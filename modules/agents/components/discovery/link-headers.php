@@ -39,6 +39,12 @@ class Link_Headers extends Feature_Component {
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
 
+	private Markdown_Endpoint $markdown_endpoint;
+
+	public function __construct( Markdown_Endpoint $markdown_endpoint ) {
+		$this->markdown_endpoint = $markdown_endpoint;
+	}
+
 	public function get_id(): string {
 		return 'link_headers';
 	}
@@ -154,9 +160,7 @@ class Link_Headers extends Feature_Component {
 			return null;
 		}
 
-		$markdown_endpoint = new Markdown_Endpoint();
-
-		if ( ! $markdown_endpoint->is_markdown_access_allowed( $post ) ) {
+		if ( ! $this->markdown_endpoint->is_markdown_access_allowed( $post ) ) {
 			return null;
 		}
 

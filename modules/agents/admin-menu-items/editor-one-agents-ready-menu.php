@@ -32,7 +32,7 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 	}
 
 	public function get_label(): string {
-		return esc_html__( 'Agents Ready', 'elementor' );
+		return esc_html__( 'Agent Ready', 'elementor' );
 	}
 
 	public function get_position(): int {

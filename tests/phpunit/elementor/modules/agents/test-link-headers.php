@@ -3,14 +3,20 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Module;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Link_Headers extends Elementor_Test_Base {
 
 	private Link_Headers $link_headers;
+
+	private Agent_Ready_Settings $settings;
 
 	private $original_experiment_default_state;
 
@@ -25,7 +31,11 @@ class Test_Link_Headers extends Elementor_Test_Base {
 			Experiments_Manager::STATE_ACTIVE
 		);
 
-		$this->link_headers = new Link_Headers();
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->settings->ensure_option_exists();
+		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ) );
 	}
 
 	public function tearDown(): void {
@@ -33,6 +43,8 @@ class Test_Link_Headers extends Elementor_Test_Base {
 			Module::EXPERIMENT_NAME,
 			$this->original_experiment_default_state
 		);
+
+		delete_option( Agent_Ready_Settings::OPTION );
 
 		parent::tearDown();
 	}
@@ -106,6 +118,21 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		] ) );
 
 		$this->assertNull( $this->link_headers->build_singular_markdown_link( $post ) );
+	}
+
+	public function test_build_singular_markdown_link__omits_post_when_markdown_is_disabled() {
+		// Arrange
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'Disabled Markdown Link Header Page',
+		] ) );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+
+		// Act
+		$link = $this->link_headers->build_singular_markdown_link( $post );
+
+		// Assert
+		$this->assertNull( $link );
 	}
 
 	public function test_is_enabled__follows_agent_ready_experiment() {

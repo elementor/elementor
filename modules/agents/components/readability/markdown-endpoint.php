@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Readability;
 
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 
@@ -42,6 +43,12 @@ class Markdown_Endpoint extends Feature_Component {
 	/** @var bool Whether a `.md` path was detected on this request. */
 	private bool $serving_md = false;
 
+	private Agent_Ready_Settings $settings;
+
+	public function __construct( Agent_Ready_Settings $settings ) {
+		$this->settings = $settings;
+	}
+
 	// -------------------------------------------------------------------------
 	// Registration
 	// -------------------------------------------------------------------------
@@ -57,6 +64,7 @@ class Markdown_Endpoint extends Feature_Component {
 		add_action( 'template_redirect', [ $this, 'on_md_path_redirect' ], 1 );
 		add_action( 'template_redirect', [ $this, 'on_markdown_request_fallback' ], 2 );
 		add_action( 'elementor/markdown/headers', [ $this, 'on_markdown_headers' ] );
+		add_filter( 'elementor/markdown/should_serve', [ $this, 'filter_should_serve' ], 10, 2 );
 	}
 
 	// -------------------------------------------------------------------------
@@ -173,6 +181,10 @@ class Markdown_Endpoint extends Feature_Component {
 			return;
 		}
 
+		if ( ! $this->is_included_by_settings( $post ) ) {
+			return;
+		}
+
 		// Only handle pages not built with Elementor — those are already
 		// handled (or intentionally skipped) by markdown-render.
 		if ( class_exists( '\Elementor\Plugin' ) ) {
@@ -184,6 +196,28 @@ class Markdown_Endpoint extends Feature_Component {
 		}
 
 		$this->serve_markdown( $post );
+	}
+
+	/**
+	 * Keep markdown-render from serving posts the Agent Ready settings exclude
+	 * or that an SEO plugin marks noindex, so the request falls through to the
+	 * regular HTML page.
+	 *
+	 * Does not repeat the publish-status or password checks: markdown-render
+	 * already does those, and applying them here would block editor previews
+	 * of drafts.
+	 *
+	 * Fires on the `elementor/markdown/should_serve` filter.
+	 *
+	 * @param bool     $should_serve Whether markdown-render should attempt to serve.
+	 * @param \WP_Post $post         The current post.
+	 */
+	public function filter_should_serve( $should_serve, \WP_Post $post ): bool {
+		if ( ! $this->is_included_by_settings( $post ) || Post_Noindex::is_noindex( $post->ID ) ) {
+			return false;
+		}
+
+		return (bool) $should_serve;
 	}
 
 	/**
@@ -223,18 +257,26 @@ class Markdown_Endpoint extends Feature_Component {
 			$this->deny_markdown_access();
 		}
 
-		$extractor   = new Content_Extractor();
-		$extraction  = $extractor->extract_with_id( $post );
-		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
-		$body        = $extraction['body'];
-
-		$output = $frontmatter . "\n\n" . $body;
+		$output = $this->build_markdown( $post );
 
 		$this->send_headers( $post->ID );
 		status_header( 200 );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $output;
 		exit;
+	}
+
+	/**
+	 * Build the markdown document served for a post, without sending it.
+	 *
+	 * @param \WP_Post $post The post to render.
+	 */
+	public function build_markdown( \WP_Post $post ): string {
+		$extractor   = new Content_Extractor();
+		$extraction  = $extractor->extract_with_id( $post );
+		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
+
+		return $frontmatter . "\n\n" . $extraction['body'];
 	}
 
 	/**
@@ -258,7 +300,12 @@ class Markdown_Endpoint extends Feature_Component {
 			return false;
 		}
 
-		return true;
+		return $this->is_included_by_settings( $post );
+	}
+
+	public function is_included_by_settings( \WP_Post $post ): bool {
+		return $this->settings->is_markdown_enabled()
+			&& in_array( $post->post_type, $this->settings->get_markdown_post_types(), true );
 	}
 
 	/**
