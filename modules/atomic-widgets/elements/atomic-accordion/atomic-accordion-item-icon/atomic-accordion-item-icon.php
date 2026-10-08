@@ -175,7 +175,7 @@ class Atomic_Accordion_Item_Icon extends Atomic_Element_Base {
 				->settings( [
 					'svg' => Svg_Src_Prop_Type::generate( [
 						'id' => null,
-						'url' => Url_Prop_Type::generate( self::DEFAULT_ICON_URL ),
+						'url' => Url_Prop_Type::generate( static::DEFAULT_ICON_URL ),
 					] ),
 				] )
 				->build(),
