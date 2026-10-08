@@ -23,7 +23,7 @@ class Site_Flag {
 		'elementor/reorder-classes' => 'class-order',
 		'elementor/create-page' => 'pages',
 		'elementor/publish-document' => 'publish',
-		'elementor/update-page-settings' => 'site-settings',
+		'elementor/update-page-settings' => 'page-settings',
 	];
 
 	public static function register(): void {

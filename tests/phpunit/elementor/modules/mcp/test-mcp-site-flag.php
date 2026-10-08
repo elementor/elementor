@@ -101,6 +101,7 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 	public function test_capability_for_ability__meaningful_tools_only() {
 		// Act / Assert
 		$this->assertSame( 'compositions', Site_Flag::capability_for_ability( 'elementor/build-composition' ) );
+		$this->assertSame( 'page-settings', Site_Flag::capability_for_ability( 'elementor/update-page-settings' ) );
 		$this->assertNull( Site_Flag::capability_for_ability( 'elementor/get-structure' ) );
 		$this->assertNull( Site_Flag::capability_for_ability( 'elementor/create-preview-link' ) );
 		$this->assertNull( Site_Flag::capability_for_ability( 'elementor/list-posts' ) );
