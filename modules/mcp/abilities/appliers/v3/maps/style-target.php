@@ -18,6 +18,8 @@ class Style_Target {
 
 	private string $label = '';
 
+	private ?string $selector = null;
+
 	/**
 	 * @var string[]
 	 */
@@ -38,6 +40,17 @@ class Style_Target {
 
 	public function label( string $label ): self {
 		$this->label = $label;
+
+		return $this;
+	}
+
+	/**
+	 * DOM selector inside the widget wrapper that declarations the widget controls cannot store
+	 * fall back to as custom CSS. An empty string is the wrapper itself; targets without a
+	 * selector drop those declarations instead.
+	 */
+	public function selector( string $selector ): self {
+		$this->selector = $selector;
 
 		return $this;
 	}
@@ -73,6 +86,10 @@ class Style_Target {
 
 	public function get_label(): string {
 		return $this->label;
+	}
+
+	public function get_selector(): ?string {
+		return $this->selector;
 	}
 
 	/**

@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Box_Shadow_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Diagnostics;
@@ -27,18 +28,15 @@ class Test_V3_Map_Style_Writer extends TestCase {
 	const TABLET = 'tablet';
 	const HOVER = 'hover';
 
-	const TABLET_MAX_WIDTH = 1024;
+	const FONT_WEIGHT_OPTIONS = [
+		'400' => '400',
+		'700' => '700',
+	];
 
 	private function controls(): array {
 		return [
-			'title_color' => [
-				'type' => 'color',
-				'selectors' => [ '{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};' ],
-			],
-			'title_hover_color' => [
-				'type' => 'color',
-				'selectors' => [ '{{WRAPPER}} .elementor-heading-title:hover, {{WRAPPER}} .elementor-heading-title:focus' => 'color: {{VALUE}};' ],
-			],
+			'title_color' => [ 'type' => 'color' ],
+			'title_hover_color' => [ 'type' => 'color' ],
 			'typography_typography' => [ 'type' => 'popover_toggle' ],
 			'typography_font_size' => [
 				'type' => 'slider',
@@ -46,6 +44,18 @@ class Test_V3_Map_Style_Writer extends TestCase {
 			],
 			'padding_horizontal' => [ 'type' => 'slider' ],
 			'padding_vertical' => [ 'type' => 'slider' ],
+			'title_font_weight' => [
+				'type' => 'select',
+				'options' => self::FONT_WEIGHT_OPTIONS,
+			],
+			'shadow_box_shadow_type' => [
+				'type' => 'popover_toggle',
+				'return_value' => 'yes',
+			],
+			'shadow_box_shadow' => [
+				'type' => 'box_shadow',
+				'condition' => [ 'shadow_box_shadow_type!' => '' ],
+			],
 		];
 	}
 
@@ -59,6 +69,8 @@ class Test_V3_Map_Style_Writer extends TestCase {
 					->bind( 'font-size', V3_Control::bind_to( 'typography_font_size' )->responsive()->requires( [ 'typography_typography' => 'custom' ] ) )
 					->bind( 'padding', V3_Control::bind_to( 'padding_horizontal' )->sides( 'inline-start', 'inline-end' ) )
 					->bind( 'padding', V3_Control::bind_to( 'padding_vertical' )->sides( 'block-start', 'block-end' ) )
+					->bind( 'font-weight', V3_Control::bind_to( 'title_font_weight' ) )
+					->with( Box_Shadow_Group::from_prefix( 'shadow' ) )
 			);
 
 		return ( new V3_Widget_Map_Compiler() )
@@ -79,6 +91,8 @@ class Test_V3_Map_Style_Writer extends TestCase {
 			->get_style_bindings();
 	}
 
+	private array $fallbacks = [];
+
 	private function write( string $css, string $breakpoint = self::DESKTOP, ?string $state = null ): V3_Conversion_Context {
 		return $this->write_bindings( $this->bindings(), $css, $breakpoint, $state );
 	}
@@ -87,18 +101,11 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		$writer = new V3_Map_Style_Writer(
 			new Css_Converter( Converter_Registry_Factory::create( null ), new Null_Failure_Reporter(), Expander_Registry_Factory::create( null ) ),
 			V3_Control_Adapter_Registry::create_default(),
-			new Css_Declaration_Parser(),
-			[
-				self::TABLET => [
-					'direction' => 'max',
-					'value' => self::TABLET_MAX_WIDTH,
-					'is_enabled' => true,
-				],
-			]
+			new Css_Declaration_Parser()
 		);
 		$ctx = new V3_Conversion_Context();
 
-		$writer->write( $ctx, $bindings, $this->controls(), $breakpoint, $state, $css );
+		$this->fallbacks = $writer->write( $ctx, $bindings, $this->controls(), $breakpoint, $state, $css );
 
 		return $ctx;
 	}
@@ -136,14 +143,14 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		$this->assertSame( [], $ctx->warnings() );
 	}
 
-	public function test_write__warns_when_sides_sharing_one_slider_differ() {
+	public function test_write__returns_sides_sharing_one_slider_as_fallback_when_they_differ() {
 		// Act.
 		$ctx = $this->write( 'padding-left: 10px; padding-right: 30px;' );
 
 		// Assert.
 		$this->assertSame( [], $ctx->settings_patch() );
-		$this->assertCount( 1, $ctx->warnings() );
-		$this->assertStringContainsString( 'padding', $ctx->warnings()[0] );
+		$this->assertSame( [ 'padding-left', 'padding-right' ], array_column( $this->fallbacks, 'property' ) );
+		$this->assertSame( [], $ctx->warnings() );
 	}
 
 	public function test_write__routes_hover_state_to_hover_control() {
@@ -168,46 +175,52 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		], $ctx->settings_patch() );
 	}
 
-	public function test_write__falls_back_to_custom_css_for_breakpoint_value_of_non_responsive_control() {
+	public function test_write__returns_breakpoint_value_of_non_responsive_control_as_fallback() {
 		// Act.
-		$ctx = $this->write( 'color: red; font-size: 14px;', self::TABLET );
-
-		// Assert.
-		$this->assertSame( [ '@media (max-width:1024px) { selector .elementor-heading-title { color: red; } }' ], $ctx->unmapped_parts() );
-		$this->assertSame( [ 'typography_font_size_tablet', 'typography_typography' ], array_keys( $ctx->settings_patch() ) );
-		$this->assertSame( [], $ctx->warnings() );
-	}
-
-	public function test_write__falls_back_to_the_state_control_selector() {
-		// Act.
-		$ctx = $this->write( 'color: #c00;', self::TABLET, self::HOVER );
-
-		// Assert.
-		$this->assertSame(
-			[ '@media (max-width:1024px) { selector .elementor-heading-title:hover, selector .elementor-heading-title:focus { color: #c00; } }' ],
-			$ctx->unmapped_parts()
-		);
-	}
-
-	public function test_write__skips_breakpoint_value_with_warning_when_control_has_no_selector() {
-		// Act.
-		$ctx = $this->write( 'padding: 10px;', self::TABLET );
+		$ctx = $this->write( 'color: red;', self::TABLET );
 
 		// Assert.
 		$this->assertSame( [], $ctx->settings_patch() );
-		$this->assertSame( [], $ctx->unmapped_parts() );
-		$this->assertCount( 1, $ctx->warnings() );
-		$this->assertStringContainsString( '@media(--tablet)', $ctx->warnings()[0] );
+		$this->assertSame( [], $ctx->warnings() );
+		$this->assertSame( [
+			[
+				'property' => 'color',
+				'value' => 'red',
+				'reason' => 'CSS property color has no per-device value in this Elementor widget at @media(--tablet).',
+			],
+		], $this->fallbacks );
 	}
 
-	public function test_write__warns_for_property_without_binding() {
+	public function test_write__returns_property_without_binding_as_fallback() {
 		// Act.
 		$ctx = $this->write( 'letter-spacing: 2px; color: #111;' );
 
 		// Assert.
 		$this->assertSame( [ 'title_color' => '#111' ], $ctx->settings_patch() );
-		$this->assertCount( 1, $ctx->warnings() );
-		$this->assertStringContainsString( 'letter-spacing', $ctx->warnings()[0] );
+		$this->assertSame( [], $ctx->warnings() );
+		$this->assertSame( [
+			[
+				'property' => 'letter-spacing',
+				'value' => '2px',
+				'reason' => 'CSS property letter-spacing is not supported by this Elementor widget.',
+			],
+		], $this->fallbacks );
+	}
+
+	public function test_write__returns_unstorable_value_as_fallback_with_the_allowed_values() {
+		// Act.
+		$ctx = $this->write( 'font-weight: 650;' );
+
+		// Assert.
+		$this->assertSame( [], $ctx->settings_patch() );
+		$this->assertSame( [], $ctx->warnings() );
+		$this->assertSame( [
+			[
+				'property' => 'font-weight',
+				'value' => '650',
+				'reason' => 'CSS property font-weight has a value this Elementor widget cannot store. Allowed values: 400, 700.',
+			],
+		], $this->fallbacks );
 	}
 
 	public function test_write__names_the_states_a_state_only_property_is_bound_in() {
@@ -219,19 +232,45 @@ class Test_V3_Map_Style_Writer extends TestCase {
 
 		// Assert.
 		$this->assertSame( [], $ctx->settings_patch() );
+		$this->assertSame( [], $this->fallbacks );
 		$this->assertSame(
 			[ 'CSS property color is only supported in the :hover state of this style target. Move it into a `<target>:hover { }` block.' ],
 			$ctx->warnings()
 		);
 	}
 
-	public function test_write__warns_for_css_the_converter_cannot_read() {
+	public function test_write__turns_the_box_shadow_toggle_off_for_box_shadow_none() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: none;' );
+
+		// Assert.
+		$this->assertSame( [ 'shadow_box_shadow_type' => '' ], $ctx->settings_patch() );
+		$this->assertSame( [], $this->fallbacks );
+		$this->assertSame( [], $ctx->warnings() );
+	}
+
+	public function test_write__stores_a_box_shadow_with_its_toggle_on() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);' );
+
+		// Assert.
+		$this->assertSame( 'yes', $ctx->settings_patch()['shadow_box_shadow_type'] ?? null );
+		$this->assertSame( [], $this->fallbacks );
+	}
+
+	public function test_write__returns_css_the_converter_cannot_read_as_fallback() {
 		// Act.
 		$ctx = $this->write( 'padding-inline: 12px;' );
 
 		// Assert.
 		$this->assertSame( [], $ctx->settings_patch() );
-		$this->assertCount( 1, $ctx->warnings() );
-		$this->assertStringContainsString( 'padding-inline', $ctx->warnings()[0] );
+		$this->assertSame( [], $ctx->warnings() );
+		$this->assertSame( [
+			[
+				'property' => 'padding-inline',
+				'value' => '12px',
+				'reason' => 'CSS property padding-inline is not supported by this Elementor widget.',
+			],
+		], $this->fallbacks );
 	}
 }

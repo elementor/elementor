@@ -27,9 +27,12 @@ class Advanced_Wrapper implements Style_Fragment {
 
 	const CLASSIC_BACKGROUND = 'classic';
 
+	const WRAPPER_SELECTOR = '';
+
 	public static function target(): Style_Target {
 		return Style_Target::make( self::ALIAS )
 			->label( self::LABEL )
+			->selector( self::WRAPPER_SELECTOR )
 			->with( new self() );
 	}
 

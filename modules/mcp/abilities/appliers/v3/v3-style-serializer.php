@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
@@ -28,10 +29,22 @@ class V3_Style_Serializer {
 	private Block_Renderer $renderer;
 	private V3_Map_Style_Reader $map_reader;
 
-	public function __construct( ?V3_Serializer_Registry $registry = null, ?Block_Renderer $renderer = null, ?V3_Map_Style_Reader $map_reader = null ) {
+	/**
+	 * @var array<string, string>|null
+	 */
+	private ?array $fallback_media_queries;
+
+	/**
+	 * @param V3_Serializer_Registry|null $registry
+	 * @param Block_Renderer|null         $renderer
+	 * @param V3_Map_Style_Reader|null    $map_reader
+	 * @param array<string, string>|null  $fallback_media_queries Breakpoint name => media query; the site breakpoints when null.
+	 */
+	public function __construct( ?V3_Serializer_Registry $registry = null, ?Block_Renderer $renderer = null, ?V3_Map_Style_Reader $map_reader = null, ?array $fallback_media_queries = null ) {
 		$this->registry = $registry ?? V3_Serializer_Registry_Factory::create();
 		$this->renderer = $renderer ?? new Block_Renderer();
 		$this->map_reader = $map_reader ?? new V3_Map_Style_Reader( V3_Control_Adapter_Registry::create_default() );
+		$this->fallback_media_queries = $fallback_media_queries;
 	}
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
@@ -47,10 +60,20 @@ class V3_Style_Serializer {
 				V3_Control_Visibility::for_widget( $widget_type )
 			);
 
-			// Not unwrapped: bare declarations would be written back to the default style target.
-			$custom_css = is_string( $settings['custom_css'] ?? null ) ? trim( $settings['custom_css'] ) : '';
+			$custom_css = is_string( $settings['custom_css'] ?? null ) ? $settings['custom_css'] : '';
 
-			return $this->join_css( $this->renderer->render_targets( $target_blocks, $map->get_default_target() ), $custom_css );
+			if ( '' === trim( $custom_css ) ) {
+				return $this->renderer->render_targets( $target_blocks, $map->get_default_target() );
+			}
+
+			$fallback = new V3_Custom_Css_Fallback(
+				V3_Custom_Css_Fallback::selectors_of( $map ),
+				$this->fallback_media_queries ?? V3_Custom_Css_Fallback::site_media_queries()
+			);
+
+			$this->push_fallback_rules( $target_blocks, $fallback->read( $custom_css ) );
+
+			return $this->join_css( $this->renderer->render_targets( $target_blocks, $map->get_default_target() ), $fallback->read_verbatim( $custom_css ) );
 		}
 
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
@@ -80,6 +103,18 @@ class V3_Style_Serializer {
 		}
 
 		return $mapped_css . ' ' . $custom_css;
+	}
+
+	/**
+	 * @param array<string, V3_Block_Accumulator> $target_blocks
+	 * @param array[]                             $rules {@see V3_Custom_Css_Fallback::read()}.
+	 */
+	private function push_fallback_rules( array $target_blocks, array $rules ): void {
+		foreach ( $rules as $rule ) {
+			foreach ( $rule['declarations'] as $property => $value ) {
+				$target_blocks[ $rule['target'] ]->push( $rule['breakpoint'], $rule['state'], (string) $property, $value );
+			}
+		}
 	}
 
 	/**

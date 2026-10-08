@@ -9,13 +9,13 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
-use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -31,6 +31,19 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { selector { color: blue; } }';
 
+	const MEDIA_QUERIES = [
+		'tablet' => '(max-width: 1024px)',
+		'mobile' => '(max-width: 767px)',
+	];
+
+	const TABLET_RULE = [
+		'target' => 'title',
+		'state' => null,
+		'breakpoint' => 'tablet',
+		'declarations' => [ 'color' => 'red' ],
+		'replaces' => [ 'color' ],
+	];
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -42,7 +55,11 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		];
 		$map = V3_Widget_Map::make( self::WIDGET_TYPE )
 			->description( 'Heading.' )
-			->default_target( Style_Target::make( 'title' )->bind( 'color', V3_Control::bind_to( 'title_color' ) ) );
+			->default_target(
+				Style_Target::make( 'title' )
+					->selector( '.elementor-heading-title' )
+					->bind( 'color', V3_Control::bind_to( 'title_color' ) )
+			);
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
@@ -65,21 +82,33 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [ 'title_color' => '#111111' ], $result['settings_patch'] );
-		$this->assertSame( $this->tablet_media_query() . ' { selector .elementor-heading-title { color: red; } } ' . self::CUSTOM_MEDIA_BLOCK, $result['unmapped_css'] );
+		$this->assertSame(
+			[
+				self::TABLET_RULE,
+				array_merge( self::TABLET_RULE, [
+					'breakpoint' => 'desktop',
+					'declarations' => [],
+				] ),
+			],
+			$result['fallback_rules']
+		);
+		$this->assertSame( self::CUSTOM_MEDIA_BLOCK, $result['unmapped_css'] );
 		$this->assertSame( [], $result['warnings'] );
 	}
 
 	public function test_round_trip__custom_css_fallback_reads_back_and_writes_the_same_custom_css() {
 		// Arrange.
-		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; }', self::WIDGET_TYPE, [] );
-		$settings = $written['settings_patch'] + [ 'custom_css' => $written['unmapped_css'] ];
-		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE, [] );
+		$fallback = new V3_Custom_Css_Fallback( [ 'title' => '.elementor-heading-title' ], self::MEDIA_QUERIES );
+		$settings = $written['settings_patch'] + [ 'custom_css' => $fallback->merge( '', $written['fallback_rules'], $written['unmapped_css'] ) ];
+		$css = ( new V3_Style_Serializer( null, null, null, self::MEDIA_QUERIES ) )->serialize( $settings, self::WIDGET_TYPE, [] );
 
 		// Act.
 		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
 
 		// Assert.
 		$this->assertSame( $written['settings_patch'], $result['settings_patch'] );
+		$this->assertSame( $written['fallback_rules'], $result['fallback_rules'] );
 		$this->assertSame( $written['unmapped_css'], $result['unmapped_css'] );
 		$this->assertSame( [], $result['warnings'] );
 	}
@@ -104,18 +133,14 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$this->assertSame( '#111111', $node['settings']['title_color'] );
 
 		if ( Utils::has_pro() ) {
-			$this->assertSame( $this->tablet_media_query() . ' { selector .elementor-heading-title { color: red; } }', $node['settings']['custom_css'] );
+			$this->assertStringContainsString( '{ selector .elementor-heading-title { color: red; } }', $node['settings']['custom_css'] );
 			$this->assertSame( [ 'css_fallback_custom_css' ], $codes );
-		} else {
-			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
-			$this->assertSame( [ 'v3_style_needs_pro', 'css_dropped' ], $codes );
+
+			return;
 		}
-	}
 
-	private function tablet_media_query(): string {
-		$tablet = Plugin::$instance->breakpoints->get_breakpoints_config()['tablet'];
-
-		return sprintf( '@media (%s-width:%dpx)', $tablet['direction'], $tablet['value'] );
+		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+		$this->assertSame( [ 'css_dropped' ], $codes );
 	}
 
 	private function mapper(): V3_Style_Mapper {

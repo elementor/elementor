@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
@@ -36,6 +37,14 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		. ' &:hover { color: #222222; } &:current { color: #333333; } dropdown { background-color: #ffffff; }'
 		. ' wrapper { position: absolute; inset-inline-end: 20px; z-index: 9; }'
 		. ' @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } wrapper { width: 150px; } }';
+
+	const UNSTORABLE_CSS = 'font-weight: 650; color: #111111; dropdown { box-shadow: 0 1rem 2rem #000000; }'
+		. ' @media(--mobile) { toggle { letter-spacing: 1px; } }';
+
+	const MEDIA_QUERIES = [
+		'tablet' => '(max-width: 1024px)',
+		'mobile' => '(max-width: 767px)',
+	];
 
 	private V3_Widget_Map_Registry $registry;
 
@@ -257,6 +266,77 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$this->assertCount( 2, $result['warnings'] );
 		$this->assertStringContainsString( 'Style target header is not supported', $result['warnings'][0] );
 		$this->assertStringContainsString( 'The state in toggle:current is not supported', $result['warnings'][1] );
+	}
+
+	public function test_apply__routes_unstorable_declarations_to_per_target_fallback_rules() {
+		// Act.
+		$result = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( [], $result['warnings'] );
+		$this->assertSame( [ 'color_menu_item' => '#111111' ], $result['settings_patch'] );
+		$this->assertSame(
+			[
+				[
+					'target' => 'toggle',
+					'state' => null,
+					'breakpoint' => 'mobile',
+					'declarations' => [ 'letter-spacing' => '1px' ],
+					'replaces' => [ 'letter-spacing' ],
+				],
+				[
+					'target' => 'main-menu',
+					'state' => null,
+					'breakpoint' => 'desktop',
+					'declarations' => [ 'font-weight' => '650' ],
+					'replaces' => [ 'font-weight', 'color' ],
+				],
+				[
+					'target' => 'dropdown',
+					'state' => null,
+					'breakpoint' => 'desktop',
+					'declarations' => [ 'box-shadow' => '0 1rem 2rem #000000' ],
+					'replaces' => [ 'box-shadow' ],
+				],
+			],
+			$result['fallback_rules']
+		);
+		$this->assertSame(
+			[
+				'letter-spacing: 1px (toggle): CSS property letter-spacing is not supported by this Elementor widget.',
+				'font-weight: 650 (main-menu): CSS property font-weight has a value this Elementor widget cannot store. Allowed values: 100, 200, 300, 400, 500, 600, 700, 800, 900, normal, bold.',
+				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths must be px.',
+			],
+			$result['fallback_notes']
+		);
+	}
+
+	public function test_apply__warns_and_skips_unstorable_declarations_of_targets_without_a_selector() {
+		// Act.
+		$result = $this->mapper()->apply( 'divider { letter-spacing: 1px; }', self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( [], $result['fallback_notes'] );
+		$this->assertSame(
+			[ 'CSS property letter-spacing is not supported by this Elementor widget. It was skipped because style target divider cannot hold custom CSS.' ],
+			$result['warnings']
+		);
+	}
+
+	public function test_round_trip__fallback_custom_css_reads_back_as_target_blocks() {
+		// Arrange.
+		$written = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
+		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
+		$settings = array_merge( $written['settings_patch'], [ 'custom_css' => $fallback->merge( '', $written['fallback_rules'] ) ] );
+		$readback = ( new V3_Style_Serializer( null, null, null, self::MEDIA_QUERIES ) )->serialize( $settings, self::WIDGET_TYPE, [] );
+
+		// Act.
+		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000; }', $settings['custom_css'] );
+		$this->assertEquals( $written['settings_patch'], $result['settings_patch'] );
+		$this->assertEqualsCanonicalizing( $written['fallback_rules'], $result['fallback_rules'] );
 	}
 
 	private function mapper(): V3_Style_Mapper {
