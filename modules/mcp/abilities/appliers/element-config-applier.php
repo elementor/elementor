@@ -116,7 +116,6 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$settings = Editor_Settings::apply( $node, $settings, (string) $tag, (string) $config_id, $warnings );
 			$schema = $this->type_resolver->get_props_schema( $tag, $widget_configs );
 
 			if ( ! $schema ) {
@@ -197,6 +196,11 @@ class Element_Config_Applier {
 
 		foreach ( $settings as $name => $value ) {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
+
+			if ( null === $canonical && Editor_Settings::is_editor_key( $name ) ) {
+				Editor_Settings::warn_misplaced( (string) $name, $config_id, $warnings );
+				continue;
+			}
 
 			if ( null === $canonical ) {
 				$warnings->add(
