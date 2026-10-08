@@ -153,13 +153,23 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	 * Controls child.
 	 */
 	protected function define_children_dependencies(): array {
+		$show_icon = [
+			'operator' => 'ne',
+			'path' => [ 'show_icon' ],
+			'value' => false,
+		];
+
+		$open_icon_when = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( $show_icon )
+			->where( [
+				'operator' => 'eq',
+				'path' => [ 'different_open_icon' ],
+				'value' => true,
+			] );
+
 		return [
 			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON )
-				->when( Dependency_Manager::make()->where( [
-					'operator' => 'ne',
-					'path' => [ 'show_icon' ],
-					'value' => false,
-				] ) )
+				->when( Dependency_Manager::make()->where( $show_icon ) )
 				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_TITLE ) )
 				->stash( true )
 				->default_model(
@@ -169,15 +179,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 						->build()
 				),
 			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
-				->when( Dependency_Manager::make( Dependency_Manager::RELATION_AND )->where( [
-					'operator' => 'ne',
-					'path' => [ 'show_icon' ],
-					'value' => false,
-				] )->where( [
-					'operator' => 'eq',
-					'path' => [ 'different_open_icon' ],
-					'value' => true,
-				] ) )
+				->when( $open_icon_when )
 				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_ICON ) )
 				->stash( true )
 				->default_model(
@@ -190,6 +192,75 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 						->build()
 				),
 		];
+	}
+
+	/**
+	 * Documents saved before the open icon was anchored after the closed icon keep the old
+	 * child order. The structure panel reads this loaded tree, so correct it before the editor
+	 * builds models from it.
+	 *
+	 * @param mixed $elements
+	 * @return mixed
+	 */
+	public static function order_open_icon_after_closed_icon( $elements ) {
+		if ( ! is_array( $elements ) ) {
+			return $elements;
+		}
+
+		$ordered = [];
+
+		foreach ( $elements as $element ) {
+			if ( ! is_array( $element ) ) {
+				$ordered[] = $element;
+				continue;
+			}
+
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = self::order_open_icon_after_closed_icon( $element['elements'] );
+			}
+
+			if ( Atomic_Accordion::ELEMENT_TYPE_HEADER === ( $element['elType'] ?? '' ) && isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = self::place_open_icon_after_icon( $element['elements'] );
+			}
+
+			$ordered[] = $element;
+		}
+
+		return $ordered;
+	}
+
+	private static function place_open_icon_after_icon( array $children ): array {
+		$icon_index = null;
+		$open_index = null;
+
+		foreach ( $children as $index => $child ) {
+			if ( ! is_array( $child ) ) {
+				continue;
+			}
+
+			if ( Atomic_Accordion::ELEMENT_TYPE_ICON === ( $child['elType'] ?? '' ) ) {
+				$icon_index = $index;
+			}
+
+			if ( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN === ( $child['elType'] ?? '' ) ) {
+				$open_index = $index;
+			}
+		}
+
+		if ( null === $icon_index || null === $open_index || $open_index === $icon_index + 1 ) {
+			return $children;
+		}
+
+		$open_icon = $children[ $open_index ];
+		array_splice( $children, $open_index, 1 );
+
+		if ( $open_index < $icon_index ) {
+			--$icon_index;
+		}
+
+		array_splice( $children, $icon_index + 1, 0, [ $open_icon ] );
+
+		return $children;
 	}
 
 	protected function get_templates(): array {

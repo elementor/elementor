@@ -180,7 +180,11 @@ export const useActions = () => {
 						// *existing* element out of the document, not for describing one to create. A single
 						// cast is enough (the two types overlap enough for TS to allow it directly); no
 						// `unknown` escape hatch needed.
-						model: buildItemModel( position, showIcon, differentOpenIcon ) as CreateElementParams[ 'model' ],
+						model: buildItemModel(
+							position,
+							showIcon,
+							differentOpenIcon
+						) as CreateElementParams[ 'model' ],
 					},
 				],
 			} );
