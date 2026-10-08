@@ -205,9 +205,10 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 										borderRadius: 1,
 										cursor: 'pointer',
 										'&:hover': { bgcolor: 'action.hover' },
-										'&:hover .violation-row-fix-action, &:focus-within .violation-row-fix-action': {
-											opacity: 1,
-										},
+										'&:hover .violation-row-fix-action, &:focus-visible .violation-row-fix-action':
+											{
+												opacity: 1,
+											},
 									} }
 								>
 									<ViolationIcon violation={ violation } widgetIcon={ widgetIcon } />
