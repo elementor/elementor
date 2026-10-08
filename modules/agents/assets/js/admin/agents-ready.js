@@ -17,7 +17,9 @@ const init = () => {
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
 			isExperimentActive={ !! config.isExperimentActive }
+			botAccessConfig={ config.botAccess }
 			llmsConfig={ config.llms }
+			markdownConfig={ config.markdown }
 		/>
 	), rootElement );
 };

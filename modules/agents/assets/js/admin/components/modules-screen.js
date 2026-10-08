@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import Alert from '@elementor/ui/Alert';
 import Infotip from '@elementor/ui/Infotip';
@@ -15,10 +14,12 @@ import {
 	MODULE_STATUS_ENABLED,
 	MODULE_STATUS_WARNING,
 } from '../constants';
+import { useBotAccessSettings } from '../hooks/use-bot-access-settings';
 import { useLlmsSettings } from '../hooks/use-llms-settings';
-import { BotAccessPanel } from './bot-access-panel';
+import { useMarkdownSettings } from '../hooks/use-markdown-settings';
+import { BotAccessPanel } from './bot-access/bot-access-panel';
 import { LlmsTxtPanel } from './llms-txt/llms-txt-panel';
-import { MarkdownContentPanel } from './markdown-content-panel';
+import { MarkdownContentPanel } from './markdown-content/markdown-content-panel';
 import { ModuleAccordion } from './module-accordion';
 import { ModulesStatus } from './modules-status';
 import { PageTitle } from './page-title';
@@ -33,15 +34,6 @@ const scoreInfoIcon = (
 
 const modules = getModules();
 
-const placeholderPanelsById = {
-	[ MODULE_MARKDOWN_CONTENT ]: MarkdownContentPanel,
-	[ MODULE_BOT_ACCESS_CONTROL ]: BotAccessPanel,
-};
-
-const getInitialEnabledState = () => Object.fromEntries(
-	Object.keys( placeholderPanelsById ).map( ( id ) => [ id, true ] ),
-);
-
 const getStatus = ( isEnabled, hasWarning = false ) => {
 	if ( hasWarning ) {
 		return MODULE_STATUS_WARNING;
@@ -50,15 +42,12 @@ const getStatus = ( isEnabled, hasWarning = false ) => {
 	return isEnabled ? MODULE_STATUS_ENABLED : MODULE_STATUS_DISABLED;
 };
 
-export const ModulesScreen = ( { llmsConfig } ) => {
+export const ModulesScreen = ( { botAccessConfig, llmsConfig, markdownConfig } ) => {
+	const botAccessSettings = useBotAccessSettings( botAccessConfig );
 	const llmsSettings = useLlmsSettings( llmsConfig );
-	const [ enabledById, setEnabledById ] = useState( getInitialEnabledState );
+	const markdownSettings = useMarkdownSettings( markdownConfig );
 
-	const handleToggle = ( id ) => () => {
-		setEnabledById( ( previous ) => ( { ...previous, [ id ]: ! previous[ id ] } ) );
-	};
-
-	const enabledCount = [ llmsSettings.isEnabled, ...Object.values( enabledById ) ].filter( Boolean ).length;
+	const enabledCount = [ llmsSettings.isEnabled, markdownSettings.isEnabled, botAccessSettings.isEnabled ].filter( Boolean ).length;
 
 	const renderModule = ( module ) => {
 		if ( MODULE_LLMS_TXT === module.id ) {
@@ -77,20 +66,39 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 			);
 		}
 
-		const Panel = placeholderPanelsById[ module.id ];
+		if ( MODULE_MARKDOWN_CONTENT === module.id ) {
+			return (
+				<ModuleAccordion
+					key={ module.id }
+					title={ module.title }
+					description={ module.description }
+					status={ getStatus( markdownSettings.isEnabled ) }
+					isEnabled={ markdownSettings.isEnabled }
+					isToggleDisabled={ markdownSettings.isSaving }
+					onToggle={ markdownSettings.toggleEnabled }
+				>
+					<MarkdownContentPanel settings={ markdownSettings } />
+				</ModuleAccordion>
+			);
+		}
 
-		return (
-			<ModuleAccordion
-				key={ module.id }
-				title={ module.title }
-				description={ module.description }
-				status={ getStatus( enabledById[ module.id ] ) }
-				isEnabled={ enabledById[ module.id ] }
-				onToggle={ handleToggle( module.id ) }
-			>
-				<Panel description={ module.description } />
-			</ModuleAccordion>
-		);
+		if ( MODULE_BOT_ACCESS_CONTROL === module.id ) {
+			return (
+				<ModuleAccordion
+					key={ module.id }
+					title={ module.title }
+					description={ module.description }
+					status={ getStatus( botAccessSettings.isEnabled, botAccessSettings.hasPhysicalFile ) }
+					isEnabled={ botAccessSettings.isEnabled }
+					isToggleDisabled={ botAccessSettings.hasPhysicalFile || botAccessSettings.isSaving }
+					onToggle={ botAccessSettings.toggleEnabled }
+				>
+					<BotAccessPanel settings={ botAccessSettings } />
+				</ModuleAccordion>
+			);
+		}
+
+		return null;
 	};
 
 	return (
@@ -101,7 +109,13 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 			</Stack>
 			<Stack spacing={ 2 }>
 				{ llmsSettings.saveError && (
-					<Alert severity="error" sx={ { mb: 2 } }>{ llmsSettings.saveError }</Alert>
+					<Alert severity="error">{ llmsSettings.saveError }</Alert>
+				) }
+				{ markdownSettings.saveError && (
+					<Alert severity="error">{ markdownSettings.saveError }</Alert>
+				) }
+				{ botAccessSettings.saveError && (
+					<Alert severity="error">{ botAccessSettings.saveError }</Alert>
 				) }
 				{ modules.map( renderModule ) }
 			</Stack>
@@ -110,11 +124,21 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 };
 
 ModulesScreen.propTypes = {
+	botAccessConfig: PropTypes.shape( {
+		enabled: PropTypes.bool.isRequired,
+		hasPhysicalFile: PropTypes.bool.isRequired,
+		bots: PropTypes.array.isRequired,
+		catalog: PropTypes.array.isRequired,
+	} ).isRequired,
 	llmsConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,
 		isManuallyEdited: PropTypes.bool.isRequired,
 		hasPhysicalFile: PropTypes.bool.isRequired,
 		fileUrl: PropTypes.string.isRequired,
+		postTypes: PropTypes.array.isRequired,
+	} ).isRequired,
+	markdownConfig: PropTypes.shape( {
+		enabled: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
 	} ).isRequired,
 };
