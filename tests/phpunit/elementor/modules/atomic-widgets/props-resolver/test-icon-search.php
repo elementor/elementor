@@ -22,7 +22,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 		add_filter(
 			'elementor/atomic-widgets/font-awesome-7/json-base-path',
-			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
 		);
 
 		$this->fixture_path = get_temp_dir() . 'icon-search-' . wp_generate_password( 8, false ) . '.json';
@@ -504,11 +504,6 @@ class Test_Icon_Search extends Elementor_Test_Base {
 					'prefix' => 'test-',
 					'custom_icon_type' => 'fontello',
 					'icons' => [ 'shopping-bag' ],
-					'fetchJson' => [ 'url' => 'data:application/json;base64,' . base64_encode( wp_json_encode( [
-						'glyphs' => [
-							[ 'css' => 'shopping-bag', 'code' => 59392, 'search' => [ 'bag', 'shopping' ] ],
-						],
-					] ) ) ],
 					'native' => false,
 				];
 
@@ -522,40 +517,39 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$args = [ 'queries' => [ 'shopping' ], 'per_page' => 20 ];
 
 		// Act.
-		$matches = $this->get_matches( Icon_Search::search( $args ) );
+		$response = Icon_Search::search( $args );
+		$matches = $this->get_matches( $response );
 
 		// Assert — custom library icons should appear alongside Font Awesome icons.
 		$custom_results = array_filter( $matches, fn( $m ) => $m['library'] === 'test-pack' );
 		$this->assertNotEmpty( $custom_results, 'Custom library results should be included' );
 
 		$custom_match = array_values( $custom_results )[0];
-		$this->assertSame( 'test-pack test-shopping-bag', $custom_match['value'] );
-		$this->assertSame( 'Test Pack', $custom_match['library_label'] );
+		$this->assertSame( 'test test-shopping-bag', $custom_match['value'] );
+		$this->assertSame( 'shopping bag', $custom_match['label'] );
+
+		$this->assertArrayHasKey( 'test-pack', $response['custom_libraries'] );
+		$this->assertSame( 'Test Pack', $response['custom_libraries']['test-pack']['label'] );
 	}
 
 	public function test_search__truncates_custom_libraries_at_250_icons() {
 		// Arrange — a custom library with >250 icons.
 		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 
-		$glyphs = [];
 		$icon_names = [];
 		for ( $i = 0; $i < 300; $i++ ) {
-			$glyphs[] = [ 'css' => "icon-$i", 'code' => 59392 + $i, 'search' => [ 'search' ] ];
-			$icon_names[] = "icon-$i";
+			$icon_names[] = "search-$i";
 		}
 
 		add_filter(
 			'elementor/icons_manager/additional_tabs',
-			static function ( $tabs ) use ( $glyphs, $icon_names ) {
+			static function ( $tabs ) use ( $icon_names ) {
 				$tabs['large-pack'] = [
 					'name' => 'large-pack',
 					'label' => 'Large Pack',
 					'prefix' => 'lp-',
 					'custom_icon_type' => 'fontello',
 					'icons' => $icon_names,
-					'fetchJson' => [ 'url' => 'data:application/json;base64,' . base64_encode( wp_json_encode( [
-						'glyphs' => $glyphs,
-					] ) ) ],
 					'native' => false,
 				];
 
@@ -569,13 +563,12 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 		// Act.
 		$response = Icon_Search::search( $args );
-		$custom_libraries = $response['custom_libraries'];
 
 		// Assert.
-		$this->assertArrayHasKey( 'large-pack', $custom_libraries );
-		$this->assertTrue( $custom_libraries['large-pack']['truncated'] );
-		$this->assertSame( 300, $custom_libraries['large-pack']['total'] );
-		$this->assertLessThanOrEqual( 250, count( $custom_libraries['large-pack']['values'] ) );
+		$this->assertArrayHasKey( 'large-pack', $response['custom_libraries'] );
+		$this->assertTrue( $response['custom_libraries']['large-pack']['truncated'] );
+		$this->assertSame( 300, $response['custom_libraries']['large-pack']['total'] );
+		$this->assertCount( 250, $response['custom_libraries']['large-pack']['values'] );
 	}
 
 	public function test_catalog__icon_value_format_matches_fixture() {
@@ -625,7 +618,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $this->fixture_path );
 		add_filter(
 			'elementor/atomic-widgets/font-awesome-7/json-base-path',
-			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
 		);
 		Icon_Catalog::reset();
 		Font_Awesome_7_Icon_Resolver::reset();

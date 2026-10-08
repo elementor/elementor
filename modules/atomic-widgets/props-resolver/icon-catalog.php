@@ -129,11 +129,11 @@ class Icon_Catalog {
 			$base_path = Font_Awesome_7_Icon_Resolver::JSON_BASE_PATH;
 		}
 
-		return dirname( trailingslashit( $base_path ) ) . '/' . self::VERSION_FILE_NAME;
-	}
+		$path = dirname( trailingslashit( $base_path ) ) . '/' . self::VERSION_FILE_NAME;
 
-	private static function default_catalog_dir(): string {
-		return trailingslashit( dirname( untrailingslashit( Font_Awesome_7_Icon_Resolver::JSON_BASE_PATH ) ) );
+		$filtered = apply_filters( 'elementor/atomic-widgets/icons/version-path', $path );
+
+		return is_string( $filtered ) ? $filtered : $path;
 	}
 
 	private static function read_entries( string $file_path ): array {

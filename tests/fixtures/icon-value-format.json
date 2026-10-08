@@ -1,17 +1,9 @@
 {
 	"icons": [
 		{
-			"name": "home",
-			"expectedValues": {
-				"fa-solid": "fa-solid fa-home",
-				"fa-regular": "fa-regular fa-home"
-			}
-		},
-		{
 			"name": "0",
 			"expectedValues": {
-				"fa-solid": "fa-solid fa-0",
-				"fa-regular": "fa-regular fa-0"
+				"fa-solid": "fa-solid fa-0"
 			}
 		},
 		{

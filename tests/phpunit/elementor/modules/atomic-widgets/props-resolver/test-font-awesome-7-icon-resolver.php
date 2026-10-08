@@ -15,7 +15,7 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 
 		add_filter(
 			'elementor/atomic-widgets/font-awesome-7/json-base-path',
-			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
 		);
 
 		Font_Awesome_7_Icon_Resolver::reset();

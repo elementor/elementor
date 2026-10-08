@@ -176,6 +176,11 @@ class Icon_Search {
 		}
 
 		$tokens = Icon_Matcher::tokenize( $normalized );
+
+		if ( empty( $tokens ) ) {
+			$tokens = [ $normalized ];
+		}
+
 		$scored = [];
 
 		foreach ( $custom_values as $custom_library => $values ) {
@@ -183,9 +188,9 @@ class Icon_Search {
 				$normalized_name = Icon_Matcher::normalize( (string) $name );
 
 				$exact_match = $normalized_name === $normalized;
-				$has_all_tokens = ! empty( $tokens );
+				$has_all_tokens = true;
 
-				if ( ! $exact_match && ! empty( $tokens ) ) {
+				if ( ! $exact_match ) {
 					foreach ( $tokens as $token ) {
 						$pattern = '/(^|-|\\s)' . preg_quote( $token, '/' ) . '($|-|\\s)/';
 						if ( ! preg_match( $pattern, $normalized_name ) ) {
@@ -204,7 +209,7 @@ class Icon_Search {
 						'value' => $value,
 						'library' => $custom_library,
 						'name' => (string) $name,
-						'label' => str_replace( '-', ' ', $normalized_name ),
+						'label' => str_replace( '-', ' ', (string) $name ),
 						'license' => Icon_Catalog::LICENSE_FREE,
 					],
 					Icon_Matcher::result(

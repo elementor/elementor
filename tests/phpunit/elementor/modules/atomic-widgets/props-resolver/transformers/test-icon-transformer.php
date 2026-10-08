@@ -30,7 +30,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 		add_filter(
 			self::JSON_BASE_PATH_FILTER,
-			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
 		);
 
 		Font_Awesome_7_Icon_Resolver::reset();

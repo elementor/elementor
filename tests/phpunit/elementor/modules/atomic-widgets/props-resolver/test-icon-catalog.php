@@ -25,6 +25,7 @@ class Test_Icon_Catalog extends Elementor_Test_Base {
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 		remove_all_filters( 'elementor/atomic-widgets/icons/version-path' );
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 
 		foreach ( glob( $this->fixture_dir . '/*' ) as $file ) {
 			unlink( $file );
