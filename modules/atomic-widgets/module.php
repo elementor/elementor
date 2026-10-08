@@ -724,9 +724,15 @@ class Module extends BaseModule {
 			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg, .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base .e-svg-base svg { width: auto !important; }',
 			'.e-accordion-item-icon-base svg, .e-accordion-item-icon-open-base svg { transition: transform .3s ease; }',
 			'.e-accordion-item-base[open] > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation, ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg)); }',
-			'.e-accordion-item-base .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base { display: none; }',
-			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-open-base { display: inline-flex; }',
-			'.e-accordion-item-base[open] > summary:has(.e-accordion-item-icon-open-base) .e-accordion-item-icon-base { display: none; }',
+			// `display: none` until [open] skips the transform transition, so the open icon
+			// appears already rotated. Keep both slots rendered, stacked in one cell, and
+			// swap them with visibility so the visible icon can rotate.
+			'.e-accordion-item-header-base.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }',
+			'.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) > .e-accordion-item-title-base { grid-column: 1; grid-row: 1; }',
+			'.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) > :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) { grid-column: 2; grid-row: 1; }',
+			'.e-accordion-item-base .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base { visibility: hidden; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-open-base { visibility: visible; }',
+			'.e-accordion-item-base[open] > summary:has(.e-accordion-item-icon-open-base) .e-accordion-item-icon-base { visibility: hidden; }',
 			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
 			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
 			// The marker is a flex item and shrinks the icon (about 19.7px wide for a 21px font). :where() stays under the SVG's own styles.
