@@ -32,6 +32,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon_Open\Atomic_Accordion_Item_Icon_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
@@ -440,6 +441,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon_Open() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
 
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
@@ -716,11 +718,15 @@ class Module extends BaseModule {
 			'}',
 			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
 			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
-			'.e-accordion-item-icon-base { --e-svg-width: auto; --e-svg-height: 100%; }',
-			':where(.e-accordion-item-icon-base) .e-svg-base { max-width: 100%; }',
-			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
-			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
-			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+			'.e-accordion-item-icon-base, .e-accordion-item-icon-open-base { --e-svg-width: auto; --e-svg-height: 100%; }',
+			':where(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) .e-svg-base { max-width: 100%; }',
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg, .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base .e-svg-base svg { width: auto !important; }',
+			'.e-accordion-item-icon-base svg, .e-accordion-item-icon-open-base svg { transition: transform .3s ease; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(var(--e-accordion-icon-rotation, ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg)); }',
+			'.e-accordion-item-base[open] > summary:has(.e-accordion-item-icon-open-base) .e-accordion-item-icon-base svg { transform: none; }',
+			'.e-accordion-item-base .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base { display: none; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-open-base { display: inline-flex; }',
+			'.e-accordion-item-base[open] > summary:has(.e-accordion-item-icon-open-base) .e-accordion-item-icon-base { display: none; }',
 			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
 			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
 			// The marker is a flex item and shrinks the icon (about 19.7px wide for a 21px font). :where() stays under the SVG's own styles.

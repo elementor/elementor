@@ -432,7 +432,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// place this animation is defined (there is no frontend JS handler for the toggle — the
 		// element ships none, by design):
 		//   '.e-accordion-item-icon-base svg { transition: transform .3s ease; }'
-		//   '.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }'
+		//   '.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(var(--e-accordion-icon-rotation, 180deg)); }'
 		//   '.e-accordion-item-base::details-content { block-size: 0; overflow: hidden;
 		//      transition: block-size .3s ease, content-visibility .3s ease allow-discrete; }'
 		//   '.e-accordion-item-base[open]::details-content { block-size: auto; }'

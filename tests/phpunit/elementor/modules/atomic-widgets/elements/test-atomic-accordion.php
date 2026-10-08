@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon_Open\Atomic_Accordion_Item_Icon_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
@@ -31,6 +32,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		'e-accordion-item-header' => Atomic_Accordion_Item_Header::class,
 		'e-accordion-item-title' => Atomic_Accordion_Item_Title::class,
 		'e-accordion-item-icon' => Atomic_Accordion_Item_Icon::class,
+		'e-accordion-item-icon-open' => Atomic_Accordion_Item_Icon_Open::class,
 		'e-accordion-item-content' => Atomic_Accordion_Item_Content::class,
 	];
 
@@ -176,7 +178,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$schema = $this->get_define_props_schema( Atomic_Accordion::class );
 
 		$this->assertEqualsCanonicalizing(
-			[ 'classes', 'attributes', 'default_state', 'max_expanded', 'show_icon', 'faq_schema' ],
+			[ 'classes', 'attributes', 'default_state', 'max_expanded', 'show_icon', 'icon_rotation', 'different_open_icon', 'faq_schema' ],
 			array_keys( $schema )
 		);
 
@@ -187,13 +189,15 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( [ 'one', 'multiple' ], $schema['max_expanded']->get_enum() );
 
 		$this->assertTrue( $schema['show_icon']->get_default()['value'] );
+		$this->assertSame( Atomic_Accordion::ICON_ROTATION_DEFAULT, $schema['icon_rotation']->get_default()['value'] );
+		$this->assertFalse( $schema['different_open_icon']->get_default()['value'] );
 		$this->assertFalse( $schema['faq_schema']->get_default()['value'] );
 	}
 
 	public function test_functional_props_have_descriptions_classes_and_attributes_do_not() {
 		$schema = $this->get_define_props_schema( Atomic_Accordion::class );
 
-		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'faq_schema' ] as $key ) {
+		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'icon_rotation', 'different_open_icon', 'faq_schema' ] as $key ) {
 			$description = $schema[ $key ]->get_meta()['description'] ?? '';
 			$this->assertNotSame( '', $description, "Expected {$key} to have a non-empty description." );
 		}
@@ -211,7 +215,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'overridable', $schema['attributes']->get_meta() );
 		$this->assertFalse( $schema['attributes']->get_meta()['overridable'] );
 
-		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'faq_schema' ] as $key ) {
+		foreach ( [ 'default_state', 'max_expanded', 'show_icon', 'icon_rotation', 'different_open_icon', 'faq_schema' ] as $key ) {
 			$this->assertArrayNotHasKey( 'overridable', $schema[ $key ]->get_meta(), "Did not expect {$key} to be marked non-overridable." );
 		}
 	}
@@ -305,6 +309,41 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_open_icon_slot_seeds_its_svg_child_with_the_upward_chevron() {
+		$default_children = $this->get_config( 'e-accordion-item-icon-open' )['default_children'];
+
+		$this->assertCount( 1, $default_children );
+
+		$svg = $default_children[0];
+		$this->assertSame( 'widget', $svg['elType'] );
+		$this->assertSame( 'e-svg', $svg['widgetType'] );
+		$this->assertSame(
+			Atomic_Accordion_Item_Icon_Open::DEFAULT_ICON_URL,
+			$svg['settings']['svg']['value']['url']['value']
+		);
+		$this->assertNotSame(
+			Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL,
+			$svg['settings']['svg']['value']['url']['value']
+		);
+	}
+
+	public function test_open_icon_asset_ships_with_the_plugin() {
+		$this->assertFileExists( Atomic_Accordion_Item_Icon_Open::DEFAULT_ICON_PATH );
+		$this->assertStringContainsString(
+			'<svg',
+			(string) file_get_contents( Atomic_Accordion_Item_Icon_Open::DEFAULT_ICON_PATH )
+		);
+	}
+
+	public function test_render_defaults_to_the_original_icon_rotation() {
+		$html = $this->render_accordion( [] );
+
+		$this->assertStringContainsString(
+			'--e-accordion-icon-rotation: ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg',
+			$html
+		);
+	}
+
 	// ---------------------------------------------------------------------
 	// allowed_child_types per level
 	// ---------------------------------------------------------------------
@@ -316,11 +355,12 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			$this->get_config( 'e-accordion-item' )['allowed_child_types']
 		);
 		$this->assertSame(
-			[ 'e-accordion-item-title', 'e-accordion-item-icon' ],
+			[ 'e-accordion-item-title', 'e-accordion-item-icon', 'e-accordion-item-icon-open' ],
 			$this->get_config( 'e-accordion-item-header' )['allowed_child_types']
 		);
 		$this->assertEmpty( $this->get_config( 'e-accordion-item-title' )['allowed_child_types'] );
 		$this->assertEmpty( $this->get_config( 'e-accordion-item-icon' )['allowed_child_types'] );
+		$this->assertEmpty( $this->get_config( 'e-accordion-item-icon-open' )['allowed_child_types'] );
 		$this->assertEmpty( $this->get_config( 'e-accordion-item-content' )['allowed_child_types'] );
 	}
 
@@ -344,6 +384,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			'e-accordion-item-header' => 10,
 			'e-accordion-item-title' => 0,
 			'e-accordion-item-icon' => 0,
+			'e-accordion-item-icon-open' => 0,
 			'e-accordion-item-content' => 10,
 		];
 
@@ -392,7 +433,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	public function test_header_children_dependencies_shape() {
 		$config = $this->get_config( 'e-accordion-item-header' );
 
-		$this->assertCount( 1, $config['children_dependencies'] );
+		$this->assertCount( 2, $config['children_dependencies'] );
 
 		$rule = $config['children_dependencies'][0];
 		$this->assertSame( 'e-accordion-item-icon', $rule['child_type'] );
@@ -405,6 +446,22 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( 'ne', $term['operator'] );
 		$this->assertSame( [ 'show_icon' ], $term['path'] );
 		$this->assertFalse( $term['value'] );
+
+		$open_rule = $config['children_dependencies'][1];
+		$this->assertSame( 'e-accordion-item-icon-open', $open_rule['child_type'] );
+		$this->assertSame( 'last', $open_rule['position']['kind'] );
+		$this->assertTrue( $open_rule['stash'] );
+		$this->assertSame( 'e-accordion-item-icon-open', $open_rule['default_model']['elType'] );
+		$this->assertTrue( $open_rule['default_model']['hydrateDefaultChildren'] );
+		$this->assertSame( 'and', $open_rule['when']['relation'] );
+
+		$open_terms = $open_rule['when']['terms'];
+		$this->assertSame( 'ne', $open_terms[0]['operator'] );
+		$this->assertSame( [ 'show_icon' ], $open_terms[0]['path'] );
+		$this->assertFalse( $open_terms[0]['value'] );
+		$this->assertSame( 'eq', $open_terms[1]['operator'] );
+		$this->assertSame( [ 'different_open_icon' ], $open_terms[1]['path'] );
+		$this->assertTrue( $open_terms[1]['value'] );
 	}
 
 	public function test_root_and_item_have_no_children_dependencies() {
@@ -429,14 +486,14 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		// `_cssid` and `display-conditions` are framework-injected by
 		// `Has_Atomic_Base::get_props_schema()` / the `elementor/atomic-widgets/props-schema`
 		// filter, never declared by the element — do not assert their absence (Step 2's
-		// correction). `e-accordion-item-header` additionally carries the mirrored `show_icon` prop
-		// (see that class) — every other sub-element exposes only the four framework/plumbing
-		// props.
+		// correction). `e-accordion-item-header` additionally carries the mirrored `show_icon` and
+		// `different_open_icon` props (see that class) — every other sub-element exposes only the
+		// four framework/plumbing props.
 		foreach ( self::SUB_ELEMENT_CLASSES_BY_TYPE as $type => $class ) {
 			$schema_keys = array_keys( $class::get_props_schema() );
 
 			$expected = 'e-accordion-item-header' === $type
-				? [ 'classes', 'attributes', 'show_icon', '_cssid', 'display-conditions' ]
+				? [ 'classes', 'attributes', 'show_icon', 'different_open_icon', '_cssid', 'display-conditions' ]
 				: [ 'classes', 'attributes', '_cssid', 'display-conditions' ];
 
 			$this->assertEqualsCanonicalizing( $expected, $schema_keys, "{$type} props schema mismatch." );

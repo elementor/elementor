@@ -76,6 +76,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 			// changes (see `useShowIconWriteThrough` alongside the accordion items repeater control) -
 			// it is never surfaced in the panel and must never grow a per-item control of its own.
 			'show_icon' => Boolean_Prop_Type::make()->default( true ),
+			'different_open_icon' => Boolean_Prop_Type::make()->default( false ),
 		];
 	}
 
@@ -123,6 +124,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 		return [
 			Atomic_Accordion::ELEMENT_TYPE_TITLE,
 			Atomic_Accordion::ELEMENT_TYPE_ICON,
+			Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN,
 		];
 	}
 
@@ -164,6 +166,27 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON )
 						->is_locked( true )
 						->hydrate_default_children( true )
+						->build()
+				),
+			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
+				->when( Dependency_Manager::make( Dependency_Manager::RELATION_AND )->where( [
+					'operator' => 'ne',
+					'path' => [ 'show_icon' ],
+					'value' => false,
+				] )->where( [
+					'operator' => 'eq',
+					'path' => [ 'different_open_icon' ],
+					'value' => true,
+				] ) )
+				->position( Element_Position::last() )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->editor_settings( [
+							'title' => esc_html__( 'Open icon', 'elementor' ),
+						] )
 						->build()
 				),
 		];
