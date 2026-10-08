@@ -15,6 +15,12 @@ class Test_App extends Elementor_Test_Base {
 		],
 	];
 
+	public function test_enqueue_app_loader_enqueues_overlay_style() {
+		Plugin::$instance->common->register_scripts();
+
+		$this->assertTrue( wp_style_is( 'elementor-app-overlay', 'enqueued' ) );
+	}
+
 	public function test_fix_submenu() {
 		global $submenu;
 
