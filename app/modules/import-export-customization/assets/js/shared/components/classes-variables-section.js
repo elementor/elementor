@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
 	Alert,
 	Box,
@@ -28,6 +28,8 @@ const SubSettingRow = ( {
 	showOverrideOption = false,
 	notExported = false,
 } ) => {
+	const switchId = useId();
+
 	if ( notExported ) {
 		return (
 			<Box
@@ -58,7 +60,7 @@ const SubSettingRow = ( {
 			} }
 		>
 			<Stack direction="row" alignItems="center" spacing={ 1 } sx={ { flex: 1 } }>
-				<Typography variant="body1" color="text.primary">
+				<Typography variant="body1" color="text.primary" component="label" htmlFor={ switchId }>
 					{ label }
 				</Typography>
 
@@ -146,7 +148,7 @@ const SubSettingRow = ( {
 					color="info"
 					size="medium"
 					disabled={ disabled || ( limitExceeded && ! overrideAll ) }
-					inputProps={ { 'aria-label': label } }
+					inputProps={ { id: switchId } }
 				/>
 			</Stack>
 		</Box>
