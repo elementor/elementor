@@ -243,6 +243,28 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
         run: node packages/scripts/version-manager/index.js publish --tag "$NPM_DIST_TAG" --yes
 
+      # Mirrors the npmjs publish above onto Google Artifact Registry. Auth is via
+      # Workload Identity Federation, scoped to a pool whose attribute_condition only
+      # issues tokens for runs on this repo's main branch (see elementor-cloud-iac,
+      # gcp-iam/variables/infra/prod.tfvars, "public-repos-pool") — no long-lived
+      # GCP credentials are stored in this repo.
+      - name: Authenticate to Google Artifact Registry
+        id: gcp-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: 'projects/165476505383/locations/global/workloadIdentityPools/public-repos-pool/providers/github-provider'
+          service_account: 'github-actions-public-sa@elementor-infra.iam.gserviceaccount.com'
+          token_format: access_token
+
+      - name: Publish Packages to Artifact Registry
+        env:
+          NPM_DIST_TAG: ${{ steps.tag-strategy.outputs.NPM_DIST_TAG }}
+          GAR_REGISTRY: https://us-npm.pkg.dev/elementor-infra/npm-packages/
+        run: |
+          npm config set --location user "@elementor:registry" "$GAR_REGISTRY"
+          npm config set --location user "${GAR_REGISTRY#https:}:_authToken" "${{ steps.gcp-auth.outputs.access_token }}"
+          node packages/scripts/version-manager/index.js publish --tag "$NPM_DIST_TAG" --yes
+
       - name: Create Git Tag
         env:
           FULL_VERSION: ${{ steps.version.outputs.FULL_VERSION }}
