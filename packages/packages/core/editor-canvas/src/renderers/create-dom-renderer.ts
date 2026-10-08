@@ -14,7 +14,7 @@ export function createDomRenderer(): DomRenderer {
 
 	return {
 		register: loader.setTemplate,
-		render: environment.render,
+		render: ( name, context, options ) => environment.render( name, context, options ),
 	};
 }
 
