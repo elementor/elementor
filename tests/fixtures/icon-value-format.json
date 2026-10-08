@@ -1,0 +1,64 @@
+{
+	"icons": [
+		{
+			"name": "home",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-home",
+				"fa-regular": "fa-regular fa-home"
+			}
+		},
+		{
+			"name": "0",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-0",
+				"fa-regular": "fa-regular fa-0"
+			}
+		},
+		{
+			"name": "1",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-1"
+			}
+		},
+		{
+			"name": "9",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-9"
+			}
+		},
+		{
+			"name": "facebook",
+			"expectedValues": {
+				"fa-brands": "fa-brands fa-facebook"
+			}
+		},
+		{
+			"name": "instagram",
+			"expectedValues": {
+				"fa-brands": "fa-brands fa-instagram"
+			}
+		},
+		{
+			"name": "cart-shopping",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-cart-shopping"
+			},
+			"aliases": ["shopping-cart"]
+		},
+		{
+			"name": "house",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-house",
+				"fa-regular": "fa-regular fa-house"
+			},
+			"aliases": ["home"]
+		},
+		{
+			"name": "magnifying-glass",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-magnifying-glass"
+			},
+			"aliases": ["search"]
+		}
+	]
+}

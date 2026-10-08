@@ -556,4 +556,35 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertSame( 300, $custom_libraries['large-pack']['total'] );
 		$this->assertLessThanOrEqual( 250, count( $custom_libraries['large-pack']['values'] ) );
 	}
+
+	public function test_catalog__icon_value_format_matches_fixture() {
+		// Arrange.
+		$fixture_path = __DIR__ . '/../../../../fixtures/icon-value-format.json';
+		$fixture = json_decode( file_get_contents( $fixture_path ), true );
+		$this->assertIsArray( $fixture );
+		$this->assertArrayHasKey( 'icons', $fixture );
+
+		foreach ( $fixture['icons'] as $icon_case ) {
+			$name = $icon_case['name'];
+			$expected_values = $icon_case['expectedValues'];
+
+			foreach ( $expected_values as $library => $expected_value ) {
+				$catalog_entries = array_filter(
+					Icon_Catalog::get_entries(),
+					fn( $e ) => $e['name'] === $name && $e['library'] === $library
+				);
+
+				$this->assertNotEmpty( $catalog_entries, "Icon '$name' should exist in library '$library'" );
+
+				$entry = array_values( $catalog_entries )[0];
+				$actual_value = $entry['value'];
+
+				$this->assertSame(
+					$expected_value,
+					$actual_value,
+					"Icon '$name' in '$library' should have value format '$expected_value', got '$actual_value'"
+				);
+			}
+		}
+	}
 }
