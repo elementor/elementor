@@ -117,7 +117,7 @@ class Font_Awesome_7_Icon_Resolver {
 				'type' => self::FILTER_TYPE_ITEM,
 				'value' => 'fa-brands',
 				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
-				'icon' => 'library',
+				'icon' => 'rosette',
 			],
 		];
 
