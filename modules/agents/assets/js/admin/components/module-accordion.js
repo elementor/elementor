@@ -18,8 +18,8 @@ const statusIcons = {
 	[ MODULE_STATUS_WARNING ]: <AlertCircleIcon color="warning" />,
 };
 
-export const ModuleAccordion = ( { title, description, status, isEnabled, isToggleDisabled, onToggle, children } ) => {
-	const [ isExpanded, setIsExpanded ] = useState( false );
+export const ModuleAccordion = ( { title, description, status, isEnabled, isToggleDisabled, onToggle, defaultExpanded = false, children } ) => {
+	const [ isExpanded, setIsExpanded ] = useState( defaultExpanded );
 
 	return (
 		<Accordion
@@ -70,5 +70,6 @@ ModuleAccordion.propTypes = {
 	isEnabled: PropTypes.bool.isRequired,
 	isToggleDisabled: PropTypes.bool,
 	onToggle: PropTypes.func.isRequired,
+	defaultExpanded: PropTypes.bool,
 	children: PropTypes.node.isRequired,
 };

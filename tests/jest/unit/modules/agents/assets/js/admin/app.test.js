@@ -89,8 +89,8 @@ const agentDiscoveryConfig = {
 	files: [ { slug: 'agent.json', url: 'https://example.com/.well-known/agent.json' } ],
 };
 
-const BOT_ACCESS_SWITCH_INDEX = 2;
-const AGENT_DISCOVERY_SWITCH_INDEX = 3;
+const BOT_ACCESS_SWITCH_INDEX = 3;
+const AGENT_DISCOVERY_SWITCH_INDEX = 4;
 
 describe( 'Agents Ready App', () => {
 	beforeEach( () => {
@@ -241,12 +241,13 @@ describe( 'Agents Ready App', () => {
 		expect( screen.getByText( '3/4' ) ).toBeTruthy();
 	} );
 
-	it( 'replaces the inline description with the panel when a module is expanded', () => {
+	it( 'opens the first module by default and restores its description when collapsed', () => {
 		// Arrange
 		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
-		// Assert - all modules start collapsed with an inline description
-		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
+		// Assert - the first module starts open; the rest stay collapsed
+		expect( screen.queryByText( 'Guide AI agents through your site' ) ).toBeNull();
+		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
 		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Tell agents what this site offers them' ) ).toBeTruthy();
@@ -255,10 +256,10 @@ describe( 'Agents Ready App', () => {
 		fireEvent.click( screen.getByText( 'LLMs.txt' ) );
 
 		// Assert
-		expect( screen.queryByText( 'Guide AI agents through your site' ) ).toBeNull();
+		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Help agents find your content' ) ).toBeNull();
 		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
 		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
-		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
 	} );
 
 	it( 'keeps the welcome screen when activation fails', async () => {

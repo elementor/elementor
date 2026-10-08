@@ -58,7 +58,9 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 		agentDiscoverySettings.isEnabled,
 	].filter( Boolean ).length;
 
-	const renderModule = ( module ) => {
+	const renderModule = ( module, index ) => {
+		const defaultExpanded = 0 === index;
+
 		if ( MODULE_LLMS_TXT === module.id ) {
 			return (
 				<ModuleAccordion
@@ -69,6 +71,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ llmsSettings.isEnabled }
 					isToggleDisabled={ llmsSettings.hasPhysicalFile || llmsSettings.isSaving }
 					onToggle={ llmsSettings.toggleEnabled }
+					defaultExpanded={ defaultExpanded }
 				>
 					<LlmsTxtPanel settings={ llmsSettings } />
 				</ModuleAccordion>
@@ -85,6 +88,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ markdownSettings.isEnabled }
 					isToggleDisabled={ markdownSettings.isSaving }
 					onToggle={ markdownSettings.toggleEnabled }
+					defaultExpanded={ defaultExpanded }
 				>
 					<MarkdownContentPanel settings={ markdownSettings } />
 				</ModuleAccordion>
@@ -101,6 +105,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ botAccessSettings.isEnabled }
 					isToggleDisabled={ botAccessSettings.hasPhysicalFile || botAccessSettings.isSaving }
 					onToggle={ botAccessSettings.toggleEnabled }
+					defaultExpanded={ defaultExpanded }
 				>
 					<BotAccessPanel settings={ botAccessSettings } />
 				</ModuleAccordion>
@@ -117,6 +122,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ agentDiscoverySettings.isEnabled }
 					isToggleDisabled={ agentDiscoverySettings.isSaving }
 					onToggle={ agentDiscoverySettings.toggleEnabled }
+					defaultExpanded={ defaultExpanded }
 				>
 					<AgentDiscoveryPanel settings={ agentDiscoverySettings } />
 				</ModuleAccordion>
