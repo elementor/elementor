@@ -16,8 +16,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		Site_Refresh::register();
-
 		add_action( 'elementor/admin_top_bar/before_enqueue_scripts', function() {
 			if ( ! current_user_can( 'manage_options' ) ) {
 				return;

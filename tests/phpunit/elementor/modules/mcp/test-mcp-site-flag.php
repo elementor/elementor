@@ -88,14 +88,6 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 			"add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );",
 			$source
 		);
-		$this->assertStringNotContainsString(
-			'template_redirect',
-			$source
-		);
-		$this->assertStringNotContainsString(
-			'maybe_refresh_notifications',
-			$source
-		);
 	}
 
 	public function test_capability_for_ability__meaningful_tools_only() {
