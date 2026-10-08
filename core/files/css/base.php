@@ -617,7 +617,13 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
-		if ( function_exists( 'wp_is_rest_endpoint' ) && wp_is_rest_endpoint() ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return true;
+		}
+
+		global $wp_rest_server;
+
+		if ( $wp_rest_server instanceof \WP_REST_Server && $wp_rest_server->is_dispatching() ) {
 			return true;
 		}
 
