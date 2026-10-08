@@ -109,4 +109,35 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 		$this->assertNotContains( 'My libraries', $labels );
 		$this->assertNotContains( 'Nehama 1', $labels );
 	}
+
+	/**
+	 * @dataProvider data_digit_icon_names
+	 */
+	public function test_resolve__handles_digit_icon_names( string $input_name, string $expected_name ) {
+		// Arrange.
+		$icon_value = 'fa-solid ' . $input_name;
+
+		// Act.
+		$result = Font_Awesome_7_Icon_Resolver::resolve( $icon_value );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'svg', $result );
+		$this->assertNotEmpty( $result['svg'], "Icon $expected_name should resolve to SVG" );
+	}
+
+	public function data_digit_icon_names(): array {
+		return [
+			'fa-0' => [ 'fa-0', '0' ],
+			'fa-1' => [ 'fa-1', '1' ],
+			'fa-2' => [ 'fa-2', '2' ],
+			'fa-3' => [ 'fa-3', '3' ],
+			'fa-4' => [ 'fa-4', '4' ],
+			'fa-5' => [ 'fa-5', '5' ],
+			'fa-6' => [ 'fa-6', '6' ],
+			'fa-7' => [ 'fa-7', '7' ],
+			'fa-8' => [ 'fa-8', '8' ],
+			'fa-9' => [ 'fa-9', '9' ],
+		];
+	}
 }

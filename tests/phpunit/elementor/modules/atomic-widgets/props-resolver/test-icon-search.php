@@ -416,4 +416,144 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			],
 		];
 	}
+
+	/**
+	 * @dataProvider data_word_order_independence
+	 */
+	public function test_search__multi_word_queries_are_order_independent( string $query_a, string $query_b ) {
+		// Arrange.
+		$args_a = [ 'queries' => [ $query_a ] ];
+		$args_b = [ 'queries' => [ $query_b ] ];
+
+		// Act.
+		$matches_a = $this->get_matches( Icon_Search::search( $args_a ) );
+		$matches_b = $this->get_matches( Icon_Search::search( $args_b ) );
+
+		// Assert.
+		$values_a = array_column( $matches_a, 'value' );
+		$values_b = array_column( $matches_b, 'value' );
+
+		$this->assertSame( $values_a, $values_b, 'Query order should not affect ranking' );
+	}
+
+	public function data_word_order_independence(): array {
+		return [
+			'cart shopping' => [ 'cart shopping', 'shopping cart' ],
+			'cart checkout' => [ 'cart checkout', 'checkout cart' ],
+		];
+	}
+
+	public function test_search__returns_no_matches_for_queries_that_normalize_to_empty() {
+		// Arrange — queries that contain only special characters or short words.
+		$args = [ 'queries' => [ '!!!', '🛒', 'a', 'hi', '...' ] ];
+
+		// Act.
+		$response = Icon_Search::search( $args );
+
+		// Assert.
+		foreach ( $response['results'] as $result ) {
+			$this->assertSame( 0, $result['total'], 'Empty-normalized queries should return 0 matches' );
+			$this->assertEmpty( $result['matches'] );
+		}
+	}
+
+	public function test_search__requires_at_least_query_library_or_category() {
+		// Arrange.
+		$args = [ 'queries' => [] ];
+
+		// Act.
+		$response = Icon_Search::search( $args );
+
+		// Assert.
+		$this->assertArrayHasKey( 'error', $response );
+		$this->assertStringContainsString( 'required', $response['error'] );
+	}
+
+	public function test_search__all_tokens_in_name_ranks_higher() {
+		// Arrange.
+		$args = [ 'queries' => [ 'shopping cart' ] ];
+
+		// Act.
+		$matches = $this->get_matches( Icon_Search::search( $args ) );
+
+		// Assert — cart-shopping has both "cart" and "shopping" in its name.
+		$this->assertSame( 'fa-solid fa-cart-shopping', $matches[0]['value'] );
+	}
+
+	public function test_search__includes_custom_library_results() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
+		add_filter(
+			'elementor/icons_manager/additional_tabs',
+			static function ( $tabs ) {
+				$tabs['test-pack'] = [
+					'name' => 'test-pack',
+					'label' => 'Test Pack',
+					'prefix' => 'test-',
+					'custom_icon_type' => 'fontello',
+					'fetchJson' => [ 'url' => 'data:application/json;base64,' . base64_encode( wp_json_encode( [
+						'glyphs' => [
+							[ 'css' => 'shopping-bag', 'code' => 59392, 'search' => [ 'bag', 'shopping' ] ],
+						],
+					] ) ) ],
+					'native' => false,
+				];
+
+				return $tabs;
+			}
+		);
+
+		$args = [ 'queries' => [ 'shopping' ], 'per_page' => 20 ];
+
+		// Act.
+		$matches = $this->get_matches( Icon_Search::search( $args ) );
+
+		// Assert — custom library icons should appear alongside Font Awesome icons.
+		$custom_results = array_filter( $matches, fn( $m ) => $m['library'] === 'test-pack' );
+		$this->assertNotEmpty( $custom_results, 'Custom library results should be included' );
+
+		$custom_match = array_values( $custom_results )[0];
+		$this->assertSame( 'test-pack test-shopping-bag', $custom_match['value'] );
+		$this->assertSame( 'Test Pack', $custom_match['library_label'] );
+	}
+
+	public function test_search__truncates_custom_libraries_at_250_icons() {
+		// Arrange — a custom library with >250 icons.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
+
+		$glyphs = [];
+		for ( $i = 0; $i < 300; $i++ ) {
+			$glyphs[] = [ 'css' => "icon-$i", 'code' => 59392 + $i, 'search' => [ 'search' ] ];
+		}
+
+		add_filter(
+			'elementor/icons_manager/additional_tabs',
+			static function ( $tabs ) use ( $glyphs ) {
+				$tabs['large-pack'] = [
+					'name' => 'large-pack',
+					'label' => 'Large Pack',
+					'prefix' => 'lp-',
+					'custom_icon_type' => 'fontello',
+					'fetchJson' => [ 'url' => 'data:application/json;base64,' . base64_encode( wp_json_encode( [
+						'glyphs' => $glyphs,
+					] ) ) ],
+					'native' => false,
+				];
+
+				return $tabs;
+			}
+		);
+
+		$args = [ 'queries' => [ 'search' ], 'per_page' => 300 ];
+
+		// Act.
+		$response = Icon_Search::search( $args );
+		$custom_libraries = $response['custom_libraries'];
+
+		// Assert.
+		$this->assertArrayHasKey( 'large-pack', $custom_libraries );
+		$this->assertTrue( $custom_libraries['large-pack']['truncated'] );
+		$this->assertSame( 300, $custom_libraries['large-pack']['total'] );
+		$this->assertLessThanOrEqual( 250, count( $custom_libraries['large-pack']['values'] ) );
+	}
 }
