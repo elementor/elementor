@@ -3,27 +3,34 @@ import { UploadIcon } from '@elementor/icons';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const MEDIA_ACTION_PADDING_Y = 0.75;
-const MEDIA_ACTION_PADDING_X = 2;
+const SELECT_AREA_WIDTH = 72;
+const UPLOAD_AREA_WIDTH = 48;
+const SPLIT_BUTTON_MIN_HEIGHT = 32;
+const SPLIT_BUTTON_CORNER_RADIUS = '8px';
+const SPLIT_BUTTON_FONT_SIZE = '14px';
 
 const actionButtonSx = {
-	px: MEDIA_ACTION_PADDING_X,
-	py: MEDIA_ACTION_PADDING_Y,
+	minWidth: 0,
+	minHeight: SPLIT_BUTTON_MIN_HEIGHT,
+	px: 2,
+	fontSize: SPLIT_BUTTON_FONT_SIZE,
+	fontWeight: 500,
+	lineHeight: 1,
 };
 
-const MediaActionGroup = styled( Stack )( ( { theme } ) => ( {
+const MediaActionGroup = styled( Stack )( {
 	display: 'inline-flex',
 	flexDirection: 'row',
 	alignItems: 'stretch',
 	border: '1px solid currentColor',
-	borderRadius: theme.shape.borderRadius,
+	borderRadius: SPLIT_BUTTON_CORNER_RADIUS,
 	overflow: 'hidden',
 	'& .MuiButton-root': {
 		border: 'none',
 		borderRadius: 0,
 		lineHeight: 1,
 	},
-} ) );
+} );
 
 type MediaSelectActionsProps = {
 	onSelect: () => void;
@@ -40,7 +47,7 @@ export const MediaSelectActions = ( { onSelect, onUpload, onInsertUrl }: MediaSe
 				variant="text"
 				onClick={ onSelect }
 				aria-label={ __( 'Select', 'elementor' ) }
-				sx={ actionButtonSx }
+				sx={ { ...actionButtonSx, minWidth: SELECT_AREA_WIDTH } }
 			>
 				{ __( 'Select', 'elementor' ) }
 			</Button>
@@ -52,16 +59,18 @@ export const MediaSelectActions = ( { onSelect, onUpload, onInsertUrl }: MediaSe
 					flexShrink: 0,
 				} }
 			/>
-			<Button
-				sx={ actionButtonSx }
-				size="tiny"
-				color="inherit"
-				variant="text"
-				onClick={ onUpload }
-				aria-label={ __( 'Upload', 'elementor' ) }
-			>
-				<UploadIcon />
-			</Button>
+			<Box component="span" sx={ { display: 'flex', width: UPLOAD_AREA_WIDTH } }>
+				<Button
+					sx={ { ...actionButtonSx, width: '100%' } }
+					size="tiny"
+					color="inherit"
+					variant="text"
+					onClick={ onUpload }
+					aria-label={ __( 'Upload', 'elementor' ) }
+				>
+					<UploadIcon fontSize="small" />
+				</Button>
+			</Box>
 		</MediaActionGroup>
 		<Button size="tiny" variant="text" color="inherit" onClick={ onInsertUrl }>
 			{ __( 'Insert URL', 'elementor' ) }
