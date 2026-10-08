@@ -10,7 +10,11 @@ export type ExtendedWindow = Window & {
 			get?: ( name: string ) => {
 				utils?: {
 					findModelById?: ( id: string, collection?: unknown ) => BackboneModel | null;
-					addModelToParent?: ( parentId: string, childData: unknown, options?: { at?: number } ) => boolean;
+					addModelToParent?: (
+						parentId: string,
+						childData: unknown,
+						options?: { at?: number; clone?: boolean }
+					) => boolean;
 					removeModelFromParent?: ( parentId: string, childId: string ) => boolean;
 				};
 			};
@@ -206,6 +210,7 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	dependencies_per_target_mapping?: Record< string, string[] >;
 	twig_templates?: Record< string, string >;
 	twig_main_template?: string;
+	template_context?: Record< string, unknown >;
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	base_settings?: Record< string, PropValue >;

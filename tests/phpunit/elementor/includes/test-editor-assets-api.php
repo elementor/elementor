@@ -161,4 +161,69 @@ class Test_Editor_Assets_API extends PHPUnit_TestCase {
 
 		$this->assertNull( $result );
 	}
+
+	// --- Negative cache (failed-fetch throttle) tests ---
+
+	public function test_get_assets_data__caches_empty_result_and_blocks_second_request() {
+		// Arrange — every HTTP call returns 500 so fetch_data() returns [].
+		$call_count = 0;
+		$block      = function () use ( &$call_count ) {
+			$call_count++;
+			return [ 'response' => [ 'code' => 500 ], 'body' => '' ];
+		};
+
+		$cache_key = 'test_negative_cache_' . uniqid();
+		$api       = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => $cache_key,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/test.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'test',
+		] );
+
+		add_filter( 'pre_http_request', $block );
+
+		try {
+			$first  = $api->get_assets_data();
+			$second = $api->get_assets_data();
+		} finally {
+			remove_filter( 'pre_http_request', $block );
+			delete_option( $cache_key );
+		}
+
+		$this->assertSame( [], $first, 'First call must return [] on failed fetch' );
+		$this->assertSame( [], $second, 'Second call must return [] from negative cache without HTTP' );
+		$this->assertSame( 1, $call_count, 'HTTP must be called exactly once; second call must use negative cache' );
+	}
+
+	public function test_get_assets_data__refetches_after_negative_cache_expires() {
+		// Arrange — seed an expired negative cache, then let the next fetch succeed.
+		$payload   = [ 'test' => [ 'key' => 'value' ] ];
+		$call_count = 0;
+		$cache_key  = 'test_negative_cache_expiry_' . uniqid();
+
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => $cache_key,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/test.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'test',
+		] );
+
+		// Expired negative cache: timeout = 1 (epoch).
+		update_option( $cache_key, [ 'timeout' => 1, 'value' => wp_json_encode( [] ) ] );
+
+		$pre = function () use ( &$call_count, $payload ) {
+			$call_count++;
+			return [ 'response' => [ 'code' => 200 ], 'body' => wp_json_encode( $payload ) ];
+		};
+
+		add_filter( 'pre_http_request', $pre );
+
+		try {
+			$result = $api->get_assets_data();
+		} finally {
+			remove_filter( 'pre_http_request', $pre );
+			delete_option( $cache_key );
+		}
+
+		$this->assertSame( [ 'key' => 'value' ], $result, 'Must return fresh data after negative cache expires' );
+		$this->assertSame( 1, $call_count, 'Must make exactly one HTTP request after expiry' );
+	}
 }
