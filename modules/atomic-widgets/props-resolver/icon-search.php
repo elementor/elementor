@@ -28,15 +28,30 @@ class Icon_Search {
 		$page = max( 1, (int) ( $args['page'] ?? 1 ) );
 
 		$custom_libraries = Custom_Icon_Resolver::get_libraries();
+		$custom_values = [];
 
-		if ( empty( $queries ) && ( '' !== $library || '' !== $category ) ) {
+		foreach ( array_keys( $custom_libraries ) as $custom_library ) {
+			if ( '' !== $library && $custom_library !== $library ) {
+				continue;
+			}
+
+			$custom_values[ $custom_library ] = Custom_Icon_Resolver::resolve_library_values( $custom_library )['values'];
+		}
+
+		if ( empty( $queries ) ) {
+			if ( '' === $library && '' === $category ) {
+				return [
+					'error' => 'At least one of queries, library, or category is required.',
+				];
+			}
+
 			$queries = [ '' ];
 		}
 
 		$results = [];
 
 		foreach ( $queries as $query ) {
-			$results[] = self::search_single( $query, $library, $category, $page, $per_page, $custom_libraries );
+			$results[] = self::search_single( $query, $library, $category, $page, $per_page, $custom_values );
 		}
 
 		$response = [
@@ -52,11 +67,11 @@ class Icon_Search {
 		return is_array( $filtered ) ? $filtered : $response;
 	}
 
-	private static function search_single( string $query, string $library, string $category, int $page, int $per_page, array $custom_libraries ): array {
+	private static function search_single( string $query, string $library, string $category, int $page, int $per_page, array $custom_values ): array {
 		$scored = self::score_catalog( $query, $library, $category );
 
 		if ( '' === $category ) {
-			$scored = array_merge( $scored, self::score_custom_libraries( $query, $library, $custom_libraries ) );
+			$scored = array_merge( $scored, self::score_custom_libraries( $query, $library, $custom_values ) );
 		}
 
 		usort( $scored, [ self::class, 'compare_scored' ] );
@@ -107,8 +122,8 @@ class Icon_Search {
 				continue;
 			}
 
-			$best = '' === $normalized
-				? Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, self::browse_matched_on( $category ) )
+			$best = '' === $normalized && '' !== $category
+				? Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, Icon_Matcher::MATCHED_ON_CATEGORY )
 				: Icon_Matcher::match( $entry, $normalized, $tokens );
 
 			if ( $best ) {
@@ -119,11 +134,7 @@ class Icon_Search {
 		return $scored;
 	}
 
-	private static function browse_matched_on( string $category ): string {
-		return '' !== $category ? Icon_Matcher::MATCHED_ON_CATEGORY : Icon_Matcher::MATCHED_ON_NAME;
-	}
-
-	private static function score_custom_libraries( string $query, string $library, array $custom_libraries ): array {
+	private static function score_custom_libraries( string $query, string $library, array $custom_values ): array {
 		$normalized = Icon_Matcher::normalize( $query );
 
 		if ( '' === $normalized ) {
@@ -132,12 +143,8 @@ class Icon_Search {
 
 		$scored = [];
 
-		foreach ( array_keys( $custom_libraries ) as $custom_library ) {
-			if ( '' !== $library && $custom_library !== $library ) {
-				continue;
-			}
-
-			foreach ( Custom_Icon_Resolver::resolve_library_values( $custom_library )['values'] as $name => $value ) {
+		foreach ( $custom_values as $custom_library => $values ) {
+			foreach ( $values as $name => $value ) {
 				$normalized_name = Icon_Matcher::normalize( (string) $name );
 
 				if ( ! str_contains( $normalized_name, $normalized ) ) {

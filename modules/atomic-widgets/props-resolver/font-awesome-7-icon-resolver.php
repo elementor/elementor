@@ -324,6 +324,10 @@ class Font_Awesome_7_Icon_Resolver {
 		$index = [];
 
 		foreach ( $icons as $name => $icon_tuple ) {
+			if ( is_int( $name ) ) {
+				$name = (string) $name;
+			}
+
 			if ( ! is_string( $name ) || ! self::is_valid_icon_tuple( $icon_tuple ) ) {
 				continue;
 			}

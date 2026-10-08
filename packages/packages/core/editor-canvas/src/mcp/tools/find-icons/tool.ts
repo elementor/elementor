@@ -16,8 +16,8 @@ type IconMatch = {
 	library: string;
 	name: string;
 	label: string;
-	matched_on: string;
-	license: string;
+	matched_on: 'name' | 'alias' | 'label' | 'term' | 'category' | 'custom_name';
+	license: 'free' | 'pro';
 };
 
 type IconQueryResult = {
@@ -29,10 +29,15 @@ type IconQueryResult = {
 	truncated: boolean;
 };
 
+type CustomLibrary = {
+	label: string;
+};
+
 // NOTE: shape defined by Find_Icons_Ability::execute() in modules/mcp/abilities/find-icons-ability.php
 type FindIconsResponse = {
 	results: IconQueryResult[];
 	libraries: string[];
+	custom_libraries: Record< string, CustomLibrary >;
 	categories: string[];
 	font_awesome_version: string | null;
 	llm_instructions?: string;
@@ -64,16 +69,37 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 				.describe(
 					'Restrict results to one Font Awesome category reported in "categories", for example "shopping". May be used without a query to browse that category.'
 				),
-			page: z.number().min( 1 ).optional(),
-			perPage: z.number().min( 1 ).max( MAX_PER_PAGE ).optional(),
+			page: z.number().int().min( 1 ).optional(),
+			perPage: z.number().int().min( 1 ).max( MAX_PER_PAGE ).optional(),
 		},
 		outputSchema: {
 			results: z
-				.array( z.any() )
+				.array(
+					z.object( {
+						query: z.string(),
+						matches: z.array(
+							z.object( {
+								value: z.string(),
+								library: z.string(),
+								name: z.string(),
+								label: z.string(),
+								matched_on: z.enum( [ 'name', 'alias', 'label', 'term', 'category', 'custom_name' ] ),
+								license: z.enum( [ 'free', 'pro' ] ),
+							} )
+						),
+						total: z.number(),
+						page: z.number(),
+						per_page: z.number(),
+						truncated: z.boolean(),
+					} )
+				)
 				.describe(
 					'One entry per query, each with ranked "matches". Every match carries the "value" and "library" pair to write on the e-svg icon prop, plus "matched_on" and "license".'
 				),
 			libraries: z.array( z.string() ).describe( 'Icon library keys installed on this site.' ),
+			customLibraries: z
+				.record( z.string(), z.object( { label: z.string() } ) )
+				.describe( 'Custom (uploaded) icon libraries with their labels.' ),
 			categories: z.array( z.string() ).describe( 'Icon categories available for the "category" filter.' ),
 			fontAwesomeVersion: z.string().nullable().describe( 'Font Awesome version the site renders icons from.' ),
 			llmInstructions: z
@@ -97,6 +123,7 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 				return {
 					results: data.data.results,
 					libraries: data.data.libraries,
+					customLibraries: data.data.custom_libraries,
 					categories: data.data.categories,
 					fontAwesomeVersion: data.data.font_awesome_version,
 					...( data.data.llm_instructions ? { llmInstructions: data.data.llm_instructions } : {} ),

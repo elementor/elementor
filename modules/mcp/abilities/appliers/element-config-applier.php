@@ -7,7 +7,9 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
@@ -345,25 +347,75 @@ class Element_Config_Applier {
 			return;
 		}
 
-		if ( ! Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+			if ( ! Icon_Catalog::is_available() ) {
+				return;
+			}
+
+			if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+				return;
+			}
+
+			$warnings->add(
+				'icon_not_found',
+				sprintf(
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					$key,
+					$element_type,
+					$value,
+					$library
+				),
+				$config_id
+			);
+
 			return;
 		}
 
-		if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+		$custom_libraries = Custom_Icon_Resolver::get_libraries();
+
+		if ( ! isset( $custom_libraries[ $library ] ) ) {
+			$warnings->add(
+				'icon_library_not_found',
+				sprintf(
+					'Property "%s" on "%s" references library "%s", which is not installed, so a placeholder renders. Call elementor/find-icons to see which libraries are available.',
+					$key,
+					$element_type,
+					$library
+				),
+				$config_id
+			);
+
 			return;
 		}
 
-		$warnings->add(
-			'icon_not_found',
-			sprintf(
-				'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
-				$key,
-				$element_type,
-				$value,
-				$library
-			),
-			$config_id
-		);
+		$library_icons = Custom_Icon_Resolver::resolve_library_values( $library );
+
+		if ( $library_icons['truncated'] && $library_icons['total'] > Custom_Icon_Resolver::MAX_LIBRARY_ICONS ) {
+			return;
+		}
+
+		$icon_exists = false;
+
+		foreach ( $library_icons['values'] as $icon_value ) {
+			if ( $icon_value === $value ) {
+				$icon_exists = true;
+				break;
+			}
+		}
+
+		if ( ! $icon_exists ) {
+			$warnings->add(
+				'icon_not_found',
+				sprintf(
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					$key,
+					$element_type,
+					$value,
+					$library
+				),
+				$config_id
+			);
+		}
 	}
 
 	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {

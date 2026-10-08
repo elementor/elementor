@@ -91,21 +91,35 @@ class Icon_Catalog {
 	}
 
 	private static function get_search_index_path(): string {
-		$path = apply_filters(
-			'elementor/atomic-widgets/icons/search-index-path',
-			self::default_catalog_dir() . 'json/' . self::SEARCH_INDEX_FILE_NAME
+		$base_path = apply_filters(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			Font_Awesome_7_Icon_Resolver::JSON_BASE_PATH,
+			'search-index'
 		);
 
-		return is_string( $path ) ? $path : '';
+		if ( ! is_string( $base_path ) || '' === $base_path ) {
+			$base_path = Font_Awesome_7_Icon_Resolver::JSON_BASE_PATH;
+		}
+
+		$path = trailingslashit( $base_path ) . self::SEARCH_INDEX_FILE_NAME;
+
+		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-index-path', $path );
+
+		return is_string( $filtered ) ? $filtered : $path;
 	}
 
 	private static function get_version_path(): string {
-		$path = apply_filters(
-			'elementor/atomic-widgets/icons/version-path',
-			self::default_catalog_dir() . self::VERSION_FILE_NAME
+		$base_path = apply_filters(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			Font_Awesome_7_Icon_Resolver::JSON_BASE_PATH,
+			'version'
 		);
 
-		return is_string( $path ) ? $path : '';
+		if ( ! is_string( $base_path ) || '' === $base_path ) {
+			$base_path = Font_Awesome_7_Icon_Resolver::JSON_BASE_PATH;
+		}
+
+		return dirname( trailingslashit( $base_path ) ) . '/' . self::VERSION_FILE_NAME;
 	}
 
 	private static function default_catalog_dir(): string {

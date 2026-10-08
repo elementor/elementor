@@ -13,7 +13,6 @@
     ],
     "jsx": "react",
     "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
     "ignoreDeprecations": "6.0",
     "esModuleInterop": false,
     "isolatedModules": true,
