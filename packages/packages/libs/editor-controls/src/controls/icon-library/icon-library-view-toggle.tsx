@@ -19,6 +19,7 @@ export const IconLibraryViewToggle = ( { value, onChange }: IconLibraryViewToggl
 	const nextView: IconLibraryView = isGrid ? 'list' : 'grid';
 	const ViewIcon = isGrid ? WidgetsIcon : ListIcon;
 	const viewButtonLabel = isGrid ? __( 'Grid view', 'elementor' ) : __( 'List view', 'elementor' );
+	const viewButtonAction = isGrid ? __( 'Switch to list view', 'elementor' ) : __( 'Switch to grid view', 'elementor' );
 
 	return (
 		<Tooltip
@@ -29,7 +30,7 @@ export const IconLibraryViewToggle = ( { value, onChange }: IconLibraryViewToggl
 			disableInteractive
 		>
 			<IconButton
-				aria-label={ viewButtonLabel }
+				aria-label={ viewButtonAction }
 				size="tiny"
 				onClick={ () => onChange( nextView ) }
 				sx={ { flexShrink: 0, mr: HEADER_ACTION_GAP } }

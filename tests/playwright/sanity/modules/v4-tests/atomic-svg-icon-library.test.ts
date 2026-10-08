@@ -51,7 +51,7 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await page.getByRole( 'button', { name: 'Icon library' } ).click();
 			await expect( popover.getByRole( 'gridcell' ).first() ).toBeVisible();
 			await expect( popover.getByRole( 'button', { name: 'Filter by library' } ) ).toBeVisible();
-			await expect( popover.getByRole( 'button', { name: 'Grid view' } ) ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'Switch to list view' } ) ).toBeVisible();
 			await expect( popover ).toHaveScreenshot( 'icon-library-popover.png', SCREENSHOT_OPTIONS );
 		} );
 
@@ -94,7 +94,7 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		} );
 
 		await test.step( 'Hovered row is visually highlighted', async () => {
-			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
+			await popover.getByRole( 'button', { name: 'Switch to list view' } ).click();
 			await popover.getByRole( 'option' ).nth( 1 ).hover();
 			await expect( popover ).toHaveScreenshot( 'icon-library-option-hover.png', SCREENSHOT_OPTIONS );
 		} );
@@ -141,14 +141,14 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
 			await expect( popover.getByRole( 'gridcell', { name: /github/i } ).first() ).toBeVisible();
 
-			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
+			await popover.getByRole( 'button', { name: 'Switch to list view' } ).click();
 
 			await expect( search ).toHaveValue( 'github' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
 			await expect( popover.getByRole( 'option', { name: /github/i } ).first() ).toBeVisible();
 			await expect( popover.getByRole( 'option', { name: /star/i } ) ).toHaveCount( 0 );
 
-			await popover.getByRole( 'button', { name: 'List view' } ).click();
+			await popover.getByRole( 'button', { name: 'Switch to grid view' } ).click();
 
 			await expect( search ).toHaveValue( 'github' );
 			await expect( popover.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeVisible();
@@ -167,14 +167,14 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		} );
 
 		await test.step( 'Selected view persists after close and reopen', async () => {
-			await popover.getByRole( 'button', { name: 'Grid view' } ).click();
+			await popover.getByRole( 'button', { name: 'Switch to list view' } ).click();
 			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
 
 			await popover.getByRole( 'button', { name: 'close' } ).click();
 			await expect( popover ).toBeHidden();
 			await openIconLibrary( page, svgControl, popover );
 			await expect( popover.getByRole( 'option' ).first() ).toBeVisible();
-			await expect( popover.getByRole( 'button', { name: 'List view' } ) ).toBeVisible();
+			await expect( popover.getByRole( 'button', { name: 'Switch to grid view' } ) ).toBeVisible();
 		} );
 	} );
 } );

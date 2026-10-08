@@ -66,11 +66,11 @@ const renderPopover = ( props: Partial< React.ComponentProps< typeof IconLibrary
 	);
 
 const switchToListView = () => {
-	fireEvent.click( screen.getByRole( 'button', { name: 'Grid view' } ) );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Switch to list view' } ) );
 };
 
 const switchToGridView = () => {
-	fireEvent.click( screen.getByRole( 'button', { name: 'List view' } ) );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Switch to grid view' } ) );
 };
 
 const restoreClientWidth = () => {
@@ -148,7 +148,7 @@ describe( 'IconLibraryPopover', () => {
 		// Assert.
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'List view' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Switch to grid view' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'grid' ) ).not.toBeInTheDocument();
 	} );
 
@@ -337,7 +337,7 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Grid view' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Switch to list view' } ) );
 
 		// Assert.
 		expect( screen.queryByRole( 'menu', { name: 'View' } ) ).not.toBeInTheDocument();
