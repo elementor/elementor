@@ -13,6 +13,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_Site_Settings_Gate extends TestCase {
 
+	public function test_module_always_registers_site_flag(): void {
+		$source = file_get_contents(
+			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
+		);
+
+		$this->assertStringContainsString(
+			"Site_Flag::register();",
+			$source
+		);
+		$this->assertStringNotContainsString(
+			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tSite_Flag::register();\n\t\t}",
+			$source
+		);
+	}
+
 	public function test_module_gates_wp_abilities_on_site_mcp_setting(): void {
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/module.php'
