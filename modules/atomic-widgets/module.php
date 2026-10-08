@@ -18,6 +18,9 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolv
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Google_Maps\Atomic_Google_Maps;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Map\Map_Providers_Registry;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Map\Providers\Google\Google_Maps_Provider;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Grid\Grid;
@@ -241,6 +244,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/plain/transformers/register', fn ( $transformers ) => $this->register_plain_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
+		add_action( 'elementor/atomic-widgets/map-providers/register', fn ( Map_Providers_Registry $registry ) => $this->register_map_providers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
@@ -413,6 +417,14 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
+
+		if ( Atomic_Google_Maps::has_provider() ) {
+			$widgets_manager->register( new Atomic_Google_Maps() );
+		}
+	}
+
+	private function register_map_providers( Map_Providers_Registry $registry ) {
+		$registry->register( new Google_Maps_Provider() );
 	}
 
 	private function register_list_element( Elements_Manager $elements_manager ) {
