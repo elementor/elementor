@@ -218,7 +218,7 @@ class Module extends BaseModule {
 
 		$this->register_hooks();
 
-		add_filter( 'elementor/document/load/data', [ Atomic_Accordion_Item_Header::class, 'order_open_icon_after_closed_icon' ] );
+		add_filter( 'elementor/document/load/data', [ Atomic_Accordion_Item_Header::class, 'replace_saved_upward_chevron' ] );
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );

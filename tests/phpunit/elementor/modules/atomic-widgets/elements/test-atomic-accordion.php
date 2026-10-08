@@ -360,7 +360,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			],
 		];
 
-		$ordered = Atomic_Accordion_Item_Header::order_open_icon_after_closed_icon( $data );
+		$ordered = Atomic_Accordion_Item_Header::replace_saved_upward_chevron( $data );
 		$urls = $ordered[0]['elements'];
 
 		$this->assertSame( Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL, $urls[0]['settings']['svg']['value']['url']['value'] );
@@ -549,42 +549,6 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( 'eq', $open_terms[1]['operator'] );
 		$this->assertSame( [ 'different_open_icon' ], $open_terms[1]['path'] );
 		$this->assertTrue( $open_terms[1]['value'] );
-	}
-
-	public function test_load_places_the_open_icon_after_the_closed_icon() {
-		$data = [
-			[
-				'elType' => 'e-accordion',
-				'elements' => [
-					[
-						'elType' => 'e-accordion-item',
-						'elements' => [
-							[
-								'elType' => 'e-accordion-item-header',
-								'elements' => [
-									[ 'elType' => 'e-accordion-item-title', 'id' => 'title' ],
-									[ 'elType' => 'e-accordion-item-icon-open', 'id' => 'open' ],
-									[ 'elType' => 'e-accordion-item-icon', 'id' => 'icon' ],
-								],
-							],
-						],
-					],
-				],
-			],
-		];
-
-		$ordered = Atomic_Accordion_Item_Header::order_open_icon_after_closed_icon( $data );
-		$header_children = $ordered[0]['elements'][0]['elements'][0]['elements'];
-
-		$this->assertSame(
-			[ 'e-accordion-item-title', 'e-accordion-item-icon', 'e-accordion-item-icon-open' ],
-			array_column( $header_children, 'elType' )
-		);
-		$this->assertSame( 'open', $header_children[2]['id'] );
-
-		$already_ordered = Atomic_Accordion_Item_Header::order_open_icon_after_closed_icon( $ordered );
-
-		$this->assertSame( $header_children, $already_ordered[0]['elements'][0]['elements'][0]['elements'] );
 	}
 
 	public function test_root_and_item_have_no_children_dependencies() {
