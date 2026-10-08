@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClickAwayListener, Stack } from '@elementor/ui';
 
 import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
+import { isColorFieldDismissImmuneTarget } from '../../utils/is-color-field-dismiss-immune-target';
 import { useLabelError } from '../fields/label-field';
 
 type VariableEditableCellProps = {
@@ -50,6 +51,17 @@ export const VariableEditableCell = React.memo(
 			}
 			setIsEditing( false );
 		}, [ value, onChange, fieldType, labelFieldError, valueFieldError ] );
+
+		const handleClickAway = useCallback(
+			( event: MouseEvent | TouchEvent ) => {
+				if ( isColorFieldDismissImmuneTarget( event.target ) ) {
+					return;
+				}
+
+				handleSave();
+			},
+			[ handleSave ]
+		);
 
 		useEffect( () => {
 			onRowRef?.( rowRef?.current );
@@ -118,7 +130,7 @@ export const VariableEditableCell = React.memo(
 
 		if ( isEditing ) {
 			return (
-				<ClickAwayListener onClickAway={ handleSave }>
+				<ClickAwayListener onClickAway={ handleClickAway }>
 					<Stack
 						ref={ rowRef }
 						direction="row"

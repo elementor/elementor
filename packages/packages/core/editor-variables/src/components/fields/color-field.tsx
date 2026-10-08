@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import { UnstableColorField } from '@elementor/ui';
 
 import { usePopoverContentRef } from '../../context/variable-selection-popover.context';
-import { useColorFormatMenuDismissGuard } from '../../hooks/use-color-format-menu-dismiss-guard';
 import { validateValue } from '../../utils/validations';
 
 type ColorFieldProps = {
@@ -18,8 +17,6 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
-
-	useColorFormatMenuDismissGuard();
 
 	const handleChange = ( newValue: string ) => {
 		setColor( newValue );
@@ -53,12 +50,6 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 						},
 						popover: {
 							disableRestoreFocus: true,
-							onMouseDown: ( event ) => {
-								event.stopPropagation();
-							},
-							onMouseUp: ( event ) => {
-								event.stopPropagation();
-							},
 						},
 					},
 				},
