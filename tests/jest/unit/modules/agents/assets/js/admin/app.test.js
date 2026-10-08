@@ -19,22 +19,40 @@ jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 } ) );
 
 jest.mock( '@elementor/icons', () => ( {
+	AcademyIcon: () => <span />,
 	AlertCircleIcon: () => <span data-testid="alert-circle-icon" />,
 	ArchiveTemplateIcon: () => <span />,
 	ArrowsDiagonalIcon: () => <span />,
-	CircleCheckFilledIcon: () => <span data-testid="circle-check-icon" />,
-	CircleXFilledIcon: () => <span data-testid="circle-x-icon" />,
-	FileIcon: () => <span />,
-	InfoCircleIcon: () => <span data-testid="info-icon" />,
+	BanIcon: () => <span />,
 	ChevronDownIcon: () => <span data-testid="chevron-down-icon" />,
 	ChevronUpIcon: () => <span data-testid="chevron-up-icon" />,
+	CircleCheckFilledIcon: () => <span data-testid="circle-check-icon" />,
+	CircleCheckIcon: () => <span />,
+	CircleXFilledIcon: () => <span data-testid="circle-x-icon" />,
+	ContentIcon: () => <span />,
+	FileIcon: () => <span />,
+	InfoCircleIcon: () => <span data-testid="info-icon" />,
 	PencilIcon: () => <span />,
 	PinIcon: () => <span />,
+	SearchIcon: () => <span />,
+	XIcon: () => <span />,
+	ZoomIcon: () => <span />,
 } ) );
 
-jest.mock( '@elementor/ui/Accordion', () => ( { children, expanded, onChange } ) => (
-	<div onClick={ ( event ) => onChange( event, ! expanded ) }>{ children }</div>
-) );
+jest.mock( '@elementor/ui/Accordion', () => {
+	const React = require( 'react' );
+
+	return ( { children, expanded, onChange } ) => {
+		const items = React.Children.toArray( children );
+
+		return (
+			<div onClick={ ( event ) => onChange( event, ! expanded ) }>
+				{ items[ 0 ] }
+				{ expanded ? items.slice( 1 ) : null }
+			</div>
+		);
+	};
+} );
 jest.mock( '@elementor/ui/AccordionDetails', () => ( { children } ) => <div>{ children }</div> );
 jest.mock( '@elementor/ui/AccordionSummary', () => ( { children } ) => <div>{ children }</div> );
 jest.mock( '@elementor/ui/Alert', () => ( { children } ) => <div>{ children }</div> );
