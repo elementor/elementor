@@ -35,6 +35,7 @@ class Module extends BaseModule {
 	private function get_generator_content(): string {
 		$active_features = $this->get_active_features();
 		$settings = $this->get_generator_tag_settings();
+		$capabilities = $this->get_generator_tag_capabilities();
 
 		$tags = [
 			'Elementor ' . ELEMENTOR_VERSION,
@@ -46,6 +47,10 @@ class Module extends BaseModule {
 
 		if ( ! empty( $settings ) ) {
 			$tags[] = 'settings: ' . implode( ', ', $settings );
+		}
+
+		if ( ! empty( $capabilities ) ) {
+			$tags[] = 'capabilities: ' . implode( ', ', $capabilities );
 		}
 
 		return implode( '; ', $tags );
@@ -65,6 +70,10 @@ class Module extends BaseModule {
 
 	private function get_generator_tag_settings(): array {
 		return apply_filters( 'elementor/generator_tag/settings', [] );
+	}
+
+	private function get_generator_tag_capabilities(): array {
+		return apply_filters( 'elementor/generator_tag/capabilities', [] );
 	}
 
 	public function register_admin_settings( Settings $settings ) {
