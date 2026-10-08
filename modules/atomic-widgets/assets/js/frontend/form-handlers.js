@@ -134,6 +134,7 @@ function registerAtomicFormAlpineData( form ) {
 				}
 
 				respondToAgentIfInvoked( event, response, state );
+				redirectIfRequested( response );
 			} catch ( error ) {
 				setFormState( form, 'error' );
 				respondToAgentIfInvoked( event, { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
@@ -142,6 +143,15 @@ function registerAtomicFormAlpineData( form ) {
 			}
 		},
 	} ) );
+}
+
+function redirectIfRequested( response ) {
+	const actionResults = response?.data?.data?.actionResults ?? [];
+	const redirectUrl = actionResults.find( ( result ) => 'success' === result.status && result.redirectUrl )?.redirectUrl;
+
+	if ( redirectUrl ) {
+		window.location.assign( redirectUrl );
+	}
 }
 
 function handleAtomicFormSubmit( form ) {

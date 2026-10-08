@@ -28,6 +28,34 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$this->assertSame( 'webhook', Atomic_Form::ACTION_WEBHOOK );
 	}
 
+	public function test_action_redirect_constant_matches_expected_slug() {
+		$this->assertSame( 'redirect', Atomic_Form::ACTION_REDIRECT );
+	}
+
+	public function test_props_schema_includes_redirect_url_string_prop() {
+		$schema = Atomic_Form::get_props_schema();
+
+		$this->assertArrayHasKey( 'redirect_url', $schema );
+		$this->assertInstanceOf( Prop_Type::class, $schema['redirect_url'] );
+		$this->assertTrue( $schema['redirect_url']->validate( $schema['redirect_url']->get_default() ) );
+	}
+
+	public function test_actions_after_submit_control_includes_redirect_chip() {
+		$form = $this->make_atomic_form_instance();
+
+		$chips = $this->find_control_by_bind( $form->get_atomic_controls(), 'actions-after-submit' );
+		$values = array_column( $chips->get_props()['options'] ?? [], 'value' );
+
+		$this->assertContains( Atomic_Form::ACTION_REDIRECT, $values );
+	}
+
+	public function test_redirect_url_text_control_is_registered() {
+		$form = $this->make_atomic_form_instance();
+
+		$url_control = $this->find_control_by_bind( $form->get_atomic_controls(), 'redirect_url' );
+		$this->assertInstanceOf( Text_Control::class, $url_control );
+	}
+
 	public function test_props_schema_includes_webhook_url_string_prop() {
 		$schema = Atomic_Form::get_props_schema();
 

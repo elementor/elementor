@@ -46,6 +46,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
 	public const ACTION_WEBHOOK = 'webhook';
+	public const ACTION_REDIRECT = 'redirect';
 	public const METADATA_REMOTE_IP = 'remote_ip';
 	public const METADATA_USER_AGENT = 'user_agent';
 
@@ -112,6 +113,15 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->get();
 
+		$redirect_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => self::ACTION_REDIRECT,
+				'effect' => 'hide',
+			] )
+			->get();
+
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -137,6 +147,10 @@ class Atomic_Form extends Atomic_Element_Base {
 		$props = array_merge( $props, self::get_emails_prop_settings(), [
 			'webhook_url' => String_Prop_Type::make()
 				->set_dependencies( $webhook_dependencies )
+				->meta( Overridable_Prop_Type::ignore() )
+				->default( '' ),
+			'redirect_url' => String_Prop_Type::make()
+				->set_dependencies( $redirect_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -192,6 +206,10 @@ class Atomic_Form extends Atomic_Element_Base {
 						'label' => __( 'Webhook', 'elementor' ),
 						'value' => self::ACTION_WEBHOOK,
 					],
+					[
+						'label' => __( 'Redirect', 'elementor' ),
+						'value' => self::ACTION_REDIRECT,
+					],
 				] ) )
 				->set_label( __( 'Actions after submit', 'elementor' ) )
 				->set_meta( [ 'topDivider' => true ] ),
@@ -225,6 +243,13 @@ class Atomic_Form extends Atomic_Element_Base {
 					Text_Control::bind_to( 'webhook_url' )
 						->set_placeholder( __( 'https://your-webhook-url.com', 'elementor' ) )
 						->set_label( __( 'Webhook URL', 'elementor' ) ),
+				] ),
+			Section::make()
+				->set_label( __( 'Redirect', 'elementor' ) )
+				->set_items( [
+					Text_Control::bind_to( 'redirect_url' )
+						->set_placeholder( __( 'https://your-link.com', 'elementor' ) )
+						->set_label( __( 'Redirect to', 'elementor' ) ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
