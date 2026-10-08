@@ -47,12 +47,6 @@ export function bindSettingsReconcile( { model, elementConfig }: BindSettingsRec
 		lastMet.set( rule.child_type, evaluateWhen( rule.when, settingsModel.toJSON() ) );
 	} );
 
-	rules.forEach( ( rule ) => {
-		if ( lastMet.get( rule.child_type ) ) {
-			placeAnchoredChild( elementId, rule );
-		}
-	} );
-
 	const onChange = () => {
 		const currentSettings = settingsModel.toJSON();
 
@@ -135,7 +129,14 @@ function placeAnchoredChild( parentId: string, rule: ChildDependencyRule ): void
 		return;
 	}
 
-	const parent = getContainer( parentId ) ?? undefined;
+	let parent: V1Element | undefined;
+
+	try {
+		parent = getContainer( parentId ) ?? undefined;
+	} catch {
+		return;
+	}
+
 	const collection = parent?.model?.get?.( 'elements' ) as
 		| {
 				models?: Array< { get: ( key: string ) => unknown } >;
