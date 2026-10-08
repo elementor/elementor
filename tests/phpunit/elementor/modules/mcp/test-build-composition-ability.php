@@ -1147,7 +1147,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		return $html;
 	}
 
-	public function test_execute__stores_decorative_setting_from_element_config_as_editor_setting() {
+	public function test_execute__warns_when_decorative_is_sent_in_element_config() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1157,6 +1157,75 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'xml_structure' => '<e-div-block configuration-id="hero"><e-div-block configuration-id="glow-blob"/></e-div-block>',
 			'element_config' => [
+				'glow-blob' => [ 'decorative' => true ],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 'editor_setting_in_settings', $result['warning_details'][0]['code'] );
+
+		$blob = Plugin::$instance->documents->get( $post_id )->get_elements_data()[0]['elements'][0];
+		$this->assertArrayNotHasKey( 'decorative', $blob['editor_settings'] ?? [] );
+		$this->assertArrayNotHasKey( 'decorative', $blob['settings'] ?? [] );
+	}
+
+	public function test_execute__names_v3_elements_through_settings_title() {
+		// Arrange
+		$this->act_as_admin();
+		$this->enable_standardized_v3_maps();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<container configuration-id="legacy-wrapper"/>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$container = $this->find_element_by_callback(
+			$elements,
+			static fn( array $element ) => 'container' === ( $element['elType'] ?? null )
+		);
+		$this->assertSame( 'legacy-wrapper', $container['settings']['_title'] ?? null );
+		$this->assertArrayNotHasKey( 'title', $container['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__rejects_name_in_editor_settings_in_favor_of_configuration_id() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+			'editor_settings' => [
+				'hero' => [ 'name' => 'Other name' ],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 'editor_setting_not_supported', $result['warning_details'][0]['code'] );
+
+		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$this->assertSame( 'hero', $elements[0]['editor_settings']['title'] );
+	}
+
+	public function test_execute__stores_decorative_editor_setting() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"><e-div-block configuration-id="glow-blob"/></e-div-block>',
+			'editor_settings' => [
 				'glow-blob' => [ 'decorative' => true ],
 			],
 			'style' => [
