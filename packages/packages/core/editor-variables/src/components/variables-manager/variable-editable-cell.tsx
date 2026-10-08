@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClickAwayListener, Stack } from '@elementor/ui';
 
-import { shouldIgnoreVariableCellClickAway } from '../../utils/should-ignore-variable-cell-click-away';
 import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 import { useLabelError } from '../fields/label-field';
 
@@ -51,17 +50,6 @@ export const VariableEditableCell = React.memo(
 			}
 			setIsEditing( false );
 		}, [ value, onChange, fieldType, labelFieldError, valueFieldError ] );
-
-		const handleClickAway = useCallback(
-			( event: MouseEvent | TouchEvent ) => {
-				if ( shouldIgnoreVariableCellClickAway( event ) ) {
-					return;
-				}
-
-				handleSave();
-			},
-			[ handleSave ]
-		);
 
 		useEffect( () => {
 			onRowRef?.( rowRef?.current );
@@ -130,7 +118,7 @@ export const VariableEditableCell = React.memo(
 
 		if ( isEditing ) {
 			return (
-				<ClickAwayListener onClickAway={ handleClickAway }>
+				<ClickAwayListener onClickAway={ handleSave }>
 					<Stack
 						ref={ rowRef }
 						direction="row"

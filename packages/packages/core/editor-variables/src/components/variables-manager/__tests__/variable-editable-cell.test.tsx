@@ -1,41 +1,15 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariableEditableCell } from '../variable-editable-cell';
 
 jest.mock( '@elementor/ui', () => ( {
 	...jest.requireActual( '@elementor/ui' ),
-	ClickAwayListener: ( {
-		children,
-		onClickAway,
-	}: {
-		children: React.ReactNode;
-		onClickAway: ( event: MouseEvent | TouchEvent ) => void;
-	} ) => {
-		const rootRef = useRef< HTMLDivElement >( null );
-
-		useEffect( () => {
-			const handleMouseDown = ( event: MouseEvent ) => {
-				if ( rootRef.current?.contains( event.target as Node ) ) {
-					return;
-				}
-
-				onClickAway( event );
-			};
-
-			document.addEventListener( 'mousedown', handleMouseDown );
-
-			return () => document.removeEventListener( 'mousedown', handleMouseDown );
-		}, [ onClickAway ] );
-
-		return (
-			<>
-				<div ref={ rootRef }>{ children }</div>
-				<div role="presentation" aria-label="Click away area" />
-			</>
-		);
-	},
+	ClickAwayListener: ( { children, onClickAway }: { children: React.ReactNode; onClickAway: () => void } ) => (
+		<div role="presentation" onClick={ onClickAway } aria-label="Click away area">
+			{ children }
+		</div>
+	),
 } ) );
 
 describe( 'VariableEditableCell', () => {
@@ -69,8 +43,6 @@ describe( 'VariableEditableCell', () => {
 		return render( <VariableEditableCell { ...defaultProps } /> );
 	};
 
-	const getEditTrigger = () => screen.getByRole( 'button', { name: 'Double click or press Space to edit' } );
-
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -91,7 +63,7 @@ describe( 'VariableEditableCell', () => {
 
 	it( 'should enter edit mode on double click', () => {
 		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 
 		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
@@ -99,7 +71,7 @@ describe( 'VariableEditableCell', () => {
 
 	it( 'should enter edit mode on space key press', () => {
 		renderComponent();
-		const button = getEditTrigger();
+		const button = screen.getByRole( 'button' );
 
 		fireEvent.keyDown( button, { key: ' ' } );
 
@@ -109,7 +81,7 @@ describe( 'VariableEditableCell', () => {
 
 	it( 'should save changes on Enter key press', () => {
 		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 		const input = screen.getByLabelText( 'Edit value' );
 
 		fireEvent.change( input, { target: { value: 'new value' } } );
@@ -121,7 +93,7 @@ describe( 'VariableEditableCell', () => {
 
 	it( 'should cancel changes on Escape key press', () => {
 		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 		const input = screen.getByLabelText( 'Edit value' );
 
 		fireEvent.change( input, { target: { value: 'new value' } } );
@@ -133,54 +105,19 @@ describe( 'VariableEditableCell', () => {
 
 	it( 'should save changes when clicking away', () => {
 		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 		const input = screen.getByLabelText( 'Edit value' );
 
 		fireEvent.change( input, { target: { value: 'new value' } } );
-		fireEvent.mouseDown( screen.getByRole( 'presentation' ) );
+		fireEvent.click( screen.getByRole( 'presentation' ) );
 
 		expect( mockOnChange ).toHaveBeenCalledWith( 'new value' );
 		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should not save when clicking inside the color field format menu', () => {
-		const colorField = document.createElement( 'div' );
-		colorField.id = 'color-variable-field';
-
-		const combobox = document.createElement( 'div' );
-		combobox.setAttribute( 'role', 'combobox' );
-		combobox.setAttribute( 'aria-expanded', 'true' );
-		combobox.setAttribute( 'aria-controls', 'format-menu' );
-		colorField.appendChild( combobox );
-
-		const menu = document.createElement( 'ul' );
-		menu.id = 'format-menu';
-		const menuItem = document.createElement( 'li' );
-		menu.appendChild( menuItem );
-
-		document.body.appendChild( colorField );
-		document.body.appendChild( menu );
-
-		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
-		const input = screen.getByLabelText( 'Edit value' );
-
-		fireEvent.change( input, { target: { value: 'new value' } } );
-
-		const event = new MouseEvent( 'mousedown', { bubbles: true } );
-		Object.defineProperty( event, 'target', { value: menuItem } );
-		document.dispatchEvent( event );
-
-		expect( mockOnChange ).not.toHaveBeenCalled();
-		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
-
-		document.body.removeChild( colorField );
-		document.body.removeChild( menu );
-	} );
-
 	it( 'should have correct ARIA attributes', () => {
 		renderComponent();
-		const element = getEditTrigger();
+		const element = screen.getByRole( 'button' );
 
 		expect( element ).toHaveAttribute( 'aria-label', 'Double click or press Space to edit' );
 		expect( element ).toHaveAttribute( 'tabIndex', '0' );
@@ -189,7 +126,7 @@ describe( 'VariableEditableCell', () => {
 	it( 'should call onChange callback when value changes', () => {
 		// Arrange
 		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 		const input = screen.getByLabelText( 'Edit value' );
 
 		// Act
@@ -203,7 +140,7 @@ describe( 'VariableEditableCell', () => {
 	it( 'should call onSave with initial value when value is unchanged', () => {
 		// Arrange
 		renderComponent();
-		fireEvent.doubleClick( getEditTrigger() );
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 		const input = screen.getByLabelText( 'Edit value' );
 
 		// Act
