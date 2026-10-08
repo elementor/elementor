@@ -31,22 +31,38 @@ class Test_Editor_Settings extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
 	}
 
-	public function test_apply_name__stores_unregistered_atomic_widget_name_in_editor_settings() {
+	public function test_apply_name__stores_registered_atomic_widget_name_in_editor_settings() {
 		// Arrange
 		$node = [
-			'id' => 'addon2',
+			'id' => 'heading1',
 			'elType' => 'widget',
-			'widgetType' => 'inactive-atomic-widget',
-			'version' => '0.0',
+			'widgetType' => 'e-heading',
 			'settings' => [],
 		];
 
 		// Act
-		Editor_Settings::apply_name( $node, 'Pricing Table' );
+		Editor_Settings::apply_name( $node, 'Hero Title' );
 
 		// Assert
-		$this->assertSame( 'Pricing Table', $node['editor_settings']['title'] );
+		$this->assertSame( 'Hero Title', $node['editor_settings']['title'] );
 		$this->assertArrayNotHasKey( '_title', $node['settings'] );
+	}
+
+	public function test_read__returns_atomic_widget_name_from_editor_settings() {
+		// Arrange
+		$node = [
+			'id' => 'heading1',
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'settings' => [],
+			'editor_settings' => [ 'title' => 'Hero Title' ],
+		];
+
+		// Act
+		$result = Editor_Settings::read( $node );
+
+		// Assert
+		$this->assertSame( [ 'name' => 'Hero Title' ], $result );
 	}
 
 	public function test_read__returns_unregistered_legacy_widget_name_from_settings() {

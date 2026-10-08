@@ -25,8 +25,6 @@ class Editor_Settings {
 
 	const LEGACY_NAME_SETTING = '_title';
 
-	const ATOMIC_VERSION_KEY = 'version';
-
 	const DECORATIVE_ELEMENT_TYPES = [ 'e-div-block', 'e-flexbox', 'e-grid' ];
 
 	const NAME_DESCRIPTION = 'Editor only: the layer name shown in the Structure panel. Never rendered on the page and not a prop. Never use `settings.title` to rename a layer: `title` on e-heading is the visible heading text. Send an empty string or null to clear it.';
@@ -170,11 +168,13 @@ class Editor_Settings {
 	}
 
 	private static function read_name( array $node ): ?string {
-		$name = self::is_legacy_node( $node )
-			? ( $node['settings'][ self::LEGACY_NAME_SETTING ] ?? null )
-			: ( $node['editor_settings'][ self::ATOMIC_NAME_KEY ] ?? null );
+		foreach ( [ $node['editor_settings'][ self::ATOMIC_NAME_KEY ] ?? null, $node['settings'][ self::LEGACY_NAME_SETTING ] ?? null ] as $name ) {
+			if ( is_string( $name ) && '' !== $name ) {
+				return $name;
+			}
+		}
 
-		return is_string( $name ) && '' !== $name ? $name : null;
+		return null;
 	}
 
 	private static function is_legacy_node( array $node ): bool {
@@ -184,13 +184,7 @@ class Editor_Settings {
 			return false;
 		}
 
-		$instance = Atomic_Elements_Utils::get_element_instance( $element_type );
-
-		if ( null === $instance ) {
-			return ! isset( $node[ self::ATOMIC_VERSION_KEY ] );
-		}
-
-		return ! Atomic_Elements_Utils::is_atomic_element( $instance );
+		return ! Atomic_Elements_Utils::is_atomic_element( Atomic_Elements_Utils::get_element_instance( $element_type ) );
 	}
 
 	private static function get_node_type( array $node ): string {
