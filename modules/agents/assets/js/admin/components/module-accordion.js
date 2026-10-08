@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AlertCircleIcon, ChevronDownIcon, ChevronUpIcon, CircleCheckFilledIcon, CircleXFilledIcon } from '@elementor/icons';
 import Accordion from '@elementor/ui/Accordion';
 import AccordionDetails from '@elementor/ui/AccordionDetails';
@@ -18,50 +17,44 @@ const statusIcons = {
 	[ MODULE_STATUS_WARNING ]: <AlertCircleIcon color="warning" />,
 };
 
-export const ModuleAccordion = ( { title, description, status, isEnabled, isToggleDisabled, onToggle, defaultExpanded = false, children } ) => {
-	const [ isExpanded, setIsExpanded ] = useState( defaultExpanded );
-
-	return (
-		<Accordion
-			variant="outlined"
-			expanded={ isExpanded }
-			onChange={ ( event, expanded ) => setIsExpanded( expanded ) }
-			sx={ { borderRadius: '12px', maxWidth: '100%', minWidth: 0 } }
+export const ModuleAccordion = ( { title, description, status, isEnabled, isToggleDisabled, onToggle, isExpanded, onExpandedChange, children } ) => (
+	<Accordion
+		variant="outlined"
+		expanded={ isExpanded }
+		onChange={ onExpandedChange }
+		sx={ { borderRadius: '12px', maxWidth: '100%', minWidth: 0 } }
+	>
+		<AccordionSummary
+			expandIcon={ null }
+			sx={ { py: 2, borderBottom: isExpanded ? 1 : 0,
+				borderColor: 'divider' } }
 		>
-			<AccordionSummary
-				expandIcon={ null }
-				sx={ { py: 2, borderBottom: isExpanded ? 1 : 0,
-					borderColor: 'divider' } }
-			>
-				<Stack direction="row" alignItems="center" justifyContent="space-between" width="100%">
-					<Stack direction="row" alignItems="center" spacing={ 1 }>
-						{ statusIcons[ status ] }
-						<Typography variant="h6">{ title }</Typography>
-						{ ! isExpanded && (
-							<Typography variant="body2" color="text.tertiary">{ description }</Typography>
-						) }
-					</Stack>
-					<Stack direction="row" alignItems="center" spacing={ 2 }>
-						<Switch
-							size="small"
-							checked={ isEnabled }
-							disabled={ isToggleDisabled }
-							onChange={ onToggle }
-							onClick={ stopEventPropagation }
-							sx={ { '& .MuiSwitch-input': { position: 'absolute' } } }
-						/>
-						{ isExpanded ? <ChevronUpIcon fontSize="small" /> : <ChevronDownIcon fontSize="small" /> }
-					</Stack>
+			<Stack direction="row" alignItems="center" justifyContent="space-between" width="100%">
+				<Stack direction="row" alignItems="center" spacing={ 1 }>
+					{ statusIcons[ status ] }
+					<Typography variant="h6">{ title }</Typography>
+					{ ! isExpanded && (
+						<Typography variant="body2" color="text.tertiary">{ description }</Typography>
+					) }
 				</Stack>
-			</AccordionSummary>
-			{ isExpanded && (
-				<AccordionDetails sx={ { p: 0 } }>
-					{ children }
-				</AccordionDetails>
-			) }
-		</Accordion>
-	);
-};
+				<Stack direction="row" alignItems="center" spacing={ 2 }>
+					<Switch
+						size="small"
+						checked={ isEnabled }
+						disabled={ isToggleDisabled }
+						onChange={ onToggle }
+						onClick={ stopEventPropagation }
+						sx={ { '& .MuiSwitch-input': { position: 'absolute' } } }
+					/>
+					{ isExpanded ? <ChevronUpIcon fontSize="small" /> : <ChevronDownIcon fontSize="small" /> }
+				</Stack>
+			</Stack>
+		</AccordionSummary>
+		<AccordionDetails sx={ { p: 0 } }>
+			{ children }
+		</AccordionDetails>
+	</Accordion>
+);
 
 ModuleAccordion.propTypes = {
 	title: PropTypes.string.isRequired,
@@ -70,6 +63,7 @@ ModuleAccordion.propTypes = {
 	isEnabled: PropTypes.bool.isRequired,
 	isToggleDisabled: PropTypes.bool,
 	onToggle: PropTypes.func.isRequired,
-	defaultExpanded: PropTypes.bool,
+	isExpanded: PropTypes.bool.isRequired,
+	onExpandedChange: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
 };

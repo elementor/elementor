@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import Alert from '@elementor/ui/Alert';
 import Infotip from '@elementor/ui/Infotip';
@@ -50,6 +51,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 	const botAccessSettings = useBotAccessSettings( botAccessConfig );
 	const llmsSettings = useLlmsSettings( llmsConfig );
 	const markdownSettings = useMarkdownSettings( markdownConfig );
+	const [ expandedModuleId, setExpandedModuleId ] = useState( modules[ 0 ]?.id ?? null );
 
 	const enabledCount = [
 		llmsSettings.isEnabled,
@@ -58,8 +60,15 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 		agentDiscoverySettings.isEnabled,
 	].filter( Boolean ).length;
 
-	const renderModule = ( module, index ) => {
-		const defaultExpanded = 0 === index;
+	const handleExpandedChange = ( moduleId ) => ( event, expanded ) => {
+		setExpandedModuleId( expanded ? moduleId : null );
+	};
+
+	const renderModule = ( module ) => {
+		const accordionProps = {
+			isExpanded: expandedModuleId === module.id,
+			onExpandedChange: handleExpandedChange( module.id ),
+		};
 
 		if ( MODULE_LLMS_TXT === module.id ) {
 			return (
@@ -71,7 +80,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ llmsSettings.isEnabled }
 					isToggleDisabled={ llmsSettings.hasPhysicalFile || llmsSettings.isSaving }
 					onToggle={ llmsSettings.toggleEnabled }
-					defaultExpanded={ defaultExpanded }
+					{ ...accordionProps }
 				>
 					<LlmsTxtPanel settings={ llmsSettings } />
 				</ModuleAccordion>
@@ -88,7 +97,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ markdownSettings.isEnabled }
 					isToggleDisabled={ markdownSettings.isSaving }
 					onToggle={ markdownSettings.toggleEnabled }
-					defaultExpanded={ defaultExpanded }
+					{ ...accordionProps }
 				>
 					<MarkdownContentPanel settings={ markdownSettings } />
 				</ModuleAccordion>
@@ -105,7 +114,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ botAccessSettings.isEnabled }
 					isToggleDisabled={ botAccessSettings.hasPhysicalFile || botAccessSettings.isSaving }
 					onToggle={ botAccessSettings.toggleEnabled }
-					defaultExpanded={ defaultExpanded }
+					{ ...accordionProps }
 				>
 					<BotAccessPanel settings={ botAccessSettings } />
 				</ModuleAccordion>
@@ -122,7 +131,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 					isEnabled={ agentDiscoverySettings.isEnabled }
 					isToggleDisabled={ agentDiscoverySettings.isSaving }
 					onToggle={ agentDiscoverySettings.toggleEnabled }
-					defaultExpanded={ defaultExpanded }
+					{ ...accordionProps }
 				>
 					<AgentDiscoveryPanel settings={ agentDiscoverySettings } />
 				</ModuleAccordion>
