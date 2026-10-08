@@ -66,7 +66,7 @@ class Font_Awesome_7_Icon_Resolver {
 		$icon_name = self::get_icon_name( $value );
 		$file_name = self::get_json_file_name( $library );
 
-		if ( ! $icon_name || ! $file_name ) {
+		if ( null === $icon_name || null === $file_name ) {
 			return null;
 		}
 

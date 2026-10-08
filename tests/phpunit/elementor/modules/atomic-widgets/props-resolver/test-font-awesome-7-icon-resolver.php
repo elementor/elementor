@@ -10,9 +10,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
+	public function setUp(): void {
+		parent::setUp();
+
+		add_filter(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			fn() => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/'
+		);
+	}
+
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
 		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
+
+		Font_Awesome_7_Icon_Resolver::reset();
 
 		parent::tearDown();
 	}
@@ -115,13 +127,14 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 	 */
 	public function test_resolve__handles_digit_icon_names( string $input_name, string $expected_name ) {
 		// Arrange.
+		Font_Awesome_7_Icon_Resolver::reset();
 		$icon_value = 'fa-solid ' . $input_name;
 
 		// Act.
 		$result = Font_Awesome_7_Icon_Resolver::resolve( $icon_value, 'fa-solid' );
 
 		// Assert.
-		$this->assertIsArray( $result );
+		$this->assertIsArray( $result, "Failed to resolve $icon_value" );
 		$this->assertArrayHasKey( 'paths', $result );
 		$this->assertNotEmpty( $result['paths'], "Icon $expected_name should resolve to paths" );
 	}
