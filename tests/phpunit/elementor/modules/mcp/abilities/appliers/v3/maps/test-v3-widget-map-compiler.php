@@ -74,6 +74,7 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		return [
 			'title' => [ 'type' => 'text' ],
 			'title_color' => [ 'type' => 'color' ],
+			'title_hover_color' => [ 'type' => 'color' ],
 			'title_size' => [ 'type' => 'number' ],
 			'typography_typography' => [ 'type' => 'popover_toggle' ],
 			'typography_font_size' => [
@@ -329,6 +330,36 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		// Assert.
 		$this->assertSame( [], $bindings );
 		$this->assertSame( [ 'heading.color:focus' => 'invalid_state_key' ], $this->dropped_reasons() );
+	}
+
+	public function test_compile__accepts_states_declared_by_the_target() {
+		// Arrange.
+		$target = Style_Target::make( 'heading' )
+			->states( 'current' )
+			->bind( 'color', V3_Control::bind_to( 'title_color' ) )
+			->bind( 'color', V3_Control::bind_to( 'title_hover_color' ), 'current' );
+
+		// Act.
+		$compiled = $this->compile( $this->map_with_target( $target ) )->get_targets()['heading'];
+
+		// Assert.
+		$this->assertCount( 2, $compiled->get_bindings() );
+		$this->assertSame( [ 'default', 'current' ], $compiled->get_states() );
+		$this->assertSame( [], $this->dropped_reasons() );
+	}
+
+	public function test_compile__drops_declared_state_that_is_not_a_css_identifier() {
+		// Arrange.
+		$target = Style_Target::make( 'heading' )
+			->states( 'Not A State' )
+			->bind( 'color', V3_Control::bind_to( 'title_color' ), 'Not A State' );
+
+		// Act.
+		$bindings = $this->compile_bindings( $target );
+
+		// Assert.
+		$this->assertSame( [], $bindings );
+		$this->assertSame( [ 'heading.color:Not A State' => 'invalid_state_key' ], $this->dropped_reasons() );
 	}
 
 	public function test_compile__fails_map_when_alias_is_invalid() {

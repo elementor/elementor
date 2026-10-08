@@ -12,9 +12,16 @@ class Style_Target {
 
 	const DEFAULT_STATE = 'default';
 
+	const GLOBAL_STATES = [ self::DEFAULT_STATE, 'hover' ];
+
 	private string $alias;
 
 	private string $label = '';
+
+	/**
+	 * @var string[]
+	 */
+	private array $declared_states = [];
 
 	/**
 	 * @var array<int, array{prop: string, state: string, control: V3_Control}>
@@ -31,6 +38,15 @@ class Style_Target {
 
 	public function label( string $label ): self {
 		$this->label = $label;
+
+		return $this;
+	}
+
+	/**
+	 * Widget-specific states on top of {@see self::GLOBAL_STATES}, written as `<alias>:<state> { ... }`.
+	 */
+	public function states( string ...$states ): self {
+		$this->declared_states = $states;
 
 		return $this;
 	}
@@ -57,6 +73,13 @@ class Style_Target {
 
 	public function get_label(): string {
 		return $this->label;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_declared_states(): array {
+		return $this->declared_states;
 	}
 
 	/**

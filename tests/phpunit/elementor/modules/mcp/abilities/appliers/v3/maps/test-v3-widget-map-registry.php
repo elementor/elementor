@@ -125,7 +125,10 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	public function test_get_llm_contract__returns_description_properties_and_targets() {
 		// Arrange.
-		$registry = $this->registry();
+		$registry = $this->registry( [
+			'maps' => [ self::WIDGET_TYPE => $this->map()->default_target( $this->main_menu()->bind( 'color', V3_Control::bind_to( 'color_menu_item_current' ), 'current' ) ) ],
+			'controls' => self::CONTROLS + [ 'color_menu_item_current' => [ 'type' => 'color' ] ],
+		] );
 
 		// Act.
 		$contract = $registry->get_llm_contract( self::WIDGET_TYPE );
@@ -133,7 +136,17 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		// Assert.
 		$this->assertSame( 'Navigation menu.', $contract['description'] );
 		$this->assertSame( [], $contract['properties'] );
-		$this->assertSame( [ 'main-menu' => [ 'color' ] ], $contract['style_targets'] );
+		$this->assertSame( 'main-menu', $contract['default_style_target'] );
+		$this->assertSame(
+			[
+				'main-menu' => [
+					'label' => 'Main menu items',
+					'states' => [ 'default', 'current' ],
+					'properties' => [ 'color' ],
+				],
+			],
+			$contract['style_targets']
+		);
 	}
 
 	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
@@ -157,10 +170,13 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 	private function map(): V3_Widget_Map {
 		return V3_Widget_Map::make( self::WIDGET_TYPE )
 			->description( 'Navigation menu.' )
-			->default_target(
-				Style_Target::make( 'main-menu' )
-					->label( 'Main menu items' )
-					->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) )
-			);
+			->default_target( $this->main_menu() );
+	}
+
+	private function main_menu(): Style_Target {
+		return Style_Target::make( 'main-menu' )
+			->label( 'Main menu items' )
+			->states( 'current' )
+			->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) );
 	}
 }

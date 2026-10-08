@@ -205,7 +205,7 @@ class V3_Widget_Map_Registry {
 	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
-	 * @return array{description: string, properties: array<string, array<string, mixed>>, style_targets: array<string, string[]>}|null
+	 * @return array{description: string, properties: array<string, array<string, mixed>>, default_style_target: string, style_targets: array<string, array{label: string, states: string[], properties: string[]}>}|null
 	 */
 	public function get_llm_contract( string $widget_type ): ?array {
 		$map = $this->get_map( $widget_type );
@@ -217,8 +217,13 @@ class V3_Widget_Map_Registry {
 		return [
 			'description' => $map->get_description(),
 			'properties' => V3_Json_Schema_Builder::build_from_map( $map->get_setting_schemas() )['properties'],
+			'default_style_target' => $map->get_default_target(),
 			'style_targets' => array_map(
-				fn( Compiled_Style_Target $target ) => $target->get_props(),
+				fn( Compiled_Style_Target $target ) => [
+					'label' => $target->get_label(),
+					'states' => $target->get_states(),
+					'properties' => $target->get_props(),
+				],
 				$map->get_targets()
 			),
 		];

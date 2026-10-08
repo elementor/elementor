@@ -23,15 +23,27 @@ class V3_Map_Style_Reader {
 	}
 
 	/**
-	 * @param V3_Block_Accumulator     $blocks
-	 * @param Compiled_Style_Binding[] $bindings
-	 * @param array<string, mixed>     $settings
-	 * @param array<string, mixed>     $controls
-	 * @param callable|null            $is_visible `( array $control, array $values, array $controls ): bool`; hidden controls are not rendered.
+	 * @param Compiled_V3_Map      $map
+	 * @param array<string, mixed> $settings
+	 * @param array<string, mixed> $controls
+	 * @param callable|null        $is_visible `( array $control, array $values, array $controls ): bool`; hidden controls are not rendered.
+	 * @return array<string, V3_Block_Accumulator> Alias => blocks of that style target.
 	 */
-	public function read( V3_Block_Accumulator $blocks, array $bindings, array $settings, array $controls, ?callable $is_visible = null ): void {
-		$suffixes = [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES;
+	public function read( Compiled_V3_Map $map, array $settings, array $controls, ?callable $is_visible = null ): array {
 		$is_key_visible = $this->key_visibility( $settings, $controls, $is_visible );
+
+		return array_map(
+			fn( Compiled_Style_Target $target ) => $this->read_target( $target->get_bindings(), $settings, $controls, $is_key_visible ),
+			$map->get_targets()
+		);
+	}
+
+	/**
+	 * @param Compiled_Style_Binding[] $bindings
+	 */
+	private function read_target( array $bindings, array $settings, array $controls, callable $is_key_visible ): V3_Block_Accumulator {
+		$blocks = new V3_Block_Accumulator();
+		$suffixes = [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES;
 
 		foreach ( $suffixes as $suffix => $breakpoint ) {
 			foreach ( $this->props_by_state( $bindings, $settings, $controls, $suffix, $is_key_visible ) as $state => $props ) {
@@ -42,6 +54,8 @@ class V3_Map_Style_Reader {
 				}
 			}
 		}
+
+		return $blocks;
 	}
 
 	/**
