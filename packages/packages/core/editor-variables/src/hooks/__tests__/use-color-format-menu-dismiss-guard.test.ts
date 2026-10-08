@@ -3,6 +3,25 @@ import { renderHook } from '@testing-library/react';
 import { useColorFormatMenuDismissGuard } from '../use-color-format-menu-dismiss-guard';
 
 describe( 'useColorFormatMenuDismissGuard', () => {
+	it( 'stops propagation on the color variable field root', () => {
+		const colorField = document.createElement( 'div' );
+		colorField.id = 'color-variable-field';
+		document.body.appendChild( colorField );
+
+		renderHook( () => useColorFormatMenuDismissGuard() );
+
+		const propagated = jest.fn();
+		document.addEventListener( 'mouseup', propagated );
+
+		const event = new MouseEvent( 'mouseup', { bubbles: true } );
+		colorField.dispatchEvent( event );
+
+		expect( propagated ).not.toHaveBeenCalled();
+
+		document.removeEventListener( 'mouseup', propagated );
+		document.body.removeChild( colorField );
+	} );
+
 	it( 'stops propagation on the portaled format menu root', () => {
 		const colorField = document.createElement( 'div' );
 		colorField.id = 'color-variable-field';

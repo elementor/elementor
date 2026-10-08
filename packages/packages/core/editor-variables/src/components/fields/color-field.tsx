@@ -53,6 +53,12 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 						},
 						popover: {
 							disableRestoreFocus: true,
+							onMouseDown: ( event ) => {
+								event.stopPropagation();
+							},
+							onMouseUp: ( event ) => {
+								event.stopPropagation();
+							},
 						},
 					},
 				},
