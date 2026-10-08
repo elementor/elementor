@@ -50,6 +50,22 @@ class Post_Preview extends Post_Local_Cache {
 	}
 
 	/**
+	 * Write preview CSS to a dedicated file.
+	 *
+	 * `Post_Preview` reads element data from the autosave/draft but used to
+	 * inherit the published `post-{id}.css` path. That made editor preview
+	 * overwrite live CSS (and keep the same `?ver=`) before publish.
+	 *
+	 * @since 4.3.0
+	 * @access protected
+	 *
+	 * @return string
+	 */
+	protected function get_css_file_name() {
+		return static::FILE_PREFIX . $this->get_post_id() . '-preview.css';
+	}
+
+	/**
 	 * Get file handle ID.
 	 *
 	 * Retrieve the handle ID for the previewed post CSS file.

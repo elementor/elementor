@@ -55,7 +55,22 @@ class Post extends Base {
 	public function __construct( $post_id ) {
 		$this->post_id = $post_id;
 
-		parent::__construct( static::FILE_PREFIX . $post_id . '.css' );
+		parent::__construct( $this->get_css_file_name() );
+	}
+
+	/**
+	 * CSS file name written under uploads/elementor/css/.
+	 *
+	 * Preview subclasses override this so unpublished drafts never overwrite
+	 * the published stylesheet.
+	 *
+	 * @since 4.3.0
+	 * @access protected
+	 *
+	 * @return string
+	 */
+	protected function get_css_file_name() {
+		return static::FILE_PREFIX . $this->post_id . '.css';
 	}
 
 	/**
