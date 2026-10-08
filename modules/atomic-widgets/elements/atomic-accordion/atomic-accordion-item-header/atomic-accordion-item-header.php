@@ -160,7 +160,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 					'path' => [ 'show_icon' ],
 					'value' => false,
 				] ) )
-				->position( Element_Position::last() )
+				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_TITLE ) )
 				->stash( true )
 				->default_model(
 					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON )
@@ -178,7 +178,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 					'path' => [ 'different_open_icon' ],
 					'value' => true,
 				] ) )
-				->position( Element_Position::last() )
+				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_ICON ) )
 				->stash( true )
 				->default_model(
 					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )

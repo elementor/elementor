@@ -113,7 +113,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			'show_icon' => Boolean_Prop_Type::make()->default( true )
 				->description( 'Whether every item header shows an open/closed indicator icon. Applies to all items; there is no per-item override.' ),
 			'different_open_icon' => Boolean_Prop_Type::make()->default( false )
-				->description( 'Whether each header also has an open icon slot. While an item is open, that slot is shown and the closed icon is hidden. Applies to all items; there is no per-item override.' )
+				->description( 'Shows a separate icon while an item is open. Applies to all items; there is no per-item override.' )
 				->set_dependencies(
 					Dependency_Manager::make()
 						->where( self::SHOW_ICON_IS_ON_TERM )
@@ -130,6 +130,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 							'path' => [ 'different_open_icon' ],
 							'value' => true,
 							'effect' => 'disable',
+							'newValue' => Number_Prop_Type::generate( 0 ),
 						] )
 						->get()
 				),
@@ -152,7 +153,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 					Switch_Control::bind_to( 'show_icon' )
 						->set_label( esc_html__( 'Show Icon', 'elementor' ) ),
 					Switch_Control::bind_to( 'different_open_icon' )
-						->set_label( esc_html__( 'Different icon when open', 'elementor' ) ),
+						->set_label( esc_html__( 'Open icon', 'elementor' ) ),
 					Number_Control::bind_to( 'icon_rotation' )
 						->set_label( esc_html__( 'Icon rotation', 'elementor' ) )
 						->set_min( self::ICON_ROTATION_MIN )

@@ -363,6 +363,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( 'ne', $terms[1]['operator'] );
 		$this->assertTrue( $terms[1]['value'] );
 		$this->assertSame( 'disable', $terms[1]['effect'] );
+		$this->assertSame( 0, $terms[1]['newValue']['value'] );
 	}
 
 	public function test_different_open_icon_is_hidden_without_show_icon() {
@@ -467,7 +468,8 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 
 		$rule = $config['children_dependencies'][0];
 		$this->assertSame( 'e-accordion-item-icon', $rule['child_type'] );
-		$this->assertSame( 'last', $rule['position']['kind'] );
+		$this->assertSame( 'after_type', $rule['position']['kind'] );
+		$this->assertSame( 'e-accordion-item-title', $rule['position']['value'] );
 		$this->assertTrue( $rule['stash'] );
 		$this->assertSame( 'e-accordion-item-icon', $rule['default_model']['elType'] );
 		$this->assertTrue( $rule['default_model']['hydrateDefaultChildren'] );
@@ -479,7 +481,8 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 
 		$open_rule = $config['children_dependencies'][1];
 		$this->assertSame( 'e-accordion-item-icon-open', $open_rule['child_type'] );
-		$this->assertSame( 'last', $open_rule['position']['kind'] );
+		$this->assertSame( 'after_type', $open_rule['position']['kind'] );
+		$this->assertSame( 'e-accordion-item-icon', $open_rule['position']['value'] );
 		$this->assertTrue( $open_rule['stash'] );
 		$this->assertSame( 'e-accordion-item-icon-open', $open_rule['default_model']['elType'] );
 		$this->assertTrue( $open_rule['default_model']['hydrateDefaultChildren'] );
