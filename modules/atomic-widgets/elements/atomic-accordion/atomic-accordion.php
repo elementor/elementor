@@ -50,6 +50,13 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	const ICON_ROTATION_MIN = -360;
 	const ICON_ROTATION_MAX = 360;
 
+	const SHOW_ICON_IS_ON_TERM = [
+		'operator' => 'ne',
+		'path' => [ 'show_icon' ],
+		'value' => false,
+		'effect' => 'hide',
+	];
+
 	public static $widget_description = 'Create collapsible content sections using native <details>/<summary> semantics, with no JavaScript needed for the toggle. Structure: e-accordion contains e-accordion-item elements; each item contains an e-accordion-item-header (holding e-accordion-item-title and an optional e-accordion-item-icon) and an e-accordion-item-content that accepts any element.';
 
 	public function __construct( $data = [], $args = null ) {
@@ -105,21 +112,27 @@ class Atomic_Accordion extends Atomic_Element_Base {
 			// structural, not an oversight.
 			'show_icon' => Boolean_Prop_Type::make()->default( true )
 				->description( 'Whether every item header shows an open/closed indicator icon. Applies to all items; there is no per-item override.' ),
+			'different_open_icon' => Boolean_Prop_Type::make()->default( false )
+				->description( 'Whether each header also has an open icon slot. While an item is open, that slot is shown and the closed icon is hidden. Applies to all items; there is no per-item override.' )
+				->set_dependencies(
+					Dependency_Manager::make()
+						->where( self::SHOW_ICON_IS_ON_TERM )
+						->get()
+				),
 			'icon_rotation' => Number_Prop_Type::make()
 				->default( self::ICON_ROTATION_DEFAULT )
 				->description( 'How many degrees the closed icon rotates while an item is open. 180 matches the original chevron. 0 leaves it unrotated. Ignored while a different open icon is in use.' )
 				->set_dependencies(
-					Dependency_Manager::make()
+					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+						->where( self::SHOW_ICON_IS_ON_TERM )
 						->where( [
-							'operator' => 'eq',
+							'operator' => 'ne',
 							'path' => [ 'different_open_icon' ],
 							'value' => true,
 							'effect' => 'disable',
 						] )
 						->get()
 				),
-			'different_open_icon' => Boolean_Prop_Type::make()->default( false )
-				->description( 'Whether each header also has an open icon slot. While an item is open, that slot is shown and the closed icon is hidden. Applies to all items; there is no per-item override.' ),
 			'faq_schema' => Boolean_Prop_Type::make()->default( false )
 				->description( 'Whether to output an FAQPage JSON-LD structured data script on the frontend, built from each item\'s title (question) and content (answer).' ),
 		];
@@ -138,14 +151,14 @@ class Atomic_Accordion extends Atomic_Element_Base {
 						] ),
 					Switch_Control::bind_to( 'show_icon' )
 						->set_label( esc_html__( 'Show Icon', 'elementor' ) ),
+					Switch_Control::bind_to( 'different_open_icon' )
+						->set_label( esc_html__( 'Different icon when open', 'elementor' ) ),
 					Number_Control::bind_to( 'icon_rotation' )
 						->set_label( esc_html__( 'Icon rotation', 'elementor' ) )
 						->set_min( self::ICON_ROTATION_MIN )
 						->set_max( self::ICON_ROTATION_MAX )
 						->set_step( 1 )
 						->set_should_force_int( true ),
-					Switch_Control::bind_to( 'different_open_icon' )
-						->set_label( esc_html__( 'Different icon when open', 'elementor' ) ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
@@ -447,18 +460,7 @@ class Atomic_Accordion extends Atomic_Element_Base {
 
 		return array_merge( $this->build_base_template_context(), [
 			'faq_schema_json' => $faq_schema_json,
-			'icon_rotation' => $this->get_icon_rotation(),
 		] );
-	}
-
-	private function get_icon_rotation(): int {
-		$rotation = $this->get_atomic_setting( 'icon_rotation' );
-
-		if ( ! is_numeric( $rotation ) ) {
-			return self::ICON_ROTATION_DEFAULT;
-		}
-
-		return max( self::ICON_ROTATION_MIN, min( self::ICON_ROTATION_MAX, (int) $rotation ) );
 	}
 
 	/**

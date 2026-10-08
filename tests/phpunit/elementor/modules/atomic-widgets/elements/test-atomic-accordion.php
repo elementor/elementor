@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
@@ -342,6 +343,35 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 			'--e-accordion-icon-rotation: ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg',
 			$html
 		);
+	}
+
+	public function test_render_keeps_a_zero_icon_rotation() {
+		$html = $this->render_accordion( [ 'icon_rotation' => Number_Prop_Type::generate( 0 ) ] );
+
+		$this->assertStringContainsString( '--e-accordion-icon-rotation: 0deg', $html );
+	}
+
+	public function test_icon_rotation_is_hidden_without_show_icon_and_disabled_by_the_open_icon() {
+		$terms = $this->get_define_props_schema( Atomic_Accordion::class )['icon_rotation']->get_dependencies()['terms'];
+
+		$this->assertSame( [ 'show_icon' ], $terms[0]['path'] );
+		$this->assertSame( 'ne', $terms[0]['operator'] );
+		$this->assertFalse( $terms[0]['value'] );
+		$this->assertSame( 'hide', $terms[0]['effect'] );
+
+		$this->assertSame( [ 'different_open_icon' ], $terms[1]['path'] );
+		$this->assertSame( 'ne', $terms[1]['operator'] );
+		$this->assertTrue( $terms[1]['value'] );
+		$this->assertSame( 'disable', $terms[1]['effect'] );
+	}
+
+	public function test_different_open_icon_is_hidden_without_show_icon() {
+		$term = $this->get_define_props_schema( Atomic_Accordion::class )['different_open_icon']->get_dependencies()['terms'][0];
+
+		$this->assertSame( [ 'show_icon' ], $term['path'] );
+		$this->assertSame( 'ne', $term['operator'] );
+		$this->assertFalse( $term['value'] );
+		$this->assertSame( 'hide', $term['effect'] );
 	}
 
 	// ---------------------------------------------------------------------
