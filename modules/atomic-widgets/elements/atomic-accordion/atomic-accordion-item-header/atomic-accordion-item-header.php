@@ -219,6 +219,10 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 				$element['elements'] = self::order_open_icon_after_closed_icon( $element['elements'] );
 			}
 
+			if ( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN === ( $element['elType'] ?? '' ) ) {
+				$element = self::point_default_open_chevron_the_same_way( $element );
+			}
+
 			if ( Atomic_Accordion::ELEMENT_TYPE_HEADER === ( $element['elType'] ?? '' ) && isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
 				$element['elements'] = self::place_open_icon_after_icon( $element['elements'] );
 			}
@@ -227,6 +231,30 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 		}
 
 		return $ordered;
+	}
+
+	private static function point_default_open_chevron_the_same_way( array $element ): array {
+		if ( empty( $element['elements'] ) || ! is_array( $element['elements'] ) ) {
+			return $element;
+		}
+
+		$upward_chevron = 'chevron-up.svg';
+
+		foreach ( $element['elements'] as $index => $child ) {
+			if ( ! is_array( $child ) ) {
+				continue;
+			}
+
+			$url = $child['settings']['svg']['value']['url']['value'] ?? null;
+
+			if ( ! is_string( $url ) || $upward_chevron !== substr( $url, -strlen( $upward_chevron ) ) ) {
+				continue;
+			}
+
+			$element['elements'][ $index ]['settings']['svg']['value']['url']['value'] = Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL;
+		}
+
+		return $element;
 	}
 
 	private static function place_open_icon_after_icon( array $children ): array {

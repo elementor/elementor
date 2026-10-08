@@ -310,7 +310,7 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_open_icon_slot_seeds_its_svg_child_with_the_upward_chevron() {
+	public function test_open_icon_slot_seeds_the_same_chevron_as_the_closed_icon() {
 		$default_children = $this->get_config( 'e-accordion-item-icon-open' )['default_children'];
 
 		$this->assertCount( 1, $default_children );
@@ -319,21 +319,51 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertSame( 'widget', $svg['elType'] );
 		$this->assertSame( 'e-svg', $svg['widgetType'] );
 		$this->assertSame(
-			Atomic_Accordion_Item_Icon_Open::DEFAULT_ICON_URL,
-			$svg['settings']['svg']['value']['url']['value']
-		);
-		$this->assertNotSame(
 			Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL,
 			$svg['settings']['svg']['value']['url']['value']
 		);
 	}
 
-	public function test_open_icon_asset_ships_with_the_plugin() {
-		$this->assertFileExists( Atomic_Accordion_Item_Icon_Open::DEFAULT_ICON_PATH );
-		$this->assertStringContainsString(
-			'<svg',
-			(string) file_get_contents( Atomic_Accordion_Item_Icon_Open::DEFAULT_ICON_PATH )
-		);
+	public function test_load_points_a_saved_upward_chevron_the_same_way_as_the_closed_icon() {
+		$data = [
+			[
+				'elType' => 'e-accordion-item-icon-open',
+				'elements' => [
+					[
+						'elType' => 'widget',
+						'widgetType' => 'e-svg',
+						'settings' => [
+							'svg' => [
+								'value' => [
+									'url' => [
+										'value' => 'https://example.com/wp-content/plugins/elementor/assets/images/chevron-up.svg',
+									],
+								],
+							],
+						],
+					],
+					[
+						'elType' => 'widget',
+						'widgetType' => 'e-svg',
+						'settings' => [
+							'svg' => [
+								'value' => [
+									'url' => [
+										'value' => 'https://example.com/my-plus.svg',
+									],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$ordered = Atomic_Accordion_Item_Header::order_open_icon_after_closed_icon( $data );
+		$urls = $ordered[0]['elements'];
+
+		$this->assertSame( Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL, $urls[0]['settings']['svg']['value']['url']['value'] );
+		$this->assertSame( 'https://example.com/my-plus.svg', $urls[1]['settings']['svg']['value']['url']['value'] );
 	}
 
 	public function test_render_defaults_to_the_original_icon_rotation() {
