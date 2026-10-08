@@ -34,8 +34,9 @@ describe( 'VariableEditableCell color picker', () => {
 		const editStack = screen.getByRole( 'button', { name: 'Double click or press Space to edit' } );
 		fireEvent.doubleClick( editStack );
 
-		const pickerTrigger = within( editStack ).getByRole( 'button' );
-		fireEvent.click( pickerTrigger );
+		const pickerTrigger = screen.getAllByRole( 'button' ).find( ( button ) => button !== editStack );
+		expect( pickerTrigger ).toBeDefined();
+		fireEvent.click( pickerTrigger as HTMLElement );
 
 		const formatSelect = await screen.findByRole( 'combobox', { hidden: true } );
 		fireEvent.mouseDown( formatSelect );
