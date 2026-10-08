@@ -21,7 +21,7 @@ findIconsToolPrompt.instruction(
 
 findIconsToolPrompt.instruction(
 	'Results are ordered best first; `matched_on: "name"` is a stronger signal than `matched_on: "term"`. ' +
-		'All results are free icons from Font Awesome's free packages. ' +
+		'All results are free icons from Font Awesome free packages. ' +
 		'Prefer `fa-solid` for UI iconography and keep one style across a page; brand marks only exist in `fa-brands`. ' +
 		'An empty `matches` array means no match was found: broaden the phrase instead of inventing a value.'
 );
