@@ -1,11 +1,14 @@
 const COLOR_VARIABLE_FIELD_ID = 'color-variable-field';
 
+const COLOR_PICKER_POPOVER_ID = 'eui-color-picker-popover';
+
 const COLOR_FIELD_OVERLAY_SELECTORS = [
 	'.MuiPopover-root',
 	'.MuiMenu-root',
 	'[role="combobox"]',
 	'[role="listbox"]',
 	'.MuiSelect-select',
+	`#${ COLOR_PICKER_POPOVER_ID }`,
 ].join( ', ' );
 
 const getDocumentsToSearch = ( target: Element ): Document[] => {
