@@ -24,14 +24,6 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_get_tokens__legacy_one_is_compositions() {
-		// Arrange
-		update_option( Site_Flag::OPTION_NAME, '1' );
-
-		// Act / Assert
-		$this->assertSame( [ 'compositions' ], Site_Flag::get_tokens() );
-	}
-
 	public function test_mark__appends_unique_capabilities() {
 		// Act
 		Site_Flag::mark( 'compositions' );

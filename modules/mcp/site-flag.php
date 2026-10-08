@@ -129,10 +129,6 @@ class Site_Flag {
 			return [];
 		}
 
-		if ( '1' === $raw ) {
-			return [ self::TOOL_CAPABILITIES['elementor/build-composition'] ];
-		}
-
 		$tokens = array_map( 'trim', explode( ',', $raw ) );
 
 		return array_values( array_filter( $tokens, function ( $token ) {
