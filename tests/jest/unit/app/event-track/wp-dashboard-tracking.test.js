@@ -97,4 +97,55 @@ describe( 'WpDashboardTracking', () => {
 			} );
 		} );
 	} );
+
+	describe( 'isNavigatingAwayFromElementor', () => {
+		test( 'does not throw and returns false when given a non-string value', () => {
+			jest.isolateModules( () => {
+				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
+
+				// A form control named "action" (e.g. `<input name="action">`) shadows
+				// `HTMLFormElement.action`, so callers may accidentally pass a DOM element here.
+				const shadowedFormAction = document.createElement( 'input' );
+
+				expect( () => WpDashboardTracking.isNavigatingAwayFromElementor( shadowedFormAction ) ).not.toThrow();
+				expect( WpDashboardTracking.isNavigatingAwayFromElementor( shadowedFormAction ) ).toBe( false );
+			} );
+		} );
+	} );
+
+	describe( 'getFormActionUrl', () => {
+		test( 'returns the string action when it is not shadowed by a form control', () => {
+			jest.isolateModules( () => {
+				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
+
+				const form = document.createElement( 'form' );
+				form.setAttribute( 'action', 'https://example.com/wp-admin/edit.php' );
+
+				expect( WpDashboardTracking.getFormActionUrl( form ) ).toBe( 'https://example.com/wp-admin/edit.php' );
+			} );
+		} );
+
+		test( 'falls back to the raw attribute when a named "action" control shadows form.action', () => {
+			jest.isolateModules( () => {
+				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
+
+				const form = document.createElement( 'form' );
+				form.setAttribute( 'action', 'https://example.com/wp-admin/edit.php?post_type=elementor_library' );
+
+				const actionInput = document.createElement( 'input' );
+				actionInput.setAttribute( 'type', 'hidden' );
+				actionInput.setAttribute( 'name', 'action' );
+				actionInput.setAttribute( 'value', 'elementor_new_post' );
+				form.appendChild( actionInput );
+
+				// Real browsers shadow `HTMLFormElement.action` with a named form control
+				// (e.g. `<input name="action">`, the WordPress admin-post/admin-ajax convention).
+				// jsdom does not replicate that quirk, so we simulate it directly here.
+				Object.defineProperty( form, 'action', { value: actionInput, configurable: true } );
+
+				expect( WpDashboardTracking.getFormActionUrl( form ) )
+					.toBe( 'https://example.com/wp-admin/edit.php?post_type=elementor_library' );
+			} );
+		} );
+	} );
 } );
