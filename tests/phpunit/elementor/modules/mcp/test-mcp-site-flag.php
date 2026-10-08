@@ -24,9 +24,12 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_parse_tokens__legacy_one_is_compositions() {
+	public function test_get_tokens__legacy_one_is_compositions() {
+		// Arrange
+		update_option( Site_Flag::OPTION_NAME, '1' );
+
 		// Act / Assert
-		$this->assertSame( [ 'compositions' ], Site_Flag::parse_tokens( '1' ) );
+		$this->assertSame( [ 'compositions' ], Site_Flag::get_tokens() );
 	}
 
 	public function test_mark__appends_unique_capabilities() {
@@ -44,9 +47,9 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 		// Arrange
 		Site_Flag::mark( 'compositions' );
 		Site_Flag::mark( 'variables' );
-		wp_cache_delete( 'alloptions', 'options' );
 
 		// Act / Assert
+		$this->assertSame( [ 'compositions', 'variables' ], Site_Flag::get_tokens() );
 		$this->assertSame(
 			[ 'compositions', 'variables' ],
 			Site_Flag::filter_generator_tag_capabilities( [] )
@@ -69,15 +72,24 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'capabilities', $args['body'] );
 	}
 
-	public function test_register__noops_when_mcp_disabled() {
+	public function test_option_name_is_elementor_m_exists() {
+		// Act / Assert
+		$this->assertSame( 'elementor_m_exists', Site_Flag::OPTION_NAME );
+	}
+
+	public function test_register__always_adds_hooks_without_mcp_gate() {
 		// Arrange
 		$source = file_get_contents(
 			dirname( __DIR__, 5 ) . '/modules/mcp/site-flag.php'
 		);
 
 		// Act / Assert
+		$this->assertStringNotContainsString(
+			'is_site_mcp_exposure_enabled',
+			$source
+		);
 		$this->assertStringContainsString(
-			'if ( ! Module::is_site_mcp_exposure_enabled() ) {',
+			"add_filter( 'body_class', [ self::class, 'filter_body_class' ] );",
 			$source
 		);
 		$this->assertStringContainsString(
@@ -88,10 +100,22 @@ class Test_Mcp_Site_Flag extends Elementor_Test_Base {
 			"add_filter( 'elementor/generator_tag/capabilities', [ self::class, 'filter_generator_tag_capabilities' ] );",
 			$source
 		);
-		$this->assertStringContainsString(
-			"add_filter( 'body_class', [ self::class, 'filter_body_class' ] );",
-			$source
+		$this->assertStringNotContainsString( 'wp_load_alloptions', $source );
+		$this->assertStringNotContainsString( 'get_tokens_from_alloptions', $source );
+	}
+
+	public function test_filters_silent_when_flag_unset() {
+		// Act / Assert
+		$this->assertFalse( Site_Flag::is_set() );
+		$this->assertSame( [ 'foo' ], Site_Flag::filter_body_class( [ 'foo' ] ) );
+		$this->assertSame(
+			[ 'body' => [] ],
+			Site_Flag::filter_notifications_request(
+				[ 'body' => [] ],
+				'https://my.elementor.com/api/v1/notifications'
+			)
 		);
+		$this->assertSame( [], Site_Flag::filter_generator_tag_capabilities( [] ) );
 	}
 
 	public function test_filter_body_class__absent_when_flag_unset() {

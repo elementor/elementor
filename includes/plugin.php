@@ -25,6 +25,7 @@ use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Modules\Mcp\Site_Flag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -618,6 +619,8 @@ class Plugin {
 	 * @access public
 	 */
 	public function init() {
+		Site_Flag::register();
+
 		$this->add_cpt_support();
 
 		$this->init_components();

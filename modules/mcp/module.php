@@ -148,8 +148,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		Site_Flag::register();
-
 		$this->register_v3_standardized_maps_experiment();
 
 		$this->registry = self::build_core_registry();
