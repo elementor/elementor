@@ -75,7 +75,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 'fa-solid fa-cart-shopping', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_ALIAS, $matches[0]['matched_on'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
 	}
 
 	public function test_search__matches_a_search_term_for_a_descriptive_phrase() {
@@ -563,7 +563,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 		Icon_Catalog::reset();
 
-		$fixture_path = __DIR__ . '/../../../../fixtures/icon-value-format.json';
+		$fixture_path = ELEMENTOR_PATH . 'tests/fixtures/icon-value-format.json';
 		$this->assertFileExists( $fixture_path, 'Fixture file must exist' );
 
 		$fixture = json_decode( file_get_contents( $fixture_path ), true );

@@ -187,9 +187,10 @@ class Test_Icon_Catalog extends Elementor_Test_Base {
 	public function test_get_version__returns_null_when_the_version_file_is_missing() {
 		// Arrange.
 		add_filter(
-			'elementor/atomic-widgets/icons/version-path',
-			fn() => $this->fixture_dir . '/missing.json'
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			fn() => $this->fixture_dir . '/nonexistent/'
 		);
+		Icon_Catalog::reset();
 
 		// Act & Assert.
 		$this->assertNull( Icon_Catalog::get_version() );
