@@ -57,6 +57,26 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'color-variable-screenshot.png' );
 	} );
 
+	test( 'Color format dropdown keeps edit mode when editing an existing color variable', async () => {
+		const variableRow = await variablesManagerPage.createVariableFromManager( {
+			name: 'format-dropdown-variable',
+			value: '#ff0000',
+			type: 'color',
+		} );
+
+		await variablesManagerPage.openVariableManager();
+		await variablesManagerPage.expectColorFormatDropdownKeepsEditMode( variableRow );
+	} );
+
+	test( 'Color format dropdown keeps edit mode when creating a color variable', async () => {
+		await variablesManagerPage.openVariableManager();
+		await page.getByRole( 'button', { name: 'Add variable' } ).click();
+		await page.locator( 'li' ).filter( { hasText: 'color' } ).click();
+
+		const variableRow = page.locator( 'tbody tr' ).last();
+		await variablesManagerPage.expectColorFormatDropdownKeepsEditMode( variableRow );
+	} );
+
 	test( 'Variable name validation error displays and clears in the manager', async () => {
 		const variableRow = await variablesManagerPage.createVariableFromManager( { name: 'test-variable', value: '#000000', type: 'color' } );
 		const nameField = variableRow.getByRole( 'button' ).nth( 1 );

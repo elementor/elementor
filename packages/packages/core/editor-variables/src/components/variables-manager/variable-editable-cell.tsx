@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClickAwayListener, Stack } from '@elementor/ui';
 
-import { isClickInsideMuiPortal } from '../../utils/is-click-inside-mui-portal';
+import { shouldIgnoreVariableCellClickAway } from '../../utils/should-ignore-variable-cell-click-away';
 import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 import { useLabelError } from '../fields/label-field';
 
@@ -54,7 +54,7 @@ export const VariableEditableCell = React.memo(
 
 		const handleClickAway = useCallback(
 			( event: MouseEvent | TouchEvent ) => {
-				if ( isClickInsideMuiPortal( event ) ) {
+				if ( shouldIgnoreVariableCellClickAway( event ) ) {
 					return;
 				}
 

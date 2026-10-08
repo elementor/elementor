@@ -143,27 +143,39 @@ describe( 'VariableEditableCell', () => {
 		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should not save when clicking inside a portaled MUI overlay', () => {
+	it( 'should not save when clicking inside the color field format menu', () => {
+		const colorField = document.createElement( 'div' );
+		colorField.id = 'color-variable-field';
+
+		const combobox = document.createElement( 'div' );
+		combobox.setAttribute( 'role', 'combobox' );
+		combobox.setAttribute( 'aria-expanded', 'true' );
+		combobox.setAttribute( 'aria-controls', 'format-menu' );
+		colorField.appendChild( combobox );
+
+		const menu = document.createElement( 'ul' );
+		menu.id = 'format-menu';
+		const menuItem = document.createElement( 'li' );
+		menu.appendChild( menuItem );
+
+		document.body.appendChild( colorField );
+		document.body.appendChild( menu );
+
 		renderComponent();
 		fireEvent.doubleClick( getEditTrigger() );
 		const input = screen.getByLabelText( 'Edit value' );
 
 		fireEvent.change( input, { target: { value: 'new value' } } );
 
-		const portalTarget = document.createElement( 'span' );
-		const portal = document.createElement( 'div' );
-		portal.className = 'MuiPopover-root';
-		portal.appendChild( portalTarget );
-		document.body.appendChild( portal );
-
 		const event = new MouseEvent( 'mousedown', { bubbles: true } );
-		Object.defineProperty( event, 'target', { value: portalTarget } );
+		Object.defineProperty( event, 'target', { value: menuItem } );
 		document.dispatchEvent( event );
 
 		expect( mockOnChange ).not.toHaveBeenCalled();
 		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
 
-		document.body.removeChild( portal );
+		document.body.removeChild( colorField );
+		document.body.removeChild( menu );
 	} );
 
 	it( 'should have correct ARIA attributes', () => {

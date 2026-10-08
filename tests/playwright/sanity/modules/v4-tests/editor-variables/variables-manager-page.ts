@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import DesignSystemPage from '../design-system/design-system-page';
 
 export default class VariablesManagerPage {
@@ -51,6 +51,21 @@ export default class VariablesManagerPage {
 		await this.saveVariablesManager();
 
 		return latestRow;
+	}
+
+	async expectColorFormatDropdownKeepsEditMode( row: ReturnType< Page['locator'] > ) {
+		await row.getByRole( 'button' ).nth( 2 ).dblclick();
+
+		const colorField = row.locator( `#color-variable-field` );
+		await colorField.getByRole( 'button' ).first().click();
+
+		const formatSelect = colorField.getByRole( 'combobox' );
+		await formatSelect.click();
+		await this.page.getByRole( 'option', { name: 'RGB' } ).click();
+
+		await expect( formatSelect ).toHaveText( 'RGB' );
+		await expect( colorField.getByRole( 'textbox' ) ).toBeVisible();
+		await expect( colorField.getByRole( 'button' ).first() ).toBeVisible();
 	}
 
 	private async saveVariablesManager() {
