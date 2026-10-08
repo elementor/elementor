@@ -220,6 +220,10 @@ class V3_Map_Style_Writer {
 	}
 
 	private function write_binding( V3_Conversion_Context $ctx, Compiled_Style_Binding $binding, array $controls, string $breakpoint, $prop_value ): void {
+		if ( null !== $binding->get_part() ) {
+			$prop_value = $prop_value['value'][ $binding->get_part() ] ?? null;
+		}
+
 		if ( ! is_array( $prop_value ) || ! $this->touches_bound_sides( $prop_value, $binding->get_sides() ) ) {
 			return;
 		}
@@ -243,7 +247,32 @@ class V3_Map_Style_Writer {
 
 		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
 
-		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $binding->get_dependency_values() ) );
+		$ctx->merge_patch( array_merge( [ $setting => $control_value ], self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint ) ) );
+	}
+
+	/**
+	 * A responsive requirement is written at the same breakpoint as the bound value, so a
+	 * mobile-only write does not change the desktop sibling.
+	 *
+	 * @param array<string, mixed> $requirements
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	private static function requirements_at( array $requirements, array $controls, string $breakpoint ): array {
+		if ( Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ) {
+			return $requirements;
+		}
+
+		$scoped = [];
+
+		foreach ( $requirements as $setting => $value ) {
+			$responsive_key = $setting . '_' . $breakpoint;
+			$is_responsive = isset( $controls[ $responsive_key ] ) || ! empty( $controls[ $setting ]['is_responsive'] );
+
+			$scoped[ $is_responsive ? $responsive_key : $setting ] = $value;
+		}
+
+		return $scoped;
 	}
 
 	/**

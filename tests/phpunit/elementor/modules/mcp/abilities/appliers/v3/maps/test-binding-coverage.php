@@ -38,4 +38,19 @@ class Test_Binding_Coverage extends TestCase {
 		$this->assertFalse( $overlaps_inline );
 		$this->assertTrue( $overlaps_block_end );
 	}
+
+	public function test_overlaps__parts_overlap_only_the_same_part_or_the_whole_value() {
+		// Arrange.
+		$grow = Binding_Coverage::part( 'flexGrow' );
+
+		// Act.
+		$overlaps_shrink = $grow->overlaps( Binding_Coverage::part( 'flexShrink' ) );
+		$overlaps_grow = $grow->overlaps( Binding_Coverage::part( 'flexGrow' ) );
+		$overlaps_whole = $grow->overlaps( Binding_Coverage::whole() );
+
+		// Assert.
+		$this->assertFalse( $overlaps_shrink );
+		$this->assertTrue( $overlaps_grow );
+		$this->assertTrue( $overlaps_whole );
+	}
 }
