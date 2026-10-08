@@ -16,7 +16,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
-use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\Pointers\Promotional_Pointer;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Modules\Promotions\Widgets\Atomic_Carousel_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
@@ -70,9 +70,8 @@ class Module extends Base_Module {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
 
-		if ( Utils::is_sale_time() ) {
-			add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
-		}
+		add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
+		add_filter( 'elementor_one/upgrade_url', [ $this, 'override_one_menu_upgrade_url' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -87,8 +86,8 @@ class Module extends Base_Module {
 			new Birthday();
 		}
 
-		if ( Black_Friday::should_display_notice() ) {
-			new Black_Friday();
+		if ( Promotional_Pointer::should_display_notice() ) {
+			new Promotional_Pointer();
 		}
 
 		if ( ! Utils::has_pro() ) {
@@ -118,12 +117,24 @@ class Module extends Base_Module {
 		}
 
 		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
-			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+			add_filter( 'allowed_redirect_hosts', function ( $hosts, $host ) {
+				if ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) ) {
+					$hosts[] = $host;
+				}
+				return $hosts;
+			}, 10, 2 );
+			wp_safe_redirect( Go_Pro_Promotion_Item::get_url() );
 			die;
 		}
 	}
 
 	public function override_one_menu_upgrade_label_during_sale( $menu ) {
+		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
+
+		if ( empty( $assets_data['is_active'] ) || empty( $assets_data['label'] ) ) {
+			return $menu;
+		}
+
 		global $submenu;
 
 		$parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
@@ -135,12 +146,22 @@ class Module extends Base_Module {
 
 		foreach ( $submenu[ $parent_slug ] as &$item ) {
 			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
-				$item[0] = esc_html__( 'Sale!', 'elementor' ) . '<br />' . esc_html__( 'Upgrade Now', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$item[0] = esc_html( $assets_data['label'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				break;
 			}
 		}
 
 		return $menu;
+	}
+
+	public function override_one_menu_upgrade_url( string $url ): string {
+		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) ) {
+			return Go_Pro_Promotion_Item::get_url();
+		}
+
+		return $url;
 	}
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
