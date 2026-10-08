@@ -8,28 +8,35 @@ import { ConditionalControlInfotip } from '../components/conditional-control-inf
 export const SVG_MEDIA_CONTROL_CONTAINER_TEST_ID = 'svg-media-control-container';
 export const SVG_MEDIA_ACTION_GROUP_TEST_ID = 'svg-media-action-group';
 
-const MEDIA_ACTION_PADDING_Y = 0.75;
-const MEDIA_ACTION_PADDING_X = 2;
+const SELECT_AREA_WIDTH = 72;
+const UPLOAD_AREA_WIDTH = 48;
+const SPLIT_BUTTON_MIN_HEIGHT = 32;
+const SPLIT_BUTTON_CORNER_RADIUS = '8px';
+const SPLIT_BUTTON_FONT_SIZE = '14px';
 const ICON_LIBRARY_PADDING = 0.625;
 
 const svgButtonSx = {
-	px: MEDIA_ACTION_PADDING_X,
-	py: MEDIA_ACTION_PADDING_Y,
+	minWidth: 0,
+	minHeight: SPLIT_BUTTON_MIN_HEIGHT,
+	px: 2,
+	fontSize: SPLIT_BUTTON_FONT_SIZE,
+	fontWeight: 500,
+	lineHeight: 1,
 };
 
-const MediaActionGroup = styled( Stack )( ( { theme } ) => ( {
+const MediaActionGroup = styled( Stack )( {
 	display: 'inline-flex',
 	flexDirection: 'row',
 	alignItems: 'stretch',
 	border: '1px solid currentColor',
-	borderRadius: theme.shape.borderRadius,
+	borderRadius: SPLIT_BUTTON_CORNER_RADIUS,
 	overflow: 'hidden',
 	'& .MuiButton-root': {
 		border: 'none',
 		borderRadius: 0,
 		lineHeight: 1,
 	},
-} ) );
+} );
 
 type SvgMediaOverlayProps = {
 	isAdmin: boolean;
@@ -60,7 +67,7 @@ export const SvgMediaOverlay = ( {
 				variant="text"
 				onClick={ onSelectSvg }
 				aria-label={ __( 'Select', 'elementor' ) }
-				sx={ svgButtonSx }
+				sx={ { ...svgButtonSx, minWidth: SELECT_AREA_WIDTH } }
 			>
 				{ __( 'Select', 'elementor' ) }
 			</Button>
@@ -77,7 +84,7 @@ export const SvgMediaOverlay = ( {
 				description={ infotipDescription }
 				isEnabled={ ! isAdmin }
 			>
-				<Box component="span" sx={ { display: 'inline-flex' } }>
+				<Box component="span" sx={ { display: 'flex', width: UPLOAD_AREA_WIDTH } }>
 					<UploadControl isAdmin={ isAdmin } onUpload={ onUpload } />
 				</Box>
 			</ConditionalControlInfotip>
@@ -124,7 +131,7 @@ const UploadButton = ( {
 	onClick?: () => void;
 } ) => (
 	<Button
-		sx={ sx }
+		sx={ { ...sx, width: '100%' } }
 		size="tiny"
 		color="inherit"
 		variant="text"
@@ -132,6 +139,6 @@ const UploadButton = ( {
 		onClick={ onClick }
 		aria-label={ __( 'Upload', 'elementor' ) }
 	>
-		<UploadIcon />
+		<UploadIcon fontSize="small" />
 	</Button>
 );
