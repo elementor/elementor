@@ -13,12 +13,12 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->ensure_font_awesome_7_json_available();
-
 		add_filter(
 			'elementor/atomic-widgets/font-awesome-7/json-base-path',
-			fn() => ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/'
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
 		);
+
+		Font_Awesome_7_Icon_Resolver::reset();
 	}
 
 	public function tearDown(): void {
@@ -29,39 +29,6 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 		Font_Awesome_7_Icon_Resolver::reset();
 
 		parent::tearDown();
-	}
-
-	private function ensure_font_awesome_7_json_available(): void {
-		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
-		$solid_file = $json_dir . '/solid.json';
-
-		if ( is_readable( $solid_file ) ) {
-			return;
-		}
-
-		if ( ! is_dir( $json_dir ) && ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
-			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
-		}
-
-		$icons = [
-			'0' => [ 448, 512, [], 'e0600', 'M0 0' ],
-			'1' => [ 256, 512, [], 'e0601', 'M1 1' ],
-			'2' => [ 320, 512, [], 'e0602', 'M2 2' ],
-			'3' => [ 384, 512, [], 'e0603', 'M3 3' ],
-			'4' => [ 384, 512, [], 'e0604', 'M4 4' ],
-			'5' => [ 320, 512, [], 'e0605', 'M5 5' ],
-			'6' => [ 320, 512, [], 'e0606', 'M6 6' ],
-			'7' => [ 320, 512, [], 'e0607', 'M7 7' ],
-			'8' => [ 320, 512, [], 'e0608', 'M8 8' ],
-			'9' => [ 320, 512, [], 'e0609', 'M9 9' ],
-			'cart-shopping' => [ 576, 512, [], 'f07a', 'M0 0' ],
-			'house' => [ 576, 512, [ 'home' ], 'f015', 'M0 0' ],
-		];
-
-		file_put_contents(
-			$solid_file,
-			wp_json_encode( [ 'icons' => $icons ] )
-		);
 	}
 
 	public function test_get_editor_config__adds_my_libraries_group_when_additional_tabs_exist() {

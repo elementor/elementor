@@ -19,7 +19,10 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->ensure_font_awesome_7_json_available();
+		add_filter(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/'
+		);
 
 		$this->fixture_path = get_temp_dir() . 'icon-search-' . wp_generate_password( 8, false ) . '.json';
 
@@ -36,6 +39,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-results' );
 		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 
 		if ( file_exists( $this->fixture_path ) ) {
 			unlink( $this->fixture_path );
@@ -46,88 +50,6 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		Custom_Icon_Svg\Resolver::reset_memory();
 
 		parent::tearDown();
-	}
-
-	private function ensure_font_awesome_7_json_available(): void {
-		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
-		$solid_file = $json_dir . '/solid.json';
-		$regular_file = $json_dir . '/regular.json';
-		$brands_file = $json_dir . '/brands.json';
-		$search_index_file = $json_dir . '/search-index.json';
-
-		if ( is_readable( $solid_file ) && is_readable( $search_index_file ) ) {
-			return;
-		}
-
-		if ( ! is_dir( $json_dir ) && ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
-			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
-		}
-
-		$solid_icons = [
-			'0' => [ 448, 512, [], 'e0600', 'M0 0' ],
-			'1' => [ 256, 512, [], 'e0601', 'M1 1' ],
-			'9' => [ 320, 512, [], 'e0609', 'M9 9' ],
-			'cart-shopping' => [ 576, 512, [ 'shopping-cart' ], 'f07a', 'M0 0' ],
-			'cart-plus' => [ 576, 512, [], 'f217', 'M0 0' ],
-			'star' => [ 576, 512, [], 'f005', 'M0 0' ],
-			'crown' => [ 576, 512, [], 'f521', 'M0 0' ],
-			'house' => [ 576, 512, [ 'home' ], 'f015', 'M0 0' ],
-			'home' => [ 576, 512, [], 'f015', 'M0 0' ],
-			'magnifying-glass' => [ 576, 512, [ 'search' ], 'f002', 'M0 0' ],
-		];
-
-		$regular_icons = [
-			'0' => [ 448, 512, [], 'e0600', 'M0 0' ],
-			'house' => [ 576, 512, [ 'home' ], 'f015', 'M0 0' ],
-			'home' => [ 576, 512, [], 'f015', 'M0 0' ],
-		];
-
-		$brands_icons = [
-			'facebook' => [ 512, 512, [], 'f09a', 'M0 0' ],
-			'instagram' => [ 448, 512, [], 'f16d', 'M0 0' ],
-		];
-
-		file_put_contents( $solid_file, wp_json_encode( [ 'icons' => $solid_icons ] ) );
-		file_put_contents( $regular_file, wp_json_encode( [ 'icons' => $regular_icons ] ) );
-		file_put_contents( $brands_file, wp_json_encode( [ 'icons' => $brands_icons ] ) );
-
-		$search_icons = [];
-		foreach ( $solid_icons as $name => $data ) {
-			$search_icons[] = [
-				'name' => $name,
-				'label' => ucfirst( str_replace( '-', ' ', $name ) ),
-				'categories' => [],
-				'libraries' => [ 'fa-solid' ],
-			];
-		}
-		foreach ( $regular_icons as $name => $data ) {
-			$exists = false;
-			foreach ( $search_icons as &$icon ) {
-				if ( $icon['name'] === $name ) {
-					$icon['libraries'][] = 'fa-regular';
-					$exists = true;
-					break;
-				}
-			}
-			if ( ! $exists ) {
-				$search_icons[] = [
-					'name' => $name,
-					'label' => ucfirst( str_replace( '-', ' ', $name ) ),
-					'categories' => [],
-					'libraries' => [ 'fa-regular' ],
-				];
-			}
-		}
-		foreach ( $brands_icons as $name => $data ) {
-			$search_icons[] = [
-				'name' => $name,
-				'label' => ucfirst( str_replace( '-', ' ', $name ) ),
-				'categories' => [],
-				'libraries' => [ 'fa-brands' ],
-			];
-		}
-
-		file_put_contents( $search_index_file, wp_json_encode( [ 'icons' => $search_icons ] ) );
 	}
 
 	public function test_search__ranks_an_exact_name_first() {
@@ -580,6 +502,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 					'label' => 'Test Pack',
 					'prefix' => 'test-',
 					'custom_icon_type' => 'fontello',
+					'icons' => [ 'shopping-bag' ],
 					'fetchJson' => [ 'url' => 'data:application/json;base64,' . base64_encode( wp_json_encode( [
 						'glyphs' => [
 							[ 'css' => 'shopping-bag', 'code' => 59392, 'search' => [ 'bag', 'shopping' ] ],
@@ -598,7 +521,17 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$args = [ 'queries' => [ 'shopping' ], 'per_page' => 20 ];
 
 		// Act.
-		$matches = $this->get_matches( Icon_Search::search( $args ) );
+		$response = Icon_Search::search( $args );
+
+		// Debug custom library structure.
+		if ( empty( $response['custom_libraries']['test-pack']['values'] ) ) {
+			$this->fail( 'test-pack has no values. Data: ' . wp_json_encode( $response['custom_libraries'] ) );
+		}
+
+		$test_pack_values = $response['custom_libraries']['test-pack']['values'];
+		$this->fail( 'test-pack values: ' . wp_json_encode( $test_pack_values ) . '. All response keys: ' . implode( ', ', array_keys( $response ) ) );
+
+		$matches = $this->get_matches( $response );
 
 		// Assert — custom library icons should appear alongside Font Awesome icons.
 		$custom_results = array_filter( $matches, fn( $m ) => $m['library'] === 'test-pack' );
@@ -614,18 +547,21 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 
 		$glyphs = [];
+		$icon_names = [];
 		for ( $i = 0; $i < 300; $i++ ) {
 			$glyphs[] = [ 'css' => "icon-$i", 'code' => 59392 + $i, 'search' => [ 'search' ] ];
+			$icon_names[] = "icon-$i";
 		}
 
 		add_filter(
 			'elementor/icons_manager/additional_tabs',
-			static function ( $tabs ) use ( $glyphs ) {
+			static function ( $tabs ) use ( $glyphs, $icon_names ) {
 				$tabs['large-pack'] = [
 					'name' => 'large-pack',
 					'label' => 'Large Pack',
 					'prefix' => 'lp-',
 					'custom_icon_type' => 'fontello',
+					'icons' => $icon_names,
 					'fetchJson' => [ 'url' => 'data:application/json;base64,' . base64_encode( wp_json_encode( [
 						'glyphs' => $glyphs,
 					] ) ) ],
