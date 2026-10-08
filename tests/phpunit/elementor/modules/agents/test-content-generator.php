@@ -405,6 +405,67 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'Fresh content that is long enough for extraction.', $output );
 	}
 
+	public function test_get_available_post_types__lists_pages_then_posts() {
+		// Act
+		$post_types = $this->generator->get_available_post_types();
+
+		// Assert
+		$this->assertSame( [ 'page', 'post' ], array_slice( array_keys( $post_types ), 0, 2 ) );
+	}
+
+	public function test_get_available_post_types__is_filterable() {
+		// Arrange
+		$filter = static fn( array $post_types ) => array_diff_key( $post_types, [ 'post' => true ] );
+		add_filter( 'elementor/agents/llms_txt/post_types', $filter );
+
+		// Act
+		$post_types = $this->generator->get_available_post_types();
+
+		// Assert
+		$this->assertArrayHasKey( 'page', $post_types );
+		$this->assertArrayNotHasKey( 'post', $post_types );
+
+		// Cleanup
+		remove_filter( 'elementor/agents/llms_txt/post_types', $filter );
+	}
+
+	public function test_llms_txt__includes_only_selected_post_types() {
+		// Arrange
+		$this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Selected Page Type Item',
+		] );
+		$this->factory()->post->create( [
+			'post_type'   => 'post',
+			'post_status' => 'publish',
+			'post_title'  => 'Excluded Post Type Item',
+		] );
+
+		// Act
+		$output = $this->generator->generate_llms_txt( [], [ 'page' ] );
+
+		// Assert
+		$this->assertStringContainsString( 'Selected Page Type Item', $output );
+		$this->assertStringNotContainsString( 'Excluded Post Type Item', $output );
+		$this->assertStringNotContainsString( '## Posts', $output );
+	}
+
+	public function test_llms_full_txt__excludes_unselected_post_types() {
+		// Arrange
+		$this->factory()->post->create( [
+			'post_type'   => 'post',
+			'post_status' => 'publish',
+			'post_title'  => 'Unselected Full Post Item',
+		] );
+
+		// Act
+		$output = $this->generator->generate_llms_full_txt( [], [] );
+
+		// Assert
+		$this->assertStringNotContainsString( 'Unselected Full Post Item', $output );
+	}
+
 	private function ensure_active_kit_exists(): void {
 		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
 
