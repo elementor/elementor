@@ -21,6 +21,12 @@ class V3_Map_Style_Reader {
 		$this->adapters = $adapters;
 	}
 
+	/**
+	 * @param V3_Block_Accumulator     $blocks
+	 * @param Compiled_Style_Binding[] $bindings
+	 * @param array<string, mixed>     $settings
+	 * @param array<string, mixed>     $controls
+	 */
 	public function read( V3_Block_Accumulator $blocks, array $bindings, array $settings, array $controls ): void {
 		$suffixes = [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES;
 
@@ -48,8 +54,8 @@ class V3_Map_Style_Reader {
 				continue;
 			}
 
-			$existing = $props[ $binding['state'] ][ $binding['prop'] ] ?? null;
-			$props[ $binding['state'] ][ $binding['prop'] ] = null === $existing
+			$existing = $props[ $binding->get_state() ][ $binding->get_prop() ] ?? null;
+			$props[ $binding->get_state() ][ $binding->get_prop() ] = null === $existing
 				? $prop_value
 				: $this->merge_sides( $existing, $prop_value );
 		}
@@ -57,23 +63,23 @@ class V3_Map_Style_Reader {
 		return $props;
 	}
 
-	private function read_binding( array $binding, array $settings, array $controls, string $suffix ): ?array {
-		if ( '' !== $suffix && ! $binding['responsive'] ) {
+	private function read_binding( Compiled_Style_Binding $binding, array $settings, array $controls, string $suffix ): ?array {
+		if ( '' !== $suffix && ! $binding->is_responsive() ) {
 			return null;
 		}
 
-		if ( ! $this->are_dependencies_met( $binding['dependency_values'], $settings, $controls ) ) {
+		if ( ! $this->are_dependencies_met( $binding->get_dependency_values(), $settings, $controls ) ) {
 			return null;
 		}
 
-		$stored = $settings[ $binding['setting'] . $suffix ] ?? null;
-		$adapter = $this->adapters->find( $binding['read_type'], $binding['control_type'], null !== $binding['sides'] );
+		$stored = $settings[ $binding->get_setting() . $suffix ] ?? null;
+		$adapter = $this->adapters->find( $binding->get_read_type(), $binding->get_control_type(), null !== $binding->get_sides() );
 
 		if ( null === $stored || null === $adapter ) {
 			return null;
 		}
 
-		return $adapter->from_control_value( $stored, $binding['sides'] );
+		return $adapter->from_control_value( $stored, $binding->get_sides() );
 	}
 
 	/**
