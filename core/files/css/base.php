@@ -617,13 +617,15 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		// Post CSS is skipped during REST handling so styles are not echoed outside the JSON envelope.
+		// Third-party internal rest_do_request() rendering therefore returns markup without post CSS unless with_css inlines it in the HTML string.
+		global $wp_rest_server;
+
+		if ( false !== $wp_rest_server && function_exists( 'wp_is_rest_endpoint' ) && wp_is_rest_endpoint() ) {
 			return true;
 		}
 
-		global $wp_rest_server;
-
-		if ( $wp_rest_server instanceof \WP_REST_Server && $wp_rest_server->is_dispatching() ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			return true;
 		}
 
