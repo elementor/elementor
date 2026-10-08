@@ -34,9 +34,12 @@ describe( 'VariableEditableCell color picker', () => {
 		const editStack = screen.getByRole( 'button', { name: 'Double click or press Space to edit' } );
 		fireEvent.doubleClick( editStack );
 
-		const pickerTrigger = screen.getAllByRole( 'button' ).find( ( button ) => button !== editStack );
-		expect( pickerTrigger ).toBeDefined();
-		fireEvent.click( pickerTrigger as HTMLElement );
+		// eslint-disable-next-line testing-library/no-node-access -- ColorField root id is the stable hook for the picker trigger
+		const colorField = document.getElementById( 'color-variable-field' );
+		expect( colorField ).toBeTruthy();
+
+		const pickerTrigger = within( colorField as HTMLElement ).getByRole( 'button' );
+		fireEvent.click( pickerTrigger );
 
 		const formatSelect = await screen.findByRole( 'combobox', { hidden: true } );
 		fireEvent.mouseDown( formatSelect );
