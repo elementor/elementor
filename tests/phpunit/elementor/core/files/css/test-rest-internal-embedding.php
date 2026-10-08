@@ -36,11 +36,14 @@ class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
 
 	private string $previous_css_print_method;
 
+	private $previous_wp_rest_server;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		global $wp_rest_server, $wp_styles;
 
+		$this->previous_wp_rest_server = $wp_rest_server;
 		$wp_rest_server = new \WP_REST_Server();
 		$wp_styles = new \WP_Styles();
 
@@ -51,6 +54,10 @@ class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		global $wp_rest_server;
+
+		$wp_rest_server = $this->previous_wp_rest_server;
+
 		update_option( 'elementor_css_print_method', $this->previous_css_print_method );
 
 		parent::tearDown();
