@@ -110,6 +110,78 @@ function getAccordionHeaderIds( accordionId: string ): string[] {
 	return headerContainers.map( ( header ) => header.id );
 }
 
+type CascadeDifferentOpenIconPayload = {
+	accordionId: string;
+	differentOpenIcon: boolean;
+};
+
+type CascadeDifferentOpenIconResult = {
+	previous: Record< string, ReturnType< typeof booleanPropTypeUtil.create > | null | undefined >;
+};
+
+export const cascadeDifferentOpenIconToHeaders = undoable<
+	CascadeDifferentOpenIconPayload,
+	CascadeDifferentOpenIconResult,
+	undefined
+>(
+	{
+		do: ( { accordionId, differentOpenIcon } ) => {
+			const headerIds = getAccordionHeaderIds( accordionId );
+
+			const previous = Object.fromEntries(
+				headerIds.map(
+					( headerId ) =>
+						[
+							headerId,
+							getElementSettings< ReturnType< typeof booleanPropTypeUtil.create > >( headerId, [
+								'different_open_icon',
+							] ).different_open_icon,
+						] as const
+				)
+			);
+
+			headerIds.forEach( ( headerId ) => {
+				updateElementSettings( {
+					id: headerId,
+					props: { different_open_icon: booleanPropTypeUtil.create( differentOpenIcon ) },
+					withHistory: false,
+				} );
+			} );
+
+			return { previous };
+		},
+		undo: ( _payload, { previous } ) => {
+			Object.entries( previous ).forEach( ( [ headerId, previousValue ] ) => {
+				updateElementSettings( {
+					id: headerId,
+					props: { different_open_icon: previousValue ?? null },
+					withHistory: false,
+				} );
+			} );
+		},
+	},
+	{
+		title: __( 'Accordion', 'elementor' ),
+		subtitle: __( 'Different icon when open', 'elementor' ),
+		debounce: { wait: HISTORY_DEBOUNCE_WAIT },
+	}
+);
+
+export function useDifferentOpenIconWriteThrough( accordionId: string, differentOpenIcon: boolean ): void {
+	const previousRef = useRef< { accordionId: string; differentOpenIcon: boolean } | null >( null );
+
+	useEffect( () => {
+		const previous = previousRef.current;
+		previousRef.current = { accordionId, differentOpenIcon };
+
+		if ( ! previous || previous.accordionId !== accordionId || previous.differentOpenIcon === differentOpenIcon ) {
+			return;
+		}
+
+		cascadeDifferentOpenIconToHeaders( { accordionId, differentOpenIcon } );
+	}, [ accordionId, differentOpenIcon ] );
+}
+
 // Watches the root's *current* `show_icon` value (read reactively from the panel's element
 // settings) and cascades it to every header on change. Skips the very first render for a given
 // element so mounting the panel on an already-toggled-off accordion doesn't re-fire a no-op
