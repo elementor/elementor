@@ -121,17 +121,10 @@ class Atomic_Accordion extends Atomic_Element_Base {
 				),
 			'icon_rotation' => Number_Prop_Type::make()
 				->default( self::ICON_ROTATION_DEFAULT )
-				->description( 'How many degrees the closed icon rotates while an item is open. 180 matches the original chevron. 0 leaves it unrotated. Ignored while a different open icon is in use.' )
+				->description( 'How many degrees the visible icon rotates while an item is open. 180 matches the original chevron. 0 leaves it unrotated.' )
 				->set_dependencies(
-					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+					Dependency_Manager::make()
 						->where( self::SHOW_ICON_IS_ON_TERM )
-						->where( [
-							'operator' => 'ne',
-							'path' => [ 'different_open_icon' ],
-							'value' => true,
-							'effect' => 'disable',
-							'newValue' => Number_Prop_Type::generate( 0 ),
-						] )
 						->get()
 				),
 			'faq_schema' => Boolean_Prop_Type::make()->default( false )

@@ -351,19 +351,14 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		$this->assertStringContainsString( '--e-accordion-icon-rotation: 0deg', $html );
 	}
 
-	public function test_icon_rotation_is_hidden_without_show_icon_and_disabled_by_the_open_icon() {
+	public function test_icon_rotation_is_hidden_without_show_icon() {
 		$terms = $this->get_define_props_schema( Atomic_Accordion::class )['icon_rotation']->get_dependencies()['terms'];
 
+		$this->assertCount( 1, $terms );
 		$this->assertSame( [ 'show_icon' ], $terms[0]['path'] );
 		$this->assertSame( 'ne', $terms[0]['operator'] );
 		$this->assertFalse( $terms[0]['value'] );
 		$this->assertSame( 'hide', $terms[0]['effect'] );
-
-		$this->assertSame( [ 'different_open_icon' ], $terms[1]['path'] );
-		$this->assertSame( 'ne', $terms[1]['operator'] );
-		$this->assertTrue( $terms[1]['value'] );
-		$this->assertSame( 'disable', $terms[1]['effect'] );
-		$this->assertSame( 0, $terms[1]['newValue']['value'] );
 	}
 
 	public function test_different_open_icon_is_hidden_without_show_icon() {
