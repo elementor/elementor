@@ -276,7 +276,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'editor_settings' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → editor-only fields, kept separate from element_config. Example: { "glow-blob": { "decorative": true } }. The layer name always comes from configuration-id, so `name` is not accepted here. Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → editor-only fields, kept separate from element_config. `name` is not accepted here; the layer name is the configuration-id.',
 				],
 				'style' => [
 					'type' => 'object',

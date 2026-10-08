@@ -246,24 +246,28 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **dry_run**: If true, validate and return resolved tree without persisting
 
 # EXAMPLE
-Section with heading + button (NO explicit heights - content sizes naturally):
+Section with heading + button and a decorative glow (only the glow gets an explicit size):
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
+  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-div-block configuration-id=\"Glow\"/><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
   "element_config": {
     "Section Title": {
       "tag": "h2",
       "title": "Welcome"
     }
   },
+  "editor_settings": {
+    "Glow": { "decorative": true }
+  },
   "style": {
-    "Main Section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "Main Section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "Glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
     "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }
 ```
-Note: No height/width specified on any element — content sizes naturally.
+Note: Only the decorative `Glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
 
 # FURTHER INSTRUCTIONS
 Use server-assigned element ids from `resolved_xml` for follow-up work — see **ID RULES**.
