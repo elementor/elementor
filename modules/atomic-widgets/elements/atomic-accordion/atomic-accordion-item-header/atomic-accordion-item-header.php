@@ -247,7 +247,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 
 			$url = $child['settings']['svg']['value']['url']['value'] ?? null;
 
-			if ( ! is_string( $url ) || $upward_chevron !== substr( $url, -strlen( $upward_chevron ) ) ) {
+			if ( ! is_string( $url ) || substr( $url, -strlen( $upward_chevron ) ) !== $upward_chevron ) {
 				continue;
 			}
 
