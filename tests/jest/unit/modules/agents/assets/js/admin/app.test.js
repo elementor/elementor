@@ -77,6 +77,15 @@ const markdownConfig = {
 	postTypes: [ { name: 'page', label: 'Pages', count: 2, included: true } ],
 };
 
+const botAccessConfig = {
+	enabled: true,
+	hasPhysicalFile: false,
+	bots: [ { token: 'GPTBot', search: true, aiInput: true, aiTrain: false } ],
+	catalog: [ { token: 'GPTBot', name: 'GPTBot', vendor: 'OpenAI', logoUrl: '' } ],
+};
+
+const BOT_ACCESS_SWITCH_INDEX = 2;
+
 describe( 'Agents Ready App', () => {
 	beforeEach( () => {
 		activateAgentsReady.mockReset();
@@ -101,7 +110,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'renders the three module accordions when the experiment is active', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		expect( screen.getByText( 'LLMs.txt' ) ).toBeTruthy();
@@ -114,7 +123,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -132,7 +141,7 @@ describe( 'Agents Ready App', () => {
 	it( 'rolls back the LLMs.txt toggle and shows an alert when saving fails', async () => {
 		// Arrange
 		saveAgentReadySettings.mockRejectedValueOnce( null );
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -151,7 +160,7 @@ describe( 'Agents Ready App', () => {
 		saveAgentReadySettings.mockImplementationOnce( () => new Promise( ( resolve ) => {
 			resolveSave = resolve;
 		} ) );
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Act
 		fireEvent.click( screen.getAllByRole( 'switch' )[ 0 ] );
@@ -168,7 +177,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'locks the LLMs.txt switch off when a physical file exists', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } markdownConfig={ markdownConfig } /> );
 
 		// Assert
 		const [ llmsSwitch ] = screen.getAllByRole( 'switch' );
@@ -177,9 +186,40 @@ describe( 'Agents Ready App', () => {
 		expect( screen.getByText( '2/4' ) ).toBeTruthy();
 	} );
 
+	it( 'persists the bot access setting when its module is toggled off', async () => {
+		// Arrange
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'switch' )[ BOT_ACCESS_SWITCH_INDEX ] );
+
+		// Assert
+		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
+			bot_access_control: {
+				enabled: false,
+				bots: { GPTBot: { search: true, ai_input: true, ai_train: false } },
+			},
+		} );
+		await waitFor( () => {
+			expect( screen.getAllByRole( 'switch' )[ BOT_ACCESS_SWITCH_INDEX ].disabled ).toBe( false );
+		} );
+	} );
+
+	it( 'locks the bot access switch off when a physical robots.txt exists', () => {
+		// Arrange & Act
+		render( <App isExperimentActive={ true } botAccessConfig={ { ...botAccessConfig, hasPhysicalFile: true } } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+
+		// Assert
+		const botAccessSwitch = screen.getAllByRole( 'switch' )[ BOT_ACCESS_SWITCH_INDEX ];
+		expect( botAccessSwitch.checked ).toBe( false );
+		expect( botAccessSwitch.disabled ).toBe( true );
+		expect( screen.getByText( '2/4' ) ).toBeTruthy();
+	} );
+
 	it( 'replaces the inline description with the panel when a module is expanded', () => {
 		// Arrange
-		render( <App isExperimentActive={ true } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
+		render( <App isExperimentActive={ true } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> );
 
 		// Assert - all three modules start collapsed with an inline description
 		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();

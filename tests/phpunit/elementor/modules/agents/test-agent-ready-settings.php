@@ -218,6 +218,37 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		$this->assertSame( '', $output );
 	}
 
+	public function test_rest_update__keeps_only_catalog_bots_with_boolean_permissions() {
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL => [
+				'enabled' => 'false',
+				'bots' => [
+					'UnknownBot' => [ 'search' => true, 'ai_input' => true, 'ai_train' => true ],
+					'CCBot' => [ 'search' => 'false', 'ai_input' => 1, 'extra' => true ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_bot_access_enabled() );
+		$this->assertSame(
+			[ 'CCBot' => [ 'search' => false, 'ai_input' => true, 'ai_train' => false ] ],
+			$this->settings->get_managed_bots()
+		);
+	}
+
+	public function test_get_managed_bots__defaults_to_popular_bots_in_catalog_order() {
+		// Act
+		$bots = $this->settings->get_managed_bots();
+
+		// Assert
+		$this->assertSame( 'GPTBot', array_key_first( $bots ) );
+		$this->assertArrayHasKey( 'ClaudeBot', $bots );
+		$this->assertArrayNotHasKey( 'CCBot', $bots );
+		$this->assertSame( Agent_Ready_Settings::DEFAULT_BOT_PERMISSIONS, $bots['GPTBot'] );
+	}
+
 	private function put_settings( array $value ): \WP_REST_Response {
 		$request = new \WP_REST_Request( 'PUT', self::ROUTE );
 		$request->set_param( 'value', $value );
