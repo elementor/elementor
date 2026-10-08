@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClickAwayListener, Stack } from '@elementor/ui';
 
 import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
-import { isColorFieldDismissImmuneTarget } from '../../utils/is-color-field-dismiss-immune-target';
+import { isColorFieldDismissImmuneEvent } from '../../utils/is-color-field-dismiss-immune-target';
 import { useLabelError } from '../fields/label-field';
 
 type VariableEditableCellProps = {
@@ -54,7 +54,7 @@ export const VariableEditableCell = React.memo(
 
 		const handleClickAway = useCallback(
 			( event: MouseEvent | TouchEvent ) => {
-				if ( isColorFieldDismissImmuneTarget( event.target ) ) {
+				if ( isColorFieldDismissImmuneEvent( event ) ) {
 					return;
 				}
 

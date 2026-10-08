@@ -1,46 +1,71 @@
 const COLOR_VARIABLE_FIELD_ID = 'color-variable-field';
-const COLOR_PICKER_POPOVER_ID = 'eui-color-picker-popover';
+
+const COLOR_FIELD_OVERLAY_SELECTORS = [
+	'.MuiPopover-root',
+	'.MuiMenu-root',
+	'[role="combobox"]',
+	'[role="listbox"]',
+	'.MuiSelect-select',
+].join( ', ' );
+
+const getDocumentsToSearch = ( target: Element ): Document[] => {
+	const documents = new Set< Document >();
+	documents.add( target.ownerDocument );
+	documents.add( document );
+
+	document.querySelectorAll( 'iframe' ).forEach( ( frame ) => {
+		try {
+			if ( frame.contentDocument ) {
+				documents.add( frame.contentDocument );
+			}
+		} catch {
+			// Cross-origin iframe.
+		}
+	} );
+
+	return [ ...documents ];
+};
+
+const findActiveColorField = ( target: Element ): HTMLElement | null => {
+	for ( const doc of getDocumentsToSearch( target ) ) {
+		const field = doc.getElementById( COLOR_VARIABLE_FIELD_ID );
+
+		if ( field ) {
+			return field;
+		}
+	}
+
+	return null;
+};
 
 export const isColorFieldDismissImmuneTarget = ( target: EventTarget | null ): boolean => {
 	if ( ! ( target instanceof Element ) ) {
 		return false;
 	}
 
-	const field = document.getElementById( COLOR_VARIABLE_FIELD_ID );
-
-	if ( field?.contains( target ) ) {
-		return true;
-	}
-
-	const pickerPopover = document.getElementById( COLOR_PICKER_POPOVER_ID );
-
-	if ( pickerPopover?.contains( target ) ) {
-		return true;
-	}
-
-	const pickerPopoverRoot = pickerPopover?.closest( '.MuiPopover-root' );
-
-	if ( pickerPopoverRoot instanceof HTMLElement && pickerPopoverRoot.contains( target ) ) {
-		return true;
-	}
+	const field = findActiveColorField( target );
 
 	if ( ! field ) {
 		return false;
 	}
 
-	const expandedSelects = field.querySelectorAll( '[role="combobox"][aria-expanded="true"]' );
+	if ( field.contains( target ) ) {
+		return true;
+	}
 
-	for ( const select of expandedSelects ) {
-		const menuId = select.getAttribute( 'aria-controls' );
+	return Boolean( target.closest( COLOR_FIELD_OVERLAY_SELECTORS ) );
+};
 
-		if ( ! menuId ) {
-			continue;
-		}
+export const isColorFieldDismissImmuneEvent = ( event: MouseEvent | TouchEvent ): boolean => {
+	if ( isColorFieldDismissImmuneTarget( event.target ) ) {
+		return true;
+	}
 
-		const menu = document.getElementById( menuId );
-
-		if ( menu?.contains( target ) ) {
-			return true;
+	if ( 'composedPath' in event ) {
+		for ( const node of event.composedPath() ) {
+			if ( isColorFieldDismissImmuneTarget( node ) ) {
+				return true;
+			}
 		}
 	}
 
