@@ -5,16 +5,30 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
+use Mock_Pro_License_API;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
+
 /**
  * @group Elementor\Modules\Mcp
  */
 class Test_Manage_Variable_Ability extends TestCase {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		Mock_Pro_License_API::set_license_state( false );
+	}
+
+	public function tearDown(): void {
+		Mock_Pro_License_API::reset();
+		parent::tearDown();
+	}
 
 	private function assertWPError( $actual ): void {
 		$this->assertInstanceOf( \WP_Error::class, $actual );
@@ -300,6 +314,81 @@ class Test_Manage_Variable_Ability extends TestCase {
 		// Assert
 		$this->assertSame( 'error', $result['status'] );
 		$this->assertSame( 'pro_license_required', $result['results'][0]['code'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_create__allows_size_types_with_active_license( string $type ) {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'spacing',
+					],
+				],
+				'watermark' => 12,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => $type,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_update__allows_size_variables_with_active_license( string $type ) {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'find_type' );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'update',
+						'id' => 'abc',
+						'type' => $type,
+					],
+				],
+				'watermark' => 13,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'abc',
+				'label' => 'spacing',
+				'value' => '24px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
 	}
 
 	public function test_update__allows_non_size_variables_without_active_license() {
