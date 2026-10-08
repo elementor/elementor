@@ -10,7 +10,7 @@ import {
 	readCategories,
 	readIconMetadata,
 	serializeSearchIndex,
-} from '../search-index.ts';
+} from '../search-index';
 
 const iconTuple = ( aliases: unknown[] = [] ): [ number, number, unknown[], string, string ] => [
 	512,

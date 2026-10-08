@@ -118,12 +118,12 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 		$icon_value = 'fa-solid ' . $input_name;
 
 		// Act.
-		$result = Font_Awesome_7_Icon_Resolver::resolve( $icon_value );
+		$result = Font_Awesome_7_Icon_Resolver::resolve( $icon_value, 'fa-solid' );
 
 		// Assert.
 		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'svg', $result );
-		$this->assertNotEmpty( $result['svg'], "Icon $expected_name should resolve to SVG" );
+		$this->assertArrayHasKey( 'paths', $result );
+		$this->assertNotEmpty( $result['paths'], "Icon $expected_name should resolve to paths" );
 	}
 
 	public function data_digit_icon_names(): array {

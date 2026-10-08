@@ -222,8 +222,9 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		// Act.
 		$response = Icon_Search::search( $args );
 
-		// Assert.
-		$this->assertSame( [], $response['results'] );
+		// Assert — empty queries without library/category returns an error.
+		$this->assertArrayHasKey( 'error', $response );
+		$this->assertStringContainsString( 'required', $response['error'] );
 	}
 
 	public function test_search__reports_the_site_libraries_categories_and_version() {
@@ -558,12 +559,18 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	}
 
 	public function test_catalog__icon_value_format_matches_fixture() {
-		// Arrange.
+		// Arrange — temporarily remove test fixture filter to use real catalog.
+		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
+		Icon_Catalog::reset();
+
 		$fixture_path = __DIR__ . '/../../../../fixtures/icon-value-format.json';
+		$this->assertFileExists( $fixture_path, 'Fixture file must exist' );
+
 		$fixture = json_decode( file_get_contents( $fixture_path ), true );
 		$this->assertIsArray( $fixture );
 		$this->assertArrayHasKey( 'icons', $fixture );
 
+		// Act & Assert.
 		foreach ( $fixture['icons'] as $icon_case ) {
 			$name = $icon_case['name'];
 			$expected_values = $icon_case['expectedValues'];
@@ -586,5 +593,9 @@ class Test_Icon_Search extends Elementor_Test_Base {
 				);
 			}
 		}
+
+		// Restore test fixture filter.
+		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $this->fixture_path );
+		Icon_Catalog::reset();
 	}
 }

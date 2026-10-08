@@ -13,7 +13,7 @@ import {
 	readIconMetadata,
 	SEARCH_INDEX_FILE_NAME,
 	serializeSearchIndex,
-} from './search-index.ts';
+} from './search-index';
 
 const FONT_AWESOME_MAJOR_VERSION = 7;
 

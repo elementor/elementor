@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Pack_Directory;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
