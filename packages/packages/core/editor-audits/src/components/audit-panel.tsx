@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { getHostDocumentId } from '@elementor/editor-elements';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
-import { ReloadIcon } from '@elementor/icons';
-import { Box, Button, Typography } from '@elementor/ui';
+import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { AUDIT_PANEL_ID } from '../constants';
@@ -12,9 +11,10 @@ import ErrorPage from './pages/error-page';
 import LoadingPage from './pages/loading-page';
 import WelcomePage from './pages/welcome-page';
 import ReportShell from './report-shell';
+import RescanButton from './rescan-button';
 
 export default function AuditPanel() {
-	const { status, report, error, run } = useAuditReport();
+	const { status, report, error, isStale, run } = useAuditReport();
 
 	const hostDocumentId = getHostDocumentId() ?? 0;
 	const onRun = () => run( hostDocumentId );
@@ -49,15 +49,12 @@ export default function AuditPanel() {
 					<Box sx={ { flex: 1 } } />
 				) }
 				{ lastScanLabel && <AuditFeedback /> }
-				<Button
-					variant="contained"
-					size="small"
-					startIcon={ lastScanLabel ? <ReloadIcon fontSize="small" /> : undefined }
-					onClick={ onRun }
+				<RescanButton
+					hasScanned={ Boolean( lastScanLabel ) }
+					isStale={ isStale }
 					disabled={ status === 'loading' || hostDocumentId === 0 }
-				>
-					{ lastScanLabel ? __( 'Rescan', 'elementor' ) : __( 'Run page audit', 'elementor' ) }
-				</Button>
+					onClick={ onRun }
+				/>
 			</FloatingPanelFooter>
 		</>
 	);
