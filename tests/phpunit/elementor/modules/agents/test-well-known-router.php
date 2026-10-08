@@ -3,18 +3,23 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
+use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Module;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Well_Known_Router extends Elementor_Test_Base {
 
 	private Well_Known_Router $router;
+
+	private Agent_Ready_Settings $settings;
 
 	private $original_experiment_default_state;
 
@@ -33,7 +38,12 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 			Experiments_Manager::STATE_ACTIVE
 		);
 
-		$this->router = new Well_Known_Router();
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->settings->ensure_option_exists();
+
+		$this->router = new Well_Known_Router( $this->settings );
 		$this->router->register_endpoint( new Auth_Md() );
 	}
 
@@ -44,6 +54,8 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		);
 
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
+
+		delete_option( Agent_Ready_Settings::OPTION );
 
 		parent::tearDown();
 	}
@@ -89,6 +101,32 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( '', $output );
+	}
+
+	public function test_maybe_handle__falls_through_when_agent_discovery_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+		$_SERVER['REQUEST_URI'] = '/.well-known/auth.md';
+
+		// Act
+		ob_start();
+		$this->router->maybe_handle();
+		$output = ob_get_clean();
+
+		// Assert
+		$this->assertSame( '', $output );
+	}
+
+	public function test_get_applicable_endpoints__lists_canonical_slugs_of_applicable_endpoints_only() {
+		// Arrange
+		$this->router->register_endpoint( new Oauth_Authorization_Server() );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+
+		// Act
+		$applicable = $this->router->get_applicable_endpoints();
+
+		// Assert
+		$this->assertSame( [ 'auth.md' ], array_keys( $applicable ) );
 	}
 
 	public function test_get_normalized_path__matches_subdirectory_install() {
