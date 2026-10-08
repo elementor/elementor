@@ -42,6 +42,7 @@ const SASS_TARGETS = [
 	{ cwd: 'modules/home/assets/scss', src: 'e-home-screen.scss', dest: 'assets/css/modules/home' },
 	{ cwd: 'modules/promotions/assets/scss', src: 'conversion-banner.scss', dest: 'assets/css/modules/promotions' },
 	{ cwd: 'assets/dev/scss/frontend', src: 'admin-bar.scss', dest: 'assets/css' },
+	{ cwd: 'assets/dev/scss/frontend', src: 'app-overlay.scss', dest: 'assets/css' },
 	{ cwd: 'assets/dev/scss/frontend/conditionals', src: '*.scss', dest: 'assets/css/conditionals' },
 	{ cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints', src: '*.scss', dest: 'assets/css/conditionals' },
 	{ cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints', src: '*.scss', dest: 'assets/css/templates' },
