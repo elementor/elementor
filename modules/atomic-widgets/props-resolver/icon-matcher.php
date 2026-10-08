@@ -97,6 +97,12 @@ class Icon_Matcher {
 		$normalized = strtolower( trim( $value ) );
 		$normalized = trim( (string) preg_replace( '/[^a-z0-9]+/', '-', $normalized ), '-' );
 
+		if ( str_contains( $normalized, '-' ) ) {
+			$parts = explode( '-', $normalized );
+			sort( $parts );
+			$normalized = implode( '-', $parts );
+		}
+
 		self::$normalized_cache[ $value ] = $normalized;
 
 		return $normalized;
@@ -110,13 +116,15 @@ class Icon_Matcher {
 			return [];
 		}
 
-		$tokens = array_values( array_unique( array_filter(
+		$tokens = array_unique( array_filter(
 			explode( '-', $normalized ),
 			static fn( $token ) => strlen( $token ) >= self::MIN_TOKEN_LENGTH
 				&& ! in_array( $token, self::IGNORED_TOKENS, true )
-		) ) );
+		) );
 
-		return $tokens;
+		sort( $tokens );
+
+		return array_values( $tokens );
 	}
 
 	public static function result( int $score, string $matched_on ): array {
@@ -129,7 +137,8 @@ class Icon_Matcher {
 	private static function match_tokens( array $entry, array $tokens ): ?array {
 		$best = null;
 		$matched_tokens = 0;
-		$name_tokens = 0;
+		$exact_name_tokens = 0;
+		$name_part_tokens = 0;
 		$all_matched = true;
 
 		foreach ( $tokens as $token ) {
@@ -143,7 +152,10 @@ class Icon_Matcher {
 			++$matched_tokens;
 
 			if ( self::MATCHED_ON_NAME === $match['matched_on'] ) {
-				++$name_tokens;
+				++$name_part_tokens;
+				if ( $match['score'] >= self::SCORE_EXACT_NAME ) {
+					++$exact_name_tokens;
+				}
 			}
 
 			if ( ! $best || $match['score'] > $best['score'] ) {
@@ -156,11 +168,15 @@ class Icon_Matcher {
 		}
 
 		$base_score = ( $matched_tokens * self::SCORE_PER_MATCHED_TOKEN )
-			+ ( $name_tokens * self::SCORE_PER_NAME_TOKEN )
-			+ intdiv( $best['score'], 100 );
+			+ ( $exact_name_tokens * self::SCORE_PER_NAME_TOKEN )
+			+ min( intdiv( $best['score'], 100 ), 5 );
+
+		if ( $name_part_tokens === count( $tokens ) && count( $tokens ) > 1 ) {
+			$base_score += 50;
+		}
 
 		if ( $all_matched && count( $tokens ) > 1 ) {
-			$base_score += 50;
+			$base_score += 30;
 		}
 
 		$best['score'] = min( self::SCORE_TOKEN_BAND_MAX, $base_score );
