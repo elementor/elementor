@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ClickAwayListener, Stack } from '@elementor/ui';
 
-import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 import { isClickInsideMuiPortal } from '../../utils/is-click-inside-mui-portal';
+import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 import { useLabelError } from '../fields/label-field';
 
 type VariableEditableCellProps = {

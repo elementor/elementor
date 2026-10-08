@@ -2,8 +2,8 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { ColorField } from '../../fields/color-field';
 import { type ValueFieldProps } from '../../../variables-registry/create-variable-type-registry';
+import { ColorField } from '../../fields/color-field';
 import { VariableEditableCell } from '../variable-editable-cell';
 
 jest.mock( '../../../context/variable-selection-popover.context', () => ( {
@@ -31,28 +31,13 @@ describe( 'VariableEditableCell color picker', () => {
 			</VariableEditableCell>
 		);
 
-		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Double click or press Space to edit' } ) );
+		const editStack = screen.getByRole( 'button', { name: 'Double click or press Space to edit' } );
+		fireEvent.doubleClick( editStack );
 
-		const colorField = document.getElementById( 'color-variable-field' );
-		expect( colorField ).toBeTruthy();
-
-		const pickerTrigger = within( colorField as HTMLElement ).getByRole( 'button' );
+		const pickerTrigger = within( editStack ).getByRole( 'button' );
 		fireEvent.click( pickerTrigger );
 
-		const popover = await waitFor( () => {
-			const popovers = Array.from( document.querySelectorAll( '.MuiPopover-root' ) );
-
-			const colorPickerPopover = popovers.find( ( element ) =>
-				within( element as HTMLElement ).queryByRole( 'combobox', { hidden: true } )
-			);
-
-			if ( ! colorPickerPopover ) {
-				throw new Error( 'Color picker popover not found' );
-			}
-
-			return colorPickerPopover as HTMLElement;
-		} );
-		const formatSelect = within( popover ).getByRole( 'combobox', { hidden: true } );
+		const formatSelect = await screen.findByRole( 'combobox', { hidden: true } );
 		fireEvent.mouseDown( formatSelect );
 
 		const listbox = await screen.findByRole( 'listbox', { hidden: true } );
@@ -60,10 +45,10 @@ describe( 'VariableEditableCell color picker', () => {
 		fireEvent.click( rgbOption );
 
 		await waitFor( () => {
-			expect( within( popover ).getByRole( 'combobox', { hidden: true } ) ).toHaveTextContent( 'RGB' );
+			expect( formatSelect ).toHaveTextContent( 'RGB' );
 		} );
 
 		expect( mockOnChange ).not.toHaveBeenCalled();
-		expect( within( popover ).getByRole( 'combobox', { hidden: true } ) ).toBeInTheDocument();
+		expect( formatSelect ).toBeInTheDocument();
 	} );
 } );

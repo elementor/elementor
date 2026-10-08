@@ -69,8 +69,7 @@ describe( 'VariableEditableCell', () => {
 		return render( <VariableEditableCell { ...defaultProps } /> );
 	};
 
-	const getEditTrigger = () =>
-		screen.getByRole( 'button', { name: 'Double click or press Space to edit' } );
+	const getEditTrigger = () => screen.getByRole( 'button', { name: 'Double click or press Space to edit' } );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
