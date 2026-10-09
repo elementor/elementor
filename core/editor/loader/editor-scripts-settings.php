@@ -248,6 +248,7 @@ class Editor_Scripts_Settings {
 				'editor_class' => 'elementor-wp-editor',
 				'editor_height' => 250,
 				'drag_drop_upload' => true,
+				'wpautop' => false,
 			]
 		);
 
