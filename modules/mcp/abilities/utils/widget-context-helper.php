@@ -205,19 +205,16 @@ class Widget_Context_Helper {
 				'message' => self::V3_FALLBACK_MESSAGE,
 				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
 				'properties' => $built['properties'],
+				'editor_settings' => Editor_Settings::get_schema( $widget_type ),
 				'required' => $built['required'],
 				'additionalProperties' => false,
 			] );
 		}
 
-		$properties = array_merge(
-			self::build_configurable_properties_schema( $props_schema, $widget_type ),
-			Editor_Settings::get_properties_schema( $widget_type )
-		);
-
 		return self::filter_nulls( [
 			'type' => 'object',
-			'properties' => $properties,
+			'properties' => self::build_configurable_properties_schema( $props_schema, $widget_type ),
+			'editor_settings' => Editor_Settings::get_schema( $widget_type ),
 			'description' => self::get_description( $config, $widget_type ),
 			'llm_guidance' => Llm_Guidance_Builder::build( $config, $widget_type, $parents_index ),
 		] );
@@ -437,6 +434,7 @@ class Widget_Context_Helper {
 			'widget_version' => self::VERSION_V3,
 			'description' => $description,
 			'properties' => $contract['properties'],
+			'editor_settings' => Editor_Settings::get_schema( $widget_type ),
 			'additionalProperties' => false,
 			'style_targets' => $contract['style_targets'],
 		] );
