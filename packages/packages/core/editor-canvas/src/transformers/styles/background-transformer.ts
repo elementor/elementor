@@ -11,9 +11,17 @@ type Background = {
 export const backgroundTransformer = createTransformer( ( value: Background ) => {
 	const { color = null, 'background-overlay': overlays = null, clip = null } = value;
 
-	return createMultiPropsValue( {
+	const props = {
 		...overlays,
 		'background-color': color,
 		'background-clip': clip,
-	} );
+	};
+
+	// A solid color only sets background-color. A kit/site gradient is background-image
+	// on the same element, and that image paints over the color unless it is cleared.
+	if ( color && ! props[ 'background-image' ] ) {
+		props[ 'background-image' ] = 'none';
+	}
+
+	return createMultiPropsValue( props );
 } );
