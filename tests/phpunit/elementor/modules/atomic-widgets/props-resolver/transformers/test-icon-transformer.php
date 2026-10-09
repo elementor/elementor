@@ -28,8 +28,12 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		add_filter(
+			self::JSON_BASE_PATH_FILTER,
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
+		);
+
 		Font_Awesome_7_Icon_Resolver::reset();
-		$this->ensure_font_awesome_7_json_available();
 	}
 
 	public function tearDown(): void {
@@ -327,26 +331,4 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->filtered_json_dir = null;
 	}
 
-	private function ensure_font_awesome_7_json_available(): void {
-		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
-		$json_file = $json_dir . '/solid.json';
-
-		if ( is_readable( $json_file ) ) {
-			return;
-		}
-
-		if ( ! is_dir( $json_dir ) && ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
-			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
-		}
-
-		file_put_contents(
-			$json_file,
-			wp_json_encode( [
-				'icons' => [
-					'star' => [ 576, 512, [], 'f005', self::FA7_STAR_PATH_FRAGMENT ],
-					'headphones' => [ 448, 512, [ 'headphones-simple' ], 'f025', 'M64 224' ],
-				],
-			] )
-		);
-	}
 }

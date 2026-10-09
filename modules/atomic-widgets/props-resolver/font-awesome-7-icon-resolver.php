@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Pack_Directory;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -65,7 +66,7 @@ class Font_Awesome_7_Icon_Resolver {
 		$icon_name = self::get_icon_name( $value );
 		$file_name = self::get_json_file_name( $library );
 
-		if ( ! $icon_name || ! $file_name ) {
+		if ( null === $icon_name || null === $file_name ) {
 			return null;
 		}
 
@@ -121,41 +122,16 @@ class Font_Awesome_7_Icon_Resolver {
 			],
 		];
 
-		$custom_items = [];
-
 		if ( ! $custom_icon_libraries_enabled ) {
 			return $items;
 		}
 
-		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
-			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
-				continue;
-			}
+		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries( [
+			'require_label' => true,
+			'include_labels' => true,
+		] );
 
-			if ( in_array( $name, self::SKIPPED_TAB_NAMES, true ) ) {
-				continue;
-			}
-
-			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
-			$tab_label = isset( $tab['label'] ) && is_string( $tab['label'] ) ? $tab['label'] : '';
-
-			if ( '' === $tab_name || '' === $tab_label || str_starts_with( $tab_name, self::LIBRARY_PREFIX ) ) {
-				continue;
-			}
-
-			if ( ! Pack_Directory::is_supported( $tab + [ 'name' => $tab_name ] ) ) {
-				continue;
-			}
-
-			$custom_items[] = [
-				'type' => self::FILTER_TYPE_ITEM,
-				'value' => $tab_name,
-				'label' => $tab_label,
-				'icon' => 'library',
-			];
-		}
-
-		if ( empty( $custom_items ) ) {
+		if ( empty( $custom_libraries ) ) {
 			return $items;
 		}
 
@@ -164,44 +140,22 @@ class Font_Awesome_7_Icon_Resolver {
 			'label' => esc_html__( 'My libraries', 'elementor' ),
 		];
 
-		return array_merge( $items, $custom_items );
+		foreach ( $custom_libraries as $library => $entry ) {
+			$items[] = [
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => $library,
+				'label' => $entry['label'],
+				'icon' => 'library',
+			];
+		}
+
+		return $items;
 	}
 
 	private static function get_custom_icon_packs(): array {
-		$packs = [];
-
-		if ( ! class_exists( Icons_Manager::class ) ) {
-			return $packs;
-		}
-
-		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
-			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
-				continue;
-			}
-
-			$library = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : (string) $name;
-
-			if ( '' === $library || in_array( $library, self::SKIPPED_TAB_NAMES, true ) || str_starts_with( $library, self::LIBRARY_PREFIX ) ) {
-				continue;
-			}
-
-			$tab_with_name = $tab + [ 'name' => $library ];
-
-			if ( ! Pack_Directory::is_supported( $tab_with_name ) ) {
-				continue;
-			}
-
-			$urls = Pack_Directory::public_urls( $tab_with_name );
-
-			if ( isset( $tab['fetchJson'] ) && is_string( $tab['fetchJson'] ) && '' !== $tab['fetchJson'] ) {
-				$urls['fetchJson'] = $tab['fetchJson'];
-			}
-
-			$urls['type'] = Pack_Directory::detect_type( $tab_with_name );
-			$packs[ $library ] = $urls;
-		}
-
-		return $packs;
+		return Custom_Icon_Resolver::get_custom_libraries( [
+			'include_urls' => true,
+		] );
 	}
 
 	private static function get_icon_name( string $value ): ?string {
@@ -324,6 +278,10 @@ class Font_Awesome_7_Icon_Resolver {
 		$index = [];
 
 		foreach ( $icons as $name => $icon_tuple ) {
+			if ( is_int( $name ) ) {
+				$name = (string) $name;
+			}
+
 			if ( ! is_string( $name ) || ! self::is_valid_icon_tuple( $icon_tuple ) ) {
 				continue;
 			}

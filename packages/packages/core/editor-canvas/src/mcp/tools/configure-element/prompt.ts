@@ -64,6 +64,19 @@ Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" var
 }
 Image example: { "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }
 Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only when the tag has no settings.
+
+# Icons (the \`svg\` property on e-svg)
+The \`svg\` property accepts two variants. Prefer a library icon for iconography (carts, arrows, social marks, check marks) — it needs no upload and inherits \`color\` via \`currentColor\`. Use an uploaded file only for custom artwork such as a brand logo.
+
+Resolve the icon with the \`find-icons\` tool FIRST, then copy its \`value\` and \`library\` verbatim. Never assemble those strings yourself: Font Awesome renamed many icons between major versions (\`shopping-cart\` became \`cart-shopping\`), so a plausible guess renders nothing. \`find-icons\` matches on names, aliases, labels, human search terms, and categories, so describe the intent — "add to cart" finds \`cart-shopping\`. It takes a batch of \`queries\`, so resolve every icon you need in one call.
+
+Library icon (note the nested PropValues — \`value\` and \`library\` are each a \`string\` PropValue):
+{ "$$type": "icon", "value": { "value": { "$$type": "string", "value": "fa-solid fa-cart-shopping" }, "library": { "$$type": "string", "value": "fa-solid" } } }
+
+Uploaded SVG file:
+{ "$$type": "svg-src", "value": { "id": { "$$type": "image-attachment-id", "value": 123 } } }
+
+Size and colour an e-svg through \`style\` (\`width\`, \`height\`, \`color\`), never through \`propertiesToChange\`.
 ` );
 
 	configureElementToolPrompt.parameter( 'elementId', 'The ID of the element to configure. MANDATORY.' );
@@ -103,6 +116,31 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
   },
   elementId: 'element-id',
   elementType: 'element-type'
+};
+\`\`\`
+` );
+
+	configureElementToolPrompt.example( `
+Setting a Font Awesome icon on an e-svg, after resolving it with \`find-icons\`:
+
+\`\`\`json
+{
+  propertiesToChange: {
+    svg: {
+      $$type: 'icon',
+      value: {
+        value: { $$type: 'string', value: 'fa-solid fa-cart-shopping' },
+        library: { $$type: 'string', value: 'fa-solid' }
+      }
+    }
+  },
+  style: {
+    'width': '1.25rem',
+    'height': '1.25rem',
+    'color': 'var(--brand-accent)'
+  },
+  elementId: 'element-id',
+  elementType: 'e-svg'
 };
 \`\`\`
 ` );

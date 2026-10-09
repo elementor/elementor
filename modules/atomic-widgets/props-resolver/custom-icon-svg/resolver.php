@@ -18,6 +18,93 @@ class Resolver {
 
 	private static array $memory = [];
 
+	/**
+	 * Get custom icon libraries with configurable output.
+	 *
+	 * @param array $options {
+	 *     Configuration options.
+	 *
+	 *     @type bool $require_label   Only include libraries that have a non-empty label.
+	 *     @type bool $include_urls    Include fetchJson URL and type in output.
+	 *     @type bool $include_labels  Include label in output (as 'label' key).
+	 * }
+	 *
+	 * @return array<string, array{label?: string, fetchJson?: string, type?: string}|string>
+	 *   When include_urls or include_labels is true: map of library => array with requested fields
+	 *   When both are false: map of library => label (for back-compat with get_libraries)
+	 */
+	public static function get_custom_libraries( array $options = [] ): array {
+		$require_label = $options['require_label'] ?? false;
+		$include_urls = $options['include_urls'] ?? false;
+		$include_labels = $options['include_labels'] ?? false;
+
+		if ( ! Availability::is_enabled() ) {
+			return [];
+		}
+
+		if ( ! class_exists( Icons_Manager::class ) ) {
+			return [];
+		}
+
+		$libraries = [];
+
+		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
+			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
+				continue;
+			}
+
+			$library = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : (string) $name;
+
+			if ( '' === $library || Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+				continue;
+			}
+
+			if ( in_array( $library, Font_Awesome_7_Icon_Resolver::SKIPPED_TAB_NAMES, true ) ) {
+				continue;
+			}
+
+			$tab_with_name = $tab + [ 'name' => $library ];
+
+			if ( ! Pack_Directory::is_supported( $tab_with_name ) ) {
+				continue;
+			}
+
+			$label = isset( $tab['label'] ) && is_string( $tab['label'] ) && '' !== $tab['label']
+				? $tab['label']
+				: $library;
+
+			if ( $require_label && $label === $library ) {
+				continue;
+			}
+
+			if ( ! $include_urls && ! $include_labels ) {
+				$libraries[ $library ] = $label;
+				continue;
+			}
+
+			$entry = [];
+
+			if ( $include_labels ) {
+				$entry['label'] = $label;
+			}
+
+			if ( $include_urls ) {
+				$urls = Pack_Directory::public_urls( $tab_with_name );
+
+				if ( isset( $tab['fetchJson'] ) && is_string( $tab['fetchJson'] ) && '' !== $tab['fetchJson'] ) {
+					$urls['fetchJson'] = $tab['fetchJson'];
+				}
+
+				$entry = array_merge( $entry, $urls );
+				$entry['type'] = Pack_Directory::detect_type( $tab_with_name );
+			}
+
+			$libraries[ $library ] = $entry;
+		}
+
+		return $libraries;
+	}
+
 	public static function reset_memory(): void {
 		self::$memory = [];
 		Fontello_Glyph_Parser::reset_memory();
@@ -74,8 +161,33 @@ class Resolver {
 	 * @return array{icons: array<string, string>, truncated: bool, total: int}
 	 */
 	public static function resolve_library_response( string $library ): array {
+		$values = self::resolve_library_values( $library );
+		$result = [];
+
+		foreach ( $values['values'] as $value ) {
+			$markup = self::resolve( [
+				'library' => $library,
+				'value' => $value,
+			] );
+
+			if ( '' !== $markup ) {
+				$result[ $value ] = $markup;
+			}
+		}
+
+		return [
+			'icons' => $result,
+			'truncated' => $values['truncated'],
+			'total' => $values['total'],
+		];
+	}
+
+	/**
+	 * @return array{values: array<string, string>, truncated: bool, total: int}
+	 */
+	public static function resolve_library_values( string $library ): array {
 		$empty = [
-			'icons' => [],
+			'values' => [],
 			'truncated' => false,
 			'total' => 0,
 		];
@@ -99,25 +211,24 @@ class Resolver {
 			? $tab['displayPrefix']
 			: rtrim( $prefix, '-' );
 
-		$result = [];
+		$values = [];
 
 		foreach ( $names as $name ) {
-			$value = trim( $display_prefix . ' ' . $prefix . $name );
-			$markup = self::resolve( [
-				'library' => $library,
-				'value' => $value,
-			] );
-
-			if ( '' !== $markup ) {
-				$result[ $value ] = $markup;
-			}
+			$values[ $name ] = trim( $display_prefix . ' ' . $prefix . $name );
 		}
 
 		return [
-			'icons' => $result,
+			'values' => $values,
 			'truncated' => $truncated,
 			'total' => $total,
 		];
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public static function get_libraries(): array {
+		return self::get_custom_libraries();
 	}
 
 	private static function sanitize( string $markup ): string {
