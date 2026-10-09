@@ -31,32 +31,44 @@ class V3_Style_Binding_Compiler {
 		$this->adapters = $adapters;
 	}
 
-	/**
-	 * @return array<int, array<string, mixed>>|WP_Error
-	 */
-	public function compile( Style_Target $target, array $controls ) {
+	public function compile( Style_Target $target, array $controls, V3_Map_Diagnostics $diagnostics, string $widget_type ): Compiled_Style_Target {
 		$compiled = [];
 		$covered_sides = [];
 
 		foreach ( $target->get_bindings() as $binding ) {
+			$entry = self::entry_name( $target->get_alias(), $binding['prop'], $binding['state'] );
 			$result = $this->compile_binding( $binding, $controls );
 
 			if ( $result instanceof WP_Error ) {
-				return $result;
+				self::record( $diagnostics, $widget_type, $entry, $result );
+				continue;
 			}
 
-			$coverage_key = $result['prop'] . '|' . $result['state'];
-			$sides = $result['sides'] ?? self::all_sides();
+			$coverage_key = $result->get_prop() . '|' . $result->get_state();
+			$sides = $result->get_sides() ?? self::all_sides();
 
 			if ( ! empty( array_intersect( $covered_sides[ $coverage_key ] ?? [], $sides ) ) ) {
-				return V3_Widget_Map_Compiler::error( 'overlapping_bindings', $result['prop'] );
+				$diagnostics->add( $widget_type, $entry, 'overlapping_bindings', $result->get_setting() );
+				continue;
 			}
 
 			$covered_sides[ $coverage_key ] = array_merge( $covered_sides[ $coverage_key ] ?? [], $sides );
 			$compiled[] = $result;
 		}
 
-		return $compiled;
+		return new Compiled_Style_Target( $target->get_alias(), $target->get_label(), $compiled );
+	}
+
+	private static function entry_name( string $alias, string $prop, string $state ): string {
+		$entry = $alias . '.' . $prop;
+
+		return Style_Target::DEFAULT_STATE === $state ? $entry : $entry . ':' . $state;
+	}
+
+	private static function record( V3_Map_Diagnostics $diagnostics, string $widget_type, string $entry, WP_Error $error ): void {
+		$data = $error->get_error_data( $error->get_error_code() );
+
+		$diagnostics->add( $widget_type, $entry, (string) ( $data['reason'] ?? '' ), (string) ( $data['detail'] ?? '' ) );
 	}
 
 	/**
@@ -69,7 +81,7 @@ class V3_Style_Binding_Compiler {
 	/**
 	 * @param array{prop: string, state: string, control: V3_Control} $binding
 	 * @param array<string, mixed>                                    $controls
-	 * @return array<string, mixed>|WP_Error
+	 * @return Compiled_Style_Binding|WP_Error
 	 */
 	private function compile_binding( array $binding, array $controls ) {
 		$prop = $binding['prop'];
@@ -111,7 +123,7 @@ class V3_Style_Binding_Compiler {
 			return $dependency_values;
 		}
 
-		return [
+		return new Compiled_Style_Binding( [
 			'prop' => $prop,
 			'state' => $state,
 			'setting' => $setting,
@@ -120,7 +132,7 @@ class V3_Style_Binding_Compiler {
 			'sides' => $sides,
 			'dependency_values' => $dependency_values,
 			'read_type' => $read_type,
-		];
+		] );
 	}
 
 	/**

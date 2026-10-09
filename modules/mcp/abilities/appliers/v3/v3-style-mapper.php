@@ -163,13 +163,12 @@ class V3_Style_Mapper {
 
 	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
 		$registry = V3_Widget_Map_Registry::instance();
-		$style_bindings = $registry->get_style_bindings( $widget_type );
-		$is_map_driven = null !== $style_bindings;
+		$map = $registry->get_map( $widget_type );
 
-		if ( $is_map_driven ) {
+		if ( null !== $map ) {
 			$widget_config['controls'] = $registry->get_registered_controls( $widget_type );
 
-			return new V3_Context_Meta( $widget_type, $widget_config, [], [], true, $style_bindings );
+			return new V3_Context_Meta( $widget_type, $widget_config, [], [], true, $map->get_style_bindings() );
 		}
 
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
