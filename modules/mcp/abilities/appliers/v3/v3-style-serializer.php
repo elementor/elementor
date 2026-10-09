@@ -40,7 +40,13 @@ class V3_Style_Serializer {
 		$blocks = new V3_Block_Accumulator();
 
 		if ( null !== $map ) {
-			$this->map_reader->read( $blocks, $map->get_style_bindings(), $settings, $map_registry->get_registered_controls( $widget_type ) );
+			$this->map_reader->read(
+				$blocks,
+				$map->get_style_bindings(),
+				$settings,
+				$map_registry->get_registered_controls( $widget_type ),
+				V3_Control_Visibility::for_widget( $widget_type )
+			);
 
 			return $this->renderer->render( $blocks );
 		}
