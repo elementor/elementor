@@ -435,6 +435,62 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		$this->assertSame( [ 'setting.title' => 'incompatible_dynamic_control' ], $this->dropped_reasons() );
 	}
 
+	public function test_compile__drops_settings_whose_adapter_does_not_support_the_control() {
+		// Arrange.
+		$map = $this->valid_map()->settings( [
+			'title' => V3_Setting::bind_to( 'title' )->string(),
+			'layout' => V3_Setting::bind_to( 'title' )->enum_from_control(),
+			'stretch' => V3_Setting::bind_to( 'title' )->switcher(),
+			'icon' => V3_Setting::bind_to( 'title' )->icons(),
+		] );
+
+		// Act.
+		$result = $this->compile( $map );
+
+		// Assert.
+		$this->assertSame( [ 'title' ], array_keys( $result->get_settings() ) );
+		$this->assertSame( [
+			'setting.layout' => 'incompatible_setting_shape',
+			'setting.stretch' => 'incompatible_setting_shape',
+			'setting.icon' => 'incompatible_setting_shape',
+		], $this->dropped_reasons() );
+	}
+
+	public function test_compile__builds_plain_schemas_from_control_options_and_conditions() {
+		// Arrange.
+		$map = $this->valid_map()->settings( [
+			'layout' => V3_Setting::bind_to( 'layout' )->enum_from_control()->default( 'horizontal' ),
+			'stretch' => V3_Setting::bind_to( 'stretch' )->switcher(),
+		] );
+		$controls = array_merge( $this->controls(), [
+			'layout' => [
+				'type' => 'select',
+				'options' => [
+					'horizontal' => 'Horizontal',
+					'dropdown' => 'Dropdown',
+				],
+			],
+			'stretch' => [
+				'type' => 'switcher',
+				'condition' => [ 'layout!' => 'dropdown' ],
+			],
+		] );
+
+		// Act.
+		$schemas = $this->compile( $map, $controls )->get_setting_schemas();
+
+		// Assert.
+		$this->assertSame( [
+			'type' => 'string',
+			'enum' => [ 'horizontal', 'dropdown' ],
+			'default' => 'horizontal',
+		], $schemas['layout'] );
+		$this->assertSame( [
+			'type' => 'boolean',
+			'description' => "Only takes effect when layout is not 'dropdown'.",
+		], $schemas['stretch'] );
+	}
+
 	public function test_compile__drops_setting_when_control_is_missing() {
 		// Arrange.
 		$map = $this->valid_map()->settings( [ 'subtitle' => V3_Setting::bind_to( 'subtitle' )->string() ] );
