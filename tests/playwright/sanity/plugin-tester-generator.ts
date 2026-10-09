@@ -38,7 +38,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'cli', hasInstallationPage: true },
-	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
+	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'cli' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
 	{ pluginName: 'tutor-lms-elementor-addons', installSource: 'api' },
