@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Theme_Style_Buttons extends Tab_Base {
 
+	/**
+	 * Matches atomic (V4) elements without adding specificity, so V3 output keeps its current weight.
+	 * `data-interaction-id` is rendered by `Atomic_Element_Base`; `e-atomic-element` covers atomic
+	 * templates rendered without it (e.g. carousel controls).
+	 */
+	const ATOMIC_ELEMENTS_EXCLUSION = ':not(:where(.e-atomic-element, [data-interaction-id]))';
+
 	public function get_id() {
 		return 'theme-style-buttons';
 	}
@@ -56,6 +63,11 @@ class Theme_Style_Buttons extends Tab_Base {
 
 		$button_selector = implode( ',', $button_selectors );
 		$button_hover_selector = implode( ',', $button_hover_selectors );
+
+		// Atomic elements resolve their background through their own style props. A Kit background,
+		// and a gradient's `background-image` in particular, would otherwise paint over them.
+		$button_background_selector = $this->exclude_atomic_elements( $button_selectors );
+		$button_hover_background_selector = $this->exclude_atomic_elements( $button_hover_selectors );
 
 		$this->start_controls_section(
 			'section_buttons',
@@ -110,7 +122,7 @@ class Theme_Style_Buttons extends Tab_Base {
 				'name' => 'button_background',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => $button_selector,
+				'selector' => $button_background_selector,
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -185,7 +197,7 @@ class Theme_Style_Buttons extends Tab_Base {
 				'name' => 'button_hover_background',
 				'types' => [ 'classic', 'gradient' ],
 				'exclude' => [ 'image' ],
-				'selector' => $button_hover_selector,
+				'selector' => $button_hover_background_selector,
 				'fields_options' => [
 					'background' => [
 						'default' => 'classic',
@@ -251,5 +263,12 @@ class Theme_Style_Buttons extends Tab_Base {
 		);
 
 		$this->end_controls_section();
+	}
+
+	private function exclude_atomic_elements( array $selectors ): string {
+		return implode( ',', array_map(
+			fn( $selector ) => $selector . self::ATOMIC_ELEMENTS_EXCLUSION,
+			$selectors
+		) );
 	}
 }
