@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { urlPropTypeUtil, videoSrcPropTypeUtil } from '@elementor/editor-props';
-import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
+import { Card, CardMedia, CardOverlay, CircularProgress } from '@elementor/ui';
 import { useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { MediaSelectActions } from './media-select-actions';
 import { TILES_GRADIENT_FORMULA } from './svg-media-control';
 
 const PLACEHOLDER_IMAGE = window.elementorCommon?.config?.urls?.assets + '/shapes/play-triangle.svg';
@@ -63,33 +63,11 @@ export const VideoMediaControl = createControl( () => {
 					<VideoPreview isFetching={ isFetching } videoUrl={ videoUrl } />
 				</CardMedia>
 				<CardOverlay>
-					<Stack gap={ 1 }>
-						<Button
-							size="tiny"
-							color="inherit"
-							variant="outlined"
-							onClick={ () => open( { mode: 'browse' } ) }
-						>
-							{ __( 'Select video', 'elementor' ) }
-						</Button>
-						<Button
-							size="tiny"
-							variant="text"
-							color="inherit"
-							startIcon={ <UploadIcon /> }
-							onClick={ () => open( { mode: 'upload' } ) }
-						>
-							{ __( 'Upload', 'elementor' ) }
-						</Button>
-						<Button
-							size="tiny"
-							variant="text"
-							color="inherit"
-							onClick={ () => open( { mode: 'url', currentUrl: currentUrlForModal } ) }
-						>
-							{ __( 'Insert from URL', 'elementor' ) }
-						</Button>
-					</Stack>
+					<MediaSelectActions
+						onSelect={ () => open( { mode: 'browse' } ) }
+						onUpload={ () => open( { mode: 'upload' } ) }
+						onInsertUrl={ () => open( { mode: 'url', currentUrl: currentUrlForModal } ) }
+					/>
 				</CardOverlay>
 			</Card>
 		</ControlActions>

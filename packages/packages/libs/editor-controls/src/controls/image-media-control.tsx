@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { imageSrcPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
-import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
+import { Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
 import { type MediaType, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
-import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { MediaSelectActions } from './media-select-actions';
 
 type ImageMediaControlProps = {
 	mediaTypes?: MediaType[];
@@ -61,35 +60,13 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 					) }
 				</CardMedia>
 				<CardOverlay>
-					<Stack gap={ 1 }>
-						<Button
-							size="tiny"
-							color="inherit"
-							variant="outlined"
-							onClick={ () => open( { mode: 'browse' } ) }
-						>
-							{ __( 'Select image', 'elementor' ) }
-						</Button>
-						<Button
-							size="tiny"
-							variant="text"
-							color="inherit"
-							startIcon={ <UploadIcon /> }
-							onClick={ () => open( { mode: 'upload' } ) }
-						>
-							{ __( 'Upload', 'elementor' ) }
-						</Button>
-						<Button
-							size="tiny"
-							variant="text"
-							color="inherit"
-							onClick={ () =>
-								open( { mode: 'url', currentUrl: currentUrlForModal, currentAlt: currentAltForModal } )
-							}
-						>
-							{ __( 'Insert from URL', 'elementor' ) }
-						</Button>
-					</Stack>
+					<MediaSelectActions
+						onSelect={ () => open( { mode: 'browse' } ) }
+						onUpload={ () => open( { mode: 'upload' } ) }
+						onInsertUrl={ () =>
+							open( { mode: 'url', currentUrl: currentUrlForModal, currentAlt: currentAltForModal } )
+						}
+					/>
 				</CardOverlay>
 			</Card>
 		</ControlActions>

@@ -115,7 +115,7 @@ describe( 'VideoMediaControl', () => {
 
 		// Act.
 		renderControl( <VideoMediaControl />, props );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Insert from URL' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Insert URL' } ) );
 
 		// Assert.
 		expect( open ).toHaveBeenCalledWith( { mode: 'url', currentUrl: undefined } );
