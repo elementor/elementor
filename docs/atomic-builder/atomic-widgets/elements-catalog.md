@@ -77,6 +77,31 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-form-error-message` | element | yes | `e-paragraph` | Required child of `e-form` |
 | `e-form` (promotion) | element | — | — | Free sites: placeholder |
 | `e-collection-loop` | element | — | — | Free sites: Pro promotion |
+| `e-carousel` (promotion) | element | — | — | Free sites: Pro promotion (`Carousel_Promotion`) |
+
+### SNAPSHOT — Pro carousel (atomic)
+
+Registered by `elementor-pro/modules/atomic-carousel/module.php` when Pro, license feature `atomic-carousel`, Core `>= 4.4`, and `e_atomic_elements` are active. No separate carousel experiment.
+
+| Type | Kind | Container | Allowed children | Notes |
+|------|------|-----------|------------------|-------|
+| `e-carousel` | element | yes | viewport, arrows, pagination, autoplay button | Root; default 4 slides |
+| `e-carousel-viewport` | element | yes | `e-carousel-container` | Required child of root |
+| `e-carousel-container` | element | yes | `e-carousel-slide` | Slides track; gap drives `--e-carousel-gap` |
+| `e-carousel-slide` | element | yes | any | Locked in structure |
+| `e-carousel-arrow-prev` | element | yes | any | Optional; stashed when `show_arrows` off |
+| `e-carousel-arrow-next` | element | yes | any | Optional; stashed when `show_arrows` off |
+| `e-carousel-pagination` | element | yes | `e-carousel-dot` | Optional; stashed when pagination `none` |
+| `e-carousel-dot` | element | no | — | Prototype; runtime clones per snap |
+| `e-carousel-autoplay-button` | element | no | — | When autoplay + `show_autoplay_button` |
+
+| Site | License `atomic-carousel` | `e_atomic_elements` | Registers |
+|------|---------------------------|---------------------|-----------|
+| Free | — | active | Core promotion stub only |
+| Pro | yes | active | Full carousel tree |
+| Pro | no | active | Nothing (module constructor returns early) |
+
+Implementation notes: `elementor-pro/docs/modules/atomic-carousel/module.md`.
 
 ### SNAPSHOT — Pro form field widgets
 
@@ -109,6 +134,14 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 | `e-tab` | `e-tabs-menu` |
 | `e-tab-content` | `e-tabs-content-area` |
 | `e-paragraph` | `e-form-success-message`, `e-form-error-message` |
+| `e-carousel-viewport` | `e-carousel` |
+| `e-carousel-container` | `e-carousel-viewport` |
+| `e-carousel-slide` | `e-carousel-container` |
+| `e-carousel-arrow-prev` | `e-carousel` |
+| `e-carousel-arrow-next` | `e-carousel` |
+| `e-carousel-pagination` | `e-carousel` |
+| `e-carousel-dot` | `e-carousel-pagination` |
+| `e-carousel-autoplay-button` | `e-carousel` |
 
 ## See also
 
