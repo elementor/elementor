@@ -114,10 +114,10 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$post_id = $this->create_real_document();
 
 		// Act.
-		$result = $this->build_with_icon( $post_id, 'fa-regular fa-star', 'fa-solid' );
+		$result = $this->build_with_icon( $post_id, 'fa-regular fa-cart-shopping', 'fa-solid' );
 
 		// Assert.
-		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertSame( [ 'icon_library_mismatch' ], array_column( $result['warning_details'] ?? [], 'code' ) );
 	}
 
 	public function test_execute__does_not_warn_for_a_managed_icon_library() {

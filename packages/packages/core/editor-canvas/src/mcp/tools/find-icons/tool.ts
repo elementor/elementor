@@ -32,9 +32,9 @@ type IconQueryResult = {
 // NOTE: shape defined by Find_Icons_Ability::execute() in modules/mcp/abilities/find-icons-ability.php
 type FindIconsResponse = {
 	results: IconQueryResult[];
-	libraries: string[];
-	custom_libraries: Record< string, string >;
-	categories: string[];
+	libraries?: string[];
+	custom_libraries?: Record< string, string >;
+	categories?: string[];
 	font_awesome_version: string | null;
 	llm_instructions?: string;
 };
@@ -92,11 +92,24 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 				.describe(
 					'One entry per query, each with ranked "matches". Every match carries the "value" and "library" pair to write on the e-svg icon prop, plus "matched_on" and "license".'
 				),
-			libraries: z.array( z.string() ).describe( 'Icon library keys installed on this site.' ),
+			libraries: z
+				.array( z.string() )
+				.optional()
+				.describe(
+					'Icon library keys installed on this site. Only sent when nothing matched or when browsing.'
+				),
 			customLibraries: z
 				.record( z.string(), z.string() )
-				.describe( 'Custom (uploaded) icon libraries, keyed by library with their labels.' ),
-			categories: z.array( z.string() ).describe( 'Icon categories available for the "category" filter.' ),
+				.optional()
+				.describe(
+					'Custom (uploaded) icon libraries keyed by library. Only sent when nothing matched or when browsing.'
+				),
+			categories: z
+				.array( z.string() )
+				.optional()
+				.describe(
+					'Icon categories for the "category" filter. Only sent when nothing matched or when browsing.'
+				),
 			fontAwesomeVersion: z.string().nullable().describe( 'Font Awesome version the site renders icons from.' ),
 			llmInstructions: z
 				.string()
@@ -118,9 +131,9 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 
 				return {
 					results: data.data.results,
-					libraries: data.data.libraries,
-					customLibraries: data.data.custom_libraries,
-					categories: data.data.categories,
+					...( data.data.libraries ? { libraries: data.data.libraries } : {} ),
+					...( data.data.custom_libraries ? { customLibraries: data.data.custom_libraries } : {} ),
+					...( data.data.categories ? { categories: data.data.categories } : {} ),
 					fontAwesomeVersion: data.data.font_awesome_version,
 					...( data.data.llm_instructions ? { llmInstructions: data.data.llm_instructions } : {} ),
 				};

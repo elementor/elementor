@@ -357,9 +357,25 @@ class Element_Config_Applier {
 		}
 
 		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
-			$value_library = strtok( $value, ' ' );
+			if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+				$value_library = strtok( $value, ' ' );
 
-			if ( $value_library === $library && Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+				if ( $value_library !== $library ) {
+					$warnings->add(
+						'icon_library_mismatch',
+						sprintf(
+							'Property "%s" on "%s" was saved with icon "%s" in library "%s", so it renders in the "%s" style rather than "%s". Copy the "value" and "library" pair from one elementor/find-icons result.',
+							$key,
+							$element_type,
+							$value,
+							$library,
+							$library,
+							$value_library
+						),
+						$config_id
+					);
+				}
+
 				return;
 			}
 

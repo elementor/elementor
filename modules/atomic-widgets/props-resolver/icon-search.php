@@ -75,13 +75,28 @@ class Icon_Search {
 			$results[] = self::search_single( $entries, $query, $page, $per_page, $browse_matched_on );
 		}
 
-		return [
+		$response = [
 			'results' => $results,
-			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_labels ) ),
-			'custom_libraries' => empty( $custom_library_labels ) ? (object) [] : $custom_library_labels,
-			'categories' => Icon_Catalog::get_categories(),
 			'font_awesome_version' => Icon_Catalog::get_version(),
 		];
+
+		if ( self::needs_site_facets( $results ) ) {
+			$response['libraries'] = array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_labels ) );
+			$response['custom_libraries'] = empty( $custom_library_labels ) ? (object) [] : $custom_library_labels;
+			$response['categories'] = Icon_Catalog::get_categories();
+		}
+
+		return $response;
+	}
+
+	private static function needs_site_facets( array $results ): bool {
+		foreach ( $results as $result ) {
+			if ( '' === $result['query'] ) {
+				return true;
+			}
+		}
+
+		return 0 === array_sum( array_column( $results, 'total' ) );
 	}
 
 	private static function get_entries( string $library, string $category, array $custom_libraries ): array {
@@ -165,7 +180,7 @@ class Icon_Search {
 	 * @return array{0: int, 1: string}|null
 	 */
 	private static function match( array $entry, string $query ): ?array {
-		$name = $entry['name'];
+		$name = self::normalize( $entry['name'] );
 		$aliases = array_map( [ self::class, 'normalize' ], $entry['aliases'] );
 		$terms = array_map( [ self::class, 'normalize' ], $entry['terms'] );
 
@@ -187,7 +202,7 @@ class Icon_Search {
 
 		$words = self::significant_words( $query );
 
-		if ( count( $words ) > 1 ) {
+		if ( ! empty( $words ) ) {
 			$name_words = explode( '-', $name );
 			$known_words = array_merge( $name_words, ...array_map( static fn( $item ) => explode( '-', $item ), array_merge( $aliases, $terms ) ) );
 			$matched_words = array_intersect( $words, $known_words );
@@ -231,7 +246,7 @@ class Icon_Search {
 			$queries = [ $queries ];
 		}
 
-		$sanitized = array_values( array_unique( array_filter( array_map( [ self::class, 'sanitize_text' ], $queries ) ) ) );
+		$sanitized = array_values( array_unique( array_filter( array_map( [ self::class, 'sanitize_text' ], $queries ), 'strlen' ) ) );
 
 		return array_slice( $sanitized, 0, self::MAX_QUERIES );
 	}

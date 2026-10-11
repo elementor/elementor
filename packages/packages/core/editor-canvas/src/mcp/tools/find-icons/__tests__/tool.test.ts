@@ -115,6 +115,20 @@ describe( 'find-icons tool', () => {
 		expect( result.fontAwesomeVersion ).toBe( '7.3.1' );
 	} );
 
+	it( 'omits facets the server did not send', async () => {
+		// Arrange
+		givenServerResponse( { results: serverResponse.results, font_awesome_version: '7.3.1' } );
+		const { handler } = captureTool();
+
+		// Act
+		const result = await handler( { queries: [ 'add to cart' ] } );
+
+		// Assert
+		expect( result ).not.toHaveProperty( 'libraries' );
+		expect( result ).not.toHaveProperty( 'customLibraries' );
+		expect( result ).not.toHaveProperty( 'categories' );
+	} );
+
 	it( 'surfaces a server failure as a tool error', async () => {
 		// Arrange
 		const post = jest.fn().mockRejectedValue( new Error( 'The icon catalog is missing on this site.' ) );

@@ -53,6 +53,8 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			'exact name, non-alphabetical words' => [ 'right-left', 'fa-solid fa-right-left', Icon_Search::MATCHED_ON_NAME ],
 			'alias from an older FA version' => [ 'shopping-cart', 'fa-solid fa-cart-shopping', Icon_Search::MATCHED_ON_ALIAS ],
 			'search term' => [ 'email', 'fa-regular fa-envelope', Icon_Search::MATCHED_ON_TERM ],
+			'single word with a filler word' => [ 'star icon', 'fa-regular fa-star', Icon_Search::MATCHED_ON_NAME ],
+			'numeric query' => [ '0', 'fa-solid fa-0', Icon_Search::MATCHED_ON_NAME ],
 			'plain-language phrase' => [ 'add to cart icon', 'fa-solid fa-cart-plus', Icon_Search::MATCHED_ON_TERM ],
 		];
 	}
@@ -118,11 +120,24 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		Custom_Icon_Svg\Resolver::reset_memory();
 
 		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'shopping-bag' ], 'library' => 'test-pack' ] );
+		$response = Icon_Search::search( [ 'library' => 'test-pack' ] );
 
 		// Assert.
 		$this->assertSame( 'test test-shopping-bag', $response['results'][0]['matches'][0]['value'] );
 		$this->assertSame( 'Test Pack', $response['custom_libraries']['test-pack'] );
+	}
+
+	public function test_search__sends_site_facets_only_when_nothing_matched_or_browsing() {
+		// Act.
+		$matched = Icon_Search::search( [ 'queries' => [ 'star' ] ] );
+		$unmatched = Icon_Search::search( [ 'queries' => [ 'zzzqqq' ] ] );
+		$browsing = Icon_Search::search( [ 'category' => 'shopping' ] );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'categories', $matched );
+		$this->assertArrayNotHasKey( 'libraries', $matched );
+		$this->assertArrayHasKey( 'categories', $unmatched );
+		$this->assertArrayHasKey( 'libraries', $browsing );
 	}
 
 	private function search( array $args ): array {

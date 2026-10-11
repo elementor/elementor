@@ -29,6 +29,7 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->original_svg_library_state = Plugin::$instance->experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY )['default'];
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_ACTIVE );
 
 		$this->ability = new Find_Icons_Ability();
 		$this->fixture_path = get_temp_dir() . 'find-icons-' . wp_generate_password( 8, false ) . '.json';
