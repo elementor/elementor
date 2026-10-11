@@ -31,6 +31,8 @@ type IconQueryResult = {
 
 type CustomLibrary = {
 	label: string;
+	total: number;
+	truncated: boolean;
 };
 
 // NOTE: shape defined by Find_Icons_Ability::execute() in modules/mcp/abilities/find-icons-ability.php
@@ -98,8 +100,15 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 				),
 			libraries: z.array( z.string() ).describe( 'Icon library keys installed on this site.' ),
 			customLibraries: z
-				.record( z.string(), z.object( { label: z.string() } ) )
-				.describe( 'Custom (uploaded) icon libraries with their labels.' ),
+				.record(
+					z.string(),
+					z.object( {
+						label: z.string(),
+						total: z.number(),
+						truncated: z.boolean(),
+					} )
+				)
+				.describe( 'Custom (uploaded) icon libraries with their labels, totals, and truncation status.' ),
 			categories: z.array( z.string() ).describe( 'Icon categories available for the "category" filter.' ),
 			fontAwesomeVersion: z.string().nullable().describe( 'Font Awesome version the site renders icons from.' ),
 			llmInstructions: z
