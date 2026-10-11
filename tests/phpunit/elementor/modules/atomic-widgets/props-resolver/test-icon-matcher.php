@@ -23,7 +23,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__arrow_down_1_9() {
 		$entry = $this->make_entry( 'arrow-down-1-9' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'arrow-down-1-9' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'arrow-down-1-9' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -31,7 +31,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__arrow_down_9_1() {
 		$entry = $this->make_entry( 'arrow-down-9-1' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'arrow-down-9-1' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'arrow-down-9-1' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -39,7 +39,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__arrow_down_a_z() {
 		$entry = $this->make_entry( 'arrow-down-a-z' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'arrow-down-a-z' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'arrow-down-a-z' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -47,7 +47,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__arrow_down_z_a() {
 		$entry = $this->make_entry( 'arrow-down-z-a' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'arrow-down-z-a' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'arrow-down-z-a' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -55,7 +55,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__arrow_down_short_wide() {
 		$entry = $this->make_entry( 'arrow-down-short-wide' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'arrow-down-short-wide' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'arrow-down-short-wide' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -63,7 +63,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__arrow_down_wide_short() {
 		$entry = $this->make_entry( 'arrow-down-wide-short' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'arrow-down-wide-short' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'arrow-down-wide-short' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -71,7 +71,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__left_right() {
 		$entry = $this->make_entry( 'left-right' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'left-right' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'left-right' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
@@ -79,7 +79,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 
 	public function test_exact_name_match__right_left() {
 		$entry = $this->make_entry( 'right-left' );
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'right-left' ), [] );
+		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize_preserve_order( 'right-left' ), [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
