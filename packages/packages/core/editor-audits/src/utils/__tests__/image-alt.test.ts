@@ -32,6 +32,7 @@ const PAGE_CONTEXT: PageContextResponse = {
 	ally_accessibility_statement_created: false,
 	ally_accessibility_statement_url: '',
 	ally_widget_settings_url: '',
+	ally_scan_url: '',
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: '',
 	cookiez_plugin_installed: false,
@@ -40,6 +41,7 @@ const PAGE_CONTEXT: PageContextResponse = {
 	cookiez_consent_mode_settings_url: '',
 	image_optimization_plugin_active: false,
 	image_optimization_plugin_url: '',
+	image_optimization_settings_url: '',
 	frontend_url: null,
 };
 
