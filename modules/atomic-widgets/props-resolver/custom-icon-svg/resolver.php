@@ -18,6 +18,8 @@ class Resolver {
 
 	private static array $memory = [];
 
+	private static array $renderable_values = [];
+
 	/**
 	 * Get custom icon libraries with configurable output.
 	 *
@@ -107,6 +109,7 @@ class Resolver {
 
 	public static function reset_memory(): void {
 		self::$memory = [];
+		self::$renderable_values = [];
 		Fontello_Glyph_Parser::reset_memory();
 	}
 
@@ -222,6 +225,33 @@ class Resolver {
 			'truncated' => $truncated,
 			'total' => $total,
 		];
+	}
+
+	public static function is_renderable_value( string $library, string $value ): bool {
+		return '' !== self::resolve( [
+			'library' => $library,
+			'value' => $value,
+		] );
+	}
+
+	/**
+	 * @return array{values: array<string, string>, truncated: bool, total: int}
+	 */
+	public static function resolve_renderable_library_values( string $library ): array {
+		if ( isset( self::$renderable_values[ $library ] ) ) {
+			return self::$renderable_values[ $library ];
+		}
+
+		$listing = self::resolve_library_values( $library );
+
+		$listing['values'] = array_filter(
+			$listing['values'],
+			fn( string $value ) => self::is_renderable_value( $library, $value )
+		);
+
+		self::$renderable_values[ $library ] = $listing;
+
+		return $listing;
 	}
 
 	private static function sanitize( string $markup ): string {

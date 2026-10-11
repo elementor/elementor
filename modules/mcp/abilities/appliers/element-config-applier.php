@@ -392,22 +392,7 @@ class Element_Config_Applier {
 			return;
 		}
 
-		$library_icons = Custom_Icon_Resolver::resolve_library_values( $library );
-
-		if ( $library_icons['truncated'] ) {
-			return;
-		}
-
-		$icon_exists = false;
-
-		foreach ( $library_icons['values'] as $icon_value ) {
-			if ( $icon_value === $value ) {
-				$icon_exists = true;
-				break;
-			}
-		}
-
-		if ( ! $icon_exists ) {
+		if ( ! Custom_Icon_Resolver::is_renderable_value( $library, $value ) ) {
 			$warnings->add(
 				'icon_not_found',
 				sprintf(
