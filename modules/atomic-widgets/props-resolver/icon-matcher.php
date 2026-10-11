@@ -27,11 +27,13 @@ class Icon_Matcher {
 
 	const SCORE_EXACT_LABEL = 800;
 
+	const SCORE_PLURAL_NAME = 740;
+
+	const SCORE_PREFIX_NAME = 730;
+
 	const SCORE_WHOLE_WORD_NAME = 725;
 
 	const SCORE_EXACT_TERM = 700;
-
-	const SCORE_PREFIX_NAME = 650;
 
 	const SCORE_SUBSTRING_NAME = 500;
 
@@ -225,20 +227,26 @@ class Icon_Matcher {
 			return self::result( self::SCORE_EXACT_LABEL, self::MATCHED_ON_LABEL );
 		}
 
-		if ( self::list_has_exact( $entry['terms'], $needle_sorted ) ) {
-			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
+		$is_short_query = strlen( $needle_preserve_order ) < self::MIN_TOKEN_LENGTH;
+
+		if ( ! $is_short_query && $name_normalized === $needle_preserve_order . 's' ) {
+			return self::result( self::SCORE_PLURAL_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( strlen( $needle_preserve_order ) < self::MIN_TOKEN_LENGTH ) {
-			return null;
+		if ( str_starts_with( $name_normalized, $needle_preserve_order . '-' ) ) {
+			return self::result( self::SCORE_PREFIX_NAME, self::MATCHED_ON_NAME );
 		}
 
 		if ( self::is_whole_word_in_name( $name_normalized, $needle_preserve_order ) ) {
 			return self::result( self::SCORE_WHOLE_WORD_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( str_starts_with( $name_normalized, $needle_preserve_order . '-' ) ) {
-			return self::result( self::SCORE_PREFIX_NAME, self::MATCHED_ON_NAME );
+		if ( self::list_has_exact( $entry['terms'], $needle_sorted ) ) {
+			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
+		}
+
+		if ( $is_short_query ) {
+			return null;
 		}
 
 		if ( self::is_word_boundary_match( $name_normalized, $needle_preserve_order ) ) {

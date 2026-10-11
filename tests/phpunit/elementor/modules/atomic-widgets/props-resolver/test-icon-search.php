@@ -546,8 +546,8 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	}
 
 	public function test_search__returns_no_matches_for_queries_that_normalize_to_empty() {
-		// Arrange — queries that contain only special characters or short words.
-		$args = [ 'queries' => [ '!!!', '🛒', 'a', 'hi', '...' ] ];
+		// Arrange — queries that contain only special characters.
+		$args = [ 'queries' => [ '!!!', '🛒', '...' ] ];
 
 		// Act.
 		$response = Icon_Search::search( $args );

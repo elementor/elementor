@@ -52,7 +52,7 @@ class Icon_Search {
 		if ( empty( $queries ) ) {
 			if ( '' === $library && '' === $category ) {
 				return [
-					'error' => esc_html__( 'At least one of queries, library, or category is required.', 'elementor' ),
+					'error' => __( 'At least one of queries, library, or category is required.', 'elementor' ),
 				];
 			}
 
@@ -95,10 +95,12 @@ class Icon_Search {
 	}
 
 	private static function search_single( string $query, string $library, string $category, int $page, int $per_page, array $custom_values ): array {
-		$scored = self::score_catalog( $query, $library, $category );
+		[ $search_query, $search_library ] = self::extract_library_token( $query, $library );
+
+		$scored = self::score_catalog( $search_query, $search_library, $category );
 
 		if ( '' === $category ) {
-			$scored = array_merge( $scored, self::score_custom_libraries( $query, $library, $custom_values ) );
+			$scored = array_merge( $scored, self::score_custom_libraries( $search_query, $search_library, $custom_values ) );
 		}
 
 		usort( $scored, [ self::class, 'compare_scored' ] );
@@ -120,6 +122,39 @@ class Icon_Search {
 		];
 	}
 
+	/**
+	 * @return array{0: string, 1: string} The query without its library token, and the library to filter by.
+	 */
+	private static function extract_library_token( string $query, string $library ): array {
+		if ( '' !== $library ) {
+			return [ $query, $library ];
+		}
+
+		$libraries = Icon_Catalog::get_libraries();
+		$found_library = '';
+		$remaining_words = [];
+
+		foreach ( preg_split( '/\s+/', trim( $query ) ) as $word ) {
+			if ( '' === $found_library && in_array( strtolower( $word ), $libraries, true ) ) {
+				$found_library = strtolower( $word );
+				continue;
+			}
+
+			$remaining_words[] = $word;
+		}
+
+		if ( '' === $found_library || empty( $remaining_words ) ) {
+			return [ $query, $library ];
+		}
+
+		$remaining_words = array_map(
+			static fn( $word ) => preg_replace( '/^fa-/i', '', $word ),
+			$remaining_words
+		);
+
+		return [ implode( ' ', $remaining_words ), $found_library ];
+	}
+
 	private static function compare_scored( array $a, array $b ): int {
 		if ( $a['score'] !== $b['score'] ) {
 			return $b['score'] <=> $a['score'];
@@ -137,6 +172,10 @@ class Icon_Search {
 			if ( $a_is_generic !== $b_is_generic ) {
 				return $a_is_generic ? -1 : 1;
 			}
+		}
+
+		if ( Icon_Matcher::MATCHED_ON_TERM === $a_matched_on && Icon_Matcher::MATCHED_ON_TERM === $b_matched_on && $a['term_count'] !== $b['term_count'] ) {
+			return $b['term_count'] <=> $a['term_count'];
 		}
 
 		$a_name_words = count( explode( '-', $a['match']['name'] ) );
@@ -245,6 +284,7 @@ class Icon_Search {
 	private static function scored_entry( array $entry, array $best ): array {
 		return [
 			'score' => $best['score'],
+			'term_count' => count( $entry['terms'] ?? [] ),
 			'match' => [
 				'value' => $entry['value'],
 				'library' => $entry['library'],
