@@ -34,7 +34,7 @@ Each match is one icon in one style:
 
 - `value` and `library` are what you write on the element. Copy both verbatim.
 - Results are ordered best first. `matched_on: "name"` is a stronger signal than `matched_on: "term"`.
-- All icons returned are `license: "free"` - the index is built from Font Awesome's free packages.
+- Check each match's `license`; only use `"free"` icons and skip any `"pro"` entry.
 - The same icon often ships in several styles (`fa-solid`, `fa-regular`, `fa-brands`). Prefer `fa-solid` for UI iconography and keep one style across a page. Brand marks only exist in `fa-brands`.
 - `libraries` lists what this site actually has, including custom uploaded icon packs. `categories` are Font Awesome categories only (custom packs are not categorized). Pass `library` or `category` to narrow a search, or `category` alone to browse.
 - Paginate with `page` / `per_page` when `truncated` is `true`.

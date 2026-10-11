@@ -191,6 +191,7 @@ class Find_Icons_Ability extends Abstract_Ability {
 												Icon_Matcher::MATCHED_ON_LABEL,
 												Icon_Matcher::MATCHED_ON_TERM,
 												Icon_Matcher::MATCHED_ON_CATEGORY,
+												Icon_Matcher::MATCHED_ON_LIBRARY,
 												Icon_Matcher::MATCHED_ON_CUSTOM_NAME,
 											],
 										],
