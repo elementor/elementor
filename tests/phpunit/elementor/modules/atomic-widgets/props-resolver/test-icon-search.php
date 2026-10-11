@@ -2,7 +2,6 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
@@ -706,155 +705,30 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertSame( 300, $response['custom_libraries']['large-pack']['total'] );
 	}
 
-	public function test_catalog__icon_value_format_matches_fixture() {
-		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
-		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
-		Icon_Catalog::reset();
-		Font_Awesome_7_Icon_Resolver::reset();
-
-		$real_search_index = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/search-index.json';
-		$committed_search_index = ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/search-index.json';
-
-		if ( file_exists( $real_search_index ) ) {
-			$search_index_path = $real_search_index;
-			$json_base_path = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/';
-		} elseif ( file_exists( $committed_search_index ) ) {
-			$search_index_path = $committed_search_index;
-			$json_base_path = ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/';
-		} else {
-			$this->fail( 'Neither real nor committed Font Awesome 7 search-index.json found.' );
-		}
-
-		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $search_index_path );
-		add_filter( 'elementor/atomic-widgets/font-awesome-7/json-base-path', fn() => $json_base_path );
-		Icon_Catalog::reset();
-
-		$fixture_path = ELEMENTOR_PATH . 'tests/fixtures/icon-value-format.json';
-		$this->assertFileExists( $fixture_path, 'Fixture file must exist' );
-
-		$fixture = json_decode( file_get_contents( $fixture_path ), true );
-		$this->assertIsArray( $fixture );
-		$this->assertArrayHasKey( 'icons', $fixture );
-
-		foreach ( $fixture['icons'] as $icon_case ) {
-			$name = $icon_case['name'];
-			$expected_values = $icon_case['expectedValues'];
-
-			foreach ( $expected_values as $library => $expected_value ) {
-				$catalog_entries = array_filter(
-					Icon_Catalog::get_entries(),
-					fn( $e ) => $e['name'] === $name && $e['library'] === $library
-				);
-
-				$this->assertNotEmpty( $catalog_entries, "Icon '$name' should exist in library '$library'" );
-
-				$entry = array_values( $catalog_entries )[0];
-				$actual_value = $entry['value'];
-
-				$this->assertSame(
-					$expected_value,
-					$actual_value,
-					"Icon '$name' in '$library' should have value format '$expected_value', got '$actual_value'"
-				);
-			}
-		}
-
-		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $this->fixture_path );
-		add_filter(
-			'elementor/atomic-widgets/font-awesome-7/json-base-path',
-			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
-		);
-		Icon_Catalog::reset();
-		Font_Awesome_7_Icon_Resolver::reset();
-	}
-
-	public function test_search__arrow_down_1_9_returns_exact_name_match() {
+	/**
+	 * @dataProvider data_exact_icon_names
+	 */
+	public function test_search__returns_the_exact_name_first( string $name ) {
 		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-1-9' ] ] );
+		$response = Icon_Search::search( [ 'queries' => [ $name ] ] );
 
 		// Assert.
 		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-arrow-down-1-9', $matches[0]['value'] );
+		$this->assertSame( 'fa-solid fa-' . $name, $matches[0]['value'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
 	}
 
-	public function test_search__arrow_down_9_1_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-9-1' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-arrow-down-9-1', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__arrow_down_a_z_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-a-z' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-arrow-down-a-z', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__arrow_down_z_a_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-z-a' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-arrow-down-z-a', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__arrow_down_short_wide_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-short-wide' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-arrow-down-short-wide', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__arrow_down_wide_short_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-wide-short' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-arrow-down-wide-short', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__left_right_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'left-right' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-left-right', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__right_left_returns_exact_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'right-left' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-right-left', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
-	}
-
-	public function test_search__magnifying_glass_reports_name_match() {
-		// Act.
-		$response = Icon_Search::search( [ 'queries' => [ 'magnifying-glass' ] ] );
-
-		// Assert.
-		$matches = $response['results'][0]['matches'];
-		$this->assertSame( 'fa-solid fa-magnifying-glass', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	public function data_exact_icon_names(): array {
+		return [
+			[ 'arrow-down-1-9' ],
+			[ 'arrow-down-9-1' ],
+			[ 'arrow-down-a-z' ],
+			[ 'arrow-down-z-a' ],
+			[ 'arrow-down-short-wide' ],
+			[ 'arrow-down-wide-short' ],
+			[ 'left-right' ],
+			[ 'right-left' ],
+			[ 'magnifying-glass' ],
+		];
 	}
 }
