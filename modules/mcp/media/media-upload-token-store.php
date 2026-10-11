@@ -25,7 +25,7 @@ class Media_Upload_Token_Store {
 		];
 	}
 
-	public static function consume( string $token ): array|\WP_Error {
+	public static function consume( string $token ) {
 		$key = self::storage_key( $token );
 		$data = get_transient( $key );
 
@@ -52,7 +52,7 @@ class Media_Upload_Token_Store {
 		return $data;
 	}
 
-	public static function peek( string $token ): array|\WP_Error {
+	public static function peek( string $token ) {
 		$key = self::storage_key( $token );
 		$data = get_transient( $key );
 
