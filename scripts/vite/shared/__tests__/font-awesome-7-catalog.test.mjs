@@ -101,8 +101,6 @@ describe( 'verifyFontAwesome7Catalog', () => {
 		);
 	} );
 
-
-
 	it( 'throws when metadata enrichment produced no search terms', () => {
 		// Arrange.
 		const baseDir = writeCatalog( {

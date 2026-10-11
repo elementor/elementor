@@ -58,8 +58,6 @@ describe( 'find-icons tool', () => {
 		jest.clearAllMocks();
 	} );
 
-
-
 	it( 'proxies a batch of queries to the php ability', async () => {
 		// Arrange
 		const post = givenServerResponse( serverResponse );
@@ -102,7 +100,6 @@ describe( 'find-icons tool', () => {
 		} );
 	} );
 
-
 	it( 'returns the writable icon pair and the site catalog facets', async () => {
 		// Arrange
 		givenServerResponse( serverResponse );
@@ -117,8 +114,6 @@ describe( 'find-icons tool', () => {
 		expect( result.categories ).toEqual( serverResponse.categories );
 		expect( result.fontAwesomeVersion ).toBe( '7.3.1' );
 	} );
-
-
 
 	it( 'surfaces a server failure as a tool error', async () => {
 		// Arrange

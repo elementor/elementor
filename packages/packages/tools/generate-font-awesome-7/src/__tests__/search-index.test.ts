@@ -8,7 +8,6 @@ import {
 	LICENSE_FREE,
 	LICENSE_PRO,
 	readCategories,
-	readIconMetadata,
 	serializeSearchIndex,
 } from '../search-index.ts';
 
@@ -90,9 +89,6 @@ describe( 'buildSearchIndex', () => {
 		expect( icons.map( ( icon ) => icon.name ) ).toEqual( [ 'star' ] );
 	} );
 
-
-
-
 	it( 'marks a style that metadata does not list as free as pro', () => {
 		// Arrange.
 		const iconsByFileName = { solid: solidPack( [ 'crown' ] ) };
@@ -106,7 +102,6 @@ describe( 'buildSearchIndex', () => {
 		// Assert.
 		expect( icons[ 0 ].license ).toBe( LICENSE_PRO );
 	} );
-
 
 	it( 'serializes deterministically so rebuilds produce identical bytes', () => {
 		// Arrange.
@@ -126,7 +121,7 @@ describe( 'buildSearchIndex', () => {
 	} );
 } );
 
-describe( 'readIconMetadata / readCategories', () => {
+describe( 'readCategories', () => {
 	let metadataDir: string;
 
 	beforeEach( () => {
