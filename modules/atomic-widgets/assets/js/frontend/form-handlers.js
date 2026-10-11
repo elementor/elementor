@@ -3,6 +3,8 @@ import { Alpine } from '@elementor/alpinejs';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
 
+const REDIRECT_DELAY_MS = 1000;
+
 let webmcpFormListenersRegistered = false;
 
 registerBySelector( {
@@ -150,7 +152,7 @@ function redirectIfRequested( response ) {
 	const redirectUrl = actionResults.find( ( result ) => 'success' === result.status && result.redirectUrl )?.redirectUrl;
 
 	if ( redirectUrl ) {
-		window.location.assign( redirectUrl );
+		setTimeout( () => window.location.assign( redirectUrl ), REDIRECT_DELAY_MS );
 	}
 }
 
