@@ -23,6 +23,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
@@ -87,6 +88,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
 					],
 					'version' => [ 'type' => 'string' ],
+					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
 			],
 			[
@@ -156,6 +159,10 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				],
 			]
 		);
+	}
+
+	public function get_snapshot_post_id( array $input ): int {
+		return isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 	}
 
 	public function execute( $input = [] ) {

@@ -31,6 +31,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 					'post_id' => [ 'type' => 'integer' ],
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
+					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 				],
 			],
 			[
@@ -59,6 +60,10 @@ class Update_Settings_Ability extends Abstract_Ability {
 				],
 			]
 		);
+	}
+
+	public function get_snapshot_post_id( array $input ): int {
+		return isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
 	}
 
 	public function execute( $input = [] ) {

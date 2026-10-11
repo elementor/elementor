@@ -57,6 +57,14 @@ class Build_Composition_Ability extends Abstract_Ability {
 		);
 	}
 
+	public function get_snapshot_post_id( array $input ): int {
+		if ( ! empty( $input['dry_run'] ) ) {
+			return 0;
+		}
+
+		return isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
+	}
+
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
@@ -251,6 +259,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'Element IDs removed when mode is replace_children (empty when none existed).',
 				],
+				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 			],
 		];
 	}

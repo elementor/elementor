@@ -12,6 +12,7 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
@@ -57,6 +58,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 			fn() => current_user_can( 'manage_options' ),
 			$this->get_input_schema()
 		);
+	}
+
+	public function get_snapshot_post_id( array $input ): int {
+		if ( self::ACTION_UPDATE !== ( $input['action'] ?? null ) ) {
+			return 0;
+		}
+
+		return isset( $input['component_id'] ) ? (int) $input['component_id'] : 0;
 	}
 
 	public function execute( $input = [] ) {
@@ -663,6 +672,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'description' => 'Every warning is fixable: one field was skipped or adjusted during XML compilation and the rest was saved. Errors fail the call instead.',
 				],
 				'warning_details' => Warnings_Bag::get_details_schema(),
+				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 			],
 		];
 	}
