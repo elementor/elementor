@@ -35,6 +35,7 @@ type FindIconsResponse = {
 	libraries?: string[];
 	custom_libraries?: Record< string, string >;
 	categories?: string[];
+	truncated_custom_libraries?: string[];
 	font_awesome_version: string | null;
 	llm_instructions?: string;
 };
@@ -110,6 +111,10 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 				.describe(
 					'Icon categories for the "category" filter. Only sent when nothing matched or when browsing.'
 				),
+			truncatedCustomLibraries: z
+				.array( z.string() )
+				.optional()
+				.describe( 'Custom libraries with more than 250 icons; only their first 250 icons are searchable.' ),
 			fontAwesomeVersion: z.string().nullable().describe( 'Font Awesome version the site renders icons from.' ),
 			llmInstructions: z
 				.string()
@@ -134,6 +139,9 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 					...( data.data.libraries ? { libraries: data.data.libraries } : {} ),
 					...( data.data.custom_libraries ? { customLibraries: data.data.custom_libraries } : {} ),
 					...( data.data.categories ? { categories: data.data.categories } : {} ),
+					...( data.data.truncated_custom_libraries
+						? { truncatedCustomLibraries: data.data.truncated_custom_libraries }
+						: {} ),
 					fontAwesomeVersion: data.data.font_awesome_version,
 					...( data.data.llm_instructions ? { llmInstructions: data.data.llm_instructions } : {} ),
 				};

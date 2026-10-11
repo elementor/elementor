@@ -91,6 +91,23 @@ class Test_Renderable_Icons extends Elementor_Test_Base {
 		$this->assertSame( [ 'icon_not_found' ], array_column( $bogus['warning_details'] ?? [], 'code' ) );
 	}
 
+	public function test_search__reports_custom_libraries_cut_at_the_listing_cap() {
+		// Arrange.
+		$names = [];
+
+		for ( $i = 0; $i <= Resolver::MAX_LIBRARY_ICONS; $i++ ) {
+			$names[] = 'icon-' . $i;
+		}
+
+		$this->register_pack( $names );
+
+		// Act.
+		$result = Icon_Search::search( [ 'library' => self::LIBRARY ] );
+
+		// Assert.
+		$this->assertSame( [ self::LIBRARY ], $result['truncated_custom_libraries'] );
+	}
+
 	private function register_pack( array $names ): void {
 		add_filter(
 			'elementor/atomic-widgets/custom-icon-library-dir',

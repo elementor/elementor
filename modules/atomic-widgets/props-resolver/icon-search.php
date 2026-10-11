@@ -67,7 +67,8 @@ class Icon_Search {
 		}
 
 		$custom_library_labels = Custom_Icon_Resolver::get_custom_libraries();
-		$entries = self::get_entries( $library, $category, array_keys( $custom_library_labels ) );
+		$truncated_custom_libraries = [];
+		$entries = self::get_entries( $library, $category, array_keys( $custom_library_labels ), $truncated_custom_libraries );
 
 		$results = [];
 
@@ -88,6 +89,10 @@ class Icon_Search {
 			$response['categories'] = Icon_Catalog::get_categories();
 		}
 
+		if ( ! empty( $truncated_custom_libraries ) ) {
+			$response['truncated_custom_libraries'] = $truncated_custom_libraries;
+		}
+
 		return $response;
 	}
 
@@ -101,7 +106,7 @@ class Icon_Search {
 		return 0 === array_sum( array_column( $results, 'total' ) );
 	}
 
-	private static function get_entries( string $library, string $category, array $custom_libraries ): array {
+	private static function get_entries( string $library, string $category, array $custom_libraries, array &$truncated_custom_libraries ): array {
 		$entries = array_filter(
 			Icon_Catalog::get_entries(),
 			static fn( $entry ) => ( '' === $library || $entry['library'] === $library )
@@ -117,7 +122,13 @@ class Icon_Search {
 				continue;
 			}
 
-			foreach ( Custom_Icon_Resolver::resolve_library_values( $custom_library )['values'] as $name => $value ) {
+			$resolved = Custom_Icon_Resolver::resolve_library_values( $custom_library );
+
+			if ( $resolved['truncated'] ) {
+				$truncated_custom_libraries[] = $custom_library;
+			}
+
+			foreach ( $resolved['values'] as $name => $value ) {
 				$entries[] = [
 					'name' => (string) $name,
 					'library' => $custom_library,

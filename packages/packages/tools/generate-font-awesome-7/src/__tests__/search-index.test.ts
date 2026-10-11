@@ -103,6 +103,20 @@ describe( 'buildSearchIndex', () => {
 		expect( icons[ 0 ].license ).toBe( LICENSE_PRO );
 	} );
 
+	it( 'marks free brand icons as free', () => {
+		// Arrange.
+		const iconsByFileName = { brands: solidPack( [ 'github' ] ) };
+		const metadata = {
+			github: { familyStylesByLicense: { free: [ { family: 'classic', style: 'brands' } ] } },
+		};
+
+		// Act.
+		const { icons } = buildSearchIndex( { iconsByFileName, metadata, categoriesByIconName: {} } );
+
+		// Assert.
+		expect( icons[ 0 ].license ).toBe( LICENSE_FREE );
+	} );
+
 	it( 'serializes deterministically so rebuilds produce identical bytes', () => {
 		// Arrange.
 		const iconsByFileName = { solid: solidPack( [ 'star', 'anchor' ] ) };

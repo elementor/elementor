@@ -185,6 +185,10 @@ class Find_Icons_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 				],
 				'custom_libraries' => [ 'type' => 'object' ],
+				'truncated_custom_libraries' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'string' ],
+				],
 				'categories' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
