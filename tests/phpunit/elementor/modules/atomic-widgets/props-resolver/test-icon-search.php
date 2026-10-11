@@ -571,16 +571,27 @@ class Test_Icon_Search extends Elementor_Test_Base {
 	}
 
 	public function test_catalog__icon_value_format_matches_fixture() {
-		// Arrange — temporarily remove test fixture filter to use real catalog.
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 		Icon_Catalog::reset();
 		Font_Awesome_7_Icon_Resolver::reset();
 
 		$real_search_index = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/search-index.json';
-		if ( ! file_exists( $real_search_index ) ) {
-			$this->markTestSkipped( 'Real Font Awesome 7 search-index.json not found. This test validates build-generated assets and requires `npm run start` or `npm run build` to have been run.' );
+		$committed_search_index = ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/search-index.json';
+
+		if ( file_exists( $real_search_index ) ) {
+			$search_index_path = $real_search_index;
+			$json_base_path = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json/';
+		} elseif ( file_exists( $committed_search_index ) ) {
+			$search_index_path = $committed_search_index;
+			$json_base_path = ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/';
+		} else {
+			$this->fail( 'Neither real nor committed Font Awesome 7 search-index.json found.' );
 		}
+
+		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $search_index_path );
+		add_filter( 'elementor/atomic-widgets/font-awesome-7/json-base-path', fn() => $json_base_path );
+		Icon_Catalog::reset();
 
 		$fixture_path = ELEMENTOR_PATH . 'tests/fixtures/icon-value-format.json';
 		$this->assertFileExists( $fixture_path, 'Fixture file must exist' );
@@ -589,7 +600,6 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertIsArray( $fixture );
 		$this->assertArrayHasKey( 'icons', $fixture );
 
-		// Act & Assert.
 		foreach ( $fixture['icons'] as $icon_case ) {
 			$name = $icon_case['name'];
 			$expected_values = $icon_case['expectedValues'];
@@ -613,7 +623,6 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			}
 		}
 
-		// Restore test fixture filters.
 		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $this->fixture_path );
 		add_filter(
 			'elementor/atomic-widgets/font-awesome-7/json-base-path',
