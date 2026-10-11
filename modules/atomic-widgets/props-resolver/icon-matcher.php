@@ -25,9 +25,11 @@ class Icon_Matcher {
 
 	const SCORE_EXACT_LABEL = 800;
 
-	const SCORE_PREFIX_NAME = 750;
+	const SCORE_WHOLE_WORD_NAME = 725;
 
 	const SCORE_EXACT_TERM = 700;
+
+	const SCORE_PREFIX_NAME = 650;
 
 	const SCORE_SUBSTRING_NAME = 500;
 
@@ -225,6 +227,10 @@ class Icon_Matcher {
 			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
 		}
 
+		if ( self::is_whole_word_in_name( $name_normalized, $needle_preserve_order ) ) {
+			return self::result( self::SCORE_WHOLE_WORD_NAME, self::MATCHED_ON_NAME );
+		}
+
 		if ( str_starts_with( $name_normalized, $needle_preserve_order . '-' ) ) {
 			return self::result( self::SCORE_PREFIX_NAME, self::MATCHED_ON_NAME );
 		}
@@ -250,6 +256,16 @@ class Icon_Matcher {
 		}
 
 		return null;
+	}
+
+	private static function is_whole_word_in_name( string $name, string $needle ): bool {
+		if ( ! str_contains( $name, $needle ) ) {
+			return false;
+		}
+
+		$pattern = '/(^|-)' . preg_quote( $needle, '/' ) . '(-|$)/';
+
+		return (bool) preg_match( $pattern, $name );
 	}
 
 	private static function is_word_boundary_match( string $haystack, string $needle ): bool {

@@ -137,6 +137,13 @@ class Icon_Search {
 			}
 		}
 
+		$a_name_words = count( explode( '-', $a['match']['name'] ) );
+		$b_name_words = count( explode( '-', $b['match']['name'] ) );
+
+		if ( $a_name_words !== $b_name_words ) {
+			return $a_name_words <=> $b_name_words;
+		}
+
 		$a_length = strlen( $a['match']['name'] );
 		$b_length = strlen( $b['match']['name'] );
 
