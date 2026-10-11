@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import * as path from 'path';
+import { timeouts } from '../../../config/timeouts';
 import { ImportExportSelectors } from '../selectors/import-export-selectors';
 
 export class ImportExportHelpers {
@@ -53,10 +54,12 @@ export class ImportExportHelpers {
 
 	static async customizeContentSection( page: Page, uncheckPost: boolean = false ): Promise<void> {
 		await page.click( ImportExportSelectors.contentEditButton );
+		await expect( page.getByRole( 'heading', { name: 'Edit content' } ) ).toBeVisible();
 		if ( uncheckPost ) {
-			await page.uncheck( ImportExportSelectors.postCheckbox );
+			await page.getByRole( 'checkbox', { name: 'Post', exact: true } ).uncheck();
 		}
 		await page.click( ImportExportSelectors.saveChangesButton );
+		await expect( page.getByRole( 'heading', { name: 'Edit content' } ) ).toBeHidden( { timeout: timeouts.longAction } );
 	}
 
 	static async customizeSettingsSection( page: Page, uncheckTheme: boolean = false ): Promise<void> {
