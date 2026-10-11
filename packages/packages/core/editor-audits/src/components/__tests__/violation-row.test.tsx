@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { getElementTitle } from '@elementor/editor-elements';
 import { useFloatingPanelZIndex } from '@elementor/editor-floating-panels';
 import { fireEvent, screen } from '@testing-library/react';
 
@@ -106,6 +107,44 @@ describe( 'ViolationRow', () => {
 		expect( screen.getAllByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveLength( 2 );
 	} );
 
+	it( 'renders a single shared Fix with Angie action when every violation has the same angiePrompt', () => {
+		// Arrange.
+		const sharedPrompt = 'Set every nested container inside a boxed container to Full Width.';
+
+		// Act.
+		renderExpanded( [
+			{
+				auditId: AUDIT.id,
+				elementId: 'el-1',
+				label: 'Nested boxed container.',
+				angieFix: true,
+				angiePrompt: sharedPrompt,
+			},
+			{
+				auditId: AUDIT.id,
+				elementId: 'el-2',
+				label: 'Nested boxed container.',
+				angieFix: true,
+				angiePrompt: sharedPrompt,
+			},
+			{
+				auditId: AUDIT.id,
+				elementId: 'el-3',
+				label: 'Nested boxed container.',
+				angieFix: true,
+				angiePrompt: sharedPrompt,
+			},
+		] );
+
+		// Assert.
+		const fixWithAngieLinks = screen.getAllByRole( 'link', { name: 'Fix with Angie' } );
+		expect( fixWithAngieLinks ).toHaveLength( 1 );
+		expect( fixWithAngieLinks[ 0 ] ).toHaveAttribute(
+			'href',
+			`#angie-prompt=${ encodeURIComponent( sharedPrompt ) }`
+		);
+	} );
+
 	it( 'renders both the primary and secondary CTA buttons inside the guidance box when provided', () => {
 		// Arrange & Act.
 		renderExpanded( [
@@ -160,6 +199,18 @@ describe( 'ViolationRow', () => {
 
 		// Assert.
 		expect( focusViolation ).toHaveBeenCalledWith( expect.objectContaining( { label: 'Site logo is not set.' } ) );
+	} );
+
+	it( 'shows only the element name, not the "name - description" pair, when the element has a title', () => {
+		// Arrange.
+		jest.mocked( getElementTitle ).mockReturnValueOnce( 'Nested boxed container' );
+
+		// Act.
+		renderExpanded( [ { auditId: AUDIT.id, elementId: 'el-1', label: 'Nested boxed container.' } ] );
+
+		// Assert.
+		expect( screen.getByText( 'Nested boxed container' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Nested boxed container - Nested boxed container.' ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'violations with an elementId', () => {
