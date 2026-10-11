@@ -107,7 +107,11 @@ type MediaSelectActionsProps = {
 
 export const MediaSelectActions = ( { label, onSelect, onUpload, onInsertUrl }: MediaSelectActionsProps ) => (
 	<Stack alignItems="center" gap={ 1 }>
-		<MediaActionGroup label={ label } onSelect={ onSelect } uploadSlot={ <MediaUploadButton onClick={ onUpload } /> } />
+		<MediaActionGroup
+			label={ label }
+			onSelect={ onSelect }
+			uploadSlot={ <MediaUploadButton onClick={ onUpload } /> }
+		/>
 		<Button size="tiny" variant="text" color="inherit" onClick={ onInsertUrl }>
 			{ __( 'Insert URL', 'elementor' ) }
 		</Button>

@@ -187,7 +187,11 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 					/>
 				</Popover>
 			) : null }
-			<Box ref={ controlContainerRef } data-testid={ SVG_MEDIA_CONTROL_CONTAINER_TEST_ID } sx={ { width: '100%' } }>
+			<Box
+				ref={ controlContainerRef }
+				data-testid={ SVG_MEDIA_CONTROL_CONTAINER_TEST_ID }
+				sx={ { width: '100%' } }
+			>
 				<ControlActions>
 					<StyledCard variant="outlined">
 						<StyledCardMediaContainer>

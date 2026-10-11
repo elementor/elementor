@@ -41,7 +41,11 @@ export const SvgMediaOverlay = ( {
 			groupRef={ buttonGroupRef }
 			testId={ SVG_MEDIA_ACTION_GROUP_TEST_ID }
 			uploadSlot={
-				<ConditionalControlInfotip title={ infotipTitle } description={ infotipDescription } isEnabled={ ! isAdmin }>
+				<ConditionalControlInfotip
+					title={ infotipTitle }
+					description={ infotipDescription }
+					isEnabled={ ! isAdmin }
+				>
 					<Box component="span" sx={ { display: 'flex', width: '100%' } }>
 						<UploadControl isAdmin={ isAdmin } onUpload={ onUpload } />
 					</Box>
