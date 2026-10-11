@@ -41,15 +41,16 @@ class Import extends Import_Runner_Base {
 		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
 
-private function is_default_styles_enabled( array $data ): bool {
-	$settings = $data['customization']['settings'] ?? null;
+	private function is_default_styles_enabled( array $data ): bool {
+		$settings = $data['customization']['settings'] ?? null;
 
-	if ( ! is_array( $settings ) || ! array_key_exists( 'defaultStyles', $settings ) ) {
-		return true;
+		if ( ! is_array( $settings ) || ! array_key_exists( 'defaultStyles', $settings ) ) {
+			return true;
+		}
+
+		return (bool) $settings['defaultStyles'];
 	}
 
-	return (bool) $settings['defaultStyles'];
-}
 	public function import( array $data, array $imported_data ): array {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$default_styles_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
