@@ -2,6 +2,7 @@ import * as React from 'react';
 import { imageSrcPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
 import { type MediaType, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
+import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
@@ -10,9 +11,13 @@ import { MediaSelectActions } from './media-select-actions';
 
 type ImageMediaControlProps = {
 	mediaTypes?: MediaType[];
+	label?: string;
 };
 
-export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: ImageMediaControlProps ) => {
+export const ImageMediaControl = createControl( ( {
+	mediaTypes = [ 'image' ],
+	label = __( 'Image', 'elementor' ),
+}: ImageMediaControlProps ) => {
 	const { value, setValue, propType, placeholder } = useBoundProp( imageSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
@@ -61,6 +66,7 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 				</CardMedia>
 				<CardOverlay>
 					<MediaSelectActions
+						label={ label }
 						onSelect={ () => open( { mode: 'browse' } ) }
 						onUpload={ () => open( { mode: 'upload' } ) }
 						onInsertUrl={ () =>

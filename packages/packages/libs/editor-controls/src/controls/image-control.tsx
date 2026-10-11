@@ -24,7 +24,7 @@ export const ImageControl = createControl( ( { sizes, label = __( 'Image', 'elem
 		<PropProvider { ...propContext }>
 			<Stack gap={ 1.5 }>
 				<ControlLabel>{ label }</ControlLabel>
-				<ImageSrcControl />
+				<ImageSrcControl label={ label } />
 				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
 					<Grid item xs={ 6 }>
 						<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
@@ -38,13 +38,13 @@ export const ImageControl = createControl( ( { sizes, label = __( 'Image', 'elem
 	);
 } );
 
-const ImageSrcControl = () => {
+const ImageSrcControl = ( { label }: { label: string } ) => {
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const mediaTypes: MediaType[] = allowSvgUpload ? [ 'image', 'svg' ] : [ 'image' ];
 
 	return (
 		<PropKeyProvider bind={ 'src' }>
-			<ImageMediaControl mediaTypes={ mediaTypes } />
+			<ImageMediaControl mediaTypes={ mediaTypes } label={ label } />
 		</PropKeyProvider>
 	);
 };

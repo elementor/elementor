@@ -12,7 +12,11 @@ import { TILES_GRADIENT_FORMULA } from './svg-media-control';
 
 const PLACEHOLDER_IMAGE = window.elementorCommon?.config?.urls?.assets + '/shapes/play-triangle.svg';
 
-export const VideoMediaControl = createControl( () => {
+type VideoMediaControlProps = {
+	label?: string;
+};
+
+export const VideoMediaControl = createControl( ( { label = __( 'Video', 'elementor' ) }: VideoMediaControlProps ) => {
 	const { value, setValue, propType } = useBoundProp( videoSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
@@ -64,6 +68,7 @@ export const VideoMediaControl = createControl( () => {
 				</CardMedia>
 				<CardOverlay>
 					<MediaSelectActions
+						label={ label }
 						onSelect={ () => open( { mode: 'browse' } ) }
 						onUpload={ () => open( { mode: 'upload' } ) }
 						onInsertUrl={ () => open( { mode: 'url', currentUrl: currentUrlForModal } ) }

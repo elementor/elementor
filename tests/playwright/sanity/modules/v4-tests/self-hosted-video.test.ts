@@ -49,7 +49,7 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			await expect( videoWidget ).toBeVisible();
 			await editor.page
 				.locator( '[data-type="settings-field"]' )
-				.filter( { hasText: 'Video' } )
+				.filter( { has: editor.page.getByText( 'Video', { exact: true } ) } )
 				.getByRole( 'button', { name: 'Upload', exact: true } )
 				.click();
 			await editor.page.setInputFiles(

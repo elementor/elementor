@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UploadIcon } from '@elementor/icons';
-import { Box, Button, Stack, styled } from '@elementor/ui';
+import { Box, Button, Stack, styled, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SELECT_AREA_WIDTH = 72;
@@ -18,7 +18,7 @@ const actionButtonSx = {
 	lineHeight: 1,
 };
 
-const MediaActionGroup = styled( Stack )( {
+const SplitButtonGroup = styled( Stack )( {
 	display: 'inline-flex',
 	flexDirection: 'row',
 	alignItems: 'stretch',
@@ -32,46 +32,88 @@ const MediaActionGroup = styled( Stack )( {
 	},
 } );
 
+type MediaActionGroupProps = {
+	label: string;
+	onSelect: () => void;
+	uploadSlot: React.ReactNode;
+	groupRef?: React.Ref< HTMLDivElement >;
+	testId?: string;
+};
+
+export const MediaActionGroup = ( {
+	label,
+	onSelect,
+	uploadSlot,
+	groupRef,
+	testId,
+}: MediaActionGroupProps ) => (
+	<SplitButtonGroup
+		ref={ groupRef }
+		role="group"
+		aria-label={ label }
+		direction="row"
+		data-testid={ testId }
+	>
+		<Button
+			size="tiny"
+			color="inherit"
+			variant="text"
+			onClick={ onSelect }
+			sx={ { ...actionButtonSx, minWidth: SELECT_AREA_WIDTH } }
+		>
+			{ __( 'Select', 'elementor' ) }
+		</Button>
+		<Box
+			sx={ {
+				width: '1px',
+				alignSelf: 'stretch',
+				bgcolor: 'currentColor',
+				flexShrink: 0,
+			} }
+		/>
+		<Box component="span" sx={ { display: 'flex', width: UPLOAD_AREA_WIDTH } }>
+			{ uploadSlot }
+		</Box>
+	</SplitButtonGroup>
+);
+
+type MediaUploadButtonProps = {
+	disabled?: boolean;
+	onClick?: () => void;
+};
+
+export const MediaUploadButton = ( { disabled = false, onClick }: MediaUploadButtonProps ) => (
+	<Tooltip title={ __( 'Upload', 'elementor' ) }>
+		<Box component="span" sx={ { display: 'flex', width: '100%' } }>
+			<Button
+				sx={ { ...actionButtonSx, width: '100%' } }
+				size="tiny"
+				color="inherit"
+				variant="text"
+				disabled={ disabled }
+				onClick={ onClick }
+				aria-label={ __( 'Upload', 'elementor' ) }
+			>
+				<UploadIcon fontSize="small" />
+			</Button>
+		</Box>
+	</Tooltip>
+);
+
 type MediaSelectActionsProps = {
+	label: string;
 	onSelect: () => void;
 	onUpload: () => void;
 	onInsertUrl: () => void;
 };
 
-export const MediaSelectActions = ( { onSelect, onUpload, onInsertUrl }: MediaSelectActionsProps ) => (
+export const MediaSelectActions = ( { label, onSelect, onUpload, onInsertUrl }: MediaSelectActionsProps ) => (
 	<Stack alignItems="center" gap={ 1 }>
-		<MediaActionGroup direction="row">
-			<Button
-				size="tiny"
-				color="inherit"
-				variant="text"
-				onClick={ onSelect }
-				aria-label={ __( 'Select', 'elementor' ) }
-				sx={ { ...actionButtonSx, minWidth: SELECT_AREA_WIDTH } }
-			>
-				{ __( 'Select', 'elementor' ) }
-			</Button>
-			<Box
-				sx={ {
-					width: '1px',
-					alignSelf: 'stretch',
-					bgcolor: 'currentColor',
-					flexShrink: 0,
-				} }
-			/>
-			<Box component="span" sx={ { display: 'flex', width: UPLOAD_AREA_WIDTH } }>
-				<Button
-					sx={ { ...actionButtonSx, width: '100%' } }
-					size="tiny"
-					color="inherit"
-					variant="text"
-					onClick={ onUpload }
-					aria-label={ __( 'Upload', 'elementor' ) }
-				>
-					<UploadIcon fontSize="small" />
-				</Button>
-			</Box>
-		</MediaActionGroup>
+		<MediaActionGroup
+			label={ label }
+			onSelect={ onSelect }
+			uploadSlot={ <MediaUploadButton onClick={ onUpload } /> }
+		/>
 		<Button size="tiny" variant="text" color="inherit" onClick={ onInsertUrl }>
 			{ __( 'Insert URL', 'elementor' ) }
 		</Button>

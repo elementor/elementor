@@ -105,7 +105,39 @@ describe( 'VideoMediaControl', () => {
 		expect( control ).toHaveAttribute( 'src', 'https://localhost/video.mp4' );
 	} );
 
-	it( 'should open wp media frame in url mode when clicking insert from url', () => {
+	it( 'should open wp media frame in browse mode when clicking select', () => {
+		// Arrange.
+		const open = jest.fn();
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
+
+		const setValue = jest.fn();
+		const props = { setValue, value: {}, bind: 'source', propType };
+
+		// Act.
+		renderControl( <VideoMediaControl />, props );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Select' } ) );
+
+		// Assert.
+		expect( open ).toHaveBeenCalledWith( { mode: 'browse' } );
+	} );
+
+	it( 'should open wp media frame in upload mode when clicking upload', () => {
+		// Arrange.
+		const open = jest.fn();
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
+
+		const setValue = jest.fn();
+		const props = { setValue, value: {}, bind: 'source', propType };
+
+		// Act.
+		renderControl( <VideoMediaControl />, props );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upload' } ) );
+
+		// Assert.
+		expect( open ).toHaveBeenCalledWith( { mode: 'upload' } );
+	} );
+
+	it( 'should open wp media frame in url mode when clicking insert url', () => {
 		// Arrange.
 		const open = jest.fn();
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
