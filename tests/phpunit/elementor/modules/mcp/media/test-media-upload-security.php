@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
+use Elementor\Modules\Mcp\Abilities\Update_Media_Attachment_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
@@ -32,6 +33,25 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		( new Mcp_Media_Upload_REST_API() )->register_hooks();
 
 		do_action( 'rest_api_init' );
+	}
+
+	public function test_upload_abilities__are_not_direct_mcp_tools() {
+		// Arrange
+		$upload = new Upload_Media_Ability();
+		$request = new Request_Media_Upload_Ability();
+		$update = new Update_Media_Attachment_Ability();
+		$registry = \Elementor\Modules\Mcp\Module::build_core_registry();
+
+		// Assert
+		$this->assertFalse( $upload->is_exposed_via_proxy() );
+		$this->assertFalse( $upload->is_exposed_on_server() );
+		$this->assertFalse( $request->is_exposed_via_proxy() );
+		$this->assertFalse( $request->is_exposed_on_server() );
+		$this->assertFalse( $update->is_exposed_via_proxy() );
+		$this->assertFalse( $update->is_exposed_on_server() );
+		$this->assertNull( $registry->find_by_proxy_slug( 'upload-media' ) );
+		$this->assertNull( $registry->find_by_proxy_slug( 'request-media-upload' ) );
+		$this->assertNull( $registry->find_by_proxy_slug( 'update-media-attachment' ) );
 	}
 
 	public function test_public_host_validator__rejects_loopback_ip() {
