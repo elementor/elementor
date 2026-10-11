@@ -40,6 +40,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-results' );
 		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/svg-converters' );
 		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 
 		if ( file_exists( $this->fixture_path ) ) {
@@ -599,6 +600,21 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 				return $tabs;
 			}
+		);
+
+		add_filter(
+			'elementor/atomic-widgets/icon/svg-converters',
+			static fn() => [
+				new class() implements Custom_Icon_Svg\Svg_Converter {
+					public function supports( array $tab ): bool {
+						return 'test-pack' === ( $tab['name'] ?? '' );
+					}
+
+					public function convert( array $tab, string $icon_value ): string {
+						return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1H0z"/></svg>';
+					}
+				},
+			]
 		);
 
 		Custom_Icon_Svg\Resolver::reset_memory();

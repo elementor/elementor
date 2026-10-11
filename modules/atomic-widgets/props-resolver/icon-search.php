@@ -40,7 +40,9 @@ class Icon_Search {
 				continue;
 			}
 
-			$resolved = Custom_Icon_Resolver::resolve_renderable_library_values( $custom_library );
+			$resolved = '' === $category
+				? Custom_Icon_Resolver::resolve_renderable_library_values( $custom_library )
+				: Custom_Icon_Resolver::resolve_library_values( $custom_library );
 			$custom_values[ $custom_library ] = $resolved['values'];
 			$custom_libraries[ $custom_library ] = [
 				'label' => $custom_library_metadata[ $custom_library ]['label'] ?? $custom_library,
