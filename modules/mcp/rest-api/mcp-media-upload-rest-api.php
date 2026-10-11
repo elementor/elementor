@@ -69,6 +69,17 @@ class Mcp_Media_Upload_REST_API {
 			);
 		}
 
+		$content_length_error = Media_Upload_Config::assert_content_length_within_limit(
+			$request->get_header( 'content-length' )
+		);
+		if ( $content_length_error ) {
+			if ( $previous_user > 0 ) {
+				wp_set_current_user( $previous_user );
+			}
+
+			return $content_length_error;
+		}
+
 		$stream_result = $this->stream_body_to_temp( $request );
 		if ( is_wp_error( $stream_result ) ) {
 			if ( $previous_user > 0 ) {

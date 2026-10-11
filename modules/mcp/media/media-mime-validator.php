@@ -32,7 +32,7 @@ class Media_Mime_Validator {
 		return null;
 	}
 
-	public static function assert_allowed_mime( ?string $mime ): ?\WP_Error {
+	public static function assert_allowed_mime( ?string $mime, ?int $user_id = null ): ?\WP_Error {
 		if ( ! is_string( $mime ) || '' === $mime ) {
 			return new \WP_Error(
 				'invalid_mime',
@@ -43,15 +43,15 @@ class Media_Mime_Validator {
 
 		$mime = strtolower( $mime );
 
-		if ( Media_Upload_Config::SVG_MIME_TYPE === $mime && ! Media_Upload_Config::is_svg_upload_allowed() ) {
+		if ( Media_Upload_Config::SVG_MIME_TYPE === $mime && ! Media_Upload_Config::is_svg_upload_allowed_for_user( $user_id ) ) {
 			return new \WP_Error(
 				'svg_not_allowed',
-				__( 'SVG uploads are not enabled or cannot be sanitized on this site.', 'elementor' ),
+				__( 'SVG uploads are limited to site administrators or users with permission to upload unfiltered files.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
 
-		if ( ! in_array( $mime, Media_Upload_Config::allowed_mime_types(), true ) ) {
+		if ( ! in_array( $mime, Media_Upload_Config::allowed_mime_types( $user_id ), true ) ) {
 			return new \WP_Error(
 				'invalid_mime',
 				__( 'The file type could not be determined or is not allowed.', 'elementor' ),

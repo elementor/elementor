@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Media;
 
 use Elementor\Core\Files\File_Types\Svg;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -72,7 +73,9 @@ class Media_Attachment_Service {
 			'tmp_name' => $file['tmp_name'],
 		];
 
+		$sideload_filters = self::install_svg_sideload_filters( $mime );
 		$attachment_id = media_handle_sideload( $file_array, 0, $title ?? '', [ 'test_form' => false ] );
+		self::remove_svg_sideload_filters( $sideload_filters );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			self::delete_temp( $file['tmp_name'] );
@@ -154,6 +157,30 @@ class Media_Attachment_Service {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
+	}
+
+	private static function install_svg_sideload_filters( string $mime ): array {
+		if ( Media_Upload_Config::SVG_MIME_TYPE !== $mime ) {
+			return [];
+		}
+
+		$mime_filter = static function ( array $mimes ) {
+			$mimes['svg'] = Media_Upload_Config::SVG_MIME_TYPE;
+
+			return $mimes;
+		};
+
+		add_filter( 'upload_mimes', $mime_filter );
+
+		return [
+			'mime' => $mime_filter,
+		];
+	}
+
+	private static function remove_svg_sideload_filters( array $filters ): void {
+		if ( isset( $filters['mime'] ) ) {
+			remove_filter( 'upload_mimes', $filters['mime'] );
+		}
 	}
 
 	private static function delete_temp( string $path ): void {

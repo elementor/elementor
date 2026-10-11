@@ -52,31 +52,6 @@ class Media_Upload_Token_Store {
 		return $data;
 	}
 
-	public static function peek( string $token ) {
-		$key = self::storage_key( $token );
-		$data = get_transient( $key );
-
-		if ( ! is_array( $data ) || empty( $data['user_id'] ) || empty( $data['expires_at'] ) ) {
-			return new \WP_Error(
-				'invalid_upload_token',
-				__( 'The upload token is invalid or has expired.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
-		if ( time() >= (int) $data['expires_at'] ) {
-			delete_transient( $key );
-
-			return new \WP_Error(
-				'upload_token_expired',
-				__( 'The upload token has expired.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
-		return $data;
-	}
-
 	private static function storage_key( string $token ): string {
 		return Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . hash( 'sha256', $token );
 	}
