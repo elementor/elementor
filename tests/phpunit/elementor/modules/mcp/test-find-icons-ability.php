@@ -2,6 +2,8 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
@@ -23,8 +25,12 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 	private Find_Icons_Ability $ability;
 	private string $fixture_path;
 
+	private string $original_svg_library_state;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_svg_library_state = Plugin::$instance->experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY )['default'];
 
 		$this->ability = new Find_Icons_Ability();
 		$this->fixture_path = get_temp_dir() . 'find-icons-' . wp_generate_password( 8, false ) . '.json';
@@ -51,6 +57,7 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, $this->original_svg_library_state );
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 
 		if ( file_exists( $this->fixture_path ) ) {
@@ -202,7 +209,7 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$admin_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $admin_id );
 
-		Plugin::$instance->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_INACTIVE );
 
 		$availability = $this->ability->is_available();
 

@@ -2,6 +2,8 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
@@ -21,8 +23,13 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 
 	private string $fixture_path;
 
+	private string $original_svg_library_state;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_svg_library_state = Plugin::$instance->experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY )['default'];
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_ACTIVE );
 
 		$this->fixture_path = sys_get_temp_dir() . '/fa7-fixture-' . uniqid( '', true );
 
@@ -60,6 +67,7 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, $this->original_svg_library_state );
 		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 
 		if ( is_dir( $this->fixture_path ) ) {
@@ -146,7 +154,7 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 
-		Plugin::$instance->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_INACTIVE );
 
 		$result = $this->build_with_icon( $post_id, 'fa-solid fa-invalid-icon', 'fa-solid' );
 

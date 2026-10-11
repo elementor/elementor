@@ -229,6 +229,10 @@ class Icon_Matcher {
 			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
 		}
 
+		if ( strlen( $needle_preserve_order ) < self::MIN_TOKEN_LENGTH ) {
+			return null;
+		}
+
 		if ( self::is_whole_word_in_name( $name_normalized, $needle_preserve_order ) ) {
 			return self::result( self::SCORE_WHOLE_WORD_NAME, self::MATCHED_ON_NAME );
 		}
