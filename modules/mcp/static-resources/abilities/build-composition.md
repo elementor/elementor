@@ -39,7 +39,7 @@ Use the XML attribute `configuration-id` on **every** element tag in `xml_struct
 | Uniqueness | Each `configuration-id` value must appear at most once in the `xml_structure` string for this call. Duplicates fail validation (`elementor_duplicate_configuration_id`). |
 | Map keys | Keys in `element_config`, `style`, `classes`, and `interactions` must match a `configuration-id` in `xml_structure` **exactly** (case-sensitive string). Extra map keys with no matching element are ignored. Elements without map entries are still created. |
 | Allowed values | Any non-empty string valid as a quoted XML attribute value (letters, numbers, spaces, hyphens, etc.). |
-| Navigator title | The server copies the value into the element's `editor_settings.title`, so it is visible to the user in the editor — use human-readable labels. |
+| Navigator title | The server uses the value as the element's layer name in the Structure panel, so it is visible to the user in the editor — use human-readable labels. Rename it later with `elementor/manage-elements` `editor_settings.name`, never through `element_config`. |
 | Scope | Per request only. A `configuration-id` from an earlier call does not refer to the same widget later; it is not a persisted element id. |
 
 ## Element id (server assigns; output and follow-up)
@@ -237,6 +237,7 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **post_id**: WordPress post ID of the document to mutate
 - **xml_structure**: Valid XML with configuration-id attributes on every element
 - **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT). For `<e-component>` config-ids the value is `{ component_id, overrides? }` (see COMPONENTS section).
+- **editor_settings**: configuration-id → editor-only fields, separate from `element_config`. Currently `{ "decorative": true }` on `e-div-block`, `e-flexbox` and `e-grid` for visual-only containers that stay empty (see the `editor_settings` section of the widget schema). Never put these in `element_config`, and do not send `name` here — the layer name comes from `configuration-id`.
 - **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). Variables by **label** via `var(--label)`
 - **classes**: configuration-id → list of existing global class **labels** to attach
 - **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
@@ -245,24 +246,28 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **dry_run**: If true, validate and return resolved tree without persisting
 
 # EXAMPLE
-Section with heading + button (NO explicit heights - content sizes naturally):
+Section with heading + button and a decorative glow (only the glow gets an explicit size):
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
+  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-div-block configuration-id=\"Glow\"/><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
   "element_config": {
     "Section Title": {
       "tag": "h2",
       "title": "Welcome"
     }
   },
+  "editor_settings": {
+    "Glow": { "decorative": true }
+  },
   "style": {
-    "Main Section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "Main Section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "Glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
     "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }
 ```
-Note: No height/width specified on any element — content sizes naturally.
+Note: Only the decorative `Glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
 
 # FURTHER INSTRUCTIONS
 Use server-assigned element ids from `resolved_xml` for follow-up work — see **ID RULES**.

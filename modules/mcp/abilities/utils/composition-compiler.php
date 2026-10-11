@@ -36,6 +36,8 @@ final class Composition_Compiler {
 	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
 	private const DOCUMENT_ROOT_V3_WRAPPER = 'container';
 
+	private const NAME_COMES_FROM_CONFIGURATION_ID_HINT = 'The layer name is the element\'s configuration-id; rename it afterwards with elementor/manage-elements editor_settings.name.';
+
 	public const COMPONENT_PARENT_ID = 'component';
 
 	public static function make(): self {
@@ -119,6 +121,8 @@ final class Composition_Compiler {
 			return $config_result['error'];
 		}
 		$warnings->merge( $config_result['warnings'] );
+
+		$warnings->merge( $this->apply_editor_settings( $index, $this->as_map( $input['editor_settings'] ?? [] ) ) );
 
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
 		$warnings->merge( $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) )['warnings'] );
@@ -265,6 +269,30 @@ final class Composition_Compiler {
 		}
 
 		return self::DOCUMENT_ROOT_WRAPPER;
+	}
+
+	/**
+	 * @param array<string, array&>               $index           Index of subtree refs.
+	 * @param array<string, array<string, mixed>> $editor_settings Per-config-id editor-only fields.
+	 */
+	private function apply_editor_settings( array $index, array $editor_settings ): Warnings_Bag {
+		$warnings = Warnings_Bag::make();
+
+		foreach ( $editor_settings as $config_id => $values ) {
+			if ( ! isset( $index[ $config_id ] ) ) {
+				continue;
+			}
+
+			Editor_Settings::apply(
+				$index[ $config_id ],
+				$this->as_map( $values ),
+				(string) $config_id,
+				$warnings,
+				[ Editor_Settings::NAME => self::NAME_COMES_FROM_CONFIGURATION_ID_HINT ]
+			);
+		}
+
+		return $warnings;
 	}
 
 	private function as_map( $value ): array {
