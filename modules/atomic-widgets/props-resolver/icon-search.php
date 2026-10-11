@@ -19,6 +19,8 @@ class Icon_Search {
 
 	const MAX_QUERY_WORDS = 10;
 
+	const MAX_PAGE = 1000;
+
 	/**
 	 * @param array{queries?: array|string, library?: string, category?: string, page?: int, per_page?: int} $args
 	 */
@@ -50,7 +52,7 @@ class Icon_Search {
 		if ( empty( $queries ) ) {
 			if ( '' === $library && '' === $category ) {
 				return [
-					'error' => 'At least one of queries, library, or category is required.',
+					'error' => esc_html__( 'At least one of queries, library, or category is required.', 'elementor' ),
 				];
 			}
 
@@ -79,14 +81,14 @@ class Icon_Search {
 			'per_page' => $per_page,
 		];
 
-		/**
-		 * Filters the icon search results before returning them.
-		 *
-		 * @since 3.28.0
-		 *
-		 * @param array $response      The search response containing results, libraries, custom_libraries, categories, and font_awesome_version.
-		 * @param array $sanitized_args The sanitized search arguments (queries, library, category, page, per_page).
-		 */
+	/**
+	 * Filters the icon search results before returning them.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param array $response      The search response containing results, libraries, custom_libraries, categories, and font_awesome_version.
+	 * @param array $sanitized_args The sanitized search arguments (queries, library, category, page, per_page).
+	 */
 		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-results', $response, $sanitized_args );
 
 		return is_array( $filtered ) ? $filtered : $response;
@@ -165,15 +167,16 @@ class Icon_Search {
 				continue;
 			}
 
-			if ( '' !== $category && ! Icon_Matcher::has_category( $entry, $category ) ) {
-				continue;
-			}
+		if ( '' !== $category && ! Icon_Matcher::has_category( $entry, $category ) ) {
+			continue;
+		}
 
-			if ( '' === $normalized_sorted && ( '' !== $category || '' !== $library ) ) {
-				$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, Icon_Matcher::MATCHED_ON_CATEGORY );
-			} else {
-				$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
-			}
+		if ( '' === $normalized_sorted && ( '' !== $category || '' !== $library ) ) {
+			$matched_on = '' !== $library ? Icon_Matcher::MATCHED_ON_LIBRARY : Icon_Matcher::MATCHED_ON_CATEGORY;
+			$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, $matched_on );
+		} else {
+			$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
+		}
 
 			if ( $best ) {
 				$scored[] = self::scored_entry( $entry, $best );
@@ -318,6 +321,6 @@ class Icon_Search {
 			return 1;
 		}
 
-		return min( $page, 1000 );
+		return min( $page, self::MAX_PAGE );
 	}
 }

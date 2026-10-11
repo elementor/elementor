@@ -109,13 +109,13 @@ class Icon_Catalog {
 
 		$path = trailingslashit( $base_path ) . self::SEARCH_INDEX_FILE_NAME;
 
-		/**
-		 * Filters the absolute path to the icon search index JSON file.
-		 *
-		 * @since 3.28.0
-		 *
-		 * @param string $path Default path to search-index.json.
-		 */
+	/**
+	 * Filters the absolute path to the icon search index JSON file.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string $path Default path to search-index.json.
+	 */
 		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-index-path', $path );
 
 		return is_string( $filtered ) ? $filtered : $path;
@@ -134,13 +134,13 @@ class Icon_Catalog {
 
 		$path = dirname( trailingslashit( $base_path ) ) . '/' . self::VERSION_FILE_NAME;
 
-		/**
-		 * Filters the absolute path to the icon version JSON file.
-		 *
-		 * @since 3.28.0
-		 *
-		 * @param string $path Default path to version.json.
-		 */
+	/**
+	 * Filters the absolute path to the icon version JSON file.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string $path Default path to version.json.
+	 */
 		$filtered = apply_filters( 'elementor/atomic-widgets/icons/version-path', $path );
 
 		return is_string( $filtered ) ? $filtered : $path;

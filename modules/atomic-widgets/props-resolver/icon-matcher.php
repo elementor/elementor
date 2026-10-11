@@ -17,6 +17,8 @@ class Icon_Matcher {
 
 	const MATCHED_ON_CATEGORY = 'category';
 
+	const MATCHED_ON_LIBRARY = 'library';
+
 	const MATCHED_ON_CUSTOM_NAME = 'custom_name';
 
 	const SCORE_EXACT_NAME = 1000;

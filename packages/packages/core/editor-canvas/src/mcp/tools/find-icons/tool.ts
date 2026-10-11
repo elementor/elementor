@@ -16,7 +16,7 @@ type IconMatch = {
 	library: string;
 	name: string;
 	label: string;
-	matched_on: 'name' | 'alias' | 'label' | 'term' | 'category' | 'custom_name';
+	matched_on: 'name' | 'alias' | 'label' | 'term' | 'category' | 'library' | 'custom_name';
 	license: 'free' | 'pro';
 };
 
@@ -85,7 +85,7 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 								library: z.string(),
 								name: z.string(),
 								label: z.string(),
-								matched_on: z.enum( [ 'name', 'alias', 'label', 'term', 'category', 'custom_name' ] ),
+								matched_on: z.enum( [ 'name', 'alias', 'label', 'term', 'category', 'library', 'custom_name' ] ),
 								license: z.enum( [ 'free', 'pro' ] ),
 							} )
 						),
