@@ -122,7 +122,7 @@ Match the widget schema shape:
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`. Don't send `alt` with `id`; library images render the attachment's Media Library alt text, so ask the user to update it there if it's missing.
   - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
-- **svg** (the `svg` prop on `e-svg`): two mutually exclusive forms — send one, not both.<!--if:svg_library--> See ICONS for which to pick.<!--endif:svg_library-->
+- **svg** (the `svg` prop on `e-svg`):<!--if:svg_library--> two mutually exclusive forms — send one, not both. See ICONS for which to pick.<!--endif:svg_library-->
 <!--if:svg_library-->  - Icon from a library (preferred for iconography): `{ "value": "fa-solid fa-cart-shopping", "library": "fa-solid" }`. Both fields come verbatim from `elementor/find-icons` — never assemble them yourself.<!--endif:svg_library-->
   - Uploaded SVG file (for custom artwork, logos): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div, and a fabricated id renders nothing.
 - **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
@@ -243,7 +243,7 @@ Each match returns `{ value, library, name, label, matched_on }`. Place it as-is
   },
   "style": {
     "Add To Cart Row": "display: flex; align-items: center; gap: 0.5rem;",
-    "Cart Icon": "width: 1.25rem; height: 1.25rem; color: var(--brand-accent);"
+    "Cart Icon": "width: 1.25rem; height: 1.25rem; color: #1a1a1a;"
   }
 }
 ```

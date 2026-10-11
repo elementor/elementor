@@ -35,7 +35,7 @@ Setting a Font Awesome icon on an e-svg, after resolving it with \`find-icons\`:
   style: {
     'width': '1.25rem',
     'height': '1.25rem',
-    'color': 'var(--brand-accent)'
+    'color': '#1a1a1a'
   },
   elementId: 'element-id',
   elementType: 'e-svg'

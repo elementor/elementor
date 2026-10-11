@@ -356,7 +356,9 @@ class Element_Config_Applier {
 		}
 
 		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
-			if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+			$value_library = strtok( $value, ' ' );
+
+			if ( $value_library === $library && Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
 				return;
 			}
 

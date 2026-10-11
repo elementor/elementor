@@ -108,6 +108,18 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'elementor/find-icons', $result['warning_details'][0]['message'] );
 	}
 
+	public function test_execute__warns_when_value_style_does_not_match_library() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'fa-regular fa-star', 'fa-solid' );
+
+		// Assert.
+		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+	}
+
 	public function test_execute__does_not_warn_for_an_icon_the_site_can_render() {
 		// Arrange.
 		$this->act_as_admin();
