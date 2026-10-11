@@ -100,7 +100,7 @@ class Icon_Search {
 				continue;
 			}
 
-			foreach ( Custom_Icon_Resolver::resolve_renderable_library_values( $custom_library )['values'] as $name => $value ) {
+			foreach ( Custom_Icon_Resolver::resolve_library_values( $custom_library )['values'] as $name => $value ) {
 				$entries[] = [
 					'name' => (string) $name,
 					'library' => $custom_library,
@@ -110,6 +110,7 @@ class Icon_Search {
 					'terms' => [],
 					'categories' => [],
 					'license' => Icon_Catalog::LICENSE_FREE,
+					'is_custom' => true,
 				];
 			}
 		}
@@ -126,7 +127,7 @@ class Icon_Search {
 				? [ self::SCORE_BROWSE, $browse_matched_on ]
 				: self::match( $entry, $normalized );
 
-			if ( $match ) {
+			if ( $match && self::is_renderable( $entry ) ) {
 				$scored[] = [ $match[0], $entry, $match[1] ];
 			}
 		}
@@ -154,6 +155,10 @@ class Icon_Search {
 			'per_page' => $per_page,
 			'truncated' => count( $scored ) > $offset + count( $matches ),
 		];
+	}
+
+	private static function is_renderable( array $entry ): bool {
+		return empty( $entry['is_custom'] ) || Custom_Icon_Resolver::is_renderable_value( $entry['library'], $entry['value'] );
 	}
 
 	/**
