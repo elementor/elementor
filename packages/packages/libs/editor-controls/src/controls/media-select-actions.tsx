@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UploadIcon } from '@elementor/icons';
-import { Box, Button, Stack, styled, Tooltip } from '@elementor/ui';
+import { Box, Button, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SELECT_AREA_WIDTH = 72;
@@ -70,33 +70,19 @@ type MediaUploadButtonProps = {
 	onClick?: () => void;
 };
 
-export const MediaUploadButton = ( { disabled = false, onClick }: MediaUploadButtonProps ) => {
-	const button = (
-		<Button
-			sx={ { ...actionButtonSx, width: '100%' } }
-			size="tiny"
-			color="inherit"
-			variant="text"
-			disabled={ disabled }
-			onClick={ onClick }
-			aria-label={ __( 'Upload', 'elementor' ) }
-		>
-			<UploadIcon fontSize="small" />
-		</Button>
-	);
-
-	if ( disabled ) {
-		return button;
-	}
-
-	return (
-		<Tooltip title={ __( 'Upload', 'elementor' ) }>
-			<Box component="span" sx={ { display: 'flex', width: '100%' } }>
-				{ button }
-			</Box>
-		</Tooltip>
-	);
-};
+export const MediaUploadButton = ( { disabled = false, onClick }: MediaUploadButtonProps ) => (
+	<Button
+		sx={ { ...actionButtonSx, width: '100%' } }
+		size="tiny"
+		color="inherit"
+		variant="text"
+		disabled={ disabled }
+		onClick={ onClick }
+		aria-label={ __( 'Upload', 'elementor' ) }
+	>
+		<UploadIcon fontSize="small" />
+	</Button>
+);
 
 type MediaSelectActionsProps = {
 	label: string;
