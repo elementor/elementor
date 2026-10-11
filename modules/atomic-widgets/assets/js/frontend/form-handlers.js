@@ -136,7 +136,7 @@ function registerAtomicFormAlpineData( form ) {
 				}
 
 				respondToAgentIfInvoked( event, response, state );
-				redirectIfRequested( response );
+				redirectIfRequested( event, response );
 			} catch ( error ) {
 				setFormState( form, 'error' );
 				respondToAgentIfInvoked( event, { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
@@ -147,9 +147,13 @@ function registerAtomicFormAlpineData( form ) {
 	} ) );
 }
 
-function redirectIfRequested( response ) {
+function redirectIfRequested( event, response ) {
+	if ( event?.agentInvoked ) {
+		return;
+	}
+
 	const actionResults = response?.data?.data?.actionResults ?? [];
-	const redirectUrl = actionResults.find( ( result ) => 'success' === result.status && result.redirectUrl )?.redirectUrl;
+	const redirectUrl = actionResults.find( ( result ) => 'redirect' === result.type && 'success' === result.status )?.redirectUrl;
 
 	if ( redirectUrl ) {
 		setTimeout( () => window.location.assign( redirectUrl ), REDIRECT_DELAY_MS );
