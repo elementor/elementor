@@ -126,7 +126,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const settingsInitialState = useMemo(
 		() => getSettingsInitialState( contextData, isImport, showDesignSystemSettingsSection ),
-		[ contextData?.data?.includes, contextData?.isOldExport, contextData?.data?.uploadedData?.manifest, isImport, showDesignSystemSettingsSection ],
+		[ contextData, isImport, showDesignSystemSettingsSection ],
 	);
 
 	const {
@@ -150,13 +150,12 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		[ existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo ],
 	);
 
-	const getInitialSettings = useCallback(
-		() => ( {
+	const getInitialSettings = () => {
+		return {
 			...settingsInitialState,
 			...( data.customization.settings || {} ),
-		} ),
-		[ data.customization.settings, settingsInitialState ],
-	);
+		}
+	};
 
 	const [ settings, setSettings ] = useState( () => {
 		return getInitialSettings();
