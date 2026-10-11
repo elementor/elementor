@@ -40,20 +40,8 @@ type MediaActionGroupProps = {
 	testId?: string;
 };
 
-export const MediaActionGroup = ( {
-	label,
-	onSelect,
-	uploadSlot,
-	groupRef,
-	testId,
-}: MediaActionGroupProps ) => (
-	<SplitButtonGroup
-		ref={ groupRef }
-		role="group"
-		aria-label={ label }
-		direction="row"
-		data-testid={ testId }
-	>
+export const MediaActionGroup = ( { label, onSelect, uploadSlot, groupRef, testId }: MediaActionGroupProps ) => (
+	<SplitButtonGroup ref={ groupRef } role="group" aria-label={ label } direction="row" data-testid={ testId }>
 		<Button
 			size="tiny"
 			color="inherit"
@@ -82,23 +70,33 @@ type MediaUploadButtonProps = {
 	onClick?: () => void;
 };
 
-export const MediaUploadButton = ( { disabled = false, onClick }: MediaUploadButtonProps ) => (
-	<Tooltip title={ __( 'Upload', 'elementor' ) }>
-		<Box component="span" sx={ { display: 'flex', width: '100%' } }>
-			<Button
-				sx={ { ...actionButtonSx, width: '100%' } }
-				size="tiny"
-				color="inherit"
-				variant="text"
-				disabled={ disabled }
-				onClick={ onClick }
-				aria-label={ __( 'Upload', 'elementor' ) }
-			>
-				<UploadIcon fontSize="small" />
-			</Button>
-		</Box>
-	</Tooltip>
-);
+export const MediaUploadButton = ( { disabled = false, onClick }: MediaUploadButtonProps ) => {
+	const button = (
+		<Button
+			sx={ { ...actionButtonSx, width: '100%' } }
+			size="tiny"
+			color="inherit"
+			variant="text"
+			disabled={ disabled }
+			onClick={ onClick }
+			aria-label={ __( 'Upload', 'elementor' ) }
+		>
+			<UploadIcon fontSize="small" />
+		</Button>
+	);
+
+	if ( disabled ) {
+		return button;
+	}
+
+	return (
+		<Tooltip title={ __( 'Upload', 'elementor' ) }>
+			<Box component="span" sx={ { display: 'flex', width: '100%' } }>
+				{ button }
+			</Box>
+		</Tooltip>
+	);
+};
 
 type MediaSelectActionsProps = {
 	label: string;
@@ -109,11 +107,7 @@ type MediaSelectActionsProps = {
 
 export const MediaSelectActions = ( { label, onSelect, onUpload, onInsertUrl }: MediaSelectActionsProps ) => (
 	<Stack alignItems="center" gap={ 1 }>
-		<MediaActionGroup
-			label={ label }
-			onSelect={ onSelect }
-			uploadSlot={ <MediaUploadButton onClick={ onUpload } /> }
-		/>
+		<MediaActionGroup label={ label } onSelect={ onSelect } uploadSlot={ <MediaUploadButton onClick={ onUpload } /> } />
 		<Button size="tiny" variant="text" color="inherit" onClick={ onInsertUrl }>
 			{ __( 'Insert URL', 'elementor' ) }
 		</Button>

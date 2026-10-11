@@ -14,10 +14,9 @@ type ImageMediaControlProps = {
 	label?: string;
 };
 
-export const ImageMediaControl = createControl( ( {
-	mediaTypes = [ 'image' ],
-	label = __( 'Image', 'elementor' ),
-}: ImageMediaControlProps ) => {
+export const ImageMediaControl = createControl( ( { mediaTypes, label }: ImageMediaControlProps ) => {
+	const resolvedMediaTypes = mediaTypes ?? [ 'image' ];
+	const groupLabel = label ?? __( 'Image', 'elementor' );
 	const { value, setValue, propType, placeholder } = useBoundProp( imageSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
@@ -30,7 +29,7 @@ export const ImageMediaControl = createControl( ( {
 	const currentAltForModal = ( value as { alt?: { value?: string } | null } | null | undefined )?.alt?.value;
 
 	const { open } = useWpMediaFrame( {
-		mediaTypes,
+		mediaTypes: resolvedMediaTypes,
 		multiple: false,
 		selected: id?.value || null,
 		allowUrlImport: true,
@@ -66,7 +65,7 @@ export const ImageMediaControl = createControl( ( {
 				</CardMedia>
 				<CardOverlay>
 					<MediaSelectActions
-						label={ label }
+						label={ groupLabel }
 						onSelect={ () => open( { mode: 'browse' } ) }
 						onUpload={ () => open( { mode: 'upload' } ) }
 						onInsertUrl={ () =>

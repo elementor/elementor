@@ -54,10 +54,8 @@ type SvgMediaControlProps = {
 	label?: string;
 };
 
-export const SvgMediaControl = createControl( ( {
-	showIconLibrary = false,
-	label = __( 'SVG', 'elementor' ),
-}: SvgMediaControlProps ) => {
+export const SvgMediaControl = createControl( ( { showIconLibrary = false, label }: SvgMediaControlProps ) => {
+	const groupLabel = label ?? __( 'SVG', 'elementor' );
 	const { value: svgValue, setValue: setSvgValue } = useBoundProp( svgSrcPropTypeUtil );
 	const { value: iconValue, setValue: setIconValue } = useBoundProp( iconPropTypeUtil );
 	const id = svgValue?.id;
@@ -189,11 +187,7 @@ export const SvgMediaControl = createControl( ( {
 					/>
 				</Popover>
 			) : null }
-			<Box
-				ref={ controlContainerRef }
-				data-testid={ SVG_MEDIA_CONTROL_CONTAINER_TEST_ID }
-				sx={ { width: '100%' } }
-			>
+			<Box ref={ controlContainerRef } data-testid={ SVG_MEDIA_CONTROL_CONTAINER_TEST_ID } sx={ { width: '100%' } }>
 				<ControlActions>
 					<StyledCard variant="outlined">
 						<StyledCardMediaContainer>
@@ -212,7 +206,7 @@ export const SvgMediaControl = createControl( ( {
 							} }
 						>
 							<SvgMediaOverlay
-								label={ label }
+								label={ groupLabel }
 								isAdmin={ isAdmin }
 								showIconLibrary={ showIconLibrary }
 								buttonGroupRef={ buttonGroupRef }

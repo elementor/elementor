@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { LibraryIcon } from '@elementor/icons';
-import { Button, Stack, ThemeProvider, Typography } from '@elementor/ui';
+import { Box, Button, Stack, ThemeProvider, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ConditionalControlInfotip } from '../components/conditional-control-infotip';
@@ -41,12 +41,10 @@ export const SvgMediaOverlay = ( {
 			groupRef={ buttonGroupRef }
 			testId={ SVG_MEDIA_ACTION_GROUP_TEST_ID }
 			uploadSlot={
-				<ConditionalControlInfotip
-					title={ infotipTitle }
-					description={ infotipDescription }
-					isEnabled={ ! isAdmin }
-				>
-					<UploadControl isAdmin={ isAdmin } onUpload={ onUpload } />
+				<ConditionalControlInfotip title={ infotipTitle } description={ infotipDescription } isEnabled={ ! isAdmin }>
+					<Box component="span" sx={ { display: 'flex', width: '100%' } }>
+						<UploadControl isAdmin={ isAdmin } onUpload={ onUpload } />
+					</Box>
 				</ConditionalControlInfotip>
 			}
 		/>
