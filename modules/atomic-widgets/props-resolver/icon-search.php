@@ -77,9 +77,9 @@ class Icon_Search {
 			'queries' => $queries,
 			'library' => $library,
 			'category' => $category,
-		'page' => $page,
-		'per_page' => $per_page,
-	];
+			'page' => $page,
+			'per_page' => $per_page,
+		];
 
 		/**
 		 * Filters the icon search results before returning them.
@@ -167,21 +167,21 @@ class Icon_Search {
 				continue;
 			}
 
-		if ( '' !== $category && ! Icon_Matcher::has_category( $entry, $category ) ) {
-			continue;
-		}
+			if ( '' !== $category && ! Icon_Matcher::has_category( $entry, $category ) ) {
+				continue;
+			}
 
-		if ( '' === $normalized_sorted && ( '' !== $category || '' !== $library ) ) {
-			$matched_on = '' !== $library ? Icon_Matcher::MATCHED_ON_LIBRARY : Icon_Matcher::MATCHED_ON_CATEGORY;
-			$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, $matched_on );
-		} else {
-			$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
-		}
+			if ( '' === $normalized_sorted && ( '' !== $category || '' !== $library ) ) {
+				$matched_on = '' !== $library ? Icon_Matcher::MATCHED_ON_LIBRARY : Icon_Matcher::MATCHED_ON_CATEGORY;
+				$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, $matched_on );
+			} else {
+				$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
+			}
 
-		if ( $best ) {
-			$scored[] = self::scored_entry( $entry, $best );
+			if ( $best ) {
+				$scored[] = self::scored_entry( $entry, $best );
+			}
 		}
-	}
 
 		return $scored;
 	}
