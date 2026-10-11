@@ -158,9 +158,9 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_mime', $result->get_error_code() );
 	}
 
-	public function test_upload_media__rejects_svg_when_svg_upload_disabled() {
+	public function test_upload_media__rejects_svg_for_non_admin_editor() {
 		// Arrange
-		$this->act_as_admin();
+		$this->act_as_editor();
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
 
 		add_filter( 'pre_http_request', function () use ( $svg ) {
@@ -170,15 +170,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 				'body' => $svg,
 			];
 		} );
-
-		$tmp = wp_tempnam( 'mcp-svg-test' );
-		file_put_contents( $tmp, $svg );
-		$mime = Media_Mime_Validator::sniff_mime_type( $tmp );
-		wp_delete_file( $tmp );
-
-		if ( Media_Upload_Config::is_svg_upload_allowed() ) {
-			$this->markTestSkipped( 'SVG uploads are enabled on this environment.' );
-		}
 
 		$ability = new Upload_Media_Ability();
 
@@ -192,7 +183,95 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertContains( $result->get_error_code(), [ 'svg_not_allowed', 'invalid_mime' ] );
+		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
+	}
+
+	public function test_svg_upload_path__sanitizes_for_admin() {
+		// Arrange
+		if ( ! \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run() ) {
+			$this->markTestSkipped( 'SVG sanitizer is not available in this environment.' );
+		}
+
+		$this->act_as_admin();
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><rect width="1" height="1"/></svg>';
+		$tmp = wp_tempnam( 'mcp-admin-svg.svg' );
+		file_put_contents( $tmp, $svg );
+
+		// Act
+		$mime_error = Media_Mime_Validator::assert_allowed_mime( Media_Upload_Config::SVG_MIME_TYPE );
+		$sanitized = ( new \Elementor\Core\Files\File_Types\Svg() )->sanitize_svg( $tmp );
+
+		// Assert
+		$this->assertNull( $mime_error );
+		$this->assertTrue( $sanitized );
+		$this->assertStringNotContainsString( 'onload', (string) file_get_contents( $tmp ) );
+		wp_delete_file( $tmp );
+	}
+
+	public function test_upload_media__rejects_content_length_larger_than_cap() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Upload_Media_Ability();
+		$limit = Media_Upload_Config::max_upload_bytes();
+
+		add_filter( 'pre_http_request', function () use ( $limit ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [ 'content-length' => (string) ( $limit + 1 ) ],
+				'body' => 'small-body',
+			];
+		} );
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => 'https://example.com/photo.png',
+			'consent' => true,
+		] );
+
+		remove_all_filters( 'pre_http_request' );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'file_too_large', $result->get_error_code() );
+	}
+
+	public function test_upload_token__rejects_oversized_body() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+		$issued = $ability->execute( [ 'consent' => true ] );
+		$oversized = str_repeat( 'x', Media_Upload_Config::max_upload_bytes() + 1 );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
+		$request->set_body( $oversized );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::BAD_REQUEST, $response->get_status() );
+		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
+	}
+
+	public function test_upload_token__rejects_content_length_larger_than_cap() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+		$issued = $ability->execute( [ 'consent' => true ] );
+		$limit = Media_Upload_Config::max_upload_bytes();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
+		$request->set_header( 'Content-Length', (string) ( $limit + 1 ) );
+		$request->set_body( self::MINIMAL_PNG );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::BAD_REQUEST, $response->get_status() );
+		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
 	}
 
 	public function test_upload_media__requires_upload_files_capability() {

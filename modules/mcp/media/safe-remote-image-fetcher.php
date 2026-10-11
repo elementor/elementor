@@ -76,6 +76,13 @@ class Safe_Remote_Image_Fetcher {
 				);
 			}
 
+			$content_length_error = Media_Upload_Config::assert_content_length_within_limit(
+				wp_remote_retrieve_header( $response, 'content-length' )
+			);
+			if ( $content_length_error ) {
+				return $content_length_error;
+			}
+
 			$body = wp_remote_retrieve_body( $response );
 			$size = strlen( $body );
 
