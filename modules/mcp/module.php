@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
+use Elementor\Modules\Mcp\Utils\Revision_Snapshot_Hooks;
 use Elementor\Plugin;
 use Elementor\Utils;
 use WP\MCP\Core\McpAdapter;
@@ -27,6 +28,7 @@ class Module extends BaseModule {
 
 	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
 	const V3_STANDARDIZED_MAPS_EXPERIMENT_NAME = 'e_mcp_v3_standardized_maps';
+	const REVISION_SNAPSHOTS_EXPERIMENT_NAME = 'e_mcp_revision_snapshots';
 	const PROMOTION_REGISTRAR_HANDLE = 'elementor-mcp-promotion-registrar';
 	const MCP_PROMOTION_UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-connector-page-upgrade/';
 	const MCP_PROMOTION_ALLOWED_DOMAIN = 'elementor.com';
@@ -145,16 +147,33 @@ class Module extends BaseModule {
 		];
 	}
 
+	public static function get_revision_snapshots_experimental_data(): array {
+		return [
+			'name' => self::REVISION_SNAPSHOTS_EXPERIMENT_NAME,
+			'title' => esc_html__( 'MCP undo through revisions', 'elementor' ),
+			'description' => esc_html__( 'Save a revision before each MCP change so it can be undone, and let MCP clients list and restore revisions.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		];
+	}
+
+	public static function is_revision_snapshots_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::REVISION_SNAPSHOTS_EXPERIMENT_NAME );
+	}
+
 	public function __construct() {
 		parent::__construct();
 
 		$this->register_v3_standardized_maps_experiment();
+		$this->register_revision_snapshots_experiment();
 
 		$this->registry = self::build_core_registry();
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
+		( new Revision_Snapshot_Hooks() )->register_hooks();
 
 		if ( ! self::is_active() ) {
 			return;
@@ -172,6 +191,10 @@ class Module extends BaseModule {
 
 	private function register_v3_standardized_maps_experiment(): void {
 		Plugin::$instance->experiments->add_feature( self::get_v3_standardized_maps_experimental_data() );
+	}
+
+	private function register_revision_snapshots_experiment(): void {
+		Plugin::$instance->experiments->add_feature( self::get_revision_snapshots_experimental_data() );
 	}
 
 	public function registry(): Ability_Registry {
@@ -257,6 +280,11 @@ class Module extends BaseModule {
 			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
 		];
+
+		if ( self::is_revision_snapshots_active() ) {
+			$abilities[] = new Abilities\List_Revisions_Ability();
+			$abilities[] = new Abilities\Manage_Revisions_Ability();
+		}
 
 		return $abilities;
 	}

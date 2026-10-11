@@ -39,7 +39,7 @@ abstract class Abstract_Ability {
 			}
 		}
 
-		$result  = $this->execute( $input );
+		$result  = $this->run_executor( $input );
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
@@ -49,6 +49,28 @@ abstract class Abstract_Ability {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * The document this call writes to, for listeners that act on document writes
+	 * (e.g. revision snapshots). Return 0 when the call does not write a document.
+	 */
+	public function get_snapshot_post_id( array $input ): int {
+		return 0;
+	}
+
+	private function run_executor( $input ) {
+		$default_executor = fn( $input ) => $this->execute( $input );
+
+		/**
+		 * Filters the callable that runs the ability, so listeners can wrap the execution.
+		 *
+		 * @param callable         $executor Receives the ability input and returns the ability result.
+		 * @param Abstract_Ability $ability  The ability being executed.
+		 */
+		$executor = apply_filters( 'elementor/mcp/ability_executor', $default_executor, $this );
+
+		return is_callable( $executor ) ? $executor( $input ) : $default_executor( $input );
 	}
 
 	public function check_permission(): bool {
