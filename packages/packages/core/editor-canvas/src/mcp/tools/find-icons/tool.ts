@@ -16,7 +16,7 @@ type IconMatch = {
 	library: string;
 	name: string;
 	label: string;
-	matched_on: 'name' | 'alias' | 'label' | 'term' | 'category' | 'library' | 'custom_name';
+	matched_on: 'name' | 'alias' | 'term' | 'category' | 'library';
 	license: 'free' | 'pro';
 };
 
@@ -29,17 +29,11 @@ type IconQueryResult = {
 	truncated: boolean;
 };
 
-type CustomLibrary = {
-	label: string;
-	total: number;
-	truncated: boolean;
-};
-
 // NOTE: shape defined by Find_Icons_Ability::execute() in modules/mcp/abilities/find-icons-ability.php
 type FindIconsResponse = {
 	results: IconQueryResult[];
 	libraries: string[];
-	custom_libraries: Record< string, CustomLibrary >;
+	custom_libraries: Record< string, string >;
 	categories: string[];
 	font_awesome_version: string | null;
 	llm_instructions?: string;
@@ -85,15 +79,7 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 								library: z.string(),
 								name: z.string(),
 								label: z.string(),
-								matched_on: z.enum( [
-									'name',
-									'alias',
-									'label',
-									'term',
-									'category',
-									'library',
-									'custom_name',
-								] ),
+								matched_on: z.enum( [ 'name', 'alias', 'term', 'category', 'library' ] ),
 								license: z.enum( [ 'free', 'pro' ] ),
 							} )
 						),
@@ -108,15 +94,8 @@ export const initFindIconsTool = ( reg: MCPRegistryEntry ) => {
 				),
 			libraries: z.array( z.string() ).describe( 'Icon library keys installed on this site.' ),
 			customLibraries: z
-				.record(
-					z.string(),
-					z.object( {
-						label: z.string(),
-						total: z.number(),
-						truncated: z.boolean(),
-					} )
-				)
-				.describe( 'Custom (uploaded) icon libraries with their labels, totals, and truncation status.' ),
+				.record( z.string(), z.string() )
+				.describe( 'Custom (uploaded) icon libraries, keyed by library with their labels.' ),
 			categories: z.array( z.string() ).describe( 'Icon categories available for the "category" filter.' ),
 			fontAwesomeVersion: z.string().nullable().describe( 'Font Awesome version the site renders icons from.' ),
 			llmInstructions: z

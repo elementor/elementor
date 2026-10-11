@@ -16,7 +16,7 @@ findIconsToolPrompt.instruction(
 
 findIconsToolPrompt.instruction(
 	'Write queries the way a person would describe the icon ("shopping cart", "credit card", "phone"). Icons are matched on ' +
-		'their name, aliases, label, Font Awesome search terms and category, so plain language works better than guessed icon names.'
+		'their name, aliases, Font Awesome search terms and category, so plain language works better than guessed icon names.'
 );
 
 findIconsToolPrompt.instruction(

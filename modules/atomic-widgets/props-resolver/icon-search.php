@@ -17,39 +17,42 @@ class Icon_Search {
 
 	const MAX_QUERY_LENGTH = 100;
 
-	const MAX_QUERY_WORDS = 10;
+	const MATCHED_ON_NAME = 'name';
 
-	const MAX_PAGE = 1000;
+	const MATCHED_ON_ALIAS = 'alias';
 
-	/**
-	 * @param array{queries?: array|string, library?: string, category?: string, page?: int, per_page?: int} $args
-	 */
+	const MATCHED_ON_TERM = 'term';
+
+	const MATCHED_ON_CATEGORY = 'category';
+
+	const MATCHED_ON_LIBRARY = 'library';
+
+	const SCORE_EXACT_NAME = 100;
+
+	const SCORE_EXACT_ALIAS = 90;
+
+	const SCORE_NAME_WORD = 80;
+
+	const SCORE_EXACT_TERM = 70;
+
+	const SCORE_ALL_WORDS = 50;
+
+	const SCORE_SOME_WORDS = 30;
+
+	const MIN_WORD_LENGTH = 3;
+
+	const IGNORED_WORDS = [ 'and', 'button', 'for', 'icon', 'icons', 'page', 'the', 'with' ];
+
+	const SCORE_CATEGORY = 20;
+
+	const SCORE_BROWSE = 10;
+
 	public static function search( array $args ): array {
 		$queries = self::sanitize_queries( $args['queries'] ?? [] );
 		$library = self::sanitize_text( $args['library'] ?? '' );
 		$category = self::sanitize_text( $args['category'] ?? '' );
-		$per_page = self::sanitize_per_page( $args['per_page'] ?? self::DEFAULT_PER_PAGE );
-		$page = self::sanitize_page( $args['page'] ?? 1 );
-
-		$custom_library_metadata = Custom_Icon_Resolver::get_custom_libraries( [ 'include_labels' => true ] );
-		$custom_values = [];
-		$custom_libraries = [];
-
-		foreach ( array_keys( $custom_library_metadata ) as $custom_library ) {
-			if ( '' !== $library && $custom_library !== $library ) {
-				continue;
-			}
-
-			$resolved = '' === $category
-				? Custom_Icon_Resolver::resolve_renderable_library_values( $custom_library )
-				: Custom_Icon_Resolver::resolve_library_values( $custom_library );
-			$custom_values[ $custom_library ] = $resolved['values'];
-			$custom_libraries[ $custom_library ] = [
-				'label' => $custom_library_metadata[ $custom_library ]['label'] ?? $custom_library,
-				'total' => $resolved['total'],
-				'truncated' => $resolved['truncated'],
-			];
-		}
+		$per_page = min( self::MAX_PER_PAGE, max( 1, (int) ( $args['per_page'] ?? self::DEFAULT_PER_PAGE ) ) );
+		$page = max( 1, (int) ( $args['page'] ?? 1 ) );
 
 		if ( empty( $queries ) ) {
 			if ( '' === $library && '' === $category ) {
@@ -61,316 +64,174 @@ class Icon_Search {
 			$queries = [ '' ];
 		}
 
+		$custom_library_labels = Custom_Icon_Resolver::get_custom_libraries();
+		$entries = self::get_entries( $library, $category, array_keys( $custom_library_labels ) );
+
 		$results = [];
 
+		$browse_matched_on = '' !== $library ? self::MATCHED_ON_LIBRARY : self::MATCHED_ON_CATEGORY;
+
 		foreach ( $queries as $query ) {
-			$results[] = self::search_single( $query, $library, $category, $page, $per_page, $custom_values );
+			$results[] = self::search_single( $entries, $query, $page, $per_page, $browse_matched_on );
 		}
 
-		$response = [
+		return [
 			'results' => $results,
-			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_metadata ) ),
-			'custom_libraries' => empty( $custom_libraries ) ? (object) [] : $custom_libraries,
+			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_labels ) ),
+			'custom_libraries' => empty( $custom_library_labels ) ? (object) [] : $custom_library_labels,
 			'categories' => Icon_Catalog::get_categories(),
 			'font_awesome_version' => Icon_Catalog::get_version(),
 		];
-
-		$sanitized_args = [
-			'queries' => $queries,
-			'library' => $library,
-			'category' => $category,
-			'page' => $page,
-			'per_page' => $per_page,
-		];
-
-		/**
-		 * Filters the icon search results before returning them.
-		 *
-		 * @since 4.4.0
-		 *
-		 * @param array $response      The search response containing results, libraries, custom_libraries, categories, and font_awesome_version.
-		 * @param array $sanitized_args The sanitized search arguments (queries, library, category, page, per_page).
-		 */
-		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-results', $response, $sanitized_args );
-
-		return is_array( $filtered ) ? $filtered : $response;
 	}
 
-	private static function search_single( string $query, string $library, string $category, int $page, int $per_page, array $custom_values ): array {
-		[ $search_query, $search_library ] = self::extract_library_token( $query, $library );
+	private static function get_entries( string $library, string $category, array $custom_libraries ): array {
+		$entries = array_filter(
+			Icon_Catalog::get_entries(),
+			static fn( $entry ) => ( '' === $library || $entry['library'] === $library )
+				&& ( '' === $category || in_array( self::normalize( $category ), array_map( [ self::class, 'normalize' ], $entry['categories'] ), true ) )
+		);
 
-		$scored = self::score_catalog( $search_query, $search_library, $category );
-
-		if ( '' === $category ) {
-			$scored = array_merge( $scored, self::score_custom_libraries( $search_query, $search_library, $custom_values ) );
+		if ( '' !== $category ) {
+			return $entries;
 		}
 
-		usort( $scored, [ self::class, 'compare_scored' ] );
+		foreach ( $custom_libraries as $custom_library ) {
+			if ( '' !== $library && $custom_library !== $library ) {
+				continue;
+			}
 
-		$total = count( $scored );
+			foreach ( Custom_Icon_Resolver::resolve_renderable_library_values( $custom_library )['values'] as $name => $value ) {
+				$entries[] = [
+					'name' => (string) $name,
+					'library' => $custom_library,
+					'value' => $value,
+					'label' => str_replace( '-', ' ', (string) $name ),
+					'aliases' => [],
+					'terms' => [],
+					'categories' => [],
+					'license' => Icon_Catalog::LICENSE_FREE,
+				];
+			}
+		}
+
+		return $entries;
+	}
+
+	private static function search_single( array $entries, string $query, int $page, int $per_page, string $browse_matched_on ): array {
+		$normalized = self::normalize( $query );
+		$scored = [];
+
+		foreach ( $entries as $entry ) {
+			$match = '' === $normalized
+				? [ self::SCORE_BROWSE, $browse_matched_on ]
+				: self::match( $entry, $normalized );
+
+			if ( $match ) {
+				$scored[] = [ $match[0], $entry, $match[1] ];
+			}
+		}
+
+		usort( $scored, static fn( $a, $b ) => [ $b[0], strlen( $a[1]['name'] ), $a[1]['value'] ] <=> [ $a[0], strlen( $b[1]['name'] ), $b[1]['value'] ] );
+
 		$offset = ( $page - 1 ) * $per_page;
 		$matches = array_map(
-			static fn( $entry ) => $entry['match'],
+			static fn( $item ) => [
+				'value' => $item[1]['value'],
+				'library' => $item[1]['library'],
+				'name' => $item[1]['name'],
+				'label' => $item[1]['label'],
+				'matched_on' => $item[2],
+				'license' => $item[1]['license'],
+			],
 			array_slice( $scored, $offset, $per_page )
 		);
 
 		return [
 			'query' => $query,
-			'matches' => array_values( $matches ),
-			'total' => $total,
+			'matches' => $matches,
+			'total' => count( $scored ),
 			'page' => $page,
 			'per_page' => $per_page,
-			'truncated' => $total > $offset + count( $matches ),
+			'truncated' => count( $scored ) > $offset + count( $matches ),
 		];
 	}
 
 	/**
-	 * @return array{0: string, 1: string} The query without its library token, and the library to filter by.
+	 * @return array{0: int, 1: string}|null
 	 */
-	private static function extract_library_token( string $query, string $library ): array {
-		if ( '' !== $library ) {
-			return [ $query, $library ];
+	private static function match( array $entry, string $query ): ?array {
+		$name = $entry['name'];
+		$aliases = array_map( [ self::class, 'normalize' ], $entry['aliases'] );
+		$terms = array_map( [ self::class, 'normalize' ], $entry['terms'] );
+
+		if ( $name === $query ) {
+			return [ self::SCORE_EXACT_NAME, self::MATCHED_ON_NAME ];
 		}
 
-		$libraries = Icon_Catalog::get_libraries();
-		$found_library = '';
-		$remaining_words = [];
+		if ( in_array( $query, $aliases, true ) ) {
+			return [ self::SCORE_EXACT_ALIAS, self::MATCHED_ON_ALIAS ];
+		}
 
-		foreach ( preg_split( '/\s+/', trim( $query ) ) as $word ) {
-			if ( '' === $found_library && in_array( strtolower( $word ), $libraries, true ) ) {
-				$found_library = strtolower( $word );
-				continue;
+		if ( preg_match( '/(^|-)' . preg_quote( $query, '/' ) . '(-|$)/', $name ) ) {
+			return [ self::SCORE_NAME_WORD, self::MATCHED_ON_NAME ];
+		}
+
+		if ( in_array( $query, $terms, true ) ) {
+			return [ self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM ];
+		}
+
+		$words = self::significant_words( $query );
+
+		if ( count( $words ) > 1 ) {
+			$name_words = explode( '-', $name );
+			$known_words = array_merge( $name_words, ...array_map( static fn( $item ) => explode( '-', $item ), array_merge( $aliases, $terms ) ) );
+			$matched_words = array_intersect( $words, $known_words );
+			$matched_on = empty( array_diff( $matched_words, $name_words ) ) ? self::MATCHED_ON_NAME : self::MATCHED_ON_TERM;
+
+			if ( count( $matched_words ) === count( $words ) ) {
+				return [ self::SCORE_ALL_WORDS, $matched_on ];
 			}
 
-			$remaining_words[] = $word;
+			if ( ! empty( $matched_words ) ) {
+				return [ self::SCORE_SOME_WORDS + count( $matched_words ), $matched_on ];
+			}
 		}
 
-		if ( '' === $found_library ) {
-			return [ $query, $library ];
+		if ( in_array( $query, array_map( [ self::class, 'normalize' ], $entry['categories'] ), true ) ) {
+			return [ self::SCORE_CATEGORY, self::MATCHED_ON_CATEGORY ];
 		}
 
-		if ( empty( $remaining_words ) ) {
-			return [ '', $found_library ];
-		}
-
-		$remaining_words = array_map(
-			static fn( $word ) => preg_replace( '/^fa-/i', '', $word ),
-			$remaining_words
-		);
-
-		return [ implode( ' ', $remaining_words ), $found_library ];
+		return null;
 	}
 
-	private static function compare_scored( array $a, array $b ): int {
-		if ( $a['score'] !== $b['score'] ) {
-			return $b['score'] <=> $a['score'];
-		}
-
-		$a_library = $a['match']['library'];
-		$b_library = $b['match']['library'];
-		$a_matched_on = $a['match']['matched_on'];
-		$b_matched_on = $b['match']['matched_on'];
-
-		if ( Icon_Matcher::MATCHED_ON_TERM === $a_matched_on && Icon_Matcher::MATCHED_ON_TERM === $b_matched_on ) {
-			$a_is_generic = str_starts_with( $a_library, 'fa-solid' ) || str_starts_with( $a_library, 'fa-regular' );
-			$b_is_generic = str_starts_with( $b_library, 'fa-solid' ) || str_starts_with( $b_library, 'fa-regular' );
-
-			if ( $a_is_generic !== $b_is_generic ) {
-				return $a_is_generic ? -1 : 1;
-			}
-		}
-
-		if ( Icon_Matcher::MATCHED_ON_TERM === $a_matched_on && Icon_Matcher::MATCHED_ON_TERM === $b_matched_on && $a['term_count'] !== $b['term_count'] ) {
-			return $b['term_count'] <=> $a['term_count'];
-		}
-
-		$a_name_words = count( explode( '-', $a['match']['name'] ) );
-		$b_name_words = count( explode( '-', $b['match']['name'] ) );
-
-		if ( $a_name_words !== $b_name_words ) {
-			return $a_name_words <=> $b_name_words;
-		}
-
-		$a_length = strlen( $a['match']['name'] );
-		$b_length = strlen( $b['match']['name'] );
-
-		if ( $a_length !== $b_length ) {
-			return $a_length <=> $b_length;
-		}
-
-		return strcmp( $a['match']['value'], $b['match']['value'] );
+	/**
+	 * @return string[]
+	 */
+	private static function significant_words( string $query ): array {
+		return array_values( array_unique( array_filter(
+			explode( '-', $query ),
+			static fn( $word ) => strlen( $word ) >= self::MIN_WORD_LENGTH && ! in_array( $word, self::IGNORED_WORDS, true )
+		) ) );
 	}
 
-	private static function score_catalog( string $query, string $library, string $category ): array {
-		$normalized_sorted = Icon_Matcher::normalize( $query );
-		$normalized_preserve_order = Icon_Matcher::normalize_preserve_order( $query );
-		$tokens = Icon_Matcher::tokenize( $normalized_sorted );
-		$scored = [];
-
-		foreach ( Icon_Catalog::get_entries() as $entry ) {
-			if ( '' !== $library && $entry['library'] !== $library ) {
-				continue;
-			}
-
-			if ( '' !== $category && ! Icon_Matcher::has_category( $entry, $category ) ) {
-				continue;
-			}
-
-			if ( '' === $normalized_sorted && ( '' !== $category || '' !== $library ) ) {
-				$matched_on = '' !== $library ? Icon_Matcher::MATCHED_ON_LIBRARY : Icon_Matcher::MATCHED_ON_CATEGORY;
-				$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, $matched_on );
-			} else {
-				$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
-			}
-
-			if ( $best ) {
-				$scored[] = self::scored_entry( $entry, $best );
-			}
-		}
-
-		return $scored;
-	}
-
-	private static function score_custom_libraries( string $query, string $library, array $custom_values ): array {
-		$normalized = Icon_Matcher::normalize( $query );
-		$tokens = Icon_Matcher::tokenize( $normalized );
-
-		if ( empty( $tokens ) && '' !== $normalized ) {
-			$tokens = [ $normalized ];
-		}
-
-		$scored = [];
-
-		foreach ( $custom_values as $custom_library => $values ) {
-			if ( '' !== $library && $custom_library !== $library ) {
-				continue;
-			}
-
-			foreach ( $values as $name => $value ) {
-				$normalized_name = Icon_Matcher::normalize( (string) $name );
-
-				if ( '' === $normalized ) {
-					$exact_match = true;
-					$has_all_tokens = true;
-				} else {
-					$exact_match = $normalized_name === $normalized;
-					$has_all_tokens = true;
-
-					if ( ! $exact_match ) {
-						foreach ( $tokens as $token ) {
-							$pattern = '/(^|-|\\s)' . preg_quote( $token, '/' ) . '($|-|\\s)/';
-							if ( ! preg_match( $pattern, $normalized_name ) ) {
-								$has_all_tokens = false;
-								break;
-							}
-						}
-					}
-				}
-
-				if ( ! $exact_match && ! $has_all_tokens ) {
-					continue;
-				}
-
-				$score = '' === $normalized
-					? Icon_Matcher::SCORE_EXACT_CATEGORY
-					: ( $exact_match ? Icon_Matcher::SCORE_EXACT_NAME : Icon_Matcher::SCORE_SUBSTRING_NAME );
-
-				$scored[] = self::scored_entry(
-					[
-						'value' => $value,
-						'library' => $custom_library,
-						'name' => (string) $name,
-						'label' => str_replace( '-', ' ', (string) $name ),
-						'license' => Icon_Catalog::LICENSE_FREE,
-					],
-					Icon_Matcher::result( $score, Icon_Matcher::MATCHED_ON_CUSTOM_NAME )
-				);
-			}
-		}
-
-		return $scored;
-	}
-
-	private static function scored_entry( array $entry, array $best ): array {
-		return [
-			'score' => $best['score'],
-			'term_count' => count( $entry['terms'] ?? [] ),
-			'match' => [
-				'value' => $entry['value'],
-				'library' => $entry['library'],
-				'name' => $entry['name'],
-				'label' => $entry['label'],
-				'matched_on' => $best['matched_on'],
-				'license' => $entry['license'],
-			],
-		];
+	private static function normalize( string $value ): string {
+		return trim( (string) preg_replace( '/[^a-z0-9]+/', '-', strtolower( $value ) ), '-' );
 	}
 
 	/**
 	 * @return string[]
 	 */
 	private static function sanitize_queries( $queries ): array {
-		if ( is_string( $queries ) ) {
+		if ( ! is_array( $queries ) ) {
 			$queries = [ $queries ];
 		}
 
-		if ( ! is_array( $queries ) ) {
-			return [];
-		}
+		$sanitized = array_values( array_unique( array_filter( array_map( [ self::class, 'sanitize_text' ], $queries ) ) ) );
 
-		$sanitized = [];
-
-		foreach ( $queries as $query ) {
-			$query = self::sanitize_text( $query );
-
-			if ( '' !== $query && ! in_array( $query, $sanitized, true ) ) {
-				$sanitized[] = $query;
-			}
-
-			if ( count( $sanitized ) >= self::MAX_QUERIES ) {
-				break;
-			}
-		}
-
-		return $sanitized;
+		return array_slice( $sanitized, 0, self::MAX_QUERIES );
 	}
 
 	private static function sanitize_text( $value ): string {
-		if ( ! is_string( $value ) ) {
-			return '';
-		}
-
-		$text = mb_substr( trim( $value ), 0, self::MAX_QUERY_LENGTH );
-		$parts = explode( ' ', $text );
-
-		if ( count( $parts ) > self::MAX_QUERY_WORDS ) {
-			$parts = array_slice( $parts, 0, self::MAX_QUERY_WORDS );
-		}
-
-		return implode( ' ', $parts );
-	}
-
-	private static function sanitize_per_page( $per_page ): int {
-		$per_page = (int) $per_page;
-
-		if ( $per_page < 1 ) {
-			return self::DEFAULT_PER_PAGE;
-		}
-
-		return min( $per_page, self::MAX_PER_PAGE );
-	}
-
-	private static function sanitize_page( $page ): int {
-		if ( is_string( $page ) && ! is_numeric( $page ) ) {
-			return 1;
-		}
-
-		$page = (int) $page;
-
-		if ( $page < 1 ) {
-			return 1;
-		}
-
-		return min( $page, self::MAX_PAGE );
+		return is_string( $value ) ? mb_substr( trim( $value ), 0, self::MAX_QUERY_LENGTH ) : '';
 	}
 }

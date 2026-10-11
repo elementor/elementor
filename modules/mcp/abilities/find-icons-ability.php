@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 
@@ -81,7 +80,7 @@ class Find_Icons_Ability extends Abstract_Ability {
 		$input = is_array( $input ) ? $input : [];
 
 		$response = Icon_Search::search( [
-			'queries' => $this->resolve_queries( $input ),
+			'queries' => $input['queries'] ?? [],
 			'library' => $input['library'] ?? '',
 			'category' => $input['category'] ?? '',
 			'page' => $input['page'] ?? 1,
@@ -103,20 +102,6 @@ class Find_Icons_Ability extends Abstract_Ability {
 		return $response;
 	}
 
-	private function resolve_queries( array $input ): array {
-		$queries = $input['queries'] ?? [];
-
-		if ( ! is_array( $queries ) ) {
-			$queries = [ $queries ];
-		}
-
-		if ( isset( $input['search'] ) ) {
-			$queries[] = $input['search'];
-		}
-
-		return $queries;
-	}
-
 	private function has_no_matches( array $response ): bool {
 		foreach ( $response['results'] ?? [] as $result ) {
 			if ( ! empty( $result['total'] ) ) {
@@ -136,10 +121,6 @@ class Find_Icons_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'maxItems' => Icon_Search::MAX_QUERIES,
 					'description' => 'One plain-language phrase per icon you need, for example ["add to cart", "free shipping"]. Batch every icon a page needs into a single call.',
-				],
-				'search' => [
-					'type' => 'string',
-					'description' => 'Shorthand for a single-entry "queries" array.',
 				],
 				'library' => [
 					'type' => 'string',
@@ -186,13 +167,11 @@ class Find_Icons_Ability extends Abstract_Ability {
 										'matched_on' => [
 											'type' => 'string',
 											'enum' => [
-												Icon_Matcher::MATCHED_ON_NAME,
-												Icon_Matcher::MATCHED_ON_ALIAS,
-												Icon_Matcher::MATCHED_ON_LABEL,
-												Icon_Matcher::MATCHED_ON_TERM,
-												Icon_Matcher::MATCHED_ON_CATEGORY,
-												Icon_Matcher::MATCHED_ON_LIBRARY,
-												Icon_Matcher::MATCHED_ON_CUSTOM_NAME,
+												Icon_Search::MATCHED_ON_NAME,
+												Icon_Search::MATCHED_ON_ALIAS,
+												Icon_Search::MATCHED_ON_TERM,
+												Icon_Search::MATCHED_ON_CATEGORY,
+												Icon_Search::MATCHED_ON_LIBRARY,
 											],
 										],
 										'license' => [

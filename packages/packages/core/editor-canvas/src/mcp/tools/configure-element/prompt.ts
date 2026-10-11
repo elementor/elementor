@@ -7,7 +7,7 @@ import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 const ICONS_SECTION = `# Icons (the \`svg\` property on e-svg)
 The \`svg\` property accepts two variants. Prefer a library icon for iconography (carts, arrows, social marks, check marks) — it needs no upload and inherits \`color\` via \`currentColor\`. Use an uploaded file only for custom artwork such as a brand logo.
 
-Resolve the icon with the \`find-icons\` tool FIRST, then copy its \`value\` and \`library\` verbatim. Never assemble those strings yourself: Font Awesome renamed many icons between major versions (\`shopping-cart\` became \`cart-shopping\`), so a plausible guess renders nothing. \`find-icons\` matches on names, aliases, labels, human search terms, and categories, so describe the intent — "add to cart" finds \`cart-shopping\`. It takes a batch of \`queries\`, so resolve every icon you need in one call.
+Resolve the icon with the \`find-icons\` tool FIRST, then copy its \`value\` and \`library\` verbatim. Never assemble those strings yourself: Font Awesome renamed many icons between major versions (\`shopping-cart\` became \`cart-shopping\`), so a plausible guess renders nothing. \`find-icons\` matches on names, aliases, human search terms, and categories, so describe the intent — "add to cart" finds \`cart-shopping\`. It takes a batch of \`queries\`, so resolve every icon you need in one call.
 
 Library icon (note the nested PropValues — \`value\` and \`library\` are each a \`string\` PropValue):
 { "$$type": "icon", "value": { "value": { "$$type": "string", "value": "fa-solid fa-cart-shopping" }, "library": { "$$type": "string", "value": "fa-solid" } } }

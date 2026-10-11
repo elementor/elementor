@@ -226,7 +226,7 @@ BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overfl
 
 Call `elementor/find-icons` to resolve icons, then copy its `value` and `library` verbatim into the `svg` prop. Do not assemble those strings yourself: Font Awesome renamed many icons between major versions (`shopping-cart` became `cart-shopping`), so a plausible-looking guess renders nothing.
 
-`find-icons` accepts a batch of `queries`, so resolve every icon a composition needs in ONE call before composing — not one call per icon. It matches on icon names, aliases, labels, human search terms, and categories, so describe the intent rather than guessing a name: `"add to cart"` finds `cart-shopping`.
+`find-icons` accepts a batch of `queries`, so resolve every icon a composition needs in ONE call before composing — not one call per icon. It matches on icon names, aliases, human search terms, and categories, so describe the intent rather than guessing a name: `"add to cart"` finds `cart-shopping`.
 
 ```json
 { "queries": ["add to cart", "free shipping", "secure payment", "instagram"] }

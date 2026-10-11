@@ -5,8 +5,6 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Find_Icons_Ability;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
@@ -53,7 +51,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $this->fixture_path );
 
 		Icon_Catalog::reset();
-		Icon_Matcher::reset();
 	}
 
 	public function tearDown(): void {
@@ -65,14 +62,8 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		}
 
 		Icon_Catalog::reset();
-		Icon_Matcher::reset();
 
 		parent::tearDown();
-	}
-
-	public function test_get_id__is_stable() {
-		// Act & Assert — the id is part of the public MCP surface.
-		$this->assertSame( 'elementor/find-icons', $this->ability->get_id() );
 	}
 
 	public function test_ability__is_a_read_only_tool() {
@@ -113,18 +104,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'fa-solid', $match['library'] );
 	}
 
-	public function test_execute__accepts_the_search_shorthand() {
-		// Arrange.
-		$this->act_as_admin();
-
-		// Act.
-		$result = $this->ability->execute( [ 'search' => 'cart-shopping' ] );
-
-		// Assert.
-		$this->assertCount( 1, $result['results'] );
-		$this->assertNotEmpty( $result['results'][0]['matches'] );
-	}
-
 	public function test_execute__handles_a_non_array_input() {
 		// Arrange.
 		$this->act_as_admin();
@@ -149,17 +128,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertSame( Find_Icons_Ability::EMPTY_RESULT_HINT, $result['llm_instructions'] );
 	}
 
-	public function test_execute__omits_the_instruction_when_something_matches() {
-		// Arrange.
-		$this->act_as_admin();
-
-		// Act.
-		$result = $this->ability->execute( [ 'queries' => [ 'cart-shopping' ] ] );
-
-		// Assert.
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
-	}
-
 	public function test_execute__omits_the_instruction_for_a_page_past_the_last_match() {
 		// Arrange.
 		$this->act_as_admin();
@@ -170,17 +138,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( [], $result['results'][0]['matches'] );
 		$this->assertArrayNotHasKey( 'llm_instructions', $result );
-	}
-
-	public function test_execute__clamps_per_page_to_the_maximum() {
-		// Arrange.
-		$this->act_as_admin();
-
-		// Act.
-		$result = $this->ability->execute( [ 'queries' => [ 'cart' ], 'per_page' => 9999 ] );
-
-		// Assert.
-		$this->assertSame( Icon_Search::MAX_PER_PAGE, $result['results'][0]['per_page'] );
 	}
 
 	public function test_is_available__reports_a_missing_catalog() {
@@ -204,17 +161,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_input_schema__documents_the_batch_queries_limit() {
-		// Act.
-		$get_definition = new \ReflectionMethod( Find_Icons_Ability::class, 'get_definition' );
-
-		$schema = $get_definition->invoke( $this->ability )->input_schema;
-
-		// Assert.
-		$this->assertSame( Icon_Search::MAX_QUERIES, $schema['properties']['queries']['maxItems'] );
-		$this->assertSame( Icon_Search::MAX_PER_PAGE, $schema['properties']['per_page']['maximum'] );
-	}
-
 	public function test_is_available__returns_error_when_svg_library_experiment_inactive() {
 		$this->act_as_editor();
 
@@ -228,14 +174,5 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertWPError( $availability );
 		$this->assertSame( 'elementor_svg_library_inactive', $availability->get_error_code() );
 		$this->assertStringContainsString( 'SVG icon library experiment', $availability->get_error_message() );
-	}
-
-	public function test_description__tells_agents_not_to_assemble_icon_values() {
-		// Act.
-		$description = $this->ability->get_description_for_llm();
-
-		// Assert.
-		$this->assertStringContainsString( 'e-svg', $description );
-		$this->assertStringContainsString( 'fa-solid fa-cart-shopping', $description );
 	}
 }

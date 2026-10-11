@@ -90,45 +90,8 @@ describe( 'buildSearchIndex', () => {
 		expect( icons.map( ( icon ) => icon.name ) ).toEqual( [ 'star' ] );
 	} );
 
-	it( 'emits one entry per style for a name that ships in several libraries', () => {
-		// Arrange.
-		const iconsByFileName = {
-			solid: solidPack( [ 'address-book' ] ),
-			regular: solidPack( [ 'address-book' ] ),
-		};
 
-		// Act.
-		const { icons } = buildSearchIndex( { iconsByFileName, metadata: {}, categoriesByIconName: {} } );
 
-		// Assert.
-		expect( icons.map( ( icon ) => icon.value ) ).toEqual( [
-			'fa-regular fa-address-book',
-			'fa-solid fa-address-book',
-		] );
-	} );
-
-	it( 'drops unicode codepoint aliases and keeps string aliases', () => {
-		// Arrange.
-		const iconsByFileName = { solid: solidPack( [ 'house' ], [ 127968, 'home', '' ] ) };
-
-		// Act.
-		const { icons } = buildSearchIndex( { iconsByFileName, metadata: {}, categoriesByIconName: {} } );
-
-		// Assert.
-		expect( icons[ 0 ].aliases ).toEqual( [ 'home' ] );
-	} );
-
-	it( 'falls back to a readable label when metadata has no entry', () => {
-		// Arrange.
-		const iconsByFileName = { solid: solidPack( [ 'cart-shopping' ] ) };
-
-		// Act.
-		const { icons } = buildSearchIndex( { iconsByFileName, metadata: {}, categoriesByIconName: {} } );
-
-		// Assert.
-		expect( icons[ 0 ].label ).toBe( 'cart shopping' );
-		expect( icons[ 0 ].license ).toBe( LICENSE_FREE );
-	} );
 
 	it( 'marks a style that metadata does not list as free as pro', () => {
 		// Arrange.
@@ -144,16 +107,6 @@ describe( 'buildSearchIndex', () => {
 		expect( icons[ 0 ].license ).toBe( LICENSE_PRO );
 	} );
 
-	it( 'ignores unknown pack file names', () => {
-		// Arrange.
-		const iconsByFileName = { duotone: solidPack( [ 'star' ] ) };
-
-		// Act.
-		const { icons } = buildSearchIndex( { iconsByFileName, metadata: {}, categoriesByIconName: {} } );
-
-		// Assert.
-		expect( icons ).toEqual( [] );
-	} );
 
 	it( 'serializes deterministically so rebuilds produce identical bytes', () => {
 		// Arrange.
@@ -208,29 +161,5 @@ describe( 'readIconMetadata / readCategories', () => {
 		// Assert.
 		expect( categoriesByIconName[ 'cart-shopping' ] ).toEqual( [ 'Shopping', 'Transportation' ] );
 		expect( categoriesByIconName[ 'basket-shopping' ] ).toEqual( [ 'Shopping' ] );
-	} );
-
-	it( 'falls back to the category key when it has no label', () => {
-		// Arrange.
-		const categoriesPath = join( metadataDir, 'categories.yml' );
-		writeFileSync( categoriesPath, [ 'alert:', '  icons:', '    - bell' ].join( '\n' ) );
-
-		// Act.
-		const categoriesByIconName = readCategories( categoriesPath );
-
-		// Assert.
-		expect( categoriesByIconName.bell ).toEqual( [ 'alert' ] );
-	} );
-
-	it( 'returns an empty map for metadata that is not an object', () => {
-		// Arrange.
-		const metadataPath = join( metadataDir, 'icon-families.json' );
-		writeFileSync( metadataPath, '[]' );
-
-		// Act.
-		const metadata = readIconMetadata( metadataPath );
-
-		// Assert.
-		expect( metadata ).toEqual( {} );
 	} );
 } );

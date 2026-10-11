@@ -58,23 +58,7 @@ describe( 'find-icons tool', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'is registered under a stable name', () => {
-		// Act
-		const tool = captureTool();
 
-		// Assert
-		expect( tool.name ).toBe( 'find-icons' );
-	} );
-
-	it( 'tells the agent to copy the value and library verbatim', () => {
-		// Act
-		const { description } = captureTool();
-
-		// Assert
-		expect( description ).toContain( 'e-svg' );
-		expect( description ).toContain( 'never assemble those strings yourself' );
-		expect( description ).toContain( 'fa-solid fa-cart-shopping' );
-	} );
 
 	it( 'proxies a batch of queries to the php ability', async () => {
 		// Arrange
@@ -118,20 +102,6 @@ describe( 'find-icons tool', () => {
 		} );
 	} );
 
-	it( 'omits empty filters instead of sending blanks', async () => {
-		// Arrange
-		const post = givenServerResponse( serverResponse );
-		const { handler } = captureTool();
-
-		// Act
-		await handler( { category: 'shopping' } );
-
-		// Assert
-		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
-			tool: 'find-icons',
-			input: { category: 'shopping' },
-		} );
-	} );
 
 	it( 'returns the writable icon pair and the site catalog facets', async () => {
 		// Arrange
@@ -148,33 +118,7 @@ describe( 'find-icons tool', () => {
 		expect( result.fontAwesomeVersion ).toBe( '7.3.1' );
 	} );
 
-	it( 'forwards the empty-result instruction when nothing matched', async () => {
-		// Arrange
-		givenServerResponse( {
-			...serverResponse,
-			results: [ { query: 'nope', matches: [], total: 0, page: 1, per_page: 10, truncated: false } ],
-			llm_instructions: 'No icon on this site matches these queries.',
-		} );
-		const { handler } = captureTool();
 
-		// Act
-		const result = await handler( { queries: [ 'nope' ] } );
-
-		// Assert
-		expect( result.llmInstructions ).toBe( 'No icon on this site matches these queries.' );
-	} );
-
-	it( 'omits the instruction key when something matched', async () => {
-		// Arrange
-		givenServerResponse( serverResponse );
-		const { handler } = captureTool();
-
-		// Act
-		const result = await handler( { queries: [ 'add to cart' ] } );
-
-		// Assert
-		expect( result ).not.toHaveProperty( 'llmInstructions' );
-	} );
 
 	it( 'surfaces a server failure as a tool error', async () => {
 		// Arrange

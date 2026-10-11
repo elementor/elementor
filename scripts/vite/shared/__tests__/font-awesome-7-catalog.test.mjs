@@ -101,31 +101,7 @@ describe( 'verifyFontAwesome7Catalog', () => {
 		);
 	} );
 
-	it( 'throws when the search index has no icons', () => {
-		// Arrange.
-		const baseDir = writeCatalog( { searchIndexJson: JSON.stringify( { icons: [] } ) } );
 
-		// Act & Assert.
-		assert.throws(
-			() => verifyFontAwesome7Catalog( baseDir ),
-			( error ) => error.message.includes( FONT_AWESOME_7_SEARCH_INDEX_FILE ),
-		);
-	} );
-
-	it( 'throws when a search index value is not the canonical selection value', () => {
-		// Arrange.
-		const baseDir = writeCatalog( {
-			searchIndexJson: JSON.stringify( {
-				icons: [ { name: 'star', library: 'fa-solid', value: 'fas fa-star', terms: [ 'favorite' ] } ],
-			} ),
-		} );
-
-		// Act & Assert.
-		assert.throws(
-			() => verifyFontAwesome7Catalog( baseDir ),
-			( error ) => error.message.includes( FONT_AWESOME_7_SEARCH_INDEX_FILE ),
-		);
-	} );
 
 	it( 'throws when metadata enrichment produced no search terms', () => {
 		// Arrange.

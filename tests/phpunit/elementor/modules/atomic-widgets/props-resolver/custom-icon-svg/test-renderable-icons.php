@@ -69,17 +69,6 @@ class Test_Renderable_Icons extends Elementor_Test_Base {
 		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
 	}
 
-	public function test_execute__does_not_warn_for_valid_custom_icon() {
-		// Arrange.
-		$this->register_pack( [ 'emo-surprised' ] );
-
-		// Act.
-		$result = $this->build_with_icon( self::RENDERABLE_VALUE );
-
-		// Assert.
-		$this->assertArrayNotHasKey( 'warning_details', $result );
-	}
-
 	public function test_execute__validates_icons_beyond_the_listing_cap() {
 		// Arrange.
 		$names = [];
