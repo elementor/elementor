@@ -195,6 +195,21 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertSame( Icon_Search::MAX_PER_PAGE, $schema['properties']['per_page']['maximum'] );
 	}
 
+	public function test_is_available__returns_error_when_svg_library_experiment_inactive() {
+		$this->act_as_editor();
+
+		$admin_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $admin_id );
+
+		$this->plugin()->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
+
+		$availability = $this->ability->is_available();
+
+		$this->assertWPError( $availability );
+		$this->assertSame( 'elementor_svg_library_inactive', $availability->get_error_code() );
+		$this->assertStringContainsString( 'SVG icon library experiment', $availability->get_error_message() );
+	}
+
 	public function test_description__tells_agents_not_to_assemble_icon_values() {
 		// Act.
 		$description = $this->ability->get_description_for_llm();

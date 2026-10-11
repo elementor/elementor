@@ -141,6 +141,17 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'placeholder', $result['warning_details'][0]['message'] );
 	}
 
+	public function test_no_icon_warnings_when_svg_library_experiment_inactive() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$this->plugin()->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
+
+		$result = $this->build_with_icon( $post_id, 'fa-solid fa-invalid-icon', 'fa-solid' );
+
+		$this->assertArrayNotHasKey( 'warning_details', $result );
+	}
+
 	private function create_real_document(): int {
 		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
 	}
