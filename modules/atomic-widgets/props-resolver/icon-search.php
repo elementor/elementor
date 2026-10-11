@@ -27,7 +27,7 @@ class Icon_Search {
 		$library = self::sanitize_text( $args['library'] ?? '' );
 		$category = self::sanitize_text( $args['category'] ?? '' );
 		$per_page = self::sanitize_per_page( $args['per_page'] ?? self::DEFAULT_PER_PAGE );
-		$page = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$page = self::sanitize_page( $args['page'] ?? 1 );
 
 		$custom_library_metadata = Custom_Icon_Resolver::get_custom_libraries( [ 'include_labels' => true ] );
 		$custom_values = [];
@@ -40,14 +40,11 @@ class Icon_Search {
 
 			$resolved = Custom_Icon_Resolver::resolve_library_values( $custom_library );
 			$custom_values[ $custom_library ] = $resolved['values'];
-			$custom_libraries[ $custom_library ] = array_merge(
-				$custom_library_metadata[ $custom_library ],
-				[
-					'values' => $resolved['values'],
-					'truncated' => $resolved['truncated'],
-					'total' => $resolved['total'],
-				]
-			);
+			$custom_libraries[ $custom_library ] = (object) [
+				'label' => $custom_library_metadata[ $custom_library ]['label'] ?? $custom_library,
+				'total' => $resolved['total'],
+				'truncated' => $resolved['truncated'],
+			];
 		}
 
 		if ( empty( $queries ) ) {
@@ -69,7 +66,7 @@ class Icon_Search {
 		$response = [
 			'results' => $results,
 			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_metadata ) ),
-			'custom_libraries' => $custom_libraries,
+			'custom_libraries' => empty( $custom_libraries ) ? (object) [] : (object) $custom_libraries,
 			'categories' => Icon_Catalog::get_categories(),
 			'font_awesome_version' => Icon_Catalog::get_version(),
 		];
@@ -156,9 +153,11 @@ class Icon_Search {
 				continue;
 			}
 
-			$best = '' === $normalized && '' !== $category
-				? Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, Icon_Matcher::MATCHED_ON_CATEGORY )
-				: Icon_Matcher::match( $entry, $normalized, $tokens );
+			if ( '' === $normalized && ( '' !== $category || '' !== $library ) ) {
+				$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, Icon_Matcher::MATCHED_ON_CATEGORY );
+			} else {
+				$best = Icon_Matcher::match( $entry, $normalized, $tokens );
+			}
 
 			if ( $best ) {
 				$scored[] = self::scored_entry( $entry, $best );
@@ -170,14 +169,9 @@ class Icon_Search {
 
 	private static function score_custom_libraries( string $query, string $library, array $custom_values ): array {
 		$normalized = Icon_Matcher::normalize( $query );
-
-		if ( '' === $normalized ) {
-			return [];
-		}
-
 		$tokens = Icon_Matcher::tokenize( $normalized );
 
-		if ( empty( $tokens ) ) {
+		if ( empty( $tokens ) && '' !== $normalized ) {
 			$tokens = [ $normalized ];
 		}
 
@@ -187,15 +181,20 @@ class Icon_Search {
 			foreach ( $values as $name => $value ) {
 				$normalized_name = Icon_Matcher::normalize( (string) $name );
 
-				$exact_match = $normalized_name === $normalized;
-				$has_all_tokens = true;
+				if ( '' === $normalized ) {
+					$exact_match = true;
+					$has_all_tokens = true;
+				} else {
+					$exact_match = $normalized_name === $normalized;
+					$has_all_tokens = true;
 
-				if ( ! $exact_match ) {
-					foreach ( $tokens as $token ) {
-						$pattern = '/(^|-|\\s)' . preg_quote( $token, '/' ) . '($|-|\\s)/';
-						if ( ! preg_match( $pattern, $normalized_name ) ) {
-							$has_all_tokens = false;
-							break;
+					if ( ! $exact_match ) {
+						foreach ( $tokens as $token ) {
+							$pattern = '/(^|-|\\s)' . preg_quote( $token, '/' ) . '($|-|\\s)/';
+							if ( ! preg_match( $pattern, $normalized_name ) ) {
+								$has_all_tokens = false;
+								break;
+							}
 						}
 					}
 				}
@@ -203,6 +202,10 @@ class Icon_Search {
 				if ( ! $exact_match && ! $has_all_tokens ) {
 					continue;
 				}
+
+				$score = '' === $normalized
+					? Icon_Matcher::SCORE_EXACT_CATEGORY
+					: ( $exact_match ? Icon_Matcher::SCORE_EXACT_NAME : Icon_Matcher::SCORE_SUBSTRING_NAME );
 
 				$scored[] = self::scored_entry(
 					[
@@ -212,10 +215,7 @@ class Icon_Search {
 						'label' => str_replace( '-', ' ', (string) $name ),
 						'license' => Icon_Catalog::LICENSE_FREE,
 					],
-					Icon_Matcher::result(
-						$exact_match ? Icon_Matcher::SCORE_EXACT_NAME : Icon_Matcher::SCORE_SUBSTRING_NAME,
-						Icon_Matcher::MATCHED_ON_CUSTOM_NAME
-					)
+					Icon_Matcher::result( $score, Icon_Matcher::MATCHED_ON_CUSTOM_NAME )
 				);
 			}
 		}
@@ -289,5 +289,19 @@ class Icon_Search {
 		}
 
 		return min( $per_page, self::MAX_PER_PAGE );
+	}
+
+	private static function sanitize_page( $page ): int {
+		if ( is_string( $page ) && ! is_numeric( $page ) ) {
+			return 1;
+		}
+
+		$page = (int) $page;
+
+		if ( $page < 1 ) {
+			return 1;
+		}
+
+		return min( $page, 1000 );
 	}
 }

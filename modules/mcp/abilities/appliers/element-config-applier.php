@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -340,6 +341,10 @@ class Element_Config_Applier {
 	 */
 	private function maybe_warn_unknown_icon( $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
 		if ( ! is_array( $resolved_value ) || Icon_Prop_Type::get_key() !== ( $resolved_value['$$type'] ?? null ) ) {
+			return;
+		}
+
+		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
 			return;
 		}
 

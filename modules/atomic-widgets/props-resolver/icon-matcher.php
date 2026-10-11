@@ -25,9 +25,9 @@ class Icon_Matcher {
 
 	const SCORE_EXACT_LABEL = 800;
 
-	const SCORE_EXACT_TERM = 700;
+	const SCORE_PREFIX_NAME = 750;
 
-	const SCORE_PREFIX_NAME = 600;
+	const SCORE_EXACT_TERM = 700;
 
 	const SCORE_SUBSTRING_NAME = 500;
 
@@ -67,9 +67,11 @@ class Icon_Matcher {
 	];
 
 	private static array $normalized_cache = [];
+	private static array $normalized_preserve_order_cache = [];
 
 	public static function reset(): void {
 		self::$normalized_cache = [];
+		self::$normalized_preserve_order_cache = [];
 	}
 
 	/**
@@ -104,6 +106,19 @@ class Icon_Matcher {
 		}
 
 		self::$normalized_cache[ $value ] = $normalized;
+
+		return $normalized;
+	}
+
+	public static function normalize_preserve_order( string $value ): string {
+		if ( isset( self::$normalized_preserve_order_cache[ $value ] ) ) {
+			return self::$normalized_preserve_order_cache[ $value ];
+		}
+
+		$normalized = strtolower( trim( $value ) );
+		$normalized = trim( (string) preg_replace( '/[^a-z0-9]+/', '-', $normalized ), '-' );
+
+		self::$normalized_preserve_order_cache[ $value ] = $normalized;
 
 		return $normalized;
 	}
@@ -171,7 +186,7 @@ class Icon_Matcher {
 			+ ( $exact_name_tokens * self::SCORE_PER_NAME_TOKEN )
 			+ min( intdiv( $best['score'], 100 ), 5 );
 
-		if ( $matched_tokens === $name_part_tokens && 1 < count( $tokens ) ) {
+		if ( $all_matched && $matched_tokens === $name_part_tokens && 1 < count( $tokens ) ) {
 			$base_score += 50;
 		}
 
@@ -190,9 +205,11 @@ class Icon_Matcher {
 		}
 
 		$name = $entry['name'];
+		$name_normalized = self::normalize_preserve_order( $name );
+		$needle_normalized = self::normalize_preserve_order( $needle );
 		$label = self::normalize( $entry['label'] );
 
-		if ( $name === $needle ) {
+		if ( $name_normalized === $needle_normalized ) {
 			return self::result( self::SCORE_EXACT_NAME, self::MATCHED_ON_NAME );
 		}
 
@@ -208,11 +225,11 @@ class Icon_Matcher {
 			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
 		}
 
-		if ( str_starts_with( $name, $needle ) || str_starts_with( $name, $needle . '-' ) ) {
+		if ( str_starts_with( $name_normalized, $needle_normalized . '-' ) ) {
 			return self::result( self::SCORE_PREFIX_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( self::is_word_boundary_match( $name, $needle ) ) {
+		if ( self::is_word_boundary_match( $name_normalized, $needle_normalized ) ) {
 			return self::result( self::SCORE_SUBSTRING_NAME, self::MATCHED_ON_NAME );
 		}
 

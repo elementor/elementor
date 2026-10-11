@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Matcher;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
@@ -46,6 +47,14 @@ class Find_Icons_Ability extends Abstract_Ability {
 			return $gate;
 		}
 
+		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
+			return new \WP_Error(
+				'elementor_svg_library_inactive',
+				__( 'The SVG icon library experiment is not active on this site.', 'elementor' ),
+				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
+			);
+		}
+
 		if ( ! Icon_Catalog::is_available() ) {
 			return new \WP_Error(
 				'elementor_icon_catalog_unavailable',
@@ -80,12 +89,11 @@ class Find_Icons_Ability extends Abstract_Ability {
 		] );
 
 		if ( isset( $response['error'] ) ) {
-			$response = [
-				'results' => [],
-				'libraries' => [],
-				'custom_libraries' => [],
-				'categories' => [],
-			];
+			return new \WP_Error(
+				'elementor_icon_search_invalid_request',
+				$response['error'],
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
 		if ( $this->has_no_matches( $response ) ) {
