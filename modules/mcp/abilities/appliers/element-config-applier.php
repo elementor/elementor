@@ -357,10 +357,6 @@ class Element_Config_Applier {
 		}
 
 		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
-			if ( ! Icon_Catalog::is_available() ) {
-				return;
-			}
-
 			if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
 				return;
 			}
@@ -380,7 +376,7 @@ class Element_Config_Applier {
 			return;
 		}
 
-		$custom_libraries = Custom_Icon_Resolver::get_libraries();
+		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries();
 
 		if ( ! isset( $custom_libraries[ $library ] ) ) {
 			$warnings->add(
@@ -399,7 +395,7 @@ class Element_Config_Applier {
 
 		$library_icons = Custom_Icon_Resolver::resolve_library_values( $library );
 
-		if ( $library_icons['truncated'] && $library_icons['total'] > Custom_Icon_Resolver::MAX_LIBRARY_ICONS ) {
+		if ( $library_icons['truncated'] ) {
 			return;
 		}
 

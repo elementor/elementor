@@ -49,10 +49,6 @@ class Icon_Catalog {
 		return is_readable( $path ) && filesize( $path ) > 0;
 	}
 
-	public static function has_entries(): bool {
-		return ! empty( self::get_entries() );
-	}
-
 	public static function get_version(): ?string {
 		if ( null !== self::$version ) {
 			return '' === self::$version ? null : self::$version;

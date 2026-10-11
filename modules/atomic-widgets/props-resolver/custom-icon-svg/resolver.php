@@ -69,11 +69,11 @@ class Resolver {
 				continue;
 			}
 
-			$label = isset( $tab['label'] ) && is_string( $tab['label'] ) && '' !== $tab['label']
-				? $tab['label']
-				: $library;
+			$has_label = isset( $tab['label'] ) && is_string( $tab['label'] ) && '' !== $tab['label'];
 
-			if ( $require_label && $label === $library ) {
+			$label = $has_label ? $tab['label'] : $library;
+
+			if ( $require_label && ! $has_label ) {
 				continue;
 			}
 
@@ -222,13 +222,6 @@ class Resolver {
 			'truncated' => $truncated,
 			'total' => $total,
 		];
-	}
-
-	/**
-	 * @return array<string, string>
-	 */
-	public static function get_libraries(): array {
-		return self::get_custom_libraries();
 	}
 
 	private static function sanitize( string $markup ): string {

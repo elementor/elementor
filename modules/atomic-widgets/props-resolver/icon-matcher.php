@@ -281,14 +281,4 @@ class Icon_Matcher {
 
 		return false;
 	}
-
-	private static function list_has_substring( array $items, string $needle ): bool {
-		foreach ( $items as $item ) {
-			if ( str_contains( self::normalize( (string) $item ), $needle ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 }
