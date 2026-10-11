@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
@@ -374,6 +375,10 @@ class Element_Config_Applier {
 				$config_id
 			);
 
+			return;
+		}
+
+		if ( Font_Icon_Svg_Data_Manager::get_font_family( $library ) ) {
 			return;
 		}
 

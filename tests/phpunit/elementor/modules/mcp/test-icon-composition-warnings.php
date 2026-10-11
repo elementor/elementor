@@ -120,6 +120,18 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
 	}
 
+	public function test_execute__does_not_warn_for_a_managed_icon_library() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'eicon-star', 'eicons' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'warning_details', $result );
+	}
+
 	public function test_execute__does_not_warn_for_an_icon_the_site_can_render() {
 		// Arrange.
 		$this->act_as_admin();
