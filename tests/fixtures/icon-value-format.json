@@ -19,6 +19,13 @@
 			}
 		},
 		{
+			"name": "star",
+			"expectedValues": {
+				"fa-solid": "fa-solid fa-star",
+				"fa-regular": "fa-regular fa-star"
+			}
+		},
+		{
 			"name": "facebook",
 			"expectedValues": {
 				"fa-brands": "fa-brands fa-facebook"
@@ -43,7 +50,7 @@
 				"fa-solid": "fa-solid fa-house",
 				"fa-regular": "fa-regular fa-house"
 			},
-			"aliases": ["home"]
+			"aliases": ["home", "home-alt", "home-lg-alt"]
 		},
 		{
 			"name": "magnifying-glass",
