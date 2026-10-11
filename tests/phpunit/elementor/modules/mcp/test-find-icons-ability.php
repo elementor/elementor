@@ -77,20 +77,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertTrue( Mcp_V4_Gate::is_gated( $this->ability->get_id() ) );
 	}
 
-	public function test_execute__returns_403_for_subscriber() {
-		// Arrange.
-		$user_id = $this->factory()->user->create( [ 'role' => 'subscriber' ] );
-		wp_set_current_user( $user_id );
-
-		// Act.
-		$result = $this->ability->execute( [ 'queries' => [ 'cart' ] ] );
-
-		// Assert.
-		$this->assertWPError( $result );
-		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
-		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
-	}
-
 	public function test_execute__returns_the_writable_icon_pair() {
 		// Arrange.
 		$this->act_as_admin();

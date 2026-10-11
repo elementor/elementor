@@ -69,14 +69,6 @@ class Find_Icons_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to look up icons.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
 		$input = is_array( $input ) ? $input : [];
 
 		$response = Icon_Search::search( [
