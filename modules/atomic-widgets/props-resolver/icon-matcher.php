@@ -77,8 +77,8 @@ class Icon_Matcher {
 	/**
 	 * @return array{score: int, matched_on: string}|null
 	 */
-	public static function match( array $entry, string $normalized, array $tokens ): ?array {
-		$best = self::match_whole_query( $entry, $normalized );
+	public static function match( array $entry, string $normalized_preserve_order, string $normalized_sorted, array $tokens ): ?array {
+		$best = self::match_whole_query( $entry, $normalized_preserve_order, $normalized_sorted );
 
 		if ( $best || empty( $tokens ) ) {
 			return $best;
@@ -157,7 +157,8 @@ class Icon_Matcher {
 		$all_matched = true;
 
 		foreach ( $tokens as $token ) {
-			$match = self::match_whole_query( $entry, $token );
+			$token_preserve_order = self::normalize_preserve_order( $token );
+			$match = self::match_whole_query( $entry, $token_preserve_order, $token );
 
 			if ( ! $match ) {
 				$all_matched = false;
@@ -199,53 +200,52 @@ class Icon_Matcher {
 		return $best;
 	}
 
-	private static function match_whole_query( array $entry, string $needle ): ?array {
-		if ( '' === $needle ) {
+	private static function match_whole_query( array $entry, string $needle_preserve_order, string $needle_sorted ): ?array {
+		if ( '' === $needle_preserve_order ) {
 			return null;
 		}
 
 		$name = $entry['name'];
 		$name_normalized = self::normalize_preserve_order( $name );
-		$needle_normalized = self::normalize_preserve_order( $needle );
 		$label = self::normalize( $entry['label'] );
 
-		if ( $name_normalized === $needle_normalized ) {
+		if ( $name_normalized === $needle_preserve_order ) {
 			return self::result( self::SCORE_EXACT_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( self::list_has_exact( $entry['aliases'], $needle ) ) {
+		if ( self::list_has_exact( $entry['aliases'], $needle_sorted ) ) {
 			return self::result( self::SCORE_EXACT_ALIAS, self::MATCHED_ON_ALIAS );
 		}
 
-		if ( $label === $needle ) {
+		if ( $label === $needle_sorted ) {
 			return self::result( self::SCORE_EXACT_LABEL, self::MATCHED_ON_LABEL );
 		}
 
-		if ( self::list_has_exact( $entry['terms'], $needle ) ) {
+		if ( self::list_has_exact( $entry['terms'], $needle_sorted ) ) {
 			return self::result( self::SCORE_EXACT_TERM, self::MATCHED_ON_TERM );
 		}
 
-		if ( str_starts_with( $name_normalized, $needle_normalized . '-' ) ) {
+		if ( str_starts_with( $name_normalized, $needle_preserve_order . '-' ) ) {
 			return self::result( self::SCORE_PREFIX_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( self::is_word_boundary_match( $name_normalized, $needle_normalized ) ) {
+		if ( self::is_word_boundary_match( $name_normalized, $needle_preserve_order ) ) {
 			return self::result( self::SCORE_SUBSTRING_NAME, self::MATCHED_ON_NAME );
 		}
 
-		if ( self::list_has_word_boundary_match( $entry['aliases'], $needle ) ) {
+		if ( self::list_has_word_boundary_match( $entry['aliases'], $needle_sorted ) ) {
 			return self::result( self::SCORE_SUBSTRING_ALIAS, self::MATCHED_ON_ALIAS );
 		}
 
-		if ( self::is_word_boundary_match( $label, $needle ) ) {
+		if ( self::is_word_boundary_match( $label, $needle_sorted ) ) {
 			return self::result( self::SCORE_SUBSTRING_LABEL, self::MATCHED_ON_LABEL );
 		}
 
-		if ( self::list_has_word_boundary_match( $entry['terms'], $needle ) ) {
+		if ( self::list_has_word_boundary_match( $entry['terms'], $needle_sorted ) ) {
 			return self::result( self::SCORE_SUBSTRING_TERM, self::MATCHED_ON_TERM );
 		}
 
-		if ( self::list_has_exact( $entry['categories'], $needle ) ) {
+		if ( self::list_has_exact( $entry['categories'], $needle_sorted ) ) {
 			return self::result( self::SCORE_EXACT_CATEGORY, self::MATCHED_ON_CATEGORY );
 		}
 

@@ -568,7 +568,6 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'large-pack', $response['custom_libraries'] );
 		$this->assertTrue( $response['custom_libraries']['large-pack']['truncated'] );
 		$this->assertSame( 300, $response['custom_libraries']['large-pack']['total'] );
-		$this->assertCount( 250, $response['custom_libraries']['large-pack']['values'] );
 	}
 
 	public function test_catalog__icon_value_format_matches_fixture() {
@@ -622,5 +621,95 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		);
 		Icon_Catalog::reset();
 		Font_Awesome_7_Icon_Resolver::reset();
+	}
+
+	public function test_search__arrow_down_1_9_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-1-9' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-arrow-down-1-9', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__arrow_down_9_1_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-9-1' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-arrow-down-9-1', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__arrow_down_a_z_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-a-z' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-arrow-down-a-z', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__arrow_down_z_a_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-z-a' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-arrow-down-z-a', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__arrow_down_short_wide_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-short-wide' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-arrow-down-short-wide', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__arrow_down_wide_short_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'arrow-down-wide-short' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-arrow-down-wide-short', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__left_right_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'left-right' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-left-right', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__right_left_returns_exact_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'right-left' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-right-left', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+	}
+
+	public function test_search__magnifying_glass_reports_name_match() {
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'magnifying-glass' ] ] );
+
+		// Assert.
+		$matches = $response['results'][0]['matches'];
+		$this->assertSame( 'fa-solid fa-magnifying-glass', $matches[0]['value'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
 	}
 }

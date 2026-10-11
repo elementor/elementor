@@ -40,7 +40,7 @@ class Icon_Search {
 
 			$resolved = Custom_Icon_Resolver::resolve_library_values( $custom_library );
 			$custom_values[ $custom_library ] = $resolved['values'];
-			$custom_libraries[ $custom_library ] = (object) [
+			$custom_libraries[ $custom_library ] = [
 				'label' => $custom_library_metadata[ $custom_library ]['label'] ?? $custom_library,
 				'total' => $resolved['total'],
 				'truncated' => $resolved['truncated'],
@@ -66,7 +66,7 @@ class Icon_Search {
 		$response = [
 			'results' => $results,
 			'libraries' => array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_metadata ) ),
-			'custom_libraries' => empty( $custom_libraries ) ? (object) [] : (object) $custom_libraries,
+			'custom_libraries' => empty( $custom_libraries ) ? (object) [] : $custom_libraries,
 			'categories' => Icon_Catalog::get_categories(),
 			'font_awesome_version' => Icon_Catalog::get_version(),
 		];
@@ -148,8 +148,9 @@ class Icon_Search {
 	}
 
 	private static function score_catalog( string $query, string $library, string $category ): array {
-		$normalized = Icon_Matcher::normalize( $query );
-		$tokens = Icon_Matcher::tokenize( $normalized );
+		$normalized_sorted = Icon_Matcher::normalize( $query );
+		$normalized_preserve_order = Icon_Matcher::normalize_preserve_order( $query );
+		$tokens = Icon_Matcher::tokenize( $normalized_sorted );
 		$scored = [];
 
 		foreach ( Icon_Catalog::get_entries() as $entry ) {
@@ -161,10 +162,10 @@ class Icon_Search {
 				continue;
 			}
 
-			if ( '' === $normalized && ( '' !== $category || '' !== $library ) ) {
+			if ( '' === $normalized_sorted && ( '' !== $category || '' !== $library ) ) {
 				$best = Icon_Matcher::result( Icon_Matcher::SCORE_EXACT_CATEGORY, Icon_Matcher::MATCHED_ON_CATEGORY );
 			} else {
-				$best = Icon_Matcher::match( $entry, $normalized, $tokens );
+				$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
 			}
 
 			if ( $best ) {
