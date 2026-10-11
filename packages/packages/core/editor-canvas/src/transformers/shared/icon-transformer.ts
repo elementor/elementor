@@ -1,9 +1,9 @@
 import {
 	type FontAwesome7IconDefinition,
 	getFontAwesome7IconName,
-	isDeletedCustomIconLibrary,
-	resolveCustomIconSvg,
+	isDeletedIconLibrary,
 	resolveFontAwesome7Icon,
+	resolveProviderIconSvg,
 } from '@elementor/editor-controls';
 
 import { createTransformer } from '../create-transformer';
@@ -35,14 +35,14 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: fontAwesomeHtml, url: null };
 	}
 
-	if ( isDeletedCustomIconLibrary( library, iconValue ) ) {
+	if ( isDeletedIconLibrary( library, iconValue ) ) {
 		return resolveDefaultSvg( signal );
 	}
 
-	const customHtml = await resolveCustomSvg( library, iconValue, signal );
+	const providerHtml = await resolveProviderSvg( library, iconValue, signal );
 
-	if ( customHtml ) {
-		return { html: customHtml, url: null };
+	if ( providerHtml ) {
+		return { html: providerHtml, url: null };
 	}
 
 	return EMPTY_ICON_RESULT;
@@ -64,8 +64,8 @@ async function resolveDefaultSvg( signal?: AbortSignal ) {
 	);
 }
 
-async function resolveCustomSvg( library: string, iconValue: string, signal?: AbortSignal ): Promise< string | null > {
-	const markup = await resolveCustomIconSvg( library, iconValue, signal );
+async function resolveProviderSvg( library: string, iconValue: string, signal?: AbortSignal ): Promise< string | null > {
+	const markup = await resolveProviderIconSvg( library, iconValue, signal );
 
 	return markup ? processIconSvgContent( markup ) : null;
 }

@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Box, CardMedia, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCustomIconLibraries } from './icon-library/custom-icon-libraries';
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
+import { useIconLibraryProviderIcons } from './icon-library/icon-library-providers';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
 const ICON_PREVIEW_SIZE = 50;
@@ -21,10 +21,10 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	const shouldLoadIconCatalog = Boolean( iconClassName && iconLibrary );
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } =
 		useFontAwesome7Catalog( shouldLoadIconCatalog );
-	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( shouldLoadIconCatalog );
-	const icons = [ ...fontAwesomeIcons, ...customIcons ];
+	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons( shouldLoadIconCatalog );
+	const icons = [ ...fontAwesomeIcons, ...providerIcons ];
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
-	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isCustomLoading );
+	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
 
 	if ( isFetching || isLoadingCatalog ) {
 		return <CircularProgress role="progressbar" />;

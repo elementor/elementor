@@ -82,11 +82,7 @@ declare global {
 						jsonFiles?: string[];
 						jsonBaseUrl?: string;
 						filter?: unknown;
-						customIconPacks?: Record<
-							string,
-							{ configUrl?: string; fontUrl?: string; selectionUrl?: string; type?: string }
-						>;
-						customIconLibrariesEnabled?: boolean;
+						[ key: string ]: unknown;
 					};
 				};
 				urls?: {

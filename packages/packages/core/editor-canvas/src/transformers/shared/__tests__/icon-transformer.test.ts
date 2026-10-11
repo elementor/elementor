@@ -1,10 +1,8 @@
-jest.mock( '@elementor/http-client', () => ( {
-	httpService: () => ( {
-		get: jest.fn().mockRejectedValue( new Error( 'no custom svg' ) ),
-	} ),
-} ) );
-
-import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
+import {
+	registerIconLibraryProvider,
+	resetFontAwesome7IconsCache,
+	unregisterIconLibraryProvider,
+} from '@elementor/editor-controls';
 import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
 import { iconPropType } from '../../../__tests__/prop-types';
@@ -186,15 +184,13 @@ describe( 'iconTransformer', () => {
 		expect( result ).toEqual( { html: null, url: null } );
 	} );
 
-	it( 'falls back to the default svg when a custom library has been deleted', async () => {
+	it( 'falls back to the default svg when a provider reports the library as deleted', async () => {
 		// Arrange.
-		window.elementor = {
-			config: {
-				icons: {
-					libraries: [ { name: 'fa-solid', prefix: 'fa-', native: true } ],
-				},
-			},
-		} as typeof window.elementor;
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			isDeletedLibrary: ( library ) => 'missing-set' === library,
+		} );
 		const defaultSvg =
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
 		global.fetch = jest.fn().mockResolvedValue( {
@@ -205,6 +201,8 @@ describe( 'iconTransformer', () => {
 
 		// Act.
 		const result = await resolveSavedIcon( 'missing-set missing-set-ghost', 'missing-set' );
+
+		unregisterIconLibraryProvider( 'test-provider' );
 
 		// Assert.
 		expect( global.fetch ).toHaveBeenCalledWith(

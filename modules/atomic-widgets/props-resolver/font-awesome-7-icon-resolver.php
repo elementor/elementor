@@ -2,10 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Icons_Manager;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Pack_Directory;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -47,18 +43,23 @@ class Font_Awesome_7_Icon_Resolver {
 
 	const FILTER_TYPE_ITEM = 'item';
 
-	const SKIPPED_TAB_NAMES = [ 'all', 'recommended', 'GoPro' ];
-
 	public static function get_editor_config(): array {
-		$custom_icon_libraries_enabled = Availability::is_enabled();
-
-		return [
+		$config = [
 			'jsonFiles' => self::allowed_json_files(),
 			'jsonBaseUrl' => self::get_json_base_url(),
-			'filter' => self::get_filter_items( $custom_icon_libraries_enabled ),
-			'customIconPacks' => $custom_icon_libraries_enabled ? self::get_custom_icon_packs() : [],
-			'customIconLibrariesEnabled' => $custom_icon_libraries_enabled,
+			'filter' => self::get_filter_items(),
 		];
+
+		/**
+		 * Filters the Font Awesome 7 icon library editor config.
+		 *
+		 * Extensions can add keys consumed by editor icon library providers.
+		 *
+		 * @param array $config Editor config.
+		 */
+		$filtered = apply_filters( 'elementor/atomic-widgets/font-awesome-7/editor-config', $config );
+
+		return is_array( $filtered ) ? $filtered : $config;
 	}
 
 	public static function resolve( string $value, string $library ): ?array {
@@ -94,7 +95,7 @@ class Font_Awesome_7_Icon_Resolver {
 		];
 	}
 
-	private static function get_filter_items( bool $custom_icon_libraries_enabled ): array {
+	private static function get_filter_items(): array {
 		$items = [
 			[
 				'type' => self::FILTER_TYPE_ALL,
@@ -121,87 +122,14 @@ class Font_Awesome_7_Icon_Resolver {
 			],
 		];
 
-		$custom_items = [];
+		/**
+		 * Filters the icon library filter items.
+		 *
+		 * @param array $items Filter items.
+		 */
+		$filtered = apply_filters( 'elementor/atomic-widgets/font-awesome-7/filter-items', $items );
 
-		if ( ! $custom_icon_libraries_enabled ) {
-			return $items;
-		}
-
-		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
-			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
-				continue;
-			}
-
-			if ( in_array( $name, self::SKIPPED_TAB_NAMES, true ) ) {
-				continue;
-			}
-
-			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
-			$tab_label = isset( $tab['label'] ) && is_string( $tab['label'] ) ? $tab['label'] : '';
-
-			if ( '' === $tab_name || '' === $tab_label || str_starts_with( $tab_name, self::LIBRARY_PREFIX ) ) {
-				continue;
-			}
-
-			if ( ! Pack_Directory::is_supported( $tab + [ 'name' => $tab_name ] ) ) {
-				continue;
-			}
-
-			$custom_items[] = [
-				'type' => self::FILTER_TYPE_ITEM,
-				'value' => $tab_name,
-				'label' => $tab_label,
-				'icon' => 'library',
-			];
-		}
-
-		if ( empty( $custom_items ) ) {
-			return $items;
-		}
-
-		$items[] = [
-			'type' => self::FILTER_TYPE_GROUP,
-			'label' => esc_html__( 'My libraries', 'elementor' ),
-		];
-
-		return array_merge( $items, $custom_items );
-	}
-
-	private static function get_custom_icon_packs(): array {
-		$packs = [];
-
-		if ( ! class_exists( Icons_Manager::class ) ) {
-			return $packs;
-		}
-
-		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
-			if ( ! is_array( $tab ) || ! empty( $tab['native'] ) ) {
-				continue;
-			}
-
-			$library = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : (string) $name;
-
-			if ( '' === $library || in_array( $library, self::SKIPPED_TAB_NAMES, true ) || str_starts_with( $library, self::LIBRARY_PREFIX ) ) {
-				continue;
-			}
-
-			$tab_with_name = $tab + [ 'name' => $library ];
-
-			if ( ! Pack_Directory::is_supported( $tab_with_name ) ) {
-				continue;
-			}
-
-			$urls = Pack_Directory::public_urls( $tab_with_name );
-
-			if ( isset( $tab['fetchJson'] ) && is_string( $tab['fetchJson'] ) && '' !== $tab['fetchJson'] ) {
-				$urls['fetchJson'] = $tab['fetchJson'];
-			}
-
-			$urls['type'] = Pack_Directory::detect_type( $tab_with_name );
-			$packs[ $library ] = $urls;
-		}
-
-		return $packs;
+		return is_array( $filtered ) ? $filtered : $items;
 	}
 
 	private static function get_icon_name( string $value ): ?string {

@@ -37,7 +37,13 @@ export { TransformSettingsControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
-export { isDeletedCustomIconLibrary, resolveCustomIconSvg } from './controls/icon-library/custom-icon-libraries';
+export {
+	isDeletedIconLibrary,
+	registerIconLibraryProvider,
+	resolveProviderIconSvg,
+	unregisterIconLibraryProvider,
+	type IconLibraryProvider,
+} from './controls/icon-library/icon-library-providers';
 export {
 	getFontAwesome7IconName,
 	resetFontAwesome7IconsCache,
