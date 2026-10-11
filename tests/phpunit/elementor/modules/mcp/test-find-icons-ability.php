@@ -125,8 +125,8 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$result = $this->ability->execute( 'not-an-array' );
 
 		// Assert.
-		$this->assertIsArray( $result );
-		$this->assertSame( [], $result['results'] );
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_icon_search_invalid_request', $result->get_error_code() );
 	}
 
 	public function test_execute__adds_an_instruction_when_nothing_matches() {

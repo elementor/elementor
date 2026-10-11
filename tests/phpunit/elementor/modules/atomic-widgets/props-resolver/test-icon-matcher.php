@@ -94,7 +94,8 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 			'categories' => [],
 		];
 
-		$result = Icon_Matcher::match( $entry, Icon_Matcher::normalize( 'magnifying-glass' ), [] );
+		$needle = Icon_Matcher::normalize_preserve_order( 'magnifying-glass' );
+		$result = Icon_Matcher::match( $entry, $needle, [] );
 
 		$this->assertSame( Icon_Matcher::SCORE_EXACT_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );

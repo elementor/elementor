@@ -111,7 +111,7 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'warning_details', $result );
 	}
 
-	public function test_execute__does_not_warn_when_catalog_is_unavailable() {
+	public function test_execute__warns_when_icon_json_is_unavailable() {
 		// Arrange — FA7 files missing is a production-plausible scenario (fresh git clone, build not run).
 		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 		add_filter( 'elementor/atomic-widgets/font-awesome-7/json-base-path', fn() => '/nonexistent/' );
@@ -123,8 +123,8 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		// Act.
 		$result = $this->build_with_icon( $post_id, 'fa-solid fa-cart-shopping', 'fa-solid' );
 
-		// Assert — when the catalog is unavailable, we cannot determine whether the icon exists, so skip the warning.
-		$this->assertArrayNotHasKey( 'warning_details', $result );
+		// Assert — when icon JSON files are unavailable, Font_Awesome_7_Icon_Resolver::resolve() returns null, so we warn.
+		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
 	}
 
 	public function test_execute__warns_for_unregistered_custom_library() {
