@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Find_Icons_Ability;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -201,7 +202,7 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$admin_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $admin_id );
 
-		$this->plugin()->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
+		Plugin::$instance->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
 
 		$availability = $this->ability->is_available();
 

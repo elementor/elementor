@@ -120,7 +120,7 @@ class Test_Icon_Matcher extends Elementor_Test_Base {
 		$result = Icon_Matcher::match( $entry, $needle_preserve, $needle_sorted, $tokens );
 
 		$this->assertNotNull( $result );
-		$this->assertSame( Icon_Matcher::SCORE_PREFIX_NAME, $result['score'] );
+		$this->assertSame( Icon_Matcher::SCORE_WHOLE_WORD_NAME, $result['score'] );
 		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $result['matched_on'] );
 	}
 

@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -145,7 +146,7 @@ class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 
-		$this->plugin()->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
+		Plugin::$instance->experiments->set_feature_default_state( 'e_svg_library', 'inactive' );
 
 		$result = $this->build_with_icon( $post_id, 'fa-solid fa-invalid-icon', 'fa-solid' );
 

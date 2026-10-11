@@ -86,7 +86,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 'fa-solid fa-cart-shopping', $matches[0]['value'] );
-		$this->assertSame( Icon_Matcher::MATCHED_ON_NAME, $matches[0]['matched_on'] );
+		$this->assertSame( Icon_Matcher::MATCHED_ON_ALIAS, $matches[0]['matched_on'] );
 	}
 
 	public function test_search__matches_a_search_term_for_a_descriptive_phrase() {
@@ -416,18 +416,108 @@ class Test_Icon_Search extends Elementor_Test_Base {
 				'categories' => [ 'brands' ],
 				'license' => 'free',
 			],
-			[
-				'name' => 'crown',
-				'library' => 'fa-solid',
-				'value' => 'fa-solid fa-crown',
-				'label' => 'Crown',
-				'aliases' => [],
-				'terms' => [ 'premium' ],
-				'categories' => [ 'shapes' ],
-				'license' => 'pro',
-			],
-		];
-	}
+		[
+			'name' => 'crown',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-crown',
+			'label' => 'Crown',
+			'aliases' => [],
+			'terms' => [ 'premium' ],
+			'categories' => [ 'shapes' ],
+			'license' => 'pro',
+		],
+		[
+			'name' => 'arrow-down-1-9',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-arrow-down-1-9',
+			'label' => 'Arrow Down 1 9',
+			'aliases' => [ 'sort-numeric-asc', 'sort-numeric-down' ],
+			'terms' => [ '1-9', 'arrange', 'ascending', 'filter', 'number order', 'numbers', 'numeric', 'order', 'sort', 'sort by number', 'sort-ascending', 'sort-numeric-asc' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'arrow-down-9-1',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-arrow-down-9-1',
+			'label' => 'Arrow Down 9 1',
+			'aliases' => [ 'sort-numeric-desc', 'sort-numeric-down-alt' ],
+			'terms' => [ '9-1', 'arrange', 'arrow-down', 'descending', 'down', 'filter', 'numbers', 'numeric', 'order', 'sort', 'sort-numeric-desc' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'arrow-down-a-z',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-arrow-down-a-z',
+			'label' => 'Arrow Down A Z',
+			'aliases' => [ 'sort-alpha-asc', 'sort-alpha-down' ],
+			'terms' => [ 'a-z', 'alphabet', 'alphabetical', 'arrange', 'ascending', 'filter', 'letters', 'order', 'sort', 'sort-alpha-asc', 'sort-asc', 'sort-letters' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'arrow-down-z-a',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-arrow-down-z-a',
+			'label' => 'Arrow Down Z A',
+			'aliases' => [ 'sort-alpha-desc', 'sort-alpha-down-alt' ],
+			'terms' => [ 'alphabetical', 'alphabetically descending', 'arrange', 'descending', 'filter', 'order', 'reverse alphabetical', 'sort', 'sort descending', 'sort reverse', 'sort z-a', 'z to a' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'arrow-down-short-wide',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-arrow-down-short-wide',
+			'label' => 'Arrow Down Short Wide',
+			'aliases' => [ 'sort-amount-desc', 'sort-amount-down-alt' ],
+			'terms' => [ 'arrange', 'arrow', 'descending', 'down', 'filter', 'order', 'short', 'sort', 'sort-amount-asc', 'wide' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'arrow-down-wide-short',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-arrow-down-wide-short',
+			'label' => 'Arrow Down Wide Short',
+			'aliases' => [ 'sort-amount-asc', 'sort-amount-down' ],
+			'terms' => [ 'arrange', 'descending', 'down', 'filter', 'number', 'order', 'short arrow', 'sort', 'sort amount asc', 'sort descending', 'wide arrow' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'left-right',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-left-right',
+			'label' => 'Left Right',
+			'aliases' => [ 'arrows-alt-h' ],
+			'terms' => [ 'adjust', 'arrow', 'arrows-h', 'direction', 'drag', 'expand', 'horizontal', 'left arrow', 'left-right', 'move', 'resize', 'right arrow', 'slider', 'wide' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'right-left',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-right-left',
+			'label' => 'Right Left',
+			'aliases' => [ 'exchange-alt' ],
+			'terms' => [ 'arrow', 'arrows', 'bidirectional', 'exchange', 'flip', 'horizontal', 'left-right', 'reverse', 'swap', 'switch', 'transfer' ],
+			'categories' => [ 'Arrows' ],
+			'license' => 'free',
+		],
+		[
+			'name' => 'magnifying-glass',
+			'library' => 'fa-solid',
+			'value' => 'fa-solid fa-magnifying-glass',
+			'label' => 'Magnifying Glass',
+			'aliases' => [ 'search' ],
+			'terms' => [ 'bigger', 'enlarge', 'find', 'glass', 'inspect', 'inspection', 'magnifier', 'magnify', 'magnifying glass', 'preview', 'search', 'tool', 'zoom' ],
+			'categories' => [ 'Maps' ],
+			'license' => 'free',
+		],
+	];
+}
 
 	/**
 	 * @dataProvider data_word_order_independence

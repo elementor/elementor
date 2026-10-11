@@ -77,18 +77,18 @@ class Icon_Search {
 			'queries' => $queries,
 			'library' => $library,
 			'category' => $category,
-			'page' => $page,
-			'per_page' => $per_page,
-		];
+		'page' => $page,
+		'per_page' => $per_page,
+	];
 
-	/**
-	 * Filters the icon search results before returning them.
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param array $response      The search response containing results, libraries, custom_libraries, categories, and font_awesome_version.
-	 * @param array $sanitized_args The sanitized search arguments (queries, library, category, page, per_page).
-	 */
+		/**
+		 * Filters the icon search results before returning them.
+		 *
+		 * @since 4.4.0
+		 *
+		 * @param array $response      The search response containing results, libraries, custom_libraries, categories, and font_awesome_version.
+		 * @param array $sanitized_args The sanitized search arguments (queries, library, category, page, per_page).
+		 */
 		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-results', $response, $sanitized_args );
 
 		return is_array( $filtered ) ? $filtered : $response;
@@ -178,10 +178,10 @@ class Icon_Search {
 			$best = Icon_Matcher::match( $entry, $normalized_preserve_order, $normalized_sorted, $tokens );
 		}
 
-			if ( $best ) {
-				$scored[] = self::scored_entry( $entry, $best );
-			}
+		if ( $best ) {
+			$scored[] = self::scored_entry( $entry, $best );
 		}
+	}
 
 		return $scored;
 	}
