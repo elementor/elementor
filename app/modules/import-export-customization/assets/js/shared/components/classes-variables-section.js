@@ -169,7 +169,7 @@ SubSettingRow.propTypes = {
 	notExported: PropTypes.bool,
 };
 
-export function DesignSystemSettingsSection( {
+export function ClassesVariablesSection( {
 	settings,
 	onSettingChange,
 	isImport = false,
@@ -278,7 +278,7 @@ export function DesignSystemSettingsSection( {
 	);
 }
 
-DesignSystemSettingsSection.propTypes = {
+ClassesVariablesSection.propTypes = {
 	settings: PropTypes.shape( {
 		classes: PropTypes.bool,
 		defaultStyles: PropTypes.bool,
@@ -300,5 +300,3 @@ DesignSystemSettingsSection.propTypes = {
 	disabled: PropTypes.bool,
 	notExported: PropTypes.bool,
 };
-
-export { DesignSystemSettingsSection as ClassesVariablesSection };

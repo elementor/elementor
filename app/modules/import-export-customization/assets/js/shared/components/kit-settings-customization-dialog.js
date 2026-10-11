@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
-import { DesignSystemSettingsSection } from './classes-variables-section';
+import { ClassesVariablesSection } from './classes-variables-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { OverrideConfirmationDialog } from './override-confirmation-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
@@ -293,7 +293,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					) }
 
 					{ showDesignSystemSettingsSection && (
-						<DesignSystemSettingsSection
+						<ClassesVariablesSection
 							settings={ {
 								classes: settings.classes ?? false,
 								defaultStyles: settings.defaultStyles ?? false,
