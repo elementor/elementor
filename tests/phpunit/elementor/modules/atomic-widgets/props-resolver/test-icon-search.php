@@ -55,7 +55,7 @@ class Test_Icon_Search extends Elementor_Test_Base {
 			'search term' => [ 'email', 'fa-regular fa-envelope', Icon_Search::MATCHED_ON_TERM ],
 			'single word with a filler word' => [ 'star icon', 'fa-regular fa-star', Icon_Search::MATCHED_ON_NAME ],
 			'numeric query' => [ '0', 'fa-solid fa-0', Icon_Search::MATCHED_ON_NAME ],
-			'plain-language phrase' => [ 'add to cart icon', 'fa-solid fa-cart-plus', Icon_Search::MATCHED_ON_TERM ],
+			'plain-language phrase' => [ 'add to cart icon', 'fa-solid fa-cart-shopping', Icon_Search::MATCHED_ON_TERM ],
 		];
 	}
 

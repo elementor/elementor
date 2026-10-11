@@ -56,6 +56,8 @@ class Test_Renderable_Icons extends Elementor_Test_Base {
 		$values = array_column( $result['results'][0]['matches'], 'value' );
 		$this->assertContains( self::RENDERABLE_VALUE, $values );
 		$this->assertNotContains( 'icon icon-declared-only', $values );
+		$this->assertSame( count( $values ), $result['results'][0]['total'] );
+		$this->assertFalse( $result['results'][0]['truncated'] );
 	}
 
 	public function test_execute__warns_for_declared_but_unrenderable_custom_icon() {

@@ -39,9 +39,11 @@ class Icon_Search {
 
 	const SCORE_SOME_WORDS = 30;
 
+	const SCORE_NAME_BONUS = 5;
+
 	const MIN_WORD_LENGTH = 3;
 
-	const IGNORED_WORDS = [ 'and', 'button', 'for', 'icon', 'icons', 'page', 'the', 'with' ];
+	const IGNORED_WORDS = [ 'and', 'button', 'for', 'icon', 'icons', 'image', 'logo', 'page', 'symbol', 'the', 'with' ];
 
 	const SCORE_CATEGORY = 20;
 
@@ -147,7 +149,7 @@ class Icon_Search {
 			}
 		}
 
-		usort( $scored, static fn( $a, $b ) => [ $b[0], strlen( $a[1]['name'] ), $a[1]['value'] ] <=> [ $a[0], strlen( $b[1]['name'] ), $b[1]['value'] ] );
+		usort( $scored, static fn( $a, $b ) => [ $b[0], count( $b[1]['terms'] ), strlen( $a[1]['name'] ), $a[1]['value'] ] <=> [ $a[0], count( $a[1]['terms'] ), strlen( $b[1]['name'] ), $b[1]['value'] ] );
 
 		$offset = ( $page - 1 ) * $per_page;
 		$matches = array_map(
@@ -207,13 +209,14 @@ class Icon_Search {
 			$known_words = array_merge( $name_words, ...array_map( static fn( $item ) => explode( '-', $item ), array_merge( $aliases, $terms ) ) );
 			$matched_words = array_intersect( $words, $known_words );
 			$matched_on = empty( array_diff( $matched_words, $name_words ) ) ? self::MATCHED_ON_NAME : self::MATCHED_ON_TERM;
+			$bonus = self::MATCHED_ON_NAME === $matched_on ? self::SCORE_NAME_BONUS : 0;
 
 			if ( count( $matched_words ) === count( $words ) ) {
-				return [ self::SCORE_ALL_WORDS, $matched_on ];
+				return [ self::SCORE_ALL_WORDS + $bonus, $matched_on ];
 			}
 
 			if ( ! empty( $matched_words ) ) {
-				return [ self::SCORE_SOME_WORDS + count( $matched_words ), $matched_on ];
+				return [ self::SCORE_SOME_WORDS + count( $matched_words ) + $bonus, $matched_on ];
 			}
 		}
 

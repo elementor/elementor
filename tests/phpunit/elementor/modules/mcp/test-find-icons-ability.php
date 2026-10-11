@@ -91,6 +91,20 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'fa-solid', $match['library'] );
 	}
 
+	public function test_permission__requires_edit_posts() {
+		// Arrange.
+		$method = new \ReflectionMethod( $this->ability, 'get_definition' );
+		$method->setAccessible( true );
+		$permission_callback = $method->invoke( $this->ability )->permission_callback;
+
+		// Act & Assert.
+		$this->act_as( 'subscriber' );
+		$this->assertFalse( $permission_callback() );
+
+		$this->act_as( 'editor' );
+		$this->assertTrue( $permission_callback() );
+	}
+
 	public function test_execute__handles_a_non_array_input() {
 		// Arrange.
 		$this->act_as_admin();
