@@ -51,9 +51,11 @@ const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
 type SvgMediaControlProps = {
 	showIconLibrary?: boolean;
+	label?: string;
 };
 
-export const SvgMediaControl = createControl( ( { showIconLibrary = false }: SvgMediaControlProps ) => {
+export const SvgMediaControl = createControl( ( { showIconLibrary = false, label }: SvgMediaControlProps ) => {
+	const groupLabel = label ?? __( 'SVG', 'elementor' );
 	const { value: svgValue, setValue: setSvgValue } = useBoundProp( svgSrcPropTypeUtil );
 	const { value: iconValue, setValue: setIconValue } = useBoundProp( iconPropTypeUtil );
 	const id = svgValue?.id;
@@ -208,6 +210,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false }: Svg
 							} }
 						>
 							<SvgMediaOverlay
+								label={ groupLabel }
 								isAdmin={ isAdmin }
 								showIconLibrary={ showIconLibrary }
 								buttonGroupRef={ buttonGroupRef }
