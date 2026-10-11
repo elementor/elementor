@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
@@ -158,6 +159,7 @@ class Module extends BaseModule {
 		$this->registry = self::build_core_registry();
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
+		( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
 
@@ -275,6 +277,9 @@ class Module extends BaseModule {
 			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
 			new Abilities\Find_Icons_Ability(),
+			new Abilities\Upload_Media_Ability(),
+			new Abilities\Request_Media_Upload_Ability(),
+			new Abilities\Update_Media_Attachment_Ability(),
 			new Abilities\Global_Variables_Resource_Ability(),
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),

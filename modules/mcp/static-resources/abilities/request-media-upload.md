@@ -1,0 +1,1 @@
+Issues a single-use HTTPS upload endpoint for a local image file. Never download or base64-encode the image yourself; run the returned curl command so bytes go directly to WordPress. The upload token is sent in a header, not in the URL. Requires explicit user consent.
