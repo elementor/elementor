@@ -79,6 +79,14 @@ class Icon_Search {
 			'per_page' => $per_page,
 		];
 
+		/**
+		 * Filters the icon search results before returning them.
+		 *
+		 * @since 3.28.0
+		 *
+		 * @param array $response      The search response containing results, libraries, custom_libraries, categories, and font_awesome_version.
+		 * @param array $sanitized_args The sanitized search arguments (queries, library, category, page, per_page).
+		 */
 		$filtered = apply_filters( 'elementor/atomic-widgets/icons/search-results', $response, $sanitized_args );
 
 		return is_array( $filtered ) ? $filtered : $response;

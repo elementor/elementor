@@ -130,7 +130,7 @@ describe( 'buildSearchIndex', () => {
 		expect( icons[ 0 ].license ).toBe( LICENSE_FREE );
 	} );
 
-	it( 'marks a style that metadata does not list as free', () => {
+	it( 'marks a style that metadata does not list as free as pro', () => {
 		// Arrange.
 		const iconsByFileName = { solid: solidPack( [ 'crown' ] ) };
 		const metadata = {
