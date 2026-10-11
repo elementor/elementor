@@ -147,6 +147,16 @@ class Test_Icon_Catalog extends Elementor_Test_Base {
 		$this->assertFalse( Icon_Catalog::is_available() );
 	}
 
+	public function test_is_available__rejects_a_malformed_index() {
+		// Arrange.
+		$path = $this->fixture_dir . '/search-index.json';
+		file_put_contents( $path, '{ not json' );
+		add_filter( 'elementor/atomic-widgets/icons/search-index-path', fn() => $path );
+
+		// Act & Assert.
+		$this->assertFalse( Icon_Catalog::is_available() );
+	}
+
 	public function test_get_entries__returns_empty_for_invalid_json() {
 		// Arrange.
 		$path = $this->fixture_dir . '/search-index.json';

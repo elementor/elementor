@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
@@ -19,6 +20,13 @@ class Icon_Prop_Type extends Object_Prop_Type {
 	const LIBRARY_DESCRIPTION = 'Icon library key for the same icon, copied verbatim from the `elementor/find-icons` tool, for example "fa-solid". Must match the library the value was found in. Call `elementor/find-icons` for the libraries installed on this site.';
 
 	protected function define_shape(): array {
+		if ( ! Atomic_Widgets_Module::is_svg_library_active() ) {
+			return [
+				'value' => String_Prop_Type::make(),
+				'library' => String_Prop_Type::make(),
+			];
+		}
+
 		return [
 			'value' => String_Prop_Type::make()->description( self::VALUE_DESCRIPTION ),
 			'library' => String_Prop_Type::make()->description( self::LIBRARY_DESCRIPTION ),

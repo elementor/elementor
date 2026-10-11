@@ -160,6 +160,18 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'llm_instructions', $result );
 	}
 
+	public function test_execute__omits_the_instruction_for_a_page_past_the_last_match() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'cart-shopping' ], 'page' => 999 ] );
+
+		// Assert.
+		$this->assertSame( [], $result['results'][0]['matches'] );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+	}
+
 	public function test_execute__clamps_per_page_to_the_maximum() {
 		// Arrange.
 		$this->act_as_admin();

@@ -119,7 +119,7 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 	private function has_no_matches( array $response ): bool {
 		foreach ( $response['results'] ?? [] as $result ) {
-			if ( ! empty( $result['matches'] ) ) {
+			if ( ! empty( $result['total'] ) ) {
 				return false;
 			}
 		}

@@ -250,7 +250,7 @@ Each match returns `{ value, library, name, label, matched_on }`. Place it as-is
 
 Size an `e-svg` with `width` / `height` in `style` and colour it with `color` — the icon fills its box and takes `currentColor`.
 
-The response also lists the `libraries` installed on this site and the Font Awesome `version` in use. Brand marks live in `fa-brands`, not `fa-solid`. Sites may add their own uploaded icon libraries, which `find-icons` returns alongside Font Awesome and which match on icon name only. When a query returns no matches, refine the wording rather than paginating, and fall back to a text label rather than inventing a name.
+The response also lists the `libraries` installed on this site and the Font Awesome version in use (`font_awesome_version`). Brand marks live in `fa-brands`, not `fa-solid`. Sites may add their own uploaded icon libraries, which `find-icons` returns alongside Font Awesome and which match on icon name only. When a query returns no matches, refine the wording rather than paginating, and fall back to a text label rather than inventing a name.
 
 <!--endif:svg_library--># INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
