@@ -48,6 +48,13 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 								borderRadius: 0.5,
 							},
 						},
+						colorBox: {
+							slotProps: {
+								formatSelection: {
+									MenuProps: { disablePortal: true },
+								},
+							},
+						},
 					},
 				},
 			} }
