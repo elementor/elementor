@@ -622,6 +622,36 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertSame( 'Test Pack', $response['custom_libraries']['test-pack']['label'] );
 	}
 
+	public function test_search__library_token_excludes_custom_libraries() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
+		add_filter(
+			'elementor/icons_manager/additional_tabs',
+			static function ( $tabs ) {
+				$tabs['star-pack'] = [
+					'name' => 'star-pack',
+					'label' => 'Star Pack',
+					'prefix' => 'sp-',
+					'custom_icon_type' => 'fontello',
+					'icons' => [ 'star' ],
+					'native' => false,
+				];
+
+				return $tabs;
+			}
+		);
+
+		Custom_Icon_Svg\Resolver::reset_memory();
+		Icon_Catalog::reset();
+
+		// Act.
+		$matches = $this->get_matches( Icon_Search::search( [ 'queries' => [ 'fa-solid star' ] ] ) );
+
+		// Assert.
+		$this->assertSame( 'fa-solid fa-star', $matches[0]['value'] );
+		$this->assertNotContains( 'star-pack', array_column( $matches, 'library' ) );
+	}
+
 	public function test_search__truncates_custom_libraries_at_250_icons() {
 		// Arrange — a custom library with >250 icons.
 		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );

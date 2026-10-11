@@ -39,9 +39,9 @@ class Test_Prompt_Loader_Icon_Library extends Elementor_Test_Base {
 		$prompt = Prompt_Loader::load( 'build-composition' );
 
 		// Assert.
-		$this->assertStringContainsString( 'elementor/find-icons', $prompt );
-		$this->assertStringContainsString( '# ICONS', $prompt );
-		$this->assertStringNotContainsString( 'svg_library', $prompt );
+		$this->assertStringStartsWith( $this->get_source_without_markers(), $prompt );
+		$this->assertMatchesRegularExpression( '/elementor\/find-icons`[^\n]*\n- `elementor\/list-components`/', $prompt );
+		$this->assertStringContainsString( "\n\n# INTERACTIONS", $prompt );
 	}
 
 	public function test_load__omits_icon_guidance_when_the_experiment_is_inactive() {
@@ -55,6 +55,14 @@ class Test_Prompt_Loader_Icon_Library extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'find-icons', $prompt );
 		$this->assertStringNotContainsString( '# ICONS', $prompt );
 		$this->assertStringNotContainsString( 'svg_library', $prompt );
-		$this->assertStringContainsString( '# INTERACTIONS', $prompt );
+		$this->assertStringNotContainsString( "\n\n\n", $prompt );
+		$this->assertStringContainsString( "Generous padding on CTAs: min 1rem 2.5rem\n\n# INTERACTIONS", $prompt );
+		$this->assertMatchesRegularExpression( '/elementor\/list-assets`[^\n]*\n- `elementor\/list-components`/', $prompt );
+	}
+
+	private function get_source_without_markers(): string {
+		$source = (string) file_get_contents( ELEMENTOR_PATH . 'modules/mcp/static-resources/abilities/build-composition.md' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		return rtrim( str_replace( [ '<!--if:svg_library-->', '<!--endif:svg_library-->' ], '', $source ) );
 	}
 }

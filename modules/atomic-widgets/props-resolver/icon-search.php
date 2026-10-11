@@ -143,8 +143,12 @@ class Icon_Search {
 			$remaining_words[] = $word;
 		}
 
-		if ( '' === $found_library || empty( $remaining_words ) ) {
+		if ( '' === $found_library ) {
 			return [ $query, $library ];
+		}
+
+		if ( empty( $remaining_words ) ) {
+			return [ '', $found_library ];
 		}
 
 		$remaining_words = array_map(
@@ -236,6 +240,10 @@ class Icon_Search {
 		$scored = [];
 
 		foreach ( $custom_values as $custom_library => $values ) {
+			if ( '' !== $library && $custom_library !== $library ) {
+				continue;
+			}
+
 			foreach ( $values as $name => $value ) {
 				$normalized_name = Icon_Matcher::normalize( (string) $name );
 

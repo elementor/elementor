@@ -100,6 +100,16 @@ class Test_Icon_Search_Ranking extends Elementor_Test_Base {
 		$this->assertSame( [ 'fa-solid' ], array_values( array_unique( array_column( $matches, 'library' ) ) ) );
 	}
 
+	public function test_search__library_token_alone_browses_that_library() {
+		// Act.
+		$result = $this->search( 'fa-brands' );
+
+		// Assert.
+		$this->assertGreaterThan( 0, $result['total'] );
+		$this->assertSame( [ 'fa-brands' ], array_values( array_unique( array_column( $result['matches'], 'library' ) ) ) );
+		$this->assertSame( [ Icon_Matcher::MATCHED_ON_LIBRARY ], array_values( array_unique( array_column( $result['matches'], 'matched_on' ) ) ) );
+	}
+
 	public function test_search__short_query_matches_whole_word_names() {
 		// Act.
 		$names = $this->search_names( 'up' );

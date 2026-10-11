@@ -42,7 +42,7 @@ class Prompt_Loader {
 		$inline_pattern = '/<!--if:svg_library-->(.*?)<!--endif:svg_library-->/s';
 
 		if ( $is_active ) {
-			return (string) preg_replace( [ $block_pattern, $inline_pattern ], '$1', $prompt );
+			return str_replace( [ '<!--if:svg_library-->', '<!--endif:svg_library-->' ], '', $prompt );
 		}
 
 		return (string) preg_replace( [ $block_pattern, $inline_pattern ], '', $prompt );
