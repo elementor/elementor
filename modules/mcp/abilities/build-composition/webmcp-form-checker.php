@@ -8,14 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Warns when an element exposes WebMCP props in its schema but has no saved value for them.
- */
 class Webmcp_Form_Checker {
 
 	const WARNING_CODE = 'webmcp_missing';
 
 	const WEBMCP_PROPS = [ 'webmcp-tool-name', 'webmcp-tool-description', 'webmcp-param-description' ];
+
+	const FALLBACK_PROPS = [ 'webmcp-tool-name' => 'form-name' ];
 
 	private Widget_Type_Resolver $type_resolver;
 
@@ -23,10 +22,6 @@ class Webmcp_Form_Checker {
 		$this->type_resolver = $type_resolver;
 	}
 
-	/**
-	 * @param array<string, array> $index          Elements by id, holding their saved settings.
-	 * @param array<string, array> $widget_configs Resolved type configs.
-	 */
 	public function check( array $index, array $widget_configs ): Warnings_Bag {
 		$warnings = Warnings_Bag::make();
 
@@ -36,7 +31,7 @@ class Webmcp_Form_Checker {
 
 			$missing = array_filter(
 				self::WEBMCP_PROPS,
-				fn( $prop ) => isset( $schema[ $prop ] ) && empty( $element['settings'][ $prop ]['value'] )
+				fn( $prop ) => isset( $schema[ $prop ] ) && ! $this->has_value( $element, $prop )
 			);
 
 			if ( empty( $missing ) ) {
@@ -46,7 +41,7 @@ class Webmcp_Form_Checker {
 			$warnings->add(
 				self::WARNING_CODE,
 				sprintf(
-					'<%1$s> has no value for "%2$s". Set it from the purpose of the form so AI agents can discover and fill it, using elementor/manage-elements.',
+					'<%1$s> has no value for "%2$s". Set it from the purpose of the form, using elementor/manage-elements.',
 					$type,
 					implode( '", "', $missing )
 				),
@@ -55,5 +50,14 @@ class Webmcp_Form_Checker {
 		}
 
 		return $warnings;
+	}
+
+	private function has_value( array $element, string $prop ): bool {
+		$keys = [ $prop, self::FALLBACK_PROPS[ $prop ] ?? $prop ];
+
+		return (bool) array_filter(
+			$keys,
+			fn( $key ) => ! empty( $element['settings'][ $key ]['value'] )
+		);
 	}
 }

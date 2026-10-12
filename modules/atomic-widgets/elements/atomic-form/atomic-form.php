@@ -120,7 +120,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( __( 'Form', 'elementor' ) ),
 			'webmcp-autosubmit' => Boolean_Prop_Type::make()
 				->default( false )
-				->description( 'Whether AI agents submit the form without waiting for the user. Use true only for read-only forms, such as search or filters. Keep false for forms that send data, book, or buy.' ),
+				->description( 'Whether to submit the form automatically after a WebMCP tool fills it. Use only for read-only forms, such as search or filters.' ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' )
@@ -148,11 +148,11 @@ class Atomic_Form extends Atomic_Element_Base {
 			$props['webmcp-tool-name'] = String_Prop_Type::make()
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' )
-				->description( 'The WebMCP tool name of the form, in snake_case verb_object format (e.g. book_table_le_petit_bistro). The element ID is appended on render.' );
+				->description( 'The WebMCP tool name, in snake_case verb_object format (e.g. book_table). The element ID is appended on render.' );
 			$props['webmcp-tool-description'] = String_Prop_Type::make()
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' )
-				->description( 'What the form does and which details it accepts, in one or two sentences. Shown to AI agents as the WebMCP tool description.' );
+				->description( 'What the form does and which details it accepts, in one or two sentences.' );
 		}
 
 		return $props;
