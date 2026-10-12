@@ -177,7 +177,7 @@ class Public_Host_Validator {
 			return true;
 		}
 
-		if ( 0x20 === $first && 0x01 === $second ) {
+		if ( 0x20 === $first && 0x01 === $second && 0x00 === ord( $packed[2] ) && 0x00 === ord( $packed[3] ) ) {
 			return true;
 		}
 
@@ -243,6 +243,13 @@ class Public_Host_Validator {
 		}
 
 		$ips = array_values( array_unique( array_filter( $ips, 'is_string' ) ) );
+
+		if ( defined( 'WP_TESTS_DOMAIN' ) && WP_TESTS_DOMAIN ) {
+			/**
+			 * @param string[] $ips
+			 */
+			$ips = apply_filters( 'elementor/mcp/media/test_resolved_host_ips', $ips, $host );
+		}
 
 		return $ips;
 	}

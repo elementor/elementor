@@ -493,8 +493,40 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'ipv4-mapped-loopback' => [ '::ffff:127.0.0.1' ],
 			'ipv4-mapped-private' => [ '::ffff:10.0.0.1' ],
 			'6to4' => [ '2002:7f00:1::1' ],
-			'teredo' => [ '2001:0000:4136:e378:8000:63bf:3fff:fdd2' ],
+			'teredo' => [ '2001:0:4136:e378:8000:63bf:3fff:fdd2' ],
 		];
+	}
+
+	public function test_assert_public_ip__allows_public_2001_4860_address() {
+		// Act
+		$error = Public_Host_Validator::assert_public_ip( '2001:4860:4860::8888' );
+
+		// Assert
+		$this->assertNull( $error );
+	}
+
+	public function test_select_pinned_ip__allows_dual_stack_host_with_public_2001_address() {
+		// Arrange
+		add_filter(
+			'elementor/mcp/media/test_resolved_host_ips',
+			static function ( $ips, $host ) {
+				if ( 'dual-stack.example' === $host ) {
+					return [ '93.184.216.34', '2001:4860:4860::8888' ];
+				}
+
+				return $ips;
+			},
+			10,
+			2
+		);
+
+		// Act
+		$pinned = Pinned_Remote_Fetch::select_pinned_ip( 'dual-stack.example' );
+
+		remove_all_filters( 'elementor/mcp/media/test_resolved_host_ips' );
+
+		// Assert
+		$this->assertSame( '93.184.216.34', $pinned );
 	}
 
 	public function test_assert_https_url__rejects_non_443_port() {

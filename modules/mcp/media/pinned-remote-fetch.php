@@ -51,10 +51,13 @@ class Pinned_Remote_Fetch {
 
 		$response = null;
 
-		/**
-		 * @param array{response:array,headers:array,body:string}|null $response_override PHPUnit may supply a canned HTTP response without preempting cURL.
-		 */
-		$response_override = apply_filters( 'elementor/mcp/media/pinned_fetch_http_response', null, $url, $host, $pinned_ip );
+		$response_override = null;
+		if ( defined( 'WP_TESTS_DOMAIN' ) && WP_TESTS_DOMAIN ) {
+			/**
+			 * @param array{response:array,headers:array,body:string}|null $response_override PHPUnit may supply a canned HTTP response without preempting cURL.
+			 */
+			$response_override = apply_filters( 'elementor/mcp/media/pinned_fetch_http_response', null, $url, $host, $pinned_ip );
+		}
 
 		try {
 			if ( null !== $response_override ) {
