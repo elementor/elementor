@@ -173,9 +173,17 @@ class Public_Host_Validator {
 			return true;
 		}
 
+		if ( 0x20 === $first && 0x02 === $second ) {
+			return true;
+		}
+
+		if ( 0x20 === $first && 0x01 === $second ) {
+			return true;
+		}
+
 		if ( self::ipv6_is_ipv4_mapped( $packed ) ) {
 			$embedded = long2ip( unpack( 'N', substr( $packed, 12, 4 ) )[1] );
-			if ( is_string( $embedded ) && self::is_denied_ipv4( $embedded ) ) {
+			if ( is_string( $embedded ) && null !== self::assert_public_ip( $embedded ) ) {
 				return true;
 			}
 		}
@@ -189,15 +197,6 @@ class Public_Host_Validator {
 		}
 
 		return "\0\0\0\0\0\0\0\0\0\0\xff\xff" === substr( $packed, 0, 12 );
-	}
-
-	private static function ipv6_starts_with( string $packed, string $hex_prefix, int $byte_length ): bool {
-		$prefix = hex2bin( $hex_prefix );
-		if ( false === $prefix || strlen( $prefix ) !== $byte_length ) {
-			return false;
-		}
-
-		return substr( $packed, 0, $byte_length ) === $prefix;
 	}
 
 	private static function ipv4_in_range( string $unsigned_long, string $network, int $prefix_length ): bool {
