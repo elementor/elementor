@@ -42,6 +42,8 @@ class Media_Upload_Token_Store {
 		$key = self::storage_key( $token );
 		$lock_key = $key . '_consume';
 
+		// Single-use is enforced when delete_transient() removes the stored token; a false return means another request already consumed it.
+		// wp_cache_add only dedupes concurrent consumers within the same HTTP request unless a persistent object cache is configured.
 		if ( ! wp_cache_add( $lock_key, 1, self::CONSUME_LOCK_GROUP, 30 ) ) {
 			return new \WP_Error(
 				'invalid_upload_token',
