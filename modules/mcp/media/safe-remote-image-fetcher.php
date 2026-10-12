@@ -34,15 +34,12 @@ class Safe_Remote_Image_Fetcher {
 				return $host_error;
 			}
 
-			$response = wp_remote_get(
-				$current_url,
-				[
-					'timeout' => Media_Upload_Config::FETCH_TIMEOUT_SECONDS,
-					'redirection' => 0,
-					'reject_unsafe_urls' => true,
-					'limit_response_size' => Media_Upload_Config::max_upload_bytes() + 1,
-				]
-			);
+			$pinned_ip = Pinned_Remote_Fetch::select_pinned_ip( $host );
+			if ( is_wp_error( $pinned_ip ) ) {
+				return $pinned_ip;
+			}
+
+			$response = Pinned_Remote_Fetch::get( $current_url, $host, $pinned_ip );
 
 			if ( is_wp_error( $response ) ) {
 				return $response;
