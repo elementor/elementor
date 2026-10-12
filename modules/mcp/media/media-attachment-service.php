@@ -10,8 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Media_Attachment_Service {
 
-	public static function find_by_source_url( string $source_url ): ?int {
-		$ids = get_posts( [
+	public static function find_by_source_url( string $source_url, ?int $author_id = null ): ?int {
+		$author_id = null === $author_id ? get_current_user_id() : (int) $author_id;
+
+		$query = [
 			'post_type' => 'attachment',
 			'post_status' => 'inherit',
 			'posts_per_page' => 1,
@@ -19,7 +21,13 @@ class Media_Attachment_Service {
 			'meta_key' => Media_Upload_Config::SOURCE_URL_META_KEY,
 			'meta_value' => $source_url,
 			'no_found_rows' => true,
-		] );
+		];
+
+		if ( $author_id > 0 ) {
+			$query['author'] = $author_id;
+		}
+
+		$ids = get_posts( $query );
 
 		if ( empty( $ids ) ) {
 			return null;
@@ -111,6 +119,14 @@ class Media_Attachment_Service {
 			return new \WP_Error(
 				'rest_forbidden',
 				__( 'You do not have permission to upload files.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
+		if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to edit this attachment.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}
