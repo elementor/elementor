@@ -24,8 +24,18 @@ class Mcp_Media_Upload_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::ROUTE, [
 			'methods' => 'POST',
 			'callback' => fn( $request ) => $this->handle_upload( $request ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => fn( $request ) => $this->permission_check( $request ),
 		] );
+	}
+
+	public function permission_check( \WP_REST_Request $request ): bool {
+		$token = $this->read_header( $request, Media_Upload_Config::UPLOAD_TOKEN_HEADER );
+
+		if ( '' === $token ) {
+			return false;
+		}
+
+		return Media_Upload_Token_Store::is_valid_for_request( $token );
 	}
 
 	private function handle_upload( \WP_REST_Request $request ) {
@@ -154,38 +164,28 @@ class Mcp_Media_Upload_REST_API {
 		}
 
 		$max_bytes = Media_Upload_Config::max_upload_bytes();
-		$request_body = $request->get_body();
+		$input = fopen( 'php://input', 'rb' );
 
-		if ( is_string( $request_body ) && '' !== $request_body ) {
-			$read = strlen( $request_body );
-			if ( $read > $max_bytes ) {
-				wp_delete_file( $tmp );
+		if ( false === $input ) {
+			wp_delete_file( $tmp );
 
-				return new \WP_Error(
-					'file_too_large',
-					__( 'The uploaded file exceeds the allowed size limit.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-			if ( false === file_put_contents( $tmp, $request_body ) ) {
-				wp_delete_file( $tmp );
-
-				return new \WP_Error(
-					'upload_stream_failed',
-					__( 'Could not read the upload body.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-
-			return [ 'tmp_name' => $tmp ];
+			return new \WP_Error(
+				'upload_stream_failed',
+				__( 'Could not read the upload body.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
-		$input = fopen( 'php://input', 'rb' );
-		$output = fopen( $tmp, 'wb' );
+		$first_byte = fread( $input, 1 );
+		if ( ( false === $first_byte || '' === $first_byte ) && feof( $input ) ) {
+			fclose( $input );
 
-		if ( false === $input || false === $output ) {
+			return $this->write_chunked_string_to_temp( (string) $request->get_body(), $tmp, $max_bytes );
+		}
+
+		$output = fopen( $tmp, 'wb' );
+		if ( false === $output ) {
+			fclose( $input );
 			wp_delete_file( $tmp );
 
 			return new \WP_Error(
@@ -197,6 +197,11 @@ class Mcp_Media_Upload_REST_API {
 
 		$read = 0;
 		$chunk_size = 8192;
+
+		if ( false !== $first_byte && '' !== $first_byte ) {
+			$read = 1;
+			fwrite( $output, $first_byte );
+		}
 
 		while ( ! feof( $input ) ) {
 			$chunk = fread( $input, $chunk_size );
@@ -210,6 +215,10 @@ class Mcp_Media_Upload_REST_API {
 					__( 'Could not read the upload body.', 'elementor' ),
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				);
+			}
+
+			if ( '' === $chunk ) {
+				break;
 			}
 
 			$read += strlen( $chunk );
@@ -240,6 +249,57 @@ class Mcp_Media_Upload_REST_API {
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
+
+		return [ 'tmp_name' => $tmp ];
+	}
+
+	/**
+	 * @return array{tmp_name:string}|WP_Error
+	 */
+	private function write_chunked_string_to_temp( string $body, string $tmp, int $max_bytes ) {
+		if ( '' === $body ) {
+			wp_delete_file( $tmp );
+
+			return new \WP_Error(
+				'empty_file',
+				__( 'The uploaded file is empty.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		$output = fopen( $tmp, 'wb' );
+		if ( false === $output ) {
+			wp_delete_file( $tmp );
+
+			return new \WP_Error(
+				'upload_stream_failed',
+				__( 'Could not read the upload body.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		$length = strlen( $body );
+		if ( $length > $max_bytes ) {
+			fclose( $output );
+			wp_delete_file( $tmp );
+
+			return new \WP_Error(
+				'file_too_large',
+				__( 'The uploaded file exceeds the allowed size limit.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		$offset = 0;
+		$chunk_size = 8192;
+
+		while ( $offset < $length ) {
+			$chunk = substr( $body, $offset, $chunk_size );
+			fwrite( $output, $chunk );
+			$offset += strlen( $chunk );
+		}
+
+		fclose( $output );
 
 		return [ 'tmp_name' => $tmp ];
 	}
