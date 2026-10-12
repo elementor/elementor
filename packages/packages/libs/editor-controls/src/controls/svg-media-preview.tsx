@@ -17,37 +17,38 @@ type SvgMediaPreviewProps = {
 	iconLibrary: string | null;
 };
 
-export const SvgMediaPreview = ({ isFetching, src, iconClassName, iconLibrary }: SvgMediaPreviewProps) => {
-	const shouldLoadIconCatalog = Boolean(iconClassName && iconLibrary);
+export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }: SvgMediaPreviewProps ) => {
+	const shouldLoadIconCatalog = Boolean( iconClassName && iconLibrary );
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } =
-		useFontAwesome7Catalog(shouldLoadIconCatalog);
-	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons(shouldLoadIconCatalog);
-	const icons = [...fontAwesomeIcons, ...providerIcons];
-	const selectedIcon = findFontAwesome7Icon(icons, iconClassName, iconLibrary);
-	const isLoadingCatalog = shouldLoadIconCatalog && (isFontAwesomeLoading || isProviderLoading);
+		useFontAwesome7Catalog( shouldLoadIconCatalog );
+	const { data: providerIcons = [], isLoading: isProviderLoading } =
+		useIconLibraryProviderIcons( shouldLoadIconCatalog );
+	const icons = [ ...fontAwesomeIcons, ...providerIcons ];
+	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
+	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
 
-	if (isFetching || isLoadingCatalog) {
+	if ( isFetching || isLoadingCatalog ) {
 		return <CircularProgress role="progressbar" />;
 	}
 
-	if (selectedIcon) {
-		return <IconPreview icon={selectedIcon} />;
+	if ( selectedIcon ) {
+		return <IconPreview icon={ selectedIcon } />;
 	}
 
-	if (shouldLoadIconCatalog) {
+	if ( shouldLoadIconCatalog ) {
 		return <IconPreviewPlaceholder />;
 	}
 
-	return <SvgPreview src={src} />;
+	return <SvgPreview src={ src } />;
 };
 
-const IconPreview = ({ icon }: { icon: FontAwesome7Icon }) => (
-	<Box sx={{ color: ICON_PREVIEW_COLOR }}>
+const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
+	<Box sx={ { color: ICON_PREVIEW_COLOR } }>
 		<FontAwesomeGlyph
-			icon={icon}
-			size={ICON_PREVIEW_SIZE}
-			color={ICON_PREVIEW_COLOR}
-			label={__('Preview icon', 'elementor')}
+			icon={ icon }
+			size={ ICON_PREVIEW_SIZE }
+			color={ ICON_PREVIEW_COLOR }
+			label={ __( 'Preview icon', 'elementor' ) }
 		/>
 	</Box>
 );
@@ -55,19 +56,19 @@ const IconPreview = ({ icon }: { icon: FontAwesome7Icon }) => (
 const IconPreviewPlaceholder = () => (
 	<Box
 		aria-hidden
-		sx={{
+		sx={ {
 			width: ICON_PREVIEW_SIZE,
 			height: ICON_PREVIEW_SIZE,
 			color: ICON_PREVIEW_COLOR,
-		}}
+		} }
 	/>
 );
 
-const SvgPreview = ({ src }: { src: string | null }) => (
+const SvgPreview = ( { src }: { src: string | null } ) => (
 	<CardMedia
 		component="img"
-		image={src}
-		alt={__('Preview SVG', 'elementor')}
-		sx={{ maxHeight: '140px', width: `${ICON_PREVIEW_SIZE}px`, color: ICON_PREVIEW_COLOR }}
+		image={ src }
+		alt={ __( 'Preview SVG', 'elementor' ) }
+		sx={ { maxHeight: '140px', width: `${ ICON_PREVIEW_SIZE }px`, color: ICON_PREVIEW_COLOR } }
 	/>
 );
