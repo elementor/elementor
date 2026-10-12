@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -125,31 +123,6 @@ class Font_Awesome_7_Icon_Resolver {
 			],
 		];
 
-		$custom_icon_libraries_enabled = Availability::is_enabled();
-
-		if ( $custom_icon_libraries_enabled ) {
-			$custom_libraries = Custom_Icon_Resolver::get_custom_libraries( [
-				'require_label' => true,
-				'include_labels' => true,
-			] );
-
-			if ( ! empty( $custom_libraries ) ) {
-				$items[] = [
-					'type' => self::FILTER_TYPE_GROUP,
-					'label' => esc_html__( 'My libraries', 'elementor' ),
-				];
-
-				foreach ( $custom_libraries as $library => $entry ) {
-					$items[] = [
-						'type' => self::FILTER_TYPE_ITEM,
-						'value' => $library,
-						'label' => $entry['label'],
-						'icon' => 'library',
-					];
-				}
-			}
-		}
-
 		/**
 		 * Filters the icon library filter items.
 		 *
@@ -158,12 +131,6 @@ class Font_Awesome_7_Icon_Resolver {
 		$filtered = apply_filters( 'elementor/atomic-widgets/font-awesome-7/filter-items', $items );
 
 		return is_array( $filtered ) ? $filtered : $items;
-	}
-
-	private static function get_custom_icon_packs(): array {
-		return Custom_Icon_Resolver::get_custom_libraries( [
-			'include_urls' => true,
-		] );
 	}
 
 	private static function get_icon_name( string $value ): ?string {

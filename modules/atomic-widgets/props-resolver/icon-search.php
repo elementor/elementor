@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Libraries as Custom_Icon_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

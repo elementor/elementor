@@ -27,7 +27,6 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
-		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
 		remove_all_filters( self::CONFIG_FILTER );
 		remove_all_filters( self::FILTER_ITEMS_FILTER );
