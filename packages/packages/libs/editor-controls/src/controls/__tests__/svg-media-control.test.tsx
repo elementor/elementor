@@ -385,6 +385,109 @@ describe( 'SvgMediaControl', () => {
 		expect( preview ).toContainHTML( `d="${ starPath }"` );
 	} );
 
+	it( 'should preview the inherited font icon (from placeholder) when there is no own value (M2)', () => {
+		// Arrange
+		const starPath = 'M0 0h100v100H0z';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
+			data: [
+				{
+					id: 'fa-solid:star',
+					name: 'star',
+					label: 'star',
+					library: 'fa-solid',
+					value: 'fa-solid fa-star',
+					aliases: [],
+					width: 576,
+					height: 512,
+					paths: [ starPath ],
+				},
+			],
+			isLoading: false,
+		} as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: null,
+			placeholder: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'fas fa-star' },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl showIconLibrary />, props );
+
+		// Assert
+		const preview = screen.getByLabelText( 'Preview icon' );
+		expect( preview ).toHaveAttribute( 'fill', '#000000' );
+		expect( preview ).toContainHTML( `d="${ starPath }"` );
+	} );
+
+	it( 'should preview the inherited SVG (from placeholder) when there is no own value (M2)', () => {
+		// Arrange
+		const inheritedSvgUrl = 'https://localhost/inherited.svg';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+
+		const props = {
+			setValue: jest.fn(),
+			value: null,
+			placeholder: {
+				$$type: 'svg-src',
+				value: {
+					id: null,
+					url: { $$type: 'url', value: inheritedSvgUrl },
+				},
+			},
+			bind: 'svg',
+			propType,
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', inheritedSvgUrl );
+	} );
+
+	it( 'should preview only the own SVG value when it exists, ignoring an unrelated icon placeholder (M2 fix round 1)', () => {
+		// Arrange
+		const ownSvgUrl = 'https://localhost/own.svg';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+
+		const props = {
+			setValue: jest.fn(),
+			value: {
+				$$type: 'svg-src',
+				value: {
+					id: null,
+					url: { $$type: 'url', value: ownSvgUrl },
+				},
+			},
+			placeholder: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'fas fa-star' },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+			bind: 'svg',
+			propType,
+		};
+
+		// Act
+		renderControl( <SvgMediaControl showIconLibrary />, props );
+
+		// Assert
+		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', ownSvgUrl );
+		expect( screen.queryByLabelText( 'Preview icon' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should keep an icon preview placeholder when the catalog does not contain the icon', () => {
 		// Arrange
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
