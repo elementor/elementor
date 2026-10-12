@@ -25,6 +25,24 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 	private const MINIMAL_PNG = "\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82";
 
+	/**
+	 * @param callable(string,string,string):(?array{response:array,headers:array,body:string}) $resolver
+	 */
+	private function mock_pinned_http_response( callable $resolver ): void {
+		add_filter(
+			'elementor/mcp/media/pinned_fetch_http_response',
+			static function ( $response, $url, $host, $pinned_ip ) use ( $resolver ) {
+				return $resolver( $url, $host, $pinned_ip );
+			},
+			10,
+			4
+		);
+	}
+
+	private function clear_pinned_http_mocks(): void {
+		remove_all_filters( 'elementor/mcp/media/pinned_fetch_http_response' );
+	}
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -102,7 +120,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$ability = new Upload_Media_Ability();
 
-		add_filter( 'pre_http_request', function ( $response, $args, $url ) {
+		$this->mock_pinned_http_response( static function ( $url ) {
 			if ( str_contains( $url, 'example.com' ) ) {
 				return [
 					'response' => [ 'code' => 302 ],
@@ -111,8 +129,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 				];
 			}
 
-			return $response;
-		}, 10, 3 );
+			return null;
+		} );
 
 		// Act
 		$result = $ability->execute( [
@@ -120,7 +138,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'consent' => true,
 		] );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_pinned_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -133,7 +151,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$ability = new Upload_Media_Ability();
 		$oversized = str_repeat( 'x', Media_Upload_Config::max_upload_bytes() + 1 );
 
-		add_filter( 'pre_http_request', function () use ( $oversized ) {
+		$this->mock_pinned_http_response( static function () use ( $oversized ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -147,7 +165,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'consent' => true,
 		] );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_pinned_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -159,7 +177,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$ability = new Upload_Media_Ability();
 
-		add_filter( 'pre_http_request', function () {
+		$this->mock_pinned_http_response( static function () {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -173,7 +191,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'consent' => true,
 		] );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_pinned_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -185,7 +203,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_editor();
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
 
-		add_filter( 'pre_http_request', function () use ( $svg ) {
+		$this->mock_pinned_http_response( static function () use ( $svg ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -201,7 +219,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'consent' => true,
 		] );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_pinned_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -236,7 +254,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$ability = new Upload_Media_Ability();
 		$limit = Media_Upload_Config::max_upload_bytes();
 
-		add_filter( 'pre_http_request', function () use ( $limit ) {
+		$this->mock_pinned_http_response( static function () use ( $limit ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [ 'content-length' => (string) ( $limit + 1 ) ],
@@ -250,7 +268,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'consent' => true,
 		] );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_pinned_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -368,41 +386,86 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		$resolve_hook_ran = false;
-
-		add_action(
-			'http_api_curl',
-			static function () use ( &$resolve_hook_ran ) {
-				$resolve_hook_ran = true;
+		add_filter(
+			'elementor/mcp/media/pinned_fetch_http_response',
+			static function () {
+				return [
+					'response' => [ 'code' => 200 ],
+					'headers' => [],
+					'body' => 'ok',
+				];
 			},
-			9
+			10,
+			4
 		);
+
+		// Act
+		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+
+		remove_all_filters( 'elementor/mcp/media/pinned_fetch_http_response' );
+
+		// Assert
+		$this->assertNotWPError( $result );
+		$this->assertSame( 200, wp_remote_retrieve_response_code( $result ) );
+	}
+
+	public function test_pinned_remote_fetch__rejects_when_curl_resolve_hook_does_not_run() {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
 
 		add_filter(
 			'pre_http_request',
-			static function ( $response, $args, $url ) use ( &$resolve_hook_ran ) {
-				if ( $resolve_hook_ran ) {
-					return [
-						'response' => [ 'code' => 200 ],
-						'headers' => [],
-						'body' => 'ok',
-					];
-				}
-
-				return false;
+			static function () {
+				return [
+					'response' => [ 'code' => 200 ],
+					'headers' => [],
+					'body' => 'ok',
+				];
 			},
 			10,
 			3
 		);
 
 		// Act
-		Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
 
 		remove_all_filters( 'pre_http_request' );
-		remove_all_actions( 'http_api_curl' );
 
 		// Assert
-		$this->assertTrue( $resolve_hook_ran );
+		$this->assertWPError( $result );
+		$this->assertSame( 'remote_fetch_unpinned', $result->get_error_code() );
+	}
+
+	public function test_pinned_remote_fetch__removes_transport_filter_after_exception() {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
+
+		add_filter(
+			'pre_http_request',
+			static function () {
+				throw new \Exception( 'Pinned fetch test exception.' );
+			},
+			10,
+			3
+		);
+
+		// Act
+		try {
+			Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+		} catch ( \Exception $exception ) {
+			$this->assertSame( 'Pinned fetch test exception.', $exception->getMessage() );
+		}
+
+		remove_all_filters( 'pre_http_request' );
+
+		$transports = apply_filters( 'http_api_transports', [ 'curl', 'streams' ], [], 'https://example.com/' );
+
+		// Assert
+		$this->assertContains( 'streams', $transports );
 	}
 
 	/**
@@ -427,6 +490,10 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'fd00::/7' => [ 'fd12::1' ],
 			'64:ff9b::/96' => [ '64:ff9b::1' ],
 			'ipv4-mapped' => [ '::ffff:169.254.169.254' ],
+			'ipv4-mapped-loopback' => [ '::ffff:127.0.0.1' ],
+			'ipv4-mapped-private' => [ '::ffff:10.0.0.1' ],
+			'6to4' => [ '2002:7f00:1::1' ],
+			'teredo' => [ '2001:0000:4136:e378:8000:63bf:3fff:fdd2' ],
 		];
 	}
 
@@ -473,7 +540,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		$png = self::MINIMAL_PNG;
 
-		add_filter( 'pre_http_request', static function () use ( $png ) {
+		$this->mock_pinned_http_response( static function () use ( $png ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -490,7 +557,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'title' => 'Editor title',
 		] );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_pinned_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
