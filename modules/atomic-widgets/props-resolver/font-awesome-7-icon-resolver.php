@@ -141,7 +141,7 @@ class Font_Awesome_7_Icon_Resolver {
 		foreach ( $custom_libraries as $library => $entry ) {
 			$items[] = [
 				'type' => self::FILTER_TYPE_ITEM,
-				'value' => $library,
+				'value' => (string) $library,
 				'label' => $entry['label'],
 				'icon' => 'library',
 			];

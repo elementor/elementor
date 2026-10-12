@@ -61,6 +61,31 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 		$this->assertTrue( $config['customIconLibrariesEnabled'] );
 	}
 
+	public function test_get_editor_config__keeps_numeric_library_names_as_strings() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
+		add_filter(
+			'elementor/icons_manager/additional_tabs',
+			static function ( $tabs ) {
+				$tabs['-1'] = [
+					'name' => '-1',
+					'label' => 'PW Fontello',
+					'prefix' => 'icon-',
+					'custom_icon_type' => 'fontello',
+					'native' => false,
+				];
+
+				return $tabs;
+			}
+		);
+
+		// Act.
+		$config = Font_Awesome_7_Icon_Resolver::get_editor_config();
+
+		// Assert.
+		$this->assertContains( '-1', array_column( $config['filter'], 'value' ) );
+	}
+
 	public function test_get_editor_config__omits_unsupported_custom_icon_types() {
 		// Arrange.
 		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );

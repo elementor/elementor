@@ -69,8 +69,9 @@ class Icon_Search {
 		}
 
 		$custom_library_labels = Custom_Icon_Resolver::get_custom_libraries();
+		$custom_library_names = array_map( 'strval', array_keys( $custom_library_labels ) );
 		$truncated_custom_libraries = [];
-		$entries = self::get_entries( $library, $category, array_keys( $custom_library_labels ), $truncated_custom_libraries );
+		$entries = self::get_entries( $library, $category, $custom_library_names, $truncated_custom_libraries );
 
 		$results = [];
 
@@ -86,7 +87,7 @@ class Icon_Search {
 		];
 
 		if ( self::needs_site_facets( $results ) ) {
-			$response['libraries'] = array_merge( Icon_Catalog::get_libraries(), array_keys( $custom_library_labels ) );
+			$response['libraries'] = array_merge( Icon_Catalog::get_libraries(), $custom_library_names );
 			$response['custom_libraries'] = empty( $custom_library_labels ) ? (object) [] : $custom_library_labels;
 			$response['categories'] = Icon_Catalog::get_categories();
 		}
