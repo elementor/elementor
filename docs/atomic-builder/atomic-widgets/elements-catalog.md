@@ -85,7 +85,7 @@ Registered by `elementor-pro/modules/atomic-carousel/module.php` when Pro, licen
 
 | Type | Kind | Container | Allowed children | Notes |
 |------|------|-----------|------------------|-------|
-| `e-carousel` | element | yes | viewport, arrows, pagination, autoplay button | Root; default 4 slides |
+| `e-carousel` | element | yes | `e-carousel-viewport`, `e-carousel-arrow-prev`, `e-carousel-arrow-next`, `e-carousel-pagination`, `e-carousel-autoplay-button` | Root; default 4 slides |
 | `e-carousel-viewport` | element | yes | `e-carousel-container` | Required child of root |
 | `e-carousel-container` | element | yes | `e-carousel-slide` | Slides track; gap drives `--e-carousel-gap` |
 | `e-carousel-slide` | element | yes | any | Locked in structure |
