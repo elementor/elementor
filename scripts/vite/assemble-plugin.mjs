@@ -14,8 +14,9 @@ import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
  * Markdown excluded from the distributable plugin, with explicit exceptions.
  *
  * These patterns are not folded into `PRUNED` because `glob` `ignore` drops paths before
- * `PLUGIN_FILE_PATTERNS` runs, and it does not honor `!` un-ignore rules. Putting `**/*.md` in
- * `PRUNED` therefore removed `modules/mcp/static-resources/` entirely; MCP abilities then failed
+ * `PLUGIN_FILE_PATTERNS` runs, and it does not honor `!` un-ignore rules. Putting a recursive
+ * markdown glob in `PRUNED` therefore removed `modules/mcp/static-resources/` entirely; MCP
+ * abilities then failed
  * to register when `Prompt_Loader::load()` returned empty descriptions.
  *
  * Order matters: the last pattern that matches a path wins (same rule as `PLUGIN_FILE_PATTERNS`).
