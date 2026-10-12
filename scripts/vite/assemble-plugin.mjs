@@ -10,6 +10,16 @@ import { minimatch } from 'minimatch';
 import { BUILD_DIR, ROOT } from './shared/paths.mjs';
 import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
 
+/**
+ * Markdown excluded from the distributable plugin, with explicit exceptions.
+ *
+ * These patterns are not folded into `PRUNED` because `glob` `ignore` drops paths before
+ * `PLUGIN_FILE_PATTERNS` runs, and it does not honor `!` un-ignore rules. Putting `**/*.md` in
+ * `PRUNED` therefore removed `modules/mcp/static-resources/` entirely; MCP abilities then failed
+ * to register when `Prompt_Loader::load()` returned empty descriptions.
+ *
+ * Order matters: the last pattern that matches a path wins (same rule as `PLUGIN_FILE_PATTERNS`).
+ */
 const MARKDOWN_PRUNE_PATTERNS = [
 	'*.md',
 	'**/*.md',
@@ -47,6 +57,7 @@ const PRUNED = [
 	'update-snapshots-linux.js',
 ];
 
+/** @returns {boolean} Whether `filePath` is excluded by the ordered include/negate patterns. */
 function matchesOrderedPatterns( filePath, patterns ) {
 	let matched = false;
 
@@ -96,6 +107,7 @@ export function assemblePlugin() {
 
 	rmSync( BUILD_DIR, { recursive: true, force: true } );
 
+	// Directory prune via `PRUNED`, then markdown prune via `MARKDOWN_PRUNE_PATTERNS`.
 	const candidates = globSync( '**', {
 		cwd: ROOT,
 		nodir: true,
