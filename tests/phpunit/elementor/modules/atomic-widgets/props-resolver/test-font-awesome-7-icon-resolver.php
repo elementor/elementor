@@ -10,9 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
+	public function setUp(): void {
+		parent::setUp();
+
+		add_filter(
+			'elementor/atomic-widgets/font-awesome-7/json-base-path',
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
+		);
+
+		Font_Awesome_7_Icon_Resolver::reset();
+	}
+
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
 		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
+
+		Font_Awesome_7_Icon_Resolver::reset();
 
 		parent::tearDown();
 	}
@@ -108,5 +122,37 @@ class Test_Font_Awesome_7_Icon_Resolver extends Elementor_Test_Base {
 		$this->assertSame( [], $config['customIconPacks'] );
 		$this->assertNotContains( 'My libraries', $labels );
 		$this->assertNotContains( 'Nehama 1', $labels );
+	}
+
+	/**
+	 * @dataProvider data_digit_icon_names
+	 */
+	public function test_resolve__handles_digit_icon_names( string $input_name, string $expected_name ) {
+		// Arrange.
+		Font_Awesome_7_Icon_Resolver::reset();
+		$icon_value = 'fa-solid ' . $input_name;
+
+		// Act.
+		$result = Font_Awesome_7_Icon_Resolver::resolve( $icon_value, 'fa-solid' );
+
+		// Assert.
+		$this->assertIsArray( $result, "Failed to resolve $icon_value" );
+		$this->assertArrayHasKey( 'paths', $result );
+		$this->assertNotEmpty( $result['paths'], "Icon $expected_name should resolve to paths" );
+	}
+
+	public function data_digit_icon_names(): array {
+		return [
+			'fa-0' => [ 'fa-0', '0' ],
+			'fa-1' => [ 'fa-1', '1' ],
+			'fa-2' => [ 'fa-2', '2' ],
+			'fa-3' => [ 'fa-3', '3' ],
+			'fa-4' => [ 'fa-4', '4' ],
+			'fa-5' => [ 'fa-5', '5' ],
+			'fa-6' => [ 'fa-6', '6' ],
+			'fa-7' => [ 'fa-7', '7' ],
+			'fa-8' => [ 'fa-8', '8' ],
+			'fa-9' => [ 'fa-9', '9' ],
+		];
 	}
 }

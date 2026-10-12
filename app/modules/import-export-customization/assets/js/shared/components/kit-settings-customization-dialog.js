@@ -24,6 +24,10 @@ function isVariablesFeatureActive() {
 	return isExperimentActive( 'e_atomic_elements' );
 }
 
+function isDefaultStylesFeatureActive() {
+	return isExperimentActive( 'e_atomic_elements' );
+}
+
 const transformAnalyticsData = ( payload ) => {
 	const transformed = {};
 
@@ -82,14 +86,32 @@ function isVariablesExported( contextData ) {
 	return !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variables;
 }
 
-function getClassesVariablesInitialState( contextData, isImport ) {
+function isDefaultStylesExported( contextData ) {
+	const siteSettings = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
+
+	if ( undefined === siteSettings?.defaultStyles ) {
+		return false;
+	}
+
+	return !! siteSettings.defaultStyles;
+}
+
+function getDesignSystemSettingsInitialState( contextData, isImport ) {
 	const includesSettings = contextData?.data?.includes?.includes( 'settings' );
 
 	return {
 		classes: includesSettings && ( ! isImport || isClassesExported( contextData ) ),
 		variables: includesSettings && ( ! isImport || isVariablesExported( contextData ) ),
+		defaultStyles: includesSettings && ( ! isImport || isDefaultStylesExported( contextData ) ),
 		classesOverrideAll: false,
 		variablesOverrideAll: false,
+	};
+}
+
+function getSettingsInitialState( contextData, isImport, showDesignSystemSettingsSection ) {
+	return {
+		theme: getInitialState( contextData, isImport ),
+		...( showDesignSystemSettingsSection ? getDesignSystemSettingsInitialState( contextData, isImport ) : {} ),
 	};
 }
 
@@ -99,16 +121,12 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const showClassesSection = isClassesFeatureActive();
 	const showVariablesSection = isVariablesFeatureActive();
-	const showClassesVariablesSection = showClassesSection || showVariablesSection;
+	const showDefaultStylesSection = isDefaultStylesFeatureActive();
+	const showDesignSystemSettingsSection = showClassesSection || showVariablesSection || showDefaultStylesSection;
 
-	const initialState = useMemo(
-		() => getInitialState( contextData, isImport ),
-		[ contextData?.data?.includes, contextData?.isOldExport, contextData?.data?.uploadedData?.manifest, isImport ],
-	);
-
-	const classesVariablesInitialState = useMemo(
-		() => getClassesVariablesInitialState( contextData, isImport ),
-		[ contextData?.data?.includes, contextData?.data?.uploadedData?.manifest, isImport ],
+	const settingsInitialState = useMemo(
+		() => getSettingsInitialState( contextData, isImport, showDesignSystemSettingsSection ),
+		[ contextData, isImport, showDesignSystemSettingsSection ],
 	);
 
 	const {
@@ -132,31 +150,20 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		[ existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo ],
 	);
 
-	const [ settings, setSettings ] = useState( () => {
-		if ( data.customization.settings ) {
-			return {
-				...data.customization.settings,
-			};
-		}
-
+	const getInitialSettings = () => {
 		return {
-			theme: initialState,
-			...( showClassesVariablesSection ? classesVariablesInitialState : {} ),
-		};
+			...settingsInitialState,
+			...( data.customization.settings || {} ),
+		}
+	};
+
+	const [ settings, setSettings ] = useState( () => {
+		return getInitialSettings();
 	} );
 
 	useEffect( () => {
 		if ( open ) {
-			if ( data.customization.settings ) {
-				setSettings( {
-					...data.customization.settings,
-				} );
-			} else {
-				setSettings( {
-					theme: initialState,
-					...( showClassesVariablesSection ? classesVariablesInitialState : {} ),
-				} );
-			}
+			setSettings( getInitialSettings() );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ open ] );
@@ -205,7 +212,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const classesNotExported = isImport && ! isClassesExported( contextData );
 	const variablesNotExported = isImport && ! isVariablesExported( contextData );
-	const classesVariablesNotExported = classesNotExported && variablesNotExported;
+	const defaultStylesNotExported = isImport && ! isDefaultStylesExported( contextData );
+	const designSystemSettingsNotExported = classesNotExported && variablesNotExported && defaultStylesNotExported;
 
 	const classesLimitExceeded = isImport && classesLimitInfo.isExceeded;
 	const variablesLimitExceeded = isImport && variablesLimitInfo.isExceeded;
@@ -284,10 +292,11 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 						/>
 					) }
 
-					{ showClassesVariablesSection && (
+					{ showDesignSystemSettingsSection && (
 						<ClassesVariablesSection
 							settings={ {
 								classes: settings.classes ?? false,
+								defaultStyles: settings.defaultStyles ?? false,
 								variables: settings.variables ?? false,
 								classesOverrideAll: settings.classesOverrideAll ?? false,
 								variablesOverrideAll: settings.variablesOverrideAll ?? false,
@@ -295,6 +304,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 							onSettingChange={ handleClassesVariablesChange }
 							isImport={ isImport }
 							classesExported={ ! classesNotExported && showClassesSection }
+							defaultStylesExported={ ! defaultStylesNotExported && showDefaultStylesSection }
 							variablesExported={ ! variablesNotExported && showVariablesSection }
 							classesLimitExceeded={ classesLimitExceeded }
 							variablesLimitExceeded={ variablesLimitExceeded }
@@ -302,7 +312,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 							variablesOverLimitCount={ variablesOverLimitCount }
 							onClassesReviewClick={ handleClassesReviewClick }
 							onVariablesReviewClick={ handleVariablesReviewClick }
-							notExported={ classesVariablesNotExported }
+							notExported={ designSystemSettingsNotExported }
 						/>
 					) }
 				</Stack>
