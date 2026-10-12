@@ -7,47 +7,46 @@ export type IconLibraryProviderState = {
 
 export type IconLibraryProvider = {
 	id: string;
-	useIcons: ( enabled: boolean ) => IconLibraryProviderState;
-	resolveSvg?: ( library: string, iconValue: string, signal?: AbortSignal ) => Promise< string | null >;
-	isDeletedLibrary?: ( library: string, iconValue: string ) => boolean;
+	useIcons: (enabled: boolean) => IconLibraryProviderState;
+	resolveSvg?: (library: string, iconValue: string, signal?: AbortSignal) => Promise<string | null>;
+	isDeletedLibrary?: (library: string, iconValue: string) => boolean;
 };
 
-const providers = new Map< string, IconLibraryProvider >();
+const providers = new Map<string, IconLibraryProvider>();
 
-export function registerIconLibraryProvider( provider: IconLibraryProvider ) {
-	providers.set( provider.id, provider );
+export function registerIconLibraryProvider(provider: IconLibraryProvider) {
+	providers.set(provider.id, provider);
 }
 
-export function unregisterIconLibraryProvider( id: string ) {
-	providers.delete( id );
+export function unregisterIconLibraryProvider(id: string) {
+	providers.delete(id);
 }
 
-export function useIconLibraryProviderIcons( enabled: boolean ): Required< IconLibraryProviderState > {
-	const states = [ ...providers.values() ].map( ( provider ) =>
+export function useIconLibraryProviderIcons(enabled: boolean): Required<IconLibraryProviderState> {
+	const states = [...providers.values()].map((provider) =>
 		// Providers are registered once at editor boot, so the hook order is stable between renders.
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		provider.useIcons( enabled )
+		provider.useIcons(enabled)
 	);
 
 	return {
-		data: states.flatMap( ( state ) => state.data ?? [] ),
-		isLoading: states.some( ( state ) => state.isLoading ),
+		data: states.flatMap((state) => state.data ?? []),
+		isLoading: states.some((state) => state.isLoading),
 	};
 }
 
-export function isDeletedIconLibrary( library: string, iconValue: string ): boolean {
-	return [ ...providers.values() ].some( ( provider ) => provider.isDeletedLibrary?.( library, iconValue ) ?? false );
+export function isDeletedIconLibrary(library: string, iconValue: string): boolean {
+	return [...providers.values()].some((provider) => provider.isDeletedLibrary?.(library, iconValue) ?? false);
 }
 
 export async function resolveProviderIconSvg(
 	library: string,
 	iconValue: string,
 	signal?: AbortSignal
-): Promise< string | null > {
-	for ( const provider of providers.values() ) {
-		const markup = await provider.resolveSvg?.( library, iconValue, signal );
+): Promise<string | null> {
+	for (const provider of providers.values()) {
+		const markup = await provider.resolveSvg?.(library, iconValue, signal);
 
-		if ( markup ) {
+		if (markup) {
 			return markup;
 		}
 	}

@@ -146,7 +146,10 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assert_default_svg_fallback( $result );
+		$this->assertSame( [
+			'html' => '',
+			'url' => null,
+		], $result );
 	}
 
 	public function test_get_editor_config__exposes_allowed_files_and_json_url() {
