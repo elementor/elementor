@@ -82,6 +82,25 @@ describe( 'NoticeControl', () => {
 		expect( extendedWindow.elementor.config.user.dismissed_editor_notices ).toContain( 'ally-atomic-notice' );
 	} );
 
+	it( 'should not render when the notice was already dismissed', () => {
+		// Arrange.
+		( window as unknown as { elementor: unknown } ).elementor = {
+			config: { user: { dismissed_editor_notices: [ 'ally-atomic-notice' ] } },
+		};
+
+		// Act.
+		renderControl(
+			<NoticeControl
+				content="Ally helps detect and fix common issues across your site."
+				dismissible="ally-atomic-notice"
+			/>,
+			{ bind: 'notice', propType }
+		);
+
+		// Assert.
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should hide the notice without calling the dismiss ajax when the action button is clicked', () => {
 		// Arrange.
 		renderControl(
