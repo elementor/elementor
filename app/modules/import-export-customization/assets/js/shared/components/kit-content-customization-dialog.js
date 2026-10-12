@@ -10,6 +10,8 @@ import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customizati
 import useContextDetection from '../hooks/use-context-detection';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
+import { KIT_SECTIONS } from '../constants';
+import { getAvailableCustomizationDialogChildren } from '../utils';
 
 const transformAnalyticsData = ( payload, customPostTypes ) => {
 	const optionsArray = [
@@ -253,7 +255,7 @@ export function KitContentCustomizationDialog( {
 	useEffect( () => {
 		if ( open ) {
 			setSettings( ( prevState ) => {
-				if ( ! data.includes.includes( 'content' ) ) {
+				if ( ! data.includes.includes( KIT_SECTIONS.CONTENT ) ) {
 					return {
 						customPostTypes: [],
 						mediaFormat: MEDIA_FORMAT_OPTIONS.LINK,
@@ -288,11 +290,7 @@ export function KitContentCustomizationDialog( {
 			[ settingKey ]: payload,
 		} ) );
 	};
-	const registeredSections = (
-		window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( 'content' )?.children ?? []
-	)
-		.filter( ( child ) => child.isAvailable() )
-		.sort( ( first, second ) => first.order - second.order );
+	const registeredSections = getAvailableCustomizationDialogChildren( KIT_SECTIONS.CONTENT );
 
 	return (
 		<KitCustomizationDialog
@@ -301,7 +299,7 @@ export function KitContentCustomizationDialog( {
 			handleClose={ handleClose }
 			handleSaveChanges={ () => {
 				const transformedAnalytics = transformAnalyticsData( settings, customPostTypes );
-				handleSaveChanges( 'content', settings, true, transformedAnalytics );
+				handleSaveChanges( KIT_SECTIONS.CONTENT, settings, true, transformedAnalytics );
 				handleClose();
 			} }
 		>

@@ -21,6 +21,8 @@ import useContextDetection from '../hooks/use-context-detection';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
+import { KIT_SECTIONS } from '../constants';
+import { getAvailableCustomizationDialogChildren } from '../utils';
 
 const transformAnalyticsData = ( payload ) => {
 	const transformed = {};
@@ -165,7 +167,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 
 	const [ plugins, setPlugins ] = useState( {} );
 
-	const initialState = data?.includes?.includes( 'plugins' ) || false;
+	const initialState = data?.includes?.includes( KIT_SECTIONS.PLUGINS ) || false;
 
 	useEffect( () => {
 		if ( 0 === Object.keys( pluginsList ).length ) {
@@ -248,11 +250,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		}
 	}, [ open ] );
 
-	const registeredSections = (
-		window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( 'plugins' )?.children ?? []
-	)
-		.filter( ( child ) => child.isAvailable() )
-		.sort( ( first, second ) => first.order - second.order );
+	const registeredSections = getAvailableCustomizationDialogChildren( KIT_SECTIONS.PLUGINS );
 
 	return (
 		<Dialog
@@ -309,7 +307,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 						const pluginsSelection = getPluginsSelection();
 						const hasEnabledCustomization = Object.values( pluginsSelection ).some( Boolean );
 						const transformedAnalytics = transformAnalyticsData( pluginsSelection );
-						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, transformedAnalytics );
+						handleSaveChanges( KIT_SECTIONS.PLUGINS, pluginsSelection, hasEnabledCustomization, transformedAnalytics );
 						handleClose();
 					} }
 					variant="contained"

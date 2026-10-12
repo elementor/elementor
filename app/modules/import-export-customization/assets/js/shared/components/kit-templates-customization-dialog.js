@@ -7,15 +7,15 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 import useContextDetection from '../hooks/use-context-detection';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
+import { KIT_SECTIONS } from '../constants';
+import { getAvailableCustomizationDialogChildren } from '../utils';
 
 function getRegisteredSections() {
-	return ( window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( 'templates' )?.children ?? [] )
-		.filter( ( row ) => row.isAvailable() )
-		.sort( ( first, second ) => first.order - second.order );
+	return getAvailableCustomizationDialogChildren( KIT_SECTIONS.TEMPLATES );
 }
 
 function getInitialTemplatesState( contextData, isImport, registeredSections ) {
-	const includesTemplates = contextData?.data?.includes?.includes( 'templates' );
+	const includesTemplates = contextData?.data?.includes?.includes( KIT_SECTIONS.TEMPLATES );
 	const customization = contextData?.data?.customization?.templates ?? {};
 
 	return registeredSections.reduce( ( state, section ) => {
@@ -77,7 +77,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			handleClose={ handleClose }
 			handleSaveChanges={ () => {
 				const hasEnabledCustomization = Object.values( templates ).some( ( sectionState ) => sectionState?.enabled );
-				handleSaveChanges( 'templates', templates, hasEnabledCustomization, transformAnalyticsData( templates ) );
+				handleSaveChanges( KIT_SECTIONS.TEMPLATES, templates, hasEnabledCustomization, transformAnalyticsData( templates ) );
 				handleClose();
 			} }
 			minHeight="auto"

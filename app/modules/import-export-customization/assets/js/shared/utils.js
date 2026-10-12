@@ -20,6 +20,24 @@ export function isDefaultStylesFeatureActive() {
 	return isAtomicElementsFeatureActive();
 }
 
+export function getCustomizationDialogsRegistry() {
+	return globalThis.elementorModules?.importExport?.customizationDialogsRegistry ?? null;
+}
+
+export function getCustomizationDialog( dialogKey ) {
+	return getCustomizationDialogsRegistry()?.get?.( dialogKey ) ?? null;
+}
+
+export function getCustomizationDialogChildren( dialogKey ) {
+	return getCustomizationDialog( dialogKey )?.children ?? [];
+}
+
+export function getAvailableCustomizationDialogChildren( dialogKey ) {
+	return getCustomizationDialogChildren( dialogKey )
+		.filter( ( child ) => child.isAvailable() )
+		.sort( ( first, second ) => first.order - second.order );
+}
+
 const SITE_SETTINGS_MANIFEST_KEY = 'site-settings';
 const WP_CONTENT_MANIFEST_KEY = 'wp-content';
 const CUSTOM_POST_TYPE_TITLES_MANIFEST_KEY = 'custom-post-type-title';

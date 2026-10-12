@@ -18,6 +18,7 @@ import {
 	ThemeSettingsRow,
 } from './settings-customization-sections';
 import {
+	getAvailableCustomizationDialogChildren,
 	getImportedClassesCount,
 	getImportedVariablesCount,
 	isAtomicElementsFeatureActive,
@@ -25,6 +26,10 @@ import {
 	isDefaultStylesExported,
 	isVariablesExported,
 } from '../utils';
+import {
+	KIT_SECTIONS,
+	KIT_SECTION_ITEMS,
+} from '../constants';
 
 const transformAnalyticsData = ( payload ) => {
 	const transformed = {};
@@ -58,13 +63,11 @@ async function fetchManagerUrl( panelId ) {
 }
 
 function getRegisteredRows() {
-	return ( window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( 'settings' )?.children ?? [] )
-		.filter( ( row ) => row.isAvailable() )
-		.sort( ( first, second ) => first.order - second.order );
+	return getAvailableCustomizationDialogChildren( KIT_SECTIONS.SETTINGS );
 }
 
 function getInitialSettings( contextData, isImport, registeredRows ) {
-	const includesSettings = contextData?.data?.includes?.includes( 'settings' );
+	const includesSettings = contextData?.data?.includes?.includes( KIT_SECTIONS.SETTINGS );
 	const customization = contextData?.data?.customization?.settings ?? {};
 
 	return registeredRows.reduce( ( state, row ) => {
@@ -142,7 +145,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const handleReviewClick = useCallback( async ( panelId ) => {
 		const transformedAnalytics = transformAnalyticsData( settings );
-		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+		handleSaveChanges( KIT_SECTIONS.SETTINGS, settings, true, transformedAnalytics );
 		handleClose();
 
 		try {
@@ -172,8 +175,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const classesOverLimitCount = classesLimitInfo.overLimitCount;
 	const variablesOverLimitCount = variablesLimitInfo.overLimitCount;
 
-	const hasSiteSettingsRows = rowByKey.has( 'settings/global-colors' ) || rowByKey.has( 'settings/global-fonts' ) || rowByKey.has( 'settings/theme-style-settings' );
-	const hasCustomFilesRows = rowByKey.has( 'settings/custom-fonts' ) || rowByKey.has( 'settings/custom-icons' ) || rowByKey.has( 'settings/custom-code' );
+	const hasSiteSettingsRows = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_COLORS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_FONTS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME_STYLE_SETTINGS );
+	const hasCustomFilesRows = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_FONTS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_ICONS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_CODE );
 
 	const renderRegisteredRow = ( rowKey ) => {
 		const row = rowByKey.get( rowKey );
@@ -203,7 +206,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const performSave = useCallback( () => {
 		const transformedAnalytics = transformAnalyticsData( settings );
-		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+		handleSaveChanges( KIT_SECTIONS.SETTINGS, settings, true, transformedAnalytics );
 		handleClose();
 	}, [ settings, handleSaveChanges, handleClose ] );
 
@@ -250,7 +253,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					{ contextData?.isOldElementorVersion && (
 						<UpgradeVersionBanner />
 					) }
-					{ rowByKey.has( 'settings/theme' ) && (
+					{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME ) && (
 						<ThemeSettingsRow
 							contextData={ contextData }
 							isImport={ isImport }
@@ -264,7 +267,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 							{ ( classesLimitExceeded || variablesLimitExceeded ) && ! designSystemSettingsNotExported && (
 								<DesignSystemLimitAlert />
 							) }
-							{ rowByKey.has( 'settings/global-classes' ) && (
+							{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES ) && (
 								<GlobalClassesSettingsRow
 									classesLimitExceeded={ classesLimitExceeded }
 									classesOverLimitCount={ classesOverLimitCount }
@@ -275,7 +278,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 									settings={ settings }
 								/>
 							) }
-							{ rowByKey.has( 'settings/global-variables' ) && (
+							{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES ) && (
 								<GlobalVariablesSettingsRow
 									contextData={ contextData }
 									isImport={ isImport }
@@ -286,7 +289,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 									variablesReviewClick={ handleVariablesReviewClick }
 								/>
 							) }
-							{ rowByKey.has( 'settings/default-styles' ) && (
+							{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES ) && (
 								<DefaultStylesSettingsRow
 									contextData={ contextData }
 									isImport={ isImport }
@@ -299,20 +302,20 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 					{ hasSiteSettingsRows && (
 						<SettingsGroupSection title={ __( 'Site settings', 'elementor' ) }>
-							{ renderRegisteredRow( 'settings/global-colors' ) }
-							{ renderRegisteredRow( 'settings/global-fonts' ) }
-							{ renderRegisteredRow( 'settings/theme-style-settings' ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_COLORS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_FONTS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_THEME_STYLE_SETTINGS ) }
 						</SettingsGroupSection>
 					) }
 
-					{ renderRegisteredRow( 'settings/general-settings' ) }
-					{ renderRegisteredRow( 'settings/experiments' ) }
+					{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_GENERAL_SETTINGS ) }
+					{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_EXPERIMENTS ) }
 
 					{ hasCustomFilesRows && (
 						<SettingsGroupSection title={ __( 'Custom files', 'elementor' ) }>
-							{ renderRegisteredRow( 'settings/custom-fonts' ) }
-							{ renderRegisteredRow( 'settings/custom-icons' ) }
-							{ renderRegisteredRow( 'settings/custom-code' ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_FONTS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_ICONS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_CODE ) }
 						</SettingsGroupSection>
 					) }
 				</Stack>

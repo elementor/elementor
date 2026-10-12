@@ -10,6 +10,7 @@ import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits
 import { ReExportBanner } from './re-export-banner';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import {
+	getCustomizationDialog,
 	getImportedClassesCount,
 	getImportedVariablesCount,
 	getManifestItem,
@@ -19,6 +20,7 @@ import {
 	isSiteSettingsExported,
 	isVariablesExported,
 } from '../utils';
+import { KIT_SECTIONS } from '../constants';
 
 const kitPartItemPropType = PropTypes.shape( {
 	type: PropTypes.string.isRequired,
@@ -86,7 +88,7 @@ function DefaultKitPartSelectionSection( {
 									},
 								} }
 							/>
-							{ 'settings' === item.type && hasSettingsLimitWarning && (
+							{ KIT_SECTIONS.SETTINGS === item.type && hasSettingsLimitWarning && (
 								<Tooltip
 									title={ __( 'Limit exceeded. Click \'Edit\' to review conflicts or override existing items', 'elementor' ) }
 									placement="top"
@@ -180,15 +182,15 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 
 	useEffect( () => {
 		if ( showMediaFormatValidation && ! isImport ) {
-			setActiveDialog( 'content' );
+			setActiveDialog( KIT_SECTIONS.CONTENT );
 		}
 	}, [ showMediaFormatValidation, isImport ] );
 
 	const isExported = ( item ) => {
 		switch ( item.type ) {
-			case 'settings':
+			case KIT_SECTIONS.SETTINGS:
 				return isSiteSettingsExported( contextData );
-			case 'content':
+			case KIT_SECTIONS.CONTENT:
 				return isContentSettingsExported( contextData );
 			default:
 				return getManifestItem( contextData, item.type );
@@ -209,7 +211,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 
 	const isEditDisabled = ( item ) => {
 		if ( isImport ) {
-			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
+			const manifestKey = KIT_SECTIONS.SETTINGS === item.type ? 'site-settings' : item.type;
 			return ! getManifestItem( contextData, manifestKey );
 		}
 
@@ -217,7 +219,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 	};
 
 	const getRegistryEntry = ( item ) => {
-		return window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( item.type );
+		return getCustomizationDialog( item.type );
 	};
 
 	const renderFeatureDescription = ( item, isLockedFeaturesNoPro ) => {

@@ -14,6 +14,10 @@ import {
 	getSiteSettingsManifest,
 	isThemeExported,
 } from '../utils';
+import {
+	KIT_SECTIONS,
+	KIT_SECTION_ITEMS,
+} from '../constants';
 
 export const customizationDialogsRegistry = new BaseRegistry();
 
@@ -40,17 +44,17 @@ function createSiteSettingsInitialStateResolver( manifestKey ) {
 }
 
 customizationDialogsRegistry.register( {
-	key: 'content',
+	key: KIT_SECTIONS.CONTENT,
 	title: 'Content',
 	children: [
 		{
-			key: 'content/custom-post-types',
+			key: KIT_SECTION_ITEMS.CONTENT_CUSTOM_POST_TYPES,
 			title: 'Custom post types',
 			order: 20,
 			component: CustomPostTypesSection,
 		},
 		{
-			key: 'content/media-format',
+			key: KIT_SECTION_ITEMS.CONTENT_MEDIA_FORMAT,
 			title: 'Media format',
 			order: 30,
 			component: MediaFormatSection,
@@ -59,16 +63,16 @@ customizationDialogsRegistry.register( {
 } );
 
 customizationDialogsRegistry.register( {
-	key: 'templates',
+	key: KIT_SECTIONS.TEMPLATES,
 	title: 'Templates',
 } );
 
 customizationDialogsRegistry.register( {
-	key: 'settings',
+	key: KIT_SECTIONS.SETTINGS,
 	title: 'Settings',
 	children: [
 		{
-			key: 'settings/theme',
+			key: KIT_SECTION_ITEMS.SETTINGS_THEME,
 			title: 'Theme',
 			order: 10,
 			component: ThemeSettingsRow,
@@ -76,7 +80,7 @@ customizationDialogsRegistry.register( {
 			getInitialState: getThemeInitialState,
 		},
 		{
-			key: 'settings/global-classes',
+			key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES,
 			title: 'Classes',
 			order: 20,
 			component: GlobalClassesSettingsRow,
@@ -85,7 +89,7 @@ customizationDialogsRegistry.register( {
 			getInitialState: createSiteSettingsInitialStateResolver( 'classes' ),
 		},
 		{
-			key: 'settings/global-variables',
+			key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES,
 			title: 'Variables',
 			order: 30,
 			component: GlobalVariablesSettingsRow,
@@ -94,7 +98,7 @@ customizationDialogsRegistry.register( {
 			getInitialState: createSiteSettingsInitialStateResolver( 'variables' ),
 		},
 		{
-			key: 'settings/default-styles',
+			key: KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES,
 			title: 'Default styles',
 			order: 40,
 			component: DefaultStylesSettingsRow,
@@ -106,11 +110,11 @@ customizationDialogsRegistry.register( {
 } );
 
 customizationDialogsRegistry.register( {
-	key: 'plugins',
+	key: KIT_SECTIONS.PLUGINS,
 	title: 'Plugins',
 	children: [
 		{
-			key: 'plugins/plugin-list',
+			key: KIT_SECTION_ITEMS.PLUGINS_PLUGIN_LIST,
 			title: 'Plugin list',
 			order: 10,
 			component: PluginListSection,
