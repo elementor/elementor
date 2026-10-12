@@ -13,6 +13,19 @@ import {
 	isAtomicElementsFeatureActive,
 } from '../utils';
 
+const kitPartItemPropType = PropTypes.shape( {
+	type: PropTypes.string.isRequired,
+	checked: PropTypes.bool.isRequired,
+	data: PropTypes.shape( {
+		title: PropTypes.string.isRequired,
+		features: PropTypes.shape( {
+			open: PropTypes.arrayOf( PropTypes.string ).isRequired,
+			locked: PropTypes.arrayOf( PropTypes.string ),
+			tooltip: PropTypes.string,
+		} ).isRequired,
+	} ).isRequired,
+} );
+
 function DefaultKitPartSelectionSection( {
 	item,
 	DialogComponent,
@@ -103,6 +116,26 @@ function DefaultKitPartSelectionSection( {
 		</>
 	);
 }
+
+DefaultKitPartSelectionSection.propTypes = {
+	item: kitPartItemPropType.isRequired,
+	DialogComponent: PropTypes.elementType,
+	isActive: PropTypes.bool.isRequired,
+	disabled: PropTypes.bool.isRequired,
+	isLockedFeaturesNoPro: PropTypes.bool.isRequired,
+	hasSettingsLimitWarning: PropTypes.bool.isRequired,
+	onCheckboxChange: PropTypes.func.isRequired,
+	onOpenDialog: PropTypes.func.isRequired,
+	onCloseDialog: PropTypes.func.isRequired,
+	handleSaveCustomization: PropTypes.func.isRequired,
+	isImport: PropTypes.bool.isRequired,
+	isOldExport: PropTypes.bool.isRequired,
+	isOldElementorVersion: PropTypes.bool.isRequired,
+	isCloudKitsEligible: PropTypes.bool.isRequired,
+	showMediaFormatValidation: PropTypes.bool.isRequired,
+	renderFeatureDescription: PropTypes.func.isRequired,
+	renderEditControl: PropTypes.func.isRequired,
+};
 
 export default function KitPartsSelection( { onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );

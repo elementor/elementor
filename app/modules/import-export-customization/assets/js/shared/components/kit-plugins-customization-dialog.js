@@ -36,6 +36,12 @@ const REQUIRED_PLUGINS = [
 	'elementor/elementor',
 ];
 
+const pluginDataPropType = PropTypes.shape( {
+	name: PropTypes.string.isRequired,
+	version: PropTypes.string,
+	pluginUri: PropTypes.string,
+} );
+
 export function PluginListSection( {
 	handleSelectAll,
 	handleToggleChange,
@@ -125,6 +131,17 @@ export function PluginListSection( {
 		</Box>
 	);
 }
+
+PluginListSection.propTypes = {
+	handleSelectAll: PropTypes.func.isRequired,
+	handleToggleChange: PropTypes.func.isRequired,
+	isAllSelected: PropTypes.bool.isRequired,
+	isIndeterminate: PropTypes.bool.isRequired,
+	isLoading: PropTypes.bool.isRequired,
+	isRequiredPlugin: PropTypes.func.isRequired,
+	plugins: PropTypes.objectOf( PropTypes.bool ).isRequired,
+	pluginsList: PropTypes.objectOf( pluginDataPropType ).isRequired,
+};
 
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};

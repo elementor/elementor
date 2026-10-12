@@ -52,14 +52,6 @@ async function fetchManagerUrl( panelId ) {
 	return data.data?.url || data.url;
 }
 
-function isThemeExported( contextData ) {
-	if ( contextData?.isOldExport ) {
-		return contextData?.data?.uploadedData?.manifest?.theme;
-	}
-
-	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
-}
-
 function getRegisteredRows() {
 	return ( window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( 'settings' )?.children ?? [] )
 		.filter( ( row ) => row.isAvailable() )

@@ -43,6 +43,23 @@ const MEDIA_FORMAT_CONFIG = [
 	},
 ];
 
+const customPostTypePropType = PropTypes.shape( {
+	label: PropTypes.string.isRequired,
+	value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+} );
+
+const refPropType = PropTypes.oneOfType( [
+	PropTypes.func,
+	PropTypes.shape( {
+		current: PropTypes.any,
+	} ),
+] );
+
+const contentSettingsPropType = PropTypes.shape( {
+	customPostTypes: PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ) ).isRequired,
+	mediaFormat: PropTypes.string,
+} );
+
 export function CustomPostTypesSection( { customPostTypes, isImport, onSettingChange, settings } ) {
 	return isImport && ! customPostTypes?.length ? (
 		<SettingSection
@@ -62,6 +79,13 @@ export function CustomPostTypesSection( { customPostTypes, isImport, onSettingCh
 		/>
 	);
 }
+
+CustomPostTypesSection.propTypes = {
+	customPostTypes: PropTypes.arrayOf( customPostTypePropType ).isRequired,
+	isImport: PropTypes.bool.isRequired,
+	onSettingChange: PropTypes.func.isRequired,
+	settings: contentSettingsPropType.isRequired,
+};
 
 export function MediaFormatSection( {
 	alertRef,
@@ -180,6 +204,16 @@ export function MediaFormatSection( {
 		</SettingSection>
 	);
 }
+
+MediaFormatSection.propTypes = {
+	alertRef: refPropType,
+	isCloudKitsEligible: PropTypes.bool.isRequired,
+	isImport: PropTypes.bool.isRequired,
+	mediaFormatSectionRef: refPropType,
+	onSettingChange: PropTypes.func.isRequired,
+	settings: contentSettingsPropType.isRequired,
+	showMediaFormatValidation: PropTypes.bool.isRequired,
+};
 
 export function KitContentCustomizationDialog( {
 	open,
