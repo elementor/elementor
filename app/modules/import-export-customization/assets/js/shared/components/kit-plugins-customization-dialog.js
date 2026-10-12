@@ -36,6 +36,96 @@ const REQUIRED_PLUGINS = [
 	'elementor/elementor',
 ];
 
+export function PluginListSection( {
+	handleSelectAll,
+	handleToggleChange,
+	isAllSelected,
+	isIndeterminate,
+	isLoading,
+	isRequiredPlugin,
+	plugins,
+	pluginsList,
+} ) {
+	return (
+		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
+			<Typography variant="h6">
+				{ __( 'Plugin name and version', 'elementor' ) }
+			</Typography>
+			{ isLoading ? (
+				<Stack spacing={ 3 } alignItems="center" sx={ { py: 8 } }>
+					<CircularProgress size={ 30 } />
+				</Stack>
+			) : (
+				<Stack sx={ { mt: 2 } }>
+					<Box sx={ { py: 1.5 } }>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={ isAllSelected }
+									indeterminate={ isIndeterminate }
+									onChange={ handleSelectAll }
+									color="info"
+									size="medium"
+									sx={ { py: 0 } }
+								/>
+							}
+							label={ <Typography variant="body1" sx={ { fontWeight: 500 } }>{ __( 'All plugins', 'elementor' ) }</Typography> }
+						/>
+					</Box>
+					{ Object.entries( pluginsList ).map( ( [ pluginKey, pluginData ] ) => {
+						const isRequired = isRequiredPlugin( pluginKey );
+
+						return (
+							<Box key={ pluginKey } sx={ { py: 1.5 } }>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={ plugins[ pluginKey ] }
+											onChange={ () => handleToggleChange( pluginKey ) }
+											color="info"
+											size="medium"
+											sx={ { py: 0 } }
+											disabled={ isRequired }
+										/>
+									}
+									label={
+										<Typography variant="body1" sx={ { fontWeight: 400, color: isRequired ? 'text.disabled' : 'inherit' } }>
+											{ pluginData.name }
+										</Typography>
+									}
+								/>
+								{ pluginData.version && (
+									<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400, ml: 4 } }>
+										{ pluginData.pluginUri ? (
+											<Link
+												href={ pluginData.pluginUri }
+												target="_blank"
+												rel="noopener noreferrer"
+												color="info.light"
+												underline="hover"
+												sx={ {
+													display: 'inline-flex',
+													alignItems: 'center',
+													gap: 0.5,
+												} }
+											>
+												{ __( 'Version', 'elementor' ) } { pluginData.version }
+												<ExternalLinkIcon />
+											</Link>
+										) : (
+											<>{ __( 'Version', 'elementor' ) } { pluginData.version }</>
+										) }
+									</Typography>
+								) }
+							</Box>
+						);
+					} ) }
+				</Stack>
+			) }
+		</Box>
+	);
+}
+
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null, isOldElementorVersion = false } = contextData;
@@ -141,90 +231,11 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		}
 	}, [ open ] );
 
-	const SettingSection = ( { title, description, children, settingKey } ) => (
-		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
-			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-				<Box>
-					<Typography variant="h6">
-						{ title }
-					</Typography>
-					{ description && (
-						<Typography variant="body1" color="text.secondary">
-							{ description }
-						</Typography>
-					) }
-				</Box>
-			</Box>
-			{ children && (
-				<Box sx={ { mt: 2 } }>
-					{ children }
-				</Box>
-			) }
-		</Box>
-	);
-
-	SettingSection.propTypes = {
-		title: PropTypes.string.isRequired,
-		description: PropTypes.string,
-		children: PropTypes.node,
-		settingKey: PropTypes.string,
-	};
-
-	const SubSetting = ( { label, settingKey, version, pluginUri } ) => {
-		const isRequired = isRequiredPlugin( settingKey );
-
-		return (
-			<Box sx={ { py: 1.5 } }>
-				<FormControlLabel
-					control={
-						<Checkbox
-							checked={ plugins[ settingKey ] }
-							onChange={ () => handleToggleChange( settingKey ) }
-							color="info"
-							size="medium"
-							sx={ { py: 0 } }
-							disabled={ isRequired }
-						/>
-					}
-					label={
-						<Typography variant="body1" sx={ { fontWeight: 400, color: isRequired ? 'text.disabled' : 'inherit' } }>
-							{ label }
-						</Typography>
-					}
-				/>
-				{ version && (
-					<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400, ml: 4 } }>
-						{ pluginUri ? (
-							<Link
-								href={ pluginUri }
-								target="_blank"
-								rel="noopener noreferrer"
-								color="info.light"
-								underline="hover"
-								sx={ {
-									display: 'inline-flex',
-									alignItems: 'center',
-									gap: 0.5,
-								} }
-							>
-								{ __( 'Version', 'elementor' ) } { version }
-								<ExternalLinkIcon />
-							</Link>
-						) : (
-							<>{ __( 'Version', 'elementor' ) } { version }</>
-						) }
-					</Typography>
-				) }
-			</Box>
-		);
-	};
-
-	SubSetting.propTypes = {
-		label: PropTypes.string.isRequired,
-		settingKey: PropTypes.string.isRequired,
-		version: PropTypes.string,
-		pluginUri: PropTypes.string,
-	};
+	const registeredSections = (
+		window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( 'plugins' )?.children ?? []
+	)
+		.filter( ( child ) => child.isAvailable() )
+		.sort( ( first, second ) => first.order - second.order );
 
 	return (
 		<Dialog
@@ -249,42 +260,23 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 					{ isOldElementorVersion && (
 						<UpgradeVersionBanner />
 					) }
-					{ isLoading ? (
-						<Stack spacing={ 3 } alignItems="center" sx={ { py: 8 } }>
-							<CircularProgress size={ 30 } />
-						</Stack>
-					) : (
-						<SettingSection
-							title={ __( 'Plugin name and version', 'elementor' ) }
-						>
-							<Stack>
-								<Box sx={ { py: 1.5 } }>
-									<FormControlLabel
-										control={
-											<Checkbox
-												checked={ isAllSelected }
-												indeterminate={ isIndeterminate }
-												onChange={ handleSelectAll }
-												color="info"
-												size="medium"
-												sx={ { py: 0 } }
-											/>
-										}
-										label={ <Typography variant="body1" sx={ { fontWeight: 500 } }>{ __( 'All plugins', 'elementor' ) }</Typography> }
-									/>
-								</Box>
-								{ Object.entries( pluginsList ).map( ( [ pluginKey, pluginData ] ) => (
-									<SubSetting
-										key={ pluginKey }
-										label={ pluginData.name }
-										settingKey={ pluginKey }
-										version={ pluginData.version }
-										pluginUri={ pluginData.pluginUri }
-									/>
-								) ) }
-							</Stack>
-						</SettingSection>
-					) }
+					{ registeredSections.map( ( section ) => {
+						const SectionComponent = section.component;
+
+						return (
+							<SectionComponent
+								key={ section.key }
+								handleSelectAll={ handleSelectAll }
+								handleToggleChange={ handleToggleChange }
+								isAllSelected={ isAllSelected }
+								isIndeterminate={ isIndeterminate }
+								isLoading={ isLoading }
+								isRequiredPlugin={ isRequiredPlugin }
+								plugins={ plugins }
+								pluginsList={ pluginsList }
+							/>
+						);
+					} ) }
 				</Stack>
 			</DialogContent>
 

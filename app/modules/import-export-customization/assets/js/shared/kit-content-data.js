@@ -1,6 +1,7 @@
 import { KitPluginsCustomizationDialog } from './components/kit-plugins-customization-dialog';
 import { KitContentCustomizationDialog } from './components/kit-content-customization-dialog';
 import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
+import { KitTemplatesCustomizationDialog } from './components/kit-templates-customization-dialog';
 
 const kitContentData = [
 	{
@@ -43,7 +44,7 @@ const kitContentData = [
 				tooltip: __( 'To import or export these components, you’ll need Elementor Pro.', 'elementor' ),
 			},
 		},
-		dialog: null,
+		dialog: KitTemplatesCustomizationDialog,
 		required: false,
 	},
 	{

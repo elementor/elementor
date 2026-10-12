@@ -1,3 +1,98 @@
+import * as React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import KitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection';
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => ( [
+	{
+		type: 'templates',
+		data: {
+			title: 'Templates',
+			features: {
+				open: [ 'Saved Templates' ],
+			},
+		},
+		dialog: function DefaultDialog() {
+			return <div>Default dialog</div>;
+		},
+		required: false,
+	},
+] ) );
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => () => ( {
+	isImport: false,
+	contextData: {
+		data: {
+			customization: {},
+			includes: [ 'templates' ],
+			uploadedData: {
+				manifest: {},
+			},
+		},
+	},
+} ) );
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits', () => ( {
+	useClassesVariablesLimits: () => ( {
+		existingClassesCount: 0,
+		existingVariablesCount: 0,
+		classesLimit: 0,
+		variablesLimit: 0,
+		calculateLimitInfo: () => ( {
+			isExceeded: false,
+			overLimitCount: 0,
+		} ),
+	} ),
+} ) );
+
+global.elementorCommon = {
+	config: {
+		experimentalFeatures: {},
+	},
+};
+
+global.elementorAppConfig = {
+	hasPro: true,
+};
+
+describe( 'KitPartsSelection', () => {
+	it( 'renders a section override and uses the registered dialog component', () => {
+		// Arrange
+		const OverrideDialog = ( { open } ) => open ? <div>Override dialog</div> : null;
+		const SectionOverride = ( { DialogComponent, isActive, item, onOpenDialog } ) => (
+			<div>
+				<div>{ item.data.title } custom section</div>
+				<button onClick={ onOpenDialog }>Open section dialog</button>
+				{ DialogComponent && <DialogComponent open={ isActive } /> }
+			</div>
+		);
+
+		window.elementorModules = {
+			importExport: {
+				customizationDialogsRegistry: {
+					get: jest.fn().mockReturnValue( {
+						component: OverrideDialog,
+						section: SectionOverride,
+					} ),
+				},
+			},
+		};
+
+		// Act
+		render(
+			<KitPartsSelection
+				onCheckboxChange={ jest.fn() }
+				handleSaveCustomization={ jest.fn() }
+			/>,
+		);
+
+		fireEvent.click( screen.getByText( 'Open section dialog' ) );
+
+		// Assert
+		expect( screen.getByText( 'Templates custom section' ) ).toBeTruthy();
+		expect( screen.getByText( 'Override dialog' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Default dialog' ) ).toBeFalsy();
+	} );
+} );
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 import KitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection';

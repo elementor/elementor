@@ -9,27 +9,107 @@ import useContextDetection from '../hooks/use-context-detection';
 import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits';
 import { ReExportBanner } from './re-export-banner';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import {
+	isAtomicElementsFeatureActive,
+} from '../utils';
 
-function isExperimentActive( experimentName ) {
-	const common = typeof globalThis !== 'undefined' ? globalThis.elementorCommon : undefined;
-	return !! common?.config?.experimentalFeatures?.[ experimentName ];
-}
-
-function isClassesFeatureActive() {
-	return isExperimentActive( 'e_atomic_elements' );
-}
-
-function isVariablesFeatureActive() {
-	return isExperimentActive( 'e_atomic_elements' );
+function DefaultKitPartSelectionSection( {
+	item,
+	DialogComponent,
+	isActive,
+	disabled,
+	isLockedFeaturesNoPro,
+	hasSettingsLimitWarning,
+	onCheckboxChange,
+	onOpenDialog,
+	onCloseDialog,
+	handleSaveCustomization,
+	isImport,
+	isOldExport,
+	isOldElementorVersion,
+	isCloudKitsEligible,
+	showMediaFormatValidation,
+	renderFeatureDescription,
+	renderEditControl,
+} ) {
+	return (
+		<>
+			<Box
+				data-testid={ `KitPartsSelectionRow-${ item.type }` }
+				sx={ {
+					mb: 3,
+					border: 1,
+					borderRadius: 1,
+					borderColor: 'action.focus',
+					p: 2.5,
+				} }
+			>
+				<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
+					<Box sx={ { flex: 1, opacity: isLockedFeaturesNoPro ? 0.5 : 1 } }>
+						<Box sx={ { display: 'flex', alignItems: 'center' } }>
+							<FormControlLabel
+								control={
+									<Checkbox
+										color="info"
+										checked={ item.checked }
+										onChange={ onCheckboxChange }
+										disabled={ disabled }
+										sx={ { p: 0, mx: 1 } }
+										data-testid={ `KitContentDataSelection-${ item.type }` }
+										data-type={ item.type }
+									/>
+								}
+								label={ <Typography color="text.primary" variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
+								sx={ {
+									'& .MuiFormControlLabel-label.Mui-disabled': {
+										color: 'text.primary',
+									},
+								} }
+							/>
+							{ 'settings' === item.type && hasSettingsLimitWarning && (
+								<Tooltip
+									title={ __( 'Limit exceeded. Click \'Edit\' to review conflicts or override existing items', 'elementor' ) }
+									placement="top"
+									arrow
+								>
+									<AlertTriangleFilledIcon
+										sx={ {
+											fontSize: 20,
+											color: 'warning.main',
+											ml: 0.5,
+										} }
+										aria-hidden
+									/>
+								</Tooltip>
+							) }
+						</Box>
+						{ renderFeatureDescription( item, isLockedFeaturesNoPro ) }
+					</Box>
+					{ renderEditControl( item, isLockedFeaturesNoPro, onOpenDialog ) }
+				</Box>
+			</Box>
+			{ DialogComponent && (
+				<DialogComponent
+					open={ isActive }
+					handleClose={ onCloseDialog }
+					handleSaveChanges={ handleSaveCustomization }
+					isImport={ isImport }
+					isOldExport={ isOldExport }
+					isOldElementorVersion={ isOldElementorVersion }
+					isCloudKitsEligible={ isCloudKitsEligible }
+					showMediaFormatValidation={ showMediaFormatValidation }
+				/>
+			) }
+		</>
+	);
 }
 
 export default function KitPartsSelection( { onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
-	const { data = null } = contextData;
+	const { data = null, isOldExport = false, isOldElementorVersion = false } = contextData;
 
-	const showClassesSection = isClassesFeatureActive();
-	const showVariablesSection = isVariablesFeatureActive();
+	const showDesignSystemSettingsSection = isAtomicElementsFeatureActive();
 
 	const {
 		existingClassesCount,
@@ -53,9 +133,9 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 		[ existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo ],
 	);
 
-	const hasSettingsLimitWarning = isImport && (
-		( showClassesSection && isClassesExportedInManifest && classesLimitInfo.isExceeded ) ||
-		( showVariablesSection && isVariablesExportedInManifest && variablesLimitInfo.isExceeded )
+	const hasSettingsLimitWarning = showDesignSystemSettingsSection && isImport && (
+		( isClassesExportedInManifest && classesLimitInfo.isExceeded ) ||
+		( isVariablesExportedInManifest && variablesLimitInfo.isExceeded )
 	);
 
 	useEffect( () => {
@@ -114,10 +194,8 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 		return false;
 	};
 
-	const getDialogComponent = ( item ) => {
-		const reg = window.elementorModules?.importExport?.customizationDialogsRegistry;
-		const registered = reg?.get?.( item.type );
-		return registered?.component || item.dialog;
+	const getRegistryEntry = ( item ) => {
+		return window.elementorModules?.importExport?.customizationDialogsRegistry?.get?.( item.type );
 	};
 
 	const renderFeatureDescription = ( item, isLockedFeaturesNoPro ) => {
@@ -140,29 +218,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 		) : description;
 	};
 
-	const renderCheckboxControl = ( item, disabled ) => (
-		<FormControlLabel
-			control={
-				<Checkbox
-					color="info"
-					checked={ data.includes.includes( item.type ) }
-					onChange={ () => onCheckboxChange( item.type ) }
-					disabled={ disabled }
-					sx={ { p: 0, mx: 1 } }
-					data-testid={ `KitContentDataSelection-${ item.type }` }
-					data-type={ item.type }
-				/>
-			}
-			label={ <Typography color="text.primary" variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
-			sx={ {
-				'& .MuiFormControlLabel-label.Mui-disabled': {
-					color: 'text.primary',
-				},
-			} }
-		/>
-	);
-
-	const getSectionEditButton = ( item, isLockedFeaturesNoPro ) => {
+	const renderEditControl = ( item, isLockedFeaturesNoPro, onOpenDialog ) => {
 		if ( isLockedFeaturesNoPro ) {
 			return (
 				<Button
@@ -186,7 +242,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 			return (
 				<Button
 					color="secondary"
-					onClick={ () => setActiveDialog( item.type ) }
+					onClick={ onOpenDialog }
 					sx={ { alignSelf: 'center' } }
 					data-type={ item.type }
 					disabled={ isEditDisabled( item ) }
@@ -200,7 +256,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 			? (
 				<Button
 					color="secondary"
-					onClick={ () => setActiveDialog( item.type ) }
+					onClick={ onOpenDialog }
 					sx={ { alignSelf: 'center' } }
 					data-type={ item.type }
 					disabled={ isEditDisabled( item ) }
@@ -227,62 +283,36 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 				<UpgradeVersionBanner />
 			) }
 			{ kitContentData.map( ( item ) => {
+				const registryEntry = getRegistryEntry( item );
 				const isLockedFeaturesNoPro = item.data.features?.locked && ! elementorAppConfig.hasPro;
 				const disabled = isDisabled( item );
-				const DialogComponent = getDialogComponent( item );
+				const DialogComponent = registryEntry?.component || item.dialog;
+				const SectionComponent = registryEntry?.section || DefaultKitPartSelectionSection;
 
 				return (
 					<Fragment key={ item.type }>
-						<Box
-							data-testid={ `KitPartsSelectionRow-${ item.type }` }
-							key={ item.type }
-							sx={ {
-								mb: 3,
-								border: 1,
-								borderRadius: 1,
-								borderColor: 'action.focus',
-								p: 2.5,
+						<SectionComponent
+							item={ {
+								...item,
+								checked: data.includes.includes( item.type ),
 							} }
-						>
-							<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
-								<Box sx={ { flex: 1, opacity: isLockedFeaturesNoPro ? 0.5 : 1 } }>
-									<Box sx={ { display: 'flex', alignItems: 'center' } }>
-										{ renderCheckboxControl( item, disabled ) }
-										{ 'settings' === item.type && hasSettingsLimitWarning && (
-											<Tooltip
-												title={ __( 'Limit exceeded. Click \'Edit\' to review conflicts or override existing items', 'elementor' ) }
-												placement="top"
-												arrow
-											>
-												<AlertTriangleFilledIcon
-													sx={ {
-														fontSize: 20,
-														color: 'warning.main',
-														ml: 0.5,
-													} }
-													aria-hidden
-												/>
-											</Tooltip>
-										) }
-									</Box>
-									{ renderFeatureDescription( item, isLockedFeaturesNoPro ) }
-								</Box>
-								{ getSectionEditButton( item, isLockedFeaturesNoPro ) }
-							</Box>
-						</Box>
-						{ DialogComponent && (
-							<DialogComponent
-								open={ activeDialog === item.type }
-								handleClose={ () => setActiveDialog( null ) }
-								data={ data }
-								handleSaveChanges={ handleSaveCustomization }
-								isImport={ isImport }
-								isOldExport={ contextData.isOldExport }
-								isOldElementorVersion={ contextData.isOldElementorVersion }
-								isCloudKitsEligible={ isCloudKitsEligible }
-								showMediaFormatValidation={ showMediaFormatValidation }
-							/>
-						) }
+							DialogComponent={ DialogComponent }
+							isActive={ activeDialog === item.type }
+							disabled={ disabled }
+							isLockedFeaturesNoPro={ isLockedFeaturesNoPro }
+							hasSettingsLimitWarning={ hasSettingsLimitWarning }
+							onCheckboxChange={ () => onCheckboxChange( item.type ) }
+							onOpenDialog={ () => setActiveDialog( item.type ) }
+							onCloseDialog={ () => setActiveDialog( null ) }
+							handleSaveCustomization={ handleSaveCustomization }
+							isImport={ isImport }
+							isOldExport={ isOldExport }
+							isOldElementorVersion={ isOldElementorVersion }
+							isCloudKitsEligible={ isCloudKitsEligible }
+							showMediaFormatValidation={ showMediaFormatValidation }
+							renderFeatureDescription={ renderFeatureDescription }
+							renderEditControl={ renderEditControl }
+						/>
 					</Fragment>
 				);
 			} ) }

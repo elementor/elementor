@@ -9,8 +9,13 @@ export class BaseRegistry {
 		}
 
 		const existingSection = this.get( section.key );
-
-		const formattedSection = existingSection || this.formatSection( section );
+		const formattedSection = existingSection
+			? this.formatSection( {
+				...existingSection,
+				...section,
+				children: existingSection.children,
+			} )
+			: this.formatSection( section );
 
 		if ( section.children ) {
 			// If existing section has children, merge them with new children
@@ -29,6 +34,8 @@ export class BaseRegistry {
 			} else {
 				formattedSection.children = section.children.map( ( childSection ) => this.formatSection( childSection ) );
 			}
+		} else if ( existingSection?.children ) {
+			formattedSection.children = existingSection.children;
 		}
 		this.sections.set( section.key, formattedSection );
 	}
