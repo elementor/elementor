@@ -86,6 +86,22 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		] ) );
 	}
 
+	public function test_should_export__returns_true_when_default_styles_key_is_missing_from_settings_customization() {
+		$runner = new Export_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_export( [
+			'include' => [ 'settings' ],
+			'customization' => [
+				'settings' => [],
+			],
+		] ) );
+	}
+
 	public function test_export() {
 		$repository = Default_Styles_Repository::make();
 
