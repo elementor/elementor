@@ -57,8 +57,16 @@ function getSiteSettingsManifest( contextData ) {
 	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
 }
 
+function isThemeExported( contextData ) {
+	if ( contextData?.isOldExport ) {
+		return !! contextData?.data?.uploadedData?.manifest?.theme;
+	}
+
+	return !! getSiteSettingsManifest( contextData )?.theme;
+}
+
 export function ThemeSettingsRow( { contextData, isImport, onSettingChange, settings } ) {
-	const themeExported = !! getSiteSettingsManifest( contextData )?.theme;
+	const themeExported = isThemeExported( contextData );
 
 	return isImport && ! themeExported ? (
 		<SettingSection
