@@ -45,9 +45,19 @@ const markNoticeAsDismissedInSession = ( dismissId: string ) => {
 	}
 };
 
+const isNoticeDismissed = ( dismissId?: string ) => {
+	if ( ! dismissId ) {
+		return false;
+	}
+
+	const dismissedNotices = ( window as ExtendedWindow ).elementor?.config?.user?.dismissed_editor_notices;
+
+	return !! dismissedNotices?.includes( dismissId );
+};
+
 export const NoticeControl = createControl(
 	( { noticeType = 'info', heading, content, dismissible, buttonText, buttonUrl }: NoticeControlProps ) => {
-		const [ isDismissed, setIsDismissed ] = useState( false );
+		const [ isDismissed, setIsDismissed ] = useState( () => isNoticeDismissed( dismissible ) );
 
 		if ( isDismissed || ! content ) {
 			return null;
