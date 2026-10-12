@@ -136,6 +136,14 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		overridableProp.label
 	);
 
+	// When there's a real inherited (base) value, let the control's bound placeholder show it,
+	// instead of the control definition's own placeholder (instance panel only).
+	// `controlProps` is the control definition's own props object (shared with the normal editing
+	// panel via the widgets cache), so it must never be mutated here — build a derived object instead.
+	const effectiveControlProps = hasInheritedValue( resolvedBaseValue )
+		? omitPlaceholder( controlProps )
+		: controlProps;
+
 	const propTypeSchema = createTopLevelObjectType( {
 		schema: { [ overridableProp.overrideKey ]: propType },
 	} );
@@ -213,7 +221,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 							<Box mb={ 1.5 }>
 								<ControlTypeContainer layout={ layout }>
 									{ layout !== 'custom' && <ControlLabel>{ overridableProp.label }</ControlLabel> }
-									<OriginalControl control={ control } controlProps={ controlProps } />
+									<OriginalControl control={ control } controlProps={ effectiveControlProps } />
 								</ControlTypeContainer>
 							</Box>
 						</ControlReplacementsProvider>
@@ -239,6 +247,25 @@ function resolveOverrideValues(
 	const baseValue = overrideValue || isInheritedDynamic ? null : inheritedValue;
 
 	return { propValue, baseValue };
+}
+
+// An inherited value whose extracted primitive is empty/null/undefined (e.g. a component's default
+// empty string) isn't a meaningful value to show as a placeholder — treat it like there's no base
+// value at all, so the control's own placeholder is kept instead of an empty one.
+function hasInheritedValue( baseValue: AnyTransformable | null ): boolean {
+	if ( baseValue === null || baseValue === undefined ) {
+		return false;
+	}
+
+	const primitive = ( baseValue as { value?: unknown } ).value;
+
+	return primitive !== null && primitive !== undefined && primitive !== '';
+}
+
+function omitPlaceholder( controlProps: Record< string, unknown > ): Record< string, unknown > {
+	const { placeholder: _placeholder, ...rest } = controlProps;
+
+	return rest;
 }
 
 // Temp solution: when removing an override on a dynamic value, fall back to propType.default

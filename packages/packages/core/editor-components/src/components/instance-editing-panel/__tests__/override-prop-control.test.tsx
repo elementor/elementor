@@ -195,6 +195,89 @@ describe( '<OverridePropControl />', () => {
 		} );
 	} );
 
+	describe( 'control placeholder vs inherited (base) value (M1)', () => {
+		const PLACEHOLDER_OVERRIDABLE_PROP: OverridableProp = {
+			overrideKey: 'prop-1',
+			label: 'Title',
+			elementId: 'element-1',
+			propKey: 'title',
+			widgetType: 'e-heading',
+			elType: 'widget',
+			groupId: 'content',
+			originValue: { $$type: 'string', value: 'Element 1 Original Title' },
+		};
+
+		it( 'shows the inherited value as placeholder when a base value exists, even if the control definition has its own placeholder', () => {
+			// Arrange
+			setupElementsMocks( undefined, { title: { placeholder: 'Control placeholder' } } );
+
+			// Act
+			renderOverridePropControl( store, PLACEHOLDER_OVERRIDABLE_PROP, [], MOCK_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Element 1 Original Title' );
+		} );
+
+		it( 'falls back to the control definition placeholder when there is no base (inherited) value', () => {
+			// Arrange
+			const noOriginOverridableProp: OverridableProp = {
+				...PLACEHOLDER_OVERRIDABLE_PROP,
+				elementId: 'original-text-element',
+			};
+
+			setupElementsMocks( undefined, { title: { placeholder: 'Control placeholder' } } );
+
+			// Act
+			renderOverridePropControl( store, noOriginOverridableProp, [], MOCK_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Control placeholder' );
+		} );
+
+		it( 'keeps the control definition placeholder when the inherited value is an empty string', () => {
+			// Arrange
+			const EMPTY_TITLE_ELEMENT_ID = 'element-empty-title';
+			const emptyTitleOverridableProp: OverridableProp = {
+				...PLACEHOLDER_OVERRIDABLE_PROP,
+				elementId: EMPTY_TITLE_ELEMENT_ID,
+			};
+
+			setupElementsMocks(
+				{
+					[ EMPTY_TITLE_ELEMENT_ID ]: createMockContainer( EMPTY_TITLE_ELEMENT_ID, [], 'e-heading', {
+						title: stringPropTypeUtil.create( '' ),
+					} ),
+				},
+				{ title: { placeholder: 'Control placeholder' } }
+			);
+
+			// Act
+			renderOverridePropControl( store, emptyTitleOverridableProp, [], MOCK_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Control placeholder' );
+		} );
+
+		it( 'does not mutate the shared control definition props object when stripping the placeholder', () => {
+			// Arrange
+			const sharedControlDefinitionProps: Record< string, unknown > = { placeholder: 'Control placeholder' };
+
+			setupElementsMocks( undefined, { title: sharedControlDefinitionProps } );
+
+			// Act
+			renderOverridePropControl( store, PLACEHOLDER_OVERRIDABLE_PROP, [], MOCK_COMPONENT_ID );
+
+			// Assert — the input shows the inherited value...
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Element 1 Original Title' );
+			// ...but the shared control definition object (as read by the normal editing panel) is untouched.
+			expect( sharedControlDefinitionProps.placeholder ).toBe( 'Control placeholder' );
+		} );
+	} );
+
 	describe( 'inner control element context', () => {
 		it( 'should use originPropFields element context when available', () => {
 			// Arrange
@@ -842,7 +925,10 @@ function setupNestedComponents( layers: ComponentLayerConfig[] ) {
 	dispatch( slice.actions.load( components ) );
 }
 
-function setupElementsMocks( elements?: Record< string, V1Element > ) {
+function setupElementsMocks(
+	elements?: Record< string, V1Element >,
+	controlPropsOverrides?: Record< string, Record< string, unknown > >
+) {
 	const widgetDefinitions: Record< string, { props: Array< { propKey: string; label: string } >; title: string } > = {
 		'e-heading': {
 			title: 'Heading',
@@ -897,7 +983,12 @@ function setupElementsMocks( elements?: Record< string, V1Element > ) {
 
 		const controls = def.props.map( ( prop ) => ( {
 			type: 'control' as const,
-			value: { bind: prop.propKey, label: prop.label, type: MOCK_CONTROL_TYPE, props: {} },
+			value: {
+				bind: prop.propKey,
+				label: prop.label,
+				type: MOCK_CONTROL_TYPE,
+				props: controlPropsOverrides?.[ prop.propKey ] ?? {},
+			},
 		} ) );
 
 		const propsSchema = Object.fromEntries( def.props.map( ( prop ) => [ prop.propKey, MOCK_PROP_TYPE ] ) );
@@ -918,7 +1009,12 @@ function setupElementsMocks( elements?: Record< string, V1Element > ) {
 		Object.entries( widgetDefinitions ).map( ( [ key, def ] ) => {
 			const controls = def.props.map( ( prop ) => ( {
 				type: 'control' as const,
-				value: { bind: prop.propKey, label: prop.label, type: MOCK_CONTROL_TYPE, props: {} },
+				value: {
+					bind: prop.propKey,
+					label: prop.label,
+					type: MOCK_CONTROL_TYPE,
+					props: controlPropsOverrides?.[ prop.propKey ] ?? {},
+				},
 			} ) );
 
 			const propsSchema = Object.fromEntries( def.props.map( ( prop ) => [ prop.propKey, MOCK_PROP_TYPE ] ) );
