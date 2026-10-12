@@ -41,7 +41,10 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages.';
+	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages. On submit, runs the actions listed in actions-after-submit: email, collect-submissions, webhook, and redirect. Each action reads its own settings prop (email, webhook_url, redirect_url).';
+
+	const FIELD_LABEL_TYPE = 'e-form-label';
+	const SUBMIT_BUTTON_TYPE = 'e-form-submit-button';
 
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
@@ -126,33 +129,40 @@ class Atomic_Form extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'form-name' => String_Prop_Type::make()
-				->default( __( 'Form', 'elementor' ) ),
+				->default( __( 'Form', 'elementor' ) )
+				->description( 'Human-readable form name. Shown in submissions and emails, and used to name the agent tool exposed for this form.' ),
 			'webmcp-autosubmit' => Boolean_Prop_Type::make()
-				->default( false ),
+				->default( false )
+				->description( 'When true, an agent invoking this form as a tool submits it immediately instead of only filling the fields for the user to review.' ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' )
-				->meta( 'generates_class', 'form-state-{value}' ),
+				->meta( 'generates_class', 'form-state-{value}' )
+				->description( 'Editor preview of the form state; it does not change frontend behavior. Valid values: default, success, error' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
 				->initial_value( [ String_Prop_Type::generate( self::ACTION_EMAIL ) ] )
-				->default( [ String_Prop_Type::generate( self::ACTION_EMAIL ) ] ),
+				->default( [ String_Prop_Type::generate( self::ACTION_EMAIL ) ] )
+				->description( 'Actions run in order after a valid submission. Valid values: email (plus email_2, email_3... when more email actions are enabled), collect-submissions (Pro license with form submissions), webhook, redirect. redirect requires redirect_url; webhook requires webhook_url.' ),
 			'submissions_metadata' => String_Array_Prop_Type::make()
 				->set_dependencies( $submissions_metadata_dependencies )
 				->default( [
 					String_Prop_Type::generate( self::METADATA_REMOTE_IP ),
 					String_Prop_Type::generate( self::METADATA_USER_AGENT ),
-				] ),
+				] )
+				->description( 'Extra request data stored with each collected submission. Used only when "collect-submissions" is in actions-after-submit. Valid values: remote_ip, user_agent' ),
 		];
 
 		$props = array_merge( $props, self::get_emails_prop_settings(), [
 			'webhook_url' => String_Prop_Type::make()
 				->set_dependencies( $webhook_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
-				->default( '' ),
+				->default( '' )
+				->description( 'Absolute http(s) URL that receives a POST with the submitted fields. Used only when "webhook" is in actions-after-submit.' ),
 			'redirect_url' => String_Prop_Type::make()
 				->set_dependencies( $redirect_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
-				->default( '' ),
+				->default( '' )
+				->description( 'Absolute http(s) URL to navigate to after a successful submission. Used only when "redirect" is in actions-after-submit. Supports field shortcodes like [field id="email"], whose values are URL-encoded.' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
 
@@ -457,8 +467,49 @@ class Atomic_Form extends Atomic_Element_Base {
 		return $instance instanceof Atomic_Form;
 	}
 
+	/**
+	 * Markdown is served publicly to crawlers, so it lists only what the page already shows.
+	 * Action settings (recipients, webhook_url, redirect_url) must never appear here.
+	 */
 	public function render_markdown(): string {
-		return '';
+		$name = trim( (string) ( $this->get_atomic_settings()['form-name'] ?? '' ) );
+		$blocks = [ sprintf( 'Form "%s"', '' === $name ? __( 'Form', 'elementor' ) : $name ) ];
+
+		$labels = $this->collect_descendant_texts( $this, self::FIELD_LABEL_TYPE );
+
+		if ( ! empty( $labels ) ) {
+			$blocks[] = implode( "\n", array_map( fn( $label ) => '- ' . $label, $labels ) );
+		}
+
+		$submit_texts = $this->collect_descendant_texts( $this, self::SUBMIT_BUTTON_TYPE );
+
+		if ( ! empty( $submit_texts ) ) {
+			$blocks[] = '**' . $submit_texts[0] . '**';
+		}
+
+		return implode( "\n\n", $blocks );
+	}
+
+	private function collect_descendant_texts( $element, string $type ): array {
+		$texts = [];
+
+		foreach ( $element->get_children() as $child ) {
+			if ( $child->get_name() === $type && method_exists( $child, 'get_atomic_settings' ) ) {
+				$text = $child->get_atomic_settings()['text'] ?? '';
+				$text = is_array( $text ) ? ( $text['content'] ?? '' ) : $text;
+				$text = trim( wp_strip_all_tags( (string) $text ) );
+
+				if ( '' !== $text ) {
+					$texts[] = $text;
+				}
+
+				continue;
+			}
+
+			$texts = array_merge( $texts, $this->collect_descendant_texts( $child, $type ) );
+		}
+
+		return $texts;
 	}
 
 	private static function get_emails_prop_settings(): array {
@@ -469,7 +520,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_dependencies( self::make_action_dependency( $key ) )
 				->meta( Overridable_Prop_Type::ignore() )
 				->initial_value( $default_value )
-				->default( $default_value );
+				->default( $default_value )
+				->description( sprintf( 'Email sent after submission (to, from, subject, message, and more). Used only when "%s" is in actions-after-submit. The message supports [all-fields] and [field id="..."] shortcodes.', $key ) );
 		}
 
 		return $props;
