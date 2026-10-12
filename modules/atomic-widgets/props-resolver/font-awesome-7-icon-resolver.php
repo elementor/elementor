@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
