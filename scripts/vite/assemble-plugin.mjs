@@ -10,6 +10,8 @@ import { minimatch } from 'minimatch';
 import { BUILD_DIR, ROOT } from './shared/paths.mjs';
 import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
 
+const MARKDOWN_PRUNE_PATTERNS = [ '*.md', '**/*.md' ];
+
 /**
  * Directories that are excluded with no later re-inclusion, pruned up front so the scan does not
  * walk them at all. `vendor` and `core/**\/assets` are deliberately absent: both are excluded
@@ -37,9 +39,12 @@ const PRUNED = [
 	'tests/**',
 	'tmp/**',
 	'turbo.json',
+	...MARKDOWN_PRUNE_PATTERNS,
 	'eslint*mjs',
 	'update-snapshots-linux.js',
 ];
+
+const PRUNED_WITHOUT_MARKDOWN = PRUNED.filter( ( pattern ) => ! MARKDOWN_PRUNE_PATTERNS.includes( pattern ) );
 
 /**
  * Applies the patterns in order, as `PLUGIN_FILE_PATTERNS` requires: a positive pattern adds matches
@@ -68,7 +73,7 @@ function selectPluginFiles( candidates ) {
 	return [ ...selected ];
 }
 
-export function getPluginFiles() {
+function getPluginCandidates() {
 	const candidates = globSync( '**', {
 		cwd: ROOT,
 		nodir: true,
@@ -77,7 +82,15 @@ export function getPluginFiles() {
 		posix: true,
 	} );
 
-	return selectPluginFiles( candidates );
+	const mcpMarkdown = globSync( 'modules/mcp/**/*.md', {
+		cwd: ROOT,
+		nodir: true,
+		dot: false,
+		ignore: PRUNED_WITHOUT_MARKDOWN,
+		posix: true,
+	} );
+
+	return [ ...new Set( [ ...candidates, ...mcpMarkdown ] ) ];
 }
 
 export function assemblePlugin() {
@@ -85,7 +98,7 @@ export function assemblePlugin() {
 
 	rmSync( BUILD_DIR, { recursive: true, force: true } );
 
-	const files = getPluginFiles();
+	const files = selectPluginFiles( getPluginCandidates() );
 
 	for ( const file of files.sort() ) {
 		const destination = join( BUILD_DIR, file );
