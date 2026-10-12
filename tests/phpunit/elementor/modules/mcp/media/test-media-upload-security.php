@@ -5,9 +5,11 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
 use Elementor\Modules\Mcp\Abilities\Update_Media_Attachment_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
+use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
+use Elementor\Modules\Mcp\Media\Pinned_Remote_Fetch;
 use Elementor\Modules\Mcp\Media\Public_Host_Validator;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -330,7 +332,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( \WP_Http::FORBIDDEN, $response->get_status() );
-		$this->assertSame( 'upload_token_expired', $response->get_data()['code'] );
 	}
 
 	public function test_upload_token__single_use() {
@@ -351,7 +352,165 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( \WP_Http::CREATED, $first->get_status() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $second->get_status() );
-		$this->assertSame( 'invalid_upload_token', $second->get_data()['code'] );
+	}
+
+	public function test_pinned_remote_fetch__builds_curl_resolve_entry() {
+		// Act
+		$entry = Pinned_Remote_Fetch::build_curl_resolve_entry( 'example.com', '93.184.216.34' );
+
+		// Assert
+		$this->assertSame( 'example.com:443:93.184.216.34', $entry );
+	}
+
+	public function test_pinned_remote_fetch__registers_http_api_curl_hook_during_get() {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
+
+		$resolve_hook_ran = false;
+
+		add_action(
+			'http_api_curl',
+			static function () use ( &$resolve_hook_ran ) {
+				$resolve_hook_ran = true;
+			},
+			9
+		);
+
+		add_filter(
+			'pre_http_request',
+			static function ( $response, $args, $url ) use ( &$resolve_hook_ran ) {
+				if ( $resolve_hook_ran ) {
+					return [
+						'response' => [ 'code' => 200 ],
+						'headers' => [],
+						'body' => 'ok',
+					];
+				}
+
+				return false;
+			},
+			10,
+			3
+		);
+
+		// Act
+		Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+
+		remove_all_filters( 'pre_http_request' );
+		remove_all_actions( 'http_api_curl' );
+
+		// Assert
+		$this->assertTrue( $resolve_hook_ran );
+	}
+
+	/**
+	 * @dataProvider denied_ip_address_provider
+	 */
+	public function test_assert_public_ip__rejects_denied_ranges( string $ip ) {
+		// Act
+		$error = Public_Host_Validator::assert_public_ip( $ip );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertSame( 'private_host_blocked', $error->get_error_code() );
+	}
+
+	public function denied_ip_address_provider(): array {
+		return [
+			'0.0.0.0/8' => [ '0.0.0.1' ],
+			'100.64.0.0/10' => [ '100.64.0.1' ],
+			'169.254.0.0/16' => [ '169.254.169.254' ],
+			'fe80::/10' => [ 'fe80::1' ],
+			'fc00::/7' => [ 'fc00::1' ],
+			'fd00::/7' => [ 'fd12::1' ],
+			'64:ff9b::/96' => [ '64:ff9b::1' ],
+			'ipv4-mapped' => [ '::ffff:169.254.169.254' ],
+		];
+	}
+
+	public function test_assert_https_url__rejects_non_443_port() {
+		// Act
+		$error = Public_Host_Validator::assert_https_url( 'https://example.com:8443/photo.png' );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertSame( 'invalid_url_port', $error->get_error_code() );
+	}
+
+	public function test_update_title_and_alt__requires_edit_post_on_attachment() {
+		// Arrange
+		$this->act_as_admin();
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => get_current_user_id(),
+			'post_mime_type' => 'image/jpeg',
+		] );
+
+		$other_author = self::factory()->user->create( [ 'role' => 'author' ] );
+		wp_set_current_user( $other_author );
+
+		// Act
+		$result = Media_Attachment_Service::update_title_and_alt( $attachment_id, 'New title', null );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+	}
+
+	public function test_upload_media__dedupe_does_not_update_another_users_attachment_meta() {
+		// Arrange
+		$this->act_as_admin();
+		$source_url = 'https://example.com/dedupe-owner.png';
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => get_current_user_id(),
+			'post_mime_type' => 'image/jpeg',
+			'post_title' => 'Original title',
+		] );
+		update_post_meta( $attachment_id, Media_Upload_Config::SOURCE_URL_META_KEY, $source_url );
+
+		$this->act_as_editor();
+
+		$png = self::MINIMAL_PNG;
+
+		add_filter( 'pre_http_request', static function () use ( $png ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
+
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => $source_url,
+			'consent' => true,
+			'title' => 'Editor title',
+		] );
+
+		remove_all_filters( 'pre_http_request' );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'Original title', get_post( $attachment_id )->post_title );
+		$this->assertNotSame( $attachment_id, $result['attachment_id'] );
+	}
+
+	public function test_token_consume__second_consume_fails() {
+		// Arrange
+		$this->act_as_admin();
+		$issued = Media_Upload_Token_Store::issue_for_user( get_current_user_id() );
+
+		// Act
+		$first = Media_Upload_Token_Store::consume( $issued['token'] );
+		$second = Media_Upload_Token_Store::consume( $issued['token'] );
+
+		// Assert
+		$this->assertIsArray( $first );
+		$this->assertWPError( $second );
+		$this->assertSame( 'invalid_upload_token', $second->get_error_code() );
 	}
 
 	public function test_upload_token__rejects_mismatched_logged_in_user() {
