@@ -67,13 +67,28 @@ const UI_REGISTRATIONS = [
 	},
 ];
 
+function mergeRegistrationChildren( registry, registration ) {
+	const existingChildren = registry?.get?.( registration.key )?.children ?? [];
+	const existingChildrenMap = new Map(
+		existingChildren.map( ( child ) => [ child.key, child ] ),
+	);
+
+	return registration.children?.map( ( child ) => ( {
+		...existingChildrenMap.get( child.key ),
+		...child,
+	} ) );
+}
+
 export function registerCustomizationDialogs( registry ) {
 	if ( ! registry?.register ) {
 		return registry;
 	}
 
 	for ( const registration of UI_REGISTRATIONS ) {
-		registry.register( registration );
+		registry.register( {
+			...registration,
+			children: mergeRegistrationChildren( registry, registration ),
+		} );
 	}
 
 	return registry;

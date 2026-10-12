@@ -1,25 +1,24 @@
-const mockAddRoute = jest.fn();
-const mockRegisterGlobalCustomizationDialogs = jest.fn();
-
 jest.mock( '@elementor/router', () => ( {
-	addRoute: mockAddRoute,
-} ) );
+	addRoute: jest.fn(),
+} ), { virtual: true } );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export', () => function Export() {} );
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import', () => function Import() {} );
 jest.mock(
 	'elementor/app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs',
 	() => ( {
-		registerGlobalCustomizationDialogs: mockRegisterGlobalCustomizationDialogs,
+		registerGlobalCustomizationDialogs: jest.fn(),
 	} ),
 );
 
 import ImportExportCustomization from 'elementor/app/modules/import-export-customization/assets/js/module';
+import router from '@elementor/router';
+import { registerGlobalCustomizationDialogs } from 'elementor/app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
 
 describe( 'ImportExportCustomization', () => {
 	beforeEach( () => {
-		mockAddRoute.mockClear();
-		mockRegisterGlobalCustomizationDialogs.mockClear();
+		router.addRoute.mockClear();
+		registerGlobalCustomizationDialogs.mockClear();
 	} );
 
 	it( 'registers customization dialogs before adding routes', () => {
@@ -27,8 +26,8 @@ describe( 'ImportExportCustomization', () => {
 		new ImportExportCustomization();
 
 		// Assert
-		expect( mockRegisterGlobalCustomizationDialogs ).toHaveBeenCalledTimes( 1 );
-		expect( mockAddRoute ).toHaveBeenCalledTimes( 2 );
-		expect( mockRegisterGlobalCustomizationDialogs.mock.invocationCallOrder[ 0 ] ).toBeLessThan( mockAddRoute.mock.invocationCallOrder[ 0 ] );
+		expect( registerGlobalCustomizationDialogs ).toHaveBeenCalledTimes( 1 );
+		expect( router.addRoute ).toHaveBeenCalledTimes( 2 );
+		expect( registerGlobalCustomizationDialogs.mock.invocationCallOrder[ 0 ] ).toBeLessThan( router.addRoute.mock.invocationCallOrder[ 0 ] );
 	} );
 } );
