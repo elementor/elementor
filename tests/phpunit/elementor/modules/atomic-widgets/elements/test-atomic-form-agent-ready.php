@@ -121,10 +121,13 @@ class Test_Atomic_Form_Agent_Ready extends Elementor_Test_Base {
 	}
 
 	private function get_config(): array {
-		$element_type = Plugin::$instance->elements_manager->get_element_types( Atomic_Form::get_element_type() );
-		$this->assertNotNull( $element_type, 'e-form is not registered.' );
+		$instance = new Atomic_Form( [
+			'id' => 'config-probe',
+			'elType' => Atomic_Form::get_element_type(),
+			'settings' => [],
+		] );
 
-		return $element_type->get_config();
+		return $instance->get_config();
 	}
 
 	private function make_widget( string $id, string $type, string $text ): array {
@@ -138,16 +141,12 @@ class Test_Atomic_Form_Agent_Ready extends Elementor_Test_Base {
 		];
 	}
 
-	private function create_form( array $settings = [], array $children = [] ): Atomic_Element_Base {
-		$instance = Plugin::$instance->elements_manager->create_element_instance( [
+	private function create_form( array $settings = [], array $children = [] ): Atomic_Form {
+		return new Atomic_Form( [
 			'id' => 'form1',
 			'elType' => Atomic_Form::get_element_type(),
 			'settings' => $settings,
 			'elements' => $children,
 		] );
-
-		$this->assertInstanceOf( Atomic_Form::class, $instance );
-
-		return $instance;
 	}
 }
