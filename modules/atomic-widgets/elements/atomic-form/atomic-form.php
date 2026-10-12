@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
@@ -118,7 +119,8 @@ class Atomic_Form extends Atomic_Element_Base {
 			'form-name' => String_Prop_Type::make()
 				->default( __( 'Form', 'elementor' ) ),
 			'webmcp-autosubmit' => Boolean_Prop_Type::make()
-				->default( false ),
+				->default( false )
+				->description( 'Whether AI agents submit the form without waiting for the user. Use true only for read-only forms, such as search or filters. Keep false for forms that send data, book, or buy.' ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' )
@@ -141,6 +143,17 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( '' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
+
+		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
+			$props['webmcp-tool-name'] = String_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->default( '' )
+				->description( 'The WebMCP tool name of the form, in snake_case verb_object format (e.g. book_table_le_petit_bistro). The element ID is appended on render.' );
+			$props['webmcp-tool-description'] = String_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->default( '' )
+				->description( 'What the form does and which details it accepts, in one or two sentences. Shown to AI agents as the WebMCP tool description.' );
+		}
 
 		return $props;
 	}
@@ -417,9 +430,14 @@ class Atomic_Form extends Atomic_Element_Base {
 			return $context;
 		}
 
-		$form_name = (string) ( $this->get_atomic_settings()['form-name'] ?? '' );
-		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
-		$context['webmcp_tool_description'] = Webmcp_Utils::build_tool_description( $form_name );
+		$settings = $this->get_atomic_settings();
+		$form_name = (string) ( $settings['form-name'] ?? '' );
+		$tool_name = ! empty( $settings['webmcp-tool-name'] ) ? $settings['webmcp-tool-name'] : $form_name;
+
+		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $tool_name, (string) $this->get_id() );
+		$context['webmcp_tool_description'] = ! empty( $settings['webmcp-tool-description'] )
+			? $settings['webmcp-tool-description']
+			: Webmcp_Utils::build_tool_description( $form_name );
 
 		return $context;
 	}

@@ -20,6 +20,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Webmcp_Form_Checker;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
@@ -530,6 +531,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 					return $config_result['error'];
 				}
 				$warnings->merge( $config_result['warnings'] );
+				$warnings->merge( ( new Webmcp_Form_Checker( $type_resolver ) )->check( $index, $widget_configs ) );
 			}
 		}
 
