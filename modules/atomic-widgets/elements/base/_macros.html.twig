@@ -27,3 +27,7 @@ data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-
 {%- macro render_interactions(interactions) -%}
 data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 {%- endmacro -%}
+
+{%- macro render_webmcp_param_description(description) -%}
+toolparamdescription="{{ description | e('html_attr') }}"
+{%- endmacro -%}
