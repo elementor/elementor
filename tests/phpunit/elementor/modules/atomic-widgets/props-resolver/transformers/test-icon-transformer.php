@@ -295,4 +295,26 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->filtered_json_dir = null;
 	}
 
+
+	public function test_transform__sanitizes_svg_returned_by_third_party_filter() {
+		// Arrange.
+		$filter = static fn() => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><script>alert(1)</script><path d="M0 0h1v1H0z"/></svg>';
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'x x-y',
+				'library' => 'untrusted-pack',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'script', $result['html'] );
+		$this->assertStringNotContainsString( 'onload', $result['html'] );
+	}
 }
