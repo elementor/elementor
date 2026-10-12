@@ -152,6 +152,8 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		$this->assertNotNull( $notice_control );
 		$this->assertSame( '_ally_notice', $notice_control->get_bind() );
 		$this->assertSame( 'ally_atomic_notice', $notice_control->get_props()['dismissible'] );
+		$this->assertSame( 'Make your site accessible', $notice_control->get_props()['heading'] );
+		$this->assertSame( 'Ally detects common accessibility issues across your site and guides each fix.', $notice_control->get_props()['content'] );
 
 		$button_url = $notice_control->get_props()['buttonUrl'];
 		$this->assertStringNotContainsString( '&amp;', $button_url );
