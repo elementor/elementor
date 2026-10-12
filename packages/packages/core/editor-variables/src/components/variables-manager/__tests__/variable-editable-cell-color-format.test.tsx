@@ -21,8 +21,8 @@ describe( 'VariableEditableCell color format menu', () => {
 			</VariableEditableCell>
 		);
 
-		const colorIndicator = screen.getAllByRole( 'button' ).find( ( button ) => button.tagName === 'BUTTON' );
-		fireEvent.click( colorIndicator! );
+		const colorIndicator = screen.getByRole( 'button', { name: 'Color indicator' } );
+		fireEvent.click( colorIndicator );
 
 		return { onChange };
 	};
@@ -47,8 +47,10 @@ describe( 'VariableEditableCell color format menu', () => {
 		} );
 
 		// Assert
-		expect( colorPopover ).toBeTruthy();
-		expect( within( colorPopover! ).getByRole( 'listbox', { hidden: true } ) ).toBeInTheDocument();
+		if ( ! colorPopover ) {
+			throw new Error( 'Color popover not found' );
+		}
+		expect( within( colorPopover ).getByRole( 'listbox', { hidden: true } ) ).toBeInTheDocument();
 
 		fireEvent.click( screen.getByRole( 'option', { name: 'RGB', hidden: true } ) );
 

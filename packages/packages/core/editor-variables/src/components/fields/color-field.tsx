@@ -43,6 +43,7 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 					transformOrigin: { vertical: 'top', horizontal: -10 },
 					slotProps: {
 						colorIndicator: {
+							'aria-label': 'Color indicator',
 							size: 'inherit',
 							sx: {
 								borderRadius: 0.5,
