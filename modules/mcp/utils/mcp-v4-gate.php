@@ -14,6 +14,7 @@ class Mcp_V4_Gate {
 	const GATED_IDS = [
 		'elementor/build-composition',
 		'elementor/create-preview-link',
+		'elementor/find-icons',
 		'elementor/get-default-styles',
 		'elementor/get-widget-schema',
 		'elementor/global-classes-resource',
