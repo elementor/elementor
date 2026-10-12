@@ -46,6 +46,7 @@ class Test_Shared_Registry_Bridge extends TestCase {
 		);
 
 		$this->assertStringContainsString( "'vendor/elementor/elementor-mcp-composer/**'", $source );
+		$this->assertStringContainsString( "'modules/mcp/static-resources/**'", $source );
 	}
 
 	public function test_editor_one_mcp_menu_uses_home_menu_and_extension_icon(): void {

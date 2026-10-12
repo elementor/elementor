@@ -73,4 +73,7 @@ export const PLUGIN_FILE_PATTERNS = [
 	'vendor/elementor/elementor-mcp-composer/**',
 	'vendor/jetpack-autoloader/**',
 	'vendor/wordpress/**',
+
+	'!**/*.md',
+	'modules/mcp/static-resources/**',
 ];

@@ -7,6 +7,7 @@ import { buildPackages } from './build-packages.mjs';
 import { buildScripts } from './build-scripts.mjs';
 import { buildStyles } from './build-styles.mjs';
 import { ensureFontAwesome7Catalog, verifyFontAwesome7Catalog } from './shared/font-awesome-7-catalog.mjs';
+import { verifyMcpStaticResources } from './shared/mcp-static-resources.mjs';
 import { BUILD_DIR } from './shared/paths.mjs';
 
 /**
@@ -26,6 +27,7 @@ export async function buildAll() {
 	ensureFontAwesome7Catalog();
 	assemblePlugin();
 	verifyFontAwesome7Catalog( BUILD_DIR );
+	verifyMcpStaticResources( BUILD_DIR );
 }
 
 if ( import.meta.url === pathToFileURL( process.argv[ 1 ] ).href ) {

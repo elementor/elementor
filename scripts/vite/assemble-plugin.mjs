@@ -37,8 +37,6 @@ const PRUNED = [
 	'tests/**',
 	'tmp/**',
 	'turbo.json',
-	'*.md',
-	'**/*.md',
 	'eslint*mjs',
 	'update-snapshots-linux.js',
 ];
@@ -70,11 +68,7 @@ function selectPluginFiles( candidates ) {
 	return [ ...selected ];
 }
 
-export function assemblePlugin() {
-	const startedAt = Date.now();
-
-	rmSync( BUILD_DIR, { recursive: true, force: true } );
-
+export function getPluginFiles() {
 	const candidates = globSync( '**', {
 		cwd: ROOT,
 		nodir: true,
@@ -83,7 +77,15 @@ export function assemblePlugin() {
 		posix: true,
 	} );
 
-	const files = selectPluginFiles( candidates );
+	return selectPluginFiles( candidates );
+}
+
+export function assemblePlugin() {
+	const startedAt = Date.now();
+
+	rmSync( BUILD_DIR, { recursive: true, force: true } );
+
+	const files = getPluginFiles();
 
 	for ( const file of files.sort() ) {
 		const destination = join( BUILD_DIR, file );
