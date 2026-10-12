@@ -10,7 +10,14 @@ import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits
 import { ReExportBanner } from './re-export-banner';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import {
+	getImportedClassesCount,
+	getImportedVariablesCount,
+	getManifestItem,
 	isAtomicElementsFeatureActive,
+	isClassesExported,
+	isContentSettingsExported,
+	isSiteSettingsExported,
+	isVariablesExported,
 } from '../utils';
 
 const kitPartItemPropType = PropTypes.shape( {
@@ -152,10 +159,10 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 		calculateLimitInfo,
 	} = useClassesVariablesLimits( { open: true, isImport } );
 
-	const importedClassesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classesCount ?? 0;
-	const importedVariablesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variablesCount ?? 0;
-	const isClassesExportedInManifest = !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classes;
-	const isVariablesExportedInManifest = !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variables;
+	const importedClassesCount = getImportedClassesCount( contextData );
+	const importedVariablesCount = getImportedVariablesCount( contextData );
+	const isClassesExportedInManifest = isClassesExported( contextData );
+	const isVariablesExportedInManifest = isVariablesExported( contextData );
 
 	const classesLimitInfo = useMemo(
 		() => calculateLimitInfo( existingClassesCount, importedClassesCount, classesLimit ),
@@ -177,32 +184,14 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 		}
 	}, [ showMediaFormatValidation, isImport ] );
 
-	const isSiteSettingsExported = () => {
-		const siteSettings = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
-		if ( ! siteSettings ) {
-			return false;
-		}
-
-		return Object.values( siteSettings ).some( Boolean );
-	};
-
-	const isContentSettingsExported = () => {
-		const taxonomies = contextData?.data?.uploadedData?.manifest?.taxonomies;
-		const content = contextData?.data?.uploadedData?.manifest?.content;
-		const wpContent = contextData?.data?.uploadedData?.manifest?.[ 'wp-content' ];
-		const customPostTypes = contextData?.data?.uploadedData?.manifest?.[ 'custom-post-type-title' ];
-
-		return taxonomies || content || wpContent || customPostTypes;
-	};
-
 	const isExported = ( item ) => {
 		switch ( item.type ) {
 			case 'settings':
-				return isSiteSettingsExported();
+				return isSiteSettingsExported( contextData );
 			case 'content':
-				return isContentSettingsExported();
+				return isContentSettingsExported( contextData );
 			default:
-				return contextData?.data?.uploadedData?.manifest?.[ item.type ];
+				return getManifestItem( contextData, item.type );
 		}
 	};
 
@@ -221,7 +210,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 	const isEditDisabled = ( item ) => {
 		if ( isImport ) {
 			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
-			return ! contextData?.data?.uploadedData?.manifest?.[ manifestKey ];
+			return ! getManifestItem( contextData, manifestKey );
 		}
 
 		return false;

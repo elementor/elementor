@@ -18,7 +18,12 @@ import {
 	ThemeSettingsRow,
 } from './settings-customization-sections';
 import {
+	getImportedClassesCount,
+	getImportedVariablesCount,
 	isAtomicElementsFeatureActive,
+	isClassesExported,
+	isDefaultStylesExported,
+	isVariablesExported,
 } from '../utils';
 
 const transformAnalyticsData = ( payload ) => {
@@ -94,8 +99,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		calculateLimitInfo,
 	} = useClassesVariablesLimits( { open, isImport } );
 
-	const importedClassesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classesCount ?? 0;
-	const importedVariablesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variablesCount ?? 0;
+	const importedClassesCount = getImportedClassesCount( contextData );
+	const importedVariablesCount = getImportedVariablesCount( contextData );
 
 	const classesLimitInfo = useMemo(
 		() => calculateLimitInfo( existingClassesCount, importedClassesCount, classesLimit ),
@@ -157,9 +162,9 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		handleReviewClick( 'variables-manager' );
 	}, [ handleReviewClick ] );
 
-	const classesNotExported = isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classes;
-	const variablesNotExported = isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variables;
-	const defaultStylesNotExported = isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.defaultStyles;
+	const classesNotExported = isImport && ! isClassesExported( contextData );
+	const variablesNotExported = isImport && ! isVariablesExported( contextData );
+	const defaultStylesNotExported = isImport && ! isDefaultStylesExported( contextData );
 	const designSystemSettingsNotExported = classesNotExported && variablesNotExported && defaultStylesNotExported;
 
 	const classesLimitExceeded = isImport && classesLimitInfo.isExceeded;

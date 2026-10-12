@@ -4,6 +4,12 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { SubSettingRow } from './classes-variables-section';
 import { SettingSection } from './customization-setting-section';
+import {
+	isClassesExported,
+	isDefaultStylesExported,
+	isThemeExported,
+	isVariablesExported,
+} from '../utils';
 
 export function SettingsGroupSection( { children, title } ) {
 	return (
@@ -53,18 +59,6 @@ export function DesignSystemLimitAlert() {
 	);
 }
 
-function getSiteSettingsManifest( contextData ) {
-	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
-}
-
-function isThemeExported( contextData ) {
-	if ( contextData?.isOldExport ) {
-		return !! contextData?.data?.uploadedData?.manifest?.theme;
-	}
-
-	return !! getSiteSettingsManifest( contextData )?.theme;
-}
-
 export function ThemeSettingsRow( { contextData, isImport, onSettingChange, settings } ) {
 	const themeExported = isThemeExported( contextData );
 
@@ -102,7 +96,7 @@ export function GlobalClassesSettingsRow( {
 	onSettingChange,
 	settings,
 } ) {
-	const classesExported = !! getSiteSettingsManifest( contextData )?.classes;
+	const classesExported = isClassesExported( contextData );
 	const classesNotExported = isImport && ! classesExported;
 
 	return (
@@ -140,7 +134,7 @@ export function GlobalVariablesSettingsRow( {
 	variablesOverLimitCount,
 	variablesReviewClick,
 } ) {
-	const variablesExported = !! getSiteSettingsManifest( contextData )?.variables;
+	const variablesExported = isVariablesExported( contextData );
 	const variablesNotExported = isImport && ! variablesExported;
 
 	return (
@@ -170,8 +164,7 @@ GlobalVariablesSettingsRow.propTypes = {
 };
 
 export function DefaultStylesSettingsRow( { contextData, isImport, onSettingChange, settings } ) {
-	const siteSettings = getSiteSettingsManifest( contextData );
-	const defaultStylesExported = undefined !== siteSettings?.defaultStyles && !! siteSettings.defaultStyles;
+	const defaultStylesExported = isDefaultStylesExported( contextData );
 
 	return (
 		<SubSettingRow

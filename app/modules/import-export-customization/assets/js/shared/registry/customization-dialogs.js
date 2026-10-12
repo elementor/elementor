@@ -10,6 +10,10 @@ import {
 	GlobalVariablesSettingsRow,
 	ThemeSettingsRow,
 } from '../components/settings-customization-sections';
+import {
+	getSiteSettingsManifest,
+	isThemeExported,
+} from '../utils';
 
 export const customizationDialogsRegistry = new BaseRegistry();
 
@@ -17,16 +21,12 @@ function isAtomicSettingsExperimentActive() {
 	return !! globalThis.elementorCommon?.config?.experimentalFeatures?.e_atomic_elements;
 }
 
-function getSiteSettingsManifest( contextData ) {
-	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
-}
-
 function getThemeInitialState( { contextData, includesSettings, isImport } ) {
 	if ( ! isImport ) {
 		return includesSettings;
 	}
 
-	return includesSettings && !! getSiteSettingsManifest( contextData )?.theme;
+	return includesSettings && isThemeExported( contextData );
 }
 
 function createSiteSettingsInitialStateResolver( manifestKey ) {
