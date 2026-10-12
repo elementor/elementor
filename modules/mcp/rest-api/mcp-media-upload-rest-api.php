@@ -180,7 +180,17 @@ class Mcp_Media_Upload_REST_API {
 		if ( ( false === $first_byte || '' === $first_byte ) && feof( $input ) ) {
 			fclose( $input );
 
-			return $this->write_chunked_string_to_temp( (string) $request->get_body(), $tmp, $max_bytes );
+			if ( $this->allow_request_body_string_fallback() ) {
+				return $this->write_chunked_string_to_temp( (string) $request->get_body(), $tmp, $max_bytes );
+			}
+
+			wp_delete_file( $tmp );
+
+			return new \WP_Error(
+				'empty_file',
+				__( 'The uploaded file is empty.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
 		$output = fopen( $tmp, 'wb' );
@@ -302,6 +312,17 @@ class Mcp_Media_Upload_REST_API {
 		fclose( $output );
 
 		return [ 'tmp_name' => $tmp ];
+	}
+
+	private function allow_request_body_string_fallback(): bool {
+		if ( defined( 'WP_TESTS_DOMAIN' ) && WP_TESTS_DOMAIN ) {
+			return true;
+		}
+
+		/**
+		 * @param bool $allow When true, empty php://input may fall back to WP_REST_Request::get_body() (PHPUnit only).
+		 */
+		return (bool) apply_filters( 'elementor/mcp/media/allow_stream_body_fallback', false );
 	}
 
 	private function read_header( \WP_REST_Request $request, string $name ): string {
