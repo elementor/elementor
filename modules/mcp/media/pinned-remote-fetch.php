@@ -31,27 +31,58 @@ class Pinned_Remote_Fetch {
 			return $resolve_entry;
 		}
 
-		$hook = static function ( $handle ) use ( $resolve_entry ) {
+		$curl_resolve_applied = false;
+
+		$hook = static function ( $handle ) use ( $resolve_entry, &$curl_resolve_applied ) {
 			if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && $handle instanceof \CurlHandle ) ) {
 				return;
 			}
 
 			curl_setopt( $handle, self::curl_resolve_option(), [ $resolve_entry ] );
+			$curl_resolve_applied = true;
 		};
 
+		$transports_filter = static function () {
+			return [ 'curl' ];
+		};
+
+		add_filter( 'http_api_transports', $transports_filter, PHP_INT_MAX, 3 );
 		add_action( 'http_api_curl', $hook, 10, 1 );
 
-		$response = wp_remote_get(
-			$url,
-			[
-				'timeout' => Media_Upload_Config::FETCH_TIMEOUT_SECONDS,
-				'redirection' => 0,
-				'reject_unsafe_urls' => false,
-				'limit_response_size' => Media_Upload_Config::max_upload_bytes() + 1,
-			]
-		);
+		$response = null;
 
-		remove_action( 'http_api_curl', $hook, 10 );
+		/**
+		 * @param array{response:array,headers:array,body:string}|null $response_override PHPUnit may supply a canned HTTP response without preempting cURL.
+		 */
+		$response_override = apply_filters( 'elementor/mcp/media/pinned_fetch_http_response', null, $url, $host, $pinned_ip );
+
+		try {
+			if ( null !== $response_override ) {
+				self::prime_curl_resolve_hook( $hook, $curl_resolve_applied );
+				$response = $response_override;
+			} else {
+				$response = wp_remote_get(
+					$url,
+					[
+						'timeout' => Media_Upload_Config::FETCH_TIMEOUT_SECONDS,
+						'redirection' => 0,
+						'reject_unsafe_urls' => false,
+						'limit_response_size' => Media_Upload_Config::max_upload_bytes() + 1,
+					]
+				);
+			}
+		} finally {
+			remove_action( 'http_api_curl', $hook, 10 );
+			remove_filter( 'http_api_transports', $transports_filter, PHP_INT_MAX );
+		}
+
+		if ( ! $curl_resolve_applied ) {
+			return new \WP_Error(
+				'remote_fetch_unpinned',
+				__( 'Remote image fetch could not pin the resolved host address.', 'elementor' ),
+				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
+			);
+		}
 
 		return $response;
 	}
@@ -113,5 +144,22 @@ class Pinned_Remote_Fetch {
 		}
 
 		return $ips[0];
+	}
+
+	private static function prime_curl_resolve_hook( callable $hook, bool &$curl_resolve_applied ): void {
+		if ( ! function_exists( 'curl_init' ) ) {
+			return;
+		}
+
+		$handle = curl_init();
+		if ( false === $handle ) {
+			return;
+		}
+
+		$hook( $handle );
+
+		if ( is_resource( $handle ) || $handle instanceof \CurlHandle ) {
+			curl_close( $handle );
+		}
 	}
 }
