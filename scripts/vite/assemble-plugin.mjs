@@ -10,7 +10,11 @@ import { minimatch } from 'minimatch';
 import { BUILD_DIR, ROOT } from './shared/paths.mjs';
 import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
 
-const MARKDOWN_PRUNE_PATTERNS = [ '*.md', '**/*.md' ];
+const MARKDOWN_PRUNE_PATTERNS = [
+	'*.md',
+	'**/*.md',
+	'!modules/mcp/**/*.md',
+];
 
 /**
  * Directories that are excluded with no later re-inclusion, pruned up front so the scan does not
@@ -39,12 +43,26 @@ const PRUNED = [
 	'tests/**',
 	'tmp/**',
 	'turbo.json',
-	...MARKDOWN_PRUNE_PATTERNS,
 	'eslint*mjs',
 	'update-snapshots-linux.js',
 ];
 
-const PRUNED_WITHOUT_MARKDOWN = PRUNED.filter( ( pattern ) => ! MARKDOWN_PRUNE_PATTERNS.includes( pattern ) );
+function matchesOrderedPatterns( filePath, patterns ) {
+	let matched = false;
+
+	for ( const pattern of patterns ) {
+		const isNegated = pattern.startsWith( '!' );
+		const matcher = isNegated ? pattern.slice( 1 ) : pattern;
+
+		if ( ! minimatch( filePath, matcher ) ) {
+			continue;
+		}
+
+		matched = ! isNegated;
+	}
+
+	return matched;
+}
 
 /**
  * Applies the patterns in order, as `PLUGIN_FILE_PATTERNS` requires: a positive pattern adds matches
@@ -73,32 +91,20 @@ function selectPluginFiles( candidates ) {
 	return [ ...selected ];
 }
 
-function getPluginCandidates() {
+export function assemblePlugin() {
+	const startedAt = Date.now();
+
+	rmSync( BUILD_DIR, { recursive: true, force: true } );
+
 	const candidates = globSync( '**', {
 		cwd: ROOT,
 		nodir: true,
 		dot: false,
 		ignore: PRUNED,
 		posix: true,
-	} );
+	} ).filter( ( candidate ) => ! matchesOrderedPatterns( candidate, MARKDOWN_PRUNE_PATTERNS ) );
 
-	const mcpMarkdown = globSync( 'modules/mcp/**/*.md', {
-		cwd: ROOT,
-		nodir: true,
-		dot: false,
-		ignore: PRUNED_WITHOUT_MARKDOWN,
-		posix: true,
-	} );
-
-	return [ ...new Set( [ ...candidates, ...mcpMarkdown ] ) ];
-}
-
-export function assemblePlugin() {
-	const startedAt = Date.now();
-
-	rmSync( BUILD_DIR, { recursive: true, force: true } );
-
-	const files = selectPluginFiles( getPluginCandidates() );
+	const files = selectPluginFiles( candidates );
 
 	for ( const file of files.sort() ) {
 		const destination = join( BUILD_DIR, file );
