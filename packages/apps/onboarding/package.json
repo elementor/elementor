@@ -38,15 +38,15 @@
   },
   "dependencies": {
     "@elementor/events": "4.4.0",
-    "@elementor/icons": "~1.75.1",
+    "@elementor/icons": "~1.78.1",
     "@elementor/query": "4.4.0",
     "@elementor/store": "4.4.0",
-    "@elementor/ui": "1.37.5",
+    "@elementor/ui": "1.41.1",
     "@elementor/utils": "4.4.0"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

@@ -40,12 +40,12 @@
     "@elementor/editor-documents": "4.4.0",
     "@elementor/editor-site-settings": "4.4.0",
     "@elementor/editor-v1-adapters": "4.4.0",
-    "@elementor/ui": "1.37.5",
+    "@elementor/ui": "1.41.1",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

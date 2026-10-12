@@ -38,14 +38,14 @@
   },
   "dependencies": {
     "@elementor/editor-modal-shell": "4.4.0",
-    "@elementor/icons": "~1.75.1",
-    "@elementor/ui": "1.37.5",
+    "@elementor/icons": "~1.78.1",
+    "@elementor/ui": "1.41.1",
     "@wordpress/i18n": "^5.13.0",
     "lottie-react": "^2.4.1"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"
