@@ -125,9 +125,15 @@ describe( 'KitPartsSelection Component', () => {
 				onOpenDialog: PropTypes.func,
 			};
 
-			window.elementorModules.importExport.customizationDialogsRegistry.get.mockReturnValue( {
-				component: OverrideDialog,
-				section: SectionOverride,
+			window.elementorModules.importExport.customizationDialogsRegistry.get.mockImplementation( ( sectionKey ) => {
+				if ( 'templates' !== sectionKey ) {
+					return {};
+				}
+
+				return {
+					component: OverrideDialog,
+					section: SectionOverride,
+				};
 			} );
 
 			// Act

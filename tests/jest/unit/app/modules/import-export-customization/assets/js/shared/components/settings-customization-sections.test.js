@@ -28,6 +28,6 @@ describe( 'ThemeSettingsRow', () => {
 
 		// Assert
 		expect( screen.queryByText( 'Not exported' ) ).toBeFalsy();
-		expect( screen.getByRole( 'checkbox' ) ).not.toBeDisabled();
+		expect( screen.getByRole( 'checkbox' ).disabled ).toBe( false );
 	} );
 } );

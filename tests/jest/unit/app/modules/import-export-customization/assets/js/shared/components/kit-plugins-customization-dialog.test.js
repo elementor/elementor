@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { KitPluginsCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-plugins-customization-dialog';
+import { customizationDialogsRegistry } from 'elementor/app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins' );
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
@@ -73,6 +74,11 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 		global.elementorCommon = {
 			eventsManager: {
 				config: eventsConfig,
+			},
+		};
+		global.elementorModules = {
+			importExport: {
+				customizationDialogsRegistry,
 			},
 		};
 	} );
