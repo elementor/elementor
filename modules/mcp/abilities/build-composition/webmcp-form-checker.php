@@ -11,10 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Webmcp_Form_Checker {
 
 	const WARNING_CODE = 'webmcp_missing';
-
 	const WEBMCP_PROPS = [ 'webmcp-tool-name', 'webmcp-tool-description', 'webmcp-param-description' ];
-
-	const FALLBACK_PROPS = [ 'webmcp-tool-name' => 'form-name' ];
 
 	private Widget_Type_Resolver $type_resolver;
 
@@ -27,12 +24,13 @@ class Webmcp_Form_Checker {
 
 		foreach ( $index as $element_id => $element ) {
 			$type = $element['widgetType'] ?? $element['elType'] ?? null;
-			$schema = $this->type_resolver->get_props_schema( $type, $widget_configs ) ?? [];
 
-			$missing = array_filter(
-				self::WEBMCP_PROPS,
-				fn( $prop ) => isset( $schema[ $prop ] ) && ! $this->has_value( $element, $prop )
-			);
+			if ( ! $this->is_form_or_field( $type ) ) {
+				continue;
+			}
+
+			$schema = $this->type_resolver->get_props_schema( $type, $widget_configs ) ?? [];
+			$missing = $this->get_missing_props( $element, $schema );
 
 			if ( empty( $missing ) ) {
 				continue;
@@ -52,12 +50,25 @@ class Webmcp_Form_Checker {
 		return $warnings;
 	}
 
-	private function has_value( array $element, string $prop ): bool {
-		$keys = [ $prop, self::FALLBACK_PROPS[ $prop ] ?? $prop ];
+	private function is_form_or_field( ?string $type ): bool {
+		return Form_Structure_Validator::FORM_ELEMENT_TYPE === $type
+			|| in_array( $type, Form_Structure_Validator::FORM_FIELD_ELEMENT_TYPES, true );
+	}
 
-		return (bool) array_filter(
-			$keys,
-			fn( $key ) => ! empty( $element['settings'][ $key ]['value'] )
-		);
+	private function get_missing_props( array $element, array $schema ): array {
+		$exposed_props = array_intersect( self::WEBMCP_PROPS, array_keys( $schema ) );
+
+		return array_filter( $exposed_props, fn( $prop ) => ! $this->is_prop_set( $element, $prop ) );
+	}
+
+	private function is_prop_set( array $element, string $prop ): bool {
+		$settings = $element['settings'] ?? [];
+		$value = $settings[ $prop ]['value'] ?? '';
+
+		if ( empty( $value ) && 'webmcp-tool-name' === $prop ) {
+			$value = $settings['form-name']['value'] ?? '';
+		}
+
+		return ! empty( $value );
 	}
 }
