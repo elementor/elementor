@@ -207,7 +207,7 @@ class Public_Host_Validator {
 		}
 
 		$network_long = sprintf( '%u', $network_long );
-		$mask = $prefix_length === 0 ? 0 : ( 0xffffffff << ( 32 - $prefix_length ) ) & 0xffffffff;
+		$mask = 0 === $prefix_length ? 0 : ( 0xffffffff << ( 32 - $prefix_length ) ) & 0xffffffff;
 
 		return ( (int) $unsigned_long & $mask ) === ( (int) $network_long & $mask );
 	}
