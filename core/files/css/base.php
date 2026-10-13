@@ -237,6 +237,8 @@ abstract class Base extends Base_File {
 		}
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
+			$meta['css'] = $this->sanitize_inline_css_output( (string) ( $meta['css'] ?? '' ) );
+
 			$dep = $this->get_inline_dependency();
 			$is_dependency_registered = (bool) wp_styles()->query( $dep, 'registered' );
 
@@ -746,7 +748,13 @@ abstract class Base extends Base_File {
 
 		Performance::set_use_style_controls( false );
 
-		return $this->get_stylesheet()->__toString();
+		return $this->sanitize_inline_css_output( $this->get_stylesheet()->__toString() );
+	}
+
+	private function sanitize_inline_css_output( string $css ): string {
+		$sanitized_css = preg_replace( '/<\/(style)/i', '<\\\\/$1', $css );
+
+		return is_string( $sanitized_css ) ? $sanitized_css : $css;
 	}
 
 	/**
