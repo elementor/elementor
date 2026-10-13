@@ -36,7 +36,7 @@ See [../composition-workflow.md](../composition-workflow.md):
 1. Read resources (`global-variables`, `global-classes`, `style/best-practices`)
 2. `manage-global-variable` → `manage-classes`
 3. `list-widget-schemas` (`summary: true`) → `list-components` (if using `<e-component>`)
-4. `get-widget-schema` per type → read `interactions/schema` if needed
+4. `get-widget-schema` once, with every type in `widget_type` → read `interactions/schema` if needed
 5. `build-composition` (`dry_run` first) → `manage-elements` for follow-up
 
 `list-dynamic-tags`: [../../dynamic-tags/discovery.md](../../dynamic-tags/discovery.md).

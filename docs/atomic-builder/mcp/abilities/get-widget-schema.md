@@ -8,13 +8,13 @@
 
 Ability ID: **`elementor/get-widget-schema`**
 
-Live JSON schema for one widget type — source of truth for `element_config`. Permission: `edit_posts`.
+Live JSON schema for widget settings — source of truth for `element_config`. Permission: `edit_posts`. A string `widget_type` returns one schema. An array returns every requested schema in one call.
 
 ## Public API
 
 | Symbol | Signature | Purpose |
 |--------|-----------|---------|
-| `Get_Widget_Schema_Ability` | `execute( array $input ): array` | Returns schema + `llm_guidance` for `widget_type` |
+| `Get_Widget_Schema_Ability` | `execute( array $input ): array\|\WP_Error` | String returns one schema. Array returns `{ schemas, errors }` |
 | Ability ID | `elementor/get-widget-schema` | Stable MCP host identifier |
 
 Verified: `get-widget-schema-ability.php`.
@@ -25,7 +25,7 @@ Verified: `get-widget-schema-ability.php`.
 - To check nesting rules (`allowed_child_types`, `required_direct_children`)
 - To see which props accept dynamic tag bindings
 
-Call once per widget type in your composition. For discovery of available types, use [list-widget-schemas.md](list-widget-schemas.md) first.
+Pass every type in the composition as one `widget_type` array, including containers. A single string still returns one schema. For discovery of available types, use [list-widget-schemas.md](list-widget-schemas.md) first.
 
 ## Key concepts
 
@@ -33,7 +33,7 @@ Call once per widget type in your composition. For discovery of available types,
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `widget_type` | yes | Registry identifier, e.g. `e-heading`, `e-flexbox` |
+| `widget_type` | yes | One registry identifier, e.g. `e-heading`, or an array of identifiers |
 
 ### Output (v4 atomic widget)
 
@@ -89,10 +89,31 @@ Widgets without `atomic_props_schema` but with legacy controls return:
 
 `build-composition` targets v4 elements; v3 fallback is informational.
 
+### Output (array of types)
+
+```json
+{
+  "schemas": {
+    "e-heading": { }
+  },
+  "errors": {
+    "missing-type": {
+      "code": "elementor_not_found",
+      "message": "Unknown widget type: missing-type."
+    }
+  }
+}
+```
+
+Each value in `schemas` is the same object a string `widget_type` returns. `errors` is present even when empty. One failing type does not fail the call. The parents index is built once for the array, then reused for every v4 type.
+
 ### Errors
 
-- `invalid_input` — missing `widget_type`
+A string `widget_type` returns these as `WP_Error`. An array records the same `code` and `message` under `errors` and still returns the valid schemas.
+
+- `invalid_input` — missing `widget_type`, a value that is neither a string nor an array, an empty array, or a non-string item
 - `elementor_not_found` — unknown type or widget with `meta.llm_support: false`
+- `elementor_v3_not_supported` — legacy V3 widget that is not allowlisted
 
 ## Extension
 
@@ -101,6 +122,7 @@ Widget authors enable LLM support via widget config `meta.llm_support` and `defi
 ## Internals
 
 - `Widget_Context_Helper::get_widget_config()` → `build_widget_schema()`
+- An array `widget_type` builds `build_parents_index()` once and reuses it for every type in the call
 - Eligibility: `is_widget_eligible_for_llm()` checks `llm_support`, excludes Component widget title
 - Properties converted via `Plain_Llm_Schema_Converter` for agent-friendly plain schemas
 

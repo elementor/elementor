@@ -16,7 +16,7 @@ Recommended sequence for an external MCP agent to add or redesign v4 content. Ce
 | `Manage_Classes_Ability` | `elementor/manage-classes` | Create global classes before composition |
 | `Manage_Variable_Ability` | `elementor/manage-global-variable` | Create variables before composition |
 | `List_Widget_Schemas_Ability` | `elementor/list-widget-schemas` | Discover widget types |
-| `Get_Widget_Schema_Ability` | `elementor/get-widget-schema` | Per-type JSON schema |
+| `Get_Widget_Schema_Ability` | `elementor/get-widget-schema` | JSON schema for one type, or several types in one call |
 | `Manage_Elements_Ability` | `elementor/manage-elements` | Post-composition surgical edits |
 
 All extend `Abstract_Ability` → `register()` + `execute( $input )`.
@@ -36,7 +36,7 @@ Full layouts from scratch or container redesigns. For single-element edits, use 
 2. elementor/manage-global-variable  (create missing tokens)
 3. elementor/manage-classes          (create missing classes)
 4. elementor/list-widget-schemas?summary=true
-5. elementor/get-widget-schema       (per widget type)
+5. elementor/get-widget-schema       (widget_type array of every type)
 6. elementor/build-composition       (dry_run first if unsure)
 7. elementor/manage-elements         (optional follow-up)
 ```

@@ -202,6 +202,56 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 
+	public function test_execute__batch_returns_each_schema_in_single_call_shape() {
+		$this->act_as_admin();
+
+		$heading = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
+		$flexbox = $this->ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+		$result = $this->ability->execute( [ 'widget_type' => [ 'e-heading', 'e-flexbox' ] ] );
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( $heading, $result['schemas']['e-heading'] );
+		$this->assertEquals( $flexbox, $result['schemas']['e-flexbox'] );
+		$this->assertSame( [], $result['errors'] );
+	}
+
+	public function test_execute__batch_keeps_valid_schemas_when_some_types_fail() {
+		$this->act_as_admin();
+		$this->given_widget_manager_with_registered_heading();
+
+		$heading = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
+		$result = $this->ability->execute( [
+			'widget_type' => [ 'e-heading', 'does-not-exist-anywhere', 'heading' ],
+		] );
+
+		$this->assertIsArray( $result );
+		$this->assertEquals( $heading, $result['schemas']['e-heading'] );
+		$this->assertArrayNotHasKey( 'does-not-exist-anywhere', $result['schemas'] );
+		$this->assertArrayNotHasKey( 'heading', $result['schemas'] );
+		$this->assertSame( 'elementor_not_found', $result['errors']['does-not-exist-anywhere']['code'] );
+		$this->assertSame( 'elementor_v3_not_supported', $result['errors']['heading']['code'] );
+	}
+
+	public function test_execute__batch_empty_array_returns_bad_request() {
+		$this->act_as_admin();
+
+		$result = $this->ability->execute( [ 'widget_type' => [] ] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function test_execute__batch_non_string_item_returns_bad_request() {
+		$this->act_as_admin();
+
+		$result = $this->ability->execute( [ 'widget_type' => [ 'e-heading', 1 ] ] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
 	private function given_widget_manager_with_fake_v3_widget( string $type, array $controls = null ): void {
 		$controls = $controls ?? [ 'title' => [ 'type' => 'text' ] ];
 

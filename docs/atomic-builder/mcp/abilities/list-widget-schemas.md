@@ -25,7 +25,7 @@ Verified: `list-widget-schemas-ability.php`.
 - **Bulk schema fetch** — call without `summary` (or `summary: false`) to get full schemas for all v4 widgets (heavier payload)
 - Before `build-composition` when you need to know valid container/child types
 
-For a single widget's full schema, prefer [get-widget-schema.md](get-widget-schema.md) — smaller and always current.
+For the types you will use, prefer [get-widget-schema.md](get-widget-schema.md): one string, or every type in one `widget_type` array. Smaller than this full list, and it accepts types this list omits.
 
 ## Key concepts
 
@@ -77,6 +77,6 @@ N/A — discovery ability. New v4 widgets appear automatically when registered w
 
 ## See also
 
-- [get-widget-schema.md](get-widget-schema.md) — single-widget schema (preferred for composition)
+- [get-widget-schema.md](get-widget-schema.md) — schema for the types you will use (preferred for composition)
 - [../../atomic-widgets/elements-catalog.md](../../atomic-widgets/elements-catalog.md) — snapshot catalog (secondary)
 - [../composition-workflow.md](../composition-workflow.md) — step 5 in workflow
