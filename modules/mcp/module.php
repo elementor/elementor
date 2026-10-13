@@ -251,6 +251,7 @@ class Module extends BaseModule {
 			new Abilities\Manage_Elements_Ability(),
 			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
+			new Abilities\Find_Icons_Ability(),
 			new Abilities\Upload_Media_Ability(),
 			new Abilities\Request_Media_Upload_Ability(),
 			new Abilities\Update_Media_Attachment_Ability(),

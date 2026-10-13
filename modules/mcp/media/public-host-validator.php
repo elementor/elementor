@@ -248,7 +248,8 @@ class Public_Host_Validator {
 			/**
 			 * @param string[] $ips
 			 */
-			$ips = apply_filters( 'elementor/mcp/media/test_resolved_host_ips', $ips, $host );
+			$filtered = apply_filters( 'elementor/mcp/media/test_resolved_host_ips', $ips, $host );
+			$ips = is_array( $filtered ) ? $filtered : [];
 		}
 
 		return $ips;
