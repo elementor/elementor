@@ -79,7 +79,10 @@ class Test_Manage_Revisions_Components extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result );
+		$this->assertTrue( $result['changed'] );
 		$this->assertTrue( $result['staged'] );
+		$this->assertStringContainsString( 'elementor/manage-component with action=publish', $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'elementor/publish-document', $result['llm_instructions'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result, 'Components have no preview URL; an empty one breaks strict MCP clients.' );
 		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertStringContainsString( $result['edit_url'], $result['llm_instructions'] );

@@ -70,6 +70,10 @@ class Document_Revision_Snapshots {
 		self::sync_meta( $from_post_id, $to_post_id, self::RESTORABLE_META_KEYS );
 	}
 
+	public static function matches_current_state( int $main_id, int $revision_id ): bool {
+		return self::has_same_content( self::resolve_current_state_id( $main_id ), $revision_id );
+	}
+
 	/**
 	 * @return array{revision_id: int, is_new: bool}|null
 	 */
@@ -80,8 +84,7 @@ class Document_Revision_Snapshots {
 			return null;
 		}
 
-		$source = Plugin::$instance->documents->get_doc_or_auto_save( $main_id, get_current_user_id() );
-		$source_id = $source ? (int) $source->get_post()->ID : $main_id;
+		$source_id = self::resolve_current_state_id( $main_id );
 
 		$latest_revision_id = self::find_latest_revision_id( $main_id );
 
@@ -183,6 +186,12 @@ class Document_Revision_Snapshots {
 
 			update_metadata( 'post', $to_post_id, $meta_key, wp_slash( get_metadata( 'post', $from_post_id, $meta_key, true ) ) );
 		}
+	}
+
+	private static function resolve_current_state_id( int $main_id ): int {
+		$source = Plugin::$instance->documents->get_doc_or_auto_save( $main_id, get_current_user_id() );
+
+		return $source ? (int) $source->get_post()->ID : $main_id;
 	}
 
 	private static function resolve_main_id( int $post_id ): int {

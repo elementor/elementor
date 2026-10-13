@@ -92,6 +92,25 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 		$this->assertCount( 3, $this->elements_of( $post_id ) );
 	}
 
+	public function test_restore__writes_nothing_when_the_document_already_matches_the_undo_point() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'publish', $this->containers( 1 ) );
+		$write = $this->write_ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
+		$this->restore( $post_id, $write['undo_revision_id'] );
+		$revisions_before = $this->regular_revision_ids( $post_id );
+		$autosave_before = get_post( $this->find_autosave_id( $post_id ) );
+
+		// Act
+		$result = $this->restore( $post_id, $write['undo_revision_id'] );
+
+		// Assert
+		$this->assertFalse( $result['changed'] );
+		$this->assertFalse( $result['staged'] );
+		$this->assertArrayNotHasKey( 'undo_revision_id', $result );
+		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
+		$this->assertSame( $autosave_before->post_modified_gmt, get_post( $autosave_before->ID )->post_modified_gmt );
+	}
+
 	public function test_restore__rejects_a_revision_that_is_not_an_undo_point() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 3 ) );

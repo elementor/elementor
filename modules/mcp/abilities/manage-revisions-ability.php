@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Revision_Restorer;
 use Elementor\Plugin;
@@ -34,16 +36,20 @@ class Manage_Revisions_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Revisions', 'elementor' ),
-			__( 'Undoes MCP changes to an Elementor document (page, post, template, component). Every MCP write tool returns an undo_revision_id holding the document state from before that change; action=restore with that revision_id brings back that state: the element tree, page settings and component overridable props. To undo several changes, restore the undo_revision_id of the earliest one. On published documents the restore is staged in a draft copy like other MCP edits, so the live page is unchanged until you call elementor/publish-document. The response returns a new undo_revision_id; restore it to redo the change you just undid. Only undo_revision_id values returned by MCP calls can be restored.', 'elementor' ),
+			__( 'Undoes MCP changes to an Elementor document (page, post, template, component). Every MCP write tool returns an undo_revision_id holding the document state from before that change; action=restore with that revision_id brings back that state: the element tree, page settings and component overridable props. A restore replaces the whole document with that state, so every change made after it (including unrelated settings) is discarded; to undo several changes, restore the undo_revision_id of the earliest one. On published documents the restore is staged in a draft copy like other MCP edits: pages stay unchanged until you call elementor/publish-document, and components until you call elementor/manage-component with action=publish. The response returns a new undo_revision_id; restore it to redo the change you just undid. When the document already matches the undo point, nothing is changed (changed=false). Only undo_revision_id values returned by MCP calls can be restored, and WordPress revision limits can remove old ones (the restore then returns "Revision not found").', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'post_id' => [ 'type' => 'integer' ],
 					'restored_revision_id' => [ 'type' => 'integer' ],
+					'changed' => [
+						'type' => 'boolean',
+						'description' => 'False when the document already matched the undo point and nothing was written.',
+					],
 					'staged' => [
 						'type' => 'boolean',
-						'description' => 'True when the restore was written to a draft copy of a published document and still needs elementor/publish-document to go live.',
+						'description' => 'True when the restore was written to a draft copy of a published document and still needs publishing to go live.',
 					],
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
 					'edit_url' => [
@@ -135,21 +141,36 @@ class Manage_Revisions_Ability extends Abstract_Ability {
 			return $target;
 		}
 
+		if ( null === $target ) {
+			return [
+				'post_id' => $main_id,
+				'restored_revision_id' => $revision_id,
+				'changed' => false,
+				'staged' => false,
+				'llm_instructions' => __( 'The document already matches this undo point, so nothing was changed.', 'elementor' ),
+			];
+		}
+
 		$is_staged = (int) $target->get_post()->ID !== $main_id;
 
 		return [
 			'post_id' => $main_id,
 			'restored_revision_id' => $revision_id,
+			'changed' => true,
 			'staged' => $is_staged,
-		] + Document_Mutation_Links::for_document( $document, $this->get_restore_message( $is_staged ) );
+		] + Document_Mutation_Links::for_document( $document, $this->get_restore_message( $document, $is_staged ) );
 	}
 
-	private function get_restore_message( bool $is_staged ): string {
-		if ( $is_staged ) {
-			return __( 'Revision restored to a draft copy. The live page is unchanged until you call elementor/publish-document.', 'elementor' );
+	private function get_restore_message( Document $document, bool $is_staged ): string {
+		if ( ! $is_staged ) {
+			return __( 'Revision restored.', 'elementor' );
 		}
 
-		return __( 'Revision restored.', 'elementor' );
+		if ( $document instanceof Component_Document ) {
+			return __( 'Revision restored to a draft copy of the component. Pages using it are unchanged until you call elementor/manage-component with action=publish.', 'elementor' );
+		}
+
+		return __( 'Revision restored to a draft copy. The live page is unchanged until you call elementor/publish-document.', 'elementor' );
 	}
 
 	private function invalid_input( string $message ): \WP_Error {

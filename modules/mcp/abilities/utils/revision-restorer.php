@@ -22,13 +22,18 @@ class Revision_Restorer {
 	 * Restores an MCP undo point onto the document through the staged save path:
 	 * published documents receive it in the current user's autosave.
 	 *
-	 * @return Document|\WP_Error The document that was written.
+	 * @return Document|\WP_Error|null The document that was written, or null when it already matched the undo point and nothing was written.
 	 */
 	public function restore_undo_point( Document $document, int $revision_id ) {
-		$revision_document = $this->resolve_undo_point( (int) $document->get_main_id(), $revision_id );
+		$main_id = (int) $document->get_main_id();
+		$revision_document = $this->resolve_undo_point( $main_id, $revision_id );
 
 		if ( is_wp_error( $revision_document ) ) {
 			return $revision_document;
+		}
+
+		if ( Document_Revision_Snapshots::matches_current_state( $main_id, $revision_id ) ) {
+			return null;
 		}
 
 		try {
