@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
@@ -36,11 +35,6 @@ class V3_Widget_Map_Registry {
 	/**
 	 * @var callable
 	 */
-	private $is_atomic_active;
-
-	/**
-	 * @var callable
-	 */
 	private $get_controls;
 
 	/**
@@ -56,20 +50,17 @@ class V3_Widget_Map_Registry {
 	/**
 	 * @param V3_Widget_Map_Compiler                        $compiler
 	 * @param callable(): bool                              $is_experiment_active
-	 * @param callable(): bool                              $is_atomic_active
 	 * @param callable(string): (array<string, mixed>|null) $get_controls
 	 * @param array<string, array<string, mixed>>           $maps
 	 */
 	public function __construct(
 		V3_Widget_Map_Compiler $compiler,
 		callable $is_experiment_active,
-		callable $is_atomic_active,
 		callable $get_controls,
 		array $maps = []
 	) {
 		$this->compiler = $compiler;
 		$this->is_experiment_active = $is_experiment_active;
-		$this->is_atomic_active = $is_atomic_active;
 		$this->get_controls = $get_controls;
 		$this->maps = $maps;
 	}
@@ -95,9 +86,6 @@ class V3_Widget_Map_Registry {
 			static fn() => class_exists( \Elementor\Plugin::class )
 				&& isset( Plugin::$instance->experiments )
 				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
-			static fn() => class_exists( \Elementor\Plugin::class )
-				&& isset( Plugin::$instance->experiments )
-				&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
 				$source = Plugin::$instance->widgets_manager->get_widget_types( $widget_type )
 					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
@@ -157,12 +145,6 @@ class V3_Widget_Map_Registry {
 	public function is_supported( string $widget_type ): bool {
 		if ( ! $this->is_experiment_active() ) {
 			return Widget_Context_Helper::is_v3_allowlisted( $widget_type );
-		}
-
-		$is_atomic_active = $this->is_atomic_active;
-
-		if ( ! (bool) $is_atomic_active() ) {
-			return false;
 		}
 
 		return null !== $this->get_validation_contract( $widget_type );
