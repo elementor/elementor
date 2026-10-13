@@ -24,6 +24,8 @@ class V3_Style_Target_Router {
 
 	const SELECTOR_PATTERN = '/^(?P<target>&|[a-z0-9]+(?:-[a-z0-9]+)*)(?::(?P<state>[a-z]+(?:-[a-z]+)*))?$/i';
 
+	const MEDIA_AT_PATTERN = '/^\s*@media/i';
+
 	const REASON_UNKNOWN_TARGET = 'unknown_target';
 
 	const REASON_UNKNOWN_STATE = 'unknown_state';
@@ -90,6 +92,34 @@ class V3_Style_Target_Router {
 			'blocks' => $blocks,
 			'dropped' => $dropped,
 		];
+	}
+
+	/**
+	 * @param string $css `@media <condition> { ... }` blocks.
+	 * @return array<int, array{condition: string, css: string}>
+	 */
+	public function media_blocks( string $css ): array {
+		$blocks = [];
+		$length = strlen( $css );
+		$segment_start = 0;
+		$brace = $this->find_unquoted( $css, $segment_start, $length, [ '{' ] );
+
+		while ( null !== $brace ) {
+			$block_end = $this->find_block_end( $css, $brace + 1, $length );
+
+			if ( null === $block_end ) {
+				break;
+			}
+
+			$blocks[] = [
+				'condition' => trim( preg_replace( self::MEDIA_AT_PATTERN, '', substr( $css, $segment_start, $brace - $segment_start ) ) ?? '' ),
+				'css' => trim( substr( $css, $brace + 1, $block_end - $brace - 2 ) ),
+			];
+			$segment_start = $block_end;
+			$brace = $this->find_unquoted( $css, $segment_start, $length, [ '{' ] );
+		}
+
+		return $blocks;
 	}
 
 	/**

@@ -47,10 +47,9 @@ class V3_Map_Fallback_Css {
 	public function apply( array &$node, array $result, string $widget_type, string $config_id, Warnings_Bag $warnings ): void {
 		$rules = $result['fallback_rules'] ?? [];
 		$notes = $result['fallback_notes'] ?? [];
-		$verbatim_css = trim( $result['unmapped_css'] ?? '' );
 		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 
-		if ( ( empty( $rules ) && '' === $verbatim_css ) || null === $map ) {
+		if ( empty( $rules ) || null === $map ) {
 			return;
 		}
 
@@ -58,8 +57,6 @@ class V3_Map_Fallback_Css {
 			foreach ( $notes as $note ) {
 				$warnings->add( self::SKIPPED_CODE, $note . ' ' . __( 'It was skipped because custom CSS requires Elementor Pro.', 'elementor' ), $config_id );
 			}
-
-			self::report_verbatim( $warnings, $config_id, self::SKIPPED_CODE, $verbatim_css );
 
 			return;
 		}
@@ -70,7 +67,7 @@ class V3_Map_Fallback_Css {
 			$this->media_queries ?? V3_Custom_Css_Fallback::site_media_queries()
 		);
 		$existing_css = trim( (string) ( $node['settings'][ $setting ] ?? '' ) );
-		$fallback_css = $fallback->render( $rules, $verbatim_css );
+		$fallback_css = $fallback->render( $rules );
 
 		if ( '' !== $fallback_css ) {
 			$node['settings'][ $setting ] = '' === $existing_css ? $fallback_css : $existing_css . "\n" . $fallback_css;
@@ -79,21 +76,5 @@ class V3_Map_Fallback_Css {
 		foreach ( $notes as $note ) {
 			$warnings->add( self::WRITTEN_CODE, $note . ' ' . __( 'Written to the widget custom CSS instead.', 'elementor' ), $config_id );
 		}
-
-		self::report_verbatim( $warnings, $config_id, self::WRITTEN_CODE, $verbatim_css );
-	}
-
-	private static function report_verbatim( Warnings_Bag $warnings, string $config_id, string $code, string $verbatim_css ): void {
-		if ( '' === $verbatim_css ) {
-			return;
-		}
-
-		$message = self::WRITTEN_CODE === $code
-			/* translators: %s: Media query blocks */
-			? __( 'Media queries other than @media(--<breakpoint>) were written to the widget custom CSS as is: %s', 'elementor' )
-			/* translators: %s: Media query blocks */
-			: __( 'Media queries other than @media(--<breakpoint>) were skipped because custom CSS requires Elementor Pro: %s', 'elementor' );
-
-		$warnings->add( $code, sprintf( $message, $verbatim_css ), $config_id );
 	}
 }

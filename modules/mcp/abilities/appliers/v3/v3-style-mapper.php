@@ -112,7 +112,7 @@ class V3_Style_Mapper {
 	 * Unknown breakpoints fail the whole style like V4 does. Declarations a target cannot store
 	 * become `fallback_rules` scoped to the target's selector, for {@see Maps\V3_Custom_Css_Fallback};
 	 * targets without a selector drop them with a warning. Media queries other than
-	 * `@media(--<breakpoint>)` are returned verbatim as `unmapped_css`.
+	 * `@media(--<breakpoint>)` become fallback rules with their `media` condition.
 	 *
 	 * @return array{settings_patch: array<string, mixed>, unmapped_css: string, fallback_rules: array[], fallback_notes: string[], required_settings: array<string, array{value: mixed, declaration: string}>, warnings: string[], error: string|null}
 	 */
@@ -132,12 +132,18 @@ class V3_Style_Mapper {
 			}
 		}
 
-		$ctx->mark_unmapped( $split['custom_css'] );
+		foreach ( $this->target_router->media_blocks( $split['custom_css'] ) as $media_block ) {
+			$this->route_to_targets( $ctx, $meta, Responsive_Key_Resolver::BASE_BREAKPOINT, $media_block['css'], $media_block['condition'] );
+		}
 
 		return $this->finalize( $ctx, $meta );
 	}
 
-	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css ): void {
+	/**
+	 * A media query that is not a site breakpoint has no setting to write to, so all of its
+	 * declarations fall back.
+	 */
+	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css, ?string $media = null ): void {
 		$map = $meta->map();
 		$targets = $map->get_targets();
 		$routed = $this->target_router->route(
@@ -147,15 +153,33 @@ class V3_Style_Mapper {
 		);
 
 		foreach ( $routed['dropped'] as $dropped ) {
-			$ctx->warn( self::dropped_block_message( $dropped, array_keys( $targets ) ) );
+			$ctx->warn( self::dropped_block_message( $dropped, array_keys( $targets ), $map->get_default_target() ) );
 		}
 
 		foreach ( $routed['blocks'] as $block ) {
 			$target = $targets[ $block['target'] ];
-			$fallbacks = $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $block['css'] );
+			$fallbacks = null === $media
+				? $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $block['css'] )
+				: $this->custom_media_fallbacks( $block['css'], $media );
 
-			$this->collect_fallback( $ctx, $target, $breakpoint, $block, $fallbacks );
+			$this->collect_fallback( $ctx, $target, $breakpoint, $block, $fallbacks, $media );
 		}
+	}
+
+	/**
+	 * @return array<int, array{property: string, value: string, reason: string}>
+	 */
+	private function custom_media_fallbacks( string $css, string $media ): array {
+		$reason = sprintf(
+			/* translators: %s: Media query condition */
+			__( 'Media query %s is not a site breakpoint.', 'elementor' ),
+			$media
+		);
+
+		return array_map(
+			fn( array $declaration ) => array_merge( $declaration, [ 'reason' => $reason ] ),
+			$this->declaration_parser->parse_declarations( $css )
+		);
 	}
 
 	/**
@@ -164,8 +188,9 @@ class V3_Style_Mapper {
 	 * @param string                                                             $breakpoint
 	 * @param array{target: string, state: string|null, css: string}             $block
 	 * @param array<int, array{property: string, value: string, reason: string}> $fallbacks
+	 * @param string|null                                                        $media
 	 */
-	private function collect_fallback( V3_Conversion_Context $ctx, Compiled_Style_Target $target, string $breakpoint, array $block, array $fallbacks ): void {
+	private function collect_fallback( V3_Conversion_Context $ctx, Compiled_Style_Target $target, string $breakpoint, array $block, array $fallbacks, ?string $media ): void {
 		if ( empty( $fallbacks ) ) {
 			return;
 		}
@@ -184,6 +209,7 @@ class V3_Style_Mapper {
 			'target' => $target->get_alias(),
 			'state' => $block['state'],
 			'breakpoint' => $breakpoint,
+			'media' => $media,
 			'declarations' => array_column( $fallbacks, 'value', 'property' ),
 		] );
 
@@ -216,8 +242,9 @@ class V3_Style_Mapper {
 	/**
 	 * @param array{selector: string, reason: string} $dropped
 	 * @param string[]                                $aliases
+	 * @param string                                  $default_target
 	 */
-	private static function dropped_block_message( array $dropped, array $aliases ): string {
+	private static function dropped_block_message( array $dropped, array $aliases, string $default_target ): string {
 		switch ( $dropped['reason'] ) {
 			case V3_Style_Target_Router::REASON_UNKNOWN_TARGET:
 				return sprintf(
@@ -228,9 +255,10 @@ class V3_Style_Mapper {
 				);
 			case V3_Style_Target_Router::REASON_UNKNOWN_STATE:
 				return sprintf(
-					/* translators: %s: CSS block selector */
-					__( 'The state in %s is not supported by this style target and was dropped.', 'elementor' ),
-					$dropped['selector']
+					/* translators: 1: CSS block selector, 2: Style target name */
+					__( 'The state in %1$s is not supported by style target %2$s and was dropped.', 'elementor' ),
+					$dropped['selector'],
+					self::target_of_selector( $dropped['selector'], $default_target )
 				);
 			default:
 				return sprintf(
@@ -239,6 +267,12 @@ class V3_Style_Mapper {
 					$dropped['selector']
 				);
 		}
+	}
+
+	private static function target_of_selector( string $selector, string $default_target ): string {
+		$target = strtolower( explode( ':', $selector )[0] );
+
+		return V3_Style_Target_Router::DEFAULT_TARGET_SELECTOR === $target ? $default_target : $target;
 	}
 
 	private function process_breakpoint( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css ): void {

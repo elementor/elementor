@@ -24,8 +24,6 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 
 	const HAND_WRITTEN_CSS = 'selector { outline: 1px solid red; }';
 
-	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { selector { color: blue; } }';
-
 	const NOTE = 'font-weight: 650 (title): CSS property font-weight has a value this Elementor widget cannot store.';
 
 	const FALLBACK_RULE_CSS = 'selector .title { font-weight: 650; }';
@@ -68,6 +66,7 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 					'target' => 'title',
 					'state' => null,
 					'breakpoint' => 'desktop',
+					'media' => null,
 					'declarations' => [ 'font-weight' => '650' ],
 				],
 			],
@@ -100,26 +99,5 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 		$this->assertSame( [ Style_Applier::UNSUPPORTED_CSS_CODE ], array_column( $warnings->all(), 'code' ) );
 		$this->assertSame( [ '[' . self::CONFIG_ID . '] ' . self::NOTE . ' It was skipped because custom CSS requires Elementor Pro.' ], $warnings->messages() );
-	}
-
-	public function test_apply__writes_media_queries_the_map_cannot_route_as_is() {
-		// Arrange.
-		$node = [ 'settings' => [] ];
-		$warnings = Warnings_Bag::make();
-		$result = [
-			'fallback_rules' => [],
-			'fallback_notes' => [],
-			'unmapped_css' => self::CUSTOM_MEDIA_BLOCK,
-		];
-
-		// Act.
-		$this->fallback_css( true )->apply( $node, $result, self::WIDGET_TYPE, self::CONFIG_ID, $warnings );
-
-		// Assert.
-		$this->assertSame( self::CUSTOM_MEDIA_BLOCK, $node['settings']['custom_css'] );
-		$this->assertSame(
-			[ '[' . self::CONFIG_ID . '] Media queries other than @media(--<breakpoint>) were written to the widget custom CSS as is: ' . self::CUSTOM_MEDIA_BLOCK ],
-			$warnings->messages()
-		);
 	}
 }

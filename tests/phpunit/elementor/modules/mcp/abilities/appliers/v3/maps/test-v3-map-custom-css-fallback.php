@@ -29,7 +29,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 	const BREAKPOINTS = [ 'desktop', 'tablet', 'mobile' ];
 
-	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { selector { color: blue; } }';
+	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { color: blue; title:hover { color: green; } }';
 
 	const MEDIA_QUERIES = [
 		'tablet' => '(max-width: 1024px)',
@@ -40,7 +40,16 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		'target' => 'title',
 		'state' => null,
 		'breakpoint' => 'tablet',
+		'media' => null,
 		'declarations' => [ 'color' => 'red' ],
+	];
+
+	const WIDESCREEN_RULE = [
+		'target' => 'title',
+		'state' => null,
+		'breakpoint' => 'desktop',
+		'media' => '(min-width: 2000px)',
+		'declarations' => [ 'color' => 'blue' ],
 	];
 
 	public function setUp(): void {
@@ -80,16 +89,28 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [ 'title_color' => '#111111' ], $result['settings_patch'] );
-		$this->assertSame( [ self::TABLET_RULE ], $result['fallback_rules'] );
-		$this->assertSame( self::CUSTOM_MEDIA_BLOCK, $result['unmapped_css'] );
-		$this->assertSame( [], $result['warnings'] );
+		$this->assertSame( [ self::TABLET_RULE, self::WIDESCREEN_RULE ], $result['fallback_rules'] );
+		$this->assertSame( '', $result['unmapped_css'] );
+		$this->assertSame(
+			[ 'color: blue (title): Media query (min-width: 2000px) is not a site breakpoint.' ],
+			array_slice( $result['fallback_notes'], 1 )
+		);
+		$this->assertSame( [ 'The state in title:hover is not supported by style target title and was dropped.' ], $result['warnings'] );
+	}
+
+	public function test_site_media_queries__lists_max_width_breakpoints_from_widest_to_narrowest() {
+		// Act.
+		$queries = V3_Custom_Css_Fallback::site_media_queries();
+
+		// Assert.
+		$this->assertSame( [ 'tablet', 'mobile' ], array_keys( $queries ) );
 	}
 
 	public function test_serialize__returns_the_custom_css_as_is_after_the_mapped_css() {
 		// Arrange.
 		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE, [] );
 		$custom_css = ( new V3_Custom_Css_Fallback( [ 'title' => '.elementor-heading-title' ], self::MEDIA_QUERIES ) )
-			->render( $written['fallback_rules'], $written['unmapped_css'] );
+			->render( $written['fallback_rules'] );
 		$settings = $written['settings_patch'] + [ 'custom_css' => $custom_css ];
 
 		// Act.

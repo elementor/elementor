@@ -18,6 +18,10 @@ class V3_Map_Style_Writer {
 
 	const NONE_KEYWORD = 'none';
 
+	const POSITION_PROPERTY = 'position';
+
+	const POSITION_OFFSET_PROPERTIES = [ 'inset-inline-start', 'inset-inline-end', 'inset-block-start', 'inset-block-end' ];
+
 	private Css_Converter $css_converter;
 	private V3_Control_Adapter_Registry $adapters;
 	private Css_Declaration_Parser $declaration_parser;
@@ -45,19 +49,24 @@ class V3_Map_Style_Writer {
 		$converted = $this->css_converter->convert( $css );
 		$state = $state ?? Style_Target::DEFAULT_STATE;
 		$failures = [];
+		$unconverted = $this->unconverted_declarations( $ctx, $converted, $bindings, $controls, $breakpoint, $state );
+		$position_fell_back = in_array( self::POSITION_PROPERTY, array_column( $unconverted, 'property' ), true );
 
-		foreach ( $converted['props'] as $prop => $prop_value ) {
+		foreach ( self::position_first( $converted['props'] ) as $prop => $prop_value ) {
+			if ( $position_fell_back && in_array( $prop, self::POSITION_OFFSET_PROPERTIES, true ) ) {
+				$failures[ $prop ] = self::position_offset_message( (string) $prop );
+				continue;
+			}
+
 			$prop_bindings = $this->bindings_for( $bindings, (string) $prop, $state );
 
 			if ( empty( $prop_bindings ) ) {
 				$bound_states = $this->states_bound_for( $bindings, (string) $prop );
 
-				if ( empty( $bound_states ) ) {
-					$failures[ $prop ] = self::unsupported_property_message( (string) $prop );
-					continue;
-				}
-
-				$ctx->warn( self::state_only_property_message( (string) $prop, $bound_states ) );
+				$failures[ $prop ] = empty( $bound_states )
+					? self::unsupported_property_message( (string) $prop )
+					: self::state_only_property_message( (string) $prop, $bound_states );
+				$position_fell_back = $position_fell_back || self::POSITION_PROPERTY === $prop;
 				continue;
 			}
 
@@ -68,11 +77,25 @@ class V3_Map_Style_Writer {
 					$failures[ $prop ] = $failures[ $prop ] ?? $failure;
 				}
 			}
+
+			$position_fell_back = $position_fell_back || isset( $failures[ self::POSITION_PROPERTY ] );
 		}
 
-		return array_merge(
-			$this->declarations_of( $css, $failures ),
-			$this->unconverted_declarations( $ctx, $converted, $bindings, $controls, $breakpoint, $state )
+		return array_merge( $this->declarations_of( $css, $failures ), $unconverted );
+	}
+
+	/**
+	 * Offsets are written after position, so they know whether position fell back.
+	 */
+	private static function position_first( array $props ): array {
+		return array_merge( array_intersect_key( $props, [ self::POSITION_PROPERTY => true ] ), $props );
+	}
+
+	private static function position_offset_message( string $property ): string {
+		return sprintf(
+			/* translators: %s: CSS property name */
+			__( 'CSS property %s only works with position, which was written to the widget custom CSS.', 'elementor' ),
+			$property
 		);
 	}
 
@@ -117,14 +140,12 @@ class V3_Map_Style_Writer {
 	 */
 	private static function state_only_property_message( string $property, array $states ): string {
 		$selectors = array_map( fn( string $state ) => Style_Target::DEFAULT_STATE === $state ? 'default' : ':' . $state, $states );
-		$example = Style_Target::DEFAULT_STATE === $states[0] ? '<target> { }' : '<target>:' . $states[0] . ' { }';
 
 		return sprintf(
-			/* translators: 1: CSS property name, 2: Comma-separated states, 3: Example CSS block */
-			__( 'CSS property %1$s is only supported in the %2$s state of this style target. Move it into a `%3$s` block.', 'elementor' ),
+			/* translators: 1: CSS property name, 2: Comma-separated states */
+			__( 'CSS property %1$s is only stored in the %2$s state of this style target.', 'elementor' ),
 			$property,
-			implode( ', ', $selectors ),
-			$example
+			implode( ', ', $selectors )
 		);
 	}
 

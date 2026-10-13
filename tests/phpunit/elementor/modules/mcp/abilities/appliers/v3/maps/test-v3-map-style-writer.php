@@ -28,6 +28,12 @@ class Test_V3_Map_Style_Writer extends TestCase {
 	const TABLET = 'tablet';
 	const HOVER = 'hover';
 
+	const POSITION_OPTIONS = [
+		'' => 'Default',
+		'absolute' => 'Absolute',
+		'fixed' => 'Fixed',
+	];
+
 	const FONT_WEIGHT_OPTIONS = [
 		'400' => '400',
 		'700' => '700',
@@ -56,6 +62,12 @@ class Test_V3_Map_Style_Writer extends TestCase {
 				'type' => 'box_shadow',
 				'condition' => [ 'shadow_box_shadow_type!' => '' ],
 			],
+			'_position' => [
+				'type' => 'select',
+				'options' => self::POSITION_OPTIONS,
+			],
+			'_offset_y' => [ 'type' => 'slider' ],
+			'_z_index' => [ 'type' => 'number' ],
 		];
 	}
 
@@ -88,6 +100,21 @@ class Test_V3_Map_Style_Writer extends TestCase {
 
 		return ( new V3_Widget_Map_Compiler() )
 			->compile( $map, $this->controls(), new V3_Map_Diagnostics(), 'pointer-widget' )
+			->get_style_bindings();
+	}
+
+	private function positioned_bindings(): array {
+		$map = V3_Widget_Map::make( 'positioned-widget' )
+			->description( 'Widget with a positioned wrapper.' )
+			->default_target(
+				Style_Target::make( 'wrapper' )
+					->bind( 'position', V3_Control::bind_to( '_position' ) )
+					->bind( 'inset-block-start', V3_Control::bind_to( '_offset_y' ) )
+					->bind( 'z-index', V3_Control::bind_to( '_z_index' ) )
+			);
+
+		return ( new V3_Widget_Map_Compiler() )
+			->compile( $map, $this->controls(), new V3_Map_Diagnostics(), 'positioned-widget' )
 			->get_style_bindings();
 	}
 
@@ -223,7 +250,7 @@ class Test_V3_Map_Style_Writer extends TestCase {
 		], $this->fallbacks );
 	}
 
-	public function test_write__names_the_states_a_state_only_property_is_bound_in() {
+	public function test_write__falls_back_on_a_property_bound_only_in_other_states() {
 		// Arrange.
 		$bindings = $this->hover_only_bindings();
 
@@ -232,11 +259,40 @@ class Test_V3_Map_Style_Writer extends TestCase {
 
 		// Assert.
 		$this->assertSame( [], $ctx->settings_patch() );
-		$this->assertSame( [], $this->fallbacks );
+		$this->assertSame( [], $ctx->warnings() );
+		$this->assertSame( [
+			[
+				'property' => 'color',
+				'value' => '#111',
+				'reason' => 'CSS property color is only stored in the :hover state of this style target.',
+			],
+		], $this->fallbacks );
+	}
+
+	public function test_write__falls_back_on_offsets_together_with_a_position_it_cannot_store() {
+		// Act.
+		$ctx = $this->write_bindings( $this->positioned_bindings(), 'position: sticky; inset-block-start: 0px; z-index: 10;' );
+
+		// Assert.
+		$this->assertSame( [ '_z_index' => 10 ], $ctx->settings_patch() );
+		$this->assertSame( [ 'position', 'inset-block-start' ], array_column( $this->fallbacks, 'property' ) );
 		$this->assertSame(
-			[ 'CSS property color is only supported in the :hover state of this style target. Move it into a `<target>:hover { }` block.' ],
-			$ctx->warnings()
+			'CSS property inset-block-start only works with position, which was written to the widget custom CSS.',
+			$this->fallbacks[1]['reason']
 		);
+	}
+
+	public function test_write__stores_offsets_with_a_position_it_can_store() {
+		// Act.
+		$ctx = $this->write_bindings( $this->positioned_bindings(), 'position: absolute; inset-block-start: 10px;' );
+
+		// Assert.
+		$this->assertSame( [], $this->fallbacks );
+		$this->assertSame( 'absolute', $ctx->settings_patch()['_position'] );
+		$this->assertSame( [
+			'unit' => 'px',
+			'size' => 10,
+		], $ctx->settings_patch()['_offset_y'] );
 	}
 
 	public function test_write__turns_the_box_shadow_toggle_off_for_box_shadow_none() {

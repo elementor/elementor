@@ -13,11 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Renders the declarations a style target cannot store as custom CSS scoped to that target.
  * Pro replaces `selector` with the widget wrapper at render.
  *
- * Rule shape: `{ target, state, breakpoint, declarations: property => value }`.
+ * Rule shape: `{ target, state, breakpoint, media, declarations: property => value }`, where `media`
+ * is the condition of a media query that is not a site breakpoint, or null. Rules render desktop
+ * first, then in the order of `$media_queries`, then custom media, so later rules win the cascade.
  */
 class V3_Custom_Css_Fallback {
 
 	const WRAPPER_PLACEHOLDER = 'selector';
+
+	const MAX_WIDTH_DIRECTION = 'max';
 
 	/**
 	 * @var array<string, string|null>
@@ -31,7 +35,7 @@ class V3_Custom_Css_Fallback {
 
 	/**
 	 * @param array<string, string|null> $selectors     Target alias => DOM selector inside the wrapper.
-	 * @param array<string, string>      $media_queries Breakpoint name => media query condition.
+	 * @param array<string, string>      $media_queries Breakpoint name => media query condition, in cascade order.
 	 */
 	public function __construct( array $selectors, array $media_queries ) {
 		$this->selectors = $selectors;
@@ -49,35 +53,55 @@ class V3_Custom_Css_Fallback {
 	 * @return array<string, string>
 	 */
 	public static function site_media_queries(): array {
-		$queries = [];
+		$breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
 
-		foreach ( Plugin::$instance->breakpoints->get_active_breakpoints() as $name => $breakpoint ) {
-			$queries[ $name ] = sprintf( '(%s-width: %dpx)', $breakpoint->get_direction(), $breakpoint->get_value() );
-		}
+		uasort( $breakpoints, fn( $a, $b ) => self::cascade_position( $a ) <=> self::cascade_position( $b ) );
 
-		return $queries;
+		return array_map(
+			fn( $breakpoint ) => sprintf( '(%s-width: %dpx)', $breakpoint->get_direction(), $breakpoint->get_value() ),
+			$breakpoints
+		);
 	}
 
-	public function render( array $rules, string $verbatim_css = '' ): string {
+	private static function cascade_position( $breakpoint ): int {
+		return self::MAX_WIDTH_DIRECTION === $breakpoint->get_direction() ? -$breakpoint->get_value() : $breakpoint->get_value();
+	}
+
+	public function render( array $rules ): string {
 		$lines = [];
 
-		foreach ( $rules as $rule ) {
+		foreach ( $this->in_cascade_order( $rules ) as $rule ) {
 			$selector = $this->selectors[ $rule['target'] ] ?? null;
 
-			if ( null === $selector || empty( $rule['declarations'] ) || ! $this->has_media_query( $rule['breakpoint'] ) ) {
+			if ( null === $selector || empty( $rule['declarations'] ) || ! $this->has_media_query( $rule ) ) {
 				continue;
 			}
 
 			$lines[] = $this->render_rule( $rule, $selector );
 		}
 
-		$lines[] = trim( $verbatim_css );
-
-		return implode( "\n", array_filter( $lines ) );
+		return implode( "\n", $lines );
 	}
 
-	private function has_media_query( string $breakpoint ): bool {
-		return Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint || isset( $this->media_queries[ $breakpoint ] );
+	private function in_cascade_order( array $rules ): array {
+		$ranks = array_flip( array_merge( [ Responsive_Key_Resolver::BASE_BREAKPOINT ], array_keys( $this->media_queries ) ) );
+		$custom_media_rank = count( $ranks );
+		$ranked = [];
+
+		foreach ( array_values( $rules ) as $index => $rule ) {
+			$rank = null === ( $rule['media'] ?? null ) ? ( $ranks[ $rule['breakpoint'] ] ?? $custom_media_rank ) : $custom_media_rank;
+			$ranked[] = [ $rank, $index, $rule ];
+		}
+
+		sort( $ranked );
+
+		return array_column( $ranked, 2 );
+	}
+
+	private function has_media_query( array $rule ): bool {
+		return null !== ( $rule['media'] ?? null )
+			|| Responsive_Key_Resolver::BASE_BREAKPOINT === $rule['breakpoint']
+			|| isset( $this->media_queries[ $rule['breakpoint'] ] );
 	}
 
 	private function render_rule( array $rule, string $selector ): string {
@@ -89,11 +113,9 @@ class V3_Custom_Css_Fallback {
 
 		$block = sprintf( '%s { %s }', $this->full_selector( $selector, $rule['state'] ), implode( ' ', $declarations ) );
 
-		if ( Responsive_Key_Resolver::BASE_BREAKPOINT === $rule['breakpoint'] ) {
-			return $block;
-		}
+		$media = $rule['media'] ?? $this->media_queries[ $rule['breakpoint'] ] ?? null;
 
-		return sprintf( '@media %s { %s }', $this->media_queries[ $rule['breakpoint'] ], $block );
+		return null === $media ? $block : sprintf( '@media %s { %s }', $media, $block );
 	}
 
 	private function full_selector( string $selector, ?string $state ): string {
