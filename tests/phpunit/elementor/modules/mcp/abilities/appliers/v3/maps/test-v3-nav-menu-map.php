@@ -56,7 +56,6 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$this->registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
 			static fn() => true,
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $this->map() ],
 			static fn() => true
@@ -90,6 +89,17 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 		// Assert.
 		$this->assertSame( [ 'main-menu' ], $contract['properties']['menu']['enum'] );
+	}
+
+	public function test_get_llm_contract__exposes_only_the_essential_settings() {
+		// Act.
+		$contract = $this->registry->get_llm_contract( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertEqualsCanonicalizing(
+			[ 'menu', 'menu_name', 'layout', 'align_items', 'pointer', 'dropdown', 'toggle', 'full_width', 'text_align' ],
+			array_keys( $contract['properties'] )
+		);
 	}
 
 	public function test_apply__writes_every_target_without_warnings() {
