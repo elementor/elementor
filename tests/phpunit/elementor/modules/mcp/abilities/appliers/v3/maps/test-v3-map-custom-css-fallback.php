@@ -41,7 +41,6 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		'state' => null,
 		'breakpoint' => 'tablet',
 		'declarations' => [ 'color' => 'red' ],
-		'replaces' => [ 'color' ],
 	];
 
 	public function setUp(): void {
@@ -81,35 +80,23 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [ 'title_color' => '#111111' ], $result['settings_patch'] );
-		$this->assertSame(
-			[
-				self::TABLET_RULE,
-				array_merge( self::TABLET_RULE, [
-					'breakpoint' => 'desktop',
-					'declarations' => [],
-				] ),
-			],
-			$result['fallback_rules']
-		);
+		$this->assertSame( [ self::TABLET_RULE ], $result['fallback_rules'] );
 		$this->assertSame( self::CUSTOM_MEDIA_BLOCK, $result['unmapped_css'] );
 		$this->assertSame( [], $result['warnings'] );
 	}
 
-	public function test_round_trip__custom_css_fallback_reads_back_and_writes_the_same_custom_css() {
+	public function test_serialize__returns_the_custom_css_as_is_after_the_mapped_css() {
 		// Arrange.
 		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE, [] );
-		$fallback = new V3_Custom_Css_Fallback( [ 'title' => '.elementor-heading-title' ], self::MEDIA_QUERIES );
-		$settings = $written['settings_patch'] + [ 'custom_css' => $fallback->merge( '', $written['fallback_rules'], $written['unmapped_css'] ) ];
-		$css = ( new V3_Style_Serializer( null, null, null, self::MEDIA_QUERIES ) )->serialize( $settings, self::WIDGET_TYPE, [] );
+		$custom_css = ( new V3_Custom_Css_Fallback( [ 'title' => '.elementor-heading-title' ], self::MEDIA_QUERIES ) )
+			->render( $written['fallback_rules'], $written['unmapped_css'] );
+		$settings = $written['settings_patch'] + [ 'custom_css' => $custom_css ];
 
 		// Act.
-		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
+		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
 
 		// Assert.
-		$this->assertSame( $written['settings_patch'], $result['settings_patch'] );
-		$this->assertSame( $written['fallback_rules'], $result['fallback_rules'] );
-		$this->assertSame( $written['unmapped_css'], $result['unmapped_css'] );
-		$this->assertSame( [], $result['warnings'] );
+		$this->assertSame( 'color: #111111; ' . $custom_css, $css );
 	}
 
 	public function test_style_applier__stores_the_fallback_in_custom_css_or_reports_missing_pro() {
@@ -139,7 +126,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		}
 
 		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
-		$this->assertSame( [ 'css_dropped' ], $codes );
+		$this->assertSame( [ Style_Applier::UNSUPPORTED_CSS_CODE ], $codes );
 	}
 
 	private function mapper(): V3_Style_Mapper {

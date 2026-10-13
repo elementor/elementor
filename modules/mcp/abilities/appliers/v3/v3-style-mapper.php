@@ -159,9 +159,6 @@ class V3_Style_Mapper {
 	}
 
 	/**
-	 * Every block of a target with a selector yields a rule, so properties it now writes natively
-	 * replace an older fallback for them.
-	 *
 	 * @param V3_Conversion_Context                                              $ctx
 	 * @param Compiled_Style_Target                                              $target
 	 * @param string                                                             $breakpoint
@@ -169,6 +166,10 @@ class V3_Style_Mapper {
 	 * @param array<int, array{property: string, value: string, reason: string}> $fallbacks
 	 */
 	private function collect_fallback( V3_Conversion_Context $ctx, Compiled_Style_Target $target, string $breakpoint, array $block, array $fallbacks ): void {
+		if ( empty( $fallbacks ) ) {
+			return;
+		}
+
 		$skip_reason = self::fallback_skip_reason( $target, $block['state'] );
 
 		if ( null !== $skip_reason ) {
@@ -184,7 +185,6 @@ class V3_Style_Mapper {
 			'state' => $block['state'],
 			'breakpoint' => $breakpoint,
 			'declarations' => array_column( $fallbacks, 'value', 'property' ),
-			'replaces' => array_values( array_unique( array_column( $this->declaration_parser->parse_declarations( $block['css'] ), 'property' ) ) ),
 		] );
 
 		foreach ( $fallbacks as $fallback ) {

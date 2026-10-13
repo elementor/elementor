@@ -292,21 +292,18 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 					'state' => null,
 					'breakpoint' => 'mobile',
 					'declarations' => [ 'letter-spacing' => '1px' ],
-					'replaces' => [ 'letter-spacing' ],
 				],
 				[
 					'target' => 'main-menu',
 					'state' => null,
 					'breakpoint' => 'desktop',
 					'declarations' => [ 'font-weight' => '650' ],
-					'replaces' => [ 'font-weight', 'color' ],
 				],
 				[
 					'target' => 'dropdown',
 					'state' => null,
 					'breakpoint' => 'desktop',
 					'declarations' => [ 'box-shadow' => '0 1rem 2rem #000000' ],
-					'replaces' => [ 'box-shadow' ],
 				],
 			],
 			$result['fallback_rules']
@@ -333,20 +330,17 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		);
 	}
 
-	public function test_round_trip__fallback_custom_css_reads_back_as_target_blocks() {
+	public function test_render__writes_fallback_rules_against_each_target_selector() {
 		// Arrange.
 		$written = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
 		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
-		$settings = array_merge( $written['settings_patch'], [ 'custom_css' => $fallback->merge( '', $written['fallback_rules'] ) ] );
-		$readback = ( new V3_Style_Serializer( null, null, null, self::MEDIA_QUERIES ) )->serialize( $settings, self::WIDGET_TYPE, [] );
 
 		// Act.
-		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
+		$custom_css = $fallback->render( $written['fallback_rules'] );
 
 		// Assert.
-		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000; }', $settings['custom_css'] );
-		$this->assertEquals( $written['settings_patch'], $result['settings_patch'] );
-		$this->assertEqualsCanonicalizing( $written['fallback_rules'], $result['fallback_rules'] );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000; }', $custom_css );
+		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px; } }', $custom_css );
 	}
 
 	private function mapper(): V3_Style_Mapper {

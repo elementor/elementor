@@ -2,9 +2,9 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
@@ -27,6 +27,8 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { selector { color: blue; } }';
 
 	const NOTE = 'font-weight: 650 (title): CSS property font-weight has a value this Elementor widget cannot store.';
+
+	const FALLBACK_RULE_CSS = 'selector .title { font-weight: 650; }';
 
 	public function setUp(): void {
 		parent::setUp();
@@ -67,14 +69,13 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 					'state' => null,
 					'breakpoint' => 'desktop',
 					'declarations' => [ 'font-weight' => '650' ],
-					'replaces' => [ 'font-weight' ],
 				],
 			],
 			'fallback_notes' => [ self::NOTE ],
 		];
 	}
 
-	public function test_apply__merges_fallback_rules_into_custom_css_and_says_so() {
+	public function test_apply__appends_fallback_rules_to_custom_css_and_says_so() {
 		// Arrange.
 		$node = [ 'settings' => [ 'custom_css' => self::HAND_WRITTEN_CSS ] ];
 		$warnings = Warnings_Bag::make();
@@ -83,14 +84,11 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 		$this->fallback_css( true )->apply( $node, self::result(), self::WIDGET_TYPE, self::CONFIG_ID, $warnings );
 
 		// Assert.
-		$this->assertSame(
-			self::HAND_WRITTEN_CSS . "\n" . V3_Custom_Css_Fallback::SECTION_START . "\nselector .title { font-weight: 650; }\n" . V3_Custom_Css_Fallback::SECTION_END,
-			$node['settings']['custom_css']
-		);
+		$this->assertSame( self::HAND_WRITTEN_CSS . "\n" . self::FALLBACK_RULE_CSS, $node['settings']['custom_css'] );
 		$this->assertSame( [ '[' . self::CONFIG_ID . '] ' . self::NOTE . ' Written to the widget custom CSS instead.' ], $warnings->messages() );
 	}
 
-	public function test_apply__skips_fallback_rules_without_pro_and_says_why() {
+	public function test_apply__skips_fallback_rules_without_pro_with_the_v4_unsupported_css_code() {
 		// Arrange.
 		$node = [ 'settings' => [] ];
 		$warnings = Warnings_Bag::make();
@@ -100,10 +98,11 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 
 		// Assert.
 		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
+		$this->assertSame( [ Style_Applier::UNSUPPORTED_CSS_CODE ], array_column( $warnings->all(), 'code' ) );
 		$this->assertSame( [ '[' . self::CONFIG_ID . '] ' . self::NOTE . ' It was skipped because custom CSS requires Elementor Pro.' ], $warnings->messages() );
 	}
 
-	public function test_apply__keeps_media_queries_the_map_cannot_route_verbatim() {
+	public function test_apply__writes_media_queries_the_map_cannot_route_as_is() {
 		// Arrange.
 		$node = [ 'settings' => [] ];
 		$warnings = Warnings_Bag::make();
@@ -117,29 +116,10 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 		$this->fallback_css( true )->apply( $node, $result, self::WIDGET_TYPE, self::CONFIG_ID, $warnings );
 
 		// Assert.
-		$this->assertSame(
-			V3_Custom_Css_Fallback::SECTION_START . "\n" . self::CUSTOM_MEDIA_BLOCK . "\n" . V3_Custom_Css_Fallback::SECTION_END,
-			$node['settings']['custom_css']
-		);
+		$this->assertSame( self::CUSTOM_MEDIA_BLOCK, $node['settings']['custom_css'] );
 		$this->assertSame(
 			[ '[' . self::CONFIG_ID . '] Media queries other than @media(--<breakpoint>) were written to the widget custom CSS as is: ' . self::CUSTOM_MEDIA_BLOCK ],
 			$warnings->messages()
 		);
-	}
-
-	public function test_apply__removes_custom_css_once_the_last_fallback_is_replaced() {
-		// Arrange.
-		$node = [ 'settings' => [] ];
-		$this->fallback_css( true )->apply( $node, self::result(), self::WIDGET_TYPE, self::CONFIG_ID, Warnings_Bag::make() );
-		$replaced = [
-			'fallback_rules' => [ array_merge( self::result()['fallback_rules'][0], [ 'declarations' => [] ] ) ],
-			'fallback_notes' => [],
-		];
-
-		// Act.
-		$this->fallback_css( true )->apply( $node, $replaced, self::WIDGET_TYPE, self::CONFIG_ID, Warnings_Bag::make() );
-
-		// Assert.
-		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 	}
 }

@@ -33,7 +33,7 @@ class V3_Conversion_Context {
 	 */
 	private array $typography_buckets = [];
 
-	/** @var array<int, array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>, replaces: string[]}> */
+	/** @var array<int, array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>}> */
 	private array $fallback_rules = [];
 
 	/** @var string[] */
@@ -107,7 +107,7 @@ class V3_Conversion_Context {
 	}
 
 	/**
-	 * @param array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>, replaces: string[]} $rule
+	 * @param array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>} $rule
 	 */
 	public function add_fallback_rule( array $rule ): void {
 		$this->fallback_rules[] = $rule;
@@ -118,7 +118,7 @@ class V3_Conversion_Context {
 	}
 
 	/**
-	 * @return array<int, array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>, replaces: string[]}>
+	 * @return array<int, array{target: string, state: string|null, breakpoint: string, declarations: array<string, string>}>
 	 */
 	public function fallback_rules(): array {
 		return $this->fallback_rules;

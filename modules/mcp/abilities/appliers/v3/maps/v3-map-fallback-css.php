@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Utils;
@@ -18,7 +19,7 @@ class V3_Map_Fallback_Css {
 
 	const WRITTEN_CODE = 'css_fallback_custom_css';
 
-	const SKIPPED_CODE = 'css_dropped';
+	const SKIPPED_CODE = Style_Applier::UNSUPPORTED_CSS_CODE;
 
 	private bool $has_pro;
 
@@ -68,12 +69,11 @@ class V3_Map_Fallback_Css {
 			V3_Custom_Css_Fallback::selectors_of( $map ),
 			$this->media_queries ?? V3_Custom_Css_Fallback::site_media_queries()
 		);
-		$custom_css = $fallback->merge( (string) ( $node['settings'][ $setting ] ?? '' ), $rules, $verbatim_css );
+		$existing_css = trim( (string) ( $node['settings'][ $setting ] ?? '' ) );
+		$fallback_css = $fallback->render( $rules, $verbatim_css );
 
-		unset( $node['settings'][ $setting ] );
-
-		if ( '' !== $custom_css ) {
-			$node['settings'][ $setting ] = $custom_css;
+		if ( '' !== $fallback_css ) {
+			$node['settings'][ $setting ] = '' === $existing_css ? $fallback_css : $existing_css . "\n" . $fallback_css;
 		}
 
 		foreach ( $notes as $note ) {
