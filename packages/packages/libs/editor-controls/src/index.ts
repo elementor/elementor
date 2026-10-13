@@ -38,7 +38,6 @@ export { TransitionRepeaterControl } from './controls/transition-control/transit
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export {
-	isDeletedIconLibrary,
 	registerIconLibraryProvider,
 	resolveProviderIconSvg,
 	unregisterIconLibraryProvider,

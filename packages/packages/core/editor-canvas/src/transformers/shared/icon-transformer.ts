@@ -1,7 +1,6 @@
 import {
 	type FontAwesome7IconDefinition,
 	getFontAwesome7IconName,
-	isDeletedIconLibrary,
 	resolveFontAwesome7Icon,
 	resolveProviderIconSvg,
 } from '@elementor/editor-controls';
@@ -14,6 +13,7 @@ import { svgSrcTransformer } from './svg-src-transformer';
 const EMPTY_ICON_RESULT = { html: null, url: null };
 const ICON_SVG_SIZE = '100%';
 const ICON_SVG_OVERFLOW = 'visible';
+const FONT_AWESOME_LIBRARY_PREFIX = 'fa-';
 const DEFAULT_SVG_RELATIVE_PATH = 'images/default-svg.svg';
 
 type IconValue = {
@@ -35,8 +35,8 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: fontAwesomeHtml, url: null };
 	}
 
-	if ( isDeletedIconLibrary( library, iconValue ) ) {
-		return resolveDefaultSvg( signal );
+	if ( library.startsWith( FONT_AWESOME_LIBRARY_PREFIX ) ) {
+		return EMPTY_ICON_RESULT;
 	}
 
 	const providerHtml = await resolveProviderSvg( library, iconValue, signal );
@@ -45,7 +45,7 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: providerHtml, url: null };
 	}
 
-	return EMPTY_ICON_RESULT;
+	return resolveDefaultSvg( signal );
 } );
 
 async function resolveDefaultSvg( signal?: AbortSignal ) {

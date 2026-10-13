@@ -11,7 +11,6 @@ export type IconLibraryProvider = {
 	id: string;
 	useIcons: ( enabled: boolean ) => IconLibraryProviderState;
 	resolveSvg?: ( library: string, iconValue: string, signal?: AbortSignal ) => Promise< string | null >;
-	isDeletedLibrary?: ( library: string, iconValue: string ) => boolean;
 };
 
 const providers = new Map< string, IconLibraryProvider >();
@@ -39,20 +38,22 @@ export function useIconLibraryProviderIcons( enabled: boolean ): Required< IconL
 	};
 }
 
-export function isDeletedIconLibrary( library: string, iconValue: string ): boolean {
-	return [ ...providers.values() ].some( ( provider ) => provider.isDeletedLibrary?.( library, iconValue ) ?? false );
-}
-
 export async function resolveProviderIconSvg(
 	library: string,
 	iconValue: string,
 	signal?: AbortSignal
 ): Promise< string | null > {
 	for ( const provider of providers.values() ) {
-		const markup = await provider.resolveSvg?.( library, iconValue, signal );
+		try {
+			const markup = await provider.resolveSvg?.( library, iconValue, signal );
 
-		if ( markup ) {
-			return markup;
+			if ( markup ) {
+				return markup;
+			}
+		} catch ( error ) {
+			if ( signal?.aborted ) {
+				throw error;
+			}
 		}
 	}
 

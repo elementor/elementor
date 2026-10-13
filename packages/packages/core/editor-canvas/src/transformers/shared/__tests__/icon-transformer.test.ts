@@ -184,12 +184,11 @@ describe( 'iconTransformer', () => {
 		expect( result ).toEqual( { html: null, url: null } );
 	} );
 
-	it( 'falls back to the default svg when a provider reports the library as deleted', async () => {
+	it( 'falls back to the default svg when no provider resolves a non-native library', async () => {
 		// Arrange.
 		registerIconLibraryProvider( {
 			id: 'test-provider',
 			useIcons: () => ( { data: [], isLoading: false } ),
-			isDeletedLibrary: ( library ) => 'missing-set' === library,
 		} );
 		const defaultSvg =
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
@@ -209,6 +208,26 @@ describe( 'iconTransformer', () => {
 			'https://example.com/assets/images/default-svg.svg',
 			expect.anything()
 		);
+		expect( result ).toEqual( {
+			html: expect.stringContaining( 'M24.9999 4.31543' ),
+			url: 'https://example.com/assets/images/default-svg.svg',
+		} );
+	} );
+
+	it( 'falls back to the default svg for a non-native library when no provider is registered', async () => {
+		// Arrange.
+		const defaultSvg =
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			headers: new Headers( { 'content-type': 'image/svg+xml' } ),
+			text: () => Promise.resolve( defaultSvg ),
+		} );
+
+		// Act.
+		const result = await resolveSavedIcon( 'my-set my-set-star', 'my-set' );
+
+		// Assert.
 		expect( result ).toEqual( {
 			html: expect.stringContaining( 'M24.9999 4.31543' ),
 			url: 'https://example.com/assets/images/default-svg.svg',
