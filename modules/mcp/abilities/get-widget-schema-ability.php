@@ -36,8 +36,8 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 				'required' => [ 'widget_type' ],
 				'properties' => [
 					'widget_type' => [
-						'description' => 'One registry identifier, e.g. "e-heading" (returns that schema), or an array of identifiers (returns schemas plus per-type errors). An array still returns the valid schemas when some types fail.',
 						'type' => [ 'string', 'array' ],
+						'description' => 'Registry identifier of the widget, e.g. "e-heading", or an array of identifiers.',
 						'items' => [
 							'type' => 'string',
 						],

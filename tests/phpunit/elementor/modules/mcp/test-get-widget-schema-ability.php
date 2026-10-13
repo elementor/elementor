@@ -217,19 +217,19 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 
 	public function test_execute__batch_keeps_valid_schemas_when_some_types_fail() {
 		$this->act_as_admin();
-		$this->given_widget_manager_with_registered_heading();
+		$this->given_widget_manager_with_fake_v3_widget( 'fake-v3' );
 
-		$heading = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
+		$flexbox = $this->ability->execute( [ 'widget_type' => 'e-flexbox' ] );
 		$result = $this->ability->execute( [
-			'widget_type' => [ 'e-heading', 'does-not-exist-anywhere', 'heading' ],
+			'widget_type' => [ 'e-flexbox', 'does-not-exist-anywhere', 'fake-v3' ],
 		] );
 
 		$this->assertIsArray( $result );
-		$this->assertEquals( $heading, $result['schemas']['e-heading'] );
+		$this->assertEquals( $flexbox, $result['schemas']['e-flexbox'] );
 		$this->assertArrayNotHasKey( 'does-not-exist-anywhere', $result['schemas'] );
-		$this->assertArrayNotHasKey( 'heading', $result['schemas'] );
+		$this->assertArrayNotHasKey( 'fake-v3', $result['schemas'] );
 		$this->assertSame( 'elementor_not_found', $result['errors']['does-not-exist-anywhere']['code'] );
-		$this->assertSame( 'elementor_v3_not_supported', $result['errors']['heading']['code'] );
+		$this->assertSame( 'elementor_v3_not_supported', $result['errors']['fake-v3']['code'] );
 	}
 
 	public function test_execute__batch_empty_array_returns_bad_request() {
