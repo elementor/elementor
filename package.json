@@ -141,6 +141,7 @@
     "karma-remap-coverage": "0.1.5",
     "knip": "^5.54.1",
     "lighthouse": "^12.3.0",
+    "minimatch": "^10.2.4",
     "msw": "^2.6.8",
     "path": "^0.12.7",
     "pixelmatch": "^7.2.0",
