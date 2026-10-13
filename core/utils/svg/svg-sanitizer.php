@@ -810,17 +810,17 @@ class Svg_Sanitizer {
 	 * @param \DOMElement $element
 	 */
 	private function sanitize_element_child_nodes( \DOMElement $element ) {
-		$child_nodes = iterator_to_array( $element->childNodes );
+		$child_nodes = iterator_to_array( $element->childNodes ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		foreach ( $child_nodes as $child ) {
-			if ( XML_TEXT_NODE === $child->nodeType ) {
-				$child->nodeValue = $this->sanitize_text_node_value( $child->nodeValue );
+			if ( XML_TEXT_NODE === $child->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$child->nodeValue = $this->sanitize_text_node_value( $child->nodeValue ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				continue;
 			}
 
-			if ( XML_CDATA_SECTION_NODE === $child->nodeType ) {
-				$text_node = $element->ownerDocument->createTextNode(
-					$this->sanitize_text_node_value( $child->nodeValue )
+			if ( XML_CDATA_SECTION_NODE === $child->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$text_node = $element->ownerDocument->createTextNode( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$this->sanitize_text_node_value( $child->nodeValue ) // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				);
 				$element->replaceChild( $text_node, $child );
 			}
