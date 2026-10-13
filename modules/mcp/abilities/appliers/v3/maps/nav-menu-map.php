@@ -83,20 +83,10 @@ return V3_Widget_Map::make( 'nav-menu' )
 		'layout' => V3_Setting::bind_to( 'layout' )->enum_from_control(),
 		'align_items' => V3_Setting::bind_to( 'align_items' )->enum_from_control(),
 		'pointer' => V3_Setting::bind_to( 'pointer' )->enum_from_control(),
-		'animation_line' => V3_Setting::bind_to( 'animation_line' )->enum_from_control(),
-		'animation_framed' => V3_Setting::bind_to( 'animation_framed' )->enum_from_control(),
-		'animation_background' => V3_Setting::bind_to( 'animation_background' )->enum_from_control(),
-		'animation_text' => V3_Setting::bind_to( 'animation_text' )->enum_from_control(),
-		'submenu_icon' => V3_Setting::bind_to( 'submenu_icon' )->icons(),
 		'dropdown' => V3_Setting::bind_to( 'dropdown' )->enum_from_control(),
 		'full_width' => V3_Setting::bind_to( 'full_width' )->switcher(),
 		'text_align' => V3_Setting::bind_to( 'text_align' )->enum_from_control(),
 		'toggle' => V3_Setting::bind_to( 'toggle' )->enum_from_control(),
-		'toggle_icon_normal' => V3_Setting::bind_to( 'toggle_icon_normal' )->icons(),
-		'toggle_icon_hover_animation' => V3_Setting::bind_to( 'toggle_icon_hover_animation' )->string(),
-		'toggle_icon_active' => V3_Setting::bind_to( 'toggle_icon_active' )->icons(),
-		'toggle_align' => V3_Setting::bind_to( 'toggle_align' )->enum_from_control(),
-		'nav_menu_divider' => V3_Setting::bind_to( 'nav_menu_divider' )->switcher(),
 	] )
 	->default_target( $main_menu )
 	->targets( $pointer, $divider, $dropdown, $dropdown_divider, $toggle );
