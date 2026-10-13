@@ -93,7 +93,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => true,
+					'destructive' => false,
 				],
 				'mutates_page' => true,
 			],

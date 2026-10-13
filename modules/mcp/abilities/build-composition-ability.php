@@ -49,7 +49,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => true,
+					'destructive' => false,
 				],
 				'mutates_page' => true,
 			],

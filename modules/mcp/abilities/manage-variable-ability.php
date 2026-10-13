@@ -52,7 +52,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			fn() => current_user_can( 'manage_options' ),
