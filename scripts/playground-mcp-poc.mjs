@@ -232,6 +232,37 @@ async function main() {
 			style: {},
 			renderMarker: 'elementor-shortcode',
 		},
+		'image-gallery': {
+			pageTitle: 'MCP Image Gallery POC',
+			xml_structure: '<image-gallery configuration-id="g1"/>',
+			element_config: {
+				g1: {
+					gallery_columns: '3',
+					gallery_link: 'none',
+					image_spacing: 'custom',
+				},
+			},
+			style: {
+				g1: 'border-radius: 8px; gap: 12px; caption { color: #37474f; }',
+			},
+			renderMarker: 'elementor-image-gallery',
+		},
+		'image-carousel': {
+			pageTitle: 'MCP Image Carousel POC',
+			xml_structure: '<image-carousel configuration-id="ic1"/>',
+			element_config: {
+				ic1: {
+					carousel_name: 'MCP carousel',
+					navigation: 'both',
+					slides_to_show: '2',
+					image_stretch: 'yes',
+				},
+			},
+			style: {
+				ic1: 'border-radius: 6px; navigation { color: #1565c0; background: #90caf9; }',
+			},
+			renderMarker: 'elementor-image-carousel',
+		},
 	};
 	const scenario = scenarios[ widget ];
 	if ( ! scenario ) {

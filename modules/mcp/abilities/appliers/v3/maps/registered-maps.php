@@ -10,4 +10,6 @@ return [
 	'progress' => __DIR__ . '/progress-map.php',
 	'shortcode' => __DIR__ . '/shortcode-map.php',
 	'social-icons' => __DIR__ . '/social-icons-map.php',
+	'image-gallery' => __DIR__ . '/image-gallery-map.php',
+	'image-carousel' => __DIR__ . '/image-carousel-map.php',
 ];
