@@ -60,7 +60,8 @@ class Test_Kit extends Elementor_Test_Base {
 
 			$this->assertSame( Post_CSS_Base::CSS_STATUS_INLINE, $css_meta_after['status'] );
 			$this->assertNotEmpty( $css_meta_after['css'] );
-			$this->assertGreaterThan( $css_meta_before['time'], $css_meta_after['time'] );
+			$this->assertNotSame( $css_meta_before['css'], $css_meta_after['css'] );
+			$this->assertGreaterThanOrEqual( $css_meta_before['time'], $css_meta_after['time'] );
 
 			$refreshed_kit = Plugin::$instance->documents->get( $kit_id, false );
 			$colors = $refreshed_kit->get_settings( 'custom_colors' );
