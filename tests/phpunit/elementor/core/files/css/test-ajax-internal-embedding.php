@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax_Module;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -54,8 +55,9 @@ class Test_Ajax_Internal_Embedding extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_get_builder_content_does_not_echo_post_css_during_ajax() {
+	public function test_get_builder_content_does_not_echo_post_css_during_elementor_ajax() {
 		add_filter( 'wp_doing_ajax', '__return_true' );
+		$_REQUEST['action'] = Ajax_Module::NONCE_KEY;
 
 		$this->act_as_admin();
 
@@ -73,8 +75,9 @@ class Test_Ajax_Internal_Embedding extends Elementor_Test_Base {
 		Plugin::$instance->frontend->get_builder_content( $post_id );
 		$unexpected_output = ob_get_clean();
 
+		unset( $_REQUEST['action'] );
 		remove_filter( 'wp_doing_ajax', '__return_true' );
 
-		$this->assertSame( '', $unexpected_output, 'Post CSS must not be echoed outside builder content during AJAX.' );
+		$this->assertSame( '', $unexpected_output, 'Post CSS must not be echoed outside builder content during elementor_ajax.' );
 	}
 }

@@ -58,10 +58,18 @@ class Test_Kit extends Elementor_Test_Base {
 
 			$css_meta_after = Post_CSS::create( $kit_id )->get_meta();
 
-			$this->assertSame( Post_CSS_Base::CSS_STATUS_INLINE, $css_meta_after['status'] );
-			$this->assertNotEmpty( $css_meta_after['css'] );
-			$this->assertNotSame( $css_meta_before['css'], $css_meta_after['css'] );
-			$this->assertGreaterThanOrEqual( $css_meta_before['time'], $css_meta_after['time'] );
+			$this->assertIsArray( $css_meta_before );
+			$this->assertIsArray( $css_meta_after );
+
+			$css_before = isset( $css_meta_before['css'] ) ? (string) $css_meta_before['css'] : '';
+			$css_after = isset( $css_meta_after['css'] ) ? (string) $css_meta_after['css'] : '';
+			$time_before = isset( $css_meta_before['time'] ) ? (int) $css_meta_before['time'] : 0;
+			$time_after = isset( $css_meta_after['time'] ) ? (int) $css_meta_after['time'] : 0;
+
+			$this->assertSame( Post_CSS_Base::CSS_STATUS_INLINE, $css_meta_after['status'] ?? null );
+			$this->assertNotEmpty( $css_after );
+			$this->assertNotSame( $css_before, $css_after );
+			$this->assertGreaterThanOrEqual( $time_before, $time_after );
 
 			$refreshed_kit = Plugin::$instance->documents->get( $kit_id, false );
 			$colors = $refreshed_kit->get_settings( 'custom_colors' );

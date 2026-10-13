@@ -244,14 +244,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	/**
-	 * Ajax success response.
-	 *
-	 * Send a JSON response data back to the ajax request, indicating success.
-	 *
-	 * @since 2.0.0
-	 * @access protected
-	 */
 	private function discard_output_buffers() {
 		while ( ob_get_level() ) {
 			if ( ! @ob_end_clean() ) {
@@ -260,6 +252,14 @@ class Module extends BaseModule {
 		}
 	}
 
+	/**
+	 * Ajax success response.
+	 *
+	 * Send a JSON response data back to the ajax request, indicating success.
+	 *
+	 * @since 2.0.0
+	 * @access protected
+	 */
 	private function send_success() {
 		$response = [
 			'success' => true,
