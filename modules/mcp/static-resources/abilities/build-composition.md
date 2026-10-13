@@ -21,6 +21,13 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 4. Read the schema via `elementor/get-widget-schema` for every element type you will use, including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
 5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 6. Use returned element IDs for subsequent configuration changes
+7. After saving an `e-form`, read it back with `elementor/get-page-structure` (`include_content: true`) and confirm every WebMCP prop from the FORMS section is set
+
+# FORMS (WebMCP)
+When the schema of `e-form` lists `webmcp-tool-description`, WebMCP is active and these props are required, not optional:
+- `e-form`: `form-name` — verb first, 2–4 words, one purpose (e.g. `Book table Osteria Lumina`). It becomes the tool name, so no "or" and no two purposes in one form. `webmcp-tool-description` — what the form does and which details it accepts
+- Every form field (input, textarea, select, checkbox, radio, date, time, file upload): `_cssid` — unique meaningful kebab-case (e.g. `full-name`) that matches its `e-form-label` `input-id`; it is the WebMCP parameter name. `webmcp-param-description` — what to enter, with format and constraints (e.g. `Preferred date, today or later`)
+- Leave `webmcp-autosubmit` off unless the form is read-only, such as search or filters
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.

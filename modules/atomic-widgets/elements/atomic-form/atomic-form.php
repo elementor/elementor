@@ -42,7 +42,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages.';
+	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages. Name it by purpose in form-name and, when the schema has webmcp-tool-description, set it.';
 
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
@@ -117,7 +117,8 @@ class Atomic_Form extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'form-name' => String_Prop_Type::make()
-				->default( __( 'Form', 'elementor' ) ),
+				->default( __( 'Form', 'elementor' ) )
+				->description( 'Name of the form by its purpose, verb first, 2-4 words, one purpose only (e.g. Book table Osteria Lumina). Also used to derive the WebMCP tool name, so keep it short.' ),
 			'webmcp-autosubmit' => Boolean_Prop_Type::make()
 				->default( false )
 				->description( 'Whether to submit the form automatically after a WebMCP tool fills it. Use only for read-only forms, such as search or filters.' ),
@@ -145,14 +146,10 @@ class Atomic_Form extends Atomic_Element_Base {
 		] );
 
 		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
-			$props['webmcp-tool-name'] = String_Prop_Type::make()
-				->meta( Overridable_Prop_Type::ignore() )
-				->default( '' )
-				->description( 'The WebMCP tool name, in snake_case verb_object format (e.g. book_table). The element ID is appended on render.' );
 			$props['webmcp-tool-description'] = String_Prop_Type::make()
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' )
-				->description( 'What the form does and which details it accepts, in one or two sentences.' );
+				->description( 'Always set when creating a form: what the form does and which details it accepts, in one or two sentences.' );
 		}
 
 		return $props;
@@ -432,9 +429,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$settings = $this->get_atomic_settings();
 		$form_name = (string) ( $settings['form-name'] ?? '' );
-		$tool_name = ! empty( $settings['webmcp-tool-name'] ) ? $settings['webmcp-tool-name'] : $form_name;
 
-		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $tool_name, (string) $this->get_id() );
+		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
 		$context['webmcp_tool_description'] = ! empty( $settings['webmcp-tool-description'] )
 			? $settings['webmcp-tool-description']
 			: Webmcp_Utils::build_tool_description( $form_name );

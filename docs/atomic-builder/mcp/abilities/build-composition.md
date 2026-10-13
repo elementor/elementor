@@ -90,6 +90,17 @@ Plain JSON matching `elementor/get-widget-schema` output — no `$$type` wrapper
 
 Omit keys listed in `llm_guidance.default_settings` unless the user requests a change.
 
+### Forms and WebMCP
+
+With the `e_atomic_form_webmcp` experiment active, forms render WebMCP declarative attributes. The server falls back to defaults when a prop is empty, but the agent is instructed (prompt `FORMS (WebMCP)` section and prop descriptions in `get-widget-schema`) to always set `form-name` (verb first, 2–4 words, one purpose), `webmcp-tool-description`, and per field `_cssid` and `webmcp-param-description`, then read the form back with `get-page-structure` to verify:
+
+| Prop | Rendered attribute | Fallback when empty |
+|------|--------------------|---------------------|
+| `e-form` `form-name` | `toolname` (snake_case, element ID appended) | `submit_form_<id>` |
+| `e-form` `webmcp-tool-description` | `tooldescription` | "Submit the `<form-name>` form with the provided field values." |
+| field `webmcp-param-description` | `toolparamdescription` | Browser uses the field's `<label>` |
+| field `_cssid` | Parameter name | Generated default ID |
+
 ### Globals in style and classes
 
 - Variables: `color: var(--brand-primary)` — labels from `elementor://global-variables`

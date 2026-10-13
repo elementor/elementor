@@ -18,7 +18,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Webmcp_Form_Checker;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Variables\Module as Variables_Module;
@@ -122,8 +121,6 @@ final class Composition_Compiler {
 			return $config_result['error'];
 		}
 		$warnings->merge( $config_result['warnings'] );
-
-		$warnings->merge( ( new Webmcp_Form_Checker( $type_resolver ) )->check( $index, $widget_configs ) );
 
 		$warnings->merge( $this->apply_editor_settings( $index, $this->as_map( $input['editor_settings'] ?? [] ) ) );
 
