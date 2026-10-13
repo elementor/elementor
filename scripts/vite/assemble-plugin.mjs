@@ -58,7 +58,7 @@ const PRUNED = [
 	'update-snapshots-linux.js',
 ];
 
-/** @returns {boolean} Whether `filePath` is excluded by the ordered include/negate patterns. */
+/** @return {boolean} Whether `filePath` is excluded by the ordered include/negate patterns. */
 export function matchesOrderedPatterns( filePath, patterns ) {
 	let matched = false;
 
