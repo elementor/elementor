@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
 export type IconLibraryProviderState = {
@@ -14,6 +16,11 @@ export type IconLibraryProvider = {
 
 const providers = new Map< string, IconLibraryProvider >();
 
+/**
+ * Register before the icon picker mounts. Each picker instance snapshots the providers on mount,
+ * so its hook count stays constant; a provider registered later appears on the next mount.
+ * @param provider
+ */
 export function registerIconLibraryProvider( provider: IconLibraryProvider ) {
 	providers.set( provider.id, provider );
 }
@@ -23,10 +30,8 @@ export function unregisterIconLibraryProvider( id: string ) {
 }
 
 export function useIconLibraryProviderIcons( enabled: boolean ): Required< IconLibraryProviderState > {
-	const states = [ ...providers.values() ].map( ( provider ) =>
-		// Providers are registered once at editor boot, so the hook order is stable between renders.
-		provider.useIcons( enabled )
-	);
+	const [ snapshot ] = useState( () => [ ...providers.values() ] );
+	const states = snapshot.map( ( provider ) => provider.useIcons( enabled ) );
 
 	return {
 		data: states.flatMap( ( state ) => state.data ?? [] ),

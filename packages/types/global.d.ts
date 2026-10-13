@@ -82,7 +82,8 @@ declare global {
 						jsonFiles?: string[];
 						jsonBaseUrl?: string;
 						filter?: unknown;
-						[ key: string ]: unknown;
+						customIconPacks?: unknown;
+						customIconLibrariesEnabled?: boolean;
 					};
 				};
 				urls?: {

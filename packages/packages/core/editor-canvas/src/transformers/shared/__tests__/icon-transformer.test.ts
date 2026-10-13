@@ -215,6 +215,27 @@ describe( 'iconTransformer', () => {
 		} );
 	} );
 
+	it( 'renders and sanitizes svg returned by a provider', async () => {
+		// Arrange.
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			resolveSvg: () =>
+				Promise.resolve(
+					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><script>alert(1)</script><path d="M1 1h8v8H1z"></path></svg>'
+				),
+		} );
+
+		// Act.
+		const result = ( await resolveSavedIcon( 'my-set my-set-star', 'my-set' ) ) as { html: string };
+
+		unregisterIconLibraryProvider( 'test-provider' );
+
+		// Assert.
+		expect( result.html ).toContain( 'M1 1h8v8H1z' );
+		expect( result.html ).not.toContain( 'script' );
+	} );
+
 	it( 'returns null html when value or library is missing', async () => {
 		// Act.
 		const resolve = createPropsResolver( {
