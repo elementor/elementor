@@ -63,7 +63,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$this->assertFalse( $this->controller->get_items_permissions_check( $request ) );
 	}
 
-	public function test_granted_for_author_editing_own_post() {
+	public function test_denied_for_author_editing_own_post() {
 		// Arrange.
 		$author = $this->act_as( 'author' );
 		$post_id = self::factory()->post->create( [ 'post_author' => $author->ID ] );
@@ -71,10 +71,10 @@ class Test_Controller extends Elementor_Test_Base {
 		$request->set_param( 'document_id', $post_id );
 
 		// Assert.
-		$this->assertTrue( $this->controller->get_items_permissions_check( $request ) );
+		$this->assertFalse( $this->controller->get_items_permissions_check( $request ) );
 	}
 
-	public function test_granted_for_editor_editing_another_users_post() {
+	public function test_denied_for_editor_editing_another_users_post() {
 		// Arrange.
 		$other_user_id = self::factory()->user->create( [ 'role' => 'author' ] );
 		$post_id = self::factory()->post->create( [ 'post_author' => $other_user_id ] );
@@ -84,7 +84,7 @@ class Test_Controller extends Elementor_Test_Base {
 		$request->set_param( 'document_id', $post_id );
 
 		// Assert.
-		$this->assertTrue( $this->controller->get_items_permissions_check( $request ) );
+		$this->assertFalse( $this->controller->get_items_permissions_check( $request ) );
 	}
 
 	public function test_granted_for_admin_editing_any_post() {

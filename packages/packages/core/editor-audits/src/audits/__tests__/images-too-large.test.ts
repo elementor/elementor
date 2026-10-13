@@ -246,6 +246,24 @@ describe( audit.id, () => {
 		}
 	} );
 
+	it( 'reports the same oversized image for v3 and v4 image widgets', async () => {
+		const pageContext = { image_sizes: { '13:full': imageSize( ONE_MB ) } };
+		const v3Tree = [ makeWidget( 'v3', 'image', { image: { id: 13 } } ) ];
+		const v4Tree = [ makeWidget( 'v4', 'e-image', { image: atomicImageProp( 13 ) } ) ];
+
+		const v3Result = await audit.evaluate( makeContext( { tree: v3Tree, pageContext } ) );
+		const v4Result = await audit.evaluate( makeContext( { tree: v4Tree, pageContext } ) );
+
+		expect( v3Result.status ).toBe( 'fail' );
+		expect( v4Result.status ).toBe( 'fail' );
+
+		if ( v3Result.status === 'fail' && v4Result.status === 'fail' ) {
+			expect( v4Result.violations ).toHaveLength( v3Result.violations.length );
+			expect( v4Result.metadata?.oversizedImageCount ).toBe( v3Result.metadata?.oversizedImageCount );
+			expect( v4Result.violations[ 0 ].label ).toBe( v3Result.violations[ 0 ].label );
+		}
+	} );
+
 	it( 'fails when an atomic widget poster prop exceeds the threshold', async () => {
 		const tree = [ makeWidget( 'video', 'e-self-hosted-video', { poster: atomicImageProp( 9 ) } ) ];
 		const pageContext = { image_sizes: { '9:full': imageSize( ONE_MB ) } };
