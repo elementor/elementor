@@ -46,6 +46,7 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-file-upload',
 	'e-form-date-picker',
 	'e-form-time-picker',
+	'e-form-hidden',
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
