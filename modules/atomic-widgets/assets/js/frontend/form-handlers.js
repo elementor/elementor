@@ -148,10 +148,7 @@ function registerAtomicFormAlpineData( form ) {
 }
 
 function redirectIfRequested( event, response ) {
-function redirectIfRequested( event, response ) {
 	if ( event?.agentInvoked || ! response?.success ) {
-		return;
-	}
 		return;
 	}
 
