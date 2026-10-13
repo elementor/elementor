@@ -1,9 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits\Documents;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Plugin;
-use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Kit extends Elementor_Test_Base {
@@ -12,6 +13,8 @@ class Test_Kit extends Elementor_Test_Base {
 	 * @var \Elementor\Core\Kits\Documents\Kit
 	 */
 	private $kit;
+
+	private string $previous_css_print_method;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -23,6 +26,41 @@ class Test_Kit extends Elementor_Test_Base {
 
 		// In the production environment 'JS' sends empty array, do the same.
 		add_post_meta( $kit->get_main_id(), '_elementor_data', '[]' );
+
+		$this->previous_css_print_method = get_option( 'elementor_css_print_method', 'external' );
+	}
+
+	public function tearDown(): void {
+		update_option( 'elementor_css_print_method', $this->previous_css_print_method );
+
+		parent::tearDown();
+	}
+
+	public function test_add_repeater_row_does_not_echo_post_css_with_internal_embedding() {
+		global $wp_styles;
+
+		$wp_styles = new \WP_Styles();
+
+		update_option( 'elementor_css_print_method', 'internal' );
+
+		Post_CSS::create( $this->kit->get_main_id() )->update();
+
+		$item = [
+			'_id' => 'test_color_row',
+			'title' => 'Test color',
+			'color' => '#ff00ff',
+		];
+
+		ob_start();
+		$this->kit->add_repeater_row( 'custom_colors', $item );
+		$unexpected_output = ob_get_clean();
+
+		$this->assertSame( '', $unexpected_output, 'Kit post CSS must not be echoed when adding a repeater row.' );
+
+		$colors = $this->kit->get_settings( 'custom_colors' );
+		$last_color = end( $colors );
+
+		$this->assertEquals( $item['_id'], $last_color['_id'] );
 	}
 
 	public function test_save__kits_revision_ensure_changed() {
