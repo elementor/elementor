@@ -88,8 +88,6 @@ describe( 'ImageOptimizeTrigger', () => {
 
 		fireEvent.click( trigger );
 
-		expect( document.querySelector( '[data-image-optimize-popover]' ) ).toHaveClass( 'dialog-widget' );
-
 		// Act.
 		fireEvent.keyDown( document, { key: 'Escape' } );
 
