@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { KitPluginsCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-plugins-customization-dialog';
-import { customizationDialogsRegistry } from 'elementor/app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
+import { createRegisteredCustomizationDialogsRegistry } from 'elementor/app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins' );
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
@@ -78,7 +78,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 		};
 		global.elementorModules = {
 			importExport: {
-				customizationDialogsRegistry,
+				customizationDialogsRegistry: createRegisteredCustomizationDialogsRegistry(),
 			},
 		};
 	} );
@@ -262,6 +262,41 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 			expect( elementorCheckbox.checked ).toBe( true );
 			expect( acfCheckbox.checked ).toBe( false );
 			expect( cf7Checkbox.checked ).toBe( true );
+		} );
+
+		it( 'defaults missing saved plugin keys to false', () => {
+			const dataWithPartialCustomization = {
+				includes: [ 'plugins' ],
+				customization: {
+					plugins: {
+						'elementor/elementor': true,
+					},
+				},
+			};
+			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: dataWithPartialCustomization,
+					isOldElementorVersion: false,
+				},
+			} );
+
+			render(
+				<KitPluginsCustomizationDialog
+					open={ true }
+					handleClose={ mockHandleClose }
+					handleSaveChanges={ mockHandleSaveChanges }
+				/>,
+			);
+
+			expect( screen.getByLabelText( 'Elementor' ).checked ).toBe( true );
+			expect( screen.getByLabelText( 'Advanced Custom Fields' ).checked ).toBe( false );
+			expect( screen.getByLabelText( 'Contact Form 7' ).checked ).toBe( false );
+			expect( consoleErrorSpy ).not.toHaveBeenCalled();
+
+			consoleErrorSpy.mockRestore();
 		} );
 	} );
 

@@ -9,42 +9,21 @@ export class BaseRegistry {
 		}
 
 		const existingSection = this.get( section.key );
-		const formattedSection = existingSection
-			? this.formatSection( {
-				...existingSection,
-				...section,
-				children: existingSection.children,
-			} )
-			: this.formatSection( section );
+		const formattedSection = this.formatSection( {
+			...existingSection,
+			...section,
+		} );
 
-		if ( section.children ) {
-			// If existing section has children, merge them with new children
-			if ( formattedSection.children ) {
-				const existingChildrenMap = new Map(
-					formattedSection.children.map( ( child ) => [ child.key, child ] ),
-				);
-
-				// Override existing children with new ones and add new children
-				section.children.forEach( ( childSection ) => {
-					const formattedChild = this.formatSection( childSection );
-					existingChildrenMap.set( childSection.key, formattedChild );
-				} );
-
-				formattedSection.children = Array.from( existingChildrenMap.values() );
-			} else {
-				formattedSection.children = section.children.map( ( childSection ) => this.formatSection( childSection ) );
-			}
-		} else if ( existingSection?.children ) {
-			formattedSection.children = existingSection.children;
-		}
 		this.sections.set( section.key, formattedSection );
 	}
 
-	formatSection( { children, ...section } ) {
+	formatSection( section ) {
 		return {
 			key: section.key,
+			parentKey: section.parentKey || null,
 			title: section.title,
 			description: section.description || '',
+			isPlaceholder: !! section.isPlaceholder,
 			useParentDefault: section.useParentDefault !== false,
 			getInitialState: section.getInitialState || null,
 			component: section.component || null,
@@ -54,18 +33,11 @@ export class BaseRegistry {
 		};
 	}
 	getAll() {
-		return Array.from( this.sections.values() )
+		const sections = Array.from( this.sections.values() )
 			.filter( ( type ) => type.isAvailable() )
-			.map( ( type ) => {
-				if ( type.children ) {
-					return {
-						...type,
-						children: [ ...type.children ].sort( ( a, b ) => a.order - b.order ),
-					};
-				}
-				return type;
-			} )
-			.sort( ( a, b ) => a.order - b.order );
+			.sort( ( first, second ) => first.order - second.order );
+
+		return sections;
 	}
 
 	get( key ) {

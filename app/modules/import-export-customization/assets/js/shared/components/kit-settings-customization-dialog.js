@@ -8,20 +8,16 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 import useContextDetection from '../hooks/use-context-detection';
 import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { createRegisteredCustomizationDialogsRegistry } from '../registry/customization-dialogs';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
 import {
-	DefaultStylesSettingsRow,
-	DesignSystemLimitAlert,
-	GlobalClassesSettingsRow,
-	GlobalVariablesSettingsRow,
 	SettingsGroupSection,
-	ThemeSettingsRow,
 } from './settings-customization-sections';
 import {
 	getAvailableCustomizationDialogChildren,
+	getCustomizationDialogSnapshot,
 	getImportedClassesCount,
 	getImportedVariablesCount,
-	isAtomicElementsFeatureActive,
 	isClassesExported,
 	isDefaultStylesExported,
 	isVariablesExported,
@@ -62,8 +58,57 @@ async function fetchManagerUrl( panelId ) {
 	return data.data?.url || data.url;
 }
 
-function getRegisteredRows() {
-	return getAvailableCustomizationDialogChildren( KIT_SECTIONS.SETTINGS );
+function getRegistryChildren( registry, parentKey ) {
+	return registry.getAll()
+		.filter( ( item ) => item.parentKey === parentKey )
+		.sort( ( first, second ) => first.order - second.order );
+}
+
+const coreSettingsRegistry = createRegisteredCustomizationDialogsRegistry();
+
+function mergeCoreSettingsEntries( parentKey, registeredEntries ) {
+	const coreEntries = getRegistryChildren( coreSettingsRegistry, parentKey );
+
+	if ( ! coreEntries.length ) {
+		return registeredEntries;
+	}
+
+	const coreEntryByKey = new Set( coreEntries.map( ( entry ) => entry.key ) );
+	const registeredEntriesMap = new Map(
+		registeredEntries.map( ( entry ) => [ entry.key, entry ] ),
+	);
+
+	return [
+		...coreEntries.map( ( entry ) => ( {
+			...entry,
+			...registeredEntriesMap.get( entry.key ),
+		} ) ),
+		...registeredEntries.filter( ( entry ) => ! coreEntryByKey.has( entry.key ) ),
+	].sort( ( first, second ) => first.order - second.order );
+}
+
+function getRegisteredSettingsChildren( parentKey ) {
+	return mergeCoreSettingsEntries(
+		parentKey,
+		getAvailableCustomizationDialogChildren( parentKey ),
+	);
+}
+
+function buildSettingsTree( parentKey = KIT_SECTIONS.SETTINGS ) {
+	return getRegisteredSettingsChildren( parentKey ).map( ( item ) => ( {
+		...item,
+		children: buildSettingsTree( item.key ),
+	} ) );
+}
+
+function collectSettingRows( tree ) {
+	return tree.flatMap( ( item ) => {
+		if ( item.children.length ) {
+			return collectSettingRows( item.children );
+		}
+
+		return item.settingKey ? [ item ] : [];
+	} );
 }
 
 function getInitialSettings( contextData, isImport, registeredRows ) {
@@ -90,8 +135,18 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null } = contextData;
 
-	const showDesignSystemSettingsSection = isAtomicElementsFeatureActive();
-	const registeredRows = useMemo( () => getRegisteredRows(), [] );
+	const settingsDialogSnapshot = getCustomizationDialogSnapshot( KIT_SECTIONS.SETTINGS );
+	const designSystemDialogSnapshot = getCustomizationDialogSnapshot( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM );
+	const settingsTreeSignature = JSON.stringify( {
+		settings: settingsDialogSnapshot,
+		designSystem: designSystemDialogSnapshot,
+	} );
+	const settingsTree = useMemo( () => buildSettingsTree(), [ settingsTreeSignature ] );
+	const registeredRows = useMemo( () => collectSettingRows( settingsTree ), [ settingsTree ] );
+	const registeredRowsKey = useMemo(
+		() => registeredRows.map( ( row ) => `${ row.key }:${ row.component?.name || '' }` ).join( '|' ),
+		[ registeredRows ],
+	);
 	const rowByKey = useMemo( () => new Map( registeredRows.map( ( row ) => [ row.key, row ] ) ), [ registeredRows ] );
 
 	const {
@@ -121,7 +176,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		if ( open ) {
 			setSettings( getInitialSettings( contextData, isImport, registeredRows ) );
 		}
-	}, [ contextData, isImport, open, registeredRows ] );
+	}, [ contextData, isImport, open, registeredRows, registeredRowsKey ] );
 
 	useEffect( () => {
 		if ( open ) {
@@ -174,14 +229,75 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const variablesLimitExceeded = isImport && variablesLimitInfo.isExceeded;
 	const classesOverLimitCount = classesLimitInfo.overLimitCount;
 	const variablesOverLimitCount = variablesLimitInfo.overLimitCount;
-
+	const hasThemeRow = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME );
+	const topLevelSettingsKeys = useMemo( () => new Set( settingsTree.map( ( item ) => item.key ) ), [ settingsTree ] );
 	const hasSiteSettingsRows = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_COLORS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_FONTS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME_STYLE_SETTINGS );
 	const hasCustomFilesRows = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_FONTS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_ICONS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_CODE );
+
+	const getRegisteredRowProps = ( rowKey ) => {
+		const props = {
+			data,
+			contextData,
+			isImport,
+			settings,
+		};
+
+		switch ( rowKey ) {
+			case KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES:
+				return {
+					...props,
+					classesLimitExceeded,
+					classesOverLimitCount,
+					classesReviewClick: handleClassesReviewClick,
+					onSettingChange: handleSettingChange,
+				};
+			case KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES:
+				return {
+					...props,
+					onSettingChange: handleSettingChange,
+					variablesLimitExceeded,
+					variablesOverLimitCount,
+					variablesReviewClick: handleVariablesReviewClick,
+				};
+			case KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES:
+				return {
+					...props,
+					onSettingChange: handleSettingChange,
+				};
+			default:
+				return {
+					...props,
+					onSettingChange: handleToggleChange,
+				};
+		}
+	};
+
+	const getRegisteredSectionProps = ( sectionKey ) => {
+		if ( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM === sectionKey ) {
+			return {
+				isImport,
+				classesLimitExceeded,
+				variablesLimitExceeded,
+				notExported: designSystemSettingsNotExported,
+				settings,
+				onSettingChange: handleSettingChange,
+				classesExported: ! classesNotExported,
+				defaultStylesExported: ! defaultStylesNotExported,
+				variablesExported: ! variablesNotExported,
+				classesOverLimitCount,
+				variablesOverLimitCount,
+				onClassesReviewClick: handleClassesReviewClick,
+				onVariablesReviewClick: handleVariablesReviewClick,
+			};
+		}
+
+		return {};
+	};
 
 	const renderRegisteredRow = ( rowKey ) => {
 		const row = rowByKey.get( rowKey );
 
-		if ( ! row ) {
+		if ( ! row?.component || row.isPlaceholder ) {
 			return null;
 		}
 
@@ -190,12 +306,37 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		return (
 			<RowComponent
 				key={ row.key }
-				data={ data }
-				contextData={ contextData }
-				isImport={ isImport }
-				onSettingChange={ handleToggleChange }
-				settings={ settings }
+				{ ...getRegisteredRowProps( rowKey ) }
 			/>
+		);
+	};
+
+	const renderSettingsTreeItem = ( item ) => {
+		if ( ! item.children.length ) {
+			return renderRegisteredRow( item.key );
+		}
+
+		const renderedChildren = item.children
+			.map( ( child ) => renderSettingsTreeItem( child ) )
+			.filter( Boolean );
+
+		if ( ! renderedChildren.length && item.isPlaceholder ) {
+			return null;
+		}
+
+		if ( ! item.component ) {
+			return renderedChildren;
+		}
+
+		const SectionComponent = item.component;
+
+		return (
+			<SectionComponent
+				key={ item.key }
+				{ ...getRegisteredSectionProps( item.key ) }
+			>
+				{ renderedChildren }
+			</SectionComponent>
 		);
 	};
 
@@ -253,52 +394,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					{ contextData?.isOldElementorVersion && (
 						<UpgradeVersionBanner />
 					) }
-					{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME ) && (
-						<ThemeSettingsRow
-							contextData={ contextData }
-							isImport={ isImport }
-							onSettingChange={ handleToggleChange }
-							settings={ settings }
-						/>
-					) }
-
-					{ showDesignSystemSettingsSection && (
-						<SettingsGroupSection title={ __( 'Classes, variables & default styles', 'elementor' ) }>
-							{ ( classesLimitExceeded || variablesLimitExceeded ) && ! designSystemSettingsNotExported && (
-								<DesignSystemLimitAlert />
-							) }
-							{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES ) && (
-								<GlobalClassesSettingsRow
-									classesLimitExceeded={ classesLimitExceeded }
-									classesOverLimitCount={ classesOverLimitCount }
-									classesReviewClick={ handleClassesReviewClick }
-									contextData={ contextData }
-									isImport={ isImport }
-									onSettingChange={ handleSettingChange }
-									settings={ settings }
-								/>
-							) }
-							{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES ) && (
-								<GlobalVariablesSettingsRow
-									contextData={ contextData }
-									isImport={ isImport }
-									onSettingChange={ handleSettingChange }
-									settings={ settings }
-									variablesLimitExceeded={ variablesLimitExceeded }
-									variablesOverLimitCount={ variablesOverLimitCount }
-									variablesReviewClick={ handleVariablesReviewClick }
-								/>
-							) }
-							{ rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES ) && (
-								<DefaultStylesSettingsRow
-									contextData={ contextData }
-									isImport={ isImport }
-									onSettingChange={ handleSettingChange }
-									settings={ settings }
-								/>
-							) }
-						</SettingsGroupSection>
-					) }
+					{ hasThemeRow && renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_THEME ) }
+					{ topLevelSettingsKeys.has( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM ) && renderSettingsTreeItem( settingsTree.find( ( item ) => item.key === KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM ) ) }
 
 					{ hasSiteSettingsRows && (
 						<SettingsGroupSection title={ __( 'Site settings', 'elementor' ) }>

@@ -59,6 +59,31 @@ export function DesignSystemLimitAlert() {
 	);
 }
 
+export function DesignSystemSettingsSection( {
+	children,
+	isImport,
+	classesLimitExceeded,
+	notExported,
+	variablesLimitExceeded,
+} ) {
+	return (
+		<SettingsGroupSection title={ __( 'Classes, variables & default styles', 'elementor' ) }>
+			{ isImport && ( classesLimitExceeded || variablesLimitExceeded ) && ! notExported && (
+				<DesignSystemLimitAlert />
+			) }
+			{ children }
+		</SettingsGroupSection>
+	);
+}
+
+DesignSystemSettingsSection.propTypes = {
+	children: PropTypes.node,
+	isImport: PropTypes.bool,
+	classesLimitExceeded: PropTypes.bool,
+	notExported: PropTypes.bool,
+	variablesLimitExceeded: PropTypes.bool,
+};
+
 export function ThemeSettingsRow( { contextData, isImport, onSettingChange, settings } ) {
 	const themeExported = isThemeExported( contextData );
 

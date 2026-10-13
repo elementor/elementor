@@ -3,80 +3,79 @@ import {
 	MediaFormatSection,
 } from '../components/kit-content-customization-dialog';
 import { PluginListSection } from '../components/kit-plugins-customization-dialog';
+
 import {
+	DesignSystemSettingsSection,
 	DefaultStylesSettingsRow,
 	GlobalClassesSettingsRow,
 	GlobalVariablesSettingsRow,
 	ThemeSettingsRow,
 } from '../components/settings-customization-sections';
+
 import {
-	KIT_SECTIONS,
 	KIT_SECTION_ITEMS,
 } from '../constants';
+
 import {
 	createCustomizationDialogsRegistry,
-	customizationDialogsRegistry as baseCustomizationDialogsRegistry,
 } from './customization-dialogs-base';
+
+const CUSTOMIZATION_DIALOGS_READY_EVENT = 'elementor/import-export-customization/ready';
+const REGISTRY_STATE_KEY = '__elementorImportExportCustomization';
+
+const coreCustomizationDialogsBase = createCustomizationDialogsRegistry();
 
 const UI_REGISTRATIONS = [
 	{
-		key: KIT_SECTIONS.CONTENT,
-		title: 'Content',
-		children: [
-			{
-				key: KIT_SECTION_ITEMS.CONTENT_CUSTOM_POST_TYPES,
-				component: CustomPostTypesSection,
-			},
-			{
-				key: KIT_SECTION_ITEMS.CONTENT_MEDIA_FORMAT,
-				component: MediaFormatSection,
-			},
-		],
+		key: KIT_SECTION_ITEMS.CONTENT_CUSTOM_POST_TYPES,
+		title: 'Custom post types',
+		component: CustomPostTypesSection,
 	},
 	{
-		key: KIT_SECTIONS.SETTINGS,
-		title: 'Settings',
-		children: [
-			{
-				key: KIT_SECTION_ITEMS.SETTINGS_THEME,
-				component: ThemeSettingsRow,
-			},
-			{
-				key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES,
-				component: GlobalClassesSettingsRow,
-			},
-			{
-				key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES,
-				component: GlobalVariablesSettingsRow,
-			},
-			{
-				key: KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES,
-				component: DefaultStylesSettingsRow,
-			},
-		],
+		key: KIT_SECTION_ITEMS.CONTENT_MEDIA_FORMAT,
+		title: 'Media format',
+		component: MediaFormatSection,
 	},
 	{
-		key: KIT_SECTIONS.PLUGINS,
-		title: 'Plugins',
-		children: [
-			{
-				key: KIT_SECTION_ITEMS.PLUGINS_PLUGIN_LIST,
-				component: PluginListSection,
-			},
-		],
+		key: KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM,
+		title: 'Classes, variables & default styles',
+		component: DesignSystemSettingsSection,
+	},
+	{
+		key: KIT_SECTION_ITEMS.SETTINGS_THEME,
+		title: 'Theme',
+		component: ThemeSettingsRow,
+	},
+	{
+		key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES,
+		title: 'Classes',
+		component: GlobalClassesSettingsRow,
+	},
+	{
+		key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES,
+		title: 'Variables',
+		component: GlobalVariablesSettingsRow,
+	},
+	{
+		key: KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES,
+		title: 'Default styles',
+		component: DefaultStylesSettingsRow,
+	},
+	{
+		key: KIT_SECTION_ITEMS.PLUGINS_PLUGIN_LIST,
+		title: 'Plugin list',
+		component: PluginListSection,
 	},
 ];
 
-function mergeRegistrationChildren( registry, registration ) {
-	const existingChildren = registry?.get?.( registration.key )?.children ?? [];
-	const existingChildrenMap = new Map(
-		existingChildren.map( ( child ) => [ child.key, child ] ),
-	);
+function createCoreUiRegistration( registration ) {
+	const baseRegistration = coreCustomizationDialogsBase.get( registration.key );
 
-	return registration.children?.map( ( child ) => ( {
-		...existingChildrenMap.get( child.key ),
-		...child,
-	} ) );
+	return {
+		...baseRegistration,
+		...registration,
+		isPlaceholder: false,
+	};
 }
 
 export function registerCustomizationDialogs( registry ) {
@@ -84,11 +83,14 @@ export function registerCustomizationDialogs( registry ) {
 		return registry;
 	}
 
-	for ( const registration of UI_REGISTRATIONS ) {
-		registry.register( {
-			...registration,
-			children: mergeRegistrationChildren( registry, registration ),
-		} );
+	UI_REGISTRATIONS
+		.map( createCoreUiRegistration )
+		.forEach( ( registration ) => registry.register( registration ) );
+
+	const state = getRegistryState( registry );
+
+	if ( state ) {
+		state.supportsComponentOverrides = true;
 	}
 
 	return registry;
@@ -98,12 +100,64 @@ export function getCustomizationDialogsRegistry() {
 	return globalThis.elementorModules?.importExport?.customizationDialogsRegistry ?? null;
 }
 
-export function registerGlobalCustomizationDialogs() {
-	return registerCustomizationDialogs( getCustomizationDialogsRegistry() );
+function getRegistryState( registry ) {
+	if ( ! registry ) {
+		return null;
+	}
+
+	registry[ REGISTRY_STATE_KEY ] = registry[ REGISTRY_STATE_KEY ] || {
+		hasDispatchedReadyEvent: false,
+		hasRegisteredUi: false,
+		isInitialized: false,
+		supportsComponentOverrides: false,
+	};
+
+	return registry[ REGISTRY_STATE_KEY ];
 }
 
-export const customizationDialogsRegistry = registerCustomizationDialogs(
-	createCustomizationDialogsRegistry(),
-);
+export function initializeCustomizationDialogsRegistration( registry = getCustomizationDialogsRegistry() ) {
+	const state = getRegistryState( registry );
 
-registerCustomizationDialogs( baseCustomizationDialogsRegistry );
+	if ( ! state || state.isInitialized ) {
+		return registry;
+	}
+
+	state.isInitialized = true;
+
+	return registry;
+}
+
+export function isCustomizationDialogsUiRegistered( registry = getCustomizationDialogsRegistry() ) {
+	return !! getRegistryState( registry )?.hasRegisteredUi;
+}
+
+export function registerGlobalCustomizationDialogs() {
+	return prepareCustomizationDialogsForRender();
+}
+
+export function createRegisteredCustomizationDialogsRegistry() {
+	return registerCustomizationDialogs( createCustomizationDialogsRegistry() );
+}
+
+export function prepareCustomizationDialogsForRender( registry = getCustomizationDialogsRegistry() ) {
+	const currentState = getRegistryState( registry );
+
+	if ( ! currentState ) {
+		return registry;
+	}
+
+	if ( currentState.hasRegisteredUi ) {
+		return registry;
+	}
+
+	registerCustomizationDialogs( registry );
+
+	currentState.hasRegisteredUi = true;
+
+	if ( ! currentState.hasDispatchedReadyEvent ) {
+		globalThis.dispatchEvent( new CustomEvent( CUSTOMIZATION_DIALOGS_READY_EVENT ) );
+		currentState.hasDispatchedReadyEvent = true;
+	}
+
+	return registry;
+}

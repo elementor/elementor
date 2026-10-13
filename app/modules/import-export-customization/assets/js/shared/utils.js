@@ -20,6 +20,19 @@ export function isDefaultStylesFeatureActive() {
 	return isAtomicElementsFeatureActive();
 }
 
+export const IMPORT_EXPORT_CUSTOMIZATION_DEBUG_STORAGE_KEY = 'elementor:import-export-customization:debug';
+
+export function isImportExportCustomizationDebugEnabled() {
+	if ( 'undefined' === typeof globalThis ) {
+		return false;
+	}
+
+	const debugFlag = globalThis.__ELEMENTOR_IMPORT_EXPORT_CUSTOMIZATION_DEBUG__;
+	const storageValue = globalThis.localStorage?.getItem?.( IMPORT_EXPORT_CUSTOMIZATION_DEBUG_STORAGE_KEY );
+
+	return true === debugFlag || '1' === storageValue || 'true' === storageValue;
+}
+
 export function getCustomizationDialogsRegistry() {
 	return globalThis.elementorModules?.importExport?.customizationDialogsRegistry ?? null;
 }
@@ -28,14 +41,41 @@ export function getCustomizationDialog( dialogKey ) {
 	return getCustomizationDialogsRegistry()?.get?.( dialogKey ) ?? null;
 }
 
+export function getCustomizationDialogSnapshot( dialogKey ) {
+	const dialog = getCustomizationDialog( dialogKey );
+
+	if ( ! dialog ) {
+		return null;
+	}
+
+	return {
+		key: dialog.key,
+		parentKey: dialog.parentKey,
+		title: dialog.title,
+		order: dialog.order,
+		children: getCustomizationDialogChildren( dialogKey ).map( ( child ) => ( {
+			key: child.key,
+			parentKey: child.parentKey,
+			title: child.title,
+			order: child.order,
+			settingKey: child.settingKey,
+			component: child.component?.name || null,
+		} ) ),
+	};
+}
+
 export function getCustomizationDialogChildren( dialogKey ) {
-	return getCustomizationDialog( dialogKey )?.children ?? [];
+	return getCustomizationDialogsRegistry()
+		?.getAll?.()
+		?.filter( ( dialog ) => dialog.parentKey === dialogKey ) ?? [];
 }
 
 export function getAvailableCustomizationDialogChildren( dialogKey ) {
-	return getCustomizationDialogChildren( dialogKey )
+	const availableChildren = getCustomizationDialogChildren( dialogKey )
 		.filter( ( child ) => child.isAvailable() )
 		.sort( ( first, second ) => first.order - second.order );
+
+	return availableChildren;
 }
 
 const SITE_SETTINGS_MANIFEST_KEY = 'site-settings';

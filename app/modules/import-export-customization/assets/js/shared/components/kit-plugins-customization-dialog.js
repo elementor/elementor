@@ -88,7 +88,7 @@ export function PluginListSection( {
 								<FormControlLabel
 									control={
 										<Checkbox
-											checked={ plugins[ pluginKey ] }
+											checked={ !! plugins[ pluginKey ] }
 											onChange={ () => handleToggleChange( pluginKey ) }
 											color="info"
 											size="medium"
@@ -174,15 +174,15 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			return;
 		}
 
-		let initialPluginsState = {};
+		const savedPluginsState = data?.customization?.plugins || {};
+		const hasSavedPluginsState = !! data?.customization?.plugins;
+		const initialPluginsState = Object.keys( pluginsList ).reduce( ( acc, pluginKey ) => {
+			acc[ pluginKey ] = hasSavedPluginsState
+				? !! savedPluginsState[ pluginKey ]
+				: initialState;
 
-		if ( data?.customization?.plugins ) {
-			initialPluginsState = data.customization.plugins;
-		} else {
-			Object.keys( pluginsList ).forEach( ( pluginKey ) => {
-				initialPluginsState[ pluginKey ] = initialState;
-			} );
-		}
+			return acc;
+		}, {} );
 
 		REQUIRED_PLUGINS.forEach( ( pluginKey ) => {
 			if ( initialPluginsState.hasOwnProperty( pluginKey ) ) {

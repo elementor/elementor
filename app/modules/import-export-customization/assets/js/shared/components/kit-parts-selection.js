@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment, useMemo } from 'react';
+import { useState, useEffect, useLayoutEffect, Fragment, useMemo } from 'react';
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Button, Tooltip } from '@elementor/ui';
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
 import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits';
+import { prepareCustomizationDialogsForRender } from '../registry/customization-dialogs';
 import { ReExportBanner } from './re-export-banner';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import {
@@ -36,6 +37,7 @@ const kitPartItemPropType = PropTypes.shape( {
 } );
 
 function DefaultKitPartSelectionSection( {
+	data,
 	item,
 	DialogComponent,
 	isActive,
@@ -112,6 +114,7 @@ function DefaultKitPartSelectionSection( {
 			</Box>
 			{ DialogComponent && (
 				<DialogComponent
+					data={ data }
 					open={ isActive }
 					handleClose={ onCloseDialog }
 					handleSaveChanges={ handleSaveCustomization }
@@ -127,6 +130,7 @@ function DefaultKitPartSelectionSection( {
 }
 
 DefaultKitPartSelectionSection.propTypes = {
+	data: PropTypes.object,
 	item: kitPartItemPropType.isRequired,
 	DialogComponent: PropTypes.elementType,
 	isActive: PropTypes.bool.isRequired,
@@ -148,8 +152,14 @@ DefaultKitPartSelectionSection.propTypes = {
 
 export default function KitPartsSelection( { onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
+	const [ isRegistryPrepared, setIsRegistryPrepared ] = useState( false );
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null, isOldExport = false, isOldElementorVersion = false } = contextData;
+
+	useLayoutEffect( () => {
+		prepareCustomizationDialogsForRender();
+		setIsRegistryPrepared( true );
+	}, [] );
 
 	const showDesignSystemSettingsSection = isAtomicElementsFeatureActive();
 
@@ -197,8 +207,10 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 		}
 	};
 
+	const hasLockedFeatures = ( item ) => ( item.data.features?.locked?.length ?? 0 ) > 0;
+
 	const isDisabled = ( item ) => {
-		if ( item.data.features?.locked && ! elementorAppConfig.hasPro ) {
+		if ( hasLockedFeatures( item ) && ! elementorAppConfig.hasPro ) {
 			return true;
 		}
 
@@ -298,6 +310,10 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 			);
 	};
 
+	if ( ! isRegistryPrepared ) {
+		return null;
+	}
+
 	return (
 		<Stack spacing={ 2 } data-testid={ testId }>
 			{ contextData?.isOldExport && (
@@ -308,7 +324,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 			) }
 			{ kitContentData.map( ( item ) => {
 				const registryEntry = getRegistryEntry( item );
-				const isLockedFeaturesNoPro = item.data.features?.locked && ! elementorAppConfig.hasPro;
+				const isLockedFeaturesNoPro = hasLockedFeatures( item ) && ! elementorAppConfig.hasPro;
 				const disabled = isDisabled( item );
 				const DialogComponent = registryEntry?.component || item.dialog;
 				const SectionComponent = registryEntry?.section || DefaultKitPartSelectionSection;
@@ -316,6 +332,7 @@ export default function KitPartsSelection( { onCheckboxChange, testId, handleSav
 				return (
 					<Fragment key={ item.type }>
 						<SectionComponent
+							data={ data }
 							item={ {
 								...item,
 								checked: data.includes.includes( item.type ),
