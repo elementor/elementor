@@ -1003,7 +1003,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_execute__returns_decorative_editor_setting_as_plain_setting() {
+	public function test_execute__returns_decorative_editor_setting_separately_from_settings() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
@@ -1017,7 +1017,64 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$node = $this->read_node_with_content( $post_id, 'block1' );
 
 		// Assert
-		$this->assertSame( [ 'decorative' => true ], (array) $node['settings'] );
+		$this->assertSame( [ 'decorative' => true ], $node['editor_settings'] );
+		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
+	}
+
+	public function test_execute__returns_atomic_layer_name_as_editor_setting_name() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$heading = $this->make_atomic_widget( 'heading1', 'e-heading', [] );
+		$heading['editor_settings'] = [ 'title' => 'Hero Title' ];
+
+		$this->mock_document_with_elements( $post_id, [ $heading ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'heading1' );
+
+		// Assert
+		$this->assertSame( [ 'name' => 'Hero Title' ], $node['editor_settings'] );
+		$this->assertArrayNotHasKey( 'name', (array) $node['settings'] );
+	}
+
+	public function test_execute__returns_legacy_layer_name_as_editor_setting_name() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$legacy_heading = [
+			'id' => 'legacy1',
+			'elType' => 'widget',
+			'widgetType' => 'heading',
+			'settings' => [ '_title' => 'Legacy Hero' ],
+			'elements' => [],
+		];
+
+		$this->mock_document_with_elements( $post_id, [ $legacy_heading ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'legacy1' );
+
+		// Assert
+		$this->assertSame( [ 'name' => 'Legacy Hero' ], $node['editor_settings'] );
+	}
+
+	public function test_execute__omits_editor_settings_when_nothing_is_set() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'editor_settings', $node );
 	}
 
 	public function test_execute__decorative_keeps_frontend_base_styles_in_default_styles() {

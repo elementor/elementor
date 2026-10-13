@@ -3,9 +3,14 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
@@ -118,7 +123,6 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			$settings = Editor_Settings::apply( $node, $settings, (string) $tag, (string) $config_id, $warnings );
 			$schema = $this->type_resolver->get_props_schema( $tag, $widget_configs );
 
 			if ( ! $schema ) {
@@ -200,6 +204,11 @@ class Element_Config_Applier {
 		foreach ( $settings as $name => $value ) {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
 
+			if ( null === $canonical && Editor_Settings::is_editor_key( $name ) ) {
+				Editor_Settings::warn_misplaced( (string) $name, $config_id, $warnings );
+				continue;
+			}
+
 			if ( null === $canonical ) {
 				$warnings->add(
 					'prop_not_in_schema',
@@ -246,6 +255,8 @@ class Element_Config_Applier {
 			if ( ! empty( $dropped_paths ) ) {
 				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
 			}
+
+			$this->maybe_warn_unknown_icon( $resolved_value, $canonical, $element_type, $config_id, $warnings );
 
 			$resolved[ $canonical ] = $resolved_value;
 		}
@@ -327,6 +338,101 @@ class Element_Config_Applier {
 			}
 
 			unset( $node_settings[ $cleared_key ] );
+		}
+	}
+
+	/**
+	 * An icon value that no installed library knows is stored happily and then renders nothing,
+	 * which is invisible to the agent unless it is told here.
+	 */
+	private function maybe_warn_unknown_icon( $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		if ( ! is_array( $resolved_value ) || Icon_Prop_Type::get_key() !== ( $resolved_value['$$type'] ?? null ) ) {
+			return;
+		}
+
+		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
+			return;
+		}
+
+		$icon = is_array( $resolved_value['value'] ?? null ) ? $resolved_value['value'] : [];
+		$value = $icon['value']['value'] ?? '';
+		$library = $icon['library']['value'] ?? '';
+
+		if ( ! is_string( $value ) || ! is_string( $library ) ) {
+			return;
+		}
+
+		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+			if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+				$value_library = strtok( $value, ' ' );
+
+				if ( $value_library !== $library ) {
+					$warnings->add(
+						'icon_library_mismatch',
+						sprintf(
+							'Property "%s" on "%s" was saved with icon "%s" in library "%s", so it renders in the "%s" style rather than "%s". Copy the "value" and "library" pair from one elementor/find-icons result.',
+							$key,
+							$element_type,
+							$value,
+							$library,
+							$library,
+							$value_library
+						),
+						$config_id
+					);
+				}
+
+				return;
+			}
+
+			$warnings->add(
+				'icon_not_found',
+				sprintf(
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					$key,
+					$element_type,
+					$value,
+					$library
+				),
+				$config_id
+			);
+
+			return;
+		}
+
+		if ( Font_Icon_Svg_Data_Manager::get_font_family( $library ) ) {
+			return;
+		}
+
+		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries();
+
+		if ( ! isset( $custom_libraries[ $library ] ) ) {
+			$warnings->add(
+				'icon_library_not_found',
+				sprintf(
+					'Property "%s" on "%s" references library "%s", which is not installed, so a placeholder renders. Call elementor/find-icons to see which libraries are available.',
+					$key,
+					$element_type,
+					$library
+				),
+				$config_id
+			);
+
+			return;
+		}
+
+		if ( ! Custom_Icon_Resolver::is_renderable_value( $library, $value ) ) {
+			$warnings->add(
+				'icon_not_found',
+				sprintf(
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					$key,
+					$element_type,
+					$value,
+					$library
+				),
+				$config_id
+			);
 		}
 	}
 

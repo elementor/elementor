@@ -18,6 +18,7 @@ export const audit: Audit = {
 	severity: 'info',
 	weight: 1,
 	evaluate: ( ctx ) => {
+		const isReady = ctx.pageContext.image_optimization_plugin_active;
 		const offendingElementIds = new Set< string >();
 		let hasAnyImage = false;
 		let inefficientImageFormatCount = 0;
@@ -57,7 +58,9 @@ export const audit: Audit = {
 			elementId,
 			targetHint: 'element-settings' as const,
 			label: __( "Image isn't served in a modern format like WebP or AVIF.", 'elementor' ),
-			externalUrl: ctx.pageContext.image_optimization_plugin_url,
+			externalUrl: isReady
+				? ctx.pageContext.image_optimization_settings_url
+				: ctx.pageContext.image_optimization_plugin_url,
 			ctaLabel: __( 'Optimize all', 'elementor' ),
 		} ) );
 
