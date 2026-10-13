@@ -130,9 +130,8 @@ export const ImageOptimizeTrigger = ( { promotion }: { promotion?: ImagePromotio
 			disableFocusListener
 			disableHoverListener
 			disableTouchListener
-			className="dialog-widget"
 			content={
-				<Box data-image-optimize-popover="" sx={ { width: POPOVER_WIDTH } }>
+				<Box className="dialog-widget" data-image-optimize-popover="" sx={ { width: POPOVER_WIDTH } }>
 					<Stack direction="row" alignItems="center" gap={ 1 } py={ 1 } px={ 2 }>
 						<BulbIcon fontSize="small" color="info" />
 						<Typography variant="subtitle2">

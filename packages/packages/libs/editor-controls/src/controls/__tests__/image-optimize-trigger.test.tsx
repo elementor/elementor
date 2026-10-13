@@ -83,7 +83,12 @@ describe( 'ImageOptimizeTrigger', () => {
 		// Arrange.
 		renderControl( <ImageControl sizes={ [] } promotion={ promotion } />, controlProps );
 		const trigger = screen.getByRole( 'button', { name: 'Optimize' } );
+
+		expect( trigger ).not.toHaveClass( 'dialog-widget' );
+
 		fireEvent.click( trigger );
+
+		expect( document.querySelector( '[data-image-optimize-popover]' ) ).toHaveClass( 'dialog-widget' );
 
 		// Act.
 		fireEvent.keyDown( document, { key: 'Escape' } );
