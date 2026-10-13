@@ -349,7 +349,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		$this->assertEquals( 'valuealert(1)', $value );
+		\ElementorEditorTesting\Kses_Test_Expectations::assert_same_wp_kses_plain_string( $this, $value, 'valuealert(1)', 'value' );
 	}
 
 	public function test_get_super_global_value__returns_sanitized_array() {
@@ -360,7 +360,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		$this->assertEquals( [ 'valuealert(1)' ], $value );
+		$this->assertEquals(
+			[ \ElementorEditorTesting\Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
+			$value
+		);
 	}
 
 	public function test_get_super_global_value__returns_sanitized_associative_array() {
@@ -371,7 +374,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
+		$this->assertEquals(
+			[ 'key' => \ElementorEditorTesting\Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
+			$value
+		);
 	}
 
 	public function test_get_super_global_value__single_file() {
