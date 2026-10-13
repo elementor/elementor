@@ -36,6 +36,7 @@ class Widget_Context_Helper {
 	];
 
 	const V3_ALLOWLIST = [
+		'counter',
 		'nav-menu',
 		'theme-post-content',
 		'theme-post-title',
