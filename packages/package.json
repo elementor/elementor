@@ -14,7 +14,7 @@
   "scripts": {
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc\"",
+    "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc && tsc -p packages/tools/generate-font-awesome-7/tsconfig.json --noEmit\"",
     "lint:fix": "eslint . --fix --report-unused-disable-directives-severity error",
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",
