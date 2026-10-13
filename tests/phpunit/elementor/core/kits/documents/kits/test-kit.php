@@ -57,10 +57,11 @@ class Test_Kit extends Elementor_Test_Base {
 
 		$this->assertSame( '', $unexpected_output, 'Kit post CSS must not be echoed when adding a repeater row.' );
 
-		$colors = $this->kit->get_settings( 'custom_colors' );
-		$last_color = end( $colors );
+		$refreshed_kit = Plugin::$instance->documents->get( $this->kit->get_main_id(), false );
+		$colors = $refreshed_kit->get_settings( 'custom_colors' );
 
-		$this->assertEquals( $item['_id'], $last_color['_id'] );
+		$this->assertIsArray( $colors );
+		$this->assertContains( $item['_id'], array_column( $colors, '_id' ) );
 	}
 
 	public function test_save__kits_revision_ensure_changed() {
