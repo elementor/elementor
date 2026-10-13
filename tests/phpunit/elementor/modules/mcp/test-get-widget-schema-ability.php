@@ -94,8 +94,23 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result );
-		$this->assertSame( 'boolean', $result['properties']['decorative']['type'] );
-		$this->assertStringStartsWith( 'Editor only', $result['properties']['decorative']['description'] );
+		$this->assertSame( 'boolean', $result['editor_settings']['properties']['decorative']['type'] );
+		$this->assertStringStartsWith( 'Editor only', $result['editor_settings']['properties']['decorative']['description'] );
+		$this->assertArrayNotHasKey( 'decorative', $result['properties'] );
+	}
+
+	public function test_execute__exposes_editor_only_name_for_every_atomic_element() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'string', $result['editor_settings']['properties']['name']['type'] );
+		$this->assertStringStartsWith( 'Editor only', $result['editor_settings']['properties']['name']['description'] );
+		$this->assertArrayNotHasKey( 'decorative', $result['editor_settings']['properties'] );
 	}
 
 	public function test_execute__rejects_v3_widget_type() {
@@ -190,6 +205,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	private function enable_standardized_v3_maps(): void {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
