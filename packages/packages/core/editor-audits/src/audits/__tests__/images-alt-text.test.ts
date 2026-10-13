@@ -10,6 +10,23 @@ const imageSizeWithAlt = ( id: number, alt: string ) => ( {
 	alt,
 } );
 
+type AtomicImageSrc = { id?: number; url?: string; alt?: string };
+
+const atomicImageProp = ( { id, url, alt }: AtomicImageSrc ) => ( {
+	$$type: 'image',
+	value: {
+		src: {
+			$$type: 'image-src',
+			value: {
+				id: id ? { $$type: 'image-attachment-id', value: id } : null,
+				url: url ? { $$type: 'url', value: url } : null,
+				alt: alt ? { $$type: 'string', value: alt } : null,
+			},
+		},
+		size: null,
+	},
+} );
+
 describe( audit.id, () => {
 	it( 'is skipped when the page has no images', async () => {
 		expect( await audit.evaluate( makeContext() ) ).toEqual( {
@@ -124,5 +141,67 @@ describe( audit.id, () => {
 	it( 'uses snapshot alt for URL-only images', async () => {
 		const tree = [ makeWidget( 'ext', 'image', { image: { url: 'http://example.test/x.jpg', alt: 'External' } } ) ];
 		expect( await audit.evaluate( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
+	} );
+
+	describe( 'atomic widgets', () => {
+		it( 'fails when an atomic image attachment is missing alt text', async () => {
+			// Arrange
+			const tree = [ makeWidget( 'e-image', 'e-image', { image: atomicImageProp( { id: 20 } ) } ) ];
+			const pageContext = { image_sizes: { '20:full': imageSizeWithAlt( 20, '' ) } };
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+			// Assert
+			expect( result.status ).toBe( 'fail' );
+
+			if ( result.status === 'fail' ) {
+				expect( result.violations[ 0 ].elementId ).toBe( 'e-image' );
+				expect( result.metadata?.missingAltImageCount ).toBe( 1 );
+			}
+		} );
+
+		it( 'passes when an atomic image attachment has alt text', async () => {
+			// Arrange
+			const tree = [ makeWidget( 'e-image', 'e-image', { image: atomicImageProp( { id: 21 } ) } ) ];
+			const pageContext = { image_sizes: { '21:full': imageSizeWithAlt( 21, 'Dog' ) } };
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+			// Assert
+			expect( result ).toEqual( { status: 'pass' } );
+		} );
+
+		it( 'uses the src alt for URL-only atomic images', async () => {
+			// Arrange
+			const withAlt = makeWidget( 'with-alt', 'e-image', {
+				image: atomicImageProp( { url: 'http://example.test/a.jpg', alt: 'External' } ),
+			} );
+			const withoutAlt = makeWidget( 'without-alt', 'e-image', {
+				image: atomicImageProp( { url: 'http://example.test/b.jpg' } ),
+			} );
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree: [ withAlt, withoutAlt ] } ) );
+
+			// Assert
+			expect( result.status ).toBe( 'fail' );
+
+			if ( result.status === 'fail' ) {
+				expect( result.violations.map( ( { elementId } ) => elementId ) ).toEqual( [ 'without-alt' ] );
+			}
+		} );
+
+		it( 'ignores atomic video posters', async () => {
+			// Arrange
+			const tree = [ makeWidget( 'video', 'e-self-hosted-video', { poster: atomicImageProp( { id: 22 } ) } ) ];
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree } ) );
+
+			// Assert
+			expect( result ).toEqual( { status: 'skipped', reason: 'No images' } );
+		} );
 	} );
 } );

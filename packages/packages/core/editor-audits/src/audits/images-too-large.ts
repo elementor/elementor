@@ -1,10 +1,8 @@
 import { __, sprintf } from '@wordpress/i18n';
 
 import { type Audit, type AuditViolation, type ElementSnapshotNode } from '../types';
-import { walkAtomicBackgroundImageSources } from '../utils/atomic-background-image-sources';
-import { walkAtomicImageSources } from '../utils/atomic-image-sources';
-import { walkBackgroundImageSources } from '../utils/background-image-sources';
-import { type ImageLikeMedia, walkImageLikeSources } from '../utils/image-like-sources';
+import { walkAllImageSources } from '../utils/all-image-sources';
+import { type ImageLikeMedia } from '../utils/image-like-sources';
 import { buildImageSizeKey } from '../utils/image-size-key';
 
 const SIZE_THRESHOLD_BYTES = 500 * 1024;
@@ -48,10 +46,7 @@ export const audit: Audit = {
 			widgetMaxKb.set( node.id, Math.max( currentMax, kb ) );
 		};
 
-		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
-		walkBackgroundImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
-		walkAtomicImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
-		walkAtomicBackgroundImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
+		walkAllImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
 
 		if ( ! hasAnyImage ) {
 			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
