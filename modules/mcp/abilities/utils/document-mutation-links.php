@@ -20,15 +20,6 @@ class Document_Mutation_Links {
 			'description' => 'Mandatory next step: include this text (with the preview or editor link) in your reply to the user.',
 		];
 	}
-
-	public static function edit_url_schema_property(): array {
-		return [
-			'type' => 'string',
-			'format' => 'uri',
-			'description' => 'Elementor editor URL, returned instead of preview_url for documents without a front-end preview (e.g. components).',
-		];
-	}
-
 	public static function undo_revision_id_schema_property(): array {
 		return [
 			'type' => [ 'integer', 'null' ],

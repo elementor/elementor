@@ -46,7 +46,11 @@ class Manage_Revisions_Ability extends Abstract_Ability {
 						'description' => 'True when the restore was written to a draft copy of a published document and still needs elementor/publish-document to go live.',
 					],
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
-					'edit_url' => Document_Mutation_Links::edit_url_schema_property(),
+					'edit_url' => [
+						'type' => 'string',
+						'format' => 'uri',
+						'description' => 'Elementor editor URL, returned instead of preview_url for documents without a front-end preview (e.g. components).',
+					],
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 				],

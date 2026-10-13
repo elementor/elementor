@@ -70,10 +70,6 @@ class Document_Revision_Snapshots {
 		self::sync_meta( $from_post_id, $to_post_id, self::RESTORABLE_META_KEYS );
 	}
 
-	public static function skip_revision_changes_check(): bool {
-		return false;
-	}
-
 	/**
 	 * @return array{revision_id: int, is_new: bool}|null
 	 */
@@ -109,12 +105,15 @@ class Document_Revision_Snapshots {
 	}
 
 	private static function create_revision( int $main_id, int $source_id ): int {
-		add_filter( 'wp_save_post_revision_check_for_changes', [ self::class, 'skip_revision_changes_check' ] );
+		// Its own closure, so removing it can't also remove the `__return_false` that `Revisions_Manager` adds to this filter.
+		$force_revision = fn() => false;
+
+		add_filter( 'wp_save_post_revision_check_for_changes', $force_revision );
 
 		try {
 			$revision_id = wp_save_post_revision( $main_id );
 		} finally {
-			remove_filter( 'wp_save_post_revision_check_for_changes', [ self::class, 'skip_revision_changes_check' ] );
+			remove_filter( 'wp_save_post_revision_check_for_changes', $force_revision );
 		}
 
 		if ( ! $revision_id || is_wp_error( $revision_id ) ) {
