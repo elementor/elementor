@@ -27,6 +27,7 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			function () {
 				return current_user_can( 'edit_posts' );

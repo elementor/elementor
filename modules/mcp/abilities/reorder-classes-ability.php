@@ -63,6 +63,7 @@ class Reorder_Classes_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 			[

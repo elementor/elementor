@@ -68,6 +68,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 			[

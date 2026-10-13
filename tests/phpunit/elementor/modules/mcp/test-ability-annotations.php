@@ -58,25 +58,18 @@ class Test_Ability_Annotations extends Elementor_Test_Base {
 		$this->assertSame( self::DESTRUCTIVE_TOOL_IDS, $destructive_ids );
 	}
 
-	public function test_tools__writing_tools_with_post_id_declare_mutates_page() {
+	public function test_tools__declare_mutates_page_explicitly() {
 		// Arrange
 		$definitions = $this->tool_definitions();
 
 		// Act
 		$missing = array_keys( array_filter(
 			$definitions,
-			fn( Ability_Definition $definition ) => $this->is_writing_tool_with_post_id( $definition )
-				&& ! is_bool( $definition->meta['mutates_page'] ?? null )
+			fn( Ability_Definition $definition ) => ! is_bool( $definition->meta['mutates_page'] ?? null )
 		) );
 
 		// Assert
 		$this->assertSame( [], $missing );
-	}
-
-	private function is_writing_tool_with_post_id( Ability_Definition $definition ): bool {
-		$is_readonly = true === ( $definition->meta['annotations']['readonly'] ?? null );
-
-		return ! $is_readonly && isset( $definition->input_schema['properties']['post_id'] );
 	}
 
 	/** @return array<string, Ability_Definition> */
