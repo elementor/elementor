@@ -16,15 +16,15 @@ import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
  * These patterns are not folded into `PRUNED` because `glob` `ignore` drops paths before
  * `PLUGIN_FILE_PATTERNS` runs, and it does not honor `!` un-ignore rules. Putting a recursive
  * markdown glob in `PRUNED` therefore removed `modules/mcp/static-resources/` entirely; MCP
- * abilities then failed
- * to register when `Prompt_Loader::load()` returned empty descriptions.
+ * abilities then failed to register when `Prompt_Loader::load()` returned empty descriptions.
+ * Only markdown under `modules/mcp/static-resources/` is exempt; other MCP markdown stays out of the build.
  *
  * Order matters: the last pattern that matches a path wins (same rule as `PLUGIN_FILE_PATTERNS`).
  */
-const MARKDOWN_PRUNE_PATTERNS = [
+export const MARKDOWN_PRUNE_PATTERNS = [
 	'*.md',
 	'**/*.md',
-	'!modules/mcp/**/*.md',
+	'!modules/mcp/static-resources/**/*.md',
 ];
 
 /**
@@ -59,7 +59,7 @@ const PRUNED = [
 ];
 
 /** @returns {boolean} Whether `filePath` is excluded by the ordered include/negate patterns. */
-function matchesOrderedPatterns( filePath, patterns ) {
+export function matchesOrderedPatterns( filePath, patterns ) {
 	let matched = false;
 
 	for ( const pattern of patterns ) {
