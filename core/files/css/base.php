@@ -619,7 +619,7 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
-		// Post CSS is skipped during REST handling so styles are not echoed outside the JSON envelope.
+		// Post CSS is skipped during REST and elementor_ajax handling so styles are not echoed outside the JSON envelope.
 		// Third-party internal rest_do_request() rendering therefore returns markup without post CSS unless with_css inlines it in the HTML string.
 		global $wp_rest_server;
 
@@ -628,6 +628,10 @@ abstract class Base extends Base_File {
 		}
 
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return true;
+		}
+
+		if ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'] ) {
 			return true;
 		}
 

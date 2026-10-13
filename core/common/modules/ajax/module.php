@@ -3,7 +3,6 @@ namespace Elementor\Core\Common\Modules\Ajax;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Utils\Exceptions;
-use Elementor\Core\Utils\Output_Buffer;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -263,7 +262,9 @@ class Module extends BaseModule {
 
 		$json = wp_json_encode( $response );
 
-		Output_Buffer::discard_all();
+		while ( ob_get_status() ) {
+			ob_end_clean();
+		}
 
 		header( 'Content-Type: application/json; charset=UTF-8' );
 		echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
