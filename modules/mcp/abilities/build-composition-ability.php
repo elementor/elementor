@@ -51,6 +51,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => true,
 			],
 			fn() => current_user_can( 'edit_posts' ),
 			$this->get_input_schema()
