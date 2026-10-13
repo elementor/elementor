@@ -17,6 +17,8 @@ class Module extends BaseModule {
 
 	const REST_NAMESPACE = 'elementor/v1';
 
+	const REQUIRED_CAPABILITY = 'manage_options';
+
 	const PACKAGES = [
 		'editor-props',
 		'editor-styles',
@@ -57,15 +59,27 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
+	public static function is_user_allowed(): bool {
+		return current_user_can( self::REQUIRED_CAPABILITY );
+	}
+
 	public function register_data_controller(): void {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 	}
 
 	private function add_packages( array $packages ): array {
+		if ( ! self::is_user_allowed() ) {
+			return $packages;
+		}
+
 		return array_merge( $packages, self::PACKAGES );
 	}
 
 	private function print_inline_config(): void {
+		if ( ! self::is_user_allowed() ) {
+			return;
+		}
+
 		wp_add_inline_script(
 			'elementor-v2-editor-audits',
 			'window.elementorAudits = ' . wp_json_encode( [
