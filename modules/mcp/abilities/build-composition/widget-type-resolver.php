@@ -156,9 +156,7 @@ class Widget_Type_Resolver {
 				'class' => get_class( $widget ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
-				$resolved['controls'] = (array) $widget->get_controls();
-			}
+			$this->attach_v3_controls( $type, $widget, $resolved );
 
 			return $resolved;
 		}
@@ -190,12 +188,7 @@ class Widget_Type_Resolver {
 				'class' => get_class( $element ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
-				if ( method_exists( $element, 'get_stack' ) ) {
-					$element->get_stack();
-				}
-				$resolved['controls'] = (array) $element->get_controls();
-			}
+			$this->attach_v3_controls( $type, $element, $resolved );
 
 			return $resolved;
 		}
@@ -265,5 +258,21 @@ class Widget_Type_Resolver {
 		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
 			$this->collect_required_child_errors( $child, $widget_configs, $errors );
 		}
+	}
+
+	/**
+	 * @param \Elementor\Widget_Base|\Elementor\Element_Base $instance
+	 * @param array<string, mixed>                           $resolved
+	 */
+	private function attach_v3_controls( string $type, $instance, array &$resolved ): void {
+		if ( ! Widget_Context_Helper::is_v3_allowlisted( $type ) && ! Widget_Context_Helper::is_v3_supported( $type ) ) {
+			return;
+		}
+
+		if ( method_exists( $instance, 'get_stack' ) ) {
+			$instance->get_stack( false );
+		}
+
+		$resolved['controls'] = (array) $instance->get_controls();
 	}
 }
