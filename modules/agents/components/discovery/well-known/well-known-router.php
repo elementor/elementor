@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Agent_Ready_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -29,6 +31,12 @@ class Well_Known_Router {
 
 	/** @var Abstract_Well_Known_Endpoint[] Keyed by well-known slug. */
 	private array $endpoints = [];
+
+	private Agent_Ready_Settings $settings;
+
+	public function __construct( Agent_Ready_Settings $settings ) {
+		$this->settings = $settings;
+	}
 
 	/**
 	 * Wire the router into WordPress.
@@ -63,6 +71,10 @@ class Well_Known_Router {
 		$path = $this->get_normalized_path();
 
 		if ( '' === $path || 0 !== strpos( $path, self::WELL_KNOWN_PREFIX ) ) {
+			return;
+		}
+
+		if ( ! $this->settings->is_agent_discovery_enabled() ) {
 			return;
 		}
 
@@ -114,6 +126,24 @@ class Well_Known_Router {
 				return $e->is_enabled() && $e->is_applicable();
 			}
 		);
+	}
+
+	/**
+	 * Return each endpoint once (aliases dropped) when it is relevant to this site,
+	 * regardless of whether the admin has switched discovery on.
+	 *
+	 * @return Abstract_Well_Known_Endpoint[] Keyed by canonical slug.
+	 */
+	public function get_applicable_endpoints(): array {
+		$applicable = [];
+
+		foreach ( $this->endpoints as $endpoint ) {
+			if ( $endpoint->is_applicable() ) {
+				$applicable[ $endpoint->get_well_known_slug() ] = $endpoint;
+			}
+		}
+
+		return $applicable;
 	}
 
 	// ------------------------------------------------------------------

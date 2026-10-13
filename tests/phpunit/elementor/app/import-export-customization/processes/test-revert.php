@@ -16,6 +16,13 @@ use Elementor\Core\Utils\Plugins_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
+/**
+ * @group Elementor
+ * @group Elementor/ImportExportCustomization
+ * @group Elementor/ImportExportCustomization/Processes
+ *
+ * @group kit-import-export-customization
+ */
 class Test_Revert extends Elementor_Test_Base {
 	const MOCK_KIT_ZIP_PATH = __DIR__ . '/../mock/sample-kit.zip';
 

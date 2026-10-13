@@ -238,6 +238,26 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_is_agent_discovery_enabled__defaults_to_true() {
+		// Act & Assert
+		$this->assertTrue( $this->settings->is_agent_discovery_enabled() );
+	}
+
+	public function test_rest_update__sanitizes_agent_discovery_and_keeps_other_modules() {
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY => [ 'enabled' => 'false', 'extra' => true ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_agent_discovery_enabled() );
+		$this->assertSame(
+			[ 'enabled' => false ],
+			$this->settings->get_module_settings( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY )
+		);
+		$this->assertTrue( $this->settings->is_llms_enabled() );
+	}
+
 	public function test_get_managed_bots__defaults_to_popular_bots_in_catalog_order() {
 		// Act
 		$bots = $this->settings->get_managed_bots();
