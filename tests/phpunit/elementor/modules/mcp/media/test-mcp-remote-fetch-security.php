@@ -53,9 +53,9 @@ class Test_Mcp_Remote_Fetch_Security extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_url_scheme', $error->get_error_code() );
 	}
 
-	public function test_assert_https_url__rejects_private_ip_literal() {
+	public function test_assert_host_resolves_publicly__rejects_private_ip_literal() {
 		// Act
-		$error = Public_Host_Validator::assert_https_url( 'https://127.0.0.1/image.png' );
+		$error = Public_Host_Validator::assert_host_resolves_publicly( '127.0.0.1' );
 
 		// Assert
 		$this->assertWPError( $error );
