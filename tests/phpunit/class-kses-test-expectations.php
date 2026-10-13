@@ -3,6 +3,7 @@
 namespace ElementorEditorTesting;
 
 use DOMDocument;
+use DOMElement;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,10 +32,31 @@ class Kses_Test_Expectations {
 
 	public static function assert_sanitized_data_href_link( TestCase $test_case, string $html ): void {
 		$test_case->assertStringContainsString( 'click', $html );
-		$test_case->assertStringNotContainsString( 'data:', $html );
+		self::assert_no_anchor_uses_data_href( $test_case, $html );
 
 		if ( ! self::wp_kses_strips_disallowed_element_content() ) {
 			$test_case->assertStringNotContainsString( '<a href=', $html );
+		}
+	}
+
+	private static function assert_no_anchor_uses_data_href( TestCase $test_case, string $html ): void {
+		$document = new DOMDocument();
+		$use_internal_errors = libxml_use_internal_errors( true );
+		$document->loadHTML( '<?xml encoding="utf-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $use_internal_errors );
+
+		$anchors = $document->getElementsByTagName( 'a' );
+		foreach ( $anchors as $anchor ) {
+			if ( ! $anchor instanceof DOMElement || ! $anchor->hasAttribute( 'href' ) ) {
+				continue;
+			}
+
+			$href = strtolower( trim( $anchor->getAttribute( 'href' ) ) );
+			$test_case->assertFalse(
+				str_starts_with( $href, 'data:' ),
+				'Sanitized HTML must not contain a link with a data: href.'
+			);
 		}
 	}
 
@@ -55,7 +77,7 @@ class Kses_Test_Expectations {
 		libxml_use_internal_errors( $use_internal_errors );
 
 		$image = $document->getElementsByTagName( 'img' )->item( 0 );
-		if ( ! $image instanceof \DOMElement ) {
+		if ( ! $image instanceof DOMElement ) {
 			return [];
 		}
 
