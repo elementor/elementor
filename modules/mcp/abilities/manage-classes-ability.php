@@ -66,7 +66,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
 			],
 			fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
