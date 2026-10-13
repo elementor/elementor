@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,6 +55,28 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 
 		$url_control = $this->find_control_by_bind( $form->get_atomic_controls(), 'redirect_url' );
 		$this->assertInstanceOf( Text_Control::class, $url_control );
+	}
+
+	public function test_widget_description_lists_every_action() {
+		foreach ( [ 'email', 'collect-submissions', 'webhook', 'redirect' ] as $action ) {
+			$this->assertStringContainsString( $action, Atomic_Form::$widget_description );
+		}
+	}
+
+	public function test_widget_schema_exposes_redirect_url_description() {
+		if ( ! class_exists( Widget_Context_Helper::class ) ) {
+			$this->markTestSkipped( 'Core MCP Widget_Context_Helper is not available.' );
+		}
+
+		$config = ( new Atomic_Form( [
+			'id' => 'config-probe',
+			'elType' => Atomic_Form::get_element_type(),
+			'settings' => [],
+		] ) )->get_config();
+
+		$schema = Widget_Context_Helper::build_widget_schema( Atomic_Form::get_element_type(), $config );
+
+		$this->assertStringContainsString( 'redirect', $schema['properties']['redirect_url']['description'] ?? '' );
 	}
 
 	public function test_props_schema_includes_webhook_url_string_prop() {
