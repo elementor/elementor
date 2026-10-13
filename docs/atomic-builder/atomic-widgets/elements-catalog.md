@@ -6,7 +6,7 @@
 
 ## What it is
 
-Snapshot of built-in atomic types from `module.php`. For authoring see [authoring-widgets.md](authoring-widgets.md). For live schemas use MCP `get-widget-schema` / `list-widget-schemas`.
+Snapshot of built-in atomic types from `module.php`. For authoring see [authoring-widgets.md](authoring-widgets.md). For live schemas use MCP `get-widgets-schema` / `list-widget-schemas`.
 
 ## When to use it
 

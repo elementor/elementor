@@ -20,7 +20,7 @@ Verified: `abstract-ability.php`.
 | File | Ability ID |
 |------|------------|
 | [build-composition.md](build-composition.md) | `elementor/build-composition` |
-| [get-widget-schema.md](get-widget-schema.md) | `elementor/get-widget-schema` |
+| [get-widget-schema.md](get-widget-schema.md) | `elementor/get-widgets-schema` |
 | [list-widget-schemas.md](list-widget-schemas.md) | `elementor/list-widget-schemas` |
 | [manage-classes.md](manage-classes.md) | `elementor/manage-classes` |
 | [reorder-classes.md](reorder-classes.md) | `elementor/reorder-classes` |
@@ -36,7 +36,7 @@ See [../composition-workflow.md](../composition-workflow.md):
 1. Read resources (`global-variables`, `global-classes`, `style/best-practices`)
 2. `manage-global-variable` → `manage-classes`
 3. `list-widget-schemas` (`summary: true`) → `list-components` (if using `<e-component>`)
-4. `get-widget-schema` once, with every type in `widget_type` → read `interactions/schema` if needed
+4. `get-widgets-schema` once, with every type in `widget_type` → read `interactions/schema` if needed
 5. `build-composition` (`dry_run` first) → `manage-elements` for follow-up
 
 `list-dynamic-tags`: [../../dynamic-tags/discovery.md](../../dynamic-tags/discovery.md).

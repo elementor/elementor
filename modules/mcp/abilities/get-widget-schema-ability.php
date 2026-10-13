@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Get_Widget_Schema_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
-		return 'elementor/get-widget-schema';
+		return 'elementor/get-widgets-schema';
 	}
 
 	protected function get_definition(): Ability_Definition {
@@ -36,8 +36,8 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 				'required' => [ 'widget_type' ],
 				'properties' => [
 					'widget_type' => [
-						'type' => [ 'string', 'array' ],
-						'description' => 'Registry identifier of the widget, e.g. "e-heading", or an array of identifiers.',
+						'type' => 'array',
+						'description' => 'Registry identifiers of the widgets, e.g. ["e-heading"].',
 						'items' => [
 							'type' => 'string',
 						],
@@ -54,21 +54,13 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 			return $this->invalid_input_error();
 		}
 
-		$widget_type = $input['widget_type'];
+		$widget_types = $input['widget_type'];
 
-		if ( is_array( $widget_type ) ) {
-			return $this->execute_batch( $widget_type );
+		if ( is_string( $widget_types ) ) {
+			$widget_types = [ $widget_types ];
 		}
 
-		if ( ! is_string( $widget_type ) ) {
-			return $this->invalid_input_error();
-		}
-
-		return $this->resolve_widget_schema( sanitize_key( $widget_type ) );
-	}
-
-	private function execute_batch( array $widget_types ) {
-		if ( [] === $widget_types ) {
+		if ( ! is_array( $widget_types ) || [] === $widget_types ) {
 			return $this->invalid_input_error();
 		}
 
@@ -107,15 +99,6 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 				continue;
 			}
 
-			if ( null === $schema ) {
-				$unknown = $this->unknown_widget_error( $type );
-				$errors[ $type ] = [
-					'code' => $unknown->get_error_code(),
-					'message' => $unknown->get_error_message(),
-				];
-				continue;
-			}
-
 			$schemas[ $type ] = $schema;
 		}
 
@@ -125,11 +108,7 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function resolve_widget_schema( string $widget_type, ?array $parents_index = null ) {
-		if ( '' === $widget_type ) {
-			return $this->invalid_input_error();
-		}
-
+	private function resolve_widget_schema( string $widget_type, array $parents_index ) {
 		$config = Widget_Context_Helper::get_widget_config( $widget_type );
 
 		if ( ! $config || ! Widget_Context_Helper::is_widget_eligible_for_llm( $config ) ) {
@@ -150,23 +129,8 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 			);
 		}
 
-		if ( $is_v3 ) {
-			$schema = Widget_Context_Helper::build_widget_schema( $widget_type, $config );
-
-			if ( null === $schema ) {
-				return $this->unknown_widget_error( $widget_type );
-			}
-
-			return $schema;
-		}
-
-		if ( null === $parents_index ) {
-			$parents_index = Widget_Context_Helper::build_parents_index(
-				Widget_Context_Helper::get_llm_eligible_widgets()
-			);
-		}
-
-		return Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index );
+		return Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index )
+			?? $this->unknown_widget_error( $widget_type );
 	}
 
 	private function invalid_input_error(): \WP_Error {

@@ -18,7 +18,7 @@ Both assume the `{ $$type, value }` contract. LLM flows also export JSON Schema 
 - Server-side save/REST/MCP payloads before persist
 - Client-side editor validation before committing changes
 - CSS converter post-processing (`validate_props`)
-- Building MCP widget schemas (`get-widget-schema`)
+- Building MCP widget schemas (`get-widgets-schema`)
 
 ## Key concepts
 
@@ -68,7 +68,7 @@ Partial-null props bypass strict validation so per-field resets survive. `cleanu
 
 **`llm_guidance`** — sibling field on MCP widget schema root (not part of `to_json_schema()`). Built by `Llm_Guidance_Builder`.
 
-Prefer live MCP `get-widget-schema` over static docs.
+Prefer live MCP `get-widgets-schema` over static docs.
 
 ### Public API
 

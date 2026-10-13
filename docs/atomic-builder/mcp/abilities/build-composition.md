@@ -40,7 +40,7 @@ Not for editing existing elements by ID — use [manage-elements.md](manage-elem
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `element_config` | `{}` | `configuration-id` → plain widget settings (see `get-widget-schema`) |
+| `element_config` | `{}` | `configuration-id` → plain widget settings (see `get-widgets-schema`) |
 | `style` | `{}` | `configuration-id` → raw CSS declarations (`property` → value) |
 | `classes` | `{}` | `configuration-id` → array of global class **labels** |
 | `parent_id` | `document` | Parent element ID or `document` for root |
@@ -81,7 +81,7 @@ CSS `style` strings are converted to native atomic styles when possible; some sh
 
 ### element_config format
 
-Plain JSON matching `elementor/get-widget-schema` output — no `$$type` wrappers for standard props:
+Plain JSON matching `elementor/get-widgets-schema` output — no `$$type` wrappers for standard props:
 
 - Strings/enums: `"h2"`, `"https://example.com"`
 - Text (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`) — not `{ content, children }`

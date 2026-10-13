@@ -59,7 +59,7 @@ Record mapping a caller-chosen override key → `{ target, prop_key, label, grou
   - With `xml_structure` (create or update): the `configuration-id` you set on that element.
   - With `source_post_id`/`element_id` (create), or `update` without `xml_structure`: the real element id (from `elementor/get-page-structure`).
 - `prop_key`: identifies WHICH setting to expose. Meaning depends on the target:
-  - Raw widget / atomic element (`<e-heading>`, `<e-image>`, `<e-div-block>`, etc.): the setting name on that element (from `elementor/get-widget-schema`).
+  - Raw widget / atomic element (`<e-heading>`, `<e-image>`, `<e-div-block>`, etc.): the setting name on that element (from `elementor/get-widgets-schema`).
   - Nested `<e-component>` instance (expose-further): the inner component's own exposed override key (from `elementor/list-components` `overridable_props` for that component). The inner component must already expose the prop before you can re-expose it through the wrapper.
 - `label`: human-readable name shown to whoever configures an instance.
 - `group` (optional): label used to group related overrides together; defaults to "Default".

@@ -322,7 +322,7 @@ class Test_List_Components_Ability extends Elementor_Test_Base {
 
 		$origin_schema = $title_prop['origin_prop_schema'];
 		$this->assertArrayNotHasKey( '$$type', $origin_schema['properties'] ?? [],
-			'origin_prop_schema must be plain-value JSON schema (no $$type envelope), matching elementor/get-widget-schema.' );
+			'origin_prop_schema must be plain-value JSON schema (no $$type envelope), matching elementor/get-widgets-schema.' );
 		$this->assertStringNotContainsString( '"$$type"', wp_json_encode( $origin_schema ),
 			'origin_prop_schema must not contain any $$type envelopes anywhere in the tree.' );
 	}

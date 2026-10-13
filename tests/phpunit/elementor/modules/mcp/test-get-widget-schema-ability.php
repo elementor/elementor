@@ -52,10 +52,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->given_widget_manager_with_registered_heading();
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'heading' ] );
-
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_v3_not_supported', $result->get_error_code() );
+		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'heading' ) );
 	}
 
 	public function test_execute__returns_standardized_heading_schema_when_experiment_active() {
@@ -64,7 +61,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'heading' ] );
+		$result = $this->execute_for_schema( 'heading' );
 
 		$this->assertIsArray( $result );
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
@@ -85,7 +82,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'container' ] );
+		$result = $this->execute_for_schema( 'container' );
 
 		$this->assertIsArray( $result );
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
@@ -99,7 +96,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act
-		$result = $this->ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+		$result = $this->execute_for_schema( 'e-flexbox' );
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -113,7 +110,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act
-		$result = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
+		$result = $this->execute_for_schema( 'e-heading' );
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -128,9 +125,8 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'button' ] );
+		$result = $this->execute_for_schema( 'button' );
 
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'text', $result['properties'] );
 		$this->assertArrayHasKey( 'link', $result['properties'] );
@@ -143,24 +139,14 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'heading' ] );
-
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_v3_not_supported', $result->get_error_code() );
+		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'heading' ) );
 	}
 
 	public function test_execute__rejects_v3_widget_type() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_fake_v3_widget( 'fake-v3' );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'fake-v3' ] );
-
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_v3_not_supported', $result->get_error_code() );
-		$data = $result->get_error_data();
-		$this->assertSame( \WP_Http::BAD_REQUEST, $data['status'] );
-		$this->assertSame( 'fake-v3', $data['widget_type'] );
-		$this->assertSame( 'v3', $data['version'] );
+		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'fake-v3' ) );
 	}
 
 	public function test_execute__returns_v3_fallback_for_allowlisted_widget() {
@@ -170,7 +156,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 			'layout' => [ 'type' => 'select', 'options' => [ 'horizontal' => 'Horizontal', 'vertical' => 'Vertical' ] ],
 		] );
 
-		$result = $this->ability->execute( [ 'widget_type' => 'nav-menu' ] );
+		$result = $this->execute_for_schema( 'nav-menu' );
 
 		$this->assertIsArray( $result );
 		$this->assertSame( 'object', $result['type'] );
@@ -186,10 +172,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	public function test_execute__returns_404_for_unknown_widget_type() {
 		$this->act_as_admin();
 
-		$result = $this->ability->execute( [ 'widget_type' => 'does-not-exist-anywhere' ] );
-
-		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_not_found', $result->get_error_code() );
+		$this->assertSame( 'elementor_not_found', $this->execute_for_error_code( 'does-not-exist-anywhere' ) );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {
@@ -205,8 +188,8 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	public function test_execute__batch_returns_each_schema_in_single_call_shape() {
 		$this->act_as_admin();
 
-		$heading = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
-		$flexbox = $this->ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+		$heading = $this->execute_for_schema( 'e-heading' );
+		$flexbox = $this->execute_for_schema( 'e-flexbox' );
 		$result = $this->ability->execute( [ 'widget_type' => [ 'e-heading', 'e-flexbox' ] ] );
 
 		$this->assertIsArray( $result );
@@ -219,7 +202,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_fake_v3_widget( 'fake-v3' );
 
-		$flexbox = $this->ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+		$flexbox = $this->execute_for_schema( 'e-flexbox' );
 		$result = $this->ability->execute( [
 			'widget_type' => [ 'e-flexbox', 'does-not-exist-anywhere', 'fake-v3' ],
 		] );
@@ -230,6 +213,17 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'fake-v3', $result['schemas'] );
 		$this->assertSame( 'elementor_not_found', $result['errors']['does-not-exist-anywhere']['code'] );
 		$this->assertSame( 'elementor_v3_not_supported', $result['errors']['fake-v3']['code'] );
+	}
+
+	public function test_execute__string_widget_type_returns_same_envelope_as_single_item_array() {
+		$this->act_as_admin();
+
+		$from_array = $this->ability->execute( [ 'widget_type' => [ 'e-heading' ] ] );
+		$result = $this->ability->execute( [ 'widget_type' => 'e-heading' ] );
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'e-heading', $result['schemas'] );
+		$this->assertEquals( $from_array, $result );
 	}
 
 	public function test_execute__batch_empty_array_returns_bad_request() {
@@ -250,6 +244,24 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_input', $result->get_error_code() );
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	private function execute_for_schema( string $widget_type ): array {
+		$result = $this->ability->execute( [ 'widget_type' => [ $widget_type ] ] );
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( $widget_type, $result['schemas'], wp_json_encode( $result['errors'] ) );
+
+		return $result['schemas'][ $widget_type ];
+	}
+
+	private function execute_for_error_code( string $widget_type ): string {
+		$result = $this->ability->execute( [ 'widget_type' => [ $widget_type ] ] );
+
+		$this->assertIsArray( $result );
+		$this->assertArrayNotHasKey( $widget_type, $result['schemas'] );
+
+		return $result['errors'][ $widget_type ]['code'];
 	}
 
 	private function given_widget_manager_with_fake_v3_widget( string $type, array $controls = null ): void {
