@@ -23,6 +23,7 @@ class Test_Ability_Annotations extends Elementor_Test_Base {
 		'elementor/manage-global-variable',
 		'elementor/publish-document',
 		'elementor/reorder-classes',
+		'elementor/update-page-settings',
 	];
 
 	public function test_tools__declare_readonly_and_destructive_explicitly() {
