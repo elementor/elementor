@@ -14,52 +14,52 @@ import { ImageOptimizeTrigger, type ImagePromotion } from './image-optimize-trig
 import { SelectControl } from './select-control';
 
 type ImageControlProps = {
-  sizes: { label: string; value: string }[];
-  label?: string;
-  promotion?: ImagePromotion;
+	sizes: { label: string; value: string }[];
+	label?: string;
+	promotion?: ImagePromotion;
 };
 
 export const ImageControl = createControl(
-  ( { sizes, promotion, label = __( 'Image', 'elementor' ) }: ImageControlProps ) => {
-    const propContext = useBoundProp( imagePropTypeUtil );
+	( { sizes, promotion, label = __( 'Image', 'elementor' ) }: ImageControlProps ) => {
+		const propContext = useBoundProp( imagePropTypeUtil );
 
-    return (
-      <PropProvider { ...propContext }>
-        <Stack gap={ 1.5 }>
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <ControlLabel>{ label }</ControlLabel>
-            <ImageOptimizeTrigger promotion={ promotion } />
-          </Stack>
-          <ImageSrcControl label={ label } />
-          <Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
-            <Grid item xs={ 6 }>
-              <ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
-            </Grid>
-            <Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-              <ImageSizeControl sizes={ sizes } />
-            </Grid>
-          </Grid>
-        </Stack>
-      </PropProvider>
-    );
-  }
+		return (
+			<PropProvider { ...propContext }>
+				<Stack gap={ 1.5 }>
+					<Stack direction="row" alignItems="center" justifyContent="space-between">
+						<ControlLabel>{ label }</ControlLabel>
+						<ImageOptimizeTrigger promotion={ promotion } />
+					</Stack>
+					<ImageSrcControl label={ label } />
+					<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
+						<Grid item xs={ 6 }>
+							<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+						</Grid>
+						<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
+							<ImageSizeControl sizes={ sizes } />
+						</Grid>
+					</Grid>
+				</Stack>
+			</PropProvider>
+		);
+	}
 );
 
 const ImageSrcControl = ( { label }: { label: string } ) => {
-  const { data: allowSvgUpload } = useUnfilteredFilesUpload();
-  const mediaTypes: MediaType[] = allowSvgUpload ? [ 'image', 'svg' ] : [ 'image' ];
+	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
+	const mediaTypes: MediaType[] = allowSvgUpload ? [ 'image', 'svg' ] : [ 'image' ];
 
-  return (
-    <PropKeyProvider bind={ 'src' }>
-      <ImageMediaControl mediaTypes={ mediaTypes } label={ label } />
-    </PropKeyProvider>
-  );
+	return (
+		<PropKeyProvider bind={ 'src' }>
+			<ImageMediaControl mediaTypes={ mediaTypes } label={ label } />
+		</PropKeyProvider>
+	);
 };
 
 const ImageSizeControl = ( { sizes }: { sizes: ImageControlProps[ 'sizes' ] } ) => {
-  return (
-    <PropKeyProvider bind={ 'size' }>
-      <SelectControl options={ sizes } />
-    </PropKeyProvider>
-  );
+	return (
+		<PropKeyProvider bind={ 'size' }>
+			<SelectControl options={ sizes } />
+		</PropKeyProvider>
+	);
 };

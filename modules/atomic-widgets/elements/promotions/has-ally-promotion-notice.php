@@ -47,8 +47,9 @@ trait Has_Ally_Promotion_Notice {
 		$notice_data = $this->get_ally_promotion_notice_data();
 
 		return [
+			'label' => esc_html__( 'Improve', 'elementor' ),
 			'title' => esc_html__( 'Make your site accessible', 'elementor' ),
-			'content' => esc_html__( 'Ally detects common accessibility issues across your site and guides each fix.', 'elementor' ),
+			'content' => esc_html__( 'Ally detects common accessibility issues across your site and helps you fix them.', 'elementor' ),
 			'buttonText' => $notice_data['button_text'],
 			'buttonUrl' => $notice_data['button_url'],
 			'dismissible' => self::get_ally_notice_hint_key(),
@@ -65,7 +66,7 @@ trait Has_Ally_Promotion_Notice {
 		return Notice_Control::bind_to( self::get_ally_notice_prop_key() )
 			->set_notice_type( 'info' )
 			->set_heading( esc_html__( 'Make your site accessible', 'elementor' ) )
-			->set_content( esc_html__( 'Ally detects common accessibility issues across your site and guides each fix.', 'elementor' ) )
+			->set_content( esc_html__( 'Ally detects common accessibility issues across your site and helps you fix them.', 'elementor' ) )
 			->set_dismissible( self::get_ally_notice_hint_key() )
 			->set_button_text( $notice_data['button_text'] )
 			->set_button_url( $notice_data['button_url'] );

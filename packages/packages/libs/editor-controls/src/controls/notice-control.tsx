@@ -12,121 +12,104 @@ type NoticeType = 'info' | 'success' | 'warning' | 'danger';
 // Alert's own class. Repeating the `.MuiAlertTitle-root` class here matches that selector's specificity
 // so this override applies reliably regardless of stylesheet insertion order.
 const NoticeTitle = styled( AlertTitle )( {
-  '&.MuiAlertTitle-root.MuiAlertTitle-root': {
-    marginBottom: 4,
-    fontStyle: 'italic',
-  },
+	'&.MuiAlertTitle-root.MuiAlertTitle-root': {
+		marginBottom: 4,
+		fontStyle: 'italic',
+	},
 } );
 
 type NoticeControlProps = {
-  noticeType?: NoticeType;
-  heading?: string;
-  content?: string;
-  dismissible?: string;
-  buttonText?: string;
-  buttonUrl?: string;
+	noticeType?: NoticeType;
+	heading?: string;
+	content?: string;
+	dismissible?: string;
+	buttonText?: string;
+	buttonUrl?: string;
 };
 
 type ExtendedWindow = Window & {
-  elementor?: {
-    config?: {
-      user?: {
-        dismissed_editor_notices?: string[];
-      };
-    };
-  };
+	elementor?: {
+		config?: {
+			user?: {
+				dismissed_editor_notices?: string[];
+			};
+		};
+	};
 };
 
 export const markNoticeAsDismissedInSession = ( dismissId: string ) => {
-  const dismissedNotices = ( window as ExtendedWindow ).elementor?.config?.user
-    ?.dismissed_editor_notices;
+	const dismissedNotices = ( window as ExtendedWindow ).elementor?.config?.user?.dismissed_editor_notices;
 
-  if ( dismissedNotices && ! dismissedNotices.includes( dismissId ) ) {
-    dismissedNotices.push( dismissId );
-  }
+	if ( dismissedNotices && ! dismissedNotices.includes( dismissId ) ) {
+		dismissedNotices.push( dismissId );
+	}
 };
 
 export const isNoticeDismissed = ( dismissId?: string ) => {
-  if ( ! dismissId ) {
-    return false;
-  }
+	if ( ! dismissId ) {
+		return false;
+	}
 
-  const dismissedNotices = ( window as ExtendedWindow ).elementor?.config?.user
-    ?.dismissed_editor_notices;
+	const dismissedNotices = ( window as ExtendedWindow ).elementor?.config?.user?.dismissed_editor_notices;
 
-  return !! dismissedNotices?.includes( dismissId );
+	return !! dismissedNotices?.includes( dismissId );
 };
 
 export const NoticeControl = createControl(
-  ( {
-    noticeType = 'info',
-    heading,
-    content,
-    dismissible,
-    buttonText,
-    buttonUrl,
-  }: NoticeControlProps ) => {
-    const [ isDismissed, setIsDismissed ] = useState( () => isNoticeDismissed( dismissible ) );
+	( { noticeType = 'info', heading, content, dismissible, buttonText, buttonUrl }: NoticeControlProps ) => {
+		const [ isDismissed, setIsDismissed ] = useState( () => isNoticeDismissed( dismissible ) );
 
-    if ( isDismissed || ! content ) {
-      return null;
-    }
+		if ( isDismissed || ! content ) {
+			return null;
+		}
 
-    const severity: AlertProps[ 'severity' ] = noticeType === 'danger' ? 'error' : noticeType;
-    const icon = noticeType === 'info' ? <BulbIcon fontSize="inherit" /> : undefined;
+		const severity: AlertProps[ 'severity' ] = noticeType === 'danger' ? 'error' : noticeType;
+		const icon = noticeType === 'info' ? <BulbIcon fontSize="inherit" /> : undefined;
 
-    const handleDismiss = () => {
-      setIsDismissed( true );
+		const handleDismiss = () => {
+			setIsDismissed( true );
 
-      if ( ! dismissible ) {
-        return;
-      }
+			if ( ! dismissible ) {
+				return;
+			}
 
-      markNoticeAsDismissedInSession( dismissible );
+			markNoticeAsDismissedInSession( dismissible );
 
-      ajax
-        .load( {
-          action: 'dismissed_editor_notices',
-          unique_id: `dismiss-editor-notice-${ dismissible }`,
-          data: { dismissId: dismissible },
-        } )
-        .catch( () => {} );
-    };
+			ajax.load( {
+				action: 'dismissed_editor_notices',
+				unique_id: `dismiss-editor-notice-${ dismissible }`,
+				data: { dismissId: dismissible },
+			} ).catch( () => {} );
+		};
 
-    const handleActionClick = () => {
-      setIsDismissed( true );
+		const handleActionClick = () => {
+			setIsDismissed( true );
 
-      if ( dismissible ) {
-        markNoticeAsDismissedInSession( dismissible );
-      }
-    };
+			if ( dismissible ) {
+				markNoticeAsDismissedInSession( dismissible );
+			}
+		};
 
-    return (
-      <Alert
-        variant="outlined"
-        severity={ severity }
-        icon={ icon }
-        size="small"
-        onClose={ handleDismiss }
-      >
-        { heading && <NoticeTitle>{ heading }</NoticeTitle> }
-        <Typography variant="caption" color="textSecondary" sx={ { fontStyle: 'italic' } }>
-          { content }
-        </Typography>
-        { buttonText && buttonUrl && (
-          <AlertAction
-            variant="contained"
-            color={ severity }
-            target="_blank"
-            rel="noopener noreferrer"
-            href={ buttonUrl }
-            onClick={ handleActionClick }
-            sx={ { mt: 2 } }
-          >
-            { buttonText }
-          </AlertAction>
-        ) }
-      </Alert>
-    );
-  }
+		return (
+			<Alert variant="outlined" severity={ severity } icon={ icon } size="small" onClose={ handleDismiss }>
+				{ heading && <NoticeTitle>{ heading }</NoticeTitle> }
+				<Typography variant="caption" color="textSecondary" sx={ { fontStyle: 'italic' } }>
+					{ content }
+				</Typography>
+				{ buttonText && buttonUrl && (
+					<AlertAction
+						variant="contained"
+						color={ severity }
+						target="_blank"
+						rel="noopener noreferrer"
+						href={ buttonUrl }
+						onClick={ handleActionClick }
+						sx={ { mt: 2 } }
+					>
+						{ buttonText }
+					</AlertAction>
+				) }
+			</Alert>
+		);
+	}
 );

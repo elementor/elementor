@@ -46,7 +46,7 @@ const controlProps = {
 
 describe( 'ImageOptimizeTrigger', () => {
 	beforeEach( () => {
-		jest.mocked( ImageMediaControl ).mockImplementation( () => null );
+		jest.mocked( ImageMediaControl ).mockImplementation( () => <></> );
 		jest.mocked( ajax.load ).mockResolvedValue( {} );
 		( window as unknown as { elementor: unknown } ).elementor = {
 			config: { user: { dismissed_editor_notices: [] } },
@@ -55,6 +55,14 @@ describe( 'ImageOptimizeTrigger', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
+	} );
+
+	it( 'should use the promotion label when one is provided', () => {
+		// Act.
+		renderControl( <ImageControl sizes={ [] } promotion={ { ...promotion, label: 'Improve' } } />, controlProps );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Improve' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should show the promotion title when one is provided', () => {
@@ -69,6 +77,34 @@ describe( 'ImageOptimizeTrigger', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Make your site accessible' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should close on escape without dismissing', () => {
+		// Arrange.
+		renderControl( <ImageControl sizes={ [] } promotion={ promotion } />, controlProps );
+		const trigger = screen.getByRole( 'button', { name: 'Optimize' } );
+		fireEvent.click( trigger );
+
+		// Act.
+		fireEvent.keyDown( document, { key: 'Escape' } );
+
+		// Assert.
+		expect( trigger ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( ajax.load ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should close when clicking outside without dismissing', () => {
+		// Arrange.
+		renderControl( <ImageControl sizes={ [] } promotion={ promotion } />, controlProps );
+		const trigger = screen.getByRole( 'button', { name: 'Optimize' } );
+		fireEvent.click( trigger );
+
+		// Act.
+		fireEvent.mouseDown( document.body );
+
+		// Assert.
+		expect( trigger ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( ajax.load ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should hide the popover without dismissing when close is clicked', () => {

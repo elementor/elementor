@@ -154,7 +154,8 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		$this->assertIsArray( $promotion );
 		$this->assertSame( 'ally_atomic_notice', $promotion['dismissible'] );
 		$this->assertSame( 'Make your site accessible', $promotion['title'] );
-		$this->assertSame( 'Ally detects common accessibility issues across your site and guides each fix.', $promotion['content'] );
+		$this->assertSame( 'Improve', $promotion['label'] );
+		$this->assertSame( 'Ally detects common accessibility issues across your site and helps you fix them.', $promotion['content'] );
 		$this->assertSame( 'custom', $title_control->jsonSerialize()['value']['meta']['layout'] );
 
 		$button_url = $promotion['buttonUrl'];

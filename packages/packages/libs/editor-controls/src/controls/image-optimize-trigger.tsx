@@ -19,6 +19,7 @@ type InfotipWithPopperProps = React.ComponentProps< typeof Infotip > & {
 const OptimizeInfotip = Infotip as React.FC< InfotipWithPopperProps >;
 
 export type ImagePromotion = {
+	label?: string;
 	title?: string;
 	content: string;
 	buttonText?: string;
@@ -208,7 +209,7 @@ export const ImageOptimizeTrigger = ( { promotion }: { promotion?: ImagePromotio
 					},
 				} }
 			>
-				{ __( 'Optimize', 'elementor' ) }
+				{ promotion.label || __( 'Optimize', 'elementor' ) }
 			</Button>
 		</OptimizeInfotip>
 	);
