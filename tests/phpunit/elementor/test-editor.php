@@ -133,6 +133,7 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 			'elementor-icons',
 			'wp-auth-check',
 			'google-font-roboto',
+			'google-font-dm-sans',
 
 			'elementor-editor',
 		];

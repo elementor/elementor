@@ -478,6 +478,13 @@ final class Editor_Loader {
 			ELEMENTOR_VERSION
 		);
 
+		wp_register_style(
+			'google-font-dm-sans',
+			'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		$source_map = $this->styles_source_map();
 
 		foreach ( $source_map as $handle => $style ) {
@@ -509,6 +516,7 @@ final class Editor_Loader {
 				'elementor-icons',
 				'wp-auth-check',
 				'google-font-roboto',
+				'google-font-dm-sans',
 				'flatpickr',
 				'pickr',
 			],
