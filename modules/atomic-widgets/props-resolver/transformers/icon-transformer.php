@@ -51,10 +51,7 @@ class Icon_Transformer extends Transformer_Base {
 		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
 
 		if ( ! is_string( $html ) || '' === $html ) {
-			return [
-				'html' => '',
-				'url' => null,
-			];
+			return $this->transform_default_svg();
 		}
 
 		return [

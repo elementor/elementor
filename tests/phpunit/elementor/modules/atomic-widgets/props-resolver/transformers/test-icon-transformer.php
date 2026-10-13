@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver\Transformers;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Icon_Transformer;
@@ -150,10 +151,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( [
-			'html' => '',
-			'url' => null,
-		], $result );
+		$this->assert_default_svg_fallback( $result );
 	}
 
 	public function test_get_editor_config__exposes_allowed_files_and_json_url() {
@@ -239,7 +237,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertNull( $result['url'] );
 	}
 
-	public function test_transform__returns_empty_html_for_unhandled_library() {
+	public function test_transform__falls_back_to_default_svg_when_no_filter_returns_markup() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
@@ -251,8 +249,13 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( '', $result['html'] );
-		$this->assertNull( $result['url'] );
+		$this->assert_default_svg_fallback( $result );
+	}
+
+	private function assert_default_svg_fallback( array $result ): void {
+		$this->assertStringContainsString( '<svg', $result['html'] );
+		$this->assertStringContainsString( 'M24.9999 4.31543', $result['html'] );
+		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
 	}
 
 	private function create_filtered_json_dir(): string {

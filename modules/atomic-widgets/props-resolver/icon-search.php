@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Libraries as Custom_Icon_Resolver;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -68,7 +66,7 @@ class Icon_Search {
 			$queries = [ '' ];
 		}
 
-		$custom_library_labels = Custom_Icon_Resolver::get_custom_libraries();
+		$custom_library_labels = Icon_Libraries::get_custom_libraries();
 		$truncated_custom_libraries = [];
 		$entries = self::get_entries( $library, $category, array_keys( $custom_library_labels ), $truncated_custom_libraries );
 
@@ -124,7 +122,7 @@ class Icon_Search {
 				continue;
 			}
 
-			$resolved = Custom_Icon_Resolver::resolve_library_values( $custom_library );
+			$resolved = Icon_Libraries::resolve_library_values( $custom_library );
 
 			if ( $resolved['truncated'] ) {
 				$truncated_custom_libraries[] = $custom_library;
@@ -188,7 +186,7 @@ class Icon_Search {
 	}
 
 	private static function is_renderable( array $entry ): bool {
-		return empty( $entry['is_custom'] ) || Custom_Icon_Resolver::is_renderable_value( $entry['library'], $entry['value'] );
+		return empty( $entry['is_custom'] ) || Icon_Libraries::is_renderable_value( $entry['library'], $entry['value'] );
 	}
 
 	/**

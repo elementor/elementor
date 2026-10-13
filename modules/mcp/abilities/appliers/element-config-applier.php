@@ -9,7 +9,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Libraries as Custom_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Libraries;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
@@ -382,7 +382,7 @@ class Element_Config_Applier {
 			$warnings->add(
 				'icon_not_found',
 				sprintf(
-					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so a placeholder renders. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
 					$key,
 					$element_type,
 					$value,
@@ -398,7 +398,7 @@ class Element_Config_Applier {
 			return;
 		}
 
-		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries();
+		$custom_libraries = Icon_Libraries::get_custom_libraries();
 
 		if ( ! isset( $custom_libraries[ $library ] ) ) {
 			$warnings->add(
@@ -415,11 +415,11 @@ class Element_Config_Applier {
 			return;
 		}
 
-		if ( ! Custom_Icon_Resolver::is_renderable_value( $library, $value ) ) {
+		if ( ! Icon_Libraries::is_renderable_value( $library, $value ) ) {
 			$warnings->add(
 				'icon_not_found',
 				sprintf(
-					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so a placeholder renders. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
 					$key,
 					$element_type,
 					$value,
