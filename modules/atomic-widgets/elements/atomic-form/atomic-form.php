@@ -162,7 +162,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_dependencies( $redirect_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' )
-				->description( 'Absolute http(s) URL to navigate to after a successful submission. Used only when "redirect" is in actions-after-submit. Supports field shortcodes like [field id="email"], whose values are URL-encoded.' ),
+				->description( 'Absolute URL (http, https, ftp or ftps) to navigate to after a successful submission. Used only when "redirect" is in actions-after-submit. Supports field shortcodes like [field id="email"], whose values are URL-encoded.' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
 
