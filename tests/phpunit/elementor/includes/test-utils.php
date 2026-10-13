@@ -4,6 +4,7 @@ namespace Elementor\Testing\Includes;
 use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
@@ -349,7 +350,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		\ElementorEditorTesting\Kses_Test_Expectations::assert_same_wp_kses_plain_string( $this, $value, 'valuealert(1)', 'value' );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string( $this, $value, 'valuealert(1)', 'value' );
 	}
 
 	public function test_get_super_global_value__returns_sanitized_array() {
@@ -361,7 +362,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals(
-			[ \ElementorEditorTesting\Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
+			[ Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
 			$value
 		);
 	}
@@ -375,7 +376,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals(
-			[ 'key' => \ElementorEditorTesting\Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
+			[ 'key' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
 			$value
 		);
 	}
