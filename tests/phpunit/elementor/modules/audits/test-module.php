@@ -89,8 +89,9 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertNotContains( 'editor-floating-panels', $packages );
 	}
 
-	public function test_packages_filter_adds_floating_panels_and_audits_when_experiment_is_active() {
+	public function test_packages_filter_adds_floating_panels_and_audits_for_admin_when_experiment_is_active() {
 		// Arrange.
+		$this->act_as_admin();
 		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
 		// Act.
@@ -100,6 +101,20 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert.
 		$this->assertContains( 'editor-floating-panels', $packages );
 		$this->assertContains( 'editor-audits', $packages );
+	}
+
+	public function test_packages_filter_does_not_add_audits_for_non_admin_when_experiment_is_active() {
+		// Arrange.
+		$this->act_as_editor();
+		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		new Module();
+		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
+
+		// Assert.
+		$this->assertNotContains( 'editor-audits', $packages );
+		$this->assertNotContains( 'editor-floating-panels', $packages );
 	}
 
 	public function test_inline_config_is_not_printed_when_experiment_is_inactive() {
@@ -115,8 +130,23 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEmpty( wp_scripts()->get_inline_script_data( 'elementor-v2-editor-audits', 'before' ) );
 	}
 
-	public function test_inline_config_is_printed_when_editor_assets_enqueue_and_experiment_is_active() {
+	public function test_inline_config_is_not_printed_for_non_admin_when_experiment_is_active() {
 		// Arrange.
+		$this->act_as_editor();
+		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		new Module();
+		wp_register_script( 'elementor-v2-editor-audits', 'http://example.test/editor-audits.js', [], '1.0', true );
+
+		// Act.
+		do_action( 'elementor/editor/v2/scripts/enqueue' );
+
+		// Assert.
+		$this->assertEmpty( wp_scripts()->get_inline_script_data( 'elementor-v2-editor-audits', 'before' ) );
+	}
+
+	public function test_inline_config_is_printed_for_admin_when_editor_assets_enqueue_and_experiment_is_active() {
+		// Arrange.
+		$this->act_as_admin();
 		Plugin::$instance->experiments->set_feature_default_state( Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		new Module();
 		wp_register_script( 'elementor-v2-editor-audits', 'http://example.test/editor-audits.js', [], '1.0', true );
