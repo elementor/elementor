@@ -21,7 +21,7 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	const CONTROLS = [ 'color_menu_item' => [ 'type' => 'color' ] ];
 
-	public function test_get_map__returns_compiled_map_when_experiment_and_atomic_active() {
+	public function test_get_map__returns_compiled_map_when_experiment_active() {
 		// Arrange.
 		$registry = $this->registry();
 
@@ -42,18 +42,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 		// Assert.
 		$this->assertNull( $map );
-	}
-
-	public function test_get_map__null_when_atomic_inactive() {
-		// Arrange.
-		$registry = $this->registry( [ 'is_atomic_active' => false ] );
-
-		// Act.
-		$map = $registry->get_map( self::WIDGET_TYPE );
-
-		// Assert.
-		$this->assertNull( $map );
-		$this->assertFalse( $registry->is_supported( self::WIDGET_TYPE ) );
 	}
 
 	public function test_get_map__null_without_registered_map() {
@@ -139,7 +127,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
 		$options = array_merge( [
 			'is_experiment_active' => true,
-			'is_atomic_active' => true,
 			'maps' => [ self::WIDGET_TYPE => $this->map() ],
 			'controls' => self::CONTROLS,
 		], $overrides );
@@ -148,7 +135,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		return new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler( [ 'color' => Color_Prop_Type::make() ] ),
 			static fn() => $options['is_experiment_active'],
-			static fn() => $options['is_atomic_active'],
 			$options['get_controls'] ?? static fn() => $controls,
 			$options['maps']
 		);
