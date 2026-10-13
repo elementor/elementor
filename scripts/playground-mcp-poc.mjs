@@ -190,6 +190,48 @@ async function main() {
 			},
 			renderMarker: 'elementor-widget-nav-menu',
 		},
+		progress: {
+			pageTitle: 'MCP Progress Bar POC',
+			xml_structure: '<progress configuration-id="p1"/>',
+			element_config: {
+				p1: {
+					title: 'Design skills',
+					percent: { size: 72, unit: '%' },
+					inner_text: 'Advanced',
+					display_percentage: 'show',
+				},
+			},
+			style: {
+				p1: 'background-color: #1565c0; height: 18px; track { background-color: #e3f2fd; } title { color: #263238; }',
+			},
+			renderMarker: 'elementor-progress',
+		},
+		'social-icons': {
+			pageTitle: 'MCP Social Icons POC',
+			xml_structure: '<social-icons configuration-id="s1"/>',
+			element_config: {
+				s1: {
+					shape: 'circle',
+					columns: '3',
+					align: 'center',
+				},
+			},
+			style: {
+				s1: 'font-size: 22px; background-color: #1e88e5; color: #ffffff;',
+			},
+			renderMarker: 'elementor-social-icons',
+		},
+		shortcode: {
+			pageTitle: 'MCP Shortcode POC',
+			xml_structure: '<shortcode configuration-id="sc1"/>',
+			element_config: {
+				sc1: {
+					shortcode: '[year]',
+				},
+			},
+			style: {},
+			renderMarker: 'elementor-shortcode',
+		},
 	};
 	const scenario = scenarios[ widget ];
 	if ( ! scenario ) {

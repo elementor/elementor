@@ -80,3 +80,4 @@ docker-output/
 .wp-env.override.json
 tests/wp-env/plugins/
 .playground-mcp-poc-data/
+/composer

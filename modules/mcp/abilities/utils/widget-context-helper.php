@@ -37,7 +37,12 @@ class Widget_Context_Helper {
 
 	const V3_ALLOWLIST = [
 		'counter',
+		'image-carousel',
+		'image-gallery',
 		'nav-menu',
+		'progress',
+		'shortcode',
+		'social-icons',
 		'theme-post-content',
 		'theme-post-title',
 		'theme-post-featured-image',
