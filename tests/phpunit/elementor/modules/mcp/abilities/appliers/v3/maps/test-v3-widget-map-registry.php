@@ -17,9 +17,9 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	const WIDGET_TYPE = 'nav-menu';
 
-	public function test_is_supported__true_when_map_compiles_and_atomic_active() {
+	public function test_is_supported__true_when_map_compiles() {
 		// Arrange.
-		$registry = $this->registry( true );
+		$registry = $this->registry();
 
 		// Act.
 		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
@@ -28,20 +28,9 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		$this->assertTrue( $is_supported );
 	}
 
-	public function test_is_supported__false_when_atomic_inactive() {
-		// Arrange.
-		$registry = $this->registry( false );
-
-		// Act.
-		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
-
-		// Assert.
-		$this->assertFalse( $is_supported );
-	}
-
 	public function test_is_supported__false_without_registered_map() {
 		// Arrange.
-		$registry = $this->registry( true, [] );
+		$registry = $this->registry( [] );
 
 		// Act.
 		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
@@ -52,7 +41,7 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	public function test_is_supported__false_when_map_does_not_compile() {
 		// Arrange.
-		$registry = $this->registry( true, null, [] );
+		$registry = $this->registry( null, [] );
 
 		// Act.
 		$is_supported = $registry->is_supported( self::WIDGET_TYPE );
@@ -61,14 +50,13 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		$this->assertFalse( $is_supported );
 	}
 
-	private function registry( bool $is_atomic_active, ?array $maps = null, ?array $controls = null ): V3_Widget_Map_Registry {
+	private function registry( ?array $maps = null, ?array $controls = null ): V3_Widget_Map_Registry {
 		$maps = $maps ?? [ self::WIDGET_TYPE => $this->map() ];
 		$controls = $controls ?? [ 'color_menu_item' => [ 'type' => 'color' ] ];
 
 		return new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler( [ 'color' => Color_Prop_Type::make() ] ),
 			static fn() => true,
-			static fn() => $is_atomic_active,
 			static fn() => $controls,
 			$maps
 		);
