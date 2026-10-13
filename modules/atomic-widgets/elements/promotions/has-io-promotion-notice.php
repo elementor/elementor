@@ -39,12 +39,23 @@ trait Has_Io_Promotion_Notice {
 		];
 	}
 
-	protected function get_io_promotion_notice_control(): ?Notice_Control {
-		if ( ! Hints::should_display_hint( self::get_io_notice_hint_key() ) ) {
+	protected function get_io_promotion_trigger(): ?array {
+		if ( ! $this->should_display_io_promotion() ) {
 			return null;
 		}
 
-		if ( Hints::is_plugin_active( self::get_io_notice_plugin_slug() ) ) {
+		$notice_data = $this->get_io_promotion_notice_data();
+
+		return [
+			'content' => $notice_data['content'],
+			'buttonText' => $notice_data['button_text'],
+			'buttonUrl' => $notice_data['button_url'],
+			'dismissible' => 'image_optimizer_hint',
+		];
+	}
+
+	protected function get_io_promotion_notice_control(): ?Notice_Control {
+		if ( ! $this->should_display_io_promotion() ) {
 			return null;
 		}
 
@@ -56,6 +67,11 @@ trait Has_Io_Promotion_Notice {
 			->set_dismissible( 'image_optimizer_hint' )
 			->set_button_text( $notice_data['button_text'] )
 			->set_button_url( $notice_data['button_url'] );
+	}
+
+	private function should_display_io_promotion(): bool {
+		return Hints::should_display_hint( self::get_io_notice_hint_key() )
+			&& ! Hints::is_plugin_active( self::get_io_notice_plugin_slug() );
 	}
 
 	private function get_io_promotion_notice_data(): array {
