@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
 import { type Audit, type AuditViolation } from '../types';
+import { hasAltTextImages, walkAltTextImageSources } from '../utils/alt-text-image-sources';
 import { hasMeaningfulAlt, isImageSourcePresent } from '../utils/image-alt';
-import { hasPageImages, walkImageLikeSources } from '../utils/image-like-sources';
 
 export const audit: Audit = {
 	id: 'audits/images-alt-text',
@@ -13,7 +13,7 @@ export const audit: Audit = {
 	severity: 'error',
 	weight: 10,
 	evaluate: ( ctx ) => {
-		if ( ! hasPageImages( ctx.elements.tree ) ) {
+		if ( ! hasAltTextImages( ctx.elements.tree ) ) {
 			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
 		}
 
@@ -22,7 +22,7 @@ export const audit: Audit = {
 		const failedWidgetIds = new Set< string >();
 		let missingAltImageCount = 0;
 
-		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {
+		walkAltTextImageSources( ctx.elements.tree, ( { node, media } ) => {
 			if ( ! isImageSourcePresent( media ) || hasMeaningfulAlt( media, ctx.pageContext ) ) {
 				return;
 			}
