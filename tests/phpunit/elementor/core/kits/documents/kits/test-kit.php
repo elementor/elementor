@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Kits\Documents;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Files\CSS\Base as Post_CSS_Base;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Plugin;
@@ -14,8 +15,6 @@ class Test_Kit extends Elementor_Test_Base {
 	 */
 	private $kit;
 
-	private string $previous_css_print_method;
-
 	public function setUp(): void {
 		parent::setUp();
 
@@ -26,42 +25,57 @@ class Test_Kit extends Elementor_Test_Base {
 
 		// In the production environment 'JS' sends empty array, do the same.
 		add_post_meta( $kit->get_main_id(), '_elementor_data', '[]' );
-
-		$this->previous_css_print_method = get_option( 'elementor_css_print_method', 'external' );
-	}
-
-	public function tearDown(): void {
-		update_option( 'elementor_css_print_method', $this->previous_css_print_method );
-
-		parent::tearDown();
 	}
 
 	public function test_add_repeater_row_does_not_echo_post_css_with_internal_embedding() {
 		global $wp_styles;
 
+		$had_css_print_method_option = ( false !== get_option( 'elementor_css_print_method', false ) );
+		$previous_css_print_method = $had_css_print_method_option ? get_option( 'elementor_css_print_method' ) : null;
+
+		$original_wp_styles = $wp_styles;
 		$wp_styles = new \WP_Styles();
 
-		update_option( 'elementor_css_print_method', 'internal' );
+		try {
+			update_option( 'elementor_css_print_method', 'internal' );
 
-		Post_CSS::create( $this->kit->get_main_id() )->update();
+			$kit_id = $this->kit->get_main_id();
+			$post_css = Post_CSS::create( $kit_id );
+			$post_css->update();
+			$css_meta_before = $post_css->get_meta();
 
-		$item = [
-			'_id' => 'test_color_row',
-			'title' => 'Test color',
-			'color' => '#ff00ff',
-		];
+			$item = [
+				'_id' => 'test_color_row',
+				'title' => 'Test color',
+				'color' => '#ff00ff',
+			];
 
-		ob_start();
-		$this->kit->add_repeater_row( 'custom_colors', $item );
-		$unexpected_output = ob_get_clean();
+			ob_start();
+			$this->kit->add_repeater_row( 'custom_colors', $item );
+			$unexpected_output = ob_get_clean();
 
-		$this->assertSame( '', $unexpected_output, 'Kit post CSS must not be echoed when adding a repeater row.' );
+			$this->assertSame( '', $unexpected_output, 'Kit post CSS must not be echoed when adding a repeater row.' );
 
-		$refreshed_kit = Plugin::$instance->documents->get( $this->kit->get_main_id(), false );
-		$colors = $refreshed_kit->get_settings( 'custom_colors' );
+			$css_meta_after = Post_CSS::create( $kit_id )->get_meta();
 
-		$this->assertIsArray( $colors );
-		$this->assertContains( $item['_id'], array_column( $colors, '_id' ) );
+			$this->assertSame( Post_CSS_Base::CSS_STATUS_INLINE, $css_meta_after['status'] );
+			$this->assertNotEmpty( $css_meta_after['css'] );
+			$this->assertGreaterThan( $css_meta_before['time'], $css_meta_after['time'] );
+
+			$refreshed_kit = Plugin::$instance->documents->get( $kit_id, false );
+			$colors = $refreshed_kit->get_settings( 'custom_colors' );
+
+			$this->assertIsArray( $colors );
+			$this->assertContains( $item['_id'], array_column( $colors, '_id' ) );
+		} finally {
+			if ( $had_css_print_method_option ) {
+				update_option( 'elementor_css_print_method', $previous_css_print_method );
+			} else {
+				delete_option( 'elementor_css_print_method' );
+			}
+
+			$wp_styles = $original_wp_styles;
+		}
 	}
 
 	public function test_save__kits_revision_ensure_changed() {
