@@ -252,6 +252,14 @@ class Module extends BaseModule {
 	 * @since 2.0.0
 	 * @access protected
 	 */
+	private function discard_output_buffers() {
+		while ( ob_get_level() ) {
+			if ( ! @ob_end_clean() ) {
+				break;
+			}
+		}
+	}
+
 	private function send_success() {
 		$response = [
 			'success' => true,
@@ -262,9 +270,7 @@ class Module extends BaseModule {
 
 		$json = wp_json_encode( $response );
 
-		while ( ob_get_status() ) {
-			ob_end_clean();
-		}
+		$this->discard_output_buffers();
 
 		header( 'Content-Type: application/json; charset=UTF-8' );
 		echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -283,6 +289,8 @@ class Module extends BaseModule {
 	 * @param null $code
 	 */
 	private function send_error( $code = null ) {
+		$this->discard_output_buffers();
+
 		wp_send_json_error( [
 			'responses' => $this->response_data,
 		], $code );

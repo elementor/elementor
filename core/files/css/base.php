@@ -631,6 +631,10 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
+		if ( wp_doing_ajax() ) {
+			return true;
+		}
+
 		if ( ! is_admin() ) {
 			return false;
 		}

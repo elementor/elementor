@@ -312,6 +312,17 @@ class Test_Base extends Elementor_Test_Base {
 		unset( $_REQUEST['action'] );
 	}
 
+	public function test_should_skip_enqueue_during_ajax() {
+		add_filter( 'wp_doing_ajax', '__return_true' );
+
+		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
+
+		remove_filter( 'wp_doing_ajax', '__return_true' );
+	}
+
 	public function test_get_registered_enqueue_dependencies_filters_unregistered_handles() {
 		$css = $this->getMockBuilder( \Elementor\Core\Files\CSS\Post::class )
 			->setConstructorArgs( [ 0 ] )
