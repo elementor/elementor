@@ -118,6 +118,15 @@ export const ImageOptimizeTrigger = ( { promotion }: { promotion?: ImagePromotio
       .catch( () => {} );
   };
 
+  const hideForSession = () => {
+    setDismissed( true );
+    setOpen( false );
+
+    if ( promotion.dismissible ) {
+      markNoticeAsDismissedInSession( promotion.dismissible );
+    }
+  };
+
   return (
     <OptimizeInfotip
       arrow
@@ -162,6 +171,7 @@ export const ImageOptimizeTrigger = ( { promotion }: { promotion?: ImagePromotio
                 href={ promotion.buttonUrl }
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={ hideForSession }
                 sx={ { ml: 'auto' } }
               >
                 { promotion.buttonText }

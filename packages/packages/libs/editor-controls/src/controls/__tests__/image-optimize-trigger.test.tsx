@@ -71,6 +71,26 @@ describe( 'ImageOptimizeTrigger', () => {
     expect( ajax.load ).not.toHaveBeenCalled();
   } );
 
+  it( 'should hide the trigger for the session when the action is clicked', () => {
+    // Arrange.
+    renderControl( <ImageControl sizes={ [] } promotion={ promotion } />, controlProps );
+    fireEvent.click( screen.getByRole( 'button', { name: 'Optimize' } ) );
+
+    // Act.
+    fireEvent.click( screen.getByRole( 'link', { name: 'Install now' } ) );
+
+    // Assert.
+    expect( screen.queryByRole( 'button', { name: 'Optimize' } ) ).not.toBeInTheDocument();
+    expect( ajax.load ).not.toHaveBeenCalled();
+
+    const extendedWindow = window as unknown as {
+      elementor: { config: { user: { dismissed_editor_notices: string[] } } };
+    };
+    expect( extendedWindow.elementor.config.user.dismissed_editor_notices ).toContain(
+      'image_optimizer_hint'
+    );
+  } );
+
   it( 'should persist the dismissal and hide the trigger', () => {
     // Arrange.
     renderControl( <ImageControl sizes={ [] } promotion={ promotion } />, controlProps );
