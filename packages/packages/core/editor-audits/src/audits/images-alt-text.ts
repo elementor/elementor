@@ -17,6 +17,7 @@ export const audit: Audit = {
 			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
 		}
 
+		const isReady = ctx.pageContext.ally_plugin_active;
 		const violations: AuditViolation[] = [];
 		const failedWidgetIds = new Set< string >();
 		let missingAltImageCount = 0;
@@ -35,7 +36,7 @@ export const audit: Audit = {
 					elementId: node.id,
 					targetHint: 'element-settings',
 					label: __( 'Image is missing alt text.', 'elementor' ),
-					externalUrl: ctx.pageContext.ally_plugin_url,
+					externalUrl: isReady ? ctx.pageContext.ally_scan_url : ctx.pageContext.ally_plugin_url,
 					ctaLabel: __( 'Fix with Ally', 'elementor' ),
 				} );
 			}

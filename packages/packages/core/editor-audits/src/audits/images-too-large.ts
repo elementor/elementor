@@ -19,6 +19,7 @@ export const audit: Audit = {
 	severity: 'warning',
 	weight: 7,
 	evaluate: ( ctx ) => {
+		const isReady = ctx.pageContext.image_optimization_plugin_active;
 		const widgetMaxKb = new Map< string, number >();
 		let oversizedImageCount = 0;
 		let hasAnyImage = false;
@@ -65,7 +66,9 @@ export const audit: Audit = {
 				__( 'Image is %d KB (over 500 KB).', 'elementor' ),
 				kb
 			),
-			externalUrl: ctx.pageContext.image_optimization_plugin_url,
+			externalUrl: isReady
+				? ctx.pageContext.image_optimization_settings_url
+				: ctx.pageContext.image_optimization_plugin_url,
 			ctaLabel: __( 'Optimize all', 'elementor' ),
 		} ) );
 

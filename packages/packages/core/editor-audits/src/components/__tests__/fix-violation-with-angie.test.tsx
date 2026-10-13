@@ -93,4 +93,12 @@ describe( 'FixViolationWithAngie', () => {
 		// Assert.
 		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( '' );
 	} );
+
+	it( 'renders visible "Fix with Angie" text when variant is "button"', () => {
+		// Arrange & Act.
+		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } variant="button" /> );
+
+		// Assert.
+		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( 'Fix with Angie' );
+	} );
 } );

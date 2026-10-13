@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 
 import {
 	getModules,
+	MODULE_AGENT_DISCOVERY,
 	MODULE_BOT_ACCESS_CONTROL,
 	MODULE_LLMS_TXT,
 	MODULE_MARKDOWN_CONTENT,
@@ -15,10 +16,14 @@ import {
 	MODULE_STATUS_ENABLED,
 	MODULE_STATUS_WARNING,
 } from '../constants';
+import { useAgentDiscoverySettings } from '../hooks/use-agent-discovery-settings';
+import { useBotAccessSettings } from '../hooks/use-bot-access-settings';
 import { useLlmsSettings } from '../hooks/use-llms-settings';
-import { BotAccessPanel } from './bot-access-panel';
+import { useMarkdownSettings } from '../hooks/use-markdown-settings';
+import { AgentDiscoveryPanel } from './agent-discovery/agent-discovery-panel';
+import { BotAccessPanel } from './bot-access/bot-access-panel';
 import { LlmsTxtPanel } from './llms-txt/llms-txt-panel';
-import { MarkdownContentPanel } from './markdown-content-panel';
+import { MarkdownContentPanel } from './markdown-content/markdown-content-panel';
 import { ModuleAccordion } from './module-accordion';
 import { ModulesStatus } from './modules-status';
 import { PageTitle } from './page-title';
@@ -33,15 +38,6 @@ const scoreInfoIcon = (
 
 const modules = getModules();
 
-const placeholderPanelsById = {
-	[ MODULE_MARKDOWN_CONTENT ]: MarkdownContentPanel,
-	[ MODULE_BOT_ACCESS_CONTROL ]: BotAccessPanel,
-};
-
-const getInitialEnabledState = () => Object.fromEntries(
-	Object.keys( placeholderPanelsById ).map( ( id ) => [ id, true ] ),
-);
-
 const getStatus = ( isEnabled, hasWarning = false ) => {
 	if ( hasWarning ) {
 		return MODULE_STATUS_WARNING;
@@ -50,17 +46,30 @@ const getStatus = ( isEnabled, hasWarning = false ) => {
 	return isEnabled ? MODULE_STATUS_ENABLED : MODULE_STATUS_DISABLED;
 };
 
-export const ModulesScreen = ( { llmsConfig } ) => {
+export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConfig, markdownConfig } ) => {
+	const agentDiscoverySettings = useAgentDiscoverySettings( agentDiscoveryConfig );
+	const botAccessSettings = useBotAccessSettings( botAccessConfig );
 	const llmsSettings = useLlmsSettings( llmsConfig );
-	const [ enabledById, setEnabledById ] = useState( getInitialEnabledState );
+	const markdownSettings = useMarkdownSettings( markdownConfig );
+	const [ expandedModuleId, setExpandedModuleId ] = useState( modules[ 0 ]?.id ?? null );
 
-	const handleToggle = ( id ) => () => {
-		setEnabledById( ( previous ) => ( { ...previous, [ id ]: ! previous[ id ] } ) );
+	const enabledCount = [
+		llmsSettings.isEnabled,
+		markdownSettings.isEnabled,
+		botAccessSettings.isEnabled,
+		agentDiscoverySettings.isEnabled,
+	].filter( Boolean ).length;
+
+	const handleExpandedChange = ( moduleId ) => ( event, expanded ) => {
+		setExpandedModuleId( expanded ? moduleId : null );
 	};
 
-	const enabledCount = [ llmsSettings.isEnabled, ...Object.values( enabledById ) ].filter( Boolean ).length;
-
 	const renderModule = ( module ) => {
+		const accordionProps = {
+			isExpanded: expandedModuleId === module.id,
+			onExpandedChange: handleExpandedChange( module.id ),
+		};
+
 		if ( MODULE_LLMS_TXT === module.id ) {
 			return (
 				<ModuleAccordion
@@ -71,26 +80,65 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 					isEnabled={ llmsSettings.isEnabled }
 					isToggleDisabled={ llmsSettings.hasPhysicalFile || llmsSettings.isSaving }
 					onToggle={ llmsSettings.toggleEnabled }
+					{ ...accordionProps }
 				>
 					<LlmsTxtPanel settings={ llmsSettings } />
 				</ModuleAccordion>
 			);
 		}
 
-		const Panel = placeholderPanelsById[ module.id ];
+		if ( MODULE_MARKDOWN_CONTENT === module.id ) {
+			return (
+				<ModuleAccordion
+					key={ module.id }
+					title={ module.title }
+					description={ module.description }
+					status={ getStatus( markdownSettings.isEnabled ) }
+					isEnabled={ markdownSettings.isEnabled }
+					isToggleDisabled={ markdownSettings.isSaving }
+					onToggle={ markdownSettings.toggleEnabled }
+					{ ...accordionProps }
+				>
+					<MarkdownContentPanel settings={ markdownSettings } />
+				</ModuleAccordion>
+			);
+		}
 
-		return (
-			<ModuleAccordion
-				key={ module.id }
-				title={ module.title }
-				description={ module.description }
-				status={ getStatus( enabledById[ module.id ] ) }
-				isEnabled={ enabledById[ module.id ] }
-				onToggle={ handleToggle( module.id ) }
-			>
-				<Panel description={ module.description } />
-			</ModuleAccordion>
-		);
+		if ( MODULE_BOT_ACCESS_CONTROL === module.id ) {
+			return (
+				<ModuleAccordion
+					key={ module.id }
+					title={ module.title }
+					description={ module.description }
+					status={ getStatus( botAccessSettings.isEnabled, botAccessSettings.hasPhysicalFile ) }
+					isEnabled={ botAccessSettings.isEnabled }
+					isToggleDisabled={ botAccessSettings.hasPhysicalFile || botAccessSettings.isSaving }
+					onToggle={ botAccessSettings.toggleEnabled }
+					{ ...accordionProps }
+				>
+					<BotAccessPanel settings={ botAccessSettings } />
+				</ModuleAccordion>
+			);
+		}
+
+		if ( MODULE_AGENT_DISCOVERY === module.id ) {
+			return (
+				<ModuleAccordion
+					key={ module.id }
+					title={ module.title }
+					description={ module.description }
+					status={ getStatus( agentDiscoverySettings.isEnabled ) }
+					isEnabled={ agentDiscoverySettings.isEnabled }
+					isToggleDisabled={ agentDiscoverySettings.isSaving }
+					onToggle={ agentDiscoverySettings.toggleEnabled }
+					{ ...accordionProps }
+				>
+					<AgentDiscoveryPanel settings={ agentDiscoverySettings } />
+				</ModuleAccordion>
+			);
+		}
+
+		return null;
 	};
 
 	return (
@@ -101,7 +149,16 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 			</Stack>
 			<Stack spacing={ 2 }>
 				{ llmsSettings.saveError && (
-					<Alert severity="error" sx={ { mb: 2 } }>{ llmsSettings.saveError }</Alert>
+					<Alert severity="error">{ llmsSettings.saveError }</Alert>
+				) }
+				{ markdownSettings.saveError && (
+					<Alert severity="error">{ markdownSettings.saveError }</Alert>
+				) }
+				{ botAccessSettings.saveError && (
+					<Alert severity="error">{ botAccessSettings.saveError }</Alert>
+				) }
+				{ agentDiscoverySettings.saveError && (
+					<Alert severity="error">{ agentDiscoverySettings.saveError }</Alert>
 				) }
 				{ modules.map( renderModule ) }
 			</Stack>
@@ -110,11 +167,25 @@ export const ModulesScreen = ( { llmsConfig } ) => {
 };
 
 ModulesScreen.propTypes = {
+	agentDiscoveryConfig: PropTypes.shape( {
+		enabled: PropTypes.bool.isRequired,
+		files: PropTypes.array.isRequired,
+	} ).isRequired,
+	botAccessConfig: PropTypes.shape( {
+		enabled: PropTypes.bool.isRequired,
+		hasPhysicalFile: PropTypes.bool.isRequired,
+		bots: PropTypes.array.isRequired,
+		catalog: PropTypes.array.isRequired,
+	} ).isRequired,
 	llmsConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,
 		isManuallyEdited: PropTypes.bool.isRequired,
 		hasPhysicalFile: PropTypes.bool.isRequired,
 		fileUrl: PropTypes.string.isRequired,
+		postTypes: PropTypes.array.isRequired,
+	} ).isRequired,
+	markdownConfig: PropTypes.shape( {
+		enabled: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
 	} ).isRequired,
 };

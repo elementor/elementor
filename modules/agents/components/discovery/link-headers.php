@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery;
 
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 
@@ -15,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Site-wide (all frontend responses):
  *   Link: </llms.txt>; rel="llms-txt"; type="text/plain"
+ *
+ * Site-wide when the Agent discovery module is enabled:
  *   Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/json"
  *   Link: </.well-known/auth.md>; rel="service-doc"; type="text/markdown"
  *
@@ -38,6 +41,15 @@ class Link_Headers extends Feature_Component {
 
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
+
+	private Markdown_Endpoint $markdown_endpoint;
+
+	private Agent_Ready_Settings $settings;
+
+	public function __construct( Markdown_Endpoint $markdown_endpoint, Agent_Ready_Settings $settings ) {
+		$this->markdown_endpoint = $markdown_endpoint;
+		$this->settings          = $settings;
+	}
 
 	public function get_id(): string {
 		return 'link_headers';
@@ -124,9 +136,12 @@ class Link_Headers extends Feature_Component {
 
 		$links = [
 			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
-			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"',
-			'<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"',
 		];
+
+		if ( $this->settings->is_agent_discovery_enabled() ) {
+			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
+			$links[] = '<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"';
+		}
 
 		/**
 		 * Fires when the MCP server card is available.
@@ -154,9 +169,7 @@ class Link_Headers extends Feature_Component {
 			return null;
 		}
 
-		$markdown_endpoint = new Markdown_Endpoint();
-
-		if ( ! $markdown_endpoint->is_markdown_access_allowed( $post ) ) {
+		if ( ! $this->markdown_endpoint->is_markdown_access_allowed( $post ) ) {
 			return null;
 		}
 

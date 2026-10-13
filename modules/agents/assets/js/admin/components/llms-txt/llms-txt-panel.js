@@ -6,9 +6,9 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { PostTypeList } from '../post-type-list';
 import { LlmsPreviewDialog } from './llms-preview-dialog';
 import { LlmsPreviewPane } from './llms-preview-pane';
-import { PostTypeList } from './post-type-list';
 
 const getWarningMessage = ( hasPhysicalFile, isManuallyEdited ) => {
 	if ( hasPhysicalFile ) {

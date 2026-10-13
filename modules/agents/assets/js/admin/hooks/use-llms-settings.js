@@ -1,24 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
 
 import { fetchLlmsFile, saveAgentReadySettings, saveLlmsContent } from '../api';
 import { LLMS_SETTINGS_KEY } from '../constants';
+import { getSaveErrorMessage } from './get-save-error-message';
 
 const getIncludedPostTypeNames = ( postTypes ) => postTypes
 	.filter( ( postType ) => postType.included )
 	.map( ( postType ) => postType.name );
-
-const getSaveErrorMessage = ( reason ) => {
-	if ( reason && 'string' === typeof reason.message && reason.message ) {
-		return reason.message;
-	}
-
-	if ( 'string' === typeof reason && reason ) {
-		return reason;
-	}
-
-	return __( 'Something went wrong. Please try again.', 'elementor' );
-};
 
 export const useLlmsSettings = ( initialState ) => {
 	const { fileUrl, hasPhysicalFile } = initialState;

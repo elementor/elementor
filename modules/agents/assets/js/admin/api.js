@@ -34,6 +34,26 @@ export const fetchLlmsFile = async ( url ) => {
 	return response.text();
 };
 
+export const fetchMarkdownPreview = ( postId ) => {
+	return new Promise( ( resolve, reject ) => {
+		elementorCommon.ajax.addRequest( 'agents_ready_preview_markdown', {
+			data: { postId },
+			success: ( response ) => resolve( response?.content ?? '' ),
+			error: reject,
+		} );
+	} );
+};
+
+export const searchMarkdownItems = ( term ) => {
+	return new Promise( ( resolve, reject ) => {
+		elementorCommon.ajax.addRequest( 'agents_ready_search_markdown', {
+			data: { term },
+			success: ( response ) => resolve( response?.items ?? [] ),
+			error: reject,
+		} );
+	} );
+};
+
 export const saveLlmsContent = ( content ) => {
 	return new Promise( ( resolve, reject ) => {
 		elementorCommon.ajax.addRequest( 'agents_ready_save_llms_content', {

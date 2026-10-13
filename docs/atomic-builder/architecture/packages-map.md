@@ -57,7 +57,7 @@ Lookup table mapping v4 **docs areas** to **PHP modules**, **Editor V2 JS packag
 
 ### Registered widgets (snapshot)
 
-`e-heading`, `e-image`, `e-paragraph`, `e-svg`, `e-button`, `e-youtube`, `e-divider`, `e-self-hosted-video`
+`e-heading`, `e-image`, `e-paragraph`, `e-svg`, `e-button`, `e-youtube`, `e-divider`, `e-self-hosted-video`, `e-google-maps`
 
 ### Tests locations
 
