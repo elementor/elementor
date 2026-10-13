@@ -488,6 +488,79 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			}
 		} );
 
+		const createRedirectResponse = ( { success = true, redirectUrl = 'https://example.org/thank-you' } = {} ) => ( {
+			success,
+			data: {
+				message: success ? 'Success message' : 'Error message',
+				data: {
+					actionResults: [ { type: 'redirect', status: 'success', redirectUrl } ],
+				},
+			},
+		} );
+
+		const submitAndGetRedirectAssign = async ( response ) => {
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			try {
+				const { form, input } = createFormWithInput();
+				input.value = 'Test value';
+
+				const instance = await setupFormHandler( form );
+
+				global.fetch = jest.fn().mockResolvedValue( {
+					ok: true,
+					json: () => Promise.resolve( response ),
+				} );
+
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				return assign;
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		};
+
+		it( 'skips redirect when the submission is not successful', async () => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { success: false } ) );
+
+			// Assert
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
+			[ 'javascript:alert(1)' ],
+			[ 'data:text/html,<script>alert(1)</script>' ],
+			[ 'mailto:user@example.org' ],
+			[ 'http://[invalid' ],
+		] )( 'skips redirect for a disallowed or invalid redirect URL: %s', async ( redirectUrl ) => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { redirectUrl } ) );
+
+			// Assert
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it( 'redirects to ftp URLs allowed by the server', async () => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { redirectUrl: 'ftp://files.example.org/file.zip' } ) );
+
+			// Assert
+			expect( assign ).toHaveBeenCalledWith( 'ftp://files.example.org/file.zip' );
+		} );
+
 		it( 'responds to agent-invoked submissions with respondWith', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
