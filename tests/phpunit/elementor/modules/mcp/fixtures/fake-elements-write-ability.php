@@ -42,6 +42,10 @@ class Fake_Elements_Write_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
+		if ( ! empty( $input['throw'] ) ) {
+			throw new \RuntimeException( 'Simulated failure.' );
+		}
+
 		if ( empty( $input['elements'] ) ) {
 			return [
 				'status' => 'error',

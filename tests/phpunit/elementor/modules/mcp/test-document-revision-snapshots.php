@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Fake_Elements_Write_Ability;
@@ -114,7 +115,7 @@ class Test_Document_Revision_Snapshots extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'undo_revision_id', $result );
 	}
 
-	public function test_write__skips_the_snapshot_and_revision_tools_when_the_experiment_is_off() {
+	public function test_write__skips_the_snapshot_and_the_undo_tool_when_the_experiment_is_off() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
 		$this->set_revision_snapshots_experiment( Experiments_Manager::STATE_INACTIVE );
@@ -128,8 +129,53 @@ class Test_Document_Revision_Snapshots extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'undo_revision_id', $result );
-		$this->assertNotContains( 'elementor/list-revisions', $registered_ids );
 		$this->assertNotContains( 'elementor/manage-revisions', $registered_ids );
+	}
+
+	public function test_write__returns_no_undo_point_when_the_document_did_not_change() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'publish', $this->containers( 1 ) );
+		update_post_meta( $post_id, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
+		$revisions_before = $this->regular_revision_ids( $post_id );
+
+		// Act
+		$result = $this->ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 1 ) ] );
+
+		// Assert
+		$this->assertSame( 'success', $result['status'] );
+		$this->assertArrayNotHasKey( 'undo_revision_id', $result );
+		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
+	}
+
+	public function test_write__leaves_no_revision_behind_when_the_operation_throws() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
+		update_post_meta( $post_id, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
+		$revisions_before = $this->regular_revision_ids( $post_id );
+		$thrown = null;
+
+		// Act
+		try {
+			$this->ability->execute_guarded( [ 'post_id' => $post_id, 'throw' => true ] );
+		} catch ( \RuntimeException $e ) {
+			$thrown = $e;
+		}
+
+		// Assert
+		$this->assertInstanceOf( \RuntimeException::class, $thrown );
+		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
+	}
+
+	public function test_write__marks_the_returned_revision_as_an_undo_point() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
+
+		// Act
+		$result = $this->ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
+
+		// Assert
+		$this->assertTrue( Document_Revision_Snapshots::is_undo_point( $result['undo_revision_id'] ) );
+		$this->assertFalse( Document_Revision_Snapshots::is_undo_point( $this->latest_revision_id( $post_id ) ), 'The post-save revision holds the new state, not an undo point.' );
 	}
 
 	public function test_write__reports_undo_as_unavailable_when_revisions_are_disabled() {

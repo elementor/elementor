@@ -17,7 +17,15 @@ class Document_Mutation_Links {
 	public static function llm_instructions_schema_property(): array {
 		return [
 			'type' => 'string',
-			'description' => 'Mandatory next step: include this text (with the preview link) in your reply to the user.',
+			'description' => 'Mandatory next step: include this text (with the preview or editor link) in your reply to the user.',
+		];
+	}
+
+	public static function edit_url_schema_property(): array {
+		return [
+			'type' => 'string',
+			'format' => 'uri',
+			'description' => 'Elementor editor URL, returned instead of preview_url for documents without a front-end preview (e.g. components).',
 		];
 	}
 
@@ -42,22 +50,45 @@ class Document_Mutation_Links {
 	}
 
 	public static function for_document( Document $document, ?string $success_message = null ): array {
+		$prefix = $success_message ?? __( 'Change saved.', 'elementor' );
 		$preview_url = Document_Preview_Url::for_document( $document );
+
+		if ( '' === $preview_url ) {
+			return self::for_editor_link( $prefix, (string) $document->get_edit_url() );
+		}
 
 		return [
 			'preview_url' => $preview_url,
-			'llm_instructions' => self::build_llm_instructions( $preview_url, $success_message ),
+			'llm_instructions' => self::build_preview_link_instructions( $prefix, $preview_url ),
 		];
 	}
 
-	private static function build_llm_instructions( string $preview_url, ?string $success_message = null ): string {
-		$prefix = $success_message ?? __( 'Change saved.', 'elementor' );
+	private static function for_editor_link( string $prefix, string $edit_url ): array {
+		if ( '' === $edit_url ) {
+			return [ 'llm_instructions' => $prefix ];
+		}
 
+		return [
+			'edit_url' => $edit_url,
+			'llm_instructions' => self::build_edit_link_instructions( $prefix, $edit_url ),
+		];
+	}
+
+	private static function build_preview_link_instructions( string $prefix, string $preview_url ): string {
 		return sprintf(
 			/* translators: 1: Success message, 2: Preview URL the LLM must share with the user. */
 			__( '%1$s You MUST show the user this preview link in your reply (they must be logged into WordPress as an editor): %2$s', 'elementor' ),
 			$prefix,
 			$preview_url
+		);
+	}
+
+	private static function build_edit_link_instructions( string $prefix, string $edit_url ): string {
+		return sprintf(
+			/* translators: 1: Success message, 2: Elementor editor URL the LLM must share with the user. */
+			__( '%1$s You MUST show the user this link to review the change in the Elementor editor: %2$s', 'elementor' ),
+			$prefix,
+			$edit_url
 		);
 	}
 }

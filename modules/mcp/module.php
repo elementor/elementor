@@ -282,7 +282,6 @@ class Module extends BaseModule {
 		];
 
 		if ( self::is_revision_snapshots_active() ) {
-			$abilities[] = new Abilities\List_Revisions_Ability();
 			$abilities[] = new Abilities\Manage_Revisions_Ability();
 		}
 

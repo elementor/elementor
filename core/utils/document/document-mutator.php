@@ -194,31 +194,25 @@ class Document_Mutator {
 	 * serving the previous version until the user opens the editor and publishes.
 	 * In this mode the return value is the Document actually written on success.
 	 *
-	 * `$prepare_target` receives the Document about to be written, right before the save.
-	 *
 	 * @return bool|Document|\WP_Error
 	 */
-	public function save_as_draft( Document $document, array $elements, bool $preserve_live_status = false, ?callable $prepare_target = null ) {
+	public function save_as_draft( Document $document, array $elements, bool $preserve_live_status = false ) {
 		if ( $preserve_live_status ) {
-			return $this->save_preserving_live_status( $document, $elements, $prepare_target );
+			return $this->save_preserving_live_status( $document, $elements );
 		}
 
-		return $this->save_downgrading_publish_to_draft( $document, $elements, $prepare_target );
+		return $this->save_downgrading_publish_to_draft( $document, $elements );
 	}
 
 	/**
 	 * @return bool|int|\WP_Error
 	 */
-	private function save_downgrading_publish_to_draft( Document $document, array $elements, ?callable $prepare_target ) {
+	private function save_downgrading_publish_to_draft( Document $document, array $elements ) {
 		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
 			wp_update_post( [
 				'ID' => $document->get_main_id(),
 				'post_status' => 'draft',
 			] );
-		}
-
-		if ( $prepare_target ) {
-			$prepare_target( $document );
 		}
 
 		return $document->save( [ 'elements' => $elements ] );
@@ -227,15 +221,11 @@ class Document_Mutator {
 	/**
 	 * @return Document|\WP_Error
 	 */
-	private function save_preserving_live_status( Document $document, array $elements, ?callable $prepare_target ) {
+	private function save_preserving_live_status( Document $document, array $elements ) {
 		$target = $this->resolve_autosave_target( $document );
 
 		if ( is_wp_error( $target ) ) {
 			return $target;
-		}
-
-		if ( $prepare_target ) {
-			$prepare_target( $target );
 		}
 
 		$saved = $target->save( [ 'elements' => $elements ] );

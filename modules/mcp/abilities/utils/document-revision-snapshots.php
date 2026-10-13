@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Document_Revision_Snapshots {
 
 	// Must not start with `_elementor`: `DB::copy_elementor_meta` copies those keys from a revision back to its parent.
-	const ABILITY_META_KEY = '_mcp_revision_ability';
+	const UNDO_POINT_META_KEY = '_mcp_undo_point';
 
 	const RESTORABLE_META_KEYS = [
 		Page_Settings_Manager::META_KEY,
@@ -27,37 +27,43 @@ class Document_Revision_Snapshots {
 
 	public static function record( int $post_id, string $ability_id, callable $operation ): Snapshot_Recording {
 		$main_id = self::resolve_main_id( $post_id );
-		$saved_main_ids = [];
+		$saved_target_ids = [];
+		$snapshot = null;
 
-		$attribute_revision = fn( $revision_id ) => self::attribute( (int) $revision_id, $ability_id );
-		$track_save = function ( Document $document ) use ( &$saved_main_ids ) {
-			$saved_main_ids[ (int) $document->get_main_id() ] = true;
+		$track_save = function ( Document $document ) use ( &$saved_target_ids ) {
+			$saved_target_ids[ (int) $document->get_main_id() ] = (int) $document->get_post()->ID;
 		};
 
-		add_action( '_wp_put_post_revision', $attribute_revision );
 		add_action( 'elementor/document/after_save', $track_save );
 
 		try {
 			$snapshot = $main_id ? self::capture( $main_id ) : null;
 			$result = $operation();
+		} catch ( \Throwable $e ) {
+			self::discard( $snapshot );
+
+			throw $e;
 		} finally {
-			remove_action( '_wp_put_post_revision', $attribute_revision );
 			remove_action( 'elementor/document/after_save', $track_save );
 		}
 
-		if ( ! $main_id || ! isset( $saved_main_ids[ $main_id ] ) ) {
+		$saved_target_id = $saved_target_ids[ $main_id ] ?? 0;
+
+		if ( ! $saved_target_id || self::is_unchanged( $saved_target_id, $snapshot ) ) {
 			self::discard( $snapshot );
 
 			return new Snapshot_Recording( $result, false, $main_id, null );
 		}
 
+		if ( $snapshot ) {
+			update_metadata( 'post', $snapshot['revision_id'], self::UNDO_POINT_META_KEY, $ability_id );
+		}
+
 		return new Snapshot_Recording( $result, true, $main_id, $snapshot['revision_id'] ?? null );
 	}
 
-	public static function get_ability( int $revision_id ): ?string {
-		$ability = get_metadata( 'post', $revision_id, self::ABILITY_META_KEY, true );
-
-		return is_string( $ability ) && '' !== $ability ? $ability : null;
+	public static function is_undo_point( int $revision_id ): bool {
+		return metadata_exists( 'post', $revision_id, self::UNDO_POINT_META_KEY );
 	}
 
 	public static function restore_meta( int $from_post_id, int $to_post_id ): void {
@@ -132,12 +138,8 @@ class Document_Revision_Snapshots {
 		wp_delete_post_revision( $snapshot['revision_id'] );
 	}
 
-	private static function attribute( int $revision_id, string $ability_id ): void {
-		if ( wp_is_post_autosave( $revision_id ) ) {
-			return;
-		}
-
-		update_metadata( 'post', $revision_id, self::ABILITY_META_KEY, $ability_id );
+	private static function is_unchanged( int $saved_target_id, ?array $snapshot ): bool {
+		return $snapshot && self::has_same_content( $saved_target_id, $snapshot['revision_id'] );
 	}
 
 	private static function find_latest_revision_id( int $main_id ): int {

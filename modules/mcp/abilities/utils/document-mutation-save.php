@@ -17,10 +17,9 @@ class Document_Mutation_Save {
 	public static function elements_preserving_live_status(
 		Document_Mutator $mutator,
 		Document $document,
-		array $elements,
-		?callable $prepare_target = null
+		array $elements
 	) {
-		$result = $mutator->save_as_draft( $document, $elements, true, $prepare_target );
+		$result = $mutator->save_as_draft( $document, $elements, true );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

@@ -78,7 +78,21 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 		$this->assertCount( 2, $this->elements_of( $post_id ) );
 	}
 
-	public function test_restore__restores_a_revision_saved_by_the_editor() {
+	public function test_restore__restores_an_editor_revision_reused_as_an_undo_point() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'draft', $this->containers( 3 ) );
+		$editor_revision_id = $this->latest_revision_id( $post_id );
+		$write = $this->write_ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 1 ) ] );
+
+		// Act
+		$this->restore( $post_id, $write['undo_revision_id'] );
+
+		// Assert
+		$this->assertSame( $editor_revision_id, $write['undo_revision_id'] );
+		$this->assertCount( 3, $this->elements_of( $post_id ) );
+	}
+
+	public function test_restore__rejects_a_revision_that_is_not_an_undo_point() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 3 ) );
 		$editor_revision_id = $this->latest_revision_id( $post_id );
@@ -88,8 +102,10 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 		$result = $this->restore( $post_id, $editor_revision_id );
 
 		// Assert
-		$this->assertSame( $editor_revision_id, $result['restored_revision_id'] );
-		$this->assertCount( 3, $this->elements_of( $post_id ) );
+		$this->assertWPError( $result );
+		$this->assertSame( 'not_an_undo_point', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertCount( 1, $this->elements_of( $post_id ) );
 	}
 
 	public function test_restore__keeps_backslashes_in_restored_meta() {
@@ -107,27 +123,49 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 		$this->assertSame( $page_settings, get_post_meta( $post_id, Page_Settings_Manager::META_KEY, true ) );
 	}
 
-	public function test_restore__does_not_leak_the_ability_marker_to_the_parent() {
+	public function test_restore__returns_422_and_changes_nothing_when_the_save_throws() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
-		$this->write_ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
-		$tagged_revision_id = $this->latest_revision_id( $post_id );
+		$write = $this->write_ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
+		update_post_meta( $post_id, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
+		$revisions_before = $this->regular_revision_ids( $post_id );
+		add_action( 'elementor/document/before_save', function () {
+			throw new \Exception( 'Simulated save failure.' );
+		} );
 
 		// Act
-		Revisions_Manager::restore_revision( $post_id, $tagged_revision_id );
+		$result = $this->restore( $post_id, $write['undo_revision_id'] );
 
 		// Assert
-		$this->assertSame( Fake_Elements_Write_Ability::ID, Document_Revision_Snapshots::get_ability( $tagged_revision_id ) );
-		$this->assertFalse( metadata_exists( 'post', $post_id, Document_Revision_Snapshots::ABILITY_META_KEY ) );
+		$this->assertWPError( $result );
+		$this->assertSame( 'restore_failed', $result->get_error_code() );
+		$this->assertSame( \WP_Http::UNPROCESSABLE_ENTITY, $result->get_error_data()['status'] );
+		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
+		$this->assertCount( 2, $this->elements_of( $post_id ) );
+		$this->assertSame( [ 'hide_title' => 'yes' ], get_post_meta( $post_id, Page_Settings_Manager::META_KEY, true ) );
+	}
+
+	public function test_restore__does_not_leak_the_undo_point_marker_to_the_parent() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
+		$write = $this->write_ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
+
+		// Act
+		Revisions_Manager::restore_revision( $post_id, $write['undo_revision_id'] );
+
+		// Assert
+		$this->assertTrue( Document_Revision_Snapshots::is_undo_point( $write['undo_revision_id'] ) );
+		$this->assertFalse( metadata_exists( 'post', $post_id, Document_Revision_Snapshots::UNDO_POINT_META_KEY ) );
 	}
 
 	public function test_restore__rejects_a_revision_of_another_post() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
-		$other_post_id = $this->create_elementor_page( 'draft', $this->containers( 2 ) );
+		$other_post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
+		$other_write = $this->write_ability->execute_guarded( [ 'post_id' => $other_post_id, 'elements' => $this->containers( 2 ) ] );
 
 		// Act
-		$result = $this->restore( $post_id, $this->latest_revision_id( $other_post_id ) );
+		$result = $this->restore( $post_id, $other_write['undo_revision_id'] );
 
 		// Assert
 		$this->assertWPError( $result );
@@ -153,11 +191,11 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 	public function test_restore__rejects_users_who_cannot_edit_the_post() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
-		$revision_id = $this->latest_revision_id( $post_id );
+		$write = $this->write_ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'contributor' ] ) );
 
 		// Act
-		$result = $this->restore( $post_id, $revision_id );
+		$result = $this->restore( $post_id, $write['undo_revision_id'] );
 
 		// Assert
 		$this->assertWPError( $result );

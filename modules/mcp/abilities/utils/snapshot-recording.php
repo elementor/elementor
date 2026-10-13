@@ -10,21 +10,21 @@ class Snapshot_Recording {
 
 	private $result;
 
-	private bool $document_saved;
+	private bool $document_changed;
 
 	private int $post_id;
 
 	private ?int $undo_revision_id;
 
-	public function __construct( $result, bool $document_saved, int $post_id, ?int $undo_revision_id ) {
+	public function __construct( $result, bool $document_changed, int $post_id, ?int $undo_revision_id ) {
 		$this->result = $result;
-		$this->document_saved = $document_saved;
+		$this->document_changed = $document_changed;
 		$this->post_id = $post_id;
 		$this->undo_revision_id = $undo_revision_id;
 	}
 
 	public function to_response() {
-		if ( ! $this->document_saved || ! is_array( $this->result ) ) {
+		if ( ! $this->document_changed || ! is_array( $this->result ) ) {
 			return $this->result;
 		}
 
