@@ -13,6 +13,13 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
+/**
+ * @group Elementor
+ * @group Elementor/ImportExportCustomization
+ * @group Elementor/ImportExportCustomization/Processes
+ *
+ * @group kit-import-export-customization
+ */
 class Test_Export extends Elementor_Test_Base {
 	public function test_run__export_all() {
 		// Arrange
@@ -81,7 +88,6 @@ class Test_Export extends Elementor_Test_Base {
 	public function test_run__export_site_settings() {
 		// Arrange
 		$this->act_as_admin();
-
 		$custom_colors = [
 			'_id' => '0fba91c',
 			'title' => 'Light Orange',
@@ -138,7 +144,9 @@ class Test_Export extends Elementor_Test_Base {
 			'classes' => true,
 			'variables' => true,
 			'classesCount' => 0,
+			'defaultStylesCount' => 0,
 			'variablesCount' => 0,
+			'defaultStyles' => true,
 		];
 
 		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );

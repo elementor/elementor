@@ -512,6 +512,19 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertStringContainsString( 'page=accessibility-settings#capabilities', $response['ally_widget_settings_url'] );
 	}
 
+	public function test_ally_scan_url_points_to_the_scans_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_scan_url', $response );
+		$this->assertStringContainsString( 'page=accessibility-settings#scans', $response['ally_scan_url'] );
+	}
+
 	public function test_ally_accessibility_statement_created_is_false_when_no_statement_data_option_exists() {
 		// Arrange.
 		delete_option( 'ea11y_accessibility_statement_data' );
@@ -584,6 +597,19 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertArrayHasKey( 'image_optimization_plugin_url', $response );
 		$this->assertStringNotContainsString( '&amp;', $response['image_optimization_plugin_url'] );
 		$this->assertStringContainsString( '&', $response['image_optimization_plugin_url'] );
+	}
+
+	public function test_image_optimization_settings_url_points_to_the_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'image_optimization_settings_url', $response );
+		$this->assertStringContainsString( 'page=image-optimization-settings', $response['image_optimization_settings_url'] );
 	}
 
 	public function test_cookiez_plugin_installed_is_boolean() {

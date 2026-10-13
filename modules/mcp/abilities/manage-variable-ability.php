@@ -10,6 +10,7 @@ use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -73,7 +74,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'string' ],
 								'type' => [
 									'type' => 'string',
-									'enum' => [ self::TYPE_COLOR, self::TYPE_FONT, self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ],
+									'enum' => $this->get_allowed_types(),
 								],
 								'label' => [ 'type' => 'string' ],
 								'value' => [ 'type' => 'string' ],
@@ -197,6 +198,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
 				}
 
+				if ( $this->is_size_type( $type ) && ! $this->can_manage_size_variables() ) {
+					return $this->pro_license_required();
+				}
+
 				return [
 					'type' => 'create',
 					'variable' => [
@@ -213,6 +218,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 				if ( '' === $id || '' === $label || '' === $value ) {
 					return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
+				}
+
+				if ( ! $this->can_manage_size_variables() && $this->is_size_variable( $id ) ) {
+					return $this->pro_license_required();
 				}
 
 				return [
@@ -265,6 +274,37 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 	private function bad_request( string $message ): \WP_Error {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
+	}
+
+	private function pro_license_required(): \WP_Error {
+		return new \WP_Error(
+			'pro_license_required',
+			__( 'Size variables require an active Elementor Pro license, so this operation was not applied. Do not retry it — tell the user that size variables are a Pro feature.', 'elementor' ),
+			[ 'status' => \WP_Http::FORBIDDEN ]
+		);
+	}
+
+	private function is_size_type( $type ): bool {
+		return in_array( $type, [ self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ], true );
+	}
+
+	private function is_size_variable( $id ): bool {
+		return is_string( $id ) && $this->is_size_type( $this->get_service()->find_type( $id ) );
+	}
+
+	private function can_manage_size_variables(): bool {
+		return Utils::is_license_active();
+	}
+
+	private function get_allowed_types(): array {
+		$types = [ self::TYPE_COLOR, self::TYPE_FONT ];
+
+		if ( $this->can_manage_size_variables() ) {
+			$types[] = self::TYPE_SIZE;
+			$types[] = self::TYPE_CUSTOM_SIZE;
+		}
+
+		return $types;
 	}
 
 	private function clear_cache(): void {

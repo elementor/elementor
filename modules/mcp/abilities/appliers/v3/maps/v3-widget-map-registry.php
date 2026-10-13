@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
@@ -44,11 +43,6 @@ class V3_Widget_Map_Registry {
 	/**
 	 * @var callable
 	 */
-	private $is_atomic_active;
-
-	/**
-	 * @var callable
-	 */
 	private $get_controls;
 
 	/**
@@ -71,7 +65,6 @@ class V3_Widget_Map_Registry {
 	/**
 	 * @param V3_Widget_Map_Compiler                        $compiler
 	 * @param callable(): bool                              $is_experiment_active
-	 * @param callable(): bool                              $is_atomic_active
 	 * @param callable(string): (array<string, mixed>|null) $get_controls
 	 * @param array<string, V3_Widget_Map>                  $maps
 	 * @param (callable(string): bool)|null                 $has_advanced_tab Widgets that get the {@see Advanced_Wrapper} target.
@@ -79,14 +72,12 @@ class V3_Widget_Map_Registry {
 	public function __construct(
 		V3_Widget_Map_Compiler $compiler,
 		callable $is_experiment_active,
-		callable $is_atomic_active,
 		callable $get_controls,
 		array $maps = [],
 		?callable $has_advanced_tab = null
 	) {
 		$this->compiler = $compiler;
 		$this->is_experiment_active = $is_experiment_active;
-		$this->is_atomic_active = $is_atomic_active;
 		$this->get_controls = $get_controls;
 		$this->maps = $maps;
 		$this->has_advanced_tab = $has_advanced_tab;
@@ -114,9 +105,6 @@ class V3_Widget_Map_Registry {
 			static fn() => class_exists( \Elementor\Plugin::class )
 				&& isset( Plugin::$instance->experiments )
 				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
-			static fn() => class_exists( \Elementor\Plugin::class )
-				&& isset( Plugin::$instance->experiments )
-				&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
 				$source = Plugin::$instance->widgets_manager->get_widget_types( $widget_type )
 					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
@@ -209,10 +197,10 @@ class V3_Widget_Map_Registry {
 
 	/**
 	 * The single gate for map-driven behavior: null whenever the standardized maps experiment
-	 * or atomic elements are off, the widget has no map, or the map shape is invalid.
+	 * is off, the widget has no map, or the map shape is invalid.
 	 */
 	public function get_map( string $widget_type ): ?Compiled_V3_Map {
-		if ( ! $this->is_experiment_active() || ! $this->is_atomic_active() ) {
+		if ( ! $this->is_experiment_active() ) {
 			return null;
 		}
 
@@ -266,12 +254,6 @@ class V3_Widget_Map_Registry {
 				$map->get_targets()
 			),
 		];
-	}
-
-	private function is_atomic_active(): bool {
-		$callback = $this->is_atomic_active;
-
-		return (bool) $callback();
 	}
 
 	/**
