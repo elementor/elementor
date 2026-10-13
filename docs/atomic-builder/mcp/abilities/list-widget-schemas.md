@@ -25,7 +25,7 @@ Verified: `list-widget-schemas-ability.php`.
 - **Bulk schema fetch** — call without `summary` (or `summary: false`) to get full schemas for all v4 widgets (heavier payload)
 - Before `build-composition` when you need to know valid container/child types
 
-For the types you will use, prefer [get-widget-schema.md](get-widget-schema.md) with every type in one `widget_type` array. Smaller than this full list, and it accepts types this list omits.
+For the types you will use, prefer [get-widget-schema.md](get-widget-schema.md) with every type in one `widget_type` array.
 
 ## Key concepts
 
