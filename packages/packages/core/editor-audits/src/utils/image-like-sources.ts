@@ -15,18 +15,6 @@ export type ImageLikeSourceVisit = {
 	media: ImageLikeMedia;
 };
 
-export function hasPageImages( tree: ElementSnapshotNode[] ): boolean {
-	let found = false;
-
-	walkImageLikeSources( tree, ( { media } ) => {
-		if ( media.id || media.url ) {
-			found = true;
-		}
-	} );
-
-	return found;
-}
-
 export function walkImageLikeSources(
 	tree: ElementSnapshotNode[],
 	visit: ( source: ImageLikeSourceVisit ) => void

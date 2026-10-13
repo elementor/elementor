@@ -10,7 +10,9 @@ import { type ElementSnapshotNode } from '../types';
 import { type ImageLikeMedia } from './image-like-sources';
 import { walkElements } from './walk';
 
-const ATOMIC_IMAGE_PROP_KEYS = [ 'image', 'poster' ] as const;
+export const ATOMIC_CONTENT_IMAGE_PROP_KEYS = [ 'image' ] as const;
+
+const ATOMIC_IMAGE_PROP_KEYS = [ ...ATOMIC_CONTENT_IMAGE_PROP_KEYS, 'poster' ] as const;
 
 export type AtomicImageSourceVisit = {
 	node: ElementSnapshotNode;
@@ -19,14 +21,15 @@ export type AtomicImageSourceVisit = {
 
 export function walkAtomicImageSources(
 	tree: ElementSnapshotNode[],
-	visit: ( source: AtomicImageSourceVisit ) => void
+	visit: ( source: AtomicImageSourceVisit ) => void,
+	propKeys: readonly string[] = ATOMIC_IMAGE_PROP_KEYS
 ): void {
 	walkElements( tree, ( node ) => {
 		if ( node.elType !== 'widget' ) {
 			return;
 		}
 
-		for ( const key of ATOMIC_IMAGE_PROP_KEYS ) {
+		for ( const key of propKeys ) {
 			const media = extractAtomicImageMedia( node.settings[ key ] );
 
 			if ( media ) {
@@ -56,7 +59,8 @@ export function extractAtomicImageMedia( imageProp: unknown ): ImageLikeMedia | 
 		return null;
 	}
 
+	const alt = stringPropTypeUtil.extract( src.alt ) ?? undefined;
 	const size = stringPropTypeUtil.extract( image.size ) ?? undefined;
 
-	return { id, url, size };
+	return { id, url, alt, size };
 }
