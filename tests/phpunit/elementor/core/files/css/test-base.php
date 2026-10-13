@@ -312,32 +312,6 @@ class Test_Base extends Elementor_Test_Base {
 		unset( $_REQUEST['action'] );
 	}
 
-	public function test_should_skip_enqueue_during_elementor_ajax() {
-		add_filter( 'wp_doing_ajax', '__return_true' );
-		$_REQUEST['action'] = 'elementor_ajax';
-
-		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
-		$method->setAccessible( true );
-
-		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
-
-		unset( $_REQUEST['action'] );
-		remove_filter( 'wp_doing_ajax', '__return_true' );
-	}
-
-	public function test_should_not_skip_enqueue_during_other_ajax_actions() {
-		add_filter( 'wp_doing_ajax', '__return_true' );
-		$_REQUEST['action'] = 'woocommerce_get_refreshed_fragments';
-
-		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
-		$method->setAccessible( true );
-
-		$this->assertFalse( $method->invoke( $this->css_generator_class ) );
-
-		unset( $_REQUEST['action'] );
-		remove_filter( 'wp_doing_ajax', '__return_true' );
-	}
-
 	public function test_get_registered_enqueue_dependencies_filters_unregistered_handles() {
 		$css = $this->getMockBuilder( \Elementor\Core\Files\CSS\Post::class )
 			->setConstructorArgs( [ 0 ] )

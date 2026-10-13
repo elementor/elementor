@@ -6,7 +6,6 @@ use Elementor\Control_Repeater;
 use Elementor\Controls_Manager;
 use Elementor\Controls_Stack;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax_Module;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
@@ -632,10 +631,6 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
-		if ( $this->is_elementor_ajax_request() ) {
-			return true;
-		}
-
 		if ( ! is_admin() ) {
 			return false;
 		}
@@ -643,16 +638,6 @@ abstract class Base extends Base_File {
 		$editor = Plugin::$instance->editor;
 
 		return $editor && $editor->is_editor_request();
-	}
-
-	protected function is_elementor_ajax_request(): bool {
-		if ( ! wp_doing_ajax() ) {
-			return false;
-		}
-
-		$action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : '';
-
-		return Ajax_Module::NONCE_KEY === $action;
 	}
 
 	protected function get_registered_enqueue_dependencies(): array {
