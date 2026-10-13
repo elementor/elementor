@@ -184,8 +184,7 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		Kses_Test_Expectations::assert_link_does_not_use_data_href( $this, $result['value'] );
-		$this->assertStringContainsString( 'click', $result['value'] );
+		Kses_Test_Expectations::assert_sanitized_data_href_link( $this, $result['value'] );
 	}
 
 	public function test_should_persist__true_for_empty_string() {

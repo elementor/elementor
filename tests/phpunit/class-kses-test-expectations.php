@@ -29,8 +29,15 @@ class Kses_Test_Expectations {
 		$test_case->assertSame( self::expected_wp_kses_plain_string( $release, $trunk ), $actual );
 	}
 
-	public static function assert_link_does_not_use_data_href( TestCase $test_case, string $html ): void {
-		$test_case->assertStringNotContainsString( 'data:', $html );
+	public static function assert_sanitized_data_href_link( TestCase $test_case, string $html ): void {
+		$test_case->assertStringContainsString( 'click', $html );
+
+		if ( self::wp_kses_strips_disallowed_element_content() ) {
+			$test_case->assertStringNotContainsString( 'data:', $html );
+			return;
+		}
+
+		$test_case->assertStringNotContainsString( '<a href=', $html );
 	}
 
 	public static function assert_same_img_markup( TestCase $test_case, string $expected, string $actual ): void {
