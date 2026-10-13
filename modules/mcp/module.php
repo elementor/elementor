@@ -11,6 +11,7 @@ use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
@@ -250,6 +251,7 @@ class Module extends BaseModule {
 			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
 			new Abilities\Find_Icons_Ability(),
+			...( Mcp_Media_Feature_Gate::is_enabled() ? [ new Abilities\Update_Media_Attachment_Ability() ] : [] ),
 			new Abilities\Global_Variables_Resource_Ability(),
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
