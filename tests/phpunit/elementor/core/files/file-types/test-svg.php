@@ -64,6 +64,43 @@ class Test_Svg extends Elementor_Test_Base {
 		}
 	}
 
+	/**
+	 * The sanitized SVG is inlined into the page, so it must be safe under HTML parsing.
+	 * A CDATA section survives XML round-tripping, but an HTML parser reads its opener as a
+	 * bogus comment that swallows the closing tag, turning the rest of the section into live markup.
+	 *
+	 * @dataProvider cdata_breakout_data_provider
+	 */
+	public function test_sanitize__does_not_keep_markup_inside_cdata( $svg_content ) {
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		$this->assertStringNotContainsString( '<![CDATA[', $sanitized );
+		$this->assertStringNotContainsString( '<img', $sanitized );
+		$this->assertStringNotContainsString( '<script', $sanitized );
+	}
+
+	public function test_sanitize__converts_cdata_to_escaped_text() {
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><desc><![CDATA[Hello <world>]]></desc></svg>';
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		$this->assertStringNotContainsString( '<![CDATA[', $sanitized );
+		$this->assertStringContainsString( 'Hello world', $sanitized );
+	}
+
+	public function cdata_breakout_data_provider() {
+		return [
+			'desc' => [ '<svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"><desc><![CDATA[</desc><img src=x onerror=alert(document.domain)>]]></desc><rect width="10" height="10"/></svg>' ],
+			'title' => [ '<svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"><title><![CDATA[</title><img src=x onerror=alert(document.domain)>]]></title><rect width="10" height="10"/></svg>' ],
+			'foreignObject' => [ '<svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"><foreignObject><![CDATA[</foreignObject><script>alert(document.domain)</script>]]></foreignObject><rect width="10" height="10"/></svg>' ],
+		];
+	}
+
 	public function invalid_xlink_href_data_provider() {
 		return [
 			[ '', true ],
