@@ -1,8 +1,11 @@
 import { register } from '@elementor/frontend-handlers';
-
-const ACCORDION_ELEMENT_TYPE = 'e-accordion';
-const ITEM_ELEMENT_TYPE = 'e-accordion-item';
-const HEADER_ELEMENT_TYPE = 'e-accordion-item-header';
+import {
+	ACCORDION_ELEMENT_TYPE,
+	HEADER_ELEMENT_TYPE,
+	ITEM_ELEMENT_TYPE,
+	syncAllHeadersInAccordion,
+	syncHeaderSelectedClass,
+} from './accordion-header-selected';
 const MAX_EXPANDED_ONE = 'one';
 const DEFAULT_STATE_FIRST_EXPANDED = 'first_expanded';
 const SELECT_COMMAND = 'document/elements/select';
@@ -37,6 +40,8 @@ register( {
 		const getOwnAccordion = ( node ) => node.closest( `[data-element_type="${ ACCORDION_ELEMENT_TYPE }"]` );
 
 		const belongsToThisAccordion = ( node ) => getOwnAccordion( node ) === element;
+
+		const syncSelectedHeaders = () => syncAllHeadersInAccordion( element, belongsToThisAccordion );
 
 		// Items of a nested accordion match the selector too, so they are filtered out by their
 		// nearest accordion ancestor - the inner accordion runs its own instance of this handler.
@@ -78,6 +83,7 @@ register( {
 			}
 
 			item.setAttribute( 'open', '' );
+			syncSelectedHeaders();
 		};
 
 		// Whether a human has already decided this accordion's open state in the current DOM
@@ -119,6 +125,8 @@ register( {
 					item.setAttribute( 'open', '' );
 				}
 			} );
+
+			syncSelectedHeaders();
 		};
 
 		applyDefaultState();
@@ -156,6 +164,7 @@ register( {
 
 			if ( item.hasAttribute( 'open' ) ) {
 				item.removeAttribute( 'open' );
+				syncHeaderSelectedClass( item );
 
 				return;
 			}
