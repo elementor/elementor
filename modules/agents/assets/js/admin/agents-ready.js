@@ -17,6 +17,7 @@ const init = () => {
 		<App
 			isRTL={ !! elementorCommon.config.isRTL }
 			isExperimentActive={ !! config.isExperimentActive }
+			agentDiscoveryConfig={ config.agentDiscovery }
 			botAccessConfig={ config.botAccess }
 			llmsConfig={ config.llms }
 			markdownConfig={ config.markdown }
