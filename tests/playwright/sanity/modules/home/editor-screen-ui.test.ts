@@ -44,10 +44,21 @@ test.describe( 'Editor screen UI tests', () => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'pro' );
 
+		await page.setViewportSize( VIEWPORT_SIZE );
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
-		await page.setViewportSize( VIEWPORT_SIZE );
+		await page.waitForLoadState( 'networkidle' );
+		await expect( homeScreen ).toBeVisible();
+		await expect.poll( async () => homeScreen.evaluate( ( element ) => {
+			const images = Array.from( element.querySelectorAll( 'img' ) );
+
+			if ( 0 === images.length ) {
+				return true;
+			}
+
+			return images.every( ( image ) => image instanceof HTMLImageElement && image.complete && image.naturalHeight > 0 );
+		} ) ).toBe( true );
 		await expectScreenshot( homeScreen, 'home-screen-pro.png' );
 		await requestContext.dispose();
 	} );
