@@ -70,8 +70,6 @@ function buildAgentToolResponse( response, state ) {
 	};
 }
 
-// `respondWith` must be called while the submit event is still being dispatched, so hand the browser a
-// pending promise right away and resolve it once the submission finishes.
 function createAgentResponder( event ) {
 	if ( ! event?.agentInvoked || 'function' !== typeof event.respondWith ) {
 		return () => {};
