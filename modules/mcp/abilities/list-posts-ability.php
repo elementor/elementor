@@ -70,6 +70,7 @@ class List_Posts_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			fn() => is_user_logged_in(),
 			[
