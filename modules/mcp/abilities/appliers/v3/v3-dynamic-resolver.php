@@ -24,6 +24,31 @@ class V3_Dynamic_Resolver {
 	/**
 	 * @return array{name: string, settings: array<string, mixed>}|null
 	 */
+	public static function contains_dynamic_input( $value, ?string $property = null ): bool {
+		return null !== self::extract_input( $value, $property );
+	}
+
+	/**
+	 * @param mixed $value
+	 */
+	public static function contains_nested_dynamic_input( $value ): bool {
+		if ( self::contains_dynamic_input( $value, null ) ) {
+			return true;
+		}
+
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		foreach ( $value as $nested_value ) {
+			if ( self::contains_dynamic_input( $nested_value, null ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public static function extract_input( $value, ?string $property ): ?array {
 		if ( ! is_array( $value ) ) {
 			return null;

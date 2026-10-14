@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,6 +17,34 @@ class Dynamic_Tag_Llm_Resolver {
 
 	public static function make(): callable {
 		return [ self::class, 'resolve' ];
+	}
+
+	public static function try_serialize( $value ): ?array {
+		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $value ) ) {
+			return null;
+		}
+
+		return self::serialize( $value );
+	}
+
+	public static function serialize( $stored_value ): array {
+		$input = self::normalize_input( $stored_value );
+		$name = $input['name'] ?? '';
+		$tag = $name ? Dynamic_Tags_Module::instance()->registry->get_tag( $name ) : null;
+		$props_schema = is_array( $tag['props_schema'] ?? null ) ? $tag['props_schema'] : [];
+		$stored_settings = is_array( $input['settings'] ?? null ) ? $input['settings'] : [];
+
+		$schema = array_diff_key(
+			array_intersect_key( $props_schema, $stored_settings ),
+			array_flip( self::OMITTED_SETTING_KEYS )
+		);
+
+		$resolved = Render_Props_Resolver::for_plain()->resolve( $schema, $stored_settings );
+
+		return [
+			'name' => $name,
+			'settings' => array_filter( $resolved, fn( $value ) => null !== $value ),
+		];
 	}
 
 	public static function resolve( $value, ?callable $settings_resolver = null ): array {

@@ -1,10 +1,6 @@
-import { type ChipProps } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
-
 import { type AuditCategory, type AuditResult, type AuditRun, type PageAuditReport } from '../types';
+import { isScoredAudit } from './is-scored-audit';
 import { sortFailedAuditResults } from './sort-failed-audits';
-
-export type AuditStatusGroup = 'fail' | 'pass' | 'skipped';
 
 export type PartitionedAuditResults = {
 	failed: Array< AuditRun & { result: Extract< AuditResult, { status: 'fail' } > } >;
@@ -37,7 +33,11 @@ export function partitionAuditResults(
 		switch ( run.result.status ) {
 			case 'fail':
 				failed.push( { ...run, result: run.result } );
-				totalViolations += run.result.violations.length;
+
+				if ( isScoredAudit( run.audit ) ) {
+					totalViolations += run.result.violations.length;
+				}
+
 				break;
 			case 'pass':
 				passed.push( { ...run, result: run.result } );
@@ -54,54 +54,6 @@ export function partitionAuditResults(
 		skipped,
 		totalViolations,
 	};
-}
-
-export function auditStatusDisplayCounts( report: PageAuditReport ): Record< AuditStatusGroup, number > {
-	let pass = 0;
-	let skipped = 0;
-	let totalViolations = 0;
-
-	for ( const { result } of report.auditResults ) {
-		switch ( result.status ) {
-			case 'fail':
-				totalViolations += result.violations.length;
-				break;
-			case 'pass':
-				pass++;
-				break;
-			case 'skipped':
-				skipped++;
-				break;
-		}
-	}
-
-	return {
-		fail: totalViolations,
-		pass,
-		skipped,
-	};
-}
-
-export function auditStatusColor( status: AuditStatusGroup ): ChipProps[ 'color' ] {
-	switch ( status ) {
-		case 'fail':
-			return 'error';
-		case 'pass':
-			return 'success';
-		case 'skipped':
-			return 'default';
-	}
-}
-
-export function auditStatusLabel( status: AuditStatusGroup ): string {
-	switch ( status ) {
-		case 'fail':
-			return __( 'Failed audits', 'elementor' );
-		case 'pass':
-			return __( 'Passed audits', 'elementor' );
-		case 'skipped':
-			return __( 'Skipped audits', 'elementor' );
-	}
 }
 
 export function getPopulatedCategories(

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { ANGIE_GUIDE_TOGGLE_EVENT } from '../angie-consts';
+import { CREATE_WIDGET_EVENT } from '../angie-consts';
 
 export function useAutoShow() {
 	useEffect( () => {
@@ -9,7 +9,11 @@ export function useAutoShow() {
 		}
 
 		const id = setTimeout( () => {
-			window.dispatchEvent( new CustomEvent( ANGIE_GUIDE_TOGGLE_EVENT ) );
+			window.dispatchEvent(
+				new CustomEvent( CREATE_WIDGET_EVENT, {
+					detail: { entry_point: 'auto_show' },
+				} )
+			);
 		}, 0 );
 
 		return () => clearTimeout( id );

@@ -1,6 +1,7 @@
 import { type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
+	getNonEmptyVariants,
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
@@ -238,7 +239,7 @@ export const slice = createSlice( {
 				if ( ! ( id in state.data.items ) ) {
 					state.data.items[ id ] = previewClassData;
 				}
-				if ( ! ( id in state.initialData.frontend.items ) ) {
+				if ( frontendClassData && ! ( id in state.initialData.frontend.items ) ) {
 					state.initialData.frontend.items[ id ] = frontendClassData;
 				}
 				if ( ! ( id in state.initialData.preview.items ) ) {
@@ -301,12 +302,6 @@ const mergeProps = ( current: Props, updates: Props ): Props => {
 	} );
 
 	return props;
-};
-
-const getNonEmptyVariants = ( style: StyleDefinition ) => {
-	return style.variants.filter(
-		( { props, custom_css: customCss }: StyleDefinitionVariant ) => Object.keys( props ).length || customCss?.raw
-	);
 };
 
 export const placeholderDefinition = ( id: StyleDefinitionID, label: string ): StyleDefinition => ( {

@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { ASSETS_JS } from './paths.mjs';
@@ -10,6 +10,12 @@ import { ASSETS_JS } from './paths.mjs';
  * what the two deliberate runtime imports of `tipsy.min.js` rely on.
  */
 const STATIC_DYNAMIC_IMPORT = /\bimport\(\s*(["'`])([^"'`$]+)\1\s*\)/g;
+
+const RUNTIME_ELEMENTOR_ONE_LOCALE_IMPORT = new RegExp( 'import\\s*\\(\\s*`\\.\\/locales\\/\\$\\{' );
+
+const EDITOR_ONE_TOP_BAR_BUNDLE = 'editor-one-top-bar.min.js';
+
+const INLINED_ELEMENTOR_ONE_LOCALE_MAP = /"he-IL\/common":\{/;
 
 /**
  * Only the minified bundles are scanned. The unminified ones keep JSDoc comments, and
@@ -45,6 +51,10 @@ export function verifyNoUnresolvedImports( directory = ASSETS_JS ) {
 		for ( const [ , , specifier ] of code.matchAll( STATIC_DYNAMIC_IMPORT ) ) {
 			offences.push( `${ fileName }: import( '${ specifier }' )` );
 		}
+
+		if ( RUNTIME_ELEMENTOR_ONE_LOCALE_IMPORT.test( code ) ) {
+			offences.push( `${ fileName }: runtime import of @elementor/elementor-one-assets locale JSON` );
+		}
 	}
 
 	if ( offences.length ) {
@@ -55,6 +65,28 @@ export function verifyNoUnresolvedImports( directory = ASSETS_JS ) {
 				'Frontend entries route dynamic imports through __elementorLoadChunk; base entries still inline them.',
 				'Externals must be rewritten to a global, and first-party specifiers must be plain string literals.',
 			].join( '\n' ),
+		);
+	}
+}
+
+export function verifyEditorOneTopBarLocaleLoading( directory = ASSETS_JS ) {
+	const bundlePath = join( directory, EDITOR_ONE_TOP_BAR_BUNDLE );
+
+	if ( ! existsSync( bundlePath ) ) {
+		return;
+	}
+
+	const code = readFileSync( bundlePath, 'utf8' );
+
+	if ( INLINED_ELEMENTOR_ONE_LOCALE_MAP.test( code ) ) {
+		throw new Error(
+			`${ EDITOR_ONE_TOP_BAR_BUNDLE } inlines @elementor/elementor-one-assets locale JSON; use fetch against localesBaseUrl instead.`,
+		);
+	}
+
+	if ( ! code.includes( 'elementorOneTopBarConfig.localeLanguageBaseUrls' ) ) {
+		throw new Error(
+			`${ EDITOR_ONE_TOP_BAR_BUNDLE } must load locales via elementorOneTopBarConfig.localeLanguageBaseUrls.`,
 		);
 	}
 }

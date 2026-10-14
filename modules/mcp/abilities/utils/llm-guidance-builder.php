@@ -19,6 +19,10 @@ class Llm_Guidance_Builder {
 
 		$default_styles = self::collect_default_styles( $config['base_styles'] ?? [] );
 
+		if ( Atomic_Container_Presentation::applies_to( $config ) ) {
+			$default_styles = array_merge( Atomic_Container_Presentation::SHELL_STYLES, $default_styles );
+		}
+
 		$instructions = array_filter( [
 			! empty( $default_styles ) ? self::DEFAULT_STYLES_INSTRUCTION : null,
 		] );
@@ -60,7 +64,8 @@ class Llm_Guidance_Builder {
 
 	private static function build_nesting( array $config, string $widget_type, array $parents_index ): array {
 		$allowed_child_types = $config['allowed_child_types'] ?? [];
-		$allowed_parents = $parents_index[ $widget_type ] ?? [];
+		$emit_allowed_parents = empty( $config['show_in_panel'] );
+		$allowed_parents = $emit_allowed_parents ? ( $parents_index[ $widget_type ] ?? [] ) : [];
 
 		return array_filter(
 			[

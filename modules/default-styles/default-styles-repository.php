@@ -5,7 +5,6 @@ namespace Elementor\Modules\DefaultStyles;
 use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\DefaultStyles\Utils\Default_Style_Data_Normalizer;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -118,6 +117,6 @@ class Default_Styles_Repository {
 	}
 
 	public static function is_allowed_tag( string $tag ): bool {
-		return in_array( $tag, Utils::ALLOWED_HTML_WRAPPER_TAGS, true );
+		return in_array( $tag, Default_Styles_Allowed_Tags::TAGS, true );
 	}
 }

@@ -119,7 +119,9 @@ class Revisions_Manager {
 
 		$default_query_args = [
 			'posts_per_page' => self::MAX_REVISIONS_TO_DISPLAY,
-			'meta_key' => '_elementor_data',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'no_found_rows' => true,
 		];
 
 		$query_args = array_merge( $default_query_args, $query_args );

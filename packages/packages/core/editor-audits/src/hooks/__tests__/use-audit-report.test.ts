@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getHostDocumentId } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__deleteStore,
@@ -13,10 +13,11 @@ import { runPageAudit } from '../../runner';
 import { slice } from '../../store/slice';
 import { type PageAuditReport } from '../../types';
 import { getPersistedReport, persistReport } from '../../utils/report-storage';
+import { SessionExpiredError } from '../../utils/session-expiration';
 import { useAuditReport } from '../use-audit-report';
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	getCurrentDocumentId: jest.fn(),
+	getHostDocumentId: jest.fn(),
 } ) );
 
 jest.mock( '../../runner' );
@@ -58,7 +59,7 @@ describe( 'useAuditReport', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		jest.mocked( getPersistedReport ).mockReturnValue( null );
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( DOCUMENT_ID );
+		jest.mocked( getHostDocumentId ).mockReturnValue( DOCUMENT_ID );
 		__registerSlice( slice );
 		__createStore();
 	} );
@@ -98,7 +99,7 @@ describe( 'useAuditReport', () => {
 		await waitFor( () => expect( result.current.status ).toBe( 'ready' ) );
 
 		// Act.
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
+		jest.mocked( getHostDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
 		rerender();
 
 		// Assert.
@@ -117,7 +118,7 @@ describe( 'useAuditReport', () => {
 		await waitFor( () => expect( result.current.report ).toEqual( reportForDocumentOne ) );
 
 		// Act.
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
+		jest.mocked( getHostDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
 		rerender();
 
 		// Assert.
@@ -153,5 +154,44 @@ describe( 'useAuditReport', () => {
 		// Assert.
 		expect( result.current.status ).toBe( 'error' );
 		expect( persistReport ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reverts to idle without an error when the session expires and there is no report yet', async () => {
+		// Arrange.
+		jest.mocked( runPageAudit ).mockRejectedValue( new SessionExpiredError( 'Session expired' ) );
+		const { result } = renderUseAuditReport();
+
+		// Act.
+		await act( async () => {
+			await result.current.run( DOCUMENT_ID );
+		} );
+
+		// Assert.
+		expect( result.current.status ).toBe( 'idle' );
+		expect( result.current.error ).toBeNull();
+		expect( persistReport ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reverts to the last ready report without an error when the session expires during a re-scan', async () => {
+		// Arrange.
+		const existingReport = makeReport( DOCUMENT_ID );
+		jest.mocked( runPageAudit )
+			.mockResolvedValueOnce( existingReport )
+			.mockRejectedValueOnce( new SessionExpiredError( 'Session expired' ) );
+		const { result } = renderUseAuditReport();
+		await act( async () => {
+			await result.current.run( DOCUMENT_ID );
+		} );
+		await waitFor( () => expect( result.current.status ).toBe( 'ready' ) );
+
+		// Act.
+		await act( async () => {
+			await result.current.run( DOCUMENT_ID );
+		} );
+
+		// Assert.
+		expect( result.current.status ).toBe( 'ready' );
+		expect( result.current.error ).toBeNull();
+		expect( result.current.report ).toEqual( existingReport );
 	} );
 } );

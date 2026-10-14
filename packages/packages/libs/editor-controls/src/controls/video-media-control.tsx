@@ -1,28 +1,36 @@
 import * as React from 'react';
-import { videoSrcPropTypeUtil } from '@elementor/editor-props';
-import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
+import { urlPropTypeUtil, videoSrcPropTypeUtil } from '@elementor/editor-props';
+import { Card, CardMedia, CardOverlay, CircularProgress } from '@elementor/ui';
 import { useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { MediaSelectActions } from './media-select-actions';
 import { TILES_GRADIENT_FORMULA } from './svg-media-control';
 
 const PLACEHOLDER_IMAGE = window.elementorCommon?.config?.urls?.assets + '/shapes/play-triangle.svg';
 
-export const VideoMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( videoSrcPropTypeUtil );
+type VideoMediaControlProps = {
+	label?: string;
+};
+
+export const VideoMediaControl = createControl( ( { label = __( 'Video', 'elementor' ) }: VideoMediaControlProps ) => {
+	const { value, setValue, propType } = useBoundProp( videoSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
 	const videoUrl = attachment?.url ?? url?.value ?? null;
 
+	const defaultUrl = videoSrcPropTypeUtil.extract( propType.default ?? null )?.url?.value;
+	const currentUrlForModal = url?.value && url.value !== defaultUrl ? url.value : undefined;
+
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'video' ],
 		multiple: false,
 		selected: id?.value || null,
+		allowUrlImport: true,
 		onSelect: ( selectedAttachment ) => {
 			setValue( {
 				id: {
@@ -30,6 +38,12 @@ export const VideoMediaControl = createControl( () => {
 					value: selectedAttachment.id,
 				},
 				url: null,
+			} );
+		},
+		onSelectUrl: ( selectedUrl ) => {
+			setValue( {
+				id: null,
+				url: urlPropTypeUtil.create( selectedUrl ),
 			} );
 		},
 	} );
@@ -53,25 +67,12 @@ export const VideoMediaControl = createControl( () => {
 					<VideoPreview isFetching={ isFetching } videoUrl={ videoUrl } />
 				</CardMedia>
 				<CardOverlay>
-					<Stack gap={ 1 }>
-						<Button
-							size="tiny"
-							color="inherit"
-							variant="outlined"
-							onClick={ () => open( { mode: 'browse' } ) }
-						>
-							{ __( 'Select video', 'elementor' ) }
-						</Button>
-						<Button
-							size="tiny"
-							variant="text"
-							color="inherit"
-							startIcon={ <UploadIcon /> }
-							onClick={ () => open( { mode: 'upload' } ) }
-						>
-							{ __( 'Upload', 'elementor' ) }
-						</Button>
-					</Stack>
+					<MediaSelectActions
+						label={ label }
+						onSelect={ () => open( { mode: 'browse' } ) }
+						onUpload={ () => open( { mode: 'upload' } ) }
+						onInsertUrl={ () => open( { mode: 'url', currentUrl: currentUrlForModal } ) }
+					/>
 				</CardOverlay>
 			</Card>
 		</ControlActions>
@@ -86,6 +87,7 @@ const VideoPreview = ( { isFetching = false, videoUrl }: { isFetching?: boolean;
 	if ( videoUrl ) {
 		return (
 			<video
+				aria-label={ __( 'Video preview', 'elementor' ) }
 				src={ videoUrl }
 				muted
 				preload="metadata"

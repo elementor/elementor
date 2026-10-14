@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class V3_Widget_Bridge_Registry {
 
 	/**
-	 * @return array{non_style_keys: string[], style_overrides: array<string, array>}|null
+	 * @return array{non_style_keys: string[], style_overrides: array<string, array>, description?: string}|null
 	 */
 	public static function get( string $widget_type ): ?array {
 		$entries = self::entries();
@@ -59,6 +59,13 @@ class V3_Widget_Bridge_Registry {
 		$entry = self::get( $widget_type );
 
 		return $entry['style_overrides'] ?? [];
+	}
+
+	public static function get_description( string $widget_type ): ?string {
+		$entry = self::get( $widget_type );
+		$description = $entry['description'] ?? null;
+
+		return is_string( $description ) && '' !== $description ? $description : null;
 	}
 
 	/**
@@ -148,6 +155,7 @@ class V3_Widget_Bridge_Registry {
 
 	private static function theme_post_content(): array {
 		return [
+			'description' => 'Single-template body slot only. Exactly one per single template, wrapped in an `e-div-block`. Do NOT place inside loop items, archives, headers, footers, or components — the loop already repeats the article body.',
 			'non_style_keys' => [],
 			'style_overrides' => array_merge(
 				self::typography_overrides( 'typography' ),
@@ -167,6 +175,7 @@ class V3_Widget_Bridge_Registry {
 
 	private static function theme_post_title(): array {
 		return [
+			'description' => 'Prefer `e-heading` with a `post-title` dynamic tag. Use this V3 widget only when the V4 equivalent is not viable.',
 			'non_style_keys' => [
 				'title',
 				'link',
@@ -191,6 +200,7 @@ class V3_Widget_Bridge_Registry {
 
 	private static function theme_post_excerpt(): array {
 		return [
+			'description' => 'Prefer `e-heading` or `e-paragraph` with a `post-excerpt` dynamic tag.',
 			'non_style_keys' => [
 				'excerpt',
 			],
@@ -217,6 +227,7 @@ class V3_Widget_Bridge_Registry {
 
 	private static function theme_post_featured_image(): array {
 		return [
+			'description' => 'Prefer `e-image` with a `featured-image` dynamic tag on `src`. Use this V3 widget only when the V4 equivalent is not viable.',
 			'non_style_keys' => [
 				'image',
 				'image_size',

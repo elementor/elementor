@@ -32,8 +32,8 @@ class Atomic_Styles_Manager {
 	private array $fonts = [];
 
 	public function __construct() {
-		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
+		$this->css_files_manager = new CSS_Files_Manager( $this->cache_validity );
 	}
 
 	public static function instance() {

@@ -1,13 +1,21 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, type SetValueMeta, useBoundProp } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type ElementID, getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
-import { type CreateOptions, type PropKey, type Props } from '@elementor/editor-props';
+import {
+	type CreateOptions,
+	type PropKey,
+	type Props,
+	responsiveFallbackChain,
+	responsivePropTypeUtil,
+} from '@elementor/editor-props';
+import { type BreakpointId, useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
+import { isResponsivePropType } from '../utils/is-responsive-prop-type';
 import {
 	extractDependencyEffect,
 	extractOrderedDependencies,
@@ -24,6 +32,7 @@ type SettingsFieldProps = {
 };
 
 const HISTORY_DEBOUNCE_WAIT = 800;
+const DESKTOP_BREAKPOINT: BreakpointId = 'desktop';
 
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
@@ -62,7 +71,36 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+			<PropKeyProvider bind={ bind }>
+				{ isResponsivePropType( propsSchema[ bind ] ) ? (
+					<ResponsiveBinding>{ children }</ResponsiveBinding>
+				) : (
+					children
+				) }
+			</PropKeyProvider>
+		</PropProvider>
+	);
+};
+
+const ResponsiveBinding = ( { children }: { children: React.ReactNode } ) => {
+	const { value, setValue, propType, disabled } = useBoundProp( responsivePropTypeUtil );
+	const breakpoint = useActiveBreakpoint() ?? DESKTOP_BREAKPOINT;
+	const activeBreakpoints = ( useBreakpoints() ?? [] ).map( ( { id } ) => id );
+
+	const inherited = responsiveFallbackChain( breakpoint )
+		.filter( ( key ) => key !== breakpoint && activeBreakpoints.includes( key as BreakpointId ) )
+		.map( ( key ) => value?.[ key ] )
+		.find( ( entry ) => entry !== null && entry !== undefined );
+
+	return (
+		<PropProvider
+			propType={ propType }
+			value={ value }
+			setValue={ setValue }
+			placeholder={ { [ breakpoint ]: inherited } }
+			isDisabled={ () => disabled }
+		>
+			<PropKeyProvider bind={ breakpoint }>{ children }</PropKeyProvider>
 		</PropProvider>
 	);
 };

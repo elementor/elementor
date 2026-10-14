@@ -16,7 +16,9 @@ const SidebarHeader = ( { siteTitle, onCollapse } ) => {
 				<SiteIconBox>
 					<EditorIcon />
 				</SiteIconBox>
-				<SiteTitle variant="subtitle1">{ siteTitle }</SiteTitle>
+				<SiteTitle variant="subtitle1" component="div">
+					{ siteTitle }
+				</SiteTitle>
 				<SearchButton onClick={ finderAction }>
 					<SearchIcon />
 				</SearchButton>
