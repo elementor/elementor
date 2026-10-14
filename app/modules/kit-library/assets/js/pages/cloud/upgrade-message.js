@@ -8,23 +8,29 @@ const UPGRADE_URLS = {
 	GO_PRO: 'https://go.elementor.com/go-pro-cloud-website-templates-library/',
 };
 
+const WEBSITE_TEMPLATE_DESCRIPTION = __( 'Save your entire website as a Website Template - including content, global styles, settings, and media - and reuse it across your connected sites.', 'elementor' );
+
+const WEBSITE_TEMPLATE_AVAILABILITY_NOTE = __( 'Available on selected plans. Website Templates are different from Cloud Templates, which are used for individual design elements rather than complete websites.', 'elementor' );
+
 export default function UpgradeMessage( { hasSubscription, isCloudKitsAvailable } ) {
 	const showPlanUpgradeMessage = ! isCloudKitsAvailable && hasSubscription;
 
 	const content = useMemo( () => showPlanUpgradeMessage ? {
-		heading: __( 'Access Website Templates with a plan upgrade', 'elementor' ),
-		description: __( 'Your current plan doesn\'t include saving and importing Website Templates. Upgrade to the Advanced plan or higher to use this feature.', 'elementor' ),
-		buttonText: __( 'Compare plans', 'elementor' ),
+		heading: __( 'Website Templates aren\'t included in your plan', 'elementor' ),
+		description: WEBSITE_TEMPLATE_DESCRIPTION,
+		buttonText: __( 'View upgrade options', 'elementor' ),
+		note: WEBSITE_TEMPLATE_AVAILABILITY_NOTE,
 		url: UPGRADE_URLS.ADVANCED_PLAN,
 	} : {
-		heading: __( 'It\'s time to level up', 'elementor' ),
-		description: __( 'Upgrade to Elementor Pro to import your own website template and save templates that you can reuse on any of your connected websites.', 'elementor' ),
-		buttonText: __( 'Upgrade now', 'elementor' ),
+		heading: __( 'Save and reuse complete websites', 'elementor' ),
+		description: WEBSITE_TEMPLATE_DESCRIPTION,
+		buttonText: __( 'See plans', 'elementor' ),
+		note: WEBSITE_TEMPLATE_AVAILABILITY_NOTE,
 		url: UPGRADE_URLS.GO_PRO,
 	}, [ showPlanUpgradeMessage ] );
 
 	return (
-		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
+		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen e-kit-library__error-screen--upgrade">
 			<i className="eicon-library-subscription-upgrade" aria-hidden="true"></i>
 			<Heading
 				tag="h3"
@@ -45,6 +51,9 @@ export default function UpgradeMessage( { hasSubscription, isCloudKitsAvailable 
 				target="_blank"
 				className="e-kit-library__upgrade-button"
 			/>
+			<p className="e-kit-library__error-screen-note">
+				{ content.note }
+			</p>
 		</Grid>
 	);
 }
