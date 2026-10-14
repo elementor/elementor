@@ -56,7 +56,8 @@ class Block_Renderer {
 			if ( empty( $declarations ) ) {
 				continue;
 			}
-			$parts[] = sprintf( '&:%s { %s }', $state, $this->render_declarations( $declarations ) );
+			$selector = ' ' === substr( (string) $state, 0, 1 ) ? (string) $state : ':' . $state;
+			$parts[] = sprintf( '&%s { %s }', $selector, $this->render_declarations( $declarations ) );
 		}
 
 		return implode( ' ', $parts );

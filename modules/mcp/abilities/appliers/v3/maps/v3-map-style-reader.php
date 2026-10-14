@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
@@ -48,13 +49,28 @@ class V3_Map_Style_Reader {
 				continue;
 			}
 
-			$existing = $props[ $binding['state'] ][ $binding['prop'] ] ?? null;
-			$props[ $binding['state'] ][ $binding['prop'] ] = null === $existing
+			$block_key = self::block_key( $binding );
+			$existing = $props[ $block_key ][ $binding['prop'] ] ?? null;
+			$props[ $block_key ][ $binding['prop'] ] = null === $existing
 				? $prop_value
 				: $this->merge_sides( $existing, $prop_value );
 		}
 
 		return $props;
+	}
+
+	/**
+	 * Default-target bindings read back as base or `&:state` blocks; other targets as `& target`
+	 * or `& target:state` blocks, the same selectors `V3_Style_Mapper` routes on write.
+	 */
+	private static function block_key( array $binding ): string {
+		if ( $binding['is_default_target'] ?? true ) {
+			return $binding['state'];
+		}
+
+		$state_suffix = Style_Target::DEFAULT_STATE === $binding['state'] ? '' : ':' . $binding['state'];
+
+		return ' ' . $binding['target'] . $state_suffix;
 	}
 
 	private function read_binding( array $binding, array $settings, array $controls, string $suffix ): ?array {
@@ -73,7 +89,33 @@ class V3_Map_Style_Reader {
 			return null;
 		}
 
-		return $adapter->from_control_value( $stored, $binding['sides'] );
+		$prop_value = $adapter->from_control_value( $stored, $binding['sides'] );
+
+		return Size_Prop_Type::get_key() === $binding['read_type'] ? self::as_single_size( $prop_value ) : $prop_value;
+	}
+
+	/**
+	 * Props whose only shared shape with a dimensions control is a size (e.g. border-radius)
+	 * read back as one size when all sides are equal; unequal sides cannot be expressed.
+	 */
+	private static function as_single_size( ?array $prop_value ): ?array {
+		if ( null === $prop_value || Dimensions_Prop_Type::get_key() !== ( $prop_value['$$type'] ?? null ) ) {
+			return $prop_value;
+		}
+
+		$sides = array_values( array_filter( (array) ( $prop_value['value'] ?? [] ) ) );
+
+		if ( empty( $sides ) ) {
+			return null;
+		}
+
+		foreach ( $sides as $side ) {
+			if ( $side != $sides[0] ) { // phpcs:ignore Universal.Operators.StrictComparisons.LooseNotEqual -- compares nested prop arrays.
+				return null;
+			}
+		}
+
+		return $sides[0];
 	}
 
 	/**

@@ -118,14 +118,14 @@ class V3_Style_Mapper {
 		$block_css = (string) ( $block['css'] ?? '' );
 		$state = $this->declaration_parser->normalize_state( $selector );
 
-		if ( null !== $selector && null === $state ) {
-			$ctx->mark_unmapped( $this->unmapped_serializer->serialize_nested_block( $breakpoint, (string) $selector, $block_css ) );
+		if ( $meta->is_map_driven() ) {
+			$this->write_map_block( $ctx, $meta, $breakpoint, $selector, $block_css );
 
 			return;
 		}
 
-		if ( $meta->is_map_driven() ) {
-			$this->map_writer->write( $ctx, $meta->style_bindings(), $meta->controls(), $breakpoint, $state, $block_css );
+		if ( null !== $selector && null === $state ) {
+			$ctx->mark_unmapped( $this->unmapped_serializer->serialize_nested_block( $breakpoint, (string) $selector, $block_css ) );
 
 			return;
 		}
@@ -147,6 +147,67 @@ class V3_Style_Mapper {
 				) );
 			}
 		}
+	}
+
+	/**
+	 * Map-driven widgets address their style targets with nested blocks:
+	 *   `color: red;`             default target
+	 *   `&:hover { ... }`         default target, hover state
+	 *   `& title { ... }`         `title` target
+	 *   `& title:hover { ... }`   `title` target, hover state
+	 */
+	private function write_map_block( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, ?string $selector, string $block_css ): void {
+		$target = null;
+		$state = null;
+
+		if ( null !== $selector ) {
+			$route = $this->route_map_selector( $selector, $meta->style_bindings() );
+
+			if ( null === $route ) {
+				$ctx->warn( sprintf(
+					/* translators: 1: CSS selector, 2: comma separated style target names */
+					__( 'Selector &%1$s does not match a style target of this widget and was skipped. Style targets: %2$s.', 'elementor' ),
+					$selector,
+					implode( ', ', self::map_targets( $meta->style_bindings() ) )
+				) );
+
+				return;
+			}
+
+			[ $target, $state ] = $route;
+		}
+
+		$this->map_writer->write( $ctx, $meta->style_bindings(), $meta->controls(), $breakpoint, $state, $block_css, $target );
+	}
+
+	/**
+	 * @return array{0: string|null, 1: string|null}|null Target alias and state, or null when the selector matches no target.
+	 */
+	private function route_map_selector( string $selector, array $bindings ): ?array {
+		if ( 1 !== preg_match( '/^\s*(?P<target>[a-z0-9]+(?:-[a-z0-9]+)*)?(?::(?P<state>[a-z-]+))?$/i', $selector, $matches ) ) {
+			return null;
+		}
+
+		$target = '' !== ( $matches['target'] ?? '' ) ? strtolower( $matches['target'] ) : null;
+		$state_name = $matches['state'] ?? '';
+		$state = '' !== $state_name ? $this->declaration_parser->normalize_state( $state_name ) : null;
+
+		if ( ( null === $target && null === $state ) || ( '' !== $state_name && null === $state ) ) {
+			return null;
+		}
+
+		if ( null !== $target && ! in_array( $target, self::map_targets( $bindings ), true ) ) {
+			return null;
+		}
+
+		return [ $target, $state ];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function map_targets( array $bindings ): array {
+		return array_values( array_unique( array_filter( array_column( $bindings, 'target' ) ) ) );
 	}
 
 	private function dispatch_rule( V3_Conversion_Context $ctx, V3_Context_Meta $meta, array $rule ): bool {

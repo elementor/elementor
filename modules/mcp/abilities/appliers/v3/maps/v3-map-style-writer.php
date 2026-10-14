@@ -29,12 +29,12 @@ class V3_Map_Style_Writer {
 		$this->declaration_parser = $declaration_parser;
 	}
 
-	public function write( V3_Conversion_Context $ctx, array $bindings, array $controls, string $breakpoint, ?string $state, string $css ): void {
+	public function write( V3_Conversion_Context $ctx, array $bindings, array $controls, string $breakpoint, ?string $state, string $css, ?string $target = null ): void {
 		$converted = $this->css_converter->convert( $css );
 		$state = $state ?? Style_Target::DEFAULT_STATE;
 
 		foreach ( $converted['props'] as $prop => $prop_value ) {
-			$prop_bindings = $this->bindings_for( $bindings, (string) $prop, $state );
+			$prop_bindings = $this->bindings_for( $bindings, (string) $prop, $state, $target );
 
 			if ( empty( $prop_bindings ) ) {
 				$ctx->warn( self::unsupported_property_message( (string) $prop ) );
@@ -101,11 +101,26 @@ class V3_Map_Style_Writer {
 	/**
 	 * @return array<int, array<string, mixed>>
 	 */
-	private function bindings_for( array $bindings, string $prop, string $state ): array {
+	private function bindings_for( array $bindings, string $prop, string $state, ?string $target ): array {
 		return array_values( array_filter(
 			$bindings,
-			fn( array $binding ) => $prop === $binding['prop'] && $state === $binding['state']
+			fn( array $binding ) => $prop === $binding['prop']
+				&& $state === $binding['state']
+				&& self::belongs_to_target( $binding, $target )
 		) );
+	}
+
+	/**
+	 * Bindings without a target come from single-target maps and always belong to the default target.
+	 */
+	private static function belongs_to_target( array $binding, ?string $target ): bool {
+		if ( null === $target ) {
+			return $binding['is_default_target'] ?? true;
+		}
+
+		$binding_target = $binding['target'] ?? null;
+
+		return $binding_target === $target;
 	}
 
 	private function warn_unconverted( V3_Conversion_Context $ctx, array $converted ): void {

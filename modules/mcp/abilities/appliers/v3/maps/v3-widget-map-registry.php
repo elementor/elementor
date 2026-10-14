@@ -155,7 +155,8 @@ class V3_Widget_Map_Registry {
 		$compiled = $this->get_validation_contract( $widget_type );
 
 		if ( null === $compiled ) {
-			return false;
+			// A map that does not compile against the installed widget (e.g. an older Pro) keeps the legacy allowlist path.
+			return Widget_Context_Helper::is_v3_allowlisted( $widget_type );
 		}
 
 		if ( V3_Widget_Map_Compiler::CATALOG_VISIBILITY_ALWAYS === $compiled['catalog_visibility'] ) {
@@ -196,7 +197,17 @@ class V3_Widget_Map_Registry {
 			return null;
 		}
 
-		return array_merge( [], ...array_values( array_column( $compiled['style_targets'], 'bindings' ) ) );
+		$bindings = [];
+
+		foreach ( $compiled['style_targets'] as $alias => $target ) {
+			foreach ( $target['bindings'] as $binding ) {
+				$binding['target'] = $alias;
+				$binding['is_default_target'] = $alias === $compiled['default_style_target'];
+				$bindings[] = $binding;
+			}
+		}
+
+		return $bindings;
 	}
 
 	/**
