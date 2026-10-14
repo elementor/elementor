@@ -1,0 +1,214 @@
+<?php
+
+namespace Elementor\Tests\Phpunit\Modules\Mcp;
+
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
+use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Plugin;
+use ElementorEditorTesting\Elementor_Test_Base;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * @group Elementor\Modules\Mcp
+ */
+class Test_Icon_Composition_Warnings extends Elementor_Test_Base {
+
+	const XML_STRUCTURE = '<e-flexbox configuration-id="wrap"><e-svg configuration-id="icon"/></e-flexbox>';
+
+	private string $fixture_path;
+
+	private string $original_svg_library_state;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->original_svg_library_state = Plugin::$instance->experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY )['default'];
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_ACTIVE );
+
+		$this->fixture_path = sys_get_temp_dir() . '/fa7-fixture-' . uniqid( '', true );
+
+		if ( ! mkdir( $this->fixture_path, 0777, true ) && ! is_dir( $this->fixture_path ) ) {
+			$this->fail( 'Could not create FA7 fixture directory.' );
+		}
+
+		file_put_contents(
+			$this->fixture_path . '/solid.json',
+			wp_json_encode( [
+				'icons' => [
+					'cart-shopping' => [ 576, 512, [], 'f07a', 'M0 0' ],
+				],
+			] )
+		);
+
+		file_put_contents(
+			$this->fixture_path . '/search-index.json',
+			wp_json_encode( [
+				'icons' => [
+					'cart-shopping' => [
+						'name' => 'cart-shopping',
+						'label' => 'Cart Shopping',
+						'categories' => [ 'shopping' ],
+						'libraries' => [ 'fa-solid' ],
+					],
+				],
+			] )
+		);
+
+		add_filter( 'elementor/atomic-widgets/font-awesome-7/json-base-path', [ $this, 'filter_json_base_path' ] );
+
+		Font_Awesome_7_Icon_Resolver::reset();
+		Icon_Catalog::reset();
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, $this->original_svg_library_state );
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
+
+		if ( is_dir( $this->fixture_path ) ) {
+			$json_file = $this->fixture_path . '/solid.json';
+			$search_index = $this->fixture_path . '/search-index.json';
+
+			if ( is_file( $json_file ) ) {
+				unlink( $json_file );
+			}
+
+			if ( is_file( $search_index ) ) {
+				unlink( $search_index );
+			}
+
+			rmdir( $this->fixture_path );
+		}
+
+		Font_Awesome_7_Icon_Resolver::reset();
+		Icon_Catalog::reset();
+
+		parent::tearDown();
+	}
+
+	public function filter_json_base_path(): string {
+		return trailingslashit( $this->fixture_path );
+	}
+
+	public function test_execute__warns_when_an_icon_cannot_be_rendered() {
+		// Arrange — a hallucinated icon name validates fine and then renders nothing.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'fa-solid fa-not-a-real-icon', 'fa-solid' );
+
+		// Assert.
+		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( 'elementor/find-icons', $result['warning_details'][0]['message'] );
+	}
+
+	public function test_execute__warns_when_value_style_does_not_match_library() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'fa-regular fa-cart-shopping', 'fa-solid' );
+
+		// Assert.
+		$this->assertSame( [ 'icon_library_mismatch' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+	}
+
+	public function test_execute__does_not_warn_for_a_managed_icon_library() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'eicon-star', 'eicons' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'warning_details', $result );
+	}
+
+	public function test_execute__does_not_warn_for_an_icon_the_site_can_render() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'fa-solid fa-cart-shopping', 'fa-solid' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'warning_details', $result );
+	}
+
+	public function test_execute__warns_when_icon_json_is_unavailable() {
+		// Arrange — FA7 files missing is a production-plausible scenario (fresh git clone, build not run).
+		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
+		add_filter( 'elementor/atomic-widgets/font-awesome-7/json-base-path', fn() => '/nonexistent/' );
+		Font_Awesome_7_Icon_Resolver::reset();
+
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'fa-solid fa-cart-shopping', 'fa-solid' );
+
+		// Assert — when icon JSON files are unavailable, Font_Awesome_7_Icon_Resolver::resolve() returns null, so we warn.
+		$this->assertSame( [ 'icon_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+	}
+
+	public function test_execute__warns_for_unregistered_custom_library() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act.
+		$result = $this->build_with_icon( $post_id, 'my-pack my-pack-logo', 'my-pack' );
+
+		// Assert.
+		$this->assertSame( [ 'icon_library_not_found' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( 'not installed', $result['warning_details'][0]['message'] );
+		$this->assertStringContainsString( 'placeholder', $result['warning_details'][0]['message'] );
+	}
+
+	public function test_no_icon_warnings_when_svg_library_experiment_inactive() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_INACTIVE );
+
+		$result = $this->build_with_icon( $post_id, 'fa-solid fa-invalid-icon', 'fa-solid' );
+
+		$this->assertArrayNotHasKey( 'warning_details', $result );
+	}
+
+	private function create_real_document(): int {
+		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+	}
+
+	private function build_with_icon( int $post_id, string $value, string $library ): array {
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => self::XML_STRUCTURE,
+			'element_config' => [
+				'icon' => [
+					'svg' => [
+						'value' => $value,
+						'library' => $library,
+					],
+				],
+			],
+			'parent_id' => 'document',
+			'dry_run' => false,
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			$this->fail( 'Composition failed: ' . $result->get_error_message() );
+		}
+
+		return $result;
+	}
+}

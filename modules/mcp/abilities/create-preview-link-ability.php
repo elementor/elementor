@@ -55,6 +55,7 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			function ( $input = [] ) {
 				$post_id = is_array( $input ) && isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;

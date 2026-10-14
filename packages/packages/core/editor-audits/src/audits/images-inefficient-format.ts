@@ -1,10 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
 import { type Audit, type AuditViolation, type ElementSnapshotNode } from '../types';
-import { walkAtomicBackgroundImageSources } from '../utils/atomic-background-image-sources';
-import { walkAtomicImageSources } from '../utils/atomic-image-sources';
-import { walkBackgroundImageSources } from '../utils/background-image-sources';
-import { type ImageLikeMedia, walkImageLikeSources } from '../utils/image-like-sources';
+import { walkAllImageSources } from '../utils/all-image-sources';
+import { type ImageLikeMedia } from '../utils/image-like-sources';
 import { buildImageSizeKey } from '../utils/image-size-key';
 
 const LEGACY_RASTER_MIME_TYPES = new Set( [ 'image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff' ] );
@@ -18,6 +16,7 @@ export const audit: Audit = {
 	severity: 'info',
 	weight: 1,
 	evaluate: ( ctx ) => {
+		const isReady = ctx.pageContext.image_optimization_plugin_active;
 		const offendingElementIds = new Set< string >();
 		let hasAnyImage = false;
 		let inefficientImageFormatCount = 0;
@@ -43,10 +42,7 @@ export const audit: Audit = {
 			offendingElementIds.add( node.id );
 		};
 
-		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
-		walkBackgroundImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
-		walkAtomicImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
-		walkAtomicBackgroundImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
+		walkAllImageSources( ctx.elements.tree, ( { node, media } ) => evaluateSource( node, media ) );
 
 		if ( ! hasAnyImage ) {
 			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
@@ -57,7 +53,9 @@ export const audit: Audit = {
 			elementId,
 			targetHint: 'element-settings' as const,
 			label: __( "Image isn't served in a modern format like WebP or AVIF.", 'elementor' ),
-			externalUrl: ctx.pageContext.image_optimization_plugin_url,
+			externalUrl: isReady
+				? ctx.pageContext.image_optimization_settings_url
+				: ctx.pageContext.image_optimization_plugin_url,
 			ctaLabel: __( 'Optimize all', 'elementor' ),
 		} ) );
 

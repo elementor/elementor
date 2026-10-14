@@ -54,12 +54,31 @@ describe( audit.id, () => {
 				expect( result.metadata?.inefficientImageFormatCount ).toBe( 1 );
 				expect( result.violations[ 0 ].elementId ).toBe( 'i1' );
 				expect( result.violations[ 0 ].externalUrl ).toBe(
-					'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization'
+					'https://example.com/wp-admin/admin.php?page=image-optimization-settings'
 				);
 				expect( result.violations[ 0 ].ctaLabel ).toBe( 'Optimize all' );
 			}
 		}
 	);
+
+	it( 'points to the Image Optimization plugin install URL when the plugin is not active', async () => {
+		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
+		const pageContext = {
+			image_sizes: { '1:full': imageSize( 'image/jpeg' ) },
+			image_optimization_plugin_active: false,
+			image_optimization_plugin_url:
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization',
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization'
+			);
+		}
+	} );
 
 	it.each( [ 'image/webp', 'image/avif' ] )( 'passes when an image is already served as %s', async ( mime ) => {
 		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
