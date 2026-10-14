@@ -124,6 +124,42 @@ class Document_Mutator_Test extends TestCase {
 		$this->assertWPError( $result, 'elementor_invalid_parent' );
 	}
 
+	public function test_insert_at_nested_widget_accepts_a_container_child() {
+		// Arrange
+		$mutator = $this->mutator_for_nested_widget( 'mega-menu' );
+		$tree = [ [
+			'id' => 'menu',
+			'elType' => 'widget',
+			'widgetType' => 'mega-menu',
+			'settings' => [],
+			'elements' => [],
+		] ];
+
+		// Act
+		$result = $mutator->insert_at( $tree, 'menu', null, $this->make_container( 'panel' ) );
+
+		// Assert
+		$this->assertSame( 'panel', $result[0]['elements'][0]['id'] );
+	}
+
+	public function test_insert_at_nested_widget_rejects_a_widget_child() {
+		// Arrange
+		$mutator = $this->mutator_for_nested_widget( 'mega-menu' );
+		$tree = [ [
+			'id' => 'menu',
+			'elType' => 'widget',
+			'widgetType' => 'mega-menu',
+			'settings' => [],
+			'elements' => [],
+		] ];
+
+		// Act
+		$result = $mutator->insert_at( $tree, 'menu', null, $this->make_widget( 'w2' ) );
+
+		// Assert
+		$this->assertWPError( $result, 'elementor_invalid_parent' );
+	}
+
 	public function test_insert_at_unknown_parent_returns_not_found_error() {
 		// Arrange
 		$tree = [ $this->make_container( 'c1' ) ];
@@ -477,6 +513,24 @@ class Document_Mutator_Test extends TestCase {
 	}
 
 	// Helpers
+
+	private function mutator_for_nested_widget( string $widget_type ): Document_Mutator {
+		$widget = new class() {
+			public function get_config(): array {
+				return [ 'support_nesting' => true ];
+			}
+		};
+
+		$widgets = $this->createMock( \Elementor\Widgets_Manager::class );
+		$widgets->method( 'get_widget_types' )->willReturnCallback(
+			static fn( $type ) => $widget_type === $type ? $widget : null
+		);
+
+		return new Document_Mutator(
+			$this->createMock( \Elementor\Elements_Manager::class ),
+			$widgets
+		);
+	}
 
 	private function assertWPError( $value, string $code ): void {
 		$this->assertInstanceOf( \WP_Error::class, $value );
