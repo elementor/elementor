@@ -39,12 +39,25 @@ trait Has_Io_Promotion_Notice {
 		];
 	}
 
-	protected function get_io_promotion_notice_control(): ?Notice_Control {
-		if ( ! Hints::should_display_hint( self::get_io_notice_hint_key() ) ) {
+	protected function get_io_promotion_trigger(): ?array {
+		if ( ! $this->should_display_io_promotion() ) {
 			return null;
 		}
 
-		if ( Hints::is_plugin_active( self::get_io_notice_plugin_slug() ) ) {
+		$notice_data = $this->get_io_promotion_notice_data();
+
+		return [
+			'label' => esc_html__( 'Optimize', 'elementor' ),
+			'title' => esc_html__( 'Optimize your images', 'elementor' ),
+			'content' => $notice_data['content'],
+			'buttonText' => $notice_data['button_text'],
+			'buttonUrl' => $notice_data['button_url'],
+			'dismissible' => 'image_optimizer_hint',
+		];
+	}
+
+	protected function get_io_promotion_notice_control(): ?Notice_Control {
+		if ( ! $this->should_display_io_promotion() ) {
 			return null;
 		}
 
@@ -58,15 +71,21 @@ trait Has_Io_Promotion_Notice {
 			->set_button_url( $notice_data['button_url'] );
 	}
 
+	private function should_display_io_promotion(): bool {
+		return Hints::should_display_hint( self::get_io_notice_hint_key() )
+			&& ! Hints::is_plugin_active( self::get_io_notice_plugin_slug() );
+	}
+
 	private function get_io_promotion_notice_data(): array {
 		$plugin_slug = self::get_io_notice_plugin_slug();
 		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
 		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$content = esc_html__( 'Improve site performance by optimizing your images with Image Optimizer.', 'elementor' );
 
 		if ( $one_subscription ) {
 			return $is_installed
 				? [
-					'content' => esc_html__( 'Your ONE subscription includes Image Optimization. Activate it to optimize images and improve site performance.', 'elementor' ),
+					'content' => $content,
 					'button_text' => esc_html__( 'Activate now', 'elementor' ),
 					'button_url' => $this->get_io_promotion_notice_url(
 						Hints::get_plugin_activate_url( $plugin_slug ),
@@ -76,7 +95,7 @@ trait Has_Io_Promotion_Notice {
 					),
 				]
 				: [
-					'content' => esc_html__( 'Optimize your images to improve site speed and performance. Image Optimization is included in your ONE subscription.', 'elementor' ),
+					'content' => $content,
 					'button_text' => esc_html__( 'Install now', 'elementor' ),
 					'button_url' => $this->get_io_promotion_notice_url(
 						Hints::get_plugin_install_url( $plugin_slug ),
@@ -86,8 +105,6 @@ trait Has_Io_Promotion_Notice {
 					),
 				];
 		}
-
-		$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimization.', 'elementor' );
 
 		return $is_installed
 			? [
