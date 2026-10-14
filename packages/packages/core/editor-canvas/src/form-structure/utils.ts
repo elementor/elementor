@@ -35,6 +35,7 @@ export type StorageContent = {
 };
 
 export const FORM_ELEMENT_TYPE = 'e-form';
+export const FORM_HIDDEN_FIELD_ELEMENT_TYPE = 'e-form-hidden';
 export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-input',
 	'e-form-textarea',
@@ -46,7 +47,7 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-file-upload',
 	'e-form-date-picker',
 	'e-form-time-picker',
-	'e-form-hidden',
+	FORM_HIDDEN_FIELD_ELEMENT_TYPE,
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {

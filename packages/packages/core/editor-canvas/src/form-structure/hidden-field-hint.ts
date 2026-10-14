@@ -2,9 +2,7 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { type HookOptions, registerDataHook } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { type CreateArgs, getArgsElementType } from './utils';
-
-const HIDDEN_FIELD_ELEMENT_TYPE = 'e-form-hidden';
+import { type CreateArgs, FORM_HIDDEN_FIELD_ELEMENT_TYPE, getArgsElementType } from './utils';
 
 const MOVE_COMMAND = 'document/elements/move';
 
@@ -24,7 +22,7 @@ export function initHiddenFieldHint() {
 			return;
 		}
 
-		if ( getArgsElementType( args ) === HIDDEN_FIELD_ELEMENT_TYPE ) {
+		if ( getArgsElementType( args ) === FORM_HIDDEN_FIELD_ELEMENT_TYPE ) {
 			notify( createHiddenFieldNotification() );
 		}
 	} );
