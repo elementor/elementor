@@ -653,5 +653,20 @@ describe( 'interactions-utils', () => {
 		it( 'returns true when no end state differs from the CSS default', () => {
 			expect( shouldResetElementStyles( {} ) ).toBe( true );
 		} );
+
+		it( 'compares the end state against the transform baseline when one is given', () => {
+			const baseline = { x: -100, y: 0, scaleX: 1.2, scaleY: 1.2 };
+
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], x: [ -100, -100 ] }, baseline ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], scale: [ 1.2, 1.2 ] }, baseline ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], x: [ -100, -100 ] } ) ).toBe( false );
+		} );
+
+		it( 'returns false when the end state differs from the transform baseline', () => {
+			const baseline = { x: -100, y: 0, scaleX: 1.2, scaleY: 1.2 };
+
+			expect( shouldResetElementStyles( { x: [ -50, 0 ] }, baseline ) ).toBe( false );
+			expect( shouldResetElementStyles( { scale: [ 0, 1 ] }, baseline ) ).toBe( false );
+		} );
 	} );
 } );

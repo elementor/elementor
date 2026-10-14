@@ -45,6 +45,43 @@ function runRafSync() {
 	} );
 }
 
+function createInteraction( trigger, effect, type, { direction = '', replay = false } = {} ) {
+	return {
+		trigger,
+		breakpoints: { excluded: [] },
+		animation: {
+			effect,
+			type,
+			direction,
+			timing_config: { duration: 600, delay: 0 },
+			config: { replay, easing: 'easeIn' },
+		},
+	};
+}
+
+function mountInteractions( element, interactions ) {
+	document.body.appendChild( element );
+
+	const script = document.createElement( 'script' );
+	script.id = 'elementor-interactions-data';
+	script.type = 'application/json';
+	script.textContent = JSON.stringify( [
+		{ elementId: element.getAttribute( 'data-interaction-id' ), interactions },
+	] );
+	document.body.appendChild( script );
+
+	jest.isolateModules( () => {
+		require( 'elementor/modules/interactions/assets/js/interactions.js' );
+	} );
+}
+
+function createInteractionElement( id ) {
+	const element = document.createElement( 'div' );
+	element.setAttribute( 'data-interaction-id', id );
+
+	return element;
+}
+
 describe( 'Interactions', () => {
 	beforeAll( () => {
 		stubInteractionsConfig();
@@ -440,5 +477,164 @@ describe( 'Interactions', () => {
 		expect( element.style.transform ).toBe( '' );
 		// The authored inline transition must survive the cleanup.
 		expect( element.style.transition ).toBe( 'opacity 0.3s' );
+	} );
+
+	it( 'restores the pre-existing inline opacity instead of clearing it after a fade-in completes', async () => {
+		runRafSync();
+		installMotionMocks( { animate: createStyleWritingAnimate(), inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'inline-opacity' );
+		element.style.opacity = '0.6';
+		mountInteractions( element, [ createInteraction( 'load', 'fade', 'in' ) ] );
+
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '0.6' );
+	} );
+
+	it( 'restores the pre-existing inline transform instead of clearing it after a scale-in completes', async () => {
+		runRafSync();
+		installMotionMocks( { animate: createStyleWritingAnimate(), inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'inline-transform' );
+		element.style.transform = 'rotate(5deg)';
+		mountInteractions( element, [ createInteraction( 'load', 'scale', 'in' ) ] );
+
+		await flushPromises();
+
+		expect( element.style.transform ).toBe( 'rotate(5deg)' );
+	} );
+
+	it( 'does not clear inline styles while another interaction on the same element is still running', async () => {
+		runRafSync();
+		const resolvers = [];
+		const animate = jest.fn( ( element, keyframes ) => {
+			applyLastKeyframeStyles( element, keyframes );
+			return new Promise( ( resolve ) => resolvers.push( resolve ) );
+		} );
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'multiple-interactions' );
+		mountInteractions( element, [
+			createInteraction( 'load', 'fade', 'in' ),
+			createInteraction( 'load', '', 'in', { direction: 'left' } ),
+		] );
+
+		await flushPromises();
+		expect( animate ).toHaveBeenCalledTimes( 2 );
+
+		resolvers[ 0 ]();
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '1' );
+		expect( element.style.transform ).toBe( 'matrix(1, 0, 0, 1, 0, 0)' );
+
+		resolvers[ 1 ]();
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '' );
+		expect( element.style.transform ).toBe( '' );
+	} );
+
+	it( 'keeps the opacity a finished "out" animation committed when an "in" animation on another style finishes later', async () => {
+		runRafSync();
+		const resolvers = [];
+		const animate = jest.fn( ( element, keyframes ) => {
+			applyLastKeyframeStyles( element, keyframes );
+			return new Promise( ( resolve ) => resolvers.push( resolve ) );
+		} );
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'committed-out-state' );
+		mountInteractions( element, [
+			createInteraction( 'load', 'scale', 'in' ),
+			createInteraction( 'load', 'fade', 'out' ),
+		] );
+
+		await flushPromises();
+
+		resolvers[ 1 ]();
+		await flushPromises();
+		resolvers[ 0 ]();
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '0' );
+		expect( element.style.transform ).toBe( '' );
+	} );
+
+	it( 'restores the original inline styles after every replay of a scrollIn interaction', async () => {
+		runRafSync();
+		const animate = createStyleWritingAnimate();
+		let enterViewport;
+		const inView = jest.fn( ( el, callback ) => {
+			enterViewport = callback;
+			return jest.fn();
+		} );
+		installMotionMocks( { animate, inView, scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'scroll-in-replay' );
+		element.style.opacity = '0.6';
+		mountInteractions( element, [ createInteraction( 'scrollIn', 'fade', 'in', { replay: true } ) ] );
+
+		enterViewport();
+		await flushPromises();
+		expect( element.style.opacity ).toBe( '0.6' );
+
+		enterViewport();
+		await flushPromises();
+
+		expect( animate ).toHaveBeenCalledTimes( 2 );
+		expect( element.style.opacity ).toBe( '0.6' );
+	} );
+
+	it( 'clears leftover inline styles after a scrollOut animation of type "in" completes', async () => {
+		runRafSync();
+		const inView = jest.fn( ( el, callback ) => {
+			callback()();
+			return jest.fn();
+		} );
+		installMotionMocks( { animate: createStyleWritingAnimate(), inView, scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'scroll-out-in' );
+		mountInteractions( element, [ createInteraction( 'scrollOut', 'fade', 'in', { replay: true } ) ] );
+
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '' );
+	} );
+
+	it( 'does not clear inline styles after a scrollOut animation of type "out" completes', async () => {
+		runRafSync();
+		const inView = jest.fn( ( el, callback ) => {
+			callback()();
+			return jest.fn();
+		} );
+		installMotionMocks( { animate: createStyleWritingAnimate(), inView, scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'scroll-out-out' );
+		mountInteractions( element, [ createInteraction( 'scrollOut', 'fade', 'out', { replay: true } ) ] );
+
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '0' );
+	} );
+
+	it( 'clears leftover inline styles when the animation ends at the element stylesheet transform baseline', async () => {
+		runRafSync();
+		installMotionMocks( { animate: createStyleWritingAnimate(), inView: jest.fn(), scroll: jest.fn() } );
+
+		const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( {
+			transform: 'matrix(1, 0, 0, 1, -100, 0)',
+		} );
+
+		const element = createInteractionElement( 'baseline-translate' );
+		mountInteractions( element, [ createInteraction( 'load', 'fade', 'in' ) ] );
+
+		await flushPromises();
+
+		expect( element.style.transform ).toBe( '' );
+		expect( element.style.opacity ).toBe( '' );
+
+		getComputedStyleSpy.mockRestore();
 	} );
 } );

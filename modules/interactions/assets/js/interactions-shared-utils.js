@@ -248,12 +248,14 @@ export function getTransformBaselineFromComputedStyle( element ) {
 	};
 }
 
-export function shouldResetElementStyles( keyframes ) {
+export function shouldResetElementStyles( keyframes, baseline ) {
 	// An inline style only needs clearing when the animation's end state matches
-	// the CSS default. "In" animations (fade in, slide in, scale in) end at
-	// opacity 1 / x 0 / y 0 / scale 1, so the inline value after the animation is
-	// redundant with the stylesheet and would otherwise mask `:hover` rules.
-	// "Out" and scrollOut animations end off-identity and must stay in place.
+	// what the stylesheet already renders: the CSS default, or the element's own
+	// transform baseline (e.g. a stylesheet `translateX( -50% )`).
+	// "In" animations (fade in, slide in, scale in) end at opacity 1 / x 0 / y 0 /
+	// scale 1, so the inline value after the animation is redundant with the
+	// stylesheet and would otherwise mask `:hover` rules.
+	// "Out" and scrollOut animations end off that state and must stay in place.
 	const lastKeyframe = Object.keys( keyframes ).reduce( ( acc, key ) => {
 		const values = keyframes[ key ];
 		acc[ key ] = values[ values.length - 1 ];
@@ -261,9 +263,11 @@ export function shouldResetElementStyles( keyframes ) {
 	}, {} );
 
 	const resetOpacity = undefined === lastKeyframe.opacity || isNearOne( lastKeyframe.opacity );
-	const resetScale = undefined === lastKeyframe.scale || isNearOne( lastKeyframe.scale );
-	const resetX = undefined === lastKeyframe.x || isNearZero( lastKeyframe.x );
-	const resetY = undefined === lastKeyframe.y || isNearZero( lastKeyframe.y );
+	const resetScale = undefined === lastKeyframe.scale || (
+		isNear( lastKeyframe.scale, baseline?.scaleX ?? 1 ) && isNear( lastKeyframe.scale, baseline?.scaleY ?? 1 )
+	);
+	const resetX = undefined === lastKeyframe.x || isNear( lastKeyframe.x, baseline?.x ?? 0 );
+	const resetY = undefined === lastKeyframe.y || isNear( lastKeyframe.y, baseline?.y ?? 0 );
 
 	return resetOpacity && resetScale && resetX && resetY;
 }

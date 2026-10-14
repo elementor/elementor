@@ -11,38 +11,76 @@ import {
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
-	resetElementStyles,
 	shouldResetElementStyles,
 } from './interactions-utils.js';
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-function restoreElementStyles( element, transition, keyframes ) {
-	element.style.transition = transition;
+// Inline transform/opacity the element had before any interaction touched it.
+const originalInlineStyles = new WeakMap();
+// Number of interaction animations currently running on the element.
+const runningAnimations = new WeakMap();
 
-	// Clear the inline transform/opacity left behind once the animation reaches a
-	// state that already matches the stylesheet default, so it does not mask
-	// `:hover` (and manually authored) CSS on the same element.
-	if ( shouldResetElementStyles( keyframes ) ) {
-		requestAnimationFrame( () => {
-			resetElementStyles( element );
-			// ResetElementStyles also clears transition; restore it so an
-			// authored inline transition is not removed by the cleanup.
-			element.style.transition = transition;
+function rememberInlineStyles( element ) {
+	if ( ! originalInlineStyles.has( element ) ) {
+		originalInlineStyles.set( element, {
+			transform: element.style.transform,
+			opacity: element.style.opacity,
 		} );
 	}
 }
 
-function scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
+function playAnimation( element, keyframes, options, animateFunc ) {
+	const animation = animateFunc( element, keyframes, options );
+	const finish = () => runningAnimations.set( element, runningAnimations.get( element ) - 1 );
+
+	runningAnimations.set( element, ( runningAnimations.get( element ) || 0 ) + 1 );
+	// Registered before the caller's `.then`, so the count is already updated when it runs.
+	animation.then( finish, finish );
+
+	return animation;
+}
+
+function restoreElementStyles( element, transition, keyframes, baseline ) {
+	element.style.transition = transition;
+
+	// Put back the inline transform/opacity the element had before the animation,
+	// once it reaches a state that already matches the stylesheet, so the value
+	// Motion.js leaves behind does not mask `:hover` (and manually authored) CSS.
+	if ( ! shouldResetElementStyles( keyframes, baseline ) ) {
+		return;
+	}
+
+	// Only touch what this animation wrote, so a style another interaction committed stays.
+	const wroteOpacity = undefined !== keyframes.opacity;
+	const wroteTransform = Object.keys( keyframes ).some( ( key ) => 'opacity' !== key );
+
+	requestAnimationFrame( () => {
+		// A running animation still owns the inline styles. Wiping them now would make it jump.
+		if ( runningAnimations.get( element ) > 0 ) {
+			return;
+		}
+
+		const { transform, opacity } = originalInlineStyles.get( element );
+
+		if ( wroteTransform ) {
+			element.style.transform = transform;
+		}
+
+		if ( wroteOpacity ) {
+			element.style.opacity = opacity;
+		}
+	} );
+}
+
+function scrollOutAnimation( element, restoreStyles, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
 	const stop = inViewFunc( element, () => {
 		return () => {
-			animateFunc( element, keyframes, options ).then( () => {
-				element.style.transition = transition;
-			} );
+			playAnimation( element, keyframes, options, animateFunc ).then( restoreStyles );
 			if ( false === animConfig.replay ) {
 				Promise.resolve().then( () => stop() );
 			}
@@ -50,25 +88,23 @@ function scrollOutAnimation( element, transition, animConfig, keyframes, resetKe
 	}, viewOptions );
 }
 
-function scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+function scrollInAnimation( element, restoreStyles, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0, root: null };
 	const stop = inViewFunc( element, () => {
-		animateFunc( element, keyframes, options ).then( () => {
-			restoreElementStyles( element, transition, keyframes );
-		} );
+		playAnimation( element, keyframes, options, animateFunc ).then( restoreStyles );
 		if ( false === animConfig.replay ) {
 			stop();
 		}
 	}, viewOptions );
 }
 
-function defaultAnimation( element, transition, keyframes, options, animateFunc ) {
-	animateFunc( element, keyframes, options ).then( () => {
-		restoreElementStyles( element, transition, keyframes );
-	} );
+function defaultAnimation( element, restoreStyles, keyframes, options, animateFunc ) {
+	playAnimation( element, keyframes, options, animateFunc ).then( restoreStyles );
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
+	rememberInlineStyles( element );
+
 	const baseline = getTransformBaselineFromComputedStyle( element );
 	const keyframes = preserveTransformKeyframes(
 		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
@@ -88,12 +124,14 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
 	const transition = element.style.transition;
 	element.style.transition = 'none';
+	const restoreStyles = () => restoreElementStyles( element, transition, keyframes, baseline );
+
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, restoreStyles, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
+		scrollInAnimation( element, restoreStyles, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
-		defaultAnimation( element, transition, keyframes, options, animateFunc );
+		defaultAnimation( element, restoreStyles, keyframes, options, animateFunc );
 	}
 }
 
