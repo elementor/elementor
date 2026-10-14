@@ -24,6 +24,14 @@ class Style_Variants_Merger {
 	/**
 	 * $get_converter is a factory callable resolved lazily — only called if the CSS split succeeds.
 	 */
+	/**
+	 * @param string   $error
+	 * @param string[] $active_breakpoints
+	 */
+	public static function invalid_breakpoints_message( string $error, array $active_breakpoints ): string {
+		return $error . sprintf( ' Valid breakpoints: %s.', implode( ', ', $active_breakpoints ) );
+	}
+
 	public static function parse_css_string(
 		string $css_string,
 		array $active_breakpoints,
@@ -40,7 +48,7 @@ class Style_Variants_Merger {
 				$op_index,
 				$op_action,
 				'invalid_css',
-				$split['error'] . sprintf( ' Valid breakpoints: %s.', implode( ', ', $active_breakpoints ) )
+				self::invalid_breakpoints_message( $split['error'], $active_breakpoints )
 			);
 			return null;
 		}

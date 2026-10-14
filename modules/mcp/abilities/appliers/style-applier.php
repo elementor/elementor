@@ -4,7 +4,10 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Overridden_Setting_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
@@ -175,6 +178,17 @@ class Style_Applier {
 
 		$is_empty_css = '' === trim( $css_string );
 		$is_replace = 'replace' === $style_apply_mode;
+		$result = null;
+
+		if ( ! $is_empty_css ) {
+			$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
+			$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
+		}
+
+		if ( null !== ( $result['error'] ?? null ) ) {
+			$warnings->add( 'css_parse_failed', $result['error'], $config_id );
+			return;
+		}
 
 		if ( $is_replace ) {
 			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
@@ -184,21 +198,22 @@ class Style_Applier {
 			return;
 		}
 
-		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
-		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
-
 		foreach ( $result['warnings'] as $warning ) {
 			$warnings->add( 'v3_css_skipped', $warning, $config_id );
 		}
+
+		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [] );
 
 		if ( ! empty( $result['settings_patch'] ) ) {
 			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
 
-		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_style_bindings( (string) $widget_type );
+		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
+			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $result['settings_patch'] ?? [] ), $node['settings'] ?? [] );
+			( new V3_Map_Fallback_Css() )->apply( $node, $result, (string) $widget_type, $config_id, $warnings );
 			return;
 		}
 
