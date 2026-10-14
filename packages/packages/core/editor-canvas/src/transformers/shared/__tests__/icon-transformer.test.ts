@@ -234,6 +234,18 @@ describe( 'iconTransformer', () => {
 		} );
 	} );
 
+	it( 'does not replace PHP-managed eicons with the default svg', async () => {
+		// Arrange.
+		global.fetch = jest.fn();
+
+		// Act.
+		const result = await resolveSavedIcon( 'eicon-edit', 'eicons' );
+
+		// Assert.
+		expect( result ).toEqual( { html: null, url: null } );
+		expect( global.fetch ).not.toHaveBeenCalled();
+	} );
+
 	it( 'renders and sanitizes svg returned by a provider', async () => {
 		// Arrange.
 		registerIconLibraryProvider( {
