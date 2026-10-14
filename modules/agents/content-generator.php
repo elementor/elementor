@@ -678,7 +678,7 @@ class Content_Generator {
 	 * @param array{title: string, url: string, description: string} $item
 	 */
 	private function format_link_line( array $item ): string {
-		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url( $item['url'] ) . ')';
+		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url_raw( $item['url'] ) . ')';
 
 		if ( '' !== $item['description'] ) {
 			$line .= ': ' . $item['description'];

@@ -387,6 +387,20 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'See [docs](http://evil.test)', $output );
 	}
 
+	public function test_format_link_line_keeps_ampersand_in_url() {
+		$method = new \ReflectionMethod( Content_Generator::class, 'format_link_line' );
+		$method->setAccessible( true );
+
+		$line = $method->invoke( $this->generator, [
+			'title'       => 'Docs',
+			'url'         => 'https://example.test/page?a=1&b=2',
+			'description' => '',
+		] );
+
+		$this->assertSame( '- [Docs](https://example.test/page?a=1&b=2)', $line );
+		$this->assertStringNotContainsString( '&#038;', $line );
+	}
+
 	public function test_stale_cache_version_is_ignored() {
 		$post_id = $this->factory()->post->create( [
 			'post_status'  => 'publish',
