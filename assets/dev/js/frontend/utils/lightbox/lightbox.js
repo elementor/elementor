@@ -941,14 +941,11 @@ module.exports = elementorModules.ViewModule.extend( {
 			$videoWrapper = jQuery( '<div>', {
 				class: `${ classes.videoWrapper } elementor-video-${ this.getRatioType( aspectRatio ) }`,
 				style: '--video-aspect-ratio: ' + aspectRatio },
-			),
-			$playIcon = $activeSlide.children( '.' + classes.playButton );
+			);
 
 		let videoType, apiProvider;
 
 		$videoContainer.append( $videoWrapper );
-
-		$activeSlide.append( $videoContainer );
 
 		if ( -1 !== videoURL.indexOf( 'vimeo.com' ) ) {
 			videoType = 'vimeo';
@@ -958,7 +955,14 @@ module.exports = elementorModules.ViewModule.extend( {
 			apiProvider = elementorFrontend.utils.youtube;
 		}
 
-		const videoID = apiProvider.getVideoIDFromURL( videoURL );
+		if ( ! apiProvider ) {
+			return;
+		}
+
+		$activeSlide.append( $videoContainer );
+
+		const $playIcon = $activeSlide.children( '.' + classes.playButton ),
+			videoID = apiProvider.getVideoIDFromURL( videoURL );
 
 		apiProvider.onApiReady( ( apiObject ) => {
 			if ( 'youtube' === videoType ) {
@@ -1008,7 +1012,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 
 		// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
-		if ( videoURL && -1 !== videoURL.indexOf( 'youtube-nocookie.com' ) ) {
+		if ( /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?youtube-nocookie\.com/.test( videoURL ) ) {
 			playerOptions.host = 'https://www.youtube-nocookie.com';
 			playerOptions.playerVars.origin = window.location.origin;
 		}
