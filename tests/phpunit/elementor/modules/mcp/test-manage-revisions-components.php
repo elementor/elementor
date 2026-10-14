@@ -46,7 +46,7 @@ class Test_Manage_Revisions_Components extends Elementor_Test_Base {
 
 		Mock_Pro_License_API::set_license_state( true );
 		$this->act_as_admin();
-		$this->register_revision_snapshots();
+		$this->register_revision_snapshots_experiment();
 	}
 
 	public function tearDown(): void {

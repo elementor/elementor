@@ -15,7 +15,6 @@ use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
-use Elementor\Modules\Mcp\Utils\Revision_Snapshot_Hooks;
 use Elementor\Plugin;
 use Elementor\Utils;
 use WP\MCP\Core\McpAdapter;
@@ -151,7 +150,7 @@ class Module extends BaseModule {
 		return [
 			'name' => self::REVISION_SNAPSHOTS_EXPERIMENT_NAME,
 			'title' => esc_html__( 'MCP undo through revisions', 'elementor' ),
-			'description' => esc_html__( 'Save a revision before each MCP change so it can be undone, and let MCP clients list and restore revisions.', 'elementor' ),
+			'description' => esc_html__( 'Save a revision before each MCP change so it can be undone.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
@@ -173,8 +172,6 @@ class Module extends BaseModule {
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
-		( new Revision_Snapshot_Hooks() )->register_hooks();
-
 		if ( ! self::is_active() ) {
 			return;
 		}

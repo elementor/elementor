@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Ability_Definition;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,29 +38,24 @@ class Fake_Elements_Write_Ability extends Abstract_Ability {
 		);
 	}
 
-	public function get_snapshot_post_id( array $input ): int {
-		return (int) ( $input['post_id'] ?? 0 );
-	}
-
 	public function execute( $input = [] ) {
-		if ( ! empty( $input['throw'] ) ) {
-			throw new \RuntimeException( 'Simulated failure.' );
-		}
-
-		if ( empty( $input['elements'] ) ) {
-			return [
-				'status' => 'error',
-				'post_id' => (int) $input['post_id'],
-			];
-		}
-
 		$document = Plugin::$instance->documents->get( (int) $input['post_id'] );
 
-		Document_Mutation_Save::elements_preserving_live_status( Document_Mutator::instance(), $document, $input['elements'] );
+		$recording = Document_Revision_Snapshots::record(
+			$document,
+			$this->get_id(),
+			function () use ( $document, $input ) {
+				if ( ! empty( $input['throw'] ) ) {
+					throw new \RuntimeException( 'Simulated failure.' );
+				}
 
-		return [
+				return Document_Mutation_Save::elements_preserving_live_status( Document_Mutator::instance(), $document, $input['elements'] );
+			}
+		);
+
+		return $recording->add_to_response( [
 			'status' => 'success',
 			'post_id' => (int) $input['post_id'],
-		];
+		] );
 	}
 }

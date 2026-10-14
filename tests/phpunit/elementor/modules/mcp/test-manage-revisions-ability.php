@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Modules\Mcp\Abilities\Manage_Revisions_Ability;
 use Elementor\Modules\Mcp\Abilities\Publish_Document_Ability;
+use Elementor\Modules\Mcp\Abilities\Update_Settings_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Fake_Elements_Write_Ability;
@@ -35,7 +36,7 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->act_as_admin();
-		$this->register_revision_snapshots();
+		$this->register_revision_snapshots_experiment();
 		$this->write_ability = new Fake_Elements_Write_Ability();
 		$this->ability = new Manage_Revisions_Ability();
 	}
@@ -203,8 +204,25 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'autosave_not_restorable', $result->get_error_code() );
+		$this->assertSame( 'not_an_undo_point', $result->get_error_code() );
 		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function test_restore__returns_a_redo_point_when_only_page_settings_change() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
+		$update = ( new Update_Settings_Ability() )->execute_guarded( [
+			'post_id' => $post_id,
+			'settings' => [ 'hide_title' => 'yes' ],
+		] );
+		$undo = $this->restore( $post_id, $update['undo_revision_id'] );
+
+		// Act
+		$this->restore( $post_id, $undo['undo_revision_id'] );
+
+		// Assert
+		$this->assertIsInt( $undo['undo_revision_id'] );
+		$this->assertSame( 'yes', get_post_meta( $post_id, Page_Settings_Manager::META_KEY, true )['hide_title'] ?? null );
 	}
 
 	public function test_restore__rejects_users_who_cannot_edit_the_post() {

@@ -25,6 +25,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -161,10 +162,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		);
 	}
 
-	public function get_snapshot_post_id( array $input ): int {
-		return isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
-	}
-
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
@@ -281,7 +278,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $response;
 		}
 
-		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree );
+		$recording = Document_Revision_Snapshots::record(
+			$document,
+			$this->get_id(),
+			fn() => Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree )
+		);
+		$save_result = $recording->get_result();
 		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
 			$response['save_error'] = $save_result->get_error_message();
@@ -296,7 +298,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
-		$response = $this->with_edit_url( $response, $document );
+		$response = $recording->add_to_response( $this->with_edit_url( $response, $document ) );
 		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 		return $response;
 	}

@@ -33,7 +33,7 @@ class Test_Document_Revision_Snapshots extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->act_as_admin();
-		$this->register_revision_snapshots();
+		$this->register_revision_snapshots_experiment();
 		$this->ability = new Fake_Elements_Write_Ability();
 	}
 
@@ -86,33 +86,6 @@ class Test_Document_Revision_Snapshots extends Elementor_Test_Base {
 			get_post_meta( $result['undo_revision_id'], Page_Settings_Manager::META_KEY, true )
 		);
 		$this->assertCount( 1, $this->elements_of( $result['undo_revision_id'] ) );
-	}
-
-	public function test_write__leaves_no_revision_behind_when_nothing_was_saved() {
-		// Arrange
-		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
-		update_post_meta( $post_id, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
-		$revisions_before = $this->regular_revision_ids( $post_id );
-
-		// Act
-		$result = $this->ability->execute_guarded( [ 'post_id' => $post_id ] );
-
-		// Assert
-		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
-		$this->assertArrayNotHasKey( 'undo_revision_id', $result );
-	}
-
-	public function test_write__skips_the_snapshot_when_the_filter_disables_it() {
-		// Arrange
-		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
-		add_filter( 'elementor/mcp/revision_snapshots/enabled', '__return_false' );
-
-		// Act
-		$result = $this->ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
-
-		// Assert
-		$this->assertSame( 'success', $result['status'] );
-		$this->assertArrayNotHasKey( 'undo_revision_id', $result );
 	}
 
 	public function test_write__skips_the_snapshot_and_the_undo_tool_when_the_experiment_is_off() {

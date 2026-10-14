@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\Mcp\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,8 +26,13 @@ class Document_Revision_Snapshots {
 
 	const LATEST_REVISIONS_SCAN_LIMIT = 10;
 
-	public static function record( int $post_id, string $ability_id, callable $operation ): Snapshot_Recording {
-		$main_id = self::resolve_main_id( $post_id );
+	public static function record( Document $document, string $ability_id, callable $save ): Snapshot_Recording {
+		$main_id = (int) $document->get_main_id();
+
+		if ( ! Module::is_revision_snapshots_active() ) {
+			return new Snapshot_Recording( $save(), false, $main_id, null );
+		}
+
 		$saved_target_ids = [];
 		$snapshot = null;
 
@@ -37,8 +43,8 @@ class Document_Revision_Snapshots {
 		add_action( 'elementor/document/after_save', $track_save );
 
 		try {
-			$snapshot = $main_id ? self::capture( $main_id ) : null;
-			$result = $operation();
+			$snapshot = self::capture( $main_id );
+			$result = $save();
 		} catch ( \Throwable $e ) {
 			self::discard( $snapshot );
 
@@ -192,11 +198,5 @@ class Document_Revision_Snapshots {
 		$source = Plugin::$instance->documents->get_doc_or_auto_save( $main_id, get_current_user_id() );
 
 		return $source ? (int) $source->get_post()->ID : $main_id;
-	}
-
-	private static function resolve_main_id( int $post_id ): int {
-		$document = $post_id > 0 ? Plugin::$instance->documents->get( $post_id ) : null;
-
-		return $document ? (int) $document->get_main_id() : 0;
 	}
 }

@@ -13,6 +13,7 @@ use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
@@ -58,14 +59,6 @@ class Manage_Component_Ability extends Abstract_Ability {
 			fn() => current_user_can( 'manage_options' ),
 			$this->get_input_schema()
 		);
-	}
-
-	public function get_snapshot_post_id( array $input ): int {
-		if ( self::ACTION_UPDATE !== ( $input['action'] ?? null ) ) {
-			return 0;
-		}
-
-		return isset( $input['component_id'] ) ? (int) $input['component_id'] : 0;
 	}
 
 	public function execute( $input = [] ) {
@@ -312,10 +305,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
 		try {
-			$saved = $component->save( [
-				'elements' => $elements,
-				'settings' => $settings,
-			] );
+			$recording = Document_Revision_Snapshots::record(
+				$component,
+				$this->get_id(),
+				fn() => $component->save( [
+					'elements' => $elements,
+					'settings' => $settings,
+				] )
+			);
 		} catch ( \Exception $e ) {
 			if ( str_contains( $e->getMessage(), 'components that contain each other' ) ) {
 				return new \WP_Error(
@@ -328,14 +325,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return new \WP_Error( 'save_failed', $e->getMessage(), [ 'status' => \WP_Http::UNPROCESSABLE_ENTITY ] );
 		}
 
-		if ( ! $saved ) {
+		if ( ! $recording->get_result() ) {
 			return new \WP_Error( 'save_failed', __( 'Failed to save component.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return [
+		return $recording->add_to_response( [
 			'success' => true,
 			'component_id' => $component->get_main_id(),
-		] + $this->document_links( $component );
+		] + $this->document_links( $component ) );
 	}
 
 	private function validate_circular_dependency( callable $validate ): ?\WP_Error {

@@ -23,12 +23,15 @@ class Snapshot_Recording {
 		$this->undo_revision_id = $undo_revision_id;
 	}
 
-	public function to_response() {
-		if ( ! $this->document_changed || ! is_array( $this->result ) ) {
-			return $this->result;
+	public function get_result() {
+		return $this->result;
+	}
+
+	public function add_to_response( array $response ): array {
+		if ( ! $this->document_changed ) {
+			return $response;
 		}
 
-		$response = $this->result;
 		$response['undo_revision_id'] = $this->undo_revision_id;
 		$response['llm_instructions'] = trim(
 			( $response['llm_instructions'] ?? '' ) . ' ' . Document_Mutation_Links::undo_instructions( $this->post_id, $this->undo_revision_id )

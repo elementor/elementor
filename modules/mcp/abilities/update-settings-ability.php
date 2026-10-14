@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,10 +63,6 @@ class Update_Settings_Ability extends Abstract_Ability {
 		);
 	}
 
-	public function get_snapshot_post_id( array $input ): int {
-		return isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
-	}
-
 	public function execute( $input = [] ) {
 		$post_id = isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
 		$settings = isset( $input['settings'] ) && is_array( $input['settings'] ) ? $input['settings'] : null;
@@ -88,15 +85,19 @@ class Update_Settings_Ability extends Abstract_Ability {
 			return new \WP_Error( 'rest_cannot_edit', __( 'Sorry, you are not allowed to edit this document.', 'elementor' ), [ 'status' => \WP_Http::FORBIDDEN ] );
 		}
 
-		$saved = $document->save( [ 'settings' => $settings ] );
+		$recording = Document_Revision_Snapshots::record(
+			$document,
+			$this->get_id(),
+			fn() => $document->save( [ 'settings' => $settings ] )
+		);
 
-		if ( ! $saved ) {
+		if ( ! $recording->get_result() ) {
 			return new \WP_Error( 'save_failed', __( 'Could not save document settings.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return [
+		return $recording->add_to_response( [
 			'success' => true,
 			'post_id' => $post_id,
-		] + Document_Mutation_Links::for_document( $document );
+		] + Document_Mutation_Links::for_document( $document ) );
 	}
 }

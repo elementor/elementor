@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Fixtures;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
-use Elementor\Modules\Mcp\Utils\Revision_Snapshot_Hooks;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,17 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Revision_Test_Helpers {
 
 	/**
-	 * The MCP module is not instantiated in the test environment, so its experiment and hooks are registered here.
+	 * The MCP module is not instantiated in the test environment, so its experiment is registered here.
 	 */
-	private function register_revision_snapshots(): void {
+	private function register_revision_snapshots_experiment(): void {
 		$experiments = Plugin::$instance->experiments;
 
 		if ( ! $experiments->get_features( Mcp_Module::REVISION_SNAPSHOTS_EXPERIMENT_NAME ) ) {
 			$experiments->add_feature( Mcp_Module::get_revision_snapshots_experimental_data() );
-		}
-
-		if ( ! has_filter( 'elementor/mcp/ability_executor' ) ) {
-			( new Revision_Snapshot_Hooks() )->register_hooks();
 		}
 	}
 
