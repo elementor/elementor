@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -43,7 +44,12 @@ class Test_Render_Props_Resolver_Escaped_Html extends TestCase {
 		);
 
 		// Assert.
-		$this->assertSame( 'alert(1)<strong>Title</strong>', $result );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result,
+			'alert(1)<strong>Title</strong>',
+			'<strong>Title</strong>'
+		);
 	}
 
 	public function test_resolve_item__sanitizes_plain_string_for_escaped_html_union() {
@@ -65,7 +71,12 @@ class Test_Render_Props_Resolver_Escaped_Html extends TestCase {
 		);
 
 		// Assert.
-		$this->assertSame( 'alert(1)<strong>Title</strong>', $result );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result,
+			'alert(1)<strong>Title</strong>',
+			'<strong>Title</strong>'
+		);
 	}
 
 	public function test_resolve_item__strips_javascript_href_from_escaped_html() {

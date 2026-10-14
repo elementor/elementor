@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
@@ -197,7 +198,12 @@ class Test_Html_V3_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result['value']['content']['value'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result['value']['content']['value'],
+			'Hello alert("xss")<strong>world</strong>',
+			'Hello <strong>world</strong>'
+		);
 	}
 
 	public function test_sanitize__preserves_id_attributes_on_inline_elements() {
