@@ -22,11 +22,6 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 6. Use returned element IDs for subsequent configuration changes
 
-# FORMS (WebMCP)
-When the `e-form` schema lists `webmcp-tool-name`, WebMCP is active, so set these props when you create a form:
-- `e-form`: `actions-after-submit: ["collect-submissions"]` (the site owner sees submissions under Elementor > Submissions; the default `email` only sends mail), `webmcp-tool-name` (unique snake_case, verb first), `webmcp-tool-description` (what the form does and what details it needs) and `webmcp-autosubmit: true` (the agent submits the form itself; leave off only if a person must review it first)
-- Every form field: `webmcp-param-description` (what to enter, with format and constraints)
-
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
 
@@ -160,6 +155,11 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Example (image `src`): `"image": { "src": { "name": "<image tag>", "settings": { ... } }, "size": "full" }`
 - The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps. A category mismatch returns an error for that field and skips merging it.
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
+
+# FORMS (WebMCP)
+When the `e-form` schema lists `webmcp-tool-name` set these props when you create a form:
+- `e-form`: `webmcp-tool-name` (unique snake_case, verb first) and `webmcp-tool-description` (what the form does and what details it needs)
+- Every form field: `webmcp-param-description` (what to enter, with format and constraints)
 
 # DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
 
