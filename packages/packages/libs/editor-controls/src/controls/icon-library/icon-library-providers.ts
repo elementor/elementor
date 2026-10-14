@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
 export type IconLibraryProviderState = {
@@ -29,8 +27,7 @@ export function unregisterIconLibraryProvider( id: string ) {
 }
 
 export function useIconLibraryProviderIcons( enabled: boolean ): Required< IconLibraryProviderState > {
-	const [ snapshot ] = useState( () => [ ...providers.values() ] );
-	const states = snapshot.map( ( provider ) => provider.useIcons( enabled ) );
+	const states = [ ...providers.values() ].map( ( provider ) => provider.useIcons( enabled ) );
 
 	return {
 		data: states.flatMap( ( state ) => state.data ?? [] ),
