@@ -174,6 +174,34 @@ describe( '<InlineEditingControl />', () => {
 		expect( screen.queryByRole( 'toolbar' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should show Improve beside the label when a promotion is set', () => {
+		// Arrange.
+		( window as unknown as { elementor: unknown } ).elementor = {
+			config: { user: { dismissed_editor_notices: [] } },
+		};
+
+		// Act.
+		renderControl(
+			<InlineEditingControl
+				context={ { elementId: '1' } }
+				label="Title"
+				promotion={ {
+					label: 'Improve',
+					title: 'Make your site accessible',
+					content: 'Ally detects common accessibility issues across your site and helps you fix them.',
+					buttonText: 'Install now',
+					buttonUrl: 'https://example.com/install',
+					dismissible: 'ally_atomic_notice',
+				} }
+			/>,
+			baseProps
+		);
+
+		// Assert.
+		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Improve' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'should pass onEditorDestroy to the inline editor', () => {
 		// Act.
 		renderControl( <InlineEditingControl context={ { elementId: '1' } } />, baseProps );
