@@ -133,7 +133,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$types = array_column( $summary['widgets'], 'type' );
 		$this->assertNotContains( 'e-flexbox', $types );
 
-		$get_result = $this->get_schema_ability->execute( [ 'widget_type' => 'e-flexbox' ] );
+		$get_result = $this->get_schema_ability->execute( [ 'widget_type' => [ 'e-flexbox' ] ] )['schemas']['e-flexbox'];
 		$this->assertIsArray( $get_result );
 		$this->assertArrayHasKey( 'properties', $get_result );
 		$this->assertStringContainsString( 'flex-direction to column', $get_result['description'] );
