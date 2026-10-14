@@ -35,6 +35,11 @@ export const audit: Audit = {
 					elementId: node.id,
 					targetHint: 'element-settings',
 					label: __( 'Nested boxed container.', 'elementor' ),
+					angieFix: true,
+					angiePrompt: __(
+						'Find containers that have nested containers. Containers can be deep-nested. Update the nested container styling so that when a parent container already uses a boxed setting, any inner container inside it is set to Full Width. Keep the first parent container boxed, remove all boxed styling from the nested inner containers, and preserve the inner container’s content, spacing, alignment, and hierarchy.',
+						'elementor'
+					),
 				} );
 			}
 		} );

@@ -30,7 +30,7 @@ abstract class Abstract_Ability {
 			return $availability;
 		}
 
-		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_destructive();
+		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_page_mutating();
 
 		if ( $is_mutating ) {
 			$guard = apply_filters( 'elementor/mcp/pre_execute_guard', null, $input );
@@ -137,8 +137,8 @@ abstract class Abstract_Ability {
 		return self::KIND_RESOURCE === ( $this->mcp_meta()['type'] ?? null );
 	}
 
-	private function is_destructive(): bool {
-		return false !== ( $this->definition()->meta['annotations']['destructive'] ?? true );
+	private function is_page_mutating(): bool {
+		return true === ( $this->definition()->meta['mutates_page'] ?? false );
 	}
 
 	protected function definition(): Ability_Definition {

@@ -41,6 +41,7 @@ class Publish_Document_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => true,
 				],
+				'mutates_page' => true,
 			],
 			function () {
 				return current_user_can( 'edit_posts' );
