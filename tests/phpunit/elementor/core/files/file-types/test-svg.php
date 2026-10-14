@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\File_Types;
 
 use Elementor\Core\Files\File_Types\Svg;
+use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -105,17 +106,19 @@ class Test_Svg extends Elementor_Test_Base {
 	}
 
 	public function allowed_filter_elements_data_provider() {
-		return [
-			'feDropShadow' => [ 'feDropShadow' ],
-			'feGaussianBlur' => [ 'feGaussianBlur' ],
-			'feFlood' => [ 'feFlood' ],
-			'feColorMatrix' => [ 'feColorMatrix' ],
-			'feComposite' => [ 'feComposite' ],
-			'feOffset' => [ 'feOffset' ],
-			'feMerge' => [ 'feMerge' ],
-			'feMergeNode' => [ 'feMergeNode' ],
-			'animateTransform' => [ 'animateTransform' ],
-		];
+		$sanitizer = new Svg_Sanitizer();
+		$method = new \ReflectionMethod( Svg_Sanitizer::class, 'get_allowed_elements' );
+		$method->setAccessible( true );
+
+		$all_elements = $method->invoke( $sanitizer );
+		$camel_case_elements = array_filter( $all_elements, fn( $el ) => strtolower( $el ) !== $el );
+
+		$data = [];
+		foreach ( $camel_case_elements as $element ) {
+			$data[ $element ] = [ $element ];
+		}
+
+		return $data;
 	}
 
 	public function test_sanitize__removes_unknown_element() {
@@ -130,5 +133,20 @@ class Test_Svg extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEquals( '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect></svg>', $sanitized );
+	}
+
+	public function test_sanitize__keeps_camel_case_attributes() {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><feGaussianBlur stdDeviation="2"></feGaussianBlur></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertStringContainsString( '<feGaussianBlur', $sanitized );
+		$this->assertStringContainsString( 'stdDeviation="2"', $sanitized );
 	}
 }
