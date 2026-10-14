@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
@@ -157,6 +158,15 @@ class Atomic_Form extends Atomic_Element_Base {
 				->description( 'Absolute URL (http, https, ftp or ftps) to navigate to after a successful submission. Used only when "redirect" is in actions-after-submit. Supports field shortcodes like [field id="email"] in the path, query or fragment only (not in the scheme or host); their values are URL-encoded.' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
+
+		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
+			$props['webmcp-tool-name'] = String_Prop_Type::make()
+				->description( 'Required when creating a form. Exposes the form to AI agents as a tool: unique snake_case name that starts with a verb, e.g. book_table.' );
+			$props['webmcp-tool-description'] = String_Prop_Type::make()
+				->description( 'Required when creating a form. Tells AI agents what the form does and what details it needs, e.g. "Books a table: needs date, time and number of guests."' );
+			$props['actions-after-submit']->description( 'Set to ["collect-submissions"] when creating a form, Add "email" only if the user asks for email notifications.' );
+			$props['webmcp-autosubmit']->description( 'Set to true when creating a form. Leave false only if a person must review the form and click submit.' );
+		}
 
 		return $props;
 	}
@@ -444,9 +454,15 @@ class Atomic_Form extends Atomic_Element_Base {
 			return $context;
 		}
 
-		$form_name = (string) ( $this->get_atomic_settings()['form-name'] ?? '' );
-		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
-		$context['webmcp_tool_description'] = Webmcp_Utils::build_tool_description( $form_name );
+		$settings = $this->get_atomic_settings();
+		$form_name = (string) ( $settings['form-name'] ?? '' );
+
+		$context['webmcp_tool_name'] = ! empty( $settings['webmcp-tool-name'] )
+			? $settings['webmcp-tool-name']
+			: Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
+		$context['webmcp_tool_description'] = ! empty( $settings['webmcp-tool-description'] )
+			? $settings['webmcp-tool-description']
+			: Webmcp_Utils::build_tool_description( $form_name );
 
 		return $context;
 	}
