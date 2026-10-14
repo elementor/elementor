@@ -187,6 +187,33 @@ class Test_Svg extends Elementor_Test_Base {
 		$this->assertEquals( $svg_content, $sanitized );
 	}
 
+	/**
+	 * @dataProvider unsafe_fe_image_href_data_provider
+	 */
+	public function test_sanitize__removes_unsafe_href_from_fe_image( $attribute, $value ) {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_open = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">';
+		$svg_content = $svg_open . '<filter id="f"><feImage ' . $attribute . '="' . $value . '"></feImage></filter></svg>';
+		$expected = $svg_open . '<filter id="f"><feImage></feImage></filter></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $expected, $sanitized );
+	}
+
+	public function unsafe_fe_image_href_data_provider() {
+		return [
+			'javascript in href' => [ 'href', 'javascript:alert(1)' ],
+			'javascript in xlink:href' => [ 'xlink:href', 'javascript:alert(1)' ],
+			'html data URI in xlink:href' => [ 'xlink:href', 'data:text/html,x' ],
+		];
+	}
+
 	public function test_sanitize__removes_unknown_element() {
 		// Arrange.
 		/** @var Svg $svg_handler */
