@@ -98,6 +98,8 @@ With the hidden `e_atomic_form_webmcp` experiment active, `e-form` and the form 
 |---------|------|--------------------|---------------------|
 | `e-form` | `webmcp-tool-name` | `toolname` | `form-name` as snake_case + element ID |
 | `e-form` | `webmcp-tool-description` | `tooldescription` | "Submit the `<form-name>` form with the provided field values." |
+| `e-form` | `actions-after-submit` | none | default `["email"]`; agents set `["collect-submissions"]` so entries appear under Elementor > Submissions |
+| `e-form` | `webmcp-autosubmit` | `toolautosubmit` | off: the browser fills the form and waits for a person to click submit |
 | form field | `webmcp-param-description` | `toolparamdescription` | none (the browser uses the field's label) |
 
 ### Globals in style and classes

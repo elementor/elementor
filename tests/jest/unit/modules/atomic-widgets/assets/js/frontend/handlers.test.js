@@ -423,6 +423,32 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			} );
 		} );
 
+		it( 'calls respondWith synchronously, before the submission finishes', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { message: 'Success message' } } ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			const submission = instance.submit( event );
+
+			// Assert
+			expect( respondWith ).toHaveBeenCalledTimes( 1 );
+
+			await submission;
+		} );
+
 		it( 'returns nested agent payload data without duplicating the message', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
