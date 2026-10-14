@@ -429,6 +429,101 @@ describe( 'SvgMediaControl', () => {
 		expect( preview ).toContainHTML( `d="${ starPath }"` );
 	} );
 
+	it( 'should write the selected attachment as the own value, not the bound placeholder', () => {
+		// Arrange
+		const inheritedSvgUrl = 'https://localhost/inherited.svg';
+		const selectedUrl = 'https://localhost/selected.svg';
+		const selectedId = 42;
+		const setValue = jest.fn();
+
+		jest.mocked( useWpMediaFrame ).mockImplementation( ( { onSelect } ) => ( {
+			open: () => {
+				onSelect( { id: selectedId, url: selectedUrl } );
+			},
+		} ) );
+
+		const props = {
+			setValue,
+			value: null,
+			placeholder: {
+				$$type: 'svg-src',
+				value: {
+					id: null,
+					url: { $$type: 'url', value: inheritedSvgUrl },
+				},
+			},
+			bind: 'svg',
+			propType,
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Select' } ) );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				$$type: 'svg-src',
+				value: expect.objectContaining( {
+					id: expect.objectContaining( { $$type: 'image-attachment-id', value: selectedId } ),
+					url: expect.objectContaining( { $$type: 'url', value: selectedUrl } ),
+				} ),
+			} )
+		);
+	} );
+
+	it( 'should write the selected icon as the own value when a placeholder is bound, not persist the placeholder', () => {
+		// Arrange
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		mockSvgControlLayout();
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: null,
+			placeholder: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'fas fa-star' },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+			bind: 'svg',
+			propType,
+		};
+
+		// Act
+		renderControl( <SvgMediaControl showIconLibrary />, props );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Pick star' } ) );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				$$type: 'icon',
+				value: expect.objectContaining( {
+					value: expect.objectContaining( { $$type: 'string', value: 'fa-solid fa-star' } ),
+				} ),
+			} )
+		);
+	} );
+
+	it( 'should not preview a bound placeholder when no placeholder is provided (normal editing panel)', () => {
+		// Arrange
+		const inheritedSvgUrl = 'https://localhost/inherited.svg';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+
+		const props = { setValue: jest.fn(), value: null, bind: 'svg', propType };
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		const preview = screen.queryByRole( 'img' );
+		if ( preview ) {
+			expect( preview ).not.toHaveAttribute( 'src', inheritedSvgUrl );
+		}
+	} );
+
 	it( 'should preview the inherited SVG (from placeholder) when there is no own value (M2)', () => {
 		// Arrange
 		const inheritedSvgUrl = 'https://localhost/inherited.svg';

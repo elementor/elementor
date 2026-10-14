@@ -261,6 +261,53 @@ describe( '<OverridePropControl />', () => {
 			expect( input ).toHaveAttribute( 'placeholder', 'Control placeholder' );
 		} );
 
+		it( 'keeps the control definition placeholder when the inherited object value is recursively empty', () => {
+			// Arrange
+			const LINK_ELEMENT_ID = 'element-empty-link';
+			const linkOverridableProp: OverridableProp = {
+				...PLACEHOLDER_OVERRIDABLE_PROP,
+				propKey: 'link',
+				label: 'Link',
+				elementId: LINK_ELEMENT_ID,
+				originValue: null,
+			};
+
+			setupElementsMocks(
+				{
+					[ LINK_ELEMENT_ID ]: createMockContainer( LINK_ELEMENT_ID, [], 'e-heading', {
+						link: linkPropTypeUtil.create( { destination: '' } ),
+					} ),
+				},
+				{ link: { placeholder: 'Control placeholder' } }
+			);
+
+			// Act
+			renderOverridePropControl( store, linkOverridableProp, [], MOCK_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Control placeholder' );
+		} );
+
+		it( 'shows the inherited value as placeholder when the inherited object has a non-empty field', () => {
+			// Arrange
+			const linkOverridableProp: OverridableProp = {
+				...PLACEHOLDER_OVERRIDABLE_PROP,
+				propKey: 'link',
+				label: 'Link',
+				elementId: 'element-1',
+			};
+
+			setupElementsMocks( undefined, { link: { placeholder: 'Control placeholder' } } );
+
+			// Act
+			renderOverridePropControl( store, linkOverridableProp, [], MOCK_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).not.toHaveAttribute( 'placeholder', 'Control placeholder' );
+		} );
+
 		it( 'does not mutate the shared control definition props object when stripping the placeholder', () => {
 			// Arrange
 			const sharedControlDefinitionProps: Record< string, unknown > = { placeholder: 'Control placeholder' };

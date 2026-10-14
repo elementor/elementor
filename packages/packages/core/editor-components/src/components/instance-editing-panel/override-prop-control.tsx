@@ -19,7 +19,13 @@ import {
 	useElement,
 } from '@elementor/editor-editing-panel';
 import { type Control } from '@elementor/editor-elements';
-import { type AnyTransformable, type CreateOptions, type PropType, type PropValue } from '@elementor/editor-props';
+import {
+	type AnyTransformable,
+	type CreateOptions,
+	isEmpty,
+	type PropType,
+	type PropValue,
+} from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -253,13 +259,7 @@ function resolveOverrideValues(
 // empty string) isn't a meaningful value to show as a placeholder — treat it like there's no base
 // value at all, so the control's own placeholder is kept instead of an empty one.
 function hasInheritedValue( baseValue: AnyTransformable | null ): boolean {
-	if ( baseValue === null || baseValue === undefined ) {
-		return false;
-	}
-
-	const primitive = ( baseValue as { value?: unknown } ).value;
-
-	return primitive !== null && primitive !== undefined && primitive !== '';
+	return !! baseValue && ! isEmpty( baseValue );
 }
 
 function omitPlaceholder( controlProps: Record< string, unknown > ): Record< string, unknown > {

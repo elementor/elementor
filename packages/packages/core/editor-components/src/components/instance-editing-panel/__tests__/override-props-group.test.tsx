@@ -5,6 +5,7 @@ import { screen } from '@testing-library/react';
 
 import { type OverridablePropsGroup } from '../../../types';
 import { OverridePropControl } from '../override-prop-control';
+import { OVERRIDE_PROPS_GROUP_CONTENT_CLASS } from '../override-props-group-constants';
 import { OverridePropsGroup } from '../override-props-group';
 
 jest.mock( '../override-prop-control', () => ( {
@@ -31,7 +32,7 @@ const MOCK_GROUP: OverridablePropsGroup = {
 	props: [ 'prop-1', 'prop-2' ],
 };
 
-const CONTENT_CLASS = '.e-override-props-group__content';
+const CONTENT_CLASS = `.${ OVERRIDE_PROPS_GROUP_CONTENT_CLASS }`;
 
 describe( '<OverridePropsGroup />', () => {
 	beforeEach( () => {
