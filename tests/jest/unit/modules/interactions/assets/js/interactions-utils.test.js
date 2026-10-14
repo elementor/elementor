@@ -1,7 +1,9 @@
 import {
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
 	shouldResetElementStyles,
 	parseAnimationName,
 	skipInteraction,
@@ -667,6 +669,49 @@ describe( 'interactions-utils', () => {
 
 			expect( shouldResetElementStyles( { x: [ -50, 0 ] }, baseline ) ).toBe( false );
 			expect( shouldResetElementStyles( { scale: [ 0, 1 ] }, baseline ) ).toBe( false );
+		} );
+
+		it( 'compares the opacity end state against the opacity baseline', () => {
+			expect( shouldResetElementStyles( { opacity: [ 0, 0.6 ] }, null, 0.6 ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ] }, null, 0.6 ) ).toBe( false );
+			expect( shouldResetElementStyles( { opacity: [ 0.6, 0 ] }, null, 0.6 ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getOpacityBaselineFromComputedStyle', () => {
+		afterEach( () => {
+			jest.restoreAllMocks();
+		} );
+
+		it( 'returns the authored opacity when it is between 0 and 1', () => {
+			jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( { opacity: '0.6' } );
+
+			expect( getOpacityBaselineFromComputedStyle( document.createElement( 'div' ) ) ).toBe( 0.6 );
+		} );
+
+		it( 'returns 1 for the default, a hidden or an unreadable opacity', () => {
+			const element = document.createElement( 'div' );
+			const getComputedStyle = jest.spyOn( window, 'getComputedStyle' );
+
+			[ '1', '0', '', undefined ].forEach( ( opacity ) => {
+				getComputedStyle.mockReturnValue( { opacity } );
+
+				expect( getOpacityBaselineFromComputedStyle( element ) ).toBe( 1 );
+			} );
+		} );
+	} );
+
+	describe( 'preserveOpacityKeyframes', () => {
+		it( 'ends an "in" fade and starts an "out" fade at the baseline opacity', () => {
+			expect( preserveOpacityKeyframes( { opacity: [ 0, 1 ] }, 0.6 ) ).toEqual( { opacity: [ 0, 0.6 ] } );
+			expect( preserveOpacityKeyframes( { opacity: [ 1, 0 ] }, 0.6 ) ).toEqual( { opacity: [ 0.6, 0 ] } );
+		} );
+
+		it( 'returns the keyframes untouched when there is nothing to change', () => {
+			const keyframes = { opacity: [ 0, 1 ] };
+
+			expect( preserveOpacityKeyframes( keyframes, 1 ) ).toBe( keyframes );
+			expect( preserveOpacityKeyframes( { x: [ -50, 0 ] }, 0.6 ) ).toEqual( { x: [ -50, 0 ] } );
 		} );
 	} );
 } );

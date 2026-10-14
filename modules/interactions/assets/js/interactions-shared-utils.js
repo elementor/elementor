@@ -248,13 +248,32 @@ export function getTransformBaselineFromComputedStyle( element ) {
 	};
 }
 
-export function shouldResetElementStyles( keyframes, baseline ) {
+export function getOpacityBaselineFromComputedStyle( element ) {
+	const opacity = Number.parseFloat( window.getComputedStyle( element )?.opacity );
+
+	// Only an authored value between 0 and 1 changes where a fade has to end.
+	return opacity > 0 && opacity < 1 ? opacity : 1;
+}
+
+export function preserveOpacityKeyframes( keyframes, baselineOpacity ) {
+	if ( ! keyframes.opacity || isNearOne( baselineOpacity ) ) {
+		return keyframes;
+	}
+
+	return {
+		...keyframes,
+		opacity: keyframes.opacity.map( ( value ) => isNearOne( value ) ? baselineOpacity : value ),
+	};
+}
+
+export function shouldResetElementStyles( keyframes, baseline, baselineOpacity = 1 ) {
 	// An inline style only needs clearing when the animation's end state matches
 	// what the stylesheet already renders: the CSS default, or the element's own
-	// transform baseline (e.g. a stylesheet `translateX( -50% )`).
-	// "In" animations (fade in, slide in, scale in) end at opacity 1 / x 0 / y 0 /
-	// scale 1, so the inline value after the animation is redundant with the
-	// stylesheet and would otherwise mask `:hover` rules.
+	// opacity and transform baseline (e.g. an authored `opacity: 0.6` or a
+	// stylesheet `translateX( -50% )`).
+	// "In" animations (fade in, slide in, scale in) end at that baseline, so the
+	// inline value after the animation is redundant with the stylesheet and would
+	// otherwise mask `:hover` rules.
 	// "Out" and scrollOut animations end off that state and must stay in place.
 	const lastKeyframe = Object.keys( keyframes ).reduce( ( acc, key ) => {
 		const values = keyframes[ key ];
@@ -262,7 +281,7 @@ export function shouldResetElementStyles( keyframes, baseline ) {
 		return acc;
 	}, {} );
 
-	const resetOpacity = undefined === lastKeyframe.opacity || isNearOne( lastKeyframe.opacity );
+	const resetOpacity = undefined === lastKeyframe.opacity || isNear( lastKeyframe.opacity, baselineOpacity );
 	const resetScale = undefined === lastKeyframe.scale || (
 		isNear( lastKeyframe.scale, baseline?.scaleX ?? 1 ) && isNear( lastKeyframe.scale, baseline?.scaleY ?? 1 )
 	);
@@ -337,6 +356,8 @@ window.elementorModules.interactions = {
 	timingValueToMs,
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
 	shouldResetElementStyles,
 };

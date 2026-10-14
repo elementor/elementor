@@ -12,7 +12,9 @@ import {
 	timingValueToMs,
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
 	shouldResetElementStyles,
 } from './interactions-shared-utils.js';
 
@@ -47,7 +49,9 @@ export {
 	timingValueToMs,
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
 	shouldResetElementStyles,
 };
 

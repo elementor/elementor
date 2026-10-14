@@ -536,6 +536,75 @@ describe( 'Interactions', () => {
 		expect( element.style.transform ).toBe( '' );
 	} );
 
+	it( 'fades in to the stylesheet opacity and leaves no inline opacity behind', async () => {
+		runRafSync();
+		const animate = createStyleWritingAnimate();
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const style = document.createElement( 'style' );
+		style.textContent = '[data-interaction-id="authored-opacity"] { opacity: 0.6; }';
+		document.head.appendChild( style );
+
+		const element = createInteractionElement( 'authored-opacity' );
+		mountInteractions( element, [ createInteraction( 'load', 'fade', 'in' ) ] );
+
+		await flushPromises();
+
+		expect( animate.mock.calls[ 0 ][ 1 ].opacity ).toEqual( [ 0, 0.6 ] );
+		expect( element.style.opacity ).toBe( '' );
+
+		style.remove();
+	} );
+
+	it( 'restores the opacity when a fade finishes before a slide that does not write opacity', async () => {
+		runRafSync();
+		const resolvers = [];
+		const animate = jest.fn( ( element, keyframes ) => {
+			applyLastKeyframeStyles( element, keyframes );
+			return new Promise( ( resolve ) => resolvers.push( resolve ) );
+		} );
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'fade-before-slide' );
+		mountInteractions( element, [
+			createInteraction( 'load', 'fade', 'in' ),
+			createInteraction( 'load', 'slide', 'in', { direction: 'left' } ),
+		] );
+
+		await flushPromises();
+		expect( animate.mock.calls[ 1 ][ 1 ].opacity ).toBeUndefined();
+
+		resolvers[ 0 ]();
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '' );
+		expect( element.style.transform ).toBe( 'matrix(1, 0, 0, 1, 0, 0)' );
+
+		resolvers[ 1 ]();
+		await flushPromises();
+
+		expect( element.style.transform ).toBe( '' );
+	} );
+
+	it( 'restores the styles after an animation that Motion.js stopped and never settled', async () => {
+		runRafSync();
+		const animate = jest.fn( ( element, keyframes ) => {
+			applyLastKeyframeStyles( element, keyframes );
+			return 1 === animate.mock.calls.length ? new Promise( () => {} ) : Promise.resolve();
+		} );
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'stopped-animation' );
+		mountInteractions( element, [
+			createInteraction( 'load', 'fade', 'in' ),
+			createInteraction( 'load', 'fade', 'in' ),
+		] );
+
+		await flushPromises();
+
+		expect( element.style.opacity ).toBe( '' );
+	} );
+
 	it( 'keeps the opacity a finished "out" animation committed when an "in" animation on another style finishes later', async () => {
 		runRafSync();
 		const resolvers = [];
