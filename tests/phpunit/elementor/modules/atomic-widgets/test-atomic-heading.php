@@ -146,16 +146,19 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$notice_control = $this->find_ally_notice_control( $widget_instance );
+		$title_control = $this->find_content_control( $widget_instance, 'title' );
 
 		// Assert.
-		$this->assertNotNull( $notice_control );
-		$this->assertSame( '_ally_notice', $notice_control->get_bind() );
-		$this->assertSame( 'ally_atomic_notice', $notice_control->get_props()['dismissible'] );
-		$this->assertSame( 'Make your site accessible', $notice_control->get_props()['heading'] );
-		$this->assertSame( 'Ally detects common accessibility issues across your site and guides each fix.', $notice_control->get_props()['content'] );
+		$this->assertNotNull( $title_control );
+		$promotion = $title_control->get_props()['promotion'] ?? null;
+		$this->assertIsArray( $promotion );
+		$this->assertSame( 'ally_atomic_notice', $promotion['dismissible'] );
+		$this->assertSame( 'Make your site accessible', $promotion['title'] );
+		$this->assertSame( 'Improve', $promotion['label'] );
+		$this->assertSame( 'Ally detects common accessibility issues across your site and helps you fix them.', $promotion['content'] );
+		$this->assertSame( 'custom', $title_control->jsonSerialize()['value']['meta']['layout'] );
 
-		$button_url = $notice_control->get_props()['buttonUrl'];
+		$button_url = $promotion['buttonUrl'];
 		$this->assertStringNotContainsString( '&amp;', $button_url );
 		$this->assertStringContainsString( '&', $button_url );
 	}
@@ -173,10 +176,12 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$notice_control = $this->find_ally_notice_control( $widget_instance );
+		$title_control = $this->find_content_control( $widget_instance, 'title' );
 
 		// Assert.
-		$this->assertNull( $notice_control );
+		$this->assertNotNull( $title_control );
+		$this->assertArrayNotHasKey( 'promotion', $title_control->get_props() );
+		$this->assertNull( $title_control->jsonSerialize()['value']['meta'] );
 	}
 
 	public function test__ally_promotion_notice_is_hidden_when_ally_is_connected(): void {
@@ -192,10 +197,12 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$notice_control = $this->find_ally_notice_control( $widget_instance );
+		$title_control = $this->find_content_control( $widget_instance, 'title' );
 
 		// Assert.
-		$this->assertNull( $notice_control );
+		$this->assertNotNull( $title_control );
+		$this->assertArrayNotHasKey( 'promotion', $title_control->get_props() );
+		$this->assertNull( $title_control->jsonSerialize()['value']['meta'] );
 
 		// Cleanup.
 		delete_option( 'ea11y_access_token' );
@@ -213,20 +220,22 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		] );
 
 		// Act.
-		$notice_control = $this->find_ally_notice_control( $widget_instance );
+		$title_control = $this->find_content_control( $widget_instance, 'title' );
 
 		// Assert.
-		$this->assertNull( $notice_control );
+		$this->assertNotNull( $title_control );
+		$this->assertArrayNotHasKey( 'promotion', $title_control->get_props() );
+		$this->assertNull( $title_control->jsonSerialize()['value']['meta'] );
 	}
 
-	private function find_ally_notice_control( $widget_instance ) {
+	private function find_content_control( $widget_instance, string $bind ) {
 		foreach ( $widget_instance->get_atomic_controls() as $control ) {
 			if ( ! ( $control instanceof Section ) || 'content' !== $control->get_id() ) {
 				continue;
 			}
 
 			foreach ( $control->get_items() as $item ) {
-				if ( method_exists( $item, 'get_bind' ) && '_ally_notice' === $item->get_bind() ) {
+				if ( method_exists( $item, 'get_bind' ) && $bind === $item->get_bind() ) {
 					return $item;
 				}
 			}
