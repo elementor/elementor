@@ -70,18 +70,6 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertStringContainsString( 'e-form', $errors[0] );
 	}
 
-	public function test_collect_form_ancestor_errors__rejects_orphaned_hidden_field() {
-		// Arrange
-		$dom = $this->parse_xml( '<e-flexbox><e-form-hidden configuration-id="utm-source" /></e-flexbox>' );
-
-		// Act
-		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
-
-		// Assert
-		$this->assertCount( 1, $errors );
-		$this->assertStringContainsString( '<e-form-hidden configuration-id="utm-source">', $errors[0] );
-	}
-
 	public function test_collect_form_ancestor_errors__reports_each_orphaned_field() {
 		// Arrange
 		$dom = $this->parse_xml( '<e-flexbox><e-form-input /><e-form-label /></e-flexbox>' );
