@@ -91,7 +91,9 @@ class V3_Map_Style_Reader {
 
 		$key = $binding->get_setting() . $suffix;
 
-		if ( ! $is_key_visible( $key, $binding->get_setting() ) ) {
+		// A multi-value condition is not a compiled dependency, so another binding can hide this
+		// control (nav menu pointer=background hides pointer_width) without dropping the stored value.
+		if ( [] !== $binding->get_dependency_values() && ! $is_key_visible( $key, $binding->get_setting() ) ) {
 			return null;
 		}
 

@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -83,9 +84,7 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 * @dataProvider registered_maps_provider
 	 */
 	public function test_get_map__compiles_with_no_diagnostics( string $widget_type ) {
-		if ( 'mega-menu' === $widget_type && ! Plugin::$instance->widgets_manager->get_widget_types( $widget_type ) ) {
-			$this->markTestSkipped( 'mega-menu is registered by Elementor Pro.' );
-		}
+		$this->skip_unless_widget_controls_are_registered( $widget_type );
 
 		// Act.
 		$map = $this->registry->get_map( $widget_type );
@@ -157,6 +156,8 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 * @dataProvider round_trip_provider
 	 */
 	public function test_get_map__exposes_the_expected_targets( string $widget_type, array $targets ) {
+		$this->skip_unless_widget_controls_are_registered( $widget_type );
+
 		// Act.
 		$map = $this->registry->get_map( $widget_type );
 
@@ -169,6 +170,8 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 * @dataProvider round_trip_provider
 	 */
 	public function test_round_trip__serialized_css_maps_back_to_same_settings( string $widget_type, array $targets, string $css ) {
+		$this->skip_unless_widget_controls_are_registered( $widget_type );
+
 		// Arrange.
 		$written = $this->mapper()->apply( $css, $widget_type, [] );
 		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type, [] );
@@ -186,6 +189,8 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 * @dataProvider round_trip_provider
 	 */
 	public function test_settings__read_back_as_written( string $widget_type, array $targets, string $css, array $plain ) {
+		$this->skip_unless_widget_controls_are_registered( $widget_type );
+
 		// Arrange.
 		$map = $this->registry->get_map( $widget_type );
 		$writer = new V3_Map_Settings_Writer( Atomic_Widgets_Module::instance()->get_settings_plain_values_resolver() );
@@ -197,6 +202,15 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( [], $written['rejected'] );
 		$this->assertEquals( $plain, $read );
+	}
+
+	private function skip_unless_widget_controls_are_registered( string $widget_type ): void {
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type )
+			?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
+
+		if ( ! $widget || $widget instanceof Pro_Widget_Promotion ) {
+			$this->markTestSkipped( sprintf( '%s is not registered in this run.', $widget_type ) );
+		}
 	}
 
 	private function mapper(): V3_Style_Mapper {
