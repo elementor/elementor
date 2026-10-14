@@ -65,7 +65,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 	// isn't broken. If there IS an own value, use it as-is — even if it's only one of the two types —
 	// so we never mix an own value with an unrelated inherited placeholder. This never affects what
 	// setValue writes.
-	const hasOwnValue = svgValue !== null || iconValue !== null;
+	const hasOwnValue = svgValue != null || iconValue != null;
 	const previewSvgValue = hasOwnValue ? svgValue : svgPlaceholder;
 	const previewIconValue = hasOwnValue ? iconValue : iconPlaceholder;
 

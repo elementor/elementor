@@ -551,6 +551,32 @@ describe( 'SvgMediaControl', () => {
 		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', inheritedSvgUrl );
 	} );
 
+	it( 'should preview the inherited SVG (from placeholder) when own value is undefined', () => {
+		// Arrange
+		const inheritedSvgUrl = 'https://localhost/inherited.svg';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+
+		const props = {
+			setValue: jest.fn(),
+			value: undefined,
+			placeholder: {
+				$$type: 'svg-src',
+				value: {
+					id: null,
+					url: { $$type: 'url', value: inheritedSvgUrl },
+				},
+			},
+			bind: 'svg',
+			propType,
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', inheritedSvgUrl );
+	} );
+
 	it( 'should preview only the own SVG value when it exists, ignoring an unrelated icon placeholder (M2 fix round 1)', () => {
 		// Arrange
 		const ownSvgUrl = 'https://localhost/own.svg';
