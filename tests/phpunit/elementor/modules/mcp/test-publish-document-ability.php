@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
+use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Mcp\Abilities\Publish_Document_Ability;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -161,6 +162,54 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'draft', get_post_status( $parent_id ) );
 	}
 
+	public function test_execute__promotes_pending_autosave_when_already_published() {
+		// Arrange - simulate MCP write on live doc: main has 1 element, autosave has 2 (ED-25608).
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$main_document = Plugin::$instance->documents->get( $post->ID );
+		$main_document->set_is_built_with_elementor( true );
+		$main_document->save( [ 'elements' => $this->containers( 1 ) ] );
+
+		$autosave = Document_Mutator::instance()->save_as_draft( $main_document, $this->containers( 2 ), true );
+		$this->assertInstanceOf( \Elementor\Core\Base\Document::class, $autosave );
+		$autosave_id = $autosave->get_post()->ID;
+
+		$this->assertNotSame( $post->ID, $autosave_id, 'Mutator must route writes to an autosave post for live docs.' );
+		$this->assertCount( 2, $autosave->get_elements_data(), 'Autosave must hold the newer 2-element tree before publish.' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post->ID ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'publish', $result['status'] );
+		$this->assertSame( 'publish', $result['previous_status'] );
+		$this->assertSame( 'publish', get_post_status( $post->ID ) );
+
+		$refreshed_main = Plugin::$instance->documents->get( $post->ID, false );
+		$this->assertCount( 2, $refreshed_main->get_elements_data(), 'Main document must now hold the promoted 2-element tree.' );
+		$this->assertNull( get_post( $autosave_id ), 'Promoted autosave should be deleted.' );
+	}
+
+	public function test_execute__already_published_without_autosave_is_noop_success() {
+		// Arrange
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$main_document = Plugin::$instance->documents->get( $post->ID );
+		$main_document->save( [ 'elements' => $this->containers( 3 ) ] );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post->ID ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'publish', $result['status'] );
+		$this->assertSame( 'publish', $result['previous_status'] );
+
+		$refreshed_main = Plugin::$instance->documents->get( $post->ID, false );
+		$this->assertCount( 3, $refreshed_main->get_elements_data(), 'Main document must be untouched when there is no pending autosave.' );
+	}
+
 	public function test_execute__authorizes_against_main_id_not_input() {
 		// Arrange — author has `publish_posts` but not `publish_pages`,
 		// so publish_post cap passes on input (post) and fails on remapped (page).
@@ -195,5 +244,21 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		} finally {
 			remove_filter( 'elementor/documents/get/post_id', $filter );
 		}
+	}
+
+	private function containers( int $count ): array {
+		$containers = [];
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$containers[] = [
+				'id' => sprintf( 'e%07d', $i + 1 ),
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [],
+				'isInner' => false,
+			];
+		}
+
+		return $containers;
 	}
 }

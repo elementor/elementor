@@ -68,14 +68,19 @@ class Post_Query extends Base {
 		$post_types = $this->get_post_types_from_params( $request );
 
 		$query_args = [
-			'post_type'                    => array_keys( $post_types ),
-			'numberposts'                  => $post_count,
-			'suppress_filters'             => false,
-			'custom_search'                => true,
-			'post_status'                  => $is_public_only ? 'publish' : 'any',
-			'orderby'                      => 'modified',
-			'order'                        => 'DESC',
+			'post_type'       => array_keys( $post_types ),
+			'numberposts'     => $post_count,
+			'suppress_filters' => false,
+			'custom_search'   => true,
+			'post_status'     => $is_public_only ? 'publish' : 'any',
+			'orderby'         => 'modified',
+			'order'           => 'DESC',
 		];
+
+		// for non-admins (contributors), filter by author for private posts
+		if ( ! $is_public_only && ! current_user_can( 'read_private_posts' ) ) {
+			$query_args['author'] = get_current_user_id();
+		}
 
 		if ( ! empty( $term ) ) {
 			$query_args['search_term'] = $term;

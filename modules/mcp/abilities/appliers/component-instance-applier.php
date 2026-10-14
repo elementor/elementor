@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\Components\Circular_Dependency_Validator;
+use Elementor\Modules\Components\Components_Access_Controller;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
@@ -16,6 +17,8 @@ use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overrides_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
+use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,10 +28,22 @@ class Component_Instance_Applier {
 
 	private Components_Repository $repository;
 	private Plain_Values_Resolver $plain_values_resolver;
+	private Warnings_Bag $warnings;
+	private string $active_config_id = '';
 
 	public function __construct( Components_Repository $repository, Plain_Values_Resolver $plain_values_resolver ) {
 		$this->repository = $repository;
 		$this->plain_values_resolver = $plain_values_resolver;
+		$this->warnings = Warnings_Bag::make();
+	}
+
+	public function consume_warnings(): Warnings_Bag {
+		$warnings = $this->warnings;
+
+		$this->warnings = Warnings_Bag::make();
+		$this->active_config_id = '';
+
+		return $warnings;
 	}
 
 	/**
@@ -38,12 +53,17 @@ class Component_Instance_Applier {
 	 *
 	 * @param array<string, array&>                                                 $config_id_index      Index of subtree refs (from Subtree_Builder).
 	 * @param array<string, array{component_id:int,overrides?:array<string,mixed>}> $component_instances  Per-config-id shorthand.
-	 * @param Document                                                              $document             Target document (used for circular-dep check).
+	 * @param Document|null                                                         $document             Target document, when one already exists.
 	 * @return \WP_Error|null
 	 */
-	public function apply( array &$config_id_index, array $component_instances, Document $document ): ?\WP_Error {
+	public function apply( array &$config_id_index, array $component_instances, ?Document $document ): ?\WP_Error {
 		if ( empty( $component_instances ) ) {
 			return null;
+		}
+
+		$access_error = $this->get_access_error( $document );
+		if ( $access_error ) {
+			return $access_error;
 		}
 
 		$errors = [];
@@ -91,7 +111,8 @@ class Component_Instance_Applier {
 		);
 	}
 
-	private function build_envelope( string $config_id, array $shorthand, Document $document, array &$errors ): ?array {
+	private function build_envelope( string $config_id, array $shorthand, ?Document $document, array &$errors ): ?array {
+		$this->active_config_id = $config_id;
 		$component_id = (int) ( $shorthand['component_id'] ?? 0 );
 
 		if ( ! $component_id ) {
@@ -107,28 +128,9 @@ class Component_Instance_Applier {
 			return null;
 		}
 
-		$component = $this->repository->get( $component_id, false );
-
+		$component = $this->load_valid_component( $config_id, $component_id, $document, $errors );
 		if ( ! $component ) {
-			$errors[] = sprintf( '[%s] Component %d not found.', $config_id, $component_id );
 			return null;
-		}
-
-		if ( $component->get_is_archived() ) {
-			$errors[] = sprintf( '[%s] Component %d is archived and cannot be placed.', $config_id, $component_id );
-			return null;
-		}
-
-		if ( $document instanceof Component_Document ) {
-			$circular_result = Circular_Dependency_Validator::make()->validate(
-				$document->get_main_id(),
-				[ $this->make_placeholder_element( $component_id ) ]
-			);
-
-			if ( ! $circular_result['success'] ) {
-				$errors[] = sprintf( '[%s] %s', $config_id, implode( ' ', $circular_result['messages'] ) );
-				return null;
-			}
 		}
 
 		$overridable_props = $component->get_overridable_props()->props;
@@ -163,6 +165,11 @@ class Component_Instance_Applier {
 	public function apply_partial( array &$config_id_index, array $partial_shorthands, Document $document ): ?\WP_Error {
 		if ( empty( $partial_shorthands ) ) {
 			return null;
+		}
+
+		$access_error = $this->get_access_error( $document );
+		if ( $access_error ) {
+			return $access_error;
 		}
 
 		$errors = [];
@@ -214,6 +221,8 @@ class Component_Instance_Applier {
 				continue;
 			}
 
+			$this->active_config_id = $config_id;
+
 			$existing_overrides_list = $this->extract_overrides_list( $existing_settings );
 			$merged_overrides_list = $this->merge_overrides_list(
 				$existing_overrides_list,
@@ -238,6 +247,24 @@ class Component_Instance_Applier {
 			implode( ' ', $errors ),
 			[ 'status' => \WP_Http::BAD_REQUEST ]
 		);
+	}
+
+	private function get_access_error( ?Document $document ): ?\WP_Error {
+		if ( $document instanceof Component_Document ) {
+			return Components_Access_Controller::can_edit()
+				? null
+				: Insufficient_Permissions_Error::for_action( 'update' );
+		}
+
+		if ( null === $document ) {
+			return Components_Access_Controller::can_create()
+				? null
+				: Insufficient_Permissions_Error::for_action( 'create' );
+		}
+
+		return Components_Access_Controller::can_add_to_page()
+			? null
+			: Insufficient_Permissions_Error::for_action( 'add_to_page' );
 	}
 
 	private function assemble_envelope( int $component_id, array $overrides_list ): array {
@@ -317,7 +344,7 @@ class Component_Instance_Applier {
 		return $merged;
 	}
 
-	private function load_valid_component( string $config_id, int $component_id, Document $document, array &$errors ) {
+	private function load_valid_component( string $config_id, int $component_id, ?Document $document, array &$errors ) {
 		$component = $this->repository->get( $component_id, false );
 
 		if ( ! $component ) {
@@ -368,12 +395,25 @@ class Component_Instance_Applier {
 
 		foreach ( $raw_overrides as $override_key => $raw_value ) {
 			$prop = $overridable_props[ $override_key ] ?? null;
+			$resolved_override = $this->resolve_override_value( $raw_value, $prop );
+
+			if ( $resolved_override['skipped'] ) {
+				$this->warnings->add(
+					'component_override_invalid',
+					sprintf(
+						'Override "%s" could not be resolved and was skipped. See elementor/list-components.',
+						$override_key
+					),
+					$this->active_config_id
+				);
+				continue;
+			}
 
 			$overrides[] = [
 				'$$type' => Override_Prop_Type::get_key(),
 				'value'  => [
 					'override_key'   => $override_key,
-					'override_value' => $this->resolve_override_value( $raw_value, $prop ),
+					'override_value' => $resolved_override['value'],
 					'schema_source'  => [
 						'type' => Component_Override_Parser::get_override_type(),
 						'id' => $component_id,
@@ -385,20 +425,39 @@ class Component_Instance_Applier {
 		return $overrides;
 	}
 
-	private function resolve_override_value( $raw_value, ?Component_Overridable_Prop $prop ) {
+	/**
+	 * @return array{skipped: bool, value: mixed}
+	 */
+	private function resolve_override_value( $raw_value, ?Component_Overridable_Prop $prop ): array {
 		if ( null === $raw_value ) {
-			return null;
+			return [
+				'skipped' => false,
+				'value' => null,
+			];
 		}
 
 		$origin_prop_type = $this->resolve_origin_prop_type( $prop );
 
 		if ( ! $origin_prop_type instanceof Prop_Type ) {
-			return $raw_value;
+			return [
+				'skipped' => false,
+				'value' => $raw_value,
+			];
 		}
 
 		$resolved = $this->plain_values_resolver->resolve( $raw_value, $origin_prop_type );
 
-		return $resolved ?? $raw_value;
+		if ( null === $resolved ) {
+			return [
+				'skipped' => true,
+				'value' => null,
+			];
+		}
+
+		return [
+			'skipped' => false,
+			'value' => $resolved,
+		];
 	}
 
 	private function resolve_origin_prop_type( ?Component_Overridable_Prop $prop ) {

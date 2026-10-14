@@ -1439,6 +1439,32 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
+	public function test_render_atomic_widget_styles__flex_shrink_only_preserves_basis_auto() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style-shrink-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( null, 0 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.test-style-shrink-only{flex:0 0 auto;}', $css );
+	}
+
 	public function test_render__style_variant_with_custom_css() {
 		// Arrange.
 		$styles = [
@@ -1494,6 +1520,73 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'font-size:16px;', $css );
 		$this->assertStringContainsString( 'background: yellow;', $css );
 		$this->assertStringContainsString( 'color: red;', $css );
+	}
+
+	public function test_render__style_with_zero_number_values() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'order' => Number_Prop_Type::generate( 0 ),
+							'z-index' => Number_Prop_Type::generate( 0 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.test-style{z-index:0;order:0;}', $css );
+	}
+
+	public function test_render__style_variant_with_breakpoint_and_zero_order() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'order' => Number_Prop_Type::generate( 2 ),
+						],
+						'meta' => [],
+					],
+					[
+						'props' => [
+							'order' => Number_Prop_Type::generate( 0 ),
+						],
+						'meta' => [
+							'breakpoint' => 'mobile',
+						],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [
+			'mobile' => [
+				'direction' => 'max',
+				'value' => 768,
+				'is_enabled' => true,
+			],
+		], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( '@media(max-width:768px){.test-style{order:0;}}', $css );
 	}
 
 	private function mock_images() {

@@ -946,9 +946,9 @@ class Widget_Image_Carousel extends Widget_Base {
 			}
 
 			if ( $lazyload ) {
-				$image_html = '<img class="swiper-slide-image swiper-lazy" data-src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+				$image_html = '<img class="swiper-slide-image swiper-lazy" data-src="' . esc_url( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 			} else {
-				$image_html = '<img class="swiper-slide-image" src="' . esc_attr( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
+				$image_html = '<img class="swiper-slide-image" src="' . esc_url( $image_url ) . '" alt="' . esc_attr( Control_Media::get_image_alt( $attachment ) ) . '" />';
 			}
 
 			$link_tag = '';
@@ -1105,11 +1105,15 @@ class Widget_Image_Carousel extends Widget_Base {
 	private function get_image_caption( $attachment ) {
 		$caption_type = $this->get_settings_for_display( 'caption_type' );
 
-		if ( empty( $caption_type ) ) {
+		if ( empty( $caption_type ) || empty( $attachment['id'] ) ) {
 			return '';
 		}
 
 		$attachment_post = get_post( $attachment['id'] );
+
+		if ( ! $attachment_post ) {
+			return '';
+		}
 
 		if ( Utils::has_invalid_post_permissions( $attachment_post ) ) {
 			return '';

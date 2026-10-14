@@ -58,6 +58,32 @@ describe( 'walkImageLikeSources', () => {
 		expect( nodeIds ).toEqual( [ 'gallery' ] );
 	} );
 
+	it( 'captures the sibling size setting for image and gallery-like widgets', () => {
+		const tree: ElementSnapshotNode[] = [
+			{
+				id: 'img',
+				elType: 'widget',
+				widgetType: 'image',
+				settings: { image: { id: 1 }, image_size: 'large' },
+				elements: [],
+			},
+			{
+				id: 'carousel',
+				elType: 'widget',
+				widgetType: 'image-carousel',
+				settings: { carousel: [ { id: 2 } ], thumbnail_size: 'medium' },
+				elements: [],
+			},
+		];
+
+		const sizes: Array< string | undefined > = [];
+		walkImageLikeSources( tree, ( { media } ) => {
+			sizes.push( media.size );
+		} );
+
+		expect( sizes ).toEqual( [ 'large', 'medium' ] );
+	} );
+
 	it( 'ignores non image-like widgets', () => {
 		const tree: ElementSnapshotNode[] = [
 			{

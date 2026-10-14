@@ -34,20 +34,43 @@ class Ability_Definition {
 		$this->input_schema = $input_schema;
 	}
 
+	public static function empty_object_input_schema(): array {
+		return [
+			'type' => 'object',
+		];
+	}
+
 	public function to_array(): array {
-		$definition = [
+		return [
 			'label' => $this->label,
 			'description' => $this->description,
 			'category' => $this->category,
 			'output_schema' => $this->output_schema,
 			'meta' => $this->meta,
 			'permission_callback' => $this->permission_callback,
+			'input_schema' => $this->normalized_input_schema(),
 		];
+	}
 
-		if ( ! empty( $this->input_schema ) ) {
-			$definition['input_schema'] = $this->input_schema;
+	private function normalized_input_schema(): array {
+		if ( empty( $this->input_schema ) ) {
+			return self::empty_object_input_schema();
 		}
 
-		return $definition;
+		$schema = $this->input_schema;
+
+		if (
+			array_key_exists( 'properties', $schema )
+			&& is_array( $schema['properties'] )
+			&& empty( $schema['properties'] )
+		) {
+			unset( $schema['properties'] );
+		}
+
+		if ( ! isset( $schema['type'] ) ) {
+			$schema['type'] = 'object';
+		}
+
+		return $schema;
 	}
 }

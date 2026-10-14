@@ -167,9 +167,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Check terms and click Install & Activate to trigger the failure.
+			// Check terms and click Install and activate to trigger the failure.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+			const installButton = screen.getByRole( 'button', { name: /Install and activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -201,9 +201,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Check terms and click Install & Activate.
+			// Check terms and click Install and activate.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+			const installButton = screen.getByRole( 'button', { name: /Install and activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -226,7 +226,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 	} );
 
 	describe( 'consent saving', () => {
-		it( 'saves consent to DB when Install & Activate is clicked', async () => {
+		it( 'saves consent to DB when Install and activate is clicked', async () => {
 			// Arrange.
 			mockIsAngieAvailable.mockReturnValue( false );
 			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
@@ -238,7 +238,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Act — check terms then click the button.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install and activate/i } ) );
 
 			// Assert.
 			await waitFor( () => {
@@ -258,7 +258,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Act — check terms then click the button.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install and activate/i } ) );
 
 			// Assert.
 			await waitFor( () => {
@@ -280,7 +280,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Act — check terms then install.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+			const installButton = screen.getByRole( 'button', { name: /Install and activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -307,7 +307,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Act — check terms then install.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+			const installButton = screen.getByRole( 'button', { name: /Install and activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -329,7 +329,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Act — check terms then install.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+			const installButton = screen.getByRole( 'button', { name: /Install and activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -357,7 +357,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Act — check terms then install.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+			const installButton = screen.getByRole( 'button', { name: /Install and activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -391,7 +391,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Trigger install failure so the fallback button appears — check terms first.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install and activate/i } ) );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
@@ -416,7 +416,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 
 			// Trigger install failure so the fallback button appears — check terms first.
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install and activate/i } ) );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();

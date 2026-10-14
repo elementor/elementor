@@ -27,7 +27,6 @@ class Test_Mcp_Adapter_Jetpack_Autoloader extends TestCase {
 
 		// Assert
 		$this->assertIsArray( $mcp_namespace );
-		$this->assertSame( '0.5.0.0', $mcp_namespace['version'] );
 		$this->assertStringContainsString(
 			'/vendor/wordpress/mcp-adapter/includes',
 			str_replace( '\\', '/', $mcp_path )

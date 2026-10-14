@@ -132,6 +132,7 @@ async function fetchDocument( id: number ): Promise< {
 		const data = await ajax.load< { id: number }, Document >( {
 			data: { id },
 			action: 'get_document_config',
+			retry: true,
 			unique_id: `embedded-document-${ id }`,
 		} );
 

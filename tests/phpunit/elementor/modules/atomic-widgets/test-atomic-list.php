@@ -1,0 +1,127 @@
+<?php
+
+namespace Elementor\Testing\Modules\AtomicWidgets;
+
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List\Atomic_List;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_List\Atomic_List_Item_Marker\Atomic_List_Item_Marker;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Plugin;
+use ElementorEditorTesting\Elementor_Test_Base;
+
+class Test_Atomic_List extends Elementor_Test_Base {
+	public function test_default_children_seed_two_numbered_items(): void {
+		$children = Plugin::$instance->elements_manager->get_element_types( 'e-list' )->get_config()['default_children'];
+
+		$this->assertCount( 2, $children );
+
+		foreach ( $children as $index => $item ) {
+			$this->assertSame( 'e-list-item', $item['elType'] );
+			$this->assertSame( 'List item ' . ( $index + 1 ), $item['editor_settings']['title'] );
+			$this->assertSame( $index + 1, $item['editor_settings']['initial_position'] );
+			$this->assertTrue( $item['settings']['show_markers']['value'] );
+
+			$marker = $item['elements'][0];
+			$this->assertSame( 'e-list-item-marker', $marker['elType'] );
+			$this->assertSame( 'Marker', $marker['editor_settings']['title'] );
+			$this->assertTrue( $marker['hydrateDefaultChildren'] );
+
+			$content = $item['elements'][1];
+			$this->assertSame( 'e-list-item-content', $content['elType'] );
+
+			$paragraph = $content['elements'][0];
+			$this->assertSame( 'widget', $paragraph['elType'] );
+			$this->assertSame( 'e-paragraph', $paragraph['widgetType'] );
+			$this->assertSame( 'escaped-html', $paragraph['settings']['paragraph']['$$type'] );
+			$this->assertSame( 'List item ' . ( $index + 1 ), $paragraph['settings']['paragraph']['value'] );
+		}
+	}
+
+	public function test__render_list_emits_default_style_tag_class(): void {
+		// Arrange.
+		$instance = new Atomic_List( [
+			'id' => 'e8e55a1',
+			'elType' => Atomic_List::get_element_type(),
+			'settings' => [],
+		] );
+
+		// Act.
+		ob_start();
+		$instance->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( '<ul', $rendered_output );
+		$this->assertStringContainsString( 'e-default-ul', $rendered_output );
+	}
+
+	public function test_list_default_style_roots_do_not_add_editor_handle_reset_rule(): void {
+		wp_register_style( 'elementor-frontend', 'https://example.com/frontend.css' );
+		wp_register_style( 'elementor-editor', 'https://example.com/editor.css' );
+
+		$module = ( new \ReflectionClass( Module::class ) )->newInstanceWithoutConstructor();
+		$method = new \ReflectionMethod( Module::class, 'add_inline_styles' );
+		$method->setAccessible( true );
+
+		$method->invoke( $module );
+
+		$frontend_inline_styles = wp_styles()->get_data( 'elementor-frontend', 'after' );
+		$editor_inline_styles = wp_styles()->get_data( 'elementor-editor', 'after' );
+		$removed_rule = '.e-default-ul > .elementor-element-overlay > .elementor-editor-element-settings, .e-default-li > .elementor-element-overlay > .elementor-editor-element-settings { list-style: none; margin: 0; padding: 0; }';
+
+		$this->assertIsArray( $frontend_inline_styles );
+		$this->assertIsArray( $editor_inline_styles );
+		$this->assertNotContains( $removed_rule, $frontend_inline_styles );
+		$this->assertNotContains( $removed_rule, $editor_inline_styles );
+
+		$marker_size_rule = '.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }';
+		$frontend_css = implode( '', $frontend_inline_styles );
+		$editor_css = implode( '', $editor_inline_styles );
+
+		$this->assertStringContainsString( $marker_size_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_size_rule, $editor_css );
+
+		$marker_svg_shrink_rule = ':where(.e-list-item-marker-base) .e-svg-base { flex-shrink: 0; }';
+		$marker_svg_alignment_rule = '.e-list-item-marker-base .e-svg-base svg { display: block; }';
+
+		$this->assertStringContainsString( $marker_svg_shrink_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_svg_shrink_rule, $editor_css );
+
+		$this->assertStringContainsString( $marker_svg_alignment_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_svg_alignment_rule, $editor_css );
+
+		wp_deregister_style( 'elementor-frontend' );
+		wp_deregister_style( 'elementor-editor' );
+	}
+
+	public function test_marker_handle_rule_loads_only_in_the_canvas_preview(): void {
+		// Arrange.
+		wp_register_style( 'elementor-frontend', 'https://example.com/frontend.css' );
+		wp_register_style( 'editor-preview', 'https://example.com/editor-preview.css' );
+
+		$module = ( new \ReflectionClass( Module::class ) )->newInstanceWithoutConstructor();
+		$marker_handle_rule = '.e-list-item > .e-list-item__marker.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 100%; }';
+		$item_handle_rule = '.e-list > .e-list-item.e-con > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 0; }';
+		$list_handle_rule = '.e-list.e-con.e-atomic-element > .elementor-element-overlay > .elementor-editor-element-settings { inset-inline-start: auto; inset-inline-end: 0; transform: none; }';
+
+		// Act.
+		foreach ( [ 'add_inline_styles', 'add_preview_inline_styles' ] as $method_name ) {
+			$method = new \ReflectionMethod( Module::class, $method_name );
+			$method->setAccessible( true );
+			$method->invoke( $module );
+		}
+
+		// Assert.
+		$frontend_css = implode( '', wp_styles()->get_data( 'elementor-frontend', 'after' ) ?: [] );
+		$preview_css = implode( '', wp_styles()->get_data( 'editor-preview', 'after' ) ?: [] );
+
+		$this->assertStringNotContainsString( $marker_handle_rule, $frontend_css );
+		$this->assertStringContainsString( $marker_handle_rule, $preview_css );
+		$this->assertStringNotContainsString( $item_handle_rule, $frontend_css );
+		$this->assertStringContainsString( $item_handle_rule, $preview_css );
+		$this->assertStringNotContainsString( $list_handle_rule, $frontend_css );
+		$this->assertStringContainsString( $list_handle_rule, $preview_css );
+
+		wp_deregister_style( 'elementor-frontend' );
+		wp_deregister_style( 'editor-preview' );
+	}
+}

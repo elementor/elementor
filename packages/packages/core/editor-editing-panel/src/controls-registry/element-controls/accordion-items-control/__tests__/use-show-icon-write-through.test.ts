@@ -3,7 +3,12 @@ import { getContainer, getElementSettings, updateElementSettings, type V1Element
 import { renderHook } from '@testing-library/react';
 
 import { HISTORY_DEBOUNCE_WAIT } from '../../../../hooks/use-styles-fields';
-import { cascadeShowIconToHeaders, useShowIconWriteThrough } from '../use-show-icon-write-through';
+import {
+	cascadeDifferentOpenIconToHeaders,
+	cascadeShowIconToHeaders,
+	useDifferentOpenIconWriteThrough,
+	useShowIconWriteThrough,
+} from '../use-show-icon-write-through';
 
 jest.mock( '@elementor/editor-elements' );
 
@@ -236,6 +241,57 @@ describe( 'useShowIconWriteThrough / cascadeShowIconToHeaders', () => {
 
 			// Assert.
 			expect( updateElementSettings ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'cascadeDifferentOpenIconToHeaders', () => {
+		it( 'writes the root value onto every header', () => {
+			// Act.
+			cascadeDifferentOpenIconToHeaders( { accordionId: ACCORDION_ID, differentOpenIcon: true } );
+
+			// Assert.
+			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'item-1-header',
+				props: { different_open_icon: { $$type: 'boolean', value: true } },
+				withHistory: false,
+			} );
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'item-2-header',
+				props: { different_open_icon: { $$type: 'boolean', value: true } },
+				withHistory: false,
+			} );
+		} );
+	} );
+
+	describe( 'useDifferentOpenIconWriteThrough', () => {
+		it( 'does not cascade on initial mount', () => {
+			// Act.
+			renderHook( () => useDifferentOpenIconWriteThrough( ACCORDION_ID, false ) );
+
+			// Assert.
+			expect( updateElementSettings ).not.toHaveBeenCalled();
+		} );
+
+		it( 'cascades once when the value flips', () => {
+			// Arrange.
+			const { rerender } = renderHook(
+				( { differentOpenIcon }: { differentOpenIcon: boolean } ) =>
+					useDifferentOpenIconWriteThrough( ACCORDION_ID, differentOpenIcon ),
+				{ initialProps: { differentOpenIcon: false } }
+			);
+
+			// Act.
+			rerender( { differentOpenIcon: true } );
+
+			// Assert.
+			expect( updateElementSettings ).toHaveBeenCalledTimes( 2 );
+			expect( updateElementSettings ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					id: 'item-1-header',
+					props: { different_open_icon: { $$type: 'boolean', value: true } },
+				} )
+			);
 		} );
 	} );
 } );

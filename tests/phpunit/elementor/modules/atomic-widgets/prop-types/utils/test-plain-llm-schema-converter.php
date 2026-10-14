@@ -30,6 +30,28 @@ class Test_Plain_Llm_Schema_Converter extends TestCase {
 		], $plain );
 	}
 
+	public function test_convert__escaped_html_envelope__preserves_allowed_html_tags() {
+		$allowed_html_tags = [ 'b', 'strong', 'em', 'a' ];
+		$envelope = [
+			'type' => 'object',
+			'properties' => [
+				'$$type' => [ 'type' => 'string', 'const' => 'escaped-html' ],
+				'value' => [
+					'type' => 'string',
+					'allowed_html_tags' => $allowed_html_tags,
+				],
+			],
+			'required' => [ '$$type', 'value' ],
+		];
+
+		$plain = Plain_Llm_Schema_Converter::convert( $envelope );
+
+		$this->assertSame( [
+			'type' => 'string',
+			'allowed_html_tags' => $allowed_html_tags,
+		], $plain );
+	}
+
 	public function test_convert__string_envelope_with_enum__preserves_enum() {
 		$envelope = [
 			'type' => 'object',

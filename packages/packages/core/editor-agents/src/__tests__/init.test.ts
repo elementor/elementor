@@ -25,7 +25,7 @@ describe( 'init', () => {
 		window.elementorCommon = {
 			config: {
 				experimentalFeatures: {
-					agents_llms_txt: true,
+					agent_ready: true,
 				},
 			},
 		} as typeof window.elementorCommon;

@@ -33,8 +33,39 @@ class Atomic_Widget_Styles {
 			fn( $post_id ) => $this->invalidate_cache( [ $post_id ] )
 		);
 
-		add_action( 'update_option__elementor_pro_license_v2_data', fn() => Plugin::$instance->files_manager->clear_cache() );
+		add_action(
+			'update_option__elementor_pro_license_v2_data',
+			fn( $old_value, $new_value ) => $this->on_license_data_update( $old_value, $new_value ),
+			10,
+			2
+		);
+
 		add_action( 'delete_option__elementor_pro_license_v2_data', fn() => Plugin::$instance->files_manager->clear_cache() );
+	}
+
+	/**
+	 * Pro stores the license under a transient-style wrapper whose `timeout` is recomputed on
+	 * every write, so a routine re-validation reports a changed option even when the license
+	 * itself is identical. Purging the whole CSS directory on those refreshes deletes files that
+	 * in-flight requests have already enqueued, so only act on a real license change.
+	 */
+	private function on_license_data_update( $old_value, $new_value ): void {
+		$old_payload = $this->get_license_payload( $old_value );
+
+		// Anything we can't positively read as an unchanged license falls through to a purge.
+		if ( null !== $old_payload && $old_payload === $this->get_license_payload( $new_value ) ) {
+			return;
+		}
+
+		Plugin::$instance->files_manager->clear_cache();
+	}
+
+	private function get_license_payload( $option_value ): ?string {
+		if ( ! is_array( $option_value ) || ! isset( $option_value['value'] ) || ! is_string( $option_value['value'] ) ) {
+			return null;
+		}
+
+		return $option_value['value'];
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {

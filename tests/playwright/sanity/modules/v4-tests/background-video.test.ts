@@ -1,0 +1,130 @@
+import { BrowserContext, expect } from '@playwright/test';
+import EditorPage from '../../../pages/editor-page';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import { AtomicHelper } from '../atomic-widgets/helper';
+
+test.describe( 'Background Video @v4-tests', () => {
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
+	let context: BrowserContext;
+
+	const elementType = 'e-background-video';
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		context = await browser.newContext();
+		const page = await context.newPage();
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_atomic_elements: 'active',
+		} );
+	} );
+
+	test.afterAll( async () => {
+		await wpAdmin.resetExperiments();
+		await context.close();
+	} );
+
+	test.beforeEach( async () => {
+		editor = await wpAdmin.openNewPage();
+	} );
+
+	test( 'Play state is selected by default when Background Video is added', async () => {
+		const elementId = await editor.addElement( { elType: elementType }, 'document' );
+
+		await editor.selectElement( elementId );
+		await editor.v4Panel.openTab( 'general' );
+
+		const statesField = editor.page.locator( '[data-type="settings-field"]' ).filter( { hasText: 'States' } );
+		await expect( statesField ).toBeVisible();
+
+		const playButton = statesField.getByRole( 'button', { name: 'Play' } );
+		const pauseButton = statesField.getByRole( 'button', { name: 'Pause' } );
+
+		await expect( playButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		await expect( pauseButton ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		const previewRoot = editor.getPreviewFrame().locator( editor.getWidgetSelector( elementId ) );
+		await expect( previewRoot ).toHaveClass( /e-background-video--playing/ );
+		await expect( previewRoot ).not.toHaveClass( /e-background-video--paused/ );
+	} );
+
+	test( 'User can switch Background Video state to Pause', async () => {
+		const elementId = await editor.addElement( { elType: elementType }, 'document' );
+
+		await editor.selectElement( elementId );
+		await editor.v4Panel.openTab( 'general' );
+
+		const statesField = editor.page.locator( '[data-type="settings-field"]' ).filter( { hasText: 'States' } );
+		await statesField.getByRole( 'button', { name: 'Pause' } ).click();
+
+		await expect( statesField.getByRole( 'button', { name: 'Play' } ) ).toHaveAttribute( 'aria-pressed', 'false' );
+		await expect( statesField.getByRole( 'button', { name: 'Pause' } ) ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		const previewRoot = editor.getPreviewFrame().locator( editor.getWidgetSelector( elementId ) );
+		await expect( previewRoot ).toHaveClass( /e-background-video--paused/ );
+		await expect( previewRoot ).not.toHaveClass( /e-background-video--playing/ );
+	} );
+
+	test( 'User can deselect the active Background Video state', async () => {
+		const elementId = await editor.addElement( { elType: elementType }, 'document' );
+
+		await editor.selectElement( elementId );
+		await editor.v4Panel.openTab( 'general' );
+
+		const statesField = editor.page.locator( '[data-type="settings-field"]' ).filter( { hasText: 'States' } );
+		const playButton = statesField.getByRole( 'button', { name: 'Play' } );
+		await expect( playButton ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		await playButton.click();
+
+		await expect( playButton ).toHaveAttribute( 'aria-pressed', 'false' );
+		await expect( statesField.getByRole( 'button', { name: 'Pause' } ) ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		const previewRoot = editor.getPreviewFrame().locator( editor.getWidgetSelector( elementId ) );
+		await expect( previewRoot ).not.toHaveClass( /e-background-video--playing/ );
+		await expect( previewRoot ).not.toHaveClass( /e-background-video--paused/ );
+		await expect( editor.getPreviewFrame().locator( `${ editor.getWidgetSelector( elementId ) } .e-background-video__controls` ) ).toBeHidden();
+	} );
+
+	test( 'HTML Tag setting is applied in the editor and on the frontend', async () => {
+		const helper = new AtomicHelper( editor.page, editor, wpAdmin );
+		const elementId = await editor.addElement( { elType: elementType }, 'document' );
+
+		await editor.selectElement( elementId );
+		await editor.v4Panel.openTab( 'general' );
+
+		const htmlTagField = helper.getHtmlTagControl();
+
+		if ( ! await htmlTagField.isVisible() ) {
+			await editor.page.locator( '.MuiButtonBase-root', { hasText: /^Settings$/ } ).click();
+		}
+
+		await test.step( 'Main and Nav are available as HTML tags', async () => {
+			await helper.getHtmlTagControl( '.MuiInputBase-root' ).click();
+
+			await expect( editor.page.locator( 'li[data-value="main"]' ) ).toBeVisible();
+			await expect( editor.page.locator( 'li[data-value="nav"]' ) ).toBeVisible();
+
+			await editor.page.keyboard.press( 'Escape' );
+		} );
+
+		await test.step( 'Editor preview renders the selected tag', async () => {
+			await helper.setHtmlTagControl( 'section' );
+
+			const previewRoot = editor.getPreviewFrame().locator( editor.getWidgetSelector( elementId ) );
+
+			await expect( previewRoot ).toHaveClass( /e-default-section/ );
+			expect( await previewRoot.evaluate( ( node ) => node.tagName ) ).toBe( 'SECTION' );
+		} );
+
+		await test.step( 'Frontend renders the selected tag', async () => {
+			await editor.publishAndViewPage();
+
+			const frontendRoot = editor.page.locator( `[data-id="${ elementId }"][data-e-type="${ elementType }"]` );
+
+			await expect( frontendRoot ).toHaveClass( /e-default-section/ );
+			expect( await frontendRoot.evaluate( ( node ) => node.tagName ) ).toBe( 'SECTION' );
+		} );
+	} );
+} );

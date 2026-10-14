@@ -9,9 +9,10 @@ const IMPORT_BASE_PATH = 'elementor/v1/import-export-customization';
 
 const IMPORT_REQUEST_TIMEOUT_MS = 120_000;
 
+const DEFAULT_STYLES_RUNNER = 'default-styles';
 const GLOBAL_CLASSES_RUNNER = 'global-classes';
 const GLOBAL_VARIABLES_RUNNER = 'global-variables';
-const SUPPORTED_RUNNERS = [ GLOBAL_CLASSES_RUNNER, GLOBAL_VARIABLES_RUNNER ];
+const SUPPORTED_RUNNERS = [ DEFAULT_STYLES_RUNNER, GLOBAL_CLASSES_RUNNER, GLOBAL_VARIABLES_RUNNER ];
 
 export const IMPORT_DESIGN_SYSTEM_MUTATION_KEY = 'design-system-import' as const;
 

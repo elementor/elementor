@@ -39,6 +39,8 @@ type LinkSessionValue = {
 
 export type DestinationProp = LinkPropValue[ 'value' ][ 'destination' ];
 
+type ClearActiveLinkWhen = 'restricted' | 'newly-restricted';
+
 const SIZE = 'tiny';
 
 export const LinkControl = createControl( ( props: Props ) => {
@@ -63,10 +65,13 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
-	const debouncedCheckRestriction = useDebouncedCallback( () => {
+	const syncLinkRestriction = ( clearActiveLinkWhen: ClearActiveLinkWhen = 'restricted' ) => {
 		const newRestriction = getLinkInLinkRestriction( elementId, value ?? linkPlaceholder );
+		const becameRestricted = newRestriction.shouldRestrict && ! linkInLinkRestriction.shouldRestrict;
+		const shouldClearActiveLink =
+			clearActiveLinkWhen === 'newly-restricted' ? becameRestricted : newRestriction.shouldRestrict;
 
-		if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
+		if ( shouldClearActiveLink && isActive && ! linkPlaceholder ) {
 			setIsActive( false );
 
 			if ( value !== null ) {
@@ -75,21 +80,26 @@ export const LinkControl = createControl( ( props: Props ) => {
 		}
 
 		setLinkInLinkRestriction( ( prev ) => ( isSameRestriction( prev, newRestriction ) ? prev : newRestriction ) );
-	}, 300 );
+	};
+
+	const debouncedSyncLinkRestriction = useDebouncedCallback(
+		( clearActiveLinkWhen: ClearActiveLinkWhen = 'restricted' ) => syncLinkRestriction( clearActiveLinkWhen ),
+		300
+	);
 
 	useListenTo(
 		commandEndEvent( 'document/elements/set-settings' ),
 		() => {
-			debouncedCheckRestriction();
+			debouncedSyncLinkRestriction( 'newly-restricted' );
 		},
-		[ debouncedCheckRestriction ]
+		[ debouncedSyncLinkRestriction ]
 	);
 
 	useEffect( () => {
-		debouncedCheckRestriction();
+		debouncedSyncLinkRestriction();
 
 		const handleInlineLinkChanged = () => {
-			debouncedCheckRestriction();
+			debouncedSyncLinkRestriction();
 		};
 
 		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
@@ -97,7 +107,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 		return () => {
 			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
 		};
-	}, [ elementId, debouncedCheckRestriction ] );
+	}, [ elementId, debouncedSyncLinkRestriction ] );
 
 	const onEnabledChange = () => {
 		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId, value ?? linkPlaceholder ) );

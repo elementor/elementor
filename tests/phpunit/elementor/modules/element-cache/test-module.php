@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\ElementCache;
 
+use Elementor\Modules\ElementCache\Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
@@ -72,5 +73,25 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEmpty( $output );
+	}
+
+	public function test_construct__does_not_register_site_changed_purge_hooks() {
+		// Arrange.
+		remove_all_actions( 'activated_plugin' );
+		remove_all_actions( 'deactivated_plugin' );
+		remove_all_actions( 'switch_theme' );
+		remove_all_actions( 'upgrader_process_complete' );
+		remove_all_actions( 'update_option_elementor_element_cache_ttl' );
+
+		// Act - relocated to Elementor\Core\Files\Manager, a files/assets concern; the
+		// Performance-tab "Element Cache" setting must no longer imply it governs this purge.
+		new Module();
+
+		// Assert.
+		$this->assertFalse( has_action( 'activated_plugin' ) );
+		$this->assertFalse( has_action( 'deactivated_plugin' ) );
+		$this->assertFalse( has_action( 'switch_theme' ) );
+		$this->assertFalse( has_action( 'upgrader_process_complete' ) );
+		$this->assertFalse( has_action( 'update_option_elementor_element_cache_ttl' ) );
 	}
 }

@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Serializer_Registry_Factory;
@@ -23,18 +26,28 @@ class V3_Style_Serializer {
 
 	private V3_Serializer_Registry $registry;
 	private Block_Renderer $renderer;
+	private V3_Map_Style_Reader $map_reader;
 
-	public function __construct( ?V3_Serializer_Registry $registry = null, ?Block_Renderer $renderer = null ) {
+	public function __construct( ?V3_Serializer_Registry $registry = null, ?Block_Renderer $renderer = null, ?V3_Map_Style_Reader $map_reader = null ) {
 		$this->registry = $registry ?? V3_Serializer_Registry_Factory::create();
 		$this->renderer = $renderer ?? new Block_Renderer();
+		$this->map_reader = $map_reader ?? new V3_Map_Style_Reader( V3_Control_Adapter_Registry::create_default() );
 	}
 
 	public function serialize( array $settings, string $widget_type, array $widget_config ): string {
+		$map_registry = V3_Widget_Map_Registry::instance();
+		$style_bindings = $map_registry->get_style_bindings( $widget_type );
+		$blocks = new V3_Block_Accumulator();
+
+		if ( null !== $style_bindings ) {
+			$this->map_reader->read( $blocks, $style_bindings, $settings, $map_registry->get_registered_controls( $widget_type ) );
+
+			return $this->renderer->render( $blocks );
+		}
+
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 		$controls = $widget_config['controls'] ?? [];
 		$generic = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
-
-		$blocks = new V3_Block_Accumulator();
 
 		foreach ( $overrides as $match_key => $entry ) {
 			[ $property, $state ] = $this->split_match_key( (string) $match_key );
@@ -47,6 +60,7 @@ class V3_Style_Serializer {
 		}
 
 		$mapped_css = $this->renderer->render( $blocks );
+
 		$custom_css = $this->unwrap_custom_css( $settings['custom_css'] ?? null );
 
 		if ( '' === $mapped_css ) {

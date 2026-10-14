@@ -1,5 +1,5 @@
 import { createMockElement } from 'test-utils';
-import { getElements } from '@elementor/editor-elements';
+import { getElements, getHostDocumentElements } from '@elementor/editor-elements';
 
 import { type ExtendedWindow } from '../types';
 
@@ -50,5 +50,51 @@ describe( 'getElements', () => {
 			expect.objectContaining( { id: 'container' } ),
 			expect.objectContaining( { id: 'element' } ),
 		] );
+	} );
+} );
+
+describe( 'getHostDocumentElements', () => {
+	it( 'returns the host document elements, even when another document is active', () => {
+		// Arrange.
+		const extendedWindow = window as unknown as ExtendedWindow;
+
+		const element = createMockElement( { model: { id: 'element' } } );
+		const hostContainer = createMockElement( { model: { id: 'host-document', elements: [ element.model ] } } );
+		const activeContainer = createMockElement( { model: { id: 'active-document' } } );
+
+		extendedWindow.elementor = {
+			documents: {
+				getCurrent: () => ( { container: activeContainer } ),
+				getInitialId: () => 49,
+				get: ( id ) => ( id === 49 ? { container: hostContainer } : undefined ),
+			},
+			getContainer: ( id ) => ( id === 'element' ? element : undefined ),
+		};
+
+		// Act.
+		const elements = getHostDocumentElements();
+
+		// Assert.
+		expect( elements ).toEqual( [
+			expect.objectContaining( { id: 'host-document' } ),
+			expect.objectContaining( { id: 'element' } ),
+		] );
+	} );
+
+	it( 'returns an empty array when the host document id is unavailable', () => {
+		// Arrange.
+		const extendedWindow = window as unknown as ExtendedWindow;
+
+		extendedWindow.elementor = {
+			documents: {
+				getInitialId: () => undefined as unknown as number,
+			},
+		};
+
+		// Act.
+		const elements = getHostDocumentElements();
+
+		// Assert.
+		expect( elements ).toEqual( [] );
 	} );
 } );

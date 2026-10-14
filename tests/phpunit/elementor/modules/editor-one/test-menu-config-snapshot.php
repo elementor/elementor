@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
+use Elementor\Modules\Agents\Module as Agents_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -24,6 +25,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->reset_menu_data_provider();
 		$this->simulate_admin_context();
 		$this->set_request_uri();
+		$this->exclude_hidden_experiment_menu_items();
 	}
 
 	public function tearDown(): void {
@@ -32,6 +34,30 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->reset_menu_data_provider();
 		$this->restore_screen_context();
 		$this->restore_request_uri();
+		$this->restore_hidden_experiment_menu_items();
+	}
+
+	/**
+	 * Agent Ready ships an Editor One menu item, but the experiment is
+	 * `'hidden' => true` and inactive by default in production. The test
+	 * bootstrap force-activates every mutable experiment, so the real
+	 * Agents module registers the item for the whole PHPUnit process. Excluding
+	 * the slug here keeps this snapshot describing the default (all hidden
+	 * experiments off) menu. When Agent Ready goes live, remove this exclusion
+	 * and regenerate the snapshot instead.
+	 */
+	private function exclude_hidden_experiment_menu_items(): void {
+		add_filter( 'elementor/editor-one/menu/excluded_level3_slugs', [ $this, 'exclude_agents_ready_slug' ] );
+	}
+
+	private function restore_hidden_experiment_menu_items(): void {
+		remove_filter( 'elementor/editor-one/menu/excluded_level3_slugs', [ $this, 'exclude_agents_ready_slug' ] );
+	}
+
+	public function exclude_agents_ready_slug( array $excluded_slugs ): array {
+		$excluded_slugs[] = Agents_Module::PAGE_ID;
+
+		return $excluded_slugs;
 	}
 
 	public function test_menu_config__matches_expected_snapshot_via_action() {

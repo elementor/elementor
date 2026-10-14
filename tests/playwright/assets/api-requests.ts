@@ -34,6 +34,29 @@ export default class ApiRequests {
 		return id;
 	}
 
+	public async updatePostMeta(
+		request: APIRequestContext,
+		entity: string,
+		id: string,
+		meta: Record<string, string>,
+	): Promise<void> {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: { rest_route: `/wp/v2/${ entity }/${ id }` },
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': this.nonce,
+			},
+			data: { meta },
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to update ${ entity } meta for id ${ id }: ${ response.status() }.
+				${ await response.text() }
+			` );
+		}
+	}
+
 	public async createMedia( request: APIRequestContext, image: Image ) {
 		const imagePath = image.filePath;
 		const multipart = {

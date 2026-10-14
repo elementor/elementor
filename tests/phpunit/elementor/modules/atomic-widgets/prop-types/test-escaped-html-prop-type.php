@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,7 +94,12 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result['value'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result['value'],
+			'Hello alert("xss")<strong>world</strong>',
+			'Hello <strong>world</strong>'
+		);
 	}
 
 	public function test_sanitize__strips_id_attribute_from_inline_elements() {
@@ -178,8 +184,7 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertStringNotContainsString( '<a href=', $result['value'] );
-		$this->assertStringContainsString( 'click', $result['value'] );
+		Kses_Test_Expectations::assert_sanitized_data_href_link( $this, $result['value'] );
 	}
 
 	public function test_should_persist__true_for_empty_string() {
@@ -207,5 +212,32 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		$this->assertSame( 'object', $schema['type'] );
 		$this->assertSame( 'escaped-html', $schema['properties']['$$type']['const'] );
 		$this->assertSame( 'string', $schema['properties']['value']['type'] );
+	}
+
+	public function test_get_allowed_html_tags_for_prop__returns_heading_title_tags() {
+		$this->assertSame(
+			Escaped_Html_Prop_Type::HEADING_TEXT_TAGS,
+			Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( 'e-heading', 'title' )
+		);
+	}
+
+	public function test_get_allowed_html_tags_for_prop__returns_null_for_unknown_mapping() {
+		$this->assertNull(
+			Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( 'e-heading', 'text' )
+		);
+	}
+
+	public function test_heading_text_tags_const__matches_frontend_allowlist() {
+		$this->assertSame(
+			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'i', 'u', 'a', 'del', 'span', 'br' ],
+			Escaped_Html_Prop_Type::HEADING_TEXT_TAGS
+		);
+	}
+
+	public function test_paragraph_text_tags_const__matches_frontend_allowlist() {
+		$this->assertSame(
+			[ 'b', 'strong', 'sup', 'sub', 's', 'em', 'u', 'ul', 'ol', 'li', 'blockquote', 'a', 'del', 'span', 'br' ],
+			Escaped_Html_Prop_Type::PARAGRAPH_TEXT_TAGS
+		);
 	}
 }
