@@ -1,4 +1,6 @@
 import * as accessibilityPolicy from './audits/accessibility-policy';
+import * as accessibilityStatement from './audits/accessibility-statement';
+import * as accessibilityWidget from './audits/accessibility-widget';
 import * as cookiePolicy from './audits/cookie-policy';
 import * as deepNesting from './audits/deep-nesting';
 import * as defaultDesignSystem from './audits/default-design-system';
@@ -7,6 +9,7 @@ import * as googleConsentMode from './audits/google-consent-mode';
 import * as headingStructure from './audits/heading-structure';
 import * as hiddenElements from './audits/hidden-elements';
 import * as imagesAltText from './audits/images-alt-text';
+import * as imagesInefficientFormat from './audits/images-inefficient-format';
 import * as imagesTooLarge from './audits/images-too-large';
 import * as nestedBoxedContainers from './audits/nested-boxed-containers';
 import * as pageExcerpt from './audits/page-excerpt';
@@ -19,7 +22,6 @@ import * as robotsNoindex from './audits/robots-noindex';
 import * as scanForCookies from './audits/scan-for-cookies';
 import * as sectionsAndColumns from './audits/sections-and-columns';
 import * as siteIdentity from './audits/site-identity';
-import * as tooManyWidgets from './audits/too-many-widgets';
 import { registerAudit } from './registry';
 import { type Audit } from './types';
 
@@ -30,7 +32,6 @@ const AUDITS: Audit[] = [
 
 	hiddenElements.audit,
 	deprecatedWidgets.audit,
-	tooManyWidgets.audit,
 	sectionsAndColumns.audit,
 	deepNesting.audit,
 	nestedBoxedContainers.audit,
@@ -43,11 +44,14 @@ const AUDITS: Audit[] = [
 	headingStructure.audit,
 	imagesAltText.audit,
 	imagesTooLarge.audit,
+	imagesInefficientFormat.audit,
 
 	robotsNoindex.audit,
 
 	privacyPolicy.audit,
 	accessibilityPolicy.audit,
+	accessibilityStatement.audit,
+	accessibilityWidget.audit,
 	cookiePolicy.audit,
 	scanForCookies.audit,
 	googleConsentMode.audit,

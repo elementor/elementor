@@ -2,13 +2,16 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
+import { useCustomIconLibraries } from '../custom-icon-libraries';
+import { ICON_LIBRARY_GRID_MIN_CELL_SIZE, ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
 jest.mock( '../use-font-awesome-7-catalog' );
+jest.mock( '../custom-icon-libraries' );
 
 const scrollToIndex = jest.fn();
+const scrolledRowHeights: number[] = [];
 let mockVisibleIndices: number[] | null = null;
 
 jest.mock( '@tanstack/react-virtual', () => ( {
@@ -26,7 +29,10 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 				} ) )
 			),
 			getTotalSize: jest.fn().mockReturnValue( config.count * rowHeight ),
-			scrollToIndex,
+			scrollToIndex: ( ...args: unknown[] ) => {
+				scrolledRowHeights.push( config.estimateSize() );
+				scrollToIndex( ...args );
+			},
 			measure: jest.fn(),
 			getVirtualIndexes: jest.fn().mockReturnValue( indices ),
 		};
@@ -59,14 +65,12 @@ const renderPopover = ( props: Partial< React.ComponentProps< typeof IconLibrary
 		</ThemeProvider>
 	);
 
-const switchToGridView = () => {
-	fireEvent.click( screen.getByRole( 'button', { name: 'List view' } ) );
-	fireEvent.click( screen.getByRole( 'menuitemradio', { name: 'Grid' } ) );
+const switchToListView = () => {
+	fireEvent.click( screen.getByRole( 'button', { name: 'Switch to list view' } ) );
 };
 
-const switchToListView = () => {
-	fireEvent.click( screen.getByRole( 'button', { name: 'Grid view' } ) );
-	fireEvent.click( screen.getByRole( 'menuitemradio', { name: 'List' } ) );
+const switchToGridView = () => {
+	fireEvent.click( screen.getByRole( 'button', { name: 'Switch to grid view' } ) );
 };
 
 const restoreClientWidth = () => {
@@ -89,9 +93,14 @@ describe( 'IconLibraryPopover', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
 		mockVisibleIndices = null;
+		scrolledRowHeights.length = 0;
 		scrollToIndex.mockClear();
 		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
 			data: icons,
+			isLoading: false,
+		} as never );
+		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
+			data: [],
 			isLoading: false,
 		} as never );
 
@@ -110,16 +119,19 @@ describe( 'IconLibraryPopover', () => {
 		jest.useRealTimers();
 		document.documentElement.removeAttribute( 'dir' );
 		restoreClientWidth();
+		delete ( window as { elementor?: typeof window.elementor } ).elementor;
+		window.elementorCommon = undefined as unknown as typeof window.elementorCommon;
 	} );
 
-	it( 'opens in list view by default', () => {
+	it( 'opens in grid view by default', () => {
 		// Arrange.
 		renderPopover();
 
 		// Assert.
-		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'grid' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'listbox' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menu', { name: 'View' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'persists the selected view after the picker is closed and reopened', () => {
@@ -128,16 +140,36 @@ describe( 'IconLibraryPopover', () => {
 		const { unmount } = renderPopover( { onClose } );
 
 		// Act.
-		switchToGridView();
+		switchToListView();
 		fireEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
 		unmount();
 		renderPopover();
 
 		// Assert.
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
-		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Grid view' } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'listbox' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Switch to grid view' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'grid' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'scrolls a selected icon into view after the measured cell size replaces the fallback', () => {
+		// Arrange.
+		const gridWidthWhereColumnCountStaysAtTheFallback = 300;
+
+		Object.defineProperty( HTMLElement.prototype, 'clientWidth', {
+			configurable: true,
+			get: () => gridWidthWhereColumnCountStaysAtTheFallback,
+		} );
+
+		// Act.
+		renderPopover( {
+			selectedIconClass: 'fa-brands fa-wordpress',
+			selectedIconLibrary: 'fa-brands',
+		} );
+
+		// Assert.
+		expect( scrollToIndex ).toHaveBeenLastCalledWith( 1, { align: 'center' } );
+		expect( scrolledRowHeights.at( -1 ) ).toBeGreaterThan( ICON_LIBRARY_GRID_MIN_CELL_SIZE );
 	} );
 
 	it( 'fits as many equal columns as the popover width allows', () => {
@@ -148,17 +180,15 @@ describe( 'IconLibraryPopover', () => {
 		} );
 
 		renderPopover();
-		switchToGridView();
 
 		// Assert.
-		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toHaveAttribute( 'aria-colcount', '8' );
+		expect( screen.getByRole( 'grid', { name: 'Icons' } ) ).toHaveAttribute( 'aria-colcount', '7' );
 	} );
 
 	it( 'keeps measuring the grid after an empty search is cleared', () => {
 		// Arrange.
 		jest.useFakeTimers();
 		renderPopover();
-		switchToGridView();
 
 		// Act.
 		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'missing' } } );
@@ -180,7 +210,6 @@ describe( 'IconLibraryPopover', () => {
 		// Arrange.
 		document.documentElement.setAttribute( 'dir', 'rtl' );
 		renderPopover();
-		switchToGridView();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 
@@ -216,7 +245,6 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
 		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'Font Awesome - Solid' } ) );
 		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
-		switchToGridView();
 
 		// Assert.
 		expect( search ).toHaveValue( 'star' );
@@ -232,6 +260,12 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'option', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
 		expect( screen.queryByRole( 'option', { name: /github/i } ) ).not.toBeInTheDocument();
+
+		// Act.
+		switchToGridView();
+
+		// Assert.
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
 	} );
 
 	it( 'selects an icon and closes', () => {
@@ -240,6 +274,7 @@ describe( 'IconLibraryPopover', () => {
 		const onClose = jest.fn();
 
 		renderPopover( { onSelect, onClose } );
+		switchToListView();
 
 		// Act.
 		fireEvent.click( screen.getByRole( 'option', { name: /star/i } ) );
@@ -255,7 +290,6 @@ describe( 'IconLibraryPopover', () => {
 		const onClose = jest.fn();
 
 		renderPopover( { onSelect, onClose } );
-		switchToGridView();
 
 		// Act.
 		fireEvent.click( screen.getByRole( 'gridcell', { name: /star/i } ) );
@@ -271,7 +305,6 @@ describe( 'IconLibraryPopover', () => {
 		const onClose = jest.fn();
 
 		const { unmount } = renderPopover( { onSelect, onClose } );
-		switchToGridView();
 
 		// Act.
 		fireEvent.keyDown( screen.getByRole( 'gridcell', { name: /star/i } ), { key: 'Enter' } );
@@ -301,13 +334,14 @@ describe( 'IconLibraryPopover', () => {
 		renderPopover();
 
 		// Assert.
-		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'List view' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Switch to list view' } ) );
 
 		// Assert.
-		expect( screen.getByRole( 'menuitemradio', { name: 'List' } ) ).toBeChecked();
+		expect( screen.queryByRole( 'menu', { name: 'View' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
 	} );
 
 	it( 'highlights the selected icon when the stored class uses an alias', () => {
@@ -318,7 +352,7 @@ describe( 'IconLibraryPopover', () => {
 		} );
 
 		// Assert.
-		expect( screen.getByRole( 'option', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toHaveAttribute( 'aria-selected', 'true' );
 	} );
 
 	it( 'filters by library without clearing the search query', () => {
@@ -349,8 +383,8 @@ describe( 'IconLibraryPopover', () => {
 		// Assert.
 		expect( search ).toHaveValue( 'star' );
 		expect( screen.getByRole( 'button', { name: 'Filter by library, active' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
-		expect( screen.queryByRole( 'option', { name: /github/i } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'gridcell', { name: /github/i } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'supports keyboard navigation and restores focus when the filter menu closes', async () => {
@@ -417,7 +451,7 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'missing' } } );
 
 		// Assert.
-		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
 
 		act( () => {
 			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
@@ -429,7 +463,7 @@ describe( 'IconLibraryPopover', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Clear & try again' } ) );
 
 		expect( screen.getByPlaceholderText( 'Search' ) ).toHaveValue( '' );
-		expect( screen.getByRole( 'option', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows a load failure when the catalog is empty', () => {
@@ -468,7 +502,6 @@ describe( 'IconLibraryPopover', () => {
 	it( 'moves grid focus with two-dimensional keys including incomplete last rows', () => {
 		// Arrange.
 		renderPopover();
-		switchToGridView();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 
@@ -536,7 +569,6 @@ describe( 'IconLibraryPopover', () => {
 	it( 'moves the roving tab index to the pointer-focused cell', () => {
 		// Arrange.
 		renderPopover();
-		switchToGridView();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 		const heart = screen.getByRole( 'gridcell', { name: /heart/i } );
@@ -555,7 +587,6 @@ describe( 'IconLibraryPopover', () => {
 	it( 'clamps grid focus when the filtered list shrinks', () => {
 		// Arrange.
 		renderPopover();
-		switchToGridView();
 
 		const heart = screen.getByRole( 'gridcell', { name: /heart/i } );
 
@@ -574,7 +605,6 @@ describe( 'IconLibraryPopover', () => {
 		// Arrange.
 		mockVisibleIndices = [ 0 ];
 		const { rerender } = renderPopover();
-		switchToGridView();
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );
 
 		expect( screen.queryByRole( 'gridcell', { name: /bell/i } ) ).not.toBeInTheDocument();
@@ -605,10 +635,139 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'gridcell', { name: /bell/i } ) ).toHaveFocus();
 	} );
 
+	it( 'lists custom library icons and stores the library value on select', () => {
+		// Arrange.
+		const onSelect = jest.fn();
+		const customIcon = {
+			id: 'my-icons:badge',
+			name: 'badge',
+			label: 'badge',
+			library: 'my-icons',
+			value: 'my-icons my-icons-badge',
+			aliases: [],
+			width: 512,
+			height: 512,
+			paths: [],
+			glyphClass: 'my-icons my-icons-badge',
+		};
+
+		window.elementor = {
+			...window.elementor,
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							label: 'My Icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							fetchJson: 'https://example.com/my-icons.js',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
+			data: [ customIcon ],
+			isLoading: false,
+		} as never );
+
+		renderPopover( { onSelect } );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'gridcell', { name: /badge/i } ) );
+
+		// Assert.
+		expect( onSelect ).toHaveBeenCalledWith( {
+			value: 'my-icons my-icons-badge',
+			library: 'my-icons',
+		} );
+	} );
+
+	it( 'filters custom libraries under My Libraries without resetting search', () => {
+		// Arrange.
+		jest.useFakeTimers();
+		const customIcon = {
+			id: 'my-icons:badge',
+			name: 'badge',
+			label: 'badge',
+			library: 'my-icons',
+			value: 'my-icons my-icons-badge',
+			aliases: [],
+			width: 512,
+			height: 512,
+			paths: [ 'M1 1' ],
+		};
+
+		window.elementor = {
+			...window.elementor,
+			config: {
+				icons: {
+					libraries: [
+						{
+							name: 'my-icons',
+							label: 'My Icons',
+							prefix: 'my-icons-',
+							displayPrefix: 'my-icons',
+							fetchJson: 'https://example.com/my-icons.js',
+							native: false,
+						},
+					],
+				},
+			},
+			helpers: {
+				enqueueIconFonts: jest.fn(),
+			},
+		} as typeof window.elementor;
+		window.elementorCommon = {
+			config: {
+				fontAwesome: {
+					v7: {
+						jsonFiles: [ 'solid', 'regular', 'brands' ],
+						jsonBaseUrl: 'https://example.com/assets/lib/font-awesome-7/json/',
+						filter: [
+							{ type: 'all', label: 'All icons', icon: 'list' },
+							{ type: 'item', value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
+							{ type: 'item', value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
+							{ type: 'item', value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'library' },
+							{ type: 'group', label: 'My libraries' },
+							{ type: 'item', value: 'my-icons', label: 'My Icons', icon: 'library' },
+						],
+					},
+				},
+			},
+		} as typeof window.elementorCommon;
+		jest.mocked( useCustomIconLibraries ).mockReturnValue( {
+			data: [ customIcon ],
+			isLoading: false,
+		} as never );
+
+		renderPopover();
+		const search = screen.getByPlaceholderText( 'Search' );
+		fireEvent.change( search, { target: { value: 'badge' } } );
+		act( () => {
+			jest.advanceTimersByTime( ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY );
+		} );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Filter by library' } ) );
+		expect( screen.getByText( 'My libraries' ) ).toBeInTheDocument();
+		fireEvent.click( screen.getByRole( 'menuitemcheckbox', { name: 'My Icons' } ) );
+		fireEvent.keyDown( screen.getByRole( 'menu' ), { key: 'Escape' } );
+
+		// Assert.
+		expect( search ).toHaveValue( 'badge' );
+		expect( screen.getByRole( 'gridcell', { name: /badge/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'gridcell', { name: /star/i } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'shows a grid icon name tooltip only after one second', async () => {
 		// Arrange.
 		renderPopover();
-		switchToGridView();
 		jest.useFakeTimers();
 
 		const star = screen.getByRole( 'gridcell', { name: /star/i } );

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getHostDocumentId } from '@elementor/editor-elements';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { runPageAudit } from '../runner';
-import { type GlobalState, selectError, selectReport, selectStatus, slice } from '../store';
+import { type GlobalState, selectError, selectIsStale, selectReport, selectStatus, slice } from '../store';
 import { getPersistedReport, persistReport } from '../utils/report-storage';
 import { SessionExpiredError } from '../utils/session-expiration';
 
@@ -11,8 +11,9 @@ export function useAuditReport() {
 	const status = useSelector( ( state: GlobalState ) => selectStatus( state ) );
 	const report = useSelector( ( state: GlobalState ) => selectReport( state ) );
 	const error = useSelector( ( state: GlobalState ) => selectError( state ) );
+	const isStale = useSelector( ( state: GlobalState ) => selectIsStale( state ) );
 	const dispatch = useDispatch();
-	const documentId = getCurrentDocumentId() ?? 0;
+	const documentId = getHostDocumentId() ?? 0;
 
 	useEffect( () => {
 		if ( ! documentId || report?.documentId === documentId ) {
@@ -45,5 +46,5 @@ export function useAuditReport() {
 		}
 	};
 
-	return { status, report, error, run };
+	return { status, report, error, isStale, run };
 }

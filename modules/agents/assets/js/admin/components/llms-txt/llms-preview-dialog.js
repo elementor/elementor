@@ -1,0 +1,75 @@
+import { useState } from 'react';
+import Alert from '@elementor/ui/Alert';
+import Box from '@elementor/ui/Box';
+import Button from '@elementor/ui/Button';
+import TextField from '@elementor/ui/TextField';
+import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
+
+import { LLMS_FILE_NAME } from '../../constants';
+import { ContentPreviewDialog } from '../content-preview-dialog';
+
+const EDITOR_MIN_ROWS = 20;
+
+const getErrorMessage = ( reason ) => ( 'string' === typeof reason && reason )
+	? reason
+	: __( 'Something went wrong. Please try again.', 'elementor' );
+
+export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => {
+	const [ draft, setDraft ] = useState( content );
+	const [ isSaving, setIsSaving ] = useState( false );
+	const [ error, setError ] = useState( '' );
+
+	const isSaveDisabled = isSaving || ! draft.trim() || draft === content;
+
+	const handleSave = () => {
+		setIsSaving( true );
+		setError( '' );
+
+		onSave( draft )
+			.then( onClose )
+			.catch( ( reason ) => {
+				setError( getErrorMessage( reason ) );
+				setIsSaving( false );
+			} );
+	};
+
+	const actions = isEditing ? (
+		<>
+			<Button color="secondary" onClick={ onClose }>
+				{ __( 'Cancel', 'elementor' ) }
+			</Button>
+			<Button variant="contained" onClick={ handleSave } disabled={ isSaveDisabled }>
+				{ __( 'Save', 'elementor' ) }
+			</Button>
+		</>
+	) : null;
+
+	return (
+		<ContentPreviewDialog title={ LLMS_FILE_NAME } onClose={ onClose } actions={ actions }>
+			{ error && <Alert severity="error" sx={ { mb: 2 } }>{ error }</Alert> }
+			{ isEditing ? (
+				<TextField
+					value={ draft }
+					onChange={ ( event ) => setDraft( event.target.value ) }
+					multiline
+					fullWidth
+					minRows={ EDITOR_MIN_ROWS }
+					inputProps={ { 'aria-label': LLMS_FILE_NAME } }
+					InputProps={ { sx: { fontFamily: 'monospace' } } }
+				/>
+			) : (
+				<Box component="pre" m={ 0 } typography="body2" fontFamily="monospace" whiteSpace="pre-wrap">
+					{ content }
+				</Box>
+			) }
+		</ContentPreviewDialog>
+	);
+};
+
+LlmsPreviewDialog.propTypes = {
+	content: PropTypes.string.isRequired,
+	isEditing: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
+	onSave: PropTypes.func.isRequired,
+};

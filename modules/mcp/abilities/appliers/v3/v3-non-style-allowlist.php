@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -60,13 +61,24 @@ class V3_Non_Style_Allowlist {
 			'error' => new \WP_Error(
 				'elementor_invalid_settings',
 				sprintf(
-					'V3 widget "%s" does not allow settings: %s. Allowed non-style keys: %s. Visual styling must go through the style (CSS) input.',
+					'V3 widget "%s" does not allow settings: %s. Allowed non-style keys: %s. Visual styling must go through the style (CSS) input.%s',
 					$widget_type,
 					implode( ', ', $rejected ),
-					$available
+					$available,
+					self::get_editor_settings_hint( $rejected )
 				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			),
 		];
+	}
+
+	private static function get_editor_settings_hint( array $rejected ): string {
+		$editor_keys = array_values( array_filter( $rejected, [ Editor_Settings::class, 'is_editor_key' ] ) );
+
+		if ( empty( $editor_keys ) ) {
+			return '';
+		}
+
+		return sprintf( ' %s: editor-only, send in `editor_settings` instead.', implode( ', ', $editor_keys ) );
 	}
 }

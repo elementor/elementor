@@ -35,7 +35,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		return $this->build_guide( ElementorUtils::has_pro() );
+		return $this->build_guide( ElementorUtils::is_license_active() );
 	}
 
 	public function build_guide( bool $pro_active ): string {

@@ -17,6 +17,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
@@ -536,14 +537,10 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertOkOperation( $result, 0 );
 	}
 
-	public function test_update__null_setting_on_required_prop_returns_invalid_settings_error() {
+	public function test_update__null_setting_on_required_prop_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
-
-		$node_before = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertNotNull( $node_before );
-		$title_before = $node_before['settings']['title'] ?? null;
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -559,12 +556,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
+		$this->assertStringContainsString( 'tag', implode( ' ', $result['results'][0]['warnings'] ?? [] ) );
 
 		$node_after = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( $title_before, $node_after['settings']['title'] ?? null );
+		$this->assertArrayNotHasKey( 'title', $node_after['settings'] ?? [] );
+		$this->assertNotSame( 'h99', $node_after['settings']['tag']['value'] ?? null );
 	}
 
 	public function test_update__null_unknown_setting_warns_without_clearing() {
@@ -592,7 +590,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'skipped', $warnings[0] );
 	}
 
-	public function test_update__rejects_unknown_class_label_as_per_op_error() {
+	public function test_update__unknown_class_label_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -608,9 +606,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_unknown_global_class', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$warning = $result['results'][0]['warning_details'][0] ?? [];
+		$this->assertSame( 'unknown_global_class', $warning['code'] ?? null );
+		$this->assertSame( $heading_id, $warning['config_id'] ?? null );
+		$this->assertStringContainsString( 'missing-class', $warning['message'] ?? '' );
 	}
 
 	public function test_update__applies_plain_dynamic_title() {
@@ -655,7 +655,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( '120', $node['settings']['title']['value']['settings']['length']['value'] ?? null );
 	}
 
-	public function test_update__rejects_invalid_title_shape_as_per_op_error() {
+	public function test_update__invalid_title_shape_returns_warning() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -671,9 +671,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			],
 		] );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] ?? null );
+		$this->assertSame( $heading_id, $result['results'][0]['warning_details'][0]['config_id'] ?? null );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertNotSame(
+			[ 'content' => 'not-a-valid-escaped-html-shape', 'children' => [] ],
+			$node['settings']['title']['value'] ?? null
+		);
 	}
 
 	public function test_update__style_merges_into_existing_local_style_from_build_composition() {
@@ -1274,7 +1280,231 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertTrue( empty( $items ) );
 	}
 
-	public function test_bulk__failed_interactions_update_does_not_persist_settings() {
+	public function test_execute__update_stores_decorative_editor_setting() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $inner_id, [ 'decorative' => true ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertArrayNotHasKey( 'warning_details', $result['results'][0] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertTrue( $node['editor_settings']['decorative'] );
+		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_skips_non_boolean_decorative_editor_setting_with_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $inner_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $inner_id, [ 'decorative' => 'yes' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $inner_id );
+		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_renames_v4_element_through_editor_settings_title() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'name' => 'Hero Title' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Hero Title', $node['editor_settings']['title'] );
+		$this->assertArrayNotHasKey( '_title', $node['settings'] ?? [] );
+		$this->assertNotSame( 'Hero Title', $node['settings']['title']['value'] ?? null );
+	}
+
+	public function test_execute__update_renames_unsupported_v3_element_through_settings_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $v3_id, [ 'name' => 'Legacy Hero' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertSame( 'Legacy Hero', $node['settings']['_title'] );
+		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_with_settings_and_editor_settings_still_rejects_unsupported_v3_element() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'title' => 'Nope' ],
+					'editor_settings' => [ 'name' => 'Legacy Hero' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( 'elementor_v3_not_supported', $result['results'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertArrayNotHasKey( '_title', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_clears_name_with_empty_string() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+		$this->update_editor_settings( $post_id, $heading_id, [ 'name' => 'Hero Title' ] );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'name' => '' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_skips_non_string_name_with_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'name' => 42 ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] );
+	}
+
+	public function test_execute__update_warns_on_unsupported_editor_setting_key() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'decorative' => true ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'editor_setting_not_supported', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_points_to_name_when_title_is_sent_in_editor_settings() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $container_id ] = $this->given_container_with_heading( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $container_id, [ 'title' => 'Wrapper' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$warning = $result['results'][0]['warning_details'][0];
+		$this->assertSame( 'editor_setting_not_supported', $warning['code'] );
+		$this->assertStringContainsString( 'Use "name"', $warning['message'] );
+	}
+
+	public function test_execute__update_rejects_prop_sent_in_editor_settings() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'title' => 'Visible text' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_in_editor_settings', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'h1', $node['editor_settings']['title'] );
+		$this->assertNotSame( 'Visible text', $node['settings']['title']['value'] ?? null );
+	}
+
+	public function test_execute__update_warns_when_editor_setting_is_sent_in_settings() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [ 'name' => 'Hero Title' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'editor_setting_in_settings', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'h1', $node['editor_settings']['title'] );
+		$this->assertArrayNotHasKey( 'name', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__allowlisted_v3_update_rejects_editor_setting_in_settings_with_hint() {
+		// Arrange
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'name' => 'Main Menu' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertStringContainsString( 'send in `editor_settings`', $result['results'][0]['message'] );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertArrayNotHasKey( 'name', $node['settings'] ?? [] );
+		$this->assertArrayNotHasKey( '_title', $node['settings'] ?? [] );
+	}
+
+	public function test_bulk__invalid_interactions_update_still_persists_settings() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$heading_id = $this->given_heading_on_document( $post_id );
@@ -1305,13 +1535,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 
 		$this->assertIsArray( $result );
-		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['status'] );
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
-		$this->assertSame( 'error', $result['results'][1]['status'] );
-		$this->assertSame( 'elementor_invalid_interactions', $result['results'][1]['code'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertSame( 'interaction_invalid', $result['results'][1]['warning_details'][0]['code'] ?? null );
 
 		$node = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Saved', $node['settings']['title']['value'] );
+		$this->assertSame( 'Leaked', $node['settings']['title']['value'] );
 	}
 
 	public function test_bulk__partial_failure_still_saves_valid_ops() {
@@ -1440,10 +1670,260 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
 	}
 
+	public function test_update__settings_read_from_structure_round_trip_unchanged() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id, $image_id ] = $this->given_linked_button_and_image( $post_id );
+		$stored_before = [
+			$button_id => $this->find_element_in_document( $post_id, $button_id )['settings'],
+			$image_id => $this->find_element_in_document( $post_id, $image_id )['settings'],
+		];
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => $this->read_settings_from_structure( $post_id, $button_id ),
+				],
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => $this->read_settings_from_structure( $post_id, $image_id ),
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertOkOperation( $result, 1 );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][0] );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][1] );
+		$this->assertEquals( $stored_before[ $button_id ]['link'], $this->find_element_in_document( $post_id, $button_id )['settings']['link'] );
+		$this->assertEquals( $stored_before[ $image_id ]['image'], $this->find_element_in_document( $post_id, $image_id )['settings']['image'] );
+	}
+
+	public function test_update__partial_object_prop_warns_about_dropped_stored_sub_keys() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => [
+						'link' => [ 'isTargetBlank' => false ],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_subkeys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( 'destination', $details[0]['message'] );
+		$this->assertStringContainsString( 'tag', $details[0]['message'] );
+		$this->assertArrayNotHasKey( 'destination', $this->find_element_in_document( $post_id, $button_id )['settings']['link']['value'] );
+	}
+
+	public function test_update__full_object_prop_replacement_does_not_warn() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $button_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $button_id,
+					'settings' => [
+						'link' => [
+							'destination' => 'https://example.com/other',
+							'isTargetBlank' => false,
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertArrayNotHasKey( 'warnings', $result['results'][0] );
+		$this->assertSame(
+			'https://example.com/other',
+			$this->find_element_in_document( $post_id, $button_id )['settings']['link']['value']['destination']['value']
+		);
+	}
+
+	public function test_update__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [
+						'link' => [
+							'href' => 'https://example.com',
+							'target' => '_blank',
+							'tag' => 'a',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"link.href", "link.target"', $details[0]['message'] );
+	}
+
+	public function test_build_composition__unknown_object_prop_keys_return_warning() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'href' => 'https://example.com',
+						'tag' => 'a',
+					],
+				],
+			],
+			'parent_id' => 'document',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( [ 'prop_keys_dropped' ], array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( '"link.href"', $result['warning_details'][0]['message'] );
+	}
+
+	public function test_update__nested_object_prop_keys_return_warning_with_path() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ , $image_id ] = $this->given_linked_button_and_image( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $image_id,
+					'settings' => [
+						'image' => [
+							'src' => [
+								'url' => 'https://example.com/other.jpg',
+								'caption' => 'Not a field',
+							],
+							'size' => 'full',
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$details = $result['results'][0]['warning_details'] ?? [];
+		$this->assertContains( 'prop_keys_dropped', array_column( $details, 'code' ) );
+		$this->assertStringContainsString( '"image.src.caption"', implode( ' ', array_column( $details, 'message' ) ) );
+	}
+
+	private function given_linked_button_and_image( int $post_id ): array {
+		$this->act_as_admin();
+
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="c1"><e-button configuration-id="b1"/><e-image configuration-id="i1"/></e-flexbox>',
+			'element_config' => [
+				'b1' => [
+					'text' => 'Go',
+					'link' => [
+						'destination' => 'https://example.com',
+						'isTargetBlank' => true,
+						'tag' => 'a',
+					],
+				],
+				'i1' => [
+					'image' => [
+						'src' => [
+							'url' => 'https://example.com/photo.jpg',
+							'alt' => 'A photo',
+						],
+						'size' => 'full',
+					],
+				],
+			],
+			'parent_id' => 'document',
+		] );
+
+		if ( is_wp_error( $result ) ) {
+			$this->fail( 'Fixture setup failed: ' . $result->get_error_message() );
+		}
+
+		$this->assertArrayNotHasKey( 'warnings', $result, 'Fixture setup produced warnings.' );
+
+		$children = $this->find_element_in_document( $post_id, $result['root_element_ids'][0] )['elements'];
+
+		return [ $children[0]['id'], $children[1]['id'] ];
+	}
+
+	private function read_settings_from_structure( int $post_id, string $element_id ): array {
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+
+		$result = ( new Get_Structure_Ability() )->execute( [
+			'post_id' => $post_id,
+			'element_id' => $element_id,
+			'include_content' => true,
+		] );
+
+		$this->assertIsArray( $result );
+
+		return (array) $result['elements'][0]['settings'];
+	}
+
 	private function assertOkOperation( $result, int $index ): void {
 		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertSame( 'ok', $result['status'] );
 		$this->assertSame( 'ok', $result['results'][ $index ]['status'] ?? null );
+	}
+
+	private function update_editor_settings( int $post_id, string $element_id, array $editor_settings ) {
+		return ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $element_id,
+					'editor_settings' => $editor_settings,
+				],
+			],
+		] );
 	}
 
 	private function create_real_document(): int {

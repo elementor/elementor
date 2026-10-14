@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 
@@ -52,6 +53,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'manage_options' ),
 			$this->get_input_schema()
@@ -147,11 +149,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 			'uid' => $uid,
 		] + $this->document_links( $component );
 
-		if ( ! empty( $warnings ) ) {
-			$response['warnings'] = $warnings;
-		}
-
-		return $response;
+		return $warnings->add_to_response( $response );
 	}
 
 	private function handle_update( array $input ) {
@@ -297,11 +295,11 @@ class Manage_Component_Ability extends Abstract_Ability {
 		}
 
 		$result = $this->save_component( $component, $elements, $settings );
-		if ( is_wp_error( $result ) || empty( $warnings ) ) {
+		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
-		return $result + [ 'warnings' => $warnings ];
+		return $warnings->add_to_response( $result );
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
@@ -367,7 +365,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[], source_id_map?: array<string,string>}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, source_id_map?: array<string,string>}|\WP_Error
 	 */
 	private function resolve_create_elements( array $input ) {
 		$has_xml = ! empty( $input['xml_structure'] ) && is_string( $input['xml_structure'] );
@@ -387,12 +385,12 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		return [
 			'elements' => [],
-			'warnings' => [],
+			'warnings' => Warnings_Bag::make(),
 		];
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[]}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag}|\WP_Error
 	 */
 	private function compile_elements_from_xml( array $input ) {
 		$compiled = $this->compile_composition( $input );
@@ -408,7 +406,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[], dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
 		$compiled = Composition_Compiler::make()->compile(
@@ -433,7 +431,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: string[], source_id_map: array<string,string>}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, source_id_map: array<string,string>}|\WP_Error
 	 */
 	private function copy_elements_from_source( array $input ) {
 		$source_post_id = (int) $input['source_post_id'];
@@ -464,7 +462,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		return [
 			'elements' => $elements,
-			'warnings' => [],
+			'warnings' => Warnings_Bag::make(),
 			'source_id_map' => $source_id_map,
 		];
 	}
@@ -663,8 +661,9 @@ class Manage_Component_Ability extends Abstract_Ability {
 				'warnings' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
-					'description' => 'Non-fatal notices from XML compilation, e.g. props skipped or CSS that fell back to custom_css.',
+					'description' => 'Every warning is fixable: one field was skipped or adjusted during XML compilation and the rest was saved. Errors fail the call instead.',
 				],
+				'warning_details' => Warnings_Bag::get_details_schema(),
 			],
 		];
 	}

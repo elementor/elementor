@@ -6,6 +6,7 @@ import { ajax } from '@elementor/editor-v1-adapters';
 // so component fetches triggered together merge into a single batched request.
 const getComponentDocumentParams = ( id: number ) => ( {
 	action: 'get_document_config',
+	retry: true,
 	unique_id: `document-${ id }`,
 	data: { id },
 } );

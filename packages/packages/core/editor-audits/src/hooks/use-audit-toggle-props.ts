@@ -1,7 +1,7 @@
 import { type ToggleActionProps } from '@elementor/editor-app-bar';
-import { ShieldCheckIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
+import AuditToggleIcon from '../components/audit-toggle-icon';
 import { auditPanel } from '../editor-panel';
 
 export function useAuditToggleProps(): ToggleActionProps {
@@ -10,7 +10,7 @@ export function useAuditToggleProps(): ToggleActionProps {
 
 	return {
 		title: __( 'Audit Page', 'elementor' ),
-		icon: ShieldCheckIcon,
+		icon: AuditToggleIcon,
 		selected: isOpen,
 		onClick: () => toggle(),
 	};

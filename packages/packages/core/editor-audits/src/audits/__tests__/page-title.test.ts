@@ -23,6 +23,9 @@ describe( audit.id, () => {
 
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].angieFix ).toBe( true );
+			expect( result.violations[ 0 ].angiePrompt ).toBe(
+				"Based on this page's contents, generate a title for this page."
+			);
 		}
 	} );
 
@@ -33,6 +36,7 @@ describe( audit.id, () => {
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].label ).toContain( 'too long' );
 			expect( result.violations[ 0 ].angieFix ).toBe( true );
+			expect( result.violations[ 0 ].angiePrompt ).toBeUndefined();
 		}
 	} );
 } );

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getHostDocumentId } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__deleteStore,
@@ -17,7 +17,7 @@ import { SessionExpiredError } from '../../utils/session-expiration';
 import { useAuditReport } from '../use-audit-report';
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	getCurrentDocumentId: jest.fn(),
+	getHostDocumentId: jest.fn(),
 } ) );
 
 jest.mock( '../../runner' );
@@ -59,7 +59,7 @@ describe( 'useAuditReport', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		jest.mocked( getPersistedReport ).mockReturnValue( null );
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( DOCUMENT_ID );
+		jest.mocked( getHostDocumentId ).mockReturnValue( DOCUMENT_ID );
 		__registerSlice( slice );
 		__createStore();
 	} );
@@ -99,7 +99,7 @@ describe( 'useAuditReport', () => {
 		await waitFor( () => expect( result.current.status ).toBe( 'ready' ) );
 
 		// Act.
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
+		jest.mocked( getHostDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
 		rerender();
 
 		// Assert.
@@ -118,7 +118,7 @@ describe( 'useAuditReport', () => {
 		await waitFor( () => expect( result.current.report ).toEqual( reportForDocumentOne ) );
 
 		// Act.
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
+		jest.mocked( getHostDocumentId ).mockReturnValue( OTHER_DOCUMENT_ID );
 		rerender();
 
 		// Assert.

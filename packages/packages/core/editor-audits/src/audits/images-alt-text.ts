@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
 import { type Audit, type AuditViolation } from '../types';
+import { hasAltTextImages, walkAltTextImageSources } from '../utils/alt-text-image-sources';
 import { hasMeaningfulAlt, isImageSourcePresent } from '../utils/image-alt';
-import { hasPageImages, walkImageLikeSources } from '../utils/image-like-sources';
 
 export const audit: Audit = {
 	id: 'audits/images-alt-text',
@@ -13,15 +13,16 @@ export const audit: Audit = {
 	severity: 'error',
 	weight: 10,
 	evaluate: ( ctx ) => {
-		if ( ! hasPageImages( ctx.elements.tree ) ) {
+		if ( ! hasAltTextImages( ctx.elements.tree ) ) {
 			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
 		}
 
+		const isReady = ctx.pageContext.ally_plugin_active;
 		const violations: AuditViolation[] = [];
 		const failedWidgetIds = new Set< string >();
 		let missingAltImageCount = 0;
 
-		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {
+		walkAltTextImageSources( ctx.elements.tree, ( { node, media } ) => {
 			if ( ! isImageSourcePresent( media ) || hasMeaningfulAlt( media, ctx.pageContext ) ) {
 				return;
 			}
@@ -35,7 +36,8 @@ export const audit: Audit = {
 					elementId: node.id,
 					targetHint: 'element-settings',
 					label: __( 'Image is missing alt text.', 'elementor' ),
-					externalUrl: ctx.pageContext.ally_plugin_url,
+					externalUrl: isReady ? ctx.pageContext.ally_scan_url : ctx.pageContext.ally_plugin_url,
+					ctaLabel: __( 'Fix with Ally', 'elementor' ),
 				} );
 			}
 		} );
