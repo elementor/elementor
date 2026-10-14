@@ -3,6 +3,7 @@ export * from './types';
 
 // utils
 export { generateId } from './utils/generate-id';
+export { getNonEmptyVariants } from './utils/get-non-empty-variants';
 export { getStylesSchema, isExistingStyleProperty } from './utils/get-styles-schema';
 export { getVariantByMeta } from './utils/get-variant-by-meta';
 export { isClassState, isPseudoState, getSelectorWithState } from './utils/state-utils';

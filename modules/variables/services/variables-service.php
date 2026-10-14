@@ -57,6 +57,12 @@ class Variables_Service {
 		return null;
 	}
 
+	public function find_type( string $id ): ?string {
+		$variable = $this->repo->load()->get( $id );
+
+		return $variable ? $variable->type() : null;
+	}
+
 	public function load() {
 		$collection = $this->repo->load()->serialize( true );
 		foreach ( $collection['data'] as $id => $variable ) {

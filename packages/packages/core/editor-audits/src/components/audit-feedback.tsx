@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useFloatingPanelZIndex } from '@elementor/editor-floating-panels';
 import { notify } from '@elementor/editor-notifications';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { useMixpanel } from '@elementor/events';
@@ -21,6 +22,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import {
+	AUDIT_PANEL_ID,
 	FEEDBACK_CANCELLED_EVENT,
 	FEEDBACK_CLICKED_EVENT,
 	FEEDBACK_CLOSED_EVENT,
@@ -58,6 +60,7 @@ export default function AuditFeedback() {
 	const [ feedbackText, setFeedbackText ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const { dispatchEvent: trackEvent = ( ...args: unknown[] ) => void args } = useMixpanel();
+	const panelZIndex = useFloatingPanelZIndex( AUDIT_PANEL_ID );
 
 	if ( ! isExperimentActive( FEEDBACK_EXPERIMENT_NAME ) ) {
 		return null;
@@ -117,7 +120,7 @@ export default function AuditFeedback() {
 
 	return (
 		<>
-			<Tooltip title={ triggerLabel } placement="top">
+			<Tooltip title={ triggerLabel } placement="top" PopperProps={ { sx: { zIndex: panelZIndex } } }>
 				<IconButton size="small" aria-label={ triggerLabel } onClick={ handleOpen }>
 					<MessageLinesIcon fontSize="small" />
 				</IconButton>

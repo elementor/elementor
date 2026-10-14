@@ -226,6 +226,32 @@ describe( 'reconcileInitialChildren', () => {
 		] );
 	} );
 
+	it( 'moves an anchored child that is already present but on the wrong side of its anchor', () => {
+		// Arrange.
+		const title = { elType: 'e-accordion-item-title' } as V1ElementData;
+		const openIcon = { elType: 'e-accordion-item-icon-open', id: 'open-1' } as V1ElementData;
+		const icon = { elType: 'e-accordion-item-icon' } as V1ElementData;
+		const attributes = {
+			elements: [ title, openIcon, icon ] as V1ElementData[],
+			settings: { pagination: { $$type: 'boolean', value: true } },
+		};
+
+		// Act.
+		reconcileInitialChildren( {
+			elementId: 'parent',
+			elementConfig: createConfig( [
+				createRule( {
+					child_type: 'e-accordion-item-icon-open',
+					position: { kind: 'after_type', value: 'e-accordion-item-icon' },
+				} ),
+			] ),
+			attributes,
+		} );
+
+		// Assert.
+		expect( attributes.elements ).toEqual( [ title, icon, openIcon ] );
+	} );
+
 	it( 'is idempotent: does nothing when state already matches the rule', () => {
 		// Arrange.
 		const attributes = {

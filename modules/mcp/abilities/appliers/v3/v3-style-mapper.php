@@ -4,9 +4,11 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Media_Splitter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
@@ -38,6 +40,7 @@ class V3_Style_Mapper {
 	private Css_Declaration_Parser $declaration_parser;
 	private Unmapped_Css_Serializer $unmapped_serializer;
 	private Responsive_Key_Resolver $responsive_resolver;
+	private V3_Map_Style_Writer $map_writer;
 
 	public function __construct(
 		Css_Converter $css_converter,
@@ -53,6 +56,7 @@ class V3_Style_Mapper {
 		$this->declaration_parser = $declaration_parser;
 		$this->unmapped_serializer = $unmapped_serializer;
 		$this->responsive_resolver = $responsive_resolver;
+		$this->map_writer = new V3_Map_Style_Writer( $css_converter, V3_Control_Adapter_Registry::create_default(), $declaration_parser );
 	}
 
 	/**
@@ -120,6 +124,12 @@ class V3_Style_Mapper {
 			return;
 		}
 
+		if ( $meta->is_map_driven() ) {
+			$this->map_writer->write( $ctx, $meta->style_bindings(), $meta->controls(), $breakpoint, $state, $block_css );
+
+			return;
+		}
+
 		foreach ( $this->declaration_parser->parse_declarations( $block_css ) as $declaration ) {
 			$rule = [
 				'property' => $declaration['property'],
@@ -129,11 +139,6 @@ class V3_Style_Mapper {
 			];
 
 			if ( ! $this->dispatch_rule( $ctx, $meta, $rule ) ) {
-				if ( $meta->is_map_driven() ) {
-					$this->report_unsupported_property( $ctx, $meta, $rule );
-					continue;
-				}
-
 				$ctx->mark_unmapped( $this->unmapped_serializer->serialize_declaration(
 					$breakpoint,
 					$state,
@@ -156,28 +161,22 @@ class V3_Style_Mapper {
 		return false;
 	}
 
-	private function report_unsupported_property( V3_Conversion_Context $ctx, V3_Context_Meta $meta, array $rule ): void {
-		$property = (string) ( $rule['property'] ?? '' );
-
-		$ctx->warn(
-			sprintf(
-				/* translators: %s: CSS property name */
-				__( 'CSS property %s is not supported by this Elementor widget and was skipped.', 'elementor' ),
-				$property
-			)
-		);
-	}
-
 	private function build_meta( string $widget_type, array $widget_config ): V3_Context_Meta {
-		$map_overrides = V3_Widget_Map_Registry::instance()->get_style_overrides_from_map( $widget_type );
-		$overrides = $map_overrides ?? V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
-		$is_map_driven = null !== $map_overrides;
-		$controls = $widget_config['controls'] ?? [];
-		$generic_index = $is_map_driven
-			? []
-			: V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+		$registry = V3_Widget_Map_Registry::instance();
+		$style_bindings = $registry->get_style_bindings( $widget_type );
+		$is_map_driven = null !== $style_bindings;
 
-		return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index, $is_map_driven );
+		if ( $is_map_driven ) {
+			$widget_config['controls'] = $registry->get_registered_controls( $widget_type );
+
+			return new V3_Context_Meta( $widget_type, $widget_config, [], [], true, $style_bindings );
+		}
+
+		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+		$controls = $widget_config['controls'] ?? [];
+		$generic_index = V3_Style_Settings_Index::build( is_array( $controls ) ? $controls : [], $overrides );
+
+		return new V3_Context_Meta( $widget_type, $widget_config, $overrides, $generic_index );
 	}
 
 	private function finalize( V3_Conversion_Context $ctx, V3_Context_Meta $meta ): array {

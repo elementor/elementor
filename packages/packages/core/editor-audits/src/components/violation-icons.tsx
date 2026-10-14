@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FileSettingsIcon, SettingsIcon, ShieldCheckIcon } from '@elementor/icons';
+import { FileSettingsIcon, SettingsIcon } from '@elementor/icons';
 import { Box } from '@elementor/ui';
 
 import { type AuditViolation } from '../types';
@@ -29,5 +29,5 @@ export default function ViolationIcon( { violation, widgetIcon }: Props ) {
 		return <SettingsIcon fontSize="inherit" aria-hidden={ true } />;
 	}
 
-	return <ShieldCheckIcon fontSize="inherit" aria-hidden={ true } />;
+	return <SettingsIcon fontSize="inherit" aria-hidden={ true } />;
 }

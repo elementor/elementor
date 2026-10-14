@@ -961,6 +961,10 @@ abstract class Widget_Base extends Element_Base {
 	 * @return string|false Single skin, or false.
 	 */
 	public function get_skin( $skin_id ) {
+		if ( null === $skin_id ) {
+			return false;
+		}
+
 		$skins = $this->get_skins();
 		if ( isset( $skins[ $skin_id ] ) ) {
 			return $skins[ $skin_id ];

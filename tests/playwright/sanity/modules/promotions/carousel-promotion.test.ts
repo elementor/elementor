@@ -64,6 +64,7 @@ test.describe( 'Carousel promotion test @promotions', () => {
 		const preview = editor.getPreviewFrame();
 		await expect( preview.locator( '.e-pro-promotion-placeholder' ) ).toBeVisible();
 		await expect( preview.getByText( 'Carousel is a Pro feature' ) ).toBeVisible();
+		await expect( preview.getByRole( 'link', { name: 'Unlock with Pro' } ) ).toHaveAttribute( 'href', /go-pro-carousel-canvas-upgrade/ );
 
 		await editor.publishAndViewPage();
 

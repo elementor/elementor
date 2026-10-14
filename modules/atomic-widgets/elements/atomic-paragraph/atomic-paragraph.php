@@ -81,16 +81,20 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
+		$paragraph_control = Inline_Editing_Control::bind_to( 'paragraph' )
+			->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+			->set_label( __( 'Paragraph', 'elementor' ) );
+		$promotion = $this->get_ally_promotion_trigger();
+
+		if ( $promotion ) {
+			$paragraph_control->set_promotion( $promotion )->set_meta( [ 'layout' => 'custom' ] );
+		}
+
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
-				->set_items( array_filter( [
-					Inline_Editing_Control::bind_to( 'paragraph' )
-						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
-						->set_label( __( 'Paragraph', 'elementor' ) ),
-					$this->get_ally_promotion_notice_control(),
-				] ) ),
+				->set_items( [ $paragraph_control ] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )

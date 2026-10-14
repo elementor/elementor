@@ -5,7 +5,11 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string }[] = [
+const isBelowVersion = ( currentVersion?: string, minVersion?: string ) => {
+	return !! minVersion && !! currentVersion && currentVersion.localeCompare( minVersion, undefined, { numeric: true } ) < 0;
+};
+
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string, minPhp?: string, minWp?: string }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
@@ -43,16 +47,18 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
-	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
+	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true, minWp: '6.9' },
 	{ pluginName: 'hello-plus', installSource: 'cli' },
-	// Skip: latest wordpress.org package requires PHP 8.3; Playwright PR/merge CI is 8.2 (WP install 500 incompatible_php_required_version).
-	// { pluginName: 'template-kit-import', installSource: 'api' },
+	{ pluginName: 'template-kit-import', installSource: 'api', minPhp: '8.3' },
 	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
+			test.skip( isBelowVersion( process.env.PHP_VERSION, plugin.minPhp ), `Requires PHP ${ plugin.minPhp }+` );
+			test.skip( isBelowVersion( process.env.WP_CORE_VERSION, plugin.minWp ), `Requires WordPress ${ plugin.minWp }+` );
+
 			let pluginTechnicalName: string;
 			if ( plugin.dependency ) {
 				await wpCli( `wp plugin install ${ plugin.dependency } --activate` );

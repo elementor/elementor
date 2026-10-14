@@ -36,6 +36,7 @@
     },
   },
   "exclude": [
-    "**/dist/**"
+    "**/dist/**",
+    "packages/tools/generate-font-awesome-7"
   ]
 }

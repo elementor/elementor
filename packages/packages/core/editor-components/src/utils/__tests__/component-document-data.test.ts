@@ -30,6 +30,7 @@ describe( 'getComponentDocumentData', () => {
 		// Assert
 		expect( mockLoad ).toHaveBeenCalledWith( {
 			action: 'get_document_config',
+			retry: true,
 			unique_id: `document-${ componentId }`,
 			data: { id: componentId },
 		} );

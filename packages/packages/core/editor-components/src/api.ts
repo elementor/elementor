@@ -49,6 +49,7 @@ export type ValidateComponentsResponse = {
 
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
+	retry: true,
 	unique_id: `document-config-${ id }`,
 	data: { id },
 } );

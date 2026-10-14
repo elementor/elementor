@@ -23,6 +23,7 @@ export type AuditRun = {
 export type AuditFailMetadata = {
 	missingAltImageCount?: number;
 	oversizedImageCount?: number;
+	inefficientImageFormatCount?: number;
 };
 
 export type AuditResult =
@@ -38,15 +39,19 @@ export type AuditViolation = {
 	label: string;
 	detail?: string;
 	angieFix?: boolean;
+	angiePrompt?: string;
 	ctaLabel?: string;
+	secondaryCtaLabel?: string;
+	secondaryCtaUrl?: string;
 };
 
 export type PageContextResponse = {
 	post_title: string | null;
 	post_excerpt: string | null;
 	featured_image_id: number | null;
+	/** Keyed by the composite `buildImageSizeKey` result (`"{attachmentId}:{size}"`), since one attachment can resolve to different files at different sizes. */
 	image_sizes: Record<
-		number,
+		string,
 		{
 			width: number;
 			height: number;
@@ -64,6 +69,10 @@ export type PageContextResponse = {
 	privacy_settings_url: string;
 	ally_plugin_active: boolean;
 	ally_plugin_url: string;
+	ally_accessibility_statement_created: boolean;
+	ally_accessibility_statement_url: string;
+	ally_widget_settings_url: string;
+	ally_scan_url: string;
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
 	cookiez_plugin_installed: boolean;
@@ -72,6 +81,7 @@ export type PageContextResponse = {
 	cookiez_consent_mode_settings_url: string;
 	image_optimization_plugin_active: boolean;
 	image_optimization_plugin_url: string;
+	image_optimization_settings_url: string;
 	frontend_url: string | null;
 	site_identity: {
 		site_name_set: boolean;
@@ -107,6 +117,7 @@ export type AuditContext = {
 	elements: ElementsModelSnapshot;
 	pageContext: PageContextResponse;
 	kit: KitSnapshot;
+	renderedHtml: string | null;
 };
 
 export type PageAuditReport = {
