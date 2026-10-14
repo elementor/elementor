@@ -8,20 +8,31 @@ const HIDDEN_FIELD_ELEMENT_TYPE = 'e-form-hidden';
 
 const MOVE_COMMAND = 'document/elements/move';
 
-const HIDDEN_FIELD_ADDED_NOTIFICATION: NotificationData = {
-	type: 'default',
-	message: __( 'Hidden field added - invisible on your form. Manage it in the Structure panel.', 'elementor' ),
-	id: 'hidden-field-added',
-};
+let notificationCounter = 0;
+
+function createHiddenFieldNotification(): NotificationData {
+  return {
+    type: 'default',
+    message: __(
+      'Hidden field added - invisible on your form. Manage it in the Structure panel.',
+      'elementor'
+    ),
+    id: `hidden-field-added-${ ++notificationCounter }`,
+  };
+}
 
 export function initHiddenFieldHint() {
-	registerDataHook( 'after', 'document/elements/create', ( args: CreateArgs, _result, options?: HookOptions ) => {
-		if ( options?.commandsCurrentTrace?.includes( MOVE_COMMAND ) ) {
-			return;
-		}
+  registerDataHook(
+    'after',
+    'document/elements/create',
+    ( args: CreateArgs, _result, options?: HookOptions ) => {
+      if ( options?.commandsCurrentTrace?.includes( MOVE_COMMAND ) ) {
+        return;
+      }
 
-		if ( getArgsElementType( args ) === HIDDEN_FIELD_ELEMENT_TYPE ) {
-			notify( HIDDEN_FIELD_ADDED_NOTIFICATION );
-		}
-	} );
+      if ( getArgsElementType( args ) === HIDDEN_FIELD_ELEMENT_TYPE ) {
+        notify( createHiddenFieldNotification() );
+      }
+    }
+  );
 }

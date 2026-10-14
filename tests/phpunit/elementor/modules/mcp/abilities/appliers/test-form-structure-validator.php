@@ -115,6 +115,30 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertSame( [], $errors );
 	}
 
+	public function test_collect_form_ancestor_errors__allows_hidden_field_inside_form() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form><e-form-hidden /><e-form-submit-button /></e-form>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertSame( [], $errors );
+	}
+
+	public function test_collect_form_ancestor_errors__rejects_orphaned_hidden_field() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-flexbox><e-form-hidden /></e-flexbox>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertCount( 1, $errors );
+		$this->assertStringContainsString( 'e-form-hidden', $errors[0] );
+		$this->assertStringContainsString( 'e-form', $errors[0] );
+	}
+
 	public function test_collect_form_ancestor_errors__allows_orphan_field_when_parent_is_existing_form() {
 		// Arrange
 		$dom = $this->parse_xml( '<e-form-input configuration-id="field-1" />' );
