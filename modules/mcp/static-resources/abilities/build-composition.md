@@ -157,8 +157,11 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
 # FORMS (WebMCP)
-When the `e-form` schema lists `webmcp-tool-name` set these props when you create a form:
-- `e-form`: `webmcp-tool-name` (unique snake_case, verb first) and `webmcp-tool-description` (what the form does and what details it needs)
+When the `e-form` schema lists `webmcp-tool-name`, set these props when you create a form:
+- `e-form` `webmcp-tool-name`: unique snake_case, verb first
+- `e-form` `webmcp-tool-description`: what the form does and what details it needs
+- `e-form` `webmcp-autosubmit`: `true`,leave `false` only if a person must review the form and click submit
+- `e-form` `actions-after-submit`: `["collect-submissions"]`add `"email"` only if the user asks for email notifications
 - Every form field: `webmcp-param-description` (what to enter, with format and constraints)
 
 # DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
