@@ -57,7 +57,7 @@ Object keyed by widget type:
 }
 ```
 
-Same shape as `get-widgets-schema` per widget, including `llm_guidance`.
+Same shape as `get-widget-schemas` per widget, including `llm_guidance`.
 
 ### v4 filter
 

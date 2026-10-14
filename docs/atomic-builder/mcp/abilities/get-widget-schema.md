@@ -1,4 +1,4 @@
-# get-widgets-schema
+# get-widget-schemas
 
 > Audience: external  
 > Module: `modules/mcp/abilities/get-widget-schema-ability.php`  
@@ -6,7 +6,7 @@
 
 ## What it is
 
-Ability ID: **`elementor/get-widgets-schema`**
+Ability ID: **`elementor/get-widget-schemas`**
 
 Live JSON schemas for the requested widget types, returned in one call — source of truth for `element_config`. Permission: `edit_posts`.
 
@@ -15,7 +15,7 @@ Live JSON schemas for the requested widget types, returned in one call — sourc
 | Symbol | Signature | Purpose |
 |--------|-----------|---------|
 | `Get_Widget_Schema_Ability` | `execute( array $input ): array\|\WP_Error` | Returns `{ schemas, errors }` keyed by widget type |
-| Ability ID | `elementor/get-widgets-schema` | Stable MCP host identifier |
+| Ability ID | `elementor/get-widget-schemas` | Stable MCP host identifier |
 
 Verified: `get-widget-schema-ability.php`.
 

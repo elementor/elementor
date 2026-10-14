@@ -36,7 +36,7 @@ type WidgetSchemasResponse = {
 
 const fetchWidgetSchema = async ( widgetType: string ): Promise< Record< string, unknown > > => {
 	const { data } = await httpService().post< HttpResponse< WidgetSchemasResponse > >( MCP_PROXY_URL, {
-		tool: 'get-widgets-schema',
+		tool: 'get-widget-schemas',
 		input: { widget_type: [ widgetType ] },
 	} );
 

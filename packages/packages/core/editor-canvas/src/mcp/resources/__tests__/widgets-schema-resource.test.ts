@@ -69,7 +69,7 @@ describe( 'widgets-schema-resource', () => {
 		] );
 	} );
 
-	it( 'reads a single widget schema via the get-widgets-schema tool', async () => {
+	it( 'reads a single widget schema via the get-widget-schemas tool', async () => {
 		// Arrange
 		const post = jest.fn().mockResolvedValue( {
 			data: {
@@ -88,7 +88,7 @@ describe( 'widgets-schema-resource', () => {
 
 		// Assert
 		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
-			tool: 'get-widgets-schema',
+			tool: 'get-widget-schemas',
 			input: { widget_type: [ 'e-heading' ] },
 		} );
 		expect( JSON.parse( result.contents[ 0 ].text ) ).toEqual( {

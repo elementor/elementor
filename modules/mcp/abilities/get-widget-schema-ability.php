@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Get_Widget_Schema_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
-		return 'elementor/get-widgets-schema';
+		return 'elementor/get-widget-schemas';
 	}
 
 	protected function get_definition(): Ability_Definition {

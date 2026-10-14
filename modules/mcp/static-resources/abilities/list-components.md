@@ -23,6 +23,6 @@ If any requested id is not a component, the call fails with `elementor_not_found
 Each entry in `overridable_props` maps an `override_key` to:
 - `label`: human-readable name (e.g. "Heading Title", "CTA URL") — use this to understand what value to pass
 - `group_id`: optional grouping for display
-- `origin_prop_schema`: plain-value JSON Schema for the override value (no `$$type` envelopes — same convention as `elementor/get-widgets-schema`)
+- `origin_prop_schema`: plain-value JSON Schema for the override value (no `$$type` envelopes — same convention as `elementor/get-widget-schemas`)
 
 Place components via `elementor/build-composition` (see its COMPONENTS section). Update an existing instance's overrides via `elementor/manage-elements` with `settings.overrides` — a deep-merge, and `null` clears a key.

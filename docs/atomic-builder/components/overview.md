@@ -55,7 +55,7 @@ Publishing updates all instances on next render; instances do not store a copy u
 No dedicated component MCP abilities. Integrate via:
 
 - **REST** — `elementor/v1/components` (see [document-model.md](./document-model.md))
-- **Widget schema** — `e-component` excluded from `list-widget-schemas` / `get-widgets-schema`
+- **Widget schema** — `e-component` excluded from `list-widget-schemas` / `get-widget-schemas`
 - **Direct JSON** — `component-instance` prop shape in [instances-and-overrides.md](./instances-and-overrides.md)
 
 ## Extension
