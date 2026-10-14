@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { type UseQueryResult } from '@elementor/query';
-import { useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
+import { type Attachment, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { useUnfilteredFilesUpload, useUpdateUnfilteredFilesUpload } from '../../hooks/use-unfiltered-files-upload';
@@ -436,9 +436,10 @@ describe( 'SvgMediaControl', () => {
 		const selectedId = 42;
 		const setValue = jest.fn();
 
-		jest.mocked( useWpMediaFrame ).mockImplementation( ( { onSelect } ) => ( {
+		jest.mocked( useWpMediaFrame ).mockImplementation( ( options ) => ( {
 			open: () => {
-				onSelect( { id: selectedId, url: selectedUrl } );
+				const selectedAttachment = { id: selectedId, url: selectedUrl } as Attachment;
+				( options.onSelect as ( value: Attachment ) => void )( selectedAttachment );
 			},
 		} ) );
 

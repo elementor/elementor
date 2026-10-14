@@ -5,8 +5,8 @@ import { screen } from '@testing-library/react';
 
 import { type OverridablePropsGroup } from '../../../types';
 import { OverridePropControl } from '../override-prop-control';
-import { OVERRIDE_PROPS_GROUP_CONTENT_CLASS } from '../override-props-group-constants';
 import { OverridePropsGroup } from '../override-props-group';
+import { OVERRIDE_PROPS_GROUP_CONTENT_CLASS } from '../override-props-group-constants';
 
 jest.mock( '../override-prop-control', () => ( {
 	OverridePropControl: jest.fn(),
