@@ -65,18 +65,8 @@ const buildItemModel = ( position: number, showMarkers: boolean ): V1ElementData
 				editor_settings: {
 					title: __( 'Marker', 'elementor' ),
 				},
-				elements: [
-					{
-						elType: 'widget',
-						widgetType: PARAGRAPH_WIDGET_TYPE,
-						id: generateElementId(),
-						elements: [],
-						settings: {
-							tag: { $$type: 'string', value: 'span' },
-							paragraph: escapedHtmlPropTypeUtil.create( '&bull;' ),
-						},
-					},
-				],
+				elements: [],
+				hydrateDefaultChildren: true,
 			},
 			{
 				elType: LIST_ITEM_CONTENT_ELEMENT_TYPE,

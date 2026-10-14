@@ -39,12 +39,25 @@ trait Has_Ally_Promotion_Notice {
 		];
 	}
 
-	protected function get_ally_promotion_notice_control(): ?Notice_Control {
-		if ( ! Hints::should_display_hint( self::get_ally_notice_hint_key() ) ) {
+	protected function get_ally_promotion_trigger(): ?array {
+		if ( ! $this->should_display_ally_promotion() ) {
 			return null;
 		}
 
-		if ( Hints::is_plugin_active( self::get_ally_notice_plugin_slug() ) ) {
+		$notice_data = $this->get_ally_promotion_notice_data();
+
+		return [
+			'label' => esc_html__( 'Improve', 'elementor' ),
+			'title' => esc_html__( 'Make your site accessible', 'elementor' ),
+			'content' => esc_html__( 'Ally detects common accessibility issues across your site and helps you fix them.', 'elementor' ),
+			'buttonText' => $notice_data['button_text'],
+			'buttonUrl' => $notice_data['button_url'],
+			'dismissible' => self::get_ally_notice_hint_key(),
+		];
+	}
+
+	protected function get_ally_promotion_notice_control(): ?Notice_Control {
+		if ( ! $this->should_display_ally_promotion() ) {
 			return null;
 		}
 
@@ -52,11 +65,16 @@ trait Has_Ally_Promotion_Notice {
 
 		return Notice_Control::bind_to( self::get_ally_notice_prop_key() )
 			->set_notice_type( 'info' )
-			->set_heading( esc_html__( 'Accessible structure matters', 'elementor' ) )
-			->set_content( $notice_data['content'] )
+			->set_heading( esc_html__( 'Make your site accessible', 'elementor' ) )
+			->set_content( esc_html__( 'Ally detects common accessibility issues across your site and helps you fix them.', 'elementor' ) )
 			->set_dismissible( self::get_ally_notice_hint_key() )
 			->set_button_text( $notice_data['button_text'] )
 			->set_button_url( $notice_data['button_url'] );
+	}
+
+	private function should_display_ally_promotion(): bool {
+		return Hints::should_display_hint( self::get_ally_notice_hint_key() )
+			&& ! Hints::is_plugin_active( self::get_ally_notice_plugin_slug() );
 	}
 
 	private function get_ally_promotion_notice_data(): array {
@@ -67,7 +85,6 @@ trait Has_Ally_Promotion_Notice {
 		if ( $one_subscription ) {
 			return $is_installed
 				? [
-					'content' => esc_html__( 'Keep your content accessible. Activate Ally, included in ONE, to scan this page.', 'elementor' ),
 					'button_text' => esc_html__( 'Activate now', 'elementor' ),
 					'button_url' => $this->get_ally_promotion_notice_url(
 						Hints::get_plugin_activate_url( $plugin_slug ),
@@ -77,7 +94,6 @@ trait Has_Ally_Promotion_Notice {
 					),
 				]
 				: [
-					'content' => esc_html__( 'Want to ensure your content is accessible? Your ONE subscription includes Ally. Install it and scan your page.', 'elementor' ),
 					'button_text' => esc_html__( 'Install now', 'elementor' ),
 					'button_url' => $this->get_ally_promotion_notice_url(
 						Hints::get_plugin_install_url( $plugin_slug ),
@@ -88,11 +104,8 @@ trait Has_Ally_Promotion_Notice {
 				];
 		}
 
-		$content = esc_html__( 'Make sure your content is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
-
 		return $is_installed
 			? [
-				'content' => $content,
 				'button_text' => esc_html__( 'Activate now', 'elementor' ),
 				'button_url' => $this->get_ally_promotion_notice_url(
 					Hints::get_plugin_activate_url( $plugin_slug ),
@@ -102,7 +115,6 @@ trait Has_Ally_Promotion_Notice {
 				),
 			]
 			: [
-				'content' => $content,
 				'button_text' => esc_html__( 'Install now', 'elementor' ),
 				'button_url' => $this->get_ally_promotion_notice_url(
 					Hints::get_plugin_install_url( $plugin_slug ),

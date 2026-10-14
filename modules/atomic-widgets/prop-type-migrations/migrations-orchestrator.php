@@ -13,7 +13,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Component_Override_Parser;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -70,9 +69,7 @@ class Migrations_Orchestrator {
 	}
 
 	public static function is_rollback(): bool {
-		/** @var Upgrade_Manager $upgrade_manager */
-		$upgrade_manager = Plugin::$instance->upgrade;
-		$stored_version = get_option( $upgrade_manager->get_version_option_name() );
+		$stored_version = get_option( Upgrade_Manager::VERSION_OPTION_NAME );
 
 		if ( ! $stored_version ) {
 			return false;

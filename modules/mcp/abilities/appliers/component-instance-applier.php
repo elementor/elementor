@@ -18,6 +18,7 @@ use Elementor\Modules\Components\PropTypes\Overrides_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,10 +28,22 @@ class Component_Instance_Applier {
 
 	private Components_Repository $repository;
 	private Plain_Values_Resolver $plain_values_resolver;
+	private Warnings_Bag $warnings;
+	private string $active_config_id = '';
 
 	public function __construct( Components_Repository $repository, Plain_Values_Resolver $plain_values_resolver ) {
 		$this->repository = $repository;
 		$this->plain_values_resolver = $plain_values_resolver;
+		$this->warnings = Warnings_Bag::make();
+	}
+
+	public function consume_warnings(): Warnings_Bag {
+		$warnings = $this->warnings;
+
+		$this->warnings = Warnings_Bag::make();
+		$this->active_config_id = '';
+
+		return $warnings;
 	}
 
 	/**
@@ -99,6 +112,7 @@ class Component_Instance_Applier {
 	}
 
 	private function build_envelope( string $config_id, array $shorthand, ?Document $document, array &$errors ): ?array {
+		$this->active_config_id = $config_id;
 		$component_id = (int) ( $shorthand['component_id'] ?? 0 );
 
 		if ( ! $component_id ) {
@@ -206,6 +220,8 @@ class Component_Instance_Applier {
 				$errors = array_merge( $errors, $key_errors );
 				continue;
 			}
+
+			$this->active_config_id = $config_id;
 
 			$existing_overrides_list = $this->extract_overrides_list( $existing_settings );
 			$merged_overrides_list = $this->merge_overrides_list(
@@ -379,12 +395,25 @@ class Component_Instance_Applier {
 
 		foreach ( $raw_overrides as $override_key => $raw_value ) {
 			$prop = $overridable_props[ $override_key ] ?? null;
+			$resolved_override = $this->resolve_override_value( $raw_value, $prop );
+
+			if ( $resolved_override['skipped'] ) {
+				$this->warnings->add(
+					'component_override_invalid',
+					sprintf(
+						'Override "%s" could not be resolved and was skipped. See elementor/list-components.',
+						$override_key
+					),
+					$this->active_config_id
+				);
+				continue;
+			}
 
 			$overrides[] = [
 				'$$type' => Override_Prop_Type::get_key(),
 				'value'  => [
 					'override_key'   => $override_key,
-					'override_value' => $this->resolve_override_value( $raw_value, $prop ),
+					'override_value' => $resolved_override['value'],
 					'schema_source'  => [
 						'type' => Component_Override_Parser::get_override_type(),
 						'id' => $component_id,
@@ -396,20 +425,39 @@ class Component_Instance_Applier {
 		return $overrides;
 	}
 
-	private function resolve_override_value( $raw_value, ?Component_Overridable_Prop $prop ) {
+	/**
+	 * @return array{skipped: bool, value: mixed}
+	 */
+	private function resolve_override_value( $raw_value, ?Component_Overridable_Prop $prop ): array {
 		if ( null === $raw_value ) {
-			return null;
+			return [
+				'skipped' => false,
+				'value' => null,
+			];
 		}
 
 		$origin_prop_type = $this->resolve_origin_prop_type( $prop );
 
 		if ( ! $origin_prop_type instanceof Prop_Type ) {
-			return $raw_value;
+			return [
+				'skipped' => false,
+				'value' => $raw_value,
+			];
 		}
 
 		$resolved = $this->plain_values_resolver->resolve( $raw_value, $origin_prop_type );
 
-		return $resolved ?? $raw_value;
+		if ( null === $resolved ) {
+			return [
+				'skipped' => true,
+				'value' => null,
+			];
+		}
+
+		return [
+			'skipped' => false,
+			'value' => $resolved,
+		];
 	}
 
 	private function resolve_origin_prop_type( ?Component_Overridable_Prop $prop ) {

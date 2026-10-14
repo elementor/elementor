@@ -121,20 +121,7 @@ describe( 'createTemplatedElementView', () => {
 	} );
 
 	describe( 'render context', () => {
-		it( 'should inject computed tag into the twig render context', async () => {
-			// Arrange
-			const utils = createMockRenderer();
-			const ViewClass = createTemplatedElementView( {
-				type: MOCK_ELEMENT_TYPE,
-				renderer: utils,
-				element: {
-					...createMockElementConfig(),
-					twig_templates: {
-						main: '<{{ tag | e("html_tag") }}></{{ tag | e("html_tag") }}>',
-					},
-				},
-			} );
-
+		const createRenderableView = ( ViewClass: ReturnType< typeof createTemplatedElementView > ) => {
 			const view = new ViewClass() as unknown as ElementView & {
 				_abortController: AbortController;
 			};
@@ -159,11 +146,60 @@ describe( 'createTemplatedElementView', () => {
 			view._ensureViewIsIntact = jest.fn();
 			view.resetChildViewContainer = jest.fn();
 
+			return view;
+		};
+
+		it( 'should inject computed tag into the twig render context', async () => {
+			// Arrange
+			const utils = createMockRenderer();
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: utils,
+				element: {
+					...createMockElementConfig(),
+					twig_templates: {
+						main: '<{{ tag | e("html_tag") }}></{{ tag | e("html_tag") }}>',
+					},
+				},
+			} );
+
+			const view = createRenderableView( ViewClass );
+
 			// Act
 			await view._renderTemplate();
 
 			// Assert
 			expect( utils.render ).toHaveBeenCalledWith( 'main', expect.objectContaining( { tag: 'div' } ) );
+		} );
+
+		it( 'should merge element template_context into the twig render context without overriding core keys', async () => {
+			// Arrange
+			const utils = createMockRenderer();
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: utils,
+				element: {
+					...createMockElementConfig(),
+					template_context: {
+						provider: { key: 'google', api_key: 'test-key' },
+						id: 'should-not-override',
+					},
+				},
+			} );
+
+			const view = createRenderableView( ViewClass );
+
+			// Act
+			await view._renderTemplate();
+
+			// Assert
+			expect( utils.render ).toHaveBeenCalledWith(
+				'main',
+				expect.objectContaining( {
+					id: 'test-id',
+					provider: { key: 'google', api_key: 'test-key' },
+				} )
+			);
 		} );
 	} );
 } );

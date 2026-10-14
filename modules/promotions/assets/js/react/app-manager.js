@@ -171,7 +171,15 @@ export class AppManager {
 }
 
 function applyProConnectPromotionOverrides( promotionData ) {
-	if ( ! elementor.helpers.hasProAndNotConnected() ) {
+	if ( ! elementor.helpers.hasPro() ) {
+		return promotionData;
+	}
+
+	if ( elementorProEditorConfig?.isActive ) {
+		return promotionData;
+	}
+
+	if ( ! elementorProEditorConfig?.urls?.connect ) {
 		return promotionData;
 	}
 

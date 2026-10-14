@@ -4,13 +4,16 @@ import { type PageContextResponse } from '../types';
 import { isNonceInvalidError, refreshAuditsNonce } from '../utils/session-expiration';
 import { getWindowConfig } from '../utils/window-config';
 
-export async function fetchPageContext( documentId: number, attachmentIds: number[] ): Promise< PageContextResponse > {
-	return requestPageContext( documentId, attachmentIds, true );
+export async function fetchPageContext(
+	documentId: number,
+	imageSizeRequests: string[]
+): Promise< PageContextResponse > {
+	return requestPageContext( documentId, imageSizeRequests, true );
 }
 
 async function requestPageContext(
 	documentId: number,
-	attachmentIds: number[],
+	imageSizeRequests: string[],
 	allowNonceRetry: boolean
 ): Promise< PageContextResponse > {
 	const { restNamespace, nonce } = getWindowConfig();
@@ -20,7 +23,7 @@ async function requestPageContext(
 		const response = await httpService().get< PageContextResponse >( url, {
 			params: {
 				document_id: documentId,
-				attachment_ids: attachmentIds,
+				image_size_requests: imageSizeRequests,
 			},
 			headers: { 'X-WP-Nonce': nonce },
 		} );
@@ -33,6 +36,6 @@ async function requestPageContext(
 
 		await refreshAuditsNonce();
 
-		return requestPageContext( documentId, attachmentIds, false );
+		return requestPageContext( documentId, imageSizeRequests, false );
 	}
 }
