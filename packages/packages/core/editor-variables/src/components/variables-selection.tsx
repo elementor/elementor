@@ -17,6 +17,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { type ExtendedVirtualizedItem } from '../types';
+import { isStateVariableKey } from '../utils/state-variables';
 import { trackVariableEvent, trackVariablesManagerEvent } from '../utils/tracking';
 import { EmptyState } from './ui/empty-state';
 import { MenuItemContent } from './ui/menu-item-content';
@@ -123,7 +124,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 		label,
 		icon: <StartIcon value={ value } />,
 		secondaryText: value,
-		onEdit: onEdit ? () => onEdit?.( key ) : undefined,
+		onEdit: onEdit && ! isStateVariableKey( key ) ? () => onEdit?.( key ) : undefined,
 	} ) );
 
 	const handleSearch = ( search: string ) => {

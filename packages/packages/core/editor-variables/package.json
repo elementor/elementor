@@ -43,6 +43,7 @@
     "@elementor/editor-canvas": "4.4.0",
     "@elementor/editor-controls": "4.4.0",
     "@elementor/editor-current-user": "4.4.0",
+    "@elementor/editor-elements": "4.4.0",
     "@elementor/editor-mcp": "4.4.0",
     "@elementor/editor-panels": "4.4.0",
     "@elementor/editor-props": "4.4.0",

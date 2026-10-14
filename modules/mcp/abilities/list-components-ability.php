@@ -6,6 +6,8 @@ use Elementor\Modules\Components\Components_Access_Controller;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
+use Elementor\Modules\DataFlow\Component_State_Params;
+use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -46,6 +48,11 @@ class List_Components_Ability extends Abstract_Ability {
 								'overridable_props' => [
 									'type' => 'object',
 									'description' => 'Only present for components requested via component_ids.',
+								],
+								'state_params' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'object' ],
+									'description' => 'Only present for components requested via component_ids when the e_data_flow experiment is active. The component params ({ key, label, type, default }) declared on its root containers; set per instance with the build-composition "state" map.',
 								],
 							],
 						],
@@ -150,13 +157,19 @@ class List_Components_Ability extends Abstract_Ability {
 				continue;
 			}
 
-			$components[] = [
+			$entry = [
 				'id'                => $component->get_main_id(),
 				'name'              => $component->get_post()->post_title,
 				'uid'               => $component->get_component_uid(),
 				'is_archived'       => $component->get_is_archived(),
 				'overridable_props' => $this->build_props_schema( $component->get_overridable_props()->props ),
 			];
+
+			if ( Data_Flow_Module::is_active() ) {
+				$entry['state_params'] = Component_State_Params::from_elements( $component->get_elements_data() ?: [] )['params'];
+			}
+
+			$components[] = $entry;
 		}
 
 		if ( ! empty( $not_found ) ) {

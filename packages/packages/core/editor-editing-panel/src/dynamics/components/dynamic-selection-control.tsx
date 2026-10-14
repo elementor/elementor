@@ -34,6 +34,7 @@ import { useLicenseConfig } from '../../hooks/use-license-config';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { DynamicControl } from '../dynamic-control';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
+import { getStateTagLabel, isStateTagName } from '../state-tag';
 import { type DynamicTag } from '../types';
 import { dynamicPropTypeUtil, isDynamicTagSupported } from '../utils';
 import { DynamicSelection } from './dynamic-selection';
@@ -55,7 +56,7 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 	const [ propValueFromHistory ] = usePersistDynamicValue( bind );
 	const selectionPopoverState = usePopupState( { variant: 'popover' } );
 
-	const { name: tagName = '' } = value;
+	const { name: tagName = '', settings } = value;
 	const dynamicTag = useDynamicTag( tagName );
 
 	if ( ! isDynamicTagSupported( tagName ) && OriginalControl ) {
@@ -81,12 +82,14 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 			<Tag
 				fullWidth
 				showActionsOnHover
-				label={ dynamicTag.label }
+				label={ ( isStateTagName( tagName ) && getStateTagLabel( settings ) ) || dynamicTag.label }
 				startIcon={ <DatabaseIcon fontSize={ SIZE } /> }
 				{ ...bindTrigger( selectionPopoverState ) }
 				actions={
 					<>
-						<DynamicSettingsPopover dynamicTag={ dynamicTag } disabled={ readonly } />
+						{ ! isStateTagName( tagName ) && (
+							<DynamicSettingsPopover dynamicTag={ dynamicTag } disabled={ readonly } />
+						) }
 						<IconButton
 							size={ SIZE }
 							onClick={ removeDynamicTag }

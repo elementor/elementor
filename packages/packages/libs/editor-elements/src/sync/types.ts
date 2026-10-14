@@ -159,6 +159,32 @@ export type ElementInteractions = {
 	items: InteractionItemPropValue[];
 };
 
+export type ElementSnippetReference = {
+	snippet: string;
+	event: string;
+};
+
+export type ElementStateParamType = 'string' | 'number' | 'boolean' | 'json';
+
+export type ElementStatePropType = 'string' | 'number' | 'boolean' | 'json' | 'enum' | 'color' | 'size' | 'image';
+
+export type ElementStateExposedControl = {
+	control: 'text' | 'number' | 'switch' | 'select' | 'size' | 'image';
+	label: string;
+};
+
+export type ElementStateParam = {
+	key: string;
+	label: string;
+	type: ElementStateParamType;
+	default: unknown;
+	prop_type?: ElementStatePropType;
+	options?: string[];
+	exposed?: ElementStateExposedControl;
+};
+
+export type ElementStateValues = Record< string, unknown >;
+
 export type V1ElementModelProps = {
 	title?: string;
 	isLocked?: boolean;
@@ -171,6 +197,9 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
+	snippets?: ElementSnippetReference[];
+	state_params?: ElementStateParam[];
+	state?: ElementStateValues;
 	isGlobal?: boolean;
 	skipDefaultChildren?: boolean;
 	hydrateDefaultChildren?: boolean;

@@ -4,7 +4,13 @@ import { service } from '../service';
 import { type TVariable } from '../storage';
 import { resolveCssVariable } from './utils/resolve-css-variable';
 
+const STATE_VARIABLE_PATTERN = /^e-state-[a-z_][a-z0-9_]*$/;
+
 export const variableTransformer = createTransformer( ( idOrLabel: string, { key }: { key: string } ) => {
+	if ( STATE_VARIABLE_PATTERN.test( idOrLabel ) ) {
+		return `var(--${ idOrLabel })`;
+	}
+
 	const variables = service.variables();
 
 	const targetVariable: TVariable | null = variables[ idOrLabel ] || service.findVariableByLabel( idOrLabel );

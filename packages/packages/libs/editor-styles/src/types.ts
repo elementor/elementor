@@ -28,7 +28,9 @@ export type StyleDefinitionPseudoState =
 	| 'checked'
 	| StyleDefinitionAdditionalPseudoState;
 
-export type StyleDefinitionClassState = ClassState[ 'value' ];
+export type StateKeyClassState = `e--state-${ string }`;
+
+export type StyleDefinitionClassState = ClassState[ 'value' ] | StateKeyClassState;
 
 export type StyleDefinitionStateType = StyleDefinitionPseudoState | StyleDefinitionClassState;
 

@@ -12,7 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Global_Variable_Transformer extends Transformer_Base {
+	const STATE_VARIABLE_PATTERN = '/^e-state-[a-z_][a-z0-9_]*$/';
+
 	public function transform( $value, Props_Resolver_Context $context ) {
+		if ( 1 === preg_match( self::STATE_VARIABLE_PATTERN, (string) $value ) ) {
+			return "var(--{$value})";
+		}
+
 		$variable = Variables::by_id( $value );
 
 		if ( ! $variable ) {

@@ -6,6 +6,7 @@ export {
 	type ValidationResult,
 } from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
+export { ComponentStateSection } from './components/data-flow/component-state-section';
 export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
@@ -14,6 +15,7 @@ export { EditingPanelTabs } from './components/editing-panel-tabs';
 export { SectionContent } from './components/section-content';
 export { SectionsList } from './components/sections-list';
 export { SettingsControl } from './components/settings-control';
+export { injectIntoSettingsTab, SettingsTabSlot } from './components/settings-tab';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab, StyleTabSlot } from './components/style-tab';
