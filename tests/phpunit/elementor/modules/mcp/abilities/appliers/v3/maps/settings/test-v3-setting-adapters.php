@@ -16,7 +16,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Switcher_Setting_A
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Icons_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Link_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Repeater_Setting_Adapter;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Gallery_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Number_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Size_Prop_Type;
@@ -370,19 +369,19 @@ class Test_V3_Setting_Adapters extends TestCase {
 		$this->assertSame( [ [ 'id' => 7, 'url' => 'x' ] ], $read );
 	}
 
-	public function test_repeater_adapter__round_trips_rows_through_field_adapters() {
-		// Arrange.
+	public function test_repeater_adapter__derives_row_fields_from_the_control() {
+		// Arrange: the row shape comes from the control's own fields; _id and unmapped
+		// controls (e.g. color) are skipped.
 		$control = [
 			'type' => 'repeater',
 			'fields' => [
+				'_id' => [ 'type' => 'hidden' ],
 				'item_text' => [ 'type' => 'text' ],
 				'item_on' => [ 'type' => 'switcher', 'return_value' => 'yes' ],
+				'item_color' => [ 'type' => 'color' ],
 			],
 		];
-		$adapter = new Repeater_Setting_Adapter( [
-			'item_text' => V3_Setting::bind_to( 'item_text' )->string(),
-			'item_on' => V3_Setting::bind_to( 'item_on' )->switcher(),
-		] );
+		$adapter = new Repeater_Setting_Adapter();
 		$prop_type = $adapter->prop_type( $control );
 
 		// Act.
@@ -394,6 +393,7 @@ class Test_V3_Setting_Adapters extends TestCase {
 		$read = $adapter->from_control_value( $stored, $control );
 
 		// Assert.
+		$this->assertSame( [ 'item_text', 'item_on' ], array_keys( $prop_type->get_item_type()->get_shape() ) );
 		$this->assertCount( 2, $stored );
 		$this->assertArrayHasKey( '_id', $stored[0] );
 		$this->assertSame( 'First', $stored[0]['item_text'] );
@@ -405,14 +405,13 @@ class Test_V3_Setting_Adapters extends TestCase {
 		], $read );
 	}
 
-	public function test_repeater_adapter__is_unsupported_when_a_field_control_is_missing() {
+	public function test_repeater_adapter__is_unsupported_when_no_field_maps_to_an_adapter() {
 		// Arrange.
-		$adapter = new Repeater_Setting_Adapter( [
-			'item_text' => V3_Setting::bind_to( 'item_text' )->string(),
-		] );
+		$adapter = new Repeater_Setting_Adapter();
 
 		// Act & Assert.
 		$this->assertFalse( $adapter->supports( [ 'type' => 'repeater', 'fields' => [] ] ) );
+		$this->assertFalse( $adapter->supports( [ 'type' => 'repeater', 'fields' => [ '_id' => [ 'type' => 'hidden' ], 'c' => [ 'type' => 'color' ] ] ] ) );
 		$this->assertTrue( $adapter->supports( [ 'type' => 'repeater', 'fields' => [ 'item_text' => [ 'type' => 'text' ] ] ] ) );
 	}
 

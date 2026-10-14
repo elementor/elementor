@@ -3,14 +3,14 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * REPEATER control. Each row exposes the declared fields only, converted by their own adapters.
+ * REPEATER control. The row shape is derived from the control's own fields: each field whose
+ * type maps to a setting adapter is exposed under its field key and converted by that adapter.
  * A write replaces the whole list; every row gets a fresh `_id`.
  */
 class Repeater_Setting_Adapter implements V3_Setting_Adapter {
@@ -21,39 +21,15 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 
 	const ROW_ID_LENGTH = 7;
 
-	/**
-	 * @var array<string, V3_Setting>
-	 */
-	private array $fields;
-
-	/**
-	 * @param array<string, V3_Setting> $fields Keyed by the public row property name.
-	 */
-	public function __construct( array $fields ) {
-		$this->fields = $fields;
-	}
-
 	public function supports( array $control ): bool {
-		if ( self::CONTROL_TYPE !== ( $control['type'] ?? null ) || empty( $this->fields ) ) {
-			return false;
-		}
-
-		foreach ( $this->fields as $field ) {
-			$field_control = self::field_control( $control, $field );
-
-			if ( null === $field_control || ! $field->get_adapter()->supports( $field_control ) ) {
-				return false;
-			}
-		}
-
-		return true;
+		return self::CONTROL_TYPE === ( $control['type'] ?? null ) && ! empty( $this->field_adapters( $control ) );
 	}
 
 	public function prop_type( array $control ): Prop_Type {
 		$shape = [];
 
-		foreach ( $this->fields as $public_key => $field ) {
-			$shape[ $public_key ] = $field->get_adapter()->prop_type( self::field_control( $control, $field ) ?? [] );
+		foreach ( $this->field_adapters( $control ) as $key => $adapter ) {
+			$shape[ $key ] = $adapter->prop_type( $control['fields'][ $key ] );
 		}
 
 		return V3_Repeater_Prop_Type::make()->set_item_type( V3_Repeater_Item_Prop_Type::make()->set_shape( $shape ) );
@@ -61,21 +37,17 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 
 	public function to_control_value( array $prop_value, array $control ) {
 		$rows = is_array( $prop_value['value'] ?? null ) ? $prop_value['value'] : [];
+		$adapters = $this->field_adapters( $control );
 		$stored = [];
 
 		foreach ( $rows as $row ) {
 			$values = is_array( $row['value'] ?? null ) ? $row['value'] : [];
 			$stored_row = [ self::ROW_ID_KEY => self::row_id() ];
 
-			foreach ( $this->fields as $public_key => $field ) {
-				if ( ! is_array( $values[ $public_key ] ?? null ) ) {
-					continue;
+			foreach ( $adapters as $key => $adapter ) {
+				if ( is_array( $values[ $key ] ?? null ) ) {
+					$stored_row[ $key ] = $adapter->to_control_value( $values[ $key ], $control['fields'][ $key ] );
 				}
-
-				$stored_row[ $field->get_control_key() ] = $field->get_adapter()->to_control_value(
-					$values[ $public_key ],
-					self::field_control( $control, $field ) ?? []
-				);
 			}
 
 			$stored[] = $stored_row;
@@ -89,6 +61,7 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 			return null;
 		}
 
+		$adapters = $this->field_adapters( $control );
 		$rows = [];
 
 		foreach ( $stored as $stored_row ) {
@@ -98,18 +71,13 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 
 			$row = [];
 
-			foreach ( $this->fields as $public_key => $field ) {
-				if ( ! array_key_exists( $field->get_control_key(), $stored_row ) ) {
-					continue;
-				}
+			foreach ( $adapters as $key => $adapter ) {
+				if ( array_key_exists( $key, $stored_row ) ) {
+					$value = $adapter->from_control_value( $stored_row[ $key ], $control['fields'][ $key ] );
 
-				$value = $field->get_adapter()->from_control_value(
-					$stored_row[ $field->get_control_key() ],
-					self::field_control( $control, $field ) ?? []
-				);
-
-				if ( null !== $value ) {
-					$row[ $public_key ] = $value;
+					if ( null !== $value ) {
+						$row[ $key ] = $value;
+					}
 				}
 			}
 
@@ -121,12 +89,25 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 
 	/**
 	 * @param array<string, mixed> $control
-	 * @return array<string, mixed>|null
+	 * @return array<string, V3_Setting_Adapter> Field key => adapter, for fields that map to a content setting.
 	 */
-	private static function field_control( array $control, V3_Setting $field ): ?array {
-		$field_control = $control['fields'][ $field->get_control_key() ] ?? null;
+	private function field_adapters( array $control ): array {
+		$fields = is_array( $control['fields'] ?? null ) ? $control['fields'] : [];
+		$adapters = [];
 
-		return is_array( $field_control ) ? $field_control : null;
+		foreach ( $fields as $key => $field ) {
+			if ( self::ROW_ID_KEY === $key || ! is_array( $field ) ) {
+				continue;
+			}
+
+			$adapter = V3_Setting_Adapter_Resolver::resolve( $field );
+
+			if ( null !== $adapter ) {
+				$adapters[ $key ] = $adapter;
+			}
+		}
+
+		return $adapters;
 	}
 
 	private static function row_id(): string {

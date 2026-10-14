@@ -94,11 +94,8 @@ class V3_Setting {
 		return $this;
 	}
 
-	/**
-	 * @param array<string, V3_Setting> $fields Row fields keyed by public name, each bound to a repeater field control.
-	 */
-	public function repeater( array $fields ): self {
-		$this->adapter = new Repeater_Setting_Adapter( $fields );
+	public function repeater(): self {
+		$this->adapter = new Repeater_Setting_Adapter();
 
 		return $this;
 	}
