@@ -67,7 +67,7 @@ Call `elementor/list-components` before building a repeated, named, or otherwise
 Place a component as the self-closing leaf tag `<e-component configuration-id="my-hero"/>`. Configure it through `element_config` with `{ component_id, overrides? }`. Override values use the plain-value shape from `origin_prop_schema`; only listed override keys are valid. Components can be mixed with raw widgets.
 
 # XML STRUCTURE
-- Use widget tags: `<e-button configuration-id="btn1"></e-button>`
+- Use widget tags: `<e-button configuration-id="primary-button"></e-button>`
 - Containers: "e-div-block", "e-grid", "e-flexbox"
 - Every element needs a unique `configuration-id` — see **ID RULES**
 - No other attributes, classes, element ids, or text nodes in XML
@@ -144,7 +144,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
 
 **In `classes` (reference-only):** attach existing global classes by label:
-- Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)
+- Map configuration-id → array of labels (e.g. `"section-title": ["hero-heading", "text-muted"]`)
 - Create or update classes with `elementor/manage-classes` before referencing them here
 - Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
@@ -236,14 +236,14 @@ Each match returns `{ value, library, name, label, matched_on }`. Place it as-is
 
 ```json
 {
-  "xml_structure": "<e-flexbox configuration-id=\"Add To Cart Row\"><e-svg configuration-id=\"Cart Icon\"/><e-button configuration-id=\"Add To Cart\"></e-button></e-flexbox>",
+  "xml_structure": "<e-flexbox configuration-id=\"add-to-cart-row\"><e-svg configuration-id=\"cart-icon\"/><e-button configuration-id=\"add-to-cart\"></e-button></e-flexbox>",
   "element_config": {
-    "Cart Icon": { "svg": { "value": "fa-solid fa-cart-shopping", "library": "fa-solid" } },
-    "Add To Cart": { "text": "Add to cart" }
+    "cart-icon": { "svg": { "value": "fa-solid fa-cart-shopping", "library": "fa-solid" } },
+    "add-to-cart": { "text": "Add to cart" }
   },
   "style": {
-    "Add To Cart Row": "display: flex; align-items: center; gap: 0.5rem;",
-    "Cart Icon": "width: 1.25rem; height: 1.25rem; color: #1a1a1a;"
+    "add-to-cart-row": "display: flex; align-items: center; gap: 0.5rem;",
+    "cart-icon": "width: 1.25rem; height: 1.25rem; color: #1a1a1a;"
   }
 }
 ```
@@ -285,24 +285,24 @@ Section with heading + button and a decorative glow (only the glow gets an expli
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-div-block configuration-id=\"Glow\"/><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
+  "xml_structure": "<e-div-block configuration-id=\"main-section\"><e-div-block configuration-id=\"glow\"/><e-heading configuration-id=\"section-title\"></e-heading><e-button configuration-id=\"call-to-action\"></e-button></e-div-block>",
   "element_config": {
-    "Section Title": {
+    "section-title": {
       "tag": "h2",
       "title": "Welcome"
     }
   },
   "editor_settings": {
-    "Glow": { "decorative": true }
+    "glow": { "decorative": true }
   },
   "style": {
-    "Main Section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
-    "Glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
-    "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
+    "main-section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
+    "section-title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }
 ```
-Note: Only the decorative `Glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
+Note: Only the decorative `glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
 
 # FURTHER INSTRUCTIONS
 Use server-assigned element ids from `resolved_xml` for follow-up work — see **ID RULES**.
