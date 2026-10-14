@@ -168,6 +168,7 @@ describe( 'saveGlobalClasses', () => {
 				modified: [],
 				order: true,
 			},
+			version: 0,
 		} );
 	} );
 
