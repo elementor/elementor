@@ -664,6 +664,11 @@ class Content_Generator {
 	// Formatting helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * @param string $output Current llms-full.txt body.
+	 * @param string $append Bytes about to be appended.
+	 * @return bool
+	 */
 	private function llms_full_would_exceed_cap( string $output, string $append ): bool {
 		return strlen( $output ) + strlen( $append ) > self::LLMS_FULL_HARD_CAP;
 	}
