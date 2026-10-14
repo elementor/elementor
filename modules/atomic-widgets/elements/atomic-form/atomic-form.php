@@ -148,8 +148,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->description( 'Required when creating a form. Exposes the form to AI agents as a tool: unique snake_case name that starts with a verb, e.g. book_table.' );
 			$props['webmcp-tool-description'] = String_Prop_Type::make()
 				->description( 'Required when creating a form. Tells AI agents what the form does and what details it needs, e.g. "Books a table: needs date, time and number of guests."' );
-			$props['actions-after-submit']->description( 'Set to ["collect-submissions"] when creating a form, so the site owner sees every submission under Elementor > Submissions. Add "email" only if the user asks for email notifications.' );
-			$props['webmcp-autosubmit']->description( 'Set to true when creating a form so an AI agent submits it right after filling it. Leave false only if a person must review the form and click submit.' );
+			$props['actions-after-submit']->description( 'Set to ["collect-submissions"] when creating a form, Add "email" only if the user asks for email notifications.' );
+			$props['webmcp-autosubmit']->description( 'Set to true when creating a form. Leave false only if a person must review the form and click submit.' );
 		}
 
 		return $props;
