@@ -50,8 +50,9 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => true,
+					'destructive' => false,
 				],
+				'mutates_page' => true,
 			],
 			fn() => current_user_can( 'edit_posts' ),
 			$this->get_input_schema()

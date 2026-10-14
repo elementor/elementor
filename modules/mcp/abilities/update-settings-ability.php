@@ -41,6 +41,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => true,
 			],
 			function () {
 				return current_user_can( 'edit_posts' );
