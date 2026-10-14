@@ -17,6 +17,7 @@ import {
 
 import type { ApiContext } from './api';
 import { GlobalClassNotFoundError } from './errors';
+import { rebaseLocalChanges } from './utils/rebase-local-changes';
 import { SnapshotHistory } from './utils/snapshot-history';
 
 export type GlobalClasses = {
@@ -24,9 +25,10 @@ export type GlobalClasses = {
 	order: StyleDefinitionID[];
 };
 
-// The optimistic-concurrency token the server returned with the last index read for
-// each context. A save sends it back so the server can reject (409) a save that was
-// based on a stale snapshot instead of silently overwriting newer classes.
+// The optimistic-concurrency token of the kit's global classes index. The server keeps one
+// counter for the kit, shared by the preview and frontend contexts, so the client tracks one too.
+// A save sends it back so the server can reject (409) a save that was based on a stale snapshot
+// instead of silently overwriting newer classes.
 export type GlobalClassesVersion = number;
 
 type GlobalClassesState = {
@@ -36,10 +38,7 @@ type GlobalClassesState = {
 		frontend: GlobalClasses;
 		preview: GlobalClasses;
 	};
-	version: {
-		frontend: number;
-		preview: number;
-	};
+	version: GlobalClassesVersion;
 	isDirty: boolean;
 };
 
@@ -59,10 +58,7 @@ const initialState: GlobalClassesState = {
 		frontend: { items: {}, order: [] },
 		preview: { items: {}, order: [] },
 	},
-	version: {
-		frontend: 0,
-		preview: 0,
-	},
+	version: 0,
 	isDirty: false,
 };
 
@@ -78,25 +74,19 @@ export const slice = createSlice( {
 		load(
 			state,
 			{
-				payload: { frontend, preview, classLabels, version = { frontend: 0, preview: 0 } },
+				payload: { frontend, preview, classLabels, version = 0 },
 			}: PayloadAction< {
 				frontend: GlobalClasses;
 				preview: GlobalClasses;
 				classLabels: Record< StyleDefinitionID, string >;
-				version?: {
-					frontend: number;
-					preview: number;
-				};
+				version?: GlobalClassesVersion;
 			} >
 		) {
 			state.initialData.frontend = frontend;
 			state.initialData.preview = preview;
 			state.data = preview;
 			state.classLabels = classLabels;
-			state.version = {
-				frontend: version.frontend ?? 0,
-				preview: version.preview ?? 0,
-			};
+			state.version = version;
 
 			state.isDirty = false;
 		},
@@ -214,58 +204,44 @@ export const slice = createSlice( {
 			state.initialData.preview = state.data;
 		},
 
-		/**
-		 * Rebase the working data and the concurrency baseline onto the server state a
-		 * save just 409-conflicted against. [server] carries the full item definitions
-		 * (post fetch) and the authoritative order (index fetch) for the conflicted
-		 * context. The other context keeps the items it already owns (merge instead of
-		 * replace) so lazily-loaded class data is not dropped when only a concurrent
-		 * order change caused the conflict. The retry then re-diffs and saves against
-		 * the fresh baseline.
-		 */
+		// Set the version the next save is sent with, after a save the server accepted.
+		setVersion( state, { payload }: PayloadAction< GlobalClassesVersion > ) {
+			state.version = payload;
+		},
+
+		// Rebase the unsaved edits onto the server state a save just 409-conflicted against.
+		// [server] carries the item definitions (post fetch) and the order (index fetch) of the
+		// conflicted context. The edits are re-applied on top of it (see rebaseLocalChanges), so the
+		// retry re-diffs and saves exactly what the user changed and nothing is dropped.
+		// The other context keeps its own baseline: it still holds what was last saved there.
 		rebaseToServer(
 			state,
 			{
-				payload: { context, server, version = 0 },
+				payload: { context, server, serverLabels, version = 0 },
 			}: PayloadAction< {
 				context: ApiContext;
 				server: GlobalClasses;
-				version?: number;
+				serverLabels: Record< StyleDefinitionID, string >;
+				version?: GlobalClassesVersion;
 			} >
 		) {
-			state.version[ context ] = version;
+			const { data, baseline } = rebaseLocalChanges( state.initialData[ context ], state.data, server );
 
-			const other = context === 'frontend' ? 'preview' : 'frontend';
-			state.data = {
-				items: {
-					...state.initialData[ context ].items,
-					...server.items,
-				},
-				order: server.order,
-			};
+			// The undo snapshots were taken before the rebase. Restoring one would diff against the
+			// new baseline as a deletion of every class another session added.
+			localHistory.reset();
 
-			state.initialData[ context ] = {
-				items: {
-					...state.initialData[ context ].items,
-					...server.items,
-				},
-				order: server.order,
-			};
+			state.version = version;
+			state.data = data;
+			state.initialData[ context ] = baseline;
 
-			state.initialData[ other ] = {
-				...state.initialData[ other ],
-				items: {
-					...state.initialData[ other ].items,
-					...server.items,
-				},
-				order: server.order,
-			};
-
-			for ( const [ id, item ] of Object.entries( server.items ) ) {
-				if ( ! ( id in state.classLabels ) ) {
-					state.classLabels[ id ] = item.label;
-				}
-			}
+			// The server index labels every class, including the ones this document does not use.
+			// Labels of classes another session removed are dropped with them.
+			state.classLabels = Object.fromEntries(
+				data.order
+					.map( ( id ) => [ id, data.items[ id ]?.label ?? serverLabels[ id ] ?? state.classLabels[ id ] ] )
+					.filter( ( [ , label ] ) => label !== undefined )
+			);
 
 			state.isDirty = true;
 		},
@@ -404,12 +380,7 @@ export const selectFrontendInitialData = ( state: SliceState< typeof slice > ) =
 export const selectPreviewInitialData = ( state: SliceState< typeof slice > ) =>
 	state[ SLICE_NAME ].initialData.preview;
 
-export const selectVersion = ( state: SliceState< typeof slice >, context: ApiContext ) =>
-	state[ SLICE_NAME ].version[ context ];
-
-export const selectFrontendVersion = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].version.frontend;
-
-export const selectPreviewVersion = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].version.preview;
+export const selectVersion = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].version;
 
 export const selectOrder = createSelector( selectData, ( { order } ) => order );
 

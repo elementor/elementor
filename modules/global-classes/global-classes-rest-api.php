@@ -21,15 +21,6 @@ class Global_Classes_REST_API {
 	const API_BASE_STYLES = self::API_BASE . '/styles';
 	const MAX_ITEMS = 1000;
 
-	/**
-	 * Per-kit mutex that serializes the read-modify-write of a global-classes
-	 * save. Mirrors the spinlock pattern used by the component lock managers,
-	 * but keys on the kit so two overlapping saves cannot overwrite each other.
-	 */
-	const LOCK_GROUP = 'elementor_global_classes_lock';
-	const LOCK_ACQUIRE_ATTEMPTS = 20;
-	const LOCK_ACQUIRE_DELAY_US = 100000;
-
 	private ?Global_Classes_Repository $repository = null;
 	private ?Global_Classes_Relations $relations = null;
 	private ?Kit $kit = null;
@@ -66,39 +57,6 @@ class Global_Classes_REST_API {
 		}
 
 		return $this->relations;
-	}
-
-	private function lock_key( int $kit_id ): string {
-		return 'elementor_global_classes_' . $kit_id;
-	}
-
-	/**
-	 * Acquire the per-kit global-classes write lock.
-	 *
-	 * Returns the lock token on success or null if it could not be acquired
-	 * within the give-up budget. The token must be passed to release_lock().
-	 */
-	private function acquire_lock( int $kit_id ): ?string {
-		$key = $this->lock_key( $kit_id );
-		$token = wp_generate_uuid4();
-
-		for ( $attempt = 0; $attempt < self::LOCK_ACQUIRE_ATTEMPTS; $attempt++ ) {
-			if ( wp_cache_add( $key, $token, self::LOCK_GROUP ) ) {
-				return $token;
-			}
-
-			usleep( self::LOCK_ACQUIRE_DELAY_US );
-		}
-
-		return null;
-	}
-
-	private function release_lock( int $kit_id, string $token ): void {
-		$key = $this->lock_key( $kit_id );
-
-		if ( wp_cache_get( $key, self::LOCK_GROUP ) === $token ) {
-			wp_cache_delete( $key, self::LOCK_GROUP );
-		}
 	}
 
 	private function register_routes() {
@@ -364,9 +322,14 @@ class Global_Classes_REST_API {
 
 		$repository = $this->get_repository()->set_preview( $is_preview );
 		$kit = $this->get_kit();
-		$kit_id = $kit ? (int) $kit->get_main_id() : null;
+		$kit_id = $kit ? (int) $kit->get_main_id() : 0;
 
-		$lock_token = $kit_id ? $this->acquire_lock( $kit_id ) : null;
+		// Without a kit there is no shared index to protect, so there is nothing to lock or version. Save as before.
+		if ( ! $kit_id ) {
+			return $this->put_serialized( $request, $repository, $changes, $added_ids, $deleted_ids, $order, null );
+		}
+
+		$lock_token = Global_Classes_Lock::acquire( $kit_id );
 
 		if ( null === $lock_token ) {
 			return Error_Builder::make( 'global_classes_conflict' )
@@ -378,9 +341,7 @@ class Global_Classes_REST_API {
 		try {
 			return $this->put_serialized( $request, $repository, $changes, $added_ids, $deleted_ids, $order, $requested_version );
 		} finally {
-			if ( $kit_id ) {
-				$this->release_lock( $kit_id, $lock_token );
-			}
+			Global_Classes_Lock::release( $kit_id, $lock_token );
 		}
 	}
 

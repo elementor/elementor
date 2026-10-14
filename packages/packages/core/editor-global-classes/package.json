@@ -45,6 +45,7 @@
     "@elementor/editor-embedded-documents-manager": "4.3.0",
     "@elementor/editor-editing-panel": "4.3.0",
     "@elementor/editor-mcp": "4.3.0",
+    "@elementor/editor-notifications": "4.3.0",
     "@elementor/editor-panels": "4.3.0",
     "@elementor/editor-props": "4.3.0",
     "@elementor/editor-variables": "4.3.0",

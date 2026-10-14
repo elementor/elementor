@@ -16,12 +16,17 @@ export function styleDefinitionsMapWithoutNull(
 	);
 }
 
-function resetGlobalClassesState( globalOrder: StyleDefinitionID[], classLabels: Record< StyleDefinitionID, string > ) {
+function resetGlobalClassesState(
+	globalOrder: StyleDefinitionID[],
+	classLabels: Record< StyleDefinitionID, string >,
+	version: number
+) {
 	dispatch(
 		slice.actions.load( {
 			preview: { items: {}, order: globalOrder },
 			frontend: { items: {}, order: globalOrder },
 			classLabels,
+			version,
 		} )
 	);
 }
@@ -39,9 +44,12 @@ export async function loadCurrentDocumentClasses() {
 	const previewOrder = previewIndex.map( ( e ) => e.id );
 	const frontendOrder = frontendIndex.map( ( e ) => e.id );
 
+	// The server keeps one version for the kit, so both index responses carry the same value.
+	const version = frontendIndexRes.data.meta.version ?? 0;
+
 	// This is intended to establish the baseline with current labels and order
 	// without it we won't be able to properly resolve the styles' class names
-	resetGlobalClassesState( previewOrder, classLabels );
+	resetGlobalClassesState( previewOrder, classLabels, version );
 
 	const postId = getCurrentDocument()?.id;
 	if ( ! postId ) {
@@ -61,10 +69,7 @@ export async function loadCurrentDocumentClasses() {
 			preview: { items: previewItems, order: previewOrder },
 			frontend: { items: frontendItems, order: frontendOrder },
 			classLabels,
-			version: {
-				preview: previewIndexRes.data.meta.version ?? 0,
-				frontend: frontendIndexRes.data.meta.version ?? 0,
-			},
+			version,
 		} )
 	);
 }

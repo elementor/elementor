@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { getCurrentDocument } from '@elementor/editor-documents';
+import { notify } from '@elementor/editor-notifications';
 import { openDialog } from '@elementor/editor-ui';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-import { hash } from '@elementor/utils';
+import { __ } from '@wordpress/i18n';
 
-import { API_ERROR_CODES, apiClient, isConflictError, type ApiContext } from './api';
+import { API_ERROR_CODES, apiClient, type ApiContext, isConflictError } from './api';
 import { DuplicateLabelDialog } from './components/class-manager/duplicate-label-dialog';
+import { styleDefinitionsMapWithoutNull } from './load-document-classes';
 import {
 	type GlobalClasses,
 	selectData,
@@ -14,7 +16,8 @@ import {
 	selectVersion,
 	slice,
 } from './store';
-import { styleDefinitionsMapWithoutNull } from './load-document-classes';
+import { calculateChanges } from './utils/calculate-changes';
+import { createLabelsForClasses } from './utils/create-labels-for-classes';
 import { trackGlobalClasses } from './utils/tracking';
 
 type Options = {
@@ -22,32 +25,39 @@ type Options = {
 	onApprove?: () => void;
 };
 
-const INDEX_ORDER_CONFLICT_EVENT = 'classes:conflict';
+const CLASSES_CONFLICT_EVENT = 'classes:conflict';
+const CONFLICT_NOTIFICATION_ID = 'global-classes-save-conflict';
 
 export async function saveGlobalClasses( { context, onApprove }: Options ) {
 	let lastResponse;
 
 	try {
-		lastResponse = await persistGlobalClasses( { context, onApprove } );
+		lastResponse = await persistGlobalClasses( context );
 	} catch ( error ) {
 		// The save was based on a stale snapshot: another save already changed the
-		// kit's classes since this client's last index read. Re-fetch, rebase, re-diff
-		// and retry once against the fresh baseline. A class whose loss had already
-		// committed on the server is re-added by the re-diff (self-heal).
+		// kit's classes since this client's last index read. Nothing was written.
+		// Re-fetch the server state, re-apply the unsaved edits on top of it,
+		// and retry once.
 		if ( ! isConflictError( error ) ) {
 			throw error;
 		}
 
-		window.dispatchEvent( new CustomEvent( INDEX_ORDER_CONFLICT_EVENT ) );
+		window.dispatchEvent( new CustomEvent( CLASSES_CONFLICT_EVENT ) );
 
 		await rebaseToServer( context );
 
-		lastResponse = await persistGlobalClasses( { context, onApprove } );
+		try {
+			lastResponse = await persistGlobalClasses( context );
+		} catch ( retryError ) {
+			if ( isConflictError( retryError ) ) {
+				notifyConflict();
+			}
+
+			throw retryError;
+		}
 	}
 
-	if (
-		lastResponse?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL
-	) {
+	if ( lastResponse?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		dispatch( slice.actions.updateMultiple( lastResponse.data.data.modifiedLabels ) );
 
 		trackGlobalClasses( {
@@ -66,7 +76,7 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 	}
 }
 
-async function persistGlobalClasses( { context, onApprove }: Options ) {
+async function persistGlobalClasses( context: ApiContext ) {
 	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
 	const currentContext = context === 'preview' ? selectPreviewInitialData : selectFrontendInitialData;
 
@@ -78,18 +88,19 @@ async function persistGlobalClasses( { context, onApprove }: Options ) {
 		touchedIds.map( ( id ) => [ id, state.items[ id ] ] ).filter( ( [ , v ] ) => v )
 	);
 
+	const version = selectVersion( getState() );
+
 	const response = await apiAction( {
 		items: touchedItems,
 		order: state.order,
 		changes,
-		version: selectVersion( getState(), context ),
+		version,
 	} );
 
-	// A successful save establishes the new baseline, unless a duplicate-label
-	// response carried server-side label modifications that must be folded in first.
-	if ( response?.data?.data?.code !== API_ERROR_CODES.DUPLICATED_LABEL ) {
-		dispatch( slice.actions.reset( { context } ) );
-	}
+	// The server accepted the save, so it is the new baseline, and the server advanced its version by one.
+	// A duplicate-label response still carries label changes, which the caller applies on top of this baseline.
+	dispatch( slice.actions.reset( { context } ) );
+	dispatch( slice.actions.setVersion( version + 1 ) );
 
 	window.dispatchEvent( new CustomEvent( 'classes:updated', { detail: { context } } ) );
 
@@ -97,20 +108,15 @@ async function persistGlobalClasses( { context, onApprove }: Options ) {
 }
 
 async function rebaseToServer( context: ApiContext ) {
+	const documentId = getCurrentDocument()?.id;
+
 	const [ serverIndexRes, serverPostRes ] = await Promise.all( [
 		apiClient.all( context ),
-		getCurrentDocument()?.id
-			? apiClient.getStylesForPost( getCurrentDocument().id, context )
-			: Promise.resolve( null ),
+		documentId ? apiClient.getStylesForPost( documentId, context ) : Promise.resolve( null ),
 	] );
 
-	if ( ! serverPostRes ) {
-		return;
-	}
-
-	const serverItems = styleDefinitionsMapWithoutNull( serverPostRes.data.data );
 	const server: GlobalClasses = {
-		items: serverItems,
+		items: serverPostRes ? styleDefinitionsMapWithoutNull( serverPostRes.data.data ) : {},
 		order: serverIndexRes.data.data.map( ( entry ) => entry.id ),
 	};
 
@@ -118,29 +124,19 @@ async function rebaseToServer( context: ApiContext ) {
 		slice.actions.rebaseToServer( {
 			context,
 			server,
+			serverLabels: createLabelsForClasses( serverIndexRes.data.data ),
 			version: serverIndexRes.data.meta.version ?? 0,
 		} )
 	);
 }
 
-function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {
-	const stateIds = Object.keys( state.items );
-	const initialDataIds = Object.keys( initialData.items );
-
-	const { order: stateOrder } = state;
-	const { order: initialDataOrder } = initialData;
-
-	const stateOrderIdSet = new Set( stateOrder );
-	const deleted = initialDataOrder.filter( ( id ) => ! stateOrderIdSet.has( id ) );
-
-	const order = stateOrder.join( ';' ) !== initialDataOrder.join( ';' );
-
-	return {
-		added: stateIds.filter( ( id ) => ! initialDataIds.includes( id ) ),
-		deleted,
-		modified: stateIds.filter( ( id ) => {
-			return id in initialData.items && hash( state.items[ id ] ) !== hash( initialData.items[ id ] );
-		} ),
-		order,
-	};
+function notifyConflict() {
+	notify( {
+		type: 'error',
+		id: CONFLICT_NOTIFICATION_ID,
+		message: __(
+			'Your classes were not saved because they changed somewhere else. Refresh the page to load the latest classes.',
+			'elementor'
+		),
+	} );
 }
