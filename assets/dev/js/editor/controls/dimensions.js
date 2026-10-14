@@ -229,10 +229,17 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 			let value = $firstControl.val();
 
 			if ( _.isEmpty( value ) ) {
-				value = this.getInheritedDimensionValue( $firstControl.data( 'setting' ) ) ?? '';
+				value = this.getInheritedDimensionValue( $firstControl.data( 'setting' ) );
 			}
 
-			this.ui.controls.val( value );
+			// When there is nothing to inherit either, use the default, so the control gets values of its
+			// own. Otherwise `isLinkedDimensions()` would keep following the responsive parent, and linking
+			// a control whose parent is unlinked would look like it does nothing.
+			if ( undefined === value && this.getResponsiveParentView() ) {
+				value = this.defaultDimensionValue;
+			}
+
+			this.ui.controls.val( value ?? '' );
 		}
 
 		this.updateDimensions();
@@ -241,18 +248,14 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 	},
 
 	updateElementModel( value, input ) {
-		const values = {
-			[ input.dataset.setting ]: value,
-		};
-
 		// The base control saves the typed value before `onInputChange` runs. Once the control has a
-		// value of its own, the inherited link state no longer applies, so persist it together with
-		// the first value, otherwise the stored default `isLinked: true` would take over.
+		// value of its own, the inherited link state no longer applies, so persist it before the first
+		// value is saved, otherwise the stored default `isLinked: true` would take over.
 		if ( this.getControlValue( 'isLinked' ) && ! this.isLinkedDimensions() ) {
-			values.isLinked = false;
+			this.setValue( 'isLinked', false );
 		}
 
-		this.setValue( values );
+		ControlBaseUnitsItemView.prototype.updateElementModel.call( this, value, input );
 	},
 
 	isLinkedDimensions() {
@@ -262,6 +265,8 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend( {
 		// "untouched" from "linked on purpose". In that case, follow the responsive parent so the link
 		// state matches the breakpoint whose values are inherited.
 		if ( isLinked && ! this.hasOwnDimensionValues() ) {
+			// The parent view is undefined when the control has no responsive parent, or when the parent
+			// control is not rendered in the panel. In that case, the stored value is used as is.
 			const parentView = this.getResponsiveParentView();
 
 			if ( parentView && 'function' === typeof parentView.isLinkedDimensions ) {
