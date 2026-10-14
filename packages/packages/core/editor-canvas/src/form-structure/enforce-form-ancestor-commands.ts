@@ -1,0 +1,113 @@
+import { type NotificationData, notify } from '@elementor/editor-notifications';
+import { blockCommand } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
+
+import {
+	clipboardRootsAreAtomicForms,
+	type CreateArgs,
+	FORM_ELEMENT_TYPE,
+	FORM_FIELD_ELEMENT_TYPES,
+	getArgsElementType,
+	hasClipboardElementTypes,
+	hasElementType,
+	hasElementTypes,
+	isWithinForm,
+	type MoveArgs,
+	movedContainersIncludeAtomicFormRoot,
+	type PasteArgs,
+	type StorageContent,
+} from './utils';
+
+const FORM_FIELDS_OUTSIDE_ALERT: NotificationData = {
+	type: 'default',
+	message: __( 'Form elements must be placed inside a form.', 'elementor' ),
+	id: 'form-fields-outside-form-blocked',
+};
+
+export function initFormAncestorEnforcement() {
+	blockCommand( {
+		command: 'document/elements/create',
+		condition: blockFormFieldCreate,
+	} );
+
+	blockCommand( {
+		command: 'document/elements/move',
+		condition: blockFormFieldMove,
+	} );
+
+	blockCommand( {
+		command: 'document/elements/paste',
+		condition: blockFormFieldPaste,
+	} );
+}
+
+function blockFormFieldCreate( args: CreateArgs ): boolean {
+	const elementType = getArgsElementType( args );
+
+	if ( ! elementType || ! FORM_FIELD_ELEMENT_TYPES.has( elementType ) ) {
+		return false;
+	}
+
+	const containers = args.containers ?? [ args.container ];
+
+	if ( containers.some( ( container ) => ! isWithinForm( container ) ) ) {
+		handleBlockedFormField();
+
+		return true;
+	}
+
+	return false;
+}
+
+function blockFormFieldMove( args: MoveArgs ): boolean {
+	const { containers = [ args.container ], target } = args;
+
+	// Form fields must not be outside a form, but can be moved while inside a form or the container IS a form [ED-23858]
+	const hasLooseFormFields = containers.some( ( container ) =>
+		container
+			? ! hasElementType( container, FORM_ELEMENT_TYPE ) && hasElementTypes( container, FORM_FIELD_ELEMENT_TYPES )
+			: false
+	);
+
+	if ( hasLooseFormFields && ! isWithinForm( target ) && ! movedContainersIncludeAtomicFormRoot( containers ) ) {
+		handleBlockedFormField();
+
+		return true;
+	}
+
+	return false;
+}
+
+function blockFormFieldPaste( args: PasteArgs ): boolean {
+	const { storageType } = args;
+
+	if ( storageType !== 'localstorage' ) {
+		return false;
+	}
+
+	const data = (
+		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
+	 )?.elementorCommon?.storage?.get();
+
+	if ( ! data?.clipboard?.elements ) {
+		return false;
+	}
+
+	const hasFormFieldElement = hasClipboardElementTypes( data.clipboard.elements, FORM_FIELD_ELEMENT_TYPES );
+
+	if (
+		hasFormFieldElement &&
+		! isWithinForm( args.container ) &&
+		! clipboardRootsAreAtomicForms( data.clipboard.elements )
+	) {
+		handleBlockedFormField();
+
+		return true;
+	}
+
+	return false;
+}
+
+function handleBlockedFormField(): void {
+	notify( FORM_FIELDS_OUTSIDE_ALERT );
+}

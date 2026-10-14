@@ -1,0 +1,55 @@
+---
+description: Legacy code integration and migration rules
+globs: ["core/**/*.php", "includes/**/*.php", "modules/**/*.js", "assets/**/*.js"]
+alwaysApply: false
+---
+
+# Legacy Integration Rules
+
+## Architecture Overview
+- **Legacy Editor**: jQuery-based, monolithic structure
+- **New Editor V2**: React-based, micro-frontend architecture
+- **Integration Layer**: Adapters and bridges between systems
+
+## Key Legacy Components
+- `core/` - Core PHP functionality
+- `includes/` - PHP includes and utilities
+- `modules/` - Legacy JavaScript modules
+- `assets/` - Built assets (CSS, JS)
+
+## Legacy Code Rules
+- Don't modify legacy code without understanding impact
+- Use adapters for new functionality
+- Maintain backward compatibility with existing APIs
+- Avoid direct modification of legacy modules
+- Create wrappers for new functionality
+- Use event system for communication between legacy and new
+
+## Integration Patterns
+
+### Event-Based Communication
+```javascript
+elementor.hooks.addAction('frontend/element_ready', (element) => {
+  window.dispatchEvent(new CustomEvent('elementor:element:ready', {
+    detail: { element }
+  }));
+});
+```
+
+### Legacy Data Format
+```javascript
+{ id: 'element-123', elType: 'widget', widgetType: 'button', settings: { text: 'Click me', link: { url: '#' } } }
+```
+
+### New Data Format
+```typescript
+interface Element { id: string; type: 'button'; props: { text: string; link: { url: string } } }
+```
+
+## Migration Strategy
+- Maintain backward compatibility
+- Use adapters for new functionality
+- Migrate components incrementally
+- Test thoroughly at each step
+- Minimize legacy code execution in new editor
+- Use lazy loading for legacy components

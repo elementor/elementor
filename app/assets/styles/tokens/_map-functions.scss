@@ -1,5 +1,5 @@
 // Tokens: map functions
-// - Simple 'get' mechanizm hardcoded to scoped maps.
+// - Simple 'get' mechanism hardcoded to scoped maps.
 @function spacing($keys...) {
 	@return map-deep-get($eps-spacers, $keys...);
 }
@@ -17,7 +17,7 @@
 	@return map-deep-get($eps-theme-elements-colors, $keys...);
 }
 
-@function type($keys...) {
+@function get-type($keys...) {
 	@return map-deep-get($eps-type-map, $keys...);
 }
 

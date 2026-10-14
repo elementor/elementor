@@ -1,4 +1,6 @@
-import { sanitizeUrl } from 'elementor-editor-utils/helpers';
+import { sanitizeUrl, validateHTMLTag } from 'elementor-editor-utils/helpers';
+
+const TEST_ALLOWED_HTML_WRAPPER_TAGS = [ 'a', 'div', 'form', 'span' ];
 
 describe( 'elementor.helpers.sanitizeUrl', () => {
 	test( 'should not affect valid URL', () => {
@@ -25,5 +27,36 @@ describe( 'elementor.helpers.sanitizeUrl', () => {
 	test( 'should not allow injecting script tags', () => {
 		expect( sanitizeUrl( '"><script>alert( "my-script" );</script>' ) )
 			.toBe( '%22%3E%3Cscript%3Ealert(%20%22my-script%22%20);%3C/script%3E' );
+	} );
+} );
+
+describe( 'elementor.helpers.validateHTMLTag', () => {
+	beforeEach( () => {
+		global.elementorCommon = {
+			config: {
+				allowedHTMLWrapperTags: TEST_ALLOWED_HTML_WRAPPER_TAGS,
+			},
+		};
+	} );
+
+	afterEach( () => {
+		delete global.elementorCommon;
+	} );
+
+	test( 'should return the tag when it is in the localized allowed list', () => {
+		expect( validateHTMLTag( 'form' ) ).toBe( 'form' );
+		expect( validateHTMLTag( 'script' ) ).toBe( 'div' );
+	} );
+
+	test( 'should return the tag when it is added via localized config', () => {
+		global.elementorCommon.config.allowedHTMLWrapperTags = [ ...TEST_ALLOWED_HTML_WRAPPER_TAGS, 'custom-tag' ];
+
+		expect( validateHTMLTag( 'custom-tag' ) ).toBe( 'custom-tag' );
+	} );
+
+	test( 'should fail closed to div when the localized config is missing, even for an otherwise-safe tag', () => {
+		delete global.elementorCommon;
+
+		expect( validateHTMLTag( 'a' ) ).toBe( 'div' );
 	} );
 } );

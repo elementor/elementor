@@ -29,25 +29,21 @@ class Module extends Module_Base {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
-		$is_tests = Utils::is_elementor_tests();
-		$is_v2_experiment_on = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
-		if ( ! $is_v2_experiment_on && ! $is_tests ) {
-			return;
-		}
-
 		$this->register_pages_panel_experiment();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
+		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
+			$env['@elementor/editor-site-navigation'] = [
+				'is_pages_panel_active' => Plugin::$instance->experiments->is_feature_active(
+					self::PAGES_PANEL_EXPERIMENT_NAME
+				),
+			];
+
+			return $env;
+		} );
+
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
-				$env['@elementor/editor-site-navigation'] = [
-					'is_pages_panel_active' => true,
-				];
-
-				return $env;
-			} );
-
 			$this->register_rest_fields();
 		}
 	}
@@ -75,9 +71,6 @@ class Module extends Module_Base {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
-			'dependencies' => [
-				'editor_v2',
-			],
 		] );
 	}
 

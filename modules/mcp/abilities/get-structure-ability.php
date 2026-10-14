@@ -1,0 +1,399 @@
+<?php
+
+namespace Elementor\Modules\Mcp\Abilities;
+
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
+use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Reader;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
+use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
+use Elementor\Modules\Mcp\Abilities\Utils\Element_Tag_Resolver;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Plugin;
+use Elementor\Utils;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Get_Structure_Ability extends Abstract_Ability {
+
+	private ?Default_Styles_Repository $default_styles_repository;
+
+	public function __construct( ?Default_Styles_Repository $default_styles_repository = null ) {
+		$this->default_styles_repository = $default_styles_repository;
+	}
+
+	protected function get_ability_id(): string {
+		return 'elementor/get-page-structure';
+	}
+
+	protected function get_definition(): Ability_Definition {
+		return new Ability_Definition(
+			__( 'Get Elementor Page Structure', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor, except for their layer name. `title` is the layer name shown in the Structure panel: rename any node (v3 or v4) with elementor/manage-elements `editor_settings.name`, never through `settings`. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles, plus editor_settings (name, decorative) when set; editor_settings is separate from settings and is written back through the `editor_settings` input. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
+			'elementor',
+			[
+				'type' => 'object',
+				'properties' => [
+					'elements' => [
+						'type' => 'array',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
+					],
+				],
+			],
+			[
+				'annotations' => [
+					'readonly' => true,
+					'idempotent' => true,
+					'destructive' => false,
+				],
+				'mutates_page' => false,
+			],
+			function () {
+				return current_user_can( 'edit_posts' );
+			},
+			[
+				'type' => 'object',
+				'required' => [ 'post_id' ],
+				'properties' => [
+					'post_id' => [
+						'type' => 'integer',
+						'description' => 'WordPress post ID of the Elementor document.',
+					],
+					'element_id' => [
+						'type' => 'string',
+						'description' => 'Optional. If provided, returns only the subtree rooted at that element id.',
+					],
+					'include_content' => [
+						'type' => 'boolean',
+						'default' => false,
+						'description' => 'If true, includes each node\'s settings (plain shape, writable as-is) and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
+					],
+				],
+			]
+		);
+	}
+
+	public function execute( $input = [] ) {
+		$post_id = $this->resolve_post_id( $input );
+		if ( is_wp_error( $post_id ) ) {
+			return $post_id;
+		}
+
+		$document = $this->get_editable_document( $post_id );
+		if ( is_wp_error( $document ) ) {
+			return $document;
+		}
+
+		$elements = $document->get_elements_data();
+		$elements = is_array( $elements ) ? $elements : [];
+
+		$element_id = isset( $input['element_id'] ) ? (string) $input['element_id'] : '';
+		$include_content = ! empty( $input['include_content'] );
+
+		if ( $include_content && '' === $element_id ) {
+			return new \WP_Error(
+				'invalid_input',
+				__( 'include_content requires element_id.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		$document_root_ids = array_column( $elements, 'id' );
+
+		if ( '' !== $element_id ) {
+			$subtree = Utils::find_element_recursive( $elements, $element_id );
+
+			if ( ! $subtree ) {
+				return new \WP_Error(
+					'element_not_found',
+					__( 'Element not found in this document.', 'elementor' ),
+					[ 'status' => \WP_Http::NOT_FOUND ]
+				);
+			}
+
+			$elements = [ $subtree ];
+		}
+
+		return [
+			'elements' => $this->prune_elements( $elements, $include_content, $document_root_ids ),
+		];
+	}
+
+	private function prune_elements( array $elements, bool $include_content = false, array $document_root_ids = [] ): array {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content, $document_root_ids ) {
+			$skeleton = [
+				'id' => $node['id'] ?? null,
+				'elType' => $node['elType'] ?? null,
+			];
+
+			if ( isset( $node['widgetType'] ) ) {
+				$skeleton['widgetType'] = $node['widgetType'];
+			}
+
+			$title = Element_Structure_Title::resolve( $node );
+
+			if ( null !== $title ) {
+				$skeleton['title'] = $title;
+			}
+
+			if ( ! empty( $node['elements'] ) ) {
+				$skeleton['elements'] = $node['elements'];
+			}
+
+			if ( $include_content ) {
+				$this->populate_content( $skeleton, $node, in_array( $node['id'] ?? null, $document_root_ids, true ) );
+			}
+
+			return $skeleton;
+		} );
+	}
+
+	private function populate_content( array &$skeleton, array $node, bool $is_document_root ): void {
+		$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
+
+		$editor_settings = Editor_Settings::read( $node );
+
+		if ( ! empty( $editor_settings ) ) {
+			$skeleton['editor_settings'] = $editor_settings;
+		}
+
+		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+			$this->populate_v3_content( $skeleton, $node );
+			return;
+		}
+
+		$config = $this->resolve_widget_config( $node );
+		$props_schema = $config['atomic_props_schema'] ?? null;
+		$raw_settings = $node['settings'] ?? [];
+
+		if ( ! $props_schema ) {
+			$skeleton['settings'] = (object) [];
+			$skeleton['styles'] = [ 'css' => '' ];
+			return;
+		}
+
+		$skeleton['settings'] = $this->serialize_settings_for_llm( $props_schema, $raw_settings );
+		$skeleton['styles'] = $this->normalize_styles( Local_Style_Serializer::serialize( $node['styles'] ?? [] ) );
+
+		$rendered_settings = $this->resolve_rendered_settings( $props_schema, $raw_settings );
+		$this->populate_default_styles( $skeleton, $node, $config, $rendered_settings, $is_document_root );
+	}
+
+	private function serialize_settings_for_llm( array $props_schema, $raw_settings ) {
+		if ( ! is_array( $raw_settings ) ) {
+			return (object) [];
+		}
+
+		[ $serialized, $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
+
+		if ( ! empty( $static_schema ) ) {
+			$serialized += Render_Props_Resolver::for_plain()->resolve( $static_schema, $raw_settings );
+		}
+
+		return ! empty( $serialized ) ? $serialized : (object) [];
+	}
+
+	private function resolve_rendered_settings( array $props_schema, $raw_settings ): array {
+		if ( ! is_array( $raw_settings ) ) {
+			return [];
+		}
+
+		[ , $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
+
+		return empty( $static_schema ) ? [] : Render_Props_Resolver::for_settings()->resolve( $static_schema, $raw_settings );
+	}
+
+	private function split_dynamic_settings( array $props_schema, array $raw_settings ): array {
+		$dynamic_settings = [];
+		$static_schema = [];
+
+		foreach ( array_intersect_key( $props_schema, $raw_settings ) as $key => $prop_type ) {
+			$dynamic = Dynamic_Tag_Llm_Resolver::try_serialize( $raw_settings[ $key ] );
+
+			if ( null !== $dynamic ) {
+				$dynamic_settings[ $key ] = $dynamic;
+				continue;
+			}
+
+			$static_schema[ $key ] = $prop_type;
+		}
+
+		return [ $dynamic_settings, $static_schema ];
+	}
+
+	private function populate_default_styles( array &$skeleton, array $node, array $config, array $resolved_settings, bool $is_document_root ): void {
+		$base_styles = is_array( $config['base_styles'] ?? null ) ? $config['base_styles'] : [];
+		$props_schema = is_array( $config['atomic_props_schema'] ?? null ) ? $config['atomic_props_schema'] : [];
+		$tag = $this->resolve_html_tag( $node, $resolved_settings );
+
+		$default_styles_css = Element_Default_Styles_Builder::render(
+			$base_styles,
+			$tag,
+			$this->get_default_styles_repository(),
+			null,
+			Atomic_Container_Presentation::applies_to( $config ) ? Atomic_Container_Presentation::to_css_string( $is_document_root ) : ''
+		);
+
+		if ( null !== $tag ) {
+			$skeleton['tag'] = $tag;
+		}
+
+		if ( '' !== $default_styles_css ) {
+			$skeleton['default_styles'] = $default_styles_css;
+		}
+	}
+
+	private function resolve_html_tag( array $node, array $resolved_settings ): ?string {
+		$type = Atomic_Elements_Utils::get_element_type( $node );
+
+		if ( ! $type ) {
+			return null;
+		}
+
+		return Element_Tag_Resolver::resolve( $resolved_settings, $type );
+	}
+
+	private function get_default_styles_repository(): ?Default_Styles_Repository {
+		if ( null !== $this->default_styles_repository ) {
+			return $this->default_styles_repository;
+		}
+
+		if ( ! class_exists( Default_Styles_Repository::class ) ) {
+			return null;
+		}
+
+		$this->default_styles_repository = Default_Styles_Repository::make();
+
+		return $this->default_styles_repository;
+	}
+
+	private function normalize_styles( array $serialized ): array {
+		return empty( $serialized ) ? [ 'css' => '' ] : $serialized;
+	}
+
+	private function populate_v3_content( array &$skeleton, array $node ): void {
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
+		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
+
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$bridge_non_style = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
+		$bridge_style = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
+
+		if ( null === $map && empty( $bridge_non_style ) && empty( $bridge_style ) ) {
+			$skeleton['settings'] = (object) [];
+			$skeleton['styles'] = [ 'css' => '' ];
+			return;
+		}
+
+		$allowed_settings = null !== $map
+			? V3_Map_Settings_Reader::read( $map, $raw_settings )
+			: V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings )['allowed'];
+
+		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
+		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
+
+		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
+		$skeleton['styles'] = [ 'css' => $style ];
+	}
+
+	private function normalize_interactions( $interactions ): array {
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			$interactions = ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) ? $decoded : [];
+		}
+
+		if ( ! is_array( $interactions ) || empty( $interactions['items'] ) ) {
+			return [];
+		}
+
+		$resolver = Render_Props_Resolver::for_plain();
+		$prop_type = Interaction_Item_Prop_Type::make();
+		$plain = [];
+
+		foreach ( $interactions['items'] as $item ) {
+			$serialized = $resolver->resolve_value( $item, $prop_type );
+
+			if ( is_array( $serialized ) && ! empty( $serialized ) ) {
+				$plain[] = $serialized;
+			}
+		}
+
+		return $plain;
+	}
+
+	private function resolve_widget_config( array $node ): array {
+		$type = Atomic_Elements_Utils::get_element_type( $node );
+
+		if ( ! $type ) {
+			return [];
+		}
+
+		$config = Widget_Context_Helper::get_widget_config( (string) $type );
+
+		return is_array( $config ) ? $config : [];
+	}
+
+	private function resolve_post_id( $input ) {
+		$post_id = isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
+
+		if ( ! $post_id ) {
+			return new \WP_Error(
+				'invalid_post_id',
+				__( 'A valid post_id is required.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error(
+				'rest_cannot_view',
+				__( 'Sorry, you are not allowed to access this document.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
+		return $post_id;
+	}
+
+	private function get_editable_document( int $post_id ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
+			return new \WP_Error(
+				'document_not_found',
+				__( 'Document not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		if ( ! $document->is_built_with_elementor() ) {
+			return new \WP_Error(
+				'not_elementor',
+				__( 'This post is not built with Elementor.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			return new \WP_Error(
+				'rest_cannot_view',
+				__( 'Sorry, you are not allowed to edit this document.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
+		return $document;
+	}
+}

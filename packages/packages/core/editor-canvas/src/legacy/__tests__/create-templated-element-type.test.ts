@@ -1,0 +1,278 @@
+import { mockLegacyElementor } from 'test-utils';
+
+import {
+	canBeTemplated,
+	createTemplatedElementType,
+	createTemplatedElementView,
+} from '../create-templated-element-type';
+import { type ElementView } from '../types';
+
+const MOCK_ELEMENT_TYPE = 'test-element';
+const MOCK_HTML = '<div>Element</div>';
+
+const createMockRenderer = () => ( {
+	register: jest.fn(),
+	render: jest.fn( () => Promise.resolve( MOCK_HTML ) ),
+} );
+
+const createMockElementConfig = () => ( {
+	twig_templates: {},
+	twig_main_template: 'main',
+	atomic_props_schema: {},
+	base_styles_dictionary: {},
+	default_html_tag: 'div',
+	html_tag_follows_link: true,
+} );
+
+describe( 'createTemplatedElementType', () => {
+	beforeEach( () => {
+		mockLegacyElementor();
+	} );
+
+	it( 'should return the correct element type', () => {
+		// Arrange
+		const ElementType = createTemplatedElementType( {
+			type: MOCK_ELEMENT_TYPE,
+			renderer: createMockRenderer(),
+			element: createMockElementConfig(),
+		} );
+
+		// Act
+		const typeInstance = new ElementType();
+
+		// Assert
+		expect( typeInstance.getType() ).toBe( MOCK_ELEMENT_TYPE );
+	} );
+
+	it( 'should return the same view class for multiple type instances', () => {
+		// Arrange
+		const ElementType = createTemplatedElementType( {
+			type: MOCK_ELEMENT_TYPE,
+			renderer: createMockRenderer(),
+			element: createMockElementConfig(),
+		} );
+
+		// Act
+		const typeInstance1 = new ElementType();
+		const typeInstance2 = new ElementType();
+		const viewClass1 = typeInstance1.getView();
+		const viewClass2 = typeInstance2.getView();
+
+		// Assert
+		expect( viewClass1 ).toBe( viewClass2 );
+	} );
+} );
+
+describe( 'createTemplatedElementView', () => {
+	beforeEach( () => {
+		mockLegacyElementor();
+	} );
+
+	describe( 'class structure', () => {
+		it( 'should return twig as template type', () => {
+			// Arrange
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: createMockRenderer(),
+				element: createMockElementConfig(),
+			} );
+
+			// Assert
+			expect( ViewClass.prototype.getTemplateType() ).toBe( 'twig' );
+		} );
+
+		it( 'should return element type as namespace key', () => {
+			// Arrange
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: createMockRenderer(),
+				element: createMockElementConfig(),
+			} );
+
+			// Assert
+			expect( ViewClass.prototype.getNamespaceKey() ).toBe( MOCK_ELEMENT_TYPE );
+		} );
+	} );
+
+	describe( 'template registration', () => {
+		it( 'should register templates with the renderer', () => {
+			// Arrange
+			const utils = createMockRenderer();
+			const elementConfig = {
+				...createMockElementConfig(),
+				twig_templates: {
+					template1: '<div>Template 1</div>',
+					template2: '<div>Template 2</div>',
+				},
+			};
+
+			// Act
+			createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: utils,
+				element: elementConfig,
+			} );
+
+			// Assert
+			expect( utils.register ).toHaveBeenCalledTimes( 2 );
+			expect( utils.register ).toHaveBeenCalledWith( 'template1', '<div>Template 1</div>' );
+			expect( utils.register ).toHaveBeenCalledWith( 'template2', '<div>Template 2</div>' );
+		} );
+	} );
+
+	describe( 'render context', () => {
+		const createRenderableView = ( ViewClass: ReturnType< typeof createTemplatedElementView > ) => {
+			const view = new ViewClass() as unknown as ElementView & {
+				_abortController: AbortController;
+			};
+			view.model = {
+				get: ( key: string ) => {
+					if ( key === 'id' ) {
+						return 'test-id';
+					}
+
+					if ( key === 'settings' ) {
+						return { toJSON: () => ( {} ) };
+					}
+
+					return undefined;
+				},
+			} as unknown as ElementView[ 'model' ];
+			view.isRendered = false;
+			view._abortController = new AbortController();
+			view.triggerMethod = jest.fn();
+			view.bindUIElements = jest.fn();
+			view.$el = { html: jest.fn() } as unknown as ElementView[ '$el' ];
+			view._ensureViewIsIntact = jest.fn();
+			view.resetChildViewContainer = jest.fn();
+
+			return view;
+		};
+
+		it( 'should inject computed tag into the twig render context', async () => {
+			// Arrange
+			const utils = createMockRenderer();
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: utils,
+				element: {
+					...createMockElementConfig(),
+					twig_templates: {
+						main: '<{{ tag | e("html_tag") }}></{{ tag | e("html_tag") }}>',
+					},
+				},
+			} );
+
+			const view = createRenderableView( ViewClass );
+
+			// Act
+			await view._renderTemplate();
+
+			// Assert
+			expect( utils.render ).toHaveBeenCalledWith( 'main', expect.objectContaining( { tag: 'div' } ) );
+		} );
+
+		it( 'should merge element template_context into the twig render context without overriding core keys', async () => {
+			// Arrange
+			const utils = createMockRenderer();
+			const ViewClass = createTemplatedElementView( {
+				type: MOCK_ELEMENT_TYPE,
+				renderer: utils,
+				element: {
+					...createMockElementConfig(),
+					template_context: {
+						provider: { key: 'google', api_key: 'test-key' },
+						id: 'should-not-override',
+					},
+				},
+			} );
+
+			const view = createRenderableView( ViewClass );
+
+			// Act
+			await view._renderTemplate();
+
+			// Assert
+			expect( utils.render ).toHaveBeenCalledWith(
+				'main',
+				expect.objectContaining( {
+					id: 'test-id',
+					provider: { key: 'google', api_key: 'test-key' },
+				} )
+			);
+		} );
+	} );
+} );
+
+describe( 'canBeTemplated', () => {
+	it( 'should return true when all required properties are present', () => {
+		// Arrange
+		const element = createMockElementConfig();
+
+		// Act
+		const result = canBeTemplated( element );
+
+		// Assert
+		expect( result ).toBe( true );
+	} );
+
+	it( 'should return false when atomic_props_schema is missing', () => {
+		// Arrange
+		const element = {
+			twig_templates: {},
+			twig_main_template: 'main',
+			base_styles_dictionary: {},
+		};
+
+		// Act
+		const result = canBeTemplated( element );
+
+		// Assert
+		expect( result ).toBe( false );
+	} );
+
+	it( 'should return false when twig_templates is missing', () => {
+		// Arrange
+		const element = {
+			twig_main_template: 'main',
+			atomic_props_schema: {},
+			base_styles_dictionary: {},
+		};
+
+		// Act
+		const result = canBeTemplated( element );
+
+		// Assert
+		expect( result ).toBe( false );
+	} );
+
+	it( 'should return false when twig_main_template is missing', () => {
+		// Arrange
+		const element = {
+			twig_templates: {},
+			atomic_props_schema: {},
+			base_styles_dictionary: {},
+		};
+
+		// Act
+		const result = canBeTemplated( element );
+
+		// Assert
+		expect( result ).toBe( false );
+	} );
+
+	it( 'should return false when base_styles_dictionary is missing', () => {
+		// Arrange
+		const element = {
+			twig_templates: {},
+			twig_main_template: 'main',
+			atomic_props_schema: {},
+		};
+
+		// Act
+		const result = canBeTemplated( element );
+
+		// Assert
+		expect( result ).toBe( false );
+	} );
+} );

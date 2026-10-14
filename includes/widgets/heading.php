@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
+use Elementor\Core\Utils\Hints;
+use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
@@ -140,6 +142,27 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	}
 
 	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-heading-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
+	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -225,15 +248,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
-		if ( ! Utils::has_pro() ) {
-			$this->add_control(
-				Utils::ANIMATED_HEADLINE . '_promotion',
-				[
-					'label' => esc_html__( 'Animated Headline widget', 'elementor' ),
-					'type' => Promotion_Control::TYPE,
-				]
-			);
-		}
+		$this->maybe_add_ally_heading_hint();
 
 		$this->end_controls_section();
 
@@ -251,22 +266,27 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'default' => '',
 				'selectors' => [
@@ -426,7 +446,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$title = $this->should_sanitize( $settings ) ? wp_kses_post( $settings['title'] ) : $settings['title'];
+		$title = wp_kses_post( $settings['title'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_link_attributes( 'url', $settings['link'] );
@@ -438,6 +458,112 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		// PHPCS - the variable $title_html holds safe data.
 		echo $title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( '' === $settings['title'] ) {
+			return '';
+		}
+
+		$tag = $settings['header_size'] ?? 'h2';
+		$level_map = [
+			'h1' => 1,
+			'h2' => 2,
+			'h3' => 3,
+			'h4' => 4,
+			'h5' => 5,
+			'h6' => 6,
+		];
+		$level = $level_map[ $tag ] ?? 2;
+		$title = Utils::html_to_plain_text( $settings['title'] );
+
+		$md = str_repeat( '#', $level ) . ' ' . $title;
+
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$md = str_repeat( '#', $level ) . ' [' . $title . '](' . esc_url( $settings['link']['url'] ) . ')';
+		}
+
+		return $md;
+	}
+
+	public function maybe_add_ally_heading_hint() {
+		$notice_id = 'ally_heading_notice';
+		$plugin_slug = 'pojo-accessibility';
+
+		if ( ! Hints::should_display_hint( $notice_id ) ) {
+			return;
+		}
+
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$notice_content = esc_html__( 'Want to ensure this heading is accessible? Your ONE subscription includes Ally. Install it and scan your page.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-scanner-plg-heading-one-install',
+					'source' => 'editor-heading-widget-one-install',
+					'medium' => 'editor-one',
+				];
+			} elseif ( ! $is_active ) {
+				$notice_content = esc_html__( 'Keep your content accessible. Activate Ally, included in ONE, to scan this page.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-scanner-plg-heading-one-activate',
+					'source' => 'editor-heading-widget-one-non-activate',
+					'medium' => 'editor-one',
+				];
+			}
+		} else {
+			$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+			}
+			$campaign_data = [
+				'name' => 'elementor_ea11y_campaign',
+				'campaign' => 'acc-scanner-plg-heading',
+				'source' => 'editor-heading-widget',
+				'medium' => 'editor',
+			];
+		}
+
+		$notice_heading = esc_html__( 'Accessible structure matters', 'elementor' );
+
+		$this->add_control(
+			$notice_id,
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => Hints::get_notice_template( [
+					'display' => ! Hints::is_dismissed( $notice_id ),
+					'heading' => $notice_heading,
+					'type' => 'info',
+					'content' => $notice_content,
+					'icon' => true,
+					'dismissible' => $notice_id,
+					'button_text' => $button_text,
+					'button_event' => $notice_id,
+					'button_data' => [
+						'action_url' => Admin_Notices::add_plg_campaign_data( $button_url, $campaign_data ),
+					],
+				], true ),
+			]
+		);
 	}
 
 	/**
@@ -453,8 +579,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		<#
 		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );
 
-		if ( '' !== settings.link.url ) {
-			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + title + '</a>';
+		if ( '' !== settings.link?.url ) {
+			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title + '</a>';
 		}
 
 		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title' ] );
@@ -473,14 +599,5 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		print( title_html );
 		#>
 		<?php
-	}
-
-	/**
-	 * Check if the content should be sanitized. Sanitizing should be applied for non-admin users in the editor and for shortcodes.
-	 *
-	 * @return bool
-	 */
-	private function should_sanitize( array $settings ): bool {
-		return ( is_admin() && ! current_user_can( 'manage_options' ) ) || ! empty( $settings['isShortcode'] );
 	}
 }

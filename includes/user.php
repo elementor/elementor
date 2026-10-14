@@ -127,6 +127,10 @@ class User {
 			return false;
 		}
 
+		if ( function_exists( 'wc_get_page_id' ) && intval( wc_get_page_id( 'shop' ) ) === $post->ID ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -363,18 +367,18 @@ class User {
 	}
 
 	/**
-	 * Get a user option with default value as fallback.
+	 * Get a user option with a fallback value.
 	 *
-	 * @param string $option  - Option key.
-	 * @param int    $user_id - User ID.
-	 * @param mixed  $default - Default fallback value.
+	 * @param string $option   Option key.
+	 * @param int    $user_id  User ID.
+	 * @param mixed  $fallback Default fallback value.
 	 *
 	 * @return mixed
 	 */
-	public static function get_user_option_with_default( $option, $user_id, $default ) {
+	public static function get_user_option_with_default( $option, $user_id, $fallback ) {
 		$value = get_user_option( $option, $user_id );
 
-		return ( false === $value ) ? $default : $value;
+		return ( false === $value ) ? $fallback : $value;
 	}
 
 	/**

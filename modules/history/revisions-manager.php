@@ -119,7 +119,9 @@ class Revisions_Manager {
 
 		$default_query_args = [
 			'posts_per_page' => self::MAX_REVISIONS_TO_DISPLAY,
-			'meta_key' => '_elementor_data',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'no_found_rows' => true,
 		];
 
 		$query_args = array_merge( $default_query_args, $query_args );
@@ -247,7 +249,7 @@ class Revisions_Manager {
 	 * @param $data
 	 *
 	 * @return array
-	 * @throws \Exception Id Exception.
+	 * @throws \Exception If the revision ID is not set.
 	 */
 	public static function ajax_get_revision_data( array $data ) {
 		if ( ! isset( $data['id'] ) ) {
@@ -278,7 +280,7 @@ class Revisions_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 * @static
-	 * @param array $return_data
+	 * @param array    $return_data
 	 * @param Document $document
 	 *
 	 * @return array

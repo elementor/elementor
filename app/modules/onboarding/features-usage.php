@@ -35,12 +35,59 @@ class Features_Usage {
 			return;
 		}
 
-		update_option( static::ONBOARDING_FEATURES_OPTION, $post_data['features'] );
+		$sanitized_features = $this->sanitize_features( $post_data['features'] );
+
+		if ( null === $sanitized_features ) {
+			return [
+				'status' => 'error',
+				'payload' => [
+					'error_message' => esc_html__( 'There was a problem saving your selected features.', 'elementor' ),
+				],
+			];
+		}
+
+		update_option( static::ONBOARDING_FEATURES_OPTION, $sanitized_features );
 
 		return [
 			'status' => 'success',
 			'payload' => [],
 		];
+	}
+
+	/**
+	 * Sanitize the features selection payload.
+	 *
+	 * Expects an associative array of known tiers, each holding a list of
+	 * free-text feature labels (see assets/js/utils/utils.js), e.g.:
+	 * [ 'essential' => [ 'Templates & Theme Builder' ], 'advanced' => [], 'one' => [] ].
+	 *
+	 * @param mixed $features
+	 *
+	 * @return array|null Sanitized array, or null if the payload shape is invalid.
+	 */
+	private function sanitize_features( $features ) {
+		if ( ! is_array( $features ) ) {
+			return null;
+		}
+
+		$allowed_tiers = [ 'essential', 'advanced', 'one' ];
+		$sanitized = [];
+
+		foreach ( $features as $tier => $selected_labels ) {
+			if ( ! in_array( $tier, $allowed_tiers, true ) || ! is_array( $selected_labels ) ) {
+				return null;
+			}
+
+			$sanitized[ $tier ] = array_values( array_map( function ( $label ) {
+				return is_string( $label ) ? sanitize_text_field( $label ) : null;
+			}, $selected_labels ) );
+
+			if ( in_array( null, $sanitized[ $tier ], true ) ) {
+				return null;
+			}
+		}
+
+		return $sanitized;
 	}
 
 	private function get_usage_data() {

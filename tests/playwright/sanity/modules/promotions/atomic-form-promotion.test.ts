@@ -1,0 +1,56 @@
+import { expect } from '@playwright/test';
+import { wpCli } from '../../../assets/wp-cli';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import {
+	expandPanelCategory,
+	getPromotionWidgetByType,
+	openPromotionPopover,
+} from './promotion-popover-helper';
+
+test.describe( 'Atomic Form promotion test @promotions', () => {
+	const categorySelector = '#elementor-panel-category-atomic-form';
+	const promotionLinkSelector = `${ categorySelector } .elementor-panel-heading-promotion a`;
+
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
+	} );
+
+	test( 'Upgrade button visible on Atomic Form section', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.openNewPage();
+
+		const category = page.locator( categorySelector );
+		await expect( category ).toBeVisible();
+
+		const promotionLink = page.locator( promotionLinkSelector );
+		await expect( promotionLink ).toBeVisible();
+		await expect( promotionLink ).toHaveAttribute( 'href', /go-pro-atomic-form-section/ );
+	} );
+
+	test( 'Promotion popover shown on widget click', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.openNewPage();
+
+		const category = page.locator( categorySelector );
+		await expandPanelCategory( category );
+
+		const formWidget = getPromotionWidgetByType( category, 'e-form' );
+		const popover = await openPromotionPopover( formWidget, { hasText: 'Atomic form' } );
+		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
+		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
+
+		// Screenshot could have a different position on a single run - under the top-bar
+		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png', {
+			mask: [ popover.getByTestId( 'e-atomic-form-animation' ) ],
+		} );
+	} );
+} );

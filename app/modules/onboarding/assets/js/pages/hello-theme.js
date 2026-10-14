@@ -1,30 +1,44 @@
 /* eslint-disable @wordpress/i18n-ellipsis */
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { OnboardingContext } from '../context/context';
 import { useNavigate } from '@reach/router';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Layout from '../components/layout/layout';
-import PageContentLayout from '../components/layout/page-content-layout';
+import ThemeSelectionContentA from '../components/theme-selection-content-a';
+import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
+
+const HELLO_THEME_SLUG = 'hello-elementor';
+
+const getContinueButtonText = ( isHelloThemeActivated ) => {
+	if ( isHelloThemeActivated ) {
+		return __( 'Next', 'elementor' );
+	}
+
+	return __( 'Continue with Hello Theme', 'elementor' );
+};
 
 export default function HelloTheme() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		{ ajaxState: activateHelloThemeAjaxState, setAjax: setActivateHelloThemeAjaxState } = useAjax(),
 		// Allow navigating back to this screen if it was completed in the onboarding.
 		[ helloInstalledInOnboarding, setHelloInstalledInOnboarding ] = useState( false ),
-		[ isInstalling, setIsInstalling ] = useState( false ),
-		noticeStateSuccess = {
-			type: 'success',
-			icon: 'eicon-check-circle-o',
-			message: __( 'Your site’s got Hello theme. High-five!', 'elementor' ),
-		},
-		[ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null ),
-		[ activeTimeouts, setActiveTimeouts ] = useState( [] ),
-		continueWithHelloThemeText = state.isHelloThemeActivated ? __( 'Next', 'elementor' ) : __( 'Continue with Hello Biz Theme', 'elementor' ),
-		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText ),
+		[ isInstalling, setIsInstalling ] = useState( false );
+
+	const noticeStateSuccess = useMemo( () => ( {
+		type: 'success',
+		icon: 'eicon-check-circle-o',
+		message: __( 'Your site\'s got Hello theme. High-five!', 'elementor' ),
+	} ), [] );
+
+	const [ noticeState, setNoticeState ] = useState( state.isHelloThemeActivated ? noticeStateSuccess : null );
+
+	const [ activeTimeouts, setActiveTimeouts ] = useState( [] ),
 		navigate = useNavigate(),
 		pageId = 'hello',
 		nextStep = elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName',
-		goToNextScreen = () => navigate( 'onboarding/' + nextStep );
+		goToNextScreen = useCallback( () => navigate( 'onboarding/' + nextStep ), [ navigate, nextStep ] ),
+		continueWithHelloThemeText = getContinueButtonText( state.isHelloThemeActivated ),
+		[ actionButtonText, setActionButtonText ] = useState( continueWithHelloThemeText );
 
 	/**
 	 * Setup
@@ -40,17 +54,25 @@ export default function HelloTheme() {
 
 			goToNextScreen();
 		}
-	}, [] );
+
+		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
+		OnboardingEventTracking.onStepLoad( 2 );
+	}, [ getStateObjectToUpdate, goToNextScreen, helloInstalledInOnboarding, pageId, state, updateState ] );
+
+	useEffect( () => {
+		const updatedButtonText = getContinueButtonText( state.isHelloThemeActivated );
+		setActionButtonText( updatedButtonText );
+	}, [ state.isHelloThemeActivated ] );
 
 	const resetScreenContent = () => {
-		// Clear any active timeouts for changing the action button text during installation.
 		activeTimeouts.forEach( ( timeoutID ) => clearTimeout( timeoutID ) );
 
 		setActiveTimeouts( [] );
 
 		setIsInstalling( false );
 
-		setActionButtonText( continueWithHelloThemeText );
+		const updatedButtonText = getContinueButtonText( state.isHelloThemeActivated );
+		setActionButtonText( updatedButtonText );
 	};
 
 	/**
@@ -82,8 +104,11 @@ export default function HelloTheme() {
 
 		setHelloInstalledInOnboarding( true );
 
+		OnboardingEventTracking.sendThemeInstalled( 'hello' );
+
+		OnboardingEventTracking.sendStepEndState( 2 );
 		goToNextScreen();
-	}, [] );
+	}, [ getStateObjectToUpdate, goToNextScreen, noticeStateSuccess, state, updateState ] );
 
 	const onErrorInstallHelloTheme = () => {
 		elementorCommon.events.dispatchEvent( {
@@ -100,7 +125,7 @@ export default function HelloTheme() {
 		setNoticeState( {
 			type: 'error',
 			icon: 'eicon-warning',
-			message: __( 'There was a problem installing Hello Biz Theme.', 'elementor' ),
+			message: __( 'There was a problem installing Hello Theme.', 'elementor' ),
 		} );
 
 		resetScreenContent();
@@ -112,7 +137,10 @@ export default function HelloTheme() {
 		updateState( { isHelloThemeInstalled: true } );
 
 		setActivateHelloThemeAjaxState( {
-			data: { action: 'elementor_activate_hello_theme' },
+			data: {
+				action: 'elementor_activate_hello_theme',
+				theme_slug: HELLO_THEME_SLUG,
+			},
 		} );
 	};
 
@@ -122,7 +150,7 @@ export default function HelloTheme() {
 		}
 
 		wp.updates.ajax( 'install-theme', {
-			slug: 'hello-biz',
+			slug: HELLO_THEME_SLUG,
 			success: () => activateHelloTheme(),
 			error: () => onErrorInstallHelloTheme(),
 		} );
@@ -155,6 +183,7 @@ export default function HelloTheme() {
 		actionButton.onClick = () => {
 			sendNextButtonEvent();
 
+			OnboardingEventTracking.sendStepEndState( 2 );
 			goToNextScreen();
 		};
 	} else {
@@ -166,6 +195,7 @@ export default function HelloTheme() {
 			} else if ( ! state.isHelloThemeInstalled ) {
 				installHelloTheme();
 			} else {
+				OnboardingEventTracking.sendStepEndState( 2 );
 				goToNextScreen();
 			}
 		};
@@ -174,12 +204,14 @@ export default function HelloTheme() {
 	/**
 	 * Skip Button
 	 */
-	let skipButton;
+	const skipButton = {};
+
+	if ( isInstalling ) {
+		skipButton.className = 'e-onboarding__button-skip--disabled';
+	}
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
-		skipButton = {
-			text: __( 'Skip', 'elementor' ),
-		};
+		skipButton.text = __( 'Skip', 'elementor' );
 	}
 
 	/**
@@ -248,7 +280,7 @@ export default function HelloTheme() {
 				setNoticeState( {
 					type: 'error',
 					icon: 'eicon-warning',
-					message: __( 'There was a problem activating Hello Biz Theme.', 'elementor' ),
+					message: __( 'There was a problem activating Hello Theme.', 'elementor' ),
 				} );
 
 				// Clear any active timeouts for changing the action button text during installation.
@@ -259,27 +291,13 @@ export default function HelloTheme() {
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
-			<PageContentLayout
-				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Hello_Biz.svg' }
-				title={ __( 'Every site starts with a theme.', 'elementor' ) }
+			<ThemeSelectionContentA
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
-			>
-				<p>
-					{ __( 'Hello Biz by Elementor helps you launch your professional business website - fast.', 'elementor' ) }
-				</p>
-				{ ! elementorAppConfig.onboarding.experiment && <p>
-					{ __( 'Here\'s why:', 'elementor' ) }
-				</p> }
-				<ul className="e-onboarding__feature-list">
-					<li>{ __( 'Get online faster', 'elementor' ) }</li>
-					<li>{ __( 'Lightweight and fast loading', 'elementor' ) }</li>
-					<li>{ __( 'Great for SEO', 'elementor' ) }</li>
-				</ul>
-			</PageContentLayout>
+			/>
 			<div className="e-onboarding__footnote">
-				{ '* ' + __( 'You can switch your theme later on', 'elementor' ) }
+				{ __( 'You can switch your theme later on', 'elementor' ) }
 			</div>
 		</Layout>
 	);

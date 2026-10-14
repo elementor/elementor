@@ -1,0 +1,20 @@
+import * as React from 'react';
+import { createContext, type PropsWithChildren, useContext } from 'react';
+import { type useElement } from '@elementor/editor-editing-panel';
+
+import { type ComponentOverridablePropValue } from '../prop-types/component-overridable-prop-type';
+
+type OverridablePropData = {
+	value?: ComponentOverridablePropValue;
+	componentInstanceElement?: ReturnType< typeof useElement >;
+};
+
+const OverridablePropContext = createContext< OverridablePropData | null >( null );
+
+export function OverridablePropProvider( { children, ...props }: PropsWithChildren< OverridablePropData > ) {
+	return <OverridablePropContext.Provider value={ props }>{ children }</OverridablePropContext.Provider>;
+}
+
+export const useOverridablePropValue = () => useContext( OverridablePropContext )?.value;
+
+export const useComponentInstanceElement = () => useContext( OverridablePropContext )?.componentInstanceElement;

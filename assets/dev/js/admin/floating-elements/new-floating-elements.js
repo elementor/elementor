@@ -5,7 +5,7 @@ const NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				addButtonTopBar: '.page-title-action',
+				addButtonTopBar: 'a.page-title-action[href*="e-floating-buttons"]',
 				addButtonAdminBar: '#wp-admin-bar-new-e-floating-buttons a',
 				addButtonEmptyTemplate: '#elementor-template-library-add-new',
 			},

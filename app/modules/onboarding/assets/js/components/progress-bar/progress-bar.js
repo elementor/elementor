@@ -3,10 +3,15 @@ import { OnboardingContext } from '../../context/context';
 import { useNavigate } from '@reach/router';
 
 import ProgressBarItem from './progress-bar-item';
+import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../../utils/onboarding-event-tracking';
 
 export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
+		experiment401Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT ),
+		isExperiment401VariantB = 'B' === experiment401Variant,
+		experiment402Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT ),
+		isExperiment402VariantB = 'B' === experiment402Variant,
 		progressBarItemsConfig = [
 			{
 				id: 'account',
@@ -19,7 +24,7 @@ export default function ProgressBar() {
 	if ( ! elementorAppConfig.onboarding.helloActivated ) {
 		progressBarItemsConfig.push( {
 			id: 'hello',
-			title: __( 'Hello Biz Theme', 'elementor' ),
+			title: __( 'Hello Theme', 'elementor' ),
 			route: 'hello',
 		} );
 	}
@@ -43,10 +48,12 @@ export default function ProgressBar() {
 		} );
 	}
 
+	const goodToGoTitle = ( isExperiment401VariantB || isExperiment402VariantB ) ? __( 'Start Creating Site', 'elementor' ) : __( 'Good to Go', 'elementor' );
+
 	progressBarItemsConfig.push(
 		{
 			id: 'goodToGo',
-			title: __( 'Good to Go', 'elementor' ),
+			title: goodToGoTitle,
 			route: 'good-to-go',
 		},
 	);
@@ -56,6 +63,17 @@ export default function ProgressBar() {
 
 		if ( state.steps[ itemConfig.id ] ) {
 			itemConfig.onClick = () => {
+				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
+				const nextStepNumber = OnboardingEventTracking.getStepNumber( itemConfig.id );
+
+				if ( 4 === currentStepNumber ) {
+					OnboardingEventTracking.trackStepAction( 4, 'stepper_clicks', {
+						from_step: currentStepNumber,
+						to_step: nextStepNumber,
+					} );
+					OnboardingEventTracking.sendStepEndState( 4 );
+				}
+
 				elementorCommon.events.dispatchEvent( {
 					event: 'step click',
 					version: '',

@@ -28,29 +28,29 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiment();
+		$this->register_app();
 
-		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
-			$this->register_app();
+		add_action( 'elementor/init', function () {
+			$this->set_cloud_library_settings();
+		}, 12 /** After the initiation of the connect cloud library */ );
 
-			add_action( 'elementor/init', function () {
-				$this->set_cloud_library_settings();
-			}, 12 /** After the initiation of the connect cloud library */ );
+		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			return $this->localize_settings( $settings );
+		}, 11 /** After Elementor Core */ );
 
-			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
-				return $this->localize_settings( $settings );
-			}, 11 /** After Elementor Core */ );
+		add_filter( 'elementor/render_mode/module', function( $module_name ) {
+			$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-			add_filter( 'elementor/render_mode/module', function( $module_name ) {
-				$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
+			if ( $render_mode_manager ) {
+				$current_render_mode = $render_mode_manager->get_current();
 
-				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+				if ( $current_render_mode instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
 					return 'cloud-library';
 				}
+			}
 
-				return $module_name;
-			}, 12);
-		}
+			return $module_name;
+		}, 12);
 	}
 
 	public function localize_settings( $settings ) {
@@ -61,16 +61,6 @@ class Module extends BaseModule {
 		$settings['library']['doc_types'] = $this->get_document_types();
 
 		return $settings;
-	}
-
-	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
-			'description' => esc_html__( 'Cloud Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
-			'default' => ExperimentsManager::STATE_ACTIVE,
-		] );
 	}
 
 	private function register_app() {
@@ -91,7 +81,7 @@ class Module extends BaseModule {
 	/**
 	 * @param Render_Mode_Manager $manager
 	 *
-	 * @throws \Exception
+	 * @throws \Exception If render mode registration fails.
 	 */
 	public function register_render_mode( Render_Mode_Manager $manager ) {
 		$manager->register_render_mode( Render_Mode_Preview::class );
@@ -120,9 +110,9 @@ class Module extends BaseModule {
 				'utm_content' => 'cloud-library',
 				'source' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
-			'library_connect_sub_title' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
-			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
+			'library_connect_title_copy' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
+			'library_connect_sub_title_copy' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
+			'library_connect_button_copy' => esc_html__( 'Connect', 'elementor' ),
 		] );
 	}
 
@@ -151,9 +141,22 @@ class Module extends BaseModule {
 	private function print_thumbnail_preview_callback() {
 		$doc = Plugin::$instance->documents->get_current();
 
-		// PHPCS - should not be escaped.
-		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( ! $doc ) {
+			$render_mode = Plugin::$instance->frontend->render_mode_manager->get_current();
+			if ( $render_mode instanceof Render_Mode_Preview ) {
+				$doc = $render_mode->get_document();
+			}
+		}
 
-		wp_delete_post( $doc->get_main_id(), true );
+		if ( ! $doc ) {
+			echo '<div class="elementor-alert elementor-alert-danger">' . esc_html__( 'Document not found for preview.', 'elementor' ) . '</div>';
+			return;
+		}
+
+		Plugin::$instance->documents->switch_to_document( $doc );
+
+		$content = $doc->get_content( true );
+
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

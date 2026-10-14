@@ -6,6 +6,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
+import 'elementor-app/event-track/wp-dashboard-tracking';
 
 ( function( $ ) {
 	var ElementorAdmin = elementorModules.ViewModule.extend( {
@@ -29,8 +30,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
-				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"], a[href*="admin.php?page=elementor-one-upgrade"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 
@@ -61,13 +61,13 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 				if ( self.isElementorMode() ) {
 					elementorCommon.dialogsManager.createWidget( 'confirm', {
-						message: __( 'Please note that you are switching to WordPress default editor. Your current layout, design and content might break.', 'elementor' ),
-						headerMessage: __( 'Back to WordPress Editor', 'elementor' ),
+						message: __( 'You are about to switch this page from the Elementor editor to the WordPress editor. Your current layout, design, and content may break and need to be rebuilt. Are you sure you want to continue?', 'elementor' ),
+						headerMessage: __( 'Edit with WordPress?', 'elementor' ),
 						strings: {
 							confirm: __( 'Continue', 'elementor' ),
 							cancel: __( 'Cancel', 'elementor' ),
 						},
-						defaultOption: 'confirm',
+						defaultOption: 'cancel',
 						onConfirm() {
 							self.elements.$switchModeInput.val( '' );
 							self.toggleStatus();
@@ -119,27 +119,30 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				} );
 			} );
 
-			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
-				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
-					data: {
-						source: 'io-wp-media-library-install',
-					},
+			const campaignNotices = {
+				plugin_image_optimization: 'elementor_image_optimization_campaign',
+			};
+
+			Object.keys( campaignNotices ).forEach( ( noticeId ) => {
+				$( `.e-notice--cta.e-notice--dismissible[data-notice_id="${ noticeId }"] a.e-button--cta` ).on( 'click', function() {
+					const $button = $( this );
+					elementorCommon.ajax.addRequest( campaignNotices[ noticeId ], {
+						data: {
+							campaign: $button?.data( 'campaign' ) || '',
+							source: $button?.data( 'source' ) || '',
+							medium: $button?.data( 'medium' ) || '',
+						},
+					} );
 				} );
 			} );
 
 			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
+				const $button = $( this );
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source: 'io-esetting-addons-install',
-					},
-				} );
-			} );
-
-			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="site_mailer_promotion"] a.e-button--cta' ).on( 'click', function() {
-				const isWcNotice = $( this ).closest( '.e-notice' ).hasClass( 'sm-notice-wc' );
-				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
-					data: {
-						source: isWcNotice ? 'sm-core-woo-install' : 'sm-core-form-install',
+						campaign: $button?.data( 'campaign' ) || '',
+						source: $button?.data( 'source' ) || '',
+						medium: $button?.data( 'medium' ) || '',
 					},
 				} );
 			} );
@@ -279,14 +282,12 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				click( event ) {
 					event.preventDefault();
 
-					event.currentTarget.focus(); // Safari does not focus the tab automatically
+					self.activateSettingsTab( event.currentTarget );
+
+					event.currentTarget.focus();
 				},
-				focus() { // Using focus event to enable navigation by tab key
-					var hrefWithoutHash = location.href.replace( /#.*/, '' );
-
-					history.pushState( {}, '', hrefWithoutHash + this.hash );
-
-					self.goToSettingsTabFromHash();
+				focus() {
+					self.activateSettingsTab( this );
 				},
 			} );
 
@@ -297,7 +298,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 					placeholderUrl = $rollbackButton.data( 'placeholder-url' );
 
 				$rollbackButton.html( placeholderText.replace( '{VERSION}', $this.val() ) );
-				$rollbackButton.attr( 'href', placeholderUrl.replace( 'VERSION', $this.val() ) );
+				$rollbackButton.data( 'href', placeholderUrl.replace( 'VERSION', $this.val() ) );
 			} ).trigger( 'change' );
 
 			$( '.elementor-rollback-button' ).on( 'click', function( event ) {
@@ -315,7 +316,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 					onConfirm() {
 						$this.addClass( 'loading' );
 
-						location.href = $this.attr( 'href' );
+						location.href = $this.data( 'href' );
 					},
 				} ).show();
 			} );
@@ -396,7 +397,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 		 */
 		openLinksInNewTab() {
 			const elements = [
-				this.elements.$menuGetHelpLink,
 				this.elements.$menuGoProLink,
 			];
 
@@ -415,6 +415,10 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				return;
 			}
 
+			if ( 0 === this.elements.$importNowButton.length ) {
+				return;
+			}
+
 			const self = this,
 				$importForm = self.elements.$importForm,
 				$importButton = self.elements.$importButton,
@@ -424,7 +428,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
-			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
+			$( '#wpbody-content' ).find( '.page-title-action' ).first().before( $importButton );
 
 			self.elements.$formAnchor.after( $importArea );
 
@@ -499,6 +503,18 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 		animateLoader() {
 			this.elements.$goToEditLink.addClass( 'elementor-animate' );
+		},
+
+		activateSettingsTab( tabElement ) {
+			if ( ! tabElement?.hash ) {
+				return;
+			}
+
+			const hrefWithoutHash = location.href.replace( /#.*/, '' );
+
+			history.pushState( {}, '', hrefWithoutHash + tabElement.hash );
+
+			this.goToSettingsTabFromHash();
 		},
 
 		goToSettingsTabFromHash() {

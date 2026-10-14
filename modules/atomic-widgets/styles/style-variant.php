@@ -28,6 +28,11 @@ class Style_Variant {
 		return $this;
 	}
 
+	public function add_props( array $props ): self {
+		$this->props = array_merge( $this->props, $props );
+		return $this;
+	}
+
 	public function build(): array {
 		return [
 			'meta' => [

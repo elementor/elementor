@@ -34,7 +34,7 @@ class Export_Runner extends Export_Runner_Base {
 			];
 		}
 
-		$global_classes = Global_Classes_Repository::make()->all()->get();
+		$global_classes = Global_Classes_Repository::make( $kit )->all()->get();
 
 		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
 

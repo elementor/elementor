@@ -142,8 +142,8 @@
 		}
 	}
 
-	&__cta-button,
-	&__cta-button:not([href]):not([tabindex]) {
+	& .e-floating-bars__cta-button,
+	& .e-floating-bars__cta-button:not([href]):not([tabindex]) {
 		align-items: center;
 		color: var(--e-floating-bars-cta-button-text-color);
 		display: inline-flex;

@@ -1,3 +1,11 @@
+/**
+ * The source alias map, retained at this path after the Grunt and Webpack removal because two
+ * consumers still resolve it by literal path: `tests/jest/jest.config.js` and Elementor Pro's Vite
+ * build (`scripts/vite/shared/paths.mjs`). It moves under `scripts/vite/shared/` once Pro is updated.
+ *
+ * The `resolve.alias` shape is part of that contract and is why it survives rather than the flat map
+ * it would otherwise be.
+ */
 const path = require( 'path' );
 
 module.exports = {

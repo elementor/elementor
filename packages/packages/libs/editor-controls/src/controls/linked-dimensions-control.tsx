@@ -1,0 +1,293 @@
+import * as React from 'react';
+import { type RefObject, useLayoutEffect, useRef, useState } from 'react';
+import {
+	dimensionsPropTypeUtil,
+	type DimensionsPropValue,
+	type PropKey,
+	type PropValue,
+	sizePropTypeUtil,
+	type SizePropValue,
+} from '@elementor/editor-props';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
+import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
+import { Grid, Stack, Tooltip } from '@elementor/ui';
+import { __, sprintf } from '@wordpress/i18n';
+
+import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
+import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
+import { StyledToggleButton } from '../components/control-toggle-button-group';
+import { type ExtendedOption } from '../utils/size-control';
+import { UnstableSizeControl } from './size-control/unstable-size-control';
+
+type Props = {
+	label: string;
+	isSiteRtl?: boolean;
+	extendedOptions?: ExtendedOption[];
+	min?: number;
+};
+
+export const LinkedDimensionsControl = ( { label, isSiteRtl = false, min }: Props ) => {
+	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
+
+	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
+
+	const {
+		value: dimensionsValue,
+		setValue: setDimensionsValue,
+		propType,
+		placeholder: dimensionsPlaceholder,
+		disabled: dimensionsDisabled,
+	} = useBoundProp( dimensionsPropTypeUtil );
+
+	const { value: masterValue, placeholder: masterPlaceholder, setValue: setMasterValue } = useBoundProp();
+
+	const inferIsLinked = () => {
+		if ( dimensionsPropTypeUtil.isValid( masterValue ) ) {
+			return false;
+		}
+
+		if ( ! masterValue && dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	const [ isLinked, setIsLinked ] = useState( () => inferIsLinked() );
+
+	const activeBreakpoint = useActiveBreakpoint();
+
+	const isCurrentlyDimensions = dimensionsPropTypeUtil.isValid( masterValue ?? masterPlaceholder );
+
+	useLayoutEffect( () => {
+		setIsLinked( inferIsLinked );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activeBreakpoint, isCurrentlyDimensions ] );
+
+	const onLinkToggle = () => {
+		setIsLinked( ( prev ) => ! prev );
+
+		if ( ! dimensionsPropTypeUtil.isValid( masterValue ) ) {
+			const value = masterValue ? masterValue : null;
+
+			if ( ! value ) {
+				setMasterValue( null );
+				return;
+			}
+
+			setMasterValue(
+				dimensionsPropTypeUtil.create( {
+					'block-start': value,
+					'block-end': value,
+					'inline-start': value,
+					'inline-end': value,
+				} )
+			);
+
+			return;
+		}
+
+		const sizeValue = getFirstDefined( dimensionsValue ) ?? null;
+
+		if ( ! sizeValue ) {
+			setMasterValue( null );
+			return;
+		}
+
+		setMasterValue( sizeValue );
+	};
+
+	const tooltipLabel = label.toLowerCase();
+
+	const LinkedIcon = isLinked ? LinkIcon : DetachIcon;
+	// translators: %s: Tooltip title.
+	const linkedLabel = __( 'Link %s', 'elementor' ).replace( '%s', tooltipLabel );
+	// translators: %s: Tooltip title.
+	const unlinkedLabel = __( 'Unlink %s', 'elementor' ).replace( '%s', tooltipLabel );
+
+	const disabled = sizeDisabled || dimensionsDisabled;
+
+	const effectiveDimensionsPlaceholder =
+		dimensionsPlaceholder ??
+		( ! isLinked
+			? {
+					'block-start': masterPlaceholder,
+					'block-end': masterPlaceholder,
+					'inline-start': masterPlaceholder,
+					'inline-end': masterPlaceholder,
+			  }
+			: null );
+
+	const propProviderProps = {
+		propType,
+		value: dimensionsValue,
+		placeholder: effectiveDimensionsPlaceholder,
+		setValue: ( dimensions: PropValue ) => {
+			const entries = Object.entries( dimensions as DimensionsPropValue );
+			const filtered = entries.filter( ( [ , value ] ) => Boolean( value ) );
+
+			setDimensionsValue( filtered.length === 0 ? null : Object.fromEntries( filtered ) );
+		},
+		isDisabled: () => dimensionsDisabled,
+	};
+
+	const hasPlaceholders = ! masterValue && ( dimensionsPlaceholder || masterPlaceholder );
+
+	const getEffectivePlaceholder = ( bind: string ) => {
+		if ( isLinked ) {
+			const linkedPlaceholder = getFirstDefined( dimensionsPlaceholder );
+
+			return sizePropTypeUtil.extract( linkedPlaceholder );
+		}
+
+		return sizePropTypeUtil.extract( dimensionsPlaceholder?.[ bind as keyof DimensionsPropValue[ 'value' ] ] );
+	};
+
+	return (
+		<PropProvider { ...propProviderProps }>
+			<Stack direction="row" gap={ 2 } flexWrap="nowrap">
+				<ControlFormLabel>{ label }</ControlFormLabel>
+				<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
+					<StyledToggleButton
+						aria-label={ isLinked ? unlinkedLabel : linkedLabel }
+						size={ 'tiny' }
+						value={ 'check' }
+						selected={ isLinked }
+						sx={ { marginLeft: 'auto' } }
+						onChange={ onLinkToggle }
+						disabled={ disabled }
+						isPlaceholder={ hasPlaceholders }
+					>
+						<LinkedIcon fontSize={ 'tiny' } />
+					</StyledToggleButton>
+				</Tooltip>
+			</Stack>
+
+			{ getCssDimensionProps( label, isSiteRtl ).map( ( row, index ) => (
+				<Stack direction="row" gap={ 2 } flexWrap="nowrap" key={ index } ref={ gridRowRefs[ index ] }>
+					{ row.map( ( { icon, ...props } ) => (
+						<Grid container gap={ 0.75 } alignItems="center" key={ props.bind }>
+							<Grid item xs={ 12 }>
+								<Label { ...props } />
+							</Grid>
+							<Grid item xs={ 12 }>
+								<Control
+									bind={ props.bind }
+									ariaLabel={ props.ariaLabel }
+									startIcon={ icon }
+									isLinked={ isLinked }
+									placeholder={ getEffectivePlaceholder( props.bind ) ?? undefined }
+									anchorRef={ gridRowRefs[ index ] }
+									min={ min }
+								/>
+							</Grid>
+						</Grid>
+					) ) }
+				</Stack>
+			) ) }
+		</PropProvider>
+	);
+};
+
+const Control = ( {
+	bind,
+	ariaLabel,
+	startIcon,
+	isLinked,
+	placeholder,
+	anchorRef,
+	min,
+}: {
+	bind: PropKey;
+	ariaLabel: string;
+	startIcon: React.ReactNode;
+	isLinked: boolean;
+	placeholder?: SizePropValue[ 'value' ];
+	anchorRef: RefObject< HTMLDivElement >;
+	min?: number;
+} ) => {
+	if ( isLinked ) {
+		return (
+			<UnstableSizeControl
+				ariaLabel={ ariaLabel }
+				startIcon={ startIcon }
+				anchorRef={ anchorRef }
+				placeholder={ placeholder }
+				min={ min }
+			/>
+		);
+	}
+
+	return (
+		<PropKeyProvider bind={ bind }>
+			<UnstableSizeControl
+				ariaLabel={ ariaLabel }
+				startIcon={ startIcon }
+				anchorRef={ anchorRef }
+				min={ min }
+				placeholder={ placeholder }
+			/>
+		</PropKeyProvider>
+	);
+};
+
+const Label = ( { label, bind }: { label: string; bind: PropKey } ) => {
+	return (
+		<PropKeyProvider bind={ bind }>
+			<ControlLabel>{ label }</ControlLabel>
+		</PropKeyProvider>
+	);
+};
+
+const getFirstDefined = ( dimensions: DimensionsPropValue[ 'value' ] | null | undefined ) => {
+	return (
+		dimensions?.[ 'block-start' ] ??
+		dimensions?.[ 'inline-end' ] ??
+		dimensions?.[ 'block-end' ] ??
+		dimensions?.[ 'inline-start' ]
+	);
+};
+
+function getCssDimensionProps( label: string, isSiteRtl: boolean ) {
+	return [
+		[
+			{
+				bind: 'block-start',
+				label: __( 'Top', 'elementor' ),
+				/* translators: %s is the name of the main group (margin or padding) */
+				ariaLabel: sprintf( __( '%s top', 'elementor' ), label ),
+				icon: <SideTopIcon fontSize={ 'tiny' } />,
+			},
+			{
+				bind: 'inline-end',
+				label: isSiteRtl ? __( 'Left', 'elementor' ) : __( 'Right', 'elementor' ),
+				ariaLabel: isSiteRtl
+					? /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s left', 'elementor' ), label )
+					: /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s right', 'elementor' ), label ),
+				icon: isSiteRtl ? <SideLeftIcon fontSize={ 'tiny' } /> : <SideRightIcon fontSize={ 'tiny' } />,
+			},
+		],
+		[
+			{
+				bind: 'block-end',
+				label: __( 'Bottom', 'elementor' ),
+				/* translators: %s is the name of the main group (margin or padding) */
+				ariaLabel: sprintf( __( '%s bottom', 'elementor' ), label ),
+				icon: <SideBottomIcon fontSize={ 'tiny' } />,
+			},
+			{
+				bind: 'inline-start',
+				label: isSiteRtl ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' ),
+				ariaLabel: isSiteRtl
+					? /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s right', 'elementor' ), label )
+					: /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s left', 'elementor' ), label ),
+				icon: isSiteRtl ? <SideRightIcon fontSize={ 'tiny' } /> : <SideLeftIcon fontSize={ 'tiny' } />,
+			},
+		],
+	];
+}

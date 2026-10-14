@@ -1,0 +1,38 @@
+---
+description: Development workflow and environment setup rules
+alwaysApply: false
+---
+
+# Development Workflow Rules
+
+## Environment
+- Node.js >= 20.19.0, npm >= 10.0.0, PHP >= 7.4, Composer, Docker (testing)
+- Setup: `npm run prepare-environment`
+
+## Main Repository Commands
+- `npm run watch` - Development (builds packages + watches)
+- `npm run build` / `npm run build:packages` - Build
+- `npm run test:php` / `npm run test:jest` / `npm run test:playwright` - Tests
+
+## Turbo-Repo Commands (cd packages)
+- `npm run dev` / `npm run build` / `npm run test`
+- `npm run lint` / `npm run check-unused` / `npm run format`
+
+## File Structure
+```
+elementor/
+├── app/, core/, includes/, modules/, tests/  (Main Repository)
+└── packages/packages/{core,libs,tools}/      (Turbo-Repo)
+```
+
+## Workflow
+1. Search existing functionality first
+2. Understand if main repo or turbo-repo work
+3. Follow existing patterns and conventions
+4. Run tests and linting after implementation
+5. Verify no circular dependencies
+
+## Troubleshooting
+- Reset: `npm run hard-reinstall`
+- Force rebuild: `npm run build --force`
+- Clear turbo cache: `cd packages && turbo build --force`

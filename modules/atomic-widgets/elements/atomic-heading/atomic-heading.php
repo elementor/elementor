@@ -2,18 +2,23 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Has_Ally_Promotion_Notice;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,6 +26,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
+	use Has_Ally_Promotion_Notice;
+
+	const LINK_BASE_STYLE_KEY = 'link-base';
+
+	public static $widget_description = 'Display a heading with customizable tag, styles, and link options.';
 
 	public static function get_element_type(): string {
 		return 'e-heading';
@@ -31,67 +41,107 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'heading', 'title', 'text', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
 	}
 
 	public function get_icon() {
 		return 'eicon-e-heading';
 	}
 
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'h2', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
+	}
+
 	protected static function define_props_schema(): array {
-		return [
+		return array_merge( [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' ),
+				->default( 'h2' )
+				->description( 'The HTML tag for the heading element. One of: h1, h2, h3, h4, h5, or h6. Do not use p, span, or div.' ),
 
-			'title' => String_Prop_Type::make()
-				->default( __( 'This is a title', 'elementor' ) ),
+			'title' => Escaped_Html_Prop_Type::make()
+				->default( __( 'This is a title', 'elementor' ) )
+				->description( 'The text content of the heading.' )
+				->alias( 'text', 'content', 'heading' ),
 
 			'link' => Link_Prop_Type::make(),
-		];
+
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+		], static::get_ally_promotion_notice_prop_schema() );
 	}
 
 	protected function define_atomic_controls(): array {
+		$title_control = Inline_Editing_Control::bind_to( 'title' )
+			->set_placeholder( __( 'Type your title here', 'elementor' ) )
+			->set_label( __( 'Title', 'elementor' ) );
+		$promotion = $this->get_ally_promotion_trigger();
+
+		if ( $promotion ) {
+			$title_control->set_promotion( $promotion )->set_meta( [ 'layout' => 'custom' ] );
+		}
+
+		$content_section = Section::make()
+			->set_label( __( 'Content', 'elementor' ) )
+			->set_id( 'content' )
+			->set_items( [ $title_control ] );
+
 		return [
+			$content_section,
 			Section::make()
-				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
-					Textarea_Control::bind_to( 'title' )
-						->set_label( __( 'Title', 'elementor' ) )
-						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-					Select_Control::bind_to( 'tag' )
-						->set_label( esc_html__( 'Tag', 'elementor' ) )
-						->set_options( [
-							[
-								'value' => 'h1',
-								'label' => 'H1',
-							],
-							[
-								'value' => 'h2',
-								'label' => 'H2',
-							],
-							[
-								'value' => 'h3',
-								'label' => 'H3',
-							],
-							[
-								'value' => 'h4',
-								'label' => 'H4',
-							],
-							[
-								'value' => 'h5',
-								'label' => 'H5',
-							],
-							[
-								'value' => 'h6',
-								'label' => 'H6',
-							],
-						]),
-					Link_Control::bind_to( 'link' ),
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Select_Control::bind_to( 'tag' )
+				->set_options([
+					[
+						'value' => 'h1',
+						'label' => 'H1',
+					],
+					[
+						'value' => 'h2',
+						'label' => 'H2',
+					],
+					[
+						'value' => 'h3',
+						'label' => 'H3',
+					],
+					[
+						'value' => 'h4',
+						'label' => 'H4',
+					],
+					[
+						'value' => 'h5',
+						'label' => 'H5',
+					],
+					[
+						'value' => 'h6',
+						'label' => 'H6',
+					],
+				])
+				->set_label( __( 'Tag', 'elementor' ) ),
+			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
 				] ),
+			Text_Control::bind_to( '_cssid' )
+			->set_label( __( 'ID', 'elementor' ) )
+			->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
@@ -107,6 +157,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Style_Variant::make()
 						->add_prop( 'margin', $margin_value )
 				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
+				),
 		];
 	}
 
@@ -114,5 +170,33 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$title = wp_strip_all_tags( $settings['title'] ?? '' );
+
+		if ( empty( $title ) ) {
+			return '';
+		}
+
+		$tag = $settings['tag'] ?? 'h2';
+		$level_map = [
+			'h1' => 1,
+			'h2' => 2,
+			'h3' => 3,
+			'h4' => 4,
+			'h5' => 5,
+			'h6' => 6,
+		];
+		$level = $level_map[ $tag ] ?? 2;
+
+		$md = str_repeat( '#', $level ) . ' ' . $title;
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$md = str_repeat( '#', $level ) . ' [' . $title . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return $md;
 	}
 }

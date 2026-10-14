@@ -90,6 +90,9 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 			.toggleClass( 'e-media-empty-placeholder', ( ! value && ! isPlaceholder ) );
 
 		if ( 'image' === mediaType ) {
+			if ( this.ui.promotions.length ) {
+				this.ui.promotions.hide();
+			}
 			if ( attachmentId ) {
 				const dismissPromotionEventName = this.getDismissPromotionEventName();
 				const handleHints = ( attachment ) => {
@@ -102,14 +105,6 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 					}
 				};
 				wp.media.attachment( attachmentId ).fetch().then( handleHints );
-			} else {
-				// eslint-disable-next-line capitalized-comments
-				// this.ui.warnings.hide();
-
-				// eslint-disable-next-line no-lonely-if
-				if ( this.ui.promotions.length ) {
-					this.ui.promotions.hide();
-				}
 			}
 		}
 	},
@@ -197,11 +192,23 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onPromotionAction( event ) {
-		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		let settings = {};
+
+		try {
+			settings = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		} catch ( e ) {
+			// Do nothing.
+		}
+
+		const {
+			action_url: actionURL = null,
+			source = 'io-editor-image-install',
+		} = settings;
+
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
 		}
-		this.hidePromotion();
+		this.hidePromotion( null, source );
 	},
 
 	dismissPromotion( eventName ) {
@@ -215,7 +222,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 	},
 
-	hidePromotion( eventName = null ) {
+	hidePromotion( eventName = null, source = 'io-editor-image-install' ) {
 		const $promotions = this.ui.promotions;
 		$promotions.hide();
 		if ( ! eventName ) {
@@ -224,7 +231,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 			data: {
-				source: 'io-editor-image-install',
+				source,
 			},
 		} );
 

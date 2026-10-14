@@ -12,9 +12,9 @@ class Upgrade_Utils {
 	/**
 	 *  _update_widget_settings
 	 *
-	 * @param string $widget_id  widget type id.
+	 * @param string  $widget_id widget type id.
 	 * @param Updater $updater   updater instance.
-	 * @param array $changes     array containing updating control_ids, callback and other data needed by the callback.
+	 * @param array   $changes   array containing updating control_ids, callback and other data needed by the callback.
 	 *
 	 * @return bool
 	 */

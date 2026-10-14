@@ -1,9 +1,11 @@
 import { type APIRequestContext, type Page, Response, type TestInfo } from '@playwright/test';
+import ApiRequests from '../assets/api-requests';
+import { wpCli } from '../assets/wp-cli';
+import { timeouts } from '../config/timeouts';
+import topBarSelectors from '../selectors/top-bar-selectors';
+import { ElementorType, WindowType } from '../types/types';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-import { ElementorType, WindowType } from '../types/types';
-import { wpCli } from '../assets/wp-cli';
-import ApiRequests from '../assets/api-requests';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -19,8 +21,61 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async gotoDashboard(): Promise<void> {
-		await this.page.goto( '/wp-admin' );
+	async openWordPressDashboard(): Promise<void> {
+		await this.page.goto( '/wp-admin/' );
+	}
+
+	/**
+	 * Go to the WordPress User Profile.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openWordPressUserProfile(): Promise<void> {
+		await this.page.goto( '/wp-admin/profile.php' );
+	}
+
+	/**
+	 * Go to the WordPress Settings pages.
+	 *
+	 * @param {('general' | 'writing' | 'reading' | 'discussion' | 'media' | 'permalink' | 'privacy')} page - The settings page to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openWordPressSettings( page: 'general' | 'writing' | 'reading' | 'discussion' | 'media' | 'permalink' | 'privacy' ): Promise<void> {
+		await this.page.goto( `/wp-admin/options-${ page }.php` );
+	}
+
+	/**
+	 * Go to the WordPress Settings pages.
+	 *
+	 * @param {('tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-performance' | 'tab-experiments')} tab - The Elementor settings tab to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openElementorSettings( tab: 'tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-performance' | 'tab-experiments' ): Promise<void> {
+		await this.page.goto( `/wp-admin/admin.php?page=elementor-settings#${ tab }` );
+		await this.page.locator( `#elementor-settings-${ tab }` ).waitFor();
+	}
+
+	/**
+	 * Set settings in Elementor advanced/performance tab, as they both have only select-based options.
+	 *
+	 * @param {('tab-advanced' | 'tab-performance')} tab      - Either Elementor advanced or performance tab.
+	 * @param {Object}                               settings - Settings to set ( `{ setting_id: setting_value }` );
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setElementorSettings( tab: 'tab-advanced' | 'tab-performance', settings: { [ n: string ]: string } ): Promise<void> {
+		await this.openElementorSettings( tab );
+
+		for ( const [ selector, state ] of Object.entries( settings ) ) {
+			const selectLocator = this.page.locator( `select[name="${ selector }"]` );
+			await selectLocator.waitFor( { state: 'attached' } );
+
+			await selectLocator.selectOption( state.toString(), { force: true } );
+		}
+
+		await this.page.click( '#submit' );
 	}
 
 	/**
@@ -29,7 +84,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async login(): Promise<void> {
-		await this.gotoDashboard();
+		await this.openWordPressDashboard();
 
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
@@ -53,7 +108,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async customLogin( username: string, password: string ): Promise<void> {
-		await this.gotoDashboard();
+		await this.openWordPressDashboard();
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
 		if ( loggedIn ) {
@@ -90,6 +145,25 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
+	 * Edit an existing Elementor page.
+	 *
+	 * @param {string}   postId        - The ID of the page to edit.
+	 * @param {Object}   prop          - Properties object.
+	 * @param {Page}     prop.page     - Playwright Page object.
+	 * @param {TestInfo} prop.testInfo - Playwright TestInfo object.
+	 * @return {Promise<EditorPage>}
+	 */
+	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
+		await page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+
+		await page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( page, testInfo );
+	}
+
+	/**
 	 * Create a new page with the API and open it in Elementor.
 	 *
 	 * @return {Promise<string>}
@@ -120,7 +194,7 @@ export default class WpAdminPage extends BasePage {
 	 */
 	async createNewPostFromDashboard( setPageName: boolean ): Promise<void> {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
-			await this.gotoDashboard();
+			await this.openWordPressDashboard();
 		}
 
 		await this.page.click( '.e-overview__create > a' );
@@ -138,13 +212,15 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageName(): Promise<void> {
-		await this.page.locator( '#elementor-panel-footer-settings' ).click();
+		const topbarLocator = this.page.locator( '#elementor-editor-wrapper-v2' );
+
+		await topbarLocator.locator( `button[${ topBarSelectors.pageSettings.attribute }="${ topBarSelectors.pageSettings.attributeValue }"]` ).click();
 
 		const pageId = await this.page.evaluate( () => elementor.config.initial_document.id );
 		await this.page.locator( '.elementor-control-post_title input' ).fill( `Playwright Test Page #${ pageId }` );
 
-		await this.page.locator( '#elementor-panel-footer-saver-options' ).click();
-		await this.page.locator( '#elementor-panel-footer-sub-menu-item-save-draft' ).click();
+		await topbarLocator.locator( `button[${ topBarSelectors.saveOptions.attribute }="${ topBarSelectors.saveOptions.attributeValue }"]` ).click();
+		await this.page.getByRole( 'menuitem', { name: 'Save Draft' } ).click();
 		await this.page.locator( '#elementor-panel-header-add-button' ).click();
 	}
 
@@ -187,14 +263,22 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async waitForPanel(): Promise<void> {
-		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
+		// The DOM signals above hide before the editor bootstrap assigns `window.elementor` and
+		// registers the `document` container, so a test that immediately does
+		// `elementor.getContainer( 'document' )` can get back `undefined` rather than a
+		// `ReferenceError`. Polling the container itself, not just the method, closes that race
+		// deterministically for the common case of adding elements right after the panel loads.
+		await this.page.waitForFunction(
+			() => Boolean( ( window as unknown as { elementor?: { getContainer?: ( id: string ) => unknown } } ).elementor?.getContainer?.( 'document' ) ),
+			null,
+			{ timeout: timeouts.heavyAction },
+		);
 	}
 
 	/**
 	 * Activate and deactivate Elementor experiments.
-	 *
-	 * TODO: The testing environment isn't clean between tests - Use with caution!
 	 *
 	 * @param {Object}            experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 * @param {(boolean|string)=} oldUrl      - Optional. Whether to use the old URL structure. Default is false.
@@ -206,7 +290,7 @@ export default class WpAdminPage extends BasePage {
 			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 			await this.page.click( '#elementor-settings-tab-experiments' );
 		} else {
-			await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+			await this.openElementorSettings( 'tab-experiments' );
 		}
 
 		const prefix = 'e-experiment';
@@ -214,8 +298,13 @@ export default class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some experiments may be hidden for the user,
-			// but actually exist and need to be tested.
+			await this.page.waitForSelector( selector, { state: 'attached', timeout: 10000 } );
+
+			const selectElement = this.page.locator( selector );
+			await selectElement.waitFor( { state: 'visible', timeout: 5000 } );
+
+			await this.page.waitForTimeout( 500 );
+
 			await this.page.evaluate( ( el ) => {
 				const element: HTMLElement = document.querySelector( el );
 
@@ -224,9 +313,16 @@ export default class WpAdminPage extends BasePage {
 				}
 			}, `.elementor_experiment-${ id }` );
 
-			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
+			let optionValue: string;
 
-			// Click to confirm any experiment that has dependencies.
+			if ( 'string' === typeof state ) {
+				optionValue = state;
+			} else {
+				optionValue = state ? 'active' : 'inactive';
+			}
+
+			await selectElement.selectOption( optionValue, { timeout: 5000 } );
+
 			await this.confirmExperimentModalIfOpen();
 		}
 
@@ -239,7 +335,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async resetExperiments(): Promise<void> {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		await this.openElementorSettings( 'tab-experiments' );
 		await this.page.getByRole( 'button', { name: 'default' } ).click();
 	}
 
@@ -260,7 +356,7 @@ export default class WpAdminPage extends BasePage {
 			languageCheck = 'en_US';
 		}
 
-		await this.page.goto( '/wp-admin/options-general.php' );
+		await this.openWordPressSettings( 'general' );
 
 		const isLanguageActive = await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible();
 
@@ -281,7 +377,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setUserLanguage( language: string ): Promise<void> {
-		await this.page.goto( 'wp-admin/profile.php' );
+		await this.openWordPressUserProfile();
 		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
 	}
@@ -324,9 +420,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async enableAdvancedUploads(): Promise<void> {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
-		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
-		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+		await this.setElementorSettings( 'tab-advanced', { elementor_unfiltered_files_upload: '1' } );
 	}
 
 	/**
@@ -335,9 +429,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async disableAdvancedUploads(): Promise<void> {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
-		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
-		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
+		await this.setElementorSettings( 'tab-advanced', { elementor_unfiltered_files_upload: '' } );
 	}
 
 	/**
@@ -356,6 +448,11 @@ export default class WpAdminPage extends BasePage {
 			const editorSessionId = window.EDITOR_SESSION_ID;
 			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
 		} );
+
+		const angieGuideCard = this.page.getByTestId( 'e-angie-guide-card' );
+		if ( await angieGuideCard.isVisible() ) {
+			await angieGuideCard.getByRole( 'button', { name: 'Close' } ).click();
+		}
 	}
 
 	/**
@@ -409,5 +506,15 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).check();
 		await this.page.locator( '#submit' ).click();
+	}
+
+	async cleanAdminPageForScreenshot(): Promise<void> {
+		await this.page.addStyleTag( {
+			content: '.notice, .update-nag, .e-notice { display: none !important; }',
+		} );
+
+		await this.page.evaluate( () => {
+			document.querySelectorAll( 'iframe' ).forEach( ( iframe ) => iframe.remove() );
+		} );
 	}
 }

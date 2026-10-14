@@ -135,6 +135,18 @@ export const twitter = {
 	},
 };
 
+export const xTwitter = {
+	get element() {
+		const svgData = {
+			path: 'M760.16 93.75h137.89L596.88 437.89 951.17 906.25H673.83L456.45 622.27 208.01 906.25H69.92L391.99 538.09 52.34 93.75H336.72L533.01 353.32 760.16 93.75zM711.72 823.83h76.37L295.12 171.88h-82.03L711.72 823.83z',
+			width: 1000,
+			height: 1000,
+		};
+
+		return iconsManager.createSvgElement( 'x-twitter', svgData );
+	},
+};
+
 export const zoomInBold = {
 	get element() {
 		const svgData = {

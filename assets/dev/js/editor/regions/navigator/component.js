@@ -26,9 +26,9 @@ export default class Component extends ComponentBase {
 	}
 
 	open( args ) {
-		const { model = false } = args;
+		const { model = false, expandAllElements = false } = args;
 
-		this.manager.open( model );
+		this.manager.open( model, { expandAllElements } );
 
 		return true;
 	}

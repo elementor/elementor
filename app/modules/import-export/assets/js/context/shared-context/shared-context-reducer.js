@@ -16,6 +16,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, selectedCustomPostTypes: payload };
 		case 'SET_CURRENT_PAGE_NAME':
 			return { ...state, currentPage: payload };
+		case 'SET_RETURN_TO':
+			return { ...state, returnTo: payload };
 		default:
 			return state;
 	}

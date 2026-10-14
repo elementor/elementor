@@ -22,7 +22,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 	test( 'Enable SVG fit-to-size', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
-			iconWidget = await editor.addWidget( 'icon' ),
+			iconWidget = await editor.addWidget( { widgetType: 'icon' } ),
 			iconSelector = '.elementor-element-' + iconWidget + ' .elementor-icon';
 
 		await test.step( 'Fit Aspect hidden for Icons', async () => {
@@ -71,7 +71,7 @@ test.describe( 'Icon and social icon widget tests', () => {
 		await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'social-icons' );
+		await editor.addWidget( { widgetType: 'social-icons' } );
 		await page.locator( EditorSelectors.item ).first().click();
 		const mediaUploadControl = page.locator( '.elementor-control-social_icon .elementor-control-media__preview' ).first();
 		await mediaUploadControl.hover();

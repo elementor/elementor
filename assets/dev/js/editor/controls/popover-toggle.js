@@ -157,6 +157,15 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 		return $message;
 	}
 
+	createHeaderItemMarkup( text ) {
+		return jQuery( '<div>', { class: 'e-global__group-header' } )
+			.text( text );
+	}
+
+	createDividerMarkup() {
+		return jQuery( '<div>', { class: 'e-global__group-divider' } );
+	}
+
 	async getGlobalsList() {
 		const result = await $e.data.get( this.getGlobalCommand() );
 
@@ -164,13 +173,38 @@ export default class ControlPopoverStarterView extends ControlChooseView {
 	}
 
 	buildGlobalsList( globalTypographies, $globalPreviewItemsContainer ) {
-		Object.values( globalTypographies ).forEach( ( typography ) => {
-			// Only build markup if the typography is valid.
-			if ( typography ) {
-				const $typographyPreview = this.createGlobalItemMarkup( typography );
+		const v4Typographies = [];
+		const v3Typographies = [];
 
-				$globalPreviewItemsContainer.append( $typographyPreview );
+		Object.values( globalTypographies ).forEach( ( typography ) => {
+			if ( ! typography ) {
+				return;
 			}
+
+			if ( 'v4' === typography.group ) {
+				v4Typographies.push( typography );
+			} else {
+				v3Typographies.push( typography );
+			}
+		} );
+
+		if ( v4Typographies.length ) {
+			$globalPreviewItemsContainer.append(
+				this.createHeaderItemMarkup( __( 'Atomic Classes', 'elementor' ) ),
+			);
+
+			v4Typographies.forEach( ( typography ) => {
+				$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( typography ) );
+			} );
+
+			if ( v3Typographies.length ) {
+				$globalPreviewItemsContainer.append( this.createDividerMarkup() );
+				$globalPreviewItemsContainer.append( this.createHeaderItemMarkup( __( 'Global Fonts', 'elementor' ) ) );
+			}
+		}
+
+		v3Typographies.forEach( ( typography ) => {
+			$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( typography ) );
 		} );
 	}
 

@@ -5,8 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Admin\Admin_Notices;
 
 class Hints {
 
@@ -21,7 +23,13 @@ class Hints {
 	const CAPABILITY = 'capability';
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
+	const PLUGIN_CONNECTED = 'plugin_connected';
 	const NOT_HAS_OPTION = 'not_has_option';
+
+	const INSTALL = 'install';
+	const ACTIVATE = 'activate';
+	const CONNECT = 'connect';
+	const CUSTOMIZE = 'customize';
 
 	/**
 	 * Get_notice_types
@@ -65,12 +73,22 @@ class Hints {
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'manage_options',
 				self::NOT_DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
-				self::NOT_HAS_OPTION => 'image_optimizer_access_token',
+				self::PLUGIN_CONNECTED => [ 'image_optimizer', 'image-optimization' ],
 			],
 			'image-optimization-media-modal' => [
 				self::DISMISSED => 'image-optimization-media-modal',
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
+			'ally_heading_notice' => [
+				self::DISMISSED => 'ally_heading_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
+			],
+			'ally_atomic_notice' => [
+				self::DISMISSED => 'ally_atomic_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::PLUGIN_CONNECTED => [ 'ea11y', 'pojo-accessibility' ],
 			],
 		];
 		if ( ! $hint_key ) {
@@ -99,11 +117,11 @@ class Hints {
 	 * Print or Retrieve the notice template.
 	 *
 	 * @param array $notice
-	 * @param bool $return
+	 * @param bool  $should_return
 	 *
 	 * @return string|void
 	 */
-	public static function get_notice_template( array $notice, bool $return = false ) {
+	public static function get_notice_template( array $notice, bool $should_return = false ) {
 		$default_settings = [
 			'type' => 'info',
 			'icon' => false,
@@ -176,7 +194,7 @@ class Hints {
 			$notice_settings['display']
 		);
 
-		if ( $return ) {
+		if ( $should_return ) {
 			return $notice_template;
 		}
 		echo wp_kses( $notice_template, self::get_notice_allowed_html() );
@@ -216,6 +234,23 @@ class Hints {
 			admin_url( 'plugins.php?action=activate&plugin=' . $path ),
 			'activate-plugin_' . $path
 		);
+	}
+
+	/**
+	 * Decode_url_for_js
+	 *
+	 * `wp_nonce_url()` (used by `get_plugin_install_url()` and `get_plugin_activate_url()`) HTML-escapes
+	 * its result (e.g. `&` becomes `&amp;`) for direct raw HTML/template output, where the browser's HTML
+	 * parser decodes the entities back. Consumers that send the URL through a JSON REST response, editor
+	 * script settings, or a React/JS component prop use it as a raw string that is never HTML-parsed, so
+	 * it must be decoded back to a literal URL before being handed to those contexts.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	public static function decode_url_for_js( string $url ): string {
+		return wp_specialchars_decode( $url, ENT_QUOTES );
 	}
 
 	/**
@@ -287,6 +322,15 @@ class Hints {
 
 					break;
 
+				case self::PLUGIN_CONNECTED:
+					[ $option_prefix, $plugin_slug ] = $value;
+
+					if ( self::is_plugin_connected( $option_prefix, $plugin_slug ) ) {
+						return false;
+					}
+
+					break;
+
 				case self::NOT_HAS_OPTION:
 					$option = get_option( $value );
 					if ( ! empty( $option ) ) {
@@ -333,6 +377,10 @@ class Hints {
 	 * @return bool
 	 */
 	public static function is_plugin_installed( $plugin ): bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugins = get_plugins();
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return ! empty( $plugins[ $plugin ] );
@@ -346,6 +394,10 @@ class Hints {
 	 * @return bool
 	 */
 	public static function is_plugin_active( $plugin ): bool {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return is_plugin_active( $plugin );
 	}
@@ -353,17 +405,20 @@ class Hints {
 	/**
 	 * Get_plugin_action_url
 	 *
+	 * Returns a decoded install/activate nonce URL (see `decode_url_for_js()`), since every current
+	 * caller consumes this over JSON/JS rather than raw HTML output.
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
 	 */
 	public static function get_plugin_action_url( $plugin ): string {
 		if ( ! self::is_plugin_installed( $plugin ) ) {
-			return self::get_plugin_install_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_install_url( $plugin ) );
 		}
 
 		if ( ! self::is_plugin_active( $plugin ) ) {
-			return self::get_plugin_activate_url( $plugin );
+			return self::decode_url_for_js( self::get_plugin_activate_url( $plugin ) );
 		}
 
 		return '';
@@ -427,5 +482,107 @@ class Hints {
 				'target' => [],
 			],
 		];
+	}
+
+	public static function is_plugin_connected( $option_prefix, $plugin_slug = null ): bool {
+		if ( null !== $plugin_slug && class_exists( '\ElementorOne\Connect\Facade' ) ) {
+			$facade = \ElementorOne\Connect\Facade::get( $plugin_slug );
+
+			if ( $facade ) {
+				return $facade->utils()->is_connected();
+			}
+		}
+
+		return ! empty( get_option( $option_prefix . '_access_token' ) );
+	}
+
+	public static function is_plugin_connected_to_one_subscription(): bool {
+		return self::is_plugin_connected( 'elementor_one' );
+	}
+
+	private static function get_all_widget_content( $step, $one_subscription = false ) {
+		if ( $one_subscription ) {
+			$steps = [
+				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Web Accessibility, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Web Accessibility. Activate it to place an accessibility widget on your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
+			];
+		} else {
+			$steps = [
+				self::INSTALL => esc_html__( 'Install Web Accessibility to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Activate the Web Accessibility plugin to turn its accessibility features on across your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
+			];
+		}
+		return $steps[ $step ];
+	}
+
+	private static function get_all_widget_action_button( $step ) {
+		$steps = [
+			self::INSTALL => esc_html__( 'Install now', 'elementor' ),
+			self::ACTIVATE => esc_html__( 'Activate now', 'elementor' ),
+			self::CONNECT => esc_html__( 'Connect now', 'elementor' ),
+			self::CUSTOMIZE => esc_html__( 'Customize', 'elementor' ),
+		];
+		return $steps[ $step ];
+	}
+
+	private static function get_all_widget_action_url( $step, $one_subscription = false ) {
+		if ( in_array( $step, [ self::INSTALL, self::ACTIVATE ], true ) ) {
+			$action = ( self::INSTALL === $step ? 'install' : 'activate' );
+			if ( $one_subscription ) {
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-usability-widget-plg-ally-one-' . $action,
+					'source' => 'editor-ally-widget-one-' . $action,
+					'medium' => 'editor-one',
+				];
+			} else {
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-usability-widget-plg-ally',
+					'source' => 'editor-ally-widget',
+					'medium' => 'editor',
+				];
+			}
+			return Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( 'pojo-accessibility' ), $campaign_data );
+		}
+		return self::CONNECT === $step ? admin_url( 'admin.php?page=accessibility-settings' ) : admin_url( 'admin.php?page=accessibility-settings#design' );
+	}
+
+	private static function get_ally_cta_button( $step, $one_subscription = false ) {
+		return [
+			'text' => self::get_all_widget_action_button( $step ),
+			'url' => self::get_all_widget_action_url( $step, $one_subscription ),
+			'classes' => [ 'elementor-button' ],
+		];
+	}
+
+	public static function get_ally_action_data(): array {
+		$plugin_slug = 'pojo-accessibility';
+		$is_installed = self::is_plugin_installed( $plugin_slug );
+		$is_active = self::is_plugin_active( $plugin_slug );
+		$is_connected = self::is_plugin_connected( 'ea11y' );
+		$one_subscription = self::is_plugin_connected_to_one_subscription();
+
+		if ( ! $is_installed ) {
+			$step = self::INSTALL;
+		} elseif ( ! $is_active ) {
+			$step = self::ACTIVATE;
+		} elseif ( ! $is_connected ) {
+			$step = self::CONNECT;
+		} else {
+			$step = self::CUSTOMIZE;
+		}
+
+		$data = [
+			'title' => __( 'Web accessibility', 'elementor' ),
+			'content' => self::get_all_widget_content( $step, $one_subscription ),
+			'action_button' => self::get_ally_cta_button( $step, $one_subscription ),
+		];
+
+		return $data;
 	}
 }

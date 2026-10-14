@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+vendor/
+vendor-prefixed/
+php-scoper/
+
+# V4
+packages/
+
+# Data and test files
+data/
+tests/data/
+tmp/
+
+# Build artifacts
+build/
+dist/
+
+# Logs and temporary files
+*.log
+*.cache

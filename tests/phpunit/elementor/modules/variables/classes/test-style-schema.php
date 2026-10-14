@@ -2,21 +2,19 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Color_Variable as Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_Style_Schema extends TestCase {
@@ -35,15 +33,20 @@ class Test_Style_Schema extends TestCase {
 	public function test_augment__will_skip_regular_style_definitions() {
 		// Arrange.
 		$style_def = [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
+			'width' => String_Prop_Type::make(),
+			'height' => String_Prop_Type::make(),
 		];
 
 		// Act.
 		$schema = $this->style_schema()->augment( $style_def );
 
 		// Assert.
-		$this->assertSchemaIsEqual( $schema, $style_def );
+		$expected = [
+			'width' => String_Prop_Type::make(),
+			'height' => String_Prop_Type::make(),
+		];
+
+		$this->assertSchemaIsEqual( $schema, $expected );
 	}
 
 	public function test_augment__will_convert_color_prop_type() {
@@ -58,14 +61,55 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'width' => Size_Prop_Type::make(),
 			'color' => Union_Prop_Type::make()
 				->add_prop_type( Color_Prop_Type::make() )
 				->add_prop_type( Color_Variable_Prop_Type::make() ),
+			'width' => Size_Prop_Type::make(),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
+
+	public function test_augment__will_convert_size_prop_type() {
+		// Arrange.
+		$style_def = [
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
+	public function test_augment__will_convert_font_prop_type() {
+		// Arrange.
+		$style_def = [
+			'font-family' => String_Prop_Type::make(),
+			'some-type' => String_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'some-type' => String_Prop_Type::make(),
+			'font-family' => Union_Prop_Type::make()
+				->add_prop_type( Font_Variable_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
 
 	public function test_augment__will_convert_item_of_array_prop_type() {
 		// Arrange.
@@ -112,6 +156,27 @@ class Test_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
+	public function test_augment__multiple_times() {
+		// Arrange.
+		$style_def = [
+			'color' => Color_Prop_Type::make()->required()
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+		$schema = $this->style_schema()->augment( $schema );
+		$schema = $this->style_schema()->augment( $schema );
+
+		// Assert.
+		$expected = [
+			'color' => Union_Prop_Type::make()->required()
+			  ->add_prop_type( Color_Variable_Prop_Type::make() )
+			  ->add_prop_type( Color_Prop_Type::make()->required() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
 	public function test_augment__will_update_background_prop_type() {
 		// Arrange.
 		$style_def = [
@@ -145,8 +210,12 @@ class Test_Style_Schema extends TestCase {
 				$bg_color_shape = $prop_type->get_shape();
 
 				$bg_color_shape['color'] = Union_Prop_Type::make()
-					->add_prop_type( Color_Prop_Type::make() )
-					->add_prop_type( Color_Variable_Prop_Type::make() );
+					->add_prop_type( Color_Prop_Type::make()->initial_value( '#00000033' ) )
+					->add_prop_type( Color_Variable_Prop_Type::make() )
+					->initial_value( [
+							'$$type' => 'color',
+							'value' => '#00000033'
+					] );
 
 				$prop_type->set_shape( $bg_color_shape );
 			}
@@ -165,6 +234,32 @@ class Test_Style_Schema extends TestCase {
 					->set_shape( $gradient_stop_shape );
 
 				$prop_type->set_shape( $bg_gradient_shape );
+			}
+
+			if ( 'background-image-overlay' === $prop_type->get_key() ) {
+				$bg_image_shape = $prop_type->get_shape();
+
+				if ( isset( $bg_image_shape['size'] ) ) {
+					foreach ( $bg_image_shape['size']->get_prop_types() as $size_prop_type ) {
+						if ( $size_prop_type->get_key() === 'background-image-size-scale' ) {
+							$size_scale_shape = $size_prop_type->get_shape();
+
+							$size_prop_type->set_shape( $size_scale_shape );
+						}
+					}
+				}
+
+				if ( isset( $bg_image_shape['position'] ) ) {
+					foreach ( $bg_image_shape['position']->get_prop_types() as $position_prop_type ) {
+						if ( $position_prop_type->get_key() === 'background-image-position-offset' ) {
+							$position_offset_shape = $position_prop_type->get_shape();
+
+							$position_prop_type->set_shape( $position_offset_shape );
+						}
+					}
+				}
+
+				$prop_type->set_shape( $bg_image_shape );
 			}
 		}
 

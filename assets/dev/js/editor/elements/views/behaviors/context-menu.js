@@ -52,9 +52,7 @@ module.exports = Marionette.Behavior.extend( {
 					{
 						name: 'navigator',
 						icon: 'eicon-navigator',
-						title: elementorCommon.config.experimentalFeatures.editor_v2
-							? __( 'Structure', 'elementor' )
-							: __( 'Navigator', 'elementor' ),
+						title: __( 'Structure', 'elementor' ),
 						shortcut: controlSign + '+I',
 						callback: () => $e.route( 'navigator', {
 							reOpen: true,
@@ -85,7 +83,7 @@ module.exports = Marionette.Behavior.extend( {
 		return this.contextMenu;
 	},
 
-	onContextMenu( event ) {
+	onContextMenu( event, options = {} ) {
 		if ( $e.shortcuts.isControlEvent( event ) ) {
 			return;
 		}
@@ -107,12 +105,13 @@ module.exports = Marionette.Behavior.extend( {
 			this.view._parent.triggerMethod( 'toggleSortMode', false );
 		}
 
-		this.getContextMenu().show( event );
+		const location = options.location || elementorCommon.eventsManager.config.locations.canvas;
+		this.getContextMenu().show( event, { location } );
 
 		elementor.channels.editor.reply( 'contextMenu:targetView', this.view );
 	},
 
-	onRequestContextMenu( event ) {
+	onRequestContextMenu( event, options ) {
 		var modal = this.getContextMenu().getModal(),
 			iframe = modal.getSettings( 'iframe' ),
 			toolsGroup = _.findWhere( this.contextMenu.getSettings( 'groups' ), { name: 'tools' } );
@@ -121,7 +120,7 @@ module.exports = Marionette.Behavior.extend( {
 
 		modal.setSettings( 'iframe', null );
 
-		this.onContextMenu( event );
+		this.onContextMenu( event, options );
 
 		toolsGroup.isVisible = true;
 

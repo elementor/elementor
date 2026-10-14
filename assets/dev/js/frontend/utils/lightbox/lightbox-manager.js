@@ -2,8 +2,7 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	static getLightbox() {
 		const lightboxPromise = new Promise( ( resolveLightbox ) => {
 				import(
-					/* webpackChunkName: 'lightbox' */
-					`elementor-frontend/utils/lightbox/lightbox`
+					'elementor-frontend/utils/lightbox/lightbox'
 				).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
 			} ),
 			dialogScriptPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),

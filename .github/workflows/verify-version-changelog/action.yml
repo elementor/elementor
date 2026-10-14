@@ -1,0 +1,16 @@
+name: Verify Version Changelog
+description: Verify that changelog.txt and readme.txt contain a non-empty section for the release version.
+
+inputs:
+  VERSION:
+    description: 'Package Version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        VERSION: ${{ inputs.VERSION }}
+      run: |
+        node ./.github/scripts/verify-version-changelog.js

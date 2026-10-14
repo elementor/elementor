@@ -8,6 +8,8 @@ use Elementor\App\Modules\ImportExport\Compatibility\Kit_Library;
 use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExport\Runners\Import\Elementor_Content;
@@ -18,7 +20,6 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
-use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
@@ -140,11 +141,12 @@ class Import {
 	private $runners_import_metadata = [];
 
 	/**
-	 * @param string $path session_id | zip_file_path
-	 * @param array $settings Use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param string     $path session_id | zip_file_path
+	 * @param array      $settings Use to determine which content to import.
+	 *                   (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @param array|null $old_instance An array of old instance parameters that will be used for creating new instance.
-	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
+	 *                   We are using it for quick creation of the instance when the import process is being split into chunks.
+	 *
 	 * @throws \Exception If the import session does not exist.
 	 */
 	public function __construct( string $path, array $settings = [], array $old_instance = null ) {
@@ -445,18 +447,7 @@ class Import {
 			return $this->manifest['thumbnail'];
 		}
 
-		if ( empty( $this->kit_id ) ) {
-			return '';
-		}
-
-		$api = new Kit_Library_Api();
-		$kit = $api->get_by_id( $this->kit_id );
-
-		if ( is_wp_error( $kit ) ) {
-			return '';
-		}
-
-		return $kit->thumbnail;
+		return apply_filters( 'elementor/import/kit_thumbnail', '', $this->kit_id, $this->settings_referrer );
 	}
 
 	public function get_runners_name(): array {
@@ -571,7 +562,7 @@ class Import {
 	/**
 	 * Prevent saving elements on elementor post creation.
 	 *
-	 * @param array $data
+	 * @param array    $data
 	 * @param Document $document
 	 *
 	 * @return array
@@ -596,6 +587,7 @@ class Import {
 	 *
 	 * @param string $zip_path The path to the zip file.
 	 * @return string The extracted directory path.
+	 * @throws \Error If import process fails, file validation errors occur, or data corruption is detected.
 	 */
 	private function extract_zip( $zip_path ) {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
@@ -615,6 +607,8 @@ class Import {
 	 * Get the manifest file from the extracted directory and adapt it if needed.
 	 *
 	 * @return string The manifest file content.
+	 *
+	 * @throws \Error If import validation fails or processing errors occur.
 	 */
 	private function read_manifest_json() {
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );
@@ -748,6 +742,9 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
+				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
+				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
 
@@ -763,6 +760,17 @@ class Import {
 
 			$document->save( $data );
 		}
+	}
+
+	private function merge_atomic_prop_remap_warnings( array $warnings ): void {
+		if ( empty( $warnings ) ) {
+			return;
+		}
+
+		$existing = $this->runners_import_metadata['atomic_prop_remap']['warnings'] ?? [];
+		$this->runners_import_metadata['atomic_prop_remap'] = [
+			'warnings' => array_merge( $existing, $warnings ),
+		];
 	}
 
 	private function update_instance_data_in_import_session_option() {

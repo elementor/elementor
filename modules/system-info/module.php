@@ -1,10 +1,13 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Info_Menu;
+use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Menu;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Modules\System_Info\Reporters\Base;
+use Elementor\Modules\System_Info\Rest\Rest_Api;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -118,25 +121,52 @@ class Module extends BaseModule {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
-			$this->register_menu( $admin_menu_manager );
-		}, Settings::ADMIN_MENU_PRIORITY + 30 );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
-	/**
-	 * Register admin menu.
-	 *
-	 * Add new Elementor system info admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.9.0
-	 * @access private
-	 */
-	private function register_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
+	public function register_rest_routes(): void {
+		( new Rest_Api() )->register_routes();
+	}
+
+	public function get_reports_data(): array {
+		$reports = $this->load_reports( self::get_allowed_reports() );
+
+		return $this->build_reports_data( $reports );
+	}
+
+	private function build_reports_data( array $reports ): array {
+		$data = [];
+
+		foreach ( $reports as $report_name => $report_details ) {
+			$report = $report_details['report']->get_report();
+
+			if ( is_wp_error( $report ) ) {
+				continue;
+			}
+
+			$report_data = [
+				'label' => $report_details['label'],
+				'report' => $report,
+			];
+
+			if ( ! empty( $report_details['sub'] ) ) {
+				$report_data['sub'] = $this->build_reports_data( $report_details['sub'] );
+			}
+
+			$data[ $report_name ] = $report_data;
+		}
+
+		return $data;
+	}
+
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_System_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_System_Info_Menu() );
 	}
 
 	/**
@@ -154,14 +184,14 @@ class Module extends BaseModule {
 		?>
 		<div id="elementor-system-info">
 			<div class="elementor-system-info-header">
-				<h3 class="wp-heading-inline"><?php echo esc_html__( 'System Info', 'elementor' ); ?></h3>
+				<h1 class="wp-heading-inline"><?php echo esc_html__( 'System Info', 'elementor' ); ?></h1>
 				<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="post">
 					<input type="hidden" name="action" value="elementor_system_info_download_file">
-					<input type="submit" class="button button-primary" value="<?php echo esc_attr__( 'Download System Info', 'elementor' ); ?>">
+					<input type="submit" data-id="elementor-system-info-download-file" class="button button-primary" value="<?php echo esc_attr__( 'Download System Info', 'elementor' ); ?>">
 				</form>
 			</div>
 			<div><?php $this->print_report( $reports, 'html' ); ?></div>
-			<h3><?php echo esc_html__( 'Copy & Paste Info', 'elementor' ); ?></h3>
+			<h2><?php echo esc_html__( 'Copy & Paste Info', 'elementor' ); ?></h2>
 			<div id="elementor-system-info-raw">
 				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php echo esc_html__( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ); ?></label>
 				<textarea id="elementor-system-info-raw-code" readonly>
@@ -181,7 +211,7 @@ class Module extends BaseModule {
 			<hr>
 			<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="post">
 				<input type="hidden" name="action" value="elementor_system_info_download_file">
-				<input type="submit" class="button button-primary" value="<?php echo esc_attr__( 'Download System Info', 'elementor' ); ?>">
+				<input type="submit" data-id="elementor-system-info-download-file" class="button button-primary" value="<?php echo esc_attr__( 'Download System Info', 'elementor' ); ?>">
 			</form>
 		</div>
 		<?php

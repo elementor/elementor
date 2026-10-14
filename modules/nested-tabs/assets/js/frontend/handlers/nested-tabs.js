@@ -53,8 +53,8 @@ export default class NestedTabs extends Base {
 			selectors: {
 				widgetContainer: `[data-widget-number="${ widgetNumber }"]`,
 				tabTitle: `[aria-controls*="e-n-tab-content-${ widgetNumber }"]`,
-				tabTitleIcon: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-icon`,
-				tabTitleText: `[id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-title-text`,
+				tabTitleIcon: `[data-tab-title-id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-icon`,
+				tabTitleText: `[data-tab-title-id*="e-n-tab-title-${ widgetNumber }"] > .e-n-tab-title-text`,
 				tabContent: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-content > .e-con`,
 				headingContainer: `[data-widget-number="${ widgetNumber }"] > .e-n-tabs-heading`,
 				activeTabContentContainers: `[id*="e-n-tab-content-${ widgetNumber }"].e-active`,

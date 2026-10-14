@@ -217,6 +217,32 @@ class Test_Image_Prop_Type extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
+	public function test_validate__passes_for_uncommon_tld() {
+		// Arrange.
+		$prop_type = Image_Prop_Type::make();
+
+		// Act — https://google.c was rejected by wp_http_validate_url (see ED-25101).
+		$result = $prop_type->validate( [
+			'$$type' => 'image',
+			'value' => [
+				'src' => [
+					'$$type' => 'image-src',
+					'value' => [
+						'id' => null,
+						'url' => [
+							'$$type' => 'url',
+							'value' => 'https://google.c',
+						],
+					],
+				],
+				'size' => [ '$$type' => 'string', 'value' => 'full' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
 	public function test_validate__fail_when_passing_non_string_size() {
 		// Arrange.
 		$prop_type = Image_Prop_Type::make();

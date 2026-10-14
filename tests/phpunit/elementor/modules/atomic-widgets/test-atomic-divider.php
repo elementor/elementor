@@ -1,0 +1,132 @@
+<?php
+
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Plugin;
+use ElementorEditorTesting\Elementor_Test_Base;
+use Spatie\Snapshots\MatchesSnapshots;
+
+class Test_Atomic_Divider extends Elementor_Test_Base {
+	use MatchesSnapshots;
+
+	public function test__base_styles_include_full_width(): void {
+		// Arrange.
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Divider::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		// Act.
+		$base_styles = $widget_instance->get_base_styles();
+		$base_style_id = Atomic_Divider::get_element_type() . '-base';
+		$props = $base_styles[ $base_style_id ]['variants'][0]['props'];
+
+		// Assert.
+		$this->assertArrayHasKey( 'width', $props );
+		$this->assertEquals(
+			Size_Prop_Type::generate( [
+				'size' => 100,
+				'unit' => '%',
+			] ),
+			$props['width']
+		);
+	}
+
+	public function test__render_divider(): void {
+		// Arrange.
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Divider::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__render_divider_with_css_id(): void {
+		// Arrange.
+		$mock_with_id = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'_cssid' => 'my-custom-divider',
+			],
+			'widgetType' => Atomic_Divider::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_with_id );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__render_divider_with_classes(): void {
+		// Arrange.
+		$mock_with_classes = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'classes' => [ 'custom-class-1', 'custom-class-2' ],
+			],
+			'widgetType' => Atomic_Divider::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_with_classes );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__render_divider_with_interactions(): void {
+		// Arrange.
+		$mock_with_interactions = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Divider::get_element_type(),
+			'interactions' => [
+				'version' => 1,
+				'items' => [
+					[
+						'animation' => [
+							'animation_type' => 'full-preset',
+							'animation_id' => 'load-fade-in--300-0',
+						],
+					],
+				],
+			],
+		];
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_with_interactions );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+}

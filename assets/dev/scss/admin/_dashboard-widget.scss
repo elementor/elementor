@@ -161,3 +161,11 @@
 		}
 	}
 }
+
+[class*="branch-7"] {
+	&.wp-core-ui .button .dashicons {
+		vertical-align: middle;
+		line-height: 1.2;
+		color: var(--wp-admin-theme-color);
+	}
+}

@@ -1,6 +1,7 @@
 import AddSectionView from './add-section/independent';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
+const { isCompoundAtomicType } = require( 'elementor-editor/utils/element-types' );
 
 const Preview = BaseSectionsContainerView.extend( {
 	initialize() {
@@ -79,10 +80,12 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
+		const wrappedElementTypes = [ 'widget', 'section', 'column' ];
+
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: ! [ 'container', 'e-div-block', 'e-flexbox' ].includes( model.elType ) },
+			{ ...options, shouldWrap: ( wrappedElementTypes.includes( model.elType ) || isCompoundAtomicType( model.elType ) ) && ! model.widgetType?.startsWith( 'e-form-' ) },
 		);
 	},
 

@@ -56,7 +56,7 @@ class Repeater extends Control_Repeater {
 	 */
 	public function content_template() {
 		?>
-		<div class="elementor-repeater-fields-wrapper"></div>
+		<div class="elementor-repeater-fields-wrapper" role="list"></div>
 		<# if ( itemActions.add ) { #>
 			<div class="elementor-button-wrapper">
 				<button class="elementor-button elementor-repeater-add" type="button">

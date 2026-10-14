@@ -1,0 +1,68 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "move",
+        "src": "value",
+        "dest": "value.size",
+        "clean": false
+      },
+      "condition": {
+        "fn": "equals",
+        "path": "$$type",
+        "value": "number"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "value.unit",
+        "value": "ms"
+      },
+      "condition": {
+        "fn": "equals",
+        "path": "$$type",
+        "value": "number"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "size"
+      },
+      "condition": {
+        "fn": "equals",
+        "path": "$$type",
+        "value": "number"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "move",
+        "src": "value.size",
+        "dest": "value",
+        "clean": false
+      },
+      "condition": {
+        "fn": "equals",
+        "path": "$$type",
+        "value": "size"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "number"
+      },
+      "condition": {
+        "fn": "equals",
+        "path": "$$type",
+        "value": "size"
+      }
+    }
+  ]
+}

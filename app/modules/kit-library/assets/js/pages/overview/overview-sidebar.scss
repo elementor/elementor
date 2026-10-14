@@ -51,7 +51,7 @@
 	}
 
 	&__item-information-text {
-		font-size: type(size, "13");
+		font-size: get-type(size, "13");
 		color: var(--e-kit-library-item-information-text-color);
 		margin-block-end: spacing(5);
 	}

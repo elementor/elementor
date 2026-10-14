@@ -1,15 +1,13 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Menu_Item;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Empty_View_Menu_Item;
+use Elementor\Modules\LandingPages\AdminMenuItems\Editor_One_Landing_Pages_Menu;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -22,6 +20,7 @@ class Module extends BaseModule {
 	const DOCUMENT_TYPE = 'landing-page';
 	const CPT = 'e-landing-page';
 	const ADMIN_PAGE_SLUG = 'edit.php?post_type=' . self::CPT;
+	const ACTIVATION_KEY = 'elementor_landing_pages_activation';
 
 	private $has_pages = null;
 	private $trashed_posts;
@@ -54,17 +53,28 @@ class Module extends BaseModule {
 		] );
 	}
 
+	/**
+	 * Should activate landing pages
+	 *
+	 * Checks whether the Landing Pages should be activated.
+	 *
+	 * If the activation key set to `1` in wp_options, the Landing Pages feature should be active. Otherwise not.
+	 * This is a backwards compatibility for websites that had Landing Pages, therefore couldn't be deactivated.
+	 * When deleting posts in Landing Pages CPT, Elementor checks again whether this feature should be activated.
+	 *
+	 * @since 3.31.0
+	 */
 	private function should_activate_landing_pages() {
-		if ( '1' === get_option( 'elementor_landing_pages_activation' ) ) {
+		if ( '1' === get_option( self::ACTIVATION_KEY ) ) {
 			return true;
 		}
 
 		if ( $this->has_landing_pages() ) {
-			update_option( 'elementor_landing_pages_activation', '1' );
+			update_option( self::ACTIVATION_KEY, '1' );
 			return true;
 		}
 
-		update_option( 'elementor_landing_pages_activation', '0' );
+		update_option( self::ACTIVATION_KEY, '0' );
 		return false;
 	}
 
@@ -132,7 +142,7 @@ class Module extends BaseModule {
 		return self::CPT === $post->post_type;
 	}
 
-	private function get_menu_args() {
+	public function get_menu_args() {
 		if ( $this->has_landing_pages() ) {
 			$menu_slug = self::ADMIN_PAGE_SLUG;
 			$function = null;
@@ -147,36 +157,8 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu( MainMenu $menu ) {
-		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
-
-		$menu_args = array_merge( $this->get_menu_args(), [
-			'page_title' => $landing_pages_title,
-			'menu_title' => $landing_pages_title,
-			'index' => 20,
-		] );
-
-		$menu->add_submenu( $menu_args );
-	}
-
-	/**
-	 * Add Submenu Page
-	 *
-	 * Adds the 'Landing Pages' submenu item to the 'Templates' menu item.
-	 *
-	 * @since 3.1.0
-	 */
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_menu_args();
-
-		$slug = $menu_args['menu_slug'];
-		$function = $menu_args['function'];
-
-		if ( is_callable( $function ) ) {
-			$admin_menu->register( $slug, new Landing_Pages_Empty_View_Menu_Item( $function ) );
-		} else {
-			$admin_menu->register( $slug, new Landing_Pages_Menu_Item() );
-		}
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Landing_Pages_Menu( $this ) );
 	}
 
 	/**
@@ -480,9 +462,17 @@ class Module extends BaseModule {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT ] = [
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=' . static::CPT,
+			];
+			return $elementor_post_types;
+		} );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
 		add_action( 'elementor/admin/localize_settings', function( array $settings ) {
@@ -493,6 +483,11 @@ class Module extends BaseModule {
 			$cpts[] = self::CPT;
 
 			return $cpts;
+		} );
+
+		// When deleting posts in Landing Page CPT, force Elementor to check again whether this feature should be activated.
+		add_action( 'deleted_post_' . self::CPT, function () {
+			delete_option( self::ACTIVATION_KEY );
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.

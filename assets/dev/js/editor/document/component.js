@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import { cloneElementTree } from 'elementor/packages/packages/libs/editor-elements/src/sync/clone-element-tree';
 
 import * as components from './';
 import * as hooks from './hooks/';
@@ -76,6 +77,61 @@ export default class Component extends ComponentBase {
 				}
 
 				return result;
+			},
+			findModelById: ( id, collection = elementor.elementsModel.get( 'elements' ) ) => {
+				for ( const model of collection?.models ?? [] ) {
+					const found = model.get( 'id' ) === id
+						? model
+						: this.utils.findModelById( id, model.get( 'elements' ) );
+
+					if ( found ) {
+						return found;
+					}
+				}
+
+				return null;
+			},
+			addModelToParent: ( parentId, childData, options ) => {
+				const parentModel = this.utils.findModelById( parentId );
+
+				if ( ! parentModel ) {
+					return false;
+				}
+
+				const elements = parentModel.get( 'elements' );
+
+				if ( ! elements ) {
+					return false;
+				}
+
+				const modelToAdd = options?.clone ? cloneElementTree( childData ) : childData;
+
+				elements.add( modelToAdd, { at: options?.at, silent: true } );
+
+				return true;
+			},
+			removeModelFromParent: ( parentId, childId ) => {
+				const parentModel = this.utils.findModelById( parentId );
+
+				if ( ! parentModel ) {
+					return false;
+				}
+
+				const elements = parentModel.get( 'elements' );
+
+				if ( ! elements ) {
+					return false;
+				}
+
+				const child = elements.findWhere( { id: childId } );
+
+				if ( ! child ) {
+					return false;
+				}
+
+				elements.remove( child, { silent: true } );
+
+				return true;
 			},
 		};
 	}

@@ -23,7 +23,8 @@ PanelMenu.createGroupItems = ( groupName ) => {
 };
 
 PanelMenu.initGroups = () => {
-	const settingsItems = PanelMenu.createGroupItems( 'settings' ),
+	const agentsItems = PanelMenu.createGroupItems( 'agents' ),
+		settingsItems = PanelMenu.createGroupItems( 'settings' ),
 		additionalSettingsProps = {
 			name: 'settings-additional-settings',
 			icon: 'eicon-tools',
@@ -35,7 +36,7 @@ PanelMenu.initGroups = () => {
 
 	settingsItems.push( additionalSettingsProps );
 
-	PanelMenu.groups = new Backbone.Collection( [
+	const groups = [
 		{
 			name: 'design_system',
 			title: __( 'Design System', 'elementor' ),
@@ -46,12 +47,23 @@ PanelMenu.initGroups = () => {
 			title: __( 'Theme Style', 'elementor' ),
 			items: PanelMenu.createGroupItems( 'theme-style' ),
 		},
-		{
-			name: 'settings',
-			title: __( 'Settings', 'elementor' ),
-			items: settingsItems,
-		},
-	] );
+	];
+
+	if ( agentsItems.length ) {
+		groups.push( {
+			name: 'agents',
+			title: __( 'Agents', 'elementor' ),
+			items: agentsItems,
+		} );
+	}
+
+	groups.push( {
+		name: 'settings',
+		title: __( 'Settings', 'elementor' ),
+		items: settingsItems,
+	} );
+
+	PanelMenu.groups = new Backbone.Collection( groups );
 };
 
 PanelMenu.getGroups = () => {

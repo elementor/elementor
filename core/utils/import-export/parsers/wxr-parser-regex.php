@@ -209,10 +209,10 @@ class WXR_Parser_Regex {
 		return $term_data;
 	}
 
-	private function process_meta( $string, $tag ) {
+	private function process_meta( $meta_string, $tag ) {
 		$parsed_meta = [];
 
-		preg_match_all( "|<$tag>(.+?)</$tag>|is", $string, $meta );
+		preg_match_all( "|<$tag>(.+?)</$tag>|is", $meta_string, $meta );
 
 		if ( ! isset( $meta[1] ) ) {
 			return $parsed_meta;
@@ -322,8 +322,8 @@ class WXR_Parser_Regex {
 		return $postdata;
 	}
 
-	private function get_tag( $string, $tag ) {
-		preg_match( "|<$tag.*?>(.*?)</$tag>|is", $string, $return );
+	private function get_tag( $text_string, $tag ) {
+		preg_match( "|<$tag.*?>(.*?)</$tag>|is", $text_string, $return );
 		if ( isset( $return[1] ) ) {
 			if ( substr( $return[1], 0, 9 ) == '<![CDATA[' ) {
 				if ( strpos( $return[1], ']]]]><![CDATA[>' ) !== false ) {

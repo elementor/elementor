@@ -1,15 +1,10 @@
-/**
- * @typedef {import('assets/dev/js/editor/container/container')} Container
- */
-
-/**
- * return all recursively nested elements in a flat array
- * @param {Container} model
- * @return {Container[]}
- */
 export function getElementChildren( model ) {
-	const container = window.elementor.getContainer( model.id );
-	const children = ( container.model?.get( 'elements' )?.models ?? [] ).flatMap( ( child ) => getElementChildren( child ) ) ?? [];
+	if ( ! model ) {
+		return [];
+	}
 
-	return [ container, ...children ];
+	const childModels = model.get( 'elements' )?.models ?? [];
+	const children = childModels.flatMap( getElementChildren );
+
+	return [ model, ...children ];
 }

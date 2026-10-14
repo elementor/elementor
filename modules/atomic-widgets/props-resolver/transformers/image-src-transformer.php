@@ -20,6 +20,7 @@ class Image_Src_Transformer extends Transformer_Base {
 		return [
 			'id' => isset( $value['id'] ) ? (int) $value['id'] : null,
 			'url' => $value['url'] ?? null,
+			'alt' => $value['alt'] ?? null,
 		];
 	}
 }

@@ -1,3 +1,6 @@
+import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { cloneElementTree } from 'elementor/packages/packages/libs/editor-elements/src/sync/clone-element-tree';
+import { isCompoundAtomicType } from 'elementor-editor/utils/element-types';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -21,6 +24,38 @@ module.exports = Marionette.CompositeView.extend( {
 
 	addChildModel( model, options ) {
 		return this.collection.add( model, options, true );
+	},
+
+	/**
+	 * Find a descendant view that accepts `elType` as a direct child.
+	 * Prefers a direct child that accepts the type over a deeper match inside
+	 * an earlier sibling (e.g. accordion item content over header → title).
+	 *
+	 * @param {string} elType
+	 * @return {Marionette.View|null}
+	 */
+	findFirstViewAccepting( elType ) {
+		let directAccepting = null;
+		let recursiveAccepting = null;
+
+		this.children.each( ( child ) => {
+			if ( ! child?.getChildType ) {
+				return;
+			}
+
+			if ( -1 !== child.getChildType().indexOf( elType ) ) {
+				if ( ! directAccepting ) {
+					directAccepting = child;
+				}
+				return;
+			}
+
+			if ( ! recursiveAccepting && child.findFirstViewAccepting ) {
+				recursiveAccepting = child.findFirstViewAccepting( elType );
+			}
+		} );
+
+		return directAccepting || recursiveAccepting;
 	},
 
 	addElement( data, options ) {
@@ -59,7 +94,10 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			return this.children.last().addElement( newItem, options );
+			const acceptingChild = this.findFirstViewAccepting( elType );
+			const fallbackChild = acceptingChild || this.children.last();
+
+			return fallbackChild.addElement( newItem, options );
 		}
 
 		if ( options.clone ) {
@@ -78,7 +116,7 @@ module.exports = Marionette.CompositeView.extend( {
 			this.filterSettings( newItem );
 		}
 
-		var newModel = this.addChildModel( newItem, { at: options.at } ),
+		const newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
 		if ( options.onAfterAdd ) {
@@ -92,10 +130,14 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
 			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
 			newView.getContainer();
-			newModel.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
+			newView._openEditingPanel( options );
 		}
 
 		return newView;
+	},
+
+	_openEditingPanel( options ) {
+		this.model.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
 	},
 
 	createElementFromContainer( container, options = {} ) {
@@ -122,32 +164,21 @@ module.exports = Marionette.CompositeView.extend( {
 			model.settings = model.preset_settings;
 		}
 
-		const historyId = $e.internal( 'document/history/start-log', {
-			type: this.getHistoryType( options.event ),
-			title: elementor.helpers.getModelLabel( model ),
-		} );
+		const { useHistory = true } = options;
+
+		let historyId;
+
+		if ( useHistory ) {
+			historyId = $e.internal( 'document/history/start-log', {
+				type: this.getHistoryType( options.event ),
+				title: elementor.helpers.getModelLabel( model ),
+			} );
+		}
 
 		let container = this.getContainer();
+
 		if ( options.shouldWrap ) {
-			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
-
-			container = $e.run( 'document/elements/create', {
-				model: {
-					elType: containerExperiment ? 'container' : 'section',
-				},
-				container,
-				columns: Number( ! containerExperiment ),
-				options: {
-					at: options.at,
-					scrollIntoView: options.scrollIntoView,
-				},
-			} );
-
-			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
-			if ( ! containerExperiment ) {
-				container = container.view.children.findByIndex( 0 )
-					.getContainer();
-			}
+			container = this.getWrappingContainer( container, model, options );
 		}
 
 		// Create the element in column.
@@ -157,9 +188,44 @@ module.exports = Marionette.CompositeView.extend( {
 			options,
 		} );
 
-		$e.internal( 'document/history/end-log', { id: historyId } );
+		if ( useHistory ) {
+			$e.internal( 'document/history/end-log', { id: historyId } );
+		}
 
 		return widget;
+	},
+
+	getWrappingContainer( container, model, settings ) {
+		const isAtomic = elementor.helpers.isAtomicWidget( model ) || isCompoundAtomicType( model.elType );
+		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
+
+		if ( isAtomic ) {
+			return ContainerHelper.createContainerFromModel(
+				{ elType: ContainerHelper.V4_DEFAULT_CONTAINER_TYPE },
+				container,
+				{ options },
+			);
+		}
+
+		return this.getV3Container( container, options );
+	},
+
+	getV3Container( container, options ) {
+		const isContainerExperimentActive = elementorCommon.config.experimentalFeatures.container;
+
+		container = ContainerHelper.createContainerFromModel(
+			{ elType: isContainerExperimentActive ? 'container' : 'section' },
+			container,
+			{ columns: Number( ! isContainerExperimentActive ), options },
+		);
+
+		// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+		if ( ! isContainerExperimentActive ) {
+			container = container.view.children.findByIndex( 0 )
+				.getContainer();
+		}
+
+		return container;
 	},
 
 	onDrop( event, options ) {
@@ -180,13 +246,26 @@ module.exports = Marionette.CompositeView.extend( {
 		args.model = Object.fromEntries(
 			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
 				// The `custom` property is responsible for storing global-widgets related data.
-				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
+				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom', 'editor_settings' ].includes( key ) ),
 		);
 
 		args.container = this.getContainer();
 		args.options = options;
 
 		$e.run( 'preview/drop', args );
+
+		if ( elementorCommon?.eventsManager?.dispatchEvent && args?.model ) {
+			const elType = args.model?.elType ?? '';
+			const widgetType = args.model?.widgetType ?? '';
+			const elementName = 'widget' === elType ? widgetType : elType;
+
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
+				location: 'editor_panel',
+				element_name: elementName,
+				element_type: elType,
+				widget_type: widgetType,
+			} );
+		}
 	},
 
 	getHistoryType( event ) {
@@ -207,21 +286,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	cloneItem( item ) {
-		var self = this;
-
-		if ( item instanceof Backbone.Model ) {
-			return item.clone();
-		}
-
-		item.id = elementorCommon.helpers.getUniqueId();
-
-		item.settings._element_id = '';
-
-		item.elements.forEach( function( childItem, index ) {
-			item.elements[ index ] = self.cloneItem( childItem );
-		} );
-
-		return item;
+		return cloneElementTree( item );
 	},
 
 	lookup() {

@@ -2,26 +2,165 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
+use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables;
+use Elementor\Plugin;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
+use Elementor\Modules\Variables\Classes\Fonts;
+use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
 use Elementor\Modules\Variables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\Size_Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
+use Elementor\Modules\Variables\Classes\Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Hooks {
-	public function register_styles_transformers() {
+	const PACKAGES = [
+		'editor-variables',
+	];
+
+	public function register() {
+		$this->register_styles_transformers()
+			->register_css_renderer()
+			->register_packages()
+			->register_fonts()
+			->register_api_endpoints()
+			->filter_for_style_schema()
+			->register_variable_types()
+			->register_template_library_import();
+
+		return $this;
+	}
+
+	private function register_variable_types() {
+		add_action( 'elementor/variables/register', function ( Variable_Types_Registry $registry ) {
+			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
+			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
+			$registry->register( Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY, new Size_Variable_Prop_Type() );
+			$registry->register( Size_Variable_Prop_Type::get_key(), new Size_Variable_Prop_Type() );
+		} );
+
+		return $this;
+	}
+
+	private function register_packages() {
+		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
+			return array_merge( $packages, self::PACKAGES );
+		} );
+
+		return $this;
+	}
+
+	private function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
+			Variables::init( $this->variables_service() );
 			( new Style_Transformers() )->append_to( $registry );
 		} );
 
 		return $this;
 	}
 
-	public function filter_for_style_schema() {
+	private function filter_for_style_schema() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
 			return ( new Style_Schema() )->augment( $schema );
 		} );
+
+		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
+			return ( new Size_Style_Schema() )->augment( $schema );
+		} );
+
+		return $this;
+	}
+
+	private function css_renderer() {
+		return new Variables_CSS_Renderer( $this->variables_service() );
+	}
+
+	private function register_css_renderer() {
+		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
+			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
+				return;
+			}
+
+			$post_css->get_stylesheet()->add_raw_css(
+				$this->css_renderer()->raw_css()
+			);
+		} );
+
+		return $this;
+	}
+
+	private function fonts() {
+		return new Fonts( $this->variables_service() );
+	}
+
+	private function register_fonts() {
+		add_action( 'elementor/css-file/post/parse', function ( $post_css ) {
+			$this->fonts()->append_to( $post_css );
+		} );
+
+		return $this;
+	}
+
+	private function rest_api() {
+		return new Variables_API( $this->variables_service() );
+	}
+
+	private function register_api_endpoints() {
+		add_action( 'rest_api_init', function () {
+			$this->rest_api()->register_routes();
+		} );
+
+		return $this;
+	}
+
+	private function variables_service() {
+		$repository = new Variables_Repository(
+			Plugin::$instance->kits_manager->get_active_kit()
+		);
+
+		return new Variables_Service( $repository, new Batch_Processor() );
+	}
+
+	private function register_template_library_import() {
+		add_filter(
+			'elementor/template_library/export/build_snapshots',
+			[ Template_Library_Variables::class, 'add_variables_snapshot' ],
+			20,
+			4
+		);
+
+		add_filter(
+			'elementor/template_library/get_data/extract_snapshots',
+			[ Template_Library_Variables::class, 'extract_variables_from_data' ],
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/template_library/import/process_content',
+			[ Template_Library_Variables::class, 'process_variables_import' ],
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/global_classes/import/transform_snapshot',
+			[ Template_Library_Variables::class, 'transform_variables_in_classes_snapshot' ],
+			10,
+			4
+		);
 
 		return $this;
 	}

@@ -52,8 +52,8 @@
 
 		&-remove {
 			position: absolute;
-			@include end(0);
-			top: 5px;
+			inset-block-start: 5px;
+			inset-inline-end: 0;
 
 			i {
 				font-size: 16px;

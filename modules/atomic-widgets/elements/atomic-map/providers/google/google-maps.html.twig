@@ -1,0 +1,11 @@
+{% set location = settings.location | default('') | trim %}
+{% set zoom = settings.zoom > 0 ? min( settings.zoom | round(0, 'floor'), 21 ) : 10 %}
+{% set query = location | url_encode %}
+{% if provider.api_key is not empty %}
+	{% set embed_src = 'https://www.google.com/maps/embed/v1/place?key=' ~ ( provider.api_key | url_encode ) ~ '&q=' ~ query ~ '&zoom=' ~ zoom %}
+	{% set allow_fullscreen = true %}
+{% else %}
+	{% set embed_src = 'https://maps.google.com/maps?q=' ~ query ~ '&t=m&z=' ~ zoom ~ '&output=embed&iwloc=near' %}
+	{% set allow_fullscreen = false %}
+{% endif %}
+{% include 'elementor/elements/atomic-map' %}

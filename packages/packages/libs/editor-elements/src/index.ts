@@ -1,0 +1,92 @@
+// types
+export * from './types';
+export type * from './sync/types';
+
+// children dependencies (schema-driven settings <-> children sync)
+export {
+	bindSettingsReconcile,
+	type ChildDependenciesConfig,
+	type ChildDependencyRule,
+	evaluateWhen,
+	reconcileInitialChildren,
+} from './children-dependencies';
+
+// hooks
+export {
+	useElementChildren,
+	type ElementChildren,
+	type ElementModel,
+	type UseElementChildrenOptions,
+} from './hooks/use-element-children';
+export { useElementEditorSettings } from './hooks/use-element-editor-settings';
+export { useParentElement } from './hooks/use-parent-element';
+export { useSelectedElement } from './hooks/use-selected-element';
+export { useSelectedElementSettings } from './hooks/use-selected-element-settings';
+
+// utils
+export { createElement, type CreateElementParams } from './sync/create-element';
+export { createElements } from './sync/create-elements';
+export { deleteElement } from './sync/delete-element';
+export { dropElement, type DropElementParams } from './sync/drop-element';
+export { duplicateElement, type DuplicateElementParams } from './sync/duplicate-element';
+export {
+	duplicateElements,
+	type DuplicatedElement,
+	type DuplicatedElementsResult,
+	type DuplicateElementsParams,
+} from './sync/duplicate-elements';
+export { cloneElementTree } from './sync/clone-element-tree';
+export { generateElementId } from './sync/generate-element-id';
+export { getContainer, selectElement } from './sync/get-container';
+export { getPreviewElementDOM } from './sync/get-preview-element-dom';
+export { addModelToParent, findModelInDocument, removeModelFromParent, resolveContainer } from './sync/resolve-element';
+export { getCurrentDocumentContainer } from './sync/get-current-document-container';
+export { getCurrentDocumentId } from './sync/get-current-document-id';
+export { getElementEditorSettings } from './sync/get-element-editor-settings';
+export { getElementIcon } from './sync/get-element-icon';
+export { getElementLabel } from './sync/get-element-label';
+export { getElementTitle } from './sync/get-element-title';
+export { getElementSetting, getElementSettings } from './sync/get-element-setting';
+export { getElementStyles } from './sync/get-element-styles';
+export { getElementType } from './sync/get-element-type';
+export { getAllDescendants } from './sync/get-all-descendants';
+export {
+	findChildRecursive,
+	getElementChildren as getElementChildrenWithFallback,
+	type ModelResult,
+} from './sync/model-utils';
+export { getElements, getHostDocumentElements } from './sync/get-elements';
+export { getHostDocumentId } from './sync/get-host-document-id';
+export { getSelectedElements } from './sync/get-selected-elements';
+export { getWidgetsCache } from './sync/get-widgets-cache';
+export { moveElement, type MoveElementParams } from './sync/move-element';
+export { moveElements } from './sync/move-elements';
+export { removeElements } from './sync/remove-elements';
+export { replaceElement } from './sync/replace-element';
+export { resolveInsertIndex } from './sync/resolve-insert-index';
+export { updateElementEditorSettings } from './sync/update-element-editor-settings';
+export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
+
+export {
+	getAnchoredAncestorId,
+	getAnchoredDescendantId,
+	getLinkInLinkRestriction,
+	isElementAnchored,
+	type LinkInLinkRestriction,
+} from './link-restriction';
+export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
+export {
+	createElementStyle,
+	shouldCreateNewLocalStyle,
+	type CreateElementStyleArgs,
+} from './styles/create-element-style';
+export { deleteElementStyle } from './styles/delete-element-style';
+export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
+
+export { getElementInteractions } from './sync/get-element-interactions';
+export {
+	DEFAULT_STYLE_CLASS_PREFIX,
+	getDefaultStyleTagFromPreviewElement,
+	parseDefaultStyleTagFromClassList,
+} from './utils/get-default-style-tag-from-preview';
+export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';

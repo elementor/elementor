@@ -4,6 +4,8 @@ namespace Elementor\Testing\Includes;
 use Elementor\User;
 use ElementorEditorTesting\Elementor_Test_Base;
 
+require_once __DIR__ . '/../../stubs/wc-stubs.php';
+
 class Test_User extends Elementor_Test_Base {
 
 	const OPTION_KEY = 'some-option-key';
@@ -175,6 +177,55 @@ class Test_User extends Elementor_Test_Base {
 		// Assert.
 		$notices = get_user_meta( $user->ID, self::ADMIN_NOTICES_KEY, true );
 		$this->assertEquals( [ 'test_notice' => [ 'is_viewed' => true, 'meta' => $new_meta ] ], $notices );
+	}
+
+	public function test_is_current_user_can_edit__returns_true_for_regular_page() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		// Act.
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_current_user_can_edit__returns_false_for_woocommerce_shop_page() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		global $mock_wc_shop_page_id;
+		$mock_wc_shop_page_id = $post_id;
+
+		// Act.
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertFalse( $result );
+
+		// Cleanup.
+		$mock_wc_shop_page_id = -1;
+	}
+
+	public function test_is_current_user_can_edit__returns_true_for_non_shop_page_when_woocommerce_active() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id      = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+		$shop_post_id = $this->factory()->post->create( [ 'post_type' => 'page' ] );
+
+		global $mock_wc_shop_page_id;
+		$mock_wc_shop_page_id = $shop_post_id;
+
+		// Act — editing a different page (not the shop page).
+		$result = User::is_current_user_can_edit( $post_id );
+
+		// Assert.
+		$this->assertTrue( $result );
+
+		// Cleanup.
+		$mock_wc_shop_page_id = -1;
 	}
 
 	// BC tests

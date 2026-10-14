@@ -6,16 +6,31 @@ log/
 vendor/
 local-site/
 tmp/
+8888/
+8889/
+data/languages/
+tests/data
+
+http-playground/
+
+data/languages
+tests/data
+
+graphify-out/
+.superpowers/
+docs/superpowers/
 
 # build outputs
 build/
 assets/css/
 assets/js/
+assets/lib/font-awesome-7/
 assets/lib/swiper/css/swiper*.css
 *.log
 *.map
 /templates/
 /hello-elementor/
+.turbo/
 
 # build tools lock
 yarn.lock
@@ -23,6 +38,7 @@ yarn.lock
 # IDE's
 .project/
 .vscode/
+!vscode/extensions.json
 .idea/
 
 # other
@@ -33,6 +49,24 @@ coverage/
 .phpunit.result.cache
 .npmrc
 
+# Code agents
+.cursor/*
+!.cursor/README.md
+!.cursor/rules/
+!.cursor/rules/**
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/system-prompts/
+!.cursor/system-prompts/**
+.cursor/rules/LOCAL_RULES.md
+.cursor/skills/create-ship-deploy/
+.cursor/plans/
+.claude/
+docs/superpowers/
+
+# PHPunit and PHPlint cache files
+*.cache
+
 # playwright
 test-results/
 **/storageState-*.json
@@ -42,3 +76,6 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+docker-output/
+.wp-env.override.json
+tests/wp-env/plugins/

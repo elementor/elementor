@@ -1,5 +1,6 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import environment from 'elementor-common/utils/environment';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 /**
  * @typedef {import('../../container/container')} Container
@@ -166,6 +167,9 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	onAddTemplateButtonClick() {
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'e_library',
+		} );
 		$e.run( 'library/open', this.getTemplatesModalOptions() );
 	}
 
@@ -183,7 +187,7 @@ class AddSectionBase extends Marionette.ItemView {
 
 	getDroppableOptions() {
 		return {
-			isDroppingAllowed: ( ) => {
+			isDroppingAllowed: () => {
 				return ! elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
 			},
 			onDropping: ( side, event ) => {
@@ -199,36 +203,21 @@ class AddSectionBase extends Marionette.ItemView {
 		this.closeSelectPresets();
 
 		const selectedStructure = event.currentTarget.dataset.structure,
-			parsedStructure = elementor.presetsFactory.getParsedGridStructure( selectedStructure ),
 			isAddedAboveAnotherContainer = !! this.options.at || 0 === this.options.at;
 
-		const newContainer = ContainerHelper.createContainer(
-			{
-				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
-				grid_columns_grid: {
-					unit: 'fr',
-					size: parsedStructure.columns,
-				},
-				grid_rows_grid: {
-					unit: 'fr',
-					size: parsedStructure.rows,
-				},
-				grid_rows_grid_mobile: {
-					unit: 'fr',
-					size: parsedStructure.rows,
-				},
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'add_container',
+			metadata: {
+				container_type: 'grid',
+				structure_type: selectedStructure,
 			},
+			containerCreated: true,
+		} );
+
+		const newContainer = ContainerHelper.createContainerFromGridPreset(
+			selectedStructure,
 			elementor.getPreviewContainer(),
 			this.options,
-			{
-				title: __( 'Grid', 'elementor' ),
-				custom: {
-					isPreset: true,
-					preset_settings: {
-						presetIcon: 'eicon-container-grid',
-					},
-				},
-			},
 		);
 
 		if ( isAddedAboveAnotherContainer ) {
@@ -265,8 +254,19 @@ class AddSectionBase extends Marionette.ItemView {
 	onFlexPresetSelected( e ) {
 		this.closeSelectPresets();
 
+		const preset = e.currentTarget.dataset.preset;
+
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'add_container',
+			metadata: {
+				container_type: 'flexbox',
+				structure_type: preset,
+			},
+			containerCreated: true,
+		} );
+
 		return ContainerHelper.createContainerFromPreset(
-			e.currentTarget.dataset.preset,
+			preset,
 			elementor.getPreviewContainer(),
 			this.options,
 		);

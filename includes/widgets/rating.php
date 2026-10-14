@@ -305,7 +305,9 @@ class Widget_Rating extends Widget_Base {
 			'itemprop' => 'ratingValue',
 			'content' => $this->get_rating_value(),
 			'role' => 'img',
-			'aria-label' => sprintf( esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
+			'aria-label' => sprintf(
+				/* translators: 1: Rating value, 2: Rating scale. */
+				esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
 				$this->get_rating_value(),
 				$this->get_rating_scale()
 			),
@@ -319,5 +321,15 @@ class Widget_Rating extends Widget_Base {
 			</div>
 		</div>
 		<?php
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$value = $settings['rating_value'] ?? '';
+		$scale = $settings['rating_scale']['size'] ?? ( $settings['rating_scale'] ?? '5' );
+		if ( empty( $value ) ) {
+			return '';
+		}
+		return $value . '/' . $scale;
 	}
 }

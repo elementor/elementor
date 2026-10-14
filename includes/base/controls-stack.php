@@ -227,7 +227,7 @@ abstract class Controls_Stack extends Base_Object {
 		/** We ignore possible notices, in order to support elements created prior to v1.8.0 and might include
 		 *  non-base 16 characters as part of their ID.
 		 */
-		return @hexdec( $this->id );
+		return @hexdec( (string) $this->id );
 	}
 
 	/**
@@ -350,7 +350,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Active controls.
 	 */
-	public function get_active_controls( array $controls = null, array $settings = null ) {
+	public function get_active_controls( ?array $controls = null, ?array $settings = null ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( ! $controls ) {
@@ -797,7 +797,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Style controls.
 	 */
-	final public function get_style_controls( array $controls = null, array $settings = null ) {
+	final public function get_style_controls( ?array $controls = null, ?array $settings = null ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		$controls = $this->get_active_controls( $controls, $settings );
@@ -1183,6 +1183,13 @@ abstract class Controls_Stack extends Base_Object {
 		}
 
 		return self::get_items( $this->parsed_dynamic_settings, $setting );
+	}
+
+	public function reset_render_state(): void {
+		$this->active_settings = null;
+		$this->parsed_active_settings = null;
+		$this->parsed_dynamic_settings = null;
+		$this->render_attributes = [];
 	}
 
 	/**

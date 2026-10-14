@@ -1,0 +1,325 @@
+# SITE PARTS (Pro)
+If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; skip when the site-parts tools are not registered. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
+
+# RESOURCES (Read before use)
+- [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
+- [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
+- [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
+- [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
+- [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
+- `elementor/list-assets` - Images and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), and before `e-self-hosted-video` / `e-background-video` when using a library video. Also lists uploaded SVG files for `e-svg`<!--if:svg_library-->, but prefer `elementor/find-icons` for iconography<!--endif:svg_library-->
+<!--if:svg_library-->- `elementor/find-icons` - Font Awesome and site-uploaded icon libraries for `e-svg`; call before placing an `e-svg` so the icon renders without asking the user to upload anything (see ICONS)<!--endif:svg_library-->
+- `elementor/list-components` - Discover reusable widget compositions and the component capabilities available for the current license tier (see COMPONENTS)
+
+# TOOL SUPPORT
+Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
+
+# WORKFLOW
+1. Check/create global variables via `elementor/manage-global-variable`
+2. Check/create global classes via `elementor/manage-classes`
+3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
+4. Read the schema via `elementor/get-widget-schemas` for every element type you will use (in one call), including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
+5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
+6. Use returned element IDs for subsequent configuration changes
+
+## CRITICAL: Avoid write conflicts after build-composition
+`manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
+
+**Rules:**
+- Only use element IDs from the `resolved_xml` in **this tool's response** for any follow-up `manage-elements` calls — never IDs from an earlier read.
+- Prefer adding pseudo-states (`&:hover`, `&:focus`, `&:active`) and breakpoints (`@media (--mobile)`) **inline in the `style` string** during composition, eliminating the need for a follow-up `manage-elements` call entirely.
+
+# ID RULES
+`build-composition` uses two different identifiers. Do not mix them.
+
+## configuration-id (you choose; input only)
+Use the XML attribute `configuration-id` on **every** element tag in `xml_structure` (including nested elements). This is the only allowed attribute on widget tags — no `id`, `class`, or other attributes.
+
+| Rule | Detail |
+|------|--------|
+| Uniqueness | Each `configuration-id` value must appear at most once in the `xml_structure` string for this call. Duplicates fail validation (`elementor_duplicate_configuration_id`). |
+| Map keys | Keys in `element_config`, `style`, `classes`, and `interactions` must match a `configuration-id` in `xml_structure` **exactly** (case-sensitive string). Extra map keys with no matching element are ignored. Elements without map entries are still created. |
+| Allowed values | Any non-empty string valid as a quoted XML attribute value (letters, numbers, spaces, hyphens, etc.). |
+| Navigator title | The server uses the value as the element's layer name in the Structure panel, so it is visible to the user in the editor — use human-readable labels. Rename it later with `elementor/manage-elements` `editor_settings.name`, never through `element_config`. |
+| Scope | Per request only. A `configuration-id` from an earlier call does not refer to the same widget later; it is not a persisted element id. |
+
+## Element id (server assigns; output and follow-up)
+Never put element ids in `xml_structure`. The server generates a **new** id for every inserted element (including all descendants) on each successful save.
+
+| Rule | Detail |
+|------|--------|
+| Format | Server-generated lowercase hexadecimal string (one new id per inserted element). |
+| Where to read | After a non-`dry_run` call: `resolved_xml` (each tag gains an `id="..."` attribute) and `root_element_ids` (top-level inserts). `dry_run` does not assign ids. |
+| Reuse vs create | **Create:** every element in this composition gets a fresh server id — do not invent or recycle ids in input. **Reuse:** `parent_id` must be an existing container element id in the document (from `elementor/get-page-structure` or from `resolved_xml` of a prior save on this document). Use `document` (or omit `parent_id`) for root-level insertion. |
+| Follow-up edits | For `elementor/manage-elements`, use only element ids from **this** response's `resolved_xml` (see write-conflict rules above). Never substitute a `configuration-id` where an element id is required. |
+
+## component_id (inside `element_config` for `<e-component>` only)
+Integer post id of a reusable component from `elementor/list-components`. This is neither a `configuration-id` nor an element id.
+
+# COMPONENTS (only when explicitly requested)
+Elementor components are reusable widget compositions; global classes are reusable styles. Do not substitute one for the other.
+
+Call `elementor/list-components` before building a repeated, named, or otherwise reusable structure. Use its `capabilities` response to decide the flow:
+- When `can_add_to_page` is true, reuse a matching component whose `overridable_props` cover the required customization.
+- When no suitable component exists and `can_create` is true, create one through `elementor/manage-component`, then place it.
+- When the required capability is false, build with raw widgets. Do not claim that a component was created or placed.
+
+Place a component as the self-closing leaf tag `<e-component configuration-id="my-hero"/>`. Configure it through `element_config` with `{ component_id, overrides? }`. Override values use the plain-value shape from `origin_prop_schema`; only listed override keys are valid. Components can be mixed with raw widgets.
+
+# XML STRUCTURE
+- Use widget tags: `<e-button configuration-id="primary-button"></e-button>`
+- Containers: "e-div-block", "e-grid", "e-flexbox"
+- Every element needs a unique `configuration-id` — see **ID RULES**
+- No other attributes, classes, element ids, or text nodes in XML
+- Multiple root elements are allowed. Every opening tag needs exactly one matching closing tag (or use a self-closing tag); a stray or missing closing tag fails the whole call with `invalid_xml`, even on `dry_run`
+- Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other wrapper — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
+
+## LAYOUTS
+Every element accepts the same layout styles. Set them in the `style` map for that configuration-id — not as an attribute on the XML tag.
+
+- `display: block` — children stack vertically in normal document flow and take the full width of the parent. Use this for sections and a heading followed by text.
+- `display: flex` — `flex-direction` defaults to `row`, so children sit side by side. For stacked content, set `flex-direction: column`. Set `flex-direction` on every multi-child flex container; otherwise children render in a row with no warning.
+
+## NESTED ELEMENTS
+Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
+- Check `llm_guidance.nesting` in widget schemas for structure requirements
+- `llm_guidance.required_direct_children` lists element types that must appear as direct child tags in XML (from widget defaults)
+- `allowed_child_types` lists which element types can be nested inside
+- `allowed_parents` lists which element types this element can be placed inside
+
+# CONFIGURATION
+- Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
+- **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
+- **Prop names must come from the widget schema (use elementor/get-widget-schemas tool with the widget type). A key not in the schema, an unresolvable value, an unknown global class label, a bad interaction item, or unparseable CSS is skipped, the rest is saved, and each skip is returned as a warning (with `code` and `config_id` in `warning_details`). Every warning is fixable; only errors fail the call. Correct only that field via `elementor/manage-elements`; do not rebuild the composition and do not treat the skip as unsupported.**
+- style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
+- classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
+- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schemas`) includes a `link` property. On widgets without it, `link` is skipped with a warning — send it on a widget whose schema includes `link`, or wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
+- Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
+
+### Style conversion
+The server converts most CSS into **native atomic styles** (breakpoint variants, pseudo-states). Some value shapes fall back to `custom_css`; `animation` and `animation-*` are dropped.
+
+**When easy, prefer native-friendly shapes** (fallbacks are fine when the design needs them):
+- Breakpoints: `@media(--mobile)` — not `@media (max-width: 768px)`
+- Gap: single value `gap: 1rem` — not two-value `gap: 1rem 2rem` / `row-gap`
+- Borders: shorthand `border` / `border-width` — per-side `border-color` / `border-style` may fall back
+- Border-radius: simple values — not elliptical slash form (`10px / 20px`)
+- Transform: `rotate()` / `scale()` / `translate()` — not `matrix()`, `skew()`, `perspective`, `rotate3d`
+- Transition: property list — easing and delay may be dropped
+- Box-shadow: literal values (fully supported) — not `var(...)` inside the shadow
+- Font family & `var()`: one Google Font or one kit variable label — see GLOBAL VARIABLES
+
+**`padding` / `margin` shorthands are supported** — use them; do not split into longhand unnecessarily.
+
+### V3 widget style targets
+V3 widgets (non `e-` types such as `nav-menu`) are styled per **style target**, not with selectors. `elementor/get-widget-schema` returns `default_style_target` and `style_targets`; each target lists its `states` and its `properties`.
+- Bare declarations and `&:state { }` style the `default_style_target`.
+- Every other target is a block named by its alias: `dropdown { }`, `pointer:hover { }`. Blocks cannot be nested.
+- A property listed for a target may only be bound in some states (e.g. a hover pointer color); the warning names the state to use.
+- `wrapper` is the widget's Advanced tab (margin, padding, width, position, background, border).
+- A value the target's controls cannot store (unsupported property, value outside the control's options such as `font-weight: 650`, non-px box-shadow) is written to the widget's custom CSS for that target when Elementor Pro is active; the warning gives the reason and, when known, the allowed values. Prefer an allowed value so it stays editable in the panel. Media queries other than `@media(--<breakpoint>)` are kept verbatim in the same custom CSS.
+- Never use `.elementor-*` class selectors or descendant selectors — they are dropped.
+
+```json
+"style": {
+  "Main Menu": "color: #292925; font-size: 0.875rem; &:hover { color: #000000; } pointer:hover { background: #171714; color: #ffffff; } dropdown { background: #ffffff; border-radius: 12px; box-shadow: 0 16px 32px rgba(23,23,20,0.12); } toggle { color: #171714; } wrapper { flex-grow: 1; } @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } }"
+}
+```
+
+## element_config FORMAT
+Match the widget schema shape:
+- **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
+- **number**: plain number (`42`)
+- **boolean**: plain boolean (`true`)
+- **text** (`title` on `e-heading`, `paragraph` on `e-paragraph`, `text` on `e-button`): plain string (`"Welcome"`). May contain inline HTML tags for text styling.
+  - Example: `"paragraph": "<strong>Contact support</strong> for a <s>free</s> discounted quote — <em>limited time</em> only."`
+- **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
+- **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
+  - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`. Don't send `alt` with `id`; library images render the attachment's Media Library alt text, so ask the user to update it there if it's missing.
+  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
+- **svg** (the `svg` prop on `e-svg`):<!--if:svg_library--> two mutually exclusive forms — send one, not both. See ICONS for which to pick.<!--endif:svg_library-->
+<!--if:svg_library-->  - Icon from a library (preferred for iconography): `{ "value": "fa-solid fa-cart-shopping", "library": "fa-solid" }`. Both fields come verbatim from `elementor/find-icons` — never assemble them yourself.<!--endif:svg_library-->
+  - Uploaded SVG file (for custom artwork, logos): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div, and a fabricated id renders nothing.
+- **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
+  - Library asset (from `elementor/list-assets` with `type: "video"`): `{ "id": 123 }`
+  - External URL: `{ "url": "https://example.com/clip.mp4" }`
+  - NEVER put a raw video URL on a text, link, or `href` prop — a video always goes into `source` on a video widget.
+
+## GLOBAL VARIABLES
+Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
+
+**In `style` (raw CSS):** reference by label only:
+- `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
+- `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
+- Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
+- Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
+- Unrecognized variable references fall back to `custom_css`
+
+## GLOBAL CLASSES
+Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
+
+**In `classes` (reference-only):** attach existing global classes by label:
+- Map configuration-id → array of labels (e.g. `"section-title": ["hero-heading", "text-muted"]`)
+- Create or update classes with `elementor/manage-classes` before referencing them here
+- Global classes are prepended before any local styles from `style`; local styles still win on conflicts
+
+# DYNAMIC TAGS
+- A value can be made dynamic wherever the widget schema allows a dynamic variant (often a union on the prop or a nested field such as an image's `src`).
+- Put the plain dynamic object at that node, in place of the static variant. Read [elementor://dynamic-tags] for allowed tag names and each tag's settings schema.
+- Plain dynamic shape: `{ "name": "<allowed tag>", "settings": { ... } }`
+- Example (image `src`): `"image": { "src": { "name": "<image tag>", "settings": { ... } }, "size": "full" }`
+- The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps. A category mismatch returns an error for that field and skips merging it.
+- Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
+
+# DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
+
+**Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
+
+## SIZING: DEFAULT IS NO SIZE (CRITICAL)
+
+**DO NOT specify height or width unless you have a specific visual reason.**
+
+Flexbox and CSS already handle sizing automatically:
+- Containers grow to fit their content
+- Flex children distribute space via flex properties, not width/height
+- Text elements size to their content
+
+WHEN TO SPECIFY SIZE:
+- min-height on ROOT section for viewport-spanning hero (use min-height, NOT height)
+- max-width for contained content areas (e.g., max-width: 60rem)
+- Explicit aspect ratios for media containers
+
+NEVER SPECIFY:
+- height on nested containers (causes overflow)
+- width on flex children (use flex-basis or gap instead)
+- 100vh on anything except root-level sections
+- Any size "just to be safe" - if unsure, OMIT IT
+
+vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
+
+GOOD: `<e-div-block>content naturally sizes</e-div-block>`
+BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-div-block>`
+
+## Layout Variety (Break the Template)
+- AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
+- VARY heights: Use auto-height sections with generous padding (6rem+). Let content breathe
+- VARY widths: Not everything spans full width. Use contained sections (max-width: 960px) mixed with edge-to-edge
+- ASYMMETRIC grids: 2:1, 1:3, offset layouts. Avoid equal column widths
+- Negative space as design element: Large margins create focus and sophistication
+- Break alignment intentionally: Offset headings, overlapping elements, broken grids
+
+## Visual Depth & Effects
+- Layer elements: Overlapping cards, text over images, floating elements
+- Subtle shadows with color tint (not pure black): `box-shadow: 0 20px 60px rgba(<brand-color-here>, 0.15)`
+- Gradient overlays on images for text readability
+- Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
+- Backdrop blur for glassmorphism where appropriate
+- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
+
+## Typography with Character
+- Display fonts for headlines (from user's brand or contextually appropriate)
+- Size contrast: 4rem+ headlines vs 1rem body. Make hierarchy unmistakable
+- Letter-spacing: Tight for large headlines (-0.02em), loose for small caps (0.1em)
+- Line-height: Tight for headlines (1.1), generous for body (1.6-1.8)
+- Text decoration: Underlines, highlights, gradient text for emphasis
+
+## Color with Purpose
+- Extract palette from user context (brand colors, industry norms, mood)
+- 60-30-10 rule: dominant, secondary, accent
+- Tinted neutrals over pure grays: warm (#faf8f5, #2d2a26) or cool (#f5f7fa, #1e2430)
+- Color blocking: Large colored sections create visual rhythm
+- Gradient directions: Diagonal (135deg, 225deg) feel more dynamic than vertical
+
+## Spacing Strategy
+- Section padding: 6rem-10rem vertical, creating breathing room
+- Rhythm variation: Tight groups (2rem) with generous gaps between (6rem)
+- Use rem/em exclusively for responsive scaling
+- Generous padding on CTAs: min 1rem 2.5rem
+
+<!--if:svg_library--># ICONS
+`e-svg` renders either a library icon or an uploaded SVG file. Prefer a library icon for iconography — carts, arrows, social marks, check marks — because it needs no upload and inherits `color` via `currentColor`. Use an uploaded SVG only for custom artwork such as a brand logo.
+
+Call `elementor/find-icons` to resolve icons, then copy its `value` and `library` verbatim into the `svg` prop. Do not assemble those strings yourself: Font Awesome renamed many icons between major versions (`shopping-cart` became `cart-shopping`), so a plausible-looking guess renders nothing.
+
+`find-icons` accepts a batch of `queries`, so resolve every icon a composition needs in ONE call before composing — not one call per icon. It matches on icon names, aliases, human search terms, and categories, so describe the intent rather than guessing a name: `"add to cart"` finds `cart-shopping`.
+
+```json
+{ "queries": ["add to cart", "free shipping", "secure payment", "instagram"] }
+```
+
+Each match returns `{ value, library, name, label, matched_on }`. Place it as-is:
+
+```json
+{
+  "xml_structure": "<e-flexbox configuration-id=\"add-to-cart-row\"><e-svg configuration-id=\"cart-icon\"/><e-button configuration-id=\"add-to-cart\"></e-button></e-flexbox>",
+  "element_config": {
+    "cart-icon": { "svg": { "value": "fa-solid fa-cart-shopping", "library": "fa-solid" } },
+    "add-to-cart": { "text": "Add to cart" }
+  },
+  "style": {
+    "add-to-cart-row": "display: flex; align-items: center; gap: 0.5rem;",
+    "cart-icon": "width: 1.25rem; height: 1.25rem; color: #1a1a1a;"
+  }
+}
+```
+
+Size an `e-svg` with `width` / `height` in `style` and colour it with `color` — the icon fills its box and takes `currentColor`.
+
+The response includes the Font Awesome version in use (`font_awesome_version`); the installed `libraries` and `categories` are listed only when nothing matched or when browsing without a query. Brand marks live in `fa-brands`, not `fa-solid`. Sites may add their own uploaded icon libraries, which `find-icons` returns alongside Font Awesome and which match on icon name only. When a query returns no matches, refine the wording rather than paginating, and fall back to a text label rather than inventing a name.
+
+<!--endif:svg_library--># INTERACTIONS
+Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
+
+# HARD CONSTRAINTS
+- Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
+- Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
+<!--if:svg_library-->- Icons ONLY from `elementor/find-icons`; copy `value` and `library` verbatim into the `svg` prop. Never invent an icon name — FA renamed many icons between versions and a guess renders nothing<!--endif:svg_library-->
+- Uploaded SVG files ONLY from `elementor/list-assets` with `type: "svg"`, referenced by `id`. External URLs on `e-svg` render an empty div; never fabricate an id
+- Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
+
+# MODE
+Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's id — one call replaces its children. Default `'append'` keeps existing content.
+- `append` (default): Insert new elements as children of `parent_id`, preserving existing children.
+- `replace_children`: Remove all direct children of `parent_id` first, then insert new elements. The response includes `removed_element_ids` listing what was removed.
+- When `parent_id: 'document'` + `mode: 'replace_children'`, all top-level elements are removed — use this to redesign the whole page.
+
+# PARAMETERS
+- **post_id**: WordPress post ID of the document to mutate
+- **xml_structure**: Valid XML with configuration-id attributes on every element
+- **element_config**: configuration-id → plain widget settings (see PLAIN element_config FORMAT). For `<e-component>` config-ids the value is `{ component_id, overrides? }` (see COMPONENTS section).
+- **editor_settings**: configuration-id → editor-only fields, separate from `element_config`. Currently `{ "decorative": true }` on `e-div-block`, `e-flexbox` and `e-grid` for visual-only containers that stay empty (see the `editor_settings` section of the widget schema). Never put these in `element_config`, and do not send `name` here — the layer name comes from `configuration-id`.
+- **style**: configuration-id → plain CSS string (e.g. `"color: red; padding-top: 1rem;"`). Supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile)`). Variables by **label** via `var(--label)`
+- **classes**: configuration-id → list of existing global class **labels** to attach
+- **interactions**: configuration-id → array of native-shape interaction items (see INTERACTIONS section; read [elementor://interactions/schema] for allowed values)
+- **parent_id**: ID of the parent container (omit to insert at document root)
+- **mode**: `'append'` (default) or `'replace_children'` — see MODE section above
+- **dry_run**: If true, validate and return resolved tree without persisting
+
+# EXAMPLE
+Section with heading + button and a decorative glow (only the glow gets an explicit size):
+```json
+{
+  "post_id": 123,
+  "xml_structure": "<e-div-block configuration-id=\"main-section\"><e-div-block configuration-id=\"glow\"/><e-heading configuration-id=\"section-title\"></e-heading><e-button configuration-id=\"call-to-action\"></e-button></e-div-block>",
+  "element_config": {
+    "section-title": {
+      "tag": "h2",
+      "title": "Welcome"
+    }
+  },
+  "editor_settings": {
+    "glow": { "decorative": true }
+  },
+  "style": {
+    "main-section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
+    "section-title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
+  }
+}
+```
+Note: Only the decorative `glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
+
+# FURTHER INSTRUCTIONS
+Use server-assigned element ids from `resolved_xml` for follow-up work — see **ID RULES**.
+
+If components were requested or used, verify that each was created or placed successfully before reporting completion.

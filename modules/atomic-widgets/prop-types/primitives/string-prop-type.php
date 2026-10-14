@@ -10,6 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class String_Prop_Type extends Plain_Prop_Type {
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'string';
+
 	public static function get_key(): string {
 		return 'string';
 	}
@@ -70,5 +74,16 @@ class String_Prop_Type extends Plain_Prop_Type {
 
 			return $leading . sanitize_text_field( $value ) . $trailing;
 		}, $value );
+	}
+
+	public function to_json_schema(): array {
+		$value_schema = [ 'type' => 'string' ];
+
+		$enum = $this->get_enum();
+		if ( $enum ) {
+			$value_schema['enum'] = $enum;
+		}
+
+		return $this->wrap_json_schema( $value_schema );
 	}
 }

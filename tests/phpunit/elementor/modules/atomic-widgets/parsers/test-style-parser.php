@@ -1,9 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Parsers;
 
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
+use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Style_Parser extends Elementor_Test_Base {
@@ -20,7 +21,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		$style = [
 			'id' => 'test-style',
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [
 				[
 					'meta' => [
@@ -48,7 +49,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
         // Arrange.
 		$style = [
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [],
 		];
 
@@ -64,7 +65,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		$style = [
 			'id' => 'test-style',
 			'type' => 'invalid-type',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [],
 		];
 
@@ -95,7 +96,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		$style = [
 			'id' => 'test-style',
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => 'not-an-array',
 		];
 
@@ -111,10 +112,11 @@ class Test_Style_Parser extends Elementor_Test_Base {
         $style = [
 			'id' => 'test-style',
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [
 				[
 					'props' => [],
+					'meta' => null,
 				],
 			],
 		];
@@ -131,7 +133,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
         $style = [
 			'id' => 'test-style',
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [
 				[
 					'meta' => [
@@ -155,7 +157,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
         $style = [
 			'id' => 'test-style',
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [
 				[
 					'meta' => [
@@ -174,30 +176,12 @@ class Test_Style_Parser extends Elementor_Test_Base {
         $this->assert_parse_result_invalid ( $result, [ 'meta.breakpoint' ] );
 	}
 
-	public function test_parse__sanitizes_label_and_id() {
-		// Arrange.
-        $style = [
-			'id' => 'test<script>alert( 1 )</script>-style',
-			'type' => 'class',
-			'label' => 'Test <strong>Style</strong>',
-			'variants' => [],
-		];
-
-        // Act.
-		$result = $this->parser->parse( $style );
-		$sanitized = $result->unwrap();
-
-        // Assert.
-		$this->assertEquals( 'test-style', $sanitized['id'] );
-		$this->assertEquals( 'Test Style', $sanitized['label'] );
-	}
-
 	public function test_parse__validates_and_sanitizes() {
 		// Arrange.
         $style = [
 			'id' => 'test-style',
 			'type' => 'class',
-			'label' => 'Test Style',
+			'label' => 'test-style',
 			'variants' => [
 				[
 					'meta' => [
@@ -222,8 +206,206 @@ class Test_Style_Parser extends Elementor_Test_Base {
 		$this->assertTrue( $result->is_valid() );
 
 		$this->assertEquals( 'test-style', $parsed['id'] );
-		$this->assertEquals( 'Test Style', $parsed['label'] );
+		$this->assertEquals( 'test-style', $parsed['label'] );
 		$this->assertEquals( 'class', $parsed['type'] );
+	}
+
+	public function test_parse__label_too_long_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => str_repeat('a', 51), // 51 characters
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_too_long', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__label_too_short_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'a',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_too_short', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__label_with_reserved_name_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'container',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('reserved_class_name', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__label_starting_with_number_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => '1test',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_starts_with_digit', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__label_with_spaces_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test class',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_contains_spaces', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__label_with_invalid_chars_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test@class',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_invalid_chars', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__label_with_double_hyphen_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => '--test-class',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_double_hyphen', $result->errors()->all()[0]['error']);
+	}
+
+	public function test_parse__sanitizes_custom_css_security_vectors_without_validation_errors() {
+		// Arrange.
+		$modern_css = '&:has(> .child):hover { color: red; } @supports (width < 100px) { display: block; }';
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => 'desktop',
+					],
+					'props' => [],
+					'custom_css' => [
+						'raw' => Utils::encode_string( $modern_css . ' background: url(javascript:alert(1));' ),
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+		$sanitized = Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] );
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertStringContainsString( '&:has(> .child):hover', $sanitized );
+		$this->assertStringContainsString( '@supports (width < 100px)', $sanitized );
+		$this->assertStringNotContainsString( 'javascript:', strtolower( $sanitized ) );
+	}
+
+	public function test_parse__drops_custom_css_when_raw_is_invalid_base64() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => 'test-style',
+			'variants' => [
+				[
+					'meta' => [
+						'state' => null,
+						'breakpoint' => 'desktop',
+					],
+					'props' => [],
+					'custom_css' => [
+						'raw' => '!!!not-base64!!!',
+					],
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $style );
+		$parsed = $result->unwrap();
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+		$this->assertNull( $parsed['variants'][0]['custom_css'] );
+	}
+
+	public function test_parse__label_starting_with_hyphen_digit_fails_validation() {
+		// Arrange.
+		$style = [
+			'id' => 'test-style',
+			'type' => 'class',
+			'label' => '-1test',
+			'variants' => [],
+		];
+
+		// Act.
+		$result = $this->parser->parse($style);
+
+		// Assert.
+		$this->assert_parse_result_invalid($result, ['label']);
+		$this->assertEquals('class_name_starts_with_hyphen_digit', $result->errors()->all()[0]['error']);
 	}
 
     private function assert_parse_result_invalid( Parse_Result $result, array $errors ) {

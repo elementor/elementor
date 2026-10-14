@@ -5,7 +5,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Element_Base;
-use Elementor\Modules\Ai\Feature_Intro\Product_Image_Unification_Intro;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
@@ -29,7 +28,6 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
 	];
-
 	public function get_name() {
 		return 'ai';
 	}
@@ -122,7 +120,6 @@ class Module extends BaseModule {
 				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
 				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
 				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
-				Product_Image_Unification_Intro::add_hooks();
 			}
 		}
 
@@ -1109,6 +1106,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_upload_image( $data ) {
+		$this->verify_upload_permissions( $data );
+
 		if ( empty( $data['image'] ) ) {
 			throw new \Exception( 'Missing image data' );
 		}

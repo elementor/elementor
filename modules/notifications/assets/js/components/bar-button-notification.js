@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { WhatsNew } from './whats-new';
 import { Badge } from '@elementor/ui';
 
-export const BarButtonNotification = ( props ) => {
-	const { defaultIsRead } = props;
-
+export const BarButtonNotification = ( { children } ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ isRead, setIsRead ] = useState( defaultIsRead );
+	const [ unreadCount, setUnreadCount ] = useState( parseInt( window.elementorNotifications?.unread_count, 10 ) || 0 );
 
-	// TODO: This is a temporary solution until we have a proper admin bar component.
+	useEffect( () => {
+		const handler = () => setUnreadCount( ( prev ) => Math.max( 0, prev - 1 ) );
+		window.addEventListener( 'e-notification-item-seen', handler );
+		return () => window.removeEventListener( 'e-notification-item-seen', handler );
+	}, [] );
+
+	const handleOpen = ( event ) => {
+		event.preventDefault();
+		setIsOpen( true );
+	};
+
 	return (
 		<>
 			<button
@@ -17,32 +25,25 @@ export const BarButtonNotification = ( props ) => {
 					backgroundColor: 'transparent',
 					border: 'none',
 				} }
-				onClick={ ( event ) => {
-					event.preventDefault();
-
-					setIsOpen( true );
-				} }
+				onClick={ handleOpen }
 			>
 				<Badge
 					color="primary"
-					variant="dot"
-					invisible={ isRead }
-					sx={ {
-						mx: 0.5,
-					} }
+					badgeContent={ unreadCount }
+					invisible={ 0 === unreadCount }
+					sx={ { mx: 0.5 } }
 				>
 					<i className="e-admin-top-bar__bar-button-icon eicon-speakerphone"></i>
 				</Badge>
 				<span className="e-admin-top-bar__bar-button-title">
-					{ props.children }
+					{ children }
 				</span>
 			</button>
-			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } setIsRead={ setIsRead } />
+			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } />
 		</>
 	);
 };
 
 BarButtonNotification.propTypes = {
-	defaultIsRead: PropTypes.bool,
-	children: PropTypes.any.isRequired,
+	children: PropTypes.node.isRequired,
 };

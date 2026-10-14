@@ -1,0 +1,48 @@
+---
+description: WordPress and PHP development rules
+globs: ["**/*.php", "core/**/*.php", "includes/**/*.php", "modules/**/*.php"]
+alwaysApply: false
+---
+
+# WordPress & PHP Development Rules
+
+## WordPress Standards
+- Follow WordPress Coding Standards and naming conventions
+- Use WordPress functions instead of PHP equivalents
+- Use WordPress hooks system properly with appropriate priorities
+- Use WordPress database functions with prepared statements
+
+## Security Requirements
+- Sanitize all user inputs, validate data types and ranges
+- Use nonces for forms, check user capabilities
+- Escape all outputs for display
+- Never expose sensitive information in errors
+
+## Elementor Specific PHP
+- Understand legacy architecture before modifying
+- Maintain backward compatibility
+- Use adapters for new functionality
+- Follow WordPress plugin structure with proper activation/deactivation hooks
+
+## Performance
+- Minimize database calls, use efficient queries
+- Cache expensive operations
+- Avoid N+1 query problems
+- Use lazy loading when appropriate
+
+## Common Patterns
+```php
+// Settings
+get_option('elementor_' . $key, $default);
+
+// Hooks
+add_action('init', [$this, 'init']);
+add_filter('the_content', [$this, 'filter_content'], 10, 1);
+
+// Security
+if (!current_user_can('edit_posts')) { wp_die(__('Insufficient permissions.')); }
+if (!wp_verify_nonce($_POST['nonce'], 'elementor_action')) { wp_die(__('Security check failed.')); }
+
+// DB
+$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}elementor_data WHERE post_id = %d", $post_id));
+```

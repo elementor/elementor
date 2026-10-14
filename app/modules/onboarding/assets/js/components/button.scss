@@ -23,6 +23,12 @@
 		&:hover {
 			background-color: $e-gray-25;
 		}
+
+		&--disabled {
+			pointer-events: none;
+			cursor: none;
+			color: $e-gray-100;
+		}
 	}
 
 	&--disabled {

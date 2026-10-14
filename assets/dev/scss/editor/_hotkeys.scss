@@ -78,7 +78,7 @@
 					&::after {
 						content: "+";
 						position: absolute;
-						@include end(0);
+						inset-inline-end: 0;
 						width: 9px;
 						text-align: center;
 						margin-inline-end: -18px;

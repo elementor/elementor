@@ -22,15 +22,6 @@ export default class {
 		return [ 'mobile', 'tablet', 'desktop' ];
 	}
 
-	async saveOrUpdate( editor: EditorPage, toReload = false ) {
-		const hasTopBar: boolean = await editor.hasTopBar();
-		if ( hasTopBar ) {
-			await editor.saveSiteSettingsWithTopBar( toReload );
-		} else {
-			await editor.saveSiteSettingsNoTopBar();
-		}
-	}
-
 	async addAllBreakpoints( editor: EditorPage, experimentPostId?: string ) {
 		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
@@ -45,7 +36,7 @@ export default class {
 			}
 		}
 
-		await this.saveOrUpdate( editor, true );
+		await editor.saveSiteSettings( true );
 
 		if ( experimentPostId ) {
 			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
@@ -66,10 +57,16 @@ export default class {
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const removeBreakpointButton = EditorSelectors.panels.siteSettings.layout.breakpoints.removeBreakpointButton;
-		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
-			await this.page.click( removeBreakpointButton );
+		const breakpointsToReset = this.page.locator( removeBreakpointButton );
+		const hadRemovableBreakpoints = await breakpointsToReset.count() > 0;
+
+		while ( await breakpointsToReset.count() > 0 ) {
+			await breakpointsToReset.first().click();
 		}
-		await this.saveOrUpdate( editor, true );
+
+		if ( hadRemovableBreakpoints ) {
+			await editor.saveSiteSettings( true );
+		}
 	}
 
 	getBreakpointInputLocator( page: Page, device: BreakpointEditableDevice ): Locator {
@@ -83,7 +80,7 @@ export default class {
 
 		const locator = this.getBreakpointInputLocator( this.page, device );
 		await locator.fill( String( value ) );
-		await this.saveOrUpdate( editor );
+		await editor.saveSiteSettings( false );
 		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 }

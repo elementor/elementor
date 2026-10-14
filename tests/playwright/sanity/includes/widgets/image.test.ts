@@ -29,7 +29,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			const imageTitle = 'About-Pic-3-1';
 
 			await wpAdmin.openNewPage();
-			await editor.addWidget( data[ i ].widgetTitle );
+			await editor.addWidget( { widgetType: data[ i ].widgetTitle } );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 
 			const imageSize = [ 'thumbnail', 'large', 'full' ];
@@ -68,6 +68,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						isPublished: true,
 					} );
 				await wpAdmin.editWithElementor();
+				await page.waitForLoadState( 'load' );
 			}
 		} );
 	}
@@ -80,7 +81,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			const imageTitle = 'About-Pic-3-1';
 
 			await wpAdmin.openNewPage();
-			await editor.addWidget( data[ i ].widgetTitle );
+			await editor.addWidget( { widgetType: data[ i ].widgetTitle } );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 			await editor.waitForPanelToLoad();
 			await contentTab.setCustomImageSize(
@@ -102,14 +103,14 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
-		const widgetId = await editor.addWidget( 'image' );
+		const widgetId = await editor.addWidget( { widgetType: 'image' } );
 		await editor.setMediaControlImageValue( 'image', `${ image }.png` );
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
 		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
-			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
-		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
+		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.link ),
+		).toHaveAttribute( 'data-elementor-open-lightbox', 'yes' );
+		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click();
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 
 		const title = editor.getPreviewFrame().locator( '.elementor-slideshow__title' );
@@ -119,12 +120,12 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
 		await editor.removeElement( widgetId );
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.setTextControlValue( 'link', imageSrc );
 
 		await editor.publishAndViewPage();
 
-		await page.locator( EditorSelectors.widget ).locator( 'a' ).click( );
+		await page.locator( EditorSelectors.widget ).locator( 'a' ).click();
 
 		const maskPageTitle = page.locator( EditorSelectors.pageHeader );
 		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png', { mask: [ maskPageTitle ] } );

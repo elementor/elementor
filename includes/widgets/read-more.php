@@ -157,4 +157,14 @@ class Widget_Read_More extends Widget_Base {
 		<!--more {{ settings.link_text }}-->
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$text = Utils::html_to_plain_text( $settings['link_text'] ?? 'Read More' );
+		$url = ( $settings['link'] ?? [] )['url'] ?? '';
+		if ( ! empty( $url ) ) {
+			return '[' . $text . '](' . esc_url( $url ) . ')';
+		}
+		return $text;
+	}
 }

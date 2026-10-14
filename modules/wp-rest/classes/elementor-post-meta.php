@@ -78,7 +78,27 @@ class Elementor_Post_Meta {
 				],
 			],
 			'auth_callback' => [ $this, 'check_edit_permission' ],
+			'sanitize_callback' => [ $this, 'sanitize_elementor_data' ],
 		]);
+	}
+
+	public function sanitize_elementor_data( $value ) {
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			return $value;
+		}
+
+		if ( ! is_string( $value ) ) {
+			return Utils::kses_post_deep( $value );
+		}
+
+		$elementor_data = json_decode( $value, true );
+
+		if ( JSON_ERROR_NONE !== json_last_error() || empty( $elementor_data ) ) {
+			// Not valid Elementor JSON (or empty): treat the whole string as HTML to be safe.
+			return wp_kses_post( $value );
+		}
+
+		return wp_json_encode( Utils::kses_post_deep( $elementor_data ) );
 	}
 
 	private function register_page_settings_meta( string $post_type ): void {
@@ -104,7 +124,16 @@ class Elementor_Post_Meta {
 				],
 			],
 			'auth_callback' => [ $this, 'check_edit_permission' ],
+			'sanitize_callback' => [ $this, 'sanitize_page_settings' ],
 		]);
+	}
+
+	public function sanitize_page_settings( $value ) {
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			return $value;
+		}
+
+		return Utils::kses_post_deep( $value );
 	}
 
 	private function register_conditions_meta( string $post_type ): void {

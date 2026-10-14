@@ -1,0 +1,49 @@
+---
+description: Turbo-repo and micro-frontend architecture rules
+globs: ["packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.js", "packages/**/*.jsx"]
+alwaysApply: false
+---
+
+# Turbo-Repo Development Rules
+
+## Package Architecture
+- **Core**: Standalone applications (editor, app-bar, canvas)
+- **Libs**: Reusable libraries (controls, elements, utils)
+- **Tools**: Development tools and build utilities
+
+## Principles
+- Each package must be independently developable
+- Use typed APIs for inter-package communication
+- Follow the pluggable component pattern for extensions
+- Maintain backward compatibility for stable packages
+- All extensions load dynamically at runtime via locations system
+- Keep state local to packages, avoid global state
+
+## TypeScript Standards
+- Use strict TypeScript for all new code
+- Define clear interfaces for all public APIs
+- Avoid `any` type, use existing types from other packages when available
+- Design APIs for external consumption with concrete types
+
+## Package Structure
+```
+packages/packages/[category]/[package-name]/
+├── src/ (index.ts, types.ts, components/, hooks/, utils/)
+└── package.json
+```
+
+## Naming Conventions
+- Package names: `@elementor/[category]-[name]`
+- Files: kebab-case | Components: PascalCase | Hooks: use* | Functions: camelCase
+
+## Pluggable Components
+```typescript
+locations.register('editor.app-bar.menu', MyMenuComponent);
+const menuItems = locations.get('editor.app-bar.menu');
+```
+
+## Workflow
+1. Check if functionality exists in other packages
+2. Write TypeScript interfaces first
+3. Implement with proper error handling
+4. Run: `cd packages && npm test && npm run lint && npm run check-unused`

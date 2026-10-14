@@ -1,5 +1,5 @@
 const handlesInsideClass = 'e-handles-inside';
-const handlesHeight = 25;
+const handlesHeight = 100;
 
 export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
 	onInit() {
@@ -10,49 +10,63 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 		return elementor.settings.page.model.attributes.scroll_snap;
 	}
 
-	isFirstElement() {
-		return this.$element[ 0 ] === document.querySelector( '.elementor-section-wrap > .elementor-element:first-child' );
-	}
-
 	isOverflowHidden() {
 		return 'hidden' === this.$element.css( 'overflow' );
 	}
 
-	getOffset() {
-		if ( 'body' === elementor.config.document.container ) {
-			return this.$element.offset().top;
+	isEmbeddedEditArea() {
+		const editAreaElement = this.getEditAreaElement();
+
+		if ( ! editAreaElement ) {
+			return false;
 		}
 
-		const $container = jQuery( elementor.config.document.container );
-		return this.$element.offset().top - $container.offset().top;
+		return null !== editAreaElement.closest( '.elementor-embedded-editor' );
+	}
+
+	getEditAreaElement() {
+		const $closestEditArea = this.$element.closest( '.elementor-edit-area-active' );
+
+		if ( $closestEditArea.length ) {
+			return $closestEditArea[ 0 ];
+		}
+
+		const document = elementor.documents.getCurrent();
+		const $editArea = document?.$element;
+
+		if ( $editArea?.length ) {
+			return $editArea[ 0 ];
+		}
+
+		return this.$element.closest( '.elementor-edit-area' )[ 0 ];
+	}
+
+	getEditAreaOffset() {
+		const editAreaElement = this.getEditAreaElement();
+
+		if ( ! editAreaElement ) {
+			return Number.POSITIVE_INFINITY;
+		}
+
+		return this.$element[ 0 ].getBoundingClientRect().top - editAreaElement.getBoundingClientRect().top;
 	}
 
 	setHandlesPosition() {
 		const document = elementor.documents.getCurrent();
 
-		if ( ! document || ! document.container.isEditable() ) {
+		if ( ! document?.container.isEditable() ) {
 			return;
 		}
 
 		if ( this.isSectionScrollSnapEnabled() ) {
 			this.$element.addClass( handlesInsideClass );
-
 			return;
 		}
 
-		if ( ! this.isOverflowHidden() && ! this.isFirstElement() ) {
-			this.$element.removeClass( handlesInsideClass );
+		const viewportTop = this.$element[ 0 ].getBoundingClientRect().top;
 
-			return;
-		}
-
-		const offset = this.getOffset(),
-			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
-
-		if ( offset < handlesHeight ) {
+		if ( viewportTop < handlesHeight || this.isOverflowHidden() || ( this.isEmbeddedEditArea() && this.getEditAreaOffset() < handlesHeight ) ) {
 			this.$element.addClass( handlesInsideClass );
-
-			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
 		} else {
 			this.$element.removeClass( handlesInsideClass );
 		}

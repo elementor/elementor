@@ -57,7 +57,7 @@ class Test_Compatibility_Tag_Report extends Elementor_Test_Base {
 	 * @param string $format
 	 *
 	 * @return Compatibility_Tag_Report
-	 * @throws \Exception
+	 * @throws \Exception If an error occurs.
 	 */
 	private function create_instance( $format = '' ) {
 		$this->mock_wp_api(

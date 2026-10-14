@@ -9,7 +9,7 @@ class ControllerGetItemsException extends Controller {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
+	 * @throws \Exception If an error occurs.
 	 */
 	public function get_items( $request ) {
 		switch ( $request->get_param( 'error' ) ) {

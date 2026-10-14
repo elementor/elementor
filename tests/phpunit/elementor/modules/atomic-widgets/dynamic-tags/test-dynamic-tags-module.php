@@ -8,8 +8,6 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Control_Url_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -113,12 +111,13 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'group' => 'post',
 				'atomic_controls' => [
-					[
-						'type' => 'section',
-						'value' => [
-							'label' => 'Settings',
-							'description' => null,
-							'items' => [
+				[
+					'type' => 'section',
+					'value' => [
+						'id' => null,
+						'label' => 'Settings',
+						'description' => null,
+						'items' => [
 								[
 									'type' => 'control',
 									'value' => [
@@ -129,6 +128,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 										'props' => [
 											'placeholder' => null,
 										],
+										'meta' => null,
 									],
 								],
 								[
@@ -149,7 +149,10 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 													'label' => 'Email',
 												],
 											],
+											'fallbackLabels' => null,
+											'placeholder' => '',
 										],
+										'meta' => null,
 									],
 								],
 							],
@@ -158,25 +161,25 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'props_schema' => [
 					'before' => [
-						'kind' => 'plain',
+						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
 						'settings' => [],
 						'meta' => [],
+						'dependencies' => null,
+						'initial_value' => null,
 					],
 					'key' => [
-						'kind' => 'plain',
+						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
-						'settings' => [
-							'enum' => [
-								'name',
-								'email',
-							],
-						],
+						'settings' => [],
 						'meta' => [],
+						'dependencies' => null,
+						'initial_value' => null,
 					],
 				],
+				'meta' => [],
 			],
 			'post' => [
 				'name' => 'post',
@@ -187,6 +190,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			]
 		];
 
@@ -274,7 +278,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				$tag->add_control(
 					'unsupported-control',
 					[
-						'type' => 'choose',
+						'type' => 'code',
 					]
 				);
 			},
@@ -301,6 +305,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			],
 		];
 
@@ -335,6 +340,72 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEmpty( $settings['atomicDynamicTags']['tags'] );
+
+		// Cleanup.
+		$tag->cleanup();
+	}
+
+	public function test_add_atomic_dynamic_tags_to_editor_settings__preserves_select_control_groups() {
+		// Arrange.
+		$tag = $this->make_mock_tag( [
+			'name' => 'acf-like',
+			'title' => 'ACF Like',
+			'categories' => [ 'text' ],
+			'register_controls' => function ( Tag $tag ) {
+				$tag->add_control(
+					'key',
+					[
+						'type' => 'select',
+						'label' => 'Key',
+						'groups' => [
+							[
+								'label' => 'Group A',
+								'options' => [
+									'field_1:name' => 'Name',
+								],
+							],
+							[
+								'label' => 'Group B',
+								'options' => [
+									'field_2:email' => 'Email',
+								],
+							],
+						],
+						'default' => '',
+					]
+				);
+			},
+		] );
+
+		Plugin::$instance->dynamic_tags->register( $tag );
+
+		$tags = Plugin::$instance->dynamic_tags->get_tags_config();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'dynamicTags' => [ 'tags' => $tags ] ] );
+
+		$decoded_tags = json_decode( wp_json_encode( $settings['atomicDynamicTags']['tags'] ), true );
+		$key_control_props = $decoded_tags['acf-like']['atomic_controls'][0]['value']['items'][0]['value']['props'];
+
+		// Assert.
+		$this->assertEmpty( $key_control_props['options'] );
+		$this->assertEquals(
+			[
+				[
+					'label' => 'Group A',
+					'options' => [
+						[ 'value' => 'field_1:name', 'label' => 'Name' ],
+					],
+				],
+				[
+					'label' => 'Group B',
+					'options' => [
+						[ 'value' => 'field_2:email', 'label' => 'Email' ],
+					],
+				],
+			],
+			$key_control_props['groups']
+		);
 
 		// Cleanup.
 		$tag->cleanup();
@@ -421,6 +492,66 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$this->assertEquals( [ V1DynamicTags::TEXT_CATEGORY ], $internal->get_prop_type( 'dynamic' )->get_categories() );
 	}
 
+	public function test_get_dynamic_tag_names_by_categories__returns_empty_array_for_no_categories() {
+		// Act.
+		$result = Dynamic_Tags_Module::instance()->get_dynamic_tag_names_by_categories( [] );
+
+		// Assert.
+		$this->assertSame( [], $result );
+	}
+
+	public function test_get_dynamic_tag_names_by_categories__returns_names_of_tags_matching_any_category() {
+		// Arrange.
+		$text_tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
+		$number_tag = $this->make_mock_tag( [ 'name' => 'number-tag', 'categories' => [ 'number' ] ] );
+		$url_tag = $this->make_mock_tag( [ 'name' => 'url-tag', 'categories' => [ 'url' ] ] );
+
+		Plugin::$instance->dynamic_tags->register( $text_tag );
+		Plugin::$instance->dynamic_tags->register( $number_tag );
+		Plugin::$instance->dynamic_tags->register( $url_tag );
+
+		Dynamic_Tags_Module::fresh()->register_hooks();
+
+		// Act.
+		$result = Dynamic_Tags_Module::instance()->get_dynamic_tag_names_by_categories( [ 'text', 'number' ] );
+
+		// Assert.
+		$this->assertEqualSets( [ 'text-tag', 'number-tag' ], $result );
+
+		// Cleanup.
+		$text_tag->cleanup();
+		$number_tag->cleanup();
+		$url_tag->cleanup();
+	}
+
+	public function test_dynamic_prop_type_includes_allowed_tag_names_from_mapping() {
+		// Arrange.
+		$tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
+
+		Plugin::$instance->dynamic_tags->register( $tag );
+
+		Dynamic_Tags_Module::fresh()->register_hooks();
+
+		$prop = String_Prop_Type::make()->default( 'test' );
+
+		// Act.
+		$schema = apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			[ 'prop' => $prop ]
+		);
+
+		// Assert.
+		$this->assertInstanceOf( Union_Prop_Type::class, $schema['prop'] );
+
+		$dynamic_prop_type = $schema['prop']->get_prop_type( 'dynamic' );
+
+		$this->assertInstanceOf( Dynamic_Prop_Type::class, $dynamic_prop_type );
+		$this->assertSame( [ 'text-tag' ], $dynamic_prop_type->get_allowed_tag_names() );
+
+		// Cleanup.
+		$tag->cleanup();
+	}
+
 	public function add_dynamic_prop_type_data_provider() {
 		return [
 			'number' => [
@@ -447,11 +578,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				Url_Prop_Type::make()->default( 'http://example.com' ),
 				[ V1DynamicTags::URL_CATEGORY ],
 			],
-
-			'url for link' => [
-				Link_Control_Url_Prop_Type::make()->default( 'http://example.com' ),
-				[ V1DynamicTags::URL_CATEGORY ],
-			]
 		];
 	}
 

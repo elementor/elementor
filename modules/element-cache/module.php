@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const OPTION_UNIQUE_ID = '_elementor_element_cache_unique_id';
+
 	public function get_name() {
 		return 'element-cache';
 	}
@@ -23,33 +25,24 @@ class Module extends BaseModule {
 
 		$this->register_shortcode();
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
-			return;
-		}
+		add_filter( 'elementor/element_cache/unique_id', [ $this, 'get_unique_id' ] );
 
 		$this->add_advanced_tab_actions();
 
 		if ( is_admin() ) {
 			add_action( 'elementor/admin/after_create_settings/' . Settings::PAGE_ID, [ $this, 'register_admin_fields' ], 100 );
 		}
-
-		$this->clear_cache_on_site_changed();
 	}
 
-	public static function get_experimental_data(): array {
-		return [
-			'name' => 'e_element_cache',
-			'title' => esc_html__( 'Element Caching', 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.23.0',
-			],
-			'generator_tag' => true,
-		];
+	public function get_unique_id() {
+		$unique_id = get_option( static::OPTION_UNIQUE_ID );
+
+		if ( ! $unique_id ) {
+			$unique_id = md5( uniqid( wp_generate_password() ) );
+			update_option( static::OPTION_UNIQUE_ID, $unique_id );
+		}
+
+		return $unique_id;
 	}
 
 	private function register_shortcode() {
@@ -58,13 +51,15 @@ class Module extends BaseModule {
 				return '';
 			}
 
+			if ( empty( $atts['k'] ) || $atts['k'] !== $this->get_unique_id() ) {
+				return '';
+			}
+
 			$widget_data = json_decode( base64_decode( $atts['data'] ), true );
 
 			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
 				return '';
 			}
-
-			$widget_data['settings']['isShortcode'] = true;
 
 			ob_start();
 
@@ -145,18 +140,5 @@ class Module extends BaseModule {
 				],
 			]
 		);
-	}
-
-	private function clear_cache_on_site_changed() {
-		add_action( 'activated_plugin', [ $this, 'clear_cache' ] );
-		add_action( 'deactivated_plugin', [ $this, 'clear_cache' ] );
-		add_action( 'switch_theme', [ $this, 'clear_cache' ] );
-		add_action( 'upgrader_process_complete', [ $this, 'clear_cache' ] );
-
-		add_action( 'update_option_elementor_element_cache_ttl', [ $this, 'clear_cache' ] );
-	}
-
-	public function clear_cache() {
-		Plugin::$instance->files_manager->clear_cache();
 	}
 }

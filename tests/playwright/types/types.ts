@@ -74,9 +74,7 @@ export type Post = {
 }
 
 export type WindowType = Window & {
-	$e?: {
-		run: ( s: string, o: object )=> unknown
-	}
+	$e?: $eType;
 	wpApiSettings?: { nonce: string }
 };
 export type BackboneType = {
@@ -85,6 +83,10 @@ export type BackboneType = {
 
 export type $eType = {
 	run: ( s: string, o: object )=> unknown
+	commands: {
+		on: ( event: string, callback: ( ...args: unknown[] ) => void ) => void
+		off: ( event: string, callback: ( ...args: unknown[] ) => void ) => void
+	}
 }
 
 export type ElementorType = {

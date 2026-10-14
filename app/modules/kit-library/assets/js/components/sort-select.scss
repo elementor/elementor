@@ -14,7 +14,7 @@
 
 .eps-sort-select {
 	width: 100%;
-	font-size: type(size, "15");
+	font-size: get-type(size, "15");
 	display: flex;
 
 	&__select-wrapper {
@@ -25,9 +25,8 @@
 			content: "\e8ad";
 			font-family: eicons;
 			position: absolute;
-			@include end( spacing( 10 ) );
-			top: 0;
-			bottom: 0;
+			inset-inline-end: spacing( 10 );
+			inset-block: 0;
 			color: tints(500);
 			display: flex;
 			align-items: center;
@@ -43,7 +42,7 @@
 		background: var(--eps-sort-select-select-background-color);
 		outline: none;
 		color: var(--eps-sort-select-select-color);
-		line-height: type( line-height, 'flat' );
+		line-height: get-type( line-height, 'flat' );
 		cursor: pointer;
 		height: spacing(44);
 		appearance: none;
@@ -55,7 +54,7 @@
 		padding: spacing(12) spacing(12);
 		background: var(--eps-sort-select-button-background-color);
 		border-inline-start: var(--eps-sort-select-button-border);
-		line-height: type( line-height, 'flat' );
+		line-height: get-type( line-height, 'flat' );
 		color: tints(500);
 	}
 }

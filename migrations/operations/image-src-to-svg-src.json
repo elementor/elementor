@@ -1,0 +1,20 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "svg-src"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "image-src"
+      }
+    }
+  ]
+}

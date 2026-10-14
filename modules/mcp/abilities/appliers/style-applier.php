@@ -1,0 +1,382 @@
+<?php
+
+namespace Elementor\Modules\Mcp\Abilities\Appliers;
+
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Overridden_Setting_Warnings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
+use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
+use Elementor\Plugin;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Style_Applier {
+
+	const LOCAL_STYLE_ID_PREFIX = 'e-';
+	const DESKTOP_BREAKPOINT = 'desktop';
+	const LOCAL_STYLE_LABEL = 'local';
+	const LOCAL_STYLE_TYPE = 'class';
+
+	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
+
+	private Css_Converter $css_converter;
+	private array $active_breakpoints;
+
+	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [] ) {
+		$this->css_converter      = $css_converter;
+		$this->active_breakpoints = $active_breakpoints;
+	}
+
+	/**
+	 * @param array<string, array&> $config_id_index Index of subtree refs.
+	 * @param array<string, string> $styles          Per-config-id CSS strings.
+	 * @param string                $style_apply_mode `patch` or `replace`.
+	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
+	 * @return array{error: null, warnings: Warnings_Bag, variable_connections: array<string, array<string, string>>}
+	 */
+	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
+		$warnings = Warnings_Bag::make();
+
+		if ( empty( $styles ) ) {
+			return [
+				'error'               => null,
+				'warnings'            => $warnings,
+				'variable_connections' => [],
+			];
+		}
+
+		$active_breakpoints    = $this->get_active_breakpoints();
+		$variable_connections  = [];
+
+		foreach ( $styles as $config_id => $css_string ) {
+			if ( ! is_string( $css_string ) ) {
+				$warnings->add(
+					'css_parse_failed',
+					sprintf( 'style must be a CSS string, got %s.', gettype( $css_string ) ),
+					(string) $config_id
+				);
+				continue;
+			}
+
+			if ( ! isset( $config_id_index[ $config_id ] ) ) {
+				continue;
+			}
+
+			$node = &$config_id_index[ $config_id ];
+
+			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
+				$this->apply_v3_style( $node, $css_string, (string) $config_id, $warnings, $style_apply_mode, $widget_configs );
+				unset( $node );
+				continue;
+			}
+
+			$is_empty_css = '' === trim( $css_string );
+
+			if ( $is_empty_css ) {
+				if ( 'replace' === $style_apply_mode ) {
+					$existing_style_id = $this->find_existing_local_style_id( $node );
+					if ( $existing_style_id ) {
+						$node['styles'][ $existing_style_id ]['variants'] = [];
+					}
+				}
+				unset( $node );
+				continue;
+			}
+
+			$parse_results = new Bulk_Operations_Result();
+			$parsed        = Style_Variants_Merger::parse_css_string(
+				$css_string,
+				$active_breakpoints,
+				0,
+				'update',
+				$parse_results,
+				fn() => $this->css_converter
+			);
+
+			if ( null === $parsed ) {
+				$result_data = $parse_results->to_array();
+				$warnings->add(
+					'css_parse_failed',
+					$result_data['results'][0]['message'] ?? 'CSS parse error.',
+					(string) $config_id
+				);
+				unset( $node );
+				continue;
+			}
+
+			$built_variants  = Style_Variants_Merger::build_variants_with_fallback_css( $parsed['breakpoint_blocks'], $this->css_converter );
+			$new_variants    = $built_variants['variants'];
+			$unsupported_css = $this->collect_unsupported_css( $new_variants, $built_variants['fallback_css'] );
+
+			if ( '' !== $unsupported_css ) {
+				$warnings->add(
+					self::UNSUPPORTED_CSS_CODE,
+					sprintf(
+						/* translators: %s: CSS declarations that were not saved */
+						__( 'These CSS properties or values are not supported and were not saved: %s', 'elementor' ),
+						self::truncate_css_snippet( $unsupported_css )
+					),
+					(string) $config_id
+				);
+			}
+
+			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
+			$removal_bps            = $parsed['removal_breakpoints'];
+			$existing_style_id      = $this->find_existing_local_style_id( $node );
+			$existing_variants      = $node['styles'][ $existing_style_id ]['variants'] ?? [];
+			$existing_after_removal = array_values(
+				array_filter( $existing_variants, fn( $v ) => ! in_array( $v['meta']['breakpoint'] ?? null, $removal_bps, true ) )
+			);
+
+			$merged_variants = Style_Variants_Merger::apply_mode(
+				$existing_after_removal,
+				$new_variants,
+				$style_apply_mode,
+				$affected_bps
+			);
+
+			$variable_connections[ $config_id ] = $this->collect_variable_connections( $new_variants );
+
+			$this->write_variants_to_node( $node, $merged_variants, $existing_style_id );
+			unset( $node );
+		}
+
+		return [
+			'error'               => null,
+			'warnings'            => $warnings,
+			'variable_connections' => $variable_connections,
+		];
+	}
+
+	/**
+	 * @param array                $node
+	 * @param string               $css_string
+	 * @param string               $config_id
+	 * @param Warnings_Bag         $warnings
+	 * @param string               $style_apply_mode
+	 * @param array<string, array> $widget_configs
+	 */
+	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch', array $widget_configs = [] ): void {
+		$widget_type = $node['widgetType'] ?? $node['elType'] ?? '';
+		$widget_config = [];
+
+		if ( is_string( $widget_type ) && '' !== $widget_type ) {
+			$widget_config = $widget_configs[ $widget_type ]
+				?? Widget_Context_Helper::get_widget_config( $widget_type )
+				?? [];
+		}
+
+		$is_empty_css = '' === trim( $css_string );
+		$is_replace = 'replace' === $style_apply_mode;
+		$result = null;
+
+		if ( ! $is_empty_css ) {
+			$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
+			$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
+		}
+
+		if ( null !== ( $result['error'] ?? null ) ) {
+			$warnings->add( 'css_parse_failed', $result['error'], $config_id );
+			return;
+		}
+
+		if ( $is_replace ) {
+			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
+		}
+
+		if ( $is_empty_css ) {
+			return;
+		}
+
+		foreach ( $result['warnings'] as $warning ) {
+			$warnings->add( 'v3_css_skipped', $warning, $config_id );
+		}
+
+		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [] );
+
+		if ( ! empty( $result['settings_patch'] ) ) {
+			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+		}
+
+		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
+		$unmapped = $result['unmapped_css'] ?? '';
+
+		if ( $is_map_driven ) {
+			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $result['settings_patch'] ?? [] ), $node['settings'] ?? [] );
+			( new V3_Map_Fallback_Css() )->apply( $node, $result, (string) $widget_type, $config_id, $warnings );
+			return;
+		}
+
+		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
+		if ( null !== $pro_warning ) {
+			$warnings->add( 'v3_style_needs_pro', $pro_warning, $config_id );
+		}
+
+		if ( '' !== trim( $unmapped ) ) {
+			$snippet = self::truncate_css_snippet( $unmapped );
+			if ( null !== $pro_warning ) {
+				$warnings->add(
+					'css_dropped',
+					sprintf(
+						/* translators: %s: CSS snippet that could not be mapped */
+						__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
+						$snippet
+					),
+					$config_id
+				);
+			} else {
+				$warnings->add(
+					'css_fallback_custom_css',
+					sprintf(
+						/* translators: %s: CSS snippet that could not be mapped */
+						__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
+						$snippet
+					),
+					$config_id
+				);
+			}
+		}
+	}
+
+	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {
+		$css = trim( preg_replace( '/\s+/', ' ', $css ) ?? $css );
+		if ( strlen( $css ) <= $max_length ) {
+			return $css;
+		}
+
+		return substr( $css, 0, $max_length - 3 ) . '...';
+	}
+
+	/**
+	 * @param array[]            $variants
+	 * @param array<int, string> $fallback_css Per variant index, CSS the converter could not convert natively.
+	 */
+	private function collect_unsupported_css( array $variants, array $fallback_css ): string {
+		if ( empty( $fallback_css ) ) {
+			return '';
+		}
+
+		$kept_variants = Atomic_Widget_Styles::get_license_based_filtered_styles(
+			[ self::LOCAL_STYLE_LABEL => [ 'variants' => array_intersect_key( $variants, $fallback_css ) ] ]
+		)[ self::LOCAL_STYLE_LABEL ]['variants'];
+
+		$dropped_css = [];
+
+		foreach ( $fallback_css as $index => $css ) {
+			if ( empty( $kept_variants[ $index ]['custom_css'] ) ) {
+				$dropped_css[] = $css;
+			}
+		}
+
+		return implode( ' ', $dropped_css );
+	}
+
+	private function get_active_breakpoints(): array {
+		if ( ! empty( $this->active_breakpoints ) ) {
+			return $this->active_breakpoints;
+		}
+		return array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
+	}
+
+	private function write_variants_to_node( array &$node, array $merged_variants, ?string $existing_style_id ): void {
+		if ( $existing_style_id ) {
+			$node['styles'][ $existing_style_id ]['variants'] = $merged_variants;
+			return;
+		}
+
+		if ( empty( $merged_variants ) ) {
+			return;
+		}
+
+		$style_id              = $this->generate_local_style_id();
+		$node['styles']        = $node['styles'] ?? [];
+		$node['styles'][ $style_id ] = [
+			'id'       => $style_id,
+			'label'    => self::LOCAL_STYLE_LABEL,
+			'type'     => self::LOCAL_STYLE_TYPE,
+			'variants' => $merged_variants,
+		];
+		$node['settings'] = $this->add_style_to_classes( $node['settings'] ?? [], $style_id );
+	}
+
+	private function find_existing_local_style_id( array $node ): ?string {
+		foreach ( $node['styles'] ?? [] as $style_id => $_style ) {
+			if ( str_starts_with( (string) $style_id, self::LOCAL_STYLE_ID_PREFIX ) ) {
+				return $style_id;
+			}
+		}
+		return null;
+	}
+
+	private function add_style_to_classes( array $settings, string $style_id ): array {
+		$existing = $settings['classes']['value'] ?? [];
+		if ( ! is_array( $existing ) ) {
+			$existing = [];
+		}
+		if ( ! in_array( $style_id, $existing, true ) ) {
+			$existing[] = $style_id;
+		}
+
+		$settings['classes'] = [
+			'$$type' => 'classes',
+			'value'  => array_values( $existing ),
+		];
+
+		return $settings;
+	}
+
+	private function generate_local_style_id(): string {
+		return self::LOCAL_STYLE_ID_PREFIX . strtolower( \Elementor\Utils::generate_random_string() ) . '-' . dechex( wp_rand( 0x1000, 0xffff ) );
+	}
+
+	/**
+	 * @param array[] $variants
+	 * @return array<int, array{variable_id: string, var_type: string, control_path: string}>
+	 */
+	private function collect_variable_connections( array $variants ): array {
+		$connections = [];
+
+		foreach ( $variants as $variant ) {
+			foreach ( $variant['props'] ?? [] as $prop_key => $prop_value ) {
+				if ( ! is_array( $prop_value ) ) {
+					continue;
+				}
+
+				$type = $prop_value['$$type'] ?? '';
+
+				if ( ! Variable_Type_Keys::is_variable_type( $type ) ) {
+					continue;
+				}
+
+				$connections[] = [
+					'variable_id'  => (string) ( $prop_value['value'] ?? '' ),
+					'var_type'     => $this->resolve_var_type_label( $type ),
+					'control_path' => (string) $prop_key,
+				];
+			}
+		}
+
+		return $connections;
+	}
+
+	private function resolve_var_type_label( string $type ): string {
+		$labels = [
+			'global-color-variable'       => 'color',
+			'global-font-variable'        => 'font',
+			'global-size-variable'        => 'size',
+			'global-custom-size-variable' => 'size',
+		];
+
+		return $labels[ $type ] ?? $type;
+	}
+}

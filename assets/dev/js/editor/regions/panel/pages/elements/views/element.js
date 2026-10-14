@@ -6,8 +6,12 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() ) {
+		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() ) {
 			className += ' elementor-element--promotion';
+		}
+
+		if ( this.isIntegration() ) {
+			className += ' elementor-element--integration';
 		}
 
 		return className;
@@ -46,6 +50,14 @@ module.exports = Marionette.ItemView.extend( {
 		return false !== this.model.get( 'editable' );
 	},
 
+	isIntegration() {
+		return !! this.model.get( 'integration' );
+	},
+
+	isAtomicWidgetPromotion() {
+		return !! this.model.get( 'promotionType' );
+	},
+
 	onRender() {
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
@@ -71,27 +83,46 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onMouseDown() {
-		const title = this.model.get( 'title' ),
-			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			promotion = elementor.config.promotion.elements;
+	onMouseDown( event ) {
+		event.stopPropagation();
 
-		elementor.promotion.showDialog( {
+		if ( this.isAtomicWidgetPromotion() ) {
+			const promotionType = this.model.get( 'promotionType' );
+			document.dispatchEvent( new CustomEvent( `${ promotionType }-promotion:open`, {
+				detail: { target: this.el },
+			} ) );
+			return;
+		}
+
+		const widgetTitle = this.model.get( 'title' ),
+			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
+			isIntegration = this.isIntegration(),
+			configPromotion = elementor.config.promotion;
+
+		let ctaUrl, ctaText, title, content;
+
+		if ( isIntegration ) {
+			const integrationPromo = configPromotion?.integration?.[ widgetType ];
+			ctaUrl = integrationPromo.action_button.url.toString().replaceAll( '&amp;', '&' );
+			ctaText = integrationPromo.action_button.text;
 			// eslint-disable-next-line @wordpress/valid-sprintf
-			title: sprintf( promotion.title, title ),
+			title = sprintf( integrationPromo.title, widgetTitle );
 			// eslint-disable-next-line @wordpress/valid-sprintf
-			content: sprintf( promotion.content, title ),
-			targetElement: this.el,
-			position: {
-				blockStart: '-7',
+			content = sprintf( integrationPromo.content, widgetTitle );
+		}
+
+		document.dispatchEvent( new CustomEvent( 'widget-promotion:open', {
+			detail: {
+				target: this.el,
+				widgetType,
+				widgetTitle,
+				title,
+				content,
+				ctaUrl,
+				ctaText,
+				hideProTag: isIntegration,
 			},
-			actionButton: {
-				// eslint-disable-next-line @wordpress/valid-sprintf
-				url: sprintf( promotion.action_button.url, widgetType ),
-				text: promotion.action_button.text,
-				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
-			},
-		} );
+		} ) );
 	},
 
 	addToPage() {
@@ -155,14 +186,29 @@ module.exports = Marionette.ItemView.extend( {
 			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 
+		const modelData = this.model.toJSON();
+
 		$e.run( 'preview/drop', {
 			container,
 			options: {
 				...options,
 				scrollIntoView: true,
 			},
-			model: this.model.toJSON(),
+			model: modelData,
 		} );
+
+		if ( elementorCommon?.eventsManager?.dispatchEvent ) {
+			const elType = modelData?.elType ?? '';
+			const widgetType = modelData?.widgetType ?? '';
+			const elementName = 'widget' === elType ? widgetType : elType;
+
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
+				location: 'editor_panel',
+				element_name: elementName,
+				element_type: elType,
+				widget_type: widgetType,
+			} );
+		}
 	},
 
 	getSelectedElements() {

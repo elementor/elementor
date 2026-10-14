@@ -1,0 +1,197 @@
+import { type V1Element } from '@elementor/editor-elements';
+import { type AnyTransformable } from '@elementor/editor-props';
+
+import { type OverridesMapping } from '../components/instance-editing-panel/utils/resolve-element-settings';
+import {
+	type ComponentInstanceOverrideProp,
+	componentInstanceOverridePropTypeUtil,
+} from '../prop-types/component-instance-override-prop-type';
+import {
+	type ComponentInstanceOverride,
+	componentInstanceOverridesPropTypeUtil,
+} from '../prop-types/component-instance-overrides-prop-type';
+import { componentInstancePropTypeUtil } from '../prop-types/component-instance-prop-type';
+import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
+import { type OverridableProp } from '../types';
+import { getContainerByOriginId } from './get-container-by-origin-id';
+import { getOverridableProp } from './get-overridable-prop';
+
+type OverridesChainResult =
+	| {
+			isChainBroken: false;
+			innerElement: V1Element;
+			overridesMapping: OverridesMapping;
+	  }
+	| {
+			isChainBroken: true;
+	  };
+
+// Recursively walks down a chain of nested component instances to find the innermost element
+// and collect the overrides mapping for it.
+// Returns the resolved inner element with its overrides mapping,
+// or { isChainBroken: true } if any level in the chain is no longer overridable.
+export function resolveOverridesChain( {
+	outerOverridableProp,
+	outerInstanceId,
+	overridesMapping = {},
+}: {
+	outerOverridableProp: OverridableProp;
+	outerInstanceId?: string;
+	overridesMapping?: OverridesMapping;
+} ): OverridesChainResult {
+	// Stop condition: no originPropFields means we've reached the most inner component instance
+	if ( ! outerOverridableProp.originPropFields ) {
+		const innerElement = getContainerByOriginId( outerOverridableProp.elementId, outerInstanceId );
+
+		if ( ! innerElement ) {
+			throw new Error(
+				`Inner element not found inside instance. elementId: ${ outerOverridableProp.elementId }, instanceId: ${ outerInstanceId }`
+			);
+		}
+
+		return { isChainBroken: false, innerElement, overridesMapping };
+	}
+
+	// Step 1: Find the intermediate component instance and read its settings.
+	const currentInstance = getContainerByOriginId( outerOverridableProp.elementId, outerInstanceId );
+	if ( ! currentInstance ) {
+		// One of the instances in the chain was deleted.
+		return { isChainBroken: true };
+	}
+	const { componentId, overrides } = extractComponentInstanceSettings( currentInstance );
+
+	if ( ! componentId ) {
+		throw new Error(
+			`Component ID not found for current instance. currentInstanceId: ${ currentInstance.id }. outerInstanceId: ${ outerInstanceId }`
+		);
+	}
+
+	// Collect overrides from this level, translating keys for exposed-further props.
+	const mergedOverrides = buildOverridesMap( overridesMapping, overrides ?? [] );
+
+	// Find the overridable-override that matches the outer overridable prop's key,
+	// to get the next level's overridable prop.
+	const override = findOverrideByOuterKey( overrides, outerOverridableProp.overrideKey );
+	const overrideKey = componentInstanceOverridePropTypeUtil.extract( override )?.override_key;
+
+	if ( ! override || ! overrideKey ) {
+		// No matching override found for the current level - it means it's no longer overridable.
+		return { isChainBroken: true };
+	}
+
+	const overridableProp = getOverridableProp( { componentId, overrideKey } );
+
+	if ( ! overridableProp ) {
+		throw new Error( `Overridable prop not found. componentId: ${ componentId }, overrideKey: ${ overrideKey }` );
+	}
+
+	// Step 4: Recurse into the next nesting level.
+	return resolveOverridesChain( {
+		outerOverridableProp: overridableProp,
+		outerInstanceId: currentInstance.id,
+		overridesMapping: mergedOverrides,
+	} );
+}
+
+/**
+ * Builds overrides map from instances chain:
+ * At each level, we collect overrides from the current instance and merge them with the overrides from the outer levels.
+ *
+ * For exposed-further overrides (overridable wrapping an override), we have outer key (overridable's) and inner key (override's).
+ * If a higher level already set a value for the outer key, that value is carried forward to the inner key
+ * — same logic as the componentOverridableTransformer in the render pipeline.
+ *
+ * For simple overrides, that are not exposed further, we just use the override's key and value.
+ *
+ * @param existing       - Previously accumulated overrides from outer levels.
+ * @param levelOverrides - The overrides array from the current level instance.
+ */
+export function buildOverridesMap(
+	existing: OverridesMapping,
+	levelOverrides: ComponentInstanceOverride[]
+): OverridesMapping {
+	const result: OverridesMapping = { ...existing };
+
+	for ( const item of levelOverrides ) {
+		const overridableValue = componentOverridablePropTypeUtil.extract( item );
+
+		if ( overridableValue ) {
+			// Exposed-further: overridable wraps an inner override with a different key.
+			const override = componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value );
+
+			if ( ! override ) {
+				continue;
+			}
+
+			const outerKey = overridableValue.override_key;
+			const innerKey = override.override_key;
+			const innerValue = override.override_value as AnyTransformable | null;
+
+			// If an upper level already set a value for the outer key, carry it forward to the inner key.
+			const higherLevelOverride = existing[ outerKey ];
+
+			if ( higherLevelOverride ) {
+				const outerValue = higherLevelOverride.value;
+				result[ innerKey ] = {
+					value: outerValue ?? innerValue,
+					outermostKey: higherLevelOverride.outermostKey ?? outerKey,
+				};
+				continue;
+			}
+
+			result[ innerKey ] = {
+				value: innerValue,
+				outermostKey: outerKey,
+			};
+		} else {
+			// Simple override: not exposed further, we just store the override's key and value.
+			const override = componentInstanceOverridePropTypeUtil.extract( item );
+
+			if ( ! override ) {
+				continue;
+			}
+
+			const key = override.override_key;
+			const value = override.override_value as AnyTransformable | null;
+
+			result[ key ] = { value };
+		}
+	}
+
+	return result;
+}
+
+function extractComponentInstanceSettings( element: V1Element ) {
+	const instanceSetting = element.settings?.get( 'component_instance' );
+	const instanceValue = componentInstancePropTypeUtil.extract( instanceSetting );
+	const componentId = instanceValue?.component_id?.value;
+	const overrides = componentInstanceOverridesPropTypeUtil.extract( instanceValue?.overrides );
+
+	return { componentId, overrides };
+}
+
+// Finds the inner override prop whose wrapping overridable matches the given outer key.
+function findOverrideByOuterKey(
+	overrides: ComponentInstanceOverride[] | null | undefined,
+	outerKey: string
+): ComponentInstanceOverrideProp | null {
+	if ( ! overrides ) {
+		return null;
+	}
+
+	const overridableOverride: ComponentInstanceOverride | undefined = overrides.find( ( item ) => {
+		const overridableValue = componentOverridablePropTypeUtil.extract( item );
+		if ( ! overridableValue ) {
+			return false;
+		}
+		return overridableValue.override_key === outerKey;
+	} );
+
+	const override = componentOverridablePropTypeUtil.extract( overridableOverride )?.origin_value;
+
+	if ( ! override || ! componentInstanceOverridePropTypeUtil.isValid( override ) ) {
+		return null;
+	}
+
+	return override;
+}

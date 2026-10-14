@@ -1,0 +1,22 @@
+{
+  "up": [
+    {
+      "op": { "fn": "move", "src": "value.content", "dest": "value.content.value", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "value.content.$$type", "value": "string" },
+      "condition": { "fn": "exists", "path": "value.content.value" }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "html-v3" }
+    }
+  ],
+  "down": [
+    {
+      "op": { "fn": "move", "src": "value.content.value", "dest": "value.content", "clean": false }
+    },
+    {
+      "op": { "fn": "set", "path": "$$type", "value": "html-v2" }
+    }
+  ]
+}

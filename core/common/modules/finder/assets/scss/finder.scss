@@ -88,8 +88,8 @@ $finder-z-index: 99999; // Above Theme Builder Modal
 		.eicon-loading {
 			display: none;
 			position: absolute;
-			@include end(10px);
-			top: 30px;
+			inset-block-start: 30px;
+			inset-inline-end: 10px;
 			color: var(--e-a-color-info);
 			font-size: 14px;
 		}

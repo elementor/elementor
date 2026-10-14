@@ -60,6 +60,16 @@ $e-dialog-confirm-space: 20px;
 			&.dialog-take_over {
 				@extend .e-primary;
 			}
+
+			&[disabled] {
+				&:hover,
+				&:focus,
+				&:visited {
+					background-color: var(--e-a-btn-bg-disabled);
+				}
+				background-color: var(--e-a-btn-bg-disabled);
+				cursor: not-allowed;
+			}
 		}
 	}
 }

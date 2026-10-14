@@ -4,34 +4,12 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
 import _path from 'path';
 
-test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'active',
-		} );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-		} );
-
-		await page.close();
-	} );
-
+test.describe( 'Nested Accordion tests @nested-atomic-repeaters', () => {
 	test( 'Atomic repeaters functionality', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 
 		await editor.selectElement( nestedAccordionID );
 
@@ -67,7 +45,7 @@ test.describe( 'Nested Accordion experiment is active @nested-atomic-repeaters',
 
 		await test.step( 'Add an item to the second accordion', async () => {
 			const secondContainer = await editor.addElement( { elType: 'container' }, 'document' ),
-				secondNestedAccordionID = await editor.addWidget( 'nested-accordion', secondContainer );
+				secondNestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container: secondContainer } );
 
 			await editor.selectElement( secondNestedAccordionID );
 

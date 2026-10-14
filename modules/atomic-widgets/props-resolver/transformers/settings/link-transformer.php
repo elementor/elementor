@@ -14,8 +14,9 @@ class Link_Transformer extends Transformer_Base {
 		$url = $this->extract_url( $value );
 
 		$link_attrs = [
-			'href' => esc_url( $url ),
+			'href' => $url,
 			'target' => $value['isTargetBlank'] ? '_blank' : '_self',
+			'tag' => $url && 'button' === $value['tag'] ? 'button' : 'a',
 		];
 
 		return array_filter( $link_attrs );
@@ -25,6 +26,6 @@ class Link_Transformer extends Transformer_Base {
 		$destination = $value['destination'];
 		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
 
-		return $post ? $post->guid : $destination;
+		return $post ? get_permalink( $post ) : $destination;
 	}
 }

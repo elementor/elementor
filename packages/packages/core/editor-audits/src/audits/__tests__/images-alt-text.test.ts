@@ -1,0 +1,207 @@
+import { audit } from '../images-alt-text';
+import { makeContext, makeWidget } from './fixtures';
+
+const imageSizeWithAlt = ( id: number, alt: string ) => ( {
+	width: 1,
+	height: 1,
+	filesize_bytes: 1000,
+	mime: 'image/jpeg',
+	src: '',
+	alt,
+} );
+
+type AtomicImageSrc = { id?: number; url?: string; alt?: string };
+
+const atomicImageProp = ( { id, url, alt }: AtomicImageSrc ) => ( {
+	$$type: 'image',
+	value: {
+		src: {
+			$$type: 'image-src',
+			value: {
+				id: id ? { $$type: 'image-attachment-id', value: id } : null,
+				url: url ? { $$type: 'url', value: url } : null,
+				alt: alt ? { $$type: 'string', value: alt } : null,
+			},
+		},
+		size: null,
+	},
+} );
+
+describe( audit.id, () => {
+	it( 'is skipped when the page has no images', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No images',
+		} );
+	} );
+
+	it( 'passes when every image has alt text from page context', async () => {
+		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
+		const pageContext = { image_sizes: { '1:full': imageSizeWithAlt( 1, 'Cat' ) } };
+		expect( await audit.evaluate( makeContext( { tree, pageContext } ) ) ).toEqual( { status: 'pass' } );
+	} );
+
+	it( 'fails when an image is missing alt text', async () => {
+		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
+		const pageContext = { image_sizes: { '1:full': imageSizeWithAlt( 1, '' ) } };
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].elementId ).toBe( 'i1' );
+			expect( result.metadata?.missingAltImageCount ).toBe( 1 );
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/admin.php?page=accessibility-settings#scans'
+			);
+			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Fix with Ally' );
+		}
+	} );
+
+	it( 'points to the Ally plugin install URL when Ally is not active', async () => {
+		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
+		const pageContext = {
+			image_sizes: { '1:full': imageSizeWithAlt( 1, '' ) },
+			ally_plugin_active: false,
+			ally_plugin_url:
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility',
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility'
+			);
+		}
+	} );
+
+	it( 'passes for image-box when attachment has alt', async () => {
+		const tree = [ makeWidget( 'box', 'image-box', { image: { id: 2 } } ) ];
+		const pageContext = { image_sizes: { '2:full': imageSizeWithAlt( 2, 'Box image' ) } };
+		expect( await audit.evaluate( makeContext( { tree, pageContext } ) ) ).toEqual( { status: 'pass' } );
+	} );
+
+	it( 'fails for image-carousel when any slide lacks alt', async () => {
+		const tree = [
+			makeWidget( 'carousel', 'image-carousel', {
+				carousel: [
+					{ id: 10, url: 'http://example.test/a.jpg' },
+					{ id: 11, url: 'http://example.test/b.jpg' },
+				],
+			} ),
+		];
+		const pageContext = {
+			image_sizes: {
+				'10:full': imageSizeWithAlt( 10, 'Slide one' ),
+				'11:full': imageSizeWithAlt( 11, '' ),
+			},
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 1 );
+			expect( result.violations[ 0 ].elementId ).toBe( 'carousel' );
+			expect( result.metadata?.missingAltImageCount ).toBe( 1 );
+		}
+	} );
+
+	it( 'counts missing alt images across multiple widgets', async () => {
+		const tree = [
+			makeWidget( 'i1', 'image', { image: { id: 1 } } ),
+			makeWidget( 'i2', 'image', { image: { id: 2 } } ),
+			makeWidget( 'carousel', 'image-carousel', {
+				carousel: [
+					{ id: 10, url: 'http://example.test/a.jpg' },
+					{ id: 11, url: 'http://example.test/b.jpg' },
+				],
+			} ),
+		];
+		const pageContext = {
+			image_sizes: {
+				'1:full': imageSizeWithAlt( 1, '' ),
+				'2:full': imageSizeWithAlt( 2, '' ),
+				'10:full': imageSizeWithAlt( 10, '' ),
+				'11:full': imageSizeWithAlt( 11, '' ),
+			},
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 3 );
+			expect( result.metadata?.missingAltImageCount ).toBe( 4 );
+		}
+	} );
+
+	it( 'uses snapshot alt for URL-only images', async () => {
+		const tree = [ makeWidget( 'ext', 'image', { image: { url: 'http://example.test/x.jpg', alt: 'External' } } ) ];
+		expect( await audit.evaluate( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
+	} );
+
+	describe( 'atomic widgets', () => {
+		it( 'fails when an atomic image attachment is missing alt text', async () => {
+			// Arrange
+			const tree = [ makeWidget( 'e-image', 'e-image', { image: atomicImageProp( { id: 20 } ) } ) ];
+			const pageContext = { image_sizes: { '20:full': imageSizeWithAlt( 20, '' ) } };
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+			// Assert
+			expect( result.status ).toBe( 'fail' );
+
+			if ( result.status === 'fail' ) {
+				expect( result.violations[ 0 ].elementId ).toBe( 'e-image' );
+				expect( result.metadata?.missingAltImageCount ).toBe( 1 );
+			}
+		} );
+
+		it( 'passes when an atomic image attachment has alt text', async () => {
+			// Arrange
+			const tree = [ makeWidget( 'e-image', 'e-image', { image: atomicImageProp( { id: 21 } ) } ) ];
+			const pageContext = { image_sizes: { '21:full': imageSizeWithAlt( 21, 'Dog' ) } };
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+			// Assert
+			expect( result ).toEqual( { status: 'pass' } );
+		} );
+
+		it( 'uses the src alt for URL-only atomic images', async () => {
+			// Arrange
+			const withAlt = makeWidget( 'with-alt', 'e-image', {
+				image: atomicImageProp( { url: 'http://example.test/a.jpg', alt: 'External' } ),
+			} );
+			const withoutAlt = makeWidget( 'without-alt', 'e-image', {
+				image: atomicImageProp( { url: 'http://example.test/b.jpg' } ),
+			} );
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree: [ withAlt, withoutAlt ] } ) );
+
+			// Assert
+			expect( result.status ).toBe( 'fail' );
+
+			if ( result.status === 'fail' ) {
+				expect( result.violations.map( ( { elementId } ) => elementId ) ).toEqual( [ 'without-alt' ] );
+			}
+		} );
+
+		it( 'ignores atomic video posters', async () => {
+			// Arrange
+			const tree = [ makeWidget( 'video', 'e-self-hosted-video', { poster: atomicImageProp( { id: 22 } ) } ) ];
+
+			// Act
+			const result = await audit.evaluate( makeContext( { tree } ) );
+
+			// Assert
+			expect( result ).toEqual( { status: 'skipped', reason: 'No images' } );
+		} );
+	} );
+} );

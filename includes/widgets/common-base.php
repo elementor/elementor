@@ -124,27 +124,152 @@ class Widget_Common_Base extends Widget_Base {
 	}
 
 	/**
-	 * Return a translated user-friendly list of the available masking shapes.
+	 * Get a list of the available mask shapes.
 	 *
-	 * @param bool $add_custom Determine if the output should contain `Custom` options.
+	 * @param bool $custom_button Determine if the output should contain `Custom Mask` button.
 	 *
-	 * @return array Array of shapes with their URL as key.
+	 * @return array A list of mask shapes.
 	 */
-	private function get_shapes( $add_custom = true ) {
+	private function get_shapes( $custom_button = true ): array {
 		$shapes = [
-			'circle' => esc_html__( 'Circle', 'elementor' ),
-			'flower' => esc_html__( 'Flower', 'elementor' ),
-			'sketch' => esc_html__( 'Sketch', 'elementor' ),
-			'triangle' => esc_html__( 'Triangle', 'elementor' ),
-			'blob' => esc_html__( 'Blob', 'elementor' ),
-			'hexagon' => esc_html__( 'Hexagon', 'elementor' ),
+			'circle' => [
+				'title' => esc_html__( 'Circle', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/circle.svg',
+			],
+			'oval-vertical' => [
+				'title' => esc_html__( 'Oval vertical', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/oval-vertical.svg',
+			],
+			'oval-horizontal' => [
+				'title' => esc_html__( 'Oval horizontal', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/oval-horizontal.svg',
+			],
+			'pill-vertical' => [
+				'title' => esc_html__( 'Pill vertical', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/pill-vertical.svg',
+			],
+			'pill-horizontal' => [
+				'title' => esc_html__( 'Pill horizontal', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/pill-horizontal.svg',
+			],
+			'triangle' => [
+				'title' => esc_html__( 'Triangle', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/triangle.svg',
+			],
+			'diamond' => [
+				'title' => esc_html__( 'Diamond', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/diamond.svg',
+			],
+			'pentagon' => [
+				'title' => esc_html__( 'Pentagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/pentagon.svg',
+			],
+			'hexagon-vertical' => [
+				'title' => esc_html__( 'Hexagon vertical', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon-vertical.svg',
+			],
+			'hexagon-horizontal' => [
+				'title' => esc_html__( 'Hexagon horizontal', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon-horizontal.svg',
+			],
+			'heptagon' => [
+				'title' => esc_html__( 'Heptagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/heptagon.svg',
+			],
+			'octagon' => [
+				'title' => esc_html__( 'Octagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/octagon.svg',
+			],
+			'parallelogram-right' => [
+				'title' => esc_html__( 'Parallelogram right', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/parallelogram-right.svg',
+			],
+			'parallelogram-left' => [
+				'title' => esc_html__( 'Parallelogram left', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/parallelogram-left.svg',
+			],
+			'trapezoid-up' => [
+				'title' => esc_html__( 'Trapezoid Up', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/trapezoid-up.svg',
+			],
+			'trapezoid-down' => [
+				'title' => esc_html__( 'Trapezoid Down', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/trapezoid-down.svg',
+			],
+			'flower' => [
+				'title' => esc_html__( 'Flower', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/flower.svg',
+			],
+			'sketch' => [
+				'title' => esc_html__( 'Sketch', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/sketch.svg',
+			],
+			'hexagon' => [
+				'title' => esc_html__( 'Hexagon Donut', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon.svg',
+			],
+			'blob' => [
+				'title' => esc_html__( 'Blob', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/blob.svg',
+			],
 		];
 
-		if ( $add_custom ) {
-			$shapes['custom'] = esc_html__( 'Custom', 'elementor' );
+		$shapes = array_merge( $shapes, self::get_additional_mask_shapes() );
+
+		if ( $custom_button ) {
+			$shapes['custom'] = [
+				'type' => 'button',
+				'title' => esc_html__( 'Custom Mask', 'elementor' ),
+			];
 		}
 
 		return $shapes;
+	}
+
+	/**
+	 * Get selectors dictionary for mask shapes.
+	 *
+	 * Built-in and additional shapes resolve to their concrete asset/image URLs, while the
+	 * `custom` option intentionally resolves to `none` so only `_mask_image` can emit a custom URL.
+	 *
+	 * @return array Mask shape selectors dictionary.
+	 */
+	private function get_mask_shape_selectors_dictionary(): array {
+		$selectors_dictionary = [];
+
+		foreach ( $this->get_shapes( false ) as $shape_key => $shape_data ) {
+			$shape_url = $shape_data['image'] ?? $this->get_shape_url( $shape_key );
+
+			$selectors_dictionary[ $shape_key ] = 'url( ' . $shape_url . ' )';
+		}
+
+		$selectors_dictionary['custom'] = 'none';
+
+		return $selectors_dictionary;
+	}
+
+	/**
+	 * Get additional mask shapes.
+	 *
+	 * Used to add custom mask shapes to elementor.
+	 *
+	 * @since 3.30.0
+	 *
+	 * @return array A list of additional mask shapes.
+	 */
+	private static function get_additional_mask_shapes(): array {
+		$additional_mask_shapes = [];
+
+		/**
+		 * Additional mask shapes.
+		 *
+		 * Filters the mask shapes used by Elementor to add additional mask shapes.
+		 *
+		 * @since 3.30.0
+		 *
+		 * @param array $additional_mask_shapes Additional mask shapes.
+		 */
+		return apply_filters( 'elementor/mask_shapes/additional_shapes', $additional_mask_shapes );
 	}
 
 	/**
@@ -165,8 +290,7 @@ class Widget_Common_Base extends Widget_Base {
 		];
 
 		return [
-			$mask_selectors['default'] => $rules,
-			$mask_selectors['image'] => $rules,
+			$mask_selectors['default'] . ', ' . $mask_selectors['image'] => $rules,
 		];
 	}
 
@@ -279,7 +403,7 @@ class Widget_Common_Base extends Widget_Base {
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -292,7 +416,7 @@ class Widget_Common_Base extends Widget_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
@@ -323,7 +447,7 @@ class Widget_Common_Base extends Widget_Base {
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -336,7 +460,7 @@ class Widget_Common_Base extends Widget_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',
@@ -988,17 +1112,20 @@ class Widget_Common_Base extends Widget_Base {
 			'_mask_shape',
 			[
 				'label' => esc_html__( 'Shape', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
+				'type' => Controls_Manager::VISUAL_CHOICE,
+				'label_block' => true,
+				'columns' => 4,
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
-				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+				'selectors_dictionary' => $this->get_mask_shape_selectors_dictionary(),
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: {{VALUE}};' ),
 				'condition' => [
 					'_mask_switch!' => '',
 				],
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_image',
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
@@ -1013,24 +1140,6 @@ class Widget_Common_Base extends Widget_Base {
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_shape' => 'custom',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_mask_notice',
-			[
-				'type' => Controls_Manager::HIDDEN,
-				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) .
-						'<br>' .
-						sprintf(
-							'%1$s <a target="_blank" href="https://go.elementor.com/mask-control">%2$s</a>',
-							esc_html__( 'Explore additional Premium Shape packs and use them in your site.', 'elementor' ),
-							esc_html__( 'Learn more', 'elementor' ),
-						),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
-				'condition' => [
-					'_mask_switch!' => '',
 				],
 			]
 		);

@@ -2,10 +2,10 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\TemplateRenderer;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
-use Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer;
+use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -26,6 +26,28 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 		parent::tear_down();
 
 		Template_Renderer::reset();
+	}
+
+	public function test_render__html_attr_escapes_multibyte_characters() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'templates' => [
+				'elementor/elements/test' => __DIR__ . '/mocks/html-attr.html.twig',
+			],
+			'settings' => [
+				'title' => 'Café',
+			],
+		] );
+
+		// Act.
+		ob_start();
+
+		$widget->render_content();
+
+		$content = ob_get_clean();
+
+		// Assert.
+		$this->assertSame( '<div title="Caf&#x00E9;"></div>', trim( $content ) );
 	}
 
 	public function test_render__basic_template() {

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Parsers;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Core\Utils\Api\Parse_Result;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -66,7 +67,13 @@ class Props_Parser {
 				continue;
 			}
 
-			$sanitized[ $key ] = $prop_type->sanitize( $props[ $key ] );
+			$sanitized_value = $prop_type->sanitize( $props[ $key ] );
+
+			if ( ! $prop_type->should_persist( $sanitized_value ) ) {
+				continue;
+			}
+
+			$sanitized[ $key ] = $sanitized_value;
 		}
 
 		return Parse_Result::make()->wrap( $sanitized );

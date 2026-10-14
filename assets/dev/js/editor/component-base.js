@@ -1,6 +1,9 @@
 import { default as ApiComponentBase } from 'elementor-api/modules/component-base';
-import EditorView from 'elementor-panel/pages/editor';
-import ControlBaseDataView from 'elementor-controls/base-data';
+
+/**
+ * @typedef {import('elementor-panel/pages/editor').default} EditorView
+ * @typedef {import('elementor-controls/base-data').default} ControlBaseDataView
+ */
 
 export default class ComponentBase extends ApiComponentBase {
 	/**

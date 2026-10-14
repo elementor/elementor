@@ -1336,6 +1336,11 @@
 			"type": "number",
 			"title": "Install timestamp"
 		},
+		"allowed_usage_time": {
+			"$id": "#/allowed_usage_time",
+			"type": "number",
+			"title": "Allowed usage time"
+		},
 		"site_key": {
 			"$id": "#/site_key",
 			"type": "string",

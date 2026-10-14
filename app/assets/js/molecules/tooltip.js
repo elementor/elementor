@@ -67,12 +67,14 @@ export default function Tooltip( props ) {
 				nodes[ nodes.length - 1 ].remove();
 			}
 		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.disabled ] );
 
 	useEffect( () => {
 		if ( isLibraryLoaded ) {
 			setTipsy();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isLibraryLoaded, showTooltip ] );
 
 	useEffect( () => {
@@ -80,6 +82,7 @@ export default function Tooltip( props ) {
 		if ( ! props.disabled && props.show !== showTooltip ) {
 			setShowTooltip( props.show );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.show ] );
 
 	return (

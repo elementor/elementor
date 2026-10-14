@@ -41,6 +41,7 @@ export default function Select2( props ) {
 		return () => {
 			$select2.select2( 'destroy' ).off( 'select2:select select2:unselect' );
 		};
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.settings, props.options ] );
 
 	// Listen to changes in the prop `value`, if changed update the select 2.

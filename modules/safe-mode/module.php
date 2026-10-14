@@ -65,7 +65,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	/**
-	 * @throws \Exception Access Denied.
+	 * @throws \Exception If the safe mode cannot be enabled.
 	 */
 	public function ajax_enable_safe_mode( $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {

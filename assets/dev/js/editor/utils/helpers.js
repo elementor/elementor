@@ -1,26 +1,18 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
-import DOMPurify, { isValidAttribute } from 'dompurify';
+import DOMPurify from 'dompurify';
 
-const allowedHTMLWrapperTags = [
-	'article',
-	'aside',
-	'div',
-	'footer',
-	'h1',
-	'h2',
-	'h3',
-	'h4',
-	'h5',
-	'h6',
-	'header',
-	'main',
-	'nav',
-	'p',
-	'section',
-	'span',
-];
+/**
+ * PHP (`Utils::get_allowed_html_wrapper_tags()`) is the single source of truth for this
+ * list; it's localized via `elementorCommon.config`. If it's ever missing, fail closed
+ * (no tags allowed) rather than fall back to a second hardcoded copy that could drift.
+ */
+function getAllowedHTMLWrapperTags() {
+	const { allowedHTMLWrapperTags } = globalThis.elementorCommon?.config ?? {};
+
+	return Array.isArray( allowedHTMLWrapperTags ) ? allowedHTMLWrapperTags : [];
+}
 
 module.exports = {
 	container: ContainerHelper,
@@ -44,24 +36,6 @@ module.exports = {
 						container: null,
 					},
 				},
-			},
-			container: {
-				widget: null,
-				container: null,
-				'e-div-block': null,
-				'e-flexbox': null,
-			},
-			'e-div-block': {
-				widget: null,
-				'e-div-block': null,
-				container: null,
-				'e-flexbox': null,
-			},
-			'e-flexbox': {
-				widget: null,
-				'e-div-block': null,
-				container: null,
-				'e-flexbox': null,
 			},
 		},
 	},
@@ -295,11 +269,11 @@ module.exports = {
 
 				enqueueOptions.crossOrigin = true;
 
-				if ( elementorCommon.config.experimentalFeatures?.e_local_google_fonts && 'preview' === target ) {
+				if ( 'preview' === target ) {
 					elementorCommon.ajax.addRequest( 'enqueue_google_fonts', {
 						data: { font_name: font },
 						unique_id: 'enqueue_google_fonts_' + font,
-					} );
+					}, true );
 				}
 
 				break;
@@ -712,7 +686,9 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
+		const allowedTags = getAllowedHTMLWrapperTags();
+
+		return allowedTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {
@@ -729,7 +705,7 @@ module.exports = {
 	},
 
 	sanitizeUrl( url ) {
-		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
+		const isValidUrl = !! url ? DOMPurify.isValidAttribute( 'a', 'href', url ) : false;
 
 		if ( ! isValidUrl ) {
 			return '';
@@ -772,9 +748,28 @@ module.exports = {
 		return this.getAtomicElementTypes().includes( elType );
 	},
 
-	isAtomicWidget( model ) {
-		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+	getWidgetCache( model ) {
+		const isModel = model && 'function' === typeof model.get;
+		const elType = isModel ? model.get( 'elType' ) : model?.elType;
+		const widgetType = isModel ? model.get( 'widgetType' ) : model?.widgetType;
+		const elementType = 'widget' === elType ? widgetType : elType;
 
-		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
+		return elementor.widgetsCache[ elementType ];
+	},
+
+	isAtomicWidget( model ) {
+		const widgetCache = this.getWidgetCache( model );
+
+		return !! widgetCache?.atomic_props_schema;
+	},
+
+	getAtomicWidgetBaseStyles( model ) {
+		if ( ! this.isAtomicWidget( model ) ) {
+			return;
+		}
+
+		const widgetCache = this.getWidgetCache( model );
+
+		return widgetCache.base_styles;
 	},
 };

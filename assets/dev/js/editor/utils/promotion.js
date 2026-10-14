@@ -12,6 +12,7 @@ export default class extends elementorModules.Module {
 			text: null,
 			classes: [ 'elementor-button', 'e-accent' ],
 		},
+		hideProTag: false,
 	};
 
 	elements = {
@@ -40,6 +41,11 @@ export default class extends elementorModules.Module {
 			position: {
 				my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + '+5 top',
 			},
+			onHide: () => {
+				if ( this.hideProTag ) {
+					this.resetProTag();
+				}
+			},
 		} );
 
 		this.elements.$header = this.dialog.getElements( 'header' );
@@ -55,6 +61,42 @@ export default class extends elementorModules.Module {
 			this.elements.$titleBadge,
 			this.elements.$closeButton,
 		);
+	}
+
+	getElements() {
+		return this.elements;
+	}
+
+	updateElements( elements ) {
+		this.elements = elements;
+	}
+
+	hideProTag() {
+		const elements = this.getElements();
+		elements.$titleBadge.css( 'display', 'none' );
+		if ( ! elements.$freeBadgeContainer ) {
+			elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
+			elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
+			elements.$freeBadge.text( 'Free' );
+			elements.$freeBadgeContainer.append( elements.$freeBadge );
+			elements.$titleBadge.after( elements.$freeBadgeContainer );
+			this.updateElements( elements );
+		}
+		const $actionButton = this.dialog.getElements( 'action' );
+		$actionButton.removeClass( 'go-pro' );
+		$actionButton.css( 'background-color', 'var(--e-a-btn-bg-info)' );
+	}
+
+	resetProTag() {
+		const elements = this.getElements();
+		elements.$titleBadge.css( 'display', 'inline-block' );
+		if ( elements.$freeBadgeContainer?.remove ) {
+			elements.$freeBadgeContainer.remove();
+		}
+		elements.$freeBadgeContainer = null;
+		elements.$freeBadge = null;
+		this.updateElements( elements );
+		this.dialog.getElements( 'action' ).addClass( 'go-pro' );
 	}
 
 	createButton( options ) {
@@ -106,6 +148,12 @@ export default class extends elementorModules.Module {
 				of: options.targetElement,
 				at: `${ inlineStartKey }${ options.position.inlineStart || '' } top${ options.position.blockStart || '' }`,
 			} );
+
+		if ( options.hideProTag ) {
+			this.hideProTag();
+		} else {
+			this.resetProTag();
+		}
 
 		return this.dialog.show();
 	}

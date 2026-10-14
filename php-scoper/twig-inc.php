@@ -36,5 +36,33 @@ return [
 				$content
 			);
 		},
+		function ( $file_path, $prefix, $content ) {
+			$is_capture_node_file = (bool) preg_match( '/twig\/twig\/src\/Node\/CaptureNode\.php/', $file_path );
+
+			if ( ! $is_capture_node_file ) {
+				return $content;
+			}
+
+			return preg_replace_callback(
+				"/'\\\\\\\\Twig\\\\\\\\Extension\\\\\\\\CoreExtension::captureOutput\('/",
+				fn() => "'{$prefix}\\\\Twig\\\\Extension\\\\CoreExtension::captureOutput('",
+				$content
+			);
+		},
+		function ( $file_path, $prefix, $content ) {
+			$is_escaper_runtime_file = (bool) preg_match( '/twig\/twig\/src\/Runtime\/EscaperRuntime\.php/', $file_path );
+
+			if ( ! $is_escaper_runtime_file ) {
+				return $content;
+			}
+
+			$search = '$ord = \ord($chr);';
+
+			if ( false === strpos( $content, $search ) ) {
+				throw new \RuntimeException( 'Twig EscaperRuntime ord() patch target not found.' );
+			}
+
+			return str_replace( $search, '$ord = \ord($chr[0]);', $content );
+		},
 	],
 ];

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import FormText from './pages/form-text';
 import Connect from './pages/connect';
-import FormCode from './pages/form-code';
 import GetStarted from './pages/get-started';
 import useUserInfo from './hooks/use-user-info';
 import WizardDialog from './components/wizard-dialog';
@@ -16,10 +15,12 @@ import useUpgradeMessage from './hooks/use-upgrade-message';
 import UsageMessages from './components/usage-messages';
 import { Box, Typography } from '@elementor/ui';
 import Loader from './components/loader';
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useRequestIds } from './context/requests-ids';
 import { FREE_TRIAL_FEATURES_NAMES } from './helpers/features-enum';
 import FormAnimation from './pages/form-animation';
+
+const FormCode = lazy( () => import( /* webpackChunkName: 'ai-form-code' */ './pages/form-code' ) );
 
 const PageContent = (
 	{
@@ -77,6 +78,7 @@ const PageContent = (
 			sx: {
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
+				minHeight: '80vh',
 				height: 'auto',
 			},
 		},
@@ -206,21 +208,23 @@ const PageContent = (
 						</PromptDialog.Header>
 
 						<PromptDialog.Content className="e-ai-dialog-content" dividers>
-							<FormCode
-								onClose={ onClose }
-								getControlValue={ getControlValue }
-								setControlValue={ setControlValue }
-								additionalOptions={ additionalOptions }
-								credits={ credits }
-								usagePercentage={ usagePercentage }
-							>
-								<UsageMessages
-									hasSubscription={ hasSubscription }
+							<Suspense fallback={ <Loader /> }>
+								<FormCode
+									onClose={ onClose }
+									getControlValue={ getControlValue }
+									setControlValue={ setControlValue }
+									additionalOptions={ additionalOptions }
+									credits={ credits }
 									usagePercentage={ usagePercentage }
-									sx={ { mb: 2 } }
-									feature={ FREE_TRIAL_FEATURES_NAMES.CODE }
-								/>
-							</FormCode>
+								>
+									<UsageMessages
+										hasSubscription={ hasSubscription }
+										usagePercentage={ usagePercentage }
+										sx={ { mb: 2 } }
+										feature={ FREE_TRIAL_FEATURES_NAMES.CODE }
+									/>
+								</FormCode>
+							</Suspense>
 						</PromptDialog.Content>
 					</PromptHistoryActionProvider>
 				</PromptHistoryProvider>
@@ -236,7 +240,7 @@ const PageContent = (
 		};
 		return (
 			<PromptDialog onClose={ onCloseAnimationDialog } { ...codePromptDialogStyleProps }>
-				<PromptDialog.Header onClose={ onCloseAnimationDialog }>
+				<PromptDialog.Header onClose={ onCloseAnimationDialog } hideAiBetaLogo={ additionalOptions?.hideAiBetaLogo }>
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
@@ -265,8 +269,8 @@ const PageContent = (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptHistoryProvider historyType={ HISTORY_TYPES.TEXT }>
 				<PromptHistoryActionProvider>
-					<PromptDialog.Header onClose={ onClose }>
-						<PromptHistory />
+					<PromptDialog.Header onClose={ onClose } hideAiBetaLogo={ additionalOptions?.hideAiBetaLogo }>
+						{ ! additionalOptions?.withoutHistory && <PromptHistory /> }
 
 						{ maybeRenderUpgradeChip() }
 					</PromptDialog.Header>

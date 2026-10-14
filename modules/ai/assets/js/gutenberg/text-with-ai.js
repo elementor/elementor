@@ -29,7 +29,7 @@ export const AiText = ( { onClose, blockName, initialValue = '', blockClientId =
 
 	const isRTL = elementorCommon.config.isRTL;
 
-	const { paragraphBlock } = useSelect( ( ) => {
+	const { paragraphBlock } = useSelect( () => {
 		const currentBlocks = wp.data.select( 'core/block-editor' )?.getBlocks();
 		const foundParagraphBlock = currentBlocks.find( ( block ) => blockName === block.name && blockClientId === block.clientId );
 		return {

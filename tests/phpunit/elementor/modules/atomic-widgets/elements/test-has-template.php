@@ -2,9 +2,9 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -58,6 +58,25 @@ class Test_Has_Template extends Elementor_Test_Base {
 						'link' => [
 							'href' => 'https://example.com',
 							'target' => '_blank',
+							'tag' => 'a',
+						],
+					],
+					'widgetType' => Atomic_Image::get_element_type(),
+				],
+			],
+			'Atomic Image action link' => [
+				[
+					'id' => 'e8e55a1',
+					'elType' => 'widget',
+					'settings' => [
+						'image' => [
+							'id' => 123,
+							'src' => 'https://example.com/image.jpg',
+						],
+						'link' => [
+							'href' => 'https://very.dynamic.content.elementor',
+							'target' => '_blank',
+							'tag' => 'button',
 						],
 					],
 					'widgetType' => Atomic_Image::get_element_type(),
@@ -79,18 +98,19 @@ class Test_Has_Template extends Elementor_Test_Base {
 						'link' => [
 							'href' => 'https://example.com',
 							'target' => '_blank',
+							'tag' => 'a',
 						],
 					],
 					'widgetType' => Atomic_Paragraph::get_element_type(),
 				],
 			],
-			'Atomic SVG default' => [
+		'Atomic Divider default' => [
 				[
-					'id' => 'abcd123',
+					'id' => 'e8e55a1',
 					'elType' => 'widget',
 					'settings' => [],
-					'widgetType' => Atomic_Svg::get_element_type(),
-				]
+					'widgetType' => Atomic_Divider::get_element_type(),
+				],
 			],
 		];
 	}

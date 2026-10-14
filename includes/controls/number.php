@@ -69,12 +69,42 @@ class Control_Number extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
-				<input id="<?php $this->print_control_uid(); ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" class="tooltip-target elementor-control-tag-area elementor-control-unit-2" data-tooltip="{{ data.title }}" title="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ view.getControlPlaceholder() }}" />
+				<input id="<?php $this->print_control_uid(); ?>" type="number" min="{{ data.min }}" max="{{ data.max }}" step="{{ data.step }}" class="tooltip-target elementor-control-tag-area elementor-control-unit-2" data-tooltip="{{ data.title }}" data-setting="{{ data.name }}" placeholder="{{ view.getControlPlaceholder() }}" />
 			</div>
 		</div>
 		<# if ( data.description ) { #>
 		<div class="elementor-control-field-description">{{{ data.description }}}</div>
 		<# } #>
 		<?php
+	}
+
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
+
+		if ( '' === $value || null === $value ) {
+			return $value;
+		}
+
+		if ( ! is_numeric( $value ) ) {
+			return ! empty( $control['default'] ) ? $control['default'] : '';
+		}
+
+		return $value;
+	}
+
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		if ( 'DEFAULT' === $css_property ) {
+			return $control_data['default'];
+		}
+
+		if ( '' === $control_value || null === $control_value ) {
+			return $control_value;
+		}
+
+		if ( ! is_numeric( $control_value ) ) {
+			return ! empty( $control_data['default'] ) ? $control_data['default'] : '';
+		}
+
+		return $control_value;
 	}
 }

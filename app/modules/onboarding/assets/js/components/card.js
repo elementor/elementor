@@ -1,14 +1,7 @@
-export default function Card( { image, imageAlt, text, link, name, clickAction, target = '_self' } ) {
-	const onClick = () => {
-		elementorCommon.events.dispatchEvent( {
-			event: 'starting canvas click',
-			version: '',
-			details: {
-				placement: elementorAppConfig.onboarding.eventPlacement,
-				selection: name,
-			},
-		} );
+import PropTypes from 'prop-types';
 
+export default function Card( { image, imageAlt, title, text, link, clickAction, target = '_self' } ) {
+	const onClick = () => {
 		if ( clickAction ) {
 			clickAction();
 		}
@@ -17,7 +10,12 @@ export default function Card( { image, imageAlt, text, link, name, clickAction, 
 	return (
 		<a target={ target } className="e-onboarding__card" href={ link } onClick={ onClick }>
 			<img className="e-onboarding__card-image" src={ image } alt={ imageAlt } />
-			<div className="e-onboarding__card-text">{ text }</div>
+			{ !! title && <>
+				<div className="e-onboarding__card-text">{ title }</div>
+				<div className="e-onboarding__card-text-small">{ text }</div>
+			</>
+			}
+			{ ! title && <div className="e-onboarding__card-text">{ text }</div> }
 		</a>
 	);
 }
@@ -25,9 +23,9 @@ export default function Card( { image, imageAlt, text, link, name, clickAction, 
 Card.propTypes = {
 	image: PropTypes.string.isRequired,
 	imageAlt: PropTypes.string.isRequired,
+	title: PropTypes.string,
 	text: PropTypes.string.isRequired,
 	link: PropTypes.string.isRequired,
-	name: PropTypes.string.isRequired,
 	clickAction: PropTypes.func,
 	target: PropTypes.string,
 };

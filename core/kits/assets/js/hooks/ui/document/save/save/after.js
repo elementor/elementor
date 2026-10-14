@@ -15,6 +15,8 @@ export class KitAfterSave extends After {
 	}
 
 	apply( args ) {
+		this.trackSiteSettingsSave();
+
 		// On save clear cache of all edited documents and dynamic tags.
 		// This is needed because when returning to the editor after saving the kit, it was still displaying the old data.
 		this.clearDocumentCache();
@@ -52,6 +54,32 @@ export class KitAfterSave extends After {
 
 			reloadConfirm.show();
 		}
+	}
+
+	trackSiteSettingsSave() {
+		const globalComponent = $e.components.get( 'panel/global' );
+
+		if ( ! globalComponent ) {
+			return;
+		}
+
+		const currentTab = globalComponent.currentTab;
+		let activeSection = null;
+
+		try {
+			const panelView = elementor.getPanelView();
+			const currentPage = panelView?.getCurrentPageView?.();
+			const contentView = currentPage?.content?.currentView;
+			activeSection = contentView?.activeSection || null;
+		} catch ( e ) {}
+
+		const savedItem = activeSection ? `${ currentTab } - ${ activeSection }` : currentTab;
+
+		if ( savedItem ) {
+			globalComponent.trackSavedItem( savedItem );
+		}
+
+		globalComponent.siteSettingsSession.hasSaved = true;
 	}
 
 	clearDocumentCache() {

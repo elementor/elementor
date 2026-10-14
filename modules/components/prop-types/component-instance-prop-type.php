@@ -1,0 +1,75 @@
+<?php
+
+namespace Elementor\Modules\Components\PropTypes;
+
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Component_Instance_Prop_Type extends Object_Prop_Type {
+	const WIDGET_TYPE = 'e-component';
+
+	public static function get_key(): string {
+		return 'component-instance';
+	}
+
+	public static function is_instance_element( array $element ): bool {
+		return 'widget' === ( $element['elType'] ?? null )
+			&& self::WIDGET_TYPE === ( $element['widgetType'] ?? null );
+	}
+
+	protected function define_shape(): array {
+		return [
+			'component_id' => Number_Prop_Type::make()->required(),
+			'overrides' => Overrides_Prop_Type::make()->optional(),
+		];
+	}
+
+	public static function extract_component_id( array $settings ) {
+		if ( empty( $settings['component_instance']['value']['component_id']['value'] ) ) {
+			return null;
+		}
+
+		return $settings['component_instance']['value']['component_id']['value'];
+	}
+
+	public static function set_component_id( array $settings, int $component_id ): array {
+		$settings['component_instance']['value']['component_id']['value'] = $component_id;
+
+		return $settings;
+	}
+
+	public function validate_value( $value ): bool {
+		if ( ! parent::validate_value( $value ) ) {
+			return false;
+		}
+
+		$sanitized = parent::sanitize_value( $value );
+
+		$overrides = $sanitized['overrides']['value'] ?? [];
+
+		foreach ( $overrides as $item ) {
+			$component_id = null;
+
+			switch ( $item['$$type'] ) {
+				case Override_Prop_Type::get_key():
+					$component_id = $item['value']['schema_source']['id'];
+					break;
+				case Overridable_Prop_Type::get_key():
+					$override = $item['value']['origin_value'];
+					$component_id = $override['value']['schema_source']['id'];
+					break;
+			}
+
+			if ( $component_id !== $sanitized['component_id']['value'] ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+}

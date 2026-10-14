@@ -55,14 +55,9 @@ class Module extends BaseModule {
 			'elementor-v2-ui',
 			'elementor-v2-icons',
 			'elementor-v2-query',
+			'elementor-v2-editor-app-bar',
 			'wp-i18n',
 		];
-
-		$is_editor_v2 = current_action() === 'elementor/editor/v2/scripts/enqueue';
-
-		if ( $is_editor_v2 ) {
-			$deps[] = 'elementor-v2-editor-app-bar';
-		}
 
 		wp_enqueue_script(
 			'e-editor-notifications',
@@ -83,7 +78,8 @@ class Module extends BaseModule {
 
 	private function get_app_js_config(): array {
 		return [
-			'is_unread' => Options::has_unread_notifications(),
+			'is_unread'    => Options::has_unread_notifications(),
+			'unread_count' => Options::get_unread_count(),
 		];
 	}
 

@@ -2,10 +2,13 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Plugin;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +25,7 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	const CONTEXT_SETTINGS = 'settings';
 	const CONTEXT_STYLES = 'styles';
+	const CONTEXT_PLAIN = 'plain';
 
 	public static function for_styles(): self {
 		return static::instance( self::CONTEXT_STYLES );
@@ -29,6 +33,16 @@ class Render_Props_Resolver extends Props_Resolver {
 
 	public static function for_settings(): self {
 		return static::instance( self::CONTEXT_SETTINGS );
+	}
+
+	public static function for_plain(): self {
+		return static::instance( self::CONTEXT_PLAIN );
+	}
+
+	public function resolve_value( $value, Prop_Type $prop_type ) {
+		$value = $this->get_validated_value( $prop_type, $value );
+
+		return $this->resolve_item( $value, null, $prop_type );
 	}
 
 	public function resolve( array $schema, array $props ): array {
@@ -39,8 +53,11 @@ class Render_Props_Resolver extends Props_Resolver {
 				continue;
 			}
 
+			$prop_value = $props[ $key ] ?? null;
+			$actual_value = $this->get_validated_value( $prop_type, $prop_value );
+
 			$transformed = $this->resolve_item(
-				$props[ $key ] ?? $prop_type->get_default(),
+				$actual_value,
 				$key,
 				$prop_type
 			);
@@ -63,7 +80,7 @@ class Render_Props_Resolver extends Props_Resolver {
 		}
 
 		if ( ! $this->is_transformable( $value ) ) {
-			return $value;
+			return $this->sanitize_html_prop_value( $value, $prop_type );
 		}
 
 		if ( $depth >= self::TRANSFORM_DEPTH_LIMIT ) {
@@ -77,5 +94,46 @@ class Render_Props_Resolver extends Props_Resolver {
 		$transformed = $this->transform( $value, $key, $prop_type );
 
 		return $this->resolve_item( $transformed, $key, $prop_type, $depth + 1 );
+	}
+
+	private function get_validated_value( Prop_Type $prop_type, $prop_value ) {
+		$default = $prop_type->get_default() ?? null;
+
+		if ( null === $prop_value ) {
+			return $default;
+		}
+
+		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) ) {
+			return $prop_value;
+		}
+
+		$tag_name = $prop_value['value']['name'] ?? null;
+		$tag = Plugin::$instance->dynamic_tags->get_tag_info( $tag_name );
+
+		return ! $tag ? $default : $prop_value;
+	}
+
+	private function sanitize_html_prop_value( $value, Prop_Type $prop_type ) {
+		if ( ! is_string( $value ) || ! $this->requires_html_sanitization( $prop_type ) ) {
+			return $value;
+		}
+
+		return Html_Prop_Type::sanitize_allowed_html( $value );
+	}
+
+	private function requires_html_sanitization( Prop_Type $prop_type ): bool {
+		if ( $prop_type instanceof Html_Prop_Type ) {
+			return true;
+		}
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			foreach ( $prop_type->get_prop_types() as $variant ) {
+				if ( $this->requires_html_sanitization( $variant ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

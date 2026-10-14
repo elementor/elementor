@@ -266,7 +266,7 @@ class Svg_Sanitizer {
 		$allowed_attributes = [
 			'accent-height',
 			'accumulate',
-			'additivive',
+			'additive',
 			'alignment-baseline',
 			'aria-hidden',
 			'aria-controls',
@@ -728,20 +728,15 @@ class Svg_Sanitizer {
 	 */
 	private function sanitize_elements() {
 		$elements = $this->svg_dom->getElementsByTagName( '*' );
-		// loop through all elements
-		// we do this backwards so we don't skip anything if we delete a node
-		// see comments at: http://php.net/manual/en/class.domnamednodemap.php
 		for ( $index = $elements->length - 1; $index >= 0; $index-- ) {
 			/**
 			 * @var \DOMElement $current_element
 			 */
 			$current_element = $elements->item( $index );
-			// If the tag isn't in the whitelist, remove it and continue with next iteration
 			if ( ! $this->is_allowed_tag( $current_element ) ) {
 				continue;
 			}
 
-			// validate element attributes
 			$this->validate_allowed_attributes( $current_element );
 
 			$this->strip_xlinks( $current_element );
@@ -749,6 +744,8 @@ class Svg_Sanitizer {
 			if ( 'use' === strtolower( $current_element->tagName ) ) { // phpcs:ignore -- php DomDocument
 				$this->validate_use_tag( $current_element );
 			}
+
+			$this->sanitize_element_child_nodes( $current_element );
 		}
 	}
 
@@ -758,19 +755,19 @@ class Svg_Sanitizer {
 	 * @since 3.16.0
 	 * @access private
 	 *
-	 * @param $string
+	 * @param string $content
 	 * @return string
 	 */
-	private function strip_php_tags( $string ) {
-		$string = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $string );
+	private function strip_php_tags( $content ) {
+		$content = preg_replace( '/<\?(=|php)(.+?)\?>/i', '', $content );
 		// Remove XML, ASP, etc.
-		$string = preg_replace( '/<\?(.*)\?>/Us', '', $string );
-		$string = preg_replace( '/<\%(.*)\%>/Us', '', $string );
+		$content = preg_replace( '/<\?(.*)\?>/Us', '', $content );
+		$content = preg_replace( '/<\%(.*)\%>/Us', '', $content );
 
-		if ( ( false !== strpos( $string, '<?' ) ) || ( false !== strpos( $string, '<%' ) ) ) {
+		if ( ( false !== strpos( $content, '<?' ) ) || ( false !== strpos( $content, '<%' ) ) ) {
 			return '';
 		}
-		return $string;
+		return $content;
 	}
 
 	/**
@@ -779,17 +776,17 @@ class Svg_Sanitizer {
 	 * @since 3.16.0
 	 * @access private
 	 *
-	 * @param $string
+	 * @param string $content
 	 * @return string
 	 */
-	private function strip_comments( $string ) {
+	private function strip_comments( $content ) {
 		// Remove comments.
-		$string = preg_replace( '/<!--(.*)-->/Us', '', $string );
-		$string = preg_replace( '/\/\*(.*)\*\//Us', '', $string );
-		if ( ( false !== strpos( $string, '<!--' ) ) || ( false !== strpos( $string, '/*' ) ) ) {
+		$content = preg_replace( '/<!--(.*)-->/Us', '', $content );
+		$content = preg_replace( '/\/\*(.*)\*\//Us', '', $content );
+		if ( ( false !== strpos( $content, '<!--' ) ) || ( false !== strpos( $content, '/*' ) ) ) {
 			return '';
 		}
-		return $string;
+		return $content;
 	}
 
 	/**
@@ -798,11 +795,53 @@ class Svg_Sanitizer {
 	 * @since 3.16.0
 	 * @access private
 	 *
-	 * @param $string
+	 * @param string $content
 	 * @return string
 	 */
-	private function strip_line_breaks( $string ) {
+	private function strip_line_breaks( $content ) {
 		// Remove line breaks.
-		return preg_replace( '/\r|\n/', '', $string );
+		return preg_replace( '/\r|\n/', '', $content );
+	}
+
+	/**
+	 * Convert CDATA children to escaped text so saveXML() cannot re-emit
+	 * a CDATA section that an HTML parser would treat as a breakout.
+	 *
+	 * @param \DOMElement $element
+	 */
+	private function sanitize_element_child_nodes( \DOMElement $element ) {
+		$child_nodes = iterator_to_array( $element->childNodes ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
+		foreach ( $child_nodes as $child ) {
+			if ( XML_TEXT_NODE === $child->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$child->nodeValue = $this->sanitize_text_node_value( $child->nodeValue ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				continue;
+			}
+
+			if ( XML_CDATA_SECTION_NODE === $child->nodeType ) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				$text_node = $element->ownerDocument->createTextNode( // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$this->sanitize_text_node_value( $child->nodeValue ) // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+				);
+				$element->replaceChild( $text_node, $child );
+			}
+		}
+	}
+
+	/**
+	 * Strip CDATA markers and angle brackets from text so inlined SVG
+	 * cannot introduce live HTML markup.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	private function sanitize_text_node_value( $value ) {
+		if ( '' === $value ) {
+			return $value;
+		}
+
+		$value = str_replace( [ '<![CDATA[', ']]>' ], '', $value );
+		$value = str_replace( [ '<', '>' ], '', $value );
+
+		return $value;
 	}
 }

@@ -67,8 +67,8 @@
 				&:after {
 					content: '';
 					position: absolute;
-					bottom: -17px;
-					@include start(16px);
+					inset-block-end: -17px;
+					inset-inline-start: 16px;
 					border: 10px solid transparent;
 					border-block-start-color: rgba(0,0,0,0.9);
 				}
@@ -86,6 +86,19 @@
 		padding: 5px 0;
 
 		@include webkit-scrollbar(7px, $editor-lighter, 10px)
+	}
+
+	&__group-header {
+		padding: 12px 20px 5px;
+		font-weight: 500;
+		font-size: 11px;
+		color: var(--e-a-color-txt-muted);
+	}
+
+	&__group-divider {
+		height: 1px;
+		background-color: var(--e-a-border-color);
+		margin: 10px 20px;
 	}
 
 	&__manage-button {
@@ -107,7 +120,7 @@
 				content: '\e90e'; // eicon-check
 				position: absolute;
 				transform: translateY(-50%);
-				top: 50%;
+				inset-block-start: 50%;
 				inset-inline-start: 13px;
 			}
 		}

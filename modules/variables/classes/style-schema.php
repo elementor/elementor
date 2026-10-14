@@ -4,9 +4,11 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Color_Variable as Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,13 +16,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Style_Schema {
 	public function augment( array $schema ): array {
-		$result = [];
-
 		foreach ( $schema as $key => $prop_type ) {
-			$result[ $key ] = $this->update( $prop_type );
+			$schema[ $key ] = $this->update( $prop_type );
+			if ( method_exists( $prop_type, 'get_meta' ) && method_exists( $schema[ $key ], 'meta' ) ) {
+				$meta = $schema[ $key ]->get_meta() ?? [];
+				foreach ( $meta as $meta_key => $meta_value ) {
+					$schema[ $key ]->meta( $meta_key, $meta_value );
+				}
+			}
 		}
 
-		return $result;
+		if ( isset( $schema['font-family'] ) ) {
+			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
+		}
+
+		return $schema;
 	}
 
 	private function update( $prop_type ) {
@@ -43,40 +53,48 @@ class Style_Schema {
 		return $prop_type;
 	}
 
-	private function update_color( Color_Prop_Type $color_prop_type ) {
-		return Union_Prop_Type::create_from( $color_prop_type )
-			->add_prop_type( Color_Variable_Prop_Type::make() );
+	private function update_font_family( $prop_type ): Union_Prop_Type {
+
+		if ( $prop_type instanceof String_Prop_Type ) {
+			return Union_Prop_Type::create_from( $prop_type )
+				->add_prop_type( Font_Variable_Prop_Type::make() );
+		}
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			$prop_type->add_prop_type( Font_Variable_Prop_Type::make() );
+		}
+
+		return $prop_type;
 	}
 
-	private function update_array( Array_Prop_Type $array_prop_type ) {
+	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {
+		return Union_Prop_Type::create_from( $color_prop_type )
+					->add_prop_type( Color_Variable_Prop_Type::make() );
+	}
+
+	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {
 		return $array_prop_type->set_item_type(
 			$this->update( $array_prop_type->get_item_type() )
 		);
 	}
 
-	private function update_object( Object_Prop_Type $object_prop_type ) {
+	private function update_object( Object_Prop_Type $object_prop_type ): Object_Prop_Type {
 		return $object_prop_type->set_shape(
 			$this->augment( $object_prop_type->get_shape() )
 		);
 	}
 
-	private function update_union( Union_Prop_Type $union_prop_type ) {
-		$new_union = Union_Prop_Type::make();
-
+	private function update_union( Union_Prop_Type $union_prop_type ): Union_Prop_Type {
 		foreach ( $union_prop_type->get_prop_types() as $prop_type ) {
 			$updated = $this->update( $prop_type );
 
 			if ( $updated instanceof Union_Prop_Type ) {
-				foreach ( $updated->get_prop_types() as $prop_type ) {
-					$new_union->add_prop_type( $prop_type );
+				foreach ( $updated->get_prop_types() as $updated_prop_type ) {
+					$union_prop_type->add_prop_type( $updated_prop_type );
 				}
-
-				continue;
 			}
-
-			$new_union->add_prop_type( $updated );
 		}
 
-		return $new_union;
+		return $union_prop_type;
 	}
 }

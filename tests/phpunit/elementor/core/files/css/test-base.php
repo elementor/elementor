@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -287,5 +288,113 @@ class Test_Base extends Elementor_Test_Base {
 			function() {},
 			'SIZE'
 		);
+	}
+
+	public function test_should_skip_enqueue_when_rendering_markdown() {
+		Widget_Content_Render_Mode::set_current( Widget_Content_Render_Mode::MARKDOWN );
+
+		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
+
+		Widget_Content_Render_Mode::set_current( Widget_Content_Render_Mode::NORMAL );
+	}
+
+	public function test_should_skip_enqueue_in_editor_request() {
+		$_REQUEST['action'] = 'elementor';
+
+		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
+		$method->setAccessible( true );
+
+		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
+
+		unset( $_REQUEST['action'] );
+	}
+
+	public function test_get_registered_enqueue_dependencies_filters_unregistered_handles() {
+		$css = $this->getMockBuilder( \Elementor\Core\Files\CSS\Post::class )
+			->setConstructorArgs( [ 0 ] )
+			->onlyMethods( [ 'get_enqueue_dependencies' ] )
+			->getMock();
+
+		$css->method( 'get_enqueue_dependencies' )->willReturn( [
+			'registered-handle',
+			'unregistered-handle',
+		] );
+
+		wp_register_style( 'registered-handle', 'https://example.com/style.css' );
+
+		$method = new \ReflectionMethod( $css, 'get_registered_enqueue_dependencies' );
+		$method->setAccessible( true );
+
+		$this->assertSame( [ 'registered-handle' ], $method->invoke( $css ) );
+
+		wp_deregister_style( 'registered-handle' );
+	}
+
+	public function test_get_content__sanitizes_inline_output_from_page_settings() {
+		// Arrange.
+		$post_id = $this->create_page_with_background_color( 'red}</style>' );
+
+		// Act.
+		$css = \Elementor\Core\Files\CSS\Post::create( $post_id )->get_content();
+
+		// Assert.
+		$this->assertDoesNotMatchRegularExpression( '/<\/style/i', $css );
+		$this->assertStringContainsString( '<\/style>', $css );
+	}
+
+	public function test_enqueue__sanitizes_cached_inline_css() {
+		// Arrange.
+		$post_id = $this->factory()->post->create( [
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_css' => [
+					'time' => time(),
+					'status' => 'inline',
+					'css' => 'body{color:red}</STYLE>',
+				],
+			],
+		] );
+
+		$css = \Elementor\Core\Files\CSS\Post::create( $post_id );
+
+		// Act.
+		ob_start();
+		$css->enqueue();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertSame( 1, preg_match_all( '/<\/style/i', $output ) );
+		$this->assertStringContainsString( '<\/STYLE>', $output );
+		$this->assertStringEndsWith( '</style>', $output );
+	}
+
+	public function test_get_content__keeps_valid_css_unchanged() {
+		// Arrange.
+		$post_id = $this->create_page_with_background_color( '#ff0000' );
+
+		// Act.
+		$css = \Elementor\Core\Files\CSS\Post::create( $post_id )->get_content();
+
+		// Assert.
+		$this->assertStringContainsString( 'background-color:#ff0000;', $css );
+		$this->assertDoesNotMatchRegularExpression( '/<\/style/i', $css );
+	}
+
+	private function create_page_with_background_color( string $color ): int {
+		return $this->factory()->post->create( [
+			'post_type' => 'page',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_template_type' => 'wp-page',
+				'_elementor_data' => '[]',
+				'_elementor_page_settings' => [
+					'background_background' => 'classic',
+					'background_color' => $color,
+				],
+			],
+		] );
 	}
 }

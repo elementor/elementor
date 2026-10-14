@@ -207,4 +207,36 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 'On Save', $data['settings']['text'] );
 	}
+
+	public function test_reset_descendant_render_state_clears_parent_and_child_render_attributes() {
+		// Arrange.
+		$container_data = [
+			'id' => 'container1',
+			'elType' => 'container',
+			'isInner' => false,
+			'settings' => [],
+			'elements' => [
+				[
+					'id' => 'button1',
+					'elType' => 'widget',
+					'isInner' => false,
+					'settings' => [ 'text' => 'Click here' ],
+					'elements' => [],
+					'widgetType' => 'button',
+				],
+			],
+		];
+		$container = Plugin::$instance->elements_manager->create_element_instance( $container_data );
+		$child = $container->get_children()[0];
+
+		$container->add_render_attribute( 'parent', 'class', 'parent-class' );
+		$child->add_render_attribute( 'child', 'class', 'child-class' );
+
+		// Act.
+		$container->reset_descendant_render_state();
+
+		// Assert.
+		$this->assertNull( $container->get_render_attributes( 'parent' ) );
+		$this->assertNull( $child->get_render_attributes( 'child' ) );
+	}
 }

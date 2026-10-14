@@ -41,7 +41,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		// Assert.
 		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
-		$this->assertArrayNotHasKey( '@elementor/editor-site-navigation', $env );
+		$this->assertFalse( $env['@elementor/editor-site-navigation']['is_pages_panel_active'] );
 	}
 
 	public function test_construct_experiment_active() {

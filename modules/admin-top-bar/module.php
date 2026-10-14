@@ -1,10 +1,10 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Core\Admin\Admin;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,7 +40,7 @@ class Module extends BaseApp {
 	private function enqueue_scripts() {
 		wp_enqueue_style( 'elementor-admin-top-bar-fonts', 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap', [], ELEMENTOR_VERSION );
 
-		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar', null, 'default', true ), [], ELEMENTOR_VERSION );
+		wp_enqueue_style( 'elementor-admin-top-bar', $this->get_css_assets_url( 'admin-top-bar' ), [], ELEMENTOR_VERSION );
 
 		/**
 		 * Before admin top bar enqueue scripts.
@@ -111,16 +111,9 @@ class Module extends BaseApp {
 	private function is_top_bar_active() {
 		$current_screen = get_current_screen();
 
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		$is_elementor_page = strpos( $current_screen->id ?? '', 'elementor' ) !== false;
-		$is_elementor_post_type_page = strpos( $current_screen->post_type ?? '', 'elementor' ) !== false;
-
 		return apply_filters(
 			'elementor/admin-top-bar/is-active',
-			$is_elementor_page || $is_elementor_post_type_page,
+			Admin::is_elementor_admin_page( $current_screen ),
 			$current_screen
 		);
 	}

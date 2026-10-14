@@ -48,7 +48,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @return $this
 	 */
-	public function filter( callable $callback = null ) {
+	public function filter( ?callable $callback = null ) {
 		if ( ! $callback ) {
 			return new static( array_filter( $this->items ) );
 		}
@@ -124,7 +124,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Run a map over each of the items.
 	 *
-	 * @param  callable  $callback
+	 * @param  callable $callback
 	 * @return $this
 	 */
 	public function map( callable $callback ) {
@@ -453,6 +453,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return new static( $result );
 	}
 
+	public function flip() {
+		return new static( array_flip( $this->items ) );
+	}
+
 	/**
 	 * @param array ...$values
 	 *
@@ -480,6 +484,16 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return false;
+	}
+
+	public function every( callable $callback ) {
+		foreach ( $this->items as $key => $item ) {
+			if ( ! $callback( $item, $key ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

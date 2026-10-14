@@ -14,6 +14,8 @@ class Manager extends DB_Upgrades_Manager {
 	 */
 	const INSTALLS_HISTORY_META = 'elementor_install_history';
 
+	const VERSION_OPTION_NAME = 'elementor_version';
+
 	public static function get_install_history_meta() {
 		return 'elementor_install_history';
 	}
@@ -56,7 +58,7 @@ class Manager extends DB_Upgrades_Manager {
 	}
 
 	public function get_version_option_name() {
-		return 'elementor_version';
+		return self::VERSION_OPTION_NAME;
 	}
 
 	public function get_upgrades_class() {
@@ -102,5 +104,27 @@ class Manager extends DB_Upgrades_Manager {
 		$installs_history = self::get_installs_history();
 
 		return empty( $installs_history ) || static::install_compare( ELEMENTOR_VERSION, '>=' );
+	}
+
+	public static function had_install_prior_to( string $version ): bool {
+		if ( ! $version ) {
+			return false;
+		}
+
+		$installs_history = self::get_installs_history();
+
+		if ( empty( $installs_history ) ) {
+			return false;
+		}
+
+		uksort( $installs_history, 'version_compare' );
+
+		$first_version = array_key_first( $installs_history );
+
+		if ( ! $first_version ) {
+			return false;
+		}
+
+		return version_compare( $first_version, $version, '<' );
 	}
 }

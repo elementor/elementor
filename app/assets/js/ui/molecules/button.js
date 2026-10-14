@@ -1,5 +1,6 @@
 import { Link, LocationProvider } from '@reach/router';
 import router from '@elementor/router';
+import PopoverDialog from '../popover-dialog/popover-dialog';
 import Icon from 'elementor-app/ui/atoms/icon';
 
 export default class Button extends React.Component {
@@ -58,18 +59,25 @@ export default class Button extends React.Component {
 
 	getIcon() {
 		if ( this.props.icon ) {
+			const iconRef = React.createRef( null );
 			const tooltip = this.props.tooltip || this.props.text;
-			const icon = <Icon className={ this.props.icon } aria-hidden="true" title={ tooltip } />;
+			const icon = <Icon ref={ iconRef } className={ this.props.icon } aria-hidden="true" />;
 			let screenReaderText = '';
 
 			if ( this.props.hideText ) {
-				screenReaderText = <span className="sr-only" >{ tooltip }</span>;
+				screenReaderText = <span className="sr-only">{ tooltip }</span>;
 			}
 
 			return (
 				<>
 					{ icon }
 					{ screenReaderText }
+					{ this.props.tooltip && <PopoverDialog
+						targetRef={ iconRef }
+						wrapperClass="e-kit-library__tooltip"
+					>
+						{ this.props.tooltip }
+					</PopoverDialog> }
 				</>
 			);
 		}

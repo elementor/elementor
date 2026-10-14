@@ -39,12 +39,12 @@ class Module extends BaseModule {
 	public function register_elementor_rest_field() {
 		register_rest_field( get_post_types( '', 'names' ),
 			'gutenberg_elementor_mode', [
-				'update_callback' => function( $request_value, $object ) {
-					if ( ! User::is_current_user_can_edit( $object->ID ) ) {
+				'update_callback' => function( $request_value, $obj ) {
+					if ( ! User::is_current_user_can_edit( $obj->ID ) ) {
 						return false;
 					}
 
-					$document = Plugin::$instance->documents->get( $object->ID );
+					$document = Plugin::$instance->documents->get( $obj->ID );
 
 					if ( ! $document ) {
 						return false;
@@ -95,7 +95,10 @@ class Module extends BaseModule {
 		<script id="elementor-gutenberg-button-switch-mode" type="text/html">
 			<div id="elementor-switch-mode">
 				<button id="elementor-switch-mode-button" type="button" class="button button-primary button-large">
-					<span class="elementor-switch-mode-on"><?php echo esc_html__( '&#8592; Back to WordPress Editor', 'elementor' ); ?></span>
+					<span class="elementor-switch-mode-on">
+						<i class="eicon-wordpress" aria-hidden="true"></i>
+						<?php echo esc_html__( 'Edit with WordPress', 'elementor' ); ?>
+					</span>
 					<span class="elementor-switch-mode-off">
 						<i class="eicon-elementor-square" aria-hidden="true"></i>
 						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>

@@ -25,11 +25,10 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! $this->should_lazy_load_background_images() ) {
-			return;
-		}
-
 		add_action( 'wp_head', function() {
+			if ( ! $this->should_lazy_load_background_images() ) {
+				return;
+			}
 			?>
 			<style>
 				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
@@ -53,32 +52,37 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'wp_footer', function() {
+			if ( ! $this->should_lazy_load_background_images() ) {
+				return;
+			}
 			?>
 			<script>
-				const lazyloadRunObserver = () => {
-					const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
-					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
-						entries.forEach( ( entry ) => {
-							if ( entry.isIntersecting ) {
-								let lazyloadBackground = entry.target;
-								if( lazyloadBackground ) {
-									lazyloadBackground.classList.add( 'e-lazyloaded' );
+				( () => {
+					const lazyloadRunObserver = () => {
+						const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
+						const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
+							entries.forEach( ( entry ) => {
+								if ( entry.isIntersecting ) {
+									let lazyloadBackground = entry.target;
+									if( lazyloadBackground ) {
+										lazyloadBackground.classList.add( 'e-lazyloaded' );
+									}
+									lazyloadBackgroundObserver.unobserve( entry.target );
 								}
-								lazyloadBackgroundObserver.unobserve( entry.target );
-							}
-						});
-					}, { rootMargin: '200px 0px 200px 0px' } );
-					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
-						lazyloadBackgroundObserver.observe( lazyloadBackground );
+							});
+						}, { rootMargin: '200px 0px 200px 0px' } );
+						lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
+							lazyloadBackgroundObserver.observe( lazyloadBackground );
+						} );
+					};
+					const events = [
+						'DOMContentLoaded',
+						'elementor/lazyload/observe',
+					];
+					events.forEach( ( event ) => {
+						document.addEventListener( event, lazyloadRunObserver );
 					} );
-				};
-				const events = [
-					'DOMContentLoaded',
-					'elementor/lazyload/observe',
-				];
-				events.forEach( ( event ) => {
-					document.addEventListener( event, lazyloadRunObserver );
-				} );
+				} )();
 			</script>
 			<?php
 		} );

@@ -1,0 +1,28 @@
+{
+  "id": "g-123",
+  "type": "class",
+  "label": "Test1",
+  "variants": [
+    {
+      "meta": {
+        "breakpoint": "desktop",
+        "state": null
+      },
+      "props": {
+        "background": {
+          "$$type": "background",
+          "value": {
+            "color": {
+              "$$type": "color",
+              "value": "#ff0000"
+            }
+          }
+        },
+        "display": {
+          "$$type": "string",
+          "value": "block"
+        }
+      }
+    }
+  ]
+}

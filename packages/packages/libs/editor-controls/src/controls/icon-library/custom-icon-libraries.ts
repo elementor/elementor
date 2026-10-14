@@ -1,0 +1,556 @@
+import { type HttpResponse, httpService } from '@elementor/http-client';
+import { useQuery } from '@elementor/query';
+
+import { enqueueIconFonts } from '../open-icon-library';
+import { type FontAwesome7Icon } from './font-awesome-7-catalog';
+import { parseFontelloSvgFont } from './fontello-svg-font';
+import { parseIcomoonSelection } from './icomoon-selection';
+
+const NATIVE_TAB_NAMES = new Set( [ 'all', 'recommended', 'GoPro' ] );
+const DEFAULT_ICON_SIZE = 512;
+const CUSTOM_ICON_LIBRARIES_QUERY_KEY = [ 'custom-icon-libraries' ];
+const CUSTOM_ICON_SVG_URL = 'elementor/v1/atomic-widgets/custom-icon-svg';
+
+type CustomIconLibraryConfig = {
+	name: string;
+	prefix: string;
+	displayPrefix?: string;
+	fetchJson?: string;
+	configUrl?: string;
+	fontUrl?: string;
+	selectionUrl?: string;
+	custom_icon_type?: string;
+	icons?: unknown;
+	native?: boolean;
+};
+
+const SUPPORTED_CUSTOM_ICON_TYPES = new Set( [ 'fontello', 'icomoon', 'fontastic' ] );
+
+const svgMapCache = new Map< string, Record< string, string > >();
+const inFlightSvgMaps = new Map< string, Promise< Record< string, string > > >();
+
+export function resetCustomIconSvgCache() {
+	svgMapCache.clear();
+	inFlightSvgMaps.clear();
+}
+
+export function isDeletedCustomIconLibrary( library: string, iconValue: string ): boolean {
+	const libraryName = String( library );
+
+	if ( ! libraryName || ! iconValue ) {
+		return false;
+	}
+
+	if ( NATIVE_TAB_NAMES.has( libraryName ) || libraryName.startsWith( 'fa-' ) ) {
+		return false;
+	}
+
+	return ! getCustomIconLibraryConfigs().some( ( item ) => item.name === libraryName );
+}
+
+export function useCustomIconLibraries( enabled: boolean ) {
+	return useQuery< FontAwesome7Icon[] >( {
+		queryKey: CUSTOM_ICON_LIBRARIES_QUERY_KEY,
+		queryFn: ( { signal } ) => loadCustomIconLibraries( signal ),
+		enabled: enabled && areCustomIconLibrariesEnabled(),
+		staleTime: Infinity,
+	} );
+}
+
+export async function loadCustomIconLibraries( signal?: AbortSignal ): Promise< FontAwesome7Icon[] > {
+	const catalogs = await Promise.all(
+		getCustomIconLibraryConfigs().map( ( library ) => loadCustomLibrary( library, signal ) )
+	);
+
+	return catalogs.flat();
+}
+
+export async function resolveCustomIconSvg(
+	library: string,
+	iconValue: string,
+	signal?: AbortSignal
+): Promise< string | null > {
+	const config = getCustomIconLibraryConfigs().find( ( item ) => item.name === String( library ) );
+
+	if ( ! config ) {
+		svgMapCache.delete( String( library ) );
+
+		return null;
+	}
+
+	const map = await loadLibrarySvgMap( String( library ), config, signal );
+	const markup = map[ iconValue ];
+
+	return typeof markup === 'string' && markup !== '' ? markup : null;
+}
+
+function areCustomIconLibrariesEnabled(): boolean {
+	return true === window.elementorCommon?.config?.fontAwesome?.v7?.customIconLibrariesEnabled;
+}
+
+function getCustomIconLibraryConfigs(): CustomIconLibraryConfig[] {
+	if ( ! areCustomIconLibrariesEnabled() ) {
+		return [];
+	}
+
+	const libraries = window.elementor?.config as { icons?: { libraries?: unknown } } | undefined;
+	const items = Array.isArray( libraries?.icons?.libraries ) ? libraries.icons.libraries : [];
+
+	return items.flatMap( ( value ) => {
+		const library = normalizeCustomIconLibraryConfig( value );
+
+		return library ? [ library ] : [];
+	} );
+}
+
+function normalizeCustomIconLibraryConfig( value: unknown ): CustomIconLibraryConfig | null {
+	if ( ! value || typeof value !== 'object' ) {
+		return null;
+	}
+
+	const library = value as CustomIconLibraryConfig & { name?: unknown; prefix?: unknown };
+	const name = coerceLibraryName( library.name );
+
+	if ( name === '' || NATIVE_TAB_NAMES.has( name ) || library.native === true || name.startsWith( 'fa-' ) ) {
+		return null;
+	}
+
+	if ( typeof library.prefix !== 'string' ) {
+		return null;
+	}
+
+	if ( ! library.fetchJson && library.icons === undefined ) {
+		return null;
+	}
+
+	const resolved: CustomIconLibraryConfig = {
+		...library,
+		name,
+		prefix: library.prefix,
+		...getPackUrls( name, library ),
+	};
+
+	if ( ! resolveCustomIconType( resolved ) ) {
+		return null;
+	}
+
+	return resolved;
+}
+
+function coerceLibraryName( value: unknown ): string {
+	if ( typeof value === 'string' ) {
+		return value;
+	}
+
+	if ( typeof value === 'number' && Number.isFinite( value ) ) {
+		return String( value );
+	}
+
+	return '';
+}
+
+function getPackUrls(
+	library: string,
+	config: CustomIconLibraryConfig
+): Pick< CustomIconLibraryConfig, 'configUrl' | 'fontUrl' | 'selectionUrl' | 'custom_icon_type' > {
+	const derived = derivePackAssetUrls( config.fetchJson, resolveCustomIconType( config ) );
+	const packs = window.elementorCommon?.config?.fontAwesome?.v7?.customIconPacks;
+
+	if ( ! packs || typeof packs !== 'object' ) {
+		return derived;
+	}
+
+	const pack = packs[ library ];
+
+	if ( ! pack || typeof pack !== 'object' ) {
+		return derived;
+	}
+
+	const packType = typeof pack.type === 'string' ? pack.type : config.custom_icon_type;
+
+	return {
+		...derived,
+		configUrl: typeof pack.configUrl === 'string' ? pack.configUrl : derived.configUrl,
+		fontUrl: typeof pack.fontUrl === 'string' ? pack.fontUrl : derived.fontUrl,
+		selectionUrl: typeof pack.selectionUrl === 'string' ? pack.selectionUrl : derived.selectionUrl,
+		custom_icon_type: packType ?? derived.custom_icon_type,
+	};
+}
+
+function resolveCustomIconType( library: CustomIconLibraryConfig ): string {
+	const type = typeof library.custom_icon_type === 'string' ? library.custom_icon_type.toLowerCase() : '';
+
+	return SUPPORTED_CUSTOM_ICON_TYPES.has( type ) ? type : '';
+}
+
+function derivePackAssetUrls(
+	fetchJson: string | undefined,
+	type: string
+): Pick< CustomIconLibraryConfig, 'configUrl' | 'fontUrl' | 'selectionUrl' | 'custom_icon_type' > {
+	if ( ! fetchJson ) {
+		return type ? { custom_icon_type: type } : {};
+	}
+
+	try {
+		const url = new URL( fetchJson, window.location.origin );
+		const base = url.href.replace( /\/[^/?#]+(?:\?.*)?$/, '' );
+
+		if ( 'icomoon' === type ) {
+			return {
+				custom_icon_type: type,
+				selectionUrl: `${ base }/selection.json`,
+				fontUrl: `${ base }/fonts/icomoon.svg`,
+			};
+		}
+
+		if ( 'fontastic' === type ) {
+			return {
+				custom_icon_type: type,
+				fontUrl: `${ base }/fonts/fontastic.svg`,
+			};
+		}
+
+		if ( 'fontello' === type ) {
+			return {
+				custom_icon_type: type,
+				configUrl: `${ base }/config.json`,
+				fontUrl: `${ base }/font/fontello.svg`,
+			};
+		}
+
+		return {};
+	} catch {
+		return type ? { custom_icon_type: type } : {};
+	}
+}
+
+async function loadCustomLibrary(
+	library: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< FontAwesome7Icon[] > {
+	enqueueIconFonts( library.name );
+
+	const names = parseIconNames( await loadLibraryPayload( library, signal ) );
+	const svgMap = await loadLibrarySvgMap( library.name, library, signal );
+
+	return names.map( ( name ) => {
+		const value = createCustomIconSelectionValue( library, name );
+
+		return {
+			id: `${ library.name }:${ name }`,
+			name,
+			label: name.replace( /-/g, ' ' ),
+			library: library.name,
+			value,
+			aliases: [],
+			width: DEFAULT_ICON_SIZE,
+			height: DEFAULT_ICON_SIZE,
+			paths: [],
+			glyphClass: value,
+			svgMarkup: svgMap[ value ],
+		};
+	} );
+}
+
+async function loadLibrarySvgMap(
+	library: string,
+	config?: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< Record< string, string > > {
+	if ( ! config ) {
+		svgMapCache.delete( library );
+		inFlightSvgMaps.delete( library );
+
+		return {};
+	}
+
+	const cached = svgMapCache.get( library );
+
+	if ( cached && Object.keys( cached ).length > 0 ) {
+		return cached;
+	}
+
+	const pending = inFlightSvgMaps.get( library );
+
+	if ( pending ) {
+		return pending;
+	}
+
+	const request = fetchLibrarySvgMap( library, config, signal ).finally( () => {
+		inFlightSvgMaps.delete( library );
+	} );
+
+	inFlightSvgMaps.set( library, request );
+
+	return request;
+}
+
+async function fetchLibrarySvgMap(
+	library: string,
+	config: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< Record< string, string > > {
+	const fromRest = await loadSvgMapFromRest( library, signal );
+	const restIcons = fromRest.icons;
+
+	if ( Object.keys( restIcons ).length > 0 && ! fromRest.truncated ) {
+		svgMapCache.set( library, restIcons );
+
+		return restIcons;
+	}
+
+	const fromPack = await loadSvgMapFromPackFiles( config, signal );
+	const merged = { ...fromPack, ...restIcons };
+
+	if ( Object.keys( merged ).length > 0 ) {
+		svgMapCache.set( library, merged );
+
+		return merged;
+	}
+
+	return {};
+}
+
+async function loadSvgMapFromRest(
+	library: string,
+	signal?: AbortSignal
+): Promise< { icons: Record< string, string >; truncated: boolean } > {
+	try {
+		const response = await httpService().get<
+			HttpResponse< { icons?: Record< string, unknown >; truncated?: unknown } >
+		>( CUSTOM_ICON_SVG_URL, { params: { library: String( library ) }, signal } );
+
+		return unwrapIconMap( response );
+	} catch {
+		return { icons: {}, truncated: false };
+	}
+}
+
+function unwrapIconMap( payload: unknown ): { icons: Record< string, string >; truncated: boolean } {
+	let current: unknown = payload;
+
+	for ( let depth = 0; depth < 4; depth++ ) {
+		if ( ! current || typeof current !== 'object' ) {
+			return { icons: {}, truncated: false };
+		}
+
+		const record = current as Record< string, unknown >;
+
+		if ( record.icons && typeof record.icons === 'object' && ! Array.isArray( record.icons ) ) {
+			const icons: Record< string, string > = {};
+
+			Object.entries( record.icons as Record< string, unknown > ).forEach( ( [ key, value ] ) => {
+				if ( typeof value === 'string' && value !== '' ) {
+					icons[ key ] = value;
+				}
+			} );
+
+			return {
+				icons,
+				truncated: true === record.truncated,
+			};
+		}
+
+		current = 'data' in record ? record.data : undefined;
+	}
+
+	return { icons: {}, truncated: false };
+}
+
+async function loadSvgMapFromPackFiles(
+	library: CustomIconLibraryConfig,
+	signal?: AbortSignal
+): Promise< Record< string, string > > {
+	const type = resolveCustomIconType( library );
+
+	if ( ! type ) {
+		return {};
+	}
+
+	if ( 'icomoon' === type && library.selectionUrl ) {
+		try {
+			const response = await fetch( library.selectionUrl, { signal, mode: 'cors' } );
+
+			if ( response.ok ) {
+				const selectionJson = await response.text();
+				const names = parseIconNames( safeJson( selectionJson ) );
+				const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
+				const fromSelection = parseIcomoonSelection(
+					selectionJson,
+					library.prefix,
+					library.displayPrefix ?? '',
+					payloadNames
+				);
+
+				if ( Object.keys( fromSelection ).length > 0 ) {
+					return fromSelection;
+				}
+			}
+		} catch {
+			// Continue with SVG-font fallback.
+		}
+	}
+
+	const fontUrls = uniqueUrls( [
+		library.fontUrl,
+		'fontello' === type && library.fetchJson ? packSiblingUrl( library.fetchJson, 'font/fontello.svg' ) : null,
+		'fontastic' === type && library.fetchJson ? packSiblingUrl( library.fetchJson, 'fonts/fontastic.svg' ) : null,
+		'icomoon' === type && library.fetchJson ? packSiblingUrl( library.fetchJson, 'fonts/icomoon.svg' ) : null,
+	] );
+
+	if ( fontUrls.length === 0 ) {
+		return {};
+	}
+
+	let configJson = '{}';
+
+	if ( library.configUrl ) {
+		try {
+			const configResponse = await fetch( library.configUrl, { signal, mode: 'cors' } );
+
+			if ( configResponse.ok ) {
+				configJson = await configResponse.text();
+			}
+		} catch {
+			configJson = '{}';
+		}
+	}
+
+	const names = parseIconNames( safeJson( configJson ) );
+	const payloadNames = names.length > 0 ? names : parseIconNames( { icons: library.icons } );
+
+	for ( const fontUrl of fontUrls ) {
+		try {
+			const fontResponse = await fetch( fontUrl, { signal, mode: 'cors' } );
+
+			if ( ! fontResponse.ok ) {
+				continue;
+			}
+
+			const fromFont = parseFontelloSvgFont(
+				configJson,
+				await fontResponse.text(),
+				library.prefix,
+				library.displayPrefix ?? '',
+				payloadNames
+			);
+
+			if ( Object.keys( fromFont ).length > 0 ) {
+				return fromFont;
+			}
+		} catch {
+			continue;
+		}
+	}
+
+	return {};
+}
+
+function packSiblingUrl( fetchJson: string, relativePath: string ): string | null {
+	try {
+		const url = new URL( fetchJson, window.location.origin );
+
+		url.pathname = url.pathname.replace( /\/[^/]+$/, `/${ relativePath }` );
+
+		return url.href;
+	} catch {
+		return null;
+	}
+}
+
+function uniqueUrls( urls: Array< string | null | undefined > ): string[] {
+	return [ ...new Set( urls.filter( ( url ): url is string => typeof url === 'string' && url !== '' ) ) ];
+}
+
+function safeJson( value: string ): unknown {
+	try {
+		return JSON.parse( value );
+	} catch {
+		return null;
+	}
+}
+
+async function loadLibraryPayload( library: CustomIconLibraryConfig, signal?: AbortSignal ): Promise< unknown > {
+	if ( library.icons !== undefined ) {
+		return { icons: library.icons };
+	}
+
+	if ( ! library.fetchJson ) {
+		return null;
+	}
+
+	try {
+		const response = await fetch( library.fetchJson, { signal, mode: 'cors' } );
+
+		return response.ok ? response.json() : null;
+	} catch {
+		return null;
+	}
+}
+
+function parseIconNames( payload: unknown ): string[] {
+	if ( ! payload || typeof payload !== 'object' ) {
+		return [];
+	}
+
+	const icons = ( payload as { icons?: unknown } ).icons;
+
+	if ( Array.isArray( icons ) ) {
+		return icons
+			.flatMap( ( entry ) => {
+				if ( typeof entry === 'string' ) {
+					return [ normalizeIconName( entry ) ];
+				}
+
+				if ( entry && typeof entry === 'object' && 'name' in entry && typeof entry.name === 'string' ) {
+					return [ normalizeIconName( entry.name ) ];
+				}
+
+				if (
+					entry &&
+					typeof entry === 'object' &&
+					'properties' in entry &&
+					entry.properties &&
+					typeof entry.properties === 'object' &&
+					'name' in entry.properties &&
+					typeof entry.properties.name === 'string'
+				) {
+					return [ normalizeIconName( entry.properties.name ) ];
+				}
+
+				return [];
+			} )
+			.filter( Boolean );
+	}
+
+	if ( icons && typeof icons === 'object' ) {
+		return Object.keys( icons ).map( normalizeIconName ).filter( Boolean );
+	}
+
+	const glyphs = ( payload as { glyphs?: unknown } ).glyphs;
+
+	if ( Array.isArray( glyphs ) ) {
+		return glyphs
+			.flatMap( ( entry ) => {
+				if ( entry && typeof entry === 'object' && 'css' in entry && typeof entry.css === 'string' ) {
+					return [ normalizeIconName( entry.css ) ];
+				}
+
+				return [];
+			} )
+			.filter( Boolean );
+	}
+
+	return [];
+}
+
+function normalizeIconName( name: string ): string {
+	return name.trim().replace( /^:/, '' ).replace( /:$/, '' );
+}
+
+function createCustomIconSelectionValue( library: CustomIconLibraryConfig, name: string ): string {
+	const prefix = library.prefix;
+	const displayPrefix = library.displayPrefix || prefix.replace( /-$/, '' );
+
+	return `${ displayPrefix } ${ prefix }${ name }`.trim();
+}
