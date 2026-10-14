@@ -105,13 +105,19 @@ class V3_Style_Binding_Compiler {
 			return V3_Widget_Map_Compiler::error( 'incompatible_responsive_control', $setting );
 		}
 
+		foreach ( $control->get_mirrors() as $mirror ) {
+			if ( (string) ( $controls[ $mirror ]['type'] ?? '' ) !== $control_type ) {
+				return V3_Widget_Map_Compiler::error( 'incompatible_mirror_control', $mirror );
+			}
+		}
+
 		$dependency_values = $this->dependency_values( $control->get_dependencies(), $controls );
 
 		if ( $dependency_values instanceof WP_Error ) {
 			return $dependency_values;
 		}
 
-		return [
+		$compiled = [
 			'prop' => $prop,
 			'state' => $state,
 			'setting' => $setting,
@@ -121,6 +127,12 @@ class V3_Style_Binding_Compiler {
 			'dependency_values' => $dependency_values,
 			'read_type' => $read_type,
 		];
+
+		if ( ! empty( $control->get_mirrors() ) ) {
+			$compiled['mirrors'] = $control->get_mirrors();
+		}
+
+		return $compiled;
 	}
 
 	/**

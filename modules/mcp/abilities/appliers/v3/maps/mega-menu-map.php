@@ -30,7 +30,7 @@ $switcher = static fn( string $description ): array => [
 
 return [
 	'widget_type' => 'mega-menu',
-	'description' => 'Mega menu (Elementor Pro): menu items with dropdown panels. Style targets: titles (default; menu item titles), panel (open dropdown panel). Address a non-default target with a nested block, e.g. `& panel { background: #fff; padding: 24px; }` or `&:hover { color: #fff; }`.',
+	'description' => 'Mega menu (Elementor Pro): menu items with dropdown panels. Panels only render for items that have nested dropdown content, which this map cannot create, so panel styles apply only to items that already have content. Style targets: titles (default; menu item titles), panel (open dropdown panel). Address a non-default target with a nested block, e.g. `& panel { background: #fff; padding: 24px; }` or `&:hover { color: #fff; }`.',
 	'catalog_visibility' => 'always',
 	'settings' => [],
 	'default_style_target' => 'titles',

@@ -30,7 +30,7 @@ $switcher = static fn( string $description ): array => [
 
 return [
 	'widget_type' => 'social-icons',
-	'description' => 'Row of linked social icons. social_icon_list replaces the whole list; each item is { social_icon: { value: "fab fa-facebook", library: "fa-brands" }, link: { url } }. Style targets: icons (default; background is the button color, color the glyph, font-size the icon size), row (gap between icons). Address a non-default target with a nested block, e.g. `& row { column-gap: 12px; }`.',
+	'description' => 'Row of linked social icons. social_icon_list replaces the whole list; each item is { social_icon: { value: "fab fa-facebook", library: "fa-brands" }, link: { url } }. Style targets: icons (default; background is the button color, color the glyph, font-size the icon size; border-width/border-color imply a solid border unless border-style is given), row (gap between icons). Address a non-default target with a nested block, e.g. `& row { column-gap: 12px; }`.',
 	'catalog_visibility' => 'always',
 	'settings' => [
 		'social_icon_list' => [
@@ -48,9 +48,10 @@ return [
 			->bind( 'background', V3_Control::bind_to( 'hover_primary_color' ), 'hover' )
 			->bind( 'color', V3_Control::bind_to( 'icon_secondary_color' )->set_dependencies( $when( 'icon_color', 'custom' ) ) )
 			->bind( 'color', V3_Control::bind_to( 'hover_secondary_color' ), 'hover' )
-			->bind( 'border-color', V3_Control::bind_to( 'image_border_color' ) )
-			->bind( 'border-color', V3_Control::bind_to( 'hover_border_color' ), 'hover' )
-			->bind( 'border-width', V3_Control::bind_to( 'image_border_width' )->responsive() )
+			->bind( 'border-style', V3_Control::bind_to( 'image_border_border' ) )
+			->bind( 'border-color', V3_Control::bind_to( 'image_border_color' )->set_dependencies( $when( 'image_border_border', 'solid' ) ) )
+			->bind( 'border-color', V3_Control::bind_to( 'hover_border_color' )->set_dependencies( $when( 'image_border_border', 'solid' ) ), 'hover' )
+			->bind( 'border-width', V3_Control::bind_to( 'image_border_width' )->responsive()->set_dependencies( $when( 'image_border_border', 'solid' ) ) )
 			->bind( 'border-radius', V3_Control::bind_to( 'border_radius' )->responsive() )
 			->bind( 'font-size', V3_Control::bind_to( 'icon_size' )->responsive() ),
 		'row' => Style_Target::make( 'Row of icons' )

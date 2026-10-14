@@ -28,6 +28,7 @@ class V3_Control_Adapter_Registry {
 			new Dimensions_Adapter(),
 			new Dimensions_Sides_Slider_Adapter(),
 			new String_Choice_Adapter(),
+			new Box_Shadow_Adapter(),
 		] );
 	}
 

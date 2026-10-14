@@ -91,7 +91,7 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
 		$this->assertArrayHasKey( 'content_width', $result['properties'] );
 		$this->assertSame( [ 'boxed', 'full' ], $result['properties']['content_width']['enum'] );
-		$this->assertSame( [ 'background', 'padding', 'margin' ], $result['style_targets']['container'] );
+		$this->assertSame( [ 'background', 'padding', 'margin', 'border-radius', 'box-shadow', 'justify-content', 'align-items' ], $result['style_targets']['container'] );
 	}
 
 	public function test_execute__exposes_editor_only_decorative_description_for_atomic_container() {

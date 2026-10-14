@@ -30,7 +30,7 @@ $switcher = static fn( string $description ): array => [
 
 return [
 	'widget_type' => 'image-gallery',
-	'description' => 'WordPress image grid. wp_gallery is a list of { id, url } media items. Style targets: images (default), caption. Address a non-default target with a nested block, e.g. `& caption { color: #555; }`.',
+	'description' => 'WordPress image grid. wp_gallery is a list of { id, url } media items. Style targets: images (default; border-width/border-color imply a solid border unless border-style is given), grid (gap between images, one value for all breakpoints), caption. Address a non-default target with a nested block, e.g. `& caption { color: #555; }` or `& grid { gap: 24px; }`. gallery_columns applies to every breakpoint; this widget has no per-device column count.',
 	'catalog_visibility' => 'always',
 	'settings' => [
 		'wp_gallery' => [
@@ -46,8 +46,11 @@ return [
 	'style_targets' => [
 		'images' => Style_Target::make( 'Gallery images' )
 			->bind( 'border-radius', V3_Control::bind_to( 'image_border_radius' )->responsive() )
-			->bind( 'border-width', V3_Control::bind_to( 'image_border_width' )->responsive() )
-			->bind( 'border-color', V3_Control::bind_to( 'image_border_color' ) ),
+			->bind( 'border-style', V3_Control::bind_to( 'image_border_border' ) )
+			->bind( 'border-width', V3_Control::bind_to( 'image_border_width' )->responsive()->set_dependencies( $when( 'image_border_border', 'solid' ) ) )
+			->bind( 'border-color', V3_Control::bind_to( 'image_border_color' )->set_dependencies( $when( 'image_border_border', 'solid' ) ) ),
+		'grid' => Style_Target::make( 'Spacing between images' )
+			->bind( 'gap', V3_Control::bind_to( 'image_spacing_custom' )->set_dependencies( $when( 'image_spacing', 'custom' ) ) ),
 		'caption' => Style_Target::make( 'Image captions' )
 			->bind( 'color', V3_Control::bind_to( 'text_color' ) )
 			->bind( 'text-align', V3_Control::bind_to( 'align' )->responsive() )

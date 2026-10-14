@@ -33,6 +33,9 @@ class V3_Map_Style_Writer {
 		$converted = $this->css_converter->convert( $css );
 		$state = $state ?? Style_Target::DEFAULT_STATE;
 
+		$explicit = [];
+		$implied = [];
+
 		foreach ( $converted['props'] as $prop => $prop_value ) {
 			$prop_bindings = $this->bindings_for( $bindings, (string) $prop, $state, $target );
 
@@ -42,8 +45,18 @@ class V3_Map_Style_Writer {
 			}
 
 			foreach ( $prop_bindings as $binding ) {
-				$this->write_binding( $ctx, $binding, $controls, $breakpoint, $prop_value );
+				$patch = $this->binding_patch( $ctx, $binding, $controls, $breakpoint, $prop_value );
+
+				if ( null !== $patch ) {
+					$explicit = array_merge( $explicit, $patch );
+					$implied = array_merge( $implied, $binding['dependency_values'] );
+				}
 			}
+		}
+
+		// A value the CSS set explicitly (e.g. border-style: dashed) wins over one a dependency implies (border style solid).
+		if ( ! empty( $explicit ) ) {
+			$ctx->merge_patch( $explicit + $implied );
 		}
 
 		$this->warn_unconverted( $ctx, $converted );
@@ -57,15 +70,15 @@ class V3_Map_Style_Writer {
 		);
 	}
 
-	private function write_binding( V3_Conversion_Context $ctx, array $binding, array $controls, string $breakpoint, $prop_value ): void {
+	private function binding_patch( V3_Conversion_Context $ctx, array $binding, array $controls, string $breakpoint, $prop_value ): ?array {
 		if ( ! is_array( $prop_value ) || ! $this->touches_bound_sides( $prop_value, $binding['sides'] ) ) {
-			return;
+			return null;
 		}
 
 		if ( Responsive_Key_Resolver::BASE_BREAKPOINT !== $breakpoint && ! $binding['responsive'] ) {
 			$ctx->warn( $this->missing_breakpoint_message( $binding['prop'], $breakpoint ) );
 
-			return;
+			return null;
 		}
 
 		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding['control_type'], null !== $binding['sides'] );
@@ -76,12 +89,17 @@ class V3_Map_Style_Writer {
 		if ( null === $control_value ) {
 			$ctx->warn( $this->unstorable_value_message( $binding['prop'] ) );
 
-			return;
+			return null;
 		}
 
-		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding['setting'] : $binding['setting'] . '_' . $breakpoint;
+		$suffix = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? '' : '_' . $breakpoint;
+		$patch = [];
 
-		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $binding['dependency_values'] ) );
+		foreach ( array_merge( [ $binding['setting'] ], $binding['mirrors'] ?? [] ) as $setting ) {
+			$patch[ $setting . $suffix ] = $control_value;
+		}
+
+		return $patch;
 	}
 
 	/**

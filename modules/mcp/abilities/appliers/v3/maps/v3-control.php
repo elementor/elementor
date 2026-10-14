@@ -19,6 +19,8 @@ class V3_Control {
 
 	private ?array $dependencies = null;
 
+	private array $mirrors = [];
+
 	private function __construct( string $setting ) {
 		$this->setting = $setting;
 	}
@@ -43,6 +45,21 @@ class V3_Control {
 		$this->dependencies = $dependencies;
 
 		return $this;
+	}
+
+	/**
+	 * Also write the same value to sibling controls of the same type. Used when a widget splits
+	 * one visual property across mutually exclusive controls (e.g. by a condition on another
+	 * setting), so the value takes effect whichever variant is active.
+	 */
+	public function mirror_to( string ...$settings ): self {
+		$this->mirrors = $settings;
+
+		return $this;
+	}
+
+	public function get_mirrors(): array {
+		return $this->mirrors;
 	}
 
 	public function get_setting(): string {
