@@ -3,7 +3,6 @@ import {
 	ACCORDION_ELEMENT_TYPE,
 	HEADER_ELEMENT_TYPE,
 	ITEM_ELEMENT_TYPE,
-	syncAllHeadersInAccordion,
 	syncHeaderSelectedClass,
 } from './accordion-header-selected';
 const MAX_EXPANDED_ONE = 'one';
@@ -40,8 +39,6 @@ register( {
 		const getOwnAccordion = ( node ) => node.closest( `[data-element_type="${ ACCORDION_ELEMENT_TYPE }"]` );
 
 		const belongsToThisAccordion = ( node ) => getOwnAccordion( node ) === element;
-
-		const syncSelectedHeaders = () => syncAllHeadersInAccordion( element, belongsToThisAccordion );
 
 		// Items of a nested accordion match the selector too, so they are filtered out by their
 		// nearest accordion ancestor - the inner accordion runs its own instance of this handler.
@@ -83,7 +80,6 @@ register( {
 			}
 
 			item.setAttribute( 'open', '' );
-			syncSelectedHeaders();
 		};
 
 		// Whether a human has already decided this accordion's open state in the current DOM
@@ -125,8 +121,6 @@ register( {
 					item.setAttribute( 'open', '' );
 				}
 			} );
-
-			syncSelectedHeaders();
 		};
 
 		applyDefaultState();
@@ -137,6 +131,22 @@ register( {
 			if ( belongsToThisAccordion( event.detail.element ) ) {
 				applyDefaultState();
 			}
+		} );
+
+		listenToChildren( [ HEADER_ELEMENT_TYPE ] ).render( ( event ) => {
+			const header = event.detail.element;
+
+			if ( ! header || ! belongsToThisAccordion( header ) ) {
+				return;
+			}
+
+			const item = header.closest( `[data-element_type="${ ITEM_ELEMENT_TYPE }"]` );
+
+			if ( ! item || ! belongsToThisAccordion( item ) ) {
+				return;
+			}
+
+			syncHeaderSelectedClass( item );
 		} );
 
 		// The item toggled by the click currently being dispatched, if any. Clicking a header also
@@ -164,7 +174,6 @@ register( {
 
 			if ( item.hasAttribute( 'open' ) ) {
 				item.removeAttribute( 'open' );
-				syncHeaderSelectedClass( item );
 
 				return;
 			}

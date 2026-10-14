@@ -134,22 +134,7 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 		];
 	}
 
-	/**
-	 * Resolves this item's position among its siblings, and the `open`/`name` attributes that
-	 * depend on it, via the accordion's render context.
-	 *
-	 * `Render_Context::get()` returns `[]` when this item renders outside a parent
-	 * `Atomic_Accordion` pass (e.g. the editor's `Render_Element_Action` re-rendering a single
-	 * element), so `get-item-index`, `default-state`, `max-expanded` and `accordion-id` may all be
-	 * absent. Rather than special-case that, the fallbacks below (`null`/`[]`) simply propagate
-	 * through the same expressions used in the normal case: `item_index` stays `null` so it can
-	 * never equal `0` and `is_open` resolves `false`, and `accordion_id` stays `null` so
-	 * `group_name` resolves `false`/absent regardless of `max_expanded`. A parentless item
-	 * therefore renders collapsed and without a `name` — it has no accordion identity to be
-	 * exclusive within, so asserting `open` or a `name` would be guessing.
-	 *
-	 * @return array
-	 */
+	/** Exposes `is_open` to the accordion item header Twig template. */
 	protected function define_render_context(): array {
 		$state = $this->resolve_item_render_state();
 
@@ -169,6 +154,19 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 	}
 
 	/**
+	 * Resolves this item's position among its siblings, and the `open`/`name` attributes that
+	 * depend on it, via the accordion's render context.
+	 *
+	 * `Render_Context::get()` returns `[]` when this item renders outside a parent
+	 * `Atomic_Accordion` pass (e.g. the editor's `Render_Element_Action` re-rendering a single
+	 * element), so `get-item-index`, `default-state`, `max-expanded` and `accordion-id` may all be
+	 * absent. Rather than special-case that, the fallbacks below (`null`/`[]`) simply propagate
+	 * through the same expressions used in the normal case: `item_index` stays `null` so it can
+	 * never equal `0` and `is_open` resolves `false`, and `accordion_id` stays `null` so
+	 * `group_name` resolves `false`/absent regardless of `max_expanded`. A parentless item
+	 * therefore renders collapsed and without a `name` — it has no accordion identity to be
+	 * exclusive within, so asserting `open` or a `name` would be guessing.
+	 *
 	 * @return array{item_index: ?int, is_open: bool, group_name: ?string}
 	 */
 	private function resolve_item_render_state(): array {
