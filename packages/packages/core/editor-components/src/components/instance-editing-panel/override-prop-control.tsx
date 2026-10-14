@@ -255,9 +255,8 @@ function resolveOverrideValues(
 	return { propValue, baseValue };
 }
 
-// An inherited value whose extracted primitive is empty/null/undefined (e.g. a component's default
-// empty string) isn't a meaningful value to show as a placeholder — treat it like there's no base
-// value at all, so the control's own placeholder is kept instead of an empty one.
+// An empty inherited value (e.g. an empty string, or an object whose fields are all empty) isn't
+// worth showing as a placeholder, so the control's own placeholder is kept instead.
 function hasInheritedValue( baseValue: AnyTransformable | null ): boolean {
 	return !! baseValue && ! isEmpty( baseValue );
 }
