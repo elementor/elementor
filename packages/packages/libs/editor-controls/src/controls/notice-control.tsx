@@ -37,7 +37,7 @@ type ExtendedWindow = Window & {
 	};
 };
 
-const markNoticeAsDismissedInSession = ( dismissId: string ) => {
+export const markNoticeAsDismissedInSession = ( dismissId: string ) => {
 	const dismissedNotices = ( window as ExtendedWindow ).elementor?.config?.user?.dismissed_editor_notices;
 
 	if ( dismissedNotices && ! dismissedNotices.includes( dismissId ) ) {
@@ -45,7 +45,7 @@ const markNoticeAsDismissedInSession = ( dismissId: string ) => {
 	}
 };
 
-const isNoticeDismissed = ( dismissId?: string ) => {
+export const isNoticeDismissed = ( dismissId?: string ) => {
 	if ( ! dismissId ) {
 		return false;
 	}
