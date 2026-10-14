@@ -121,7 +121,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								],
 								'editor_settings' => [
 									'type' => 'object',
-									'description' => 'update only: editor-only fields, kept separate from settings. `name` renames the layer in the Structure panel (works on V3 and V4 elements, including V3 elements that cannot be edited otherwise; empty string clears it). `decorative` (boolean) is supported on e-div-block, e-flexbox and e-grid only. Never use settings.title to rename a layer (title on e-heading is the visible text). See the editor_settings section of elementor/get-widget-schema.',
+									'description' => 'update only: editor-only fields, kept separate from settings. `name` renames the layer in the Structure panel (works on V3 and V4 elements, including V3 elements that cannot be edited otherwise; empty string clears it). `decorative` (boolean) is supported on e-div-block, e-flexbox and e-grid only. Never use settings.title to rename a layer (title on e-heading is the visible text). See the editor_settings section of elementor/get-widget-schemas.',
 								],
 								'style' => [
 									'type' => 'string',
