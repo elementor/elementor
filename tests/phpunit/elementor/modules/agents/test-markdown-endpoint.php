@@ -297,6 +297,28 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'rel="canonical"', $headers['Link'] );
 	}
 
+	public function test_build_response_headers__keeps_ampersand_in_canonical_link() {
+		$permalink = 'https://example.test/page?a=1&b=2';
+		$filter    = static function () use ( $permalink ) {
+			return $permalink;
+		};
+		add_filter( 'post_link', $filter );
+
+		$post_id = $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'Ampersand Canonical',
+		] );
+
+		$response_headers = $this->endpoint->build_response_headers( $post_id );
+		$hook_headers     = $this->endpoint->build_markdown_hook_headers( $post_id );
+		remove_filter( 'post_link', $filter );
+
+		$expected = '<' . $permalink . '>; rel="canonical"';
+		$this->assertSame( $expected, $response_headers['Link'] );
+		$this->assertSame( $expected, $hook_headers['Link'] );
+		$this->assertStringNotContainsString( '&#038;', $response_headers['Link'] );
+	}
+
 	private function create_published_page(): \WP_Post {
 		return get_post( $this->factory()->post->create( [
 			'post_type'   => 'page',
