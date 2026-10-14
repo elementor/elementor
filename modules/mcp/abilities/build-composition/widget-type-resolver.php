@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Type_Resolver {
 
+	const NESTED_WIDGET_CHILD_TYPE = 'container';
+
 	private Xml_Parser $xml_parser;
 
 	public function __construct( Xml_Parser $xml_parser ) {
@@ -148,10 +150,16 @@ class Widget_Type_Resolver {
 			}
 
 			$config = $widget->get_config();
+			$supports_nesting = ! empty( $config['support_nesting'] );
+			$allowed_child_types = $config['allowed_child_types'] ?? [];
+			if ( $supports_nesting && empty( $allowed_child_types ) ) {
+				$allowed_child_types = [ self::NESTED_WIDGET_CHILD_TYPE ];
+			}
 			$resolved = [
 				'elType' => 'widget',
 				'widgetType' => $type,
-				'allowed_child_types' => $config['allowed_child_types'] ?? [],
+				'allowed_child_types' => $allowed_child_types,
+				'support_nesting' => $supports_nesting,
 				'default_children' => $config['default_children'] ?? [],
 				'class' => get_class( $widget ),
 			];
@@ -212,7 +220,9 @@ class Widget_Type_Resolver {
 		$parent_tag = $this->xml_parser->get_tag_name( $node );
 		$parent_config = $widget_configs[ $parent_tag ] ?? null;
 		$allowed = $parent_config['allowed_child_types'] ?? [];
-		$is_leaf_widget = $parent_config && 'widget' === ( $parent_config['elType'] ?? null );
+		$is_leaf_widget = $parent_config
+			&& 'widget' === ( $parent_config['elType'] ?? null )
+			&& empty( $parent_config['support_nesting'] );
 
 		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
 			$child_tag = $this->xml_parser->get_tag_name( $child );

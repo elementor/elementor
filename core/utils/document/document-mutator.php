@@ -16,6 +16,8 @@ class Document_Mutator {
 
 	const WIDGET_EL_TYPE = 'widget';
 
+	const NESTED_WIDGET_CHILD_TYPE = 'container';
+
 	/** @var \Elementor\Elements_Manager */
 	private $element_manager;
 
@@ -371,11 +373,22 @@ class Document_Mutator {
 		foreach ( $tree as $i => $node ) {
 			if ( isset( $node['id'] ) && $node['id'] === $parent_id ) {
 				if ( isset( $node['elType'] ) && self::WIDGET_EL_TYPE === $node['elType'] ) {
-					return new \WP_Error(
-						'elementor_invalid_parent',
-						__( 'Cannot insert into a widget element.', 'elementor' ),
-						[ 'status' => \WP_Http::BAD_REQUEST ]
-					);
+					if ( ! $this->widget_accepts_children( $node ) ) {
+						return new \WP_Error(
+							'elementor_invalid_parent',
+							__( 'Cannot insert into a widget element.', 'elementor' ),
+							[ 'status' => \WP_Http::BAD_REQUEST ]
+						);
+					}
+
+					$nested_child_error = $this->check_nested_widget_child_allowed( $node, $element );
+					if ( is_wp_error( $nested_child_error ) ) {
+						return $nested_child_error;
+					}
+
+					$node['elements'] = $this->splice_into( $node['elements'] ?? [], $index, $element );
+					$tree[ $i ] = $node;
+					return $tree;
 				}
 
 				$child_type_error = $this->check_child_type_allowed( $node, $element );
@@ -426,6 +439,56 @@ class Document_Mutator {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Nested widgets (mega menu, nested tabs) store one container child per repeater item.
+	 */
+	private function widget_accepts_children( array $node ): bool {
+		$type = $node['widgetType'] ?? '';
+		if ( ! is_string( $type ) || '' === $type ) {
+			return false;
+		}
+
+		$widget = $this->widgets_manager->get_widget_types( $type );
+		if ( ! $widget || ! method_exists( $widget, 'get_config' ) ) {
+			return false;
+		}
+
+		$config = $widget->get_config();
+
+		return ! empty( $config['support_nesting'] );
+	}
+
+	/**
+	 * @return null|\WP_Error
+	 */
+	private function check_nested_widget_child_allowed( array $node, array $element ): ?\WP_Error {
+		$widget = $this->widgets_manager->get_widget_types( (string) ( $node['widgetType'] ?? '' ) );
+		$config = $widget && method_exists( $widget, 'get_config' ) ? $widget->get_config() : [];
+		$allowed = $config['allowed_child_types'] ?? [];
+
+		if ( empty( $allowed ) ) {
+			$allowed = [ self::NESTED_WIDGET_CHILD_TYPE ];
+		}
+
+		$child_type = $element['widgetType'] ?? $element['elType'] ?? '';
+
+		if ( in_array( $child_type, $allowed, true ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_invalid_parent',
+			sprintf(
+				/* translators: 1: child type, 2: parent widget type, 3: allowed types */
+				__( '"%1$s" is not allowed as a child of "%2$s". Allowed: %3$s.', 'elementor' ),
+				(string) $child_type,
+				(string) ( $node['widgetType'] ?? self::WIDGET_EL_TYPE ),
+				implode( ', ', $allowed )
+			),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 
 	/**
