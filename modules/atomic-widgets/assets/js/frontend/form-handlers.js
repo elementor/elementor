@@ -193,8 +193,8 @@ function getAtomicFormFields( form ) {
 			return;
 		}
 
-inputs.forEach( ( input ) => {
-				const id = input.dataset.id || input.dataset.interactionId;
+		inputs.forEach( ( input ) => {
+			const id = input.dataset.id || input.dataset.interactionId;
 			const label = getAtomicFormFieldLabel( input, form );
 			const type = getAtomicFormFieldType( input );
 			const value = getAtomicFormFieldValue( input, type );
