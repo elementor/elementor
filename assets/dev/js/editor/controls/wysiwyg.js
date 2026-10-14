@@ -74,6 +74,15 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			selector: '#' + self.editorID,
 			setup( editor ) {
 				self.editor = editor;
+
+				// `wpautop` is disabled for the editor, so saved HTML loads verbatim.
+				// Legacy content without block tags (e.g. typed in the Text tab) still
+				// needs autop once on load, otherwise its line breaks collapse.
+				editor.on( 'BeforeSetContent', ( event ) => {
+					if ( event.load && 'raw' !== event.format && self.needsAutop( event.content ) ) {
+						event.content = wp.editor.autop( event.content );
+					}
+				} );
 			},
 		};
 
@@ -82,6 +91,25 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		if ( ! elementor.config.tinymceHasCustomConfig ) {
 			self.rearrangeButtons();
 		}
+	},
+
+	/**
+	 * Whether the content needs `wpautop` on load.
+	 *
+	 * Content without any block-level tag was never wrapped by TinyMCE, so it
+	 * relies on autop to turn its line breaks into paragraphs.
+	 *
+	 * @param {string} content
+	 * @return {boolean} needsAutop
+	 */
+	needsAutop( content ) {
+		if ( ! content || 'string' !== typeof content || ! wp?.editor?.autop ) {
+			return false;
+		}
+
+		const blockTags = 'p|div|ul|ol|li|dl|dt|dd|table|thead|tbody|tfoot|tr|th|td|h[1-6]|blockquote|pre|address|fieldset|figure|figcaption|section|article|aside|header|footer|nav|main|form|hr';
+
+		return ! new RegExp( '<(' + blockTags + ')(\\s|/?>)', 'i' ).test( content );
 	},
 
 	applySavedValue() {
