@@ -75,14 +75,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 			setup( editor ) {
 				self.editor = editor;
 
-				// `wpautop` is disabled for the editor, so saved HTML loads verbatim.
-				// Legacy content without block tags (e.g. typed in the Text tab) still
-				// needs autop once on load, otherwise its line breaks collapse.
-				editor.on( 'BeforeSetContent', ( event ) => {
-					if ( event.load && 'raw' !== event.format && self.needsAutop( event.content ) ) {
-						event.content = wp.editor.autop( event.content );
-					}
-				} );
+				editor.on( 'BeforeSetContent', self.onEditorBeforeSetContent.bind( self ) );
 			},
 		};
 
@@ -91,6 +84,23 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		if ( ! elementor.config.tinymceHasCustomConfig ) {
 			self.rearrangeButtons();
 		}
+	},
+
+	/**
+	 * Run `wpautop` once when legacy content loads into TinyMCE.
+	 *
+	 * `wpautop` is disabled for the editor, so saved HTML loads verbatim.
+	 * Content without block tags (e.g. typed in the Text tab) still needs
+	 * autop on load, otherwise its line breaks collapse.
+	 *
+	 * @param {Object} event TinyMCE `BeforeSetContent` event.
+	 */
+	onEditorBeforeSetContent( event ) {
+		if ( ! event.load || 'raw' === event.format || ! this.needsAutop( event.content ) ) {
+			return;
+		}
+
+		event.content = wp.editor.autop( event.content );
 	},
 
 	/**
@@ -103,7 +113,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 	 * @return {boolean} needsAutop
 	 */
 	needsAutop( content ) {
-		if ( ! content || 'string' !== typeof content || ! wp?.editor?.autop ) {
+		if ( ! content || 'string' !== typeof content || ! window.wp?.editor?.autop ) {
 			return false;
 		}
 
