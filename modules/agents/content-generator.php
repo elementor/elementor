@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Post_Noindex;
+use Elementor\Modules\Agents\Classes\Post_Title;
 use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
 use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
@@ -470,7 +471,7 @@ class Content_Generator {
 
 			$result[] = [
 				'id'          => $post->ID,
-				'title'       => $this->clean_title( get_the_title( $post->ID ) ),
+				'title'       => Post_Title::to_plain_text( get_the_title( $post->ID ) ),
 				'url'         => $permalink,
 				'description' => $this->get_post_description( $post->ID ),
 			];
@@ -721,13 +722,6 @@ class Content_Generator {
 		return '' !== $optional
 			? $this->sanitizer->sanitize( $optional )
 			: '';
-	}
-
-	/**
-	 * Strip HTML entities and tags from a post title.
-	 */
-	private function clean_title( string $title ): string {
-		return html_entity_decode( wp_strip_all_tags( $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	private function escape_markdown_link_text( string $text ): string {
