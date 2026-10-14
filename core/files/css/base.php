@@ -631,7 +631,9 @@ abstract class Base extends Base_File {
 			return true;
 		}
 
-		if ( wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'elementor_ajax' === $_REQUEST['action'] ) {
+		$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+
+		if ( wp_doing_ajax() && 'elementor_ajax' === $action ) {
 			return true;
 		}
 

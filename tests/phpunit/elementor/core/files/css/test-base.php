@@ -317,13 +317,15 @@ class Test_Base extends Elementor_Test_Base {
 
 		$_REQUEST['action'] = 'elementor_ajax';
 
-		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
-		$method->setAccessible( true );
+		try {
+			$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
+			$method->setAccessible( true );
 
-		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
-
-		unset( $_REQUEST['action'] );
-		remove_filter( 'wp_doing_ajax', '__return_true' );
+			$this->assertTrue( $method->invoke( $this->css_generator_class ) );
+		} finally {
+			unset( $_REQUEST['action'] );
+			remove_filter( 'wp_doing_ajax', '__return_true' );
+		}
 	}
 
 	public function test_get_registered_enqueue_dependencies_filters_unregistered_handles() {
