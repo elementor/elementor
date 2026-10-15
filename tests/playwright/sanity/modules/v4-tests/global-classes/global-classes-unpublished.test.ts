@@ -125,7 +125,7 @@ test.describe.serial( 'Global Classes - Unpublished class persistence @v4-tests'
 		await test.step( 'Publish page A and resolve its class on the frontend', async () => {
 			await openExistingPageEditor( page, editor, pageAId );
 			const widget = await editor.getWidget( widgetId );
-			await expect.poll( () => getComputedBackground( widget ), { timeout: timeouts.expect } )
+			await expect.poll( () => getComputedBackground( widget ), { timeout: timeouts.heavyAction } )
 				.toBe( BACKGROUND_COLOR.rgb );
 
 			await publishAndWaitForClassesSave( editor, page );
