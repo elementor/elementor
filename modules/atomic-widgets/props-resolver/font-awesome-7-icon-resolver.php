@@ -2,9 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -46,18 +43,23 @@ class Font_Awesome_7_Icon_Resolver {
 
 	const FILTER_TYPE_ITEM = 'item';
 
-	const SKIPPED_TAB_NAMES = [ 'all', 'recommended', 'GoPro' ];
-
 	public static function get_editor_config(): array {
-		$custom_icon_libraries_enabled = Availability::is_enabled();
-
-		return [
+		$config = [
 			'jsonFiles' => self::allowed_json_files(),
 			'jsonBaseUrl' => self::get_json_base_url(),
-			'filter' => self::get_filter_items( $custom_icon_libraries_enabled ),
-			'customIconPacks' => $custom_icon_libraries_enabled ? self::get_custom_icon_packs() : [],
-			'customIconLibrariesEnabled' => $custom_icon_libraries_enabled,
+			'filter' => self::get_filter_items(),
 		];
+
+		/**
+		 * Filters the Font Awesome 7 icon library editor config.
+		 *
+		 * Extensions can add keys consumed by editor icon library providers.
+		 *
+		 * @param array $config Editor config.
+		 */
+		$filtered = apply_filters( 'elementor/atomic-widgets/font-awesome-7/editor-config', $config );
+
+		return is_array( $filtered ) ? $filtered : $config;
 	}
 
 	public static function resolve( string $value, string $library ): ?array {
@@ -93,7 +95,7 @@ class Font_Awesome_7_Icon_Resolver {
 		];
 	}
 
-	private static function get_filter_items( bool $custom_icon_libraries_enabled ): array {
+	private static function get_filter_items(): array {
 		$items = [
 			[
 				'type' => self::FILTER_TYPE_ALL,
@@ -120,40 +122,14 @@ class Font_Awesome_7_Icon_Resolver {
 			],
 		];
 
-		if ( ! $custom_icon_libraries_enabled ) {
-			return $items;
-		}
+		/**
+		 * Filters the icon library filter items.
+		 *
+		 * @param array $items Filter items.
+		 */
+		$filtered = apply_filters( 'elementor/atomic-widgets/font-awesome-7/filter-items', $items );
 
-		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries( [
-			'require_label' => true,
-			'include_labels' => true,
-		] );
-
-		if ( empty( $custom_libraries ) ) {
-			return $items;
-		}
-
-		$items[] = [
-			'type' => self::FILTER_TYPE_GROUP,
-			'label' => esc_html__( 'My libraries', 'elementor' ),
-		];
-
-		foreach ( $custom_libraries as $library => $entry ) {
-			$items[] = [
-				'type' => self::FILTER_TYPE_ITEM,
-				'value' => $library,
-				'label' => $entry['label'],
-				'icon' => 'library',
-			];
-		}
-
-		return $items;
-	}
-
-	private static function get_custom_icon_packs(): array {
-		return Custom_Icon_Resolver::get_custom_libraries( [
-			'include_urls' => true,
-		] );
+		return is_array( $filtered ) ? $filtered : $items;
 	}
 
 	private static function get_icon_name( string $value ): ?string {
