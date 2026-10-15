@@ -69,6 +69,17 @@ class Test_Get_System_Info_Ability extends Elementor_Test_Base {
 		$this->assertSame( [ 'wordpress' ], array_keys( $result['reports'] ) );
 	}
 
+	public function test_execute__accepts_comma_separated_report_names() {
+		// Arrange
+		$input = [ 'reports' => 'server, wordpress' ];
+
+		// Act
+		$result = $this->ability->execute( $input );
+
+		// Assert
+		$this->assertSame( [ 'server', 'wordpress' ], array_keys( $result['reports'] ) );
+	}
+
 	public function test_execute__returns_every_report_when_none_requested() {
 		// Act
 		$result = $this->ability->execute( [] );

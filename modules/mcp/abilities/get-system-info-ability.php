@@ -71,7 +71,7 @@ class Get_System_Info_Ability extends Abstract_Ability {
 					'reports' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
-						'description' => 'Optional report names to return, for example server, wordpress, theme, plugins, log. Omit to get every report.',
+						'description' => 'Optional report names to return, for example server, wordpress, theme, user, plugins. Omit to get every report.',
 					],
 				],
 			]
@@ -103,7 +103,9 @@ class Get_System_Info_Ability extends Abstract_Ability {
 	}
 
 	private function resolve_requested_reports( array $input ): array {
-		$reports = isset( $input['reports'] ) && is_array( $input['reports'] ) ? $input['reports'] : [];
+		$reports = $input['reports'] ?? [];
+		$reports = is_string( $reports ) ? wp_parse_list( $reports ) : $reports;
+		$reports = is_array( $reports ) ? $reports : [];
 
 		return array_values( array_filter( array_map( 'sanitize_key', array_filter( $reports, 'is_string' ) ) ) );
 	}
