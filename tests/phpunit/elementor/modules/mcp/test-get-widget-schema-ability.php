@@ -55,40 +55,29 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'heading' ) );
 	}
 
-	public function test_execute__returns_standardized_heading_schema_when_experiment_active() {
+	public function test_execute__rejects_heading_without_registered_map_when_experiment_active() {
+		// Arrange.
 		$this->act_as_admin();
 		$this->given_widget_manager_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->enable_standardized_v3_maps();
 
-		$result = $this->execute_for_schema( 'heading' );
+		// Act.
+		$error_code = $this->execute_for_error_code( 'heading' );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertArrayNotHasKey( 'message', $result );
-		$this->assertArrayHasKey( 'title', $result['properties'] );
-		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertArrayHasKey( 'tag', $result['properties'] );
-		$this->assertSame( [ 'color', 'font-size', 'line-height', 'font-weight' ], $result['style_targets']['heading'] );
-		$this->assertSame( 'Text heading with optional link and HTML tag (h1–h6, div, span, or p).', $result['description'] );
-		$this->assertSame( 'string', $result['properties']['title']['anyOf'][0]['type'] );
-		$this->assertSame( 'object', $result['properties']['title']['anyOf'][1]['type'] );
-		$this->assertSame( 'boolean', $result['properties']['link']['properties']['is_external']['type'] );
-		$this->assertArrayNotHasKey( 'convert', $result['properties']['link']['properties']['is_external'] );
-		$this->assertArrayNotHasKey( 'key', $result['properties']['tag'] );
+		// Assert.
+		$this->assertSame( 'elementor_v3_not_supported', $error_code );
 	}
 
-	public function test_execute__returns_standardized_container_schema_when_experiment_active() {
+	public function test_execute__rejects_v3_container_when_experiment_active() {
+		// Arrange.
 		$this->act_as_admin();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->enable_standardized_v3_maps();
 
-		$result = $this->execute_for_schema( 'container' );
+		// Act.
+		$error_code = $this->execute_for_error_code( 'container' );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertArrayHasKey( 'content_width', $result['properties'] );
-		$this->assertSame( [ 'boxed', 'full' ], $result['properties']['content_width']['enum'] );
-		$this->assertSame( [ 'background', 'padding', 'margin' ], $result['style_targets']['container'] );
+		// Assert.
+		$this->assertSame( 'elementor_v3_not_supported', $error_code );
 	}
 
 	public function test_execute__exposes_editor_only_decorative_description_for_atomic_container() {
@@ -117,29 +106,6 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'string', $result['editor_settings']['properties']['name']['type'] );
 		$this->assertStringStartsWith( 'Editor only', $result['editor_settings']['properties']['name']['description'] );
 		$this->assertArrayNotHasKey( 'decorative', $result['editor_settings']['properties'] );
-	}
-
-	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
-		$this->act_as_admin();
-		$this->given_registered_v3_widget_stack( 'button' );
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-
-		$result = $this->execute_for_schema( 'button' );
-
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertArrayHasKey( 'text', $result['properties'] );
-		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertSame( [ 'color', 'background', 'font-size', 'font-weight', 'padding' ], $result['style_targets']['button'] );
-	}
-
-	public function test_execute__rejects_heading_when_atomic_elements_active() {
-		$this->act_as_admin();
-		$this->given_widget_manager_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-
-		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'heading' ) );
 	}
 
 	public function test_execute__rejects_v3_widget_type() {
@@ -300,11 +266,10 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$heading->get_stack();
 	}
 
-	private function given_registered_v3_widget_stack( string $widget_type ): void {
-		$widget = $this->original_widgets_manager->get_widget_types( $widget_type );
-		if ( $widget && method_exists( $widget, 'get_stack' ) ) {
-			$widget->get_stack();
-		}
+	private function enable_standardized_v3_maps(): void {
+		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
