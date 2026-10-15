@@ -50,15 +50,15 @@ test.describe( 'Container tests #1 @container', () => {
 		const heading = await editor.addWidget( { widgetType: widgets.heading, container: containerId } );
 		const image = await editor.addWidget( { widgetType: widgets.image, container: containerId } );
 
-		// Act - Move the button to be last.
-		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996]
+		// Act - Move the button to be last by dropping it on the right side of the image.
+		const imageBox = await editor.previewFrame.locator( getElementSelector( image ) ).boundingBox();
+
+		expect( imageBox ).toBeTruthy();
+
 		await editor.previewFrame.dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),
-		);
-		await editor.previewFrame.dragAndDrop(
-			getElementSelector( button ),
-			getElementSelector( image ),
+			{ targetPosition: { x: imageBox!.width * 0.75, y: imageBox!.height / 2 } },
 		);
 		const buttonEl = await editor.getElementHandle( button );
 		const headingEl = await editor.getElementHandle( heading );

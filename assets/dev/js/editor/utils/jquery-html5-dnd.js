@@ -307,7 +307,7 @@
 			const { host: droppableHost, styleTarget: droppableStyleTarget } = getDroppableHostAndStyleTarget();
 			const isAtomicFlexWrapRowHost = isAtomicFlexWrapRowHostElement( droppableHost, droppableStyleTarget );
 
-			maybeAddFlexRowClass( container );
+			maybeAddFlexRowClass( container, isFlexRowContainer );
 
 			return {
 				$currentElement,
@@ -329,12 +329,10 @@
 			};
 		};
 
-		const maybeAddFlexRowClass = function( container ) {
+		const maybeAddFlexRowClass = function( container, isFlexRowContainer ) {
 			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
-
-			const { isFlexRowContainer } = placeholderContext;
 
 			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
