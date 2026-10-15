@@ -86,6 +86,7 @@ describe( 'syncWithDocumentSave', () => {
 					modified: [],
 					order: true,
 				},
+				version: 0,
 			} );
 
 			const isPublish = status === 'publish';
