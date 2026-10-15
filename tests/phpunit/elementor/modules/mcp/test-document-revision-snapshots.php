@@ -120,23 +120,26 @@ class Test_Document_Revision_Snapshots extends Elementor_Test_Base {
 		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
 	}
 
-	public function test_write__leaves_no_revision_behind_when_the_operation_throws() {
+	public function test_write__leaves_no_undo_point_when_the_operation_throws_and_reuses_its_revision() {
 		// Arrange
 		$post_id = $this->create_elementor_page( 'draft', $this->containers( 1 ) );
 		update_post_meta( $post_id, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
-		$revisions_before = $this->regular_revision_ids( $post_id );
 		$thrown = null;
 
-		// Act
 		try {
 			$this->ability->execute_guarded( [ 'post_id' => $post_id, 'throw' => true ] );
 		} catch ( \RuntimeException $e ) {
 			$thrown = $e;
 		}
 
+		$leftover_revision_id = $this->latest_revision_id( $post_id );
+
+		// Act
+		$result = $this->ability->execute_guarded( [ 'post_id' => $post_id, 'elements' => $this->containers( 2 ) ] );
+
 		// Assert
 		$this->assertInstanceOf( \RuntimeException::class, $thrown );
-		$this->assertSame( $revisions_before, $this->regular_revision_ids( $post_id ) );
+		$this->assertSame( $leftover_revision_id, $result['undo_revision_id'] );
 	}
 
 	public function test_write__marks_the_returned_revision_as_an_undo_point() {

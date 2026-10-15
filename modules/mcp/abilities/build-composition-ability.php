@@ -115,12 +115,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
-		$recording = Document_Revision_Snapshots::record(
-			$document,
-			$this->get_id(),
-			fn() => $persister->insert_and_save( $document, $subtrees, $parent_id, $mode )
-		);
-		$persisted = $recording->get_result();
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
+		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
 			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $persisted, $subtrees, $warning_codes, $document );
 			return $persisted;
@@ -128,9 +124,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $recording->add_to_response(
-			$this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] )
-		);
+		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
 		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
 
 		return $response;

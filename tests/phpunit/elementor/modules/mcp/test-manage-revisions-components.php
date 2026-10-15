@@ -88,4 +88,37 @@ class Test_Manage_Revisions_Components extends Elementor_Test_Base {
 		$this->assertStringContainsString( $result['edit_url'], $result['llm_instructions'] );
 		$this->assertSame( 'e-heading', $this->elements_of( $this->find_autosave_id( $component_id ) )[0]['widgetType'] );
 	}
+
+	public function test_restore__removes_overridable_props_from_the_live_component_after_publish() {
+		// Arrange
+		$repository = new Components_Repository();
+		$component_id = $repository->create( 'Hero', [
+			[ 'id' => 'h1', 'elType' => 'widget', 'widgetType' => 'e-heading', 'settings' => [], 'elements' => [] ],
+		], 'publish', uniqid( 'uid-', true ), [] );
+
+		$update = ( new Manage_Component_Ability() )->execute_guarded( [
+			'action' => Manage_Component_Ability::ACTION_UPDATE,
+			'component_id' => $component_id,
+			'overridable_props' => [
+				'heading_tag' => [
+					'target' => 'h1',
+					'prop_key' => 'tag',
+					'label' => 'Heading Tag',
+				],
+			],
+		] );
+		$this->move_modified_date_to_the_past( $component_id );
+
+		( new Manage_Revisions_Ability() )->execute_guarded( [
+			'action' => Manage_Revisions_Ability::ACTION_RESTORE,
+			'post_id' => $component_id,
+			'revision_id' => $update['undo_revision_id'],
+		] );
+
+		// Act
+		$repository->publish_component( $repository->get( $component_id ) );
+
+		// Assert
+		$this->assertEmpty( $repository->get( $component_id, false )->get_overridable_props()->props );
+	}
 }

@@ -57,6 +57,7 @@ trait Revision_Test_Helpers {
 		);
 
 		clean_post_cache( $post_id );
+		Plugin::$instance->documents->get( $post_id, false );
 	}
 
 	private function containers( int $count ): array {

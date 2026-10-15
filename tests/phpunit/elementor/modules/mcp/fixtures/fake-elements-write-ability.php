@@ -41,21 +41,24 @@ class Fake_Elements_Write_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$document = Plugin::$instance->documents->get( (int) $input['post_id'] );
 
-		$recording = Document_Revision_Snapshots::record(
-			$document,
-			$this->get_id(),
-			function () use ( $document, $input ) {
-				if ( ! empty( $input['throw'] ) ) {
-					throw new \RuntimeException( 'Simulated failure.' );
-				}
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
 
-				return Document_Mutation_Save::elements_preserving_live_status( Document_Mutator::instance(), $document, $input['elements'] );
-			}
-		);
+		if ( ! empty( $input['throw'] ) ) {
+			throw new \RuntimeException( 'Simulated failure.' );
+		}
 
-		return $recording->add_to_response( [
+		Document_Mutation_Save::elements_preserving_live_status( Document_Mutator::instance(), $document, $input['elements'] );
+
+		$response = [
 			'status' => 'success',
 			'post_id' => (int) $input['post_id'],
-		] );
+		];
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 }

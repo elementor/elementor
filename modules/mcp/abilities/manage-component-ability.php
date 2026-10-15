@@ -305,15 +305,13 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
+		$undo_point = Document_Revision_Snapshots::capture( $component, $this->get_id() );
+
 		try {
-			$recording = Document_Revision_Snapshots::record(
-				$component,
-				$this->get_id(),
-				fn() => $component->save( [
-					'elements' => $elements,
-					'settings' => $settings,
-				] )
-			);
+			$saved = $component->save( [
+				'elements' => $elements,
+				'settings' => $settings,
+			] );
 		} catch ( \Exception $e ) {
 			if ( str_contains( $e->getMessage(), 'components that contain each other' ) ) {
 				return new \WP_Error(
@@ -326,14 +324,21 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return new \WP_Error( 'save_failed', $e->getMessage(), [ 'status' => \WP_Http::UNPROCESSABLE_ENTITY ] );
 		}
 
-		if ( ! $recording->get_result() ) {
+		if ( ! $saved ) {
 			return new \WP_Error( 'save_failed', __( 'Failed to save component.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return $recording->add_to_response( [
+		$response = [
 			'success' => true,
 			'component_id' => $component->get_main_id(),
-		] + $this->document_links( $component ) );
+		] + $this->document_links( $component );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 
 	private function validate_circular_dependency( callable $validate ): ?\WP_Error {

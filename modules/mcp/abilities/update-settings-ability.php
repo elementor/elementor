@@ -86,19 +86,23 @@ class Update_Settings_Ability extends Abstract_Ability {
 			return new \WP_Error( 'rest_cannot_edit', __( 'Sorry, you are not allowed to edit this document.', 'elementor' ), [ 'status' => \WP_Http::FORBIDDEN ] );
 		}
 
-		$recording = Document_Revision_Snapshots::record(
-			$document,
-			$this->get_id(),
-			fn() => $document->save( [ 'settings' => $settings ] )
-		);
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
+		$saved = $document->save( [ 'settings' => $settings ] );
 
-		if ( ! $recording->get_result() ) {
+		if ( ! $saved ) {
 			return new \WP_Error( 'save_failed', __( 'Could not save document settings.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return $recording->add_to_response( [
+		$response = [
 			'success' => true,
 			'post_id' => $post_id,
-		] + Document_Mutation_Links::for_document( $document ) );
+		] + Document_Mutation_Links::for_document( $document );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 }

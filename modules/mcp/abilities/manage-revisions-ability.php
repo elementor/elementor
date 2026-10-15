@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Revision_Restorer;
 use Elementor\Plugin;
 
@@ -127,13 +128,14 @@ class Manage_Revisions_Ability extends Abstract_Ability {
 			return new \WP_Error( 'rest_cannot_edit', __( 'Sorry, you are not allowed to edit this document.', 'elementor' ), [ 'status' => \WP_Http::FORBIDDEN ] );
 		}
 
-		$recording = ( new Revision_Restorer( $this->get_mutator() ) )->restore_undo_point( $document, $revision_id, $this->get_id() );
+		$restorer = new Revision_Restorer( $this->get_mutator() );
+		$undo_point_document = $restorer->resolve_undo_point( $document, $revision_id );
 
-		if ( is_wp_error( $recording ) ) {
-			return $recording;
+		if ( is_wp_error( $undo_point_document ) ) {
+			return $undo_point_document;
 		}
 
-		if ( null === $recording ) {
+		if ( Document_Revision_Snapshots::matches_current_state( $main_id, $revision_id ) ) {
 			return [
 				'post_id' => $main_id,
 				'restored_revision_id' => $revision_id,
@@ -143,14 +145,28 @@ class Manage_Revisions_Ability extends Abstract_Ability {
 			];
 		}
 
-		$is_staged = (int) $recording->get_result()->get_post()->ID !== $main_id;
+		$redo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
+		$target = $restorer->restore( $document, $undo_point_document );
 
-		return $recording->add_to_response( [
+		if ( is_wp_error( $target ) ) {
+			return $target;
+		}
+
+		$is_staged = (int) $target->get_post()->ID !== $main_id;
+
+		$response = [
 			'post_id' => $main_id,
 			'restored_revision_id' => $revision_id,
 			'changed' => true,
 			'staged' => $is_staged,
-		] + Document_Mutation_Links::for_document( $document, $this->get_restore_message( $document, $is_staged ) ) );
+		] + Document_Mutation_Links::for_document( $document, $this->get_restore_message( $document, $is_staged ) );
+
+		if ( $redo_point ) {
+			$redo_point->commit();
+			$response = $redo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 
 	private function get_restore_message( Document $document, bool $is_staged ): string {

@@ -279,12 +279,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $response;
 		}
 
-		$recording = Document_Revision_Snapshots::record(
-			$document,
-			$this->get_id(),
-			fn() => Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree )
-		);
-		$save_result = $recording->get_result();
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
+		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree );
 		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
 			$response['save_error'] = $save_result->get_error_message();
@@ -299,7 +295,13 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
-		$response = $recording->add_to_response( $this->with_edit_url( $response, $document ) );
+		$response = $this->with_edit_url( $response, $document );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
 		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 		return $response;
 	}
