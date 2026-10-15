@@ -94,6 +94,7 @@
 			isDroppingAllowedState = false,
 			originalCurrentElementOpacity = null,
 			placeholderContext = {},
+			dndAnchorHostElement = null,
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -127,7 +128,7 @@
 				return -1 !== settings.axis.indexOf( 'horizontal' );
 			}
 
-			return placeholderContext.isFlexRowContainer;
+			return placeholderContext.isFlexRowContainer || placeholderContext.isAtomicFlexWrapRowHost;
 		};
 
 		var hasVerticalDetection = function() {
@@ -135,7 +136,7 @@
 				return -1 !== settings.axis.indexOf( 'vertical' );
 			}
 
-			return ! placeholderContext.isFlexRowContainer;
+			return ! placeholderContext.isFlexRowContainer && ! placeholderContext.isAtomicFlexWrapRowHost;
 		};
 
 		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
@@ -227,6 +228,9 @@
 				case 'gridRow':
 					insertGridRowPlaceholder();
 					break;
+				case 'flexWrapRow':
+					insertFlexWrapRowPlaceholder();
+					break;
 				case 'flexRow':
 					insertFlexRowPlaceholder();
 					break;
@@ -234,6 +238,39 @@
 					insertDefaultPlaceholder();
 					break;
 			}
+		};
+
+		const getDroppableHostAndStyleTarget = function() {
+			const host = elementsCache.$element[ 0 ];
+			const styleTarget = host?.querySelector( ':scope > .e-con-inner' ) || host;
+
+			return { host, styleTarget };
+		};
+
+		const isAtomicFlexWrapRowHostElement = function( host, styleTarget ) {
+			if ( ! host || ! styleTarget ) {
+				return false;
+			}
+
+			if ( ! host.classList.contains( 'e-atomic-element' ) ) {
+				return false;
+			}
+
+			if ( host.classList.contains( 'e-grid-base' ) ) {
+				return false;
+			}
+
+			const styles = getComputedStyle( styleTarget );
+
+			if ( ! [ 'flex', 'inline-flex' ].includes( styles.display ) ) {
+				return false;
+			}
+
+			if ( ! [ 'row', 'row-reverse' ].includes( styles.flexDirection ) ) {
+				return false;
+			}
+
+			return [ 'wrap', 'wrap-reverse' ].includes( styles.flexWrap );
 		};
 
 		const createPlaceholderContext = function() {
@@ -252,8 +289,12 @@
 
 			const isFlexContainer = !! container && [ 'flex', 'inline-flex' ].includes( containerWrapperStyle.display );
 			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
+			const isFlexRowContainer = isFlexContainer && isRowDirection;
 
-			maybeAddFlexRowClass( container );
+			const { host: droppableHost, styleTarget: droppableStyleTarget } = getDroppableHostAndStyleTarget();
+			const isAtomicFlexWrapRowHost = isAtomicFlexWrapRowHostElement( droppableHost, droppableStyleTarget );
+
+			maybeAddFlexRowClass( container, isFlexRowContainer );
 
 			return {
 				$currentElement,
@@ -265,19 +306,20 @@
 				isAtomicGridContainer: 0 !== $currentElement.closest( '.e-grid-base' ).length,
 				isFlexContainer,
 				isRowDirection,
-				isFlexRowContainer: isFlexContainer && isRowDirection,
+				isFlexRowContainer,
+				isAtomicFlexWrapRowHost,
+				droppableHost,
+				droppableStyleTarget,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
 				isAtomicContainer: [ 'e-div-block', 'e-flexbox', 'e-grid' ].includes( currentElement.dataset.element_type ),
 			};
 		};
 
-		const maybeAddFlexRowClass = function( container ) {
+		const maybeAddFlexRowClass = function( container, isFlexRowContainer ) {
 			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
-
-			const { isFlexRowContainer } = placeholderContext;
 
 			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
@@ -300,6 +342,10 @@
 				return 'gridRow';
 			}
 
+			if ( placeholderContext.isAtomicFlexWrapRowHost ) {
+				return 'flexWrapRow';
+			}
+
 			if ( placeholderContext.isFlexRowContainer ) {
 				return 'flexRow';
 			}
@@ -311,8 +357,24 @@
 			return 'default';
 		};
 
+		const clearOverlayPlaceholderState = function() {
+			elementsCache.$placeholder.removeClass( 'e-placeholder--overlay e-dragging-left e-dragging-right' );
+			elementsCache.$placeholder.css( '--e-placeholder-left', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-top', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-height', '' );
+
+			if ( dndAnchorHostElement ) {
+				dndAnchorHostElement.classList.remove( 'e-con--dnd-anchor' );
+				dndAnchorHostElement = null;
+			}
+		};
+
 		const clearPreviousPlaceholder = function() {
-			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
+			clearOverlayPlaceholderState();
+
+			if ( placeholderContext.$parentContainer ) {
+				placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
+			}
 
 			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right e-dragging-top e-dragging-bottom is-logical' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
@@ -416,6 +478,49 @@
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			insertPlaceholderOutsideElement( $target[ 0 ] );
+		};
+
+		const PLACEHOLDER_OVERLAY_BAR_SIZE = 10;
+
+		const insertFlexWrapRowPlaceholder = function() {
+			const { placeholderTarget, droppableHost, droppableStyleTarget } = placeholderContext;
+			const target = placeholderTarget || currentElement;
+			const host = droppableHost;
+
+			if ( ! host || ! target || ! currentSide ) {
+				return;
+			}
+
+			const hostStyles = getComputedStyle( host );
+
+			if ( 'static' === hostStyles.position ) {
+				host.classList.add( 'e-con--dnd-anchor' );
+				dndAnchorHostElement = host;
+			}
+
+			const styleTarget = droppableStyleTarget || host;
+			const flexStyles = getComputedStyle( styleTarget );
+			const gap = parseFloat( flexStyles.columnGap ) || 0;
+
+			const targetRect = target.getBoundingClientRect();
+			const hostRect = host.getBoundingClientRect();
+
+			const halfGap = gap / 2;
+			const edgeX = 'right' === currentSide
+				? targetRect.right + halfGap
+				: targetRect.left - halfGap;
+
+			const halfBarSize = PLACEHOLDER_OVERLAY_BAR_SIZE / 2;
+			const left = edgeX - halfBarSize - hostRect.left - host.clientLeft + host.scrollLeft;
+			const top = targetRect.top - hostRect.top - host.clientTop + host.scrollTop;
+			const height = targetRect.height;
+
+			elementsCache.$placeholder.addClass( 'e-placeholder--overlay e-dragging-' + currentSide );
+			elementsCache.$placeholder.css( '--e-placeholder-left', `${ left }px` );
+			elementsCache.$placeholder.css( '--e-placeholder-top', `${ top }px` );
+			elementsCache.$placeholder.css( '--e-placeholder-height', `${ height }px` );
+
+			elementsCache.$placeholder.appendTo( host );
 		};
 
 		const insertDefaultPlaceholder = function() {
@@ -669,6 +774,7 @@
 
 		this.doDragLeave = function() {
 			if ( settings.placeholder ) {
+				clearOverlayPlaceholderState();
 				elementsCache.$placeholder.remove();
 			}
 
