@@ -36,4 +36,27 @@ class Test_Webmcp_Utils extends Elementor_Test_Base {
 
 		$this->assertNotEmpty( $description );
 	}
+
+	public function test_resolve_tool_name_suffixes_explicit_name_with_element_id() {
+		$this->assertSame( 'book_table_abc123', Webmcp_Utils::resolve_tool_name( 'book_table', 'Contact Form', 'abc123' ) );
+	}
+
+	public function test_resolve_tool_name_falls_back_to_form_name() {
+		$this->assertSame( 'contact_form_abc123', Webmcp_Utils::resolve_tool_name( '', 'Contact Form', 'abc123' ) );
+	}
+
+	public function test_resolve_tool_name_keeps_duplicated_forms_unique() {
+		$this->assertNotSame(
+			Webmcp_Utils::resolve_tool_name( 'book_table', '', 'abc123' ),
+			Webmcp_Utils::resolve_tool_name( 'book_table', '', 'def456' )
+		);
+	}
+
+	public function test_resolve_tool_description_prefers_explicit_value() {
+		$this->assertSame( 'Book a table.', Webmcp_Utils::resolve_tool_description( 'Book a table.', 'Contact Form' ) );
+	}
+
+	public function test_resolve_tool_description_falls_back_to_form_name() {
+		$this->assertSame( Webmcp_Utils::build_tool_description( 'Contact Form' ), Webmcp_Utils::resolve_tool_description( '', 'Contact Form' ) );
+	}
 }

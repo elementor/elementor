@@ -1,5 +1,5 @@
 import { type ElementSnapshotNode } from '../../types';
-import { walkAtomicImageSources } from '../atomic-image-sources';
+import { extractAtomicImageMedia, walkAtomicImageSources } from '../atomic-image-sources';
 
 const atomicImageProp = ( id: number, size = 'full' ) => ( {
 	$$type: 'image',
@@ -75,6 +75,42 @@ describe( 'walkAtomicImageSources', () => {
 		walkAtomicImageSources( tree, ( { media } ) => sources.push( { mediaUrl: media.url } ) );
 
 		expect( sources ).toEqual( [ { mediaUrl: 'http://example.test/a.jpg' } ] );
+	} );
+
+	it( 'extracts the alt of a URL-only image', () => {
+		const imageProp = {
+			$$type: 'image',
+			value: {
+				src: {
+					$$type: 'image-src',
+					value: {
+						id: null,
+						url: { $$type: 'url', value: 'http://example.test/a.jpg' },
+						alt: { $$type: 'string', value: 'External' },
+					},
+				},
+				size: null,
+			},
+		};
+
+		expect( extractAtomicImageMedia( imageProp )?.alt ).toBe( 'External' );
+	} );
+
+	it( 'only visits the requested prop keys', () => {
+		const tree: ElementSnapshotNode[] = [
+			{
+				id: 'video',
+				elType: 'widget',
+				widgetType: 'e-self-hosted-video',
+				settings: { image: atomicImageProp( 1 ), poster: atomicImageProp( 2 ) },
+				elements: [],
+			},
+		];
+
+		const sources: Array< { mediaId?: number } > = [];
+		walkAtomicImageSources( tree, ( { media } ) => sources.push( { mediaId: media.id } ), [ 'image' ] );
+
+		expect( sources ).toEqual( [ { mediaId: 1 } ] );
 	} );
 
 	it( 'ignores non-atomic widgets and empty props', () => {

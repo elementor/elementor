@@ -51,6 +51,11 @@ export const ColorControl = createControl(
 								},
 								colorBox: {
 									value: value ?? placeholder ?? '',
+									slotProps: {
+										formatSelection: {
+											MenuProps: { disablePortal: true },
+										},
+									},
 								},
 							},
 						},

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Post_Noindex;
+use Elementor\Modules\Agents\Classes\Post_Title;
 use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
 use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
@@ -176,12 +177,10 @@ class Content_Generator {
 		// Build output, inlining content and respecting the size cap.
 		$header_text = implode( "\n", $lines );
 		$output      = $header_text;
-		$output_size = strlen( $output );
 
 		foreach ( $content_blocks as $block ) {
 			$section_text = $block['header'];
 
-			// Add inline content for each item in this section (if any).
 			if ( ! empty( $block['items'] ) ) {
 				foreach ( $block['items'] as $item ) {
 					if ( empty( $item['id'] ) ) {
@@ -194,37 +193,31 @@ class Content_Generator {
 						continue;
 					}
 
-					// Build the inline block for this document.
 					$inline_block = "\n---\n\n" . $inline . "\n";
 
-					// Hard-cap check: if adding this block would exceed 1 MB, stop.
-					if ( $output_size + strlen( $section_text ) + strlen( $inline_block ) > self::LLMS_FULL_HARD_CAP ) {
-						break 2; // stop processing all further content blocks
+					if ( $this->llms_full_would_exceed_cap( $output, "\n" . $section_text . $inline_block ) ) {
+						break;
 					}
 
 					$section_text .= $inline_block;
-
-					// If we've passed the 500 KB target, keep going but note it.
-					// The hard cap above will stop us if we truly go over 1 MB.
-					$output_size += strlen( $inline_block );
 				}
 			}
 
-			// Hard-cap check for the section header itself.
-			if ( $output_size + strlen( $section_text ) > self::LLMS_FULL_HARD_CAP ) {
+			if ( $this->llms_full_would_exceed_cap( $output, "\n" . $section_text ) ) {
 				break;
 			}
 
-			$output      .= "\n" . $section_text;
-			$output_size  = strlen( $output );
+			$output .= "\n" . $section_text;
 		}
 
-		// Append the user-editable optional section to the output directly,
-		// since $output was already built from $lines before the content loop.
 		$optional = $this->get_sanitized_optional( $overrides );
 
 		if ( '' !== $optional ) {
-			$output .= "\n## Optional\n\n" . $optional . "\n";
+			$optional_block = "\n## Optional\n\n" . $optional . "\n";
+
+			if ( ! $this->llms_full_would_exceed_cap( $output, $optional_block ) ) {
+				$output .= $optional_block;
+			}
 		}
 
 		return $output;
@@ -478,7 +471,7 @@ class Content_Generator {
 
 			$result[] = [
 				'id'          => $post->ID,
-				'title'       => $this->clean_title( get_the_title( $post->ID ) ),
+				'title'       => Post_Title::to_plain_text( get_the_title( $post->ID ) ),
 				'url'         => $permalink,
 				'description' => $this->get_post_description( $post->ID ),
 			];
@@ -673,12 +666,21 @@ class Content_Generator {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * @param string $output Current llms-full.txt body.
+	 * @param string $append Bytes about to be appended.
+	 * @return bool
+	 */
+	private function llms_full_would_exceed_cap( string $output, string $append ): bool {
+		return strlen( $output ) + strlen( $append ) > self::LLMS_FULL_HARD_CAP;
+	}
+
+	/**
 	 * Format a single link line per the llmstxt.org spec.
 	 *
 	 * @param array{title: string, url: string, description: string} $item
 	 */
 	private function format_link_line( array $item ): string {
-		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url( $item['url'] ) . ')';
+		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url_raw( $item['url'] ) . ')';
 
 		if ( '' !== $item['description'] ) {
 			$line .= ': ' . $item['description'];
@@ -720,13 +722,6 @@ class Content_Generator {
 		return '' !== $optional
 			? $this->sanitizer->sanitize( $optional )
 			: '';
-	}
-
-	/**
-	 * Strip HTML entities and tags from a post title.
-	 */
-	private function clean_title( string $title ): string {
-		return html_entity_decode( wp_strip_all_tags( $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	private function escape_markdown_link_text( string $text ): string {

@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 4.3.5 - 2026-10-13 =
+
+* Fix: Page editing can fail when Internal CSS Embedding is enabled ([#37468](https://github.com/elementor/elementor/issues/37468))
+* Fix: Improved code security enforcement across CSS, SVG, and element ID handling
+* Fix: Theme Builder fails to open correctly from "Edit with Elementor" on the frontend
+
 = 4.3.4 - 2026-10-05 =
 
 * Tweak: Improved MCP connector setup instructions across macOS, Windows, and Linux

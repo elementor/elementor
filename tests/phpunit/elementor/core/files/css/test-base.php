@@ -332,4 +332,69 @@ class Test_Base extends Elementor_Test_Base {
 
 		wp_deregister_style( 'registered-handle' );
 	}
+
+	public function test_get_content__sanitizes_inline_output_from_page_settings() {
+		// Arrange.
+		$post_id = $this->create_page_with_background_color( 'red}</style>' );
+
+		// Act.
+		$css = \Elementor\Core\Files\CSS\Post::create( $post_id )->get_content();
+
+		// Assert.
+		$this->assertDoesNotMatchRegularExpression( '/<\/style/i', $css );
+		$this->assertStringContainsString( '<\/style>', $css );
+	}
+
+	public function test_enqueue__sanitizes_cached_inline_css() {
+		// Arrange.
+		$post_id = $this->factory()->post->create( [
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_css' => [
+					'time' => time(),
+					'status' => 'inline',
+					'css' => 'body{color:red}</STYLE>',
+				],
+			],
+		] );
+
+		$css = \Elementor\Core\Files\CSS\Post::create( $post_id );
+
+		// Act.
+		ob_start();
+		$css->enqueue();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertSame( 1, preg_match_all( '/<\/style/i', $output ) );
+		$this->assertStringContainsString( '<\/STYLE>', $output );
+		$this->assertStringEndsWith( '</style>', $output );
+	}
+
+	public function test_get_content__keeps_valid_css_unchanged() {
+		// Arrange.
+		$post_id = $this->create_page_with_background_color( '#ff0000' );
+
+		// Act.
+		$css = \Elementor\Core\Files\CSS\Post::create( $post_id )->get_content();
+
+		// Assert.
+		$this->assertStringContainsString( 'background-color:#ff0000;', $css );
+		$this->assertDoesNotMatchRegularExpression( '/<\/style/i', $css );
+	}
+
+	private function create_page_with_background_color( string $color ): int {
+		return $this->factory()->post->create( [
+			'post_type' => 'page',
+			'meta_input' => [
+				'_elementor_edit_mode' => 'builder',
+				'_elementor_template_type' => 'wp-page',
+				'_elementor_data' => '[]',
+				'_elementor_page_settings' => [
+					'background_background' => 'classic',
+					'background_color' => $color,
+				],
+			],
+		] );
+	}
 }
