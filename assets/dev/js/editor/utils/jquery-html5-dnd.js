@@ -240,6 +240,7 @@
 		};
 
 		const findAtomicFlexWrapRowHost = function( startElement ) {
+			const droppableElement = elementsCache.$element[ 0 ];
 			let candidate = startElement;
 
 			while ( candidate ) {
@@ -249,6 +250,10 @@
 					if ( isAtomicFlexWrapRowHostElement( candidate, styleTarget ) ) {
 						return { host: candidate, styleTarget };
 					}
+				}
+
+				if ( candidate === droppableElement ) {
+					break;
 				}
 
 				candidate = candidate.parentElement;
@@ -304,7 +309,7 @@
 			const { host: droppableHost, styleTarget: droppableStyleTarget } = findAtomicFlexWrapRowHost( currentElement );
 			const isAtomicFlexWrapRowHost = !! droppableHost;
 
-			maybeAddFlexRowClass( container );
+			maybeAddFlexRowClass( container, isFlexRowContainer );
 
 			return {
 				$currentElement,
@@ -326,12 +331,10 @@
 			};
 		};
 
-		const maybeAddFlexRowClass = function( container ) {
+		const maybeAddFlexRowClass = function( container, isFlexRowContainer ) {
 			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
-
-			const { isFlexRowContainer } = placeholderContext;
 
 			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
