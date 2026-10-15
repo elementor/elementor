@@ -136,8 +136,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Svg_Resolver;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Rest_Api as Custom_Icon_Svg_Rest_Api;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Content\Atomic_Background_Video_Content;
@@ -186,6 +184,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
 	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
+	const EXPERIMENT_FORM_WEBMCP = 'e_atomic_form_webmcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -215,6 +214,7 @@ class Module extends BaseModule {
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
 		$this->register_icon_library_experiment();
+		$this->register_form_webmcp_experiment();
 
 		$this->register_hooks();
 
@@ -300,6 +300,17 @@ class Module extends BaseModule {
 		] );
 	}
 
+	private function register_form_webmcp_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_FORM_WEBMCP,
+			'title' => esc_html__( 'Atomic Form WebMCP authoring', 'elementor' ),
+			'description' => esc_html__( 'Let the MCP author WebMCP declarative attributes on atomic forms and their fields.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
 	private function register_hooks() {
 		Dynamic_Tags_Module::instance()->register_hooks();
 		Atomic_Styles_Manager::instance()->register_hooks();
@@ -311,23 +322,9 @@ class Module extends BaseModule {
 		Atomic_Prop_Remap::register_builtin_handlers();
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
-		( new Custom_Icon_Svg_Rest_Api() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
 
-		add_filter( 'elementor/atomic-widgets/icon/svg-html', [ $this, 'fill_custom_icon_svg' ], 20, 2 );
 		add_filter( 'elementor/allowed_html_wrapper_tags', [ $this, 'add_inline_html_tags' ] );
-	}
-
-	public function fill_custom_icon_svg( $html, $icon ) {
-		if ( is_string( $html ) && '' !== $html ) {
-			return $html;
-		}
-
-		if ( ! is_array( $icon ) ) {
-			return is_string( $html ) ? $html : '';
-		}
-
-		return Custom_Icon_Svg_Resolver::resolve( $icon );
 	}
 
 	public function add_inline_html_tags( array $tags ): array {
@@ -621,6 +618,10 @@ class Module extends BaseModule {
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
+
+	public static function is_form_webmcp_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_FORM_WEBMCP );
 	}
 
 	public static function is_svg_library_active(): bool {

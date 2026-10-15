@@ -6,6 +6,7 @@ import { ElementsOverlays } from './components/elements-overlays';
 import { InteractionsRenderer } from './components/interactions-renderer';
 import { StyleRenderer } from './components/style-renderer';
 import { initFormAncestorEnforcement } from './form-structure/enforce-form-ancestor-commands';
+import { initHiddenFieldHint } from './form-structure/hidden-field-hint';
 import { initFormNestingPrevention } from './form-structure/prevent-form-nesting-commands';
 import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
@@ -25,6 +26,7 @@ export function init() {
 	initLinkInLinkPrevention();
 	initFormNestingPrevention();
 	initFormAncestorEnforcement();
+	initHiddenFieldHint();
 
 	initViewReplacements();
 
