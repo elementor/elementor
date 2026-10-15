@@ -5,8 +5,10 @@ import {
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
 	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
 	preserveOpacityKeyframes,
+	mergeCommittedTransformChannels,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -18,18 +20,24 @@ import {
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-// Inline transform/opacity the element had before any interaction touched it,
+// Inline transform/opacity/transition the element had before any interaction touched it,
 // and the opacity its stylesheet gives it.
 const originalStyles = new WeakMap();
 // The latest animation writing each style on the element. Motion.js stops an earlier
 // animation of the same style when a new one starts, and a stopped animation never settles.
 const styleOwners = new WeakMap();
+// Transform channels (x / y / scale) an animation has committed away from the stylesheet
+// state. x / y / scale share one inline transform, so a later animation that ends back at
+// the baseline must not clear a channel another animation already committed, while a
+// channel it does bring back to the baseline is cleared again.
+const committedTransforms = new WeakMap();
 
 function rememberOriginalStyles( element ) {
 	if ( ! originalStyles.has( element ) ) {
 		originalStyles.set( element, {
 			transform: element.style.transform,
 			opacity: element.style.opacity,
+			transition: element.style.transition,
 			baselineOpacity: getOpacityBaselineFromComputedStyle( element ),
 		} );
 	}
@@ -78,6 +86,21 @@ function restoreElementStyles( element, transition, keyframes, baseline, ownedSt
 
 	const original = originalStyles.get( element );
 
+	// Track which transform channels this animation leaves away from the stylesheet state,
+	// so a later animation that ends at the baseline on the same channel can still clear
+	// it, while channels this one does not write keep what an earlier animation committed.
+	const committedChannels = mergeCommittedTransformChannels(
+		committedTransforms.get( element ),
+		keyframes,
+		baseline,
+	);
+
+	if ( committedChannels.size > 0 ) {
+		committedTransforms.set( element, committedChannels );
+	} else {
+		committedTransforms.delete( element );
+	}
+
 	// Put back the inline transform/opacity the element had before the animation,
 	// once it reaches a state that already matches the stylesheet, so the value
 	// Motion.js leaves behind does not mask `:hover` (and manually authored) CSS.
@@ -90,9 +113,16 @@ function restoreElementStyles( element, transition, keyframes, baseline, ownedSt
 
 		ownedStyles.forEach( ( style ) => {
 			// A newer animation started meanwhile and owns the style again.
-			if ( ! owners[ style ] ) {
-				element.style[ style ] = original[ style ];
+			if ( owners[ style ] ) {
+				return;
 			}
+
+			// Another animation already committed this transform away from the baseline.
+			if ( 'transform' === style && committedTransforms.has( element ) ) {
+				return;
+			}
+
+			element.style[ style ] = original[ style ];
 		} );
 	} );
 }
@@ -129,21 +159,22 @@ function defaultAnimation( element, restoreStyles, keyframes, options, animateFu
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	rememberOriginalStyles( element );
 
-	const { baselineOpacity } = originalStyles.get( element );
+	const { baselineOpacity, transition } = originalStyles.get( element );
+	const fadeTargetOpacity = getFadeTargetOpacity( baselineOpacity );
 	const baseline = getTransformBaselineFromComputedStyle( element );
 	const keyframes = preserveOpacityKeyframes(
 		preserveTransformKeyframes(
 			getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
 			baseline,
 		),
-		baselineOpacity,
+		fadeTargetOpacity,
 	);
 	const resetKeyframes = preserveOpacityKeyframes(
 		preserveTransformKeyframes(
 			getKeyframes( animConfig.effect, 'in', animConfig.direction ),
 			baseline,
 		),
-		baselineOpacity,
+		fadeTargetOpacity,
 	);
 
 	const options = {
@@ -153,7 +184,6 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
-	const transition = element.style.transition;
 	element.style.transition = 'none';
 	const restoreStyles = ( ownedStyles ) => restoreElementStyles( element, transition, keyframes, baseline, ownedStyles );
 

@@ -13,8 +13,11 @@ import {
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
 	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
 	preserveOpacityKeyframes,
+	endsAtTransformBaseline,
+	mergeCommittedTransformChannels,
 	shouldResetElementStyles,
 } from './interactions-shared-utils.js';
 
@@ -50,8 +53,11 @@ export {
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
 	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
 	preserveOpacityKeyframes,
+	endsAtTransformBaseline,
+	mergeCommittedTransformChannels,
 	shouldResetElementStyles,
 };
 

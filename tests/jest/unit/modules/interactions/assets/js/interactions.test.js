@@ -631,6 +631,104 @@ describe( 'Interactions', () => {
 		expect( element.style.transform ).toBe( '' );
 	} );
 
+	it( 'keeps the inline opacity a fade-in leaves behind when the stylesheet hides the element', async () => {
+		runRafSync();
+		const animate = createStyleWritingAnimate();
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const style = document.createElement( 'style' );
+		style.textContent = '[data-interaction-id="hidden-opacity"] { opacity: 0; }';
+		document.head.appendChild( style );
+
+		const element = createInteractionElement( 'hidden-opacity' );
+		mountInteractions( element, [ createInteraction( 'load', 'fade', 'in' ) ] );
+
+		await flushPromises();
+
+		// The fade still runs to fully visible, and the inline `opacity: 1` is kept,
+		// because the stylesheet renders `opacity: 0` and would hide the element again.
+		expect( animate.mock.calls[ 0 ][ 1 ].opacity ).toEqual( [ 0, 1 ] );
+		expect( element.style.opacity ).toBe( '1' );
+
+		style.remove();
+	} );
+
+	it( 'restores the authored transition after two interactions on the same element', async () => {
+		runRafSync();
+		const animate = createStyleWritingAnimate();
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'authored-transition' );
+		element.style.transition = 'opacity 0.3s';
+		mountInteractions( element, [
+			createInteraction( 'load', 'fade', 'in' ),
+			createInteraction( 'load', 'scale', 'in' ),
+		] );
+
+		await flushPromises();
+
+		expect( animate ).toHaveBeenCalledTimes( 2 );
+		// The second interaction must not capture and restore the 'none' the first one set.
+		expect( element.style.transition ).toBe( 'opacity 0.3s' );
+	} );
+
+	it( 'keeps the transform a finished slide-out committed when a scale-in settles later', async () => {
+		runRafSync();
+		const resolvers = [];
+		const animate = jest.fn( ( element, keyframes ) => {
+			applyLastKeyframeStyles( element, keyframes );
+			return new Promise( ( resolve ) => resolvers.push( resolve ) );
+		} );
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'committed-transform' );
+		mountInteractions( element, [
+			createInteraction( 'load', 'slide', 'out', { direction: 'left' } ),
+			createInteraction( 'load', 'scale', 'in' ),
+		] );
+
+		await flushPromises();
+
+		resolvers[ 0 ]();
+		await flushPromises();
+
+		resolvers[ 1 ]();
+		await flushPromises();
+
+		// The scale-in ends at the baseline, but it must not clear the transform
+		// the slide-out already committed.
+		expect( element.style.transform ).toBe( 'matrix(1, 0, 0, 1, 0, 0)' );
+	} );
+
+	it( 'clears the inline transform when a later transform animation returns to the baseline', async () => {
+		runRafSync();
+		const resolvers = [];
+		const animate = jest.fn( ( element, keyframes ) => {
+			applyLastKeyframeStyles( element, keyframes );
+			return new Promise( ( resolve ) => resolvers.push( resolve ) );
+		} );
+		installMotionMocks( { animate, inView: jest.fn(), scroll: jest.fn() } );
+
+		const element = createInteractionElement( 'returned-to-baseline' );
+		mountInteractions( element, [
+			createInteraction( 'load', 'slide', 'out', { direction: 'left' } ),
+			createInteraction( 'load', 'slide', 'in', { direction: 'left' } ),
+		] );
+
+		await flushPromises();
+
+		resolvers[ 0 ]();
+		await flushPromises();
+
+		resolvers[ 1 ]();
+		await flushPromises();
+
+		// The slide-out committed an off-baseline transform, but the slide-in brings the
+		// element back to its stylesheet state, so the inline transform must be cleared
+		// instead of masking stylesheet transform rules.
+		expect( element.style.transform ).toBe( '' );
+	} );
+
 	it( 'restores the original inline styles after every replay of a scrollIn interaction', async () => {
 		runRafSync();
 		const animate = createStyleWritingAnimate();
