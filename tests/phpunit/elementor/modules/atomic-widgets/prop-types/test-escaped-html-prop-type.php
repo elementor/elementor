@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,7 +94,12 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result['value'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result['value'],
+			'Hello alert("xss")<strong>world</strong>',
+			'Hello <strong>world</strong>'
+		);
 	}
 
 	public function test_sanitize__strips_id_attribute_from_inline_elements() {
@@ -178,8 +184,7 @@ class Test_Escaped_Html_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertStringNotContainsString( '<a href=', $result['value'] );
-		$this->assertStringContainsString( 'click', $result['value'] );
+		Kses_Test_Expectations::assert_sanitized_data_href_link( $this, $result['value'] );
 	}
 
 	public function test_should_persist__true_for_empty_string() {
