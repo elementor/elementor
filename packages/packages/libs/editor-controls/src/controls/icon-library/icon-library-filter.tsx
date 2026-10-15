@@ -1,10 +1,20 @@
 import * as React from 'react';
 import { useId } from 'react';
-import { CheckIcon, FilterIcon, LibraryIcon, ListIcon, StarFilledIcon, StarIcon } from '@elementor/icons';
+import {
+	CheckIcon,
+	FilterIcon,
+	LibraryIcon,
+	MenuIcon,
+	RosetteDiscountCheckIcon,
+	StarFilledIcon,
+	StarIcon,
+} from '@elementor/icons';
 import {
 	bindMenu,
 	bindToggle,
 	Box,
+	Divider,
+	ListSubheader,
 	Menu,
 	MenuItem,
 	Stack,
@@ -15,42 +25,35 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import {
-	FONT_AWESOME_7_LIBRARIES,
-	type FontAwesome7Library,
-	type FontAwesome7LibraryFilter,
-} from './font-awesome-7-catalog';
+import { type FontAwesome7LibraryFilter } from './font-awesome-7-catalog';
 import { ICON_LIBRARY_ACTION_TOOLTIP_ENTER_DELAY } from './icon-library-tooltip';
 
 const FILTER_MENU_WIDTH = 280;
 const FILTER_INDICATOR_SIZE = 6;
-const FILTER_INDICATOR_OFFSET = 4;
-const LIBRARY_FILTER_ORDER = {
-	regular: 0,
-	solid: 1,
-	brands: 2,
-} as const;
+const FILTER_INDICATOR_CORNER_OFFSET = -( FILTER_INDICATOR_SIZE / 2 );
+const FILTER_TYPE_ALL = 'all';
+const FILTER_TYPE_GROUP = 'group';
+const FILTER_TYPE_ITEM = 'item';
 
-const LIBRARY_FILTER_CONFIG: Record<
-	FontAwesome7Library,
-	{ getLabel: () => string; Icon: typeof StarIcon; order: number }
-> = {
-	'fa-regular': {
-		getLabel: () => __( 'Font Awesome - Regular', 'elementor' ),
-		Icon: StarIcon,
-		order: LIBRARY_FILTER_ORDER.regular,
-	},
-	'fa-solid': {
-		getLabel: () => __( 'Font Awesome - Solid', 'elementor' ),
-		Icon: StarFilledIcon,
-		order: LIBRARY_FILTER_ORDER.solid,
-	},
-	'fa-brands': {
-		getLabel: () => __( 'Font Awesome - Brands', 'elementor' ),
-		Icon: LibraryIcon,
-		order: LIBRARY_FILTER_ORDER.brands,
-	},
+const FILTER_ICONS: Record< string, typeof MenuIcon > = {
+	list: MenuIcon,
+	star: StarIcon,
+	'star-filled': StarFilledIcon,
+	library: LibraryIcon,
+	rosette: RosetteDiscountCheckIcon,
 };
+
+const DEFAULT_FILTER = [
+	{ type: FILTER_TYPE_ALL, label: 'All icons', icon: 'list' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-regular', label: 'Font Awesome - Regular', icon: 'star' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-solid', label: 'Font Awesome - Solid', icon: 'star-filled' },
+	{ type: FILTER_TYPE_ITEM, value: 'fa-brands', label: 'Font Awesome - Brands', icon: 'rosette' },
+] as const;
+
+type FilterEntry =
+	| { type: typeof FILTER_TYPE_ALL; label: string; icon?: string }
+	| { type: typeof FILTER_TYPE_GROUP; label: string }
+	| { type: typeof FILTER_TYPE_ITEM; value: string; label: string; icon?: string };
 
 type IconLibraryFilterProps = {
 	value: FontAwesome7LibraryFilter;
@@ -63,27 +66,19 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 		variant: 'popover',
 		popupId,
 	} );
-	const options = FONT_AWESOME_7_LIBRARIES.map( ( { library } ) => ( {
-		value: library,
-		label: LIBRARY_FILTER_CONFIG[ library ].getLabel(),
-		Icon: LIBRARY_FILTER_CONFIG[ library ].Icon,
-		order: LIBRARY_FILTER_CONFIG[ library ].order,
-	} ) ).sort( ( firstOption, secondOption ) => firstOption.order - secondOption.order );
+	const entries = getFilterEntries();
+	const selectableValues = entries.flatMap( ( entry ) => ( entry.type === FILTER_TYPE_ITEM ? [ entry.value ] : [] ) );
 	const isFiltered = value.length > 0;
 	const filterButtonLabel = isFiltered
 		? __( 'Filter by library, active', 'elementor' )
 		: __( 'Filter by library', 'elementor' );
 
-	const handleAllIconsClick = () => {
-		onChange( [] );
-	};
-
-	const handleLibraryClick = ( library: FontAwesome7Library ) => {
+	const handleLibraryClick = ( library: string ) => {
 		const nextValue = value.includes( library )
 			? value.filter( ( selectedLibrary ) => selectedLibrary !== library )
 			: [ ...value, library ];
 
-		onChange( nextValue.length === FONT_AWESOME_7_LIBRARIES.length ? [] : nextValue );
+		onChange( nextValue.length === selectableValues.length ? [] : nextValue );
 	};
 
 	return (
@@ -100,7 +95,7 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 					value="filter"
 					size="tiny"
 					selected={ popupState.isOpen }
-					sx={ { position: 'relative', flexShrink: 0 } }
+					sx={ { position: 'relative', flexShrink: 0, overflow: 'visible' } }
 					{ ...bindToggle( popupState ) }
 					aria-expanded={ popupState.isOpen }
 				>
@@ -111,12 +106,12 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 							aria-hidden="true"
 							sx={ {
 								position: 'absolute',
-								insetBlockStart: FILTER_INDICATOR_OFFSET,
-								insetInlineEnd: FILTER_INDICATOR_OFFSET,
+								insetBlockStart: FILTER_INDICATOR_CORNER_OFFSET,
+								insetInlineEnd: FILTER_INDICATOR_CORNER_OFFSET,
 								width: FILTER_INDICATOR_SIZE,
 								height: FILTER_INDICATOR_SIZE,
 								borderRadius: '50%',
-								bgcolor: 'secondary.main',
+								bgcolor: 'text.primary',
 							} }
 						/>
 					) : null }
@@ -131,31 +126,63 @@ export const IconLibraryFilter = ( { value, onChange }: IconLibraryFilterProps )
 				} }
 				sx={ { '& .MuiPaper-root': { minWidth: FILTER_MENU_WIDTH } } }
 			>
-				<MenuItem
-					role="menuitemcheckbox"
-					aria-checked={ ! isFiltered }
-					selected={ ! isFiltered }
-					onClick={ handleAllIconsClick }
-				>
-					{ renderFilterMenuItemContent( __( 'All icons', 'elementor' ), ListIcon, ! isFiltered ) }
-				</MenuItem>
-				{ options.map( ( { value: library, label, Icon } ) => (
-					<MenuItem
-						key={ library }
-						role="menuitemcheckbox"
-						aria-checked={ value.includes( library ) }
-						selected={ value.includes( library ) }
-						onClick={ () => handleLibraryClick( library ) }
-					>
-						{ renderFilterMenuItemContent( label, Icon, value.includes( library ) ) }
-					</MenuItem>
-				) ) }
+				{ entries.flatMap( ( entry, index ) =>
+					renderFilterEntry( entry, index, value, isFiltered, () => onChange( [] ), handleLibraryClick )
+				) }
 			</Menu>
 		</>
 	);
 };
 
-const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, selected: boolean ) => (
+const renderFilterEntry = (
+	entry: FilterEntry,
+	index: number,
+	selectedLibraries: FontAwesome7LibraryFilter,
+	isFiltered: boolean,
+	onAllIconsClick: () => void,
+	onLibraryClick: ( library: string ) => void
+): React.ReactNode[] => {
+	if ( entry.type === FILTER_TYPE_GROUP ) {
+		return [
+			<Divider key={ `divider-${ index }` } />,
+			<ListSubheader key={ `group-${ index }` } disableSticky>
+				{ entry.label }
+			</ListSubheader>,
+		];
+	}
+
+	if ( entry.type === FILTER_TYPE_ALL ) {
+		return [
+			<MenuItem
+				key={ `all-${ index }` }
+				role="menuitemcheckbox"
+				aria-checked={ ! isFiltered }
+				selected={ ! isFiltered }
+				onClick={ onAllIconsClick }
+			>
+				{ renderFilterMenuItemContent( entry.label, getFilterIcon( entry.icon ), ! isFiltered ) }
+			</MenuItem>,
+		];
+	}
+
+	const isSelected = selectedLibraries.includes( entry.value );
+
+	return [
+		<MenuItem
+			key={ entry.value }
+			role="menuitemcheckbox"
+			aria-checked={ isSelected }
+			selected={ isSelected }
+			onClick={ () => onLibraryClick( entry.value ) }
+		>
+			{ renderFilterMenuItemContent( entry.label, getFilterIcon( entry.icon ), isSelected ) }
+		</MenuItem>,
+	];
+};
+
+const getFilterIcon = ( icon?: string ) => FILTER_ICONS[ icon ?? '' ] ?? LibraryIcon;
+
+const renderFilterMenuItemContent = ( label: string, Icon: typeof MenuIcon, selected: boolean ) => (
 	<Stack direction="row" alignItems="center" gap={ 1 } width="100%">
 		<Icon fontSize="tiny" />
 		<Typography variant="caption" sx={ { flex: 1 } }>
@@ -164,3 +191,50 @@ const renderFilterMenuItemContent = ( label: string, Icon: typeof ListIcon, sele
 		{ selected ? <CheckIcon fontSize="tiny" aria-hidden="true" /> : null }
 	</Stack>
 );
+
+function getFilterEntries(): FilterEntry[] {
+	const filter = window.elementorCommon?.config?.fontAwesome?.v7?.filter;
+
+	if ( ! Array.isArray( filter ) ) {
+		return [ ...DEFAULT_FILTER ];
+	}
+
+	const entries = filter.map( parseFilterEntry ).filter( ( entry ): entry is FilterEntry => entry !== null );
+
+	return entries.length > 0 ? entries : [ ...DEFAULT_FILTER ];
+}
+
+function parseFilterEntry( value: unknown ): FilterEntry | null {
+	if ( ! value || typeof value !== 'object' ) {
+		return null;
+	}
+
+	const entry = value as { type?: unknown; label?: unknown; value?: unknown; icon?: unknown };
+
+	if ( typeof entry.label !== 'string' || entry.label === '' ) {
+		return null;
+	}
+
+	if ( entry.type === FILTER_TYPE_GROUP ) {
+		return { type: FILTER_TYPE_GROUP, label: entry.label };
+	}
+
+	if ( entry.type === FILTER_TYPE_ALL ) {
+		return {
+			type: FILTER_TYPE_ALL,
+			label: entry.label,
+			icon: typeof entry.icon === 'string' ? entry.icon : undefined,
+		};
+	}
+
+	if ( entry.type === FILTER_TYPE_ITEM && typeof entry.value === 'string' && entry.value !== '' ) {
+		return {
+			type: FILTER_TYPE_ITEM,
+			value: entry.value,
+			label: entry.label,
+			icon: typeof entry.icon === 'string' ? entry.icon : undefined,
+		};
+	}
+
+	return null;
+}

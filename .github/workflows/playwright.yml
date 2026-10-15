@@ -3,7 +3,7 @@ name: Playwright
 on:
   merge_group:
   schedule:
-    - cron: '30 08 * * 0,1,2,3,4,5'
+    - cron: '0 2 * * 0,1,2,3,4,5'
   workflow_dispatch:
     inputs:
       fail_fast:

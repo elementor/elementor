@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -37,10 +40,23 @@ class Font_Awesome_7_Icon_Resolver {
 		return str_starts_with( $library, self::LIBRARY_PREFIX );
 	}
 
+	const FILTER_TYPE_ALL = 'all';
+
+	const FILTER_TYPE_GROUP = 'group';
+
+	const FILTER_TYPE_ITEM = 'item';
+
+	const SKIPPED_TAB_NAMES = [ 'all', 'recommended', 'GoPro' ];
+
 	public static function get_editor_config(): array {
+		$custom_icon_libraries_enabled = Availability::is_enabled();
+
 		return [
-			'jsonFiles' => self::ALLOWED_JSON_FILES,
+			'jsonFiles' => self::allowed_json_files(),
 			'jsonBaseUrl' => self::get_json_base_url(),
+			'filter' => self::get_filter_items( $custom_icon_libraries_enabled ),
+			'customIconPacks' => $custom_icon_libraries_enabled ? self::get_custom_icon_packs() : [],
+			'customIconLibrariesEnabled' => $custom_icon_libraries_enabled,
 		];
 	}
 
@@ -48,7 +64,7 @@ class Font_Awesome_7_Icon_Resolver {
 		$icon_name = self::get_icon_name( $value );
 		$file_name = self::get_json_file_name( $library );
 
-		if ( ! $icon_name || ! $file_name ) {
+		if ( null === $icon_name || null === $file_name ) {
 			return null;
 		}
 
@@ -77,12 +93,99 @@ class Font_Awesome_7_Icon_Resolver {
 		];
 	}
 
+	private static function get_filter_items( bool $custom_icon_libraries_enabled ): array {
+		$items = [
+			[
+				'type' => self::FILTER_TYPE_ALL,
+				'label' => esc_html__( 'All icons', 'elementor' ),
+				'icon' => 'list',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-regular',
+				'label' => esc_html__( 'Font Awesome - Regular', 'elementor' ),
+				'icon' => 'star',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-solid',
+				'label' => esc_html__( 'Font Awesome - Solid', 'elementor' ),
+				'icon' => 'star-filled',
+			],
+			[
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => 'fa-brands',
+				'label' => esc_html__( 'Font Awesome - Brands', 'elementor' ),
+				'icon' => 'rosette',
+			],
+		];
+
+		if ( ! $custom_icon_libraries_enabled ) {
+			return $items;
+		}
+
+		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries( [
+			'require_label' => true,
+			'include_labels' => true,
+		] );
+
+		if ( empty( $custom_libraries ) ) {
+			return $items;
+		}
+
+		$items[] = [
+			'type' => self::FILTER_TYPE_GROUP,
+			'label' => esc_html__( 'My libraries', 'elementor' ),
+		];
+
+		foreach ( $custom_libraries as $library => $entry ) {
+			$items[] = [
+				'type' => self::FILTER_TYPE_ITEM,
+				'value' => $library,
+				'label' => $entry['label'],
+				'icon' => 'library',
+			];
+		}
+
+		return $items;
+	}
+
+	private static function get_custom_icon_packs(): array {
+		return Custom_Icon_Resolver::get_custom_libraries( [
+			'include_urls' => true,
+		] );
+	}
+
 	private static function get_icon_name( string $value ): ?string {
 		if ( ! preg_match( '/^fa\S*\s+fa-([^\s]+)/', $value, $matches ) ) {
 			return null;
 		}
 
 		return $matches[1];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function allowed_json_files(): array {
+		$files = apply_filters(
+			'elementor/atomic-widgets/font-awesome-7/json-files',
+			self::ALLOWED_JSON_FILES
+		);
+
+		if ( ! is_array( $files ) ) {
+			return self::ALLOWED_JSON_FILES;
+		}
+
+		return array_values( array_filter(
+			$files,
+			static function ( $file ) {
+				return is_string( $file )
+					&& '' !== $file
+					&& basename( $file ) === $file
+					&& ! str_contains( $file, '..' );
+			}
+		) );
 	}
 
 	private static function get_json_base_path( string $file_name ): string {
@@ -130,7 +233,7 @@ class Font_Awesome_7_Icon_Resolver {
 
 		$file_name = substr( $library, strlen( self::LIBRARY_PREFIX ) );
 
-		if ( ! in_array( $file_name, self::ALLOWED_JSON_FILES, true ) ) {
+		if ( ! in_array( $file_name, self::allowed_json_files(), true ) ) {
 			return null;
 		}
 
@@ -138,7 +241,7 @@ class Font_Awesome_7_Icon_Resolver {
 	}
 
 	private static function load_icons( string $file_name ): ?array {
-		if ( ! in_array( $file_name, self::ALLOWED_JSON_FILES, true ) ) {
+		if ( ! in_array( $file_name, self::allowed_json_files(), true ) ) {
 			return null;
 		}
 
@@ -173,6 +276,10 @@ class Font_Awesome_7_Icon_Resolver {
 		$index = [];
 
 		foreach ( $icons as $name => $icon_tuple ) {
+			if ( is_int( $name ) ) {
+				$name = (string) $name;
+			}
+
 			if ( ! is_string( $name ) || ! self::is_valid_icon_tuple( $icon_tuple ) ) {
 				continue;
 			}

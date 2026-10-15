@@ -21,8 +21,27 @@ class Export extends Export_Runner_Base {
 		return (
 			isset( $data['include'] ) &&
 			in_array( 'settings', $data['include'], true ) &&
-			$this->is_feature_active()
+			$this->is_feature_active() &&
+			$this->is_default_styles_enabled( $data )
 		);
+	}
+
+	private function is_default_styles_enabled( array $data ): bool {
+		if ( ! $this->is_feature_active() ) {
+			return false;
+		}
+
+		$settings_customization = $data['customization']['settings'] ?? null;
+
+		if ( is_array( $settings_customization ) ) {
+			if ( array_key_exists( 'defaultStyles', $settings_customization ) ) {
+				return (bool) $settings_customization['defaultStyles'];
+			}
+
+			return true;
+		}
+
+		return true;
 	}
 
 	private function is_feature_active(): bool {

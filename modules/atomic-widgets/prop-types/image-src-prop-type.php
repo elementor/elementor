@@ -18,7 +18,8 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 		return [
 			'id'  => Image_Attachment_Id_Prop_Type::make()->description( 'The ID of the image attachment in the WordPress media library, applicable for internal images only' ),
 			'url' => Url_Prop_Type::make(),
-			'alt' => String_Prop_Type::make()->description( 'The alt text of the image' ),
+			// TODO: Describe the alt-depends-on-url dependency in the prop type schema itself instead of only in this description.
+			'alt' => String_Prop_Type::make()->description( 'The alt text of the image, applicable for external images (url) only. Media Library images (id) use the attachment\'s alt text' ),
 		];
 	}
 

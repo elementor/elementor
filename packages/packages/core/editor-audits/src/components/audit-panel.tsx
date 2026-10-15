@@ -1,27 +1,29 @@
 import * as React from 'react';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
+import { getHostDocumentId } from '@elementor/editor-elements';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
-import { Box, Button, Typography } from '@elementor/ui';
+import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { AUDIT_PANEL_ID } from '../constants';
 import { useAuditReport } from '../hooks/use-audit-report';
 import AuditFeedback from './audit-feedback';
 import ErrorPage from './pages/error-page';
 import LoadingPage from './pages/loading-page';
 import WelcomePage from './pages/welcome-page';
 import ReportShell from './report-shell';
+import RescanButton from './rescan-button';
 
 export default function AuditPanel() {
-	const { status, report, error, run } = useAuditReport();
+	const { status, report, error, isStale, run } = useAuditReport();
 
-	const currentDocumentId = getCurrentDocumentId() ?? 0;
-	const onRun = () => run( currentDocumentId );
+	const hostDocumentId = getHostDocumentId() ?? 0;
+	const onRun = () => run( hostDocumentId );
 	const lastScanLabel = report ? new Date( report.runAt ).toLocaleTimeString() : null;
 
 	return (
 		<>
 			<FloatingPanelHeader
-				panelId="audit-panel"
+				panelId={ AUDIT_PANEL_ID }
 				title={ __( 'Page Audit', 'elementor' ) }
 				badge={ __( 'Beta', 'elementor' ) }
 				titleVariant="subtitle2"
@@ -47,14 +49,12 @@ export default function AuditPanel() {
 					<Box sx={ { flex: 1 } } />
 				) }
 				{ lastScanLabel && <AuditFeedback /> }
-				<Button
-					variant="contained"
-					size="small"
+				<RescanButton
+					hasScanned={ Boolean( lastScanLabel ) }
+					isStale={ isStale }
+					disabled={ status === 'loading' || hostDocumentId === 0 }
 					onClick={ onRun }
-					disabled={ status === 'loading' || currentDocumentId === 0 }
-				>
-					{ lastScanLabel ? __( 'Re-scan', 'elementor' ) : __( 'Run page audit', 'elementor' ) }
-				</Button>
+				/>
 			</FloatingPanelFooter>
 		</>
 	);

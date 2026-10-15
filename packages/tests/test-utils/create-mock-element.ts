@@ -12,6 +12,7 @@ type MockElementProps = {
 	view?: V1Element[ 'view' ];
 	parent?: V1Element;
 };
+
 export function createMockElement( {
 	model: partialModel = {},
 	settings: partialSettings = {},
@@ -28,20 +29,20 @@ export function createMockElement( {
 	return {
 		id: model.id,
 		model: {
-			get: ( key ) => {
-				return model[ key ];
+			get: ( key: string ) => {
+				return model[ key as keyof typeof model ] as never;
 			},
 			set: jest.fn().mockImplementation( ( key: keyof typeof model, value ) => {
-				model[ key ] = value as never;
+				model[ key as keyof typeof model ] = value as never;
 			} ),
 			toJSON: () => model,
 		},
 		settings: {
-			get: ( key ) => {
+			get: ( key: string ) => {
 				return partialSettings[ key ];
 			},
-			set: ( key, value ) => {
-				partialSettings[ key ] = value;
+			set: ( key: string, value: unknown ) => {
+				partialSettings[ key as keyof typeof partialSettings ] = value as never;
 			},
 			toJSON: () => partialSettings,
 		},

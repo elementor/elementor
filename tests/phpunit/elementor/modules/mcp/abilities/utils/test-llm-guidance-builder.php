@@ -37,6 +37,32 @@ class Test_Llm_Guidance_Builder extends TestCase {
 		$this->assertSame( [ 'e-list' ], $guidance['nesting']['allowed_parents'] );
 	}
 
+	public function test_build__structural_atomic_element_default_styles_include_e_con_shell_width() {
+		$config = [
+			'elType' => 'e-tab',
+			'atomic' => true,
+			'show_in_panel' => false,
+			'meta' => [ 'is_container' => false ],
+		];
+
+		$guidance = Llm_Guidance_Builder::build( $config, 'e-tab', [] );
+
+		$this->assertSame( '100%', $guidance['default_styles']['width'] );
+	}
+
+	public function test_build__atomic_widget_default_styles_exclude_e_con_shell_width() {
+		$config = [
+			'elType' => 'widget',
+			'atomic' => true,
+			'show_in_panel' => true,
+			'meta' => [ 'is_container' => false ],
+		];
+
+		$guidance = Llm_Guidance_Builder::build( $config, 'e-heading', [] );
+
+		$this->assertArrayNotHasKey( 'default_styles', $guidance );
+	}
+
 	public function test_build__includes_allowed_child_types_for_containers() {
 		$config = [
 			'show_in_panel' => true,

@@ -51,6 +51,7 @@ tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 require $_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/trait-responsive-control-testing.php';
+require __DIR__ . '/phpunit/class-kses-test-expectations.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 

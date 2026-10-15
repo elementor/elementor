@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
 
@@ -29,7 +30,7 @@ abstract class Abstract_Ability {
 			return $availability;
 		}
 
-		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_destructive();
+		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_page_mutating();
 
 		if ( $is_mutating ) {
 			$guard = apply_filters( 'elementor/mcp/pre_execute_guard', null, $input );
@@ -61,7 +62,7 @@ abstract class Abstract_Ability {
 
 		$meta = is_array( $definition['meta'] ?? null ) ? $definition['meta'] : [];
 		$mcp = is_array( $meta['mcp'] ?? null ) ? $meta['mcp'] : [];
-		$mcp['public'] = true;
+		$mcp['public'] = McpSettingsController::is_enabled();
 		if ( isset( $mcp['description'] ) ) {
 			$mcp['description'] = $this->maybe_append_unavailable_notice( (string) $mcp['description'] );
 		}
@@ -136,8 +137,8 @@ abstract class Abstract_Ability {
 		return self::KIND_RESOURCE === ( $this->mcp_meta()['type'] ?? null );
 	}
 
-	private function is_destructive(): bool {
-		return false !== ( $this->definition()->meta['annotations']['destructive'] ?? true );
+	private function is_page_mutating(): bool {
+		return true === ( $this->definition()->meta['mutates_page'] ?? false );
 	}
 
 	protected function definition(): Ability_Definition {

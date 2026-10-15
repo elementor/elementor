@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,10 +20,9 @@ class V3_Non_Style_Allowlist {
 	 * @return array{allowed: array<string, mixed>, rejected: string[], error: \WP_Error|null}
 	 */
 	public static function filter( string $widget_type, array $settings ): array {
-		$registry = V3_Widget_Map_Registry::instance();
-		$contract = $registry->get_validation_contract( $widget_type );
-		$allowed_keys = $registry->is_experiment_active() && null !== $contract
-			? array_keys( $contract['settings'] )
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$allowed_keys = null !== $map
+			? array_keys( $map->get_settings() )
 			: V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
 		$allowed_lookup = array_fill_keys( $allowed_keys, true );
 
@@ -60,13 +60,24 @@ class V3_Non_Style_Allowlist {
 			'error' => new \WP_Error(
 				'elementor_invalid_settings',
 				sprintf(
-					'V3 widget "%s" does not allow settings: %s. Allowed non-style keys: %s. Visual styling must go through the style (CSS) input.',
+					'V3 widget "%s" does not allow settings: %s. Allowed non-style keys: %s. Visual styling must go through the style (CSS) input.%s',
 					$widget_type,
 					implode( ', ', $rejected ),
-					$available
+					$available,
+					self::get_editor_settings_hint( $rejected )
 				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			),
 		];
+	}
+
+	private static function get_editor_settings_hint( array $rejected ): string {
+		$editor_keys = array_values( array_filter( $rejected, [ Editor_Settings::class, 'is_editor_key' ] ) );
+
+		if ( empty( $editor_keys ) ) {
+			return '';
+		}
+
+		return sprintf( ' %s: editor-only, send in `editor_settings` instead.', implode( ', ', $editor_keys ) );
 	}
 }

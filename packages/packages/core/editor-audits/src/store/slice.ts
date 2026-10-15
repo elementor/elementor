@@ -6,9 +6,10 @@ type SliceState = {
 	status: 'idle' | 'loading' | 'error' | 'ready';
 	report: PageAuditReport | null;
 	error: string | null;
+	isStale: boolean;
 };
 
-const initialState: SliceState = { status: 'idle', report: null, error: null };
+const initialState: SliceState = { status: 'idle', report: null, error: null, isStale: false };
 
 export const slice = __createSlice( {
 	name: 'audits',
@@ -21,6 +22,7 @@ export const slice = __createSlice( {
 		runSucceeded( state, action: PayloadAction< PageAuditReport > ) {
 			state.status = 'ready';
 			state.report = action.payload;
+			state.isStale = false;
 		},
 		runFailed( state, action: PayloadAction< string > ) {
 			state.status = 'error';
@@ -33,11 +35,18 @@ export const slice = __createSlice( {
 			state.status = 'ready';
 			state.report = action.payload;
 			state.error = null;
+			state.isStale = false;
 		},
 		reportCleared( state ) {
 			state.status = 'idle';
 			state.report = null;
 			state.error = null;
+			state.isStale = false;
+		},
+		reportStale( state ) {
+			if ( state.report ) {
+				state.isStale = true;
+			}
 		},
 	},
 } );

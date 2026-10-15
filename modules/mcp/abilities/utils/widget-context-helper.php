@@ -64,7 +64,7 @@ class Widget_Context_Helper {
 			}
 
 			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
-				$instance->get_stack();
+				$instance->get_stack( false );
 			}
 
 			$config = $instance->get_config();
@@ -82,7 +82,7 @@ class Widget_Context_Helper {
 			}
 
 			if ( self::should_initialize_v3_controls_stack( $type ) && method_exists( $instance, 'get_stack' ) ) {
-				$instance->get_stack();
+				$instance->get_stack( false );
 			}
 
 			$config = $instance->get_config();
@@ -103,7 +103,7 @@ class Widget_Context_Helper {
 		}
 
 		if ( self::should_initialize_v3_controls_stack( $widget_type ) && method_exists( $instance, 'get_stack' ) ) {
-			$instance->get_stack();
+			$instance->get_stack( false );
 		}
 
 		return $instance->get_config();
@@ -205,16 +205,16 @@ class Widget_Context_Helper {
 				'message' => self::V3_FALLBACK_MESSAGE,
 				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
 				'properties' => $built['properties'],
+				'editor_settings' => Editor_Settings::get_schema( $widget_type ),
 				'required' => $built['required'],
 				'additionalProperties' => false,
 			] );
 		}
 
-		$properties = self::build_configurable_properties_schema( $props_schema, $widget_type );
-
 		return self::filter_nulls( [
 			'type' => 'object',
-			'properties' => $properties,
+			'properties' => self::build_configurable_properties_schema( $props_schema, $widget_type ),
+			'editor_settings' => Editor_Settings::get_schema( $widget_type ),
 			'description' => self::get_description( $config, $widget_type ),
 			'llm_guidance' => Llm_Guidance_Builder::build( $config, $widget_type, $parents_index ),
 		] );
@@ -388,10 +388,10 @@ class Widget_Context_Helper {
 		}
 
 		if ( null !== $widget_type && self::is_v3_supported( $widget_type ) ) {
-			$contract = V3_Widget_Map_Registry::instance()->get_validation_contract( $widget_type );
+			$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 
-			if ( is_array( $contract ) && is_string( $contract['description'] ?? null ) && '' !== $contract['description'] ) {
-				return $contract['description'];
+			if ( null !== $map && '' !== $map->get_description() ) {
+				return $map->get_description();
 			}
 
 			if ( self::is_v3_allowlisted( $widget_type ) ) {
@@ -434,7 +434,9 @@ class Widget_Context_Helper {
 			'widget_version' => self::VERSION_V3,
 			'description' => $description,
 			'properties' => $contract['properties'],
+			'editor_settings' => Editor_Settings::get_schema( $widget_type ),
 			'additionalProperties' => false,
+			'default_style_target' => $contract['default_style_target'],
 			'style_targets' => $contract['style_targets'],
 		] );
 	}

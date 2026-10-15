@@ -3,16 +3,25 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
+use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
+use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -66,8 +75,7 @@ class Element_Config_Applier {
 
 			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
-				$registry = V3_Widget_Map_Registry::instance();
-				$is_standardized = $registry->is_experiment_active() && null !== $registry->get_validation_contract( $widget_type );
+				$is_standardized = null !== V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
@@ -83,7 +91,9 @@ class Element_Config_Applier {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$shape = V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
+				$shape = $is_standardized
+					? $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings )
+					: V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
@@ -95,6 +105,9 @@ class Element_Config_Applier {
 						if ( empty( $node['settings']['__dynamic__'] ) ) {
 							unset( $node['settings']['__dynamic__'] );
 						}
+
+						$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
+						V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
 					}
 				}
 
@@ -191,6 +204,11 @@ class Element_Config_Applier {
 		foreach ( $settings as $name => $value ) {
 			$canonical = Prop_Canonicalizer::resolve_canonical_key( $schema, $name, $alias_map );
 
+			if ( null === $canonical && Editor_Settings::is_editor_key( $name ) ) {
+				Editor_Settings::warn_misplaced( (string) $name, $config_id, $warnings );
+				continue;
+			}
+
 			if ( null === $canonical ) {
 				$warnings->add(
 					'prop_not_in_schema',
@@ -232,6 +250,14 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$dropped_paths = Dropped_Plain_Keys_Finder::find( $value, $resolved_value, $canonical );
+
+			if ( ! empty( $dropped_paths ) ) {
+				$this->warn_plain_keys_dropped( $dropped_paths, $canonical, $element_type, $config_id, $warnings );
+			}
+
+			$this->maybe_warn_unknown_icon( $resolved_value, $canonical, $element_type, $config_id, $warnings );
+
 			$resolved[ $canonical ] = $resolved_value;
 		}
 
@@ -269,6 +295,21 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$stored = $node_settings[ $key ] ?? null;
+
+			if (
+				$this->is_object_prop_value( $stored )
+				&& $this->is_object_prop_value( $value )
+				&& $stored['$$type'] === $value['$$type']
+			) {
+				$stored_sub_values = array_filter( $stored['value'], fn( $sub_value ) => null !== $sub_value );
+				$dropped_sub_keys = array_keys( array_diff_key( $stored_sub_values, $value['value'] ) );
+
+				if ( ! empty( $dropped_sub_keys ) ) {
+					$this->warn_sub_keys_dropped( $dropped_sub_keys, $key, $element_type, $config_id, $warnings );
+				}
+			}
+
 			$node_settings[ $key ] = $value;
 		}
 
@@ -298,6 +339,137 @@ class Element_Config_Applier {
 
 			unset( $node_settings[ $cleared_key ] );
 		}
+	}
+
+	/**
+	 * An icon value that no installed library knows is stored happily and then renders nothing,
+	 * which is invisible to the agent unless it is told here.
+	 */
+	private function maybe_warn_unknown_icon( $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		if ( ! is_array( $resolved_value ) || Icon_Prop_Type::get_key() !== ( $resolved_value['$$type'] ?? null ) ) {
+			return;
+		}
+
+		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
+			return;
+		}
+
+		$icon = is_array( $resolved_value['value'] ?? null ) ? $resolved_value['value'] : [];
+		$value = $icon['value']['value'] ?? '';
+		$library = $icon['library']['value'] ?? '';
+
+		if ( ! is_string( $value ) || ! is_string( $library ) ) {
+			return;
+		}
+
+		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
+			if ( Font_Awesome_7_Icon_Resolver::resolve( $value, $library ) ) {
+				$value_library = strtok( $value, ' ' );
+
+				if ( $value_library !== $library ) {
+					$warnings->add(
+						'icon_library_mismatch',
+						sprintf(
+							'Property "%s" on "%s" was saved with icon "%s" in library "%s", so it renders in the "%s" style rather than "%s". Copy the "value" and "library" pair from one elementor/find-icons result.',
+							$key,
+							$element_type,
+							$value,
+							$library,
+							$library,
+							$value_library
+						),
+						$config_id
+					);
+				}
+
+				return;
+			}
+
+			$warnings->add(
+				'icon_not_found',
+				sprintf(
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					$key,
+					$element_type,
+					$value,
+					$library
+				),
+				$config_id
+			);
+
+			return;
+		}
+
+		if ( Font_Icon_Svg_Data_Manager::get_font_family( $library ) ) {
+			return;
+		}
+
+		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries();
+
+		if ( ! isset( $custom_libraries[ $library ] ) ) {
+			$warnings->add(
+				'icon_library_not_found',
+				sprintf(
+					'Property "%s" on "%s" references library "%s", which is not installed, so a placeholder renders. Call elementor/find-icons to see which libraries are available.',
+					$key,
+					$element_type,
+					$library
+				),
+				$config_id
+			);
+
+			return;
+		}
+
+		if ( ! Custom_Icon_Resolver::is_renderable_value( $library, $value ) ) {
+			$warnings->add(
+				'icon_not_found',
+				sprintf(
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					$key,
+					$element_type,
+					$value,
+					$library
+				),
+				$config_id
+			);
+		}
+	}
+
+	private function warn_plain_keys_dropped( array $dropped_paths, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$warnings->add(
+			'prop_keys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was saved without "%s": each is either not a field of the prop or has a value that could not be resolved. Use the shape from elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_paths ),
+				$element_type
+			),
+			$config_id
+		);
+	}
+
+	private function warn_sub_keys_dropped( array $dropped_sub_keys, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
+		$warnings->add(
+			'prop_subkeys_dropped',
+			sprintf(
+				'Property "%s" on "%s" was replaced as a whole, dropping its stored "%s". Send the full value (as returned by elementor/get-page-structure) to keep them. See elementor://widgets/schema/%s.',
+				$key,
+				$element_type,
+				implode( '", "', $dropped_sub_keys ),
+				$element_type
+			),
+			$config_id
+		);
+	}
+
+	private function is_object_prop_value( $value ): bool {
+		return is_array( $value )
+			&& isset( $value['$$type'] )
+			&& is_array( $value['value'] ?? null )
+			&& ! empty( $value['value'] )
+			&& ! wp_is_numeric_array( $value['value'] );
 	}
 
 	private function merge_with_clears( array $existing, array $incoming ): array {
@@ -338,5 +510,36 @@ class Element_Config_Applier {
 		}
 
 		return $this->v3_dynamic_hoister;
+	}
+
+	/**
+	 * @param string               $widget_type
+	 * @param array<string, mixed> $primitives
+	 * @param string               $config_id
+	 * @param Warnings_Bag         $warnings
+	 * @return array{valid: array<string, mixed>, error: null}
+	 */
+	private function write_v3_map_settings( string $widget_type, array $primitives, string $config_id, Warnings_Bag $warnings ): array {
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$result = ( new V3_Map_Settings_Writer( $this->plain_values_resolver ) )->write( $map, $primitives );
+
+		foreach ( $result['rejected'] as $key => $reason ) {
+			$warnings->add(
+				'prop_value_invalid',
+				sprintf(
+					'Property "%s" on "%s" %s and was skipped. See elementor://widgets/schema/%s.',
+					$key,
+					$widget_type,
+					$reason,
+					$widget_type
+				),
+				$config_id
+			);
+		}
+
+		return [
+			'valid' => $result['settings'],
+			'error' => null,
+		];
 	}
 }

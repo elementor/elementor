@@ -61,8 +61,9 @@ class Reorder_Classes_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => true,
-					'destructive' => false,
+					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 			[
