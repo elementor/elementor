@@ -41,7 +41,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages. On submit, runs the actions listed in actions-after-submit: email, collect-submissions, webhook, and redirect. Each action reads its own settings prop (email, webhook_url, redirect_url).';
+	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, hidden fields, submit button) and status messages. On submit, runs the actions listed in actions-after-submit: email, collect-submissions, webhook, and redirect. Each action reads its own settings prop (email, webhook_url, redirect_url).';
 
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
