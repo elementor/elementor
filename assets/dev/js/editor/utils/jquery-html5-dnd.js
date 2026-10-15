@@ -239,24 +239,22 @@
 			}
 		};
 
-		const getDroppableHostAndStyleTarget = function() {
-			const droppableElement = elementsCache.$element[ 0 ];
+		const findAtomicFlexWrapRowHost = function( startElement ) {
+			let candidate = startElement;
 
-			if ( ! droppableElement ) {
-				return { host: null, styleTarget: null };
+			while ( candidate ) {
+				if ( candidate.matches?.( '.e-atomic-element' ) ) {
+					const styleTarget = candidate.querySelector( ':scope > .e-con-inner' ) || candidate;
+
+					if ( isAtomicFlexWrapRowHostElement( candidate, styleTarget ) ) {
+						return { host: candidate, styleTarget };
+					}
+				}
+
+				candidate = candidate.parentElement;
 			}
 
-			const atomicHost = droppableElement.matches( '.e-atomic-element' )
-				? droppableElement
-				: null;
-
-			if ( ! atomicHost ) {
-				return { host: null, styleTarget: null };
-			}
-
-			const styleTarget = atomicHost.querySelector( ':scope > .e-con-inner' ) || atomicHost;
-
-			return { host: atomicHost, styleTarget };
+			return { host: null, styleTarget: null };
 		};
 
 		const isAtomicFlexWrapRowHostElement = function( host, styleTarget ) {
@@ -304,10 +302,10 @@
 			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
 			const isFlexRowContainer = isFlexContainer && isRowDirection;
 
-			const { host: droppableHost, styleTarget: droppableStyleTarget } = getDroppableHostAndStyleTarget();
-			const isAtomicFlexWrapRowHost = isAtomicFlexWrapRowHostElement( droppableHost, droppableStyleTarget );
+			const { host: droppableHost, styleTarget: droppableStyleTarget } = findAtomicFlexWrapRowHost( currentElement );
+			const isAtomicFlexWrapRowHost = !! droppableHost;
 
-			maybeAddFlexRowClass( container, isFlexRowContainer );
+			maybeAddFlexRowClass( container );
 
 			return {
 				$currentElement,
@@ -329,10 +327,12 @@
 			};
 		};
 
-		const maybeAddFlexRowClass = function( container, isFlexRowContainer ) {
+		const maybeAddFlexRowClass = function( container ) {
 			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
+
+			const { isFlexRowContainer } = placeholderContext;
 
 			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
