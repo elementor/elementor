@@ -241,10 +241,21 @@
 		};
 
 		const getDroppableHostAndStyleTarget = function() {
-			const host = elementsCache.$element[ 0 ];
-			const styleTarget = host?.querySelector( ':scope > .e-con-inner' ) || host;
+			const droppableElement = elementsCache.$element[ 0 ];
 
-			return { host, styleTarget };
+			if ( ! droppableElement ) {
+				return { host: null, styleTarget: null };
+			}
+
+			const atomicHost = droppableElement.closest( '.e-atomic-element' );
+
+			if ( ! atomicHost ) {
+				return { host: null, styleTarget: null };
+			}
+
+			const styleTarget = atomicHost.querySelector( ':scope > .e-con-inner' ) || atomicHost;
+
+			return { host: atomicHost, styleTarget };
 		};
 
 		const isAtomicFlexWrapRowHostElement = function( host, styleTarget ) {
@@ -482,14 +493,24 @@
 
 		const getFlexWrapOverlayPlaceholderBarSize = function( host, heightPx ) {
 			elementsCache.$placeholder.css( {
+				position: 'absolute',
+				top: 0,
+				left: 0,
 				visibility: 'hidden',
+				'pointer-events': 'none',
 				'--e-placeholder-height': `${ heightPx }px`,
 			} );
 			elementsCache.$placeholder.appendTo( host );
 
 			const barSize = elementsCache.$placeholder[ 0 ].offsetWidth;
 
-			elementsCache.$placeholder.css( 'visibility', '' );
+			elementsCache.$placeholder.css( {
+				position: '',
+				top: '',
+				left: '',
+				visibility: '',
+				'pointer-events': '',
+			} );
 
 			return barSize;
 		};
