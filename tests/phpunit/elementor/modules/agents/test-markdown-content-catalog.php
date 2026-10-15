@@ -135,6 +135,25 @@ class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 		$this->assertSame( [ $pricing_id ], array_column( $items, 'id' ) );
 	}
 
+	public function test_search__returns_plain_text_titles() {
+		// Arrange
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Tom & Jerry',
+		] );
+
+		// Act
+		$items = $this->catalog->search( [ 'page' ], 'Tom' );
+
+		// Assert
+		$ids = array_column( $items, 'id' );
+		$visible = $items[ array_search( $page_id, $ids, true ) ];
+		$this->assertSame( 'Tom & Jerry', $visible['title'] );
+		$this->assertStringNotContainsString( '&amp;', $visible['title'] );
+		$this->assertStringNotContainsString( '&#038;', $visible['title'] );
+	}
+
 	public function test_search__returns_nothing_without_post_types() {
 		// Arrange
 		$this->factory()->post->create( [
