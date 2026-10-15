@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ThemeProvider as ThemeProviderBase, type ThemeProviderProps } from '@elementor/ui';
 
-import { useColorScheme, type ColorScheme } from '../hooks/use-color-scheme';
+import { type ColorScheme, useColorScheme } from '../hooks/use-color-scheme';
 
 const EDITOR_PALETTE: ThemeProviderProps[ 'palette' ] = 'unstable';
 

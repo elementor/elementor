@@ -23,7 +23,7 @@ export function useColorScheme( staticColorScheme?: ColorScheme ) {
 		}
 
 		return listenTo( v1ReadyEvent(), () => setColorScheme( getV1ColorScheme() ) );
-	}, [] );
+	}, [ staticColorScheme ] );
 
 	useEffect( () => {
 		if ( staticColorScheme ) {
@@ -44,7 +44,7 @@ export function useColorScheme( staticColorScheme?: ColorScheme ) {
 				setColorScheme( getV1ColorScheme() );
 			}
 		} );
-	}, [] );
+	}, [ staticColorScheme ] );
 
 	return colorScheme;
 }
