@@ -169,7 +169,7 @@ class Media_Attachment_Service {
 		return $name;
 	}
 
-	private static function load_admin_media_includes(): void {
+	public static function load_admin_media_includes(): void {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
