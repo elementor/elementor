@@ -480,7 +480,19 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
-		const PLACEHOLDER_OVERLAY_BAR_SIZE = 10;
+		const getFlexWrapOverlayPlaceholderBarSize = function( host, heightPx ) {
+			elementsCache.$placeholder.css( {
+				visibility: 'hidden',
+				'--e-placeholder-height': `${ heightPx }px`,
+			} );
+			elementsCache.$placeholder.appendTo( host );
+
+			const barSize = elementsCache.$placeholder[ 0 ].offsetWidth;
+
+			elementsCache.$placeholder.css( 'visibility', '' );
+
+			return barSize;
+		};
 
 		const insertFlexWrapRowPlaceholder = function() {
 			const { placeholderTarget, droppableHost, droppableStyleTarget } = placeholderContext;
@@ -510,17 +522,17 @@
 				? targetRect.right + halfGap
 				: targetRect.left - halfGap;
 
-			const halfBarSize = PLACEHOLDER_OVERLAY_BAR_SIZE / 2;
-			const left = edgeX - halfBarSize - hostRect.left - host.clientLeft + host.scrollLeft;
 			const top = targetRect.top - hostRect.top - host.clientTop + host.scrollTop;
 			const height = targetRect.height;
 
 			elementsCache.$placeholder.addClass( 'e-placeholder--overlay e-dragging-' + currentSide );
+
+			const barSize = getFlexWrapOverlayPlaceholderBarSize( host, height );
+			const halfBarSize = barSize / 2;
+			const left = edgeX - halfBarSize - hostRect.left - host.clientLeft + host.scrollLeft;
+
 			elementsCache.$placeholder.css( '--e-placeholder-left', `${ left }px` );
 			elementsCache.$placeholder.css( '--e-placeholder-top', `${ top }px` );
-			elementsCache.$placeholder.css( '--e-placeholder-height', `${ height }px` );
-
-			elementsCache.$placeholder.appendTo( host );
 		};
 
 		const insertDefaultPlaceholder = function() {
