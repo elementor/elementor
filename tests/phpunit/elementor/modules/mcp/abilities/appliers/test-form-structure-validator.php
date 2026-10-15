@@ -127,6 +127,87 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertStringContainsString( 'e-form', $errors[0] );
 	}
 
+	public function test_collect_honeypot_errors__allows_single_honeypot() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form><e-form-honeypot /><e-form-submit-button /></e-form>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertSame( [], $errors );
+	}
+
+	public function test_collect_honeypot_errors__rejects_orphaned_honeypot() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-flexbox><e-form-honeypot /></e-flexbox>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertCount( 1, $errors );
+		$this->assertStringContainsString( 'e-form-honeypot', $errors[0] );
+	}
+
+	public function test_collect_honeypot_errors__rejects_two_honeypots_in_one_form() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form><e-form-honeypot /><e-form-honeypot /><e-form-submit-button /></e-form>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertContains( '<e-form> has 2 honeypots — only 1 is allowed.', $errors );
+	}
+
+	public function test_collect_honeypot_errors__rejects_honeypot_added_to_existing_form_with_honeypot() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form-honeypot />' );
+		$document_tree = [
+			[
+				'id' => 'form-1',
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'honeypot-1',
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		];
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, $document_tree, 'form-1' );
+
+		// Assert
+		$this->assertCount( 1, $errors );
+		$this->assertStringContainsString( 'already has an <e-form-honeypot>', $errors[0] );
+	}
+
+	public function test_collect_honeypot_errors__allows_honeypot_added_to_existing_form_without_honeypot() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form-honeypot />' );
+		$document_tree = [
+			[
+				'id' => 'form-1',
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [],
+			],
+		];
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, $document_tree, 'form-1' );
+
+		// Assert
+		$this->assertSame( [], $errors );
+	}
+
 	public function test_collect_form_ancestor_errors__allows_orphan_field_when_parent_is_existing_form() {
 		// Arrange
 		$dom = $this->parse_xml( '<e-form-input configuration-id="field-1" />' );
