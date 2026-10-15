@@ -14,7 +14,6 @@ import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from 
 import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { useCustomIconLibraries } from './custom-icon-libraries';
 import {
 	createIconSelectionValue,
 	filterFontAwesome7Icons,
@@ -25,6 +24,7 @@ import {
 import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { IconLibraryFilter } from './icon-library-filter';
 import { IconLibraryGrid } from './icon-library-grid';
+import { useIconLibraryProviderIcons } from './icon-library-providers';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
 import { SvgElementIcon } from './svg-element-icon';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
@@ -85,9 +85,9 @@ export const IconLibraryPopover = ( {
 	);
 	const view = isIconLibraryView( storedView ) ? storedView : DEFAULT_ICON_LIBRARY_VIEW;
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } = useFontAwesome7Catalog( open );
-	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( open );
-	const isLoading = isFontAwesomeLoading || isCustomLoading;
-	const icons = useMemo( () => [ ...fontAwesomeIcons, ...customIcons ], [ customIcons, fontAwesomeIcons ] );
+	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons( open );
+	const isLoading = isFontAwesomeLoading || isProviderLoading;
+	const icons = useMemo( () => [ ...fontAwesomeIcons, ...providerIcons ], [ providerIcons, fontAwesomeIcons ] );
 
 	const items = useMemo(
 		() => createIconLibraryItems( icons, searchValue, activeLibraries ),
