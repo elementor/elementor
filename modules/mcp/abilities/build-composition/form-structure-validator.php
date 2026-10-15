@@ -167,7 +167,7 @@ class Form_Structure_Validator {
 
 		$parent_form = $this->find_form_containing_node( $document_tree, $parent_id );
 
-		if ( ! $parent_form || ! $this->tree_has_element_type( $parent_form['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE ) ) {
+		if ( ! $parent_form || 0 === $this->count_element_type( $parent_form['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE ) ) {
 			return $errors;
 		}
 
@@ -290,18 +290,45 @@ class Form_Structure_Validator {
 		return null;
 	}
 
-	private function tree_has_element_type( array $tree, string $type ): bool {
+	/**
+	 * @return string[]
+	 */
+	public function collect_tree_honeypot_errors( array $tree ): array {
+		$errors = [];
+
 		foreach ( $tree as $node ) {
-			if ( ( $node['widgetType'] ?? '' ) === $type ) {
-				return true;
+			if ( $this->is_form_element( $node ) ) {
+				$honeypot_count = $this->count_element_type( $node['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE );
+
+				if ( $honeypot_count > 1 ) {
+					$errors[] = '<e-form> has ' . $honeypot_count . ' honeypots — only 1 is allowed.';
+				}
+
+				continue;
 			}
 
-			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) && $this->tree_has_element_type( $node['elements'], $type ) ) {
-				return true;
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$errors = array_merge( $errors, $this->collect_tree_honeypot_errors( $node['elements'] ) );
 			}
 		}
 
-		return false;
+		return $errors;
+	}
+
+	private function count_element_type( array $tree, string $type ): int {
+		$count = 0;
+
+		foreach ( $tree as $node ) {
+			if ( ( $node['widgetType'] ?? '' ) === $type ) {
+				++$count;
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$count += $this->count_element_type( $node['elements'], $type );
+			}
+		}
+
+		return $count;
 	}
 
 	private function is_form_element( array $node ): bool {

@@ -20,6 +20,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
@@ -391,6 +392,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
+		$form_structure_error = $this->reject_duplicate_honeypots( $new_tree );
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
@@ -433,10 +439,28 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
+		$form_structure_error = $this->reject_duplicate_honeypots( $new_tree );
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
 		];
+	}
+
+	private function reject_duplicate_honeypots( array $tree ): ?\WP_Error {
+		$errors = ( new Form_Structure_Validator() )->collect_tree_honeypot_errors( $tree );
+		if ( empty( $errors ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_invalid_form_structure',
+			implode( ' ', $errors ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {

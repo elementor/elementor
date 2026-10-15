@@ -189,6 +189,46 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertStringContainsString( 'already has an <e-form-honeypot>', $errors[0] );
 	}
 
+	public function test_collect_tree_honeypot_errors__rejects_form_with_two_honeypots() {
+		// Arrange
+		$tree = [
+			[
+				'id' => 'flex-1',
+				'elType' => 'e-flexbox',
+				'elements' => [
+					$this->form_node( 'form-1', [
+						$this->honeypot_node( 'honeypot-1' ),
+						[
+							'id' => 'flex-2',
+							'elType' => 'e-flexbox',
+							'elements' => [ $this->honeypot_node( 'honeypot-2' ) ],
+						],
+					] ),
+				],
+			],
+		];
+
+		// Act
+		$errors = $this->validator->collect_tree_honeypot_errors( $tree );
+
+		// Assert
+		$this->assertSame( [ '<e-form> has 2 honeypots — only 1 is allowed.' ], $errors );
+	}
+
+	public function test_collect_tree_honeypot_errors__allows_one_honeypot_per_form() {
+		// Arrange
+		$tree = [
+			$this->form_node( 'form-1', [ $this->honeypot_node( 'honeypot-1' ) ] ),
+			$this->form_node( 'form-2', [ $this->honeypot_node( 'honeypot-2' ) ] ),
+		];
+
+		// Act
+		$errors = $this->validator->collect_tree_honeypot_errors( $tree );
+
+		// Assert
+		$this->assertSame( [], $errors );
+	}
+
 	public function test_collect_honeypot_errors__allows_honeypot_added_to_existing_form_without_honeypot() {
 		// Arrange
 		$dom = $this->parse_xml( '<e-form-honeypot />' );
@@ -440,5 +480,22 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertInstanceOf( \DOMDocument::class, $result );
 
 		return $result;
+	}
+
+	private function form_node( string $id, array $elements ): array {
+		return [
+			'id' => $id,
+			'elType' => 'e-form',
+			'elements' => $elements,
+		];
+	}
+
+	private function honeypot_node( string $id ): array {
+		return [
+			'id' => $id,
+			'elType' => 'widget',
+			'widgetType' => 'e-form-honeypot',
+			'elements' => [],
+		];
 	}
 }
