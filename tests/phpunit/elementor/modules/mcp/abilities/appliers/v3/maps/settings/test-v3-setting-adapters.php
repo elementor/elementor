@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings;
 
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Enum_From_Control_Setting_Adapter;
@@ -18,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Link_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Repeater_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Gallery_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Number_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Repeater_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Size_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
@@ -413,6 +415,68 @@ class Test_V3_Setting_Adapters extends TestCase {
 		$this->assertFalse( $adapter->supports( [ 'type' => 'repeater', 'fields' => [] ] ) );
 		$this->assertFalse( $adapter->supports( [ 'type' => 'repeater', 'fields' => [ '_id' => [ 'type' => 'hidden' ], 'c' => [ 'type' => 'color' ] ] ] ) );
 		$this->assertTrue( $adapter->supports( [ 'type' => 'repeater', 'fields' => [ 'item_text' => [ 'type' => 'text' ] ] ] ) );
+	}
+
+	public function gallery_url_provider(): array {
+		return [
+			'absolute url' => [ 'https://example.com/uploads/a.jpg', true ],
+			'url with query string' => [ 'https://example.com/a.jpg?size=large&v=2', true ],
+			'relative url' => [ '/wp-content/uploads/a.jpg', false ],
+			'not a url' => [ 'not a url', false ],
+		];
+	}
+
+	/**
+	 * @dataProvider gallery_url_provider
+	 */
+	public function test_gallery_adapter__validates_the_item_url_as_a_url( string $url, bool $is_valid ) {
+		// Arrange.
+		$prop_type = ( new Gallery_Setting_Adapter() )->prop_type( [] );
+		$resolved = $this->plain_resolver()->resolve( [ [ 'id' => 12, 'url' => $url ] ], $prop_type );
+
+		// Act.
+		$result = Props_Parser::make( [ 'value' => $prop_type ] )->validate( [ 'value' => $resolved ] );
+
+		// Assert.
+		$this->assertSame( $is_valid, $result->is_valid() );
+	}
+
+	public function test_gallery_adapter__accepts_an_item_without_a_url() {
+		// Arrange.
+		$prop_type = ( new Gallery_Setting_Adapter() )->prop_type( [] );
+		$resolved = $this->plain_resolver()->resolve( [ [ 'id' => 12 ] ], $prop_type );
+
+		// Act.
+		$result = Props_Parser::make( [ 'value' => $prop_type ] )->validate( [ 'value' => $resolved ] );
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+	}
+
+	public function test_repeater_prop_type__takes_the_row_shape_through_set_item_shape() {
+		// Arrange.
+		$shape = [
+			'title' => String_Prop_Type::make(),
+			'enabled' => Boolean_Prop_Type::make(),
+		];
+
+		// Act.
+		$prop_type = V3_Repeater_Prop_Type::make()->set_item_shape( $shape );
+
+		// Assert.
+		$this->assertSame( [ 'title', 'enabled' ], array_keys( $prop_type->get_item_type()->get_shape() ) );
+	}
+
+	public function test_repeater_prop_type__keeps_row_shapes_independent_between_instances() {
+		// Arrange.
+		$first = V3_Repeater_Prop_Type::make()->set_item_shape( [ 'title' => String_Prop_Type::make() ] );
+
+		// Act.
+		$second = V3_Repeater_Prop_Type::make()->set_item_shape( [ 'enabled' => Boolean_Prop_Type::make() ] );
+
+		// Assert.
+		$this->assertSame( [ 'title' ], array_keys( $first->get_item_type()->get_shape() ) );
+		$this->assertSame( [ 'enabled' ], array_keys( $second->get_item_type()->get_shape() ) );
 	}
 
 	private function plain_resolver(): \Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver {

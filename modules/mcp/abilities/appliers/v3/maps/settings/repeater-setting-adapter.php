@@ -32,7 +32,7 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 			$shape[ $key ] = $adapter->prop_type( $control['fields'][ $key ] );
 		}
 
-		return V3_Repeater_Prop_Type::make()->set_item_type( V3_Repeater_Item_Prop_Type::make()->set_shape( $shape ) );
+		return V3_Repeater_Prop_Type::make()->set_item_shape( $shape );
 	}
 
 	public function to_control_value( array $prop_value, array $control ) {
