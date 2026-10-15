@@ -15,4 +15,11 @@ return [
 	'countdown' => __DIR__ . '/countdown-map.php',
 	'progress-tracker' => __DIR__ . '/progress-tracker-map.php',
 	'gallery' => __DIR__ . '/gallery-map.php',
+	'woocommerce-product-add-to-cart' => __DIR__ . '/woocommerce-product-add-to-cart-map.php',
+	'woocommerce-product-images' => __DIR__ . '/woocommerce-product-images-map.php',
+	'woocommerce-menu-cart' => __DIR__ . '/woocommerce-menu-cart-map.php',
+	'woocommerce-cart' => __DIR__ . '/woocommerce-cart-map.php',
+	'woocommerce-purchase-summary' => __DIR__ . '/woocommerce-purchase-summary-map.php',
+	'woocommerce-checkout-page' => __DIR__ . '/woocommerce-checkout-page-map.php',
+	'woocommerce-my-account' => __DIR__ . '/woocommerce-my-account-map.php',
 ];
