@@ -12,6 +12,8 @@ class Safe_Remote_Image_Fetcher {
 	 * @return array{tmp_name:string,name:string}|WP_Error
 	 */
 	public static function fetch_to_temp_file( string $source_url ) {
+		Media_Attachment_Service::load_admin_media_includes();
+
 		$current_url = $source_url;
 
 		for ( $hop = 0; $hop <= Media_Upload_Config::MAX_REDIRECT_HOPS; $hop++ ) {

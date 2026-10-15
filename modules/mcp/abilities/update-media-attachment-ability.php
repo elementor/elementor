@@ -16,14 +16,6 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 		return 'elementor/update-media-attachment';
 	}
 
-	public function is_exposed_via_proxy(): bool {
-		return false;
-	}
-
-	public function is_exposed_on_server(): bool {
-		return false;
-	}
-
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Update Media Attachment Meta', 'elementor' ),

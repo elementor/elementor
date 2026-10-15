@@ -154,6 +154,8 @@ class Mcp_Media_Upload_REST_API {
 	 * @return array{tmp_name:string}|WP_Error
 	 */
 	private function stream_body_to_temp( \WP_REST_Request $request ) {
+		Media_Attachment_Service::load_admin_media_includes();
+
 		$tmp = wp_tempnam( 'mcp-media-upload' );
 		if ( ! $tmp ) {
 			return new \WP_Error(
