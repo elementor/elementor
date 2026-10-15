@@ -15,7 +15,7 @@ export type ExtendedWindow = Window & {
 };
 
 export function useColorScheme( staticColorScheme?: ColorScheme ) {
-	const [ colorScheme, setColorScheme ] = useState< ColorScheme >( () => staticColorScheme || getV1ColorScheme() );
+	const [ colorScheme, setColorScheme ] = useState< ColorScheme >( () => getV1ColorScheme() );
 
 	useEffect( () => {
 		if ( staticColorScheme ) {
@@ -46,7 +46,7 @@ export function useColorScheme( staticColorScheme?: ColorScheme ) {
 		} );
 	}, [ staticColorScheme ] );
 
-	return colorScheme;
+	return staticColorScheme || colorScheme;
 }
 
 function getV1ColorScheme() {
