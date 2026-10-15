@@ -2,7 +2,6 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -25,12 +24,11 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/atomic-widgets/font-awesome-7/json-base-path' );
-		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
-		remove_all_filters( 'elementor/icons_manager/additional_tabs' );
-		remove_all_filters( 'elementor/atomic-widgets/icon/svg-converters' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/custom-libraries' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/library-values' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/is-renderable' );
 
 		Icon_Catalog::reset();
-		Custom_Icon_Svg\Resolver::reset_memory();
 
 		parent::tearDown();
 	}
@@ -95,29 +93,15 @@ class Test_Icon_Search extends Elementor_Test_Base {
 
 	public function test_search__includes_renderable_custom_library_icons() {
 		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
-		add_filter( 'elementor/icons_manager/additional_tabs', static fn( $tabs ) => $tabs + [
-			'test-pack' => [
-				'name' => 'test-pack',
-				'label' => 'Test Pack',
-				'prefix' => 'test-',
-				'custom_icon_type' => 'fontello',
-				'icons' => [ 'shopping-bag' ],
-				'native' => false,
-			],
-		] );
-		add_filter( 'elementor/atomic-widgets/icon/svg-converters', static fn() => [
-			new class() implements Custom_Icon_Svg\Svg_Converter {
-				public function supports( array $tab ): bool {
-					return 'test-pack' === ( $tab['name'] ?? '' );
-				}
-
-				public function convert( array $tab, string $icon_value ): string {
-					return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1H0z"/></svg>';
-				}
-			},
-		] );
-		Custom_Icon_Svg\Resolver::reset_memory();
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ 'test-pack' => 'Test Pack' ] );
+		add_filter( 'elementor/atomic-widgets/icon/library-values', static fn( $result, $library ) => 'test-pack' === $library
+			? [
+				'values' => [ 'shopping-bag' => 'test test-shopping-bag' ],
+				'truncated' => false,
+				'total' => 1,
+			]
+			: $result, 10, 2 );
+		add_filter( 'elementor/atomic-widgets/icon/is-renderable', '__return_true' );
 
 		// Act.
 		$response = Icon_Search::search( [ 'library' => 'test-pack' ] );

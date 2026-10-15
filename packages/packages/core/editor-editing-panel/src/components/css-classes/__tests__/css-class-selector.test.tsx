@@ -739,7 +739,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.click( activeEditableField );
@@ -770,7 +772,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.click( activeEditableField );
@@ -800,7 +804,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.doubleClick( activeEditableField );
@@ -828,7 +834,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.doubleClick( activeEditableField );
@@ -1123,7 +1131,9 @@ describe( '<CssClassSelector />', () => {
 
 			const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 				'button',
-				{ name: 'Provider-1-b' }
+				{
+					name: 'Provider-1-b',
+				}
 			);
 
 			fireEvent.click( activeEditableField );
