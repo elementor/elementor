@@ -4,11 +4,11 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { getAtomicWidgetDragHandleSelector, getElementSelector } from '../../../assets/elements-utils';
 import EditorSelectors from '../../../selectors/editor-selectors';
+import { timeouts } from '../../../config/timeouts';
 
 const WIDGET_PLACEHOLDER_SELECTOR = '.elementor-widget-placeholder';
 const OVERLAY_PLACEHOLDER_SELECTOR = '.elementor-widget-placeholder.e-placeholder--overlay';
 const ROW_PLACEHOLDER_WIDTH_PX = 10;
-const PLACEHOLDER_ANIMATION_MS = 300;
 const PLACEHOLDER_WIDTH_TOLERANCE_PX = 5;
 const LAYOUT_STABILITY_TOLERANCE_PX = 1;
 const V4_IMAGE_WIDGET_TYPE = 'e-image';
@@ -41,9 +41,9 @@ test.describe( 'Atomic flexbox wrap drag and drop @v4-tests', () => {
 		editor = await wpAdmin.openNewPage();
 
 		const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
-		await editor.addWidget( { widgetType: V4_IMAGE_WIDGET_TYPE, container: flexboxId } );
+		const firstImageId = await editor.addWidget( { widgetType: V4_IMAGE_WIDGET_TYPE, container: flexboxId } );
 		const secondImageId = await editor.addWidget( { widgetType: V4_IMAGE_WIDGET_TYPE, container: flexboxId } );
-		await editor.addWidget( { widgetType: V4_IMAGE_WIDGET_TYPE, container: flexboxId } );
+		const thirdImageId = await editor.addWidget( { widgetType: V4_IMAGE_WIDGET_TYPE, container: flexboxId } );
 
 		await editor.selectElement( flexboxId );
 		await editor.v4Panel.style.openSection( 'Size' );
@@ -103,7 +103,7 @@ test.describe( 'Atomic flexbox wrap drag and drop @v4-tests', () => {
 				}
 
 				return placeholderBox.width;
-			}, { timeout: PLACEHOLDER_ANIMATION_MS } )
+			}, { timeout: timeouts.expect } )
 			.toBeGreaterThan( 1 );
 
 		const placeholderBox = await placeholder.boundingBox();
@@ -121,10 +121,28 @@ test.describe( 'Atomic flexbox wrap drag and drop @v4-tests', () => {
 		await page.mouse.up();
 
 		await expect( editor.getPreviewFrame().locator( WIDGET_PLACEHOLDER_SELECTOR ) ).toBeHidden( {
-			timeout: 5000,
+			timeout: timeouts.expect,
 		} );
+
+		const childIds = await getFlexboxChildIds( editor, flexboxId );
+
+		expect( childIds ).toHaveLength( 4 );
+		expect( childIds[ 0 ] ).toBe( firstImageId );
+		expect( childIds[ 1 ] ).not.toBe( firstImageId );
+		expect( childIds[ 1 ] ).not.toBe( secondImageId );
+		expect( childIds[ 1 ] ).not.toBe( thirdImageId );
+		expect( childIds[ 2 ] ).toBe( secondImageId );
+		expect( childIds[ 3 ] ).toBe( thirdImageId );
 	} );
 } );
+
+async function getFlexboxChildIds( editor: EditorPage, flexboxId: string ): Promise<string[]> {
+	return editor.getPreviewFrame().locator( getElementSelector( flexboxId ) ).evaluate( ( flexbox ) =>
+		Array.from( flexbox.querySelectorAll( ':scope > .elementor-element' ) )
+			.map( ( child ) => child.getAttribute( 'data-id' ) || '' )
+			.filter( Boolean ),
+	);
+}
 
 async function getDirectChildBoundingBoxes( editor: EditorPage, containerId: string ) {
 	const children = editor.getPreviewFrame().locator( `${ getElementSelector( containerId ) } > .elementor-element` );

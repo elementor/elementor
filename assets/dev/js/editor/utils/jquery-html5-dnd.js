@@ -94,7 +94,6 @@
 			isDroppingAllowedState = false,
 			originalCurrentElementOpacity = null,
 			placeholderContext = {},
-			dndAnchorHostElement = null,
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -247,7 +246,9 @@
 				return { host: null, styleTarget: null };
 			}
 
-			const atomicHost = droppableElement.closest( '.e-atomic-element' );
+			const atomicHost = droppableElement.matches( '.e-atomic-element' )
+				? droppableElement
+				: null;
 
 			if ( ! atomicHost ) {
 				return { host: null, styleTarget: null };
@@ -373,11 +374,6 @@
 			elementsCache.$placeholder.css( '--e-placeholder-left', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-top', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-height', '' );
-
-			if ( dndAnchorHostElement ) {
-				dndAnchorHostElement.classList.remove( 'e-con--dnd-anchor' );
-				dndAnchorHostElement = null;
-			}
 		};
 
 		const clearPreviousPlaceholder = function() {
@@ -491,7 +487,19 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
-		const getFlexWrapOverlayPlaceholderBarSize = function( host, heightPx ) {
+		const getFlexWrapOverlayPositionAnchor = function( host ) {
+			if ( ! host ) {
+				return null;
+			}
+
+			if ( 'static' !== getComputedStyle( host ).position ) {
+				return host;
+			}
+
+			return host.offsetParent || host;
+		};
+
+		const getFlexWrapOverlayPlaceholderBarSize = function( positionAnchor, heightPx ) {
 			elementsCache.$placeholder.css( {
 				position: 'absolute',
 				top: 0,
@@ -500,7 +508,7 @@
 				'pointer-events': 'none',
 				'--e-placeholder-height': `${ heightPx }px`,
 			} );
-			elementsCache.$placeholder.appendTo( host );
+			elementsCache.$placeholder.appendTo( positionAnchor );
 
 			const barSize = elementsCache.$placeholder[ 0 ].offsetWidth;
 
@@ -524,11 +532,10 @@
 				return;
 			}
 
-			const hostStyles = getComputedStyle( host );
+			const positionAnchor = getFlexWrapOverlayPositionAnchor( host );
 
-			if ( 'static' === hostStyles.position ) {
-				host.classList.add( 'e-con--dnd-anchor' );
-				dndAnchorHostElement = host;
+			if ( ! positionAnchor ) {
+				return;
 			}
 
 			const styleTarget = droppableStyleTarget || host;
@@ -536,21 +543,21 @@
 			const gap = parseFloat( flexStyles.columnGap ) || 0;
 
 			const targetRect = target.getBoundingClientRect();
-			const hostRect = host.getBoundingClientRect();
+			const anchorRect = positionAnchor.getBoundingClientRect();
 
 			const halfGap = gap / 2;
 			const edgeX = 'right' === currentSide
 				? targetRect.right + halfGap
 				: targetRect.left - halfGap;
 
-			const top = targetRect.top - hostRect.top - host.clientTop + host.scrollTop;
+			const top = targetRect.top - anchorRect.top - positionAnchor.clientTop + positionAnchor.scrollTop;
 			const height = targetRect.height;
 
 			elementsCache.$placeholder.addClass( 'e-placeholder--overlay e-dragging-' + currentSide );
 
-			const barSize = getFlexWrapOverlayPlaceholderBarSize( host, height );
+			const barSize = getFlexWrapOverlayPlaceholderBarSize( positionAnchor, height );
 			const halfBarSize = barSize / 2;
-			const left = edgeX - halfBarSize - hostRect.left - host.clientLeft + host.scrollLeft;
+			const left = edgeX - halfBarSize - anchorRect.left - positionAnchor.clientLeft + positionAnchor.scrollLeft;
 
 			elementsCache.$placeholder.css( '--e-placeholder-left', `${ left }px` );
 			elementsCache.$placeholder.css( '--e-placeholder-top', `${ top }px` );
