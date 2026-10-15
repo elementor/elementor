@@ -156,6 +156,10 @@
 		z-index: $editor-layer;
 		pointer-events: none;
 		animation-name: dnd-placeholder-overlay;
+
+		&.e-placeholder--overlay-fixed {
+			position: fixed;
+		}
 	}
 
 	// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
@@ -309,6 +313,10 @@
 		z-index: $editor-layer;
 		pointer-events: none;
 		animation-name: dnd-placeholder-overlay;
+
+		&.e-placeholder--overlay-fixed {
+			position: fixed;
+		}
 	}
 
 	// Scoped to a direct child: the 120px canvas placeholder must not leak onto ancestor

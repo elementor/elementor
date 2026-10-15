@@ -69,6 +69,14 @@ test.describe( 'Atomic flexbox wrap drag and drop @v4-tests', () => {
 		await panelImage.waitFor( { state: 'visible' } );
 		await dropTarget.waitFor( { state: 'visible' } );
 
+		await expect
+			.poll( async () => {
+				const childBoxes = await getDirectChildBoundingBoxes( editor, flexboxId );
+
+				return childBoxes.length === 3 && childBoxes.every( Boolean );
+			}, { timeout: timeouts.expect } )
+			.toBe( true );
+
 		const childBoxesBefore = await getDirectChildBoundingBoxes( editor, flexboxId );
 
 		const panelBox = await panelImage.boundingBox();
