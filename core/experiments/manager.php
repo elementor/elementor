@@ -41,6 +41,8 @@ class Manager extends Base_Object {
 
 	private $features;
 
+	private $state_change_hooked_features = [];
+
 	/**
 	 * Add Feature
 	 *
@@ -112,6 +114,8 @@ class Manager extends Base_Object {
 
 			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
 			add_action( 'update_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
+
+			$this->state_change_hooked_features[ $options['name'] ] = true;
 		}
 
 		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
@@ -335,6 +339,38 @@ class Manager extends Base_Object {
 	 */
 	public function get_feature_option_key( $feature_name ) {
 		return static::OPTION_PREFIX . $feature_name;
+	}
+
+	/**
+	 * Set Feature State
+	 *
+	 * Saves a feature state and runs the same side effects as the experiments settings page,
+	 * also outside of the admin (REST, WP-CLI). Dependencies are validated before anything is saved,
+	 * and a Dependency_Exception is thrown when the feature can't be activated because a dependency is inactive.
+	 *
+	 * @param string $feature_name
+	 * @param string $state One of STATE_ACTIVE, STATE_INACTIVE or STATE_DEFAULT.
+	 *
+	 * @throws \InvalidArgumentException If the feature does not exist, is not mutable, or the state is invalid.
+	 */
+	public function set_feature_state( string $feature_name, string $state ): void {
+		$feature = $this->get_features( $feature_name );
+
+		if ( ! $feature ) {
+			throw new \InvalidArgumentException( sprintf( 'Experiment `%s` does not exist.', esc_html( $feature_name ) ) );
+		}
+
+		if ( ! $feature['mutable'] ) {
+			throw new \InvalidArgumentException( sprintf( 'Experiment `%s` can not be changed.', esc_html( $feature_name ) ) );
+		}
+
+		if ( ! in_array( $state, [ self::STATE_ACTIVE, self::STATE_INACTIVE, self::STATE_DEFAULT ], true ) ) {
+			throw new \InvalidArgumentException( sprintf( 'Invalid experiment state `%s`.', esc_html( $state ) ) );
+		}
+
+		$this->assert_dependencies_allow_state( $feature, $state );
+
+		$this->write_feature_state( $feature_name, $state );
 	}
 
 	private function add_default_features() {
@@ -850,13 +886,7 @@ class Manager extends Base_Object {
 				if ( self::STATE_INACTIVE === $dependency_state ) {
 					$rollback( $feature_option_key, self::STATE_INACTIVE );
 
-					throw new Exceptions\Dependency_Exception(
-						sprintf(
-							'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency_feature['name'] )
-						)
-					);
+					throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $dependency_feature['name'] ) );
 				}
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
@@ -870,11 +900,60 @@ class Manager extends Base_Object {
 
 				foreach ( $current_feature['dependencies'] as $dependency ) {
 					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
-						update_option( $this->get_feature_option_key( $current_feature['name'] ), static::STATE_INACTIVE );
+						$this->write_feature_state( $current_feature['name'], static::STATE_INACTIVE );
 					}
 				}
 			}
 		}
+	}
+
+	private function create_inactive_dependency_exception( string $feature_name, string $dependency_name ): Exceptions\Dependency_Exception {
+		return new Exceptions\Dependency_Exception(
+			sprintf(
+				'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
+				$feature_name,
+				$dependency_name
+			)
+		);
+	}
+
+	private function assert_dependencies_allow_state( array $feature, string $state ): void {
+		$resolved_state = self::STATE_DEFAULT === $state ? $feature['default'] : $state;
+
+		if ( self::STATE_ACTIVE !== $resolved_state ) {
+			return;
+		}
+
+		foreach ( $feature['dependencies'] ?? [] as $dependency ) {
+			if ( $dependency instanceof Non_Existing_Dependency ) {
+				continue;
+			}
+
+			$dependency_feature = $this->get_features( $dependency->get_name() );
+
+			if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
+				continue;
+			}
+
+			if ( self::STATE_INACTIVE === $this->get_feature_actual_state( $dependency_feature ) ) {
+				throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $dependency_feature['name'] ) );
+			}
+		}
+	}
+
+	private function write_feature_state( string $feature_name, string $state ): void {
+		$feature = $this->features[ $feature_name ];
+		$old_state = $feature['state'];
+
+		update_option( $this->get_feature_option_key( $feature_name ), $state );
+
+		$is_handled_by_option_hooks = isset( $this->state_change_hooked_features[ $feature_name ] );
+
+		if ( ! $feature['mutable'] || $is_handled_by_option_hooks ) {
+			return;
+		}
+
+		$this->on_feature_state_change( $feature, $state, $old_state );
 	}
 
 	private function should_show_hidden() {

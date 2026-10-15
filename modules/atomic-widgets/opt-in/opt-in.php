@@ -46,17 +46,15 @@ class Opt_In {
 		]);
 	}
 
-	private function opt_out_v4() {
+	public function opt_out_v4() {
 		foreach ( self::OPT_OUT_FEATURES as $feature ) {
-			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
-			update_option( $feature_key, Experiments_Manager::STATE_INACTIVE );
+			Plugin::$instance->experiments->set_feature_state( $feature, Experiments_Manager::STATE_INACTIVE );
 		}
 	}
 
-	private function opt_in_v4() {
+	public function opt_in_v4() {
 		foreach ( self::OPT_IN_FEATURES as $feature ) {
-			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
-			update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
+			Plugin::$instance->experiments->set_feature_state( $feature, Experiments_Manager::STATE_ACTIVE );
 		}
 
 		update_option( self::OPT_IN_CLICKED_OPTION, true );

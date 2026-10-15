@@ -25,6 +25,16 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments_state = [];
 
+	private $screen_backup;
+
+	public function tearDown(): void {
+		if ( $this->screen_backup ) {
+			$GLOBALS['current_screen'] = $this->screen_backup;
+		}
+
+		parent::tearDown();
+	}
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -953,6 +963,93 @@ class Test_Manager extends Elementor_Test_Base {
 			Experiments_Manager::STATE_INACTIVE
 		);
 
+	}
+
+	public function test_set_feature_state__runs_state_change_side_effects_once_outside_admin() {
+		// Arrange.
+		$this->set_front_screen();
+		$this->add_test_feature( [ 'name' => 'test_feature_side_effects' ] );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_feature_side_effects', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_feature_side_effects', Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertSame( 1, $fired );
+		$this->assertTrue( $this->experiments->is_feature_active( 'test_feature_side_effects' ) );
+		$this->assertSame(
+			Experiments_Manager::STATE_ACTIVE,
+			get_option( $this->experiments->get_feature_option_key( 'test_feature_side_effects' ) )
+		);
+	}
+
+	public function test_set_feature_state__throws_and_keeps_option_when_dependency_is_inactive() {
+		// Arrange.
+		$this->set_front_screen();
+		$this->add_test_feature( [ 'name' => 'test_dependency', 'default' => Experiments_Manager::STATE_INACTIVE ] );
+		$this->add_test_feature( [ 'name' => 'test_dependant', 'dependencies' => [ 'test_dependency' ] ] );
+
+		// Act.
+		$exception = null;
+
+		try {
+			$this->experiments->set_feature_state( 'test_dependant', Experiments_Manager::STATE_ACTIVE );
+		} catch ( Dependency_Exception $e ) {
+			$exception = $e;
+		}
+
+		// Assert.
+		$this->assertInstanceOf( Dependency_Exception::class, $exception );
+		$this->assertFalse( get_option( $this->experiments->get_feature_option_key( 'test_dependant' ) ) );
+	}
+
+	public function test_set_feature_state__deactivating_a_dependency_deactivates_its_active_dependants() {
+		// Arrange.
+		$this->set_front_screen();
+		$this->add_test_feature( [ 'name' => 'test_dependency', 'default' => Experiments_Manager::STATE_ACTIVE ] );
+		$this->add_test_feature( [
+			'name' => 'test_dependant',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [ 'test_dependency' ],
+		] );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_dependant', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_dependency', Experiments_Manager::STATE_INACTIVE );
+
+		// Assert.
+		$this->assertFalse( $this->experiments->is_feature_active( 'test_dependant' ) );
+		$this->assertSame( 1, $fired );
+	}
+
+	public function test_set_feature_state__throws_for_unknown_and_immutable_features() {
+		// Arrange.
+		$this->add_test_feature( [ 'name' => 'test_immutable', 'mutable' => false ] );
+
+		// Act & Assert.
+		foreach ( [ 'test_unknown_feature', 'test_immutable' ] as $feature_name ) {
+			try {
+				$this->experiments->set_feature_state( $feature_name, Experiments_Manager::STATE_ACTIVE );
+				$this->fail( 'Expected an InvalidArgumentException for ' . $feature_name );
+			} catch ( \InvalidArgumentException $e ) {
+				$this->assertFalse( get_option( $this->experiments->get_feature_option_key( $feature_name ) ) );
+			}
+		}
+	}
+
+	private function set_front_screen() {
+		global $current_screen;
+
+		$this->screen_backup = $current_screen;
+		set_current_screen( 'front' );
 	}
 
 	/**

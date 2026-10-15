@@ -7,6 +7,26 @@ use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Opt_In extends Elementor_Test_Base {
+	private array $original_states = [];
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->original_states = array_column( Plugin::$instance->experiments->get_features(), 'state', 'name' );
+	}
+
+	public function tearDown(): void {
+		$experiments = Plugin::$instance->experiments;
+
+		foreach ( $this->original_states as $name => $state ) {
+			if ( $experiments->get_features( $name )['state'] !== $state ) {
+				$experiments->set_feature_state( $name, $state );
+			}
+		}
+
+		parent::tearDown();
+	}
+
 	public function test_init__registers_feature(): void {
 		// Act.
 		( new Opt_In )->init();
