@@ -292,7 +292,7 @@ class Form_Structure_Validator {
 
 	private function tree_has_element_type( array $tree, string $type ): bool {
 		foreach ( $tree as $node ) {
-			if ( $type === ( $node['widgetType'] ?? '' ) ) {
+			if ( ( $node['widgetType'] ?? '' ) === $type ) {
 				return true;
 			}
 
