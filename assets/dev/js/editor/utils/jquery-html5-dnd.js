@@ -525,7 +525,6 @@
 			const gap = parseFloat( flexStyles.columnGap ) || 0;
 
 			const targetRect = target.getBoundingClientRect();
-			const hostRect = host.getBoundingClientRect();
 			const useFixedOverlay = 'static' === getComputedStyle( host ).position;
 
 			const halfGap = gap / 2;
@@ -552,6 +551,7 @@
 				return;
 			}
 
+			const hostRect = host.getBoundingClientRect();
 			const top = targetRect.top - hostRect.top - host.clientTop + host.scrollTop;
 			const left = edgeX - halfBarSize - hostRect.left - host.clientLeft + host.scrollLeft;
 
