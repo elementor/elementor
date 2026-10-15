@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { InlineEditor, InlineEditorToolbar } from '@elementor/editor-controls';
-import { Box, ThemeProvider } from '@elementor/ui';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { Box } from '@elementor/ui';
 import { autoUpdate, flip, FloatingPortal, useFloating } from '@floating-ui/react';
 
 import { CANVAS_WRAPPER_ID, OutlineOverlay } from '../../../components/outline-overlay';
