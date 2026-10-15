@@ -239,27 +239,24 @@
 			}
 		};
 
-		const findAtomicFlexWrapRowHost = function( startElement ) {
+		const getDroppableHostAndStyleTarget = function() {
 			const droppableElement = elementsCache.$element[ 0 ];
-			let candidate = startElement;
 
-			while ( candidate ) {
-				if ( candidate.matches?.( '.e-atomic-element' ) ) {
-					const styleTarget = candidate.querySelector( ':scope > .e-con-inner' ) || candidate;
-
-					if ( isAtomicFlexWrapRowHostElement( candidate, styleTarget ) ) {
-						return { host: candidate, styleTarget };
-					}
-				}
-
-				if ( candidate === droppableElement ) {
-					break;
-				}
-
-				candidate = candidate.parentElement;
+			if ( ! droppableElement ) {
+				return { host: null, styleTarget: null };
 			}
 
-			return { host: null, styleTarget: null };
+			const atomicHost = droppableElement.matches( '.e-atomic-element' )
+				? droppableElement
+				: null;
+
+			if ( ! atomicHost ) {
+				return { host: null, styleTarget: null };
+			}
+
+			const styleTarget = atomicHost.querySelector( ':scope > .e-con-inner' ) || atomicHost;
+
+			return { host: atomicHost, styleTarget };
 		};
 
 		const isAtomicFlexWrapRowHostElement = function( host, styleTarget ) {
@@ -267,7 +264,8 @@
 				return false;
 			}
 
-			if ( ! host.classList.contains( 'e-atomic-element' ) ) {
+			// Overlay placeholder styles are scoped to `.e-con`.
+			if ( ! host.matches( '.e-con.e-atomic-element' ) ) {
 				return false;
 			}
 
@@ -306,10 +304,10 @@
 			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
 			const isFlexRowContainer = isFlexContainer && isRowDirection;
 
-			const { host: droppableHost, styleTarget: droppableStyleTarget } = findAtomicFlexWrapRowHost( currentElement );
-			const isAtomicFlexWrapRowHost = !! droppableHost;
+			const { host: droppableHost, styleTarget: droppableStyleTarget } = getDroppableHostAndStyleTarget();
+			const isAtomicFlexWrapRowHost = isAtomicFlexWrapRowHostElement( droppableHost, droppableStyleTarget );
 
-			maybeAddFlexRowClass( container, isFlexRowContainer );
+			maybeAddFlexRowClass( container );
 
 			return {
 				$currentElement,
@@ -331,10 +329,12 @@
 			};
 		};
 
-		const maybeAddFlexRowClass = function( container, isFlexRowContainer ) {
+		const maybeAddFlexRowClass = function( container ) {
 			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
+
+			const { isFlexRowContainer } = placeholderContext;
 
 			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
@@ -373,7 +373,7 @@
 		};
 
 		const clearOverlayPlaceholderState = function() {
-			elementsCache.$placeholder.removeClass( 'e-placeholder--overlay e-placeholder--overlay-fixed e-dragging-left e-dragging-right' );
+			elementsCache.$placeholder.removeClass( 'e-placeholder--overlay e-dragging-left e-dragging-right' );
 			elementsCache.$placeholder.css( '--e-placeholder-left', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-top', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-height', '' );
@@ -490,7 +490,9 @@
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
-		const getFlexWrapOverlayPlaceholderBarSize = function( host, heightPx ) {
+		const measureFlexWrapOverlayPlaceholder = function( host, heightPx ) {
+			const placeholder = elementsCache.$placeholder[ 0 ];
+
 			elementsCache.$placeholder.css( {
 				position: 'absolute',
 				top: 0,
@@ -501,7 +503,12 @@
 			} );
 			elementsCache.$placeholder.appendTo( host );
 
-			const barSize = elementsCache.$placeholder[ 0 ].offsetWidth;
+			// The overlay stays inside the host so its CSS applies; a static host is not mutated,
+			// so coordinates are resolved against the placeholder's actual containing block.
+			const measurement = {
+				barSize: placeholder.offsetWidth,
+				anchor: placeholder.offsetParent || host,
+			};
 
 			elementsCache.$placeholder.css( {
 				position: '',
@@ -511,7 +518,7 @@
 				'pointer-events': '',
 			} );
 
-			return barSize;
+			return measurement;
 		};
 
 		const insertFlexWrapRowPlaceholder = function() {
@@ -528,39 +535,23 @@
 			const gap = parseFloat( flexStyles.columnGap ) || 0;
 
 			const targetRect = target.getBoundingClientRect();
-			const useFixedOverlay = 'static' === getComputedStyle( host ).position;
+			const height = targetRect.height;
+
+			elementsCache.$placeholder.addClass( 'e-placeholder--overlay e-dragging-' + currentSide );
+
+			const { barSize, anchor } = measureFlexWrapOverlayPlaceholder( host, height );
+			const anchorRect = anchor.getBoundingClientRect();
 
 			const halfGap = gap / 2;
 			const edgeX = 'right' === currentSide
 				? targetRect.right + halfGap
 				: targetRect.left - halfGap;
 
-			const height = targetRect.height;
-
-			elementsCache.$placeholder.addClass( 'e-placeholder--overlay e-dragging-' + currentSide );
-
-			if ( useFixedOverlay ) {
-				elementsCache.$placeholder.addClass( 'e-placeholder--overlay-fixed' );
-			}
-
-			const barSize = getFlexWrapOverlayPlaceholderBarSize( host, height );
-			const halfBarSize = barSize / 2;
-
-			if ( useFixedOverlay ) {
-				elementsCache.$placeholder.css( '--e-placeholder-left', `${ edgeX - halfBarSize }px` );
-				elementsCache.$placeholder.css( '--e-placeholder-top', `${ targetRect.top }px` );
-				elementsCache.$placeholder.appendTo( host );
-
-				return;
-			}
-
-			const hostRect = host.getBoundingClientRect();
-			const top = targetRect.top - hostRect.top - host.clientTop + host.scrollTop;
-			const left = edgeX - halfBarSize - hostRect.left - host.clientLeft + host.scrollLeft;
+			const top = targetRect.top - anchorRect.top - anchor.clientTop + anchor.scrollTop;
+			const left = edgeX - ( barSize / 2 ) - anchorRect.left - anchor.clientLeft + anchor.scrollLeft;
 
 			elementsCache.$placeholder.css( '--e-placeholder-left', `${ left }px` );
 			elementsCache.$placeholder.css( '--e-placeholder-top', `${ top }px` );
-			elementsCache.$placeholder.appendTo( host );
 		};
 
 		const insertDefaultPlaceholder = function() {
