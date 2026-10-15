@@ -54,7 +54,7 @@
     "@elementor/query": "4.4.0",
     "@elementor/schema": "4.4.0",
     "@elementor/session": "4.4.0",
-    "@elementor/ui": "1.41.2",
+    "@elementor/ui": "1.41.3",
     "@elementor/utils": "4.4.0",
     "@elementor/wp-media": "4.4.0",
     "@monaco-editor/react": "^4.7.0",
