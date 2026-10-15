@@ -6,6 +6,7 @@ import { Box, Collapse, ListItemButton, ListItemText, Stack } from '@elementor/u
 
 import { type OverridablePropsGroup } from '../../types';
 import { OverridePropControl } from './override-prop-control';
+import { OVERRIDE_PROPS_GROUP_CONTENT_CLASS } from './override-props-group-constants';
 
 type Props = {
 	group: OverridablePropsGroup;
@@ -25,7 +26,10 @@ export function OverridePropsGroup( { group }: Props ) {
 	const title = group.label;
 
 	return (
-		<Box aria-label={ `${ title } section` }>
+		<Box
+			aria-label={ `${ title } section` }
+			sx={ { [ `&:has(.${ OVERRIDE_PROPS_GROUP_CONTENT_CLASS }:empty)` ]: { display: 'none' } } }
+		>
 			<ListItemButton
 				id={ labelId }
 				aria-controls={ contentId }
@@ -44,7 +48,7 @@ export function OverridePropsGroup( { group }: Props ) {
 				<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" />
 			</ListItemButton>
 			<Collapse id={ contentId } aria-labelledby={ labelId } in={ isOpen } timeout="auto">
-				<Stack direction="column" gap={ 1 } p={ 2 }>
+				<Stack className={ OVERRIDE_PROPS_GROUP_CONTENT_CLASS } direction="column" gap={ 1 } p={ 2 }>
 					{ group.props.map( ( overrideKey ) => (
 						<OverridePropControl key={ overrideKey } overrideKey={ overrideKey } />
 					) ) }
