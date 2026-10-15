@@ -184,6 +184,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
 	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
+	const EXPERIMENT_FORM_WEBMCP = 'e_atomic_form_webmcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -213,6 +214,7 @@ class Module extends BaseModule {
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
 		$this->register_icon_library_experiment();
+		$this->register_form_webmcp_experiment();
 
 		$this->register_hooks();
 
@@ -292,6 +294,17 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ICON_LIBRARY,
 			'title' => esc_html__( 'SVG Library', 'elementor' ),
 			'description' => esc_html__( 'Enable SVG library support in the SVG element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_form_webmcp_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_FORM_WEBMCP,
+			'title' => esc_html__( 'Atomic Form WebMCP authoring', 'elementor' ),
+			'description' => esc_html__( 'Let the MCP author WebMCP declarative attributes on atomic forms and their fields.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -605,6 +618,10 @@ class Module extends BaseModule {
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
+
+	public static function is_form_webmcp_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_FORM_WEBMCP );
 	}
 
 	public static function is_svg_library_active(): bool {
