@@ -3,6 +3,9 @@ import { Alpine } from '@elementor/alpinejs';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
 
+const REDIRECT_DELAY_MS = 1000;
+const ALLOWED_REDIRECT_PROTOCOLS = [ 'http:', 'https:', 'ftp:', 'ftps:' ];
+
 let webmcpFormListenersRegistered = false;
 
 registerBySelector( {
@@ -140,6 +143,7 @@ function registerAtomicFormAlpineData( form ) {
 				}
 
 				respondToAgent( response, state );
+				redirectIfRequested( event, response );
 			} catch ( error ) {
 				setFormState( form, 'error' );
 				respondToAgent( { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
@@ -148,6 +152,35 @@ function registerAtomicFormAlpineData( form ) {
 			}
 		},
 	} ) );
+}
+
+function redirectIfRequested( event, response ) {
+	if ( event?.agentInvoked || ! response?.success ) {
+		return;
+	}
+
+	const actionResults = response?.data?.data?.actionResults ?? [];
+	const redirectUrl = actionResults.find( ( result ) => 'redirect' === result.type && 'success' === result.status )?.redirectUrl;
+
+	const safeRedirectUrl = getSafeRedirectUrl( redirectUrl );
+
+	if ( safeRedirectUrl ) {
+		setTimeout( () => window.location.assign( safeRedirectUrl ), REDIRECT_DELAY_MS );
+	}
+}
+
+function getSafeRedirectUrl( redirectUrl ) {
+	if ( ! redirectUrl ) {
+		return null;
+	}
+
+	try {
+		const url = new URL( redirectUrl, window.location.href );
+
+		return ALLOWED_REDIRECT_PROTOCOLS.includes( url.protocol ) ? url.href : null;
+	} catch {
+		return null;
+	}
 }
 
 function handleAtomicFormSubmit( form ) {

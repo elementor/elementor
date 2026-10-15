@@ -61,7 +61,7 @@ namespace {
 		}
 
 		public function test_is_v3_node__false_for_column_element() {
-			// Arrange: column is always rejected — only widget and container elements can be routed.
+			// Arrange: column is always rejected — only widget elements can be routed.
 			$node = [
 				'elType' => 'column',
 				'settings' => [],
@@ -71,10 +71,8 @@ namespace {
 			$this->assertFalse( V3_Node_Bridge::is_v3_node( $node ) );
 		}
 
-		public function test_is_v3_node__false_for_container_when_experiment_inactive() {
-			// Arrange: containers are only routed when the standardized-maps experiment is active
-			// AND a compiled map exists. In this unit-test bootstrap, no Elementor Plugin is loaded,
-			// so the experiment gate falls through to false.
+		public function test_is_v3_node__false_for_container_element() {
+			// Arrange.
 			$node = [
 				'elType' => 'container',
 				'settings' => [],
