@@ -52,7 +52,7 @@
     "@elementor/locations": "4.4.0",
     "@elementor/menus": "4.4.0",
     "@elementor/events": "4.4.0",
-    "@elementor/ui": "1.41.2",
+    "@elementor/ui": "1.41.3",
     "@wordpress/i18n": "^5.13.0"
   },
   "devDependencies": {
