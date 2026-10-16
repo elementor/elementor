@@ -1,4 +1,4 @@
-import { type APIRequestContext, expect, type Locator, type Page, type TestInfo } from '@playwright/test';
+import { type APIRequestContext, expect, type Locator, type Page } from '@playwright/test';
 import type ApiRequests from '../../../../assets/api-requests';
 import { timeouts } from '../../../../config/timeouts';
 import EditorPage from '../../../../pages/editor-page';
