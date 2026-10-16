@@ -63,7 +63,7 @@ export default function Promotions( { report }: Props ) {
 								return;
 							}
 
-							window.open( ctaUrl, '_blank' );
+							window.open( ctaUrl, '_blank', 'noopener' );
 
 							if ( run.result.status === 'fail' ) {
 								trackFixWithApp( run.audit, run.result.violations[ 0 ], 'overview' );

@@ -42,6 +42,7 @@ export function useAuditReport() {
 		} catch ( e ) {
 			if ( e instanceof SessionExpiredError ) {
 				dispatch( slice.actions.runAborted() );
+				trackRunFailed();
 				return;
 			}
 

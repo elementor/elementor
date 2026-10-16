@@ -28,7 +28,7 @@ export function focusViolation( violation: AuditViolation ): ViewIssueResult | n
 			runCommand( 'panel/editor/open' );
 		}
 
-		return 'element_focused';
+		return container ? 'element_focused' : null;
 	}
 
 	if ( violation.externalUrl ) {

@@ -190,7 +190,7 @@ describe( 'useAuditReport', () => {
 		expect( trackRunCompleted ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not track a terminal outcome when the session expires', async () => {
+	it( 'tracks a failed run when the session expires', async () => {
 		// Arrange.
 		jest.mocked( runPageAudit ).mockRejectedValue( new SessionExpiredError( 'Session expired' ) );
 		const { result } = renderUseAuditReport();
@@ -201,8 +201,9 @@ describe( 'useAuditReport', () => {
 		} );
 
 		// Assert.
+		expect( trackRunStarted ).toHaveBeenCalledTimes( 1 );
+		expect( trackRunFailed ).toHaveBeenCalledTimes( 1 );
 		expect( trackRunCompleted ).not.toHaveBeenCalled();
-		expect( trackRunFailed ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reverts to idle without an error when the session expires and there is no report yet', async () => {
