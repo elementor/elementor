@@ -38,6 +38,7 @@ export const audit: Audit = {
 					label: __( 'Image is missing alt text.', 'elementor' ),
 					externalUrl: isReady ? ctx.pageContext.ally_scan_url : ctx.pageContext.ally_plugin_url,
 					ctaLabel: __( 'Fix with Ally', 'elementor' ),
+					appInstalled: isReady,
 				} );
 			}
 		} );

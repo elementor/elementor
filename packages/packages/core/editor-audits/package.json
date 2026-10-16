@@ -42,6 +42,7 @@
     "@elementor/editor": "4.4.0",
     "@elementor/editor-mcp": "4.4.0",
     "@elementor/editor-app-bar": "4.4.0",
+    "@elementor/editor-current-user": "4.4.0",
     "@elementor/editor-elements": "4.4.0",
     "@elementor/editor-floating-panels": "4.4.0",
     "@elementor/editor-notifications": "4.4.0",
