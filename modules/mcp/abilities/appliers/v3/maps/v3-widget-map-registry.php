@@ -284,11 +284,24 @@ class V3_Widget_Map_Registry {
 		$map = $this->maps[ $widget_type ];
 		$has_advanced_tab = $this->has_advanced_tab;
 
-		if ( null === $has_advanced_tab || ! $has_advanced_tab( $widget_type ) ) {
+		if ( null === $has_advanced_tab || ! $has_advanced_tab( $widget_type ) || self::declares_target( $map, Advanced_Wrapper::ALIAS ) ) {
 			return $map;
 		}
 
 		return ( clone $map )->targets( Advanced_Wrapper::target() );
+	}
+
+	/**
+	 * Widgets without style controls of their own (e.g. Shortcode) use the wrapper as their default target.
+	 */
+	private static function declares_target( V3_Widget_Map $map, string $alias ): bool {
+		foreach ( $map->get_all_targets() as $target ) {
+			if ( $alias === $target->get_alias() ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function log_diagnostics( string $widget_type ): void {
