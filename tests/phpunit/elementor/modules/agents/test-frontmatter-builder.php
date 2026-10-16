@@ -42,4 +42,50 @@ class Test_Frontmatter_Builder extends Elementor_Test_Base {
 
 		$this->assertStringContainsString( 'description: "Line one\\nLine two"', $yaml );
 	}
+
+	public function test_build_keeps_ampersand_in_permalink() {
+		$permalink = 'https://example.test/page?a=1&b=2';
+		$filter    = static function () use ( $permalink ) {
+			return $permalink;
+		};
+		add_filter( 'post_link', $filter );
+
+		$post_id = $this->factory()->post->create( [
+			'post_status'  => 'publish',
+			'post_title'   => 'Ampersand URL',
+			'post_content' => 'Body with enough characters for extraction.',
+		] );
+
+		$yaml = ( new Frontmatter_Builder() )->build( get_post( $post_id ) );
+		remove_filter( 'post_link', $filter );
+
+		$this->assertStringContainsString( 'url: "' . $permalink . '"', $yaml );
+		$this->assertStringContainsString( 'canonical: "' . $permalink . '"', $yaml );
+		$this->assertStringNotContainsString( '&#038;', $yaml );
+	}
+
+	public function test_build_keeps_ampersand_in_featured_image() {
+		$image_url = 'https://cdn.example.test/img.jpg?w=800&h=600';
+		$id_filter = static function () {
+			return 1;
+		};
+		$url_filter = static function () use ( $image_url ) {
+			return $image_url;
+		};
+		add_filter( 'post_thumbnail_id', $id_filter );
+		add_filter( 'post_thumbnail_url', $url_filter );
+
+		$post_id = $this->factory()->post->create( [
+			'post_status'  => 'publish',
+			'post_title'   => 'Featured Image URL',
+			'post_content' => 'Body with enough characters for extraction.',
+		] );
+
+		$yaml = ( new Frontmatter_Builder() )->build( get_post( $post_id ) );
+		remove_filter( 'post_thumbnail_id', $id_filter );
+		remove_filter( 'post_thumbnail_url', $url_filter );
+
+		$this->assertStringContainsString( 'featured_image: "' . $image_url . '"', $yaml );
+		$this->assertStringNotContainsString( '&#038;', $yaml );
+	}
 }

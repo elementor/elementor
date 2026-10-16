@@ -28,13 +28,16 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		add_filter(
+			self::JSON_BASE_PATH_FILTER,
+			fn() => ELEMENTOR_PATH . 'tests/fixtures/font-awesome-7/json/'
+		);
+
 		Font_Awesome_7_Icon_Resolver::reset();
-		$this->ensure_font_awesome_7_json_available();
 	}
 
 	public function tearDown(): void {
 		remove_all_filters( self::JSON_BASE_PATH_FILTER );
-		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		Font_Awesome_7_Icon_Resolver::reset();
 		$this->remove_filtered_json_dir();
 
@@ -205,9 +208,8 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<path', $result['html'] );
 	}
 
-	public function test_transform__uses_custom_library_svg_html_filter() {
+	public function test_transform__uses_svg_html_filter() {
 		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'my-icons my-icons-badge',
@@ -235,43 +237,12 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertNull( $result['url'] );
 	}
 
-	public function test_transform__falls_back_to_default_svg_when_custom_library_is_deleted() {
+	public function test_transform__falls_back_to_default_svg_when_no_filter_returns_markup() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'missing-set missing-set-ghost',
 			'library' => 'missing-set',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		// Assert.
-		$this->assert_default_svg_fallback( $result );
-	}
-
-	public function test_transform__falls_back_to_default_svg_when_numeric_custom_library_is_deleted() {
-		// Arrange.
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'icon icon-emo-surprised',
-			'library' => '-1',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		// Assert.
-		$this->assert_default_svg_fallback( $result );
-	}
-
-	public function test_transform__falls_back_to_default_svg_when_pro_license_is_inactive() {
-		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_false' );
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'icon icon-emo-surprised',
-			'library' => '-1',
 		];
 
 		// Act.
@@ -327,26 +298,26 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->filtered_json_dir = null;
 	}
 
-	private function ensure_font_awesome_7_json_available(): void {
-		$json_dir = ELEMENTOR_ASSETS_PATH . 'lib/font-awesome-7/json';
-		$json_file = $json_dir . '/solid.json';
 
-		if ( is_readable( $json_file ) ) {
-			return;
-		}
+	public function test_transform__sanitizes_svg_returned_by_third_party_filter() {
+		// Arrange.
+		$filter = static fn() => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><script>alert(1)</script><path d="M0 0h1v1H0z"/></svg>';
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
 
-		if ( ! is_dir( $json_dir ) && ! mkdir( $json_dir, 0777, true ) && ! is_dir( $json_dir ) ) {
-			$this->fail( 'Could not create Font Awesome 7 test JSON directory.' );
-		}
-
-		file_put_contents(
-			$json_file,
-			wp_json_encode( [
-				'icons' => [
-					'star' => [ 576, 512, [], 'f005', self::FA7_STAR_PATH_FRAGMENT ],
-					'headphones' => [ 448, 512, [ 'headphones-simple' ], 'f025', 'M64 224' ],
-				],
-			] )
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'x x-y',
+				'library' => 'untrusted-pack',
+			],
+			Props_Resolver_Context::make()
 		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'script', $result['html'] );
+		$this->assertStringNotContainsString( 'onload', $result['html'] );
 	}
 }

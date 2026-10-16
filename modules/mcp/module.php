@@ -249,6 +249,7 @@ class Module extends BaseModule {
 			new Abilities\Manage_Elements_Ability(),
 			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
+			new Abilities\Find_Icons_Ability(),
 			new Abilities\Global_Variables_Resource_Ability(),
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
@@ -256,6 +257,7 @@ class Module extends BaseModule {
 			new Abilities\List_Components_Ability(),
 			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
+			new Abilities\Get_System_Info_Ability(),
 		];
 
 		return $abilities;

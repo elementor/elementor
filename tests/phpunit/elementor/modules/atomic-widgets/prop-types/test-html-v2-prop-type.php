@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -162,7 +163,12 @@ class Test_Html_V2_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result['value']['content'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result['value']['content'],
+			'Hello alert("xss")<strong>world</strong>',
+			'Hello <strong>world</strong>'
+		);
 	}
 
 	public function test_sanitize__preserves_id_attributes_on_inline_elements() {

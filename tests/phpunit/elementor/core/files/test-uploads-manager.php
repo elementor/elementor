@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core\Files;
 
 use Elementor\Core\Files\File_Types\Base as File_Type_Base;
 use Elementor\Core\Files\File_Types\Json;
+use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -264,6 +265,70 @@ class Test_Uploads_Manager extends Elementor_Test_Base {
 		$validation_result = Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload( $file );
 
 		$this->assertTrue( ! isset( $validation_result['error'] ) );
+	}
+
+	public function test_handle_elementor_wp_media_upload_is_hooked_on_sideload() {
+		$this->assertNotFalse(
+			has_filter(
+				'wp_handle_sideload_prefilter',
+				[ Plugin::$instance->uploads_manager, 'handle_elementor_wp_media_upload' ]
+			)
+		);
+	}
+
+	/**
+	 * @dataProvider elementor_upload_type_caller_provider
+	 */
+	public function test_handle_elementor_wp_media_upload_sanitizes_svg_for_elementor_callers( $upload_type_caller ) {
+		if ( ! Svg::file_sanitizer_can_run() ) {
+			$this->markTestSkipped( 'SVG sanitizer requires DOMDocument.' );
+		}
+
+		add_filter( 'elementor/files/allow_unfiltered_upload', function() {
+			return true;
+		} );
+		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, 1 );
+
+		$svg_path = self::$temp_directory . 'payload-' . $upload_type_caller . '.svg';
+		file_put_contents(
+			$svg_path,
+			'<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'
+		);
+
+		$_REQUEST['uploadTypeCaller'] = $upload_type_caller;
+
+		$result = Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload( [
+			'name' => 'payload.svg',
+			'tmp_name' => $svg_path,
+		] );
+
+		unset( $_REQUEST['uploadTypeCaller'] );
+
+		$this->assertArrayNotHasKey( 'error', $result );
+		$this->assertStringNotContainsString( '<script>', file_get_contents( $svg_path ) );
+	}
+
+	public function test_handle_elementor_wp_media_upload_does_not_intervene_without_elementor_caller() {
+		$svg_path = self::$temp_directory . 'payload-no-caller.svg';
+		$svg_content = '<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>';
+		file_put_contents( $svg_path, $svg_content );
+
+		unset( $_REQUEST['uploadTypeCaller'] );
+
+		$result = Plugin::$instance->uploads_manager->handle_elementor_wp_media_upload( [
+			'name' => 'payload.svg',
+			'tmp_name' => $svg_path,
+		] );
+
+		$this->assertArrayNotHasKey( 'error', $result );
+		$this->assertSame( $svg_content, file_get_contents( $svg_path ) );
+	}
+
+	public function elementor_upload_type_caller_provider() {
+		return [
+			'elementor-media-upload' => [ 'elementor-media-upload' ],
+			'elementor-wp-media-upload' => [ 'elementor-wp-media-upload' ],
+		];
 	}
 
 	public function test_create_temp_file() {

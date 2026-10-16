@@ -7,7 +7,8 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
-- `elementor/list-assets` - Images, SVG icons, and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), always before an `e-svg` (which needs an uploaded asset to render), and before `e-self-hosted-video` / `e-background-video` when using a library video
+- `elementor/list-assets` - Images and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), and before `e-self-hosted-video` / `e-background-video` when using a library video. Also lists uploaded SVG files for `e-svg`<!--if:svg_library-->, but prefer `elementor/find-icons` for iconography<!--endif:svg_library-->
+<!--if:svg_library-->- `elementor/find-icons` - Font Awesome and site-uploaded icon libraries for `e-svg`; call before placing an `e-svg` so the icon renders without asking the user to upload anything (see ICONS)<!--endif:svg_library-->
 - `elementor/list-components` - Discover reusable widget compositions and the component capabilities available for the current license tier (see COMPONENTS)
 
 # TOOL SUPPORT
@@ -17,7 +18,7 @@ Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=t
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
-4. Read the schema via `elementor/get-widget-schema` for every element type you will use, including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
+4. Read the schema via `elementor/get-widget-schemas` for every element type you will use (in one call), including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
 5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
 6. Use returned element IDs for subsequent configuration changes
 
@@ -66,7 +67,7 @@ Call `elementor/list-components` before building a repeated, named, or otherwise
 Place a component as the self-closing leaf tag `<e-component configuration-id="my-hero"/>`. Configure it through `element_config` with `{ component_id, overrides? }`. Override values use the plain-value shape from `origin_prop_schema`; only listed override keys are valid. Components can be mixed with raw widgets.
 
 # XML STRUCTURE
-- Use widget tags: `<e-button configuration-id="btn1"></e-button>`
+- Use widget tags: `<e-button configuration-id="primary-button"></e-button>`
 - Containers: "e-div-block", "e-grid", "e-flexbox"
 - Every element needs a unique `configuration-id` — see **ID RULES**
 - No other attributes, classes, element ids, or text nodes in XML
@@ -89,10 +90,10 @@ Some elements have internal tree structures (nesting). When using these elements
 # CONFIGURATION
 - Map configuration-id → element_config (props) + style (plain CSS string) + classes (global class labels)
 - **element_config uses plain JSON values** — send scalars and objects exactly as shown in the widget schema.
-- **Prop names must come from the widget schema (use elementor/get-widget-schema tool with the widget type). A key not in the schema, an unresolvable value, an unknown global class label, a bad interaction item, or unparseable CSS is skipped, the rest is saved, and each skip is returned as a warning (with `code` and `config_id` in `warning_details`). Every warning is fixable; only errors fail the call. Correct only that field via `elementor/manage-elements`; do not rebuild the composition and do not treat the skip as unsupported.**
+- **Prop names must come from the widget schema (use elementor/get-widget-schemas tool with the widget type). A key not in the schema, an unresolvable value, an unknown global class label, a bad interaction item, or unparseable CSS is skipped, the rest is saved, and each skip is returned as a warning (with `code` and `config_id` in `warning_details`). Every warning is fixable; only errors fail the call. Correct only that field via `elementor/manage-elements`; do not rebuild the composition and do not treat the skip as unsupported.**
 - style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
-- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schema`) includes a `link` property. On widgets without it, `link` is skipped with a warning — send it on a widget whose schema includes `link`, or wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
+- LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schemas`) includes a `link` property. On widgets without it, `link` is skipped with a warning — send it on a widget whose schema includes `link`, or wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
 ### Style conversion
@@ -110,6 +111,21 @@ The server converts most CSS into **native atomic styles** (breakpoint variants,
 
 **`padding` / `margin` shorthands are supported** — use them; do not split into longhand unnecessarily.
 
+### V3 widget style targets
+V3 widgets (non `e-` types such as `nav-menu`) are styled per **style target**, not with selectors. `elementor/get-widget-schema` returns `default_style_target` and `style_targets`; each target lists its `states` and its `properties`.
+- Bare declarations and `&:state { }` style the `default_style_target`.
+- Every other target is a block named by its alias: `dropdown { }`, `pointer:hover { }`. Blocks cannot be nested.
+- A property listed for a target may only be bound in some states (e.g. a hover pointer color); the warning names the state to use.
+- `wrapper` is the widget's Advanced tab (margin, padding, width, position, background, border).
+- A value the target's controls cannot store (unsupported property, value outside the control's options such as `font-weight: 650`, non-px box-shadow) is written to the widget's custom CSS for that target when Elementor Pro is active; the warning gives the reason and, when known, the allowed values. Prefer an allowed value so it stays editable in the panel. Media queries other than `@media(--<breakpoint>)` are kept verbatim in the same custom CSS.
+- Never use `.elementor-*` class selectors or descendant selectors — they are dropped.
+
+```json
+"style": {
+  "Main Menu": "color: #292925; font-size: 0.875rem; &:hover { color: #000000; } pointer:hover { background: #171714; color: #ffffff; } dropdown { background: #ffffff; border-radius: 12px; box-shadow: 0 16px 32px rgba(23,23,20,0.12); } toggle { color: #171714; } wrapper { flex-grow: 1; } @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } }"
+}
+```
+
 ## element_config FORMAT
 Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)
@@ -121,7 +137,9 @@ Match the widget schema shape:
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`. Don't send `alt` with `id`; library images render the attachment's Media Library alt text, so ask the user to update it there if it's missing.
   - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
-- **svg** (the `svg` prop on `e-svg`): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div. If no uploaded SVG exists, ask the user to upload one, otherwise omit the icon or use a text label — never fabricate an id.
+- **svg** (the `svg` prop on `e-svg`):<!--if:svg_library--> two mutually exclusive forms — send one, not both. See ICONS for which to pick.<!--endif:svg_library-->
+<!--if:svg_library-->  - Icon from a library (preferred for iconography): `{ "value": "fa-solid fa-cart-shopping", "library": "fa-solid" }`. Both fields come verbatim from `elementor/find-icons` — never assemble them yourself.<!--endif:svg_library-->
+  - Uploaded SVG file (for custom artwork, logos): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div, and a fabricated id renders nothing.
 - **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` with `type: "video"`): `{ "id": 123 }`
   - External URL: `{ "url": "https://example.com/clip.mp4" }`
@@ -141,7 +159,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
 
 **In `classes` (reference-only):** attach existing global classes by label:
-- Map configuration-id → array of labels (e.g. `"Section Title": ["hero-heading", "text-muted"]`)
+- Map configuration-id → array of labels (e.g. `"section-title": ["hero-heading", "text-muted"]`)
 - Create or update classes with `elementor/manage-classes` before referencing them here
 - Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
@@ -218,13 +236,45 @@ BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overfl
 - Use rem/em exclusively for responsive scaling
 - Generous padding on CTAs: min 1rem 2.5rem
 
-# INTERACTIONS
+<!--if:svg_library--># ICONS
+`e-svg` renders either a library icon or an uploaded SVG file. Prefer a library icon for iconography — carts, arrows, social marks, check marks — because it needs no upload and inherits `color` via `currentColor`. Use an uploaded SVG only for custom artwork such as a brand logo.
+
+Call `elementor/find-icons` to resolve icons, then copy its `value` and `library` verbatim into the `svg` prop. Do not assemble those strings yourself: Font Awesome renamed many icons between major versions (`shopping-cart` became `cart-shopping`), so a plausible-looking guess renders nothing.
+
+`find-icons` accepts a batch of `queries`, so resolve every icon a composition needs in ONE call before composing — not one call per icon. It matches on icon names, aliases, human search terms, and categories, so describe the intent rather than guessing a name: `"add to cart"` finds `cart-shopping`.
+
+```json
+{ "queries": ["add to cart", "free shipping", "secure payment", "instagram"] }
+```
+
+Each match returns `{ value, library, name, label, matched_on }`. Place it as-is:
+
+```json
+{
+  "xml_structure": "<e-flexbox configuration-id=\"add-to-cart-row\"><e-svg configuration-id=\"cart-icon\"/><e-button configuration-id=\"add-to-cart\"></e-button></e-flexbox>",
+  "element_config": {
+    "cart-icon": { "svg": { "value": "fa-solid fa-cart-shopping", "library": "fa-solid" } },
+    "add-to-cart": { "text": "Add to cart" }
+  },
+  "style": {
+    "add-to-cart-row": "display: flex; align-items: center; gap: 0.5rem;",
+    "cart-icon": "width: 1.25rem; height: 1.25rem; color: #1a1a1a;"
+  }
+}
+```
+
+Size an `e-svg` with `width` / `height` in `style` and colour it with `color` — the icon fills its box and takes `currentColor`.
+
+The response includes the Font Awesome version in use (`font_awesome_version`); the installed `libraries` and `categories` are listed only when nothing matched or when browsing without a query. Brand marks live in `fa-brands`, not `fa-solid`. Sites may add their own uploaded icon libraries, which `find-icons` returns alongside Font Awesome and which match on icon name only. When a query returns no matches, refine the wording rather than paginating, and fall back to a text label rather than inventing a name.
+
+<!--endif:svg_library--># INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
-- SVG widgets require an uploaded attachment: discover one via `elementor/list-assets` with `type: "svg"` and reference it by `id`. External URLs on `e-svg` render an empty div. When none exists, ask the user to upload, otherwise omit the icon or use a text label.
+<!--if:svg_library-->- Icons ONLY from `elementor/find-icons`; copy `value` and `library` verbatim into the `svg` prop. Never invent an icon name — FA renamed many icons between versions and a guess renders nothing<!--endif:svg_library-->
+- Uploaded SVG files ONLY from `elementor/list-assets` with `type: "svg"`, referenced by `id`. External URLs on `e-svg` render an empty div; never fabricate an id
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
 # MODE
@@ -250,24 +300,24 @@ Section with heading + button and a decorative glow (only the glow gets an expli
 ```json
 {
   "post_id": 123,
-  "xml_structure": "<e-div-block configuration-id=\"Main Section\"><e-div-block configuration-id=\"Glow\"/><e-heading configuration-id=\"Section Title\"></e-heading><e-button configuration-id=\"Call to Action\"></e-button></e-div-block>",
+  "xml_structure": "<e-div-block configuration-id=\"main-section\"><e-div-block configuration-id=\"glow\"/><e-heading configuration-id=\"section-title\"></e-heading><e-button configuration-id=\"call-to-action\"></e-button></e-div-block>",
   "element_config": {
-    "Section Title": {
+    "section-title": {
       "tag": "h2",
       "title": "Welcome"
     }
   },
   "editor_settings": {
-    "Glow": { "decorative": true }
+    "glow": { "decorative": true }
   },
   "style": {
-    "Main Section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
-    "Glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
-    "Section Title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
+    "main-section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
+    "glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
+    "section-title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
   }
 }
 ```
-Note: Only the decorative `Glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
+Note: Only the decorative `glow` has a width/height — it stays empty, so it needs one. Everything else sizes naturally.
 
 # FURTHER INSTRUCTIONS
 Use server-assigned element ids from `resolved_xml` for follow-up work — see **ID RULES**.

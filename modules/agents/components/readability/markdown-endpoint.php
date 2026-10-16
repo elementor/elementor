@@ -336,7 +336,7 @@ class Markdown_Endpoint extends Feature_Component {
 				'X-Robots-Tag'           => 'noindex',
 			],
 			[
-				'Link' => '<' . esc_url( get_permalink( $post_id ) ) . '>; rel="canonical"',
+				'Link' => '<' . esc_url_raw( get_permalink( $post_id ) ) . '>; rel="canonical"',
 			]
 		);
 	}
@@ -347,7 +347,7 @@ class Markdown_Endpoint extends Feature_Component {
 	public function build_markdown_hook_headers( int $post_id ): array {
 		return [
 			'Vary'         => 'Accept',
-			'Link'         => '<' . esc_url( get_permalink( $post_id ) ) . '>; rel="canonical"',
+			'Link'         => '<' . esc_url_raw( get_permalink( $post_id ) ) . '>; rel="canonical"',
 			'X-Robots-Tag' => 'noindex',
 		];
 	}

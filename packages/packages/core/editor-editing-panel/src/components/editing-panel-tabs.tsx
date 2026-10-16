@@ -36,14 +36,16 @@ const PanelTabContent = () => {
 	const { element } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
-	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
+	const elementMeta = getWidgetsCache()?.[ element.type ]?.meta;
+	const isPromotedElement = !! elementMeta?.is_pro_promotion;
+	const hasDesignTabs = ! elementMeta?.hide_design_tabs;
 	const hasContentOnlyAccess = useHasContentOnlyAccess();
 
 	// A promoted element has no General tab, and its Style tab only renders an upsell, so restricting it would leave the panel empty.
 	const areDesignTabsRestricted = hasContentOnlyAccess && ! isPromotedElement;
 
 	const [ storedTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
-	const currentTab = resolveCurrentTab( { storedTab, isPromotedElement, areDesignTabsRestricted } );
+	const currentTab = resolveCurrentTab( { storedTab, isPromotedElement, areDesignTabsRestricted, hasDesignTabs } );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );
 
 	const getDesignTabProps = ( tab: TabValue ) => ( {
@@ -76,14 +78,18 @@ const PanelTabContent = () => {
 						{ ! isPromotedElement && (
 							<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						) }
-						<Tab
-							label={ withRestrictionInfotip( __( 'Style', 'elementor' ) ) }
-							{ ...getDesignTabProps( 'style' ) }
-						/>
-						<Tab
-							label={ withRestrictionInfotip( __( 'Interactions', 'elementor' ) ) }
-							{ ...getDesignTabProps( 'interactions' ) }
-						/>
+						{ hasDesignTabs && (
+							<Tab
+								label={ withRestrictionInfotip( __( 'Style', 'elementor' ) ) }
+								{ ...getDesignTabProps( 'style' ) }
+							/>
+						) }
+						{ hasDesignTabs && (
+							<Tab
+								label={ withRestrictionInfotip( __( 'Interactions', 'elementor' ) ) }
+								{ ...getDesignTabProps( 'interactions' ) }
+							/>
+						) }
 					</Tabs>
 					<Divider />
 				</Stack>
@@ -92,7 +98,7 @@ const PanelTabContent = () => {
 						<SettingsTab />
 					</TabPanel>
 				) }
-				{ ! areDesignTabsRestricted && (
+				{ hasDesignTabs && ! areDesignTabsRestricted && (
 					<>
 						<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 							<StyleTab />
@@ -111,12 +117,14 @@ const resolveCurrentTab = ( {
 	storedTab,
 	isPromotedElement,
 	areDesignTabsRestricted,
+	hasDesignTabs,
 }: {
 	storedTab: TabValue;
 	isPromotedElement: boolean;
 	areDesignTabsRestricted: boolean;
+	hasDesignTabs: boolean;
 } ): TabValue => {
-	if ( areDesignTabsRestricted && DESIGN_TABS.includes( storedTab ) ) {
+	if ( ( areDesignTabsRestricted || ! hasDesignTabs ) && DESIGN_TABS.includes( storedTab ) ) {
 		return CONTENT_ONLY_TAB;
 	}
 

@@ -41,6 +41,7 @@ class Create_Page_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			function () {
 				return current_user_can( 'edit_posts' );
