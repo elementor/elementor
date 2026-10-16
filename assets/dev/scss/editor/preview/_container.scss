@@ -145,6 +145,19 @@
 		}
 	}
 
+	> .elementor-sortable-placeholder.elementor-widget-placeholder.e-placeholder--overlay {
+		position: absolute;
+		top: var( --e-placeholder-top );
+		left: var( --e-placeholder-left );
+		width: var( --size );
+		height: var( --e-placeholder-height );
+		min-height: 0;
+		margin: 0;
+		z-index: $editor-layer;
+		pointer-events: none;
+		animation-name: dnd-placeholder-overlay;
+	}
+
 	// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
 	&.e-grid.e-con--row {
 
@@ -375,6 +388,20 @@ body.rtl {
 				}
 			}
 		}
+	}
+}
+
+@keyframes dnd-placeholder-overlay {
+	0% {
+		transform-origin: 50% 50%;
+		transform: scaleX( 0 );
+		opacity: 0;
+	}
+
+	100% {
+		transform-origin: 50% 50%;
+		transform: scaleX( 1 );
+		opacity: .9;
 	}
 }
 
