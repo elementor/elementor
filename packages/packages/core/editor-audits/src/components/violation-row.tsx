@@ -11,6 +11,7 @@ import { type AuditMeta, type AuditViolation } from '../types';
 import { buildAngiePrompt } from '../utils/build-angie-prompt';
 import { isScoredAudit } from '../utils/is-scored-audit';
 import { onKeyboardClick } from '../utils/keyboard-click';
+import { trackFindingClicked, trackFixWithApp } from '../utils/tracking';
 import FixViolationWithAngie from './fix-violation-with-angie';
 import SeverityIcon from './severity-icons';
 import ViolationCtaButton from './violation-cta-button';
@@ -52,10 +53,12 @@ function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violati
 }
 
 function GuidanceAction( {
+	audit,
 	violation,
 	sharedAngiePrompt,
 	panelZIndex,
 }: {
+	audit: AuditMeta;
 	violation: AuditViolation;
 	sharedAngiePrompt?: string;
 	panelZIndex: number;
@@ -73,6 +76,7 @@ function GuidanceAction( {
 					ctaLabel={ violation.ctaLabel as string }
 					externalUrl={ violation.externalUrl as string }
 					withIcon
+					onOpen={ () => trackFixWithApp( audit, violation, 'issues' ) }
 				/>
 			) }
 			{ hasPrimaryCta && violation.secondaryCtaLabel && violation.secondaryCtaUrl && (
@@ -83,7 +87,12 @@ function GuidanceAction( {
 				/>
 			) }
 			{ sharedAngiePrompt && (
-				<FixViolationWithAngie prompt={ sharedAngiePrompt } panelZIndex={ panelZIndex } variant="button" />
+				<FixViolationWithAngie
+					audit={ audit }
+					prompt={ sharedAngiePrompt }
+					panelZIndex={ panelZIndex }
+					variant="button"
+				/>
 			) }
 		</Box>
 	);
@@ -113,9 +122,22 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 	const panelZIndex = useFloatingPanelZIndex( AUDIT_PANEL_ID );
 	const sharedAngiePrompt = getSharedAngiePrompt( violations );
 
+	const viewIssue = ( violation: AuditViolation ) => {
+		const interactionResult = focusViolation( violation );
+
+		if ( interactionResult ) {
+			trackFindingClicked( {
+				audit,
+				locationL2: 'issues',
+				actionType: 'view_issue',
+				interactionResult,
+			} );
+		}
+	};
+
 	const handleGuidanceClick = () => {
 		if ( isGuidanceFocusable && primaryViolation ) {
-			focusViolation( primaryViolation );
+			viewIssue( primaryViolation );
 		}
 	};
 
@@ -170,6 +192,7 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 							</Typography>
 							{ primaryViolation && (
 								<GuidanceAction
+									audit={ audit }
 									violation={ primaryViolation }
 									sharedAngiePrompt={ sharedAngiePrompt }
 									panelZIndex={ panelZIndex }
@@ -194,8 +217,8 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 									key={ idx }
 									role="button"
 									tabIndex={ 0 }
-									onClick={ () => focusViolation( violation ) }
-									onKeyDown={ onKeyboardClick( () => focusViolation( violation ) ) }
+									onClick={ () => viewIssue( violation ) }
+									onKeyDown={ onKeyboardClick( () => viewIssue( violation ) ) }
 									sx={ {
 										display: 'flex',
 										alignItems: 'center',
@@ -226,6 +249,7 @@ export default function ViolationRow( { audit, expanded, onToggleExpand, skipRea
 											sx={ { opacity: 0, transition: 'opacity .15s' } }
 										>
 											<FixViolationWithAngie
+												audit={ audit }
 												prompt={
 													violation.angiePrompt ?? buildAngiePrompt( angiePromptContext )
 												}
