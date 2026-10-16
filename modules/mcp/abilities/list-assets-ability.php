@@ -42,7 +42,7 @@ class List_Assets_Ability extends Abstract_Ability {
 		'video/3gpp2',
 	];
 
-	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Ask the user to upload the images or SVG icons they want to use (WP Admin → Media → Add New), then call this tool again. Do not fabricate attachment ids.';
+	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Use elementor/upload-media (HTTPS source URL) or elementor/request-media-upload (one-time curl upload) after the user consents. If those are unavailable, ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-assets';

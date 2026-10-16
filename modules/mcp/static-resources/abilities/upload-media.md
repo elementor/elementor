@@ -1,0 +1,1 @@
+Imports an image into the WordPress Media Library by HTTPS URL. Never download or base64-encode the image yourself; the server fetches the file out of band. Requires explicit user consent. Returns attachment metadata only (no image bytes).
