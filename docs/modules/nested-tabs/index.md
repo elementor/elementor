@@ -90,9 +90,9 @@
 			* Custom Views:
 				* __View__ `modules/nested-tabs/assets/js/editor/views/view.js` - The actual view of the widget.
 			* Custom Empty widget views:
-				* __Empty View__ `modules/nested-tabs/assets/js/editor/views/empty.js` - The view that will be rendered when the widget is empty.
-				* __Select Preset View__ `modules/nested-tabs/assets/js/editor/views/select-preset.js` - will be rendered when select preset selected.
-				* __Add Section Area View__ `modules/nested-tabs/assets/js/editor/views/add-section-area.js` - The default that will be rendered on the __Empty View__.
+				* __Empty View__ `modules/nested-elements/assets/js/editor/views/empty.js` - The view that will be rendered when the widget is empty.
+				* __Select Preset View__ `modules/nested-elements/assets/js/editor/views/select-preset.js` - will be rendered when select preset selected.
+				* __Add Section Area View__ `modules/nested-elements/assets/js/editor/views/add-section-area.js` - The default that will be rendered on the __Empty View__.
 		* Frontend scripts:
 			* __NestedTabs__ Handler `modules/nested-tabs/assets/js/frontend/handlers/nested-tabs.js`
 		* Frontend styles:
@@ -395,7 +395,7 @@ export default class YourCustomHandler extends elementorModules.frontend.handler
 - The view logic is handles the clicks on the widget, that's what it used in this scenario, if there is no custom logic, the default nested view can be used:       - `$e.components.get( 'nested-elements/nested-repeater' ).exports.NestedViewBase`.
 
 ## `assets/js/editor/views/add-section-area.js` - Custom `AddSectionArea` for nested tabs.
-* **Link to the actual file** - [add-section-area.js](../../../modules/nested-tabs/assets/js/editor/views/add-section-area.js)
+* **Link to the actual file** - [add-section-area.js](../../../modules/nested-elements/assets/js/editor/views/add-section-area.js)
 ```javascript
 import { useEffect, useRef } from 'react';
 
@@ -462,7 +462,7 @@ AddSectionArea.propTypes = {
 };
 ```
 ## `assets/js/editor/views/empty.js` - Custom empty-view for the widget.
-* **Link to the actual file** - [empty.js](../../../modules/nested-tabs/assets/js/editor/views/empty.js)
+* **Link to the actual file** - [empty.js](../../../modules/nested-elements/assets/js/editor/views/empty.js)
 
 ![img](./_images/1.jpg)
 * The view should be `React` component, it will be the empty view for the widget children, in this case, the tabs.
@@ -490,7 +490,7 @@ AddSectionArea.propTypes = {
     ```
     - This component determines which component to print `SelectPreset` or `AddSectionArea`.
 ## `assets/js/editor/views/select-preset.js` - Custom react component to print the presets available for children containers.
-* **Link to the actual file** - [select-preset.js](../../../modules/nested-tabs/assets/js/editor/views/select-preset.js)
+* **Link to the actual file** - [select-preset.js](../../../modules/nested-elements/assets/js/editor/views/select-preset.js)
 
 ![img](./_images/2.jpg)
 ```javascript
