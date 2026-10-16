@@ -72,9 +72,15 @@ class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'GET', '/wp/v2/pages/' . $post_id );
 
+		// WP 6.8 emits PHP 8.5 deprecation notices that are not Elementor output.
 		ob_start();
-		$response = rest_do_request( $request );
-		$unexpected_output = ob_get_clean();
+		$previous_error_reporting = error_reporting( error_reporting() & ~E_DEPRECATED );
+		try {
+			$response = rest_do_request( $request );
+		} finally {
+			error_reporting( $previous_error_reporting );
+			$unexpected_output = ob_get_clean();
+		}
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '', $unexpected_output, 'Post CSS must not be echoed outside the REST JSON payload.' );
