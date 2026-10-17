@@ -3,6 +3,7 @@ import { createMockPropType, renderControl } from 'test-utils';
 import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { useElement } from '../../../contexts/element-context';
 import { usePersistDynamicValue } from '../../../hooks/use-persist-dynamic-value';
 import { usePropDynamicTags } from '../../hooks/use-prop-dynamic-tags';
 import { getAtomicDynamicTags } from '../../sync/get-atomic-dynamic-tags';
@@ -15,6 +16,7 @@ jest.mock( '@elementor/editor-controls', () => ( {
 	trackUpgradePromotionClick: jest.fn(),
 } ) );
 
+jest.mock( '../../../contexts/element-context' );
 jest.mock( '../../hooks/use-prop-dynamic-tags' );
 jest.mock( '../../sync/get-atomic-dynamic-tags' );
 jest.mock( '../../../hooks/use-persist-dynamic-value' );
@@ -26,6 +28,7 @@ describe( '<DynamicSelection />', () => {
 		globalThis.Element.prototype.getBoundingClientRect = jest.fn().mockReturnValue( { height: 1000, width: 1000 } );
 
 		jest.mocked( usePersistDynamicValue ).mockReturnValue( [ null, jest.fn(), jest.fn() ] );
+		jest.mocked( useElement ).mockReturnValue( { element: { id: 'element-id', type: 'e-heading' } } as never );
 	} );
 
 	afterEach( () => {

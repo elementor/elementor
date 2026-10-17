@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type Control, type ControlItem, type Element, type ElementControl } from '@elementor/editor-elements';
 import { type Props, type PropsSchema } from '@elementor/editor-props';
+import { createLocation } from '@elementor/locations';
 import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
@@ -9,6 +10,8 @@ import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 import { SettingsControl } from './settings-control';
+
+export const { Slot: SettingsTabSlot, inject: injectIntoSettingsTab } = createLocation();
 
 export const SettingsTab = () => {
 	const { elementType, element, settings } = useElement();
@@ -53,6 +56,7 @@ export const SettingsTab = () => {
 
 					return null;
 				} ) }
+				<SettingsTabSlot />
 			</SectionsList>
 		</SessionStorageProvider>
 	);

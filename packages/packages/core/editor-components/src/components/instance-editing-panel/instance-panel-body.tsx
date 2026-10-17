@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider } from '@elementor/editor-controls';
-import { getFieldIndicators } from '@elementor/editor-editing-panel';
+import { ComponentStateSection, getFieldIndicators } from '@elementor/editor-editing-panel';
 import { PanelBody } from '@elementor/editor-panels';
 import { Divider, Stack } from '@elementor/ui';
 
+import { useComponentId } from '../../provider/component-instance-context';
 import { type OverridablePropsGroup } from '../../types';
 import { OverridePropsGroup } from './override-props-group';
 
@@ -15,8 +16,13 @@ type InstancePanelBodyProps = {
 };
 
 export function InstancePanelBody( { groups, isEmpty, emptyState, componentInstanceId }: InstancePanelBodyProps ) {
+	const componentId = useComponentId();
+
 	return (
 		<PanelBody>
+			{ componentInstanceId && (
+				<ComponentStateSection componentId={ componentId } elementId={ componentInstanceId } />
+			) }
 			<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 				{ isEmpty ? (
 					emptyState

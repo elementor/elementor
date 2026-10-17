@@ -8,7 +8,12 @@ import {
 	mockHistoryManager,
 	renderWithTheme,
 } from 'test-utils';
-import { getElementLabel, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
+import {
+	getElementLabel,
+	getElementSetting,
+	getElementStateParamsInScope,
+	updateElementSettings,
+} from '@elementor/editor-elements';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import {
 	ELEMENTS_STYLES_PROVIDER_KEY_PREFIX,
@@ -131,6 +136,8 @@ describe( '<CssClassSelector />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		historyMock.beforeEach();
+
+		jest.mocked( getElementStateParamsInScope ).mockReturnValue( [] );
 
 		jest.mocked( stylesRepository.all ).mockReturnValue( [
 			providerLocalMockStyle,

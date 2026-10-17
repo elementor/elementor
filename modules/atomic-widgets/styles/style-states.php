@@ -14,6 +14,8 @@ class Style_States {
 	const PLAYING = 'e--playing';
 	const PAUSED = 'e--paused';
 
+	const STATE_KEY_PATTERN = '/^e--state-[a-z_][a-z0-9_]*$/';
+
 	private static function get_pseudo_states(): array {
 		return [
 			self::HOVER,
@@ -40,6 +42,10 @@ class Style_States {
 	}
 
 	public static function get_selector_with_state( string $base_selector, string $state ): string {
+		if ( self::is_state_key_state( $state ) ) {
+			return $base_selector . '.' . $state . ',.' . $state . ' ' . $base_selector;
+		}
+
 		$additional_states = self::get_additional_states( $state );
 		$all_states = [ $state, ...$additional_states ];
 
@@ -82,7 +88,11 @@ class Style_States {
 	}
 
 	public static function is_class_state( string $state ): bool {
-		return in_array( $state, self::get_class_states(), true );
+		return in_array( $state, self::get_class_states(), true ) || self::is_state_key_state( $state );
+	}
+
+	public static function is_state_key_state( string $state ): bool {
+		return 1 === preg_match( self::STATE_KEY_PATTERN, $state );
 	}
 
 	public static function is_valid_state( $state ): bool {
@@ -90,7 +100,7 @@ class Style_States {
 			return true;
 		}
 
-		return is_string( $state ) && in_array( $state, self::get_valid_states(), true );
+		return is_string( $state ) && ( in_array( $state, self::get_valid_states(), true ) || self::is_state_key_state( $state ) );
 	}
 
 	public static function get_class_states_map(): array {

@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
+import { useSelectedElement } from '@elementor/editor-elements';
 import { type PropKey } from '@elementor/editor-props';
 
 import { useVariableType } from '../context/variable-type-context';
 import { type CreateVariableOptions, service, type UpdateVariableOptions } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 import { filterBySearch } from '../utils/filter-by-search';
+import { getStateVariables } from '../utils/state-variables';
 import { toNormalizedVariable, variablesToList } from '../utils/variables-to-list';
 import { getVariableType, getVariableTypes } from '../variables-registry/variable-type-registry';
 
@@ -47,7 +49,8 @@ export function getVariable( key: string ) {
 export const useFilteredVariables = ( searchValue: string, propTypeKey: string ) => {
 	const baseVariables = usePropVariables( propTypeKey );
 
-	const typeFilteredVariables = useVariableSelectionFilter( baseVariables );
+	const stateVariables = useStateVariables( propTypeKey );
+	const typeFilteredVariables = [ ...useVariableSelectionFilter( baseVariables ), ...stateVariables ];
 	const searchFilteredVariables = filterBySearch( typeFilteredVariables, searchValue );
 
 	const sortedVariables = searchFilteredVariables.sort( ( a, b ) => {
@@ -69,6 +72,17 @@ const useVariableSelectionFilter = ( variables: NormalizedVariable[] ): Normaliz
 	const { propType } = useBoundProp();
 
 	return selectionFilter ? selectionFilter( variables, propType ) : variables;
+};
+
+const useStateVariables = ( propKey: PropKey ): NormalizedVariable[] => {
+	const { element } = useSelectedElement();
+	const variableType = getVariableType( propKey )?.variableType;
+	const elementId = element?.id;
+
+	return useMemo(
+		() => ( variableType ? getStateVariables( elementId, variableType ) : [] ),
+		[ elementId, variableType ]
+	);
 };
 
 const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {

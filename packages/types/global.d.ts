@@ -1,6 +1,6 @@
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 import type { DynamicTag, DynamicTags, DynamicTagsManager, InteractionsConfig } from '@elementor/editor-editing-panel';
-import type { ControlItem, V1Element } from '@elementor/editor-elements';
+import type { ControlItem, ElementStateParam, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema, PropValue } from '@elementor/editor-props';
 import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 
@@ -131,6 +131,11 @@ declare global {
 						groups?: Record< string, string >;
 						options?: Record< string, string >;
 					};
+				};
+				dataFlow?: {
+					componentParams?: Record< number, ElementStateParam[] >;
+					snippetFiles?: Record< string, string >;
+					snippets?: Record< string, { event: string; description: string; code?: string }[] >;
 				};
 				atomicDynamicTags?: {
 					tags: DynamicTags;

@@ -2,6 +2,7 @@ import { createTransformer } from '@elementor/editor-canvas';
 import { isTransformable, type Props } from '@elementor/editor-props';
 
 import { DynamicTagsManagerNotFoundError } from './errors';
+import { isStateTagName, STATE_IMAGE_TAG_NAME, toStatePlaceholder } from './state-tag';
 import { isDynamicTagSupported } from './utils';
 
 type Dynamic = {
@@ -12,6 +13,10 @@ type Dynamic = {
 export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType, renderContext } ) => {
 	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
 		return propType?.default ?? null;
+	}
+
+	if ( isStateTagName( value.name ) ) {
+		return toStatePlaceholder( value.settings, value.name === STATE_IMAGE_TAG_NAME ? '.url' : '' );
 	}
 
 	const renderPostId = ( renderContext as { currentPostId?: number } | undefined )?.currentPostId;
