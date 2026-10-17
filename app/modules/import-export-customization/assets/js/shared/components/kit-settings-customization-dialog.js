@@ -2,31 +2,30 @@ import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { SettingSection } from './customization-setting-section';
-import { ClassesVariablesSection } from './classes-variables-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { OverrideConfirmationDialog } from './override-confirmation-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
 import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { createRegisteredCustomizationDialogsRegistry } from '../registry/customization-dialogs';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
-
-function isExperimentActive( experimentName ) {
-	return !! elementorCommon?.config?.experimentalFeatures?.[ experimentName ];
-}
-
-function isClassesFeatureActive() {
-	return isExperimentActive( 'e_atomic_elements' );
-}
-
-function isVariablesFeatureActive() {
-	return isExperimentActive( 'e_atomic_elements' );
-}
-
-function isDefaultStylesFeatureActive() {
-	return isExperimentActive( 'e_atomic_elements' );
-}
+import {
+	SettingsGroupSection,
+} from './settings-customization-sections';
+import {
+	getAvailableCustomizationDialogChildren,
+	getCustomizationDialogSnapshot,
+	getImportedClassesCount,
+	getImportedVariablesCount,
+	isClassesExported,
+	isDefaultStylesExported,
+	isVariablesExported,
+} from '../utils';
+import {
+	KIT_SECTIONS,
+	KIT_SECTION_ITEMS,
+} from '../constants';
 
 const transformAnalyticsData = ( payload ) => {
 	const transformed = {};
@@ -59,75 +58,96 @@ async function fetchManagerUrl( panelId ) {
 	return data.data?.url || data.url;
 }
 
-function getInitialState( contextData, isImport ) {
-	const data = contextData.data;
-	let initialState = data.includes.includes( 'settings' );
+function getRegistryChildren( registry, parentKey ) {
+	return registry.getAll()
+		.filter( ( item ) => item.parentKey === parentKey )
+		.sort( ( first, second ) => first.order - second.order );
+}
 
-	if ( isImport && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) {
-		initialState = false;
+const coreSettingsRegistry = createRegisteredCustomizationDialogsRegistry();
+
+function mergeCoreSettingsEntries( parentKey, registeredEntries ) {
+	const coreEntries = getRegistryChildren( coreSettingsRegistry, parentKey );
+
+	if ( ! coreEntries.length ) {
+		return registeredEntries;
 	}
 
-	return initialState;
+	const coreEntryByKey = new Set( coreEntries.map( ( entry ) => entry.key ) );
+	const registeredEntriesMap = new Map(
+		registeredEntries.map( ( entry ) => [ entry.key, entry ] ),
+	);
+
+	return [
+		...coreEntries.map( ( entry ) => ( {
+			...entry,
+			...registeredEntriesMap.get( entry.key ),
+		} ) ),
+		...registeredEntries.filter( ( entry ) => ! coreEntryByKey.has( entry.key ) ),
+	].sort( ( first, second ) => first.order - second.order );
 }
 
-function isExported( contextData ) {
-	if ( contextData?.isOldExport ) {
-		return contextData?.data?.uploadedData?.manifest?.theme;
-	}
-
-	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
+function getRegisteredSettingsChildren( parentKey ) {
+	return mergeCoreSettingsEntries(
+		parentKey,
+		getAvailableCustomizationDialogChildren( parentKey ),
+	);
 }
 
-function isClassesExported( contextData ) {
-	return !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classes;
+function buildSettingsTree( parentKey = KIT_SECTIONS.SETTINGS ) {
+	return getRegisteredSettingsChildren( parentKey ).map( ( item ) => ( {
+		...item,
+		children: buildSettingsTree( item.key ),
+	} ) );
 }
 
-function isVariablesExported( contextData ) {
-	return !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variables;
+function collectSettingRows( tree ) {
+	return tree.flatMap( ( item ) => {
+		if ( item.children.length ) {
+			return collectSettingRows( item.children );
+		}
+
+		return item.settingKey ? [ item ] : [];
+	} );
 }
 
-function isDefaultStylesExported( contextData ) {
-	const siteSettings = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
+function getInitialSettings( contextData, isImport, registeredRows ) {
+	const includesSettings = contextData?.data?.includes?.includes( KIT_SECTIONS.SETTINGS );
+	const customization = contextData?.data?.customization?.settings ?? {};
 
-	if ( undefined === siteSettings?.defaultStyles ) {
-		return false;
-	}
+	return registeredRows.reduce( ( state, row ) => {
+		if ( ! row.settingKey ) {
+			return state;
+		}
 
-	return !! siteSettings.defaultStyles;
-}
+		const initialValue = row.getInitialState
+			? row.getInitialState( { contextData, includesSettings, isImport } )
+			: includesSettings;
 
-function getDesignSystemSettingsInitialState( contextData, isImport ) {
-	const includesSettings = contextData?.data?.includes?.includes( 'settings' );
-
-	return {
-		classes: includesSettings && ( ! isImport || isClassesExported( contextData ) ),
-		variables: includesSettings && ( ! isImport || isVariablesExported( contextData ) ),
-		defaultStyles: includesSettings && ( ! isImport || isDefaultStylesExported( contextData ) ),
-		classesOverrideAll: false,
-		variablesOverrideAll: false,
-	};
-}
-
-function getSettingsInitialState( contextData, isImport, showDesignSystemSettingsSection ) {
-	return {
-		theme: getInitialState( contextData, isImport ),
-		...( showDesignSystemSettingsSection ? getDesignSystemSettingsInitialState( contextData, isImport ) : {} ),
-	};
+		return {
+			...state,
+			[ row.settingKey ]: row.settingKey in customization ? customization[ row.settingKey ] : initialValue,
+		};
+	}, {} );
 }
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null } = contextData;
 
-	const showClassesSection = isClassesFeatureActive();
-	const showVariablesSection = isVariablesFeatureActive();
-	const showDefaultStylesSection = isDefaultStylesFeatureActive();
-	const showDesignSystemSettingsSection = showClassesSection || showVariablesSection || showDefaultStylesSection;
-
-	const settingsInitialState = useMemo(
-		() => getSettingsInitialState( contextData, isImport, showDesignSystemSettingsSection ),
-		[ contextData, isImport, showDesignSystemSettingsSection ],
+	const settingsDialogSnapshot = getCustomizationDialogSnapshot( KIT_SECTIONS.SETTINGS );
+	const designSystemDialogSnapshot = getCustomizationDialogSnapshot( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM );
+	const settingsTreeSignature = JSON.stringify( {
+		settings: settingsDialogSnapshot,
+		designSystem: designSystemDialogSnapshot,
+	} );
+	const settingsTree = useMemo( () => buildSettingsTree(), [ settingsTreeSignature ] );
+	const registeredRows = useMemo( () => collectSettingRows( settingsTree ), [ settingsTree ] );
+	const registeredRowsKey = useMemo(
+		() => registeredRows.map( ( row ) => `${ row.key }:${ row.component?.name || '' }` ).join( '|' ),
+		[ registeredRows ],
 	);
+	const rowByKey = useMemo( () => new Map( registeredRows.map( ( row ) => [ row.key, row ] ) ), [ registeredRows ] );
 
 	const {
 		existingClassesCount,
@@ -137,8 +157,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		calculateLimitInfo,
 	} = useClassesVariablesLimits( { open, isImport } );
 
-	const importedClassesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.classesCount ?? 0;
-	const importedVariablesCount = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variablesCount ?? 0;
+	const importedClassesCount = getImportedClassesCount( contextData );
+	const importedVariablesCount = getImportedVariablesCount( contextData );
 
 	const classesLimitInfo = useMemo(
 		() => calculateLimitInfo( existingClassesCount, importedClassesCount, classesLimit ),
@@ -150,23 +170,13 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		[ existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo ],
 	);
 
-	const getInitialSettings = () => {
-		return {
-			...settingsInitialState,
-			...( data.customization.settings || {} ),
-		}
-	};
-
-	const [ settings, setSettings ] = useState( () => {
-		return getInitialSettings();
-	} );
+	const [ settings, setSettings ] = useState( () => getInitialSettings( contextData, isImport, registeredRows ) );
 
 	useEffect( () => {
 		if ( open ) {
-			setSettings( getInitialSettings() );
+			setSettings( getInitialSettings( contextData, isImport, registeredRows ) );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ open ] );
+	}, [ contextData, isImport, open, registeredRows, registeredRowsKey ] );
 
 	useEffect( () => {
 		if ( open ) {
@@ -174,14 +184,14 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		}
 	}, [ open ] );
 
-	const handleToggleChange = ( settingKey ) => {
+	const handleToggleChange = ( settingKey, isChecked ) => {
 		setSettings( ( prev ) => ( {
 			...prev,
-			[ settingKey ]: ! prev[ settingKey ],
+			[ settingKey ]: undefined === isChecked ? ! prev[ settingKey ] : isChecked,
 		} ) );
 	};
 
-	const handleClassesVariablesChange = ( settingKey, value ) => {
+	const handleSettingChange = ( settingKey, value ) => {
 		setSettings( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: value,
@@ -190,7 +200,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const handleReviewClick = useCallback( async ( panelId ) => {
 		const transformedAnalytics = transformAnalyticsData( settings );
-		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+		handleSaveChanges( KIT_SECTIONS.SETTINGS, settings, true, transformedAnalytics );
 		handleClose();
 
 		try {
@@ -219,6 +229,116 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const variablesLimitExceeded = isImport && variablesLimitInfo.isExceeded;
 	const classesOverLimitCount = classesLimitInfo.overLimitCount;
 	const variablesOverLimitCount = variablesLimitInfo.overLimitCount;
+	const hasThemeRow = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME );
+	const topLevelSettingsKeys = useMemo( () => new Set( settingsTree.map( ( item ) => item.key ) ), [ settingsTree ] );
+	const hasSiteSettingsRows = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_COLORS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_FONTS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_THEME_STYLE_SETTINGS );
+	const hasCustomFilesRows = rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_FONTS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_ICONS ) || rowByKey.has( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_CODE );
+
+	const getRegisteredRowProps = ( rowKey ) => {
+		const props = {
+			data,
+			contextData,
+			isImport,
+			settings,
+		};
+
+		switch ( rowKey ) {
+			case KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES:
+				return {
+					...props,
+					classesLimitExceeded,
+					classesOverLimitCount,
+					classesReviewClick: handleClassesReviewClick,
+					onSettingChange: handleSettingChange,
+				};
+			case KIT_SECTION_ITEMS.SETTINGS_GLOBAL_VARIABLES:
+				return {
+					...props,
+					onSettingChange: handleSettingChange,
+					variablesLimitExceeded,
+					variablesOverLimitCount,
+					variablesReviewClick: handleVariablesReviewClick,
+				};
+			case KIT_SECTION_ITEMS.SETTINGS_DEFAULT_STYLES:
+				return {
+					...props,
+					onSettingChange: handleSettingChange,
+				};
+			default:
+				return {
+					...props,
+					onSettingChange: handleToggleChange,
+				};
+		}
+	};
+
+	const getRegisteredSectionProps = ( sectionKey ) => {
+		if ( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM === sectionKey ) {
+			return {
+				isImport,
+				classesLimitExceeded,
+				variablesLimitExceeded,
+				notExported: designSystemSettingsNotExported,
+				settings,
+				onSettingChange: handleSettingChange,
+				classesExported: ! classesNotExported,
+				defaultStylesExported: ! defaultStylesNotExported,
+				variablesExported: ! variablesNotExported,
+				classesOverLimitCount,
+				variablesOverLimitCount,
+				onClassesReviewClick: handleClassesReviewClick,
+				onVariablesReviewClick: handleVariablesReviewClick,
+			};
+		}
+
+		return {};
+	};
+
+	const renderRegisteredRow = ( rowKey ) => {
+		const row = rowByKey.get( rowKey );
+
+		if ( ! row?.component || row.isPlaceholder ) {
+			return null;
+		}
+
+		const RowComponent = row.component;
+
+		return (
+			<RowComponent
+				key={ row.key }
+				{ ...getRegisteredRowProps( rowKey ) }
+			/>
+		);
+	};
+
+	const renderSettingsTreeItem = ( item ) => {
+		if ( ! item.children.length ) {
+			return renderRegisteredRow( item.key );
+		}
+
+		const renderedChildren = item.children
+			.map( ( child ) => renderSettingsTreeItem( child ) )
+			.filter( Boolean );
+
+		if ( ! renderedChildren.length && item.isPlaceholder ) {
+			return null;
+		}
+
+		if ( ! item.component ) {
+			return renderedChildren;
+		}
+
+		const SectionComponent = item.component;
+
+		return (
+			<SectionComponent
+				key={ item.key }
+				{ ...getRegisteredSectionProps( item.key ) }
+			>
+				{ renderedChildren }
+			</SectionComponent>
+		);
+	};
 
 	const [ confirmationDialog, setConfirmationDialog ] = useState( {
 		open: false,
@@ -227,7 +347,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const performSave = useCallback( () => {
 		const transformedAnalytics = transformAnalyticsData( settings );
-		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+		handleSaveChanges( KIT_SECTIONS.SETTINGS, settings, true, transformedAnalytics );
 		handleClose();
 	}, [ settings, handleSaveChanges, handleClose ] );
 
@@ -274,46 +394,26 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					{ contextData?.isOldElementorVersion && (
 						<UpgradeVersionBanner />
 					) }
-					{ isImport && ! isExported( contextData ) ? (
-						<SettingSection
-							title={ __( 'Theme', 'elementor' ) }
-							settingKey="theme"
-							notExported
-						/>
-					) : (
-						<SettingSection
-							key="theme"
-							checked={ settings.theme }
-							title={ __( 'Theme', 'elementor' ) }
-							description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
-							settingKey="theme"
-							onSettingChange={ handleToggleChange }
-							disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
-						/>
+					{ hasThemeRow && renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_THEME ) }
+					{ topLevelSettingsKeys.has( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM ) && renderSettingsTreeItem( settingsTree.find( ( item ) => item.key === KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM ) ) }
+
+					{ hasSiteSettingsRows && (
+						<SettingsGroupSection title={ __( 'Site settings', 'elementor' ) }>
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_COLORS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_GLOBAL_FONTS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_THEME_STYLE_SETTINGS ) }
+						</SettingsGroupSection>
 					) }
 
-					{ showDesignSystemSettingsSection && (
-						<ClassesVariablesSection
-							settings={ {
-								classes: settings.classes ?? false,
-								defaultStyles: settings.defaultStyles ?? false,
-								variables: settings.variables ?? false,
-								classesOverrideAll: settings.classesOverrideAll ?? false,
-								variablesOverrideAll: settings.variablesOverrideAll ?? false,
-							} }
-							onSettingChange={ handleClassesVariablesChange }
-							isImport={ isImport }
-							classesExported={ ! classesNotExported && showClassesSection }
-							defaultStylesExported={ ! defaultStylesNotExported && showDefaultStylesSection }
-							variablesExported={ ! variablesNotExported && showVariablesSection }
-							classesLimitExceeded={ classesLimitExceeded }
-							variablesLimitExceeded={ variablesLimitExceeded }
-							classesOverLimitCount={ classesOverLimitCount }
-							variablesOverLimitCount={ variablesOverLimitCount }
-							onClassesReviewClick={ handleClassesReviewClick }
-							onVariablesReviewClick={ handleVariablesReviewClick }
-							notExported={ designSystemSettingsNotExported }
-						/>
+					{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_GENERAL_SETTINGS ) }
+					{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_EXPERIMENTS ) }
+
+					{ hasCustomFilesRows && (
+						<SettingsGroupSection title={ __( 'Custom files', 'elementor' ) }>
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_FONTS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_ICONS ) }
+							{ renderRegisteredRow( KIT_SECTION_ITEMS.SETTINGS_CUSTOM_CODE ) }
+						</SettingsGroupSection>
 					) }
 				</Stack>
 			</KitCustomizationDialog>
