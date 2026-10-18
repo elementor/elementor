@@ -1293,6 +1293,13 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		$this->act_as_admin();
 		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+		$provide_dimensions = static function ( $metadata ) {
+			$metadata['width'] = 1;
+			$metadata['height'] = 1;
+
+			return $metadata;
+		};
+		add_filter( 'wp_generate_attachment_metadata', $provide_dimensions );
 		$tmp = wp_tempnam( 'mcp-admin-upload.svg' );
 		file_put_contents( $tmp, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><rect width="1" height="1"/></svg>' );
 
@@ -1302,6 +1309,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'name' => 'icon.svg',
 		] );
 
+		remove_filter( 'wp_generate_attachment_metadata', $provide_dimensions );
 		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
 
 		// Assert
