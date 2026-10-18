@@ -43,6 +43,7 @@ jobs:
       job_name: PHPUnit (PR/Merge)
       wordpress_versions: '["latest"]'
       php_versions: '["8.1", "8.4"]'
+      multisite_modes: '[false]'
 
   test_schedule:
     uses: ./.github/workflows/phpunit-runner.yml
