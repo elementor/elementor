@@ -60,6 +60,7 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'manage_options' ),
 			[
