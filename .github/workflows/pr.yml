@@ -424,7 +424,7 @@ jobs:
       job_name: PHPUnit (PR)
       wordpress_versions: '["latest"]'
       php_versions: '["8.1", "8.4"]'
-      multisite: single
+      multisite: both
 
   playwright:
     name: Playwright
