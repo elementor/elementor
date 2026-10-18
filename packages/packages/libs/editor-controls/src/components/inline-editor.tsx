@@ -16,7 +16,7 @@ import Underline from '@tiptap/extension-underline';
 import { type EditorProps, type EditorView } from '@tiptap/pm/view';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
-import { StateBindingHighlight } from '../state-binding-highlight';
+import { StateBindingHighlight } from './state-binding-highlight';
 import { htmlToPlainText, isEmpty } from '../utils/inline-editing';
 
 const ITALIC_KEYBOARD_SHORTCUT = 'i';
