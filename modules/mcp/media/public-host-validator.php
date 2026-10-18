@@ -268,6 +268,26 @@ class Public_Host_Validator {
 			return true;
 		}
 
+		// 2001:2::/48 (benchmarking).
+		if ( 0x20 === $first && 0x01 === $second && 0x00 === ord( $packed[2] ) && 0x02 === ord( $packed[3] ) && 0x00 === ord( $packed[4] ) && 0x00 === ord( $packed[5] ) ) {
+			return true;
+		}
+
+		// 2001:10::/28 and 2001:20::/28 (ORCHID and ORCHIDv2).
+		if ( 0x20 === $first && 0x01 === $second && 0x00 === ord( $packed[2] ) && in_array( ord( $packed[3] ) & 0xf0, [ 0x10, 0x20 ], true ) ) {
+			return true;
+		}
+
+		// 3fff::/20 (documentation).
+		if ( 0x3f === $first && 0xff === $second && ( ord( $packed[2] ) & 0xf0 ) === 0x00 ) {
+			return true;
+		}
+
+		// 5f00::/16 (reserved for segment routing).
+		if ( 0x5f === $first && 0x00 === $second ) {
+			return true;
+		}
+
 		if ( self::ipv6_is_ipv4_mapped( $packed ) ) {
 			$embedded = long2ip( unpack( 'N', substr( $packed, 12, 4 ) )[1] );
 			if ( is_string( $embedded ) && null !== self::assert_public_ip( $embedded ) ) {

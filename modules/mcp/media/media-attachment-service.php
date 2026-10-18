@@ -68,12 +68,12 @@ class Media_Attachment_Service {
 		?string $alt = null,
 		?string $source_url = null
 	) {
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
 			self::delete_temp( $file['tmp_name'] );
 
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to upload files.', 'elementor' ),
+				__( 'Only administrators can upload media with these tools.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}
@@ -141,10 +141,10 @@ class Media_Attachment_Service {
 	}
 
 	public static function update_title_and_alt( int $attachment_id, ?string $title, ?string $alt ) {
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to upload files.', 'elementor' ),
+				__( 'Only administrators can upload media with these tools.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}

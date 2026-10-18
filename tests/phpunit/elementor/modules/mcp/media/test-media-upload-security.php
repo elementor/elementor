@@ -198,34 +198,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_mime', $result->get_error_code() );
 	}
 
-	public function test_upload_media__rejects_svg_for_non_admin_editor() {
-		// Arrange
-		$this->act_as_editor();
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
-
-		$this->mock_pinned_http_response( static function () use ( $svg ) {
-			return [
-				'response' => [ 'code' => 200 ],
-				'headers' => [],
-				'body' => $svg,
-			];
-		} );
-
-		$ability = new Upload_Media_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'source_url' => 'https://example.com/icon.svg',
-			'consent' => true,
-		] );
-
-		$this->clear_pinned_http_mocks();
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
-	}
-
 	public function test_svg_upload_path__sanitizes_for_admin() {
 		// Arrange
 		if ( ! \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run() ) {
@@ -369,7 +341,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
 	}
 
-	public function test_upload_media__requires_upload_files_capability() {
+	public function test_upload_media__requires_administrator_capability() {
 		// Arrange
 		$user_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
 		wp_set_current_user( $user_id );
@@ -571,6 +543,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'ipv4-translated loopback' => [ '::ffff:0:7f00:1' ],
 			'ipv6 loopback' => [ '::1' ],
 			'ipv6 unspecified' => [ '::' ],
+			'2001:2::/48' => [ '2001:2::1' ],
+			'2001:10::/28' => [ '2001:1f:ffff::1' ],
+			'2001:20::/28' => [ '2001:2f::1' ],
+			'3fff::/20' => [ '3fff:fff::1' ],
+			'5f00::/16' => [ '5f00::1' ],
 		];
 	}
 
@@ -615,7 +592,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_url_port', $error->get_error_code() );
 	}
 
-	public function test_update_title_and_alt__requires_edit_post_on_attachment() {
+	public function test_update_title_and_alt__requires_administrator_capability() {
 		// Arrange
 		$this->act_as_admin();
 		$attachment_id = self::factory()->attachment->create( [
@@ -645,7 +622,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		] );
 		update_post_meta( $attachment_id, Media_Upload_Config::SOURCE_URL_META_KEY, $source_url );
 
-		$this->act_as_editor();
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 
 		$png = self::MINIMAL_PNG;
 
@@ -981,6 +958,9 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertNull( Public_Host_Validator::assert_public_ip( '198.20.0.1' ) );
 		$this->assertNull( Public_Host_Validator::assert_public_ip( '93.184.216.34' ) );
 		$this->assertNull( Public_Host_Validator::assert_public_ip( '2606:4700:4700::1111' ) );
+		$this->assertNull( Public_Host_Validator::assert_public_ip( '2001:30::1' ) );
+		$this->assertNull( Public_Host_Validator::assert_public_ip( '3fff:1000::1' ) );
+		$this->assertNull( Public_Host_Validator::assert_public_ip( '5f01::1' ) );
 	}
 
 	public function test_assert_https_url__rejects_userinfo() {
@@ -1337,12 +1317,12 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run(), $allowed_for_admin );
 	}
 
-	public function test_upload_token__rejects_user_who_lost_upload_capability() {
+	public function test_upload_token__rejects_user_who_lost_administrator_role() {
 		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		$user_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $user_id );
 		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
-		( new \WP_User( $user_id ) )->set_role( 'subscriber' );
+		( new \WP_User( $user_id ) )->set_role( 'editor' );
 		wp_set_current_user( 0 );
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
@@ -1450,5 +1430,195 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( \WP_Http::CREATED, $response->get_status() );
 		$this->assertSame( Media_Upload_Config::MAX_METADATA_LENGTH, strlen( $response->get_data()['alt'] ) );
+	}
+
+	/**
+	 * @dataProvider non_administrator_role_provider
+	 */
+	public function test_media_abilities__deny_non_administrators( string $role ) {
+		// Arrange
+		$user_id = self::factory()->user->create( [ 'role' => $role ] );
+		wp_set_current_user( $user_id );
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => $user_id,
+			'post_mime_type' => 'image/jpeg',
+		] );
+
+		// Act
+		$upload = ( new Upload_Media_Ability() )->execute( [
+			'source_url' => 'https://example.com/photo.png',
+			'consent' => true,
+		] );
+		$request = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
+		$update = ( new Update_Media_Attachment_Ability() )->execute( [
+			'attachment_id' => $attachment_id,
+			'title' => 'New title',
+		] );
+		$permission = [
+			( new Upload_Media_Ability() )->check_permission(),
+			( new Request_Media_Upload_Ability() )->check_permission(),
+			( new Update_Media_Attachment_Ability() )->check_permission(),
+		];
+
+		// Assert
+		foreach ( [ $upload, $request, $update ] as $result ) {
+			$this->assertWPError( $result );
+			$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+		}
+
+		$this->assertSame( [ false, false, false ], $permission );
+	}
+
+	public function non_administrator_role_provider(): array {
+		return [
+			'editor' => [ 'editor' ],
+			'author' => [ 'author' ],
+			'contributor' => [ 'contributor' ],
+			'subscriber' => [ 'subscriber' ],
+		];
+	}
+
+	public function test_media_abilities__allow_administrators() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Assert
+		$this->assertTrue( ( new Upload_Media_Ability() )->check_permission() );
+		$this->assertTrue( ( new Request_Media_Upload_Ability() )->check_permission() );
+		$this->assertTrue( ( new Update_Media_Attachment_Ability() )->check_permission() );
+	}
+
+	public function test_create_from_temp_file__denies_editor_and_deletes_temp_file() {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+		$tmp = wp_tempnam( 'mcp-editor-check.png' );
+		file_put_contents( $tmp, self::MINIMAL_PNG );
+
+		// Act
+		$result = Media_Attachment_Service::create_from_temp_file( [
+			'tmp_name' => $tmp,
+			'name' => 'pixel.png',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+		$this->assertFalse( file_exists( $tmp ) );
+	}
+
+	public function test_upload_token__issued_for_non_administrator_is_not_redeemable() {
+		// Arrange
+		$editor_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		$issued = Media_Upload_Token_Store::issue_for_user( $editor_id );
+		wp_set_current_user( 0 );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['token'] );
+		$request->set_body( self::MINIMAL_PNG );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::FORBIDDEN, $response->get_status() );
+		$this->assertSame( 0, get_current_user_id() );
+	}
+
+	public function test_list_assets_hint__omits_upload_tools_for_non_administrators() {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+		$ability = new \Elementor\Modules\Mcp\Abilities\List_Assets_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'search' => 'nonexistent-needle-' . wp_generate_password( 12, false ) ] );
+
+		// Assert
+		$this->assertSame(
+			\Elementor\Modules\Mcp\Abilities\List_Assets_Ability::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS,
+			$result['llm_instructions']
+		);
+	}
+
+	public function test_update_media_attachment__accepts_numeric_string_id() {
+		// Arrange
+		$this->act_as_admin();
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => get_current_user_id(),
+			'post_mime_type' => 'image/jpeg',
+		] );
+		$ability = new Update_Media_Attachment_Ability();
+
+		// Act
+		$from_string = $ability->execute( [
+			'attachment_id' => (string) $attachment_id,
+			'alt' => 'Alt from string id',
+		] );
+		$from_float = $ability->execute( [
+			'attachment_id' => (float) $attachment_id,
+			'alt' => 'Alt from float id',
+		] );
+		$from_signed = $ability->execute( [
+			'attachment_id' => '-' . $attachment_id,
+			'alt' => 'Alt from signed id',
+		] );
+
+		// Assert
+		$this->assertSame( 'Alt from string id', $from_string['alt'] );
+		$this->assertWPError( $from_float );
+		$this->assertSame( 'invalid_attachment', $from_float->get_error_code() );
+		$this->assertWPError( $from_signed );
+		$this->assertSame( 'invalid_attachment', $from_signed->get_error_code() );
+	}
+
+	public function test_pinned_remote_fetch__registers_direct_connection_hook_at_last_priority() {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
+
+		$priorities = [];
+
+		add_filter(
+			'pre_http_request',
+			static function () use ( &$priorities ) {
+				global $wp_filter;
+
+				$priorities = isset( $wp_filter['http_api_curl'] ) ? array_keys( $wp_filter['http_api_curl']->callbacks ) : [];
+
+				return [
+					'response' => [ 'code' => 200 ],
+					'headers' => [],
+					'body' => 'ok',
+				];
+			},
+			10,
+			3
+		);
+
+		// Act
+		Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+
+		remove_all_filters( 'pre_http_request' );
+
+		// Assert
+		$this->assertContains( PHP_INT_MAX, $priorities );
+		$remaining = isset( $GLOBALS['wp_filter']['http_api_curl'] ) ? array_keys( $GLOBALS['wp_filter']['http_api_curl']->callbacks ) : [];
+		$this->assertNotContains( PHP_INT_MAX, $remaining );
+	}
+
+	public function test_pinned_remote_fetch__direct_connection_options_accept_curl_handle() {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
+
+		$handle = curl_init();
+
+		// Act
+		Pinned_Remote_Fetch::apply_direct_connection_options( $handle );
+		Pinned_Remote_Fetch::apply_direct_connection_options( null );
+
+		// Assert
+		$this->assertTrue( true );
 	}
 }

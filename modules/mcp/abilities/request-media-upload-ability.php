@@ -70,7 +70,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( 'upload_files' ),
+			fn() => current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ),
 			[
 				'type' => 'object',
 				'required' => [ 'consent' ],
@@ -99,7 +99,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 			return Mcp_Media_Feature_Gate::disabled_error();
 		}
 
-		$capability_error = Media_Upload_Input_Guard::require_upload_files_capability();
+		$capability_error = Media_Upload_Input_Guard::require_upload_capability();
 		if ( $capability_error ) {
 			return $capability_error;
 		}

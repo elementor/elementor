@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
+use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Input_Guard;
 use Elementor\Modules\Mcp\Media\Safe_Remote_Image_Fetcher;
 
@@ -45,7 +46,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( 'upload_files' ),
+			fn() => current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ),
 			[
 				'type' => 'object',
 				'required' => [ 'source_url', 'consent' ],
@@ -57,10 +58,12 @@ class Upload_Media_Ability extends Abstract_Ability {
 					],
 					'title' => [
 						'type' => 'string',
+						'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
 						'description' => 'Optional attachment title.',
 					],
 					'alt' => [
 						'type' => 'string',
+						'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
 						'description' => 'Optional alt text for the attachment.',
 					],
 					'consent' => [
@@ -80,7 +83,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 			return Mcp_Media_Feature_Gate::disabled_error();
 		}
 
-		$capability_error = Media_Upload_Input_Guard::require_upload_files_capability();
+		$capability_error = Media_Upload_Input_Guard::require_upload_capability();
 		if ( $capability_error ) {
 			return $capability_error;
 		}

@@ -45,11 +45,11 @@ class Media_Upload_Input_Guard {
 		return null;
 	}
 
-	public static function require_upload_files_capability(): ?\WP_Error {
-		if ( ! current_user_can( 'upload_files' ) ) {
+	public static function require_upload_capability(): ?\WP_Error {
+		if ( ! current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to upload files.', 'elementor' ),
+				__( 'Only administrators can upload media with these tools.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}

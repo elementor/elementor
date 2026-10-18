@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
+use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -203,7 +204,7 @@ class List_Assets_Ability extends Abstract_Ability {
 	}
 
 	private function get_empty_result_hint(): string {
-		if ( Mcp_Media_Feature_Gate::is_enabled() && current_user_can( 'upload_files' ) ) {
+		if ( Mcp_Media_Feature_Gate::is_enabled() && current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
 			return self::EMPTY_RESULT_HINT;
 		}
 
