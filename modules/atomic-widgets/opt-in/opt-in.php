@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\OptIn;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
@@ -82,7 +83,14 @@ class Opt_In {
 	}
 
 	private function handle_rest_opt_in_v4() {
-		$this->ajax_opt_in_v4();
+		try {
+			$this->ajax_opt_in_v4();
+		} catch ( \Exception $e ) {
+			$status = $e instanceof Dependency_Exception ? \WP_Http::CONFLICT : \WP_Http::INTERNAL_SERVER_ERROR;
+
+			return new \WP_Error( 'opt_in_v4_failed', $e->getMessage(), [ 'status' => $status ] );
+		}
+
 		return new \WP_REST_Response( [
 			'success' => true,
 		], 200 );
