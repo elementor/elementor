@@ -29,7 +29,7 @@ $track = Style_Target::make( 'track' )
 	->bind( 'background', V3_Control::bind_to( 'bar_bg_color' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'bar_border_radius' ) );
 
-$title = Style_Target::make( 'title' )
+$title_target = Style_Target::make( 'title' )
 	->label( 'Title above the bar' )
 	->selector( '.elementor-title' )
 	->with( Typography_Group::from_prefix( 'typography' ) )
@@ -46,4 +46,4 @@ return V3_Widget_Map::make( 'progress' )
 		'inner_text' => V3_Setting::bind_to( 'inner_text' )->string()->dynamic(),
 	] )
 	->default_target( $bar )
-	->targets( $track, $title );
+	->targets( $track, $title_target );

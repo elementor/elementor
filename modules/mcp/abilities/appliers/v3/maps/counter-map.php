@@ -18,7 +18,7 @@ $number = Style_Target::make( 'number' )
 	->bind( 'text-align', V3_Control::bind_to( 'number_position' )->responsive() )
 	->bind( 'gap', V3_Control::bind_to( 'number_gap' )->responsive() );
 
-$title = Style_Target::make( 'title' )
+$title_target = Style_Target::make( 'title' )
 	->label( 'Title shown next to the number' )
 	->selector( '.elementor-counter-title' )
 	->defaults( [ 'line-height' => '2.5' ] )
@@ -44,4 +44,4 @@ return V3_Widget_Map::make( 'counter' )
 		'title_position' => V3_Setting::bind_to( 'title_position' )->enum_from_control(),
 	] )
 	->default_target( $number )
-	->targets( $title, $layout );
+	->targets( $title_target, $layout );

@@ -48,6 +48,7 @@ class V3_Control_Condition {
 
 	/**
 	 * @param mixed                $expected
+	 * @param bool                 $is_negated
 	 * @param array<string, mixed> $control
 	 */
 	private static function operator( $expected, bool $is_negated, array $control ): string {

@@ -88,7 +88,7 @@ $product_links = Style_Target::make( 'product-links' )
 	->bind( 'color', V3_Control::bind_to( 'product_link_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'product_link_hover_color' ), $hover );
 
-$totals = Style_Target::make( 'totals' )
+$totals_target = Style_Target::make( 'totals' )
 	->label( 'Cart totals rows' )
 	->selector( '.cart_totals .shop_table td:before, .cart_totals .shop_table td .woocommerce-Price-amount' )
 	->with( Typography_Group::from_prefix( 'totals_typography' ) )
@@ -123,4 +123,4 @@ return V3_Widget_Map::make( 'woocommerce-cart' )
 		'checkout_button_text' => V3_Setting::bind_to( 'checkout_button_text' )->string()->dynamic(),
 	] )
 	->default_target( $sections )
-	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text' ), $buttons, $products, $product_links, $totals, $checkout_button );
+	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text' ), $buttons, $products, $product_links, $totals_target, $checkout_button );

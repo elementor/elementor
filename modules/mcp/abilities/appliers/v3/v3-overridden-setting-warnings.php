@@ -49,6 +49,7 @@ class V3_Overridden_Setting_Warnings {
 	}
 
 	/**
+	 * @param string               $value
 	 * @param array<string, mixed> $control
 	 */
 	private static function shown_value( string $value, array $control ): string {

@@ -34,7 +34,7 @@ $overlay = Style_Target::make( 'overlay' )
 	->bind( 'background', V3_Control::bind_to( 'overlay_background_hover_color' )->requires( [ 'overlay_background_hover_background' => $classic ] ), $hover )
 	->bind( 'padding', V3_Control::bind_to( 'content_padding' )->responsive()->sides( 'block-start', 'block-end', 'inline-start', 'inline-end' ) );
 
-$title = Style_Target::make( 'title' )
+$title_target = Style_Target::make( 'title' )
 	->label( 'Overlay title' )
 	->selector( '.elementor-gallery-item__title' )
 	->defaults( [ 'color' => '#fff' ] )
@@ -63,4 +63,4 @@ return V3_Widget_Map::make( 'gallery' )
 		'overlay_description' => V3_Setting::bind_to( 'overlay_description' )->enum_from_control(),
 	] )
 	->default_target( $images )
-	->targets( $grid, $overlay, $title, $description );
+	->targets( $grid, $overlay, $title_target, $description );

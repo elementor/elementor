@@ -54,6 +54,7 @@ class Enum_From_Control_Setting_Adapter implements V3_Setting_Adapter {
 	}
 
 	/**
+	 * @param string               $stored
 	 * @param array<string, mixed> $control
 	 */
 	public static function public_value( string $stored, array $control ): string {
@@ -65,14 +66,15 @@ class Enum_From_Control_Setting_Adapter implements V3_Setting_Adapter {
 	}
 
 	/**
+	 * @param string               $value
 	 * @param array<string, mixed> $control
 	 */
-	public static function stored_value( string $public, array $control ): string {
-		if ( self::has_empty_option( $control ) && $public === self::empty_option_token( $control ) ) {
+	public static function stored_value( string $value, array $control ): string {
+		if ( self::has_empty_option( $control ) && self::empty_option_token( $control ) === $value ) {
 			return self::EMPTY_OPTION_KEY;
 		}
 
-		return $public;
+		return $value;
 	}
 
 	/**
