@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
 import { useIconLibraryProviderIcons } from './icon-library/icon-library-providers';
+import { mergeIconsById } from './icon-library/merge-icons-by-id';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
 const ICON_PREVIEW_SIZE = 50;
@@ -23,7 +24,7 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 		useFontAwesome7Catalog( shouldLoadIconCatalog );
 	const { data: providerIcons = [], isLoading: isProviderLoading } =
 		useIconLibraryProviderIcons( shouldLoadIconCatalog );
-	const icons = [ ...fontAwesomeIcons, ...providerIcons ];
+	const icons = mergeIconsById( fontAwesomeIcons, providerIcons );
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
 	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
 

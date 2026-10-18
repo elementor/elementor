@@ -26,6 +26,7 @@ import { IconLibraryFilter } from './icon-library-filter';
 import { IconLibraryGrid } from './icon-library-grid';
 import { useIconLibraryProviderIcons } from './icon-library-providers';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
+import { mergeIconsById } from './merge-icons-by-id';
 import { SvgElementIcon } from './svg-element-icon';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
@@ -87,7 +88,10 @@ export const IconLibraryPopover = ( {
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } = useFontAwesome7Catalog( open );
 	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons( open );
 	const isLoading = isFontAwesomeLoading || isProviderLoading;
-	const icons = useMemo( () => [ ...fontAwesomeIcons, ...providerIcons ], [ providerIcons, fontAwesomeIcons ] );
+	const icons = useMemo(
+		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
+		[ providerIcons, fontAwesomeIcons ]
+	);
 
 	const items = useMemo(
 		() => createIconLibraryItems( icons, searchValue, activeLibraries ),

@@ -184,6 +184,49 @@ describe( 'iconTransformer', () => {
 		expect( result ).toEqual( { html: null, url: null } );
 	} );
 
+	it( 'asks providers for a font awesome icon missing from the free data', async () => {
+		// Arrange.
+		mockFetch( { icons: {} } );
+		const resolveSvg = jest
+			.fn()
+			.mockResolvedValue(
+				'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M2 2h6v6H2z"></path></svg>'
+			);
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			resolveSvg,
+		} );
+
+		// Act.
+		const result = ( await resolveSavedIcon( 'fal fa-star', 'fa-light' ) ) as { html: string; url: string | null };
+
+		unregisterIconLibraryProvider( 'test-provider' );
+
+		// Assert.
+		expect( resolveSvg ).toHaveBeenCalledWith( 'fa-light', 'fal fa-star', undefined );
+		expect( result.html ).toContain( 'M2 2h6v6H2z' );
+		expect( result.url ).toBeNull();
+	} );
+
+	it( 'returns null html for a font awesome icon when no provider resolves it', async () => {
+		// Arrange.
+		mockFetch( { icons: {} } );
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			resolveSvg: async () => null,
+		} );
+
+		// Act.
+		const result = await resolveSavedIcon( 'fal fa-star', 'fa-light' );
+
+		unregisterIconLibraryProvider( 'test-provider' );
+
+		// Assert.
+		expect( result ).toEqual( { html: null, url: null } );
+	} );
+
 	it( 'falls back to the default svg when no provider resolves a non-native library', async () => {
 		// Arrange.
 		registerIconLibraryProvider( {

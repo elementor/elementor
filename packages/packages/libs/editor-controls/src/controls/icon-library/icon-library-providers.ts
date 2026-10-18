@@ -11,6 +11,11 @@ export type IconLibraryProvider = {
 	id: string;
 	useIcons: ( enabled: boolean ) => IconLibraryProviderState;
 	resolveSvg?: ( library: string, iconValue: string, signal?: AbortSignal ) => Promise< string | null >;
+	/**
+	 * Resolves markup for picker tiles and the control preview. Falls back to `resolveSvg` when omitted.
+	 * Use it when `resolveSvg` has side effects that should only happen for icons that are actually rendered.
+	 */
+	resolvePreviewSvg?: ( library: string, iconValue: string, signal?: AbortSignal ) => Promise< string | null >;
 };
 
 const providers = new Map< string, IconLibraryProvider >();
@@ -38,14 +43,36 @@ export function useIconLibraryProviderIcons( enabled: boolean ): Required< IconL
 	};
 }
 
-export async function resolveProviderIconSvg(
+export function resolveProviderIconSvg(
+	library: string,
+	iconValue: string,
+	signal?: AbortSignal
+): Promise< string | null > {
+	return resolveFromProviders( ( provider ) => provider.resolveSvg, library, iconValue, signal );
+}
+
+export function resolveProviderIconPreviewSvg(
+	library: string,
+	iconValue: string,
+	signal?: AbortSignal
+): Promise< string | null > {
+	return resolveFromProviders(
+		( provider ) => provider.resolvePreviewSvg ?? provider.resolveSvg,
+		library,
+		iconValue,
+		signal
+	);
+}
+
+async function resolveFromProviders(
+	pickResolver: ( provider: IconLibraryProvider ) => IconLibraryProvider[ 'resolveSvg' ],
 	library: string,
 	iconValue: string,
 	signal?: AbortSignal
 ): Promise< string | null > {
 	for ( const provider of providers.values() ) {
 		try {
-			const markup = await provider.resolveSvg?.( library, iconValue, signal );
+			const markup = await pickResolver( provider )?.( library, iconValue, signal );
 
 			if ( markup ) {
 				return markup;

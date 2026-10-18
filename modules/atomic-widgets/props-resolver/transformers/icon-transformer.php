@@ -39,6 +39,19 @@ class Icon_Transformer extends Transformer_Base {
 	}
 
 	private function transform_filtered_library_icon( array $icon ): array {
+		$html = $this->get_filtered_svg_html( $icon );
+
+		if ( '' === $html ) {
+			return $this->transform_default_svg();
+		}
+
+		return [
+			'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
+			'url' => null,
+		];
+	}
+
+	private function get_filtered_svg_html( array $icon ): string {
 		/**
 		 * Filters inline SVG markup for an icon library value not handled by Core.
 		 *
@@ -50,14 +63,7 @@ class Icon_Transformer extends Transformer_Base {
 		 */
 		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
 
-		if ( ! is_string( $html ) || '' === $html ) {
-			return $this->transform_default_svg();
-		}
-
-		return [
-			'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
-			'url' => null,
-		];
+		return is_string( $html ) ? $html : '';
 	}
 
 	private function transform_default_svg(): array {
@@ -80,14 +86,20 @@ class Icon_Transformer extends Transformer_Base {
 		$icon_data = Font_Awesome_7_Icon_Resolver::resolve( $icon['value'], $icon['library'] );
 
 		if ( ! $icon_data || empty( $icon_data['paths'] ) ) {
-			return [
-				'html' => '',
-				'url' => null,
-			];
+			return $this->transform_extension_font_awesome_icon( $icon );
 		}
 
 		return [
 			'html' => $this->build_fa7_svg( $icon_data ),
+			'url' => null,
+		];
+	}
+
+	private function transform_extension_font_awesome_icon( array $icon ): array {
+		$html = $this->get_filtered_svg_html( $icon );
+
+		return [
+			'html' => '' === $html ? '' : $this->process_svg( $html, self::FA7_SVG_INLINE_STYLES ),
 			'url' => null,
 		];
 	}

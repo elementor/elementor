@@ -36,7 +36,7 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: fontAwesomeHtml, url: null };
 	}
 
-	if ( library.startsWith( FONT_AWESOME_LIBRARY_PREFIX ) || EICONS_LIBRARY === library ) {
+	if ( EICONS_LIBRARY === library ) {
 		return EMPTY_ICON_RESULT;
 	}
 
@@ -44,6 +44,10 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 
 	if ( providerHtml ) {
 		return { html: providerHtml, url: null };
+	}
+
+	if ( library.startsWith( FONT_AWESOME_LIBRARY_PREFIX ) ) {
+		return EMPTY_ICON_RESULT;
 	}
 
 	return resolveDefaultSvg( signal );

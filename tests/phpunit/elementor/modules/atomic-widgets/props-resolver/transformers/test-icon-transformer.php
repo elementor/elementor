@@ -320,4 +320,66 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'script', $result['html'] );
 		$this->assertStringNotContainsString( 'onload', $result['html'] );
 	}
+
+	public function test_transform__applies_svg_html_filter_for_font_awesome_icon_missing_from_free_data() {
+		// Arrange.
+		$filter = static fn( $html, $icon ) => 'fa-light' === $icon['library']
+			? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M3 3h4v4H3z"></path></svg>'
+			: $html;
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter, 10, 2 );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'fal fa-star',
+				'library' => 'fa-light',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( 'd="M3 3h4v4H3z"', $result['html'] );
+		$this->assertNull( $result['url'] );
+	}
+
+	public function test_transform__returns_empty_html_for_font_awesome_icon_missing_from_free_data_without_filter() {
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'fal fa-star',
+				'library' => 'fa-light',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		// Assert.
+		$this->assertSame( [
+			'html' => '',
+			'url' => null,
+		], $result );
+	}
+
+	public function test_transform__sanitizes_svg_filtered_for_font_awesome_icon_missing_from_free_data() {
+		// Arrange.
+		$filter = static fn() => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><script>alert(1)</script><path d="M0 0h1v1H0z"/></svg>';
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'fal fa-star',
+				'library' => 'fa-light',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'script', $result['html'] );
+		$this->assertStringNotContainsString( 'onload', $result['html'] );
+	}
 }

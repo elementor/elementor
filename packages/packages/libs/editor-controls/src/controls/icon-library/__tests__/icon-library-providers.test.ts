@@ -1,8 +1,10 @@
 import {
 	registerIconLibraryProvider,
+	resolveProviderIconPreviewSvg,
 	resolveProviderIconSvg,
 	unregisterIconLibraryProvider,
 } from '../icon-library-providers';
+import { mergeIconsById } from '../merge-icons-by-id';
 
 const PROVIDER_ID = 'test-provider';
 const FAILING_PROVIDER_ID = 'failing-provider';
@@ -76,5 +78,78 @@ describe( 'icon-library-providers', () => {
 		await expect( resolveProviderIconSvg( 'my-icons', 'my-icons badge', controller.signal ) ).rejects.toThrow(
 			'aborted'
 		);
+	} );
+
+	describe( 'resolveProviderIconPreviewSvg', () => {
+		it( 'should prefer resolvePreviewSvg over resolveSvg', async () => {
+			// Arrange.
+			const resolveSvg = jest.fn().mockResolvedValue( '<svg id="full"></svg>' );
+			registerIconLibraryProvider( {
+				id: PROVIDER_ID,
+				useIcons: emptyIcons,
+				resolvePreviewSvg: async () => '<svg id="preview"></svg>',
+				resolveSvg,
+			} );
+
+			// Act.
+			const markup = await resolveProviderIconPreviewSvg( 'fa-light', 'fal fa-star' );
+
+			// Assert.
+			expect( markup ).toBe( '<svg id="preview"></svg>' );
+			expect( resolveSvg ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should fall back to resolveSvg when the provider has no preview resolver', async () => {
+			// Arrange.
+			registerIconLibraryProvider( {
+				id: PROVIDER_ID,
+				useIcons: emptyIcons,
+				resolveSvg: async () => '<svg id="full"></svg>',
+			} );
+
+			// Act.
+			const markup = await resolveProviderIconPreviewSvg( 'fa-light', 'fal fa-star' );
+
+			// Assert.
+			expect( markup ).toBe( '<svg id="full"></svg>' );
+		} );
+
+		it( 'should resolve null when no provider is registered', async () => {
+			// Act.
+			const markup = await resolveProviderIconPreviewSvg( 'fa-light', 'fal fa-star' );
+
+			// Assert.
+			expect( markup ).toBeNull();
+		} );
+	} );
+
+	describe( 'mergeIconsById', () => {
+		const icon = ( id: string, label: string ) =>
+			( {
+				id,
+				label,
+				name: id,
+				library: 'fa-solid',
+				value: id,
+				aliases: [],
+				width: 1,
+				height: 1,
+				paths: [],
+			} ) as never;
+
+		it( 'should keep the primary icon when both lists contain the same id', () => {
+			// Arrange.
+			const primary = [ icon( 'fa-solid:star', 'core' ) ];
+			const secondary = [ icon( 'fa-solid:star', 'provider' ), icon( 'fa-light:star', 'light' ) ];
+
+			// Act.
+			const merged = mergeIconsById( primary, secondary );
+
+			// Assert.
+			expect( merged.map( ( item: { id: string; label: string } ) => [ item.id, item.label ] ) ).toEqual( [
+				[ 'fa-solid:star', 'core' ],
+				[ 'fa-light:star', 'light' ],
+			] );
+		} );
 	} );
 } );

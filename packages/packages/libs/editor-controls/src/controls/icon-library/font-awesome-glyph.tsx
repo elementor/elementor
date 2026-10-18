@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@elementor/ui';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
+import { resolveProviderIconPreviewSvg } from './icon-library-providers';
 import { sanitizeIconSvgMarkup } from './sanitize-icon-svg-markup';
 
 type FontAwesomeGlyphProps = {
@@ -11,7 +13,40 @@ type FontAwesomeGlyphProps = {
 	label?: string;
 };
 
-export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
+export const FontAwesomeGlyph = ( props: FontAwesomeGlyphProps ) => {
+	const { icon } = props;
+
+	if ( icon.lazySvg && ! icon.svgMarkup ) {
+		return <LazyProviderGlyph { ...props } />;
+	}
+
+	return <ResolvedGlyph { ...props } />;
+};
+
+const LazyProviderGlyph = ( props: FontAwesomeGlyphProps ) => {
+	const { icon } = props;
+	const [ svgMarkup, setSvgMarkup ] = useState< string | null >( null );
+
+	useEffect( () => {
+		const controller = new AbortController();
+
+		setSvgMarkup( null );
+
+		resolveProviderIconPreviewSvg( icon.library, icon.value, controller.signal )
+			.then( ( markup ) => ! controller.signal.aborted && setSvgMarkup( markup ) )
+			.catch( () => {} );
+
+		return () => controller.abort();
+	}, [ icon.library, icon.value ] );
+
+	if ( ! svgMarkup ) {
+		return null;
+	}
+
+	return <ResolvedGlyph { ...props } icon={ { ...icon, svgMarkup } } />;
+};
+
+const ResolvedGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
 	const svgMarkup = sanitizeIconSvgMarkup( icon.svgMarkup );
 
 	if ( svgMarkup ) {
