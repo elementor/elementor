@@ -80,7 +80,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $error );
-		$this->assertSame( 'private_host_blocked', $error->get_error_code() );
+		$this->assertSame( 'remote_host_not_allowed', $error->get_error_code() );
 	}
 
 	public function test_upload_media__rejects_non_https_scheme() {
@@ -112,7 +112,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'private_host_blocked', $result->get_error_code() );
+		$this->assertSame( 'remote_host_not_allowed', $result->get_error_code() );
 	}
 
 	public function test_upload_media__rejects_redirect_to_private_host() {
@@ -142,7 +142,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'private_host_blocked', $result->get_error_code() );
+		$this->assertSame( 'remote_host_not_allowed', $result->get_error_code() );
 	}
 
 	public function test_upload_media__rejects_response_larger_than_cap() {
@@ -504,7 +504,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $error );
-		$this->assertSame( 'private_host_blocked', $error->get_error_code() );
+		$this->assertSame( 'remote_host_not_allowed', $error->get_error_code() );
 	}
 
 	public function denied_ip_address_provider(): array {
@@ -1648,7 +1648,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_update_media_attachment__accepts_numeric_string_id() {
+	public function test_update_media_attachment__accepts_integral_ids_only() {
 		// Arrange
 		$this->act_as_admin();
 		$attachment_id = self::factory()->attachment->create( [
@@ -1666,6 +1666,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'attachment_id' => (float) $attachment_id,
 			'alt' => 'Alt from float id',
 		] );
+		$from_fraction = $ability->execute( [
+			'attachment_id' => $attachment_id + 0.5,
+			'alt' => 'Alt from fractional id',
+		] );
+		$from_decimal_string = $ability->execute( [
+			'attachment_id' => $attachment_id . '.0',
+			'alt' => 'Alt from decimal string id',
+		] );
 		$from_signed = $ability->execute( [
 			'attachment_id' => '-' . $attachment_id,
 			'alt' => 'Alt from signed id',
@@ -1673,8 +1681,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( 'Alt from string id', $from_string['alt'] );
-		$this->assertWPError( $from_float );
-		$this->assertSame( 'invalid_attachment', $from_float->get_error_code() );
+		$this->assertSame( 'Alt from float id', $from_float['alt'] );
+		$this->assertWPError( $from_fraction );
+		$this->assertSame( 'invalid_attachment', $from_fraction->get_error_code() );
+		$this->assertWPError( $from_decimal_string );
+		$this->assertSame( 'invalid_attachment', $from_decimal_string->get_error_code() );
 		$this->assertWPError( $from_signed );
 		$this->assertSame( 'invalid_attachment', $from_signed->get_error_code() );
 	}
@@ -1715,19 +1726,208 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertNotContains( PHP_INT_MAX, $remaining );
 	}
 
-	public function test_pinned_remote_fetch__direct_connection_options_accept_curl_handle() {
+	public function test_pinned_remote_fetch__direct_connection_options_clear_proxy() {
+		// Act
+		$options = Pinned_Remote_Fetch::direct_connection_options();
+
+		// Assert
+		$this->assertSame( '', $options[ CURLOPT_PROXY ] );
+		$this->assertSame( '*', $options[ CURLOPT_NOPROXY ] );
+		$this->assertCount( 2, $options );
+	}
+
+	public function test_pinned_remote_fetch__pin_options_contain_resolve_entry_and_disable_decoding() {
+		// Act
+		$options = Pinned_Remote_Fetch::pin_options( 'example.com:443:93.184.216.34' );
+
+		// Assert
+		$this->assertSame( [ 'example.com:443:93.184.216.34' ], $options[ CURLOPT_RESOLVE ] );
+		$this->assertFalse( $options[ CURLOPT_HTTP_CONTENT_DECODING ] );
+	}
+
+	public function test_pinned_remote_fetch__matches_only_the_fetch_url() {
+		// Assert
+		$url = 'https://example.com/a/photo.png?x=1';
+
+		$this->assertTrue( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://EXAMPLE.com/a/photo.png?x=1' ) );
+		$this->assertTrue( Pinned_Remote_Fetch::matches_fetch_url( 'https://example.com', 'https://example.com/' ) );
+		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://other.example/a/photo.png?x=1' ) );
+		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://example.com/a/other.png?x=1' ) );
+		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://example.com/a/photo.png?x=2' ) );
+		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'http://example.com/a/photo.png?x=1' ) );
+		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, null ) );
+	}
+
+	public function test_pinned_remote_fetch__ignores_curl_requests_for_other_urls() {
 		// Arrange
 		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		$handle = curl_init();
+		add_filter(
+			'pre_http_request',
+			static function () {
+				$handle = curl_init();
+				do_action( 'http_api_curl', $handle, [], 'https://unrelated.example/other.png' );
+				curl_close( $handle );
+
+				return [
+					'response' => [ 'code' => 200 ],
+					'headers' => [],
+					'body' => 'ok',
+				];
+			},
+			10,
+			3
+		);
 
 		// Act
-		Pinned_Remote_Fetch::apply_direct_connection_options( $handle );
-		Pinned_Remote_Fetch::apply_direct_connection_options( null );
+		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+
+		remove_all_filters( 'pre_http_request' );
 
 		// Assert
-		$this->assertTrue( true );
+		$this->assertWPError( $result );
+		$this->assertSame( 'remote_fetch_unpinned', $result->get_error_code() );
+	}
+
+	public function test_pinned_remote_fetch__applies_pin_for_the_fetch_url() {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
+
+		add_filter(
+			'pre_http_request',
+			static function ( $preempt, $args, $url ) {
+				$handle = curl_init();
+				do_action( 'http_api_curl', $handle, $args, $url );
+				curl_close( $handle );
+
+				return [
+					'response' => [ 'code' => 200 ],
+					'headers' => [],
+					'body' => 'ok',
+				];
+			},
+			10,
+			3
+		);
+
+		// Act
+		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+
+		remove_all_filters( 'pre_http_request' );
+
+		// Assert
+		$this->assertNotWPError( $result );
+		$this->assertSame( 200, wp_remote_retrieve_response_code( $result ) );
+	}
+
+	/**
+	 * @dataProvider transport_error_provider
+	 */
+	public function test_pinned_remote_fetch__maps_transport_errors_to_generic_codes( string $raw_message, string $expected_code ) {
+		// Arrange
+		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
+		}
+
+		add_filter(
+			'pre_http_request',
+			static function ( $preempt, $args, $url ) use ( $raw_message ) {
+				$handle = curl_init();
+				do_action( 'http_api_curl', $handle, $args, $url );
+				curl_close( $handle );
+
+				return new \WP_Error( 'http_request_failed', $raw_message );
+			},
+			10,
+			3
+		);
+
+		// Act
+		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+
+		remove_all_filters( 'pre_http_request' );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( $expected_code, $result->get_error_code() );
+		$this->assertStringNotContainsString( 'cURL', $result->get_error_message() );
+		$this->assertStringNotContainsString( 'resolve', strtolower( $result->get_error_message() ) );
+	}
+
+	public function transport_error_provider(): array {
+		return [
+			'resolution failure' => [ 'cURL error 6: Could not resolve host: internal.example', 'fetch_failed' ],
+			'refused connection' => [ 'cURL error 7: Failed to connect to 10.0.0.5 port 443', 'fetch_failed' ],
+			'timeout' => [ 'cURL error 28: Operation timed out after 30001 milliseconds', 'fetch_timeout' ],
+		];
+	}
+
+	public function test_host_errors__share_one_generic_code() {
+		// Arrange
+		add_filter(
+			'elementor/mcp/media/test_resolved_host_ips',
+			static function ( $ips, $host ) {
+				return 'unresolvable.example' === $host ? [] : $ips;
+			},
+			10,
+			2
+		);
+
+		// Act
+		$blocked = Public_Host_Validator::assert_public_ip( '10.0.0.5' );
+		$unresolvable = Pinned_Remote_Fetch::select_pinned_ip( 'unresolvable.example' );
+
+		remove_all_filters( 'elementor/mcp/media/test_resolved_host_ips' );
+
+		// Assert
+		$this->assertWPError( $blocked );
+		$this->assertWPError( $unresolvable );
+		$this->assertSame( 'remote_host_not_allowed', $blocked->get_error_code() );
+		$this->assertSame( $blocked->get_error_code(), $unresolvable->get_error_code() );
+		$this->assertSame( $blocked->get_error_message(), $unresolvable->get_error_message() );
+	}
+
+	public function test_is_proxy_in_use__follows_the_proxy_configuration() {
+		// Arrange
+		$enabled_proxy = new class() extends \WP_HTTP_Proxy {
+			public function is_enabled() {
+				return true;
+			}
+
+			public function send_through_proxy( $uri ) {
+				return true;
+			}
+		};
+
+		$disabled_proxy = new class() extends \WP_HTTP_Proxy {
+			public function is_enabled() {
+				return false;
+			}
+		};
+
+		// Assert
+		$this->assertTrue( Pinned_Remote_Fetch::is_proxy_in_use( 'https://example.com/photo.png', $enabled_proxy ) );
+		$this->assertFalse( Pinned_Remote_Fetch::is_proxy_in_use( 'https://example.com/photo.png', $disabled_proxy ) );
+	}
+
+	public function test_fetch_to_temp_file__stops_when_the_overall_deadline_passes() {
+		// Arrange
+		$calls = 0;
+		$clock = static function () use ( &$calls ) {
+			$calls++;
+
+			return 1 === $calls ? 1000.0 : 1000.0 + Media_Upload_Config::TOTAL_FETCH_TIMEOUT_SECONDS + 1;
+		};
+
+		// Act
+		$result = \Elementor\Modules\Mcp\Media\Safe_Remote_Image_Fetcher::fetch_to_temp_file( 'https://example.com/photo.png', $clock );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'fetch_timeout', $result->get_error_code() );
 	}
 }
