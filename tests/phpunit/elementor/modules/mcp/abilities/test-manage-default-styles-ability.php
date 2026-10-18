@@ -280,4 +280,39 @@ class Test_Manage_Default_Styles_Ability extends TestCase {
 		$this->assertArrayNotHasKey( 'default_styles_tag_saved', $this->emitted_events );
 		$this->assertSame( 1, $this->emitted_events['default_styles_save_failed'][0]['tags_changed_count'] );
 	}
+
+	public function test_partial_error_emits_save_failed_counting_only_failed_operations() {
+		// Arrange.
+		$ability = $this->make_ability( new Stub_Manage_Default_Styles_Repository( [
+			'h1' => [ 'variants' => [] ],
+			'h2' => [ 'variants' => [] ],
+		] ) );
+
+		// Act.
+		$result = $ability->execute( [
+			'operations' => [
+				[ 'action' => 'delete', 'tag' => 'h1' ],
+				[ 'action' => 'delete', 'tag' => 'h2' ],
+				[ 'action' => 'delete', 'tag' => 'script' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertCount( 2, $this->emitted_events['default_styles_tag_saved'] );
+		$this->assertCount( 1, $this->emitted_events['default_styles_save_failed'] );
+		$this->assertSame( 1, $this->emitted_events['default_styles_save_failed'][0]['tags_changed_count'] );
+	}
+
+	public function test_successful_operations_do_not_emit_save_failed() {
+		// Arrange.
+		$ability = $this->make_ability( new Stub_Manage_Default_Styles_Repository( [ 'h1' => [ 'variants' => [] ] ] ) );
+
+		// Act.
+		$result = $ability->execute( [ 'operations' => [ [ 'action' => 'delete', 'tag' => 'h1' ] ] ] );
+
+		// Assert.
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertArrayNotHasKey( 'default_styles_save_failed', $this->emitted_events );
+	}
 }

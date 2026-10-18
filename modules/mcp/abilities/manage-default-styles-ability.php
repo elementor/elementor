@@ -128,14 +128,20 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 		$response = $this->handle_bulk( $operations );
 
-		if ( 'ok' !== $response['status'] ) {
+		$failed_count = $this->count_failed_operations( $response['results'] );
+
+		if ( $failed_count > 0 ) {
 			Mcp_Event_Dispatcher::emit( 'default_styles_save_failed', [
 				'interaction_result' => 'save_failed',
-				'tags_changed_count' => count( $operations ),
+				'tags_changed_count' => $failed_count,
 			] );
 		}
 
 		return $response;
+	}
+
+	private function count_failed_operations( array $results ): int {
+		return count( array_filter( $results, fn( $result ) => 'ok' !== ( $result['status'] ?? '' ) ) );
 	}
 
 	private function handle_bulk( array $operations ): array {
