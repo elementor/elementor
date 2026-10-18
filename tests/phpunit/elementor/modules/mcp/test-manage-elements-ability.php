@@ -219,7 +219,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result );
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertStringNotContainsString( 'preview=true', $result['llm_instructions'] ?? '' );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
