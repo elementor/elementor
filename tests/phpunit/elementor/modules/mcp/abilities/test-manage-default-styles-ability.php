@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\Mcp\Abilities\Manage_Default_Styles_Ability;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use PHPUnit\Framework\TestCase;
 
 // Elementor\Utils is not resolved by the unit-bootstrap autoloader because its file lives under
@@ -51,6 +52,24 @@ class Testable_Manage_Default_Styles_Ability extends Manage_Default_Styles_Abili
 }
 
 class Test_Manage_Default_Styles_Ability extends TestCase {
+
+	private array $emitted_events = [];
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->emitted_events = [];
+
+		Mcp_Event_Dispatcher::set_interceptor( function ( string $name, array $payload ) {
+			$this->emitted_events[ $name ][] = $payload;
+		} );
+	}
+
+	public function tearDown(): void {
+		Mcp_Event_Dispatcher::set_interceptor( null );
+
+		parent::tearDown();
+	}
 
 	private function make_ability( ?Default_Styles_Repository $repo = null ): Testable_Manage_Default_Styles_Ability {
 		$css_converter = $this->createMock( Css_Converter::class );
@@ -208,5 +227,57 @@ class Test_Manage_Default_Styles_Ability extends TestCase {
 		$this->assertCount( 2, $result['results'] );
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
 		$this->assertSame( 'error', $result['results'][1]['status'] );
+	}
+
+	public function test_update_emits_tag_saved_with_modified_sections() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size' ], 'margin' => [ '$$type' => 'dimensions' ] ],
+			'customCss' => '',
+		] );
+		$ability = new Testable_Manage_Default_Styles_Ability( new Stub_Manage_Default_Styles_Repository(), $css_converter );
+
+		// Act.
+		$ability->execute( [
+			'operations' => [ [ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ] ],
+		] );
+
+		// Assert.
+		$payload = $this->emitted_events['default_styles_tag_saved'][0];
+
+		$this->assertSame( 'h1', $payload['tag'] );
+		$this->assertSame( 'set', $payload['action'] );
+		$this->assertSame( [ 'spacing', 'typography' ], $payload['sections_modified'] );
+		$this->assertSame( 'mcp_tool', $payload['executed_by'] );
+	}
+
+	public function test_delete_emits_tag_saved_as_unset() {
+		// Arrange.
+		$ability = $this->make_ability( new Stub_Manage_Default_Styles_Repository( [ 'h1' => [ 'variants' => [] ] ] ) );
+
+		// Act.
+		$ability->execute( [ 'operations' => [ [ 'action' => 'delete', 'tag' => 'h1' ] ] ] );
+
+		// Assert.
+		$payload = $this->emitted_events['default_styles_tag_saved'][0];
+
+		$this->assertSame( 'unset', $payload['action'] );
+		$this->assertSame( [], $payload['sections_modified'] );
+	}
+
+	public function test_failed_operation_emits_save_failed() {
+		// Arrange.
+		$ability = $this->make_ability();
+
+		// Act.
+		$ability->execute( [ 'operations' => [ [ 'action' => 'delete', 'tag' => 'h1' ] ] ] );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'default_styles_tag_saved', $this->emitted_events );
+		$this->assertSame( 1, $this->emitted_events['default_styles_save_failed'][0]['tags_changed_count'] );
 	}
 }
