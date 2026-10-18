@@ -15,6 +15,7 @@ export const BASE_EXTERNALS = {
 	'@elementor/ui': 'elementorV2.ui',
 	'@elementor/icons': 'elementorV2.icons',
 	'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
+	'@elementor/editor-ui': 'elementorV2.editorUi',
 	'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
 	'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
 	'@elementor/alpinejs': 'elementorV2.alpinejs',
