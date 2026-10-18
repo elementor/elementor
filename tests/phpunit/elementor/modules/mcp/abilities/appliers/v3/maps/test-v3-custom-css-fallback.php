@@ -143,6 +143,20 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 		$this->assertSame( $rules, $parsed['rules'] );
 	}
 
+	public function test_render__puts_the_state_before_a_trailing_pseudo_element() {
+		// Arrange.
+		$fallback = new V3_Custom_Css_Fallback( [ 'pointer' => '.elementor-item:before, .elementor-item::after' ], self::MEDIA_QUERIES );
+		$rules = [ self::rule( 'pointer', 'hover', self::DESKTOP, [ 'background-color' => 'red' ] ) ];
+
+		// Act.
+		$css = $fallback->render( $rules );
+		$parsed = $fallback->parse( $css );
+
+		// Assert.
+		$this->assertSame( 'selector .elementor-item:hover:before, selector .elementor-item:hover::after { background-color: red !important; }', $css );
+		$this->assertSame( $rules, $parsed['rules'] );
+	}
+
 	public function test_parse__reads_a_selector_list_typed_without_spaces() {
 		// Arrange.
 		$fallback = new V3_Custom_Css_Fallback( [ 'sections' => '.shop_table, address' ], self::MEDIA_QUERIES );

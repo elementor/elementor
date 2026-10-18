@@ -73,7 +73,9 @@ class Test_V3_Map_Style_Writer_Values extends TestCase {
 				Style_Target::make( 'caption' )
 					->bind( 'text-align', V3_Control::bind_to( 'caption_align' ) ),
 				Style_Target::make( 'image' )
-					->bind( 'margin', V3_Control::bind_to( 'image_spacing' )->sides( 'block-end' ) )
+					->bind( 'margin', V3_Control::bind_to( 'image_spacing' )->sides( 'block-end' ) ),
+				Style_Target::make( 'divider' )
+					->bind( 'border-width', V3_Control::bind_to( 'frame_width' ) )
 			);
 		$compiled = ( new V3_Widget_Map_Compiler() )->compile( $map, $this->controls(), new V3_Map_Diagnostics(), 'values-widget' );
 		$writer = new V3_Map_Style_Writer(
@@ -135,6 +137,27 @@ class Test_V3_Map_Style_Writer_Values extends TestCase {
 		$this->assertCount( 1, $this->fallbacks );
 		$this->assertStringContainsString( 'one length for all sides', $this->fallbacks[0]['reason'] );
 		$this->assertStringNotContainsString( 'Allowed units', $this->fallbacks[0]['reason'] );
+	}
+
+	public function test_write__says_a_single_length_slider_needs_a_single_value() {
+		// Act.
+		$ctx = $this->write( 'divider', 'border-width: 2px 4px;' );
+
+		// Assert.
+		$this->assertSame( [], $ctx->settings_patch() );
+		$this->assertCount( 1, $this->fallbacks );
+		$this->assertStringContainsString( 'use a single value', $this->fallbacks[0]['reason'] );
+		$this->assertStringNotContainsString( 'Allowed units', $this->fallbacks[0]['reason'] );
+	}
+
+	public function test_write__keeps_the_allowed_units_for_a_single_length_in_a_missing_unit() {
+		// Act.
+		$ctx = $this->write( 'divider', 'border-width: 10%;' );
+
+		// Assert.
+		$this->assertSame( [], $ctx->settings_patch() );
+		$this->assertCount( 1, $this->fallbacks );
+		$this->assertStringContainsString( 'Allowed units: px.', $this->fallbacks[0]['reason'] );
 	}
 
 	public function test_write__falls_back_on_sides_no_binding_stores() {

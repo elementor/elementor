@@ -337,16 +337,18 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		);
 	}
 
-	public function test_apply__warns_and_skips_unstorable_declarations_of_targets_without_a_selector() {
+	public function test_render__writes_pointer_and_divider_fallbacks_on_the_pseudo_elements_they_paint() {
+		// Arrange.
+		$written = $this->mapper()->apply( 'pointer:hover { opacity: 0.5; } divider { opacity: 0.4; }', self::WIDGET_TYPE, [] );
+		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
+
 		// Act.
-		$result = $this->mapper()->apply( 'divider { letter-spacing: 1px; }', self::WIDGET_TYPE, [] );
+		$custom_css = $fallback->render( $written['fallback_rules'] );
 
 		// Assert.
-		$this->assertSame( [], $result['fallback_notes'] );
-		$this->assertSame(
-			[ 'letter-spacing: 1px (divider): CSS property letter-spacing is not supported by this Elementor widget. It was skipped because style target divider cannot hold custom CSS.' ],
-			$result['warnings']
-		);
+		$this->assertSame( [], $written['warnings'] );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--main .elementor-item:hover:before, selector .elementor-nav-menu--main .elementor-item:hover:after { opacity: 0.5 !important; }', $custom_css );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--layout-horizontal .elementor-nav-menu > li:not(:last-child):after { opacity: 0.4 !important; }', $custom_css );
 	}
 
 	public function test_render__writes_fallback_rules_against_each_target_selector() {

@@ -518,9 +518,13 @@ class V3_Map_Style_Writer {
 	 * @param mixed                  $prop_value
 	 */
 	private static function has_different_bound_sides( Compiled_Style_Binding $binding, $prop_value ): bool {
-		$sides = $binding->get_sides() ?? [];
+		if ( ! Size_Values::is_sides_prop( $prop_value ) ) {
+			return false;
+		}
 
-		if ( count( $sides ) < 2 || ! Size_Values::is_sides_prop( $prop_value ) ) {
+		$sides = $binding->get_sides() ?? array_keys( $prop_value['value'] );
+
+		if ( count( $sides ) < 2 ) {
 			return false;
 		}
 

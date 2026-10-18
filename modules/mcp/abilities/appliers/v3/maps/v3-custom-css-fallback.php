@@ -33,6 +33,8 @@ class V3_Custom_Css_Fallback {
 	const IMPORTANT = '!important';
 
 	const IMPORTANT_PATTERN = '/\s*!\s*important\s*$/i';
+
+	const TRAILING_PSEUDO_ELEMENT_PATTERN = '/::?(?:before|after)$/i';
 	/**
 	 * @var array<string, string|null>
 	 */
@@ -140,7 +142,14 @@ class V3_Custom_Css_Fallback {
 			function ( string $part ) use ( $state ) {
 				$full = '' === $part ? self::WRAPPER_PLACEHOLDER : self::WRAPPER_PLACEHOLDER . ' ' . $part;
 
-				return null === $state ? $full : $full . ':' . $state;
+				if ( null === $state ) {
+					return $full;
+				}
+
+				// A pseudo-class after a pseudo-element never matches, so the state goes before it.
+				return preg_match( self::TRAILING_PSEUDO_ELEMENT_PATTERN, $full, $match, PREG_OFFSET_CAPTURE )
+					? substr( $full, 0, $match[0][1] ) . ':' . $state . $match[0][0]
+					: $full . ':' . $state;
 			},
 			array_map( 'trim', explode( ',', $selector ) )
 		);
