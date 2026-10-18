@@ -364,6 +364,8 @@ class V3_Map_Style_Writer {
 			$patch[ V3_Settings_Patch::GLOBALS_KEY ] = [ $setting => $global_link ];
 		}
 
+		$patch = self::patch_border_style_when_needed( $patch, $controls );
+
 		$ctx->merge_patch( $patch );
 		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
 	}
@@ -531,6 +533,45 @@ class V3_Map_Style_Writer {
 		$sizes = array_map( fn( string $side ) => Size_Values::from_prop( $prop_value['value'][ $side ] ?? null ), $sides );
 
 		return in_array( null, $sizes, true ) || ! Size_Values::are_equal( $sizes );
+	}
+
+	/**
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	private static function patch_border_style_when_needed( array $patch, array $controls ): array {
+		$style_patch = [];
+
+		foreach ( array_keys( $patch ) as $setting ) {
+			if ( V3_Settings_Patch::GLOBALS_KEY === $setting ) {
+				continue;
+			}
+
+			if ( ! preg_match( '/^(.+)_(width|color)(?:_(tablet|mobile))?$/', $setting, $matches ) ) {
+				continue;
+			}
+
+			$style_key = $matches[1] . '_border' . ( ! empty( $matches[3] ) ? '_' . $matches[3] : '' );
+
+			if ( ! isset( $controls[ $style_key ] ) ) {
+				continue;
+			}
+
+			$style_value = $patch[ $style_key ] ?? '';
+
+			if ( '' !== $style_value && 'none' !== $style_value ) {
+				continue;
+			}
+
+			$style_patch[ $style_key ] = 'solid';
+		}
+
+		if ( empty( $style_patch ) ) {
+			return $patch;
+		}
+
+		return array_merge( $style_patch, $patch );
 	}
 
 	private static function storable_values_hint( string $control_type, array $control ): string {

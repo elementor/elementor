@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $image = Style_Target::make( 'image' )
-	->label( 'Main product image' )
+	->label( 'Main product image viewport; margin-bottom spacing applies when thumbnails follow' )
 	->selector( '.flex-viewport' )
 	->with( Border_Group::from_prefix( 'image_border' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'image_border_radius' )->responsive() )
