@@ -144,7 +144,7 @@ function registerAtomicFormAlpineData( form ) {
 
 					form.dispatchEvent( new CustomEvent( SUBMIT_SUCCESS_EVENT, {
 						bubbles: true,
-						detail: { response },
+						detail: { response, agentInvoked: Boolean( event?.agentInvoked ) },
 					} ) );
 				}
 
