@@ -21,10 +21,22 @@ class Media_Upload_Token_Store {
 
 		set_transient( self::storage_key( $token ), $data, Media_Upload_Config::TOKEN_TTL_SECONDS );
 
+		$index = self::outstanding_index( $user_id );
+		$index[ hash( 'sha256', $token ) ] = $expires_at;
+		set_transient( self::user_index_key( $user_id ), $index, Media_Upload_Config::TOKEN_TTL_SECONDS );
+
 		return [
 			'token' => $token,
 			'expires_at' => $expires_at,
 		];
+	}
+
+	public static function outstanding_count( int $user_id ): int {
+		return count( self::outstanding_index( $user_id ) );
+	}
+
+	public static function has_capacity_for( int $user_id, int $count ): bool {
+		return self::outstanding_count( $user_id ) + $count <= Media_Upload_Config::MAX_OUTSTANDING_TOKENS_PER_USER;
 	}
 
 	public static function is_valid_for_request( string $token ): bool {
@@ -96,6 +108,27 @@ class Media_Upload_Token_Store {
 		wp_cache_delete( $lock_key, self::CONSUME_LOCK_GROUP );
 
 		return $data;
+	}
+
+	private static function user_index_key( int $user_id ): string {
+		return Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . 'user_' . $user_id;
+	}
+
+	/**
+	 * @return array<string,int> Token hash to expiry time, for tokens that are still unused and unexpired.
+	 */
+	private static function outstanding_index( int $user_id ): array {
+		$index = get_transient( self::user_index_key( $user_id ) );
+		$index = is_array( $index ) ? $index : [];
+		$now = time();
+
+		foreach ( $index as $hash => $expires_at ) {
+			if ( (int) $expires_at <= $now || false === get_transient( Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . $hash ) ) {
+				unset( $index[ $hash ] );
+			}
+		}
+
+		return $index;
 	}
 
 	private static function storage_key( string $token ): string {

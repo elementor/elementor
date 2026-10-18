@@ -113,10 +113,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 			$alt = isset( $input['alt'] ) && is_string( $input['alt'] ) ? $input['alt'] : null;
 
 			if ( null !== $title || null !== $alt ) {
-				$updated = Media_Attachment_Service::update_title_and_alt( $existing_id, $title, $alt );
-				if ( ! is_wp_error( $updated ) ) {
-					return $updated;
-				}
+				return Media_Attachment_Service::update_title_and_alt( $existing_id, $title, $alt );
 			}
 
 			return Media_Attachment_Service::format_attachment( $existing_id );

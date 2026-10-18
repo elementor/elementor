@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -43,6 +44,8 @@ class List_Assets_Ability extends Abstract_Ability {
 	];
 
 	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Use elementor/upload-media (HTTPS source URL) or elementor/request-media-upload (one-time curl upload) after the user consents. If those are unavailable, ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
+
+	const EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS = 'No matching assets are in the Media Library. Ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-assets';
@@ -153,7 +156,7 @@ class List_Assets_Ability extends Abstract_Ability {
 		];
 
 		if ( 0 === $response['total'] ) {
-			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
+			$response['llm_instructions'] = $this->get_empty_result_hint();
 		}
 
 		return $response;
@@ -197,5 +200,13 @@ class List_Assets_Ability extends Abstract_Ability {
 			'width' => isset( $metadata['width'] ) ? (int) $metadata['width'] : null,
 			'height' => isset( $metadata['height'] ) ? (int) $metadata['height'] : null,
 		];
+	}
+
+	private function get_empty_result_hint(): string {
+		if ( Mcp_Media_Feature_Gate::is_enabled() && current_user_can( 'upload_files' ) ) {
+			return self::EMPTY_RESULT_HINT;
+		}
+
+		return self::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS;
 	}
 }
