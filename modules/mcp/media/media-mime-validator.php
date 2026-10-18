@@ -20,6 +20,10 @@ class Media_Mime_Validator {
 			}
 		}
 
+		if ( self::looks_like_svg( $file_path ) ) {
+			return Media_Upload_Config::SVG_MIME_TYPE;
+		}
+
 		if ( class_exists( 'finfo' ) ) {
 			$finfo = new \finfo( FILEINFO_MIME_TYPE );
 			$detected = $finfo->file( $file_path );
@@ -30,6 +34,23 @@ class Media_Mime_Validator {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Detects SVG markup that may start with a byte order mark, an XML declaration, comments or a doctype.
+	 */
+	private static function looks_like_svg( string $file_path ): bool {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$head = file_get_contents( $file_path, false, null, 0, 8192 );
+
+		if ( ! is_string( $head ) || '' === $head ) {
+			return false;
+		}
+
+		$head = preg_replace( '/^\xEF\xBB\xBF/', '', $head );
+		$head = preg_replace( '/^(?:\s+|<\?xml\b.*?\?>|<!--.*?-->|<!DOCTYPE[^>]*>)+/is', '', (string) $head );
+
+		return 1 === preg_match( '/^<svg[\s>]/iD', (string) $head );
 	}
 
 	public static function assert_allowed_mime( ?string $mime, ?int $user_id = null ): ?\WP_Error {

@@ -15,8 +15,18 @@ class Safe_Remote_Image_Fetcher {
 		Media_Attachment_Service::load_admin_media_includes();
 
 		$current_url = $source_url;
+		$deadline = microtime( true ) + Media_Upload_Config::TOTAL_FETCH_TIMEOUT_SECONDS;
 
 		for ( $hop = 0; $hop <= Media_Upload_Config::MAX_REDIRECT_HOPS; $hop++ ) {
+			$remaining = (int) floor( $deadline - microtime( true ) );
+			if ( $remaining < 1 ) {
+				return new \WP_Error(
+					'fetch_timeout',
+					__( 'Downloading the image took too long.', 'elementor' ),
+					[ 'status' => \WP_Http::GATEWAY_TIMEOUT ]
+				);
+			}
+
 			$scheme_error = Public_Host_Validator::assert_https_url( $current_url );
 			if ( $scheme_error ) {
 				return $scheme_error;
@@ -46,7 +56,7 @@ class Safe_Remote_Image_Fetcher {
 				return $pinned_ip;
 			}
 
-			$response = Pinned_Remote_Fetch::get( $current_url, $host, $pinned_ip );
+			$response = Pinned_Remote_Fetch::get( $current_url, $host, $pinned_ip, $remaining );
 
 			if ( is_wp_error( $response ) ) {
 				return $response;

@@ -19,11 +19,21 @@ class Media_Upload_Config {
 
 	const UPLOAD_FILENAME_HEADER = 'X-Elementor-Mcp-Upload-Filename';
 
+	const UPLOAD_TITLE_HEADER = 'X-Elementor-Mcp-Upload-Title';
+
+	const UPLOAD_ALT_HEADER = 'X-Elementor-Mcp-Upload-Alt';
+
+	const MAX_METADATA_LENGTH = 255;
+
 	const TOKEN_TRANSIENT_PREFIX = 'elementor_mcp_upload_';
 
 	const TOKEN_TTL_SECONDS = 600;
 
 	const FETCH_TIMEOUT_SECONDS = 30;
+
+	const TOTAL_FETCH_TIMEOUT_SECONDS = 60;
+
+	const MAX_OUTSTANDING_TOKENS_PER_USER = 20;
 
 	const MAX_REDIRECT_HOPS = 5;
 
@@ -53,7 +63,7 @@ class Media_Upload_Config {
 
 		$filtered = apply_filters( 'elementor/mcp/media/max_upload_bytes', $bytes );
 
-		return max( 1, (int) $filtered );
+		return min( $bytes, max( 1, (int) $filtered ) );
 	}
 
 	public static function assert_content_length_within_limit( $content_length ): ?\WP_Error {
@@ -87,16 +97,32 @@ class Media_Upload_Config {
 			return false;
 		}
 
-		if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
-			return false;
-		}
-
 		$user_id = null === $user_id ? get_current_user_id() : (int) $user_id;
 
 		if ( $user_id <= 0 ) {
 			return false;
 		}
 
+		if ( ! self::are_unfiltered_uploads_enabled_for_user( $user_id ) ) {
+			return false;
+		}
+
 		return user_can( $user_id, 'manage_options' ) || user_can( $user_id, 'unfiltered_upload' );
+	}
+
+	private static function are_unfiltered_uploads_enabled_for_user( int $user_id ): bool {
+		$previous_user_id = get_current_user_id();
+
+		if ( $previous_user_id === $user_id ) {
+			return (bool) Uploads_Manager::are_unfiltered_uploads_enabled();
+		}
+
+		wp_set_current_user( $user_id );
+
+		try {
+			return (bool) Uploads_Manager::are_unfiltered_uploads_enabled();
+		} finally {
+			wp_set_current_user( $previous_user_id );
+		}
 	}
 }

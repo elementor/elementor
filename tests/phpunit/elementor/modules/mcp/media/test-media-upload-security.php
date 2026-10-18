@@ -493,11 +493,13 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'remote_fetch_unpinned', $result->get_error_code() );
 	}
 
-	public function test_pinned_remote_fetch__removes_transport_filter_after_exception() {
+	public function test_pinned_remote_fetch__removes_curl_hook_after_exception() {
 		// Arrange
 		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
+
+		$hooks_before = has_action( 'http_api_curl' );
 
 		add_filter(
 			'pre_http_request',
@@ -517,10 +519,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		remove_all_filters( 'pre_http_request' );
 
-		$transports = apply_filters( 'http_api_transports', [ 'curl', 'streams' ], [], 'https://example.com/' );
-
 		// Assert
-		$this->assertContains( 'streams', $transports );
+		$this->assertSame( $hooks_before, has_action( 'http_api_curl' ) );
 	}
 
 	/**
@@ -549,6 +549,28 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'ipv4-mapped-private' => [ '::ffff:10.0.0.1' ],
 			'6to4' => [ '2002:7f00:1::1' ],
 			'teredo' => [ '2001:0:4136:e378:8000:63bf:3fff:fdd2' ],
+			'192.0.0.0/24' => [ '192.0.0.192' ],
+			'192.0.2.0/24' => [ '192.0.2.1' ],
+			'192.88.99.0/24' => [ '192.88.99.1' ],
+			'198.18.0.0/15' => [ '198.19.255.254' ],
+			'198.51.100.0/24' => [ '198.51.100.1' ],
+			'203.0.113.0/24' => [ '203.0.113.1' ],
+			'224.0.0.0/4' => [ '224.0.0.1' ],
+			'240.0.0.0/4' => [ '240.0.0.1' ],
+			'broadcast' => [ '255.255.255.255' ],
+			'cloud metadata wireserver' => [ '168.63.129.16' ],
+			'loopback' => [ '127.0.0.1' ],
+			'10.0.0.0/8' => [ '10.0.0.1' ],
+			'172.16.0.0/12' => [ '172.16.0.1' ],
+			'192.168.0.0/16' => [ '192.168.0.1' ],
+			'fec0::/10' => [ 'fec0::1' ],
+			'ff00::/8' => [ 'ff02::1' ],
+			'100::/64' => [ '100::1' ],
+			'2001:db8::/32' => [ '2001:db8::1' ],
+			'ipv4-compatible loopback' => [ '::7f00:1' ],
+			'ipv4-translated loopback' => [ '::ffff:0:7f00:1' ],
+			'ipv6 loopback' => [ '::1' ],
+			'ipv6 unspecified' => [ '::' ],
 		];
 	}
 
@@ -952,5 +974,473 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::CREATED, $responses[0]->get_status() );
 		$this->assertSame( \WP_Http::CREATED, $responses[1]->get_status() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $reused->get_status() );
+	}
+
+	public function test_assert_public_ip__allows_public_addresses_next_to_denied_ranges() {
+		// Assert
+		$this->assertNull( Public_Host_Validator::assert_public_ip( '198.20.0.1' ) );
+		$this->assertNull( Public_Host_Validator::assert_public_ip( '93.184.216.34' ) );
+		$this->assertNull( Public_Host_Validator::assert_public_ip( '2606:4700:4700::1111' ) );
+	}
+
+	public function test_assert_https_url__rejects_userinfo() {
+		// Act
+		$error = Public_Host_Validator::assert_https_url( 'https://user@example.com/photo.png' );
+
+		// Assert
+		$this->assertWPError( $error );
+		$this->assertSame( 'invalid_url', $error->get_error_code() );
+	}
+
+	public function test_upload_media__rejects_ipv6_literal_host() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => 'https://[2001:4860:4860::8888]/image.png',
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+	}
+
+	public function test_upload_media__follows_relative_redirect() {
+		// Arrange
+		$this->act_as_admin();
+		$png = self::MINIMAL_PNG;
+
+		$this->mock_pinned_http_response( static function ( $url ) use ( $png ) {
+			if ( str_ends_with( $url, '/start.png' ) ) {
+				return [
+					'response' => [ 'code' => 302 ],
+					'headers' => [ 'location' => '/final.png' ],
+					'body' => '',
+				];
+			}
+
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
+
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => 'https://example.com/start.png',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'image/png', $result['mime'] );
+	}
+
+	public function test_upload_media__rejects_redirect_without_location() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->mock_pinned_http_response( static function () {
+			return [
+				'response' => [ 'code' => 302 ],
+				'headers' => [],
+				'body' => '',
+			];
+		} );
+
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => 'https://example.com/start.png',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_redirect', $result->get_error_code() );
+	}
+
+	public function test_upload_media__rejects_too_many_redirects() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->mock_pinned_http_response( static function () {
+			return [
+				'response' => [ 'code' => 302 ],
+				'headers' => [ 'location' => 'https://example.com/loop.png' ],
+				'body' => '',
+			];
+		} );
+
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => 'https://example.com/loop.png',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'too_many_redirects', $result->get_error_code() );
+	}
+
+	public function test_upload_media__does_not_store_query_string_in_source_url_meta() {
+		// Arrange
+		$this->act_as_admin();
+		$png = self::MINIMAL_PNG;
+
+		$this->mock_pinned_http_response( static function () use ( $png ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
+
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$with_query = $ability->execute( [
+			'source_url' => 'https://example.com/signed.png?sig=abc123',
+			'consent' => true,
+		] );
+		$with_fragment = $ability->execute( [
+			'source_url' => 'https://example.com/plain.png#section',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertSame( '', (string) get_post_meta( $with_query['attachment_id'], Media_Upload_Config::SOURCE_URL_META_KEY, true ) );
+		$this->assertSame(
+			'https://example.com/plain.png',
+			get_post_meta( $with_fragment['attachment_id'], Media_Upload_Config::SOURCE_URL_META_KEY, true )
+		);
+	}
+
+	public function test_upload_media__returns_error_when_dedupe_update_is_denied() {
+		// Arrange
+		$this->act_as_admin();
+		$source_url = 'https://example.com/dedupe-denied.png';
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => get_current_user_id(),
+			'post_mime_type' => 'image/jpeg',
+		] );
+		update_post_meta( $attachment_id, Media_Upload_Config::SOURCE_URL_META_KEY, $source_url );
+
+		$deny_edit = static function ( $caps, $cap, $user_id, $args ) use ( $attachment_id ) {
+			if ( 'edit_post' === $cap && isset( $args[0] ) && (int) $args[0] === $attachment_id ) {
+				return [ 'do_not_allow' ];
+			}
+
+			return $caps;
+		};
+
+		add_filter( 'map_meta_cap', $deny_edit, 10, 4 );
+
+		$ability = new Upload_Media_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'source_url' => $source_url,
+			'consent' => true,
+			'title' => 'New title',
+		] );
+
+		remove_filter( 'map_meta_cap', $deny_edit, 10 );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+	}
+
+	public function test_create_from_temp_file__deletes_temp_file_without_upload_capability() {
+		// Arrange
+		$user_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
+		wp_set_current_user( $user_id );
+		$tmp = wp_tempnam( 'mcp-cap-check.png' );
+		file_put_contents( $tmp, self::MINIMAL_PNG );
+
+		// Act
+		$result = Media_Attachment_Service::create_from_temp_file( [
+			'tmp_name' => $tmp,
+			'name' => 'pixel.png',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+		$this->assertFalse( file_exists( $tmp ) );
+	}
+
+	public function test_update_title_and_alt__returns_not_found_for_missing_attachment() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = Media_Attachment_Service::update_title_and_alt( 99999999, 'Title', null );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_attachment', $result->get_error_code() );
+	}
+
+	public function test_update_title_and_alt__limits_length() {
+		// Arrange
+		$this->act_as_admin();
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => get_current_user_id(),
+			'post_mime_type' => 'image/jpeg',
+		] );
+
+		// Act
+		$result = Media_Attachment_Service::update_title_and_alt(
+			$attachment_id,
+			str_repeat( 't', 1000 ),
+			str_repeat( 'a', 1000 )
+		);
+
+		// Assert
+		$this->assertSame( Media_Upload_Config::MAX_METADATA_LENGTH, strlen( $result['alt'] ) );
+		$this->assertSame( Media_Upload_Config::MAX_METADATA_LENGTH, strlen( get_post( $attachment_id )->post_title ) );
+	}
+
+	public function test_update_media_attachment__rejects_empty_title_and_non_integer_id() {
+		// Arrange
+		$this->act_as_admin();
+		$attachment_id = self::factory()->attachment->create( [
+			'post_author' => get_current_user_id(),
+			'post_mime_type' => 'image/jpeg',
+		] );
+		$ability = new Update_Media_Attachment_Ability();
+
+		// Act
+		$empty_title = $ability->execute( [
+			'attachment_id' => $attachment_id,
+			'title' => '  ',
+		] );
+		$string_id = $ability->execute( [
+			'attachment_id' => $attachment_id . 'abc',
+			'title' => 'Title',
+		] );
+
+		// Assert
+		$this->assertWPError( $empty_title );
+		$this->assertSame( 'invalid_title', $empty_title->get_error_code() );
+		$this->assertWPError( $string_id );
+		$this->assertSame( 'invalid_attachment', $string_id->get_error_code() );
+	}
+
+	public function test_max_upload_bytes__filter_cannot_raise_the_limit() {
+		// Arrange
+		$default = Media_Upload_Config::max_upload_bytes();
+		add_filter( 'elementor/mcp/media/max_upload_bytes', static fn() => PHP_INT_MAX );
+
+		// Act
+		$raised = Media_Upload_Config::max_upload_bytes();
+
+		remove_all_filters( 'elementor/mcp/media/max_upload_bytes' );
+		add_filter( 'elementor/mcp/media/max_upload_bytes', static fn() => 1024 );
+
+		$lowered = Media_Upload_Config::max_upload_bytes();
+
+		remove_all_filters( 'elementor/mcp/media/max_upload_bytes' );
+
+		// Assert
+		$this->assertSame( $default, $raised );
+		$this->assertSame( 1024, $lowered );
+	}
+
+	public function test_sniff_mime_type__detects_svg_with_prolog_and_comment() {
+		// Arrange
+		$tmp = wp_tempnam( 'mcp-sniff.svg' );
+		file_put_contents( $tmp, "\xEF\xBB\xBF<?xml version=\"1.0\"?>\n<!-- exported -->\n<svg xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"1\" height=\"1\"/></svg>" );
+
+		$text = wp_tempnam( 'mcp-sniff.txt' );
+		file_put_contents( $text, 'plain text <svg not at start' );
+
+		// Act
+		$svg_mime = Media_Mime_Validator::sniff_mime_type( $tmp );
+		$text_mime = Media_Mime_Validator::sniff_mime_type( $text );
+
+		wp_delete_file( $tmp );
+		wp_delete_file( $text );
+
+		// Assert
+		$this->assertSame( Media_Upload_Config::SVG_MIME_TYPE, $svg_mime );
+		$this->assertNotSame( Media_Upload_Config::SVG_MIME_TYPE, $text_mime );
+	}
+
+	public function test_svg_upload__succeeds_for_admin_when_unfiltered_uploads_enabled() {
+		// Arrange
+		if ( ! \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run() ) {
+			$this->markTestSkipped( 'SVG sanitizer is not available in this environment.' );
+		}
+
+		$this->act_as_admin();
+		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+		$tmp = wp_tempnam( 'mcp-admin-upload.svg' );
+		file_put_contents( $tmp, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><rect width="1" height="1"/></svg>' );
+
+		// Act
+		$result = Media_Attachment_Service::create_from_temp_file( [
+			'tmp_name' => $tmp,
+			'name' => 'icon.svg',
+		] );
+
+		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( Media_Upload_Config::SVG_MIME_TYPE, $result['mime'] );
+		$this->assertStringNotContainsString( 'onload', (string) file_get_contents( get_attached_file( $result['attachment_id'] ) ) );
+	}
+
+	public function test_svg_upload__is_evaluated_for_the_given_user() {
+		// Arrange
+		$this->act_as_editor();
+		$admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+		$current_user_id = get_current_user_id();
+
+		// Act
+		$allowed_for_admin = Media_Upload_Config::is_svg_upload_allowed_for_user( $admin_id );
+		$allowed_for_editor = Media_Upload_Config::is_svg_upload_allowed_for_user( $current_user_id );
+
+		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+
+		// Assert
+		$this->assertSame( $current_user_id, get_current_user_id() );
+		$this->assertFalse( $allowed_for_editor );
+		$this->assertSame( \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run(), $allowed_for_admin );
+	}
+
+	public function test_upload_token__rejects_user_who_lost_upload_capability() {
+		// Arrange
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user_id );
+		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
+		( new \WP_User( $user_id ) )->set_role( 'subscriber' );
+		wp_set_current_user( 0 );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
+		$request->set_body( self::MINIMAL_PNG );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::FORBIDDEN, $response->get_status() );
+		$this->assertSame( 0, get_current_user_id() );
+	}
+
+	public function test_request_media_upload__accepts_count_bounds() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$single = $ability->execute( [
+			'consent' => true,
+			'count' => 1,
+		] );
+		$max = $ability->execute( [
+			'consent' => true,
+			'count' => Media_Upload_Config::MAX_UPLOADS_PER_REQUEST,
+		] );
+		$null_count = $ability->execute( [
+			'consent' => true,
+			'count' => null,
+		] );
+		$huge = $ability->execute( [
+			'consent' => true,
+			'count' => PHP_INT_MAX,
+		] );
+
+		// Assert
+		$this->assertCount( 1, $single['uploads'] );
+		$this->assertCount( Media_Upload_Config::MAX_UPLOADS_PER_REQUEST, $max['uploads'] );
+		$this->assertCount( 1, $null_count['uploads'] );
+		$this->assertWPError( $huge );
+		$this->assertSame( 'invalid_upload_count', $huge->get_error_code() );
+	}
+
+	public function test_request_media_upload__limits_outstanding_tokens_per_user() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+		$user_id = get_current_user_id();
+
+		for ( $index = 0; $index < Media_Upload_Config::MAX_OUTSTANDING_TOKENS_PER_USER; $index++ ) {
+			Media_Upload_Token_Store::issue_for_user( $user_id );
+		}
+
+		// Act
+		$result = $ability->execute( [ 'consent' => true ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'too_many_pending_uploads', $result->get_error_code() );
+	}
+
+	public function test_request_media_upload__used_tokens_free_up_capacity() {
+		// Arrange
+		$this->act_as_admin();
+		$user_id = get_current_user_id();
+		$issued = Media_Upload_Token_Store::issue_for_user( $user_id );
+		$this->assertSame( 1, Media_Upload_Token_Store::outstanding_count( $user_id ) );
+
+		// Act
+		Media_Upload_Token_Store::consume( $issued['token'] );
+
+		// Assert
+		$this->assertSame( 0, Media_Upload_Token_Store::outstanding_count( $user_id ) );
+	}
+
+	public function test_request_media_upload__curl_command_sends_raw_body_content_type() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'consent' => true ] );
+
+		// Assert
+		$this->assertStringContainsString( "-H 'Content-Type: application/octet-stream'", $result['curl_command'] );
+	}
+
+	public function test_upload_token__limits_title_and_alt_header_length() {
+		// Arrange
+		$this->act_as_admin();
+		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
+		$request->set_header( Media_Upload_Config::UPLOAD_FILENAME_HEADER, 'pixel.png' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TITLE_HEADER, str_repeat( 't', 1000 ) );
+		$request->set_header( Media_Upload_Config::UPLOAD_ALT_HEADER, str_repeat( 'a', 1000 ) );
+		$request->set_body( self::MINIMAL_PNG );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::CREATED, $response->get_status() );
+		$this->assertSame( Media_Upload_Config::MAX_METADATA_LENGTH, strlen( $response->get_data()['alt'] ) );
 	}
 }

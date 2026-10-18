@@ -82,6 +82,8 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 					'count' => [
 						'type' => 'integer',
 						'minimum' => 1,
+						'maximum' => Media_Upload_Config::MAX_UPLOADS_PER_REQUEST,
+						'default' => 1,
 						'description' => 'Number of files to upload. One single-use upload token is issued per file. Defaults to 1.',
 					],
 				],
@@ -113,6 +115,15 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 		}
 
 		$user_id = get_current_user_id();
+
+		if ( ! Media_Upload_Token_Store::has_capacity_for( $user_id, $count ) ) {
+			return new \WP_Error(
+				'too_many_pending_uploads',
+				__( 'There are too many unused upload tokens. Use or wait for the existing ones to expire, then try again.', 'elementor' ),
+				[ 'status' => \WP_Http::TOO_MANY_REQUESTS ]
+			);
+		}
+
 		$upload_url = rest_url( Mcp_Media_Upload_REST_API::API_NAMESPACE . '/' . Mcp_Media_Upload_REST_API::ROUTE );
 		$uploads = [];
 
@@ -154,7 +165,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 		$token = $issued['token'];
 
 		$curl_command = sprintf(
-			"curl -X POST '%s' -H '%s: %s' --data-binary @/path/to/your/image.jpg",
+			"curl -X POST '%s' -H '%s: %s' -H 'Content-Type: application/octet-stream' --data-binary @/path/to/your/image-file",
 			$upload_url,
 			$header,
 			$token

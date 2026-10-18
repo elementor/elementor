@@ -55,13 +55,14 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 					],
 					'title' => [
 						'type' => 'string',
-						'description' => 'New attachment title.',
+						'description' => 'New attachment title. Must not be empty.',
 					],
 					'alt' => [
 						'type' => 'string',
-						'description' => 'New alt text.',
+						'description' => 'New alt text. An empty string clears the alt text.',
 					],
 				],
+				'additionalProperties' => false,
 			]
 		);
 	}
@@ -78,7 +79,7 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 			return $capability_error;
 		}
 
-		$attachment_id = isset( $input['attachment_id'] ) ? (int) $input['attachment_id'] : 0;
+		$attachment_id = isset( $input['attachment_id'] ) && is_int( $input['attachment_id'] ) ? $input['attachment_id'] : 0;
 		if ( $attachment_id <= 0 ) {
 			return new \WP_Error(
 				'invalid_attachment',
@@ -89,6 +90,14 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 
 		$title = isset( $input['title'] ) && is_string( $input['title'] ) ? $input['title'] : null;
 		$alt = isset( $input['alt'] ) && is_string( $input['alt'] ) ? $input['alt'] : null;
+
+		if ( null !== $title && '' === trim( $title ) ) {
+			return new \WP_Error(
+				'invalid_title',
+				__( 'The title must not be empty.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
 
 		if ( null === $title && null === $alt ) {
 			return new \WP_Error(

@@ -17,11 +17,19 @@ class Pinned_Remote_Fetch {
 	/**
 	 * @return array{response:array}|WP_Error
 	 */
-	public static function get( string $url, string $host, string $pinned_ip ) {
+	public static function get( string $url, string $host, string $pinned_ip, ?int $timeout = null ) {
 		if ( ! self::is_curl_transport_available() ) {
 			return new \WP_Error(
 				'remote_fetch_unavailable',
 				__( 'Remote image fetch is not available on this server.', 'elementor' ),
+				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
+			);
+		}
+
+		if ( self::is_proxy_in_use( $url ) ) {
+			return new \WP_Error(
+				'remote_fetch_proxy_unsupported',
+				__( 'Remote image fetch is not available when the server sends requests through a proxy.', 'elementor' ),
 				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
 			);
 		}
@@ -46,11 +54,6 @@ class Pinned_Remote_Fetch {
 			}
 		};
 
-		$transports_filter = static function () {
-			return [ 'curl' ];
-		};
-
-		add_filter( 'http_api_transports', $transports_filter, PHP_INT_MAX, 3 );
 		add_action( 'http_api_curl', $hook, 10, 1 );
 
 		$response = null;
@@ -71,7 +74,7 @@ class Pinned_Remote_Fetch {
 				$response = wp_remote_get(
 					$url,
 					[
-						'timeout' => Media_Upload_Config::FETCH_TIMEOUT_SECONDS,
+						'timeout' => null === $timeout ? Media_Upload_Config::FETCH_TIMEOUT_SECONDS : max( 1, min( $timeout, Media_Upload_Config::FETCH_TIMEOUT_SECONDS ) ),
 						'redirection' => 0,
 						'reject_unsafe_urls' => false,
 						'limit_response_size' => Media_Upload_Config::max_upload_bytes() + 1,
@@ -82,7 +85,6 @@ class Pinned_Remote_Fetch {
 			}
 		} finally {
 			remove_action( 'http_api_curl', $hook, 10 );
-			remove_filter( 'http_api_transports', $transports_filter, PHP_INT_MAX );
 		}
 
 		if ( ! $curl_resolve_applied ) {
@@ -102,6 +104,16 @@ class Pinned_Remote_Fetch {
 		}
 
 		return $response;
+	}
+
+	public static function is_proxy_in_use( string $url ): bool {
+		if ( ! class_exists( '\WP_HTTP_Proxy' ) ) {
+			return false;
+		}
+
+		$proxy = new \WP_HTTP_Proxy();
+
+		return $proxy->is_enabled() && $proxy->send_through_proxy( $url );
 	}
 
 	private static function has_content_encoding( $response ): bool {

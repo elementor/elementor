@@ -178,24 +178,35 @@ class Public_Host_Validator {
 		return true;
 	}
 
+	private const DENIED_IPV4_RANGES = [
+		[ '0.0.0.0', 8 ],
+		[ '10.0.0.0', 8 ],
+		[ '100.64.0.0', 10 ],
+		[ '127.0.0.0', 8 ],
+		[ '168.63.129.16', 32 ],
+		[ '169.254.0.0', 16 ],
+		[ '172.16.0.0', 12 ],
+		[ '192.0.0.0', 24 ],
+		[ '192.0.2.0', 24 ],
+		[ '192.88.99.0', 24 ],
+		[ '192.168.0.0', 16 ],
+		[ '198.18.0.0', 15 ],
+		[ '198.51.100.0', 24 ],
+		[ '203.0.113.0', 24 ],
+		[ '224.0.0.0', 4 ],
+		[ '240.0.0.0', 4 ],
+	];
+
 	private static function is_denied_ipv4( string $ip ): bool {
 		$long = ip2long( $ip );
 		if ( false === $long ) {
 			return true;
 		}
 
-		$long = sprintf( '%u', $long );
-
-		if ( self::ipv4_in_range( $long, '0.0.0.0', 8 ) ) {
-			return true;
-		}
-
-		if ( self::ipv4_in_range( $long, '100.64.0.0', 10 ) ) {
-			return true;
-		}
-
-		if ( self::ipv4_in_range( $long, '169.254.0.0', 16 ) ) {
-			return true;
+		foreach ( self::DENIED_IPV4_RANGES as [ $network, $prefix_length ] ) {
+			if ( self::ipv4_in_range( $long, $network, $prefix_length ) ) {
+				return true;
+			}
 		}
 
 		return false;
@@ -210,11 +221,34 @@ class Public_Host_Validator {
 		$first = ord( $packed[0] );
 		$second = ord( $packed[1] );
 
+		// ::/96 covers the unspecified address, loopback and IPv4-compatible forms.
+		if ( str_repeat( "\0", 12 ) === substr( $packed, 0, 12 ) ) {
+			return true;
+		}
+
+		// ::ffff:0:0:0/96 covers IPv4-translated forms.
+		if ( "\0\0\0\0\0\0\0\0\xff\xff\0\0" === substr( $packed, 0, 12 ) ) {
+			return true;
+		}
+
+		// 100::/64 is the discard-only prefix.
+		if ( 0x01 === $first && 0x00 === $second && str_repeat( "\0", 6 ) === substr( $packed, 2, 6 ) ) {
+			return true;
+		}
+
 		if ( 0xfe === $first && ( $second & 0xc0 ) === 0x80 ) {
 			return true;
 		}
 
+		if ( 0xfe === $first && ( $second & 0xc0 ) === 0xc0 ) {
+			return true;
+		}
+
 		if ( 0xfc === $first || 0xfd === $first ) {
+			return true;
+		}
+
+		if ( 0xff === $first ) {
 			return true;
 		}
 
@@ -227,6 +261,10 @@ class Public_Host_Validator {
 		}
 
 		if ( 0x20 === $first && 0x01 === $second && 0x00 === ord( $packed[2] ) && 0x00 === ord( $packed[3] ) ) {
+			return true;
+		}
+
+		if ( 0x20 === $first && 0x01 === $second && 0x0d === ord( $packed[2] ) && 0xb8 === ord( $packed[3] ) ) {
 			return true;
 		}
 
@@ -248,16 +286,15 @@ class Public_Host_Validator {
 		return "\0\0\0\0\0\0\0\0\0\0\xff\xff" === substr( $packed, 0, 12 );
 	}
 
-	private static function ipv4_in_range( string $unsigned_long, string $network, int $prefix_length ): bool {
+	private static function ipv4_in_range( int $long, string $network, int $prefix_length ): bool {
 		$network_long = ip2long( $network );
 		if ( false === $network_long ) {
 			return false;
 		}
 
-		$network_long = sprintf( '%u', $network_long );
 		$mask = 0 === $prefix_length ? 0 : ( 0xffffffff << ( 32 - $prefix_length ) ) & 0xffffffff;
 
-		return ( (int) $unsigned_long & $mask ) === ( (int) $network_long & $mask );
+		return ( ( $long & 0xffffffff ) & $mask ) === ( ( $network_long & 0xffffffff ) & $mask );
 	}
 
 	/**

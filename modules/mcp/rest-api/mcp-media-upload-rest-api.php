@@ -141,8 +141,8 @@ class Mcp_Media_Upload_REST_API {
 			);
 		}
 
-		$title = $this->read_header( $request, 'X-Elementor-Mcp-Upload-Title' );
-		$alt = $this->read_header( $request, 'X-Elementor-Mcp-Upload-Alt' );
+		$title = $this->read_header( $request, Media_Upload_Config::UPLOAD_TITLE_HEADER );
+		$alt = $this->read_header( $request, Media_Upload_Config::UPLOAD_ALT_HEADER );
 
 		return Media_Attachment_Service::create_from_temp_file(
 			[

@@ -196,6 +196,21 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $result['llm_instructions'] );
 	}
 
+	public function test_execute__empty_result_hint_omits_upload_tools_when_media_upload_is_disabled() {
+		// Arrange
+		$this->act_as_admin();
+		add_filter( \Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+
+		// Act
+		$result = $this->ability->execute( [ 'search' => 'nonexistent-needle-' . wp_generate_password( 12, false ) ] );
+
+		remove_all_filters( \Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate::ENABLED_FILTER );
+
+		// Assert
+		$this->assertSame( List_Assets_Ability::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS, $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'elementor/upload-media', $result['llm_instructions'] );
+	}
+
 	private function create_attachment( string $mime_type, string $filename, string $title = '' ): int {
 		$attachment_id = $this->factory()->attachment->create_object(
 			$filename,

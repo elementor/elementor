@@ -11,7 +11,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Media_Attachment_Service {
 
+	/**
+	 * URLs with a query string are neither stored nor matched: they may carry signed
+	 * access values and the query can decide which file is served.
+	 */
+	public static function source_url_for_storage( string $source_url ): ?string {
+		$parts = wp_parse_url( $source_url );
+
+		if ( ! is_array( $parts ) || isset( $parts['query'] ) ) {
+			return null;
+		}
+
+		$without_fragment = explode( '#', $source_url, 2 )[0];
+
+		return '' === $without_fragment ? null : $without_fragment;
+	}
+
 	public static function find_by_source_url( string $source_url, ?int $author_id = null ): ?int {
+		$source_url = self::source_url_for_storage( $source_url );
+
+		if ( null === $source_url ) {
+			return null;
+		}
+
 		$author_id = null === $author_id ? get_current_user_id() : (int) $author_id;
 
 		$query = [
@@ -47,6 +69,8 @@ class Media_Attachment_Service {
 		?string $source_url = null
 	) {
 		if ( ! current_user_can( 'upload_files' ) ) {
+			self::delete_temp( $file['tmp_name'] );
+
 			return new \WP_Error(
 				'rest_forbidden',
 				__( 'You do not have permission to upload files.', 'elementor' ),
@@ -83,7 +107,7 @@ class Media_Attachment_Service {
 		];
 
 		$sideload_filters = self::install_svg_sideload_filters( $mime );
-		$attachment_id = media_handle_sideload( $file_array, 0, $title ?? '', [ 'test_form' => false ] );
+		$attachment_id = media_handle_sideload( $file_array, 0, $title ?? '' );
 		self::remove_svg_sideload_filters( $sideload_filters );
 
 		if ( is_wp_error( $attachment_id ) ) {
@@ -92,8 +116,9 @@ class Media_Attachment_Service {
 			return $attachment_id;
 		}
 
-		if ( is_string( $source_url ) && '' !== $source_url ) {
-			update_post_meta( $attachment_id, Media_Upload_Config::SOURCE_URL_META_KEY, $source_url );
+		$stored_source_url = is_string( $source_url ) ? self::source_url_for_storage( $source_url ) : null;
+		if ( null !== $stored_source_url ) {
+			update_post_meta( $attachment_id, Media_Upload_Config::SOURCE_URL_META_KEY, $stored_source_url );
 		}
 
 		self::apply_meta( $attachment_id, $title, $alt );
@@ -124,20 +149,20 @@ class Media_Attachment_Service {
 			);
 		}
 
-		if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to edit this attachment.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
 		$post = get_post( $attachment_id );
 		if ( ! $post || 'attachment' !== $post->post_type ) {
 			return new \WP_Error(
 				'invalid_attachment',
 				__( 'The attachment was not found.', 'elementor' ),
 				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		if ( ! current_user_can( 'edit_post', $attachment_id ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'You do not have permission to edit this attachment.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}
 
@@ -150,20 +175,24 @@ class Media_Attachment_Service {
 		if ( is_string( $title ) && '' !== trim( $title ) ) {
 			wp_update_post( [
 				'ID' => $attachment_id,
-				'post_title' => sanitize_text_field( $title ),
+				'post_title' => self::limit_length( sanitize_text_field( $title ) ),
 			] );
 		}
 
 		if ( is_string( $alt ) ) {
-			update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $alt ) );
+			update_post_meta( $attachment_id, '_wp_attachment_image_alt', self::limit_length( sanitize_text_field( $alt ) ) );
 		}
+	}
+
+	private static function limit_length( string $value ): string {
+		return mb_substr( $value, 0, Media_Upload_Config::MAX_METADATA_LENGTH );
 	}
 
 	private static function normalize_filename( string $name, string $mime ): string {
 		$name = sanitize_file_name( $name );
 		$extension = Media_Mime_Validator::extension_for_mime( $mime );
 
-		if ( ! preg_match( '/\.' . preg_quote( $extension, '/' ) . '$/i', $name ) ) {
+		if ( ! preg_match( '/\.' . preg_quote( $extension, '/' ) . '$/iD', $name ) ) {
 			$name = preg_replace( '/\.[^.]+$/', '', $name ) . '.' . $extension;
 		}
 
