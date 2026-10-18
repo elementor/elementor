@@ -73,6 +73,7 @@ class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'GET', '/wp/v2/pages/' . $post_id );
 
 		// WP 6.8 emits PHP 8.5 deprecation notices that are not Elementor output.
+		// Only this test masks E_DEPRECATED, and only for this request; other tests still surface Elementor's own deprecations.
 		ob_start();
 		$previous_error_reporting = error_reporting( error_reporting() & ~E_DEPRECATED );
 		try {
