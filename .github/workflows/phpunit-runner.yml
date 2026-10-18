@@ -10,17 +10,22 @@ on:
       job_name:
         required: true
         type: string
+      multisite_modes:
+        required: false
+        type: string
+        default: '[false, true]'
 
 jobs:
   run-tests:
     runs-on: ubuntu-22.04
-    name: ${{ inputs.job_name }} - WP ${{ matrix.wordpress_versions }} - PHP ${{ matrix.php_versions }}
+    name: ${{ inputs.job_name }} - WP ${{ matrix.wordpress_versions }} - PHP ${{ matrix.php_versions }} - ${{ matrix.multisite && 'Multisite' || 'Single site' }}
 
     strategy:
       fail-fast: false
       matrix:
         wordpress_versions: ${{ fromJson(inputs.wordpress_versions) }}
         php_versions: ${{ fromJson(inputs.php_versions) }}
+        multisite: ${{ fromJson(inputs.multisite_modes) }}
 
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
@@ -53,15 +58,14 @@ jobs:
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
           composer update --no-interaction
       - name: Run Tests with Coverage (latest PHP & WP)
-        if: ${{ env.COVERAGE != 'false' }}
+        if: ${{ !matrix.multisite && env.COVERAGE != 'false' }}
         run: |
           composer run coverage
       - name: Run Tests without Coverage
-        if: ${{ env.COVERAGE == 'false' }}
+        if: ${{ !matrix.multisite && env.COVERAGE == 'false' }}
         run: |
           composer run test
-      - name: Run Test - Multisite
+      - name: Run Tests - Multisite
+        if: ${{ matrix.multisite }}
         run: |
-          WP_MULTISITE=1
-          composer update --no-interaction
-          composer run test
+          WP_MULTISITE=1 composer run test
