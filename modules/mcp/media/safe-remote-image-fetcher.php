@@ -9,16 +9,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Safe_Remote_Image_Fetcher {
 
 	/**
+	 * @param callable|null $clock Returns the current time in seconds; defaults to microtime( true ).
 	 * @return array{tmp_name:string,name:string}|WP_Error
 	 */
-	public static function fetch_to_temp_file( string $source_url ) {
+	public static function fetch_to_temp_file( string $source_url, ?callable $clock = null ) {
 		Media_Attachment_Service::load_admin_media_includes();
 
+		$clock = $clock ?? static fn(): float => microtime( true );
 		$current_url = $source_url;
-		$deadline = microtime( true ) + Media_Upload_Config::TOTAL_FETCH_TIMEOUT_SECONDS;
+		$deadline = $clock() + Media_Upload_Config::TOTAL_FETCH_TIMEOUT_SECONDS;
 
 		for ( $hop = 0; $hop <= Media_Upload_Config::MAX_REDIRECT_HOPS; $hop++ ) {
-			$remaining = (int) floor( $deadline - microtime( true ) );
+			$remaining = (int) floor( $deadline - $clock() );
 			if ( $remaining < 1 ) {
 				return new \WP_Error(
 					'fetch_timeout',

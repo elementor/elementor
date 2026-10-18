@@ -33,25 +33,27 @@ class Pinned_Remote_Fetch {
 
 		$curl_resolve_applied = false;
 
-		$hook = static function ( $handle ) use ( $resolve_entry, &$curl_resolve_applied ) {
-			if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && $handle instanceof \CurlHandle ) ) {
+		// Both hooks only act on the request made for this fetch, so other HTTP requests
+		// that run while it is in flight are left untouched.
+		$hook = static function ( $handle, $parsed_args = null, $request_url = null ) use ( $url, $resolve_entry, &$curl_resolve_applied ) {
+			if ( ! self::matches_fetch_url( $url, $request_url ) || ! self::is_curl_handle( $handle ) ) {
 				return;
 			}
 
-			curl_setopt( $handle, self::curl_resolve_option(), [ $resolve_entry ] );
+			self::apply_options( $handle, self::pin_options( $resolve_entry ) );
 			$curl_resolve_applied = true;
+		};
 
-			if ( defined( 'CURLOPT_HTTP_CONTENT_DECODING' ) ) {
-				curl_setopt( $handle, CURLOPT_HTTP_CONTENT_DECODING, false );
+		$direct_connection_hook = static function ( $handle, $parsed_args = null, $request_url = null ) use ( $url ) {
+			if ( ! self::matches_fetch_url( $url, $request_url ) || ! self::is_curl_handle( $handle ) ) {
+				return;
 			}
+
+			self::apply_options( $handle, self::direct_connection_options() );
 		};
 
-		$direct_connection_hook = static function ( $handle ) {
-			self::apply_direct_connection_options( $handle );
-		};
-
-		add_action( 'http_api_curl', $hook, 10, 1 );
-		add_action( 'http_api_curl', $direct_connection_hook, PHP_INT_MAX, 1 );
+		add_action( 'http_api_curl', $hook, 10, 3 );
+		add_action( 'http_api_curl', $direct_connection_hook, PHP_INT_MAX, 3 );
 
 		$response = null;
 
@@ -65,7 +67,7 @@ class Pinned_Remote_Fetch {
 
 		try {
 			if ( null !== $response_override ) {
-				self::prime_curl_resolve_hook( $hook, $curl_resolve_applied );
+				self::prime_curl_resolve_hook( $hook, $url );
 				$response = $response_override;
 			} else {
 				$response = wp_remote_get(
@@ -93,7 +95,11 @@ class Pinned_Remote_Fetch {
 			);
 		}
 
-		if ( ! is_wp_error( $response ) && self::has_content_encoding( $response ) ) {
+		if ( is_wp_error( $response ) ) {
+			return self::generic_fetch_error( $response );
+		}
+
+		if ( self::has_content_encoding( $response ) ) {
 			return new \WP_Error(
 				'unsupported_content_encoding',
 				__( 'The source server returned an encoded response, which is not supported.', 'elementor' ),
@@ -104,14 +110,96 @@ class Pinned_Remote_Fetch {
 		return $response;
 	}
 
-	public static function is_proxy_in_use( string $url ): bool {
+	/**
+	 * Proxies set in the WordPress configuration make the request refuse to run.
+	 * Proxy settings from the environment are ignored instead: the request is kept on a
+	 * direct connection to the validated address, so hosts that need an outbound proxy
+	 * have to use the token upload.
+	 */
+	public static function is_proxy_in_use( string $url, ?\WP_HTTP_Proxy $proxy = null ): bool {
 		if ( ! class_exists( '\WP_HTTP_Proxy' ) ) {
 			return false;
 		}
 
-		$proxy = new \WP_HTTP_Proxy();
+		$proxy = $proxy ?? new \WP_HTTP_Proxy();
 
 		return $proxy->is_enabled() && $proxy->send_through_proxy( $url );
+	}
+
+	public static function matches_fetch_url( string $fetch_url, $request_url ): bool {
+		if ( ! is_string( $request_url ) ) {
+			return false;
+		}
+
+		$expected = wp_parse_url( $fetch_url );
+		$actual = wp_parse_url( $request_url );
+
+		if ( ! is_array( $expected ) || ! is_array( $actual ) ) {
+			return false;
+		}
+
+		$normalize = static function ( array $parts ): array {
+			return [
+				strtolower( (string) ( $parts['scheme'] ?? '' ) ),
+				strtolower( (string) ( $parts['host'] ?? '' ) ),
+				(int) ( $parts['port'] ?? 443 ),
+				(string) ( $parts['path'] ?? '/' ),
+				(string) ( $parts['query'] ?? '' ),
+			];
+		};
+
+		return $normalize( $expected ) === $normalize( $actual );
+	}
+
+	/**
+	 * @return array<int,mixed> cURL options that pin the connection to the validated address.
+	 */
+	public static function pin_options( string $resolve_entry ): array {
+		$options = [ self::curl_resolve_option() => [ $resolve_entry ] ];
+
+		if ( defined( 'CURLOPT_HTTP_CONTENT_DECODING' ) ) {
+			$options[ CURLOPT_HTTP_CONTENT_DECODING ] = false;
+		}
+
+		return $options;
+	}
+
+	/**
+	 * @return array<int,mixed> cURL options that keep the request off any proxy.
+	 */
+	public static function direct_connection_options(): array {
+		return [
+			CURLOPT_PROXY => '',
+			CURLOPT_NOPROXY => '*',
+		];
+	}
+
+	private static function is_curl_handle( $handle ): bool {
+		return is_resource( $handle ) || ( is_object( $handle ) && $handle instanceof \CurlHandle );
+	}
+
+	private static function apply_options( $handle, array $options ): void {
+		foreach ( $options as $option => $value ) {
+			curl_setopt( $handle, $option, $value );
+		}
+	}
+
+	private static function generic_fetch_error( \WP_Error $error ): \WP_Error {
+		$message = strtolower( $error->get_error_message() );
+
+		if ( str_contains( $message, 'timed out' ) || str_contains( $message, 'curl error 28' ) ) {
+			return new \WP_Error(
+				'fetch_timeout',
+				__( 'Downloading the image took too long.', 'elementor' ),
+				[ 'status' => \WP_Http::GATEWAY_TIMEOUT ]
+			);
+		}
+
+		return new \WP_Error(
+			'fetch_failed',
+			__( 'Could not download the image from the source URL.', 'elementor' ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 
 	private static function has_content_encoding( $response ): bool {
@@ -144,19 +232,6 @@ class Pinned_Remote_Fetch {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Keeps the request on a direct connection so that the pinned address is used,
-	 * even when proxy settings come from the environment.
-	 */
-	public static function apply_direct_connection_options( $handle ): void {
-		if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && $handle instanceof \CurlHandle ) ) {
-			return;
-		}
-
-		curl_setopt( $handle, CURLOPT_PROXY, '' );
-		curl_setopt( $handle, CURLOPT_NOPROXY, '*' );
 	}
 
 	/**
@@ -199,11 +274,7 @@ class Pinned_Remote_Fetch {
 	public static function select_pinned_ip( string $host ) {
 		$ips = Public_Host_Validator::resolve_dns( $host );
 		if ( null === $ips || [] === $ips ) {
-			return new \WP_Error(
-				'host_resolution_failed',
-				__( 'The source host could not be resolved.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return Public_Host_Validator::host_not_allowed_error();
 		}
 
 		foreach ( $ips as $ip ) {
@@ -222,7 +293,7 @@ class Pinned_Remote_Fetch {
 		return $ips[0];
 	}
 
-	private static function prime_curl_resolve_hook( callable $hook, bool &$curl_resolve_applied ): void {
+	private static function prime_curl_resolve_hook( callable $hook, string $url ): void {
 		if ( ! function_exists( 'curl_init' ) ) {
 			return;
 		}
@@ -232,7 +303,7 @@ class Pinned_Remote_Fetch {
 			return;
 		}
 
-		$hook( $handle );
+		$hook( $handle, [], $url );
 
 		if ( is_resource( $handle ) || $handle instanceof \CurlHandle ) {
 			curl_close( $handle );

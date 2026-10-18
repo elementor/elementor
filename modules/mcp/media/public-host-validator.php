@@ -72,19 +72,11 @@ class Public_Host_Validator {
 		$records = self::resolve_dns( $host );
 
 		if ( null === $records ) {
-			return new \WP_Error(
-				'host_resolution_failed',
-				__( 'The source host could not be resolved.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return self::host_not_allowed_error();
 		}
 
 		if ( [] === $records ) {
-			return new \WP_Error(
-				'host_resolution_failed',
-				__( 'The source host could not be resolved.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return self::host_not_allowed_error();
 		}
 
 		foreach ( $records as $ip ) {
@@ -126,13 +118,21 @@ class Public_Host_Validator {
 		return true;
 	}
 
+	/**
+	 * One generic error for every host that cannot be used, so callers learn nothing about
+	 * DNS answers or blocked address ranges.
+	 */
+	public static function host_not_allowed_error(): \WP_Error {
+		return new \WP_Error(
+			'remote_host_not_allowed',
+			__( 'The source host cannot be used.', 'elementor' ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
+	}
+
 	public static function assert_url_accepted_by_wp( string $url ): ?\WP_Error {
 		if ( ! wp_http_validate_url( $url ) ) {
-			return new \WP_Error(
-				'invalid_url',
-				__( 'The source URL is not valid.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return self::host_not_allowed_error();
 		}
 
 		return null;
@@ -148,19 +148,11 @@ class Public_Host_Validator {
 		}
 
 		if ( self::is_denied_ip( $ip ) ) {
-			return new \WP_Error(
-				'private_host_blocked',
-				__( 'The source URL points to a private or reserved network address.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return self::host_not_allowed_error();
 		}
 
 		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
-			return new \WP_Error(
-				'private_host_blocked',
-				__( 'The source URL points to a private or reserved network address.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return self::host_not_allowed_error();
 		}
 
 		return null;

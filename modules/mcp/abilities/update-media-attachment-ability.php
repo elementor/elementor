@@ -120,6 +120,10 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 			return $value;
 		}
 
+		if ( is_float( $value ) && is_finite( $value ) && $value >= 1 && $value <= 9007199254740991 && floor( $value ) === $value ) {
+			return (int) $value;
+		}
+
 		if ( is_string( $value ) && ctype_digit( $value ) && strlen( $value ) <= 18 ) {
 			return (int) $value;
 		}
