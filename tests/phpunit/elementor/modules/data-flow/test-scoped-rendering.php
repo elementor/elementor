@@ -4,6 +4,8 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use Elementor\Modules\DataFlow\Actions_Converter;
+use Elementor\Modules\DataFlow\Actions_Parser;
 use Elementor\Modules\DataFlow\Module as Data_Flow_Module;
 use Elementor\Modules\DataFlow\State_Params;
 use Elementor\Plugin;
@@ -80,6 +82,57 @@ class Test_Scoped_Rendering extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'Count: 1', $first_html );
 		$this->assertStringContainsString( 'Count: 2', $second_html );
 		$this->assertSame( [ 'first', 'second' ], array_column( $this->get_footer_data()['scopes'], 'id' ) );
+	}
+
+	public function test_print_element__publishes_scope_state_as_css_variables() {
+		// Arrange
+		$container = $this->create_counter_container( 'vars', 7 );
+
+		// Act
+		$html = $this->print_element( $container );
+
+		// Assert
+		$this->assertStringContainsString( 'data-e-scope="vars" style="--e-state-count:7"', $html );
+	}
+
+	public function test_print_data__outputs_element_actions_in_the_runtime_shape() {
+		// Arrange
+		$action = [ 'on' => 'click', 'do' => 'state/increment', 'args' => [ 'key' => 'count' ] ];
+		$button = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'acting-button',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [],
+			Actions_Parser::DATA_KEY => Actions_Parser::wrap( Actions_Converter::make()->from_plain( [ $action ] )['items'] ),
+		] );
+
+		// Act
+		$this->print_element( $button );
+		$data = $this->get_footer_data();
+
+		// Assert
+		$this->assertSame( [ [ 'elementId' => 'acting-button', 'actions' => [ $action ] ] ], $data['actions'] );
+	}
+
+	public function test_get_raw_data__keeps_only_valid_actions() {
+		// Arrange
+		$valid = Actions_Converter::make()->from_plain( [ [ 'on' => 'click', 'do' => 'state/toggle', 'args' => [ 'key' => 'open' ] ] ] )['items'][0];
+		$element = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'raw-actions',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [],
+			Actions_Parser::DATA_KEY => [
+				'items' => [
+					$valid,
+					[ '$$type' => 'event-action', 'value' => [ 'on' => [ '$$type' => 'string', 'value' => 'click' ] ] ],
+				],
+			],
+		] );
+
+		// Act
+		$raw_data = $element->get_raw_data();
+
+		// Assert
+		$this->assertSame( [ $valid ], $raw_data[ Actions_Parser::DATA_KEY ]['items'] );
 	}
 
 	public function test_get_raw_data__keeps_sanitized_state_params_and_state() {

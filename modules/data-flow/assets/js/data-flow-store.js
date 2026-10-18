@@ -50,7 +50,7 @@ export function createStore( initialState = {} ) {
 
 	const provides = ( key ) => Object.prototype.hasOwnProperty.call( state, key );
 
-	return { getState, setState, subscribe, provides };
+	return { getState, setState, subscribe, provides, owns: provides };
 }
 
 export function createScopedStore( initialState = {}, parentStore ) {
@@ -92,5 +92,5 @@ export function createScopedStore( initialState = {}, parentStore ) {
 		};
 	};
 
-	return { getState, setState, subscribe, provides };
+	return { getState, setState, subscribe, provides, owns: ownStore.provides };
 }

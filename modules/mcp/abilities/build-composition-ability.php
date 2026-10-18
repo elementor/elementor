@@ -4,7 +4,8 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
-use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Actions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Custom_Actions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\State_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
@@ -299,12 +300,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 						'items' => [ 'type' => 'object' ],
 					],
 				],
-				'handlers' => [
+				'actions' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Requires the e_data_flow experiment. Record mapping configuration-id → array of { event, code } plain JavaScript handlers that read and write page state. Send [] for a configuration-id to clear its handlers. Read ' . Data_Flow_Guide_Ability::URI . ' before using handlers.',
-					'additionalProperties' => Handlers_Applier::get_handlers_list_schema(),
+					'description' => 'Requires the e_data_flow experiment. Record mapping configuration-id → array of declarative actions: event actions { on, do, args } and continuous input actions { input, write } that read and write state (no JavaScript). Send [] for a configuration-id to clear its actions. Read ' . Data_Flow_Guide_Ability::URI . ' before using actions.',
+					'additionalProperties' => Actions_Applier::get_actions_list_schema(),
 				],
+				'custom_actions' => Custom_Actions_Applier::get_schema(),
 				'state_params' => [
 					'type' => 'object',
 					'default' => (object) [],

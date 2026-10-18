@@ -15,7 +15,7 @@ class Data_Flow_Guide_Ability extends Abstract_Ability {
 	}
 
 	protected function get_definition(): Ability_Definition {
-		$description = __( 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, and element handlers for build-composition, manage-component and manage-elements.', 'elementor' );
+		$description = __( 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, --e-state-* CSS variables, element actions (events, pointer/scroll/drag/time inputs) and custom_actions for build-composition, manage-component and manage-elements. The actions available on this site are listed in elementor://data-flow/actions.', 'elementor' );
 
 		return new Ability_Definition(
 			__( 'Data Flow Guide', 'elementor' ),

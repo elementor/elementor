@@ -5,7 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
-use Elementor\Modules\DataFlow\Handlers_Parser;
+use Elementor\Modules\DataFlow\Actions_Parser;
 use Elementor\Modules\DataFlow\State_Params;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -162,10 +162,10 @@ class Get_Structure_Ability extends Abstract_Ability {
 	private function populate_content( array &$skeleton, array $node, bool $is_document_root ): void {
 		$skeleton['interactions'] = $this->normalize_interactions( $node['interactions'] ?? null );
 
-		$handlers = Handlers_Parser::sanitize( $node[ Handlers_Parser::DATA_KEY ] ?? [] );
+		$actions = Actions_Parser::to_runtime( $node[ Actions_Parser::DATA_KEY ] ?? [] );
 
-		if ( ! empty( $handlers ) ) {
-			$skeleton[ Handlers_Parser::DATA_KEY ] = $handlers;
+		if ( ! empty( $actions ) ) {
+			$skeleton[ Actions_Parser::DATA_KEY ] = $actions;
 		}
 
 		$state_params = State_Params::sanitize( $node[ State_Params::DATA_KEY ] ?? [] );

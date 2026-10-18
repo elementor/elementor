@@ -26,6 +26,8 @@ class State_Scopes {
 	 * A component instance has no wrapper of its own, so its scope is owned by the instance but tagged on each
 	 * of its root elements. Those roots declare the component params, so they don't open a scope of their own.
 	 *
+	 * @param string     $element_id       The element id.
+	 * @param array      $element_data     The element data.
 	 * @param array|null $component_params The instance's component params, or null when the element isn't an instance.
 	 *
 	 * @return string|null The scope id the element's root tag must carry, if any.
@@ -80,8 +82,16 @@ class State_Scopes {
 		return array_values( $this->scopes );
 	}
 
-	public static function tag_root_element( string $html, string $scope_id ): string {
+	public function get_scope_state( string $scope_id ): array {
+		return $this->scopes[ $scope_id ]['state'] ?? [];
+	}
+
+	public static function tag_root_element( string $html, string $scope_id, string $css_vars = '' ): string {
 		$attribute = self::SCOPE_ATTRIBUTE . '="' . htmlspecialchars( $scope_id, ENT_QUOTES, 'UTF-8' ) . '"';
+
+		if ( '' !== $css_vars ) {
+			$attribute .= ' style="' . htmlspecialchars( $css_vars, ENT_QUOTES, 'UTF-8' ) . '"';
+		}
 
 		return preg_replace_callback(
 			self::FIRST_OPENING_TAG_PATTERN,

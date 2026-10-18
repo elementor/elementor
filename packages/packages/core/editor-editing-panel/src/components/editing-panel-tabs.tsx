@@ -10,17 +10,17 @@ import { useElement } from '../contexts/element-context';
 import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
+import { ActionsTab } from './actions-tab';
 import { ContentOnlyInfotip } from './content-only-infotip';
-import { HandlersTab } from './handlers-tab';
 import { InteractionsTab } from './interactions-tab';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
 
-type TabValue = 'settings' | 'style' | 'interactions' | 'handlers';
+type TabValue = 'settings' | 'style' | 'interactions' | 'actions';
 
 const CONTENT_ONLY_TAB: TabValue = 'settings';
 
-const DESIGN_TABS: TabValue[] = [ 'style', 'interactions', 'handlers' ];
+const DESIGN_TABS: TabValue[] = [ 'style', 'interactions', 'actions' ];
 
 const DATA_FLOW_EXPERIMENT = 'e_data_flow';
 
@@ -91,8 +91,8 @@ const PanelTabContent = () => {
 						/>
 						{ isDataFlowActive && (
 							<Tab
-								label={ withRestrictionInfotip( __( 'Handlers', 'elementor' ) ) }
-								{ ...getDesignTabProps( 'handlers' ) }
+								label={ withRestrictionInfotip( __( 'Actions', 'elementor' ) ) }
+								{ ...getDesignTabProps( 'actions' ) }
 							/>
 						) }
 					</Tabs>
@@ -112,8 +112,8 @@ const PanelTabContent = () => {
 							<InteractionsTab />
 						</TabPanel>
 						{ isDataFlowActive && (
-							<TabPanel { ...getTabPanelProps( 'handlers' ) } disablePadding>
-								<HandlersTab />
+							<TabPanel { ...getTabPanelProps( 'actions' ) } disablePadding>
+								<ActionsTab />
 							</TabPanel>
 						) }
 					</>

@@ -15,7 +15,8 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\Handlers_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Actions_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Custom_Actions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\State_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
@@ -131,7 +132,10 @@ final class Composition_Compiler {
 
 		$warnings->merge( $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) )['warnings'] );
 
-		$warnings->merge( $this->apply_handlers( $index, $this->as_map( $input['handlers'] ?? [] ) ) );
+		$custom_actions = is_array( $input['custom_actions'] ?? null ) ? $input['custom_actions'] : [];
+		$warnings->merge( ( new Custom_Actions_Applier() )->apply( $custom_actions, empty( $input['dry_run'] ) ) );
+
+		$warnings->merge( $this->apply_actions( $index, $this->as_map( $input['actions'] ?? [] ) ) );
 
 		$warnings->merge( $this->apply_state( $index, $this->as_map( $input['state_params'] ?? [] ), $this->as_map( $input['state'] ?? [] ) ) );
 
@@ -351,21 +355,21 @@ final class Composition_Compiler {
 
 	/**
 	 * @param array<string, array&> $index
-	 * @param array<string, mixed>  $handlers
+	 * @param array<string, mixed>  $actions
 	 */
-	private function apply_handlers( array &$index, array $handlers ): Warnings_Bag {
-		if ( empty( $handlers ) ) {
+	private function apply_actions( array &$index, array $actions ): Warnings_Bag {
+		if ( empty( $actions ) ) {
 			return Warnings_Bag::make();
 		}
 
 		if ( ! Data_Flow_Module::is_active() ) {
 			return Warnings_Bag::make()->add(
-				'handlers_experiment_off',
-				__( 'Data Flow experiment is not active. Handlers were not applied.', 'elementor' )
+				'actions_experiment_off',
+				__( 'Data Flow experiment is not active. Actions were not applied.', 'elementor' )
 			);
 		}
 
-		return ( new Handlers_Applier() )->apply( $index, $handlers );
+		return ( new Actions_Applier() )->apply( $index, $actions );
 	}
 
 	/**

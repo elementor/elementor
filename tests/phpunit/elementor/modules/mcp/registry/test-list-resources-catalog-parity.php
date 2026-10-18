@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Registry;
 
+use Elementor\Modules\Mcp\Abilities\Data_Flow_Actions_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Data_Flow_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
@@ -55,6 +56,7 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 			new List_Dynamic_Tags_Ability(),
 			new Interactions_Schema_Resource_Ability(),
 			new Data_Flow_Guide_Ability(),
+			new Data_Flow_Actions_Resource_Ability(),
 		];
 	}
 
@@ -105,8 +107,14 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 			[
 				'uri' => Data_Flow_Guide_Ability::URI,
 				'name' => 'Data Flow Guide',
-				'description' => 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, and element handlers for build-composition, manage-component and manage-elements.',
+				'description' => 'How to make a page stateful: page, container and component state scopes, component params, {{state.key}} text bindings, --e-state-* CSS variables, element actions (events, pointer/scroll/drag/time inputs) and custom_actions for build-composition, manage-component and manage-elements. The actions available on this site are listed in elementor://data-flow/actions.',
 				'mimeType' => 'text/markdown',
+			],
+			[
+				'uri' => Data_Flow_Actions_Resource_Ability::URI,
+				'name' => 'Data Flow Actions',
+				'description' => Data_Flow_Actions_Resource_Ability::DESCRIPTION,
+				'mimeType' => 'application/json',
 			],
 		];
 	}
