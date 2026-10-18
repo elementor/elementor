@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { type MouseEvent, useRef, useState } from 'react';
+import { forwardRef, type MouseEvent, useRef, useState } from 'react';
 import { PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { UploadIcon } from '@elementor/icons';
 import { createReplaceableLocation } from '@elementor/locations';
-import { IconButton, Tooltip } from '@elementor/ui';
+import { Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { trackUpgradePromotionClick, trackViewPromotion } from '../../utils/tracking';
@@ -15,12 +15,38 @@ const TRACKING_DATA = { target_name: 'icon_library_upload', location_l2: 'genera
 export const { Slot: IconLibraryUploadActionSlot, inject: injectIntoIconLibraryUploadAction } =
 	createReplaceableLocation();
 
+type IconLibraryUploadButtonProps = {
+	onClick: () => void;
+	'aria-haspopup'?: 'dialog';
+	'aria-expanded'?: boolean;
+};
+
+export const IconLibraryUploadButton = forwardRef< HTMLButtonElement, IconLibraryUploadButtonProps >(
+	( props, ref ) => {
+		const label = __( 'Upload library', 'elementor' );
+
+		return (
+			<Tooltip title={ label } placement="top">
+				<IconButton ref={ ref } size="tiny" aria-label={ label } { ...props }>
+					<UploadIcon fontSize="tiny" />
+				</IconButton>
+			</Tooltip>
+		);
+	}
+);
+
 type IconLibraryUploadPromotionProps = {
 	ctaUrl?: string;
+	ctaText?: string;
+	title?: string;
+	content?: string;
 };
 
 export const IconLibraryUploadPromotion = ( {
 	ctaUrl = ICON_LIBRARY_UPLOAD_UPGRADE_URL,
+	ctaText = __( 'Upgrade now', 'elementor' ),
+	title = __( 'Upload custom icons', 'elementor' ),
+	content = __( 'Add your own icon font library to use across your site.', 'elementor' ),
 }: IconLibraryUploadPromotionProps ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const triggerRef = useRef< HTMLButtonElement >( null );
@@ -33,8 +59,6 @@ export const IconLibraryUploadPromotion = ( {
 	};
 
 	useCanvasClickHandler( isOpen, close );
-
-	const label = __( 'Upload library', 'elementor' );
 
 	const toggle = () => {
 		if ( ! isOpen ) {
@@ -53,9 +77,9 @@ export const IconLibraryUploadPromotion = ( {
 			open={ isOpen }
 			placement="top"
 			arrow
-			title={ __( 'Upload custom icons', 'elementor' ) }
-			content={ __( 'Add your own icon font library to use across your site.', 'elementor' ) }
-			ctaText={ __( 'Upgrade now', 'elementor' ) }
+			title={ title }
+			content={ content }
+			ctaText={ ctaText }
 			ctaUrl={ ctaUrl }
 			onClose={ ( event: MouseEvent ) => {
 				event.stopPropagation();
@@ -63,18 +87,14 @@ export const IconLibraryUploadPromotion = ( {
 			} }
 			onCtaClick={ () => trackUpgradePromotionClick( TRACKING_DATA ) }
 		>
-			<Tooltip title={ label } placement="top">
-				<IconButton
+			<Box component="span" sx={ { display: 'inline-flex' } }>
+				<IconLibraryUploadButton
 					ref={ triggerRef }
-					size="tiny"
-					aria-label={ label }
 					aria-haspopup="dialog"
 					aria-expanded={ isOpen }
 					onClick={ toggle }
-				>
-					<UploadIcon fontSize="tiny" />
-				</IconButton>
-			</Tooltip>
+				/>
+			</Box>
 		</PromotionPopover>
 	);
 };

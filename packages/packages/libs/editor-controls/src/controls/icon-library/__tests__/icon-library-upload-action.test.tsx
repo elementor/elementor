@@ -84,6 +84,23 @@ describe( 'IconLibraryUploadAction', () => {
 		expect( document.querySelector( '[class*="arrow"]' ) ).toBeInTheDocument();
 	} );
 
+	it( 'should let the caller override the promotion texts', () => {
+		// Arrange.
+		render(
+			<ThemeProvider>
+				<IconLibraryUploadPromotion ctaText="Renew now" title="Custom title" content="Custom content" />
+			</ThemeProvider>
+		);
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upload library' } ) );
+
+		// Assert.
+		expect( screen.getByRole( 'link', { name: 'Renew now' } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Custom title' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Custom content' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should track the promotion view when it opens and the click on the upgrade link', () => {
 		// Arrange.
 		renderSlot();
