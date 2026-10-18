@@ -130,4 +130,21 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		$this->assertFalse( Media_Upload_Token_Store::is_valid_for_request( $token ) );
 		$this->assertWPError( Media_Upload_Token_Store::consume( $token ) );
 	}
+
+	public function test_request_media_upload__returns_disabled_error_for_any_count() {
+		// Arrange
+		$this->act_as_admin();
+		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'consent' => true,
+			'count' => 3,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'mcp_media_disabled', $result->get_error_code() );
+	}
 }

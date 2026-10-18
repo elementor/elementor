@@ -39,6 +39,27 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 						'format' => 'date-time',
 					],
 					'expires_at_unix' => [ 'type' => 'integer' ],
+					'uploads' => [
+						'type' => 'array',
+						'description' => 'One entry per requested file. Each upload_token is single-use. The top-level fields repeat the first entry.',
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'upload_url' => [
+									'type' => 'string',
+									'format' => 'uri',
+								],
+								'token_header' => [ 'type' => 'string' ],
+								'upload_token' => [ 'type' => 'string' ],
+								'curl_command' => [ 'type' => 'string' ],
+								'expires_at' => [
+									'type' => 'string',
+									'format' => 'date-time',
+								],
+								'expires_at_unix' => [ 'type' => 'integer' ],
+							],
+						],
+					],
 				],
 			],
 			[
@@ -57,6 +78,11 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 					'consent' => [
 						'type' => 'boolean',
 						'description' => 'Must be true when the user has approved uploading a local file.',
+					],
+					'count' => [
+						'type' => 'integer',
+						'minimum' => 1,
+						'description' => 'Number of files to upload. One single-use upload token is issued per file. Defaults to 1.',
 					],
 				],
 				'additionalProperties' => false,
@@ -81,10 +107,49 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 			return $consent_error;
 		}
 
-		$user_id = get_current_user_id();
-		$issued = Media_Upload_Token_Store::issue_for_user( $user_id );
+		$count = $this->read_count( $input );
+		if ( is_wp_error( $count ) ) {
+			return $count;
+		}
 
+		$user_id = get_current_user_id();
 		$upload_url = rest_url( Mcp_Media_Upload_REST_API::API_NAMESPACE . '/' . Mcp_Media_Upload_REST_API::ROUTE );
+		$uploads = [];
+
+		for ( $index = 0; $index < $count; $index++ ) {
+			$uploads[] = $this->issue_upload( $user_id, $upload_url );
+		}
+
+		return array_merge( $uploads[0], [ 'uploads' => $uploads ] );
+	}
+
+	/**
+	 * @return int|\WP_Error
+	 */
+	private function read_count( array $input ) {
+		if ( ! array_key_exists( 'count', $input ) || null === $input['count'] ) {
+			return 1;
+		}
+
+		$max = Media_Upload_Config::max_uploads_per_request();
+
+		if ( ! is_int( $input['count'] ) || $input['count'] < 1 || $input['count'] > $max ) {
+			return new \WP_Error(
+				'invalid_upload_count',
+				sprintf(
+					/* translators: %d: maximum number of files per request. */
+					__( 'The count must be a whole number between 1 and %d.', 'elementor' ),
+					$max
+				),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return $input['count'];
+	}
+
+	private function issue_upload( int $user_id, string $upload_url ): array {
+		$issued = Media_Upload_Token_Store::issue_for_user( $user_id );
 		$header = Media_Upload_Config::UPLOAD_TOKEN_HEADER;
 		$token = $issued['token'];
 
