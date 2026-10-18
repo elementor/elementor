@@ -20,9 +20,12 @@ class Global_Variable_Transformer extends Transformer_Base {
 		}
 
 		if ( Grid_Track_Renderer::is_grid_track_property( $context->get_key() ) ) {
-			$count = (int) trim( $variable['value'] ?? '' );
+			$track_value = trim( $variable['value'] ?? '' );
 
-			return Grid_Track_Renderer::format_repeat( $count );
+			// Only a plain count like "3" or "3fr" becomes repeat(), other values are full track lists.
+			if ( preg_match( '/^\d+(\.\d+)?\s*(fr)?$/i', $track_value ) ) {
+				return Grid_Track_Renderer::format_repeat( (int) $track_value );
+			}
 		}
 
 		if ( array_key_exists( 'deleted', $variable ) && $variable['deleted'] ) {
