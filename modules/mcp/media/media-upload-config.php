@@ -51,7 +51,9 @@ class Media_Upload_Config {
 
 	const SVG_MIME_TYPE = 'image/svg+xml';
 
-	const REQUIRED_CAPABILITY = 'manage_options';
+	const REQUIRED_CAPABILITY = 'upload_files';
+
+	const SVG_REQUIRED_CAPABILITY = 'manage_options';
 
 	public static function max_upload_bytes(): int {
 		$wp_limit = wp_max_upload_size();
@@ -109,7 +111,7 @@ class Media_Upload_Config {
 			return false;
 		}
 
-		return user_can( $user_id, 'manage_options' ) || user_can( $user_id, 'unfiltered_upload' );
+		return user_can( $user_id, self::SVG_REQUIRED_CAPABILITY );
 	}
 
 	private static function are_unfiltered_uploads_enabled_for_user( int $user_id ): bool {

@@ -341,7 +341,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
 	}
 
-	public function test_upload_media__requires_administrator_capability() {
+	public function test_upload_media__requires_upload_files_capability() {
 		// Arrange
 		$user_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
 		wp_set_current_user( $user_id );
@@ -592,7 +592,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_url_port', $error->get_error_code() );
 	}
 
-	public function test_update_title_and_alt__requires_administrator_capability() {
+	public function test_update_title_and_alt__requires_edit_post_on_attachment() {
 		// Arrange
 		$this->act_as_admin();
 		$attachment_id = self::factory()->attachment->create( [
@@ -1317,12 +1317,12 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run(), $allowed_for_admin );
 	}
 
-	public function test_upload_token__rejects_user_who_lost_administrator_role() {
+	public function test_upload_token__rejects_user_who_lost_upload_capability() {
 		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
 		wp_set_current_user( $user_id );
 		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
-		( new \WP_User( $user_id ) )->set_role( 'editor' );
+		( new \WP_User( $user_id ) )->set_role( 'subscriber' );
 		wp_set_current_user( 0 );
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
@@ -1433,9 +1433,9 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider non_administrator_role_provider
+	 * @dataProvider roles_without_upload_capability_provider
 	 */
-	public function test_media_abilities__deny_non_administrators( string $role ) {
+	public function test_media_abilities__deny_users_without_upload_capability( string $role ) {
 		// Arrange
 		$user_id = self::factory()->user->create( [ 'role' => $role ] );
 		wp_set_current_user( $user_id );
@@ -1469,28 +1469,137 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( [ false, false, false ], $permission );
 	}
 
-	public function non_administrator_role_provider(): array {
+	public function roles_without_upload_capability_provider(): array {
 		return [
-			'editor' => [ 'editor' ],
-			'author' => [ 'author' ],
 			'contributor' => [ 'contributor' ],
 			'subscriber' => [ 'subscriber' ],
 		];
 	}
 
-	public function test_media_abilities__allow_administrators() {
+	/**
+	 * @dataProvider roles_with_upload_capability_provider
+	 */
+	public function test_media_flow__works_for_non_administrators( string $role ) {
 		// Arrange
-		$this->act_as_admin();
+		$user_id = self::factory()->user->create( [ 'role' => $role ] );
+		wp_set_current_user( $user_id );
+
+		// Act
+		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
+		wp_set_current_user( 0 );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
+		$request->set_header( Media_Upload_Config::UPLOAD_FILENAME_HEADER, 'pixel.png' );
+		$request->set_body( self::MINIMAL_PNG );
+		$response = rest_do_request( $request );
+
+		wp_set_current_user( $user_id );
+		$attachment_id = $response->get_data()['attachment_id'] ?? 0;
+		$updated = ( new Update_Media_Attachment_Ability() )->execute( [
+			'attachment_id' => $attachment_id,
+			'title' => 'Updated title',
+			'alt' => 'Updated alt',
+		] );
 
 		// Assert
-		$this->assertTrue( ( new Upload_Media_Ability() )->check_permission() );
-		$this->assertTrue( ( new Request_Media_Upload_Ability() )->check_permission() );
-		$this->assertTrue( ( new Update_Media_Attachment_Ability() )->check_permission() );
+		$this->assertSame( \WP_Http::CREATED, $response->get_status() );
+		$this->assertSame( 'image/png', $response->get_data()['mime'] );
+		$this->assertSame( $user_id, (int) get_post( $attachment_id )->post_author );
+		$this->assertIsArray( $updated );
+		$this->assertSame( 'Updated alt', $updated['alt'] );
+		$this->assertSame( 'Updated title', get_post( $attachment_id )->post_title );
 	}
 
-	public function test_create_from_temp_file__denies_editor_and_deletes_temp_file() {
+	/**
+	 * @dataProvider roles_with_upload_capability_provider
+	 */
+	public function test_upload_media__works_for_non_administrators( string $role ) {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => $role ] ) );
+		$png = self::MINIMAL_PNG;
+
+		$this->mock_pinned_http_response( static function () use ( $png ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_url' => 'https://example.com/' . $role . '.png',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'image/png', $result['mime'] );
+	}
+
+	public function roles_with_upload_capability_provider(): array {
+		return [
+			'editor' => [ 'editor' ],
+			'author' => [ 'author' ],
+		];
+	}
+
+	/**
+	 * @dataProvider roles_with_upload_capability_provider
+	 */
+	public function test_svg_upload__is_rejected_for_non_administrators( string $role ) {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => $role ] ) );
+		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+		$tmp = wp_tempnam( 'mcp-non-admin.svg' );
+		file_put_contents( $tmp, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>' );
+
+		// Act
+		$result = Media_Attachment_Service::create_from_temp_file( [
+			'tmp_name' => $tmp,
+			'name' => 'icon.svg',
+		] );
+
+		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
+		$this->assertFalse( file_exists( $tmp ) );
+	}
+
+	public function test_upload_media__rejects_svg_for_editor_from_remote_url() {
 		// Arrange
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
+
+		$this->mock_pinned_http_response( static function () use ( $svg ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $svg,
+			];
+		} );
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_url' => 'https://example.com/icon.svg',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
+	}
+
+	public function test_create_from_temp_file__denies_subscriber_and_deletes_temp_file() {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
 		$tmp = wp_tempnam( 'mcp-editor-check.png' );
 		file_put_contents( $tmp, self::MINIMAL_PNG );
 
@@ -1506,9 +1615,9 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertFalse( file_exists( $tmp ) );
 	}
 
-	public function test_upload_token__issued_for_non_administrator_is_not_redeemable() {
+	public function test_upload_token__issued_for_user_without_upload_capability_is_not_redeemable() {
 		// Arrange
-		$editor_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		$editor_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
 		$issued = Media_Upload_Token_Store::issue_for_user( $editor_id );
 		wp_set_current_user( 0 );
 
@@ -1524,9 +1633,9 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 0, get_current_user_id() );
 	}
 
-	public function test_list_assets_hint__omits_upload_tools_for_non_administrators() {
+	public function test_list_assets_hint__omits_upload_tools_for_users_without_upload_capability() {
 		// Arrange
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'contributor' ] ) );
 		$ability = new \Elementor\Modules\Mcp\Abilities\List_Assets_Ability();
 
 		// Act

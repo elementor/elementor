@@ -67,7 +67,7 @@ class Media_Mime_Validator {
 		if ( Media_Upload_Config::SVG_MIME_TYPE === $mime && ! Media_Upload_Config::is_svg_upload_allowed_for_user( $user_id ) ) {
 			return new \WP_Error(
 				'svg_not_allowed',
-				__( 'SVG uploads require unfiltered file uploads to be enabled, and are limited to site administrators or users with permission to upload unfiltered files.', 'elementor' ),
+				__( 'SVG uploads require unfiltered file uploads to be enabled in Elementor, and are limited to site administrators.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
