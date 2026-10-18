@@ -18,11 +18,13 @@ export function getModifiedSections( initialStyle?: StyleDefinition, currentStyl
 		const initial = initialVariants.get( meta );
 		const current = currentVariants.get( meta );
 
-		new Set( [ ...Object.keys( initial?.props ?? {} ), ...Object.keys( current?.props ?? {} ) ] ).forEach( ( prop ) => {
-			if ( isChanged( initial?.props[ prop ], current?.props[ prop ] ) && sectionByProp.has( prop ) ) {
-				modified.add( sectionByProp.get( prop ) as string );
+		new Set( [ ...Object.keys( initial?.props ?? {} ), ...Object.keys( current?.props ?? {} ) ] ).forEach(
+			( prop ) => {
+				if ( isChanged( initial?.props[ prop ], current?.props[ prop ] ) && sectionByProp.has( prop ) ) {
+					modified.add( sectionByProp.get( prop ) as string );
+				}
 			}
-		} );
+		);
 
 		if ( isChanged( initial?.custom_css, current?.custom_css ) ) {
 			modified.add( CUSTOM_CSS_SECTION );
