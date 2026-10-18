@@ -801,6 +801,7 @@ describe( 'IconLibraryPopover', () => {
 
 	it( 'shows the upload action in the header without hiding the icons', () => {
 		// Arrange.
+		window.elementor = { config: { v4Promotions: {} } } as unknown as typeof window.elementor;
 		renderPopover();
 
 		// Act.
@@ -814,6 +815,7 @@ describe( 'IconLibraryPopover', () => {
 
 	it( 'keeps the picker state when the upload promotion is opened and closed', async () => {
 		// Arrange.
+		window.elementor = { config: { v4Promotions: {} } } as unknown as typeof window.elementor;
 		const onClose = jest.fn();
 		renderPopover( { onClose } );
 		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'star' } } );

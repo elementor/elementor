@@ -30,10 +30,19 @@ const renderSlot = () =>
 		</ThemeProvider>
 	);
 
+const setPromotions = ( value?: unknown ) => {
+	( window as { elementor?: unknown } ).elementor = { config: { v4Promotions: value } };
+};
+
 describe( 'IconLibraryUploadAction', () => {
+	beforeEach( () => {
+		setPromotions( {} );
+	} );
+
 	afterEach( () => {
 		__flushAllInjections();
 		delete ( window as { elementorPro?: unknown } ).elementorPro;
+		delete ( window as { elementor?: unknown } ).elementor;
 		jest.clearAllMocks();
 	} );
 
@@ -125,6 +134,17 @@ describe( 'IconLibraryUploadAction', () => {
 			'https://example.com/renew'
 		);
 		expect( trackViewPromotion ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should render nothing for users who do not receive promotions', () => {
+		// Arrange.
+		setPromotions( undefined );
+
+		// Act.
+		renderSlot();
+
+		// Assert.
+		expect( screen.queryByRole( 'button', { name: 'Upload library' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should render nothing by default when Pro is active so Pro can provide the action', () => {

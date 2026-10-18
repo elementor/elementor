@@ -71,7 +71,7 @@ export const IconLibraryUploadPromotion = ( { ctaUrl }: IconLibraryUploadPromoti
 };
 
 export const IconLibraryUploadAction = () => {
-	if ( window.elementorPro ) {
+	if ( window.elementorPro || ! window.elementor?.config?.v4Promotions ) {
 		return null;
 	}
 
