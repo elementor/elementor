@@ -10,6 +10,9 @@ class Form_Structure_Validator {
 
 	const FORM_ELEMENT_TYPE = 'e-form';
 
+	// Mirrors the Pro-only e-form-honeypot widget (same precedent as e-form-hidden).
+	const HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
+
 	const FORM_FIELD_ELEMENT_TYPES = [
 		'e-form-input',
 		'e-form-textarea',
@@ -22,6 +25,7 @@ class Form_Structure_Validator {
 		'e-form-date-picker',
 		'e-form-time-picker',
 		'e-form-hidden',
+		self::HONEYPOT_ELEMENT_TYPE,
 	];
 
 	private const DEFAULT_PARENT_ID = 'document';
@@ -59,6 +63,7 @@ class Form_Structure_Validator {
 			$this->collect_nested_form_errors( $dom, $parent_within_form ),
 			$this->collect_form_ancestor_errors( $dom, $parent_within_form ),
 			$this->collect_submit_button_errors( $dom ),
+			$this->collect_honeypot_errors( $dom, $document_tree, $parent_id ),
 			$this->collect_empty_message_errors( $dom )
 		);
 	}
@@ -136,6 +141,40 @@ class Form_Structure_Validator {
 			} elseif ( $submit_button_count > 1 ) {
 				$errors[] = '<e-form> has ' . $submit_button_count . ' submit buttons — only 1 is allowed.';
 			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function collect_honeypot_errors( \DOMDocument $dom, array $document_tree, string $parent_id ): array {
+		$errors = [];
+		$xpath = new \DOMXPath( $dom );
+		$all_honeypots = $xpath->query( '//' . self::HONEYPOT_ELEMENT_TYPE );
+
+		foreach ( $xpath->query( '//' . self::FORM_ELEMENT_TYPE ) as $form ) {
+			if ( ! $form instanceof \DOMElement ) {
+				continue;
+			}
+
+			$honeypots = $xpath->query( './/' . self::HONEYPOT_ELEMENT_TYPE, $form );
+			$honeypot_count = $honeypots ? $honeypots->length : 0;
+
+			if ( 1 < $honeypot_count ) {
+				$errors[] = '<e-form> has ' . $honeypot_count . ' honeypots — only 1 is allowed.';
+			}
+		}
+
+		$parent_form = $this->find_form_containing_node( $document_tree, $parent_id );
+
+		if ( ! $parent_form || 0 === $this->count_element_type( $parent_form['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE ) ) {
+			return $errors;
+		}
+
+		if ( $all_honeypots && $all_honeypots->length > 0 ) {
+			$errors[] = 'The target <e-form> already has an <e-form-honeypot> — only 1 is allowed per form.';
 		}
 
 		return $errors;
@@ -225,6 +264,86 @@ class Form_Structure_Validator {
 			'found' => false,
 			'within_form' => false,
 		];
+	}
+
+	private function find_form_containing_node( array $tree, string $target_id, ?array $current_form = null ): ?array {
+		if ( self::DEFAULT_PARENT_ID === $target_id ) {
+			return null;
+		}
+
+		foreach ( $tree as $node ) {
+			$node_form = $this->is_form_element( $node ) ? $node : $current_form;
+
+			if ( ( $node['id'] ?? '' ) === $target_id ) {
+				return $node_form;
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$result = $this->find_form_containing_node( $node['elements'], $target_id, $node_form );
+
+				if ( $result ) {
+					return $result;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function collect_tree_honeypot_errors( array $tree ): array {
+		$counts = $this->collect_form_honeypot_counts( $tree );
+
+		$errors = [];
+		foreach ( $counts as $count ) {
+			if ( 1 < $count ) {
+				$errors[] = '<e-form> has ' . $count . ' honeypots — only 1 is allowed.';
+			}
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * @return array<string, int> Map of form element id => honeypot count
+	 */
+	public function collect_form_honeypot_counts( array $tree ): array {
+		$counts = [];
+		$this->walk_tree_for_form_honeypot_counts( $tree, $counts );
+
+		return $counts;
+	}
+
+	private function walk_tree_for_form_honeypot_counts( array $tree, array &$counts ): void {
+		foreach ( $tree as $node ) {
+			if ( $this->is_form_element( $node ) ) {
+				$form_id = $node['id'] ?? '';
+				$counts[ $form_id ] = $this->count_element_type( $node['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE );
+				continue;
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$this->walk_tree_for_form_honeypot_counts( $node['elements'], $counts );
+			}
+		}
+	}
+
+	private function count_element_type( array $tree, string $type ): int {
+		$count = 0;
+
+		foreach ( $tree as $node ) {
+			if ( ( $node['widgetType'] ?? '' ) === $type ) {
+				++$count;
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$count += $this->count_element_type( $node['elements'], $type );
+			}
+		}
+
+		return $count;
 	}
 
 	private function is_form_element( array $node ): bool {
