@@ -75,6 +75,23 @@ class Test_List_Experiments_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Read more', $experiment['description'] );
 	}
 
+	public function test_execute__decodes_html_entities_in_title_description_and_warning() {
+		// Arrange
+		$this->add_feature( 'test_mcp_visible', [
+			'title' => esc_html( 'Header & Footer' ),
+			'description' => esc_html( 'Uses "Site Settings" & more' ),
+			'messages' => [ 'on_deactivate' => esc_html( 'Headers & footers will be hidden' ) ],
+		] );
+
+		// Act
+		$experiment = $this->find_experiment( 'test_mcp_visible' );
+
+		// Assert
+		$this->assertSame( 'Header & Footer', $experiment['title'] );
+		$this->assertSame( 'Uses "Site Settings" & more', $experiment['description'] );
+		$this->assertSame( 'Headers & footers will be hidden', $experiment['deactivation_warning'] );
+	}
+
 	public function test_execute__reports_effective_state_separately_from_saved_state() {
 		// Arrange
 		$this->add_feature( 'test_mcp_visible', [ 'default' => Experiments_Manager::STATE_ACTIVE ] );

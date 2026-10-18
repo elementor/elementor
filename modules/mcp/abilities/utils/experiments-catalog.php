@@ -48,8 +48,8 @@ class Experiments_Catalog {
 
 		return [
 			'name' => $feature['name'],
-			'title' => wp_strip_all_tags( (string) ( $feature['title'] ?? $feature['name'] ) ),
-			'description' => wp_strip_all_tags( (string) $feature['description'] ),
+			'title' => self::to_plain_text( (string) ( $feature['title'] ?? $feature['name'] ) ),
+			'description' => self::to_plain_text( (string) $feature['description'] ),
 			'state' => $feature['state'],
 			'active' => Plugin::$instance->experiments->is_feature_active( $feature['name'] ),
 			'default_state' => $feature['default'],
@@ -111,6 +111,10 @@ class Experiments_Catalog {
 	private static function get_deactivation_warning( array $feature ): ?string {
 		$warning = $feature['messages']['on_deactivate'] ?? '';
 
-		return '' === $warning ? null : wp_strip_all_tags( (string) $warning );
+		return '' === $warning ? null : self::to_plain_text( (string) $warning );
+	}
+
+	private static function to_plain_text( string $html ): string {
+		return html_entity_decode( wp_strip_all_tags( $html ), ENT_QUOTES, 'UTF-8' );
 	}
 }
