@@ -2017,4 +2017,176 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			update_option( $feature_option_key, $original_option );
 		}
 	}
+
+	public function test_move__succeeds_when_page_has_preexisting_honeypot_violation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		[ $unrelated_container_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $unrelated_container_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_duplicate__succeeds_when_page_has_preexisting_honeypot_violation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		[ $unrelated_container_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $unrelated_container_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_duplicate__rejects_duplicating_container_with_honeypot_when_form_already_has_one() {
+		// Arrange: form has a container with honeypot + another container with honeypot
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$container_id = $this->given_form_with_honeypot_in_container( $post_id );
+
+		// Act: duplicate the container (would create a second honeypot in the form)
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_id,
+				],
+			],
+		] );
+
+		// Assert: should be rejected because form would have 2 honeypots
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	public function test_duplicate__rejects_when_page_has_preexisting_violation_and_new_violation_introduced() {
+		// Arrange: form A has 2 honeypots (pre-existing violation), form B has honeypot in container
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		$container_in_form_b = $this->given_form_with_honeypot_in_container( $post_id );
+
+		// Act: duplicate container in form B (would create a new violation in form B)
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_in_form_b,
+				],
+			],
+		] );
+
+		// Assert: should be rejected because form B would now have 2 honeypots
+		// (pre-existing violation in form A is ignored)
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	private function given_form_with_two_honeypots( int $post_id ): void {
+		$form_id = $this->random_element_id();
+		$honeypot1_id = $this->random_element_id();
+		$honeypot2_id = $this->random_element_id();
+		$submit_id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $form_id,
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => $honeypot1_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+					[
+						'id' => $honeypot2_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+					[
+						'id' => $submit_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-submit-button',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+	}
+
+	private function given_form_with_honeypot_in_container( int $post_id ): string {
+		$form_id = $this->random_element_id();
+		$container_id = $this->random_element_id();
+		$honeypot_id = $this->random_element_id();
+		$submit_id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $form_id,
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => $container_id,
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'elements' => [
+							[
+								'id' => $honeypot_id,
+								'elType' => 'widget',
+								'widgetType' => 'e-form-honeypot',
+								'settings' => [],
+								'elements' => [],
+							],
+						],
+					],
+					[
+						'id' => $submit_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-submit-button',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+
+		return $container_id;
+	}
 }

@@ -294,25 +294,40 @@ class Form_Structure_Validator {
 	 * @return string[]
 	 */
 	public function collect_tree_honeypot_errors( array $tree ): array {
+		$counts = $this->collect_form_honeypot_counts( $tree );
+
 		$errors = [];
-
-		foreach ( $tree as $node ) {
-			if ( $this->is_form_element( $node ) ) {
-				$honeypot_count = $this->count_element_type( $node['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE );
-
-				if ( 1 < $honeypot_count ) {
-					$errors[] = '<e-form> has ' . $honeypot_count . ' honeypots — only 1 is allowed.';
-				}
-
-				continue;
-			}
-
-			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
-				$errors = array_merge( $errors, $this->collect_tree_honeypot_errors( $node['elements'] ) );
+		foreach ( $counts as $count ) {
+			if ( 1 < $count ) {
+				$errors[] = '<e-form> has ' . $count . ' honeypots — only 1 is allowed.';
 			}
 		}
 
 		return $errors;
+	}
+
+	/**
+	 * @return array<string, int> Map of form element id => honeypot count
+	 */
+	public function collect_form_honeypot_counts( array $tree ): array {
+		$counts = [];
+		$this->walk_tree_for_form_honeypot_counts( $tree, $counts );
+
+		return $counts;
+	}
+
+	private function walk_tree_for_form_honeypot_counts( array $tree, array &$counts ): void {
+		foreach ( $tree as $node ) {
+			if ( $this->is_form_element( $node ) ) {
+				$form_id = $node['id'] ?? '';
+				$counts[ $form_id ] = $this->count_element_type( $node['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE );
+				continue;
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$this->walk_tree_for_form_honeypot_counts( $node['elements'], $counts );
+			}
+		}
 	}
 
 	private function count_element_type( array $tree, string $type ): int {

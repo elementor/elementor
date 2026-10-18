@@ -392,7 +392,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
-		$form_structure_error = $this->reject_duplicate_honeypots( $new_tree );
+		$form_structure_error = $this->reject_new_honeypot_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
 			return $form_structure_error;
 		}
@@ -439,7 +439,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
-		$form_structure_error = $this->reject_duplicate_honeypots( $new_tree );
+		$form_structure_error = $this->reject_new_honeypot_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
 			return $form_structure_error;
 		}
@@ -450,15 +450,34 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function reject_duplicate_honeypots( array $tree ): ?\WP_Error {
-		$errors = ( new Form_Structure_Validator() )->collect_tree_honeypot_errors( $tree );
-		if ( empty( $errors ) ) {
+	private function reject_new_honeypot_violations( array $tree_before, array $tree_after ): ?\WP_Error {
+		$validator = new Form_Structure_Validator();
+		$counts_before = $validator->collect_form_honeypot_counts( $tree_before );
+		$counts_after = $validator->collect_form_honeypot_counts( $tree_after );
+
+		$new_violation_count = 0;
+		foreach ( $counts_after as $form_id => $count_after ) {
+			if ( $count_after <= 1 ) {
+				continue;
+			}
+
+			$count_before = $counts_before[ $form_id ] ?? 0;
+			if ( $count_after > $count_before ) {
+				++$new_violation_count;
+			}
+		}
+
+		if ( 0 === $new_violation_count ) {
 			return null;
 		}
 
+		$message = 1 === $new_violation_count
+			? '<e-form> would have multiple honeypots — only 1 is allowed per form.'
+			: $new_violation_count . ' forms would have multiple honeypots — only 1 is allowed per form.';
+
 		return new \WP_Error(
 			'elementor_invalid_form_structure',
-			implode( ' ', $errors ),
+			$message,
 			[ 'status' => \WP_Http::BAD_REQUEST ]
 		);
 	}
