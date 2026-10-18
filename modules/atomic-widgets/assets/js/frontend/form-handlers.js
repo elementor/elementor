@@ -73,12 +73,16 @@ function buildAgentToolResponse( response, state ) {
 	};
 }
 
-function respondToAgentIfInvoked( event, response, state ) {
+function createAgentResponder( event ) {
 	if ( ! event?.agentInvoked || 'function' !== typeof event.respondWith ) {
-		return;
+		return () => {};
 	}
 
-	event.respondWith( Promise.resolve( buildAgentToolResponse( response, state ) ) );
+	const { promise, resolve } = Promise.withResolvers();
+
+	event.respondWith( promise );
+
+	return ( response, state ) => resolve( buildAgentToolResponse( response, state ) );
 }
 
 function registerAtomicFormAlpineData( form ) {
@@ -100,8 +104,10 @@ function registerAtomicFormAlpineData( form ) {
 
 			event.preventDefault();
 
+			const respondToAgent = createAgentResponder( event );
+
 			if ( form.dataset.atomicFormSubmitting ) {
-				respondToAgentIfInvoked( event, { success: false, message: 'Form is already submitting.' }, 'error' );
+				respondToAgent( { success: false, message: 'Form is already submitting.' }, 'error' );
 				return;
 			}
 
@@ -117,7 +123,7 @@ function registerAtomicFormAlpineData( form ) {
 
 			if ( ! payload ) {
 				setFormState( form, 'error' );
-				respondToAgentIfInvoked( event, { success: false, message: 'Invalid form payload.' }, 'error' );
+				respondToAgent( { success: false, message: 'Invalid form payload.' }, 'error' );
 				clearAtomicFormSubmittingState( form, submitButtons );
 				return;
 			}
@@ -136,11 +142,11 @@ function registerAtomicFormAlpineData( form ) {
 					}, { once: true } );
 				}
 
-				respondToAgentIfInvoked( event, response, state );
+				respondToAgent( response, state );
 				redirectIfRequested( event, response );
 			} catch ( error ) {
 				setFormState( form, 'error' );
-				respondToAgentIfInvoked( event, { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
+				respondToAgent( { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
 			} finally {
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}

@@ -1,0 +1,75 @@
+<?php
+
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Compiled_Style_Target {
+
+	private string $alias;
+
+	private string $label;
+
+	private ?string $selector;
+
+	/**
+	 * @var Compiled_Style_Binding[]
+	 */
+	private array $bindings;
+
+	/**
+	 * @param string                   $alias
+	 * @param string                   $label
+	 * @param Compiled_Style_Binding[] $bindings
+	 * @param string|null              $selector
+	 */
+	public function __construct( string $alias, string $label, array $bindings, ?string $selector = null ) {
+		$this->alias = $alias;
+		$this->label = $label;
+		$this->bindings = $bindings;
+		$this->selector = $selector;
+	}
+
+	public function get_alias(): string {
+		return $this->alias;
+	}
+
+	public function get_label(): string {
+		return $this->label;
+	}
+
+	public function get_selector(): ?string {
+		return $this->selector;
+	}
+
+	/**
+	 * @return Compiled_Style_Binding[]
+	 */
+	public function get_bindings(): array {
+		return $this->bindings;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_props(): array {
+		return array_values( array_unique( array_map(
+			fn( Compiled_Style_Binding $binding ) => $binding->get_prop(),
+			$this->bindings
+		) ) );
+	}
+
+	/**
+	 * States that have at least one binding, in binding order.
+	 *
+	 * @return string[]
+	 */
+	public function get_states(): array {
+		return array_values( array_unique( array_map(
+			fn( Compiled_Style_Binding $binding ) => $binding->get_state(),
+			$this->bindings
+		) ) );
+	}
+}

@@ -38,7 +38,6 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( self::JSON_BASE_PATH_FILTER );
-		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		Font_Awesome_7_Icon_Resolver::reset();
 		$this->remove_filtered_json_dir();
 
@@ -209,9 +208,8 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<path', $result['html'] );
 	}
 
-	public function test_transform__uses_custom_library_svg_html_filter() {
+	public function test_transform__uses_svg_html_filter() {
 		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'my-icons my-icons-badge',
@@ -239,43 +237,12 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertNull( $result['url'] );
 	}
 
-	public function test_transform__falls_back_to_default_svg_when_custom_library_is_deleted() {
+	public function test_transform__falls_back_to_default_svg_when_no_filter_returns_markup() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'missing-set missing-set-ghost',
 			'library' => 'missing-set',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		// Assert.
-		$this->assert_default_svg_fallback( $result );
-	}
-
-	public function test_transform__falls_back_to_default_svg_when_numeric_custom_library_is_deleted() {
-		// Arrange.
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'icon icon-emo-surprised',
-			'library' => '-1',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		// Assert.
-		$this->assert_default_svg_fallback( $result );
-	}
-
-	public function test_transform__falls_back_to_default_svg_when_pro_license_is_inactive() {
-		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_false' );
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'icon icon-emo-surprised',
-			'library' => '-1',
 		];
 
 		// Act.
@@ -331,4 +298,26 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->filtered_json_dir = null;
 	}
 
+
+	public function test_transform__sanitizes_svg_returned_by_third_party_filter() {
+		// Arrange.
+		$filter = static fn() => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><script>alert(1)</script><path d="M0 0h1v1H0z"/></svg>';
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'x x-y',
+				'library' => 'untrusted-pack',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'script', $result['html'] );
+		$this->assertStringNotContainsString( 'onload', $result['html'] );
+	}
 }

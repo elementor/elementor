@@ -8,6 +8,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -114,6 +115,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
 		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
 			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $persisted, $subtrees, $warning_codes, $document );
@@ -123,6 +125,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
 		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
 		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
 
 		return $response;
@@ -252,6 +260,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'items' => [ 'type' => 'string' ],
 					'description' => 'Element IDs removed when mode is replace_children (empty when none existed).',
 				],
+				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
+				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 			],
 		];
 	}
