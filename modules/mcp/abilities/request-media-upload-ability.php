@@ -46,6 +46,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'upload_files' ),
 			[

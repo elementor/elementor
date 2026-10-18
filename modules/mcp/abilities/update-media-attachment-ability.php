@@ -41,6 +41,7 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'upload_files' ),
 			[
