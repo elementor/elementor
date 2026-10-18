@@ -85,7 +85,7 @@ export default function RecentlyEdited() {
 			<Menu
 				MenuListProps={ {
 					subheader: (
-						<ListSubheader color="primary" sx={ { fontStyle: 'italic', fontWeight: '300' } }>
+						<ListSubheader color="accent" sx={ { fontStyle: 'italic', fontWeight: '300' } }>
 							{ __( 'Recent', 'elementor' ) }
 						</ListSubheader>
 					),
