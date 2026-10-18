@@ -160,7 +160,7 @@ class Form_Structure_Validator {
 			$honeypots = $xpath->query( './/' . self::HONEYPOT_ELEMENT_TYPE, $form );
 			$honeypot_count = $honeypots ? $honeypots->length : 0;
 
-			if ( $honeypot_count > 1 ) {
+			if ( 1 < $honeypot_count ) {
 				$errors[] = '<e-form> has ' . $honeypot_count . ' honeypots — only 1 is allowed.';
 			}
 		}
@@ -300,7 +300,7 @@ class Form_Structure_Validator {
 			if ( $this->is_form_element( $node ) ) {
 				$honeypot_count = $this->count_element_type( $node['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE );
 
-				if ( $honeypot_count > 1 ) {
+				if ( 1 < $honeypot_count ) {
 					$errors[] = '<e-form> has ' . $honeypot_count . ' honeypots — only 1 is allowed.';
 				}
 
