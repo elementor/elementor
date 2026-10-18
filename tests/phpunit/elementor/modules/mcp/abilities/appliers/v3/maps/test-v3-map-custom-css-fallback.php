@@ -31,6 +31,8 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { color: blue; title:hover { color: green; } }';
 
+	const UNKNOWN_SELECTOR_RULE = 'selector .unknown { outline: 1px solid red; }';
+
 	const MEDIA_QUERIES = [
 		'tablet' => '(max-width: 1024px)',
 		'mobile' => '(max-width: 767px)',
@@ -106,18 +108,56 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$this->assertSame( [ 'tablet', 'mobile' ], array_keys( $queries ) );
 	}
 
-	public function test_serialize__returns_the_custom_css_as_is_after_the_mapped_css() {
+	public function test_serialize__returns_fallback_rules_inside_their_target_blocks_so_they_can_be_written_back() {
 		// Arrange.
 		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE, [] );
-		$custom_css = ( new V3_Custom_Css_Fallback( [ 'title' => '.elementor-heading-title' ], self::MEDIA_QUERIES ) )
-			->render( $written['fallback_rules'] );
-		$settings = $written['settings_patch'] + [ 'custom_css' => $custom_css ];
+		$settings = $written['settings_patch'] + [ 'custom_css' => $this->fallback()->render( $written['fallback_rules'] ) ];
+
+		// Act.
+		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
+		$rewritten = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( 'color: #111111; @media(--tablet) { color: red; } @media (min-width: 2000px) { color: blue; }', $css );
+		$this->assertSame( $written['settings_patch'], $rewritten['settings_patch'] );
+		$this->assertSame( $written['fallback_rules'], $rewritten['fallback_rules'] );
+		$this->assertSame( [], $rewritten['warnings'] );
+	}
+
+	public function test_serialize__returns_custom_css_rules_outside_every_target_as_is() {
+		// Arrange.
+		$settings = [ 'custom_css' => self::UNKNOWN_SELECTOR_RULE . "\nselector .elementor-heading-title:hover { color: red; }" ];
 
 		// Act.
 		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
 
 		// Assert.
-		$this->assertSame( 'color: #111111; ' . $custom_css, $css );
+		$this->assertSame( '&:hover { color: red; } ' . self::UNKNOWN_SELECTOR_RULE, $css );
+	}
+
+	public function test_style_applier__ignores_an_unchanged_copy_of_a_custom_css_rule_outside_every_target() {
+		// Arrange.
+		$node = [
+			'id' => 'elem-1',
+			'elType' => 'widget',
+			'widgetType' => self::WIDGET_TYPE,
+			'settings' => [ 'custom_css' => self::UNKNOWN_SELECTOR_RULE ],
+			'styles' => [],
+		];
+		$index = [ 'title' => &$node ];
+		$applier = new Style_Applier( $this->converter(), self::BREAKPOINTS );
+
+		// Act.
+		$result = $applier->apply( $index, [ 'title' => 'color: #111111; ' . self::UNKNOWN_SELECTOR_RULE ], 'replace', [ self::WIDGET_TYPE => [] ] );
+
+		// Assert.
+		$this->assertSame( [], $result['warnings']->all() );
+		$this->assertSame( '#111111', $node['settings']['title_color'] );
+		$this->assertSame( self::UNKNOWN_SELECTOR_RULE, $node['settings']['custom_css'] );
+	}
+
+	private function fallback(): V3_Custom_Css_Fallback {
+		return new V3_Custom_Css_Fallback( [ 'title' => '.elementor-heading-title' ], self::MEDIA_QUERIES );
 	}
 
 	public function test_style_applier__stores_the_fallback_in_custom_css_or_reports_missing_pro() {

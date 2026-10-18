@@ -33,6 +33,8 @@ class V3_Map_Style_Clearer {
 		$links = is_array( $settings[ V3_Settings_Patch::GLOBALS_KEY ] ?? null ) ? $settings[ V3_Settings_Patch::GLOBALS_KEY ] : [];
 		$cleared = array_flip( $keys );
 
+		$user_css = implode( "\n", $this->user_css_rules( $settings, $map ) );
+
 		$settings = array_diff_key( $settings, $cleared );
 		$links = array_diff_key( $links, $cleared );
 		unset( $settings[ V3_Settings_Patch::GLOBALS_KEY ], $settings[ V3_Node_Bridge::V3_CUSTOM_CSS_SETTING ] );
@@ -41,6 +43,21 @@ class V3_Map_Style_Clearer {
 			$settings[ V3_Settings_Patch::GLOBALS_KEY ] = $links;
 		}
 
+		if ( '' !== $user_css ) {
+			$settings[ V3_Node_Bridge::V3_CUSTOM_CSS_SETTING ] = $user_css;
+		}
+
 		$node['settings'] = $settings;
+	}
+
+	/**
+	 * Custom CSS rules outside every style target, which the read returns as written.
+	 *
+	 * @return string[]
+	 */
+	public static function user_css_rules( array $settings, Compiled_V3_Map $map ): array {
+		$custom_css = $settings[ V3_Node_Bridge::V3_CUSTOM_CSS_SETTING ] ?? '';
+
+		return is_string( $custom_css ) ? V3_Custom_Css_Fallback::for_map( $map )->parse( $custom_css )['unmatched'] : [];
 	}
 }

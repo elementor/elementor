@@ -95,4 +95,61 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 			$css
 		);
 	}
+
+	public function test_parse__reads_rendered_rules_back_to_their_targets() {
+		// Arrange.
+		$rules = [
+			self::rule( 'main-menu', null, self::DESKTOP, [ 'font-weight' => '650' ] ),
+			self::rule( 'main-menu', 'hover', self::TABLET, [ 'color' => 'rgba(0, 0, 0, 0.5)' ] ),
+			self::rule( 'wrapper', null, self::DESKTOP, [ 'letter-spacing' => '4px' ], self::WIDESCREEN_MEDIA ),
+		];
+
+		// Act.
+		$parsed = $this->fallback()->parse( $this->fallback()->render( $rules ) );
+
+		// Assert.
+		$this->assertSame( $rules, $parsed['rules'] );
+		$this->assertSame( [], $parsed['unmatched'] );
+	}
+
+	public function test_parse__keeps_rules_outside_every_target_as_written() {
+		// Arrange.
+		$unknown_rule = 'selector .unknown > a { color: red; }';
+		$unknown_media_rule = '@media (max-width: 767px) { selector .unknown { color: blue; } }';
+
+		// Act.
+		$parsed = $this->fallback()->parse( $unknown_rule . "\n" . $unknown_media_rule . "\nselector { color: green; }" );
+
+		// Assert.
+		$this->assertSame( [ self::rule( 'wrapper', null, self::DESKTOP, [ 'color' => 'green' ] ) ], $parsed['rules'] );
+		$this->assertSame( [ $unknown_rule, $unknown_media_rule ], $parsed['unmatched'] );
+	}
+
+	public function test_merge__overrides_declarations_of_the_same_target_state_and_breakpoint() {
+		// Arrange.
+		$existing = [
+			self::rule( 'main-menu', null, self::DESKTOP, [
+				'font-weight' => '600',
+				'letter-spacing' => '1px',
+			] ),
+			self::rule( 'main-menu', 'hover', self::DESKTOP, [ 'font-weight' => '700' ] ),
+		];
+		$incoming = [
+			self::rule( 'main-menu', null, self::DESKTOP, [ 'font-weight' => '650' ] ),
+			self::rule( 'wrapper', null, self::MOBILE, [ 'color' => 'red' ] ),
+		];
+
+		// Act.
+		$merged = V3_Custom_Css_Fallback::merge( $existing, $incoming );
+
+		// Assert.
+		$this->assertSame( [
+			self::rule( 'main-menu', null, self::DESKTOP, [
+				'font-weight' => '650',
+				'letter-spacing' => '1px',
+			] ),
+			self::rule( 'main-menu', 'hover', self::DESKTOP, [ 'font-weight' => '700' ] ),
+			self::rule( 'wrapper', null, self::MOBILE, [ 'color' => 'red' ] ),
+		], $merged );
+	}
 }

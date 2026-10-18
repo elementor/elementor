@@ -87,6 +87,17 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 		$this->assertSame( [ '[' . self::CONFIG_ID . '] ' . self::NOTE . ' Written to the widget custom CSS instead.' ], $warnings->messages() );
 	}
 
+	public function test_apply__merges_into_the_existing_rule_of_the_same_target() {
+		// Arrange.
+		$node = [ 'settings' => [ 'custom_css' => 'selector .title { font-weight: 600; letter-spacing: 1px; }' ] ];
+
+		// Act.
+		$this->fallback_css( true )->apply( $node, self::result(), self::WIDGET_TYPE, self::CONFIG_ID, Warnings_Bag::make() );
+
+		// Assert.
+		$this->assertSame( 'selector .title { font-weight: 650; letter-spacing: 1px; }', $node['settings']['custom_css'] );
+	}
+
 	public function test_apply__skips_fallback_rules_without_pro_with_the_v4_unsupported_css_code() {
 		// Arrange.
 		$node = [ 'settings' => [] ];

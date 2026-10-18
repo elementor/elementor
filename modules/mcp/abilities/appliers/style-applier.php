@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Clearer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
@@ -178,6 +179,13 @@ class Style_Applier {
 				?? [];
 		}
 
+		$map = V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
+		$is_map_driven = null !== $map;
+
+		if ( $is_map_driven ) {
+			$css_string = V3_Custom_Css_Fallback::without_statements( $css_string, V3_Map_Style_Clearer::user_css_rules( $node['settings'] ?? [], $map ) );
+		}
+
 		$is_empty_css = '' === trim( $css_string );
 		$is_replace = 'replace' === $style_apply_mode;
 		$result = null;
@@ -191,9 +199,6 @@ class Style_Applier {
 			$warnings->add( 'css_parse_failed', $result['error'], $config_id );
 			return;
 		}
-
-		$map = V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
-		$is_map_driven = null !== $map;
 
 		if ( $is_replace && $is_map_driven ) {
 			( new V3_Map_Style_Clearer() )->clear( $node, $map, (string) $widget_type );
