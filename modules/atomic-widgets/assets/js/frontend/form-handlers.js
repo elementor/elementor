@@ -4,6 +4,7 @@ import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostI
 import _ from 'lodash';
 
 const REDIRECT_DELAY_MS = 1000;
+const SUBMIT_SUCCESS_EVENT = 'elementor/atomic-form/submit-success';
 const ALLOWED_REDIRECT_PROTOCOLS = [ 'http:', 'https:', 'ftp:', 'ftps:' ];
 
 let webmcpFormListenersRegistered = false;
@@ -140,6 +141,11 @@ function registerAtomicFormAlpineData( form ) {
 					form.addEventListener( 'input', () => {
 						setFormState( form, 'default' );
 					}, { once: true } );
+
+					form.dispatchEvent( new CustomEvent( SUBMIT_SUCCESS_EVENT, {
+						bubbles: true,
+						detail: { response },
+					} ) );
 				}
 
 				respondToAgent( response, state );
