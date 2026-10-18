@@ -191,8 +191,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 				'invalid_upload_count',
 				sprintf(
 					/* translators: %d: maximum number of URLs per request. */
-					__( 'source_urls must be a list of 1 to %d URLs (maximum %d).', 'elementor' ),
-					$max,
+					__( 'source_urls must be a list with at least 1 and at most %d URLs.', 'elementor' ),
 					$max
 				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
