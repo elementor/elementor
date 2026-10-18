@@ -14,6 +14,10 @@ on:
         required: false
         type: string
         default: '[false, true]'
+      coverage:
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   run-tests:
@@ -29,7 +33,7 @@ jobs:
 
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
-      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
+      COVERAGE: ${{ inputs.coverage && matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
     services:
       mysql:
         image: mysql:5.7

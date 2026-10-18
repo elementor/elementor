@@ -53,6 +53,7 @@ jobs:
       wordpress_versions: '["latest", "6.8", "7.1", "nightly"]'
       php_versions: '["7.4", "8.1", "8.3", "8.5"]'
       multisite_modes: '[false]'
+      coverage: true
 
   # Multisite runs on a reduced nightly subset to control cost.
   test_schedule_multisite:
