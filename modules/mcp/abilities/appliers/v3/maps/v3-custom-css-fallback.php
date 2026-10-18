@@ -31,6 +31,10 @@ class V3_Custom_Css_Fallback {
 
 	const RULE_PRELUDE_PATTERN = '/^selector(?:\s+(?P<selector>.+?))?(?::(?P<state>hover|focus|active))?$/s';
 
+	const IMPORTANT = '!important';
+
+	const IMPORTANT_PATTERN = '/\s*!\s*important\s*$/i';
+
 	/**
 	 * @var array<string, string|null>
 	 */
@@ -120,7 +124,7 @@ class V3_Custom_Css_Fallback {
 		$declarations = [];
 
 		foreach ( $rule['declarations'] as $property => $value ) {
-			$declarations[] = $property . ': ' . $value . ';';
+			$declarations[] = $property . ': ' . self::without_important( (string) $value ) . ' ' . self::IMPORTANT . ';';
 		}
 
 		$block = sprintf( '%s { %s }', $this->full_selector( $selector, $rule['state'] ), implode( ' ', $declarations ) );
@@ -279,8 +283,12 @@ class V3_Custom_Css_Fallback {
 			'state' => '' !== ( $matches['state'] ?? '' ) ? $matches['state'] : null,
 			'breakpoint' => $breakpoint,
 			'media' => $media,
-			'declarations' => array_column( $declarations, 'value', 'property' ),
+			'declarations' => array_map( [ self::class, 'without_important' ], array_column( $declarations, 'value', 'property' ) ),
 		];
+	}
+
+	private static function without_important( string $value ): string {
+		return trim( preg_replace( self::IMPORTANT_PATTERN, '', $value ) ?? $value );
 	}
 
 	private static function collapse_whitespace( string $css ): string {

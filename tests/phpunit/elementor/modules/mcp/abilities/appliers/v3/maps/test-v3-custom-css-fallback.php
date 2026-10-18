@@ -56,8 +56,8 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 
 		// Assert.
 		$this->assertSame(
-			"selector .elementor-nav-menu--main .elementor-item { font-weight: 650; }\n"
-				. '@media (max-width: 767px) { selector:hover { box-shadow: 0 1rem 2rem #000; } }',
+			"selector .elementor-nav-menu--main .elementor-item { font-weight: 650 !important; }\n"
+				. '@media (max-width: 767px) { selector:hover { box-shadow: 0 1rem 2rem #000 !important; } }',
 			$css
 		);
 	}
@@ -87,10 +87,10 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 		// Assert.
 		$this->assertSame(
 			implode( "\n", [
-				'selector { letter-spacing: 3px; }',
-				'@media (max-width: 1024px) { selector { letter-spacing: 2px; } }',
-				'@media (max-width: 767px) { selector { letter-spacing: 1px; } }',
-				'@media (min-width: 2000px) { selector { letter-spacing: 4px; } }',
+				'selector { letter-spacing: 3px !important; }',
+				'@media (max-width: 1024px) { selector { letter-spacing: 2px !important; } }',
+				'@media (max-width: 767px) { selector { letter-spacing: 1px !important; } }',
+				'@media (min-width: 2000px) { selector { letter-spacing: 4px !important; } }',
 			] ),
 			$css
 		);
@@ -110,6 +110,23 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 		// Assert.
 		$this->assertSame( $rules, $parsed['rules'] );
 		$this->assertSame( [], $parsed['unmatched'] );
+	}
+
+	public function test_render__marks_declarations_important_so_they_beat_the_widget_control_rules() {
+		// Act.
+		$css = $this->fallback()->render( [
+			self::rule( 'wrapper', null, self::DESKTOP, [
+				'color' => 'red',
+				'width' => '10px !important',
+			] ),
+		] );
+
+		// Assert.
+		$this->assertSame( 'selector { color: red !important; width: 10px !important; }', $css );
+		$this->assertSame( [
+			'color' => 'red',
+			'width' => '10px',
+		], $this->fallback()->parse( $css )['rules'][0]['declarations'] );
 	}
 
 	public function test_parse__keeps_rules_outside_every_target_as_written() {

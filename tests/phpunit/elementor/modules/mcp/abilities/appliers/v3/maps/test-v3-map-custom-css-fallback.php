@@ -180,7 +180,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$this->assertSame( '#111111', $node['settings']['title_color'] );
 
 		if ( Utils::has_pro() ) {
-			$this->assertStringContainsString( '{ selector .elementor-heading-title { color: red; } }', $node['settings']['custom_css'] );
+			$this->assertStringContainsString( '{ selector .elementor-heading-title { color: red !important; } }', $node['settings']['custom_css'] );
 			$this->assertSame( [ 'css_fallback_custom_css' ], $codes );
 
 			return;

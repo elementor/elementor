@@ -342,8 +342,8 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$custom_css = $fallback->render( $written['fallback_rules'] );
 
 		// Assert.
-		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000; }', $custom_css );
-		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px; } }', $custom_css );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000 !important; }', $custom_css );
+		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px !important; } }', $custom_css );
 	}
 
 	private function mapper(): V3_Style_Mapper {
