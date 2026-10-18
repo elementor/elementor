@@ -39,6 +39,9 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	// nav-menu ships in an earlier stack PR with its own dedicated test.
 	const OWNED_ELSEWHERE = [ 'nav-menu' ];
 
+	// The advanced wrapper binds the flex item controls, which widgets register only while it is active.
+	const CONTAINER_EXPERIMENT_NAME = 'container';
+
 	/**
 	 * @var array<string, string>
 	 */
@@ -50,6 +53,8 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 		parent::setUp();
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( self::CONTAINER_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		Plugin::$instance->controls_manager->clear_stack_cache();
 
 		$this->registry = V3_Widget_Map_Registry::create_default();
 		V3_Widget_Map_Registry::set_instance( $this->registry );
