@@ -10,6 +10,9 @@ class Form_Structure_Validator {
 
 	const FORM_ELEMENT_TYPE = 'e-form';
 
+	// Mirrors the Pro-only e-form-honeypot widget (same precedent as e-form-hidden).
+	const HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
+
 	const FORM_FIELD_ELEMENT_TYPES = [
 		'e-form-input',
 		'e-form-textarea',
@@ -24,9 +27,6 @@ class Form_Structure_Validator {
 		'e-form-hidden',
 		self::HONEYPOT_ELEMENT_TYPE,
 	];
-
-	// Mirrors the Pro-only e-form-honeypot widget (same precedent as e-form-hidden).
-	const HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
 
 	private const DEFAULT_PARENT_ID = 'document';
 
@@ -152,6 +152,7 @@ class Form_Structure_Validator {
 	private function collect_honeypot_errors( \DOMDocument $dom, array $document_tree, string $parent_id ): array {
 		$errors = [];
 		$xpath = new \DOMXPath( $dom );
+		$all_honeypots = $xpath->query( '//' . self::HONEYPOT_ELEMENT_TYPE );
 
 		foreach ( $xpath->query( '//' . self::FORM_ELEMENT_TYPE ) as $form ) {
 			if ( ! $form instanceof \DOMElement ) {
@@ -172,9 +173,7 @@ class Form_Structure_Validator {
 			return $errors;
 		}
 
-		$added_honeypots = $xpath->query( '//' . self::HONEYPOT_ELEMENT_TYPE );
-
-		if ( $added_honeypots && $added_honeypots->length > 0 ) {
+		if ( $all_honeypots && $all_honeypots->length > 0 ) {
 			$errors[] = 'The target <e-form> already has an <e-form-honeypot> — only 1 is allowed per form.';
 		}
 
