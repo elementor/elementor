@@ -28,7 +28,7 @@ $grid = Style_Target::make( 'grid' )
 	->bind( 'gap', V3_Control::bind_to( 'gap' )->responsive() );
 
 $overlay = Style_Target::make( 'overlay' )
-	->label( 'Overlay over each image; padding is the space around the title and description' )
+	->label( 'Overlay over each image. The default state is always visible; the hover state is the color on hover. Padding is the space around the title and description' )
 	->selector( '.elementor-gallery-item__overlay' )
 	->bind( 'background', V3_Control::bind_to( 'overlay_background_color' )->requires( [ 'overlay_background_background' => $classic ] ) )
 	->bind( 'background', V3_Control::bind_to( 'overlay_background_hover_color' )->requires( [ 'overlay_background_hover_background' => $classic ] ), $hover )

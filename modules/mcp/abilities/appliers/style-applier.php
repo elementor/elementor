@@ -214,7 +214,8 @@ class Style_Applier {
 			$warnings->add( 'v3_css_skipped', $warning, $config_id );
 		}
 
-		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [] );
+		$controls = $is_map_driven ? V3_Widget_Map_Registry::instance()->get_registered_controls( (string) $widget_type ) : [];
+		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [], $controls );
 
 		if ( ! empty( $result['settings_patch'] ) ) {
 			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $result['settings_patch'] );

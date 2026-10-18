@@ -86,4 +86,24 @@ class Compiled_Style_Target {
 			$this->bindings
 		) ) );
 	}
+
+	/**
+	 * Bound properties for each state, in binding order.
+	 *
+	 * @return array<string, string[]>
+	 */
+	public function get_props_by_state(): array {
+		$props_by_state = [];
+
+		foreach ( $this->bindings as $binding ) {
+			$state = $binding->get_state();
+			$prop = $binding->get_prop();
+
+			if ( ! in_array( $prop, $props_by_state[ $state ] ?? [], true ) ) {
+				$props_by_state[ $state ][] = $prop;
+			}
+		}
+
+		return $props_by_state;
+	}
 }

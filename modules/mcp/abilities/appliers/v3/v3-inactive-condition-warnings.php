@@ -64,7 +64,7 @@ class V3_Inactive_Condition_Warnings {
 				continue;
 			}
 
-			$condition = self::describe( self::unmet_condition( $control, $values, $controls, $is_visible ) );
+			$condition = self::describe( self::unmet_condition( $control, $values, $controls, $is_visible ), $controls );
 			$hidden_by_condition[ $condition ][] = $labels[ $key ] ?? $key;
 		}
 
@@ -149,9 +149,10 @@ class V3_Inactive_Condition_Warnings {
 
 	/**
 	 * @param array<string, mixed> $control
+	 * @param array<string, mixed> $controls
 	 */
-	private static function describe( array $control ): string {
-		$description = is_array( $control['condition'] ?? null ) ? V3_Control_Condition::describe( $control['condition'] ) : '';
+	private static function describe( array $control, array $controls ): string {
+		$description = is_array( $control['condition'] ?? null ) ? V3_Control_Condition::describe( $control['condition'], $controls ) : '';
 
 		return '' === $description ? self::UNWORDED_CONDITION : $description;
 	}

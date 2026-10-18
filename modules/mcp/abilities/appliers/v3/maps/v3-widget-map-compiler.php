@@ -22,6 +22,10 @@ class V3_Widget_Map_Compiler {
 
 	const SETTING_ENTRY_PREFIX = 'setting.';
 
+	const DATE_TIME_CONTROL_TYPE = 'date_time';
+
+	const DATE_TIME_FORMAT_DESCRIPTION = 'Date and time as YYYY-MM-DD HH:MM, in the site timezone.';
+
 	/** @var array<string, Prop_Type>|null */
 	private ?array $style_schema;
 
@@ -122,7 +126,7 @@ class V3_Widget_Map_Compiler {
 				continue;
 			}
 
-			$compiled[ $public_key ] = $this->compile_setting( $setting, $controls[ $setting->get_control_key() ] );
+			$compiled[ $public_key ] = $this->compile_setting( $setting, $controls[ $setting->get_control_key() ], $controls );
 		}
 
 		return $compiled;
@@ -131,8 +135,9 @@ class V3_Widget_Map_Compiler {
 	/**
 	 * @param V3_Setting           $setting
 	 * @param array<string, mixed> $control
+	 * @param array<string, mixed> $controls
 	 */
-	private function compile_setting( V3_Setting $setting, array $control ): Compiled_V3_Setting {
+	private function compile_setting( V3_Setting $setting, array $control, array $controls ): Compiled_V3_Setting {
 		$adapter = $setting->get_adapter();
 		$prop_type = $adapter->prop_type( $control );
 
@@ -142,7 +147,7 @@ class V3_Widget_Map_Compiler {
 			$adapter,
 			$prop_type,
 			$control,
-			$this->build_setting_schema( $setting, $control, $prop_type )
+			$this->build_setting_schema( $setting, $control, $prop_type, $controls )
 		);
 	}
 
@@ -150,19 +155,22 @@ class V3_Widget_Map_Compiler {
 	 * @param V3_Setting           $setting
 	 * @param array<string, mixed> $control
 	 * @param Prop_Type            $prop_type
+	 * @param array<string, mixed> $controls
 	 * @return array<string, mixed>
 	 */
-	private function build_setting_schema( V3_Setting $setting, array $control, Prop_Type $prop_type ): array {
+	private function build_setting_schema( V3_Setting $setting, array $control, Prop_Type $prop_type, array $controls ): array {
 		$schema = Plain_Llm_Schema_Converter::convert( $prop_type->to_json_schema() );
 
-		if ( null !== $setting->get_default() ) {
-			$schema['default'] = $setting->get_default();
+		$default = $setting->get_default() ?? $this->control_default( $setting, $control );
+
+		if ( null !== $default ) {
+			$schema['default'] = $default;
 		}
 
-		$condition = is_array( $control['condition'] ?? null ) ? V3_Control_Condition::describe( $control['condition'] ) : '';
+		$description = $this->setting_description( $control, $controls );
 
-		if ( '' !== $condition ) {
-			$schema['description'] = sprintf( 'Only takes effect when %s.', $condition );
+		if ( '' !== $description ) {
+			$schema['description'] = $description;
 		}
 
 		if ( $setting->is_dynamic() ) {
@@ -170,6 +178,43 @@ class V3_Widget_Map_Compiler {
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * @param array<string, mixed> $control
+	 * @param array<string, mixed> $controls
+	 */
+	private function setting_description( array $control, array $controls ): string {
+		$parts = [];
+
+		if ( self::DATE_TIME_CONTROL_TYPE === ( $control['type'] ?? null ) ) {
+			$parts[] = self::DATE_TIME_FORMAT_DESCRIPTION;
+		}
+
+		$condition = is_array( $control['condition'] ?? null ) ? V3_Control_Condition::describe( $control['condition'], $controls ) : '';
+
+		if ( '' !== $condition ) {
+			$parts[] = sprintf( 'Only takes effect when %s.', $condition );
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	/**
+	 * What the widget renders when the setting is not set, in the plain shape the setting is read back in.
+	 *
+	 * @return mixed
+	 */
+	private function control_default( V3_Setting $setting, array $control ) {
+		$default = $control['default'] ?? null;
+
+		if ( null === $default || [] === $default ) {
+			return null;
+		}
+
+		$plain = $setting->get_adapter()->from_control_value( $default, $control );
+
+		return '' === $plain ? null : $plain;
 	}
 
 	private function find_setting_error( V3_Setting $setting, array $controls ): ?string {

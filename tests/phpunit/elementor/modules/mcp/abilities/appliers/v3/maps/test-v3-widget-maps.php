@@ -125,7 +125,7 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 			'counter targets and responsive typography' => [
 				'counter',
 				[ 'number', 'title', 'layout', 'wrapper' ],
-				'color: #ff0000; font-size: 48px; font-weight: 700; title { color: #333333; font-size: 18px; }'
+				'color: #ff0000; font-size: 48px; font-weight: 700; text-align: start; title { color: #333333; font-size: 18px; }'
 					. ' layout { gap: 12px; } @media(--mobile) { font-size: 32px; title { font-size: 14px; } }',
 				[
 					'ending_number' => 4.5,

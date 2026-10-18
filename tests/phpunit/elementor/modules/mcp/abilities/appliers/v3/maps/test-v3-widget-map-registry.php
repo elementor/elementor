@@ -133,6 +133,10 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 					'label' => 'Main menu items',
 					'states' => [ 'default', 'current' ],
 					'properties' => [ 'color' ],
+					'properties_by_state' => [
+						'default' => [ 'color' ],
+						'current' => [ 'color' ],
+					],
 				],
 			],
 			$contract['style_targets']

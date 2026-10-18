@@ -15,6 +15,7 @@ $number = Style_Target::make( 'number' )
 	->selector( '.elementor-counter-number-wrapper' )
 	->with( Typography_Group::from_prefix( 'typography_number' ) )
 	->bind( 'color', V3_Control::bind_to( 'number_color' ) )
+	->bind( 'text-align', V3_Control::bind_to( 'number_position' )->responsive() )
 	->bind( 'gap', V3_Control::bind_to( 'number_gap' )->responsive() );
 
 $title = Style_Target::make( 'title' )
