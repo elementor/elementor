@@ -25,6 +25,7 @@ class Form_Structure_Validator {
 		self::HONEYPOT_ELEMENT_TYPE,
 	];
 
+	// Mirrors the Pro-only e-form-honeypot widget (same precedent as e-form-hidden).
 	const HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
 
 	private const DEFAULT_PARENT_ID = 'document';
