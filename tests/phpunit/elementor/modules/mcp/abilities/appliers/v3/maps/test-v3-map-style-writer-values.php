@@ -160,6 +160,32 @@ class Test_V3_Map_Style_Writer_Values extends TestCase {
 		$this->assertStringContainsString( 'Allowed units: px.', $this->fallbacks[0]['reason'] );
 	}
 
+	public function test_patch_border_style_when_needed__adds_solid_for_group_width_without_style() {
+		// Arrange.
+		$method = new \ReflectionMethod( V3_Map_Style_Writer::class, 'patch_border_style_when_needed' );
+		$method->setAccessible( true );
+		$controls = [
+			'image_border_border' => [ 'type' => 'select' ],
+			'image_border_width' => [ 'type' => 'dimensions' ],
+		];
+		$patch = [
+			'image_border_width' => [
+				'unit' => 'px',
+				'top' => '2',
+				'right' => '2',
+				'bottom' => '2',
+				'left' => '2',
+				'isLinked' => true,
+			],
+		];
+
+		// Act.
+		$patched = $method->invoke( null, $patch, $controls );
+
+		// Assert.
+		$this->assertSame( 'solid', $patched['image_border_border'] );
+	}
+
 	public function test_write__falls_back_on_sides_no_binding_stores() {
 		// Act.
 		$ctx = $this->write( 'image', 'margin: 0 0 16px 0;' );

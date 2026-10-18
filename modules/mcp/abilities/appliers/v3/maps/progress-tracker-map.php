@@ -36,12 +36,14 @@ $track = Style_Target::make( 'track' )
 	->bind( 'border-color', V3_Control::bind_to( 'horizontal_tracker_border_color' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'horizontal_tracker_border_radius' )->responsive() );
 
+$circular = [ 'type' => 'circular' ];
+
 $circle = Style_Target::make( 'circle' )
-	->label( 'Circular tracker: width is the circle size, color the progress ring, background the ring behind it' )
-	->selector( '.elementor-scrolling-tracker-circular' )
-	->bind( 'width', V3_Control::bind_to( 'circular_size' )->responsive() )
-	->bind( 'color', V3_Control::bind_to( 'circular_color' ) )
-	->bind( 'background', V3_Control::bind_to( 'circular_background_color' ) );
+	->label( 'Circular tracker. Width is the circle diameter; color and background are the progress and track colors (stored as CSS variables on the widget).' )
+	->selector( '' )
+	->bind( 'width', V3_Control::bind_to( 'circular_size' )->responsive()->requires( $circular ) )
+	->bind( 'color', V3_Control::bind_to( 'circular_color' )->requires( $circular ) )
+	->bind( 'background', V3_Control::bind_to( 'circular_background_color' )->requires( $circular ) );
 
 $percentage = Style_Target::make( 'percentage' )
 	->label( 'Percentage text' )
