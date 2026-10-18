@@ -112,14 +112,14 @@ class Public_Host_Validator {
 			$host = substr( $host, 0, -1 );
 		}
 
-		if ( ! preg_match( '/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/', $host ) ) {
+		if ( ! preg_match( '/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/D', $host ) ) {
 			return false;
 		}
 
 		$labels = explode( '.', $host );
 		$last_label = end( $labels );
 
-		if ( preg_match( '/^[0-9]+$/', $last_label ) || str_starts_with( $last_label, '0x' ) ) {
+		if ( preg_match( '/^[0-9]+$/D', $last_label ) || str_starts_with( $last_label, '0x' ) ) {
 			return false;
 		}
 
