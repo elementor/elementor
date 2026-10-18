@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Default_Styles_Sections {
 
-	// Mirrors STYLE_SECTIONS in editor-editing-panel/src/components/style-sections-definition.ts; a PHPUnit test keeps them in sync.
 	public const SECTION_PROPS = [
 		'layout' => [
 			'display',
