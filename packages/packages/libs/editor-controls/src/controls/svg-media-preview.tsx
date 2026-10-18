@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
-import { useIconLibraryProviderIcons } from './icon-library/icon-library-providers';
+import { useIconLibraryProviderIcons, useProviderIconSvg } from './icon-library/icon-library-providers';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
 const ICON_PREVIEW_SIZE = 50;
@@ -26,13 +26,22 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	const icons = [ ...fontAwesomeIcons, ...providerIcons ];
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
 	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
+	const { data: savedIconSvg, isLoading: isSavedIconLoading } = useProviderIconSvg(
+		iconLibrary,
+		iconClassName,
+		shouldLoadIconCatalog && ! isLoadingCatalog && ! selectedIcon
+	);
 
-	if ( isFetching || isLoadingCatalog ) {
+	if ( isFetching || isLoadingCatalog || isSavedIconLoading ) {
 		return <CircularProgress role="progressbar" />;
 	}
 
 	if ( selectedIcon ) {
 		return <IconPreview icon={ selectedIcon } />;
+	}
+
+	if ( savedIconSvg ) {
+		return <IconPreview icon={ toSvgMarkupIcon( savedIconSvg, iconLibrary, iconClassName ) } />;
 	}
 
 	if ( shouldLoadIconCatalog ) {
@@ -41,6 +50,19 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 
 	return <SvgPreview src={ src } />;
 };
+
+const toSvgMarkupIcon = ( svgMarkup: string, library: string | null, value: string | null ): FontAwesome7Icon => ( {
+	id: `${ library }:${ value }`,
+	label: value ?? '',
+	library: library ?? '',
+	value: value ?? '',
+	name: value ?? '',
+	aliases: [],
+	width: 0,
+	height: 0,
+	paths: [],
+	svgMarkup,
+} );
 
 const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
 	<Box sx={ { color: ICON_PREVIEW_COLOR } }>

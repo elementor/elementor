@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@elementor/query';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
@@ -58,4 +59,13 @@ export async function resolveProviderIconSvg(
 	}
 
 	return null;
+}
+
+export function useProviderIconSvg( library: string | null, iconValue: string | null, enabled: boolean ) {
+	return useQuery< string | null >( {
+		queryKey: [ 'icon-library-provider-svg', library, iconValue ],
+		queryFn: ( { signal } ) => resolveProviderIconSvg( library as string, iconValue as string, signal ),
+		enabled: enabled && Boolean( library && iconValue ),
+		staleTime: Infinity,
+	} );
 }
