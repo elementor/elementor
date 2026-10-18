@@ -55,7 +55,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		do_action( 'rest_api_init' );
 	}
 
-	public function test_upload_abilities__are_not_direct_mcp_tools() {
+	public function test_upload_abilities__are_exposed_as_mcp_tools() {
 		// Arrange
 		$upload = new Upload_Media_Ability();
 		$request = new Request_Media_Upload_Ability();
@@ -63,15 +63,15 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$registry = \Elementor\Modules\Mcp\Module::build_core_registry();
 
 		// Assert
-		$this->assertFalse( $upload->is_exposed_via_proxy() );
-		$this->assertFalse( $upload->is_exposed_on_server() );
-		$this->assertFalse( $request->is_exposed_via_proxy() );
-		$this->assertFalse( $request->is_exposed_on_server() );
-		$this->assertFalse( $update->is_exposed_via_proxy() );
-		$this->assertFalse( $update->is_exposed_on_server() );
-		$this->assertNull( $registry->find_by_proxy_slug( 'upload-media' ) );
-		$this->assertNull( $registry->find_by_proxy_slug( 'request-media-upload' ) );
-		$this->assertNull( $registry->find_by_proxy_slug( 'update-media-attachment' ) );
+		$this->assertTrue( $upload->is_exposed_via_proxy() );
+		$this->assertTrue( $upload->is_exposed_on_server() );
+		$this->assertTrue( $request->is_exposed_via_proxy() );
+		$this->assertTrue( $request->is_exposed_on_server() );
+		$this->assertTrue( $update->is_exposed_via_proxy() );
+		$this->assertTrue( $update->is_exposed_on_server() );
+		$this->assertNotNull( $registry->find_by_proxy_slug( 'upload-media' ) );
+		$this->assertNotNull( $registry->find_by_proxy_slug( 'request-media-upload' ) );
+		$this->assertNotNull( $registry->find_by_proxy_slug( 'update-media-attachment' ) );
 	}
 
 	public function test_public_host_validator__rejects_loopback_ip() {
