@@ -269,6 +269,12 @@ const eventsConfig = {
 			export: 'design_system_export',
 			opened: 'design_system_opened',
 		},
+		default_styles: {
+			panelOpened: 'default_styles_panel_opened',
+			tagSaved: 'default_styles_tag_saved',
+			saveFailed: 'default_styles_save_failed',
+			changesDiscarded: 'default_styles_changes_discarded',
+		},
 		components: {
 			createClicked: 'component_create_clicked',
 			createCancelled: 'component_creation_cancelled',
