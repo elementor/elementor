@@ -80,15 +80,19 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
+		$title_control = Inline_Editing_Control::bind_to( 'title' )
+			->set_placeholder( __( 'Type your title here', 'elementor' ) )
+			->set_label( __( 'Title', 'elementor' ) );
+		$promotion = $this->get_ally_promotion_trigger();
+
+		if ( $promotion ) {
+			$title_control->set_promotion( $promotion )->set_meta( [ 'layout' => 'custom' ] );
+		}
+
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_id( 'content' )
-			->set_items( array_filter( [
-				Inline_Editing_Control::bind_to( 'title' )
-					->set_placeholder( __( 'Type your title here', 'elementor' ) )
-					->set_label( __( 'Title', 'elementor' ) ),
-				$this->get_ally_promotion_notice_control(),
-			] ) );
+			->set_items( [ $title_control ] );
 
 		return [
 			$content_section,

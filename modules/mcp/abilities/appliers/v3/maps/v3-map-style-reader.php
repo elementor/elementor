@@ -8,6 +8,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Regi
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers\Base_Property_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,11 +22,31 @@ class V3_Map_Style_Reader {
 		$this->adapters = $adapters;
 	}
 
-	public function read( V3_Block_Accumulator $blocks, array $bindings, array $settings, array $controls ): void {
+	/**
+	 * @param Compiled_V3_Map      $map
+	 * @param array<string, mixed> $settings
+	 * @param array<string, mixed> $controls
+	 * @param callable|null        $is_visible `( array $control, array $values, array $controls ): bool`; hidden controls are not rendered.
+	 * @return array<string, V3_Block_Accumulator> Alias => blocks of that style target.
+	 */
+	public function read( Compiled_V3_Map $map, array $settings, array $controls, ?callable $is_visible = null ): array {
+		$is_key_visible = $this->key_visibility( $settings, $controls, $is_visible );
+
+		return array_map(
+			fn( Compiled_Style_Target $target ) => $this->read_target( $target->get_bindings(), $settings, $controls, $is_key_visible ),
+			$map->get_targets()
+		);
+	}
+
+	/**
+	 * @param Compiled_Style_Binding[] $bindings
+	 */
+	private function read_target( array $bindings, array $settings, array $controls, callable $is_key_visible ): V3_Block_Accumulator {
+		$blocks = new V3_Block_Accumulator();
 		$suffixes = [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES;
 
 		foreach ( $suffixes as $suffix => $breakpoint ) {
-			foreach ( $this->props_by_state( $bindings, $settings, $controls, $suffix ) as $state => $props ) {
+			foreach ( $this->props_by_state( $bindings, $settings, $controls, $suffix, $is_key_visible ) as $state => $props ) {
 				$block_state = Style_Target::DEFAULT_STATE === $state ? null : $state;
 
 				foreach ( Style_Props_To_Css::to_map( $props ) as $property => $value ) {
@@ -33,60 +54,126 @@ class V3_Map_Style_Reader {
 				}
 			}
 		}
+
+		return $blocks;
 	}
 
 	/**
 	 * @return array<string, array<string, array<string, mixed>>>
 	 */
-	private function props_by_state( array $bindings, array $settings, array $controls, string $suffix ): array {
+	private function props_by_state( array $bindings, array $settings, array $controls, string $suffix, callable $is_key_visible ): array {
 		$props = [];
 
 		foreach ( $bindings as $binding ) {
-			$prop_value = $this->read_binding( $binding, $settings, $controls, $suffix );
+			$prop_value = $this->read_binding( $binding, $settings, $controls, $suffix, $is_key_visible );
 
 			if ( null === $prop_value ) {
 				continue;
 			}
 
-			$existing = $props[ $binding['state'] ][ $binding['prop'] ] ?? null;
-			$props[ $binding['state'] ][ $binding['prop'] ] = null === $existing
+			$existing = $props[ $binding->get_state() ][ $binding->get_prop() ] ?? null;
+			$props[ $binding->get_state() ][ $binding->get_prop() ] = null === $existing
 				? $prop_value
-				: $this->merge_sides( $existing, $prop_value );
+				: $this->merge( $existing, $prop_value );
 		}
 
 		return $props;
 	}
 
-	private function read_binding( array $binding, array $settings, array $controls, string $suffix ): ?array {
-		if ( '' !== $suffix && ! $binding['responsive'] ) {
+	private function read_binding( Compiled_Style_Binding $binding, array $settings, array $controls, string $suffix, callable $is_key_visible ): ?array {
+		if ( '' !== $suffix && ! $binding->is_responsive() ) {
 			return null;
 		}
 
-		if ( ! $this->are_dependencies_met( $binding['dependency_values'], $settings, $controls ) ) {
+		if ( ! $this->are_dependencies_met( $binding->get_dependency_values(), $settings, $controls, $suffix ) ) {
 			return null;
 		}
 
-		$stored = $settings[ $binding['setting'] . $suffix ] ?? null;
-		$adapter = $this->adapters->find( $binding['read_type'], $binding['control_type'], null !== $binding['sides'] );
+		$key = $binding->get_setting() . $suffix;
+
+		if ( ! $is_key_visible( $key, $binding->get_setting() ) ) {
+			return null;
+		}
+
+		$stored = $settings[ $key ] ?? null;
+		$adapter = $this->adapters->find( $binding->get_read_type(), $binding->get_control_type(), null !== $binding->get_sides() );
 
 		if ( null === $stored || null === $adapter ) {
 			return null;
 		}
 
-		return $adapter->from_control_value( $stored, $binding['sides'] );
+		$prop_value = $adapter->from_control_value( $stored, $binding->get_sides() );
+
+		if ( null === $prop_value || null === $binding->get_part() ) {
+			return $prop_value;
+		}
+
+		return [
+			'$$type' => $binding->get_part_of(),
+			'value' => [ $binding->get_part() => $prop_value ],
+		];
 	}
 
 	/**
-	 * Elementor does not store settings left at their default, so an unset dependency
-	 * falls back to the control default.
+	 * @return callable `( string $key, string $base_key ): bool`
+	 */
+	private function key_visibility( array $settings, array $controls, ?callable $is_visible ): callable {
+		if ( null === $is_visible ) {
+			return fn(): bool => true;
+		}
+
+		$values = V3_Control_Visibility::values_with_defaults( $controls, $settings );
+		$values_by_suffix = [];
+
+		return function ( string $key, string $base_key ) use ( $is_visible, $values, $controls, &$values_by_suffix ): bool {
+			if ( isset( $controls[ $key ] ) || $key === $base_key ) {
+				return ! is_array( $controls[ $key ] ?? null ) || $is_visible( $controls[ $key ], $values, $controls );
+			}
+
+			if ( ! is_array( $controls[ $base_key ] ?? null ) ) {
+				return true;
+			}
+
+			$suffix = substr( $key, strlen( $base_key ) );
+			$values_by_suffix[ $suffix ] ??= self::device_values( $values, $suffix );
+
+			return $is_visible( $controls[ $base_key ], $values_by_suffix[ $suffix ], $controls );
+		};
+	}
+
+	/**
+	 * A single `is_responsive` control is duplicated per device only when the page CSS is
+	 * rendered, and each duplicate checks its condition against that device's value, falling
+	 * back to the desktop value when the device is unset.
+	 *
+	 * @param array<string, mixed> $values
+	 * @param string               $suffix
+	 * @return array<string, mixed>
+	 */
+	private static function device_values( array $values, string $suffix ): array {
+		foreach ( $values as $setting => $value ) {
+			$device_value = $values[ $setting . $suffix ] ?? '';
+
+			if ( '' !== $device_value ) {
+				$values[ $setting ] = $device_value;
+			}
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Elementor does not store settings left at their default, so an unset dependency falls
+	 * back to the desktop value and then the control default.
 	 *
 	 * @param array<string, mixed> $dependency_values
 	 * @param array<string, mixed> $settings
 	 * @param array<string, mixed> $controls
+	 * @param string               $suffix
 	 */
-	private function are_dependencies_met( array $dependency_values, array $settings, array $controls ): bool {
+	private function are_dependencies_met( array $dependency_values, array $settings, array $controls, string $suffix ): bool {
 		foreach ( $dependency_values as $setting => $value ) {
-			$current = $settings[ $setting ] ?? $controls[ $setting ]['default'] ?? '';
+			$current = $settings[ $setting . $suffix ] ?? $settings[ $setting ] ?? $controls[ $setting ]['default'] ?? '';
 
 			if ( (string) $current !== (string) $value ) {
 				return false;
@@ -101,7 +188,16 @@ class V3_Map_Style_Reader {
 	 * @param array<string, mixed> $addition
 	 * @return array<string, mixed>
 	 */
-	private function merge_sides( array $existing, array $addition ): array {
-		return Dimensions_Prop_Type::generate( array_merge( $existing['value'] ?? [], $addition['value'] ?? [] ) );
+	private function merge( array $existing, array $addition ): array {
+		$value = array_merge( $existing['value'] ?? [], $addition['value'] ?? [] );
+
+		if ( Dimensions_Prop_Type::get_key() === ( $existing['$$type'] ?? null ) ) {
+			return Dimensions_Prop_Type::generate( $value );
+		}
+
+		return [
+			'$$type' => $existing['$$type'] ?? null,
+			'value' => $value,
+		];
 	}
 }
