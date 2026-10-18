@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\RestApi;
 
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
@@ -21,6 +22,10 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	private function register_routes(): void {
+		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
+			return;
+		}
+
 		register_rest_route( self::API_NAMESPACE, '/' . self::ROUTE, [
 			'methods' => 'POST',
 			'callback' => fn( $request ) => $this->handle_upload( $request ),
@@ -29,6 +34,10 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	public function permission_check( \WP_REST_Request $request ): bool {
+		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
+			return false;
+		}
+
 		$token = $this->read_header( $request, Media_Upload_Config::UPLOAD_TOKEN_HEADER );
 
 		if ( '' === $token ) {
@@ -39,6 +48,10 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	private function handle_upload( \WP_REST_Request $request ) {
+		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
+			return Mcp_Media_Feature_Gate::disabled_error();
+		}
+
 		$token = $this->read_header( $request, Media_Upload_Config::UPLOAD_TOKEN_HEADER );
 		if ( '' === $token ) {
 			return new \WP_Error(

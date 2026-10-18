@@ -28,6 +28,10 @@ class Media_Upload_Token_Store {
 	}
 
 	public static function is_valid_for_request( string $token ): bool {
+		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
+			return false;
+		}
+
 		$key = self::storage_key( $token );
 		$data = get_transient( $key );
 
@@ -39,6 +43,10 @@ class Media_Upload_Token_Store {
 	}
 
 	public static function consume( string $token ) {
+		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
+			return Mcp_Media_Feature_Gate::disabled_error();
+		}
+
 		$key = self::storage_key( $token );
 		$lock_key = $key . '_consume';
 

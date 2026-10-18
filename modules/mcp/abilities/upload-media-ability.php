@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Upload_Input_Guard;
 use Elementor\Modules\Mcp\Media\Safe_Remote_Image_Fetcher;
 
@@ -74,6 +75,10 @@ class Upload_Media_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
+
+		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
+			return Mcp_Media_Feature_Gate::disabled_error();
+		}
 
 		$capability_error = Media_Upload_Input_Guard::require_upload_files_capability();
 		if ( $capability_error ) {

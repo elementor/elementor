@@ -11,6 +11,7 @@ use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
@@ -252,9 +253,6 @@ class Module extends BaseModule {
 			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
 			new Abilities\Find_Icons_Ability(),
-			new Abilities\Upload_Media_Ability(),
-			new Abilities\Request_Media_Upload_Ability(),
-			new Abilities\Update_Media_Attachment_Ability(),
 			new Abilities\Global_Variables_Resource_Ability(),
 			new Abilities\Interactions_Schema_Resource_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
@@ -264,6 +262,12 @@ class Module extends BaseModule {
 			new Abilities\List_Posts_Ability(),
 			new Abilities\Get_System_Info_Ability(),
 		];
+
+		if ( Mcp_Media_Feature_Gate::is_enabled() ) {
+			$abilities[] = new Abilities\Upload_Media_Ability();
+			$abilities[] = new Abilities\Request_Media_Upload_Ability();
+			$abilities[] = new Abilities\Update_Media_Attachment_Ability();
+		}
 
 		return $abilities;
 	}
