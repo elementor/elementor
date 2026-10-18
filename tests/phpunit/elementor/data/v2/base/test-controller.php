@@ -120,6 +120,46 @@ class Test_Controller extends Data_Test_Base {
 		}
 	}
 
+	public function test_get_permission_callback__unimplemented_check_returns_wp_error() {
+		// Arrange.
+		$controller = new ControllerTemplate();
+		$controller->bypass_original_permission( false );
+
+		$request = new \WP_REST_Request( 'POST' );
+		$request->set_param( 'is_multi', true );
+
+		// Act.
+		$result = $controller->get_permission_callback( $request );
+
+		// Assert.
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid-method', $result->get_error_code() );
+		$this->assertSame( 405, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'create_items_permissions_check', $result->get_error_message() );
+	}
+
+	public function test_rest_dispatch__unimplemented_permission_returns_405() {
+		// Arrange.
+		$controller = new ControllerTemplate();
+		$controller->bypass_original_permission( false );
+
+		add_action( 'elementor_rest_api_before_init', function () use ( $controller ) {
+			add_action( 'rest_api_init', function () use ( $controller ) {
+				$controller->get_endpoint_index()->register_items_route( \WP_REST_Server::CREATABLE );
+			}, 11 );
+		}, 20 );
+
+		$this->manager->run_server();
+
+		// Act.
+		$response = $this->manager->run_request( $controller->get_name(), [], 'POST' );
+		$data = $response->get_data();
+
+		// Assert.
+		$this->assertSame( 'invalid-method', $data['code'] );
+		$this->assertSame( 405, $response->get_status() );
+	}
+
 	public function test_get_items() {
 		// Arrange.
 		$controller = new ControllerTemplate();
