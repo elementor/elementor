@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
+use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Input_Guard;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,7 +45,7 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( 'upload_files' ),
+			fn() => current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ),
 			[
 				'type' => 'object',
 				'required' => [ 'attachment_id' ],
@@ -55,10 +56,12 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 					],
 					'title' => [
 						'type' => 'string',
+						'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
 						'description' => 'New attachment title. Must not be empty.',
 					],
 					'alt' => [
 						'type' => 'string',
+						'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
 						'description' => 'New alt text. An empty string clears the alt text.',
 					],
 				],
@@ -74,12 +77,12 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 			return Mcp_Media_Feature_Gate::disabled_error();
 		}
 
-		$capability_error = Media_Upload_Input_Guard::require_upload_files_capability();
+		$capability_error = Media_Upload_Input_Guard::require_upload_capability();
 		if ( $capability_error ) {
 			return $capability_error;
 		}
 
-		$attachment_id = isset( $input['attachment_id'] ) && is_int( $input['attachment_id'] ) ? $input['attachment_id'] : 0;
+		$attachment_id = $this->read_attachment_id( $input );
 		if ( $attachment_id <= 0 ) {
 			return new \WP_Error(
 				'invalid_attachment',
@@ -108,5 +111,19 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 		}
 
 		return Media_Attachment_Service::update_title_and_alt( $attachment_id, $title, $alt );
+	}
+
+	private function read_attachment_id( array $input ): int {
+		$value = $input['attachment_id'] ?? null;
+
+		if ( is_int( $value ) ) {
+			return $value;
+		}
+
+		if ( is_string( $value ) && ctype_digit( $value ) && strlen( $value ) <= 18 ) {
+			return (int) $value;
+		}
+
+		return 0;
 	}
 }

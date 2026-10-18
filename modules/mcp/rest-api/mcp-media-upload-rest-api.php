@@ -100,10 +100,10 @@ class Mcp_Media_Upload_REST_API {
 	 * @return array|\WP_Error
 	 */
 	private function process_upload( \WP_REST_Request $request ) {
-		if ( ! current_user_can( 'upload_files' ) ) {
+		if ( ! current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to upload files.', 'elementor' ),
+				__( 'Only administrators can upload media with these tools.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}

@@ -51,6 +51,8 @@ class Media_Upload_Config {
 
 	const SVG_MIME_TYPE = 'image/svg+xml';
 
+	const REQUIRED_CAPABILITY = 'manage_options';
+
 	public static function max_upload_bytes(): int {
 		$wp_limit = wp_max_upload_size();
 		$wp_limit = is_numeric( $wp_limit ) ? (int) $wp_limit : 0;

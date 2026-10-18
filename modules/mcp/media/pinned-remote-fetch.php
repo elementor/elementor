@@ -18,18 +18,10 @@ class Pinned_Remote_Fetch {
 	 * @return array{response:array}|WP_Error
 	 */
 	public static function get( string $url, string $host, string $pinned_ip, ?int $timeout = null ) {
-		if ( ! self::is_curl_transport_available() ) {
+		if ( ! self::is_curl_transport_available() || self::is_proxy_in_use( $url ) ) {
 			return new \WP_Error(
 				'remote_fetch_unavailable',
 				__( 'Remote image fetch is not available on this server.', 'elementor' ),
-				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
-			);
-		}
-
-		if ( self::is_proxy_in_use( $url ) ) {
-			return new \WP_Error(
-				'remote_fetch_proxy_unsupported',
-				__( 'Remote image fetch is not available when the server sends requests through a proxy.', 'elementor' ),
 				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
 			);
 		}
@@ -54,7 +46,12 @@ class Pinned_Remote_Fetch {
 			}
 		};
 
+		$direct_connection_hook = static function ( $handle ) {
+			self::apply_direct_connection_options( $handle );
+		};
+
 		add_action( 'http_api_curl', $hook, 10, 1 );
+		add_action( 'http_api_curl', $direct_connection_hook, PHP_INT_MAX, 1 );
 
 		$response = null;
 
@@ -85,6 +82,7 @@ class Pinned_Remote_Fetch {
 			}
 		} finally {
 			remove_action( 'http_api_curl', $hook, 10 );
+			remove_action( 'http_api_curl', $direct_connection_hook, PHP_INT_MAX );
 		}
 
 		if ( ! $curl_resolve_applied ) {
@@ -133,7 +131,32 @@ class Pinned_Remote_Fetch {
 	}
 
 	public static function is_curl_transport_available(): bool {
-		return class_exists( '\WP_Http_Curl' ) && function_exists( 'curl_version' );
+		if ( ! function_exists( 'curl_init' ) ) {
+			return false;
+		}
+
+		if ( class_exists( '\WpOrg\Requests\Transport\Curl' ) ) {
+			return \WpOrg\Requests\Transport\Curl::test( [ 'ssl' => true ] );
+		}
+
+		if ( class_exists( '\Requests_Transport_cURL' ) ) {
+			return \Requests_Transport_cURL::test( [ 'ssl' => true ] );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Keeps the request on a direct connection so that the pinned address is used,
+	 * even when proxy settings come from the environment.
+	 */
+	public static function apply_direct_connection_options( $handle ): void {
+		if ( ! is_resource( $handle ) && ! ( is_object( $handle ) && $handle instanceof \CurlHandle ) ) {
+			return;
+		}
+
+		curl_setopt( $handle, CURLOPT_PROXY, '' );
+		curl_setopt( $handle, CURLOPT_NOPROXY, '*' );
 	}
 
 	/**

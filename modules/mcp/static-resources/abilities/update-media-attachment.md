@@ -1,1 +1,1 @@
-Updates the title and/or alt text on an existing Media Library attachment by ID. Pass at least one of `title` and `alt`. The title must not be empty; an empty `alt` clears the alt text. Both are limited to 255 characters.
+Updates the title and/or alt text on an existing Media Library attachment by ID. Available to administrators only (`manage_options`). Pass at least one of `title` and `alt`. The title must not be empty; an empty `alt` clears the alt text. Both are limited to 255 characters.
