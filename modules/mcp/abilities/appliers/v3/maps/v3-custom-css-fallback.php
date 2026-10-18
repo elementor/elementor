@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Block_Scanner_Trait;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
+use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,12 +30,9 @@ class V3_Custom_Css_Fallback {
 
 	const MEDIA_PRELUDE_PATTERN = '/^@media\s*(?P<condition>.+)$/is';
 
-	const RULE_PRELUDE_PATTERN = '/^selector(?:\s+(?P<selector>.+?))?(?::(?P<state>hover|focus|active))?$/s';
-
 	const IMPORTANT = '!important';
 
 	const IMPORTANT_PATTERN = '/\s*!\s*important\s*$/i';
-
 	/**
 	 * @var array<string, string|null>
 	 */
@@ -134,10 +132,42 @@ class V3_Custom_Css_Fallback {
 		return null === $media ? $block : sprintf( '@media %s { %s }', $media, $block );
 	}
 
+	/**
+	 * A target can span several nodes (`.shop_table, address`); each one is scoped to the wrapper.
+	 */
 	private function full_selector( string $selector, ?string $state ): string {
-		$full = '' === $selector ? self::WRAPPER_PLACEHOLDER : self::WRAPPER_PLACEHOLDER . ' ' . $selector;
+		$parts = array_map(
+			function ( string $part ) use ( $state ) {
+				$full = '' === $part ? self::WRAPPER_PLACEHOLDER : self::WRAPPER_PLACEHOLDER . ' ' . $part;
 
-		return null === $state ? $full : $full . ':' . $state;
+				return null === $state ? $full : $full . ':' . $state;
+			},
+			array_map( 'trim', explode( ',', $selector ) )
+		);
+
+		return implode( ', ', $parts );
+	}
+
+	/**
+	 * @return array<string, array{target: string, state: string|null}> Normalized rendered selector => target and state.
+	 */
+	private function rendered_selectors(): array {
+		$rendered = [];
+
+		foreach ( array_filter( $this->selectors, 'is_string' ) as $alias => $selector ) {
+			foreach ( array_merge( [ null ], Style_Variants_Merger::PSEUDO_STATES ) as $state ) {
+				$rendered[ self::normalize_selector( $this->full_selector( $selector, $state ) ) ] = [
+					'target' => (string) $alias,
+					'state' => $state,
+				];
+			}
+		}
+
+		return $rendered;
+	}
+
+	private static function normalize_selector( string $selector ): string {
+		return preg_replace( '/\s*,\s*/', ', ', self::collapse_whitespace( $selector ) ) ?? $selector;
 	}
 
 	/**
@@ -267,20 +297,16 @@ class V3_Custom_Css_Fallback {
 	}
 
 	private function parse_rule( string $prelude, string $body, string $breakpoint, ?string $media ): ?array {
-		if ( 1 !== preg_match( self::RULE_PRELUDE_PATTERN, $prelude, $matches ) || false !== strpos( $body, '{' ) ) {
-			return null;
-		}
-
-		$target = array_search( self::collapse_whitespace( $matches['selector'] ?? '' ), array_filter( $this->selectors, 'is_string' ), true );
+		$match = false === strpos( $body, '{' ) ? $this->rendered_selectors()[ self::normalize_selector( $prelude ) ] ?? null : null;
 		$declarations = ( new Css_Declaration_Parser() )->parse_declarations( $body );
 
-		if ( false === $target || empty( $declarations ) ) {
+		if ( null === $match || empty( $declarations ) ) {
 			return null;
 		}
 
 		return [
-			'target' => (string) $target,
-			'state' => '' !== ( $matches['state'] ?? '' ) ? $matches['state'] : null,
+			'target' => $match['target'],
+			'state' => $match['state'],
 			'breakpoint' => $breakpoint,
 			'media' => $media,
 			'declarations' => array_map( [ self::class, 'without_important' ], array_column( $declarations, 'value', 'property' ) ),

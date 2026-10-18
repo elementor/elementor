@@ -17,6 +17,7 @@ $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Summary sections (payment details, bank details, order details, addresses)' )
+	->selector( '.shop_table, address' )
 	->with( Box_Shadow_Group::from_prefix( 'sections_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'sections_background_color' ) )
 	->bind( 'border-style', V3_Control::bind_to( 'sections_border_type' ) )
@@ -39,24 +40,25 @@ $titles = Style_Target::make( 'titles' )
 
 $text = Style_Target::make( 'text' )
 	->label( 'General text such as addresses' )
-	->selector( 'address' )
+	->selector( 'address, .product-purchase-note, .woocommerce-thankyou-order-details + p' )
 	->with( Typography_Group::from_prefix( 'general_text_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'general_text_color' ) );
 
 $order_items = Style_Target::make( 'order-items' )
 	->label( 'Product rows in the order details table' )
-	->selector( '.shop_table td' )
+	->selector( '.product-quantity, .woocommerce-table--order-details td a, td.product-total, td.download-product, td.download-remaining, td.download-expires, td.download-file' )
 	->with( Typography_Group::from_prefix( 'order_details_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_details_items_color' ) );
 
 $product_links = Style_Target::make( 'product-links' )
 	->label( 'Product name links in the order details' )
+	->selector( '.woocommerce a' )
 	->bind( 'color', V3_Control::bind_to( 'order_details_product_links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_details_product_links_hover_color' ), $hover );
 
 $button = Style_Target::make( 'button' )
 	->label( 'Buttons in the order details (e.g. download)' )
-	->selector( '.shop_table .button' )
+	->selector( '.shop_table .button, .order-again .button, .woocommerce-pagination .button' )
 	->with( Typography_Group::from_prefix( 'order_details_button_typography' ) )
 	->with( Background_Group::from_prefix( 'order_details_button_normal_background' ) )
 	->with( Background_Group::from_prefix( 'order_details_button_hover_background', $hover ) )

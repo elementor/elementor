@@ -18,6 +18,7 @@ $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Checkout sections (billing, additional info, order summary, payment, coupon, returning customer)' )
+	->selector( '.e-woocommerce-login-section, .woocommerce-checkout #customer_details .col-1, .woocommerce-additional-fields, .e-checkout__order_review, .e-coupon-box, .woocommerce-checkout #payment, .woocommerce-shipping-fields .shipping_address' )
 	->with( Box_Shadow_Group::from_prefix( 'section_normal_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'sections_background_color' ) )
 	->bind( 'border-style', V3_Control::bind_to( 'sections_border_type' ) )
@@ -28,6 +29,7 @@ $sections = Style_Target::make( 'sections' )
 
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
+	->selector( 'h3#order_review_heading, .woocommerce-billing-fields h3, .woocommerce-additional-fields h3' )
 	->with( Typography_Group::from_prefix( 'sections_titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_title_color' ) );
 
@@ -45,18 +47,19 @@ $text = Style_Target::make( 'text' )
 
 $links = Style_Target::make( 'links' )
 	->label( 'Links inside the sections' )
+	->selector( 'a' )
 	->bind( 'color', V3_Control::bind_to( 'links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'links_hover_color' ), $hover );
 
 $labels = Style_Target::make( 'labels' )
 	->label( 'Form field labels' )
-	->selector( '.woocommerce-billing-fields .form-row label' )
+	->selector( '.woocommerce-billing-fields .form-row label, .woocommerce-shipping-fields .form-row label, .woocommerce-additional-fields .form-row label, .e-woocommerce-login-anchor .form-row label, .e-coupon-anchor-description' )
 	->with( Typography_Group::from_prefix( 'forms_label_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'forms_label_color' ) );
 
 $buttons = Style_Target::make( 'buttons' )
 	->label( 'Form buttons (login, apply coupon)' )
-	->selector( '.woocommerce-button' )
+	->selector( '.woocommerce-button, .e-apply-coupon, .woocommerce-form-login__submit' )
 	->with( Typography_Group::from_prefix( 'forms_button_typography' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_normal_background' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_hover_background', $hover ) )
@@ -79,7 +82,7 @@ $order_items = Style_Target::make( 'order-items' )
 
 $order_totals = Style_Target::make( 'order-totals' )
 	->label( 'Totals rows and headers in the order summary' )
-	->selector( '.woocommerce-checkout-review-order-table thead tr th' )
+	->selector( '.woocommerce-checkout-review-order-table thead tr th, .woocommerce-checkout-review-order-table tfoot tr th, .woocommerce-checkout-review-order-table tfoot tr td' )
 	->with( Typography_Group::from_prefix( 'order_summary_totals_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_summary_totals_color' ) );
 

@@ -17,7 +17,7 @@ $focus = 'focus';
 
 $button = Style_Target::make( 'button' )
 	->label( 'Add to cart button' )
-	->selector( '.cart .button' )
+	->selector( '.cart .button, .cart button' )
 	->with( Typography_Group::from_prefix( 'button_typography' ) )
 	->with( Border_Group::from_prefix( 'button_border' ) )
 	->bind( 'color', V3_Control::bind_to( 'button_text_color' ) )

@@ -35,12 +35,13 @@ $titles = Style_Target::make( 'titles' )
 
 $text = Style_Target::make( 'text' )
 	->label( 'Section text; links have their own target' )
-	->selector( '.e-cart-content' )
+	->selector( '.e-cart-content, .woocommerce-shipping-destination, .shipping-calculator-button' )
 	->with( Typography_Group::from_prefix( 'sections_descriptions_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_descriptions_color' ) );
 
 $links = Style_Target::make( 'links' )
 	->label( 'Links inside the sections' )
+	->selector( '.woocommerce a:not(.add_to_cart_button):not(.restore-item):not(.wc-backward):not(.wc-forward)' )
 	->bind( 'color', V3_Control::bind_to( 'links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'links_hover_color' ), $hover );
 
@@ -63,18 +64,19 @@ $buttons = Style_Target::make( 'buttons' )
 
 $products = Style_Target::make( 'products' )
 	->label( 'Product rows in the order summary table' )
-	->selector( '.e-shop-table .cart td' )
+	->selector( '.cart td span, .cart td, .input-text.qty' )
 	->with( Typography_Group::from_prefix( 'order_summary_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_summary_color' ) );
 
 $product_links = Style_Target::make( 'product-links' )
 	->label( 'Product name links in the order summary' )
+	->selector( '.woocommerce .product-name a' )
 	->bind( 'color', V3_Control::bind_to( 'product_link_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'product_link_hover_color' ), $hover );
 
 $totals = Style_Target::make( 'totals' )
 	->label( 'Cart totals rows' )
-	->selector( '.cart_totals .shop_table td' )
+	->selector( '.cart_totals .shop_table td:before, .cart_totals .shop_table td .woocommerce-Price-amount' )
 	->with( Typography_Group::from_prefix( 'totals_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'totals_color' ) );
 

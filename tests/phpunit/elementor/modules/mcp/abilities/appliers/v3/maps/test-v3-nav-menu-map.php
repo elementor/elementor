@@ -242,6 +242,22 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		);
 	}
 
+	public function test_apply__falls_back_on_the_flex_basis_no_wrapper_control_stores() {
+		// Act.
+		$result = $this->mapper()->apply( 'wrapper { flex: 0 0 333px; }', self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertEquals(
+			[
+				'_flex_grow' => 0,
+				'_flex_size' => 'custom',
+				'_flex_shrink' => 0,
+			],
+			$result['settings_patch']
+		);
+		$this->assertSame( [ 'flex-basis' => '333px' ], $result['fallback_rules'][0]['declarations'] );
+	}
+
 	public function test_round_trip__wrapper_states_map_back_to_same_settings() {
 		// Arrange.
 		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; flex-grow: 1; flex-shrink: 0; }'
@@ -328,7 +344,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		// Assert.
 		$this->assertSame( [], $result['fallback_notes'] );
 		$this->assertSame(
-			[ 'CSS property letter-spacing is not supported by this Elementor widget. It was skipped because style target divider cannot hold custom CSS.' ],
+			[ 'letter-spacing: 1px (divider): CSS property letter-spacing is not supported by this Elementor widget. It was skipped because style target divider cannot hold custom CSS.' ],
 			$result['warnings']
 		);
 	}

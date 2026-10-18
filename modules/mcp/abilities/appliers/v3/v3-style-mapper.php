@@ -201,7 +201,7 @@ class V3_Style_Mapper {
 
 		if ( null !== $skip_reason ) {
 			foreach ( $fallbacks as $fallback ) {
-				$ctx->warn( $fallback['reason'] . ' ' . $skip_reason );
+				$ctx->warn( self::fallback_note( $fallback, $target ) . ' ' . $skip_reason );
 			}
 
 			return;
@@ -216,8 +216,16 @@ class V3_Style_Mapper {
 		] );
 
 		foreach ( $fallbacks as $fallback ) {
-			$ctx->add_fallback_note( sprintf( '%1$s: %2$s (%3$s): %4$s', $fallback['property'], $fallback['value'], $target->get_alias(), $fallback['reason'] ) );
+			$ctx->add_fallback_note( self::fallback_note( $fallback, $target ) );
 		}
+	}
+
+	/**
+	 * @param array{property: string, value: string, reason: string} $fallback
+	 * @param Compiled_Style_Target                                  $target
+	 */
+	private static function fallback_note( array $fallback, Compiled_Style_Target $target ): string {
+		return sprintf( '%1$s: %2$s (%3$s): %4$s', $fallback['property'], $fallback['value'], $target->get_alias(), $fallback['reason'] );
 	}
 
 	private static function fallback_skip_reason( Compiled_Style_Target $target, ?string $state ): ?string {

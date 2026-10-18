@@ -63,6 +63,7 @@ $dropdown = Style_Target::make( 'dropdown' )
 
 $dropdown_divider = Style_Target::make( 'dropdown-divider' )
 	->label( 'Divider between dropdown items' )
+	->selector( '.elementor-nav-menu--dropdown li:not(:last-child)' )
 	->bind( 'border-style', V3_Control::bind_to( 'dropdown_divider_border' ) )
 	->bind( 'border-color', V3_Control::bind_to( 'dropdown_divider_color' ) )
 	->bind( 'border-width', V3_Control::bind_to( 'dropdown_divider_width' ) );

@@ -41,6 +41,7 @@ $account_tabs = Style_Target::make( 'tabs' )
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Content sections of each tab' )
+	->selector( '.e-my-account-tab__dashboard:not(.e-my-account-tab__dashboard--custom) .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__orders .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__downloads .woocommerce-MyAccount-content-wrapper, address, .e-my-account-tab__edit-account .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__view-order .order_details, .woocommerce-form-login, .woocommerce-form-register, .woocommerce-ResetPassword, .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper' )
 	->with( Box_Shadow_Group::from_prefix( 'my_account_sections_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'my_account_sections_background_color' ) )
 	->bind( 'border-style', V3_Control::bind_to( 'sections_border_type' ) )
@@ -51,29 +52,31 @@ $sections = Style_Target::make( 'sections' )
 
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
+	->selector( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) h2, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) h3' )
 	->with( Typography_Group::from_prefix( 'section_titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'typography_section_titles_color' ) );
 
 $text = Style_Target::make( 'text' )
 	->label( 'General text' )
-	->selector( '.woocommerce-MyAccount-content > div > p' )
+	->selector( '.woocommerce-MyAccount-content > div > p, address, .woocommerce-EditAccountForm fieldset legend, .woocommerce-ResetPassword p:nth-child(1), .woocommerce-OrderUpdate' )
 	->with( Typography_Group::from_prefix( 'general_text_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'general_text_color' ) );
 
 $links = Style_Target::make( 'links' )
 	->label( 'Links inside the content' )
+	->selector( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce a' )
 	->bind( 'color', V3_Control::bind_to( 'links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'links_hover_color' ), $hover );
 
 $labels = Style_Target::make( 'labels' )
 	->label( 'Form field labels' )
-	->selector( '.woocommerce-form-row label' )
+	->selector( '.woocommerce-form-row label, .woocommerce-address-fields label' )
 	->with( Typography_Group::from_prefix( 'forms_label_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'forms_label_color' ) );
 
 $buttons = Style_Target::make( 'buttons' )
 	->label( 'Form buttons (save, login, register)' )
-	->selector( 'button.button' )
+	->selector( 'button.button, .login .button, .register .button, .woocommerce-ResetPassword .button, #add_payment_method #payment #place_order' )
 	->with( Typography_Group::from_prefix( 'forms_button_typography' ) )
 	->with( Border_Group::from_prefix( 'forms_buttons_border' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_background' ) )
@@ -88,13 +91,13 @@ $buttons = Style_Target::make( 'buttons' )
 
 $table_items = Style_Target::make( 'table-items' )
 	->label( 'Rows of the orders and downloads tables' )
-	->selector( '.e-my-account-tab__orders tbody td' )
+	->selector( '.e-my-account-tab__orders tbody td, .e-my-account-tab__downloads tbody td, .woocommerce-table--order-downloads tbody td, .woocommerce-table--order-details td a, .product-quantity, td.product-total, td.payment-method-method, td.payment-method-expires' )
 	->with( Typography_Group::from_prefix( 'tables_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'tables_items_color' ) );
 
 $table_buttons = Style_Target::make( 'table-buttons' )
 	->label( 'Buttons inside the tables (view, pay, download)' )
-	->selector( '.shop_table .button' )
+	->selector( '.shop_table .button, .order-again .button, .woocommerce-pagination .button' )
 	->with( Typography_Group::from_prefix( 'tables_button_typography' ) )
 	->with( Background_Group::from_prefix( 'tables_button_normal_background' ) )
 	->with( Background_Group::from_prefix( 'tables_button_hover_background', $hover ) )

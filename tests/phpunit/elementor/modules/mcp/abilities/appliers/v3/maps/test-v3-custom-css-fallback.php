@@ -129,6 +129,31 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 		], $this->fallback()->parse( $css )['rules'][0]['declarations'] );
 	}
 
+	public function test_render__scopes_every_node_of_a_selector_list() {
+		// Arrange.
+		$fallback = new V3_Custom_Css_Fallback( [ 'sections' => '.shop_table, address' ], self::MEDIA_QUERIES );
+		$rules = [ self::rule( 'sections', 'hover', self::DESKTOP, [ 'cursor' => 'pointer' ] ) ];
+
+		// Act.
+		$css = $fallback->render( $rules );
+		$parsed = $fallback->parse( $css );
+
+		// Assert.
+		$this->assertSame( 'selector .shop_table:hover, selector address:hover { cursor: pointer !important; }', $css );
+		$this->assertSame( $rules, $parsed['rules'] );
+	}
+
+	public function test_parse__reads_a_selector_list_typed_without_spaces() {
+		// Arrange.
+		$fallback = new V3_Custom_Css_Fallback( [ 'sections' => '.shop_table, address' ], self::MEDIA_QUERIES );
+
+		// Act.
+		$parsed = $fallback->parse( 'selector .shop_table,selector  address { cursor: pointer; }' );
+
+		// Assert.
+		$this->assertSame( [ self::rule( 'sections', null, self::DESKTOP, [ 'cursor' => 'pointer' ] ) ], $parsed['rules'] );
+	}
+
 	public function test_parse__keeps_rules_outside_every_target_as_written() {
 		// Arrange.
 		$unknown_rule = 'selector .unknown > a { color: red; }';

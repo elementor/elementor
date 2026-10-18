@@ -36,6 +36,7 @@ $track = Style_Target::make( 'track' )
 
 $circle = Style_Target::make( 'circle' )
 	->label( 'Circular tracker: width is the circle size, color the progress ring, background the ring behind it' )
+	->selector( '.elementor-scrolling-tracker-circular' )
 	->bind( 'width', V3_Control::bind_to( 'circular_size' )->responsive() )
 	->bind( 'color', V3_Control::bind_to( 'circular_color' ) )
 	->bind( 'background', V3_Control::bind_to( 'circular_background_color' ) );

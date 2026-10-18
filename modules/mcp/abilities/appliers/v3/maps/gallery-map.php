@@ -24,6 +24,7 @@ $images = Style_Target::make( 'images' )
 
 $grid = Style_Target::make( 'grid' )
 	->label( 'Gallery grid; gap is the space between images' )
+	->selector( '.elementor-gallery__container' )
 	->bind( 'gap', V3_Control::bind_to( 'gap' )->responsive() );
 
 $overlay = Style_Target::make( 'overlay' )

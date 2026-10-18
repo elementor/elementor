@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Controls_Manager;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Size_Values;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Text_Alignment;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
@@ -31,6 +32,12 @@ class V3_Map_Style_Writer {
 		'block-end' => 'bottom',
 		'inline-start' => 'left',
 	];
+
+	const PART_LONGHANDS = [
+		'flexBasis' => 'flex-basis',
+	];
+
+	const INITIAL_FLEX_BASIS = 'auto';
 
 	const SIDE_LONGHAND_FORMATS = [
 		'margin' => 'margin-%s',
@@ -99,7 +106,11 @@ class V3_Map_Style_Writer {
 			}
 
 			if ( ! isset( $failures[ $prop ] ) ) {
-				$uncovered_sides = array_merge( $uncovered_sides, self::uncovered_side_declarations( (string) $prop, $prop_value, $prop_bindings ) );
+				$uncovered_sides = array_merge(
+					$uncovered_sides,
+					self::uncovered_side_declarations( (string) $prop, $prop_value, $prop_bindings ),
+					self::uncovered_part_declarations( (string) $prop, $prop_value, $prop_bindings )
+				);
 			}
 
 			$position_fell_back = $position_fell_back || isset( $failures[ self::POSITION_PROPERTY ] );
@@ -157,6 +168,51 @@ class V3_Map_Style_Writer {
 		}
 
 		return $declarations;
+	}
+
+	/**
+	 * Parts of a shorthand none of the prop's bindings owns, like the basis of `flex: 0 0 333px`,
+	 * keep their value as longhands in the custom CSS. A part at its initial value adds nothing.
+	 *
+	 * @param string                   $prop
+	 * @param mixed                    $prop_value
+	 * @param Compiled_Style_Binding[] $prop_bindings
+	 * @return array<int, array{property: string, value: string, reason: string}>
+	 */
+	private static function uncovered_part_declarations( string $prop, $prop_value, array $prop_bindings ): array {
+		$parts = is_array( $prop_value['value'] ?? null ) ? $prop_value['value'] : [];
+		$covered = array_map( fn( Compiled_Style_Binding $binding ) => $binding->get_part(), $prop_bindings );
+
+		if ( in_array( null, $covered, true ) ) {
+			return [];
+		}
+
+		$declarations = [];
+
+		foreach ( array_diff_key( self::PART_LONGHANDS, array_flip( $covered ) ) as $part => $longhand ) {
+			$size = Size_Values::from_prop( $parts[ $part ] ?? null );
+
+			if ( null === $size || self::INITIAL_FLEX_BASIS === $size['size'] ) {
+				continue;
+			}
+
+			$declarations[] = [
+				'property' => $longhand,
+				'value' => Size_Constants::UNIT_CUSTOM === $size['unit'] ? (string) $size['size'] : $size['size'] . $size['unit'],
+				'reason' => self::uncovered_part_message( $prop, $longhand ),
+			];
+		}
+
+		return $declarations;
+	}
+
+	private static function uncovered_part_message( string $property, string $longhand ): string {
+		return sprintf(
+			/* translators: 1: CSS shorthand property, 2: CSS longhand property */
+			__( 'This Elementor widget does not store the %2$s part of CSS property %1$s, so it was written to the widget custom CSS.', 'elementor' ),
+			$property,
+			$longhand
+		);
 	}
 
 	private static function uncovered_side_message( string $property ): string {
