@@ -839,55 +839,12 @@ class Manager extends Base_Object {
 		$feature_option_key = $this->get_feature_option_key( $feature['name'] );
 
 		if ( self::STATE_ACTIVE === $new_state ) {
-			if ( empty( $feature['dependencies'] ) ) {
-				return;
-			}
+			$inactive_dependency = $this->find_inactive_dependency( $feature );
 
-			// Validate if the current feature dependency is available.
-			foreach ( $feature['dependencies'] as $dependency ) {
-				if ( $dependency instanceof Non_Existing_Dependency ) {
-					$this->warn_removed_or_hidden_dependency(
-						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available in Core.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency->get_name() )
-						)
-					);
-					continue;
-				}
+			if ( $inactive_dependency ) {
+				$rollback( $feature_option_key, self::STATE_INACTIVE );
 
-				$dependency_feature = $this->get_features( $dependency->get_name() );
-
-				if ( ! $dependency_feature ) {
-					$this->warn_removed_or_hidden_dependency(
-						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available in Core.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency->get_name() )
-						)
-					);
-					continue;
-				}
-
-				if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
-					$this->warn_removed_or_hidden_dependency(
-						sprintf(
-							'The feature `%1$s` depends on hidden experiment `%2$s`.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency_feature['name'] )
-						)
-					);
-					continue;
-				}
-
-				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
-
-				// If dependency is not active.
-				if ( self::STATE_INACTIVE === $dependency_state ) {
-					$rollback( $feature_option_key, self::STATE_INACTIVE );
-
-					throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $dependency_feature['name'] ) );
-				}
+				throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $inactive_dependency['name'] ) );
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
 			// Make sure to deactivate a dependant experiment of the current feature when it's deactivated.
@@ -924,21 +881,56 @@ class Manager extends Base_Object {
 			return;
 		}
 
+		$inactive_dependency = $this->find_inactive_dependency( $feature );
+
+		if ( $inactive_dependency ) {
+			throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $inactive_dependency['name'] ) );
+		}
+	}
+
+	private function find_inactive_dependency( array $feature ): ?array {
 		foreach ( $feature['dependencies'] ?? [] as $dependency ) {
 			if ( $dependency instanceof Non_Existing_Dependency ) {
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'The feature `%s` has a dependency `%s` that is not available in Core.',
+						esc_html( $feature['name'] ),
+						esc_html( $dependency->get_name() )
+					)
+				);
 				continue;
 			}
 
 			$dependency_feature = $this->get_features( $dependency->get_name() );
 
+			if ( ! $dependency_feature ) {
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'The feature `%s` has a dependency `%s` that is not available in Core.',
+						esc_html( $feature['name'] ),
+						esc_html( $dependency->get_name() )
+					)
+				);
+				continue;
+			}
+
 			if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'The feature `%1$s` depends on hidden experiment `%2$s`.',
+						esc_html( $feature['name'] ),
+						esc_html( $dependency_feature['name'] )
+					)
+				);
 				continue;
 			}
 
 			if ( self::STATE_INACTIVE === $this->get_feature_actual_state( $dependency_feature ) ) {
-				throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $dependency_feature['name'] ) );
+				return $dependency_feature;
 			}
 		}
+
+		return null;
 	}
 
 	private function write_feature_state( string $feature_name, string $state ): void {
