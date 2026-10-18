@@ -44,6 +44,10 @@ export {
 	type IconLibraryProvider,
 } from './controls/icon-library/icon-library-providers';
 export { enqueueIconFonts } from './controls/open-icon-library';
+export {
+	IconLibraryUploadPromotion,
+	injectIntoIconLibraryUploadAction,
+} from './controls/icon-library/icon-library-upload-action';
 export { type FontAwesome7Icon } from './controls/icon-library/font-awesome-7-catalog';
 export {
 	getFontAwesome7IconName,
