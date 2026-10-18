@@ -127,7 +127,7 @@
 				return -1 !== settings.axis.indexOf( 'horizontal' );
 			}
 
-			return placeholderContext.isFlexRowContainer;
+			return placeholderContext.isFlexRowContainer || placeholderContext.isAtomicFlexWrapRowHost;
 		};
 
 		var hasVerticalDetection = function() {
@@ -135,7 +135,7 @@
 				return -1 !== settings.axis.indexOf( 'vertical' );
 			}
 
-			return ! placeholderContext.isFlexRowContainer;
+			return ! placeholderContext.isFlexRowContainer && ! placeholderContext.isAtomicFlexWrapRowHost;
 		};
 
 		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
@@ -227,6 +227,9 @@
 				case 'gridRow':
 					insertGridRowPlaceholder();
 					break;
+				case 'flexWrapRow':
+					insertFlexWrapRowPlaceholder();
+					break;
 				case 'flexRow':
 					insertFlexRowPlaceholder();
 					break;
@@ -234,6 +237,53 @@
 					insertDefaultPlaceholder();
 					break;
 			}
+		};
+
+		const getDroppableHostAndStyleTarget = function() {
+			const droppableElement = elementsCache.$element[ 0 ];
+
+			if ( ! droppableElement ) {
+				return { host: null, styleTarget: null };
+			}
+
+			const atomicHost = droppableElement.matches( '.e-atomic-element' )
+				? droppableElement
+				: null;
+
+			if ( ! atomicHost ) {
+				return { host: null, styleTarget: null };
+			}
+
+			const styleTarget = atomicHost.querySelector( ':scope > .e-con-inner' ) || atomicHost;
+
+			return { host: atomicHost, styleTarget };
+		};
+
+		const isAtomicFlexWrapRowHostElement = function( host, styleTarget ) {
+			if ( ! host || ! styleTarget ) {
+				return false;
+			}
+
+			// Overlay placeholder styles are scoped to `.e-con`.
+			if ( ! host.matches( '.e-con.e-atomic-element' ) ) {
+				return false;
+			}
+
+			if ( host.classList.contains( 'e-grid-base' ) ) {
+				return false;
+			}
+
+			const styles = getComputedStyle( styleTarget );
+
+			if ( ! [ 'flex', 'inline-flex' ].includes( styles.display ) ) {
+				return false;
+			}
+
+			if ( ! [ 'row', 'row-reverse' ].includes( styles.flexDirection ) ) {
+				return false;
+			}
+
+			return [ 'wrap', 'wrap-reverse' ].includes( styles.flexWrap );
 		};
 
 		const createPlaceholderContext = function() {
@@ -252,8 +302,12 @@
 
 			const isFlexContainer = !! container && [ 'flex', 'inline-flex' ].includes( containerWrapperStyle.display );
 			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
+			const isFlexRowContainer = isFlexContainer && isRowDirection;
 
-			maybeAddFlexRowClass( container );
+			const { host: droppableHost, styleTarget: droppableStyleTarget } = getDroppableHostAndStyleTarget();
+			const isAtomicFlexWrapRowHost = isAtomicFlexWrapRowHostElement( droppableHost, droppableStyleTarget );
+
+			maybeAddFlexRowClass( container, isFlexRowContainer );
 
 			return {
 				$currentElement,
@@ -265,19 +319,20 @@
 				isAtomicGridContainer: 0 !== $currentElement.closest( '.e-grid-base' ).length,
 				isFlexContainer,
 				isRowDirection,
-				isFlexRowContainer: isFlexContainer && isRowDirection,
+				isFlexRowContainer,
+				isAtomicFlexWrapRowHost,
+				droppableHost,
+				droppableStyleTarget,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
 				isAtomicContainer: [ 'e-div-block', 'e-flexbox', 'e-grid' ].includes( currentElement.dataset.element_type ),
 			};
 		};
 
-		const maybeAddFlexRowClass = function( container ) {
+		const maybeAddFlexRowClass = function( container, isFlexRowContainer ) {
 			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
-
-			const { isFlexRowContainer } = placeholderContext;
 
 			if ( isFlexRowContainer ) {
 				container.classList.add( 'e-con--row' );
@@ -300,6 +355,10 @@
 				return 'gridRow';
 			}
 
+			if ( placeholderContext.isAtomicFlexWrapRowHost ) {
+				return 'flexWrapRow';
+			}
+
 			if ( placeholderContext.isFlexRowContainer ) {
 				return 'flexRow';
 			}
@@ -311,8 +370,19 @@
 			return 'default';
 		};
 
+		const clearOverlayPlaceholderState = function() {
+			elementsCache.$placeholder.removeClass( 'e-placeholder--overlay e-dragging-left e-dragging-right' );
+			elementsCache.$placeholder.css( '--e-placeholder-left', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-top', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-height', '' );
+		};
+
 		const clearPreviousPlaceholder = function() {
-			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
+			clearOverlayPlaceholderState();
+
+			if ( placeholderContext.$parentContainer ) {
+				placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
+			}
 
 			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right e-dragging-top e-dragging-bottom is-logical' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
@@ -416,6 +486,70 @@
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			insertPlaceholderOutsideElement( $target[ 0 ] );
+		};
+
+		const measureFlexWrapOverlayPlaceholder = function( host, heightPx ) {
+			const placeholder = elementsCache.$placeholder[ 0 ];
+
+			elementsCache.$placeholder.css( {
+				position: 'absolute',
+				top: 0,
+				left: 0,
+				visibility: 'hidden',
+				'pointer-events': 'none',
+				'--e-placeholder-height': `${ heightPx }px`,
+			} );
+			elementsCache.$placeholder.appendTo( host );
+
+			// The overlay stays inside the host so its CSS applies; a static host is not mutated,
+			// so coordinates are resolved against the placeholder's actual containing block.
+			const measurement = {
+				barSize: placeholder.offsetWidth,
+				anchor: placeholder.offsetParent || host,
+			};
+
+			elementsCache.$placeholder.css( {
+				position: '',
+				top: '',
+				left: '',
+				visibility: '',
+				'pointer-events': '',
+			} );
+
+			return measurement;
+		};
+
+		const insertFlexWrapRowPlaceholder = function() {
+			const { placeholderTarget, droppableHost, droppableStyleTarget } = placeholderContext;
+			const target = placeholderTarget || currentElement;
+			const host = droppableHost;
+
+			if ( ! host || ! target || ! currentSide ) {
+				return;
+			}
+
+			const styleTarget = droppableStyleTarget || host;
+			const flexStyles = getComputedStyle( styleTarget );
+			const gap = parseFloat( flexStyles.columnGap ) || 0;
+
+			const targetRect = target.getBoundingClientRect();
+			const height = targetRect.height;
+
+			elementsCache.$placeholder.addClass( 'e-placeholder--overlay e-dragging-' + currentSide );
+
+			const { barSize, anchor } = measureFlexWrapOverlayPlaceholder( host, height );
+			const anchorRect = anchor.getBoundingClientRect();
+
+			const halfGap = gap / 2;
+			const edgeX = 'right' === currentSide
+				? targetRect.right + halfGap
+				: targetRect.left - halfGap;
+
+			const top = targetRect.top - anchorRect.top - anchor.clientTop + anchor.scrollTop;
+			const left = edgeX - ( barSize / 2 ) - anchorRect.left - anchor.clientLeft + anchor.scrollLeft;
+
+			elementsCache.$placeholder.css( '--e-placeholder-left', `${ left }px` );
+			elementsCache.$placeholder.css( '--e-placeholder-top', `${ top }px` );
 		};
 
 		const insertDefaultPlaceholder = function() {
@@ -669,6 +803,7 @@
 
 		this.doDragLeave = function() {
 			if ( settings.placeholder ) {
+				clearOverlayPlaceholderState();
 				elementsCache.$placeholder.remove();
 			}
 
