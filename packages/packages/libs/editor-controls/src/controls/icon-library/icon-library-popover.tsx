@@ -25,6 +25,7 @@ import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { IconLibraryFilter } from './icon-library-filter';
 import { IconLibraryGrid } from './icon-library-grid';
 import { useIconLibraryProviderIcons } from './icon-library-providers';
+import { IconLibraryUploadAction, IconLibraryUploadActionSlot } from './icon-library-upload-action';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
 import { SvgElementIcon } from './svg-element-icon';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
@@ -127,7 +128,12 @@ export const IconLibraryPopover = ( {
 				title={ __( 'Icon library', 'elementor' ) }
 				onClose={ handleClose }
 				icon={ <LibraryIcon fontSize="tiny" /> }
-				actions={ [ <IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } /> ] }
+				actions={ [
+					<IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } />,
+					<IconLibraryUploadActionSlot key="upload">
+						<IconLibraryUploadAction />
+					</IconLibraryUploadActionSlot>,
+				] }
 				sx={ {
 					pl: ICON_LIBRARY_INLINE_SPACING,
 					pr: 1,
