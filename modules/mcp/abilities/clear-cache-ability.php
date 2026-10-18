@@ -38,7 +38,7 @@ class Clear_Cache_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => true,
-					'destructive' => false,
+					'destructive' => true,
 				],
 				'mutates_page' => false,
 			],
@@ -51,7 +51,7 @@ class Clear_Cache_Ability extends Abstract_Ability {
 
 		return [
 			'success' => true,
-			'llm_instructions' => __( 'The Elementor cache was cleared. The files are rebuilt the next time a page is visited, so the first load of each page can be slower. Tell the user that caches outside Elementor (caching plugins, CDN, browser) were not cleared.', 'elementor' ),
+			'llm_instructions' => __( 'The Elementor cache was cleared. The files are rebuilt the next time a page is visited, so the first load of each page can be slower. Tell the user that caches outside Elementor (caching plugin, server cache, CDN, browser) were not cleared, and to clear them now, since cached pages can still point to the deleted CSS files. Do not call this tool again for the same problem.', 'elementor' ),
 		];
 	}
 }
