@@ -52,6 +52,7 @@ export const IconLibraryUploadPromotion = ( {
 		<PromotionPopover
 			open={ isOpen }
 			placement="top"
+			arrow
 			title={ __( 'Upload custom icons', 'elementor' ) }
 			content={ __( 'Add your own icon font library to use across your site.', 'elementor' ) }
 			ctaText={ __( 'Upgrade now', 'elementor' ) }

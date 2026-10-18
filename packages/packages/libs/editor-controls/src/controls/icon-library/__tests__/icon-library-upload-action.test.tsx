@@ -71,6 +71,17 @@ describe( 'IconLibraryUploadAction', () => {
 		expect( ICON_LIBRARY_UPLOAD_UPGRADE_URL ).toBe( 'https://go.elementor.com/go-pro-svg-library-upload-upgrade/' );
 	} );
 
+	it( 'should point the promotion at its anchor with an arrow', () => {
+		// Arrange.
+		renderSlot();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upload library' } ) );
+
+		// Assert.
+		expect( document.querySelector( '[class*="arrow"]' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should track the promotion view when it opens and the click on the upgrade link', () => {
 		// Arrange.
 		renderSlot();
