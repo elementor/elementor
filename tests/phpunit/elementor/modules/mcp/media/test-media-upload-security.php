@@ -835,4 +835,145 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'sha256_mismatch', $response->get_data()['code'] );
 		$this->assertSame( 0, get_current_user_id() );
 	}
+
+	public function test_request_media_upload__issues_one_token_when_count_omitted() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'consent' => true ] );
+
+		// Assert
+		$this->assertCount( 1, $result['uploads'] );
+		$this->assertSame( $result['upload_token'], $result['uploads'][0]['upload_token'] );
+	}
+
+	public function test_request_media_upload__issues_distinct_tokens_for_count() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'consent' => true,
+			'count' => 3,
+		] );
+
+		// Assert
+		$tokens = array_column( $result['uploads'], 'upload_token' );
+
+		$this->assertCount( 3, $result['uploads'] );
+		$this->assertCount( 3, array_unique( $tokens ) );
+		$this->assertSame( $tokens[0], $result['upload_token'] );
+		$this->assertSame( $result['uploads'][0]['curl_command'], $result['curl_command'] );
+		$this->assertSame( $result['uploads'][0]['expires_at_unix'], $result['expires_at_unix'] );
+		$this->assertSame( $result['uploads'][0]['upload_url'], $result['upload_url'] );
+
+		foreach ( $tokens as $token ) {
+			$this->assertTrue( Media_Upload_Token_Store::is_valid_for_request( $token ) );
+		}
+	}
+
+	public function test_request_media_upload__rejects_count_above_max() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'consent' => true,
+			'count' => Media_Upload_Config::MAX_UPLOADS_PER_REQUEST + 1,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_upload_count', $result->get_error_code() );
+	}
+
+	public function test_request_media_upload__allows_count_up_to_filtered_max() {
+		// Arrange
+		$this->act_as_admin();
+		add_filter( 'elementor/mcp/media/max_uploads_per_request', static fn() => 2 );
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$allowed = $ability->execute( [
+			'consent' => true,
+			'count' => 2,
+		] );
+		$rejected = $ability->execute( [
+			'consent' => true,
+			'count' => 3,
+		] );
+
+		remove_all_filters( 'elementor/mcp/media/max_uploads_per_request' );
+
+		// Assert
+		$this->assertCount( 2, $allowed['uploads'] );
+		$this->assertWPError( $rejected );
+		$this->assertSame( 'invalid_upload_count', $rejected->get_error_code() );
+	}
+
+	/**
+	 * @dataProvider invalid_upload_count_provider
+	 */
+	public function test_request_media_upload__rejects_invalid_count( $count ) {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'consent' => true,
+			'count' => $count,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_upload_count', $result->get_error_code() );
+	}
+
+	public function invalid_upload_count_provider(): array {
+		return [
+			'zero' => [ 0 ],
+			'negative' => [ -1 ],
+			'float' => [ 1.5 ],
+			'string' => [ 'two' ],
+			'numeric string' => [ '2' ],
+			'boolean' => [ true ],
+		];
+	}
+
+	public function test_request_media_upload__each_token_is_single_use() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Request_Media_Upload_Ability();
+		$result = $ability->execute( [
+			'consent' => true,
+			'count' => 2,
+		] );
+
+		$responses = [];
+
+		// Act
+		foreach ( $result['uploads'] as $index => $upload ) {
+			$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+			$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $upload['upload_token'] );
+			$request->set_header( Media_Upload_Config::UPLOAD_FILENAME_HEADER, 'pixel-' . $index . '.png' );
+			$request->set_body( self::MINIMAL_PNG );
+
+			$responses[] = rest_do_request( $request );
+		}
+
+		$reuse = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$reuse->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $result['uploads'][0]['upload_token'] );
+		$reuse->set_body( self::MINIMAL_PNG );
+		$reused = rest_do_request( $reuse );
+
+		// Assert
+		$this->assertSame( \WP_Http::CREATED, $responses[0]->get_status() );
+		$this->assertSame( \WP_Http::CREATED, $responses[1]->get_status() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $reused->get_status() );
+	}
 }

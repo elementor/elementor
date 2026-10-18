@@ -29,6 +29,8 @@ class Media_Upload_Config {
 
 	const MAX_BYTES = 10485760;
 
+	const MAX_UPLOADS_PER_REQUEST = 10;
+
 	const ALLOWED_IMAGE_MIME_TYPES = [
 		'image/jpeg',
 		'image/png',
@@ -50,6 +52,15 @@ class Media_Upload_Config {
 		}
 
 		$filtered = apply_filters( 'elementor/mcp/media/max_upload_bytes', $bytes );
+
+		return max( 1, (int) $filtered );
+	}
+
+	public static function max_uploads_per_request(): int {
+		/**
+		 * @param int $max Maximum number of upload tokens that can be issued in one request.
+		 */
+		$filtered = apply_filters( 'elementor/mcp/media/max_uploads_per_request', self::MAX_UPLOADS_PER_REQUEST );
 
 		return max( 1, (int) $filtered );
 	}
