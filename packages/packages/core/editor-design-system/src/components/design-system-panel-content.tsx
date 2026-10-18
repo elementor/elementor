@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { DefaultStylesTabEmbedded } from '@elementor/editor-default-styles';
+import { DefaultStylesTabEmbedded, trackDefaultStyles } from '@elementor/editor-default-styles';
 import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
@@ -34,6 +34,9 @@ const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 
 const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
 	switch ( tab ) {
+		case 'defaults':
+			trackDefaultStyles( { event: 'panelOpened' } );
+			break;
 		case 'classes':
 			trackGlobalClasses( { event: 'classManagerOpened', source: 'system-panel' } );
 			break;

@@ -281,6 +281,7 @@ class Module extends BaseModule {
 			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
 			new Abilities\Get_System_Info_Ability(),
+			new Abilities\Clear_Cache_Ability(),
 		];
 
 		if ( Mcp_Media_Feature_Gate::is_enabled() ) {
