@@ -22,7 +22,9 @@ const convertBlocks = async (
 ): Promise< Record< string, CssConversionResult > > => {
 	const { data } = await httpService().post< HttpResponse< Record< string, CssConversionResult > > >(
 		CSS_TO_ATOMIC_URL,
-		{ blocks }
+		{
+			blocks,
+		}
 	);
 
 	return data.data;

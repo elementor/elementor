@@ -78,13 +78,11 @@ function createAgentResponder( event ) {
 		return () => {};
 	}
 
-	let resolveResponse;
+	const { promise, resolve } = Promise.withResolvers();
 
-	event.respondWith( new Promise( ( resolve ) => {
-		resolveResponse = resolve;
-	} ) );
+	event.respondWith( promise );
 
-	return ( response, state ) => resolveResponse( buildAgentToolResponse( response, state ) );
+	return ( response, state ) => resolve( buildAgentToolResponse( response, state ) );
 }
 
 function registerAtomicFormAlpineData( form ) {

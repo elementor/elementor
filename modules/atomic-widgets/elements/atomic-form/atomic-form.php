@@ -42,7 +42,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
-	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages. On submit, runs the actions listed in actions-after-submit: email, collect-submissions, webhook, and redirect. Each action reads its own settings prop (email, webhook_url, redirect_url).';
+	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, hidden fields, submit button) and status messages. On submit, runs the actions listed in actions-after-submit: email, collect-submissions, webhook, and redirect. Each action reads its own settings prop (email, webhook_url, redirect_url).';
 
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
@@ -164,8 +164,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->description( 'Required when creating a form. Exposes the form to AI agents as a tool: unique snake_case name that starts with a verb, e.g. book_table.' );
 			$props['webmcp-tool-description'] = String_Prop_Type::make()
 				->description( 'Required when creating a form. Tells AI agents what the form does and what details it needs, e.g. "Books a table: needs date, time and number of guests."' );
-			$props['actions-after-submit']->description( 'Set to ["collect-submissions"] when creating a form, Add "email" only if the user asks for email notifications.' );
-			$props['webmcp-autosubmit']->description( 'Set to true when creating a form. Leave false only if a person must review the form and click submit.' );
+			$props['webmcp-autosubmit']->description( 'Lets an AI agent submit the form without a person confirming. Leave false (default); set true only when the user explicitly asks for an "agent ready" form or explicitly mentions agents.' );
 		}
 
 		return $props;
@@ -457,12 +456,15 @@ class Atomic_Form extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$form_name = (string) ( $settings['form-name'] ?? '' );
 
-		$context['webmcp_tool_name'] = ! empty( $settings['webmcp-tool-name'] )
-			? $settings['webmcp-tool-name']
-			: Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
-		$context['webmcp_tool_description'] = ! empty( $settings['webmcp-tool-description'] )
-			? $settings['webmcp-tool-description']
-			: Webmcp_Utils::build_tool_description( $form_name );
+		$context['webmcp_tool_name'] = Webmcp_Utils::resolve_tool_name(
+			(string) ( $settings['webmcp-tool-name'] ?? '' ),
+			$form_name,
+			(string) $this->get_id()
+		);
+		$context['webmcp_tool_description'] = Webmcp_Utils::resolve_tool_description(
+			(string) ( $settings['webmcp-tool-description'] ?? '' ),
+			$form_name
+		);
 
 		return $context;
 	}

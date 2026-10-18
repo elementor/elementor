@@ -115,7 +115,7 @@ class Markdown_Content_Catalog {
 	private function to_item( \WP_Post $post ): array {
 		return [
 			'id'    => $post->ID,
-			'title' => get_the_title( $post ),
+			'title' => Post_Title::to_plain_text( get_the_title( $post ) ),
 			'path'  => $this->get_path( $post ),
 			'type'  => $post->post_type,
 		];
