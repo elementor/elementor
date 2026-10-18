@@ -15,10 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $hover = 'hover';
-$hover = 'hover';
 $active = 'active';
 
-$tabs = Style_Target::make( 'tabs' )
+$account_tabs = Style_Target::make( 'tabs' )
 	->label( 'Account navigation tabs; tabs:active styles the current tab' )
 	->selector( '.woocommerce-MyAccount-navigation ul li a' )
 	->states( $active )
@@ -115,5 +114,5 @@ return V3_Widget_Map::make( 'woocommerce-my-account' )
 	->settings( [
 		'tabs_layout' => V3_Setting::bind_to( 'tabs_layout' )->enum_from_control(),
 	] )
-	->default_target( $tabs )
+	->default_target( $account_tabs )
 	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.woocommerce-Input' ), $buttons, $table_items, $table_buttons );

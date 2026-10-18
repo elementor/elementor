@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $hover = 'hover';
-$hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Checkout sections (billing, additional info, order summary, payment, coupon, returning customer)' )

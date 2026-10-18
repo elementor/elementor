@@ -7,6 +7,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
 use Elementor\Widget_Common_Base;
@@ -106,7 +107,7 @@ class V3_Widget_Map_Registry {
 				&& isset( Plugin::$instance->experiments )
 				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
-				$source = Plugin::$instance->widgets_manager->get_widget_types( $widget_type )
+				$source = self::registered_widget( $widget_type )
 					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
 
 				if ( ! $source || ! method_exists( $source, 'get_stack' ) ) {
@@ -118,8 +119,22 @@ class V3_Widget_Map_Registry {
 				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] ) + self::advanced_tab_controls( $source );
 			},
 			$maps ?? self::load_map_files(),
-			static fn( string $widget_type ): bool => self::has_advanced_tab( Plugin::$instance->widgets_manager->get_widget_types( $widget_type ) )
+			static fn( string $widget_type ): bool => self::has_advanced_tab( self::registered_widget( $widget_type ) )
 		);
+	}
+
+	/**
+	 * Without Pro, core registers a promotion placeholder under every Pro widget name.
+	 * Its controls are not the real widget's, so a map must not compile against it.
+	 */
+	public static function registered_widget( string $widget_type ): ?Widget_Base {
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+
+		if ( ! $widget instanceof Widget_Base || $widget instanceof Pro_Widget_Promotion ) {
+			return null;
+		}
+
+		return $widget;
 	}
 
 	/**
