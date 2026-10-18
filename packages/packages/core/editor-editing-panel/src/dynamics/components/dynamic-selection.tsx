@@ -6,18 +6,25 @@ import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useElement } from '../../contexts/element-context';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
+import { createStateTagValue, getStateTagGroups, isStateTagName, type StateTagOption } from '../state-tag';
 import { getAtomicDynamicTags } from '../sync/get-atomic-dynamic-tags';
-import { dynamicPropTypeUtil } from '../utils';
+import { dynamicPropTypeUtil, getDynamicPropType } from '../utils';
 
 type Option = {
 	label: string;
 	value: string;
 	group: string;
+	state?: StateTagOption;
 };
 
-type OptionEntry = [ string, Option[] ];
+type OptionEntry = {
+	id: string;
+	label?: string;
+	items: Option[];
+};
 
 const SIZE = 'tiny';
 const PROMO_TEXT_WIDTH = 170;
@@ -67,18 +74,26 @@ export const DynamicSelection = ( { close: closePopover, expired = false }: Dyna
 			updatePropValueHistory( anyValue );
 		}
 
-		const selectedOption = options.flatMap( ( [ , items ] ) => items ).find( ( item ) => item.value === value );
+		const selectedOption = options.flatMap( ( { items } ) => items ).find( ( item ) => item.value === value );
 
-		setValue( { name: value, group: selectedOption?.group ?? '', settings: { label: selectedOption?.label } } );
+		if ( selectedOption?.state ) {
+			setValue( createStateTagValue( selectedOption.state ) );
+		} else {
+			setValue( {
+				name: value,
+				group: selectedOption?.group ?? '',
+				settings: { label: selectedOption?.label },
+			} );
+		}
 
 		closePopover();
 	};
 
-	const virtualizedItems = options.flatMap( ( [ category, items ] ) => [
+	const virtualizedItems = options.flatMap( ( { id, label, items } ) => [
 		{
 			type: 'category' as const,
-			value: category,
-			label: dynamicGroups?.[ category ]?.title || category,
+			value: id,
+			label: label || dynamicGroups?.[ id ]?.title || id,
 		},
 		...items.map( ( item ) => ( {
 			type: 'item' as const,
@@ -218,9 +233,15 @@ const ExpiredDynamicTags = () => (
 
 const useFilteredOptions = ( searchValue: string ): OptionEntry[] => {
 	const dynamicTags = usePropDynamicTags();
+	const { element } = useElement();
+	const { propType } = useBoundProp();
+	const acceptedCategories = propType ? getDynamicPropType( propType )?.settings.categories ?? [] : [];
+
+	const acceptsState = dynamicTags.some( ( { name } ) => isStateTagName( name ) );
+	const stateGroups = acceptsState ? getStateTagGroups( element.id, acceptedCategories ) : [];
 
 	const options = dynamicTags.reduce< Map< string, Option[] > >( ( categories, { name, label, group } ) => {
-		const isVisible = label.toLowerCase().includes( searchValue.trim().toLowerCase() );
+		const isVisible = ! isStateTagName( name ) && label.toLowerCase().includes( searchValue.trim().toLowerCase() );
 
 		if ( ! isVisible ) {
 			return categories;
@@ -235,5 +256,19 @@ const useFilteredOptions = ( searchValue: string ): OptionEntry[] => {
 		return categories;
 	}, new Map() );
 
-	return [ ...options ];
+	const optionEntries = [ ...options ].map( ( [ id, items ] ) => ( { id, items } ) );
+	const normalizedSearch = searchValue.trim().toLowerCase();
+
+	return [
+		...optionEntries,
+		...stateGroups
+			.map( ( { id, label, options: stateOptions } ) => ( {
+				id,
+				label,
+				items: stateOptions
+					.filter( ( option ) => option.label.toLowerCase().includes( normalizedSearch ) )
+					.map( ( option ) => ( { ...option, state: option } ) ),
+			} ) )
+			.filter( ( { items } ) => items.length ),
+	];
 };

@@ -10,6 +10,12 @@ const PSEUDO_STATES: StyleDefinitionPseudoState[] = [ 'hover', 'focus', 'active'
 
 const CLASS_STATES: StyleDefinitionClassState[] = [ 'e--selected', 'e--disabled', 'e--playing', 'e--paused' ];
 
+const STATE_KEY_CLASS_PATTERN = /^e--state-[a-z_][a-z0-9_]*$/;
+
+function isStateKeyState( state: StyleDefinitionStateType ) {
+	return STATE_KEY_CLASS_PATTERN.test( state );
+}
+
 function getAdditionalStates( state: StyleDefinitionState ): StyleDefinitionAdditionalPseudoState[] {
 	if ( state === 'hover' ) {
 		return [ 'focus-visible' ];
@@ -31,7 +37,7 @@ function getStateSelector( state: StyleDefinitionPseudoState | StyleDefinitionCl
 }
 
 export function isClassState( state: StyleDefinitionStateType ): state is StyleDefinitionClassState {
-	return CLASS_STATES.includes( state as StyleDefinitionClassState );
+	return CLASS_STATES.includes( state as StyleDefinitionClassState ) || isStateKeyState( state );
 }
 
 export function isPseudoState( state: StyleDefinitionStateType ): state is StyleDefinitionPseudoState {
@@ -41,6 +47,10 @@ export function isPseudoState( state: StyleDefinitionStateType ): state is Style
 export function getSelectorWithState( baseSelector: string, state: StyleDefinitionState ): string {
 	if ( ! state ) {
 		return baseSelector;
+	}
+
+	if ( isStateKeyState( state ) ) {
+		return `${ baseSelector }.${ state },.${ state } ${ baseSelector }`;
 	}
 
 	return [ state, ...getAdditionalStates( state ) ]

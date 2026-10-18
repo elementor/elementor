@@ -15,6 +15,7 @@ class Mcp_V4_Gate {
 		'elementor/build-composition',
 		'elementor/create-preview-link',
 		'elementor/find-icons',
+		'elementor/data-flow-guide',
 		'elementor/get-default-styles',
 		'elementor/get-widget-schemas',
 		'elementor/global-classes-resource',

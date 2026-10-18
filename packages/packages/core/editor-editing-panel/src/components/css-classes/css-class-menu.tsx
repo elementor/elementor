@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { getElementStateParamsInScope } from '@elementor/editor-elements';
 import { isEmpty } from '@elementor/editor-props';
-import { type StyleDefinitionState } from '@elementor/editor-styles';
+import { type StyleDefinitionClassState, type StyleDefinitionState } from '@elementor/editor-styles';
 import {
 	isElementsStylesProvider,
 	stylesRepository,
@@ -135,13 +136,25 @@ const CLASS_STATES_MAP: Record< string, { label: string } > = {
 export function useElementStates() {
 	const { elementType } = useElement();
 
+	const { element } = useElement();
+
 	const { styleStates = [] } = elementType;
 
-	const elementStates = styleStates.map( ( { value, name } ) => ( {
+	const declaredStates = styleStates.map( ( { value, name } ) => ( {
 		key: value,
 		value,
 		label: CLASS_STATES_MAP[ value ]?.label ?? name,
 	} ) );
+
+	const stateKeyStates = getElementStateParamsInScope( element.id )
+		.filter( ( param ) => param.prop_type === 'boolean' || param.type === 'boolean' )
+		.map( ( param ) => ( {
+			key: `e--state-${ param.key }`,
+			value: `e--state-${ param.key }` as StyleDefinitionClassState,
+			label: param.label || param.key,
+		} ) );
+
+	const elementStates = [ ...declaredStates, ...stateKeyStates ];
 
 	return {
 		elementStates,
