@@ -92,6 +92,14 @@ class Test_Manage_Experiments_Ability extends Elementor_Test_Base {
 		$this->assert_error( $result, 'experiment_not_found', \WP_Http::NOT_FOUND );
 	}
 
+	public function test_execute__unknown_action_returns_bad_request() {
+		// Act
+		$result = $this->ability->execute( [ 'action' => 'toggle', 'name' => 'test_mcp_toggle' ] );
+
+		// Assert
+		$this->assert_error( $result, 'invalid_input', \WP_Http::BAD_REQUEST );
+	}
+
 	public function test_execute__missing_name_returns_bad_request() {
 		// Act
 		$result = $this->ability->execute( [ 'action' => 'activate' ] );

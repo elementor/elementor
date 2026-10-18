@@ -21,14 +21,6 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 	const ACTION_ENABLE_ATOMIC_EDITOR = 'enable_atomic_editor';
 	const ACTION_DISABLE_ATOMIC_EDITOR = 'disable_atomic_editor';
 
-	const EXPERIMENT_ACTION_STATES = [
-		self::ACTION_ACTIVATE => Experiments_Manager::STATE_ACTIVE,
-		self::ACTION_DEACTIVATE => Experiments_Manager::STATE_INACTIVE,
-		self::ACTION_RESET => Experiments_Manager::STATE_DEFAULT,
-	];
-
-	const ATOMIC_EDITOR_ACTIONS = [ self::ACTION_ENABLE_ATOMIC_EDITOR, self::ACTION_DISABLE_ATOMIC_EDITOR ];
-
 	protected function get_ability_id(): string {
 		return 'elementor/manage-experiments';
 	}
@@ -69,7 +61,7 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 				'properties' => [
 					'action' => [
 						'type' => 'string',
-						'enum' => array_merge( array_keys( self::EXPERIMENT_ACTION_STATES ), self::ATOMIC_EDITOR_ACTIONS ),
+						'enum' => array_keys( $this->get_action_handlers() ),
 						'description' => 'activate / deactivate / reset (back to default) change one experiment and need "name". enable_atomic_editor / disable_atomic_editor turn the Atomic Editor (V4) on or off.',
 					],
 					'name' => [
@@ -85,25 +77,30 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 		$input = is_array( $input ) ? $input : [];
 		$action = isset( $input['action'] ) && is_string( $input['action'] ) ? $input['action'] : '';
 		$name = isset( $input['name'] ) && is_string( $input['name'] ) ? sanitize_key( $input['name'] ) : '';
+		$handler = $this->get_action_handlers()[ $action ] ?? null;
 
-		try {
-			if ( in_array( $action, self::ATOMIC_EDITOR_ACTIONS, true ) ) {
-				return $this->toggle_atomic_editor( $action );
-			}
-
-			if ( isset( self::EXPERIMENT_ACTION_STATES[ $action ] ) ) {
-				return $this->change_experiment( $action, $name );
-			}
-		} catch ( Dependency_Exception $e ) {
-			return $this->error( 'experiment_dependency_inactive', $e->getMessage(), \WP_Http::CONFLICT );
-		} catch ( \InvalidArgumentException $e ) {
-			return $this->error( 'invalid_input', $e->getMessage(), \WP_Http::BAD_REQUEST );
+		if ( ! $handler ) {
+			return $this->error( 'invalid_input', __( 'A valid action is required.', 'elementor' ), \WP_Http::BAD_REQUEST );
 		}
 
-		return $this->error( 'invalid_input', __( 'A valid action is required.', 'elementor' ), \WP_Http::BAD_REQUEST );
+		try {
+			return $handler( $name );
+		} catch ( Dependency_Exception $e ) {
+			return $this->error( 'experiment_dependency_inactive', $e->getMessage(), \WP_Http::CONFLICT );
+		}
 	}
 
-	private function change_experiment( string $action, string $name ) {
+	private function get_action_handlers(): array {
+		return [
+			self::ACTION_ACTIVATE => fn( string $name ) => $this->change_experiment( $name, Experiments_Manager::STATE_ACTIVE ),
+			self::ACTION_DEACTIVATE => fn( string $name ) => $this->change_experiment( $name, Experiments_Manager::STATE_INACTIVE ),
+			self::ACTION_RESET => fn( string $name ) => $this->change_experiment( $name, Experiments_Manager::STATE_DEFAULT ),
+			self::ACTION_ENABLE_ATOMIC_EDITOR => fn() => $this->enable_atomic_editor(),
+			self::ACTION_DISABLE_ATOMIC_EDITOR => fn() => $this->disable_atomic_editor(),
+		];
+	}
+
+	private function change_experiment( string $name, string $state ) {
 		if ( '' === $name ) {
 			return $this->error( 'invalid_input', __( 'The name of the experiment is required.', 'elementor' ), \WP_Http::BAD_REQUEST );
 		}
@@ -118,7 +115,7 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 			return $this->error( 'experiment_not_toggleable', __( 'This experiment can not be changed from here.', 'elementor' ), \WP_Http::BAD_REQUEST );
 		}
 
-		Plugin::$instance->experiments->set_feature_state( $name, self::EXPERIMENT_ACTION_STATES[ $action ] );
+		Plugin::$instance->experiments->set_feature_state( $name, $state );
 
 		$response = [
 			'success' => true,
@@ -127,32 +124,32 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 
 		$warning = $response['experiment']['deactivation_warning'];
 
-		if ( self::ACTION_DEACTIVATE === $action && null !== $warning ) {
+		if ( Experiments_Manager::STATE_INACTIVE === $state && null !== $warning ) {
 			$response['llm_instructions'] = $warning;
 		}
 
 		return $response;
 	}
 
-	private function toggle_atomic_editor( string $action ) {
-		$opt_in = new Opt_In();
+	private function enable_atomic_editor(): array {
+		( new Opt_In() )->opt_in_v4();
 
-		if ( self::ACTION_ENABLE_ATOMIC_EDITOR === $action ) {
-			$opt_in->opt_in_v4();
-		} else {
-			$opt_in->opt_out_v4();
-		}
+		return $this->atomic_editor_response() + [
+			'llm_instructions' => __( 'The Atomic Editor is now on. Refresh your tool list to use the V4 tools. Editor tabs the user already has open must be reloaded.', 'elementor' ),
+		];
+	}
 
-		$response = [
+	private function disable_atomic_editor(): array {
+		( new Opt_In() )->opt_out_v4();
+
+		return $this->atomic_editor_response();
+	}
+
+	private function atomic_editor_response(): array {
+		return [
 			'success' => true,
 			'atomic_editor' => Experiments_Catalog::atomic_editor_status(),
 		];
-
-		if ( self::ACTION_ENABLE_ATOMIC_EDITOR === $action ) {
-			$response['llm_instructions'] = __( 'The Atomic Editor is now on. Refresh your tool list to use the V4 tools. Editor tabs the user already has open must be reloaded.', 'elementor' );
-		}
-
-		return $response;
 	}
 
 	private function error( string $code, string $message, int $status ): \WP_Error {
