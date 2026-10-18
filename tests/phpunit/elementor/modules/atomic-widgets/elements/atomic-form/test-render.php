@@ -1,7 +1,10 @@
 <?php
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Webmcp_Utils;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -71,6 +74,42 @@ class Test_Atomic_Form_Render extends Elementor_Test_Base {
 
 		// Act.
 		$rendered_output = $this->render_form( $form, true );
+
+		// Assert.
+		$this->assertStringNotContainsString( 'toolname=', $rendered_output );
+		$this->assertStringNotContainsString( 'tooldescription=', $rendered_output );
+		$this->assertStringNotContainsString( 'toolautosubmit', $rendered_output );
+	}
+
+	public function test_render_frontend_excludes_webmcp_attributes_when_not_exposed_to_agents(): void {
+		// Arrange.
+		$experiments = Plugin::$instance->experiments;
+		$original_state = $experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_FORM_WEBMCP )['default'];
+		$experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_FORM_WEBMCP, Experiments_Manager::STATE_ACTIVE );
+		Render_Props_Resolver::reset();
+
+		try {
+			$form = $this->make_atomic_form_instance( [
+				'form-name' => [
+					'$$type' => 'string',
+					'value' => 'Contact Form',
+				],
+				'webmcp-autosubmit' => [
+					'$$type' => 'boolean',
+					'value' => true,
+				],
+				Atomic_Form::WEBMCP_EXPOSE => [
+					'$$type' => 'boolean',
+					'value' => false,
+				],
+			] );
+
+			// Act.
+			$rendered_output = $this->render_form( $form, false );
+		} finally {
+			$experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_FORM_WEBMCP, $original_state );
+			Render_Props_Resolver::reset();
+		}
 
 		// Assert.
 		$this->assertStringNotContainsString( 'toolname=', $rendered_output );
