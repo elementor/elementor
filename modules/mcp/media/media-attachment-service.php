@@ -73,7 +73,7 @@ class Media_Attachment_Service {
 
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'Only administrators can upload media with these tools.', 'elementor' ),
+				__( 'You do not have permission to upload files.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}
@@ -144,7 +144,7 @@ class Media_Attachment_Service {
 		if ( ! current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__( 'Only administrators can upload media with these tools.', 'elementor' ),
+				__( 'You do not have permission to upload files.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}
