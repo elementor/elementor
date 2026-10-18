@@ -10,6 +10,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
@@ -362,7 +363,7 @@ class V3_Style_Mapper {
 				$group_patch = $this->responsive_resolver->suffix_patch( $group_patch, $bucket['breakpoint'], $meta );
 			}
 
-			$settings_patch = array_merge( $settings_patch, $group_patch );
+			$settings_patch = V3_Settings_Patch::merge( $settings_patch, $group_patch );
 		}
 
 		return [

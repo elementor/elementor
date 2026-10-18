@@ -25,15 +25,18 @@ class V3_Map_Style_Writer {
 	private Css_Converter $css_converter;
 	private V3_Control_Adapter_Registry $adapters;
 	private Css_Declaration_Parser $declaration_parser;
+	private V3_Color_Variables $color_variables;
 
 	public function __construct(
 		Css_Converter $css_converter,
 		V3_Control_Adapter_Registry $adapters,
-		Css_Declaration_Parser $declaration_parser
+		Css_Declaration_Parser $declaration_parser,
+		?V3_Color_Variables $color_variables = null
 	) {
 		$this->css_converter = $css_converter;
 		$this->adapters = $adapters;
 		$this->declaration_parser = $declaration_parser;
+		$this->color_variables = $color_variables ?? V3_Color_Variables::create_default();
 	}
 
 	/**
@@ -181,6 +184,27 @@ class V3_Map_Style_Writer {
 			return $this->missing_breakpoint_message( $binding->get_prop(), $breakpoint );
 		}
 
+		$variable_id = V3_Color_Variables::variable_id_in( $prop_value );
+
+		if ( null !== $variable_id ) {
+			$variable = $this->color_variables->find( $variable_id );
+
+			if ( null === $variable ) {
+				return self::unknown_variable_message( $binding );
+			}
+
+			$global_link = Controls_Manager::COLOR === $binding->get_control_type() ? $this->color_variables->global_link( $variable ) : null;
+
+			if ( null !== $global_link ) {
+				$this->store( $ctx, $binding, $controls, $breakpoint, '', $global_link );
+
+				return null;
+			}
+
+			$prop_value = V3_Color_Variables::with_resolved_color( $prop_value, $variable['value'] );
+			$ctx->warn( self::unlinked_variable_message( $binding, (string) $variable['label'] ) );
+		}
+
 		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding->get_control_type(), null !== $binding->get_sides() );
 		$control_value = null === $adapter
 			? null
@@ -190,14 +214,39 @@ class V3_Map_Style_Writer {
 			return self::unstorable_value_message( $binding, $controls[ $binding->get_setting() ] ?? [] );
 		}
 
-		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
-
-		$requirements = self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint );
-
-		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $requirements ) );
-		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
+		$this->store( $ctx, $binding, $controls, $breakpoint, $control_value );
 
 		return null;
+	}
+
+	private function store( V3_Conversion_Context $ctx, Compiled_Style_Binding $binding, array $controls, string $breakpoint, $control_value, ?string $global_link = null ): void {
+		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
+		$requirements = self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint );
+		$patch = array_merge( [ $setting => $control_value ], $requirements );
+
+		if ( null !== $global_link ) {
+			$patch[ V3_Settings_Patch::GLOBALS_KEY ] = [ $setting => $global_link ];
+		}
+
+		$ctx->merge_patch( $patch );
+		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
+	}
+
+	private static function unknown_variable_message( Compiled_Style_Binding $binding ): string {
+		return sprintf(
+			/* translators: %s: CSS property name */
+			__( 'CSS property %s uses a color variable that does not exist.', 'elementor' ),
+			$binding->get_prop()
+		);
+	}
+
+	private static function unlinked_variable_message( Compiled_Style_Binding $binding, string $label ): string {
+		return sprintf(
+			/* translators: 1: CSS property name, 2: Variable label */
+			__( 'CSS property %1$s stores the current value of var(--%2$s), not a link to it: this Elementor widget can only link to color variables synced to Global Colors. Use "Sync to Global Colors" on the variable to keep the link.', 'elementor' ),
+			$binding->get_prop(),
+			$label
+		);
 	}
 
 	private static function declaration_label( Compiled_Style_Binding $binding ): string {

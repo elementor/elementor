@@ -17,6 +17,14 @@ class Color_Adapter implements V3_Control_Adapter {
 	}
 
 	public function to_control_value( array $prop_value, ?array $sides, array $control ) {
+		return self::plain_color( $prop_value );
+	}
+
+	public static function plain_color( $prop_value ): ?string {
+		if ( ! is_array( $prop_value ) || Color_Prop_Type::get_key() !== ( $prop_value['$$type'] ?? null ) ) {
+			return null;
+		}
+
 		$color = $prop_value['value'] ?? null;
 
 		return is_string( $color ) && '' !== $color ? $color : null;

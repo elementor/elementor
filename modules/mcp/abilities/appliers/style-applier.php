@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Overridden_Setting_Warnings;
@@ -205,7 +206,7 @@ class Style_Applier {
 		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [] );
 
 		if ( ! empty( $result['settings_patch'] ) ) {
-			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
 
 		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );

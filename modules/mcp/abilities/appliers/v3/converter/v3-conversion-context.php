@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -50,7 +52,7 @@ class V3_Conversion_Context {
 			return;
 		}
 
-		$this->settings_patch = array_merge( $this->settings_patch, $patch );
+		$this->settings_patch = V3_Settings_Patch::merge( $this->settings_patch, $patch );
 	}
 
 	/**

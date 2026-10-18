@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Controls_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
@@ -9,6 +11,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers\Base_Property_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,9 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class V3_Map_Style_Reader {
 
 	private V3_Control_Adapter_Registry $adapters;
+	private V3_Color_Variables $color_variables;
 
-	public function __construct( V3_Control_Adapter_Registry $adapters ) {
+	public function __construct( V3_Control_Adapter_Registry $adapters, ?V3_Color_Variables $color_variables = null ) {
 		$this->adapters = $adapters;
+		$this->color_variables = $color_variables ?? V3_Color_Variables::create_default();
 	}
 
 	/**
@@ -95,14 +100,7 @@ class V3_Map_Style_Reader {
 			return null;
 		}
 
-		$stored = $settings[ $key ] ?? null;
-		$adapter = $this->adapters->find( $binding->get_read_type(), $binding->get_control_type(), null !== $binding->get_sides() );
-
-		if ( null === $stored || null === $adapter ) {
-			return null;
-		}
-
-		$prop_value = $adapter->from_control_value( $stored, $binding->get_sides() );
+		$prop_value = $this->linked_color_variable( $binding, $settings, $key ) ?? $this->stored_prop_value( $binding, $settings, $key );
 
 		if ( null === $prop_value || null === $binding->get_part() ) {
 			return $prop_value;
@@ -112,6 +110,31 @@ class V3_Map_Style_Reader {
 			'$$type' => $binding->get_part_of(),
 			'value' => [ $binding->get_part() => $prop_value ],
 		];
+	}
+
+	private function stored_prop_value( Compiled_Style_Binding $binding, array $settings, string $key ): ?array {
+		$stored = $settings[ $key ] ?? null;
+		$adapter = $this->adapters->find( $binding->get_read_type(), $binding->get_control_type(), null !== $binding->get_sides() );
+
+		return null === $stored || null === $adapter ? null : $adapter->from_control_value( $stored, $binding->get_sides() );
+	}
+
+	private function linked_color_variable( Compiled_Style_Binding $binding, array $settings, string $key ): ?array {
+		if ( Controls_Manager::COLOR !== $binding->get_control_type() ) {
+			return null;
+		}
+
+		$variable_id = $this->color_variables->variable_id_for_global_link( $settings[ V3_Settings_Patch::GLOBALS_KEY ][ $key ] ?? null );
+
+		if ( null === $variable_id ) {
+			return null;
+		}
+
+		$color = Color_Variable_Prop_Type::generate( $variable_id );
+
+		return Background_Prop_Type::get_key() === $binding->get_read_type()
+			? Background_Prop_Type::generate( [ 'color' => $color ] )
+			: $color;
 	}
 
 	/**

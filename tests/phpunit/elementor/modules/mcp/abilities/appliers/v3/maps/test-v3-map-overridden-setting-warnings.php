@@ -103,6 +103,19 @@ class Test_V3_Map_Overridden_Setting_Warnings extends Elementor_Test_Base {
 		$this->assertSame( [], $warnings );
 	}
 
+	public function test_apply__warns_when_a_style_turns_on_a_switcher_that_was_explicitly_off() {
+		// Arrange.
+		$node = $this->node( [ 'pointer' => '' ] );
+
+		// Act.
+		$warnings = $this->apply( $node, '&:hover { background: #ff0000; }' );
+
+		// Assert.
+		$this->assertSame( 'background', $node['settings']['pointer'] );
+		$this->assertSame( [ self::OVERRIDDEN_CODE ], array_column( $warnings, 'code' ) );
+		$this->assertStringContainsString( "pointer was off and was set to 'background'", $warnings[0]['message'] );
+	}
+
 	private function node( array $settings ): array {
 		return [
 			'id' => 'elem-1',
