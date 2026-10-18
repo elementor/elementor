@@ -20,6 +20,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
@@ -402,6 +403,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
+		$form_structure_error = $this->reject_new_honeypot_violations( $tree, $new_tree );
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
@@ -444,10 +450,47 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
+		$form_structure_error = $this->reject_new_honeypot_violations( $tree, $new_tree );
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
 		];
+	}
+
+	private function reject_new_honeypot_violations( array $tree_before, array $tree_after ): ?\WP_Error {
+		$validator = new Form_Structure_Validator();
+		$counts_before = $validator->collect_form_honeypot_counts( $tree_before );
+		$counts_after = $validator->collect_form_honeypot_counts( $tree_after );
+
+		$new_violation_count = 0;
+		foreach ( $counts_after as $form_id => $count_after ) {
+			if ( $count_after <= 1 ) {
+				continue;
+			}
+
+			$count_before = $counts_before[ $form_id ] ?? 0;
+			if ( $count_after > $count_before ) {
+				++$new_violation_count;
+			}
+		}
+
+		if ( 0 === $new_violation_count ) {
+			return null;
+		}
+
+		$message = 1 === $new_violation_count
+			? '<e-form> would have multiple honeypots — only 1 is allowed per form.'
+			: $new_violation_count . ' forms would have multiple honeypots — only 1 is allowed per form.';
+
+		return new \WP_Error(
+			'elementor_invalid_form_structure',
+			$message,
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
 	}
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
