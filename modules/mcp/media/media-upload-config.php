@@ -56,15 +56,6 @@ class Media_Upload_Config {
 		return max( 1, (int) $filtered );
 	}
 
-	public static function max_uploads_per_request(): int {
-		/**
-		 * @param int $max Maximum number of upload tokens that can be issued in one request.
-		 */
-		$filtered = apply_filters( 'elementor/mcp/media/max_uploads_per_request', self::MAX_UPLOADS_PER_REQUEST );
-
-		return max( 1, (int) $filtered );
-	}
-
 	public static function assert_content_length_within_limit( $content_length ): ?\WP_Error {
 		if ( ! is_numeric( $content_length ) || '' === $content_length ) {
 			return null;

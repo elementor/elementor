@@ -1,1 +1,1 @@
-Imports an image into the WordPress Media Library by HTTPS URL. Never download or base64-encode the image yourself; the server fetches the file out of band. Requires explicit user consent. Returns attachment metadata only (no image bytes).
+Imports an image into the WordPress Media Library by HTTPS URL. Never download or base64-encode the image yourself; the server fetches the file out of band. Requires explicit user consent. Returns attachment metadata only (no image bytes). The source host must be a DNS name; IP literals and IPv6-only hosts are not supported.

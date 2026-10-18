@@ -131,7 +131,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 			return 1;
 		}
 
-		$max = Media_Upload_Config::max_uploads_per_request();
+		$max = Media_Upload_Config::MAX_UPLOADS_PER_REQUEST;
 
 		if ( ! is_int( $input['count'] ) || $input['count'] < 1 || $input['count'] > $max ) {
 			return new \WP_Error(

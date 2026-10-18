@@ -712,6 +712,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'trailing dot ip' => [ '127.0.0.1.' ],
 			'hex label' => [ '0x7f.0.0.1' ],
 			'underscore' => [ 'bad_host.example' ],
+			'trailing newline' => [ "example.com\n" ],
 		];
 	}
 
@@ -889,30 +890,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_upload_count', $result->get_error_code() );
-	}
-
-	public function test_request_media_upload__allows_count_up_to_filtered_max() {
-		// Arrange
-		$this->act_as_admin();
-		add_filter( 'elementor/mcp/media/max_uploads_per_request', static fn() => 2 );
-		$ability = new Request_Media_Upload_Ability();
-
-		// Act
-		$allowed = $ability->execute( [
-			'consent' => true,
-			'count' => 2,
-		] );
-		$rejected = $ability->execute( [
-			'consent' => true,
-			'count' => 3,
-		] );
-
-		remove_all_filters( 'elementor/mcp/media/max_uploads_per_request' );
-
-		// Assert
-		$this->assertCount( 2, $allowed['uploads'] );
-		$this->assertWPError( $rejected );
-		$this->assertSame( 'invalid_upload_count', $rejected->get_error_code() );
 	}
 
 	/**
