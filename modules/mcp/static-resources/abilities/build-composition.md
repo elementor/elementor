@@ -111,6 +111,21 @@ The server converts most CSS into **native atomic styles** (breakpoint variants,
 
 **`padding` / `margin` shorthands are supported** — use them; do not split into longhand unnecessarily.
 
+### V3 widget style targets
+V3 widgets (non `e-` types such as `nav-menu`) are styled per **style target**, not with selectors. `elementor/get-widget-schema` returns `default_style_target` and `style_targets`; each target lists its `states` and its `properties`.
+- Bare declarations and `&:state { }` style the `default_style_target`.
+- Every other target is a block named by its alias: `dropdown { }`, `pointer:hover { }`. Blocks cannot be nested.
+- A property listed for a target may only be bound in some states (e.g. a hover pointer color); the warning names the state to use.
+- `wrapper` is the widget's Advanced tab (margin, padding, width, position, background, border).
+- A value the target's controls cannot store (unsupported property, value outside the control's options such as `font-weight: 650`, non-px box-shadow) is written to the widget's custom CSS for that target when Elementor Pro is active; the warning gives the reason and, when known, the allowed values. Prefer an allowed value so it stays editable in the panel. Media queries other than `@media(--<breakpoint>)` are kept verbatim in the same custom CSS.
+- Never use `.elementor-*` class selectors or descendant selectors — they are dropped.
+
+```json
+"style": {
+  "Main Menu": "color: #292925; font-size: 0.875rem; &:hover { color: #000000; } pointer:hover { background: #171714; color: #ffffff; } dropdown { background: #ffffff; border-radius: 12px; box-shadow: 0 16px 32px rgba(23,23,20,0.12); } toggle { color: #171714; } wrapper { flex-grow: 1; } @media(--mobile) { dropdown { padding-block-start: 6px; padding-block-end: 6px; } }"
+}
+```
+
 ## element_config FORMAT
 Match the widget schema shape:
 - **string / enum / url**: plain string (`"h2"`, `"https://example.com"`)

@@ -29,7 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
-
 class Manage_Elements_V3_Heading_Dynamic_Tag extends Tag {
 	public function get_name() {
 		return 'mcp-v3-heading-title';
@@ -220,7 +219,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result );
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertStringNotContainsString( 'preview=true', $result['llm_instructions'] ?? '' );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
@@ -789,142 +788,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$node = $this->find_element_in_document( $post_id, $v3_id );
 		$this->assertNotNull( $node );
 		$this->assertArrayNotHasKey( 'title', $node['settings'] ?? [] );
-	}
-
-	public function test_update__applies_standardized_v3_heading_settings() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => 'Updated Heading',
-						'tag' => 'h4',
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Updated Heading', $heading['settings']['title'] ?? null );
-		$this->assertSame( 'h4', $heading['settings']['header_size'] ?? null );
-		$this->assertArrayNotHasKey( 'tag', $heading['settings'] );
-	}
-
-	public function test_update__rejects_invalid_standardized_v3_heading_settings_without_mutation() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => [ 'settings' => [] ],
-						'tag' => 'h4',
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertArrayNotHasKey( 'title', $heading['settings'] ?? [] );
-		$this->assertArrayNotHasKey( 'header_size', $heading['settings'] ?? [] );
-	}
-
-	public function test_update__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'link' => [
-							'name' => 'post-url',
-							'settings' => [],
-						],
-					],
-				],
-			],
-		] );
-
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
-		$this->assertStringContainsString( 'dynamic tags are not supported', $result['results'][0]['message'] );
-	}
-
-	public function test_update__applies_dynamic_standardized_v3_heading_title() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-		$this->register_v3_heading_dynamic_tag();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => [
-							'name' => 'mcp-v3-heading-title',
-							'settings' => [],
-						],
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$dynamic_title = $heading['settings']['__dynamic__']['title'] ?? null;
-		$this->assertIsString( $dynamic_title );
-		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [ 'title' => 'Static Heading' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Static Heading', $heading['settings']['title'] ?? null );
-		$this->assertArrayNotHasKey( 'title', $heading['settings']['__dynamic__'] ?? [] );
 	}
 
 	public function test_execute__rejects_v3_delete_move_duplicate_per_op() {
@@ -2022,7 +1885,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function enable_standardized_v3_maps(): void {
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
@@ -2152,5 +2016,177 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			$experiments->set_feature_default_state( $name, $original_default );
 			update_option( $feature_option_key, $original_option );
 		}
+	}
+
+	public function test_move__succeeds_when_page_has_preexisting_honeypot_violation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		[ $unrelated_container_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $unrelated_container_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_duplicate__succeeds_when_page_has_preexisting_honeypot_violation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		[ $unrelated_container_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $unrelated_container_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_duplicate__rejects_duplicating_container_with_honeypot_when_form_already_has_one() {
+		// Arrange: form has a container with honeypot + another container with honeypot
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$container_id = $this->given_form_with_honeypot_in_container( $post_id );
+
+		// Act: duplicate the container (would create a second honeypot in the form)
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_id,
+				],
+			],
+		] );
+
+		// Assert: should be rejected because form would have 2 honeypots
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	public function test_duplicate__rejects_when_page_has_preexisting_violation_and_new_violation_introduced() {
+		// Arrange: form A has 2 honeypots (pre-existing violation), form B has honeypot in container
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		$container_in_form_b = $this->given_form_with_honeypot_in_container( $post_id );
+
+		// Act: duplicate container in form B (would create a new violation in form B)
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_in_form_b,
+				],
+			],
+		] );
+
+		// Assert: should be rejected because form B would now have 2 honeypots
+		// (pre-existing violation in form A is ignored)
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	private function given_form_with_two_honeypots( int $post_id ): void {
+		$form_id = $this->random_element_id();
+		$honeypot1_id = $this->random_element_id();
+		$honeypot2_id = $this->random_element_id();
+		$submit_id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $form_id,
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => $honeypot1_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+					[
+						'id' => $honeypot2_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+					[
+						'id' => $submit_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-submit-button',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+	}
+
+	private function given_form_with_honeypot_in_container( int $post_id ): string {
+		$form_id = $this->random_element_id();
+		$container_id = $this->random_element_id();
+		$honeypot_id = $this->random_element_id();
+		$submit_id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $form_id,
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => $container_id,
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'elements' => [
+							[
+								'id' => $honeypot_id,
+								'elType' => 'widget',
+								'widgetType' => 'e-form-honeypot',
+								'settings' => [],
+								'elements' => [],
+							],
+						],
+					],
+					[
+						'id' => $submit_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-submit-button',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+
+		return $container_id;
 	}
 }

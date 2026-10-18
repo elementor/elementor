@@ -591,6 +591,23 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 	// Render: name / open / title tag / aria-hidden
 	// ---------------------------------------------------------------------
 
+	public function test_style_states__header_exposes_the_selected_class_state() {
+		$config = $this->get_config( Atomic_Accordion_Item_Header::get_element_type() );
+		$states = $config['atomic_style_states'] ?? [];
+
+		$this->assertSame( 'selected', $states[0]['name'] ?? null );
+		$this->assertSame( 'e--selected', $states[0]['value'] ?? null );
+	}
+
+	public function test_render_first_expanded_marks_only_open_item_header_selected() {
+		$html = $this->render_accordion( [] );
+
+		preg_match_all( '/<summary\b[^>]*>/', $html, $summaries );
+		$this->assertCount( 2, $summaries[0] );
+		$this->assertMatchesRegularExpression( '/e--selected/', $summaries[0][0] );
+		$this->assertDoesNotMatchRegularExpression( '/e--selected/', $summaries[0][1] );
+	}
+
 	public function test_render_first_expanded_one_marks_only_first_item_open_and_shares_name() {
 		$html = $this->render_accordion( [] ); // defaults: first_expanded, one
 
@@ -617,6 +634,8 @@ class Test_Atomic_Accordion extends Elementor_Test_Base {
 		foreach ( $matches[0] as $tag ) {
 			$this->assertDoesNotMatchRegularExpression( '/\bopen\b/', $tag );
 		}
+
+		$this->assertDoesNotMatchRegularExpression( '/<summary[^>]*e--selected/', $html );
 	}
 
 	public function test_render_max_expanded_multiple_omits_name_attribute() {

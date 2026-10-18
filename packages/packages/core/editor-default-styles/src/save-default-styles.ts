@@ -3,9 +3,11 @@ import { hash } from '@elementor/utils';
 
 import { type AllowedHtmlTag } from './allowed-tags';
 import { apiClient } from './api';
+import { getModifiedSections } from './modified-sections';
 import { selectData, selectInitialData, selectIsDirty, slice, type StateWithDefaultStyles } from './store';
+import { trackDefaultStyles } from './utils/tracking';
 
-function getChangedTags( state: StateWithDefaultStyles ): AllowedHtmlTag[] {
+export function getChangedTags( state: StateWithDefaultStyles ): AllowedHtmlTag[] {
 	const current = selectData( state );
 	const initial = selectInitialData( state );
 
@@ -37,6 +39,7 @@ export async function saveDefaultStyles() {
 	}
 
 	const data = selectData( state );
+	const initialData = selectInitialData( state );
 	const changedTags = getChangedTags( state );
 
 	await Promise.all(
@@ -51,7 +54,22 @@ export async function saveDefaultStyles() {
 
 			await apiClient.put( tag, style.variants );
 		} )
-	);
+	).catch( ( error ) => {
+		trackDefaultStyles( { event: 'saveFailed', tags_changed_count: changedTags.length } );
+
+		throw error;
+	} );
+
+	changedTags.forEach( ( tag ) => {
+		const isUnset = ! data[ tag ]?.variants.length;
+
+		trackDefaultStyles( {
+			event: 'tagSaved',
+			tag,
+			action: isUnset ? 'unset' : 'set',
+			sections_modified: isUnset ? [] : getModifiedSections( initialData[ tag ], data[ tag ] ),
+		} );
+	} );
 
 	dispatch( slice.actions.commit() );
 }
