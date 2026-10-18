@@ -10,10 +10,11 @@ on:
       job_name:
         required: true
         type: string
-      multisite_modes:
+      multisite:
+        description: 'Which test modes to run: single (single site), multi (multisite) or both'
         required: false
         type: string
-        default: '[false, true]'
+        default: both
       coverage:
         required: false
         type: boolean
@@ -29,7 +30,7 @@ jobs:
       matrix:
         wordpress_versions: ${{ fromJson(inputs.wordpress_versions) }}
         php_versions: ${{ fromJson(inputs.php_versions) }}
-        multisite: ${{ fromJson(inputs.multisite_modes) }}
+        multisite: ${{ fromJson(inputs.multisite == 'single' && '[false]' || inputs.multisite == 'multi' && '[true]' || '[false, true]') }}
 
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
@@ -44,6 +45,17 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
+      - name: Validate multisite input
+        env:
+          MULTISITE_MODE: ${{ inputs.multisite }}
+        run: |
+          case "$MULTISITE_MODE" in
+            single|multi|both) ;;
+            *)
+              echo "::error::Invalid multisite input '$MULTISITE_MODE' (expected single, multi or both)"
+              exit 1
+              ;;
+          esac
       - name: Mask GitHub token
         run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout source code

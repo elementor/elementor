@@ -43,7 +43,7 @@ jobs:
       job_name: PHPUnit (PR/Merge)
       wordpress_versions: '["latest"]'
       php_versions: '["8.1", "8.4"]'
-      multisite_modes: '[false]'
+      multisite: single
 
   test_schedule:
     uses: ./.github/workflows/phpunit-runner.yml
@@ -52,7 +52,7 @@ jobs:
       job_name: PHPUnit (Nightly)
       wordpress_versions: '["latest", "6.8", "7.1", "nightly"]'
       php_versions: '["7.4", "8.1", "8.3", "8.5"]'
-      multisite_modes: '[false]'
+      multisite: single
       coverage: true
 
   # Multisite runs on a reduced nightly subset to control cost.
@@ -63,7 +63,7 @@ jobs:
       job_name: PHPUnit (Nightly)
       wordpress_versions: '["latest"]'
       php_versions: '["8.1", "8.4"]'
-      multisite_modes: '[true]'
+      multisite: multi
 
   test-result:
     needs: [test_pr_group, test_schedule, test_schedule_multisite]
