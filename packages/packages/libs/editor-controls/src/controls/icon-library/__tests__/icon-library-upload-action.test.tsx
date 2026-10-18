@@ -147,6 +147,39 @@ describe( 'IconLibraryUploadAction', () => {
 		expect( screen.queryByRole( 'button', { name: 'Upload library' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should render nothing from the shared promotion for users who do not receive promotions', () => {
+		// Arrange.
+		setPromotions( undefined );
+
+		// Act.
+		render(
+			<ThemeProvider>
+				<IconLibraryUploadPromotion ctaUrl="https://example.com/renew" />
+			</ThemeProvider>
+		);
+
+		// Assert.
+		expect( screen.queryByRole( 'button', { name: 'Upload library' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should default the promotion link to the upgrade url', () => {
+		// Arrange.
+		render(
+			<ThemeProvider>
+				<IconLibraryUploadPromotion />
+			</ThemeProvider>
+		);
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upload library' } ) );
+
+		// Assert.
+		expect( screen.getByRole( 'link', { name: 'Upgrade now' } ) ).toHaveAttribute(
+			'href',
+			ICON_LIBRARY_UPLOAD_UPGRADE_URL
+		);
+	} );
+
 	it( 'should render nothing by default when Pro is active so Pro can provide the action', () => {
 		// Arrange.
 		( window as { elementorPro?: unknown } ).elementorPro = {};

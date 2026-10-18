@@ -16,12 +16,16 @@ export const { Slot: IconLibraryUploadActionSlot, inject: injectIntoIconLibraryU
 	createReplaceableLocation();
 
 type IconLibraryUploadPromotionProps = {
-	ctaUrl: string;
+	ctaUrl?: string;
 };
 
-export const IconLibraryUploadPromotion = ( { ctaUrl }: IconLibraryUploadPromotionProps ) => {
+export const IconLibraryUploadPromotion = ( {
+	ctaUrl = ICON_LIBRARY_UPLOAD_UPGRADE_URL,
+}: IconLibraryUploadPromotionProps ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const triggerRef = useRef< HTMLButtonElement >( null );
+
+	const canSeePromotions = !! window.elementor?.config?.v4Promotions;
 
 	const close = () => {
 		setIsOpen( false );
@@ -39,6 +43,10 @@ export const IconLibraryUploadPromotion = ( { ctaUrl }: IconLibraryUploadPromoti
 
 		setIsOpen( ! isOpen );
 	};
+
+	if ( ! canSeePromotions ) {
+		return null;
+	}
 
 	return (
 		<PromotionPopover
@@ -71,9 +79,9 @@ export const IconLibraryUploadPromotion = ( { ctaUrl }: IconLibraryUploadPromoti
 };
 
 export const IconLibraryUploadAction = () => {
-	if ( window.elementorPro || ! window.elementor?.config?.v4Promotions ) {
+	if ( window.elementorPro ) {
 		return null;
 	}
 
-	return <IconLibraryUploadPromotion ctaUrl={ ICON_LIBRARY_UPLOAD_UPGRADE_URL } />;
+	return <IconLibraryUploadPromotion />;
 };
