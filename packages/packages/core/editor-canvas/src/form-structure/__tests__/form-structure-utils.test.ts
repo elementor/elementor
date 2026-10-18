@@ -114,6 +114,16 @@ describe( 'form-structure utils', () => {
 			expect( errors[ 0 ] ).toContain( 'e-form-input' );
 			expect( errors[ 0 ] ).toContain( 'e-form' );
 		} );
+		it( 'returns an error when a hidden field has no e-form ancestor (invalid)', () => {
+			const xml = parseXml( `
+				<e-flexbox>
+					<e-form-hidden />
+				</e-flexbox>
+			` );
+			const errors = collectFormAncestorErrors( xml );
+			expect( errors ).toHaveLength( 1 );
+			expect( errors[ 0 ] ).toContain( 'e-form-hidden' );
+		} );
 		it( 'returns an error for each orphaned form field', () => {
 			const xml = parseXml( `
 				<e-flexbox>

@@ -21,6 +21,7 @@ class Form_Structure_Validator {
 		'e-form-file-upload',
 		'e-form-date-picker',
 		'e-form-time-picker',
+		'e-form-hidden',
 	];
 
 	private const DEFAULT_PARENT_ID = 'document';

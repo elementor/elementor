@@ -422,25 +422,34 @@ class Atomic_Accordion extends Atomic_Element_Base {
 	}
 
 	/**
-	 * Editor-only: auto-opens the item containing the descendant the editor just selected
-	 * (`handlers/editor-accordion-state.js`). Nothing is added on the frontend - the toggle itself
-	 * stays native, no JS involved.
+	 * The accordion toggle stays native (`<details>` / `<summary>`). Scripts only mirror open state
+	 * for editor preview (`handlers/editor-accordion-state.js`) and keep `e--selected` on headers in
+	 * sync with `open` for Style-tab Selected variants (`handlers/accordion-selected-state.js`).
 	 *
 	 * @return array
 	 */
 	public function get_script_depends() {
 		$global_depends = parent::get_script_depends();
+		$handler_depends = [ 'elementor-accordion-selected-state-handler' ];
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return array_merge( $global_depends, [ 'elementor-accordion-preview-handler' ] );
+			return array_merge( $global_depends, $handler_depends, [ 'elementor-accordion-preview-handler' ] );
 		}
 
-		return $global_depends;
+		return array_merge( $global_depends, $handler_depends );
 	}
 
 	public function register_frontend_handlers() {
 		$assets_url = ELEMENTOR_ASSETS_URL;
 		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
+		wp_register_script(
+			'elementor-accordion-selected-state-handler',
+			"{$assets_url}js/accordion-selected-state-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 
 		wp_register_script(
 			'elementor-accordion-preview-handler',
