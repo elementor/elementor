@@ -44,6 +44,31 @@ class V3_Map_Style_Reader {
 	}
 
 	/**
+	 * Setting keys {@see self::read()} renders from, so a replace clears exactly what was read.
+	 *
+	 * @param Compiled_V3_Map      $map
+	 * @param array<string, mixed> $settings
+	 * @param array<string, mixed> $controls
+	 * @param callable|null        $is_visible `( array $control, array $values, array $controls ): bool`.
+	 * @return string[]
+	 */
+	public function readable_keys( Compiled_V3_Map $map, array $settings, array $controls, ?callable $is_visible = null ): array {
+		$is_key_visible = $this->key_visibility( $settings, $controls, $is_visible );
+		$suffixes = array_keys( [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES );
+		$keys = [];
+
+		foreach ( $map->get_targets() as $target ) {
+			foreach ( $target->get_bindings() as $binding ) {
+				foreach ( $suffixes as $suffix ) {
+					$keys[] = $this->readable_key( $binding, $settings, $controls, (string) $suffix, $is_key_visible );
+				}
+			}
+		}
+
+		return array_values( array_unique( array_filter( $keys ) ) );
+	}
+
+	/**
 	 * @param Compiled_Style_Binding[] $bindings
 	 */
 	private function read_target( array $bindings, array $settings, array $controls, callable $is_key_visible ): V3_Block_Accumulator {
@@ -85,7 +110,7 @@ class V3_Map_Style_Reader {
 		return $props;
 	}
 
-	private function read_binding( Compiled_Style_Binding $binding, array $settings, array $controls, string $suffix, callable $is_key_visible ): ?array {
+	private function readable_key( Compiled_Style_Binding $binding, array $settings, array $controls, string $suffix, callable $is_key_visible ): ?string {
 		if ( '' !== $suffix && ! $binding->is_responsive() ) {
 			return null;
 		}
@@ -96,7 +121,13 @@ class V3_Map_Style_Reader {
 
 		$key = $binding->get_setting() . $suffix;
 
-		if ( ! $is_key_visible( $key, $binding->get_setting() ) ) {
+		return $is_key_visible( $key, $binding->get_setting() ) ? $key : null;
+	}
+
+	private function read_binding( Compiled_Style_Binding $binding, array $settings, array $controls, string $suffix, callable $is_key_visible ): ?array {
+		$key = $this->readable_key( $binding, $settings, $controls, $suffix, $is_key_visible );
+
+		if ( null === $key ) {
 			return null;
 		}
 

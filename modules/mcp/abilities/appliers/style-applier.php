@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Clearer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
@@ -191,7 +192,12 @@ class Style_Applier {
 			return;
 		}
 
-		if ( $is_replace ) {
+		$map = V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
+		$is_map_driven = null !== $map;
+
+		if ( $is_replace && $is_map_driven ) {
+			( new V3_Map_Style_Clearer() )->clear( $node, $map, (string) $widget_type );
+		} elseif ( $is_replace ) {
 			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
 		}
 
@@ -209,7 +215,6 @@ class Style_Applier {
 			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $result['settings_patch'] );
 		}
 
-		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
