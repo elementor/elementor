@@ -9,7 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Safe_Remote_Image_Fetcher {
 
 	/**
-	 * @param callable|null $clock Returns the current time in seconds; defaults to microtime( true ).
+	 * @param string        $source_url HTTPS URL to download.
+	 * @param callable|null $clock      Returns the current time in seconds; defaults to microtime( true ).
 	 * @return array{tmp_name:string,name:string}|WP_Error
 	 */
 	public static function fetch_to_temp_file( string $source_url, ?callable $clock = null ) {
