@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Box, CardMedia, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -24,7 +25,10 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 		useFontAwesome7Catalog( shouldLoadIconCatalog );
 	const { data: providerIcons = [], isLoading: isProviderLoading } =
 		useIconLibraryProviderIcons( shouldLoadIconCatalog );
-	const icons = mergeIconsById( fontAwesomeIcons, providerIcons );
+	const icons = useMemo(
+		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
+		[ fontAwesomeIcons, providerIcons ]
+	);
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
 	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
 
@@ -36,6 +40,10 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 		return <IconPreview icon={ selectedIcon } />;
 	}
 
+	if ( shouldLoadIconCatalog && iconClassName && iconLibrary?.startsWith( 'fa-' ) ) {
+		return <IconPreview icon={ createLazyIcon( iconLibrary, iconClassName ) } />;
+	}
+
 	if ( shouldLoadIconCatalog ) {
 		return <IconPreviewPlaceholder />;
 	}
@@ -43,8 +51,21 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	return <SvgPreview src={ src } />;
 };
 
+const createLazyIcon = ( library: string, value: string ): FontAwesome7Icon => ( {
+	id: `${ library }:${ value }`,
+	name: value,
+	label: value,
+	library,
+	value,
+	aliases: [],
+	width: ICON_PREVIEW_SIZE,
+	height: ICON_PREVIEW_SIZE,
+	paths: [],
+	lazySvg: true,
+} );
+
 const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
-	<Box sx={ { color: ICON_PREVIEW_COLOR } }>
+	<Box sx={ { color: ICON_PREVIEW_COLOR, minWidth: ICON_PREVIEW_SIZE, minHeight: ICON_PREVIEW_SIZE } }>
 		<FontAwesomeGlyph
 			icon={ icon }
 			size={ ICON_PREVIEW_SIZE }

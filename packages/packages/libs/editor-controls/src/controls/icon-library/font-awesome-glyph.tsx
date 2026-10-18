@@ -25,19 +25,18 @@ export const FontAwesomeGlyph = ( props: FontAwesomeGlyphProps ) => {
 
 const LazyProviderGlyph = ( props: FontAwesomeGlyphProps ) => {
 	const { icon } = props;
-	const [ svgMarkup, setSvgMarkup ] = useState< string | null >( null );
+	const [ resolved, setResolved ] = useState< { id: string; markup: string | null } | null >( null );
+	const svgMarkup = resolved?.id === icon.id ? resolved.markup : null;
 
 	useEffect( () => {
 		const controller = new AbortController();
 
-		setSvgMarkup( null );
-
 		resolveProviderIconPreviewSvg( icon.library, icon.value, controller.signal )
-			.then( ( markup ) => ! controller.signal.aborted && setSvgMarkup( markup ) )
+			.then( ( markup ) => ! controller.signal.aborted && setResolved( { id: icon.id, markup } ) )
 			.catch( () => {} );
 
 		return () => controller.abort();
-	}, [ icon.library, icon.value ] );
+	}, [ icon.id, icon.library, icon.value ] );
 
 	if ( ! svgMarkup ) {
 		return null;

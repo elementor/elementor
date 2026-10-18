@@ -14,7 +14,7 @@ const lazyIcon: FontAwesome7Icon = {
 	name: 'star',
 	label: 'star',
 	library: 'fa-light',
-	value: 'fal fa-star',
+	value: 'fa-light fa-star',
 	aliases: [],
 	width: 512,
 	height: 512,
@@ -40,7 +40,7 @@ describe( 'FontAwesomeGlyph lazy svg', () => {
 		expect( await screen.findByRole( 'img', { name: 'Star' } ) ).toBeInTheDocument();
 		expect( resolveProviderIconPreviewSvg ).toHaveBeenCalledWith(
 			'fa-light',
-			'fal fa-star',
+			'fa-light fa-star',
 			expect.any( AbortSignal )
 		);
 	} );
