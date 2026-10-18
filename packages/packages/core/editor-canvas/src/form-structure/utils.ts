@@ -3,6 +3,7 @@ import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 type Model = {
 	elType?: string;
 	widgetType?: string;
+	elements?: Model[];
 };
 
 export type CreateArgs = {
@@ -36,6 +37,7 @@ export type StorageContent = {
 
 export const FORM_ELEMENT_TYPE = 'e-form';
 export const FORM_HIDDEN_FIELD_ELEMENT_TYPE = 'e-form-hidden';
+export const FORM_HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
 export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-input',
 	'e-form-textarea',
@@ -48,10 +50,37 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-date-picker',
 	'e-form-time-picker',
 	FORM_HIDDEN_FIELD_ELEMENT_TYPE,
+	FORM_HONEYPOT_ELEMENT_TYPE,
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
 	return args.model?.widgetType || args.model?.elType;
+}
+
+export function hasModelElementType( model: Model | undefined, type: string ): boolean {
+	if ( ! model ) {
+		return false;
+	}
+
+	if ( ( model.widgetType || model.elType ) === type ) {
+		return true;
+	}
+
+	return ( model.elements ?? [] ).some( ( child ) => hasModelElementType( child, type ) );
+}
+
+export function getFormContainer( element?: V1Element ): V1Element | undefined {
+	let current = element;
+
+	while ( current ) {
+		if ( getElementType( current ) === FORM_ELEMENT_TYPE ) {
+			return current;
+		}
+
+		current = current.parent;
+	}
+
+	return undefined;
 }
 
 export function getElementType( element?: V1Element ): string | undefined {
