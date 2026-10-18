@@ -29,18 +29,21 @@ $sections = Style_Target::make( 'sections' )
 $message = Style_Target::make( 'message' )
 	->label( 'Order received confirmation message' )
 	->selector( '.woocommerce-thankyou-order-received' )
+	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'confirmation_message_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'confirmation_message_color' ) );
 
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
 	->selector( 'h2' )
+	->defaults( [ 'color' => '#000' ] )
 	->with( Typography_Group::from_prefix( 'titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'titles_color' ) );
 
 $text = Style_Target::make( 'text' )
 	->label( 'General text such as addresses' )
 	->selector( 'address, .product-purchase-note, .woocommerce-thankyou-order-details + p' )
+	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'general_text_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'general_text_color' ) );
 

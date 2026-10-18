@@ -20,6 +20,12 @@ $active = 'active';
 $account_tabs = Style_Target::make( 'tabs' )
 	->label( 'Account navigation tabs; tabs:active styles the current tab' )
 	->selector( '.woocommerce-MyAccount-navigation ul li a' )
+	->defaults( [
+		'font-size' => '14px',
+		'font-weight' => '700',
+		'background-color' => '#f9fafa',
+		'color' => '#69727d',
+	] )
 	->states( $active )
 	->with( Typography_Group::from_prefix( 'tabs_typography' ) )
 	->with( Background_Group::from_prefix( 'tabs_normal_background' ) )
@@ -59,6 +65,7 @@ $titles = Style_Target::make( 'titles' )
 $text = Style_Target::make( 'text' )
 	->label( 'General text' )
 	->selector( '.woocommerce-MyAccount-content > div > p, address, .woocommerce-EditAccountForm fieldset legend, .woocommerce-ResetPassword p:nth-child(1), .woocommerce-OrderUpdate' )
+	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'general_text_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'general_text_color' ) );
 

@@ -36,12 +36,17 @@ $titles = Style_Target::make( 'titles' )
 $secondary_titles = Style_Target::make( 'secondary-titles' )
 	->label( 'Secondary titles (returning customer and coupon prompts)' )
 	->selector( '.e-checkout-secondary-title' )
+	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'sections_secondary_titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_secondary_title_color' ) );
 
 $text = Style_Target::make( 'text' )
 	->label( 'Section descriptions' )
 	->selector( '.e-description' )
+	->defaults( [
+		'font-size' => '14px',
+		'color' => '#69727d',
+	] )
 	->with( Typography_Group::from_prefix( 'sections_descriptions_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_descriptions_color' ) );
 
@@ -54,12 +59,18 @@ $links = Style_Target::make( 'links' )
 $labels = Style_Target::make( 'labels' )
 	->label( 'Form field labels' )
 	->selector( '.woocommerce-billing-fields .form-row label, .woocommerce-shipping-fields .form-row label, .woocommerce-additional-fields .form-row label, .e-woocommerce-login-anchor .form-row label, .e-coupon-anchor-description' )
+	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'forms_label_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'forms_label_color' ) );
 
 $buttons = Style_Target::make( 'buttons' )
 	->label( 'Form buttons (login, apply coupon)' )
 	->selector( '.woocommerce-button, .e-apply-coupon, .woocommerce-form-login__submit' )
+	->defaults( [
+		'color' => '#6f6f6f',
+		'border-width' => '2px',
+		'padding' => '1rem',
+	] )
 	->with( Typography_Group::from_prefix( 'forms_button_typography' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_normal_background' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_hover_background', $hover ) )
@@ -77,18 +88,24 @@ $buttons = Style_Target::make( 'buttons' )
 $order_items = Style_Target::make( 'order-items' )
 	->label( 'Product rows in the order summary' )
 	->selector( '.woocommerce-checkout-review-order-table .cart_item td' )
+	->defaults( [ 'color' => '#000' ] )
 	->with( Typography_Group::from_prefix( 'order_summary_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_summary_items_color' ) );
 
 $order_totals = Style_Target::make( 'order-totals' )
 	->label( 'Totals rows and headers in the order summary' )
 	->selector( '.woocommerce-checkout-review-order-table thead tr th, .woocommerce-checkout-review-order-table tfoot tr th, .woocommerce-checkout-review-order-table tfoot tr td' )
+	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'order_summary_totals_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_summary_totals_color' ) );
 
 $purchase_button = Style_Target::make( 'purchase-button' )
 	->label( '"Place order" button' )
 	->selector( '#place_order' )
+	->defaults( [
+		'background-color' => '#5bc0de',
+		'color' => '#fff',
+	] )
 	->with( Typography_Group::from_prefix( 'purchase_button_typography' ) )
 	->with( Border_Group::from_prefix( 'purchase_button_border' ) )
 	->with( Background_Group::from_prefix( 'purchase_button_normal_background' ) )

@@ -10,7 +10,9 @@ use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
@@ -30,8 +32,11 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 	private ?Default_Styles_Repository $default_styles_repository;
 
-	public function __construct( ?Default_Styles_Repository $default_styles_repository = null ) {
+	private ?V3_Map_Default_Styles $v3_default_styles;
+
+	public function __construct( ?Default_Styles_Repository $default_styles_repository = null, ?V3_Map_Default_Styles $v3_default_styles = null ) {
 		$this->default_styles_repository = $default_styles_repository;
+		$this->v3_default_styles = $v3_default_styles;
 	}
 
 	protected function get_ability_id(): string {
@@ -306,6 +311,16 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['styles'] = [ 'css' => $style ];
+
+		if ( null !== $map ) {
+			$this->v3_default_styles ??= V3_Map_Default_Styles::create_default();
+			$skeleton['default_styles'] = $this->v3_default_styles->render(
+				$map,
+				$raw_settings,
+				V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type ),
+				V3_Control_Visibility::for_widget( $widget_type )
+			);
+		}
 	}
 
 	private function normalize_interactions( $interactions ): array {

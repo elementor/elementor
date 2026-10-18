@@ -26,6 +26,11 @@ class Style_Target {
 	private array $declared_states = [];
 
 	/**
+	 * @var array<string, string>
+	 */
+	private array $defaults = [];
+
+	/**
 	 * @var array<int, array{prop: string, state: string, control: V3_Control}>
 	 */
 	private array $bindings = [];
@@ -64,6 +69,18 @@ class Style_Target {
 		return $this;
 	}
 
+	/**
+	 * Declarations the widget's own stylesheet paints on this target before any setting is set,
+	 * kept in sync with the widget stylesheet by hand.
+	 *
+	 * @param array<string, string> $declarations CSS property => value.
+	 */
+	public function defaults( array $declarations ): self {
+		$this->defaults = $declarations;
+
+		return $this;
+	}
+
 	public function bind( string $prop, V3_Control $control, string $state = self::DEFAULT_STATE ): self {
 		$this->bindings[] = [
 			'prop' => $prop,
@@ -97,6 +114,13 @@ class Style_Target {
 	 */
 	public function get_declared_states(): array {
 		return $this->declared_states;
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function get_defaults(): array {
+		return $this->defaults;
 	}
 
 	/**

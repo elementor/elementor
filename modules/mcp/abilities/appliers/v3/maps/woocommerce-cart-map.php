@@ -19,6 +19,10 @@ $hover = 'hover';
 $sections = Style_Target::make( 'sections' )
 	->label( 'Cart sections (order summary, coupon, totals)' )
 	->selector( '.e-cart-section' )
+	->defaults( [
+		'background-color' => '#fff',
+		'border-width' => '1px',
+	] )
 	->with( Box_Shadow_Group::from_prefix( 'section_normal_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'sections_background_color' ) )
 	->bind( 'border-style', V3_Control::bind_to( 'sections_border_type' ) )
@@ -30,6 +34,11 @@ $sections = Style_Target::make( 'sections' )
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
 	->selector( '.cart_totals h2' )
+	->defaults( [
+		'font-size' => '14px',
+		'font-weight' => '700',
+		'color' => '#000',
+	] )
 	->with( Typography_Group::from_prefix( 'sections_titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_title_color' ) );
 
@@ -48,6 +57,11 @@ $links = Style_Target::make( 'links' )
 $buttons = Style_Target::make( 'buttons' )
 	->label( 'Form buttons (update cart, apply coupon, update shipping)' )
 	->selector( '.shop_table .button' )
+	->defaults( [
+		'font-size' => '14px',
+		'font-weight' => '700',
+		'border-width' => '2px',
+	] )
 	->with( Typography_Group::from_prefix( 'forms_button_typography' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_normal_background' ) )
 	->with( Background_Group::from_prefix( 'forms_buttons_hover_background', $hover ) )
@@ -83,6 +97,11 @@ $totals = Style_Target::make( 'totals' )
 $checkout_button = Style_Target::make( 'checkout-button' )
 	->label( '"Proceed to checkout" button' )
 	->selector( '.checkout-button' )
+	->defaults( [
+		'font-size' => '15px',
+		'background-color' => '#5bc0de',
+		'color' => '#fff',
+	] )
 	->with( Typography_Group::from_prefix( 'checkout_button_typography' ) )
 	->with( Border_Group::from_prefix( 'checkout_button_border' ) )
 	->with( Background_Group::from_prefix( 'checkout_button_normal_background' ) )

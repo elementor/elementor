@@ -20,16 +20,30 @@ class Compiled_Style_Target {
 	private array $bindings;
 
 	/**
+	 * @var array<string, string>
+	 */
+	private array $defaults;
+
+	/**
 	 * @param string                   $alias
 	 * @param string                   $label
 	 * @param Compiled_Style_Binding[] $bindings
 	 * @param string|null              $selector
+	 * @param array<string, string>    $defaults
 	 */
-	public function __construct( string $alias, string $label, array $bindings, ?string $selector = null ) {
+	public function __construct( string $alias, string $label, array $bindings, ?string $selector = null, array $defaults = [] ) {
 		$this->alias = $alias;
 		$this->label = $label;
 		$this->bindings = $bindings;
 		$this->selector = $selector;
+		$this->defaults = $defaults;
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function get_defaults(): array {
+		return $this->defaults;
 	}
 
 	public function get_alias(): string {

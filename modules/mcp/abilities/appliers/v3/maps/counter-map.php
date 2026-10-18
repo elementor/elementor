@@ -20,6 +20,7 @@ $number = Style_Target::make( 'number' )
 $title = Style_Target::make( 'title' )
 	->label( 'Title shown next to the number' )
 	->selector( '.elementor-counter-title' )
+	->defaults( [ 'line-height' => '2.5' ] )
 	->with( Typography_Group::from_prefix( 'typography_title' ) )
 	->bind( 'color', V3_Control::bind_to( 'title_color' ) );
 

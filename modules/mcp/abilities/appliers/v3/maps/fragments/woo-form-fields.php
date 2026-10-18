@@ -20,10 +20,17 @@ class Woo_Form_Fields implements Style_Fragment {
 
 	const FOCUS_STATE = 'focus';
 
+	const DEFAULTS = [
+		'font-size' => '14px',
+		'background-color' => '#f9fafa',
+		'color' => '#69727d',
+	];
+
 	public static function target( string $selector ): Style_Target {
 		return Style_Target::make( self::ALIAS )
 			->label( self::LABEL )
 			->selector( $selector )
+			->defaults( self::DEFAULTS )
 			->states( self::FOCUS_STATE )
 			->with( new self() );
 	}

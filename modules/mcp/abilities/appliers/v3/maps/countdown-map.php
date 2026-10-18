@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $boxes = Style_Target::make( 'boxes' )
 	->label( 'Box around each unit (days, hours, minutes, seconds)' )
 	->selector( '.elementor-countdown-item' )
+	->defaults( [ 'padding' => '20px 0' ] )
 	->with( Border_Group::from_prefix( 'box_border' ) )
 	->with( Box_Shadow_Group::from_prefix( 'box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'box_background_color' ) )
@@ -24,12 +25,17 @@ $boxes = Style_Target::make( 'boxes' )
 $digits = Style_Target::make( 'digits' )
 	->label( 'Countdown digits' )
 	->selector( '.elementor-countdown-digits' )
+	->defaults( [
+		'font-size' => '69px',
+		'line-height' => '1',
+	] )
 	->with( Typography_Group::from_prefix( 'digits_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'digits_color' ) );
 
 $label = Style_Target::make( 'label' )
 	->label( 'Unit labels (Days, Hours, ...)' )
 	->selector( '.elementor-countdown-label' )
+	->defaults( [ 'line-height' => '1' ] )
 	->with( Typography_Group::from_prefix( 'label_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'label_color' ) );
 
@@ -40,6 +46,10 @@ $label = Style_Target::make( 'label' )
 $message = Style_Target::make( 'message' )
 	->label( 'Message shown when the countdown expires; only takes effect while expire_actions includes message' )
 	->selector( '.elementor-countdown-expire--message' )
+	->defaults( [
+		'text-align' => 'center',
+		'padding' => '20px',
+	] )
 	->bind( 'color', V3_Control::bind_to( 'text_color' )->requires( [] ) )
 	->bind( 'text-align', V3_Control::bind_to( 'align' )->responsive()->requires( [] ) )
 	->bind( 'padding', V3_Control::bind_to( 'message_padding' )->responsive()->requires( [] ) );

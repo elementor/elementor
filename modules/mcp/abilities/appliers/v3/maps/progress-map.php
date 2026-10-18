@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $bar = Style_Target::make( 'bar' )
 	->label( 'Filled part of the bar; color and typography apply to the inner text' )
 	->selector( '.elementor-progress-bar' )
+	->defaults( [ 'font-size' => '11px' ] )
 	->with( Typography_Group::from_prefix( 'bar_inner_typography' )->except( 'line-height' ) )
 	->bind( 'background', V3_Control::bind_to( 'bar_color' ) )
 	->bind( 'height', V3_Control::bind_to( 'bar_height' ) )
@@ -21,6 +22,10 @@ $bar = Style_Target::make( 'bar' )
 $track = Style_Target::make( 'track' )
 	->label( 'Unfilled track behind the bar' )
 	->selector( '.elementor-progress-wrapper' )
+	->defaults( [
+		'background-color' => '#eeeeee',
+		'border-radius' => '2px',
+	] )
 	->bind( 'background', V3_Control::bind_to( 'bar_bg_color' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'bar_border_radius' ) );
 

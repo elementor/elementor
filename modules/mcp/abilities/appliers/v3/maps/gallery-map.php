@@ -37,12 +37,14 @@ $overlay = Style_Target::make( 'overlay' )
 $title = Style_Target::make( 'title' )
 	->label( 'Overlay title' )
 	->selector( '.elementor-gallery-item__title' )
+	->defaults( [ 'color' => '#fff' ] )
 	->with( Typography_Group::from_prefix( 'title_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'title_color' ) );
 
 $description = Style_Target::make( 'description' )
 	->label( 'Overlay description' )
 	->selector( '.elementor-gallery-item__description' )
+	->defaults( [ 'color' => '#fff' ] )
 	->with( Typography_Group::from_prefix( 'description_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'description_color' ) );
 

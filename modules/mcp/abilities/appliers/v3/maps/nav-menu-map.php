@@ -18,6 +18,10 @@ $current = 'current';
 $main_menu = Style_Target::make( 'main-menu' )
 	->label( 'Main menu items' )
 	->selector( '.elementor-nav-menu--main .elementor-item' )
+	->defaults( [
+		'line-height' => '20px',
+		'padding' => '10px 20px',
+	] )
 	->states( $current )
 	->with( Typography_Group::from_prefix( 'menu_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'color_menu_item' ) )
@@ -46,6 +50,11 @@ $divider = Style_Target::make( 'divider' )
 $dropdown = Style_Target::make( 'dropdown' )
 	->label( 'Submenu on desktop, and the whole menu on mobile' )
 	->selector( '.elementor-nav-menu--dropdown' )
+	->defaults( [
+		'font-size' => '13px',
+		'background-color' => '#fff',
+		'margin-top' => '10px',
+	] )
 	->states( $current )
 	->with( Typography_Group::from_prefix( 'dropdown_typography' )->except( 'line-height' ) )
 	->with( Border_Group::from_prefix( 'dropdown_border' ) )
@@ -71,6 +80,11 @@ $dropdown_divider = Style_Target::make( 'dropdown-divider' )
 $toggle = Style_Target::make( 'toggle' )
 	->label( 'Mobile menu toggle button' )
 	->selector( '.elementor-menu-toggle' )
+	->defaults( [
+		'background-color' => 'rgba(0, 0, 0, .05)',
+		'font-size' => '22px',
+		'border-radius' => '3px',
+	] )
 	->bind( 'color', V3_Control::bind_to( 'toggle_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'toggle_color_hover' ), $hover )
 	->bind( 'background', V3_Control::bind_to( 'toggle_background_color' ) )

@@ -15,6 +15,11 @@ $hover = 'hover';
 $icons = Style_Target::make( 'icons' )
 	->label( 'Each icon button; background is the button color, color the glyph, font-size the icon size' )
 	->selector( '.elementor-social-icon' )
+	->defaults( [
+		'color' => '#69727d',
+		'border-radius' => '10%',
+		'font-size' => '25px',
+	] )
 	->with( Border_Group::from_prefix( 'image_border' ) )
 	->bind( 'background', V3_Control::bind_to( 'icon_primary_color' ) )
 	->bind( 'background', V3_Control::bind_to( 'hover_primary_color' ), $hover )
@@ -28,6 +33,7 @@ $icons = Style_Target::make( 'icons' )
 $grid = Style_Target::make( 'grid' )
 	->label( 'Row of icons; column-gap is the space between icons' )
 	->selector( '.elementor-social-icons-wrapper' )
+	->defaults( [ 'column-gap' => '5px' ] )
 	->bind( 'column-gap', V3_Control::bind_to( 'icon_spacing' )->responsive() )
 	->bind( 'text-align', V3_Control::bind_to( 'align' )->responsive() );
 
