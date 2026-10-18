@@ -79,6 +79,8 @@ describe( 'IconLibraryUploadAction', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Upload library' } ) );
 
 		// Assert.
+		// MUI renders the arrow as an unlabelled element, so it can only be found by class.
+		// eslint-disable-next-line testing-library/no-node-access
 		expect( document.querySelector( '[class*="arrow"]' ) ).toBeInTheDocument();
 	} );
 
