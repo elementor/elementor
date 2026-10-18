@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Media;
 
 use Elementor\Core\Files\File_Types\Svg;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -62,7 +63,7 @@ class Media_Attachment_Service {
 		}
 
 		if ( Media_Upload_Config::SVG_MIME_TYPE === $mime ) {
-			$sanitized = ( new Svg() )->sanitize_svg( $file['tmp_name'] );
+			$sanitized = self::get_svg_handler()->sanitize_svg( $file['tmp_name'] );
 			if ( ! $sanitized ) {
 				self::delete_temp( $file['tmp_name'] );
 
@@ -197,6 +198,22 @@ class Media_Attachment_Service {
 		if ( isset( $filters['mime'] ) ) {
 			remove_filter( 'upload_mimes', $filters['mime'] );
 		}
+	}
+
+	private static function get_svg_handler(): Svg {
+		static $fallback = null;
+
+		$handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		if ( $handler instanceof Svg ) {
+			return $handler;
+		}
+
+		if ( null === $fallback ) {
+			$fallback = new Svg();
+		}
+
+		return $fallback;
 	}
 
 	private static function delete_temp( string $path ): void {

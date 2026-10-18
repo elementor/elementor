@@ -36,6 +36,11 @@ class Safe_Remote_Image_Fetcher {
 				return $host_error;
 			}
 
+			$url_error = Public_Host_Validator::assert_url_accepted_by_wp( $current_url );
+			if ( $url_error ) {
+				return $url_error;
+			}
+
 			$pinned_ip = Pinned_Remote_Fetch::select_pinned_ip( $host );
 			if ( is_wp_error( $pinned_ip ) ) {
 				return $pinned_ip;

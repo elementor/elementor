@@ -61,6 +61,14 @@ class Public_Host_Validator {
 			return self::assert_public_ip( $host );
 		}
 
+		if ( ! self::is_strict_dns_name( $host ) ) {
+			return new \WP_Error(
+				'invalid_url',
+				__( 'The source URL is not valid.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
 		$records = self::resolve_dns( $host );
 
 		if ( null === $records ) {
@@ -84,6 +92,47 @@ class Public_Host_Validator {
 			if ( $ip_error ) {
 				return $ip_error;
 			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Accepts only plain DNS names. Numeric-looking hosts (decimal, octal, hex or short forms) are
+	 * rejected because the HTTP client may read them as addresses instead of resolving them.
+	 */
+	public static function is_strict_dns_name( string $host ): bool {
+		$host = strtolower( $host );
+
+		if ( '' === $host || strlen( $host ) > 254 ) {
+			return false;
+		}
+
+		if ( str_ends_with( $host, '.' ) ) {
+			$host = substr( $host, 0, -1 );
+		}
+
+		if ( ! preg_match( '/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/', $host ) ) {
+			return false;
+		}
+
+		$labels = explode( '.', $host );
+		$last_label = end( $labels );
+
+		if ( preg_match( '/^[0-9]+$/', $last_label ) || str_starts_with( $last_label, '0x' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function assert_url_accepted_by_wp( string $url ): ?\WP_Error {
+		if ( ! wp_http_validate_url( $url ) ) {
+			return new \WP_Error(
+				'invalid_url',
+				__( 'The source URL is not valid.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
 		return null;

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Media;
 
 use Elementor\Core\Files\File_Types\Svg;
+use Elementor\Core\Files\Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -81,6 +82,10 @@ class Media_Upload_Config {
 
 	public static function is_svg_upload_allowed_for_user( ?int $user_id = null ): bool {
 		if ( ! Svg::file_sanitizer_can_run() ) {
+			return false;
+		}
+
+		if ( ! Uploads_Manager::are_unfiltered_uploads_enabled() ) {
 			return false;
 		}
 

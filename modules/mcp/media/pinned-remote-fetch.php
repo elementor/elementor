@@ -40,6 +40,10 @@ class Pinned_Remote_Fetch {
 
 			curl_setopt( $handle, self::curl_resolve_option(), [ $resolve_entry ] );
 			$curl_resolve_applied = true;
+
+			if ( defined( 'CURLOPT_HTTP_CONTENT_DECODING' ) ) {
+				curl_setopt( $handle, CURLOPT_HTTP_CONTENT_DECODING, false );
+			}
 		};
 
 		$transports_filter = static function () {
@@ -71,6 +75,8 @@ class Pinned_Remote_Fetch {
 						'redirection' => 0,
 						'reject_unsafe_urls' => false,
 						'limit_response_size' => Media_Upload_Config::max_upload_bytes() + 1,
+						'decompress' => false,
+						'headers' => [ 'Accept-Encoding' => 'identity' ],
 					]
 				);
 			}
@@ -87,7 +93,31 @@ class Pinned_Remote_Fetch {
 			);
 		}
 
+		if ( ! is_wp_error( $response ) && self::has_content_encoding( $response ) ) {
+			return new \WP_Error(
+				'unsupported_content_encoding',
+				__( 'The source server returned an encoded response, which is not supported.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
 		return $response;
+	}
+
+	private static function has_content_encoding( $response ): bool {
+		$encoding = wp_remote_retrieve_header( $response, 'content-encoding' );
+
+		if ( is_array( $encoding ) ) {
+			$encoding = implode( ',', $encoding );
+		}
+
+		if ( ! is_string( $encoding ) ) {
+			return false;
+		}
+
+		$encoding = strtolower( trim( $encoding ) );
+
+		return '' !== $encoding && 'identity' !== $encoding;
 	}
 
 	public static function is_curl_transport_available(): bool {
@@ -101,6 +131,14 @@ class Pinned_Remote_Fetch {
 		$host = strtolower( trim( $host, '[]' ) );
 
 		if ( '' === $host ) {
+			return new \WP_Error(
+				'invalid_url',
+				__( 'The source URL is not valid.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		if ( ! filter_var( $host, FILTER_VALIDATE_IP ) && ! Public_Host_Validator::is_strict_dns_name( $host ) ) {
 			return new \WP_Error(
 				'invalid_url',
 				__( 'The source URL is not valid.', 'elementor' ),
