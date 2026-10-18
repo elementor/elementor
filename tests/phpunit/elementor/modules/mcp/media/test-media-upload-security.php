@@ -1930,4 +1930,388 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'fetch_timeout', $result->get_error_code() );
 	}
+
+	private function mock_png_for_all_urls(): void {
+		$png = self::MINIMAL_PNG;
+
+		$this->mock_pinned_http_response( static function () use ( $png ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
+	}
+
+	public function test_upload_media__list_imports_each_url() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [
+				'https://example.com/list-a.png',
+				'https://example.com/list-b.png',
+				'https://example.com/list-c.png',
+			],
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 3, $result['total'] );
+		$this->assertSame( 3, $result['succeeded'] );
+		$this->assertSame( 0, $result['failed'] );
+		$this->assertCount( 3, $result['uploads'] );
+
+		$ids = [];
+		foreach ( $result['uploads'] as $position => $entry ) {
+			$this->assertSame( $position, $entry['index'] );
+			$this->assertSame( 'ok', $entry['status'] );
+			$this->assertSame( 'image/png', $entry['mime'] );
+			$this->assertArrayNotHasKey( 'error', $entry );
+			$ids[] = $entry['attachment_id'];
+		}
+
+		$this->assertCount( 3, array_unique( $ids ) );
+		$this->assertSame( 'https://example.com/list-b.png', $result['uploads'][1]['source_url'] );
+	}
+
+	public function test_upload_media__list_reports_partial_failures_and_continues() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [
+				'https://127.0.0.1/blocked.png?token=secret#frag',
+				'https://example.com/partial-ok.png',
+				'http://example.com/plain-http.png',
+			],
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 3, $result['total'] );
+		$this->assertSame( 1, $result['succeeded'] );
+		$this->assertSame( 2, $result['failed'] );
+
+		$this->assertSame( 'error', $result['uploads'][0]['status'] );
+		$this->assertSame( 'remote_host_not_allowed', $result['uploads'][0]['error']['code'] );
+		$this->assertSame( 'https://127.0.0.1/blocked.png', $result['uploads'][0]['source_url'] );
+		$this->assertArrayNotHasKey( 'attachment_id', $result['uploads'][0] );
+
+		$this->assertSame( 'ok', $result['uploads'][1]['status'] );
+		$this->assertGreaterThan( 0, $result['uploads'][1]['attachment_id'] );
+
+		$this->assertSame( 'error', $result['uploads'][2]['status'] );
+		$this->assertSame( 'invalid_url_scheme', $result['uploads'][2]['error']['code'] );
+	}
+
+	public function test_upload_media__list_returns_per_item_errors_when_all_fail() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [ 'https://127.0.0.1/a.png', 'http://example.com/b.png' ],
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 0, $result['succeeded'] );
+		$this->assertSame( 2, $result['failed'] );
+		$this->assertSame( 'error', $result['uploads'][0]['status'] );
+		$this->assertSame( 'error', $result['uploads'][1]['status'] );
+	}
+
+	public function test_upload_media__list_rejects_more_than_the_maximum() {
+		// Arrange
+		$this->act_as_admin();
+		$urls = [];
+		for ( $i = 0; $i <= Media_Upload_Config::MAX_UPLOADS_PER_REQUEST; $i++ ) {
+			$urls[] = 'https://example.com/too-many-' . $i . '.png';
+		}
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => $urls,
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertCount( 11, $urls );
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_upload_count', $result->get_error_code() );
+		$this->assertStringContainsString( '10', $result->get_error_message() );
+	}
+
+	public function test_upload_media__list_accepts_exactly_the_maximum() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+		$urls = [];
+		for ( $i = 0; $i < Media_Upload_Config::MAX_UPLOADS_PER_REQUEST; $i++ ) {
+			$urls[] = 'https://example.com/max-' . $i . '.png';
+		}
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => $urls,
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 10, $result['succeeded'] );
+	}
+
+	public function test_upload_media__list_rejects_empty_list() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [],
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_upload_count', $result->get_error_code() );
+	}
+
+	public function test_upload_media__rejects_both_single_and_list_inputs() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_url' => 'https://example.com/one.png',
+			'source_urls' => [ 'https://example.com/two.png' ],
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'conflicting_source_inputs', $result->get_error_code() );
+	}
+
+	/**
+	 * @dataProvider invalid_list_entries_provider
+	 */
+	public function test_upload_media__list_rejects_invalid_entries( array $urls ) {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => $urls,
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_source_url', $result->get_error_code() );
+	}
+
+	public function invalid_list_entries_provider(): array {
+		return [
+			'integer entry' => [ [ 'https://example.com/a.png', 12 ] ],
+			'null entry' => [ [ null ] ],
+			'array entry' => [ [ [ 'https://example.com/a.png' ] ] ],
+			'empty string entry' => [ [ '' ] ],
+			'blank string entry' => [ [ '   ' ] ],
+		];
+	}
+
+	public function test_upload_media__list_rejects_title_and_alt() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [ 'https://example.com/a.png' ],
+			'title' => 'Shared title',
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'unsupported_with_source_urls', $result->get_error_code() );
+	}
+
+	public function test_upload_media__list_requires_upload_files_capability_for_the_whole_call() {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'contributor' ] ) );
+		$this->mock_png_for_all_urls();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [ 'https://example.com/contrib-a.png', 'https://example.com/contrib-b.png' ],
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+	}
+
+	public function test_upload_media__list_applies_svg_rule_per_item_for_editor() {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+		$png = self::MINIMAL_PNG;
+		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
+
+		$this->mock_pinned_http_response( static function ( $url ) use ( $png, $svg ) {
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => false !== strpos( $url, '.svg' ) ? $svg : $png,
+			];
+		} );
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_urls' => [
+				'https://example.com/list-svg-first.svg',
+				'https://example.com/list-after-svg.png',
+			],
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 1, $result['succeeded'] );
+		$this->assertSame( 'error', $result['uploads'][0]['status'] );
+		$this->assertSame( 'svg_not_allowed', $result['uploads'][0]['error']['code'] );
+		$this->assertSame( 'ok', $result['uploads'][1]['status'] );
+	}
+
+	public function test_upload_media__list_returns_existing_attachment_for_a_repeated_url() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+		$ability = new Upload_Media_Ability();
+		$url = 'https://example.com/list-repeat.png';
+
+		// Act
+		$result = $ability->execute( [
+			'source_urls' => [ $url, $url ],
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertSame( 2, $result['succeeded'] );
+		$this->assertSame( $result['uploads'][0]['attachment_id'], $result['uploads'][1]['attachment_id'] );
+	}
+
+	public function test_upload_media__single_url_response_shape_is_unchanged() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_url' => 'https://example.com/single-shape.png',
+			'title' => 'Single title',
+			'alt' => 'Single alt',
+			'consent' => true,
+		] );
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame(
+			[ 'attachment_id', 'url', 'mime', 'width', 'height', 'alt' ],
+			array_keys( $result )
+		);
+		$this->assertSame( 'Single alt', $result['alt'] );
+		$this->assertSame( 'Single title', get_post( $result['attachment_id'] )->post_title );
+	}
+
+	public function test_upload_media__single_url_still_returns_wp_error_on_failure() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'source_url' => 'https://127.0.0.1/single.png',
+			'consent' => true,
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'remote_host_not_allowed', $result->get_error_code() );
+	}
+
+	public function test_upload_media__missing_source_still_returns_invalid_source_url() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [ 'consent' => true ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_source_url', $result->get_error_code() );
+	}
+
+	public function test_upload_media__list_schema_limits_the_list_to_the_maximum() {
+		// Arrange
+		$method = new \ReflectionMethod( Upload_Media_Ability::class, 'get_definition' );
+		$method->setAccessible( true );
+		$schema = $method->invoke( new Upload_Media_Ability() )->input_schema['properties']['source_urls'] ?? null;
+
+		// Assert
+		$this->assertNotNull( $schema );
+		$this->assertSame( 1, $schema['minItems'] );
+		$this->assertSame( Media_Upload_Config::MAX_UPLOADS_PER_REQUEST, $schema['maxItems'] );
+		$this->assertSame( 'string', $schema['items']['type'] );
+	}
+
+	public function test_upload_media__batch_reports_remaining_urls_as_timeouts_after_the_batch_deadline() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+		$calls = 0;
+		$clock = static function () use ( &$calls ) {
+			$calls++;
+
+			// Call 1 sets the deadline, call 2 is the first item, later calls are past the deadline.
+			return $calls <= 2 ? 1000.0 : 1000.0 + Media_Upload_Config::TOTAL_BATCH_TIMEOUT_SECONDS + 1;
+		};
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->import_batch(
+			[ 'https://example.com/batch-a.png', 'https://example.com/batch-b.png', 'https://example.com/batch-c.png' ],
+			$clock
+		);
+
+		$this->clear_pinned_http_mocks();
+
+		// Assert
+		$this->assertSame( 1, $result['succeeded'] );
+		$this->assertSame( 2, $result['failed'] );
+		$this->assertSame( 'ok', $result['uploads'][0]['status'] );
+		$this->assertSame( 'fetch_timeout', $result['uploads'][1]['error']['code'] );
+		$this->assertSame( 'fetch_timeout', $result['uploads'][2]['error']['code'] );
+	}
 }

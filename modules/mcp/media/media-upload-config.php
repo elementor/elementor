@@ -33,6 +33,8 @@ class Media_Upload_Config {
 
 	const TOTAL_FETCH_TIMEOUT_SECONDS = 60;
 
+	const TOTAL_BATCH_TIMEOUT_SECONDS = 120;
+
 	const MAX_OUTSTANDING_TOKENS_PER_USER = 20;
 
 	const MAX_REDIRECT_HOPS = 5;
