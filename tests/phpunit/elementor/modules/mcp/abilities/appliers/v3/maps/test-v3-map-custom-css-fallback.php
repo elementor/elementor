@@ -97,7 +97,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 			[ 'color: blue (title): Media query (min-width: 2000px) is not a site breakpoint.' ],
 			array_slice( $result['fallback_notes'], 1 )
 		);
-		$this->assertSame( [ 'The state in title:hover is not supported by style target title and was dropped.' ], $result['warnings'] );
+		$this->assertSame( [ 'The state in title:hover is not supported by style target title and was dropped. Supported states: default.' ], $result['warnings'] );
 	}
 
 	public function test_site_media_queries__lists_max_width_breakpoints_from_widest_to_narrowest() {

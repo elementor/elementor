@@ -4,7 +4,8 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Controls_Manager;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Size_Values;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Text_Alignment;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
@@ -21,6 +22,21 @@ class V3_Map_Style_Writer {
 	const POSITION_PROPERTY = 'position';
 
 	const POSITION_OFFSET_PROPERTIES = [ 'inset-inline-start', 'inset-inline-end', 'inset-block-start', 'inset-block-end' ];
+
+	const PHYSICAL_TEXT_ALIGN_PATTERN = '/(text-align\s*:\s*)(left|right)\b/i';
+
+	const PHYSICAL_SIDES = [
+		'block-start' => 'top',
+		'inline-end' => 'right',
+		'block-end' => 'bottom',
+		'inline-start' => 'left',
+	];
+
+	const SIDE_LONGHAND_FORMATS = [
+		'margin' => 'margin-%s',
+		'padding' => 'padding-%s',
+		'border-width' => 'border-%s-width',
+	];
 
 	private Css_Converter $css_converter;
 	private V3_Control_Adapter_Registry $adapters;
@@ -49,9 +65,10 @@ class V3_Map_Style_Writer {
 	 * @return array<int, array{property: string, value: string, reason: string}> Declarations the bindings cannot store, for the caller to fall back on.
 	 */
 	public function write( V3_Conversion_Context $ctx, array $bindings, array $controls, string $breakpoint, ?string $state, string $css ): array {
-		$converted = $this->css_converter->convert( $css );
+		$converted = $this->css_converter->convert( self::with_logical_text_align( $css ) );
 		$state = $state ?? Style_Target::DEFAULT_STATE;
 		$failures = [];
+		$uncovered_sides = [];
 		$unconverted = $this->unconverted_declarations( $ctx, $converted, $bindings, $controls, $breakpoint, $state );
 		$position_fell_back = in_array( self::POSITION_PROPERTY, array_column( $unconverted, 'property' ), true );
 
@@ -81,10 +98,73 @@ class V3_Map_Style_Writer {
 				}
 			}
 
+			if ( ! isset( $failures[ $prop ] ) ) {
+				$uncovered_sides = array_merge( $uncovered_sides, self::uncovered_side_declarations( (string) $prop, $prop_value, $prop_bindings ) );
+			}
+
 			$position_fell_back = $position_fell_back || isset( $failures[ self::POSITION_PROPERTY ] );
 		}
 
-		return array_merge( $this->declarations_of( $css, $failures ), $unconverted );
+		return array_merge( $this->declarations_of( $css, $failures ), $unconverted, $uncovered_sides );
+	}
+
+	private static function with_logical_text_align( string $css ): string {
+		return preg_replace_callback(
+			self::PHYSICAL_TEXT_ALIGN_PATTERN,
+			fn( array $matches ) => $matches[1] . Text_Alignment::to_logical( $matches[2] ),
+			$css
+		) ?? $css;
+	}
+
+	/**
+	 * When every binding of a prop owns only some sides, the sides none of them owns keep their
+	 * value as physical longhands in the custom CSS.
+	 *
+	 * @param string                   $prop
+	 * @param mixed                    $prop_value
+	 * @param Compiled_Style_Binding[] $prop_bindings
+	 * @return array<int, array{property: string, value: string, reason: string}>
+	 */
+	private static function uncovered_side_declarations( string $prop, $prop_value, array $prop_bindings ): array {
+		if ( ! Size_Values::is_sides_prop( $prop_value ) || ! isset( self::SIDE_LONGHAND_FORMATS[ $prop ] ) ) {
+			return [];
+		}
+
+		$covered = [];
+
+		foreach ( $prop_bindings as $binding ) {
+			if ( null === $binding->get_sides() ) {
+				return [];
+			}
+
+			$covered = array_merge( $covered, $binding->get_sides() );
+		}
+
+		$declarations = [];
+
+		foreach ( self::PHYSICAL_SIDES as $side => $physical_side ) {
+			$size = in_array( $side, $covered, true ) ? null : Size_Values::from_prop( $prop_value['value'][ $side ] ?? null );
+
+			if ( null === $size ) {
+				continue;
+			}
+
+			$declarations[] = [
+				'property' => sprintf( self::SIDE_LONGHAND_FORMATS[ $prop ], $physical_side ),
+				'value' => $size['size'] . $size['unit'],
+				'reason' => self::uncovered_side_message( $prop ),
+			];
+		}
+
+		return $declarations;
+	}
+
+	private static function uncovered_side_message( string $property ): string {
+		return sprintf(
+			/* translators: %s: CSS property name */
+			__( 'This Elementor widget stores only some sides of CSS property %s; the other sides were written to the widget custom CSS.', 'elementor' ),
+			$property
+		);
 	}
 
 	/**
@@ -126,7 +206,7 @@ class V3_Map_Style_Writer {
 		$declarations = [];
 
 		foreach ( $this->declaration_parser->parse_declarations( $css ) as $declaration ) {
-			$props = $this->css_converter->convert( $declaration['property'] . ': ' . $declaration['value'] )['props'];
+			$props = $this->css_converter->convert( self::with_logical_text_align( $declaration['property'] . ': ' . $declaration['value'] ) )['props'];
 			$failed = array_intersect_key( $failures, $props );
 
 			if ( ! empty( $failed ) ) {
@@ -211,7 +291,7 @@ class V3_Map_Style_Writer {
 			: $adapter->to_control_value( $prop_value, $binding->get_sides(), $controls[ $binding->get_setting() ] ?? [] );
 
 		if ( null === $control_value ) {
-			return self::unstorable_value_message( $binding, $controls[ $binding->get_setting() ] ?? [] );
+			return self::unstorable_value_message( $binding, $controls[ $binding->get_setting() ] ?? [], $prop_value );
 		}
 
 		$this->store( $ctx, $binding, $controls, $breakpoint, $control_value );
@@ -285,7 +365,7 @@ class V3_Map_Style_Writer {
 	 * sides untouched belongs to another binding of the same prop.
 	 */
 	private function touches_bound_sides( array $prop_value, ?array $sides ): bool {
-		if ( null === $sides || Dimensions_Prop_Type::get_key() !== ( $prop_value['$$type'] ?? null ) ) {
+		if ( null === $sides || ! Size_Values::is_sides_prop( $prop_value ) ) {
 			return true;
 		}
 
@@ -358,19 +438,44 @@ class V3_Map_Style_Writer {
 		);
 	}
 
-	private static function unstorable_value_message( Compiled_Style_Binding $binding, array $control ): string {
+	/**
+	 * @param Compiled_Style_Binding $binding
+	 * @param array                  $control
+	 * @param mixed                  $prop_value
+	 */
+	private static function unstorable_value_message( Compiled_Style_Binding $binding, array $control, $prop_value = null ): string {
 		$message = sprintf(
 			/* translators: %s: CSS property name */
 			__( 'CSS property %s has a value this Elementor widget cannot store.', 'elementor' ),
 			$binding->get_prop()
 		);
 
-		return trim( $message . ' ' . self::storable_values_hint( $binding->get_control_type(), $control ) );
+		$hint = self::has_different_bound_sides( $binding, $prop_value )
+			? __( 'This Elementor widget stores one length for all sides, so use a single value.', 'elementor' )
+			: self::storable_values_hint( $binding->get_control_type(), $control );
+
+		return trim( $message . ' ' . $hint );
+	}
+
+	/**
+	 * @param Compiled_Style_Binding $binding
+	 * @param mixed                  $prop_value
+	 */
+	private static function has_different_bound_sides( Compiled_Style_Binding $binding, $prop_value ): bool {
+		$sides = $binding->get_sides() ?? [];
+
+		if ( count( $sides ) < 2 || ! Size_Values::is_sides_prop( $prop_value ) ) {
+			return false;
+		}
+
+		$sizes = array_map( fn( string $side ) => Size_Values::from_prop( $prop_value['value'][ $side ] ?? null ), $sides );
+
+		return in_array( null, $sizes, true ) || ! Size_Values::are_equal( $sizes );
 	}
 
 	private static function storable_values_hint( string $control_type, array $control ): string {
 		if ( Controls_Manager::BOX_SHADOW === $control_type ) {
-			return __( 'Box shadow lengths must be px.', 'elementor' );
+			return __( 'Box shadow lengths, offsets and blur must be px, and the color must be a valid color.', 'elementor' );
 		}
 
 		$options = array_filter( array_map( 'strval', array_keys( $control['options'] ?? [] ) ), fn( string $option ) => '' !== $option );

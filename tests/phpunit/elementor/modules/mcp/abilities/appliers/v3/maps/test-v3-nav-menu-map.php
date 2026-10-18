@@ -315,7 +315,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 			[
 				'letter-spacing: 1px (toggle): CSS property letter-spacing is not supported by this Elementor widget.',
 				'font-weight: 650 (main-menu): CSS property font-weight has a value this Elementor widget cannot store. Allowed values: 100, 200, 300, 400, 500, 600, 700, 800, 900, normal, bold.',
-				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths must be px.',
+				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths, offsets and blur must be px, and the color must be a valid color.',
 			],
 			$result['fallback_notes']
 		);

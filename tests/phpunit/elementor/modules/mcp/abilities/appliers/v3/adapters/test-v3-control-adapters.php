@@ -282,4 +282,24 @@ class Test_V3_Control_Adapters extends TestCase {
 		$this->assertNull( $rejected );
 		$this->assertSame( String_Prop_Type::generate( '700' ), $read );
 	}
+
+	public function test_string_choice_adapter__stores_logical_alignment_on_physical_options() {
+		// Arrange.
+		$adapter = new String_Choice_Adapter();
+		$control = [
+			'options' => [
+				'left' => 'Left',
+				'center' => 'Center',
+				'right' => 'Right',
+			],
+		];
+
+		// Act.
+		$start = $adapter->to_control_value( String_Prop_Type::generate( 'start' ), null, $control );
+		$end = $adapter->to_control_value( String_Prop_Type::generate( 'end' ), null, $control );
+
+		// Assert.
+		$this->assertSame( 'left', $start );
+		$this->assertSame( 'right', $end );
+	}
 }

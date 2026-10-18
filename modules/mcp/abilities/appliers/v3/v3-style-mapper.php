@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
@@ -154,7 +155,7 @@ class V3_Style_Mapper {
 		);
 
 		foreach ( $routed['dropped'] as $dropped ) {
-			$ctx->warn( self::dropped_block_message( $dropped, array_keys( $targets ), $map->get_default_target() ) );
+			$ctx->warn( self::dropped_block_message( $dropped, $targets, $map->get_default_target() ) );
 		}
 
 		foreach ( $routed['blocks'] as $block ) {
@@ -242,24 +243,27 @@ class V3_Style_Mapper {
 
 	/**
 	 * @param array{selector: string, reason: string} $dropped
-	 * @param string[]                                $aliases
+	 * @param array<string, Compiled_Style_Target>    $targets
 	 * @param string                                  $default_target
 	 */
-	private static function dropped_block_message( array $dropped, array $aliases, string $default_target ): string {
+	private static function dropped_block_message( array $dropped, array $targets, string $default_target ): string {
 		switch ( $dropped['reason'] ) {
 			case V3_Style_Target_Router::REASON_UNKNOWN_TARGET:
 				return sprintf(
 					/* translators: 1: CSS block selector, 2: Comma-separated style target names */
 					__( 'Style target %1$s is not supported by this Elementor widget and was dropped. Valid style targets: %2$s.', 'elementor' ),
 					$dropped['selector'],
-					implode( ', ', $aliases )
+					implode( ', ', array_keys( $targets ) )
 				);
 			case V3_Style_Target_Router::REASON_UNKNOWN_STATE:
+				$alias = self::target_of_selector( $dropped['selector'], $default_target );
+
 				return sprintf(
-					/* translators: 1: CSS block selector, 2: Style target name */
-					__( 'The state in %1$s is not supported by style target %2$s and was dropped.', 'elementor' ),
+					/* translators: 1: CSS block selector, 2: Style target name, 3: Comma-separated states */
+					__( 'The state in %1$s is not supported by style target %2$s and was dropped. Supported states: %3$s.', 'elementor' ),
 					$dropped['selector'],
-					self::target_of_selector( $dropped['selector'], $default_target )
+					$alias,
+					implode( ', ', isset( $targets[ $alias ] ) ? $targets[ $alias ]->get_states() : [ Style_Target::DEFAULT_STATE ] )
 				);
 			default:
 				return sprintf(

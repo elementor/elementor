@@ -105,6 +105,68 @@ class Test_V3_Inactive_Condition_Warnings extends TestCase {
 		$this->assertSame( 'underline', $received_values['pointer'] );
 	}
 
+	public function test_collect__groups_settings_hidden_by_the_same_condition() {
+		// Arrange.
+		$controls = array_merge( $this->controls(), [
+			'pointer_color' => [
+				'type' => 'color',
+				'condition' => [ 'layout!' => 'dropdown' ],
+			],
+		] );
+
+		// Act.
+		$messages = V3_Inactive_Condition_Warnings::collect( [ 'pointer', 'pointer_color' ], [ 'layout' => 'dropdown' ], $controls, $this->layout_visibility() );
+
+		// Assert.
+		$this->assertSame(
+			[ "Settings pointer, pointer_color were saved but only take effect when layout is not 'dropdown'." ],
+			$messages
+		);
+	}
+
+	public function test_collect__names_only_the_unmet_condition_terms() {
+		// Arrange.
+		$controls = array_merge( $this->controls(), [
+			'font_size' => [
+				'type' => 'slider',
+				'condition' => [
+					'layout!' => 'dropdown',
+					'typography' => 'custom',
+				],
+			],
+		] );
+		$is_visible = function ( array $control, array $values ): bool {
+			$condition = $control['condition'];
+			$layout_holds = ! isset( $condition['layout!'] ) || 'dropdown' !== $values['layout'];
+			$typography_holds = ! isset( $condition['typography'] ) || 'custom' === ( $values['typography'] ?? null );
+
+			return $layout_holds && $typography_holds;
+		};
+
+		// Act.
+		$messages = V3_Inactive_Condition_Warnings::collect( [ 'font_size' ], [ 'layout' => 'dropdown', 'typography' => 'custom' ], $controls, $is_visible );
+
+		// Assert.
+		$this->assertSame(
+			[ "Setting font_size was saved but only takes effect when layout is not 'dropdown'." ],
+			$messages
+		);
+	}
+
+	public function test_collect__labels_style_settings_by_their_css() {
+		// Arrange.
+		$labels = [ 'pointer' => 'border-color on wrapper:hover' ];
+
+		// Act.
+		$messages = V3_Inactive_Condition_Warnings::collect( [ 'pointer' ], [ 'layout' => 'dropdown' ], $this->controls(), $this->layout_visibility(), $labels );
+
+		// Assert.
+		$this->assertSame(
+			[ "Setting border-color on wrapper:hover was saved but only takes effect when layout is not 'dropdown'." ],
+			$messages
+		);
+	}
+
 	public function test_collect__ignores_written_keys_without_conditions_or_controls() {
 		// Arrange.
 		$never_visible = fn() => false;

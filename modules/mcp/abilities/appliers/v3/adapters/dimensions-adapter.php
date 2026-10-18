@@ -89,6 +89,8 @@ class Dimensions_Adapter implements V3_Control_Adapter {
 			$sizes[ $physical ] = $size;
 		}
 
+		$sizes = Size_Values::with_zero_in_shared_unit( $sizes );
+
 		return $this->have_same_unit( $sizes ) ? $sizes : null;
 	}
 
