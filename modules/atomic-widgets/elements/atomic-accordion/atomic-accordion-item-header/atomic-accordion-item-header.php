@@ -5,9 +5,11 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accor
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
@@ -18,6 +20,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -95,6 +98,10 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	 */
 	public static function get_computed_html_tag( array $settings ): string {
 		return Html_Tag_Computer::compute( $settings, 'summary' );
+	}
+
+	protected function define_atomic_style_states(): array {
+		return [ Style_States::get_class_states_map()['selected'] ];
 	}
 
 	protected function define_base_styles(): array {
@@ -251,6 +258,15 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 		}
 
 		return $element;
+	}
+
+	protected function build_template_context(): array {
+		$item_context = Render_Context::get( Atomic_Accordion_Item::class );
+		$is_open = $item_context['is_open'] ?? false;
+
+		return array_merge( $this->build_base_template_context(), [
+			'is_open' => $is_open,
+		] );
 	}
 
 	protected function get_templates(): array {
