@@ -80,11 +80,27 @@ class Mcp_Media_Upload_REST_API {
 		$previous_user = $current_user_id;
 		wp_set_current_user( $user_id );
 
-		if ( ! current_user_can( 'upload_files' ) ) {
-			if ( $previous_user > 0 ) {
-				wp_set_current_user( $previous_user );
-			}
+		try {
+			$result = $this->process_upload( $request );
+		} finally {
+			wp_set_current_user( $previous_user );
+		}
 
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$response = new \WP_REST_Response( $result, \WP_Http::CREATED );
+		$response->header( 'Cache-Control', 'no-store' );
+
+		return $response;
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	private function process_upload( \WP_REST_Request $request ) {
+		if ( ! current_user_can( 'upload_files' ) ) {
 			return new \WP_Error(
 				'rest_forbidden',
 				__( 'You do not have permission to upload files.', 'elementor' ),
@@ -96,19 +112,11 @@ class Mcp_Media_Upload_REST_API {
 			$request->get_header( 'content-length' )
 		);
 		if ( $content_length_error ) {
-			if ( $previous_user > 0 ) {
-				wp_set_current_user( $previous_user );
-			}
-
 			return $content_length_error;
 		}
 
 		$stream_result = $this->stream_body_to_temp( $request );
 		if ( is_wp_error( $stream_result ) ) {
-			if ( $previous_user > 0 ) {
-				wp_set_current_user( $previous_user );
-			}
-
 			return $stream_result;
 		}
 
@@ -117,9 +125,6 @@ class Mcp_Media_Upload_REST_API {
 			$actual_sha = hash_file( 'sha256', $stream_result['tmp_name'] );
 			if ( ! hash_equals( strtolower( $expected_sha ), strtolower( (string) $actual_sha ) ) ) {
 				wp_delete_file( $stream_result['tmp_name'] );
-				if ( $previous_user > 0 ) {
-					wp_set_current_user( $previous_user );
-				}
 
 				return new \WP_Error(
 					'sha256_mismatch',
@@ -139,7 +144,7 @@ class Mcp_Media_Upload_REST_API {
 		$title = $this->read_header( $request, 'X-Elementor-Mcp-Upload-Title' );
 		$alt = $this->read_header( $request, 'X-Elementor-Mcp-Upload-Alt' );
 
-		$result = Media_Attachment_Service::create_from_temp_file(
+		return Media_Attachment_Service::create_from_temp_file(
 			[
 				'tmp_name' => $stream_result['tmp_name'],
 				'name' => sanitize_file_name( $filename ),
@@ -148,19 +153,6 @@ class Mcp_Media_Upload_REST_API {
 			'' !== $alt ? $alt : null,
 			null
 		);
-
-		if ( $previous_user > 0 ) {
-			wp_set_current_user( $previous_user );
-		}
-
-		if ( is_wp_error( $result ) ) {
-			return $result;
-		}
-
-		$response = new \WP_REST_Response( $result, \WP_Http::CREATED );
-		$response->header( 'Cache-Control', 'no-store' );
-
-		return $response;
 	}
 
 	/**
