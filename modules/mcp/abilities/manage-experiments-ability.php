@@ -132,11 +132,15 @@ class Manage_Experiments_Ability extends Abstract_Ability {
 	}
 
 	private function enable_atomic_editor(): array {
+		$was_active = Experiments_Catalog::atomic_editor_status()['active'];
+
 		( new Opt_In() )->opt_in_v4();
 
-		return $this->atomic_editor_response() + [
-			'llm_instructions' => __( 'The Atomic Editor is now on. Refresh your tool list to use the V4 tools. Editor tabs the user already has open must be reloaded.', 'elementor' ),
-		];
+		$instructions = $was_active
+			? __( 'The Atomic Editor was already on. Nothing else to do.', 'elementor' )
+			: __( 'The Atomic Editor is now on. Refresh your tool list to use the V4 tools. Editor tabs the user already has open must be reloaded.', 'elementor' );
+
+		return $this->atomic_editor_response() + [ 'llm_instructions' => $instructions ];
 	}
 
 	private function disable_atomic_editor(): array {

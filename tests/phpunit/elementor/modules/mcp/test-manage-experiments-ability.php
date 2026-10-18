@@ -123,17 +123,36 @@ class Test_Manage_Experiments_Ability extends Elementor_Test_Base {
 	}
 
 	public function test_execute__enable_atomic_editor_activates_the_whole_opt_in_bundle() {
+		// Arrange
+		$experiments = Plugin::$instance->experiments;
+
+		foreach ( Opt_In::OPT_IN_FEATURES as $name ) {
+			$experiments->set_feature_state( $name, Experiments_Manager::STATE_INACTIVE );
+		}
+
 		// Act
 		$result = $this->ability->execute( [ 'action' => 'enable_atomic_editor' ] );
 
 		// Assert
 		$this->assertTrue( $result['success'] );
 		$this->assertTrue( $result['atomic_editor']['active'] );
-		$this->assertNotEmpty( $result['llm_instructions'] );
+		$this->assertStringContainsString( 'is now on', $result['llm_instructions'] );
 
 		foreach ( Opt_In::OPT_IN_FEATURES as $name ) {
-			$this->assertTrue( Plugin::$instance->experiments->is_feature_active( $name ), $name );
+			$this->assertSame( Experiments_Manager::STATE_ACTIVE, $experiments->get_features( $name )['state'], $name );
 		}
+	}
+
+	public function test_execute__enable_atomic_editor_when_already_on_says_so() {
+		// Arrange
+		$this->ability->execute( [ 'action' => 'enable_atomic_editor' ] );
+
+		// Act
+		$result = $this->ability->execute( [ 'action' => 'enable_atomic_editor' ] );
+
+		// Assert
+		$this->assertTrue( $result['atomic_editor']['active'] );
+		$this->assertStringContainsString( 'already on', $result['llm_instructions'] );
 	}
 
 	public function test_execute__disable_atomic_editor_deactivates_the_opt_out_bundle() {
