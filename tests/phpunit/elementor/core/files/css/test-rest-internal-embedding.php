@@ -72,9 +72,21 @@ class Test_Rest_Internal_Embedding extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'GET', '/wp/v2/pages/' . $post_id );
 
+		// Ignore only WP core E_DEPRECATED from wp-includes (not Elementor output).
 		ob_start();
-		$response = rest_do_request( $request );
-		$unexpected_output = ob_get_clean();
+		$previous_handler = set_error_handler( function ( $errno, $errstr, $errfile, $errline ) use ( &$previous_handler ) {
+			if ( E_DEPRECATED === $errno && 0 === strpos( wp_normalize_path( $errfile ), wp_normalize_path( ABSPATH . WPINC ) ) ) {
+				return true;
+			}
+
+			return $previous_handler ? $previous_handler( $errno, $errstr, $errfile, $errline ) : false;
+		} );
+		try {
+			$response = rest_do_request( $request );
+		} finally {
+			restore_error_handler();
+			$unexpected_output = ob_get_clean();
+		}
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '', $unexpected_output, 'Post CSS must not be echoed outside the REST JSON payload.' );
