@@ -41,7 +41,7 @@ class Manager extends Base_Object {
 
 	private $features;
 
-	private $state_change_hooked_features = [];
+	private $features_being_saved = [];
 
 	/**
 	 * Add Feature
@@ -98,6 +98,10 @@ class Manager extends Base_Object {
 			$feature_option_key = $this->get_feature_option_key( $options['name'] );
 
 			$on_state_change_callback = function( $old_state, $new_state ) use ( $experimental_data, $feature_option_key ) {
+				if ( isset( $this->features_being_saved[ $experimental_data['name'] ] ) ) {
+					return;
+				}
+
 				try {
 					$this->on_feature_state_change( $experimental_data, $new_state, $old_state );
 				} catch ( Exceptions\Dependency_Exception $e ) {
@@ -114,8 +118,6 @@ class Manager extends Base_Object {
 
 			add_action( 'add_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
 			add_action( 'update_option_' . $feature_option_key, $on_state_change_callback, 10, 2 );
-
-			$this->state_change_hooked_features[ $options['name'] ] = true;
 		}
 
 		do_action( 'elementor/experiments/feature-registered', $this, $experimental_data );
@@ -935,17 +937,19 @@ class Manager extends Base_Object {
 
 	private function write_feature_state( string $feature_name, string $state ): void {
 		$feature = $this->features[ $feature_name ];
-		$old_state = $feature['state'];
+		$this->features_being_saved[ $feature_name ] = true;
 
-		update_option( $this->get_feature_option_key( $feature_name ), $state );
+		try {
+			update_option( $this->get_feature_option_key( $feature_name ), $state );
+		} finally {
+			unset( $this->features_being_saved[ $feature_name ] );
+		}
 
-		$is_handled_by_option_hooks = isset( $this->state_change_hooked_features[ $feature_name ] );
-
-		if ( ! $feature['mutable'] || $is_handled_by_option_hooks ) {
+		if ( ! $feature['mutable'] ) {
 			return;
 		}
 
-		$this->on_feature_state_change( $feature, $state, $old_state );
+		$this->on_feature_state_change( $feature, $state, $feature['state'] );
 	}
 
 	private function should_show_hidden() {

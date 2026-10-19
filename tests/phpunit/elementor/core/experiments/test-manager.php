@@ -967,7 +967,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 	public function test_set_feature_state__runs_state_change_side_effects_once_outside_admin() {
 		// Arrange.
-		$this->set_front_screen();
+		$this->set_screen( 'front' );
 		$this->add_test_feature( [ 'name' => 'test_feature_side_effects' ] );
 		$fired = 0;
 
@@ -989,7 +989,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 	public function test_set_feature_state__throws_and_keeps_option_when_dependency_is_inactive() {
 		// Arrange.
-		$this->set_front_screen();
+		$this->set_screen( 'front' );
 		$this->add_test_feature( [ 'name' => 'test_dependency', 'default' => Experiments_Manager::STATE_INACTIVE ] );
 		$this->add_test_feature( [ 'name' => 'test_dependant', 'dependencies' => [ 'test_dependency' ] ] );
 
@@ -1009,7 +1009,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 	public function test_set_feature_state__deactivating_a_dependency_deactivates_its_active_dependants() {
 		// Arrange.
-		$this->set_front_screen();
+		$this->set_screen( 'front' );
 		$this->add_test_feature( [ 'name' => 'test_dependency', 'default' => Experiments_Manager::STATE_ACTIVE ] );
 		$this->add_test_feature( [
 			'name' => 'test_dependant',
@@ -1045,11 +1045,50 @@ class Test_Manager extends Elementor_Test_Base {
 		}
 	}
 
-	private function set_front_screen() {
+	public function test_set_feature_state__runs_state_change_side_effects_once_when_admin_option_hooks_are_attached() {
+		// Arrange.
+		$this->set_screen( 'dashboard' );
+		$this->add_test_feature( [ 'name' => 'test_feature_admin_side_effects' ] );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_feature_admin_side_effects', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_feature_admin_side_effects', Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertSame( 1, $fired );
+		$this->assertTrue( $this->experiments->is_feature_active( 'test_feature_admin_side_effects' ) );
+	}
+
+	public function test_set_feature_state__runs_state_change_side_effects_when_admin_option_hooks_were_removed() {
+		// Arrange.
+		$this->set_screen( 'dashboard' );
+		$this->add_test_feature( [ 'name' => 'test_feature_removed_hooks' ] );
+		$option_key = $this->experiments->get_feature_option_key( 'test_feature_removed_hooks' );
+		remove_all_actions( 'add_option_' . $option_key );
+		remove_all_actions( 'update_option_' . $option_key );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_feature_removed_hooks', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_feature_removed_hooks', Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertSame( 1, $fired );
+		$this->assertTrue( $this->experiments->is_feature_active( 'test_feature_removed_hooks' ) );
+	}
+
+	private function set_screen( string $screen_id ) {
 		global $current_screen;
 
 		$this->screen_backup = $current_screen;
-		set_current_screen( 'front' );
+		set_current_screen( $screen_id );
 	}
 
 	/**
