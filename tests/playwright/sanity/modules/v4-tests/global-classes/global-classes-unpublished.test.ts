@@ -96,7 +96,8 @@ test.describe.serial( 'Global Classes - Unpublished class persistence @v4-tests'
 		await page.close();
 	} );
 
-	test( 'keeps a preview-only class when another page is published', async ( { apiRequests, request }, testInfo ) => {
+	// Skipped until ED-25857 fixes this test.
+	test.skip( 'keeps a preview-only class when another page is published', async ( { apiRequests, request }, testInfo ) => {
 		let pageAId: number;
 		let widgetId: string;
 

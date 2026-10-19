@@ -8,9 +8,11 @@ import { DesignSystemPanelContent } from '../design-system-panel-content';
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 
 const mockDefaultStylesTabEmbedded = jest.fn();
+const mockTrackDefaultStyles = jest.fn();
 
 jest.mock( '@elementor/editor-default-styles', () => ( {
 	DefaultStylesTabEmbedded: ( props: unknown ) => mockDefaultStylesTabEmbedded( props ),
+	trackDefaultStyles: ( ...args: unknown[] ) => mockTrackDefaultStyles( ...args ),
 } ) );
 
 jest.mock( '../design-system-header-menu', () => ( {
@@ -286,6 +288,19 @@ describe( 'DesignSystemPanelContent', () => {
 				event: 'classManagerOpened',
 				source: 'system-panel',
 			} );
+		} );
+
+		it( 'should track panelOpened when the Defaults tab is clicked', () => {
+			// Arrange
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			// Act
+			fireEvent.click( screen.getByRole( 'tab', { name: 'Defaults' } ) );
+
+			// Assert
+			expect( mockTrackDefaultStyles ).toHaveBeenCalledWith( { event: 'panelOpened' } );
 		} );
 
 		it( 'should track open_variables_manager with system-panel when Variables tab is clicked', () => {

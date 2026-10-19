@@ -2,11 +2,11 @@ import * as React from 'react';
 import { type JSX } from 'react';
 import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { GlobalDialog } from '@elementor/editor-ui';
+import { GlobalDialog, ThemeProvider } from '@elementor/editor-ui';
 import { __privateDispatchReadyEvent as dispatchReadyEvent } from '@elementor/editor-v1-adapters';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __StoreProvider as StoreProvider } from '@elementor/store';
-import { DirectionProvider, ThemeProvider } from '@elementor/ui';
+import { DirectionProvider } from '@elementor/ui';
 
 import Shell from './components/shell';
 import { ensureCurrentUser } from './ensure-current-user';
