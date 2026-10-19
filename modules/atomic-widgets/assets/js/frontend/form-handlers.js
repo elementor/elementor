@@ -390,9 +390,9 @@ async function collectBeforeSubmitFields( form ) {
 		},
 	} ) );
 
-	const fields = await Promise.all( pendingFields );
+	const resolved = await Promise.all( pendingFields );
 
-	return Object.assign( {}, ...fields );
+	return Object.assign( {}, ...resolved.filter( ( fields ) => fields && 'object' === typeof fields ) );
 }
 
 async function submitAtomicForm( payload ) {
