@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Update_Media_Attachment_Ability extends Abstract_Ability {
 
+	// 2^53 - 1 (JS Number.MAX_SAFE_INTEGER): the largest integer a JSON client can send without losing precision.
+	const MAX_ATTACHMENT_ID = 9007199254740991;
+
 	protected function get_ability_id(): string {
 		return 'elementor/update-media-attachment';
 	}
@@ -130,7 +133,7 @@ class Update_Media_Attachment_Ability extends Abstract_Ability {
 			return $value;
 		}
 
-		if ( is_float( $value ) && is_finite( $value ) && $value >= 1 && $value <= 9007199254740991 && floor( $value ) === $value ) {
+		if ( is_float( $value ) && is_finite( $value ) && $value >= 1 && $value <= self::MAX_ATTACHMENT_ID && floor( $value ) === $value ) {
 			return (int) $value;
 		}
 
