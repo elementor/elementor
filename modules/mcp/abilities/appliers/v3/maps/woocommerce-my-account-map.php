@@ -18,7 +18,8 @@ $hover = 'hover';
 $active = 'active';
 
 $account_tabs = Style_Target::make( 'tabs' )
-	->label( 'Account navigation tabs; tabs:active styles the current tab' )
+	->label( 'Account tabs' )
+	->description( 'Links to the account pages (dashboard, orders, downloads, addresses, account details, logout), shown only to logged-in customers; logged-out visitors see the login form instead. tabs_layout places them in a column beside the content (vertical) or in a row above it (horizontal). The active state styles the tab of the page being viewed, not a pressed tab.' )
 	->selector( '.woocommerce-MyAccount-navigation ul li a' )
 	->defaults( [
 		'font-size' => '14px',
@@ -46,7 +47,8 @@ $account_tabs = Style_Target::make( 'tabs' )
 	->bind( 'padding', V3_Control::bind_to( 'tabs_padding' )->responsive() );
 
 $sections = Style_Target::make( 'sections' )
-	->label( 'Content sections of each tab' )
+	->label( 'Content sections' )
+	->description( 'Boxes around the content of each account page, and around the login and register forms for logged-out visitors. The register form shows only while store registration is enabled. Not applied to a custom dashboard template, or to the empty orders and downloads messages.' )
 	->selector( '.e-my-account-tab__dashboard:not(.e-my-account-tab__dashboard--custom) .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__orders .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__downloads .woocommerce-MyAccount-content-wrapper, address, .e-my-account-tab__edit-account .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__view-order .order_details, .woocommerce-form-login, .woocommerce-form-register, .woocommerce-ResetPassword, .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper' )
 	->with( Box_Shadow_Group::from_prefix( 'my_account_sections_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'my_account_sections_background_color' ) )
@@ -58,31 +60,36 @@ $sections = Style_Target::make( 'sections' )
 
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
+	->description( 'Headings inside the account pages and the login and register forms.' )
 	->selector( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) h2, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) h3' )
 	->with( Typography_Group::from_prefix( 'section_titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'typography_section_titles_color' ) );
 
 $text = Style_Target::make( 'text' )
 	->label( 'General text' )
+	->description( 'Paragraphs, addresses and form legends inside the account pages.' )
 	->selector( '.woocommerce-MyAccount-content > div > p, address, .woocommerce-EditAccountForm fieldset legend, .woocommerce-ResetPassword p:nth-child(1), .woocommerce-OrderUpdate' )
 	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'general_text_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'general_text_color' ) );
 
 $links = Style_Target::make( 'links' )
-	->label( 'Links inside the content' )
+	->label( 'Links' )
+	->description( 'Links inside the account page content. hover styles them under the pointer.' )
 	->selector( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce a' )
 	->bind( 'color', V3_Control::bind_to( 'links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'links_hover_color' ), $hover );
 
 $labels = Style_Target::make( 'labels' )
-	->label( 'Form field labels' )
+	->label( 'Field labels' )
+	->description( 'Labels of the login, register, account details and address fields.' )
 	->selector( '.woocommerce-form-row label, .woocommerce-address-fields label' )
 	->with( Typography_Group::from_prefix( 'forms_label_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'forms_label_color' ) );
 
 $buttons = Style_Target::make( 'buttons' )
-	->label( 'Form buttons (save, login, register)' )
+	->label( 'Form buttons' )
+	->description( 'Submit buttons of the account forms: login, register, reset password, save account details and addresses, and add payment method. hover styles them under the pointer.' )
 	->selector( 'button.button, .login .button, .register .button, .woocommerce-ResetPassword .button, #add_payment_method #payment #place_order' )
 	->with( Typography_Group::from_prefix( 'forms_button_typography' ) )
 	->with( Border_Group::from_prefix( 'forms_buttons_border' ) )
@@ -97,13 +104,15 @@ $buttons = Style_Target::make( 'buttons' )
 	->bind( 'padding', V3_Control::bind_to( 'forms_buttons_padding' )->responsive() );
 
 $table_items = Style_Target::make( 'table-items' )
-	->label( 'Rows of the orders and downloads tables' )
+	->label( 'Table rows' )
+	->description( 'Cells of the orders, downloads, order details and payment methods tables. Present only on the account pages that have those tables, and only once the customer has orders or downloads.' )
 	->selector( '.e-my-account-tab__orders tbody td, .e-my-account-tab__downloads tbody td, .woocommerce-table--order-downloads tbody td, .woocommerce-table--order-details td a, .product-quantity, td.product-total, td.payment-method-method, td.payment-method-expires' )
 	->with( Typography_Group::from_prefix( 'tables_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'tables_items_color' ) );
 
 $table_buttons = Style_Target::make( 'table-buttons' )
-	->label( 'Buttons inside the tables (view, pay, download)' )
+	->label( 'Table buttons' )
+	->description( 'Action buttons inside the tables, such as View, Pay and Download, and the pagination buttons of long order lists. hover styles them under the pointer.' )
 	->selector( '.shop_table .button, .order-again .button, .woocommerce-pagination .button' )
 	->with( Typography_Group::from_prefix( 'tables_button_typography' ) )
 	->with( Background_Group::from_prefix( 'tables_button_normal_background' ) )
@@ -125,4 +134,4 @@ return V3_Widget_Map::make( 'woocommerce-my-account' )
 		'tabs_layout' => V3_Setting::bind_to( 'tabs_layout' )->enum_from_control(),
 	] )
 	->default_target( $account_tabs )
-	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.woocommerce-Input' ), $buttons, $table_items, $table_buttons );
+	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.woocommerce-Input', 'Inputs of the login, register and account details forms.' ), $buttons, $table_items, $table_buttons );

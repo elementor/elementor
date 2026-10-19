@@ -13,14 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $image = Style_Target::make( 'image' )
-	->label( 'Main product image viewport; margin-bottom spacing applies when thumbnails follow' )
+	->label( 'Main image' )
+	->description( 'The large product image, which slides between images when the product has a gallery. Its bottom margin is the space above the thumbnails and only applies while thumbnails are shown. sale_flash adds a Sale badge on it for products on sale.' )
 	->selector( '.flex-viewport' )
 	->with( Border_Group::from_prefix( 'image_border' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'image_border_radius' )->responsive() )
 	->bind( 'margin', V3_Control::bind_to( 'spacing' )->sides( 'block-end' ) );
 
 $thumbs = Style_Target::make( 'thumbs' )
-	->label( 'Gallery thumbnails' )
+	->label( 'Thumbnails' )
+	->description( 'Small images under the main image that switch it on click. Only shown when the product has gallery images besides its main image.' )
 	->selector( '.flex-control-thumbs img' )
 	->with( Border_Group::from_prefix( 'thumbs_border' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'thumbs_border_radius' )->responsive() );

@@ -17,7 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
-	->label( 'Cart sections (order summary, coupon, totals)' )
+	->label( 'Cart sections' )
+	->description( 'Boxes around the product table, the coupon form and the cart totals. cart_layout puts the totals beside the products (two-column) or below them (one-column). The coupon box shows only while store coupons are enabled and section_coupon_display is on. With an empty cart the widget shows the WooCommerce empty-cart message instead.' )
 	->selector( '.e-cart-section' )
 	->defaults( [
 		'background-color' => '#fff',
@@ -32,7 +33,8 @@ $sections = Style_Target::make( 'sections' )
 	->bind( 'padding', V3_Control::bind_to( 'sections_padding' )->responsive() );
 
 $titles = Style_Target::make( 'titles' )
-	->label( 'Section titles' )
+	->label( 'Totals title' )
+	->description( 'The Cart totals heading. It is the only heading in the cart widget.' )
 	->selector( '.cart_totals h2' )
 	->defaults( [
 		'font-size' => '14px',
@@ -43,19 +45,22 @@ $titles = Style_Target::make( 'titles' )
 	->bind( 'color', V3_Control::bind_to( 'sections_title_color' ) );
 
 $text = Style_Target::make( 'text' )
-	->label( 'Section text; links have their own target' )
+	->label( 'Section text' )
+	->description( 'Body text in the totals, such as the shipping destination and messages, and the Calculate shipping link, which opens the shipping calculator on click. Other links use the links target.' )
 	->selector( '.e-cart-content, .woocommerce-shipping-destination, .shipping-calculator-button' )
 	->with( Typography_Group::from_prefix( 'sections_descriptions_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_descriptions_color' ) );
 
 $links = Style_Target::make( 'links' )
-	->label( 'Links inside the sections' )
+	->label( 'Links' )
+	->description( 'Links inside the cart, except product names and buttons, which have their own targets. hover styles them under the pointer.' )
 	->selector( '.woocommerce a:not(.add_to_cart_button):not(.restore-item):not(.wc-backward):not(.wc-forward)' )
 	->bind( 'color', V3_Control::bind_to( 'links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'links_hover_color' ), $hover );
 
 $buttons = Style_Target::make( 'buttons' )
-	->label( 'Form buttons (update cart, apply coupon, update shipping)' )
+	->label( 'Form buttons' )
+	->description( 'The Update cart, Apply coupon and shipping calculator Update buttons. Apply coupon shows only with the coupon box, and its text comes from apply_coupon_button_text. hover styles them under the pointer.' )
 	->selector( '.shop_table .button' )
 	->defaults( [
 		'font-size' => '14px',
@@ -77,25 +82,29 @@ $buttons = Style_Target::make( 'buttons' )
 	->bind( 'padding', V3_Control::bind_to( 'forms_buttons_padding' )->responsive() );
 
 $products = Style_Target::make( 'products' )
-	->label( 'Product rows in the order summary table' )
+	->label( 'Product rows' )
+	->description( 'Cells of the product table, including the price, subtotal and quantity fields of each cart item. Only present while the cart has items.' )
 	->selector( '.cart td span, .cart td, .input-text.qty' )
 	->with( Typography_Group::from_prefix( 'order_summary_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_summary_color' ) );
 
 $product_links = Style_Target::make( 'product-links' )
-	->label( 'Product name links in the order summary' )
+	->label( 'Product names' )
+	->description( 'Product name links in the product table. hover styles them under the pointer.' )
 	->selector( '.woocommerce .product-name a' )
 	->bind( 'color', V3_Control::bind_to( 'product_link_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'product_link_hover_color' ), $hover );
 
 $totals_target = Style_Target::make( 'totals' )
-	->label( 'Cart totals rows' )
+	->label( 'Totals rows' )
+	->description( 'Rows of the cart totals table: subtotal, shipping, taxes and total.' )
 	->selector( '.cart_totals .shop_table td:before, .cart_totals .shop_table td .woocommerce-Price-amount' )
 	->with( Typography_Group::from_prefix( 'totals_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'totals_color' ) );
 
 $checkout_button = Style_Target::make( 'checkout-button' )
-	->label( '"Proceed to checkout" button' )
+	->label( 'Checkout button' )
+	->description( 'The main button under the cart totals that goes to checkout. Its text comes from checkout_button_text.' )
 	->selector( '.checkout-button' )
 	->defaults( [
 		'font-size' => '15px',
@@ -123,4 +132,4 @@ return V3_Widget_Map::make( 'woocommerce-cart' )
 		'checkout_button_text' => V3_Setting::bind_to( 'checkout_button_text' )->string()->dynamic(),
 	] )
 	->default_target( $sections )
-	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text' ), $buttons, $products, $product_links, $totals_target, $checkout_button );
+	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text', 'The coupon code input. Present only while the coupon box is shown. Quantity fields belong to the products target.' ), $buttons, $products, $product_links, $totals_target, $checkout_button );

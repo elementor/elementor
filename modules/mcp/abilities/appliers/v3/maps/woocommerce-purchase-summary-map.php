@@ -16,7 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
-	->label( 'Summary sections (payment details, bank details, order details, addresses)' )
+	->label( 'Summary sections' )
+	->description( 'Boxes around the order details table, the downloads table and the billing and shipping addresses on the order received page. The widget only renders that page content after a real order, or in the editor. Addresses show only to the customer who placed the order, and the shipping address only for orders that ship.' )
 	->selector( '.shop_table, address' )
 	->with( Box_Shadow_Group::from_prefix( 'sections_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'sections_background_color' ) )
@@ -27,7 +28,8 @@ $sections = Style_Target::make( 'sections' )
 	->bind( 'padding', V3_Control::bind_to( 'sections_padding' )->responsive() );
 
 $message = Style_Target::make( 'message' )
-	->label( 'Order received confirmation message' )
+	->label( 'Confirmation message' )
+	->description( 'The thank-you line at the top of the order received page, with the text from confirmation_message_text. Hidden while confirmation_message_active is off.' )
 	->selector( '.woocommerce-thankyou-order-received' )
 	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'confirmation_message_typography' ) )
@@ -35,32 +37,37 @@ $message = Style_Target::make( 'message' )
 
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
+	->description( 'Headings of the order received sections, such as order details, downloads and addresses. Each shows only with its section.' )
 	->selector( 'h2' )
 	->defaults( [ 'color' => '#000' ] )
 	->with( Typography_Group::from_prefix( 'titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'titles_color' ) );
 
 $text = Style_Target::make( 'text' )
-	->label( 'General text such as addresses' )
+	->label( 'General text' )
+	->description( 'Body text such as the billing and shipping addresses and product purchase notes. Purchase notes show only on processing or completed orders.' )
 	->selector( 'address, .product-purchase-note, .woocommerce-thankyou-order-details + p' )
 	->defaults( [ 'color' => '#69727d' ] )
 	->with( Typography_Group::from_prefix( 'general_text_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'general_text_color' ) );
 
 $order_items = Style_Target::make( 'order-items' )
-	->label( 'Product rows in the order details table' )
+	->label( 'Order rows' )
+	->description( 'Cells of the order details table: product names with quantity, line totals and order totals, plus the downloads table cells when the order has downloadable products.' )
 	->selector( '.product-quantity, .woocommerce-table--order-details td a, td.product-total, td.download-product, td.download-remaining, td.download-expires, td.download-file' )
 	->with( Typography_Group::from_prefix( 'order_details_items_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_details_items_color' ) );
 
 $product_links = Style_Target::make( 'product-links' )
-	->label( 'Product name links in the order details' )
+	->label( 'Links' )
+	->description( 'Every link inside the widget: product names, download links and any other link, not only the product names. hover styles them under the pointer.' )
 	->selector( '.woocommerce a' )
 	->bind( 'color', V3_Control::bind_to( 'order_details_product_links_normal_color' ) )
 	->bind( 'color', V3_Control::bind_to( 'order_details_product_links_hover_color' ), $hover );
 
 $button = Style_Target::make( 'button' )
-	->label( 'Buttons in the order details (e.g. download)' )
+	->label( 'Buttons' )
+	->description( 'Buttons inside the order tables, such as download buttons for downloadable products. Not present on orders without them.' )
 	->selector( '.shop_table .button, .order-again .button, .woocommerce-pagination .button' )
 	->with( Typography_Group::from_prefix( 'order_details_button_typography' ) )
 	->with( Background_Group::from_prefix( 'order_details_button_normal_background' ) )

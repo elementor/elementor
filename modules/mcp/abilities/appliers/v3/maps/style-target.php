@@ -18,6 +18,8 @@ class Style_Target {
 
 	private string $label = '';
 
+	private string $description = '';
+
 	private ?string $selector = null;
 
 	/**
@@ -45,6 +47,16 @@ class Style_Target {
 
 	public function label( string $label ): self {
 		$this->label = $label;
+
+		return $this;
+	}
+
+	/**
+	 * Plain-language purpose of the inner element and when it is hidden, conditional or stateful,
+	 * for agents that cannot see the rendered widget.
+	 */
+	public function description( string $description ): self {
+		$this->description = $description;
 
 		return $this;
 	}
@@ -103,6 +115,10 @@ class Style_Target {
 
 	public function get_label(): string {
 		return $this->label;
+	}
+
+	public function get_description(): string {
+		return $this->description;
 	}
 
 	public function get_selector(): ?string {

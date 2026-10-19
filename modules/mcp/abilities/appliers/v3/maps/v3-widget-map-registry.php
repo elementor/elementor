@@ -247,7 +247,7 @@ class V3_Widget_Map_Registry {
 	/**
 	 * Public shape exposed to the LLM as the widget contract.
 	 *
-	 * @return array{description: string, properties: array<string, array<string, mixed>>, default_style_target: string, style_targets: array<string, array{label: string, states: string[], properties: string[], properties_by_state: array<string, string[]>}>}|null
+	 * @return array{description: string, properties: array<string, array<string, mixed>>, default_style_target: string, style_targets: array<string, array{label: string, description?: string, states: string[], properties: string[], properties_by_state: array<string, string[]>}>}|null
 	 */
 	public function get_llm_contract( string $widget_type ): ?array {
 		$map = $this->get_map( $widget_type );
@@ -261,14 +261,23 @@ class V3_Widget_Map_Registry {
 			'properties' => V3_Json_Schema_Builder::build_from_map( $map->get_setting_schemas() )['properties'],
 			'default_style_target' => $map->get_default_target(),
 			'style_targets' => array_map(
-				fn( Compiled_Style_Target $target ) => [
-					'label' => $target->get_label(),
-					'states' => $target->get_states(),
-					'properties' => $target->get_props(),
-					'properties_by_state' => $target->get_props_by_state(),
-				],
+				fn( Compiled_Style_Target $target ) => $this->describe_target( $target ),
 				$map->get_targets()
 			),
+		];
+	}
+
+	private function describe_target( Compiled_Style_Target $target ): array {
+		$contract = [ 'label' => $target->get_label() ];
+
+		if ( '' !== $target->get_description() ) {
+			$contract['description'] = $target->get_description();
+		}
+
+		return $contract + [
+			'states' => $target->get_states(),
+			'properties' => $target->get_props(),
+			'properties_by_state' => $target->get_props_by_state(),
 		];
 	}
 

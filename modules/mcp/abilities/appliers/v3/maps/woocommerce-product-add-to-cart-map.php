@@ -17,6 +17,7 @@ $focus = 'focus';
 
 $button = Style_Target::make( 'button' )
 	->label( 'Add to cart button' )
+	->description( 'The button that adds the product to the cart. Only rendered for products that can be bought and are in stock. layout sets how it sits with the quantity input (inline, stacked or auto), and alignment aligns the form.' )
 	->selector( '.cart .button, .cart button' )
 	->with( Typography_Group::from_prefix( 'button_typography' ) )
 	->with( Border_Group::from_prefix( 'button_border' ) )
@@ -29,7 +30,8 @@ $button = Style_Target::make( 'button' )
 	->bind( 'padding', V3_Control::bind_to( 'button_padding' ) );
 
 $quantity = Style_Target::make( 'quantity' )
-	->label( 'Quantity input; quantity:focus styles it while focused' )
+	->label( 'Quantity input' )
+	->description( 'Number field for how many to add. Hidden while show_quantity is off, and not shown for products sold one at a time. The focus state styles it while the visitor is typing in it.' )
 	->selector( '.quantity .qty' )
 	->states( $focus )
 	->with( Typography_Group::from_prefix( 'quantity_typography' ) )
@@ -43,7 +45,8 @@ $quantity = Style_Target::make( 'quantity' )
 	->bind( 'padding', V3_Control::bind_to( 'quantity_padding' ) );
 
 $view_cart = Style_Target::make( 'view-cart' )
-	->label( '"View cart" link shown after adding' )
+	->label( 'View cart link' )
+	->description( 'Link to the cart that WooCommerce inserts next to the button after a product is added without a page reload. It is not in the page until then, so it never appears in a preview.' )
 	->selector( '.added_to_cart' )
 	->with( Typography_Group::from_prefix( 'view_cart_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'view_cart_color' ) );

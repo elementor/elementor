@@ -13,7 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $boxes = Style_Target::make( 'boxes' )
-	->label( 'Box around each unit (days, hours, minutes, seconds)' )
+	->label( 'Unit boxes' )
+	->description( 'One box per unit shown: days, hours, minutes and seconds, each turned on by show_days, show_hours, show_minutes and show_seconds. Holds the digits and, while show_labels is on, the unit label.' )
 	->selector( '.elementor-countdown-item' )
 	->defaults( [ 'padding' => '20px 0' ] )
 	->with( Border_Group::from_prefix( 'box_border' ) )
@@ -23,7 +24,8 @@ $boxes = Style_Target::make( 'boxes' )
 	->bind( 'border-radius', V3_Control::bind_to( 'box_border_radius' ) );
 
 $digits = Style_Target::make( 'digits' )
-	->label( 'Countdown digits' )
+	->label( 'Digits' )
+	->description( 'The number inside each unit box. Updates every second until the countdown expires.' )
 	->selector( '.elementor-countdown-digits' )
 	->defaults( [
 		'font-size' => '69px',
@@ -33,7 +35,8 @@ $digits = Style_Target::make( 'digits' )
 	->bind( 'color', V3_Control::bind_to( 'digits_color' ) );
 
 $label = Style_Target::make( 'label' )
-	->label( 'Unit labels (Days, Hours, ...)' )
+	->label( 'Unit labels' )
+	->description( 'The unit name under or beside the digits (Days, Hours, Minutes, Seconds). Rendered only while show_labels is on.' )
 	->selector( '.elementor-countdown-label' )
 	->defaults( [ 'line-height' => '1' ] )
 	->with( Typography_Group::from_prefix( 'label_typography' ) )
@@ -44,7 +47,8 @@ $label = Style_Target::make( 'label' )
 // the requirement is declared explicitly: nothing is written, and the inactive-condition warning
 // tells the caller the style only takes effect while the message action is enabled.
 $message = Style_Target::make( 'message' )
-	->label( 'Message shown when the countdown expires; only takes effect while expire_actions includes message' )
+	->label( 'Expiry message' )
+	->description( 'Text from message_after_expire, shown in place of the countdown once it expires. Rendered only while expire_actions includes message, and hidden until the countdown reaches zero, so it does not appear in a preview of a running countdown.' )
 	->selector( '.elementor-countdown-expire--message' )
 	->defaults( [
 		'text-align' => 'center',
@@ -61,7 +65,8 @@ foreach ( Typography_Group::FIELDS as $prop => [ $suffix, $is_responsive ] ) {
 }
 
 $container = Style_Target::make( 'container' )
-	->label( 'Row holding all boxes' )
+	->label( 'Boxes row' )
+	->description( 'The row that holds all unit boxes. max-width only applies while the widget label position is set to block, and text-align only while it is set to inline; that position is set in the Elementor editor, not here.' )
 	->selector( '.elementor-countdown-wrapper' )
 	->bind( 'max-width', V3_Control::bind_to( 'container_width' )->responsive() )
 	->bind( 'text-align', V3_Control::bind_to( 'boxes_alignment' ) );

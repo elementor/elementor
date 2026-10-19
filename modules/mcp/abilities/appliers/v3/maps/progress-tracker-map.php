@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $classic = 'classic';
 
 $progress = Style_Target::make( 'progress' )
-	->label( 'Filled part of the horizontal tracker' )
+	->label( 'Progress fill' )
+	->description( 'The part of the horizontal bar that fills as the visitor scrolls, measured against relative_to. Applies only while type is horizontal. Hidden until the visitor scrolls, so a preview at the top of the page shows an empty bar.' )
 	->selector( '.current-progress' )
 	->defaults( [ 'background-color' => '#61ce70' ] )
 	->bind( 'background', V3_Control::bind_to( 'horizontal_color_color' )->requires( [ 'horizontal_color_background' => $classic ] ) )
@@ -24,7 +25,8 @@ $progress = Style_Target::make( 'progress' )
 	->bind( 'border-radius', V3_Control::bind_to( 'horizontal_border_radius' )->responsive() );
 
 $track = Style_Target::make( 'track' )
-	->label( 'Horizontal tracker bar behind the progress' )
+	->label( 'Track bar' )
+	->description( 'The full-width bar behind the progress fill. Applies only while type is horizontal.' )
 	->selector( '.elementor-scrolling-tracker-horizontal' )
 	->defaults( [ 'background-color' => '#eee' ] )
 	->with( Box_Shadow_Group::from_prefix( 'box_shadow' ) )
@@ -39,14 +41,16 @@ $track = Style_Target::make( 'track' )
 $circular = [ 'type' => 'circular' ];
 
 $circle = Style_Target::make( 'circle' )
-	->label( 'Circular tracker. Width is the circle diameter; color and background are the progress and track colors (stored as CSS variables on the widget).' )
+	->label( 'Progress circle' )
+	->description( 'The circle that fills as the visitor scrolls. Applies only while type is circular. width is the circle diameter, color is the filled part and background is the track behind it. The fill is hidden until the visitor scrolls.' )
 	->selector( '' )
 	->bind( 'width', V3_Control::bind_to( 'circular_size' )->responsive()->requires( $circular ) )
 	->bind( 'color', V3_Control::bind_to( 'circular_color' )->requires( $circular ) )
 	->bind( 'background', V3_Control::bind_to( 'circular_background_color' )->requires( $circular ) );
 
 $percentage = Style_Target::make( 'percentage' )
-	->label( 'Percentage text' )
+	->label( 'Percentage' )
+	->description( 'The scroll percentage shown on the tracker while percentage is on. On the horizontal bar the text only shows once the fill is wide enough to hold it.' )
 	->selector( '.current-progress-percentage' )
 	->with( Typography_Group::from_prefix( 'percentage_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'percentage_color' ) );
