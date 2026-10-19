@@ -144,6 +144,61 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 		$this->assertContains( 'draft', $wp->query_vars['post_status'] );
 	}
 
+	public function test_valid_token__query_vars_filter_can_replace_the_main_query() {
+		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$received = [];
+		$filter = function ( $query_vars, $post ) use ( &$received ) {
+			$received = [ $query_vars, $post ];
+
+			return [ 'page_id' => 42 ];
+		};
+		add_filter( 'elementor/mcp/preview/query_vars', $filter, 10, 2 );
+
+		$wp = new \WP();
+		$this->handler->maybe_activate( $wp );
+		remove_filter( 'elementor/mcp/preview/query_vars', $filter, 10 );
+
+		$this->assertSame( [ 'page_id' => 42 ], $wp->query_vars );
+		$this->assertSame( $post_id, $received[0]['p'] );
+		$this->assertSame( $post_id, $received[1]->ID );
+	}
+
+	public function test_valid_token__announces_activation_with_fixtures_before_the_query_is_rewritten() {
+		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
+		$fixtures = [ 'product_id' => 9 ];
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret(), $fixtures );
+		$calls = [];
+		$on_activated = function ( $post, $received_fixtures ) use ( &$calls ) {
+			$calls[] = [ 'activated', $post->ID, $received_fixtures ];
+		};
+		$on_query_vars = function ( $query_vars ) use ( &$calls ) {
+			$calls[] = [ 'query_vars' ];
+
+			return $query_vars;
+		};
+		add_action( 'elementor/mcp/preview/activated', $on_activated, 10, 2 );
+		add_filter( 'elementor/mcp/preview/query_vars', $on_query_vars );
+
+		$this->handler->maybe_activate( new \WP() );
+		remove_action( 'elementor/mcp/preview/activated', $on_activated, 10 );
+		remove_filter( 'elementor/mcp/preview/query_vars', $on_query_vars );
+
+		$this->assertSame( [ [ 'activated', $post_id, $fixtures ], [ 'query_vars' ] ], $calls );
+	}
+
+	public function test_valid_token__previewed_document_keeps_revision_meta_when_main_query_is_replaced() {
+		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$filter = fn() => [ 'page_id' => 42 ];
+		add_filter( 'elementor/mcp/preview/query_vars', $filter );
+
+		$this->handler->maybe_activate( new \WP() );
+		remove_filter( 'elementor/mcp/preview/query_vars', $filter );
+
+		$this->assertSame( [ 'snapshot' ], $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+	}
+
 	private function create_snapshot_post( string $data ): int {
 		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft' ] );
 		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );

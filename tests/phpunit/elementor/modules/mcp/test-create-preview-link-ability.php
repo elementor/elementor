@@ -105,6 +105,61 @@ class Test_Create_Preview_Link_Ability extends Elementor_Test_Base {
 		$this->assertSame( time() + $expected_ttl_seconds, $result['expires_at_unix'] );
 	}
 
+	public function test_execute__normalizes_fixtures_and_binds_them_to_the_token() {
+		$this->act_as_admin();
+		$post_id = $this->create_elementor_post();
+		$expected_fixtures = [
+			'cart_products' => [
+				[ 'product_id' => 5, 'quantity' => 2 ],
+				[ 'product_id' => 7, 'quantity' => 1 ],
+			],
+			'logged_in' => false,
+			'product_id' => 9,
+		];
+
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'fixtures' => [
+				'cart_products' => [
+					[ 'product_id' => '5', 'quantity' => 2 ],
+					[ 'product_id' => 7 ],
+				],
+				'logged_in' => false,
+				'product_id' => 9,
+				'unknown' => 'dropped',
+			],
+		] );
+
+		parse_str( wp_parse_url( $result['url'], PHP_URL_QUERY ), $query );
+		$claims = Preview_Token::decode( $query[ Preview_Token::QUERY_ARG ], Preview_Token::secret() );
+
+		$this->assertSame( $expected_fixtures, $result['fixtures'] );
+		$this->assertSame( $expected_fixtures, $claims['fixtures'] );
+	}
+
+	public function test_execute__without_fixtures_returns_no_fixtures() {
+		$this->act_as_admin();
+		$post_id = $this->create_elementor_post();
+
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		$this->assertArrayNotHasKey( 'fixtures', $result );
+	}
+
+	public function test_execute__rejects_logged_in_fixture() {
+		$this->act_as_admin();
+		$post_id = $this->create_elementor_post();
+
+		$result = $this->ability->execute( [
+			'post_id' => $post_id,
+			'fixtures' => [ 'logged_in' => true ],
+		] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_fixtures', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
 	private function create_elementor_post( array $elements = [] ): int {
 		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft' ] );
 		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );

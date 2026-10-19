@@ -153,7 +153,7 @@ Read [elementor://global-variables] before styling. Create or update via `elemen
 - `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
 - Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
 - Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
-- Unrecognized variable references fall back to `custom_css`
+- Unrecognized variable references fall back to `custom_css` and return an `unknown_variable` warning
 
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
@@ -180,8 +180,9 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 **DO NOT specify height or width unless you have a specific visual reason.**
 
 Flexbox and CSS already handle sizing automatically:
-- Containers grow to fit their content
+- Containers grow to fit their content vertically; horizontally `e-flexbox` and `e-div-block` are `width: 100%` of their parent
 - Flex children distribute space via flex properties, not width/height
+- A nested `e-flexbox` / `e-div-block` inside a row takes the whole row unless it can shrink: to size it to its content, set `width: auto` on it. Never use `flex: 0 0 auto` or `flex-shrink: 0` without `width: auto`; that squeezes its siblings to zero width
 - Text elements size to their content
 
 WHEN TO SPECIFY SIZE:
@@ -191,7 +192,7 @@ WHEN TO SPECIFY SIZE:
 
 NEVER SPECIFY:
 - height on nested containers (causes overflow)
-- width on flex children (use flex-basis or gap instead)
+- fixed widths on flex children (use flex-basis or gap instead; `width: auto` on a nested container is fine)
 - 100vh on anything except root-level sections
 - Any size "just to be safe" - if unsure, OMIT IT
 

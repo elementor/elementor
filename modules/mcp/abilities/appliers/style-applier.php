@@ -16,6 +16,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
 use Elementor\Plugin;
 
@@ -31,13 +32,16 @@ class Style_Applier {
 	const LOCAL_STYLE_TYPE = 'class';
 
 	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
+	const UNKNOWN_VARIABLE_CODE = 'unknown_variable';
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
+	private ?Variables_Service $variables_service;
 
-	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [] ) {
+	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [], ?Variables_Service $variables_service = null ) {
 		$this->css_converter      = $css_converter;
 		$this->active_breakpoints = $active_breakpoints;
+		$this->variables_service  = $variables_service;
 	}
 
 	/**
@@ -132,6 +136,8 @@ class Style_Applier {
 					(string) $config_id
 				);
 			}
+
+			$this->warn_about_unknown_variables( $css_string, (string) $config_id, $warnings );
 
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
 			$removal_bps            = $parsed['removal_breakpoints'];
@@ -258,6 +264,31 @@ class Style_Applier {
 				);
 			}
 		}
+	}
+
+	private function warn_about_unknown_variables( string $css_string, string $config_id, Warnings_Bag $warnings ): void {
+		if ( null === $this->variables_service || ! preg_match_all( '/var\(\s*--([A-Za-z0-9_-]+)/', $css_string, $matches ) ) {
+			return;
+		}
+
+		$unknown = array_filter(
+			array_unique( $matches[1] ),
+			fn( string $reference ) => null === $this->variables_service->find_by_label_or_id( $reference )
+		);
+
+		if ( empty( $unknown ) ) {
+			return;
+		}
+
+		$warnings->add(
+			self::UNKNOWN_VARIABLE_CODE,
+			sprintf(
+				/* translators: %s: Comma-separated var() references */
+				__( 'No Elementor variable matches %s. The declaration was kept as plain CSS and only works if that CSS custom property is defined elsewhere on the page; otherwise the browser ignores it. Use an existing variable from elementor://global-variables or create one with elementor-manage-global-variable.', 'elementor' ),
+				implode( ', ', array_map( fn( string $reference ) => 'var(--' . $reference . ')', $unknown ) )
+			),
+			$config_id
+		);
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {

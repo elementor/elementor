@@ -105,6 +105,8 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( '__globals__', $result['settings_patch'] );
 		$this->assertCount( 1, $result['warnings'] );
 		$this->assertStringContainsString( self::UNSYNCED_LABEL, $result['warnings'][0] );
+		$this->assertStringContainsString( 'stored as ' . self::UNSYNCED_VALUE, $result['warnings'][0] );
+		$this->assertStringNotContainsString( 'Sync to Global Colors', $result['warnings'][0] );
 	}
 
 	public function test_apply__never_stores_a_variable_id_as_a_background_color() {

@@ -338,7 +338,7 @@ class V3_Map_Style_Writer {
 			}
 
 			$prop_value = V3_Color_Variables::with_resolved_color( $prop_value, $variable['value'] );
-			$ctx->warn( self::unlinked_variable_message( $binding, (string) $variable['label'] ) );
+			$ctx->warn( self::unlinked_variable_message( $binding, (string) $variable['label'], (string) $variable['value'] ) );
 		}
 
 		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding->get_control_type(), null !== $binding->get_sides() );
@@ -378,11 +378,12 @@ class V3_Map_Style_Writer {
 		);
 	}
 
-	private static function unlinked_variable_message( Compiled_Style_Binding $binding, string $label ): string {
+	private static function unlinked_variable_message( Compiled_Style_Binding $binding, string $label, string $value ): string {
 		return sprintf(
-			/* translators: 1: CSS property name, 2: Variable label */
-			__( 'CSS property %1$s stores the current value of var(--%2$s), not a link to it: this Elementor widget can only link to color variables synced to Global Colors. Use "Sync to Global Colors" on the variable to keep the link.', 'elementor' ),
+			/* translators: 1: CSS property name, 2: Color value, 3: Variable label */
+			__( 'CSS property %1$s is stored as %2$s; it is not linked to var(--%3$s), so later changes to that variable will not update this widget.', 'elementor' ),
 			$binding->get_prop(),
+			$value,
 			$label
 		);
 	}

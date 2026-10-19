@@ -59,6 +59,14 @@ class Public_Preview_Handler {
 		$this->active_revision_id = $claims['revision_id'];
 		$this->prime_revision_meta_cache( $claims['revision_id'] );
 
+		/**
+		 * Fires when a public preview request is accepted, before its main query is set.
+		 *
+		 * @param \WP_Post $post     The previewed post.
+		 * @param array    $fixtures Preview fixtures from elementor/create-preview-link.
+		 */
+		do_action( 'elementor/mcp/preview/activated', get_post( $claims['post_id'] ), $claims['fixtures'] );
+
 		$this->rewrite_main_query( $wp, $claims['post_id'] );
 		$this->install_render_filters();
 		$this->send_privacy_headers();
@@ -97,11 +105,22 @@ class Public_Preview_Handler {
 			return;
 		}
 
-		$wp->query_vars = [
+		$query_vars = [
 			'p' => $post_id,
 			'post_type' => $post->post_type,
 			'post_status' => [ 'publish', 'draft', 'pending', 'private', 'future', 'auto-draft' ],
 		];
+
+		/**
+		 * Filters the main query of a public preview request.
+		 *
+		 * Documents that are not rendered on their own URL, such as site parts, can render
+		 * inside another page instead. The previewed document still reads its snapshot meta.
+		 *
+		 * @param array    $query_vars Main query vars for the previewed post.
+		 * @param \WP_Post $post       The previewed post.
+		 */
+		$wp->query_vars = apply_filters( 'elementor/mcp/preview/query_vars', $query_vars, $post );
 	}
 
 	private function install_render_filters(): void {
