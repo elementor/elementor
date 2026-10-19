@@ -1,7 +1,7 @@
 import { createHooksRegistry, setupHooksRegistry } from 'test-utils';
 import { notify } from '@elementor/editor-notifications';
 
-import { initHoneypotHint } from '../honeypot-hint';
+import { initFormAtomAddedHints } from '../form-atom-added-hints';
 
 jest.mock( '@elementor/editor-notifications', () => ( {
 	notify: jest.fn(),
@@ -10,14 +10,45 @@ jest.mock( '@elementor/editor-notifications', () => ( {
 const CREATE_COMMAND = 'document/elements/create';
 const MOVE_COMMAND = 'document/elements/move';
 const HONEYPOT_TYPE = 'e-form-honeypot';
+const RECAPTCHA_SCORE_TYPE = 'e-form-recaptcha-score';
 
-describe( 'honeypot hint', () => {
+describe( 'form atom added hints', () => {
 	const hooksRegistry = createHooksRegistry();
 
 	beforeEach( () => {
 		jest.mocked( notify ).mockClear();
 		setupHooksRegistry( hooksRegistry );
-		initHoneypotHint();
+		initFormAtomAddedHints();
+	} );
+
+	it( 'should notify when a reCAPTCHA Score is added', () => {
+		// Arrange
+		const hook = hooksRegistry.getByCommand( CREATE_COMMAND );
+
+		// Act
+		hook?.apply( { model: { widgetType: RECAPTCHA_SCORE_TYPE } } );
+
+		// Assert
+		expect( notify ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				message: 'reCAPTCHA Score added - You can adjust its settings from the Structure panel',
+			} )
+		);
+	} );
+
+	it( 'should notify again when a reCAPTCHA Score is removed and added once more', () => {
+		// Arrange
+		const hook = hooksRegistry.getByCommand( CREATE_COMMAND );
+
+		// Act
+		hook?.apply( { model: { widgetType: RECAPTCHA_SCORE_TYPE } } );
+		hook?.apply( { model: { widgetType: RECAPTCHA_SCORE_TYPE } } );
+
+		// Assert
+		expect( notify ).toHaveBeenCalledTimes( 2 );
+		expect( jest.mocked( notify ).mock.calls[ 0 ][ 0 ].id ).not.toBe(
+			jest.mocked( notify ).mock.calls[ 1 ][ 0 ].id
+		);
 	} );
 
 	it( 'should notify when a honeypot is added', () => {

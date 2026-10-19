@@ -189,7 +189,7 @@ class Test_Form_Structure_Validator extends TestCase {
 		$this->assertStringContainsString( 'already has an <e-form-honeypot>', $errors[0] );
 	}
 
-	public function test_collect_tree_honeypot_errors__rejects_form_with_two_honeypots() {
+	public function test_collect_tree_single_instance_errors__rejects_form_with_two_honeypots() {
 		// Arrange
 		$tree = [
 			[
@@ -209,13 +209,13 @@ class Test_Form_Structure_Validator extends TestCase {
 		];
 
 		// Act
-		$errors = $this->validator->collect_tree_honeypot_errors( $tree );
+		$errors = $this->validator->collect_tree_single_instance_errors( $tree );
 
 		// Assert
 		$this->assertSame( [ '<e-form> has 2 honeypots — only 1 is allowed.' ], $errors );
 	}
 
-	public function test_collect_tree_honeypot_errors__allows_one_honeypot_per_form() {
+	public function test_collect_tree_single_instance_errors__allows_one_honeypot_per_form() {
 		// Arrange
 		$tree = [
 			$this->form_node( 'form-1', [ $this->honeypot_node( 'honeypot-1' ) ] ),
@@ -223,10 +223,75 @@ class Test_Form_Structure_Validator extends TestCase {
 		];
 
 		// Act
-		$errors = $this->validator->collect_tree_honeypot_errors( $tree );
+		$errors = $this->validator->collect_tree_single_instance_errors( $tree );
 
 		// Assert
 		$this->assertSame( [], $errors );
+	}
+
+	public function test_collect_single_instance_errors__rejects_two_recaptcha_score_atoms_in_one_form() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form><e-form-recaptcha-score /><e-form-recaptcha-score /><e-form-submit-button /></e-form>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertSame( [ '<e-form> has 2 reCAPTCHA Score atoms — only 1 is allowed.' ], $errors );
+	}
+
+	public function test_collect_single_instance_errors__allows_recaptcha_score_with_honeypot_in_one_form() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form><e-form-honeypot /><e-form-recaptcha-score /><e-form-submit-button /></e-form>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertSame( [], $errors );
+	}
+
+	public function test_collect_single_instance_errors__rejects_recaptcha_score_added_to_form_that_has_one() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-form-recaptcha-score />' );
+		$document_tree = [
+			$this->form_node( 'form-1', [ $this->recaptcha_score_node( 'recaptcha-1' ) ] ),
+		];
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, $document_tree, 'form-1' );
+
+		// Assert
+		$this->assertSame( [ 'The target <e-form> already has an <e-form-recaptcha-score> — only 1 is allowed per form.' ], $errors );
+	}
+
+	public function test_collect_form_ancestor_errors__rejects_orphaned_recaptcha_score() {
+		// Arrange
+		$dom = $this->parse_xml( '<e-flexbox><e-form-recaptcha-score /></e-flexbox>' );
+
+		// Act
+		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
+
+		// Assert
+		$this->assertCount( 1, $errors );
+		$this->assertStringContainsString( '<e-form-recaptcha-score> must be nested inside <e-form>', $errors[0] );
+	}
+
+	public function test_collect_tree_single_instance_errors__rejects_form_with_two_recaptcha_score_atoms() {
+		// Arrange
+		$tree = [
+			$this->form_node( 'form-1', [
+				$this->recaptcha_score_node( 'recaptcha-1' ),
+				$this->recaptcha_score_node( 'recaptcha-2' ),
+				$this->honeypot_node( 'honeypot-1' ),
+			] ),
+		];
+
+		// Act
+		$errors = $this->validator->collect_tree_single_instance_errors( $tree );
+
+		// Assert
+		$this->assertSame( [ '<e-form> has 2 reCAPTCHA Score atoms — only 1 is allowed.' ], $errors );
 	}
 
 	public function test_collect_honeypot_errors__allows_honeypot_added_to_existing_form_without_honeypot() {
@@ -495,6 +560,15 @@ class Test_Form_Structure_Validator extends TestCase {
 			'id' => $id,
 			'elType' => 'widget',
 			'widgetType' => 'e-form-honeypot',
+			'elements' => [],
+		];
+	}
+
+	private function recaptcha_score_node( string $id ): array {
+		return [
+			'id' => $id,
+			'elType' => 'widget',
+			'widgetType' => 'e-form-recaptcha-score',
 			'elements' => [],
 		];
 	}

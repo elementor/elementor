@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 const REDIRECT_DELAY_MS = 1000;
 const SUBMIT_SUCCESS_EVENT = 'elementor/atomic-form/submit-success';
+const BEFORE_SUBMIT_EVENT = 'elementor/atomic-form/before-submit';
 const ALLOWED_REDIRECT_PROTOCOLS = [ 'http:', 'https:', 'ftp:', 'ftps:' ];
 
 let webmcpFormListenersRegistered = false;
@@ -130,6 +131,8 @@ function registerAtomicFormAlpineData( form ) {
 			}
 
 			try {
+				payload.extraFields = await collectBeforeSubmitFields( form );
+
 				const response = await submitAtomicForm( payload );
 				const state = response?.success ? 'success' : 'error';
 
@@ -375,6 +378,23 @@ function appendFormField( formData, field, index ) {
 	appendFieldValue( formData, `${ prefix }[value]`, field.value );
 }
 
+// Listeners call `event.detail.addFields( fieldsOrPromise )` to send extra request fields (e.g. a spam protection token).
+// A rejected promise fails the submission.
+async function collectBeforeSubmitFields( form ) {
+	const pendingFields = [];
+
+	form.dispatchEvent( new CustomEvent( BEFORE_SUBMIT_EVENT, {
+		bubbles: true,
+		detail: {
+			addFields: ( fields ) => pendingFields.push( fields ),
+		},
+	} ) );
+
+	const fields = await Promise.all( pendingFields );
+
+	return Object.assign( {}, ...fields );
+}
+
 async function submitAtomicForm( payload ) {
 	const ajaxUrl = elementorFrontendConfig?.urls?.ajaxurl;
 
@@ -391,6 +411,7 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => appendFormField( formData, field, index ) );
+	Object.entries( payload.extraFields ?? {} ).forEach( ( [ key, value ] ) => formData.append( key, value ) );
 
 	const response = await fetch( ajaxUrl, {
 		method: 'POST',
