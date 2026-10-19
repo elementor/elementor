@@ -44,7 +44,7 @@ class List_Assets_Ability extends Abstract_Ability {
 		'video/3gpp2',
 	];
 
-	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Use elementor/upload-media (HTTPS source URL) or elementor/request-media-upload (one-time curl upload) after the user consents. If those are unavailable, ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
+	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. After the user consents, use elementor/upload-media when the image has a public HTTPS URL (the server downloads it), or elementor/request-media-upload only if you can run a shell command or send an HTTP request to upload a local file. If those are unavailable, ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
 
 	const EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS = 'No matching assets are in the Media Library. Ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
 

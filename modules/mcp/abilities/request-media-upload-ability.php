@@ -92,6 +92,16 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 		);
 	}
 
+	public function is_available() {
+		$gate = parent::is_available();
+
+		if ( is_wp_error( $gate ) ) {
+			return $gate;
+		}
+
+		return Mcp_Media_Feature_Gate::availability();
+	}
+
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
 

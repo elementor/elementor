@@ -14,6 +14,15 @@ class Mcp_Media_Feature_Gate {
 		return (bool) apply_filters( self::ENABLED_FILTER, true );
 	}
 
+	/**
+	 * Availability result for the media abilities: true when enabled, otherwise the disabled error.
+	 *
+	 * @return true|\WP_Error
+	 */
+	public static function availability() {
+		return self::is_enabled() ? true : self::disabled_error();
+	}
+
 	public static function disabled_error(): \WP_Error {
 		return new \WP_Error(
 			'mcp_media_disabled',
