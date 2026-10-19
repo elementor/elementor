@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 
-	private const ATOMIC_EDITOR_REQUIRED_MESSAGE = 'This site needs the Atomic Editor turned on before this can be built. Turn it on in WP Admin → Elementor → Settings → Atomic Editor, then try again.';
+	private const ATOMIC_EDITOR_REQUIRED_MESSAGE = 'This site needs the Atomic Editor turned on before this can be built. Ask the user for permission, then call elementor/manage-experiments with enable_atomic_editor, or they can turn it on in WP Admin → Elementor → Settings → Atomic Editor. Then try again.';
 	private const ATOMIC_EDITOR_DESCRIPTION_NOTICE = 'Note: needs Atomic Editor (currently off for this site).';
 
 	private array $original_experiment_states = [];
