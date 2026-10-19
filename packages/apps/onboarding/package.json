@@ -41,7 +41,7 @@
     "@elementor/icons": "~1.78.1",
     "@elementor/query": "4.4.0",
     "@elementor/store": "4.4.0",
-    "@elementor/ui": "1.41.3",
+    "@elementor/ui": "1.41.4",
     "@elementor/utils": "4.4.0"
   },
   "peerDependencies": {
