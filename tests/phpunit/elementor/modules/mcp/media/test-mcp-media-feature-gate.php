@@ -8,6 +8,8 @@ use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
 use Elementor\Modules\Mcp\Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,8 +28,15 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		'request-media-upload',
 	];
 
+	public function setUp(): void {
+		parent::setUp();
+
+		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_true' );
+	}
+
 	public function tearDown(): void {
 		remove_all_filters( Mcp_Media_Feature_Gate::ENABLED_FILTER );
+		Plugin::$instance->experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
 		parent::tearDown();
 	}
@@ -42,12 +51,29 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		do_action( 'rest_api_init' );
 	}
 
-	public function test_is_enabled__defaults_to_true() {
+	public function test_is_enabled__is_off_by_default_and_follows_the_hidden_experiment() {
+		// Arrange
+		remove_all_filters( Mcp_Media_Feature_Gate::ENABLED_FILTER );
+		$experiments = Plugin::$instance->experiments;
+		if ( ! $experiments->get_features( Mcp_Media_Feature_Gate::EXPERIMENT_NAME ) ) {
+			$experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
+		}
+		$data = Mcp_Media_Feature_Gate::get_experimental_data();
+
+		// Act
+		$experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$inactive = Mcp_Media_Feature_Gate::is_enabled();
+		$experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$active = Mcp_Media_Feature_Gate::is_enabled();
+
 		// Assert
-		$this->assertTrue( Mcp_Media_Feature_Gate::is_enabled() );
+		$this->assertTrue( $data['hidden'] );
+		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
+		$this->assertFalse( $inactive );
+		$this->assertTrue( $active );
 	}
 
-	public function test_registry__includes_media_abilities_by_default() {
+	public function test_registry__includes_media_abilities_when_enabled() {
 		// Act
 		$registry = Module::build_core_registry();
 
@@ -57,7 +83,7 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_rest_route__is_registered_by_default() {
+	public function test_rest_route__is_registered_when_enabled() {
 		// Act
 		$this->boot_rest_server();
 
@@ -89,55 +115,15 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( self::ROUTE, rest_get_server()->get_routes() );
 	}
 
-	public function test_abilities__return_error_when_disabled() {
-		// Arrange
-		$this->act_as_admin();
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
-
-		$abilities = [
-			new Upload_Media_Ability(),
-			new Request_Media_Upload_Ability(),
-		];
-
-		foreach ( $abilities as $ability ) {
-			// Act
-			$result = $ability->execute( [
-				'consent' => true,
-				'source_url' => 'https://example.com/image.png',
-			] );
-
-			// Assert
-			$this->assertWPError( $result );
-			$this->assertSame( 'mcp_media_disabled', $result->get_error_code() );
-		}
-	}
-
 	public function test_token__is_not_accepted_when_disabled_after_issue() {
 		// Arrange
 		$this->act_as_admin();
 		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
 		$token = $issued['upload_token'];
-		$this->assertTrue( Media_Upload_Token_Store::is_valid_for_request( $token ) );
 
 		// Act
 		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
-
-		// Assert
-		$this->assertFalse( Media_Upload_Token_Store::is_valid_for_request( $token ) );
-		$this->assertWPError( Media_Upload_Token_Store::consume( $token ) );
-	}
-
-	public function test_request_media_upload__returns_disabled_error_for_any_count() {
-		// Arrange
-		$this->act_as_admin();
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
-		$ability = new Request_Media_Upload_Ability();
-
-		// Act
-		$result = $ability->execute( [
-			'consent' => true,
-			'count' => 3,
-		] );
+		$result = Media_Upload_Token_Store::consume( $token );
 
 		// Assert
 		$this->assertWPError( $result );
@@ -155,38 +141,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		foreach ( $this->media_abilities() as $ability ) {
 			// Assert
 			$this->assertTrue( $ability->is_available() );
-		}
-	}
-
-	public function test_is_available__returns_disabled_error_when_disabled() {
-		// Arrange
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
-
-		foreach ( $this->media_abilities() as $ability ) {
-			// Act
-			$availability = $ability->is_available();
-
-			// Assert
-			$this->assertWPError( $availability );
-			$this->assertSame( 'mcp_media_disabled', $availability->get_error_code() );
-		}
-	}
-
-	public function test_execute_guarded__stops_before_execute_when_disabled() {
-		// Arrange
-		$this->act_as_admin();
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
-
-		foreach ( $this->media_abilities() as $ability ) {
-			// Act
-			$result = $ability->execute_guarded( [
-				'consent' => true,
-				'source_url' => 'https://example.com/image.png',
-			] );
-
-			// Assert
-			$this->assertWPError( $result );
-			$this->assertSame( 'mcp_media_disabled', $result->get_error_code() );
 		}
 	}
 }

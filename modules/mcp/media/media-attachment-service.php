@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Media;
 
-use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,35 +67,12 @@ class Media_Attachment_Service {
 		?string $alt = null,
 		?string $source_url = null
 	) {
-		if ( ! current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ) ) {
-			self::delete_temp( $file['tmp_name'] );
-
-			return new \WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to upload files.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
 		$mime = Media_Mime_Validator::sniff_mime_type( $file['tmp_name'] );
 		$mime_error = Media_Mime_Validator::assert_allowed_mime( $mime );
 		if ( $mime_error ) {
 			self::delete_temp( $file['tmp_name'] );
 
 			return $mime_error;
-		}
-
-		if ( Media_Upload_Config::SVG_MIME_TYPE === $mime ) {
-			$sanitized = self::get_svg_handler()->sanitize_svg( $file['tmp_name'] );
-			if ( ! $sanitized ) {
-				self::delete_temp( $file['tmp_name'] );
-
-				return new \WP_Error(
-					'svg_sanitization_failed',
-					__( 'The SVG file could not be sanitized.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
 		}
 
 		self::load_admin_media_includes();
@@ -106,9 +82,7 @@ class Media_Attachment_Service {
 			'tmp_name' => $file['tmp_name'],
 		];
 
-		$sideload_filters = self::install_svg_sideload_filters( $mime );
-		$attachment_id = media_handle_sideload( $file_array, 0, $title ?? '' );
-		self::remove_svg_sideload_filters( $sideload_filters );
+		$attachment_id = self::sideload( $file_array, $title, Media_Upload_Config::SVG_MIME_TYPE === $mime );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			self::delete_temp( $file['tmp_name'] );
@@ -205,44 +179,26 @@ class Media_Attachment_Service {
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 	}
 
-	private static function install_svg_sideload_filters( string $mime ): array {
-		if ( Media_Upload_Config::SVG_MIME_TYPE !== $mime ) {
-			return [];
+	/**
+	 * SVG files go through Elementor's Uploads_Manager, which allows the type and runs the SVG
+	 * sanitizer on wp_handle_sideload_prefilter, the same way other Elementor uploads do.
+	 *
+	 * @return int|\WP_Error
+	 */
+	private static function sideload( array $file_array, ?string $title, bool $is_svg ) {
+		$uploads_manager = Plugin::$instance->uploads_manager;
+
+		if ( $is_svg ) {
+			$uploads_manager->set_elementor_upload_state( true );
 		}
 
-		$mime_filter = static function ( array $mimes ) {
-			$mimes['svg'] = Media_Upload_Config::SVG_MIME_TYPE;
-
-			return $mimes;
-		};
-
-		add_filter( 'upload_mimes', $mime_filter );
-
-		return [
-			'mime' => $mime_filter,
-		];
-	}
-
-	private static function remove_svg_sideload_filters( array $filters ): void {
-		if ( isset( $filters['mime'] ) ) {
-			remove_filter( 'upload_mimes', $filters['mime'] );
+		try {
+			return media_handle_sideload( $file_array, 0, $title ?? '' );
+		} finally {
+			if ( $is_svg ) {
+				$uploads_manager->set_elementor_upload_state( false );
+			}
 		}
-	}
-
-	private static function get_svg_handler(): Svg {
-		static $fallback = null;
-
-		$handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
-
-		if ( $handler instanceof Svg ) {
-			return $handler;
-		}
-
-		if ( null === $fallback ) {
-			$fallback = new Svg();
-		}
-
-		return $fallback;
 	}
 
 	private static function delete_temp( string $path ): void {

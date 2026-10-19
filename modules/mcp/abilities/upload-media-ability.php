@@ -7,7 +7,7 @@ use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Input_Guard;
-use Elementor\Modules\Mcp\Media\Safe_Remote_Image_Fetcher;
+use Elementor\Modules\Mcp\Media\Remote_Image_Fetcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -84,27 +84,24 @@ class Upload_Media_Ability extends Abstract_Ability {
 					'source_url' => [
 						'type' => 'string',
 						'format' => 'uri',
-						'description' => 'Public HTTPS URL of a single image. Use either source_url or source_urls. Never download or base64-encode the image yourself.',
-					],
-					'source_urls' => [
-						'type' => 'array',
-						'minItems' => 1,
-						'maxItems' => Media_Upload_Config::MAX_UPLOADS_PER_REQUEST,
-						'items' => [
-							'type' => 'string',
-							'format' => 'uri',
-						],
-						'description' => 'Public HTTPS URLs of several images (1 to ' . Media_Upload_Config::MAX_UPLOADS_PER_REQUEST . '). Use either source_url or source_urls. Every URL is imported independently and gets its own result entry. title and alt are not supported with this list.',
+						'description' => 'Public HTTPS URL of a single image. Use either source_url or images. Never download or base64-encode the image yourself.',
 					],
 					'title' => [
 						'type' => 'string',
 						'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
-						'description' => 'Optional attachment title (single source_url only).',
+						'description' => 'Optional attachment title for source_url.',
 					],
 					'alt' => [
 						'type' => 'string',
 						'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
-						'description' => 'Optional alt text for the attachment (single source_url only).',
+						'description' => 'Optional alt text for source_url.',
+					],
+					'images' => [
+						'type' => 'array',
+						'minItems' => 1,
+						'maxItems' => Media_Upload_Config::MAX_URL_IMPORTS_PER_REQUEST,
+						'items' => self::image_item_schema(),
+						'description' => 'Several images (1 to ' . Media_Upload_Config::MAX_URL_IMPORTS_PER_REQUEST . '), each with its own source_url and optional title and alt. Use either source_url or images. Every image is imported independently and gets its own result entry.',
 					],
 					'consent' => [
 						'type' => 'boolean',
@@ -116,31 +113,12 @@ class Upload_Media_Ability extends Abstract_Ability {
 		);
 	}
 
-	public function is_available() {
-		$gate = parent::is_available();
-
-		if ( is_wp_error( $gate ) ) {
-			return $gate;
-		}
-
-		return Mcp_Media_Feature_Gate::availability();
-	}
-
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
-
-		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
-			return Mcp_Media_Feature_Gate::disabled_error();
-		}
 
 		$capability_error = Media_Upload_Input_Guard::require_upload_capability();
 		if ( $capability_error ) {
 			return $capability_error;
-		}
-
-		$binary_error = Media_Upload_Input_Guard::reject_inline_binary_fields( $input );
-		if ( $binary_error ) {
-			return $binary_error;
 		}
 
 		$consent_error = Media_Upload_Input_Guard::require_upload_consent( $input );
@@ -149,12 +127,12 @@ class Upload_Media_Ability extends Abstract_Ability {
 		}
 
 		$has_single = array_key_exists( 'source_url', $input ) && null !== $input['source_url'];
-		$has_list = array_key_exists( 'source_urls', $input ) && null !== $input['source_urls'];
+		$has_list = array_key_exists( 'images', $input ) && null !== $input['images'];
 
 		if ( $has_single && $has_list ) {
 			return new \WP_Error(
 				'conflicting_source_inputs',
-				__( 'Provide either source_url or source_urls, not both.', 'elementor' ),
+				__( 'Provide either source_url or images, not both.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
@@ -168,17 +146,35 @@ class Upload_Media_Ability extends Abstract_Ability {
 			: '';
 
 		if ( '' === $source_url ) {
-			return new \WP_Error(
-				'invalid_source_url',
-				__( 'A valid HTTPS source URL is required.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
+			return self::invalid_source_url_error();
 		}
 
-		$title = isset( $input['title'] ) && is_string( $input['title'] ) ? $input['title'] : null;
-		$alt = isset( $input['alt'] ) && is_string( $input['alt'] ) ? $input['alt'] : null;
+		return $this->import_one( $source_url, self::read_string( $input, 'title' ), self::read_string( $input, 'alt' ) );
+	}
 
-		return $this->import_one( $source_url, $title, $alt );
+	private static function image_item_schema(): array {
+		return [
+			'type' => 'object',
+			'required' => [ 'source_url' ],
+			'properties' => [
+				'source_url' => [
+					'type' => 'string',
+					'format' => 'uri',
+					'description' => 'Public HTTPS URL of the image.',
+				],
+				'title' => [
+					'type' => 'string',
+					'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
+					'description' => 'Optional attachment title.',
+				],
+				'alt' => [
+					'type' => 'string',
+					'maxLength' => Media_Upload_Config::MAX_METADATA_LENGTH,
+					'description' => 'Optional alt text.',
+				],
+			],
+			'additionalProperties' => false,
+		];
 	}
 
 	/**
@@ -187,68 +183,64 @@ class Upload_Media_Ability extends Abstract_Ability {
 	private function import_list( array $input ) {
 		if ( array_key_exists( 'title', $input ) || array_key_exists( 'alt', $input ) ) {
 			return new \WP_Error(
-				'unsupported_with_source_urls',
-				__( 'title and alt are only supported with a single source_url.', 'elementor' ),
+				'unsupported_with_images',
+				__( 'Set title and alt on each entry in images instead of at the top level.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
 
-		$urls = $input['source_urls'];
-		$max = Media_Upload_Config::MAX_UPLOADS_PER_REQUEST;
+		$images = $input['images'];
+		$max = Media_Upload_Config::MAX_URL_IMPORTS_PER_REQUEST;
 
-		if ( ! is_array( $urls ) || array_values( $urls ) !== $urls || count( $urls ) < 1 || count( $urls ) > $max ) {
+		if ( ! is_array( $images ) || array_values( $images ) !== $images || count( $images ) < 1 || count( $images ) > $max ) {
 			return new \WP_Error(
 				'invalid_upload_count',
 				sprintf(
-					/* translators: %d: maximum number of URLs per request. */
-					__( 'source_urls must be a list with at least 1 and at most %d URLs.', 'elementor' ),
+					/* translators: %d: maximum number of images per request. */
+					__( 'images must be a list with at least 1 and at most %d entries.', 'elementor' ),
 					$max
 				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
 
-		foreach ( $urls as $url ) {
-			if ( ! is_string( $url ) || '' === trim( $url ) ) {
+		foreach ( $images as $image ) {
+			if ( ! is_array( $image ) || ! is_string( $image['source_url'] ?? null ) || '' === trim( $image['source_url'] ) ) {
 				return new \WP_Error(
 					'invalid_source_url',
-					__( 'Every entry in source_urls must be a non-empty string.', 'elementor' ),
+					__( 'Every entry in images must have a non-empty source_url.', 'elementor' ),
 					[ 'status' => \WP_Http::BAD_REQUEST ]
 				);
 			}
 		}
 
-		return $this->import_batch( $urls );
+		return $this->import_batch( $images );
 	}
 
 	/**
-	 * Imports each URL independently. A failure on one URL never stops the others.
+	 * Imports each image independently. A failure on one image never stops the others.
 	 *
-	 * The whole batch has a hard time limit (TOTAL_BATCH_TIMEOUT_SECONDS); URLs not
-	 * started before it is reached are reported as `fetch_timeout`.
+	 * The whole batch has a hard time limit (TOTAL_BATCH_TIMEOUT_SECONDS) that also bounds each
+	 * download; images not started before it is reached are reported as `fetch_timeout`.
 	 *
-	 * @param string[]      $urls  Non-empty list of URL strings.
-	 * @param callable|null $clock Returns the current time in seconds; defaults to microtime( true ).
+	 * @param array<int,array{source_url:string,title?:string,alt?:string}> $images Non-empty list of images.
+	 * @param callable|null                                                 $clock  Returns the current time in seconds; defaults to microtime( true ).
 	 */
-	public function import_batch( array $urls, ?callable $clock = null ): array {
+	public function import_batch( array $images, ?callable $clock = null ): array {
 		$clock = $clock ?? static fn(): float => microtime( true );
 		$deadline = $clock() + Media_Upload_Config::TOTAL_BATCH_TIMEOUT_SECONDS;
 		$uploads = [];
 		$succeeded = 0;
 
-		foreach ( $urls as $index => $raw_url ) {
-			$source_url = esc_url_raw( trim( (string) $raw_url ) );
+		foreach ( $images as $index => $image ) {
+			$source_url = esc_url_raw( trim( (string) ( $image['source_url'] ?? '' ) ) );
 			$entry = [
 				'index' => $index,
 				'source_url' => self::display_url( $source_url ),
 			];
 
 			if ( '' === $source_url ) {
-				$result = new \WP_Error(
-					'invalid_source_url',
-					__( 'A valid HTTPS source URL is required.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
+				$result = self::invalid_source_url_error();
 			} elseif ( $clock() >= $deadline ) {
 				$result = new \WP_Error(
 					'fetch_timeout',
@@ -256,7 +248,13 @@ class Upload_Media_Ability extends Abstract_Ability {
 					[ 'status' => \WP_Http::GATEWAY_TIMEOUT ]
 				);
 			} else {
-				$result = $this->import_one( $source_url, null, null );
+				$result = $this->import_one(
+					$source_url,
+					self::read_string( $image, 'title' ),
+					self::read_string( $image, 'alt' ),
+					$deadline,
+					$clock
+				);
 			}
 
 			if ( is_wp_error( $result ) ) {
@@ -282,6 +280,18 @@ class Upload_Media_Ability extends Abstract_Ability {
 		];
 	}
 
+	private static function read_string( array $input, string $key ): ?string {
+		return isset( $input[ $key ] ) && is_string( $input[ $key ] ) ? $input[ $key ] : null;
+	}
+
+	private static function invalid_source_url_error(): \WP_Error {
+		return new \WP_Error(
+			'invalid_source_url',
+			__( 'A valid HTTPS source URL is required.', 'elementor' ),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
+	}
+
 	private static function display_url( string $url ): string {
 		return substr( (string) preg_replace( '/[?#].*$/s', '', $url ), 0, 300 );
 	}
@@ -289,7 +299,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 	/**
 	 * @return array|\WP_Error
 	 */
-	private function import_one( string $source_url, ?string $title, ?string $alt ) {
+	private function import_one( string $source_url, ?string $title, ?string $alt, ?float $deadline = null, ?callable $clock = null ) {
 		$existing_id = Media_Attachment_Service::find_by_source_url( $source_url );
 		if ( $existing_id ) {
 			if ( null !== $title || null !== $alt ) {
@@ -299,7 +309,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 			return Media_Attachment_Service::format_attachment( $existing_id );
 		}
 
-		$file = Safe_Remote_Image_Fetcher::fetch_to_temp_file( $source_url );
+		$file = Remote_Image_Fetcher::fetch_to_temp_file( $source_url, $deadline, $clock );
 		if ( is_wp_error( $file ) ) {
 			return $file;
 		}

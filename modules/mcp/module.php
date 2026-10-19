@@ -156,11 +156,11 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_revision_snapshots_experiment();
+		$this->register_media_upload_experiment();
 
 		$this->registry = self::build_core_registry();
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
-		( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
 
@@ -179,7 +179,12 @@ class Module extends BaseModule {
 
 		if ( self::is_site_mcp_exposure_enabled() ) {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
+			( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		}
+	}
+
+	private function register_media_upload_experiment(): void {
+		Plugin::$instance->experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
 	}
 
 	private function register_revision_snapshots_experiment(): void {
