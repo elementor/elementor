@@ -55,7 +55,7 @@ const CompactIconLibraryMenuList = styled( StyledMenuList )( ( { theme } ) => ( 
 	},
 } ) );
 
-type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' >;
+type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' > & { iconValue: string };
 
 type IconLibraryPopoverProps = {
 	open: boolean;
@@ -282,7 +282,11 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					flexShrink: 0,
 				} }
 			>
-				<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
+				<FontAwesomeGlyph
+					icon={ { ...icon, value: icon.iconValue } }
+					size={ ICON_GLYPH_SIZE }
+					color="currentColor"
+				/>
 			</Box>
 			<Typography variant="caption" color="text.primary" noWrap>
 				{ icon.label }
@@ -328,4 +332,5 @@ const createIconLibraryItems = (
 		...icon,
 		type: 'item',
 		value: icon.id,
+		iconValue: icon.value,
 	} ) );
