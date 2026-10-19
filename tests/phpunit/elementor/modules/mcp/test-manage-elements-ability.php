@@ -2108,7 +2108,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertSame( 'error', $result['status'] );
 		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
-		$this->assertStringContainsString( 'reCAPTCHA Score', $result['results'][0]['message'] );
+		$this->assertStringContainsString( 'Score-based reCAPTCHA', $result['results'][0]['message'] );
 	}
 
 	public function test_duplicate__rejects_when_page_has_preexisting_violation_and_new_violation_introduced() {

@@ -237,7 +237,7 @@ class Test_Form_Structure_Validator extends TestCase {
 		$errors = $this->validator->collect_errors( $dom, [], self::DOCUMENT_ROOT );
 
 		// Assert
-		$this->assertSame( [ '<e-form> has 2 reCAPTCHA Score atoms — only 1 is allowed.' ], $errors );
+		$this->assertSame( [ '<e-form> has 2 Score-based reCAPTCHA atoms — only 1 is allowed.' ], $errors );
 	}
 
 	public function test_collect_single_instance_errors__allows_recaptcha_score_with_honeypot_in_one_form() {
@@ -291,7 +291,7 @@ class Test_Form_Structure_Validator extends TestCase {
 		$errors = $this->validator->collect_tree_single_instance_errors( $tree );
 
 		// Assert
-		$this->assertSame( [ '<e-form> has 2 reCAPTCHA Score atoms — only 1 is allowed.' ], $errors );
+		$this->assertSame( [ '<e-form> has 2 Score-based reCAPTCHA atoms — only 1 is allowed.' ], $errors );
 	}
 
 	public function test_collect_honeypot_errors__allows_honeypot_added_to_existing_form_without_honeypot() {

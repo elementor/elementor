@@ -17,7 +17,7 @@ class Form_Structure_Validator {
 	// Element type => plural label used in error messages.
 	const SINGLE_INSTANCE_ELEMENT_TYPES = [
 		self::HONEYPOT_ELEMENT_TYPE => 'honeypots',
-		self::RECAPTCHA_SCORE_ELEMENT_TYPE => 'reCAPTCHA Score atoms',
+		self::RECAPTCHA_SCORE_ELEMENT_TYPE => 'Score-based reCAPTCHA atoms',
 	];
 
 	const FORM_FIELD_ELEMENT_TYPES = [

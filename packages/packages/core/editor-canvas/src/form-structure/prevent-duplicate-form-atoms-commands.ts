@@ -24,7 +24,7 @@ const SINGLE_INSTANCE_FORM_ATOM_ALERTS: Record< string, NotificationData > = {
 	},
 	[ FORM_RECAPTCHA_SCORE_ELEMENT_TYPE ]: {
 		type: 'default',
-		message: __( 'Only one reCAPTCHA Score can be added per form.', 'elementor' ),
+		message: __( 'Only one Score-based reCAPTCHA can be added per form.', 'elementor' ),
 		id: 'duplicate-recaptcha-score-blocked',
 	},
 };

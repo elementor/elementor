@@ -31,7 +31,7 @@ describe( 'form atom added hints', () => {
 		// Assert
 		expect( notify ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				message: 'reCAPTCHA Score added - You can adjust its settings from the Structure panel',
+				message: 'Score-based reCAPTCHA added - You can adjust its settings from the Structure panel.',
 			} )
 		);
 	} );

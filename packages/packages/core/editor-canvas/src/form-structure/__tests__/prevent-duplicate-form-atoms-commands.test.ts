@@ -146,7 +146,7 @@ describe( 'prevent duplicate form atoms', () => {
 		// Assert
 		expect( result ).toBe( false );
 		expect( notify ).toHaveBeenCalledWith(
-			expect.objectContaining( { message: 'Only one reCAPTCHA Score can be added per form.' } )
+			expect.objectContaining( { message: 'Only one Score-based reCAPTCHA can be added per form.' } )
 		);
 	} );
 
@@ -192,7 +192,7 @@ describe( 'prevent duplicate form atoms', () => {
 		// Assert
 		expect( result ).toBe( false );
 		expect( notify ).toHaveBeenCalledWith(
-			expect.objectContaining( { message: 'Only one reCAPTCHA Score can be added per form.' } )
+			expect.objectContaining( { message: 'Only one Score-based reCAPTCHA can be added per form.' } )
 		);
 	} );
 } );

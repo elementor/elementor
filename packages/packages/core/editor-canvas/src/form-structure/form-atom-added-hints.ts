@@ -25,7 +25,7 @@ const FORM_ATOM_HINTS: Record< string, FormAtomHint > = {
 	[ FORM_RECAPTCHA_SCORE_ELEMENT_TYPE ]: {
 		idPrefix: 'recaptcha-score-added',
 		getMessage: () =>
-			__( 'reCAPTCHA Score added - You can adjust its settings from the Structure panel', 'elementor' ),
+			__( 'Score-based reCAPTCHA added - You can adjust its settings from the Structure panel.', 'elementor' ),
 	},
 };
 
