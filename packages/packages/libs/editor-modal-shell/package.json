@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@elementor/icons": "~1.78.1",
-    "@elementor/ui": "1.41.3",
+    "@elementor/ui": "1.41.4",
     "lottie-react": "^2.4.1"
   },
   "devDependencies": {

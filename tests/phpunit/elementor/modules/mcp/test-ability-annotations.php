@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Ability_Annotations extends Elementor_Test_Base {
 
 	const DESTRUCTIVE_TOOL_IDS = [
+		'elementor/clear-cache',
 		'elementor/manage-classes',
 		'elementor/manage-component',
 		'elementor/manage-default-styles',
