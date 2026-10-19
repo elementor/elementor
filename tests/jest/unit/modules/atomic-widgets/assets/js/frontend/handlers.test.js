@@ -391,6 +391,83 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
 
+		it( 'dispatches a submit success event with the response', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+			const response = { success: true, data: { data: { actionResults: [] } } };
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( response ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( listener ).toHaveBeenCalledTimes( 1 );
+			expect( listener.mock.calls[ 0 ][ 0 ].target ).toBe( form );
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.response ).toEqual( response );
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.agentInvoked ).toBe( false );
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		it( 'marks the submit success event as agent invoked for agent submissions', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { data: { actionResults: [] } } } ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = jest.fn();
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.agentInvoked ).toBe( true );
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		it( 'does not dispatch a submit success event on failed submission', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( listener ).not.toHaveBeenCalled();
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
 		const successRedirectResponse = {
 			success: true,
 			data: {
