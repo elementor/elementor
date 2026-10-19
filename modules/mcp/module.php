@@ -279,6 +279,7 @@ class Module extends BaseModule {
 			new Abilities\List_Posts_Ability(),
 			new Abilities\Get_System_Info_Ability(),
 			new Abilities\Clear_Cache_Ability(),
+			new Abilities\Get_License_Status_Ability(),
 		];
 
 		if ( self::is_revision_snapshots_active() ) {
