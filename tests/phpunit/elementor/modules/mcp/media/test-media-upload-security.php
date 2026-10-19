@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
-use Elementor\Modules\Mcp\Abilities\Update_Media_Attachment_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
@@ -59,7 +58,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Arrange
 		$upload = new Upload_Media_Ability();
 		$request = new Request_Media_Upload_Ability();
-		$update = new Update_Media_Attachment_Ability();
 		$registry = \Elementor\Modules\Mcp\Module::build_core_registry();
 
 		// Assert
@@ -67,11 +65,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertTrue( $upload->is_exposed_on_server() );
 		$this->assertTrue( $request->is_exposed_via_proxy() );
 		$this->assertTrue( $request->is_exposed_on_server() );
-		$this->assertTrue( $update->is_exposed_via_proxy() );
-		$this->assertTrue( $update->is_exposed_on_server() );
 		$this->assertNotNull( $registry->find_by_proxy_slug( 'upload-media' ) );
 		$this->assertNotNull( $registry->find_by_proxy_slug( 'request-media-upload' ) );
-		$this->assertNotNull( $registry->find_by_proxy_slug( 'update-media-attachment' ) );
 	}
 
 	public function test_public_host_validator__rejects_loopback_ip() {
@@ -1199,32 +1194,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( Media_Upload_Config::MAX_METADATA_LENGTH, strlen( get_post( $attachment_id )->post_title ) );
 	}
 
-	public function test_update_media_attachment__rejects_empty_title_and_non_integer_id() {
-		// Arrange
-		$this->act_as_admin();
-		$attachment_id = self::factory()->attachment->create( [
-			'post_author' => get_current_user_id(),
-			'post_mime_type' => 'image/jpeg',
-		] );
-		$ability = new Update_Media_Attachment_Ability();
-
-		// Act
-		$empty_title = $ability->execute( [
-			'attachment_id' => $attachment_id,
-			'title' => '  ',
-		] );
-		$string_id = $ability->execute( [
-			'attachment_id' => $attachment_id . 'abc',
-			'title' => 'Title',
-		] );
-
-		// Assert
-		$this->assertWPError( $empty_title );
-		$this->assertSame( 'invalid_title', $empty_title->get_error_code() );
-		$this->assertWPError( $string_id );
-		$this->assertSame( 'invalid_attachment', $string_id->get_error_code() );
-	}
-
 	public function test_max_upload_bytes__filter_cannot_raise_the_limit() {
 		// Arrange
 		$default = Media_Upload_Config::max_upload_bytes();
@@ -1439,10 +1408,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Arrange
 		$user_id = self::factory()->user->create( [ 'role' => $role ] );
 		wp_set_current_user( $user_id );
-		$attachment_id = self::factory()->attachment->create( [
-			'post_author' => $user_id,
-			'post_mime_type' => 'image/jpeg',
-		] );
 
 		// Act
 		$upload = ( new Upload_Media_Ability() )->execute( [
@@ -1450,23 +1415,18 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'consent' => true,
 		] );
 		$request = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
-		$update = ( new Update_Media_Attachment_Ability() )->execute( [
-			'attachment_id' => $attachment_id,
-			'title' => 'New title',
-		] );
 		$permission = [
 			( new Upload_Media_Ability() )->check_permission(),
 			( new Request_Media_Upload_Ability() )->check_permission(),
-			( new Update_Media_Attachment_Ability() )->check_permission(),
 		];
 
 		// Assert
-		foreach ( [ $upload, $request, $update ] as $result ) {
+		foreach ( [ $upload, $request ] as $result ) {
 			$this->assertWPError( $result );
 			$this->assertSame( 'rest_forbidden', $result->get_error_code() );
 		}
 
-		$this->assertSame( [ false, false, false ], $permission );
+		$this->assertSame( [ false, false ], $permission );
 	}
 
 	public function roles_without_upload_capability_provider(): array {
@@ -1496,19 +1456,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		wp_set_current_user( $user_id );
 		$attachment_id = $response->get_data()['attachment_id'] ?? 0;
-		$updated = ( new Update_Media_Attachment_Ability() )->execute( [
-			'attachment_id' => $attachment_id,
-			'title' => 'Updated title',
-			'alt' => 'Updated alt',
-		] );
 
 		// Assert
 		$this->assertSame( \WP_Http::CREATED, $response->get_status() );
 		$this->assertSame( 'image/png', $response->get_data()['mime'] );
 		$this->assertSame( $user_id, (int) get_post( $attachment_id )->post_author );
-		$this->assertIsArray( $updated );
-		$this->assertSame( 'Updated alt', $updated['alt'] );
-		$this->assertSame( 'Updated title', get_post( $attachment_id )->post_title );
 	}
 
 	/**
@@ -1646,48 +1598,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			\Elementor\Modules\Mcp\Abilities\List_Assets_Ability::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS,
 			$result['llm_instructions']
 		);
-	}
-
-	public function test_update_media_attachment__accepts_integral_ids_only() {
-		// Arrange
-		$this->act_as_admin();
-		$attachment_id = self::factory()->attachment->create( [
-			'post_author' => get_current_user_id(),
-			'post_mime_type' => 'image/jpeg',
-		] );
-		$ability = new Update_Media_Attachment_Ability();
-
-		// Act
-		$from_string = $ability->execute( [
-			'attachment_id' => (string) $attachment_id,
-			'alt' => 'Alt from string id',
-		] );
-		$from_float = $ability->execute( [
-			'attachment_id' => (float) $attachment_id,
-			'alt' => 'Alt from float id',
-		] );
-		$from_fraction = $ability->execute( [
-			'attachment_id' => $attachment_id + 0.5,
-			'alt' => 'Alt from fractional id',
-		] );
-		$from_decimal_string = $ability->execute( [
-			'attachment_id' => $attachment_id . '.0',
-			'alt' => 'Alt from decimal string id',
-		] );
-		$from_signed = $ability->execute( [
-			'attachment_id' => '-' . $attachment_id,
-			'alt' => 'Alt from signed id',
-		] );
-
-		// Assert
-		$this->assertSame( 'Alt from string id', $from_string['alt'] );
-		$this->assertSame( 'Alt from float id', $from_float['alt'] );
-		$this->assertWPError( $from_fraction );
-		$this->assertSame( 'invalid_attachment', $from_fraction->get_error_code() );
-		$this->assertWPError( $from_decimal_string );
-		$this->assertSame( 'invalid_attachment', $from_decimal_string->get_error_code() );
-		$this->assertWPError( $from_signed );
-		$this->assertSame( 'invalid_attachment', $from_signed->get_error_code() );
 	}
 
 	public function test_pinned_remote_fetch__registers_direct_connection_hook_at_last_priority() {
