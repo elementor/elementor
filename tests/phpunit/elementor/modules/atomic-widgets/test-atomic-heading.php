@@ -136,7 +136,7 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 
 	public function test__ally_promotion_notice_is_included_for_admin_by_default(): void {
 		// Arrange.
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
 			'id' => 'e8e55a1',
