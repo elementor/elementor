@@ -287,7 +287,6 @@ class Module extends BaseModule {
 		if ( Mcp_Media_Feature_Gate::is_enabled() ) {
 			$abilities[] = new Abilities\Upload_Media_Ability();
 			$abilities[] = new Abilities\Request_Media_Upload_Ability();
-			$abilities[] = new Abilities\Update_Media_Attachment_Ability();
 		}
 
 		if ( self::is_revision_snapshots_active() ) {

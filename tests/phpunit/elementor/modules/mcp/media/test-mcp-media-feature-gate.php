@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
-use Elementor\Modules\Mcp\Abilities\Update_Media_Attachment_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
@@ -25,7 +24,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 	private const MEDIA_PROXY_SLUGS = [
 		'upload-media',
 		'request-media-upload',
-		'update-media-attachment',
 	];
 
 	public function tearDown(): void {
@@ -99,7 +97,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		$abilities = [
 			new Upload_Media_Ability(),
 			new Request_Media_Upload_Ability(),
-			new Update_Media_Attachment_Ability(),
 		];
 
 		foreach ( $abilities as $ability ) {
@@ -107,7 +104,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 			$result = $ability->execute( [
 				'consent' => true,
 				'source_url' => 'https://example.com/image.png',
-				'attachment_id' => 1,
 			] );
 
 			// Assert
@@ -152,7 +148,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		return [
 			new Upload_Media_Ability(),
 			new Request_Media_Upload_Ability(),
-			new Update_Media_Attachment_Ability(),
 		];
 	}
 
@@ -187,7 +182,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 			$result = $ability->execute_guarded( [
 				'consent' => true,
 				'source_url' => 'https://example.com/image.png',
-				'attachment_id' => 1,
 			] );
 
 			// Assert
