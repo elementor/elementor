@@ -37,28 +37,7 @@ class Test_Preview_Token extends TestCase {
 			'post_id' => 42,
 			'revision_id' => 43,
 			'expires_at' => 1000,
-			'fixtures' => [],
 		], $claims );
-	}
-
-	public function test_decode__round_trips_fixtures() {
-		$fixtures = [
-			'cart_products' => [ [ 'product_id' => 7, 'quantity' => 2 ] ],
-			'product_id' => 9,
-		];
-		$token = Preview_Token::encode( 42, 43, 1000, self::SECRET, $fixtures );
-
-		$claims = Preview_Token::decode( $token, self::SECRET );
-
-		$this->assertSame( $fixtures, $claims['fixtures'] );
-	}
-
-	public function test_encode__without_fixtures_keeps_the_payload_unchanged() {
-		$token = Preview_Token::encode( 42, 43, 1000, self::SECRET );
-
-		[ $payload ] = explode( '.', $token );
-
-		$this->assertSame( '{"p":42,"r":43,"e":1000}', base64_decode( strtr( $payload, '-_', '+/' ) ) );
 	}
 
 	public function test_decode__returns_null_when_signature_tampered() {

@@ -11,18 +11,12 @@ class Preview_Token {
 	const QUERY_ARG = 'elementor_preview_token';
 	const SECRET_NAMESPACE = 'elementor_preview_link_v1';
 
-	public static function encode( int $post_id, int $revision_id, int $expires_at, string $secret, array $fixtures = [] ): string {
-		$claims = [
+	public static function encode( int $post_id, int $revision_id, int $expires_at, string $secret ): string {
+		$payload = self::base64url_encode( wp_json_encode( [
 			'p' => $post_id,
 			'r' => $revision_id,
 			'e' => $expires_at,
-		];
-
-		if ( ! empty( $fixtures ) ) {
-			$claims['f'] = $fixtures;
-		}
-
-		$payload = self::base64url_encode( wp_json_encode( $claims ) );
+		] ) );
 
 		$signature = self::sign( $payload, $secret );
 
@@ -52,7 +46,6 @@ class Preview_Token {
 			'post_id' => (int) $decoded['p'],
 			'revision_id' => (int) $decoded['r'],
 			'expires_at' => (int) $decoded['e'],
-			'fixtures' => is_array( $decoded['f'] ?? null ) ? $decoded['f'] : [],
 		];
 	}
 

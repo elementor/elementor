@@ -164,13 +164,12 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 		$this->assertSame( $post_id, $received[1]->ID );
 	}
 
-	public function test_valid_token__announces_activation_with_fixtures_before_the_query_is_rewritten() {
+	public function test_valid_token__announces_activation_before_the_query_is_rewritten() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$fixtures = [ 'product_id' => 9 ];
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret(), $fixtures );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
 		$calls = [];
-		$on_activated = function ( $post, $received_fixtures ) use ( &$calls ) {
-			$calls[] = [ 'activated', $post->ID, $received_fixtures ];
+		$on_activated = function ( ...$args ) use ( &$calls ) {
+			$calls[] = [ 'activated', $args[0]->ID, count( $args ) ];
 		};
 		$on_query_vars = function ( $query_vars ) use ( &$calls ) {
 			$calls[] = [ 'query_vars' ];
@@ -184,7 +183,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 		remove_action( 'elementor/mcp/preview/activated', $on_activated, 10 );
 		remove_filter( 'elementor/mcp/preview/query_vars', $on_query_vars );
 
-		$this->assertSame( [ [ 'activated', $post_id, $fixtures ], [ 'query_vars' ] ], $calls );
+		$this->assertSame( [ [ 'activated', $post_id, 1 ], [ 'query_vars' ] ], $calls );
 	}
 
 	public function test_valid_token__previewed_document_keeps_revision_meta_when_main_query_is_replaced() {

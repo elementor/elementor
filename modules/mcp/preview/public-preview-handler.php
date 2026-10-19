@@ -62,10 +62,9 @@ class Public_Preview_Handler {
 		/**
 		 * Fires when a public preview request is accepted, before its main query is set.
 		 *
-		 * @param \WP_Post $post     The previewed post.
-		 * @param array    $fixtures Preview fixtures from elementor/create-preview-link.
+		 * @param \WP_Post $post The previewed post.
 		 */
-		do_action( 'elementor/mcp/preview/activated', get_post( $claims['post_id'] ), $claims['fixtures'] );
+		do_action( 'elementor/mcp/preview/activated', get_post( $claims['post_id'] ) );
 
 		$this->rewrite_main_query( $wp, $claims['post_id'] );
 		$this->install_render_filters();

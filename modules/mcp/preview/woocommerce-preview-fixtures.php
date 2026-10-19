@@ -7,61 +7,66 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Applies the WooCommerce fixtures of a public preview link to the preview request only:
- * a cart filled in memory (no cookie, session row or persistent cart is written),
- * a logged-out visitor, and the product a single product site part renders with.
+ * Renders public previews as a logged-out visitor whose cart holds the latest products,
+ * so cart, checkout and menu-cart widgets show their filled state. The cart is filled in
+ * memory for the preview request only: no cookie, session row or persistent cart is written.
  */
 class Woocommerce_Preview_Fixtures {
+
+	const SAMPLE_PRODUCTS_COUNT = 2;
 
 	/**
 	 * @var callable(): ?object
 	 */
 	private $woocommerce;
 
-	private array $fixtures = [];
+	/**
+	 * @var callable(): int[]
+	 */
+	private $sample_product_ids;
 
-	public function __construct( ?callable $woocommerce = null ) {
+	public function __construct( ?callable $woocommerce = null, ?callable $sample_product_ids = null ) {
 		$this->woocommerce = $woocommerce ?? fn() => WC();
+		$this->sample_product_ids = $sample_product_ids ?? [ $this, 'latest_purchasable_product_ids' ];
 	}
 
 	public function register(): void {
-		add_action( 'elementor/mcp/preview/activated', [ $this, 'on_activated' ], 10, 2 );
-		add_filter( 'elementor/mcp/preview/query_vars', [ $this, 'filter_query_vars' ], 20 );
+		add_action( 'elementor/mcp/preview/activated', [ $this, 'on_activated' ] );
 	}
 
-	public function on_activated( $post, $fixtures ): void {
-		$this->fixtures = is_array( $fixtures ) ? $fixtures : [];
-
+	public function on_activated(): void {
 		add_filter( 'woocommerce_coming_soon_exclude', '__return_true' );
 
-		if ( false === ( $this->fixtures['logged_in'] ?? null ) ) {
-			wp_set_current_user( 0 );
+		wp_set_current_user( 0 );
+
+		$product_ids = ( $this->sample_product_ids )();
+
+		if ( ! empty( $product_ids ) ) {
+			$this->fill_cart( $product_ids );
 		}
-
-		if ( ! empty( $this->fixtures['cart_products'] ) ) {
-			$this->fill_cart( $this->fixtures['cart_products'] );
-		}
-	}
-
-	public function filter_query_vars( $query_vars ) {
-		if ( empty( $this->fixtures['product_id'] ) || 'product' !== ( $query_vars['post_type'] ?? '' ) ) {
-			return $query_vars;
-		}
-
-		$query_vars['p'] = (int) $this->fixtures['product_id'];
-
-		return $query_vars;
 	}
 
 	/**
-	 * The fixture cart lives only in this request, so the browser-side fragments refresh
+	 * The sample cart lives only in this request, so the browser-side fragments refresh
 	 * would replace the rendered cart widgets with an empty session cart.
 	 */
 	public function dequeue_cart_fragments(): void {
 		wp_dequeue_script( 'wc-cart-fragments' );
 	}
 
-	private function fill_cart( array $cart_products ): void {
+	public function latest_purchasable_product_ids(): array {
+		return wc_get_products( [
+			'status' => 'publish',
+			'type' => 'simple',
+			'stock_status' => 'instock',
+			'orderby' => 'date',
+			'order' => 'DESC',
+			'limit' => self::SAMPLE_PRODUCTS_COUNT,
+			'return' => 'ids',
+		] );
+	}
+
+	private function fill_cart( array $product_ids ): void {
 		$woocommerce = ( $this->woocommerce )();
 
 		if ( empty( $woocommerce->cart ) ) {
@@ -76,8 +81,8 @@ class Woocommerce_Preview_Fixtures {
 
 		$woocommerce->cart->empty_cart( false );
 
-		foreach ( $cart_products as $item ) {
-			$woocommerce->cart->add_to_cart( (int) $item['product_id'], (int) $item['quantity'] );
+		foreach ( $product_ids as $product_id ) {
+			$woocommerce->cart->add_to_cart( (int) $product_id );
 		}
 	}
 }

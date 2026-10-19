@@ -47,10 +47,6 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 						'format' => 'date-time',
 					],
 					'expires_at_unix' => [ 'type' => 'integer' ],
-					'fixtures' => [
-						'type' => 'object',
-						'description' => 'The fixtures the preview renders with, as normalized. Omitted when none were sent.',
-					],
 				],
 			],
 			[
@@ -74,36 +70,6 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 						'type' => 'integer',
 						'description' => 'Post ID to snapshot and share.',
 					],
-					'fixtures' => [
-						'type' => 'object',
-						'description' => 'Optional WooCommerce state for this preview only (requires WooCommerce). Nothing is saved: the cart is filled in memory for the preview request.',
-						'properties' => [
-							'cart_products' => [
-								'type' => 'array',
-								'description' => 'Products to put in the cart, so cart, checkout and menu-cart widgets render their filled state instead of the empty one.',
-								'items' => [
-									'type' => 'object',
-									'required' => [ 'product_id' ],
-									'properties' => [
-										'product_id' => [ 'type' => 'integer' ],
-										'quantity' => [
-											'type' => 'integer',
-											'minimum' => 1,
-											'default' => 1,
-										],
-									],
-								],
-							],
-							'logged_in' => [
-								'type' => 'boolean',
-								'description' => 'Only false is supported: render as a logged-out visitor even when the browser holds a WordPress session. Previews cannot log in, so the logged-in My Account view cannot be previewed.',
-							],
-							'product_id' => [
-								'type' => 'integer',
-								'description' => 'Product to render a single product site part with, instead of its "Preview Dynamic Content as" product.',
-							],
-						],
-					],
 				],
 			]
 		);
@@ -124,21 +90,16 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 			return $permission_error;
 		}
 
-		$fixtures = $this->normalize_fixtures( is_array( $input['fixtures'] ?? null ) ? $input['fixtures'] : [] );
-		if ( is_wp_error( $fixtures ) ) {
-			return $fixtures;
-		}
-
 		$revision_id = $this->snapshot_revision( $post_id );
 		if ( is_wp_error( $revision_id ) ) {
 			return $revision_id;
 		}
 
 		$expires_at = time() + self::TTL_MINUTES * MINUTE_IN_SECONDS;
-		$token = Preview_Token::encode( $post_id, $revision_id, $expires_at, Preview_Token::secret(), $fixtures );
+		$token = Preview_Token::encode( $post_id, $revision_id, $expires_at, Preview_Token::secret() );
 		$document = Plugin::$instance->documents->get( $post_id );
 
-		$result = [
+		return [
 			'url' => add_query_arg( Preview_Token::QUERY_ARG, $token, home_url( '/' ) ),
 			'edit_url' => $document ? $document->get_edit_url() : '',
 			'post_id' => $post_id,
@@ -146,47 +107,6 @@ class Create_Preview_Link_Ability extends Abstract_Ability {
 			'expires_at' => gmdate( 'c', $expires_at ),
 			'expires_at_unix' => $expires_at,
 		];
-
-		if ( ! empty( $fixtures ) ) {
-			$result['fixtures'] = $fixtures;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @return array|\WP_Error
-	 */
-	private function normalize_fixtures( array $input ) {
-		if ( true === ( $input['logged_in'] ?? null ) ) {
-			return new \WP_Error(
-				'invalid_fixtures',
-				__( 'fixtures.logged_in only supports false: previews are anonymous and cannot log in.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		$fixtures = [];
-
-		if ( ! empty( $input['cart_products'] ) && is_array( $input['cart_products'] ) ) {
-			$fixtures['cart_products'] = array_map(
-				fn( $item ) => [
-					'product_id' => (int) ( $item['product_id'] ?? 0 ),
-					'quantity' => max( 1, (int) ( $item['quantity'] ?? 1 ) ),
-				],
-				array_values( array_filter( $input['cart_products'], 'is_array' ) )
-			);
-		}
-
-		if ( false === ( $input['logged_in'] ?? null ) ) {
-			$fixtures['logged_in'] = false;
-		}
-
-		if ( ! empty( $input['product_id'] ) ) {
-			$fixtures['product_id'] = (int) $input['product_id'];
-		}
-
-		return $fixtures;
 	}
 
 	private function validate_post( int $post_id ): ?\WP_Error {
