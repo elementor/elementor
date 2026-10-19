@@ -1,0 +1,47 @@
+<?php
+
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Date or date-time text control. The widgets parse it at render time and throw on anything
+ * PHP cannot read, so invalid text is rejected here instead of being saved.
+ */
+class Date_Time_Setting_Adapter extends String_Setting_Adapter implements V3_Plain_Value_Guard {
+
+	const FORMATS = [ 'Y-m-d H:i:s', 'Y-m-d H:i', 'Y-m-d' ];
+
+	public function reject_reason( $plain, array $control ): ?string {
+		if ( is_array( $plain ) ) {
+			return null;
+		}
+
+		if ( ! is_string( $plain ) ) {
+			return 'is not a date string (use "YYYY-MM-DD HH:MM")';
+		}
+
+		$value = trim( $plain );
+
+		if ( '' === $value ) {
+			return null;
+		}
+
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/', $value ) ) {
+			return 'is not a valid date (use "YYYY-MM-DD HH:MM")';
+		}
+
+		foreach ( self::FORMATS as $format ) {
+			$date = \DateTime::createFromFormat( '!' . $format, $value );
+			$errors = \DateTime::getLastErrors();
+
+			if ( $date && $date->format( $format ) === $value && ( ! $errors || ( 0 === $errors['warning_count'] && 0 === $errors['error_count'] ) ) ) {
+				return null;
+			}
+		}
+
+		return 'is not a valid date (use "YYYY-MM-DD HH:MM")';
+	}
+}

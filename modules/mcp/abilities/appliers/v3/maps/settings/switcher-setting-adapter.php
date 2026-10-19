@@ -9,13 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Switcher_Setting_Adapter implements V3_Setting_Adapter {
+class Switcher_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard {
 
 	const CONTROL_TYPE = 'switcher';
 
 	const DEFAULT_RETURN_VALUE = 'yes';
 
 	const OFF_VALUE = '';
+
+	/**
+	 * The shared boolean resolver casts with `(bool)`, which turns `"false"`, `"no"` or `2` into `true`.
+	 */
+	public function reject_reason( $plain, array $control ): ?string {
+		return is_bool( $plain ) ? null : 'is not a boolean (send true or false)';
+	}
 
 	public function supports( array $control ): bool {
 		return self::CONTROL_TYPE === ( $control['type'] ?? null );

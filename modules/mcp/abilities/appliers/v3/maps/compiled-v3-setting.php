@@ -3,6 +3,8 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Multi_Enum_From_Control_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Plain_Value_Guard;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Setting_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -56,6 +58,21 @@ class Compiled_V3_Setting {
 
 	public function get_prop_type(): Prop_Type {
 		return $this->prop_type;
+	}
+
+	/**
+	 * @param mixed $plain Raw value sent by the caller.
+	 * @return string|null Rejection reason, or null when the adapter accepts the value.
+	 */
+	public function reject_reason( $plain ): ?string {
+		return $this->adapter instanceof V3_Plain_Value_Guard ? $this->adapter->reject_reason( $plain, $this->control ) : null;
+	}
+
+	/**
+	 * A multiple-choice setting can be cleared with an empty list, which the list prop type rejects.
+	 */
+	public function accepts_empty_list(): bool {
+		return $this->adapter instanceof Multi_Enum_From_Control_Setting_Adapter;
 	}
 
 	/**

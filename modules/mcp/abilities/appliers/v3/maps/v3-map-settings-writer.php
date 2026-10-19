@@ -48,6 +48,18 @@ class V3_Map_Settings_Writer {
 				continue;
 			}
 
+			if ( [] === $value && $setting->accepts_empty_list() ) {
+				$settings[ $setting->get_control_key() ] = [];
+				continue;
+			}
+
+			$reason = $setting->reject_reason( $value );
+
+			if ( null !== $reason ) {
+				$rejected[ $public_key ] = $reason;
+				continue;
+			}
+
 			$prop_value = $this->to_prop_value( $setting, $value );
 
 			if ( is_string( $prop_value ) ) {

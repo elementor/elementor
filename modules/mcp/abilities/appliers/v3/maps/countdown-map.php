@@ -75,7 +75,7 @@ return V3_Widget_Map::make( 'countdown' )
 	->description( 'Countdown timer to a due date or an evergreen duration per visitor, with optional labels and expiry actions.' )
 	->settings( [
 		'countdown_type' => V3_Setting::bind_to( 'countdown_type' )->enum_from_control(),
-		'due_date' => V3_Setting::bind_to( 'due_date' )->string()->dynamic(),
+		'due_date' => V3_Setting::bind_to( 'due_date' )->date_time()->dynamic(),
 		'evergreen_counter_hours' => V3_Setting::bind_to( 'evergreen_counter_hours' )->number()->dynamic(),
 		'evergreen_counter_minutes' => V3_Setting::bind_to( 'evergreen_counter_minutes' )->number()->dynamic(),
 		'show_days' => V3_Setting::bind_to( 'show_days' )->switcher(),

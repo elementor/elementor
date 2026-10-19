@@ -13,13 +13,51 @@ if ( ! defined( 'ABSPATH' ) ) {
  * type maps to a setting adapter is exposed under its field key and converted by that adapter.
  * A write replaces the whole list; every row gets a fresh `_id`.
  */
-class Repeater_Setting_Adapter implements V3_Setting_Adapter {
+class Repeater_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard {
 
 	const CONTROL_TYPE = 'repeater';
 
 	const ROW_ID_KEY = '_id';
 
 	const ROW_ID_LENGTH = 7;
+
+	/**
+	 * Rows must be a list of objects that only use the repeater's own fields, and each field gets the
+	 * same vetting as a standalone setting, so nothing is silently stripped from a row.
+	 */
+	public function reject_reason( $plain, array $control ): ?string {
+		if ( ! is_array( $plain ) || $plain !== array_values( $plain ) ) {
+			return 'is not a list of rows';
+		}
+
+		$adapters = $this->field_adapters( $control );
+
+		foreach ( $plain as $index => $row ) {
+			if ( ! is_array( $row ) || ( [] !== $row && $row === array_values( $row ) ) ) {
+				return sprintf( 'has row %d that is not an object', $index );
+			}
+
+			$unknown = array_diff( array_keys( $row ), array_keys( $adapters ) );
+
+			if ( ! empty( $unknown ) ) {
+				return sprintf( 'has row %d with unsupported keys (%s; allowed: %s)', $index, implode( ', ', $unknown ), implode( ', ', array_keys( $adapters ) ) );
+			}
+
+			foreach ( $row as $key => $value ) {
+				$adapter = $adapters[ $key ];
+
+				if ( $adapter instanceof V3_Plain_Value_Guard ) {
+					$reason = $adapter->reject_reason( $value, $control['fields'][ $key ] );
+
+					if ( null !== $reason ) {
+						return sprintf( 'has row %d where "%s" %s', $index, $key, $reason );
+					}
+				}
+			}
+		}
+
+		return null;
+	}
 
 	public function supports( array $control ): bool {
 		return self::CONTROL_TYPE === ( $control['type'] ?? null ) && ! empty( $this->field_adapters( $control ) );
@@ -40,9 +78,9 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 		$adapters = $this->field_adapters( $control );
 		$stored = [];
 
-		foreach ( $rows as $row ) {
+		foreach ( $rows as $index => $row ) {
 			$values = is_array( $row['value'] ?? null ) ? $row['value'] : [];
-			$stored_row = [ self::ROW_ID_KEY => self::row_id() ];
+			$stored_row = [];
 
 			foreach ( $adapters as $key => $adapter ) {
 				if ( is_array( $values[ $key ] ?? null ) ) {
@@ -50,7 +88,7 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 				}
 			}
 
-			$stored[] = $stored_row;
+			$stored[] = [ self::ROW_ID_KEY => self::row_id( $index, $stored_row ) ] + $stored_row;
 		}
 
 		return $stored;
@@ -110,7 +148,14 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter {
 		return $adapters;
 	}
 
-	private static function row_id(): string {
-		return substr( md5( uniqid( '', true ) ), 0, self::ROW_ID_LENGTH );
+	/**
+	 * Derived from the row's position and content so that writing the same rows again keeps their ids,
+	 * which makes read-then-write idempotent.
+	 *
+	 * @param int                  $index
+	 * @param array<string, mixed> $stored_row
+	 */
+	private static function row_id( int $index, array $stored_row ): string {
+		return substr( md5( $index . wp_json_encode( $stored_row ) ), 0, self::ROW_ID_LENGTH );
 	}
 }
