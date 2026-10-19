@@ -370,7 +370,11 @@ class Manager extends Base_Object {
 			throw new \InvalidArgumentException( sprintf( 'Invalid experiment state `%s`.', esc_html( $state ) ) );
 		}
 
-		$this->assert_dependencies_allow_state( $feature, $state );
+		$blocking_dependency = $this->find_dependency_blocking_state( $feature, $state );
+
+		if ( $blocking_dependency ) {
+			throw $this->create_inactive_dependency_exception( esc_html( $feature_name ), esc_html( $blocking_dependency['name'] ) );
+		}
 
 		$this->write_feature_state( $feature_name, $state );
 	}
@@ -876,18 +880,14 @@ class Manager extends Base_Object {
 		);
 	}
 
-	private function assert_dependencies_allow_state( array $feature, string $state ): void {
+	private function find_dependency_blocking_state( array $feature, string $state ): ?array {
 		$resolved_state = self::STATE_DEFAULT === $state ? $feature['default'] : $state;
 
 		if ( self::STATE_ACTIVE !== $resolved_state ) {
-			return;
+			return null;
 		}
 
-		$inactive_dependency = $this->find_inactive_dependency( $feature );
-
-		if ( $inactive_dependency ) {
-			throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $inactive_dependency['name'] ) );
-		}
+		return $this->find_inactive_dependency( $feature );
 	}
 
 	private function find_inactive_dependency( array $feature ): ?array {
