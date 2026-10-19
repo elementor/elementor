@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
+use Elementor\Controls_Manager;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Settings_Index;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
@@ -166,7 +167,7 @@ class V3_Node_Bridge {
 	 * @return string[]
 	 */
 	private static function collect_style_setting_keys( string $widget_type, array $widget_config ): array {
-		$keys = [];
+		$keys = self::collect_map_style_setting_keys( $widget_type );
 		$overrides = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 
 		foreach ( $overrides as $override ) {
@@ -183,6 +184,40 @@ class V3_Node_Bridge {
 			if ( ! empty( $rule['responsive'] ) ) {
 				foreach ( self::RESPONSIVE_SUFFIXES as $suffix ) {
 					$keys[] = $setting . $suffix;
+				}
+			}
+		}
+
+		return $keys;
+	}
+
+	/**
+	 * Every setting a map-driven widget binds to a style target, with its responsive variants, so a
+	 * replace clears what the map wrote and not only what the generic style index finds.
+	 *
+	 * @return string[]
+	 */
+	private static function collect_map_style_setting_keys( string $widget_type ): array {
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+
+		if ( null === $map ) {
+			return [];
+		}
+
+		$keys = [];
+
+		foreach ( $map->get_targets() as $target ) {
+			foreach ( $target->get_bindings() as $binding ) {
+				$setting = $binding->get_setting();
+				$keys[] = $setting;
+
+				foreach ( self::RESPONSIVE_SUFFIXES as $suffix ) {
+					$keys[] = $setting . $suffix;
+				}
+
+				if ( Controls_Manager::BOX_SHADOW === $binding->get_control_type() ) {
+					$keys[] = $setting . '_position';
+					$keys = array_merge( $keys, array_keys( $binding->get_dependency_values() ) );
 				}
 			}
 		}

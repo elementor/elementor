@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 use Elementor\Controls_Manager;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
@@ -17,6 +18,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class V3_Map_Style_Writer {
 
 	const NONE_KEYWORD = 'none';
+
+	const FLEX_PROPERTY = 'flex';
+
+	const ALL_SIDES = [ 'block-start', 'block-end', 'inline-start', 'inline-end' ];
+
+	const TRANSPARENT_ZERO_SHADOW = [
+		'horizontal' => 0,
+		'vertical' => 0,
+		'blur' => 0,
+		'spread' => 0,
+		'color' => 'rgba(0,0,0,0)',
+		'position' => 'outline',
+	];
 
 	const POSITION_PROPERTY = 'position';
 
@@ -78,6 +92,14 @@ class V3_Map_Style_Writer {
 				}
 			}
 
+			if ( ! isset( $failures[ $prop ] ) && self::drops_flex_basis( (string) $prop, $prop_value ) ) {
+				$failures[ $prop ] = self::flex_basis_message();
+			}
+
+			if ( ! isset( $failures[ $prop ] ) && self::has_unbound_sides( $prop_bindings, $prop_value ) ) {
+				$failures[ $prop ] = self::unbound_sides_message( $prop_bindings );
+			}
+
 			$position_fell_back = $position_fell_back || isset( $failures[ self::POSITION_PROPERTY ] );
 		}
 
@@ -97,6 +119,77 @@ class V3_Map_Style_Writer {
 			__( 'CSS property %s only works with position, which was written to the widget custom CSS.', 'elementor' ),
 			$property
 		);
+	}
+
+	/**
+	 * The widget stores flex grow and shrink only, so a basis other than auto would be lost.
+	 */
+	private static function drops_flex_basis( string $prop, $prop_value ): bool {
+		if ( self::FLEX_PROPERTY !== $prop || ! is_array( $prop_value ) ) {
+			return false;
+		}
+
+		$basis = $prop_value['value']['flexBasis'] ?? null;
+		$basis_value = is_array( $basis ) ? ( $basis['value'] ?? null ) : $basis;
+
+		return null !== $basis_value && '' !== $basis_value && 'auto' !== $basis_value;
+	}
+
+	/**
+	 * A binding that owns only some sides of a dimensions value (a caption's top margin) leaves the
+	 * other sides unstored, so a value that sets them must also reach the custom CSS.
+	 *
+	 * @param Compiled_Style_Binding[] $bindings
+	 */
+	private static function has_unbound_sides( array $bindings, $prop_value ): bool {
+		if ( ! is_array( $prop_value ) ) {
+			return false;
+		}
+
+		$bound = [];
+
+		foreach ( $bindings as $binding ) {
+			if ( null === $binding->get_sides() ) {
+				return false;
+			}
+
+			$bound = array_merge( $bound, $binding->get_sides() );
+		}
+
+		$type = $prop_value['$$type'] ?? null;
+
+		if ( Size_Prop_Type::get_key() === $type ) {
+			return ! empty( array_diff( self::ALL_SIDES, $bound ) );
+		}
+
+		if ( Dimensions_Prop_Type::get_key() !== $type ) {
+			return false;
+		}
+
+		$value = is_array( $prop_value['value'] ?? null ) ? $prop_value['value'] : [];
+
+		return ! empty( array_diff( array_keys( array_filter( $value ) ), $bound ) );
+	}
+
+	/**
+	 * @param Compiled_Style_Binding[] $bindings
+	 */
+	private static function unbound_sides_message( array $bindings ): string {
+		$sides = array_unique( array_merge( ...array_map( fn( Compiled_Style_Binding $binding ) => (array) $binding->get_sides(), $bindings ) ) );
+
+		return sprintf(
+			/* translators: %s: Comma-separated sides */
+			__( 'This Elementor widget stores only the %s side natively; the full value is applied through the widget custom CSS.', 'elementor' ),
+			implode( ', ', $sides )
+		);
+	}
+
+	private static function flex_basis_message(): string {
+		return __( 'CSS property flex only stores grow and shrink natively; its basis is applied through the widget custom CSS.', 'elementor' );
+	}
+
+	private static function multiple_shadows_message(): string {
+		return __( 'This Elementor widget stores one box shadow per state; the full value is applied through the widget custom CSS.', 'elementor' );
 	}
 
 	private static function unsupported_property_message( string $property ): string {
@@ -181,6 +274,10 @@ class V3_Map_Style_Writer {
 			return $this->missing_breakpoint_message( $binding->get_prop(), $breakpoint );
 		}
 
+		if ( Controls_Manager::BOX_SHADOW === $binding->get_control_type() && is_array( $prop_value['value'] ?? null ) && count( $prop_value['value'] ) > 1 ) {
+			return self::multiple_shadows_message();
+		}
+
 		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding->get_control_type(), null !== $binding->get_sides() );
 		$control_value = null === $adapter
 			? null
@@ -194,10 +291,27 @@ class V3_Map_Style_Writer {
 
 		$requirements = self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint );
 
-		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $requirements ) );
+		$position = self::shadow_position_patch( $binding, $control_value );
+
+		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $position, $requirements ) );
 		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
 
 		return null;
+	}
+
+	/**
+	 * Elementor renders a box shadow's inset keyword from a sibling `<control>_position` select, not
+	 * from the shadow value, so it is written alongside every shadow.
+	 *
+	 * @param mixed $control_value
+	 * @return array<string, string>
+	 */
+	private static function shadow_position_patch( Compiled_Style_Binding $binding, $control_value ): array {
+		if ( Controls_Manager::BOX_SHADOW !== $binding->get_control_type() || ! is_array( $control_value ) ) {
+			return [];
+		}
+
+		return [ $binding->get_setting() . '_position' => 'inset' === ( $control_value['position'] ?? '' ) ? 'inset' : ' ' ];
 	}
 
 	private static function declaration_label( Compiled_Style_Binding $binding ): string {
@@ -276,7 +390,7 @@ class V3_Map_Style_Writer {
 			$binding = $this->bindings_for( $bindings, $declaration['property'], $state )[0] ?? null;
 
 			if ( null !== $binding && self::is_box_shadow_none( $binding, $declaration['value'], $breakpoint ) ) {
-				$ctx->merge_patch( array_fill_keys( array_keys( $binding->get_dependency_values() ), '' ) );
+				$ctx->merge_patch( self::box_shadow_none_patch( $binding, $state ) );
 				continue;
 			}
 
@@ -288,6 +402,24 @@ class V3_Map_Style_Writer {
 		}
 
 		return $declarations;
+	}
+
+	/**
+	 * The default state turns the shadow group off. A hover or other state cannot simply be switched
+	 * off, because an off state keeps the default shadow, so it gets an invisible zero shadow that
+	 * cancels it.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function box_shadow_none_patch( Compiled_Style_Binding $binding, string $state ): array {
+		if ( Style_Target::DEFAULT_STATE === $state ) {
+			return array_fill_keys( array_keys( $binding->get_dependency_values() ), '' );
+		}
+
+		return array_merge( $binding->get_dependency_values(), [
+			$binding->get_setting() => self::TRANSPARENT_ZERO_SHADOW,
+			$binding->get_setting() . '_position' => ' ',
+		] );
 	}
 
 	/**

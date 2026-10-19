@@ -14,6 +14,8 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Dimensions_Sides_Slider
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Size_Slider_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\String_Choice_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Font_Family_Adapter;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,6 +72,70 @@ class Test_V3_Control_Adapters extends TestCase {
 		// Assert.
 		$this->assertSame( '#ff0000', $stored );
 		$this->assertSame( Color_Prop_Type::generate( '#ff0000' ), $read );
+	}
+
+	/**
+	 * @dataProvider provide_invalid_colors
+	 */
+	public function test_color_adapter__reports_text_that_is_not_a_color_as_unstorable( string $color ) {
+		// Arrange.
+		$adapter = new Color_Adapter();
+
+		// Act.
+		$stored = $adapter->to_control_value( Color_Prop_Type::generate( $color ), null, [] );
+
+		// Assert.
+		$this->assertNull( $stored );
+	}
+
+	public function provide_invalid_colors(): array {
+		return [
+			'bad hex' => [ '#gggggg' ],
+			'no hash' => [ 'aabbcc' ],
+			'unknown name' => [ 'notacolor' ],
+			'number' => [ '12345' ],
+			'gradient' => [ 'linear-gradient(red, blue)' ],
+			'too long' => [ str_repeat( 'a', 130 ) ],
+		];
+	}
+
+	/**
+	 * @dataProvider provide_valid_colors
+	 */
+	public function test_color_adapter__stores_every_color_notation( string $color ) {
+		// Arrange.
+		$adapter = new Color_Adapter();
+
+		// Act.
+		$stored = $adapter->to_control_value( Color_Prop_Type::generate( $color ), null, [] );
+
+		// Assert.
+		$this->assertSame( $color, $stored );
+	}
+
+	public function provide_valid_colors(): array {
+		return [
+			'named' => [ 'rebeccapurple' ],
+			'short hex' => [ '#abc' ],
+			'hex alpha' => [ '#aabbcc80' ],
+			'rgb' => [ 'rgb(1, 2, 3)' ],
+			'rgba' => [ 'rgba(1,2,3,0.5)' ],
+			'space syntax' => [ 'rgb(1 2 3 / 50%)' ],
+			'hsl' => [ 'hsl(120, 50%, 50%)' ],
+			'oklch' => [ 'oklch(60% 0.2 120)' ],
+			'current color' => [ 'currentColor' ],
+			'transparent' => [ 'transparent' ],
+		];
+	}
+
+	public function test_font_family_adapter__stores_one_bare_family_without_quotes() {
+		// Arrange.
+		$adapter = new Font_Family_Adapter();
+
+		// Act & Assert.
+		$this->assertSame( 'Playfair Display', $adapter->to_control_value( Font_Family_Prop_Type::generate( '"Playfair Display"' ), null, [] ) );
+		$this->assertSame( 'Open Sans', $adapter->to_control_value( Font_Family_Prop_Type::generate( "'Open Sans', sans-serif" ), null, [] ) );
+		$this->assertSame( 'Inter', $adapter->to_control_value( Font_Family_Prop_Type::generate( 'Inter, sans-serif' ), null, [] ) );
 	}
 
 	public function test_background_color_adapter__accepts_color_only_background() {

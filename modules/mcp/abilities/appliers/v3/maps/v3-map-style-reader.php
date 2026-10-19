@@ -102,6 +102,10 @@ class V3_Map_Style_Reader {
 			return null;
 		}
 
+		if ( is_array( $stored ) && 'box_shadow' === $binding->get_control_type() && 'inset' === ( $settings[ $binding->get_setting() . '_position' ] ?? '' ) ) {
+			$stored['position'] = 'inset';
+		}
+
 		$prop_value = $adapter->from_control_value( $stored, $binding->get_sides() );
 
 		if ( null === $prop_value || null === $binding->get_part() ) {

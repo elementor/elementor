@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Context_Meta;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Converter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Compiled_Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Echo;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
@@ -16,6 +17,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\V3_Style_Target_Router;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -118,6 +120,8 @@ class V3_Style_Mapper {
 	 */
 	private function apply_map( V3_Context_Meta $meta, string $css_string ): array {
 		$ctx = new V3_Conversion_Context();
+		$echo = V3_Custom_Css_Echo::extract( $css_string );
+		$css_string = $echo['css'];
 		$split = ( new Css_Media_Splitter( $this->get_active_breakpoints() ) )->split( $css_string );
 
 		if ( null !== $split['error'] ) {
@@ -126,9 +130,11 @@ class V3_Style_Mapper {
 			] );
 		}
 
+		$forced = $this->base_fallback_properties( $meta, $split['breakpoints'] );
+
 		foreach ( $split['breakpoints'] as $breakpoint => $css ) {
 			if ( '' !== trim( $css ) ) {
-				$this->route_to_targets( $ctx, $meta, (string) $breakpoint, (string) $css );
+				$this->route_to_targets( $ctx, $meta, (string) $breakpoint, (string) $css, null, $forced );
 			}
 		}
 
@@ -136,14 +142,47 @@ class V3_Style_Mapper {
 			$this->route_to_targets( $ctx, $meta, Responsive_Key_Resolver::BASE_BREAKPOINT, $media_block['css'], $media_block['condition'] );
 		}
 
-		return $this->finalize( $ctx, $meta );
+		return array_merge( $this->finalize( $ctx, $meta ), [ 'preserved_custom_css' => $echo['preserved'] ] );
+	}
+
+	/**
+	 * Custom CSS prints after the native breakpoint rules at the same specificity, so a desktop value that
+	 * had to fall back to custom CSS would override the tablet and mobile values of the same property
+	 * stored natively. Those properties are collected here so their other breakpoints fall back too.
+	 *
+	 * @param array<string, string> $breakpoints Breakpoint name => CSS.
+	 * @return array<string, string[]> `target|state` => CSS property names that fell back at the base breakpoint.
+	 */
+	private function base_fallback_properties( V3_Context_Meta $meta, array $breakpoints ): array {
+		$base_css = trim( (string) ( $breakpoints[ Responsive_Key_Resolver::BASE_BREAKPOINT ] ?? '' ) );
+
+		if ( '' === $base_css || count( $breakpoints ) < 2 || ! Utils::has_pro() ) {
+			return [];
+		}
+
+		$probe = new V3_Conversion_Context();
+		$this->route_to_targets( $probe, $meta, Responsive_Key_Resolver::BASE_BREAKPOINT, $base_css );
+		$forced = [];
+
+		foreach ( $probe->fallback_rules() as $rule ) {
+			if ( Responsive_Key_Resolver::BASE_BREAKPOINT !== $rule['breakpoint'] || null !== $rule['media'] ) {
+				continue;
+			}
+
+			$key = $rule['target'] . '|' . ( $rule['state'] ?? '' );
+			$forced[ $key ] = array_merge( $forced[ $key ] ?? [], array_keys( $rule['declarations'] ) );
+		}
+
+		return $forced;
 	}
 
 	/**
 	 * A media query that is not a site breakpoint has no setting to write to, so all of its
 	 * declarations fall back.
+	 *
+	 * @param array<string, string[]> $forced Properties to send to custom CSS instead of the widget settings, by `target|state`.
 	 */
-	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css, ?string $media = null ): void {
+	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css, ?string $media = null, array $forced = [] ): void {
 		$map = $meta->map();
 		$targets = $map->get_targets();
 		$routed = $this->target_router->route(
@@ -158,12 +197,40 @@ class V3_Style_Mapper {
 
 		foreach ( $routed['blocks'] as $block ) {
 			$target = $targets[ $block['target'] ];
+			$forced_properties = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? [] : ( $forced[ $block['target'] . '|' . ( $block['state'] ?? '' ) ] ?? [] );
+			$forced_fallbacks = [];
+
+			if ( null === $media && ! empty( $forced_properties ) ) {
+				[ $block['css'], $forced_fallbacks ] = $this->split_forced_declarations( $block['css'], $forced_properties );
+			}
+
 			$fallbacks = null === $media
-				? $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $block['css'] )
+				? array_merge( '' === trim( $block['css'] ) ? [] : $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $block['css'] ), $forced_fallbacks )
 				: $this->custom_media_fallbacks( $block['css'], $media );
 
 			$this->collect_fallback( $ctx, $target, $breakpoint, $block, $fallbacks, $media );
 		}
+	}
+
+	/**
+	 * @param string   $css
+	 * @param string[] $properties
+	 * @return array{0: string, 1: array<int, array{property: string, value: string, reason: string}>} The CSS left for the widget settings, and the declarations that go to custom CSS.
+	 */
+	private function split_forced_declarations( string $css, array $properties ): array {
+		$kept = [];
+		$forced = [];
+		$reason = __( 'Its desktop value is in the widget custom CSS, which would override a per-device setting.', 'elementor' );
+
+		foreach ( $this->declaration_parser->parse_declarations( $css ) as $declaration ) {
+			if ( in_array( $declaration['property'], $properties, true ) ) {
+				$forced[] = array_merge( $declaration, [ 'reason' => $reason ] );
+			} else {
+				$kept[] = $declaration['property'] . ': ' . $declaration['value'] . ';';
+			}
+		}
+
+		return [ implode( ' ', $kept ), $forced ];
 	}
 
 	/**

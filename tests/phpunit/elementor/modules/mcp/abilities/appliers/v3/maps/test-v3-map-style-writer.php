@@ -329,4 +329,31 @@ class Test_V3_Map_Style_Writer extends TestCase {
 			],
 		], $this->fallbacks );
 	}
+
+	public function test_write__writes_the_inset_keyword_through_the_position_control() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: inset 0px 4px 12px 0px rgba(0, 0, 0, 0.2);' );
+
+		// Assert.
+		$this->assertSame( 'inset', $ctx->settings_patch()['shadow_box_shadow_position'] ?? null );
+		$this->assertSame( [], $this->fallbacks );
+	}
+
+	public function test_write__resets_the_position_control_for_an_outer_shadow() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);' );
+
+		// Assert.
+		$this->assertSame( ' ', $ctx->settings_patch()['shadow_box_shadow_position'] ?? null );
+	}
+
+	public function test_write__sends_several_shadows_to_the_fallback_instead_of_keeping_the_first() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: 0px 4px 12px 0px red, 0px 0px 10px 0px blue;' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'shadow_box_shadow', $ctx->settings_patch() );
+		$this->assertCount( 1, $this->fallbacks );
+		$this->assertStringContainsString( 'one box shadow', $this->fallbacks[0]['reason'] );
+	}
 }

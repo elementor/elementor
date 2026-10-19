@@ -47,9 +47,10 @@ class V3_Map_Fallback_Css {
 	public function apply( array &$node, array $result, string $widget_type, string $config_id, Warnings_Bag $warnings ): void {
 		$rules = $result['fallback_rules'] ?? [];
 		$notes = $result['fallback_notes'] ?? [];
+		$preserved = $result['preserved_custom_css'] ?? [];
 		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 
-		if ( empty( $rules ) || null === $map ) {
+		if ( ( empty( $rules ) && empty( $preserved ) ) || null === $map ) {
 			return;
 		}
 
@@ -67,7 +68,7 @@ class V3_Map_Fallback_Css {
 			$this->media_queries ?? V3_Custom_Css_Fallback::site_media_queries()
 		);
 		$existing_css = trim( (string) ( $node['settings'][ $setting ] ?? '' ) );
-		$fallback_css = $fallback->render( $rules );
+		$fallback_css = $this->without_existing_lines( implode( "\n", array_filter( array_merge( $preserved, [ $fallback->render( $rules ) ] ) ) ), $existing_css );
 
 		if ( '' !== $fallback_css ) {
 			$node['settings'][ $setting ] = '' === $existing_css ? $fallback_css : $existing_css . "\n" . $fallback_css;
@@ -76,5 +77,15 @@ class V3_Map_Fallback_Css {
 		foreach ( $notes as $note ) {
 			$warnings->add( self::WRITTEN_CODE, $note . ' ' . __( 'Written to the widget custom CSS instead.', 'elementor' ), $config_id );
 		}
+	}
+
+	/**
+	 * Writing back what a read returned must not stack the same rule again.
+	 */
+	private function without_existing_lines( string $css, string $existing_css ): string {
+		$existing = array_map( 'trim', explode( "\n", $existing_css ) );
+		$lines = array_filter( array_map( 'trim', explode( "\n", $css ) ), fn( string $line ) => '' !== $line && ! in_array( $line, $existing, true ) );
+
+		return implode( "\n", array_unique( $lines ) );
 	}
 }
