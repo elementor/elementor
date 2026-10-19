@@ -34,7 +34,7 @@ function CheckListItem( props ) {
 					<Checkbox
 						data-is-checked={ isChecked }
 						icon={ <RadioButtonUncheckedIcon /> }
-						checkedIcon={ <CircleCheckFilledIcon color="primary" /> }
+						checkedIcon={ <CircleCheckFilledIcon color="accent" /> }
 						edge="start"
 						checked={ isChecked }
 						tabIndex={ -1 }

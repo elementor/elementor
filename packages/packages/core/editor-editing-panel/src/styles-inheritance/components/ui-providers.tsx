@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { DirectionProvider, ThemeProvider } from '@elementor/ui';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { DirectionProvider } from '@elementor/ui';
 
 import { useDirection } from '../../hooks/use-direction';
 

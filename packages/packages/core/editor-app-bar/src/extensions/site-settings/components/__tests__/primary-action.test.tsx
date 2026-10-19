@@ -104,4 +104,15 @@ describe( '@elementor/editor-app-bar - Primary action', () => {
 		// Assert.
 		expect( loader ).toBeInTheDocument();
 	} );
+
+	it( 'should render the button with the accent colour', () => {
+		// Arrange.
+		jest.mocked( useActiveDocument ).mockReturnValue( createMockDocument( { isDirty: true } ) );
+
+		// Act.
+		renderWithTheme( <PrimaryAction /> );
+
+		// Assert.
+		expect( screen.getByRole( 'button' ).className ).toMatch( /accent/i );
+	} );
 } );
