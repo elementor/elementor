@@ -2314,4 +2314,23 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'fetch_timeout', $result['uploads'][1]['error']['code'] );
 		$this->assertSame( 'fetch_timeout', $result['uploads'][2]['error']['code'] );
 	}
+
+	public function test_upload_token__detects_type_from_content_regardless_of_extension() {
+		// Arrange
+		$this->act_as_admin();
+		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
+		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
+		$request->set_header( Media_Upload_Config::UPLOAD_FILENAME_HEADER, 'holiday-photo.heic' );
+		$request->set_body( self::MINIMAL_PNG );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::CREATED, $response->get_status() );
+		$this->assertSame( 'image/png', $response->get_data()['mime'] );
+		$this->assertStringEndsWith( '.png', (string) get_attached_file( $response->get_data()['attachment_id'] ) );
+	}
 }

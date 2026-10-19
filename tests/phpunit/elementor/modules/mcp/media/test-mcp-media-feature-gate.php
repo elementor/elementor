@@ -147,4 +147,52 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'mcp_media_disabled', $result->get_error_code() );
 	}
+
+	private function media_abilities(): array {
+		return [
+			new Upload_Media_Ability(),
+			new Request_Media_Upload_Ability(),
+			new Update_Media_Attachment_Ability(),
+		];
+	}
+
+	public function test_is_available__is_true_when_enabled() {
+		foreach ( $this->media_abilities() as $ability ) {
+			// Assert
+			$this->assertTrue( $ability->is_available() );
+		}
+	}
+
+	public function test_is_available__returns_disabled_error_when_disabled() {
+		// Arrange
+		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+
+		foreach ( $this->media_abilities() as $ability ) {
+			// Act
+			$availability = $ability->is_available();
+
+			// Assert
+			$this->assertWPError( $availability );
+			$this->assertSame( 'mcp_media_disabled', $availability->get_error_code() );
+		}
+	}
+
+	public function test_execute_guarded__stops_before_execute_when_disabled() {
+		// Arrange
+		$this->act_as_admin();
+		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+
+		foreach ( $this->media_abilities() as $ability ) {
+			// Act
+			$result = $ability->execute_guarded( [
+				'consent' => true,
+				'source_url' => 'https://example.com/image.png',
+				'attachment_id' => 1,
+			] );
+
+			// Assert
+			$this->assertWPError( $result );
+			$this->assertSame( 'mcp_media_disabled', $result->get_error_code() );
+		}
+	}
 }
