@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/types';
-import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
+import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
 import { usePseudoStates } from '../style-states/use-pseudo-states';
@@ -259,7 +259,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 					{ isStyled && (
 						<StyleIndicator
 							aria-label={ __( 'Has style', 'elementor' ) }
-							getColor={ getTempStylesProviderThemeColor( provider ?? '' ) }
+							getColor={ getStylesProviderThemeColor( provider ?? '' ) }
 						/>
 					) }
 					{ label }
