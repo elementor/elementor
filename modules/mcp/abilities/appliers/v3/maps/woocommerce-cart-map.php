@@ -132,4 +132,4 @@ return V3_Widget_Map::make( 'woocommerce-cart' )
 		'checkout_button_text' => V3_Setting::bind_to( 'checkout_button_text' )->string()->dynamic(),
 	] )
 	->default_target( $sections )
-	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text', 'The coupon code input. Present only while the coupon box is shown. Quantity fields belong to the products target.' ), $buttons, $products, $product_links, $totals_target, $checkout_button );
+	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.woocommerce .input-text, .woocommerce select, .select2-container--default .select2-selection--single', 'Inputs and dropdowns of the cart: the coupon code input (only while the coupon box is shown), the shipping calculator fields (only once the calculator is opened) and the quantity input of each product.' ), $buttons, $products, $product_links, $totals_target, $checkout_button );

@@ -112,8 +112,8 @@ $table_items = Style_Target::make( 'table-items' )
 
 $table_buttons = Style_Target::make( 'table-buttons' )
 	->label( 'Table buttons' )
-	->description( 'Action buttons inside the tables, such as View, Pay and Download, and the pagination buttons of long order lists. hover styles them under the pointer.' )
-	->selector( '.shop_table .button, .order-again .button, .woocommerce-pagination .button' )
+	->description( 'Action buttons inside the tables, such as View, Pay and Download, the Order again button, the pagination buttons of long order lists, and the buttons of the payment methods page. Not applied to a custom dashboard template. hover styles them under the pointer.' )
+	->selector( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .shop_table .button, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .order-again .button, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce-pagination .button, .e-my-account-tab__payment-methods .woocommerce .woocommerce-MyAccount-content-wrapper .button' )
 	->with( Typography_Group::from_prefix( 'tables_button_typography' ) )
 	->with( Background_Group::from_prefix( 'tables_button_normal_background' ) )
 	->with( Background_Group::from_prefix( 'tables_button_hover_background', $hover ) )
@@ -134,4 +134,4 @@ return V3_Widget_Map::make( 'woocommerce-my-account' )
 		'tabs_layout' => V3_Setting::bind_to( 'tabs_layout' )->enum_from_control(),
 	] )
 	->default_target( $account_tabs )
-	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.woocommerce-Input', 'Inputs of the login, register and account details forms.' ), $buttons, $table_items, $table_buttons );
+	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .form-row .input-text, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .form-row select, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .select2-container--default .select2-selection--single, .e-my-account-tab__payment-methods .woocommerce input[type=text]', 'Inputs and dropdowns of the login, register, account details, address and add payment method forms. Not applied to a custom dashboard template.' ), $buttons, $table_items, $table_buttons );
