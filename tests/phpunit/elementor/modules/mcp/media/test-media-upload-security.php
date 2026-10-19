@@ -4,12 +4,12 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
-use Elementor\Modules\Mcp\Media\Pinned_Remote_Fetch;
-use Elementor\Modules\Mcp\Media\Public_Host_Validator;
+use Elementor\Modules\Mcp\Media\Remote_Image_Fetcher;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -25,25 +25,29 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	private const MINIMAL_PNG = "\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82";
 
 	/**
-	 * @param callable(string,string,string):(?array{response:array,headers:array,body:string}) $resolver
+	 * Supplies HTTP responses through the standard pre_http_request filter.
+	 *
+	 * @param callable(string):(array{response:array,headers:array,body:string}|\WP_Error|null) $resolver
 	 */
-	private function mock_pinned_http_response( callable $resolver ): void {
+	private function mock_http_response( callable $resolver ): void {
 		add_filter(
-			'elementor/mcp/media/pinned_fetch_http_response',
-			static function ( $response, $url, $host, $pinned_ip ) use ( $resolver ) {
-				return $resolver( $url, $host, $pinned_ip );
+			'pre_http_request',
+			static function ( $preempt, $args, $url ) use ( $resolver ) {
+				return $resolver( $url ) ?? $preempt;
 			},
 			10,
-			4
+			3
 		);
 	}
 
-	private function clear_pinned_http_mocks(): void {
-		remove_all_filters( 'elementor/mcp/media/pinned_fetch_http_response' );
+	private function clear_http_mocks(): void {
+		remove_all_filters( 'pre_http_request' );
 	}
 
 	public function setUp(): void {
 		parent::setUp();
+
+		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_true' );
 
 		global $wp_rest_server;
 
@@ -69,13 +73,71 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertNotNull( $registry->find_by_proxy_slug( 'request-media-upload' ) );
 	}
 
-	public function test_public_host_validator__rejects_loopback_ip() {
+	/**
+	 * @dataProvider inline_file_input_provider
+	 */
+	public function test_proxy__rejects_inputs_outside_the_tool_schema( array $input ) {
 		// Arrange
-		$error = Public_Host_Validator::assert_public_ip( '127.0.0.1' );
+		$this->act_as_admin();
+		$registry = new \Elementor\Modules\Mcp\Registry\Ability_Registry();
+		$registry->add( new Upload_Media_Ability() );
+
+		global $wp_rest_server;
+		$wp_rest_server = new \WP_REST_Server();
+		( new \Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API( $registry ) )->register_hooks();
+		do_action( 'rest_api_init' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-proxy' );
+		$request->set_body_params( [
+			'tool' => 'upload-media',
+			'input' => $input,
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertWPError( $error );
-		$this->assertSame( 'remote_host_not_allowed', $error->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $response->get_status() );
+		$this->assertSame( 'invalid_input', $response->get_data()['code'] );
+	}
+
+	public function inline_file_input_provider(): array {
+		return [
+			'base64 field' => [ [
+				'consent' => true,
+				'file_base64' => 'iVBORw0KGgo=',
+			] ],
+			'unknown key inside images' => [ [
+				'consent' => true,
+				'images' => [ [
+					'source_url' => 'https://93.184.215.14/a.png',
+					'data' => 'iVBORw0KGgo=',
+				] ],
+			] ],
+			'missing consent' => [ [ 'source_url' => 'https://93.184.215.14/a.png' ] ],
+		];
+	}
+
+	public function test_upload_route__is_registered_only_with_the_mcp_abilities() {
+		// Arrange
+		$source = file_get_contents( dirname( __DIR__, 6 ) . '/modules/mcp/module.php' );
+		$constructor = substr( $source, strpos( $source, 'public function __construct()' ) );
+		$constructor = substr( $constructor, 0, strpos( $constructor, "\n\t}\n" ) );
+
+		// Assert
+		$this->assertLessThan(
+			strpos( $constructor, '( new Mcp_Media_Upload_REST_API() )->register_hooks();' ),
+			strpos( $constructor, 'if ( ! self::is_active() ) {' )
+		);
+		$this->assertLessThan(
+			strpos( $constructor, '( new Mcp_Media_Upload_REST_API() )->register_hooks();' ),
+			strpos( $constructor, 'if ( self::is_site_mcp_exposure_enabled() ) {' )
+		);
+	}
+
+	public function test_is_public_ip__rejects_loopback_ip() {
+		// Assert
+		$this->assertFalse( Remote_Image_Fetcher::is_public_ip( '127.0.0.1' ) );
 	}
 
 	public function test_upload_media__rejects_non_https_scheme() {
@@ -85,7 +147,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'http://example.com/image.png',
+			'source_url' => 'http://93.184.215.14/image.png',
 			'consent' => true,
 		] );
 
@@ -115,8 +177,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$ability = new Upload_Media_Ability();
 
-		$this->mock_pinned_http_response( static function ( $url ) {
-			if ( str_contains( $url, 'example.com' ) ) {
+		$this->mock_http_response( static function ( $url ) {
+			if ( str_contains( $url, '93.184.215.14' ) ) {
 				return [
 					'response' => [ 'code' => 302 ],
 					'headers' => [ 'location' => 'https://127.0.0.1/private.png' ],
@@ -129,11 +191,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/image.png',
+			'source_url' => 'https://93.184.215.14/image.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -146,7 +208,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$ability = new Upload_Media_Ability();
 		$oversized = str_repeat( 'x', Media_Upload_Config::max_upload_bytes() + 1 );
 
-		$this->mock_pinned_http_response( static function () use ( $oversized ) {
+		$this->mock_http_response( static function () use ( $oversized ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -156,11 +218,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/photo.png',
+			'source_url' => 'https://93.184.215.14/photo.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -172,7 +234,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$ability = new Upload_Media_Ability();
 
-		$this->mock_pinned_http_response( static function () {
+		$this->mock_http_response( static function () {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -182,11 +244,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/file.bin',
+			'source_url' => 'https://93.184.215.14/file.bin',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -224,7 +286,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_false' );
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
 
-		$this->mock_pinned_http_response( static function () use ( $svg ) {
+		$this->mock_http_response( static function () use ( $svg ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -236,11 +298,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/icon.svg',
+			'source_url' => 'https://93.184.215.14/icon.svg',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_false' );
 
 		// Assert
@@ -276,7 +338,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$ability = new Upload_Media_Ability();
 		$limit = Media_Upload_Config::max_upload_bytes();
 
-		$this->mock_pinned_http_response( static function () use ( $limit ) {
+		$this->mock_http_response( static function () use ( $limit ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [ 'content-length' => (string) ( $limit + 1 ) ],
@@ -286,11 +348,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/photo.png',
+			'source_url' => 'https://93.184.215.14/photo.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -344,7 +406,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/photo.png',
+			'source_url' => 'https://93.184.215.14/photo.png',
 			'consent' => true,
 		] );
 
@@ -357,7 +419,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$issued = Media_Upload_Token_Store::issue_for_user( get_current_user_id() );
-		$key = Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . hash( 'sha256', $issued['token'] );
+		$key = Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . hash_hmac( 'sha256', $issued['token'], wp_salt( 'auth' ) );
 		set_transient( $key, [
 			'user_id' => get_current_user_id(),
 			'expires_at' => time() - 10,
@@ -394,84 +456,64 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $second->get_status() );
 	}
 
-	public function test_pinned_remote_fetch__builds_curl_resolve_entry() {
+	public function test_curl_options__connect_to_the_checked_address_without_proxy_or_decoding() {
 		// Act
-		$entry = Pinned_Remote_Fetch::build_curl_resolve_entry( 'example.com', '93.184.216.34' );
+		$options = Remote_Image_Fetcher::curl_options( 'example.com', '93.184.216.34' );
 
 		// Assert
-		$this->assertSame( 'example.com:443:93.184.216.34', $entry );
+		$this->assertSame( [ 'example.com:443:93.184.216.34' ], $options[ CURLOPT_RESOLVE ] );
+		$this->assertSame( '', $options[ CURLOPT_PROXY ] );
+		$this->assertSame( '*', $options[ CURLOPT_NOPROXY ] );
+		$this->assertFalse( $options[ CURLOPT_HTTP_CONTENT_DECODING ] );
+		$this->assertSame( CURL_IPRESOLVE_V4, $options[ CURLOPT_IPRESOLVE ] );
 	}
 
-	public function test_pinned_remote_fetch__registers_http_api_curl_hook_during_get() {
+	public function test_fetch_to_temp_file__registers_the_curl_hook_only_during_the_request() {
 		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+		if ( ! Remote_Image_Fetcher::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		add_filter(
-			'elementor/mcp/media/pinned_fetch_http_response',
-			static function () {
-				return [
-					'response' => [ 'code' => 200 ],
-					'headers' => [],
-					'body' => 'ok',
-				];
-			},
-			10,
-			4
-		);
+		$priorities = [];
+		$png = self::MINIMAL_PNG;
+
+		$this->mock_http_response( static function () use ( &$priorities, $png ) {
+			global $wp_filter;
+
+			$priorities = isset( $wp_filter['http_api_curl'] ) ? array_keys( $wp_filter['http_api_curl']->callbacks ) : [];
+
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
 
 		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+		$result = Remote_Image_Fetcher::fetch_to_temp_file( 'https://93.184.215.14/photo.png' );
 
-		remove_all_filters( 'elementor/mcp/media/pinned_fetch_http_response' );
+		$this->clear_http_mocks();
 
 		// Assert
-		$this->assertNotWPError( $result );
-		$this->assertSame( 200, wp_remote_retrieve_response_code( $result ) );
+		$this->assertIsArray( $result );
+		wp_delete_file( $result['tmp_name'] );
+		$this->assertContains( PHP_INT_MAX, $priorities );
+		$remaining = isset( $GLOBALS['wp_filter']['http_api_curl'] ) ? array_keys( $GLOBALS['wp_filter']['http_api_curl']->callbacks ) : [];
+		$this->assertNotContains( PHP_INT_MAX, $remaining );
 	}
 
-	public function test_pinned_remote_fetch__rejects_when_curl_resolve_hook_does_not_run() {
+	public function test_fetch_to_temp_file__removes_its_hooks_after_an_exception() {
 		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+		if ( ! Remote_Image_Fetcher::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		add_filter(
-			'pre_http_request',
-			static function () {
-				return [
-					'response' => [ 'code' => 200 ],
-					'headers' => [],
-					'body' => 'ok',
-				];
-			},
-			10,
-			3
-		);
-
-		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
-
-		remove_all_filters( 'pre_http_request' );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'remote_fetch_unpinned', $result->get_error_code() );
-	}
-
-	public function test_pinned_remote_fetch__removes_curl_hook_after_exception() {
-		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
-			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
-		}
-
-		$hooks_before = has_action( 'http_api_curl' );
+		$curl_hooks_before = has_action( 'http_api_curl' );
 
 		add_filter(
 			'pre_http_request',
 			static function () {
-				throw new \Exception( 'Pinned fetch test exception.' );
+				throw new \Exception( 'Remote fetch test exception.' );
 			},
 			10,
 			3
@@ -479,27 +521,26 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		try {
-			Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+			Remote_Image_Fetcher::fetch_to_temp_file( 'https://93.184.215.14/photo.png' );
 		} catch ( \Exception $exception ) {
-			$this->assertSame( 'Pinned fetch test exception.', $exception->getMessage() );
+			$this->assertSame( 'Remote fetch test exception.', $exception->getMessage() );
 		}
+
+		$pre_http_priorities = array_keys( $GLOBALS['wp_filter']['pre_http_request']->callbacks );
 
 		remove_all_filters( 'pre_http_request' );
 
 		// Assert
-		$this->assertSame( $hooks_before, has_action( 'http_api_curl' ) );
+		$this->assertSame( $curl_hooks_before, has_action( 'http_api_curl' ) );
+		$this->assertNotContains( PHP_INT_MAX, $pre_http_priorities );
 	}
 
 	/**
 	 * @dataProvider denied_ip_address_provider
 	 */
-	public function test_assert_public_ip__rejects_denied_ranges( string $ip ) {
-		// Act
-		$error = Public_Host_Validator::assert_public_ip( $ip );
-
+	public function test_is_public_ip__rejects_denied_ranges( string $ip ) {
 		// Assert
-		$this->assertWPError( $error );
-		$this->assertSame( 'remote_host_not_allowed', $error->get_error_code() );
+		$this->assertFalse( Remote_Image_Fetcher::is_public_ip( $ip ) );
 	}
 
 	public function denied_ip_address_provider(): array {
@@ -546,41 +587,15 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_assert_public_ip__allows_public_2001_4860_address() {
-		// Act
-		$error = Public_Host_Validator::assert_public_ip( '2001:4860:4860::8888' );
-
+	public function test_is_public_ip__accepts_ipv4_only() {
 		// Assert
-		$this->assertNull( $error );
+		$this->assertTrue( Remote_Image_Fetcher::is_public_ip( '93.184.216.34' ) );
+		$this->assertFalse( Remote_Image_Fetcher::is_public_ip( '2001:4860:4860::8888' ) );
 	}
 
-	public function test_select_pinned_ip__allows_dual_stack_host_with_public_2001_address() {
-		// Arrange
-		add_filter(
-			'elementor/mcp/media/test_resolved_host_ips',
-			static function ( $ips, $host ) {
-				if ( 'dual-stack.example' === $host ) {
-					return [ '93.184.216.34', '2001:4860:4860::8888' ];
-				}
-
-				return $ips;
-			},
-			10,
-			2
-		);
-
+	public function test_assert_fetchable_url__rejects_non_443_port() {
 		// Act
-		$pinned = Pinned_Remote_Fetch::select_pinned_ip( 'dual-stack.example' );
-
-		remove_all_filters( 'elementor/mcp/media/test_resolved_host_ips' );
-
-		// Assert
-		$this->assertSame( '93.184.216.34', $pinned );
-	}
-
-	public function test_assert_https_url__rejects_non_443_port() {
-		// Act
-		$error = Public_Host_Validator::assert_https_url( 'https://example.com:8443/photo.png' );
+		$error = Remote_Image_Fetcher::assert_fetchable_url( 'https://93.184.215.14:8443/photo.png' );
 
 		// Assert
 		$this->assertWPError( $error );
@@ -609,7 +624,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	public function test_upload_media__dedupe_does_not_update_another_users_attachment_meta() {
 		// Arrange
 		$this->act_as_admin();
-		$source_url = 'https://example.com/dedupe-owner.png';
+		$source_url = 'https://93.184.215.14/dedupe-owner.png';
 		$attachment_id = self::factory()->attachment->create( [
 			'post_author' => get_current_user_id(),
 			'post_mime_type' => 'image/jpeg',
@@ -621,7 +636,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		$png = self::MINIMAL_PNG;
 
-		$this->mock_pinned_http_response( static function () use ( $png ) {
+		$this->mock_http_response( static function () use ( $png ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -638,7 +653,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'title' => 'Editor title',
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -687,13 +702,13 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	/**
 	 * @dataProvider non_dns_host_provider
 	 */
-	public function test_assert_host_resolves_publicly__rejects_non_dns_hosts( string $host ) {
+	public function test_resolve_public_ip__rejects_numeric_and_invalid_hosts( string $host ) {
 		// Act
-		$error = Public_Host_Validator::assert_host_resolves_publicly( $host );
+		$error = Remote_Image_Fetcher::resolve_public_ip( $host );
 
 		// Assert
 		$this->assertWPError( $error );
-		$this->assertSame( 'invalid_url', $error->get_error_code() );
+		$this->assertSame( 'remote_host_not_allowed', $error->get_error_code() );
 	}
 
 	public function non_dns_host_provider(): array {
@@ -705,16 +720,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'octal' => [ '0177.0.0.1' ],
 			'trailing dot ip' => [ '127.0.0.1.' ],
 			'hex label' => [ '0x7f.0.0.1' ],
-			'underscore' => [ 'bad_host.example' ],
-			'trailing newline' => [ "example.com\n" ],
+			'reserved name' => [ 'unresolvable.invalid' ],
 		];
-	}
-
-	public function test_is_strict_dns_name__allows_regular_hostnames() {
-		// Assert
-		$this->assertTrue( Public_Host_Validator::is_strict_dns_name( 'example.com' ) );
-		$this->assertTrue( Public_Host_Validator::is_strict_dns_name( 'cdn-1.images.example.co.uk' ) );
-		$this->assertTrue( Public_Host_Validator::is_strict_dns_name( 'example.com.' ) );
 	}
 
 	public function test_upload_media__rejects_hex_form_host() {
@@ -730,25 +737,16 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_url', $result->get_error_code() );
+		$this->assertSame( 'remote_host_not_allowed', $result->get_error_code() );
 	}
 
-	public function test_pinned_remote_fetch__rejects_non_dns_host_in_resolve_entry() {
-		// Act
-		$entry = Pinned_Remote_Fetch::build_curl_resolve_entry( '0x7f000001', '198.18.0.1' );
-
-		// Assert
-		$this->assertWPError( $entry );
-		$this->assertSame( 'invalid_url', $entry->get_error_code() );
-	}
-
-	public function test_pinned_remote_fetch__rejects_encoded_response() {
+	public function test_fetch_to_temp_file__rejects_encoded_response() {
 		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+		if ( ! Remote_Image_Fetcher::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		$this->mock_pinned_http_response( static function () {
+		$this->mock_http_response( static function () {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [ 'content-encoding' => 'gzip' ],
@@ -757,22 +755,22 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		} );
 
 		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+		$result = Remote_Image_Fetcher::fetch_to_temp_file( 'https://93.184.215.14/photo.png' );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'unsupported_content_encoding', $result->get_error_code() );
 	}
 
-	public function test_pinned_remote_fetch__allows_identity_content_encoding() {
+	public function test_fetch_to_temp_file__allows_identity_content_encoding() {
 		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+		if ( ! Remote_Image_Fetcher::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		$this->mock_pinned_http_response( static function () {
+		$this->mock_http_response( static function () {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [ 'content-encoding' => 'identity' ],
@@ -781,13 +779,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		} );
 
 		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+		$result = Remote_Image_Fetcher::fetch_to_temp_file( 'https://93.184.215.14/photo.png' );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
-		$this->assertNotWPError( $result );
-		$this->assertSame( 200, wp_remote_retrieve_response_code( $result ) );
+		$this->assertIsArray( $result );
+		$this->assertSame( 'ok', file_get_contents( $result['tmp_name'] ) );
+		wp_delete_file( $result['tmp_name'] );
 	}
 
 	public function test_upload_token__restores_no_user_after_successful_upload() {
@@ -948,19 +947,16 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $reused->get_status() );
 	}
 
-	public function test_assert_public_ip__allows_public_addresses_next_to_denied_ranges() {
+	public function test_is_public_ip__allows_public_addresses_next_to_denied_ranges() {
 		// Assert
-		$this->assertNull( Public_Host_Validator::assert_public_ip( '198.20.0.1' ) );
-		$this->assertNull( Public_Host_Validator::assert_public_ip( '93.184.216.34' ) );
-		$this->assertNull( Public_Host_Validator::assert_public_ip( '2606:4700:4700::1111' ) );
-		$this->assertNull( Public_Host_Validator::assert_public_ip( '2001:30::1' ) );
-		$this->assertNull( Public_Host_Validator::assert_public_ip( '3fff:1000::1' ) );
-		$this->assertNull( Public_Host_Validator::assert_public_ip( '5f01::1' ) );
+		$this->assertTrue( Remote_Image_Fetcher::is_public_ip( '198.20.0.1' ) );
+		$this->assertTrue( Remote_Image_Fetcher::is_public_ip( '93.184.216.34' ) );
+		$this->assertTrue( Remote_Image_Fetcher::is_public_ip( '100.128.0.1' ) );
 	}
 
-	public function test_assert_https_url__rejects_userinfo() {
+	public function test_assert_fetchable_url__rejects_userinfo() {
 		// Act
-		$error = Public_Host_Validator::assert_https_url( 'https://user@example.com/photo.png' );
+		$error = Remote_Image_Fetcher::assert_fetchable_url( 'https://user@93.184.215.14/photo.png' );
 
 		// Assert
 		$this->assertWPError( $error );
@@ -987,7 +983,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$png = self::MINIMAL_PNG;
 
-		$this->mock_pinned_http_response( static function ( $url ) use ( $png ) {
+		$this->mock_http_response( static function ( $url ) use ( $png ) {
 			if ( str_ends_with( $url, '/start.png' ) ) {
 				return [
 					'response' => [ 'code' => 302 ],
@@ -1007,11 +1003,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/start.png',
+			'source_url' => 'https://93.184.215.14/start.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -1022,7 +1018,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->mock_pinned_http_response( static function () {
+		$this->mock_http_response( static function () {
 			return [
 				'response' => [ 'code' => 302 ],
 				'headers' => [],
@@ -1034,11 +1030,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/start.png',
+			'source_url' => 'https://93.184.215.14/start.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -1049,10 +1045,10 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->mock_pinned_http_response( static function () {
+		$this->mock_http_response( static function () {
 			return [
 				'response' => [ 'code' => 302 ],
-				'headers' => [ 'location' => 'https://example.com/loop.png' ],
+				'headers' => [ 'location' => 'https://93.184.215.14/loop.png' ],
 				'body' => '',
 			];
 		} );
@@ -1061,11 +1057,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = $ability->execute( [
-			'source_url' => 'https://example.com/loop.png',
+			'source_url' => 'https://93.184.215.14/loop.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -1077,7 +1073,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$png = self::MINIMAL_PNG;
 
-		$this->mock_pinned_http_response( static function () use ( $png ) {
+		$this->mock_http_response( static function () use ( $png ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -1089,20 +1085,20 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$with_query = $ability->execute( [
-			'source_url' => 'https://example.com/signed.png?sig=abc123',
+			'source_url' => 'https://93.184.215.14/signed.png?sig=abc123',
 			'consent' => true,
 		] );
 		$with_fragment = $ability->execute( [
-			'source_url' => 'https://example.com/plain.png#section',
+			'source_url' => 'https://93.184.215.14/plain.png#section',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertSame( '', (string) get_post_meta( $with_query['attachment_id'], Media_Upload_Config::SOURCE_URL_META_KEY, true ) );
 		$this->assertSame(
-			'https://example.com/plain.png',
+			'https://93.184.215.14/plain.png',
 			get_post_meta( $with_fragment['attachment_id'], Media_Upload_Config::SOURCE_URL_META_KEY, true )
 		);
 	}
@@ -1110,7 +1106,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	public function test_upload_media__returns_error_when_dedupe_update_is_denied() {
 		// Arrange
 		$this->act_as_admin();
-		$source_url = 'https://example.com/dedupe-denied.png';
+		$source_url = 'https://93.184.215.14/dedupe-denied.png';
 		$attachment_id = self::factory()->attachment->create( [
 			'post_author' => get_current_user_id(),
 			'post_mime_type' => 'image/jpeg',
@@ -1141,25 +1137,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
-	}
-
-	public function test_create_from_temp_file__deletes_temp_file_without_upload_capability() {
-		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
-		wp_set_current_user( $user_id );
-		$tmp = wp_tempnam( 'mcp-cap-check.png' );
-		file_put_contents( $tmp, self::MINIMAL_PNG );
-
-		// Act
-		$result = Media_Attachment_Service::create_from_temp_file( [
-			'tmp_name' => $tmp,
-			'name' => 'pixel.png',
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
-		$this->assertFalse( file_exists( $tmp ) );
 	}
 
 	public function test_update_title_and_alt__returns_not_found_for_missing_attachment() {
@@ -1267,21 +1244,19 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'onload', (string) file_get_contents( get_attached_file( $result['attachment_id'] ) ) );
 	}
 
-	public function test_svg_upload__is_evaluated_for_the_given_user() {
+	public function test_svg_upload__is_allowed_for_administrators_only() {
 		// Arrange
-		$this->act_as_editor();
-		$admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
-		$current_user_id = get_current_user_id();
 
 		// Act
-		$allowed_for_admin = Media_Upload_Config::is_svg_upload_allowed_for_user( $admin_id );
-		$allowed_for_editor = Media_Upload_Config::is_svg_upload_allowed_for_user( $current_user_id );
+		$this->act_as_editor();
+		$allowed_for_editor = Media_Upload_Config::is_svg_upload_allowed();
+		$this->act_as_admin();
+		$allowed_for_admin = Media_Upload_Config::is_svg_upload_allowed();
 
 		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
 
 		// Assert
-		$this->assertSame( $current_user_id, get_current_user_id() );
 		$this->assertFalse( $allowed_for_editor );
 		$this->assertSame( \Elementor\Core\Files\File_Types\Svg::file_sanitizer_can_run(), $allowed_for_admin );
 	}
@@ -1411,7 +1386,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$upload = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://example.com/photo.png',
+			'source_url' => 'https://93.184.215.14/photo.png',
 			'consent' => true,
 		] );
 		$request = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
@@ -1471,7 +1446,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => $role ] ) );
 		$png = self::MINIMAL_PNG;
 
-		$this->mock_pinned_http_response( static function () use ( $png ) {
+		$this->mock_http_response( static function () use ( $png ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -1481,11 +1456,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://example.com/' . $role . '.png',
+			'source_url' => 'https://93.184.215.14/' . $role . '.png',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -1528,7 +1503,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
 
-		$this->mock_pinned_http_response( static function () use ( $svg ) {
+		$this->mock_http_response( static function () use ( $svg ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -1538,33 +1513,15 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://example.com/icon.svg',
+			'source_url' => 'https://93.184.215.14/icon.svg',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
-	}
-
-	public function test_create_from_temp_file__denies_subscriber_and_deletes_temp_file() {
-		// Arrange
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
-		$tmp = wp_tempnam( 'mcp-editor-check.png' );
-		file_put_contents( $tmp, self::MINIMAL_PNG );
-
-		// Act
-		$result = Media_Attachment_Service::create_from_temp_file( [
-			'tmp_name' => $tmp,
-			'name' => 'pixel.png',
-		] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
-		$this->assertFalse( file_exists( $tmp ) );
 	}
 
 	public function test_upload_token__issued_for_user_without_upload_capability_is_not_redeemable() {
@@ -1600,166 +1557,23 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_pinned_remote_fetch__registers_direct_connection_hook_at_last_priority() {
-		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
-			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
-		}
-
-		$priorities = [];
-
-		add_filter(
-			'pre_http_request',
-			static function () use ( &$priorities ) {
-				global $wp_filter;
-
-				$priorities = isset( $wp_filter['http_api_curl'] ) ? array_keys( $wp_filter['http_api_curl']->callbacks ) : [];
-
-				return [
-					'response' => [ 'code' => 200 ],
-					'headers' => [],
-					'body' => 'ok',
-				];
-			},
-			10,
-			3
-		);
-
-		// Act
-		Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
-
-		remove_all_filters( 'pre_http_request' );
-
-		// Assert
-		$this->assertContains( PHP_INT_MAX, $priorities );
-		$remaining = isset( $GLOBALS['wp_filter']['http_api_curl'] ) ? array_keys( $GLOBALS['wp_filter']['http_api_curl']->callbacks ) : [];
-		$this->assertNotContains( PHP_INT_MAX, $remaining );
-	}
-
-	public function test_pinned_remote_fetch__direct_connection_options_clear_proxy() {
-		// Act
-		$options = Pinned_Remote_Fetch::direct_connection_options();
-
-		// Assert
-		$this->assertSame( '', $options[ CURLOPT_PROXY ] );
-		$this->assertSame( '*', $options[ CURLOPT_NOPROXY ] );
-		$this->assertCount( 2, $options );
-	}
-
-	public function test_pinned_remote_fetch__pin_options_contain_resolve_entry_and_disable_decoding() {
-		// Act
-		$options = Pinned_Remote_Fetch::pin_options( 'example.com:443:93.184.216.34' );
-
-		// Assert
-		$this->assertSame( [ 'example.com:443:93.184.216.34' ], $options[ CURLOPT_RESOLVE ] );
-		$this->assertFalse( $options[ CURLOPT_HTTP_CONTENT_DECODING ] );
-	}
-
-	public function test_pinned_remote_fetch__matches_only_the_fetch_url() {
-		// Assert
-		$url = 'https://example.com/a/photo.png?x=1';
-
-		$this->assertTrue( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://EXAMPLE.com/a/photo.png?x=1' ) );
-		$this->assertTrue( Pinned_Remote_Fetch::matches_fetch_url( 'https://example.com', 'https://example.com/' ) );
-		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://other.example/a/photo.png?x=1' ) );
-		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://example.com/a/other.png?x=1' ) );
-		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'https://example.com/a/photo.png?x=2' ) );
-		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, 'http://example.com/a/photo.png?x=1' ) );
-		$this->assertFalse( Pinned_Remote_Fetch::matches_fetch_url( $url, null ) );
-	}
-
-	public function test_pinned_remote_fetch__ignores_curl_requests_for_other_urls() {
-		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
-			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
-		}
-
-		add_filter(
-			'pre_http_request',
-			static function () {
-				$handle = curl_init();
-				do_action( 'http_api_curl', $handle, [], 'https://unrelated.example/other.png' );
-				curl_close( $handle );
-
-				return [
-					'response' => [ 'code' => 200 ],
-					'headers' => [],
-					'body' => 'ok',
-				];
-			},
-			10,
-			3
-		);
-
-		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
-
-		remove_all_filters( 'pre_http_request' );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'remote_fetch_unpinned', $result->get_error_code() );
-	}
-
-	public function test_pinned_remote_fetch__applies_pin_for_the_fetch_url() {
-		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
-			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
-		}
-
-		add_filter(
-			'pre_http_request',
-			static function ( $preempt, $args, $url ) {
-				$handle = curl_init();
-				do_action( 'http_api_curl', $handle, $args, $url );
-				curl_close( $handle );
-
-				return [
-					'response' => [ 'code' => 200 ],
-					'headers' => [],
-					'body' => 'ok',
-				];
-			},
-			10,
-			3
-		);
-
-		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
-
-		remove_all_filters( 'pre_http_request' );
-
-		// Assert
-		$this->assertNotWPError( $result );
-		$this->assertSame( 200, wp_remote_retrieve_response_code( $result ) );
-	}
-
 	/**
 	 * @dataProvider transport_error_provider
 	 */
-	public function test_pinned_remote_fetch__maps_transport_errors_to_generic_codes( string $raw_message, string $expected_code ) {
+	public function test_fetch_to_temp_file__maps_transport_errors_to_generic_codes( string $raw_message, string $expected_code ) {
 		// Arrange
-		if ( ! Pinned_Remote_Fetch::is_curl_transport_available() ) {
+		if ( ! Remote_Image_Fetcher::is_curl_transport_available() ) {
 			$this->markTestSkipped( 'cURL transport is not available in this environment.' );
 		}
 
-		add_filter(
-			'pre_http_request',
-			static function ( $preempt, $args, $url ) use ( $raw_message ) {
-				$handle = curl_init();
-				do_action( 'http_api_curl', $handle, $args, $url );
-				curl_close( $handle );
-
-				return new \WP_Error( 'http_request_failed', $raw_message );
-			},
-			10,
-			3
-		);
+		$this->mock_http_response( static function () use ( $raw_message ) {
+			return new \WP_Error( 'http_request_failed', $raw_message );
+		} );
 
 		// Act
-		$result = Pinned_Remote_Fetch::get( 'https://example.com/photo.png', 'example.com', '93.184.216.34' );
+		$result = Remote_Image_Fetcher::fetch_to_temp_file( 'https://93.184.215.14/photo.png' );
 
-		remove_all_filters( 'pre_http_request' );
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -1773,25 +1587,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			'resolution failure' => [ 'cURL error 6: Could not resolve host: internal.example', 'fetch_failed' ],
 			'refused connection' => [ 'cURL error 7: Failed to connect to 10.0.0.5 port 443', 'fetch_failed' ],
 			'timeout' => [ 'cURL error 28: Operation timed out after 30001 milliseconds', 'fetch_timeout' ],
+			'url refused by WordPress' => [ 'A valid URL was not provided.', 'remote_host_not_allowed' ],
 		];
 	}
 
 	public function test_host_errors__share_one_generic_code() {
-		// Arrange
-		add_filter(
-			'elementor/mcp/media/test_resolved_host_ips',
-			static function ( $ips, $host ) {
-				return 'unresolvable.example' === $host ? [] : $ips;
-			},
-			10,
-			2
-		);
-
 		// Act
-		$blocked = Public_Host_Validator::assert_public_ip( '10.0.0.5' );
-		$unresolvable = Pinned_Remote_Fetch::select_pinned_ip( 'unresolvable.example' );
-
-		remove_all_filters( 'elementor/mcp/media/test_resolved_host_ips' );
+		$blocked = Remote_Image_Fetcher::resolve_public_ip( '10.0.0.5' );
+		$unresolvable = Remote_Image_Fetcher::resolve_public_ip( 'unresolvable.invalid' );
 
 		// Assert
 		$this->assertWPError( $blocked );
@@ -1820,8 +1623,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		};
 
 		// Assert
-		$this->assertTrue( Pinned_Remote_Fetch::is_proxy_in_use( 'https://example.com/photo.png', $enabled_proxy ) );
-		$this->assertFalse( Pinned_Remote_Fetch::is_proxy_in_use( 'https://example.com/photo.png', $disabled_proxy ) );
+		$this->assertTrue( Remote_Image_Fetcher::is_proxy_in_use( 'https://93.184.215.14/photo.png', $enabled_proxy ) );
+		$this->assertFalse( Remote_Image_Fetcher::is_proxy_in_use( 'https://93.184.215.14/photo.png', $disabled_proxy ) );
 	}
 
 	public function test_fetch_to_temp_file__stops_when_the_overall_deadline_passes() {
@@ -1834,7 +1637,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		};
 
 		// Act
-		$result = \Elementor\Modules\Mcp\Media\Safe_Remote_Image_Fetcher::fetch_to_temp_file( 'https://example.com/photo.png', $clock );
+		$result = Remote_Image_Fetcher::fetch_to_temp_file( 'https://93.184.215.14/photo.png', null, $clock );
 
 		// Assert
 		$this->assertWPError( $result );
@@ -1844,7 +1647,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	private function mock_png_for_all_urls(): void {
 		$png = self::MINIMAL_PNG;
 
-		$this->mock_pinned_http_response( static function () use ( $png ) {
+		$this->mock_http_response( static function () use ( $png ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -1860,15 +1663,15 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [
-				'https://example.com/list-a.png',
-				'https://example.com/list-b.png',
-				'https://example.com/list-c.png',
+			'images' => [
+				[ 'source_url' => 'https://93.184.215.14/list-a.png' ],
+				[ 'source_url' => 'https://93.184.215.14/list-b.png' ],
+				[ 'source_url' => 'https://93.184.215.14/list-c.png' ],
 			],
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -1887,7 +1690,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		}
 
 		$this->assertCount( 3, array_unique( $ids ) );
-		$this->assertSame( 'https://example.com/list-b.png', $result['uploads'][1]['source_url'] );
+		$this->assertSame( 'https://93.184.215.14/list-b.png', $result['uploads'][1]['source_url'] );
 	}
 
 	public function test_upload_media__list_reports_partial_failures_and_continues() {
@@ -1897,15 +1700,15 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [
-				'https://127.0.0.1/blocked.png?token=secret#frag',
-				'https://example.com/partial-ok.png',
-				'http://example.com/plain-http.png',
+			'images' => [
+				[ 'source_url' => 'https://127.0.0.1/blocked.png?token=secret#frag' ],
+				[ 'source_url' => 'https://93.184.215.14/partial-ok.png' ],
+				[ 'source_url' => 'http://93.184.215.14/plain-http.png' ],
 			],
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -1931,7 +1734,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [ 'https://127.0.0.1/a.png', 'http://example.com/b.png' ],
+			'images' => [ [ 'source_url' => 'https://127.0.0.1/a.png' ], [ 'source_url' => 'http://93.184.215.14/b.png' ] ],
 			'consent' => true,
 		] );
 
@@ -1946,44 +1749,71 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	public function test_upload_media__list_rejects_more_than_the_maximum() {
 		// Arrange
 		$this->act_as_admin();
-		$urls = [];
-		for ( $i = 0; $i <= Media_Upload_Config::MAX_UPLOADS_PER_REQUEST; $i++ ) {
-			$urls[] = 'https://example.com/too-many-' . $i . '.png';
+		$images = [];
+		for ( $i = 0; $i <= Media_Upload_Config::MAX_URL_IMPORTS_PER_REQUEST; $i++ ) {
+			$images[] = [ 'source_url' => 'https://93.184.215.14/too-many-' . $i . '.png' ];
 		}
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => $urls,
+			'images' => $images,
 			'consent' => true,
 		] );
 
 		// Assert
-		$this->assertCount( 11, $urls );
+		$this->assertCount( 6, $images );
 		$this->assertWPError( $result );
 		$this->assertSame( 'invalid_upload_count', $result->get_error_code() );
-		$this->assertStringContainsString( '10', $result->get_error_message() );
+		$this->assertStringContainsString( '5', $result->get_error_message() );
 	}
 
 	public function test_upload_media__list_accepts_exactly_the_maximum() {
 		// Arrange
 		$this->act_as_admin();
 		$this->mock_png_for_all_urls();
-		$urls = [];
-		for ( $i = 0; $i < Media_Upload_Config::MAX_UPLOADS_PER_REQUEST; $i++ ) {
-			$urls[] = 'https://example.com/max-' . $i . '.png';
+		$images = [];
+		for ( $i = 0; $i < Media_Upload_Config::MAX_URL_IMPORTS_PER_REQUEST; $i++ ) {
+			$images[] = [ 'source_url' => 'https://93.184.215.14/max-' . $i . '.png' ];
 		}
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => $urls,
+			'images' => $images,
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
-		$this->assertSame( 10, $result['succeeded'] );
+		$this->assertSame( 5, $result['succeeded'] );
+	}
+
+	public function test_upload_media__list_applies_title_and_alt_per_image() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->execute( [
+			'images' => [
+				[
+					'source_url' => 'https://93.184.215.14/meta-a.png',
+					'title' => 'First title',
+					'alt' => 'First alt',
+				],
+				[ 'source_url' => 'https://93.184.215.14/meta-b.png' ],
+			],
+			'consent' => true,
+		] );
+
+		$this->clear_http_mocks();
+
+		// Assert
+		$this->assertSame( 2, $result['succeeded'] );
+		$this->assertSame( 'First alt', $result['uploads'][0]['alt'] );
+		$this->assertSame( 'First title', get_post( $result['uploads'][0]['attachment_id'] )->post_title );
+		$this->assertSame( '', $result['uploads'][1]['alt'] );
 	}
 
 	public function test_upload_media__list_rejects_empty_list() {
@@ -1992,7 +1822,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [],
+			'images' => [],
 			'consent' => true,
 		] );
 
@@ -2007,8 +1837,8 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://example.com/one.png',
-			'source_urls' => [ 'https://example.com/two.png' ],
+			'source_url' => 'https://93.184.215.14/one.png',
+			'images' => [ [ 'source_url' => 'https://93.184.215.14/two.png' ] ],
 			'consent' => true,
 		] );
 
@@ -2020,13 +1850,13 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	/**
 	 * @dataProvider invalid_list_entries_provider
 	 */
-	public function test_upload_media__list_rejects_invalid_entries( array $urls ) {
+	public function test_upload_media__list_rejects_invalid_entries( array $images ) {
 		// Arrange
 		$this->act_as_admin();
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => $urls,
+			'images' => $images,
 			'consent' => true,
 		] );
 
@@ -2037,11 +1867,12 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 	public function invalid_list_entries_provider(): array {
 		return [
-			'integer entry' => [ [ 'https://example.com/a.png', 12 ] ],
+			'integer source_url' => [ [ [ 'source_url' => 'https://93.184.215.14/a.png' ], [ 'source_url' => 12 ] ] ],
 			'null entry' => [ [ null ] ],
-			'array entry' => [ [ [ 'https://example.com/a.png' ] ] ],
-			'empty string entry' => [ [ '' ] ],
-			'blank string entry' => [ [ '   ' ] ],
+			'string entry' => [ [ 'https://93.184.215.14/a.png' ] ],
+			'missing source_url' => [ [ [ 'title' => 'No URL' ] ] ],
+			'empty source_url' => [ [ [ 'source_url' => '' ] ] ],
+			'blank source_url' => [ [ [ 'source_url' => '   ' ] ] ],
 		];
 	}
 
@@ -2051,14 +1882,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [ 'https://example.com/a.png' ],
+			'images' => [ [ 'source_url' => 'https://93.184.215.14/a.png' ] ],
 			'title' => 'Shared title',
 			'consent' => true,
 		] );
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'unsupported_with_source_urls', $result->get_error_code() );
+		$this->assertSame( 'unsupported_with_images', $result->get_error_code() );
 	}
 
 	public function test_upload_media__list_requires_upload_files_capability_for_the_whole_call() {
@@ -2068,11 +1899,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [ 'https://example.com/contrib-a.png', 'https://example.com/contrib-b.png' ],
+			'images' => [ [ 'source_url' => 'https://93.184.215.14/contrib-a.png' ], [ 'source_url' => 'https://93.184.215.14/contrib-b.png' ] ],
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertWPError( $result );
@@ -2085,7 +1916,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$png = self::MINIMAL_PNG;
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
 
-		$this->mock_pinned_http_response( static function ( $url ) use ( $png, $svg ) {
+		$this->mock_http_response( static function ( $url ) use ( $png, $svg ) {
 			return [
 				'response' => [ 'code' => 200 ],
 				'headers' => [],
@@ -2095,14 +1926,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_urls' => [
-				'https://example.com/list-svg-first.svg',
-				'https://example.com/list-after-svg.png',
+			'images' => [
+				[ 'source_url' => 'https://93.184.215.14/list-svg-first.svg' ],
+				[ 'source_url' => 'https://93.184.215.14/list-after-svg.png' ],
 			],
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -2117,15 +1948,15 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->mock_png_for_all_urls();
 		$ability = new Upload_Media_Ability();
-		$url = 'https://example.com/list-repeat.png';
+		$url = 'https://93.184.215.14/list-repeat.png';
 
 		// Act
 		$result = $ability->execute( [
-			'source_urls' => [ $url, $url ],
+			'images' => [ [ 'source_url' => $url ], [ 'source_url' => $url ] ],
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertSame( 2, $result['succeeded'] );
@@ -2139,13 +1970,13 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://example.com/single-shape.png',
+			'source_url' => 'https://93.184.215.14/single-shape.png',
 			'title' => 'Single title',
 			'alt' => 'Single alt',
 			'consent' => true,
 		] );
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertIsArray( $result );
@@ -2188,34 +2019,49 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		// Arrange
 		$method = new \ReflectionMethod( Upload_Media_Ability::class, 'get_definition' );
 		$method->setAccessible( true );
-		$schema = $method->invoke( new Upload_Media_Ability() )->input_schema['properties']['source_urls'] ?? null;
+		$properties = $method->invoke( new Upload_Media_Ability() )->input_schema['properties'];
+		$schema = $properties['images'] ?? null;
 
 		// Assert
+		$this->assertArrayNotHasKey( 'source_urls', $properties );
 		$this->assertNotNull( $schema );
 		$this->assertSame( 1, $schema['minItems'] );
-		$this->assertSame( Media_Upload_Config::MAX_UPLOADS_PER_REQUEST, $schema['maxItems'] );
-		$this->assertSame( 'string', $schema['items']['type'] );
+		$this->assertSame( Media_Upload_Config::MAX_URL_IMPORTS_PER_REQUEST, $schema['maxItems'] );
+		$this->assertSame( 'object', $schema['items']['type'] );
+		$this->assertSame( [ 'source_url' ], $schema['items']['required'] );
 	}
 
 	public function test_upload_media__batch_reports_remaining_urls_as_timeouts_after_the_batch_deadline() {
 		// Arrange
 		$this->act_as_admin();
-		$this->mock_png_for_all_urls();
-		$calls = 0;
-		$clock = static function () use ( &$calls ) {
-			$calls++;
-
-			// Call 1 sets the deadline, call 2 is the first item, later calls are past the deadline.
-			return $calls <= 2 ? 1000.0 : 1000.0 + Media_Upload_Config::TOTAL_BATCH_TIMEOUT_SECONDS + 1;
+		$now = 1000.0;
+		$png = self::MINIMAL_PNG;
+		$clock = static function () use ( &$now ) {
+			return $now;
 		};
+
+		// The first download uses up the whole batch time.
+		$this->mock_http_response( static function () use ( &$now, $png ) {
+			$now += Media_Upload_Config::TOTAL_BATCH_TIMEOUT_SECONDS + 1;
+
+			return [
+				'response' => [ 'code' => 200 ],
+				'headers' => [],
+				'body' => $png,
+			];
+		} );
 
 		// Act
 		$result = ( new Upload_Media_Ability() )->import_batch(
-			[ 'https://example.com/batch-a.png', 'https://example.com/batch-b.png', 'https://example.com/batch-c.png' ],
+			[
+				[ 'source_url' => 'https://93.184.215.14/batch-a.png' ],
+				[ 'source_url' => 'https://93.184.215.14/batch-b.png' ],
+				[ 'source_url' => 'https://93.184.215.14/batch-c.png' ],
+			],
 			$clock
 		);
 
-		$this->clear_pinned_http_mocks();
+		$this->clear_http_mocks();
 
 		// Assert
 		$this->assertSame( 1, $result['succeeded'] );
@@ -2223,6 +2069,31 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'ok', $result['uploads'][0]['status'] );
 		$this->assertSame( 'fetch_timeout', $result['uploads'][1]['error']['code'] );
 		$this->assertSame( 'fetch_timeout', $result['uploads'][2]['error']['code'] );
+	}
+
+	public function test_upload_media__batch_deadline_also_bounds_each_download() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_png_for_all_urls();
+		$calls = 0;
+		$clock = static function () use ( &$calls ) {
+			$calls++;
+
+			// Call 1 sets the batch deadline; the image starts half a second before it.
+			return 1 === $calls ? 1000.0 : 1000.0 + Media_Upload_Config::TOTAL_BATCH_TIMEOUT_SECONDS - 0.5;
+		};
+
+		// Act
+		$result = ( new Upload_Media_Ability() )->import_batch(
+			[ [ 'source_url' => 'https://93.184.215.14/batch-late.png' ] ],
+			$clock
+		);
+
+		$this->clear_http_mocks();
+
+		// Assert
+		$this->assertSame( 0, $result['succeeded'] );
+		$this->assertSame( 'fetch_timeout', $result['uploads'][0]['error']['code'] );
 	}
 
 	public function test_upload_token__detects_type_from_content_regardless_of_extension() {

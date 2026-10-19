@@ -33,7 +33,7 @@ class Media_Upload_Config {
 
 	const TOTAL_FETCH_TIMEOUT_SECONDS = 60;
 
-	const TOTAL_BATCH_TIMEOUT_SECONDS = 120;
+	const TOTAL_BATCH_TIMEOUT_SECONDS = 60;
 
 	const MAX_OUTSTANDING_TOKENS_PER_USER = 20;
 
@@ -42,6 +42,8 @@ class Media_Upload_Config {
 	const MAX_BYTES = 10485760;
 
 	const MAX_UPLOADS_PER_REQUEST = 10;
+
+	const MAX_URL_IMPORTS_PER_REQUEST = 5;
 
 	const ALLOWED_IMAGE_MIME_TYPES = [
 		'image/jpeg',
@@ -88,47 +90,19 @@ class Media_Upload_Config {
 		return null;
 	}
 
-	public static function allowed_mime_types( ?int $user_id = null ): array {
+	public static function allowed_mime_types(): array {
 		$mimes = self::ALLOWED_IMAGE_MIME_TYPES;
 
-		if ( self::is_svg_upload_allowed_for_user( $user_id ) ) {
+		if ( self::is_svg_upload_allowed() ) {
 			$mimes[] = self::SVG_MIME_TYPE;
 		}
 
 		return $mimes;
 	}
 
-	public static function is_svg_upload_allowed_for_user( ?int $user_id = null ): bool {
-		if ( ! Svg::file_sanitizer_can_run() ) {
-			return false;
-		}
-
-		$user_id = null === $user_id ? get_current_user_id() : (int) $user_id;
-
-		if ( $user_id <= 0 ) {
-			return false;
-		}
-
-		if ( ! self::are_unfiltered_uploads_enabled_for_user( $user_id ) ) {
-			return false;
-		}
-
-		return user_can( $user_id, self::SVG_REQUIRED_CAPABILITY );
-	}
-
-	private static function are_unfiltered_uploads_enabled_for_user( int $user_id ): bool {
-		$previous_user_id = get_current_user_id();
-
-		if ( $previous_user_id === $user_id ) {
-			return (bool) Uploads_Manager::are_unfiltered_uploads_enabled();
-		}
-
-		wp_set_current_user( $user_id );
-
-		try {
-			return (bool) Uploads_Manager::are_unfiltered_uploads_enabled();
-		} finally {
-			wp_set_current_user( $previous_user_id );
-		}
+	public static function is_svg_upload_allowed(): bool {
+		return Svg::file_sanitizer_can_run()
+			&& Uploads_Manager::are_unfiltered_uploads_enabled()
+			&& current_user_can( self::SVG_REQUIRED_CAPABILITY );
 	}
 }

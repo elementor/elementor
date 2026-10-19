@@ -92,22 +92,8 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 		);
 	}
 
-	public function is_available() {
-		$gate = parent::is_available();
-
-		if ( is_wp_error( $gate ) ) {
-			return $gate;
-		}
-
-		return Mcp_Media_Feature_Gate::availability();
-	}
-
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
-
-		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
-			return Mcp_Media_Feature_Gate::disabled_error();
-		}
 
 		$capability_error = Media_Upload_Input_Guard::require_upload_capability();
 		if ( $capability_error ) {

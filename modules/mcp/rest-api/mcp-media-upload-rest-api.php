@@ -34,10 +34,6 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	public function permission_check( \WP_REST_Request $request ): bool {
-		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
-			return false;
-		}
-
 		$token = $this->read_header( $request, Media_Upload_Config::UPLOAD_TOKEN_HEADER );
 
 		if ( '' === $token ) {
@@ -48,10 +44,6 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	private function handle_upload( \WP_REST_Request $request ) {
-		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
-			return Mcp_Media_Feature_Gate::disabled_error();
-		}
-
 		$token = $this->read_header( $request, Media_Upload_Config::UPLOAD_TOKEN_HEADER );
 		if ( '' === $token ) {
 			return new \WP_Error(
@@ -115,7 +107,7 @@ class Mcp_Media_Upload_REST_API {
 			return $content_length_error;
 		}
 
-		$stream_result = $this->stream_body_to_temp( $request );
+		$stream_result = $this->write_body_to_temp( $request );
 		if ( is_wp_error( $stream_result ) ) {
 			return $stream_result;
 		}
@@ -156,127 +148,15 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	/**
-	 * @return array{tmp_name:string}|WP_Error
+	 * Writes the raw request body to a temporary file, as the core media endpoint
+	 * (WP_REST_Attachments_Controller::upload_from_data()) does.
+	 *
+	 * @return array{tmp_name:string}|\WP_Error
 	 */
-	private function stream_body_to_temp( \WP_REST_Request $request ) {
-		Media_Attachment_Service::load_admin_media_includes();
+	private function write_body_to_temp( \WP_REST_Request $request ) {
+		$body = (string) $request->get_body();
 
-		$tmp = wp_tempnam( 'mcp-media-upload' );
-		if ( ! $tmp ) {
-			return new \WP_Error(
-				'temp_file_failed',
-				__( 'Could not create a temporary file for the upload.', 'elementor' ),
-				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
-			);
-		}
-
-		$max_bytes = Media_Upload_Config::max_upload_bytes();
-		$input = fopen( 'php://input', 'rb' );
-
-		if ( false === $input ) {
-			wp_delete_file( $tmp );
-
-			return new \WP_Error(
-				'upload_stream_failed',
-				__( 'Could not read the upload body.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		$first_byte = fread( $input, 1 );
-		if ( ( false === $first_byte || '' === $first_byte ) && feof( $input ) ) {
-			fclose( $input );
-
-			if ( $this->allow_request_body_string_fallback() ) {
-				return $this->write_chunked_string_to_temp( (string) $request->get_body(), $tmp, $max_bytes );
-			}
-
-			wp_delete_file( $tmp );
-
-			return new \WP_Error(
-				'empty_file',
-				__( 'The uploaded file is empty.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		$output = fopen( $tmp, 'wb' );
-		if ( false === $output ) {
-			fclose( $input );
-			wp_delete_file( $tmp );
-
-			return new \WP_Error(
-				'upload_stream_failed',
-				__( 'Could not read the upload body.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		$read = 0;
-		$chunk_size = 8192;
-
-		if ( false !== $first_byte && '' !== $first_byte ) {
-			$read = 1;
-			fwrite( $output, $first_byte );
-		}
-
-		while ( ! feof( $input ) ) {
-			$chunk = fread( $input, $chunk_size );
-			if ( false === $chunk ) {
-				fclose( $input );
-				fclose( $output );
-				wp_delete_file( $tmp );
-
-				return new \WP_Error(
-					'upload_stream_failed',
-					__( 'Could not read the upload body.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-
-			if ( '' === $chunk ) {
-				break;
-			}
-
-			$read += strlen( $chunk );
-			if ( $read > $max_bytes ) {
-				fclose( $input );
-				fclose( $output );
-				wp_delete_file( $tmp );
-
-				return new \WP_Error(
-					'file_too_large',
-					__( 'The uploaded file exceeds the allowed size limit.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-
-			fwrite( $output, $chunk );
-		}
-
-		fclose( $input );
-		fclose( $output );
-
-		if ( 0 === $read ) {
-			wp_delete_file( $tmp );
-
-			return new \WP_Error(
-				'empty_file',
-				__( 'The uploaded file is empty.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		return [ 'tmp_name' => $tmp ];
-	}
-
-	/**
-	 * @return array{tmp_name:string}|WP_Error
-	 */
-	private function write_chunked_string_to_temp( string $body, string $tmp, int $max_bytes ) {
 		if ( '' === $body ) {
-			wp_delete_file( $tmp );
-
 			return new \WP_Error(
 				'empty_file',
 				__( 'The uploaded file is empty.', 'elementor' ),
@@ -284,22 +164,7 @@ class Mcp_Media_Upload_REST_API {
 			);
 		}
 
-		$output = fopen( $tmp, 'wb' );
-		if ( false === $output ) {
-			wp_delete_file( $tmp );
-
-			return new \WP_Error(
-				'upload_stream_failed',
-				__( 'Could not read the upload body.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		$length = strlen( $body );
-		if ( $length > $max_bytes ) {
-			fclose( $output );
-			wp_delete_file( $tmp );
-
+		if ( strlen( $body ) > Media_Upload_Config::max_upload_bytes() ) {
 			return new \WP_Error(
 				'file_too_large',
 				__( 'The uploaded file exceeds the allowed size limit.', 'elementor' ),
@@ -307,29 +172,24 @@ class Mcp_Media_Upload_REST_API {
 			);
 		}
 
-		$offset = 0;
-		$chunk_size = 8192;
+		Media_Attachment_Service::load_admin_media_includes();
 
-		while ( $offset < $length ) {
-			$chunk = substr( $body, $offset, $chunk_size );
-			fwrite( $output, $chunk );
-			$offset += strlen( $chunk );
+		$tmp = wp_tempnam( 'mcp-media-upload' );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( ! $tmp || false === file_put_contents( $tmp, $body ) ) {
+			if ( $tmp ) {
+				wp_delete_file( $tmp );
+			}
+
+			return new \WP_Error(
+				'temp_file_failed',
+				__( 'Could not create a temporary file for the upload.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
 		}
-
-		fclose( $output );
 
 		return [ 'tmp_name' => $tmp ];
-	}
-
-	private function allow_request_body_string_fallback(): bool {
-		if ( defined( 'WP_TESTS_DOMAIN' ) && WP_TESTS_DOMAIN ) {
-			return true;
-		}
-
-		/**
-		 * @param bool $allow When true, empty php://input may fall back to WP_REST_Request::get_body() (PHPUnit only).
-		 */
-		return (bool) apply_filters( 'elementor/mcp/media/allow_stream_body_fallback', false );
 	}
 
 	private function read_header( \WP_REST_Request $request, string $name ): string {

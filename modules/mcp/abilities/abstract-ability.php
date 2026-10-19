@@ -51,6 +51,15 @@ abstract class Abstract_Ability {
 		return $result;
 	}
 
+	/**
+	 * Validates input against the ability's input schema, the same way the WordPress Abilities API does.
+	 *
+	 * @return true|\WP_Error
+	 */
+	public function validate_input_against_schema( $input ) {
+		return rest_validate_value_from_schema( $input, $this->definition()->to_array()['input_schema'], 'input' );
+	}
+
 	public function check_permission(): bool {
 		return (bool) call_user_func( $this->definition()->permission_callback );
 	}

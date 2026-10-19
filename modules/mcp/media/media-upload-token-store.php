@@ -8,8 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Media_Upload_Token_Store {
 
-	private const CONSUME_LOCK_GROUP = 'elementor_mcp_upload_consume';
-
 	public static function issue_for_user( int $user_id ): array {
 		$token = bin2hex( random_bytes( 32 ) );
 		$expires_at = time() + Media_Upload_Config::TOKEN_TTL_SECONDS;
@@ -22,7 +20,7 @@ class Media_Upload_Token_Store {
 		set_transient( self::storage_key( $token ), $data, Media_Upload_Config::TOKEN_TTL_SECONDS );
 
 		$index = self::outstanding_index( $user_id );
-		$index[ hash( 'sha256', $token ) ] = $expires_at;
+		$index[ self::token_hash( $token ) ] = $expires_at;
 		set_transient( self::user_index_key( $user_id ), $index, Media_Upload_Config::TOKEN_TTL_SECONDS );
 
 		return [
@@ -40,10 +38,6 @@ class Media_Upload_Token_Store {
 	}
 
 	public static function is_valid_for_request( string $token ): bool {
-		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
-			return false;
-		}
-
 		$key = self::storage_key( $token );
 		$data = get_transient( $key );
 
@@ -60,23 +54,9 @@ class Media_Upload_Token_Store {
 		}
 
 		$key = self::storage_key( $token );
-		$lock_key = $key . '_consume';
-
-		// Single-use is enforced when delete_transient() removes the stored token; a false return means another request already consumed it.
-		// wp_cache_add only dedupes concurrent consumers within the same HTTP request unless a persistent object cache is configured.
-		if ( ! wp_cache_add( $lock_key, 1, self::CONSUME_LOCK_GROUP, 30 ) ) {
-			return new \WP_Error(
-				'invalid_upload_token',
-				__( 'The upload token is invalid or has expired.', 'elementor' ),
-				[ 'status' => \WP_Http::FORBIDDEN ]
-			);
-		}
-
 		$data = get_transient( $key );
 
 		if ( ! is_array( $data ) || empty( $data['user_id'] ) || empty( $data['expires_at'] ) ) {
-			wp_cache_delete( $lock_key, self::CONSUME_LOCK_GROUP );
-
 			return new \WP_Error(
 				'invalid_upload_token',
 				__( 'The upload token is invalid or has expired.', 'elementor' ),
@@ -86,7 +66,6 @@ class Media_Upload_Token_Store {
 
 		if ( time() >= (int) $data['expires_at'] ) {
 			delete_transient( $key );
-			wp_cache_delete( $lock_key, self::CONSUME_LOCK_GROUP );
 
 			return new \WP_Error(
 				'upload_token_expired',
@@ -95,17 +74,14 @@ class Media_Upload_Token_Store {
 			);
 		}
 
+		// Single use: only the request whose delete_transient() removes the stored token may use it.
 		if ( ! delete_transient( $key ) ) {
-			wp_cache_delete( $lock_key, self::CONSUME_LOCK_GROUP );
-
 			return new \WP_Error(
 				'invalid_upload_token',
 				__( 'The upload token is invalid or has expired.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
 		}
-
-		wp_cache_delete( $lock_key, self::CONSUME_LOCK_GROUP );
 
 		return $data;
 	}
@@ -132,6 +108,13 @@ class Media_Upload_Token_Store {
 	}
 
 	private static function storage_key( string $token ): string {
-		return Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . hash( 'sha256', $token );
+		return Media_Upload_Config::TOKEN_TRANSIENT_PREFIX . self::token_hash( $token );
+	}
+
+	/**
+	 * Tokens are stored by an HMAC keyed with the site's auth salt, never in plain text.
+	 */
+	private static function token_hash( string $token ): string {
+		return hash_hmac( 'sha256', $token, wp_salt( 'auth' ) );
 	}
 }

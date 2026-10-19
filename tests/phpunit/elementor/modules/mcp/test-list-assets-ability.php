@@ -19,6 +19,7 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+		add_filter( \Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_true' );
 		$this->ability = new List_Assets_Ability();
 	}
 
