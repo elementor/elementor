@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box } from '@elementor/ui';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
@@ -24,11 +24,36 @@ export const FontAwesomeGlyph = ( props: FontAwesomeGlyphProps ) => {
 };
 
 const LazyProviderGlyph = ( props: FontAwesomeGlyphProps ) => {
-	const { icon } = props;
+	const { icon, size } = props;
 	const [ resolved, setResolved ] = useState< { id: string; markup: string | null } | null >( null );
+	const [ isVisible, setIsVisible ] = useState( typeof IntersectionObserver === 'undefined' );
+	const placeholderRef = useRef< HTMLSpanElement >( null );
 	const svgMarkup = resolved?.id === icon.id ? resolved.markup : null;
 
 	useEffect( () => {
+		const element = placeholderRef.current;
+
+		if ( isVisible || ! element ) {
+			return;
+		}
+
+		const observer = new IntersectionObserver( ( entries ) => {
+			if ( entries.some( ( entry ) => entry.isIntersecting ) ) {
+				setIsVisible( true );
+				observer.disconnect();
+			}
+		} );
+
+		observer.observe( element );
+
+		return () => observer.disconnect();
+	}, [ isVisible ] );
+
+	useEffect( () => {
+		if ( ! isVisible ) {
+			return;
+		}
+
 		const controller = new AbortController();
 
 		resolveProviderIconPreviewSvg( icon.library, icon.value, controller.signal )
@@ -36,10 +61,16 @@ const LazyProviderGlyph = ( props: FontAwesomeGlyphProps ) => {
 			.catch( () => {} );
 
 		return () => controller.abort();
-	}, [ icon.id, icon.library, icon.value ] );
+	}, [ isVisible, icon.id, icon.library, icon.value ] );
 
 	if ( ! svgMarkup ) {
-		return null;
+		return (
+			<Box
+				component="span"
+				ref={ placeholderRef }
+				sx={ { display: 'inline-block', width: size, height: size } }
+			/>
+		);
 	}
 
 	return <ResolvedGlyph { ...props } icon={ { ...icon, svgMarkup } } />;

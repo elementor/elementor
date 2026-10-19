@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 
 import { type FontAwesome7Icon } from '../font-awesome-7-catalog';
 import { FontAwesomeGlyph } from '../font-awesome-glyph';
@@ -45,27 +45,27 @@ describe( 'FontAwesomeGlyph lazy svg', () => {
 		);
 	} );
 
-	it( 'renders nothing while the markup is unresolved', () => {
+	it( 'shows no glyph while the markup is unresolved', () => {
 		// Arrange.
 		jest.mocked( resolveProviderIconPreviewSvg ).mockReturnValue( new Promise( () => {} ) );
 
 		// Act.
-		const { container } = render( <FontAwesomeGlyph icon={ lazyIcon } size={ 24 } color="red" /> );
+		render( <FontAwesomeGlyph icon={ lazyIcon } size={ 24 } color="red" /> );
 
 		// Assert.
-		expect( container ).toBeEmptyDOMElement();
+		expect( screen.queryByRole( 'img' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders nothing when the provider cannot resolve the icon', async () => {
+	it( 'shows no glyph when the provider cannot resolve the icon', async () => {
 		// Arrange.
 		jest.mocked( resolveProviderIconPreviewSvg ).mockResolvedValue( null );
 
 		// Act.
-		const { container } = render( <FontAwesomeGlyph icon={ lazyIcon } size={ 24 } color="red" /> );
+		render( <FontAwesomeGlyph icon={ lazyIcon } size={ 24 } color="red" /> );
 
 		// Assert.
 		await waitFor( () => expect( resolveProviderIconPreviewSvg ).toHaveBeenCalled() );
-		expect( container ).toBeEmptyDOMElement();
+		expect( screen.queryByRole( 'img' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not ask providers when the icon already has markup', () => {
@@ -77,5 +77,31 @@ describe( 'FontAwesomeGlyph lazy svg', () => {
 
 		// Assert.
 		expect( resolveProviderIconPreviewSvg ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not ask providers until the tile scrolls into view', async () => {
+		// Arrange.
+		let onIntersect: ( entries: { isIntersecting: boolean }[] ) => void = () => {};
+		const original = global.IntersectionObserver;
+
+		global.IntersectionObserver = jest.fn( ( callback ) => {
+			onIntersect = callback as never;
+
+			return { observe: jest.fn(), disconnect: jest.fn(), unobserve: jest.fn() };
+		} ) as never;
+
+		// Act.
+		render( <FontAwesomeGlyph icon={ lazyIcon } size={ 24 } color="red" /> );
+
+		// Assert.
+		expect( resolveProviderIconPreviewSvg ).not.toHaveBeenCalled();
+
+		// Act.
+		act( () => onIntersect( [ { isIntersecting: true } ] ) );
+
+		// Assert.
+		await waitFor( () => expect( resolveProviderIconPreviewSvg ).toHaveBeenCalled() );
+
+		global.IntersectionObserver = original;
 	} );
 } );
