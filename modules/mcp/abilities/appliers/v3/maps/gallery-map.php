@@ -48,7 +48,7 @@ $description = Style_Target::make( 'description' )
 return V3_Widget_Map::make( 'gallery' )
 	->description( 'Grid, justified or masonry gallery of Media Library images with hover overlays and lightbox.' )
 	->settings( [
-		'gallery_type' => V3_Setting::bind_to( 'gallery_type' )->enum_from_control(),
+		'gallery_type' => V3_Setting::bind_to( 'gallery_type' )->enum( [ 'single' ] ),
 		'gallery' => V3_Setting::bind_to( 'gallery' )->gallery(),
 		'gallery_layout' => V3_Setting::bind_to( 'gallery_layout' )->enum_from_control(),
 		'columns' => V3_Setting::bind_to( 'columns' )->number(),

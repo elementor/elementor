@@ -51,7 +51,7 @@ return V3_Widget_Map::make( 'progress-tracker' )
 	->settings( [
 		'type' => V3_Setting::bind_to( 'type' )->enum_from_control(),
 		'relative_to' => V3_Setting::bind_to( 'relative_to' )->enum_from_control(),
-		'selector' => V3_Setting::bind_to( 'selector' )->string(),
+		'selector' => V3_Setting::bind_to( 'selector' )->css_selector(),
 		'percentage' => V3_Setting::bind_to( 'percentage' )->switcher(),
 	] )
 	->default_target( $progress )
