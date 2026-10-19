@@ -54,7 +54,7 @@
     "@elementor/http-client": "4.4.0",
     "@elementor/schema": "4.4.0",
     "@elementor/twing": "4.4.0",
-    "@elementor/ui": "1.41.3",
+    "@elementor/ui": "1.41.4",
     "@elementor/utils": "4.4.0",
     "@elementor/wp-media": "4.4.0",
     "@floating-ui/react": "^0.27.5",
