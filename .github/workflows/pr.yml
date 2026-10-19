@@ -414,7 +414,7 @@ jobs:
 
   phpunit:
     name: PHPUnit
-    needs: [install, detect-changes]
+    needs: [detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
       needs.detect-changes.outputs.skip_checks != 'true' &&
@@ -424,6 +424,7 @@ jobs:
       job_name: PHPUnit (PR)
       wordpress_versions: '["latest"]'
       php_versions: '["8.1", "8.4"]'
+      multisite: both
 
   playwright:
     name: Playwright
