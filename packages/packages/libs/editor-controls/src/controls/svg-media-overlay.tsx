@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { ThemeProvider } from '@elementor/editor-ui';
 import { LibraryIcon } from '@elementor/icons';
-import { Box, Button, Stack, ThemeProvider, Typography } from '@elementor/ui';
+import { Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ConditionalControlInfotip } from '../components/conditional-control-infotip';
