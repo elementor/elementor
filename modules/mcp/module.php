@@ -13,6 +13,7 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Modules\Mcp\Registry\Pro_Upsell_Abilities;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
@@ -93,21 +94,21 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private function get_promotion_upgrade_url(): string {
+	public static function get_promotion_upgrade_url( string $default_url = self::MCP_PROMOTION_UPGRADE_URL ): string {
 		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data(
-			[ 'upgrade_url' => self::MCP_PROMOTION_UPGRADE_URL ],
+			[ 'upgrade_url' => $default_url ],
 			'elementor/mcp/custom_promotion',
 			'upgrade_url'
 		);
 
 		$upgrade_url = $promotion_data['upgrade_url'] ?? '';
 
-		return $this->is_allowed_promotion_url( $upgrade_url )
+		return self::is_allowed_promotion_url( $upgrade_url )
 			? $upgrade_url
-			: self::MCP_PROMOTION_UPGRADE_URL;
+			: $default_url;
 	}
 
-	private function is_allowed_promotion_url( $url ): bool {
+	private static function is_allowed_promotion_url( $url ): bool {
 		if ( ! is_string( $url ) ) {
 			return false;
 		}
@@ -220,6 +221,10 @@ class Module extends BaseModule {
 		$registry = new Ability_Registry();
 
 		foreach ( self::get_core_abilities( $registry ) as $ability ) {
+			$registry->add( $ability );
+		}
+
+		foreach ( Pro_Upsell_Abilities::create( Utils::has_pro() ) as $ability ) {
 			$registry->add( $ability );
 		}
 
