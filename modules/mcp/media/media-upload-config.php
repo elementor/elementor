@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Media;
 
-use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\Uploads_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -74,22 +73,6 @@ class Media_Upload_Config {
 		return min( $bytes, max( 1, (int) $filtered ) );
 	}
 
-	public static function assert_content_length_within_limit( $content_length ): ?\WP_Error {
-		if ( ! is_numeric( $content_length ) || '' === $content_length ) {
-			return null;
-		}
-
-		if ( (int) $content_length > self::max_upload_bytes() ) {
-			return new \WP_Error(
-				'file_too_large',
-				__( 'The file exceeds the allowed upload size limit.', 'elementor' ),
-				[ 'status' => \WP_Http::BAD_REQUEST ]
-			);
-		}
-
-		return null;
-	}
-
 	public static function allowed_mime_types(): array {
 		$mimes = self::ALLOWED_IMAGE_MIME_TYPES;
 
@@ -101,8 +84,7 @@ class Media_Upload_Config {
 	}
 
 	public static function is_svg_upload_allowed(): bool {
-		return Svg::file_sanitizer_can_run()
-			&& Uploads_Manager::are_unfiltered_uploads_enabled()
+		return Uploads_Manager::are_unfiltered_uploads_enabled()
 			&& current_user_can( self::SVG_REQUIRED_CAPABILITY );
 	}
 }

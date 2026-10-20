@@ -298,13 +298,6 @@ class Remote_Image_Fetcher {
 	 * @return array{tmp_name:string,name:string}|\WP_Error
 	 */
 	private static function write_body_to_temp_file( array $response, string $url ) {
-		$content_length_error = Media_Upload_Config::assert_content_length_within_limit(
-			wp_remote_retrieve_header( $response, 'content-length' )
-		);
-		if ( $content_length_error ) {
-			return $content_length_error;
-		}
-
 		$body = wp_remote_retrieve_body( $response );
 		$size = strlen( $body );
 
