@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
+require_once __DIR__ . '/fixtures/fake-v3-widget.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -430,13 +431,14 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		Mock_Pro_License_API::set_license_state( true );
+		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( 'nav-menu' ) );
 		$ability = new Manage_Component_Ability();
 
 		// Act
 		$result = $ability->execute( [
 			'action' => 'create',
-			'title' => 'Legacy Heading XML',
-			'xml_structure' => '<heading configuration-id="heading"/>',
+			'title' => 'Legacy Menu XML',
+			'xml_structure' => '<nav-menu configuration-id="menu"/>',
 		] );
 
 		// Assert

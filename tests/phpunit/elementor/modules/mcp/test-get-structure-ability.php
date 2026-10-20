@@ -730,7 +730,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'version', $container['elements'][1] );
 	}
 
-	public function test_execute__strips_non_allowlisted_v3_settings_and_styles_when_include_content_true() {
+	public function test_execute__strips_settings_and_styles_of_unmapped_v3_widgets_when_include_content_true() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();

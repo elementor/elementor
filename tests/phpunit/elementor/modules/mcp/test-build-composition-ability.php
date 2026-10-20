@@ -1357,36 +1357,26 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'replace_children', $result->get_error_message() );
 	}
 
-	public function test_execute__allowlisted_v3_widget_accepts_raw_settings() {
+	public function test_execute__rejects_v3_widget_without_a_map() {
+		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
-
 		$this->given_no_registered_v3_maps();
 
+		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<nav-menu configuration-id="m1"/>',
 			'element_config' => [
-				'm1' => [
-					'menu' => '3',
-					'layout' => 'horizontal',
-				],
+				'm1' => [ 'menu' => '3' ],
 			],
 		] );
 
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['root_element_ids'] );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-		$elements = $document->get_elements_data();
-		$nav = $this->find_element_by_widget_type( $elements, 'nav-menu' );
-		$this->assertNotNull( $nav );
-		$this->assertSame( 'widget', $nav['elType'] );
-		$this->assertSame( 'nav-menu', $nav['widgetType'] );
-		$this->assertSame( '3', $nav['settings']['menu'] );
-		$this->assertSame( 'horizontal', $nav['settings']['layout'] );
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertStringContainsString( 'legacy V3 widget', $result->get_error_message() );
+		$this->assertSame( [], Plugin::$instance->documents->get( $post_id )->get_elements_data() );
 	}
 
 	public function test_execute__does_not_map_v3_container_styles() {
@@ -1414,7 +1404,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'background_color', $container['settings'] ?? [] );
 	}
 
-	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
+	public function test_execute__mapped_v3_widget_classes_are_written_to_css_classes() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
@@ -1437,7 +1427,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'classes', $nav['settings'] );
 	}
 
-	public function test_execute__allowlisted_v3_widget_style_wraps_in_selector_when_pro_active() {
+	public function test_execute__mapped_v3_widget_style_falls_back_to_custom_css_when_pro_active() {
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
 		}
@@ -1462,7 +1452,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'selector { filter: blur(2px); }', $nav['settings']['custom_css'] ?? null );
 	}
 
-	public function test_execute__allowlisted_v3_widget_style_warns_when_pro_missing() {
+	public function test_execute__mapped_v3_widget_style_warns_when_pro_missing() {
 		if ( \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
 		}

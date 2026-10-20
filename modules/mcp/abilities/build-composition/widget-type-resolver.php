@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -132,8 +133,8 @@ class Widget_Type_Resolver {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			if (
-				V3_Widget_Map_Registry::instance()->has_registered_map( $type )
-				&& ! Widget_Context_Helper::is_v3_supported( $type )
+				! Widget_Context_Helper::is_v3_supported( $type )
+				&& ! Atomic_Elements_Utils::is_atomic_element( $widget )
 			) {
 				return new \WP_Error(
 					'elementor_v3_not_supported',
