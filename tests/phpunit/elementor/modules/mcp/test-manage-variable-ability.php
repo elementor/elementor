@@ -19,6 +19,8 @@ require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
  */
 class Test_Manage_Variable_Ability extends TestCase {
 
+	const ABILITY_ID = 'elementor/manage-global-variable';
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -40,6 +42,10 @@ class Test_Manage_Variable_Ability extends TestCase {
 
 	private function operations_input( array $operations ): array {
 		return [ 'operations' => $operations ];
+	}
+
+	private function size_create_input(): array {
+		return $this->operations_input( [ [ 'action' => 'create', 'type' => Manage_Variable_Ability::TYPE_SIZE ] ] );
 	}
 
 	public function test_execute__requires_operations_array() {
@@ -229,6 +235,101 @@ class Test_Manage_Variable_Ability extends TestCase {
 		// Assert
 		$this->assertSame( 'error', $result['status'] );
 		$this->assertSame( 'pro_license_required', $result['results'][0]['code'] );
+	}
+
+	public function test_create__size_rejection_includes_upgrade_link() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_SIZE,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertStringContainsString( Manage_Variable_Ability::UPGRADE_URL, $result['results'][0]['message'] );
+	}
+
+	public function test_defer_size_type_rejection__passes_size_types_without_active_license() {
+		// Arrange
+		$schema_error = new \WP_Error( 'ability_invalid_input' );
+
+		// Act
+		$result = $this->make_ability()->defer_size_type_rejection(
+			$schema_error,
+			$this->size_create_input(),
+			self::ABILITY_ID
+		);
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_defer_size_type_rejection__keeps_error_for_non_size_types() {
+		// Arrange
+		$schema_error = new \WP_Error( 'ability_invalid_input' );
+		$input = $this->operations_input( [ [ 'action' => 'create', 'type' => 'unknown-type' ] ] );
+
+		// Act
+		$result = $this->make_ability()->defer_size_type_rejection( $schema_error, $input, self::ABILITY_ID );
+
+		// Assert
+		$this->assertSame( $schema_error, $result );
+	}
+
+	public function test_defer_size_type_rejection__keeps_error_with_active_license() {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+		$schema_error = new \WP_Error( 'ability_invalid_input' );
+
+		// Act
+		$result = $this->make_ability()->defer_size_type_rejection(
+			$schema_error,
+			$this->size_create_input(),
+			self::ABILITY_ID
+		);
+
+		// Assert
+		$this->assertSame( $schema_error, $result );
+	}
+
+	public function test_defer_size_type_rejection__ignores_other_abilities() {
+		// Arrange
+		$schema_error = new \WP_Error( 'ability_invalid_input' );
+
+		// Act
+		$result = $this->make_ability()->defer_size_type_rejection(
+			$schema_error,
+			$this->size_create_input(),
+			'elementor/manage-classes'
+		);
+
+		// Assert
+		$this->assertSame( $schema_error, $result );
+	}
+
+	public function test_get_description_for_llm__explains_size_variables_without_active_license() {
+		// Act
+		$description = $this->make_ability()->get_description_for_llm();
+
+		// Assert
+		$this->assertStringContainsString( 'require Elementor Pro', $description );
+	}
+
+	public function test_get_description_for_llm__omits_size_notice_with_active_license() {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+
+		// Act
+		$description = $this->make_ability()->get_description_for_llm();
+
+		// Assert
+		$this->assertStringNotContainsString( 'require Elementor Pro', $description );
 	}
 
 	public function size_type_provider(): array {

@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -23,6 +24,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	const TYPE_SIZE = 'global-size-variable';
 	const TYPE_CUSTOM_SIZE = 'global-custom-size-variable';
 	const MAX_BATCH_SIZE = 50;
+	const UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-upgrade-variables/';
 
 	private ?Variables_Service $service;
 
@@ -37,7 +39,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Variable', 'elementor' ),
-			__( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' ),
+			$this->get_description(),
 			'elementor',
 			[
 				'type' => 'object',
@@ -85,6 +87,32 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				],
 			]
 		);
+	}
+
+	public function register(): void {
+		add_filter( 'wp_ability_validate_input', [ $this, 'defer_size_type_rejection' ], 10, 3 );
+
+		parent::register();
+	}
+
+	public function defer_size_type_rejection( $validation_result, $input, string $ability_name ) {
+		if ( $this->get_id() !== $ability_name || ! is_wp_error( $validation_result ) || $this->can_manage_size_variables() ) {
+			return $validation_result;
+		}
+
+		return $this->has_size_type_operation( $input ) ? true : $validation_result;
+	}
+
+	private function has_size_type_operation( $input ): bool {
+		$operations = is_array( $input ) && is_array( $input['operations'] ?? null ) ? $input['operations'] : [];
+
+		foreach ( $operations as $operation ) {
+			if ( is_array( $operation ) && $this->is_size_type( $operation['type'] ?? null ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function execute( $input = [] ) {
@@ -280,7 +308,11 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	private function pro_license_required(): \WP_Error {
 		return new \WP_Error(
 			'pro_license_required',
-			__( 'Size variables require an active Elementor Pro license, so this operation was not applied. Do not retry it — tell the user that size variables are a Pro feature.', 'elementor' ),
+			sprintf(
+				/* translators: %s: upgrade URL. */
+				__( 'Size variables require an active Elementor Pro license, so this operation was not applied. Do not retry it. Tell the user that size variables require Elementor Pro and share this upgrade link: %s. Do not store size values in color or font variables as a workaround — only suggest the Pro upgrade.', 'elementor' ),
+				Mcp_Module::get_promotion_upgrade_url( self::UPGRADE_URL )
+			),
 			[ 'status' => \WP_Http::FORBIDDEN ]
 		);
 	}
@@ -306,6 +338,20 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		}
 
 		return $types;
+	}
+
+	private function get_description(): string {
+		$description = __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
+
+		if ( $this->can_manage_size_variables() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_size_variables_pro_notice();
+	}
+
+	private function get_size_variables_pro_notice(): string {
+		return __( 'Note: size variables (global-size-variable, global-custom-size-variable) hold reusable spacing, font-size, and layout values and require Elementor Pro, which is not licensed on this site. Operations that create or update them are rejected with an upgrade link — do not retry them, share the link with the user, and do not store size values in color or font variables as a workaround. Color and font variables, and deleting variables, work normally.', 'elementor' );
 	}
 
 	private function clear_cache(): void {
