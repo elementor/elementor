@@ -119,6 +119,6 @@ class Test_Pro_Upsell_Ability extends Elementor_Test_Base {
 	}
 
 	private function get_manage_site_parts_url(): string {
-		return Pro_Upsell_Abilities::MANAGE_SITE_PARTS_UPGRADE_URL;
+		return Pro_Upsell_Abilities::SITE_PARTS_UPGRADE_URL;
 	}
 }
