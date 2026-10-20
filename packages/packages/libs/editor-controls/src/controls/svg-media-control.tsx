@@ -79,10 +79,9 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 	const buttonGroupRef = useRef< HTMLDivElement >( null );
 	const [ iconLibraryAnchor, setIconLibraryAnchor ] = useState< IconLibraryAnchor | null >( null );
 	const { isAdmin } = useCurrentUserCapabilities();
-	const selectedIconClass =
-		showIconLibrary && typeof previewIconValue?.value?.value === 'string' ? previewIconValue.value.value : null;
+	const selectedIconClass = typeof previewIconValue?.value?.value === 'string' ? previewIconValue.value.value : null;
 	const selectedIconLibrary =
-		showIconLibrary && typeof previewIconValue?.library?.value === 'string' ? previewIconValue.library.value : null;
+		typeof previewIconValue?.library?.value === 'string' ? previewIconValue.library.value : null;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],

@@ -385,6 +385,49 @@ describe( 'SvgMediaControl', () => {
 		expect( preview ).toContainHTML( `d="${ starPath }"` );
 	} );
 
+	it( 'should preview a selected font icon even when the icon library is not enabled', () => {
+		// Arrange
+		const starPath = 'M0 0h100v100H0z';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
+			data: [
+				{
+					id: 'fa-solid:star',
+					name: 'star',
+					label: 'star',
+					library: 'fa-solid',
+					value: 'fa-solid fa-star',
+					aliases: [],
+					width: 576,
+					height: 512,
+					paths: [ starPath ],
+				},
+			],
+			isLoading: false,
+		} as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'fas fa-star' },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		const preview = screen.getByLabelText( 'Preview icon' );
+		expect( preview ).toHaveAttribute( 'fill', '#000000' );
+		expect( preview ).toContainHTML( `d="${ starPath }"` );
+	} );
+
 	it( 'should preview the inherited font icon (from placeholder) when there is no own value (M2)', () => {
 		// Arrange
 		const starPath = 'M0 0h100v100H0z';

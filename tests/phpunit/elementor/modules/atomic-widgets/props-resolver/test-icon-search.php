@@ -83,6 +83,33 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertTrue( $result['truncated'] );
 	}
 
+	public function test_search__returns_nothing_for_queries_without_latin_characters() {
+		// Act.
+		$results = $this->search( [ 'queries' => [ 'корзина', '!!!', '😀' ] ] );
+
+		// Assert.
+		$this->assertSame( [ 0, 0, 0 ], array_column( $results, 'total' ) );
+	}
+
+	public function test_search__reports_numeric_custom_library_names_as_strings() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ '-1' => 'Numeric Pack' ] );
+		add_filter( 'elementor/atomic-widgets/icon/library-values', static fn( $result, $library ) => '-1' === (string) $library
+			? [
+				'values' => [ 'shopping-bag' => '-1 -1-shopping-bag' ],
+				'truncated' => false,
+				'total' => 1,
+			]
+			: $result, 10, 2 );
+		add_filter( 'elementor/atomic-widgets/icon/is-renderable', '__return_true' );
+
+		// Act.
+		$response = Icon_Search::search( [ 'queries' => [ 'shopping-bag' ] ] );
+
+		// Assert.
+		$this->assertSame( '-1', $response['results'][0]['matches'][0]['library'] );
+	}
+
 	public function test_search__requires_a_query_or_a_filter() {
 		// Act.
 		$response = Icon_Search::search( [ 'queries' => [ '  ' ] ] );
