@@ -48,7 +48,6 @@ class Test_V3_Map_Border_Style_Default extends Elementor_Test_Base {
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $map ]
 		) );
