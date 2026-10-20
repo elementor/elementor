@@ -9,7 +9,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -33,15 +32,6 @@ class Widget_Context_Helper {
 
 	const MCP_UNPROMOTED_ELEMENT_TYPES = [
 		'e-flexbox',
-	];
-
-	const V3_ALLOWLIST = [
-		'nav-menu',
-		'theme-post-content',
-		'theme-post-title',
-		'theme-post-featured-image',
-		'theme-post-excerpt',
-		'theme-archive-title',
 	];
 
 	const ALLOWED_HTML_TAGS_NOTE = 'May contain inline HTML written directly in the string (e.g. "Hello <strong>world</strong>"), limited to these tags: %s. Any other tag is stripped on save.';
@@ -131,10 +121,6 @@ class Widget_Context_Helper {
 
 	public static function is_type_unpromoted_in_widget_list( string $widget_type ): bool {
 		return in_array( $widget_type, self::MCP_UNPROMOTED_ELEMENT_TYPES, true );
-	}
-
-	public static function is_v3_allowlisted( string $widget_type ): bool {
-		return in_array( $widget_type, self::V3_ALLOWLIST, true );
 	}
 
 	public static function is_v3_supported( string $widget_type ): bool {
@@ -368,10 +354,6 @@ class Widget_Context_Helper {
 			if ( null !== $map && '' !== $map->get_description() ) {
 				return $map->get_description();
 			}
-
-			if ( self::is_v3_allowlisted( $widget_type ) ) {
-				return V3_Widget_Bridge_Registry::get_description( $widget_type );
-			}
 		}
 
 		return null;
@@ -382,7 +364,7 @@ class Widget_Context_Helper {
 	}
 
 	private static function should_initialize_v3_controls_stack( string $widget_type ): bool {
-		return self::is_v3_allowlisted( $widget_type ) || V3_Widget_Map_Registry::instance()->has_registered_map( $widget_type );
+		return V3_Widget_Map_Registry::instance()->has_registered_map( $widget_type );
 	}
 
 	private static function build_standardized_v3_widget_schema( string $widget_type, array $config ): ?array {

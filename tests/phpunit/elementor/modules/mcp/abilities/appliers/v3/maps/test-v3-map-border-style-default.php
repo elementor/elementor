@@ -178,7 +178,7 @@ class Test_V3_Map_Border_Style_Default extends Elementor_Test_Base {
 		$index = [ self::CONFIG_ID => &$node ];
 		$applier = new Style_Applier( $this->converter(), self::BREAKPOINTS );
 
-		$applier->apply( $index, [ self::CONFIG_ID => $css ], $mode, [ self::WIDGET_TYPE => [ 'controls' => $this->controls() ] ] );
+		$applier->apply( $index, [ self::CONFIG_ID => $css ], $mode );
 	}
 
 	private function converter(): Css_Converter {

@@ -15,7 +15,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
 use Elementor\Plugin;
@@ -49,10 +48,9 @@ class Style_Applier {
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
 	 * @param string                $style_apply_mode `patch` or `replace`.
-	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
 	 * @return array{error: null, warnings: Warnings_Bag, variable_connections: array<string, array<string, string>>}
 	 */
-	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
+	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch' ): array {
 		$warnings = Warnings_Bag::make();
 
 		if ( empty( $styles ) ) {
@@ -83,7 +81,7 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$this->apply_v3_style( $node, $css_string, (string) $config_id, $warnings, $style_apply_mode, $widget_configs );
+				$this->apply_v3_style( $node, $css_string, (string) $config_id, $warnings, $style_apply_mode );
 				unset( $node );
 				continue;
 			}
@@ -168,38 +166,21 @@ class Style_Applier {
 		];
 	}
 
-	/**
-	 * @param array                $node
-	 * @param string               $css_string
-	 * @param string               $config_id
-	 * @param Warnings_Bag         $warnings
-	 * @param string               $style_apply_mode
-	 * @param array<string, array> $widget_configs
-	 */
-	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch', array $widget_configs = [] ): void {
-		$widget_type = $node['widgetType'] ?? $node['elType'] ?? '';
-		$widget_config = [];
+	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch' ): void {
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 
-		if ( is_string( $widget_type ) && '' !== $widget_type ) {
-			$widget_config = $widget_configs[ $widget_type ]
-				?? Widget_Context_Helper::get_widget_config( $widget_type )
-				?? [];
+		if ( null === $map ) {
+			return;
 		}
 
-		$map = V3_Widget_Map_Registry::instance()->get_map( (string) $widget_type );
-		$is_map_driven = null !== $map;
-
-		if ( $is_map_driven ) {
-			$css_string = V3_Custom_Css_Fallback::without_statements( $css_string, V3_Map_Style_Clearer::user_css_rules( $node['settings'] ?? [], $map ) );
-		}
-
+		$css_string = V3_Custom_Css_Fallback::without_statements( $css_string, V3_Map_Style_Clearer::user_css_rules( $node['settings'] ?? [], $map ) );
 		$is_empty_css = '' === trim( $css_string );
-		$is_replace = 'replace' === $style_apply_mode;
 		$result = null;
 
 		if ( ! $is_empty_css ) {
 			$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
-			$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
+			$result = $mapper->apply( $css_string, $widget_type );
 		}
 
 		if ( null !== ( $result['error'] ?? null ) ) {
@@ -207,10 +188,8 @@ class Style_Applier {
 			return;
 		}
 
-		if ( $is_replace && $is_map_driven ) {
-			( new V3_Map_Style_Clearer() )->clear( $node, $map, (string) $widget_type );
-		} elseif ( $is_replace ) {
-			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
+		if ( 'replace' === $style_apply_mode ) {
+			( new V3_Map_Style_Clearer() )->clear( $node, $map, $widget_type );
 		}
 
 		if ( $is_empty_css ) {
@@ -221,7 +200,7 @@ class Style_Applier {
 			$warnings->add( 'v3_css_skipped', $warning, $config_id );
 		}
 
-		$controls = $is_map_driven ? V3_Widget_Map_Registry::instance()->get_registered_controls( (string) $widget_type ) : [];
+		$controls = V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type );
 		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [], $controls );
 
 		$settings_patch = self::with_border_style_defaults( $result['settings_patch'] ?? [], $result['border_style_defaults'] ?? [], $node['settings'] ?? [] );
@@ -230,43 +209,8 @@ class Style_Applier {
 			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $settings_patch );
 		}
 
-		$unmapped = $result['unmapped_css'] ?? '';
-
-		if ( $is_map_driven ) {
-			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $settings_patch ), $node['settings'] ?? [] );
-			( new V3_Map_Fallback_Css() )->apply( $node, $result, (string) $widget_type, $config_id, $warnings );
-			return;
-		}
-
-		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
-		if ( null !== $pro_warning ) {
-			$warnings->add( 'v3_style_needs_pro', $pro_warning, $config_id );
-		}
-
-		if ( '' !== trim( $unmapped ) ) {
-			$snippet = self::truncate_css_snippet( $unmapped );
-			if ( null !== $pro_warning ) {
-				$warnings->add(
-					'css_dropped',
-					sprintf(
-						/* translators: %s: CSS snippet that could not be mapped */
-						__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
-						$snippet
-					),
-					$config_id
-				);
-			} else {
-				$warnings->add(
-					'css_fallback_custom_css',
-					sprintf(
-						/* translators: %s: CSS snippet that could not be mapped */
-						__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
-						$snippet
-					),
-					$config_id
-				);
-			}
-		}
+		V3_Inactive_Condition_Warnings::report( $warnings, $config_id, $widget_type, array_keys( $settings_patch ), $node['settings'] ?? [] );
+		( new V3_Map_Fallback_Css() )->apply( $node, $result, $widget_type, $config_id, $warnings );
 	}
 
 	private function warn_about_unknown_variables( string $css_string, string $config_id, Warnings_Bag $warnings ): void {

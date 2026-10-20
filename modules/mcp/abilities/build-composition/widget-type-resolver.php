@@ -155,7 +155,7 @@ class Widget_Type_Resolver {
 				'class' => get_class( $widget ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
+			if ( Widget_Context_Helper::is_v3_supported( $type ) ) {
 				$resolved['controls'] = (array) $widget->get_controls();
 			}
 
@@ -188,7 +188,7 @@ class Widget_Type_Resolver {
 				'class' => get_class( $element ),
 			];
 
-			if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
+			if ( Widget_Context_Helper::is_v3_supported( $type ) ) {
 				if ( method_exists( $element, 'get_stack' ) ) {
 					$element->get_stack();
 				}

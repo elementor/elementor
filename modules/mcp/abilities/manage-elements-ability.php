@@ -348,7 +348,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return null;
 		}
 
-		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type ) ) {
+		if ( Widget_Context_Helper::is_v3_supported( $type ) ) {
 			return null;
 		}
 
@@ -550,7 +550,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		if ( $has_style ) {
 			$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints(), $variables_service );
-			$style_result = $style_applier->apply( $index, [ $element_id => $style ], $style_apply_mode, $widget_configs );
+			$style_result = $style_applier->apply( $index, [ $element_id => $style ], $style_apply_mode );
 			$warnings->merge( $style_result['warnings'] );
 			$variable_connections = $style_result['variable_connections'][ $element_id ] ?? [];
 		}

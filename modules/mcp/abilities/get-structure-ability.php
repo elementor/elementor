@@ -9,13 +9,11 @@ use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Element_Default_Styles_Builder;
@@ -293,34 +291,26 @@ class Get_Structure_Ability extends Abstract_Ability {
 		$raw_settings = is_array( $node['settings'] ?? null ) ? $node['settings'] : [];
 
 		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
-		$bridge_non_style = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
-		$bridge_style = V3_Widget_Bridge_Registry::get_style_overrides( $widget_type );
 
-		if ( null === $map && empty( $bridge_non_style ) && empty( $bridge_style ) ) {
+		if ( null === $map ) {
 			$skeleton['settings'] = (object) [];
 			$skeleton['styles'] = [ 'css' => '' ];
 			return;
 		}
 
-		$allowed_settings = null !== $map
-			? V3_Map_Settings_Reader::read( $map, $raw_settings )
-			: V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings )['allowed'];
-
-		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
-		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
+		$allowed_settings = V3_Map_Settings_Reader::read( $map, $raw_settings );
+		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['styles'] = [ 'css' => $style ];
 
-		if ( null !== $map ) {
-			$this->v3_default_styles ??= V3_Map_Default_Styles::create_default();
-			$skeleton['default_styles'] = $this->v3_default_styles->render(
-				$map,
-				$raw_settings,
-				V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type ),
-				V3_Control_Visibility::for_widget( $widget_type )
-			);
-		}
+		$this->v3_default_styles ??= V3_Map_Default_Styles::create_default();
+		$skeleton['default_styles'] = $this->v3_default_styles->render(
+			$map,
+			$raw_settings,
+			V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type ),
+			V3_Control_Visibility::for_widget( $widget_type )
+		);
 	}
 
 	private function normalize_interactions( $interactions ): array {

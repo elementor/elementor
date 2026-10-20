@@ -103,7 +103,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__writes_every_target_without_warnings() {
 		// Act.
-		$result = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -141,11 +141,11 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_round_trip__serialized_css_maps_back_to_same_settings() {
 		// Arrange.
-		$written = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE, [] )['settings_patch'];
-		$css = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE )['settings_patch'];
+		$css = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE );
 
 		// Act.
-		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertEquals( $written, $result['settings_patch'] );
@@ -154,7 +154,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__writes_wrapper_requirements_at_the_written_breakpoint() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { inset-inline-end: 20px; z-index: 9; } @media(--mobile) { wrapper { width: 150px; } }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'wrapper { inset-inline-end: 20px; z-index: 9; } @media(--mobile) { wrapper { width: 150px; } }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -178,10 +178,10 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_round_trip__targets_states_and_breakpoint_requirements_read_back_as_written() {
 		// Arrange.
-		$written = $this->mapper()->apply( str_replace( '&:current', 'main-menu:current', self::ROUND_TRIP_EXAMPLE_CSS ), self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( str_replace( '&:current', 'main-menu:current', self::ROUND_TRIP_EXAMPLE_CSS ), self::WIDGET_TYPE );
 
 		// Act.
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], self::WIDGET_TYPE, [] );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $written['warnings'] );
@@ -220,12 +220,12 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 			$written['settings_patch']
 		);
 		$this->assertSame( self::ROUND_TRIP_EXAMPLE_CSS, $readback );
-		$this->assertEquals( $written['settings_patch'], $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] )['settings_patch'] );
+		$this->assertEquals( $written['settings_patch'], $this->mapper()->apply( $readback, self::WIDGET_TYPE )['settings_patch'] );
 	}
 
 	public function test_apply__writes_wrapper_flex_parts_with_custom_size_requirement() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: center; } @media(--mobile) { wrapper { flex-grow: 0; } }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: center; } @media(--mobile) { wrapper { flex-grow: 0; } }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -244,7 +244,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__falls_back_on_the_flex_basis_no_wrapper_control_stores() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { flex: 0 0 333px; }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'wrapper { flex: 0 0 333px; }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertEquals(
@@ -262,11 +262,11 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		// Arrange.
 		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; flex-grow: 1; flex-shrink: 0; }'
 			. ' wrapper:hover { background-color: #dddddd; border-style: solid; border-color: #ff0000; border-radius: 6px; }';
-		$written = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] )['settings_patch'];
-		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( $css, self::WIDGET_TYPE )['settings_patch'];
+		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE );
 
 		// Act.
-		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( 'classic', $written['_background_hover_background'] );
@@ -277,7 +277,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__fails_the_style_on_an_unknown_breakpoint() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: red; @media(--watch) { color: blue; }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'color: red; @media(--watch) { color: blue; }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( 'Unknown breakpoint alias: --watch. Valid breakpoints: desktop, tablet, mobile.', $result['error'] );
@@ -286,7 +286,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__warns_about_unknown_targets_and_states() {
 		// Act.
-		$result = $this->mapper()->apply( 'header { color: red; } toggle:current { color: blue; }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'header { color: red; } toggle:current { color: blue; }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertCount( 2, $result['warnings'] );
@@ -296,7 +296,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__routes_unstorable_declarations_to_per_target_fallback_rules() {
 		// Act.
-		$result = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -339,7 +339,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_render__writes_pointer_and_divider_fallbacks_on_the_pseudo_elements_they_paint() {
 		// Arrange.
-		$written = $this->mapper()->apply( 'pointer:hover { opacity: 0.5; } divider { opacity: 0.4; }', self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( 'pointer:hover { opacity: 0.5; } divider { opacity: 0.4; }', self::WIDGET_TYPE );
 		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
 
 		// Act.
@@ -353,7 +353,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_render__writes_fallback_rules_against_each_target_selector() {
 		// Arrange.
-		$written = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE );
 		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
 
 		// Act.

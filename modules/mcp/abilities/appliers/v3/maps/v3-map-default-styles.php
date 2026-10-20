@@ -6,7 +6,6 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Block_Renderer;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers\Base_Property_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Plugin;
 
@@ -112,7 +111,7 @@ class V3_Map_Default_Styles {
 	 * @return string[] Registered setting keys the map's style bindings read, with their device keys.
 	 */
 	private function bound_keys( Compiled_V3_Map $map, array $controls ): array {
-		$suffixes = array_merge( [ '' ], array_keys( Base_Property_Serializer::RESPONSIVE_SUFFIXES ) );
+		$suffixes = array_merge( [ '' ], array_keys( Responsive_Key_Resolver::RESPONSIVE_SUFFIXES ) );
 		$keys = [];
 
 		foreach ( $map->get_targets() as $target ) {

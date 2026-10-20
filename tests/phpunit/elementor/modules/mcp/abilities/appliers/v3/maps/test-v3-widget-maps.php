@@ -181,11 +181,11 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 */
 	public function test_round_trip__serialized_css_maps_back_to_same_settings( string $widget_type, array $targets, string $css ) {
 		// Arrange.
-		$written = $this->mapper()->apply( $css, $widget_type, [] );
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type, [] );
+		$written = $this->mapper()->apply( $css, $widget_type );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type );
 
 		// Act.
-		$result = $this->mapper()->apply( $readback, $widget_type, [] );
+		$result = $this->mapper()->apply( $readback, $widget_type );
 
 		// Assert.
 		$this->assertSame( [], $written['warnings'] );

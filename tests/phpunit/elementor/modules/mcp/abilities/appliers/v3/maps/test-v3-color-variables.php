@@ -72,7 +72,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__binds_a_synced_variable_through_the_v3_global_color() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter', [] );
+		$result = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter' );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -82,11 +82,11 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_round_trip__a_synced_variable_reads_back_as_the_same_variable() {
 		// Arrange.
-		$written = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter', [] );
+		$written = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter' );
 
 		// Act.
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], 'counter', [] );
-		$rewritten = $this->mapper()->apply( $readback, 'counter', [] );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], 'counter' );
+		$rewritten = $this->mapper()->apply( $readback, 'counter' );
 
 		// Assert.
 		$this->assertStringContainsString( self::SYNCED_LABEL, $readback );
@@ -96,7 +96,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__stores_the_value_of_an_unsynced_variable_and_warns() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: var(--' . self::UNSYNCED_LABEL . ');', 'counter', [] );
+		$result = $this->mapper()->apply( 'color: var(--' . self::UNSYNCED_LABEL . ');', 'counter' );
 
 		// Assert.
 		$this->assertSame( self::UNSYNCED_VALUE, $result['settings_patch']['number_color'] ?? null );
@@ -109,7 +109,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__never_stores_a_variable_id_as_a_background_color() {
 		// Act.
-		$result = $this->mapper()->apply( 'background: var(--' . self::UNSYNCED_LABEL . ');', 'progress', [] );
+		$result = $this->mapper()->apply( 'background: var(--' . self::UNSYNCED_LABEL . ');', 'progress' );
 
 		// Assert.
 		$this->assertStringNotContainsString( 'e-gv-', wp_json_encode( $result['settings_patch'] ) );
@@ -119,7 +119,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__never_stores_a_variable_id_as_a_box_shadow_color() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { box-shadow: 0px 2px 4px 0px var(--' . self::SYNCED_LABEL . '); }', 'counter', [] );
+		$result = $this->mapper()->apply( 'wrapper { box-shadow: 0px 2px 4px 0px var(--' . self::SYNCED_LABEL . '); }', 'counter' );
 
 		// Assert.
 		$this->assertStringNotContainsString( 'e-gv-', wp_json_encode( $result['settings_patch'] ) );

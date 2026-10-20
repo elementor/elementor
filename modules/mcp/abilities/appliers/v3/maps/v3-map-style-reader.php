@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Props_To_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Serializers\Base_Property_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -54,7 +53,7 @@ class V3_Map_Style_Reader {
 	 */
 	public function readable_keys( Compiled_V3_Map $map, array $settings, array $controls, ?callable $is_visible = null ): array {
 		$is_key_visible = $this->key_visibility( $settings, $controls, $is_visible );
-		$suffixes = array_keys( [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES );
+		$suffixes = array_keys( [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Responsive_Key_Resolver::RESPONSIVE_SUFFIXES );
 		$keys = [];
 
 		foreach ( $map->get_targets() as $target ) {
@@ -73,7 +72,7 @@ class V3_Map_Style_Reader {
 	 */
 	private function read_target( array $bindings, array $settings, array $controls, callable $is_key_visible ): V3_Block_Accumulator {
 		$blocks = new V3_Block_Accumulator();
-		$suffixes = [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Base_Property_Serializer::RESPONSIVE_SUFFIXES;
+		$suffixes = [ '' => Responsive_Key_Resolver::BASE_BREAKPOINT ] + Responsive_Key_Resolver::RESPONSIVE_SUFFIXES;
 
 		foreach ( $suffixes as $suffix => $breakpoint ) {
 			foreach ( $this->props_by_state( $bindings, $settings, $controls, $suffix, $is_key_visible ) as $state => $props ) {

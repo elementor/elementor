@@ -762,43 +762,6 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
-	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->factory()->post->create();
-
-		$elements = [
-			[
-				'id' => 'post-title-1',
-				'elType' => 'widget',
-				'widgetType' => 'theme-post-title',
-				'settings' => [
-					'title' => 'Hello',
-					'title_color' => '#222222',
-					'custom_css' => 'selector { filter: blur(2px); }',
-				],
-				'elements' => [],
-			],
-		];
-
-		$this->mock_document_with_elements( $post_id, $elements );
-
-		// Act
-		$result = $this->ability->execute( [
-			'post_id' => $post_id,
-			'element_id' => 'post-title-1',
-			'include_content' => true,
-		] );
-
-		// Assert
-		$node = $result['elements'][0];
-		$this->assertArrayNotHasKey( 'version', $node );
-		$this->assertArrayNotHasKey( 'style', $node );
-		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
-		$this->assertStringContainsString( 'color: #222222;', $node['styles']['css'] );
-		$this->assertStringContainsString( 'filter: blur(2px);', $node['styles']['css'] );
-	}
-
 	public function test_execute__returns_default_styles_for_map_driven_v3_widgets() {
 		// Arrange
 		$this->act_as_admin();
