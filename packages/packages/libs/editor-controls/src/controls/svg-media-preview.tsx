@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
-import { useIconLibraryProviderIcons } from './icon-library/icon-library-providers';
+import { useIconLibraryProviderIcons, useProviderIconSvg } from './icon-library/icon-library-providers';
 import { mergeIconsById } from './icon-library/merge-icons-by-id';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
@@ -33,8 +33,13 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	);
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
 	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
+	const { data: savedIconSvg, isLoading: isSavedIconLoading } = useProviderIconSvg(
+		iconLibrary,
+		iconClassName,
+		shouldLoadIconCatalog && ! isLoadingCatalog && ! selectedIcon && ! isFontAwesomeLibrary
+	);
 
-	if ( isFetching || isLoadingCatalog ) {
+	if ( isFetching || isLoadingCatalog || isSavedIconLoading ) {
 		return <CircularProgress role="progressbar" aria-label={ __( 'Loading icon', 'elementor' ) } />;
 	}
 
@@ -44,6 +49,10 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 
 	if ( shouldLoadIconCatalog && iconClassName && iconLibrary && isFontAwesomeLibrary ) {
 		return <IconPreview icon={ createLazyIcon( iconLibrary, iconClassName ) } />;
+	}
+
+	if ( savedIconSvg ) {
+		return <IconPreview icon={ toSvgMarkupIcon( savedIconSvg, iconLibrary, iconClassName ) } />;
 	}
 
 	if ( shouldLoadIconCatalog ) {
@@ -64,6 +73,19 @@ const createLazyIcon = ( library: string, value: string ): FontAwesome7Icon => (
 	height: ICON_PREVIEW_SIZE,
 	paths: [],
 	lazySvg: true,
+} );
+
+const toSvgMarkupIcon = ( svgMarkup: string, library: string | null, value: string | null ): FontAwesome7Icon => ( {
+	id: `${ library }:${ value }`,
+	label: value ?? '',
+	library: library ?? '',
+	value: value ?? '',
+	name: value ?? '',
+	aliases: [],
+	width: 0,
+	height: 0,
+	paths: [],
+	svgMarkup,
 } );
 
 const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
