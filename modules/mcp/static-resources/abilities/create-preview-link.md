@@ -8,7 +8,7 @@ Creates a signed, time-limited URL that renders a snapshot of the current Elemen
 A site part (header, footer, single or archive template) has no page of its own. With Elementor Pro, its preview renders it in its location on the content it applies to: its "Preview Dynamic Content as" target, or the front page (the blog home when there is none) for headers and footers.
 
 # WOOCOMMERCE STATE
-Previews render as a logged-out visitor. With WooCommerce active, the cart holds the 2 latest in-stock simple products, so cart, checkout and menu-cart widgets render their filled state; nothing is saved to the store. The empty-cart states and the logged-in My Account view cannot be previewed. A single product site part renders with its "Preview Dynamic Content as" product.
+Previews render as a logged-out visitor. With WooCommerce active, the preview cart holds sample products from the store, so cart, checkout and menu-cart widgets render their filled state; nothing is saved to the store. The empty-cart states and the logged-in My Account view cannot be previewed. A single product site part renders with its "Preview Dynamic Content as" product.
 
 # DO NOT SHARE `url` WITH THE USER
 The `url` field is throwaway — time-limited, frozen to a snapshot, and stops working once it expires. It is meant for your own verification loop.
