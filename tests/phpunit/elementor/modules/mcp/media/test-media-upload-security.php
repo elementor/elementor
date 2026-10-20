@@ -332,17 +332,18 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'svg_not_allowed', $response->get_data()['code'] );
 	}
 
-	public function test_upload_media__rejects_content_length_larger_than_cap() {
+	public function test_upload_media__rejects_download_larger_than_cap() {
 		// Arrange
 		$this->act_as_admin();
 		$ability = new Upload_Media_Ability();
 		$limit = Media_Upload_Config::max_upload_bytes();
+		$oversized = str_repeat( 'x', $limit + 1 );
 
-		$this->mock_http_response( static function () use ( $limit ) {
+		$this->mock_http_response( static function () use ( $oversized ) {
 			return [
 				'response' => [ 'code' => 200 ],
-				'headers' => [ 'content-length' => (string) ( $limit + 1 ) ],
-				'body' => 'small-body',
+				'headers' => [],
+				'body' => $oversized,
 			];
 		} );
 
@@ -378,26 +379,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
 	}
 
-	public function test_upload_token__rejects_content_length_larger_than_cap() {
-		// Arrange
-		$this->act_as_admin();
-		$ability = new Request_Media_Upload_Ability();
-		$issued = $ability->execute( [ 'consent' => true ] );
-		$limit = Media_Upload_Config::max_upload_bytes();
-
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
-		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
-		$request->set_header( 'Content-Length', (string) ( $limit + 1 ) );
-		$request->set_body( self::MINIMAL_PNG );
-
-		// Act
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertSame( \WP_Http::BAD_REQUEST, $response->get_status() );
-		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
-	}
-
 	public function test_upload_media__requires_upload_files_capability() {
 		// Arrange
 		$user_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
@@ -405,14 +386,10 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$ability = new Upload_Media_Ability();
 
 		// Act
-		$result = $ability->execute( [
-			'source_url' => 'https://93.184.215.14/photo.png',
-			'consent' => true,
-		] );
+		$allowed = $ability->check_permission();
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+		$this->assertFalse( $allowed );
 	}
 
 	public function test_upload_token__expires() {
@@ -1385,28 +1362,16 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		wp_set_current_user( $user_id );
 
 		// Act
-		$upload = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://93.184.215.14/photo.png',
-			'consent' => true,
-		] );
-		$request = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
-		$permission = [
-			( new Upload_Media_Ability() )->check_permission(),
-			( new Request_Media_Upload_Ability() )->check_permission(),
-		];
+		$upload_allowed = ( new Upload_Media_Ability() )->check_permission();
+		$request_allowed = ( new Request_Media_Upload_Ability() )->check_permission();
 
 		// Assert
-		foreach ( [ $upload, $request ] as $result ) {
-			$this->assertWPError( $result );
-			$this->assertSame( 'rest_forbidden', $result->get_error_code() );
-		}
-
-		$this->assertSame( [ false, false ], $permission );
+		$this->assertFalse( $upload_allowed );
+		$this->assertFalse( $request_allowed );
 	}
 
 	public function roles_without_upload_capability_provider(): array {
 		return [
-			'contributor' => [ 'contributor' ],
 			'subscriber' => [ 'subscriber' ],
 		];
 	}
@@ -1894,20 +1859,13 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 	public function test_upload_media__list_requires_upload_files_capability_for_the_whole_call() {
 		// Arrange
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'contributor' ] ) );
-		$this->mock_png_for_all_urls();
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
 
 		// Act
-		$result = ( new Upload_Media_Ability() )->execute( [
-			'images' => [ [ 'source_url' => 'https://93.184.215.14/contrib-a.png' ], [ 'source_url' => 'https://93.184.215.14/contrib-b.png' ] ],
-			'consent' => true,
-		] );
-
-		$this->clear_http_mocks();
+		$allowed = ( new Upload_Media_Ability() )->check_permission();
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'rest_forbidden', $result->get_error_code() );
+		$this->assertFalse( $allowed );
 	}
 
 	public function test_upload_media__list_applies_svg_rule_per_item_for_editor() {

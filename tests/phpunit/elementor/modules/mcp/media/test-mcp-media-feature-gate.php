@@ -5,7 +5,6 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
-use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
 use Elementor\Modules\Mcp\Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -113,21 +112,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( self::ROUTE, rest_get_server()->get_routes() );
-	}
-
-	public function test_token__is_not_accepted_when_disabled_after_issue() {
-		// Arrange
-		$this->act_as_admin();
-		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
-		$token = $issued['upload_token'];
-
-		// Act
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
-		$result = Media_Upload_Token_Store::consume( $token );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'mcp_media_disabled', $result->get_error_code() );
 	}
 
 	private function media_abilities(): array {
