@@ -6,6 +6,7 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Upsell_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Upsell_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Utils\Pro_Upsell;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,7 +46,7 @@ class Test_Site_Parts_Upsell_Abilities extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( Manage_Site_Parts_Upsell_Ability::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( Manage_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
 		$this->assertStringContainsString( 'Creating, updating, or deleting', $result->get_error_message() );
@@ -62,7 +63,7 @@ class Test_Site_Parts_Upsell_Abilities extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( List_Site_Parts_Upsell_Ability::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( List_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
 		$this->assertStringContainsString( 'no site parts were checked', $result->get_error_message() );

@@ -544,7 +544,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'circular_dependency_detected', $result->get_error_code() );
 	}
 
-	public function test_update__rejects_invalid_form_structure_and_preserves_the_element_tree() {
+	public function test_update__rejects_form_elements_without_pro_and_preserves_the_element_tree() {
 		// Arrange
 		$this->act_as_admin();
 		Mock_Pro_License_API::set_license_state( true );
@@ -562,7 +562,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_form_structure', $result->get_error_code() );
+		$this->assertSame( 'pro_license_required', $result->get_error_code() );
 		$elements = ( new Components_Repository() )->get( $component_id, false )->get_elements_data();
 		$this->assertSame( 'h1', $elements[0]['id'] );
 	}
