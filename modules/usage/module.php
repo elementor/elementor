@@ -26,6 +26,7 @@ class Module extends BaseModule {
 	const GENERAL_TAB = 'general';
 	const META_KEY = '_elementor_controls_usage';
 	const OPTION_NAME = 'elementor_controls_usage';
+	const SYSTEM_INFO_REPORT_PRIORITY = 5;
 
 	/**
 	 * @var bool
@@ -609,6 +610,6 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
 
-		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 50 );
+		add_action( 'elementor/system_info/get_allowed_reports', [ $this, 'add_system_info_report' ], self::SYSTEM_INFO_REPORT_PRIORITY );
 	}
 }

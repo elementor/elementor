@@ -35,6 +35,8 @@ class Manager extends Base_Object {
 
 	const OPTION_PREFIX = 'elementor_experiment-';
 
+	const SYSTEM_INFO_REPORT_PRIORITY = 7;
+
 	private $states;
 
 	private $release_statuses;
@@ -1031,14 +1033,14 @@ class Manager extends Base_Object {
 
 		$this->init_features();
 
-		add_action( 'admin_init', function () {
+		add_action( 'elementor/system_info/get_allowed_reports', function () {
 			System_Info::add_report(
 				'experiments', [
 					'file_name' => __DIR__ . '/experiments-reporter.php',
 					'class_name' => __NAMESPACE__ . '\Experiments_Reporter',
 				]
 			);
-		}, 79 /* Before log */ );
+		}, self::SYSTEM_INFO_REPORT_PRIORITY );
 
 		if ( is_admin() ) {
 			$page_id = Settings::PAGE_ID;

@@ -14,6 +14,8 @@ class Get_System_Info_Ability extends Abstract_Ability {
 
 	const REPORT_FORMAT = 'raw';
 
+	const OPT_IN_REPORTS = [ 'log', 'usage' ];
+
 	protected function get_ability_id(): string {
 		return 'elementor/get-system-info';
 	}
@@ -72,7 +74,7 @@ class Get_System_Info_Ability extends Abstract_Ability {
 					'reports' => [
 						'type' => 'array',
 						'items' => [ 'type' => 'string' ],
-						'description' => 'Optional report names to return, for example server, wordpress, theme, user, plugins. Omit to get every report.',
+						'description' => 'Optional report names to return, for example server, wordpress, theme, user, plugins, log. Omit to get every report except log and usage, which are returned only when requested by name.',
 					],
 				],
 			]
@@ -84,7 +86,7 @@ class Get_System_Info_Ability extends Abstract_Ability {
 		$requested = $this->resolve_requested_reports( $input );
 
 		$reports = Plugin::$instance->system_info->get_reports_data( self::REPORT_FORMAT );
-		$selected = empty( $requested ) ? $reports : array_intersect_key( $reports, array_flip( $requested ) );
+		$selected = $this->select_reports( $reports, $requested );
 
 		if ( ! empty( $requested ) && empty( $selected ) ) {
 			return new \WP_Error(
@@ -101,6 +103,14 @@ class Get_System_Info_Ability extends Abstract_Ability {
 		return [
 			'reports' => array_map( [ $this, 'format_report' ], $selected ),
 		];
+	}
+
+	private function select_reports( array $reports, array $requested ): array {
+		if ( empty( $requested ) ) {
+			return array_diff_key( $reports, array_flip( self::OPT_IN_REPORTS ) );
+		}
+
+		return array_intersect_key( $reports, array_flip( $requested ) );
 	}
 
 	private function resolve_requested_reports( array $input ): array {

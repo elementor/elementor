@@ -10,6 +10,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	private const FAKE_REPORT = 'test_format_report';
 
+	private const BUILT_IN_REPORTS = [ 'server', 'wordpress', 'theme', 'user', 'plugins', 'network_plugins', 'mu_plugins' ];
+
 	private array $original_reports;
 
 	public function setUp(): void {
@@ -44,6 +46,20 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( 'raw value', $data[ self::FAKE_REPORT ]['report']['item']['value'] );
+	}
+
+	public function test_get_allowed_reports__registers_experiments_and_log_before_compatibility_without_admin_init() {
+		// Arrange
+		$this->reports_property()->setValue( null, array_fill_keys( self::BUILT_IN_REPORTS, [] ) );
+
+		// Act
+		$report_names = array_keys( Module::get_allowed_reports() );
+
+		// Assert
+		$this->assertSame(
+			[ 'experiments', 'log', 'elementor_compatibility' ],
+			array_values( array_intersect( $report_names, [ 'experiments', 'log', 'elementor_compatibility' ] ) )
+		);
 	}
 
 	private function register_fake_report(): void {

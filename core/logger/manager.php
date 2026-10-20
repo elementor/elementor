@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Manager extends BaseModule {
 
+	const SYSTEM_INFO_REPORT_PRIORITY = 8;
+
 	protected $loggers = [];
 
 	protected $default_logger = '';
@@ -270,7 +272,7 @@ class Manager extends BaseModule {
 	public function __construct() {
 		register_shutdown_function( [ $this, 'shutdown' ] );
 
-		add_action( 'admin_init', [ $this, 'add_system_info_report' ], 80 );
+		add_action( 'elementor/system_info/get_allowed_reports', [ $this, 'add_system_info_report' ], self::SYSTEM_INFO_REPORT_PRIORITY );
 
 		add_action( 'wp_ajax_elementor_js_log', [ $this, 'js_log' ] );
 

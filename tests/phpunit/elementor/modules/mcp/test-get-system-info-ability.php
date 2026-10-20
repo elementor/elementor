@@ -2,8 +2,11 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Core\Logger\Log_Reporter;
+use Elementor\Core\Logger\Manager as Log_Manager;
 use Elementor\Modules\Mcp\Abilities\Get_System_Info_Ability;
 use Elementor\Modules\System_Info\Module as System_Info_Module;
+use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Reporters\Base_Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -17,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Get_System_Info_Ability extends Elementor_Test_Base {
 
 	private const FAKE_PLUGINS_REPORT = 'test_mcp_plugins';
+
+	private const LOG_MESSAGE = 'MCP system info test error';
 
 	private Get_System_Info_Ability $ability;
 	private array $original_reports;
@@ -89,6 +94,47 @@ class Test_Get_System_Info_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'wordpress', $result['reports'] );
 	}
 
+	public function test_execute__leaves_out_opt_in_reports_when_none_requested() {
+		// Arrange
+		$this->register_fake_usage_report();
+
+		// Act
+		$result = $this->ability->execute( [] );
+
+		// Assert
+		$this->assertArrayHasKey( 'experiments', $result['reports'] );
+		$this->assertArrayNotHasKey( 'log', $result['reports'] );
+		$this->assertArrayNotHasKey( 'usage', $result['reports'] );
+	}
+
+	public function test_execute__returns_log_as_plain_text_when_requested() {
+		// Arrange
+		Log_Manager::instance()->get_logger()->error( self::LOG_MESSAGE );
+
+		// Act
+		$result = $this->ability->execute( [ 'reports' => [ 'log' ] ] );
+
+		// Assert
+		$log = $result['reports']['log']['fields'][0]['value'];
+
+		$this->assertStringContainsString( self::LOG_MESSAGE, $log );
+		$this->assertSame( wp_strip_all_tags( $log ), $log );
+	}
+
+	public function test_execute__keeps_log_entries_after_reading_them() {
+		// Arrange
+		$logger = Log_Manager::instance()->get_logger();
+		$logger->error( self::LOG_MESSAGE );
+		$_GET[ Log_Reporter::CLEAR_LOG_ACTION ] = '1';
+
+		// Act
+		$this->ability->execute( [ 'reports' => [ 'log' ] ] );
+		unset( $_GET[ Log_Reporter::CLEAR_LOG_ACTION ] );
+
+		// Assert
+		$this->assertNotEmpty( $logger->get_log() );
+	}
+
 	public function test_execute__returns_not_found_when_no_requested_report_exists() {
 		// Arrange
 		$input = [ 'reports' => [ 'does_not_exist' ] ];
@@ -156,6 +202,24 @@ class Test_Get_System_Info_Ability extends Elementor_Test_Base {
 		};
 
 		System_Info_Module::add_report( self::FAKE_PLUGINS_REPORT, [ 'class_name' => get_class( $reporter ) ] );
+	}
+
+	private function register_fake_usage_report(): void {
+		$reporter = new class() extends Base {
+			public function get_title() {
+				return 'Fake Usage';
+			}
+
+			public function get_fields() {
+				return [ 'usage' => 'Usage' ];
+			}
+
+			public function get_usage() {
+				return [ 'value' => 'Page : 1' ];
+			}
+		};
+
+		System_Info_Module::add_report( 'usage', [ 'class_name' => get_class( $reporter ) ] );
 	}
 
 	private function reports_property(): \ReflectionProperty {

@@ -35,6 +35,8 @@ class Tracker {
 
 	const LAST_TERMS_UPDATED = '2025-07-07';
 
+	const REPORTS_EXCLUDED_FROM_TRACKING = [ 'log', 'experiments', 'usage', 'settings' ];
+
 	/**
 	 * Init.
 	 *
@@ -267,10 +269,8 @@ class Tracker {
 	private static function get_system_reports_data() {
 		$reports = Plugin::$instance->system_info->load_reports( System_Info_Module::get_allowed_reports() );
 
-		// The log report should not be sent with the usage data - it is not used and causes bloat.
-		if ( isset( $reports['log'] ) ) {
-			unset( $reports['log'] );
-		}
+		// These reports are not part of the usage data schema - they are not used and cause bloat.
+		$reports = array_diff_key( $reports, array_flip( self::REPORTS_EXCLUDED_FROM_TRACKING ) );
 
 		$system_reports = [];
 		foreach ( $reports as $report_key => $report_details ) {
