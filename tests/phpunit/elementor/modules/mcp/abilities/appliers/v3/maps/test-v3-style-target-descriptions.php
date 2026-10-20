@@ -75,4 +75,36 @@ class Test_V3_Style_Target_Descriptions extends TestCase {
 		$this->assertStringNotContainsString( ';', $label );
 		$this->assertStringNotContainsString( '. ', $label );
 	}
+
+	public function test_cart_fields__description_leaves_out_the_quantity_input_and_explains_the_focus_border() {
+		// Act.
+		$description = $this->target( 'woocommerce-cart', 'fields' )->get_description();
+
+		// Assert.
+		$this->assertStringNotContainsString( 'quantity', $description );
+		$this->assertStringContainsString( 'box-shadow', $description );
+	}
+
+	public function test_nav_menu_pointer__description_names_the_line_color_and_thickness_properties() {
+		// Act.
+		$description = $this->target( 'nav-menu', 'pointer' )->get_description();
+
+		// Assert.
+		$this->assertStringContainsString( 'background', $description );
+		$this->assertStringContainsString( 'border-width', $description );
+	}
+
+	private function target( string $widget_type, string $alias ): Style_Target {
+		$files = require V3_Widget_Map_Registry::REGISTERED_MAPS_FILE;
+		/** @var V3_Widget_Map $map */
+		$map = require $files[ $widget_type ];
+
+		foreach ( $map->get_all_targets() as $target ) {
+			if ( $alias === $target->get_alias() ) {
+				return $target;
+			}
+		}
+
+		$this->fail( "Target {$alias} is not declared." );
+	}
 }

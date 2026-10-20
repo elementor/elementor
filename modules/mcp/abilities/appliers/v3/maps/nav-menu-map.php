@@ -34,7 +34,7 @@ $main_menu = Style_Target::make( 'main-menu' )
 
 $pointer = Style_Target::make( 'pointer' )
 	->label( 'Main menu hover pointer' )
-	->description( 'Decoration drawn on a main menu item on hover and on the current item: an underline, overline, frame or background, chosen by pointer. Nothing shows while pointer is none or text. color is the item text color over a background pointer and only applies while pointer is background.' )
+	->description( 'Decoration drawn on a main menu item on hover and on the current item: an underline, overline, frame or background, chosen by pointer. Nothing shows while pointer is none or text. background is the pointer color: the underline or overline, the frame or the background fill; one hover value also colors the current item until current sets its own. border-width is the thickness of the line or frame. color is the item text color over a background pointer and only applies while pointer is background.' )
 	->selector( '.elementor-nav-menu--main .elementor-item:before, .elementor-nav-menu--main .elementor-item:after' )
 	->states( $current )
 	->bind( 'color', V3_Control::bind_to( 'color_menu_item_hover_pointer_bg' ), $hover )

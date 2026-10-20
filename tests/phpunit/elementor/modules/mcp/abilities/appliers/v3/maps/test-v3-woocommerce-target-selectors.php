@@ -25,9 +25,10 @@ class Test_V3_Woocommerce_Target_Selectors extends TestCase {
 
 		return [
 			'cart fields' => [ 'woocommerce-cart', 'fields', [
-				'.woocommerce .input-text',
-				'.woocommerce select',
-				self::SELECT2_FIELD,
+				'.coupon .input-text',
+				'.e-cart-totals .input-text',
+				'select',
+				'.select2-selection--single',
 			] ],
 			'checkout fields' => [ 'woocommerce-checkout-page', 'fields', [
 				'#customer_details .form-row .input-text',
