@@ -1,11 +1,6 @@
 import { backgroundGradientOverlayTransformer } from '../background-gradient-overlay-transformer';
 
-function run( value: {
-	type?: 'linear' | 'radial';
-	angle?: number | null;
-	stops?: string;
-	positions?: string;
-} ) {
+function run( value: { type?: 'linear' | 'radial'; angle?: number | null; stops?: string; positions?: string } ) {
 	return backgroundGradientOverlayTransformer( value, { key: 'background-overlay', signal: undefined } );
 }
 
