@@ -78,7 +78,21 @@ class Test_Pro_Upsell_Ability extends Elementor_Test_Base {
 		$description = $ability->get_description_for_llm();
 
 		// Assert
-		$this->assertStringEndsWith( 'Calling it only returns upgrade instructions.', $description );
+		$this->assertStringEndsWith( 'calling this tool only returns upgrade instructions.', $description );
+	}
+
+	public function test_execute_guarded__returns_tool_specific_messages() {
+		// Arrange
+		$abilities = Pro_Upsell_Abilities::create( false );
+
+		// Act
+		$manage_error = $abilities[0]->execute_guarded( [] );
+		$list_error = $abilities[1]->execute_guarded( [] );
+
+		// Assert
+		$this->assertStringContainsString( 'Creating, updating, or deleting', $manage_error->get_error_message() );
+		$this->assertStringContainsString( 'no site parts were checked', $list_error->get_error_message() );
+		$this->assertNotSame( $manage_error->get_error_data()['description_notice'], $list_error->get_error_data()['description_notice'] );
 	}
 
 	public function test_create__falls_back_to_tool_url_when_filter_returns_foreign_domain() {
