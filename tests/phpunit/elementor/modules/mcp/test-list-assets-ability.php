@@ -2,7 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Mcp\Abilities\List_Assets_Ability;
+use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +22,11 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-		add_filter( \Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_true' );
+		$experiments = Plugin::$instance->experiments;
+		if ( ! $experiments->get_features( Mcp_Media_Feature_Gate::EXPERIMENT_NAME ) ) {
+			$experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
+		}
+		$experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->ability = new List_Assets_Ability();
 	}
 
@@ -200,12 +207,12 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 	public function test_execute__empty_result_hint_omits_upload_tools_when_media_upload_is_disabled() {
 		// Arrange
 		$this->act_as_admin();
-		add_filter( \Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+		Plugin::$instance->experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
 		// Act
 		$result = $this->ability->execute( [ 'search' => 'nonexistent-needle-' . wp_generate_password( 12, false ) ] );
 
-		remove_all_filters( \Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate::ENABLED_FILTER );
+		Plugin::$instance->experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
 		// Assert
 		$this->assertSame( List_Assets_Ability::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS, $result['llm_instructions'] );

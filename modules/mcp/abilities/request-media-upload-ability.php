@@ -109,14 +109,6 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 
 		$user_id = get_current_user_id();
 
-		if ( ! Media_Upload_Token_Store::has_capacity_for( $user_id, $count ) ) {
-			return new \WP_Error(
-				'too_many_pending_uploads',
-				__( 'There are too many unused upload tokens. Use or wait for the existing ones to expire, then try again.', 'elementor' ),
-				[ 'status' => \WP_Http::TOO_MANY_REQUESTS ]
-			);
-		}
-
 		$upload_url = rest_url( Mcp_Media_Upload_REST_API::API_NAMESPACE . '/' . Mcp_Media_Upload_REST_API::ROUTE );
 		$uploads = [];
 

@@ -13,8 +13,6 @@ class Mcp_Media_Feature_Gate {
 
 	public const EXPERIMENT_NAME = 'e_mcp_media_upload';
 
-	public const ENABLED_FILTER = 'elementor/mcp/media/enabled';
-
 	public static function get_experimental_data(): array {
 		return [
 			'name' => self::EXPERIMENT_NAME,
@@ -30,7 +28,7 @@ class Mcp_Media_Feature_Gate {
 		$experiments = Plugin::$instance->experiments ?? null;
 		$is_active = $experiments && $experiments->is_feature_active( self::EXPERIMENT_NAME );
 
-		return (bool) apply_filters( self::ENABLED_FILTER, $is_active );
+		return (bool) $is_active;
 	}
 
 	public static function disabled_error(): \WP_Error {

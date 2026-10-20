@@ -30,14 +30,21 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_true' );
+		$this->set_media_upload_experiment_state( Experiments_Manager::STATE_ACTIVE );
 	}
 
 	public function tearDown(): void {
-		remove_all_filters( Mcp_Media_Feature_Gate::ENABLED_FILTER );
 		Plugin::$instance->experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 
 		parent::tearDown();
+	}
+
+	private function set_media_upload_experiment_state( string $state ): void {
+		$experiments = Plugin::$instance->experiments;
+		if ( ! $experiments->get_features( Mcp_Media_Feature_Gate::EXPERIMENT_NAME ) ) {
+			$experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
+		}
+		$experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, $state );
 	}
 
 	private function boot_rest_server(): void {
@@ -52,7 +59,6 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 
 	public function test_is_enabled__is_off_by_default_and_follows_the_hidden_experiment() {
 		// Arrange
-		remove_all_filters( Mcp_Media_Feature_Gate::ENABLED_FILTER );
 		$experiments = Plugin::$instance->experiments;
 		if ( ! $experiments->get_features( Mcp_Media_Feature_Gate::EXPERIMENT_NAME ) ) {
 			$experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
@@ -92,7 +98,7 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 
 	public function test_registry__excludes_media_abilities_when_disabled() {
 		// Arrange
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+		$this->set_media_upload_experiment_state( Experiments_Manager::STATE_INACTIVE );
 
 		// Act
 		$registry = Module::build_core_registry();
@@ -105,7 +111,7 @@ class Test_Mcp_Media_Feature_Gate extends Elementor_Test_Base {
 
 	public function test_rest_route__is_not_registered_when_disabled() {
 		// Arrange
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_false' );
+		$this->set_media_upload_experiment_state( Experiments_Manager::STATE_INACTIVE );
 
 		// Act
 		$this->boot_rest_server();

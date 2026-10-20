@@ -33,10 +33,6 @@ class Media_Upload_Token_Store {
 		return count( self::outstanding_index( $user_id ) );
 	}
 
-	public static function has_capacity_for( int $user_id, int $count ): bool {
-		return self::outstanding_count( $user_id ) + $count <= Media_Upload_Config::MAX_OUTSTANDING_TOKENS_PER_USER;
-	}
-
 	public static function is_valid_for_request( string $token ): bool {
 		$key = self::storage_key( $token );
 		$data = get_transient( $key );
