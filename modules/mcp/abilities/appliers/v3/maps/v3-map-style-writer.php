@@ -20,6 +20,8 @@ class V3_Map_Style_Writer {
 
 	const NONE_KEYWORD = 'none';
 
+	const DEFAULT_BORDER_STYLE = 'solid';
+
 	const SHADOW_POSITION_SUFFIX = '_position';
 
 	const SHADOW_INSET = 'inset';
@@ -383,9 +385,8 @@ class V3_Map_Style_Writer {
 			$patch[ V3_Settings_Patch::GLOBALS_KEY ] = [ $setting => $global_link ];
 		}
 
-		$patch = self::patch_border_style_when_needed( $patch, $controls );
-
 		$ctx->merge_patch( $patch );
+		$ctx->add_border_style_defaults( self::border_style_defaults( $patch, $controls ) );
 		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
 	}
 
@@ -602,42 +603,29 @@ class V3_Map_Style_Writer {
 	}
 
 	/**
+	 * Elementor hides a border group's width and color until its style is set, so writing either
+	 * one alone needs a style. The applier uses it only while no style is saved or written.
+	 *
 	 * @param array<string, mixed> $patch
 	 * @param array<string, mixed> $controls
-	 * @return array<string, mixed>
+	 * @return array<string, string>
 	 */
-	private static function patch_border_style_when_needed( array $patch, array $controls ): array {
-		$style_patch = [];
+	private static function border_style_defaults( array $patch, array $controls ): array {
+		$defaults = [];
 
 		foreach ( array_keys( $patch ) as $setting ) {
-			if ( V3_Settings_Patch::GLOBALS_KEY === $setting ) {
-				continue;
-			}
-
-			if ( ! preg_match( '/^(.+)_(width|color)(?:_(tablet|mobile))?$/', $setting, $matches ) ) {
+			if ( ! preg_match( '/^(.+)_(width|color)(?:_(tablet|mobile))?$/', (string) $setting, $matches ) ) {
 				continue;
 			}
 
 			$style_key = $matches[1] . '_border' . ( ! empty( $matches[3] ) ? '_' . $matches[3] : '' );
 
-			if ( ! isset( $controls[ $style_key ] ) ) {
-				continue;
+			if ( isset( $controls[ $style_key ] ) ) {
+				$defaults[ $style_key ] = self::DEFAULT_BORDER_STYLE;
 			}
-
-			$style_value = $patch[ $style_key ] ?? '';
-
-			if ( '' !== $style_value && 'none' !== $style_value ) {
-				continue;
-			}
-
-			$style_patch[ $style_key ] = 'solid';
 		}
 
-		if ( empty( $style_patch ) ) {
-			return $patch;
-		}
-
-		return array_merge( $style_patch, $patch );
+		return $defaults;
 	}
 
 	private static function storable_values_hint( string $control_type, array $control ): string {

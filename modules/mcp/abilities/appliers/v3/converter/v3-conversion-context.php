@@ -44,6 +44,9 @@ class V3_Conversion_Context {
 	/** @var array<string, array{value: mixed, declaration: string}> */
 	private array $required_settings = [];
 
+	/** @var array<string, string> */
+	private array $border_style_defaults = [];
+
 	/**
 	 * @param array<string, mixed> $patch
 	 */
@@ -73,6 +76,20 @@ class V3_Conversion_Context {
 	 */
 	public function required_settings(): array {
 		return $this->required_settings;
+	}
+
+	/**
+	 * @param array<string, string> $defaults Border style setting => style to use while none is saved.
+	 */
+	public function add_border_style_defaults( array $defaults ): void {
+		$this->border_style_defaults = array_merge( $this->border_style_defaults, $defaults );
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function border_style_defaults(): array {
+		return $this->border_style_defaults;
 	}
 
 	public function add_typography_declaration( string $prefix, string $breakpoint, ?string $state, bool $responsive, string $property, string $value ): void {

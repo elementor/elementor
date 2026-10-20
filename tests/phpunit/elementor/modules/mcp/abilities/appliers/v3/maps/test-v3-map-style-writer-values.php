@@ -160,9 +160,9 @@ class Test_V3_Map_Style_Writer_Values extends TestCase {
 		$this->assertStringContainsString( 'Allowed units: px.', $this->fallbacks[0]['reason'] );
 	}
 
-	public function test_patch_border_style_when_needed__adds_solid_for_group_width_without_style() {
+	public function test_border_style_defaults__defaults_the_group_style_to_solid_for_a_width() {
 		// Arrange.
-		$method = new \ReflectionMethod( V3_Map_Style_Writer::class, 'patch_border_style_when_needed' );
+		$method = new \ReflectionMethod( V3_Map_Style_Writer::class, 'border_style_defaults' );
 		$method->setAccessible( true );
 		$controls = [
 			'image_border_border' => [ 'type' => 'select' ],
@@ -180,10 +180,10 @@ class Test_V3_Map_Style_Writer_Values extends TestCase {
 		];
 
 		// Act.
-		$patched = $method->invoke( null, $patch, $controls );
+		$defaults = $method->invoke( null, $patch, $controls );
 
 		// Assert.
-		$this->assertSame( 'solid', $patched['image_border_border'] );
+		$this->assertSame( [ 'image_border_border' => 'solid' ], $defaults );
 	}
 
 	public function test_write__falls_back_on_sides_no_binding_stores() {

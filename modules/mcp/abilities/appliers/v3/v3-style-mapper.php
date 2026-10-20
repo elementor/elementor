@@ -484,6 +484,7 @@ class V3_Style_Mapper {
 			'fallback_rules' => $ctx->fallback_rules(),
 			'fallback_notes' => $ctx->fallback_notes(),
 			'required_settings' => $ctx->required_settings(),
+			'border_style_defaults' => $ctx->border_style_defaults(),
 			'warnings' => $ctx->warnings(),
 			'error' => null,
 		];
@@ -496,6 +497,7 @@ class V3_Style_Mapper {
 			'fallback_rules' => [],
 			'fallback_notes' => [],
 			'required_settings' => [],
+			'border_style_defaults' => [],
 			'warnings' => [],
 			'error' => null,
 		];
