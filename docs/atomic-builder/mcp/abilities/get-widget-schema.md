@@ -92,16 +92,16 @@ Built by `Llm_Guidance_Builder` from widget config:
 
 Props in `NON_CONFIGURABLE_PROP_KEYS` (`classes`, `attributes`, etc.) are excluded unless `llm_configurable` meta is set. Base settings props get a hint in their schema description.
 
-### Schema (supported v3 widget)
+### Schema (v3 widget with a map)
 
-Only the legacy V3 widgets that `elementor/list-widget-schemas` lists are supported. Their schema has this shape:
+A legacy V3 widget is supported only when it has a map in `modules/mcp/abilities/appliers/v3/maps/registered-maps.php` that compiles against the widget's controls. Its schema comes from the map:
 
 ```json
 {
   "type": "object",
   "widget_version": "v3",
-  "description": "Widget description",
-  "properties": { /* setting key → JSON schema */ },
+  "description": "Map description",
+  "properties": { /* map setting key → JSON schema */ },
   "editor_settings": { },
   "additionalProperties": false,
   "default_style_target": "title",
@@ -116,7 +116,7 @@ Only the legacy V3 widgets that `elementor/list-widget-schemas` lists are suppor
 }
 ```
 
-`properties` are the settings accepted in `element_config`. Visual styling goes through the `style` CSS input, which is applied per style target listed in `style_targets`. CSS the widget cannot store for a target falls back to the widget's custom CSS, which requires Elementor Pro.
+`properties` are the settings accepted in `element_config`. Visual styling goes through the `style` CSS input, which is written to the widget's controls through `style_targets`. CSS that no target binds falls back to the widget's custom CSS, which requires Elementor Pro.
 
 ### Errors
 
@@ -125,7 +125,7 @@ Only the legacy V3 widgets that `elementor/list-widget-schemas` lists are suppor
 The rest are per type, under `errors` with `code` and `message`, and the valid schemas still come back:
 
 - `elementor_not_found` — unknown type or widget with `meta.llm_support: false`
-- `elementor_v3_not_supported` — legacy V3 widget that is not supported
+- `elementor_v3_not_supported` — legacy V3 widget without a map that compiles
 
 ## Extension
 
