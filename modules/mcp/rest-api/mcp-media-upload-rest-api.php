@@ -45,13 +45,6 @@ class Mcp_Media_Upload_REST_API {
 
 	private function handle_upload( \WP_REST_Request $request ) {
 		$token = $this->read_header( $request, Media_Upload_Config::UPLOAD_TOKEN_HEADER );
-		if ( '' === $token ) {
-			return new \WP_Error(
-				'missing_upload_token',
-				__( 'The upload token header is required.', 'elementor' ),
-				[ 'status' => \WP_Http::UNAUTHORIZED ]
-			);
-		}
 
 		$token_data = Media_Upload_Token_Store::consume( $token );
 		if ( is_wp_error( $token_data ) ) {
@@ -98,13 +91,6 @@ class Mcp_Media_Upload_REST_API {
 				__( 'You do not have permission to upload files.', 'elementor' ),
 				[ 'status' => \WP_Http::FORBIDDEN ]
 			);
-		}
-
-		$content_length_error = Media_Upload_Config::assert_content_length_within_limit(
-			$request->get_header( 'content-length' )
-		);
-		if ( $content_length_error ) {
-			return $content_length_error;
 		}
 
 		$stream_result = $this->write_body_to_temp( $request );

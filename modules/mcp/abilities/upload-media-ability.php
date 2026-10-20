@@ -6,7 +6,6 @@ use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
-use Elementor\Modules\Mcp\Media\Media_Upload_Input_Guard;
 use Elementor\Modules\Mcp\Media\Remote_Image_Fetcher;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -116,14 +115,12 @@ class Upload_Media_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
 
-		$capability_error = Media_Upload_Input_Guard::require_upload_capability();
-		if ( $capability_error ) {
-			return $capability_error;
-		}
-
-		$consent_error = Media_Upload_Input_Guard::require_upload_consent( $input );
-		if ( $consent_error ) {
-			return $consent_error;
+		if ( true !== ( $input['consent'] ?? null ) ) {
+			return new \WP_Error(
+				'consent_required',
+				__( 'Explicit user consent is required before uploading media.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
 		$has_single = array_key_exists( 'source_url', $input ) && null !== $input['source_url'];
