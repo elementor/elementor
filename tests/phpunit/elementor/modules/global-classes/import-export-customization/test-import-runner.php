@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
+use Elementor\App\Modules\ImportExportCustomization\Kit_Context;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
@@ -479,5 +480,37 @@ class Test_Import_Runner extends Elementor_Test_Base {
 
 		$this->assertCount( 1, $result['created'] );
 		$this->assertEquals( 'Test2', $result['created'][0]['result_entry']['label'] );
+	}
+
+	public function test_import__stores_context_mappings_for_streaming_replace_and_create() {
+		// Arrange
+		$repository = Global_Classes_Repository::make();
+		$repository->put(
+			[
+				'g-existing' => [
+					'id' => 'g-existing',
+					'type' => 'class',
+					'label' => 'Test1',
+					'variants' => [],
+				],
+			],
+			[ 'g-existing' ]
+		);
+		$context = new Kit_Context();
+
+		// Act
+		( new Import_Runner() )->import( array_merge( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/streaming',
+			'customization' => [
+				'design-system' => [ 'conflict_resolution' => 'replace' ],
+			],
+			'context' => $context,
+		], self::STREAMING_MANIFEST ), [] );
+
+		// Assert
+		$group = $context->group( Kit_Context::GROUP_GLOBAL_CLASSES );
+		$this->assertSame( 'g-existing', $group->value_of( 'g-123' ) );
+		$this->assertSame( 'g-456', $group->value_of( 'g-456' ) );
 	}
 }

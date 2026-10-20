@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Design_System_Import_Context;
+use Elementor\App\Modules\ImportExportCustomization\Kit_Context;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
@@ -65,7 +66,10 @@ class Import extends Import_Runner_Base {
 			$imported_collection = Variables_Collection::hydrate( $variables_data );
 			$this->save_collection( $repository, $imported_collection );
 
-			return $this->build_override_all_result( $imported_collection );
+			$result = $this->build_override_all_result( $imported_collection );
+			$this->store_context_mappings( $data, $result );
+
+			return $result;
 		}
 
 		$existing_collection = $this->get_existing_collection( $repository );
@@ -73,6 +77,7 @@ class Import extends Import_Runner_Base {
 
 		$result = $this->resolve_collections( $existing_collection, $imported_collection, $conflict_resolution );
 		$this->save_collection( $repository, $existing_collection );
+		$this->store_context_mappings( $data, $result );
 
 		return $result;
 	}
@@ -222,5 +227,26 @@ class Import extends Import_Runner_Base {
 			'id' => $variable->id(),
 			'label' => $variable->label(),
 		];
+	}
+
+	private function store_context_mappings( array $data, array $result ): void {
+		if ( ! isset( $data['context'] ) || ! ( $data['context'] instanceof Kit_Context ) ) {
+			return;
+		}
+
+		$group = $data['context']->group( Kit_Context::GROUP_GLOBAL_VARIABLES );
+
+		foreach ( [ 'created', 'renamed', 'replaced' ] as $bucket ) {
+			foreach ( $result[ $bucket ] ?? [] as $entry ) {
+				if ( empty( $entry['import_entry']['id'] ) ) {
+					continue;
+				}
+
+				$group->put(
+					$entry['import_entry']['id'],
+					$entry['result_entry']['id'] ?? $entry['import_entry']['id']
+				);
+			}
+		}
 	}
 }
