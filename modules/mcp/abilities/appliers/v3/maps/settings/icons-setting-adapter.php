@@ -18,7 +18,7 @@ class Icons_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard 
 	 * The icon value becomes a CSS class list and an icon-library lookup; only class-name characters make sense.
 	 */
 	public function reject_reason( $plain, array $control ): ?string {
-		if ( ! is_array( $plain ) || ( $plain === array_values( $plain ) ) ) {
+		if ( ! is_array( $plain ) || array_values( $plain ) === $plain ) {
 			return 'is not an icon object ({ value, library })';
 		}
 

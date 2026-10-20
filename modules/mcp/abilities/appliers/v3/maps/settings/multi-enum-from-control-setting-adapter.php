@@ -18,7 +18,7 @@ class Multi_Enum_From_Control_Setting_Adapter implements V3_Setting_Adapter, V3_
 	const CONTROL_TYPE = 'select2';
 
 	public function reject_reason( $plain, array $control ): ?string {
-		if ( is_array( $plain ) && ! ( $plain === array_values( $plain ) ) ) {
+		if ( is_array( $plain ) && array_values( $plain ) !== $plain ) {
 			return 'is not a list (send an array of option keys)';
 		}
 

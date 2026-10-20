@@ -26,14 +26,14 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Gua
 	 * same vetting as a standalone setting, so nothing is silently stripped from a row.
 	 */
 	public function reject_reason( $plain, array $control ): ?string {
-		if ( ! is_array( $plain ) || $plain !== array_values( $plain ) ) {
+		if ( ! is_array( $plain ) || array_values( $plain ) !== $plain ) {
 			return 'is not a list of rows';
 		}
 
 		$adapters = $this->field_adapters( $control );
 
 		foreach ( $plain as $index => $row ) {
-			if ( ! is_array( $row ) || ( [] !== $row && $row === array_values( $row ) ) ) {
+			if ( ! is_array( $row ) || ( [] !== $row && array_values( $row ) === $row ) ) {
 				return sprintf( 'has row %d that is not an object', $index );
 			}
 

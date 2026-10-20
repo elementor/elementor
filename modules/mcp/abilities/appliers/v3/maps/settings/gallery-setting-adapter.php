@@ -22,12 +22,12 @@ class Gallery_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guar
 	 * dropped silently while the rest of the gallery is saved.
 	 */
 	public function reject_reason( $plain, array $control ): ?string {
-		if ( ! is_array( $plain ) || ! ( $plain === array_values( $plain ) ) ) {
+		if ( ! is_array( $plain ) || array_values( $plain ) !== $plain ) {
 			return 'is not a list of { id, url } items';
 		}
 
 		foreach ( $plain as $index => $item ) {
-			if ( ! is_array( $item ) || ( $item === array_values( $item ) ) ) {
+			if ( ! is_array( $item ) || array_values( $item ) === $item ) {
 				return sprintf( 'has item %d that is not an object with an "id"', $index );
 			}
 

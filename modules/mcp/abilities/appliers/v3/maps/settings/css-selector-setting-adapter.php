@@ -37,7 +37,10 @@ class Css_Selector_Setting_Adapter extends String_Setting_Adapter implements V3_
 	}
 
 	private static function is_balanced( string $selector ): bool {
-		$pairs = [ ')' => '(', ']' => '[' ];
+		$pairs = [
+			')' => '(',
+			']' => '[',
+		];
 		$stack = [];
 		$quote = null;
 
