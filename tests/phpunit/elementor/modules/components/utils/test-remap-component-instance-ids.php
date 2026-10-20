@@ -3,13 +3,13 @@
 namespace Elementor\Testing\Modules\Components\Utils;
 
 use Elementor\Modules\Components\Utils\Remap_Component_Instance_Ids;
-use ElementorEditorTesting\Elementor_Test_Base;
+use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Test_Remap_Component_Instance_Ids extends Elementor_Test_Base {
+class Test_Remap_Component_Instance_Ids extends TestCase {
 
 	const SOURCE_COMPONENT_ID = 93;
 	const DESTINATION_COMPONENT_ID = 167;
