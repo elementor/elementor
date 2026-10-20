@@ -13,7 +13,6 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
-use Elementor\Modules\Mcp\Registry\Pro_Upsell_Abilities;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
@@ -244,11 +243,23 @@ class Module extends BaseModule {
 			$registry->add( $ability );
 		}
 
-		foreach ( Pro_Upsell_Abilities::create( Utils::has_pro() ) as $ability ) {
+		foreach ( self::get_pro_upsell_abilities() as $ability ) {
 			$registry->add( $ability );
 		}
 
 		return $registry;
+	}
+
+	/** @return Abstract_Ability[] */
+	private static function get_pro_upsell_abilities(): array {
+		if ( Utils::has_pro() ) {
+			return [];
+		}
+
+		return [
+			new Abilities\Manage_Site_Parts_Upsell_Ability(),
+			new Abilities\List_Site_Parts_Upsell_Ability(),
+		];
 	}
 
 	/** @return Abstract_Ability[] */
