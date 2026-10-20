@@ -147,6 +147,10 @@ class V3_Map_Style_Reader {
 		$stored = $settings[ $key ] ?? null;
 		$adapter = $this->adapters->find( $binding->get_read_type(), $binding->get_control_type(), null !== $binding->get_sides() );
 
+		if ( is_array( $stored ) && Controls_Manager::BOX_SHADOW === $binding->get_control_type() && V3_Map_Style_Writer::SHADOW_INSET === ( $settings[ $key . V3_Map_Style_Writer::SHADOW_POSITION_SUFFIX ] ?? '' ) ) {
+			$stored['position'] = V3_Map_Style_Writer::SHADOW_INSET;
+		}
+
 		return null === $stored || null === $adapter ? null : $adapter->from_control_value( $stored, $binding->get_sides() );
 	}
 

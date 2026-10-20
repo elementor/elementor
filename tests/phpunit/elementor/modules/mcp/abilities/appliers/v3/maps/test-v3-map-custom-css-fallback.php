@@ -31,6 +31,8 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 	const CUSTOM_MEDIA_BLOCK = '@media (min-width: 2000px) { color: blue; title:hover { color: green; } }';
 
+	const FALLBACK_DESKTOP_FONT_SIZE = 'font-size: clamp(1rem, 2vw, 3rem); @media(--tablet) { font-size: 20px; }';
+
 	const UNKNOWN_SELECTOR_RULE = 'selector .unknown { outline: 1px solid red; }';
 
 	const MEDIA_QUERIES = [
@@ -62,6 +64,12 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 				'type' => 'color',
 				'selectors' => [ '{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};' ],
 			],
+			'title_size' => [
+				'type' => 'slider',
+				'is_responsive' => true,
+				'size_units' => [ 'px' ],
+				'selectors' => [ '{{WRAPPER}} .elementor-heading-title' => 'font-size: {{SIZE}}{{UNIT}};' ],
+			],
 		];
 		$map = V3_Widget_Map::make( self::WIDGET_TYPE )
 			->description( 'Heading.' )
@@ -69,6 +77,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 				Style_Target::make( 'title' )
 					->selector( '.elementor-heading-title' )
 					->bind( 'color', V3_Control::bind_to( 'title_color' ) )
+					->bind( 'font-size', V3_Control::bind_to( 'title_size' )->responsive() )
 			);
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
@@ -98,6 +107,26 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 			array_slice( $result['fallback_notes'], 1 )
 		);
 		$this->assertSame( [ 'The state in title:hover is not supported by style target title and was dropped. Supported states: default.' ], $result['warnings'] );
+	}
+
+	public function test_apply__sends_device_values_to_custom_css_when_the_desktop_value_falls_back() {
+		// Act.
+		$result = $this->mapper( true )->apply( self::FALLBACK_DESKTOP_FONT_SIZE, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'title_size_tablet', $result['settings_patch'] );
+		$this->assertEquals(
+			[ 'desktop' => [ 'font-size' => 'clamp(1rem, 2vw, 3rem)' ], 'tablet' => [ 'font-size' => '20px' ] ],
+			array_column( $result['fallback_rules'], 'declarations', 'breakpoint' )
+		);
+	}
+
+	public function test_apply__keeps_device_values_native_without_pro_custom_css() {
+		// Act.
+		$result = $this->mapper( false )->apply( self::FALLBACK_DESKTOP_FONT_SIZE, self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertSame( [ 'unit' => 'px', 'size' => 20 ], $result['settings_patch']['title_size_tablet'] ?? null );
 	}
 
 	public function test_site_media_queries__lists_max_width_breakpoints_from_widest_to_narrowest() {
@@ -190,8 +219,8 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$this->assertSame( [ Style_Applier::UNSUPPORTED_CSS_CODE ], $codes );
 	}
 
-	private function mapper(): V3_Style_Mapper {
-		return V3_Style_Mapper_Factory::create( $this->converter(), self::BREAKPOINTS );
+	private function mapper( ?bool $has_pro = null ): V3_Style_Mapper {
+		return V3_Style_Mapper_Factory::create( $this->converter(), self::BREAKPOINTS, $has_pro );
 	}
 
 	private function converter(): Css_Converter {

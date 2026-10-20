@@ -20,6 +20,21 @@ class V3_Map_Style_Writer {
 
 	const NONE_KEYWORD = 'none';
 
+	const SHADOW_POSITION_SUFFIX = '_position';
+
+	const SHADOW_INSET = 'inset';
+
+	const SHADOW_OUTLINE_POSITION = ' ';
+
+	const TRANSPARENT_ZERO_SHADOW = [
+		'horizontal' => 0,
+		'vertical' => 0,
+		'blur' => 0,
+		'spread' => 0,
+		'color' => 'rgba(0,0,0,0)',
+		'position' => 'outline',
+	];
+
 	const POSITION_PROPERTY = 'position';
 
 	const POSITION_OFFSET_PROPERTIES = [ 'inset-inline-start', 'inset-inline-end', 'inset-block-start', 'inset-block-end' ];
@@ -320,6 +335,10 @@ class V3_Map_Style_Writer {
 			return $this->missing_breakpoint_message( $binding->get_prop(), $breakpoint );
 		}
 
+		if ( self::is_multiple_shadows( $binding, $prop_value ) ) {
+			return self::multiple_shadows_message();
+		}
+
 		$variable_id = V3_Color_Variables::variable_id_in( $prop_value );
 
 		if ( null !== $variable_id ) {
@@ -358,7 +377,7 @@ class V3_Map_Style_Writer {
 	private function store( V3_Conversion_Context $ctx, Compiled_Style_Binding $binding, array $controls, string $breakpoint, $control_value, ?string $global_link = null ): void {
 		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
 		$requirements = self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint );
-		$patch = array_merge( [ $setting => $control_value ], $requirements );
+		$patch = array_merge( [ $setting => $control_value ], self::shadow_position_patch( $binding, $setting, $control_value ), $requirements );
 
 		if ( null !== $global_link ) {
 			$patch[ V3_Settings_Patch::GLOBALS_KEY ] = [ $setting => $global_link ];
@@ -368,6 +387,52 @@ class V3_Map_Style_Writer {
 
 		$ctx->merge_patch( $patch );
 		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
+	}
+
+	private static function is_multiple_shadows( Compiled_Style_Binding $binding, array $prop_value ): bool {
+		return Controls_Manager::BOX_SHADOW === $binding->get_control_type()
+			&& is_array( $prop_value['value'] ?? null )
+			&& count( $prop_value['value'] ) > 1;
+	}
+
+	private static function multiple_shadows_message(): string {
+		return __( 'This Elementor widget stores one box shadow per state; the full value is applied through the widget custom CSS.', 'elementor' );
+	}
+
+	/**
+	 * Elementor renders a box shadow's inset keyword from a sibling `<control>_position` select, not
+	 * from the shadow value, so it is written alongside every shadow.
+	 *
+	 * @param Compiled_Style_Binding $binding
+	 * @param string                 $setting
+	 * @param mixed                  $control_value
+	 * @return array<string, string>
+	 */
+	private static function shadow_position_patch( Compiled_Style_Binding $binding, string $setting, $control_value ): array {
+		if ( Controls_Manager::BOX_SHADOW !== $binding->get_control_type() || ! is_array( $control_value ) ) {
+			return [];
+		}
+
+		$position = self::SHADOW_INSET === ( $control_value['position'] ?? '' ) ? self::SHADOW_INSET : self::SHADOW_OUTLINE_POSITION;
+
+		return [ $setting . self::SHADOW_POSITION_SUFFIX => $position ];
+	}
+
+	/**
+	 * The default state turns the shadow group off. Another state cannot simply be switched off,
+	 * because an off state keeps showing the default shadow, so it gets an invisible zero shadow.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function box_shadow_none_patch( Compiled_Style_Binding $binding ): array {
+		if ( Style_Target::DEFAULT_STATE === $binding->get_state() ) {
+			return array_fill_keys( array_keys( $binding->get_dependency_values() ), '' );
+		}
+
+		return array_merge( $binding->get_dependency_values(), [
+			$binding->get_setting() => self::TRANSPARENT_ZERO_SHADOW,
+			$binding->get_setting() . self::SHADOW_POSITION_SUFFIX => self::SHADOW_OUTLINE_POSITION,
+		] );
 	}
 
 	private static function unknown_variable_message( Compiled_Style_Binding $binding ): string {
@@ -464,7 +529,7 @@ class V3_Map_Style_Writer {
 			$binding = $this->bindings_for( $bindings, $declaration['property'], $state )[0] ?? null;
 
 			if ( null !== $binding && self::is_box_shadow_none( $binding, $declaration['value'], $breakpoint ) ) {
-				$ctx->merge_patch( array_fill_keys( array_keys( $binding->get_dependency_values() ), '' ) );
+				$ctx->merge_patch( self::box_shadow_none_patch( $binding ) );
 				continue;
 			}
 

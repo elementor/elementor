@@ -18,6 +18,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Unmapped_Css_Serializer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\V3_Style_Target_Router;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,15 +48,27 @@ class V3_Style_Mapper {
 	private Responsive_Key_Resolver $responsive_resolver;
 	private V3_Map_Style_Writer $map_writer;
 	private V3_Style_Target_Router $target_router;
+	private bool $has_pro;
 
+	/**
+	 * @param Css_Converter           $css_converter
+	 * @param array                   $active_breakpoints
+	 * @param V3_Converter_Registry   $converter_registry
+	 * @param Css_Declaration_Parser  $declaration_parser
+	 * @param Unmapped_Css_Serializer $unmapped_serializer
+	 * @param Responsive_Key_Resolver $responsive_resolver
+	 * @param bool|null               $has_pro             Whether Pro's custom CSS module is available; detected when null.
+	 */
 	public function __construct(
 		Css_Converter $css_converter,
 		array $active_breakpoints,
 		V3_Converter_Registry $converter_registry,
 		Css_Declaration_Parser $declaration_parser,
 		Unmapped_Css_Serializer $unmapped_serializer,
-		Responsive_Key_Resolver $responsive_resolver
+		Responsive_Key_Resolver $responsive_resolver,
+		?bool $has_pro = null
 	) {
+		$this->has_pro = $has_pro ?? Utils::has_pro();
 		$this->css_converter = $css_converter;
 		$this->active_breakpoints = $active_breakpoints;
 		$this->converter_registry = $converter_registry;
@@ -128,9 +141,11 @@ class V3_Style_Mapper {
 			] );
 		}
 
+		$forced = $this->base_fallback_properties( $meta, $split['breakpoints'] );
+
 		foreach ( $split['breakpoints'] as $breakpoint => $css ) {
 			if ( '' !== trim( $css ) ) {
-				$this->route_to_targets( $ctx, $meta, (string) $breakpoint, (string) $css );
+				$this->route_to_targets( $ctx, $meta, (string) $breakpoint, (string) $css, null, $forced );
 			}
 		}
 
@@ -142,10 +157,49 @@ class V3_Style_Mapper {
 	}
 
 	/**
+	 * Fallback CSS is `!important` and prints after the native breakpoint rules, so a desktop value
+	 * that fell back would override the tablet and mobile values of the same property stored
+	 * natively. Those properties are collected so their other breakpoints fall back too.
+	 *
+	 * @param V3_Context_Meta       $meta
+	 * @param array<string, string> $breakpoints Breakpoint name => CSS.
+	 * @return array<string, string[]> `target|state` => CSS property names that fell back at the base breakpoint.
+	 */
+	private function base_fallback_properties( V3_Context_Meta $meta, array $breakpoints ): array {
+		$base_css = trim( (string) ( $breakpoints[ Responsive_Key_Resolver::BASE_BREAKPOINT ] ?? '' ) );
+
+		if ( ! $this->has_pro || '' === $base_css || count( $breakpoints ) < 2 ) {
+			return [];
+		}
+
+		$probe = new V3_Conversion_Context();
+		$this->route_to_targets( $probe, $meta, Responsive_Key_Resolver::BASE_BREAKPOINT, $base_css );
+		$forced = [];
+
+		foreach ( $probe->fallback_rules() as $rule ) {
+			$key = self::forced_key( $rule['target'], $rule['state'] );
+			$forced[ $key ] = array_merge( $forced[ $key ] ?? [], array_keys( $rule['declarations'] ) );
+		}
+
+		return $forced;
+	}
+
+	private static function forced_key( string $target, ?string $state ): string {
+		return $target . '|' . ( $state ?? '' );
+	}
+
+	/**
 	 * A media query that is not a site breakpoint has no setting to write to, so all of its
 	 * declarations fall back.
+	 *
+	 * @param V3_Conversion_Context   $ctx
+	 * @param V3_Context_Meta         $meta
+	 * @param string                  $breakpoint
+	 * @param string                  $css
+	 * @param string|null             $media
+	 * @param array<string, string[]> $forced     Properties to send to custom CSS instead of the widget settings, by `target|state`.
 	 */
-	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css, ?string $media = null ): void {
+	private function route_to_targets( V3_Conversion_Context $ctx, V3_Context_Meta $meta, string $breakpoint, string $css, ?string $media = null, array $forced = [] ): void {
 		$map = $meta->map();
 		$targets = $map->get_targets();
 		$routed = $this->target_router->route(
@@ -161,11 +215,57 @@ class V3_Style_Mapper {
 		foreach ( $routed['blocks'] as $block ) {
 			$target = $targets[ $block['target'] ];
 			$fallbacks = null === $media
-				? $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $block['css'] )
+				? $this->write_block( $ctx, $meta, $target, $breakpoint, $block, $forced[ self::forced_key( $block['target'], $block['state'] ) ] ?? [] )
 				: $this->custom_media_fallbacks( $block['css'], $media );
 
 			$this->collect_fallback( $ctx, $target, $breakpoint, $block, $fallbacks, $media );
 		}
+	}
+
+	/**
+	 * @param V3_Conversion_Context                                  $ctx
+	 * @param V3_Context_Meta                                        $meta
+	 * @param Compiled_Style_Target                                  $target
+	 * @param string                                                 $breakpoint
+	 * @param array{target: string, state: string|null, css: string} $block
+	 * @param string[]                                               $forced_properties
+	 * @return array<int, array{property: string, value: string, reason: string}>
+	 */
+	private function write_block( V3_Conversion_Context $ctx, V3_Context_Meta $meta, Compiled_Style_Target $target, string $breakpoint, array $block, array $forced_properties ): array {
+		$css = $block['css'];
+		$forced_fallbacks = [];
+
+		if ( Responsive_Key_Resolver::BASE_BREAKPOINT !== $breakpoint && ! empty( $forced_properties ) ) {
+			[ $css, $forced_fallbacks ] = $this->split_forced_declarations( $css, $forced_properties );
+		}
+
+		$fallbacks = '' === trim( $css )
+			? []
+			: $this->map_writer->write( $ctx, $target->get_bindings(), $meta->controls(), $breakpoint, $block['state'], $css );
+
+		return array_merge( $fallbacks, $forced_fallbacks );
+	}
+
+	/**
+	 * @param string   $css
+	 * @param string[] $properties
+	 * @return array{0: string, 1: array<int, array{property: string, value: string, reason: string}>} The CSS left for the widget settings, and the declarations that go to custom CSS.
+	 */
+	private function split_forced_declarations( string $css, array $properties ): array {
+		$kept = [];
+		$forced = [];
+		$reason = __( 'Its desktop value is in the widget custom CSS, which would override a per-device setting.', 'elementor' );
+
+		foreach ( $this->declaration_parser->parse_declarations( $css ) as $declaration ) {
+			if ( in_array( $declaration['property'], $properties, true ) ) {
+				$forced[] = array_merge( $declaration, [ 'reason' => $reason ] );
+				continue;
+			}
+
+			$kept[] = $declaration['property'] . ': ' . $declaration['value'] . ';';
+		}
+
+		return [ implode( ' ', $kept ), $forced ];
 	}
 
 	/**

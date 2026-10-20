@@ -130,6 +130,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 				'dropdown_border_radius',
 				'dropdown_box_shadow_box_shadow_type',
 				'dropdown_box_shadow_box_shadow',
+				'dropdown_box_shadow_box_shadow_position',
 				'color_dropdown_item_hover',
 				'dropdown_divider_border',
 				'toggle_size',
