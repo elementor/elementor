@@ -1,8 +1,11 @@
+import { renderHook } from '@testing-library/react';
+
 import {
 	registerIconLibraryProvider,
 	resolveProviderIconPreviewSvg,
 	resolveProviderIconSvg,
 	unregisterIconLibraryProvider,
+	useIconLibraryProviderIcons,
 } from '../icon-library-providers';
 import { mergeIconsById } from '../merge-icons-by-id';
 
@@ -150,6 +153,55 @@ describe( 'icon-library-providers', () => {
 				[ 'fa-solid:star', 'core' ],
 				[ 'fa-light:star', 'light' ],
 			] );
+		} );
+	} );
+
+	describe( 'useIconLibraryProviderIcons', () => {
+		const icon = {
+			id: 'x:a',
+			name: 'a',
+			label: 'a',
+			library: 'x',
+			value: 'x a',
+			aliases: [],
+			width: 1,
+			height: 1,
+			paths: [],
+		};
+
+		it( 'keeps the same list while providers return the same data', () => {
+			// Arrange.
+			const data = [ icon ];
+
+			registerIconLibraryProvider( { id: PROVIDER_ID, useIcons: () => ( { data, isLoading: false } ) } );
+
+			// Act.
+			const { result, rerender } = renderHook( () => useIconLibraryProviderIcons( true ) );
+			const first = result.current.data;
+
+			rerender();
+
+			// Assert.
+			expect( result.current.data ).toBe( first );
+		} );
+
+		it( 'reports loading when any provider loads and merges every provider list', () => {
+			// Arrange.
+			registerIconLibraryProvider( {
+				id: PROVIDER_ID,
+				useIcons: () => ( { data: [ icon ], isLoading: false } ),
+			} );
+			registerIconLibraryProvider( {
+				id: FAILING_PROVIDER_ID,
+				useIcons: () => ( { data: undefined, isLoading: true } ),
+			} );
+
+			// Act.
+			const { result } = renderHook( () => useIconLibraryProviderIcons( true ) );
+
+			// Assert.
+			expect( result.current.data ).toEqual( [ icon ] );
+			expect( result.current.isLoading ).toBe( true );
 		} );
 	} );
 } );

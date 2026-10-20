@@ -32,7 +32,8 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 		[ fontAwesomeIcons, providerIcons ]
 	);
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
-	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
+	const isLoadingCatalog =
+		shouldLoadIconCatalog && ( isFontAwesomeLoading || ( ! isFontAwesomeLibrary && isProviderLoading ) );
 	const { data: savedIconSvg, isLoading: isSavedIconLoading } = useProviderIconSvg(
 		iconLibrary,
 		iconClassName,

@@ -470,6 +470,27 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows the free icons while a provider is still loading', () => {
+		// Arrange.
+		jest.mocked( useIconLibraryProviderIcons ).mockReturnValue( { data: [], isLoading: true } as never );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows a named loading state while the free catalog is loading', () => {
+		// Arrange.
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: true } as never );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'progressbar', { name: 'Loading icons' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'shows a load failure when the catalog is empty', () => {
 		// Arrange.
 		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
