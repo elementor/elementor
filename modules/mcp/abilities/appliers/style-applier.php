@@ -33,6 +33,7 @@ class Style_Applier {
 
 	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
 	const UNKNOWN_VARIABLE_CODE = 'unknown_variable';
+	const BORDER_STYLE_NONE = 'none';
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
@@ -223,14 +224,16 @@ class Style_Applier {
 		$controls = $is_map_driven ? V3_Widget_Map_Registry::instance()->get_registered_controls( (string) $widget_type ) : [];
 		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [], $controls );
 
-		if ( ! empty( $result['settings_patch'] ) ) {
-			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $result['settings_patch'] );
+		$settings_patch = self::with_border_style_defaults( $result['settings_patch'] ?? [], $result['border_style_defaults'] ?? [], $node['settings'] ?? [] );
+
+		if ( ! empty( $settings_patch ) ) {
+			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $settings_patch );
 		}
 
 		$unmapped = $result['unmapped_css'] ?? '';
 
 		if ( $is_map_driven ) {
-			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $result['settings_patch'] ?? [] ), $node['settings'] ?? [] );
+			V3_Inactive_Condition_Warnings::report( $warnings, $config_id, (string) $widget_type, array_keys( $settings_patch ), $node['settings'] ?? [] );
 			( new V3_Map_Fallback_Css() )->apply( $node, $result, (string) $widget_type, $config_id, $warnings );
 			return;
 		}
@@ -289,6 +292,26 @@ class Style_Applier {
 			),
 			$config_id
 		);
+	}
+
+	/**
+	 * @param array<string, mixed>  $settings_patch
+	 * @param array<string, string> $border_style_defaults
+	 * @param array<string, mixed>  $saved_settings
+	 * @return array<string, mixed>
+	 */
+	private static function with_border_style_defaults( array $settings_patch, array $border_style_defaults, array $saved_settings ): array {
+		$unset_defaults = array_filter(
+			$border_style_defaults,
+			fn( string $setting ) => ! self::has_border_style( $settings_patch[ $setting ] ?? null ) && ! self::has_border_style( $saved_settings[ $setting ] ?? null ),
+			ARRAY_FILTER_USE_KEY
+		);
+
+		return array_merge( $unset_defaults, $settings_patch );
+	}
+
+	private static function has_border_style( $value ): bool {
+		return is_string( $value ) && '' !== $value && self::BORDER_STYLE_NONE !== $value;
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {
