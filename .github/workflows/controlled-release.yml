@@ -223,3 +223,21 @@ jobs:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+
+  # ── Job 9 ────────────────────────────────────────────────────────────────
+  # The first stable release of a minor (X.Y.0) ends the beta cycle, so
+  # release/beta is locked for merges until the next branch-out unlocks it.
+  # ─────────────────────────────────────────────────────────────────────────
+  lock-release-beta:
+    name: Lock release/beta
+    needs: [publish, tag]
+    if: ${{ !inputs.prerelease && needs.tag.outputs.channel == 'stable' && endsWith(inputs.version, '.0') }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Lock release/beta for merges
+        uses: elementor/elementor-editor-github-actions/actions/release-beta-lock@main
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          state: locked
