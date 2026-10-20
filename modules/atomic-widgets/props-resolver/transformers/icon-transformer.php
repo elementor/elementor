@@ -98,8 +98,12 @@ class Icon_Transformer extends Transformer_Base {
 	private function transform_extension_font_awesome_icon( array $icon ): array {
 		$html = $this->get_filtered_svg_html( $icon );
 
+		if ( '' === $html ) {
+			return $this->transform_default_svg();
+		}
+
 		return [
-			'html' => '' === $html ? '' : $this->process_svg( $html, self::FA7_SVG_INLINE_STYLES ),
+			'html' => $this->process_svg( $html, self::FA7_SVG_INLINE_STYLES ),
 			'url' => null,
 		];
 	}

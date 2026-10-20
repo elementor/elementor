@@ -103,7 +103,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'viewBox="0 0 0 0"', $result['html'] );
 	}
 
-	public function test_transform__returns_empty_html_for_unknown_font_awesome_icon() {
+	public function test_transform__falls_back_to_default_svg_for_unknown_font_awesome_icon() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
@@ -115,13 +115,10 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( [
-			'html' => '',
-			'url' => null,
-		], $result );
+		$this->assert_default_svg_fallback( $result );
 	}
 
-	public function test_transform__returns_empty_html_for_path_traversal_library() {
+	public function test_transform__falls_back_to_default_svg_for_path_traversal_library() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
@@ -133,10 +130,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( [
-			'html' => '',
-			'url' => null,
-		], $result );
+		$this->assert_default_svg_fallback( $result );
 	}
 
 	public function test_transform__falls_back_to_default_svg_for_unknown_library() {
@@ -344,7 +338,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertNull( $result['url'] );
 	}
 
-	public function test_transform__returns_empty_html_for_font_awesome_icon_missing_from_free_data_without_filter() {
+	public function test_transform__falls_back_to_default_svg_for_font_awesome_icon_missing_from_free_data_without_filter() {
 		// Act.
 		$result = ( new Icon_Transformer() )->transform(
 			[
@@ -355,10 +349,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$this->assertSame( [
-			'html' => '',
-			'url' => null,
-		], $result );
+		$this->assert_default_svg_fallback( $result );
 	}
 
 	public function test_transform__sanitizes_svg_filtered_for_font_awesome_icon_missing_from_free_data() {
