@@ -11,7 +11,9 @@ use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Upsell;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Utils\Pro_Upsell;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -176,9 +178,34 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'insufficient_permissions', $result->get_error_code() );
+		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( $input['action'], $result->get_error_data()['action'] );
+		$this->assertSame( Components_Pro_Upsell::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertStringContainsString( Components_Pro_Upsell::UPGRADE_URL, $result->get_error_message() );
+		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
+	}
+
+	/**
+	 * @dataProvider description_notice_cases
+	 */
+	public function test_get_description_for_llm__explains_pro_requirement_only_without_active_license( bool $license_active, bool $expects_notice ) {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( $license_active, false );
+
+		// Act
+		$description = ( new Manage_Component_Ability() )->get_description_for_llm();
+
+		// Assert
+		$notice = 'creating, renaming, and archiving components require an active Elementor Pro license';
+		$this->assertSame( $expects_notice, str_contains( $description, $notice ) );
+	}
+
+	public function description_notice_cases(): array {
+		return [
+			'without license' => [ false, true ],
+			'with active license' => [ true, false ],
+		];
 	}
 
 	public function access_gate_cases(): array {

@@ -14,7 +14,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
+use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Upsell;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Upsell;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -301,8 +301,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
-		$this->assertSame( Composition_Compiler::FORM_UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( Composition_Compiler::FORM_UPGRADE_URL, $result->get_error_message() );
+		$this->assertSame( Forms_Pro_Upsell::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertStringContainsString( Forms_Pro_Upsell::UPGRADE_URL, $result->get_error_message() );
 		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
 		$this->assertStringContainsString( 'workaround', $result->get_error_message() );
 	}

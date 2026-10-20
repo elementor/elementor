@@ -17,7 +17,7 @@ use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overrides_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\Components\Widgets\Component_Instance;
-use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Upsell;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -253,18 +253,18 @@ class Component_Instance_Applier {
 		if ( $document instanceof Component_Document ) {
 			return Components_Access_Controller::can_edit()
 				? null
-				: Insufficient_Permissions_Error::for_action( 'update' );
+				: Components_Pro_Upsell::for_action( 'update' );
 		}
 
 		if ( null === $document ) {
 			return Components_Access_Controller::can_create()
 				? null
-				: Insufficient_Permissions_Error::for_action( 'create' );
+				: Components_Pro_Upsell::for_action( 'create' );
 		}
 
 		return Components_Access_Controller::can_add_to_page()
 			? null
-			: Insufficient_Permissions_Error::for_action( 'add_to_page' );
+			: Components_Pro_Upsell::for_action( 'add_to_page' );
 	}
 
 	private function assemble_envelope( int $component_id, array $overrides_list ): array {

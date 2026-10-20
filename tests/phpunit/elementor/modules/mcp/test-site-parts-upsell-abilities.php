@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Upsell_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Upsell_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Upsell;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Upsell;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -48,10 +49,10 @@ class Test_Site_Parts_Upsell_Abilities extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
-		$this->assertSame( Manage_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertSame( Site_Parts_Pro_Upsell::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
 		$this->assertStringContainsString( 'Creating, updating, or deleting', $result->get_error_message() );
 		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
-		$this->assertStringContainsString( Manage_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_message() );
+		$this->assertStringContainsString( Site_Parts_Pro_Upsell::UPGRADE_URL, $result->get_error_message() );
 	}
 
 	public function test_list_execute_guarded__returns_pro_license_required_error() {
@@ -65,9 +66,9 @@ class Test_Site_Parts_Upsell_Abilities extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
-		$this->assertSame( List_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertSame( Site_Parts_Pro_Upsell::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
 		$this->assertStringContainsString( 'no site parts were checked', $result->get_error_message() );
-		$this->assertStringContainsString( List_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_message() );
+		$this->assertStringContainsString( Site_Parts_Pro_Upsell::UPGRADE_URL, $result->get_error_message() );
 	}
 
 	public function test_get_description_for_llm__appends_tool_specific_notice() {
@@ -93,7 +94,7 @@ class Test_Site_Parts_Upsell_Abilities extends Elementor_Test_Base {
 		$result = $ability->execute_guarded( [] );
 
 		// Assert
-		$this->assertSame( Manage_Site_Parts_Upsell_Ability::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertSame( Site_Parts_Pro_Upsell::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
 	}
 
 	public function test_stubs__mirror_real_tool_input_schema() {

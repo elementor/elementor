@@ -4,8 +4,8 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Upsell;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
-use Elementor\Modules\Mcp\Utils\Pro_Upsell;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -24,7 +24,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	const TYPE_SIZE = 'global-size-variable';
 	const TYPE_CUSTOM_SIZE = 'global-custom-size-variable';
 	const MAX_BATCH_SIZE = 50;
-	const UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-upgrade-variables/';
 
 	private ?Variables_Service $service;
 
@@ -228,7 +227,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				}
 
 				if ( $this->is_size_type( $type ) && ! $this->can_manage_size_variables() ) {
-					return $this->pro_license_required();
+					return Variables_Pro_Upsell::for_size_variables();
 				}
 
 				return [
@@ -250,7 +249,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				}
 
 				if ( ! $this->can_manage_size_variables() && $this->is_size_variable( $id ) ) {
-					return $this->pro_license_required();
+					return Variables_Pro_Upsell::for_size_variables();
 				}
 
 				return [
@@ -303,14 +302,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 	private function bad_request( string $message ): \WP_Error {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
-	}
-
-	private function pro_license_required(): \WP_Error {
-		return Pro_Upsell::error(
-			/* translators: %s: upgrade URL. */
-			__( 'Size variables require an active Elementor Pro license, so this operation was not applied. Do not retry it. Tell the user that size variables require Elementor Pro and share this upgrade link: %s. Do not store size values in color or font variables as a workaround — only suggest the Pro upgrade.', 'elementor' ),
-			self::UPGRADE_URL
-		);
 	}
 
 	private function is_size_type( $type ): bool {
