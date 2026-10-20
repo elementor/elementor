@@ -132,8 +132,7 @@ class Widget_Type_Resolver {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			if (
-				Widget_Context_Helper::is_standardized_maps_active()
-				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				V3_Widget_Map_Registry::instance()->has_registered_map( $type )
 				&& ! Widget_Context_Helper::is_v3_supported( $type )
 			) {
 				return new \WP_Error(
@@ -166,8 +165,7 @@ class Widget_Type_Resolver {
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
 		if ( $element ) {
 			if (
-				Widget_Context_Helper::is_standardized_maps_active()
-				&& V3_Widget_Map_Registry::instance()->has_registered_map( $type )
+				V3_Widget_Map_Registry::instance()->has_registered_map( $type )
 				&& ! Widget_Context_Helper::is_v3_supported( $type )
 			) {
 				return new \WP_Error(

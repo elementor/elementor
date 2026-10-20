@@ -489,10 +489,6 @@ class Element_Config_Applier {
 			return true;
 		}
 
-		if ( ! Widget_Context_Helper::is_standardized_maps_active() ) {
-			return false;
-		}
-
 		$type = $node['widgetType'] ?? $node['elType'] ?? null;
 
 		return is_string( $type ) && Widget_Context_Helper::is_v3_supported( $type );

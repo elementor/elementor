@@ -42,7 +42,6 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $map ],
 			static fn() => false

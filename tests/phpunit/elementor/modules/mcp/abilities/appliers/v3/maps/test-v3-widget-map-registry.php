@@ -23,7 +23,7 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	const CONTROLS = [ 'color_menu_item' => [ 'type' => 'color' ] ];
 
-	public function test_get_map__returns_compiled_map_when_experiment_active() {
+	public function test_get_map__returns_compiled_map_of_a_registered_widget() {
 		// Arrange.
 		$registry = $this->registry();
 
@@ -33,17 +33,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		// Assert.
 		$this->assertInstanceOf( Compiled_V3_Map::class, $map );
 		$this->assertTrue( $registry->is_supported( self::WIDGET_TYPE ) );
-	}
-
-	public function test_get_map__null_when_experiment_inactive() {
-		// Arrange.
-		$registry = $this->registry( [ 'is_experiment_active' => false ] );
-
-		// Act.
-		$map = $registry->get_map( self::WIDGET_TYPE );
-
-		// Assert.
-		$this->assertNull( $map );
 	}
 
 	public function test_get_map__null_without_registered_map() {
@@ -189,7 +178,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
 		$options = array_merge( [
-			'is_experiment_active' => true,
 			'maps' => [ self::WIDGET_TYPE => $this->map() ],
 			'controls' => self::CONTROLS,
 		], $overrides );
@@ -200,7 +188,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 				'color' => Color_Prop_Type::make(),
 				'margin' => Dimensions_Prop_Type::make(),
 			] ),
-			static fn() => $options['is_experiment_active'],
 			$options['get_controls'] ?? static fn() => $controls,
 			$options['maps'],
 			$options['has_advanced_tab'] ?? null

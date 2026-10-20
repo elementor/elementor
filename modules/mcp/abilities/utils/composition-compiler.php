@@ -262,10 +262,7 @@ final class Composition_Compiler {
 	}
 
 	private function resolve_document_root_wrapper(): string {
-		if (
-			Widget_Context_Helper::is_standardized_maps_active()
-			&& Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER )
-		) {
+		if ( Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER ) ) {
 			return self::DOCUMENT_ROOT_V3_WRAPPER;
 		}
 

@@ -14,7 +14,6 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -56,7 +55,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->original_documents = Plugin::$instance->documents;
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
 		$this->original_elements_manager = Plugin::$instance->elements_manager;
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
@@ -1042,7 +1040,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	public function test_execute__names_v3_elements_through_settings_title() {
 		// Arrange
 		$this->act_as_admin();
-		$this->enable_standardized_v3_maps();
+		$this->given_no_registered_v3_maps();
 		$post_id = $this->create_real_document();
 
 		// Act
@@ -1359,17 +1357,12 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'replace_children', $result->get_error_message() );
 	}
 
-	/**
-	 * @dataProvider standardized_maps_states
-	 */
-	public function test_execute__allowlisted_v3_widget_accepts_raw_settings( bool $standardized_maps_active ) {
+	public function test_execute__allowlisted_v3_widget_accepts_raw_settings() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 
-		if ( $standardized_maps_active ) {
-			$this->enable_standardized_v3_maps();
-		}
+		$this->given_no_registered_v3_maps();
 
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1396,18 +1389,11 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'horizontal', $nav['settings']['layout'] );
 	}
 
-	public function standardized_maps_states(): array {
-		return [
-			'inactive' => [ false ],
-			'active' => [ true ],
-		];
-	}
-
-	public function test_execute__does_not_map_v3_container_styles_when_standardized_maps_active() {
+	public function test_execute__does_not_map_v3_container_styles() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
+		$this->given_no_registered_v3_maps();
 
 		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
@@ -1558,8 +1544,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
 	}
 
-	private function enable_standardized_v3_maps(): void {
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+	private function given_no_registered_v3_maps(): void {
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
@@ -1567,11 +1552,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}

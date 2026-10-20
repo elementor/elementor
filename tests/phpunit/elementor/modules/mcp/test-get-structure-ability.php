@@ -3,17 +3,14 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -32,7 +29,6 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 	private Get_Structure_Ability $ability;
 	private Documents_Manager $original_documents;
-	private ?string $original_v3_maps_state = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -43,12 +39,6 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		Plugin::$instance->documents = $this->original_documents;
-
-		if ( null !== $this->original_v3_maps_state ) {
-			Plugin::$instance->experiments->set_feature_default_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, $this->original_v3_maps_state );
-			delete_option( Experiments_Manager::OPTION_PREFIX . Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME );
-			V3_Widget_Map_Registry::reset_instance();
-		}
 
 		parent::tearDown();
 	}
@@ -812,7 +802,6 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 	public function test_execute__returns_default_styles_for_map_driven_v3_widgets() {
 		// Arrange
 		$this->act_as_admin();
-		$this->activate_v3_maps();
 		$kit_colors = [
 			'globals/colors?id=primary' => self::KIT_PRIMARY_HEX,
 			'globals/colors?id=secondary' => self::KIT_SECONDARY_HEX,
@@ -1212,21 +1201,6 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$tags_prop = $reflection->getProperty( 'tags' );
 		$tags_prop->setAccessible( true );
 		$tags_prop->setValue( $module->registry, $tags );
-	}
-
-	private function activate_v3_maps(): void {
-		$experiment_name = Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME;
-		$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-		if ( empty( $features ) ) {
-			Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-		}
-
-		$this->original_v3_maps_state = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
-		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, Experiments_Manager::STATE_ACTIVE );
-		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
-		V3_Widget_Map_Registry::reset_instance();
 	}
 
 	private function mock_document_with_elements( int $post_id, array $elements ): void {

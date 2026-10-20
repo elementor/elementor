@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Settings_Index;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
@@ -87,15 +86,7 @@ class V3_Node_Bridge {
 			return false;
 		}
 
-		if ( Widget_Context_Helper::is_v3_allowlisted( $type ) ) {
-			return true;
-		}
-
-		if ( ! V3_Widget_Map_Registry::instance()->is_experiment_active() ) {
-			return false;
-		}
-
-		return Widget_Context_Helper::is_v3_supported( $type );
+		return Widget_Context_Helper::is_v3_allowlisted( $type ) || Widget_Context_Helper::is_v3_supported( $type );
 	}
 
 	/**

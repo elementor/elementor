@@ -55,7 +55,6 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 		$this->registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $this->map() ],
 			static fn() => true

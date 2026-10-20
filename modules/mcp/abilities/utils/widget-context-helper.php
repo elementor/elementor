@@ -44,10 +44,6 @@ class Widget_Context_Helper {
 		'theme-archive-title',
 	];
 
-	const V3_FALLBACK_MESSAGE = '`properties` lists the only keys accepted in `element_config` / `manage-elements.settings` for this widget. Put all visual styling in the `style` (CSS) input.';
-
-	const V3_FALLBACK_FIELDS_NOTE = 'All properties are optional. Object-typed properties describe common shapes but do not include exhaustive inner validation.';
-
 	const ALLOWED_HTML_TAGS_NOTE = 'May contain inline HTML written directly in the string (e.g. "Hello <strong>world</strong>"), limited to these tags: %s. Any other tag is stripped on save.';
 
 	/**
@@ -145,10 +141,6 @@ class Widget_Context_Helper {
 		return V3_Widget_Map_Registry::instance()->is_supported( $widget_type );
 	}
 
-	public static function is_standardized_maps_active(): bool {
-		return V3_Widget_Map_Registry::instance()->is_experiment_active();
-	}
-
 	public static function build_widget_summary( string $widget_type, array $config ): array {
 		return self::filter_nulls( [
 			'type' => $widget_type,
@@ -191,24 +183,7 @@ class Widget_Context_Helper {
 				return null;
 			}
 
-			if ( self::is_standardized_maps_active() ) {
-				return self::build_standardized_v3_widget_schema( $widget_type, $config );
-			}
-
-			$allowed_keys = V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
-			$built = V3_Json_Schema_Builder::build( $config['controls'], $allowed_keys );
-
-			return self::filter_nulls( [
-				'type' => 'object',
-				'widget_version' => self::VERSION_V3,
-				'description' => self::get_description( $config, $widget_type ),
-				'message' => self::V3_FALLBACK_MESSAGE,
-				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
-				'properties' => $built['properties'],
-				'editor_settings' => Editor_Settings::get_schema( $widget_type ),
-				'required' => $built['required'],
-				'additionalProperties' => false,
-			] );
+			return self::build_standardized_v3_widget_schema( $widget_type, $config );
 		}
 
 		return self::filter_nulls( [
@@ -407,15 +382,7 @@ class Widget_Context_Helper {
 	}
 
 	private static function should_initialize_v3_controls_stack( string $widget_type ): bool {
-		if ( self::is_v3_allowlisted( $widget_type ) ) {
-			return true;
-		}
-
-		if ( ! self::is_standardized_maps_active() ) {
-			return false;
-		}
-
-		return V3_Widget_Map_Registry::instance()->has_registered_map( $widget_type );
+		return self::is_v3_allowlisted( $widget_type ) || V3_Widget_Map_Registry::instance()->has_registered_map( $widget_type );
 	}
 
 	private static function build_standardized_v3_widget_schema( string $widget_type, array $config ): ?array {
