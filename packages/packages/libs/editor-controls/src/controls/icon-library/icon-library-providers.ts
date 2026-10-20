@@ -14,6 +14,8 @@ export type IconLibraryProvider = {
 	resolveSvg?: ( library: string, iconValue: string, signal?: AbortSignal ) => Promise< string | null >;
 };
 
+const PROVIDER_ICON_SVG_QUERY_KEY = 'icon-library-provider-svg';
+
 const providers = new Map< string, IconLibraryProvider >();
 
 /**
@@ -63,7 +65,7 @@ export async function resolveProviderIconSvg(
 
 export function useProviderIconSvg( library: string | null, iconValue: string | null, enabled: boolean ) {
 	return useQuery< string | null >( {
-		queryKey: [ 'icon-library-provider-svg', library, iconValue ],
+		queryKey: [ PROVIDER_ICON_SVG_QUERY_KEY, library, iconValue ],
 		queryFn: ( { signal } ) => resolveProviderIconSvg( library as string, iconValue as string, signal ),
 		enabled: enabled && Boolean( library && iconValue ),
 		staleTime: Infinity,
