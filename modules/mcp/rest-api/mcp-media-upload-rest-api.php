@@ -98,20 +98,6 @@ class Mcp_Media_Upload_REST_API {
 			return $stream_result;
 		}
 
-		$expected_sha = $this->read_header( $request, Media_Upload_Config::UPLOAD_SHA256_HEADER );
-		if ( '' !== $expected_sha ) {
-			$actual_sha = hash_file( 'sha256', $stream_result['tmp_name'] );
-			if ( ! hash_equals( strtolower( $expected_sha ), strtolower( (string) $actual_sha ) ) ) {
-				wp_delete_file( $stream_result['tmp_name'] );
-
-				return new \WP_Error(
-					'sha256_mismatch',
-					__( 'The uploaded file did not match the expected checksum.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
-		}
-
 		$filename = $this->read_header( $request, Media_Upload_Config::UPLOAD_FILENAME_HEADER );
 		if ( '' === $filename ) {
 			$filename = 'mcp-upload.' . Media_Mime_Validator::extension_for_mime(

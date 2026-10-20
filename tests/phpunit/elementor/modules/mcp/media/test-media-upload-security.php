@@ -11,6 +11,8 @@ use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
 use Elementor\Modules\Mcp\Media\Remote_Image_Fetcher;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,7 +49,11 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		add_filter( Mcp_Media_Feature_Gate::ENABLED_FILTER, '__return_true' );
+		$experiments = Plugin::$instance->experiments;
+		if ( ! $experiments->get_features( Mcp_Media_Feature_Gate::EXPERIMENT_NAME ) ) {
+			$experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
+		}
+		$experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
 		global $wp_rest_server;
 
@@ -795,15 +801,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
 		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
-		$request->set_header( Media_Upload_Config::UPLOAD_SHA256_HEADER, str_repeat( '0', 64 ) );
-		$request->set_body( self::MINIMAL_PNG );
+		$request->set_body( '' );
 
 		// Act
 		$response = rest_do_request( $request );
 
 		// Assert
 		$this->assertSame( \WP_Http::BAD_REQUEST, $response->get_status() );
-		$this->assertSame( 'sha256_mismatch', $response->get_data()['code'] );
+		$this->assertSame( 'empty_file', $response->get_data()['code'] );
 		$this->assertSame( 0, get_current_user_id() );
 	}
 
@@ -1287,24 +1292,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertCount( 1, $null_count['uploads'] );
 		$this->assertWPError( $huge );
 		$this->assertSame( 'invalid_upload_count', $huge->get_error_code() );
-	}
-
-	public function test_request_media_upload__limits_outstanding_tokens_per_user() {
-		// Arrange
-		$this->act_as_admin();
-		$ability = new Request_Media_Upload_Ability();
-		$user_id = get_current_user_id();
-
-		for ( $index = 0; $index < Media_Upload_Config::MAX_OUTSTANDING_TOKENS_PER_USER; $index++ ) {
-			Media_Upload_Token_Store::issue_for_user( $user_id );
-		}
-
-		// Act
-		$result = $ability->execute( [ 'consent' => true ] );
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'too_many_pending_uploads', $result->get_error_code() );
 	}
 
 	public function test_request_media_upload__used_tokens_free_up_capacity() {

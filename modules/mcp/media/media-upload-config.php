@@ -14,8 +14,6 @@ class Media_Upload_Config {
 
 	const UPLOAD_TOKEN_HEADER = 'X-Elementor-Mcp-Upload-Token';
 
-	const UPLOAD_SHA256_HEADER = 'X-Elementor-Mcp-Upload-Sha256';
-
 	const UPLOAD_FILENAME_HEADER = 'X-Elementor-Mcp-Upload-Filename';
 
 	const UPLOAD_TITLE_HEADER = 'X-Elementor-Mcp-Upload-Title';
@@ -33,8 +31,6 @@ class Media_Upload_Config {
 	const TOTAL_FETCH_TIMEOUT_SECONDS = 60;
 
 	const TOTAL_BATCH_TIMEOUT_SECONDS = 60;
-
-	const MAX_OUTSTANDING_TOKENS_PER_USER = 20;
 
 	const MAX_REDIRECT_HOPS = 5;
 
