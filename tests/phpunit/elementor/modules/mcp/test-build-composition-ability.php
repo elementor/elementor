@@ -234,6 +234,40 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	}
 
 	/**
+	 * @dataProvider form_structure_validation_cases
+	 */
+	public function test_execute__form_structure_validation_with_pro( string $xml, string $expected_code ) {
+		if ( ! Utils::has_pro() ) {
+			$this->markTestSkipped( 'Form compositions reach structure validation only with Elementor Pro.' );
+		}
+
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'xml_structure' => $xml ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( $expected_code, $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function form_structure_validation_cases(): array {
+		return [
+			'orphaned form field' => [ '<e-flexbox><e-form-input configuration-id="input-1"/></e-flexbox>', 'elementor_invalid_form_structure' ],
+			'form without submit button' => [ '<e-form><e-form-input configuration-id="input-1"/></e-form>', 'elementor_invalid_form_structure' ],
+			'empty success message' => [ '<e-form><e-form-submit-button/><e-form-success-message/></e-form>', 'elementor_invalid_form_structure' ],
+			'empty error message' => [ '<e-form><e-form-submit-button/><e-form-error-message/></e-form>', 'elementor_invalid_form_structure' ],
+			'multiple submit buttons' => [ '<e-form><e-form-submit-button/><e-form-submit-button/></e-form>', 'elementor_invalid_form_structure' ],
+			'nested form' => [ '<e-form><e-form-submit-button/><e-form><e-form-submit-button/></e-form></e-form>', 'elementor_invalid_form_structure' ],
+		];
+	}
+
+	/**
 	 * @dataProvider invalid_xml_message_cases
 	 */
 	public function test_execute__invalid_xml_message_names_the_broken_tag( string $xml, string $expected_message ) {
