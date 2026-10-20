@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
 
@@ -37,8 +37,10 @@ export function useIconLibraryProviderIcons( enabled: boolean ): Required< IconL
 	const [ snapshot ] = useState( () => [ ...providers.values() ] );
 	const states = snapshot.map( ( provider ) => provider.useIcons( enabled ) );
 
+	const data = useStableConcat( states.map( ( state ) => state.data ) );
+
 	return {
-		data: states.flatMap( ( state ) => state.data ?? [] ),
+		data,
 		isLoading: states.some( ( state ) => state.isLoading ),
 	};
 }
@@ -85,4 +87,19 @@ async function resolveFromProviders(
 	}
 
 	return null;
+}
+
+// Keeps the merged array identity while every provider returns the same data reference, so downstream memos hold.
+function useStableConcat( lists: Array< FontAwesome7Icon[] | undefined > ): FontAwesome7Icon[] {
+	const previous = useRef< { lists: typeof lists; merged: FontAwesome7Icon[] } | null >( null );
+
+	if ( ! previous.current || ! areSameLists( previous.current.lists, lists ) ) {
+		previous.current = { lists, merged: lists.flatMap( ( list ) => list ?? [] ) };
+	}
+
+	return previous.current.merged;
+}
+
+function areSameLists( a: Array< unknown >, b: Array< unknown > ) {
+	return a.length === b.length && a.every( ( item, index ) => item === b[ index ] );
 }

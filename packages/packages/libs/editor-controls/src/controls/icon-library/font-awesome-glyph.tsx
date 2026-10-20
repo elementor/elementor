@@ -68,6 +68,7 @@ const LazyProviderGlyph = ( props: FontAwesomeGlyphProps ) => {
 			<Box
 				component="span"
 				ref={ placeholderRef }
+				aria-hidden="true"
 				sx={ { display: 'inline-block', width: size, height: size } }
 			/>
 		);

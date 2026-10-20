@@ -23,8 +23,10 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	const shouldLoadIconCatalog = Boolean( iconClassName && iconLibrary );
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } =
 		useFontAwesome7Catalog( shouldLoadIconCatalog );
-	const { data: providerIcons = [], isLoading: isProviderLoading } =
-		useIconLibraryProviderIcons( shouldLoadIconCatalog );
+	const isFontAwesomeLibrary = Boolean( iconLibrary?.startsWith( 'fa-' ) );
+	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons(
+		shouldLoadIconCatalog && ! isFontAwesomeLibrary
+	);
 	const icons = useMemo(
 		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
 		[ fontAwesomeIcons, providerIcons ]
@@ -33,14 +35,14 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isProviderLoading );
 
 	if ( isFetching || isLoadingCatalog ) {
-		return <CircularProgress role="progressbar" />;
+		return <CircularProgress role="progressbar" aria-label={ __( 'Loading icon', 'elementor' ) } />;
 	}
 
 	if ( selectedIcon ) {
 		return <IconPreview icon={ selectedIcon } />;
 	}
 
-	if ( shouldLoadIconCatalog && iconClassName && iconLibrary?.startsWith( 'fa-' ) ) {
+	if ( shouldLoadIconCatalog && iconClassName && iconLibrary && isFontAwesomeLibrary ) {
 		return <IconPreview icon={ createLazyIcon( iconLibrary, iconClassName ) } />;
 	}
 

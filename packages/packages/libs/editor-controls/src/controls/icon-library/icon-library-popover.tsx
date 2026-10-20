@@ -88,7 +88,6 @@ export const IconLibraryPopover = ( {
 	const view = isIconLibraryView( storedView ) ? storedView : DEFAULT_ICON_LIBRARY_VIEW;
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } = useFontAwesome7Catalog( open );
 	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons( open );
-	const isLoading = isFontAwesomeLoading || isProviderLoading;
 	const icons = useMemo(
 		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
 		[ providerIcons, fontAwesomeIcons ]
@@ -98,6 +97,7 @@ export const IconLibraryPopover = ( {
 		() => createIconLibraryItems( icons, searchValue, activeLibraries ),
 		[ activeLibraries, icons, searchValue ]
 	);
+	const isLoading = isFontAwesomeLoading || ( isProviderLoading && items.length === 0 );
 	const selectedValue = useMemo(
 		() => findFontAwesome7Icon( icons, selectedIconClass, selectedIconLibrary )?.id,
 		[ icons, selectedIconClass, selectedIconLibrary ]
@@ -243,7 +243,7 @@ const IconLibraryContent = ( {
 
 const IconLibraryLoadingState = () => (
 	<Stack alignItems="center" justifyContent="center" height="100%">
-		<CircularProgress role="progressbar" size={ 24 } />
+		<CircularProgress role="progressbar" size={ 24 } aria-label={ __( 'Loading icons', 'elementor' ) } />
 	</Stack>
 );
 
