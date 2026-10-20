@@ -282,6 +282,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	} );
 
 	describe( 'atomic form submission behavior', () => {
+		const REDIRECT_DELAY_MS = 1000;
+
 		const createFormWithInput = () => {
 			const form = document.createElement( 'form' );
 			form.setAttribute( 'data-element_type', 'e-form' );
@@ -389,6 +391,253 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
 
+		it( 'dispatches a submit success event with the response', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+			const response = { success: true, data: { data: { actionResults: [] } } };
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( response ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( listener ).toHaveBeenCalledTimes( 1 );
+			expect( listener.mock.calls[ 0 ][ 0 ].target ).toBe( form );
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.response ).toEqual( response );
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.agentInvoked ).toBe( false );
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		it( 'marks the submit success event as agent invoked for agent submissions', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { data: { actionResults: [] } } } ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = jest.fn();
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.agentInvoked ).toBe( true );
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		it( 'does not dispatch a submit success event on failed submission', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( listener ).not.toHaveBeenCalled();
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		const successRedirectResponse = {
+			success: true,
+			data: {
+				message: 'Success message',
+				data: {
+					actionResults: [
+						{ type: 'webhook', status: 'success', redirectUrl: 'https://evil.example' },
+						{ type: 'redirect', status: 'success', redirectUrl: 'https://example.org/thank-you' },
+					],
+				},
+			},
+		};
+
+		it( 'redirects after a delay for human submissions', async () => {
+			// Arrange
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( successRedirectResponse ),
+			} );
+
+			try {
+				// Act
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+				// Assert
+				expect( assign ).not.toHaveBeenCalled();
+
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				expect( assign ).toHaveBeenCalledTimes( 1 );
+				expect( assign ).toHaveBeenCalledWith( 'https://example.org/thank-you' );
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'skips redirect for agent-invoked submissions', async () => {
+			// Arrange
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( successRedirectResponse ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			try {
+				// Act
+				await instance.submit( event );
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				// Assert
+				expect( respondWith ).toHaveBeenCalledTimes( 1 );
+				expect( assign ).not.toHaveBeenCalled();
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		} );
+
+		const createRedirectResponse = ( { success = true, redirectUrl = 'https://example.org/thank-you' } = {} ) => ( {
+			success,
+			data: {
+				message: success ? 'Success message' : 'Error message',
+				data: {
+					actionResults: [ { type: 'redirect', status: 'success', redirectUrl } ],
+				},
+			},
+		} );
+
+		const submitAndGetRedirectAssign = async ( response ) => {
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			try {
+				const { form, input } = createFormWithInput();
+				input.value = 'Test value';
+
+				const instance = await setupFormHandler( form );
+
+				global.fetch = jest.fn().mockResolvedValue( {
+					ok: true,
+					json: () => Promise.resolve( response ),
+				} );
+
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				return assign;
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		};
+
+		it( 'skips redirect when the submission is not successful', async () => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { success: false } ) );
+
+			// Assert
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
+			[ 'javascript:alert(1)' ],
+			[ 'data:text/html,<script>alert(1)</script>' ],
+			[ 'mailto:user@example.org' ],
+			[ 'http://[invalid' ],
+		] )( 'skips redirect for a disallowed or invalid redirect URL: %s', async ( redirectUrl ) => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { redirectUrl } ) );
+
+			// Assert
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it( 'redirects to ftp URLs allowed by the server', async () => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { redirectUrl: 'ftp://files.example.org/file.zip' } ) );
+
+			// Assert
+			expect( assign ).toHaveBeenCalledWith( 'ftp://files.example.org/file.zip' );
+		} );
+
 		it( 'responds to agent-invoked submissions with respondWith', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
@@ -421,6 +670,32 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				message: 'Success message',
 				data: null,
 			} );
+		} );
+
+		it( 'calls respondWith synchronously, before the submission finishes', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { message: 'Success message' } } ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			const submission = instance.submit( event );
+
+			// Assert
+			expect( respondWith ).toHaveBeenCalledTimes( 1 );
+
+			await submission;
 		} );
 
 		it( 'returns nested agent payload data without duplicating the message', async () => {

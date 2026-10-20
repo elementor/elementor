@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\KitElementsDefaults\Data;
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 class Test_Controller extends Elementor_Test_Base {
 
@@ -146,10 +147,16 @@ class Test_Controller extends Elementor_Test_Base {
 
 		$this->assertSame( [
 			'button' => [
-				'text' => 'Text before alert("error") Some text after',
+				'text' => Kses_Test_Expectations::expected_wp_kses_plain_string(
+					'Text before alert("error") Some text after',
+					'Text before  Some text after'
+				),
 				'__globals__' => [
-					'button_text_color' => 'globals/colors?id=secondary',
-				]
+					'button_text_color' => Kses_Test_Expectations::expected_wp_kses_plain_string(
+						'globals/colors?id=secondary',
+						''
+					),
+				],
 			],
 		], $this->kit->get_json_meta( Module::META_KEY ) );
 	}

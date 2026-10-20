@@ -6,7 +6,7 @@
 
 ## What it is
 
-Snapshot of built-in atomic types from `module.php`. For authoring see [authoring-widgets.md](authoring-widgets.md). For live schemas use MCP `get-widget-schema` / `list-widget-schemas`.
+Snapshot of built-in atomic types from `module.php`. For authoring see [authoring-widgets.md](authoring-widgets.md). For live schemas use MCP `get-widget-schemas` / `list-widget-schemas`.
 
 ## When to use it
 
@@ -111,6 +111,8 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 |------|-------|
 | `e-form-input`, `e-form-label`, `e-form-textarea`, `e-form-submit-button`, `e-form-checkbox`, `e-form-radio-button` | Core form fields |
 | `e-form-date-picker`, `e-form-time-picker`, `e-form-select`, `e-form-file-upload` | Core ≥ 4.1 |
+| `e-form-hidden` | Hidden field; must be inside `e-form`; no count limit |
+| `e-form-honeypot` | Honeypot spam protection; must be inside `e-form`; max 1 per form |
 
 | Site | `e_pro_atomic_form` | Registers |
 |------|---------------------|-----------|

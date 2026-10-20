@@ -39,7 +39,7 @@
   "dependencies": {
     "@elementor/editor": "4.4.0",
     "@elementor/editor-v1-adapters": "4.4.0",
-    "@elementor/ui": "1.41.1"
+    "@elementor/ui": "1.41.4"
   },
   "peerDependencies": {
     "react": "^18.3.1",

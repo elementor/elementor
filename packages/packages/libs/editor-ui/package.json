@@ -39,7 +39,7 @@
   "dependencies": {
     "@elementor/editor-v1-adapters": "4.4.0",
     "@elementor/icons": "~1.78.1",
-    "@elementor/ui": "1.41.1",
+    "@elementor/ui": "1.41.4",
     "@tanstack/react-virtual": "^3.13.3",
     "@wordpress/i18n": "^5.13.0"
   },

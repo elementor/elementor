@@ -48,7 +48,9 @@ describe( 'useDebouncedCallback', () => {
 		const calls: number[] = [];
 		const { result, rerender } = renderHook(
 			( { v }: { v: number } ) => useDebouncedCallback( () => calls.push( v ), 300 ),
-			{ initialProps: { v: 1 } }
+			{
+				initialProps: { v: 1 },
+			}
 		);
 
 		act( () => {

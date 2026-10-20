@@ -12,6 +12,8 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
@@ -53,6 +55,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'manage_options' ),
 			$this->get_input_schema()
@@ -302,6 +305,8 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
+		$undo_point = Document_Revision_Snapshots::capture( $component, $this->get_id() );
+
 		try {
 			$saved = $component->save( [
 				'elements' => $elements,
@@ -323,10 +328,17 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return new \WP_Error( 'save_failed', __( 'Failed to save component.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return [
+		$response = [
 			'success' => true,
 			'component_id' => $component->get_main_id(),
 		] + $this->document_links( $component );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 
 	private function validate_circular_dependency( callable $validate ): ?\WP_Error {
@@ -663,6 +675,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'description' => 'Every warning is fixable: one field was skipped or adjusted during XML compilation and the rest was saved. Errors fail the call instead.',
 				],
 				'warning_details' => Warnings_Bag::get_details_schema(),
+				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 			],
 		];
 	}

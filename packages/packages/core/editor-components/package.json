@@ -59,7 +59,7 @@
     "@elementor/query": "4.4.0",
     "@elementor/schema": "4.4.0",
     "@elementor/store": "4.4.0",
-    "@elementor/ui": "1.41.1",
+    "@elementor/ui": "1.41.4",
     "@elementor/utils": "4.4.0",
     "@wordpress/i18n": "^5.13.0",
     "@elementor/editor-notifications": "4.4.0",

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 					'post_id' => [ 'type' => 'integer' ],
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
+					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 				],
 			],
 			[
@@ -39,6 +41,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => true,
 			],
 			function () {
 				return current_user_can( 'edit_posts' );
@@ -83,15 +86,23 @@ class Update_Settings_Ability extends Abstract_Ability {
 			return new \WP_Error( 'rest_cannot_edit', __( 'Sorry, you are not allowed to edit this document.', 'elementor' ), [ 'status' => \WP_Http::FORBIDDEN ] );
 		}
 
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
 		$saved = $document->save( [ 'settings' => $settings ] );
 
 		if ( ! $saved ) {
 			return new \WP_Error( 'save_failed', __( 'Could not save document settings.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return [
+		$response = [
 			'success' => true,
 			'post_id' => $post_id,
 		] + Document_Mutation_Links::for_document( $document );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 }

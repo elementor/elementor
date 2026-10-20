@@ -56,12 +56,22 @@ type SvgMediaControlProps = {
 
 export const SvgMediaControl = createControl( ( { showIconLibrary = false, label }: SvgMediaControlProps ) => {
 	const groupLabel = label ?? __( 'SVG', 'elementor' );
-	const { value: svgValue, setValue: setSvgValue } = useBoundProp( svgSrcPropTypeUtil );
-	const { value: iconValue, setValue: setIconValue } = useBoundProp( iconPropTypeUtil );
+	const { value: svgValue, setValue: setSvgValue, placeholder: svgPlaceholder } = useBoundProp( svgSrcPropTypeUtil );
+	const { value: iconValue, setValue: setIconValue, placeholder: iconPlaceholder } = useBoundProp( iconPropTypeUtil );
 	const id = svgValue?.id;
-	const url = svgValue?.url;
-	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
-	const src = attachment?.url ?? url?.value ?? null;
+
+	// Preview only: when there's no own value of either type (e.g. a component instance with no
+	// override yet), fall back to the bound placeholder (the inherited/origin value) so the preview
+	// isn't broken. If there IS an own value, use it as-is — even if it's only one of the two types —
+	// so we never mix an own value with an unrelated inherited placeholder. This never affects what
+	// setValue writes.
+	const hasOwnValue =
+		( svgValue !== null && svgValue !== undefined ) || ( iconValue !== null && iconValue !== undefined );
+	const previewSvgValue = hasOwnValue ? svgValue : svgPlaceholder;
+	const previewIconValue = hasOwnValue ? iconValue : iconPlaceholder;
+
+	const { data: attachment, isFetching } = useWpMediaAttachment( previewSvgValue?.id?.value || null );
+	const src = attachment?.url ?? previewSvgValue?.url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
 	const iconLibraryPopoverState = usePopupState( { variant: 'popover' } );
@@ -70,9 +80,9 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 	const [ iconLibraryAnchor, setIconLibraryAnchor ] = useState< IconLibraryAnchor | null >( null );
 	const { isAdmin } = useCurrentUserCapabilities();
 	const selectedIconClass =
-		showIconLibrary && typeof iconValue?.value?.value === 'string' ? iconValue.value.value : null;
+		showIconLibrary && typeof previewIconValue?.value?.value === 'string' ? previewIconValue.value.value : null;
 	const selectedIconLibrary =
-		showIconLibrary && typeof iconValue?.library?.value === 'string' ? iconValue.library.value : null;
+		showIconLibrary && typeof previewIconValue?.library?.value === 'string' ? previewIconValue.library.value : null;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
