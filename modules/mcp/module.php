@@ -243,7 +243,7 @@ class Module extends BaseModule {
 			$registry->add( $ability );
 		}
 
-		foreach ( self::get_pro_upsell_abilities() as $ability ) {
+		foreach ( self::get_pro_features_discovery_abilities() as $ability ) {
 			$registry->add( $ability );
 		}
 
@@ -251,14 +251,14 @@ class Module extends BaseModule {
 	}
 
 	/** @return Abstract_Ability[] */
-	private static function get_pro_upsell_abilities(): array {
+	private static function get_pro_features_discovery_abilities(): array {
 		if ( Utils::has_pro() ) {
 			return [];
 		}
 
 		return [
-			new Abilities\Manage_Site_Parts_Upsell_Ability(),
-			new Abilities\List_Site_Parts_Upsell_Ability(),
+			new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
+			new Abilities\List_Site_Parts_Pro_Features_Discovery_Ability(),
 		];
 	}
 

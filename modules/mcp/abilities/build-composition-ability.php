@@ -235,7 +235,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	private function get_forms_pro_notice(): string {
-		return __( 'Note: forms (<e-form> and its field elements) require Elementor Pro, which is not installed on this site. Compositions containing them are rejected with an upgrade link — do not retry them, share the link with the user, and do not recreate forms with regular inputs, buttons, HTML or shortcode widgets as a workaround. Everything else builds normally.', 'elementor' );
+		return __( 'Note: forms require Elementor Pro, If the user asks for a form, tell them it requires Elementor Pro and do not recreate it with regular inputs, buttons, HTML or shortcode widgets as a workaround. Everything else builds normally.', 'elementor' );
 	}
 
 	private function get_output_schema(): array {

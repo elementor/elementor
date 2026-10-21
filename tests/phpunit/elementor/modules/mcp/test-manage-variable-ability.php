@@ -3,7 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
-use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Upsell;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Mock_Pro_License_API;
@@ -253,7 +253,7 @@ class Test_Manage_Variable_Ability extends TestCase {
 		] ) );
 
 		// Assert
-		$this->assertStringContainsString( Variables_Pro_Upsell::UPGRADE_URL, $result['results'][0]['message'] );
+		$this->assertStringContainsString( Variables_Pro_Features_Discovery::UPGRADE_URL, $result['results'][0]['message'] );
 	}
 
 	public function test_defer_size_type_rejection__passes_size_types_without_active_license() {

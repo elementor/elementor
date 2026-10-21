@@ -69,7 +69,7 @@ final class Composition_Compiler {
 		}
 
 		if ( ! Utils::has_pro() && ( new Form_Structure_Validator( $xml_parser ) )->contains_form_elements( $dom ) ) {
-			return Forms_Pro_Upsell::for_composition();
+			return Forms_Pro_Features_Discovery::for_composition();
 		}
 
 		[

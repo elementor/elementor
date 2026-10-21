@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Pro_Upsell {
+class Pro_Features_Discovery {
 
 	const ERROR_CODE = 'pro_license_required';
 

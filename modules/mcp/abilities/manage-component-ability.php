@@ -11,7 +11,7 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
-use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Upsell;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
@@ -636,7 +636,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function check_access( string $action, callable $can ): ?\WP_Error {
-		return $can() ? null : Components_Pro_Upsell::for_action( $action );
+		return $can() ? null : Components_Pro_Features_Discovery::for_action( $action );
 	}
 
 	private function invalid_input( string $message ): \WP_Error {

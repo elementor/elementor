@@ -4,7 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
-use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Upsell;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -227,7 +227,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				}
 
 				if ( $this->is_size_type( $type ) && ! $this->can_manage_size_variables() ) {
-					return Variables_Pro_Upsell::for_size_variables();
+					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
 				return [
@@ -249,7 +249,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				}
 
 				if ( ! $this->can_manage_size_variables() && $this->is_size_variable( $id ) ) {
-					return Variables_Pro_Upsell::for_size_variables();
+					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
 				return [

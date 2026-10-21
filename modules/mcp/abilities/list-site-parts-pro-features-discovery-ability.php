@@ -3,14 +3,14 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
-use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Upsell;
+use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class List_Site_Parts_Upsell_Ability extends Abstract_Ability {
+class List_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-site-parts';
@@ -36,10 +36,10 @@ class List_Site_Parts_Upsell_Ability extends Abstract_Ability {
 	}
 
 	public function is_available() {
-		return Site_Parts_Pro_Upsell::for_list();
+		return Site_Parts_Pro_Features_Discovery::for_list();
 	}
 
 	public function execute( $input = [] ) {
-		return Site_Parts_Pro_Upsell::for_list();
+		return Site_Parts_Pro_Features_Discovery::for_list();
 	}
 }

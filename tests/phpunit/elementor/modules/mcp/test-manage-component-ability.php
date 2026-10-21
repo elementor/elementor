@@ -11,9 +11,9 @@ use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
-use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Upsell;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
-use Elementor\Modules\Mcp\Utils\Pro_Upsell;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -178,11 +178,11 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( $input['action'], $result->get_error_data()['action'] );
-		$this->assertSame( Components_Pro_Upsell::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( Components_Pro_Upsell::UPGRADE_URL, $result->get_error_message() );
+		$this->assertSame( Components_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertStringContainsString( Components_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_message() );
 		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
 	}
 

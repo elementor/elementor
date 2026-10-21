@@ -9,7 +9,7 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
-use Elementor\Modules\Mcp\Utils\Pro_Upsell;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -314,7 +314,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( Pro_Upsell::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( 'add_to_page', $result->get_error_data()['action'] );
 		$this->assertSame( $expected_tier, $result->get_error_data()['tier'] );
