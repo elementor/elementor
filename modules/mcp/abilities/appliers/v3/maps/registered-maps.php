@@ -22,4 +22,5 @@ return [
 	'woocommerce-purchase-summary' => __DIR__ . '/woocommerce-purchase-summary-map.php',
 	'woocommerce-checkout-page' => __DIR__ . '/woocommerce-checkout-page-map.php',
 	'woocommerce-my-account' => __DIR__ . '/woocommerce-my-account-map.php',
+	'woocommerce-notices' => __DIR__ . '/woocommerce-notices-map.php',
 ];

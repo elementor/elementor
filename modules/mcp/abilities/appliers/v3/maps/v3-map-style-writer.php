@@ -378,7 +378,7 @@ class V3_Map_Style_Writer {
 
 	private function store( V3_Conversion_Context $ctx, Compiled_Style_Binding $binding, array $controls, string $breakpoint, $control_value, ?string $global_link = null ): void {
 		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
-		$requirements = self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint );
+		[ $requirements, $list_requirements ] = self::split_list_requirements( self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint ), $controls );
 		$patch = array_merge( [ $setting => $control_value ], self::shadow_position_patch( $binding, $setting, $control_value ), $requirements );
 
 		if ( null !== $global_link ) {
@@ -386,6 +386,7 @@ class V3_Map_Style_Writer {
 		}
 
 		$ctx->merge_patch( $patch );
+		$ctx->require_list_values( $list_requirements );
 		$ctx->add_border_style_defaults( self::border_style_defaults( $patch, $controls ) );
 		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
 	}
@@ -486,6 +487,32 @@ class V3_Map_Style_Writer {
 	}
 
 	/**
+	 * A multi-select requirement, such as a notice type the style needs enabled, is a value the
+	 * saved list must contain; writing it as the setting would drop the other selected values.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array{0: array<string, mixed>, 1: array<string, string[]>} The patch without multi-select settings, and the values those lists must contain.
+	 */
+	private static function split_list_requirements( array $patch, array $controls ): array {
+		$list_requirements = [];
+
+		foreach ( $patch as $setting => $value ) {
+			if ( empty( $controls[ $setting ]['multiple'] ) ) {
+				continue;
+			}
+
+			unset( $patch[ $setting ] );
+
+			if ( is_scalar( $value ) && '' !== (string) $value ) {
+				$list_requirements[ $setting ] = [ (string) $value ];
+			}
+		}
+
+		return [ $patch, $list_requirements ];
+	}
+
+	/**
 	 * A side binding only owns part of a dimensions value, so a value that leaves all of its
 	 * sides untouched belongs to another binding of the same prop.
 	 */
@@ -530,7 +557,9 @@ class V3_Map_Style_Writer {
 			$binding = $this->bindings_for( $bindings, $declaration['property'], $state )[0] ?? null;
 
 			if ( null !== $binding && self::is_box_shadow_none( $binding, $declaration['value'], $breakpoint ) ) {
-				$ctx->merge_patch( self::box_shadow_none_patch( $binding ) );
+				[ $patch, $list_requirements ] = self::split_list_requirements( self::box_shadow_none_patch( $binding ), $controls );
+				$ctx->merge_patch( $patch );
+				$ctx->require_list_values( $list_requirements );
 				continue;
 			}
 

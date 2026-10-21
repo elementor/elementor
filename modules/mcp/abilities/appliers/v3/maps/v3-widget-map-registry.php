@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
@@ -101,12 +102,20 @@ class V3_Widget_Map_Registry {
 	 * @param array<string, V3_Widget_Map>|null $maps Defaults to the maps listed in registered-maps.php.
 	 */
 	public static function create_default( ?array $maps = null ): self {
+		$maps = $maps ?? self::load_map_files();
+
 		return new self(
 			new V3_Widget_Map_Compiler(),
 			static fn() => class_exists( \Elementor\Plugin::class )
 				&& isset( Plugin::$instance->experiments )
 				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
-			static function ( string $widget_type ): ?array {
+			static function ( string $widget_type ) use ( $maps ): ?array {
+				$map = $maps[ $widget_type ] ?? null;
+
+				if ( $map instanceof V3_Widget_Map && null !== $map->get_kit_tab() ) {
+					return self::kit_tab_controls( $widget_type, $map );
+				}
+
 				$source = self::registered_widget( $widget_type )
 					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
 
@@ -118,9 +127,34 @@ class V3_Widget_Map_Registry {
 
 				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] ) + self::advanced_tab_controls( $source );
 			},
-			$maps ?? self::load_map_files(),
+			$maps,
 			static fn( string $widget_type ): bool => self::has_advanced_tab( self::registered_widget( $widget_type ) )
 		);
+	}
+
+	/**
+	 * The active kit's controls, or null while the widget is not registered, the map's Site Settings
+	 * tab is missing, or a required control is not registered (e.g. without the license).
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private static function kit_tab_controls( string $widget_type, V3_Widget_Map $map ): ?array {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! self::registered_widget( $widget_type ) || ! $kit instanceof Kit || ! $kit->get_tab( $map->get_kit_tab() ) ) {
+			return null;
+		}
+
+		$stack = $kit->get_stack( false );
+		$controls = ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] );
+
+		foreach ( $map->get_required_kit_controls() as $required_control ) {
+			if ( ! isset( $controls[ $required_control ] ) ) {
+				return null;
+			}
+		}
+
+		return $controls;
 	}
 
 	/**
@@ -309,7 +343,7 @@ class V3_Widget_Map_Registry {
 		$map = $this->maps[ $widget_type ];
 		$has_advanced_tab = $this->has_advanced_tab;
 
-		if ( null === $has_advanced_tab || ! $has_advanced_tab( $widget_type ) || self::declares_target( $map, Advanced_Wrapper::ALIAS ) ) {
+		if ( null === $has_advanced_tab || null !== $map->get_kit_tab() || ! $has_advanced_tab( $widget_type ) || self::declares_target( $map, Advanced_Wrapper::ALIAS ) ) {
 			return $map;
 		}
 

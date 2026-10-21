@@ -485,6 +485,7 @@ class V3_Style_Mapper {
 			'fallback_notes' => $ctx->fallback_notes(),
 			'required_settings' => $ctx->required_settings(),
 			'border_style_defaults' => $ctx->border_style_defaults(),
+			'list_requirements' => $ctx->list_requirements(),
 			'warnings' => $ctx->warnings(),
 			'error' => null,
 		];
@@ -498,6 +499,7 @@ class V3_Style_Mapper {
 			'fallback_notes' => [],
 			'required_settings' => [],
 			'border_style_defaults' => [],
+			'list_requirements' => [],
 			'warnings' => [],
 			'error' => null,
 		];

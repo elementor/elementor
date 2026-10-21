@@ -4,6 +4,8 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Kit_Settings_Host;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Node_Settings_Host;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Clearer;
@@ -34,6 +36,8 @@ class Style_Applier {
 	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
 	const UNKNOWN_VARIABLE_CODE = 'unknown_variable';
 	const BORDER_STYLE_NONE = 'none';
+	const SITE_WIDE_STYLE_CODE = 'site_wide_style';
+	const SITE_WIDE_STYLE_FORBIDDEN_CODE = 'site_wide_style_forbidden';
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
@@ -177,6 +181,40 @@ class Style_Applier {
 	 * @param array<string, array> $widget_configs
 	 */
 	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch', array $widget_configs = [] ): void {
+		$map = V3_Widget_Map_Registry::instance()->get_map( (string) ( $node['widgetType'] ?? $node['elType'] ?? '' ) );
+		$host = null === $map ? new Node_Settings_Host() : $map->get_settings_host();
+		$is_site_wide = $host instanceof Kit_Settings_Host;
+
+		if ( $is_site_wide && ! Kit_Settings_Host::can_write() ) {
+			$warnings->add( self::SITE_WIDE_STYLE_FORBIDDEN_CODE, __( 'This style is stored in Site Settings, which you do not have permission to edit, so it was not saved.', 'elementor' ), $config_id );
+			return;
+		}
+
+		$settings = $host->read( $node );
+		$hosted_node = array_merge( $node, [ 'settings' => $settings ] );
+
+		$this->apply_v3_style_to_node( $hosted_node, $css_string, $config_id, $warnings, $style_apply_mode, $widget_configs );
+
+		if ( $hosted_node['settings'] === $settings ) {
+			return;
+		}
+
+		$host->write( $node, $hosted_node['settings'] );
+
+		if ( $is_site_wide ) {
+			$warnings->add( self::SITE_WIDE_STYLE_CODE, __( 'This style is stored in Site Settings and applies to the whole site, not only this element. It goes live when the page is saved, even if the page itself stays a draft.', 'elementor' ), $config_id );
+		}
+	}
+
+	/**
+	 * @param array                $node
+	 * @param string               $css_string
+	 * @param string               $config_id
+	 * @param Warnings_Bag         $warnings
+	 * @param string               $style_apply_mode
+	 * @param array<string, array> $widget_configs
+	 */
+	private function apply_v3_style_to_node( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode, array $widget_configs ): void {
 		$widget_type = $node['widgetType'] ?? $node['elType'] ?? '';
 		$widget_config = [];
 
@@ -225,6 +263,7 @@ class Style_Applier {
 		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [], $controls );
 
 		$settings_patch = self::with_border_style_defaults( $result['settings_patch'] ?? [], $result['border_style_defaults'] ?? [], $node['settings'] ?? [] );
+		$settings_patch = self::with_list_requirements( $settings_patch, $result['list_requirements'] ?? [], $node['settings'] ?? [] );
 
 		if ( ! empty( $settings_patch ) ) {
 			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $settings_patch );
@@ -308,6 +347,27 @@ class Style_Applier {
 		);
 
 		return array_merge( $unset_defaults, $settings_patch );
+	}
+
+	/**
+	 * A requirement on a multi-select control adds its value to the saved list instead of replacing it.
+	 *
+	 * @param array<string, mixed>    $settings_patch
+	 * @param array<string, string[]> $list_requirements Setting => values the list must contain.
+	 * @param array<string, mixed>    $saved_settings
+	 * @return array<string, mixed>
+	 */
+	private static function with_list_requirements( array $settings_patch, array $list_requirements, array $saved_settings ): array {
+		foreach ( $list_requirements as $setting => $values ) {
+			$saved = is_array( $saved_settings[ $setting ] ?? null ) ? $saved_settings[ $setting ] : [];
+			$missing = array_values( array_diff( $values, $saved ) );
+
+			if ( ! empty( $missing ) ) {
+				$settings_patch[ $setting ] = array_merge( $saved, $missing );
+			}
+		}
+
+		return $settings_patch;
 	}
 
 	private static function has_border_style( $value ): bool {

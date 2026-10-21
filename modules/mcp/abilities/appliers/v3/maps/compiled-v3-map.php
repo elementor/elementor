@@ -24,19 +24,27 @@ class Compiled_V3_Map {
 	 */
 	private array $targets;
 
+	private ?string $kit_tab;
+
 	/**
 	 * @param string                               $widget_type
 	 * @param string                               $description
 	 * @param array<string, Compiled_V3_Setting>   $settings
 	 * @param string                               $default_target
 	 * @param array<string, Compiled_Style_Target> $targets
+	 * @param string|null                          $kit_tab        {@see V3_Widget_Map::kit_tab()}.
 	 */
-	public function __construct( string $widget_type, string $description, array $settings, string $default_target, array $targets ) {
+	public function __construct( string $widget_type, string $description, array $settings, string $default_target, array $targets, ?string $kit_tab = null ) {
 		$this->widget_type = $widget_type;
 		$this->description = $description;
 		$this->settings = $settings;
 		$this->default_target = $default_target;
 		$this->targets = $targets;
+		$this->kit_tab = $kit_tab;
+	}
+
+	public function get_settings_host(): V3_Map_Settings_Host {
+		return null === $this->kit_tab ? new Node_Settings_Host() : new Kit_Settings_Host();
 	}
 
 	public function get_widget_type(): string {

@@ -24,6 +24,13 @@ class V3_Widget_Map {
 	 */
 	private array $targets = [];
 
+	private ?string $kit_tab = null;
+
+	/**
+	 * @var string[]
+	 */
+	private array $required_kit_controls = [];
+
 	private function __construct( string $widget_type ) {
 		$this->widget_type = $widget_type;
 	}
@@ -59,6 +66,20 @@ class V3_Widget_Map {
 		return $this;
 	}
 
+	/**
+	 * The style targets read and write the controls of this Site Settings tab on the active kit,
+	 * so a write styles every page of the site.
+	 *
+	 * @param string   $tab_id            Kit tab ID, e.g. `settings-woocommerce`.
+	 * @param string[] $required_controls Controls the tab must register for the map to apply, e.g. ones a license adds.
+	 */
+	public function kit_tab( string $tab_id, array $required_controls = [] ): self {
+		$this->kit_tab = $tab_id;
+		$this->required_kit_controls = $required_controls;
+
+		return $this;
+	}
+
 	public function get_widget_type(): string {
 		return $this->widget_type;
 	}
@@ -72,6 +93,17 @@ class V3_Widget_Map {
 	 */
 	public function get_settings(): array {
 		return $this->settings;
+	}
+
+	public function get_kit_tab(): ?string {
+		return $this->kit_tab;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function get_required_kit_controls(): array {
+		return $this->required_kit_controls;
 	}
 
 	public function get_default_target(): ?Style_Target {

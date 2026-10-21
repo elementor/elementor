@@ -306,8 +306,9 @@ class Get_Structure_Ability extends Abstract_Ability {
 			? V3_Map_Settings_Reader::read( $map, $raw_settings )
 			: V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings )['allowed'];
 
+		$style_settings = null !== $map ? $map->get_settings_host()->read( $node ) : $raw_settings;
 		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
-		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
+		$style = ( new V3_Style_Serializer() )->serialize( $style_settings, $widget_type, $widget_config ?? [] );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['styles'] = [ 'css' => $style ];
@@ -316,7 +317,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 			$this->v3_default_styles ??= V3_Map_Default_Styles::create_default();
 			$skeleton['default_styles'] = $this->v3_default_styles->render(
 				$map,
-				$raw_settings,
+				$style_settings,
 				V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type ),
 				V3_Control_Visibility::for_widget( $widget_type )
 			);

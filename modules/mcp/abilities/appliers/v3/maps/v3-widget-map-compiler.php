@@ -66,7 +66,8 @@ class V3_Widget_Map_Compiler {
 			$map->get_description(),
 			$this->compile_settings( $map, $controls, $diagnostics ),
 			$map->get_default_target()->get_alias(),
-			$this->compile_targets( $map, $controls, $diagnostics )
+			$this->compile_targets( $map, $controls, $diagnostics ),
+			$map->get_kit_tab()
 		);
 	}
 
