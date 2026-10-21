@@ -10,8 +10,15 @@ class Form_Structure_Validator {
 
 	const FORM_ELEMENT_TYPE = 'e-form';
 
-	// Mirrors the Pro-only e-form-honeypot widget (same precedent as e-form-hidden).
+	// Mirror the Pro-only e-form-honeypot and e-form-recaptcha-score widgets (same precedent as e-form-hidden).
 	const HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
+	const RECAPTCHA_SCORE_ELEMENT_TYPE = 'e-form-recaptcha-score';
+
+	// Element type => plural label used in error messages.
+	const SINGLE_INSTANCE_ELEMENT_TYPES = [
+		self::HONEYPOT_ELEMENT_TYPE => 'honeypots',
+		self::RECAPTCHA_SCORE_ELEMENT_TYPE => 'Score-based reCAPTCHA atoms',
+	];
 
 	const FORM_FIELD_ELEMENT_TYPES = [
 		'e-form-input',
@@ -26,6 +33,7 @@ class Form_Structure_Validator {
 		'e-form-time-picker',
 		'e-form-hidden',
 		self::HONEYPOT_ELEMENT_TYPE,
+		self::RECAPTCHA_SCORE_ELEMENT_TYPE,
 	];
 
 	private const DEFAULT_PARENT_ID = 'document';
@@ -75,7 +83,7 @@ class Form_Structure_Validator {
 			$this->collect_nested_form_errors( $dom, $parent_within_form ),
 			$this->collect_form_ancestor_errors( $dom, $parent_within_form ),
 			$this->collect_submit_button_errors( $dom ),
-			$this->collect_honeypot_errors( $dom, $document_tree, $parent_id ),
+			$this->collect_single_instance_errors( $dom, $document_tree, $parent_id ),
 			$this->collect_empty_message_errors( $dom )
 		);
 	}
@@ -161,32 +169,48 @@ class Form_Structure_Validator {
 	/**
 	 * @return string[]
 	 */
-	private function collect_honeypot_errors( \DOMDocument $dom, array $document_tree, string $parent_id ): array {
+	private function collect_single_instance_errors( \DOMDocument $dom, array $document_tree, string $parent_id ): array {
+		$errors = [];
+
+		foreach ( self::SINGLE_INSTANCE_ELEMENT_TYPES as $type => $plural_label ) {
+			$errors = array_merge(
+				$errors,
+				$this->collect_single_instance_type_errors( $dom, $document_tree, $parent_id, $type, $plural_label )
+			);
+		}
+
+		return $errors;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function collect_single_instance_type_errors( \DOMDocument $dom, array $document_tree, string $parent_id, string $type, string $plural_label ): array {
 		$errors = [];
 		$xpath = new \DOMXPath( $dom );
-		$all_honeypots = $xpath->query( '//' . self::HONEYPOT_ELEMENT_TYPE );
+		$all_instances = $xpath->query( '//' . $type );
 
 		foreach ( $xpath->query( '//' . self::FORM_ELEMENT_TYPE ) as $form ) {
 			if ( ! $form instanceof \DOMElement ) {
 				continue;
 			}
 
-			$honeypots = $xpath->query( './/' . self::HONEYPOT_ELEMENT_TYPE, $form );
-			$honeypot_count = $honeypots ? $honeypots->length : 0;
+			$instances = $xpath->query( './/' . $type, $form );
+			$instance_count = $instances ? $instances->length : 0;
 
-			if ( 1 < $honeypot_count ) {
-				$errors[] = '<e-form> has ' . $honeypot_count . ' honeypots — only 1 is allowed.';
+			if ( 1 < $instance_count ) {
+				$errors[] = '<e-form> has ' . $instance_count . ' ' . $plural_label . ' — only 1 is allowed.';
 			}
 		}
 
 		$parent_form = $this->find_form_containing_node( $document_tree, $parent_id );
 
-		if ( ! $parent_form || 0 === $this->count_element_type( $parent_form['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE ) ) {
+		if ( ! $parent_form || 0 === $this->count_element_type( $parent_form['elements'] ?? [], $type ) ) {
 			return $errors;
 		}
 
-		if ( $all_honeypots && $all_honeypots->length > 0 ) {
-			$errors[] = 'The target <e-form> already has an <e-form-honeypot> — only 1 is allowed per form.';
+		if ( $all_instances && $all_instances->length > 0 ) {
+			$errors[] = 'The target <e-form> already has an <' . $type . '> — only 1 is allowed per form.';
 		}
 
 		return $errors;
@@ -305,13 +329,14 @@ class Form_Structure_Validator {
 	/**
 	 * @return string[]
 	 */
-	public function collect_tree_honeypot_errors( array $tree ): array {
-		$counts = $this->collect_form_honeypot_counts( $tree );
-
+	public function collect_tree_single_instance_errors( array $tree ): array {
 		$errors = [];
-		foreach ( $counts as $count ) {
-			if ( 1 < $count ) {
-				$errors[] = '<e-form> has ' . $count . ' honeypots — only 1 is allowed.';
+
+		foreach ( self::SINGLE_INSTANCE_ELEMENT_TYPES as $type => $plural_label ) {
+			foreach ( $this->collect_form_element_counts( $tree, $type ) as $count ) {
+				if ( 1 < $count ) {
+					$errors[] = '<e-form> has ' . $count . ' ' . $plural_label . ' — only 1 is allowed.';
+				}
 			}
 		}
 
@@ -319,25 +344,25 @@ class Form_Structure_Validator {
 	}
 
 	/**
-	 * @return array<string, int> Map of form element id => honeypot count
+	 * @return array<string, int> Map of form element id => count of elements of the given type
 	 */
-	public function collect_form_honeypot_counts( array $tree ): array {
+	public function collect_form_element_counts( array $tree, string $type ): array {
 		$counts = [];
-		$this->walk_tree_for_form_honeypot_counts( $tree, $counts );
+		$this->walk_tree_for_form_element_counts( $tree, $type, $counts );
 
 		return $counts;
 	}
 
-	private function walk_tree_for_form_honeypot_counts( array $tree, array &$counts ): void {
+	private function walk_tree_for_form_element_counts( array $tree, string $type, array &$counts ): void {
 		foreach ( $tree as $node ) {
 			if ( $this->is_form_element( $node ) ) {
 				$form_id = $node['id'] ?? '';
-				$counts[ $form_id ] = $this->count_element_type( $node['elements'] ?? [], self::HONEYPOT_ELEMENT_TYPE );
+				$counts[ $form_id ] = $this->count_element_type( $node['elements'] ?? [], $type );
 				continue;
 			}
 
 			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
-				$this->walk_tree_for_form_honeypot_counts( $node['elements'], $counts );
+				$this->walk_tree_for_form_element_counts( $node['elements'], $type, $counts );
 			}
 		}
 	}
