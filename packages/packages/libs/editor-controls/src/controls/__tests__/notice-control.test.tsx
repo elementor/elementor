@@ -125,4 +125,38 @@ describe( 'NoticeControl', () => {
 		};
 		expect( extendedWindow.elementor.config.user.dismissed_editor_notices ).toContain( 'ally-atomic-notice' );
 	} );
+
+	it( 'should not render a close button when the notice is not dismissible', () => {
+		// Act.
+		renderControl(
+			<NoticeControl
+				heading="Connect reCAPTCHA Score"
+				content="Set up your reCAPTCHA credentials in Integrations to protect this form from spam"
+			/>,
+			{ bind: 'notice', propType }
+		);
+
+		// Assert.
+		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Close' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should keep a non-dismissible notice visible when the action button is clicked', () => {
+		// Arrange.
+		renderControl(
+			<NoticeControl
+				content="Set up your reCAPTCHA credentials in Integrations to protect this form from spam"
+				buttonText="Set up"
+				buttonUrl="https://example.com/wp-admin/admin.php?page=elementor-settings#tab-integrations"
+			/>,
+			{ bind: 'notice', propType }
+		);
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'link', { name: 'Set up' } ) );
+
+		// Assert.
+		expect( screen.getByRole( 'alert' ) ).toBeInTheDocument();
+		expect( ajax.load ).not.toHaveBeenCalled();
+	} );
 } );
