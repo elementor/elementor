@@ -1,0 +1,309 @@
+<?php
+
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
+
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Agents\Agent_Ready_Settings;
+use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
+use Elementor\Modules\Agents\Components\Webmcp\Business_Schema_Parser;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Abstract_Webmcp_Tool;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Get_Site_Structure;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
+use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
+use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Run_Route;
+use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Module;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
+use Elementor\Plugin;
+use ElementorEditorTesting\Elementor_Test_Base;
+
+class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
+
+	const THIRD_PARTY_TOOL = 'elementor-webmcp/find-store';
+
+	const CORE_TOOL_COUNT = 4;
+
+	private Agent_Ready_Settings $settings;
+
+	private Business_Info_Extractor $extractor;
+
+	private Webmcp_Browser_Tools $browser_tools;
+
+	private $original_experiment_default_state;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->original_experiment_default_state = Plugin::$instance->experiments
+			->get_features( Module::EXPERIMENT_NAME )['default'];
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		delete_option( Agent_Ready_Settings::OPTION );
+		delete_transient( Business_Info_Extractor::TRANSIENT );
+		delete_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT );
+
+		wp_get_ability_categories();
+		wp_get_abilities();
+		$this->unregister_webmcp_abilities();
+
+		remove_all_filters( 'elementor/agents/webmcp/is_applicable' );
+		remove_all_filters( 'elementor/agents/webmcp_manifest' );
+		remove_all_actions( 'wp_abilities_api_categories_init' );
+		remove_all_actions( 'wp_abilities_api_init' );
+		add_filter( 'pre_http_request', fn() => [
+			'headers' => [],
+			'body' => '',
+			'response' => [ 'code' => 200, 'message' => 'OK' ],
+			'cookies' => [],
+		] );
+
+		$sanitizer = new Prompt_Injection_Sanitizer();
+		$generator = new Content_Generator( $sanitizer );
+
+		$this->settings  = new Agent_Ready_Settings( $generator );
+		$this->extractor = new Business_Info_Extractor( new Business_Schema_Parser( $sanitizer ) );
+
+		$this->settings->ensure_option_exists();
+
+		$this->browser_tools = new Webmcp_Browser_Tools( $this->settings, $this->extractor, [
+			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $generator, $sanitizer ),
+			new Get_Site_Structure( $generator, $sanitizer ),
+			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ) ),
+			new Query_Business_Info( $this->extractor, $sanitizer ),
+		] );
+	}
+
+	public function tearDown(): void {
+		$this->unregister_webmcp_abilities();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::EXPERIMENT_NAME,
+			$this->original_experiment_default_state
+		);
+
+		delete_option( Agent_Ready_Settings::OPTION );
+		delete_transient( Business_Info_Extractor::TRANSIENT );
+		delete_transient( Business_Info_Extractor::REFRESH_LOCK );
+		delete_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT );
+
+		parent::tearDown();
+	}
+
+	public function test_get_tools__keeps_only_core_tools() {
+		// Arrange
+		$this->register_all_abilities();
+
+		// Act
+		$names = array_map( fn( $ability ) => $ability->get_name(), $this->browser_tools->get_tools() );
+
+		// Assert
+		$this->assertCount( self::CORE_TOOL_COUNT, $names );
+		$this->assertContains( 'elementor-webmcp/search-site-content', $names );
+		$this->assertNotContains( self::THIRD_PARTY_TOOL, $names );
+	}
+
+	public function test_to_tool_name__strips_core_prefix() {
+		// Act & Assert
+		$this->assertSame( 'search_site_content', Webmcp_Browser_Tools::to_tool_name( 'elementor-webmcp/search-site-content' ) );
+	}
+
+	public function test_get_relevant_tools__applies_the_relevance_filter() {
+		// Arrange
+		$this->register_all_abilities();
+		add_filter( 'elementor/agents/webmcp/is_tool_relevant', fn( $relevant, $name ) => 'elementor-webmcp/get-site-structure' === $name ? false : $relevant, 10, 2 );
+
+		// Act
+		$tools = $this->browser_tools->get_relevant_tools();
+
+		// Assert
+		$this->assertArrayNotHasKey( 'get_site_structure', $tools );
+		$this->assertArrayHasKey( 'read_page_content', $tools );
+	}
+
+	public function test_get_relevant_tools__keeps_business_info_without_contact_data() {
+		// Arrange
+		$this->register_all_abilities();
+		set_transient( Business_Info_Extractor::TRANSIENT, [] );
+
+		// Act
+		$tools = $this->browser_tools->get_relevant_tools();
+
+		// Assert
+		$this->assertArrayHasKey( 'query_business_info', $tools );
+	}
+
+	public function test_get_admin_tools__lists_every_core_tool_even_when_irrelevant() {
+		// Arrange
+		$this->register_all_abilities();
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+
+		// Act
+		$tools = array_column( $this->browser_tools->get_admin_tools(), null, 'name' );
+
+		// Assert
+		$this->assertCount( self::CORE_TOOL_COUNT, $tools );
+		$this->assertArrayHasKey( 'read_page_content', $tools );
+	}
+
+	public function test_get_cached_tool_descriptors__is_refreshed_after_flush() {
+		// Arrange
+		$this->register_all_abilities();
+		$this->browser_tools->get_cached_tool_descriptors();
+		add_filter( 'elementor/agents/webmcp/is_tool_relevant', fn( $relevant, $name ) => 'elementor-webmcp/get-site-structure' === $name ? false : $relevant, 10, 2 );
+
+		// Act
+		$stale = array_column( $this->browser_tools->get_cached_tool_descriptors(), 'name' );
+		$this->browser_tools->flush_relevant_tools_cache();
+		$fresh = array_column( $this->browser_tools->get_cached_tool_descriptors(), 'name' );
+
+		// Assert
+		$this->assertContains( 'get_site_structure', $stale );
+		$this->assertNotContains( 'get_site_structure', $fresh );
+	}
+
+	public function test_register__exposes_manifest_tools_only_when_enabled() {
+		// Arrange
+		$this->register_all_abilities();
+		$this->browser_tools->register();
+
+		// Act
+		$manifest = apply_filters( 'elementor/agents/webmcp_manifest', [ 'tools' => [] ], home_url() );
+
+		// Assert
+		$names = array_column( $manifest['tools'], 'name' );
+		$this->assertContains( 'get_site_structure', $names );
+		$this->assertContains( 'query_business_info', $names );
+		$this->assertTrue( apply_filters( 'elementor/agents/webmcp/is_applicable', false ) );
+	}
+
+	public function test_register__skips_manifest_and_route_when_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BROWSER_TOOLS, 'enabled', false );
+
+		// Act
+		$this->browser_tools->register();
+
+		// Assert
+		$this->assertFalse( apply_filters( 'elementor/agents/webmcp/is_applicable', false ) );
+		$this->assertSame( [ 'tools' => [] ], apply_filters( 'elementor/agents/webmcp_manifest', [ 'tools' => [] ], home_url() ) );
+	}
+
+	public function test_run_route__returns_tool_result() {
+		// Arrange
+		$this->register_route();
+
+		// Act
+		$response = $this->run_tool( 'get_site_structure', [] );
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'site', $response->get_data() );
+	}
+
+	public function test_run_route__returns_404_for_unknown_tools() {
+		// Arrange
+		$this->register_route();
+
+		// Act
+		$response = $this->run_tool( 'does_not_exist', [] );
+
+		// Assert
+		$this->assertSame( Webmcp_Run_Route::STATUS_NOT_FOUND, $response->get_status() );
+	}
+
+	public function test_run_route__returns_404_for_third_party_and_irrelevant_tools() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+		$this->register_route();
+
+		// Act
+		$third_party = $this->run_tool( Webmcp_Browser_Tools::to_tool_name( self::THIRD_PARTY_TOOL ), [] );
+		$irrelevant  = $this->run_tool( 'read_page_content', [ 'id' => 1 ] );
+
+		// Assert
+		$this->assertSame( Webmcp_Run_Route::STATUS_NOT_FOUND, $third_party->get_status() );
+		$this->assertSame( Webmcp_Run_Route::STATUS_NOT_FOUND, $irrelevant->get_status() );
+	}
+
+	public function test_run_route__returns_400_for_invalid_input() {
+		// Arrange
+		$this->factory()->post->create( [ 'post_status' => 'publish' ] );
+		$this->register_route();
+
+		// Act
+		$response = $this->run_tool( 'search_site_content', [] );
+
+		// Assert
+		$this->assertSame( Webmcp_Run_Route::STATUS_BAD_REQUEST, $response->get_status() );
+	}
+
+	public function test_run_route__returns_503_while_business_info_is_refreshing() {
+		// Arrange
+		set_transient( Business_Info_Extractor::REFRESH_LOCK, true, MINUTE_IN_SECONDS );
+		$this->register_route();
+
+		// Act
+		$response = $this->run_tool( 'query_business_info', [] );
+
+		// Assert
+		$this->assertSame( Webmcp_Run_Route::STATUS_SERVICE_UNAVAILABLE, $response->get_status() );
+	}
+
+	private function unregister_webmcp_abilities(): void {
+		foreach ( wp_get_abilities() as $ability ) {
+			if ( 0 === strpos( $ability->get_name(), Abstract_Webmcp_Tool::CATEGORY . '/' ) ) {
+				wp_unregister_ability( $ability->get_name() );
+			}
+		}
+
+		if ( wp_has_ability_category( Abstract_Webmcp_Tool::CATEGORY ) ) {
+			wp_unregister_ability_category( Abstract_Webmcp_Tool::CATEGORY );
+		}
+	}
+
+	private function register_route(): void {
+		$this->register_all_abilities();
+		$this->browser_tools->register();
+
+		do_action( 'rest_api_init' );
+	}
+
+	private function run_tool( string $tool, array $input ): \WP_REST_Response {
+		$request = new \WP_REST_Request( 'POST', '/' . Webmcp_Run_Route::ROUTE );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( [ 'tool' => $tool, 'input' => $input ] ) );
+
+		return rest_get_server()->dispatch( $request );
+	}
+
+	private function register_all_abilities(): void {
+		add_action( 'wp_abilities_api_categories_init', [ $this->browser_tools, 'register_category' ] );
+
+		add_action( 'wp_abilities_api_init', function () {
+			$this->browser_tools->register_core_abilities();
+
+			wp_register_ability( self::THIRD_PARTY_TOOL, [
+				'label' => self::THIRD_PARTY_TOOL,
+				'description' => 'Test ability',
+				'category' => Abstract_Webmcp_Tool::CATEGORY,
+				'execute_callback' => fn() => [ 'ok' => true ],
+				'permission_callback' => '__return_true',
+				'meta' => [
+					'webmcp' => true,
+					'annotations' => [ 'readonly' => true ],
+				],
+			] );
+		} );
+
+		do_action( 'wp_abilities_api_categories_init' );
+		do_action( 'wp_abilities_api_init' );
+	}
+}

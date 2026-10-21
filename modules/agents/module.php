@@ -25,6 +25,13 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
+use Elementor\Modules\Agents\Components\Webmcp\Business_Schema_Parser;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Get_Site_Structure;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
+use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -80,6 +87,7 @@ class Module extends BaseModule {
 	private Llms_Manual_Content $manual_content;
 	private Bot_Catalog $bot_catalog;
 	private Markdown_Endpoint $markdown_endpoint;
+	private Webmcp_Browser_Tools $webmcp_browser_tools;
 
 	public function get_name() {
 		return 'agents';
@@ -160,6 +168,9 @@ class Module extends BaseModule {
 
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings ) );
 		$this->register_component( $this->markdown_endpoint );
+
+		$this->webmcp_browser_tools = $this->create_webmcp_browser_tools( $sanitizer );
+		$this->register_component( $this->webmcp_browser_tools );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
@@ -685,7 +696,48 @@ class Module extends BaseModule {
 			'markdown'           => $this->get_markdown_state(),
 			'botAccess'          => $this->get_bot_access_state(),
 			'agentDiscovery'     => $this->get_agent_discovery_state(),
+			'browserTools'       => $this->get_browser_tools_state(),
 		];
+	}
+
+	private function get_browser_tools_state(): array {
+		return [
+			'enabled'     => $this->settings->is_browser_tools_enabled(),
+			'isAvailable' => Webmcp_Browser_Tools::is_available(),
+			'tools'       => $this->webmcp_browser_tools->get_admin_tools(),
+			'editDetailsUrl' => $this->get_business_details_edit_url(),
+		];
+	}
+
+	private function get_business_details_edit_url(): string {
+		$front_page_id = (int) get_option( 'page_on_front' );
+
+		if ( ! $front_page_id ) {
+			return admin_url( 'options-reading.php' );
+		}
+
+		$document = Plugin::$instance->documents->get( $front_page_id );
+
+		if ( $document && $document->is_built_with_elementor() ) {
+			return $document->get_edit_url();
+		}
+
+		return (string) get_edit_post_link( $front_page_id, 'raw' );
+	}
+
+	private function create_webmcp_browser_tools( Prompt_Injection_Sanitizer $sanitizer ): Webmcp_Browser_Tools {
+		$extractor = new Business_Info_Extractor( new Business_Schema_Parser( $sanitizer ) );
+
+		return new Webmcp_Browser_Tools(
+			$this->settings,
+			$extractor,
+			[
+				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
+				new Get_Site_Structure( $this->generator, $sanitizer ),
+				new Read_Page_Content( $this->settings, $this->markdown_endpoint ),
+				new Query_Business_Info( $extractor, $sanitizer ),
+			]
+		);
 	}
 
 	private function get_agent_discovery_state(): array {

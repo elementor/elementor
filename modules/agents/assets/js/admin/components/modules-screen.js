@@ -10,6 +10,7 @@ import {
 	getModules,
 	MODULE_AGENT_DISCOVERY,
 	MODULE_BOT_ACCESS_CONTROL,
+	MODULE_BROWSER_TOOLS,
 	MODULE_LLMS_TXT,
 	MODULE_MARKDOWN_CONTENT,
 	MODULE_STATUS_DISABLED,
@@ -18,10 +19,12 @@ import {
 } from '../constants';
 import { useAgentDiscoverySettings } from '../hooks/use-agent-discovery-settings';
 import { useBotAccessSettings } from '../hooks/use-bot-access-settings';
+import { useBrowserToolsSettings } from '../hooks/use-browser-tools-settings';
 import { useLlmsSettings } from '../hooks/use-llms-settings';
 import { useMarkdownSettings } from '../hooks/use-markdown-settings';
 import { AgentDiscoveryPanel } from './agent-discovery/agent-discovery-panel';
 import { BotAccessPanel } from './bot-access/bot-access-panel';
+import { BrowserToolsPanel } from './browser-tools/browser-tools-panel';
 import { LlmsTxtPanel } from './llms-txt/llms-txt-panel';
 import { MarkdownContentPanel } from './markdown-content/markdown-content-panel';
 import { ModuleAccordion } from './module-accordion';
@@ -46,9 +49,10 @@ const getStatus = ( isEnabled, hasWarning = false ) => {
 	return isEnabled ? MODULE_STATUS_ENABLED : MODULE_STATUS_DISABLED;
 };
 
-export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConfig, markdownConfig } ) => {
+export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserToolsConfig, llmsConfig, markdownConfig } ) => {
 	const agentDiscoverySettings = useAgentDiscoverySettings( agentDiscoveryConfig );
 	const botAccessSettings = useBotAccessSettings( botAccessConfig );
+	const browserToolsSettings = useBrowserToolsSettings( browserToolsConfig );
 	const llmsSettings = useLlmsSettings( llmsConfig );
 	const markdownSettings = useMarkdownSettings( markdownConfig );
 	const [ expandedModuleId, setExpandedModuleId ] = useState( modules[ 0 ]?.id ?? null );
@@ -58,7 +62,9 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 		markdownSettings.isEnabled,
 		botAccessSettings.isEnabled,
 		agentDiscoverySettings.isEnabled,
+		browserToolsSettings.isEnabled && browserToolsSettings.isAvailable,
 	].filter( Boolean ).length;
+	const totalCount = modules.length - ( browserToolsSettings.isAvailable ? 0 : 1 );
 
 	const handleExpandedChange = ( moduleId ) => ( event, expanded ) => {
 		setExpandedModuleId( expanded ? moduleId : null );
@@ -138,6 +144,23 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 			);
 		}
 
+		if ( MODULE_BROWSER_TOOLS === module.id ) {
+			return (
+				<ModuleAccordion
+					key={ module.id }
+					title={ module.title }
+					description={ module.description }
+					status={ getStatus( browserToolsSettings.isEnabled, ! browserToolsSettings.isAvailable ) }
+					isEnabled={ browserToolsSettings.isEnabled && browserToolsSettings.isAvailable }
+					isToggleDisabled={ ! browserToolsSettings.isAvailable || browserToolsSettings.isSaving }
+					onToggle={ browserToolsSettings.toggleEnabled }
+					{ ...accordionProps }
+				>
+					<BrowserToolsPanel settings={ browserToolsSettings } isMarkdownEnabled={ markdownSettings.isEnabled } />
+				</ModuleAccordion>
+			);
+		}
+
 		return null;
 	};
 
@@ -145,7 +168,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 		<Stack spacing={ 5 } pt={ 6 } width="100%" maxWidth={ 1087 } minWidth={ 0 } mx="auto">
 			<Stack direction="row" alignItems="center" justifyContent="space-between">
 				<PageTitle textAlign="left" />
-				<ModulesStatus score={ enabledCount } infoIcon={ scoreInfoIcon } />
+				<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
 			</Stack>
 			<Stack spacing={ 2 }>
 				{ llmsSettings.saveError && (
@@ -159,6 +182,9 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, llmsConf
 				) }
 				{ agentDiscoverySettings.saveError && (
 					<Alert severity="error">{ agentDiscoverySettings.saveError }</Alert>
+				) }
+				{ browserToolsSettings.saveError && (
+					<Alert severity="error">{ browserToolsSettings.saveError }</Alert>
 				) }
 				{ modules.map( renderModule ) }
 			</Stack>
@@ -176,6 +202,12 @@ ModulesScreen.propTypes = {
 		hasPhysicalFile: PropTypes.bool.isRequired,
 		bots: PropTypes.array.isRequired,
 		catalog: PropTypes.array.isRequired,
+	} ).isRequired,
+	browserToolsConfig: PropTypes.shape( {
+		enabled: PropTypes.bool.isRequired,
+		isAvailable: PropTypes.bool.isRequired,
+		tools: PropTypes.array.isRequired,
+		editDetailsUrl: PropTypes.string,
 	} ).isRequired,
 	llmsConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,

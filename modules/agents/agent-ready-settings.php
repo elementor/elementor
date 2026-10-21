@@ -22,6 +22,7 @@ class Agent_Ready_Settings {
 	const MODULE_MARKDOWN_CONTENT = 'markdown_content';
 	const MODULE_BOT_ACCESS_CONTROL = 'bot_access_control';
 	const MODULE_AGENT_DISCOVERY = 'agent_discovery';
+	const MODULE_BROWSER_TOOLS = 'browser_tools';
 
 	const BOT_PERMISSION_SEARCH = 'search';
 	const BOT_PERMISSION_AI_INPUT = 'ai_input';
@@ -111,6 +112,10 @@ class Agent_Ready_Settings {
 		return (bool) $this->get_module_settings( self::MODULE_AGENT_DISCOVERY )['enabled'];
 	}
 
+	public function is_browser_tools_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['enabled'];
+	}
+
 	/**
 	 * Bots listed in the admin table, keyed by user-agent token.
 	 *
@@ -177,6 +182,9 @@ class Agent_Ready_Settings {
 			self::MODULE_AGENT_DISCOVERY => [
 				'enabled' => true,
 			],
+			self::MODULE_BROWSER_TOOLS => [
+				'enabled' => true,
+			],
 		];
 	}
 
@@ -195,6 +203,7 @@ class Agent_Ready_Settings {
 			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
 			self::MODULE_BOT_ACCESS_CONTROL  => fn( array $settings ) => $this->sanitize_bot_access_module( $settings ),
 			self::MODULE_AGENT_DISCOVERY     => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
+			self::MODULE_BROWSER_TOOLS       => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
 		];
 	}
 
