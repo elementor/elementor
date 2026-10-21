@@ -18,7 +18,7 @@ function getInitialTemplatesState( contextData, isImport, registeredSections ) {
 	const includesTemplates = contextData?.data?.includes?.includes( KIT_SECTIONS.TEMPLATES );
 	const customization = contextData?.data?.customization?.templates ?? {};
 
-	return registeredSections.reduce( ( state, section ) => {
+	const sectionStates = registeredSections.reduce( ( state, section ) => {
 		if ( ! section.settingKey ) {
 			return state;
 		}
@@ -32,6 +32,8 @@ function getInitialTemplatesState( contextData, isImport, registeredSections ) {
 			[ section.settingKey ]: customization[ section.settingKey ] ?? initialValue,
 		};
 	}, {} );
+
+	return { ...customization, ...sectionStates };
 }
 
 const transformAnalyticsData = ( payload ) => {
@@ -55,7 +57,8 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 		if ( open ) {
 			setTemplates( getInitialTemplatesState( contextData, isImport, registeredSections ) );
 		}
-	}, [ contextData, isImport, open, registeredSections ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ open ] );
 
 	useEffect( () => {
 		if ( open ) {
