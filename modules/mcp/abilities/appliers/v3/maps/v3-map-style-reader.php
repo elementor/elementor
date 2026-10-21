@@ -221,7 +221,8 @@ class V3_Map_Style_Reader {
 
 	/**
 	 * Elementor does not store settings left at their default, so an unset dependency falls
-	 * back to the desktop value and then the control default.
+	 * back to the desktop value and then the control default. A multi-select dependency is met
+	 * when its list contains the value.
 	 *
 	 * @param array<string, mixed> $dependency_values
 	 * @param array<string, mixed> $settings
@@ -231,8 +232,11 @@ class V3_Map_Style_Reader {
 	private function are_dependencies_met( array $dependency_values, array $settings, array $controls, string $suffix ): bool {
 		foreach ( $dependency_values as $setting => $value ) {
 			$current = $settings[ $setting . $suffix ] ?? $settings[ $setting ] ?? $controls[ $setting ]['default'] ?? '';
+			$is_met = is_array( $current )
+				? in_array( (string) $value, array_map( 'strval', $current ), true )
+				: (string) $current === (string) $value;
 
-			if ( (string) $current !== (string) $value ) {
+			if ( ! $is_met ) {
 				return false;
 			}
 		}

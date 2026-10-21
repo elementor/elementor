@@ -4,6 +4,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Background_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Border_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Box_Shadow_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Typography_Group;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woocommerce_Notice_Targets;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
@@ -90,4 +91,5 @@ return V3_Widget_Map::make( 'woocommerce-purchase-summary' )
 		'confirmation_message_text' => V3_Setting::bind_to( 'confirmation_message_text' )->string()->dynamic(),
 	] )
 	->default_target( $sections )
-	->targets( $message, $titles, $text, $order_items, $product_links, $button );
+	->targets( $message, $titles, $text, $order_items, $product_links, $button )
+	->targets( ...Woocommerce_Notice_Targets::all() );

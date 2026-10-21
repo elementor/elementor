@@ -5,6 +5,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Border_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Box_Shadow_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Typography_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woo_Form_Fields;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woocommerce_Notice_Targets;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
@@ -132,4 +133,5 @@ return V3_Widget_Map::make( 'woocommerce-cart' )
 		'checkout_button_text' => V3_Setting::bind_to( 'checkout_button_text' )->string()->dynamic(),
 	] )
 	->default_target( $sections )
-	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text, .e-cart-totals .input-text, select, .select2-selection--single', 'Inputs and dropdowns of the cart: the coupon code input (only while the coupon box is shown) and the shipping calculator fields (only once the calculator is opened). The normal border color overrides the focus border-color, so mark a focused field with a focus box-shadow instead.' ), $buttons, $products, $product_links, $totals_target, $checkout_button );
+	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text, .e-cart-totals .input-text, select, .select2-selection--single', 'Inputs and dropdowns of the cart: the coupon code input (only while the coupon box is shown) and the shipping calculator fields (only once the calculator is opened). The normal border color overrides the focus border-color, so mark a focused field with a focus box-shadow instead.' ), $buttons, $products, $product_links, $totals_target, $checkout_button )
+	->targets( ...Woocommerce_Notice_Targets::all() );

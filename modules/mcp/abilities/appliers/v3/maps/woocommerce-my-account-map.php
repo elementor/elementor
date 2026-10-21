@@ -5,6 +5,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Border_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Box_Shadow_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Typography_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woo_Form_Fields;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woocommerce_Notice_Targets;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
@@ -134,4 +135,5 @@ return V3_Widget_Map::make( 'woocommerce-my-account' )
 		'tabs_layout' => V3_Setting::bind_to( 'tabs_layout' )->enum_from_control(),
 	] )
 	->default_target( $account_tabs )
-	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .form-row .input-text, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .form-row select, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .select2-container--default .select2-selection--single, .e-my-account-tab__payment-methods .woocommerce input[type=text]', 'Inputs and dropdowns of the login, register, account details, address and add payment method forms. Not applied to a custom dashboard template.' ), $buttons, $table_items, $table_buttons );
+	->targets( $sections, $titles, $text, $links, $labels, Woo_Form_Fields::target( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .form-row .input-text, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .form-row select, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .select2-container--default .select2-selection--single, .e-my-account-tab__payment-methods .woocommerce input[type=text]', 'Inputs and dropdowns of the login, register, account details, address and add payment method forms. Not applied to a custom dashboard template.' ), $buttons, $table_items, $table_buttons )
+	->targets( ...Woocommerce_Notice_Targets::all() );

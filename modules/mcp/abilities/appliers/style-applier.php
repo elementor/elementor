@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Kit_Settings_Host;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Clearer;
@@ -33,6 +34,8 @@ class Style_Applier {
 	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
 	const UNKNOWN_VARIABLE_CODE = 'unknown_variable';
 	const BORDER_STYLE_NONE = 'none';
+	const SITE_WIDE_STYLE_CODE = 'site_wide_style';
+	const SITE_WIDE_STYLE_FORBIDDEN_CODE = 'site_wide_style_forbidden';
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
@@ -174,6 +177,41 @@ class Style_Applier {
 			return;
 		}
 
+		$host = $map->get_settings_host();
+		$settings = $host->read( $node );
+		$hosted_node = array_merge( $node, [ 'settings' => $settings ] );
+
+		$this->apply_v3_style_to_node( $hosted_node, $css_string, $config_id, $warnings, $style_apply_mode );
+
+		$updated_settings = $hosted_node['settings'];
+		$site_settings = $host->site_settings( $settings );
+		$changes_site_settings = $host->site_settings( $updated_settings ) !== $site_settings;
+
+		if ( $changes_site_settings && ! Kit_Settings_Host::can_write() ) {
+			$warnings->add( self::SITE_WIDE_STYLE_FORBIDDEN_CODE, __( 'This style is stored in Site Settings, which you do not have permission to edit, so it was not saved.', 'elementor' ), $config_id );
+			$updated_settings = $host->with_site_settings( $updated_settings, $site_settings );
+			$changes_site_settings = false;
+		}
+
+		if ( $updated_settings === $settings ) {
+			return;
+		}
+
+		$host->write( $node, $updated_settings );
+
+		if ( $changes_site_settings ) {
+			$warnings->add( self::SITE_WIDE_STYLE_CODE, __( 'This style is stored in Site Settings and applies to the whole site, not only this element. It goes live when the page is saved, even if the page itself stays a draft.', 'elementor' ), $config_id );
+		}
+	}
+
+	private function apply_v3_style_to_node( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode ): void {
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+
+		if ( null === $map ) {
+			return;
+		}
+
 		$css_string = V3_Custom_Css_Fallback::without_statements( $css_string, V3_Map_Style_Clearer::user_css_rules( $node['settings'] ?? [], $map ) );
 		$is_empty_css = '' === trim( $css_string );
 		$result = null;
@@ -189,7 +227,8 @@ class Style_Applier {
 		}
 
 		if ( 'replace' === $style_apply_mode ) {
-			( new V3_Map_Style_Clearer() )->clear( $node, $map, $widget_type );
+			$patch = is_array( $result ) ? ( $result['settings_patch'] ?? [] ) : [];
+			( new V3_Map_Style_Clearer() )->clear( $node, $map->for_replace( $patch ), $widget_type );
 		}
 
 		if ( $is_empty_css ) {
@@ -204,6 +243,7 @@ class Style_Applier {
 		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [], $controls );
 
 		$settings_patch = self::with_border_style_defaults( $result['settings_patch'] ?? [], $result['border_style_defaults'] ?? [], $node['settings'] ?? [] );
+		$settings_patch = self::with_list_requirements( $settings_patch, $result['list_requirements'] ?? [], $node['settings'] ?? [] );
 
 		if ( ! empty( $settings_patch ) ) {
 			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $settings_patch );
@@ -252,6 +292,27 @@ class Style_Applier {
 		);
 
 		return array_merge( $unset_defaults, $settings_patch );
+	}
+
+	/**
+	 * A requirement on a multi-select control adds its value to the saved list instead of replacing it.
+	 *
+	 * @param array<string, mixed>    $settings_patch
+	 * @param array<string, string[]> $list_requirements Setting => values the list must contain.
+	 * @param array<string, mixed>    $saved_settings
+	 * @return array<string, mixed>
+	 */
+	private static function with_list_requirements( array $settings_patch, array $list_requirements, array $saved_settings ): array {
+		foreach ( $list_requirements as $setting => $values ) {
+			$saved = is_array( $saved_settings[ $setting ] ?? null ) ? $saved_settings[ $setting ] : [];
+			$missing = array_values( array_diff( $values, $saved ) );
+
+			if ( ! empty( $missing ) ) {
+				$settings_patch[ $setting ] = array_merge( $saved, $missing );
+			}
+		}
+
+		return $settings_patch;
 	}
 
 	private static function has_border_style( $value ): bool {

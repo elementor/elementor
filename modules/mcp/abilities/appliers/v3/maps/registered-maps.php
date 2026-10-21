@@ -22,6 +22,7 @@ return [
 	'woocommerce-purchase-summary' => __DIR__ . '/woocommerce-purchase-summary-map.php',
 	'woocommerce-checkout-page' => __DIR__ . '/woocommerce-checkout-page-map.php',
 	'woocommerce-my-account' => __DIR__ . '/woocommerce-my-account-map.php',
+	'woocommerce-notices' => __DIR__ . '/woocommerce-notices-map.php',
 	'theme-post-title' => __DIR__ . '/theme-post-title-map.php',
 	'theme-archive-title' => __DIR__ . '/theme-archive-title-map.php',
 	'theme-post-content' => __DIR__ . '/theme-post-content-map.php',
