@@ -19,6 +19,12 @@ class Icon_Transformer extends Transformer_Base {
 
 	const FA7_SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: visible;';
 
+	/**
+	 * Font Awesome values that Core cannot resolve go through the `svg-html` filter before the default icon.
+	 * Extensions check for this constant instead of comparing Core versions.
+	 */
+	const RESOLVES_EXTENSION_FONT_AWESOME_ICONS = true;
+
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$icon = [
 			'value' => $value['value'] ?? '',
@@ -53,7 +59,8 @@ class Icon_Transformer extends Transformer_Base {
 
 	private function get_filtered_svg_html( array $icon ): string {
 		/**
-		 * Filters inline SVG markup for an icon library value not handled by Core.
+		 * Filters inline SVG markup for an icon library value not handled by Core,
+		 * including Font Awesome values that Core's bundled catalog cannot resolve.
 		 *
 		 * @param string $html Sanitizable SVG markup. Default empty.
 		 * @param array  $icon {
@@ -183,6 +190,7 @@ class Icon_Transformer extends Transformer_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
+		$svg->set_attribute( 'aria-hidden', 'true' );
 		$this->merge_inline_styles( $svg, $inline_styles );
 
 		return ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );

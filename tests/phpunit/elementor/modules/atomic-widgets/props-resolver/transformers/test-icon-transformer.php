@@ -228,6 +228,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<svg', $result['html'] );
 		$this->assertStringContainsString( 'd="M1 1"', $result['html'] );
 		$this->assertStringContainsString( 'fill="currentColor"', $result['html'] );
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
 		$this->assertNull( $result['url'] );
 	}
 
@@ -249,6 +250,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 	private function assert_default_svg_fallback( array $result ): void {
 		$this->assertStringContainsString( '<svg', $result['html'] );
 		$this->assertStringContainsString( 'M24.9999 4.31543', $result['html'] );
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
 		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
 	}
 
@@ -335,6 +337,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertStringContainsString( 'd="M3 3h4v4H3z"', $result['html'] );
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
 		$this->assertNull( $result['url'] );
 	}
 
