@@ -223,3 +223,21 @@ jobs:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+
+  # ── Job 9 ────────────────────────────────────────────────────────────────
+  # Published-artifact and editor-upgrade checks. Pre-releases skip publish,
+  # and a skipped inner publish job still reports success, so the prerelease
+  # input is what keeps this off the beta path.
+  # ─────────────────────────────────────────────────────────────────────────
+  post-release-check:
+    name: Post-Release Check
+    needs: publish
+    if: ${{ !inputs.prerelease && github.repository_owner == 'elementor' }}
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/post-release-check.yml
+    with:
+      core_version: ${{ inputs.version }}
+    secrets:
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
