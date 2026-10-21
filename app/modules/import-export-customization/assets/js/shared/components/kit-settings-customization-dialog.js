@@ -15,7 +15,6 @@ import {
 } from './settings-customization-sections';
 import {
 	getAvailableCustomizationDialogChildren,
-	getCustomizationDialogSnapshot,
 	getImportedClassesCount,
 	getImportedVariablesCount,
 	isClassesExported,
@@ -135,18 +134,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null } = contextData;
 
-	const settingsDialogSnapshot = getCustomizationDialogSnapshot( KIT_SECTIONS.SETTINGS );
-	const designSystemDialogSnapshot = getCustomizationDialogSnapshot( KIT_SECTION_ITEMS.SETTINGS_DESIGN_SYSTEM );
-	const settingsTreeSignature = JSON.stringify( {
-		settings: settingsDialogSnapshot,
-		designSystem: designSystemDialogSnapshot,
-	} );
 	const settingsTree = useMemo( buildSettingsTree );
 	const registeredRows = useMemo( () => collectSettingRows( settingsTree ), [ settingsTree ] );
-	const registeredRowsKey = useMemo(
-		() => registeredRows.map( ( row ) => `${ row.key }:${ row.component?.name || '' }` ).join( '|' ),
-		[ registeredRows ],
-	);
 	const rowByKey = useMemo( () => new Map( registeredRows.map( ( row ) => [ row.key, row ] ) ), [ registeredRows ] );
 
 	const {
@@ -176,7 +165,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		if ( open ) {
 			setSettings( getInitialSettings( contextData, isImport, registeredRows ) );
 		}
-	}, [ contextData, isImport, open, registeredRows, registeredRowsKey ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ open ] );
 
 	useEffect( () => {
 		if ( open ) {
