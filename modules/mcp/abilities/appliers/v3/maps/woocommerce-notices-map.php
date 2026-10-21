@@ -68,7 +68,7 @@ $message_link = Style_Target::make( 'message-link' )
 	->bind( 'color', V3_Control::bind_to( 'notice_message_hover_links_color' ), $hover );
 
 return V3_Widget_Map::make( 'woocommerce-notices' )
-	->description( 'Where WooCommerce notices (errors, success messages and info) show on the page. Its style targets set the Site Settings > WooCommerce > Notices styles, so they apply to every notice on the site. Styling a notice type also turns on its custom styles there.' )
+	->description( 'Where WooCommerce notices (errors, success messages and info) show on the page. Its styles apply to every WooCommerce notice on the site, not only this widget.' )
 	->kit_tab( 'settings-woocommerce', [ $notice_types_setting ] )
 	->default_target( $notice_box( 'error', 'Error notice', 'error', 'wc_error' ) )
 	->targets(
