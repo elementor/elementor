@@ -317,6 +317,37 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'onload', $result['html'] );
 	}
 
+	/**
+	 * @dataProvider labelled_svg_provider
+	 */
+	public function test_transform__keeps_filtered_svg_with_accessible_name_visible_to_screen_readers( string $svg ) {
+		// Arrange.
+		$filter = static fn() => $svg;
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'x x-y',
+				'library' => 'labelled-pack',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'aria-hidden', $result['html'] );
+	}
+
+	public function labelled_svg_provider(): array {
+		return [
+			'aria-label' => [ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" aria-label="Star"><path d="M0 0h1v1H0z"/></svg>' ],
+			'title' => [ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><title>Star</title><path d="M0 0h1v1H0z"/></svg>' ],
+		];
+	}
+
 	public function test_transform__applies_svg_html_filter_for_font_awesome_icon_missing_from_free_data() {
 		// Arrange.
 		$filter = static fn( $html, $icon ) => 'fa-light' === $icon['library']

@@ -22,6 +22,8 @@ class Icon_Transformer extends Transformer_Base {
 	/**
 	 * Font Awesome values that Core cannot resolve go through the `svg-html` filter before the default icon.
 	 * Extensions check for this constant instead of comparing Core versions.
+	 *
+	 * @since 4.4.0
 	 */
 	const RESOLVES_EXTENSION_FONT_AWESOME_ICONS = true;
 
@@ -61,6 +63,8 @@ class Icon_Transformer extends Transformer_Base {
 		/**
 		 * Filters inline SVG markup for an icon library value not handled by Core,
 		 * including Font Awesome values that Core's bundled catalog cannot resolve.
+		 *
+		 * @since 4.4.0 Also receives unresolved Font Awesome values.
 		 *
 		 * @param string $html Sanitizable SVG markup. Default empty.
 		 * @param array  $icon {
@@ -190,10 +194,20 @@ class Icon_Transformer extends Transformer_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
-		$svg->set_attribute( 'aria-hidden', 'true' );
+
+		if ( ! $this->has_accessible_name( $svg, $content ) ) {
+			$svg->set_attribute( 'aria-hidden', 'true' );
+		}
+
 		$this->merge_inline_styles( $svg, $inline_styles );
 
 		return ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+	}
+
+	private function has_accessible_name( \WP_HTML_Tag_Processor $svg, string $content ): bool {
+		return null !== $svg->get_attribute( 'aria-label' )
+			|| null !== $svg->get_attribute( 'aria-labelledby' )
+			|| false !== stripos( $content, '<title' );
 	}
 
 	private function merge_inline_styles( \WP_HTML_Tag_Processor $svg, string $inline_styles ): void {
