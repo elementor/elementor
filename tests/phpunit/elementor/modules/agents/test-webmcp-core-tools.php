@@ -46,6 +46,8 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->generator = new Content_Generator( $this->sanitizer );
 		$this->settings  = new Agent_Ready_Settings( $this->generator );
 		$this->settings->ensure_option_exists();
+
+		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 	}
 
 	public function tearDown(): void {
@@ -56,7 +58,8 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
-		delete_transient( Business_Info_Extractor::REFRESH_LOCK );
+		delete_transient( Business_Info_Extractor::FRESH_TRANSIENT );
+		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 		remove_theme_mod( 'nav_menu_locations' );
 
 		parent::tearDown();
@@ -317,27 +320,9 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->assertSame( '+1 555 0100', $with_data['telephone'] );
 	}
 
-	public function test_query_business_info__fetches_once_and_caches_on_cold_cache() {
-		// Arrange
-		$requests = $this->stub_home_page( '<script type="application/ld+json">{"@type":"LocalBusiness","telephone":"+1 555 0100"}</script>' );
-		$tool     = $this->create_business_info_tool();
-
-		// Act
-		$first  = $tool->execute();
-		$second = $tool->execute();
-
-		// Assert
-		$this->assertSame( '+1 555 0100', $first['telephone'] );
-		$this->assertSame( $first, $second );
-		$this->assertSame( 1, $requests->count );
-		$this->assertIsArray( get_transient( Business_Info_Extractor::TRANSIENT ) );
-		$this->assertFalse( get_transient( Business_Info_Extractor::REFRESH_LOCK ) );
-	}
-
-	public function test_query_business_info__reports_unavailable_while_another_refresh_holds_the_lock() {
+	public function test_query_business_info__schedules_a_refresh_without_fetching_on_cold_cache() {
 		// Arrange
 		$requests = $this->stub_home_page( '' );
-		set_transient( Business_Info_Extractor::REFRESH_LOCK, true, MINUTE_IN_SECONDS );
 
 		// Act
 		$result = $this->create_business_info_tool()->execute();
@@ -346,6 +331,48 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( Abstract_Webmcp_Tool::ERROR_UNAVAILABLE, $result->get_error_code() );
 		$this->assertSame( 0, $requests->count );
+		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_query_business_info__serves_stale_data_while_scheduling_a_refresh() {
+		// Arrange
+		$requests = $this->stub_home_page( '' );
+		set_transient( Business_Info_Extractor::TRANSIENT, [ 'telephone' => '+1 555 0100' ] );
+
+		// Act
+		$result = $this->create_business_info_tool()->execute();
+
+		// Assert
+		$this->assertSame( '+1 555 0100', $result['telephone'] );
+		$this->assertSame( 0, $requests->count );
+		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_query_business_info__does_not_schedule_a_refresh_while_fresh() {
+		// Arrange
+		set_transient( Business_Info_Extractor::TRANSIENT, [ 'telephone' => '+1 555 0100' ] );
+		set_transient( Business_Info_Extractor::FRESH_TRANSIENT, true );
+
+		// Act
+		$this->create_business_info_tool()->execute();
+
+		// Assert
+		$this->assertFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_business_info_refresh__fetches_once_and_marks_the_data_fresh() {
+		// Arrange
+		$requests  = $this->stub_home_page( '<script type="application/ld+json">{"@type":"LocalBusiness","telephone":"+1 555 0100"}</script>' );
+		$extractor = new Business_Info_Extractor( new Business_Schema_Parser( $this->sanitizer ) );
+
+		// Act
+		$extractor->refresh();
+		$cached = $extractor->get_or_refresh();
+
+		// Assert
+		$this->assertSame( '+1 555 0100', $cached['telephone'] );
+		$this->assertSame( 1, $requests->count );
+		$this->assertTrue( get_transient( Business_Info_Extractor::FRESH_TRANSIENT ) );
 	}
 
 	private function stub_home_page( string $body ): \stdClass {

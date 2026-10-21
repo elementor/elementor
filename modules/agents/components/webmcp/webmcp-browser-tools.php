@@ -64,12 +64,14 @@ class Webmcp_Browser_Tools extends Feature_Component {
 	public function register(): void {
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_category' ] );
 		add_action( 'update_option_' . Agent_Ready_Settings::OPTION, [ $this, 'flush_relevant_tools_cache' ] );
+		add_action( 'update_option_' . Agent_Ready_Settings::OPTION, [ $this, 'warm_business_info_on_save' ] );
 		add_action( 'elementor/agents/llms_txt/cache_invalidated', [ $this, 'flush_relevant_tools_cache' ] );
 
 		if ( ! $this->settings->is_browser_tools_enabled() ) {
 			return;
 		}
 
+		add_action( 'admin_init', [ $this, 'warm_business_info' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_core_abilities' ] );
 		add_filter( 'elementor/agents/webmcp/is_applicable', '__return_true' );
 		add_filter( 'elementor/agents/webmcp_manifest', [ $this, 'add_manifest_tools' ] );
@@ -178,6 +180,20 @@ class Webmcp_Browser_Tools extends Feature_Component {
 
 	public function flush_relevant_tools_cache(): void {
 		delete_transient( self::RELEVANT_TOOLS_TRANSIENT );
+	}
+
+	public function warm_business_info(): void {
+		if ( wp_doing_ajax() || wp_doing_cron() || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$this->business_info_extractor->warm();
+	}
+
+	public function warm_business_info_on_save(): void {
+		if ( $this->settings->is_browser_tools_enabled() ) {
+			$this->business_info_extractor->warm();
+		}
 	}
 
 	/**

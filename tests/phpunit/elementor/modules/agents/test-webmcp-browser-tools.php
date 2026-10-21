@@ -79,6 +79,8 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ) ),
 			new Query_Business_Info( $this->extractor, $sanitizer ),
 		] );
+
+		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 	}
 
 	public function tearDown(): void {
@@ -91,7 +93,8 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
-		delete_transient( Business_Info_Extractor::REFRESH_LOCK );
+		delete_transient( Business_Info_Extractor::FRESH_TRANSIENT );
+		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 		delete_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT );
 
 		parent::tearDown();
@@ -245,9 +248,8 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		$this->assertSame( Webmcp_Run_Route::STATUS_BAD_REQUEST, $response->get_status() );
 	}
 
-	public function test_run_route__returns_503_while_business_info_is_refreshing() {
+	public function test_run_route__returns_503_while_business_info_was_never_fetched() {
 		// Arrange
-		set_transient( Business_Info_Extractor::REFRESH_LOCK, true, MINUTE_IN_SECONDS );
 		$this->register_route();
 
 		// Act
@@ -255,6 +257,70 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( Webmcp_Run_Route::STATUS_SERVICE_UNAVAILABLE, $response->get_status() );
+	}
+
+	public function test_run_route__accepts_null_input() {
+		// Arrange
+		$this->register_route();
+
+		// Act
+		$response = $this->run_tool( 'get_site_structure', null );
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	public function test_run_route__returns_400_for_non_object_input() {
+		// Arrange
+		$this->register_route();
+
+		// Act
+		$response = $this->run_tool( 'get_site_structure', 'not-an-object' );
+
+		// Assert
+		$this->assertSame( Webmcp_Run_Route::STATUS_BAD_REQUEST, $response->get_status() );
+	}
+
+	public function test_warm_business_info__schedules_an_immediate_refresh_for_admins_on_cold_cache() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$this->browser_tools->warm_business_info();
+
+		// Assert
+		$scheduled = wp_next_scheduled( Business_Info_Extractor::CRON_HOOK );
+		$this->assertNotFalse( $scheduled );
+		$this->assertLessThanOrEqual( time(), $scheduled );
+	}
+
+	public function test_warm_business_info__skips_fresh_data_and_non_admins() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act
+		$this->browser_tools->warm_business_info();
+		$skipped_for_editor = wp_next_scheduled( Business_Info_Extractor::CRON_HOOK );
+		$this->act_as_admin();
+		set_transient( Business_Info_Extractor::FRESH_TRANSIENT, true );
+		$this->browser_tools->warm_business_info();
+
+		// Assert
+		$this->assertFalse( $skipped_for_editor );
+		$this->assertFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_register__warms_business_info_when_settings_are_saved() {
+		// Arrange
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+		remove_all_actions( 'update_option_' . Agent_Ready_Settings::OPTION );
+		$this->browser_tools->register();
+
+		// Act
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+
+		// Assert
+		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
 	}
 
 	private function unregister_webmcp_abilities(): void {
@@ -276,7 +342,7 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		do_action( 'rest_api_init' );
 	}
 
-	private function run_tool( string $tool, array $input ): \WP_REST_Response {
+	private function run_tool( string $tool, $input ): \WP_REST_Response {
 		$request = new \WP_REST_Request( 'POST', '/' . Webmcp_Run_Route::ROUTE );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( [ 'tool' => $tool, 'input' => $input ] ) );

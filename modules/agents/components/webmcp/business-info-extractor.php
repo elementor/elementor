@@ -9,17 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Reads business details from the Schema.org JSON-LD of the real home page.
  *
- * The page is fetched from cron or the first agent call on a cold cache.
- * Rendering a front-end page never reads business info, so the loopback can not
- * recurse. A short lock keeps concurrent cold-cache calls from piling up
- * fetches; callers that hit the lock get null, meaning "unknown yet", never an
- * empty result. Failures are cached as an empty result.
+ * The page is only fetched from cron, so a public agent call never waits on a
+ * loopback request. Stale data keeps being served while cron refreshes it; only
+ * a cache that was never filled returns null, meaning "unknown yet", never an
+ * empty result. Failures are cached as an empty result for a shorter time.
  */
 class Business_Info_Extractor {
 
 	const TRANSIENT = 'elementor_agents_webmcp_business_info';
 
+	const FRESH_TRANSIENT = 'elementor_agents_webmcp_business_info_fresh';
+
 	const CRON_HOOK = 'elementor/agents/webmcp/refresh_business_info';
+
+	const DATA_TTL = WEEK_IN_SECONDS;
 
 	const POSITIVE_TTL = DAY_IN_SECONDS;
 
@@ -35,10 +38,6 @@ class Business_Info_Extractor {
 
 	const HTTP_OK = 200;
 
-	const REFRESH_LOCK = 'elementor_agents_webmcp_business_info_lock';
-
-	const REFRESH_LOCK_TTL = MINUTE_IN_SECONDS;
-
 	private Business_Schema_Parser $parser;
 
 	public function __construct( Business_Schema_Parser $parser ) {
@@ -51,36 +50,48 @@ class Business_Info_Extractor {
 	}
 
 	public function get_or_refresh(): ?array {
+		if ( ! $this->is_fresh() ) {
+			$this->schedule_refresh();
+		}
+
 		$cached = get_transient( self::TRANSIENT );
 
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
-		if ( get_transient( self::REFRESH_LOCK ) ) {
-			return null;
-		}
-
-		set_transient( self::REFRESH_LOCK, true, self::REFRESH_LOCK_TTL );
-
-		$info = $this->refresh();
-
-		delete_transient( self::REFRESH_LOCK );
-
-		return $info;
+		return is_array( $cached ) ? $cached : null;
 	}
 
 	public function refresh(): array {
 		$info = $this->parser->parse( $this->fetch_home_page() );
 
-		set_transient( self::TRANSIENT, $info, empty( $info ) ? self::NEGATIVE_TTL : self::POSITIVE_TTL );
+		set_transient( self::TRANSIENT, $info, self::DATA_TTL );
+		set_transient( self::FRESH_TRANSIENT, true, empty( $info ) ? self::NEGATIVE_TTL : self::POSITIVE_TTL );
 
 		return $info;
 	}
 
 	public function schedule_refresh(): void {
+		$this->schedule_refresh_at( time() + self::REFRESH_DELAY );
+	}
+
+	/**
+	 * Runs the refresh in a separate cron request, so the current request never waits on the fetch.
+	 */
+	public function warm(): void {
+		if ( $this->is_fresh() ) {
+			return;
+		}
+
+		$this->schedule_refresh_at( time() );
+
+		spawn_cron();
+	}
+
+	private function is_fresh(): bool {
+		return (bool) get_transient( self::FRESH_TRANSIENT );
+	}
+
+	private function schedule_refresh_at( int $timestamp ): void {
 		if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
-			wp_schedule_single_event( time() + self::REFRESH_DELAY, self::CRON_HOOK );
+			wp_schedule_single_event( $timestamp, self::CRON_HOOK );
 		}
 	}
 

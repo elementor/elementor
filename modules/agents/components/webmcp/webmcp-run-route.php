@@ -50,6 +50,10 @@ class Webmcp_Run_Route {
 					'type' => 'string',
 					'required' => true,
 				],
+				'input' => [
+					'type' => [ 'object', 'null' ],
+					'required' => false,
+				],
 			],
 		] );
 	}
