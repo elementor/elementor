@@ -90,6 +90,12 @@ class V3_Setting {
 		return $this;
 	}
 
+	public function whole_number(): self {
+		$this->adapter = new Number_Setting_Adapter( true );
+
+		return $this;
+	}
+
 	public function size(): self {
 		$this->adapter = new Size_Setting_Adapter();
 

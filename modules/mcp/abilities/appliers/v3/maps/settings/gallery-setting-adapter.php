@@ -20,11 +20,11 @@ class Gallery_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guar
 	 * Without this the item would be dropped silently while the rest of the gallery is saved.
 	 */
 	public function reject_reason( $plain, array $control ): ?string {
-		foreach ( is_array( $plain ) ? $plain : [] as $item ) {
+		foreach ( is_array( $plain ) ? $plain : [] as $index => $item ) {
 			$id = (int) ( $item['id'] ?? 0 );
 
 			if ( 'attachment' !== get_post_type( $id ) ) {
-				return sprintf( 'references Media Library id %d, which does not exist', $id );
+				return sprintf( 'has a missing image: item %s references Media Library id %d, which does not exist (no item in the list was saved)', $index, $id );
 			}
 		}
 

@@ -59,7 +59,7 @@ return V3_Widget_Map::make( 'gallery' )
 		'gallery_type' => V3_Setting::bind_to( 'gallery_type' )->enum( [ 'single' ] ),
 		'gallery' => V3_Setting::bind_to( 'gallery' )->gallery(),
 		'gallery_layout' => V3_Setting::bind_to( 'gallery_layout' )->enum_from_control(),
-		'columns' => V3_Setting::bind_to( 'columns' )->number(),
+		'columns' => V3_Setting::bind_to( 'columns' )->whole_number(),
 		'aspect_ratio' => V3_Setting::bind_to( 'aspect_ratio' )->enum_from_control(),
 		'link_to' => V3_Setting::bind_to( 'link_to' )->enum_from_control(),
 		'url' => V3_Setting::bind_to( 'url' )->link(),

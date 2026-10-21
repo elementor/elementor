@@ -17,25 +17,38 @@ class Number_Setting_Adapter implements V3_Setting_Adapter {
 	 */
 	const MAX_MAGNITUDE = 9007199254740992;
 
+	private bool $whole;
+
+	public function __construct( bool $whole = false ) {
+		$this->whole = $whole;
+	}
+
 	public function supports( array $control ): bool {
 		return self::CONTROL_TYPE === ( $control['type'] ?? null );
 	}
 
 	public function prop_type( array $control ): Prop_Type {
-		return V3_Number_Prop_Type::make()->range(
-			self::control_limit( $control, 'min', -self::MAX_MAGNITUDE ),
-			self::control_limit( $control, 'max', self::MAX_MAGNITUDE )
+		$prop_type = V3_Number_Prop_Type::make()->range(
+			self::control_limit( $control, 'min' ),
+			self::control_limit( $control, 'max' )
 		);
+
+		return $this->whole || self::has_whole_step( $control ) ? $prop_type->whole() : $prop_type;
 	}
 
 	/**
 	 * @param array<string, mixed> $control
 	 * @param string               $key
-	 * @param int                  $fallback
-	 * @return int|float
+	 * @return int|float|null
 	 */
-	private static function control_limit( array $control, string $key, int $fallback ) {
-		return is_numeric( $control[ $key ] ?? null ) ? +$control[ $key ] : $fallback;
+	private static function control_limit( array $control, string $key ) {
+		return is_numeric( $control[ $key ] ?? null ) ? +$control[ $key ] : null;
+	}
+
+	private static function has_whole_step( array $control ): bool {
+		$step = self::control_limit( $control, 'step' );
+
+		return null !== $step && floor( (float) $step ) === (float) $step;
 	}
 
 	public function to_control_value( array $prop_value, array $control ) {
