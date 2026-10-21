@@ -69,7 +69,30 @@ class Test_Plain_Schema_Validator extends TestCase {
 		$result = Plain_Schema_Validator::strict()->validate( [ 'value' => 'fas fa-star', 'color' => 'red' ], self::ICON_SCHEMA, 'icon' );
 
 		// Assert.
-		$this->assertSame( 'color is not a valid property of Object', $result['error'] );
+		$this->assertSame( 'icon[color] is not a valid property of Object', $result['error'] );
+	}
+
+	public function test_validate__names_the_list_item_that_carries_an_unlisted_key() {
+		// Arrange.
+		$schema = [
+			'anyOf' => [
+				[
+					'type' => 'array',
+					'items' => [
+						'type' => 'object',
+						'properties' => [ 'id' => [ 'type' => 'integer' ] ],
+						'additionalProperties' => false,
+					],
+				],
+				[ 'type' => 'string' ],
+			],
+		];
+
+		// Act.
+		$result = Plain_Schema_Validator::strict()->validate( [ [ 'id' => 1 ], [ 'id' => 2, 'caption' => 'x' ] ], $schema, 'gallery' );
+
+		// Assert.
+		$this->assertSame( 'gallery[1][caption] is not a valid property of Object', $result['error'] );
 	}
 
 	public function test_validate__lenient_keeps_unlisted_keys_for_the_caller_to_drop() {
