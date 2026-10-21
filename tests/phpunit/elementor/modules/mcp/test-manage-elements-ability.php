@@ -2194,6 +2194,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	private function given_form_with_atom_in_container( int $post_id, string $widget_type ): string {
+		$this->given_form_element_registered();
+
 		$form_id = $this->random_element_id();
 		$container_id = $this->random_element_id();
 		$atom_id = $this->random_element_id();
