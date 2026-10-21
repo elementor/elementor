@@ -20,6 +20,10 @@ import {
 	createCustomizationDialogsRegistry,
 } from './customization-dialogs-base';
 
+import {
+	getCustomizationDialogsRegistry,
+} from '../utils';
+
 const CUSTOMIZATION_DIALOGS_READY_EVENT = 'elementor/import-export-customization/ready';
 const REGISTRY_STATE_KEY = '__elementorImportExportCustomization';
 
@@ -94,10 +98,6 @@ export function registerCustomizationDialogs( registry ) {
 	}
 
 	return registry;
-}
-
-export function getCustomizationDialogsRegistry() {
-	return globalThis.elementorModules?.importExport?.customizationDialogsRegistry ?? null;
 }
 
 function getRegistryState( registry ) {

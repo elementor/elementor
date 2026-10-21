@@ -1,16 +1,13 @@
 import { BaseRegistry } from './base';
 import {
 	getSiteSettingsManifest,
+	isAtomicElementsFeatureActive,
 	isThemeExported,
 } from '../utils';
 import {
 	KIT_SECTIONS,
 	KIT_SECTION_ITEMS,
 } from '../constants';
-
-function isAtomicSettingsExperimentActive() {
-	return !! globalThis.elementorCommon?.config?.experimentalFeatures?.e_atomic_elements;
-}
 
 function getThemeInitialState( { contextData, includesSettings, isImport } ) {
 	if ( ! isImport ) {
@@ -71,7 +68,7 @@ export function createCustomizationDialogsRegistry() {
 			parentKey: KIT_SECTIONS.SETTINGS,
 			title: 'Classes, variables & default styles',
 			order: 20,
-			isAvailable: isAtomicSettingsExperimentActive,
+			isAvailable: isAtomicElementsFeatureActive,
 		},
 		{
 			key: KIT_SECTION_ITEMS.SETTINGS_GLOBAL_CLASSES,
@@ -79,7 +76,7 @@ export function createCustomizationDialogsRegistry() {
 			title: 'Classes',
 			order: 10,
 			settingKey: 'classes',
-			isAvailable: isAtomicSettingsExperimentActive,
+			isAvailable: isAtomicElementsFeatureActive,
 			getInitialState: createSiteSettingsInitialStateResolver( 'classes' ),
 		},
 		{
@@ -88,7 +85,7 @@ export function createCustomizationDialogsRegistry() {
 			title: 'Variables',
 			order: 20,
 			settingKey: 'variables',
-			isAvailable: isAtomicSettingsExperimentActive,
+			isAvailable: isAtomicElementsFeatureActive,
 			getInitialState: createSiteSettingsInitialStateResolver( 'variables' ),
 		},
 		{
@@ -97,7 +94,7 @@ export function createCustomizationDialogsRegistry() {
 			title: 'Default styles',
 			order: 30,
 			settingKey: 'defaultStyles',
-			isAvailable: isAtomicSettingsExperimentActive,
+			isAvailable: isAtomicElementsFeatureActive,
 			getInitialState: createSiteSettingsInitialStateResolver( 'defaultStyles' ),
 		},
 		{

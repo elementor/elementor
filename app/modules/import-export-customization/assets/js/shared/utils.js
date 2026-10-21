@@ -8,18 +8,6 @@ export function isAtomicElementsFeatureActive() {
 	return isExperimentActive( 'e_atomic_elements' );
 }
 
-export function isClassesFeatureActive() {
-	return isAtomicElementsFeatureActive();
-}
-
-export function isVariablesFeatureActive() {
-	return isAtomicElementsFeatureActive();
-}
-
-export function isDefaultStylesFeatureActive() {
-	return isAtomicElementsFeatureActive();
-}
-
 export const IMPORT_EXPORT_CUSTOMIZATION_DEBUG_STORAGE_KEY = 'elementor:import-export-customization:debug';
 
 export function isImportExportCustomizationDebugEnabled() {
@@ -107,9 +95,7 @@ export function isVariablesExported( contextData ) {
 }
 
 export function isDefaultStylesExported( contextData ) {
-	const siteSettings = getSiteSettingsManifest( contextData );
-
-	return undefined !== siteSettings?.defaultStyles && !! siteSettings.defaultStyles;
+	return isSiteSettingExported( contextData, 'defaultStyles' );
 }
 
 export function isThemeExported( contextData ) {
