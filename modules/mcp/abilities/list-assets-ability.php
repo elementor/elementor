@@ -54,7 +54,7 @@ class List_Assets_Ability extends Abstract_Ability {
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'List Media Library Assets', 'elementor' ),
+			esc_html__( 'List Media Library Assets', 'elementor' ),
 			Prompt_Loader::load( 'list-assets' ),
 			'elementor',
 			[

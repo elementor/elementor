@@ -20,7 +20,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'Request One-Time Media Upload', 'elementor' ),
+			esc_html__( 'Request One-Time Media Upload', 'elementor' ),
 			Prompt_Loader::load( 'request-media-upload' ),
 			'elementor',
 			[

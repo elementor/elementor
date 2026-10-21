@@ -20,7 +20,7 @@ class Upload_Media_Ability extends Abstract_Ability {
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'Upload Media by URL', 'elementor' ),
+			esc_html__( 'Upload Media by URL', 'elementor' ),
 			Prompt_Loader::load( 'upload-media' ),
 			'elementor',
 			[
