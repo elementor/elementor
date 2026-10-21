@@ -8,32 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Icons_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard {
+class Icons_Setting_Adapter implements V3_Setting_Adapter {
 
 	const CONTROL_TYPE = 'icons';
 
 	const FIELD_KEYS = [ 'value', 'library' ];
-
-	/**
-	 * The icon value becomes a CSS class list and an icon-library lookup; only class-name characters make sense.
-	 */
-	public function reject_reason( $plain, array $control ): ?string {
-		if ( ! is_array( $plain ) || array_values( $plain ) === $plain ) {
-			return 'is not an icon object ({ value, library })';
-		}
-
-		foreach ( self::FIELD_KEYS as $key ) {
-			$value = $plain[ $key ] ?? '';
-
-			if ( ! is_string( $value ) || ! preg_match( '/^[A-Za-z0-9 _-]*$/', $value ) ) {
-				return sprintf( 'has an icon "%s" with unsupported characters (letters, digits, spaces, "-" and "_" only)', $key );
-			}
-		}
-
-		$unknown = array_diff( array_keys( $plain ), self::FIELD_KEYS );
-
-		return empty( $unknown ) ? null : sprintf( 'has unsupported icon keys (%s)', implode( ', ', $unknown ) );
-	}
 
 	public function supports( array $control ): bool {
 		return self::CONTROL_TYPE === ( $control['type'] ?? null );

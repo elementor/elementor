@@ -7,14 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Optional contract for a setting adapter that must vet the raw plain value before the shared
- * plain-values resolver sees it, because the resolver coerces (for example any truthy value to
- * `true`) or the stored control would accept values that break the widget.
+ * Optional contract for a rule the published JSON schema cannot express, such as an attachment that
+ * must exist or a date that must be real. It runs after the value passed the published schema, so it
+ * never re-checks types, patterns, ranges or keys.
  */
 interface V3_Plain_Value_Guard {
 
 	/**
-	 * @param mixed                $plain   Raw value sent by the caller. Dynamic tags arrive as arrays.
+	 * @param mixed                $plain   Value that already passed the published schema, sanitized by it.
 	 * @param array<string, mixed> $control
 	 * @return string|null Rejection reason that completes the sentence `Property "x" on "y" <reason> and was skipped.`, or null to accept.
 	 */

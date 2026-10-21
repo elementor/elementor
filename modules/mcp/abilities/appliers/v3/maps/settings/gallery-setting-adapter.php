@@ -15,36 +15,16 @@ class Gallery_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guar
 
 	const CONTROL_TYPE = 'gallery';
 
-	const ALLOWED_ITEM_KEYS = [ 'id', 'url' ];
-
 	/**
-	 * Items that cannot become gallery images are rejected up front; otherwise they would be
-	 * dropped silently while the rest of the gallery is saved.
+	 * The published schema fixes the item shape; whether the attachment exists is only known at write time.
+	 * Without this the item would be dropped silently while the rest of the gallery is saved.
 	 */
 	public function reject_reason( $plain, array $control ): ?string {
-		if ( ! is_array( $plain ) || array_values( $plain ) !== $plain ) {
-			return 'is not a list of { id, url } items';
-		}
+		foreach ( is_array( $plain ) ? $plain : [] as $item ) {
+			$id = (int) ( $item['id'] ?? 0 );
 
-		foreach ( $plain as $index => $item ) {
-			if ( ! is_array( $item ) || array_values( $item ) === $item ) {
-				return sprintf( 'has item %d that is not an object with an "id"', $index );
-			}
-
-			$unknown = array_diff( array_keys( $item ), self::ALLOWED_ITEM_KEYS );
-
-			if ( ! empty( $unknown ) ) {
-				return sprintf( 'has item %d with unsupported keys (%s; allowed: id, url)', $index, implode( ', ', $unknown ) );
-			}
-
-			$id = $item['id'] ?? null;
-
-			if ( ! ( is_int( $id ) || ( is_float( $id ) && floor( $id ) === $id ) || ( is_string( $id ) && ctype_digit( $id ) ) ) || (int) $id <= 0 ) {
-				return sprintf( 'has item %d without a positive numeric "id"', $index );
-			}
-
-			if ( 'attachment' !== get_post_type( (int) $id ) ) {
-				return sprintf( 'references Media Library id %d, which does not exist', (int) $id );
+			if ( 'attachment' !== get_post_type( $id ) ) {
+				return sprintf( 'references Media Library id %d, which does not exist', $id );
 			}
 		}
 

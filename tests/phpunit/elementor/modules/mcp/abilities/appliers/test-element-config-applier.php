@@ -390,6 +390,89 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( 'prop_value_invalid', $warning['code'] ?? null );
 	}
 
+	public function test_apply__v4_stores_a_boolean_string_as_the_boolean_it_names() {
+		// Arrange.
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [],
+		];
+		$index = [ 'hero-title' => &$hero_title ];
+
+		// Act.
+		$this->apply_to_mock_widget( $index, [
+			'title' => 'Hello',
+			'visible' => 'false',
+		] );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'$$type' => 'boolean',
+				'value' => false,
+			],
+			$hero_title['settings']['visible']
+		);
+	}
+
+	public function test_apply__v4_still_converts_a_number_sent_for_a_string() {
+		// Arrange.
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [],
+		];
+		$index = [ 'hero-title' => &$hero_title ];
+
+		// Act.
+		$this->apply_to_mock_widget( $index, [ 'title' => 2 ] );
+
+		// Assert.
+		$this->assertSame(
+			[
+				'$$type' => 'string',
+				'value' => '2',
+			],
+			$hero_title['settings']['title']
+		);
+	}
+
+	/**
+	 * @dataProvider provide_v4_values_the_published_schema_rejects
+	 */
+	public function test_apply__v4_reports_the_reason_from_the_published_schema( string $key, $value, string $expected_reason ) {
+		// Arrange.
+		$hero_title = [
+			'widgetType' => 'mock-widget',
+			'settings' => [],
+		];
+		$index = [ 'hero-title' => &$hero_title ];
+
+		// Act.
+		$result = $this->apply_to_mock_widget( $index, [ $key => $value ] );
+
+		// Assert.
+		$warning = $result['warnings']->all()[0] ?? [];
+		$this->assertSame( 'prop_value_invalid', $warning['code'] ?? null );
+		$this->assertStringContainsString( $expected_reason, $warning['message'] ?? '' );
+		$this->assertArrayNotHasKey( $key, $hero_title['settings'] );
+	}
+
+	public function provide_v4_values_the_published_schema_rejects(): array {
+		return [
+			'boolean word' => [ 'visible', 'no', 'visible is not of type boolean' ],
+			'number text' => [ 'count', 'many', 'count is not of type number' ],
+			'enum outside the list' => [ 'tag', 'p', 'tag is not one of h1 and h2' ],
+		];
+	}
+
+	private function apply_to_mock_widget( array &$index, array $settings ): array {
+		return $this->make_applier()->apply(
+			$index,
+			[ 'hero-title' => $settings ],
+			[
+				'mock-widget' => [ 'class' => Plain_Settings_Widget::class ],
+			]
+		);
+	}
 }
 
 class Plain_Settings_Widget {
@@ -398,6 +481,7 @@ class Plain_Settings_Widget {
 			'title' => String_Prop_Type::make()->required(),
 			'count' => Number_Prop_Type::make(),
 			'visible' => Boolean_Prop_Type::make(),
+			'tag' => String_Prop_Type::make()->enum( [ 'h1', 'h2' ] ),
 		];
 	}
 }
