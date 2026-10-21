@@ -48,9 +48,10 @@ class V3_Widget_Map_Compiler {
 	 * @param array<string, mixed> $controls
 	 * @param V3_Map_Diagnostics   $diagnostics
 	 * @param string|null          $expected_widget_type
+	 * @param array<string, mixed> $kit_controls Controls of the active kit that kit-hosted targets compile against.
 	 * @return Compiled_V3_Map|WP_Error
 	 */
-	public function compile( V3_Widget_Map $map, array $controls, V3_Map_Diagnostics $diagnostics, ?string $expected_widget_type = null ) {
+	public function compile( V3_Widget_Map $map, array $controls, V3_Map_Diagnostics $diagnostics, ?string $expected_widget_type = null, array $kit_controls = [] ) {
 		$widget_type = $map->get_widget_type();
 		$shape_error = $this->validate_map_shape( $map, $expected_widget_type );
 
@@ -66,8 +67,9 @@ class V3_Widget_Map_Compiler {
 			$map->get_description(),
 			$this->compile_settings( $map, $controls, $diagnostics ),
 			$map->get_default_target()->get_alias(),
-			$this->compile_targets( $map, $controls, $diagnostics ),
-			$map->get_kit_tab()
+			$this->compile_targets( $map, $controls, $kit_controls, $diagnostics ),
+			self::kit_target_aliases( $map ),
+			array_keys( $kit_controls )
 		);
 	}
 
@@ -239,18 +241,35 @@ class V3_Widget_Map_Compiler {
 	/**
 	 * @param V3_Widget_Map        $map
 	 * @param array<string, mixed> $controls
+	 * @param array<string, mixed> $kit_controls
 	 * @param V3_Map_Diagnostics   $diagnostics
 	 * @return array<string, Compiled_Style_Target>
 	 */
-	private function compile_targets( V3_Widget_Map $map, array $controls, V3_Map_Diagnostics $diagnostics ): array {
+	private function compile_targets( V3_Widget_Map $map, array $controls, array $kit_controls, V3_Map_Diagnostics $diagnostics ): array {
 		$binding_compiler = new V3_Style_Binding_Compiler( $this->style_schema ?? Style_Schema::get(), $this->adapters );
 		$compiled = [];
 
 		foreach ( $map->get_all_targets() as $target ) {
-			$compiled[ $target->get_alias() ] = $binding_compiler->compile( $target, $controls, $diagnostics, $map->get_widget_type() );
+			$target_controls = null === $target->get_kit_source() ? $controls : $kit_controls;
+			$compiled[ $target->get_alias() ] = $binding_compiler->compile( $target, $target_controls, $diagnostics, $map->get_widget_type() );
 		}
 
 		return $compiled;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private static function kit_target_aliases( V3_Widget_Map $map ): array {
+		$aliases = [];
+
+		foreach ( $map->get_all_targets() as $target ) {
+			if ( null !== $target->get_kit_source() ) {
+				$aliases[] = $target->get_alias();
+			}
+		}
+
+		return $aliases;
 	}
 
 	public static function error( string $reason, string $detail ): WP_Error {

@@ -40,7 +40,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 
 	const KIT_CUSTOM_CSS = 'body { margin: 0; }';
 
-	const EXPECTED_TARGETS = [ 'error', 'error-link', 'error-icon', 'message', 'message-link', 'message-button', 'info', 'info-button' ];
+	const EXPECTED_TARGETS = [ 'error-notice', 'error-notice-link', 'error-notice-icon', 'message-notice', 'message-notice-link', 'message-notice-button', 'info-notice', 'info-notice-button' ];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -73,9 +73,10 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
 			static fn() => true,
-			static fn() => null,
+			static fn() => [],
 			[ self::WIDGET_TYPE => $this->map_definition() ],
-			static fn() => true
+			static fn() => true,
+			static fn() => null
 		);
 
 		// Act.
@@ -94,7 +95,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$index = [ 'n' => &$node ];
 
 		// Act.
-		$result = $this->applier()->apply( $index, [ 'n' => 'error { color: #ff0000; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
+		$result = $this->applier()->apply( $index, [ 'n' => 'error-notice { color: #ff0000; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
 		Kit_Settings_Host::flush();
 
 		// Assert.
@@ -112,7 +113,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$index = [ 'n' => &$node ];
 
 		// Act.
-		$this->applier()->apply( $index, [ 'n' => 'error { color: #ff0000; } message-button { background: #00ff00; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
+		$this->applier()->apply( $index, [ 'n' => 'error-notice { color: #ff0000; } message-notice-button { background: #00ff00; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
 		Kit_Settings_Host::flush();
 
 		// Assert.
@@ -129,7 +130,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$index = [ 'n' => &$node ];
 
 		// Act.
-		$this->applier()->apply( $index, [ 'n' => 'error { color: #ff0000; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
+		$this->applier()->apply( $index, [ 'n' => 'error-notice { color: #ff0000; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
 		Kit_Settings_Host::discard_pending();
 
 		// Assert.
@@ -163,7 +164,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$index = [ 'n' => &$node ];
 
 		// Act.
-		$this->applier()->apply( $index, [ 'n' => 'message { color: #444444; }' ], 'replace', [ self::WIDGET_TYPE => [] ] );
+		$this->applier()->apply( $index, [ 'n' => 'message-notice { color: #444444; }' ], 'replace', [ self::WIDGET_TYPE => [] ] );
 		Kit_Settings_Host::flush();
 
 		// Assert.
@@ -183,7 +184,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$index = [ 'n' => &$node ];
 
 		// Act.
-		$this->applier()->apply( $index, [ 'n' => 'error { color: #ff0000; transform: rotate(5deg); }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
+		$this->applier()->apply( $index, [ 'n' => 'error-notice { color: #ff0000; transform: rotate(5deg); }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
 		Kit_Settings_Host::flush();
 
 		// Assert.
@@ -216,9 +217,10 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 		$registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
 			static fn() => true,
-			static fn() => $controls,
+			static fn() => [],
 			[ self::WIDGET_TYPE => $this->map_definition() ],
-			static fn() => true
+			static fn() => true,
+			static fn() => $controls
 		);
 
 		V3_Widget_Map_Registry::set_instance( $registry );
@@ -271,7 +273,7 @@ class Test_V3_Woocommerce_Notices_Map extends Elementor_Test_Base {
 			public function execute( $input = [] ) {
 				$index = [ 'n' => &$this->node ];
 
-				return $this->applier->apply( $index, [ 'n' => 'error { color: #ff0000; }' ], 'patch', [ 'woocommerce-notices' => [] ] );
+				return $this->applier->apply( $index, [ 'n' => 'error-notice { color: #ff0000; }' ], 'patch', [ 'woocommerce-notices' => [] ] );
 			}
 		};
 	}

@@ -24,13 +24,6 @@ class V3_Widget_Map {
 	 */
 	private array $targets = [];
 
-	private ?string $kit_tab = null;
-
-	/**
-	 * @var string[]
-	 */
-	private array $required_kit_controls = [];
-
 	private function __construct( string $widget_type ) {
 		$this->widget_type = $widget_type;
 	}
@@ -66,20 +59,6 @@ class V3_Widget_Map {
 		return $this;
 	}
 
-	/**
-	 * The style targets read and write the controls of this Site Settings tab on the active kit,
-	 * so a write styles every page of the site.
-	 *
-	 * @param string   $tab_id            Kit tab ID, e.g. `settings-woocommerce`.
-	 * @param string[] $required_controls Controls the tab must register for the map to apply, e.g. ones a license adds.
-	 */
-	public function kit_tab( string $tab_id, array $required_controls = [] ): self {
-		$this->kit_tab = $tab_id;
-		$this->required_kit_controls = $required_controls;
-
-		return $this;
-	}
-
 	public function get_widget_type(): string {
 		return $this->widget_type;
 	}
@@ -95,15 +74,37 @@ class V3_Widget_Map {
 		return $this->settings;
 	}
 
-	public function get_kit_tab(): ?string {
-		return $this->kit_tab;
+	/**
+	 * The kit controls source of the first kit-hosted target, null when every target is the widget's.
+	 */
+	public function get_kit_source(): ?Kit_Controls_Source {
+		foreach ( $this->get_all_targets() as $target ) {
+			if ( null !== $target->get_kit_source() ) {
+				return $target->get_kit_source();
+			}
+		}
+
+		return null;
 	}
 
-	/**
-	 * @return string[]
-	 */
-	public function get_required_kit_controls(): array {
-		return $this->required_kit_controls;
+	public function has_only_kit_targets(): bool {
+		foreach ( $this->get_all_targets() as $target ) {
+			if ( null === $target->get_kit_source() ) {
+				return false;
+			}
+		}
+
+		return null !== $this->default_target;
+	}
+
+	public function without_kit_targets(): self {
+		$map = clone $this;
+		$map->targets = array_values( array_filter(
+			$this->targets,
+			fn( Style_Target $target ) => null === $target->get_kit_source()
+		) );
+
+		return $map;
 	}
 
 	public function get_default_target(): ?Style_Target {

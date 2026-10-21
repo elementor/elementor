@@ -24,7 +24,15 @@ class Compiled_V3_Map {
 	 */
 	private array $targets;
 
-	private ?string $kit_tab;
+	/**
+	 * @var string[]
+	 */
+	private array $kit_target_aliases;
+
+	/**
+	 * @var string[]
+	 */
+	private array $kit_keys;
 
 	/**
 	 * @param string                               $widget_type
@@ -32,19 +40,52 @@ class Compiled_V3_Map {
 	 * @param array<string, Compiled_V3_Setting>   $settings
 	 * @param string                               $default_target
 	 * @param array<string, Compiled_Style_Target> $targets
-	 * @param string|null                          $kit_tab        {@see V3_Widget_Map::kit_tab()}.
+	 * @param string[]                             $kit_target_aliases {@see Style_Target::kit_hosted()}.
+	 * @param string[]                             $kit_keys           Settings stored on the active kit.
 	 */
-	public function __construct( string $widget_type, string $description, array $settings, string $default_target, array $targets, ?string $kit_tab = null ) {
+	public function __construct( string $widget_type, string $description, array $settings, string $default_target, array $targets, array $kit_target_aliases = [], array $kit_keys = [] ) {
 		$this->widget_type = $widget_type;
 		$this->description = $description;
 		$this->settings = $settings;
 		$this->default_target = $default_target;
 		$this->targets = $targets;
-		$this->kit_tab = $kit_tab;
+		$this->kit_target_aliases = $kit_target_aliases;
+		$this->kit_keys = $kit_keys;
 	}
 
 	public function get_settings_host(): V3_Map_Settings_Host {
-		return null === $this->kit_tab ? new Node_Settings_Host() : new Kit_Settings_Host();
+		if ( empty( $this->kit_target_aliases ) ) {
+			return new Node_Settings_Host();
+		}
+
+		if ( count( $this->kit_target_aliases ) === count( $this->targets ) ) {
+			return new Kit_Settings_Host();
+		}
+
+		return new Split_Settings_Host( $this->kit_keys );
+	}
+
+	/**
+	 * Replacing a widget's own style keeps its site-wide styles unless the CSS restyles them.
+	 *
+	 * @param array<string, mixed> $settings_patch
+	 */
+	public function for_replace( array $settings_patch ): self {
+		$host = $this->get_settings_host();
+
+		if ( ! $host instanceof Split_Settings_Host || ! empty( $host->site_settings( $settings_patch ) ) ) {
+			return $this;
+		}
+
+		return $this->without_kit_targets();
+	}
+
+	public function without_kit_targets(): self {
+		$map = clone $this;
+		$map->targets = array_diff_key( $this->targets, array_flip( $this->kit_target_aliases ) );
+		$map->kit_target_aliases = [];
+
+		return $map;
 	}
 
 	public function get_widget_type(): string {

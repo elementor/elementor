@@ -37,6 +37,8 @@ class Style_Target {
 	 */
 	private array $bindings = [];
 
+	private ?Kit_Controls_Source $kit_source = null;
+
 	private function __construct( string $alias ) {
 		$this->alias = $alias;
 	}
@@ -103,6 +105,16 @@ class Style_Target {
 		return $this;
 	}
 
+	/**
+	 * The target reads and writes controls of the active kit instead of the widget's,
+	 * so a write styles every page of the site.
+	 */
+	public function kit_hosted( Kit_Controls_Source $source ): self {
+		$this->kit_source = $source;
+
+		return $this;
+	}
+
 	public function with( Style_Fragment $fragment ): self {
 		$fragment->apply_to( $this );
 
@@ -144,5 +156,9 @@ class Style_Target {
 	 */
 	public function get_bindings(): array {
 		return $this->bindings;
+	}
+
+	public function get_kit_source(): ?Kit_Controls_Source {
+		return $this->kit_source;
 	}
 }

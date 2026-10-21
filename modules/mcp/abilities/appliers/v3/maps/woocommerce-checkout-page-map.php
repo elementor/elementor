@@ -5,6 +5,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Border_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Box_Shadow_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Typography_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woo_Form_Fields;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Woocommerce_Notice_Targets;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
@@ -137,4 +138,5 @@ return V3_Widget_Map::make( 'woocommerce-checkout-page' )
 		'coupon_section_display' => V3_Setting::bind_to( 'coupon_section_display' )->switcher(),
 	] )
 	->default_target( $sections )
-	->targets( $titles, $secondary_titles, $text, $links, $labels, Woo_Form_Fields::target( '#customer_details .form-row .input-text, #customer_details .form-row select, #customer_details .form-row textarea, .e-coupon-box .form-row .input-text, .e-woocommerce-login-anchor .form-row .input-text, .select2-container--default .select2-selection--single', 'Inputs, dropdowns and text areas of the billing, shipping and additional information forms, plus the coupon and returning customer login inputs once those forms are opened. The shipping fields stay hidden until the visitor checks Ship to a different address.' ), $buttons, $order_items, $order_totals, $purchase_button );
+	->targets( $titles, $secondary_titles, $text, $links, $labels, Woo_Form_Fields::target( '#customer_details .form-row .input-text, #customer_details .form-row select, #customer_details .form-row textarea, .e-coupon-box .form-row .input-text, .e-woocommerce-login-anchor .form-row .input-text, .select2-container--default .select2-selection--single', 'Inputs, dropdowns and text areas of the billing, shipping and additional information forms, plus the coupon and returning customer login inputs once those forms are opened. The shipping fields stay hidden until the visitor checks Ship to a different address.' ), $buttons, $order_items, $order_totals, $purchase_button )
+	->targets( ...Woocommerce_Notice_Targets::all() );

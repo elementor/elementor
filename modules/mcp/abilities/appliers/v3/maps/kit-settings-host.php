@@ -48,6 +48,14 @@ class Kit_Settings_Host implements V3_Map_Settings_Host {
 		}
 	}
 
+	public function site_settings( array $settings ): array {
+		return $settings;
+	}
+
+	public function with_site_settings( array $settings, array $site_settings ): array {
+		return $site_settings;
+	}
+
 	public static function can_write(): bool {
 		return current_user_can( 'edit_theme_options' );
 	}

@@ -183,25 +183,29 @@ class Style_Applier {
 	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch', array $widget_configs = [] ): void {
 		$map = V3_Widget_Map_Registry::instance()->get_map( (string) ( $node['widgetType'] ?? $node['elType'] ?? '' ) );
 		$host = null === $map ? new Node_Settings_Host() : $map->get_settings_host();
-		$is_site_wide = $host instanceof Kit_Settings_Host;
-
-		if ( $is_site_wide && ! Kit_Settings_Host::can_write() ) {
-			$warnings->add( self::SITE_WIDE_STYLE_FORBIDDEN_CODE, __( 'This style is stored in Site Settings, which you do not have permission to edit, so it was not saved.', 'elementor' ), $config_id );
-			return;
-		}
 
 		$settings = $host->read( $node );
 		$hosted_node = array_merge( $node, [ 'settings' => $settings ] );
 
 		$this->apply_v3_style_to_node( $hosted_node, $css_string, $config_id, $warnings, $style_apply_mode, $widget_configs );
 
-		if ( $hosted_node['settings'] === $settings ) {
+		$updated_settings = $hosted_node['settings'];
+		$site_settings = $host->site_settings( $settings );
+		$changes_site_settings = $host->site_settings( $updated_settings ) !== $site_settings;
+
+		if ( $changes_site_settings && ! Kit_Settings_Host::can_write() ) {
+			$warnings->add( self::SITE_WIDE_STYLE_FORBIDDEN_CODE, __( 'This style is stored in Site Settings, which you do not have permission to edit, so it was not saved.', 'elementor' ), $config_id );
+			$updated_settings = $host->with_site_settings( $updated_settings, $site_settings );
+			$changes_site_settings = false;
+		}
+
+		if ( $updated_settings === $settings ) {
 			return;
 		}
 
-		$host->write( $node, $hosted_node['settings'] );
+		$host->write( $node, $updated_settings );
 
-		if ( $is_site_wide ) {
+		if ( $changes_site_settings ) {
 			$warnings->add( self::SITE_WIDE_STYLE_CODE, __( 'This style is stored in Site Settings and applies to the whole site, not only this element. It goes live when the page is saved, even if the page itself stays a draft.', 'elementor' ), $config_id );
 		}
 	}
@@ -246,7 +250,7 @@ class Style_Applier {
 		}
 
 		if ( $is_replace && $is_map_driven ) {
-			( new V3_Map_Style_Clearer() )->clear( $node, $map, (string) $widget_type );
+			( new V3_Map_Style_Clearer() )->clear( $node, $map->for_replace( $result['settings_patch'] ?? [] ), (string) $widget_type );
 		} elseif ( $is_replace ) {
 			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
 		}
