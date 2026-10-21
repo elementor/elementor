@@ -28,11 +28,6 @@ on:
         description: 'Core version (e.g. 4.2.3)'
         required: true
         type: string
-      pro_version:
-        description: 'Pro version. Leave empty for Core-only.'
-        required: false
-        type: string
-        default: ''
       skip_wordpress_org:
         description: 'Skip wordpress.org SVN/download (use when the tag is not on .org yet)'
         required: false
@@ -58,7 +53,7 @@ jobs:
     uses: elementor/elementor-editor-github-actions/.github/workflows/post-release-check.yml@main
     with:
       core_version: ${{ inputs.core_version }}
-      pro_version: ${{ inputs.pro_version }}
+      pro_version: ${{ github.event.inputs.pro_version || '' }}
       skip_wordpress_org: ${{ inputs.skip_wordpress_org }}
       skip_smoke: ${{ inputs.skip_smoke }}
       actions_ref: main
