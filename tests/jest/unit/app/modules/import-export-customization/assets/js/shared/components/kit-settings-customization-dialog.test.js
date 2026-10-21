@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
 	__esModule: true,
@@ -177,5 +177,65 @@ describe( 'KitSettingsCustomizationDialog', () => {
 		// Assert
 		expect( screen.getByText( 'Theme' ) ).toBeTruthy();
 		expect( screen.getByText( 'General settings row' ) ).toBeTruthy();
+	} );
+
+	it( 'keeps saved settings that have no registered row when saving again', () => {
+		// Arrange
+		const savedSettings = {
+			generalSettings: false,
+			classes: false,
+			classesOverrideAll: true,
+			variablesOverrideAll: true,
+		};
+
+		useContextDetection.mockReturnValue( {
+			isImport: true,
+			contextData: {
+				data: {
+					...data,
+					customization: { settings: savedSettings },
+				},
+				isOldElementorVersion: false,
+			},
+		} );
+
+		window.elementorModules = {
+			importExport: {
+				customizationDialogsRegistry: createRegistry( [
+					{
+						key: KIT_SECTIONS.SETTINGS,
+						title: 'Settings',
+					},
+					{
+						key: KIT_SECTION_ITEMS.SETTINGS_GENERAL_SETTINGS,
+						parentKey: KIT_SECTIONS.SETTINGS,
+						title: 'Settings',
+						order: 80,
+						settingKey: 'generalSettings',
+						component: GeneralSettingsRow,
+						isAvailable: () => true,
+					},
+				] ),
+			},
+		};
+
+		render(
+			<KitSettingsCustomizationDialog
+				open={ true }
+				handleClose={ handleClose }
+				handleSaveChanges={ handleSaveChanges }
+			/>,
+		);
+
+		// Act
+		fireEvent.click( screen.getByText( 'Save changes' ) );
+
+		// Assert
+		expect( handleSaveChanges ).toHaveBeenCalledWith(
+			KIT_SECTIONS.SETTINGS,
+			expect.objectContaining( savedSettings ),
+			true,
+			expect.any( Object ),
+		);
 	} );
 } );

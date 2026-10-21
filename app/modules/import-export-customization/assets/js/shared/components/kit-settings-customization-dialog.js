@@ -115,20 +115,20 @@ function getInitialSettings( contextData, isImport, registeredRows ) {
 	const includesSettings = contextData?.data?.includes?.includes( KIT_SECTIONS.SETTINGS );
 	const customization = contextData?.data?.customization?.settings ?? {};
 
-	return registeredRows.reduce( ( state, row ) => {
+	const rowDefaults = registeredRows.reduce( ( state, row ) => {
 		if ( ! row.settingKey ) {
 			return state;
 		}
 
-		const initialValue = row.getInitialState
-			? row.getInitialState( { contextData, includesSettings, isImport } )
-			: includesSettings;
-
 		return {
 			...state,
-			[ row.settingKey ]: row.settingKey in customization ? customization[ row.settingKey ] : initialValue,
+			[ row.settingKey ]: row.getInitialState
+				? row.getInitialState( { contextData, includesSettings, isImport } )
+				: includesSettings,
 		};
 	}, {} );
+
+	return { ...rowDefaults, ...customization };
 }
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
