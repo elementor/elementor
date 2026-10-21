@@ -131,10 +131,6 @@ export function isCustomizationDialogsUiRegistered( registry = getCustomizationD
 	return !! getRegistryState( registry )?.hasRegisteredUi;
 }
 
-export function registerGlobalCustomizationDialogs() {
-	return prepareCustomizationDialogsForRender();
-}
-
 export function createRegisteredCustomizationDialogsRegistry() {
 	return registerCustomizationDialogs( createCustomizationDialogsRegistry() );
 }
