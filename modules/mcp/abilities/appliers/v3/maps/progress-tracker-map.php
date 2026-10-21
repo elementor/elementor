@@ -15,7 +15,7 @@ $classic = 'classic';
 
 $progress = Style_Target::make( 'progress' )
 	->label( 'Progress fill' )
-	->description( 'The part of the horizontal bar that fills as the visitor scrolls, measured against relative_to. Applies only while type is horizontal. Hidden until the visitor scrolls, so a preview at the top of the page shows an empty bar.' )
+	->description( 'Fill of the horizontal bar, measured against relative_to; only while type is horizontal. Hidden until the visitor scrolls, so a preview at the top of the page shows an empty bar.' )
 	->selector( '.current-progress' )
 	->defaults( [ 'background-color' => '#61ce70' ] )
 	->bind( 'background', V3_Control::bind_to( 'horizontal_color_color' )->requires( [ 'horizontal_color_background' => $classic ] ) )
@@ -42,7 +42,7 @@ $circular = [ 'type' => 'circular' ];
 
 $circle = Style_Target::make( 'circle' )
 	->label( 'Progress circle' )
-	->description( 'The circle that fills as the visitor scrolls. Applies only while type is circular. width is the circle diameter, color is the filled part and background is the track behind it. The fill is hidden until the visitor scrolls.' )
+	->description( 'Circle that fills as the visitor scrolls; only while type is circular. width is the diameter, color the fill and background the track. The fill is hidden until the visitor scrolls.' )
 	->selector( '' )
 	->bind( 'width', V3_Control::bind_to( 'circular_size' )->responsive()->requires( $circular ) )
 	->bind( 'color', V3_Control::bind_to( 'circular_color' )->requires( $circular ) )

@@ -13,17 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Multiple-choice `select2` control, stored as a list of option keys.
  */
-class Multi_Enum_From_Control_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard {
+class Multi_Enum_From_Control_Setting_Adapter implements V3_Setting_Adapter {
 
 	const CONTROL_TYPE = 'select2';
-
-	public function reject_reason( $plain, array $control ): ?string {
-		if ( is_array( $plain ) && array_values( $plain ) !== $plain ) {
-			return 'is not a list (send an array of option keys)';
-		}
-
-		return null;
-	}
 
 	public function supports( array $control ): bool {
 		return self::CONTROL_TYPE === ( $control['type'] ?? null )

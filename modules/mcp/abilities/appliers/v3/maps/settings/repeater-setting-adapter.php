@@ -22,29 +22,15 @@ class Repeater_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Gua
 	const ROW_ID_LENGTH = 7;
 
 	/**
-	 * Rows must be a list of objects that only use the repeater's own fields, and each field gets the
-	 * same vetting as a standalone setting, so nothing is silently stripped from a row.
+	 * The published row schema already carries each field's shape; this only runs the row fields'
+	 * own exceptions, so nothing is silently stripped from a row.
 	 */
 	public function reject_reason( $plain, array $control ): ?string {
-		if ( ! is_array( $plain ) || array_values( $plain ) !== $plain ) {
-			return 'is not a list of rows';
-		}
-
 		$adapters = $this->field_adapters( $control );
 
-		foreach ( $plain as $index => $row ) {
-			if ( ! is_array( $row ) || ( [] !== $row && array_values( $row ) === $row ) ) {
-				return sprintf( 'has row %d that is not an object', $index );
-			}
-
-			$unknown = array_diff( array_keys( $row ), array_keys( $adapters ) );
-
-			if ( ! empty( $unknown ) ) {
-				return sprintf( 'has row %d with unsupported keys (%s; allowed: %s)', $index, implode( ', ', $unknown ), implode( ', ', array_keys( $adapters ) ) );
-			}
-
-			foreach ( $row as $key => $value ) {
-				$adapter = $adapters[ $key ];
+		foreach ( is_array( $plain ) ? $plain : [] as $index => $row ) {
+			foreach ( is_array( $row ) ? $row : [] as $key => $value ) {
+				$adapter = $adapters[ $key ] ?? null;
 
 				if ( $adapter instanceof V3_Plain_Value_Guard ) {
 					$reason = $adapter->reject_reason( $value, $control['fields'][ $key ] );

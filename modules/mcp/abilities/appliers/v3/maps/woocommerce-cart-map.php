@@ -19,7 +19,7 @@ $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Cart sections' )
-	->description( 'Boxes around the product table, the coupon form and the cart totals. cart_layout puts the totals beside the products (two-column) or below them (one-column). The coupon box shows only while store coupons are enabled and section_coupon_display is on. With an empty cart the widget shows the WooCommerce empty-cart message instead.' )
+	->description( 'Boxes around the product table, coupon form and totals. cart_layout puts totals beside (two-column) or below (one-column). Coupon needs store coupons and section_coupon_display.' )
 	->selector( '.e-cart-section' )
 	->defaults( [
 		'background-color' => '#fff',
@@ -61,7 +61,7 @@ $links = Style_Target::make( 'links' )
 
 $buttons = Style_Target::make( 'buttons' )
 	->label( 'Form buttons' )
-	->description( 'The Update cart, Apply coupon and shipping calculator Update buttons. Apply coupon shows only with the coupon box, and its text comes from apply_coupon_button_text. hover styles them under the pointer.' )
+	->description( 'Update cart, Apply coupon and shipping calculator Update buttons. Apply coupon shows only with the coupon box; its text is apply_coupon_button_text.' )
 	->selector( '.shop_table .button' )
 	->defaults( [
 		'font-size' => '14px',

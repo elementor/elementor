@@ -21,6 +21,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
+use Elementor\Modules\Mcp\Abilities\Utils\Plain_Schema_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -35,6 +36,7 @@ class Element_Config_Applier {
 	private Widget_Type_Resolver $type_resolver;
 	private Plain_Values_Resolver $plain_values_resolver;
 	private ?V3_Dynamic_Hoister $v3_dynamic_hoister;
+	private Plain_Schema_Validator $schema_validator;
 
 	public function __construct(
 		Widget_Type_Resolver $type_resolver,
@@ -44,6 +46,7 @@ class Element_Config_Applier {
 		$this->type_resolver = $type_resolver;
 		$this->plain_values_resolver = $plain_values_resolver;
 		$this->v3_dynamic_hoister = $v3_dynamic_hoister;
+		$this->schema_validator = Plain_Schema_Validator::lenient();
 	}
 
 	/**
@@ -228,6 +231,24 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$checked = $this->check_against_published_schema( $value, $canonical, $prop_type, $element_type );
+
+			if ( null !== $checked['error'] ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" does not match the published schema and was skipped: %s. See elementor://widgets/schema/%s.',
+						$canonical,
+						$element_type,
+						$checked['error'],
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			$value = $checked['value'];
 			$resolved_value = $this->plain_values_resolver->resolve( $value, $prop_type );
 
 			if ( null === $resolved_value ) {
@@ -259,6 +280,23 @@ class Element_Config_Applier {
 			'resolved' => $resolved,
 			'cleared' => $cleared,
 		];
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return array{value: mixed, error: string|null}
+	 */
+	private function check_against_published_schema( $value, string $key, Prop_Type $prop_type, string $element_type ): array {
+		$published = Widget_Context_Helper::build_published_property_schema( $key, $prop_type, $element_type );
+
+		if ( null === $published ) {
+			return [
+				'value' => $value,
+				'error' => null,
+			];
+		}
+
+		return $this->schema_validator->validate( $value, $published, $key );
 	}
 
 	private function apply_resolved_v4_settings(

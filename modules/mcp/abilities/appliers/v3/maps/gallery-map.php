@@ -31,7 +31,7 @@ $grid = Style_Target::make( 'grid' )
 
 $overlay = Style_Target::make( 'overlay' )
 	->label( 'Image overlay' )
-	->description( 'Layer over each image that holds the overlay title and description. Rendered only while overlay_background is on. The default state is always visible, and hover sets the color shown while the pointer is over an image. padding is the space around the title and description, applied evenly on all sides.' )
+	->description( 'Layer over each image holding the overlay title and description, rendered only while overlay_background is on. default is always visible; hover applies under the pointer. padding is even on all sides.' )
 	->selector( '.elementor-gallery-item__overlay' )
 	->bind( 'background', V3_Control::bind_to( 'overlay_background_color' )->requires( [ 'overlay_background_background' => $classic ] ) )
 	->bind( 'background', V3_Control::bind_to( 'overlay_background_hover_color' )->requires( [ 'overlay_background_hover_background' => $classic ] ), $hover )

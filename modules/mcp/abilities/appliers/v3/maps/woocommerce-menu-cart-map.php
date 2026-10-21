@@ -58,7 +58,7 @@ $indicator = Style_Target::make( 'indicator' )
 
 $cart = Style_Target::make( 'cart' )
 	->label( 'Cart panel' )
-	->description( 'The panel listing the cart contents. Closed until the toggle opens it, so it does not appear in a page screenshot. cart_type sets a side drawer (side-cart) or a dropdown under the toggle (mini-cart). Shows an empty-cart message when the cart is empty.' )
+	->description( 'Cart contents panel: a side drawer (side-cart) or a dropdown (mini-cart), per cart_type. Closed until the toggle opens it, so it is not in screenshots. An empty cart shows a message.' )
 	->selector( '.elementor-menu-cart__main' )
 	->defaults( [
 		'box-shadow' => '0 0 20px rgba(0, 0, 0, .2)',

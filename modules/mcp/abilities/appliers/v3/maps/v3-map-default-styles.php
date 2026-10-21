@@ -7,6 +7,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Regi
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\Block_Renderer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Serializer\V3_Block_Accumulator;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -78,11 +79,26 @@ class V3_Map_Default_Styles {
 
 		$layers = [
 			$this->render_targets( $this->stylesheet_blocks( $map ), $map ),
-			$this->render_targets( $this->reader->read( $map, $this->kit_global_values( $map, $bound_keys, $controls ) + $unstyled, $controls ), $map ),
+			$this->render_targets( $this->kit_global_blocks( $map, $settings, $controls ), $map ),
 			$this->render_targets( $this->reader->read( $map, $this->control_defaults( $bound_keys, $controls ) + $unstyled, $controls, $is_visible ), $map ),
 		];
 
 		return implode( self::LAYER_SEPARATOR, array_filter( $layers ) );
+	}
+
+	/**
+	 * The kit globals Elementor prints for every widget of the type, read into the map's targets.
+	 *
+	 * @param Compiled_V3_Map      $map
+	 * @param array<string, mixed> $settings
+	 * @param array<string, mixed> $controls
+	 * @return array<string, V3_Block_Accumulator>
+	 */
+	public function kit_global_blocks( Compiled_V3_Map $map, array $settings, array $controls ): array {
+		$bound_keys = $this->bound_keys( $map, $controls );
+		$unstyled = array_diff_key( $settings, array_flip( $bound_keys ), [ V3_Settings_Patch::GLOBALS_KEY => true ] );
+
+		return $this->reader->read( $map, $this->kit_global_values( $map, $bound_keys, $controls ) + $unstyled, $controls );
 	}
 
 	/**
@@ -130,17 +146,9 @@ class V3_Map_Default_Styles {
 	 * @return array<string, mixed>
 	 */
 	private function control_defaults( array $bound_keys, array $controls ): array {
-		$defaults = [];
+		$defaults = V3_Control_Visibility::values_with_defaults( array_intersect_key( $controls, array_flip( $bound_keys ) ), [] );
 
-		foreach ( $bound_keys as $key ) {
-			$default = $controls[ $key ]['default'] ?? null;
-
-			if ( null !== $default && '' !== $default && [] !== $default ) {
-				$defaults[ $key ] = $default;
-			}
-		}
-
-		return $defaults;
+		return array_filter( $defaults, fn( $value ) => null !== $value && '' !== $value && [] !== $value );
 	}
 
 	/**

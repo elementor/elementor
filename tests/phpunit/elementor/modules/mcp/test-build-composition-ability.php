@@ -414,7 +414,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				[
 					'title' => [ 'foo' => 'bar' ],
 				],
-				[ 'title', 'could not be resolved' ],
+				[ 'title', 'does not match the published schema' ],
 				'prop_value_invalid',
 			],
 		];

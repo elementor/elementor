@@ -19,7 +19,7 @@ $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Checkout sections' )
-	->description( 'Boxes around the billing details, shipping address, additional information, order summary, payment, coupon and returning customer sections. checkout_layout puts the order summary beside the forms (two-column) or below them (one-column). Several sections are conditional: returning customer shows only to logged-out visitors while the store login reminder is on; coupon shows only while store coupons are enabled, coupon_section_display is on and the cart needs payment; shipping shows only for orders that ship; additional information is off unless it is turned on in the Elementor editor.' )
+	->description( 'Boxes around each checkout section. checkout_layout puts the summary beside (two-column) or below (one-column). Some are conditional: coupon needs coupon_section_display, shipping a shippable order.' )
 	->selector( '.e-woocommerce-login-section, .woocommerce-checkout #customer_details .col-1, .woocommerce-additional-fields, .e-checkout__order_review, .e-coupon-box, .woocommerce-checkout #payment, .woocommerce-shipping-fields .shipping_address' )
 	->with( Box_Shadow_Group::from_prefix( 'section_normal_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'sections_background_color' ) )
@@ -31,7 +31,7 @@ $sections = Style_Target::make( 'sections' )
 
 $titles = Style_Target::make( 'titles' )
 	->label( 'Section titles' )
-	->description( 'Headings of the billing details, additional information and order summary sections. The texts of the billing and order summary headings come from billing_details_section_title and order_summary_section_title.' )
+	->description( 'Headings of the billing, additional information and order summary sections; billing and summary texts come from billing_details_section_title and order_summary_section_title.' )
 	->selector( 'h3#order_review_heading, .woocommerce-billing-fields h3, .woocommerce-additional-fields h3' )
 	->with( Typography_Group::from_prefix( 'sections_titles_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'sections_title_color' ) );

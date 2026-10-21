@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Number_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard {
+class Number_Setting_Adapter implements V3_Setting_Adapter {
 
 	const CONTROL_TYPE = 'number';
 
@@ -17,34 +17,25 @@ class Number_Setting_Adapter implements V3_Setting_Adapter, V3_Plain_Value_Guard
 	 */
 	const MAX_MAGNITUDE = 9007199254740992;
 
-	public function reject_reason( $plain, array $control ): ?string {
-		if ( is_array( $plain ) ) {
-			return null;
-		}
-
-		if ( is_string( $plain ) && '' === trim( $plain ) ) {
-			return 'is not a number';
-		}
-
-		if ( ! is_int( $plain ) && ! is_float( $plain ) && ! ( is_string( $plain ) && is_numeric( $plain ) ) ) {
-			return 'is not a number';
-		}
-
-		$number = (float) $plain;
-
-		if ( ! is_finite( $number ) || abs( $number ) > self::MAX_MAGNITUDE ) {
-			return 'is outside the supported number range';
-		}
-
-		return null;
-	}
-
 	public function supports( array $control ): bool {
 		return self::CONTROL_TYPE === ( $control['type'] ?? null );
 	}
 
 	public function prop_type( array $control ): Prop_Type {
-		return V3_Number_Prop_Type::make();
+		return V3_Number_Prop_Type::make()->range(
+			self::control_limit( $control, 'min', -self::MAX_MAGNITUDE ),
+			self::control_limit( $control, 'max', self::MAX_MAGNITUDE )
+		);
+	}
+
+	/**
+	 * @param array<string, mixed> $control
+	 * @param string               $key
+	 * @param int                  $fallback
+	 * @return int|float
+	 */
+	private static function control_limit( array $control, string $key, int $fallback ) {
+		return is_numeric( $control[ $key ] ?? null ) ? +$control[ $key ] : $fallback;
 	}
 
 	public function to_control_value( array $prop_value, array $control ) {

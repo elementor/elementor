@@ -17,7 +17,7 @@ $current = 'current';
 
 $main_menu = Style_Target::make( 'main-menu' )
 	->label( 'Main menu items' )
-	->description( 'Top-level links of the menu, laid out by layout (horizontal or vertical). Not rendered when layout is dropdown, and hidden below the dropdown breakpoint, where the dropdown target shows the whole menu instead. The current state styles the link of the page being viewed.' )
+	->description( 'Top-level menu links, laid out by layout. Not rendered with layout dropdown, and hidden below the dropdown breakpoint. current styles the link of the page being viewed.' )
 	->selector( '.elementor-nav-menu--main .elementor-item' )
 	->defaults( [
 		'line-height' => '20px',
@@ -34,7 +34,7 @@ $main_menu = Style_Target::make( 'main-menu' )
 
 $pointer = Style_Target::make( 'pointer' )
 	->label( 'Main menu hover pointer' )
-	->description( 'Decoration drawn on a main menu item on hover and on the current item: an underline, overline, frame or background, chosen by pointer. Nothing shows while pointer is none or text. background is the pointer color: the underline or overline, the frame or the background fill; one hover value also colors the current item until current sets its own. border-width is the thickness of the line or frame. color is the item text color over a background pointer and only applies while pointer is background.' )
+	->description( 'Hover and current decoration on main menu items, chosen by pointer (none or text show none). background colors the line, frame or fill; border-width is its thickness; color is text on a fill.' )
 	->selector( '.elementor-nav-menu--main .elementor-item:before, .elementor-nav-menu--main .elementor-item:after' )
 	->states( $current )
 	->bind( 'color', V3_Control::bind_to( 'color_menu_item_hover_pointer_bg' ), $hover )
@@ -45,7 +45,7 @@ $pointer = Style_Target::make( 'pointer' )
 
 $divider = Style_Target::make( 'divider' )
 	->label( 'Main menu divider' )
-	->description( 'Separator line between top-level items. Shows only with layout horizontal and the widget Divider switch turned on in the Elementor editor; that switch is not a setting here, so these styles have no visible effect while it is off.' )
+	->description( 'Line between top-level items. Shows only with layout horizontal and the Divider switch on; that switch is set in the Elementor editor, not here.' )
 	->selector( '.elementor-nav-menu--layout-horizontal .elementor-nav-menu > li:not(:last-child):after' )
 	->bind( 'border-style', V3_Control::bind_to( 'nav_menu_divider_style' ) )
 	->bind( 'border-width', V3_Control::bind_to( 'nav_menu_divider_weight' ) )
@@ -54,7 +54,7 @@ $divider = Style_Target::make( 'divider' )
 
 $dropdown = Style_Target::make( 'dropdown' )
 	->label( 'Dropdown menu' )
-	->description( 'The submenus that open under top-level items on desktop, and the whole menu below the dropdown breakpoint, where it stays collapsed until the toggle button is clicked. With layout dropdown it is the only menu. Hidden entirely while dropdown is none. full_width stretches it to the page width. hover and current style its items.' )
+	->description( 'Submenus on desktop, and the whole menu below the dropdown breakpoint (collapsed until the toggle opens it). The only menu with layout dropdown; hidden while dropdown is none. full_width stretches it.' )
 	->selector( '.elementor-nav-menu--dropdown' )
 	->defaults( [
 		'font-size' => '13px',
@@ -86,7 +86,7 @@ $dropdown_divider = Style_Target::make( 'dropdown-divider' )
 
 $toggle = Style_Target::make( 'toggle' )
 	->label( 'Mobile menu toggle' )
-	->description( 'Hamburger button that opens and closes the dropdown menu below the dropdown breakpoint. Rendered only while toggle is burger, and hidden above the breakpoint or while dropdown is none. font-size is the icon size.' )
+	->description( 'Hamburger button that opens the dropdown menu below the dropdown breakpoint. Rendered only while toggle is burger and dropdown is not none. font-size is the icon size.' )
 	->selector( '.elementor-menu-toggle' )
 	->defaults( [
 		'background-color' => 'rgba(0, 0, 0, .05)',

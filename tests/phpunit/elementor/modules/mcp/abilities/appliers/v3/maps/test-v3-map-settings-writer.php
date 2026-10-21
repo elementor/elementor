@@ -44,6 +44,14 @@ class Test_V3_Map_Settings_Writer extends TestCase {
 			],
 			'link' => [ 'type' => 'url' ],
 			'icon' => [ 'type' => 'icons' ],
+			'columns' => [
+				'type' => 'number',
+				'min' => 1,
+				'max' => 24,
+			],
+			'due_date' => [ 'type' => 'date_time' ],
+			'selector' => [ 'type' => 'text' ],
+			'gallery' => [ 'type' => 'gallery' ],
 		];
 	}
 
@@ -56,6 +64,10 @@ class Test_V3_Map_Settings_Writer extends TestCase {
 				'full_width' => V3_Setting::bind_to( 'full_width' )->switcher(),
 				'link' => V3_Setting::bind_to( 'link' )->link(),
 				'icon' => V3_Setting::bind_to( 'icon' )->icons(),
+				'columns' => V3_Setting::bind_to( 'columns' )->number(),
+				'due_date' => V3_Setting::bind_to( 'due_date' )->date_time(),
+				'selector' => V3_Setting::bind_to( 'selector' )->css_selector(),
+				'gallery' => V3_Setting::bind_to( 'gallery' )->gallery(),
 			] )
 			->default_target( Style_Target::make( 'menu' ) );
 
@@ -134,6 +146,84 @@ class Test_V3_Map_Settings_Writer extends TestCase {
 		// Assert.
 		$this->assertSame( [], $result['settings'] );
 		$this->assertSame( [ 'menu_name' ], array_keys( $result['rejected'] ) );
+	}
+
+	public function test_write__stores_a_boolean_string_as_the_boolean_it_names() {
+		// Act.
+		$result = $this->writer()->write( $this->compiled_map(), [ 'full_width' => 'false' ] );
+
+		// Assert.
+		$this->assertSame( [ 'full_width' => '' ], $result['settings'] );
+		$this->assertSame( [], $result['rejected'] );
+	}
+
+	/**
+	 * @dataProvider provide_values_the_published_schema_rejects
+	 */
+	public function test_write__rejects_with_the_reason_from_the_published_schema( string $key, $value, string $expected_reason ) {
+		// Act.
+		$result = $this->writer()->write( $this->compiled_map(), [ $key => $value ] );
+
+		// Assert.
+		$this->assertSame( [], $result['settings'] );
+		$this->assertStringContainsString( $expected_reason, $result['rejected'][ $key ] ?? '' );
+	}
+
+	public function provide_values_the_published_schema_rejects(): array {
+		return [
+			'switcher word' => [ 'full_width', 'no', 'full_width is not of type boolean' ],
+			'number above the control max' => [ 'columns', 100, 'columns must be between 1 (inclusive) and 24 (inclusive)' ],
+			'number below the control min' => [ 'columns', 0, 'columns must be between 1 (inclusive) and 24 (inclusive)' ],
+			'date text' => [ 'due_date', 'next friday', 'due_date does not match pattern' ],
+			'selector markup' => [ 'selector', '"><script>', 'selector does not match pattern' ],
+			'selector too long' => [ 'selector', str_repeat( 'a', 300 ), 'selector must be at most 200 characters long' ],
+			'icon markup' => [ 'icon', [ 'value' => '"><b>', 'library' => 'fa-solid' ], 'icon[value] does not match pattern' ],
+			'icon extra key' => [ 'icon', [ 'value' => 'fas fa-bars', 'color' => 'red' ], 'color is not a valid property of Object' ],
+			'gallery negative id' => [ 'gallery', [ [ 'id' => -1 ] ], 'gallery[0][id] must be greater than or equal to 1' ],
+			'gallery fractional id' => [ 'gallery', [ [ 'id' => 1.5 ] ], 'gallery[0][id] is not of type integer' ],
+			'gallery extra key' => [ 'gallery', [ [ 'id' => 1, 'caption' => 'x' ] ], 'caption is not a valid property of Object' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provide_values_only_the_explicit_exceptions_reject
+	 */
+	public function test_write__rejects_what_the_schema_cannot_express_with_an_explicit_exception( string $key, $value ) {
+		// Act.
+		$result = $this->writer()->write( $this->compiled_map(), [ $key => $value ] );
+
+		// Assert.
+		$this->assertSame( [], $result['settings'] );
+		$this->assertArrayHasKey( $key, $result['rejected'] );
+	}
+
+	public function provide_values_only_the_explicit_exceptions_reject(): array {
+		return [
+			'impossible date' => [ 'due_date', '2027-02-30 10:00' ],
+			'unbalanced selector' => [ 'selector', 'div[data-x="1"' ],
+			'dangling combinator' => [ 'selector', '.a >' ],
+			'missing attachment' => [ 'gallery', [ [ 'id' => 999999999 ] ] ],
+		];
+	}
+
+	public function test_compile__publishes_the_rules_the_writer_enforces() {
+		// Act.
+		$settings = $this->compiled_map()->get_settings();
+
+		// Assert.
+		$this->assertSame( 1, $settings['columns']->get_schema()['minimum'] ?? null );
+		$this->assertSame( 24, $settings['columns']->get_schema()['maximum'] ?? null );
+		$this->assertArrayHasKey( 'pattern', $settings['due_date']->get_schema() );
+		$this->assertArrayHasKey( 'pattern', $settings['selector']->get_schema() );
+		$this->assertSame( 200, $settings['selector']->get_schema()['maxLength'] ?? null );
+		$this->assertArrayHasKey( 'pattern', $settings['icon']->get_schema()['properties']['value'] );
+		$this->assertSame(
+			[
+				'type' => 'integer',
+				'minimum' => 1,
+			],
+			array_intersect_key( $settings['gallery']->get_schema()['items']['properties']['id'], array_flip( [ 'type', 'minimum' ] ) )
+		);
 	}
 
 	public function test_write__passes_null_through_as_a_clear() {
