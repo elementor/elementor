@@ -11,10 +11,10 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
-use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -46,7 +46,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Component', 'elementor' ),
-			Prompt_Loader::load( 'manage-component' ),
+			$this->get_description(),
 			'elementor',
 			$this->get_output_schema(),
 			[
@@ -621,8 +621,22 @@ class Manage_Component_Ability extends Abstract_Ability {
 		return array_values( $ids );
 	}
 
+	private function get_description(): string {
+		$description = Prompt_Loader::load( 'manage-component' );
+
+		if ( Components_Access_Controller::is_pro_tier() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_components_pro_notice();
+	}
+
+	private function get_components_pro_notice(): string {
+		return __( 'Note: creating, renaming, and archiving components require an active Elementor Pro license, which this site does not have. Those actions are rejected with an upgrade link — do not retry them, share the link with the user, and do not substitute global classes, variables, templates, or duplicated elements for a component as a workaround.', 'elementor' );
+	}
+
 	private function check_access( string $action, callable $can ): ?\WP_Error {
-		return $can() ? null : Insufficient_Permissions_Error::for_action( $action );
+		return $can() ? null : Components_Pro_Features_Discovery::for_action( $action );
 	}
 
 	private function invalid_input( string $message ): \WP_Error {
