@@ -403,7 +403,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
-		$form_structure_error = $this->reject_new_honeypot_violations( $tree, $new_tree );
+		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
 			return $form_structure_error;
 		}
@@ -450,7 +450,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
-		$form_structure_error = $this->reject_new_honeypot_violations( $tree, $new_tree );
+		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
 			return $form_structure_error;
 		}
@@ -461,12 +461,36 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function reject_new_honeypot_violations( array $tree_before, array $tree_after ): ?\WP_Error {
+	private function reject_new_single_instance_violations( array $tree_before, array $tree_after ): ?\WP_Error {
 		$validator = new Form_Structure_Validator();
-		$counts_before = $validator->collect_form_honeypot_counts( $tree_before );
-		$counts_after = $validator->collect_form_honeypot_counts( $tree_after );
 
+		foreach ( Form_Structure_Validator::SINGLE_INSTANCE_ELEMENT_TYPES as $type => $plural_label ) {
+			$new_violation_count = $this->count_new_single_instance_violations(
+				$validator->collect_form_element_counts( $tree_before, $type ),
+				$validator->collect_form_element_counts( $tree_after, $type )
+			);
+
+			if ( 0 === $new_violation_count ) {
+				continue;
+			}
+
+			$message = 1 === $new_violation_count
+				? '<e-form> would have multiple ' . $plural_label . ' — only 1 is allowed per form.'
+				: $new_violation_count . ' forms would have multiple ' . $plural_label . ' — only 1 is allowed per form.';
+
+			return new \WP_Error(
+				'elementor_invalid_form_structure',
+				$message,
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return null;
+	}
+
+	private function count_new_single_instance_violations( array $counts_before, array $counts_after ): int {
 		$new_violation_count = 0;
+
 		foreach ( $counts_after as $form_id => $count_after ) {
 			if ( $count_after <= 1 ) {
 				continue;
@@ -478,19 +502,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			}
 		}
 
-		if ( 0 === $new_violation_count ) {
-			return null;
-		}
-
-		$message = 1 === $new_violation_count
-			? '<e-form> would have multiple honeypots — only 1 is allowed per form.'
-			: $new_violation_count . ' forms would have multiple honeypots — only 1 is allowed per form.';
-
-		return new \WP_Error(
-			'elementor_invalid_form_structure',
-			$message,
-			[ 'status' => \WP_Http::BAD_REQUEST ]
-		);
+		return $new_violation_count;
 	}
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {

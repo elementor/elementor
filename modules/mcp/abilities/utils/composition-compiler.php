@@ -25,6 +25,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -65,6 +66,10 @@ final class Composition_Compiler {
 		$dom = $xml_parser->parse( (string) ( $input['xml_structure'] ?? '' ) );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
+		}
+
+		if ( ! Utils::has_pro() && ( new Form_Structure_Validator( $xml_parser ) )->contains_form_elements( $dom ) ) {
+			return Forms_Pro_Features_Discovery::for_composition();
 		}
 
 		[
