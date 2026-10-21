@@ -183,7 +183,9 @@ describe( 'iconTransformer', () => {
 		expect( ( global.fetch as jest.Mock ).mock.calls.map( ( [ url ] ) => String( url ) ) ).toEqual( [
 			'https://example.com/assets/images/default-svg.svg',
 		] );
-		expect( result.url ).toBe( 'https://example.com/assets/images/default-svg.svg' );
+		expect( result ).toEqual(
+			expect.objectContaining( { url: 'https://example.com/assets/images/default-svg.svg' } )
+		);
 	} );
 
 	it( 'asks providers for a font awesome icon missing from the free data', async () => {
