@@ -141,7 +141,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		settings: settingsDialogSnapshot,
 		designSystem: designSystemDialogSnapshot,
 	} );
-	const settingsTree = useMemo( () => buildSettingsTree(), [ settingsTreeSignature ] );
+	const settingsTree = useMemo( buildSettingsTree );
 	const registeredRows = useMemo( () => collectSettingRows( settingsTree ), [ settingsTree ] );
 	const registeredRowsKey = useMemo(
 		() => registeredRows.map( ( row ) => `${ row.key }:${ row.component?.name || '' }` ).join( '|' ),
