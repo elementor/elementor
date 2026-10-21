@@ -6,7 +6,9 @@ import { ElementsOverlays } from './components/elements-overlays';
 import { InteractionsRenderer } from './components/interactions-renderer';
 import { StyleRenderer } from './components/style-renderer';
 import { initFormAncestorEnforcement } from './form-structure/enforce-form-ancestor-commands';
+import { initFormAtomAddedHints } from './form-structure/form-atom-added-hints';
 import { initHiddenFieldHint } from './form-structure/hidden-field-hint';
+import { initDuplicateFormAtomsPrevention } from './form-structure/prevent-duplicate-form-atoms-commands';
 import { initFormNestingPrevention } from './form-structure/prevent-form-nesting-commands';
 import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
@@ -27,6 +29,8 @@ export function init() {
 	initFormNestingPrevention();
 	initFormAncestorEnforcement();
 	initHiddenFieldHint();
+	initDuplicateFormAtomsPrevention();
+	initFormAtomAddedHints();
 
 	initViewReplacements();
 

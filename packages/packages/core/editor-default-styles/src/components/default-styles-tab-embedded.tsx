@@ -24,7 +24,7 @@ import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-u
 import { controlActionsMenu } from '@elementor/menus';
 import { useMutation } from '@elementor/query';
 import { getSessionStorageItem, SessionStorageProvider, setSessionStorageItem } from '@elementor/session';
-import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
+import { __dispatch as dispatch, __getState as getState, __useSelector as useSelector } from '@elementor/store';
 import {
 	type AutocompleteChangeReason,
 	Box,
@@ -43,8 +43,9 @@ import {
 	isAllowedDefaultStyleTag,
 } from '../allowed-tags';
 import { DEFAULT_STYLES_PROVIDER_KEY } from '../default-styles-provider';
-import { saveDefaultStyles } from '../save-default-styles';
-import { selectIsDirty, slice } from '../store';
+import { getChangedTags, saveDefaultStyles } from '../save-default-styles';
+import { selectIsDirty, slice, type StateWithDefaultStyles } from '../store';
+import { trackDefaultStyles } from '../utils/tracking';
 import { TagChip } from './tag-chip';
 
 const { useMenuItems } = controlActionsMenu;
@@ -140,6 +141,13 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 	};
 
 	const resetAndClosePanel = () => {
+		const tagsDiscarded = getChangedTags( getState() as StateWithDefaultStyles );
+
+		trackDefaultStyles( {
+			event: 'changesDiscarded',
+			tags_discarded: tagsDiscarded,
+			tags_discarded_count: tagsDiscarded.length,
+		} );
 		dispatch( slice.actions.reset() );
 		closeSaveChangesDialog();
 		void onRequestClose();
