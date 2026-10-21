@@ -8,6 +8,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
@@ -61,6 +62,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	 */
 	private array $original_experiment_states = [];
 
+	private bool $registered_form_element = false;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -75,6 +78,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		if ( $this->registered_form_element ) {
+			Plugin::$instance->elements_manager->unregister_element_type( Atomic_Form_Promotion::get_type() );
+			$this->registered_form_element = false;
+		}
+
 		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
 			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
 			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
@@ -2136,7 +2144,18 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
 	}
 
+	private function given_form_element_registered(): void {
+		if ( Plugin::$instance->elements_manager->get_element_types( Atomic_Form_Promotion::get_type() ) ) {
+			return;
+		}
+
+		Plugin::$instance->elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		$this->registered_form_element = true;
+	}
+
 	private function given_form_with_two_honeypots( int $post_id ): void {
+		$this->given_form_element_registered();
+
 		$form_id = $this->random_element_id();
 		$honeypot1_id = $this->random_element_id();
 		$honeypot2_id = $this->random_element_id();
@@ -2175,6 +2194,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	private function given_form_with_atom_in_container( int $post_id, string $widget_type ): string {
+		$this->given_form_element_registered();
+
 		$form_id = $this->random_element_id();
 		$container_id = $this->random_element_id();
 		$atom_id = $this->random_element_id();

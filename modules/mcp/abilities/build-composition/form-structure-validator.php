@@ -61,6 +61,18 @@ class Form_Structure_Validator {
 		);
 	}
 
+	public function contains_form_elements( \DOMDocument $dom ): bool {
+		$form_tags = array_merge( [ self::FORM_ELEMENT_TYPE ], self::FORM_FIELD_ELEMENT_TYPES );
+
+		foreach ( $this->xml_parser->iterate_all_descendants( $dom ) as $node ) {
+			if ( in_array( $this->xml_parser->get_tag_name( $node ), $form_tags, true ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * @return string[]
 	 */
