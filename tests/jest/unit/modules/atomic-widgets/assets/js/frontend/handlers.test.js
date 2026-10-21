@@ -349,6 +349,53 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( input.value ).toBe( '' );
 		} );
 
+		it( 'sends fields added by before-submit listeners with the request', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			form.addEventListener( 'elementor/atomic-form/before-submit', ( beforeSubmitEvent ) => {
+				beforeSubmitEvent.detail.addFields( Promise.resolve( { recaptcha_score_token: 'token-123' } ) );
+			} );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			const formData = global.fetch.mock.calls[ 0 ][ 1 ].body;
+			expect( formData.get( 'recaptcha_score_token' ) ).toBe( 'token-123' );
+			expect( form.classList.contains( 'form-state-success' ) ).toBe( true );
+		} );
+
+		it( 'fails the submission without a request when a before-submit listener rejects', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			form.addEventListener( 'elementor/atomic-form/before-submit', ( beforeSubmitEvent ) => {
+				beforeSubmitEvent.detail.addFields( Promise.reject( new Error( 'reCAPTCHA failed' ) ) );
+			} );
+
+			global.fetch = jest.fn();
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( global.fetch ).not.toHaveBeenCalled();
+			expect( form.classList.contains( 'form-state-error' ) ).toBe( true );
+			expect( input.value ).toBe( 'Test value' );
+		} );
+
 		it( 'does not clear form fields on failed submission', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
