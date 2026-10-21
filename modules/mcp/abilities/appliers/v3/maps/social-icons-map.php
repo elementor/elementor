@@ -40,7 +40,7 @@ $grid = Style_Target::make( 'grid' )
 	->bind( 'text-align', V3_Control::bind_to( 'align' )->responsive() );
 
 return V3_Widget_Map::make( 'social-icons' )
-	->description( 'Row of linked social network icons. `social_icon_list` replaces the whole list; each item is { social_icon: { value, library }, link: { url, is_external, nofollow } }, e.g. { value: "fab fa-facebook", library: "fa-brands" }.' )
+	->description( 'Row of linked social icons. `social_icon_list` replaces the whole list; item: { social_icon: { value: "fab fa-facebook", library: "fa-brands" }, link: { url, is_external, nofollow } }.' )
 	->settings( [
 		'social_icon_list' => V3_Setting::bind_to( 'social_icon_list' )->repeater(),
 		'shape' => V3_Setting::bind_to( 'shape' )->enum_from_control(),

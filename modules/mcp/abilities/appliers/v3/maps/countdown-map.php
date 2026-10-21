@@ -48,7 +48,7 @@ $label = Style_Target::make( 'label' )
 // tells the caller the style only takes effect while the message action is enabled.
 $message = Style_Target::make( 'message' )
 	->label( 'Expiry message' )
-	->description( 'Text from message_after_expire, shown in place of the countdown once it expires. Rendered only while expire_actions includes message, and hidden until the countdown reaches zero, so it does not appear in a preview of a running countdown.' )
+	->description( 'Text from message_after_expire, shown instead of the countdown once it expires, only while expire_actions includes message. Not visible in a preview of a running countdown.' )
 	->selector( '.elementor-countdown-expire--message' )
 	->defaults( [
 		'text-align' => 'center',
@@ -66,7 +66,7 @@ foreach ( Typography_Group::FIELDS as $prop => [ $suffix, $is_responsive ] ) {
 
 $container = Style_Target::make( 'container' )
 	->label( 'Boxes row' )
-	->description( 'The row that holds all unit boxes. max-width only applies while the widget label position is set to block, and text-align only while it is set to inline; that position is set in the Elementor editor, not here.' )
+	->description( 'Row holding the unit boxes. max-width applies only while the label position is block, text-align only while it is inline; that position is set in the Elementor editor.' )
 	->selector( '.elementor-countdown-wrapper' )
 	->bind( 'max-width', V3_Control::bind_to( 'container_width' )->responsive() )
 	->bind( 'text-align', V3_Control::bind_to( 'boxes_alignment' ) );

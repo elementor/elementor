@@ -20,7 +20,7 @@ $active = 'active';
 
 $account_tabs = Style_Target::make( 'tabs' )
 	->label( 'Account tabs' )
-	->description( 'Links to the account pages (dashboard, orders, downloads, addresses, account details, logout), shown only to logged-in customers; logged-out visitors see the login form instead. tabs_layout places them in a column beside the content (vertical) or in a row above it (horizontal). The active state styles the tab of the page being viewed, not a pressed tab.' )
+	->description( 'Account page links, shown only to logged-in customers (others see the login form). tabs_layout: a column beside the content (vertical) or a row above it (horizontal). active is the current page tab.' )
 	->selector( '.woocommerce-MyAccount-navigation ul li a' )
 	->defaults( [
 		'font-size' => '14px',
@@ -49,7 +49,7 @@ $account_tabs = Style_Target::make( 'tabs' )
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Content sections' )
-	->description( 'Boxes around the content of each account page, and around the login and register forms for logged-out visitors. The register form shows only while store registration is enabled. Not applied to a custom dashboard template, or to the empty orders and downloads messages.' )
+	->description( 'Boxes around each account page, and the login and register forms for logged-out visitors (register needs store registration). Not applied to a custom dashboard template or empty-list messages.' )
 	->selector( '.e-my-account-tab__dashboard:not(.e-my-account-tab__dashboard--custom) .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__orders .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__downloads .woocommerce-MyAccount-content-wrapper, address, .e-my-account-tab__edit-account .woocommerce-MyAccount-content-wrapper, .e-my-account-tab__view-order .order_details, .woocommerce-form-login, .woocommerce-form-register, .woocommerce-ResetPassword, .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper' )
 	->with( Box_Shadow_Group::from_prefix( 'my_account_sections_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'my_account_sections_background_color' ) )
@@ -113,7 +113,7 @@ $table_items = Style_Target::make( 'table-items' )
 
 $table_buttons = Style_Target::make( 'table-buttons' )
 	->label( 'Table buttons' )
-	->description( 'Action buttons inside the tables, such as View, Pay and Download, the Order again button, the pagination buttons of long order lists, and the buttons of the payment methods page. Not applied to a custom dashboard template. hover styles them under the pointer.' )
+	->description( 'Buttons in the account tables (View, Pay, Download, Order again, pagination, payment methods). Not applied to a custom dashboard template. hover applies under the pointer.' )
 	->selector( '.e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .shop_table .button, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .order-again .button, .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce-pagination .button, .e-my-account-tab__payment-methods .woocommerce .woocommerce-MyAccount-content-wrapper .button' )
 	->with( Typography_Group::from_prefix( 'tables_button_typography' ) )
 	->with( Background_Group::from_prefix( 'tables_button_normal_background' ) )

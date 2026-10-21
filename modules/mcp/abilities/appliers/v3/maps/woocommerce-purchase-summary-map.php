@@ -18,7 +18,7 @@ $hover = 'hover';
 
 $sections = Style_Target::make( 'sections' )
 	->label( 'Summary sections' )
-	->description( 'Boxes around the order details table, the downloads table and the billing and shipping addresses on the order received page. The widget only renders that page content after a real order, or in the editor. Addresses show only to the customer who placed the order, and the shipping address only for orders that ship.' )
+	->description( 'Boxes around the order details, downloads and addresses on the order received page, rendered only after a real order or in the editor. Addresses show only to the buyer; shipping only if it ships.' )
 	->selector( '.shop_table, address' )
 	->with( Box_Shadow_Group::from_prefix( 'sections_box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'sections_background_color' ) )

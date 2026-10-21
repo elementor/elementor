@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $image = Style_Target::make( 'image' )
 	->label( 'Main image' )
-	->description( 'The large product image, which slides between images when the product has a gallery. Its bottom margin is the space above the thumbnails and only applies while thumbnails are shown. sale_flash adds a Sale badge on it for products on sale.' )
+	->description( 'Main product image, a slider when the product has a gallery. Its bottom margin is the space above the thumbnails, only while they show. sale_flash adds a Sale badge for products on sale.' )
 	->selector( '.flex-viewport' )
 	->with( Border_Group::from_prefix( 'image_border' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'image_border_radius' )->responsive() )
