@@ -1,7 +1,6 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { Schema } from '@elementor/editor-props';
 
-import { isIconLibraryActive } from './icon-library-experiment';
 import { initAvailableWidgetsResource } from './resources/available-widgets-resource';
 import { initBestPracticesResource } from './resources/best-practices-resource';
 import { initBreakpointsResource } from './resources/breakpoints-resource';
@@ -30,9 +29,7 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initGeneralContextResource( reg );
 	initBestPracticesResource( reg );
 	initConfigureElementTool( reg );
-	if ( isIconLibraryActive() ) {
-		initFindIconsTool( reg );
-	}
+	initFindIconsTool( reg );
 	initGetPageStructureTool( reg );
 	initBreakpointsResource( reg );
 };
