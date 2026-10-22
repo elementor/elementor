@@ -21,6 +21,7 @@ class Test_Ability_Annotations extends Elementor_Test_Base {
 		'elementor/manage-classes',
 		'elementor/manage-component',
 		'elementor/manage-default-styles',
+		'elementor/manage-experiments',
 		'elementor/manage-global-variable',
 		'elementor/publish-document',
 		'elementor/reorder-classes',

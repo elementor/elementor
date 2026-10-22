@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -224,7 +225,17 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	private function get_ability_description(): string {
-		return Prompt_Loader::load( 'build-composition' );
+		$description = Prompt_Loader::load( 'build-composition' );
+
+		if ( Utils::has_pro() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_forms_pro_notice();
+	}
+
+	private function get_forms_pro_notice(): string {
+		return __( 'Note: forms require Elementor Pro, If the user asks for a form, tell them it requires Elementor Pro and do not recreate it with regular inputs, buttons, HTML or shortcode widgets as a workaround. Everything else builds normally.', 'elementor' );
 	}
 
 	private function get_output_schema(): array {

@@ -6,11 +6,21 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 		private static bool $active = true;
 		private static bool $expired = false;
 		private static array $features = [];
+		private static string $access_tier = 'essential-oct2023';
 
 		public static function reset(): void {
 			self::$active = true;
 			self::$expired = false;
 			self::$features = [];
+			self::$access_tier = 'essential-oct2023';
+		}
+
+		public static function set_access_tier( string $access_tier ): void {
+			self::$access_tier = $access_tier;
+		}
+
+		public static function get_access_tier(): string {
+			return self::$active ? self::$access_tier : 'free';
 		}
 
 		public static function set_license_state( bool $active, bool $expired = false ): void {

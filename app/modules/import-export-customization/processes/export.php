@@ -19,9 +19,14 @@ class Export {
 	const ZIP_ARCHIVE_MODULE_MISSING = 'zip-archive-module-is-missing';
 
 	/**
-	 * @var Export_Runner_Base[]
+	 * @var array<string, Export_Runner_Base>
 	 */
 	protected $runners = [];
+
+	/**
+	 * @var array<string, int>
+	 */
+	protected $runner_priorities = [];
 
 	/**
 	 * Selected content types to export.
@@ -86,9 +91,12 @@ class Export {
 	 * Register a runner.
 	 *
 	 * @param Export_Runner_Base $runner_instance
+	 * @param int                $priority
 	 */
-	public function register( Export_Runner_Base $runner_instance ) {
-		$this->runners[ $runner_instance::get_name() ] = $runner_instance;
+	public function register( Export_Runner_Base $runner_instance, int $priority = 0 ) {
+		$runner_name = $runner_instance::get_name();
+		$this->runners[ $runner_name ] = $runner_instance;
+		$this->runner_priorities[ $runner_name ] = $priority;
 	}
 
 	public function register_default_runners() {
@@ -130,7 +138,7 @@ class Export {
 			$media_collector->start_collection();
 		}
 
-		foreach ( $this->runners as $runner ) {
+		foreach ( $this->get_sorted_runners() as $runner ) {
 			if ( $runner->should_export( $data ) ) {
 				$export_result = $this->normalize_export_result( $runner->export( $data ) );
 				$this->handle_export_result( $export_result );
@@ -177,6 +185,30 @@ class Export {
 		if ( ! is_array( $this->get_settings_customization() ) ) {
 			$this->settings_customization( $this->get_default_settings_customization() );
 		}
+	}
+
+	private function get_sorted_runners(): array {
+		$sorted_runners = [];
+		$runners_by_priority = [];
+
+		foreach ( $this->runners as $runner_name => $runner ) {
+			$priority = $this->runner_priorities[ $runner_name ] ?? 0;
+			$runners_by_priority[ $priority ][ $runner_name ] = $runner;
+		}
+
+		ksort( $runners_by_priority, SORT_NUMERIC );
+
+		foreach ( $runners_by_priority as $priority_runners ) {
+			foreach ( $priority_runners as $runner_name => $runner ) {
+				$sorted_runners[ $runner_name ] = $runner;
+			}
+		}
+
+		return $sorted_runners;
+	}
+
+	private function remove_runner( string $runner_name ): void {
+		unset( $this->runners[ $runner_name ], $this->runner_priorities[ $runner_name ] );
 	}
 
 	public function settings_include( $settings_include ) {

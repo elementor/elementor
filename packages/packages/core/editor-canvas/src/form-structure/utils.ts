@@ -38,6 +38,7 @@ export type StorageContent = {
 export const FORM_ELEMENT_TYPE = 'e-form';
 export const FORM_HIDDEN_FIELD_ELEMENT_TYPE = 'e-form-hidden';
 export const FORM_HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
+export const FORM_RECAPTCHA_SCORE_ELEMENT_TYPE = 'e-form-recaptcha-score';
 export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-input',
 	'e-form-textarea',
@@ -51,6 +52,7 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-time-picker',
 	FORM_HIDDEN_FIELD_ELEMENT_TYPE,
 	FORM_HONEYPOT_ELEMENT_TYPE,
+	FORM_RECAPTCHA_SCORE_ELEMENT_TYPE,
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
