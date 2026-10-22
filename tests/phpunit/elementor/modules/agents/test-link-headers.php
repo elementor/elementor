@@ -93,8 +93,8 @@ class Test_Link_Headers extends Elementor_Test_Base {
 			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
 			$links
 		);
-		$this->assertNotContains( 'api-catalog', implode( '', $links ) );
-		$this->assertNotContains( 'auth.md', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'api-catalog', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'auth.md', implode( '', $links ) );
 	}
 
 	public function test_build_site_links__omits_llms_txt_when_llms_is_disabled() {

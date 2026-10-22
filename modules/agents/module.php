@@ -295,7 +295,7 @@ class Module extends BaseModule {
 	/**
 	 * Check whether llms-full.txt should be advertised in discovery mechanisms.
 	 *
-	 * llms-full.txt is always served by WordPress (no physical file concern),
+	 * Llms-full.txt is always served by WordPress (no physical file concern),
 	 * so we only check if the feature is enabled.
 	 *
 	 * @return bool
