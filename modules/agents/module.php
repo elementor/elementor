@@ -36,8 +36,6 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'agent_ready';
 
-	const PACKAGES = [];
-
 	/** Default HTTP max-age for the served response (5 minutes). */
 	const DEFAULT_CACHE_MAX_AGE = 300;
 
@@ -156,7 +154,6 @@ class Module extends BaseModule {
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings ) );
 		$this->register_component( $this->markdown_endpoint );
 
-		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
@@ -622,16 +619,6 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 	// Internal helpers
 	// -------------------------------------------------------------------------
-
-	/**
-	 * Register this module's editor packages with the packages list.
-	 *
-	 * @param array $packages Package slugs to register.
-	 * @return array
-	 */
-	public function add_packages( array $packages ): array {
-		return array_merge( $packages, self::PACKAGES );
-	}
 
 	private function invalidate_cache( int $post_id = 0 ): void {
 		$this->cache->invalidate();
