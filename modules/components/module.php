@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
 	const EXPERIMENT_VARIANTS_NAME = 'e_component_variants';
+	const EXPERIMENT_IMPORT_NAME = 'e_components_import';
 	const PACKAGES        = [ 'editor-components' ];
 
 	/**
@@ -65,6 +66,7 @@ class Module extends BaseModule {
 		}
 
 		$this->register_variants_experiment();
+		$this->register_import_experiment();
 
 		$this->register_component_post_type();
 
@@ -146,6 +148,17 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_VARIANTS_NAME,
 			'title' => esc_html__( 'Component Variants', 'elementor' ),
 			'description' => esc_html__( 'Enable per-instance class variants on components.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_import_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_IMPORT_NAME,
+			'title' => esc_html__( 'Enable Components Import', 'elementor' ),
+			'description' => esc_html__( 'Allow components import during kit import/export.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
