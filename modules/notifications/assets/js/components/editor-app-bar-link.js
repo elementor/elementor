@@ -7,7 +7,7 @@ import SpeakerphoneIcon from '@elementor/icons/SpeakerphoneIcon';
 
 const IconWithBadge = ( { count } ) => {
 	return (
-		<Badge color="primary" badgeContent={ count } invisible={ 0 === count }>
+		<Badge color="accent" badgeContent={ count } invisible={ 0 === count }>
 			<SpeakerphoneIcon />
 		</Badge>
 	);

@@ -9,7 +9,7 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Atomic_Image extends Elementor_Test_Base {
 	public function test__io_promotion_notice_is_included_for_admin_by_default(): void {
 		// Arrange.
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
 			'id' => 'e8e55a1',
@@ -102,7 +102,7 @@ class Test_Atomic_Image extends Elementor_Test_Base {
 
 	public function test__io_promotion_notice_shows_one_install_copy_when_one_subscription_and_not_installed(): void {
 		// Arrange.
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 		update_option( 'elementor_one_access_token', 'test-token' );
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( [
@@ -129,7 +129,7 @@ class Test_Atomic_Image extends Elementor_Test_Base {
 
 	public function test__io_promotion_notice_shows_one_activate_copy_when_one_subscription_and_installed(): void {
 		// Arrange.
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 		update_option( 'elementor_one_access_token', 'test-token' );
 		wp_cache_set( 'plugins', [ '' => [ 'image-optimization/image-optimization.php' => [ 'Name' => 'Image Optimization' ] ] ], 'plugins' );
 

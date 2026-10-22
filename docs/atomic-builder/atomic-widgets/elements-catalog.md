@@ -111,6 +111,9 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 |------|-------|
 | `e-form-input`, `e-form-label`, `e-form-textarea`, `e-form-submit-button`, `e-form-checkbox`, `e-form-radio-button` | Core form fields |
 | `e-form-date-picker`, `e-form-time-picker`, `e-form-select`, `e-form-file-upload` | Core ≥ 4.1 |
+| `e-form-hidden` | Hidden field; must be inside `e-form`; no count limit |
+| `e-form-honeypot` | Honeypot spam protection; must be inside `e-form`; max 1 per form |
+| `e-form-recaptcha-score` | Score-based reCAPTCHA (Enterprise) spam protection; must be inside `e-form`; max 1 per form; credentials are global (Settings > Integrations) |
 
 | Site | `e_pro_atomic_form` | Registers |
 |------|---------------------|-----------|

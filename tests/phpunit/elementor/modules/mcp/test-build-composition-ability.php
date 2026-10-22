@@ -14,6 +14,8 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -217,12 +219,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 			'invalid child type' => [ '<e-tabs-content-area><e-heading/></e-tabs-content-area>', 'elementor_invalid_child_type' ],
 			'leaf widget rejects children' => [ '<e-heading configuration-id="h1"><e-paragraph configuration-id="p1"/></e-heading>', 'elementor_invalid_child_type' ],
 			'leaf widget rejects container child' => [ '<e-image configuration-id="i1"><e-flexbox configuration-id="f1"/></e-image>', 'elementor_invalid_child_type' ],
-			'orphaned form field' => [ '<e-flexbox><e-form-input configuration-id="input-1"/></e-flexbox>', 'elementor_invalid_form_structure' ],
-			'form without submit button' => [ '<e-form><e-form-input configuration-id="input-1"/></e-form>', 'elementor_invalid_form_structure' ],
-			'empty success message' => [ '<e-form><e-form-submit-button/><e-form-success-message/></e-form>', 'elementor_invalid_form_structure' ],
-			'empty error message' => [ '<e-form><e-form-submit-button/><e-form-error-message/></e-form>', 'elementor_invalid_form_structure' ],
-			'multiple submit buttons' => [ '<e-form><e-form-submit-button/><e-form-submit-button/></e-form>', 'elementor_invalid_form_structure' ],
-			'nested form' => [ '<e-form><e-form-submit-button/><e-form><e-form-submit-button/></e-form></e-form>', 'elementor_invalid_form_structure' ],
 			'multiple duplicate configuration-ids' => [
 				'<e-heading configuration-id="dup-a"/><e-heading configuration-id="dup-a"/><e-heading configuration-id="dup-b"/><e-heading configuration-id="dup-b"/>',
 				'elementor_duplicate_configuration_id',
@@ -232,6 +228,40 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				'elementor_duplicate_configuration_id',
 			],
 			'multiple unknown types' => [ '<nonexistent-widget/><another-nonexistent-widget/>', 'elementor_unknown_type' ],
+		];
+	}
+
+	/**
+	 * @dataProvider form_structure_validation_cases
+	 */
+	public function test_execute__form_structure_validation_with_pro( string $xml, string $expected_code ) {
+		if ( ! Utils::has_pro() ) {
+			$this->markTestSkipped( 'Form compositions reach structure validation only with Elementor Pro.' );
+		}
+
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'xml_structure' => $xml ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( $expected_code, $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function form_structure_validation_cases(): array {
+		return [
+			'orphaned form field' => [ '<e-flexbox><e-form-input configuration-id="input-1"/></e-flexbox>', 'elementor_invalid_form_structure' ],
+			'form without submit button' => [ '<e-form><e-form-input configuration-id="input-1"/></e-form>', 'elementor_invalid_form_structure' ],
+			'empty success message' => [ '<e-form><e-form-submit-button/><e-form-success-message/></e-form>', 'elementor_invalid_form_structure' ],
+			'empty error message' => [ '<e-form><e-form-submit-button/><e-form-error-message/></e-form>', 'elementor_invalid_form_structure' ],
+			'multiple submit buttons' => [ '<e-form><e-form-submit-button/><e-form-submit-button/></e-form>', 'elementor_invalid_form_structure' ],
+			'nested form' => [ '<e-form><e-form-submit-button/><e-form><e-form-submit-button/></e-form></e-form>', 'elementor_invalid_form_structure' ],
 		];
 	}
 
@@ -287,38 +317,42 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
 	}
 
-	public function test_execute__valid_form_structure_passes_form_validation() {
+	/**
+	 * @dataProvider form_pro_features_discovery_cases
+	 */
+	public function test_execute__form_elements_return_pro_features_discovery_without_pro( string $xml ) {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
-
-		if ( ! Plugin::$instance->elements_manager->get_element_types( 'e-form' ) ) {
-			Plugin::$instance->elements_manager->register_element_type(
-				new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion()
-			);
-		}
-
 		$ability = new Build_Composition_Ability();
 
 		// Act
-		$result = $ability->execute( [
-			'post_id' => $post_id,
-			'dry_run' => true,
-			'xml_structure' => '<e-form configuration-id="form-1"><e-flexbox configuration-id="row-1"><e-form-input configuration-id="input-1"/></e-flexbox><e-form-submit-button configuration-id="btn-1"/></e-form>',
-		] );
+		$result = $ability->execute( [ 'post_id' => $post_id, 'dry_run' => true, 'xml_structure' => $xml ] );
 
 		// Assert
-		if ( is_wp_error( $result ) ) {
-			$this->assertNotSame(
-				'elementor_invalid_form_structure',
-				$result->get_error_code(),
-				$result->get_error_message()
-			);
+		$this->assertWPError( $result );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+		$this->assertSame( Forms_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertStringContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_message() );
+		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
+		$this->assertStringContainsString( 'workaround', $result->get_error_message() );
+	}
 
-			return;
-		}
+	public function form_pro_features_discovery_cases(): array {
+		return [
+			'valid form' => [ '<e-form configuration-id="form-1"><e-flexbox configuration-id="row-1"><e-form-input configuration-id="input-1"/></e-flexbox><e-form-submit-button configuration-id="btn-1"/></e-form>' ],
+			'orphaned form field' => [ '<e-flexbox><e-form-input configuration-id="input-1"/></e-flexbox>' ],
+		];
+	}
 
-		$this->assertTrue( $result['success'] );
+	public function test_get_description_for_llm__explains_forms_require_pro_without_pro() {
+		// Act
+		$description = ( new Build_Composition_Ability() )->get_description_for_llm();
+
+		// Assert
+		$this->assertStringContainsString( 'forms require Elementor Pro', $description );
+		$this->assertStringContainsString( 'do not recreate it with regular inputs', $description );
 	}
 
 	/**

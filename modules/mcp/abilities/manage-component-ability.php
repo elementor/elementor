@@ -11,8 +11,10 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
-use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -44,7 +46,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Component', 'elementor' ),
-			Prompt_Loader::load( 'manage-component' ),
+			$this->get_description(),
 			'elementor',
 			$this->get_output_schema(),
 			[
@@ -303,6 +305,8 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
+		$undo_point = Document_Revision_Snapshots::capture( $component, $this->get_id() );
+
 		try {
 			$saved = $component->save( [
 				'elements' => $elements,
@@ -324,10 +328,17 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return new \WP_Error( 'save_failed', __( 'Failed to save component.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return [
+		$response = [
 			'success' => true,
 			'component_id' => $component->get_main_id(),
 		] + $this->document_links( $component );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 
 	private function validate_circular_dependency( callable $validate ): ?\WP_Error {
@@ -610,8 +621,22 @@ class Manage_Component_Ability extends Abstract_Ability {
 		return array_values( $ids );
 	}
 
+	private function get_description(): string {
+		$description = Prompt_Loader::load( 'manage-component' );
+
+		if ( Components_Access_Controller::is_pro_tier() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_components_pro_notice();
+	}
+
+	private function get_components_pro_notice(): string {
+		return __( 'Note: creating, renaming, and archiving components require an active Elementor Pro license, which this site does not have. Those actions are rejected with an upgrade link — do not retry them, share the link with the user, and do not substitute global classes, variables, templates, or duplicated elements for a component as a workaround.', 'elementor' );
+	}
+
 	private function check_access( string $action, callable $can ): ?\WP_Error {
-		return $can() ? null : Insufficient_Permissions_Error::for_action( $action );
+		return $can() ? null : Components_Pro_Features_Discovery::for_action( $action );
 	}
 
 	private function invalid_input( string $message ): \WP_Error {
@@ -664,6 +689,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'description' => 'Every warning is fixable: one field was skipped or adjusted during XML compilation and the rest was saved. Errors fail the call instead.',
 				],
 				'warning_details' => Warnings_Bag::get_details_schema(),
+				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 			],
 		];
 	}

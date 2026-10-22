@@ -20,10 +20,13 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -83,6 +86,8 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
 					],
 					'version' => [ 'type' => 'string' ],
+					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
+					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
 			],
 			[
@@ -271,6 +276,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $response;
 		}
 
+		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
 		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->get_mutator(), $document, $tree );
 		if ( is_wp_error( $save_result ) ) {
 			$response['status'] = 'error';
@@ -287,6 +293,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
 		$response = $this->with_edit_url( $response, $document );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
 		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 		return $response;
 	}
@@ -387,6 +399,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
+		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
@@ -429,10 +446,59 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $this->to_public_error( $new_tree );
 		}
 
+		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
+		if ( $form_structure_error ) {
+			return $form_structure_error;
+		}
+
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
 		];
+	}
+
+	private function reject_new_single_instance_violations( array $tree_before, array $tree_after ): ?\WP_Error {
+		$validator = new Form_Structure_Validator();
+
+		foreach ( Form_Structure_Validator::SINGLE_INSTANCE_ELEMENT_TYPES as $type => $plural_label ) {
+			$new_violation_count = $this->count_new_single_instance_violations(
+				$validator->collect_form_element_counts( $tree_before, $type ),
+				$validator->collect_form_element_counts( $tree_after, $type )
+			);
+
+			if ( 0 === $new_violation_count ) {
+				continue;
+			}
+
+			$message = 1 === $new_violation_count
+				? '<e-form> would have multiple ' . $plural_label . ' — only 1 is allowed per form.'
+				: $new_violation_count . ' forms would have multiple ' . $plural_label . ' — only 1 is allowed per form.';
+
+			return new \WP_Error(
+				'elementor_invalid_form_structure',
+				$message,
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return null;
+	}
+
+	private function count_new_single_instance_violations( array $counts_before, array $counts_after ): int {
+		$new_violation_count = 0;
+
+		foreach ( $counts_after as $form_id => $count_after ) {
+			if ( $count_after <= 1 ) {
+				continue;
+			}
+
+			$count_before = $counts_before[ $form_id ] ?? 0;
+			if ( $count_after > $count_before ) {
+				++$new_violation_count;
+			}
+		}
+
+		return $new_violation_count;
 	}
 
 	private function apply_update( Document $document, array $tree, string $element_id, array $operation ) {
