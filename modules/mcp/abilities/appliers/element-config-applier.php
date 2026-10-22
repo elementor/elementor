@@ -17,7 +17,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
@@ -78,7 +77,6 @@ class Element_Config_Applier {
 
 			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
-				$is_standardized = null !== V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
@@ -94,24 +92,20 @@ class Element_Config_Applier {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$shape = $is_standardized
-					? $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings )
-					: V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
+				$shape = $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings );
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
 
-					if ( $is_standardized ) {
-						$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
-						$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
+					$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+					$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
 
-						if ( empty( $node['settings']['__dynamic__'] ) ) {
-							unset( $node['settings']['__dynamic__'] );
-						}
-
-						$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
-						V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
+					if ( empty( $node['settings']['__dynamic__'] ) ) {
+						unset( $node['settings']['__dynamic__'] );
 					}
+
+					$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
+					V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
 				}
 
 				if ( $shape['error'] ) {
@@ -525,10 +519,6 @@ class Element_Config_Applier {
 	private function is_v3_settings_node( array $node ): bool {
 		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
 			return true;
-		}
-
-		if ( ! Widget_Context_Helper::is_standardized_maps_active() ) {
-			return false;
 		}
 
 		$type = $node['widgetType'] ?? $node['elType'] ?? null;

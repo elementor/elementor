@@ -14,7 +14,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -50,7 +49,6 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default() );
 
@@ -74,7 +72,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__binds_a_synced_variable_through_the_v3_global_color() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter', [] );
+		$result = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter' );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -84,11 +82,11 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_round_trip__a_synced_variable_reads_back_as_the_same_variable() {
 		// Arrange.
-		$written = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter', [] );
+		$written = $this->mapper()->apply( 'color: var(--' . self::SYNCED_LABEL . ');', 'counter' );
 
 		// Act.
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], 'counter', [] );
-		$rewritten = $this->mapper()->apply( $readback, 'counter', [] );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], 'counter' );
+		$rewritten = $this->mapper()->apply( $readback, 'counter' );
 
 		// Assert.
 		$this->assertStringContainsString( self::SYNCED_LABEL, $readback );
@@ -98,7 +96,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__stores_the_value_of_an_unsynced_variable_and_warns() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: var(--' . self::UNSYNCED_LABEL . ');', 'counter', [] );
+		$result = $this->mapper()->apply( 'color: var(--' . self::UNSYNCED_LABEL . ');', 'counter' );
 
 		// Assert.
 		$this->assertSame( self::UNSYNCED_VALUE, $result['settings_patch']['number_color'] ?? null );
@@ -111,7 +109,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__never_stores_a_variable_id_as_a_background_color() {
 		// Act.
-		$result = $this->mapper()->apply( 'background: var(--' . self::UNSYNCED_LABEL . ');', 'progress', [] );
+		$result = $this->mapper()->apply( 'background: var(--' . self::UNSYNCED_LABEL . ');', 'progress' );
 
 		// Assert.
 		$this->assertStringNotContainsString( 'e-gv-', wp_json_encode( $result['settings_patch'] ) );
@@ -121,7 +119,7 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 
 	public function test_apply__never_stores_a_variable_id_as_a_box_shadow_color() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { box-shadow: 0px 2px 4px 0px var(--' . self::SYNCED_LABEL . '); }', 'counter', [] );
+		$result = $this->mapper()->apply( 'wrapper { box-shadow: 0px 2px 4px 0px var(--' . self::SYNCED_LABEL . '); }', 'counter' );
 
 		// Assert.
 		$this->assertStringNotContainsString( 'e-gv-', wp_json_encode( $result['settings_patch'] ) );
@@ -171,11 +169,6 @@ class Test_V3_Color_Variables extends Elementor_Test_Base {
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}

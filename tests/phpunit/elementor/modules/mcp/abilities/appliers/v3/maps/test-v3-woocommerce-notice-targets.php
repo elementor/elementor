@@ -171,7 +171,7 @@ class Test_V3_Woocommerce_Notice_Targets extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $host->read( $this->node( [ 'sections_background_color' => '#eeeeee' ] ) );
-		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
+		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( '#eeeeee', $settings['sections_background_color'] );
@@ -208,7 +208,6 @@ class Test_V3_Woocommerce_Notice_Targets extends Elementor_Test_Base {
 
 		$registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $widget_controls,
 			[ self::WIDGET_TYPE => require ( require V3_Widget_Map_Registry::REGISTERED_MAPS_FILE )[ self::WIDGET_TYPE ] ],
 			static fn() => true,

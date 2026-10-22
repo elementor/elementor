@@ -53,7 +53,6 @@ class Test_V3_Map_Style_Replace extends Elementor_Test_Base {
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $map ]
 		) );
@@ -125,6 +124,22 @@ class Test_V3_Map_Style_Replace extends Elementor_Test_Base {
 		$this->assertSame( [ 'title_color' => 'globals/colors?id=secondary' ], $node['settings']['__globals__'] );
 	}
 
+	public function test_replace__empty_css_clears_every_visible_bound_setting() {
+		// Arrange.
+		$node = $this->node( [
+			'type' => self::CIRCULAR,
+			'circular_size' => self::SIZE,
+			'circular_color' => '#ff0000',
+		] );
+
+		// Act.
+		$this->replace( $node, '' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'circular_size', $node['settings'] );
+		$this->assertArrayNotHasKey( 'circular_color', $node['settings'] );
+	}
+
 	private function controls(): array {
 		return [
 			'type' => [
@@ -173,7 +188,7 @@ class Test_V3_Map_Style_Replace extends Elementor_Test_Base {
 		$index = [ self::CONFIG_ID => &$node ];
 		$applier = new Style_Applier( $this->converter(), self::BREAKPOINTS );
 
-		$applier->apply( $index, [ self::CONFIG_ID => $css ], 'replace', [ self::WIDGET_TYPE => [ 'controls' => $this->controls() ] ] );
+		$applier->apply( $index, [ self::CONFIG_ID => $css ], 'replace' );
 	}
 
 	private function converter(): Css_Converter {

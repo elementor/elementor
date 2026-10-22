@@ -12,6 +12,11 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Stub_Dynamic_Tags_Manager;
@@ -25,6 +30,62 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/v3/stub-dynamic-tags-manager.php';
 
 class Test_Element_Config_Applier extends TestCase {
+
+	const V3_CONTROLS = [
+		'nav-menu' => [
+			'menu' => [ 'type' => 'select', 'options' => [ 'primary' => 'Primary' ] ],
+			'layout' => [ 'type' => 'select', 'options' => [ 'horizontal' => 'Horizontal', 'vertical' => 'Vertical' ] ],
+		],
+		'theme-post-title' => [
+			'title' => [ 'type' => 'text' ],
+			'header_size' => [ 'type' => 'select', 'options' => [ 'h1' => 'H1', 'h2' => 'H2' ] ],
+			'link' => [
+				'type' => 'url',
+				'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
+			],
+		],
+	];
+
+	protected function setUp(): void {
+		parent::setUp();
+
+		V3_Widget_Map_Registry::set_instance( $this->v3_map_registry() );
+	}
+
+	protected function tearDown(): void {
+		V3_Widget_Map_Registry::reset_instance();
+
+		parent::tearDown();
+	}
+
+	private function v3_map_registry(): V3_Widget_Map_Registry {
+		$nav_menu = V3_Widget_Map::make( 'nav-menu' )
+			->description( 'Nav menu.' )
+			->settings( [
+				'menu' => V3_Setting::bind_to( 'menu' )->enum_from_control(),
+				'layout' => V3_Setting::bind_to( 'layout' )->enum_from_control(),
+			] )
+			->default_target( Style_Target::make( 'menu' ) );
+
+		$post_title = V3_Widget_Map::make( 'theme-post-title' )
+			->description( 'Post title.' )
+			->settings( [
+				'title' => V3_Setting::bind_to( 'title' )->string(),
+				'header_size' => V3_Setting::bind_to( 'header_size' )->enum_from_control(),
+				'link' => V3_Setting::bind_to( 'link' )->link()->dynamic(),
+			] )
+			->default_target( Style_Target::make( 'title' ) );
+
+		return new V3_Widget_Map_Registry(
+			new V3_Widget_Map_Compiler( [] ),
+			static fn( string $widget_type ) => self::V3_CONTROLS[ $widget_type ] ?? null,
+			[
+				'nav-menu' => $nav_menu,
+				'theme-post-title' => $post_title,
+			],
+			static fn() => false
+		);
+	}
 
 	private function make_plain_values_resolver(): Plain_Values_Resolver {
 		$registry = new Plain_Resolvers_Registry();
@@ -130,7 +191,7 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( [], $e_component_node['settings'] );
 	}
 
-	public function test_apply__v3_allowlisted_keys_merge_as_plain_settings() {
+	public function test_apply__v3_map_setting_keys_merge_as_plain_settings() {
 		// Arrange
 		$applier = $this->make_applier();
 
@@ -166,7 +227,7 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertSame( 'horizontal', $nav['settings']['layout'] );
 	}
 
-	public function test_apply__v3_rejects_non_allowlisted_settings() {
+	public function test_apply__v3_rejects_settings_outside_the_map() {
 		// Arrange
 		$applier = $this->make_applier();
 
@@ -196,7 +257,7 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertArrayNotHasKey( 'menu', $nav['settings'] );
 	}
 
-	public function test_apply__v3_rejects_array_value_on_scalar_slot_shape_check() {
+	public function test_apply__v3_skips_array_value_on_scalar_slot_with_warning() {
 		$applier = $this->make_applier();
 
 		$node = [
@@ -224,13 +285,13 @@ class Test_Element_Config_Applier extends TestCase {
 			$widget_configs
 		);
 
-		$this->assertNotNull( $result['error'] );
-		$this->assertStringContainsString( 'title', $result['error']->get_error_message() );
-		$this->assertStringContainsString( 'invalid shape', $result['error']->get_error_message() );
+		$this->assertNull( $result['error'] );
+		$this->assertSame( [ 'prop_value_invalid' ], array_column( $result['warnings']->all(), 'code' ) );
+		$this->assertStringContainsString( '"title"', $result['warnings']->all()[0]['message'] );
 		$this->assertArrayNotHasKey( 'title', $node['settings'] );
 	}
 
-	public function test_apply__v3_merges_valid_keys_and_reports_invalid_keys() {
+	public function test_apply__v3_merges_valid_keys_and_warns_about_invalid_keys() {
 		$applier = $this->make_applier();
 
 		$node = [
@@ -263,8 +324,9 @@ class Test_Element_Config_Applier extends TestCase {
 			$widget_configs
 		);
 
-		$this->assertNotNull( $result['error'] );
-		$this->assertStringContainsString( 'header_size', $result['error']->get_error_message() );
+		$this->assertNull( $result['error'] );
+		$this->assertSame( [ 'prop_value_invalid' ], array_column( $result['warnings']->all(), 'code' ) );
+		$this->assertStringContainsString( '"header_size"', $result['warnings']->all()[0]['message'] );
 		$this->assertSame( 'Hello world', $node['settings']['title'] );
 		$this->assertArrayNotHasKey( 'header_size', $node['settings'] );
 	}
@@ -297,7 +359,7 @@ class Test_Element_Config_Applier extends TestCase {
 			$index,
 			[
 				'title' => [
-					'link' => [ 'url' => [ 'name' => 'post-url', 'settings' => [] ] ],
+					'link' => [ 'name' => 'post-url', 'settings' => [] ],
 				],
 			],
 			$widget_configs
@@ -306,48 +368,6 @@ class Test_Element_Config_Applier extends TestCase {
 		$this->assertNull( $result['error'] );
 		$this->assertArrayNotHasKey( 'link', $node['settings'] );
 		$this->assertArrayHasKey( '__dynamic__', $node['settings'] );
-		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
-	}
-
-	public function test_apply__v3_dynamic_on_url_control_keeps_sibling_primitive_fields() {
-		$manager = new Stub_Dynamic_Tags_Manager();
-		$manager->add_stub_tag( 'post-url', [ 'url' ] );
-		$hoister = new V3_Dynamic_Hoister( $manager );
-		$applier = $this->make_applier( $hoister );
-
-		$node = [
-			'elType' => 'widget',
-			'widgetType' => 'theme-post-title',
-			'settings' => [],
-		];
-		$index = [ 'title' => &$node ];
-
-		$widget_configs = [
-			'theme-post-title' => [
-				'controls' => [
-					'link' => [
-						'type' => 'url',
-						'dynamic' => [ 'active' => true, 'categories' => [ 'url' ], 'property' => 'url' ],
-					],
-				],
-			],
-		];
-
-		$result = $applier->apply(
-			$index,
-			[
-				'title' => [
-					'link' => [
-						'url' => [ 'name' => 'post-url', 'settings' => [] ],
-						'is_external' => 'on',
-					],
-				],
-			],
-			$widget_configs
-		);
-
-		$this->assertNull( $result['error'] );
-		$this->assertSame( 'on', $node['settings']['link']['is_external'] );
 		$this->assertStringContainsString( 'name="post-url"', $node['settings']['__dynamic__']['link'] );
 	}
 

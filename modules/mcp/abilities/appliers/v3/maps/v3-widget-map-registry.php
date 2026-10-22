@@ -6,8 +6,6 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
 use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
@@ -38,11 +36,6 @@ class V3_Widget_Map_Registry {
 	 * @var V3_Widget_Map_Compiler
 	 */
 	private $compiler;
-
-	/**
-	 * @var callable
-	 */
-	private $is_experiment_active;
 
 	/**
 	 * @var callable
@@ -78,7 +71,6 @@ class V3_Widget_Map_Registry {
 
 	/**
 	 * @param V3_Widget_Map_Compiler                                            $compiler
-	 * @param callable(): bool                                                  $is_experiment_active
 	 * @param callable(string): (array<string, mixed>|null)                     $get_controls
 	 * @param array<string, V3_Widget_Map>                                      $maps
 	 * @param (callable(string): bool)|null                                     $has_advanced_tab Widgets that get the {@see Advanced_Wrapper} target.
@@ -86,14 +78,12 @@ class V3_Widget_Map_Registry {
 	 */
 	public function __construct(
 		V3_Widget_Map_Compiler $compiler,
-		callable $is_experiment_active,
 		callable $get_controls,
 		array $maps = [],
 		?callable $has_advanced_tab = null,
 		?callable $get_kit_controls = null
 	) {
 		$this->compiler = $compiler;
-		$this->is_experiment_active = $is_experiment_active;
 		$this->get_controls = $get_controls;
 		$this->maps = $maps;
 		$this->has_advanced_tab = $has_advanced_tab;
@@ -121,9 +111,6 @@ class V3_Widget_Map_Registry {
 
 		return new self(
 			new V3_Widget_Map_Compiler(),
-			static fn() => class_exists( \Elementor\Plugin::class )
-				&& isset( Plugin::$instance->experiments )
-				&& Plugin::$instance->experiments->is_feature_active( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME ),
 			static function ( string $widget_type ): ?array {
 				$source = self::registered_widget( $widget_type )
 					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
@@ -243,29 +230,15 @@ class V3_Widget_Map_Registry {
 		return isset( $this->maps[ $widget_type ] );
 	}
 
-	public function is_experiment_active(): bool {
-		$callback = $this->is_experiment_active;
-
-		return (bool) $callback();
-	}
-
 	public function is_supported( string $widget_type ): bool {
-		if ( ! $this->is_experiment_active() ) {
-			return Widget_Context_Helper::is_v3_allowlisted( $widget_type );
-		}
-
 		return null !== $this->get_map( $widget_type );
 	}
 
 	/**
-	 * The single gate for map-driven behavior: null whenever the standardized maps experiment
-	 * is off, the widget has no map, or the map shape is invalid.
+	 * The single gate for map-driven behavior: null whenever the widget has no map or the map
+	 * shape is invalid.
 	 */
 	public function get_map( string $widget_type ): ?Compiled_V3_Map {
-		if ( ! $this->is_experiment_active() ) {
-			return null;
-		}
-
 		$compiled = $this->compile( $widget_type );
 
 		return $compiled instanceof Compiled_V3_Map ? $compiled : null;

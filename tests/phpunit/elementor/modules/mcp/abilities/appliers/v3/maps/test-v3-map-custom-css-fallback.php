@@ -82,7 +82,6 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $map ]
 		) );
@@ -96,12 +95,11 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 	public function test_apply__writes_unsupported_breakpoint_values_and_other_media_queries_to_custom_css() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [ 'title_color' => '#111111' ], $result['settings_patch'] );
 		$this->assertSame( [ self::TABLET_RULE, self::WIDESCREEN_RULE ], $result['fallback_rules'] );
-		$this->assertSame( '', $result['unmapped_css'] );
 		$this->assertSame(
 			[ 'color: blue (title): Media query (min-width: 2000px) is not a site breakpoint.' ],
 			array_slice( $result['fallback_notes'], 1 )
@@ -139,12 +137,12 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 
 	public function test_serialize__returns_fallback_rules_inside_their_target_blocks_so_they_can_be_written_back() {
 		// Arrange.
-		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( 'color: #111111; @media(--tablet) { color: red; } ' . self::CUSTOM_MEDIA_BLOCK, self::WIDGET_TYPE );
 		$settings = $written['settings_patch'] + [ 'custom_css' => $this->fallback()->render( $written['fallback_rules'] ) ];
 
 		// Act.
-		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
-		$rewritten = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
+		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE );
+		$rewritten = $this->mapper()->apply( $css, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( 'color: #111111; @media(--tablet) { color: red; } @media (min-width: 2000px) { color: blue; }', $css );
@@ -158,7 +156,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$settings = [ 'custom_css' => self::UNKNOWN_SELECTOR_RULE . "\nselector .elementor-heading-title:hover { color: red; }" ];
 
 		// Act.
-		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE, [] );
+		$css = ( new V3_Style_Serializer() )->serialize( $settings, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( '&:hover { color: red; } ' . self::UNKNOWN_SELECTOR_RULE, $css );
@@ -177,7 +175,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$applier = new Style_Applier( $this->converter(), self::BREAKPOINTS );
 
 		// Act.
-		$result = $applier->apply( $index, [ 'title' => 'color: #111111; ' . self::UNKNOWN_SELECTOR_RULE ], 'replace', [ self::WIDGET_TYPE => [] ] );
+		$result = $applier->apply( $index, [ 'title' => 'color: #111111; ' . self::UNKNOWN_SELECTOR_RULE ], 'replace' );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings']->all() );
@@ -202,7 +200,7 @@ class Test_V3_Map_Custom_Css_Fallback extends Elementor_Test_Base {
 		$applier = new Style_Applier( $this->converter(), self::BREAKPOINTS );
 
 		// Act.
-		$result = $applier->apply( $index, [ 'title' => 'color: #111111; @media(--tablet) { color: red; }' ], 'patch', [ self::WIDGET_TYPE => [] ] );
+		$result = $applier->apply( $index, [ 'title' => 'color: #111111; @media(--tablet) { color: red; }' ], 'patch' );
 
 		// Assert.
 		$codes = array_column( $result['warnings']->all(), 'code' );

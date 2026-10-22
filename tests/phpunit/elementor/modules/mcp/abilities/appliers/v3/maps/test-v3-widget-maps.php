@@ -14,7 +14,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -51,7 +50,6 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( self::CONTAINER_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		Plugin::$instance->controls_manager->clear_stack_cache();
@@ -183,11 +181,11 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 */
 	public function test_round_trip__serialized_css_maps_back_to_same_settings( string $widget_type, array $targets, string $css ) {
 		// Arrange.
-		$written = $this->mapper()->apply( $css, $widget_type, [] );
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type, [] );
+		$written = $this->mapper()->apply( $css, $widget_type );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type );
 
 		// Act.
-		$result = $this->mapper()->apply( $readback, $widget_type, [] );
+		$result = $this->mapper()->apply( $readback, $widget_type );
 
 		// Assert.
 		$this->assertSame( [], $written['warnings'] );
@@ -221,11 +219,6 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}

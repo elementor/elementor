@@ -56,7 +56,6 @@ class Test_V3_Map_Overridden_Setting_Warnings extends Elementor_Test_Base {
 
 		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $map ]
 		) );
@@ -165,7 +164,7 @@ class Test_V3_Map_Overridden_Setting_Warnings extends Elementor_Test_Base {
 		$index = [ self::CONFIG_ID => &$node ];
 		$applier = new Style_Applier( $this->converter(), self::BREAKPOINTS );
 
-		$result = $applier->apply( $index, [ self::CONFIG_ID => $css ], 'patch', [ self::WIDGET_TYPE => [] ] );
+		$result = $applier->apply( $index, [ self::CONFIG_ID => $css ], 'patch' );
 
 		return array_map(
 			fn( array $warning ) => [
