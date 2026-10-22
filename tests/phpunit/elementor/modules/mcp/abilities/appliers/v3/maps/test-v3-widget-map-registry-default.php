@@ -9,7 +9,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -29,25 +28,14 @@ class Test_V3_Widget_Map_Registry_Default extends Elementor_Test_Base {
 	 */
 	private array $original_experiment_states = [];
 
-	/**
-	 * @var string[]
-	 */
-	private array $registered_experiments = [];
-
 	public function setUp(): void {
 		parent::setUp();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 	}
 
 	public function tearDown(): void {
 		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
-			if ( in_array( $experiment_name, $this->registered_experiments, true ) ) {
-				Plugin::$instance->experiments->remove_feature( $experiment_name );
-			} else {
-				Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
-			}
-
+			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
 			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
 		}
 
@@ -91,12 +79,6 @@ class Test_V3_Widget_Map_Registry_Default extends Elementor_Test_Base {
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$this->registered_experiments[] = $experiment_name;
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}
