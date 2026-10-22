@@ -8,6 +8,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
@@ -61,6 +62,8 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	 */
 	private array $original_experiment_states = [];
 
+	private bool $registered_form_element = false;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -75,6 +78,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		if ( $this->registered_form_element ) {
+			Plugin::$instance->elements_manager->unregister_element_type( Atomic_Form_Promotion::get_type() );
+			$this->registered_form_element = false;
+		}
+
 		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
 			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
 			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
@@ -2068,7 +2076,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		// Arrange: form has a container with honeypot + another container with honeypot
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
-		$container_id = $this->given_form_with_honeypot_in_container( $post_id );
+		$container_id = $this->given_form_with_atom_in_container( $post_id, 'e-form-honeypot' );
 
 		// Act: duplicate the container (would create a second honeypot in the form)
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -2087,12 +2095,36 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
 	}
 
+	public function test_duplicate__rejects_duplicating_container_with_recaptcha_score_when_form_already_has_one() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$container_id = $this->given_form_with_atom_in_container( $post_id, 'e-form-recaptcha-score' );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+		$this->assertStringContainsString( 'Score-based reCAPTCHA', $result['results'][0]['message'] );
+	}
+
 	public function test_duplicate__rejects_when_page_has_preexisting_violation_and_new_violation_introduced() {
 		// Arrange: form A has 2 honeypots (pre-existing violation), form B has honeypot in container
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$this->given_form_with_two_honeypots( $post_id );
-		$container_in_form_b = $this->given_form_with_honeypot_in_container( $post_id );
+		$container_in_form_b = $this->given_form_with_atom_in_container( $post_id, 'e-form-honeypot' );
 
 		// Act: duplicate container in form B (would create a new violation in form B)
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -2112,7 +2144,18 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
 	}
 
+	private function given_form_element_registered(): void {
+		if ( Plugin::$instance->elements_manager->get_element_types( Atomic_Form_Promotion::get_type() ) ) {
+			return;
+		}
+
+		Plugin::$instance->elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		$this->registered_form_element = true;
+	}
+
 	private function given_form_with_two_honeypots( int $post_id ): void {
+		$this->given_form_element_registered();
+
 		$form_id = $this->random_element_id();
 		$honeypot1_id = $this->random_element_id();
 		$honeypot2_id = $this->random_element_id();
@@ -2150,10 +2193,12 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 	}
 
-	private function given_form_with_honeypot_in_container( int $post_id ): string {
+	private function given_form_with_atom_in_container( int $post_id, string $widget_type ): string {
+		$this->given_form_element_registered();
+
 		$form_id = $this->random_element_id();
 		$container_id = $this->random_element_id();
-		$honeypot_id = $this->random_element_id();
+		$atom_id = $this->random_element_id();
 		$submit_id = $this->random_element_id();
 
 		$this->append_elements_to_document( $post_id, [
@@ -2168,9 +2213,9 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 						'settings' => [],
 						'elements' => [
 							[
-								'id' => $honeypot_id,
+								'id' => $atom_id,
 								'elType' => 'widget',
-								'widgetType' => 'e-form-honeypot',
+								'widgetType' => $widget_type,
 								'settings' => [],
 								'elements' => [],
 							],
