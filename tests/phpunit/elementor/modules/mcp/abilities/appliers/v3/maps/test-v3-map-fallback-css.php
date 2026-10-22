@@ -26,7 +26,7 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 
 	const NOTE = 'font-weight: 650 (title): CSS property font-weight has a value this Elementor widget cannot store.';
 
-	const FALLBACK_RULE_CSS = 'selector .title { font-weight: 650; }';
+	const FALLBACK_RULE_CSS = 'selector .title { font-weight: 650 !important; }';
 
 	public function setUp(): void {
 		parent::setUp();
@@ -85,6 +85,17 @@ class Test_V3_Map_Fallback_Css extends TestCase {
 		// Assert.
 		$this->assertSame( self::HAND_WRITTEN_CSS . "\n" . self::FALLBACK_RULE_CSS, $node['settings']['custom_css'] );
 		$this->assertSame( [ '[' . self::CONFIG_ID . '] ' . self::NOTE . ' Written to the widget custom CSS instead.' ], $warnings->messages() );
+	}
+
+	public function test_apply__merges_into_the_existing_rule_of_the_same_target() {
+		// Arrange.
+		$node = [ 'settings' => [ 'custom_css' => 'selector .title { font-weight: 600; letter-spacing: 1px; }' ] ];
+
+		// Act.
+		$this->fallback_css( true )->apply( $node, self::result(), self::WIDGET_TYPE, self::CONFIG_ID, Warnings_Bag::make() );
+
+		// Assert.
+		$this->assertSame( 'selector .title { font-weight: 650 !important; letter-spacing: 1px !important; }', $node['settings']['custom_css'] );
 	}
 
 	public function test_apply__skips_fallback_rules_without_pro_with_the_v4_unsupported_css_code() {

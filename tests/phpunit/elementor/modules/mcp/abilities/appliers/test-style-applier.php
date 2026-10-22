@@ -29,6 +29,7 @@ namespace {
 	use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 	use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 	use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+	use Elementor\Modules\Variables\Services\Variables_Service;
 	use PHPUnit\Framework\TestCase;
 
 	class Test_Style_Applier extends TestCase {
@@ -96,6 +97,54 @@ namespace {
 			$this->assertSame( 'desktop', $node['styles'][ $style_id ]['variants'][0]['meta']['breakpoint'] );
 			$this->assertArrayHasKey( 'color', $node['styles'][ $style_id ]['variants'][0]['props'] );
 			$this->assertContains( $style_id, $node['settings']['classes']['value'] );
+		}
+
+		public function test_apply__warns_about_a_variable_reference_that_matches_no_variable() {
+			// Arrange.
+			$css       = 'font-family: var(--qa-missing); color: var(--qa-brand);';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [], 'customCss' => 'font-family: var(--qa-missing);', 'rejected' => [] ] ] ]
+			);
+			$applier = new Style_Applier( $converter, $this->active_breakpoints, $this->make_variables_service( [ 'qa-brand' ] ) );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$unknown = array_values( array_filter( $result['warnings']->all(), fn( $warning ) => 'unknown_variable' === $warning['code'] ) );
+			$this->assertCount( 1, $unknown );
+			$this->assertStringContainsString( 'var(--qa-missing)', $unknown[0]['message'] );
+			$this->assertStringNotContainsString( 'qa-brand', $unknown[0]['message'] );
+		}
+
+		public function test_apply__does_not_warn_when_every_variable_reference_exists() {
+			// Arrange.
+			$css       = 'color: var(--qa-brand);';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [ 'color' => [ '$$type' => 'global-color-variable', 'value' => 'e-gv-1' ] ], 'customCss' => '', 'rejected' => [] ] ] ]
+			);
+			$applier = new Style_Applier( $converter, $this->active_breakpoints, $this->make_variables_service( [ 'qa-brand' ] ) );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$this->assertTrue( $result['warnings']->is_empty() );
+		}
+
+		private function make_variables_service( array $existing_labels ): Variables_Service {
+			$service = $this->createMock( Variables_Service::class );
+			$service->method( 'find_by_label_or_id' )->willReturnCallback(
+				fn( string $needle ) => in_array( $needle, $existing_labels, true ) ? [ 'label' => $needle ] : null
+			);
+
+			return $service;
 		}
 
 		public function test_apply__pseudo_state_css_creates_hover_variant() {

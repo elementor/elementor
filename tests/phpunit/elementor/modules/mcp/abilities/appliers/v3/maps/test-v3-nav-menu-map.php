@@ -130,6 +130,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 				'dropdown_border_radius',
 				'dropdown_box_shadow_box_shadow_type',
 				'dropdown_box_shadow_box_shadow',
+				'dropdown_box_shadow_box_shadow_position',
 				'color_dropdown_item_hover',
 				'dropdown_divider_border',
 				'toggle_size',
@@ -242,6 +243,22 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		);
 	}
 
+	public function test_apply__falls_back_on_the_flex_basis_no_wrapper_control_stores() {
+		// Act.
+		$result = $this->mapper()->apply( 'wrapper { flex: 0 0 333px; }', self::WIDGET_TYPE, [] );
+
+		// Assert.
+		$this->assertEquals(
+			[
+				'_flex_grow' => 0,
+				'_flex_size' => 'custom',
+				'_flex_shrink' => 0,
+			],
+			$result['settings_patch']
+		);
+		$this->assertSame( [ 'flex-basis' => '333px' ], $result['fallback_rules'][0]['declarations'] );
+	}
+
 	public function test_round_trip__wrapper_states_map_back_to_same_settings() {
 		// Arrange.
 		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; flex-grow: 1; flex-shrink: 0; }'
@@ -315,22 +332,24 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 			[
 				'letter-spacing: 1px (toggle): CSS property letter-spacing is not supported by this Elementor widget.',
 				'font-weight: 650 (main-menu): CSS property font-weight has a value this Elementor widget cannot store. Allowed values: 100, 200, 300, 400, 500, 600, 700, 800, 900, normal, bold.',
-				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths must be px.',
+				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths, offsets and blur must be px, and the color must be a valid color.',
 			],
 			$result['fallback_notes']
 		);
 	}
 
-	public function test_apply__warns_and_skips_unstorable_declarations_of_targets_without_a_selector() {
+	public function test_render__writes_pointer_and_divider_fallbacks_on_the_pseudo_elements_they_paint() {
+		// Arrange.
+		$written = $this->mapper()->apply( 'pointer:hover { opacity: 0.5; } divider { opacity: 0.4; }', self::WIDGET_TYPE, [] );
+		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
+
 		// Act.
-		$result = $this->mapper()->apply( 'divider { letter-spacing: 1px; }', self::WIDGET_TYPE, [] );
+		$custom_css = $fallback->render( $written['fallback_rules'] );
 
 		// Assert.
-		$this->assertSame( [], $result['fallback_notes'] );
-		$this->assertSame(
-			[ 'CSS property letter-spacing is not supported by this Elementor widget. It was skipped because style target divider cannot hold custom CSS.' ],
-			$result['warnings']
-		);
+		$this->assertSame( [], $written['warnings'] );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--main .elementor-item:hover:before, selector .elementor-nav-menu--main .elementor-item:hover:after { opacity: 0.5 !important; }', $custom_css );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--layout-horizontal .elementor-nav-menu > li:not(:last-child):after { opacity: 0.4 !important; }', $custom_css );
 	}
 
 	public function test_render__writes_fallback_rules_against_each_target_selector() {
@@ -342,8 +361,8 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		$custom_css = $fallback->render( $written['fallback_rules'] );
 
 		// Assert.
-		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000; }', $custom_css );
-		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px; } }', $custom_css );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000 !important; }', $custom_css );
+		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px !important; } }', $custom_css );
 	}
 
 	private function mapper(): V3_Style_Mapper {

@@ -16,14 +16,24 @@ class Woo_Form_Fields implements Style_Fragment {
 
 	const ALIAS = 'fields';
 
-	const LABEL = 'Form inputs and selects; fields:focus styles them while focused';
+	const LABEL = 'Form fields';
+
+	const FOCUS_BEHAVIOR = 'The focus state styles a field while the visitor is typing in it.';
 
 	const FOCUS_STATE = 'focus';
 
-	public static function target( string $selector ): Style_Target {
+	const DEFAULTS = [
+		'font-size' => '14px',
+		'background-color' => '#f9fafa',
+		'color' => '#69727d',
+	];
+
+	public static function target( string $selector, string $description ): Style_Target {
 		return Style_Target::make( self::ALIAS )
 			->label( self::LABEL )
+			->description( $description . ' ' . self::FOCUS_BEHAVIOR )
 			->selector( $selector )
+			->defaults( self::DEFAULTS )
 			->states( self::FOCUS_STATE )
 			->with( new self() );
 	}

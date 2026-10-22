@@ -18,14 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class V3_Style_Mapper_Factory {
 
-	public static function create( Css_Converter $css_converter, array $active_breakpoints = [] ): V3_Style_Mapper {
+	public static function create( Css_Converter $css_converter, array $active_breakpoints = [], ?bool $has_pro = null ): V3_Style_Mapper {
 		return new V3_Style_Mapper(
 			$css_converter,
 			$active_breakpoints,
 			V3_Converter_Registry_Factory::create(),
 			new Css_Declaration_Parser(),
 			new Unmapped_Css_Serializer(),
-			new Responsive_Key_Resolver()
+			new Responsive_Key_Resolver(),
+			$has_pro
 		);
 	}
 }

@@ -10,7 +10,9 @@ use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Props\Interaction_Item_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3_Node_Bridge;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Control_Visibility;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Widget_Bridge_Registry;
@@ -30,8 +32,11 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 	private ?Default_Styles_Repository $default_styles_repository;
 
-	public function __construct( ?Default_Styles_Repository $default_styles_repository = null ) {
+	private ?V3_Map_Default_Styles $v3_default_styles;
+
+	public function __construct( ?Default_Styles_Repository $default_styles_repository = null, ?V3_Map_Default_Styles $v3_default_styles = null ) {
 		$this->default_styles_repository = $default_styles_repository;
+		$this->v3_default_styles = $v3_default_styles;
 	}
 
 	protected function get_ability_id(): string {
@@ -41,14 +46,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, version, title, nested elements) for a single post or page ID. Each node is tagged with version=3 (legacy) or version=4 (atomic). Only version=4 nodes can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; version=3 nodes are returned for context only and must be edited directly in the Elementor editor, except for their layer name. `title` is the layer name shown in the Structure panel: rename any node (v3 or v4) with elementor/manage-elements `editor_settings.name`, never through `settings`. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles, plus editor_settings (name, decorative) when set; editor_settings is separate from settings and is written back through the `editor_settings` input. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles. Only works for posts saved with Elementor.', 'elementor' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. V4 (atomic, `e-` types) nodes and the V3 widgets elementor/list-widget-schemas lists can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; their elementor/get-widget-schemas response has `widget_version` 3 for V3 widgets. Other V3 nodes are returned for context only and must be edited directly in the Elementor editor, except for their layer name. `title` is the layer name shown in the Structure panel: rename any node (v3 or v4) with elementor/manage-elements `editor_settings.name`, never through `settings`. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles, plus editor_settings (name, decorative) when set; editor_settings is separate from settings and is written back through the `editor_settings` input. V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles; V3 widgets with `style_targets` additionally include default_styles in the same style-target CSS as their styles. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, version, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). Map-driven V3 widgets include settings and styles.css; non-map V3 widgets return empty settings and styles.css.',
+						'description' => 'Skeleton of Elementor elements (id, elType, widgetType, title, nested elements). When include_content is true, all nodes include settings and styles (as { css } — raw CSS string). V4 nodes additionally include __style_id when a local style exists, interactions, tag (rendered HTML wrapper tag when known), and default_styles (raw CSS string, in cascade order: `.e-con` shell styles of atomic elements, including document-root rules for top-level elements + widget base layer + kit site-wide default for that tag). V3 widgets with `style_targets` include settings, styles.css and default_styles (the styles the widget shows before any style is set, in the same style-target CSS); other V3 widgets return empty settings and styles.css.',
 					],
 				],
 			],
@@ -78,7 +83,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 					'include_content' => [
 						'type' => 'boolean',
 						'default' => false,
-						'description' => 'If true, includes each node\'s settings (plain shape, writable as-is) and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles. Requires element_id.',
+						'description' => 'If true, includes each node\'s settings (plain shape, writable as-is) and styles ({ css } — raw CSS string round-trippable to build-composition.style / manage-elements.update.style in replace mode). V4 nodes also include interactions, rendered tag, and default_styles; V3 widgets with `style_targets` also include default_styles. Requires element_id.',
 					],
 				],
 			]
@@ -301,11 +306,22 @@ class Get_Structure_Ability extends Abstract_Ability {
 			? V3_Map_Settings_Reader::read( $map, $raw_settings )
 			: V3_Non_Style_Allowlist::filter( $widget_type, $raw_settings )['allowed'];
 
+		$style_settings = null !== $map ? $map->get_settings_host()->read( $node ) : $raw_settings;
 		$widget_config = Widget_Context_Helper::get_widget_config( $widget_type );
-		$style = ( new V3_Style_Serializer() )->serialize( $raw_settings, $widget_type, $widget_config ?? [] );
+		$style = ( new V3_Style_Serializer() )->serialize( $style_settings, $widget_type, $widget_config ?? [] );
 
 		$skeleton['settings'] = ! empty( $allowed_settings ) ? $allowed_settings : (object) [];
 		$skeleton['styles'] = [ 'css' => $style ];
+
+		if ( null !== $map ) {
+			$this->v3_default_styles ??= V3_Map_Default_Styles::create_default();
+			$skeleton['default_styles'] = $this->v3_default_styles->render(
+				$map,
+				$style_settings,
+				V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type ),
+				V3_Control_Visibility::for_widget( $widget_type )
+			);
+		}
 	}
 
 	private function normalize_interactions( $interactions ): array {

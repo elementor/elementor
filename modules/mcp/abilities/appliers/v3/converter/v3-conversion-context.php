@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -42,6 +44,12 @@ class V3_Conversion_Context {
 	/** @var array<string, array{value: mixed, declaration: string}> */
 	private array $required_settings = [];
 
+	/** @var array<string, string> */
+	private array $border_style_defaults = [];
+
+	/** @var array<string, string[]> */
+	private array $list_requirements = [];
+
 	/**
 	 * @param array<string, mixed> $patch
 	 */
@@ -50,7 +58,7 @@ class V3_Conversion_Context {
 			return;
 		}
 
-		$this->settings_patch = array_merge( $this->settings_patch, $patch );
+		$this->settings_patch = V3_Settings_Patch::merge( $this->settings_patch, $patch );
 	}
 
 	/**
@@ -71,6 +79,36 @@ class V3_Conversion_Context {
 	 */
 	public function required_settings(): array {
 		return $this->required_settings;
+	}
+
+	/**
+	 * @param array<string, string> $defaults Border style setting => style to use while none is saved.
+	 */
+	public function add_border_style_defaults( array $defaults ): void {
+		$this->border_style_defaults = array_merge( $this->border_style_defaults, $defaults );
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function border_style_defaults(): array {
+		return $this->border_style_defaults;
+	}
+
+	/**
+	 * @param array<string, string[]> $requirements Multi-select setting => values its list must contain.
+	 */
+	public function require_list_values( array $requirements ): void {
+		foreach ( $requirements as $setting => $values ) {
+			$this->list_requirements[ $setting ] = array_values( array_unique( array_merge( $this->list_requirements[ $setting ] ?? [], $values ) ) );
+		}
+	}
+
+	/**
+	 * @return array<string, string[]>
+	 */
+	public function list_requirements(): array {
+		return $this->list_requirements;
 	}
 
 	public function add_typography_declaration( string $prefix, string $breakpoint, ?string $state, bool $responsive, string $property, string $value ): void {

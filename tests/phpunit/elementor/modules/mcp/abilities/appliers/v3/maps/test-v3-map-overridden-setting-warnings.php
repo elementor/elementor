@@ -7,6 +7,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Overridden_Setting_Warnings;
+use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map;
@@ -101,6 +103,49 @@ class Test_V3_Map_Overridden_Setting_Warnings extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 'background', $node['settings']['pointer'] );
 		$this->assertSame( [], $warnings );
+	}
+
+	public function test_report__quotes_an_empty_choice_by_its_schema_value() {
+		// Arrange.
+		$warnings = Warnings_Bag::make();
+		$controls = [
+			'gallery_display_caption' => [
+				'type' => 'select',
+				'options' => [
+					'none' => 'None',
+					'' => 'Attachment Caption',
+				],
+			],
+		];
+
+		// Act.
+		V3_Overridden_Setting_Warnings::report( $warnings, self::CONFIG_ID, [
+			'gallery_display_caption' => 'none',
+		], [
+			'gallery_display_caption' => [
+				'value' => '',
+				'declaration' => 'margin',
+			],
+		], $controls );
+
+		// Assert.
+		$this->assertStringContainsString(
+			"gallery_display_caption was changed from 'none' to 'attachment-caption'",
+			$warnings->all()[0]['message']
+		);
+	}
+
+	public function test_apply__warns_when_a_style_turns_on_a_switcher_that_was_explicitly_off() {
+		// Arrange.
+		$node = $this->node( [ 'pointer' => '' ] );
+
+		// Act.
+		$warnings = $this->apply( $node, '&:hover { background: #ff0000; }' );
+
+		// Assert.
+		$this->assertSame( 'background', $node['settings']['pointer'] );
+		$this->assertSame( [ self::OVERRIDDEN_CODE ], array_column( $warnings, 'code' ) );
+		$this->assertStringContainsString( "pointer was off and was set to 'background'", $warnings[0]['message'] );
 	}
 
 	private function node( array $settings ): array {

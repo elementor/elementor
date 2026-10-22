@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Css_Selector_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Date_Time_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Enum_From_Control_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Gallery_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Icons_Setting_Adapter;
@@ -43,6 +45,18 @@ class V3_Setting {
 		return $this;
 	}
 
+	public function date_time(): self {
+		$this->adapter = new Date_Time_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function css_selector(): self {
+		$this->adapter = new Css_Selector_Setting_Adapter();
+
+		return $this;
+	}
+
 	/**
 	 * @param string[] $values
 	 */
@@ -72,6 +86,12 @@ class V3_Setting {
 
 	public function number(): self {
 		$this->adapter = new Number_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function whole_number(): self {
+		$this->adapter = new Number_Setting_Adapter( true );
 
 		return $this;
 	}

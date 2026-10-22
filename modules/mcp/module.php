@@ -12,6 +12,7 @@ use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
+use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
@@ -155,6 +156,10 @@ class Module extends BaseModule {
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			( new Woocommerce_Preview_Fixtures() )->register();
+		}
 
 		if ( ! self::is_active() ) {
 			return;

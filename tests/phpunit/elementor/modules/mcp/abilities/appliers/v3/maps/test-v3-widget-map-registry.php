@@ -133,10 +133,29 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 					'label' => 'Main menu items',
 					'states' => [ 'default', 'current' ],
 					'properties' => [ 'color' ],
+					'properties_by_state' => [
+						'default' => [ 'color' ],
+						'current' => [ 'color' ],
+					],
 				],
 			],
 			$contract['style_targets']
 		);
+	}
+
+	public function test_get_llm_contract__includes_target_description_when_set() {
+		// Arrange.
+		$description = 'Top-level links of the menu. Collapses into the dropdown below the mobile breakpoint.';
+		$registry = $this->registry( [
+			'maps' => [ self::WIDGET_TYPE => $this->map()->default_target( $this->main_menu()->description( $description ) ) ],
+		] );
+
+		// Act.
+		$contract = $registry->get_llm_contract( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertSame( 'Main menu items', $contract['style_targets']['main-menu']['label'] );
+		$this->assertSame( $description, $contract['style_targets']['main-menu']['description'] );
 	}
 
 	public function test_get_map__appends_advanced_wrapper_target_for_widgets_with_an_advanced_tab() {

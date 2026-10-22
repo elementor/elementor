@@ -227,21 +227,28 @@ class Widget_Context_Helper {
 		$properties = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
-			if ( ! $prop_type instanceof Prop_Type || ! self::is_prop_key_configurable( $key, $prop_type ) ) {
-				continue;
+			$schema = $prop_type instanceof Prop_Type ? self::build_published_property_schema( $key, $prop_type, $widget_type ) : null;
+
+			if ( null !== $schema ) {
+				$properties[ $key ] = $schema;
 			}
-
-			$schema = self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
-			$allowed_html_tags = Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( $widget_type, $key );
-
-			if ( null !== $allowed_html_tags ) {
-				$schema = self::describe_allowed_html_tags( $schema, $allowed_html_tags );
-			}
-
-			$properties[ $key ] = $schema;
 		}
 
 		return $properties;
+	}
+
+	/**
+	 * @return array<string, mixed>|null The property schema `get-widget-schemas` publishes, or null when the key is not configurable.
+	 */
+	public static function build_published_property_schema( string $key, Prop_Type $prop_type, string $widget_type ): ?array {
+		if ( ! self::is_prop_key_configurable( $key, $prop_type ) ) {
+			return null;
+		}
+
+		$schema = self::to_plain_llm_schema_from_json( $prop_type->to_json_schema() );
+		$allowed_html_tags = Escaped_Html_Prop_Type::get_allowed_html_tags_for_prop( $widget_type, $key );
+
+		return null === $allowed_html_tags ? $schema : self::describe_allowed_html_tags( $schema, $allowed_html_tags );
 	}
 
 	/**

@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Serializer;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -38,6 +39,9 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	// nav-menu ships in an earlier stack PR with its own dedicated test.
 	const OWNED_ELSEWHERE = [ 'nav-menu' ];
 
+	// The advanced wrapper binds the flex item controls, which widgets register only while it is active.
+	const CONTAINER_EXPERIMENT_NAME = 'container';
+
 	/**
 	 * @var array<string, string>
 	 */
@@ -49,6 +53,8 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 		parent::setUp();
 		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		$this->set_experiment_state( self::CONTAINER_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		Plugin::$instance->controls_manager->clear_stack_cache();
 
 		$this->registry = V3_Widget_Map_Registry::create_default();
 		V3_Widget_Map_Registry::set_instance( $this->registry );
@@ -84,7 +90,7 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 	 * @dataProvider registered_maps_provider
 	 */
 	public function test_get_map__compiles_with_no_diagnostics( string $widget_type ) {
-		if ( ! Plugin::$instance->widgets_manager->get_widget_types( $widget_type ) ) {
+		if ( ! V3_Widget_Map_Registry::registered_widget( $widget_type ) ) {
 			$this->markTestSkipped( "The {$widget_type} widget is not installed; its map is covered by the control fixtures." );
 		}
 
@@ -96,12 +102,35 @@ class Test_V3_Widget_Maps extends Elementor_Test_Base {
 		$this->assertSame( [], $this->registry->get_diagnostics( $widget_type ), wp_json_encode( $this->registry->get_diagnostics( $widget_type ) ) );
 	}
 
+	public function test_get_map__is_null_when_only_the_pro_promotion_placeholder_is_registered() {
+		// Arrange.
+		$widget_type = 'qa-promoted-widget';
+		Plugin::$instance->widgets_manager->register( new Pro_Widget_Promotion( [], [
+			'widget_name' => $widget_type,
+			'widget_title' => 'Promoted',
+		] ) );
+		$counter_map = require V3_Widget_Map_Registry::MAPS_DIR . '/counter-map.php';
+		$registry = V3_Widget_Map_Registry::create_default( [ $widget_type => $counter_map ] );
+
+		// Act.
+		$map = $registry->get_map( $widget_type );
+		$is_supported = $registry->is_supported( $widget_type );
+		$controls = $registry->get_registered_controls( $widget_type );
+		Plugin::$instance->widgets_manager->unregister( $widget_type );
+
+		// Assert.
+		$this->assertNull( $map );
+		$this->assertFalse( $is_supported );
+		$this->assertSame( [], $controls );
+		$this->assertSame( [], $registry->get_diagnostics( $widget_type ) );
+	}
+
 	public function round_trip_provider(): array {
 		return [
 			'counter targets and responsive typography' => [
 				'counter',
 				[ 'number', 'title', 'layout', 'wrapper' ],
-				'color: #ff0000; font-size: 48px; font-weight: 700; title { color: #333333; font-size: 18px; }'
+				'color: #ff0000; font-size: 48px; font-weight: 700; text-align: start; title { color: #333333; font-size: 18px; }'
 					. ' layout { gap: 12px; } @media(--mobile) { font-size: 32px; title { font-size: 14px; } }',
 				[
 					'ending_number' => 4.5,

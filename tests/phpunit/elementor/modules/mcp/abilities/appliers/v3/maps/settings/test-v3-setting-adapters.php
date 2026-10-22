@@ -84,6 +84,28 @@ class Test_V3_Setting_Adapters extends TestCase {
 		$this->assertSame( [ 'horizontal', 'vertical' ], $prop_type->get_enum() );
 	}
 
+	public function test_enum_from_control_adapter__names_an_empty_option_after_its_label() {
+		// Arrange.
+		$adapter = new Enum_From_Control_Setting_Adapter();
+		$control = [
+			'type' => 'select',
+			'options' => [
+				'none' => 'None',
+				'' => 'Attachment Caption',
+			],
+		];
+
+		// Act.
+		$enum = $adapter->prop_type( $control )->get_enum();
+		$stored = $adapter->to_control_value( String_Prop_Type::generate( 'attachment-caption' ), $control );
+		$read = $adapter->from_control_value( '', $control );
+
+		// Assert.
+		$this->assertSame( [ 'none', 'attachment-caption' ], $enum );
+		$this->assertSame( '', $stored );
+		$this->assertSame( 'attachment-caption', $read );
+	}
+
 	public function test_enum_from_control_adapter__supports_only_choice_controls_with_options() {
 		// Arrange.
 		$adapter = new Enum_From_Control_Setting_Adapter();

@@ -22,6 +22,10 @@ $images = Style_Target::make( 'images' )
 $arrows = Style_Target::make( 'arrows' )
 	->label( 'Previous and next arrows' )
 	->selector( '.elementor-swiper-button' )
+	->defaults( [
+		'font-size' => '25px',
+		'color' => 'rgba(238, 238, 238, .9)',
+	] )
 	->bind( 'font-size', V3_Control::bind_to( 'arrows_size' )->responsive() )
 	->bind( 'color', V3_Control::bind_to( 'arrows_color' ) );
 

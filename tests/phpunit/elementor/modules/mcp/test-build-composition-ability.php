@@ -416,7 +416,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				[
 					'title' => [ 'foo' => 'bar' ],
 				],
-				[ 'title', 'could not be resolved' ],
+				[ 'title', 'does not match the published schema' ],
 				'prop_value_invalid',
 			],
 		];
@@ -696,6 +696,41 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'box-shadow: none', Utils::decode_string( $mobile['custom_css']['raw'] ?? '' ) );
 	}
 
+	public function test_execute__warns_when_grid_rows_outnumber_the_rows_children_fill() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-grid configuration-id="menu"><e-heading configuration-id="a"/><e-heading configuration-id="b"/></e-grid>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertContains( 'grid_empty_rows', array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( '[menu]', implode( ' ', $result['warnings'] ) );
+	}
+
+	public function test_execute__warns_about_an_unknown_variable_reference() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="title"/></e-flexbox>',
+			'style' => [ 'title' => 'font-family: var(--qa-nonexistent);' ],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertContains( 'unknown_variable', array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( 'var(--qa-nonexistent)', implode( ' ', $result['warnings'] ) );
+	}
+
 	public function test_execute__box_shadow_none_warns_when_custom_css_is_not_supported() {
 		// Arrange
 		$this->act_as_admin();
@@ -725,14 +760,15 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result  = $this->build_card_with_style( $post_id, 'color: red; color: var(--not-a-kit-variable);' );
 		$desktop = $this->find_variant( $post_id, 'desktop' );
+		$unsupported = $this->warning_messages( $result, 'unsupported_css' );
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['warnings'] ?? [] );
-		$this->assertStringContainsString( '[card]', $result['warnings'][0] );
-		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
-		$this->assertStringNotContainsString( 'color: red', $result['warnings'][0] );
+		$this->assertCount( 1, $unsupported );
+		$this->assertStringContainsString( '[card]', $unsupported[0] );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $unsupported[0] );
+		$this->assertStringNotContainsString( 'color: red', $unsupported[0] );
 		$this->assertEmpty( $desktop['custom_css'] ?? null );
 	}
 
@@ -743,13 +779,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Act
 		$result = $this->build_card_with_style( $post_id, 'color: var(--not-a-kit-variable); & > p { color: blue; }' );
+		$unsupported = $this->warning_messages( $result, 'unsupported_css' );
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['warnings'] ?? [] );
-		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
-		$this->assertStringNotContainsString( '& > p', $result['warnings'][0] );
+		$this->assertCount( 1, $unsupported );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $unsupported[0] );
+		$this->assertStringNotContainsString( '& > p', $unsupported[0] );
 	}
 
 	public function test_execute__no_unsupported_css_warning_when_all_css_is_native() {
@@ -781,8 +818,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertArrayNotHasKey( 'warnings', $result );
+		$this->assertSame( [ 'unknown_variable' ], array_column( $result['warning_details'] ?? [], 'code' ) );
 		$this->assertStringContainsString( 'var(--not-a-kit-variable)', Utils::decode_string( $desktop['custom_css']['raw'] ?? '' ) );
+	}
+
+	private function warning_messages( $result, string $code ): array {
+		$details = is_array( $result ) ? ( $result['warning_details'] ?? [] ) : [];
+
+		return array_column( array_filter( $details, fn( $warning ) => $code === $warning['code'] ), 'message' );
 	}
 
 	private function build_card_with_mobile_box_shadow_none( int $post_id ) {
