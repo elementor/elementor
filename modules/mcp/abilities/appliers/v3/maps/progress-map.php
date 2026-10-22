@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $bar = Style_Target::make( 'bar' )
 	->label( 'Filled part of the bar; color and typography apply to the inner text' )
 	->selector( '.elementor-progress-bar' )
+	->defaults( [ 'font-size' => '11px' ] )
 	->with( Typography_Group::from_prefix( 'bar_inner_typography' )->except( 'line-height' ) )
 	->bind( 'background', V3_Control::bind_to( 'bar_color' ) )
 	->bind( 'height', V3_Control::bind_to( 'bar_height' ) )
@@ -21,10 +22,14 @@ $bar = Style_Target::make( 'bar' )
 $track = Style_Target::make( 'track' )
 	->label( 'Unfilled track behind the bar' )
 	->selector( '.elementor-progress-wrapper' )
+	->defaults( [
+		'background-color' => '#eeeeee',
+		'border-radius' => '2px',
+	] )
 	->bind( 'background', V3_Control::bind_to( 'bar_bg_color' ) )
 	->bind( 'border-radius', V3_Control::bind_to( 'bar_border_radius' ) );
 
-$title = Style_Target::make( 'title' )
+$title_target = Style_Target::make( 'title' )
 	->label( 'Title above the bar' )
 	->selector( '.elementor-title' )
 	->with( Typography_Group::from_prefix( 'typography' ) )
@@ -41,4 +46,4 @@ return V3_Widget_Map::make( 'progress' )
 		'inner_text' => V3_Setting::bind_to( 'inner_text' )->string()->dynamic(),
 	] )
 	->default_target( $bar )
-	->targets( $track, $title );
+	->targets( $track, $title_target );

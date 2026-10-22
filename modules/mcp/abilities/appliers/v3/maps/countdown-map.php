@@ -13,8 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $boxes = Style_Target::make( 'boxes' )
-	->label( 'Box around each unit (days, hours, minutes, seconds)' )
+	->label( 'Unit boxes' )
+	->description( 'One box per unit shown: days, hours, minutes and seconds, each turned on by show_days, show_hours, show_minutes and show_seconds. Holds the digits and, while show_labels is on, the unit label.' )
 	->selector( '.elementor-countdown-item' )
+	->defaults( [ 'padding' => '20px 0' ] )
 	->with( Border_Group::from_prefix( 'box_border' ) )
 	->with( Box_Shadow_Group::from_prefix( 'box_shadow' ) )
 	->bind( 'background', V3_Control::bind_to( 'box_background_color' ) )
@@ -22,14 +24,21 @@ $boxes = Style_Target::make( 'boxes' )
 	->bind( 'border-radius', V3_Control::bind_to( 'box_border_radius' ) );
 
 $digits = Style_Target::make( 'digits' )
-	->label( 'Countdown digits' )
+	->label( 'Digits' )
+	->description( 'The number inside each unit box. Updates every second until the countdown expires.' )
 	->selector( '.elementor-countdown-digits' )
+	->defaults( [
+		'font-size' => '69px',
+		'line-height' => '1',
+	] )
 	->with( Typography_Group::from_prefix( 'digits_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'digits_color' ) );
 
 $label = Style_Target::make( 'label' )
-	->label( 'Unit labels (Days, Hours, ...)' )
+	->label( 'Unit labels' )
+	->description( 'The unit name under or beside the digits (Days, Hours, Minutes, Seconds). Rendered only while show_labels is on.' )
 	->selector( '.elementor-countdown-label' )
+	->defaults( [ 'line-height' => '1' ] )
 	->with( Typography_Group::from_prefix( 'label_typography' ) )
 	->bind( 'color', V3_Control::bind_to( 'label_color' ) );
 
@@ -38,8 +47,13 @@ $label = Style_Target::make( 'label' )
 // the requirement is declared explicitly: nothing is written, and the inactive-condition warning
 // tells the caller the style only takes effect while the message action is enabled.
 $message = Style_Target::make( 'message' )
-	->label( 'Message shown when the countdown expires; only takes effect while expire_actions includes message' )
+	->label( 'Expiry message' )
+	->description( 'Text from message_after_expire, shown instead of the countdown once it expires, only while expire_actions includes message. Not visible in a preview of a running countdown.' )
 	->selector( '.elementor-countdown-expire--message' )
+	->defaults( [
+		'text-align' => 'center',
+		'padding' => '20px',
+	] )
 	->bind( 'color', V3_Control::bind_to( 'text_color' )->requires( [] ) )
 	->bind( 'text-align', V3_Control::bind_to( 'align' )->responsive()->requires( [] ) )
 	->bind( 'padding', V3_Control::bind_to( 'message_padding' )->responsive()->requires( [] ) );
@@ -51,7 +65,8 @@ foreach ( Typography_Group::FIELDS as $prop => [ $suffix, $is_responsive ] ) {
 }
 
 $container = Style_Target::make( 'container' )
-	->label( 'Row holding all boxes' )
+	->label( 'Boxes row' )
+	->description( 'Row holding the unit boxes. max-width applies only while the label position is block, text-align only while it is inline; that position is set in the Elementor editor.' )
 	->selector( '.elementor-countdown-wrapper' )
 	->bind( 'max-width', V3_Control::bind_to( 'container_width' )->responsive() )
 	->bind( 'text-align', V3_Control::bind_to( 'boxes_alignment' ) );
@@ -60,7 +75,7 @@ return V3_Widget_Map::make( 'countdown' )
 	->description( 'Countdown timer to a due date or an evergreen duration per visitor, with optional labels and expiry actions.' )
 	->settings( [
 		'countdown_type' => V3_Setting::bind_to( 'countdown_type' )->enum_from_control(),
-		'due_date' => V3_Setting::bind_to( 'due_date' )->string()->dynamic(),
+		'due_date' => V3_Setting::bind_to( 'due_date' )->date_time()->dynamic(),
 		'evergreen_counter_hours' => V3_Setting::bind_to( 'evergreen_counter_hours' )->number()->dynamic(),
 		'evergreen_counter_minutes' => V3_Setting::bind_to( 'evergreen_counter_minutes' )->number()->dynamic(),
 		'show_days' => V3_Setting::bind_to( 'show_days' )->switcher(),

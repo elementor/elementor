@@ -34,6 +34,8 @@ class Test_V3_Addon_Widget_Maps extends Elementor_Test_Base {
 
 	const FIXTURES_DIR_LEVELS = 4;
 
+	const KIT_CONTROLS_FIXTURE = 'woocommerce-notices-controls.php';
+
 	private ?V3_Widget_Map_Registry $registry = null;
 
 	public function tearDown(): void {
@@ -81,8 +83,23 @@ class Test_V3_Addon_Widget_Maps extends Elementor_Test_Base {
 			],
 			'my-account active tab state' => [
 				'woocommerce-my-account',
-				[ 'tabs', 'sections', 'titles', 'text', 'links', 'labels', 'fields', 'buttons', 'table-items', 'table-buttons', 'wrapper' ],
+				[ 'tabs', 'sections', 'titles', 'text', 'links', 'labels', 'fields', 'buttons', 'table-items', 'table-buttons', 'error-notice', 'error-notice-link', 'error-notice-icon', 'message-notice', 'message-notice-link', 'message-notice-button', 'info-notice', 'info-notice-button', 'wrapper' ],
 				'color: #333333; &:hover { color: #0073aa; } tabs:active { color: #ffffff; background: #0073aa; }',
+			],
+			'post title text and link hover' => [
+				'theme-post-title',
+				[ 'title', 'link', 'wrapper' ],
+				'color: #111111; font-size: 40px; text-align: center; link:hover { color: #0073aa; }',
+			],
+			'featured image size and fit' => [
+				'theme-post-featured-image',
+				[ 'image', 'caption', 'wrapper' ],
+				'width: 80%; height: 300px; object-fit: cover; border-radius: 8px;',
+			],
+			'excerpt text and links' => [
+				'theme-post-excerpt',
+				[ 'excerpt', 'links', 'wrapper' ],
+				'color: #444444; font-size: 16px; links { color: #0073aa; } links:hover { color: #005177; }',
 			],
 		];
 
@@ -108,11 +125,11 @@ class Test_V3_Addon_Widget_Maps extends Elementor_Test_Base {
 	public function test_round_trip__serialized_css_maps_back_to_same_settings( string $widget_type, array $targets, string $css ) {
 		// Arrange.
 		$this->registry_for( $widget_type );
-		$written = $this->mapper()->apply( $css, $widget_type, [] );
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type, [] );
+		$written = $this->mapper()->apply( $css, $widget_type );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], $widget_type );
 
 		// Act.
-		$result = $this->mapper()->apply( $readback, $widget_type, [] );
+		$result = $this->mapper()->apply( $readback, $widget_type );
 
 		// Assert.
 		$this->assertSame( [], $written['warnings'] );
@@ -151,7 +168,7 @@ class Test_V3_Addon_Widget_Maps extends Elementor_Test_Base {
 		$index = [ 'cd' => &$node ];
 
 		// Act.
-		( new Style_Applier( $this->converter(), self::BREAKPOINTS ) )->apply( $index, [ 'cd' => 'message { color: #ff0000; font-size: 20px; }' ], 'patch', [ 'countdown' => [] ] );
+		( new Style_Applier( $this->converter(), self::BREAKPOINTS ) )->apply( $index, [ 'cd' => 'message { color: #ff0000; font-size: 20px; }' ], 'patch' );
 
 		// Assert.
 		$this->assertSame( $expire_actions, $node['settings']['expire_actions'] );
@@ -160,17 +177,19 @@ class Test_V3_Addon_Widget_Maps extends Elementor_Test_Base {
 	}
 
 	private function registry_for( string $widget_type ): V3_Widget_Map_Registry {
-		$controls = $this->controls( $widget_type );
+		$kit_controls = require self::fixture_path( self::KIT_CONTROLS_FIXTURE );
 		$map = require self::registered_map_files()[ $widget_type ];
 
 		$this->assertInstanceOf( V3_Widget_Map::class, $map );
 
+		$controls = $map->has_only_kit_targets() ? [] : $this->controls( $widget_type );
+
 		$this->registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ $widget_type => $map ],
-			static fn() => true
+			static fn() => true,
+			static fn() => $kit_controls
 		);
 
 		V3_Widget_Map_Registry::set_instance( $this->registry );
