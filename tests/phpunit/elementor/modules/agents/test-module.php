@@ -336,9 +336,7 @@ class Test_Module extends Elementor_Test_Base {
 		// Act
 		$kit->save( [
 			'settings' => [
-				'agents' => [
-					'llms' => '# llms.txt',
-				],
+				'site_name' => 'Test Site Name for Cache Invalidation',
 			],
 		] );
 

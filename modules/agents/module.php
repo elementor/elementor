@@ -5,6 +5,7 @@ namespace Elementor\Modules\Agents;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
@@ -322,12 +323,19 @@ class Module extends BaseModule {
 		return $this->generator->get_missing_requirements();
 	}
 
-	// -------------------------------------------------------------------------
-	// Legacy / kit-based content (kept for backward compatibility)
-	// -------------------------------------------------------------------------
-
 	/**
-	 * Return the manually-entered llms.txt content stored in kit settings.
+	 * Return the saved llms.txt content from the active kit's agents.llms setting.
+	 *
+	 * @deprecated 4.4.0 Use get_generated_llms_txt() instead. Manual content is now controlled
+	 *             via Agent Ready settings, not kit settings. This method is kept for
+	 *             backward compatibility and always returns an empty string.
+	 */
+	public function get_llms_txt_content(): string {
+		_deprecated_function( __METHOD__, '4.4.0', 'Elementor\Modules\Agents\Module::get_generated_llms_txt()' );
+
+		return '';
+	}
+
 	// -------------------------------------------------------------------------
 	// Cache invalidation
 	// -------------------------------------------------------------------------
