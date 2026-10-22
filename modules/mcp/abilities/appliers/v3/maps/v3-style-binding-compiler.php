@@ -61,7 +61,7 @@ class V3_Style_Binding_Compiler {
 			$compiled[] = $result;
 		}
 
-		return new Compiled_Style_Target( $target->get_alias(), $target->get_label(), $compiled, $target->get_selector() );
+		return new Compiled_Style_Target( $target->get_alias(), $target->get_label(), $compiled, $target->get_selector(), $target->get_defaults(), $target->get_description() );
 	}
 
 	/**
