@@ -12,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * The page is only fetched from cron, so a public agent call never waits on a
  * loopback request. Stale data keeps being served while cron refreshes it; only
  * a cache that was never filled returns null, meaning "unknown yet", never an
- * empty result. Failures are cached as an empty result for a shorter time.
+ * empty result. A page without business schema is cached as an empty result for
+ * a shorter time, while a failed fetch keeps the previous data and is retried soon.
  */
 class Business_Info_Extractor {
 
@@ -27,6 +28,8 @@ class Business_Info_Extractor {
 	const POSITIVE_TTL = DAY_IN_SECONDS;
 
 	const NEGATIVE_TTL = HOUR_IN_SECONDS;
+
+	const FAILURE_RETRY_TTL = 5 * MINUTE_IN_SECONDS;
 
 	const REFRESH_DELAY = 30;
 
@@ -54,13 +57,19 @@ class Business_Info_Extractor {
 			$this->schedule_refresh();
 		}
 
-		$cached = get_transient( self::TRANSIENT );
-
-		return is_array( $cached ) ? $cached : null;
+		return $this->get_cached();
 	}
 
 	public function refresh(): array {
-		$info = $this->parser->parse( $this->fetch_home_page() );
+		$html = $this->fetch_home_page();
+
+		if ( null === $html ) {
+			set_transient( self::FRESH_TRANSIENT, true, self::FAILURE_RETRY_TTL );
+
+			return $this->get_cached() ?? [];
+		}
+
+		$info = $this->parser->parse( $html );
 
 		set_transient( self::TRANSIENT, $info, self::DATA_TTL );
 		set_transient( self::FRESH_TRANSIENT, true, empty( $info ) ? self::NEGATIVE_TTL : self::POSITIVE_TTL );
@@ -85,6 +94,12 @@ class Business_Info_Extractor {
 		spawn_cron();
 	}
 
+	private function get_cached(): ?array {
+		$cached = get_transient( self::TRANSIENT );
+
+		return is_array( $cached ) ? $cached : null;
+	}
+
 	private function is_fresh(): bool {
 		return (bool) get_transient( self::FRESH_TRANSIENT );
 	}
@@ -95,7 +110,7 @@ class Business_Info_Extractor {
 		}
 	}
 
-	private function fetch_home_page(): string {
+	private function fetch_home_page(): ?string {
 		$response = wp_remote_get( home_url( '/' ), [
 			'timeout' => self::REQUEST_TIMEOUT,
 			'redirection' => self::MAX_REDIRECTS,
@@ -106,11 +121,11 @@ class Business_Info_Extractor {
 		] );
 
 		if ( is_wp_error( $response ) || self::HTTP_OK !== wp_remote_retrieve_response_code( $response ) ) {
-			return '';
+			return null;
 		}
 
 		if ( ! $this->is_same_host( $this->get_final_url( $response ) ) ) {
-			return '';
+			return null;
 		}
 
 		return wp_remote_retrieve_body( $response );

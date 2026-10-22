@@ -12,19 +12,6 @@ class Business_Schema_Parser {
 
 	const JSON_LD_PATTERN = '#<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>#is';
 
-	const BUSINESS_TYPES = [
-		'Organization',
-		'Corporation',
-		'LocalBusiness',
-		'OnlineStore',
-		'Store',
-		'Restaurant',
-		'ProfessionalService',
-		'Place',
-	];
-
-	const BUSINESS_TYPE_SUFFIX = 'Business';
-
 	const STREET_ADDRESS_FIELD = 'streetAddress';
 
 	const ADDRESS_FIELDS = [ self::STREET_ADDRESS_FIELD, 'addressLocality', 'addressRegion', 'postalCode', 'addressCountry' ];
@@ -77,11 +64,7 @@ class Business_Schema_Parser {
 			return $this->flatten( $document['@graph'] );
 		}
 
-		if ( isset( $document['@type'] ) ) {
-			return [ $document ];
-		}
-
-		$nodes = [];
+		$nodes = isset( $document['@type'] ) ? [ $document ] : [];
 
 		foreach ( $document as $item ) {
 			if ( is_array( $item ) ) {
@@ -98,7 +81,7 @@ class Business_Schema_Parser {
 				continue;
 			}
 
-			if ( in_array( $type, self::BUSINESS_TYPES, true ) || str_ends_with( $type, self::BUSINESS_TYPE_SUFFIX ) ) {
+			if ( Business_Schema_Types::is_business_type( $type ) ) {
 				return true;
 			}
 		}

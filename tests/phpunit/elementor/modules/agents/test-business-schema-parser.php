@@ -60,6 +60,60 @@ class Test_Business_Schema_Parser extends Elementor_Test_Base {
 		$this->assertSame( [ 'https://facebook.com/bakery' ], $info['social_profiles'] );
 	}
 
+	public function test_parse__reads_an_organization_nested_inside_a_typed_node() {
+		// Arrange
+		$html = $this->wrap_json_ld( [
+			'@type' => 'WebSite',
+			'name' => 'Ignored site node',
+			'publisher' => [
+				'@type' => 'Organization',
+				'name' => 'Corner Bakery',
+				'telephone' => '+1 555 0100',
+				'address' => [ '@type' => 'PostalAddress', 'streetAddress' => '1 Main St' ],
+			],
+		] );
+
+		// Act
+		$info = $this->parser->parse( $html );
+
+		// Assert
+		$this->assertSame( 'Corner Bakery', $info['name'] );
+		$this->assertSame( '+1 555 0100', $info['telephone'] );
+		$this->assertSame( [ 'streetAddress' => '1 Main St' ], $info['address'] );
+	}
+
+	/**
+	 * @dataProvider business_subtype_provider
+	 */
+	public function test_parse__recognizes_local_business_subtypes_without_a_parent_type( string $type ) {
+		// Arrange
+		$html = $this->wrap_json_ld( [ '@type' => $type, 'telephone' => '+1 555 0100' ] );
+
+		// Act
+		$info = $this->parser->parse( $html );
+
+		// Assert
+		$this->assertSame( '+1 555 0100', $info['telephone'] );
+	}
+
+	public function business_subtype_provider(): array {
+		return [
+			'bakery' => [ 'Bakery' ],
+			'dentist' => [ 'Dentist' ],
+			'hotel' => [ 'Hotel' ],
+			'schema.org url' => [ 'https://schema.org/Dentist' ],
+			'schema prefix' => [ 'schema:Hotel' ],
+		];
+	}
+
+	public function test_parse__ignores_non_business_types_that_carry_contact_details() {
+		// Arrange
+		$html = $this->wrap_json_ld( [ '@type' => 'Person', 'name' => 'Author', 'telephone' => '+1 555 0199' ] );
+
+		// Act & Assert
+		$this->assertSame( [], $this->parser->parse( $html ) );
+	}
+
 	public function test_parse__returns_empty_for_pages_without_business_schema() {
 		// Arrange
 		$html = $this->wrap_json_ld( [ '@type' => 'WebSite', 'name' => 'Only a website' ] );

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Query_Business_Info extends Abstract_Webmcp_Tool {
 
-	const CONTACT_KEYS = [ 'telephone', 'email', 'address', 'opening_hours' ];
+	const DETAIL_KEYS = [ 'telephone', 'email', 'address', 'opening_hours', 'social_profiles' ];
 
 	private Business_Info_Extractor $extractor;
 
@@ -64,7 +64,7 @@ class Query_Business_Info extends Abstract_Webmcp_Tool {
 	}
 
 	private function has_structured_data( array $info ): bool {
-		return ! empty( array_intersect_key( $info, array_flip( self::CONTACT_KEYS ) ) );
+		return ! empty( array_intersect_key( $info, array_flip( self::DETAIL_KEYS ) ) );
 	}
 
 	private function get_business_info( array $extracted ): array {

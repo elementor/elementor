@@ -154,6 +154,30 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'We bake fresh bread every single morning.', $result['content'] );
 	}
 
+	public function test_read_page_content__renders_in_the_requested_post_context_and_restores_the_previous_one() {
+		// Arrange
+		$shortcode = 'elementor_test_current_post_id';
+		add_shortcode( $shortcode, fn() => 'This content belongs to post ' . get_the_ID() );
+
+		$requested_id = $this->factory()->post->create( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+			'post_content' => '[' . $shortcode . ']',
+		] );
+		$previous_post = get_post( $this->factory()->post->create( [ 'post_status' => 'publish' ] ) );
+		$GLOBALS['post'] = $previous_post;
+
+		// Act
+		$result = $this->create_read_tool()->execute( [ 'id' => $requested_id ] );
+		$restored_post = $GLOBALS['post'];
+		remove_shortcode( $shortcode );
+		unset( $GLOBALS['post'] );
+
+		// Assert
+		$this->assertStringContainsString( 'This content belongs to post ' . $requested_id, $result['content'] );
+		$this->assertSame( $previous_post->ID, $restored_post->ID );
+	}
+
 	public function test_read_page_content__rejects_drafts_and_unknown_ids() {
 		// Arrange
 		$draft_id = $this->factory()->post->create( [ 'post_status' => 'draft' ] );
@@ -320,6 +344,19 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->assertSame( '+1 555 0100', $with_data['telephone'] );
 	}
 
+	public function test_query_business_info__counts_social_profiles_as_structured_data() {
+		// Arrange
+		$tool = $this->create_business_info_tool();
+		set_transient( Business_Info_Extractor::TRANSIENT, [ 'social_profiles' => [ 'https://facebook.com/bakery' ] ] );
+
+		// Act
+		$result = $tool->execute();
+
+		// Assert
+		$this->assertTrue( $result['has_structured_data'] );
+		$this->assertSame( [ 'https://facebook.com/bakery' ], $result['social_profiles'] );
+	}
+
 	public function test_query_business_info__schedules_a_refresh_without_fetching_on_cold_cache() {
 		// Arrange
 		$requests = $this->stub_home_page( '' );
@@ -373,6 +410,50 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->assertSame( '+1 555 0100', $cached['telephone'] );
 		$this->assertSame( 1, $requests->count );
 		$this->assertTrue( get_transient( Business_Info_Extractor::FRESH_TRANSIENT ) );
+	}
+
+	public function test_business_info_refresh__keeps_stale_data_when_the_fetch_fails() {
+		// Arrange
+		$this->stub_home_page_failure();
+		set_transient( Business_Info_Extractor::TRANSIENT, [ 'telephone' => '+1 555 0100' ] );
+		$extractor = new Business_Info_Extractor( new Business_Schema_Parser( $this->sanitizer ) );
+
+		// Act
+		$extractor->refresh();
+
+		// Assert
+		$this->assertSame( [ 'telephone' => '+1 555 0100' ], get_transient( Business_Info_Extractor::TRANSIENT ) );
+		$this->assertTrue( get_transient( Business_Info_Extractor::FRESH_TRANSIENT ) );
+	}
+
+	public function test_business_info_refresh__stays_unavailable_when_the_first_fetch_fails() {
+		// Arrange
+		$this->stub_home_page_failure();
+		$extractor = new Business_Info_Extractor( new Business_Schema_Parser( $this->sanitizer ) );
+
+		// Act
+		$extractor->refresh();
+
+		// Assert
+		$this->assertFalse( get_transient( Business_Info_Extractor::TRANSIENT ) );
+		$this->assertNull( $extractor->get_or_refresh() );
+	}
+
+	public function test_business_info_refresh__replaces_stale_data_with_an_empty_result_for_a_page_without_schema() {
+		// Arrange
+		$this->stub_home_page( '<html></html>' );
+		set_transient( Business_Info_Extractor::TRANSIENT, [ 'telephone' => '+1 555 0100' ] );
+		$extractor = new Business_Info_Extractor( new Business_Schema_Parser( $this->sanitizer ) );
+
+		// Act
+		$extractor->refresh();
+
+		// Assert
+		$this->assertSame( [], get_transient( Business_Info_Extractor::TRANSIENT ) );
+	}
+
+	private function stub_home_page_failure(): void {
+		add_filter( 'pre_http_request', fn() => new \WP_Error( 'http_request_failed', 'Timed out' ) );
 	}
 
 	private function stub_home_page( string $body ): \stdClass {

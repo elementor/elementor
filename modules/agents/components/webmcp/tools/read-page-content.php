@@ -65,7 +65,27 @@ class Read_Page_Content extends Abstract_Webmcp_Tool {
 			'id' => $post->ID,
 			'url' => (string) get_permalink( $post ),
 			'format' => 'markdown',
-			'content' => $this->markdown_endpoint->build_markdown( $post ),
+			'content' => $this->build_markdown_in_post_context( $post ),
 		];
+	}
+
+	private function build_markdown_in_post_context( \WP_Post $post ): string {
+		$previous_post = $GLOBALS['post'] ?? null;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$GLOBALS['post'] = $post;
+		setup_postdata( $post );
+
+		try {
+			return $this->markdown_endpoint->build_markdown( $post );
+		} finally {
+			if ( $previous_post instanceof \WP_Post ) {
+				// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$GLOBALS['post'] = $previous_post;
+				setup_postdata( $previous_post );
+			} else {
+				unset( $GLOBALS['post'] );
+			}
+		}
 	}
 }
