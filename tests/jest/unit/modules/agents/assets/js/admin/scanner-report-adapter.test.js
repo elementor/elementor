@@ -212,6 +212,14 @@ describe( 'toScanResult', () => {
 			outsideScan: { status: OUTSIDE_SCAN_STATUS_OK, reason: null },
 		} );
 	} );
+
+	it( 'rounds fractional readiness scores to whole numbers', () => {
+		// Act
+		const result = toScanResult( { ...getReport(), score: 64.6 } );
+
+		// Assert
+		expect( result.score ).toBe( 65 );
+	} );
 } );
 
 describe( 'toFailedScanResult', () => {

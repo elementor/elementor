@@ -10,7 +10,7 @@ import {
 	STAGE_IDENTIFY,
 	STAGE_REACH,
 } from './scanner-constants';
-import { READINESS_SCORE_MAX } from './scanner-score';
+import { normalizeReadinessScore, READINESS_SCORE_MAX } from './scanner-score';
 
 const CHECK_STATUS_PASS = 'pass';
 const FAILING_CHECK_STATUSES = [ 'fail', 'partial' ];
@@ -113,7 +113,7 @@ export const toScanResult = ( report, retryAt = null ) => {
 	const activeWeight = getActiveWeight( layers );
 
 	return {
-		score: 'number' === typeof report?.score ? report.score : null,
+		score: normalizeReadinessScore( report?.score ),
 		ranAt: report?.scannedAt ?? null,
 		retryAt: retryAt ?? report?.retryAt ?? null,
 		stages: toStages( layers ),

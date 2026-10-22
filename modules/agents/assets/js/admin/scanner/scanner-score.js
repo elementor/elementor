@@ -22,6 +22,14 @@ export const getScoreTier = ( score ) => {
 
 export const getVisibleChecks = ( scan ) => scan?.checks ?? [];
 
-export const getBaseScore = ( scan ) => ( 'number' === typeof scan?.score ? scan.score : null );
+export const normalizeReadinessScore = ( score ) => {
+	if ( 'number' !== typeof score ) {
+		return null;
+	}
+
+	return Math.round( Math.min( Math.max( score, 0 ), READINESS_SCORE_MAX ) );
+};
+
+export const getBaseScore = ( scan ) => normalizeReadinessScore( scan?.score );
 
 export const hasPendingFixes = ( checks, resolvedIds ) => checks.some( ( check ) => resolvedIds[ check.id ] );

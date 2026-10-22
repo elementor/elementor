@@ -5,19 +5,18 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION, SCORE_RING_GRADIENTS } from '../scanner-constants';
-import { getScoreTier, READINESS_SCORE_MAX } from '../scanner-score';
+import { getScoreTier, normalizeReadinessScore, READINESS_SCORE_MAX } from '../scanner-score';
 
 const DIMMED_OPACITY = 0.2;
 const RADIUS = ( SCANNER_LAYOUT.ringSize - SCANNER_LAYOUT.ringStroke ) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const CENTER = SCANNER_LAYOUT.ringSize / 2;
 
-const clampScore = ( score ) => Math.min( Math.max( score, 0 ), READINESS_SCORE_MAX );
-
 export const ScoreRing = ( { score, durationMs, isDimmed } ) => {
 	const gradientId = useId();
-	const hasScore = 'number' === typeof score;
-	const targetScore = hasScore ? clampScore( score ) : 0;
+	const normalizedScore = normalizeReadinessScore( score );
+	const hasScore = null !== normalizedScore;
+	const targetScore = hasScore ? normalizedScore : 0;
 	const [ drawnScore, setDrawnScore ] = useState( 0 );
 
 	useEffect( () => {
