@@ -3,13 +3,11 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
@@ -20,7 +18,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -30,24 +27,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
-class Manage_Elements_V3_Heading_Dynamic_Tag extends Tag {
-	public function get_name() {
-		return 'mcp-v3-heading-title';
-	}
-
-	public function get_title() {
-		return 'MCP V3 Heading Title';
-	}
-
-	public function get_group() {
-		return 'site';
-	}
-
-	public function get_categories() {
-		return [ 'text' ];
-	}
-}
-
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -56,11 +35,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	private Documents_Manager $original_documents;
 	private Widgets_Manager $original_widgets_manager;
 	private Elements_Manager $original_elements_manager;
-
-	/**
-	 * @var array<string, string>
-	 */
-	private array $original_experiment_states = [];
 
 	private bool $registered_form_element = false;
 
@@ -74,7 +48,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->original_documents = Plugin::$instance->documents;
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
 		$this->original_elements_manager = Plugin::$instance->elements_manager;
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
@@ -83,13 +56,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			$this->registered_form_element = false;
 		}
 
-		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
-			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
-			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
-		}
-
 		V3_Widget_Map_Registry::reset_instance();
-		Plugin::$instance->dynamic_tags->unregister( 'mcp-v3-heading-title' );
 		Plugin::$instance->documents = $this->original_documents;
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
 		Plugin::$instance->elements_manager = $this->original_elements_manager;
@@ -872,89 +839,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
 	}
 
-	/**
-	 * @dataProvider standardized_maps_states
-	 */
-	public function test_execute__allowlisted_v3_update_merges_raw_settings( bool $standardized_maps_active ) {
+	public function test_execute__mapped_v3_classes_write_to_css_classes() {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
-
-		if ( $standardized_maps_active ) {
-			$this->enable_standardized_v3_maps();
-		}
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'settings' => [ 'menu' => '3', 'layout' => 'horizontal' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertNotNull( $node );
-		$this->assertSame( '3', $node['settings']['menu'] );
-		$this->assertSame( 'horizontal', $node['settings']['layout'] );
-	}
-
-	public function standardized_maps_states(): array {
-		return [
-			'inactive' => [ false ],
-			'active' => [ true ],
-		];
-	}
-
-	public function test_execute__allowlisted_v3_static_update_preserves_dynamic_setting_when_standardized_maps_inactive() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->random_element_id();
-		$this->register_v3_heading_dynamic_tag();
-		$tag = Plugin::$instance->dynamic_tags->create_tag( 'legacy', 'mcp-v3-heading-title', [] );
-		$this->assertInstanceOf( Tag::class, $tag );
-		$shortcode = Plugin::$instance->dynamic_tags->tag_to_text( $tag );
-		$this->append_elements_to_document( $post_id, [
-			[
-				'id' => $v3_id,
-				'elType' => 'widget',
-				'widgetType' => 'nav-menu',
-				'settings' => [
-					'__dynamic__' => [ 'menu' => $shortcode ],
-				],
-				'elements' => [],
-			],
-		] );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'settings' => [ 'menu' => '3' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertSame( '3', $node['settings']['menu'] );
-		$this->assertArrayHasKey( 'menu', $node['settings']['__dynamic__'] ?? [] );
-		$this->assertSame( $shortcode, $node['settings']['__dynamic__']['menu'] );
-	}
-
-	public function test_execute__allowlisted_v3_classes_write_to_css_classes() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 		$this->given_kit_global_class( 'menu-primary', '#111111' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -975,7 +864,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'classes', $node['settings'] );
 	}
 
-	public function test_execute__allowlisted_v3_style_bridged_to_custom_css_when_pro_active() {
+	public function test_execute__mapped_v3_style_falls_back_to_custom_css_when_pro_active() {
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
 		}
@@ -983,7 +872,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1003,7 +892,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'styles', $node );
 	}
 
-	public function test_execute__allowlisted_v3_style_warns_when_pro_missing() {
+	public function test_execute__mapped_v3_style_warns_when_pro_missing() {
 		if ( \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
 		}
@@ -1011,7 +900,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1038,11 +927,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 	}
 
-	public function test_execute__allowlisted_v3_delete_succeeds() {
+	public function test_execute__v3_delete_succeeds() {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'theme-post-content' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'theme-post-content' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'theme-post-content' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1347,12 +1236,12 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'name', $node['settings'] ?? [] );
 	}
 
-	public function test_execute__allowlisted_v3_update_rejects_editor_setting_in_settings_with_hint() {
+	public function test_execute__mapped_v3_update_rejects_editor_setting_in_settings_with_hint() {
 		// Arrange
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 
 		// Act
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -1871,7 +1760,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		return $id;
 	}
 
-	private function given_allowlisted_v3_widget_on_document( int $post_id, string $widget_type ): string {
+	private function given_v3_widget_on_document( int $post_id, string $widget_type ): string {
 		$id = $this->random_element_id();
 
 		$this->append_elements_to_document( $post_id, [
@@ -1889,33 +1778,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function given_fake_v3_widget_registered( string $type ): void {
 		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
-	}
-
-	private function enable_standardized_v3_maps(): void {
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
-	}
-
-	private function set_experiment_state( string $experiment_name, string $state ): void {
-		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
-			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
-
-			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
-		}
-
-		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
-		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
-		V3_Widget_Map_Registry::reset_instance();
-	}
-
-	private function register_v3_heading_dynamic_tag(): void {
-		Plugin::$instance->dynamic_tags->register( new Manage_Elements_V3_Heading_Dynamic_Tag() );
 	}
 
 	private function given_v3_container_on_document( int $post_id ): string {

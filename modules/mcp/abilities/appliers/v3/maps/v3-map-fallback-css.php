@@ -66,11 +66,12 @@ class V3_Map_Fallback_Css {
 			V3_Custom_Css_Fallback::selectors_of( $map ),
 			$this->media_queries ?? V3_Custom_Css_Fallback::site_media_queries()
 		);
-		$existing_css = trim( (string) ( $node['settings'][ $setting ] ?? '' ) );
-		$fallback_css = $fallback->render( $rules );
+		$existing = $fallback->parse( (string) ( $node['settings'][ $setting ] ?? '' ) );
+		$fallback_css = $fallback->render( V3_Custom_Css_Fallback::merge( $existing['rules'], $rules ) );
+		$custom_css = implode( "\n", array_filter( array_merge( $existing['unmatched'], [ $fallback_css ] ) ) );
 
-		if ( '' !== $fallback_css ) {
-			$node['settings'][ $setting ] = '' === $existing_css ? $fallback_css : $existing_css . "\n" . $fallback_css;
+		if ( '' !== $custom_css ) {
+			$node['settings'][ $setting ] = $custom_css;
 		}
 
 		foreach ( $notes as $note ) {
