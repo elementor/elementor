@@ -85,10 +85,40 @@ class Test_Request_Path extends Elementor_Test_Base {
 
 	public function test_matches__percent_encoded_filename() {
 		// Arrange
-		$_SERVER['REQUEST_URI'] = '/llms%2Dtxt';
+		$_SERVER['REQUEST_URI'] = '/llms%2Etxt';
 
 		// Act
-		$result = Request_Path::matches( 'llms-txt' );
+		$result = Request_Path::matches( 'llms.txt' );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_matches__rejects_blogpost_on_blog_install() {
+		// Arrange
+		add_filter( 'home_url', static function () {
+			return 'http://example.com/blog';
+		} );
+
+		$_SERVER['REQUEST_URI'] = '/blogpost.txt';
+
+		// Act
+		$result = Request_Path::matches( 'post.txt' );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_matches__subdirectory_with_encoded_slug() {
+		// Arrange
+		add_filter( 'home_url', static function () {
+			return 'http://example.com/blog';
+		} );
+
+		$_SERVER['REQUEST_URI'] = '/blog/%D7%A9%D7%9C%D7%95%D7%9D.txt';
+
+		// Act
+		$result = Request_Path::matches( 'שלום.txt' );
 
 		// Assert
 		$this->assertTrue( $result );
