@@ -148,7 +148,6 @@ export const SCANNER_MOTION = {
 	ringArriveMs: 950,
 	ringActivatingMs: 2000,
 	ringLandMs: 800,
-	ringLocalUpdateMs: 800,
 	drawerMs: 220,
 	chevronMs: 220,
 	completedCheckMs: 320,

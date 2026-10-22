@@ -18,14 +18,7 @@ import {
 } from './scanner-constants';
 import { getProgressSteps } from './scanner-mock-data';
 import { getLaterRetryAt, toFailedScanResult } from './scanner-report-adapter';
-import {
-	getActivationGain,
-	getBaseScore,
-	getEarnedPoints,
-	getMidpointScore,
-	getVisibleChecks,
-	hasUncountedFixes,
-} from './scanner-score';
+import { getBaseScore, getVisibleChecks, hasPendingFixes } from './scanner-score';
 
 const MS_PER_SECOND = 1000;
 
@@ -67,7 +60,6 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 	const [ isActivated, setIsActivated ] = useState( isExperimentActive );
 	const [ ringDurationMs, setRingDurationMs ] = useState( SCANNER_MOTION.ringArriveMs );
 	const [ resolvedIds, setResolvedIds ] = useState( {} );
-	const [ countedIds, setCountedIds ] = useState( {} );
 	const [ openIds, setOpenIds ] = useState( {} );
 	const [ preferences, setPreferences ] = useState( {} );
 	const [ areChecksExpanded, setAreChecksExpanded ] = useState( false );
@@ -180,13 +172,12 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 			return;
 		}
 
-		// TODO: Once the endpoint reports resolved checks as passing, replace this local carry-over with the scan result's own check statuses.
 		setScan( result );
-		setCountedIds( resolvedIds );
+		setResolvedIds( {} );
 		setOpenIds( {} );
 		setRingDurationMs( SCANNER_MOTION.ringArriveMs );
 		setView( getReportView( isActivated ) );
-	}, [ isActivated, playProgressSteps, retryAt, showScanFailure, scan, resolvedIds ] );
+	}, [ isActivated, playProgressSteps, retryAt, showScanFailure, scan ] );
 
 	const activate = useCallback( async () => {
 		const previousView = view;
@@ -226,7 +217,6 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 
 	const markResolved = useCallback( ( check, payload ) => {
 		setActionError( '' );
-		setRingDurationMs( SCANNER_MOTION.ringLocalUpdateMs );
 		setResolvedIds( ( current ) => ( { ...current, [ check.id ]: payload } ) );
 
 		applyCheckFix( check.id, payload ).catch( ( error ) => {
@@ -241,9 +231,7 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 		const previousPayload = resolvedIds[ check.id ];
 
 		setActionError( '' );
-		setRingDurationMs( SCANNER_MOTION.ringLocalUpdateMs );
 		setResolvedIds( ( current ) => withoutKey( current, check.id ) );
-		setCountedIds( ( current ) => withoutKey( current, check.id ) );
 
 		undoCheckFix( check.id ).catch( ( error ) => {
 			if ( isMountedRef.current ) {
@@ -287,11 +275,6 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 	}, [] );
 
 	const visibleChecks = getVisibleChecks( scan );
-	const baseScore = getBaseScore( scan, isActivated );
-	const displayScore = null === baseScore ? null : baseScore + getEarnedPoints( visibleChecks, resolvedIds, countedIds );
-	const ringScore = SCANNER_STATE_ACTIVATING === view
-		? getMidpointScore( baseScore, scan?.activation?.scoreAfter )
-		: displayScore;
 
 	return {
 		view,
@@ -300,11 +283,9 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 		scan,
 		isActivated,
 		visibleChecks,
-		activationResolvedChecks: ( scan?.checks ?? [] ).filter( ( check ) => check.resolvedByActivation ),
-		activationGain: getActivationGain( scan ),
-		ringScore,
+		ringScore: getBaseScore( scan ),
 		ringDurationMs,
-		needsRescanForScore: hasUncountedFixes( visibleChecks, resolvedIds, countedIds ),
+		needsRescanForScore: hasPendingFixes( visibleChecks, resolvedIds ),
 		resolvedIds,
 		openIds,
 		preferences,

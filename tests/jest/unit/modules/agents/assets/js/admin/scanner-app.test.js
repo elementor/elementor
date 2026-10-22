@@ -174,7 +174,7 @@ describe( 'Agent Ready scanner', () => {
 
 		expect( activateAgentsReady ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
-		expect( getScoreRing( 60 ) ).toBeTruthy();
+		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
 		expect( screen.getByRole( 'link', { name: 'Settings' } ).getAttribute( 'href' ) ).toBe( AGENT_ACCESS_URL );
 		expect( screen.getByText( 'Agent Ready is on' ).parentElement.parentElement.contains( screen.getByRole( 'link', { name: 'Settings' } ) ) ).toBe( true );
@@ -237,7 +237,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( within( row ).getByRole( 'button', { name: 'Fix with Angie' } ) ).toBeTruthy();
 	} );
 
-	it( 'updates the score immediately when a local check switch is turned on', async () => {
+	it( 'keeps the scan score when a local check switch is turned on', async () => {
 		// Arrange
 		await runFirstScan();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
@@ -248,8 +248,27 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'agent-path', { enabled: true } );
-		expect( getScoreRing( 37 ) ).toBeTruthy();
+		expect( getScoreRing( 30 ) ).toBeTruthy();
+		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 		expect( getRowByTitle( 'Agents can\'t find a path into your site' ).getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
+	it( 'drops a pending fix when a rescan still reports the check as failing', async () => {
+		// Arrange
+		await runFirstScan();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		const row = getRowByTitle( 'Agents can\'t tell when you\'re open' );
+		fireEvent.click( within( row ).getByRole( 'button', { name: 'Fix with Angie' } ) );
+
+		// Act
+		fireEvent.click( within( row ).getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
+		expect( getScoreRing( 30 ) ).toBeTruthy();
+		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
+		expect( within( getRowByTitle( 'Agents can\'t tell when you\'re open' ) ).getByRole( 'button', { name: 'Fix with Angie' } ) ).toBeTruthy();
 	} );
 
 	it( 'opens the preference drawer and completes the row once a value is saved', async () => {

@@ -82,7 +82,7 @@ FeatureCard.propTypes = {
 
 const ScannerPreview = ( { agentAccessUrl, siteDomain } ) => {
 	const scan = getMockScanResult();
-	const score = getBaseScore( scan, true );
+	const score = getBaseScore( scan );
 
 	return (
 		<Box
@@ -113,7 +113,7 @@ const ScannerPreview = ( { agentAccessUrl, siteDomain } ) => {
 				</ScoreSummaryBlock>
 				<StageBars stages={ scan.stages } />
 				<FixesSection
-					checks={ getVisibleChecks( scan, true ) }
+					checks={ getVisibleChecks( scan ) }
 					flow={ PREVIEW_FLOW }
 					agentAccessUrl={ agentAccessUrl }
 					isActivated

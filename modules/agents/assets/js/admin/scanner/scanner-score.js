@@ -22,43 +22,6 @@ export const getScoreTier = ( score ) => {
 
 export const getVisibleChecks = ( scan ) => scan?.checks ?? [];
 
-export const getBaseScore = ( scan, isActivated ) => {
-	if ( ! scan ) {
-		return null;
-	}
+export const getBaseScore = ( scan ) => ( 'number' === typeof scan?.score ? scan.score : null );
 
-	const scoreAfterActivation = scan.activation?.scoreAfter;
-
-	if ( isActivated && 'number' === typeof scoreAfterActivation ) {
-		return scoreAfterActivation;
-	}
-
-	return 'number' === typeof scan.score ? scan.score : null;
-};
-
-const isCountedNow = ( check, countedIds ) => check.isLocal || !! countedIds[ check.id ];
-
-export const getEarnedPoints = ( checks, resolvedIds, countedIds ) => checks
-	.filter( ( check ) => resolvedIds[ check.id ] && isCountedNow( check, countedIds ) )
-	.reduce( ( total, check ) => total + check.points, 0 );
-
-export const hasUncountedFixes = ( checks, resolvedIds, countedIds ) => checks
-	.some( ( check ) => resolvedIds[ check.id ] && ! isCountedNow( check, countedIds ) );
-
-export const getActivationGain = ( scan ) => {
-	const scoreAfterActivation = scan?.activation?.scoreAfter;
-
-	if ( 'number' !== typeof scoreAfterActivation || 'number' !== typeof scan.score ) {
-		return null;
-	}
-
-	return scoreAfterActivation - scan.score;
-};
-
-export const getMidpointScore = ( from, to ) => {
-	if ( 'number' !== typeof from || 'number' !== typeof to ) {
-		return from;
-	}
-
-	return Math.round( ( from + to ) / 2 );
-};
+export const hasPendingFixes = ( checks, resolvedIds ) => checks.some( ( check ) => resolvedIds[ check.id ] );
