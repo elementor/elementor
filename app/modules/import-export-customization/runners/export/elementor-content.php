@@ -9,7 +9,7 @@ use Elementor\Modules\Components\Utils\Collect_Component_Dependencies;
 use Elementor\Plugin;
 
 class Elementor_Content extends Export_Runner_Base {
-	const COMPONENTS_DEPENDENCIES_FILE_PATH = 'components/dependencies';
+	const COMPONENTS_DEPENDENCIES_FILE_PATH = 'content/' . Component_Document::TYPE . '/dependencies';
 
 	private $page_on_front_id;
 
