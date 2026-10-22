@@ -321,7 +321,8 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Return the saved llms.txt content from the active kit's agents.llms setting.
+	 * @deprecated 4.4.0 Use get_generated_llms_txt() instead. Manual content is now controlled
+	 *             via Agent Ready settings, not kit settings. Always returns an empty string.
 	 *
 	 * @deprecated 4.4.0 Use get_generated_llms_txt() instead. Manual content is now controlled
 	 *             via Agent Ready settings, not kit settings. This method is kept for
