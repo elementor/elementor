@@ -15,7 +15,7 @@ class Icon_Prop_Type extends Object_Prop_Type {
 		return 'icon';
 	}
 
-	const VALUE_DESCRIPTION = 'Icon selection value, copied verbatim from the `elementor/find-icons` tool, for example "fa-solid fa-cart-shopping". Never assemble or guess this string - an unknown icon renders nothing.';
+	const VALUE_DESCRIPTION = 'Icon selection value, copied verbatim from the `elementor/find-icons` tool, for example "fa-solid fa-cart-shopping". Never assemble or guess this string - an unknown icon renders the default icon.';
 
 	const LIBRARY_DESCRIPTION = 'Icon library key for the same icon, copied verbatim from the `elementor/find-icons` tool, for example "fa-solid". Must match the library the value was found in. Call `elementor/find-icons` for the libraries installed on this site.';
 
