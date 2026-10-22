@@ -18,6 +18,8 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 	private Agent_Ready_Settings $settings;
 
+	private Module $module;
+
 	private $original_experiment_default_state;
 
 	public function setUp(): void {
@@ -32,10 +34,12 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		);
 
 		delete_option( Agent_Ready_Settings::OPTION );
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
 
+		$this->module = new Module();
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
-		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ), $this->settings );
+		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ), $this->settings, $this->module );
 	}
 
 	public function tearDown(): void {
@@ -45,6 +49,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		);
 
 		delete_option( Agent_Ready_Settings::OPTION );
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
 
 		parent::tearDown();
 	}
@@ -80,7 +85,49 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$links = $this->invoke_build_site_links();
 
 		// Assert
-		$this->assertSame( [ '<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"' ], $links );
+		$this->assertContains(
+			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
+			$links
+		);
+		$this->assertNotContains( 'api-catalog', implode( '', $links ) );
+		$this->assertNotContains( 'auth.md', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__omits_llms_txt_when_llms_is_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertNotContains( 'llms.txt', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__omits_llms_txt_when_physical_file_is_kept() {
+		// Arrange
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertNotContains( 'llms.txt', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__includes_llms_txt_when_physical_file_is_replaced() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertContains(
+			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
+			$links
+		);
 	}
 
 	public function test_build_site_links__includes_mcp_card_when_filter_enabled() {

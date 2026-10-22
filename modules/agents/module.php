@@ -154,11 +154,11 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Auth_Md() );
 		$this->register_well_known_endpoint( new Api_Catalog() );
 		$this->register_well_known_endpoint( new Agent_Skills() );
-		$this->register_well_known_endpoint( new Ard_Manifest() );
+		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
 
 		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
 
-		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings ) );
+		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
@@ -246,6 +246,24 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Check whether llms.txt should be advertised in discovery mechanisms.
+	 *
+	 * Returns true only when Elementor's llms.txt is actually served.
+	 * Returns false when:
+	 *  - The feature is disabled
+	 *  - A physical file exists and the admin chose to keep it
+	 *
+	 * This is the single source of truth for both serving and advertising.
+	 */
+	public function should_advertise_llms_txt(): bool {
+		if ( 'keep' === get_option( self::OPTION_EXISTING_FILE_DECISION, '' ) ) {
+			return false;
+		}
+
+		return $this->settings->is_llms_enabled();
+	}
+
+	/**
 	 * Serve llms.txt when the request path matches.
 	 */
 	public function maybe_serve_llms_txt() {
@@ -253,13 +271,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// If the admin has chosen to keep an existing physical file, bail so the
-		// web server (or another handler) can serve it.
-		if ( 'keep' === get_option( self::OPTION_EXISTING_FILE_DECISION, '' ) ) {
-			return;
-		}
-
-		if ( ! $this->settings->is_llms_enabled() ) {
+		if ( ! $this->should_advertise_llms_txt() ) {
 			return;
 		}
 

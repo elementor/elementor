@@ -42,6 +42,8 @@ class Test_Module extends Elementor_Test_Base {
 
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
+
 		$this->flush_documents_cache();
 
 		parent::tearDown();
@@ -581,5 +583,33 @@ class Test_Module extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
 
 		$this->assertTrue( $fired, 'cache_invalidated action must fire on global change' );
+	}
+
+	public function test_should_advertise_llms_txt__returns_true_when_enabled() {
+		$this->assertTrue( $this->module->should_advertise_llms_txt() );
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_llms_is_disabled() {
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+		$settings->ensure_option_exists();
+		$settings->set_server_value( \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+
+		$module = new Module();
+
+		$this->assertFalse( $module->should_advertise_llms_txt() );
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_physical_file_is_kept() {
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		$this->assertFalse( $this->module->should_advertise_llms_txt() );
+	}
+
+	public function test_should_advertise_llms_txt__returns_true_when_physical_file_is_replaced() {
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+
+		$this->assertTrue( $this->module->should_advertise_llms_txt() );
 	}
 }

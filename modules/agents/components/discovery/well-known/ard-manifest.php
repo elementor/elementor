@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Always applicable — if any agent feature is active, this document is useful.
  */
 class Ard_Manifest extends Abstract_Well_Known_Endpoint {
+
+	private Module $module;
+
+	public function __construct( Module $module ) {
+		$this->module = $module;
+	}
 
 	public function get_id(): string {
 		return 'ard_manifest';
@@ -68,11 +75,12 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 	private function build_capabilities( string $home ): array {
 		$caps = [];
 
-		// llms.txt — always present when the agent_ready experiment is active.
-		$caps['llms_txt'] = [
-			'url'      => $home . 'llms.txt',
-			'full_url' => $home . 'llms-full.txt',
-		];
+		if ( $this->module->should_advertise_llms_txt() ) {
+			$caps['llms_txt'] = [
+				'url'      => $home . 'llms.txt',
+				'full_url' => $home . 'llms-full.txt',
+			];
+		}
 
 		// REST API — always present on any WordPress site.
 		$caps['rest_api'] = [
