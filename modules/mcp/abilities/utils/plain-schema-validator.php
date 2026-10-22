@@ -20,6 +20,8 @@ class Plain_Schema_Validator {
 
 	const COMBINING_KEYWORDS = [ 'anyOf', 'oneOf' ];
 
+	const UNLISTED_KEY_ERROR_CODES = [ 'rest_additional_properties_forbidden', 'rest_no_matching_schema' ];
+
 	private bool $lenient;
 
 	private function __construct( bool $lenient ) {
@@ -60,11 +62,89 @@ class Plain_Schema_Validator {
 		if ( is_wp_error( $result ) ) {
 			return [
 				'value' => null,
-				'error' => rtrim( $result->get_error_message(), '.' ),
+				'error' => self::error_message( $result, $value, $checked_schema, $name ),
 			];
 		}
 
 		return self::accepted( rest_sanitize_value_from_schema( $value, $checked_schema, $name ) );
+	}
+
+	/**
+	 * WordPress names only the unlisted key, not where it sits, which leaves the agent guessing in a list.
+	 * Inside anyOf it also replaces the error code with the combining one.
+	 *
+	 * @param \WP_Error            $error
+	 * @param mixed                $value
+	 * @param array<string, mixed> $schema
+	 * @param string               $name
+	 */
+	private static function error_message( \WP_Error $error, $value, array $schema, string $name ): string {
+		$unlisted_key_path = in_array( $error->get_error_code(), self::UNLISTED_KEY_ERROR_CODES, true )
+			? self::find_unlisted_key_path( $value, $schema, $name )
+			: null;
+
+		if ( null === $unlisted_key_path ) {
+			return rtrim( $error->get_error_message(), '.' );
+		}
+
+		return sprintf( '%s is not a valid property of Object', $unlisted_key_path );
+	}
+
+	/**
+	 * @param mixed $value
+	 */
+	private static function find_unlisted_key_path( $value, array $schema, string $path ): ?string {
+		if ( ! is_array( $value ) ) {
+			return null;
+		}
+
+		foreach ( self::COMBINING_KEYWORDS as $keyword ) {
+			foreach ( $schema[ $keyword ] ?? [] as $branch ) {
+				$found = is_array( $branch ) ? self::find_unlisted_key_path( $value, $branch, $path ) : null;
+
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+		}
+
+		$is_list = array_values( $value ) === $value;
+
+		if ( $is_list && is_array( $schema['items'] ?? null ) ) {
+			foreach ( $value as $index => $item ) {
+				$found = self::find_unlisted_key_path( $item, $schema['items'], "{$path}[{$index}]" );
+
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+
+			return null;
+		}
+
+		if ( $is_list && ! empty( $value ) ) {
+			return null;
+		}
+
+		$properties = is_array( $schema['properties'] ?? null ) ? $schema['properties'] : [];
+
+		foreach ( $value as $key => $child ) {
+			if ( ! isset( $properties[ $key ] ) ) {
+				if ( false === ( $schema['additionalProperties'] ?? null ) && ! isset( $schema['patternProperties'] ) ) {
+					return "{$path}[{$key}]";
+				}
+
+				continue;
+			}
+
+			$found = is_array( $properties[ $key ] ) ? self::find_unlisted_key_path( $child, $properties[ $key ], "{$path}[{$key}]" ) : null;
+
+			if ( null !== $found ) {
+				return $found;
+			}
+		}
+
+		return null;
 	}
 
 	/**
