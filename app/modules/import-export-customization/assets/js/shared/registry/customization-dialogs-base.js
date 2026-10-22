@@ -107,7 +107,7 @@ export function createCustomizationDialogsRegistry() {
 			title: 'Plugin list',
 			order: 10,
 		},
-	].forEach( ( registration ) => customizationDialogsRegistry.register( registration ) );
+	].forEach( ( entry ) => customizationDialogsRegistry.register( entry ) );
 
 	return customizationDialogsRegistry;
 }
