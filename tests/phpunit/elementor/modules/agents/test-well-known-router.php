@@ -180,7 +180,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		remove_all_filters( 'home_url' );
 
 		// Assert
-		$this->assertSame( '/blogpost/.well-known/auth.md', $path );
+		$this->assertSame( '', $path );
 	}
 
 	public function test_get_active_endpoints__includes_auth_md_when_enabled() {

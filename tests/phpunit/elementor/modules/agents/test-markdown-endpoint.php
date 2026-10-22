@@ -204,6 +204,8 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 	public function test_on_parse_request__resolves_custom_post_type() {
 		// Arrange
 		register_post_type( 'book', [ 'public' => true ] );
+		flush_rewrite_rules();
+
 		$post_id = $this->factory()->post->create( [
 			'post_type'   => 'book',
 			'post_status' => 'publish',
@@ -211,12 +213,16 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		] );
 		$_SERVER['REQUEST_URI'] = '/book/my-book.md';
 
-		// Act
-		$this->endpoint->on_parse_request( new \WP() );
+		try {
+			// Act
+			$this->endpoint->on_parse_request( new \WP() );
 
-		// Assert
-		$this->assertTrue( $this->get_private_property( 'serving_md' ) );
-		$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
+			// Assert
+			$this->assertTrue( $this->get_private_property( 'serving_md' ) );
+			$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
+		} finally {
+			unregister_post_type( 'book' );
+		}
 	}
 
 	public function test_on_parse_request__subdirectory_install_with_encoded_slug() {

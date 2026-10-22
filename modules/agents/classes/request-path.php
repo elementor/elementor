@@ -37,7 +37,7 @@ class Request_Path {
 			return substr( $path, strlen( $home_path ) );
 		}
 
-		return $path;
+		return '';
 	}
 
 	/**
