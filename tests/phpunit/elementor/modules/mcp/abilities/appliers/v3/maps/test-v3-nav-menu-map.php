@@ -55,7 +55,6 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 		$this->registry = new V3_Widget_Map_Registry(
 			new V3_Widget_Map_Compiler(),
-			static fn() => true,
 			static fn() => $controls,
 			[ self::WIDGET_TYPE => $this->map() ],
 			static fn() => true
@@ -104,7 +103,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__writes_every_target_without_warnings() {
 		// Act.
-		$result = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -130,6 +129,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 				'dropdown_border_radius',
 				'dropdown_box_shadow_box_shadow_type',
 				'dropdown_box_shadow_box_shadow',
+				'dropdown_box_shadow_box_shadow_position',
 				'color_dropdown_item_hover',
 				'dropdown_divider_border',
 				'toggle_size',
@@ -141,11 +141,11 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_round_trip__serialized_css_maps_back_to_same_settings() {
 		// Arrange.
-		$written = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE, [] )['settings_patch'];
-		$css = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( self::CSS_FOR_EVERY_TARGET, self::WIDGET_TYPE )['settings_patch'];
+		$css = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE );
 
 		// Act.
-		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( $css, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertEquals( $written, $result['settings_patch'] );
@@ -154,7 +154,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__writes_wrapper_requirements_at_the_written_breakpoint() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { inset-inline-end: 20px; z-index: 9; } @media(--mobile) { wrapper { width: 150px; } }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'wrapper { inset-inline-end: 20px; z-index: 9; } @media(--mobile) { wrapper { width: 150px; } }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -178,10 +178,10 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_round_trip__targets_states_and_breakpoint_requirements_read_back_as_written() {
 		// Arrange.
-		$written = $this->mapper()->apply( str_replace( '&:current', 'main-menu:current', self::ROUND_TRIP_EXAMPLE_CSS ), self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( str_replace( '&:current', 'main-menu:current', self::ROUND_TRIP_EXAMPLE_CSS ), self::WIDGET_TYPE );
 
 		// Act.
-		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], self::WIDGET_TYPE, [] );
+		$readback = ( new V3_Style_Serializer() )->serialize( $written['settings_patch'], self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $written['warnings'] );
@@ -220,12 +220,12 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 			$written['settings_patch']
 		);
 		$this->assertSame( self::ROUND_TRIP_EXAMPLE_CSS, $readback );
-		$this->assertEquals( $written['settings_patch'], $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] )['settings_patch'] );
+		$this->assertEquals( $written['settings_patch'], $this->mapper()->apply( $readback, self::WIDGET_TYPE )['settings_patch'] );
 	}
 
 	public function test_apply__writes_wrapper_flex_parts_with_custom_size_requirement() {
 		// Act.
-		$result = $this->mapper()->apply( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: center; } @media(--mobile) { wrapper { flex-grow: 0; } }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'wrapper { flex-grow: 1; flex-shrink: 0; align-self: center; } @media(--mobile) { wrapper { flex-grow: 0; } }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -242,15 +242,31 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 		);
 	}
 
+	public function test_apply__falls_back_on_the_flex_basis_no_wrapper_control_stores() {
+		// Act.
+		$result = $this->mapper()->apply( 'wrapper { flex: 0 0 333px; }', self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertEquals(
+			[
+				'_flex_grow' => 0,
+				'_flex_size' => 'custom',
+				'_flex_shrink' => 0,
+			],
+			$result['settings_patch']
+		);
+		$this->assertSame( [ 'flex-basis' => '333px' ], $result['fallback_rules'][0]['declarations'] );
+	}
+
 	public function test_round_trip__wrapper_states_map_back_to_same_settings() {
 		// Arrange.
 		$css = 'wrapper { margin: 10px; position: absolute; background-color: #eeeeee; border: 2px solid #000000; box-shadow: 0 2px 4px #00000033; flex-grow: 1; flex-shrink: 0; }'
 			. ' wrapper:hover { background-color: #dddddd; border-style: solid; border-color: #ff0000; border-radius: 6px; }';
-		$written = $this->mapper()->apply( $css, self::WIDGET_TYPE, [] )['settings_patch'];
-		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( $css, self::WIDGET_TYPE )['settings_patch'];
+		$readback = ( new V3_Style_Serializer() )->serialize( $written, self::WIDGET_TYPE );
 
 		// Act.
-		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( $readback, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( 'classic', $written['_background_hover_background'] );
@@ -261,7 +277,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__fails_the_style_on_an_unknown_breakpoint() {
 		// Act.
-		$result = $this->mapper()->apply( 'color: red; @media(--watch) { color: blue; }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'color: red; @media(--watch) { color: blue; }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( 'Unknown breakpoint alias: --watch. Valid breakpoints: desktop, tablet, mobile.', $result['error'] );
@@ -270,7 +286,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__warns_about_unknown_targets_and_states() {
 		// Act.
-		$result = $this->mapper()->apply( 'header { color: red; } toggle:current { color: blue; }', self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( 'header { color: red; } toggle:current { color: blue; }', self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertCount( 2, $result['warnings'] );
@@ -280,7 +296,7 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 
 	public function test_apply__routes_unstorable_declarations_to_per_target_fallback_rules() {
 		// Act.
-		$result = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
+		$result = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE );
 
 		// Assert.
 		$this->assertSame( [], $result['warnings'] );
@@ -315,35 +331,37 @@ class Test_V3_Nav_Menu_Map extends TestCase {
 			[
 				'letter-spacing: 1px (toggle): CSS property letter-spacing is not supported by this Elementor widget.',
 				'font-weight: 650 (main-menu): CSS property font-weight has a value this Elementor widget cannot store. Allowed values: 100, 200, 300, 400, 500, 600, 700, 800, 900, normal, bold.',
-				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths must be px.',
+				'box-shadow: 0 1rem 2rem #000000 (dropdown): CSS property box-shadow has a value this Elementor widget cannot store. Box shadow lengths, offsets and blur must be px, and the color must be a valid color.',
 			],
 			$result['fallback_notes']
 		);
 	}
 
-	public function test_apply__warns_and_skips_unstorable_declarations_of_targets_without_a_selector() {
-		// Act.
-		$result = $this->mapper()->apply( 'divider { letter-spacing: 1px; }', self::WIDGET_TYPE, [] );
-
-		// Assert.
-		$this->assertSame( [], $result['fallback_notes'] );
-		$this->assertSame(
-			[ 'CSS property letter-spacing is not supported by this Elementor widget. It was skipped because style target divider cannot hold custom CSS.' ],
-			$result['warnings']
-		);
-	}
-
-	public function test_render__writes_fallback_rules_against_each_target_selector() {
+	public function test_render__writes_pointer_and_divider_fallbacks_on_the_pseudo_elements_they_paint() {
 		// Arrange.
-		$written = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE, [] );
+		$written = $this->mapper()->apply( 'pointer:hover { opacity: 0.5; } divider { opacity: 0.4; }', self::WIDGET_TYPE );
 		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
 
 		// Act.
 		$custom_css = $fallback->render( $written['fallback_rules'] );
 
 		// Assert.
-		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000; }', $custom_css );
-		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px; } }', $custom_css );
+		$this->assertSame( [], $written['warnings'] );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--main .elementor-item:hover:before, selector .elementor-nav-menu--main .elementor-item:hover:after { opacity: 0.5 !important; }', $custom_css );
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--layout-horizontal .elementor-nav-menu > li:not(:last-child):after { opacity: 0.4 !important; }', $custom_css );
+	}
+
+	public function test_render__writes_fallback_rules_against_each_target_selector() {
+		// Arrange.
+		$written = $this->mapper()->apply( self::UNSTORABLE_CSS, self::WIDGET_TYPE );
+		$fallback = new V3_Custom_Css_Fallback( V3_Custom_Css_Fallback::selectors_of( $this->registry->get_map( self::WIDGET_TYPE ) ), self::MEDIA_QUERIES );
+
+		// Act.
+		$custom_css = $fallback->render( $written['fallback_rules'] );
+
+		// Assert.
+		$this->assertStringContainsString( 'selector .elementor-nav-menu--dropdown { box-shadow: 0 1rem 2rem #000000 !important; }', $custom_css );
+		$this->assertStringContainsString( '@media (max-width: 767px) { selector .elementor-menu-toggle { letter-spacing: 1px !important; } }', $custom_css );
 	}
 
 	private function mapper(): V3_Style_Mapper {
