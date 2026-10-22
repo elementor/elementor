@@ -612,4 +612,53 @@ class Test_Module extends Elementor_Test_Base {
 
 		$this->assertTrue( $this->module->should_advertise_llms_txt() );
 	}
+
+	public function test_should_advertise_llms_full_txt__returns_true_when_enabled() {
+		$this->assertTrue( $this->module->should_advertise_llms_full_txt() );
+	}
+
+	public function test_should_advertise_llms_full_txt__returns_false_when_disabled() {
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+		$settings->ensure_option_exists();
+		$settings->set_server_value( \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+
+		$module = new Module();
+
+		$this->assertFalse( $module->should_advertise_llms_full_txt() );
+	}
+
+	public function test_should_advertise_llms_full_txt__returns_true_even_when_physical_file_kept() {
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		$this->assertTrue( $this->module->should_advertise_llms_full_txt() );
+	}
+
+	public function test_on_settings_change__invalidates_well_known_cache() {
+		// Arrange - warm the ARD manifest cache
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act
+		$this->module->on_settings_change();
+
+		// Assert - cache should be invalidated
+		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_existing_file_decision_change__invalidates_cache() {
+		// Arrange - warm both caches
+		$this->module->get_generated_llms_txt();
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act - change the decision
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		// Assert - well-known cache should be invalidated (triggers on_settings_change)
+		$this->assertFalse( get_transient( $transient_key ) );
+	}
 }

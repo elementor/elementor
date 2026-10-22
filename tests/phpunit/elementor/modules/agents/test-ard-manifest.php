@@ -93,6 +93,39 @@ class Test_Ard_Manifest extends Elementor_Test_Base {
 		$this->assertSame( $home . 'llms.txt', $content['capabilities']['llms_txt']['url'] );
 	}
 
+	public function test_generate_content__includes_full_url_when_enabled() {
+		$home = trailingslashit( home_url() );
+
+		$content = $this->invoke_generate_content();
+
+		$this->assertArrayHasKey( 'capabilities', $content );
+		$this->assertArrayHasKey( 'llms_txt', $content['capabilities'] );
+		$this->assertArrayHasKey( 'full_url', $content['capabilities']['llms_txt'] );
+		$this->assertSame( $home . 'llms-full.txt', $content['capabilities']['llms_txt']['full_url'] );
+	}
+
+	public function test_generate_content__omits_full_url_when_llms_disabled() {
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+
+		$content = $this->invoke_generate_content();
+
+		$this->assertArrayHasKey( 'capabilities', $content );
+		$this->assertArrayNotHasKey( 'llms_txt', $content['capabilities'] );
+	}
+
+	public function test_generate_content__includes_full_url_but_not_url_when_physical_file_kept() {
+		$home = trailingslashit( home_url() );
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		$content = $this->invoke_generate_content();
+
+		$this->assertArrayHasKey( 'capabilities', $content );
+		$this->assertArrayHasKey( 'llms_txt', $content['capabilities'] );
+		$this->assertArrayNotHasKey( 'url', $content['capabilities']['llms_txt'] );
+		$this->assertArrayHasKey( 'full_url', $content['capabilities']['llms_txt'] );
+		$this->assertSame( $home . 'llms-full.txt', $content['capabilities']['llms_txt']['full_url'] );
+	}
+
 	public function test_generate_content__always_includes_rest_api() {
 		$content = $this->invoke_generate_content();
 

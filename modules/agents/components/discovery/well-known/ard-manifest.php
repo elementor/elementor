@@ -75,11 +75,19 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 	private function build_capabilities( string $home ): array {
 		$caps = [];
 
-		if ( $this->module->should_advertise_llms_txt() ) {
-			$caps['llms_txt'] = [
-				'url'      => $home . 'llms.txt',
-				'full_url' => $home . 'llms-full.txt',
-			];
+		$has_llms_txt      = $this->module->should_advertise_llms_txt();
+		$has_llms_full_txt = $this->module->should_advertise_llms_full_txt();
+
+		if ( $has_llms_txt || $has_llms_full_txt ) {
+			$caps['llms_txt'] = [];
+
+			if ( $has_llms_txt ) {
+				$caps['llms_txt']['url'] = $home . 'llms.txt';
+			}
+
+			if ( $has_llms_full_txt ) {
+				$caps['llms_txt']['full_url'] = $home . 'llms-full.txt';
+			}
 		}
 
 		// REST API — always present on any WordPress site.

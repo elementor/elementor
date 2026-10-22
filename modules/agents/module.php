@@ -120,7 +120,7 @@ class Module extends BaseModule {
 
 		$this->settings->register();
 
-		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION ] as $option ) {
+		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
 			add_action( "add_option_{$option}", [ $this, 'on_settings_change' ] );
 			add_action( "update_option_{$option}", [ $this, 'on_settings_change' ] );
 		}
@@ -251,15 +251,49 @@ class Module extends BaseModule {
 	 * Returns true only when Elementor's llms.txt is actually served.
 	 * Returns false when:
 	 *  - The feature is disabled
-	 *  - A physical file exists and the admin chose to keep it
+	 *  - A physical file exists (even if admin chose 'replace', the web server
+	 *    serves the static file before WordPress runs)
 	 *
 	 * This is the single source of truth for both serving and advertising.
+	 * Result is cached per-request since has_physical_llms_file() checks the filesystem.
 	 */
 	public function should_advertise_llms_txt(): bool {
-		if ( 'keep' === get_option( self::OPTION_EXISTING_FILE_DECISION, '' ) ) {
+		static $cached_result = null;
+
+		if ( null !== $cached_result ) {
+			return $cached_result;
+		}
+
+		if ( ! $this->settings->is_llms_enabled() ) {
+			$cached_result = false;
 			return false;
 		}
 
+		$decision = get_option( self::OPTION_EXISTING_FILE_DECISION, '' );
+
+		if ( 'keep' === $decision ) {
+			$cached_result = false;
+			return false;
+		}
+
+		if ( self::has_physical_llms_file() ) {
+			$cached_result = false;
+			return false;
+		}
+
+		$cached_result = true;
+		return true;
+	}
+
+	/**
+	 * Check whether llms-full.txt should be advertised in discovery mechanisms.
+	 *
+	 * llms-full.txt is always served by WordPress (no physical file concern),
+	 * so we only check if the feature is enabled.
+	 *
+	 * @return bool
+	 */
+	public function should_advertise_llms_full_txt(): bool {
 		return $this->settings->is_llms_enabled();
 	}
 
@@ -460,9 +494,14 @@ class Module extends BaseModule {
 
 	/**
 	 * Invalidate cache when the Agent Ready settings or the edited llms.txt content change.
+	 * Also flush well-known endpoint caches (e.g. ARD manifest) when settings change.
 	 */
 	public function on_settings_change(): void {
 		$this->invalidate_cache( 0 );
+
+		if ( $this->well_known_router ) {
+			$this->well_known_router->flush_all_caches();
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -557,13 +596,23 @@ class Module extends BaseModule {
 	 * runs, so when one exists the module must stay out of the way.
 	 *
 	 * The home path (not ABSPATH) is used so subdirectory installs are handled.
+	 * Result is memoized per-request since file_exists() is called on every response
+	 * and get_home_path() can be expensive on subdirectory installs.
 	 */
 	public static function has_physical_llms_file(): bool {
+		static $cached_result = null;
+
+		if ( null !== $cached_result ) {
+			return $cached_result;
+		}
+
 		if ( ! function_exists( 'get_home_path' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 
-		return file_exists( get_home_path() . self::LLMS_FILENAME );
+		$cached_result = file_exists( get_home_path() . self::LLMS_FILENAME );
+
+		return $cached_result;
 	}
 
 	/**
