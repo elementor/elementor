@@ -22,7 +22,14 @@ class V3_Value_Formatters {
 		switch ( $resolver ) {
 			case 'text':
 			case 'color':
-				return is_scalar( $value ) ? (string) $value : null;
+				if ( ! is_scalar( $value ) ) {
+					return null;
+				}
+				$string_value = (string) $value;
+				if ( V3_Variable_Compatibility::is_var_reference( $string_value ) ) {
+					return $string_value;
+				}
+				return $string_value;
 
 			case 'dimension':
 			case 'slider':
