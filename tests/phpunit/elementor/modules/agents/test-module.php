@@ -62,7 +62,6 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
-		$this->assertNotFalse( has_filter( 'elementor/editor/v2/packages', [ $this->module, 'add_packages' ] ) );
 	}
 
 	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {

@@ -616,10 +616,6 @@ class Module extends BaseModule {
 		exit;
 	}
 
-	// -------------------------------------------------------------------------
-	// Internal helpers
-	// -------------------------------------------------------------------------
-
 	private function invalidate_cache( int $post_id = 0 ): void {
 		$this->cache->invalidate();
 
