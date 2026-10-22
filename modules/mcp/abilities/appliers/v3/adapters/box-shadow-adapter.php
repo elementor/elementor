@@ -51,9 +51,9 @@ class Box_Shadow_Adapter implements V3_Control_Adapter {
 			$stored[ $control_field ] = $length;
 		}
 
-		$color = $shadow['value']['color']['value'] ?? null;
+		$color = Color_Adapter::plain_color( $shadow['value']['color'] ?? null );
 
-		if ( ! is_string( $color ) || '' === $color ) {
+		if ( null === $color ) {
 			return null;
 		}
 

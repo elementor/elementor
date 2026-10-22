@@ -62,6 +62,14 @@ class Test_V3_Map_Style_Writer extends TestCase {
 				'type' => 'box_shadow',
 				'condition' => [ 'shadow_box_shadow_type!' => '' ],
 			],
+			'shadow_hover_box_shadow_type' => [
+				'type' => 'popover_toggle',
+				'return_value' => 'yes',
+			],
+			'shadow_hover_box_shadow' => [
+				'type' => 'box_shadow',
+				'condition' => [ 'shadow_hover_box_shadow_type!' => '' ],
+			],
 			'_position' => [
 				'type' => 'select',
 				'options' => self::POSITION_OPTIONS,
@@ -83,6 +91,7 @@ class Test_V3_Map_Style_Writer extends TestCase {
 					->bind( 'padding', V3_Control::bind_to( 'padding_vertical' )->sides( 'block-start', 'block-end' ) )
 					->bind( 'font-weight', V3_Control::bind_to( 'title_font_weight' ) )
 					->with( Box_Shadow_Group::from_prefix( 'shadow' ) )
+					->with( Box_Shadow_Group::from_prefix( 'shadow_hover', self::HOVER ) )
 			);
 
 		return ( new V3_Widget_Map_Compiler() )
@@ -328,5 +337,44 @@ class Test_V3_Map_Style_Writer extends TestCase {
 				'reason' => 'CSS property padding-inline is not supported by this Elementor widget.',
 			],
 		], $this->fallbacks );
+	}
+
+	public function test_write__writes_the_inset_keyword_through_the_position_control() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: inset 0px 4px 12px 0px rgba(0, 0, 0, 0.2);' );
+
+		// Assert.
+		$this->assertSame( 'inset', $ctx->settings_patch()['shadow_box_shadow_position'] ?? null );
+		$this->assertSame( [], $this->fallbacks );
+	}
+
+	public function test_write__resets_the_position_control_for_an_outer_shadow() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);' );
+
+		// Assert.
+		$this->assertSame( ' ', $ctx->settings_patch()['shadow_box_shadow_position'] ?? null );
+	}
+
+	public function test_write__sends_several_shadows_to_the_fallback_instead_of_keeping_the_first() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: 0px 4px 12px 0px red, 0px 0px 10px 0px blue;' );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'shadow_box_shadow', $ctx->settings_patch() );
+		$this->assertCount( 1, $this->fallbacks );
+		$this->assertStringContainsString( 'one box shadow', $this->fallbacks[0]['reason'] );
+	}
+
+	public function test_write__cancels_the_default_shadow_for_hover_box_shadow_none() {
+		// Act.
+		$ctx = $this->write( 'box-shadow: none;', self::DESKTOP, self::HOVER );
+
+		// Assert.
+		$patch = $ctx->settings_patch();
+		$this->assertSame( 'yes', $patch['shadow_hover_box_shadow_type'] ?? null );
+		$this->assertSame( 'rgba(0,0,0,0)', $patch['shadow_hover_box_shadow']['color'] ?? null );
+		$this->assertSame( ' ', $patch['shadow_hover_box_shadow_position'] ?? null );
+		$this->assertSame( [], $this->fallbacks );
 	}
 }

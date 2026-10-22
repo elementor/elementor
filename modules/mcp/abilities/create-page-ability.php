@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,6 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Create_Page_Ability extends Abstract_Ability {
+
+	const TEMPLATES = [
+		'default',
+		Page_Templates_Module::TEMPLATE_THEME,
+		Page_Templates_Module::TEMPLATE_HEADER_FOOTER,
+		Page_Templates_Module::TEMPLATE_CANVAS,
+	];
 
 	protected function get_ability_id(): string {
 		return 'elementor/create-page';
@@ -22,7 +30,7 @@ class Create_Page_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Create Elementor Page', 'elementor' ),
-			__( 'Creates a new draft post or page and marks it as built with Elementor (blank canvas in the editor). Use when the user wants a new layout shell to design in Elementor. Returns the new post ID and edit URL.', 'elementor' ),
+			__( 'Creates a new draft post or page and marks it as built with Elementor, with no elements yet. Use when the user wants a new layout shell to design in Elementor. On the frontend the theme still wraps it: its page title, and the active header and footer site parts. Pass template `elementor_canvas` for a page with no header, footer or title, or hide_title to remove only the title. Returns the new post ID, edit URL, template and hide_title.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -31,6 +39,8 @@ class Create_Page_Ability extends Abstract_Ability {
 					'edit_url' => [ 'type' => 'string' ],
 					'status' => [ 'type' => 'string' ],
 					'type' => [ 'type' => 'string' ],
+					'template' => [ 'type' => 'string' ],
+					'hide_title' => [ 'type' => 'boolean' ],
 					'preview_url' => Document_Mutation_Links::preview_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
@@ -58,6 +68,17 @@ class Create_Page_Ability extends Abstract_Ability {
 						'description' => 'Post type slug; must support Elementor. Defaults to page.',
 						'default' => 'page',
 					],
+					'template' => [
+						'type' => 'string',
+						'enum' => self::TEMPLATES,
+						'description' => 'Page layout. `default` follows Site Settings; `elementor_theme` uses the theme template (title, header, footer); `elementor_header_footer` keeps the header and footer but not the title; `elementor_canvas` renders only the Elementor content.',
+						'default' => 'default',
+					],
+					'hide_title' => [
+						'type' => 'boolean',
+						'description' => 'Hide the page title the theme prints above the content.',
+						'default' => false,
+					],
 				],
 			]
 		);
@@ -78,9 +99,20 @@ class Create_Page_Ability extends Abstract_Ability {
 			return $permission_error;
 		}
 
+		$template = isset( $input['template'] ) && is_string( $input['template'] ) ? $input['template'] : 'default';
+
+		if ( ! in_array( $template, self::TEMPLATES, true ) ) {
+			return new \WP_Error(
+				'invalid_template',
+				/* translators: %s: Comma-separated list of supported templates. */
+				sprintf( __( 'Unknown template. Use one of: %s.', 'elementor' ), implode( ', ', self::TEMPLATES ) ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
 		$title = isset( $input['title'] ) && is_string( $input['title'] ) ? $input['title'] : '';
 
-		return $this->create_post( $post_type, $title );
+		return $this->create_post( $post_type, $title, $template, ! empty( $input['hide_title'] ) );
 	}
 
 	private function validate_post_type( string $post_type ): ?\WP_Error {
@@ -109,7 +141,7 @@ class Create_Page_Ability extends Abstract_Ability {
 		return null;
 	}
 
-	private function create_post( string $post_type, string $title ) {
+	private function create_post( string $post_type, string $title, string $template, bool $hide_title ) {
 		$post_id = wp_insert_post(
 			[
 				'post_title' => $title ? $title : __( 'Elementor Draft', 'elementor' ),
@@ -135,14 +167,36 @@ class Create_Page_Ability extends Abstract_Ability {
 
 		$document->set_is_built_with_elementor( true );
 
+		$settings = $this->page_settings( $template, $hide_title );
+
+		if ( ! empty( $settings ) ) {
+			$document->save( [ 'settings' => $settings ] );
+		}
+
 		return [
 			'id' => (int) $post_id,
 			'edit_url' => $document->get_edit_url(),
 			'status' => get_post_status( $post_id ),
 			'type' => $post_type,
+			'template' => $template,
+			'hide_title' => $hide_title,
 		] + Document_Mutation_Links::for_document(
 			$document,
 			__( 'Page created.', 'elementor' )
 		);
+	}
+
+	private function page_settings( string $template, bool $hide_title ): array {
+		$settings = [];
+
+		if ( 'default' !== $template ) {
+			$settings['template'] = $template;
+		}
+
+		if ( $hide_title ) {
+			$settings['hide_title'] = 'yes';
+		}
+
+		return $settings;
 	}
 }
