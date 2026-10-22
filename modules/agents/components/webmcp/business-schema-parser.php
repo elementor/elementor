@@ -16,6 +16,8 @@ class Business_Schema_Parser {
 
 	const ADDRESS_FIELDS = [ self::STREET_ADDRESS_FIELD, 'addressLocality', 'addressRegion', 'postalCode', 'addressCountry' ];
 
+	const CONTACT_FIELDS = [ 'telephone', 'email', 'address', 'openingHours', 'openingHoursSpecification', 'sameAs' ];
+
 	const MAX_TEXT_LENGTH = 300;
 
 	const MAX_SOCIAL_PROFILES = 10;
@@ -76,17 +78,7 @@ class Business_Schema_Parser {
 	}
 
 	private function is_business_node( array $node ): bool {
-		foreach ( (array) $node['@type'] as $type ) {
-			if ( ! is_string( $type ) ) {
-				continue;
-			}
-
-			if ( Business_Schema_Types::is_business_type( $type ) ) {
-				return true;
-			}
-		}
-
-		return false;
+		return ! empty( array_intersect_key( $node, array_flip( self::CONTACT_FIELDS ) ) );
 	}
 
 	private function first_text( array $nodes, string $key ): string {

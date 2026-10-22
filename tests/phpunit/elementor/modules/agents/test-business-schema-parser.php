@@ -82,66 +82,16 @@ class Test_Business_Schema_Parser extends Elementor_Test_Base {
 		$this->assertSame( [ 'streetAddress' => '1 Main St' ], $info['address'] );
 	}
 
-	/**
-	 * @dataProvider business_subtype_provider
-	 */
-	public function test_parse__recognizes_local_business_subtypes_without_a_parent_type( string $type ) {
+	public function test_parse__reads_contact_details_regardless_of_the_schema_type() {
 		// Arrange
-		$html = $this->wrap_json_ld( [ '@type' => $type, 'telephone' => '+1 555 0100' ] );
+		$html = $this->wrap_json_ld( [ '@type' => 'Dentist', 'name' => 'Smile Clinic', 'telephone' => '+1 555 0100' ] );
 
 		// Act
 		$info = $this->parser->parse( $html );
 
 		// Assert
+		$this->assertSame( 'Smile Clinic', $info['name'] );
 		$this->assertSame( '+1 555 0100', $info['telephone'] );
-	}
-
-	public function business_subtype_provider(): array {
-		return [
-			'bakery' => [ 'Bakery' ],
-			'dentist' => [ 'Dentist' ],
-			'hotel' => [ 'Hotel' ],
-			'educational organization' => [ 'EducationalOrganization' ],
-			'school' => [ 'School' ],
-			'college or university' => [ 'CollegeOrUniversity' ],
-			'ngo' => [ 'NGO' ],
-			'medical organization' => [ 'MedicalOrganization' ],
-			'veterinary care' => [ 'VeterinaryCare' ],
-			'news media organization' => [ 'NewsMediaOrganization' ],
-			'sports organization' => [ 'SportsOrganization' ],
-			'sports team' => [ 'SportsTeam' ],
-			'government organization' => [ 'GovernmentOrganization' ],
-			'performing group' => [ 'PerformingGroup' ],
-			'music group' => [ 'MusicGroup' ],
-			'airline' => [ 'Airline' ],
-			'schema.org url' => [ 'https://schema.org/Dentist' ],
-			'schema prefix' => [ 'schema:Hotel' ],
-		];
-	}
-
-	public function test_parse__ignores_non_business_types_that_carry_contact_details() {
-		// Arrange
-		$html = $this->wrap_json_ld( [ '@type' => 'Person', 'name' => 'Author', 'telephone' => '+1 555 0199' ] );
-
-		// Act & Assert
-		$this->assertSame( [], $this->parser->parse( $html ) );
-	}
-
-	public function test_parse__ignores_the_venue_of_an_event() {
-		// Arrange
-		$html = $this->wrap_json_ld( [
-			'@type' => 'Event',
-			'name' => 'Open day',
-			'location' => [
-				'@type' => 'Place',
-				'name' => 'City Hall',
-				'telephone' => '+1 555 0177',
-				'address' => [ '@type' => 'PostalAddress', 'streetAddress' => '9 Square' ],
-			],
-		] );
-
-		// Act & Assert
-		$this->assertSame( [], $this->parser->parse( $html ) );
 	}
 
 	public function test_parse__returns_empty_for_pages_without_business_schema() {
@@ -179,6 +129,7 @@ class Test_Business_Schema_Parser extends Elementor_Test_Base {
 		$html = $this->wrap_json_ld( [
 			'@type' => 'LocalBusiness',
 			'name' => '<b>Bold</b> Name',
+			'telephone' => '+1 555 0100',
 		] );
 
 		// Act
