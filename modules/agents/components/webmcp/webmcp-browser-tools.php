@@ -63,9 +63,12 @@ class Webmcp_Browser_Tools extends Feature_Component {
 
 	public function register(): void {
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_category' ] );
-		add_action( 'update_option_' . Agent_Ready_Settings::OPTION, [ $this, 'flush_relevant_tools_cache' ] );
-		add_action( 'update_option_' . Agent_Ready_Settings::OPTION, [ $this, 'warm_business_info_on_save' ] );
 		add_action( 'elementor/agents/llms_txt/cache_invalidated', [ $this, 'flush_relevant_tools_cache' ] );
+
+		foreach ( [ 'add_option_', 'update_option_' ] as $option_action_prefix ) {
+			add_action( $option_action_prefix . Agent_Ready_Settings::OPTION, [ $this, 'flush_relevant_tools_cache' ] );
+			add_action( $option_action_prefix . Agent_Ready_Settings::OPTION, [ $this, 'sync_business_info_with_settings' ] );
+		}
 
 		if ( ! $this->settings->is_browser_tools_enabled() ) {
 			return;
@@ -190,10 +193,14 @@ class Webmcp_Browser_Tools extends Feature_Component {
 		$this->business_info_extractor->warm();
 	}
 
-	public function warm_business_info_on_save(): void {
+	public function sync_business_info_with_settings(): void {
 		if ( $this->settings->is_browser_tools_enabled() ) {
 			$this->business_info_extractor->warm();
+
+			return;
 		}
+
+		$this->business_info_extractor->clear();
 	}
 
 	/**

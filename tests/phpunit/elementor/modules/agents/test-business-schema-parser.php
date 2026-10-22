@@ -101,6 +101,19 @@ class Test_Business_Schema_Parser extends Elementor_Test_Base {
 			'bakery' => [ 'Bakery' ],
 			'dentist' => [ 'Dentist' ],
 			'hotel' => [ 'Hotel' ],
+			'educational organization' => [ 'EducationalOrganization' ],
+			'school' => [ 'School' ],
+			'college or university' => [ 'CollegeOrUniversity' ],
+			'ngo' => [ 'NGO' ],
+			'medical organization' => [ 'MedicalOrganization' ],
+			'veterinary care' => [ 'VeterinaryCare' ],
+			'news media organization' => [ 'NewsMediaOrganization' ],
+			'sports organization' => [ 'SportsOrganization' ],
+			'sports team' => [ 'SportsTeam' ],
+			'government organization' => [ 'GovernmentOrganization' ],
+			'performing group' => [ 'PerformingGroup' ],
+			'music group' => [ 'MusicGroup' ],
+			'airline' => [ 'Airline' ],
 			'schema.org url' => [ 'https://schema.org/Dentist' ],
 			'schema prefix' => [ 'schema:Hotel' ],
 		];
@@ -109,6 +122,23 @@ class Test_Business_Schema_Parser extends Elementor_Test_Base {
 	public function test_parse__ignores_non_business_types_that_carry_contact_details() {
 		// Arrange
 		$html = $this->wrap_json_ld( [ '@type' => 'Person', 'name' => 'Author', 'telephone' => '+1 555 0199' ] );
+
+		// Act & Assert
+		$this->assertSame( [], $this->parser->parse( $html ) );
+	}
+
+	public function test_parse__ignores_the_venue_of_an_event() {
+		// Arrange
+		$html = $this->wrap_json_ld( [
+			'@type' => 'Event',
+			'name' => 'Open day',
+			'location' => [
+				'@type' => 'Place',
+				'name' => 'City Hall',
+				'telephone' => '+1 555 0177',
+				'address' => [ '@type' => 'PostalAddress', 'streetAddress' => '9 Square' ],
+			],
+		] );
 
 		// Act & Assert
 		$this->assertSame( [], $this->parser->parse( $html ) );

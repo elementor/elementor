@@ -4,6 +4,7 @@ namespace Elementor\Modules\Agents\Components\Webmcp\Tools;
 
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,9 +16,12 @@ class Read_Page_Content extends Abstract_Webmcp_Tool {
 
 	private Markdown_Endpoint $markdown_endpoint;
 
-	public function __construct( Agent_Ready_Settings $settings, Markdown_Endpoint $markdown_endpoint ) {
+	private Prompt_Injection_Sanitizer $sanitizer;
+
+	public function __construct( Agent_Ready_Settings $settings, Markdown_Endpoint $markdown_endpoint, Prompt_Injection_Sanitizer $sanitizer ) {
 		$this->settings          = $settings;
 		$this->markdown_endpoint = $markdown_endpoint;
+		$this->sanitizer         = $sanitizer;
 	}
 
 	public function get_slug(): string {
@@ -65,7 +69,7 @@ class Read_Page_Content extends Abstract_Webmcp_Tool {
 			'id' => $post->ID,
 			'url' => (string) get_permalink( $post ),
 			'format' => 'markdown',
-			'content' => $this->build_markdown_in_post_context( $post ),
+			'content' => $this->sanitizer->sanitize( $this->build_markdown_in_post_context( $post ) ),
 		];
 	}
 

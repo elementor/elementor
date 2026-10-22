@@ -27,6 +27,8 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 	const CORE_TOOL_COUNT = 4;
 
+	const CRON_DISABLED_FILTER = 'elementor/agents/webmcp/is_cron_disabled';
+
 	private Agent_Ready_Settings $settings;
 
 	private Business_Info_Extractor $extractor;
@@ -49,6 +51,7 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
 		delete_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT );
+		add_filter( self::CRON_DISABLED_FILTER, '__return_false' );
 
 		wp_get_ability_categories();
 		wp_get_abilities();
@@ -76,7 +79,7 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		$this->browser_tools = new Webmcp_Browser_Tools( $this->settings, $this->extractor, [
 			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $generator, $sanitizer ),
 			new Get_Site_Structure( $generator, $sanitizer ),
-			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ) ),
+			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ), $sanitizer ),
 			new Query_Business_Info( $this->settings, $this->extractor, $sanitizer ),
 		] );
 
@@ -321,6 +324,52 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_register__warms_business_info_when_the_settings_option_is_first_created() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+		remove_all_actions( 'add_option_' . Agent_Ready_Settings::OPTION );
+		remove_all_actions( 'update_option_' . Agent_Ready_Settings::OPTION );
+		$this->browser_tools->register();
+
+		// Act
+		$this->settings->ensure_option_exists();
+
+		// Assert
+		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_register__clears_business_info_when_browser_tools_are_turned_off() {
+		// Arrange
+		remove_all_actions( 'update_option_' . Agent_Ready_Settings::OPTION );
+		$this->browser_tools->register();
+		set_transient( Business_Info_Extractor::TRANSIENT, [ 'telephone' => '+1 555 0100' ] );
+		set_transient( Business_Info_Extractor::FRESH_TRANSIENT, true );
+		set_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT, [ 'query_business_info' ] );
+		wp_schedule_single_event( time(), Business_Info_Extractor::CRON_HOOK );
+
+		// Act
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BROWSER_TOOLS, 'enabled', false );
+
+		// Assert
+		$this->assertFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+		$this->assertFalse( get_transient( Business_Info_Extractor::TRANSIENT ) );
+		$this->assertFalse( get_transient( Business_Info_Extractor::FRESH_TRANSIENT ) );
+		$this->assertFalse( get_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT ) );
+	}
+
+	public function test_warm__fills_an_empty_cache_without_scheduling_when_cron_is_disabled() {
+		// Arrange
+		add_filter( self::CRON_DISABLED_FILTER, '__return_true' );
+
+		// Act
+		$this->extractor->warm();
+
+		// Assert
+		$this->assertSame( [], $this->extractor->get_or_refresh() );
+		$this->assertFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
 	}
 
 	private function unregister_webmcp_abilities(): void {

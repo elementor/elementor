@@ -83,15 +83,39 @@ class Business_Info_Extractor {
 
 	/**
 	 * Runs the refresh in a separate cron request, so the current request never waits on the fetch.
+	 * Without cron nothing would ever fill an empty cache, so an admin request fills it once itself.
 	 */
 	public function warm(): void {
 		if ( $this->is_fresh() ) {
 			return;
 		}
 
+		if ( $this->is_cron_disabled() && null === $this->get_cached() ) {
+			$this->refresh();
+
+			return;
+		}
+
 		$this->schedule_refresh_at( time() );
 
 		spawn_cron();
+	}
+
+	public function clear(): void {
+		wp_clear_scheduled_hook( self::CRON_HOOK );
+
+		delete_transient( self::TRANSIENT );
+		delete_transient( self::FRESH_TRANSIENT );
+	}
+
+	private function is_cron_disabled(): bool {
+		/**
+		 * Filters whether WP-Cron is assumed not to run on this site.
+		 * Sites that set DISABLE_WP_CRON but trigger wp-cron.php from a system cron can return false.
+		 *
+		 * @param bool $is_disabled Whether the business information refresh must run without cron.
+		 */
+		return (bool) apply_filters( 'elementor/agents/webmcp/is_cron_disabled', defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON );
 	}
 
 	private function get_cached(): ?array {

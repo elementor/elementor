@@ -1,5 +1,6 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
+import { getModelContext } from '../../../../agents/assets/js/frontend/model-context';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
 
@@ -23,14 +24,12 @@ function registerWebmcpFormListeners() {
 
 	webmcpFormListenersRegistered = true;
 
-	const eventTarget = document.modelContext ?? window;
+	const modelContext = getModelContext( document, navigator );
+	const eventTargets = modelContext ? [ window, modelContext ] : [ window ];
 
-	eventTarget.addEventListener( 'toolactivated', ( { toolName } ) => {
-		resetWebmcpFormState( toolName );
-	} );
-
-	eventTarget.addEventListener( 'toolcancel', ( { toolName } ) => {
-		resetWebmcpFormState( toolName );
+	eventTargets.forEach( ( eventTarget ) => {
+		eventTarget.addEventListener( 'toolactivated', ( { toolName } ) => resetWebmcpFormState( toolName ) );
+		eventTarget.addEventListener( 'toolcancel', ( { toolName } ) => resetWebmcpFormState( toolName ) );
 	} );
 }
 

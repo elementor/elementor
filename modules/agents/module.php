@@ -719,7 +719,7 @@ class Module extends BaseModule {
 			[
 				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
 				new Get_Site_Structure( $this->generator, $sanitizer ),
-				new Read_Page_Content( $this->settings, $this->markdown_endpoint ),
+				new Read_Page_Content( $this->settings, $this->markdown_endpoint, $sanitizer ),
 				new Query_Business_Info( $this->settings, $extractor, $sanitizer ),
 			]
 		);

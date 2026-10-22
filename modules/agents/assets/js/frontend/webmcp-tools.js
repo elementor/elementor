@@ -1,3 +1,5 @@
+import { getModelContext } from './model-context';
+
 const toTextResult = ( text, isError ) => ( {
 	content: [ { type: 'text', text } ],
 	isError,
@@ -39,7 +41,5 @@ export const registerTools = ( modelContext, config ) => {
 		}
 	}
 };
-
-export const getModelContext = ( doc, nav ) => doc?.modelContext ?? nav?.modelContext;
 
 registerTools( getModelContext( window.document, window.navigator ), window.elementorAgentsWebmcpConfig );

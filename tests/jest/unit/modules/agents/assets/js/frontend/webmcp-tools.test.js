@@ -1,4 +1,5 @@
-import { getModelContext, registerTools, runTool } from 'elementor/modules/agents/assets/js/frontend/webmcp-tools';
+import { getModelContext } from 'elementor/modules/agents/assets/js/frontend/model-context';
+import { registerTools, runTool } from 'elementor/modules/agents/assets/js/frontend/webmcp-tools';
 
 const RUN_URL = 'https://example.com/wp-json/elementor/v1/agents/webmcp/run';
 
