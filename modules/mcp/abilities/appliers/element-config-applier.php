@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -17,11 +16,11 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
+use Elementor\Modules\Mcp\Abilities\Utils\Plain_Schema_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -36,6 +35,7 @@ class Element_Config_Applier {
 	private Widget_Type_Resolver $type_resolver;
 	private Plain_Values_Resolver $plain_values_resolver;
 	private ?V3_Dynamic_Hoister $v3_dynamic_hoister;
+	private Plain_Schema_Validator $schema_validator;
 
 	public function __construct(
 		Widget_Type_Resolver $type_resolver,
@@ -45,6 +45,7 @@ class Element_Config_Applier {
 		$this->type_resolver = $type_resolver;
 		$this->plain_values_resolver = $plain_values_resolver;
 		$this->v3_dynamic_hoister = $v3_dynamic_hoister;
+		$this->schema_validator = Plain_Schema_Validator::lenient();
 	}
 
 	/**
@@ -75,7 +76,6 @@ class Element_Config_Applier {
 
 			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
-				$is_standardized = null !== V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
@@ -91,24 +91,20 @@ class Element_Config_Applier {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$shape = $is_standardized
-					? $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings )
-					: V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
+				$shape = $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings );
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
 
-					if ( $is_standardized ) {
-						$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
-						$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
+					$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+					$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
 
-						if ( empty( $node['settings']['__dynamic__'] ) ) {
-							unset( $node['settings']['__dynamic__'] );
-						}
-
-						$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
-						V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
+					if ( empty( $node['settings']['__dynamic__'] ) ) {
+						unset( $node['settings']['__dynamic__'] );
 					}
+
+					$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
+					V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
 				}
 
 				if ( $shape['error'] ) {
@@ -234,6 +230,24 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$checked = $this->check_against_published_schema( $value, $canonical, $prop_type, $element_type );
+
+			if ( null !== $checked['error'] ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" does not match the published schema and was skipped: %s. See elementor://widgets/schema/%s.',
+						$canonical,
+						$element_type,
+						$checked['error'],
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			$value = $checked['value'];
 			$resolved_value = $this->plain_values_resolver->resolve( $value, $prop_type );
 
 			if ( null === $resolved_value ) {
@@ -265,6 +279,23 @@ class Element_Config_Applier {
 			'resolved' => $resolved,
 			'cleared' => $cleared,
 		];
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return array{value: mixed, error: string|null}
+	 */
+	private function check_against_published_schema( $value, string $key, Prop_Type $prop_type, string $element_type ): array {
+		$published = Widget_Context_Helper::build_published_property_schema( $key, $prop_type, $element_type );
+
+		if ( null === $published ) {
+			return [
+				'value' => $value,
+				'error' => null,
+			];
+		}
+
+		return $this->schema_validator->validate( $value, $published, $key );
 	}
 
 	private function apply_resolved_v4_settings(
@@ -347,10 +378,6 @@ class Element_Config_Applier {
 	 */
 	private function maybe_warn_unknown_icon( $resolved_value, string $key, string $element_type, string $config_id, Warnings_Bag $warnings ): void {
 		if ( ! is_array( $resolved_value ) || Icon_Prop_Type::get_key() !== ( $resolved_value['$$type'] ?? null ) ) {
-			return;
-		}
-
-		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
 			return;
 		}
 
@@ -487,10 +514,6 @@ class Element_Config_Applier {
 	private function is_v3_settings_node( array $node ): bool {
 		if ( V3_Node_Bridge::is_v3_node( $node ) ) {
 			return true;
-		}
-
-		if ( ! Widget_Context_Helper::is_standardized_maps_active() ) {
-			return false;
 		}
 
 		$type = $node['widgetType'] ?? $node['elType'] ?? null;

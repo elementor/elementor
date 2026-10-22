@@ -15,7 +15,6 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
@@ -58,7 +57,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->original_documents = Plugin::$instance->documents;
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
 		$this->original_elements_manager = Plugin::$instance->elements_manager;
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
@@ -450,7 +448,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				[
 					'title' => [ 'foo' => 'bar' ],
 				],
-				[ 'title', 'could not be resolved' ],
+				[ 'title', 'does not match the published schema' ],
 				'prop_value_invalid',
 			],
 		];
@@ -730,6 +728,41 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'box-shadow: none', Utils::decode_string( $mobile['custom_css']['raw'] ?? '' ) );
 	}
 
+	public function test_execute__warns_when_grid_rows_outnumber_the_rows_children_fill() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-grid configuration-id="menu"><e-heading configuration-id="a"/><e-heading configuration-id="b"/></e-grid>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertContains( 'grid_empty_rows', array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( '[menu]', implode( ' ', $result['warnings'] ) );
+	}
+
+	public function test_execute__warns_about_an_unknown_variable_reference() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="title"/></e-flexbox>',
+			'style' => [ 'title' => 'font-family: var(--qa-nonexistent);' ],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertContains( 'unknown_variable', array_column( $result['warning_details'] ?? [], 'code' ) );
+		$this->assertStringContainsString( 'var(--qa-nonexistent)', implode( ' ', $result['warnings'] ) );
+	}
+
 	public function test_execute__box_shadow_none_warns_when_custom_css_is_not_supported() {
 		// Arrange
 		$this->act_as_admin();
@@ -759,14 +792,15 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Act
 		$result  = $this->build_card_with_style( $post_id, 'color: red; color: var(--not-a-kit-variable);' );
 		$desktop = $this->find_variant( $post_id, 'desktop' );
+		$unsupported = $this->warning_messages( $result, 'unsupported_css' );
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['warnings'] ?? [] );
-		$this->assertStringContainsString( '[card]', $result['warnings'][0] );
-		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
-		$this->assertStringNotContainsString( 'color: red', $result['warnings'][0] );
+		$this->assertCount( 1, $unsupported );
+		$this->assertStringContainsString( '[card]', $unsupported[0] );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $unsupported[0] );
+		$this->assertStringNotContainsString( 'color: red', $unsupported[0] );
 		$this->assertEmpty( $desktop['custom_css'] ?? null );
 	}
 
@@ -777,13 +811,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Act
 		$result = $this->build_card_with_style( $post_id, 'color: var(--not-a-kit-variable); & > p { color: blue; }' );
+		$unsupported = $this->warning_messages( $result, 'unsupported_css' );
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['warnings'] ?? [] );
-		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $result['warnings'][0] );
-		$this->assertStringNotContainsString( '& > p', $result['warnings'][0] );
+		$this->assertCount( 1, $unsupported );
+		$this->assertStringContainsString( 'var(--not-a-kit-variable)', $unsupported[0] );
+		$this->assertStringNotContainsString( '& > p', $unsupported[0] );
 	}
 
 	public function test_execute__no_unsupported_css_warning_when_all_css_is_native() {
@@ -815,8 +850,14 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertTrue( $result['success'] );
-		$this->assertArrayNotHasKey( 'warnings', $result );
+		$this->assertSame( [ 'unknown_variable' ], array_column( $result['warning_details'] ?? [], 'code' ) );
 		$this->assertStringContainsString( 'var(--not-a-kit-variable)', Utils::decode_string( $desktop['custom_css']['raw'] ?? '' ) );
+	}
+
+	private function warning_messages( $result, string $code ): array {
+		$details = is_array( $result ) ? ( $result['warning_details'] ?? [] ) : [];
+
+		return array_column( array_filter( $details, fn( $warning ) => $code === $warning['code'] ), 'message' );
 	}
 
 	private function build_card_with_mobile_box_shadow_none( int $post_id ) {
@@ -1033,7 +1074,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	public function test_execute__names_v3_elements_through_settings_title() {
 		// Arrange
 		$this->act_as_admin();
-		$this->enable_standardized_v3_maps();
+		$this->given_no_registered_v3_maps();
 		$post_id = $this->create_real_document();
 
 		// Act
@@ -1350,55 +1391,33 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'replace_children', $result->get_error_message() );
 	}
 
-	/**
-	 * @dataProvider standardized_maps_states
-	 */
-	public function test_execute__allowlisted_v3_widget_accepts_raw_settings( bool $standardized_maps_active ) {
+	public function test_execute__rejects_v3_widget_without_a_map() {
+		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$this->given_no_registered_v3_maps();
 
-		if ( $standardized_maps_active ) {
-			$this->enable_standardized_v3_maps();
-		}
-
+		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<nav-menu configuration-id="m1"/>',
 			'element_config' => [
-				'm1' => [
-					'menu' => '3',
-					'layout' => 'horizontal',
-				],
+				'm1' => [ 'menu' => '3' ],
 			],
 		] );
 
-		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$this->assertTrue( $result['success'] );
-		$this->assertCount( 1, $result['root_element_ids'] );
-
-		$document = Plugin::$instance->documents->get( $post_id );
-		$elements = $document->get_elements_data();
-		$nav = $this->find_element_by_widget_type( $elements, 'nav-menu' );
-		$this->assertNotNull( $nav );
-		$this->assertSame( 'widget', $nav['elType'] );
-		$this->assertSame( 'nav-menu', $nav['widgetType'] );
-		$this->assertSame( '3', $nav['settings']['menu'] );
-		$this->assertSame( 'horizontal', $nav['settings']['layout'] );
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertStringContainsString( 'legacy V3 widget', $result->get_error_message() );
+		$this->assertSame( [], Plugin::$instance->documents->get( $post_id )->get_elements_data() );
 	}
 
-	public function standardized_maps_states(): array {
-		return [
-			'inactive' => [ false ],
-			'active' => [ true ],
-		];
-	}
-
-	public function test_execute__does_not_map_v3_container_styles_when_standardized_maps_active() {
+	public function test_execute__does_not_map_v3_container_styles() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
-		$this->enable_standardized_v3_maps();
+		$this->given_no_registered_v3_maps();
 
 		// Act
 		$result = ( new Build_Composition_Ability() )->execute( [
@@ -1419,7 +1438,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'background_color', $container['settings'] ?? [] );
 	}
 
-	public function test_execute__allowlisted_v3_widget_classes_are_written_to_css_classes() {
+	public function test_execute__mapped_v3_widget_classes_are_written_to_css_classes() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
@@ -1442,7 +1461,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'classes', $nav['settings'] );
 	}
 
-	public function test_execute__allowlisted_v3_widget_style_wraps_in_selector_when_pro_active() {
+	public function test_execute__mapped_v3_widget_style_falls_back_to_custom_css_when_pro_active() {
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
 		}
@@ -1467,7 +1486,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'selector { filter: blur(2px); }', $nav['settings']['custom_css'] ?? null );
 	}
 
-	public function test_execute__allowlisted_v3_widget_style_warns_when_pro_missing() {
+	public function test_execute__mapped_v3_widget_style_warns_when_pro_missing() {
 		if ( \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
 		}
@@ -1549,8 +1568,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
 	}
 
-	private function enable_standardized_v3_maps(): void {
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+	private function given_no_registered_v3_maps(): void {
 		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
@@ -1558,11 +1576,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}

@@ -15,7 +15,7 @@ import { AlertTriangleFilledIcon, ExternalLinkIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-const SubSettingRow = ( {
+export const SubSettingRow = ( {
 	label,
 	checked,
 	onChange,

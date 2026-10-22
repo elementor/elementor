@@ -5,11 +5,12 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Compiler;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Widget_Schemas_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -22,6 +23,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor\Modules\Mcp
  */
 class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
+
+	const IMAGE_CAROUSEL = 'image-carousel';
+
+	const PRO_CAROUSEL = 'e-carousel';
 
 	private List_Widget_Schemas_Ability $ability;
 	private Get_Widget_Schema_Ability $get_schema_ability;
@@ -39,7 +44,6 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->get_schema_ability = new Get_Widget_Schema_Ability();
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
 		$this->original_elements_manager = Plugin::$instance->elements_manager;
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
@@ -54,12 +58,13 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__includes_allowlisted_v3_and_excludes_other_v3() {
+	public function test_execute__includes_mapped_v3_and_excludes_other_v3() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets( [
 			'nav-menu' => [ 'menu' => [ 'type' => 'select' ] ],
 			'fake-v3' => [ 'title' => [ 'type' => 'text' ] ],
 		] );
+		$this->given_v3_maps_compiled_against_fixtures( [ 'nav-menu' ] );
 
 		$result = $this->ability->execute( [] );
 
@@ -69,7 +74,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'fake-v3', $result );
 	}
 
-	public function test_execute__summary_falls_back_to_registry_description_for_v3_post_widgets() {
+	public function test_execute__summary_uses_map_description_for_v3_post_widgets() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets_no_description( [
 			'theme-post-title' => [ 'title' => [ 'type' => 'text' ] ],
@@ -77,6 +82,7 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 			'theme-post-excerpt' => [ 'excerpt' => [ 'type' => 'text' ] ],
 			'theme-post-content' => [ 'align' => [ 'type' => 'select' ] ],
 		] );
+		$this->given_v3_maps_compiled_against_fixtures( [ 'theme-post-title', 'theme-post-featured-image', 'theme-post-excerpt', 'theme-post-content' ] );
 
 		$result = $this->ability->execute( [ 'summary' => true ] );
 
@@ -92,11 +98,12 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'loop', $descriptions_by_type['theme-post-content'] );
 	}
 
-	public function test_execute__schema_falls_back_to_registry_description_for_v3_post_widgets() {
+	public function test_execute__schema_uses_map_description_for_v3_post_widgets() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets_no_description( [
 			'theme-post-title' => [ 'title' => [ 'type' => 'text' ] ],
 		] );
+		$this->given_v3_maps_compiled_against_fixtures( [ 'theme-post-title' ] );
 
 		$result = $this->ability->execute( [] );
 
@@ -104,12 +111,13 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'e-heading', $result['theme-post-title']['description'] );
 	}
 
-	public function test_execute__summary_includes_allowlisted_v3_type() {
+	public function test_execute__summary_includes_mapped_v3_type() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_v3_widgets( [
 			'nav-menu' => [ 'menu' => [ 'type' => 'select' ] ],
 			'fake-v3' => [ 'title' => [ 'type' => 'text' ] ],
 		] );
+		$this->given_v3_maps_compiled_against_fixtures( [ 'nav-menu' ] );
 
 		$result = $this->ability->execute( [ 'summary' => true ] );
 
@@ -137,6 +145,120 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $get_result );
 		$this->assertArrayHasKey( 'properties', $get_result );
 		$this->assertStringContainsString( 'flex-direction to column', $get_result['description'] );
+	}
+
+	public function test_execute__hides_image_carousel_when_pro_carousel_is_eligible() {
+		// Arrange
+		$this->act_as_admin();
+		$this->given_core_image_carousel();
+		$this->given_atomic_elements( [ self::PRO_CAROUSEL => true ] );
+
+		// Act
+		$result = $this->ability->execute( [] );
+		$summary_types = array_column( $this->ability->execute( [ 'summary' => true ] )['widgets'], 'type' );
+
+		// Assert
+		$this->assertArrayNotHasKey( self::IMAGE_CAROUSEL, $result );
+		$this->assertArrayHasKey( self::PRO_CAROUSEL, $result );
+		$this->assertNotContains( self::IMAGE_CAROUSEL, $summary_types );
+		$this->assertContains( self::PRO_CAROUSEL, $summary_types );
+	}
+
+	public function test_execute__keeps_image_carousel_without_pro_carousel() {
+		// Arrange
+		$this->act_as_admin();
+		$this->given_core_image_carousel();
+		$this->given_atomic_elements( [] );
+
+		// Act
+		$result = $this->ability->execute( [] );
+
+		// Assert
+		$this->assertArrayHasKey( self::IMAGE_CAROUSEL, $result );
+	}
+
+	public function test_execute__keeps_image_carousel_when_only_the_carousel_promotion_is_registered() {
+		// Arrange
+		$this->act_as_admin();
+		$this->given_core_image_carousel();
+		$this->given_atomic_elements( [ self::PRO_CAROUSEL => false ] );
+
+		// Act
+		$result = $this->ability->execute( [] );
+
+		// Assert
+		$this->assertArrayHasKey( self::IMAGE_CAROUSEL, $result );
+		$this->assertArrayNotHasKey( self::PRO_CAROUSEL, $result );
+	}
+
+	public function test_get_widget_schema__still_returns_image_carousel_when_hidden_from_catalog() {
+		// Arrange
+		$this->act_as_admin();
+		$this->given_core_image_carousel();
+		$this->given_atomic_elements( [ self::PRO_CAROUSEL => true ] );
+
+		// Act
+		$schemas = $this->get_schema_ability->execute( [ 'widget_type' => [ self::IMAGE_CAROUSEL ] ] )['schemas'];
+
+		// Assert
+		$this->assertIsArray( $schemas[ self::IMAGE_CAROUSEL ] ?? null );
+		$this->assertSame( Widget_Context_Helper::VERSION_V3, $schemas[ self::IMAGE_CAROUSEL ]['widget_version'] );
+	}
+
+	private function given_core_image_carousel(): void {
+		$original_widgets_manager = $this->original_widgets_manager;
+		$image_carousel_class = get_class( $original_widgets_manager->get_widget_types( self::IMAGE_CAROUSEL ) );
+		$image_carousel = new $image_carousel_class();
+
+		$widgets_manager = $this->createMock( Widgets_Manager::class );
+		$widgets_manager->method( 'get_widget_types' )->willReturnCallback(
+			static function ( $name = null ) use ( $image_carousel, $original_widgets_manager ) {
+				if ( null === $name ) {
+					return [ self::IMAGE_CAROUSEL => $image_carousel ];
+				}
+
+				return self::IMAGE_CAROUSEL === $name ? $image_carousel : $original_widgets_manager->get_widget_types( $name );
+			}
+		);
+		Plugin::$instance->widgets_manager = $widgets_manager;
+		V3_Widget_Map_Registry::reset_instance();
+	}
+
+	/**
+	 * @param array<string, bool> $llm_support_by_type element_type => whether the element is LLM-eligible
+	 */
+	private function given_atomic_elements( array $llm_support_by_type ): void {
+		$instances = [];
+
+		foreach ( $llm_support_by_type as $type => $llm_support ) {
+			$instances[ $type ] = new class( $llm_support ) {
+				private bool $llm_support;
+
+				public function __construct( bool $llm_support ) {
+					$this->llm_support = $llm_support;
+				}
+
+				public function get_config(): array {
+					return [
+						'atomic_props_schema' => [ 'classes' => Classes_Prop_Type::make() ],
+						'title' => 'Fake atomic element',
+						'meta' => [ 'llm_support' => $this->llm_support ],
+					];
+				}
+			};
+		}
+
+		$elements_manager = $this->createMock( Elements_Manager::class );
+		$elements_manager->method( 'get_element_types' )->willReturnCallback(
+			static function ( $name = null ) use ( $instances ) {
+				if ( null === $name ) {
+					return $instances;
+				}
+
+				return $instances[ $name ] ?? null;
+			}
+		);
+		Plugin::$instance->elements_manager = $elements_manager;
 	}
 
 	/**
@@ -192,14 +314,35 @@ class Test_List_Widget_Schemas_Ability extends Elementor_Test_Base {
 		Plugin::$instance->elements_manager = $elements_manager;
 	}
 
+	/**
+	 * @param string[] $widget_types
+	 */
+	private function given_v3_maps_compiled_against_fixtures( array $widget_types ): void {
+		$map_files = require V3_Widget_Map_Registry::REGISTERED_MAPS_FILE;
+		$advanced_controls = require self::fixture_path( 'advanced-tab-controls.php' );
+		$maps = [];
+		$controls = [];
+
+		foreach ( $widget_types as $widget_type ) {
+			$maps[ $widget_type ] = require $map_files[ $widget_type ];
+			$controls[ $widget_type ] = ( require self::fixture_path( $widget_type . '-controls.php' ) ) + $advanced_controls;
+		}
+
+		V3_Widget_Map_Registry::set_instance( new V3_Widget_Map_Registry(
+			new V3_Widget_Map_Compiler(),
+			static fn( string $widget_type ) => $controls[ $widget_type ] ?? null,
+			$maps,
+			static fn() => true
+		) );
+	}
+
+	private static function fixture_path( string $file ): string {
+		return __DIR__ . '/fixtures/' . $file;
+	}
+
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}

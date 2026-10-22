@@ -4,7 +4,9 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Controls_Manager;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Size_Values;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\Text_Alignment;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Converter\V3_Conversion_Context;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Css_Declaration_Parser;
@@ -18,22 +20,63 @@ class V3_Map_Style_Writer {
 
 	const NONE_KEYWORD = 'none';
 
+	const DEFAULT_BORDER_STYLE = 'solid';
+
+	const SHADOW_POSITION_SUFFIX = '_position';
+
+	const SHADOW_INSET = 'inset';
+
+	const SHADOW_OUTLINE_POSITION = ' ';
+
+	const TRANSPARENT_ZERO_SHADOW = [
+		'horizontal' => 0,
+		'vertical' => 0,
+		'blur' => 0,
+		'spread' => 0,
+		'color' => 'rgba(0,0,0,0)',
+		'position' => 'outline',
+	];
+
 	const POSITION_PROPERTY = 'position';
 
 	const POSITION_OFFSET_PROPERTIES = [ 'inset-inline-start', 'inset-inline-end', 'inset-block-start', 'inset-block-end' ];
 
+	const PHYSICAL_TEXT_ALIGN_PATTERN = '/(text-align\s*:\s*)(left|right)\b/i';
+
+	const PHYSICAL_SIDES = [
+		'block-start' => 'top',
+		'inline-end' => 'right',
+		'block-end' => 'bottom',
+		'inline-start' => 'left',
+	];
+
+	const PART_LONGHANDS = [
+		'flexBasis' => 'flex-basis',
+	];
+
+	const INITIAL_FLEX_BASIS = 'auto';
+
+	const SIDE_LONGHAND_FORMATS = [
+		'margin' => 'margin-%s',
+		'padding' => 'padding-%s',
+		'border-width' => 'border-%s-width',
+	];
+
 	private Css_Converter $css_converter;
 	private V3_Control_Adapter_Registry $adapters;
 	private Css_Declaration_Parser $declaration_parser;
+	private V3_Color_Variables $color_variables;
 
 	public function __construct(
 		Css_Converter $css_converter,
 		V3_Control_Adapter_Registry $adapters,
-		Css_Declaration_Parser $declaration_parser
+		Css_Declaration_Parser $declaration_parser,
+		?V3_Color_Variables $color_variables = null
 	) {
 		$this->css_converter = $css_converter;
 		$this->adapters = $adapters;
 		$this->declaration_parser = $declaration_parser;
+		$this->color_variables = $color_variables ?? V3_Color_Variables::create_default();
 	}
 
 	/**
@@ -46,9 +89,10 @@ class V3_Map_Style_Writer {
 	 * @return array<int, array{property: string, value: string, reason: string}> Declarations the bindings cannot store, for the caller to fall back on.
 	 */
 	public function write( V3_Conversion_Context $ctx, array $bindings, array $controls, string $breakpoint, ?string $state, string $css ): array {
-		$converted = $this->css_converter->convert( $css );
+		$converted = $this->css_converter->convert( self::with_logical_text_align( $css ) );
 		$state = $state ?? Style_Target::DEFAULT_STATE;
 		$failures = [];
+		$uncovered_sides = [];
 		$unconverted = $this->unconverted_declarations( $ctx, $converted, $bindings, $controls, $breakpoint, $state );
 		$position_fell_back = in_array( self::POSITION_PROPERTY, array_column( $unconverted, 'property' ), true );
 
@@ -78,10 +122,122 @@ class V3_Map_Style_Writer {
 				}
 			}
 
+			if ( ! isset( $failures[ $prop ] ) ) {
+				$uncovered_sides = array_merge(
+					$uncovered_sides,
+					self::uncovered_side_declarations( (string) $prop, $prop_value, $prop_bindings ),
+					self::uncovered_part_declarations( (string) $prop, $prop_value, $prop_bindings )
+				);
+			}
+
 			$position_fell_back = $position_fell_back || isset( $failures[ self::POSITION_PROPERTY ] );
 		}
 
-		return array_merge( $this->declarations_of( $css, $failures ), $unconverted );
+		return array_merge( $this->declarations_of( $css, $failures ), $unconverted, $uncovered_sides );
+	}
+
+	private static function with_logical_text_align( string $css ): string {
+		return preg_replace_callback(
+			self::PHYSICAL_TEXT_ALIGN_PATTERN,
+			fn( array $matches ) => $matches[1] . Text_Alignment::to_logical( $matches[2] ),
+			$css
+		) ?? $css;
+	}
+
+	/**
+	 * When every binding of a prop owns only some sides, the sides none of them owns keep their
+	 * value as physical longhands in the custom CSS.
+	 *
+	 * @param string                   $prop
+	 * @param mixed                    $prop_value
+	 * @param Compiled_Style_Binding[] $prop_bindings
+	 * @return array<int, array{property: string, value: string, reason: string}>
+	 */
+	private static function uncovered_side_declarations( string $prop, $prop_value, array $prop_bindings ): array {
+		if ( ! Size_Values::is_sides_prop( $prop_value ) || ! isset( self::SIDE_LONGHAND_FORMATS[ $prop ] ) ) {
+			return [];
+		}
+
+		$covered = [];
+
+		foreach ( $prop_bindings as $binding ) {
+			if ( null === $binding->get_sides() ) {
+				return [];
+			}
+
+			$covered = array_merge( $covered, $binding->get_sides() );
+		}
+
+		$declarations = [];
+
+		foreach ( self::PHYSICAL_SIDES as $side => $physical_side ) {
+			$size = in_array( $side, $covered, true ) ? null : Size_Values::from_prop( $prop_value['value'][ $side ] ?? null );
+
+			if ( null === $size ) {
+				continue;
+			}
+
+			$declarations[] = [
+				'property' => sprintf( self::SIDE_LONGHAND_FORMATS[ $prop ], $physical_side ),
+				'value' => $size['size'] . $size['unit'],
+				'reason' => self::uncovered_side_message( $prop ),
+			];
+		}
+
+		return $declarations;
+	}
+
+	/**
+	 * Parts of a shorthand none of the prop's bindings owns, like the basis of `flex: 0 0 333px`,
+	 * keep their value as longhands in the custom CSS. A part at its initial value adds nothing.
+	 *
+	 * @param string                   $prop
+	 * @param mixed                    $prop_value
+	 * @param Compiled_Style_Binding[] $prop_bindings
+	 * @return array<int, array{property: string, value: string, reason: string}>
+	 */
+	private static function uncovered_part_declarations( string $prop, $prop_value, array $prop_bindings ): array {
+		$parts = is_array( $prop_value['value'] ?? null ) ? $prop_value['value'] : [];
+		$covered = array_map( fn( Compiled_Style_Binding $binding ) => $binding->get_part(), $prop_bindings );
+
+		if ( in_array( null, $covered, true ) ) {
+			return [];
+		}
+
+		$declarations = [];
+
+		foreach ( array_diff_key( self::PART_LONGHANDS, array_flip( $covered ) ) as $part => $longhand ) {
+			$size = Size_Values::from_prop( $parts[ $part ] ?? null );
+
+			if ( null === $size || self::INITIAL_FLEX_BASIS === $size['size'] ) {
+				continue;
+			}
+
+			$declarations[] = [
+				'property' => $longhand,
+				'value' => Size_Constants::UNIT_CUSTOM === $size['unit'] ? (string) $size['size'] : $size['size'] . $size['unit'],
+				'reason' => self::uncovered_part_message( $prop, $longhand ),
+			];
+		}
+
+		return $declarations;
+	}
+
+	private static function uncovered_part_message( string $property, string $longhand ): string {
+		return sprintf(
+			/* translators: 1: CSS shorthand property, 2: CSS longhand property */
+			__( 'This Elementor widget does not store the %2$s part of CSS property %1$s, so it was written to the widget custom CSS.', 'elementor' ),
+			$property,
+			$longhand
+		);
+	}
+
+	private static function uncovered_side_message( string $property ): string {
+		return sprintf(
+			/* translators: %s: CSS property name */
+			__( 'This Elementor widget stores only some sides of CSS property %s; the other sides were written to the widget custom CSS.', 'elementor' ),
+			$property
+		);
 	}
 
 	/**
@@ -123,7 +279,7 @@ class V3_Map_Style_Writer {
 		$declarations = [];
 
 		foreach ( $this->declaration_parser->parse_declarations( $css ) as $declaration ) {
-			$props = $this->css_converter->convert( $declaration['property'] . ': ' . $declaration['value'] )['props'];
+			$props = $this->css_converter->convert( self::with_logical_text_align( $declaration['property'] . ': ' . $declaration['value'] ) )['props'];
 			$failed = array_intersect_key( $failures, $props );
 
 			if ( ! empty( $failed ) ) {
@@ -181,23 +337,122 @@ class V3_Map_Style_Writer {
 			return $this->missing_breakpoint_message( $binding->get_prop(), $breakpoint );
 		}
 
+		if ( self::is_multiple_shadows( $binding, $prop_value ) ) {
+			return self::multiple_shadows_message();
+		}
+
+		$variable_id = V3_Color_Variables::variable_id_in( $prop_value );
+
+		if ( null !== $variable_id ) {
+			$variable = $this->color_variables->find( $variable_id );
+
+			if ( null === $variable ) {
+				return self::unknown_variable_message( $binding );
+			}
+
+			$global_link = Controls_Manager::COLOR === $binding->get_control_type() ? $this->color_variables->global_link( $variable ) : null;
+
+			if ( null !== $global_link ) {
+				$this->store( $ctx, $binding, $controls, $breakpoint, '', $global_link );
+
+				return null;
+			}
+
+			$prop_value = V3_Color_Variables::with_resolved_color( $prop_value, $variable['value'] );
+			$ctx->warn( self::unlinked_variable_message( $binding, (string) $variable['label'], (string) $variable['value'] ) );
+		}
+
 		$adapter = $this->adapters->find( (string) ( $prop_value['$$type'] ?? '' ), $binding->get_control_type(), null !== $binding->get_sides() );
 		$control_value = null === $adapter
 			? null
 			: $adapter->to_control_value( $prop_value, $binding->get_sides(), $controls[ $binding->get_setting() ] ?? [] );
 
 		if ( null === $control_value ) {
-			return self::unstorable_value_message( $binding, $controls[ $binding->get_setting() ] ?? [] );
+			return self::unstorable_value_message( $binding, $controls[ $binding->get_setting() ] ?? [], $prop_value );
 		}
 
-		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
-
-		$requirements = self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint );
-
-		$ctx->merge_patch( array_merge( [ $setting => $control_value ], $requirements ) );
-		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
+		$this->store( $ctx, $binding, $controls, $breakpoint, $control_value );
 
 		return null;
+	}
+
+	private function store( V3_Conversion_Context $ctx, Compiled_Style_Binding $binding, array $controls, string $breakpoint, $control_value, ?string $global_link = null ): void {
+		$setting = Responsive_Key_Resolver::BASE_BREAKPOINT === $breakpoint ? $binding->get_setting() : $binding->get_setting() . '_' . $breakpoint;
+		[ $requirements, $list_requirements ] = self::split_list_requirements( self::requirements_at( $binding->get_dependency_values(), $controls, $breakpoint ), $controls );
+		$patch = array_merge( [ $setting => $control_value ], self::shadow_position_patch( $binding, $setting, $control_value ), $requirements );
+
+		if ( null !== $global_link ) {
+			$patch[ V3_Settings_Patch::GLOBALS_KEY ] = [ $setting => $global_link ];
+		}
+
+		$ctx->merge_patch( $patch );
+		$ctx->require_list_values( $list_requirements );
+		$ctx->add_border_style_defaults( self::border_style_defaults( $patch, $controls ) );
+		$ctx->require_settings( $requirements, self::declaration_label( $binding ) );
+	}
+
+	private static function is_multiple_shadows( Compiled_Style_Binding $binding, array $prop_value ): bool {
+		return Controls_Manager::BOX_SHADOW === $binding->get_control_type()
+			&& is_array( $prop_value['value'] ?? null )
+			&& count( $prop_value['value'] ) > 1;
+	}
+
+	private static function multiple_shadows_message(): string {
+		return __( 'This Elementor widget stores one box shadow per state; the full value is applied through the widget custom CSS.', 'elementor' );
+	}
+
+	/**
+	 * Elementor renders a box shadow's inset keyword from a sibling `<control>_position` select, not
+	 * from the shadow value, so it is written alongside every shadow.
+	 *
+	 * @param Compiled_Style_Binding $binding
+	 * @param string                 $setting
+	 * @param mixed                  $control_value
+	 * @return array<string, string>
+	 */
+	private static function shadow_position_patch( Compiled_Style_Binding $binding, string $setting, $control_value ): array {
+		if ( Controls_Manager::BOX_SHADOW !== $binding->get_control_type() || ! is_array( $control_value ) ) {
+			return [];
+		}
+
+		$position = self::SHADOW_INSET === ( $control_value['position'] ?? '' ) ? self::SHADOW_INSET : self::SHADOW_OUTLINE_POSITION;
+
+		return [ $setting . self::SHADOW_POSITION_SUFFIX => $position ];
+	}
+
+	/**
+	 * The default state turns the shadow group off. Another state cannot simply be switched off,
+	 * because an off state keeps showing the default shadow, so it gets an invisible zero shadow.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function box_shadow_none_patch( Compiled_Style_Binding $binding ): array {
+		if ( Style_Target::DEFAULT_STATE === $binding->get_state() ) {
+			return array_fill_keys( array_keys( $binding->get_dependency_values() ), '' );
+		}
+
+		return array_merge( $binding->get_dependency_values(), [
+			$binding->get_setting() => self::TRANSPARENT_ZERO_SHADOW,
+			$binding->get_setting() . self::SHADOW_POSITION_SUFFIX => self::SHADOW_OUTLINE_POSITION,
+		] );
+	}
+
+	private static function unknown_variable_message( Compiled_Style_Binding $binding ): string {
+		return sprintf(
+			/* translators: %s: CSS property name */
+			__( 'CSS property %s uses a color variable that does not exist.', 'elementor' ),
+			$binding->get_prop()
+		);
+	}
+
+	private static function unlinked_variable_message( Compiled_Style_Binding $binding, string $label, string $value ): string {
+		return sprintf(
+			/* translators: 1: CSS property name, 2: Color value, 3: Variable label */
+			__( 'CSS property %1$s is stored as %2$s; it is not linked to var(--%3$s), so later changes to that variable will not update this widget.', 'elementor' ),
+			$binding->get_prop(),
+			$value,
+			$label
+		);
 	}
 
 	private static function declaration_label( Compiled_Style_Binding $binding ): string {
@@ -232,11 +487,37 @@ class V3_Map_Style_Writer {
 	}
 
 	/**
+	 * A multi-select requirement, such as a notice type the style needs enabled, is a value the
+	 * saved list must contain; writing it as the setting would drop the other selected values.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array{0: array<string, mixed>, 1: array<string, string[]>} The patch without multi-select settings, and the values those lists must contain.
+	 */
+	private static function split_list_requirements( array $patch, array $controls ): array {
+		$list_requirements = [];
+
+		foreach ( $patch as $setting => $value ) {
+			if ( empty( $controls[ $setting ]['multiple'] ) ) {
+				continue;
+			}
+
+			unset( $patch[ $setting ] );
+
+			if ( is_scalar( $value ) && '' !== (string) $value ) {
+				$list_requirements[ $setting ] = [ (string) $value ];
+			}
+		}
+
+		return [ $patch, $list_requirements ];
+	}
+
+	/**
 	 * A side binding only owns part of a dimensions value, so a value that leaves all of its
 	 * sides untouched belongs to another binding of the same prop.
 	 */
 	private function touches_bound_sides( array $prop_value, ?array $sides ): bool {
-		if ( null === $sides || Dimensions_Prop_Type::get_key() !== ( $prop_value['$$type'] ?? null ) ) {
+		if ( null === $sides || ! Size_Values::is_sides_prop( $prop_value ) ) {
 			return true;
 		}
 
@@ -276,7 +557,9 @@ class V3_Map_Style_Writer {
 			$binding = $this->bindings_for( $bindings, $declaration['property'], $state )[0] ?? null;
 
 			if ( null !== $binding && self::is_box_shadow_none( $binding, $declaration['value'], $breakpoint ) ) {
-				$ctx->merge_patch( array_fill_keys( array_keys( $binding->get_dependency_values() ), '' ) );
+				[ $patch, $list_requirements ] = self::split_list_requirements( self::box_shadow_none_patch( $binding ), $controls );
+				$ctx->merge_patch( $patch );
+				$ctx->require_list_values( $list_requirements );
 				continue;
 			}
 
@@ -309,19 +592,74 @@ class V3_Map_Style_Writer {
 		);
 	}
 
-	private static function unstorable_value_message( Compiled_Style_Binding $binding, array $control ): string {
+	/**
+	 * @param Compiled_Style_Binding $binding
+	 * @param array                  $control
+	 * @param mixed                  $prop_value
+	 */
+	private static function unstorable_value_message( Compiled_Style_Binding $binding, array $control, $prop_value = null ): string {
 		$message = sprintf(
 			/* translators: %s: CSS property name */
 			__( 'CSS property %s has a value this Elementor widget cannot store.', 'elementor' ),
 			$binding->get_prop()
 		);
 
-		return trim( $message . ' ' . self::storable_values_hint( $binding->get_control_type(), $control ) );
+		$hint = self::has_different_bound_sides( $binding, $prop_value )
+			? __( 'This Elementor widget stores one length for all sides, so use a single value.', 'elementor' )
+			: self::storable_values_hint( $binding->get_control_type(), $control );
+
+		return trim( $message . ' ' . $hint );
+	}
+
+	/**
+	 * @param Compiled_Style_Binding $binding
+	 * @param mixed                  $prop_value
+	 */
+	private static function has_different_bound_sides( Compiled_Style_Binding $binding, $prop_value ): bool {
+		if ( ! Size_Values::is_sides_prop( $prop_value ) ) {
+			return false;
+		}
+
+		$sides = $binding->get_sides() ?? array_keys( $prop_value['value'] );
+
+		if ( count( $sides ) < 2 ) {
+			return false;
+		}
+
+		$sizes = array_map( fn( string $side ) => Size_Values::from_prop( $prop_value['value'][ $side ] ?? null ), $sides );
+
+		return in_array( null, $sizes, true ) || ! Size_Values::are_equal( $sizes );
+	}
+
+	/**
+	 * Elementor hides a border group's width and color until its style is set, so writing either
+	 * one alone needs a style. The applier uses it only while no style is saved or written.
+	 *
+	 * @param array<string, mixed> $patch
+	 * @param array<string, mixed> $controls
+	 * @return array<string, string>
+	 */
+	private static function border_style_defaults( array $patch, array $controls ): array {
+		$defaults = [];
+
+		foreach ( array_keys( $patch ) as $setting ) {
+			if ( ! preg_match( '/^(.+)_(width|color)(?:_(tablet|mobile))?$/', (string) $setting, $matches ) ) {
+				continue;
+			}
+
+			$style_key = $matches[1] . '_border' . ( ! empty( $matches[3] ) ? '_' . $matches[3] : '' );
+
+			if ( isset( $controls[ $style_key ] ) ) {
+				$defaults[ $style_key ] = self::DEFAULT_BORDER_STYLE;
+			}
+		}
+
+		return $defaults;
 	}
 
 	private static function storable_values_hint( string $control_type, array $control ): string {
 		if ( Controls_Manager::BOX_SHADOW === $control_type ) {
-			return __( 'Box shadow lengths must be px.', 'elementor' );
+			return __( 'Box shadow lengths, offsets and blur must be px, and the color must be a valid color.', 'elementor' );
 		}
 
 		$options = array_filter( array_map( 'strval', array_keys( $control['options'] ?? [] ) ), fn( string $option ) => '' !== $option );

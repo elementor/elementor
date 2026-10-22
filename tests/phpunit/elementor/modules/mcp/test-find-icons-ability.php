@@ -2,13 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Find_Icons_Ability;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,13 +20,8 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 	private Find_Icons_Ability $ability;
 	private string $fixture_path;
 
-	private string $original_svg_library_state;
-
 	public function setUp(): void {
 		parent::setUp();
-
-		$this->original_svg_library_state = Plugin::$instance->experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY )['default'];
-		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_ACTIVE );
 
 		$this->ability = new Find_Icons_Ability();
 		$this->fixture_path = get_temp_dir() . 'find-icons-' . wp_generate_password( 8, false ) . '.json';
@@ -55,7 +47,6 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, $this->original_svg_library_state );
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
 
 		if ( file_exists( $this->fixture_path ) ) {
@@ -160,20 +151,5 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 			Find_Icons_Ability::CATALOG_MISSING_NOTICE,
 			$availability->get_error_data()['description_notice']
 		);
-	}
-
-	public function test_is_available__returns_error_when_svg_library_experiment_inactive() {
-		$this->act_as_editor();
-
-		$admin_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
-		wp_set_current_user( $admin_id );
-
-		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_ICON_LIBRARY, Experiments_Manager::STATE_INACTIVE );
-
-		$availability = $this->ability->is_available();
-
-		$this->assertWPError( $availability );
-		$this->assertSame( 'elementor_svg_library_inactive', $availability->get_error_code() );
-		$this->assertStringContainsString( 'SVG icon library experiment', $availability->get_error_message() );
 	}
 }
