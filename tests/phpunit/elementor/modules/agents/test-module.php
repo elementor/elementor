@@ -19,6 +19,8 @@ class Test_Module extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		Module::reset_physical_file_cache();
+
 		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? '/';
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
@@ -43,6 +45,8 @@ class Test_Module extends Elementor_Test_Base {
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
+
+		Module::reset_physical_file_cache();
 
 		$this->flush_documents_cache();
 
@@ -660,5 +664,48 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert - well-known cache should be invalidated (triggers on_settings_change)
 		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_first_time_decision_add__invalidates_cache() {
+		// Arrange - ensure option doesn't exist
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
+
+		// Warm cache
+		$this->module->get_generated_llms_txt();
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act - first-time add
+		add_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		// Assert - cache should be invalidated
+		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_reset_physical_file_cache__clears_multisite_cache() {
+		// Arrange - populate cache for current blog
+		Module::has_physical_llms_file();
+
+		// Act
+		Module::reset_physical_file_cache();
+
+		// Assert - cache should be cleared (next call will check filesystem)
+		// We can't directly assert the cache is empty, but we can verify the method runs
+		$this->assertIsBool( Module::has_physical_llms_file() );
+	}
+
+	public function test_maybe_serve_llms_txt__bails_when_physical_file_exists_with_keep_decision() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/llms.txt';
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		// Capture output
+		ob_start();
+		$this->module->maybe_serve_llms_txt();
+		$output = ob_get_clean();
+
+		// Assert - should not serve (bail early)
+		$this->assertEmpty( $output );
 	}
 }

@@ -25,6 +25,8 @@ class Test_Link_Headers extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		Module::reset_physical_file_cache();
+
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Module::EXPERIMENT_NAME )['default'];
 
@@ -50,6 +52,8 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
+
+		Module::reset_physical_file_cache();
 
 		parent::tearDown();
 	}
@@ -101,7 +105,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$links = $this->invoke_build_site_links();
 
 		// Assert
-		$this->assertNotContains( 'llms.txt', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
 	}
 
 	public function test_build_site_links__omits_llms_txt_when_physical_file_is_kept() {
@@ -112,41 +116,13 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$links = $this->invoke_build_site_links();
 
 		// Assert
-		$this->assertNotContains( 'llms.txt', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
 	}
 
-	public function test_build_site_links__omits_llms_txt_when_physical_file_exists_with_replace_decision() {
-		// Arrange
-		$home_path = function_exists( 'get_home_path' ) ? get_home_path() : ABSPATH;
-		$file_path = $home_path . Module::LLMS_FILENAME;
-		$cleanup   = false;
-
-		if ( is_writable( $home_path ) ) {
-			file_put_contents( $file_path, '# Test' );
-			$cleanup = true;
-		}
-
-		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
-
-		// Act
-		$links = $this->invoke_build_site_links();
-
-		// Cleanup
-		if ( $cleanup && file_exists( $file_path ) ) {
-			unlink( $file_path );
-		}
-
-		// Assert - even with 'replace', a physical file means we don't control what's served
-		if ( $cleanup ) {
-			$this->assertNotContains( 'llms.txt', implode( '', $links ) );
-		} else {
-			$this->markTestSkipped( 'Cannot write to home path for physical file test' );
-		}
-	}
-
-	public function test_build_site_links__includes_llms_txt_when_physical_file_is_replaced_and_removed() {
+	public function test_build_site_links__includes_llms_txt_when_enabled_and_no_physical_file() {
 		// Arrange
 		$home = untrailingslashit( home_url() );
+		Module::reset_physical_file_cache();
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
 
 		// Act

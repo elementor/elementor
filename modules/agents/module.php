@@ -142,6 +142,8 @@ class Module extends BaseModule {
 		add_action( 'deactivated_plugin', [ $this, 'on_global_change' ] );
 		add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
 
+		add_action( 'switch_blog', [ __CLASS__, 'reset_physical_file_cache' ] );
+
 		$this->robots_handler->register();
 
 		$this->well_known_router = new Well_Known_Router( $this->settings );
@@ -246,6 +248,21 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * Per-blog cache for physical file existence checks.
+	 * Keyed by blog ID to support multisite.
+	 *
+	 * @var array<int, bool>
+	 */
+	private static array $physical_file_cache = [];
+
+	/**
+	 * Reset the physical file cache. Used by tests and on blog switch.
+	 */
+	public static function reset_physical_file_cache(): void {
+		self::$physical_file_cache = [];
+	}
+
+	/**
 	 * Check whether llms.txt should be advertised in discovery mechanisms.
 	 *
 	 * Returns true only when Elementor's llms.txt is actually served.
@@ -255,33 +272,23 @@ class Module extends BaseModule {
 	 *    serves the static file before WordPress runs)
 	 *
 	 * This is the single source of truth for both serving and advertising.
-	 * Result is cached per-request since has_physical_llms_file() checks the filesystem.
+	 * Not memoized to avoid leaking state between tests and across settings changes.
 	 */
 	public function should_advertise_llms_txt(): bool {
-		static $cached_result = null;
-
-		if ( null !== $cached_result ) {
-			return $cached_result;
-		}
-
 		if ( ! $this->settings->is_llms_enabled() ) {
-			$cached_result = false;
 			return false;
 		}
 
 		$decision = get_option( self::OPTION_EXISTING_FILE_DECISION, '' );
 
 		if ( 'keep' === $decision ) {
-			$cached_result = false;
 			return false;
 		}
 
 		if ( self::has_physical_llms_file() ) {
-			$cached_result = false;
 			return false;
 		}
 
-		$cached_result = true;
 		return true;
 	}
 
@@ -499,7 +506,7 @@ class Module extends BaseModule {
 	public function on_settings_change(): void {
 		$this->invalidate_cache( 0 );
 
-		if ( $this->well_known_router ) {
+		if ( isset( $this->well_known_router ) ) {
 			$this->well_known_router->flush_all_caches();
 		}
 	}
@@ -595,24 +602,63 @@ class Module extends BaseModule {
 	 * A real file in the site root is served by the web server before WordPress
 	 * runs, so when one exists the module must stay out of the way.
 	 *
-	 * The home path (not ABSPATH) is used so subdirectory installs are handled.
-	 * Result is memoized per-request since file_exists() is called on every response
-	 * and get_home_path() can be expensive on subdirectory installs.
+	 * Uses a derived home path that works on subdirectory installs, since
+	 * get_home_path() can fall back to ABSPATH incorrectly on the front end
+	 * when WP is in its own directory.
+	 *
+	 * Result is memoized per-blog to avoid repeated file_exists() calls.
 	 */
 	public static function has_physical_llms_file(): bool {
-		static $cached_result = null;
+		$blog_id = get_current_blog_id();
 
-		if ( null !== $cached_result ) {
-			return $cached_result;
+		if ( isset( self::$physical_file_cache[ $blog_id ] ) ) {
+			return self::$physical_file_cache[ $blog_id ];
 		}
 
-		if ( ! function_exists( 'get_home_path' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
+		$root_path = self::get_llms_file_root_path();
+		self::$physical_file_cache[ $blog_id ] = file_exists( $root_path . self::LLMS_FILENAME );
+
+		return self::$physical_file_cache[ $blog_id ];
+	}
+
+	/**
+	 * Get the root directory where llms.txt would be served from.
+	 *
+	 * Derives the path by subtracting the site path from ABSPATH, since
+	 * get_home_path() can return ABSPATH on the front end for subdirectory
+	 * installs, which is incorrect when WP is in its own directory.
+	 *
+	 * @return string Path with trailing slash.
+	 */
+	private static function get_llms_file_root_path(): string {
+		$home_url = trailingslashit( home_url() );
+		$site_url = trailingslashit( site_url() );
+
+		// When home and site URLs are the same, WP root = site root.
+		if ( $home_url === $site_url ) {
+			return ABSPATH;
 		}
 
-		$cached_result = file_exists( get_home_path() . self::LLMS_FILENAME );
+		// Calculate the relative path from home to site.
+		$home_path = wp_parse_url( $home_url, PHP_URL_PATH );
+		$site_path = wp_parse_url( $site_url, PHP_URL_PATH );
 
-		return $cached_result;
+		if ( ! $home_path || ! $site_path ) {
+			return ABSPATH;
+		}
+
+		$home_path = trailingslashit( $home_path );
+		$site_path = trailingslashit( $site_path );
+
+		// If site is deeper than home, subtract the difference from ABSPATH.
+		if ( 0 === strpos( $site_path, $home_path ) ) {
+			$relative = substr( $site_path, strlen( $home_path ) );
+			if ( $relative ) {
+				return substr( ABSPATH, 0, - strlen( $relative ) );
+			}
+		}
+
+		return ABSPATH;
 	}
 
 	/**
