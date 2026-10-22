@@ -25,7 +25,7 @@ test.describe( 'Atomic SVG icon library upload promotion @v4-tests', () => {
 	let editorUser: TestUser;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_svg_library' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 
 		const context = await browser.newContext();
 		const page = await context.newPage();
