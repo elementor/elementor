@@ -11,6 +11,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Link_Setting_Adapt
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Gallery_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Multi_Enum_From_Control_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Number_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Post_Id_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Size_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\String_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Switcher_Setting_Adapter;
@@ -275,6 +276,50 @@ class Test_V3_Setting_Adapters extends TestCase {
 		// Assert.
 		$this->assertTrue( $supports_number );
 		$this->assertFalse( $supports_text );
+	}
+
+	public function test_post_id_adapter__supports_only_query_controls() {
+		// Arrange.
+		$adapter = new Post_Id_Setting_Adapter();
+
+		// Act.
+		$supports_query = $adapter->supports( [ 'type' => 'query' ] );
+		$supports_number = $adapter->supports( [ 'type' => 'number' ] );
+
+		// Assert.
+		$this->assertTrue( $supports_query );
+		$this->assertFalse( $supports_number );
+	}
+
+	public function test_post_id_adapter__accepts_only_positive_whole_numbers() {
+		// Arrange.
+		$prop_type = ( new Post_Id_Setting_Adapter() )->prop_type( [ 'type' => 'query' ] );
+
+		// Act.
+		$accepts_id = $prop_type->validate( V3_Number_Prop_Type::generate( 42 ) );
+		$accepts_negative = $prop_type->validate( V3_Number_Prop_Type::generate( -3 ) );
+		$accepts_decimal = $prop_type->validate( V3_Number_Prop_Type::generate( 4.5 ) );
+
+		// Assert.
+		$this->assertTrue( $accepts_id );
+		$this->assertFalse( $accepts_negative );
+		$this->assertFalse( $accepts_decimal );
+	}
+
+	public function test_post_id_adapter__round_trips_the_id_as_an_integer() {
+		// Arrange.
+		$adapter = new Post_Id_Setting_Adapter();
+		$prop_type = $adapter->prop_type( [ 'type' => 'query' ] );
+
+		// Act.
+		$stored = $adapter->to_control_value( $prop_type->sanitize( V3_Number_Prop_Type::generate( 42 ) ), [] );
+		$read_string = $adapter->from_control_value( '42', [] );
+		$read_empty = $adapter->from_control_value( '', [] );
+
+		// Assert.
+		$this->assertSame( 42, $stored );
+		$this->assertSame( 42, $read_string );
+		$this->assertNull( $read_empty );
 	}
 
 	public function test_size_adapter__accepts_only_the_control_units() {
