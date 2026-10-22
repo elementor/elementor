@@ -10,6 +10,7 @@ import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_LINK,
 	FIX_WITH_PREFERENCE,
+	FIX_WITH_SEO,
 	FIX_WITH_TOGGLE,
 	SCANNER_COLORS,
 } from '../scanner-constants';
@@ -35,22 +36,24 @@ const copyText = ( text ) => {
 	clipboard.writeText( text ).catch( () => undefined );
 };
 
-export const CopyFixButton = ( { prompt } ) => (
+export const CopyPromptButton = ( { onCopy } ) => (
 	<Button
 		className="scanner-copy-fix"
 		variant="text"
 		color="secondary"
 		size="small"
 		startIcon={ <CopyIcon fontSize="tiny" /> }
-		onClick={ () => copyText( prompt ) }
+		onClick={ onCopy }
 	>
-		{ __( 'Copy fix', 'elementor' ) }
+		{ __( 'Copy prompt', 'elementor' ) }
 	</Button>
 );
 
-CopyFixButton.propTypes = {
-	prompt: PropTypes.string.isRequired,
+CopyPromptButton.propTypes = {
+	onCopy: PropTypes.func.isRequired,
 };
+
+export const copyPromptText = copyText;
 
 const CompletedActions = ( { check, onUndo, onRescan } ) => (
 	<Stack direction="row" spacing={ 1.5 } alignItems="center">
@@ -69,7 +72,7 @@ CompletedActions.propTypes = {
 	onRescan: PropTypes.func.isRequired,
 };
 
-export const RowAction = ( { check, isResolved, agentAccessUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
+export const RowAction = ( { check, isResolved, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
 	if ( FIX_WITH_TOGGLE === check.fixWith ) {
 		return (
 			<Switch
@@ -110,6 +113,14 @@ export const RowAction = ( { check, isResolved, agentAccessUrl, onOpen, onFixWit
 		);
 	}
 
+	if ( FIX_WITH_SEO === check.fixWith ) {
+		return (
+			<Button variant="text" color="inherit" size="small" href={ seoPluginSearchUrl } endIcon={ <ArrowUpRightIcon fontSize="tiny" /> } sx={ rowActionSx }>
+				{ __( 'Browse SEO plugins', 'elementor' ) }
+			</Button>
+		);
+	}
+
 	return null;
 };
 
@@ -117,6 +128,7 @@ RowAction.propTypes = {
 	check: PropTypes.object.isRequired,
 	isResolved: PropTypes.bool,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onOpen: PropTypes.func.isRequired,
 	onFixWithAngie: PropTypes.func.isRequired,
 	onSetEnabled: PropTypes.func.isRequired,

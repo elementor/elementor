@@ -78,6 +78,8 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 					'status' => 'pass',
 					'testTypes' => [ 'wordpress' ],
 					'failureRecommendation' => 'Add a sitemap.',
+					'fixBy' => 'Built In',
+					'fixDetails' => 'Check WordPress sitemap settings.',
 				],
 			],
 		];
@@ -108,6 +110,8 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'grade', $stored );
 		$this->assertArrayNotHasKey( 'testTypes', $stored['checks'][0] );
 		$this->assertArrayNotHasKey( 'failureRecommendation', $stored['checks'][0] );
+		$this->assertSame( 'Built In', $stored['checks'][0]['fixBy'] );
+		$this->assertSame( 'Check WordPress sitemap settings.', $stored['checks'][0]['fixDetails'] );
 		$this->assertGreaterThan( time(), (int) get_transient( Scanner_Report_Store::TRANSIENT_RETRY_AT ) );
 	}
 

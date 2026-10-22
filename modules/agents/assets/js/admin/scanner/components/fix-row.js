@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
+	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_TOGGLE,
 	PRIORITY_REQUIRED,
@@ -17,7 +18,7 @@ import {
 	SCANNER_MOTION,
 	VISUALLY_HIDDEN_SX,
 } from '../scanner-constants';
-import { CopyFixButton, RowAction } from './fix-row-actions';
+import { CopyPromptButton, RowAction } from './fix-row-actions';
 import { FixRowDrawer } from './fix-row-drawer';
 
 const ROW_ACTIVATION_KEYS = [ 'Enter', ' ' ];
@@ -67,8 +68,10 @@ export const FixRow = ( {
 	isLast,
 	preferenceValue = '',
 	agentAccessUrl,
+	seoPluginSearchUrl,
 	onToggle,
 	onOpen,
+	onCopyPrompt,
 	onFixWithAngie,
 	onSetEnabled,
 	onUndo,
@@ -78,7 +81,7 @@ export const FixRow = ( {
 } ) => {
 	const isCompleted = isResolved && FIX_WITH_TOGGLE !== check.fixWith;
 	const titleIsPrimary = isOpen || isCompleted;
-	const showCopyFix = Boolean( check.fixPrompt ) && ! isCompleted;
+	const showCopyPrompt = FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt ) && ! isCompleted;
 
 	const handleKeyDown = ( event ) => {
 		if ( event.target !== event.currentTarget || ! ROW_ACTIVATION_KEYS.includes( event.key ) ) {
@@ -121,11 +124,12 @@ export const FixRow = ( {
 					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Keeps the row's own toggle from firing when an action is used. */ }
 					<Box onClick={ stopPropagation } onKeyDown={ stopPropagation }>
 						<Stack direction="row" alignItems="center" gap={ 1 }>
-							{ showCopyFix && <CopyFixButton prompt={ check.fixPrompt } /> }
+							{ showCopyPrompt && <CopyPromptButton onCopy={ () => onCopyPrompt( check ) } /> }
 							<RowAction
 								check={ check }
 								isResolved={ isResolved }
 								agentAccessUrl={ agentAccessUrl }
+								seoPluginSearchUrl={ seoPluginSearchUrl }
 								onOpen={ onOpen }
 								onFixWithAngie={ onFixWithAngie }
 								onSetEnabled={ onSetEnabled }
@@ -174,8 +178,10 @@ FixRow.propTypes = {
 	isLast: PropTypes.bool,
 	preferenceValue: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onToggle: PropTypes.func.isRequired,
 	onOpen: PropTypes.func.isRequired,
+	onCopyPrompt: PropTypes.func.isRequired,
 	onFixWithAngie: PropTypes.func.isRequired,
 	onSetEnabled: PropTypes.func.isRequired,
 	onUndo: PropTypes.func.isRequired,

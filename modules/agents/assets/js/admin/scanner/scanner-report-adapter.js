@@ -1,5 +1,5 @@
 import * as checkCopy from './scanner-check-copy';
-import { getCheckFix } from './scanner-check-fixes';
+import { classifyCheckFix } from './scanner-check-fixes';
 import {
 	OUTSIDE_SCAN_STATUS_FAILED,
 	OUTSIDE_SCAN_STATUS_OK,
@@ -55,7 +55,7 @@ const getScoreShare = ( checkPoints, layer, activeWeight ) => {
 const getMissingPoints = ( check ) => ( check.scorable ? Math.max( 0, toNumber( check.possible ) - toNumber( check.earned ) ) : 0 );
 
 const toFailingCheck = ( check, layers, activeWeight ) => {
-	const howToFix = check.fix ?? '';
+	const classified = classifyCheckFix( check );
 
 	return {
 		id: check.id,
@@ -67,10 +67,11 @@ const toFailingCheck = ( check, layers, activeWeight ) => {
 		evidence: check.message ?? '',
 		explanation: {
 			whatItMeans: check.description ?? '',
-			howToFix,
+			howToFix: classified.howToFix,
 		},
-		fixPrompt: howToFix,
-		...getCheckFix( check.id ),
+		fixPrompt: classified.fixPrompt,
+		fixWith: classified.fixWith,
+		resolvedByActivation: classified.resolvedByActivation,
 	};
 };
 

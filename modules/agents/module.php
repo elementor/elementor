@@ -7,6 +7,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
@@ -710,6 +711,11 @@ class Module extends BaseModule {
 		return [
 			'siteDomain'           => wp_parse_url( home_url(), PHP_URL_HOST ),
 			'agentAccessUrl'         => admin_url( 'admin.php?page=' . self::AGENT_ACCESS_PAGE_ID ),
+			'seoPluginSearchUrl'     => admin_url( 'plugin-install.php?s=SEO&tab=search&type=term' ),
+			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
+			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
+			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
+			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 			'isExperimentActive'     => self::is_active(),

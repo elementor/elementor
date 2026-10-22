@@ -5,6 +5,8 @@ import { toScanResult } from './scanner/scanner-report-adapter';
 const AGENT_READY_SETTINGS_PATH = '/elementor/v1/settings/elementor_agent_ready_settings';
 const SCANNER_SCAN_PATH = '/elementor/v1/agents-ready/scan';
 const HTTP_NOT_FOUND = 404;
+const ANGIE_PLUGIN_SLUG = 'angie';
+const PLUGIN_FOLDER_EXISTS = 'folder_exists';
 
 const toScanError = ( reason ) => Object.assign( new Error( reason?.message ?? '' ), {
 	status: reason?.data?.status ?? null,
@@ -27,6 +29,47 @@ export const applyCheckFix = ( checkId, payload = {} ) => Promise.resolve( { che
 
 // TODO: Wire to the WP Admin endpoint that reverts a check fix ("Undo", or a check switch turned off).
 export const undoCheckFix = ( checkId ) => Promise.resolve( { checkId } );
+
+const isPluginError = ( error ) => Boolean( error && 'string' === typeof error.code && 'string' === typeof error.message );
+
+const activateAngiePlugin = ( pluginPath ) => apiFetch( {
+	path: `/wp/v2/plugins/${ pluginPath }`,
+	method: 'POST',
+	data: { status: 'active' },
+} );
+
+export const installAngiePlugin = async () => {
+	try {
+		await apiFetch( {
+			path: '/wp/v2/plugins',
+			method: 'POST',
+			data: {
+				slug: ANGIE_PLUGIN_SLUG,
+				status: 'active',
+			},
+		} );
+
+		return { success: true };
+	} catch ( error ) {
+		if ( isPluginError( error ) && PLUGIN_FOLDER_EXISTS === error.code ) {
+			try {
+				await activateAngiePlugin( `${ ANGIE_PLUGIN_SLUG }/${ ANGIE_PLUGIN_SLUG }` );
+
+				return { success: true };
+			} catch ( activateError ) {
+				return {
+					success: false,
+					error: isPluginError( activateError ) ? activateError.message : '',
+				};
+			}
+		}
+
+		return {
+			success: false,
+			error: isPluginError( error ) ? error.message : '',
+		};
+	}
+};
 
 export const activateAgentsReady = () => {
 	return elementorCommon.ajax.addRequest( 'agents_ready_opt_in' );

@@ -106,8 +106,7 @@ FixesFilters.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-// TODO: "Fix everything" should open the bulk-fix dialog once that flow exists.
-export const FixesSection = ( { checks, flow, agentAccessUrl, isActivated, score, isLoading } ) => {
+export const FixesSection = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl, isActivated, score, isLoading } ) => {
 	const [ selectedType, setSelectedType ] = useState( TYPE_ALL );
 	const [ priority, setPriority ] = useState( PRIORITY_ALL );
 	const [ isShowAllFixes, setIsShowAllFixes ] = useState( false );
@@ -125,16 +124,9 @@ export const FixesSection = ( { checks, flow, agentAccessUrl, isActivated, score
 
 	return (
 		<Stack gap={ SECTION_GAP }>
-			<Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={ 2 }>
-				<Stack spacing={ 0.5 }>
-					<Typography component="h3" color="text.primary" sx={ sectionHeadingSx }>{ __( 'Fix these next', 'elementor' ) }</Typography>
-					<Typography variant="body2" color="text.secondary">{ getSubtitle( checks, score ) }</Typography>
-				</Stack>
-				{ isActivated && (
-					<Button variant="contained" color="primary" size="small" sx={ { flexShrink: 0 } }>
-						{ __( 'Fix everything', 'elementor' ) }
-					</Button>
-				) }
+			<Stack spacing={ 0.5 }>
+				<Typography component="h3" color="text.primary" sx={ sectionHeadingSx }>{ __( 'Fix these next', 'elementor' ) }</Typography>
+				<Typography variant="body2" color="text.secondary">{ getSubtitle( checks, score ) }</Typography>
 			</Stack>
 			<FixesFilters
 				priority={ priority }
@@ -151,12 +143,12 @@ export const FixesSection = ( { checks, flow, agentAccessUrl, isActivated, score
 					onToggle={ flow.toggleChecksExpanded }
 				>
 					{ isExpanded && (
-						<FixTableRows checks={ shownChecks } flow={ flow } agentAccessUrl={ agentAccessUrl } isLoading={ isLoading } />
+						<FixTableRows checks={ shownChecks } flow={ flow } agentAccessUrl={ agentAccessUrl } seoPluginSearchUrl={ seoPluginSearchUrl } isLoading={ isLoading } />
 					) }
 				</ChecksSummary>
 			) }
 			{ isActivated && (
-				<FixTable checks={ shownChecks } flow={ flow } agentAccessUrl={ agentAccessUrl } isLoading={ isLoading } />
+				<FixTable checks={ shownChecks } flow={ flow } agentAccessUrl={ agentAccessUrl } seoPluginSearchUrl={ seoPluginSearchUrl } isLoading={ isLoading } />
 			) }
 			{ isFixListVisible && hiddenFixCount > 0 && (
 				<Stack direction="row" justifyContent="flex-end">
@@ -179,6 +171,7 @@ FixesSection.propTypes = {
 	checks: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	flow: PropTypes.object.isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 	isActivated: PropTypes.bool,
 	score: PropTypes.number,
 	isLoading: PropTypes.bool,

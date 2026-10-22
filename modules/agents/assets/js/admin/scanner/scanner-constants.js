@@ -13,6 +13,18 @@ export const FIX_WITH_TOGGLE = 'toggle';
 export const FIX_WITH_ANGIE = 'angie';
 export const FIX_WITH_PREFERENCE = 'preference';
 export const FIX_WITH_LINK = 'link';
+export const FIX_WITH_SEO = 'seo';
+export const FIX_WITH_MANUAL = 'manual';
+
+export const FIX_BY_AGENT_READY_TOGGLE = 'agent ready toggle';
+export const FIX_BY_SEO_PLUGIN = 'seo plugin';
+export const FIX_BY_ANGIE = 'angie';
+export const FIX_BY_ANGIE_MCP = 'angie / mcp';
+export const FIX_BY_ALLY = 'ally';
+export const FIX_BY_MANUAL = 'manual';
+export const FIX_BY_BUILT_IN = 'built in';
+
+export const FIX_DETAILS_NOT_APPLICABLE = 'n/a';
 
 export const PRIORITY_REQUIRED = 'required';
 export const PRIORITY_RECOMMENDED = 'recommended';

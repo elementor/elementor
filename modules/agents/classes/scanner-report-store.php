@@ -30,6 +30,8 @@ class Scanner_Report_Store {
 		'scorable',
 		'message',
 		'fix',
+		'fixBy',
+		'fixDetails',
 	];
 
 	public function get_last_report(): ?array {

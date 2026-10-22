@@ -29,6 +29,11 @@ const mountScanner = ( rootElement, config, isRTL ) => {
 			isExperimentActive={ resolveAgentReadyActive( config.isExperimentActive ) }
 			siteDomain={ scannerConfig.siteDomain || window.location.hostname }
 			agentAccessUrl={ scannerConfig.agentAccessUrl || '' }
+			seoPluginSearchUrl={ scannerConfig.seoPluginSearchUrl || '' }
+			angiePluginSearchUrl={ scannerConfig.angiePluginSearchUrl || '' }
+			angieAppUrl={ scannerConfig.angieAppUrl || '' }
+			angieInstallHeroUrl={ scannerConfig.angieInstallHeroUrl || '' }
+			isAngieActive={ !! scannerConfig.isAngieActive }
 			lastReport={ scannerConfig.lastReport || null }
 			retryAt={ scannerConfig.retryAt || null }
 		/>

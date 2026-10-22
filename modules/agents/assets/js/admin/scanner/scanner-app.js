@@ -12,9 +12,11 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { ActivateBanner } from './components/activate-banner';
+import { AngieInstallDialog } from './components/angie-install-dialog';
 import { ErrorReportCard } from './components/error-report-card';
 import { FirstRunView } from './components/first-run-view';
 import { FixesSection } from './components/fixes-section';
+import { HowToFixDialog } from './components/how-to-fix-dialog';
 import { PassingTable } from './components/passing-table';
 import { ProgressView } from './components/progress-view';
 import { RescanSkeletonView } from './components/rescan-skeleton-view';
@@ -69,7 +71,7 @@ ScannerShell.propTypes = {
 	fillViewport: PropTypes.bool,
 };
 
-const ScannerView = ( { flow, siteDomain, agentAccessUrl } ) => {
+const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } ) => {
 	const { view, scan } = flow;
 	const isActivating = SCANNER_STATE_ACTIVATING === view;
 
@@ -107,6 +109,7 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl } ) => {
 				checks={ flow.visibleChecks }
 				flow={ flow }
 				agentAccessUrl={ agentAccessUrl }
+				seoPluginSearchUrl={ seoPluginSearchUrl }
 				isActivated={ flow.isActivated }
 				score={ flow.ringScore }
 				isLoading={ isActivating }
@@ -119,6 +122,7 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl } ) => {
 		return (
 			<FirstRunView
 				agentAccessUrl={ agentAccessUrl }
+				seoPluginSearchUrl={ seoPluginSearchUrl }
 				siteDomain={ siteDomain }
 				onStart={ flow.startScan }
 				retryAt={ flow.retryAt }
@@ -173,13 +177,55 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl } ) => {
 	return null;
 };
 
+const FixDialogs = ( { flow, angieInstallHeroUrl, angieAppUrl, angiePluginSearchUrl } ) => (
+	<>
+		{ flow.installCheck && (
+			<AngieInstallDialog
+				check={ flow.installCheck }
+				heroUrl={ angieInstallHeroUrl }
+				angieAppUrl={ angieAppUrl }
+				angiePluginSearchUrl={ angiePluginSearchUrl }
+				onClose={ flow.closeInstallDialog }
+				onCopyPrompt={ flow.openHowToFix }
+			/>
+		) }
+		{ flow.howToFixId && (
+			<HowToFixDialog
+				checks={ flow.visibleChecks }
+				checkId={ flow.howToFixId }
+				onClose={ flow.closeHowToFix }
+				onShowCheck={ flow.showHowToFix }
+			/>
+		) }
+	</>
+);
+
+FixDialogs.propTypes = {
+	flow: PropTypes.object.isRequired,
+	angieInstallHeroUrl: PropTypes.string.isRequired,
+	angieAppUrl: PropTypes.string.isRequired,
+	angiePluginSearchUrl: PropTypes.string.isRequired,
+};
+
 ScannerView.propTypes = {
 	flow: PropTypes.object.isRequired,
 	siteDomain: PropTypes.string.isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 };
 
-const ScannerScreen = ( { siteDomain, agentAccessUrl, lastReport, retryAt = null, isExperimentActive } ) => {
+const ScannerScreen = ( {
+	siteDomain,
+	agentAccessUrl,
+	seoPluginSearchUrl,
+	angieInstallHeroUrl,
+	angieAppUrl,
+	angiePluginSearchUrl,
+	isAngieActive,
+	lastReport,
+	retryAt = null,
+	isExperimentActive,
+} ) => {
 	const agentReadyActive = useMemo( () => resolveAgentReadyActive( isExperimentActive ), [ isExperimentActive ] );
 	const initialScan = useMemo(
 		() => ( lastReport ? toScanResult( lastReport, getLaterRetryAt( lastReport.retryAt, retryAt ) ) : null ),
@@ -189,13 +235,25 @@ const ScannerScreen = ( { siteDomain, agentAccessUrl, lastReport, retryAt = null
 		initialScan,
 		initialRetryAt: lastReport ? null : retryAt,
 		isExperimentActive: agentReadyActive,
+		isAngieActive,
 	} );
 	const isFirstRun = SCANNER_STATE_FIRST_RUN === flow.view;
 	const isScanProgress = SCANNER_STATE_PROGRESS === flow.view || SCANNER_STATE_ERROR_PROGRESS === flow.view;
 
 	return (
 		<ScannerShell hideOverline={ isFirstRun || isScanProgress } fillViewport={ isScanProgress }>
-			<ScannerView flow={ flow } siteDomain={ siteDomain } agentAccessUrl={ agentAccessUrl } />
+			<ScannerView
+				flow={ flow }
+				siteDomain={ siteDomain }
+				agentAccessUrl={ agentAccessUrl }
+				seoPluginSearchUrl={ seoPluginSearchUrl }
+			/>
+			<FixDialogs
+				flow={ flow }
+				angieInstallHeroUrl={ angieInstallHeroUrl }
+				angieAppUrl={ angieAppUrl }
+				angiePluginSearchUrl={ angiePluginSearchUrl }
+			/>
 		</ScannerShell>
 	);
 };
@@ -203,18 +261,40 @@ const ScannerScreen = ( { siteDomain, agentAccessUrl, lastReport, retryAt = null
 ScannerScreen.propTypes = {
 	siteDomain: PropTypes.string.isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
+	angieInstallHeroUrl: PropTypes.string.isRequired,
+	angieAppUrl: PropTypes.string.isRequired,
+	angiePluginSearchUrl: PropTypes.string.isRequired,
+	isAngieActive: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
 	isExperimentActive: PropTypes.bool,
 };
 
-export const ScannerApp = ( { isRTL, siteDomain, agentAccessUrl, lastReport, retryAt = null, isExperimentActive = false } ) => (
+export const ScannerApp = ( {
+	isRTL,
+	siteDomain,
+	agentAccessUrl,
+	seoPluginSearchUrl = '',
+	angieInstallHeroUrl = '',
+	angieAppUrl = '',
+	angiePluginSearchUrl = '',
+	isAngieActive = false,
+	lastReport,
+	retryAt = null,
+	isExperimentActive = false,
+} ) => (
 	<DirectionProvider rtl={ isRTL }>
 		<LocalizationProvider>
 			<ThemeProvider colorScheme="light" palette="argon-beta">
 				<ScannerScreen
 					siteDomain={ siteDomain }
 					agentAccessUrl={ agentAccessUrl }
+					seoPluginSearchUrl={ seoPluginSearchUrl }
+					angieInstallHeroUrl={ angieInstallHeroUrl }
+					angieAppUrl={ angieAppUrl }
+					angiePluginSearchUrl={ angiePluginSearchUrl }
+					isAngieActive={ isAngieActive }
 					lastReport={ lastReport }
 					retryAt={ retryAt }
 					isExperimentActive={ isExperimentActive }
@@ -228,6 +308,11 @@ ScannerApp.propTypes = {
 	isRTL: PropTypes.bool,
 	siteDomain: PropTypes.string.isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string,
+	angieInstallHeroUrl: PropTypes.string,
+	angieAppUrl: PropTypes.string,
+	angiePluginSearchUrl: PropTypes.string,
+	isAngieActive: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
 	isExperimentActive: PropTypes.bool,

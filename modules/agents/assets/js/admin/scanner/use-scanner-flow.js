@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from '../api';
 import { getSaveErrorMessage } from '../hooks/get-save-error-message';
+import { canOpenAngie, openAngieWithPrompt } from './open-angie';
 import {
 	HTTP_TOO_MANY_REQUESTS,
 	OUTSIDE_SCAN_STATUS_FAILED,
@@ -49,7 +50,7 @@ const withFailedOutsideScan = ( scan, reason ) => ( {
 	outsideScan: { status: OUTSIDE_SCAN_STATUS_FAILED, reason },
 } );
 
-export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isExperimentActive = false } = {} ) => {
+export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isExperimentActive = false, isAngieActive = false } = {} ) => {
 	const progressSteps = useMemo( getProgressSteps, [] );
 	const isMountedRef = useRef( true );
 
@@ -64,6 +65,8 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 	const [ preferences, setPreferences ] = useState( {} );
 	const [ areChecksExpanded, setAreChecksExpanded ] = useState( false );
 	const [ actionError, setActionError ] = useState( '' );
+	const [ installCheck, setInstallCheck ] = useState( null );
+	const [ howToFixId, setHowToFixId ] = useState( null );
 
 	useEffect( () => {
 		isMountedRef.current = true;
@@ -242,9 +245,30 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 	}, [ resolvedIds ] );
 
 	const fixWithAngie = useCallback( ( check ) => {
-		// TODO: Hand the check over to Angie and resolve the row only once Angie reports the fix as applied.
-		markResolved( check, { source: 'angie' } );
-	}, [ markResolved ] );
+		if ( canOpenAngie( isAngieActive ) ) {
+			openAngieWithPrompt( check.fixPrompt );
+			return;
+		}
+
+		setInstallCheck( check );
+	}, [ isAngieActive ] );
+
+	const openHowToFix = useCallback( ( check ) => {
+		setInstallCheck( null );
+		setHowToFixId( check.id );
+	}, [] );
+
+	const closeHowToFix = useCallback( () => {
+		setHowToFixId( null );
+	}, [] );
+
+	const showHowToFix = useCallback( ( checkId ) => {
+		setHowToFixId( checkId );
+	}, [] );
+
+	const closeInstallDialog = useCallback( () => {
+		setInstallCheck( null );
+	}, [] );
 
 	const setCheckEnabled = useCallback( ( check, isEnabled ) => {
 		if ( isEnabled ) {
@@ -291,11 +315,17 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 		preferences,
 		areChecksExpanded,
 		actionError,
+		installCheck,
+		howToFixId,
 		retryAt,
 		startScan,
 		activate,
 		toggleRow,
 		openRow,
+		openHowToFix,
+		closeHowToFix,
+		showHowToFix,
+		closeInstallDialog,
 		fixWithAngie,
 		undoFix,
 		setCheckEnabled,

@@ -1,6 +1,7 @@
 import {
 	FIX_WITH_ANGIE,
-	FIX_WITH_LINK,
+	FIX_WITH_MANUAL,
+	FIX_WITH_SEO,
 	FIX_WITH_TOGGLE,
 	OUTSIDE_SCAN_STATUS_FAILED,
 	OUTSIDE_SCAN_STATUS_OK,
@@ -16,6 +17,9 @@ import { toFailedScanResult, toScanResult } from 'elementor/modules/agents/asset
 
 const RETRY_AT = '2026-10-21T10:00:00Z';
 
+const LLMS_TXT_EXISTS_FIX_DETAILS = 'Turn on Elementor Agent Ready > llms.txt.';
+const AGENT_INSTRUCTION_MARKDOWN = '## Fix agent usage guidance\n\nAdd concrete suitable tasks and starting URLs.';
+
 const getReport = () => ( {
 	score: 80,
 	scannedAt: '2026-10-21T09:55:00Z',
@@ -28,10 +32,71 @@ const getReport = () => ( {
 	},
 	checks: [
 		{ id: 'sitemap', label: 'Sitemap exists', layer: 'accessibility', tier: 'required', status: 'pass', earned: 2, possible: 2, scorable: true },
-		{ id: 'llms-txt-exists', label: 'llms.txt exists', layer: 'accessibility', tier: 'required', status: 'fail', earned: 0, possible: 1, scorable: true, fix: 'Add llms.txt.' },
-		{ id: 'llms-txt-formatting', label: 'llms.txt formatting', layer: 'accessibility', tier: 'recommended', status: 'partial', earned: 1, possible: 2, scorable: true, fix: 'Format it.' },
-		{ id: 'public-api', label: 'Public API', layer: 'usability', tier: 'required', status: 'fail', earned: 0, possible: 7, scorable: true, description: 'Agents need an API.', message: 'No API found', fix: 'Publish an API.' },
-		{ id: 'agent-ua-markdown', label: 'Bot-UA markdown', layer: 'accessibility', tier: 'emerging', status: 'fail', earned: 0, possible: 0, scorable: false },
+		{
+			id: 'llms-txt-exists',
+			label: 'llms.txt exists',
+			layer: 'accessibility',
+			tier: 'required',
+			status: 'fail',
+			earned: 0,
+			possible: 1,
+			scorable: true,
+			fix: 'Publish llms.txt.',
+			fixBy: 'Agent Ready toggle',
+			fixDetails: LLMS_TXT_EXISTS_FIX_DETAILS,
+		},
+		{
+			id: 'llms-txt-formatting',
+			label: 'llms.txt formatting',
+			layer: 'accessibility',
+			tier: 'recommended',
+			status: 'partial',
+			earned: 1,
+			possible: 2,
+			scorable: true,
+			fix: 'Install an SEO plugin.',
+			fixBy: 'SEO Plugin',
+		},
+		{
+			id: 'public-api',
+			label: 'Public API',
+			layer: 'usability',
+			tier: 'required',
+			status: 'fail',
+			earned: 0,
+			possible: 7,
+			scorable: true,
+			description: 'Agents need an API.',
+			message: 'No API found',
+			fix: 'Publish an API.',
+			fixBy: 'Manual',
+		},
+		{
+			id: 'agent-ua-markdown',
+			label: 'Bot-UA markdown',
+			layer: 'accessibility',
+			tier: 'emerging',
+			status: 'fail',
+			earned: 0,
+			possible: 0,
+			scorable: false,
+			fix: 'Serve markdown to bot user agents.',
+			fixBy: 'Angie',
+			fixDetails: 'PROMPT: "Serve markdown to bot user agents."',
+		},
+		{
+			id: 'agent-instruction',
+			label: 'Agent instruction',
+			layer: 'accessibility',
+			tier: 'recommended',
+			status: 'fail',
+			earned: 0,
+			possible: 1,
+			scorable: true,
+			fix: 'Add agent usage guidance.',
+			fixBy: 'Angie',
+			fixDetails: AGENT_INSTRUCTION_MARKDOWN,
+		},
 		{ id: 'ai-catalog-published', label: 'AI Catalog', layer: 'discovery', tier: 'recommended', status: 'na', earned: 0, possible: 0, scorable: false },
 	],
 } );
@@ -55,7 +120,13 @@ describe( 'toScanResult', () => {
 		const result = toScanResult( getReport() );
 
 		// Assert
-		expect( result.checks.map( ( check ) => check.id ) ).toEqual( [ 'public-api', 'llms-txt-exists', 'llms-txt-formatting', 'agent-ua-markdown' ] );
+		expect( result.checks.map( ( check ) => check.id ) ).toEqual( [
+			'public-api',
+			'llms-txt-exists',
+			'llms-txt-formatting',
+			'agent-instruction',
+			'agent-ua-markdown',
+		] );
 		expect( result.passingChecks ).toEqual( [ {
 			id: 'sitemap',
 			title: 'Sitemap exists',
@@ -78,7 +149,8 @@ describe( 'toScanResult', () => {
 			stage: STAGE_ACT,
 			evidence: 'No API found',
 			explanation: { whatItMeans: 'Agents need an API.', howToFix: 'Publish an API.' },
-			fixPrompt: 'Publish an API.',
+			fixPrompt: '',
+			fixWith: FIX_WITH_MANUAL,
 		} );
 	} );
 
@@ -101,15 +173,31 @@ describe( 'toScanResult', () => {
 		spy.mockRestore();
 	} );
 
-	it( 'uses the Agent Ready fix for module-covered checks and Angie for the rest', () => {
+	it( 'classifies fixBy and fixDetails into toggle, Angie, SEO search, or manual', () => {
 		// Act
 		const checks = toScanResult( getReport() ).checks;
 		const byId = ( id ) => checks.find( ( check ) => check.id === id );
 
 		// Assert
-		expect( byId( 'llms-txt-exists' ) ).toMatchObject( { fixWith: FIX_WITH_TOGGLE, isLocal: true, resolvedByActivation: true } );
-		expect( byId( 'llms-txt-formatting' ) ).toMatchObject( { fixWith: FIX_WITH_LINK, priority: PRIORITY_RECOMMENDED } );
-		expect( byId( 'agent-ua-markdown' ) ).toMatchObject( { fixWith: FIX_WITH_ANGIE, isLocal: false, points: 0 } );
+		expect( byId( 'agent-ua-markdown' ) ).toMatchObject( {
+			fixWith: FIX_WITH_ANGIE,
+			fixPrompt: 'Serve markdown to bot user agents.',
+			explanation: { howToFix: 'Serve markdown to bot user agents.' },
+			resolvedByActivation: false,
+			points: 0,
+		} );
+		expect( byId( 'agent-instruction' ) ).toMatchObject( {
+			fixWith: FIX_WITH_ANGIE,
+			fixPrompt: AGENT_INSTRUCTION_MARKDOWN,
+			explanation: { howToFix: AGENT_INSTRUCTION_MARKDOWN },
+		} );
+		expect( byId( 'llms-txt-exists' ) ).toMatchObject( {
+			fixWith: FIX_WITH_TOGGLE,
+			fixPrompt: '',
+			explanation: { howToFix: LLMS_TXT_EXISTS_FIX_DETAILS },
+		} );
+		expect( byId( 'llms-txt-formatting' ) ).toMatchObject( { fixWith: FIX_WITH_SEO, priority: PRIORITY_RECOMMENDED } );
+		expect( byId( 'public-api' ) ).toMatchObject( { fixWith: FIX_WITH_MANUAL, resolvedByActivation: false } );
 	} );
 
 	it( 'prefers the retryAt returned by the endpoint over the stored report', () => {

@@ -215,26 +215,42 @@ describe( 'Agent Ready scanner', () => {
 		expect( row.getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 	} );
 
-	it( 'completes a row with Fix with Angie and puts it back with Undo', async () => {
+	it( 'opens the install dialog from Fix with Angie when Angie is not active', async () => {
 		// Arrange
+		await runFirstScan();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+
+		// Act
+		fireEvent.click( within( getRowByTitle( 'Agents can\'t tell when you\'re open' ) ).getByRole( 'button', { name: 'Fix with Angie' } ) );
+
+		// Assert
+		expect( applyCheckFix ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'heading', { name: 'Prepare your site for agents (with Angie)' } ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Install Angie & fix issue' } ).hasAttribute( 'disabled' ) ).toBe( true );
+	} );
+
+	it( 'opens How to fix from Copy prompt and copies that prompt', async () => {
+		// Arrange
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.assign( navigator, { clipboard: { writeText } } );
 		await runFirstScan();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
 		const row = getRowByTitle( 'Agents can\'t tell when you\'re open' );
 
 		// Act
-		fireEvent.click( within( row ).getByRole( 'button', { name: 'Fix with Angie' } ) );
+		fireEvent.click( within( row ).getByRole( 'button', { name: 'Copy prompt' } ) );
 
 		// Assert
-		expect( applyCheckFix ).toHaveBeenCalledWith( 'opening-hours', { source: 'angie' } );
-		expect( row.getAttribute( 'aria-expanded' ) ).toBe( 'false' );
-		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ) ).toBeTruthy();
-		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
-		expect( getScoreRing( 30 ) ).toBeTruthy();
+		const dialog = screen.getByRole( 'dialog' );
+		expect( within( dialog ).getByRole( 'heading', { name: 'Agents can\'t tell when you\'re open' } ) ).toBeTruthy();
 
-		fireEvent.click( within( row ).getByRole( 'button', { name: 'Undo' } ) );
+		fireEvent.click( within( dialog ).getByRole( 'button', { name: 'Copy prompt' } ) );
 
-		expect( undoCheckFix ).toHaveBeenCalledWith( 'opening-hours' );
-		expect( within( row ).getByRole( 'button', { name: 'Fix with Angie' } ) ).toBeTruthy();
+		expect( writeText ).toHaveBeenCalledWith( 'Add your opening hours to your site\'s structured data.' );
+
+		fireEvent.click( within( dialog ).getByRole( 'button', { name: 'Next issue' } ) );
+
+		expect( within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', { name: 'Agents can\'t find a way to contact you' } ) ).toBeTruthy();
 	} );
 
 	it( 'keeps the scan score when a local check switch is turned on', async () => {
@@ -257,18 +273,18 @@ describe( 'Agent Ready scanner', () => {
 		// Arrange
 		await runFirstScan();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
-		const row = getRowByTitle( 'Agents can\'t tell when you\'re open' );
-		fireEvent.click( within( row ).getByRole( 'button', { name: 'Fix with Angie' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
+		fireEvent.click( checkSwitch );
 
 		// Act
-		fireEvent.click( within( row ).getByRole( 'button', { name: 'Rescan' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan' } ) );
 		await advanceTimers( SCANNER_MOTION.rescanMinMs );
 
 		// Assert
 		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
-		expect( within( getRowByTitle( 'Agents can\'t tell when you\'re open' ) ).getByRole( 'button', { name: 'Fix with Angie' } ) ).toBeTruthy();
+		expect( within( getRowByTitle( 'Agents can\'t find a path into your site' ) ).getByRole( 'switch' ) ).toBeTruthy();
 	} );
 
 	it( 'opens the preference drawer and completes the row once a value is saved', async () => {

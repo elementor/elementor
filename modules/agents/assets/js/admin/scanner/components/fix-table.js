@@ -82,7 +82,7 @@ const SkeletonRow = () => (
 	</Stack>
 );
 
-export const FixTableRows = ( { checks, flow, agentAccessUrl, isLoading } ) => (
+export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl, isLoading } ) => (
 	<Box aria-busy={ isLoading }>
 		{ isLoading
 			? checks.map( ( check ) => <SkeletonRow key={ check.id } /> )
@@ -95,8 +95,10 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, isLoading } ) => (
 						isLast={ index === checks.length - 1 }
 						preferenceValue={ flow.preferences[ check.id ] }
 						agentAccessUrl={ agentAccessUrl }
+						seoPluginSearchUrl={ seoPluginSearchUrl }
 						onToggle={ flow.toggleRow }
 						onOpen={ flow.openRow }
+						onCopyPrompt={ flow.openHowToFix }
 						onFixWithAngie={ flow.fixWithAngie }
 						onSetEnabled={ flow.setCheckEnabled }
 						onUndo={ flow.undoFix }
@@ -117,6 +119,7 @@ const fixTableRowsPropTypes = {
 		preferences: PropTypes.object.isRequired,
 		toggleRow: PropTypes.func.isRequired,
 		openRow: PropTypes.func.isRequired,
+		openHowToFix: PropTypes.func.isRequired,
 		fixWithAngie: PropTypes.func.isRequired,
 		setCheckEnabled: PropTypes.func.isRequired,
 		undoFix: PropTypes.func.isRequired,
@@ -125,6 +128,7 @@ const fixTableRowsPropTypes = {
 		savePreference: PropTypes.func.isRequired,
 	} ).isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 	isLoading: PropTypes.bool,
 };
 

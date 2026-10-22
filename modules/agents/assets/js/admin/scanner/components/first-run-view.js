@@ -31,6 +31,7 @@ const PREVIEW_FLOW = {
 	preferences: {},
 	toggleRow: noop,
 	openRow: noop,
+	openHowToFix: noop,
 	fixWithAngie: noop,
 	setCheckEnabled: noop,
 	undoFix: noop,
@@ -80,7 +81,7 @@ FeatureCard.propTypes = {
 	body: PropTypes.string.isRequired,
 };
 
-const ScannerPreview = ( { agentAccessUrl, siteDomain } ) => {
+const ScannerPreview = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain } ) => {
 	const scan = getMockScanResult();
 	const score = getBaseScore( scan );
 
@@ -116,6 +117,7 @@ const ScannerPreview = ( { agentAccessUrl, siteDomain } ) => {
 					checks={ getVisibleChecks( scan ) }
 					flow={ PREVIEW_FLOW }
 					agentAccessUrl={ agentAccessUrl }
+					seoPluginSearchUrl={ seoPluginSearchUrl }
 					isActivated
 					score={ score }
 				/>
@@ -127,10 +129,11 @@ const ScannerPreview = ( { agentAccessUrl, siteDomain } ) => {
 
 ScannerPreview.propTypes = {
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 	siteDomain: PropTypes.string.isRequired,
 };
 
-export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart, retryAt = null } ) => {
+export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, onStart, retryAt = null } ) => {
 	const nextScanLabel = useNextScanLabel( retryAt );
 	const isCoolingDown = '' !== nextScanLabel;
 
@@ -160,13 +163,14 @@ export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart, retryAt = n
 					) ) }
 				</Stack>
 			</Stack>
-			<ScannerPreview agentAccessUrl={ agentAccessUrl } siteDomain={ siteDomain } />
+			<ScannerPreview agentAccessUrl={ agentAccessUrl } seoPluginSearchUrl={ seoPluginSearchUrl } siteDomain={ siteDomain } />
 		</Stack>
 	);
 };
 
 FirstRunView.propTypes = {
 	agentAccessUrl: PropTypes.string.isRequired,
+	seoPluginSearchUrl: PropTypes.string.isRequired,
 	siteDomain: PropTypes.string.isRequired,
 	onStart: PropTypes.func.isRequired,
 	retryAt: PropTypes.string,
