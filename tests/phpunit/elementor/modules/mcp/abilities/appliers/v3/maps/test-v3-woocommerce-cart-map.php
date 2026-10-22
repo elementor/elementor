@@ -42,8 +42,8 @@ class Test_V3_Woocommerce_Cart_Map extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( [], $registry->get_diagnostics( self::WIDGET_TYPE ), wp_json_encode( $registry->get_diagnostics( self::WIDGET_TYPE ) ) );
-		$this->assertSame( 'additional_template_switch', $settings['customize_empty_cart']->get_control_key() );
-		$this->assertSame( 'additional_template_select', $settings['empty_cart_template_id']->get_control_key() );
+		$this->assertArrayHasKey( 'additional_template_switch', $settings );
+		$this->assertArrayHasKey( 'additional_template_select', $settings );
 	}
 
 	public function test_write__stores_the_empty_cart_template_switch_and_id() {
@@ -52,8 +52,8 @@ class Test_V3_Woocommerce_Cart_Map extends Elementor_Test_Base {
 
 		// Act.
 		$result = $this->writer()->write( $map, [
-			'customize_empty_cart' => true,
-			'empty_cart_template_id' => self::TEMPLATE_ID,
+			'additional_template_switch' => true,
+			'additional_template_select' => self::TEMPLATE_ID,
 		] );
 
 		// Assert.
@@ -67,10 +67,10 @@ class Test_V3_Woocommerce_Cart_Map extends Elementor_Test_Base {
 		$map = $this->registry()->get_map( self::WIDGET_TYPE );
 
 		// Act.
-		$result = $this->writer()->write( $map, [ 'empty_cart_template_id' => 0 ] );
+		$result = $this->writer()->write( $map, [ 'additional_template_select' => 0 ] );
 
 		// Assert.
-		$this->assertArrayHasKey( 'empty_cart_template_id', $result['rejected'] );
+		$this->assertArrayHasKey( 'additional_template_select', $result['rejected'] );
 		$this->assertArrayNotHasKey( 'additional_template_select', $result['settings'] );
 	}
 

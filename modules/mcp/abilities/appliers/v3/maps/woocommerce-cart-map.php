@@ -131,8 +131,8 @@ return V3_Widget_Map::make( 'woocommerce-cart' )
 		'section_coupon_display' => V3_Setting::bind_to( 'section_coupon_display' )->switcher(),
 		'apply_coupon_button_text' => V3_Setting::bind_to( 'apply_coupon_button_text' )->string()->dynamic(),
 		'checkout_button_text' => V3_Setting::bind_to( 'checkout_button_text' )->string()->dynamic(),
-		'customize_empty_cart' => V3_Setting::bind_to( 'additional_template_switch' )->switcher(),
-		'empty_cart_template_id' => V3_Setting::bind_to( 'additional_template_select' )->post_id(),
+		'additional_template_switch' => V3_Setting::bind_to( 'additional_template_switch' )->switcher(),
+		'additional_template_select' => V3_Setting::bind_to( 'additional_template_select' )->post_id(),
 	] )
 	->default_target( $sections )
 	->targets( $titles, $text, $links, Woo_Form_Fields::target( '.coupon .input-text, .e-cart-totals .input-text, select, .select2-selection--single', 'Inputs and dropdowns of the cart: the coupon code input (only while the coupon box is shown) and the shipping calculator fields (only once the calculator is opened). The normal border color overrides the focus border-color, so mark a focused field with a focus box-shadow instead.' ), $buttons, $products, $product_links, $totals_target, $checkout_button )
