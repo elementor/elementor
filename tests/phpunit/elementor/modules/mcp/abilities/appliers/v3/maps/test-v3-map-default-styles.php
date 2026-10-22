@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Core\Editor\Data\Globals\Controller as Globals_Controller;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Mapper\Responsive_Key_Resolver;
@@ -216,6 +217,7 @@ class Test_V3_Map_Default_Styles extends Elementor_Test_Base {
 		// Arrange.
 		delete_option( 'elementor_disable_color_schemes' );
 		delete_option( 'elementor_disable_typography_schemes' );
+		$this->ensure_globals_controller();
 		Plugin::$instance->kits_manager->create_new_kit( 'V3 map default styles', [
 			'system_colors' => [
 				[
@@ -289,5 +291,15 @@ class Test_V3_Map_Default_Styles extends Elementor_Test_Base {
 		// Assert.
 		$this->assertStringNotContainsString( self::KIT_PRIMARY_HEX, $css );
 		$this->assertStringNotContainsString( 'font-size', $css );
+	}
+
+	private function ensure_globals_controller(): void {
+		$manager = Plugin::$instance->data_manager_v2;
+
+		if ( $manager->get_controller( 'globals' ) ) {
+			return;
+		}
+
+		$manager->register_controller( new Globals_Controller() );
 	}
 }
