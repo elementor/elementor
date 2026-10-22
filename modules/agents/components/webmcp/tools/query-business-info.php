@@ -83,7 +83,13 @@ class Query_Business_Info extends Abstract_Webmcp_Tool {
 	}
 
 	private function has_structured_data( array $info ): bool {
-		return ! empty( array_intersect_key( $info, array_flip( self::DETAIL_KEYS ) ) );
+		foreach ( self::STRUCTURED_KEYS as $key ) {
+			if ( ! empty( $info[ $key ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function get_business_info( array $extracted ): array {
