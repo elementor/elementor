@@ -605,16 +605,35 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( $module->should_advertise_llms_txt() );
 	}
 
-	public function test_should_advertise_llms_txt__returns_false_when_physical_file_is_kept() {
+	public function test_should_advertise_llms_txt__returns_false_when_decision_is_keep() {
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
 
 		$this->assertFalse( $this->module->should_advertise_llms_txt() );
 	}
 
-	public function test_should_advertise_llms_txt__returns_true_when_physical_file_is_replaced() {
+	public function test_should_advertise_llms_txt__returns_true_when_decision_is_replace() {
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
 
 		$this->assertTrue( $this->module->should_advertise_llms_txt() );
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_physical_file_exists_even_if_replace() {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+
+		try {
+			file_put_contents( $file_path, '# Physical file' );
+			update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+			Module::reset_physical_file_cache();
+
+			$this->assertFalse( $this->module->should_advertise_llms_txt() );
+			$this->assertTrue( $this->module->should_advertise_llms_full_txt() );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
 	}
 
 	public function test_should_advertise_llms_full_txt__returns_true_when_enabled() {

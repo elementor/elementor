@@ -108,7 +108,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
 	}
 
-	public function test_build_site_links__omits_llms_txt_when_physical_file_is_kept() {
+	public function test_build_site_links__omits_llms_txt_when_decision_is_keep() {
 		// Arrange
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
 
@@ -117,6 +117,29 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__omits_llms_txt_when_physical_file_exists() {
+		// Arrange
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+
+		try {
+			file_put_contents( $file_path, '# Physical file' );
+			update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+			Module::reset_physical_file_cache();
+
+			// Act
+			$links = $this->invoke_build_site_links();
+
+			// Assert
+			$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
 	}
 
 	public function test_build_site_links__includes_llms_txt_when_enabled_and_no_physical_file() {
@@ -246,7 +269,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'llms.txt', $all_links );
 	}
 
-	public function test_add_rest_headers__omits_llms_txt_when_physical_file_kept() {
+	public function test_add_rest_headers__omits_llms_txt_when_decision_is_keep() {
 		// Arrange
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
 		$response = new \WP_HTTP_Response();
@@ -259,6 +282,34 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$link_headers = $result->get_headers()['Link'] ?? [];
 		$all_links    = is_array( $link_headers ) ? implode( '', $link_headers ) : $link_headers;
 		$this->assertStringNotContainsString( 'llms.txt', $all_links );
+	}
+
+	public function test_add_rest_headers__omits_llms_txt_when_physical_file_exists() {
+		// Arrange
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+
+		try {
+			file_put_contents( $file_path, '# Physical file' );
+			update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+			Module::reset_physical_file_cache();
+
+			$response = new \WP_HTTP_Response();
+			$request  = new \WP_REST_Request( 'GET', '/elementor/v1/test' );
+
+			// Act
+			$result = $this->link_headers->add_rest_headers( $response, null, $request );
+
+			// Assert
+			$link_headers = $result->get_headers()['Link'] ?? [];
+			$all_links    = is_array( $link_headers ) ? implode( '', $link_headers ) : $link_headers;
+			$this->assertStringNotContainsString( 'llms.txt', $all_links );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
 	}
 
 	/**

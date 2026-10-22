@@ -70,7 +70,7 @@ class Test_Ard_Manifest extends Elementor_Test_Base {
 		$this->assertSame( $home . 'llms-full.txt', $content['capabilities']['llms_txt']['full_url'] );
 	}
 
-	public function test_generate_content__includes_full_url_but_not_url_when_physical_file_kept() {
+	public function test_generate_content__includes_full_url_but_not_url_when_decision_is_keep() {
 		$home = trailingslashit( home_url() );
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
 		Module::reset_physical_file_cache();
@@ -84,6 +84,31 @@ class Test_Ard_Manifest extends Elementor_Test_Base {
 		$this->assertSame( $home . 'llms-full.txt', $content['capabilities']['llms_txt']['full_url'] );
 	}
 
+	public function test_generate_content__includes_full_url_but_not_url_when_physical_file_exists() {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$home = trailingslashit( home_url() );
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+
+		try {
+			file_put_contents( $file_path, '# Physical file' );
+			update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+			Module::reset_physical_file_cache();
+
+			$content = $this->invoke_generate_content();
+
+			$this->assertArrayHasKey( 'capabilities', $content );
+			$this->assertArrayHasKey( 'llms_txt', $content['capabilities'] );
+			$this->assertArrayNotHasKey( 'url', $content['capabilities']['llms_txt'] );
+			$this->assertArrayHasKey( 'full_url', $content['capabilities']['llms_txt'] );
+			$this->assertSame( $home . 'llms-full.txt', $content['capabilities']['llms_txt']['full_url'] );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
+	}
+
 	public function test_generate_content__omits_llms_txt_when_llms_is_disabled() {
 		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
 		Module::reset_physical_file_cache();
@@ -94,7 +119,7 @@ class Test_Ard_Manifest extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'llms_txt', $content['capabilities'] );
 	}
 
-	public function test_generate_content__includes_llms_txt_when_physical_file_is_replaced() {
+	public function test_generate_content__includes_llms_txt_when_decision_is_replace() {
 		$home = trailingslashit( home_url() );
 		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
 
