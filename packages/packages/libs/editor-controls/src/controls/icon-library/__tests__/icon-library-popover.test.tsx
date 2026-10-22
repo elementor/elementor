@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 
 import { ICON_LIBRARY_GRID_MIN_CELL_SIZE, ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
-import { useIconLibraryProviderIcons } from '../icon-library-providers';
+import { resolveProviderIconPreviewSvg, useIconLibraryProviderIcons } from '../icon-library-providers';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
 jest.mock( '../use-font-awesome-7-catalog' );
@@ -39,7 +39,11 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 	} ),
 } ) );
 
-const createIcon = ( name: string, library: 'fa-solid' | 'fa-regular' | 'fa-brands', aliases: string[] = [] ) => ( {
+const createIcon = (
+	name: string,
+	library: 'fa-solid' | 'fa-regular' | 'fa-brands' | 'fa-light',
+	aliases: string[] = []
+) => ( {
 	id: `${ library }:${ name }`,
 	name,
 	label: name,
@@ -466,6 +470,27 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows the free icons while a provider is still loading', () => {
+		// Arrange.
+		jest.mocked( useIconLibraryProviderIcons ).mockReturnValue( { data: [], isLoading: true } as never );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows a named loading state while the free catalog is loading', () => {
+		// Arrange.
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: true } as never );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'progressbar', { name: 'Loading icons' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'shows a load failure when the catalog is empty', () => {
 		// Arrange.
 		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
@@ -686,6 +711,30 @@ describe( 'IconLibraryPopover', () => {
 			value: 'my-icons my-icons-badge',
 			library: 'my-icons',
 		} );
+	} );
+
+	it( 'resolves a lazy provider tile by its icon value, not its tile id', async () => {
+		// Arrange.
+		const lazyIcon = {
+			...createIcon( 'star', 'fa-light' ),
+			value: 'fa-light fa-star',
+			lazySvg: true,
+		};
+
+		jest.mocked( resolveProviderIconPreviewSvg ).mockResolvedValue( null );
+		jest.mocked( useIconLibraryProviderIcons ).mockReturnValue( { data: [ lazyIcon ], isLoading: false } as never );
+
+		// Act.
+		renderPopover();
+
+		// Assert.
+		await waitFor( () =>
+			expect( resolveProviderIconPreviewSvg ).toHaveBeenCalledWith(
+				'fa-light',
+				'fa-light fa-star',
+				expect.any( AbortSignal )
+			)
+		);
 	} );
 
 	it( 'filters custom libraries under My Libraries without resetting search', () => {

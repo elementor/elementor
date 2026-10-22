@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Validates V3 element_config settings against the per-widget non-style allowlist.
+ * Validates V3 element_config settings against the setting keys of the widget's map.
  */
 class V3_Non_Style_Allowlist {
 
@@ -21,9 +21,7 @@ class V3_Non_Style_Allowlist {
 	 */
 	public static function filter( string $widget_type, array $settings ): array {
 		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
-		$allowed_keys = null !== $map
-			? array_keys( $map->get_settings() )
-			: V3_Widget_Bridge_Registry::get_non_style_keys( $widget_type );
+		$allowed_keys = null !== $map ? array_keys( $map->get_settings() ) : [];
 		$allowed_lookup = array_fill_keys( $allowed_keys, true );
 
 		$allowed = [];
