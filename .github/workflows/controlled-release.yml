@@ -225,14 +225,14 @@ jobs:
       ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
 
   # ── Job 9 ────────────────────────────────────────────────────────────────
-  # Published-artifact and editor-upgrade checks. Pre-releases skip publish,
-  # and a skipped inner publish job still reports success, so the prerelease
-  # input is what keeps this off the beta path.
+  # Published-artifact and editor-upgrade checks. Only runs for stable releases
+  # (channel == 'stable' from the tag job). Pre-releases (beta, RC, etc.) skip
+  # regardless of the prerelease checkbox, since they aren't published to WordPress.org.
   # ─────────────────────────────────────────────────────────────────────────
   post-release-check:
     name: Post-Release Check
-    needs: publish
-    if: ${{ !inputs.prerelease && github.repository_owner == 'elementor' }}
+    needs: [publish, tag]
+    if: ${{ needs.tag.outputs.channel == 'stable' && github.repository_owner == 'elementor' }}
     permissions:
       contents: read
       actions: write
