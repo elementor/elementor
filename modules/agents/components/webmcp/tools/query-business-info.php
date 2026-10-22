@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Query_Business_Info extends Abstract_Webmcp_Tool {
 
-	const DETAIL_KEYS = [ 'details', 'telephone', 'email', 'address', 'opening_hours', 'social_profiles' ];
+	const STRUCTURED_KEYS = [ 'telephone', 'email', 'address', 'opening_hours', 'social_profiles' ];
 
 	const SOURCE_MANUAL = 'manual';
 
@@ -37,7 +37,7 @@ class Query_Business_Info extends Abstract_Webmcp_Tool {
 	}
 
 	public function get_description(): string {
-		return __( 'Get authoritative business details of this site, such as opening hours, phone number, email, address and social profiles, written by the site owner or taken from its structured data. When has_structured_data is false the site publishes no such details, so do not infer them from page text.', 'elementor' );
+		return __( 'Get authoritative business details of this site, such as opening hours, phone number, email, address and social profiles, taken from the structured data of the site (has_structured_data is true) or written by the site owner as free text in the details field. When neither is present the site publishes no such details, so do not infer them from page text.', 'elementor' );
 	}
 
 	public function get_admin_description(): string {

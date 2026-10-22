@@ -370,7 +370,7 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( "Open Monday to Friday.\nCall +1 555 0199.", $result['details'] );
 		$this->assertSame( Query_Business_Info::SOURCE_MANUAL, $result['source'] );
-		$this->assertTrue( $result['has_structured_data'] );
+		$this->assertFalse( $result['has_structured_data'] );
 		$this->assertArrayNotHasKey( 'telephone', $result );
 		$this->assertSame( 0, $requests->count );
 		$this->assertFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
