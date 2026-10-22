@@ -321,15 +321,17 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * @deprecated 4.4.0 Use get_generated_llms_txt() instead. Manual content is now controlled
-	 *             via Agent Ready settings, not kit settings. Always returns an empty string.
+	 * Stub for backward compatibility.
 	 *
-	 * @deprecated 4.4.0 Use get_generated_llms_txt() instead. Manual content is now controlled
-	 *             via Agent Ready settings, not kit settings. This method is kept for
-	 *             backward compatibility and always returns an empty string.
+	 * @deprecated 4.4.0 Use get_generated_llms_txt() instead.
+	 * @return string Always returns an empty string.
 	 */
 	public function get_llms_txt_content(): string {
-		_deprecated_function( __METHOD__, '4.4.0', 'Elementor\Modules\Agents\Module::get_generated_llms_txt()' );
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'4.4.0',
+			__CLASS__ . '::get_generated_llms_txt()'
+		);
 
 		return '';
 	}

@@ -127,7 +127,6 @@ class Test_Module extends Elementor_Test_Base {
 		$instance_property->setValue( null, null );
 	}
 
-
 	public function test_is_llms_txt_request__matches_root_path() {
 		// Arrange
 		$_SERVER['REQUEST_URI'] = '/llms.txt';
@@ -550,5 +549,16 @@ class Test_Module extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
 
 		$this->assertTrue( $fired, 'cache_invalidated action must fire on global change' );
+	}
+
+	public function test_get_llms_txt_content__is_deprecated_and_returns_empty() {
+		// Arrange
+		$this->setExpectedDeprecated( 'Elementor\\Modules\\Agents\\Module::get_llms_txt_content' );
+
+		// Act
+		$result = $this->module->get_llms_txt_content();
+
+		// Assert
+		$this->assertSame( '', $result );
 	}
 }
