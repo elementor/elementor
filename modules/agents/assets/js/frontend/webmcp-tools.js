@@ -40,4 +40,6 @@ export const registerTools = ( modelContext, config ) => {
 	}
 };
 
-registerTools( window.navigator.modelContext, window.elementorAgentsWebmcpConfig );
+export const getModelContext = ( doc, nav ) => doc?.modelContext ?? nav?.modelContext;
+
+registerTools( getModelContext( window.document, window.navigator ), window.elementorAgentsWebmcpConfig );

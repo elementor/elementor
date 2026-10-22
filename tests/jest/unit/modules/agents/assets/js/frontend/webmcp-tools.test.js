@@ -1,4 +1,4 @@
-import { registerTools, runTool } from 'elementor/modules/agents/assets/js/frontend/webmcp-tools';
+import { getModelContext, registerTools, runTool } from 'elementor/modules/agents/assets/js/frontend/webmcp-tools';
 
 const RUN_URL = 'https://example.com/wp-json/elementor/v1/agents/webmcp/run';
 
@@ -13,6 +13,29 @@ const config = {
 describe( 'WebMCP browser tools', () => {
 	afterEach( () => {
 		delete global.fetch;
+	} );
+
+	it( 'prefers document.modelContext over navigator.modelContext', () => {
+		// Arrange
+		const documentContext = { registerTool: jest.fn() };
+		const navigatorContext = { registerTool: jest.fn() };
+
+		// Act
+		const result = getModelContext( { modelContext: documentContext }, { modelContext: navigatorContext } );
+
+		// Assert
+		expect( result ).toBe( documentContext );
+	} );
+
+	it( 'falls back to navigator.modelContext when document.modelContext is missing', () => {
+		// Arrange
+		const navigatorContext = { registerTool: jest.fn() };
+
+		// Act
+		const result = getModelContext( {}, { modelContext: navigatorContext } );
+
+		// Assert
+		expect( result ).toBe( navigatorContext );
 	} );
 
 	it( 'registers every localized tool with the model context', () => {

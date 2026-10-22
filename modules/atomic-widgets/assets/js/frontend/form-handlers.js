@@ -23,11 +23,13 @@ function registerWebmcpFormListeners() {
 
 	webmcpFormListenersRegistered = true;
 
-	window.addEventListener( 'toolactivated', ( { toolName } ) => {
+	const eventTarget = document.modelContext ?? window;
+
+	eventTarget.addEventListener( 'toolactivated', ( { toolName } ) => {
 		resetWebmcpFormState( toolName );
 	} );
 
-	window.addEventListener( 'toolcancel', ( { toolName } ) => {
+	eventTarget.addEventListener( 'toolcancel', ( { toolName } ) => {
 		resetWebmcpFormState( toolName );
 	} );
 }
