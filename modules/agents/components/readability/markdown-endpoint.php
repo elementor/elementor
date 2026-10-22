@@ -82,7 +82,7 @@ class Markdown_Endpoint extends Feature_Component {
 	 */
 	public function on_parse_request( \WP $wp ): void {
 		$request_uri = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			? wp_unslash( $_SERVER['REQUEST_URI'] )
 			: '';
 
 		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
@@ -90,6 +90,8 @@ class Markdown_Endpoint extends Feature_Component {
 		if ( ! is_string( $path ) ) {
 			return;
 		}
+
+		$path = rawurldecode( $path );
 
 		// Strip the home-URL path prefix (handles subdirectory installs).
 		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );

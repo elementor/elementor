@@ -16,7 +16,7 @@ class Request_Path {
 	 */
 	public static function matches( string $filename ): bool {
 		$request_uri = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			? wp_unslash( $_SERVER['REQUEST_URI'] )
 			: '';
 
 		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
@@ -24,6 +24,8 @@ class Request_Path {
 		if ( ! is_string( $path ) ) {
 			return false;
 		}
+
+		$path = rawurldecode( $path );
 
 		$path = untrailingslashit( $path );
 

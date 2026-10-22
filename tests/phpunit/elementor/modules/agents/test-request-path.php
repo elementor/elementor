@@ -71,4 +71,26 @@ class Test_Request_Path extends Elementor_Test_Base {
 			'rejects the home path itself'                 => [ '/blog', 'llms.txt', false ],
 		];
 	}
+
+	public function test_matches__decodes_percent_encoded_path() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/%D7%A9%D7%9C%D7%95%D7%9D/llms.txt';
+
+		// Act
+		$result = Request_Path::matches( 'שלום/llms.txt' );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_matches__percent_encoded_filename() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/llms%2Dtxt';
+
+		// Act
+		$result = Request_Path::matches( 'llms-txt' );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
 }

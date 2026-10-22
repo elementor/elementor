@@ -142,6 +142,42 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
 	}
 
+	public function test_on_parse_request__resolves_percent_encoded_non_latin_slug() {
+		// Arrange
+		$post_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'שלום',
+			'post_name'   => '%d7%a9%d7%9c%d7%95%d7%9d',
+		] );
+		$_SERVER['REQUEST_URI'] = '/%D7%A9%D7%9C%D7%95%D7%9D.md';
+
+		// Act
+		$this->endpoint->on_parse_request( new \WP() );
+
+		// Assert
+		$this->assertTrue( $this->get_private_property( 'serving_md' ) );
+		$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
+	}
+
+	public function test_on_parse_request__resolves_percent_encoded_cyrillic_slug() {
+		// Arrange
+		$post_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Привет',
+			'post_name'   => '%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82',
+		] );
+		$_SERVER['REQUEST_URI'] = '/%D0%BF%D1%80%D0%B8%D0%B2%D0%B5%D1%82.md';
+
+		// Act
+		$this->endpoint->on_parse_request( new \WP() );
+
+		// Assert
+		$this->assertTrue( $this->get_private_property( 'serving_md' ) );
+		$this->assertSame( $post_id, $this->get_private_property( 'md_post_id' ) );
+	}
+
 	public function test_is_markdown_access_allowed__denies_draft_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'draft',

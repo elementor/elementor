@@ -149,6 +149,20 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertSame( '/.well-known/auth.md', $path );
 	}
 
+	public function test_get_normalized_path__decodes_percent_encoded_path() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/%D7%A9%D7%9C%D7%95%D7%9D/.well-known/auth.md';
+
+		$method = new \ReflectionMethod( Well_Known_Router::class, 'get_normalized_path' );
+		$method->setAccessible( true );
+
+		// Act
+		$path = $method->invoke( $this->router );
+
+		// Assert
+		$this->assertSame( '/שלום/.well-known/auth.md', $path );
+	}
+
 	public function test_get_active_endpoints__includes_auth_md_when_enabled() {
 		// Act
 		$active = $this->router->get_active_endpoints();
