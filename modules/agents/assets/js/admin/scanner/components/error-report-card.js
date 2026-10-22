@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { SCAN_FAILURE_REASON_BLOCKED, SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
+import { RESCAN_LAYOUT_ERROR_SUMMARY, RescanControl } from './rescan-control';
 
 const ALERT_ICON_SIZE = 24;
 const LIST_INDENT = '21px';
@@ -36,23 +37,33 @@ const getFailureCopy = ( reason, siteDomain ) => {
 	};
 };
 
-export const ErrorReportCard = ( { siteDomain, reason } ) => {
+export const ErrorReportCard = ( { siteDomain, reason, retryAt, onRescan, isActivated = false } ) => {
 	const { description, steps } = getFailureCopy( reason, siteDomain );
 
 	return (
 		<Stack spacing={ 2.5 }>
-			<Stack spacing={ 0 }>
-				<Stack direction="row" alignItems="center" spacing={ 1 }>
-					<AlertCircleIcon color="error" sx={ { fontSize: ALERT_ICON_SIZE } } />
-					<Typography variant="h6" component="h3" color="text.primary">
-						{ sprintf(
-							/* Translators: %s: Site domain. */
-							__( 'We couldn\'t reach %s', 'elementor' ),
-							siteDomain,
-						) }
-					</Typography>
+			<Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+				<Stack spacing={ 0 } flex={ 1 } minWidth={ 0 }>
+					<Stack direction="row" alignItems="center" spacing={ 1 }>
+						<AlertCircleIcon color="error" sx={ { fontSize: ALERT_ICON_SIZE } } />
+						<Typography variant="h6" component="h3" color="text.primary">
+							{ sprintf(
+								/* Translators: %s: Site domain. */
+								__( 'We couldn\'t reach %s', 'elementor' ),
+								siteDomain,
+							) }
+						</Typography>
+					</Stack>
+					<Typography variant="body2" color="text.secondary">{ description }</Typography>
 				</Stack>
-				<Typography variant="body2" color="text.secondary">{ description }</Typography>
+				<Box flexShrink={ 0 }>
+					<RescanControl
+						layout={ RESCAN_LAYOUT_ERROR_SUMMARY }
+						retryAt={ retryAt }
+						onRescan={ onRescan }
+						isActivated={ isActivated }
+					/>
+				</Box>
 			</Stack>
 			<Box
 				pt={ 1 }
@@ -79,4 +90,7 @@ export const ErrorReportCard = ( { siteDomain, reason } ) => {
 ErrorReportCard.propTypes = {
 	siteDomain: PropTypes.string.isRequired,
 	reason: PropTypes.string,
+	retryAt: PropTypes.string,
+	onRescan: PropTypes.func.isRequired,
+	isActivated: PropTypes.bool,
 };

@@ -135,33 +135,33 @@ export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart, retryAt = n
 	const isCoolingDown = '' !== nextScanLabel;
 
 	return (
-	<Stack alignItems="center" width="100%">
-		<Stack alignItems="center" spacing={ HERO_SECTION_GAP } textAlign="center" width="100%">
-			<Stack alignItems="center" spacing={ 1 }>
-				<Typography variant="h4" component="h2" color="text.primary">
-					{ __( 'Is your site ready for agents?', 'elementor' ) }
-				</Typography>
-				<Typography variant="body1" color="text.secondary" maxWidth={ HERO_COPY_MAX_WIDTH }>
-					{ __( 'AI agents like those by ChatGPT and Claude now visit websites on behalf of people. Check how easily agents can reach, understand and take action on your site.', 'elementor' ) }
-				</Typography>
+		<Stack alignItems="center" width="100%">
+			<Stack alignItems="center" spacing={ HERO_SECTION_GAP } textAlign="center" width="100%">
+				<Stack alignItems="center" spacing={ 1 }>
+					<Typography variant="h4" component="h2" color="text.primary">
+						{ __( 'Is your site ready for agents?', 'elementor' ) }
+					</Typography>
+					<Typography variant="body1" color="text.secondary" maxWidth={ HERO_COPY_MAX_WIDTH }>
+						{ __( 'AI agents like those by ChatGPT and Claude now visit websites on behalf of people. Check how easily agents can reach, understand and take action on your site.', 'elementor' ) }
+					</Typography>
+				</Stack>
+				<Button
+					variant="contained"
+					color="primary"
+					size="large"
+					onClick={ onStart }
+					disabled={ isCoolingDown }
+				>
+					{ isCoolingDown ? nextScanLabel : __( 'Check my site', 'elementor' ) }
+				</Button>
+				<Stack direction="row" spacing={ 2 } width="100%" alignItems="stretch">
+					{ getFeatureCards().map( ( card ) => (
+						<FeatureCard key={ card.title } title={ card.title } body={ card.body } />
+					) ) }
+				</Stack>
 			</Stack>
-			<Button
-				variant="contained"
-				color="primary"
-				size="large"
-				onClick={ onStart }
-				disabled={ isCoolingDown }
-			>
-				{ isCoolingDown ? nextScanLabel : __( 'Check my site', 'elementor' ) }
-			</Button>
-			<Stack direction="row" spacing={ 2 } width="100%" alignItems="stretch">
-				{ getFeatureCards().map( ( card ) => (
-					<FeatureCard key={ card.title } title={ card.title } body={ card.body } />
-				) ) }
-			</Stack>
+			<ScannerPreview agentAccessUrl={ agentAccessUrl } siteDomain={ siteDomain } />
 		</Stack>
-		<ScannerPreview agentAccessUrl={ agentAccessUrl } siteDomain={ siteDomain } />
-	</Stack>
 	);
 };
 

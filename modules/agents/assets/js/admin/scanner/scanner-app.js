@@ -151,7 +151,13 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl } ) => {
 	if ( SCANNER_STATE_ERROR_REPORT === view ) {
 		return (
 			<ScoreSummaryBlock banner={ flow.isActivated ? null : renderActivateBanner() }>
-				<ErrorReportCard siteDomain={ siteDomain } reason={ scan?.outsideScan?.reason } />
+				<ErrorReportCard
+					siteDomain={ siteDomain }
+					reason={ scan?.outsideScan?.reason }
+					retryAt={ scan?.retryAt }
+					onRescan={ flow.startScan }
+					isActivated={ flow.isActivated }
+				/>
 			</ScoreSummaryBlock>
 		);
 	}

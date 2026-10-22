@@ -284,6 +284,7 @@ describe( 'Agent Ready scanner', () => {
 
 		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
 		expect( screen.getByText( 'What you can do now' ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
 		expect( screen.getByRole( 'button', { name: 'Turn settings on' } ) ).toBeTruthy();
 		expect( screen.queryByRole( 'img', { name: /Agent readiness score/ } ) ).toBeNull();
 	} );
@@ -320,6 +321,52 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
 		expect( screen.queryByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeNull();
 		expect( screen.queryByRole( 'status', { name: 'Scanning again' } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( runSiteScan ).toHaveBeenCalledTimes( 3 );
+		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
+	} );
+
+	it( 'offers rescan on the error report when Agent Ready is already on', async () => {
+		// Arrange
+		runSiteScan.mockImplementation( () => Promise.resolve( getFailedScanResult() ) );
+		renderScanner( { isExperimentActive: true } );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS + SCANNER_MOTION.errorProgressPauseMs );
+
+		// Assert
+		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
+		expect( screen.queryByRole( 'button', { name: 'Turn settings on' } ) ).toBeNull();
+	} );
+
+	it( 'shows the next scan time on the error report when a failed rescan is throttled', async () => {
+		// Arrange
+		const retryAt = new Date( Date.now() + COOLDOWN_REMAINING_MS ).toISOString();
+		await runFirstScan();
+		runSiteScan.mockImplementation( () => Promise.resolve( getFailedScanResult() ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+		runSiteScan.mockImplementation( () => Promise.reject( Object.assign( new Error( 'Too many scans' ), {
+			status: HTTP_TOO_MANY_REQUESTS,
+			reason: 'throttled',
+			retryAt,
+		} ) ) );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Next scan: 2h 15m' } ).disabled ).toBe( true );
 	} );
 
 	it( 'lands on the error report with the failure reason when the first scan request is rejected', async () => {
@@ -435,6 +482,68 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.queryByText( /You can scan again at/ ) ).toBeNull();
 		expect( screen.queryByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeNull();
 		expect( screen.getByRole( 'button', { name: 'Next scan: 2h 15m' } ).disabled ).toBe( true );
+	} );
+
+	it( 'blocks the first check when a cooldown is active and no report is stored', () => {
+		// Arrange
+		const retryAt = new Date( Date.now() + COOLDOWN_REMAINING_MS ).toISOString();
+
+		// Act
+		renderScanner( { retryAt } );
+
+		// Assert
+		expect( screen.getByRole( 'button', { name: 'Next scan: 2h 15m' } ).disabled ).toBe( true );
+		expect( screen.queryByRole( 'button', { name: 'Check my site' } ) ).toBeNull();
+	} );
+
+	it( 'uses a later localized cooldown instead of an expired report timestamp', () => {
+		// Arrange
+		const retryAt = new Date( Date.now() + COOLDOWN_REMAINING_MS ).toISOString();
+
+		// Act
+		renderScanner( { lastReport: getLastReport(), retryAt } );
+
+		// Assert
+		expect( screen.getByRole( 'button', { name: 'Next scan: 2h 15m' } ).disabled ).toBe( true );
+	} );
+
+	it( 'returns to the first-run pitch and blocks another check when the first scan is throttled', async () => {
+		// Arrange
+		const retryAt = new Date( Date.now() + COOLDOWN_REMAINING_MS ).toISOString();
+		runSiteScan.mockImplementation( () => Promise.reject( Object.assign( new Error( 'Too many scans' ), {
+			status: HTTP_TOO_MANY_REQUESTS,
+			reason: 'throttled',
+			retryAt,
+		} ) ) );
+		renderScanner();
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS );
+
+		// Assert
+		expect( runSiteScan ).toHaveBeenCalledTimes( 1 );
+		expect( screen.queryByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeNull();
+		expect( screen.getByRole( 'heading', { name: 'Is your site ready for agents?' } ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Next scan: 2h 15m' } ).disabled ).toBe( true );
+	} );
+
+	it( 'blocks rescans for the default cooldown when a throttle response omits retryAt', async () => {
+		// Arrange
+		runSiteScan.mockImplementation( () => Promise.reject( Object.assign( new Error( 'Too many scans' ), {
+			status: HTTP_TOO_MANY_REQUESTS,
+			reason: 'throttled',
+		} ) ) );
+		renderScanner( { lastReport: getLastReport() } );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( runSiteScan ).toHaveBeenCalledTimes( 1 );
+		expect( getScoreRing( LAST_REPORT_SCORE ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Next scan: 5m' } ).disabled ).toBe( true );
 	} );
 } );
 

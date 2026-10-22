@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
-import { ArrowUpRightIcon, CircleCheckFilledIcon, InfoCircleIcon, ReloadIcon } from '@elementor/icons';
+import { ArrowUpRightIcon, CircleCheckFilledIcon, InfoCircleIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
-import IconButton from '@elementor/ui/IconButton';
 import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
@@ -9,8 +7,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
+import { RESCAN_LAYOUT_SCORE_ROW, RescanControl, useNextScanLabel } from './rescan-control';
 import { scannerButtonSx } from './scanner-button-sx';
 import { ScoreRing } from './score-ring';
+
+export { useNextScanLabel };
 
 const WHERE_YOU_STAND_MAX = 39;
 const GETTING_THERE_MAX = 69;
@@ -21,76 +22,7 @@ const BANNER_BLOCK_GAP = '20px';
 const PLAIN_BLOCK_GAP = '32px';
 const BANNER_BLOCK_EXTRA_BOTTOM_SPACE = `${ SCANNER_LAYOUT.summaryBlockBottomSpace - SCANNER_LAYOUT.pageGap }px`;
 const SCORE_TEXT_GAP = '32px';
-const MS_PER_SECOND = 1000;
-const SECONDS_PER_MINUTE = 60;
-const MINUTES_PER_HOUR = 60;
-const MS_PER_MINUTE = SECONDS_PER_MINUTE * MS_PER_SECOND;
-const COOLDOWN_TICK_MS = MS_PER_MINUTE;
-const MINIMUM_REMAINING_MINUTES = 1;
 const CHECKED_AT_TOOLTIP = __( 'Based on current checks (v3.4). Not a final grade — the standard is still forming.', 'elementor' );
-
-const getRetryTimestamp = ( retryAt ) => {
-	const timestamp = retryAt ? Date.parse( retryAt ) : Number.NaN;
-
-	return Number.isNaN( timestamp ) ? null : timestamp;
-};
-
-const formatRemaining = ( remainingMs ) => {
-	const totalMinutes = Math.max( MINIMUM_REMAINING_MINUTES, Math.ceil( remainingMs / MS_PER_MINUTE ) );
-	const hours = Math.floor( totalMinutes / MINUTES_PER_HOUR );
-	const minutes = totalMinutes % MINUTES_PER_HOUR;
-
-	if ( hours > 0 && minutes > 0 ) {
-		return `${ hours }h ${ minutes }m`;
-	}
-
-	if ( hours > 0 ) {
-		return `${ hours }h`;
-	}
-
-	return `${ minutes }m`;
-};
-
-const getNextScanLabel = ( retryAt, now ) => {
-	const retryTimestamp = getRetryTimestamp( retryAt );
-
-	if ( null === retryTimestamp || retryTimestamp <= now ) {
-		return '';
-	}
-
-	return sprintf(
-		/* Translators: %s: Remaining time until the next scan, such as 2h 15m. */
-		__( 'Next scan: %s', 'elementor' ),
-		formatRemaining( retryTimestamp - now ),
-	);
-};
-
-export const useNextScanLabel = ( retryAt ) => {
-	const [ now, setNow ] = useState( () => Date.now() );
-
-	useEffect( () => {
-		const retryTimestamp = getRetryTimestamp( retryAt );
-
-		if ( null === retryTimestamp || retryTimestamp <= Date.now() ) {
-			return undefined;
-		}
-
-		setNow( Date.now() );
-		const timerId = setInterval( () => {
-			const current = Date.now();
-
-			setNow( current );
-
-			if ( retryTimestamp <= current ) {
-				clearInterval( timerId );
-			}
-		}, COOLDOWN_TICK_MS );
-
-		return () => clearInterval( timerId );
-	}, [ retryAt ] );
-
-	return getNextScanLabel( retryAt, now );
-};
 
 const getScoreCopy = ( score ) => {
 	if ( 'number' !== typeof score ) {
@@ -187,9 +119,6 @@ export const ScoreRow = ( {
 } ) => {
 	const { heading, description } = getScoreCopy( score );
 	const checkedAt = ranAt ? formatCheckedAt( ranAt ) : '';
-	const nextScanLabel = useNextScanLabel( retryAt );
-	const isCoolingDown = '' !== nextScanLabel;
-	const showRescanButton = isActivated || isCoolingDown;
 
 	return (
 		<Stack direction="row" alignItems="flex-start" gap={ SCORE_TEXT_GAP }>
@@ -198,31 +127,13 @@ export const ScoreRow = ( {
 				<Stack spacing={ 0 }>
 					<Stack direction="row" alignItems="center" spacing={ 2 }>
 						<Typography variant="h5" component="h3" color="text.primary">{ heading }</Typography>
-						{ ! showRescanButton && (
-							<IconButton
-								variant="outlined"
-								size="small"
-								color="secondary"
-								onClick={ onRescan }
-								disabled={ isBusy }
-								aria-label={ __( 'Rescan', 'elementor' ) }
-							>
-								<ReloadIcon />
-							</IconButton>
-						) }
-						{ showRescanButton && <Stack flex={ 1 } /> }
-						{ showRescanButton && (
-							<Button
-								variant="outlined"
-								color="secondary"
-								size="small"
-								onClick={ onRescan }
-								disabled={ isBusy || isCoolingDown }
-								startIcon={ <ReloadIcon /> }
-							>
-								{ isCoolingDown ? nextScanLabel : __( 'Rescan', 'elementor' ) }
-							</Button>
-						) }
+						<RescanControl
+							layout={ RESCAN_LAYOUT_SCORE_ROW }
+							retryAt={ retryAt }
+							onRescan={ onRescan }
+							isBusy={ isBusy }
+							isActivated={ isActivated }
+						/>
 					</Stack>
 					{ isActivated && (
 						<Stack direction="row" alignItems="center" spacing={ 1 }>

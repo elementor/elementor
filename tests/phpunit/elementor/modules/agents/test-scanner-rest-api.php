@@ -143,7 +143,30 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 429, $response->get_status() );
 		$this->assertSame( Scanner_Client::REASON_THROTTLED, $response->get_data()['data']['meta']['reason'] );
 		$this->assertSame( $previous_report, get_option( Scanner_Report_Store::OPTION_LAST_REPORT ) );
-		$this->assertGreaterThan( time(), (int) get_transient( Scanner_Report_Store::TRANSIENT_RETRY_AT ) );
+
+		$retry_at = (int) get_transient( Scanner_Report_Store::TRANSIENT_RETRY_AT );
+
+		$this->assertGreaterThan( time(), $retry_at );
+		$this->assertLessThanOrEqual( time() + self::RETRY_AFTER_SECONDS, $retry_at );
+	}
+
+	public function test_scan__uses_the_default_cooldown_when_a_throttle_has_no_retry_after() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_remote_response( 429, [ 'error' => 'Rate limit exceeded' ] );
+		$started_at = time();
+
+		// Act
+		$response = $this->dispatch();
+
+		// Assert
+		$retry_at = (int) get_transient( Scanner_Report_Store::TRANSIENT_RETRY_AT );
+
+		$this->assertSame( 429, $response->get_status() );
+		$this->assertSame( Scanner_Client::REASON_THROTTLED, $response->get_data()['data']['meta']['reason'] );
+		$this->assertFalse( get_option( Scanner_Report_Store::OPTION_LAST_REPORT ) );
+		$this->assertGreaterThanOrEqual( $started_at + Scanner_Report_Store::DEFAULT_COOLDOWN, $retry_at );
+		$this->assertLessThanOrEqual( time() + Scanner_Report_Store::DEFAULT_COOLDOWN, $retry_at );
 	}
 
 	public function test_scan__maps_an_unscannable_site_url_to_the_local_reason() {
