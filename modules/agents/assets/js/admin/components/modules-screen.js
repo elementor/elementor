@@ -207,7 +207,8 @@ ModulesScreen.propTypes = {
 		enabled: PropTypes.bool.isRequired,
 		isAvailable: PropTypes.bool.isRequired,
 		tools: PropTypes.array.isRequired,
-		editDetailsUrl: PropTypes.string,
+		businessDetails: PropTypes.string,
+		maxBusinessDetailsLength: PropTypes.number,
 	} ).isRequired,
 	llmsConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,

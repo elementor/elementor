@@ -272,10 +272,78 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		// Assert
 		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
 		$this->assertSame(
-			[ 'enabled' => false ],
+			[ 'enabled' => false, 'business_details' => '' ],
 			$this->settings->get_module_settings( Agent_Ready_Settings::MODULE_BROWSER_TOOLS )
 		);
 		$this->assertTrue( $this->settings->is_agent_discovery_enabled() );
+	}
+
+	public function test_get_business_details__defaults_to_empty() {
+		// Act & Assert
+		$this->assertSame( '', $this->settings->get_business_details() );
+	}
+
+	public function test_rest_update__sanitizes_and_limits_business_details() {
+		// Arrange
+		$details = "<b>Open</b> daily\n" . str_repeat( 'a', Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => $details ],
+		] );
+
+		// Assert
+		$saved = $this->settings->get_business_details();
+
+		$this->assertStringStartsWith( "Open daily\n", $saved );
+		$this->assertSame( Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH, mb_strlen( $saved ) );
+	}
+
+	public function test_rest_update__keeps_business_details_when_only_the_toggle_is_saved() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => 'Open daily' ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => false ],
+		] );
+
+		// Assert
+		$this->assertSame( 'Open daily', $this->settings->get_business_details() );
+		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
+	}
+
+	public function test_rest_update__keeps_the_toggle_when_only_business_details_are_saved() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => false ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => 'Open daily' ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
+		$this->assertSame( 'Open daily', $this->settings->get_business_details() );
+	}
+
+	public function test_rest_update__clears_business_details_when_saved_empty() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => 'Open daily' ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => '   ' ],
+		] );
+
+		// Assert
+		$this->assertSame( '', $this->settings->get_business_details() );
 	}
 
 	public function test_get_managed_bots__defaults_to_popular_bots_in_catalog_order() {

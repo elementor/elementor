@@ -24,6 +24,8 @@ class Agent_Ready_Settings {
 	const MODULE_AGENT_DISCOVERY = 'agent_discovery';
 	const MODULE_BROWSER_TOOLS = 'browser_tools';
 
+	const MAX_BUSINESS_DETAILS_LENGTH = 2000;
+
 	const BOT_PERMISSION_SEARCH = 'search';
 	const BOT_PERMISSION_AI_INPUT = 'ai_input';
 	const BOT_PERMISSION_AI_TRAIN = 'ai_train';
@@ -116,6 +118,10 @@ class Agent_Ready_Settings {
 		return (bool) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['enabled'];
 	}
 
+	public function get_business_details(): string {
+		return (string) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['business_details'];
+	}
+
 	/**
 	 * Bots listed in the admin table, keyed by user-agent token.
 	 *
@@ -183,7 +189,8 @@ class Agent_Ready_Settings {
 				'enabled' => true,
 			],
 			self::MODULE_BROWSER_TOOLS => [
-				'enabled' => true,
+				'enabled'          => true,
+				'business_details' => '',
 			],
 		];
 	}
@@ -203,8 +210,26 @@ class Agent_Ready_Settings {
 			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
 			self::MODULE_BOT_ACCESS_CONTROL  => fn( array $settings ) => $this->sanitize_bot_access_module( $settings ),
 			self::MODULE_AGENT_DISCOVERY     => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
-			self::MODULE_BROWSER_TOOLS       => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
+			self::MODULE_BROWSER_TOOLS       => fn( array $settings ) => $this->sanitize_browser_tools_module( $settings ),
 		];
+	}
+
+	private function sanitize_browser_tools_module( array $settings ): array {
+		return [
+			'enabled'          => rest_sanitize_boolean( $settings['enabled'] ?? true ),
+			'business_details' => $this->sanitize_business_details( $settings['business_details'] ?? '' ),
+		];
+	}
+
+	/**
+	 * @param mixed $details Incoming business details.
+	 */
+	private function sanitize_business_details( $details ): string {
+		if ( ! is_scalar( $details ) ) {
+			return '';
+		}
+
+		return mb_substr( trim( sanitize_textarea_field( (string) $details ) ), 0, self::MAX_BUSINESS_DETAILS_LENGTH );
 	}
 
 	private function sanitize_toggle_module( array $settings ): array {

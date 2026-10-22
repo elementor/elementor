@@ -702,27 +702,12 @@ class Module extends BaseModule {
 
 	private function get_browser_tools_state(): array {
 		return [
-			'enabled'     => $this->settings->is_browser_tools_enabled(),
-			'isAvailable' => Webmcp_Browser_Tools::is_available(),
-			'tools'       => $this->webmcp_browser_tools->get_admin_tools(),
-			'editDetailsUrl' => $this->get_business_details_edit_url(),
+			'enabled'                  => $this->settings->is_browser_tools_enabled(),
+			'isAvailable'              => Webmcp_Browser_Tools::is_available(),
+			'tools'                    => $this->webmcp_browser_tools->get_admin_tools(),
+			'businessDetails'          => $this->settings->get_business_details(),
+			'maxBusinessDetailsLength' => Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH,
 		];
-	}
-
-	private function get_business_details_edit_url(): string {
-		$front_page_id = (int) get_option( 'page_on_front' );
-
-		if ( ! $front_page_id ) {
-			return admin_url( 'options-reading.php' );
-		}
-
-		$document = Plugin::$instance->documents->get( $front_page_id );
-
-		if ( $document && $document->is_built_with_elementor() ) {
-			return $document->get_edit_url();
-		}
-
-		return (string) get_edit_post_link( $front_page_id, 'raw' );
 	}
 
 	private function create_webmcp_browser_tools( Prompt_Injection_Sanitizer $sanitizer ): Webmcp_Browser_Tools {
@@ -735,7 +720,7 @@ class Module extends BaseModule {
 				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
 				new Get_Site_Structure( $this->generator, $sanitizer ),
 				new Read_Page_Content( $this->settings, $this->markdown_endpoint ),
-				new Query_Business_Info( $extractor, $sanitizer ),
+				new Query_Business_Info( $this->settings, $extractor, $sanitizer ),
 			]
 		);
 	}

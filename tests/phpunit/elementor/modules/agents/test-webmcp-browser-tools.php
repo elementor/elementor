@@ -77,7 +77,7 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $generator, $sanitizer ),
 			new Get_Site_Structure( $generator, $sanitizer ),
 			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ) ),
-			new Query_Business_Info( $this->extractor, $sanitizer ),
+			new Query_Business_Info( $this->settings, $this->extractor, $sanitizer ),
 		] );
 
 		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );

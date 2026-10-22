@@ -22,7 +22,6 @@ jest.mock( '@elementor/icons', () => ( {
 	AcademyIcon: () => <span />,
 	AlertCircleIcon: () => <span data-testid="alert-circle-icon" />,
 	ArchiveTemplateIcon: () => <span />,
-	ArrowUpRightIcon: () => <span />,
 	ArrowsDiagonalIcon: () => <span />,
 	BanIcon: () => <span />,
 	BriefcaseIcon: () => <span />,
@@ -115,7 +114,8 @@ const agentDiscoveryConfig = {
 const browserToolsConfig = {
 	enabled: true,
 	isAvailable: true,
-	editDetailsUrl: 'https://example.com/wp-admin/post.php?post=2&action=edit',
+	businessDetails: '',
+	maxBusinessDetailsLength: 2000,
 	tools: [
 		{ name: 'search_site_content', label: 'Search site content', description: 'Let agents find relevant pages and posts easily.' },
 		{ name: 'query_business_info', label: 'Get business information', description: 'Access business details.' },

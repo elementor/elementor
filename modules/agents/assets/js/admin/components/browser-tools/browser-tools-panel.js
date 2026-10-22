@@ -21,7 +21,7 @@ const splitIntoColumns = ( tools ) => {
 };
 
 export const BrowserToolsPanel = ( { settings, isMarkdownEnabled } ) => {
-	const { editDetailsUrl, isAvailable, tools } = settings;
+	const { businessDetails, isAvailable, maxBusinessDetailsLength, saveBusinessDetails, tools } = settings;
 
 	return (
 		<Stack spacing={ 5 } pl={ 7 } pr={ 6 } py={ 4 } minWidth={ 0 }>
@@ -55,7 +55,9 @@ export const BrowserToolsPanel = ( { settings, isMarkdownEnabled } ) => {
 								<BrowserToolItem
 									key={ tool.name }
 									tool={ tool }
-									editDetailsUrl={ editDetailsUrl }
+									businessDetails={ businessDetails }
+									maxBusinessDetailsLength={ maxBusinessDetailsLength }
+									onSaveBusinessDetails={ saveBusinessDetails }
 									isMarkdownEnabled={ isMarkdownEnabled }
 								/>
 							) ) }
@@ -69,8 +71,10 @@ export const BrowserToolsPanel = ( { settings, isMarkdownEnabled } ) => {
 
 BrowserToolsPanel.propTypes = {
 	settings: PropTypes.shape( {
-		editDetailsUrl: PropTypes.string,
+		businessDetails: PropTypes.string,
 		isAvailable: PropTypes.bool.isRequired,
+		maxBusinessDetailsLength: PropTypes.number,
+		saveBusinessDetails: PropTypes.func,
 		tools: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	} ).isRequired,
 	isMarkdownEnabled: PropTypes.bool.isRequired,
