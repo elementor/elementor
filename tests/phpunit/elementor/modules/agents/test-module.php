@@ -128,34 +128,6 @@ class Test_Module extends Elementor_Test_Base {
 		$instance_property->setValue( null, null );
 	}
 
-	public function test_get_llms_txt_content__returns_empty_when_not_configured() {
-		// Act
-		$content = $this->module->get_llms_txt_content();
-
-		// Assert
-		$this->assertSame( '', $content );
-	}
-
-	public function test_get_llms_txt_content__returns_saved_content() {
-		// Arrange
-		$llms_content = '# llms.txt';
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$this->flush_documents_cache();
-		$kit = Plugin::$instance->documents->get( $kit_id );
-		$kit->update_settings( [
-			'agents' => [
-				'llms' => $llms_content,
-			],
-		] );
-
-		$this->flush_documents_cache();
-
-		// Act
-		$content = $this->module->get_llms_txt_content();
-
-		// Assert
-		$this->assertSame( $llms_content, $content );
-	}
 
 	public function test_is_llms_txt_request__matches_root_path() {
 		// Arrange

@@ -5,8 +5,6 @@ namespace Elementor\Modules\Agents;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Core\Kits\Documents\Tabs\Settings_Agents;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
@@ -37,9 +35,7 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'agent_ready';
 
-	const PACKAGES = [
-		'editor-agents',
-	];
+	const PACKAGES = [];
 
 	/** Default HTTP max-age for the served response (5 minutes). */
 	const DEFAULT_CACHE_MAX_AGE = 300;
@@ -125,8 +121,6 @@ class Module extends BaseModule {
 			add_action( "update_option_{$option}", [ $this, 'on_settings_change' ] );
 		}
 
-		add_action( 'elementor/kit/register_tabs', [ $this, 'register_kit_tabs' ] );
-
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
 		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
 
@@ -166,19 +160,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
 		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
-	}
-
-	// -------------------------------------------------------------------------
-	// Kit tabs
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Register Agents settings on the active kit.
-	 *
-	 * @param Kit $kit Active kit document.
-	 */
-	public function register_kit_tabs( $kit ) {
-		$kit->register_tab( 'settings-agents', Settings_Agents::class );
 	}
 
 	// -------------------------------------------------------------------------
@@ -347,26 +328,6 @@ class Module extends BaseModule {
 
 	/**
 	 * Return the manually-entered llms.txt content stored in kit settings.
-	 *
-	 * This was the original behaviour (pre-auto-generation). The auto-generated
-	 * content now takes precedence; this method is preserved so external code
-	 * and the existing test-suite continue to work.
-	 *
-	 * @deprecated Use get_generated_llms_txt() instead.
-	 */
-	public function get_llms_txt_content(): string {
-		$kit    = Plugin::$instance->kits_manager->get_active_kit();
-		$agents = $kit->get_settings( 'agents' );
-
-		if ( ! is_array( $agents ) || ! isset( $agents['llms'] ) ) {
-			return '';
-		}
-
-		$llms = $agents['llms'];
-
-		return is_string( $llms ) ? $llms : '';
-	}
-
 	// -------------------------------------------------------------------------
 	// Cache invalidation
 	// -------------------------------------------------------------------------
