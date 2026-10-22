@@ -65,6 +65,33 @@ const getNextScanLabel = ( retryAt, now ) => {
 	);
 };
 
+export const useNextScanLabel = ( retryAt ) => {
+	const [ now, setNow ] = useState( () => Date.now() );
+
+	useEffect( () => {
+		const retryTimestamp = getRetryTimestamp( retryAt );
+
+		if ( null === retryTimestamp || retryTimestamp <= Date.now() ) {
+			return undefined;
+		}
+
+		setNow( Date.now() );
+		const timerId = setInterval( () => {
+			const current = Date.now();
+
+			setNow( current );
+
+			if ( retryTimestamp <= current ) {
+				clearInterval( timerId );
+			}
+		}, COOLDOWN_TICK_MS );
+
+		return () => clearInterval( timerId );
+	}, [ retryAt ] );
+
+	return getNextScanLabel( retryAt, now );
+};
+
 const getScoreCopy = ( score ) => {
 	if ( 'number' !== typeof score ) {
 		return {
@@ -160,31 +187,9 @@ export const ScoreRow = ( {
 } ) => {
 	const { heading, description } = getScoreCopy( score );
 	const checkedAt = ranAt ? formatCheckedAt( ranAt ) : '';
-	const [ now, setNow ] = useState( () => Date.now() );
-	const nextScanLabel = getNextScanLabel( retryAt, now );
+	const nextScanLabel = useNextScanLabel( retryAt );
 	const isCoolingDown = '' !== nextScanLabel;
 	const showRescanButton = isActivated || isCoolingDown;
-
-	useEffect( () => {
-		const retryTimestamp = getRetryTimestamp( retryAt );
-
-		if ( null === retryTimestamp || retryTimestamp <= Date.now() ) {
-			return undefined;
-		}
-
-		setNow( Date.now() );
-		const timerId = setInterval( () => {
-			const current = Date.now();
-
-			setNow( current );
-
-			if ( retryTimestamp <= current ) {
-				clearInterval( timerId );
-			}
-		}, COOLDOWN_TICK_MS );
-
-		return () => clearInterval( timerId );
-	}, [ retryAt ] );
 
 	return (
 		<Stack direction="row" alignItems="flex-start" gap={ SCORE_TEXT_GAP }>

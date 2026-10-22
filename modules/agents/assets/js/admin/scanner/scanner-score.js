@@ -20,11 +20,7 @@ export const getScoreTier = ( score ) => {
 	return SCORE_TIER_HIGH;
 };
 
-export const getVisibleChecks = ( scan, isActivated ) => {
-	const checks = scan?.checks ?? [];
-
-	return isActivated ? checks.filter( ( check ) => ! check.resolvedByActivation ) : checks;
-};
+export const getVisibleChecks = ( scan ) => scan?.checks ?? [];
 
 export const getBaseScore = ( scan, isActivated ) => {
 	if ( ! scan ) {

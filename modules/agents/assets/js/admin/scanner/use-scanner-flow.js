@@ -5,6 +5,7 @@ import { getSaveErrorMessage } from '../hooks/get-save-error-message';
 import {
 	HTTP_TOO_MANY_REQUESTS,
 	OUTSIDE_SCAN_STATUS_FAILED,
+	SCANNER_DEFAULT_COOLDOWN_SECONDS,
 	SCANNER_MOTION,
 	SCANNER_STATE_ACTIVATING,
 	SCANNER_STATE_ERROR_PROGRESS,
@@ -16,7 +17,7 @@ import {
 	SCANNER_STATE_RESCANNING,
 } from './scanner-constants';
 import { getProgressSteps } from './scanner-mock-data';
-import { toFailedScanResult } from './scanner-report-adapter';
+import { getLaterRetryAt, toFailedScanResult } from './scanner-report-adapter';
 import {
 	getActivationGain,
 	getBaseScore,
@@ -26,7 +27,13 @@ import {
 	hasUncountedFixes,
 } from './scanner-score';
 
+const MS_PER_SECOND = 1000;
+
 const wait = ( delayMs ) => new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
+
+const getFallbackRetryAt = () => new Date( Date.now() + ( SCANNER_DEFAULT_COOLDOWN_SECONDS * MS_PER_SECOND ) ).toISOString();
+
+const getThrottledRetryAt = ( error ) => error?.retryAt || getFallbackRetryAt();
 
 const withoutKey = ( object, key ) => {
 	const { [ key ]: _removed, ...rest } = object;
@@ -49,13 +56,14 @@ const withFailedOutsideScan = ( scan, reason ) => ( {
 	outsideScan: { status: OUTSIDE_SCAN_STATUS_FAILED, reason },
 } );
 
-export const useScannerFlow = ( { initialScan = null, isExperimentActive = false } = {} ) => {
+export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isExperimentActive = false } = {} ) => {
 	const progressSteps = useMemo( getProgressSteps, [] );
 	const isMountedRef = useRef( true );
 
 	const [ view, setView ] = useState( initialScan ? getReportView( isExperimentActive ) : SCANNER_STATE_FIRST_RUN );
 	const [ completedStepsCount, setCompletedStepsCount ] = useState( 0 );
 	const [ scan, setScan ] = useState( initialScan );
+	const [ cooldownRetryAt, setCooldownRetryAt ] = useState( initialRetryAt );
 	const [ isActivated, setIsActivated ] = useState( isExperimentActive );
 	const [ ringDurationMs, setRingDurationMs ] = useState( SCANNER_MOTION.ringArriveMs );
 	const [ resolvedIds, setResolvedIds ] = useState( {} );
@@ -109,8 +117,10 @@ export const useScannerFlow = ( { initialScan = null, isExperimentActive = false
 		}
 	}, [] );
 
+	const retryAt = getLaterRetryAt( scan?.retryAt, cooldownRetryAt );
+
 	const startScan = useCallback( async () => {
-		if ( isRetryAhead( scan?.retryAt ) ) {
+		if ( isRetryAhead( retryAt ) ) {
 			return;
 		}
 
@@ -141,14 +151,20 @@ export const useScannerFlow = ( { initialScan = null, isExperimentActive = false
 			return;
 		}
 
-		if ( isThrottled( scanError ) && scan ) {
-			const hasFailedOutsideScan = OUTSIDE_SCAN_STATUS_FAILED === scan.outsideScan?.status;
+		if ( isThrottled( scanError ) ) {
+			const throttledRetryAt = getThrottledRetryAt( scanError );
 
-			if ( scanError.retryAt ) {
-				setScan( { ...scan, retryAt: scanError.retryAt } );
+			setCooldownRetryAt( throttledRetryAt );
+
+			if ( scan ) {
+				const hasFailedOutsideScan = OUTSIDE_SCAN_STATUS_FAILED === scan.outsideScan?.status;
+
+				setScan( { ...scan, retryAt: throttledRetryAt } );
+				setView( hasFailedOutsideScan ? SCANNER_STATE_ERROR_REPORT : getReportView( isActivated ) );
+				return;
 			}
 
-			setView( hasFailedOutsideScan ? SCANNER_STATE_ERROR_REPORT : getReportView( isActivated ) );
+			setView( SCANNER_STATE_FIRST_RUN );
 			return;
 		}
 
@@ -170,7 +186,7 @@ export const useScannerFlow = ( { initialScan = null, isExperimentActive = false
 		setOpenIds( {} );
 		setRingDurationMs( SCANNER_MOTION.ringArriveMs );
 		setView( getReportView( isActivated ) );
-	}, [ isActivated, playProgressSteps, showScanFailure, scan, resolvedIds ] );
+	}, [ isActivated, playProgressSteps, retryAt, showScanFailure, scan, resolvedIds ] );
 
 	const activate = useCallback( async () => {
 		const previousView = view;
@@ -270,7 +286,7 @@ export const useScannerFlow = ( { initialScan = null, isExperimentActive = false
 		setAreChecksExpanded( ( current ) => ! current );
 	}, [] );
 
-	const visibleChecks = getVisibleChecks( scan, isActivated );
+	const visibleChecks = getVisibleChecks( scan );
 	const baseScore = getBaseScore( scan, isActivated );
 	const displayScore = null === baseScore ? null : baseScore + getEarnedPoints( visibleChecks, resolvedIds, countedIds );
 	const ringScore = SCANNER_STATE_ACTIVATING === view
@@ -294,6 +310,7 @@ export const useScannerFlow = ( { initialScan = null, isExperimentActive = false
 		preferences,
 		areChecksExpanded,
 		actionError,
+		retryAt,
 		startScan,
 		activate,
 		toggleRow,

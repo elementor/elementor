@@ -33,7 +33,7 @@ import {
 	SCANNER_STATE_RESCANNING,
 } from './scanner-constants';
 import { resolveAgentReadyActive } from './resolve-agent-ready-active';
-import { toScanResult } from './scanner-report-adapter';
+import { getLaterRetryAt, toScanResult } from './scanner-report-adapter';
 import { useScannerFlow } from './use-scanner-flow';
 
 const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
@@ -116,7 +116,14 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl } ) => {
 	);
 
 	if ( SCANNER_STATE_FIRST_RUN === view ) {
-		return <FirstRunView agentAccessUrl={ agentAccessUrl } siteDomain={ siteDomain } onStart={ flow.startScan } />;
+		return (
+			<FirstRunView
+				agentAccessUrl={ agentAccessUrl }
+				siteDomain={ siteDomain }
+				onStart={ flow.startScan }
+				retryAt={ flow.retryAt }
+			/>
+		);
 	}
 
 	if ( SCANNER_STATE_PROGRESS === view || SCANNER_STATE_ERROR_PROGRESS === view ) {
@@ -166,10 +173,17 @@ ScannerView.propTypes = {
 	agentAccessUrl: PropTypes.string.isRequired,
 };
 
-const ScannerScreen = ( { siteDomain, agentAccessUrl, lastReport, isExperimentActive } ) => {
+const ScannerScreen = ( { siteDomain, agentAccessUrl, lastReport, retryAt = null, isExperimentActive } ) => {
 	const agentReadyActive = useMemo( () => resolveAgentReadyActive( isExperimentActive ), [ isExperimentActive ] );
-	const initialScan = useMemo( () => ( lastReport ? toScanResult( lastReport ) : null ), [ lastReport ] );
-	const flow = useScannerFlow( { initialScan, isExperimentActive: agentReadyActive } );
+	const initialScan = useMemo(
+		() => ( lastReport ? toScanResult( lastReport, getLaterRetryAt( lastReport.retryAt, retryAt ) ) : null ),
+		[ lastReport, retryAt ],
+	);
+	const flow = useScannerFlow( {
+		initialScan,
+		initialRetryAt: lastReport ? null : retryAt,
+		isExperimentActive: agentReadyActive,
+	} );
 	const isFirstRun = SCANNER_STATE_FIRST_RUN === flow.view;
 	const isScanProgress = SCANNER_STATE_PROGRESS === flow.view || SCANNER_STATE_ERROR_PROGRESS === flow.view;
 
@@ -184,10 +198,11 @@ ScannerScreen.propTypes = {
 	siteDomain: PropTypes.string.isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
 	lastReport: PropTypes.object,
+	retryAt: PropTypes.string,
 	isExperimentActive: PropTypes.bool,
 };
 
-export const ScannerApp = ( { isRTL, siteDomain, agentAccessUrl, lastReport, isExperimentActive = false } ) => (
+export const ScannerApp = ( { isRTL, siteDomain, agentAccessUrl, lastReport, retryAt = null, isExperimentActive = false } ) => (
 	<DirectionProvider rtl={ isRTL }>
 		<LocalizationProvider>
 			<ThemeProvider colorScheme="light" palette="argon-beta">
@@ -195,6 +210,7 @@ export const ScannerApp = ( { isRTL, siteDomain, agentAccessUrl, lastReport, isE
 					siteDomain={ siteDomain }
 					agentAccessUrl={ agentAccessUrl }
 					lastReport={ lastReport }
+					retryAt={ retryAt }
 					isExperimentActive={ isExperimentActive }
 				/>
 			</ThemeProvider>
@@ -207,5 +223,6 @@ ScannerApp.propTypes = {
 	siteDomain: PropTypes.string.isRequired,
 	agentAccessUrl: PropTypes.string.isRequired,
 	lastReport: PropTypes.object,
+	retryAt: PropTypes.string,
 	isExperimentActive: PropTypes.bool,
 };

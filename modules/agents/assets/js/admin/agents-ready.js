@@ -30,6 +30,7 @@ const mountScanner = ( rootElement, config, isRTL ) => {
 			siteDomain={ scannerConfig.siteDomain || window.location.hostname }
 			agentAccessUrl={ scannerConfig.agentAccessUrl || '' }
 			lastReport={ scannerConfig.lastReport || null }
+			retryAt={ scannerConfig.retryAt || null }
 		/>
 	), rootElement );
 };

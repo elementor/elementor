@@ -16,19 +16,36 @@ const opacityFor = ( column, row ) => {
 	return DOT_FIELD.opacityMin + ( bucket * DOT_FIELD.opacityStep );
 };
 
+const resolveGridSpacing = ( width, height ) => {
+	const baseGrid = DOT_FIELD.grid;
+	const dotCount = Math.ceil( width / baseGrid ) * Math.ceil( height / baseGrid );
+
+	if ( dotCount <= DOT_FIELD.maxDots ) {
+		return baseGrid;
+	}
+
+	return baseGrid * Math.sqrt( dotCount / DOT_FIELD.maxDots );
+};
+
 const buildDots = ( width, height ) => {
-	const columns = Math.ceil( width / DOT_FIELD.grid );
-	const rows = Math.ceil( height / DOT_FIELD.grid );
+	const gridSpacing = resolveGridSpacing( width, height );
+	const columns = Math.ceil( width / gridSpacing );
+	const rows = Math.ceil( height / gridSpacing );
 	const dots = [];
 
 	for ( let row = 0; row < rows; row++ ) {
 		for ( let column = 0; column < columns; column++ ) {
+			const x = column * gridSpacing;
+			const y = row * gridSpacing;
+			const hashColumn = Math.floor( x / DOT_FIELD.grid );
+			const hashRow = Math.floor( y / DOT_FIELD.grid );
+
 			dots.push( {
-				x: column * DOT_FIELD.grid,
-				y: row * DOT_FIELD.grid,
-				base: opacityFor( column, row ),
-				phase: ( column * DOT_FIELD.driftScaleX ) + ( row * DOT_FIELD.driftScaleY ),
-				phaseAlt: ( row * DOT_FIELD.driftScaleY ) - ( column * DOT_FIELD.driftScaleX ),
+				x,
+				y,
+				base: opacityFor( hashColumn, hashRow ),
+				phase: ( hashColumn * DOT_FIELD.driftScaleX ) + ( hashRow * DOT_FIELD.driftScaleY ),
+				phaseAlt: ( hashRow * DOT_FIELD.driftScaleY ) - ( hashColumn * DOT_FIELD.driftScaleX ),
 			} );
 		}
 	}

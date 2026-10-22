@@ -705,10 +705,13 @@ class Module extends BaseModule {
 	}
 
 	private function get_scanner_state(): array {
+		$retry_at = $this->scanner_store->get_retry_at();
+
 		return [
 			'siteDomain'           => wp_parse_url( home_url(), PHP_URL_HOST ),
 			'agentAccessUrl'         => admin_url( 'admin.php?page=' . self::AGENT_ACCESS_PAGE_ID ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
+			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 			'isExperimentActive'     => self::is_active(),
 		];
 	}

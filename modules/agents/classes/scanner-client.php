@@ -12,8 +12,6 @@ class Scanner_Client {
 
 	const DEFAULT_TIMEOUT = 90;
 
-	const DEFAULT_RETRY_AFTER = 60;
-
 	const TEST_TYPE = 'wordpress';
 
 	const ERROR_CODE = 'agents_scanner_failed';
@@ -158,7 +156,7 @@ class Scanner_Client {
 			return $retry_at - time();
 		}
 
-		return self::DEFAULT_RETRY_AFTER;
+		return Scanner_Report_Store::DEFAULT_COOLDOWN;
 	}
 
 	private function error( int $status, string $message, ?string $reason = null, ?int $retry_at = null ): \WP_Error {

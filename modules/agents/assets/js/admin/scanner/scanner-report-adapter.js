@@ -84,6 +84,28 @@ const toPassingCheck = ( check, layers, activeWeight ) => ( {
 
 const byPointsDescending = ( first, second ) => second.points - first.points;
 
+const toRetryTimestamp = ( retryAt ) => {
+	const timestamp = retryAt ? Date.parse( retryAt ) : Number.NaN;
+
+	return Number.isNaN( timestamp ) ? null : timestamp;
+};
+
+export const getLaterRetryAt = ( currentRetryAt, nextRetryAt ) => {
+	const nextTimestamp = toRetryTimestamp( nextRetryAt );
+
+	if ( null === nextTimestamp ) {
+		return currentRetryAt ?? null;
+	}
+
+	const currentTimestamp = toRetryTimestamp( currentRetryAt );
+
+	if ( null === currentTimestamp || nextTimestamp >= currentTimestamp ) {
+		return nextRetryAt;
+	}
+
+	return currentRetryAt;
+};
+
 export const toScanResult = ( report, retryAt = null ) => {
 	const layers = report?.layers ?? {};
 	const checks = report?.checks ?? [];

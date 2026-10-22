@@ -11,7 +11,7 @@ import { getMockScanResult } from '../scanner-mock-data';
 import { getBaseScore, getVisibleChecks } from '../scanner-score';
 import { FixesSection } from './fixes-section';
 import { PassingTable } from './passing-table';
-import { ScoreRow, ScoreSummaryBlock } from './score-summary-block';
+import { ScoreRow, ScoreSummaryBlock, useNextScanLabel } from './score-summary-block';
 import { StageBars } from './stage-bars';
 
 const HERO_COPY_MAX_WIDTH = 608;
@@ -130,7 +130,11 @@ ScannerPreview.propTypes = {
 	siteDomain: PropTypes.string.isRequired,
 };
 
-export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart } ) => (
+export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart, retryAt = null } ) => {
+	const nextScanLabel = useNextScanLabel( retryAt );
+	const isCoolingDown = '' !== nextScanLabel;
+
+	return (
 	<Stack alignItems="center" width="100%">
 		<Stack alignItems="center" spacing={ HERO_SECTION_GAP } textAlign="center" width="100%">
 			<Stack alignItems="center" spacing={ 1 }>
@@ -146,8 +150,9 @@ export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart } ) => (
 				color="primary"
 				size="large"
 				onClick={ onStart }
+				disabled={ isCoolingDown }
 			>
-				{ __( 'Check my site', 'elementor' ) }
+				{ isCoolingDown ? nextScanLabel : __( 'Check my site', 'elementor' ) }
 			</Button>
 			<Stack direction="row" spacing={ 2 } width="100%" alignItems="stretch">
 				{ getFeatureCards().map( ( card ) => (
@@ -157,10 +162,12 @@ export const FirstRunView = ( { agentAccessUrl, siteDomain, onStart } ) => (
 		</Stack>
 		<ScannerPreview agentAccessUrl={ agentAccessUrl } siteDomain={ siteDomain } />
 	</Stack>
-);
+	);
+};
 
 FirstRunView.propTypes = {
 	agentAccessUrl: PropTypes.string.isRequired,
 	siteDomain: PropTypes.string.isRequired,
 	onStart: PropTypes.func.isRequired,
+	retryAt: PropTypes.string,
 };

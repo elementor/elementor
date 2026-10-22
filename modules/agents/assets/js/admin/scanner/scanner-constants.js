@@ -24,6 +24,8 @@ export const SCAN_FAILURE_REASON_BLOCKED = 'blocked';
 
 export const HTTP_TOO_MANY_REQUESTS = 429;
 
+export const SCANNER_DEFAULT_COOLDOWN_SECONDS = 300;
+
 export const STAGE_REACH = 'reach';
 export const STAGE_IDENTIFY = 'identify';
 export const STAGE_ACT = 'act';
@@ -71,6 +73,7 @@ export const SCANNER_COLORS = {
 export const DOT_FIELD = {
 	size: 1.8,
 	grid: 7,
+	maxDots: 5000,
 	rgb: '89, 89, 89',
 	opacityMin: 0.02,
 	opacityStep: 0.02,
