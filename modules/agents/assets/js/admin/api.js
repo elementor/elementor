@@ -1,7 +1,32 @@
 import apiFetch from '@wordpress/api-fetch';
 
+import { toScanResult } from './scanner/scanner-report-adapter';
+
 const AGENT_READY_SETTINGS_PATH = '/elementor/v1/settings/elementor_agent_ready_settings';
+const SCANNER_SCAN_PATH = '/elementor/v1/agents-ready/scan';
 const HTTP_NOT_FOUND = 404;
+
+const toScanError = ( reason ) => Object.assign( new Error( reason?.message ?? '' ), {
+	status: reason?.data?.status ?? null,
+	reason: reason?.data?.meta?.reason ?? null,
+	retryAt: reason?.data?.meta?.retryAt ?? null,
+} );
+
+export const runSiteScan = async () => {
+	try {
+		const response = await apiFetch( { path: SCANNER_SCAN_PATH, method: 'POST' } );
+
+		return toScanResult( response?.data?.report, response?.data?.retryAt );
+	} catch ( reason ) {
+		throw toScanError( reason );
+	}
+};
+
+// TODO: Wire to the WP Admin endpoint that applies a single check fix ("Fix with Angie", a saved preference, or a check switch turned on). `payload` carries the preference value or `{ enabled: true }`.
+export const applyCheckFix = ( checkId, payload = {} ) => Promise.resolve( { checkId, payload } );
+
+// TODO: Wire to the WP Admin endpoint that reverts a check fix ("Undo", or a check switch turned off).
+export const undoCheckFix = ( checkId ) => Promise.resolve( { checkId } );
 
 export const activateAgentsReady = () => {
 	return elementorCommon.ajax.addRequest( 'agents_ready_opt_in' );
