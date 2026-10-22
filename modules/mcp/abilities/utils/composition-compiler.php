@@ -132,8 +132,9 @@ final class Composition_Compiler {
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
 		$warnings->merge( $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) )['warnings'] );
 
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
-		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs )['warnings'] );
+		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints(), $variables_service );
+		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch' )['warnings'] );
+		Grid_Empty_Rows_Warnings::report( $index, $warnings );
 
 		$warnings->merge( $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) )['warnings'] );
 
@@ -266,10 +267,7 @@ final class Composition_Compiler {
 	}
 
 	private function resolve_document_root_wrapper(): string {
-		if (
-			Widget_Context_Helper::is_standardized_maps_active()
-			&& Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER )
-		) {
+		if ( Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER ) ) {
 			return self::DOCUMENT_ROOT_V3_WRAPPER;
 		}
 
