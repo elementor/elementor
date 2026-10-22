@@ -13,7 +13,6 @@ import { svgSrcTransformer } from './svg-src-transformer';
 const EMPTY_ICON_RESULT = { html: null, url: null };
 const ICON_SVG_SIZE = '100%';
 const ICON_SVG_OVERFLOW = 'visible';
-const FONT_AWESOME_LIBRARY_PREFIX = 'fa-';
 const EICONS_LIBRARY = 'eicons';
 const DEFAULT_SVG_RELATIVE_PATH = 'images/default-svg.svg';
 
@@ -36,7 +35,7 @@ export const iconTransformer = createTransformer( async ( value: IconValue, { si
 		return { html: fontAwesomeHtml, url: null };
 	}
 
-	if ( library.startsWith( FONT_AWESOME_LIBRARY_PREFIX ) || EICONS_LIBRARY === library ) {
+	if ( EICONS_LIBRARY === library ) {
 		return EMPTY_ICON_RESULT;
 	}
 

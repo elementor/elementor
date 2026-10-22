@@ -47,12 +47,25 @@ class Global_Variables_Resource_Ability extends Abstract_Ability {
 
 		$variables_payload = $variables_service->load();
 
-		$data = $variables_payload['data'] ?? [];
+		$data = self::active_variables( $variables_payload['data'] ?? [] );
 
 		return wp_json_encode( [
 			'variables' => (object) $data,
 			'total' => count( $data ),
 			'watermark' => $variables_payload['watermark'] ?? null,
 		] );
+	}
+
+	/**
+	 * Deleted variables stay in storage so existing CSS references keep resolving. The resource lists only variables an agent can use.
+	 *
+	 * @param array<string, mixed> $variables
+	 * @return array<string, mixed>
+	 */
+	public static function active_variables( array $variables ): array {
+		return array_filter(
+			$variables,
+			static fn( $variable ) => is_array( $variable ) && empty( $variable['deleted'] )
+		);
 	}
 }

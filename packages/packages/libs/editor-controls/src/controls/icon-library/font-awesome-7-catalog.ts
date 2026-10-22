@@ -18,6 +18,8 @@ export type FontAwesome7Icon = FontAwesome7IconDefinition & {
 	value: string;
 	glyphClass?: string;
 	svgMarkup?: string;
+	/** Markup is resolved on demand by the icon library providers, once the icon is displayed. */
+	lazySvg?: boolean;
 };
 
 export async function loadFontAwesome7Catalog( signal?: AbortSignal ): Promise< FontAwesome7Icon[] > {

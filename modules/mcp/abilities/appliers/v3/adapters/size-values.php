@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,6 +11,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Values {
+
+	/**
+	 * Prop types whose value is a size per logical side.
+	 *
+	 * @return string[]
+	 */
+	public static function sides_prop_types(): array {
+		return [ Dimensions_Prop_Type::get_key(), Border_Width_Prop_Type::get_key() ];
+	}
+
+	/**
+	 * @param mixed $prop_value
+	 */
+	public static function is_sides_prop( $prop_value ): bool {
+		return is_array( $prop_value ) && in_array( $prop_value['$$type'] ?? null, self::sides_prop_types(), true );
+	}
+
+	/**
+	 * A unitless `0` converts to `0px`, so `margin: 2rem 0` would mix units; a zero side takes the
+	 * unit the other sides share.
+	 *
+	 * @param array<string, array{unit: string, size: mixed}> $sizes
+	 * @return array<string, array{unit: string, size: mixed}>
+	 */
+	public static function with_zero_in_shared_unit( array $sizes ): array {
+		$non_zero_units = array_unique( array_column( array_filter( $sizes, fn( array $size ) => ! self::is_zero( $size ) ), 'unit' ) );
+
+		if ( 1 !== count( $non_zero_units ) ) {
+			return $sizes;
+		}
+
+		$unit = reset( $non_zero_units );
+
+		return array_map( fn( array $size ) => self::is_zero( $size ) ? array_merge( $size, [ 'unit' => $unit ] ) : $size, $sizes );
+	}
+
+	private static function is_zero( array $size ): bool {
+		return is_numeric( $size['size'] ) && 0.0 === (float) $size['size'];
+	}
 
 	/**
 	 * @param mixed $prop_value
