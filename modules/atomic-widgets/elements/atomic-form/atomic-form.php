@@ -173,7 +173,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 			$props[ self::WEBMCP_EXPOSE ] = Boolean_Prop_Type::make()
 				->default( true )
-				->description( 'Exposes the form to AI agents as a tool. Keep true unless the form must not be available to agents.' );
+				->description( 'Exposes the form to AI agents as a tool. Keep true unless the form must not be available to agents. This is the only exposure switch: when false, all of the form\'s fields are hidden from agents too.' );
 			$props['webmcp-tool-name'] = String_Prop_Type::make()
 				->set_dependencies( $webmcp_dependencies )
 				->description( 'Required when creating a form. Exposes the form to AI agents as a tool: unique snake_case name that starts with a verb, e.g. book_table.' );

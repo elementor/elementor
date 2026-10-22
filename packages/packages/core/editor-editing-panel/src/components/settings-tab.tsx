@@ -4,6 +4,7 @@ import { type Props, type PropsSchema } from '@elementor/editor-props';
 import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
+import { useAncestorDependencies } from '../hooks/use-ancestor-dependencies';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
@@ -13,6 +14,7 @@ import { SettingsControl } from './settings-control';
 export const SettingsTab = () => {
 	const { elementType, element, settings } = useElement();
 	const settingsDefault = useDefaultPanelSettings();
+	const isHiddenByAncestor = useAncestorDependencies();
 	const currentSettings = settings as Props;
 
 	const isDefaultExpanded = ( sectionId: string | null | undefined ) =>
@@ -34,6 +36,7 @@ export const SettingsTab = () => {
 							element,
 							propsSchema: elementType.propsSchema,
 							settings: currentSettings,
+							isHiddenByAncestor,
 						} );
 
 						if ( ! sectionItems.length ) {
@@ -75,11 +78,13 @@ function renderSectionItems( {
 	element,
 	propsSchema,
 	settings,
+	isHiddenByAncestor,
 }: {
 	items?: ControlItem[];
 	element: Element;
 	propsSchema: PropsSchema;
 	settings: Props;
+	isHiddenByAncestor: ( bind: string ) => boolean;
 } ) {
 	return (
 		items?.flatMap( ( item ) => {
@@ -88,7 +93,11 @@ function renderSectionItems( {
 				return [];
 			}
 
-			if ( item.type === 'control' && isControlHiddenByDependencies( item, propsSchema, settings ) ) {
+			if (
+				item.type === 'control' &&
+				( isControlHiddenByDependencies( item, propsSchema, settings ) ||
+					isHiddenByAncestor( item.value.bind ) )
+			) {
 				return [];
 			}
 

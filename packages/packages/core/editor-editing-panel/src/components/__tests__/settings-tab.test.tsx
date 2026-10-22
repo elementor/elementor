@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
-import { type Control, type ControlsSection, type ElementControl, getElementLabel } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import {
+	type Control,
+	type ControlsSection,
+	type ElementControl,
+	getContainer,
+	getElementLabel,
+	getWidgetsCache,
+	type V1Element,
+	type V1ElementConfig,
+} from '@elementor/editor-elements';
+import { __privateUseListenTo as useListenTo, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { screen } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
@@ -14,6 +23,8 @@ jest.mock( '../../hooks/use-default-panel-settings' );
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getElementLabel: jest.fn(),
+	getContainer: jest.fn(),
+	getWidgetsCache: jest.fn(),
 } ) );
 
 const MockSelectComponent = ( { id }: { id?: string } ) => <select id={ id } aria-label="mock-select" />;
@@ -40,6 +51,7 @@ jest.mock( '../../controls-registry/control', () => ( {
 describe( '<SettingsTab />', () => {
 	beforeEach( () => {
 		jest.mocked( getElementLabel ).mockReturnValue( 'Mock Element' );
+		jest.mocked( useListenTo ).mockImplementation( ( _, getSnapshot ) => getSnapshot() );
 	} );
 
 	it( 'should render the widget sections', () => {
@@ -375,6 +387,66 @@ describe( '<SettingsTab />', () => {
 		expect( screen.getByText( 'Mixed Section' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Visible Control' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Hidden Control' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should hide a section when its only control is hidden by an ancestor dependency', () => {
+		// Arrange.
+		const form = {
+			id: 'form-id',
+			model: { get: ( key: string ) => ( key === 'elType' ? 'e-form' : undefined ) },
+			settings: { toJSON: () => ( { 'webmcp-expose': { $$type: 'boolean', value: false } } ) },
+		} as unknown as V1Element;
+
+		jest.mocked( getContainer ).mockImplementation( ( id: string ) =>
+			id === 'mock-id' ? ( { id, parent: form } as unknown as V1Element ) : null
+		);
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			'e-form': { atomic_props_schema: {} } as unknown as V1ElementConfig,
+		} );
+
+		const elementType = createMockElementType( {
+			propsSchema: {
+				'webmcp-param-description': createMockPropType( {
+					kind: 'plain',
+					meta: {
+						ancestor_dependency: {
+							element_type: 'e-form',
+							dependency: {
+								relation: 'or',
+								terms: [ { operator: 'eq', path: [ 'webmcp-expose' ], value: true, effect: 'hide' } ],
+							},
+						},
+					},
+				} ),
+			},
+			controls: [
+				mockSection( {
+					label: 'Agents',
+					items: [
+						mockTextAreaControl( { bind: 'webmcp-param-description', label: 'Parameter description' } ),
+					],
+				} ),
+			],
+		} );
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { type: 'mock-type', id: 'mock-id' },
+			elementType,
+			settings: {},
+		} );
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [ 'section' ],
+			},
+			defaultTab: 'settings',
+		} );
+
+		// Act.
+		renderWithTheme( <SettingsTab /> );
+
+		// Assert.
+		expect( screen.queryByText( 'Agents' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Parameter description' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should keep section visible when it contains element-control items', () => {
