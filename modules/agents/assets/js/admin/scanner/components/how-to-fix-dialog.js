@@ -7,24 +7,34 @@ import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
 
-import { FIX_WITH_ANGIE } from '../scanner-constants';
+import { FIX_WITH_ANGIE, SCANNER_COLORS } from '../scanner-constants';
 import { copyPromptText } from './fix-row-actions';
 
 const WP_ADMIN_BAR_Z_INDEX = 99999;
 const DIALOG_Z_INDEX = WP_ADMIN_BAR_Z_INDEX + 1;
 const DIALOG_WIDTH = 647;
+const DIALOG_RADIUS = 16;
+const PROMPT_RADIUS = 12;
 const STEP_BADGE_SIZE = 24;
 const PROMPT_MIN_HEIGHT = 120;
+const PROMPT_MAX_HEIGHT = 280;
+const PROMPT_LINE_HEIGHT = '20px';
+const COPIED_FEEDBACK_MS = 2000;
 
 const getPromptChecks = ( checks ) => checks.filter( ( check ) => FIX_WITH_ANGIE === check.fixWith && check.fixPrompt );
+
+const stepTitleSx = { fontWeight: 500, fontSize: 14, lineHeight: '18px', color: 'text.primary' };
+
+const footerButtonSx = { fontWeight: 400, fontSize: 14 };
 
 const StepBadge = ( { number } ) => (
 	<Box
 		width={ STEP_BADGE_SIZE }
 		height={ STEP_BADGE_SIZE }
 		borderRadius="50%"
-		bgcolor="action.hover"
+		bgcolor={ SCANNER_COLORS.stepBadge }
 		display="flex"
 		alignItems="center"
 		justifyContent="center"
@@ -36,6 +46,41 @@ const StepBadge = ( { number } ) => (
 
 StepBadge.propTypes = {
 	number: PropTypes.number.isRequired,
+};
+
+const CopyPromptAction = ( { prompt } ) => {
+	const [ isCopied, setIsCopied ] = useState( false );
+	const resetTimer = useRef( null );
+
+	useEffect( () => () => clearTimeout( resetTimer.current ), [] );
+
+	const handleCopy = async () => {
+		const copied = await copyPromptText( prompt );
+
+		if ( ! copied ) {
+			return;
+		}
+
+		setIsCopied( true );
+		clearTimeout( resetTimer.current );
+		resetTimer.current = setTimeout( () => setIsCopied( false ), COPIED_FEEDBACK_MS );
+	};
+
+	return (
+		<Button
+			variant="text"
+			size="small"
+			startIcon={ <CopyIcon fontSize="tiny" /> }
+			onClick={ handleCopy }
+			sx={ { color: SCANNER_COLORS.accent, '&:hover': { color: SCANNER_COLORS.accentHover, bgcolor: 'transparent' } } }
+		>
+			{ isCopied ? __( 'Copied', 'elementor' ) : __( 'Copy prompt', 'elementor' ) }
+		</Button>
+	);
+};
+
+CopyPromptAction.propTypes = {
+	prompt: PropTypes.string.isRequired,
 };
 
 export const HowToFixDialog = ( { checks, checkId, onClose, onShowCheck } ) => {
@@ -59,58 +104,72 @@ export const HowToFixDialog = ( { checks, checkId, onClose, onShowCheck } ) => {
 					width: DIALOG_WIDTH,
 					maxWidth: 'calc(100% - 32px)',
 					m: 0,
+					borderRadius: `${ DIALOG_RADIUS }px`,
 				},
 			} }
 		>
-			<Stack direction="row" alignItems="flex-start" justifyContent="space-between" px={ 3 } pt={ 1.5 } pb={ 2 }>
+			<Stack direction="row" alignItems="flex-start" justifyContent="space-between" pl={ 3 } pr={ 1.5 } pt={ 1.5 } pb={ 2 }>
 				<Stack spacing={ 0 } minWidth={ 0 }>
 					<Typography variant="overline" color="text.tertiary">{ __( 'How to fix', 'elementor' ) }</Typography>
 					<Typography variant="h5" component="h2" color="text.primary">{ check.title }</Typography>
 				</Stack>
-				<IconButton aria-label={ __( 'Close', 'elementor' ) } onClick={ onClose }>
-					<XIcon />
+				<IconButton size="small" aria-label={ __( 'Close', 'elementor' ) } onClick={ onClose }>
+					<XIcon fontSize="small" />
 				</IconButton>
 			</Stack>
-			<Stack spacing={ 2 } px={ 3 } pb={ 2.5 }>
+			<Stack spacing={ 2 } px={ 3 } pt={ 2 } pb={ 2.5 }>
 				<Stack spacing={ 1 }>
 					<Stack direction="row" spacing={ 1 } alignItems="center">
 						<StepBadge number={ 1 } />
-						<Typography variant="subtitle2">{ __( 'Copy the prompt', 'elementor' ) }</Typography>
+						<Typography variant="subtitle2" sx={ stepTitleSx }>{ __( 'Copy the prompt', 'elementor' ) }</Typography>
 					</Stack>
-					<Stack spacing={ 1 } bgcolor="action.hover" borderRadius={ 1.5 } px={ 2 } pt={ 2 } pb={ 1 } minHeight={ PROMPT_MIN_HEIGHT } justifyContent="flex-end">
-						<Typography variant="body2" color="text.tertiary" sx={ { fontFamily: 'monospace', fontSize: 12, whiteSpace: 'pre-wrap' } }>
+					<Stack
+						spacing={ 1 }
+						bgcolor={ SCANNER_COLORS.promptBackground }
+						borderRadius={ `${ PROMPT_RADIUS }px` }
+						px={ 2 }
+						pt={ 2 }
+						pb={ 1 }
+						minHeight={ PROMPT_MIN_HEIGHT }
+						justifyContent="flex-end"
+					>
+						<Typography
+							variant="body2"
+							color="text.tertiary"
+							sx={ {
+								fontFamily: '"Roboto Mono", monospace',
+								fontSize: 12,
+								lineHeight: PROMPT_LINE_HEIGHT,
+								letterSpacing: '0.15px',
+								whiteSpace: 'pre-wrap',
+								maxHeight: PROMPT_MAX_HEIGHT,
+								overflowY: 'auto',
+							} }
+						>
 							{ check.fixPrompt }
 						</Typography>
 						<Stack direction="row" justifyContent="flex-end">
-							<Button
-								variant="contained"
-								color="primary"
-								size="small"
-								startIcon={ <CopyIcon fontSize="tiny" /> }
-								onClick={ () => copyPromptText( check.fixPrompt ) }
-							>
-								{ __( 'Copy prompt', 'elementor' ) }
-							</Button>
+							<CopyPromptAction key={ check.id } prompt={ check.fixPrompt } />
 						</Stack>
 					</Stack>
 				</Stack>
 				<Stack direction="row" spacing={ 1 } alignItems="flex-start">
 					<StepBadge number={ 2 } />
-					<Typography variant="subtitle2">
+					<Typography variant="subtitle2" sx={ stepTitleSx }>
 						{ __( 'Paste it into your AI assistant. If it\'s connected to your site, it can make the fix. If not, it will walk you through it.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Stack direction="row" spacing={ 1 } alignItems="center">
 					<StepBadge number={ 3 } />
-					<Typography variant="subtitle2">{ __( 'Scan again when you\'re done', 'elementor' ) }</Typography>
+					<Typography variant="subtitle2" sx={ stepTitleSx }>{ __( 'Scan again when you\'re done', 'elementor' ) }</Typography>
 				</Stack>
 			</Stack>
 			<Stack direction="row" alignItems="center" justifyContent="space-between" px={ 3 } py={ 2 } borderTop={ 1 } borderColor="divider">
-				<Button variant="text" color="secondary" onClick={ onClose }>
+				<Button variant="text" color="secondary" onClick={ onClose } sx={ { ...footerButtonSx, color: 'text.tertiary' } }>
 					{ __( 'Skip', 'elementor' ) }
 				</Button>
 				<Stack direction="row" spacing={ 1 } alignItems="center">
-					<Typography variant="body2" color="text.secondary">
+					<Typography variant="body2" color="text.disabled">
 						{ sprintf(
 							/* Translators: 1: current prompt number, 2: number of prompts. */
 							__( '%1$d of %2$d', 'elementor' ),
@@ -119,10 +178,11 @@ export const HowToFixDialog = ( { checks, checkId, onClose, onShowCheck } ) => {
 						) }
 					</Typography>
 					<Button
-						variant="outlined"
-						color="primary"
+						variant="text"
+						color="inherit"
 						endIcon={ <ArrowRightIcon fontSize="tiny" /> }
 						disabled={ isLast }
+						sx={ { ...footerButtonSx, color: 'text.primary', '&.Mui-disabled': { color: 'text.disabled' } } }
 						onClick={ () => {
 							const nextCheck = promptChecks[ index + 1 ];
 

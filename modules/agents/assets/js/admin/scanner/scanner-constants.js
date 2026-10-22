@@ -80,6 +80,8 @@ export const SCANNER_COLORS = {
 	secondaryChipBackground: '#f0f0f2',
 	secondaryChipText: '#383e44',
 	countBadge: '#fbf2fb',
+	stepBadge: '#f3f4f7',
+	promptBackground: '#f9fafa',
 };
 
 export const DOT_FIELD = {

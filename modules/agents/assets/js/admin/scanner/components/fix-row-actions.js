@@ -26,14 +26,43 @@ const switchSx = {
 	'& .Mui-checked + .MuiSwitch-track': { bgcolor: `${ SCANNER_COLORS.accent } !important`, opacity: 1 },
 };
 
-const copyText = ( text ) => {
-	const clipboard = navigator.clipboard;
+const copyWithSelection = ( text ) => {
+	const textarea = document.createElement( 'textarea' );
 
-	if ( ! text || ! clipboard?.writeText ) {
-		return;
+	textarea.value = text;
+	textarea.setAttribute( 'readonly', '' );
+	textarea.style.position = 'fixed';
+	textarea.style.opacity = '0';
+	document.body.appendChild( textarea );
+	textarea.select();
+
+	try {
+		return document.execCommand( 'copy' );
+	} catch {
+		return false;
+	} finally {
+		document.body.removeChild( textarea );
+	}
+};
+
+const copyText = async ( text ) => {
+	if ( ! text ) {
+		return false;
 	}
 
-	clipboard.writeText( text ).catch( () => undefined );
+	const normalizedText = text.replace( /\r\n/g, '\n' );
+
+	if ( navigator.clipboard?.writeText ) {
+		try {
+			await navigator.clipboard.writeText( normalizedText );
+
+			return true;
+		} catch {
+			return copyWithSelection( normalizedText );
+		}
+	}
+
+	return copyWithSelection( normalizedText );
 };
 
 export const CopyPromptButton = ( { onCopy } ) => (
