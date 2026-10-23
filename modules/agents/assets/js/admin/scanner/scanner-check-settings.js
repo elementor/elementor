@@ -53,6 +53,12 @@ export const isAgentReadyModuleToggleDisabled = ( moduleKey, {
 	return false;
 };
 
+export const canShowScannerToggle = ( checkId, moduleToggleConfigs ) => {
+	const moduleKey = getToggleModuleKey( checkId );
+
+	return Boolean( moduleKey ) && ! isAgentReadyModuleToggleDisabled( moduleKey, moduleToggleConfigs );
+};
+
 export const getToggleSettingsPatch = ( checkId, isEnabled ) => {
 	const moduleKey = getToggleModuleKey( checkId );
 

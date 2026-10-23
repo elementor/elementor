@@ -36,6 +36,7 @@ class Test_Llms_Manual_Content extends Elementor_Test_Base {
 
 		$this->settings->register();
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 	}
 
 	public function tearDown(): void {

@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
@@ -27,18 +26,8 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 
 	private Prompt_Injection_Sanitizer $sanitizer;
 
-	private $original_experiment_default_state;
-
 	public function setUp(): void {
 		parent::setUp();
-
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		add_filter( 'elementor/agents/webmcp/is_cron_disabled', '__return_false' );
@@ -47,16 +36,12 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 		$this->generator = new Content_Generator( $this->sanitizer );
 		$this->settings  = new Agent_Ready_Settings( $this->generator );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 
 		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
 		delete_transient( Business_Info_Extractor::FRESH_TRANSIENT );

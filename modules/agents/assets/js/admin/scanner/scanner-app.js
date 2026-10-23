@@ -34,7 +34,6 @@ import {
 	SCANNER_STATE_PROGRESS,
 	SCANNER_STATE_RESCANNING,
 } from './scanner-constants';
-import { resolveAgentReadyActive } from './resolve-agent-ready-active';
 import { getLaterRetryAt, toScanResult } from './scanner-report-adapter';
 import { useScannerFlow } from './use-scanner-flow';
 
@@ -220,17 +219,16 @@ const ScannerScreen = ( {
 	angieInstallHeroUrl,
 	angieAppUrl,
 	angiePluginSearchUrl,
+	isActivated,
 	isAngieActive,
 	lastReport,
 	retryAt = null,
-	isExperimentActive,
 	llmsConfig,
 	markdownConfig,
 	botAccessConfig,
 	agentDiscoveryConfig,
 	browserToolsConfig,
 } ) => {
-	const agentReadyActive = useMemo( () => resolveAgentReadyActive( isExperimentActive ), [ isExperimentActive ] );
 	const initialScan = useMemo(
 		() => ( lastReport ? toScanResult( lastReport, getLaterRetryAt( lastReport.retryAt, retryAt ) ) : null ),
 		[ lastReport, retryAt ],
@@ -238,7 +236,7 @@ const ScannerScreen = ( {
 	const flow = useScannerFlow( {
 		initialScan,
 		initialRetryAt: lastReport ? null : retryAt,
-		isExperimentActive: agentReadyActive,
+		isActivated,
 		isAngieActive,
 		llmsConfig,
 		markdownConfig,
@@ -274,10 +272,10 @@ ScannerScreen.propTypes = {
 	angieInstallHeroUrl: PropTypes.string.isRequired,
 	angieAppUrl: PropTypes.string.isRequired,
 	angiePluginSearchUrl: PropTypes.string.isRequired,
+	isActivated: PropTypes.bool,
 	isAngieActive: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
-	isExperimentActive: PropTypes.bool,
 	llmsConfig: PropTypes.object,
 	markdownConfig: PropTypes.object,
 	botAccessConfig: PropTypes.object,
@@ -293,10 +291,10 @@ export const ScannerApp = ( {
 	angieInstallHeroUrl = '',
 	angieAppUrl = '',
 	angiePluginSearchUrl = '',
+	isActivated = false,
 	isAngieActive = false,
 	lastReport,
 	retryAt = null,
-	isExperimentActive = false,
 	llmsConfig,
 	markdownConfig,
 	botAccessConfig,
@@ -313,10 +311,10 @@ export const ScannerApp = ( {
 					angieInstallHeroUrl={ angieInstallHeroUrl }
 					angieAppUrl={ angieAppUrl }
 					angiePluginSearchUrl={ angiePluginSearchUrl }
+					isActivated={ isActivated }
 					isAngieActive={ isAngieActive }
 					lastReport={ lastReport }
 					retryAt={ retryAt }
-					isExperimentActive={ isExperimentActive }
 					llmsConfig={ llmsConfig }
 					markdownConfig={ markdownConfig }
 					botAccessConfig={ botAccessConfig }
@@ -336,10 +334,10 @@ ScannerApp.propTypes = {
 	angieInstallHeroUrl: PropTypes.string,
 	angieAppUrl: PropTypes.string,
 	angiePluginSearchUrl: PropTypes.string,
+	isActivated: PropTypes.bool,
 	isAngieActive: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
-	isExperimentActive: PropTypes.bool,
 	llmsConfig: PropTypes.object,
 	markdownConfig: PropTypes.object,
 	botAccessConfig: PropTypes.object,

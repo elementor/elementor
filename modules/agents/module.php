@@ -4,8 +4,8 @@ namespace Elementor\Modules\Agents;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
@@ -46,8 +46,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'agent_ready';
-
 	/** Default HTTP max-age for the served response (5 minutes). */
 	const DEFAULT_CACHE_MAX_AGE = 300;
 
@@ -63,7 +61,7 @@ class Module extends BaseModule {
 
 	const CONFIG_OBJECT_NAME = 'elementorAgentsReadyConfig';
 
-	const AJAX_OPT_IN_ACTION = 'agents_ready_opt_in';
+	const AJAX_ACTIVATE_ACTION = 'agents_ready_activate';
 
 	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
@@ -98,29 +96,8 @@ class Module extends BaseModule {
 		return 'agents';
 	}
 
-	public static function get_experimental_data() {
-		return [
-			'name'           => self::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Agent Ready', 'elementor' ),
-			'description'    => esc_html__( 'Make your site fully discoverable and readable by AI agents: auto-generated llms.txt, markdown endpoints for every page, and per-bot robots.txt controls.', 'elementor' ),
-			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		];
-	}
-
-	public static function is_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
 	public function __construct() {
 		parent::__construct();
-
-		add_action( 'plugins_loaded', [ $this, 'check_seo_plugin_conflict' ], 20 );
-
-		if ( ! self::is_active() ) {
-			return;
-		}
 
 		$sanitizer              = new Prompt_Injection_Sanitizer();
 		$this->generator        = new Content_Generator( $sanitizer );
@@ -227,7 +204,7 @@ class Module extends BaseModule {
 	}
 
 	public function register_ajax_actions( Ajax $ajax ): void {
-		$ajax->register_ajax_action( self::AJAX_OPT_IN_ACTION, [ $this, 'ajax_opt_in' ] );
+		$ajax->register_ajax_action( self::AJAX_ACTIVATE_ACTION, [ $this, 'ajax_activate' ] );
 
 		$llms_content_ajax = new Llms_Content_Ajax( $this->settings, $this->manual_content );
 		$ajax->register_ajax_action( Llms_Content_Ajax::ACTION, [ $llms_content_ajax, 'handle' ] );
@@ -239,14 +216,12 @@ class Module extends BaseModule {
 		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
 	}
 
-	public function ajax_opt_in(): void {
+	public function ajax_activate(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			throw new \Exception( 'Permission denied' );
+			throw new \Exception( esc_html__( 'Permission denied.', 'elementor' ), Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		$feature_key = Plugin::$instance->experiments->get_feature_option_key( self::EXPERIMENT_NAME );
-
-		update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
+		$this->settings->activate();
 	}
 
 	// -------------------------------------------------------------------------
@@ -508,72 +483,6 @@ class Module extends BaseModule {
 	}
 
 	// -------------------------------------------------------------------------
-	// SEO plugin detection
-	// -------------------------------------------------------------------------
-
-	/**
-	 * If a known SEO plugin is already generating an llms.txt, default this
-	 * feature to inactive so we don't serve competing files.
-	 *
-	 * This runs after all plugins are loaded, so is_plugin_active() is reliable.
-	 */
-	public function check_seo_plugin_conflict() {
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		if ( $this->seo_plugin_generates_llms_txt() ) {
-			// Override the default to inactive so new installs don't collide.
-			// (Existing explicit activations are not reverted.)
-			add_filter(
-				'elementor/experiments/feature_defaults',
-				function ( array $defaults ) {
-					$defaults[ self::EXPERIMENT_NAME ] = Experiments_Manager::STATE_INACTIVE;
-					return $defaults;
-				}
-			);
-		}
-	}
-
-	/**
-	 * Return true if a known SEO plugin is active and likely generating llms.txt.
-	 */
-	public function seo_plugin_generates_llms_txt(): bool {
-		// Yoast SEO — llms.txt generation was added in Yoast SEO 22.x (2024).
-		if (
-			is_plugin_active( 'wordpress-seo/wp-seo.php' ) &&
-			(
-				// Check the Yoast option that enables llms.txt generation.
-				'1' === (string) ( get_option( 'wpseo', [] )['enable_llm_txt'] ?? '' ) ||
-				get_option( 'wpseo_llm_txt_enabled', false )
-			)
-		) {
-			return true;
-		}
-
-		// RankMath SEO.
-		if (
-			is_plugin_active( 'seo-by-rank-math/rank-math.php' ) &&
-			'on' === ( get_option( 'rank_math_modules', [] )['llms-txt'] ?? '' )
-		) {
-			return true;
-		}
-
-		// All in One SEO Pack.
-		if (
-			is_plugin_active( 'all-in-one-seo-pack/all_in_one_seo_pack.php' ) &&
-			get_option( 'aioseo_options', false )
-		) {
-			$aioseo = maybe_unserialize( get_option( 'aioseo_options', '' ) );
-			if ( ! empty( $aioseo['searchAppearance']['global']['schema']['llmsTxt'] ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	// -------------------------------------------------------------------------
 	// Existing-file detection
 	// -------------------------------------------------------------------------
 
@@ -769,7 +678,7 @@ class Module extends BaseModule {
 		$this->settings->ensure_option_exists();
 
 		return [
-			'isExperimentActive' => Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ),
+			'isActivated'        => $this->settings->is_activated(),
 			'llms'               => $this->get_llms_state(),
 			'markdown'           => $this->get_markdown_state(),
 			'botAccess'          => $this->get_bot_access_state(),
@@ -792,7 +701,6 @@ class Module extends BaseModule {
 			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
-			'isExperimentActive'     => self::is_active(),
 		];
 	}
 

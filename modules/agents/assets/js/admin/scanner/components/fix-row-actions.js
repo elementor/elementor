@@ -94,8 +94,12 @@ CompletedActions.propTypes = {
 	onRescan: PropTypes.func.isRequired,
 };
 
-export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
+export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, isToggleVisible = true, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
 	if ( FIX_WITH_TOGGLE === check.fixWith ) {
+		if ( ! isToggleVisible ) {
+			return null;
+		}
+
 		return (
 			<Switch
 				size="small"
@@ -152,6 +156,7 @@ RowAction.propTypes = {
 	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
+	isToggleVisible: PropTypes.bool,
 	agentAccessUrl: PropTypes.string.isRequired,
 	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onOpen: PropTypes.func.isRequired,

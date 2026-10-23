@@ -58,6 +58,18 @@ const getReport = () => ( {
 			fixBy: 'SEO Plugin',
 		},
 		{
+			id: 'unmapped-toggle',
+			label: 'Unmapped toggle',
+			layer: 'accessibility',
+			tier: 'recommended',
+			status: 'fail',
+			earned: 0,
+			possible: 1,
+			scorable: true,
+			fix: 'Turn it on.',
+			fixBy: 'Agent Ready toggle',
+		},
+		{
 			id: 'public-api',
 			label: 'Public API',
 			layer: 'usability',
@@ -137,6 +149,7 @@ describe( 'toScanResult', () => {
 			'webmcp-support',
 			'llms-txt-exists',
 			'llms-txt-formatting',
+			'unmapped-toggle',
 			'agent-instruction',
 			'agent-ua-markdown',
 		] );
@@ -211,6 +224,7 @@ describe( 'toScanResult', () => {
 		} );
 		expect( byId( 'llms-txt-formatting' ) ).toMatchObject( { fixWith: FIX_WITH_SEO, priority: PRIORITY_RECOMMENDED } );
 		expect( byId( 'public-api' ) ).toMatchObject( { fixWith: FIX_WITH_MANUAL, resolvedByActivation: false } );
+		expect( byId( 'unmapped-toggle' ) ).toMatchObject( { fixWith: FIX_WITH_MANUAL } );
 		expect( byId( 'webmcp-support' ) ).toMatchObject( {
 			fixWith: FIX_WITH_TOGGLE,
 			fixPrompt: '',

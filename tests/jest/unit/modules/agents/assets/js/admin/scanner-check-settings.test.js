@@ -6,6 +6,7 @@ import {
 	MARKDOWN_SETTINGS_KEY,
 } from 'elementor/modules/agents/assets/js/admin/constants';
 import {
+	canShowScannerToggle,
 	getInitialModuleEnabled,
 	getToggleModuleKey,
 	getToggleSettingsPatch,
@@ -73,6 +74,15 @@ describe( 'scanner-check-settings', () => {
 		expect( hasDirtyModuleChecks( checks, {} ) ).toBe( false );
 		expect( hasDirtyModuleChecks( checks, { [ MARKDOWN_SETTINGS_KEY ]: true } ) ).toBe( true );
 		expect( hasDirtyModuleChecks( [ { id: 'public-api' } ], { [ MARKDOWN_SETTINGS_KEY ]: true } ) ).toBe( false );
+	} );
+
+	it( 'shows scanner toggles only for mapped checks whose module can be toggled', () => {
+		// Assert
+		expect( canShowScannerToggle( 'agent-path', {} ) ).toBe( true );
+		expect( canShowScannerToggle( 'unknown-check', {} ) ).toBe( false );
+		expect( canShowScannerToggle( 'llms-txt-exists', { llmsConfig: { hasPhysicalFile: true } } ) ).toBe( false );
+		expect( canShowScannerToggle( 'webmcp-support', { browserToolsConfig: { isAvailable: false } } ) ).toBe( false );
+		expect( canShowScannerToggle( 'webmcp-support', { browserToolsConfig: { isAvailable: true } } ) ).toBe( true );
 	} );
 
 	it( 'disables browser-tools toggles when Agent browser tools are unavailable', () => {

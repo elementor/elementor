@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
@@ -11,8 +10,6 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Module extends Elementor_Test_Base {
 
 	private $module;
-
-	private $original_experiment_default_state;
 
 	private string $original_request_uri;
 
@@ -25,23 +22,16 @@ class Test_Module extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
 		);
+		$settings->ensure_option_exists();
+		$settings->activate();
 
 		$this->module = new Module();
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
@@ -53,67 +43,10 @@ class Test_Module extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_experiment_is_registered() {
-		// Arrange
-		$data = Module::get_experimental_data();
-
-		// Act & Assert
-		$this->assertSame( Module::EXPERIMENT_NAME, $data['name'] );
-		$this->assertTrue( $data['hidden'] );
-		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
-		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
-	}
-
-	public function test_editor_one_menu_hooks_are_registered_when_experiment_is_active() {
+	public function test_editor_one_menu_hooks_are_registered() {
 		// Assert
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
-	}
-
-	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {
-		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-
-		$module = new Module();
-
-		$robots_handler = new \ReflectionProperty( Module::class, 'robots_handler' );
-		$robots_handler->setAccessible( true );
-
-		// Assert
-		$this->assertFalse( Module::is_active() );
-		$this->assertFalse( $robots_handler->isInitialized( $module ) );
-		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_txt' ] ) );
-		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_full_txt' ] ) );
-		$this->assertFalse( $module->get_component( 'link_headers' ) );
-		$this->assertFalse( $module->get_component( 'markdown_endpoint' ) );
-		$this->assertFalse( $module->get_component( 'well_known_router' ) );
-		$this->assertFalse( has_action( 'elementor/editor-one/menu/register', [ $module, 'register_editor_one_menu' ] ) );
-		$this->assertFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $module, 'enqueue_assets_for_editor_one_menu' ] ) );
-	}
-
-	public function test_ajax_opt_in__activates_experiment_for_admin() {
-		// Arrange
-		$this->act_as_admin();
-		$feature_key = Plugin::$instance->experiments->get_feature_option_key( Module::EXPERIMENT_NAME );
-		update_option( $feature_key, Experiments_Manager::STATE_INACTIVE );
-
-		// Act
-		$this->module->ajax_opt_in();
-
-		// Assert
-		$this->assertSame( Experiments_Manager::STATE_ACTIVE, get_option( $feature_key ) );
-	}
-
-	public function test_ajax_opt_in__rejects_unauthorized_user() {
-		// Arrange
-		$this->act_as_editor();
-
-		// Act & Assert
-		$this->expectException( \Exception::class );
-		$this->module->ajax_opt_in();
 	}
 
 	public function test_register_editor_one_menu__registers_agents_ready_menu_item() {

@@ -1,7 +1,6 @@
 import ReactUtils from 'elementor-utils/react';
 
 import { App } from './app';
-import { resolveAgentReadyActive } from './scanner/resolve-agent-ready-active';
 import { ScannerApp } from './scanner/scanner-app';
 
 const MOUNT_ID = 'e-agents-ready';
@@ -11,7 +10,7 @@ const mountAgentAccess = ( rootElement, config, isRTL ) => {
 	ReactUtils.render( (
 		<App
 			isRTL={ isRTL }
-			isExperimentActive={ resolveAgentReadyActive( config.isExperimentActive ) }
+			isActivated={ !! config.isActivated }
 			agentDiscoveryConfig={ config.agentDiscovery }
 			botAccessConfig={ config.botAccess }
 			browserToolsConfig={ config.browserTools }
@@ -27,7 +26,7 @@ const mountScanner = ( rootElement, config, isRTL ) => {
 	ReactUtils.render( (
 		<ScannerApp
 			isRTL={ isRTL }
-			isExperimentActive={ resolveAgentReadyActive( config.isExperimentActive ) }
+			isActivated={ !! config.isActivated }
 			siteDomain={ scannerConfig.siteDomain || window.location.hostname }
 			agentAccessUrl={ scannerConfig.agentAccessUrl || '' }
 			seoPluginSearchUrl={ scannerConfig.seoPluginSearchUrl || '' }

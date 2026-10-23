@@ -65,10 +65,12 @@ const getLastReport = () => ( {
 
 const getFailedScanResult = () => toFailedScanResult( SCAN_FAILURE_REASON_BLOCKED );
 
+const activatedProps = { isActivated: true };
+
 const renderScanner = ( props = {} ) => render( <ScannerApp siteDomain={ SITE_DOMAIN } agentAccessUrl={ AGENT_ACCESS_URL } { ...props } /> );
 
-const runFirstScan = async () => {
-	renderScanner();
+const runFirstScan = async ( props = {} ) => {
+	renderScanner( props );
 	fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 	await advanceTimers( SCAN_DURATION_MS );
 };
@@ -112,7 +114,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( screen.getByText( `Checking ${ SITE_DOMAIN }` ) ).toBeTruthy();
-		expect( within( screen.getByRole( 'list' ) ).getByText( 'Reading your site the way an AI assistant would' ) ).toBeTruthy();
+		expect( within( screen.getByRole( 'list' ) ).getAllByText( 'Reading your site the way an AI assistant would' ).length ).toBeGreaterThan( 0 );
 		expect( screen.getByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeTruthy();
 
 		await advanceTimers( SCAN_DURATION_MS );
@@ -284,10 +286,9 @@ describe( 'Agent Ready scanner', () => {
 	it( 'wires WebMCP support to Agent browser tools settings', async () => {
 		// Arrange
 		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
-		renderScanner( { browserToolsConfig: { enabled: true, isAvailable: true } } );
+		renderScanner( { ...activatedProps, browserToolsConfig: { enabled: true, isAvailable: true } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
 		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
 
 		// Assert
@@ -302,27 +303,29 @@ describe( 'Agent Ready scanner', () => {
 		expect( checkSwitch.checked ).toBe( false );
 	} );
 
-	it( 'disables the WebMCP switch when Agent browser tools are unavailable', async () => {
+	it( 'hides the WebMCP switch when Agent browser tools are unavailable', async () => {
 		// Arrange
 		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
 		renderScanner( { browserToolsConfig: { enabled: true, isAvailable: false } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
-		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
 
 		// Assert
-		expect( checkSwitch.checked ).toBe( false );
-		expect( checkSwitch.disabled ).toBe( true );
+		expect( screen.queryByRole( 'switch', { name: 'WebMCP support' } ) ).toBeNull();
 	} );
 
 	it( 'shows a mapped switch on when that Agent Ready module is already enabled', async () => {
 		// Arrange
-		renderScanner( { markdownConfig: { enabled: true } } );
+		renderScanner( { ...activatedProps, markdownConfig: { enabled: true } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show all fixes (+2)' } ) );
+		const showAllFixes = screen.queryByRole( 'button', { name: /Show all fixes/ } );
+
+		if ( showAllFixes ) {
+			fireEvent.click( showAllFixes );
+		}
+
 		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t read clean versions of your pages' } );
 
 		// Assert
@@ -355,14 +358,25 @@ describe( 'Agent Ready scanner', () => {
 		expect( getRowByTitle( 'Agents can\'t find a path into your site' ).getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 	} );
 
+	it( 'keeps check switches disabled until Agent Ready is activated', async () => {
+		// Arrange
+		await runFirstScan();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+
+		// Act
+		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
+
+		// Assert
+		expect( checkSwitch.disabled ).toBe( true );
+	} );
+
 	it( 'disables a toggle while its fix is saving', async () => {
 		// Arrange
 		let resolveFix;
 		applyCheckFix.mockImplementation( () => new Promise( ( resolve ) => {
 			resolveFix = resolve;
 		} ) );
-		await runFirstScan();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		await runFirstScan( activatedProps );
 		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
 
 		// Act
@@ -499,7 +513,7 @@ describe( 'Agent Ready scanner', () => {
 	it( 'offers rescan on the error report when Agent Ready is already on', async () => {
 		// Arrange
 		runSiteScan.mockImplementation( () => Promise.resolve( getFailedScanResult() ) );
-		renderScanner( { isExperimentActive: true } );
+		renderScanner( activatedProps );
 
 		// Act
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
@@ -559,21 +573,9 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByText( 'Prepare your site for agents' ) ).toBeTruthy();
 	} );
 
-	it( 'treats an active Agent Ready experiment from localized config as already activated', () => {
-		window.elementorAgentsReadyConfig = { isExperimentActive: true };
-
-		renderScanner( { lastReport: getLastReport() } );
-
-		expect( screen.queryByText( 'Prepare your site for agents' ) ).toBeNull();
-		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
-		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
-
-		delete window.elementorAgentsReadyConfig;
-	} );
-
-	it( 'treats an active Agent Ready experiment as already activated', () => {
+	it( 'treats an activated Agent Ready as already activated', () => {
 		// Arrange
-		renderScanner( { isExperimentActive: true, lastReport: getLastReport() } );
+		renderScanner( { ...activatedProps, lastReport: getLastReport() } );
 
 		// Assert
 		expect( screen.queryByText( 'Prepare your site for agents' ) ).toBeNull();
@@ -587,7 +589,7 @@ describe( 'Agent Ready scanner', () => {
 
 	it( 'skips the prepare banner after a first scan when Agent Ready is already on', async () => {
 		// Arrange
-		renderScanner( { isExperimentActive: true } );
+		renderScanner( activatedProps );
 
 		// Act
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );

@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
@@ -17,8 +16,6 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 	private Markdown_Endpoint $endpoint;
 
 	private Agent_Ready_Settings $settings;
-
-	private $original_experiment_default_state;
 
 	private string $original_request_uri;
 
@@ -35,27 +32,15 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$wp_rewrite->set_permalink_structure( '/%postname%/' );
 		flush_rewrite_rules();
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
 		delete_option( Agent_Ready_Settings::OPTION );
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 		$this->endpoint = new Markdown_Endpoint( $this->settings );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		if ( null === $this->original_http_accept ) {
