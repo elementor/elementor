@@ -149,6 +149,40 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertSame( '/.well-known/auth.md', $path );
 	}
 
+	public function test_get_normalized_path__decodes_percent_encoded_path() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/%D7%A9%D7%9C%D7%95%D7%9D/.well-known/auth.md';
+
+		$method = new \ReflectionMethod( Well_Known_Router::class, 'get_normalized_path' );
+		$method->setAccessible( true );
+
+		// Act
+		$path = $method->invoke( $this->router );
+
+		// Assert
+		$this->assertSame( '/שלום/.well-known/auth.md', $path );
+	}
+
+	public function test_get_normalized_path__rejects_blogpost_on_blog_install() {
+		// Arrange
+		add_filter( 'home_url', static function () {
+			return 'http://example.com/blog';
+		} );
+		$_SERVER['REQUEST_URI'] = '/blogpost/.well-known/auth.md';
+
+		$method = new \ReflectionMethod( Well_Known_Router::class, 'get_normalized_path' );
+		$method->setAccessible( true );
+
+		// Act
+		$path = $method->invoke( $this->router );
+
+		// Cleanup
+		remove_all_filters( 'home_url' );
+
+		// Assert
+		$this->assertSame( '', $path );
+	}
+
 	public function test_get_active_endpoints__includes_auth_md_when_enabled() {
 		// Act
 		$active = $this->router->get_active_endpoints();
@@ -339,7 +373,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 	public function test_ard_manifest__omits_protected_resource_when_mcp_card_off() {
 		// Arrange
-		$manifest = new Ard_Manifest();
+		$manifest = new Ard_Manifest( null );
 		$method   = new \ReflectionMethod( Ard_Manifest::class, 'generate_content' );
 		$method->setAccessible( true );
 
@@ -354,7 +388,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 	public function test_ard_manifest__includes_protected_resource_when_mcp_card_on() {
 		// Arrange
 		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
-		$manifest = new Ard_Manifest();
+		$manifest = new Ard_Manifest( null );
 		$method   = new \ReflectionMethod( Ard_Manifest::class, 'generate_content' );
 		$method->setAccessible( true );
 
