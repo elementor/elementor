@@ -49,6 +49,7 @@ class Test_Module_Availability extends Elementor_Test_Base {
 
 	public function test_get_unavailable_reasons__detects_llms_txt_seo_plugin() {
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$reasons = $this->module_availability->get_unavailable_reasons();
 
@@ -59,6 +60,7 @@ class Test_Module_Availability extends Elementor_Test_Base {
 
 	public function test_get_reason__returns_specific_module_reason() {
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$reason = $this->module_availability->get_reason( Agent_Ready_Settings::MODULE_LLMS_TXT );
 
@@ -78,12 +80,14 @@ class Test_Module_Availability extends Elementor_Test_Base {
 
 	public function test_is_available__returns_false_when_conflict_exists() {
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$this->assertFalse( $this->module_availability->is_available( Agent_Ready_Settings::MODULE_LLMS_TXT ) );
 	}
 
 	public function test_get_unavailable_reasons__checks_seo_plugin_before_physical_file() {
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$reasons = $this->module_availability->get_unavailable_reasons();
 

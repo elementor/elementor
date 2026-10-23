@@ -644,6 +644,7 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange
 		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 
 		try {
 			// Act
@@ -655,6 +656,7 @@ class Test_Module extends Elementor_Test_Base {
 			$this->assertTrue( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] );
 		} finally {
 			delete_option( 'rank_math_modules' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 		}
 	}
 
@@ -680,6 +682,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_should_advertise_llms_txt__returns_false_when_seo_plugin_active() {
 		// Arrange
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 
 		try {
 			// Act
@@ -695,7 +698,6 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_should_advertise_llms_full_txt__returns_false_when_physical_file_exists() {
 		// Arrange
-		$llms_full_path = Module::get_llms_file_root_path() . 'llms-full.txt';
 		$reflection = new \ReflectionMethod( Module::class, 'get_llms_file_root_path' );
 		$reflection->setAccessible( true );
 		$root_path = $reflection->invoke( null );
@@ -726,6 +728,7 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_seo_plugin_generates_llms_txt__returns_true_when_owner_detected() {
 		// Arrange
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 
 		try {
 			// Act
@@ -773,6 +776,7 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 
 		// Assert
 		$this->assertFalse( get_transient( $transient_key ) );

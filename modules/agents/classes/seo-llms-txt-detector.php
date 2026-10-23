@@ -45,15 +45,15 @@ class Seo_Llms_Txt_Detector {
 	}
 
 	private function detect_owner(): ?string {
-		if ( $this->is_yoast_active() && $this->is_yoast_llms_enabled() ) {
+		if ( $this->is_yoast_llms_enabled() ) {
 			return 'yoast';
 		}
 
-		if ( $this->is_rank_math_active() && $this->is_rank_math_llms_enabled() ) {
+		if ( $this->is_rank_math_llms_enabled() ) {
 			return 'rank_math';
 		}
 
-		if ( $this->is_aioseo_active() && $this->is_aioseo_llms_enabled() ) {
+		if ( $this->is_aioseo_llms_enabled() ) {
 			return 'aioseo';
 		}
 
@@ -69,6 +69,10 @@ class Seo_Llms_Txt_Detector {
 	}
 
 	private function is_yoast_llms_enabled(): bool {
+		if ( ! $this->is_yoast_active() && ! $this->option_exists( 'wpseo' ) ) {
+			return false;
+		}
+
 		if ( ! class_exists( 'WPSEO_Options' ) ) {
 			return false;
 		}
@@ -87,6 +91,10 @@ class Seo_Llms_Txt_Detector {
 	}
 
 	private function is_rank_math_llms_enabled(): bool {
+		if ( ! $this->is_rank_math_active() && ! $this->option_exists( 'rank_math_modules' ) ) {
+			return false;
+		}
+
 		$modules = get_option( 'rank_math_modules', [] );
 
 		if ( ! is_array( $modules ) ) {
@@ -105,6 +113,10 @@ class Seo_Llms_Txt_Detector {
 	}
 
 	private function is_aioseo_llms_enabled(): bool {
+		if ( ! $this->is_aioseo_active() && ! $this->option_exists( 'aioseo_options' ) ) {
+			return false;
+		}
+
 		$option = get_option( 'aioseo_options', '' );
 
 		if ( is_string( $option ) && '' !== $option ) {
@@ -116,5 +128,11 @@ class Seo_Llms_Txt_Detector {
 		}
 
 		return ! empty( $option['sitemap']['llms']['enable'] );
+	}
+
+	private function option_exists( string $option_name ): bool {
+		global $wpdb;
+		$result = $wpdb->get_var( $wpdb->prepare( "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $option_name ) );
+		return null !== $result;
 	}
 }

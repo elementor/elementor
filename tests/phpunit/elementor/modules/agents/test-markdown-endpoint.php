@@ -330,16 +330,14 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $is_allowed );
 	}
 
-	public function test_filter_should_serve__blocks_markdown_render_when_markdown_is_disabled() {
+	public function test_filter_should_serve__passes_through_when_markdown_is_disabled() {
 		// Arrange
 		$post = $this->create_published_page();
 		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
 
-		// Act
-		$should_serve = $this->endpoint->filter_should_serve( true, $post );
-
-		// Assert
-		$this->assertFalse( $should_serve );
+		// Act & Assert - should pass through incoming value
+		$this->assertTrue( $this->endpoint->filter_should_serve( true, $post ) );
+		$this->assertFalse( $this->endpoint->filter_should_serve( false, $post ) );
 	}
 
 	public function test_filter_should_serve__blocks_noindex_post() {

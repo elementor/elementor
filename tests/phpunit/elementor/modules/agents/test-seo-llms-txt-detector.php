@@ -52,18 +52,21 @@ class Test_Seo_Llms_Txt_Detector extends Elementor_Test_Base {
 
 	public function test_get_owner__detects_rank_math_when_llms_txt_module_active() {
 		update_option( 'rank_math_modules', [ 'llms-txt', 'other-module' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$this->assertSame( 'rank_math', $this->detector->get_owner() );
 	}
 
 	public function test_get_owner__returns_null_when_rank_math_llms_not_in_modules() {
 		update_option( 'rank_math_modules', [ 'other-module' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$this->assertNull( $this->detector->get_owner() );
 	}
 
 	public function test_get_owner__handles_non_array_rank_math_modules() {
 		update_option( 'rank_math_modules', 'invalid' );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$this->assertNull( $this->detector->get_owner() );
 	}
@@ -128,6 +131,7 @@ class Test_Seo_Llms_Txt_Detector extends Elementor_Test_Base {
 
 	public function test_get_owner__caches_result() {
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 
 		$this->assertSame( 'rank_math', $this->detector->get_owner() );
 
@@ -142,12 +146,14 @@ class Test_Seo_Llms_Txt_Detector extends Elementor_Test_Base {
 
 	public function test_get_owner_label__returns_correct_labels() {
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+		Seo_Llms_Txt_Detector::reset_cache();
 		$this->assertSame( 'Rank Math', $this->detector->get_owner_label() );
 
 		Seo_Llms_Txt_Detector::reset_cache();
 
 		$option = [ 'sitemap' => [ 'llms' => [ 'enable' => true ] ] ];
 		update_option( 'aioseo_options', $option );
+		Seo_Llms_Txt_Detector::reset_cache();
 		$this->assertSame( 'All in One SEO', $this->detector->get_owner_label() );
 	}
 
