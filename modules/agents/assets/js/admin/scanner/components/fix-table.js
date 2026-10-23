@@ -92,6 +92,7 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 						check={ check }
 						isOpen={ !! flow.openIds[ check.id ] }
 						isResolved={ !! flow.resolvedIds[ check.id ] }
+						isSaving={ !! flow.savingCheckIds?.[ check.id ] }
 						isLast={ index === checks.length - 1 }
 						preferenceValue={ flow.preferences[ check.id ] }
 						agentAccessUrl={ agentAccessUrl }
@@ -116,6 +117,7 @@ const fixTableRowsPropTypes = {
 	flow: PropTypes.shape( {
 		openIds: PropTypes.object.isRequired,
 		resolvedIds: PropTypes.object.isRequired,
+		savingCheckIds: PropTypes.object,
 		preferences: PropTypes.object.isRequired,
 		toggleRow: PropTypes.func.isRequired,
 		openRow: PropTypes.func.isRequired,

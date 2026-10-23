@@ -67,6 +67,7 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 	const [ actionError, setActionError ] = useState( '' );
 	const [ installCheck, setInstallCheck ] = useState( null );
 	const [ howToFixId, setHowToFixId ] = useState( null );
+	const [ savingCheckIds, setSavingCheckIds ] = useState( {} );
 
 	useEffect( () => {
 		isMountedRef.current = true;
@@ -221,13 +222,20 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 	const markResolved = useCallback( ( check, payload ) => {
 		setActionError( '' );
 		setResolvedIds( ( current ) => ( { ...current, [ check.id ]: payload } ) );
+		setSavingCheckIds( ( current ) => ( { ...current, [ check.id ]: true } ) );
 
-		applyCheckFix( check.id, payload ).catch( ( error ) => {
-			if ( isMountedRef.current ) {
-				setResolvedIds( ( current ) => withoutKey( current, check.id ) );
-				setActionError( getSaveErrorMessage( error ) );
-			}
-		} );
+		applyCheckFix( check.id, payload )
+			.catch( ( error ) => {
+				if ( isMountedRef.current ) {
+					setResolvedIds( ( current ) => withoutKey( current, check.id ) );
+					setActionError( getSaveErrorMessage( error ) );
+				}
+			} )
+			.finally( () => {
+				if ( isMountedRef.current ) {
+					setSavingCheckIds( ( current ) => withoutKey( current, check.id ) );
+				}
+			} );
 	}, [] );
 
 	const undoFix = useCallback( ( check ) => {
@@ -235,13 +243,20 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 
 		setActionError( '' );
 		setResolvedIds( ( current ) => withoutKey( current, check.id ) );
+		setSavingCheckIds( ( current ) => ( { ...current, [ check.id ]: true } ) );
 
-		undoCheckFix( check.id ).catch( ( error ) => {
-			if ( isMountedRef.current ) {
-				setResolvedIds( ( current ) => ( { ...current, [ check.id ]: previousPayload } ) );
-				setActionError( getSaveErrorMessage( error ) );
-			}
-		} );
+		undoCheckFix( check.id )
+			.catch( ( error ) => {
+				if ( isMountedRef.current ) {
+					setResolvedIds( ( current ) => ( { ...current, [ check.id ]: previousPayload } ) );
+					setActionError( getSaveErrorMessage( error ) );
+				}
+			} )
+			.finally( () => {
+				if ( isMountedRef.current ) {
+					setSavingCheckIds( ( current ) => withoutKey( current, check.id ) );
+				}
+			} );
 	}, [ resolvedIds ] );
 
 	const fixWithAngie = useCallback( ( check ) => {
@@ -317,6 +332,7 @@ export const useScannerFlow = ( { initialScan = null, initialRetryAt = null, isE
 		actionError,
 		installCheck,
 		howToFixId,
+		savingCheckIds,
 		retryAt,
 		startScan,
 		activate,

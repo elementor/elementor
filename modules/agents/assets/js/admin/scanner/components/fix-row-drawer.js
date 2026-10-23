@@ -82,7 +82,7 @@ PreferenceContent.propTypes = {
 };
 
 export const FixRowDrawer = ( { check, preferenceValue, onPreferenceChange, onSavePreference } ) => (
-	<Box mx={ 2 } mb={ 1.5 } p={ 2 } bgcolor={ SCANNER_COLORS.rowHover } borderRadius={ SCANNER_LAYOUT.drawerRadius } sx={ drawerSx }>
+	<Box mt={ 2 } mx={ 2 } mb={ 1.5 } p={ 2 } bgcolor={ SCANNER_COLORS.promptBackground } borderRadius={ SCANNER_LAYOUT.drawerRadius } sx={ drawerSx }>
 		{ FIX_WITH_PREFERENCE === check.fixWith ? (
 			<PreferenceContent check={ check } value={ preferenceValue } onChange={ onPreferenceChange } onSave={ onSavePreference } />
 		) : (

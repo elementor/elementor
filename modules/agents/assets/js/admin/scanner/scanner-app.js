@@ -80,7 +80,6 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 			isActivating={ isActivating }
 			onActivate={ flow.activate }
 			agentAccessUrl={ agentAccessUrl }
-			error={ flow.actionError }
 		/>
 	);
 
@@ -104,7 +103,7 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 		<>
 			<ScoreSummaryBlock banner={ withBanner ? renderActivateBanner() : null }>{ renderScoreRow() }</ScoreSummaryBlock>
 			{ ( scan?.stages ?? [] ).length > 0 && <StageBars stages={ scan.stages } /> }
-			{ ! withBanner && flow.actionError && <Alert severity="error">{ flow.actionError }</Alert> }
+			{ flow.actionError && <Alert severity="error">{ flow.actionError }</Alert> }
 			<FixesSection
 				checks={ flow.visibleChecks }
 				flow={ flow }

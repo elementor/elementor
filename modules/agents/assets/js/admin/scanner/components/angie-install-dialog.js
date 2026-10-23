@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { XIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
 import Checkbox from '@elementor/ui/Checkbox';
 import CircularProgress from '@elementor/ui/CircularProgress';
 import Dialog from '@elementor/ui/Dialog';
+import DialogContent from '@elementor/ui/DialogContent';
+import DialogHeader from '@elementor/ui/DialogHeader';
 import FormControlLabel from '@elementor/ui/FormControlLabel';
-import IconButton from '@elementor/ui/IconButton';
 import Link from '@elementor/ui/Link';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
@@ -74,50 +74,66 @@ export const AngieInstallDialog = ( { check, heroUrl, angieAppUrl, angiePluginSe
 					width={ HERO_WIDTH }
 					sx={ { objectFit: 'cover', flexShrink: 0, display: { xs: 'none', md: 'block' } } }
 				/>
-				<Stack flex={ 1 } minWidth={ 0 } justifyContent="space-between">
-					<Stack direction="row" justifyContent="flex-end" px={ 1 } pt={ 1 }>
-						<IconButton aria-label={ __( 'Close', 'elementor' ) } onClick={ handleClose } disabled={ isInstalling }>
-							<XIcon />
-						</IconButton>
-					</Stack>
-					<Stack spacing={ 2 } px={ 3 } pb={ 2 }>
-						<Typography variant="h4" component="h2" color="text.secondary">
-							{ __( 'Prepare your site for agents (with Angie)', 'elementor' ) }
-						</Typography>
-						<Typography variant="subtitle2">
-							{ installFailed
-								? __( 'We couldn\'t install Angie automatically. Install it from the plugin directory instead.', 'elementor' )
-								: __( 'Angie, agentic AI for WordPress, can fix this issue directly on your site. Install and activate Angie once to get started.', 'elementor' ) }
-						</Typography>
-						{ ! installFailed && (
-							<FormControlLabel
-								control={ (
-									<Checkbox
-										size="small"
-										checked={ agreedToTerms }
-										onChange={ ( event ) => setAgreedToTerms( event.target.checked ) }
-									/>
-								) }
-								label={ (
-									<Typography variant="body2" color="text.secondary">
-										{ __( 'By installing, you agree to our', 'elementor' ) }
-										{ ' ' }
-										<Link href={ ANGIE_TERMS_URL } target="_blank" rel="noreferrer">{ __( 'Terms', 'elementor' ) }</Link>
-										{ ' & ' }
-										<Link href={ ANGIE_PRIVACY_URL } target="_blank" rel="noreferrer">{ __( 'Privacy Policy', 'elementor' ) }</Link>
-										.
-									</Typography>
-								) }
-							/>
-						) }
-					</Stack>
-					<Stack direction="row" alignItems="center" justifyContent="space-between" px={ 1 } pb={ 3 } pt={ 1 }>
+				<Stack flex={ 1 } minWidth={ 0 }>
+					<DialogHeader onClose={ handleClose } logo={ false } />
+					<DialogContent sx={ { pt: 0 } }>
+						<Stack spacing={ 2 } alignItems="flex-start">
+							<Typography variant="h4" component="h2" color="text.secondary">
+								{ __( 'Prepare your site for agents (with Angie)', 'elementor' ) }
+							</Typography>
+							<Typography variant="subtitle2" color="text.secondary">
+								{ installFailed
+									? __( 'We couldn\'t install Angie automatically. Install it from the plugin directory instead.', 'elementor' )
+									: __( 'Angie, agentic AI for WordPress, can fix this issue directly on your site. Install and activate Angie once to get started.', 'elementor' ) }
+							</Typography>
+							{ ! installFailed && (
+								<FormControlLabel
+									sx={ {
+										m: 0,
+										alignItems: 'flex-start',
+										gap: 1,
+										'& .MuiCheckbox-root': {
+											p: 0,
+											mt: 0.25,
+										},
+										'& .MuiFormControlLabel-label': {
+											mt: 0,
+										},
+									} }
+									control={ (
+										<Checkbox
+											size="small"
+											checked={ agreedToTerms }
+											onChange={ ( event ) => setAgreedToTerms( event.target.checked ) }
+										/>
+									) }
+									label={ (
+										<Typography variant="body2" color="text.secondary" component="span">
+											{ __( 'By installing, you agree to our', 'elementor' ) }
+											{ ' ' }
+											<Link href={ ANGIE_TERMS_URL } target="_blank" rel="noreferrer" underline="none" color="info">{ __( 'Terms', 'elementor' ) }</Link>
+											{ ' & ' }
+											<Link href={ ANGIE_PRIVACY_URL } target="_blank" rel="noreferrer" underline="none" color="info">{ __( 'Privacy Policy', 'elementor' ) }</Link>
+											.
+										</Typography>
+									) }
+								/>
+							) }
+						</Stack>
+					</DialogContent>
+					<Stack
+						direction="row"
+						alignItems="center"
+						justifyContent="space-between"
+						px={ 3 }
+						pb={ 3 }
+						pt={ 1 }
+					>
 						<Button
 							variant="text"
 							color="secondary"
 							onClick={ () => onCopyPrompt( check ) }
 							disabled={ isInstalling }
-							aria-label={ __( 'Not now? Copy the prompt instead', 'elementor' ) }
 							sx={ { textAlign: 'left' } }
 						>
 							<Stack alignItems="flex-start" spacing={ 0 }>

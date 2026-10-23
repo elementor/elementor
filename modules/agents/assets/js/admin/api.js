@@ -1,5 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 
+import { getToggleSettingsPatch } from './scanner/scanner-check-settings';
 import { toScanResult } from './scanner/scanner-report-adapter';
 
 const AGENT_READY_SETTINGS_PATH = '/elementor/v1/settings/elementor_agent_ready_settings';
@@ -23,12 +24,6 @@ export const runSiteScan = async () => {
 		throw toScanError( reason );
 	}
 };
-
-// TODO: Wire to the WP Admin endpoint that applies a single check fix ("Fix with Angie", a saved preference, or a check switch turned on). `payload` carries the preference value or `{ enabled: true }`.
-export const applyCheckFix = ( checkId, payload = {} ) => Promise.resolve( { checkId, payload } );
-
-// TODO: Wire to the WP Admin endpoint that reverts a check fix ("Undo", or a check switch turned off).
-export const undoCheckFix = ( checkId ) => Promise.resolve( { checkId } );
 
 const isPluginError = ( error ) => Boolean( error && 'string' === typeof error.code && 'string' === typeof error.message );
 
@@ -82,6 +77,36 @@ export const saveAgentReadySettings = ( settings ) => {
 		method: 'PUT',
 		data: { value: settings },
 	} );
+};
+
+const UNMAPPED_TOGGLE_FIX_ERROR = 'This fix cannot be applied from the scanner yet.';
+
+const saveToggleFix = ( checkId, isEnabled ) => {
+	const patch = getToggleSettingsPatch( checkId, isEnabled );
+
+	if ( ! patch ) {
+		return Promise.reject( new Error( UNMAPPED_TOGGLE_FIX_ERROR ) );
+	}
+
+	return saveAgentReadySettings( patch );
+};
+
+export const applyCheckFix = ( checkId, payload = {} ) => {
+	if ( Object.prototype.hasOwnProperty.call( payload, 'value' ) ) {
+		return Promise.resolve( { checkId, payload } );
+	}
+
+	return saveToggleFix( checkId, Boolean( payload.enabled ) );
+};
+
+export const undoCheckFix = ( checkId ) => {
+	const patch = getToggleSettingsPatch( checkId, false );
+
+	if ( ! patch ) {
+		return Promise.resolve( { checkId } );
+	}
+
+	return saveAgentReadySettings( patch );
 };
 
 // The file is served with a public max-age, so skip both the browser cache and any shared cache to show the latest save.

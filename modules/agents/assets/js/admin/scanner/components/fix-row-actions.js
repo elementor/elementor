@@ -12,18 +12,11 @@ import {
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_SEO,
 	FIX_WITH_TOGGLE,
-	SCANNER_COLORS,
 } from '../scanner-constants';
 
 const rowActionSx = {
 	color: 'text.primary',
 	fontWeight: 500,
-};
-
-const switchSx = {
-	...wpAdminSwitchSx,
-	'& .MuiSwitch-track': { bgcolor: SCANNER_COLORS.switchOffTrack, opacity: 1 },
-	'& .Mui-checked + .MuiSwitch-track': { bgcolor: `${ SCANNER_COLORS.accent } !important`, opacity: 1 },
 };
 
 const copyWithSelection = ( text ) => {
@@ -101,15 +94,16 @@ CompletedActions.propTypes = {
 	onRescan: PropTypes.func.isRequired,
 };
 
-export const RowAction = ( { check, isResolved, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
+export const RowAction = ( { check, isResolved, isSaving = false, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
 	if ( FIX_WITH_TOGGLE === check.fixWith ) {
 		return (
 			<Switch
 				size="small"
 				checked={ isResolved }
+				disabled={ isSaving }
 				onChange={ ( event ) => onSetEnabled( check, event.target.checked ) }
 				inputProps={ { role: 'switch', 'aria-checked': isResolved, 'aria-label': check.title } }
-				sx={ switchSx }
+				sx={ wpAdminSwitchSx }
 			/>
 		);
 	}
@@ -156,6 +150,7 @@ export const RowAction = ( { check, isResolved, agentAccessUrl, seoPluginSearchU
 RowAction.propTypes = {
 	check: PropTypes.object.isRequired,
 	isResolved: PropTypes.bool,
+	isSaving: PropTypes.bool,
 	agentAccessUrl: PropTypes.string.isRequired,
 	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onOpen: PropTypes.func.isRequired,

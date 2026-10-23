@@ -177,7 +177,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
 		expect( screen.getByRole( 'link', { name: 'Settings' } ).getAttribute( 'href' ) ).toBe( AGENT_ACCESS_URL );
-		expect( screen.getByText( 'Agent Ready is on' ).parentElement.parentElement.contains( screen.getByRole( 'link', { name: 'Settings' } ) ) ).toBe( true );
+		expect( screen.getByText( 'Agent Ready is on' ).parentElement.contains( screen.getByRole( 'link', { name: 'Settings' } ) ) ).toBe( true );
 		expect( screen.queryByText( 'AI agents are blocked by your robots.txt' ) ).toBeNull();
 		expect( screen.getByText( 'Agents can\'t tell when you\'re open' ) ).toBeTruthy();
 	} );
@@ -266,9 +266,53 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'agent-path', { enabled: true } );
+		expect( checkSwitch.checked ).toBe( true );
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 		expect( getRowByTitle( 'Agents can\'t find a path into your site' ).getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
+	it( 'disables a toggle while its fix is saving', async () => {
+		// Arrange
+		let resolveFix;
+		applyCheckFix.mockImplementation( () => new Promise( ( resolve ) => {
+			resolveFix = resolve;
+		} ) );
+		await runFirstScan();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
+
+		// Act
+		fireEvent.click( checkSwitch );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( true );
+		expect( checkSwitch.disabled ).toBe( true );
+
+		await act( async () => {
+			resolveFix( {} );
+		} );
+
+		expect( checkSwitch.disabled ).toBe( false );
+		expect( checkSwitch.checked ).toBe( true );
+	} );
+
+	it( 'rolls back a toggle and shows an error when saving fails', async () => {
+		// Arrange
+		applyCheckFix.mockRejectedValue( new Error( 'Save failed' ) );
+		await runFirstScan();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
+
+		// Act
+		fireEvent.click( checkSwitch );
+		await act( async () => {
+			await Promise.resolve();
+		} );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( false );
+		expect( screen.getByText( 'Save failed' ) ).toBeTruthy();
 	} );
 
 	it( 'drops a pending fix when a rescan still reports the check as failing', async () => {

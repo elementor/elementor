@@ -65,6 +65,7 @@ export const FixRow = ( {
 	check,
 	isOpen,
 	isResolved,
+	isSaving = false,
 	isLast,
 	preferenceValue = '',
 	agentAccessUrl,
@@ -108,8 +109,9 @@ export const FixRow = ( {
 				onKeyDown={ handleKeyDown }
 				sx={ {
 					cursor: 'pointer',
+					bgcolor: isOpen ? SCANNER_COLORS.paper : undefined,
 					'& .scanner-fix-title': { color: titleIsPrimary ? 'text.primary' : 'text.secondary' },
-					'&:hover, &:focus-within': { bgcolor: SCANNER_COLORS.rowHover },
+					'&:hover, &:focus-within': { bgcolor: isOpen ? SCANNER_COLORS.paper : SCANNER_COLORS.rowHover },
 					'&:hover .scanner-fix-title, &:focus-within .scanner-fix-title': { color: 'text.primary' },
 					'& .scanner-copy-fix': { display: 'none' },
 					'&:hover .scanner-copy-fix, &:focus-within .scanner-copy-fix': { display: 'inline-flex' },
@@ -128,6 +130,7 @@ export const FixRow = ( {
 							<RowAction
 								check={ check }
 								isResolved={ isResolved }
+								isSaving={ isSaving }
 								agentAccessUrl={ agentAccessUrl }
 								seoPluginSearchUrl={ seoPluginSearchUrl }
 								onOpen={ onOpen }
@@ -175,6 +178,7 @@ FixRow.propTypes = {
 	check: PropTypes.object.isRequired,
 	isOpen: PropTypes.bool,
 	isResolved: PropTypes.bool,
+	isSaving: PropTypes.bool,
 	isLast: PropTypes.bool,
 	preferenceValue: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,

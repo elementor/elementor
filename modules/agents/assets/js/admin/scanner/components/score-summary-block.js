@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, CircleCheckFilledIcon, InfoCircleIcon } from '@elementor/icons';
+import { ExternalLinkIcon, InfoCircleIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
@@ -6,9 +6,8 @@ import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
+import { SCANNER_LAYOUT } from '../scanner-constants';
 import { RESCAN_LAYOUT_SCORE_ROW, RescanControl, useNextScanLabel } from './rescan-control';
-import { scannerButtonSx } from './scanner-button-sx';
 import { ScoreRing } from './score-ring';
 
 export { useNextScanLabel };
@@ -135,26 +134,6 @@ export const ScoreRow = ( {
 							isActivated={ isActivated }
 						/>
 					</Stack>
-					{ isActivated && (
-						<Stack direction="row" alignItems="center" spacing={ 1 }>
-							<Stack direction="row" alignItems="center" spacing={ 0.5 }>
-								<CircleCheckFilledIcon fontSize="tiny" sx={ { color: SCANNER_COLORS.accent } } />
-								<Typography variant="body2" sx={ { color: SCANNER_COLORS.accent } }>
-									{ __( 'Agent Ready is on', 'elementor' ) }
-								</Typography>
-							</Stack>
-							<Button
-								variant="text"
-								color="primary"
-								size="small"
-								href={ agentAccessUrl }
-								endIcon={ <ArrowUpRightIcon fontSize="tiny" /> }
-								sx={ { ...scannerButtonSx.plainText, textDecoration: 'underline' } }
-							>
-								{ __( 'Settings', 'elementor' ) }
-							</Button>
-						</Stack>
-					) }
 					<Typography variant="body1" color="text.secondary">{ description }</Typography>
 					{ needsRescanForScore && (
 						<Typography variant="caption" color="text.tertiary">
@@ -170,6 +149,22 @@ export const ScoreRow = ( {
 						<Infotip content={ CHECKED_AT_TOOLTIP }>
 							<InfoCircleIcon fontSize="small" color="action" />
 						</Infotip>
+					</Stack>
+				) }
+				{ isActivated && (
+					<Stack direction="row" alignItems="center" spacing={ 0.5 }>
+						<Typography variant="body2" color="primary">
+							{ __( 'Agent Ready is on', 'elementor' ) }
+						</Typography>
+						<Button
+							variant="text"
+							color="primary"
+							size="small"
+							href={ agentAccessUrl }
+							endIcon={ <ExternalLinkIcon fontSize="tiny" /> }
+						>
+							{ __( 'Settings', 'elementor' ) }
+						</Button>
 					</Stack>
 				) }
 			</Stack>
