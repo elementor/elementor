@@ -46,6 +46,7 @@ export const useBrowserToolsSettings = ( initialState ) => {
 		maxBusinessDetailsLength: initialState.maxBusinessDetailsLength,
 		saveBusinessDetails,
 		saveError,
+		setIsEnabled,
 		tools: initialState.tools,
 		toggleEnabled,
 	};

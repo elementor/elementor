@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import Alert from '@elementor/ui/Alert';
+import Divider from '@elementor/ui/Divider';
 import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
+	AGENT_DISCOVERY_SETTINGS_KEY,
+	BOT_ACCESS_SETTINGS_KEY,
+	BROWSER_TOOLS_SETTINGS_KEY,
 	getModules,
+	LLMS_SETTINGS_KEY,
+	MARKDOWN_SETTINGS_KEY,
 	MODULE_AGENT_DISCOVERY,
 	MODULE_BOT_ACCESS_CONTROL,
 	MODULE_BROWSER_TOOLS,
@@ -18,11 +24,13 @@ import {
 	MODULE_STATUS_WARNING,
 } from '../constants';
 import { useAgentDiscoverySettings } from '../hooks/use-agent-discovery-settings';
+import { useAllModulesToggle } from '../hooks/use-all-modules-toggle';
 import { useBotAccessSettings } from '../hooks/use-bot-access-settings';
 import { useBrowserToolsSettings } from '../hooks/use-browser-tools-settings';
 import { useLlmsSettings } from '../hooks/use-llms-settings';
 import { useMarkdownSettings } from '../hooks/use-markdown-settings';
 import { AgentDiscoveryPanel } from './agent-discovery/agent-discovery-panel';
+import { AllModulesControl } from './all-modules-control';
 import { BotAccessPanel } from './bot-access/bot-access-panel';
 import { BrowserToolsPanel } from './browser-tools/browser-tools-panel';
 import { LlmsTxtPanel } from './llms-txt/llms-txt-panel';
@@ -55,6 +63,13 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 	const browserToolsSettings = useBrowserToolsSettings( browserToolsConfig );
 	const llmsSettings = useLlmsSettings( llmsConfig );
 	const markdownSettings = useMarkdownSettings( markdownConfig );
+	const allModules = useAllModulesToggle( [
+		{ settingsKey: LLMS_SETTINGS_KEY, settings: llmsSettings, isToggleable: ! llmsSettings.hasPhysicalFile },
+		{ settingsKey: MARKDOWN_SETTINGS_KEY, settings: markdownSettings, isToggleable: true },
+		{ settingsKey: BOT_ACCESS_SETTINGS_KEY, settings: botAccessSettings, isToggleable: ! botAccessSettings.hasPhysicalFile },
+		{ settingsKey: AGENT_DISCOVERY_SETTINGS_KEY, settings: agentDiscoverySettings, isToggleable: true },
+		{ settingsKey: BROWSER_TOOLS_SETTINGS_KEY, settings: browserToolsSettings, isToggleable: browserToolsSettings.isAvailable },
+	] );
 	const [ expandedModuleId, setExpandedModuleId ] = useState( modules[ 0 ]?.id ?? null );
 
 	const enabledCount = [
@@ -84,7 +99,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 					description={ module.description }
 					status={ getStatus( llmsSettings.isEnabled, llmsSettings.hasPhysicalFile ) }
 					isEnabled={ llmsSettings.isEnabled }
-					isToggleDisabled={ llmsSettings.hasPhysicalFile || llmsSettings.isSaving }
+					isToggleDisabled={ llmsSettings.hasPhysicalFile || llmsSettings.isSaving || allModules.isSaving }
 					onToggle={ llmsSettings.toggleEnabled }
 					{ ...accordionProps }
 				>
@@ -101,7 +116,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 					description={ module.description }
 					status={ getStatus( markdownSettings.isEnabled ) }
 					isEnabled={ markdownSettings.isEnabled }
-					isToggleDisabled={ markdownSettings.isSaving }
+					isToggleDisabled={ markdownSettings.isSaving || allModules.isSaving }
 					onToggle={ markdownSettings.toggleEnabled }
 					{ ...accordionProps }
 				>
@@ -118,7 +133,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 					description={ module.description }
 					status={ getStatus( botAccessSettings.isEnabled, botAccessSettings.hasPhysicalFile ) }
 					isEnabled={ botAccessSettings.isEnabled }
-					isToggleDisabled={ botAccessSettings.hasPhysicalFile || botAccessSettings.isSaving }
+					isToggleDisabled={ botAccessSettings.hasPhysicalFile || botAccessSettings.isSaving || allModules.isSaving }
 					onToggle={ botAccessSettings.toggleEnabled }
 					{ ...accordionProps }
 				>
@@ -135,7 +150,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 					description={ module.description }
 					status={ getStatus( agentDiscoverySettings.isEnabled ) }
 					isEnabled={ agentDiscoverySettings.isEnabled }
-					isToggleDisabled={ agentDiscoverySettings.isSaving }
+					isToggleDisabled={ agentDiscoverySettings.isSaving || allModules.isSaving }
 					onToggle={ agentDiscoverySettings.toggleEnabled }
 					{ ...accordionProps }
 				>
@@ -152,7 +167,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 					description={ module.description }
 					status={ getStatus( browserToolsSettings.isEnabled, ! browserToolsSettings.isAvailable ) }
 					isEnabled={ browserToolsSettings.isEnabled && browserToolsSettings.isAvailable }
-					isToggleDisabled={ ! browserToolsSettings.isAvailable || browserToolsSettings.isSaving }
+					isToggleDisabled={ ! browserToolsSettings.isAvailable || browserToolsSettings.isSaving || allModules.isSaving }
 					onToggle={ browserToolsSettings.toggleEnabled }
 					{ ...accordionProps }
 				>
@@ -171,6 +186,9 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 				<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
 			</Stack>
 			<Stack spacing={ 2 }>
+				{ allModules.saveError && (
+					<Alert severity="error">{ allModules.saveError }</Alert>
+				) }
 				{ llmsSettings.saveError && (
 					<Alert severity="error">{ llmsSettings.saveError }</Alert>
 				) }
@@ -188,6 +206,8 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 				) }
 				{ modules.map( renderModule ) }
 			</Stack>
+			<Divider />
+			<AllModulesControl isAnyEnabled={ allModules.isAnyEnabled } isDisabled={ allModules.isDisabled } onToggleAll={ allModules.toggleAll } />
 		</Stack>
 	);
 };
