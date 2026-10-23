@@ -97,6 +97,7 @@ export const FRONTEND_ENTRIES = {
 	'background-video-preview-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-preview-handler.js',
 	'atomic-widgets-action-link-handler': 'modules/atomic-widgets/assets/js/frontend/action-link-handlers.js',
 	'atomic-widgets-form-handler': 'modules/atomic-widgets/assets/js/frontend/form-handlers.js',
+	'agents-webmcp-tools': 'modules/agents/assets/js/frontend/webmcp-tools.js',
 };
 
 export const QUNIT_ENTRIES = {

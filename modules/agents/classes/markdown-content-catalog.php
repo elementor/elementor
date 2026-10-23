@@ -12,6 +12,8 @@ class Markdown_Content_Catalog {
 
 	const MAX_SCANNED_PAGES = 5;
 
+	const EXCERPT_WORDS = 40;
+
 	/**
 	 * Published, public, indexable posts the preview picker can show, ordered by title.
 	 * An empty term puts the static front page first when it qualifies.
@@ -26,19 +28,57 @@ class Markdown_Content_Catalog {
 		}
 
 		$front_page = '' === $term ? $this->get_front_page( $post_types ) : null;
-		$items      = $front_page ? [ $this->to_item( $front_page ) ] : [];
 		$exclude    = $front_page ? [ $front_page->ID ] : [];
+		$posts      = $this->collect_posts(
+			$post_types,
+			$term,
+			$front_page ? [ $front_page ] : [],
+			$exclude,
+			self::PAGE_SIZE,
+			[ 'search_columns' => [ 'post_title' ] ]
+		);
 
+		return array_map( [ $this, 'to_item' ], $posts );
+	}
+
+	/**
+	 * Published, public, indexable posts matching the term anywhere in their content, best match first.
+	 *
+	 * @param string[] $post_types Post type slugs to query.
+	 * @param string   $term       Search term.
+	 * @param int      $limit      Maximum number of items.
+	 * @return array<int, array{id: int, title: string, url: string, type: string, date: string, excerpt: string}>
+	 */
+	public function search_content( array $post_types, string $term, int $limit ): array {
+		if ( empty( $post_types ) ) {
+			return [];
+		}
+
+		$posts = $this->collect_posts( $post_types, $term, [], [], $limit, [ 'orderby' => 'relevance' ] );
+
+		return array_map( [ $this, 'to_content_item' ], $posts );
+	}
+
+	/**
+	 * @param string[]   $post_types
+	 * @param string     $term
+	 * @param \WP_Post[] $found      Posts already collected, counted towards the limit.
+	 * @param int[]      $exclude
+	 * @param int        $limit
+	 * @param array      $overrides  WP_Query args that replace the defaults.
+	 * @return \WP_Post[]
+	 */
+	private function collect_posts( array $post_types, string $term, array $found, array $exclude, int $limit, array $overrides ): array {
 		for ( $page = 1; $page <= self::MAX_SCANNED_PAGES; $page++ ) {
-			$posts = $this->query_posts( $post_types, $term, $page, $exclude );
+			$posts = $this->query_posts( $post_types, $term, $page, $exclude, $overrides );
 
 			foreach ( $posts as $post ) {
 				if ( $this->is_listable( $post ) ) {
-					$items[] = $this->to_item( $post );
+					$found[] = $post;
 				}
 
-				if ( count( $items ) >= self::PAGE_SIZE ) {
-					return $items;
+				if ( count( $found ) >= $limit ) {
+					return $found;
 				}
 			}
 
@@ -47,7 +87,7 @@ class Markdown_Content_Catalog {
 			}
 		}
 
-		return $items;
+		return $found;
 	}
 
 	/**
@@ -76,9 +116,10 @@ class Markdown_Content_Catalog {
 	 * @param string   $term       Title search term.
 	 * @param int      $page       One-based results page.
 	 * @param int[]    $exclude    Post IDs already listed.
+	 * @param array    $overrides  WP_Query args that replace the defaults.
 	 * @return \WP_Post[]
 	 */
-	private function query_posts( array $post_types, string $term, int $page, array $exclude ): array {
+	private function query_posts( array $post_types, string $term, int $page, array $exclude, array $overrides = [] ): array {
 		$args = [
 			'post_type'              => $post_types,
 			'post_status'            => 'publish',
@@ -93,11 +134,10 @@ class Markdown_Content_Catalog {
 		];
 
 		if ( '' !== $term ) {
-			$args['s']              = $term;
-			$args['search_columns'] = [ 'post_title' ];
+			$args['s'] = $term;
 		}
 
-		$query = new \WP_Query( $args );
+		$query = new \WP_Query( array_merge( $args, $overrides ) );
 
 		return array_values( array_filter(
 			$query->posts,
@@ -119,6 +159,26 @@ class Markdown_Content_Catalog {
 			'path'  => $this->get_path( $post ),
 			'type'  => $post->post_type,
 		];
+	}
+
+	/**
+	 * @return array{id: int, title: string, url: string, type: string, date: string, excerpt: string}
+	 */
+	private function to_content_item( \WP_Post $post ): array {
+		return [
+			'id'      => $post->ID,
+			'title'   => Post_Title::to_plain_text( get_the_title( $post ) ),
+			'url'     => (string) get_permalink( $post ),
+			'type'    => $post->post_type,
+			'date'    => get_the_date( 'c', $post ),
+			'excerpt' => $this->get_excerpt( $post ),
+		];
+	}
+
+	private function get_excerpt( \WP_Post $post ): string {
+		$source = '' !== $post->post_excerpt ? $post->post_excerpt : strip_shortcodes( $post->post_content );
+
+		return wp_trim_words( wp_strip_all_tags( $source ), self::EXCERPT_WORDS );
 	}
 
 	private function get_path( \WP_Post $post ): string {

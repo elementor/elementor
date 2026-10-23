@@ -79,6 +79,7 @@ export const useLlmsSettings = ( initialState ) => {
 		saveError,
 		postTypes,
 		saveContent,
+		setIsEnabled,
 		toggleEnabled,
 		togglePostType,
 	};
