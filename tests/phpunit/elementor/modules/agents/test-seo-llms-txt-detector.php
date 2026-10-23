@@ -150,6 +150,7 @@ class Test_Seo_Llms_Txt_Detector extends Elementor_Test_Base {
 		Seo_Llms_Txt_Detector::reset_cache();
 		$this->assertSame( 'Rank Math', $this->detector->get_owner_label() );
 
+		delete_option( 'rank_math_modules' );
 		Seo_Llms_Txt_Detector::reset_cache();
 
 		$option = [ 'sitemap' => [ 'llms' => [ 'enable' => true ] ] ];

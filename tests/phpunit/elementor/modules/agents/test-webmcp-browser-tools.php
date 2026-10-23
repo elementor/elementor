@@ -313,11 +313,12 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 	public function test_register__warms_business_info_when_the_settings_option_is_first_created() {
 		// Arrange
-		delete_option( Agent_Ready_Settings::OPTION );
 		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
 		remove_all_actions( 'add_option_' . Agent_Ready_Settings::OPTION );
 		remove_all_actions( 'update_option_' . Agent_Ready_Settings::OPTION );
 		$this->browser_tools->register();
+		delete_option( Agent_Ready_Settings::OPTION );
+		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 
 		// Act
 		$this->settings->ensure_option_exists();

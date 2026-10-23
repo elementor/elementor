@@ -32,6 +32,17 @@ class Test_Module extends Elementor_Test_Base {
 		$this->module = new Module();
 	}
 
+	private function create_not_activated_settings(): \Elementor\Modules\Agents\Agent_Ready_Settings {
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+		$settings->ensure_option_exists();
+
+		return $settings;
+	}
+
 	public function tearDown(): void {
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
@@ -571,14 +582,14 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $this->module->should_advertise_llms_full_txt() );
 	}
 
-	public function test_on_settings_change__invalidates_well_known_cache() {
+	public function test_on_settings_update__invalidates_well_known_cache() {
 		// Arrange - warm the ARD manifest cache
 		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
 		$transient_key = $ard_manifest->get_transient_key();
 		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
 
 		// Act
-		$this->module->on_settings_change();
+		$this->module->on_settings_update( null, null, Module::OPTION_EXISTING_FILE_DECISION );
 
 		// Assert - cache should be invalidated
 		$this->assertFalse( get_transient( $transient_key ) );
@@ -666,15 +677,8 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_should_advertise_llms_txt__returns_false_when_not_activated() {
 		// Arrange
-		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
-			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
-		);
-		$settings->ensure_option_exists();
-
-		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
-		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
-		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
-		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+		$settings = $this->create_not_activated_settings();
+		$settings->set_server_value( \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', true );
 
 		// Act
 		$result = $this->module->should_advertise_llms_txt();
@@ -749,15 +753,8 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_on_post_change__skips_cache_clear_when_no_modules_active() {
-		// Arrange - temporarily remove settings change hooks to avoid triggering cache invalidation
-		remove_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_update' ] );
-
-		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
-		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
-		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
-
-		// Re-add the hook for cleanup
-		add_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_update' ], 10, 3 );
+		// Arrange
+		$this->create_not_activated_settings();
 
 		$post_id = $this->factory()->post->create();
 		$post = get_post( $post_id );
@@ -829,26 +826,22 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_on_settings_update__clears_caches_when_agent_ready_activated() {
 		// Arrange
-		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
-		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
-		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+		$settings = $this->create_not_activated_settings();
 
 		$this->module->get_generated_llms_txt();
 
 		// Act - activate Agent Ready
-		$new_settings = $settings;
-		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = true;
-		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+		$settings->activate();
 
 		// Assert - cache should be invalidated
 		$cache = new \Elementor\Modules\Agents\Llms_Cache();
 		$this->assertFalse( $cache->get_llms() );
 	}
 
-	public function test_on_settings_update__does_not_clear_module_caches_when_no_modules_newly_enabled() {
+	public function test_on_settings_update__invalidates_llms_cache_on_any_settings_change() {
 		// Arrange
 		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
-		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] = false;
 		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
 
 		$this->module->get_generated_llms_txt();
@@ -856,7 +849,7 @@ class Test_Module extends Elementor_Test_Base {
 		$cached_before = $cache->get_llms();
 		$this->assertNotFalse( $cached_before );
 
-		// Act - update settings but keep llms_txt enabled
+		// Act - change a module that does not affect llms.txt
 		$new_settings = $settings;
 		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] = true;
 		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
