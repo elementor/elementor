@@ -643,8 +643,11 @@ class Test_Module extends Elementor_Test_Base {
 	public function test_ajax_activate__skips_unavailable_modules() {
 		// Arrange
 		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		
+		// Force SEO plugin detection via filter (plugin isn't actually active in tests)
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
 		try {
 			// Act
@@ -655,7 +658,7 @@ class Test_Module extends Elementor_Test_Base {
 			$this->assertFalse( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] );
 			$this->assertTrue( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] );
 		} finally {
-			delete_option( 'rank_math_modules' );
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
 			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 		}
 	}
@@ -680,9 +683,10 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_should_advertise_llms_txt__returns_false_when_seo_plugin_active() {
-		// Arrange
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		// Arrange - force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
 		try {
 			// Act
@@ -691,7 +695,7 @@ class Test_Module extends Elementor_Test_Base {
 			// Assert
 			$this->assertFalse( $result );
 		} finally {
-			delete_option( 'rank_math_modules' );
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
 			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 		}
 	}
@@ -726,9 +730,10 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_seo_plugin_generates_llms_txt__returns_true_when_owner_detected() {
-		// Arrange
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		// Arrange - force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
 		try {
 			// Act
@@ -737,21 +742,21 @@ class Test_Module extends Elementor_Test_Base {
 			// Assert
 			$this->assertTrue( $result );
 		} finally {
-			delete_option( 'rank_math_modules' );
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
 			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 		}
 	}
 
 	public function test_on_post_change__skips_cache_clear_when_no_modules_active() {
-		// Arrange
-		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
-			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
-		);
-		$settings->ensure_option_exists();
+		// Arrange - temporarily remove settings change hooks to avoid triggering cache invalidation
+		remove_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_change' ] );
 
 		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
 		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
 		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		// Re-add the hook for cleanup
+		add_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_change' ], 10, 3 );
 
 		$post_id = $this->factory()->post->create();
 		$post = get_post( $post_id );
@@ -776,14 +781,12 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act
 		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 
 		// Assert
 		$this->assertFalse( get_transient( $transient_key ) );
 
 		// Cleanup
 		delete_option( 'rank_math_modules' );
-		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
 	}
 
 	public function test_on_settings_change__clears_caches_for_newly_enabled_llms_txt_module() {

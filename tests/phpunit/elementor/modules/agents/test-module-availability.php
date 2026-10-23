@@ -33,6 +33,7 @@ class Test_Module_Availability extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		delete_option( 'rank_math_modules' );
+		remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
 
 		Module::reset_physical_file_cache();
 		Seo_Llms_Txt_Detector::reset_cache();
@@ -48,24 +49,38 @@ class Test_Module_Availability extends Elementor_Test_Base {
 	}
 
 	public function test_get_unavailable_reasons__detects_llms_txt_seo_plugin() {
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		Seo_Llms_Txt_Detector::reset_cache();
+		// Force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
-		$reasons = $this->module_availability->get_unavailable_reasons();
+		try {
+			$reasons = $this->module_availability->get_unavailable_reasons();
 
-		$this->assertArrayHasKey( Agent_Ready_Settings::MODULE_LLMS_TXT, $reasons );
-		$this->assertSame( 'seo_plugin', $reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ]['code'] );
-		$this->assertStringContainsString( 'Rank Math', $reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ]['message'] );
+			$this->assertArrayHasKey( Agent_Ready_Settings::MODULE_LLMS_TXT, $reasons );
+			$this->assertSame( 'seo_plugin', $reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ]['code'] );
+			$this->assertStringContainsString( 'Rank Math', $reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ]['message'] );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			Seo_Llms_Txt_Detector::reset_cache();
+		}
 	}
 
 	public function test_get_reason__returns_specific_module_reason() {
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		Seo_Llms_Txt_Detector::reset_cache();
+		// Force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
-		$reason = $this->module_availability->get_reason( Agent_Ready_Settings::MODULE_LLMS_TXT );
+		try {
+			$reason = $this->module_availability->get_reason( Agent_Ready_Settings::MODULE_LLMS_TXT );
 
-		$this->assertIsArray( $reason );
-		$this->assertSame( 'seo_plugin', $reason['code'] );
+			$this->assertIsArray( $reason );
+			$this->assertSame( 'seo_plugin', $reason['code'] );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			Seo_Llms_Txt_Detector::reset_cache();
+		}
 	}
 
 	public function test_get_reason__returns_null_when_available() {
@@ -79,18 +94,32 @@ class Test_Module_Availability extends Elementor_Test_Base {
 	}
 
 	public function test_is_available__returns_false_when_conflict_exists() {
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		Seo_Llms_Txt_Detector::reset_cache();
+		// Force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
-		$this->assertFalse( $this->module_availability->is_available( Agent_Ready_Settings::MODULE_LLMS_TXT ) );
+		try {
+			$this->assertFalse( $this->module_availability->is_available( Agent_Ready_Settings::MODULE_LLMS_TXT ) );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			Seo_Llms_Txt_Detector::reset_cache();
+		}
 	}
 
 	public function test_get_unavailable_reasons__checks_seo_plugin_before_physical_file() {
-		update_option( 'rank_math_modules', [ 'llms-txt' ] );
-		Seo_Llms_Txt_Detector::reset_cache();
+		// Force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
 
-		$reasons = $this->module_availability->get_unavailable_reasons();
+		try {
+			$reasons = $this->module_availability->get_unavailable_reasons();
 
-		$this->assertSame( 'seo_plugin', $reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ]['code'] );
+			$this->assertSame( 'seo_plugin', $reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ]['code'] );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			Seo_Llms_Txt_Detector::reset_cache();
+		}
 	}
 }

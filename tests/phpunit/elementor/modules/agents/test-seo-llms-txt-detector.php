@@ -20,6 +20,7 @@ class Test_Seo_Llms_Txt_Detector extends Elementor_Test_Base {
 		delete_option( 'wpseo' );
 		delete_option( 'rank_math_modules' );
 		delete_option( 'aioseo_options' );
+		remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
 
 		Seo_Llms_Txt_Detector::reset_cache();
 
