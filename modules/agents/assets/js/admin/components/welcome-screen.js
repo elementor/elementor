@@ -20,12 +20,12 @@ export const WelcomeScreen = () => {
 	}, [] );
 
 	const handleActivate = async () => {
-		trackActivationClicked();
 		setHasError( false );
 		setIsActivating( true );
 
 		try {
 			await activateAgentsReady();
+			trackActivationClicked();
 			window.location.reload();
 		} catch {
 			setHasError( true );
