@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Alert from '@elementor/ui/Alert';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
@@ -6,6 +6,7 @@ import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 
+import { trackActivationClicked, trackWelcomeViewed } from '../analytics/track-agent-ready-event';
 import { activateAgentsReady } from '../api';
 import { PageTitle } from './page-title';
 import { WelcomeIllustration } from './welcome-illustration';
@@ -14,7 +15,12 @@ export const WelcomeScreen = () => {
 	const [ isActivating, setIsActivating ] = useState( false );
 	const [ hasError, setHasError ] = useState( false );
 
+	useEffect( () => {
+		trackWelcomeViewed();
+	}, [] );
+
 	const handleActivate = async () => {
+		trackActivationClicked();
 		setHasError( false );
 		setIsActivating( true );
 
