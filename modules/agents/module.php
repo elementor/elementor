@@ -30,6 +30,13 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
+use Elementor\Modules\Agents\Components\Webmcp\Business_Schema_Parser;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Get_Site_Structure;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
+use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
+use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -90,6 +97,7 @@ class Module extends BaseModule {
 	private Bot_Catalog $bot_catalog;
 	private Markdown_Endpoint $markdown_endpoint;
 	private Scanner_Report_Store $scanner_store;
+	private Webmcp_Browser_Tools $webmcp_browser_tools;
 
 	public function get_name() {
 		return 'agents';
@@ -173,6 +181,9 @@ class Module extends BaseModule {
 
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings ) );
 		$this->register_component( $this->markdown_endpoint );
+
+		$this->webmcp_browser_tools = $this->create_webmcp_browser_tools( $sanitizer );
+		$this->register_component( $this->webmcp_browser_tools );
 
 		add_filter( 'elementor/editor/v2/packages', [ $this, 'add_packages' ] );
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
@@ -702,6 +713,7 @@ class Module extends BaseModule {
 			'botAccess'          => $this->get_bot_access_state(),
 			'agentDiscovery'     => $this->get_agent_discovery_state(),
 			'scanner'            => $this->get_scanner_state(),
+			'browserTools'       => $this->get_browser_tools_state(),
 		];
 	}
 
@@ -720,6 +732,31 @@ class Module extends BaseModule {
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 			'isExperimentActive'     => self::is_active(),
 		];
+	}
+
+	private function get_browser_tools_state(): array {
+		return [
+			'enabled'                  => $this->settings->is_browser_tools_enabled(),
+			'isAvailable'              => Webmcp_Browser_Tools::is_available(),
+			'tools'                    => $this->webmcp_browser_tools->get_admin_tools(),
+			'businessDetails'          => $this->settings->get_business_details(),
+			'maxBusinessDetailsLength' => Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH,
+		];
+	}
+
+	private function create_webmcp_browser_tools( Prompt_Injection_Sanitizer $sanitizer ): Webmcp_Browser_Tools {
+		$extractor = new Business_Info_Extractor( new Business_Schema_Parser( $sanitizer ) );
+
+		return new Webmcp_Browser_Tools(
+			$this->settings,
+			$extractor,
+			[
+				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
+				new Get_Site_Structure( $this->generator, $sanitizer ),
+				new Read_Page_Content( $this->settings, $this->markdown_endpoint, $sanitizer ),
+				new Query_Business_Info( $this->settings, $extractor, $sanitizer ),
+			]
+		);
 	}
 
 	private function get_agent_discovery_state(): array {

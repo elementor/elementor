@@ -14,6 +14,7 @@ const mountAgentAccess = ( rootElement, config, isRTL ) => {
 			isExperimentActive={ resolveAgentReadyActive( config.isExperimentActive ) }
 			agentDiscoveryConfig={ config.agentDiscovery }
 			botAccessConfig={ config.botAccess }
+			browserToolsConfig={ config.browserTools }
 			llmsConfig={ config.llms }
 			markdownConfig={ config.markdown }
 		/>

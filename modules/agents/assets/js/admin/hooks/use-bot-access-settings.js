@@ -62,6 +62,7 @@ export const useBotAccessSettings = ( initialState ) => {
 		isSaving,
 		saveError,
 		setColumn,
+		setIsEnabled,
 		setRow,
 		toggleEnabled,
 		togglePermission,
