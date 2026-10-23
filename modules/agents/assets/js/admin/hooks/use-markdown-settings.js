@@ -51,6 +51,7 @@ export const useMarkdownSettings = ( initialState ) => {
 		isSaving,
 		postTypes,
 		saveError,
+		setIsEnabled,
 		toggleEnabled,
 		togglePostType,
 	};
