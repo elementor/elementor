@@ -68,7 +68,6 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
-		$this->assertNotFalse( has_filter( 'elementor/editor/v2/packages', [ $this->module, 'add_packages' ] ) );
 	}
 
 	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {
@@ -132,35 +131,6 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Cleanup
 		$instance_property->setValue( null, null );
-	}
-
-	public function test_get_llms_txt_content__returns_empty_when_not_configured() {
-		// Act
-		$content = $this->module->get_llms_txt_content();
-
-		// Assert
-		$this->assertSame( '', $content );
-	}
-
-	public function test_get_llms_txt_content__returns_saved_content() {
-		// Arrange
-		$llms_content = '# llms.txt';
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
-		$this->flush_documents_cache();
-		$kit = Plugin::$instance->documents->get( $kit_id );
-		$kit->update_settings( [
-			'agents' => [
-				'llms' => $llms_content,
-			],
-		] );
-
-		$this->flush_documents_cache();
-
-		// Act
-		$content = $this->module->get_llms_txt_content();
-
-		// Assert
-		$this->assertSame( $llms_content, $content );
 	}
 
 	public function test_is_llms_txt_request__matches_root_path() {
@@ -370,9 +340,7 @@ class Test_Module extends Elementor_Test_Base {
 		// Act
 		$kit->save( [
 			'settings' => [
-				'agents' => [
-					'llms' => '# llms.txt',
-				],
+				'site_name' => 'Test Site Name for Cache Invalidation',
 			],
 		] );
 
@@ -587,6 +555,17 @@ class Test_Module extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
 
 		$this->assertTrue( $fired, 'cache_invalidated action must fire on global change' );
+	}
+
+	public function test_get_llms_txt_content__is_deprecated_and_returns_empty() {
+		// Arrange
+		$this->setExpectedDeprecated( 'Elementor\\Modules\\Agents\\Module::get_llms_txt_content' );
+
+		// Act
+		$result = $this->module->get_llms_txt_content();
+
+		// Assert
+		$this->assertSame( '', $result );
 	}
 
 	public function test_should_advertise_llms_txt__returns_true_when_enabled() {
