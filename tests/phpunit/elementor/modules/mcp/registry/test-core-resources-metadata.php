@@ -24,6 +24,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Core_Resources_Metadata extends TestCase {
 
+	public function test_active_variables__omits_deleted_variables() {
+		// Arrange.
+		$variables = [
+			'e-gv-live' => [
+				'label' => 'Primary',
+				'value' => '#111111',
+			],
+			'e-gv-gone' => [
+				'label' => 'Old',
+				'value' => '#222222',
+				'deleted' => true,
+			],
+		];
+
+		// Act.
+		$active = Global_Variables_Resource_Ability::active_variables( $variables );
+
+		// Assert.
+		$this->assertSame( [ 'e-gv-live' ], array_keys( $active ) );
+	}
+
 	/**
 	 * @dataProvider core_resource_abilities
 	 */
