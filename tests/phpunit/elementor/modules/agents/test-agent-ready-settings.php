@@ -109,6 +109,44 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		$this->assertFalse( $this->settings->is_activated() );
 	}
 
+	public function test_activate__keeps_modules_an_admin_turned_off_when_already_activated() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => false ],
+		] );
+
+		// Act
+		$this->settings->activate();
+
+		// Assert
+		$this->assertTrue( $this->settings->is_activated() );
+		$this->assertFalse( $this->settings->is_llms_enabled() );
+	}
+
+	public function test_rest_update__first_write_without_an_existing_option_does_not_activate() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => true ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_activated() );
+	}
+
+	public function test_set_server_value__first_write_without_an_existing_option_does_not_activate() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		// Act
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'is_manually_edited', true );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_activated() );
+	}
+
 	public function test_is_activated__true_for_a_stored_option_without_the_flag() {
 		// Arrange
 		update_option( Agent_Ready_Settings::OPTION, [

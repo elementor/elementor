@@ -91,6 +91,10 @@ class Agent_Ready_Settings {
 	}
 
 	public function activate( array $skip_modules = [] ): void {
+		if ( $this->is_activated() ) {
+			return;
+		}
+
 		$settings = $this->get_stored();
 
 		foreach ( array_keys( $this->get_module_sanitizers() ) as $module ) {
@@ -190,7 +194,7 @@ class Agent_Ready_Settings {
 			return is_array( $value ) ? $value : [];
 		}
 
-		$stored   = $this->get_stored();
+		$stored   = $this->get_stored_or_inactive_defaults();
 		$incoming = is_array( $value ) ? $value : [];
 
 		foreach ( $this->get_module_sanitizers() as $module => $sanitizer ) {
@@ -213,7 +217,7 @@ class Agent_Ready_Settings {
 	 * @param mixed  $value  Setting value.
 	 */
 	public function set_server_value( string $module, string $key, $value ): void {
-		$settings = $this->get_stored();
+		$settings = $this->get_stored_or_inactive_defaults();
 
 		$settings[ $module ][ $key ] = $value;
 
@@ -242,6 +246,19 @@ class Agent_Ready_Settings {
 				'business_details' => '',
 			],
 		];
+	}
+
+	/**
+	 * A first write must not look like a legacy option, which counts as already activated.
+	 */
+	private function get_stored_or_inactive_defaults(): array {
+		$stored = $this->get_stored();
+
+		if ( [] === $stored ) {
+			$stored[ self::ACTIVATED_KEY ] = false;
+		}
+
+		return $stored;
 	}
 
 	private function get_stored(): array {

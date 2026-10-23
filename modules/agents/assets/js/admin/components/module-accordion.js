@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 
 import { MODULE_STATUS_DISABLED, MODULE_STATUS_ENABLED, MODULE_STATUS_WARNING } from '../constants';
 import { DisabledReasonSwitch } from './disabled-reason-switch';
+import { wpAdminSwitchSx } from './wp-admin-sx';
 
 const stopEventPropagation = ( event ) => event.stopPropagation();
 
@@ -45,7 +46,7 @@ export const ModuleAccordion = ( { title, description, status, isEnabled, isTogg
 						disabledReason={ disabledReason }
 						onChange={ onToggle }
 						onClick={ stopEventPropagation }
-						sx={ { '& .MuiSwitch-input': { position: 'absolute' } } }
+						sx={ wpAdminSwitchSx }
 					/>
 					{ isExpanded ? <ChevronUpIcon fontSize="small" /> : <ChevronDownIcon fontSize="small" /> }
 				</Stack>
