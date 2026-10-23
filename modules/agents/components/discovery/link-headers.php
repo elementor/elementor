@@ -63,6 +63,14 @@ class Link_Headers extends Feature_Component {
 		return 'discovery';
 	}
 
+	public function get_required_modules(): array {
+		return [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+		];
+	}
+
 	public function register(): void {
 		add_action( 'send_headers', [ $this, 'emit_frontend_headers' ] );
 		add_filter( 'rest_post_dispatch', [ $this, 'add_rest_headers' ], 10, 3 );

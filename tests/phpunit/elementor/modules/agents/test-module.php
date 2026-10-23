@@ -639,4 +639,164 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert - should not serve (bail early)
 		$this->assertEmpty( $output );
 	}
+
+	public function test_ajax_activate__skips_unavailable_modules() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+
+		try {
+			// Act
+			$this->module->ajax_activate();
+
+			// Assert
+			$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+			$this->assertFalse( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] );
+			$this->assertTrue( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] );
+		} finally {
+			delete_option( 'rank_math_modules' );
+		}
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_not_activated() {
+		// Arrange
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+		$settings->ensure_option_exists();
+
+		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		// Act
+		$result = $this->module->should_advertise_llms_txt();
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_seo_plugin_active() {
+		// Arrange
+		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+
+		try {
+			// Act
+			$result = $this->module->should_advertise_llms_txt();
+
+			// Assert
+			$this->assertFalse( $result );
+		} finally {
+			delete_option( 'rank_math_modules' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_should_advertise_llms_full_txt__returns_false_when_physical_file_exists() {
+		// Arrange
+		$llms_full_path = Module::get_llms_file_root_path() . 'llms-full.txt';
+		$reflection = new \ReflectionMethod( Module::class, 'get_llms_file_root_path' );
+		$reflection->setAccessible( true );
+		$root_path = $reflection->invoke( null );
+		$file_path = $root_path . 'llms-full.txt';
+
+		if ( ! is_writable( $root_path ) ) {
+			$this->markTestSkipped( 'Root path is not writable' );
+		}
+
+		file_put_contents( $file_path, 'test' );
+
+		try {
+			Module::reset_physical_file_cache();
+
+			// Act
+			$result = $this->module->should_advertise_llms_full_txt();
+
+			// Assert
+			$this->assertFalse( $result );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
+	}
+
+	public function test_seo_plugin_generates_llms_txt__returns_true_when_owner_detected() {
+		// Arrange
+		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+
+		try {
+			// Act
+			$result = $this->module->seo_plugin_generates_llms_txt();
+
+			// Assert
+			$this->assertTrue( $result );
+		} finally {
+			delete_option( 'rank_math_modules' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_on_post_change__skips_cache_clear_when_no_modules_active() {
+		// Arrange
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+		$settings->ensure_option_exists();
+
+		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		$post_id = $this->factory()->post->create();
+		$post = get_post( $post_id );
+
+		$invalidated = false;
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', function() use ( &$invalidated ) {
+			$invalidated = true;
+		} );
+
+		// Act
+		$this->module->on_post_change( $post_id, $post );
+
+		// Assert
+		$this->assertFalse( $invalidated );
+	}
+
+	public function test_on_seo_plugin_option_change__flushes_well_known_caches_when_agent_discovery_active() {
+		// Arrange
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act
+		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+
+		// Assert
+		$this->assertFalse( get_transient( $transient_key ) );
+
+		// Cleanup
+		delete_option( 'rank_math_modules' );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+	}
+
+	public function test_on_settings_change__clears_caches_for_newly_enabled_llms_txt_module() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$this->module->get_generated_llms_txt();
+
+		// Act
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		// Assert - cache should be invalidated
+		$cache = new \Elementor\Modules\Agents\Llms_Cache();
+		$this->assertFalse( $cache->get_llms() );
+	}
 }
+

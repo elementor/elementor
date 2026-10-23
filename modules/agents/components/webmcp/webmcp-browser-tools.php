@@ -53,6 +53,12 @@ class Webmcp_Browser_Tools extends Feature_Component {
 		return 'mcp';
 	}
 
+	public function get_required_modules(): array {
+		return [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+		];
+	}
+
 	public static function is_available(): bool {
 		return function_exists( 'wp_get_abilities' ) && function_exists( 'wp_register_ability_category' );
 	}
@@ -62,6 +68,10 @@ class Webmcp_Browser_Tools extends Feature_Component {
 	}
 
 	public function register(): void {
+		if ( ! $this->settings->is_module_active( Agent_Ready_Settings::MODULE_BROWSER_TOOLS ) ) {
+			return;
+		}
+
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_category' ] );
 		add_action( 'elementor/agents/llms_txt/cache_invalidated', [ $this, 'flush_relevant_tools_cache' ] );
 

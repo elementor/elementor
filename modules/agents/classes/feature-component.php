@@ -39,6 +39,17 @@ abstract class Feature_Component {
 	}
 
 	/**
+	 * Module dependencies required for this component to be registered.
+	 * When non-empty, the component is registered only when at least one of
+	 * the required modules is active.
+	 *
+	 * @return string[] Array of Agent_Ready_Settings::MODULE_* constants.
+	 */
+	public function get_required_modules(): array {
+		return [];
+	}
+
+	/**
 	 * Wire hooks. Called by the module only when is_enabled() returns true.
 	 */
 	abstract public function register(): void;

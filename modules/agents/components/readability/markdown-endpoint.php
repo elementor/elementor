@@ -37,6 +37,12 @@ class Markdown_Endpoint extends Feature_Component {
 		return 'readability';
 	}
 
+	public function get_required_modules(): array {
+		return [
+			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+		];
+	}
+
 	/** @var int|null Post ID resolved from a `.md` path request. */
 	private ?int $md_post_id = null;
 
@@ -60,11 +66,13 @@ class Markdown_Endpoint extends Feature_Component {
 	 * automatically — a follow-up PR will call this from module.php.
 	 */
 	public function register(): void {
-		add_action( 'parse_request', [ $this, 'on_parse_request' ], 1 );
-		add_action( 'template_redirect', [ $this, 'on_md_path_redirect' ], 1 );
-		add_action( 'template_redirect', [ $this, 'on_markdown_request_fallback' ], 2 );
-		add_action( 'elementor/markdown/headers', [ $this, 'on_markdown_headers' ] );
-		add_filter( 'elementor/markdown/should_serve', [ $this, 'filter_should_serve' ], 10, 2 );
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ) ) {
+			add_action( 'parse_request', [ $this, 'on_parse_request' ], 1 );
+			add_action( 'template_redirect', [ $this, 'on_md_path_redirect' ], 1 );
+			add_action( 'template_redirect', [ $this, 'on_markdown_request_fallback' ], 2 );
+			add_action( 'elementor/markdown/headers', [ $this, 'on_markdown_headers' ] );
+			add_filter( 'elementor/markdown/should_serve', [ $this, 'filter_should_serve' ], 10, 2 );
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -198,6 +206,10 @@ class Markdown_Endpoint extends Feature_Component {
 	 * @param \WP_Post $post         The current post.
 	 */
 	public function filter_should_serve( $should_serve, \WP_Post $post ): bool {
+		if ( ! $this->settings->is_module_active( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ) ) {
+			return (bool) $should_serve;
+		}
+
 		if ( ! $this->is_included_by_settings( $post ) || Post_Noindex::is_noindex( $post->ID ) ) {
 			return false;
 		}

@@ -12,6 +12,8 @@ use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
+use Elementor\Modules\Agents\Classes\Module_Availability;
+use Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
@@ -91,6 +93,8 @@ class Module extends BaseModule {
 	private Markdown_Endpoint $markdown_endpoint;
 	private Scanner_Report_Store $scanner_store;
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
+	private Seo_Llms_Txt_Detector $seo_detector;
+	private Module_Availability $module_availability;
 
 	public function get_name() {
 		return 'agents';
@@ -108,38 +112,64 @@ class Module extends BaseModule {
 		$this->robots_handler   = new Robots_Txt_Handler( $this->settings );
 		$this->manual_content   = new Llms_Manual_Content( $this->generator );
 		$this->scanner_store    = new Scanner_Report_Store();
+		$this->seo_detector     = new Seo_Llms_Txt_Detector();
+		$this->module_availability = new Module_Availability( $this->seo_detector, $this->robots_handler );
 
 		$this->settings->register();
 
 		( new Scanner_Rest_Api( new Scanner_Client(), $this->scanner_store ) )->register_hooks();
 
 		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
-			add_action( "add_option_{$option}", [ $this, 'on_settings_change' ] );
-			add_action( "update_option_{$option}", [ $this, 'on_settings_change' ] );
+			add_action( "add_option_{$option}", [ $this, 'on_settings_change' ], 10, 2 );
+			add_action( "update_option_{$option}", [ $this, 'on_settings_change' ], 10, 3 );
 		}
 
-		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
-		add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
+		add_action( 'add_option_wpseo', [ $this, 'on_seo_plugin_option_change' ] );
+		add_action( 'update_option_wpseo', [ $this, 'on_seo_plugin_option_change' ] );
+		add_action( 'add_option_rank_math_modules', [ $this, 'on_seo_plugin_option_change' ] );
+		add_action( 'update_option_rank_math_modules', [ $this, 'on_seo_plugin_option_change' ] );
+		add_action( 'add_option_aioseo_options', [ $this, 'on_seo_plugin_option_change' ] );
+		add_action( 'update_option_aioseo_options', [ $this, 'on_seo_plugin_option_change' ] );
 
-		add_action( 'save_post', [ $this, 'on_post_change' ], 10, 2 );
-		add_action( 'trashed_post', [ $this, 'on_post_state_change' ] );
-		add_action( 'untrashed_post', [ $this, 'on_post_state_change' ] );
-		add_action( 'before_delete_post', [ $this, 'on_post_state_change' ] );
-		add_action( 'elementor/document/after_save', [ $this, 'on_elementor_document_save' ] );
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
+			add_action( 'template_redirect', [ $this, 'maybe_serve_llms_txt' ], 1 );
+			add_action( 'template_redirect', [ $this, 'maybe_serve_llms_full_txt' ], 1 );
+		}
+
+		if ( $this->settings->has_any_active( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+		] ) ) {
+			add_action( 'save_post', [ $this, 'on_post_change' ], 10, 2 );
+			add_action( 'trashed_post', [ $this, 'on_post_state_change' ] );
+			add_action( 'untrashed_post', [ $this, 'on_post_state_change' ] );
+			add_action( 'before_delete_post', [ $this, 'on_post_state_change' ] );
+			add_action( 'elementor/document/after_save', [ $this, 'on_elementor_document_save' ] );
+
+			add_action( 'switch_theme', [ $this, 'on_global_change' ] );
+			add_action( 'activated_plugin', [ $this, 'on_global_change' ] );
+			add_action( 'deactivated_plugin', [ $this, 'on_global_change' ] );
+			add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
+		}
+
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
-		add_action( 'switch_theme', [ $this, 'on_global_change' ] );
-		add_action( 'activated_plugin', [ $this, 'on_global_change' ] );
-		add_action( 'deactivated_plugin', [ $this, 'on_global_change' ] );
-		add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
+		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_action( 'switch_blog', [ __CLASS__, 'reset_physical_file_cache' ] );
+		add_action( 'switch_blog', [ __CLASS__, 'reset_seo_detector_cache' ] );
 
-		$this->robots_handler->register();
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL ) ) {
+			$this->robots_handler->register();
+		}
 
 		$this->well_known_router = new Well_Known_Router( $this->settings );
 		$this->add_component( 'well_known_router', $this->well_known_router );
-		$this->well_known_router->init();
+
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ) ) {
+			$this->well_known_router->init();
+		}
 
 		$this->register_well_known_endpoint( new Oauth_Authorization_Server() );
 		$this->register_well_known_endpoint( new Webmcp_Manifest() );
@@ -221,7 +251,10 @@ class Module extends BaseModule {
 			throw new \Exception( esc_html__( 'Permission denied.', 'elementor' ), Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		$this->settings->activate();
+		$unavailable_reasons = $this->module_availability->get_unavailable_reasons();
+		$skip_modules        = array_keys( $unavailable_reasons );
+
+		$this->settings->activate( $skip_modules );
 	}
 
 	// -------------------------------------------------------------------------
@@ -244,18 +277,31 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Reset the SEO detector cache. Used by tests and on blog switch.
+	 */
+	public static function reset_seo_detector_cache(): void {
+		Seo_Llms_Txt_Detector::reset_cache();
+	}
+
+	/**
 	 * Check whether llms.txt should be advertised in discovery mechanisms.
 	 *
 	 * Returns true only when Elementor's llms.txt is actually served.
 	 * Returns false when:
+	 *  - The feature is not activated
 	 *  - The feature is disabled
 	 *  - A physical file exists (even if admin chose 'replace', the web server
 	 *    serves the static file before WordPress runs)
+	 *  - An SEO plugin owns llms.txt
 	 *
 	 * This is the single source of truth for both serving and advertising.
 	 * Not memoized to avoid leaking state between tests and across settings changes.
 	 */
 	public function should_advertise_llms_txt(): bool {
+		if ( ! $this->settings->is_activated() ) {
+			return false;
+		}
+
 		if ( ! $this->settings->is_llms_enabled() ) {
 			return false;
 		}
@@ -270,25 +316,75 @@ class Module extends BaseModule {
 			return false;
 		}
 
+		if ( $this->seo_plugin_generates_llms_txt() ) {
+			return false;
+		}
+
 		return true;
 	}
 
 	/**
 	 * Check whether llms-full.txt should be advertised in discovery mechanisms.
 	 *
-	 * Llms-full.txt is always served by WordPress (no physical file concern),
-	 * so we only check if the feature is enabled.
+	 * Llms-full.txt is always served by WordPress (no web server file concern),
+	 * but we check if a physical file exists to avoid conflicts.
 	 *
 	 * @return bool
 	 */
 	public function should_advertise_llms_full_txt(): bool {
-		return $this->settings->is_llms_enabled();
+		if ( ! $this->settings->is_activated() ) {
+			return false;
+		}
+
+		if ( ! $this->settings->is_llms_enabled() ) {
+			return false;
+		}
+
+		if ( self::has_physical_llms_full_file() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check whether a physical llms-full.txt file exists.
+	 *
+	 * Uses the same per-blog cache as has_physical_llms_file.
+	 *
+	 * @return bool
+	 */
+	public static function has_physical_llms_full_file(): bool {
+		$blog_id = get_current_blog_id();
+		$cache_key = 'full_' . $blog_id;
+
+		if ( isset( self::$physical_file_cache[ $cache_key ] ) ) {
+			return self::$physical_file_cache[ $cache_key ];
+		}
+
+		$root_path = self::get_llms_file_root_path();
+		self::$physical_file_cache[ $cache_key ] = file_exists( $root_path . 'llms-full.txt' );
+
+		return self::$physical_file_cache[ $cache_key ];
+	}
+
+	/**
+	 * Check whether an SEO plugin is generating llms.txt.
+	 *
+	 * @return bool
+	 */
+	public function seo_plugin_generates_llms_txt(): bool {
+		return null !== $this->seo_detector->get_owner();
 	}
 
 	/**
 	 * Serve llms.txt when the request path matches.
 	 */
 	public function maybe_serve_llms_txt() {
+		if ( ! $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
+			return;
+		}
+
 		if ( ! $this->is_request_for( 'llms.txt' ) ) {
 			return;
 		}
@@ -310,11 +406,15 @@ class Module extends BaseModule {
 	}
 
 	public function maybe_serve_llms_full_txt() {
+		if ( ! $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
+			return;
+		}
+
 		if ( ! $this->is_request_for( 'llms-full.txt' ) ) {
 			return;
 		}
 
-		if ( ! $this->settings->is_llms_enabled() ) {
+		if ( ! $this->should_advertise_llms_full_txt() ) {
 			return;
 		}
 
@@ -405,6 +505,14 @@ class Module extends BaseModule {
 	 * @param \WP_Post $post
 	 */
 	public function on_post_change( int $post_id, \WP_Post $post ) {
+		if ( ! $this->settings->has_any_active( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+		] ) ) {
+			return;
+		}
+
 		if ( wp_is_post_revision( $post_id ) ) {
 			return;
 		}
@@ -413,9 +521,10 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// Clear the per-post inline-content cache (post meta) for this specific
-		// post, then blow the assembled-output transients.
-		$this->generator->clear_post_cache( $post_id );
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
+			$this->generator->clear_post_cache( $post_id );
+		}
+
 		$this->invalidate_cache( $post_id );
 	}
 
@@ -425,7 +534,18 @@ class Module extends BaseModule {
 	 * @param int $post_id
 	 */
 	public function on_post_state_change( int $post_id ) {
-		$this->generator->clear_post_cache( $post_id );
+		if ( ! $this->settings->has_any_active( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+		] ) ) {
+			return;
+		}
+
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
+			$this->generator->clear_post_cache( $post_id );
+		}
+
 		$this->invalidate_cache( $post_id );
 	}
 
@@ -435,13 +555,21 @@ class Module extends BaseModule {
 	 * @param mixed $document
 	 */
 	public function on_elementor_document_save( $document ) {
+		if ( ! $this->settings->has_any_active( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+		] ) ) {
+			return;
+		}
+
 		if ( ! ( $document instanceof Kit ) ) {
 			return;
 		}
 
 		$kit_id = $document->get_main_id();
 
-		if ( $kit_id ) {
+		if ( $kit_id && $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
 			$this->generator->clear_post_cache( $kit_id );
 		}
 
@@ -465,7 +593,18 @@ class Module extends BaseModule {
 	 * once — theme switch, plugin (de)activation, Elementor cache clear.
 	 */
 	public function on_global_change(): void {
-		$this->generator->clear_all_post_caches();
+		if ( ! $this->settings->has_any_active( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+		] ) ) {
+			return;
+		}
+
+		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_LLMS_TXT ) ) {
+			$this->generator->clear_all_post_caches();
+		}
+
 		$this->cache->invalidate();
 		do_action( 'elementor/agents/llms_txt/cache_invalidated', 0 );
 	}
@@ -473,12 +612,88 @@ class Module extends BaseModule {
 	/**
 	 * Invalidate cache when the Agent Ready settings or the edited llms.txt content change.
 	 * Also flush well-known endpoint caches (e.g. ARD manifest) when settings change.
+	 *
+	 * Handles both add_option_* (2 args: option, value) and update_option_* (3 args: option, old, new).
 	 */
-	public function on_settings_change(): void {
+	public function on_settings_change( ...$args ): void {
+		$option = $args[0] ?? '';
+		$old_value = count( $args ) === 3 ? $args[1] : null;
+		$new_value = count( $args ) === 3 ? $args[2] : ( $args[1] ?? null );
+
 		$this->invalidate_cache( 0 );
 
 		if ( isset( $this->well_known_router ) ) {
 			$this->well_known_router->flush_all_caches();
+		}
+
+		self::reset_physical_file_cache();
+		self::reset_seo_detector_cache();
+
+		if ( Agent_Ready_Settings::OPTION === $option ) {
+			$this->clear_caches_for_newly_active_modules( $old_value, $new_value );
+		}
+	}
+
+	/**
+	 * Flush well-known endpoint caches when SEO plugin options change.
+	 */
+	public function on_seo_plugin_option_change(): void {
+		if ( ! $this->settings->is_module_active( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ) ) {
+			return;
+		}
+
+		self::reset_seo_detector_cache();
+
+		if ( isset( $this->well_known_router ) ) {
+			$this->well_known_router->flush_all_caches();
+		}
+	}
+
+	/**
+	 * Clear caches for modules that were just activated or had 'activated' toggled true.
+	 */
+	private function clear_caches_for_newly_active_modules( $old_value, $new_value ): void {
+		$old_settings = is_array( $old_value ) ? $old_value : [];
+		$new_settings = is_array( $new_value ) ? $new_value : [];
+
+		$old_activated = ! empty( $old_settings[ Agent_Ready_Settings::ACTIVATED_KEY ] );
+		$new_activated = ! empty( $new_settings[ Agent_Ready_Settings::ACTIVATED_KEY ] );
+
+		$modules_to_clear = [];
+
+		if ( ! $old_activated && $new_activated ) {
+			$modules_to_clear = [
+				Agent_Ready_Settings::MODULE_LLMS_TXT,
+				Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+				Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+			];
+		} else {
+			foreach ( [
+				Agent_Ready_Settings::MODULE_LLMS_TXT,
+				Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+				Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+			] as $module ) {
+				$old_enabled = ! empty( $old_settings[ $module ]['enabled'] );
+				$new_enabled = ! empty( $new_settings[ $module ]['enabled'] );
+
+				if ( ! $old_enabled && $new_enabled ) {
+					$modules_to_clear[] = $module;
+				}
+			}
+		}
+
+		foreach ( $modules_to_clear as $module ) {
+			if ( Agent_Ready_Settings::MODULE_LLMS_TXT === $module ) {
+				$this->generator->clear_all_post_caches();
+				$this->cache->invalidate();
+			} elseif ( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY === $module ) {
+				if ( isset( $this->well_known_router ) ) {
+					$this->well_known_router->flush_all_caches();
+				}
+			} elseif ( Agent_Ready_Settings::MODULE_BROWSER_TOOLS === $module && isset( $this->webmcp_browser_tools ) ) {
+				$this->webmcp_browser_tools->flush_relevant_tools_cache();
+				$this->webmcp_browser_tools->sync_business_info_with_settings();
+			}
 		}
 	}
 
@@ -665,6 +880,13 @@ class Module extends BaseModule {
 	private function invalidate_cache( int $post_id = 0 ): void {
 		$this->cache->invalidate();
 
+		if ( ! $this->settings->has_any_active( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+		] ) ) {
+			return;
+		}
+
 		/**
 		 * Fires when the cached /llms.txt response has been purged so external
 		 * page-caches and CDNs can revalidate.
@@ -677,14 +899,16 @@ class Module extends BaseModule {
 	private function get_app_config(): array {
 		$this->settings->ensure_option_exists();
 
+		$unavailable_reasons = $this->module_availability->get_unavailable_reasons();
+
 		return [
 			'isActivated'        => $this->settings->is_activated(),
-			'llms'               => $this->get_llms_state(),
+			'llms'               => $this->get_llms_state( $unavailable_reasons ),
 			'markdown'           => $this->get_markdown_state(),
-			'botAccess'          => $this->get_bot_access_state(),
+			'botAccess'          => $this->get_bot_access_state( $unavailable_reasons ),
 			'agentDiscovery'     => $this->get_agent_discovery_state(),
 			'scanner'            => $this->get_scanner_state(),
-			'browserTools'       => $this->get_browser_tools_state(),
+			'browserTools'       => $this->get_browser_tools_state( $unavailable_reasons ),
 		];
 	}
 
@@ -704,10 +928,11 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function get_browser_tools_state(): array {
+	private function get_browser_tools_state( array $unavailable_reasons ): array {
 		return [
 			'enabled'                  => $this->settings->is_browser_tools_enabled(),
 			'isAvailable'              => Webmcp_Browser_Tools::is_available(),
+			'unavailableReason'        => $unavailable_reasons[ Agent_Ready_Settings::MODULE_BROWSER_TOOLS ] ?? null,
 			'tools'                    => $this->webmcp_browser_tools->get_admin_tools(),
 			'businessDetails'          => $this->settings->get_business_details(),
 			'maxBusinessDetailsLength' => Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH,
@@ -745,12 +970,13 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function get_bot_access_state(): array {
+	private function get_bot_access_state( array $unavailable_reasons ): array {
 		return [
-			'enabled'         => $this->settings->is_bot_access_enabled(),
-			'hasPhysicalFile' => $this->robots_handler->has_physical_robots_txt(),
-			'bots'            => $this->get_managed_bot_rows(),
-			'catalog'         => $this->get_bot_catalog_rows(),
+			'enabled'            => $this->settings->is_bot_access_enabled(),
+			'hasPhysicalFile'    => $this->robots_handler->has_physical_robots_txt(),
+			'unavailableReason'  => $unavailable_reasons[ Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL ] ?? null,
+			'bots'               => $this->get_managed_bot_rows(),
+			'catalog'            => $this->get_bot_catalog_rows(),
 		];
 	}
 
@@ -781,13 +1007,14 @@ class Module extends BaseModule {
 		);
 	}
 
-	private function get_llms_state(): array {
+	private function get_llms_state( array $unavailable_reasons ): array {
 		return [
-			'enabled'          => $this->settings->is_llms_enabled(),
-			'isManuallyEdited' => $this->settings->is_llms_manually_edited(),
-			'hasPhysicalFile'  => self::has_physical_llms_file(),
-			'fileUrl'          => home_url( '/' . self::LLMS_FILENAME ),
-			'postTypes'        => $this->get_post_type_rows( $this->settings->get_llms_post_types() ),
+			'enabled'            => $this->settings->is_llms_enabled(),
+			'isManuallyEdited'   => $this->settings->is_llms_manually_edited(),
+			'hasPhysicalFile'    => self::has_physical_llms_file(),
+			'unavailableReason'  => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
+			'fileUrl'            => home_url( '/' . self::LLMS_FILENAME ),
+			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types() ),
 		];
 	}
 
@@ -909,7 +1136,15 @@ class Module extends BaseModule {
 		$this->feature_registry->register( $component );
 		$this->add_component( $component->get_id(), $component );
 
-		if ( $component->is_enabled() ) {
+		$required_modules = $component->get_required_modules();
+
+		$should_register = $component->is_enabled();
+
+		if ( $should_register && ! empty( $required_modules ) ) {
+			$should_register = $this->settings->has_any_active( $required_modules );
+		}
+
+		if ( $should_register ) {
 			$component->register();
 		}
 	}

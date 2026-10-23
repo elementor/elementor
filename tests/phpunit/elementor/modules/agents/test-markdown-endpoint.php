@@ -443,6 +443,39 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		] ) );
 	}
 
+	public function test_filter_should_serve__preserves_incoming_value_when_markdown_not_active() {
+		// Arrange
+		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		$post = $this->create_published_page();
+
+		// Act - should preserve true
+		$result_true = $this->endpoint->filter_should_serve( true, $post );
+		// Act - should preserve false
+		$result_false = $this->endpoint->filter_should_serve( false, $post );
+
+		// Assert
+		$this->assertTrue( $result_true );
+		$this->assertFalse( $result_false );
+	}
+
+	public function test_filter_should_serve__returns_false_when_post_not_in_settings() {
+		// Arrange
+		$post = $this->create_published_page();
+
+		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['post_types'] = [ 'post' ];
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		// Act
+		$result = $this->endpoint->filter_should_serve( true, $post );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
 	private function get_private_property( string $name ) {
 		$property = new \ReflectionProperty( Markdown_Endpoint::class, $name );
 		$property->setAccessible( true );

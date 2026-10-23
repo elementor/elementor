@@ -90,11 +90,12 @@ class Agent_Ready_Settings {
 		return (bool) $stored[ self::ACTIVATED_KEY ];
 	}
 
-	public function activate(): void {
+	public function activate( array $skip_modules = [] ): void {
 		$settings = $this->get_stored();
 
 		foreach ( array_keys( $this->get_module_sanitizers() ) as $module ) {
-			$settings[ $module ] = array_merge( $this->get_module_settings( $module ), [ 'enabled' => true ] );
+			$enabled = ! in_array( $module, $skip_modules, true );
+			$settings[ $module ] = array_merge( $this->get_module_settings( $module ), [ 'enabled' => $enabled ] );
 		}
 
 		$settings[ self::ACTIVATED_KEY ] = true;
@@ -147,6 +148,26 @@ class Agent_Ready_Settings {
 
 	public function get_business_details(): string {
 		return (string) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['business_details'];
+	}
+
+	public function is_module_active( string $module ): bool {
+		if ( ! $this->is_activated() ) {
+			return false;
+		}
+
+		$settings = $this->get_module_settings( $module );
+
+		return ! empty( $settings['enabled'] );
+	}
+
+	public function has_any_active( array $modules ): bool {
+		foreach ( $modules as $module ) {
+			if ( $this->is_module_active( $module ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
