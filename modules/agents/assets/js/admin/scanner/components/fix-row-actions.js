@@ -94,13 +94,13 @@ CompletedActions.propTypes = {
 	onRescan: PropTypes.func.isRequired,
 };
 
-export const RowAction = ( { check, isResolved, isSaving = false, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
+export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
 	if ( FIX_WITH_TOGGLE === check.fixWith ) {
 		return (
 			<Switch
 				size="small"
 				checked={ isResolved }
-				disabled={ isSaving }
+				disabled={ isSaving || isToggleDisabled }
 				onChange={ ( event ) => onSetEnabled( check, event.target.checked ) }
 				inputProps={ { role: 'switch', 'aria-checked': isResolved, 'aria-label': check.title } }
 				sx={ wpAdminSwitchSx }
@@ -151,6 +151,7 @@ RowAction.propTypes = {
 	check: PropTypes.object.isRequired,
 	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
+	isToggleDisabled: PropTypes.bool,
 	agentAccessUrl: PropTypes.string.isRequired,
 	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onOpen: PropTypes.func.isRequired,

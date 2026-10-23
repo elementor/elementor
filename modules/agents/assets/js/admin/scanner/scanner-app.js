@@ -224,6 +224,11 @@ const ScannerScreen = ( {
 	lastReport,
 	retryAt = null,
 	isExperimentActive,
+	llmsConfig,
+	markdownConfig,
+	botAccessConfig,
+	agentDiscoveryConfig,
+	browserToolsConfig,
 } ) => {
 	const agentReadyActive = useMemo( () => resolveAgentReadyActive( isExperimentActive ), [ isExperimentActive ] );
 	const initialScan = useMemo(
@@ -235,6 +240,11 @@ const ScannerScreen = ( {
 		initialRetryAt: lastReport ? null : retryAt,
 		isExperimentActive: agentReadyActive,
 		isAngieActive,
+		llmsConfig,
+		markdownConfig,
+		botAccessConfig,
+		agentDiscoveryConfig,
+		browserToolsConfig,
 	} );
 	const isFirstRun = SCANNER_STATE_FIRST_RUN === flow.view;
 	const isScanProgress = SCANNER_STATE_PROGRESS === flow.view || SCANNER_STATE_ERROR_PROGRESS === flow.view;
@@ -268,6 +278,11 @@ ScannerScreen.propTypes = {
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
 	isExperimentActive: PropTypes.bool,
+	llmsConfig: PropTypes.object,
+	markdownConfig: PropTypes.object,
+	botAccessConfig: PropTypes.object,
+	agentDiscoveryConfig: PropTypes.object,
+	browserToolsConfig: PropTypes.object,
 };
 
 export const ScannerApp = ( {
@@ -282,6 +297,11 @@ export const ScannerApp = ( {
 	lastReport,
 	retryAt = null,
 	isExperimentActive = false,
+	llmsConfig,
+	markdownConfig,
+	botAccessConfig,
+	agentDiscoveryConfig,
+	browserToolsConfig,
 } ) => (
 	<DirectionProvider rtl={ isRTL }>
 		<LocalizationProvider>
@@ -297,6 +317,11 @@ export const ScannerApp = ( {
 					lastReport={ lastReport }
 					retryAt={ retryAt }
 					isExperimentActive={ isExperimentActive }
+					llmsConfig={ llmsConfig }
+					markdownConfig={ markdownConfig }
+					botAccessConfig={ botAccessConfig }
+					agentDiscoveryConfig={ agentDiscoveryConfig }
+					browserToolsConfig={ browserToolsConfig }
 				/>
 			</ThemeProvider>
 		</LocalizationProvider>
@@ -315,4 +340,9 @@ ScannerApp.propTypes = {
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
 	isExperimentActive: PropTypes.bool,
+	llmsConfig: PropTypes.object,
+	markdownConfig: PropTypes.object,
+	botAccessConfig: PropTypes.object,
+	agentDiscoveryConfig: PropTypes.object,
+	browserToolsConfig: PropTypes.object,
 };

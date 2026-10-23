@@ -97,6 +97,18 @@ const getReport = () => ( {
 			fixBy: 'Angie',
 			fixDetails: AGENT_INSTRUCTION_MARKDOWN,
 		},
+		{
+			id: 'webmcp-support',
+			label: 'WebMCP support',
+			layer: 'accessibility',
+			tier: 'required',
+			status: 'fail',
+			earned: 0,
+			possible: 2,
+			scorable: true,
+			fix: 'Turn on Agent browser tools in Agent Ready.',
+			fixBy: 'Built In',
+		},
 		{ id: 'ai-catalog-published', label: 'AI Catalog', layer: 'discovery', tier: 'recommended', status: 'na', earned: 0, possible: 0, scorable: false },
 	],
 } );
@@ -122,6 +134,7 @@ describe( 'toScanResult', () => {
 		// Assert
 		expect( result.checks.map( ( check ) => check.id ) ).toEqual( [
 			'public-api',
+			'webmcp-support',
 			'llms-txt-exists',
 			'llms-txt-formatting',
 			'agent-instruction',
@@ -198,6 +211,11 @@ describe( 'toScanResult', () => {
 		} );
 		expect( byId( 'llms-txt-formatting' ) ).toMatchObject( { fixWith: FIX_WITH_SEO, priority: PRIORITY_RECOMMENDED } );
 		expect( byId( 'public-api' ) ).toMatchObject( { fixWith: FIX_WITH_MANUAL, resolvedByActivation: false } );
+		expect( byId( 'webmcp-support' ) ).toMatchObject( {
+			fixWith: FIX_WITH_TOGGLE,
+			fixPrompt: '',
+			explanation: { howToFix: 'Turn on Agent browser tools in Agent Ready.' },
+		} );
 	} );
 
 	it( 'prefers the retryAt returned by the endpoint over the stored report', () => {

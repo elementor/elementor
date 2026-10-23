@@ -37,6 +37,11 @@ const mountScanner = ( rootElement, config, isRTL ) => {
 			isAngieActive={ !! scannerConfig.isAngieActive }
 			lastReport={ scannerConfig.lastReport || null }
 			retryAt={ scannerConfig.retryAt || null }
+			llmsConfig={ config.llms }
+			markdownConfig={ config.markdown }
+			botAccessConfig={ config.botAccess }
+			agentDiscoveryConfig={ config.agentDiscovery }
+			browserToolsConfig={ config.browserTools }
 		/>
 	), rootElement );
 };

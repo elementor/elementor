@@ -5,7 +5,8 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION } from '../scanner-constants';
+import { getToggleModuleKey } from '../scanner-check-settings';
+import { FIX_WITH_TOGGLE, REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION } from '../scanner-constants';
 import { FixRow } from './fix-row';
 
 const ROW_RISE = '3px';
@@ -86,29 +87,35 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 	<Box aria-busy={ isLoading }>
 		{ isLoading
 			? checks.map( ( check ) => <SkeletonRow key={ check.id } /> )
-			: checks.map( ( check, index ) => (
-				<Box key={ check.id } sx={ rowAppearSx }>
-					<FixRow
-						check={ check }
-						isOpen={ !! flow.openIds[ check.id ] }
-						isResolved={ !! flow.resolvedIds[ check.id ] }
-						isSaving={ !! flow.savingCheckIds?.[ check.id ] }
-						isLast={ index === checks.length - 1 }
-						preferenceValue={ flow.preferences[ check.id ] }
-						agentAccessUrl={ agentAccessUrl }
-						seoPluginSearchUrl={ seoPluginSearchUrl }
-						onToggle={ flow.toggleRow }
-						onOpen={ flow.openRow }
-						onCopyPrompt={ flow.openHowToFix }
-						onFixWithAngie={ flow.fixWithAngie }
-						onSetEnabled={ flow.setCheckEnabled }
-						onUndo={ flow.undoFix }
-						onRescan={ flow.startScan }
-						onPreferenceChange={ flow.setPreference }
-						onSavePreference={ flow.savePreference }
-					/>
-				</Box>
-			) ) }
+			: checks.map( ( check, index ) => {
+				const moduleKey = FIX_WITH_TOGGLE === check.fixWith ? getToggleModuleKey( check.id ) : null;
+				const isToggleDisabled = moduleKey && flow.isModuleToggleDisabled?.( moduleKey );
+
+				return (
+					<Box key={ check.id } sx={ rowAppearSx }>
+						<FixRow
+							check={ check }
+							isOpen={ !! flow.openIds[ check.id ] }
+							isResolved={ moduleKey ? !! flow.moduleEnabled?.[ moduleKey ] : !! flow.resolvedIds[ check.id ] }
+							isSaving={ !! flow.savingCheckIds?.[ check.id ] || !! ( moduleKey && flow.savingModuleKeys?.[ moduleKey ] ) }
+							isToggleDisabled={ !! isToggleDisabled }
+							isLast={ index === checks.length - 1 }
+							preferenceValue={ flow.preferences[ check.id ] }
+							agentAccessUrl={ agentAccessUrl }
+							seoPluginSearchUrl={ seoPluginSearchUrl }
+							onToggle={ flow.toggleRow }
+							onOpen={ flow.openRow }
+							onCopyPrompt={ flow.openHowToFix }
+							onFixWithAngie={ flow.fixWithAngie }
+							onSetEnabled={ flow.setCheckEnabled }
+							onUndo={ flow.undoFix }
+							onRescan={ flow.startScan }
+							onPreferenceChange={ flow.setPreference }
+							onSavePreference={ flow.savePreference }
+						/>
+					</Box>
+				);
+			} ) }
 	</Box>
 );
 
@@ -117,6 +124,9 @@ const fixTableRowsPropTypes = {
 	flow: PropTypes.shape( {
 		openIds: PropTypes.object.isRequired,
 		resolvedIds: PropTypes.object.isRequired,
+		moduleEnabled: PropTypes.object,
+		isModuleToggleDisabled: PropTypes.func,
+		savingModuleKeys: PropTypes.object,
 		savingCheckIds: PropTypes.object,
 		preferences: PropTypes.object.isRequired,
 		toggleRow: PropTypes.func.isRequired,

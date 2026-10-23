@@ -2,12 +2,15 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 
 import { ScannerApp } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-app';
 import {
+	FIX_WITH_TOGGLE,
 	HTTP_TOO_MANY_REQUESTS,
+	PRIORITY_REQUIRED,
 	SCAN_FAILURE_REASON_BLOCKED,
 	SCORE_TIER_HIGH,
 	SCORE_TIER_LOW,
 	SCORE_TIER_MID,
 	SCANNER_MOTION,
+	STAGE_REACH,
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
 import { getMockScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
 import { toFailedScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-report-adapter';
@@ -253,6 +256,86 @@ describe( 'Agent Ready scanner', () => {
 		fireEvent.click( within( dialog ).getByRole( 'button', { name: 'Next issue' } ) );
 
 		expect( within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', { name: 'Agents can\'t find a way to contact you' } ) ).toBeTruthy();
+	} );
+
+	const getScanWithWebmcpCheck = () => {
+		const scan = getMockScanResult();
+
+		return {
+			...scan,
+			checks: [
+				{
+					id: 'webmcp-support',
+					title: 'WebMCP support',
+					points: 5,
+					priority: PRIORITY_REQUIRED,
+					stage: STAGE_REACH,
+					evidence: 'No WebMCP manifest found',
+					explanation: { whatItMeans: '', howToFix: 'Turn on Agent browser tools.' },
+					fixWith: FIX_WITH_TOGGLE,
+					fixPrompt: '',
+					resolvedByActivation: false,
+				},
+				...scan.checks,
+			],
+		};
+	};
+
+	it( 'wires WebMCP support to Agent browser tools settings', async () => {
+		// Arrange
+		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
+		renderScanner( { browserToolsConfig: { enabled: true, isAvailable: true } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( true );
+		expect( checkSwitch.disabled ).toBe( false );
+
+		// Act
+		fireEvent.click( checkSwitch );
+
+		// Assert
+		expect( undoCheckFix ).toHaveBeenCalledWith( 'webmcp-support' );
+		expect( checkSwitch.checked ).toBe( false );
+	} );
+
+	it( 'disables the WebMCP switch when Agent browser tools are unavailable', async () => {
+		// Arrange
+		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
+		renderScanner( { browserToolsConfig: { enabled: true, isAvailable: false } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( true );
+	} );
+
+	it( 'shows a mapped switch on when that Agent Ready module is already enabled', async () => {
+		// Arrange
+		renderScanner( { markdownConfig: { enabled: true } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show all fixes (+2)' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t read clean versions of your pages' } );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( true );
+		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
+
+		// Act
+		fireEvent.click( checkSwitch );
+
+		// Assert
+		expect( undoCheckFix ).toHaveBeenCalledWith( 'markdown-pages' );
+		expect( checkSwitch.checked ).toBe( false );
+		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 	} );
 
 	it( 'keeps the scan score when a local check switch is turned on', async () => {

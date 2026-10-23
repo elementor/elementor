@@ -1,3 +1,4 @@
+import { getToggleModuleKey } from './scanner-check-settings';
 import {
 	FIX_BY_AGENT_READY_TOGGLE,
 	FIX_BY_ALLY,
@@ -101,7 +102,7 @@ export const classifyCheckFix = ( check ) => {
 	const fixBy = normalizeFixBy( check?.fixBy );
 	const instructionText = getInstructionText( check );
 
-	if ( FIX_BY_AGENT_READY_TOGGLE === fixBy ) {
+	if ( FIX_BY_AGENT_READY_TOGGLE === fixBy || getToggleModuleKey( check?.id ) ) {
 		return toggleFix( instructionText );
 	}
 
