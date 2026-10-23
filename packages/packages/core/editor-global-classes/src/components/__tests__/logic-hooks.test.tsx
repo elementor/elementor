@@ -44,12 +44,12 @@ describe( '<LogicHooks />', () => {
 		const globalClass1 = createMockStyleDefinition( { id: 'global-1' } );
 		const globalClass2 = createMockStyleDefinition( { id: 'global-2' } );
 
-		const indexPayload: HttpResponse< GlobalClassIndexEntry[], Record< string, never > > = {
+		const indexPayload: HttpResponse< GlobalClassIndexEntry[], { version: number } > = {
 			data: [
 				{ id: 'global-2', label: 'Class 2' },
 				{ id: 'global-1', label: 'Class 1' },
 			],
-			meta: {},
+			meta: { version: 0 },
 		};
 
 		const stylesPayload: HttpResponse<
