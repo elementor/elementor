@@ -87,7 +87,7 @@ export const SCANNER_COLORS = {
 export const DOT_FIELD = {
 	size: 1.8,
 	grid: 7,
-	maxDots: 5000,
+	maxDots: 15000,
 	rgb: '89, 89, 89',
 	opacityMin: 0.02,
 	opacityStep: 0.02,
