@@ -749,14 +749,14 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_on_post_change__skips_cache_clear_when_no_modules_active() {
 		// Arrange - temporarily remove settings change hooks to avoid triggering cache invalidation
-		remove_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_change' ] );
+		remove_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_update' ] );
 
 		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
 		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
 		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
 
 		// Re-add the hook for cleanup
-		add_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_change' ], 10, 3 );
+		add_action( 'update_option_' . \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, [ $this->module, 'on_settings_update' ], 10, 3 );
 
 		$post_id = $this->factory()->post->create();
 		$post = get_post( $post_id );
@@ -789,7 +789,7 @@ class Test_Module extends Elementor_Test_Base {
 		delete_option( 'rank_math_modules' );
 	}
 
-	public function test_on_settings_change__clears_caches_for_newly_enabled_llms_txt_module() {
+	public function test_on_settings_update__clears_caches_for_newly_enabled_llms_txt_module() {
 		// Arrange
 		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
 		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = false;
@@ -797,13 +797,95 @@ class Test_Module extends Elementor_Test_Base {
 
 		$this->module->get_generated_llms_txt();
 
-		// Act
-		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
-		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+		// Act - enable llms_txt
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
 
 		// Assert - cache should be invalidated
 		$cache = new \Elementor\Modules\Agents\Llms_Cache();
 		$this->assertFalse( $cache->get_llms() );
+	}
+
+	public function test_on_settings_update__clears_caches_for_newly_enabled_agent_discovery() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ]['enabled'] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act - enable agent_discovery
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - transient should be cleared
+		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_on_settings_update__clears_caches_when_agent_ready_activated() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$this->module->get_generated_llms_txt();
+
+		// Act - activate Agent Ready
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - cache should be invalidated
+		$cache = new \Elementor\Modules\Agents\Llms_Cache();
+		$this->assertFalse( $cache->get_llms() );
+	}
+
+	public function test_on_settings_update__does_not_clear_module_caches_when_no_modules_newly_enabled() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$this->module->get_generated_llms_txt();
+		$cache = new \Elementor\Modules\Agents\Llms_Cache();
+		$cached_before = $cache->get_llms();
+		$this->assertNotFalse( $cached_before );
+
+		// Act - update settings but keep llms_txt enabled
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - llms cache should still be cleared due to global invalidation
+		$this->assertFalse( $cache->get_llms() );
+	}
+
+	public function test_on_settings_add__clears_caches_when_settings_created() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		$new_settings = [
+			\Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY => true,
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_AGENT_DISCOVERY => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => true ],
+		];
+
+		// Act - add new settings
+		add_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - transient should be cleared
+		$this->assertFalse( get_transient( $transient_key ) );
 	}
 }
 

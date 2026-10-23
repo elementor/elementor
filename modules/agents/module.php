@@ -120,8 +120,8 @@ class Module extends BaseModule {
 		( new Scanner_Rest_Api( new Scanner_Client(), $this->scanner_store ) )->register_hooks();
 
 		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
-			add_action( "add_option_{$option}", [ $this, 'on_settings_change' ], 10, 2 );
-			add_action( "update_option_{$option}", [ $this, 'on_settings_change' ], 10, 3 );
+			add_action( "add_option_{$option}", [ $this, 'on_settings_add' ], 10, 2 );
+			add_action( "update_option_{$option}", [ $this, 'on_settings_update' ], 10, 3 );
 		}
 
 		add_action( 'add_option_wpseo', [ $this, 'on_seo_plugin_option_change' ] );
@@ -152,8 +152,6 @@ class Module extends BaseModule {
 			add_action( 'deactivated_plugin', [ $this, 'on_global_change' ] );
 			add_action( 'elementor/core/files/clear_cache', [ $this, 'on_global_change' ] );
 		}
-
-		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 
@@ -610,16 +608,29 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Invalidate cache when the Agent Ready settings or the edited llms.txt content change.
-	 * Also flush well-known endpoint caches (e.g. ARD manifest) when settings change.
-	 *
-	 * Handles both add_option_* (2 args: option, value) and update_option_* (3 args: option, old, new).
+	 * Invalidate cache when Agent Ready settings are added via add_option.
+	 * Handles add_option_{$option} hook (2 args: $option, $value).
 	 */
-	public function on_settings_change( ...$args ): void {
-		$option = $args[0] ?? '';
-		$old_value = count( $args ) === 3 ? $args[1] : null;
-		$new_value = count( $args ) === 3 ? $args[2] : ( $args[1] ?? null );
+	public function on_settings_add( string $option, $value ): void {
+		$this->invalidate_cache( 0 );
 
+		if ( isset( $this->well_known_router ) ) {
+			$this->well_known_router->flush_all_caches();
+		}
+
+		self::reset_physical_file_cache();
+		self::reset_seo_detector_cache();
+
+		if ( Agent_Ready_Settings::OPTION === $option ) {
+			$this->clear_caches_for_newly_active_modules( null, $value );
+		}
+	}
+
+	/**
+	 * Invalidate cache when Agent Ready settings are updated via update_option.
+	 * Handles update_option_{$option} hook (3 args: $old_value, $value, $option).
+	 */
+	public function on_settings_update( $old_value, $new_value, string $option ): void {
 		$this->invalidate_cache( 0 );
 
 		if ( isset( $this->well_known_router ) ) {
