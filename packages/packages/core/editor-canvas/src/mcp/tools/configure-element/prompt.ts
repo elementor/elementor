@@ -1,6 +1,5 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { isIconLibraryActive } from '../../icon-library-experiment';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
@@ -46,7 +45,6 @@ Setting a Font Awesome icon on an e-svg, after resolving it with \`find-icons\`:
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
 export const generatePrompt = () => {
-	const iconLibraryActive = isIconLibraryActive();
 	const configureElementToolPrompt = toolPrompts( 'configure-element' );
 
 	configureElementToolPrompt.description( `
@@ -106,7 +104,7 @@ Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" var
 Image example: { "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }
 Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only when the tag has no settings.
 
-${ iconLibraryActive ? ICONS_SECTION : '' }` );
+${ ICONS_SECTION }` );
 
 	configureElementToolPrompt.parameter( 'elementId', 'The ID of the element to configure. MANDATORY.' );
 
@@ -149,9 +147,7 @@ ${ iconLibraryActive ? ICONS_SECTION : '' }` );
 \`\`\`
 ` );
 
-	if ( iconLibraryActive ) {
-		configureElementToolPrompt.example( ICON_EXAMPLE );
-	}
+	configureElementToolPrompt.example( ICON_EXAMPLE );
 
 	configureElementToolPrompt.instruction(
 		'The $$type property is MANDATORY for every value in propertiesToChange; it is not used in the style parameter (raw CSS only).'

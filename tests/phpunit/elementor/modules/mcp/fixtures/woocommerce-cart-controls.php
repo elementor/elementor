@@ -13,6 +13,8 @@ return [
 	'section_coupon_display' => [ 'type' => 'switcher', 'default' => 'yes', 'name' => 'section_coupon_display' ],
 	'apply_coupon_button_text' => [ 'type' => 'text', 'dynamic' => [ 'active' => true ], 'default' => 'Apply coupon', 'condition' => [ 'section_coupon_display' => 'yes' ], 'name' => 'apply_coupon_button_text' ],
 	'checkout_button_text' => [ 'type' => 'text', 'dynamic' => [ 'active' => true ], 'default' => 'Proceed to Checkout', 'name' => 'checkout_button_text' ],
+	'additional_template_switch' => [ 'type' => 'switcher', 'return_value' => 'active', 'default' => '', 'name' => 'additional_template_switch' ],
+	'additional_template_select' => [ 'type' => 'query', 'condition' => [ 'additional_template_switch' => 'active' ], 'name' => 'additional_template_select', 'default' => '' ],
 	'section_normal_box_shadow_box_shadow' => [ 'type' => 'box_shadow', 'condition' => [ 'section_normal_box_shadow_box_shadow_type!' => '' ], 'name' => 'section_normal_box_shadow_box_shadow', 'default' => [ 'horizontal' => 0, 'vertical' => 0, 'blur' => 10, 'spread' => 0, 'color' => 'rgba(0,0,0,0.5)' ] ],
 	'section_normal_box_shadow_box_shadow_type' => [ 'type' => 'popover_toggle', 'return_value' => 'yes', 'name' => 'section_normal_box_shadow_box_shadow_type', 'default' => '' ],
 	'sections_background_color' => [ 'type' => 'color', 'name' => 'sections_background_color', 'default' => '' ],
