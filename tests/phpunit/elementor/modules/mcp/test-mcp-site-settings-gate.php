@@ -38,11 +38,11 @@ class Test_Mcp_Site_Settings_Gate extends TestCase {
 		);
 
 		$this->assertStringContainsString(
-			"add_action( 'init', [ \$this, 'register_shared_registry_slugs' ], 5 );",
+			"add_action( 'mcp_adapter_init', [ \$this, 'register_shared_registry_slugs' ], 5 );",
 			$source
 		);
 		$this->assertStringNotContainsString(
-			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'init', [ \$this, 'register_shared_registry_slugs' ]",
+			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'mcp_adapter_init', [ \$this, 'register_shared_registry_slugs' ]",
 			$source
 		);
 	}
