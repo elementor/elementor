@@ -7,8 +7,8 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
 - [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
-- `elementor/list-assets` - Images and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), and before `e-self-hosted-video` / `e-background-video` when using a library video. Also lists uploaded SVG files for `e-svg`<!--if:svg_library-->, but prefer `elementor/find-icons` for iconography<!--endif:svg_library-->
-<!--if:svg_library-->- `elementor/find-icons` - Font Awesome and site-uploaded icon libraries for `e-svg`; call before placing an `e-svg` so the icon renders without asking the user to upload anything (see ICONS)<!--endif:svg_library-->
+- `elementor/list-assets` - Images and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), and before `e-self-hosted-video` / `e-background-video` when using a library video. Also lists uploaded SVG files for `e-svg`, but prefer `elementor/find-icons` for iconography
+- `elementor/find-icons` - Font Awesome and site-uploaded icon libraries for `e-svg`; call before placing an `e-svg` so the icon renders without asking the user to upload anything (see ICONS)
 - `elementor/list-components` - Discover reusable widget compositions and the component capabilities available for the current license tier (see COMPONENTS)
 
 # TOOL SUPPORT
@@ -137,8 +137,8 @@ Match the widget schema shape:
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`. Don't send `alt` with `id`; library images render the attachment's Media Library alt text, so ask the user to update it there if it's missing.
   - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
-- **svg** (the `svg` prop on `e-svg`):<!--if:svg_library--> two mutually exclusive forms — send one, not both. See ICONS for which to pick.<!--endif:svg_library-->
-<!--if:svg_library-->  - Icon from a library (preferred for iconography): `{ "value": "fa-solid fa-cart-shopping", "library": "fa-solid" }`. Both fields come verbatim from `elementor/find-icons` — never assemble them yourself.<!--endif:svg_library-->
+- **svg** (the `svg` prop on `e-svg`): two mutually exclusive forms — send one, not both. See ICONS for which to pick.
+  - Icon from a library (preferred for iconography): `{ "value": "fa-solid fa-cart-shopping", "library": "fa-solid" }`. Both fields come verbatim from `elementor/find-icons` — never assemble them yourself.
   - Uploaded SVG file (for custom artwork, logos): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div, and a fabricated id renders nothing.
 - **video** (the `source` prop on `e-self-hosted-video` and `e-background-video`): two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` with `type: "video"`): `{ "id": 123 }`
@@ -237,7 +237,7 @@ BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overfl
 - Use rem/em exclusively for responsive scaling
 - Generous padding on CTAs: min 1rem 2.5rem
 
-<!--if:svg_library--># ICONS
+# ICONS
 `e-svg` renders either a library icon or an uploaded SVG file. Prefer a library icon for iconography — carts, arrows, social marks, check marks — because it needs no upload and inherits `color` via `currentColor`. Use an uploaded SVG only for custom artwork such as a brand logo.
 
 Call `elementor/find-icons` to resolve icons, then copy its `value` and `library` verbatim into the `svg` prop. Do not assemble those strings yourself: Font Awesome renamed many icons between major versions (`shopping-cart` became `cart-shopping`), so a plausible-looking guess renders nothing.
@@ -268,13 +268,13 @@ Size an `e-svg` with `width` / `height` in `style` and colour it with `color` �
 
 The response includes the Font Awesome version in use (`font_awesome_version`); the installed `libraries` and `categories` are listed only when nothing matched or when browsing without a query. Brand marks live in `fa-brands`, not `fa-solid`. Sites may add their own uploaded icon libraries, which `find-icons` returns alongside Font Awesome and which match on icon name only. When a query returns no matches, refine the wording rather than paginating, and fall back to a text label rather than inventing a name.
 
-<!--endif:svg_library--># INTERACTIONS
+# INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
 - Classes ONLY from [elementor://global-classes]; reference **labels** in `classes` — internal `g-` ids must not be sent in `classes`
-<!--if:svg_library-->- Icons ONLY from `elementor/find-icons`; copy `value` and `library` verbatim into the `svg` prop. Never invent an icon name — FA renamed many icons between versions and a guess renders nothing<!--endif:svg_library-->
+- Icons ONLY from `elementor/find-icons`; copy `value` and `library` verbatim into the `svg` prop. Never invent an icon name — FA renamed many icons between versions and a guess renders nothing
 - Uploaded SVG files ONLY from `elementor/list-assets` with `type: "svg"`, referenced by `id`. External URLs on `e-svg` render an empty div; never fabricate an id
 - Check `llm_guidance` in widget schemas (`default_styles`, nesting, required children)
 
