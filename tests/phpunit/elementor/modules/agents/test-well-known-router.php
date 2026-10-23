@@ -339,7 +339,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 	public function test_ard_manifest__omits_protected_resource_when_mcp_card_off() {
 		// Arrange
-		$manifest = new Ard_Manifest();
+		$manifest = new Ard_Manifest( null );
 		$method   = new \ReflectionMethod( Ard_Manifest::class, 'generate_content' );
 		$method->setAccessible( true );
 
@@ -354,7 +354,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 	public function test_ard_manifest__includes_protected_resource_when_mcp_card_on() {
 		// Arrange
 		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
-		$manifest = new Ard_Manifest();
+		$manifest = new Ard_Manifest( null );
 		$method   = new \ReflectionMethod( Ard_Manifest::class, 'generate_content' );
 		$method->setAccessible( true );
 
