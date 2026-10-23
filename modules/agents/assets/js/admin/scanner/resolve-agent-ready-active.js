@@ -7,6 +7,6 @@ export const resolveAgentReadyActive = ( propValue ) => {
 
 	const config = window.elementorAgentsReadyConfig || {};
 
-	return resolveExperimentFlag( config.isExperimentActive )
-		|| resolveExperimentFlag( config.scanner?.isExperimentActive );
+	return resolveExperimentFlag( config.isExperimentActive ) ||
+		resolveExperimentFlag( config.scanner?.isExperimentActive );
 };
