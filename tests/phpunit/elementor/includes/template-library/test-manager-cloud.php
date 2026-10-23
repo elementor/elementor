@@ -271,6 +271,229 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		] );
 	}
 
+	public function test_save_template__strips_non_exportable_atomic_props() {
+		// Arrange.
+		$filter = function ( array $schema ) {
+			$schema['test_api_key'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
+				->meta( \Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity::sensitive() );
+			$schema['test_list_id'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
+				->meta( \Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity::not_exportable() );
+
+			return $schema;
+		};
+
+		add_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		$secret_settings = [
+			'test_api_key' => [ '$$type' => 'string', 'value' => 'secret' ],
+			'test_list_id' => [ '$$type' => 'string', 'value' => 'list-1' ],
+			'tag' => [ '$$type' => 'string', 'value' => 'h3' ],
+		];
+
+		$mock_content = [
+			[
+				'id' => 'div1',
+				'elType' => 'e-div-block',
+				'settings' => $secret_settings,
+				'elements' => [
+					[
+						'id' => 'heading1',
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => $secret_settings,
+						'elements' => [],
+					],
+				],
+			],
+		];
+
+		$posted_content = null;
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_resource' )
+			->with( $this->callback( function ( $resource ) use ( &$posted_content ) {
+				$posted_content = json_decode( $resource['content'], true );
+
+				return true;
+			} ) )
+			->willReturn( [ 'id' => 1 ] );
+
+		// Act.
+		$this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => null,
+		] );
+
+		remove_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		// Assert.
+		$container = $posted_content['content'][0];
+		$heading = $container['elements'][0];
+
+		$this->assertSame( 'div1', $container['id'] );
+		$this->assertSame( 'heading1', $heading['id'] );
+
+		foreach ( [ $container, $heading ] as $element ) {
+			$this->assertArrayNotHasKey( 'test_api_key', $element['settings'] );
+			$this->assertArrayNotHasKey( 'test_list_id', $element['settings'] );
+		}
+
+		$this->assertSame( 'h3', $heading['settings']['tag']['value'] );
+		$this->assertStringNotContainsString( 'secret', wp_json_encode( $posted_content ) );
+	}
+
+	public function test_save_template__keeps_v3_and_mixed_content_untouched_except_atomic_non_exportable_props() {
+		// Arrange.
+		$filter = function ( array $schema ) {
+			$schema['test_api_key'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
+				->meta( \Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity::sensitive() );
+
+			return $schema;
+		};
+
+		add_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		$v3_heading = [
+			'id' => 'v3heading',
+			'elType' => 'widget',
+			'widgetType' => 'heading',
+			'settings' => [
+				'title' => 'Hello',
+				'link' => [ 'url' => 'https://example.com' ],
+			],
+			'elements' => [],
+		];
+
+		$v3_container = [
+			'id' => 'v3container',
+			'elType' => 'container',
+			'settings' => [ 'content_width' => 'full' ],
+			'elements' => [ $v3_heading ],
+		];
+
+		$atomic_heading = [
+			'id' => 'heading1',
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'settings' => [
+				'test_api_key' => [ '$$type' => 'string', 'value' => 'secret' ],
+				'tag' => [ '$$type' => 'string', 'value' => 'h3' ],
+			],
+			'elements' => [],
+		];
+
+		$mock_content = [ $v3_container, $atomic_heading ];
+
+		$expected_atomic_heading = $atomic_heading;
+		unset( $expected_atomic_heading['settings']['test_api_key'] );
+
+		$expected_content = wp_json_encode( [
+			'content' => [ $v3_container, $expected_atomic_heading ],
+			'page_settings' => [],
+		] );
+
+		$posted_content = null;
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_resource' )
+			->with( $this->callback( function ( $resource ) use ( &$posted_content ) {
+				$posted_content = $resource['content'];
+
+				return true;
+			} ) )
+			->willReturn( [ 'id' => 1 ] );
+
+		// Act.
+		$this->manager->save_template( [
+			'post_id' => 1,
+			'source' => 'cloud',
+			'title' => 'ATemplate',
+			'type' => 'container',
+			'resourceType' => 'TEMPLATE',
+			'content' => wp_json_encode( $mock_content ),
+			'parentId' => null,
+		] );
+
+		remove_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		// Assert - V3 elements are byte-identical, only the atomic sensitive prop is gone.
+		$this->assertSame( $expected_content, $posted_content );
+	}
+
+	public function test_bulk_copy_templates__strips_non_exportable_atomic_props() {
+		// Arrange.
+		$filter = function ( array $schema ) {
+			$schema['test_api_key'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
+				->meta( \Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity::sensitive() );
+
+			return $schema;
+		};
+
+		add_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		$content = [
+			[
+				'id' => 'heading1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'test_api_key' => [ '$$type' => 'string', 'value' => 'secret' ],
+				],
+				'elements' => [],
+			],
+		];
+
+		$this->cloud_library_app_mock
+			->method( 'get_bulk_resources_with_content' )
+			->willReturn( [
+				[
+					'template_id' => 1,
+					'type' => 'container',
+					'title' => 'template 1',
+					'content' => wp_json_encode( [ 'content' => $content, 'page_settings' => [] ] ),
+				],
+			] );
+
+		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
+
+		$posted_items = null;
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'post_bulk_resources' )
+			->with( $this->callback( function ( $items ) use ( &$posted_items ) {
+				$posted_items = $items;
+
+				return true;
+			} ) );
+
+		// Act.
+		$this->manager->bulk_copy_templates( [
+			'source' => [ 'cloud' ],
+			'from_source' => 'cloud',
+			'from_template_id' => [ 1 ],
+		] );
+
+		remove_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		// Assert.
+		$this->assertCount( 1, $posted_items );
+
+		$posted_content = json_decode( $posted_items[0]['content'], true );
+
+		$this->assertSame( 'heading1', $posted_content['content'][0]['id'] );
+		$this->assertArrayNotHasKey( 'test_api_key', $posted_content['content'][0]['settings'] );
+	}
+
 	public function test_rename_template() {
 		// Arrange & Assert
 		$this->cloud_library_app_mock
