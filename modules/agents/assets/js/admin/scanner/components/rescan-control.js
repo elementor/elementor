@@ -3,6 +3,7 @@ import { ReloadIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import IconButton from '@elementor/ui/IconButton';
 import Stack from '@elementor/ui/Stack';
+import Tooltip from '@elementor/ui/Tooltip';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
@@ -80,16 +81,18 @@ export const useNextScanLabel = ( retryAt ) => {
 };
 
 const OutlinedRescanButton = ( { label, onRescan, isDisabled } ) => (
-	<Button
-		variant="outlined"
-		color="secondary"
-		size="small"
-		onClick={ onRescan }
-		disabled={ isDisabled }
-		startIcon={ <ReloadIcon /> }
-	>
-		{ label }
-	</Button>
+	<Tooltip title={ __( 'Reload', 'elementor' ) }>
+		<Button
+			variant="outlined"
+			color="secondary"
+			size="small"
+			onClick={ onRescan }
+			disabled={ isDisabled }
+			startIcon={ <ReloadIcon /> }
+		>
+			{ label }
+		</Button>
+	</Tooltip>
 );
 
 OutlinedRescanButton.propTypes = {
