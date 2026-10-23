@@ -24,6 +24,8 @@ class Test_Llms_Manual_Content extends Elementor_Test_Base {
 
 		$this->act_as_admin();
 
+		Module::reset_physical_file_cache();
+
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Llms_Manual_Content::OPTION );
 
@@ -39,6 +41,8 @@ class Test_Llms_Manual_Content extends Elementor_Test_Base {
 	public function tearDown(): void {
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Llms_Manual_Content::OPTION );
+
+		Module::reset_physical_file_cache();
 
 		parent::tearDown();
 	}
@@ -100,6 +104,9 @@ class Test_Llms_Manual_Content extends Elementor_Test_Base {
 		$file_path = get_home_path() . Module::LLMS_FILENAME;
 		file_put_contents( $file_path, '# Server file' );
 
+		// Reset cache so the handler sees the newly created file
+		Module::reset_physical_file_cache();
+
 		try {
 			// Act
 			$this->ajax->handle( [ 'content' => '# Edited by hand' ] );
@@ -111,6 +118,7 @@ class Test_Llms_Manual_Content extends Elementor_Test_Base {
 			$this->assertFalse( $this->settings->is_llms_manually_edited() );
 		} finally {
 			unlink( $file_path );
+			Module::reset_physical_file_cache();
 		}
 	}
 }

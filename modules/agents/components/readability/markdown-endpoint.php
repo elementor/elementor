@@ -81,25 +81,10 @@ class Markdown_Endpoint extends Feature_Component {
 	 * @param \WP $wp Current WordPress environment instance.
 	 */
 	public function on_parse_request( \WP $wp ): void {
-		$request_uri = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
-			: '';
+		$path = \Elementor\Modules\Agents\Classes\Request_Path::get_relative_path();
 
-		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
-
-		if ( ! is_string( $path ) ) {
+		if ( '' === $path ) {
 			return;
-		}
-
-		// Strip the home-URL path prefix (handles subdirectory installs).
-		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
-
-		if ( is_string( $home_path ) && '' !== $home_path && '/' !== $home_path ) {
-			$home_path = untrailingslashit( $home_path );
-
-			if ( 0 === strpos( $path, $home_path ) ) {
-				$path = substr( $path, strlen( $home_path ) );
-			}
 		}
 
 		// Must end with `.md` and not be a known special file like `llms.txt`.
