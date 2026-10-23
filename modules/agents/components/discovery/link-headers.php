@@ -5,6 +5,7 @@ namespace Elementor\Modules\Agents\Components\Discovery;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,9 +47,12 @@ class Link_Headers extends Feature_Component {
 
 	private Agent_Ready_Settings $settings;
 
-	public function __construct( Markdown_Endpoint $markdown_endpoint, Agent_Ready_Settings $settings ) {
+	private Module $module;
+
+	public function __construct( Markdown_Endpoint $markdown_endpoint, Agent_Ready_Settings $settings, Module $module ) {
 		$this->markdown_endpoint = $markdown_endpoint;
 		$this->settings          = $settings;
+		$this->module            = $module;
 	}
 
 	public function get_id(): string {
@@ -134,9 +138,11 @@ class Link_Headers extends Feature_Component {
 	private function build_site_links(): array {
 		$home = untrailingslashit( home_url() );
 
-		$links = [
-			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
-		];
+		$links = [];
+
+		if ( $this->module->should_advertise_llms_txt() ) {
+			$links[] = '<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"';
+		}
 
 		if ( $this->settings->is_agent_discovery_enabled() ) {
 			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
