@@ -153,7 +153,7 @@ export const ScoreRow = ( {
 				) }
 				{ isActivated && (
 					<Stack direction="row" alignItems="center" spacing={ 0.5 }>
-						<Typography variant="body2" color="primary">
+						<Typography variant="body2" color="info.main">
 							{ __( 'Agent Ready is on', 'elementor' ) }
 						</Typography>
 						<Button

@@ -68,7 +68,7 @@ const CopyPromptAction = ( { prompt } ) => {
 	return (
 		<Button
 			variant="text"
-			color="primary"
+			color="info"
 			size="small"
 			startIcon={ <CopyIcon fontSize="tiny" /> }
 			onClick={ handleCopy }
