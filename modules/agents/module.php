@@ -6,6 +6,8 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Core\Utils\Hints;
+use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
@@ -14,6 +16,9 @@ use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
 use Elementor\Modules\Agents\Classes\Request_Path;
+use Elementor\Modules\Agents\Classes\Scanner_Client;
+use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
+use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
@@ -48,7 +53,11 @@ class Module extends BaseModule {
 
 	const PAGE_ID = 'elementor-agents-ready';
 
+	const AGENT_ACCESS_PAGE_ID = 'elementor-agent-access';
+
 	const MOUNT_ID = 'e-agents-ready';
+
+	const SCANNER_MOUNT_ID = 'e-agents-ready-scanner';
 
 	const SCRIPT_HANDLE = 'e-agents-ready-app';
 
@@ -82,6 +91,7 @@ class Module extends BaseModule {
 	private Llms_Manual_Content $manual_content;
 	private Bot_Catalog $bot_catalog;
 	private Markdown_Endpoint $markdown_endpoint;
+	private Scanner_Report_Store $scanner_store;
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
 
 	public function get_name() {
@@ -120,8 +130,11 @@ class Module extends BaseModule {
 		$this->settings         = new Agent_Ready_Settings( $this->generator, $this->bot_catalog );
 		$this->robots_handler   = new Robots_Txt_Handler( $this->settings );
 		$this->manual_content   = new Llms_Manual_Content( $this->generator );
+		$this->scanner_store    = new Scanner_Report_Store();
 
 		$this->settings->register();
+
+		( new Scanner_Rest_Api( new Scanner_Client(), $this->scanner_store ) )->register_hooks();
 
 		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
 			add_action( "add_option_{$option}", [ $this, 'on_settings_change' ] );
@@ -178,17 +191,20 @@ class Module extends BaseModule {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Register the Agent Ready item in Editor One.
+	 * Register the Readiness Score and Agent Access items in Editor One.
 	 *
 	 * @param Menu_Data_Provider $menu_data_provider Editor One menu registry.
 	 */
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
 		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Agent_Access_Menu() );
 	}
 
 	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
-		if ( ! empty( $hooks[ self::PAGE_ID ] ) ) {
-			add_action( "admin_print_scripts-{$hooks[ self::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+		foreach ( [ self::PAGE_ID, self::AGENT_ACCESS_PAGE_ID ] as $page_id ) {
+			if ( ! empty( $hooks[ $page_id ] ) ) {
+				add_action( "admin_print_scripts-{$hooks[ $page_id ]}", [ $this, 'enqueue_assets' ] );
+			}
 		}
 	}
 
@@ -758,7 +774,25 @@ class Module extends BaseModule {
 			'markdown'           => $this->get_markdown_state(),
 			'botAccess'          => $this->get_bot_access_state(),
 			'agentDiscovery'     => $this->get_agent_discovery_state(),
+			'scanner'            => $this->get_scanner_state(),
 			'browserTools'       => $this->get_browser_tools_state(),
+		];
+	}
+
+	private function get_scanner_state(): array {
+		$retry_at = $this->scanner_store->get_retry_at();
+
+		return [
+			'siteDomain'           => wp_parse_url( home_url(), PHP_URL_HOST ),
+			'agentAccessUrl'         => admin_url( 'admin.php?page=' . self::AGENT_ACCESS_PAGE_ID ),
+			'seoPluginSearchUrl'     => admin_url( 'plugin-install.php?s=SEO&tab=search&type=term' ),
+			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
+			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
+			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
+			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
+			'lastReport'             => $this->scanner_store->get_last_report(),
+			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
+			'isExperimentActive'     => self::is_active(),
 		];
 	}
 
