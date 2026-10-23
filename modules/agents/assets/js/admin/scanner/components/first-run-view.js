@@ -49,11 +49,11 @@ const getFeatureCards = () => [
 	},
 	{
 		title: __( 'Know exactly what to fix', 'elementor' ),
-		body: __( 'Get a clear fix for each gap. Every issue comes with clear next steps, and many can be fixed right from your dashboard or via Angie.', 'elementor' ),
+		body: __( 'Get a clear fix for each gap. Every issue comes with clear next steps.', 'elementor' ),
 	},
 	{
-		title: __( 'Decide what agents can do', 'elementor' ),
-		body: __( 'Control whether they can answer questions about you, and on what terms', 'elementor' ),
+		title: __( 'Rescan when you\'re done', 'elementor' ),
+		body: __( 'Run the ranker again once you\'ve made your fixes, and see your revised score.', 'elementor' ),
 	},
 ];
 
@@ -145,7 +145,7 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 						{ __( 'Is your site ready for agents?', 'elementor' ) }
 					</Typography>
 					<Typography variant="body1" color="text.secondary" maxWidth={ HERO_COPY_MAX_WIDTH }>
-						{ __( 'AI agents like those by ChatGPT and Claude now visit websites on behalf of people. Check how easily agents can reach, understand and take action on your site.', 'elementor' ) }
+						{ __( 'AI agents like those by ChatGPT and Claude now visit websites on behalf of people. Check how easily agents can find, read and take action on your site.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Button

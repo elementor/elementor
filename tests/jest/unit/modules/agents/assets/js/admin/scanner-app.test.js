@@ -96,7 +96,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByRole( 'heading', { name: 'Is your site ready for agents?' } ) ).toBeTruthy();
 		expect( screen.getByText( 'Find the gaps' ) ).toBeTruthy();
 		expect( screen.getByText( 'Know exactly what to fix' ) ).toBeTruthy();
-		expect( screen.getByText( 'Decide what agents can do' ) ).toBeTruthy();
+		expect( screen.getByText( 'Rescan when you\'re done' ) ).toBeTruthy();
 		expect( screen.queryByRole( 'button', { name: 'Rescan' } ) ).toBeNull();
 	} );
 
@@ -208,6 +208,8 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( row.getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+		expect( screen.getByText( 'What we found' ) ).toBeTruthy();
+		expect( screen.getByText( 'No openingHours found on your homepage' ) ).toBeTruthy();
 		expect( screen.getByText( 'How to fix it manually' ) ).toBeTruthy();
 
 		fireEvent.keyDown( row, { key: 'Enter' } );

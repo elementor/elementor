@@ -112,10 +112,18 @@ export const AngieInstallDialog = ( { check, heroUrl, angieAppUrl, angiePluginSe
 						) }
 					</Stack>
 					<Stack direction="row" alignItems="center" justifyContent="space-between" px={ 1 } pb={ 3 } pt={ 1 }>
-						<Button variant="text" color="secondary" onClick={ () => onCopyPrompt( check ) } disabled={ isInstalling } sx={ { textAlign: 'left' } }>
-							{ __( 'Not now?', 'elementor' ) }
-							<br />
-							<Box component="span" sx={ { textDecoration: 'underline' } }>{ __( 'Copy the prompt instead', 'elementor' ) }</Box>
+						<Button
+							variant="text"
+							color="secondary"
+							onClick={ () => onCopyPrompt( check ) }
+							disabled={ isInstalling }
+							aria-label={ __( 'Not now? Copy the prompt instead', 'elementor' ) }
+							sx={ { textAlign: 'left' } }
+						>
+							<Stack alignItems="flex-start" spacing={ 0 }>
+								<span>{ __( 'Not now?', 'elementor' ) }</span>
+								<Box component="span" sx={ { textDecoration: 'underline' } }>{ __( 'Copy the prompt instead', 'elementor' ) }</Box>
+							</Stack>
 						</Button>
 						{ installFailed ? (
 							<Button variant="contained" color="primary" href={ angiePluginSearchUrl }>

@@ -49,8 +49,8 @@ export const PROGRESS_STEP_PENDING = 'pending';
 export const PROGRESS_STEP_FAILED = 'failed';
 
 export const getStageLabels = () => ( {
-	[ STAGE_REACH ]: __( 'Reach', 'elementor' ),
-	[ STAGE_IDENTIFY ]: __( 'Understand', 'elementor' ),
+	[ STAGE_REACH ]: __( 'Find', 'elementor' ),
+	[ STAGE_IDENTIFY ]: __( 'Read', 'elementor' ),
 	[ STAGE_ACT ]: __( 'Act', 'elementor' ),
 	[ STAGE_COMMERCE ]: __( 'Commerce', 'elementor' ),
 } );

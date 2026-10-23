@@ -80,7 +80,7 @@ export const FixesFilters = ( { priority, stage, onPriorityChange, onStageChange
 		<Divider orientation="vertical" flexItem />
 		<Stack direction="row" alignItems="center" gap={ 1 } flexWrap="wrap">
 			<Typography variant="body2" color={ isDisabled ? 'text.disabled' : 'text.primary' } sx={ { fontSize: '13px' } }>
-				{ __( 'Type', 'elementor' ) }
+				{ __( 'Layer', 'elementor' ) }
 			</Typography>
 			{ getTypeOptions().map( ( option ) => (
 				<Chip
