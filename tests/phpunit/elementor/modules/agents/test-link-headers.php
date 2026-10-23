@@ -206,7 +206,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertNull( $link );
 	}
 
-	public function test_is_enabled__follows_agent_ready_experiment() {
+	public function test_is_enabled__returns_true_when_activated() {
 		$this->assertTrue( $this->link_headers->is_enabled() );
 	}
 

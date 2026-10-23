@@ -67,7 +67,7 @@ export const FixRow = ( {
 	isResolved,
 	isSaving = false,
 	isToggleDisabled = false,
-	isToggleVisible = true,
+	toggleDisabledReason = null,
 	isLast,
 	preferenceValue = '',
 	agentAccessUrl,
@@ -134,7 +134,7 @@ export const FixRow = ( {
 								isResolved={ isResolved }
 								isSaving={ isSaving }
 								isToggleDisabled={ isToggleDisabled }
-								isToggleVisible={ isToggleVisible }
+								toggleDisabledReason={ toggleDisabledReason }
 								agentAccessUrl={ agentAccessUrl }
 								seoPluginSearchUrl={ seoPluginSearchUrl }
 								onOpen={ onOpen }
@@ -184,7 +184,7 @@ FixRow.propTypes = {
 	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
-	isToggleVisible: PropTypes.bool,
+	toggleDisabledReason: PropTypes.string,
 	isLast: PropTypes.bool,
 	preferenceValue: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,

@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
@@ -886,6 +887,53 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert - transient should be cleared
 		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_ajax_activate__activates_settings_for_admin() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings = $this->create_settings();
+		$this->assertFalse( $settings->is_activated() );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', static fn() => 'yoast' );
+
+		try {
+			// Act
+			$this->module->ajax_activate();
+
+			// Assert
+			$this->assertTrue( $settings->is_activated() );
+			$this->assertTrue( $settings->is_markdown_enabled() );
+			$this->assertTrue( $settings->is_agent_discovery_enabled() );
+			$this->assertFalse( $settings->is_llms_enabled(), 'An unavailable module stays off after activation.' );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_ajax_activate__rejects_non_admin() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+		$exception_code = null;
+
+		// Act
+		try {
+			$this->module->ajax_activate();
+		} catch ( \Exception $e ) {
+			$exception_code = $e->getCode();
+		}
+
+		// Assert
+		$this->assertSame( Exceptions::FORBIDDEN, $exception_code );
+		$this->assertFalse( $this->create_settings()->is_activated() );
+	}
+
+	private function create_settings(): \Elementor\Modules\Agents\Agent_Ready_Settings {
+		return new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
 	}
 }
 

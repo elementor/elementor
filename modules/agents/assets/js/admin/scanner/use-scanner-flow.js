@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from '../api';
 import { getSaveErrorMessage } from '../hooks/get-save-error-message';
 import { canOpenAngie, openAngieWithPrompt } from './open-angie';
 import {
-	canShowScannerToggle,
 	getInitialModuleEnabled,
+	getModuleUnavailableReason,
 	getToggleModuleKey,
 	hasDirtyModuleChecks,
 	isAgentReadyModuleToggleDisabled,
@@ -29,6 +30,8 @@ import { getLaterRetryAt, toFailedScanResult } from './scanner-report-adapter';
 import { getBaseScore, getVisibleChecks, hasPendingFixes } from './scanner-score';
 
 const MS_PER_SECOND = 1000;
+
+const NOT_ACTIVATED_REASON = __( 'Activate Agent Ready to turn this on.', 'elementor' );
 
 const wait = ( delayMs ) => new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
 
@@ -87,14 +90,9 @@ export const useScannerFlow = ( {
 		browserToolsConfig,
 	} ), [ llmsConfig, markdownConfig, botAccessConfig, agentDiscoveryConfig, browserToolsConfig ] );
 	const progressSteps = useMemo( getProgressSteps, [] );
-	const moduleToggleConfigs = useMemo( () => ( {
-		llmsConfig,
-		botAccessConfig,
-		browserToolsConfig,
-	} ), [ llmsConfig, botAccessConfig, browserToolsConfig ] );
 	const isModuleToggleDisabled = useCallback(
-		( moduleKey ) => isAgentReadyModuleToggleDisabled( moduleKey, moduleToggleConfigs ),
-		[ moduleToggleConfigs ],
+		( moduleKey ) => isAgentReadyModuleToggleDisabled( moduleKey, moduleConfigs ),
+		[ moduleConfigs ],
 	);
 	const isMountedRef = useRef( true );
 	const initialModuleEnabledRef = useRef( getInitialModuleEnabled( {
@@ -396,14 +394,20 @@ export const useScannerFlow = ( {
 		setAreChecksExpanded( ( current ) => ! current );
 	}, [] );
 
+	// The server reason wins: it still applies after activation, while the activation hint does not.
+	const getToggleDisabledReason = useCallback( ( moduleKey ) => {
+		const unavailableReason = getModuleUnavailableReason( moduleKey, moduleConfigs );
+
+		if ( unavailableReason ) {
+			return unavailableReason.message || null;
+		}
+
+		return isActivated ? null : NOT_ACTIVATED_REASON;
+	}, [ isActivated, moduleConfigs ] );
+
 	const isCheckToggleDisabled = useCallback(
 		( moduleKey ) => ! isActivated || isModuleToggleDisabled( moduleKey ),
 		[ isActivated, isModuleToggleDisabled ],
-	);
-
-	const canShowCheckToggle = useCallback(
-		( checkId ) => canShowScannerToggle( checkId, moduleToggleConfigs ),
-		[ moduleToggleConfigs ],
 	);
 
 	const visibleChecks = getVisibleChecks( scan );
@@ -421,7 +425,7 @@ export const useScannerFlow = ( {
 		resolvedIds,
 		moduleEnabled,
 		isModuleToggleDisabled: isCheckToggleDisabled,
-		canShowCheckToggle,
+		getToggleDisabledReason,
 		savingModuleKeys,
 		openIds,
 		preferences,

@@ -79,6 +79,16 @@ const getScoreRing = ( score ) => screen.getByRole( 'img', { name: `Agent readin
 
 const getRowByTitle = ( title ) => screen.getByText( title ).closest( '[role="button"]' );
 
+const NOT_ACTIVATED_REASON = 'Activate Agent Ready to turn this on.';
+const ABILITIES_API_REASON = { code: 'abilities_api_missing', message: 'Agent browser tools need the WordPress Abilities API.' };
+const SEO_PLUGIN_REASON = { code: 'seo_plugin', message: 'Yoast SEO already generates llms.txt.' };
+
+const getSwitchReason = ( checkSwitch ) => {
+	const describedBy = checkSwitch.getAttribute( 'aria-describedby' );
+
+	return describedBy ? document.getElementById( describedBy )?.textContent ?? null : null;
+};
+
 describe( 'Agent Ready scanner', () => {
 	beforeEach( () => {
 		HTMLCanvasElement.prototype.getContext = () => null;
@@ -114,7 +124,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( screen.getByText( `Checking ${ SITE_DOMAIN }` ) ).toBeTruthy();
-		expect( within( screen.getByRole( 'list' ) ).getAllByText( 'Reading your site the way an AI assistant would' ).length ).toBeGreaterThan( 0 );
+		expect( within( screen.getByRole( 'list' ) ).getByText( 'Reading your site the way an AI assistant would' ) ).toBeTruthy();
 		expect( screen.getByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeTruthy();
 
 		await advanceTimers( SCAN_DURATION_MS );
@@ -260,20 +270,20 @@ describe( 'Agent Ready scanner', () => {
 		expect( within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', { name: 'Agents can\'t find a way to contact you' } ) ).toBeTruthy();
 	} );
 
-	const getScanWithWebmcpCheck = () => {
+	const getScanWithToggleCheck = ( id, title ) => {
 		const scan = getMockScanResult();
 
 		return {
 			...scan,
 			checks: [
 				{
-					id: 'webmcp-support',
-					title: 'WebMCP support',
+					id,
+					title,
 					points: 5,
 					priority: PRIORITY_REQUIRED,
 					stage: STAGE_REACH,
-					evidence: 'No WebMCP manifest found',
-					explanation: { whatItMeans: '', howToFix: 'Turn on Agent browser tools.' },
+					evidence: `${ title } is missing`,
+					explanation: { whatItMeans: '', howToFix: `Turn on ${ title }.` },
 					fixWith: FIX_WITH_TOGGLE,
 					fixPrompt: '',
 					resolvedByActivation: false,
@@ -282,6 +292,8 @@ describe( 'Agent Ready scanner', () => {
 			],
 		};
 	};
+
+	const getScanWithWebmcpCheck = () => getScanWithToggleCheck( 'webmcp-support', 'WebMCP support' );
 
 	it( 'wires WebMCP support to Agent browser tools settings', async () => {
 		// Arrange
@@ -303,16 +315,46 @@ describe( 'Agent Ready scanner', () => {
 		expect( checkSwitch.checked ).toBe( false );
 	} );
 
-	it( 'hides the WebMCP switch when Agent browser tools are unavailable', async () => {
+	it( 'disables the WebMCP switch and explains why when Agent browser tools are unavailable', async () => {
 		// Arrange
 		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
-		renderScanner( { browserToolsConfig: { enabled: true, isAvailable: false } } );
+		renderScanner( { ...activatedProps, browserToolsConfig: { enabled: true, isAvailable: false, unavailableReason: ABILITIES_API_REASON } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( true );
+		expect( getSwitchReason( checkSwitch ) ).toBe( ABILITIES_API_REASON.message );
+	} );
+
+	it( 'disables the llms.txt switch and explains why when an SEO plugin owns llms.txt', async () => {
+		// Arrange
+		runSiteScan.mockResolvedValue( getScanWithToggleCheck( 'llms-txt-exists', 'No llms.txt file' ) );
+		renderScanner( { ...activatedProps, llmsConfig: { enabled: true, hasPhysicalFile: false, unavailableReason: SEO_PLUGIN_REASON } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'No llms.txt file' } );
+
+		// Assert
+		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( true );
+		expect( getSwitchReason( checkSwitch ) ).toBe( SEO_PLUGIN_REASON.message );
+	} );
+
+	it( 'prefers the server reason over the activation hint before Agent Ready is activated', async () => {
+		// Arrange
+		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
+		renderScanner( { browserToolsConfig: { enabled: true, isAvailable: false, unavailableReason: ABILITIES_API_REASON } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
 
 		// Assert
-		expect( screen.queryByRole( 'switch', { name: 'WebMCP support' } ) ).toBeNull();
+		expect( checkSwitch.disabled ).toBe( true );
+		expect( getSwitchReason( checkSwitch ) ).toBe( ABILITIES_API_REASON.message );
 	} );
 
 	it( 'shows a mapped switch on when that Agent Ready module is already enabled', async () => {
@@ -320,12 +362,7 @@ describe( 'Agent Ready scanner', () => {
 		renderScanner( { ...activatedProps, markdownConfig: { enabled: true } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
-		const showAllFixes = screen.queryByRole( 'button', { name: /Show all fixes/ } );
-
-		if ( showAllFixes ) {
-			fireEvent.click( showAllFixes );
-		}
-
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show all fixes (+2)' } ) );
 		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t read clean versions of your pages' } );
 
 		// Assert
@@ -368,6 +405,19 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( checkSwitch.disabled ).toBe( true );
+		expect( getSwitchReason( checkSwitch ) ).toBe( NOT_ACTIVATED_REASON );
+	} );
+
+	it( 'drops the activation hint from check switches once Agent Ready is activated', async () => {
+		// Arrange
+		await runFirstScan( activatedProps );
+
+		// Act
+		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
+
+		// Assert
+		expect( checkSwitch.disabled ).toBe( false );
+		expect( checkSwitch.getAttribute( 'aria-describedby' ) ).toBeNull();
 	} );
 
 	it( 'disables a toggle while its fix is saving', async () => {

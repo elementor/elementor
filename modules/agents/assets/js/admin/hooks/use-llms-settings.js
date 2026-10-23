@@ -12,6 +12,7 @@ const getIncludedPostTypeNames = ( postTypes ) => postTypes
 
 export const useLlmsSettings = ( initialState ) => {
 	const { fileUrl, hasPhysicalFile } = initialState;
+	const unavailableReason = initialState.unavailableReason ?? null;
 
 	const [ isEnabled, setIsEnabled ] = useState( initialState.enabled );
 	const [ isManuallyEdited, setIsManuallyEdited ] = useState( initialState.isManuallyEdited );
@@ -86,7 +87,7 @@ export const useLlmsSettings = ( initialState ) => {
 	return {
 		content,
 		hasPhysicalFile,
-		isEnabled: isEnabled && ! hasPhysicalFile,
+		isEnabled: isEnabled && ! unavailableReason,
 		isManuallyEdited,
 		isSaving,
 		saveError,
@@ -95,5 +96,6 @@ export const useLlmsSettings = ( initialState ) => {
 		setIsEnabled,
 		toggleEnabled,
 		togglePostType,
+		unavailableReason,
 	};
 };

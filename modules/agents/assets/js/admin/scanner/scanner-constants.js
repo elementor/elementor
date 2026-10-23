@@ -16,7 +16,6 @@ export const FIX_WITH_LINK = 'link';
 export const FIX_WITH_SEO = 'seo';
 export const FIX_WITH_MANUAL = 'manual';
 
-export const FIX_BY_AGENT_READY_TOGGLE = 'agent ready toggle';
 export const FIX_BY_SEO_PLUGIN = 'seo plugin';
 export const FIX_BY_ANGIE = 'angie';
 export const FIX_BY_ANGIE_MCP = 'angie / mcp';
@@ -87,6 +86,7 @@ export const SCANNER_COLORS = {
 export const DOT_FIELD = {
 	size: 1.8,
 	grid: 7,
+	// Admin-only background shown for a one-time scan run, so a 15000-dot ceiling is acceptable.
 	maxDots: 15000,
 	rgb: '89, 89, 89',
 	opacityMin: 0.02,

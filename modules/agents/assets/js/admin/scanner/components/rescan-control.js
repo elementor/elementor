@@ -81,7 +81,7 @@ export const useNextScanLabel = ( retryAt ) => {
 	return getNextScanLabel( retryAt, now );
 };
 
-const RESCAN_TOOLTIP = __( 'Reload', 'elementor' );
+const RESCAN_TOOLTIP = __( 'Rescan', 'elementor' );
 
 const RescanTooltip = ( { children } ) => (
 	<Tooltip title={ RESCAN_TOOLTIP }>
