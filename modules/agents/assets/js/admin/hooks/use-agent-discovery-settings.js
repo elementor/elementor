@@ -32,6 +32,7 @@ export const useAgentDiscoverySettings = ( initialState ) => {
 		isEnabled,
 		isSaving,
 		saveError,
+		setIsEnabled,
 		toggleEnabled,
 	};
 };

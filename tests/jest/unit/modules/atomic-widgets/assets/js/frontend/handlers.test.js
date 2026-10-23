@@ -914,6 +914,85 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( submitButton.disabled ).toBe( false );
 		} );
 
+		it.each( [ 'toolactivated', 'toolcancel' ] )( 're-enables submit buttons when %s fires on document.modelContext', async ( eventName ) => {
+			// Arrange
+			document.modelContext = new EventTarget();
+
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( eventName );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			document.modelContext.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+
+			delete document.modelContext;
+		} );
+
+		it( 'keeps listening on window when document.modelContext exists', async () => {
+			// Arrange
+			document.modelContext = new EventTarget();
+
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( 'toolcancel' );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			window.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+
+			delete document.modelContext;
+		} );
+
+		it( 're-enables submit buttons when toolcancel fires on navigator.modelContext', async () => {
+			// Arrange
+			const navigatorModelContext = new EventTarget();
+			Object.defineProperty( navigator, 'modelContext', { value: navigatorModelContext, configurable: true } );
+
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( 'toolcancel' );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			navigatorModelContext.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+
+			delete navigator.modelContext;
+		} );
+
 		it( 're-enables submit buttons when a matching toolcancel event fires', async () => {
 			// Arrange
 			const { form } = createFormWithInput();
