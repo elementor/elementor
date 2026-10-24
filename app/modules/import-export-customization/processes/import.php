@@ -6,11 +6,14 @@ use Elementor\App\Modules\ImportExportCustomization\Compatibility\Base_Adapter;
 use Elementor\App\Modules\ImportExportCustomization\Compatibility\Envato;
 use Elementor\App\Modules\ImportExportCustomization\Compatibility\Kit_Library;
 use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
+use Elementor\App\Modules\ImportExportCustomization\Kit_Context;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Element_Transformer;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables_Element_Transformer;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Elementor_Content;
@@ -154,6 +157,8 @@ class Import {
 	 */
 	private $runners_import_metadata = [];
 
+	private Kit_Context $context;
+
 	/**
 	 * @param string     $path session_id | zip_file_path
 	 * @param array      $settings Use to determine which content to import.
@@ -166,6 +171,8 @@ class Import {
 		if ( ! empty( $old_instance ) ) {
 			$this->set_import_object( $old_instance );
 		} else {
+			$this->context = new Kit_Context();
+
 			if ( is_file( $path ) ) {
 				$this->extracted_directory_path = $this->extract_zip( $path );
 			} else {
@@ -232,6 +239,7 @@ class Import {
 		$this->documents_data = $instance_data['documents_data'];
 		$this->imported_data = $instance_data['imported_data'];
 		$this->runners_import_metadata = $instance_data['runners_import_metadata'];
+		$this->context = Kit_Context::from_array( $instance_data['context'] ?? [] );
 	}
 
 	/**
@@ -445,6 +453,7 @@ class Import {
 				'documents_data' => $this->documents_data,
 				'imported_data' => $this->imported_data,
 				'runners_import_metadata' => $this->runners_import_metadata,
+				'context' => $this->context->to_array(),
 			];
 		}
 
@@ -568,6 +577,7 @@ class Import {
 	private function build_runner_data(): array {
 		return [
 			'session_id' => $this->session_id,
+			'context' => $this->context,
 			'include' => $this->settings_include,
 			'manifest' => $this->manifest,
 			'site_settings' => $this->site_settings,
@@ -871,10 +881,23 @@ class Import {
 	 * @return array{post_ids: array, term_ids: array}
 	 */
 	private function get_imported_data_replacements(): array {
-		return [
+		$legacy_replacements = [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
 		];
+
+		$context_replacements = $this->context->to_replacements();
+		$replacement_keys = array_unique( array_merge( array_keys( $legacy_replacements ), array_keys( $context_replacements ) ) );
+		$merged_replacements = [];
+
+		foreach ( $replacement_keys as $replacement_key ) {
+			$merged_replacements[ $replacement_key ] = array_replace(
+				$legacy_replacements[ $replacement_key ] ?? [],
+				$context_replacements[ $replacement_key ] ?? []
+			);
+		}
+
+		return $merged_replacements;
 	}
 
 	/**
@@ -883,12 +906,16 @@ class Import {
 	 */
 	private function save_elements_of_imported_posts() {
 		$imported_data_replacements = $this->get_imported_data_replacements();
+		$class_ids_map = $this->context->group( Kit_Context::GROUP_GLOBAL_CLASSES )->as_array();
+		$variable_ids_map = $this->context->group( Kit_Context::GROUP_GLOBAL_VARIABLES )->as_array();
 
 		foreach ( $this->documents_data as $new_id => $data ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
 				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Template_Library_Variables_Element_Transformer::rewrite_elements_variable_ids( $data['elements'], $variable_ids_map );
+				$data['elements'] = Template_Library_Global_Classes_Element_Transformer::rewrite_elements_classes_ids( $data['elements'], $class_ids_map );
 				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
 				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
@@ -925,6 +952,7 @@ class Import {
 		$import_sessions[ $this->session_id ]['instance_data']['documents_data'] = $this->documents_data;
 		$import_sessions[ $this->session_id ]['instance_data']['imported_data'] = $this->imported_data;
 		$import_sessions[ $this->session_id ]['instance_data']['runners_import_metadata'] = $this->runners_import_metadata;
+		$import_sessions[ $this->session_id ]['instance_data']['context'] = $this->context->to_array();
 
 		update_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS, $import_sessions, false );
 	}

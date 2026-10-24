@@ -3,6 +3,7 @@
 namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Design_System_Import_Context;
+use Elementor\App\Modules\ImportExportCustomization\Kit_Context;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
@@ -43,11 +44,17 @@ class Import extends Import_Runner_Base {
 
 		if ( $this->is_legacy_import_format( $data ) ) {
 			$global_classes_file = $data['extracted_directory_path'] . '/' . Import_Export_Customization::FILE_NAME . '.json';
-			return Legacy_Import_Utils::import_classes( $global_classes_file, $conflict_resolution );
+			$result = Legacy_Import_Utils::import_classes( $global_classes_file, $conflict_resolution );
+			$this->store_context_mappings( $data, $result );
+
+			return $result;
 		}
 
 		$global_classes_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
-		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ] );
+		$result = Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ] );
+		$this->store_context_mappings( $data, $result );
+
+		return $result;
 	}
 
 	protected function is_legacy_import_format( array $data ): bool {
@@ -55,5 +62,26 @@ class Import extends Import_Runner_Base {
 		$elementor_version = $manifest['elementor_version'];
 
 		return version_compare( $elementor_version, '4.1.0-beta1', '<' );
+	}
+
+	private function store_context_mappings( array $data, array $result ): void {
+		if ( ! isset( $data['context'] ) || ! ( $data['context'] instanceof Kit_Context ) ) {
+			return;
+		}
+
+		$group = $data['context']->group( Kit_Context::GROUP_GLOBAL_CLASSES );
+
+		foreach ( [ 'created', 'renamed', 'replaced' ] as $bucket ) {
+			foreach ( $result[ $bucket ] ?? [] as $entry ) {
+				if ( empty( $entry['import_entry']['id'] ) ) {
+					continue;
+				}
+
+				$group->put(
+					$entry['import_entry']['id'],
+					$entry['result_entry']['id'] ?? $entry['import_entry']['id']
+				);
+			}
+		}
 	}
 }

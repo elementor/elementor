@@ -2,6 +2,7 @@
 
 namespace Elementor\App\Modules\ImportExportCustomization\Processes;
 
+use Elementor\App\Modules\ImportExportCustomization\Kit_Context;
 use Elementor\App\Modules\ImportExportCustomization\Module;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Utils\Str;
@@ -79,7 +80,10 @@ class Export {
 	 */
 	private $zip;
 
+	private Kit_Context $context;
+
 	public function __construct( $settings = [] ) {
+		$this->context = new Kit_Context();
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
@@ -125,12 +129,7 @@ class Export {
 		$this->init_zip_archive();
 		$this->init_manifest_data();
 
-		$data = [
-			'include' => $this->settings_include,
-			'customization' => $this->settings_customization,
-			'selected_plugins' => $this->settings_selected_plugins,
-			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
-		];
+		$data = $this->build_runner_data();
 
 		$media_collector = null;
 		if ( $this->should_collect_media( $data ) ) {
@@ -159,6 +158,16 @@ class Export {
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
 			'media_urls' => $media_urls,
+		];
+	}
+
+	private function build_runner_data(): array {
+		return [
+			'include' => $this->settings_include,
+			'customization' => $this->settings_customization,
+			'selected_plugins' => $this->settings_selected_plugins,
+			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
+			'context' => $this->context,
 		];
 	}
 
