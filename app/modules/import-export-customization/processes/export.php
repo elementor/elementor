@@ -140,7 +140,7 @@ class Export {
 
 		foreach ( $this->get_sorted_runners() as $runner ) {
 			if ( $runner->should_export( $data ) ) {
-				$export_result = $runner->export( $data );
+				$export_result = $this->normalize_export_result( $runner->export( $data ) );
 				$this->handle_export_result( $export_result );
 			}
 		}
@@ -369,10 +369,6 @@ class Export {
 			$this->manifest_data += $data;
 		}
 
-		if ( isset( $export_result['files']['path'] ) ) {
-			$export_result['files'] = [ $export_result['files'] ];
-		}
-
 		foreach ( $export_result['files'] as $file ) {
 			$file_extension = pathinfo( $file['path'], PATHINFO_EXTENSION );
 			if ( empty( $file_extension ) ) {
@@ -387,6 +383,20 @@ class Export {
 				);
 			}
 		}
+	}
+
+	private function normalize_export_result( array $export_result ): array {
+		$manifest = $export_result['manifest'] ?? [];
+		$files = $export_result['files'] ?? [];
+
+		if ( isset( $files['path'] ) ) {
+			$files = [ $files ];
+		}
+
+		return [
+			'manifest' => $manifest,
+			'files' => $files,
+		];
 	}
 
 	/**

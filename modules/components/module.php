@@ -21,6 +21,7 @@ use Elementor\Modules\Components\Utils\Strip_Component_Instances;
 use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
+use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -98,6 +99,7 @@ class Module extends BaseModule {
 		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
+		( new Import_Export_Customization() )->register_hooks();
 	}
 
 	public static function is_experiment_active() {
@@ -126,6 +128,14 @@ class Module extends BaseModule {
 		return self::is_import_export_supported()
 			? Remap_Component_Instance_Ids::apply( $elements, $post_ids_map )
 			: Strip_Component_Instances::apply( $elements );
+	}
+
+	public static function prepare_imported_elements_for_customization( array $elements, array $post_ids_map ): array {
+		if ( ! self::is_experiment_active() ) {
+			return Strip_Component_Instances::apply( $elements );
+		}
+
+		return Remap_Component_Instance_Ids::apply( $elements, $post_ids_map );
 	}
 
 	/**

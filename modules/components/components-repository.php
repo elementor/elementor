@@ -58,7 +58,27 @@ class Components_Repository {
 		return $doc;
 	}
 
-	public function create( string $title, array $content, string $status, string $uid, array $settings = [] ) {
+	public function find_by_uid( string $uid, bool $include_autosave = false ): ?Component_Document {
+		$posts = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => 1,
+			'meta_query' => [
+				[
+					'key' => Component_Document::COMPONENT_UID_META_KEY,
+					'value' => $uid,
+				],
+			],
+		] );
+
+		if ( empty( $posts ) ) {
+			return null;
+		}
+
+		return $this->get( $posts[0]->ID, $include_autosave );
+	}
+
+	public function create_empty_document( string $title, string $status, string $uid ): Component_Document {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
@@ -69,6 +89,17 @@ class Components_Repository {
 				Component_Document::COMPONENT_UID_META_KEY => $uid,
 			]
 		);
+
+		if ( is_wp_error( $document ) || ! $document instanceof Component_Document ) {
+			$message = is_wp_error( $document ) ? $document->get_error_message() : 'Failed to create component document';
+			throw new \Exception( $message );
+		}
+
+		return $document;
+	}
+
+	public function create( string $title, array $content, string $status, string $uid, array $settings = [] ) {
+		$document = $this->create_empty_document( $title, $status, $uid );
 
 		try {
 			$saved = $document->save( [
