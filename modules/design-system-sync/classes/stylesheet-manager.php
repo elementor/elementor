@@ -23,7 +23,18 @@ class Stylesheet_Manager extends Base_File {
 	public function generate(): ?array {
 		$this->update();
 
-		if ( ! file_exists( $this->get_path() ) ) {
+		$is_empty = ! file_exists( $this->get_path() );
+
+		// Base_File never writes empty content, it deletes the file instead, so a
+		// missing file alone cannot tell "never built" from "built, nothing to sync".
+		// Record which it was. This only writes when the answer changes.
+		if ( (bool) $this->get_meta( 'empty' ) !== $is_empty ) {
+			$meta = $this->get_meta();
+			$meta['empty'] = $is_empty;
+			$this->update_meta( $meta );
+		}
+
+		if ( $is_empty ) {
 			return null;
 		}
 
@@ -35,6 +46,13 @@ class Stylesheet_Manager extends Base_File {
 
 	public function enqueue(): void {
 		if ( ! file_exists( $this->get_path() ) ) {
+			// The last build had nothing to output, and nothing has invalidated it
+			// since: delete() removes the meta along with the file. Rebuilding here
+			// would delete and re-save the meta option on every frontend request.
+			if ( $this->get_meta( 'empty' ) ) {
+				return;
+			}
+
 			$this->generate();
 		}
 
