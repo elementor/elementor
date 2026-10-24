@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
@@ -17,8 +16,6 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 	private Markdown_Endpoint $endpoint;
 
 	private Agent_Ready_Settings $settings;
-
-	private $original_experiment_default_state;
 
 	private string $original_request_uri;
 
@@ -35,27 +32,15 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$wp_rewrite->set_permalink_structure( '/%postname%/' );
 		flush_rewrite_rules();
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
 		delete_option( Agent_Ready_Settings::OPTION );
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 		$this->endpoint = new Markdown_Endpoint( $this->settings );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		if ( null === $this->original_http_accept ) {
@@ -345,16 +330,14 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $is_allowed );
 	}
 
-	public function test_filter_should_serve__blocks_markdown_render_when_markdown_is_disabled() {
+	public function test_filter_should_serve__passes_through_when_markdown_is_disabled() {
 		// Arrange
 		$post = $this->create_published_page();
 		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
 
-		// Act
-		$should_serve = $this->endpoint->filter_should_serve( true, $post );
-
-		// Assert
-		$this->assertFalse( $should_serve );
+		// Act & Assert - should pass through incoming value
+		$this->assertTrue( $this->endpoint->filter_should_serve( true, $post ) );
+		$this->assertFalse( $this->endpoint->filter_should_serve( false, $post ) );
 	}
 
 	public function test_filter_should_serve__blocks_noindex_post() {
@@ -456,6 +439,39 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 			'post_status' => 'publish',
 			'post_title'  => 'Settings Gated Page',
 		] ) );
+	}
+
+	public function test_filter_should_serve__preserves_incoming_value_when_markdown_not_active() {
+		// Arrange
+		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY ] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		$post = $this->create_published_page();
+
+		// Act - should preserve true
+		$result_true = $this->endpoint->filter_should_serve( true, $post );
+		// Act - should preserve false
+		$result_false = $this->endpoint->filter_should_serve( false, $post );
+
+		// Assert
+		$this->assertTrue( $result_true );
+		$this->assertFalse( $result_false );
+	}
+
+	public function test_filter_should_serve__returns_false_when_post_not_in_settings() {
+		// Arrange
+		$post = $this->create_published_page();
+
+		$stored = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$stored[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['post_types'] = [ 'post' ];
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $stored );
+
+		// Act
+		$result = $this->endpoint->filter_should_serve( true, $post );
+
+		// Assert
+		$this->assertFalse( $result );
 	}
 
 	private function get_private_property( string $name ) {

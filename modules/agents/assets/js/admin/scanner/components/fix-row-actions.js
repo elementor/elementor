@@ -1,10 +1,10 @@
 import { ArrowUpRightIcon, CopyIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Stack from '@elementor/ui/Stack';
-import Switch from '@elementor/ui/Switch';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { DisabledReasonSwitch } from '../../components/disabled-reason-switch';
 import { wpAdminSwitchSx } from '../../components/wp-admin-sx';
 import {
 	FIX_WITH_ANGIE,
@@ -94,13 +94,14 @@ CompletedActions.propTypes = {
 	onRescan: PropTypes.func.isRequired,
 };
 
-export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
+export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, toggleDisabledReason = null, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
 	if ( FIX_WITH_TOGGLE === check.fixWith ) {
 		return (
-			<Switch
+			<DisabledReasonSwitch
 				size="small"
 				checked={ isResolved }
 				disabled={ isSaving || isToggleDisabled }
+				disabledReason={ isToggleDisabled ? toggleDisabledReason : null }
 				onChange={ ( event ) => onSetEnabled( check, event.target.checked ) }
 				inputProps={ { role: 'switch', 'aria-checked': isResolved, 'aria-label': check.title } }
 				sx={ wpAdminSwitchSx }
@@ -152,6 +153,7 @@ RowAction.propTypes = {
 	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
+	toggleDisabledReason: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,
 	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onOpen: PropTypes.func.isRequired,

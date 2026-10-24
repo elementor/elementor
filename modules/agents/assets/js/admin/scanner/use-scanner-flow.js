@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from '../api';
 import { getSaveErrorMessage } from '../hooks/get-save-error-message';
 import { canOpenAngie, openAngieWithPrompt } from './open-angie';
 import {
 	getInitialModuleEnabled,
+	getModuleUnavailableReason,
 	getToggleModuleKey,
 	hasDirtyModuleChecks,
 	isAgentReadyModuleToggleDisabled,
@@ -28,6 +30,8 @@ import { getLaterRetryAt, toFailedScanResult } from './scanner-report-adapter';
 import { getBaseScore, getVisibleChecks, hasPendingFixes } from './scanner-score';
 
 const MS_PER_SECOND = 1000;
+
+const NOT_ACTIVATED_REASON = __( 'Activate Agent Ready to turn this on.', 'elementor' );
 
 const wait = ( delayMs ) => new Promise( ( resolve ) => setTimeout( resolve, delayMs ) );
 
@@ -70,7 +74,7 @@ const withDirtyModuleKey = ( dirtyModuleKeys, moduleKey, isEnabled, initialModul
 export const useScannerFlow = ( {
 	initialScan = null,
 	initialRetryAt = null,
-	isExperimentActive = false,
+	isActivated: initialIsActivated = false,
 	isAngieActive = false,
 	llmsConfig,
 	markdownConfig,
@@ -78,15 +82,17 @@ export const useScannerFlow = ( {
 	agentDiscoveryConfig,
 	browserToolsConfig,
 } = {} ) => {
-	const progressSteps = useMemo( getProgressSteps, [] );
-	const moduleToggleConfigs = useMemo( () => ( {
+	const moduleConfigs = useMemo( () => ( {
 		llmsConfig,
+		markdownConfig,
 		botAccessConfig,
+		agentDiscoveryConfig,
 		browserToolsConfig,
-	} ), [ llmsConfig, botAccessConfig, browserToolsConfig ] );
+	} ), [ llmsConfig, markdownConfig, botAccessConfig, agentDiscoveryConfig, browserToolsConfig ] );
+	const progressSteps = useMemo( getProgressSteps, [] );
 	const isModuleToggleDisabled = useCallback(
-		( moduleKey ) => isAgentReadyModuleToggleDisabled( moduleKey, moduleToggleConfigs ),
-		[ moduleToggleConfigs ],
+		( moduleKey ) => isAgentReadyModuleToggleDisabled( moduleKey, moduleConfigs ),
+		[ moduleConfigs ],
 	);
 	const isMountedRef = useRef( true );
 	const initialModuleEnabledRef = useRef( getInitialModuleEnabled( {
@@ -98,11 +104,11 @@ export const useScannerFlow = ( {
 	} ) );
 	const moduleEnabledRef = useRef( initialModuleEnabledRef.current );
 
-	const [ view, setView ] = useState( initialScan ? getReportView( isExperimentActive ) : SCANNER_STATE_FIRST_RUN );
+	const [ view, setView ] = useState( initialScan ? getReportView( initialIsActivated ) : SCANNER_STATE_FIRST_RUN );
 	const [ completedStepsCount, setCompletedStepsCount ] = useState( 0 );
 	const [ scan, setScan ] = useState( initialScan );
 	const [ cooldownRetryAt, setCooldownRetryAt ] = useState( initialRetryAt );
-	const [ isActivated, setIsActivated ] = useState( isExperimentActive );
+	const [ isActivated, setIsActivated ] = useState( initialIsActivated );
 	const [ ringDurationMs, setRingDurationMs ] = useState( SCANNER_MOTION.ringArriveMs );
 	const [ resolvedIds, setResolvedIds ] = useState( {} );
 	const [ moduleEnabled, setModuleEnabled ] = useState( initialModuleEnabledRef.current );
@@ -123,21 +129,6 @@ export const useScannerFlow = ( {
 			isMountedRef.current = false;
 		};
 	}, [] );
-
-	useEffect( () => {
-		if ( ! isExperimentActive ) {
-			return;
-		}
-
-		setIsActivated( true );
-		setView( ( current ) => {
-			if ( SCANNER_STATE_FIRST_CHECK === current && scan ) {
-				return SCANNER_STATE_FIXES;
-			}
-
-			return current;
-		} );
-	}, [ isExperimentActive, scan ] );
 
 	const playProgressSteps = useCallback( async () => {
 		for ( let step = 1; step <= progressSteps.length; step++ ) {
@@ -240,7 +231,6 @@ export const useScannerFlow = ( {
 		setView( SCANNER_STATE_ACTIVATING );
 
 		try {
-			// TODO: activateAgentsReady() only flips the agent_ready experiment opt-in. Replace with the endpoint that turns on every Agent Ready module and reports which checks it resolved (handoff §10.1).
 			await Promise.all( [ activateAgentsReady(), wait( SCANNER_MOTION.ringActivatingMs ) ] );
 		} catch ( error ) {
 			if ( isMountedRef.current ) {
@@ -254,11 +244,19 @@ export const useScannerFlow = ( {
 			return;
 		}
 
+		const nextModuleEnabled = getInitialModuleEnabled( moduleConfigs );
+		Object.keys( nextModuleEnabled ).forEach( ( moduleKey ) => {
+			if ( ! isModuleToggleDisabled( moduleKey ) ) {
+				nextModuleEnabled[ moduleKey ] = true;
+			}
+		} );
+		moduleEnabledRef.current = nextModuleEnabled;
+		setModuleEnabled( nextModuleEnabled );
 		setIsActivated( true );
 		setOpenIds( {} );
 		setRingDurationMs( SCANNER_MOTION.ringLandMs );
 		setView( SCANNER_STATE_FIXES );
-	}, [ view ] );
+	}, [ isModuleToggleDisabled, moduleConfigs, view ] );
 
 	const toggleRow = useCallback( ( checkId ) => {
 		setOpenIds( ( current ) => ( current[ checkId ] ? withoutKey( current, checkId ) : { ...current, [ checkId ]: true } ) );
@@ -346,12 +344,6 @@ export const useScannerFlow = ( {
 		const moduleKey = getToggleModuleKey( check.id );
 
 		if ( ! moduleKey ) {
-			if ( isEnabled ) {
-				markResolved( check, { enabled: true } );
-				return;
-			}
-
-			undoFix( check );
 			return;
 		}
 
@@ -381,7 +373,7 @@ export const useScannerFlow = ( {
 					setSavingModuleKeys( ( current ) => withoutKey( current, moduleKey ) );
 				}
 			} );
-	}, [ markResolved, setModuleFlag, undoFix ] );
+	}, [ setModuleFlag ] );
 
 	const setPreference = useCallback( ( checkId, value ) => {
 		setPreferences( ( current ) => ( { ...current, [ checkId ]: value } ) );
@@ -402,6 +394,22 @@ export const useScannerFlow = ( {
 		setAreChecksExpanded( ( current ) => ! current );
 	}, [] );
 
+	// The server reason wins: it still applies after activation, while the activation hint does not.
+	const getToggleDisabledReason = useCallback( ( moduleKey ) => {
+		const unavailableReason = getModuleUnavailableReason( moduleKey, moduleConfigs );
+
+		if ( unavailableReason ) {
+			return unavailableReason.message || null;
+		}
+
+		return isActivated ? null : NOT_ACTIVATED_REASON;
+	}, [ isActivated, moduleConfigs ] );
+
+	const isCheckToggleDisabled = useCallback(
+		( moduleKey ) => ! isActivated || isModuleToggleDisabled( moduleKey ),
+		[ isActivated, isModuleToggleDisabled ],
+	);
+
 	const visibleChecks = getVisibleChecks( scan );
 
 	return {
@@ -416,7 +424,8 @@ export const useScannerFlow = ( {
 		needsRescanForScore: hasPendingFixes( visibleChecks, resolvedIds ) || hasDirtyModuleChecks( visibleChecks, dirtyModuleKeys ),
 		resolvedIds,
 		moduleEnabled,
-		isModuleToggleDisabled,
+		isModuleToggleDisabled: isCheckToggleDisabled,
+		getToggleDisabledReason,
 		savingModuleKeys,
 		openIds,
 		preferences,

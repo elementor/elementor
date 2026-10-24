@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Content_Generator;
@@ -19,20 +18,10 @@ class Test_Ard_Manifest extends Elementor_Test_Base {
 
 	private Module $module;
 
-	private $original_experiment_default_state;
-
 	public function setUp(): void {
 		parent::setUp();
 
 		Module::reset_physical_file_cache();
-
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
@@ -40,15 +29,11 @@ class Test_Ard_Manifest extends Elementor_Test_Base {
 		$this->module = new Module();
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 		$this->ard_manifest = new Ard_Manifest( $this->module );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
 

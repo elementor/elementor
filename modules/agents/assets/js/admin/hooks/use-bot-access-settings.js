@@ -22,6 +22,7 @@ import { getSaveErrorMessage } from './get-save-error-message';
 
 export const useBotAccessSettings = ( initialState ) => {
 	const { catalog, hasPhysicalFile } = initialState;
+	const unavailableReason = initialState.unavailableReason ?? null;
 	const catalogTokens = catalog.map( ( bot ) => bot.token );
 
 	const [ isEnabled, setIsEnabled ] = useState( initialState.enabled );
@@ -102,7 +103,7 @@ export const useBotAccessSettings = ( initialState ) => {
 		bots,
 		catalog,
 		hasPhysicalFile,
-		isEnabled: isEnabled && ! hasPhysicalFile,
+		isEnabled: isEnabled && ! unavailableReason,
 		isSaving,
 		saveError,
 		setColumn,
@@ -110,5 +111,6 @@ export const useBotAccessSettings = ( initialState ) => {
 		setRow,
 		toggleEnabled,
 		togglePermission,
+		unavailableReason,
 	};
 };

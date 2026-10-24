@@ -7,11 +7,15 @@ import {
 } from 'elementor/modules/agents/assets/js/admin/constants';
 import {
 	getInitialModuleEnabled,
+	getModuleUnavailableReason,
 	getToggleModuleKey,
 	getToggleSettingsPatch,
 	hasDirtyModuleChecks,
 	isAgentReadyModuleToggleDisabled,
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-check-settings';
+
+const PHYSICAL_FILE_REASON = { code: 'physical_file', message: 'A physical llms.txt file already exists.' };
+const ABILITIES_API_REASON = { code: 'abilities_api_missing', message: 'Requires the WordPress Abilities API.' };
 
 describe( 'scanner-check-settings', () => {
 	it( 'maps known toggle check ids to Agent Ready module keys', () => {
@@ -48,11 +52,11 @@ describe( 'scanner-check-settings', () => {
 			[ BROWSER_TOOLS_SETTINGS_KEY ]: false,
 		} );
 		expect( getInitialModuleEnabled( {
-			llmsConfig: { enabled: true, hasPhysicalFile: true },
+			llmsConfig: { enabled: true, unavailableReason: PHYSICAL_FILE_REASON },
 			markdownConfig: { enabled: true },
-			botAccessConfig: { enabled: true },
+			botAccessConfig: { enabled: true, unavailableReason: null },
 			agentDiscoveryConfig: { enabled: false },
-			browserToolsConfig: { enabled: true, isAvailable: true },
+			browserToolsConfig: { enabled: true, unavailableReason: null },
 		} ) ).toEqual( {
 			[ LLMS_SETTINGS_KEY ]: false,
 			[ MARKDOWN_SETTINGS_KEY ]: true,
@@ -61,7 +65,7 @@ describe( 'scanner-check-settings', () => {
 			[ BROWSER_TOOLS_SETTINGS_KEY ]: true,
 		} );
 		expect( getInitialModuleEnabled( {
-			browserToolsConfig: { enabled: true, isAvailable: false },
+			browserToolsConfig: { enabled: true, unavailableReason: ABILITIES_API_REASON },
 		} )[ BROWSER_TOOLS_SETTINGS_KEY ] ).toBe( false );
 	} );
 
@@ -75,13 +79,29 @@ describe( 'scanner-check-settings', () => {
 		expect( hasDirtyModuleChecks( [ { id: 'public-api' } ], { [ MARKDOWN_SETTINGS_KEY ]: true } ) ).toBe( false );
 	} );
 
+	it( 'reads the server unavailable reason only for modules that can be locked', () => {
+		// Assert
+		expect( getModuleUnavailableReason( LLMS_SETTINGS_KEY, { llmsConfig: { unavailableReason: PHYSICAL_FILE_REASON } } ) ).toBe( PHYSICAL_FILE_REASON );
+		expect( getModuleUnavailableReason( LLMS_SETTINGS_KEY, { llmsConfig: { unavailableReason: null } } ) ).toBeNull();
+		expect( getModuleUnavailableReason( LLMS_SETTINGS_KEY, {} ) ).toBeNull();
+		expect( getModuleUnavailableReason( MARKDOWN_SETTINGS_KEY, { markdownConfig: { unavailableReason: PHYSICAL_FILE_REASON } } ) ).toBeNull();
+		expect( getModuleUnavailableReason( null, {} ) ).toBeNull();
+	} );
+
 	it( 'disables browser-tools toggles when Agent browser tools are unavailable', () => {
 		// Assert
 		expect( isAgentReadyModuleToggleDisabled( BROWSER_TOOLS_SETTINGS_KEY, {
-			browserToolsConfig: { enabled: true, isAvailable: false },
+			browserToolsConfig: { enabled: true, unavailableReason: ABILITIES_API_REASON },
 		} ) ).toBe( true );
 		expect( isAgentReadyModuleToggleDisabled( BROWSER_TOOLS_SETTINGS_KEY, {
-			browserToolsConfig: { enabled: true, isAvailable: true },
+			browserToolsConfig: { enabled: true, unavailableReason: null },
 		} ) ).toBe( false );
+	} );
+
+	it( 'disables llms.txt toggles when an SEO plugin owns the file even without a physical file', () => {
+		// Assert
+		expect( isAgentReadyModuleToggleDisabled( LLMS_SETTINGS_KEY, {
+			llmsConfig: { enabled: true, hasPhysicalFile: false, unavailableReason: { code: 'seo_plugin', message: 'Yoast SEO manages llms.txt.' } },
+		} ) ).toBe( true );
 	} );
 } );
