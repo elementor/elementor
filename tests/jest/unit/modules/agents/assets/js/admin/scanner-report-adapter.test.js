@@ -132,11 +132,73 @@ describe( 'toScanResult', () => {
 
 		// Assert
 		expect( result.stages ).toEqual( [
-			{ id: STAGE_REACH, earned: 4, total: 5 },
-			{ id: STAGE_IDENTIFY, earned: 30, total: 40 },
-			{ id: STAGE_ACT, earned: 30, total: 40 },
+			{ id: STAGE_REACH, earned: 0, total: 0 },
+			{ id: STAGE_IDENTIFY, earned: 1, total: 6 },
+			{ id: STAGE_ACT, earned: 0, total: 1 },
 			{ id: STAGE_COMMERCE, earned: 0, total: 0, isComingSoon: true },
 		] );
+	} );
+
+	it( 'counts passed over scorable checks per task, regardless of layer', () => {
+		// Arrange
+		const report = {
+			...getReport(),
+			checks: [
+				{ id: 'robots-txt', label: 'robots.txt', layer: 'discovery', task: 'Find', status: 'pass', scorable: true },
+				{ id: 'sitemap', label: 'Sitemap', layer: 'accessibility', task: 'Find', status: 'fail', scorable: true },
+				{ id: 'bot-detection', label: 'Bots', layer: 'accessibility', task: 'Find', status: 'pass', scorable: false },
+				{ id: 'ai-catalog', label: 'AI Catalog', layer: 'discovery', task: 'Find', status: 'na', scorable: false },
+				{ id: 'json-ld', label: 'JSON-LD', layer: 'accessibility', task: 'Read', status: 'partial', scorable: true },
+			],
+		};
+
+		// Act
+		const [ reach, identify ] = toScanResult( report ).stages;
+
+		// Assert
+		expect( reach ).toEqual( { id: STAGE_REACH, earned: 1, total: 2 } );
+		expect( identify ).toEqual( { id: STAGE_IDENTIFY, earned: 0, total: 1 } );
+	} );
+
+	it( 'uses the task for each row stage and falls back to the layer without one', () => {
+		// Arrange
+		const report = {
+			...getReport(),
+			checks: [
+				{ id: 'sitemap', label: 'Sitemap', layer: 'accessibility', task: 'Find', status: 'fail', scorable: true },
+				{ id: 'legacy', label: 'Legacy', layer: 'usability', status: 'fail', scorable: true },
+			],
+		};
+
+		// Act
+		const stages = toScanResult( report ).checks.map( ( check ) => check.stage );
+
+		// Assert
+		expect( stages ).toEqual( expect.arrayContaining( [ STAGE_REACH, STAGE_ACT ] ) );
+	} );
+
+	it( 'maps the task to a stage regardless of its casing', () => {
+		// Arrange
+		const report = {
+			...getReport(),
+			checks: [
+				{ id: 'a', label: 'A', layer: 'usability', task: 'find', status: 'pass', scorable: true },
+				{ id: 'b', label: 'B', layer: 'usability', task: 'READ', status: 'fail', scorable: true },
+				{ id: 'c', label: 'C', layer: 'discovery', task: 'Act', status: 'pass', scorable: true },
+			],
+		};
+
+		// Act
+		const result = toScanResult( report );
+
+		// Assert
+		expect( result.stages ).toEqual( [
+			{ id: STAGE_REACH, earned: 1, total: 1 },
+			{ id: STAGE_IDENTIFY, earned: 0, total: 1 },
+			{ id: STAGE_ACT, earned: 1, total: 1 },
+			{ id: STAGE_COMMERCE, earned: 0, total: 0, isComingSoon: true },
+		] );
+		expect( result.checks[ 0 ].stage ).toBe( STAGE_IDENTIFY );
 	} );
 
 	it( 'splits checks into fixes and passing rows, ordered by score impact', () => {
@@ -157,6 +219,7 @@ describe( 'toScanResult', () => {
 			id: 'sitemap',
 			title: 'Sitemap exists',
 			technicalName: 'Sitemap exists',
+			description: '',
 			stage: STAGE_IDENTIFY,
 			points: 2,
 		} ] );
@@ -172,6 +235,7 @@ describe( 'toScanResult', () => {
 			technicalName: 'Public API',
 			points: 8,
 			priority: PRIORITY_REQUIRED,
+			status: 'fail',
 			stage: STAGE_ACT,
 			evidence: 'No API found',
 			explanation: { whatItMeans: 'Agents need an API.', howToFix: 'Publish an API.' },
@@ -209,9 +273,13 @@ describe( 'toScanResult', () => {
 			fixWith: FIX_WITH_ANGIE,
 			fixPrompt: 'Serve markdown to bot user agents.',
 			explanation: { howToFix: 'Serve markdown to bot user agents.' },
+			tier: 'emerging',
+			priority: null,
+			status: 'fail',
 			resolvedByActivation: false,
 			points: 0,
 		} );
+		expect( byId( 'llms-txt-formatting' ) ).toMatchObject( { status: 'partial' } );
 		expect( byId( 'agent-instruction' ) ).toMatchObject( {
 			fixWith: FIX_WITH_ANGIE,
 			fixPrompt: AGENT_INSTRUCTION_MARKDOWN,

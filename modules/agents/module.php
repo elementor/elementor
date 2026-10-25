@@ -1043,10 +1043,16 @@ class Module extends BaseModule {
 		$post_types = [];
 
 		foreach ( $this->generator->get_available_post_types() as $name => $label ) {
+			$count = (int) ( wp_count_posts( $name )->publish ?? 0 );
+
+			if ( $count <= 0 ) {
+				continue;
+			}
+
 			$post_types[] = [
 				'name'     => $name,
 				'label'    => $label,
-				'count'    => (int) ( wp_count_posts( $name )->publish ?? 0 ),
+				'count'    => $count,
 				'included' => in_array( $name, $included_post_types, true ),
 			];
 		}

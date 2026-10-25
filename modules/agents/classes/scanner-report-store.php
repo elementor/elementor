@@ -21,6 +21,7 @@ class Scanner_Report_Store {
 		'label',
 		'description',
 		'layer',
+		'task',
 		'tier',
 		'status',
 		'earned',

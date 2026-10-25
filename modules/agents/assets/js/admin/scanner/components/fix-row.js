@@ -1,6 +1,7 @@
 import { ChevronDownIcon, CircleCheckFilledIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
+import Chip from '@elementor/ui/Chip';
 import Collapse from '@elementor/ui/Collapse';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
@@ -11,6 +12,11 @@ import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_TOGGLE,
+	CHECK_STATUS_FAIL,
+	getCheckStatusDotColor,
+	getCheckStatusLabel,
+	getCheckPriorityLabel,
+	PRIORITY_RECOMMENDED,
 	PRIORITY_REQUIRED,
 	REDUCED_MOTION_SX,
 	SCANNER_COLORS,
@@ -36,7 +42,24 @@ const completedCheckSx = {
 	...REDUCED_MOTION_SX,
 };
 
-const getPriorityLabel = ( priority ) => ( PRIORITY_REQUIRED === priority ? __( 'Required', 'elementor' ) : __( 'Recommended', 'elementor' ) );
+const PRIORITY_CHIP_COLORS = {
+	[ PRIORITY_REQUIRED ]: 'error',
+	[ PRIORITY_RECOMMENDED ]: 'success',
+};
+
+const PriorityChip = ( { priority } ) => {
+	if ( ! PRIORITY_CHIP_COLORS[ priority ] ) {
+		return null;
+	}
+
+	return <Chip size="tiny" shape="rounded" variant="standard" color={ PRIORITY_CHIP_COLORS[ priority ] } label={ getCheckPriorityLabel( { priority } ) } />;
+};
+
+PriorityChip.propTypes = {
+	priority: PropTypes.string,
+};
+
+const getDotColor = ( check ) => getCheckStatusDotColor( check.status ?? CHECK_STATUS_FAIL );
 
 const StatusIndicator = ( { check, isCompleted } ) => {
 	if ( isCompleted ) {
@@ -49,9 +72,9 @@ const StatusIndicator = ( { check, isCompleted } ) => {
 				width={ SCANNER_LAYOUT.statusDotSize }
 				height={ SCANNER_LAYOUT.statusDotSize }
 				borderRadius="50%"
-				bgcolor={ PRIORITY_REQUIRED === check.priority ? 'error.light' : 'warning.light' }
+				bgcolor={ getDotColor( check ) }
 			/>
-			<Box component="span" sx={ VISUALLY_HIDDEN_SX }>{ getPriorityLabel( check.priority ) }</Box>
+			<Box component="span" sx={ VISUALLY_HIDDEN_SX }>{ getCheckStatusLabel( check.status ?? CHECK_STATUS_FAIL ) }</Box>
 		</Box>
 	);
 };
@@ -123,6 +146,7 @@ export const FixRow = ( {
 				<Stack direction="row" alignItems="center" gap={ isCompleted ? 1 : 0.5 } flex={ 1 } minWidth={ 0 }>
 					<StatusIndicator check={ check } isCompleted={ isCompleted } />
 					<Typography className="scanner-fix-title" variant="body2">{ check.title }</Typography>
+					{ ! isCompleted && <PriorityChip priority={ check.priority } /> }
 				</Stack>
 				<Stack direction="row" alignItems="center" justifyContent="flex-end" gap={ 1 } minWidth={ SCANNER_LAYOUT.actionAreaWidth } flexShrink={ 0 }>
 					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Keeps the row's own toggle from firing when an action is used. */ }

@@ -314,6 +314,26 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( $invalidated );
 	}
 
+	public function test_get_post_type_rows__omits_post_types_without_published_posts() {
+		// Arrange
+		register_post_type( 'empty_cpt', [ 'public' => true ] );
+		$this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+
+		// Act
+		$rows = $this->invoke_private( 'get_post_type_rows', [ [] ] );
+
+		// Cleanup
+		unregister_post_type( 'empty_cpt' );
+
+		// Assert
+		$names = wp_list_pluck( $rows, 'name' );
+		$this->assertContains( 'page', $names );
+		$this->assertNotContains( 'empty_cpt', $names );
+	}
+
 	private function invoke_private( string $name, array $args = [] ) {
 		$method = new \ReflectionMethod( Module::class, $name );
 		$method->setAccessible( true );
