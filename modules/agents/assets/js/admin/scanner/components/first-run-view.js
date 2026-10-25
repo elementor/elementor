@@ -1,4 +1,3 @@
-import { StarFilledIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
 import Stack from '@elementor/ui/Stack';
@@ -9,6 +8,7 @@ import PropTypes from 'prop-types';
 import { SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
 import { getMockScanResult } from '../scanner-mock-data';
 import { getBaseScore, getVisibleChecks } from '../scanner-score';
+import { AgentReadyStarIcon } from './agent-ready-star-icon';
 import { FixesSection } from './fixes-section';
 import { PassingTable } from './passing-table';
 import { ScoreRow, ScoreSummaryBlock, useNextScanLabel } from './score-summary-block';
@@ -69,7 +69,7 @@ const FeatureCard = ( { title, body } ) => (
 		textAlign="left"
 	>
 		<Stack direction="row" alignItems="center" spacing={ FEATURE_CARD_GAP }>
-			<StarFilledIcon fontSize="medium" sx={ { color: SCANNER_COLORS.accent } } />
+			<AgentReadyStarIcon sx={ { color: SCANNER_COLORS.accent } } />
 			<Typography variant="subtitle1" color="text.secondary">{ title }</Typography>
 		</Stack>
 		<Typography variant="body2" color="text.tertiary">{ body }</Typography>
