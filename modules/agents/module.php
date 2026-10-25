@@ -1139,6 +1139,10 @@ class Module extends BaseModule {
 		return $this->feature_registry;
 	}
 
+	public function get_agent_ready_settings(): Agent_Ready_Settings {
+		return $this->settings;
+	}
+
 	/**
 	 * Add a feature component to the registry and to the base module's
 	 * component store, then call register() if the component is enabled.
