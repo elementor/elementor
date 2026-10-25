@@ -162,7 +162,6 @@ namespace {
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions {
 
-use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\Promotions\Promotion_Cdn_Url_Validator;
 use Elementor\Modules\Promotions\Sticky_Panel_Promotion;
 use Elementor\Modules\Promotions\Theme_Builder_Promotion;
@@ -330,7 +329,7 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 			]
 		);
 
-		$merged = Sticky_Panel_Promotion::apply_to_promotion( $this->sticky_defaults() );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $this->sticky_defaults() );
 
 		$this->assertSame( 'Sale message.', $merged['message'] );
 		$this->assertSame( 'Grab Pro', $merged['button_text'] );
@@ -350,7 +349,7 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 			]
 		);
 
-		$merged = Sticky_Panel_Promotion::apply_to_promotion( $this->sticky_defaults() );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $this->sticky_defaults() );
 
 		$this->assertSame( $cdn_url, $merged['url'] );
 	}
@@ -367,7 +366,7 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 			]
 		);
 
-		$merged = Sticky_Panel_Promotion::apply_to_promotion( $this->sticky_defaults() );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $this->sticky_defaults() );
 
 		$this->assertSame( 'https://go.elementor.com/go-pro-sticky-widget-panel/', $merged['url'] );
 	}
@@ -384,7 +383,7 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 			]
 		);
 
-		$merged = Sticky_Panel_Promotion::apply_to_promotion( $this->sticky_defaults() );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $this->sticky_defaults() );
 
 		$this->assertSame( 'Sale only.', $merged['message'] );
 		$this->assertSame( 'https://go.elementor.com/go-pro-sticky-widget-panel/', $merged['url'] );
@@ -418,16 +417,6 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 		$this->assertFalse( Promotion_Cdn_Url_Validator::is_allowed_promotion_url( 'https://assets.elementor.com/path/' ) );
 	}
 
-	public function test_filtered_promotions_manager__preserves_ampersand_in_url(): void {
-		$url_with_params = 'https://go.elementor.com/x/?a=1&b=2';
-		$result = Filtered_Promotions_Manager::get_filtered_promotion_data(
-			[ 'url' => $url_with_params ],
-			'elementor/tests/promotion-url-encoding',
-			'url'
-		);
-
-		$this->assertSame( $url_with_params, $result['url'] );
-	}
 }
 
 }

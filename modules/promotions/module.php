@@ -242,7 +242,7 @@ class Module extends Base_Module {
 	}
 
 	public function add_editing_panel_sticky_promotion( array $settings ): array {
-		$settings['editingPanelStickyPromotion'] = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
+		$settings['editingPanelStickyPromotion'] = Sticky_Panel_Promotion::get_promotion_for_editor();
 
 		return $settings;
 	}
