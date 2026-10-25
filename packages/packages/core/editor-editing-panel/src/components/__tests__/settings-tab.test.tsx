@@ -1,30 +1,21 @@
 import * as React from 'react';
 import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
-import {
-	type Control,
-	type ControlsSection,
-	type ElementControl,
-	getContainer,
-	getElementLabel,
-	getWidgetsCache,
-	type V1Element,
-	type V1ElementConfig,
-} from '@elementor/editor-elements';
-import { __privateUseListenTo as useListenTo, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { type Control, type ControlsSection, type ElementControl, getElementLabel } from '@elementor/editor-elements';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { screen } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
+import { useAncestorDependencies } from '../../hooks/use-ancestor-dependencies';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
 import { SettingsTab } from '../settings-tab';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../../contexts/element-context' );
+jest.mock( '../../hooks/use-ancestor-dependencies' );
 jest.mock( '../../hooks/use-default-panel-settings' );
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getElementLabel: jest.fn(),
-	getContainer: jest.fn(),
-	getWidgetsCache: jest.fn(),
 } ) );
 
 const MockSelectComponent = ( { id }: { id?: string } ) => <select id={ id } aria-label="mock-select" />;
@@ -51,7 +42,7 @@ jest.mock( '../../controls-registry/control', () => ( {
 describe( '<SettingsTab />', () => {
 	beforeEach( () => {
 		jest.mocked( getElementLabel ).mockReturnValue( 'Mock Element' );
-		jest.mocked( useListenTo ).mockImplementation( ( _, getSnapshot ) => getSnapshot() );
+		jest.mocked( useAncestorDependencies ).mockReturnValue( () => false );
 	} );
 
 	it( 'should render the widget sections', () => {
@@ -391,33 +382,11 @@ describe( '<SettingsTab />', () => {
 
 	it( 'should hide a section when its only control is hidden by an ancestor dependency', () => {
 		// Arrange.
-		const form = {
-			id: 'form-id',
-			model: { get: ( key: string ) => ( key === 'elType' ? 'e-form' : undefined ) },
-			settings: { toJSON: () => ( { 'webmcp-expose': { $$type: 'boolean', value: false } } ) },
-		} as unknown as V1Element;
-
-		jest.mocked( getContainer ).mockImplementation( ( id: string ) =>
-			id === 'mock-id' ? ( { id, parent: form } as unknown as V1Element ) : null
-		);
-		jest.mocked( getWidgetsCache ).mockReturnValue( {
-			'e-form': { atomic_props_schema: {} } as unknown as V1ElementConfig,
-		} );
+		jest.mocked( useAncestorDependencies ).mockReturnValue( ( bind ) => bind === 'webmcp-param-description' );
 
 		const elementType = createMockElementType( {
 			propsSchema: {
-				'webmcp-param-description': createMockPropType( {
-					kind: 'plain',
-					meta: {
-						ancestor_dependency: {
-							element_type: 'e-form',
-							dependency: {
-								relation: 'or',
-								terms: [ { operator: 'eq', path: [ 'webmcp-expose' ], value: true, effect: 'hide' } ],
-							},
-						},
-					},
-				} ),
+				'webmcp-param-description': createMockPropType( { kind: 'plain' } ),
 			},
 			controls: [
 				mockSection( {

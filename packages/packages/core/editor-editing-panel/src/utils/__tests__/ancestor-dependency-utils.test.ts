@@ -1,14 +1,8 @@
 import { createMockPropType } from 'test-utils';
-import { getContainer, getWidgetsCache, type V1Element, type V1ElementConfig } from '@elementor/editor-elements';
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { type ExtendedWindow, type V1Element, type V1ElementConfig } from '@elementor/editor-elements';
+import { type AncestorDependency, type PropType, type PropValue } from '@elementor/editor-props';
 
 import { isHiddenByAncestor } from '../ancestor-dependency-utils';
-
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	getContainer: jest.fn(),
-	getWidgetsCache: jest.fn(),
-} ) );
 
 const FORM_TYPE = 'e-form';
 const EXPOSE = 'webmcp-expose';
@@ -31,26 +25,23 @@ const makeContainer = ( id: string, elType: string, settings: Record< string, Pr
 		id,
 		parent,
 		model: { get: ( key: string ) => ( key === 'elType' ? elType : undefined ) },
-		settings: { toJSON: () => settings },
+		settings: { get: ( key: string ) => settings[ key ] },
 	} ) as unknown as V1Element;
 
 const registerContainers = ( containers: V1Element[] ) => {
-	jest.mocked( getContainer ).mockImplementation(
-		( id: string ) => containers.find( ( container ) => container.id === id ) ?? null
-	);
-};
-
-describe( 'isHiddenByAncestor', () => {
-	beforeEach( () => {
-		jest.mocked( getWidgetsCache ).mockReturnValue( {
+	( window as unknown as ExtendedWindow ).elementor = {
+		getContainer: ( id: string ) => containers.find( ( container ) => container.id === id ),
+		widgetsCache: {
 			[ FORM_TYPE ]: {
 				atomic_props_schema: {
 					[ EXPOSE ]: createMockPropType( { kind: 'plain', default: { $$type: 'boolean', value: true } } ),
 				},
 			} as unknown as V1ElementConfig,
-		} );
-	} );
+		},
+	};
+};
 
+describe( 'isHiddenByAncestor', () => {
 	it( 'hides when the parent form is not exposed', () => {
 		// Arrange
 		const form = makeContainer( 'form', FORM_TYPE, { [ EXPOSE ]: { $$type: 'boolean', value: false } } );
@@ -96,11 +87,23 @@ describe( 'isHiddenByAncestor', () => {
 		expect( isHiddenByAncestor( 'field', paramDescriptionPropType ) ).toBe( false );
 	} );
 
+	it( 'does not treat the element itself as its own ancestor', () => {
+		// Arrange
+		const form = makeContainer( 'form', FORM_TYPE, { [ EXPOSE ]: { $$type: 'boolean', value: false } } );
+		registerContainers( [ form ] );
+
+		// Act & Assert
+		expect( isHiddenByAncestor( 'form', paramDescriptionPropType ) ).toBe( false );
+	} );
+
 	it.each( [
 		[ 'no meta', createMockPropType( { kind: 'plain' } ) ],
 		[
 			'malformed meta',
-			createMockPropType( { kind: 'plain', meta: { ancestor_dependency: { element_type: 1 } } } ),
+			createMockPropType( {
+				kind: 'plain',
+				meta: { ancestor_dependency: { element_type: FORM_TYPE } as unknown as AncestorDependency },
+			} ),
 		],
 		[ 'undefined prop type', undefined ],
 	] )( 'shows when the prop type has %s', ( _, propType ) => {

@@ -95,8 +95,7 @@ function renderSectionItems( {
 
 			if (
 				item.type === 'control' &&
-				( isControlHiddenByDependencies( item, propsSchema, settings ) ||
-					isHiddenByAncestor( item.value.bind ) )
+				isControlHiddenByDependencies( item, propsSchema, settings, isHiddenByAncestor )
 			) {
 				return [];
 			}
@@ -106,8 +105,13 @@ function renderSectionItems( {
 	);
 }
 
-function isControlHiddenByDependencies( control: Control, propsSchema: PropsSchema, settings: Props ) {
+function isControlHiddenByDependencies(
+	control: Control,
+	propsSchema: PropsSchema,
+	settings: Props,
+	isHiddenByAncestor: ( bind: string ) => boolean
+) {
 	const { isHidden } = extractDependencyEffect( control.value.bind, propsSchema, settings );
 
-	return isHidden;
+	return isHidden || isHiddenByAncestor( control.value.bind );
 }

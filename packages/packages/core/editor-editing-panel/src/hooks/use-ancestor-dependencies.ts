@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { type PropsSchema } from '@elementor/editor-props';
+import { type PropsSchema, type PropType } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { useElement } from '../contexts/element-context';
@@ -7,8 +7,14 @@ import { isHiddenByAncestor } from '../utils/ancestor-dependency-utils';
 
 const SEPARATOR = '\n';
 
-function getHiddenBindsKey( elementId: string, propsSchema: PropsSchema ): string {
-	return Object.entries( propsSchema )
+type AncestorBoundProp = [ string, PropType ];
+
+function getAncestorBoundProps( propsSchema: PropsSchema ): AncestorBoundProp[] {
+	return Object.entries( propsSchema ).filter( ( [ , propType ] ) => propType.meta?.ancestor_dependency );
+}
+
+function getHiddenBindsKey( elementId: string, ancestorBoundProps: AncestorBoundProp[] ): string {
+	return ancestorBoundProps
 		.filter( ( [ , propType ] ) => isHiddenByAncestor( elementId, propType ) )
 		.map( ( [ bind ] ) => bind )
 		.join( SEPARATOR );
@@ -20,6 +26,8 @@ export function useAncestorDependencies(): ( bind: string ) => boolean {
 		elementType: { propsSchema },
 	} = useElement();
 
+	const ancestorBoundProps = useMemo( () => getAncestorBoundProps( propsSchema ), [ propsSchema ] );
+
 	const hiddenBindsKey = useListenTo(
 		[
 			v1ReadyEvent(),
@@ -28,8 +36,8 @@ export function useAncestorDependencies(): ( bind: string ) => boolean {
 			commandEndEvent( 'document/elements/delete' ),
 			commandEndEvent( 'document/elements/move' ),
 		],
-		() => getHiddenBindsKey( elementId, propsSchema ),
-		[ elementId, propsSchema ]
+		() => getHiddenBindsKey( elementId, ancestorBoundProps ),
+		[ elementId, ancestorBoundProps ]
 	);
 
 	return useMemo( () => {
