@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { InfoCircleIcon } from '@elementor/icons';
 import Alert from '@elementor/ui/Alert';
+import Container from '@elementor/ui/Container';
 import Divider from '@elementor/ui/Divider';
 import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
@@ -188,35 +189,37 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 	};
 
 	return (
-		<Stack spacing={ 5 } pt={ 6 } width="100%" maxWidth={ 1087 } minWidth={ 0 } mx="auto">
-			<Stack direction="row" alignItems="center" justifyContent="space-between">
-				<PageTitle textAlign="left" />
-				<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
+		<Container disableGutters maxWidth="lg" sx={ { width: '100%', minWidth: 0, pt: 6 } }>
+			<Stack spacing={ 5 } width="100%" minWidth={ 0 }>
+				<Stack direction="row" alignItems="center" justifyContent="space-between">
+					<PageTitle textAlign="left" />
+					<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
+				</Stack>
+				<Stack spacing={ 2 }>
+					{ allModules.saveError && (
+						<Alert severity="error">{ allModules.saveError }</Alert>
+					) }
+					{ llmsSettings.saveError && (
+						<Alert severity="error">{ llmsSettings.saveError }</Alert>
+					) }
+					{ markdownSettings.saveError && (
+						<Alert severity="error">{ markdownSettings.saveError }</Alert>
+					) }
+					{ botAccessSettings.saveError && (
+						<Alert severity="error">{ botAccessSettings.saveError }</Alert>
+					) }
+					{ agentDiscoverySettings.saveError && (
+						<Alert severity="error">{ agentDiscoverySettings.saveError }</Alert>
+					) }
+					{ browserToolsSettings.saveError && (
+						<Alert severity="error">{ browserToolsSettings.saveError }</Alert>
+					) }
+					{ modules.map( renderModule ) }
+				</Stack>
+				<Divider />
+				<AllModulesControl isAnyEnabled={ allModules.isAnyEnabled } isDisabled={ allModules.isDisabled } onToggleAll={ allModules.toggleAll } />
 			</Stack>
-			<Stack spacing={ 2 }>
-				{ allModules.saveError && (
-					<Alert severity="error">{ allModules.saveError }</Alert>
-				) }
-				{ llmsSettings.saveError && (
-					<Alert severity="error">{ llmsSettings.saveError }</Alert>
-				) }
-				{ markdownSettings.saveError && (
-					<Alert severity="error">{ markdownSettings.saveError }</Alert>
-				) }
-				{ botAccessSettings.saveError && (
-					<Alert severity="error">{ botAccessSettings.saveError }</Alert>
-				) }
-				{ agentDiscoverySettings.saveError && (
-					<Alert severity="error">{ agentDiscoverySettings.saveError }</Alert>
-				) }
-				{ browserToolsSettings.saveError && (
-					<Alert severity="error">{ browserToolsSettings.saveError }</Alert>
-				) }
-				{ modules.map( renderModule ) }
-			</Stack>
-			<Divider />
-			<AllModulesControl isAnyEnabled={ allModules.isAnyEnabled } isDisabled={ allModules.isDisabled } onToggleAll={ allModules.toggleAll } />
-		</Stack>
+		</Container>
 	);
 };
 
