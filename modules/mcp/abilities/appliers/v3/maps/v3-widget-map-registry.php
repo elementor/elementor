@@ -398,7 +398,7 @@ class V3_Widget_Map_Registry {
 	}
 
 	/**
-	 * Widgets without style controls of their own (e.g. Shortcode) use the wrapper as their default target.
+	 * Widgets without style controls of their own use the wrapper as their default target.
 	 */
 	private static function declares_target( V3_Widget_Map $map, string $alias ): bool {
 		foreach ( $map->get_all_targets() as $target ) {
