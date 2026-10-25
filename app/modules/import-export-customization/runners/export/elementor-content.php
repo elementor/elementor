@@ -9,8 +9,6 @@ use Elementor\Modules\Components\Utils\Collect_Component_Dependencies;
 use Elementor\Plugin;
 
 class Elementor_Content extends Export_Runner_Base {
-	const COMPONENTS_DEPENDENCIES_FILE_PATH = 'content/' . Component_Document::TYPE . '/dependencies';
-
 	private $page_on_front_id;
 
 	public function __construct() {
@@ -105,6 +103,10 @@ class Elementor_Content extends Export_Runner_Base {
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
 
+			if ( $document instanceof Component_Document && $document->get_is_archived() ) {
+				continue;
+			}
+
 			$terms = ! empty( $post_type_taxonomies ) ? $this->get_post_terms( $post->ID, $post_type_taxonomies ) : [];
 
 			$post_manifest_data = [
@@ -142,7 +144,7 @@ class Elementor_Content extends Export_Runner_Base {
 
 		if ( ! empty( $component_dependencies ) ) {
 			$files[] = [
-				'path' => static::COMPONENTS_DEPENDENCIES_FILE_PATH,
+				'path' => Component_Document::EXPORT_DEPENDENCIES_FILE_PATH,
 				'data' => [
 					'dependencies' => $component_dependencies,
 				],

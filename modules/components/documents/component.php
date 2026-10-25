@@ -3,12 +3,20 @@ namespace Elementor\Modules\Components\Documents;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\Components\Components_REST_API;
+use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\ImportExport\ImportStrategies\Import_Strategy_Factory;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Utils\Remap_Overridable_Props_Element_Ids;
+use Elementor\Modules\Components\Utils\Remap_Variants_Element_Ids;
 use Elementor\Modules\Components\Variants\Component_Variants;
 use Elementor\Modules\Components\Variants\Component_Variants_Parser;
 use Elementor\Modules\Components\Widgets\Component_Instance;
+use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -21,6 +29,8 @@ class Component extends Document {
 	const VARIANTS_META_KEY = '_elementor_component_variants';
 	const ARCHIVED_META_KEY = '_elementor_component_is_archived';
 	const ARCHIVED_AT_META_KEY = '_elementor_component_archived_at';
+	const EXPORT_SETTINGS_UID_KEY = 'uid';
+	const EXPORT_DEPENDENCIES_FILE_PATH = 'content/' . self::TYPE . '/dependencies';
 	const COMPONENT_CUSTOM_META_KEYS = [
 		self::COMPONENT_UID_META_KEY,
 		self::OVERRIDABLE_PROPS_META_KEY,
@@ -155,6 +165,65 @@ class Component extends Document {
 		return $this->update_post_field( 'post_status', $status );
 	}
 
+	public function get_export_data() {
+		$id_map = [];
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function ( $element_data ) use ( &$id_map ) {
+			$new_id = Utils::generate_random_string();
+			$id_map[ $element_data['id'] ] = $new_id;
+			$element_data['id'] = $new_id;
+
+			$element_data = apply_filters( 'elementor/document/element/replace_id', $element_data );
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! $element ) {
+				return null;
+			}
+
+			return $this->process_element_import_export( $element, 'on_export' );
+		} );
+
+		$settings = $this->get_data( 'settings' );
+		$settings[ self::EXPORT_SETTINGS_UID_KEY ] = $this->get_component_uid();
+		$settings['overridable_props'] = Remap_Overridable_Props_Element_Ids::apply(
+			$this->get_overridable_props()->to_associative_array(),
+			$id_map
+		);
+
+		$variants = $this->get_variants()->to_associative_array();
+
+		if ( Components_Module::is_variants_experiment_active() || ! empty( $variants['variants'] ) ) {
+			$settings['variants'] = Remap_Variants_Element_Ids::apply( $variants, $id_map );
+		}
+
+		return [
+			'content' => $content,
+			'settings' => $settings,
+			'metadata' => $this->get_export_metadata(),
+		];
+	}
+
+	public function import( array $data ) {
+		$this->assert_components_limit_not_reached();
+
+		$record = [
+			'id' => $this->get_main_id(),
+			'uid' => $data['settings'][ self::EXPORT_SETTINGS_UID_KEY ] ?? '',
+			'title' => $this->get_post()->post_title,
+		];
+
+		unset( $data['settings'][ self::EXPORT_SETTINGS_UID_KEY ] );
+
+		parent::import( $data );
+
+		$resolution = Import_Strategy_Factory::make()->resolve( $record );
+
+		$this->update_meta( self::COMPONENT_UID_META_KEY, $resolution->get_uid() );
+
+		if ( $resolution->get_title() !== $record['title'] ) {
+			$this->update_title( $resolution->get_title() );
+		}
+	}
+
 	private function update_post_field( string $field, $value ): bool {
 		if ( is_string( $value ) ) {
 			// NOTE: escape the json to support non-UTF-8 characters
@@ -172,6 +241,23 @@ class Component extends Document {
 		}
 
 		return $success;
+	}
+
+	private function assert_components_limit_not_reached(): void {
+		$count = Components_Repository::make()
+			->all()
+			->filter(
+				fn( array $component ) => ! $component['is_archived'] && $component['id'] !== $this->get_main_id()
+			)
+			->count();
+
+		if ( $count < Components_REST_API::MAX_COMPONENTS ) {
+			return;
+		}
+
+		$this->force_delete();
+
+		throw new \Exception( esc_html__( 'Maximum number of components exceeded.', 'elementor' ) );
 	}
 
 	public function print_elements_without_cache( array $elements_data ) {

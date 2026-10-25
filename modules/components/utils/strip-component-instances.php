@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * either render empty or throw in the editor panel.
  */
 class Strip_Component_Instances {
-	public static function apply( array $elements ): array {
+	public static function apply( array $elements, ?array $kept_component_ids = null ): array {
 		$result = [];
 
 		foreach ( $elements as $element ) {
@@ -26,17 +26,31 @@ class Strip_Component_Instances {
 				continue;
 			}
 
-			if ( Component_Instance_Prop_Type::is_instance_element( $element ) ) {
+			if ( self::should_strip_element( $element, $kept_component_ids ) ) {
 				continue;
 			}
 
 			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = self::apply( $element['elements'] );
+				$element['elements'] = self::apply( $element['elements'], $kept_component_ids );
 			}
 
 			$result[] = $element;
 		}
 
 		return $result;
+	}
+
+	private static function should_strip_element( array $element, ?array $kept_component_ids ): bool {
+		if ( ! Component_Instance_Prop_Type::is_instance_element( $element ) ) {
+			return false;
+		}
+
+		if ( null === $kept_component_ids ) {
+			return true;
+		}
+
+		$component_id = Component_Instance_Prop_Type::extract_component_id( $element['settings'] ?? [] );
+
+		return ! is_numeric( $component_id ) || ! in_array( (int) $component_id, $kept_component_ids, true );
 	}
 }

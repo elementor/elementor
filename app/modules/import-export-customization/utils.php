@@ -61,7 +61,7 @@ class Utils {
 	public static function get_elementor_post_types( $exclude = [] ) {
 		$elementor_post_types = get_post_types_by_support( 'elementor' );
 
-		return array_filter( $elementor_post_types, function ( $value ) {
+		return array_filter( $elementor_post_types, function ( $value ) use ( $exclude ) {
 			// Templates are handled in a separate process.
 			if ( 'elementor_library' === $value ) {
 				return false;

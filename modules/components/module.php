@@ -16,6 +16,7 @@ use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
+use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Components\Utils\Remap_Component_Instance_Ids;
 use Elementor\Modules\Components\Utils\Strip_Component_Instances;
 use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
@@ -32,11 +33,10 @@ class Module extends BaseModule {
 	const PACKAGES        = [ 'editor-components' ];
 
 	/**
-	 * Local kill switch for components import/export. Off by default: on export the
-	 * `elementor_component` post type is excluded, on import any `e-component` widgets
-	 * that survived from a foreign zip are stripped. Flip to `true` in the source
-	 * to unblock the flag-on branch when working on the real feature (`Remap_Component_Instance_Ids`
-	 * and its test cover that path today).
+	 * Local kill switch for components import/export. When enabled, components round-trip
+	 * through kit import/export and imported `e-component` instances are remapped to their
+	 * destination component ids. Turning it off falls back to the legacy behavior: exclude
+	 * the post type from export/import and strip any surviving component instances on import.
 	 *
 	 * Not an experiment on purpose: experiments are serialized into exported kits by
 	 * `Site_Settings::export_experiments()` and rehydrated on import, so a hidden experiment
@@ -45,7 +45,7 @@ class Module extends BaseModule {
 	 * Remove this constant, `is_import_export_supported()` and every `! is_import_export_supported()`
 	 * branch once components are a first-class part of import/export.
 	 */
-	const IS_IMPORT_EXPORT_SUPPORTED = false;
+	const IS_IMPORT_EXPORT_SUPPORTED = true;
 
 	/**
 	 * Variants meta must be persisted before `Global_Classes_Relations::on_document_save()`
@@ -98,6 +98,10 @@ class Module extends BaseModule {
 		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
+
+		if ( self::is_import_export_supported() ) {
+			( new Import_Export_Customization() )->register_hooks();
+		}
 	}
 
 	public static function is_experiment_active() {
@@ -123,9 +127,13 @@ class Module extends BaseModule {
 	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
 	 */
 	public static function prepare_imported_elements( array $elements, array $post_ids_map ): array {
-		return self::is_import_export_supported()
-			? Remap_Component_Instance_Ids::apply( $elements, $post_ids_map )
-			: Strip_Component_Instances::apply( $elements );
+		if ( ! self::is_import_export_supported() ) {
+			return Strip_Component_Instances::apply( $elements );
+		}
+
+		$elements = Remap_Component_Instance_Ids::apply( $elements, $post_ids_map );
+
+		return Strip_Component_Instances::apply( $elements, array_values( $post_ids_map ) );
 	}
 
 	/**

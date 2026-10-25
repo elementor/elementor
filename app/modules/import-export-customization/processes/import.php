@@ -30,6 +30,16 @@ class Import {
 
 	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
+	const PRIORITY_SITE_SETTINGS = -60;
+
+	const PRIORITY_PLUGINS = -50;
+
+	const PRIORITY_GLOBAL_VARIABLES = -40;
+
+	const PRIORITY_GLOBAL_CLASSES = -30;
+
+	const PRIORITY_COMPONENTS = -20;
+
 	/**
 	 * @var array<string, Import_Runner_Base>
 	 */
@@ -268,8 +278,8 @@ class Import {
 	}
 
 	public function register_default_runners() {
-		$this->register( new Site_Settings() );
-		$this->register( new Plugins() );
+		$this->register( new Site_Settings(), self::PRIORITY_SITE_SETTINGS );
+		$this->register( new Plugins(), self::PRIORITY_PLUGINS );
 		$this->register( new Templates() );
 		$this->register( new Taxonomies() );
 		$this->register( new Elementor_Content() );
