@@ -40,6 +40,8 @@ class Cache_Validity_Item {
 			return;
 		}
 
+		// Keep the decoded tree out of persistent object caches (Redis/Memcached): they would serialize it again
+		// on every read, and could serve a stale tree across requests when the option changes without option hooks.
 		wp_cache_add_non_persistent_groups( [ self::RUNTIME_CACHE_GROUP ] );
 
 		add_action( 'added_option', $forget_runtime_data );
