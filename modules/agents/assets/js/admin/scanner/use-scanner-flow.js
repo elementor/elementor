@@ -25,7 +25,7 @@ import {
 	SCANNER_STATE_PROGRESS,
 	SCANNER_STATE_RESCANNING,
 } from './scanner-constants';
-import { getProgressSteps } from './scanner-mock-data';
+import { getProgressStepDelaysMs, getProgressSteps } from './scanner-mock-data';
 import { getLaterRetryAt, toFailedScanResult } from './scanner-report-adapter';
 import { getBaseScore, getVisibleChecks, hasPendingFixes } from './scanner-score';
 
@@ -132,7 +132,7 @@ export const useScannerFlow = ( {
 
 	const playProgressStepsUntilScanGate = useCallback( async () => {
 		const gateAt = progressSteps.length - 1;
-		const { progressStepDelaysMs } = SCANNER_MOTION;
+		const progressStepDelaysMs = getProgressStepDelaysMs();
 
 		for ( let step = 1; step <= gateAt; step++ ) {
 			await wait( progressStepDelaysMs[ step - 1 ] );

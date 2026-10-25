@@ -180,7 +180,6 @@ export const SCANNER_MOTION = {
 	completedCheckMs: 320,
 	rowAppearMs: 260,
 	progressBarMs: 450,
-	progressStepDelaysMs: [ 920, 1380, 1050, 1720 ],
 	dotShimmerMs: 12000,
 	errorProgressPauseMs: 1500,
 	rescanMinMs: 800,
@@ -188,11 +187,6 @@ export const SCANNER_MOTION = {
 	easeOutCubic: 'cubic-bezier(.33, 1, .68, 1)',
 	overshoot: 'cubic-bezier(.34, 1.56, .64, 1)',
 };
-
-export const getProgressScanGateDurationMs = () => SCANNER_MOTION.progressStepDelaysMs.reduce(
-	( totalMs, stepDelayMs ) => totalMs + stepDelayMs,
-	0,
-);
 
 export const REDUCED_MOTION_MEDIA = '(prefers-reduced-motion: reduce)';
 

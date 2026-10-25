@@ -9,11 +9,10 @@ import {
 	SCORE_TIER_HIGH,
 	SCORE_TIER_LOW,
 	SCORE_TIER_MID,
-	getProgressScanGateDurationMs,
 	SCANNER_MOTION,
 	STAGE_REACH,
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
-import { getMockScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
+import { getMockScanResult, getProgressScanGateDurationMs } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
 import { toFailedScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-report-adapter';
 import { getScoreTier } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-score';
 

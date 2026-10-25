@@ -16,6 +16,8 @@ import {
 	TIER_REQUIRED,
 } from './scanner-constants';
 
+const PROGRESS_STEP_DELAYS_MS = [ 920, 1380, 1050, 1720 ];
+
 // TODO: Replace with the step list returned (or streamed) by the WP Admin scanner endpoint. If a real scan takes ~30s the progress screen needs a different shape (handoff §10.5).
 export const getProgressSteps = () => [
 	{ id: 'getting-site-ready', label: __( 'Getting your site ready to scan', 'elementor' ) },
@@ -24,6 +26,23 @@ export const getProgressSteps = () => [
 	{ id: 'agents-act-on-site', label: __( 'Checking if agents can act on your site', 'elementor' ) },
 	{ id: 'calculating-score', label: __( 'Calculating your score', 'elementor' ) },
 ];
+
+export const getProgressStepDelaysMs = () => {
+	const gateStepCount = getProgressSteps().length - 1;
+
+	if ( PROGRESS_STEP_DELAYS_MS.length !== gateStepCount ) {
+		throw new Error(
+			`Progress step delays (${ PROGRESS_STEP_DELAYS_MS.length }) must equal progress steps before gate (${ gateStepCount }).`,
+		);
+	}
+
+	return PROGRESS_STEP_DELAYS_MS;
+};
+
+export const getProgressScanGateDurationMs = () => getProgressStepDelaysMs().reduce(
+	( totalMs, stepDelayMs ) => totalMs + stepDelayMs,
+	0,
+);
 
 export const ERROR_HIDDEN_STEP_ID = 'agents-know-start';
 
