@@ -275,7 +275,7 @@ describe( 'SvgMediaControl', () => {
 		expect( open ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not show the icon library when showIconLibrary is not set', () => {
+	it( 'should always show the icon library button', () => {
 		// Arrange
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
@@ -284,7 +284,7 @@ describe( 'SvgMediaControl', () => {
 		renderControl( <SvgMediaControl />, props );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: 'Icon library' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Icon library' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should open the icon library popover when clicking on icon library', () => {
@@ -295,7 +295,7 @@ describe( 'SvgMediaControl', () => {
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 
 		// Assert
@@ -310,7 +310,7 @@ describe( 'SvgMediaControl', () => {
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 
 		// Assert
@@ -327,7 +327,7 @@ describe( 'SvgMediaControl', () => {
 		const props = { setValue, value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Pick star' } ) );
 
@@ -379,7 +379,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		const preview = screen.getByLabelText( 'Preview icon' );
@@ -423,7 +423,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		const preview = screen.getByLabelText( 'Preview icon' );
@@ -495,7 +495,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Pick star' } ) );
 
@@ -605,7 +605,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', ownSvgUrl );
@@ -634,7 +634,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		expect( screen.queryByLabelText( 'Preview icon' ) ).not.toBeInTheDocument();
@@ -665,7 +665,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		expect( screen.getByLabelText( 'Preview icon' ) ).toContainHTML( `d="${ customPath }"` );
@@ -691,7 +691,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		expect( useProviderIconSvg ).toHaveBeenCalledWith( 'my-icons', 'icon icon-emo-surprised', true );

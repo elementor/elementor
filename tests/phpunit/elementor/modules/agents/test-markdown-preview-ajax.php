@@ -27,6 +27,7 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 		$this->endpoint = new Markdown_Endpoint( $this->settings );
 		$this->ajax     = new Markdown_Preview_Ajax( $this->endpoint );
 	}

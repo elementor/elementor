@@ -71,7 +71,6 @@ From `Editor_Loader::EXTENSIONS`:
 |---------|--------|-------|
 | `editor-site-navigation` | `site-navigation` | Pages panel |
 | `editor-widget-creation` | `widget-creation` | Promo gated by `e_widget_creation` |
-| `editor-agents` | `agents` | `agents_llms_txt` |
 
 ## Public API
 
@@ -87,7 +86,6 @@ Per-package `init()` entry points in `packages/packages/core/{package}/src/init.
 | `editor-components` | Component type, panel tab, instance panel |
 | `editor-interactions` | Interactions repo, interactions MCP domain |
 | `editor-site-settings` | Site Settings tab registry and portal host |
-| `editor-agents` | Agents Site Settings tab (`llms.txt`) |
 
 ## Extension
 
