@@ -11,11 +11,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Cache_Validity_Item {
 	const CACHE_KEY_PREFIX = 'elementor_atomic_cache_validity__';
+	const RUNTIME_CACHE_GROUP = 'elementor_atomic_cache_validity';
 
 	private string $root;
 
 	public function __construct( string $root ) {
 		$this->root = $root;
+
+		self::register_runtime_cache();
+	}
+
+	public static function forget_runtime_data( string $option ): void {
+		if ( 0 !== strpos( $option, self::CACHE_KEY_PREFIX ) ) {
+			return;
+		}
+
+		wp_cache_delete( substr( $option, strlen( self::CACHE_KEY_PREFIX ) ), self::RUNTIME_CACHE_GROUP );
+	}
+
+	/**
+	 * `get_option()` unserializes non-autoloaded options on every call, so the decoded tree is kept
+	 * per request, and dropped whenever the option is changed from outside this class.
+	 */
+	private static function register_runtime_cache(): void {
+		$forget_runtime_data = [ self::class, 'forget_runtime_data' ];
+
+		if ( has_action( 'updated_option', $forget_runtime_data ) ) {
+			return;
+		}
+
+		wp_cache_add_non_persistent_groups( [ self::RUNTIME_CACHE_GROUP ] );
+
+		add_action( 'added_option', $forget_runtime_data );
+		add_action( 'updated_option', $forget_runtime_data );
+		add_action( 'deleted_option', $forget_runtime_data );
 	}
 
 	public function get( array $keys ): ?array {
@@ -258,19 +287,38 @@ class Cache_Validity_Item {
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
 	private function get_stored_data() {
-		return get_option( self::CACHE_KEY_PREFIX . $this->root, [ 'state' => false ] );
+		$found = false;
+		$data = wp_cache_get( $this->root, self::RUNTIME_CACHE_GROUP, false, $found );
+
+		if ( $found ) {
+			return $data;
+		}
+
+		$data = get_option( self::CACHE_KEY_PREFIX . $this->root, [ 'state' => false ] );
+
+		wp_cache_set( $this->root, $data, self::RUNTIME_CACHE_GROUP );
+
+		return $data;
 	}
 
 	/**
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} $data
 	 */
 	private function update_stored_data( $data ) {
+		if ( $this->get_stored_data() === $data ) {
+			return;
+		}
+
 		// setting autoload with false to avoid unnecessary memory usage
 		update_option( self::CACHE_KEY_PREFIX . $this->root, $data, false );
+
+		wp_cache_set( $this->root, $data, self::RUNTIME_CACHE_GROUP );
 	}
 
 	private function delete_stored_data() {
 		delete_option( self::CACHE_KEY_PREFIX . $this->root );
+
+		wp_cache_delete( $this->root, self::RUNTIME_CACHE_GROUP );
 	}
 
 	private function wrap_exception( callable $callback ) {
