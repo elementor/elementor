@@ -5,14 +5,14 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { screen } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
-import { useAncestorDependencies } from '../../hooks/use-ancestor-dependencies';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
+import { isHiddenByAncestor } from '../../utils/ancestor-dependency-utils';
 import { SettingsTab } from '../settings-tab';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../../contexts/element-context' );
-jest.mock( '../../hooks/use-ancestor-dependencies' );
 jest.mock( '../../hooks/use-default-panel-settings' );
+jest.mock( '../../utils/ancestor-dependency-utils' );
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getElementLabel: jest.fn(),
@@ -42,7 +42,7 @@ jest.mock( '../../controls-registry/control', () => ( {
 describe( '<SettingsTab />', () => {
 	beforeEach( () => {
 		jest.mocked( getElementLabel ).mockReturnValue( 'Mock Element' );
-		jest.mocked( useAncestorDependencies ).mockReturnValue( () => false );
+		jest.mocked( isHiddenByAncestor ).mockReturnValue( false );
 	} );
 
 	it( 'should render the widget sections', () => {
@@ -382,11 +382,13 @@ describe( '<SettingsTab />', () => {
 
 	it( 'should hide a section when its only control is hidden by an ancestor dependency', () => {
 		// Arrange.
-		jest.mocked( useAncestorDependencies ).mockReturnValue( ( bind ) => bind === 'webmcp-param-description' );
+		const ancestorHiddenPropType = createMockPropType( { kind: 'plain' } );
+
+		jest.mocked( isHiddenByAncestor ).mockImplementation( ( _, propType ) => propType === ancestorHiddenPropType );
 
 		const elementType = createMockElementType( {
 			propsSchema: {
-				'webmcp-param-description': createMockPropType( { kind: 'plain' } ),
+				'webmcp-param-description': ancestorHiddenPropType,
 			},
 			controls: [
 				mockSection( {

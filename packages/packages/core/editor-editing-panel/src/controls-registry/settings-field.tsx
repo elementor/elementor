@@ -15,7 +15,7 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { useAncestorDependencies } from '../hooks/use-ancestor-dependencies';
+import { useIsHiddenByAncestor } from '../hooks/use-is-hidden-by-ancestor';
 import { isResponsivePropType } from '../utils/is-responsive-prop-type';
 import {
 	extractDependencyEffect,
@@ -50,11 +50,11 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		propDisplayName,
 	} );
 
-	const isHiddenByAncestor = useAncestorDependencies();
+	const isHiddenByAncestor = useIsHiddenByAncestor( bind );
 
 	const { isDisabled, isHidden } = extractDependencyEffect( bind, propsSchema, currentElementSettings );
 
-	if ( isHidden || isHiddenByAncestor( bind ) ) {
+	if ( isHidden || isHiddenByAncestor ) {
 		return null;
 	}
 

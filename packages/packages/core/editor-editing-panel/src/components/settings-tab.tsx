@@ -4,8 +4,8 @@ import { type Props, type PropsSchema } from '@elementor/editor-props';
 import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
-import { useAncestorDependencies } from '../hooks/use-ancestor-dependencies';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { isHiddenByAncestor } from '../utils/ancestor-dependency-utils';
 import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
@@ -14,7 +14,6 @@ import { SettingsControl } from './settings-control';
 export const SettingsTab = () => {
 	const { elementType, element, settings } = useElement();
 	const settingsDefault = useDefaultPanelSettings();
-	const isHiddenByAncestor = useAncestorDependencies();
 	const currentSettings = settings as Props;
 
 	const isDefaultExpanded = ( sectionId: string | null | undefined ) =>
@@ -36,7 +35,6 @@ export const SettingsTab = () => {
 							element,
 							propsSchema: elementType.propsSchema,
 							settings: currentSettings,
-							isHiddenByAncestor,
 						} );
 
 						if ( ! sectionItems.length ) {
@@ -78,13 +76,11 @@ function renderSectionItems( {
 	element,
 	propsSchema,
 	settings,
-	isHiddenByAncestor,
 }: {
 	items?: ControlItem[];
 	element: Element;
 	propsSchema: PropsSchema;
 	settings: Props;
-	isHiddenByAncestor: ( bind: string ) => boolean;
 } ) {
 	return (
 		items?.flatMap( ( item ) => {
@@ -93,10 +89,7 @@ function renderSectionItems( {
 				return [];
 			}
 
-			if (
-				item.type === 'control' &&
-				isControlHiddenByDependencies( item, propsSchema, settings, isHiddenByAncestor )
-			) {
+			if ( item.type === 'control' && isControlHiddenByDependencies( item, propsSchema, settings, element.id ) ) {
 				return [];
 			}
 
@@ -109,9 +102,10 @@ function isControlHiddenByDependencies(
 	control: Control,
 	propsSchema: PropsSchema,
 	settings: Props,
-	isHiddenByAncestor: ( bind: string ) => boolean
+	elementId: string
 ) {
-	const { isHidden } = extractDependencyEffect( control.value.bind, propsSchema, settings );
+	const { bind } = control.value;
+	const { isHidden } = extractDependencyEffect( bind, propsSchema, settings );
 
-	return isHidden || isHiddenByAncestor( control.value.bind );
+	return isHidden || isHiddenByAncestor( elementId, propsSchema[ bind ] );
 }

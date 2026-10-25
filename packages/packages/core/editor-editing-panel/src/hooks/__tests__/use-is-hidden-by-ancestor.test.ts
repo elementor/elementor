@@ -4,7 +4,7 @@ import { type PropValue } from '@elementor/editor-props';
 import { act, renderHook } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
-import { useAncestorDependencies } from '../use-ancestor-dependencies';
+import { useIsHiddenByAncestor } from '../use-is-hidden-by-ancestor';
 
 jest.mock( '../../contexts/element-context' );
 
@@ -26,7 +26,7 @@ const ancestorHiddenPropType = createMockPropType( {
 	},
 } );
 
-describe( 'useAncestorDependencies', () => {
+describe( 'useIsHiddenByAncestor', () => {
 	let formSettings: Record< string, PropValue >;
 
 	beforeEach( () => {
@@ -66,38 +66,47 @@ describe( 'useAncestorDependencies', () => {
 		} );
 	} );
 
-	it( 'should not hide any bind while the ancestor dependency is met', () => {
+	it( 'should not hide the bind while the ancestor dependency is met', () => {
 		// Act.
-		const { result } = renderHook( () => useAncestorDependencies() );
+		const { result } = renderHook( () => useIsHiddenByAncestor( HIDDEN_BIND ) );
 
 		// Assert.
-		expect( result.current( HIDDEN_BIND ) ).toBe( false );
-		expect( result.current( VISIBLE_BIND ) ).toBe( false );
+		expect( result.current ).toBe( false );
 	} );
 
-	it( 'should hide only the binds that declare the unmet ancestor dependency', () => {
+	it( 'should hide the bind when the ancestor dependency is not met', () => {
 		// Arrange.
 		formSettings[ EXPOSE ] = { $$type: 'boolean', value: false };
 
 		// Act.
-		const { result } = renderHook( () => useAncestorDependencies() );
+		const { result } = renderHook( () => useIsHiddenByAncestor( HIDDEN_BIND ) );
 
 		// Assert.
-		expect( result.current( HIDDEN_BIND ) ).toBe( true );
-		expect( result.current( VISIBLE_BIND ) ).toBe( false );
+		expect( result.current ).toBe( true );
+	} );
+
+	it( 'should not hide a bind that does not declare an ancestor dependency', () => {
+		// Arrange.
+		formSettings[ EXPOSE ] = { $$type: 'boolean', value: false };
+
+		// Act.
+		const { result } = renderHook( () => useIsHiddenByAncestor( VISIBLE_BIND ) );
+
+		// Assert.
+		expect( result.current ).toBe( false );
 	} );
 
 	it( 'should re-evaluate when the ancestor settings change', () => {
 		// Arrange.
-		const { result } = renderHook( () => useAncestorDependencies() );
+		const { result } = renderHook( () => useIsHiddenByAncestor( HIDDEN_BIND ) );
 
-		expect( result.current( HIDDEN_BIND ) ).toBe( false );
+		expect( result.current ).toBe( false );
 
 		// Act.
 		formSettings[ EXPOSE ] = { $$type: 'boolean', value: false };
 		act( () => dispatchCommandAfter( 'document/elements/set-settings' ) );
 
 		// Assert.
-		expect( result.current( HIDDEN_BIND ) ).toBe( true );
+		expect( result.current ).toBe( true );
 	} );
 } );
