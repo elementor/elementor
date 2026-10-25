@@ -527,12 +527,13 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByRole( 'status', { name: 'Scanning again' } ) ).toBeTruthy();
 		expect( screen.queryByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeNull();
-		expect( getScoreRing( 30 ) ).toBeTruthy();
+		expect( screen.queryByRole( 'img', { name: /Agent readiness score/ } ) ).toBeNull();
 
 		await advanceTimers( SCANNER_MOTION.rescanMinMs );
 
 		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
 		expect( screen.queryByRole( 'status', { name: 'Scanning again' } ) ).toBeNull();
+		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByRole( 'heading', { name: 'Where you stand' } ) ).toBeTruthy();
 	} );
 

@@ -11,6 +11,7 @@ const DIMMED_OPACITY = 0.2;
 const RADIUS = ( SCANNER_LAYOUT.ringSize - SCANNER_LAYOUT.ringStroke ) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const CENTER = SCANNER_LAYOUT.ringSize / 2;
+const RING_START_ANGLE_DEG = -90;
 
 export const ScoreRing = ( { score, durationMs, isDimmed } ) => {
 	const gradientId = useId();
@@ -39,7 +40,15 @@ export const ScoreRing = ( { score, durationMs, isDimmed } ) => {
 		<Box position="relative" width={ SCANNER_LAYOUT.ringSize } height={ SCANNER_LAYOUT.ringSize } flexShrink={ 0 } role="img" aria-label={ label }>
 			<svg width={ SCANNER_LAYOUT.ringSize } height={ SCANNER_LAYOUT.ringSize } viewBox={ `0 0 ${ SCANNER_LAYOUT.ringSize } ${ SCANNER_LAYOUT.ringSize }` } aria-hidden="true">
 				<defs>
-					<linearGradient id={ gradientId } x1="0%" y1="0%" x2="100%" y2="100%">
+					<linearGradient
+						id={ gradientId }
+						gradientUnits="userSpaceOnUse"
+						gradientTransform={ `rotate(${ -RING_START_ANGLE_DEG } ${ CENTER } ${ CENTER })` }
+						x1={ gradient.x1 }
+						y1={ gradient.y1 }
+						x2={ gradient.x2 }
+						y2={ gradient.y2 }
+					>
 						<stop offset="0%" stopColor={ gradient.from } />
 						<stop offset="100%" stopColor={ gradient.to } />
 					</linearGradient>
@@ -56,7 +65,7 @@ export const ScoreRing = ( { score, durationMs, isDimmed } ) => {
 					strokeLinecap="round"
 					strokeDasharray={ CIRCUMFERENCE }
 					strokeDashoffset={ dashOffset }
-					transform={ `rotate(-90 ${ CENTER } ${ CENTER })` }
+					transform={ `rotate(${ RING_START_ANGLE_DEG } ${ CENTER } ${ CENTER })` }
 					sx={ { transition: `stroke-dashoffset ${ durationMs }ms ${ SCANNER_MOTION.easeOutCubic }`, ...REDUCED_MOTION_SX } }
 				/>
 			</svg>

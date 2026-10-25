@@ -109,10 +109,12 @@ export const SCORE_TIER_HIGH = 'high';
 export const SCORE_TIER_LOW_MAX = 30;
 export const SCORE_TIER_HIGH_MIN = 80;
 
+const SCORE_RING_GRADIENT_VECTOR = { x1: -28, y1: -35.5, x2: 95.5, y2: 56 };
+
 export const SCORE_RING_GRADIENTS = {
-	[ SCORE_TIER_LOW ]: { from: '#93003F', to: '#EF4444' },
-	[ SCORE_TIER_MID ]: { from: '#D97706', to: '#FFCB00' },
-	[ SCORE_TIER_HIGH ]: { from: '#0A875A', to: '#10B981' },
+	[ SCORE_TIER_LOW ]: { from: '#93003F', to: '#EF4444', ...SCORE_RING_GRADIENT_VECTOR },
+	[ SCORE_TIER_MID ]: { from: '#D97706', to: '#FFCB00', ...SCORE_RING_GRADIENT_VECTOR },
+	[ SCORE_TIER_HIGH ]: { from: '#0A875A', to: '#10B981', ...SCORE_RING_GRADIENT_VECTOR },
 };
 
 export const SCANNER_LAYOUT = {
