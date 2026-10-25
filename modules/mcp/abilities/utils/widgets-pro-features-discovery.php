@@ -17,7 +17,7 @@ class Widgets_Pro_Features_Discovery {
 		return Pro_Features_Discovery::error(
 			sprintf(
 				/* translators: 1: widget type, 2: upgrade URL placeholder. */
-				__( 'No schema is available for %1s. Do not retry it. Tell the user that this widget requires Elementor Pro and share this upgrade link: %2$s. Do not recreate it with other widgets, HTML or shortcodes as a workaround — only suggest the Pro upgrade.', 'elementor' ),
+				__( 'No schema is available for %1$s. Do not retry it. Tell the user that this widget requires Elementor Pro and share this upgrade link: %2$s. Do not recreate it with other widgets, HTML or shortcodes as a workaround — only suggest the Pro upgrade.', 'elementor' ),
 				$widget_type,
 				'%s'
 			),
