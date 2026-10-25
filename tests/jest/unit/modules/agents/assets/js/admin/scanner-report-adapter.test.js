@@ -177,6 +177,30 @@ describe( 'toScanResult', () => {
 		expect( stages ).toEqual( expect.arrayContaining( [ STAGE_REACH, STAGE_ACT ] ) );
 	} );
 
+	it( 'maps the task to a stage regardless of its casing', () => {
+		// Arrange
+		const report = {
+			...getReport(),
+			checks: [
+				{ id: 'a', label: 'A', layer: 'usability', task: 'find', status: 'pass', scorable: true },
+				{ id: 'b', label: 'B', layer: 'usability', task: 'READ', status: 'fail', scorable: true },
+				{ id: 'c', label: 'C', layer: 'discovery', task: 'Act', status: 'pass', scorable: true },
+			],
+		};
+
+		// Act
+		const result = toScanResult( report );
+
+		// Assert
+		expect( result.stages ).toEqual( [
+			{ id: STAGE_REACH, earned: 1, total: 1 },
+			{ id: STAGE_IDENTIFY, earned: 0, total: 1 },
+			{ id: STAGE_ACT, earned: 1, total: 1 },
+			{ id: STAGE_COMMERCE, earned: 0, total: 0, isComingSoon: true },
+		] );
+		expect( result.checks[ 0 ].stage ).toBe( STAGE_IDENTIFY );
+	} );
+
 	it( 'splits checks into fixes and passing rows, ordered by score impact', () => {
 		// Act
 		const result = toScanResult( getReport() );

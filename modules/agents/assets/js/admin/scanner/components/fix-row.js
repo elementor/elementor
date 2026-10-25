@@ -12,12 +12,15 @@ import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_TOGGLE,
+	getCheckPriorityLabel,
+	isEmergingTier,
 	PRIORITY_RECOMMENDED,
 	PRIORITY_REQUIRED,
 	REDUCED_MOTION_SX,
 	SCANNER_COLORS,
 	SCANNER_LAYOUT,
 	SCANNER_MOTION,
+	VISUALLY_HIDDEN_SX,
 } from '../scanner-constants';
 import { CopyPromptButton, RowAction } from './fix-row-actions';
 import { FixRowDrawer } from './fix-row-drawer';
@@ -37,8 +40,6 @@ const completedCheckSx = {
 	...REDUCED_MOTION_SX,
 };
 
-const getPriorityLabel = ( priority ) => ( PRIORITY_REQUIRED === priority ? __( 'Required', 'elementor' ) : __( 'Recommended', 'elementor' ) );
-
 const PRIORITY_CHIP_COLORS = {
 	[ PRIORITY_REQUIRED ]: 'error',
 	[ PRIORITY_RECOMMENDED ]: 'success',
@@ -49,11 +50,19 @@ const PriorityChip = ( { priority } ) => {
 		return null;
 	}
 
-	return <Chip size="tiny" shape="rounded" variant="standard" color={ PRIORITY_CHIP_COLORS[ priority ] } label={ getPriorityLabel( priority ) } />;
+	return <Chip size="tiny" shape="rounded" variant="standard" color={ PRIORITY_CHIP_COLORS[ priority ] } label={ getCheckPriorityLabel( { priority } ) } />;
 };
 
 PriorityChip.propTypes = {
 	priority: PropTypes.string,
+};
+
+const getDotColor = ( check ) => {
+	if ( PRIORITY_REQUIRED === check.priority ) {
+		return 'error.light';
+	}
+
+	return isEmergingTier( check.tier ) ? 'info.light' : 'warning.light';
 };
 
 const StatusIndicator = ( { check, isCompleted } ) => {
@@ -67,8 +76,9 @@ const StatusIndicator = ( { check, isCompleted } ) => {
 				width={ SCANNER_LAYOUT.statusDotSize }
 				height={ SCANNER_LAYOUT.statusDotSize }
 				borderRadius="50%"
-				bgcolor={ PRIORITY_REQUIRED === check.priority ? 'error.light' : 'warning.light' }
+				bgcolor={ getDotColor( check ) }
 			/>
+			<Box component="span" sx={ VISUALLY_HIDDEN_SX }>{ getCheckPriorityLabel( check ) }</Box>
 		</Box>
 	);
 };

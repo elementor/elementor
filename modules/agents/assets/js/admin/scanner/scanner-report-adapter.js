@@ -23,12 +23,14 @@ const LAYER_STAGES = {
 const toNumber = ( value ) => ( 'number' === typeof value ? value : 0 );
 
 const TASK_STAGES = {
-	Find: STAGE_REACH,
-	Read: STAGE_IDENTIFY,
-	Act: STAGE_ACT,
+	find: STAGE_REACH,
+	read: STAGE_IDENTIFY,
+	act: STAGE_ACT,
 };
 
-const getCheckStage = ( check ) => TASK_STAGES[ check.task ] ?? LAYER_STAGES[ check.layer ];
+const toLowerKey = ( value ) => ( 'string' === typeof value ? value.toLowerCase() : '' );
+
+const getCheckStage = ( check ) => TASK_STAGES[ toLowerKey( check.task ) ] ?? LAYER_STAGES[ toLowerKey( check.layer ) ];
 
 const toStages = ( checks ) => Object.values( LAYER_STAGES ).map( ( stageId ) => {
 	const stageChecks = checks.filter( ( check ) => check.scorable && getCheckStage( check ) === stageId );

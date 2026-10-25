@@ -37,7 +37,23 @@ const PRIORITY_BY_TIER = {
 	[ TIER_RECOMMENDED ]: PRIORITY_RECOMMENDED,
 };
 
-export const getPriorityFromTier = ( tier ) => PRIORITY_BY_TIER[ 'string' === typeof tier ? tier.toLowerCase() : '' ] ?? null;
+const normalizeTier = ( tier ) => ( 'string' === typeof tier ? tier.toLowerCase() : '' );
+
+export const getPriorityFromTier = ( tier ) => PRIORITY_BY_TIER[ normalizeTier( tier ) ] ?? null;
+
+export const isEmergingTier = ( tier ) => TIER_EMERGING === normalizeTier( tier );
+
+export const getCheckPriorityLabel = ( { tier, priority } ) => {
+	if ( PRIORITY_REQUIRED === priority ) {
+		return __( 'Required', 'elementor' );
+	}
+
+	if ( PRIORITY_RECOMMENDED === priority ) {
+		return __( 'Recommended', 'elementor' );
+	}
+
+	return isEmergingTier( tier ) ? __( 'Emerging', 'elementor' ) : '';
+};
 
 export const OUTSIDE_SCAN_STATUS_OK = 'ok';
 export const OUTSIDE_SCAN_STATUS_FAILED = 'failed';
