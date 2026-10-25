@@ -176,6 +176,17 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		$this->assertSame( [ 'main-menu' ], array_keys( $targets ) );
 	}
 
+	public function test_create_default__does_not_register_shortcode_map() {
+		// Arrange.
+		$registry = V3_Widget_Map_Registry::create_default();
+
+		// Act.
+		$has_map = $registry->has_registered_map( 'shortcode' );
+
+		// Assert.
+		$this->assertFalse( $has_map );
+	}
+
 	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
 		$options = array_merge( [
 			'maps' => [ self::WIDGET_TYPE => $this->map() ],
