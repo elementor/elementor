@@ -517,7 +517,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [
 			[
 				'context' => [
-					'webmcp_expose' => $this->is_webmcp_exposed(),
+					self::WEBMCP_EXPOSE => $this->is_webmcp_exposed(),
 				],
 			],
 		];
