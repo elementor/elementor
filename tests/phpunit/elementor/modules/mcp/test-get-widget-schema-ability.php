@@ -6,7 +6,10 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -108,6 +111,24 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$this->assertSame( 'elementor_not_found', $this->execute_for_error_code( 'does-not-exist-anywhere' ) );
+	}
+
+	public function test_execute__returns_pro_required_error_for_pro_widget_without_pro() {
+		// Arrange.
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$this->act_as_admin();
+
+		// Act.
+		$result = $this->ability->execute( [ 'widget_type' => [ 'e-form', 'e-carousel' ] ] );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertStringContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result['errors']['e-form']['message'] );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result['errors']['e-carousel']['code'] );
+		$this->assertStringNotContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result['errors']['e-carousel']['message'] );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {
