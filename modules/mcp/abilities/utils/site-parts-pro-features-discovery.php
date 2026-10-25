@@ -30,7 +30,7 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Schema_Pro_Features_Di
 	public static function for_widget_schema(): \WP_Error {
 		return Pro_Features_Discovery::error(
 			/* translators: %s: upgrade URL. */
-			__( 'Theme Builder widgets (post title, featured image, archive title and similar) belong to site parts and require Elementor Pro, which is not installed on this site, so no schema is available for them. Do not retry. Tell the user that these widgets require Elementor Pro and share this upgrade link: %s. Do not recreate them with regular widgets, HTML or shortcodes as a workaround — only suggest the Pro upgrade.', 'elementor' ),
+			__( ' No schema is available for site parts. Do not retry. Tell the user that these widgets require Elementor Pro and share this upgrade link: %s. Do not recreate them with regular widgets, HTML or shortcodes as a workaround — only suggest the Pro upgrade.', 'elementor' ),
 			self::UPGRADE_URL
 		);
 	}
