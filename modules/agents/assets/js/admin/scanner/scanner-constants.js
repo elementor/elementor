@@ -55,6 +55,46 @@ export const getCheckPriorityLabel = ( { tier, priority } ) => {
 	return isEmergingTier( tier ) ? __( 'Emerging', 'elementor' ) : '';
 };
 
+export const CHECK_STATUS_PASS = 'pass';
+export const CHECK_STATUS_FAIL = 'fail';
+export const CHECK_STATUS_PARTIAL = 'partial';
+
+export const FAILING_CHECK_STATUSES = [ CHECK_STATUS_FAIL, CHECK_STATUS_PARTIAL ];
+
+const normalizeCheckStatus = ( status ) => ( 'string' === typeof status ? status.toLowerCase() : '' );
+
+export const getCheckStatusDotColor = ( status ) => {
+	const normalized = normalizeCheckStatus( status );
+
+	if ( CHECK_STATUS_PARTIAL === normalized ) {
+		return 'warning.light';
+	}
+
+	if ( CHECK_STATUS_PASS === normalized ) {
+		return 'success.light';
+	}
+
+	return 'error.light';
+};
+
+export const getCheckStatusLabel = ( status ) => {
+	const normalized = normalizeCheckStatus( status );
+
+	if ( CHECK_STATUS_PARTIAL === normalized ) {
+		return __( 'Partial', 'elementor' );
+	}
+
+	if ( CHECK_STATUS_PASS === normalized ) {
+		return __( 'Pass', 'elementor' );
+	}
+
+	if ( CHECK_STATUS_FAIL === normalized ) {
+		return __( 'Fail', 'elementor' );
+	}
+
+	return '';
+};
+
 export const OUTSIDE_SCAN_STATUS_OK = 'ok';
 export const OUTSIDE_SCAN_STATUS_FAILED = 'failed';
 

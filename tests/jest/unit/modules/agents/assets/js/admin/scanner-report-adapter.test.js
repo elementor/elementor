@@ -235,6 +235,7 @@ describe( 'toScanResult', () => {
 			technicalName: 'Public API',
 			points: 8,
 			priority: PRIORITY_REQUIRED,
+			status: 'fail',
 			stage: STAGE_ACT,
 			evidence: 'No API found',
 			explanation: { whatItMeans: 'Agents need an API.', howToFix: 'Publish an API.' },
@@ -274,9 +275,11 @@ describe( 'toScanResult', () => {
 			explanation: { howToFix: 'Serve markdown to bot user agents.' },
 			tier: 'emerging',
 			priority: null,
+			status: 'fail',
 			resolvedByActivation: false,
 			points: 0,
 		} );
+		expect( byId( 'llms-txt-formatting' ) ).toMatchObject( { status: 'partial' } );
 		expect( byId( 'agent-instruction' ) ).toMatchObject( {
 			fixWith: FIX_WITH_ANGIE,
 			fixPrompt: AGENT_INSTRUCTION_MARKDOWN,

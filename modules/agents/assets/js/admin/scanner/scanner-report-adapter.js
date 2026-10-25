@@ -1,6 +1,8 @@
 import * as checkCopy from './scanner-check-copy';
 import { classifyCheckFix } from './scanner-check-fixes';
 import {
+	CHECK_STATUS_PASS,
+	FAILING_CHECK_STATUSES,
 	getPriorityFromTier,
 	OUTSIDE_SCAN_STATUS_FAILED,
 	OUTSIDE_SCAN_STATUS_OK,
@@ -11,8 +13,6 @@ import {
 } from './scanner-constants';
 import { normalizeReadinessScore, READINESS_SCORE_MAX } from './scanner-score';
 
-const CHECK_STATUS_PASS = 'pass';
-const FAILING_CHECK_STATUSES = [ 'fail', 'partial' ];
 const LAYER_STAGES = {
 	discovery: STAGE_REACH,
 	accessibility: STAGE_IDENTIFY,
@@ -71,6 +71,7 @@ const toFailingCheck = ( check, layers, activeWeight ) => {
 		points: getScoreShare( getMissingPoints( check ), layers[ check.layer ], activeWeight ),
 		tier: check.tier,
 		priority: getPriorityFromTier( check.tier ),
+		status: check.status,
 		stage: getCheckStage( check ),
 		evidence: check.message ?? '',
 		explanation: {

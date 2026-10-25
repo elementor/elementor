@@ -12,8 +12,10 @@ import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_TOGGLE,
+	CHECK_STATUS_FAIL,
+	getCheckStatusDotColor,
+	getCheckStatusLabel,
 	getCheckPriorityLabel,
-	isEmergingTier,
 	PRIORITY_RECOMMENDED,
 	PRIORITY_REQUIRED,
 	REDUCED_MOTION_SX,
@@ -57,13 +59,7 @@ PriorityChip.propTypes = {
 	priority: PropTypes.string,
 };
 
-const getDotColor = ( check ) => {
-	if ( PRIORITY_REQUIRED === check.priority ) {
-		return 'error.light';
-	}
-
-	return isEmergingTier( check.tier ) ? 'info.light' : 'warning.light';
-};
+const getDotColor = ( check ) => getCheckStatusDotColor( check.status ?? CHECK_STATUS_FAIL );
 
 const StatusIndicator = ( { check, isCompleted } ) => {
 	if ( isCompleted ) {
@@ -78,7 +74,7 @@ const StatusIndicator = ( { check, isCompleted } ) => {
 				borderRadius="50%"
 				bgcolor={ getDotColor( check ) }
 			/>
-			<Box component="span" sx={ VISUALLY_HIDDEN_SX }>{ getCheckPriorityLabel( check ) }</Box>
+			<Box component="span" sx={ VISUALLY_HIDDEN_SX }>{ getCheckStatusLabel( check.status ?? CHECK_STATUS_FAIL ) }</Box>
 		</Box>
 	);
 };
