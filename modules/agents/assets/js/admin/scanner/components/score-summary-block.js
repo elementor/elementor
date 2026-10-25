@@ -26,7 +26,7 @@ const BANNER_BLOCK_EXTRA_BOTTOM_SPACE = `${ SCANNER_LAYOUT.summaryBlockBottomSpa
 const SCORE_TEXT_GAP = '32px';
 const METADATA_ROW_GAP = 1;
 const CHECKED_AT_INFOTIP_WIDTH = 320;
-const CHECKED_AT_TOOLTIP = __( 'Based on current checks (v3.4). Not a final grade — the standard is still forming.', 'elementor' );
+const CHECKED_AT_TOOLTIP = __( 'Based on current standards. Score may change over time even if the site\'s content did not change', 'elementor' );
 
 const CheckedAtInfotip = () => {
 	const [ isOpen, setIsOpen ] = useState( false );
