@@ -1139,8 +1139,8 @@ class Module extends BaseModule {
 		return $this->feature_registry;
 	}
 
-	public function get_agent_ready_settings(): Agent_Ready_Settings {
-		return $this->settings;
+	public function is_browser_tools_module_active(): bool {
+		return $this->settings->is_module_active( Agent_Ready_Settings::MODULE_BROWSER_TOOLS );
 	}
 
 	/**

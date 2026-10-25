@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
-use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
@@ -193,7 +192,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		$agents_module = Plugin::$instance->modules_manager->get_modules( 'agents' );
 
 		return ! Atomic_Widgets_Module::is_form_webmcp_active()
-			|| ( $agents_module && $agents_module->get_agent_ready_settings()->is_module_active( Agent_Ready_Settings::MODULE_BROWSER_TOOLS ) );
+			|| ( $agents_module && $agents_module->is_browser_tools_module_active() );
 	}
 
 	protected function define_atomic_controls(): array {
