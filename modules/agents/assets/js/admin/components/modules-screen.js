@@ -1,11 +1,8 @@
 import { useState } from 'react';
-import { InfoCircleIcon } from '@elementor/icons';
 import Alert from '@elementor/ui/Alert';
 import Container from '@elementor/ui/Container';
 import Divider from '@elementor/ui/Divider';
-import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
-import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
@@ -39,14 +36,9 @@ import { MarkdownContentPanel } from './markdown-content/markdown-content-panel'
 import { ModuleAccordion } from './module-accordion';
 import { ModulesStatus } from './modules-status';
 import { PageTitle } from './page-title';
+import { ScoreStandardInfotip } from './score-standard-infotip';
 
-const SCORE_TOOLTIP_CONTENT = __( 'This score shows how many checks your site passes to help agents access and understand your content.', 'elementor' );
-
-const scoreInfoIcon = (
-	<Infotip content={ SCORE_TOOLTIP_CONTENT }>
-		<InfoCircleIcon fontSize="small" color="action" />
-	</Infotip>
-);
+const scoreInfoIcon = <ScoreStandardInfotip />;
 
 const modules = getModules();
 

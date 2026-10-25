@@ -12,6 +12,8 @@ import {
 	STAGE_COMMERCE,
 	STAGE_IDENTIFY,
 	STAGE_REACH,
+	TIER_RECOMMENDED,
+	TIER_REQUIRED,
 } from './scanner-constants';
 
 // TODO: Replace with the step list returned (or streamed) by the WP Admin scanner endpoint. If a real scan takes ~30s the progress screen needs a different shape (handoff §10.5).
@@ -32,6 +34,7 @@ const getFailingChecks = () => [
 		id: 'agent-path',
 		title: __( 'Agents can\'t find a path into your site', 'elementor' ),
 		points: 7,
+		tier: TIER_REQUIRED,
 		priority: PRIORITY_REQUIRED,
 		stage: STAGE_REACH,
 		evidence: __( 'No agent discovery files were found under /.well-known/', 'elementor' ),
@@ -47,6 +50,7 @@ const getFailingChecks = () => [
 		id: 'service-area',
 		title: __( 'Your service area isn\'t stated anywhere an agent can read', 'elementor' ),
 		points: 7,
+		tier: TIER_REQUIRED,
 		priority: PRIORITY_REQUIRED,
 		stage: STAGE_IDENTIFY,
 		evidence: __( 'No areaServed value in your structured data', 'elementor' ),
@@ -63,6 +67,7 @@ const getFailingChecks = () => [
 		id: 'opening-hours',
 		title: __( 'Agents can\'t tell when you\'re open', 'elementor' ),
 		points: 7,
+		tier: TIER_REQUIRED,
 		priority: PRIORITY_REQUIRED,
 		stage: STAGE_IDENTIFY,
 		evidence: __( 'No openingHours found on your homepage', 'elementor' ),
@@ -78,6 +83,7 @@ const getFailingChecks = () => [
 		id: 'contact-action',
 		title: __( 'Agents can\'t find a way to contact you', 'elementor' ),
 		points: 6,
+		tier: TIER_RECOMMENDED,
 		priority: PRIORITY_RECOMMENDED,
 		stage: STAGE_ACT,
 		evidence: __( 'No ContactPoint or contact form found', 'elementor' ),
@@ -93,6 +99,7 @@ const getFailingChecks = () => [
 		id: 'llms-guide',
 		title: __( 'Agents don\'t get a guide to your content', 'elementor' ),
 		points: 6,
+		tier: TIER_RECOMMENDED,
 		priority: PRIORITY_RECOMMENDED,
 		stage: STAGE_REACH,
 		evidence: __( 'llms.txt is missing a summary of your key pages', 'elementor' ),
@@ -109,6 +116,7 @@ const getFailingChecks = () => [
 		id: 'markdown-pages',
 		title: __( 'Agents can\'t read clean versions of your pages', 'elementor' ),
 		points: 15,
+		tier: TIER_REQUIRED,
 		priority: PRIORITY_REQUIRED,
 		stage: STAGE_REACH,
 		evidence: __( 'Requests for .md versions of your pages return 404', 'elementor' ),
@@ -124,6 +132,7 @@ const getFailingChecks = () => [
 		id: 'bot-rules',
 		title: __( 'AI agents are blocked by your robots.txt', 'elementor' ),
 		points: 15,
+		tier: TIER_REQUIRED,
 		priority: PRIORITY_REQUIRED,
 		stage: STAGE_REACH,
 		evidence: __( 'robots.txt has no rules for AI user agents', 'elementor' ),
@@ -145,9 +154,9 @@ const getPassingChecks = () => [
 ];
 
 const getStages = () => [
-	{ id: STAGE_REACH, earned: 14, total: 50 },
-	{ id: STAGE_IDENTIFY, earned: 16, total: 50 },
-	{ id: STAGE_ACT, earned: 0, total: 50 },
+	{ id: STAGE_REACH, earned: 2, total: 6 },
+	{ id: STAGE_IDENTIFY, earned: 2, total: 4 },
+	{ id: STAGE_ACT, earned: 0, total: 1 },
 	{ id: STAGE_COMMERCE, earned: 0, total: 0, isComingSoon: true },
 ];
 

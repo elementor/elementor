@@ -132,11 +132,30 @@ describe( 'toScanResult', () => {
 
 		// Assert
 		expect( result.stages ).toEqual( [
-			{ id: STAGE_REACH, earned: 4, total: 5 },
-			{ id: STAGE_IDENTIFY, earned: 30, total: 40 },
-			{ id: STAGE_ACT, earned: 30, total: 40 },
+			{ id: STAGE_REACH, earned: 0, total: 0 },
+			{ id: STAGE_IDENTIFY, earned: 1, total: 6 },
+			{ id: STAGE_ACT, earned: 0, total: 1 },
 			{ id: STAGE_COMMERCE, earned: 0, total: 0, isComingSoon: true },
 		] );
+	} );
+
+	it( 'counts passed over total scorable checks per stage', () => {
+		// Arrange
+		const report = {
+			...getReport(),
+			checks: [
+				{ id: 'https', label: 'HTTPS', layer: 'discovery', status: 'pass', scorable: true },
+				{ id: 'robots-txt', label: 'robots.txt', layer: 'discovery', status: 'pass', scorable: true },
+				{ id: 'link-headers', label: 'Link headers', layer: 'discovery', status: 'partial', scorable: true },
+				{ id: 'ai-catalog', label: 'AI Catalog', layer: 'discovery', status: 'na', scorable: false },
+			],
+		};
+
+		// Act
+		const [ reach ] = toScanResult( report ).stages;
+
+		// Assert
+		expect( reach ).toEqual( { id: STAGE_REACH, earned: 2, total: 3 } );
 	} );
 
 	it( 'splits checks into fixes and passing rows, ordered by score impact', () => {
@@ -210,6 +229,8 @@ describe( 'toScanResult', () => {
 			fixWith: FIX_WITH_ANGIE,
 			fixPrompt: 'Serve markdown to bot user agents.',
 			explanation: { howToFix: 'Serve markdown to bot user agents.' },
+			tier: 'emerging',
+			priority: null,
 			resolvedByActivation: false,
 			points: 0,
 		} );

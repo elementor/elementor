@@ -28,6 +28,17 @@ export const FIX_DETAILS_NOT_APPLICABLE = 'n/a';
 export const PRIORITY_REQUIRED = 'required';
 export const PRIORITY_RECOMMENDED = 'recommended';
 
+export const TIER_REQUIRED = 'required';
+export const TIER_RECOMMENDED = 'recommended';
+export const TIER_EMERGING = 'emerging';
+
+const PRIORITY_BY_TIER = {
+	[ TIER_REQUIRED ]: PRIORITY_REQUIRED,
+	[ TIER_RECOMMENDED ]: PRIORITY_RECOMMENDED,
+};
+
+export const getPriorityFromTier = ( tier ) => PRIORITY_BY_TIER[ 'string' === typeof tier ? tier.toLowerCase() : '' ] ?? null;
+
 export const OUTSIDE_SCAN_STATUS_OK = 'ok';
 export const OUTSIDE_SCAN_STATUS_FAILED = 'failed';
 

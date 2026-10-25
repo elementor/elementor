@@ -1,10 +1,9 @@
 import * as checkCopy from './scanner-check-copy';
 import { classifyCheckFix } from './scanner-check-fixes';
 import {
+	getPriorityFromTier,
 	OUTSIDE_SCAN_STATUS_FAILED,
 	OUTSIDE_SCAN_STATUS_OK,
-	PRIORITY_RECOMMENDED,
-	PRIORITY_REQUIRED,
 	STAGE_ACT,
 	STAGE_COMMERCE,
 	STAGE_IDENTIFY,
@@ -14,8 +13,6 @@ import { normalizeReadinessScore, READINESS_SCORE_MAX } from './scanner-score';
 
 const CHECK_STATUS_PASS = 'pass';
 const FAILING_CHECK_STATUSES = [ 'fail', 'partial' ];
-const TIER_REQUIRED = 'required';
-
 const LAYER_STAGES = {
 	discovery: STAGE_REACH,
 	accessibility: STAGE_IDENTIFY,
@@ -25,13 +22,15 @@ const LAYER_STAGES = {
 
 const toNumber = ( value ) => ( 'number' === typeof value ? value : 0 );
 
-const toStages = ( layers ) => Object.entries( LAYER_STAGES ).map( ( [ layerId, stageId ] ) => {
-	const layer = layers[ layerId ] ?? {};
-	const total = toNumber( layer.possible );
+const isCountableCheck = ( check ) => check.scorable && 'na' !== check.status;
+
+const toStages = ( checks ) => Object.entries( LAYER_STAGES ).map( ( [ layerId, stageId ] ) => {
+	const layerChecks = checks.filter( ( check ) => check.layer === layerId && isCountableCheck( check ) );
+	const total = layerChecks.length;
 
 	return {
 		id: stageId,
-		earned: toNumber( layer.earned ),
+		earned: layerChecks.filter( ( check ) => CHECK_STATUS_PASS === check.status ).length,
 		total,
 		...( STAGE_COMMERCE === stageId && 0 === total ? { isComingSoon: true } : {} ),
 	};
@@ -62,7 +61,8 @@ const toFailingCheck = ( check, layers, activeWeight ) => {
 		title: checkCopy.getCheckTitle( check.id, check.label, false ),
 		technicalName: check.label,
 		points: getScoreShare( getMissingPoints( check ), layers[ check.layer ], activeWeight ),
-		priority: TIER_REQUIRED === check.tier ? PRIORITY_REQUIRED : PRIORITY_RECOMMENDED,
+		tier: check.tier,
+		priority: getPriorityFromTier( check.tier ),
 		stage: LAYER_STAGES[ check.layer ],
 		evidence: check.message ?? '',
 		explanation: {
@@ -117,7 +117,7 @@ export const toScanResult = ( report, retryAt = null ) => {
 		score: normalizeReadinessScore( report?.score ),
 		ranAt: report?.scannedAt ?? null,
 		retryAt: retryAt ?? report?.retryAt ?? null,
-		stages: toStages( layers ),
+		stages: toStages( checks ),
 		checks: checks
 			.filter( ( check ) => FAILING_CHECK_STATUSES.includes( check.status ) )
 			.map( ( check ) => toFailingCheck( check, layers, activeWeight ) )
