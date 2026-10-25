@@ -1,6 +1,7 @@
 import { ArrowUpRightIcon, CopyIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Stack from '@elementor/ui/Stack';
+import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
@@ -9,6 +10,7 @@ import { wpAdminSwitchSx } from '../../components/wp-admin-sx';
 import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_LINK,
+	FIX_WITH_MANUAL,
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_SEO,
 	FIX_WITH_TOGGLE,
@@ -142,6 +144,14 @@ export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabl
 			<Button variant="text" color="inherit" size="small" href={ seoPluginSearchUrl } endIcon={ <ArrowUpRightIcon fontSize="tiny" /> } sx={ rowActionSx }>
 				{ __( 'Browse SEO plugins', 'elementor' ) }
 			</Button>
+		);
+	}
+
+	if ( FIX_WITH_MANUAL === check.fixWith ) {
+		return (
+			<Typography variant="body2" color="secondary" sx={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
+				{ __( 'Fix manually', 'elementor' ) }
+			</Typography>
 		);
 	}
 

@@ -22,15 +22,21 @@ const LAYER_STAGES = {
 
 const toNumber = ( value ) => ( 'number' === typeof value ? value : 0 );
 
-const isCountableCheck = ( check ) => check.scorable && 'na' !== check.status;
+const TASK_STAGES = {
+	Find: STAGE_REACH,
+	Read: STAGE_IDENTIFY,
+	Act: STAGE_ACT,
+};
 
-const toStages = ( checks ) => Object.entries( LAYER_STAGES ).map( ( [ layerId, stageId ] ) => {
-	const layerChecks = checks.filter( ( check ) => check.layer === layerId && isCountableCheck( check ) );
-	const total = layerChecks.length;
+const getCheckStage = ( check ) => TASK_STAGES[ check.task ] ?? LAYER_STAGES[ check.layer ];
+
+const toStages = ( checks ) => Object.values( LAYER_STAGES ).map( ( stageId ) => {
+	const stageChecks = checks.filter( ( check ) => check.scorable && getCheckStage( check ) === stageId );
+	const total = stageChecks.length;
 
 	return {
 		id: stageId,
-		earned: layerChecks.filter( ( check ) => CHECK_STATUS_PASS === check.status ).length,
+		earned: stageChecks.filter( ( check ) => CHECK_STATUS_PASS === check.status ).length,
 		total,
 		...( STAGE_COMMERCE === stageId && 0 === total ? { isComingSoon: true } : {} ),
 	};
@@ -63,7 +69,7 @@ const toFailingCheck = ( check, layers, activeWeight ) => {
 		points: getScoreShare( getMissingPoints( check ), layers[ check.layer ], activeWeight ),
 		tier: check.tier,
 		priority: getPriorityFromTier( check.tier ),
-		stage: LAYER_STAGES[ check.layer ],
+		stage: getCheckStage( check ),
 		evidence: check.message ?? '',
 		explanation: {
 			whatItMeans: check.description ?? '',
@@ -80,7 +86,7 @@ const toPassingCheck = ( check, layers, activeWeight ) => ( {
 	title: checkCopy.getCheckTitle( check.id, check.label, true ),
 	technicalName: check.label,
 	description: check.description ?? '',
-	stage: LAYER_STAGES[ check.layer ],
+	stage: getCheckStage( check ),
 	points: getScoreShare( toNumber( check.earned ), layers[ check.layer ], activeWeight ),
 } );
 

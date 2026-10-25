@@ -139,23 +139,42 @@ describe( 'toScanResult', () => {
 		] );
 	} );
 
-	it( 'counts passed over total scorable checks per stage', () => {
+	it( 'counts passed over scorable checks per task, regardless of layer', () => {
 		// Arrange
 		const report = {
 			...getReport(),
 			checks: [
-				{ id: 'https', label: 'HTTPS', layer: 'discovery', status: 'pass', scorable: true },
-				{ id: 'robots-txt', label: 'robots.txt', layer: 'discovery', status: 'pass', scorable: true },
-				{ id: 'link-headers', label: 'Link headers', layer: 'discovery', status: 'partial', scorable: true },
-				{ id: 'ai-catalog', label: 'AI Catalog', layer: 'discovery', status: 'na', scorable: false },
+				{ id: 'robots-txt', label: 'robots.txt', layer: 'discovery', task: 'Find', status: 'pass', scorable: true },
+				{ id: 'sitemap', label: 'Sitemap', layer: 'accessibility', task: 'Find', status: 'fail', scorable: true },
+				{ id: 'bot-detection', label: 'Bots', layer: 'accessibility', task: 'Find', status: 'pass', scorable: false },
+				{ id: 'ai-catalog', label: 'AI Catalog', layer: 'discovery', task: 'Find', status: 'na', scorable: false },
+				{ id: 'json-ld', label: 'JSON-LD', layer: 'accessibility', task: 'Read', status: 'partial', scorable: true },
 			],
 		};
 
 		// Act
-		const [ reach ] = toScanResult( report ).stages;
+		const [ reach, identify ] = toScanResult( report ).stages;
 
 		// Assert
-		expect( reach ).toEqual( { id: STAGE_REACH, earned: 2, total: 3 } );
+		expect( reach ).toEqual( { id: STAGE_REACH, earned: 1, total: 2 } );
+		expect( identify ).toEqual( { id: STAGE_IDENTIFY, earned: 0, total: 1 } );
+	} );
+
+	it( 'uses the task for each row stage and falls back to the layer without one', () => {
+		// Arrange
+		const report = {
+			...getReport(),
+			checks: [
+				{ id: 'sitemap', label: 'Sitemap', layer: 'accessibility', task: 'Find', status: 'fail', scorable: true },
+				{ id: 'legacy', label: 'Legacy', layer: 'usability', status: 'fail', scorable: true },
+			],
+		};
+
+		// Act
+		const stages = toScanResult( report ).checks.map( ( check ) => check.stage );
+
+		// Assert
+		expect( stages ).toEqual( expect.arrayContaining( [ STAGE_REACH, STAGE_ACT ] ) );
 	} );
 
 	it( 'splits checks into fixes and passing rows, ordered by score impact', () => {
