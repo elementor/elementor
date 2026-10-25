@@ -287,7 +287,7 @@ class Atomic_Form extends Atomic_Element_Base {
 						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
 			Section::make()
-				->set_label( __( 'Agents', 'elementor' ) )
+				->set_label( __( 'AI agents', 'elementor' ) )
 				->set_id( 'agents' )
 				->set_items( $this->get_agents_controls() ),
 		];
@@ -298,15 +298,15 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
 			$controls[] = Switch_Control::bind_to( self::WEBMCP_EXPOSE )
-				->set_label( __( 'Expose to agents', 'elementor' ) );
+				->set_label( __( 'Allow agents to fill out', 'elementor' ) );
 			$controls[] = Text_Control::bind_to( 'webmcp-tool-name' )
-				->set_label( __( 'Tool name', 'elementor' ) );
+				->set_label( __( 'Name', 'elementor' ) );
 			$controls[] = Textarea_Control::bind_to( 'webmcp-tool-description' )
-				->set_label( __( 'Tool description', 'elementor' ) );
+				->set_label( __( 'Description', 'elementor' ) );
 		}
 
 		$controls[] = Switch_Control::bind_to( 'webmcp-autosubmit' )
-			->set_label( __( 'Agent auto-submit', 'elementor' ) );
+			->set_label( __( 'Allow agents to submit', 'elementor' ) );
 
 		return $controls;
 	}
