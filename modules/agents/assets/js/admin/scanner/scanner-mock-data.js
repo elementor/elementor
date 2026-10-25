@@ -138,10 +138,10 @@ const getFailingChecks = () => [
 ];
 
 const getPassingChecks = () => [
-	{ id: 'https', stage: STAGE_REACH, title: __( 'Your site loads over HTTPS', 'elementor' ), points: 7 },
-	{ id: 'sitemap', stage: STAGE_REACH, title: __( 'Agents can read your sitemap', 'elementor' ), points: 7 },
-	{ id: 'site-name', stage: STAGE_IDENTIFY, title: __( 'Your business name is clear', 'elementor' ), points: 8 },
-	{ id: 'page-titles', stage: STAGE_IDENTIFY, title: __( 'Every page has a descriptive title', 'elementor' ), points: 8 },
+	{ id: 'https', stage: STAGE_REACH, title: __( 'Your site loads over HTTPS', 'elementor' ), description: __( 'Agents only trust and connect to sites served over a secure connection.', 'elementor' ), points: 7 },
+	{ id: 'sitemap', stage: STAGE_REACH, title: __( 'Agents can read your sitemap', 'elementor' ), description: __( 'A sitemap lists your pages so agents can find them without guessing.', 'elementor' ), points: 7 },
+	{ id: 'site-name', stage: STAGE_IDENTIFY, title: __( 'Your business name is clear', 'elementor' ), description: __( 'A clear site name lets agents say who you are when they recommend you.', 'elementor' ), points: 8 },
+	{ id: 'page-titles', stage: STAGE_IDENTIFY, title: __( 'Every page has a descriptive title', 'elementor' ), description: __( 'Descriptive titles help agents tell your pages apart.', 'elementor' ), points: 8 },
 ];
 
 const getStages = () => [

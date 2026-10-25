@@ -157,6 +157,7 @@ describe( 'toScanResult', () => {
 			id: 'sitemap',
 			title: 'Sitemap exists',
 			technicalName: 'Sitemap exists',
+			description: '',
 			stage: STAGE_IDENTIFY,
 			points: 2,
 		} ] );
