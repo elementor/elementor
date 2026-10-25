@@ -39,6 +39,7 @@ export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export {
 	registerIconLibraryProvider,
+	resolveProviderIconPreviewSvg,
 	resolveProviderIconSvg,
 	unregisterIconLibraryProvider,
 	type IconLibraryProvider,
