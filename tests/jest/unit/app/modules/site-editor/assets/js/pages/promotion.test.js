@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Promotion from 'elementor/app/modules/site-editor/assets/js/pages/promotion';
