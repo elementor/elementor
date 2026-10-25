@@ -417,6 +417,36 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 		$this->assertFalse( Promotion_Cdn_Url_Validator::is_allowed_promotion_url( 'https://assets.elementor.com/path/' ) );
 	}
 
+	public function test_sticky_panel__rejects_cdn_copy_with_underscore_template_markers(): void {
+		$defaults = $this->sticky_defaults();
+
+		$this->mock_cdn_json(
+			'sticky-panel.json',
+			'sticky-panel',
+			[
+				'is_active'   => true,
+				'message'     => '{{{ alert(1) }}}',
+				'button_text' => '{{ Upgrade }}',
+				'url'         => 'https://go.elementor.com/test-sticky/',
+			]
+		);
+
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $defaults );
+
+		$this->assertSame( $defaults['message'], $merged['message'] );
+		$this->assertSame( $defaults['button_text'], $merged['button_text'] );
+		$this->assertSame( 'https://go.elementor.com/test-sticky/', $merged['url'] );
+	}
+
+	public function test_promotion_cdn_url_validator__sanitize_promotion_display_string(): void {
+		$this->assertSame(
+			'Sale ends soon.',
+			Promotion_Cdn_Url_Validator::sanitize_promotion_display_string( '  Sale ends soon.  ' )
+		);
+		$this->assertSame( '', Promotion_Cdn_Url_Validator::sanitize_promotion_display_string( '{{ malicious }}' ) );
+		$this->assertSame( '', Promotion_Cdn_Url_Validator::sanitize_promotion_display_string( '<# code #>' ) );
+	}
+
 }
 
 }

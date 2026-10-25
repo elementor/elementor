@@ -8,6 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Promotion_Cdn_Url_Validator {
 
+	private const UNDERSCORE_TEMPLATE_MARKERS = [
+		'{{{',
+		'}}}',
+		'{{',
+		'}}',
+		'<#',
+		'#>',
+	];
+
 	public static function read_string_field( array $assets_data, string $key ): string {
 		$value = $assets_data[ $key ] ?? '';
 
@@ -15,9 +24,33 @@ class Promotion_Cdn_Url_Validator {
 			return '';
 		}
 
+		return self::sanitize_promotion_display_string( $value );
+	}
+
+	public static function sanitize_promotion_display_string( string $value ): string {
 		$value = trim( $value );
 
-		return '' === $value ? '' : $value;
+		if ( '' === $value ) {
+			return '';
+		}
+
+		$value = sanitize_text_field( $value );
+
+		if ( '' === $value || self::contains_underscore_template_markers( $value ) ) {
+			return '';
+		}
+
+		return $value;
+	}
+
+	private static function contains_underscore_template_markers( string $value ): bool {
+		foreach ( self::UNDERSCORE_TEMPLATE_MARKERS as $marker ) {
+			if ( str_contains( $value, $marker ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static function is_allowed_promotion_url( string $url ): bool {
