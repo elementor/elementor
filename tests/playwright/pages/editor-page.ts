@@ -1383,18 +1383,27 @@ export default class EditorPage extends BasePage {
 
 		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
 		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await this.page.locator( '.attachments-wrapper' ).waitFor( { state: 'visible', timeout: timeouts.longAction } );
 
 		const _images = args?.images === undefined ? defaultImages : args.images;
+		const resolveImagePath = ( fileName: string ) => pathResolve( __dirname, `../resources/${ fileName }` );
+		const addGalleryButton = this.page.locator( EditorSelectors.media.addGalleryButton );
 
-		for ( const i in _images ) {
-			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
-
-			if ( args?.metaData ) {
+		if ( args?.metaData ) {
+			for ( const i in _images ) {
+				await this.page.setInputFiles( EditorSelectors.media.imageInp, resolveImagePath( _images[ i ] ) );
+				await expect( addGalleryButton ).toBeEnabled( { timeout: timeouts.heavyAction } );
 				await this.addTestImageMetaData();
 			}
+		} else {
+			await this.page.setInputFiles(
+				EditorSelectors.media.imageInp,
+				_images.map( ( fileName ) => resolveImagePath( fileName ) ),
+			);
+			await expect( addGalleryButton ).toBeEnabled( { timeout: timeouts.heavyAction } );
 		}
 
-		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		await addGalleryButton.click();
 		await this.page.locator( 'text=Insert gallery' ).click();
 	}
 
