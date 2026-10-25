@@ -130,9 +130,12 @@ export const useScannerFlow = ( {
 		};
 	}, [] );
 
-	const playProgressSteps = useCallback( async () => {
-		for ( let step = 1; step <= progressSteps.length; step++ ) {
-			await wait( SCANNER_MOTION.progressStepMs );
+	const playProgressStepsUntilScanGate = useCallback( async () => {
+		const gateAt = progressSteps.length - 1;
+		const { progressStepDelaysMs } = SCANNER_MOTION;
+
+		for ( let step = 1; step <= gateAt; step++ ) {
+			await wait( progressStepDelaysMs[ step - 1 ] );
 
 			if ( ! isMountedRef.current ) {
 				return;
@@ -178,7 +181,7 @@ export const useScannerFlow = ( {
 
 		const [ result ] = await Promise.all( [
 			scanPromise,
-			isRescan ? wait( SCANNER_MOTION.rescanMinMs ) : playProgressSteps(),
+			isRescan ? wait( SCANNER_MOTION.rescanMinMs ) : playProgressStepsUntilScanGate(),
 		] );
 
 		if ( ! isMountedRef.current ) {
@@ -214,6 +217,7 @@ export const useScannerFlow = ( {
 			return;
 		}
 
+		setCompletedStepsCount( progressSteps.length );
 		setScan( result );
 		setResolvedIds( {} );
 		initialModuleEnabledRef.current = moduleEnabledRef.current;
@@ -221,7 +225,7 @@ export const useScannerFlow = ( {
 		setOpenIds( {} );
 		setRingDurationMs( SCANNER_MOTION.ringArriveMs );
 		setView( getReportView( isActivated ) );
-	}, [ isActivated, playProgressSteps, retryAt, showScanFailure, scan ] );
+	}, [ isActivated, playProgressStepsUntilScanGate, progressSteps.length, retryAt, showScanFailure, scan ] );
 
 	const activate = useCallback( async () => {
 		const previousView = view;

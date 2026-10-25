@@ -18,16 +18,14 @@ import {
 
 // TODO: Replace with the step list returned (or streamed) by the WP Admin scanner endpoint. If a real scan takes ~30s the progress screen needs a different shape (handoff §10.5).
 export const getProgressSteps = () => [
-	{ id: 'reading-site', label: __( 'Reading your site the way an AI assistant would', 'elementor' ) },
-	{ id: 'business-name', label: __( 'Business name & what you do', 'elementor' ) },
-	{ id: 'location', label: __( 'Where you\'re located', 'elementor' ) },
-	{ id: 'service-area', label: __( 'Areas you serve', 'elementor' ) },
-	{ id: 'price-range', label: __( 'Price range', 'elementor' ) },
-	{ id: 'contact', label: __( 'How to reach you', 'elementor' ) },
-	{ id: 'response-time', label: __( 'How fast you respond', 'elementor' ) },
+	{ id: 'getting-site-ready', label: __( 'Getting your site ready to scan', 'elementor' ) },
+	{ id: 'agents-know-start', label: __( 'Checking if agents know where to start', 'elementor' ) },
+	{ id: 'agents-read-content', label: __( 'Checking if agents can read your content', 'elementor' ) },
+	{ id: 'agents-act-on-site', label: __( 'Checking if agents can act on your site', 'elementor' ) },
+	{ id: 'calculating-score', label: __( 'Calculating your score', 'elementor' ) },
 ];
 
-export const ERROR_HIDDEN_STEP_ID = 'business-name';
+export const ERROR_HIDDEN_STEP_ID = 'agents-know-start';
 
 const getFailingChecks = () => [
 	{

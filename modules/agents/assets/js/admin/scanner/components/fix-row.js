@@ -49,7 +49,7 @@ const PriorityChip = ( { priority } ) => {
 		return null;
 	}
 
-	return <Chip size="small" shape="rounded" variant="standard" color={ PRIORITY_CHIP_COLORS[ priority ] } label={ getPriorityLabel( priority ) } />;
+	return <Chip size="tiny" shape="rounded" variant="standard" color={ PRIORITY_CHIP_COLORS[ priority ] } label={ getPriorityLabel( priority ) } />;
 };
 
 PriorityChip.propTypes = {

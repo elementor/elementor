@@ -9,6 +9,7 @@ import {
 	SCORE_TIER_HIGH,
 	SCORE_TIER_LOW,
 	SCORE_TIER_MID,
+	getProgressScanGateDurationMs,
 	SCANNER_MOTION,
 	STAGE_REACH,
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
@@ -27,8 +28,7 @@ import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from 'e
 
 const SITE_DOMAIN = 'example.com';
 const AGENT_ACCESS_URL = 'https://example.com/wp-admin/admin.php?page=elementor-agent-access';
-const PROGRESS_STEPS_COUNT = 7;
-const SCAN_DURATION_MS = SCANNER_MOTION.progressStepMs * PROGRESS_STEPS_COUNT;
+const SCAN_DURATION_MS = getProgressScanGateDurationMs();
 
 const advanceTimers = async ( ms ) => {
 	await act( async () => {
@@ -124,7 +124,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( screen.getByText( `Checking ${ SITE_DOMAIN }` ) ).toBeTruthy();
-		expect( within( screen.getByRole( 'list' ) ).getByText( 'Reading your site the way an AI assistant would' ) ).toBeTruthy();
+		expect( within( screen.getByRole( 'list' ) ).getByText( 'Getting your site ready to scan' ) ).toBeTruthy();
 		expect( screen.getByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeTruthy();
 
 		await advanceTimers( SCAN_DURATION_MS );
