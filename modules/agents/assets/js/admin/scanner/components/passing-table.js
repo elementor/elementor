@@ -43,7 +43,7 @@ const PassingRow = ( { check, stageLabel, isLast, isOpen, onToggle } ) => {
 		: {};
 
 	return (
-		<Box borderBottom={ isLast || isOpen ? 0 : 1 } borderColor="divider" bgcolor={ SCANNER_COLORS.paper }>
+		<Box borderBottom={ isLast ? 0 : 1 } borderColor="divider" bgcolor={ SCANNER_COLORS.paper }>
 			<Stack
 				direction="row"
 				alignItems="center"
