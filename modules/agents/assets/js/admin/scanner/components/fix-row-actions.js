@@ -62,7 +62,7 @@ export const CopyPromptButton = ( { onCopy } ) => (
 	<Button
 		className="scanner-copy-fix"
 		variant="text"
-		color="info"
+		color="secondary"
 		size="small"
 		startIcon={ <CopyIcon fontSize="tiny" /> }
 		onClick={ onCopy }
