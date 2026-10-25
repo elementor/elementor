@@ -86,7 +86,9 @@ class Icon_Search {
 
 		if ( self::needs_site_facets( $results ) ) {
 			$response['libraries'] = array_merge( Icon_Catalog::get_libraries(), $custom_library_names );
-			$response['custom_libraries'] = empty( $custom_library_labels ) ? (object) [] : $custom_library_labels;
+			$custom_library_map = array_map( 'strval', $custom_library_labels );
+			// A pack named "0" makes the map a list, which would serialize as a JSON array instead of an object.
+			$response['custom_libraries'] = array_is_list( $custom_library_map ) ? (object) $custom_library_map : $custom_library_map;
 			$response['categories'] = Icon_Catalog::get_categories();
 		}
 

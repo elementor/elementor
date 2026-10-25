@@ -139,6 +139,17 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_search__serializes_custom_libraries_as_an_object_for_a_pack_named_zero() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ '0' => 'Zero Pack' ] );
+
+		// Act.
+		$response = Icon_Search::search( [ 'library' => 'zzz-unknown' ] );
+
+		// Assert.
+		$this->assertSame( '{"0":"Zero Pack"}', wp_json_encode( $response['custom_libraries'] ) );
+	}
+
 	public function test_search__sends_site_facets_only_when_nothing_matched_or_browsing() {
 		// Act.
 		$matched = Icon_Search::search( [ 'queries' => [ 'star' ] ] );
