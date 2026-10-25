@@ -162,6 +162,25 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 		$this->assertSame( 'Grab Pro', $merged['button_text'] );
 		$this->assertSame( 'https://go.elementor.com/test-sticky/', $merged['url'] );
 	}
+
+	public function test_sticky_panel__rejects_invalid_cdn_url(): void {
+		$this->seed_cdn_cache( Sticky_Panel_Promotion::TRANSIENT_KEY, [
+			'is_active'   => true,
+			'message'     => 'Sale message.',
+			'button_text' => 'Grab Pro',
+			'url'         => 'https://example.com/evil/',
+		] );
+
+		$defaults = [
+			'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
+			'message' => 'Access all Pro widgets.',
+			'button_text' => 'Upgrade Now',
+		];
+
+		$merged = Sticky_Panel_Promotion::apply_to_promotion( $defaults );
+
+		$this->assertSame( 'https://go.elementor.com/go-pro-sticky-widget-panel/', $merged['url'] );
+	}
 }
 
 }
