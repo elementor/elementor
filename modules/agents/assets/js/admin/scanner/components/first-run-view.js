@@ -1,4 +1,4 @@
-import { AngieIcon } from '@elementor/icons';
+import { StarFilledIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
 import Stack from '@elementor/ui/Stack';
@@ -49,11 +49,11 @@ const getFeatureCards = () => [
 	},
 	{
 		title: __( 'Know exactly what to fix', 'elementor' ),
-		body: __( 'Get a clear fix for each gap. Every issue comes with clear next steps.', 'elementor' ),
+		body: __( 'Get a clear fix for each gap and find out how to fix it.', 'elementor' ),
 	},
 	{
 		title: __( 'Rescan when you\'re done', 'elementor' ),
-		body: __( 'Run the ranker again once you\'ve made your fixes, and see your revised score.', 'elementor' ),
+		body: __( 'Rescan once you\'ve made changes to see your site\'s revised score.', 'elementor' ),
 	},
 ];
 
@@ -69,7 +69,7 @@ const FeatureCard = ( { title, body } ) => (
 		textAlign="left"
 	>
 		<Stack direction="row" alignItems="center" spacing={ FEATURE_CARD_GAP }>
-			<AngieIcon fontSize="medium" sx={ { color: SCANNER_COLORS.accent } } />
+			<StarFilledIcon fontSize="medium" sx={ { color: SCANNER_COLORS.accent } } />
 			<Typography variant="subtitle1" color="text.secondary">{ title }</Typography>
 		</Stack>
 		<Typography variant="body2" color="text.tertiary">{ body }</Typography>
