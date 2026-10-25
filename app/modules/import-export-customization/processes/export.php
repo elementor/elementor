@@ -358,6 +358,23 @@ class Export {
 	}
 
 	/**
+	 * Merges one level deep so several runners can contribute to a shared section
+	 * (e.g. `content`), while the first runner still wins on conflicting keys.
+	 *
+	 * @param array $data
+	 */
+	private function merge_manifest_data( array $data ) {
+		foreach ( $data as $key => $value ) {
+			if ( isset( $this->manifest_data[ $key ] ) && is_array( $this->manifest_data[ $key ] ) && is_array( $value ) ) {
+				$this->manifest_data[ $key ] += $value;
+				continue;
+			}
+
+			$this->manifest_data += [ $key => $value ];
+		}
+	}
+
+	/**
 	 * Handle the export process output.
 	 * Add the manifest data from the runner to the manifest.json file.
 	 * Create files according to the files array that should be exported by the runner.
@@ -366,7 +383,7 @@ class Export {
 	 */
 	private function handle_export_result( $export_result ) {
 		foreach ( $export_result['manifest'] as $data ) {
-			$this->manifest_data += $data;
+			$this->merge_manifest_data( $data );
 		}
 
 		foreach ( $export_result['files'] as $file ) {

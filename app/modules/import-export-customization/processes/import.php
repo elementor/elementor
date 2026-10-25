@@ -31,6 +31,18 @@ class Import {
 	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
 	/**
+	 * Site settings creates and activates the imported kit, and the design-system runners write into
+	 * the active kit, so it must run first to keep their data revertible by switching kits back.
+	 */
+	const PRIORITY_SITE_SETTINGS = -40;
+
+	const PRIORITY_GLOBAL_VARIABLES = -30;
+
+	const PRIORITY_GLOBAL_CLASSES = -20;
+
+	const PRIORITY_COMPONENTS = -10;
+
+	/**
 	 * @var array<string, Import_Runner_Base>
 	 */
 	protected $runners = [];
@@ -268,7 +280,7 @@ class Import {
 	}
 
 	public function register_default_runners() {
-		$this->register( new Site_Settings() );
+		$this->register( new Site_Settings(), self::PRIORITY_SITE_SETTINGS );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
 		$this->register( new Taxonomies() );
@@ -872,10 +884,7 @@ class Import {
 	 */
 	private function get_imported_data_replacements(): array {
 		return [
-			'post_ids' => array_merge(
-				Utils::map_old_new_post_ids( $this->imported_data ),
-				$this->imported_data['components']['succeed'] ?? []
-			),
+			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
 		];
 	}

@@ -49,6 +49,19 @@ class Test_Duplicate_Strategy extends TestCase {
 		$this->assertSame( 'generated-uid', $result->get_uid() );
 	}
 
+	public function test_resolve_generates_new_uid_when_record_has_no_uid() {
+		// Arrange.
+		$repository = new Stub_Components_Repository();
+		$strategy = new Duplicate_Strategy( $repository );
+
+		// Act.
+		$result = $strategy->resolve( [ 'id' => 10 ] );
+
+		// Assert.
+		$this->assertTrue( $result->should_create_document() );
+		$this->assertSame( 'generated-uid', $result->get_uid() );
+	}
+
 	public function test_factory_falls_back_to_duplicate_strategy_for_unknown_values() {
 		// Arrange.
 		$factory = new Import_Strategy_Factory( new Stub_Components_Repository() );

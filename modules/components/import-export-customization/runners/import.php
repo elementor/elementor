@@ -11,6 +11,7 @@ use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customi
 use Elementor\Modules\Components\ImportExportCustomization\ImportStrategies\Import_Strategy_Factory;
 use Elementor\Modules\Components\ImportExportCustomization\ImportStrategies\Import_Strategy_Result;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Components\Utils\Sort_Components_By_Dependencies;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,30 +39,25 @@ class Import extends Import_Runner_Base {
 		return (
 			Components_Module::is_experiment_active() &&
 			! empty( $data['extracted_directory_path'] ) &&
-			! empty( $data['manifest'][ Import_Export_Customization::MANIFEST_KEY ] )
+			! empty( $data['manifest']['content'][ Component_Document::TYPE ] )
 		);
 	}
 
 	public function import( array $data, array $imported_data ): array {
 		$strategy_name = $this->resolve_strategy_name( $data );
 		$strategy = $this->strategy_factory->create( $strategy_name );
-		$records = $this->load_records( $data );
 		$result = $this->empty_result();
-
-		if ( empty( $records ) ) {
-			return [
-				Import_Export_Customization::MANIFEST_KEY => $result,
-			];
-		}
+		$records = $this->load_records( $data, $result );
+		$records = $this->sort_records_by_dependencies( $records, $data );
 
 		$documents_to_import = [];
 
-		foreach ( $records as $record ) {
+		foreach ( $records as $component_id => $record ) {
 			try {
 				$resolution = $strategy->resolve( $record );
 
 				if ( ! $resolution->should_import_document() ) {
-					$result['skipped'][ $record['id'] ] = $record['uid'];
+					$result['skipped'][ $component_id ] = $record['uid'];
 					continue;
 				}
 
@@ -72,23 +68,22 @@ class Import extends Import_Runner_Base {
 				}
 
 				$resolution->set_destination_component_id( $document->get_main_id() );
-				$result['succeed'][ (int) $record['id'] ] = $document->get_main_id();
+				$result['succeed'][ $component_id ] = $document->get_main_id();
 				$documents_to_import[] = [
 					'document' => $document,
 					'record' => $record,
 					'resolution' => $resolution,
 				];
 			} catch ( \Exception $e ) {
-				$result['failed'][ (int) ( $record['id'] ?? 0 ) ] = $e->getMessage();
+				$result['failed'][ $component_id ] = $e->getMessage();
 			}
 		}
 
 		foreach ( $documents_to_import as $entry ) {
 			try {
-				$document_data = $this->prepare_document_data( $entry['record'] );
-				$entry['document']->import( $document_data );
+				$entry['document']->import( $this->prepare_document_data( $entry['record'] ) );
 
-				if ( ! empty( $entry['record']['is_archived'] ) ) {
+				if ( ! empty( $entry['record']['component']['is_archived'] ) ) {
 					$entry['document']->archive();
 				}
 			} catch ( \Exception $e ) {
@@ -106,7 +101,9 @@ class Import extends Import_Runner_Base {
 		];
 
 		return [
-			Import_Export_Customization::MANIFEST_KEY => $result,
+			'content' => [
+				Component_Document::TYPE => $result,
+			],
 		];
 	}
 
@@ -114,34 +111,62 @@ class Import extends Import_Runner_Base {
 		return $this->import_session_metadata;
 	}
 
-	private function load_records( array $data ): array {
+	/**
+	 * Kits exported before the components runner existed only carry the generic document export
+	 * (`content`, `settings`, `metadata`), so the `component` block is optional.
+	 */
+	private function load_records( array $data, array &$result ): array {
 		$records = [];
-		$components_manifest = $data['manifest'][ Import_Export_Customization::MANIFEST_KEY ] ?? [];
-		$components_dir = trailingslashit( $data['extracted_directory_path'] . Import_Export_Customization::DIRECTORY_NAME );
+		$components_manifest = $data['manifest']['content'][ Component_Document::TYPE ] ?? [];
+		$components_dir = $data['extracted_directory_path'] . Import_Export_Customization::CONTENT_DIRECTORY;
 
-		foreach ( $components_manifest as $component_manifest ) {
-			$component_uid = $component_manifest['uid'] ?? '';
+		foreach ( $components_manifest as $component_id => $post_settings ) {
+			$component_id = (int) $component_id;
+			$export_data = Import_Export_Utils::read_json_file( $components_dir . $component_id );
 
-			if ( ! is_string( $component_uid ) || '' === $component_uid ) {
+			if ( empty( $export_data ) ) {
+				$result['failed'][ $component_id ] = 'Component file is missing.';
 				continue;
 			}
 
-			$record = Import_Export_Utils::read_json_file( $components_dir . $component_uid );
+			$component = $export_data['component'] ?? [];
+			unset( $export_data['component'] );
 
-			if ( ! empty( $record ) ) {
-				$records[] = $record;
-			}
+			$records[ $component_id ] = [
+				'id' => $component_id,
+				'uid' => is_string( $component['uid'] ?? null ) ? $component['uid'] : '',
+				'component' => $component,
+				'post_settings' => is_array( $post_settings ) ? $post_settings : [],
+				'export_data' => $export_data,
+			];
 		}
 
 		return $records;
 	}
 
+	private function sort_records_by_dependencies( array $records, array $data ): array {
+		$dependencies_file = Import_Export_Utils::read_json_file( $data['extracted_directory_path'] . Import_Export_Customization::DEPENDENCIES_FILE_PATH );
+		$dependencies = $dependencies_file['dependencies'] ?? [];
+
+		if ( empty( $dependencies ) || ! is_array( $dependencies ) ) {
+			return $records;
+		}
+
+		$sorted_records = [];
+
+		foreach ( Sort_Components_By_Dependencies::apply( array_keys( $records ), $dependencies ) as $component_id ) {
+			$sorted_records[ $component_id ] = $records[ $component_id ];
+		}
+
+		return $sorted_records;
+	}
+
 	private function resolve_document_for_import( array $record, Import_Strategy_Result $resolution ): Component_Document {
 		if ( $resolution->should_create_document() ) {
-			$status = $this->sanitize_status( $record['status'] ?? Document::STATUS_PUBLISH );
+			$status = $this->sanitize_status( (string) ( $record['component']['status'] ?? Document::STATUS_PUBLISH ) );
 
 			return $this->repository->create_empty_document(
-				(string) ( $record['title'] ?? '' ),
+				(string) ( $record['post_settings']['title'] ?? '' ),
 				$status,
 				$resolution->get_uid()
 			);
@@ -158,25 +183,15 @@ class Import extends Import_Runner_Base {
 	}
 
 	private function prepare_document_data( array $record ): array {
-		$document_data = $record['document'] ?? [];
-		$document_data['settings'] = $this->merge_component_settings( $document_data['settings'] ?? [], $record );
-		$document_data['import_settings'] = [
-			'thumbnail' => $record['thumbnail'] ?? '',
-		];
+		$document_data = $record['export_data'];
+		$document_data['content'] = $document_data['content'] ?? [];
+		$document_data['settings'] = $document_data['settings'] ?? [];
+		$document_data['import_settings'] = array_merge(
+			[ 'thumbnail' => '' ],
+			$record['post_settings']
+		);
 
 		return $document_data;
-	}
-
-	private function merge_component_settings( array $settings, array $record ): array {
-		if ( isset( $record['overridable_props'] ) ) {
-			$settings['overridable_props'] = $record['overridable_props'];
-		}
-
-		if ( isset( $record['variants'] ) ) {
-			$settings['variants'] = $record['variants'];
-		}
-
-		return $settings;
 	}
 
 	private function sanitize_status( string $status ): string {

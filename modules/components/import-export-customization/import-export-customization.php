@@ -5,6 +5,7 @@ namespace Elementor\Modules\Components\ImportExportCustomization;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Export;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Revert;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\ImportExportCustomization\Runners\Export as Export_Runner;
 use Elementor\Modules\Components\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Modules\Components\ImportExportCustomization\Runners\Revert as Revert_Runner;
@@ -14,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import_Export_Customization {
-	const DIRECTORY_NAME = 'components';
-	const MANIFEST_KEY = 'components';
+	const CONTENT_DIRECTORY = 'content/' . Component_Document::TYPE . '/';
+	const DEPENDENCIES_FILE_PATH = self::CONTENT_DIRECTORY . 'dependencies';
 
 	public function register_hooks(): void {
 		add_action( 'elementor/import-export-customization/export-kit', function ( Export $export ) {
@@ -23,7 +24,7 @@ class Import_Export_Customization {
 		} );
 
 		add_action( 'elementor/import-export-customization/import-kit', function ( Import $import ) {
-			$import->register( new Import_Runner() );
+			$import->register( new Import_Runner(), Import::PRIORITY_COMPONENTS );
 		} );
 
 		add_action( 'elementor/import-export-customization/revert-kit', function ( Revert $revert ) {

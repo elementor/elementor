@@ -26,11 +26,11 @@ class Test_Import extends TestCase {
 						22 => 222,
 					],
 				],
-			],
-			'components' => [
-				'succeed' => [
-					33 => 333,
-					44 => 444,
+				'elementor_component' => [
+					'succeed' => [
+						33 => 333,
+						44 => 444,
+					],
 				],
 			],
 		] );

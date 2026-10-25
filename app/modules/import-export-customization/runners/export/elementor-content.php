@@ -4,13 +4,9 @@ namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
-use Elementor\Modules\Components\Module as Components_Module;
-use Elementor\Modules\Components\Utils\Collect_Component_Dependencies;
 use Elementor\Plugin;
 
 class Elementor_Content extends Export_Runner_Base {
-	const COMPONENTS_DEPENDENCIES_FILE_PATH = 'content/' . Component_Document::TYPE . '/dependencies';
-
 	private $page_on_front_id;
 
 	public function __construct() {
@@ -37,7 +33,7 @@ class Elementor_Content extends Export_Runner_Base {
 			$excluded_post_types[] = 'post';
 		}
 
-		$excluded_post_types = array_merge( $excluded_post_types, Components_Module::excluded_import_export_post_types() );
+		$excluded_post_types[] = Component_Document::TYPE;
 
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
 
@@ -66,7 +62,6 @@ class Elementor_Content extends Export_Runner_Base {
 	private function export_elementor_post_type( $post_type, $customization ) {
 		$manifest_data = [];
 		$files = [];
-		$component_dependencies = [];
 
 		$query_args = [
 			'post_type' => $post_type,
@@ -126,26 +121,9 @@ class Elementor_Content extends Export_Runner_Base {
 
 			$manifest_data[ $post->ID ] = $post_manifest_data;
 
-			$export_data = $document->get_export_data();
-
 			$files[] = [
 				'path' => 'content/' . $post_type . '/' . $post->ID,
-				'data' => $export_data,
-			];
-
-			if ( Component_Document::TYPE === $post_type ) {
-				$component_dependencies[ $post->ID ] = [
-					'depends_on' => Collect_Component_Dependencies::from_elements( $export_data['content'] ?? [] ),
-				];
-			}
-		}
-
-		if ( ! empty( $component_dependencies ) ) {
-			$files[] = [
-				'path' => static::COMPONENTS_DEPENDENCIES_FILE_PATH,
-				'data' => [
-					'dependencies' => $component_dependencies,
-				],
+				'data' => $document->get_export_data(),
 			];
 		}
 

@@ -21,9 +21,8 @@ class Duplicate_Strategy implements Import_Strategy_Interface {
 
 	public function resolve( array $record ): Import_Strategy_Result {
 		$uid = $record['uid'] ?? '';
-		$existing_component = $uid ? $this->repository->find_by_uid( $uid ) : null;
 
-		if ( $existing_component ) {
+		if ( ! $uid || $this->repository->find_by_uid( $uid ) ) {
 			$uid = wp_generate_uuid4();
 		}
 

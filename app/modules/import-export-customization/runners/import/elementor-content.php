@@ -2,7 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Import;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
-use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 
 class Elementor_Content extends Import_Runner_Base {
@@ -58,7 +58,7 @@ class Elementor_Content extends Import_Runner_Base {
 			$excluded_post_types[] = 'post';
 		}
 
-		$excluded_post_types = array_merge( $excluded_post_types, Components_Module::excluded_import_export_post_types() );
+		$excluded_post_types[] = Component_Document::TYPE;
 
 		$post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
 

@@ -7,6 +7,7 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Components\Utils\Collect_Component_Dependencies;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -36,6 +37,7 @@ class Export extends Export_Runner_Base {
 
 		$manifest = [];
 		$files = [];
+		$dependencies = [];
 
 		foreach ( $components as $component_summary ) {
 			$component_id = (int) $component_summary['id'];
@@ -45,14 +47,17 @@ class Export extends Export_Runner_Base {
 				continue;
 			}
 
-			$manifest[ $component_id ] = [
-				'title' => $component->get_main_post()->post_title,
-				'uid' => $component->get_component_uid(),
-			];
+			$export_data = $this->build_component_export_data( $component );
+
+			$manifest[ $component_id ] = $this->build_component_manifest_data( $component );
 
 			$files[] = [
-				'path' => Import_Export_Customization::DIRECTORY_NAME . '/' . $component->get_component_uid(),
-				'data' => $this->build_component_export_record( $component ),
+				'path' => Import_Export_Customization::CONTENT_DIRECTORY . $component_id,
+				'data' => $export_data,
+			];
+
+			$dependencies[ $component_id ] = [
+				'depends_on' => Collect_Component_Dependencies::from_elements( $export_data['content'] ?? [] ),
 			];
 		}
 
@@ -60,34 +65,47 @@ class Export extends Export_Runner_Base {
 			return $this->empty_result();
 		}
 
+		$files[] = [
+			'path' => Import_Export_Customization::DEPENDENCIES_FILE_PATH,
+			'data' => [
+				'dependencies' => $dependencies,
+			],
+		];
+
 		return [
 			'manifest' => [
 				[
-					Import_Export_Customization::MANIFEST_KEY => $manifest,
+					'content' => [
+						Component_Document::TYPE => $manifest,
+					],
 				],
 			],
 			'files' => $files,
 		];
 	}
 
-	private function build_component_export_record( Component_Document $component ): array {
-		$document_data = $component->get_export_data();
-		$overridable_props = $component->get_overridable_props()->to_associative_array();
-		$variants = $component->get_variants()->to_associative_array();
-		$document_data['settings']['overridable_props'] = $overridable_props;
-		$document_data['settings']['variants'] = $variants;
+	private function build_component_manifest_data( Component_Document $component ): array {
+		$post = $component->get_main_post();
 
 		return [
-			'id' => $component->get_main_id(),
+			'title' => $post->post_title,
+			'excerpt' => $post->post_excerpt ?? '',
+			'doc_type' => $component->get_name(),
+			'thumbnail' => get_the_post_thumbnail_url( $post ),
+		];
+	}
+
+	private function build_component_export_data( Component_Document $component ): array {
+		$export_data = $component->get_export_data();
+		$export_data['settings']['overridable_props'] = $component->get_overridable_props()->to_associative_array();
+		$export_data['settings']['variants'] = $component->get_variants()->to_associative_array();
+		$export_data['component'] = [
 			'uid' => $component->get_component_uid(),
-			'title' => $component->get_main_post()->post_title,
 			'status' => $component->get_main_post()->post_status,
 			'is_archived' => $component->get_is_archived(),
-			'overridable_props' => $overridable_props,
-			'variants' => $variants,
-			'document' => $document_data,
-			'thumbnail' => get_the_post_thumbnail_url( $component->get_main_post() ),
 		];
+
+		return $export_data;
 	}
 
 	private function empty_result(): array {
