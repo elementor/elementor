@@ -22,33 +22,33 @@ class Sticky_Panel_Promotion {
 		return $api->get_assets_data();
 	}
 
-	public static function apply_to_promotion( array $promotion_data ): array {
+	public static function apply_to_promotion( $promotion_data ) {
+		if ( ! is_array( $promotion_data ) ) {
+			return $promotion_data;
+		}
+
 		$assets_data = self::get_assets_data();
 
 		if ( empty( $assets_data['is_active'] ) ) {
 			return $promotion_data;
 		}
 
-		if ( ! empty( $assets_data['message'] ) ) {
-			$promotion_data['message'] = $assets_data['message'];
+		$message = Promotion_Cdn_Url_Validator::read_string_field( $assets_data, 'message' );
+		if ( '' !== $message ) {
+			$promotion_data['message'] = $message;
 		}
 
-		if ( ! empty( $assets_data['button_text'] ) ) {
-			$promotion_data['button_text'] = $assets_data['button_text'];
+		$button_text = Promotion_Cdn_Url_Validator::read_string_field( $assets_data, 'button_text' );
+		if ( '' !== $button_text ) {
+			$promotion_data['button_text'] = $button_text;
 		}
 
-		if ( ! empty( $assets_data['url'] ) && self::is_allowed_elementor_url( $assets_data['url'] ) ) {
-			$promotion_data['url'] = esc_url( $assets_data['url'] );
+		$url = Promotion_Cdn_Url_Validator::read_string_field( $assets_data, 'url' );
+		$sanitized_url = Promotion_Cdn_Url_Validator::sanitize_promotion_url( $url );
+		if ( '' !== $sanitized_url ) {
+			$promotion_data['url'] = $sanitized_url;
 		}
 
 		return $promotion_data;
-	}
-
-	private static function is_allowed_elementor_url( string $url ): bool {
-		$parsed = wp_parse_url( $url );
-		$scheme = $parsed['scheme'] ?? '';
-		$host   = $parsed['host'] ?? '';
-
-		return 'https' === $scheme && ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) );
 	}
 }

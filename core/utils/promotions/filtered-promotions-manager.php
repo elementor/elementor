@@ -66,7 +66,7 @@ class Filtered_Promotions_Manager {
 		if ( ! self::domain_is_on_elementor_dot_com( $new_promotion_data[ $url_key ] ) ) {
 			unset( $new_promotion_data[ $url_key ] );
 		} else {
-			$new_promotion_data[ $url_key ] = esc_url( $new_promotion_data[ $url_key ] );
+			$new_promotion_data[ $url_key ] = esc_url_raw( $new_promotion_data[ $url_key ] );
 		}
 
 		return $new_promotion_data;

@@ -120,7 +120,7 @@ class App extends BaseApp {
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
 			'home_url' => home_url(),
-			'promotion' => Theme_Builder_Promotion::get_app_promotion_config(),
+			'promotion' => Theme_Builder_Promotion::get_app_promotion_settings_for_config(),
 		];
 	}
 
