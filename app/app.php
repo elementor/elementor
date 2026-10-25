@@ -11,7 +11,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
 use Elementor\Utils;
-use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\Promotions\Theme_Builder_Promotion;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Assets_Translation_Loader;
@@ -120,11 +120,7 @@ class App extends BaseApp {
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
 			'home_url' => home_url(),
-			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
-				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
-				'elementor/site-editor/promotion',
-				'upgrade_url'
-			),
+			'promotion' => Theme_Builder_Promotion::get_app_promotion_config(),
 		];
 	}
 

@@ -99,6 +99,7 @@ class Module extends Base_Module {
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
+		add_filter( Filtered_Promotions_Manager::EDITOR_PANEL_STICKY_FILTER, [ Sticky_Panel_Promotion::class, 'apply_to_promotion' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Controls\Promotion_Control() );
