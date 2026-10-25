@@ -149,7 +149,7 @@ export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabl
 
 	if ( FIX_WITH_MANUAL === check.fixWith ) {
 		return (
-			<Typography variant="body2" color="secondary" sx={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
+			<Typography variant="body2" color="text.disabled" sx={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
 				{ __( 'Fix manually', 'elementor' ) }
 			</Typography>
 		);
