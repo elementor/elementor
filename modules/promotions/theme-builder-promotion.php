@@ -40,7 +40,7 @@ class Theme_Builder_Promotion {
 		$upgrade_url = self::DEFAULT_UPGRADE_URL;
 
 		if ( ! empty( $assets_data['is_active'] ) ) {
-			$cdn_url = Promotion_Cdn_Url_Validator::read_string_field( $assets_data, 'url' );
+			$cdn_url = Promotion_Cdn_Url_Validator::read_url_field( $assets_data, 'url' );
 			$sanitized_url = Promotion_Cdn_Url_Validator::sanitize_promotion_url( $cdn_url );
 			if ( '' !== $sanitized_url ) {
 				$upgrade_url = $sanitized_url;

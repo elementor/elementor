@@ -312,7 +312,7 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 	public function test_sticky_panel__unchanged_when_cdn_inactive(): void {
 		$defaults = $this->sticky_defaults();
 
-		$merged = Sticky_Panel_Promotion::apply_to_promotion( $defaults );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $defaults );
 
 		$this->assertSame( $defaults, $merged );
 	}
@@ -401,15 +401,27 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 			]
 		);
 
-		$merged = Sticky_Panel_Promotion::apply_to_promotion( $this->sticky_defaults() );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $this->sticky_defaults() );
 
 		$this->assertSame( $this->sticky_defaults(), $merged );
 	}
 
-	public function test_sticky_panel__returns_non_array_filter_value_unchanged(): void {
-		$result = Sticky_Panel_Promotion::apply_to_promotion( 'not-an-array' );
+	public function test_sticky_panel__preserves_percent_encoded_query_in_url(): void {
+		$cdn_url = 'https://go.elementor.com/sticky/?utm_content=a%2Fb';
+		$this->mock_cdn_json(
+			'sticky-panel.json',
+			'sticky-panel',
+			[
+				'is_active'   => true,
+				'message'     => 'Sale',
+				'button_text' => 'Go',
+				'url'         => $cdn_url,
+			]
+		);
 
-		$this->assertSame( 'not-an-array', $result );
+		$merged = Sticky_Panel_Promotion::merge_cdn_into_sticky_promotion( $this->sticky_defaults() );
+
+		$this->assertSame( $cdn_url, $merged['url'] );
 	}
 
 	public function test_promotion_cdn_url_validator__allows_go_subdomain_only(): void {
@@ -445,6 +457,15 @@ class Test_Theme_Builder_And_Sticky_Panel_Promotion extends TestCase {
 		);
 		$this->assertSame( '', Promotion_Cdn_Url_Validator::sanitize_promotion_display_string( '{{ malicious }}' ) );
 		$this->assertSame( '', Promotion_Cdn_Url_Validator::sanitize_promotion_display_string( '<# code #>' ) );
+	}
+
+	public function test_promotion_cdn_url_validator__rejects_url_with_userinfo_or_port(): void {
+		$this->assertFalse(
+			Promotion_Cdn_Url_Validator::is_allowed_promotion_url( 'https://user@go.elementor.com:8443/path/' )
+		);
+		$this->assertTrue(
+			Promotion_Cdn_Url_Validator::is_allowed_promotion_url( 'https://GO.ELEMENTOR.COM/pro/' )
+		);
 	}
 
 }

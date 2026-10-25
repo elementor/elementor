@@ -99,7 +99,6 @@ class Module extends Base_Module {
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
-		add_filter( Filtered_Promotions_Manager::EDITOR_PANEL_STICKY_FILTER, [ Sticky_Panel_Promotion::class, 'apply_to_promotion' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Controls\Promotion_Control() );
@@ -242,7 +241,9 @@ class Module extends Base_Module {
 	}
 
 	public function add_editing_panel_sticky_promotion( array $settings ): array {
-		$settings['editingPanelStickyPromotion'] = Sticky_Panel_Promotion::get_promotion_for_editor();
+		if ( ! Utils::has_pro() ) {
+			$settings['editingPanelStickyPromotion'] = Sticky_Panel_Promotion::get_promotion_for_editor();
+		}
 
 		return $settings;
 	}

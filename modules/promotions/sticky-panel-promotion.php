@@ -29,24 +29,16 @@ class Sticky_Panel_Promotion {
 		return self::merge_cdn_into_sticky_promotion( $promotion_data );
 	}
 
-	public static function apply_to_promotion( $promotion_data ) {
-		if ( ! is_array( $promotion_data ) ) {
-			return $promotion_data;
-		}
-
-		return self::merge_cdn_copy_into_sticky_promotion( $promotion_data );
-	}
-
 	public static function merge_cdn_into_sticky_promotion( array $promotion_data ): array {
-		$promotion_data = self::merge_cdn_copy_into_sticky_promotion( $promotion_data );
-
 		$assets_data = self::get_assets_data();
 
 		if ( empty( $assets_data['is_active'] ) ) {
 			return $promotion_data;
 		}
 
-		$url = Promotion_Cdn_Url_Validator::read_string_field( $assets_data, 'url' );
+		$promotion_data = self::merge_cdn_copy_into_sticky_promotion( $promotion_data, $assets_data );
+
+		$url = Promotion_Cdn_Url_Validator::read_url_field( $assets_data, 'url' );
 		$sanitized_url = Promotion_Cdn_Url_Validator::sanitize_promotion_url( $url );
 		if ( '' !== $sanitized_url ) {
 			$promotion_data['url'] = $sanitized_url;
@@ -55,13 +47,7 @@ class Sticky_Panel_Promotion {
 		return $promotion_data;
 	}
 
-	private static function merge_cdn_copy_into_sticky_promotion( array $promotion_data ): array {
-		$assets_data = self::get_assets_data();
-
-		if ( empty( $assets_data['is_active'] ) ) {
-			return $promotion_data;
-		}
-
+	private static function merge_cdn_copy_into_sticky_promotion( array $promotion_data, array $assets_data ): array {
 		$message = Promotion_Cdn_Url_Validator::read_string_field( $assets_data, 'message' );
 		if ( '' !== $message ) {
 			$promotion_data['message'] = $message;

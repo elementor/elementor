@@ -27,6 +27,18 @@ class Promotion_Cdn_Url_Validator {
 		return self::sanitize_promotion_display_string( $value );
 	}
 
+	public static function read_url_field( array $assets_data, string $key ): string {
+		$value = $assets_data[ $key ] ?? '';
+
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
+
+		$value = trim( $value );
+
+		return '' === $value ? '' : $value;
+	}
+
 	public static function sanitize_promotion_display_string( string $value ): string {
 		$value = trim( $value );
 
@@ -64,6 +76,10 @@ class Promotion_Cdn_Url_Validator {
 		$host   = strtolower( $parsed['host'] ?? '' );
 
 		if ( 'https' !== $scheme ) {
+			return false;
+		}
+
+		if ( ! empty( $parsed['user'] ) || ! empty( $parsed['pass'] ) || ! empty( $parsed['port'] ) ) {
 			return false;
 		}
 
