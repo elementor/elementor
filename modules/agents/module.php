@@ -1145,6 +1145,10 @@ class Module extends BaseModule {
 		return $this->feature_registry;
 	}
 
+	public function is_browser_tools_module_active(): bool {
+		return $this->settings->is_module_active( Agent_Ready_Settings::MODULE_BROWSER_TOOLS );
+	}
+
 	/**
 	 * Add a feature component to the registry and to the base module's
 	 * component store, then call register() if the component is enabled.
