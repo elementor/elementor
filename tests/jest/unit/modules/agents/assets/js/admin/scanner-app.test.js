@@ -35,6 +35,28 @@ const advanceTimers = async ( ms ) => {
 	} );
 };
 
+// Lets a mocked save settle inside act(), so its `.finally()` state update doesn't land after the test.
+const flushPendingSave = async () => {
+	await act( async () => {
+		await Promise.resolve();
+	} );
+};
+
+// In jsdom, getComputedStyle walks every stylesheet rule for each element (and its ancestors), and
+// getByRole calls it for every candidate. The ~575 Emotion rules @elementor/ui injects made a single
+// getByRole take 0.7–2.8 s here, so tests ran 3–12 s and hit the 5 s timeout on slow runners.
+// No assertion in this file depends on stylesheet CSS (hidden content uses attributes or unmounting),
+// so this file drops Emotion's inserted rules.
+const originalInsertRule = CSSStyleSheet.prototype.insertRule;
+
+beforeAll( () => {
+	CSSStyleSheet.prototype.insertRule = () => 0;
+} );
+
+afterAll( () => {
+	CSSStyleSheet.prototype.insertRule = originalInsertRule;
+} );
+
 const LAST_REPORT_SCORE = 72;
 const RETRY_AT = '2026-10-21T10:00:00Z';
 const MS_PER_SECOND = 1000;
@@ -308,10 +330,12 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Assert
 		expect( undoCheckFix ).toHaveBeenCalledWith( 'webmcp-support' );
 		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( false );
 	} );
 
 	it( 'disables the WebMCP switch and explains why when Agent browser tools are unavailable', async () => {
@@ -370,10 +394,12 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Assert
 		expect( undoCheckFix ).toHaveBeenCalledWith( 'markdown-pages' );
 		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( false );
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 	} );
 
@@ -385,6 +411,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'agent-path', { enabled: true } );
@@ -489,6 +516,7 @@ describe( 'Agent Ready scanner', () => {
 		// Act
 		fireEvent.change( screen.getByRole( 'textbox', { name: title } ), { target: { value: 'London' } } );
 		fireEvent.keyDown( screen.getByRole( 'textbox', { name: title } ), { key: 'Enter' } );
+		await flushPendingSave();
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'service-area', { value: 'London' } );
