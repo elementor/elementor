@@ -29,6 +29,8 @@ permissions:
 
 jobs:
   create-version-change:
+    if: github.ref == 'refs/heads/main'
+    environment: release-owners
     runs-on: ubuntu-22.04
     env:
       GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
