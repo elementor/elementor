@@ -183,7 +183,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
-	const EXPERIMENT_FORM_WEBMCP = 'e_atomic_form_webmcp';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -212,7 +211,6 @@ class Module extends BaseModule {
 
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
-		$this->register_form_webmcp_experiment();
 
 		$this->register_hooks();
 
@@ -281,17 +279,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ACCORDION,
 			'title' => esc_html__( 'Accordion', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-	}
-
-	private function register_form_webmcp_experiment() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_FORM_WEBMCP,
-			'title' => esc_html__( 'Atomic Form WebMCP authoring', 'elementor' ),
-			'description' => esc_html__( 'Let the MCP author WebMCP declarative attributes on atomic forms and their fields.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -605,10 +592,6 @@ class Module extends BaseModule {
 
 	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
-	public static function is_form_webmcp_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_FORM_WEBMCP );
 	}
 
 	private function get_element_usage_name( $title, $type ) {
