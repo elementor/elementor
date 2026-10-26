@@ -494,6 +494,101 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'test_api_key', $posted_content['content'][0]['settings'] );
 	}
 
+	public function test_update_template__applies_prop_meta() {
+		// Arrange.
+		$filter = function ( array $schema ) {
+			$schema['test_prop_a'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
+				->meta( \Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity::sensitive() );
+			$schema['test_prop_b'] = \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type::make()
+				->meta( \Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity::not_exportable() );
+
+			return $schema;
+		};
+
+		add_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		$settings = [
+			'test_prop_a' => [ '$$type' => 'string', 'value' => 'value-a' ],
+			'test_prop_b' => [ '$$type' => 'string', 'value' => 'value-b' ],
+			'tag' => [ '$$type' => 'string', 'value' => 'h3' ],
+		];
+
+		$content = [
+			[
+				'id' => 'div1',
+				'elType' => 'e-div-block',
+				'settings' => $settings,
+				'elements' => [
+					[
+						'id' => 'heading1',
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => $settings,
+						'elements' => [],
+					],
+				],
+			],
+		];
+
+		$updated = null;
+
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'update_resource' )
+			->with( $this->callback( function ( $data ) use ( &$updated ) {
+				$updated = $data;
+
+				return true;
+			} ) )
+			->willReturn( true );
+
+		// Act.
+		$this->manager->update_template( [
+			'source' => 'cloud',
+			'id' => 1,
+			'type' => 'container',
+			'content' => wp_json_encode( $content ),
+		] );
+
+		remove_filter( 'elementor/atomic-widgets/props-schema', $filter );
+
+		// Assert.
+		$container = $updated['content'][0];
+		$heading = $container['elements'][0];
+
+		$this->assertSame( 1, $updated['id'] );
+		$this->assertSame( 'heading1', $heading['id'] );
+
+		foreach ( [ $container, $heading ] as $element ) {
+			$this->assertArrayNotHasKey( 'test_prop_a', $element['settings'] );
+			$this->assertArrayNotHasKey( 'test_prop_b', $element['settings'] );
+		}
+
+		$this->assertSame( 'h3', $heading['settings']['tag']['value'] );
+	}
+
+	public function test_update_template__keeps_content_without_elements_unchanged() {
+		// Arrange.
+		$this->cloud_library_app_mock
+			->expects( $this->once() )
+			->method( 'update_resource' )
+			->with( [
+				'source' => 'cloud',
+				'id' => 1,
+				'type' => 'container',
+				'content' => [ 'title' => 'Plain' ],
+			] )
+			->willReturn( true );
+
+		// Act.
+		$this->manager->update_template( [
+			'source' => 'cloud',
+			'id' => 1,
+			'type' => 'container',
+			'content' => wp_json_encode( [ 'title' => 'Plain' ] ),
+		] );
+	}
+
 	public function test_rename_template() {
 		// Arrange & Assert
 		$this->cloud_library_app_mock

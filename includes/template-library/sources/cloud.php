@@ -192,6 +192,10 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function update_item( $template_data ) {
+		if ( array_key_exists( 'content', $template_data ) ) {
+			$template_data['content'] = $this->strip_non_exportable_atomic_props( $template_data['content'] );
+		}
+
 		return $this->get_app()->update_resource( $template_data );
 	}
 
