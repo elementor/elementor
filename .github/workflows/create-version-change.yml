@@ -233,7 +233,7 @@ jobs:
           :package: Version mapping:
           :large_green_circle: release/stable → ${STABLE_VERSION}
           :large_yellow_circle: release/beta → ${BETA_VERSION_SHORT}
-          :large_blue_circle: main → ${MAIN_VERSION_SHORT}
+          :large_blue_circle: main → ${MAIN_VERSION_SHORT}"
 
           # Build JSON payload with jq
           PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
