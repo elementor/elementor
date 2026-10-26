@@ -49,5 +49,6 @@ export const useBrowserToolsSettings = ( initialState ) => {
 		setIsEnabled,
 		tools: initialState.tools,
 		toggleEnabled,
+		unavailableReason: initialState.unavailableReason ?? null,
 	};
 };

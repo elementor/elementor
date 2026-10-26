@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ReloadIcon } from '@elementor/icons';
+import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
 import IconButton from '@elementor/ui/IconButton';
 import Stack from '@elementor/ui/Stack';
+import Tooltip from '@elementor/ui/Tooltip';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
@@ -79,17 +81,33 @@ export const useNextScanLabel = ( retryAt ) => {
 	return getNextScanLabel( retryAt, now );
 };
 
+const RESCAN_TOOLTIP = __( 'Rescan', 'elementor' );
+
+const RescanTooltip = ( { children } ) => (
+	<Tooltip title={ RESCAN_TOOLTIP }>
+		<Box component="span" sx={ { display: 'inline-flex' } }>
+			{ children }
+		</Box>
+	</Tooltip>
+);
+
+RescanTooltip.propTypes = {
+	children: PropTypes.node.isRequired,
+};
+
 const OutlinedRescanButton = ( { label, onRescan, isDisabled } ) => (
-	<Button
-		variant="outlined"
-		color="secondary"
-		size="small"
-		onClick={ onRescan }
-		disabled={ isDisabled }
-		startIcon={ <ReloadIcon /> }
-	>
-		{ label }
-	</Button>
+	<RescanTooltip>
+		<Button
+			variant="outlined"
+			color="secondary"
+			size="small"
+			onClick={ onRescan }
+			disabled={ isDisabled }
+			startIcon={ <ReloadIcon /> }
+		>
+			{ label }
+		</Button>
+	</RescanTooltip>
 );
 
 OutlinedRescanButton.propTypes = {
@@ -125,16 +143,18 @@ export const RescanControl = ( {
 	return (
 		<>
 			{ ! showLabeledButton && (
-				<IconButton
-					variant="outlined"
-					size="small"
-					color="secondary"
-					onClick={ onRescan }
-					disabled={ isBusy }
-					aria-label={ __( 'Rescan', 'elementor' ) }
-				>
-					<ReloadIcon />
-				</IconButton>
+				<RescanTooltip>
+					<IconButton
+						variant="outlined"
+						size="small"
+						color="secondary"
+						onClick={ onRescan }
+						disabled={ isBusy }
+						aria-label={ __( 'Rescan', 'elementor' ) }
+					>
+						<ReloadIcon />
+					</IconButton>
+				</RescanTooltip>
 			) }
 			{ showLabeledButton && <Stack flex={ 1 } /> }
 			{ showLabeledButton && (

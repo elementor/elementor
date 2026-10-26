@@ -1,6 +1,5 @@
 import { getToggleModuleKey } from './scanner-check-settings';
 import {
-	FIX_BY_AGENT_READY_TOGGLE,
 	FIX_BY_ALLY,
 	FIX_BY_ANGIE,
 	FIX_BY_ANGIE_MCP,
@@ -99,12 +98,13 @@ const seoFix = ( howToFix ) => ( {
 } );
 
 export const classifyCheckFix = ( check ) => {
-	const fixBy = normalizeFixBy( check?.fixBy );
 	const instructionText = getInstructionText( check );
 
-	if ( FIX_BY_AGENT_READY_TOGGLE === fixBy || getToggleModuleKey( check?.id ) ) {
+	if ( getToggleModuleKey( check?.id ) ) {
 		return toggleFix( instructionText );
 	}
+
+	const fixBy = normalizeFixBy( check?.fixBy );
 
 	if ( FIX_BY_SEO_PLUGIN === fixBy ) {
 		return seoFix( instructionText );

@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\Promotions\Sticky_Panel_Promotion;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 		'show_banner' => ! $has_pro,
 	] );
-	$promotion_data_sticky = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
+	$promotion_data_sticky = ! $has_pro ? Sticky_Panel_Promotion::get_promotion_for_editor() : [];
 	?>
 	<?php if ( $get_pro_details['show_banner'] ) : ?>
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">

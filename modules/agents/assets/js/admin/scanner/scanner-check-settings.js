@@ -27,31 +27,28 @@ const TOGGLE_CHECK_MODULE_KEYS = {
 	'browser-tools': BROWSER_TOOLS_SETTINGS_KEY,
 };
 
+const UNAVAILABLE_REASON_CONFIG_KEYS = {
+	[ LLMS_SETTINGS_KEY ]: 'llmsConfig',
+	[ BOT_ACCESS_SETTINGS_KEY ]: 'botAccessConfig',
+	[ BROWSER_TOOLS_SETTINGS_KEY ]: 'browserToolsConfig',
+};
+
 const isSettingEnabled = ( config ) => Boolean( config?.enabled );
+
+const isAvailable = ( config ) => ! config?.unavailableReason;
 
 const normalizeCheckId = ( checkId ) => ( 'string' === typeof checkId ? checkId.trim().toLowerCase() : '' );
 
 export const getToggleModuleKey = ( checkId ) => TOGGLE_CHECK_MODULE_KEYS[ normalizeCheckId( checkId ) ] ?? null;
 
-export const isAgentReadyModuleToggleDisabled = ( moduleKey, {
-	llmsConfig,
-	botAccessConfig,
-	browserToolsConfig,
-} = {} ) => {
-	if ( BROWSER_TOOLS_SETTINGS_KEY === moduleKey ) {
-		return ! browserToolsConfig?.isAvailable;
-	}
+// The server sends `unavailableReason: { code, message }` when a module can't be turned on here, or null.
+export const getModuleUnavailableReason = ( moduleKey, configs = {} ) => {
+	const configKey = UNAVAILABLE_REASON_CONFIG_KEYS[ moduleKey ];
 
-	if ( LLMS_SETTINGS_KEY === moduleKey ) {
-		return Boolean( llmsConfig?.hasPhysicalFile );
-	}
-
-	if ( BOT_ACCESS_SETTINGS_KEY === moduleKey ) {
-		return Boolean( botAccessConfig?.hasPhysicalFile );
-	}
-
-	return false;
+	return ( configKey && configs[ configKey ]?.unavailableReason ) || null;
 };
+
+export const isAgentReadyModuleToggleDisabled = ( moduleKey, configs = {} ) => null !== getModuleUnavailableReason( moduleKey, configs );
 
 export const getToggleSettingsPatch = ( checkId, isEnabled ) => {
 	const moduleKey = getToggleModuleKey( checkId );
@@ -72,11 +69,11 @@ export const getInitialModuleEnabled = ( {
 	agentDiscoveryConfig,
 	browserToolsConfig,
 } = {} ) => ( {
-	[ LLMS_SETTINGS_KEY ]: isSettingEnabled( llmsConfig ) && ! llmsConfig?.hasPhysicalFile,
+	[ LLMS_SETTINGS_KEY ]: isSettingEnabled( llmsConfig ) && isAvailable( llmsConfig ),
 	[ MARKDOWN_SETTINGS_KEY ]: isSettingEnabled( markdownConfig ),
-	[ BOT_ACCESS_SETTINGS_KEY ]: isSettingEnabled( botAccessConfig ) && ! botAccessConfig?.hasPhysicalFile,
+	[ BOT_ACCESS_SETTINGS_KEY ]: isSettingEnabled( botAccessConfig ) && isAvailable( botAccessConfig ),
 	[ AGENT_DISCOVERY_SETTINGS_KEY ]: isSettingEnabled( agentDiscoveryConfig ),
-	[ BROWSER_TOOLS_SETTINGS_KEY ]: isSettingEnabled( browserToolsConfig ) && Boolean( browserToolsConfig?.isAvailable ),
+	[ BROWSER_TOOLS_SETTINGS_KEY ]: isSettingEnabled( browserToolsConfig ) && isAvailable( browserToolsConfig ),
 } );
 
 export const hasDirtyModuleChecks = ( checks, dirtyModuleKeys ) => checks.some( ( check ) => {

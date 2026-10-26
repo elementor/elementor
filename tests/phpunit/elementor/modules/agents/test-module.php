@@ -2,7 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
@@ -11,8 +11,6 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Module extends Elementor_Test_Base {
 
 	private $module;
-
-	private $original_experiment_default_state;
 
 	private string $original_request_uri;
 
@@ -25,23 +23,27 @@ class Test_Module extends Elementor_Test_Base {
 
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
 		);
+		$settings->ensure_option_exists();
+		$settings->activate();
 
 		$this->module = new Module();
 	}
 
-	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
+	private function create_not_activated_settings(): \Elementor\Modules\Agents\Agent_Ready_Settings {
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
 
+		$settings = new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+		$settings->ensure_option_exists();
+
+		return $settings;
+	}
+
+	public function tearDown(): void {
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
@@ -53,67 +55,10 @@ class Test_Module extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_experiment_is_registered() {
-		// Arrange
-		$data = Module::get_experimental_data();
-
-		// Act & Assert
-		$this->assertSame( Module::EXPERIMENT_NAME, $data['name'] );
-		$this->assertTrue( $data['hidden'] );
-		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
-		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
-	}
-
-	public function test_editor_one_menu_hooks_are_registered_when_experiment_is_active() {
+	public function test_editor_one_menu_hooks_are_registered() {
 		// Assert
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/register', [ $this->module, 'register_editor_one_menu' ] ) );
 		$this->assertNotFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this->module, 'enqueue_assets_for_editor_one_menu' ] ) );
-	}
-
-	public function test_feature_surfaces_are_not_registered_when_experiment_inactive() {
-		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-
-		$module = new Module();
-
-		$robots_handler = new \ReflectionProperty( Module::class, 'robots_handler' );
-		$robots_handler->setAccessible( true );
-
-		// Assert
-		$this->assertFalse( Module::is_active() );
-		$this->assertFalse( $robots_handler->isInitialized( $module ) );
-		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_txt' ] ) );
-		$this->assertFalse( has_action( 'template_redirect', [ $module, 'maybe_serve_llms_full_txt' ] ) );
-		$this->assertFalse( $module->get_component( 'link_headers' ) );
-		$this->assertFalse( $module->get_component( 'markdown_endpoint' ) );
-		$this->assertFalse( $module->get_component( 'well_known_router' ) );
-		$this->assertFalse( has_action( 'elementor/editor-one/menu/register', [ $module, 'register_editor_one_menu' ] ) );
-		$this->assertFalse( has_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $module, 'enqueue_assets_for_editor_one_menu' ] ) );
-	}
-
-	public function test_ajax_opt_in__activates_experiment_for_admin() {
-		// Arrange
-		$this->act_as_admin();
-		$feature_key = Plugin::$instance->experiments->get_feature_option_key( Module::EXPERIMENT_NAME );
-		update_option( $feature_key, Experiments_Manager::STATE_INACTIVE );
-
-		// Act
-		$this->module->ajax_opt_in();
-
-		// Assert
-		$this->assertSame( Experiments_Manager::STATE_ACTIVE, get_option( $feature_key ) );
-	}
-
-	public function test_ajax_opt_in__rejects_unauthorized_user() {
-		// Arrange
-		$this->act_as_editor();
-
-		// Act & Assert
-		$this->expectException( \Exception::class );
-		$this->module->ajax_opt_in();
 	}
 
 	public function test_register_editor_one_menu__registers_agents_ready_menu_item() {
@@ -367,6 +312,26 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $invalidated );
+	}
+
+	public function test_get_post_type_rows__omits_post_types_without_published_posts() {
+		// Arrange
+		register_post_type( 'empty_cpt', [ 'public' => true ] );
+		$this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+
+		// Act
+		$rows = $this->invoke_private( 'get_post_type_rows', [ [] ] );
+
+		// Cleanup
+		unregister_post_type( 'empty_cpt' );
+
+		// Assert
+		$names = wp_list_pluck( $rows, 'name' );
+		$this->assertContains( 'page', $names );
+		$this->assertNotContains( 'empty_cpt', $names );
 	}
 
 	private function invoke_private( string $name, array $args = [] ) {
@@ -637,14 +602,14 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $this->module->should_advertise_llms_full_txt() );
 	}
 
-	public function test_on_settings_change__invalidates_well_known_cache() {
+	public function test_on_settings_update__invalidates_well_known_cache() {
 		// Arrange - warm the ARD manifest cache
 		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
 		$transient_key = $ard_manifest->get_transient_key();
 		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
 
 		// Act
-		$this->module->on_settings_change();
+		$this->module->on_settings_update( null, null, Module::OPTION_EXISTING_FILE_DECISION );
 
 		// Assert - cache should be invalidated
 		$this->assertFalse( get_transient( $transient_key ) );
@@ -706,4 +671,282 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert - should not serve (bail early)
 		$this->assertEmpty( $output );
 	}
+
+	public function test_ajax_activate__skips_unavailable_modules() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		
+		// Force SEO plugin detection via filter (plugin isn't actually active in tests)
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
+
+		try {
+			// Act
+			$this->module->ajax_activate();
+
+			// Assert
+			$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+			$this->assertFalse( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] );
+			$this->assertTrue( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_not_activated() {
+		// Arrange
+		$settings = $this->create_not_activated_settings();
+		$settings->set_server_value( \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', true );
+
+		// Act
+		$result = $this->module->should_advertise_llms_txt();
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_should_advertise_llms_txt__returns_false_when_seo_plugin_active() {
+		// Arrange - force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
+
+		try {
+			// Act
+			$result = $this->module->should_advertise_llms_txt();
+
+			// Assert
+			$this->assertFalse( $result );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_should_advertise_llms_full_txt__returns_false_when_physical_file_exists() {
+		// Arrange
+		$reflection = new \ReflectionMethod( Module::class, 'get_llms_file_root_path' );
+		$reflection->setAccessible( true );
+		$root_path = $reflection->invoke( null );
+		$file_path = $root_path . 'llms-full.txt';
+
+		if ( ! is_writable( $root_path ) ) {
+			$this->markTestSkipped( 'Root path is not writable' );
+		}
+
+		file_put_contents( $file_path, 'test' );
+
+		try {
+			Module::reset_physical_file_cache();
+
+			// Act
+			$result = $this->module->should_advertise_llms_full_txt();
+
+			// Assert
+			$this->assertFalse( $result );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
+	}
+
+	public function test_seo_plugin_generates_llms_txt__returns_true_when_owner_detected() {
+		// Arrange - force SEO plugin detection via filter
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
+
+		try {
+			// Act
+			$result = $this->module->seo_plugin_generates_llms_txt();
+
+			// Assert
+			$this->assertTrue( $result );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_on_post_change__skips_cache_clear_when_no_modules_active() {
+		// Arrange
+		$this->create_not_activated_settings();
+
+		$post_id = $this->factory()->post->create();
+		$post = get_post( $post_id );
+
+		$invalidated = false;
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', function() use ( &$invalidated ) {
+			$invalidated = true;
+		} );
+
+		// Act
+		$this->module->on_post_change( $post_id, $post );
+
+		// Assert
+		$this->assertFalse( $invalidated );
+	}
+
+	public function test_on_seo_plugin_option_change__flushes_well_known_caches_when_agent_discovery_active() {
+		// Arrange
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act
+		update_option( 'rank_math_modules', [ 'llms-txt' ] );
+
+		// Assert
+		$this->assertFalse( get_transient( $transient_key ) );
+
+		// Cleanup
+		delete_option( 'rank_math_modules' );
+	}
+
+	public function test_on_settings_update__clears_caches_for_newly_enabled_llms_txt_module() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$this->module->get_generated_llms_txt();
+
+		// Act - enable llms_txt
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - cache should be invalidated
+		$cache = new \Elementor\Modules\Agents\Llms_Cache();
+		$this->assertFalse( $cache->get_llms() );
+	}
+
+	public function test_on_settings_update__clears_caches_for_newly_enabled_agent_discovery() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ]['enabled'] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		// Act - enable agent_discovery
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - transient should be cleared
+		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_on_settings_update__clears_caches_when_agent_ready_activated() {
+		// Arrange
+		$settings = $this->create_not_activated_settings();
+
+		$this->module->get_generated_llms_txt();
+
+		// Act - activate Agent Ready
+		$settings->activate();
+
+		// Assert - cache should be invalidated
+		$cache = new \Elementor\Modules\Agents\Llms_Cache();
+		$this->assertFalse( $cache->get_llms() );
+	}
+
+	public function test_on_settings_update__invalidates_llms_cache_on_any_settings_change() {
+		// Arrange
+		$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] = false;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $settings );
+
+		$this->module->get_generated_llms_txt();
+		$cache = new \Elementor\Modules\Agents\Llms_Cache();
+		$cached_before = $cache->get_llms();
+		$this->assertNotFalse( $cached_before );
+
+		// Act - change a module that does not affect llms.txt
+		$new_settings = $settings;
+		$new_settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] = true;
+		update_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - llms cache should still be cleared due to global invalidation
+		$this->assertFalse( $cache->get_llms() );
+	}
+
+	public function test_on_settings_add__clears_caches_when_settings_created() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+
+		$ard_manifest = new \Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest( $this->module );
+		$transient_key = $ard_manifest->get_transient_key();
+		set_transient( $transient_key, [ 'body' => '{}', 'etag' => '"test"', 'last_modified' => gmdate( 'r' ) ], 900 );
+
+		$new_settings = [
+			\Elementor\Modules\Agents\Agent_Ready_Settings::ACTIVATED_KEY => true,
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_AGENT_DISCOVERY => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL => [ 'enabled' => true ],
+			\Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => true ],
+		];
+
+		// Act - add new settings
+		add_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION, $new_settings );
+
+		// Assert - transient should be cleared
+		$this->assertFalse( get_transient( $transient_key ) );
+	}
+
+	public function test_ajax_activate__activates_settings_for_admin() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		$settings = $this->create_settings();
+		$this->assertFalse( $settings->is_activated() );
+		\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', static fn() => 'yoast' );
+
+		try {
+			// Act
+			$this->module->ajax_activate();
+
+			// Assert
+			$this->assertTrue( $settings->is_activated() );
+			$this->assertTrue( $settings->is_markdown_enabled() );
+			$this->assertTrue( $settings->is_agent_discovery_enabled() );
+			$this->assertFalse( $settings->is_llms_enabled(), 'An unavailable module stays off after activation.' );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
+	public function test_ajax_activate__rejects_non_admin() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		wp_set_current_user( $this->factory()->get_subscriber_user()->ID );
+		$exception_code = null;
+
+		// Act
+		try {
+			$this->module->ajax_activate();
+		} catch ( \Exception $e ) {
+			$exception_code = $e->getCode();
+		}
+
+		// Assert
+		$this->assertSame( Exceptions::FORBIDDEN, $exception_code );
+		$this->assertFalse( $this->create_settings()->is_activated() );
+	}
+
+	private function create_settings(): \Elementor\Modules\Agents\Agent_Ready_Settings {
+		return new \Elementor\Modules\Agents\Agent_Ready_Settings(
+			new \Elementor\Modules\Agents\Content_Generator( new \Elementor\Modules\Agents\Prompt_Injection_Sanitizer() )
+		);
+	}
 }
+

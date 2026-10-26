@@ -17,6 +17,8 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 
 	const RETRY_AFTER_SECONDS = 60;
 
+	const STALE_SCANNED_AT = '2020-01-01T00:00:00+00:00';
+
 	private int $remote_calls = 0;
 
 	public function setUp(): void {
@@ -75,6 +77,7 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 					'id' => 'sitemap',
 					'label' => 'Sitemap exists',
 					'layer' => 'accessibility',
+					'task' => 'Find',
 					'status' => 'pass',
 					'testTypes' => [ 'wordpress' ],
 					'failureRecommendation' => 'Add a sitemap.',
@@ -110,9 +113,30 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'grade', $stored );
 		$this->assertArrayNotHasKey( 'testTypes', $stored['checks'][0] );
 		$this->assertArrayNotHasKey( 'failureRecommendation', $stored['checks'][0] );
+		$this->assertSame( 'Find', $stored['checks'][0]['task'] );
 		$this->assertSame( 'Built In', $stored['checks'][0]['fixBy'] );
 		$this->assertSame( 'Check WordPress sitemap settings.', $stored['checks'][0]['fixDetails'] );
 		$this->assertGreaterThan( time(), (int) get_transient( Scanner_Report_Store::TRANSIENT_RETRY_AT ) );
+	}
+
+	public function test_scan__stamps_scanned_at_when_the_service_returns_a_stale_timestamp() {
+		// Arrange
+		$this->act_as_admin();
+		$report = $this->get_report();
+		$report['scannedAt'] = self::STALE_SCANNED_AT;
+		$this->mock_remote_response( 200, $report );
+		$started_at = time();
+
+		// Act
+		$response = $this->dispatch();
+
+		// Assert
+		$scanned_at = strtotime( $response->get_data()['data']['report']['scannedAt'] );
+		$stored = get_option( Scanner_Report_Store::OPTION_LAST_REPORT );
+
+		$this->assertGreaterThanOrEqual( $started_at, $scanned_at );
+		$this->assertLessThanOrEqual( time(), $scanned_at );
+		$this->assertSame( $response->get_data()['data']['report']['scannedAt'], $stored['scannedAt'] );
 	}
 
 	public function test_scan__returns_429_without_calling_the_service_during_the_cooldown() {

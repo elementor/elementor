@@ -90,6 +90,7 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 			: checks.map( ( check, index ) => {
 				const moduleKey = FIX_WITH_TOGGLE === check.fixWith ? getToggleModuleKey( check.id ) : null;
 				const isToggleDisabled = moduleKey && flow.isModuleToggleDisabled?.( moduleKey );
+				const toggleDisabledReason = moduleKey ? flow.getToggleDisabledReason?.( moduleKey ) ?? null : null;
 
 				return (
 					<Box key={ check.id } sx={ rowAppearSx }>
@@ -99,6 +100,7 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 							isResolved={ moduleKey ? !! flow.moduleEnabled?.[ moduleKey ] : !! flow.resolvedIds[ check.id ] }
 							isSaving={ !! flow.savingCheckIds?.[ check.id ] || !! ( moduleKey && flow.savingModuleKeys?.[ moduleKey ] ) }
 							isToggleDisabled={ !! isToggleDisabled }
+							toggleDisabledReason={ toggleDisabledReason }
 							isLast={ index === checks.length - 1 }
 							preferenceValue={ flow.preferences[ check.id ] }
 							agentAccessUrl={ agentAccessUrl }
@@ -126,6 +128,7 @@ const fixTableRowsPropTypes = {
 		resolvedIds: PropTypes.object.isRequired,
 		moduleEnabled: PropTypes.object,
 		isModuleToggleDisabled: PropTypes.func,
+		getToggleDisabledReason: PropTypes.func,
 		savingModuleKeys: PropTypes.object,
 		savingCheckIds: PropTypes.object,
 		preferences: PropTypes.object.isRequired,

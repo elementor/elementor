@@ -1,14 +1,16 @@
 import { ArrowUpRightIcon, CopyIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Stack from '@elementor/ui/Stack';
-import Switch from '@elementor/ui/Switch';
+import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { DisabledReasonSwitch } from '../../components/disabled-reason-switch';
 import { wpAdminSwitchSx } from '../../components/wp-admin-sx';
 import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_LINK,
+	FIX_WITH_MANUAL,
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_SEO,
 	FIX_WITH_TOGGLE,
@@ -62,7 +64,7 @@ export const CopyPromptButton = ( { onCopy } ) => (
 	<Button
 		className="scanner-copy-fix"
 		variant="text"
-		color="info"
+		color="secondary"
 		size="small"
 		startIcon={ <CopyIcon fontSize="tiny" /> }
 		onClick={ onCopy }
@@ -94,13 +96,14 @@ CompletedActions.propTypes = {
 	onRescan: PropTypes.func.isRequired,
 };
 
-export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
+export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, toggleDisabledReason = null, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
 	if ( FIX_WITH_TOGGLE === check.fixWith ) {
 		return (
-			<Switch
+			<DisabledReasonSwitch
 				size="small"
 				checked={ isResolved }
 				disabled={ isSaving || isToggleDisabled }
+				disabledReason={ isToggleDisabled ? toggleDisabledReason : null }
 				onChange={ ( event ) => onSetEnabled( check, event.target.checked ) }
 				inputProps={ { role: 'switch', 'aria-checked': isResolved, 'aria-label': check.title } }
 				sx={ wpAdminSwitchSx }
@@ -144,6 +147,14 @@ export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabl
 		);
 	}
 
+	if ( FIX_WITH_MANUAL === check.fixWith ) {
+		return (
+			<Typography variant="body2" color="text.disabled" sx={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
+				{ __( 'Fix manually', 'elementor' ) }
+			</Typography>
+		);
+	}
+
 	return null;
 };
 
@@ -152,6 +163,7 @@ RowAction.propTypes = {
 	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
+	toggleDisabledReason: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,
 	seoPluginSearchUrl: PropTypes.string.isRequired,
 	onOpen: PropTypes.func.isRequired,

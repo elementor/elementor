@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 import { getToggleSettingsPatch } from './scanner/scanner-check-settings';
 import { toScanResult } from './scanner/scanner-report-adapter';
@@ -67,7 +68,7 @@ export const installAngiePlugin = async () => {
 };
 
 export const activateAgentsReady = () => {
-	return elementorCommon.ajax.addRequest( 'agents_ready_opt_in' );
+	return elementorCommon.ajax.addRequest( 'agents_ready_activate' );
 };
 
 // The server merges each module key onto the stored object, so callers send only the modules they changed.
@@ -79,7 +80,7 @@ export const saveAgentReadySettings = ( settings ) => {
 	} );
 };
 
-const UNMAPPED_TOGGLE_FIX_ERROR = 'This fix cannot be applied from the scanner yet.';
+const UNMAPPED_TOGGLE_FIX_ERROR = __( 'This fix cannot be applied from the scanner yet.', 'elementor' );
 
 const saveToggleFix = ( checkId, isEnabled ) => {
 	const patch = getToggleSettingsPatch( checkId, isEnabled );

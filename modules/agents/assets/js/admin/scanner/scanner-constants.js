@@ -16,7 +16,6 @@ export const FIX_WITH_LINK = 'link';
 export const FIX_WITH_SEO = 'seo';
 export const FIX_WITH_MANUAL = 'manual';
 
-export const FIX_BY_AGENT_READY_TOGGLE = 'agent ready toggle';
 export const FIX_BY_SEO_PLUGIN = 'seo plugin';
 export const FIX_BY_ANGIE = 'angie';
 export const FIX_BY_ANGIE_MCP = 'angie / mcp';
@@ -28,6 +27,73 @@ export const FIX_DETAILS_NOT_APPLICABLE = 'n/a';
 
 export const PRIORITY_REQUIRED = 'required';
 export const PRIORITY_RECOMMENDED = 'recommended';
+
+export const TIER_REQUIRED = 'required';
+export const TIER_RECOMMENDED = 'recommended';
+export const TIER_EMERGING = 'emerging';
+
+const PRIORITY_BY_TIER = {
+	[ TIER_REQUIRED ]: PRIORITY_REQUIRED,
+	[ TIER_RECOMMENDED ]: PRIORITY_RECOMMENDED,
+};
+
+const normalizeTier = ( tier ) => ( 'string' === typeof tier ? tier.toLowerCase() : '' );
+
+export const getPriorityFromTier = ( tier ) => PRIORITY_BY_TIER[ normalizeTier( tier ) ] ?? null;
+
+export const isEmergingTier = ( tier ) => TIER_EMERGING === normalizeTier( tier );
+
+export const getCheckPriorityLabel = ( { tier, priority } ) => {
+	if ( PRIORITY_REQUIRED === priority ) {
+		return __( 'Required', 'elementor' );
+	}
+
+	if ( PRIORITY_RECOMMENDED === priority ) {
+		return __( 'Recommended', 'elementor' );
+	}
+
+	return isEmergingTier( tier ) ? __( 'Emerging', 'elementor' ) : '';
+};
+
+export const CHECK_STATUS_PASS = 'pass';
+export const CHECK_STATUS_FAIL = 'fail';
+export const CHECK_STATUS_PARTIAL = 'partial';
+
+export const FAILING_CHECK_STATUSES = [ CHECK_STATUS_FAIL, CHECK_STATUS_PARTIAL ];
+
+const normalizeCheckStatus = ( status ) => ( 'string' === typeof status ? status.toLowerCase() : '' );
+
+export const getCheckStatusDotColor = ( status ) => {
+	const normalized = normalizeCheckStatus( status );
+
+	if ( CHECK_STATUS_PARTIAL === normalized ) {
+		return 'warning.light';
+	}
+
+	if ( CHECK_STATUS_PASS === normalized ) {
+		return 'success.light';
+	}
+
+	return 'error.light';
+};
+
+export const getCheckStatusLabel = ( status ) => {
+	const normalized = normalizeCheckStatus( status );
+
+	if ( CHECK_STATUS_PARTIAL === normalized ) {
+		return __( 'Partial', 'elementor' );
+	}
+
+	if ( CHECK_STATUS_PASS === normalized ) {
+		return __( 'Pass', 'elementor' );
+	}
+
+	if ( CHECK_STATUS_FAIL === normalized ) {
+		return __( 'Fail', 'elementor' );
+	}
+
+	return '';
+};
 
 export const OUTSIDE_SCAN_STATUS_OK = 'ok';
 export const OUTSIDE_SCAN_STATUS_FAILED = 'failed';
@@ -87,7 +153,8 @@ export const SCANNER_COLORS = {
 export const DOT_FIELD = {
 	size: 1.8,
 	grid: 7,
-	maxDots: 5000,
+	// Admin-only background shown for a one-time scan run, so a 15000-dot ceiling is acceptable.
+	maxDots: 15000,
 	rgb: '89, 89, 89',
 	opacityMin: 0.02,
 	opacityStep: 0.02,
@@ -109,10 +176,12 @@ export const SCORE_TIER_HIGH = 'high';
 export const SCORE_TIER_LOW_MAX = 30;
 export const SCORE_TIER_HIGH_MIN = 80;
 
+const SCORE_RING_GRADIENT_VECTOR = { x1: -28, y1: -35.5, x2: 95.5, y2: 56 };
+
 export const SCORE_RING_GRADIENTS = {
-	[ SCORE_TIER_LOW ]: { from: '#93003F', to: '#EF4444' },
-	[ SCORE_TIER_MID ]: { from: '#D97706', to: '#FFCB00' },
-	[ SCORE_TIER_HIGH ]: { from: '#0A875A', to: '#10B981' },
+	[ SCORE_TIER_LOW ]: { from: '#93003F', to: '#EF4444', ...SCORE_RING_GRADIENT_VECTOR },
+	[ SCORE_TIER_MID ]: { from: '#D97706', to: '#FFCB00', ...SCORE_RING_GRADIENT_VECTOR },
+	[ SCORE_TIER_HIGH ]: { from: '#0A875A', to: '#10B981', ...SCORE_RING_GRADIENT_VECTOR },
 };
 
 export const SCANNER_LAYOUT = {
@@ -167,7 +236,6 @@ export const SCANNER_MOTION = {
 	completedCheckMs: 320,
 	rowAppearMs: 260,
 	progressBarMs: 450,
-	progressStepMs: 700,
 	dotShimmerMs: 12000,
 	errorProgressPauseMs: 1500,
 	rescanMinMs: 800,

@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
@@ -48,6 +49,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
 	public const ACTION_WEBHOOK = 'webhook';
 	public const ACTION_REDIRECT = 'redirect';
+	public const WEBMCP_EXPOSE = 'webmcp-expose';
 	public const METADATA_REMOTE_IP = 'remote_ip';
 	public const METADATA_USER_AGENT = 'user_agent';
 
@@ -159,15 +161,38 @@ class Atomic_Form extends Atomic_Element_Base {
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
 
-		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
+		if ( ! self::is_agents_exposure_allowed() ) {
+			unset( $props['webmcp-autosubmit'] );
+		} elseif ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
+			$webmcp_dependencies = Dependency_Manager::make()
+				->where( [
+					'operator' => 'eq',
+					'path' => [ self::WEBMCP_EXPOSE ],
+					'value' => true,
+					'effect' => 'hide',
+				] )
+				->get();
+
+			$props[ self::WEBMCP_EXPOSE ] = Boolean_Prop_Type::make()
+				->default( true )
+				->description( 'Exposes the form to AI agents as a tool. Keep true unless the form must not be available to agents. This is the only exposure switch: when false, all of the form\'s fields are hidden from agents too.' );
 			$props['webmcp-tool-name'] = String_Prop_Type::make()
+				->set_dependencies( $webmcp_dependencies )
 				->description( 'Required when creating a form. Exposes the form to AI agents as a tool: unique snake_case name that starts with a verb, e.g. book_table.' );
 			$props['webmcp-tool-description'] = String_Prop_Type::make()
+				->set_dependencies( $webmcp_dependencies )
 				->description( 'Required when creating a form. Tells AI agents what the form does and what details it needs, e.g. "Books a table: needs date, time and number of guests."' );
-			$props['webmcp-autosubmit']->description( 'Lets an AI agent submit the form without a person confirming. Leave false (default); set true only when the user explicitly asks for an "agent ready" form or explicitly mentions agents.' );
+			$props['webmcp-autosubmit']->set_dependencies( $webmcp_dependencies )->description( 'Lets an AI agent submit the form without a person confirming. Leave false (default); set true only when the user explicitly asks for an "agent ready" form or explicitly mentions agents.' );
 		}
 
 		return $props;
+	}
+
+	private static function is_agents_exposure_allowed(): bool {
+		$agents_module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		return ! Atomic_Widgets_Module::is_form_webmcp_active()
+			|| ( $agents_module && $agents_module->is_browser_tools_module_active() );
 	}
 
 	protected function define_atomic_controls(): array {
@@ -269,10 +294,32 @@ class Atomic_Form extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
-					Switch_Control::bind_to( 'webmcp-autosubmit' )
-						->set_label( __( 'Agent auto-submit', 'elementor' ) ),
 				] ),
+			...( self::is_agents_exposure_allowed() ? [
+				Section::make()
+					->set_label( __( 'AI agents', 'elementor' ) )
+					->set_id( 'agents' )
+					->set_items( $this->get_agents_controls() ),
+			] : [] ),
 		];
+	}
+
+	private function get_agents_controls(): array {
+		$controls = [];
+
+		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
+			$controls[] = Switch_Control::bind_to( self::WEBMCP_EXPOSE )
+				->set_label( __( 'Allow agents to fill out', 'elementor' ) );
+			$controls[] = Text_Control::bind_to( 'webmcp-tool-name' )
+				->set_label( __( 'Name', 'elementor' ) );
+			$controls[] = Textarea_Control::bind_to( 'webmcp-tool-description' )
+				->set_label( __( 'Description', 'elementor' ) );
+		}
+
+		$controls[] = Switch_Control::bind_to( 'webmcp-autosubmit' )
+			->set_label( __( 'Allow agents to submit', 'elementor' ) );
+
+		return $controls;
 	}
 
 	protected function define_base_settings(): array {
@@ -449,7 +496,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$context['form_state'] = 'default';
 
-		if ( ! $this->is_webmcp_enabled() ) {
+		if ( ! $this->is_webmcp_enabled() || ! $this->is_webmcp_exposed() ) {
 			return $context;
 		}
 
@@ -471,6 +518,20 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	private function is_webmcp_enabled(): bool {
 		return ! Plugin::$instance->editor->is_edit_mode();
+	}
+
+	private function is_webmcp_exposed(): bool {
+		return self::is_agents_exposure_allowed() && false !== ( $this->get_atomic_settings()[ self::WEBMCP_EXPOSE ] ?? true );
+	}
+
+	protected function define_render_context(): array {
+		return [
+			[
+				'context' => [
+					self::WEBMCP_EXPOSE => $this->is_webmcp_exposed(),
+				],
+			],
+		];
 	}
 
 	public static function is_instance_form( $instance ): bool {
