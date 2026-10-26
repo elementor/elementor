@@ -14,7 +14,6 @@ export type ExtendedWindow = Window & {
 		};
 
 		config: {
-			allExperimentalFeatures?: Record< string, boolean >;
 			library_connect: {
 				is_connected: boolean;
 			};

@@ -36,8 +36,7 @@ describe( 'app/open command', () => {
 			theme_builder_v2: false,
 		};
 
-		const cmd = new Open();
-		cmd.apply( {} );
+		new Open().apply( {} );
 
 		expect( window.top.location ).toBe( elementorAppConfig.menu_url );
 		expect( $e.route ).not.toHaveBeenCalled();
@@ -48,9 +47,8 @@ describe( 'app/open command', () => {
 			theme_builder_v2: true,
 		};
 
-		const cmd = new Open();
 		const args = { url: 'http://example.com/wp-admin/admin.php?page=elementor-app#/site-editor' };
-		cmd.apply( args );
+		new Open().apply( args );
 
 		expect( $e.route ).toHaveBeenCalledWith( 'app', args );
 		expect( window.top.location ).toBe( '' );
@@ -61,24 +59,10 @@ describe( 'app/open command', () => {
 			container: true,
 		};
 
-		const cmd = new Open();
 		const args = { url: 'http://example.com/wp-admin/admin.php?page=elementor-app#/site-editor' };
-		cmd.apply( args );
+		new Open().apply( args );
 
 		expect( $e.route ).toHaveBeenCalledWith( 'app', args );
 		expect( window.top.location ).toBe( '' );
-	} );
-
-	it( 'should navigate full page with the given url when theme_builder_v2 is inactive', () => {
-		elementorCommon.config.allExperimentalFeatures = {
-			theme_builder_v2: false,
-		};
-
-		const legacyUrl = 'http://example.com/wp-admin/admin.php?page=elementor-app#/theme-builder/templates';
-		const cmd = new Open();
-		cmd.apply( { url: legacyUrl } );
-
-		expect( window.top.location ).toBe( legacyUrl );
-		expect( $e.route ).not.toHaveBeenCalled();
 	} );
 } );

@@ -189,7 +189,6 @@ declare global {
 			};
 		};
 		elementorAppConfig?: {
-			menu_url?: string;
 			onboarding?: OnboardingConfig;
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
