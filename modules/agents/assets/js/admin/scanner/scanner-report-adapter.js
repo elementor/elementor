@@ -1,20 +1,17 @@
 import * as checkCopy from './scanner-check-copy';
 import { classifyCheckFix } from './scanner-check-fixes';
 import {
+	CHECK_STATUS_PASS,
+	FAILING_CHECK_STATUSES,
+	getPriorityFromTier,
 	OUTSIDE_SCAN_STATUS_FAILED,
 	OUTSIDE_SCAN_STATUS_OK,
-	PRIORITY_RECOMMENDED,
-	PRIORITY_REQUIRED,
 	STAGE_ACT,
 	STAGE_COMMERCE,
 	STAGE_IDENTIFY,
 	STAGE_REACH,
 } from './scanner-constants';
 import { normalizeReadinessScore, READINESS_SCORE_MAX } from './scanner-score';
-
-const CHECK_STATUS_PASS = 'pass';
-const FAILING_CHECK_STATUSES = [ 'fail', 'partial' ];
-const TIER_REQUIRED = 'required';
 
 const LAYER_STAGES = {
 	discovery: STAGE_REACH,
@@ -25,13 +22,23 @@ const LAYER_STAGES = {
 
 const toNumber = ( value ) => ( 'number' === typeof value ? value : 0 );
 
-const toStages = ( layers ) => Object.entries( LAYER_STAGES ).map( ( [ layerId, stageId ] ) => {
-	const layer = layers[ layerId ] ?? {};
-	const total = toNumber( layer.possible );
+const TASK_STAGES = {
+	find: STAGE_REACH,
+	read: STAGE_IDENTIFY,
+	act: STAGE_ACT,
+};
+
+const toLowerKey = ( value ) => ( 'string' === typeof value ? value.toLowerCase() : '' );
+
+const getCheckStage = ( check ) => TASK_STAGES[ toLowerKey( check.task ) ] ?? LAYER_STAGES[ toLowerKey( check.layer ) ];
+
+const toStages = ( checks ) => Object.values( LAYER_STAGES ).map( ( stageId ) => {
+	const stageChecks = checks.filter( ( check ) => check.scorable && getCheckStage( check ) === stageId );
+	const total = stageChecks.length;
 
 	return {
 		id: stageId,
-		earned: toNumber( layer.earned ),
+		earned: stageChecks.filter( ( check ) => CHECK_STATUS_PASS === check.status ).length,
 		total,
 		...( STAGE_COMMERCE === stageId && 0 === total ? { isComingSoon: true } : {} ),
 	};
@@ -62,8 +69,10 @@ const toFailingCheck = ( check, layers, activeWeight ) => {
 		title: checkCopy.getCheckTitle( check.id, check.label, false ),
 		technicalName: check.label,
 		points: getScoreShare( getMissingPoints( check ), layers[ check.layer ], activeWeight ),
-		priority: TIER_REQUIRED === check.tier ? PRIORITY_REQUIRED : PRIORITY_RECOMMENDED,
-		stage: LAYER_STAGES[ check.layer ],
+		tier: check.tier,
+		priority: getPriorityFromTier( check.tier ),
+		status: check.status,
+		stage: getCheckStage( check ),
 		evidence: check.message ?? '',
 		explanation: {
 			whatItMeans: check.description ?? '',
@@ -79,7 +88,8 @@ const toPassingCheck = ( check, layers, activeWeight ) => ( {
 	id: check.id,
 	title: checkCopy.getCheckTitle( check.id, check.label, true ),
 	technicalName: check.label,
-	stage: LAYER_STAGES[ check.layer ],
+	description: check.description ?? '',
+	stage: getCheckStage( check ),
 	points: getScoreShare( toNumber( check.earned ), layers[ check.layer ], activeWeight ),
 } );
 
@@ -116,7 +126,7 @@ export const toScanResult = ( report, retryAt = null ) => {
 		score: normalizeReadinessScore( report?.score ),
 		ranAt: report?.scannedAt ?? null,
 		retryAt: retryAt ?? report?.retryAt ?? null,
-		stages: toStages( layers ),
+		stages: toStages( checks ),
 		checks: checks
 			.filter( ( check ) => FAILING_CHECK_STATUSES.includes( check.status ) )
 			.map( ( check ) => toFailingCheck( check, layers, activeWeight ) )

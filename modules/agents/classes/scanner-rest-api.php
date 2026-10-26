@@ -54,6 +54,8 @@ class Scanner_Rest_Api {
 			return $this->scan_error( $result );
 		}
 
+		$result['scannedAt'] = $this->format_time( time() );
+
 		$report   = $this->store->save_report( $result );
 		$retry_at = $this->store->get_report_retry_at( $report );
 

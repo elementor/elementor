@@ -37,6 +37,10 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		if ( ! Webmcp_Browser_Tools::is_available() ) {
+			$this->markTestSkipped( 'The WordPress Abilities API requires WordPress 6.9 or later.' );
+		}
+
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
 		delete_transient( Webmcp_Browser_Tools::RELEVANT_TOOLS_TRANSIENT );
@@ -77,7 +81,9 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		$this->unregister_webmcp_abilities();
+		if ( Webmcp_Browser_Tools::is_available() ) {
+			$this->unregister_webmcp_abilities();
+		}
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
