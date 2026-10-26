@@ -241,6 +241,6 @@ jobs:
           PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
 
           # Post to Slack (keep webhook URL off argv)
-          curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""
+          curl -fsS -X POST -H 'Content-type: application/json' --proto '=https' --max-time 15 --data "$PAYLOAD" --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""
           echo "Slack notification sent successfully."
 
