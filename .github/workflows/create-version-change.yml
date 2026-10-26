@@ -204,12 +204,14 @@ jobs:
 
           # Validate versions
           if [[ ! "$BETA_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            echo "::warning::Invalid BETA_VERSION format: $BETA_VERSION. Skipping Slack notification."
+            SAFE_BETA_VERSION="${BETA_VERSION//[$'\r\n']/}"
+            echo "::warning::Invalid BETA_VERSION format: ${SAFE_BETA_VERSION}. Skipping Slack notification."
             exit 0
           fi
 
           if [[ ! "$MAIN_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            echo "::warning::Invalid MAIN_VERSION format: $MAIN_VERSION. Skipping Slack notification."
+            SAFE_MAIN_VERSION="${MAIN_VERSION//[$'\r\n']/}"
+            echo "::warning::Invalid MAIN_VERSION format: ${SAFE_MAIN_VERSION}. Skipping Slack notification."
             exit 0
           fi
 
@@ -239,6 +241,6 @@ jobs:
           PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
 
           # Post to Slack (keep webhook URL off argv)
-          curl -fsS -X POST -H 'Content-type: application/json' --proto '=https' --max-time 15 --data "$PAYLOAD" --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""
-          echo "Slack notification sent successfully."
+          curl -fsS -X POST -H 'Content-type: application/json' --proto '=https' --max-time 15 --data "$PAYLOAD" --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\"" || echo "::warning::Slack post failed"
+          exit 0
 
