@@ -235,8 +235,6 @@ jobs:
           :large_yellow_circle: release/beta → ${BETA_VERSION_SHORT}
           :large_blue_circle: main → ${MAIN_VERSION_SHORT}
 
-          From now on, fixes meant for the ${BETA_VERSION_SHORT} beta need a cherry-pick to release/beta. Everything else lands on main for ${MAIN_VERSION_SHORT}."
-
           # Build JSON payload with jq
           PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
 
