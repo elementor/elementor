@@ -12,7 +12,7 @@ import {
 	SCANNER_MOTION,
 	STAGE_REACH,
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
-import { getMockScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
+import { getMockScanResult, getProgressScanGateDurationMs } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
 import { toFailedScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-report-adapter';
 import { getScoreTier } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-score';
 
@@ -27,14 +27,35 @@ import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from 'e
 
 const SITE_DOMAIN = 'example.com';
 const AGENT_ACCESS_URL = 'https://example.com/wp-admin/admin.php?page=elementor-agent-access';
-const PROGRESS_STEPS_COUNT = 7;
-const SCAN_DURATION_MS = SCANNER_MOTION.progressStepMs * PROGRESS_STEPS_COUNT;
+const SCAN_DURATION_MS = getProgressScanGateDurationMs();
 
 const advanceTimers = async ( ms ) => {
 	await act( async () => {
 		await jest.advanceTimersByTimeAsync( ms );
 	} );
 };
+
+// Lets a mocked save settle inside act(), so its `.finally()` state update doesn't land after the test.
+const flushPendingSave = async () => {
+	await act( async () => {
+		await Promise.resolve();
+	} );
+};
+
+// In jsdom, getComputedStyle walks every stylesheet rule for each element (and its ancestors), and
+// getByRole calls it for every candidate. The ~575 Emotion rules @elementor/ui injects made a single
+// getByRole take 0.7–2.8 s here, so tests ran 3–12 s and hit the 5 s timeout on slow runners.
+// No assertion in this file depends on stylesheet CSS (hidden content uses attributes or unmounting),
+// so this file drops Emotion's inserted rules.
+const originalInsertRule = CSSStyleSheet.prototype.insertRule;
+
+beforeAll( () => {
+	CSSStyleSheet.prototype.insertRule = () => 0;
+} );
+
+afterAll( () => {
+	CSSStyleSheet.prototype.insertRule = originalInsertRule;
+} );
 
 const LAST_REPORT_SCORE = 72;
 const RETRY_AT = '2026-10-21T10:00:00Z';
@@ -124,7 +145,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( screen.getByText( `Checking ${ SITE_DOMAIN }` ) ).toBeTruthy();
-		expect( within( screen.getByRole( 'list' ) ).getByText( 'Reading your site the way an AI assistant would' ) ).toBeTruthy();
+		expect( within( screen.getByRole( 'list' ) ).getByText( 'Getting your site ready to scan' ) ).toBeTruthy();
 		expect( screen.getByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeTruthy();
 
 		await advanceTimers( SCAN_DURATION_MS );
@@ -309,10 +330,12 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Assert
 		expect( undoCheckFix ).toHaveBeenCalledWith( 'webmcp-support' );
 		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( false );
 	} );
 
 	it( 'disables the WebMCP switch and explains why when Agent browser tools are unavailable', async () => {
@@ -371,10 +394,12 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Assert
 		expect( undoCheckFix ).toHaveBeenCalledWith( 'markdown-pages' );
 		expect( checkSwitch.checked ).toBe( false );
+		expect( checkSwitch.disabled ).toBe( false );
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 	} );
 
@@ -386,6 +411,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'agent-path', { enabled: true } );
@@ -490,6 +516,7 @@ describe( 'Agent Ready scanner', () => {
 		// Act
 		fireEvent.change( screen.getByRole( 'textbox', { name: title } ), { target: { value: 'London' } } );
 		fireEvent.keyDown( screen.getByRole( 'textbox', { name: title } ), { key: 'Enter' } );
+		await flushPendingSave();
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'service-area', { value: 'London' } );
@@ -527,12 +554,13 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByRole( 'status', { name: 'Scanning again' } ) ).toBeTruthy();
 		expect( screen.queryByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeNull();
-		expect( getScoreRing( 30 ) ).toBeTruthy();
+		expect( screen.queryByRole( 'img', { name: /Agent readiness score/ } ) ).toBeNull();
 
 		await advanceTimers( SCANNER_MOTION.rescanMinMs );
 
 		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
 		expect( screen.queryByRole( 'status', { name: 'Scanning again' } ) ).toBeNull();
+		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByRole( 'heading', { name: 'Where you stand' } ) ).toBeTruthy();
 	} );
 
