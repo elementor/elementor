@@ -12,9 +12,14 @@ on:
         description: 'Run in dry-run mode (show what would be done without making changes)'
         required: false
         default: false
-      skip_branches:
+      skip_beta_reset:
         type: boolean
-        description: 'Skip branch creation, only update version files'
+        description: 'Skip resetting release/beta to main (useful for testing version bumps only)'
+        required: false
+        default: false
+      force_beta_reset:
+        type: boolean
+        description: 'Force reset release/beta even if it has unique commits (downgrades failure to warning)'
         required: false
         default: false
 
@@ -95,8 +100,12 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
 
-          if [ "${{ github.event.inputs.skip_branches }}" == "true" ]; then
-            ARGS="$ARGS --skip-branches"
+          if [ "${{ github.event.inputs.skip_beta_reset }}" == "true" ]; then
+            ARGS="$ARGS --skip-beta-reset"
+          fi
+
+          if [ "${{ github.event.inputs.force_beta_reset }}" == "true" ]; then
+            ARGS="$ARGS --force-beta-reset"
           fi
 
           echo "args=$ARGS" >> $GITHUB_OUTPUT
@@ -108,7 +117,7 @@ jobs:
           node scripts/create-version-change.js --ci ${{ steps.build-args.outputs.args }}
 
       - name: Check for changes and commit
-        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_beta_reset != 'true'
         run: |
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
@@ -130,7 +139,7 @@ jobs:
           echo "Changes committed successfully"
 
       - name: Push branch
-        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_beta_reset != 'true'
         run: |
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
@@ -144,7 +153,7 @@ jobs:
           echo "Branch $DEV_BRANCH pushed successfully"
 
       - name: Create pull request
-        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_beta_reset != 'true'
         run: |
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
           NEXT_VERSION="${{ steps.calculate.outputs.next_version }}"

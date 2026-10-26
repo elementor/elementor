@@ -86,7 +86,9 @@ Arguments:
 
 Options:
   -d, --dry-run             Show what would be done without making changes
-  -s, --skip-branches       Skip branch creation, only update version files
+  -s, --skip-beta-reset     Skip resetting release/beta to main, only update version files
+      --skip-branches       (Deprecated alias for --skip-beta-reset)
+  -f, --force-beta-reset    Force reset release/beta even if it has unique commits (downgrades failure to warning)
   --ci                      CI mode: use all default values, no prompts
   -h, --help                Show this help message
 
@@ -94,7 +96,7 @@ Examples:
   node scripts/create-version-change.js                    # Interactive mode
   node scripts/create-version-change.js 3.20.0            # Set version 3.20.0
   node scripts/create-version-change.js 3.20.0 --dry-run  # Dry run with version 3.20.0
-  node scripts/create-version-change.js 3.20.0 -s         # Update versions only, no branches
+  node scripts/create-version-change.js 3.20.0 -s         # Update versions only, no beta reset
   node scripts/create-version-change.js --ci               # CI mode with default version
 `);
   process.exit(0);
@@ -129,14 +131,20 @@ async function main() {
     
     let nextVersion = argsWithoutCI[0];
     let dryRun = false;
-    let skipBranches = false;
+    let skipBetaReset = false;
+    let forceBetaReset = false;
 
     // Parse command line arguments
     for (let i = 1; i < argsWithoutCI.length; i++) {
       if (argsWithoutCI[i] === '--dry-run' || argsWithoutCI[i] === '-d') {
         dryRun = true;
-      } else if (argsWithoutCI[i] === '--skip-branches' || argsWithoutCI[i] === '-s') {
-        skipBranches = true;
+      } else if (argsWithoutCI[i] === '--skip-beta-reset' || argsWithoutCI[i] === '-s' || argsWithoutCI[i] === '--skip-branches') {
+        skipBetaReset = true;
+        if (argsWithoutCI[i] === '--skip-branches') {
+          console.log('Warning: --skip-branches is deprecated, use --skip-beta-reset instead');
+        }
+      } else if (argsWithoutCI[i] === '--force-beta-reset' || argsWithoutCI[i] === '-f') {
+        forceBetaReset = true;
       }
     }
 
@@ -155,10 +163,10 @@ async function main() {
       dryRun = /^[Yy]$/.test(dryRunInput);
     }
 
-    // Accept skip-branches as prompt if not already set
-    if (!skipBranches && !isCI && argsWithoutCI.length <= 1) {
-      const skipBranchesInput = await prompt('Skip branch creation? (y/N)', 'N');
-      skipBranches = /^[Yy]$/.test(skipBranchesInput);
+    // Accept skip-beta-reset as prompt if not already set
+    if (!skipBetaReset && !isCI && argsWithoutCI.length <= 1) {
+      const skipBetaResetInput = await prompt('Skip resetting release/beta to main? (y/N)', 'N');
+      skipBetaReset = /^[Yy]$/.test(skipBetaResetInput);
     }
 
     const branchName = `${major}.${String(minor).padStart(2, '0')}`;
@@ -170,35 +178,92 @@ async function main() {
     console.log(`Next version (input/dev bump): ${nextVersion}`);
     console.log(`Branch name: ${branchName}`);
     console.log(`Dry run: ${dryRun}`);
-    console.log(`Skip branches: ${skipBranches}`);
+    console.log(`Skip beta reset: ${skipBetaReset}`);
+    console.log(`Force beta reset: ${forceBetaReset}`);
     console.log(`Base branch: ${currentBranch}`);
 
     // Set the version to use for updates
     const versionToUse = nextVersion;
 
-    // 1. Branch logic (skip if --skip-branches flag is set)
+    // 1. Reset release/beta to main (skip if --skip-beta-reset flag is set)
     const devBranch = `version-${versionToUse}-to-main`;
 
-    if (!skipBranches) {
-      // Only create the release branch if not exists
-      execOrLog('git fetch origin main', dryRun);
-      
+    if (!skipBetaReset) {
+      console.log('Fetching origin/main and origin/release/beta...');
       try {
-        execSync(`git show-ref --verify --quiet refs/heads/origin/${branchName}`, { stdio: 'ignore' });
-        console.log(`Branch ${branchName} already exists remotely.`);
-        rl.close();
-        return;
+        execSync('git fetch origin main', { stdio: 'inherit' });
+        execSync('git fetch origin release/beta', { stdio: 'inherit' });
       } catch (error) {
-        // Branch doesn't exist, create it
-        execOrLog(`git checkout -b ${branchName} origin/main`, dryRun);
-        execOrLog(`git push origin ${branchName}`, dryRun);
-        console.log(`Created and pushed branch ${branchName} from main.`);
-        execOrLog('git checkout main', dryRun);
+        console.error('Error fetching remote branches');
+        process.exit(1);
+      }
+      
+      // Capture release/beta SHA for --force-with-lease
+      let releaseBetaSha;
+      try {
+        releaseBetaSha = execSync('git rev-parse origin/release/beta', { encoding: 'utf8' }).trim();
+        console.log(`release/beta is at ${releaseBetaSha}`);
+      } catch (error) {
+        console.error('Error getting release/beta SHA');
+        process.exit(1);
+      }
+
+      // Safety guard: check if release/beta has unique commits (patch-equivalence check)
+      console.log('Checking for unique commits on release/beta (cherry-pick equivalence)...');
+      let uniqueCommits;
+      try {
+        uniqueCommits = execSync('git log --cherry-pick --right-only --no-merges --format=\'%h %s\' origin/main...origin/release/beta', { encoding: 'utf8' }).trim();
+      } catch (error) {
+        console.error('Error checking commit diff between main and release/beta');
+        process.exit(1);
+      }
+
+      if (uniqueCommits) {
+        const commitCount = uniqueCommits.split('\n').length;
+        console.log(`Found ${commitCount} unique commit(s) on release/beta not in main:`);
+        console.log(uniqueCommits);
+        
+        if (forceBetaReset) {
+          console.log('WARNING: Proceeding with reset due to --force-beta-reset flag');
+        } else {
+          console.error('ERROR: release/beta has unique commits not in main. Cannot reset release/beta.');
+          console.error('Use --force-beta-reset to override this check (downgrades to warning).');
+          rl.close();
+          process.exit(1);
+        }
+      } else {
+        console.log('release/beta has no unique commits. Safe to reset.');
+      }
+
+      // Warn about open PRs targeting release/beta if gh is available
+      try {
+        execSync('command -v gh', { stdio: 'ignore' });
+        const openPRs = execSync('gh pr list --base release/beta --state open --json number,title --jq \'.[] | "#\\(.number): \\(.title)"\'', { encoding: 'utf8' }).trim();
+        if (openPRs) {
+          console.log('WARNING: The following open PRs target release/beta and will become stale after the reset:');
+          console.log(openPRs);
+        }
+      } catch (error) {
+        // gh not available or no open PRs, continue
+      }
+
+      // Reset release/beta to origin/main
+      const resetCommand = `git push --force-with-lease=release/beta:${releaseBetaSha} origin origin/main:refs/heads/release/beta`;
+      if (dryRun) {
+        console.log(`DRY RUN: ${resetCommand}`);
+      } else {
+        try {
+          execSync(resetCommand, { stdio: 'inherit' });
+          console.log('Successfully reset release/beta to main.');
+        } catch (error) {
+          console.error('Error resetting release/beta to main');
+          process.exit(1);
+        }
       }
       
       execOrLog(`git checkout -b ${devBranch} main`, dryRun);
     } else {
-      console.log('Skipping branch creation as requested.');
+      console.log('Skipping release/beta reset as requested.');
     }
 
     // Update elementor.php
@@ -249,7 +314,7 @@ async function main() {
     console.log(`Running npm run packages:version with version ${nextVersion}...`);
     execOrLog(`npm run packages:version ${nextVersion}`, dryRun);
 
-    if (skipBranches) {
+    if (skipBetaReset) {
       console.log('Version bump complete. All version files have been updated.');
       console.log('Done! Please review the changes and commit them.');
     } else {
