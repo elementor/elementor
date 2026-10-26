@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { FEATURE_LLMS_TXT } from '../analytics/agent-ready-events';
+import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-agent-ready-event';
 import { fetchLlmsFile, saveAgentReadySettings, saveLlmsContent } from '../api';
 import { LLMS_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
@@ -10,6 +12,7 @@ const getIncludedPostTypeNames = ( postTypes ) => postTypes
 
 export const useLlmsSettings = ( initialState ) => {
 	const { fileUrl, hasPhysicalFile } = initialState;
+	const unavailableReason = initialState.unavailableReason ?? null;
 
 	const [ isEnabled, setIsEnabled ] = useState( initialState.enabled );
 	const [ isManuallyEdited, setIsManuallyEdited ] = useState( initialState.isManuallyEdited );
@@ -56,14 +59,25 @@ export const useLlmsSettings = ( initialState ) => {
 			.finally( () => setIsSaving( false ) );
 	};
 
-	const toggleEnabled = () => saveSettings( ! isEnabled, postTypes );
+	const toggleEnabled = () => {
+		trackFeatureToggled( { featureName: FEATURE_LLMS_TXT, isEnabled: ! isEnabled, hasConflict: hasPhysicalFile } );
 
-	const togglePostType = ( name ) => saveSettings(
-		isEnabled,
-		postTypes.map( ( postType ) => (
+		return saveSettings( ! isEnabled, postTypes );
+	};
+
+	const togglePostType = ( name ) => {
+		const nextPostTypes = postTypes.map( ( postType ) => (
 			postType.name === name ? { ...postType, included: ! postType.included } : postType
-		) ),
-	);
+		) );
+
+		trackPostTypeToggled( {
+			featureName: FEATURE_LLMS_TXT,
+			postType: name,
+			isIncluded: nextPostTypes.find( ( postType ) => postType.name === name )?.included,
+		} );
+
+		return saveSettings( isEnabled, nextPostTypes );
+	};
 
 	const saveContent = ( nextContent ) => saveLlmsContent( nextContent ).then( () => {
 		setIsManuallyEdited( true );
@@ -73,7 +87,7 @@ export const useLlmsSettings = ( initialState ) => {
 	return {
 		content,
 		hasPhysicalFile,
-		isEnabled: isEnabled && ! hasPhysicalFile,
+		isEnabled: isEnabled && ! unavailableReason,
 		isManuallyEdited,
 		isSaving,
 		saveError,
@@ -82,5 +96,6 @@ export const useLlmsSettings = ( initialState ) => {
 		setIsEnabled,
 		toggleEnabled,
 		togglePostType,
+		unavailableReason,
 	};
 };

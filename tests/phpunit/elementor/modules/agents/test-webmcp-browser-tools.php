@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
@@ -35,18 +34,8 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 	private Webmcp_Browser_Tools $browser_tools;
 
-	private $original_experiment_default_state;
-
 	public function setUp(): void {
 		parent::setUp();
-
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
@@ -75,6 +64,7 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		$this->extractor = new Business_Info_Extractor( new Business_Schema_Parser( $sanitizer ) );
 
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 
 		$this->browser_tools = new Webmcp_Browser_Tools( $this->settings, $this->extractor, [
 			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $generator, $sanitizer ),
@@ -88,11 +78,6 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		$this->unregister_webmcp_abilities();
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
 
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_transient( Business_Info_Extractor::TRANSIENT );
@@ -328,17 +313,35 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 
 	public function test_register__warms_business_info_when_the_settings_option_is_first_created() {
 		// Arrange
-		delete_option( Agent_Ready_Settings::OPTION );
 		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
 		remove_all_actions( 'add_option_' . Agent_Ready_Settings::OPTION );
 		remove_all_actions( 'update_option_' . Agent_Ready_Settings::OPTION );
 		$this->browser_tools->register();
+		delete_option( Agent_Ready_Settings::OPTION );
+		wp_clear_scheduled_hook( Business_Info_Extractor::CRON_HOOK );
 
 		// Act
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 
 		// Assert
 		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+	}
+
+	public function test_register__warms_business_info_when_browser_tools_are_turned_on() {
+		// Arrange
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+		remove_all_actions( 'update_option_' . Agent_Ready_Settings::OPTION );
+		remove_all_actions( Business_Info_Extractor::CRON_HOOK );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BROWSER_TOOLS, 'enabled', false );
+		$this->browser_tools->register();
+
+		// Act
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BROWSER_TOOLS, 'enabled', true );
+
+		// Assert
+		$this->assertNotFalse( wp_next_scheduled( Business_Info_Extractor::CRON_HOOK ) );
+		$this->assertNotFalse( has_action( Business_Info_Extractor::CRON_HOOK, [ $this->extractor, 'refresh' ] ) );
 	}
 
 	public function test_register__clears_business_info_when_browser_tools_are_turned_off() {

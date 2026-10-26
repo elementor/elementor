@@ -75,11 +75,16 @@ jest.mock( '@elementor/ui/Divider', () => () => <hr /> );
 jest.mock( '@elementor/ui/IconButton', () => ( { children, onClick } ) => (
 	<button type="button" onClick={ onClick }>{ children }</button>
 ) );
-jest.mock( '@elementor/ui/Infotip', () => ( { children } ) => children );
+jest.mock( '@elementor/ui/Infotip', () => ( { children, content } ) => (
+	<span data-testid="infotip">
+		{ children }
+		<span data-testid="infotip-content">{ content }</span>
+	</span>
+) );
 jest.mock( '@elementor/ui/Tooltip', () => ( { children } ) => children );
 jest.mock( '@elementor/ui/Stack', () => ( { children } ) => <div>{ children }</div> );
 jest.mock( '@elementor/ui/Switch', () => ( { checked, disabled, onChange, onClick, inputProps } ) => (
-	<input type="checkbox" role="switch" checked={ checked } disabled={ disabled } onChange={ onChange } onClick={ onClick } aria-label={ inputProps?.[ 'aria-label' ] } />
+	<input type="checkbox" role="switch" checked={ checked } disabled={ disabled } onChange={ onChange } onClick={ onClick } aria-label={ inputProps?.[ 'aria-label' ] } aria-describedby={ inputProps?.[ 'aria-describedby' ] } />
 ) );
 jest.mock( '@elementor/ui/SvgIcon', () => ( { children } ) => <svg>{ children }</svg> );
 jest.mock( '@elementor/ui/Typography', () => ( { children } ) => <span>{ children }</span> );
@@ -127,11 +132,26 @@ const browserToolsConfig = {
 	],
 };
 
+const PHYSICAL_LLMS_REASON = { code: 'physical_file', message: 'A physical llms.txt file already exists on your server.' };
+const SEO_PLUGIN_REASON = { code: 'seo_plugin', message: 'Yoast SEO already generates llms.txt.' };
+const PHYSICAL_ROBOTS_REASON = { code: 'physical_robots_txt', message: 'A physical robots.txt file already exists on your server.' };
+const ABILITIES_API_REASON = { code: 'abilities_api_missing', message: 'Agent browser tools need the WordPress Abilities API.' };
+
 const BOT_ACCESS_SWITCH_INDEX = 3;
 const AGENT_DISCOVERY_SWITCH_INDEX = 4;
 const BROWSER_TOOLS_SWITCH_INDEX = 5;
 
 const getModuleSwitch = ( index ) => screen.getAllByRole( 'switch' )[ index ];
+
+const expectSwitchReason = ( moduleSwitch, reason ) => {
+	const infotip = moduleSwitch.closest( '[data-testid="infotip"]' );
+	const describedBy = moduleSwitch.getAttribute( 'aria-describedby' );
+
+	expect( infotip ).toBeTruthy();
+	expect( within( infotip.querySelector( ':scope > [data-testid="infotip-content"]' ) ).getByText( reason ) ).toBeTruthy();
+	expect( describedBy ).toBeTruthy();
+	expect( document.getElementById( describedBy ).textContent ).toBe( reason );
+};
 
 const clickTurnOff = () => fireEvent.click( screen.getByRole( 'button', { name: 'Turn off' } ) );
 
@@ -139,7 +159,7 @@ const confirmTurnOff = () => fireEvent.click( within( screen.getByRole( 'dialog'
 
 const renderActiveApp = ( overrides = {} ) => render(
 	<App
-		isExperimentActive={ true }
+		isActivated
 		agentDiscoveryConfig={ agentDiscoveryConfig }
 		botAccessConfig={ botAccessConfig }
 		llmsConfig={ llmsConfig }
@@ -154,9 +174,9 @@ describe( 'Agents Ready App', () => {
 		activateAgentsReady.mockReset();
 	} );
 
-	it( 'renders the welcome activate action when the experiment is inactive', () => {
+	it( 'renders the welcome activate action and no module toggles before activation', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ false } /> );
+		render( <App isActivated={ false } /> );
 
 		// Assert
 		expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeTruthy();
@@ -165,15 +185,15 @@ describe( 'Agents Ready App', () => {
 
 	it( 'uses the Argon theme palette', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ false } /> );
+		renderActiveApp();
 
 		// Assert
 		expect( screen.getByTestId( 'theme-provider' ).getAttribute( 'data-palette' ) ).toBe( 'argon-beta' );
 	} );
 
-	it( 'renders the five module accordions when the experiment is active', () => {
+	it( 'renders the five module accordions', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		renderActiveApp();
 
 		// Assert
 		expect( screen.getByText( 'LLMs.txt' ) ).toBeTruthy();
@@ -188,7 +208,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'updates the active count and persists the setting when LLMs.txt is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Act
 		fireEvent.click( getModuleSwitch( 0 ) );
@@ -206,7 +226,7 @@ describe( 'Agents Ready App', () => {
 	it( 'rolls back the LLMs.txt toggle and shows an alert when saving fails', async () => {
 		// Arrange
 		saveAgentReadySettings.mockRejectedValueOnce( null );
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Act
 		fireEvent.click( getModuleSwitch( 0 ) );
@@ -225,7 +245,7 @@ describe( 'Agents Ready App', () => {
 		saveAgentReadySettings.mockImplementationOnce( () => new Promise( ( resolve ) => {
 			resolveSave = resolve;
 		} ) );
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Act
 		fireEvent.click( getModuleSwitch( 0 ) );
@@ -240,20 +260,44 @@ describe( 'Agents Ready App', () => {
 		} );
 	} );
 
-	it( 'locks the LLMs.txt switch off when a physical file exists', () => {
+	it( 'locks the LLMs.txt switch off and explains why when a physical file exists', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true } } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ { ...llmsConfig, hasPhysicalFile: true, unavailableReason: PHYSICAL_LLMS_REASON } } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Assert
 		const llmsSwitch = getModuleSwitch( 0 );
 		expect( llmsSwitch.checked ).toBe( false );
 		expect( llmsSwitch.disabled ).toBe( true );
+		expectSwitchReason( llmsSwitch, PHYSICAL_LLMS_REASON.message );
 		expect( screen.getByText( '4/5' ) ).toBeTruthy();
+	} );
+
+	it( 'locks the LLMs.txt switch off and explains why when an SEO plugin owns llms.txt', () => {
+		// Arrange & Act
+		renderActiveApp( { llmsConfig: { ...llmsConfig, hasPhysicalFile: false, unavailableReason: SEO_PLUGIN_REASON } } );
+
+		// Assert
+		const llmsSwitch = getModuleSwitch( 0 );
+		expect( llmsSwitch.checked ).toBe( false );
+		expect( llmsSwitch.disabled ).toBe( true );
+		expectSwitchReason( llmsSwitch, SEO_PLUGIN_REASON.message );
+		expect( screen.getByText( '4/5' ) ).toBeTruthy();
+	} );
+
+	it( 'leaves available module switches without a reason', () => {
+		// Arrange & Act
+		renderActiveApp();
+
+		// Assert
+		const llmsSwitch = getModuleSwitch( 0 );
+		expect( llmsSwitch.disabled ).toBe( false );
+		expect( llmsSwitch.getAttribute( 'aria-describedby' ) ).toBeNull();
+		expect( llmsSwitch.closest( '[data-testid="infotip"]' ) ).toBeNull();
 	} );
 
 	it( 'persists the bot access setting when its module is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Act
 		fireEvent.click( getModuleSwitch( BOT_ACCESS_SWITCH_INDEX ) );
@@ -273,7 +317,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'persists the agent discovery setting when its module is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Act
 		fireEvent.click( getModuleSwitch( AGENT_DISCOVERY_SWITCH_INDEX ) );
@@ -290,7 +334,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'persists the browser tools setting when its module is toggled off', async () => {
 		// Arrange
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Act
 		fireEvent.click( getModuleSwitch( BROWSER_TOOLS_SWITCH_INDEX ) );
@@ -305,25 +349,27 @@ describe( 'Agents Ready App', () => {
 		} );
 	} );
 
-	it( 'excludes unavailable browser tools from the total and locks its switch', () => {
+	it( 'excludes unavailable browser tools from the total, locks its switch and explains why', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ { ...browserToolsConfig, isAvailable: false } } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ { ...browserToolsConfig, isAvailable: false, unavailableReason: ABILITIES_API_REASON } } /> );
 
 		// Assert
 		const browserToolsSwitch = getModuleSwitch( BROWSER_TOOLS_SWITCH_INDEX );
 		expect( browserToolsSwitch.checked ).toBe( false );
 		expect( browserToolsSwitch.disabled ).toBe( true );
+		expectSwitchReason( browserToolsSwitch, ABILITIES_API_REASON.message );
 		expect( screen.getByText( '4/4' ) ).toBeTruthy();
 	} );
 
-	it( 'locks the bot access switch off when a physical robots.txt exists', () => {
+	it( 'locks the bot access switch off and explains why when a physical robots.txt exists', () => {
 		// Arrange & Act
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ { ...botAccessConfig, hasPhysicalFile: true } } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ { ...botAccessConfig, hasPhysicalFile: true, unavailableReason: PHYSICAL_ROBOTS_REASON } } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Assert
 		const botAccessSwitch = getModuleSwitch( BOT_ACCESS_SWITCH_INDEX );
 		expect( botAccessSwitch.checked ).toBe( false );
 		expect( botAccessSwitch.disabled ).toBe( true );
+		expectSwitchReason( botAccessSwitch, PHYSICAL_ROBOTS_REASON.message );
 		expect( screen.getByText( '4/5' ) ).toBeTruthy();
 	} );
 
@@ -424,7 +470,10 @@ describe( 'Agents Ready App', () => {
 	it( 'leaves modules that cannot be toggled out of the bulk save', async () => {
 		// Arrange
 		saveAgentReadySettings.mockClear();
-		renderActiveApp( { llmsConfig: { ...llmsConfig, hasPhysicalFile: true }, browserToolsConfig: { ...browserToolsConfig, isAvailable: false } } );
+		renderActiveApp( {
+			llmsConfig: { ...llmsConfig, unavailableReason: SEO_PLUGIN_REASON },
+			browserToolsConfig: { ...browserToolsConfig, isAvailable: false, unavailableReason: ABILITIES_API_REASON },
+		} );
 		clickTurnOff();
 
 		// Act
@@ -483,7 +532,7 @@ describe( 'Agents Ready App', () => {
 
 	it( 'opens the first module by default and restores its description when collapsed', () => {
 		// Arrange
-		render( <App isExperimentActive={ true } agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
+		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Assert - the first module starts open; the rest stay collapsed
 		expect( screen.queryByText( 'Guide AI agents through your site' ) ).toBeNull();

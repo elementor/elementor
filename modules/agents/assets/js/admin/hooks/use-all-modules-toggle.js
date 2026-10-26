@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { FEATURE_MASTER } from '../analytics/agent-ready-events';
+import { trackFeatureToggled } from '../analytics/track-agent-ready-event';
 import { saveAgentReadySettings } from '../api';
 import { getSaveErrorMessage } from './get-save-error-message';
 
@@ -15,6 +17,11 @@ export const useAllModulesToggle = ( modules ) => {
 		const nextIsEnabled = ! isAnyEnabled;
 		const previousStates = toggleableModules.map( ( module ) => [ module, module.settings.isEnabled ] );
 
+		trackFeatureToggled( {
+			featureName: FEATURE_MASTER,
+			isEnabled: nextIsEnabled,
+			hasConflict: modules.some( ( module ) => module.settings.hasPhysicalFile ),
+		} );
 		setSaveError( '' );
 		setIsSaving( true );
 		toggleableModules.forEach( ( module ) => module.settings.setIsEnabled( nextIsEnabled ) );
