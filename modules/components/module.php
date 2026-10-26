@@ -126,14 +126,23 @@ class Module extends BaseModule {
 	 * Kept as a static helper on the module so both `import-export-customization` and legacy
 	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
 	 */
-	public static function prepare_imported_elements( array $elements, array $post_ids_map ): array {
+	public static function prepare_imported_elements( array $elements, array $component_ids_map ): array {
 		if ( ! self::is_import_export_supported() ) {
 			return Strip_Component_Instances::apply( $elements );
 		}
 
-		$elements = Remap_Component_Instance_Ids::apply( $elements, $post_ids_map );
+		$elements = Remap_Component_Instance_Ids::apply( $elements, $component_ids_map );
 
-		return Strip_Component_Instances::apply( $elements, array_values( $post_ids_map ) );
+		return Strip_Component_Instances::apply( $elements, array_values( $component_ids_map ) );
+	}
+
+	/**
+	 * Old → new ids of the components imported in the current session. Must stay separate from the
+	 * generic `post_ids` map: a component that failed to import keeps its source id, which can collide
+	 * with the new id of an unrelated imported post and survive stripping as a dangling instance.
+	 */
+	public static function map_old_new_component_ids( array $imported_data ): array {
+		return $imported_data['content'][ Component_Document::TYPE ]['succeed'] ?? [];
 	}
 
 	/**

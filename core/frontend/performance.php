@@ -18,14 +18,21 @@ class Performance {
 	}
 
 	public static function should_optimize_controls() {
-		if ( null === static::$is_frontend ) {
-			static::$is_frontend = (
-				! is_admin()
-				&& ! Plugin::$instance->preview->is_preview_mode()
-				&& ! defined( 'REST_REQUEST' )
-			);
+		if ( null !== static::$is_frontend ) {
+			return static::$is_frontend;
 		}
 
-		return static::$is_frontend;
+		$is_frontend = (
+			! is_admin()
+			&& ! Plugin::$instance->preview->is_preview_mode()
+			&& ! defined( 'REST_REQUEST' )
+		);
+
+		// REST_REQUEST is defined only on `parse_request`; caching earlier locks REST requests into frontend mode.
+		if ( ! $is_frontend || did_action( 'parse_request' ) ) {
+			static::$is_frontend = $is_frontend;
+		}
+
+		return $is_frontend;
 	}
 }

@@ -55,10 +55,15 @@ class Remap_Component_Instance_Ids {
 
 		$destination_id = (int) $post_ids_map[ (int) $source_id ];
 		$settings = Component_Instance_Prop_Type::set_component_id( $settings, $destination_id );
-		$settings['component_instance']['value']['overrides']['value'] = self::remap_override_schema_source_ids(
-			$settings['component_instance']['value']['overrides']['value'] ?? [],
-			$destination_id
-		);
+
+		$overrides = $settings['component_instance']['value']['overrides']['value'] ?? null;
+
+		if ( is_array( $overrides ) ) {
+			$settings['component_instance']['value']['overrides']['value'] = self::remap_override_schema_source_ids(
+				$overrides,
+				$destination_id
+			);
+		}
 
 		return $settings;
 	}

@@ -9,6 +9,7 @@ use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
+use Elementor\Modules\Components\Utils\Remap_Component_Media;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,6 +56,18 @@ class Component_Instance extends Atomic_Widget_Base {
 
 	protected function define_atomic_controls(): array {
 		return [];
+	}
+
+	public function on_export( $element_data ) {
+		$element_data['settings'] = Remap_Component_Media::for_export( $element_data['settings'] ?? [] );
+
+		return $element_data;
+	}
+
+	public function on_import( $element_data ) {
+		$element_data['settings'] = Remap_Component_Media::for_import( $element_data['settings'] ?? [] );
+
+		return $element_data;
 	}
 
 	protected function get_templates(): array {

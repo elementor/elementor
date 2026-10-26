@@ -631,6 +631,13 @@ class Test_Import extends Elementor_Test_Base {
 			],
 			$replacements['post_ids']
 		);
+		$this->assertSame(
+			[
+				33 => 333,
+				44 => 444,
+			],
+			$replacements['component_ids']
+		);
 		$this->assertSame( [], $replacements['term_ids'] );
 	}
 

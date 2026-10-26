@@ -5,18 +5,22 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\Components\Components_REST_API;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\ImportExport\Imported_Components_Registry;
 use Elementor\Modules\Components\ImportExport\ImportStrategies\Import_Strategy_Factory;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Utils\Regenerate_Element_Ids;
+use Elementor\Modules\Components\Utils\Remap_Component_Media;
+use Elementor\Modules\Components\Utils\Remap_Overridable_Props_Component_Ids;
 use Elementor\Modules\Components\Utils\Remap_Overridable_Props_Element_Ids;
+use Elementor\Modules\Components\Utils\Remap_Overridable_Props_Origin_Element_Ids;
 use Elementor\Modules\Components\Utils\Remap_Variants_Element_Ids;
 use Elementor\Modules\Components\Variants\Component_Variants;
 use Elementor\Modules\Components\Variants\Component_Variants_Parser;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -30,6 +34,7 @@ class Component extends Document {
 	const ARCHIVED_META_KEY = '_elementor_component_is_archived';
 	const ARCHIVED_AT_META_KEY = '_elementor_component_archived_at';
 	const EXPORT_SETTINGS_UID_KEY = 'uid';
+	const EXPORT_SETTINGS_SOURCE_ID_KEY = 'source_id';
 	const EXPORT_DEPENDENCIES_FILE_PATH = 'content/' . self::TYPE . '/dependencies';
 	const COMPONENT_CUSTOM_META_KEYS = [
 		self::COMPONENT_UID_META_KEY,
@@ -166,13 +171,7 @@ class Component extends Document {
 	}
 
 	public function get_export_data() {
-		$id_map = [];
-		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function ( $element_data ) use ( &$id_map ) {
-			$new_id = Utils::generate_random_string();
-			$id_map[ $element_data['id'] ] = $new_id;
-			$element_data['id'] = $new_id;
-
-			$element_data = apply_filters( 'elementor/document/element/replace_id', $element_data );
+		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function ( $element_data ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( ! $element ) {
@@ -184,20 +183,18 @@ class Component extends Document {
 
 		$settings = $this->get_data( 'settings' );
 		$settings[ self::EXPORT_SETTINGS_UID_KEY ] = $this->get_component_uid();
-		$settings['overridable_props'] = Remap_Overridable_Props_Element_Ids::apply(
-			$this->get_overridable_props()->to_associative_array(),
-			$id_map
-		);
+		$settings[ self::EXPORT_SETTINGS_SOURCE_ID_KEY ] = $this->get_main_id();
+		$settings['overridable_props'] = $this->get_overridable_props()->to_associative_array();
 
 		$variants = $this->get_variants()->to_associative_array();
 
 		if ( Components_Module::is_variants_experiment_active() || ! empty( $variants['variants'] ) ) {
-			$settings['variants'] = Remap_Variants_Element_Ids::apply( $variants, $id_map );
+			$settings['variants'] = $variants;
 		}
 
 		return [
-			'content' => $content,
-			'settings' => $settings,
+			'content' => Remap_Component_Media::for_export( $content ),
+			'settings' => Remap_Component_Media::for_export( $settings ),
 			'metadata' => $this->get_export_metadata(),
 		];
 	}
@@ -211,7 +208,16 @@ class Component extends Document {
 			'title' => $this->get_post()->post_title,
 		];
 
-		unset( $data['settings'][ self::EXPORT_SETTINGS_UID_KEY ] );
+		$source_id = (int) ( $data['settings'][ self::EXPORT_SETTINGS_SOURCE_ID_KEY ] ?? 0 );
+
+		unset(
+			$data['settings'][ self::EXPORT_SETTINGS_UID_KEY ],
+			$data['settings'][ self::EXPORT_SETTINGS_SOURCE_ID_KEY ]
+		);
+
+		$data['content'] = Remap_Component_Media::for_import( $data['content'] ?? [] );
+		$data['settings'] = Remap_Component_Media::for_import( $data['settings'] ?? [] );
+		$data = $this->regenerate_imported_element_ids( $data, $source_id );
 
 		parent::import( $data );
 
@@ -222,6 +228,47 @@ class Component extends Document {
 		if ( $resolution->get_title() !== $record['title'] ) {
 			$this->update_title( $resolution->get_title() );
 		}
+	}
+
+	public function on_import_update_settings( array $settings, array $config ): array {
+		$settings = parent::on_import_update_settings( $settings, $config );
+
+		if ( isset( $settings['overridable_props'] ) && is_array( $settings['overridable_props'] ) ) {
+			$settings['overridable_props'] = Remap_Overridable_Props_Component_Ids::apply(
+				$settings['overridable_props'],
+				$config['component_ids'] ?? []
+			);
+		}
+
+		return $settings;
+	}
+
+	private function regenerate_imported_element_ids( array $data, int $source_id ): array {
+		$regenerated = Regenerate_Element_Ids::apply( $data['content'] ?? [] );
+		$id_map = $regenerated['id_map'];
+
+		$data['content'] = $regenerated['elements'];
+
+		if ( isset( $data['settings']['overridable_props'] ) && is_array( $data['settings']['overridable_props'] ) ) {
+			$overridable_props = Remap_Overridable_Props_Element_Ids::apply( $data['settings']['overridable_props'], $id_map );
+
+			$data['settings']['overridable_props'] = Remap_Overridable_Props_Origin_Element_Ids::apply(
+				$overridable_props,
+				$data['content'],
+				Imported_Components_Registry::get_overridable_props(),
+				Imported_Components_Registry::get_element_id_maps()
+			);
+		}
+
+		if ( isset( $data['settings']['variants'] ) && is_array( $data['settings']['variants'] ) ) {
+			$data['settings']['variants'] = Remap_Variants_Element_Ids::apply( $data['settings']['variants'], $id_map );
+		}
+
+		if ( $source_id ) {
+			Imported_Components_Registry::add( $source_id, $id_map, $data['settings']['overridable_props'] ?? [] );
+		}
+
+		return $data;
 	}
 
 	private function update_post_field( string $field, $value ): bool {
