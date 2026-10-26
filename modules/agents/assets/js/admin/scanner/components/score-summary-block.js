@@ -1,14 +1,11 @@
-import { useState } from 'react';
-import { ExternalLinkIcon, InfoCircleIcon } from '@elementor/icons';
-import Box from '@elementor/ui/Box';
+import { ExternalLinkIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
-import CloseButton from '@elementor/ui/CloseButton';
-import Infotip from '@elementor/ui/Infotip';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { ScoreStandardInfotip } from '../../components/score-standard-infotip';
 import { SCANNER_LAYOUT } from '../scanner-constants';
 import { RESCAN_LAYOUT_SCORE_ROW, RescanControl, useNextScanLabel } from './rescan-control';
 import { ScoreRing } from './score-ring';
@@ -25,54 +22,6 @@ const PLAIN_BLOCK_GAP = '32px';
 const BANNER_BLOCK_EXTRA_BOTTOM_SPACE = `${ SCANNER_LAYOUT.summaryBlockBottomSpace - SCANNER_LAYOUT.pageGap }px`;
 const SCORE_TEXT_GAP = '32px';
 const METADATA_ROW_GAP = 1;
-const CHECKED_AT_INFOTIP_WIDTH = 320;
-const CHECKED_AT_TOOLTIP = __( 'Based on current checks (v3.4). Not a final grade — the standard is still forming.', 'elementor' );
-
-const CheckedAtInfotip = () => {
-	const [ isOpen, setIsOpen ] = useState( false );
-
-	const open = () => setIsOpen( true );
-	const close = () => setIsOpen( false );
-
-	return (
-		<Infotip
-			arrow
-			open={ isOpen }
-			placement="right"
-			disableHoverListener
-			disableFocusListener
-			content={ (
-				<Box position="relative" width={ CHECKED_AT_INFOTIP_WIDTH } boxSizing="border-box" p={ 2 }>
-					<CloseButton
-						aria-label={ __( 'Close', 'elementor' ) }
-						onClick={ close }
-						sx={ { position: 'absolute', top: 1, right: 1 } }
-						slotProps={ { icon: { fontSize: 'tiny' } } }
-					/>
-					<Typography variant="body2" color="text.primary" pr={ 3 }>
-						{ CHECKED_AT_TOOLTIP }
-					</Typography>
-				</Box>
-			) }
-			slotProps={ {
-				popper: {
-					onMouseEnter: open,
-					onMouseLeave: close,
-				},
-			} }
-		>
-			<Box
-				component="span"
-				display="inline-flex"
-				alignItems="center"
-				onMouseEnter={ open }
-				onMouseLeave={ close }
-			>
-				<InfoCircleIcon fontSize="small" color="action" />
-			</Box>
-		</Infotip>
-	);
-};
 
 const getScoreCopy = ( score ) => {
 	if ( 'number' !== typeof score ) {
@@ -197,7 +146,7 @@ export const ScoreRow = ( {
 						<Typography variant="caption" color="text.tertiary">
 							{ `${ siteDomain } · ${ checkedAt }` }
 						</Typography>
-						<CheckedAtInfotip />
+						<ScoreStandardInfotip />
 					</Stack>
 				) }
 				{ isActivated && (

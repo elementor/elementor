@@ -161,7 +161,9 @@ class Atomic_Form extends Atomic_Element_Base {
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
 
-		if ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
+		if ( ! self::is_agents_exposure_allowed() ) {
+			unset( $props['webmcp-autosubmit'] );
+		} elseif ( Atomic_Widgets_Module::is_form_webmcp_active() ) {
 			$webmcp_dependencies = Dependency_Manager::make()
 				->where( [
 					'operator' => 'eq',
@@ -184,6 +186,13 @@ class Atomic_Form extends Atomic_Element_Base {
 		}
 
 		return $props;
+	}
+
+	private static function is_agents_exposure_allowed(): bool {
+		$agents_module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		return ! Atomic_Widgets_Module::is_form_webmcp_active()
+			|| ( $agents_module && $agents_module->is_browser_tools_module_active() );
 	}
 
 	protected function define_atomic_controls(): array {
@@ -286,10 +295,12 @@ class Atomic_Form extends Atomic_Element_Base {
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
-			Section::make()
-				->set_label( __( 'AI agents', 'elementor' ) )
-				->set_id( 'agents' )
-				->set_items( $this->get_agents_controls() ),
+			...( self::is_agents_exposure_allowed() ? [
+				Section::make()
+					->set_label( __( 'AI agents', 'elementor' ) )
+					->set_id( 'agents' )
+					->set_items( $this->get_agents_controls() ),
+			] : [] ),
 		];
 	}
 
@@ -510,7 +521,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function is_webmcp_exposed(): bool {
-		return false !== ( $this->get_atomic_settings()[ self::WEBMCP_EXPOSE ] ?? true );
+		return self::is_agents_exposure_allowed() && false !== ( $this->get_atomic_settings()[ self::WEBMCP_EXPOSE ] ?? true );
 	}
 
 	protected function define_render_context(): array {
