@@ -176,3 +176,63 @@ jobs:
 
           echo "PR created successfully for $DEV_BRANCH"
 
+      - name: Announce beta branch-out to Slack
+        if: success() && github.event.inputs.dry_run != 'true' && steps.run-script.outputs.beta_reset == 'true'
+        continue-on-error: true
+        env:
+          SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
+          BETA_VERSION: ${{ steps.run-script.outputs.beta_version }}
+          MAIN_VERSION: ${{ steps.calculate.outputs.next_version }}
+        run: |
+          # Exit gracefully if webhook URL is not configured
+          if [ -z "$SLACK_BRANCH_OUT_WEBHOOK_URL" ]; then
+            echo "Notice: SLACK_BRANCH_OUT_WEBHOOK_URL secret is not set. Skipping Slack notification."
+            exit 0
+          fi
+
+          # Extract major.minor from versions
+          BETA_VERSION_SHORT=$(echo "$BETA_VERSION" | grep -oE '^[0-9]+\.[0-9]+' || echo "")
+          MAIN_VERSION_SHORT=$(echo "$MAIN_VERSION" | grep -oE '^[0-9]+\.[0-9]+' || echo "")
+
+          # Validate versions
+          if [[ ! "$BETA_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "Warning: Invalid BETA_VERSION format: $BETA_VERSION. Skipping Slack notification."
+            exit 0
+          fi
+
+          if [[ ! "$MAIN_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
+            echo "Warning: Invalid MAIN_VERSION format: $MAIN_VERSION. Skipping Slack notification."
+            exit 0
+          fi
+
+          # Compute stable version (major.minor-1)
+          BETA_MAJOR=$(echo "$BETA_VERSION_SHORT" | cut -d. -f1)
+          BETA_MINOR=$(echo "$BETA_VERSION_SHORT" | cut -d. -f2)
+          
+          if [ "$BETA_MINOR" -eq 0 ]; then
+            echo "Warning: BETA_MINOR is 0, cannot derive STABLE_VERSION. Skipping Slack notification."
+            exit 0
+          fi
+
+          STABLE_MINOR=$((BETA_MINOR - 1))
+          STABLE_VERSION="${BETA_MAJOR}.${STABLE_MINOR}"
+
+          # Build Slack message
+          TEXT="<!channel> :rocket: Beta branch-out is complete!
+
+          Repo: https://github.com/elementor/elementor/
+
+          :package: Version mapping:
+          :large_green_circle: release/stable → ${STABLE_VERSION}
+          :large_yellow_circle: release/beta → ${BETA_VERSION_SHORT}
+          :large_blue_circle: main → ${MAIN_VERSION_SHORT}
+
+          From now on, fixes meant for the ${BETA_VERSION_SHORT} beta need a cherry-pick to release/beta. Everything else lands on main for ${MAIN_VERSION_SHORT}."
+
+          # Build JSON payload with jq
+          PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
+
+          # Post to Slack
+          curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_BRANCH_OUT_WEBHOOK_URL"
+          echo "Slack notification sent successfully."
+
