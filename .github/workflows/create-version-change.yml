@@ -188,13 +188,13 @@ jobs:
         run: |
           # Exit gracefully if webhook URL is not configured
           if [ -z "$SLACK_BRANCH_OUT_WEBHOOK_URL" ]; then
-            echo "Notice: SLACK_BRANCH_OUT_WEBHOOK_URL secret is not set. Skipping Slack notification."
+            echo "::warning::SLACK_BRANCH_OUT_WEBHOOK_URL secret is not set. Skipping Slack notification."
             exit 0
           fi
 
           # Validate webhook URL
           if [[ ! "$SLACK_BRANCH_OUT_WEBHOOK_URL" =~ ^https://hooks\.slack\.com/services/[A-Za-z0-9/_-]+$ ]]; then
-            echo "Warning: SLACK_BRANCH_OUT_WEBHOOK_URL must match https://hooks.slack.com/services/[A-Za-z0-9/_-]+. Skipping Slack notification."
+            echo "::warning::SLACK_BRANCH_OUT_WEBHOOK_URL must match https://hooks.slack.com/services/[A-Za-z0-9/_-]+. Skipping Slack notification."
             exit 0
           fi
 
@@ -204,12 +204,12 @@ jobs:
 
           # Validate versions
           if [[ ! "$BETA_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            echo "Warning: Invalid BETA_VERSION format: $BETA_VERSION. Skipping Slack notification."
+            echo "::warning::Invalid BETA_VERSION format: $BETA_VERSION. Skipping Slack notification."
             exit 0
           fi
 
           if [[ ! "$MAIN_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            echo "Warning: Invalid MAIN_VERSION format: $MAIN_VERSION. Skipping Slack notification."
+            echo "::warning::Invalid MAIN_VERSION format: $MAIN_VERSION. Skipping Slack notification."
             exit 0
           fi
 
@@ -218,7 +218,7 @@ jobs:
           BETA_MINOR=$(echo "$BETA_VERSION_SHORT" | cut -d. -f2)
           
           if [ "$BETA_MINOR" -eq 0 ]; then
-            echo "Warning: BETA_MINOR is 0, cannot derive STABLE_VERSION. Skipping Slack notification."
+            echo "::warning::BETA_MINOR is 0, cannot derive STABLE_VERSION. Skipping Slack notification."
             exit 0
           fi
 
