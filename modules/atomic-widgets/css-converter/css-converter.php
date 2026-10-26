@@ -373,15 +373,15 @@ class Css_Converter {
 	}
 
 	/**
-	 * Naive top-level split on ';' (breaks on values containing ';'); acceptable for clean
-	 * LLM input. Splits each declaration on the first ':' so values keep colons (e.g. url()).
+	 * Splits the input into declarations (see split_declarations()), then splits each declaration
+	 * on the first ':' so values keep colons (e.g. url()).
 	 *
 	 * @return array<int, array{property: string, value: string}>
 	 */
 	private function parse( string $css ): array {
 		$rules = [];
 
-		foreach ( explode( ';', $css ) as $declaration ) {
+		foreach ( $this->split_declarations( $css ) as $declaration ) {
 			$declaration = trim( $declaration );
 
 			$separator = strpos( $declaration, ':' );
