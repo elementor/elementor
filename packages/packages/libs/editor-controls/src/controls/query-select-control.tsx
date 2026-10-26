@@ -17,12 +17,13 @@ type QuerySelectControlProps = {
 	};
 	placeholder?: string;
 	minInputLength?: number;
+	ariaLabel?: string;
 };
 
 const SIZE = 'tiny';
 
 export const QuerySelectControl = createControl( ( props: QuerySelectControlProps ) => {
-	const { queryOptions, placeholder, minInputLength = 0 } = props;
+	const { queryOptions, placeholder, minInputLength = 0, ariaLabel } = props;
 	const { value, setValue, disabled } = useBoundProp( queryPropTypeUtil );
 
 	const selectedOption = useMemo( () => extractFlatOptionFromQueryValue( value ), [ value ] );
@@ -53,6 +54,11 @@ export const QuerySelectControl = createControl( ( props: QuerySelectControlProp
 	};
 
 	const handleInputChange = ( _: SyntheticEvent, term: string, reason: string ) => {
+		if ( 'reset' === reason || 'clear' === reason ) {
+			updateOptions( null );
+			return;
+		}
+
 		if ( 'input' !== reason ) {
 			return;
 		}
@@ -75,7 +81,14 @@ export const QuerySelectControl = createControl( ( props: QuerySelectControlProp
 				isOptionEqualToValue={ ( option, val ) => option.id === val.id }
 				filterOptions={ ( opts ) => opts }
 				renderInput={ ( params ) => (
-					<TextField { ...params } placeholder={ placeholder ?? __( 'Search', 'elementor' ) } />
+					<TextField
+						{ ...params }
+						placeholder={ placeholder ?? __( 'Search', 'elementor' ) }
+						inputProps={ {
+							...params.inputProps,
+							...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
+						} }
+					/>
 				) }
 			/>
 		</ControlActions>

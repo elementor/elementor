@@ -110,6 +110,28 @@ describe( 'QuerySelectControl', () => {
 		expect( screen.getByRole( 'combobox' ) ).toHaveValue( 'Old popup' );
 	} );
 
+	it( 'displays a previously-saved query value that is absent from the fetched options', () => {
+		// Arrange.
+		const value = makeQueryValue( 12, 'Saved popup' );
+
+		mockBoundValue( value );
+		mockUseQueryAutocomplete.mockReturnValue( {
+			options: [ { id: '34', label: 'Thank you' } ],
+			updateOptions: jest.fn(),
+		} );
+
+		// Act.
+		renderControl( <QuerySelectControl queryOptions={ queryOptions } />, {
+			setValue,
+			value,
+			bind: 'popup-id',
+			propType,
+		} );
+
+		// Assert.
+		expect( screen.getByRole( 'combobox' ) ).toHaveValue( 'Saved popup' );
+	} );
+
 	it( 'searches only when the user types', () => {
 		// Arrange.
 		const updateOptions = jest.fn();
@@ -128,5 +150,90 @@ describe( 'QuerySelectControl', () => {
 
 		// Assert.
 		expect( updateOptions ).toHaveBeenCalledWith( 'news' );
+	} );
+
+	it( 'resets options after selecting so reopening shows the full list', () => {
+		// Arrange.
+		const updateOptions = jest.fn();
+
+		mockUseQueryAutocomplete.mockReturnValue( {
+			options: [
+				{ id: '12', label: 'Newsletter' },
+				{ id: '34', label: 'Thank you' },
+			],
+			updateOptions,
+		} );
+
+		renderControl( <QuerySelectControl queryOptions={ queryOptions } />, {
+			setValue,
+			value: null,
+			bind: 'popup-id',
+			propType,
+		} );
+
+		// Act – open and select an item (triggers onInputChange with reason 'reset').
+		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
+		fireEvent.click( within( screen.getByRole( 'listbox' ) ).getByText( 'Newsletter' ) );
+
+		// Assert.
+		expect( updateOptions ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'clears the value when the clear button is clicked', () => {
+		// Arrange.
+		const value = makeQueryValue( 12, 'Newsletter' );
+
+		mockBoundValue( value );
+
+		// Act.
+		renderControl( <QuerySelectControl queryOptions={ queryOptions } />, {
+			setValue,
+			value,
+			bind: 'popup-id',
+			propType,
+		} );
+
+		fireEvent.click( screen.getByTitle( 'Clear' ) );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'disables the combobox when the bound prop is disabled', () => {
+		// Arrange.
+		mockUseBoundProp.mockReturnValue( {
+			value: null,
+			setValue,
+			disabled: true,
+			propType,
+			bind: 'popup-id',
+			path: [],
+			resetValue: jest.fn(),
+			restoreValue: jest.fn(),
+		} );
+
+		// Act.
+		renderControl( <QuerySelectControl queryOptions={ queryOptions } />, {
+			setValue,
+			value: null,
+			bind: 'popup-id',
+			propType,
+		} );
+
+		// Assert.
+		expect( screen.getByRole( 'combobox' ) ).toBeDisabled();
+	} );
+
+	it( 'applies the aria-label to the input when ariaLabel prop is given', () => {
+		// Act.
+		renderControl( <QuerySelectControl queryOptions={ queryOptions } ariaLabel="Choose a popup" />, {
+			setValue,
+			value: null,
+			bind: 'popup-id',
+			propType,
+		} );
+
+		// Assert.
+		expect( screen.getByRole( 'combobox' ) ).toHaveAccessibleName( 'Choose a popup' );
 	} );
 } );
