@@ -58,6 +58,7 @@
     "@elementor/events": "4.4.0",
     "@elementor/query": "4.4.0",
     "@elementor/schema": "4.4.0",
+    "@elementor/session": "4.4.0",
     "@elementor/store": "4.4.0",
     "@elementor/ui": "1.41.4",
     "@elementor/utils": "4.4.0",

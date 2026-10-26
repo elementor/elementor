@@ -16,6 +16,7 @@ import {
 	getWidgetsCache,
 } from '@elementor/editor-elements';
 import { notify } from '@elementor/editor-notifications';
+import { SessionStorageProvider } from '@elementor/session';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -33,7 +34,10 @@ import { InstanceEditingPanel } from '../instance-editing-panel';
 
 jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '@elementor/session' );
+jest.mock( '@elementor/session', () => ( {
+	...jest.createMockFromModule< object >( '@elementor/session' ),
+	SessionStorageProvider: jest.fn( ( { children } ) => children ),
+} ) );
 
 jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 	componentInstancePropTypeUtil: {
@@ -387,6 +391,19 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Subtitle' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Link' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should scope session storage to the component instance', () => {
+		// Arrange.
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( jest.mocked( SessionStorageProvider ).mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { prefix: MOCK_ELEMENT_ID } )
+		);
 	} );
 
 	it( 'should show edit button as disabled in core panel', () => {
