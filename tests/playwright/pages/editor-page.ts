@@ -1387,13 +1387,18 @@ export default class EditorPage extends BasePage {
 		const _images = args?.images === undefined ? defaultImages : args.images;
 
 		for ( const i in _images ) {
+			const uploadResponse = this.page.waitForResponse(
+				( response ) => response.url().includes( 'async-upload.php' ) && response.ok(),
+			);
 			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
+			await uploadResponse;
 
 			if ( args?.metaData ) {
 				await this.addTestImageMetaData();
 			}
 		}
 
+		await expect( this.page.locator( EditorSelectors.media.addGalleryButton ) ).toBeEnabled( { timeout: timeouts.heavyAction } );
 		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
 		await this.page.locator( 'text=Insert gallery' ).click();
 	}
