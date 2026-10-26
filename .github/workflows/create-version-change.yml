@@ -179,7 +179,7 @@ jobs:
           echo "PR created successfully for $DEV_BRANCH"
 
       - name: Announce beta branch-out to Slack
-        if: always() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true'
+        if: ${{ !cancelled() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true' }}
         continue-on-error: true
         env:
           SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
@@ -193,8 +193,8 @@ jobs:
           fi
 
           # Validate webhook URL
-          if [[ ! "$SLACK_BRANCH_OUT_WEBHOOK_URL" =~ ^https://hooks\.slack\.com/ ]]; then
-            echo "Warning: SLACK_BRANCH_OUT_WEBHOOK_URL must start with https://hooks.slack.com/. Skipping Slack notification."
+          if [[ ! "$SLACK_BRANCH_OUT_WEBHOOK_URL" =~ ^https://hooks\.slack\.com/services/[A-Za-z0-9/_-]+$ ]]; then
+            echo "Warning: SLACK_BRANCH_OUT_WEBHOOK_URL must match https://hooks.slack.com/services/[A-Za-z0-9/_-]+. Skipping Slack notification."
             exit 0
           fi
 

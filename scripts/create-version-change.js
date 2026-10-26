@@ -280,13 +280,18 @@ async function main() {
         try {
           execSync(resetCommand, { stdio: 'inherit' });
           console.log('Successfully reset release/beta to main.');
-          
-          // Write outputs for GitHub Actions
+        } catch (error) {
+          console.error('Error resetting release/beta to main');
+          process.exit(1);
+        }
+
+        // Write outputs for GitHub Actions (after successful reset)
+        try {
           const betaVersion = `${major}.${minor}`;
           setOutput('beta_reset', 'true');
           setOutput('beta_version', betaVersion);
         } catch (error) {
-          console.error('Error resetting release/beta to main');
+          console.error('Reset succeeded but failed to write GitHub outputs:', error.message);
           process.exit(1);
         }
       }
