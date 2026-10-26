@@ -65,4 +65,16 @@ describe( 'app/open command', () => {
 		expect( $e.route ).toHaveBeenCalledWith( 'app', args );
 		expect( window.top.location ).toBe( '' );
 	} );
+
+	it( 'should use the app route for non-site-editor app urls when theme_builder_v2 is inactive', () => {
+		elementorCommon.config.allExperimentalFeatures = {
+			theme_builder_v2: false,
+		};
+
+		const args = { url: 'http://example.com/wp-admin/admin.php?page=elementor-app&source=finder#/kit-library' };
+		new Open().apply( args );
+
+		expect( $e.route ).toHaveBeenCalledWith( 'app', args );
+		expect( window.top.location ).toBe( '' );
+	} );
 } );
