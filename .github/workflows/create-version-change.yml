@@ -179,7 +179,7 @@ jobs:
           echo "PR created successfully for $DEV_BRANCH"
 
       - name: Announce beta branch-out to Slack
-        if: success() && github.event.inputs.dry_run != 'true' && steps.run-script.outputs.beta_reset == 'true'
+        if: always() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true'
         continue-on-error: true
         env:
           SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
@@ -189,6 +189,12 @@ jobs:
           # Exit gracefully if webhook URL is not configured
           if [ -z "$SLACK_BRANCH_OUT_WEBHOOK_URL" ]; then
             echo "Notice: SLACK_BRANCH_OUT_WEBHOOK_URL secret is not set. Skipping Slack notification."
+            exit 0
+          fi
+
+          # Validate webhook URL
+          if [[ ! "$SLACK_BRANCH_OUT_WEBHOOK_URL" =~ ^https://hooks\.slack\.com/ ]]; then
+            echo "Warning: SLACK_BRANCH_OUT_WEBHOOK_URL must start with https://hooks.slack.com/. Skipping Slack notification."
             exit 0
           fi
 
@@ -234,7 +240,7 @@ jobs:
           # Build JSON payload with jq
           PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
 
-          # Post to Slack
-          curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_BRANCH_OUT_WEBHOOK_URL"
+          # Post to Slack (keep webhook URL off argv)
+          curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""
           echo "Slack notification sent successfully."
 
