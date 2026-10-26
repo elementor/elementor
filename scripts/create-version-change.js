@@ -260,6 +260,14 @@ async function main() {
         try {
           execSync(resetCommand, { stdio: 'inherit' });
           console.log('Successfully reset release/beta to main.');
+          
+          // Write outputs for GitHub Actions
+          if (process.env.GITHUB_OUTPUT) {
+            const betaVersion = `${major}.${minor}`;
+            const outputLine = `beta_reset=true\nbeta_version=${betaVersion}\n`;
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, outputLine, 'utf8');
+            console.log(`Set GitHub outputs: beta_reset=true, beta_version=${betaVersion}`);
+          }
         } catch (error) {
           console.error('Error resetting release/beta to main');
           process.exit(1);
