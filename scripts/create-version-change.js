@@ -169,14 +169,11 @@ async function main() {
       skipBetaReset = /^[Yy]$/.test(skipBetaResetInput);
     }
 
-    const branchName = `${major}.${String(minor).padStart(2, '0')}`;
-
     // Get current git branch
     const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
 
     console.log(`Current version (from package.json): ${currentVersion}`);
     console.log(`Next version (input/dev bump): ${nextVersion}`);
-    console.log(`Branch name: ${branchName}`);
     console.log(`Dry run: ${dryRun}`);
     console.log(`Skip beta reset: ${skipBetaReset}`);
     console.log(`Force beta reset: ${forceBetaReset}`);
@@ -188,10 +185,18 @@ async function main() {
     // 1. Reset release/beta to main (skip if --skip-beta-reset flag is set)
     const devBranch = `version-${versionToUse}-to-main`;
 
+    // Always fetch main
+    console.log('Fetching origin/main...');
+    try {
+      execSync('git fetch origin main', { stdio: 'inherit' });
+    } catch (error) {
+      console.error('Error fetching origin/main');
+      process.exit(1);
+    }
+
     if (!skipBetaReset) {
-      console.log('Fetching origin/main and origin/release/beta...');
+      console.log('Fetching origin/release/beta...');
       try {
-        execSync('git fetch origin main', { stdio: 'inherit' });
         execSync('git fetch origin release/beta', { stdio: 'inherit' });
       } catch (error) {
         console.error('Error fetching remote branches');
@@ -260,11 +265,12 @@ async function main() {
           process.exit(1);
         }
       }
-      
-      execOrLog(`git checkout -b ${devBranch} main`, dryRun);
     } else {
       console.log('Skipping release/beta reset as requested.');
     }
+
+    // Create dev branch from origin/main for version bump
+    execOrLog(`git checkout -b ${devBranch} origin/main`, dryRun);
 
     // Update elementor.php
     if (fs.existsSync('elementor.php')) {
@@ -314,13 +320,8 @@ async function main() {
     console.log(`Running npm run packages:version with version ${nextVersion}...`);
     execOrLog(`npm run packages:version ${nextVersion}`, dryRun);
 
-    if (skipBetaReset) {
-      console.log('Version bump complete. All version files have been updated.');
-      console.log('Done! Please review the changes and commit them.');
-    } else {
-      console.log(`Version bump complete. Please open a PR from ${devBranch} to main.`);
-      console.log('Done! Please review the changes and commit them.');
-    }
+    console.log(`Version bump complete. Please open a PR from ${devBranch} to main.`);
+    console.log('Done! Please review the changes and commit them.');
 
   } catch (error) {
     console.error('Error:', error.message);
