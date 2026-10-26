@@ -4,6 +4,8 @@ import { __ } from '@wordpress/i18n';
 
 import { type ActionProps, type ExtendedWindow } from '../../../types';
 
+const THEME_BUILDER_V2_EXPERIMENT = 'theme_builder_v2';
+
 export default function useActionProps(): ActionProps {
 	return {
 		icon: ThemeBuilderIcon,
@@ -19,6 +21,21 @@ export default function useActionProps(): ActionProps {
 					trigger: config.triggers.click,
 					element: config.elements.link,
 				} );
+			}
+
+			const allFeatures = extendedWindow.elementorCommon?.config?.allExperimentalFeatures;
+			const url = window.elementorAppConfig?.menu_url;
+			const topWindow = window.top;
+
+			if (
+				topWindow &&
+				url &&
+				allFeatures &&
+				THEME_BUILDER_V2_EXPERIMENT in allFeatures &&
+				! allFeatures[ THEME_BUILDER_V2_EXPERIMENT ]
+			) {
+				topWindow.location = url;
+				return;
 			}
 
 			runCommand( 'app/open' );
