@@ -77,7 +77,85 @@ class Test_Remap_Component_Instance_Ids extends Elementor_Test_Base {
 		$this->assertSame( $elements, $result );
 	}
 
-	private function make_component_instance_element( string $id, int $component_id ): array {
+	public function test_apply__updates_override_schema_source_ids_with_remapped_component_id() {
+		// Arrange
+		$elements = [
+			$this->make_component_instance_element( 'component', self::SOURCE_COMPONENT_ID, [
+				[
+					'$$type' => 'override',
+					'value' => [
+						'schema_source' => [
+							'id' => self::SOURCE_COMPONENT_ID,
+							'type' => 'component',
+						],
+					],
+				],
+				[
+					'$$type' => 'overridable',
+					'value' => [
+						'origin_value' => [
+							'value' => [
+								'schema_source' => [
+									'id' => self::SOURCE_COMPONENT_ID,
+									'type' => 'component',
+								],
+							],
+						],
+					],
+				],
+			] ),
+		];
+
+		// Act
+		$result = Remap_Component_Instance_Ids::apply( $elements, [ self::SOURCE_COMPONENT_ID => self::DESTINATION_COMPONENT_ID ] );
+
+		// Assert
+		$this->assertSame(
+			self::DESTINATION_COMPONENT_ID,
+			$result[0]['settings']['component_instance']['value']['overrides']['value'][0]['value']['schema_source']['id']
+		);
+		$this->assertSame(
+			self::DESTINATION_COMPONENT_ID,
+			$result[0]['settings']['component_instance']['value']['overrides']['value'][1]['value']['origin_value']['value']['schema_source']['id']
+		);
+	}
+
+	public function test_apply__does_not_add_overrides_to_instance_without_overrides() {
+		// Arrange
+		$elements = [
+			$this->make_component_instance_element( 'component', self::SOURCE_COMPONENT_ID ),
+		];
+
+		// Act
+		$result = Remap_Component_Instance_Ids::apply( $elements, [ self::SOURCE_COMPONENT_ID => self::DESTINATION_COMPONENT_ID ] );
+
+		// Assert
+		$this->assertSame(
+			[
+				'component_id' => [
+					'$$type' => 'number',
+					'value' => self::DESTINATION_COMPONENT_ID,
+				],
+			],
+			$result[0]['settings']['component_instance']['value']
+		);
+	}
+
+	private function make_component_instance_element( string $id, int $component_id, ?array $overrides = null ): array {
+		$instance_value = [
+			'component_id' => [
+				'$$type' => 'number',
+				'value' => $component_id,
+			],
+		];
+
+		if ( null !== $overrides ) {
+			$instance_value['overrides'] = [
+				'$$type' => 'overrides',
+				'value' => $overrides,
+			];
+		}
+
 		return [
 			'id' => $id,
 			'elType' => 'widget',
@@ -85,12 +163,7 @@ class Test_Remap_Component_Instance_Ids extends Elementor_Test_Base {
 			'settings' => [
 				'component_instance' => [
 					'$$type' => 'component-instance',
-					'value' => [
-						'component_id' => [
-							'$$type' => 'number',
-							'value' => $component_id,
-						],
-					],
+					'value' => $instance_value,
 				],
 			],
 		];

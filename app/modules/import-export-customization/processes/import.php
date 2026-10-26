@@ -30,6 +30,16 @@ class Import {
 
 	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
+	const PRIORITY_SITE_SETTINGS = -60;
+
+	const PRIORITY_PLUGINS = -50;
+
+	const PRIORITY_GLOBAL_VARIABLES = -40;
+
+	const PRIORITY_GLOBAL_CLASSES = -30;
+
+	const PRIORITY_COMPONENTS = -20;
+
 	/**
 	 * @var array<string, Import_Runner_Base>
 	 */
@@ -268,8 +278,8 @@ class Import {
 	}
 
 	public function register_default_runners() {
-		$this->register( new Site_Settings() );
-		$this->register( new Plugins() );
+		$this->register( new Site_Settings(), self::PRIORITY_SITE_SETTINGS );
+		$this->register( new Plugins(), self::PRIORITY_PLUGINS );
 		$this->register( new Templates() );
 		$this->register( new Taxonomies() );
 		$this->register( new Elementor_Content() );
@@ -868,12 +878,13 @@ class Import {
 	/**
 	 * Get the data that requires updating/replacement when imported.
 	 *
-	 * @return array{post_ids: array, term_ids: array}
+	 * @return array{post_ids: array, term_ids: array, component_ids: array}
 	 */
 	private function get_imported_data_replacements(): array {
 		return [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
+			'component_ids' => Components_Module::map_old_new_component_ids( $this->imported_data ),
 		];
 	}
 
@@ -888,7 +899,7 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
-				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['component_ids'] );
 				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
 				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );

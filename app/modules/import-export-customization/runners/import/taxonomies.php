@@ -6,6 +6,8 @@ use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 
 class Taxonomies extends Import_Runner_Base {
 
+	const TERM_FIELD_MAX_LENGTH = 200;
+
 	private $import_session_id;
 
 	public static function get_name(): string {
@@ -141,9 +143,19 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 	private function handle_duplicated_nav_menu_term( $term ) {
+		$base_name = preg_replace( '/( duplicate( \d+)?)+$/i', '', $term['name'] );
+		$base_slug = preg_replace( '/(-duplicate(-\d+)?)+$/', '', $term['slug'] );
+		$index = 1;
+
 		do {
-			$term['slug'] = $term['slug'] . '-duplicate';
-			$term['name'] = $term['name'] . ' duplicate';
+			$counter = $index > 1 ? $index : '';
+			$name_suffix = rtrim( ' duplicate ' . $counter );
+			$slug_suffix = rtrim( '-duplicate-' . $counter, '-' );
+
+			$term['name'] = mb_substr( $base_name, 0, self::TERM_FIELD_MAX_LENGTH - mb_strlen( $name_suffix ) ) . $name_suffix;
+			$term['slug'] = substr( $base_slug, 0, self::TERM_FIELD_MAX_LENGTH - strlen( $slug_suffix ) ) . $slug_suffix;
+
+			++$index;
 		} while ( term_exists( $term['slug'], 'nav_menu' ) );
 
 		return $term;

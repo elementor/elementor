@@ -58,6 +58,19 @@ class Components_Repository {
 		return $doc;
 	}
 
+	public function find_by_uid( string $uid ): ?int {
+		return $this->all()
+			->find( fn( array $component ) => $component['uid'] === $uid )['id'] ?? null;
+	}
+
+	public function title_exists( string $title, int $exclude_id = 0 ): bool {
+		return $this->all()->some(
+			fn( array $component ) => ! $component['is_archived']
+				&& $component['title'] === $title
+				&& $component['id'] !== $exclude_id
+		);
+	}
+
 	public function create( string $title, array $content, string $status, string $uid, array $settings = [] ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),

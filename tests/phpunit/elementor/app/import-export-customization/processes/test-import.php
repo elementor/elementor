@@ -593,6 +593,54 @@ class Test_Import extends Elementor_Test_Base {
 		$cleanup();
 	}
 
+	public function test_get_imported_data_replacements__merges_component_mappings_into_post_ids() {
+		// Arrange
+		$import = ( new \ReflectionClass( Import::class ) )->newInstanceWithoutConstructor();
+
+		$this->set_private_property( $import, 'imported_data', [
+			'templates' => [
+				'succeed' => [
+					11 => 111,
+				],
+			],
+			'content' => [
+				'page' => [
+					'succeed' => [
+						22 => 222,
+					],
+				],
+				'elementor_component' => [
+					'succeed' => [
+						33 => 333,
+						44 => 444,
+					],
+				],
+			],
+		] );
+
+		// Act
+		$replacements = $this->invoke_private_method( $import, 'get_imported_data_replacements' );
+
+		// Assert
+		$this->assertSame(
+			[
+				11 => 111,
+				22 => 222,
+				33 => 333,
+				44 => 444,
+			],
+			$replacements['post_ids']
+		);
+		$this->assertSame(
+			[
+				33 => 333,
+				44 => 444,
+			],
+			$replacements['component_ids']
+		);
+		$this->assertSame( [], $replacements['term_ids'] );
+	}
+
 	private function mock_get_kit() {
 		$filter = function() {
 			return [
@@ -614,6 +662,19 @@ class Test_Import extends Elementor_Test_Base {
 		return function() use( $filter ) {
 			remove_filter( 'pre_http_request', $filter );
 		};
+	}
+
+	private function set_private_property( object $instance, string $property_name, $value ): void {
+		$property = new \ReflectionProperty( Import::class, $property_name );
+		$property->setAccessible( true );
+		$property->setValue( $instance, $value );
+	}
+
+	private function invoke_private_method( object $instance, string $method_name ) {
+		$method = new \ReflectionMethod( Import::class, $method_name );
+		$method->setAccessible( true );
+
+		return $method->invoke( $instance );
 	}
 
 	private function mock_get_kit_wp_error() {

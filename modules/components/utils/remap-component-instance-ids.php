@@ -53,6 +53,39 @@ class Remap_Component_Instance_Ids {
 			return $settings;
 		}
 
-		return Component_Instance_Prop_Type::set_component_id( $settings, (int) $post_ids_map[ (int) $source_id ] );
+		$destination_id = (int) $post_ids_map[ (int) $source_id ];
+		$settings = Component_Instance_Prop_Type::set_component_id( $settings, $destination_id );
+
+		$overrides = $settings['component_instance']['value']['overrides']['value'] ?? null;
+
+		if ( is_array( $overrides ) ) {
+			$settings['component_instance']['value']['overrides']['value'] = self::remap_override_schema_source_ids(
+				$overrides,
+				$destination_id
+			);
+		}
+
+		return $settings;
+	}
+
+	private static function remap_override_schema_source_ids( array $overrides, int $destination_id ): array {
+		return array_map(
+			static function ( $override ) use ( $destination_id ) {
+				if ( ! is_array( $override ) ) {
+					return $override;
+				}
+
+				if ( 'override' === ( $override['$$type'] ?? null ) ) {
+					$override['value']['schema_source']['id'] = $destination_id;
+				}
+
+				if ( 'overridable' === ( $override['$$type'] ?? null ) ) {
+					$override['value']['origin_value']['value']['schema_source']['id'] = $destination_id;
+				}
+
+				return $override;
+			},
+			$overrides
+		);
 	}
 }

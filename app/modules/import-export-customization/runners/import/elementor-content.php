@@ -2,7 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Import;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
-use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 
 class Elementor_Content extends Import_Runner_Base {
@@ -51,26 +51,13 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$customization = $data['customization']['content'] ?? null;
 
-		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
-		$excluded_post_types = [];
-
-		if ( $selected_custom_post_types && ! in_array( 'post', $selected_custom_post_types, true ) ) {
-			$excluded_post_types[] = 'post';
-		}
-
-		$excluded_post_types = array_merge( $excluded_post_types, Components_Module::excluded_import_export_post_types() );
-
-		$post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
-
-		$post_types = apply_filters( 'elementor/import-export-customization/elementor-content/post-types/customization', $post_types, $customization );
-
-		foreach ( $post_types as $post_type ) {
+		foreach ( $this->get_import_post_types( $data ) as $post_type ) {
 			if ( empty( $data['manifest']['content'][ $post_type ] ) ) {
 				continue;
 			}
 
-			$posts_settings = $data['manifest']['content'][ $post_type ];
 			$path = $data['extracted_directory_path'] . 'content/' . $post_type . '/';
+			$posts_settings = $this->prepare_posts_settings( $data['manifest']['content'][ $post_type ], $path );
 			$imported_terms = ! empty( $imported_data['taxonomies'] )
 				? ImportExportUtils::map_old_new_term_ids( $imported_data )
 				: [];
@@ -85,6 +72,27 @@ class Elementor_Content extends Import_Runner_Base {
 		}
 
 		return $result;
+	}
+
+	protected function get_import_post_types( array $data ): array {
+		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
+		$excluded_post_types = [ Component_Document::TYPE ];
+
+		if ( $selected_custom_post_types && ! in_array( 'post', $selected_custom_post_types, true ) ) {
+			$excluded_post_types[] = 'post';
+		}
+
+		$post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
+
+		return apply_filters(
+			'elementor/import-export-customization/elementor-content/post-types/customization',
+			$post_types,
+			$data['customization']['content'] ?? null
+		);
+	}
+
+	protected function prepare_posts_settings( array $posts_settings, string $path ): array {
+		return $posts_settings;
 	}
 
 	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms, $customization ) {

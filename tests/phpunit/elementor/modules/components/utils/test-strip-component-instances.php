@@ -72,12 +72,35 @@ class Test_Strip_Component_Instances extends TestCase {
 		$this->assertSame( $elements, $result );
 	}
 
-	private function component_instance( string $id ): array {
+	public function test_apply__strips_only_unmapped_component_instances_when_kept_ids_are_provided() {
+		// Arrange
+		$elements = [
+			$this->component_instance( 'ci-kept', 12 ),
+			$this->component_instance( 'ci-removed', 24 ),
+		];
+
+		// Act
+		$result = Strip_Component_Instances::apply( $elements, [ 12 ] );
+
+		// Assert
+		$this->assertCount( 1, $result );
+		$this->assertSame( 'ci-kept', $result[0]['id'] );
+	}
+
+	private function component_instance( string $id, ?int $component_id = null ): array {
 		return [
 			'id' => $id,
 			'elType' => 'widget',
 			'widgetType' => 'e-component',
-			'settings' => [],
+			'settings' => null === $component_id ? [] : [
+				'component_instance' => [
+					'value' => [
+						'component_id' => [
+							'value' => $component_id,
+						],
+					],
+				],
+			],
 		];
 	}
 

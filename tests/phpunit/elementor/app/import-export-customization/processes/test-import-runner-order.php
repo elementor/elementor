@@ -88,6 +88,36 @@ class Test_Import_Runner_Order extends Elementor_Test_Base {
 		$this->assertTrue( $is_global_classes_last );
 	}
 
+	public function test_get_runners_name__runs_design_system_after_site_settings_and_plugins_and_before_content() {
+		// Arrange
+		$import = $this->make_import_process();
+		$import->register( new Fake_Import_Runner_Site_Settings(), Import::PRIORITY_SITE_SETTINGS );
+		$import->register( new Fake_Import_Runner_Plugins(), Import::PRIORITY_PLUGINS );
+		$import->register( new Fake_Import_Runner_Templates() );
+		$import->register( new Fake_Import_Runner_Global_Classes(), Import::PRIORITY_GLOBAL_CLASSES );
+		$import->register( new Fake_Import_Runner_Global_Variables(), Import::PRIORITY_GLOBAL_VARIABLES );
+		$import->register( new Fake_Import_Runner_Components(), Import::PRIORITY_COMPONENTS );
+
+		// Act
+		$result = $import->get_runners_name();
+
+		// Assert
+		$this->assertSame( [ 'site-settings', 'plugins', 'global-variables', 'global-classes', 'components', 'templates' ], $result );
+	}
+
+	public function test_register_default_runners__registers_site_settings_and_plugins_with_their_priorities() {
+		// Arrange
+		$import = $this->make_import_process();
+
+		// Act
+		$import->register_default_runners();
+
+		// Assert
+		$runner_priorities = $this->get_property( $import, 'runner_priorities' );
+		$this->assertSame( Import::PRIORITY_SITE_SETTINGS, $runner_priorities['site-settings'] );
+		$this->assertSame( Import::PRIORITY_PLUGINS, $runner_priorities['plugins'] );
+	}
+
 	public function test_remove_runner__removes_runner_and_priority_lookup_entries() {
 		// Arrange
 		$import = $this->make_import_process();
@@ -180,5 +210,23 @@ class Fake_Import_Runner_Components extends Fake_Import_Runner_Base {
 class Fake_Import_Runner_Global_Classes extends Fake_Import_Runner_Base {
 	public static function get_name(): string {
 		return 'global-classes';
+	}
+}
+
+class Fake_Import_Runner_Global_Variables extends Fake_Import_Runner_Base {
+	public static function get_name(): string {
+		return 'global-variables';
+	}
+}
+
+class Fake_Import_Runner_Plugins extends Fake_Import_Runner_Base {
+	public static function get_name(): string {
+		return 'plugins';
+	}
+}
+
+class Fake_Import_Runner_Site_Settings extends Fake_Import_Runner_Base {
+	public static function get_name(): string {
+		return 'site-settings';
 	}
 }

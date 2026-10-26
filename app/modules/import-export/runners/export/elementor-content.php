@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
@@ -88,6 +89,10 @@ class Elementor_Content extends Export_Runner_Base {
 
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
+
+			if ( $document instanceof Component_Document && $document->get_is_archived() ) {
+				continue;
+			}
 
 			$terms = ! empty( $post_type_taxonomies ) ? $this->get_post_terms( $post->ID, $post_type_taxonomies ) : [];
 
