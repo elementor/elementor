@@ -2,9 +2,17 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Css_Selector_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Date_Time_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Enum_From_Control_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Gallery_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Icons_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Link_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Multi_Enum_From_Control_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Number_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Post_Id_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Repeater_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Size_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\String_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Switcher_Setting_Adapter;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Setting_Adapter;
@@ -38,6 +46,18 @@ class V3_Setting {
 		return $this;
 	}
 
+	public function date_time(): self {
+		$this->adapter = new Date_Time_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function css_selector(): self {
+		$this->adapter = new Css_Selector_Setting_Adapter();
+
+		return $this;
+	}
+
 	/**
 	 * @param string[] $values
 	 */
@@ -53,14 +73,56 @@ class V3_Setting {
 		return $this;
 	}
 
+	public function multi_enum_from_control(): self {
+		$this->adapter = new Multi_Enum_From_Control_Setting_Adapter();
+
+		return $this;
+	}
+
 	public function switcher(): self {
 		$this->adapter = new Switcher_Setting_Adapter();
 
 		return $this;
 	}
 
+	public function number(): self {
+		$this->adapter = new Number_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function whole_number(): self {
+		$this->adapter = new Number_Setting_Adapter( true );
+
+		return $this;
+	}
+
+	public function post_id(): self {
+		$this->adapter = new Post_Id_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function size(): self {
+		$this->adapter = new Size_Setting_Adapter();
+
+		return $this;
+	}
+
 	public function link(): self {
 		$this->adapter = new Link_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function gallery(): self {
+		$this->adapter = new Gallery_Setting_Adapter();
+
+		return $this;
+	}
+
+	public function repeater(): self {
+		$this->adapter = new Repeater_Setting_Adapter();
 
 		return $this;
 	}

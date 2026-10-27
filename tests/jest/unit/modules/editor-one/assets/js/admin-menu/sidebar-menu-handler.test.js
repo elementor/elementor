@@ -43,6 +43,19 @@ describe( 'SidebarMenuHandler', () => {
 		expect( getCurrentSubmenuLabel() ).toBe( 'Agent Ready' );
 	} );
 
+	it( 'highlights Agent Ready in the WordPress submenu when the Agent Access page is selected', () => {
+		// Arrange.
+		delete window.location;
+		window.location = new URL( 'https://example.com/wp-admin/admin.php?page=elementor-agent-access' );
+		buildAdminMenu();
+
+		// Act.
+		new SidebarMenuHandler();
+
+		// Assert.
+		expect( getCurrentSubmenuLabel() ).toBe( 'Agent Ready' );
+	} );
+
 	it( 'highlights Elementor MCP in the WordPress submenu when that page is selected', () => {
 		// Arrange.
 		delete window.location;
