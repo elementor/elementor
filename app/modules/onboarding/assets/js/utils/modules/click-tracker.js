@@ -351,15 +351,7 @@ class ClickTracker {
 			return;
 		}
 
-		const siteStarterChoiceString = StorageManager.getString( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-		let siteStarterChoice = null;
-
-		if ( siteStarterChoiceString ) {
-			const choiceData = StorageManager.getObject( ONBOARDING_STORAGE_KEYS.STEP4_SITE_STARTER_CHOICE );
-			siteStarterChoice = choiceData?.site_starter || null;
-		}
-
-		EventDispatcher.dispatchClickEvent( clickCount, storedClickData, siteStarterChoice );
+		EventDispatcher.dispatchPostClickEvent( clickCount, storedClickData );
 	}
 
 	cleanup() {
