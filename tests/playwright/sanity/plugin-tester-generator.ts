@@ -99,12 +99,12 @@ export const generatePluginTests = ( testType: string ) => {
 
 				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
 					await page.getByRole( 'link', { name: 'Not right now' } ).click();
-					await page.goto( '/law-firm-about/?elementor' );
+					await page.goto( '/law-firm-about/?elementor', { timeout: timeouts.heavyAction } );
 				}
 
 				if ( 'header-footer-elementor' === plugin.pluginName && page.url().includes( 'page=hfe' ) ) {
 					await page.getByText( 'Exit Guided Setup' ).click();
-					await page.goto( '/law-firm-about/?elementor' );
+					await page.goto( '/law-firm-about/?elementor', { timeout: timeouts.heavyAction } );
 				}
 
 				await wpAdmin.closeAnnouncementsIfVisible();
