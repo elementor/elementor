@@ -1,3 +1,5 @@
+import { clearEventQueue } from './event-queue.js';
+
 export const ONBOARDING_STORAGE_KEYS = {
 	START_TIME: 'elementor_onboarding_start_time',
 	INITIATED: 'elementor_onboarding_initiated',
@@ -13,7 +15,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	STEP4_HAS_PREVIOUS_CLICK: 'elementor_onboarding_s4_has_previous_click',
 	EDITOR_LOAD_TRACKED: 'elementor_onboarding_editor_load_tracked',
 	POST_ONBOARDING_CLICK_COUNT: 'elementor_onboarding_click_count',
-	PENDING_SKIP: 'elementor_onboarding_pending_skip',
+	CREATE_ACCOUNT_FLOW: 'elementor_onboarding_create_account_flow',
 	PENDING_CONNECT_STATUS: 'elementor_onboarding_pending_connect_status',
 	PENDING_CREATE_ACCOUNT_STATUS: 'elementor_onboarding_pending_create_account_status',
 	PENDING_CREATE_MY_ACCOUNT: 'elementor_onboarding_pending_create_my_account',
@@ -134,7 +136,7 @@ export function clearAllOnboardingData() {
 		ONBOARDING_STORAGE_KEYS.STEP4_HAS_PREVIOUS_CLICK,
 		ONBOARDING_STORAGE_KEYS.EDITOR_LOAD_TRACKED,
 		ONBOARDING_STORAGE_KEYS.POST_ONBOARDING_CLICK_COUNT,
-		ONBOARDING_STORAGE_KEYS.PENDING_SKIP,
+		ONBOARDING_STORAGE_KEYS.CREATE_ACCOUNT_FLOW,
 		ONBOARDING_STORAGE_KEYS.PENDING_CREATE_ACCOUNT_STATUS,
 		ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT,
 		ONBOARDING_STORAGE_KEYS.PENDING_TOP_UPGRADE,
@@ -153,6 +155,8 @@ export function clearAllOnboardingData() {
 
 	clearMultiple( keysToRemove );
 
+	clearEventQueue();
+
 	for ( let i = 1; i <= 4; i++ ) {
 		const clickDataKey = `elementor_onboarding_click_${ i }_data`;
 		remove( clickDataKey );
@@ -162,6 +166,7 @@ export function clearAllOnboardingData() {
 	remove( ONBOARDING_STORAGE_KEYS.STEP2_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.CREATE_ACCOUNT_FLOW );
 	remove( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT );
 }
 
