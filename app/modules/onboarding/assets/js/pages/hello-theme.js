@@ -128,6 +128,8 @@ export default function HelloTheme() {
 			message: __( 'There was a problem installing Hello Theme.', 'elementor' ),
 		} );
 
+		OnboardingEventTracking.reportThemeInstallError( 'hello_theme_install_failed' );
+
 		resetScreenContent();
 	};
 
@@ -282,6 +284,8 @@ export default function HelloTheme() {
 					icon: 'eicon-warning',
 					message: __( 'There was a problem activating Hello Theme.', 'elementor' ),
 				} );
+
+				OnboardingEventTracking.reportThemeInstallError( 'hello_theme_activation_failed' );
 
 				// Clear any active timeouts for changing the action button text during installation.
 				resetScreenContent();

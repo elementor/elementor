@@ -29,6 +29,10 @@ export default function SkipButton( props ) {
 	button.onClick = ( event ) => {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
+		if ( 2 === stepNumber ) {
+			OnboardingEventTracking.sendThemeMarked();
+		}
+
 		OnboardingEventTracking.trackStepAction( stepNumber, 'skipped' );
 		OnboardingEventTracking.sendStepEndState( stepNumber );
 		OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: stepNumber } );
