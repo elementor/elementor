@@ -3,6 +3,7 @@ import { parallelTest as test } from '../parallelTest';
 import EditorPage from '../pages/editor-page';
 import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
+import { timeouts } from '../config/timeouts';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
 const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string }[] = [
@@ -94,7 +95,7 @@ export const generatePluginTests = ( testType: string ) => {
 					}
 				}
 
-				await page.goto( '/law-firm-about/?elementor' );
+				await page.goto( '/law-firm-about/?elementor', { timeout: timeouts.heavyAction } );
 
 				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
 					await page.getByRole( 'link', { name: 'Not right now' } ).click();
