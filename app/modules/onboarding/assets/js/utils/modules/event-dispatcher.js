@@ -46,6 +46,13 @@ function isMixpanelInitialized() {
 	return false;
 }
 
+function isAnalyticsReady() {
+	return isEventsManagerAvailable() &&
+		canSendEvents() &&
+		isMixpanelInitialized() &&
+		elementorCommon.eventsManager.isMixpanelReady?.();
+}
+
 export function initializeAndEnableTracking( onReady ) {
 	if ( ! isEventsManagerAvailable() ) {
 		return;
@@ -84,7 +91,7 @@ function flushQueueInternal() {
 		}
 
 		const dispatched = dispatch( event.name, event.payload );
-		if ( false === dispatched ) {
+		if ( true !== dispatched ) {
 			stillPending.push( event );
 		}
 	} );
@@ -110,8 +117,13 @@ export function dispatch( eventName, payload = {} ) {
 		return false;
 	}
 
+	if ( ! isAnalyticsReady() ) {
+		return false;
+	}
+
 	try {
-		return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		return true;
 	} catch ( error ) {
 		return false;
 	}
@@ -122,6 +134,14 @@ export function trackEvent( eventName, payload, dedupeKey = null ) {
 
 	if ( ! canSendEvents() ) {
 		enqueueEvent( eventName, fullPayload, dedupeKey );
+		return false;
+	}
+
+	if ( ! isAnalyticsReady() ) {
+		enqueueEvent( eventName, fullPayload, dedupeKey );
+		initializeAndEnableTracking( () => {
+			flushQueueInternal();
+		} );
 		return false;
 	}
 

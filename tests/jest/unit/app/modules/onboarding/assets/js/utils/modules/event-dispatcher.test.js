@@ -1,4 +1,4 @@
-const mockDispatchEvent = jest.fn( () => true );
+const mockDispatchEvent = jest.fn();
 
 beforeEach( () => {
 	sessionStorage.clear();
@@ -25,18 +25,31 @@ afterEach( () => {
 	delete window.elementorCommon;
 } );
 
+const sampleInitializedPayload = {
+	interaction_type: 'load',
+	target_type: 'loaded',
+	target_name: 'onboarding_first_load',
+	interaction_result: 'onboarding_loaded',
+	target_location: 'onboarding',
+};
+
+const sampleSkipPayload = {
+	interaction_type: 'click',
+	target_type: 'button',
+	target_name: 'skip',
+	interaction_result: 'skip_step',
+	target_value: '1',
+	target_location: 'onboarding_navigation',
+	location_l1: 'footer',
+	location_l2: '1',
+};
+
 describe( 'onboarding event dispatcher', () => {
 	test( 'queues payload when sending is not allowed', () => {
 		const { trackEvent } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js' );
 		const { getEventQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-queue.js' );
 
-		trackEvent( 'core_onboarding_initialized', {
-			interaction_type: 'load',
-			target_type: 'loaded',
-			target_name: 'onboarding_first_load',
-			interaction_result: 'onboarding_loaded',
-			target_location: 'onboarding',
-		} );
+		trackEvent( 'core_onboarding_initialized', sampleInitializedPayload );
 
 		expect( mockDispatchEvent ).not.toHaveBeenCalled();
 		expect( getEventQueue() ).toHaveLength( 1 );
@@ -65,16 +78,7 @@ describe( 'onboarding event dispatcher', () => {
 		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 1 );
 
 		window.elementorCommon.config.editor_events.can_send_events = false;
-		trackEvent( 'core_onboarding_skip_clicked', {
-			interaction_type: 'click',
-			target_type: 'button',
-			target_name: 'skip',
-			interaction_result: 'skip_step',
-			target_value: '1',
-			target_location: 'onboarding_navigation',
-			location_l1: 'footer',
-			location_l2: '1',
-		} );
+		trackEvent( 'core_onboarding_skip_clicked', sampleSkipPayload );
 
 		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 1 );
 
@@ -84,10 +88,15 @@ describe( 'onboarding event dispatcher', () => {
 		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	test( 'defers flush until async init completes', () => {
+	test( 'defers flush until async init completes and sends queued items in order once', () => {
 		jest.resetModules();
 
 		let initCallback = null;
+		const dispatchOrder = [];
+		mockDispatchEvent.mockImplementation( ( name ) => {
+			dispatchOrder.push( name );
+		} );
+
 		window.elementorCommon.config.editor_events.can_send_events = false;
 		window.elementorCommon.config.editor_events.mixpanelInstance = null;
 		window.elementorCommon.eventsManager.isMixpanelReady = () => false;
@@ -97,27 +106,52 @@ describe( 'onboarding event dispatcher', () => {
 		} );
 
 		const { trackEvent, flushQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js' );
+		const { getEventQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-queue.js' );
 
-		trackEvent( 'core_onboarding_initialized', {
-			interaction_type: 'load',
-			target_type: 'loaded',
-			target_name: 'onboarding_first_load',
-			interaction_result: 'onboarding_loaded',
-			target_location: 'onboarding',
-		} );
+		trackEvent( 'core_onboarding_initialized', sampleInitializedPayload );
+		trackEvent( 'core_onboarding_skip_clicked', sampleSkipPayload );
+
+		expect( getEventQueue() ).toHaveLength( 2 );
+		expect( mockDispatchEvent ).not.toHaveBeenCalled();
 
 		window.elementorCommon.config.editor_events.can_send_events = true;
 		flushQueue();
 
 		expect( mockDispatchEvent ).not.toHaveBeenCalled();
+		expect( getEventQueue() ).toHaveLength( 2 );
 		expect( window.elementorCommon.eventsManager.initializeMixpanel ).toHaveBeenCalledTimes( 1 );
 
+		window.elementorCommon.config.editor_events.mixpanelInstance = { isInitialized: true };
+		window.elementorCommon.eventsManager.isMixpanelReady = () => true;
 		initCallback();
+
 		expect( window.elementorCommon.eventsManager.enableTracking ).toHaveBeenCalled();
-		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 1 );
-		expect( mockDispatchEvent ).toHaveBeenCalledWith(
+		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 2 );
+		expect( dispatchOrder ).toEqual( [
 			'core_onboarding_initialized',
-			expect.objectContaining( { target_name: 'onboarding_first_load' } ),
-		);
+			'core_onboarding_skip_clicked',
+		] );
+		expect( getEventQueue() ).toHaveLength( 0 );
+	} );
+
+	test( 'keeps queue when async init never completes', () => {
+		jest.resetModules();
+
+		window.elementorCommon.config.editor_events.can_send_events = false;
+		window.elementorCommon.config.editor_events.mixpanelInstance = null;
+		window.elementorCommon.eventsManager.isMixpanelReady = () => false;
+		window.elementorCommon.eventsManager.initializeMixpanel = jest.fn();
+
+		const { trackEvent, flushQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js' );
+		const { getEventQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-queue.js' );
+
+		trackEvent( 'core_onboarding_initialized', sampleInitializedPayload );
+
+		window.elementorCommon.config.editor_events.can_send_events = true;
+		flushQueue();
+
+		expect( window.elementorCommon.eventsManager.initializeMixpanel ).toHaveBeenCalledTimes( 1 );
+		expect( mockDispatchEvent ).not.toHaveBeenCalled();
+		expect( getEventQueue() ).toHaveLength( 1 );
 	} );
 } );
