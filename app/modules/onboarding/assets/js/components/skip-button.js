@@ -30,7 +30,7 @@ export default function SkipButton( props ) {
 		const stepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 
 		if ( 2 === stepNumber ) {
-			OnboardingEventTracking.sendThemeMarked( 'hello' );
+			OnboardingEventTracking.sendThemeMarked();
 		}
 
 		OnboardingEventTracking.trackStepAction( stepNumber, 'skipped' );
