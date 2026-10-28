@@ -266,6 +266,30 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		$this->assertSame( 'Plain span title', $widget_instance->render_markdown() );
 	}
 
+	public function test__render_markdown_with_span_tag_and_link(): void {
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'tag' => 'span',
+				'title' => 'Linked span title',
+				'link' => [
+					'href' => 'https://example.com',
+					'target' => '_blank',
+					'tag' => 'a',
+				],
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		$this->assertSame(
+			'[Linked span title](https://example.com)',
+			$widget_instance->render_markdown()
+		);
+	}
+
 	private function find_content_control( $widget_instance, string $bind ) {
 		foreach ( $widget_instance->get_atomic_controls() as $control ) {
 			if ( ! ( $control instanceof Section ) || 'content' !== $control->get_id() ) {
