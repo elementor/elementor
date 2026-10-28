@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,14 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class V3_Icons_Prop_Type extends Object_Prop_Type {
 
+	/**
+	 * The icon value becomes a CSS class list and an icon-library lookup; only class-name characters make sense.
+	 */
+	const CLASS_NAME_PATTERN = '^[A-Za-z0-9 _-]*$';
+
 	public static function get_key(): string {
 		return 'v3-icons';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'value' => String_Prop_Type::make(),
-			'library' => String_Prop_Type::make(),
+			'value' => V3_String_Prop_Type::make()->pattern( self::CLASS_NAME_PATTERN ),
+			'library' => V3_String_Prop_Type::make()->pattern( self::CLASS_NAME_PATTERN ),
 		];
 	}
 }

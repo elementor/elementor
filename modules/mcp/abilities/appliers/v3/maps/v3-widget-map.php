@@ -74,6 +74,39 @@ class V3_Widget_Map {
 		return $this->settings;
 	}
 
+	/**
+	 * The kit controls source of the first kit-hosted target, null when every target is the widget's.
+	 */
+	public function get_kit_source(): ?Kit_Controls_Source {
+		foreach ( $this->get_all_targets() as $target ) {
+			if ( null !== $target->get_kit_source() ) {
+				return $target->get_kit_source();
+			}
+		}
+
+		return null;
+	}
+
+	public function has_only_kit_targets(): bool {
+		foreach ( $this->get_all_targets() as $target ) {
+			if ( null === $target->get_kit_source() ) {
+				return false;
+			}
+		}
+
+		return null !== $this->default_target;
+	}
+
+	public function without_kit_targets(): self {
+		$map = clone $this;
+		$map->targets = array_values( array_filter(
+			$this->targets,
+			fn( Style_Target $target ) => null === $target->get_kit_source()
+		) );
+
+		return $map;
+	}
+
 	public function get_default_target(): ?Style_Target {
 		return $this->default_target;
 	}

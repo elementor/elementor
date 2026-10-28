@@ -42,11 +42,13 @@ class Test_Elementor_One_Menu_Manager_Protected_Slugs extends Elementor_Test_Bas
 		$submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] = [
 			[ 'Elementor MCP', 'manage_options', 'elementor-mcp' ],
 			[ 'Agent Ready', 'manage_options', 'elementor-agents-ready' ],
+			[ 'Agent Access', 'manage_options', 'elementor-agent-access' ],
 			[ 'Element Manager', 'manage_options', 'elementor-element-manager' ],
 		];
 
 		$this->register_flyout_item( 'elementor-mcp' );
 		$this->register_flyout_item( 'elementor-agents-ready' );
+		$this->register_flyout_item( 'elementor-agent-access' );
 		$this->register_flyout_item( 'elementor-element-manager' );
 
 		// Act
@@ -57,6 +59,7 @@ class Test_Elementor_One_Menu_Manager_Protected_Slugs extends Elementor_Test_Bas
 
 		$this->assertContains( 'elementor-mcp', $remaining_slugs );
 		$this->assertContains( 'elementor-agents-ready', $remaining_slugs );
+		$this->assertNotContains( 'elementor-agent-access', $remaining_slugs );
 		$this->assertNotContains( 'elementor-element-manager', $remaining_slugs );
 	}
 

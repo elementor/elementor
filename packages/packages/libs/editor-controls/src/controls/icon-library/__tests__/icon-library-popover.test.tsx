@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import { ICON_LIBRARY_GRID_MIN_CELL_SIZE, ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY } from '../icon-library-grid';
 import { ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY, IconLibraryPopover } from '../icon-library-popover';
-import { useIconLibraryProviderIcons } from '../icon-library-providers';
+import { resolveProviderIconPreviewSvg, useIconLibraryProviderIcons } from '../icon-library-providers';
 import { useFontAwesome7Catalog } from '../use-font-awesome-7-catalog';
 
 jest.mock( '../use-font-awesome-7-catalog' );
@@ -39,7 +39,11 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 	} ),
 } ) );
 
-const createIcon = ( name: string, library: 'fa-solid' | 'fa-regular' | 'fa-brands', aliases: string[] = [] ) => ( {
+const createIcon = (
+	name: string,
+	library: 'fa-solid' | 'fa-regular' | 'fa-brands' | 'fa-light',
+	aliases: string[] = []
+) => ( {
 	id: `${ library }:${ name }`,
 	name,
 	label: name,
@@ -466,6 +470,27 @@ describe( 'IconLibraryPopover', () => {
 		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows the free icons while a provider is still loading', () => {
+		// Arrange.
+		jest.mocked( useIconLibraryProviderIcons ).mockReturnValue( { data: [], isLoading: true } as never );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows a named loading state while the free catalog is loading', () => {
+		// Arrange.
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: true } as never );
+
+		renderPopover();
+
+		// Assert.
+		expect( screen.getByRole( 'progressbar', { name: 'Loading icons' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'shows a load failure when the catalog is empty', () => {
 		// Arrange.
 		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( {
@@ -688,6 +713,30 @@ describe( 'IconLibraryPopover', () => {
 		} );
 	} );
 
+	it( 'resolves a lazy provider tile by its icon value, not its tile id', async () => {
+		// Arrange.
+		const lazyIcon = {
+			...createIcon( 'star', 'fa-light' ),
+			value: 'fa-light fa-star',
+			lazySvg: true,
+		};
+
+		jest.mocked( resolveProviderIconPreviewSvg ).mockResolvedValue( null );
+		jest.mocked( useIconLibraryProviderIcons ).mockReturnValue( { data: [ lazyIcon ], isLoading: false } as never );
+
+		// Act.
+		renderPopover();
+
+		// Assert.
+		await waitFor( () =>
+			expect( resolveProviderIconPreviewSvg ).toHaveBeenCalledWith(
+				'fa-light',
+				'fa-light fa-star',
+				expect.any( AbortSignal )
+			)
+		);
+	} );
+
 	it( 'filters custom libraries under My Libraries without resetting search', () => {
 		// Arrange.
 		jest.useFakeTimers();
@@ -797,5 +846,38 @@ describe( 'IconLibraryPopover', () => {
 
 		// Assert.
 		expect( await screen.findByRole( 'tooltip', { name: 'Filter by library' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the upload action in the header without hiding the icons', () => {
+		// Arrange.
+		window.elementor = { config: { v4Promotions: {} } } as unknown as typeof window.elementor;
+		renderPopover();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upload library' } ) );
+
+		// Assert.
+		expect( screen.getByText( 'Upload custom icons' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'grid' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'gridcell', { name: /star/i } ) ).toBeInTheDocument();
+	} );
+
+	it( 'keeps the picker state when the upload promotion is opened and closed', async () => {
+		// Arrange.
+		window.elementor = { config: { v4Promotions: {} } } as unknown as typeof window.elementor;
+		const onClose = jest.fn();
+		renderPopover( { onClose } );
+		fireEvent.change( screen.getByPlaceholderText( 'Search' ), { target: { value: 'star' } } );
+		switchToListView();
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Upload library' } ) );
+		fireEvent.click( within( screen.getByRole( 'dialog' ) ).getByRole( 'button', { name: /close/i } ) );
+
+		// Assert.
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+		expect( onClose ).not.toHaveBeenCalled();
+		expect( screen.getByPlaceholderText( 'Search' ) ).toHaveValue( 'star' );
+		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
 	} );
 } );

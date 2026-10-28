@@ -9,8 +9,10 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
+use Elementor\Modules\DefaultStyles\Default_Styles_Sections;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -124,7 +126,22 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 			);
 		}
 
-		return $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations );
+
+		$failed_count = $this->count_failed_operations( $response['results'] );
+
+		if ( $failed_count > 0 ) {
+			Mcp_Event_Dispatcher::emit( 'default_styles_save_failed', [
+				'interaction_result' => 'save_failed',
+				'tags_changed_count' => $failed_count,
+			] );
+		}
+
+		return $response;
+	}
+
+	private function count_failed_operations( array $results ): int {
+		return count( array_filter( $results, fn( $result ) => 'ok' !== ( $result['status'] ?? '' ) ) );
 	}
 
 	private function handle_bulk( array $operations ): array {
@@ -236,6 +253,8 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 			return;
 		}
 
+		$this->emit_tag_saved( $tag, 'set', Default_Styles_Sections::for_variants( $new_variants ) );
+
 		$results->add_success( $index, 'update', [ 'tag' => $tag ] );
 	}
 
@@ -249,7 +268,18 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 		$this->get_repository()->delete( $tag );
 
+		$this->emit_tag_saved( $tag, 'unset', [] );
+
 		$results->add_success( $index, 'delete', [ 'tag' => $tag ] );
+	}
+
+	private function emit_tag_saved( string $tag, string $action, array $sections_modified ): void {
+		Mcp_Event_Dispatcher::emit( 'default_styles_tag_saved', [
+			'interaction_result' => 'tag_saved',
+			'tag' => $tag,
+			'action' => $action,
+			'sections_modified' => $sections_modified,
+		] );
 	}
 
 	private function strip_null_props( array $variants ): array {

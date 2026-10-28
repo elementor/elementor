@@ -43,6 +43,7 @@ export type AuditViolation = {
 	ctaLabel?: string;
 	secondaryCtaLabel?: string;
 	secondaryCtaUrl?: string;
+	appInstalled?: boolean;
 };
 
 export type PageContextResponse = {

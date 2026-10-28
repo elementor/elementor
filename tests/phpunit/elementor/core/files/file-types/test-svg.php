@@ -123,4 +123,108 @@ class Test_Svg extends Elementor_Test_Base {
 			[ 'javascri&#10;pt:alert(origin)', false ],
 		];
 	}
+
+	/**
+	 * @dataProvider allowed_filter_elements_data_provider
+	 */
+	public function test_sanitize__keeps_camel_case_elements( $tag_name ) {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><' . $tag_name . '></' . $tag_name . '></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $svg_content, $sanitized );
+	}
+
+	public function allowed_filter_elements_data_provider() {
+		return [
+			'animateMotion' => [ 'animateMotion' ],
+			'animateTransform' => [ 'animateTransform' ],
+			'feBlend' => [ 'feBlend' ],
+			'feColorMatrix' => [ 'feColorMatrix' ],
+			'feComponentTransfer' => [ 'feComponentTransfer' ],
+			'feComposite' => [ 'feComposite' ],
+			'feConvolveMatrix' => [ 'feConvolveMatrix' ],
+			'feDiffuseLighting' => [ 'feDiffuseLighting' ],
+			'feDisplacementMap' => [ 'feDisplacementMap' ],
+			'feDistantLight' => [ 'feDistantLight' ],
+			'feDropShadow' => [ 'feDropShadow' ],
+			'feFlood' => [ 'feFlood' ],
+			'feFuncA' => [ 'feFuncA' ],
+			'feFuncB' => [ 'feFuncB' ],
+			'feFuncG' => [ 'feFuncG' ],
+			'feFuncR' => [ 'feFuncR' ],
+			'feGaussianBlur' => [ 'feGaussianBlur' ],
+			'feImage' => [ 'feImage' ],
+			'feMerge' => [ 'feMerge' ],
+			'feMergeNode' => [ 'feMergeNode' ],
+			'feMorphology' => [ 'feMorphology' ],
+			'feOffset' => [ 'feOffset' ],
+			'fePointLight' => [ 'fePointLight' ],
+			'feSpecularLighting' => [ 'feSpecularLighting' ],
+			'feSpotLight' => [ 'feSpotLight' ],
+			'feTile' => [ 'feTile' ],
+			'feTurbulence' => [ 'feTurbulence' ],
+		];
+	}
+
+	public function test_sanitize__keeps_camel_case_attributes_on_camel_case_element() {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><filter id="blur"><feGaussianBlur stdDeviation="2"></feGaussianBlur></filter></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $svg_content, $sanitized );
+	}
+
+	/**
+	 * @dataProvider unsafe_fe_image_href_data_provider
+	 */
+	public function test_sanitize__removes_unsafe_href_from_fe_image( $attribute, $value ) {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_open = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">';
+		$svg_content = $svg_open . '<filter id="f"><feImage ' . $attribute . '="' . $value . '"></feImage></filter></svg>';
+		$expected = $svg_open . '<filter id="f"><feImage></feImage></filter></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $expected, $sanitized );
+	}
+
+	public function unsafe_fe_image_href_data_provider() {
+		return [
+			'javascript in href' => [ 'href', 'javascript:alert(1)' ],
+			'javascript in xlink:href' => [ 'xlink:href', 'javascript:alert(1)' ],
+			'html data URI in xlink:href' => [ 'xlink:href', 'data:text/html,x' ],
+		];
+	}
+
+	public function test_sanitize__removes_unknown_element() {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect><blink>alert(1)</blink></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect></svg>', $sanitized );
+	}
 }

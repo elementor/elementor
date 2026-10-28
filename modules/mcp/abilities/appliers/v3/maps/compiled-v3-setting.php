@@ -3,7 +3,10 @@
 namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\Multi_Enum_From_Control_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Plain_Value_Guard;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Settings\V3_Setting_Adapter;
+use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -59,6 +62,21 @@ class Compiled_V3_Setting {
 	}
 
 	/**
+	 * @param mixed $plain Value that already passed the published schema.
+	 * @return string|null Rejection reason for a rule the schema cannot express, or null to accept.
+	 */
+	public function reject_reason( $plain ): ?string {
+		return $this->adapter instanceof V3_Plain_Value_Guard ? $this->adapter->reject_reason( $plain, $this->control ) : null;
+	}
+
+	/**
+	 * A multiple-choice setting can be cleared with an empty list, which the list prop type rejects.
+	 */
+	public function accepts_empty_list(): bool {
+		return $this->adapter instanceof Multi_Enum_From_Control_Setting_Adapter;
+	}
+
+	/**
 	 * @return mixed
 	 */
 	public function to_control_value( array $prop_value ) {
@@ -78,5 +96,12 @@ class Compiled_V3_Setting {
 	 */
 	public function get_schema(): array {
 		return $this->schema;
+	}
+
+	/**
+	 * @return array<string, mixed> The schema exactly as `get-widget-schemas` publishes it for this setting.
+	 */
+	public function get_published_schema(): array {
+		return V3_Json_Schema_Builder::build_from_map( [ $this->control_key => $this->schema ] )['properties'][ $this->control_key ];
 	}
 }
