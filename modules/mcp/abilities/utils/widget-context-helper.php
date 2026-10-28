@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Plain_Llm_Schema_Converter;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
@@ -341,6 +342,10 @@ class Widget_Context_Helper {
 	}
 
 	private static function is_prop_key_configurable( string $key, Prop_Type $prop_type ): bool {
+		if ( Prop_Sensitivity::is_sensitive( $prop_type ) ) {
+			return false;
+		}
+
 		if ( ! in_array( $key, self::NON_CONFIGURABLE_PROP_KEYS, true ) ) {
 			return true;
 		}

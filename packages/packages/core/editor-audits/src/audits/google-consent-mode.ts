@@ -45,6 +45,7 @@ export const audit: Audit = {
 						auditId: audit.id,
 						label,
 						ctaLabel: __( 'Enable', 'elementor' ),
+						appInstalled: true,
 						externalUrl: ctx.pageContext.cookiez_consent_mode_settings_url,
 					},
 				],

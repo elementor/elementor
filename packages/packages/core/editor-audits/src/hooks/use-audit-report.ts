@@ -6,6 +6,7 @@ import { runPageAudit } from '../runner';
 import { type GlobalState, selectError, selectIsStale, selectReport, selectStatus, slice } from '../store';
 import { getPersistedReport, persistReport } from '../utils/report-storage';
 import { SessionExpiredError } from '../utils/session-expiration';
+import { type RunTrigger, trackRunCompleted, trackRunFailed, trackRunStarted } from '../utils/tracking';
 
 export function useAuditReport() {
 	const status = useSelector( ( state: GlobalState ) => selectStatus( state ) );
@@ -29,20 +30,24 @@ export function useAuditReport() {
 		}
 	}, [ documentId, report, dispatch ] );
 
-	const run = async ( documentIdToRun: number ) => {
+	const run = async ( documentIdToRun: number, trigger: RunTrigger ) => {
 		dispatch( slice.actions.runStarted() );
+		trackRunStarted( trigger );
 
 		try {
 			const nextReport = await runPageAudit( documentIdToRun );
 			dispatch( slice.actions.runSucceeded( nextReport ) );
 			persistReport( documentIdToRun, nextReport );
+			trackRunCompleted( nextReport );
 		} catch ( e ) {
 			if ( e instanceof SessionExpiredError ) {
 				dispatch( slice.actions.runAborted() );
+				trackRunFailed();
 				return;
 			}
 
 			dispatch( slice.actions.runFailed( e instanceof Error ? e.message : 'Unknown error' ) );
+			trackRunFailed();
 		}
 	};
 
