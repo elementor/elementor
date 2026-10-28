@@ -1,5 +1,6 @@
 import StorageManager, { ONBOARDING_STORAGE_KEYS } from './storage-manager.js';
 import EventDispatcher from './event-dispatcher.js';
+import { ONBOARDING_EVENTS } from './onboarding-event-names.js';
 import ClickTracker from './click-tracker.js';
 
 class PostOnboardingTracker {
@@ -30,12 +31,16 @@ class PostOnboardingTracker {
 			return;
 		}
 
-		const canDispatch = EventDispatcher.canSendEvents();
-		if ( canDispatch ) {
-			EventDispatcher.dispatchEditorEvent( 'editor_loaded_from_onboarding', {
-				editor_loaded_from_onboarding_source: siteStarterChoice,
-			} );
-		}
+		EventDispatcher.trackEvent( ONBOARDING_EVENTS.EDITOR_LOADED, {
+			window_name: 'editor',
+			interaction_type: 'load',
+			target_type: 'loaded',
+			target_name: 'editor_from_onboarding',
+			interaction_result: 'editor_loaded',
+			target_value: siteStarterChoice,
+			target_location: 'editor',
+			location_l1: 'editor',
+		} );
 	}
 
 	setupPostOnboardingClickTracking() {
