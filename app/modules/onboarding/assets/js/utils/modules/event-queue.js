@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'elementor_core_onboarding_event_queue';
+export const STORAGE_KEY = 'elementor_core_onboarding_event_queue';
 const MAX_QUEUE_SIZE = 200;
 
 export function enqueueEvent( name, payload, dedupeKey = null ) {

@@ -2,6 +2,7 @@ import {
 	clearEventQueue,
 	enqueueEvent,
 	getEventQueue,
+	STORAGE_KEY,
 } from './event-queue.js';
 import {
 	createCoreOnboardingPayload,
@@ -78,6 +79,9 @@ export function initializeAndEnableTracking( onReady ) {
 			finishInitialization();
 		} );
 	} catch ( error ) {
+		if ( onReady ) {
+			onReady();
+		}
 	}
 }
 
@@ -102,7 +106,7 @@ function flushQueueInternal() {
 	}
 
 	try {
-		sessionStorage.setItem( 'elementor_core_onboarding_event_queue', JSON.stringify( stillPending ) );
+		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( stillPending ) );
 	} catch ( error ) {
 		// Storage unavailable.
 	}
@@ -154,13 +158,16 @@ export function trackEvent( eventName, payload, dedupeKey = null ) {
 	return dispatchResult;
 }
 
-export function flushQueue() {
+export function flushQueue( afterFlush ) {
 	if ( ! canSendEvents() || ! isEventsManagerAvailable() ) {
 		return;
 	}
 
 	initializeAndEnableTracking( () => {
 		flushQueueInternal();
+		if ( afterFlush ) {
+			afterFlush();
+		}
 	} );
 }
 

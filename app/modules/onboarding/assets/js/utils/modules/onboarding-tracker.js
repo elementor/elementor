@@ -791,8 +791,9 @@ class OnboardingTracker {
 
 	sendConnectionSuccessEvents( data ) {
 		this.sendAppropriateStatusEvent( 'success', data );
-		this.sendStoredExperimentData();
-		EventDispatcher.flushQueue();
+		EventDispatcher.flushQueue( () => {
+			this.sendStoredExperimentData();
+		} );
 	}
 
 	sendConnectionFailureEvents() {
@@ -1275,8 +1276,11 @@ class OnboardingTracker {
 		};
 
 		if ( EventDispatcher.canSendEvents() ) {
-			EventDispatcher.dispatch( '$experiment_started', eventData );
-			StorageManager.setString( config.startedKey, 'true' );
+			if ( EventDispatcher.dispatch( '$experiment_started', eventData ) ) {
+				StorageManager.setString( config.startedKey, 'true' );
+			} else {
+				this.storeExperimentDataForLater( experimentId, eventData );
+			}
 		} else {
 			this.storeExperimentDataForLater( experimentId, eventData );
 		}
@@ -1307,12 +1311,23 @@ class OnboardingTracker {
 			return;
 		}
 
+		const remainingExperiments = [];
+
 		storedExperiments.forEach( ( experiment ) => {
-			EventDispatcher.dispatch( '$experiment_started', experiment.eventData );
-			StorageManager.setString( experiment.startedKey, 'true' );
+			if ( EventDispatcher.dispatch( '$experiment_started', experiment.eventData ) ) {
+				StorageManager.setString( experiment.startedKey, 'true' );
+				return;
+			}
+
+			remainingExperiments.push( experiment );
 		} );
 
-		StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+		if ( 0 === remainingExperiments.length ) {
+			StorageManager.remove( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA );
+			return;
+		}
+
+		StorageManager.setObject( ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA, remainingExperiments );
 	}
 }
 

@@ -154,4 +154,46 @@ describe( 'onboarding event dispatcher', () => {
 		expect( mockDispatchEvent ).not.toHaveBeenCalled();
 		expect( getEventQueue() ).toHaveLength( 1 );
 	} );
+
+	test( 'runs flush callback when initializeMixpanel throws and keeps queued events', () => {
+		jest.resetModules();
+
+		window.elementorCommon.config.editor_events.can_send_events = true;
+		window.elementorCommon.config.editor_events.mixpanelInstance = null;
+		window.elementorCommon.eventsManager.isMixpanelReady = () => false;
+		window.elementorCommon.eventsManager.initializeMixpanel = jest.fn( () => {
+			throw new Error( 'init failed' );
+		} );
+
+		const { trackEvent, flushQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js' );
+		const { getEventQueue, STORAGE_KEY } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-queue.js' );
+
+		trackEvent( 'core_onboarding_initialized', sampleInitializedPayload );
+
+		expect( getEventQueue() ).toHaveLength( 1 );
+
+		flushQueue();
+
+		expect( mockDispatchEvent ).not.toHaveBeenCalled();
+		expect( getEventQueue() ).toHaveLength( 1 );
+		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBeTruthy();
+	} );
+
+	test( 'persists still-pending events under the shared queue storage key', () => {
+		jest.resetModules();
+
+		window.elementorCommon.config.editor_events.can_send_events = true;
+		window.elementorCommon.config.editor_events.mixpanelInstance = null;
+		window.elementorCommon.eventsManager.isMixpanelReady = () => false;
+		window.elementorCommon.eventsManager.initializeMixpanel = jest.fn( ( callback ) => callback() );
+
+		const { trackEvent, flushQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js' );
+		const { STORAGE_KEY } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-queue.js' );
+
+		trackEvent( 'core_onboarding_initialized', sampleInitializedPayload );
+		flushQueue();
+
+		expect( sessionStorage.getItem( STORAGE_KEY ) ).toContain( 'core_onboarding_initialized' );
+		expect( mockDispatchEvent ).not.toHaveBeenCalled();
+	} );
 } );
