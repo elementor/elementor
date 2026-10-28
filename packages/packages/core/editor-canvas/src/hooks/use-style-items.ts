@@ -1,8 +1,8 @@
-import { type Dispatch, type SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { type BreakpointId, useBreakpoints } from '@elementor/editor-responsive';
 import { isClassState, type StyleDefinition, type StyleDefinitionClassState } from '@elementor/editor-styles';
 import { type StylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
-import { registerDataHook } from '@elementor/editor-v1-adapters';
+import { getCanvasIframeDocument, registerDataHook } from '@elementor/editor-v1-adapters';
 
 import { type RendererStyleDefinition, type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
 import { abortPreviousRuns } from '../utils/abort-previous-runs';
@@ -28,7 +28,7 @@ type ProviderAndSubscriber = {
 
 type ProviderAndStyleItemsMap = Record< string, ProviderAndStyleItems >;
 
-export function useStyleItems() {
+export function useStyleItems( canvasHead?: HTMLElement | null ) {
 	const resolve = useStylePropResolver();
 	const renderStyles = useStyleRenderer( resolve );
 	const breakpoints = useBreakpoints();
@@ -88,6 +88,14 @@ export function useStyleItems() {
 		} );
 	} );
 
+	useLayoutEffect( () => {
+		if ( ! isCurrentCanvasHead( canvasHead ) ) {
+			return;
+		}
+
+		removeRenderedProvidersPregeneratedLinks( styleItems );
+	}, [ canvasHead, styleItems ] );
+
 	const breakpointSorter = useMemo(
 		() => createBreakpointSorter( breakpoints.map( ( breakpoint ) => breakpoint.id ) ),
 		[ breakpoints ]
@@ -102,6 +110,22 @@ export function useStyleItems() {
 				.sort( breakpointSorter ),
 		[ styleItems, breakpointSorter ]
 	);
+}
+
+// The portal container is resolved before the preview document replaces the iframe's initial document,
+// so a stale head would let the live canvas lose its pregenerated links while the styles render elsewhere.
+function isCurrentCanvasHead( canvasHead?: HTMLElement | null ): canvasHead is HTMLElement {
+	return !! canvasHead && canvasHead === getCanvasIframeDocument()?.head;
+}
+
+// The pregenerated <link /> css can only be dropped once the client-side <style /> tags replacing it are committed
+// into the canvas, otherwise the canvas is painted without any of the provider's styles.
+function removeRenderedProvidersPregeneratedLinks( styleItems: ProviderAndStyleItemsMap ) {
+	Object.entries( styleItems ).forEach( ( [ providerKey, { provider, items } ] ) => {
+		if ( items.length > 0 && provider.isPregeneratedLink ) {
+			removeProviderPregeneratedLinks( providerKey, provider.isPregeneratedLink );
+		}
+	} );
 }
 
 function prioritySorter(
@@ -157,11 +181,6 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 				const cache = getCache();
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
-
-				if ( hasCache && provider.isPregeneratedLink ) {
-					// if styles were rendered already (i.e. hasCache = true), we can safely remove the pregenerated css rules imported via <link /> tags
-					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
-				}
 
 				if ( hasDiffInfo && hasCache ) {
 					return updateItems( cache, previous, current, signal );
