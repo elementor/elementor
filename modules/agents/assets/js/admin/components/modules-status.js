@@ -5,20 +5,20 @@ import Typography from '@elementor/ui/Typography';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 
-const TOTAL_SEGMENTS = 4;
+const SEGMENT_WIDTH = 54;
 const BAR_HEIGHT = 8;
 const BAR_RADIUS = '100px';
 
-const getBarColor = ( index, score ) => {
-	if ( 4 === score ) {
+const getBarColor = ( index, score, total ) => {
+	if ( total === score ) {
 		return 'success.main';
 	}
 
 	return index < score ? 'warning.main' : 'action.disabled';
 };
 
-const getScoreIcon = ( score ) => {
-	if ( 4 === score ) {
+const getScoreIcon = ( score, total ) => {
+	if ( total === score ) {
 		return <CircleCheckFilledIcon color="success" fontSize="small" />;
 	}
 
@@ -29,24 +29,24 @@ const getScoreIcon = ( score ) => {
 	return <AlertCircleIcon color="warning" fontSize="small" />;
 };
 
-export const ModulesStatus = ( { score, label = __( 'Active', 'elementor' ), showInfoIcon = true, infoIcon } ) => {
+export const ModulesStatus = ( { score, total, label = __( 'Active', 'elementor' ), showInfoIcon = true, infoIcon } ) => {
 	return (
-		<Stack alignItems="flex-start" spacing={ 1 } width={ 216 }>
+		<Stack alignItems="flex-start" spacing={ 1 } width={ total * SEGMENT_WIDTH }>
 			<Stack direction="row" spacing={ 1 } width="100%">
-				{ Array.from( { length: TOTAL_SEGMENTS } ).map( ( _, index ) => (
+				{ Array.from( { length: total } ).map( ( _, index ) => (
 					<Box
 						key={ index }
 						flex={ 1 }
 						height={ BAR_HEIGHT }
 						borderRadius={ BAR_RADIUS }
-						bgcolor={ getBarColor( index, score ) }
+						bgcolor={ getBarColor( index, score, total ) }
 					/>
 				) ) }
 			</Stack>
 			<Stack direction="row" alignItems="center" spacing={ 1 }>
-				{ getScoreIcon( score ) }
+				{ getScoreIcon( score, total ) }
 				<Typography variant="h6" color="text.secondary">
-					{ `${ score }/${ TOTAL_SEGMENTS }` }
+					{ `${ score }/${ total }` }
 				</Typography>
 				<Stack direction="row" alignItems="center" spacing={ 0.5 }>
 					<Typography variant="body2" color="text.secondary">
@@ -60,7 +60,8 @@ export const ModulesStatus = ( { score, label = __( 'Active', 'elementor' ), sho
 };
 
 ModulesStatus.propTypes = {
-	score: PropTypes.oneOf( [ 0, 1, 2, 3, 4 ] ).isRequired,
+	score: PropTypes.number.isRequired,
+	total: PropTypes.number.isRequired,
 	label: PropTypes.string,
 	showInfoIcon: PropTypes.bool,
 	infoIcon: PropTypes.node,

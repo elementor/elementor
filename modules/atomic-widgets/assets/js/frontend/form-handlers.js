@@ -1,10 +1,12 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
+import { getModelContext } from '../../../../agents/assets/js/frontend/model-context';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
 
 const REDIRECT_DELAY_MS = 1000;
 const SUBMIT_SUCCESS_EVENT = 'elementor/atomic-form/submit-success';
+const BEFORE_SUBMIT_EVENT = 'elementor/atomic-form/before-submit';
 const ALLOWED_REDIRECT_PROTOCOLS = [ 'http:', 'https:', 'ftp:', 'ftps:' ];
 
 let webmcpFormListenersRegistered = false;
@@ -22,12 +24,12 @@ function registerWebmcpFormListeners() {
 
 	webmcpFormListenersRegistered = true;
 
-	window.addEventListener( 'toolactivated', ( { toolName } ) => {
-		resetWebmcpFormState( toolName );
-	} );
+	const modelContext = getModelContext( document, navigator );
+	const eventTargets = modelContext ? [ window, modelContext ] : [ window ];
 
-	window.addEventListener( 'toolcancel', ( { toolName } ) => {
-		resetWebmcpFormState( toolName );
+	eventTargets.forEach( ( eventTarget ) => {
+		eventTarget.addEventListener( 'toolactivated', ( { toolName } ) => resetWebmcpFormState( toolName ) );
+		eventTarget.addEventListener( 'toolcancel', ( { toolName } ) => resetWebmcpFormState( toolName ) );
 	} );
 }
 
@@ -130,6 +132,8 @@ function registerAtomicFormAlpineData( form ) {
 			}
 
 			try {
+				payload.extraFields = await collectBeforeSubmitFields( form );
+
 				const response = await submitAtomicForm( payload );
 				const state = response?.success ? 'success' : 'error';
 
@@ -375,6 +379,23 @@ function appendFormField( formData, field, index ) {
 	appendFieldValue( formData, `${ prefix }[value]`, field.value );
 }
 
+// Listeners call `event.detail.addFields( fieldsOrPromise )` to send extra request fields (e.g. a spam protection token).
+// A rejected promise fails the submission.
+async function collectBeforeSubmitFields( form ) {
+	const pendingFields = [];
+
+	form.dispatchEvent( new CustomEvent( BEFORE_SUBMIT_EVENT, {
+		bubbles: true,
+		detail: {
+			addFields: ( fields ) => pendingFields.push( fields ),
+		},
+	} ) );
+
+	const resolved = await Promise.all( pendingFields );
+
+	return Object.assign( {}, ...resolved.filter( ( fields ) => fields && 'object' === typeof fields ) );
+}
+
 async function submitAtomicForm( payload ) {
 	const ajaxUrl = elementorFrontendConfig?.urls?.ajaxurl;
 
@@ -391,6 +412,7 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => appendFormField( formData, field, index ) );
+	Object.entries( payload.extraFields ?? {} ).forEach( ( [ key, value ] ) => formData.append( key, value ) );
 
 	const response = await fetch( ajaxUrl, {
 		method: 'POST',

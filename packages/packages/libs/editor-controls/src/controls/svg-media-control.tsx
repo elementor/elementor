@@ -50,11 +50,10 @@ const MODE_BROWSE: OpenOptions = { mode: 'browse' };
 const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
 type SvgMediaControlProps = {
-	showIconLibrary?: boolean;
 	label?: string;
 };
 
-export const SvgMediaControl = createControl( ( { showIconLibrary = false, label }: SvgMediaControlProps ) => {
+export const SvgMediaControl = createControl( ( { label }: SvgMediaControlProps ) => {
 	const groupLabel = label ?? __( 'SVG', 'elementor' );
 	const { value: svgValue, setValue: setSvgValue, placeholder: svgPlaceholder } = useBoundProp( svgSrcPropTypeUtil );
 	const { value: iconValue, setValue: setIconValue, placeholder: iconPlaceholder } = useBoundProp( iconPropTypeUtil );
@@ -79,10 +78,9 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 	const buttonGroupRef = useRef< HTMLDivElement >( null );
 	const [ iconLibraryAnchor, setIconLibraryAnchor ] = useState< IconLibraryAnchor | null >( null );
 	const { isAdmin } = useCurrentUserCapabilities();
-	const selectedIconClass =
-		showIconLibrary && typeof previewIconValue?.value?.value === 'string' ? previewIconValue.value.value : null;
+	const selectedIconClass = typeof previewIconValue?.value?.value === 'string' ? previewIconValue.value.value : null;
 	const selectedIconLibrary =
-		showIconLibrary && typeof previewIconValue?.library?.value === 'string' ? previewIconValue.library.value : null;
+		typeof previewIconValue?.library?.value === 'string' ? previewIconValue.library.value : null;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
@@ -168,7 +166,7 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 	return (
 		<Stack gap={ 1 } aria-label={ __( 'SVG control', 'elementor' ) }>
 			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ handleCloseUnfilteredModal } />
-			{ showIconLibrary && iconLibraryAnchor ? (
+			{ iconLibraryAnchor ? (
 				<Popover
 					disableScrollLock
 					open={ iconLibraryPopoverState.isOpen }
@@ -222,7 +220,6 @@ export const SvgMediaControl = createControl( ( { showIconLibrary = false, label
 							<SvgMediaOverlay
 								label={ groupLabel }
 								isAdmin={ isAdmin }
-								showIconLibrary={ showIconLibrary }
 								buttonGroupRef={ buttonGroupRef }
 								onSelectSvg={ handleSelectSvg }
 								onUpload={ handleUpload }

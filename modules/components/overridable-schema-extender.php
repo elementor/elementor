@@ -4,6 +4,7 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Prop_Types_Schema_Extender;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 
@@ -20,7 +21,10 @@ class Overridable_Schema_Extender extends Prop_Types_Schema_Extender {
 		$is_ignore_overridable_applied = ! $prop_type->get_meta_item( Overridable_Prop_Type::META_KEY, true );
 		$is_classes_prop = Atomic_Elements_Utils::is_classes_prop( $prop_type );
 
-		if ( $is_ignore_overridable_applied || $is_classes_prop ) {
+		// Sensitive values (e.g. API keys) must not move into component instance overrides.
+		$is_sensitive_prop = Prop_Sensitivity::is_sensitive( $prop_type );
+
+		if ( $is_ignore_overridable_applied || $is_classes_prop || $is_sensitive_prop ) {
 			return [];
 		}
 		return [ Overridable_Prop_Type::make()->set_origin_prop_type( $prop_type ) ];

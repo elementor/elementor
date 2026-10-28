@@ -11,7 +11,8 @@ use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -23,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
+require_once __DIR__ . '/fixtures/fake-v3-widget.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -32,11 +34,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 	private Documents_Manager $original_documents;
 	private Widgets_Manager $original_widgets_manager;
 	private Elements_Manager $original_elements_manager;
-
-	/**
-	 * @var array<string, string>
-	 */
-	private array $original_experiment_states = [];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -62,15 +59,9 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		] );
 
 		Mock_Pro_License_API::reset();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
-		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
-			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
-			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
-		}
-
 		V3_Widget_Map_Registry::reset_instance();
 		Plugin::$instance->documents = $this->original_documents;
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
@@ -176,9 +167,34 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'insufficient_permissions', $result->get_error_code() );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( $input['action'], $result->get_error_data()['action'] );
+		$this->assertSame( Components_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertStringContainsString( Components_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_message() );
+		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
+	}
+
+	/**
+	 * @dataProvider description_notice_cases
+	 */
+	public function test_get_description_for_llm__explains_pro_requirement_only_without_active_license( bool $license_active, bool $expects_notice ) {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( $license_active, false );
+
+		// Act
+		$description = ( new Manage_Component_Ability() )->get_description_for_llm();
+
+		// Assert
+		$notice = 'creating, renaming, and archiving components require an active Elementor Pro license';
+		$this->assertSame( $expects_notice, str_contains( $description, $notice ) );
+	}
+
+	public function description_notice_cases(): array {
+		return [
+			'without license' => [ false, true ],
+			'with active license' => [ true, false ],
+		];
 	}
 
 	public function access_gate_cases(): array {
@@ -442,13 +458,14 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		Mock_Pro_License_API::set_license_state( true );
+		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( 'nav-menu' ) );
 		$ability = new Manage_Component_Ability();
 
 		// Act
 		$result = $ability->execute( [
 			'action' => 'create',
-			'title' => 'Legacy Heading XML',
-			'xml_structure' => '<heading configuration-id="heading"/>',
+			'title' => 'Legacy Menu XML',
+			'xml_structure' => '<nav-menu configuration-id="menu"/>',
 		] );
 
 		// Assert
@@ -544,7 +561,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'circular_dependency_detected', $result->get_error_code() );
 	}
 
-	public function test_update__rejects_invalid_form_structure_and_preserves_the_element_tree() {
+	public function test_update__rejects_form_elements_without_pro_and_preserves_the_element_tree() {
 		// Arrange
 		$this->act_as_admin();
 		Mock_Pro_License_API::set_license_state( true );
@@ -562,7 +579,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( 'elementor_invalid_form_structure', $result->get_error_code() );
+		$this->assertSame( 'pro_license_required', $result->get_error_code() );
 		$elements = ( new Components_Repository() )->get( $component_id, false )->get_elements_data();
 		$this->assertSame( 'h1', $elements[0]['id'] );
 	}
@@ -820,23 +837,6 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 			],
 			'elements' => [],
 		];
-	}
-
-	private function set_experiment_state( string $experiment_name, string $state ): void {
-		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
-			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
-
-			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
-		}
-
-		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
-		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
-		V3_Widget_Map_Registry::reset_instance();
 	}
 
 	private function error_message( $result ): string {

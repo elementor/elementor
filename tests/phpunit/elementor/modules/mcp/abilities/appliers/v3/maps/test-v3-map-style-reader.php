@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Box_Shadow_Group;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Control;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Diagnostics;
@@ -36,13 +37,25 @@ class Test_V3_Map_Style_Reader extends Elementor_Test_Base {
 				'responsive' => [],
 				'condition' => [ '_element_width' => self::CUSTOM_WIDTH ],
 			],
+			'shadow_box_shadow_type' => [
+				'type' => 'popover_toggle',
+				'return_value' => 'yes',
+			],
+			'shadow_box_shadow' => [
+				'type' => 'box_shadow',
+				'condition' => [ 'shadow_box_shadow_type!' => '' ],
+			],
 		];
 	}
 
 	private function read( array $settings ): string {
 		$map = V3_Widget_Map::make( self::WIDGET_TYPE )
 			->description( 'Heading widget.' )
-			->default_target( Style_Target::make( 'heading' )->bind( 'width', V3_Control::bind_to( '_element_custom_width' )->responsive() ) );
+			->default_target(
+				Style_Target::make( 'heading' )
+					->bind( 'width', V3_Control::bind_to( '_element_custom_width' )->responsive() )
+					->with( Box_Shadow_Group::from_prefix( 'shadow' ) )
+			);
 		$compiled = ( new V3_Widget_Map_Compiler() )->compile( $map, $this->controls(), new V3_Map_Diagnostics(), self::WIDGET_TYPE );
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( self::WIDGET_TYPE );
 
@@ -95,5 +108,23 @@ class Test_V3_Map_Style_Reader extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( '', $css );
+	}
+
+	public function test_read__returns_an_inset_shadow_from_the_position_control() {
+		// Act.
+		$css = $this->read( [
+			'shadow_box_shadow_type' => 'yes',
+			'shadow_box_shadow' => [
+				'horizontal' => 0,
+				'vertical' => 4,
+				'blur' => 12,
+				'spread' => 0,
+				'color' => 'rgba(0,0,0,0.2)',
+			],
+			'shadow_box_shadow_position' => 'inset',
+		] );
+
+		// Assert.
+		$this->assertStringContainsString( 'inset', $css );
 	}
 }

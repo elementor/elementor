@@ -22,6 +22,11 @@ class Agent_Ready_Settings {
 	const MODULE_MARKDOWN_CONTENT = 'markdown_content';
 	const MODULE_BOT_ACCESS_CONTROL = 'bot_access_control';
 	const MODULE_AGENT_DISCOVERY = 'agent_discovery';
+	const MODULE_BROWSER_TOOLS = 'browser_tools';
+
+	const ACTIVATED_KEY = 'activated';
+
+	const MAX_BUSINESS_DETAILS_LENGTH = 2000;
 
 	const BOT_PERMISSION_SEARCH = 'search';
 	const BOT_PERMISSION_AI_INPUT = 'ai_input';
@@ -72,6 +77,36 @@ class Agent_Ready_Settings {
 		return array_merge( $defaults[ $module ] ?? [], $stored[ $module ] ?? [] );
 	}
 
+	/**
+	 * A stored option without the flag predates it, so its admin already opted in.
+	 */
+	public function is_activated(): bool {
+		$stored = $this->get_stored();
+
+		if ( ! array_key_exists( self::ACTIVATED_KEY, $stored ) ) {
+			return [] !== $stored;
+		}
+
+		return (bool) $stored[ self::ACTIVATED_KEY ];
+	}
+
+	public function activate( array $skip_modules = [] ): void {
+		if ( $this->is_activated() ) {
+			return;
+		}
+
+		$settings = $this->get_stored();
+
+		foreach ( array_keys( $this->get_module_sanitizers() ) as $module ) {
+			$enabled = ! in_array( $module, $skip_modules, true );
+			$settings[ $module ] = array_merge( $this->get_module_settings( $module ), [ 'enabled' => $enabled ] );
+		}
+
+		$settings[ self::ACTIVATED_KEY ] = true;
+
+		$this->write_trusted( fn() => update_option( self::OPTION, $settings ) );
+	}
+
 	public function is_llms_enabled(): bool {
 		return (bool) $this->get_module_settings( self::MODULE_LLMS_TXT )['enabled'];
 	}
@@ -111,6 +146,34 @@ class Agent_Ready_Settings {
 		return (bool) $this->get_module_settings( self::MODULE_AGENT_DISCOVERY )['enabled'];
 	}
 
+	public function is_browser_tools_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['enabled'];
+	}
+
+	public function get_business_details(): string {
+		return (string) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['business_details'];
+	}
+
+	public function is_module_active( string $module ): bool {
+		if ( ! $this->is_activated() ) {
+			return false;
+		}
+
+		$settings = $this->get_module_settings( $module );
+
+		return ! empty( $settings['enabled'] );
+	}
+
+	public function has_any_active( array $modules ): bool {
+		foreach ( $modules as $module ) {
+			if ( $this->is_module_active( $module ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Bots listed in the admin table, keyed by user-agent token.
 	 *
@@ -131,7 +194,7 @@ class Agent_Ready_Settings {
 			return is_array( $value ) ? $value : [];
 		}
 
-		$stored   = $this->get_stored();
+		$stored   = $this->get_stored_or_inactive_defaults();
 		$incoming = is_array( $value ) ? $value : [];
 
 		foreach ( $this->get_module_sanitizers() as $module => $sanitizer ) {
@@ -154,7 +217,7 @@ class Agent_Ready_Settings {
 	 * @param mixed  $value  Setting value.
 	 */
 	public function set_server_value( string $module, string $key, $value ): void {
-		$settings = $this->get_stored();
+		$settings = $this->get_stored_or_inactive_defaults();
 
 		$settings[ $module ][ $key ] = $value;
 
@@ -163,21 +226,39 @@ class Agent_Ready_Settings {
 
 	private function get_defaults(): array {
 		return [
+			self::ACTIVATED_KEY   => false,
 			self::MODULE_LLMS_TXT => [
-				'enabled'            => true,
+				'enabled'            => false,
 				'is_manually_edited' => false,
 			],
 			self::MODULE_MARKDOWN_CONTENT => [
-				'enabled' => true,
+				'enabled' => false,
 			],
 			self::MODULE_BOT_ACCESS_CONTROL => [
-				'enabled' => true,
+				'enabled' => false,
 				'bots'    => array_fill_keys( $this->bot_catalog->get_popular_tokens(), self::DEFAULT_BOT_PERMISSIONS ),
 			],
 			self::MODULE_AGENT_DISCOVERY => [
-				'enabled' => true,
+				'enabled' => false,
+			],
+			self::MODULE_BROWSER_TOOLS => [
+				'enabled'          => false,
+				'business_details' => '',
 			],
 		];
+	}
+
+	/**
+	 * A first write must not look like a legacy option, which counts as already activated.
+	 */
+	private function get_stored_or_inactive_defaults(): array {
+		$stored = $this->get_stored();
+
+		if ( [] === $stored ) {
+			$stored[ self::ACTIVATED_KEY ] = false;
+		}
+
+		return $stored;
 	}
 
 	private function get_stored(): array {
@@ -195,18 +276,37 @@ class Agent_Ready_Settings {
 			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
 			self::MODULE_BOT_ACCESS_CONTROL  => fn( array $settings ) => $this->sanitize_bot_access_module( $settings ),
 			self::MODULE_AGENT_DISCOVERY     => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
+			self::MODULE_BROWSER_TOOLS       => fn( array $settings ) => $this->sanitize_browser_tools_module( $settings ),
 		];
+	}
+
+	private function sanitize_browser_tools_module( array $settings ): array {
+		return [
+			'enabled'          => rest_sanitize_boolean( $settings['enabled'] ?? false ),
+			'business_details' => $this->sanitize_business_details( $settings['business_details'] ?? '' ),
+		];
+	}
+
+	/**
+	 * @param mixed $details Incoming business details.
+	 */
+	private function sanitize_business_details( $details ): string {
+		if ( ! is_scalar( $details ) ) {
+			return '';
+		}
+
+		return mb_substr( trim( sanitize_textarea_field( (string) $details ) ), 0, self::MAX_BUSINESS_DETAILS_LENGTH );
 	}
 
 	private function sanitize_toggle_module( array $settings ): array {
 		return [
-			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? true ),
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? false ),
 		];
 	}
 
 	private function sanitize_bot_access_module( array $settings ): array {
 		$clean = [
-			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? true ),
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? false ),
 		];
 
 		if ( isset( $settings['bots'] ) && is_array( $settings['bots'] ) ) {
@@ -240,7 +340,7 @@ class Agent_Ready_Settings {
 
 	private function sanitize_content_module( array $settings ): array {
 		$clean = [
-			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? true ),
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? false ),
 		];
 
 		if ( isset( $settings['post_types'] ) && is_array( $settings['post_types'] ) ) {

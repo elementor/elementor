@@ -1,6 +1,6 @@
 Create and manage Elementor components — user-facing reusable compositions of widgets, placed elsewhere via `<e-component>` in `elementor/build-composition` (see `elementor/list-components`).
 
-Requires administrator access. `create`, `rename`, and `archive` additionally require an active Elementor Pro license; `publish` and `update` also work with an expired license. Without the required license, calls fail with `insufficient_permissions`.
+Requires administrator access. `create`, `rename`, and `archive` additionally require an active Elementor Pro license; `publish` and `update` also work with an expired license. Without the required license, calls fail with `pro_license_required` and an `upgrade_url` to share with the user.
 
 # COMPONENT INTENT
 An Elementor component is a persistent, reusable widget composition. It is not a global CSS class and is not merely a group of raw widgets placed on one page.

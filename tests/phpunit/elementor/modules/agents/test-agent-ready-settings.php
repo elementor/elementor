@@ -2,12 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Agent_Ready_Settings extends Elementor_Test_Base {
@@ -18,8 +16,6 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 
 	private Agent_Ready_Settings $settings;
 
-	private $original_experiment_default_state;
-
 	private string $original_request_uri;
 
 	public function setUp(): void {
@@ -29,29 +25,17 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 
 		$this->act_as_admin();
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
 		delete_option( Agent_Ready_Settings::OPTION );
 
 		$this->module   = new Module();
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 
 		do_action( 'rest_api_init' );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 
 		delete_option( Agent_Ready_Settings::OPTION );
@@ -68,9 +52,110 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		$this->settings->ensure_option_exists();
 
 		// Assert
-		$this->assertTrue( $this->settings->is_llms_enabled() );
+		$this->assertFalse( $this->settings->is_activated() );
+		$this->assertFalse( $this->settings->is_llms_enabled() );
+		$this->assertFalse( $this->settings->is_markdown_enabled() );
+		$this->assertFalse( $this->settings->is_bot_access_enabled() );
+		$this->assertFalse( $this->settings->is_agent_discovery_enabled() );
+		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
 		$this->assertFalse( $this->settings->is_llms_manually_edited() );
 		$this->assertArrayNotHasKey( Agent_Ready_Settings::OPTION, wp_load_alloptions() );
+	}
+
+	public function test_activate__enables_every_module_and_marks_activated() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+		$this->settings->ensure_option_exists();
+
+		// Act
+		$this->settings->activate();
+
+		// Assert
+		$this->assertTrue( $this->settings->is_activated() );
+		$this->assertTrue( $this->settings->is_llms_enabled() );
+		$this->assertTrue( $this->settings->is_markdown_enabled() );
+		$this->assertTrue( $this->settings->is_bot_access_enabled() );
+		$this->assertTrue( $this->settings->is_agent_discovery_enabled() );
+		$this->assertTrue( $this->settings->is_browser_tools_enabled() );
+	}
+
+	public function test_rest_update__stays_activated_after_every_module_is_turned_off() {
+		// Arrange
+		$this->settings->activate();
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT         => [ 'enabled' => false ],
+			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT => [ 'enabled' => false ],
+		] );
+
+		// Assert
+		$this->assertTrue( $this->settings->is_activated() );
+		$this->assertFalse( $this->settings->is_llms_enabled() );
+	}
+
+	public function test_rest_update__ignores_client_activated_flag() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+		$this->settings->ensure_option_exists();
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::ACTIVATED_KEY   => true,
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => true ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_activated() );
+	}
+
+	public function test_activate__keeps_modules_an_admin_turned_off_when_already_activated() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => false ],
+		] );
+
+		// Act
+		$this->settings->activate();
+
+		// Assert
+		$this->assertTrue( $this->settings->is_activated() );
+		$this->assertFalse( $this->settings->is_llms_enabled() );
+	}
+
+	public function test_rest_update__first_write_without_an_existing_option_does_not_activate() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => true ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_activated() );
+	}
+
+	public function test_set_server_value__first_write_without_an_existing_option_does_not_activate() {
+		// Arrange
+		delete_option( Agent_Ready_Settings::OPTION );
+
+		// Act
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'is_manually_edited', true );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_activated() );
+	}
+
+	public function test_is_activated__true_for_a_stored_option_without_the_flag() {
+		// Arrange
+		update_option( Agent_Ready_Settings::OPTION, [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => false ],
+		] );
+
+		// Act & Assert
+		$this->assertTrue( $this->settings->is_activated() );
+		$this->assertFalse( $this->settings->is_llms_enabled() );
 	}
 
 	public function test_rest_update__merges_module_keys_and_keeps_other_modules() {
@@ -238,7 +323,7 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_is_agent_discovery_enabled__defaults_to_true() {
+	public function test_is_agent_discovery_enabled__true_after_activation() {
 		// Act & Assert
 		$this->assertTrue( $this->settings->is_agent_discovery_enabled() );
 	}
@@ -256,6 +341,94 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 			$this->settings->get_module_settings( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY )
 		);
 		$this->assertTrue( $this->settings->is_llms_enabled() );
+	}
+
+	public function test_is_browser_tools_enabled__true_after_activation() {
+		// Act & Assert
+		$this->assertTrue( $this->settings->is_browser_tools_enabled() );
+	}
+
+	public function test_rest_update__sanitizes_browser_tools_and_keeps_other_modules() {
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => 'false', 'extra' => true ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
+		$this->assertSame(
+			[ 'enabled' => false, 'business_details' => '' ],
+			$this->settings->get_module_settings( Agent_Ready_Settings::MODULE_BROWSER_TOOLS )
+		);
+		$this->assertTrue( $this->settings->is_agent_discovery_enabled() );
+	}
+
+	public function test_get_business_details__defaults_to_empty() {
+		// Act & Assert
+		$this->assertSame( '', $this->settings->get_business_details() );
+	}
+
+	public function test_rest_update__sanitizes_and_limits_business_details() {
+		// Arrange
+		$details = "<b>Open</b> daily\n" . str_repeat( 'a', Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => $details ],
+		] );
+
+		// Assert
+		$saved = $this->settings->get_business_details();
+
+		$this->assertStringStartsWith( "Open daily\n", $saved );
+		$this->assertSame( Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH, mb_strlen( $saved ) );
+	}
+
+	public function test_rest_update__keeps_business_details_when_only_the_toggle_is_saved() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => 'Open daily' ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => false ],
+		] );
+
+		// Assert
+		$this->assertSame( 'Open daily', $this->settings->get_business_details() );
+		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
+	}
+
+	public function test_rest_update__keeps_the_toggle_when_only_business_details_are_saved() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'enabled' => false ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => 'Open daily' ],
+		] );
+
+		// Assert
+		$this->assertFalse( $this->settings->is_browser_tools_enabled() );
+		$this->assertSame( 'Open daily', $this->settings->get_business_details() );
+	}
+
+	public function test_rest_update__clears_business_details_when_saved_empty() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => 'Open daily' ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => [ 'business_details' => '   ' ],
+		] );
+
+		// Assert
+		$this->assertSame( '', $this->settings->get_business_details() );
 	}
 
 	public function test_get_managed_bots__defaults_to_popular_bots_in_catalog_order() {
