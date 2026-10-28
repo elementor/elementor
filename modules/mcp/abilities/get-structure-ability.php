@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
@@ -198,6 +199,9 @@ class Get_Structure_Ability extends Abstract_Ability {
 		if ( ! is_array( $raw_settings ) ) {
 			return (object) [];
 		}
+
+		// Sensitive props (e.g. API keys) are never returned to agents.
+		$props_schema = Prop_Sensitivity::without_sensitive_props( $props_schema );
 
 		[ $serialized, $static_schema ] = $this->split_dynamic_settings( $props_schema, $raw_settings );
 

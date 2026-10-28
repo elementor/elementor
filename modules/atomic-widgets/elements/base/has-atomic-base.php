@@ -18,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -274,6 +275,27 @@ trait Has_Atomic_Base {
 		);
 
 		return $data;
+	}
+
+	/**
+	 * Called by the export flows (kit export, template file export) through `Document::process_element_import_export()`,
+	 * and by `Source_Cloud` for atomic elements when saving cloud templates.
+	 *
+	 * @param array $element_data
+	 *
+	 * @return array Element data without the values of non-exportable props.
+	 */
+	public function on_export( $element_data ) {
+		if ( ! is_array( $element_data['settings'] ?? null ) ) {
+			return $element_data;
+		}
+
+		$element_data['settings'] = Prop_Sensitivity::strip_non_exportable_settings(
+			$element_data['settings'],
+			static::get_props_schema()
+		);
+
+		return $element_data;
 	}
 
 	private function set_data_field_for_save( array &$data, string $key, $value ): void {
