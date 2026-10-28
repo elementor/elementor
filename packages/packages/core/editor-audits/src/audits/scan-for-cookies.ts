@@ -23,6 +23,7 @@ export const audit: Audit = {
 					auditId: audit.id,
 					label: __( 'This page has not been scanned for cookies yet.', 'elementor' ),
 					externalUrl: isReady ? ctx.pageContext.cookiez_scan_url : ctx.pageContext.cookiez_plugin_action_url,
+					appInstalled: isReady,
 				},
 			],
 		};
