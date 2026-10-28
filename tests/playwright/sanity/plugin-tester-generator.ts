@@ -4,11 +4,6 @@ import { wpCli } from '../assets/wp-cli';
 import { timeouts } from '../config/timeouts';
 import EditorPage from '../pages/editor-page';
 import WpAdminPage from '../pages/wp-admin-page';
-<<<<<<< HEAD
-=======
-import { wpCli } from '../assets/wp-cli';
-import { timeouts } from '../config/timeouts';
->>>>>>> d10dc78515 (Fix: Test timeout extended for plugin tester with yoast [ED-26009] (#37869))
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
 const isBelowVersion = ( currentVersion?: string, minVersion?: string ) => {
@@ -116,28 +111,16 @@ export const generatePluginTests = ( testType: string ) => {
 					}
 				}
 
-<<<<<<< HEAD
 				await openLawFirmAboutInElementor( page, wpAdmin );
 
 				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
 					await page.getByRole( 'link', { name: 'Not right now' } ).click();
 					await openLawFirmAboutInElementor( page, wpAdmin );
-=======
-				await page.goto( '/law-firm-about/?elementor', { timeout: timeouts.heavyAction } );
-
-				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
-					await page.getByRole( 'link', { name: 'Not right now' } ).click();
-					await page.goto( '/law-firm-about/?elementor', { timeout: timeouts.heavyAction } );
->>>>>>> d10dc78515 (Fix: Test timeout extended for plugin tester with yoast [ED-26009] (#37869))
 				}
 
 				if ( 'header-footer-elementor' === plugin.pluginName && page.url().includes( 'page=hfe' ) ) {
 					await page.getByText( 'Exit Guided Setup' ).click();
-<<<<<<< HEAD
 					await openLawFirmAboutInElementor( page, wpAdmin );
-=======
-					await page.goto( '/law-firm-about/?elementor', { timeout: timeouts.heavyAction } );
->>>>>>> d10dc78515 (Fix: Test timeout extended for plugin tester with yoast [ED-26009] (#37869))
 				}
 
 				await wpAdmin.closeAnnouncementsIfVisible();
