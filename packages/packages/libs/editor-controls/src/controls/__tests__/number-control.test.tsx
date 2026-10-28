@@ -112,4 +112,405 @@ describe( 'NumberControl', () => {
 		// Assert.
 		expect( input ).toHaveAttribute( 'placeholder', '123' );
 	} );
+
+	// ED-25510: Carousel Transition Speed is 100..3000. Typing through a below-min value must not clamp.
+	it( 'should not clamp or commit while typing through an intermediate below-min value', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '2' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '2' );
+		expect( setValue ).not.toHaveBeenCalled();
+
+		// Act.
+		fireEvent.input( input, { target: { value: '20' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '20' );
+		expect( setValue ).not.toHaveBeenCalled();
+
+		// Act.
+		fireEvent.input( input, { target: { value: '200' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '200' );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 200 } );
+	} );
+
+	// ED-25510: Collection Loop items-per-page max is 100. Typing above max must not commit.
+	it( 'should not rewrite or commit while typing a value above max', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 3 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 1 } max={ 100 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '200' } } );
+
+		// Assert — 200 is above max, so nothing is committed at all.
+		expect( input ).toHaveDisplayValue( '200' );
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should clamp to min on blur', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '2' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
+	} );
+
+	it( 'should clamp to max on blur', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 3 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 1 } max={ 100 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '200' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
+	} );
+
+	it( 'should treat a null max from the PHP control config as unbounded', () => {
+		// Arrange — Number_Control::get_props() emits null for an unset max.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 4 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 1 } max={ null } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '5' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'number', value: 5 } );
+	} );
+
+	it( 'should treat a null min from the PHP control config as unbounded', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 4 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ null } max={ 100 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '-5' } } );
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'number', value: -5 } );
+	} );
+
+	it( 'should not re-commit on blur a value already committed while typing', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '900' } } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
+
+		// Act.
+		setValue.mockClear();
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should keep the field empty while editing instead of restoring the prop default', () => {
+		// Arrange.
+		const propTypeWithDefault = createMockPropType( {
+			kind: 'plain',
+			default: { $$type: 'number', value: 600 },
+		} );
+
+		const setValue = jest.fn();
+		const props = { setValue, bind: 'number', propType: propTypeWithDefault };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '600' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '' );
+		expect( setValue ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'should commit a negative value when min allows it', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 5 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ -100 } max={ 100 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '-5' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '-5' );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: -5 } );
+	} );
+
+	it( 'should display zero as a value rather than an empty field', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 0 }, bind: 'number', propType };
+
+		// Act.
+		renderControl( <NumberControl min={ 0 } />, props );
+
+		// Assert.
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '0' );
+	} );
+
+	it( 'should accept a decimal that violates the native step', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 1 }, bind: 'number', propType };
+
+		renderControl( <NumberControl step={ 0.1 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '1.15' } } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 1.15 } );
+	} );
+
+	it( 'should truncate to an integer when shouldForceInt is set', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 2 }, bind: 'number', propType };
+
+		renderControl( <NumberControl shouldForceInt min={ 0 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '1.5' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '1.5' );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 1 } );
+	} );
+
+	it( 'should follow the bound value when it changes externally and the field is not being edited', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		const { rerender } = renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		// Assert.
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '600' );
+
+		// Act.
+		rerender( <NumberControl min={ 100 } max={ 3000 } />, {
+			value: { number: { $$type: 'number', value: 900 } },
+		} );
+
+		// Assert.
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '900' );
+	} );
+
+	it( 'should keep an in-progress draft when the bound value changes externally', () => {
+		// Holding the draft until blur is intentional. Undo, responsive inherit, or another
+		// control can change the model while this field is focused; blur commits the draft.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		const { rerender } = renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '2' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '2' );
+		expect( setValue ).not.toHaveBeenCalled();
+
+		// Act — external update while the draft is still held.
+		rerender( <NumberControl min={ 100 } max={ 3000 } />, {
+			value: { number: { $$type: 'number', value: 900 } },
+		} );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '2' );
+
+		// Act.
+		fireEvent.blur( input );
+
+		// Assert — blur commits the draft (clamped), not the newer external value.
+		expect( setValue ).toHaveBeenCalledTimes( 1 );
+		expect( setValue ).toHaveBeenCalledWith( { $$type: 'number', value: 100 } );
+	} );
+
+	it( 'should restore the previous value on blur when a required field is emptied', () => {
+		// Arrange.
+		const requiredPropType = createMockPropType( {
+			kind: 'plain',
+			settings: { required: true },
+		} );
+
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType: requiredPropType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '' );
+		expect( setValue ).not.toHaveBeenCalled();
+
+		// Act.
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( input ).toHaveDisplayValue( '600' );
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should clear an optional field on blur when it is emptied', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+		expect( setValue ).toHaveBeenCalledWith( null );
+		setValue.mockClear();
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not commit anything on blur when the field was never edited', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		renderControl( <NumberControl min={ 100 } max={ 3000 } />, props );
+
+		// Act.
+		fireEvent.blur( screen.getByRole( 'spinbutton' ) );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should keep a null-default field working when cleared', () => {
+		// Arrange — mirrors Video start_time / end_time: default null, min 0.
+		const nullDefaultPropType = createMockPropType( { kind: 'plain', default: null } );
+
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: { $$type: 'number', value: 12 },
+			bind: 'number',
+			propType: nullDefaultPropType,
+		};
+
+		renderControl( <NumberControl min={ 0 } max={ 10000 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.input( input, { target: { value: '' } } );
+		expect( setValue ).toHaveBeenCalledWith( null );
+		setValue.mockClear();
+		fireEvent.blur( input );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+		// renderControl keeps the bound value static, so display falls back to '12' once the draft resets.
+		expect( input ).toHaveDisplayValue( '12' );
+	} );
+
+	it( 'should bound the native input with both min and max', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		// Act.
+		renderControl( <NumberControl min={ 100 } max={ 3000 } step={ 1 } />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( input ).toHaveAttribute( 'min', '100' );
+		expect( input ).toHaveAttribute( 'max', '3000' );
+		expect( input ).toHaveAttribute( 'step', '1' );
+	} );
+
+	it( 'should not emit a native max attribute when unbounded', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'number', value: 600 }, bind: 'number', propType };
+
+		// Act.
+		renderControl( <NumberControl />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( input ).not.toHaveAttribute( 'max' );
+	} );
 } );

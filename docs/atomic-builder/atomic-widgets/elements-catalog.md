@@ -6,7 +6,7 @@
 
 ## What it is
 
-Snapshot of built-in atomic types from `module.php`. For authoring see [authoring-widgets.md](authoring-widgets.md). For live schemas use MCP `get-widget-schema` / `list-widget-schemas`.
+Snapshot of built-in atomic types from `module.php`. For authoring see [authoring-widgets.md](authoring-widgets.md). For live schemas use MCP `get-widget-schemas` / `list-widget-schemas`.
 
 ## When to use it
 
@@ -60,6 +60,13 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-divider` | widget | no | — | |
 | `e-youtube` | widget | no | — | |
 | `e-self-hosted-video` | widget | no | — | |
+| `e-google-maps` | widget | no | — | `<iframe>` embed; extends `Atomic_Map_Base` with the `google` map provider |
+| `e-accordion` | element | yes | `e-accordion-item` | Default: 2 items, first open |
+| `e-accordion-item` | element | yes | `e-accordion-item-head`, `e-accordion-item-content` | `<details>`; permanently locked |
+| `e-accordion-item-head` | element | yes | `e-accordion-item-title`, `e-accordion-item-icon` | `<summary>`; permanently locked |
+| `e-accordion-item-title` | element | yes | any | Tag from root's `title_tag` setting |
+| `e-accordion-item-icon` | element | yes | any | Decorative (`aria-hidden`); shown/hidden via root's `show_icon`; seeds an `e-svg` child with `assets/images/chevron-down.svg` |
+| `e-accordion-item-content` | element | yes | any | Collapsible body |
 | `e-tabs` | element | yes | any | Default: menu + content area |
 | `e-tabs-menu` | element | yes | `e-tab`, `container` | Tab triggers |
 | `e-tab` | element | no | — | Single tab trigger |
@@ -70,6 +77,31 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-form-error-message` | element | yes | `e-paragraph` | Required child of `e-form` |
 | `e-form` (promotion) | element | — | — | Free sites: placeholder |
 | `e-collection-loop` | element | — | — | Free sites: Pro promotion |
+| `e-carousel` (promotion) | element | — | — | Free sites: Pro promotion (`Carousel_Promotion`) |
+
+### SNAPSHOT — Pro carousel (atomic)
+
+Registered by `elementor-pro/modules/atomic-carousel/module.php` when Pro, license feature `atomic-carousel`, Core `>= 4.4`, and `e_atomic_elements` are active. No separate carousel experiment.
+
+| Type | Kind | Container | Allowed children | Notes |
+|------|------|-----------|------------------|-------|
+| `e-carousel` | element | yes | `e-carousel-viewport`, `e-carousel-arrow-prev`, `e-carousel-arrow-next`, `e-carousel-pagination`, `e-carousel-autoplay-button` | Root; default 4 slides |
+| `e-carousel-viewport` | element | yes | `e-carousel-container` | Required child of root |
+| `e-carousel-container` | element | yes | `e-carousel-slide` | Slides track; gap drives `--e-carousel-gap` |
+| `e-carousel-slide` | element | yes | any | Locked in structure |
+| `e-carousel-arrow-prev` | element | yes | any | Optional; stashed when `show_arrows` off |
+| `e-carousel-arrow-next` | element | yes | any | Optional; stashed when `show_arrows` off |
+| `e-carousel-pagination` | element | yes | `e-carousel-dot` | Optional; stashed when pagination `none` |
+| `e-carousel-dot` | element | no | — | Prototype; runtime clones per snap |
+| `e-carousel-autoplay-button` | element | no | — | When autoplay + `show_autoplay_button` |
+
+| Site | License `atomic-carousel` | `e_atomic_elements` | Registers |
+|------|---------------------------|---------------------|-----------|
+| Free | — | active | Core promotion stub only |
+| Pro | yes | active | Full carousel tree |
+| Pro | no | active | Nothing (module constructor returns early) |
+
+Implementation notes: `elementor-pro/docs/modules/atomic-carousel/module.md`.
 
 ### SNAPSHOT — Pro form field widgets
 
@@ -79,6 +111,9 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 |------|-------|
 | `e-form-input`, `e-form-label`, `e-form-textarea`, `e-form-submit-button`, `e-form-checkbox`, `e-form-radio-button` | Core form fields |
 | `e-form-date-picker`, `e-form-time-picker`, `e-form-select`, `e-form-file-upload` | Core ≥ 4.1 |
+| `e-form-hidden` | Hidden field; must be inside `e-form`; no count limit |
+| `e-form-honeypot` | Honeypot spam protection; must be inside `e-form`; max 1 per form |
+| `e-form-recaptcha-score` | Score-based reCAPTCHA (Enterprise) spam protection; must be inside `e-form`; max 1 per form; credentials are global (Settings > Integrations) |
 
 | Site | `e_pro_atomic_form` | Registers |
 |------|---------------------|-----------|
@@ -94,9 +129,22 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 
 | Child | Parents |
 |-------|---------|
+| `e-accordion-item` | `e-accordion` |
+| `e-accordion-item-head` | `e-accordion-item` |
+| `e-accordion-item-content` | `e-accordion-item` |
+| `e-accordion-item-title` | `e-accordion-item-head` |
+| `e-accordion-item-icon` | `e-accordion-item-head` |
 | `e-tab` | `e-tabs-menu` |
 | `e-tab-content` | `e-tabs-content-area` |
 | `e-paragraph` | `e-form-success-message`, `e-form-error-message` |
+| `e-carousel-viewport` | `e-carousel` |
+| `e-carousel-container` | `e-carousel-viewport` |
+| `e-carousel-slide` | `e-carousel-container` |
+| `e-carousel-arrow-prev` | `e-carousel` |
+| `e-carousel-arrow-next` | `e-carousel` |
+| `e-carousel-pagination` | `e-carousel` |
+| `e-carousel-dot` | `e-carousel-pagination` |
+| `e-carousel-autoplay-button` | `e-carousel` |
 
 ## See also
 

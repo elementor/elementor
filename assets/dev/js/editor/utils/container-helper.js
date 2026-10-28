@@ -1,4 +1,5 @@
 import { createV4FlexboxFromPreset } from './v4-flexbox-preset';
+import { createV4GridFromPreset } from './v4-grid-preset';
 
 /**
  * @typedef {import('../container/container')} Container
@@ -144,6 +145,54 @@ export class ContainerHelper {
 		} );
 
 		return parentContainer;
+	}
+
+	/**
+	 * Create a grid container element based on a layout wizard preset.
+	 *
+	 * @param {string}    structure       - Grid preset structure (e.g. `1-2`, `2-3`).
+	 * @param {Container} target          - The target container of the newly created element.
+	 * @param {Object}    options         - Additional command options.
+	 * @param {Object}    modelAttributes - Additional model attributes (V3 only).
+	 *
+	 * @return {Container} - Container created on.
+	 */
+	static createContainerFromGridPreset( structure, target = elementor.getPreviewContainer(), options = {}, modelAttributes = {} ) {
+		if ( ContainerHelper.isV4OptIn() ) {
+			return createV4GridFromPreset( structure, target, options );
+		}
+
+		const parsedStructure = elementor.presetsFactory.getParsedGridStructure( structure );
+
+		return ContainerHelper.createContainer(
+			{
+				container_type: ContainerHelper.CONTAINER_TYPE_GRID,
+				grid_columns_grid: {
+					unit: 'fr',
+					size: parsedStructure.columns,
+				},
+				grid_rows_grid: {
+					unit: 'fr',
+					size: parsedStructure.rows,
+				},
+				grid_rows_grid_mobile: {
+					unit: 'fr',
+					size: parsedStructure.rows,
+				},
+			},
+			target,
+			options,
+			{
+				title: __( 'Grid', 'elementor' ),
+				custom: {
+					isPreset: true,
+					preset_settings: {
+						presetIcon: 'eicon-container-grid',
+					},
+				},
+				...modelAttributes,
+			},
+		);
 	}
 
 	/**

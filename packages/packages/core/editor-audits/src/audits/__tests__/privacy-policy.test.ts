@@ -17,6 +17,7 @@ describe( audit.id, () => {
 
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].externalUrl ).toBe( 'https://example.com/wp-admin/options-privacy.php' );
+			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Create' );
 		}
 	} );
 } );

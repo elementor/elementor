@@ -12,11 +12,13 @@ import { getElementLabel, getElementSettings, updateElementSettings } from '@ele
 import {
 	type AnyTransformable,
 	type Dependency,
+	numberPropTypeUtil,
 	type PropsSchema,
 	type PropType,
 	type PropValue,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
+import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
@@ -32,6 +34,10 @@ jest.mock( '@elementor/editor-elements', () => ( {
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
+} ) );
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useActiveBreakpoint: jest.fn( () => 'desktop' ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop' }, { id: 'tablet' }, { id: 'mobile' } ] ),
 } ) );
 
 const bind = 'text';
@@ -397,6 +403,172 @@ describe( '<SettingsField />', () => {
 				withHistory: false,
 			} );
 		} );
+	} );
+} );
+
+describe( '<SettingsField /> responsive binding', () => {
+	const historyMock = mockHistoryManager();
+	const slidesBind = 'slides_per_view';
+	const numberPropType = createMockPropType( { kind: 'plain', key: 'number' } );
+	const responsivePropType = createMockPropType( {
+		kind: 'object',
+		key: 'responsive',
+		shape: {
+			mobile: numberPropType,
+			tablet: numberPropType,
+			desktop: numberPropType,
+		},
+	} );
+
+	beforeEach( () => {
+		historyMock.beforeEach();
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
+		jest.mocked( useBreakpoints ).mockReturnValue( [
+			{ id: 'desktop', label: 'Desktop' },
+			{ id: 'tablet', label: 'Tablet' },
+			{ id: 'mobile', label: 'Mobile' },
+		] );
+	} );
+
+	afterEach( () => {
+		historyMock.afterEach();
+		jest.clearAllMocks();
+	} );
+
+	it( 'writes desktop into the responsive map at the settings root', () => {
+		const element = mockElement();
+		const elementType = createMockElementType( {
+			propsSchema: {
+				[ slidesBind ]: responsivePropType,
+			},
+		} );
+		const settings = {
+			[ slidesBind ]: {
+				$$type: 'responsive',
+				value: {
+					desktop: { $$type: 'number', value: 3 },
+				},
+			},
+		};
+
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
+				<SettingsField bind={ slidesBind } propDisplayName={ __( 'Slides Per View', 'elementor' ) }>
+					<MockNumberControl />
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		fireEvent.change( screen.getByRole( 'spinbutton' ), { target: { value: '4' } } );
+
+		expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+			id: element.id,
+			props: {
+				[ slidesBind ]: {
+					$$type: 'responsive',
+					value: {
+						desktop: { $$type: 'number', value: 4 },
+					},
+				},
+			},
+			withHistory: false,
+		} );
+	} );
+
+	it( 'writes only the active tablet key', () => {
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
+
+		const element = mockElement();
+		const elementType = createMockElementType( {
+			propsSchema: {
+				[ slidesBind ]: responsivePropType,
+			},
+		} );
+		const settings = {
+			[ slidesBind ]: {
+				$$type: 'responsive',
+				value: {
+					desktop: { $$type: 'number', value: 3 },
+				},
+			},
+		};
+
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
+				<SettingsField bind={ slidesBind } propDisplayName={ __( 'Slides Per View', 'elementor' ) }>
+					<MockNumberControl />
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		fireEvent.change( screen.getByRole( 'spinbutton' ), { target: { value: '2' } } );
+
+		expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+			id: element.id,
+			props: {
+				[ slidesBind ]: {
+					$$type: 'responsive',
+					value: {
+						desktop: { $$type: 'number', value: 3 },
+						tablet: { $$type: 'number', value: 2 },
+					},
+				},
+			},
+			withHistory: false,
+		} );
+	} );
+
+	it( 'shows the inherited desktop value as a placeholder on tablet', () => {
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
+
+		const element = mockElement();
+		const elementType = createMockElementType( {
+			propsSchema: {
+				[ slidesBind ]: responsivePropType,
+			},
+		} );
+		const settings = {
+			[ slidesBind ]: {
+				$$type: 'responsive',
+				value: {
+					desktop: { $$type: 'number', value: 3 },
+				},
+			},
+		};
+
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
+				<SettingsField bind={ slidesBind } propDisplayName={ __( 'Slides Per View', 'elementor' ) }>
+					<MockNumberControl />
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveAttribute( 'placeholder', '3' );
+	} );
+
+	it( 'does not wrap a non-responsive prop with breakpoint binding', () => {
+		const element = mockElement();
+		const elementType = createMockElementType( {
+			propsSchema: {
+				[ bind ]: createMockPropType( { kind: 'plain' } ),
+			},
+		} );
+
+		renderWithTheme(
+			<ElementProvider
+				element={ element }
+				elementType={ elementType }
+				settings={ { [ bind ]: { $$type: 'string', value: 'Hello, World!' } } }
+			>
+				<SettingsField bind={ bind } propDisplayName={ __( 'Test Prop', 'elementor' ) }>
+					<MockControl />
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		expect( screen.getByRole( 'textbox', { name: bind } ) ).toHaveValue( 'Hello, World!' );
+		expect( jest.mocked( useActiveBreakpoint ) ).not.toHaveBeenCalled();
 	} );
 } );
 
@@ -1239,6 +1411,20 @@ const MockControl = ( { bind: controlBind = bind }: { bind?: string } = {} ) => 
 			aria-label={ controlBind }
 			value={ value ?? '' }
 			onChange={ handleChange }
+			disabled={ disabled }
+		/>
+	);
+};
+
+const MockNumberControl = () => {
+	const { value, setValue, placeholder, disabled } = useBoundProp( numberPropTypeUtil );
+
+	return (
+		<input
+			type="number"
+			value={ value ?? '' }
+			placeholder={ placeholder === null || placeholder === undefined ? '' : String( placeholder ) }
+			onChange={ ( event ) => setValue( Number( event.target.value ) ) }
 			disabled={ disabled }
 		/>
 	);

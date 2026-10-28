@@ -1,9 +1,18 @@
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { __ } from '@wordpress/i18n';
 
-import { type Audit, type AuditViolation } from '../types';
+import { type Audit, type AuditViolation, type ElementSnapshotNode } from '../types';
 import { walkElements } from '../utils/walk';
 
 const MAX_NESTING_DEPTH = 6;
+
+function isNestingElement( node: ElementSnapshotNode, widgetsCache: ReturnType< typeof getWidgetsCache > ): boolean {
+	if ( node.elType === 'container' ) {
+		return true;
+	}
+
+	return !! widgetsCache?.[ node.elType ]?.meta?.is_container;
+}
 
 export const audit: Audit = {
 	id: 'audits/deep-nesting',
@@ -21,14 +30,15 @@ export const audit: Audit = {
 			return { status: 'skipped', reason: __( 'No elements', 'elementor' ) };
 		}
 
+		const widgetsCache = getWidgetsCache();
 		const violations: AuditViolation[] = [];
 
 		walkElements( ctx.elements.tree, ( node, parents ) => {
-			if ( node.elType !== 'container' ) {
+			if ( ! isNestingElement( node, widgetsCache ) ) {
 				return;
 			}
 
-			const depth = parents.length + 1;
+			const depth = parents.filter( ( parent ) => isNestingElement( parent, widgetsCache ) ).length + 1;
 
 			if ( depth > MAX_NESTING_DEPTH ) {
 				violations.push( {

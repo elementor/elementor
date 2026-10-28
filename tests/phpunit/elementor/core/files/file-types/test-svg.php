@@ -64,6 +64,43 @@ class Test_Svg extends Elementor_Test_Base {
 		}
 	}
 
+	/**
+	 * The sanitized SVG is inlined into the page, so it must be safe under HTML parsing.
+	 * A CDATA section survives XML round-tripping, but an HTML parser reads its opener as a
+	 * bogus comment that swallows the closing tag, turning the rest of the section into live markup.
+	 *
+	 * @dataProvider cdata_breakout_data_provider
+	 */
+	public function test_sanitize__does_not_keep_markup_inside_cdata( $svg_content ) {
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		$this->assertStringNotContainsString( '<![CDATA[', $sanitized );
+		$this->assertStringNotContainsString( '<img', $sanitized );
+		$this->assertStringNotContainsString( '<script', $sanitized );
+	}
+
+	public function test_sanitize__converts_cdata_to_escaped_text() {
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><desc><![CDATA[Hello <world>]]></desc></svg>';
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		$this->assertStringNotContainsString( '<![CDATA[', $sanitized );
+		$this->assertStringContainsString( 'Hello world', $sanitized );
+	}
+
+	public function cdata_breakout_data_provider() {
+		return [
+			'desc' => [ '<svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"><desc><![CDATA[</desc><img src=x onerror=alert(document.domain)>]]></desc><rect width="10" height="10"/></svg>' ],
+			'title' => [ '<svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"><title><![CDATA[</title><img src=x onerror=alert(document.domain)>]]></title><rect width="10" height="10"/></svg>' ],
+			'foreignObject' => [ '<svg xmlns="http://www.w3.org/2000/svg" width="65" height="65"><foreignObject><![CDATA[</foreignObject><script>alert(document.domain)</script>]]></foreignObject><rect width="10" height="10"/></svg>' ],
+		];
+	}
+
 	public function invalid_xlink_href_data_provider() {
 		return [
 			[ '', true ],
@@ -85,5 +122,109 @@ class Test_Svg extends Elementor_Test_Base {
 			[ 'javascript:alert(1)', false ],
 			[ 'javascri&#10;pt:alert(origin)', false ],
 		];
+	}
+
+	/**
+	 * @dataProvider allowed_filter_elements_data_provider
+	 */
+	public function test_sanitize__keeps_camel_case_elements( $tag_name ) {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><' . $tag_name . '></' . $tag_name . '></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $svg_content, $sanitized );
+	}
+
+	public function allowed_filter_elements_data_provider() {
+		return [
+			'animateMotion' => [ 'animateMotion' ],
+			'animateTransform' => [ 'animateTransform' ],
+			'feBlend' => [ 'feBlend' ],
+			'feColorMatrix' => [ 'feColorMatrix' ],
+			'feComponentTransfer' => [ 'feComponentTransfer' ],
+			'feComposite' => [ 'feComposite' ],
+			'feConvolveMatrix' => [ 'feConvolveMatrix' ],
+			'feDiffuseLighting' => [ 'feDiffuseLighting' ],
+			'feDisplacementMap' => [ 'feDisplacementMap' ],
+			'feDistantLight' => [ 'feDistantLight' ],
+			'feDropShadow' => [ 'feDropShadow' ],
+			'feFlood' => [ 'feFlood' ],
+			'feFuncA' => [ 'feFuncA' ],
+			'feFuncB' => [ 'feFuncB' ],
+			'feFuncG' => [ 'feFuncG' ],
+			'feFuncR' => [ 'feFuncR' ],
+			'feGaussianBlur' => [ 'feGaussianBlur' ],
+			'feImage' => [ 'feImage' ],
+			'feMerge' => [ 'feMerge' ],
+			'feMergeNode' => [ 'feMergeNode' ],
+			'feMorphology' => [ 'feMorphology' ],
+			'feOffset' => [ 'feOffset' ],
+			'fePointLight' => [ 'fePointLight' ],
+			'feSpecularLighting' => [ 'feSpecularLighting' ],
+			'feSpotLight' => [ 'feSpotLight' ],
+			'feTile' => [ 'feTile' ],
+			'feTurbulence' => [ 'feTurbulence' ],
+		];
+	}
+
+	public function test_sanitize__keeps_camel_case_attributes_on_camel_case_element() {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><filter id="blur"><feGaussianBlur stdDeviation="2"></feGaussianBlur></filter></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $svg_content, $sanitized );
+	}
+
+	/**
+	 * @dataProvider unsafe_fe_image_href_data_provider
+	 */
+	public function test_sanitize__removes_unsafe_href_from_fe_image( $attribute, $value ) {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_open = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">';
+		$svg_content = $svg_open . '<filter id="f"><feImage ' . $attribute . '="' . $value . '"></feImage></filter></svg>';
+		$expected = $svg_open . '<filter id="f"><feImage></feImage></filter></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( $expected, $sanitized );
+	}
+
+	public function unsafe_fe_image_href_data_provider() {
+		return [
+			'javascript in href' => [ 'href', 'javascript:alert(1)' ],
+			'javascript in xlink:href' => [ 'xlink:href', 'javascript:alert(1)' ],
+			'html data URI in xlink:href' => [ 'xlink:href', 'data:text/html,x' ],
+		];
+	}
+
+	public function test_sanitize__removes_unknown_element() {
+		// Arrange.
+		/** @var Svg $svg_handler */
+		$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
+
+		$svg_content = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect><blink>alert(1)</blink></svg>';
+
+		// Act.
+		$sanitized = $svg_handler->sanitizer( $svg_content );
+
+		// Assert.
+		$this->assertEquals( '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100"></rect></svg>', $sanitized );
 	}
 }

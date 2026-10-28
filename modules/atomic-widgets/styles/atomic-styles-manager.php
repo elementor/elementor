@@ -25,6 +25,8 @@ class Atomic_Styles_Manager {
 
 	private array $post_ids = [];
 
+	private array $enqueued_post_ids = [];
+
 	private CSS_Files_Manager $css_files_manager;
 
 	const DEFAULT_BREAKPOINT = 'desktop';
@@ -32,8 +34,8 @@ class Atomic_Styles_Manager {
 	private array $fonts = [];
 
 	public function __construct() {
-		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
+		$this->css_files_manager = new CSS_Files_Manager( $this->cache_validity );
 	}
 
 	public static function instance() {
@@ -48,7 +50,7 @@ class Atomic_Styles_Manager {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
 
 		add_action( 'elementor/post/render', function( $post_id ) {
-			$this->post_ids[] = $post_id;
+			$this->post_ids[ $post_id ] = $post_id;
 		} );
 
 		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $path ) => $this->clear_styles( $path ) );
@@ -64,11 +66,13 @@ class Atomic_Styles_Manager {
 	}
 
 	private function enqueue_styles() {
-		if ( empty( $this->post_ids ) ) {
+		if ( ! $this->has_post_ids_to_enqueue() ) {
 			return;
 		}
 
-		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
+		$this->enqueued_post_ids = $this->post_ids;
+
+		do_action( 'elementor/atomic-widgets/styles/register', $this, array_values( $this->post_ids ) );
 
 		$get_styles_memo = new Memo();
 
@@ -86,6 +90,10 @@ class Atomic_Styles_Manager {
 		$this->render( $styles_by_key );
 
 		$this->after_render( $styles_by_key );
+	}
+
+	private function has_post_ids_to_enqueue(): bool {
+		return ! empty( array_diff_key( $this->post_ids, $this->enqueued_post_ids ) );
 	}
 
 	private function before_render( array $styles_by_key ) {

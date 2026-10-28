@@ -1,7 +1,13 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
+import { getModelContext } from '../../../../agents/assets/js/frontend/model-context';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
+
+const REDIRECT_DELAY_MS = 1000;
+const SUBMIT_SUCCESS_EVENT = 'elementor/atomic-form/submit-success';
+const BEFORE_SUBMIT_EVENT = 'elementor/atomic-form/before-submit';
+const ALLOWED_REDIRECT_PROTOCOLS = [ 'http:', 'https:', 'ftp:', 'ftps:' ];
 
 let webmcpFormListenersRegistered = false;
 
@@ -18,12 +24,12 @@ function registerWebmcpFormListeners() {
 
 	webmcpFormListenersRegistered = true;
 
-	window.addEventListener( 'toolactivated', ( { toolName } ) => {
-		resetWebmcpFormState( toolName );
-	} );
+	const modelContext = getModelContext( document, navigator );
+	const eventTargets = modelContext ? [ window, modelContext ] : [ window ];
 
-	window.addEventListener( 'toolcancel', ( { toolName } ) => {
-		resetWebmcpFormState( toolName );
+	eventTargets.forEach( ( eventTarget ) => {
+		eventTarget.addEventListener( 'toolactivated', ( { toolName } ) => resetWebmcpFormState( toolName ) );
+		eventTarget.addEventListener( 'toolcancel', ( { toolName } ) => resetWebmcpFormState( toolName ) );
 	} );
 }
 
@@ -70,12 +76,16 @@ function buildAgentToolResponse( response, state ) {
 	};
 }
 
-function respondToAgentIfInvoked( event, response, state ) {
+function createAgentResponder( event ) {
 	if ( ! event?.agentInvoked || 'function' !== typeof event.respondWith ) {
-		return;
+		return () => {};
 	}
 
-	event.respondWith( Promise.resolve( buildAgentToolResponse( response, state ) ) );
+	const { promise, resolve } = Promise.withResolvers();
+
+	event.respondWith( promise );
+
+	return ( response, state ) => resolve( buildAgentToolResponse( response, state ) );
 }
 
 function registerAtomicFormAlpineData( form ) {
@@ -97,8 +107,10 @@ function registerAtomicFormAlpineData( form ) {
 
 			event.preventDefault();
 
+			const respondToAgent = createAgentResponder( event );
+
 			if ( form.dataset.atomicFormSubmitting ) {
-				respondToAgentIfInvoked( event, { success: false, message: 'Form is already submitting.' }, 'error' );
+				respondToAgent( { success: false, message: 'Form is already submitting.' }, 'error' );
 				return;
 			}
 
@@ -114,12 +126,14 @@ function registerAtomicFormAlpineData( form ) {
 
 			if ( ! payload ) {
 				setFormState( form, 'error' );
-				respondToAgentIfInvoked( event, { success: false, message: 'Invalid form payload.' }, 'error' );
+				respondToAgent( { success: false, message: 'Invalid form payload.' }, 'error' );
 				clearAtomicFormSubmittingState( form, submitButtons );
 				return;
 			}
 
 			try {
+				payload.extraFields = await collectBeforeSubmitFields( form );
+
 				const response = await submitAtomicForm( payload );
 				const state = response?.success ? 'success' : 'error';
 
@@ -131,17 +145,52 @@ function registerAtomicFormAlpineData( form ) {
 					form.addEventListener( 'input', () => {
 						setFormState( form, 'default' );
 					}, { once: true } );
+
+					form.dispatchEvent( new CustomEvent( SUBMIT_SUCCESS_EVENT, {
+						bubbles: true,
+						detail: { response, agentInvoked: Boolean( event?.agentInvoked ) },
+					} ) );
 				}
 
-				respondToAgentIfInvoked( event, response, state );
+				respondToAgent( response, state );
+				redirectIfRequested( event, response );
 			} catch ( error ) {
 				setFormState( form, 'error' );
-				respondToAgentIfInvoked( event, { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
+				respondToAgent( { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
 			} finally {
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
 	} ) );
+}
+
+function redirectIfRequested( event, response ) {
+	if ( event?.agentInvoked || ! response?.success ) {
+		return;
+	}
+
+	const actionResults = response?.data?.data?.actionResults ?? [];
+	const redirectUrl = actionResults.find( ( result ) => 'redirect' === result.type && 'success' === result.status )?.redirectUrl;
+
+	const safeRedirectUrl = getSafeRedirectUrl( redirectUrl );
+
+	if ( safeRedirectUrl ) {
+		setTimeout( () => window.location.assign( safeRedirectUrl ), REDIRECT_DELAY_MS );
+	}
+}
+
+function getSafeRedirectUrl( redirectUrl ) {
+	if ( ! redirectUrl ) {
+		return null;
+	}
+
+	try {
+		const url = new URL( redirectUrl, window.location.href );
+
+		return ALLOWED_REDIRECT_PROTOCOLS.includes( url.protocol ) ? url.href : null;
+	} catch {
+		return null;
+	}
 }
 
 function handleAtomicFormSubmit( form ) {
@@ -194,7 +243,7 @@ function getAtomicFormFields( form ) {
 		}
 
 		inputs.forEach( ( input ) => {
-			const id = input.dataset.interactionId;
+			const id = input.dataset.id || input.dataset.interactionId;
 			const label = getAtomicFormFieldLabel( input, form );
 			const type = getAtomicFormFieldType( input );
 			const value = getAtomicFormFieldValue( input, type );
@@ -217,7 +266,7 @@ function getAtomicFormFields( form ) {
 function getGroupedFieldId( name, inputs, checkedInputs ) {
 	const primaryInput = checkedInputs[ 0 ] ?? inputs[ 0 ];
 
-	return primaryInput?.dataset.interactionId ?? name;
+	return ( primaryInput?.dataset.id || primaryInput?.dataset.interactionId ) ?? name;
 }
 
 function getGroupedFields( name, inputs, type, form ) {
@@ -330,6 +379,23 @@ function appendFormField( formData, field, index ) {
 	appendFieldValue( formData, `${ prefix }[value]`, field.value );
 }
 
+// Listeners call `event.detail.addFields( fieldsOrPromise )` to send extra request fields (e.g. a spam protection token).
+// A rejected promise fails the submission.
+async function collectBeforeSubmitFields( form ) {
+	const pendingFields = [];
+
+	form.dispatchEvent( new CustomEvent( BEFORE_SUBMIT_EVENT, {
+		bubbles: true,
+		detail: {
+			addFields: ( fields ) => pendingFields.push( fields ),
+		},
+	} ) );
+
+	const resolved = await Promise.all( pendingFields );
+
+	return Object.assign( {}, ...resolved.filter( ( fields ) => fields && 'object' === typeof fields ) );
+}
+
 async function submitAtomicForm( payload ) {
 	const ajaxUrl = elementorFrontendConfig?.urls?.ajaxurl;
 
@@ -346,6 +412,7 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => appendFormField( formData, field, index ) );
+	Object.entries( payload.extraFields ?? {} ).forEach( ( [ key, value ] ) => formData.append( key, value ) );
 
 	const response = await fetch( ajaxUrl, {
 		method: 'POST',

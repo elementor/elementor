@@ -234,6 +234,37 @@ describe( '<CssClassSelector />', () => {
 		expect( screen.queryByRole( 'option', { name: 'Local' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should not list default-styles tags when searching for classes', () => {
+		// Arrange.
+		const defaultStylesProvider = createMockStylesProvider(
+			{
+				key: 'default-styles',
+				labels: { plural: 'tags', singular: 'tag' },
+			},
+			[
+				createMockStyleDefinition( { id: 'h1', label: 'h1' } ),
+				createMockStyleDefinition( { id: 'div', label: 'div' } ),
+			]
+		);
+
+		jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1, defaultStylesProvider ] );
+
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
+
+		// Act.
+		const input = screen.getByRole( 'combobox', { hidden: true } );
+
+		fireEvent.change( input, { target: { value: 'h1' } } );
+
+		// Assert.
+		expect( screen.queryByRole( 'option', { name: 'h1' } ) ).not.toBeInTheDocument();
+
+		fireEvent.change( input, { target: { value: 'P' } } );
+
+		expect( screen.getByRole( 'option', { name: 'Provider-1-b' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'option', { name: 'div' } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should automatically activate a class when applied', () => {
 		// Arrange.
 		const setActive = jest.fn();
@@ -708,7 +739,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.click( activeEditableField );
@@ -739,7 +772,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.click( activeEditableField );
@@ -769,7 +804,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.doubleClick( activeEditableField );
@@ -797,7 +834,9 @@ describe( '<CssClassSelector />', () => {
 
 		const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 			'button',
-			{ name: 'Provider-1-b' }
+			{
+				name: 'Provider-1-b',
+			}
 		);
 
 		fireEvent.doubleClick( activeEditableField );
@@ -1092,7 +1131,9 @@ describe( '<CssClassSelector />', () => {
 
 			const activeEditableField = within( screen.getByRole( 'group', { name: 'Edit Provider-1-b' } ) ).getByRole(
 				'button',
-				{ name: 'Provider-1-b' }
+				{
+					name: 'Provider-1-b',
+				}
 			);
 
 			fireEvent.click( activeEditableField );

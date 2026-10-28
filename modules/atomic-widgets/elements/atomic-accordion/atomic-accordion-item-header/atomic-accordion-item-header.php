@@ -1,0 +1,277 @@
+<?php
+
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header;
+
+use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
+	use Has_Element_Template;
+
+	const BASE_STYLE_KEY = 'base';
+
+	public static $widget_description = 'The clickable header of an accordion item, rendered as <summary>. Contains an e-accordion-item-title and, when the accordion\'s Show Icon setting is on, an e-accordion-item-icon indicator.';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'permanently_locked', true );
+	}
+
+	public static function get_type() {
+		return Atomic_Accordion::ELEMENT_TYPE_HEADER;
+	}
+
+	public static function get_element_type(): string {
+		return Atomic_Accordion::ELEMENT_TYPE_HEADER;
+	}
+
+	public function get_title() {
+		return esc_html__( 'Header', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'accordion', 'header', 'summary' ];
+	}
+
+	public function get_icon() {
+		return 'eicon-layout';
+	}
+
+	public function should_show_in_panel() {
+		return false;
+	}
+
+	protected static function define_props_schema(): array {
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+			// Mirrors the root `e-accordion`'s `show_icon` toggle (see that class for the user-facing
+			// control). This copy exists only so `define_children_dependencies()` below has something
+			// on *this* element's own settings to evaluate: the children-dependencies reconciler reads
+			// only the declaring element's own settings and can only attach/detach its own direct
+			// children, so a root-level prop can never drive whether *this* header's icon child is
+			// present. The editor writes this prop through from the root whenever the root's `show_icon`
+			// changes (see `useShowIconWriteThrough` alongside the accordion items repeater control) -
+			// it is never surfaced in the panel and must never grow a per-item control of its own.
+			'show_icon' => Boolean_Prop_Type::make()->default( true ),
+			'different_open_icon' => Boolean_Prop_Type::make()->default( false ),
+		];
+	}
+
+	protected function define_atomic_controls(): array {
+		return [
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( [] ),
+		];
+	}
+
+	/**
+	 * Like `details`, `summary` is absent from `Utils::ALLOWED_HTML_WRAPPER_TAGS` and would be
+	 * coerced to `div` by `Utils::validate_html_tag()`. The Twig template hardcodes the tag.
+	 */
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'summary' );
+	}
+
+	protected function define_atomic_style_states(): array {
+		return [ Style_States::get_class_states_map()['selected'] ];
+	}
+
+	protected function define_base_styles(): array {
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( [
+							'display' => String_Prop_Type::generate( 'flex' ),
+							'align-items' => String_Prop_Type::generate( 'center' ),
+							'justify-content' => String_Prop_Type::generate( 'space-between' ),
+							'gap' => Size_Prop_Type::generate( [
+								'size' => 8,
+								'unit' => 'px',
+							] ),
+							'cursor' => String_Prop_Type::generate( 'pointer' ),
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 10,
+								'unit' => 'px',
+							] ),
+						] )
+				),
+		];
+	}
+
+	protected function define_allowed_child_types() {
+		return [
+			Atomic_Accordion::ELEMENT_TYPE_TITLE,
+			Atomic_Accordion::ELEMENT_TYPE_ICON,
+			Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN,
+		];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Accordion_Item_Title::generate()
+				->hydrate_default_children( true )
+				->editor_settings( [
+					'title' => esc_html__( 'Title', 'elementor' ),
+				] )
+				->build(),
+			Atomic_Accordion_Item_Icon::generate()
+				->hydrate_default_children( true )
+				->editor_settings( [
+					'title' => esc_html__( 'Icon', 'elementor' ),
+				] )
+				->build(),
+		];
+	}
+
+	/**
+	 * Attaches/detaches the icon child as the mirrored `show_icon` prop changes, with `stash( true )`
+	 * so a user's *replaced* SVG (or one with edited styles) comes back exactly as it was on
+	 * OFF -> ON, instead of a fresh default SVG being reseeded over it. Mirrors
+	 * `Atomic_Background_Video::define_children_dependencies()` for `show_controls` / the
+	 * Controls child.
+	 */
+	protected function define_children_dependencies(): array {
+		$show_icon = [
+			'operator' => 'ne',
+			'path' => [ 'show_icon' ],
+			'value' => false,
+		];
+
+		$open_icon_when = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( $show_icon )
+			->where( [
+				'operator' => 'eq',
+				'path' => [ 'different_open_icon' ],
+				'value' => true,
+			] );
+
+		return [
+			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON )
+				->when( Dependency_Manager::make()->where( $show_icon ) )
+				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_TITLE ) )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->build()
+				),
+			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
+				->when( $open_icon_when )
+				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_ICON ) )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->editor_settings( [
+							'title' => esc_html__( 'Open icon', 'elementor' ),
+						] )
+						->build()
+				),
+		];
+	}
+
+	/**
+	 * Documents saved while this change was in progress can still point the open slot at the
+	 * bundled upward chevron, which this plugin no longer ships. Point those at the closed
+	 * chevron. An uploaded file with the same name is left alone.
+	 *
+	 * @param mixed $elements
+	 * @return mixed
+	 */
+	public static function replace_saved_upward_chevron( $elements ) {
+		if ( ! is_array( $elements ) ) {
+			return $elements;
+		}
+
+		$replaced = [];
+
+		foreach ( $elements as $element ) {
+			if ( ! is_array( $element ) ) {
+				$replaced[] = $element;
+				continue;
+			}
+
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = self::replace_saved_upward_chevron( $element['elements'] );
+			}
+
+			if ( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN === ( $element['elType'] ?? '' ) ) {
+				$element = self::point_default_open_chevron_the_same_way( $element );
+			}
+
+			$replaced[] = $element;
+		}
+
+		return $replaced;
+	}
+
+	private static function point_default_open_chevron_the_same_way( array $element ): array {
+		if ( empty( $element['elements'] ) || ! is_array( $element['elements'] ) ) {
+			return $element;
+		}
+
+		$upward_chevron = 'assets/images/chevron-up.svg';
+
+		foreach ( $element['elements'] as $index => $child ) {
+			if ( ! is_array( $child ) ) {
+				continue;
+			}
+
+			$url = $child['settings']['svg']['value']['url']['value'] ?? null;
+
+			if ( ! is_string( $url ) || substr( $url, -strlen( $upward_chevron ) ) !== $upward_chevron ) {
+				continue;
+			}
+
+			$element['elements'][ $index ]['settings']['svg']['value']['url']['value'] = Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL;
+		}
+
+		return $element;
+	}
+
+	protected function build_template_context(): array {
+		$item_context = Render_Context::get( Atomic_Accordion_Item::class );
+		$is_open = $item_context['is_open'] ?? false;
+
+		return array_merge( $this->build_base_template_context(), [
+			'is_open' => $is_open,
+		] );
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-accordion-item-header' => __DIR__ . '/atomic-accordion-item-header.html.twig',
+		];
+	}
+}

@@ -25,6 +25,16 @@ class Test_Manager extends Elementor_Test_Base {
 	 */
 	private $experiments_state = [];
 
+	private $screen_backup;
+
+	public function tearDown(): void {
+		if ( $this->screen_backup ) {
+			$GLOBALS['current_screen'] = $this->screen_backup;
+		}
+
+		parent::tearDown();
+	}
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -347,6 +357,8 @@ class Test_Manager extends Elementor_Test_Base {
 	}
 
 	public function test_add_feature__adding_non_existing_dependency() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
 		// Arrange.
 		$test_feature_data = [
 			'name' => 'test_feature',
@@ -356,12 +368,27 @@ class Test_Manager extends Elementor_Test_Base {
 			],
 		];
 
-		// Assert.
-		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature test_feature cannot be initialized before dependency feature: feature-that-not-exists' );
-
 		// Act.
-		$this->add_test_feature( $test_feature_data );
+		$feature = $this->add_test_feature( $test_feature_data );
+
+		// Assert.
+		$this->assertNotEmpty( $feature );
+		$this->assertInstanceOf( Non_Existing_Dependency::class, $feature['dependencies'][0] );
+	}
+
+	public function test_add_feature__missing_dependency_warns_when_wp_debug_enabled() {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			$this->markTestSkipped( 'WP_DEBUG is required to assert _doing_it_wrong.' );
+		}
+
+		$this->expect_doing_it_wrong( 'Elementor\Core\Experiments\Manager::warn_removed_or_hidden_dependency' );
+
+		$this->add_test_feature( [
+			'name' => 'test_feature_wp_debug',
+			'dependencies' => [
+				'feature-that-not-exists',
+			],
+		] );
 	}
 
 	public function test_feature_can_be_added_as_hidden() {
@@ -375,32 +402,38 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertTrue( $feature['hidden'] );
 	}
 
-	public function test_add_feature__throws_when_a_feature_has_a_hidden_dependency() {
+	public function test_add_feature__allows_hidden_dependency_for_compatibility() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
 		// Arrange.
 		$this->add_test_feature( [
 			'name' => 'regular-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 		] );
 
 		$this->add_test_feature( [
 			'name' => 'hidden-dependency',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
 		] );
 
-		// Expect.
-		$this->expectException( Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Depending on a hidden experiment is not allowed.' );
-
 		// Act.
-		$this->add_test_feature( [
+		$dependant = $this->add_test_feature( [
 			'name' => 'dependant',
-			'state' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'dependencies' => [
 				'regular-dependency',
 				'hidden-dependency',
 			],
 		] );
+
+		// Assert.
+		$this->assertNotEmpty( $dependant );
+		$this->assertInstanceOf( Wrap_Core_Dependency::class, $dependant['dependencies'][0] );
+		$this->assertInstanceOf( Wrap_Core_Dependency::class, $dependant['dependencies'][1] );
+		$this->assertEquals( Experiments_Manager::STATE_INACTIVE, $dependant['default'] );
+		$this->experiments->set_feature_default_state( 'dependant', Experiments_Manager::STATE_ACTIVE );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant', true ) );
 	}
 
 	public function test_get_features() {
@@ -561,6 +594,108 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $is_non_exist_active );
 	}
 
+	public function test_is_feature_active__missing_dependency_fails_closed_and_hidden_dependency_is_satisfied() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-missing-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-experiment',
+			],
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'hidden-dependency',
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'hidden' => true,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-hidden-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'hidden-dependency',
+			],
+		] );
+
+		$this->experiments->set_feature_default_state( 'dependant-hidden-dep', Experiments_Manager::STATE_ACTIVE );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-missing-dep', true ) );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-hidden-dep', true ) );
+	}
+
+	public function test_is_feature_active__missing_dependency_fails_closed_without_check_dependencies() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-plain-call',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-experiment',
+			],
+		] );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-plain-call' ) );
+	}
+
+	public function test_is_feature_active__class_based_dependency_stays_active() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-class-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				Module_B::class,
+			],
+		] );
+
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-class-dep' ) );
+	}
+
+	public function test_is_feature_active__fails_closed_when_dependency_feature_is_removed() {
+		$this->add_test_feature( [
+			'name' => 'removed-later',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-of-removed-later',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'removed-later',
+			],
+		] );
+
+		$this->experiments->remove_feature( 'removed-later' );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-of-removed-later' ) );
+	}
+
+	public function test_is_feature_active__re_resolves_late_registered_dependency() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 1 );
+
+		$this->add_test_feature( [
+			'name' => 'dependant-of-late-dep',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [
+				'late-dependency',
+			],
+		] );
+
+		$this->assertFalse( $this->experiments->is_feature_active( 'dependant-of-late-dep' ) );
+
+		$this->add_test_feature( [
+			'name' => 'late-dependency',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+		] );
+
+		$feature = $this->experiments->get_features( 'dependant-of-late-dep' );
+
+		$this->assertInstanceOf( Wrap_Core_Dependency::class, $feature['dependencies'][0] );
+		$this->assertTrue( $this->experiments->is_feature_active( 'dependant-of-late-dep' ) );
+	}
+
 	public function test_is_feature_active__saved_state() {
 		add_option( 'elementor_experiment-test_feature', Experiments_Manager::STATE_ACTIVE );
 
@@ -597,7 +732,9 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->assertNull( $feature );
 	}
 
-	public function test_validate_dependency__throws_when_a_dependency_is_not_available() {
+	public function test_validate_dependency__allows_activation_when_a_dependency_is_not_available() {
+		$this->expect_experiment_dep_compat_warnings_if_debug( 2 );
+
 		// Arrange.
 		$test_feature_data = [
 			'name' => Module_A::instance()->get_name(),
@@ -606,17 +743,19 @@ class Test_Manager extends Elementor_Test_Base {
 				Module_B::class,
 			],
 		];
-		// Assert.
-		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature module-a cannot be initialized before dependency feature: Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B' );
 
 		$this->add_test_feature( $test_feature_data );
-
 
 		// Act.
 		update_option(
 			$this->experiments->get_feature_option_key( $test_feature_data['name'] ),
 			Experiments_Manager::STATE_ACTIVE
+		);
+
+		// Assert.
+		$this->assertEquals(
+			Experiments_Manager::STATE_ACTIVE,
+			get_option( $this->experiments->get_feature_option_key( $test_feature_data['name'] ) )
 		);
 	}
 
@@ -792,6 +931,16 @@ class Test_Manager extends Elementor_Test_Base {
 		return $this->experiments->add_feature( $test_feature_data );
 	}
 
+	private function expect_experiment_dep_compat_warnings_if_debug( int $count ): void {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$this->expect_doing_it_wrong( 'Elementor\Core\Experiments\Manager::warn_removed_or_hidden_dependency' );
+		}
+	}
+
 	public function test_on_state_change_callback() {
 		$test_feature_data = [
 			'name' => 'test_feature_callback',
@@ -814,6 +963,132 @@ class Test_Manager extends Elementor_Test_Base {
 			Experiments_Manager::STATE_INACTIVE
 		);
 
+	}
+
+	public function test_set_feature_state__runs_state_change_side_effects_once_outside_admin() {
+		// Arrange.
+		$this->set_screen( 'front' );
+		$this->add_test_feature( [ 'name' => 'test_feature_side_effects' ] );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_feature_side_effects', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_feature_side_effects', Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertSame( 1, $fired );
+		$this->assertTrue( $this->experiments->is_feature_active( 'test_feature_side_effects' ) );
+		$this->assertSame(
+			Experiments_Manager::STATE_ACTIVE,
+			get_option( $this->experiments->get_feature_option_key( 'test_feature_side_effects' ) )
+		);
+	}
+
+	public function test_set_feature_state__throws_and_keeps_option_when_dependency_is_inactive() {
+		// Arrange.
+		$this->set_screen( 'front' );
+		$this->add_test_feature( [ 'name' => 'test_dependency', 'default' => Experiments_Manager::STATE_INACTIVE ] );
+		$this->add_test_feature( [ 'name' => 'test_dependant', 'dependencies' => [ 'test_dependency' ] ] );
+
+		// Act.
+		$exception = null;
+
+		try {
+			$this->experiments->set_feature_state( 'test_dependant', Experiments_Manager::STATE_ACTIVE );
+		} catch ( Dependency_Exception $e ) {
+			$exception = $e;
+		}
+
+		// Assert.
+		$this->assertInstanceOf( Dependency_Exception::class, $exception );
+		$this->assertFalse( get_option( $this->experiments->get_feature_option_key( 'test_dependant' ) ) );
+	}
+
+	public function test_set_feature_state__deactivating_a_dependency_deactivates_its_active_dependants() {
+		// Arrange.
+		$this->set_screen( 'front' );
+		$this->add_test_feature( [ 'name' => 'test_dependency', 'default' => Experiments_Manager::STATE_ACTIVE ] );
+		$this->add_test_feature( [
+			'name' => 'test_dependant',
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'dependencies' => [ 'test_dependency' ],
+		] );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_dependant', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_dependency', Experiments_Manager::STATE_INACTIVE );
+
+		// Assert.
+		$this->assertFalse( $this->experiments->is_feature_active( 'test_dependant' ) );
+		$this->assertSame( 1, $fired );
+	}
+
+	public function test_set_feature_state__throws_for_unknown_and_immutable_features() {
+		// Arrange.
+		$this->add_test_feature( [ 'name' => 'test_immutable', 'mutable' => false ] );
+
+		// Act & Assert.
+		foreach ( [ 'test_unknown_feature', 'test_immutable' ] as $feature_name ) {
+			try {
+				$this->experiments->set_feature_state( $feature_name, Experiments_Manager::STATE_ACTIVE );
+				$this->fail( 'Expected an InvalidArgumentException for ' . $feature_name );
+			} catch ( \InvalidArgumentException $e ) {
+				$this->assertFalse( get_option( $this->experiments->get_feature_option_key( $feature_name ) ) );
+			}
+		}
+	}
+
+	public function test_set_feature_state__runs_state_change_side_effects_once_when_admin_option_hooks_are_attached() {
+		// Arrange.
+		$this->set_screen( 'dashboard' );
+		$this->add_test_feature( [ 'name' => 'test_feature_admin_side_effects' ] );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_feature_admin_side_effects', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_feature_admin_side_effects', Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertSame( 1, $fired );
+		$this->assertTrue( $this->experiments->is_feature_active( 'test_feature_admin_side_effects' ) );
+	}
+
+	public function test_set_feature_state__runs_state_change_side_effects_when_admin_option_hooks_were_removed() {
+		// Arrange.
+		$this->set_screen( 'dashboard' );
+		$this->add_test_feature( [ 'name' => 'test_feature_removed_hooks' ] );
+		$option_key = $this->experiments->get_feature_option_key( 'test_feature_removed_hooks' );
+		remove_all_actions( 'add_option_' . $option_key );
+		remove_all_actions( 'update_option_' . $option_key );
+		$fired = 0;
+
+		add_action( 'elementor/experiments/feature-state-change/test_feature_removed_hooks', function () use ( &$fired ) {
+			++$fired;
+		} );
+
+		// Act.
+		$this->experiments->set_feature_state( 'test_feature_removed_hooks', Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertSame( 1, $fired );
+		$this->assertTrue( $this->experiments->is_feature_active( 'test_feature_removed_hooks' ) );
+	}
+
+	private function set_screen( string $screen_id ) {
+		global $current_screen;
+
+		$this->screen_backup = $current_screen;
+		set_current_screen( $screen_id );
 	}
 
 	/**

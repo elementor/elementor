@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -10,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -57,6 +58,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 	public function should_show_in_panel() {
 		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'button' );
 	}
 
 	protected static function define_props_schema(): array {
@@ -151,18 +156,11 @@ class Atomic_Tab extends Atomic_Element_Base {
 		];
 	}
 
-	protected function define_default_html_tag() {
-		return 'button';
-	}
-
 	protected function define_default_children() {
 		return [
 			Atomic_Paragraph::generate()
 				->settings( [
-					'paragraph' => Html_V3_Prop_Type::generate( [
-						'content'  => String_Prop_Type::generate( 'Tab' ),
-						'children' => [],
-					] ),
+					'paragraph' => Escaped_Html_Prop_Type::generate( 'Tab' ),
 					'tag' => String_Prop_Type::generate( 'span' ),
 				] )
 				->build(),

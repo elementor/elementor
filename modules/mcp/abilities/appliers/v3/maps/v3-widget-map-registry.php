@@ -1,0 +1,422 @@
+<?php
+
+namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
+
+use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Fragments\Advanced_Wrapper;
+use Elementor\Modules\Mcp\Abilities\Utils\V3_Json_Schema_Builder;
+use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
+use Elementor\Plugin;
+use Elementor\Widget_Base;
+use Elementor\Widget_Common_Base;
+use WP_Error;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class V3_Widget_Map_Registry {
+
+	const MAPS_DIR = __DIR__;
+	const REGISTERED_MAPS_FILE = __DIR__ . '/registered-maps.php';
+
+	const DIAGNOSTICS_LOG_MESSAGE = 'V3 widget map entries were dropped while compiling against the registered controls.';
+
+	const COMMON_WIDGET_TYPE = 'common';
+
+	const KIT_CONTROL_COLLISION = 'kit_control_collision';
+
+	/**
+	 * @var self|null
+	 */
+	private static $instance = null;
+
+	/**
+	 * @var V3_Widget_Map_Compiler
+	 */
+	private $compiler;
+
+	/**
+	 * @var callable
+	 */
+	private $get_controls;
+
+	/**
+	 * @var array<string, V3_Widget_Map>
+	 */
+	private $maps;
+
+	/**
+	 * @var callable|null
+	 */
+	private $has_advanced_tab;
+
+	/**
+	 * @var callable|null
+	 */
+	private $get_kit_controls;
+
+	/**
+	 * @var array<string, Compiled_V3_Map|WP_Error|null>
+	 */
+	private $cache = [];
+
+	/**
+	 * @var array<string, array<string, mixed>> Widget type => the widget and kit controls its map compiled against.
+	 */
+	private array $compiled_controls = [];
+
+	private V3_Map_Diagnostics $diagnostics;
+
+	/**
+	 * @param V3_Widget_Map_Compiler                                            $compiler
+	 * @param callable(string): (array<string, mixed>|null)                     $get_controls
+	 * @param array<string, V3_Widget_Map>                                      $maps
+	 * @param (callable(string): bool)|null                                     $has_advanced_tab Widgets that get the {@see Advanced_Wrapper} target.
+	 * @param (callable(Kit_Controls_Source): (array<string, mixed>|null))|null $get_kit_controls Null while the kit controls are unavailable.
+	 */
+	public function __construct(
+		V3_Widget_Map_Compiler $compiler,
+		callable $get_controls,
+		array $maps = [],
+		?callable $has_advanced_tab = null,
+		?callable $get_kit_controls = null
+	) {
+		$this->compiler = $compiler;
+		$this->get_controls = $get_controls;
+		$this->maps = $maps;
+		$this->has_advanced_tab = $has_advanced_tab;
+		$this->get_kit_controls = $get_kit_controls;
+		$this->diagnostics = new V3_Map_Diagnostics();
+	}
+
+	public static function instance(): self {
+		if ( null === self::$instance ) {
+			self::$instance = self::create_default();
+		}
+
+		return self::$instance;
+	}
+
+	public static function set_instance( self $registry ): void {
+		self::$instance = $registry;
+	}
+
+	/**
+	 * @param array<string, V3_Widget_Map>|null $maps Defaults to the maps listed in registered-maps.php.
+	 */
+	public static function create_default( ?array $maps = null ): self {
+		$maps = $maps ?? self::load_map_files();
+
+		return new self(
+			new V3_Widget_Map_Compiler(),
+			static function ( string $widget_type ): ?array {
+				$source = self::registered_widget( $widget_type )
+					?? Plugin::$instance->elements_manager->get_element_types( $widget_type );
+
+				if ( ! $source || ! method_exists( $source, 'get_stack' ) ) {
+					return null;
+				}
+
+				$stack = $source->get_stack( false );
+
+				return ( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] ) + self::advanced_tab_controls( $source );
+			},
+			$maps,
+			static fn( string $widget_type ): bool => self::has_advanced_tab( self::registered_widget( $widget_type ) ),
+			static fn( Kit_Controls_Source $source ): ?array => self::kit_controls( $source )
+		);
+	}
+
+	/**
+	 * The active kit's controls in the source's sections, or null while its Site Settings tab is
+	 * missing or a required control is not registered (e.g. without the license).
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private static function kit_controls( Kit_Controls_Source $source ): ?array {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit instanceof Kit || ! $kit->get_tab( $source->get_tab_id() ) ) {
+			return null;
+		}
+
+		$stack = $kit->get_stack( false );
+		$controls = array_filter(
+			( $stack['controls'] ?? [] ) + ( $stack['style_controls'] ?? [] ),
+			fn( $control ) => in_array( $control['section'] ?? null, $source->get_sections(), true )
+		);
+
+		foreach ( $source->get_required_controls() as $required_control ) {
+			if ( ! isset( $controls[ $required_control ] ) ) {
+				return null;
+			}
+		}
+
+		return $controls;
+	}
+
+	/**
+	 * Without Pro, core registers a promotion placeholder under every Pro widget name.
+	 * Its controls are not the real widget's, so a map must not compile against it.
+	 */
+	public static function registered_widget( string $widget_type ): ?Widget_Base {
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+
+		if ( ! $widget instanceof Widget_Base || $widget instanceof Pro_Widget_Promotion ) {
+			return null;
+		}
+
+		return $widget;
+	}
+
+	/**
+	 * Every widget except the common widget itself renders the common widget's Advanced tab.
+	 *
+	 * @param mixed $source
+	 */
+	private static function has_advanced_tab( $source ): bool {
+		return $source instanceof Widget_Base && ! $source instanceof Widget_Common_Base;
+	}
+
+	/**
+	 * `get_stack( false )` leaves out the shared Advanced tab, so its controls are read from the common widget.
+	 *
+	 * @param mixed $source
+	 * @return array<string, mixed>
+	 */
+	private static function advanced_tab_controls( $source ): array {
+		if ( ! self::has_advanced_tab( $source ) ) {
+			return [];
+		}
+
+		$common_widget = Plugin::$instance->widgets_manager->get_widget_types( self::COMMON_WIDGET_TYPE );
+
+		return $common_widget instanceof Widget_Common_Base ? $common_widget->get_controls() : [];
+	}
+
+	/**
+	 * @return array<string, V3_Widget_Map>
+	 */
+	private static function load_map_files(): array {
+		$maps = [];
+		$files = is_readable( self::REGISTERED_MAPS_FILE ) ? require self::REGISTERED_MAPS_FILE : [];
+
+		if ( ! is_array( $files ) ) {
+			return $maps;
+		}
+
+		foreach ( $files as $widget_type => $path ) {
+			if ( ! is_readable( $path ) ) {
+				continue;
+			}
+
+			$map = require $path;
+
+			if ( $map instanceof V3_Widget_Map ) {
+				$maps[ $widget_type ] = $map;
+			}
+		}
+
+		return $maps;
+	}
+
+	public static function reset_instance(): void {
+		self::$instance = null;
+	}
+
+	public function has_registered_map( string $widget_type ): bool {
+		return isset( $this->maps[ $widget_type ] );
+	}
+
+	public function is_supported( string $widget_type ): bool {
+		return null !== $this->get_map( $widget_type );
+	}
+
+	/**
+	 * The single gate for map-driven behavior: null whenever the widget has no map or the map
+	 * shape is invalid.
+	 */
+	public function get_map( string $widget_type ): ?Compiled_V3_Map {
+		$compiled = $this->compile( $widget_type );
+
+		return $compiled instanceof Compiled_V3_Map ? $compiled : null;
+	}
+
+	/**
+	 * @return array<int, array{widget_type: string, entry: string, reason: string, detail: string}>
+	 */
+	public function get_diagnostics( string $widget_type ): array {
+		return $this->diagnostics->for_widget( $widget_type );
+	}
+
+	/**
+	 * Full control stack (content and style buckets) the map was compiled against.
+	 * `get_config()['controls']` omits split style controls, so responsive style keys
+	 * must be looked up here.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function get_registered_controls( string $widget_type ): array {
+		$this->compile( $widget_type );
+
+		if ( isset( $this->compiled_controls[ $widget_type ] ) ) {
+			return $this->compiled_controls[ $widget_type ];
+		}
+
+		$get_controls = $this->get_controls;
+
+		return $get_controls( $widget_type ) ?? [];
+	}
+
+	/**
+	 * Public shape exposed to the LLM as the widget contract.
+	 *
+	 * @return array{description: string, properties: array<string, array<string, mixed>>, default_style_target: string, style_targets: array<string, array{label: string, description?: string, states: string[], properties: string[], properties_by_state: array<string, string[]>}>}|null
+	 */
+	public function get_llm_contract( string $widget_type ): ?array {
+		$map = $this->get_map( $widget_type );
+
+		if ( null === $map ) {
+			return null;
+		}
+
+		return [
+			'description' => $map->get_description(),
+			'properties' => V3_Json_Schema_Builder::build_from_map( $map->get_setting_schemas() )['properties'],
+			'default_style_target' => $map->get_default_target(),
+			'style_targets' => array_map(
+				fn( Compiled_Style_Target $target ) => $this->describe_target( $target ),
+				$map->get_targets()
+			),
+		];
+	}
+
+	private function describe_target( Compiled_Style_Target $target ): array {
+		$contract = [ 'label' => $target->get_label() ];
+
+		if ( '' !== $target->get_description() ) {
+			$contract['description'] = $target->get_description();
+		}
+
+		return $contract + [
+			'states' => $target->get_states(),
+			'properties' => $target->get_props(),
+			'properties_by_state' => $target->get_props_by_state(),
+		];
+	}
+
+	/**
+	 * @return Compiled_V3_Map|WP_Error|null
+	 */
+	private function compile( string $widget_type ) {
+		if ( ! isset( $this->maps[ $widget_type ] ) ) {
+			return null;
+		}
+
+		if ( array_key_exists( $widget_type, $this->cache ) ) {
+			return $this->cache[ $widget_type ];
+		}
+
+		$this->cache[ $widget_type ] = $this->compile_against_controls( $widget_type );
+
+		$this->log_diagnostics( $widget_type );
+
+		return $this->cache[ $widget_type ];
+	}
+
+	/**
+	 * @return Compiled_V3_Map|WP_Error|null
+	 */
+	private function compile_against_controls( string $widget_type ) {
+		$get_controls = $this->get_controls;
+		$controls = $get_controls( $widget_type );
+
+		if ( null === $controls ) {
+			return null;
+		}
+
+		$map = $this->map_with_shared_targets( $widget_type );
+		$kit_controls = $this->kit_controls_for( $map );
+
+		if ( null === $kit_controls && $map->has_only_kit_targets() ) {
+			return null;
+		}
+
+		if ( null === $kit_controls ) {
+			$map = $map->without_kit_targets();
+			$kit_controls = [];
+		}
+
+		$kit_controls = $this->without_colliding_controls( $widget_type, $kit_controls, $controls );
+		$this->compiled_controls[ $widget_type ] = $controls + $kit_controls;
+
+		return $this->compiler->compile( $map, $controls, $this->diagnostics, $widget_type, $kit_controls );
+	}
+
+	/**
+	 * @return array<string, mixed>|null
+	 */
+	private function kit_controls_for( V3_Widget_Map $map ): ?array {
+		$source = $map->get_kit_source();
+
+		if ( null === $source ) {
+			return [];
+		}
+
+		$get_kit_controls = $this->get_kit_controls;
+
+		return null === $get_kit_controls ? null : $get_kit_controls( $source );
+	}
+
+	/**
+	 * A kit control sharing a widget control's name would route the widget's setting to the kit.
+	 *
+	 * @param string               $widget_type
+	 * @param array<string, mixed> $kit_controls
+	 * @param array<string, mixed> $controls
+	 * @return array<string, mixed>
+	 */
+	private function without_colliding_controls( string $widget_type, array $kit_controls, array $controls ): array {
+		foreach ( array_keys( array_intersect_key( $kit_controls, $controls ) ) as $control_key ) {
+			$this->diagnostics->add( $widget_type, V3_Map_Diagnostics::MAP_ENTRY, self::KIT_CONTROL_COLLISION, $control_key );
+		}
+
+		return array_diff_key( $kit_controls, $controls );
+	}
+
+	private function map_with_shared_targets( string $widget_type ): V3_Widget_Map {
+		$map = $this->maps[ $widget_type ];
+		$has_advanced_tab = $this->has_advanced_tab;
+
+		if ( null === $has_advanced_tab || $map->has_only_kit_targets() || ! $has_advanced_tab( $widget_type ) || self::declares_target( $map, Advanced_Wrapper::ALIAS ) ) {
+			return $map;
+		}
+
+		return ( clone $map )->targets( Advanced_Wrapper::target() );
+	}
+
+	/**
+	 * Widgets without style controls of their own use the wrapper as their default target.
+	 */
+	private static function declares_target( V3_Widget_Map $map, string $alias ): bool {
+		foreach ( $map->get_all_targets() as $target ) {
+			if ( $alias === $target->get_alias() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function log_diagnostics( string $widget_type ): void {
+		$diagnostics = $this->get_diagnostics( $widget_type );
+
+		if ( empty( $diagnostics ) || ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		Logger::warning( self::DIAGNOSTICS_LOG_MESSAGE, [ 'entries' => $diagnostics ] );
+	}
+}

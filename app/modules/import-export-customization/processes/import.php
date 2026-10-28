@@ -9,6 +9,8 @@ use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Elementor_Content;
@@ -29,9 +31,14 @@ class Import {
 	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
 	/**
-	 * @var Import_Runner_Base[]
+	 * @var array<string, Import_Runner_Base>
 	 */
 	protected $runners = [];
+
+	/**
+	 * @var array<string, int>
+	 */
+	protected $runner_priorities = [];
 
 	/**
 	 * The session ID of the import process.
@@ -206,7 +213,8 @@ class Import {
 		$instance_data = $instance['instance_data'];
 
 		$this->extracted_directory_path = $instance_data['extracted_directory_path'];
-		$this->runners = $instance_data['runners'];
+		$this->runners = $this->normalize_runners( $instance_data['runners'] );
+		$this->runner_priorities = $this->normalize_runner_priorities( $instance_data['runners'], $instance_data['runner_priorities'] ?? [] );
 		$this->adapters = $instance_data['adapters'];
 
 		$this->manifest = $instance_data['manifest'];
@@ -248,12 +256,15 @@ class Import {
 
 	/**
 	 * Register a runner.
-	 * Be aware that the runner will be executed in the order of registration, the order is crucial for the import process.
+	 * Be aware that the runner will be executed by priority first, and by registration order within the same priority.
 	 *
 	 * @param Import_Runner_Base $runner_instance
+	 * @param int                $priority
 	 */
-	public function register( Import_Runner_Base $runner_instance ) {
-		$this->runners[ $runner_instance::get_name() ] = $runner_instance;
+	public function register( Import_Runner_Base $runner_instance, int $priority = 0 ) {
+		$runner_name = $runner_instance::get_name();
+		$this->runners[ $runner_name ] = $runner_instance;
+		$this->runner_priorities[ $runner_name ] = $priority;
 	}
 
 	public function register_default_runners() {
@@ -317,7 +328,7 @@ class Import {
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
-		foreach ( $this->runners as $runner ) {
+		foreach ( $this->get_sorted_runners() as $runner ) {
 			if ( $runner->should_import( $data ) ) {
 				$import = $runner->import( $data, $this->imported_data );
 				$this->imported_data = array_merge_recursive( $this->imported_data, $import );
@@ -360,7 +371,7 @@ class Import {
 		// Set the Request's state as an Elementor upload request, in order to support unfiltered file uploads.
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 
-		$runner = $this->runners[ $runner_name ];
+		$runner = $this->get_runner( $runner_name );
 
 		if ( empty( $runner ) ) {
 			throw new \Exception( 'Couldn’t execute the import process because the import runner was not found. Try again by specifying an import runner.' );
@@ -378,7 +389,7 @@ class Import {
 
 		remove_filter( 'elementor/document/save/data', [ $this, 'prevent_saving_elements_on_post_creation' ], 10 );
 
-		$is_last_runner = key( array_slice( $this->runners, -1, 1, true ) ) === $runner_name;
+		$is_last_runner = $this->is_last_runner( $runner_name, $data );
 		if ( $is_last_runner ) {
 			$this->finalize_import_session_option();
 			$this->save_elements_of_imported_posts();
@@ -416,6 +427,7 @@ class Import {
 			$import_sessions[ $this->session_id ]['instance_data'] = [
 				'extracted_directory_path' => $this->extracted_directory_path,
 				'runners' => $this->runners,
+				'runner_priorities' => $this->runner_priorities,
 				'adapters' => $this->adapters,
 
 				'manifest' => $this->manifest,
@@ -455,10 +467,102 @@ class Import {
 	public function get_runners_name(): array {
 		$data = $this->build_runner_data();
 
+		return $this->get_runnable_runner_names( $data );
+	}
+
+	private function get_runner( string $runner_name ): ?Import_Runner_Base {
+		return $this->runners[ $runner_name ] ?? null;
+	}
+
+	private function get_runnable_runner_names( array $data ): array {
 		return array_keys( array_filter(
-			$this->runners,
+			$this->get_sorted_runners(),
 			fn( $runner ) => $runner->should_import( $data )
 		) );
+	}
+
+	private function is_last_runner( string $runner_name, array $data ): bool {
+		$runnable_runner_names = $this->get_runnable_runner_names( $data );
+
+		if ( empty( $runnable_runner_names ) ) {
+			return false;
+		}
+
+		return end( $runnable_runner_names ) === $runner_name;
+	}
+
+	private function get_sorted_runners(): array {
+		$sorted_runners = [];
+		$runners_by_priority = [];
+		$runners = $this->normalize_runners( $this->runners );
+		$runner_priorities = $this->normalize_runner_priorities( $this->runners, $this->runner_priorities );
+
+		foreach ( $runners as $runner_name => $runner ) {
+			$priority = $runner_priorities[ $runner_name ] ?? 0;
+			$runners_by_priority[ $priority ][ $runner_name ] = $runner;
+		}
+
+		ksort( $runners_by_priority, SORT_NUMERIC );
+
+		foreach ( $runners_by_priority as $priority_runners ) {
+			foreach ( $priority_runners as $runner_name => $runner ) {
+				$sorted_runners[ $runner_name ] = $runner;
+			}
+		}
+
+		return $sorted_runners;
+	}
+
+	private function normalize_runners( array $runners ): array {
+		if ( empty( $runners ) ) {
+			return [];
+		}
+
+		$first_runner = reset( $runners );
+
+		if ( $first_runner instanceof Import_Runner_Base ) {
+			return $runners;
+		}
+
+		$normalized_runners = [];
+
+		foreach ( $runners as $priority_runners ) {
+			foreach ( $priority_runners as $runner_name => $runner ) {
+				$normalized_runners[ $runner_name ] = $runner;
+			}
+		}
+
+		return $normalized_runners;
+	}
+
+	private function normalize_runner_priorities( array $runners, array $runner_priorities ): array {
+		if ( ! empty( $runner_priorities ) ) {
+			return $runner_priorities;
+		}
+
+		if ( empty( $runners ) ) {
+			return [];
+		}
+
+		$first_runner = reset( $runners );
+
+		if ( $first_runner instanceof Import_Runner_Base ) {
+			return array_fill_keys( array_keys( $runners ), 0 );
+		}
+
+		$normalized_runner_priorities = [];
+
+		foreach ( $runners as $priority => $priority_runners ) {
+			foreach ( $priority_runners as $runner_name => $runner ) {
+				$normalized_runner_priorities[ $runner_name ] = (int) $priority;
+			}
+		}
+
+		return $normalized_runner_priorities;
+	}
+
+	private function remove_runner( string $runner_name ): void {
+		unset( $this->runners[ $runner_name ], $this->runner_priorities[ $runner_name ] );
 	}
 
 	private function build_runner_data(): array {
@@ -784,6 +888,9 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
+				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
+				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
 			}
 
@@ -799,6 +906,17 @@ class Import {
 
 			$document->save( $data );
 		}
+	}
+
+	private function merge_atomic_prop_remap_warnings( array $warnings ): void {
+		if ( empty( $warnings ) ) {
+			return;
+		}
+
+		$existing = $this->runners_import_metadata['atomic_prop_remap']['warnings'] ?? [];
+		$this->runners_import_metadata['atomic_prop_remap'] = [
+			'warnings' => array_merge( $existing, $warnings ),
+		];
 	}
 
 	private function update_instance_data_in_import_session_option() {

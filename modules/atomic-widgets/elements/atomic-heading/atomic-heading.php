@@ -8,9 +8,11 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Has_Ally_Promotion_Notice;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -24,6 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
+	use Has_Ally_Promotion_Notice;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
@@ -38,46 +41,58 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'heading', 'title', 'text', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span' ];
 	}
 
 	public function get_icon() {
 		return 'eicon-e-heading';
 	}
 
+	public static function html_tag_follows_link(): bool {
+		return false;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'h2', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
+	}
+
 	protected static function define_props_schema(): array {
-		return [
+		return array_merge( [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span' ] )
 				->default( 'h2' )
-				->description( 'The HTML tag for the heading element. One of: h1, h2, h3, h4, h5, or h6. Do not use p, span, or div.' ),
+				->description( 'The HTML tag for the heading element. One of: h1, h2, h3, h4, h5, h6, or span. Do not use p or div.' ),
 
-			'title' => Html_V3_Prop_Type::make()
-				->default( [
-					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
-					'children' => [],
-				] )
+			'title' => Escaped_Html_Prop_Type::make()
+				->default( __( 'This is a title', 'elementor' ) )
 				->description( 'The text content of the heading.' )
 				->alias( 'text', 'content', 'heading' ),
 
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
-		];
+		], static::get_ally_promotion_notice_prop_schema() );
 	}
 
 	protected function define_atomic_controls(): array {
+		$title_control = Inline_Editing_Control::bind_to( 'title' )
+			->set_placeholder( __( 'Type your title here', 'elementor' ) )
+			->set_label( __( 'Title', 'elementor' ) );
+		$promotion = $this->get_ally_promotion_trigger();
+
+		if ( $promotion ) {
+			$title_control->set_promotion( $promotion )->set_meta( [ 'layout' => 'custom' ] );
+		}
+
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_id( 'content' )
-			->set_items( [
-				Inline_Editing_Control::bind_to( 'title' )
-					->set_placeholder( __( 'Type your title here', 'elementor' ) )
-					->set_label( __( 'Title', 'elementor' ) ),
-			] );
+			->set_items( [ $title_control ] );
 
 		return [
 			$content_section,
@@ -115,6 +130,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					[
 						'value' => 'h6',
 						'label' => 'H6',
+					],
+					[
+						'value' => 'span',
+						'label' => 'span',
 					],
 				])
 				->set_label( __( 'Tag', 'elementor' ) ),
@@ -174,8 +193,16 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'h5' => 5,
 			'h6' => 6,
 		];
-		$level = $level_map[ $tag ] ?? 2;
 
+		if ( ! isset( $level_map[ $tag ] ) ) {
+			if ( ! empty( $settings['link']['href'] ) ) {
+				return '[' . $title . '](' . esc_url( $settings['link']['href'] ) . ')';
+			}
+
+			return $title;
+		}
+
+		$level = $level_map[ $tag ];
 		$md = str_repeat( '#', $level ) . ' ' . $title;
 
 		if ( ! empty( $settings['link']['href'] ) ) {

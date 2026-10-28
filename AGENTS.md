@@ -184,6 +184,8 @@ Internal: Sentence case description [ED-XXXXX]
 
 Allowed types: `Feature`, `CI`, `New`, `Tweak`, `Fix`, `Experiment`, `Deprecate`, `Deprecated`, `Revert`, `Internal` (sentence case, header <= 100 chars). Conventional-commit style like `docs(agents): …` fails. Both checks only re-run on push, and GitHub skips them entirely while the PR has merge conflicts — merge `main` to get them running again.
 
+Local agents do not write `## Visual proof` on `elementor/elementor` pull requests (`gh`, the GitHub UI, or any other PR body). CI `visual-proof-author.yml` adds that section when the PR is opened or marked ready for review and it is still missing. Leave it out unless a person already wrote it, and do not ask the user to fill it in. Screenshot capture follows those Steps; it does not author them.
+
 ## Gotchas
 
 - Prefer package.json script names; do not invent ad-hoc install/build chains.
@@ -193,7 +195,6 @@ Allowed types: `Feature`, `CI`, `New`, `Tweak`, `Fix`, `Experiment`, `Deprecate`
 - For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npm run build`. Restore dev dependencies afterward with `composer install`.
 - The build runs on Vite/Rolldown (see [scripts/vite/README.md](scripts/vite/README.md)). Grunt and Webpack are gone, but Babel is still in the pipeline for ES5 downleveling, and `webpack` remains a devDependency because the published plugins under `packages/packages/tools/` declare it as a peer.
 - [package.json](package.json) `engines` and `.nvmrc` define the Node version; keep them aligned.
-- Husky pre-commit runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192` (see [.husky/pre-commit](.husky/pre-commit)).
 
 ## Cursor Cloud specific instructions
 

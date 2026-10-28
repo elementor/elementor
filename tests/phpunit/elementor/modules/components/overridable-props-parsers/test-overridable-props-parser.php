@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\Components;
 use Elementor\Modules\Components\OverridableProps\Overridable_Props_Parser;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,11 +31,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 			'originValue' => [
-				'$$type' => 'html-v3',
-				'value' => [
-					'content' => ['$$type' => 'string', 'value' => 'Original text'],
-					'children' => [],
-				],
+				'$$type' => 'escaped-html',
+				'value' => 'Original text',
 			],
 			'groupId' => 'group-uuid-1',
 		]
@@ -58,11 +56,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
 			'originValue' => [
-				'$$type' => 'html-v3',
-				'value' => [
-					'content' => ['$$type' => 'string', 'value' => 'Original text'],
-					'children' => [],
-				],
+				'$$type' => 'escaped-html',
+				'value' => 'Original text',
 			],
 			'groupId' => 'group-uuid-1',
 			'originPropFields' => [
@@ -92,11 +87,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 				'originValue' => [
-				'$$type' => 'html-v3',
-				'value' => [
-					'content' => ['$$type' => 'string', 'value' => '<strong>Original text</strong><script>alert("xss")</script>'],
-					'children' => [],
-				],
+				'$$type' => 'escaped-html',
+				'value' => '<strong>Original text</strong><script>alert("xss")</script>',
 			],
 				'groupId' => 'group-uuid-1',
 			],
@@ -110,7 +102,12 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value']['content']['value'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$sanitized['prop-uuid-1']['originValue']['value'],
+			'<strong>Original text</strong>alert("xss")',
+			'<strong>Original text</strong>'
+		);
 	}
 
 	public function test_parser__sanitizes_origin_value_by_origin_prop_fields() {
@@ -124,11 +121,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
 				'originValue' => [
-				'$$type' => 'html-v3',
-				'value' => [
-					'content' => ['$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here'],
-					'children' => [],
-				],
+				'$$type' => 'escaped-html',
+				'value' => '<script>alert("xss")</script>Click here',
 			],
 				'originPropFields' => [
 					'elType' => 'widget',
@@ -146,11 +140,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 		// Assert.
 		$sanitized = $result->unwrap();
 		$this->assertEquals( [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => ['$$type' => 'string', 'value' => 'alert("xss")Click here'],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'alert("xss")Click here', 'Click here' ),
 		], $sanitized['prop-uuid-1']['originValue'] );
 	}
 
@@ -228,11 +219,8 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
 		'originValue' => [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => ['$$type' => 'string', 'value' => 'Original text'],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value' => 'Original text',
 		],
 		'groupId' => 'group-uuid-1' 
 	];

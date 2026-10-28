@@ -29,10 +29,13 @@ describe( 'Events Manager module', () => {
 		mockTrack.mockReset();
 		mockInit.mockClear();
 
+		window.fetch = jest.fn();
+
 		window.elementorCommon = {
 			config: {
 				editor_events: {
 					can_send_events: true,
+					token: 'mixpanel-project-token',
 					user_id: 'user-1',
 					site_url: 'https://example.com',
 					wp_version: '6.0',
@@ -54,6 +57,7 @@ describe( 'Events Manager module', () => {
 
 	afterEach( () => {
 		delete window.elementorCommon;
+		delete window.__elementorEventsProxyFetchInstalled;
 	} );
 
 	test( 'dispatchEvent does not throw when event dispatch fails', () => {
@@ -102,6 +106,28 @@ describe( 'Events Manager module', () => {
 		} );
 	} );
 
+	test( 'initializes without a callback', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			expect( () => eventsManager.initializeMixpanel() ).not.toThrow();
+			expect( mockInit ).toHaveBeenCalled();
+			expect( window.elementorCommon.config.editor_events.mixpanelInstance ).toBe( mockMixpanelInstance );
+		} );
+	} );
+
+	test( 'onInit enables tracking when loaded runs synchronously during init', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			eventsManager.onInit();
+
+			expect( eventsManager.trackingEnabled ).toBe( true );
+		} );
+	} );
+
 	test( 'onInit points mixpanel at the events-proxy endpoints instead of the vendor domains', () => {
 		jest.isolateModules( () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
@@ -110,13 +136,14 @@ describe( 'Events Manager module', () => {
 			eventsManager.onInit();
 
 			expect( mockInit ).toHaveBeenCalledWith(
-				undefined,
+				'mixpanel-project-token',
 				expect.objectContaining( {
 					api_host: 'https://example.com/wp-json/elementor/v1/events-proxy/api',
 					lib_base_path: 'https://example.com/wp-json/elementor/v1/events-proxy/libs/',
 				} ),
 				'elementor-builder-editor',
 			);
+			expect( window.__elementorEventsProxyFetchInstalled ).toBe( true );
 		} );
 	} );
 

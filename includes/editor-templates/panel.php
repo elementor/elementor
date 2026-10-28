@@ -1,14 +1,14 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\Promotions\Sticky_Panel_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $show_editing_panel_sticky_promotion = ! Utils::has_pro();
-$editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtered_Promotions_Manager::get_editor_panel_sticky_promotion() : [];
+$editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Sticky_Panel_Promotion::get_promotion_for_editor() : [];
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-panel-state-loading">
@@ -16,7 +16,12 @@ $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtere
 	</div>
 	<header id="elementor-panel-header-wrapper"></header>
 	<main id="elementor-panel-content-wrapper"></main>
+	<footer id="elementor-panel-footer" class="elementor-panel-footer-back-compat-wrapper" hidden></footer>
 	<div id="elementor-mode-switcher"></div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-footer-back-compat">
+	<button type="button" class="elementor-panel-footer-back-compat-preview" tabindex="-1" hidden></button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-menu">

@@ -61,7 +61,7 @@ export const DEFAULT_STRINGS: Record< string, string > = {
 	'steps.site_features.subtitle': "We'll use this to tailor suggestions for you.",
 	'steps.site_features.continue_with_free': 'Continue with Free',
 	'steps.site_features.option_classes_variables': 'Design system',
-	'steps.site_features.option_hello_theme': 'Hello theme',
+	'steps.site_features.option_interactions': 'Interactions',
 	'steps.site_features.option_cookie_consent': 'Cookie Consent',
 	'steps.site_features.option_theme_builder': 'Theme builder',
 	'steps.site_features.option_lead_collection': 'Forms & leads',

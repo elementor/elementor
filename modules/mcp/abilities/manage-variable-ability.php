@@ -3,11 +3,15 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
+use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -34,7 +38,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Variable', 'elementor' ),
-			__( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' ),
+			$this->get_description(),
 			'elementor',
 			[
 				'type' => 'object',
@@ -49,8 +53,9 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'manage_options' ),
 			[
@@ -71,7 +76,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'string' ],
 								'type' => [
 									'type' => 'string',
-									'enum' => [ self::TYPE_COLOR, self::TYPE_FONT, self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ],
+									'enum' => $this->get_allowed_types(),
 								],
 								'label' => [ 'type' => 'string' ],
 								'value' => [ 'type' => 'string' ],
@@ -83,20 +88,51 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		);
 	}
 
+	public function register(): void {
+		add_filter( 'wp_ability_validate_input', [ $this, 'defer_size_type_rejection' ], 10, 3 );
+
+		parent::register();
+	}
+
+	public function defer_size_type_rejection( $validation_result, $input, string $ability_name ) {
+		if ( $this->get_id() !== $ability_name || ! is_wp_error( $validation_result ) || $this->can_manage_size_variables() ) {
+			return $validation_result;
+		}
+
+		return $this->has_size_type_operation( $input ) ? true : $validation_result;
+	}
+
+	private function has_size_type_operation( $input ): bool {
+		$operations = is_array( $input ) && is_array( $input['operations'] ?? null ) ? $input['operations'] : [];
+
+		foreach ( $operations as $operation ) {
+			if ( is_array( $operation ) && $this->is_size_type( $operation['type'] ?? null ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function execute( $input = [] ) {
-		$input = is_array( $input ) ? $input : [];
+		$started_at = hrtime( true );
+		$input      = is_array( $input ) ? $input : [];
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
-			return $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+			$error = $this->bad_request( __( 'operations array is required.', 'elementor' ) );
+			$this->emit_mcp_manage_global_variable_executed( $started_at, [], $error );
+			return $error;
 		}
 
 		if ( empty( $operations ) ) {
-			return $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+			$error = $this->bad_request( __( 'operations must not be empty.', 'elementor' ) );
+			$this->emit_mcp_manage_global_variable_executed( $started_at, [], $error );
+			return $error;
 		}
 
 		if ( count( $operations ) > self::MAX_BATCH_SIZE ) {
-			return new \WP_Error(
+			$error = new \WP_Error(
 				'batch_size_exceeded',
 				sprintf(
 					/* translators: %d: maximum operations per request */
@@ -108,9 +144,17 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					'max_allowed' => self::MAX_BATCH_SIZE,
 				]
 			);
+			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, $error );
+			return $error;
 		}
 
-		return $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations );
+		if ( is_wp_error( $response ) ) {
+			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, $response );
+		} else {
+			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, null, $response );
+		}
+		return $response;
 	}
 
 	private function handle_bulk( array $operations ) {
@@ -148,6 +192,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				$watermark = $batch_result['watermark'] ?? null;
 
 				$this->merge_batch_results( $batch_result['results'], $index_map, $results );
+				$this->emit_variable_events( $batch_result['results'] );
 			} catch ( FatalError $e ) {
 				return new \WP_Error(
 					'unexpected_server_error',
@@ -181,6 +226,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
 				}
 
+				if ( $this->is_size_type( $type ) && ! $this->can_manage_size_variables() ) {
+					return Variables_Pro_Features_Discovery::for_size_variables();
+				}
+
 				return [
 					'type' => 'create',
 					'variable' => [
@@ -197,6 +246,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 				if ( '' === $id || '' === $label || '' === $value ) {
 					return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
+				}
+
+				if ( ! $this->can_manage_size_variables() && $this->is_size_variable( $id ) ) {
+					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
 				return [
@@ -251,6 +304,43 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
 	}
 
+	private function is_size_type( $type ): bool {
+		return in_array( $type, [ self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ], true );
+	}
+
+	private function is_size_variable( $id ): bool {
+		return is_string( $id ) && $this->is_size_type( $this->get_service()->find_type( $id ) );
+	}
+
+	private function can_manage_size_variables(): bool {
+		return Utils::is_license_active();
+	}
+
+	private function get_allowed_types(): array {
+		$types = [ self::TYPE_COLOR, self::TYPE_FONT ];
+
+		if ( $this->can_manage_size_variables() ) {
+			$types[] = self::TYPE_SIZE;
+			$types[] = self::TYPE_CUSTOM_SIZE;
+		}
+
+		return $types;
+	}
+
+	private function get_description(): string {
+		$description = __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
+
+		if ( $this->can_manage_size_variables() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_size_variables_pro_notice();
+	}
+
+	private function get_size_variables_pro_notice(): string {
+		return __( 'Note: size variables (global-size-variable, global-custom-size-variable) hold reusable spacing, font-size, and layout values and require Elementor Pro, which is not licensed on this site. Operations that create or update them are rejected with an upgrade link — do not retry them, share the link with the user, and do not store size values in color or font variables as a workaround. Color and font variables, and deleting variables, work normally.', 'elementor' );
+	}
+
 	private function clear_cache(): void {
 		if ( ! class_exists( Plugin::class ) || ! isset( Plugin::$instance ) ) {
 			return;
@@ -277,5 +367,100 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
+	}
+
+	private function emit_variable_events( array $batch_results ): void {
+		$event_by_action = [
+			'create' => 'variable_created',
+			'update' => 'variable_updated',
+		];
+
+		$var_type_labels = [
+			self::TYPE_COLOR       => 'color',
+			self::TYPE_FONT        => 'font',
+			self::TYPE_SIZE        => 'size',
+			self::TYPE_CUSTOM_SIZE => 'size',
+		];
+
+		foreach ( $batch_results as $result ) {
+			if ( 'ok' !== ( $result['status'] ?? '' ) ) {
+				continue;
+			}
+
+			$action = $result['action'] ?? '';
+
+			if ( ! isset( $event_by_action[ $action ] ) ) {
+				continue;
+			}
+
+			$raw_type = $result['type'] ?? '';
+			$var_type = $var_type_labels[ $raw_type ] ?? $raw_type;
+
+			Mcp_Event_Dispatcher::emit( $event_by_action[ $action ], [
+				'id'       => $result['id'] ?? '',
+				'name'     => $result['label'] ?? '',
+				'var_type' => $var_type,
+			] );
+		}
+	}
+
+	private function emit_mcp_manage_global_variable_executed(
+		int $started_at,
+		array $operations,
+		?\WP_Error $top_level_error = null,
+		array $response = []
+	): void {
+		$duration_ms = Tool_Performance_Metrics::duration_ms_since( $started_at );
+
+		[ 'status' => $status, 'error_code' => $error_code ] = Tool_Performance_Metrics::resolve_status( $response, $top_level_error );
+
+		$failed_results = array_filter( $response['results'] ?? [], fn( $r ) => 'error' === ( $r['status'] ?? '' ) );
+		$failed_count   = count( $failed_results );
+		$failed_codes   = array_values( array_unique( array_column( $failed_results, 'code' ) ) );
+
+		$ops_count      = count( $operations );
+		$by_action      = [];
+		$variable_types = [];
+
+		foreach ( $operations as $op ) {
+			$action = $op['action'] ?? '';
+			if ( is_string( $action ) && '' !== $action ) {
+				$by_action[ $action ] = ( $by_action[ $action ] ?? 0 ) + 1;
+			}
+		}
+
+		$ok_results = array_filter( $response['results'] ?? [], fn( $r ) => 'ok' === ( $r['status'] ?? '' ) );
+		foreach ( $ok_results as $row ) {
+			$type = $row['type'] ?? '';
+			if ( is_string( $type ) && '' !== $type ) {
+				$variable_types[ $type ] = ( $variable_types[ $type ] ?? 0 ) + 1;
+			}
+		}
+
+		$dominant_action = '';
+		if ( ! empty( $by_action ) ) {
+			arsort( $by_action );
+			$dominant_action = (string) array_key_first( $by_action );
+		}
+
+		$payload = [
+			'tool_name'               => $this->get_ability_id(),
+			'status'                  => $status,
+			'duration_ms'             => $duration_ms,
+			'action'                  => $dominant_action,
+			'operations_count'        => $ops_count,
+			'operations_by_type'      => $by_action,
+			'variable_types'          => $variable_types,
+			'failed_operations_count' => $failed_count,
+			'failed_operation_codes'  => $failed_codes,
+			'warning_count'           => 0,
+			'warning_types'           => [],
+		];
+
+		if ( null !== $error_code ) {
+			$payload['error_code'] = $error_code;
+		}
+
+		Mcp_Event_Dispatcher::emit( 'mcp_manage_global_variable_executed', $payload );
 	}
 }

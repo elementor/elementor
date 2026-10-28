@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Includes\Controls\Groups;
 
 use Elementor\Group_Control_Image_Size;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,10 +39,7 @@ class Test_Image_Size extends Elementor_Test_Base {
 		}
 
 		// Assert
-		$this->assertEquals(
-			$wp_attachment,
-			$html
-		);
+		Kses_Test_Expectations::assert_same_img_markup( $this, $wp_attachment, $html );
 
 		// Clean up
 		wp_delete_attachment( $attachment_id, true );

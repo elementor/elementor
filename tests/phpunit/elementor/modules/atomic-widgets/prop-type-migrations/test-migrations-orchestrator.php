@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrat
 
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -67,6 +68,23 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( $result );
+	}
+
+	public function test_is_rollback_does_not_depend_on_upgrade_manager_instance() {
+		// Arrange
+		$original_upgrade_manager = Plugin::$instance->upgrade;
+		Plugin::$instance->upgrade = null;
+		update_option( 'elementor_version', '99.0.0' );
+
+		try {
+			// Act
+			$result = Migrations_Orchestrator::is_rollback();
+		} finally {
+			Plugin::$instance->upgrade = $original_upgrade_manager;
+		}
+
+		// Assert
+		$this->assertTrue( $result );
 	}
 
 	public function test_migrate_uses_local_manifest_during_version_upgrade() {

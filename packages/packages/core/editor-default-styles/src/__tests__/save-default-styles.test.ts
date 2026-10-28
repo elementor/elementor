@@ -1,0 +1,229 @@
+import { createMockStyleDefinitionWithVariants } from 'test-utils';
+import {
+	__createStore as createStore,
+	__dispatch as dispatch,
+	__getState as getState,
+	__registerSlice as registerSlice,
+} from '@elementor/store';
+
+import { apiClient } from '../api';
+import { saveDefaultStyles } from '../save-default-styles';
+import { selectInitialData, selectIsDirty, slice } from '../store';
+import { trackDefaultStyles } from '../utils/tracking';
+
+jest.mock( '../api' );
+
+jest.mock( '../utils/tracking' );
+
+jest.mock( '@elementor/editor-editing-panel', () => ( {
+	STYLE_SECTIONS: [
+		{ name: 'Spacing', fields: [ 'margin', 'padding' ] },
+		{ name: 'Typography', fields: [ 'font-size', 'color' ] },
+	],
+} ) );
+
+const DESKTOP_META = { breakpoint: 'desktop', state: null } as const;
+
+describe( 'saveDefaultStyles', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+
+		registerSlice( slice );
+		createStore();
+
+		jest.mocked( apiClient.put ).mockResolvedValue( {} as never );
+		jest.mocked( apiClient.delete ).mockResolvedValue( {} as never );
+	} );
+
+	it( 'should persist changed tags and commit the store', async () => {
+		const style = createMockStyleDefinitionWithVariants( {
+			id: 'h2',
+			variants: [
+				{
+					meta: { breakpoint: 'desktop', state: null },
+					props: { 'font-size': '12px' },
+					custom_css: null,
+				},
+			],
+		} );
+
+		dispatch(
+			slice.actions.load( {
+				data: {},
+			} )
+		);
+
+		dispatch( slice.actions.update( { style } ) );
+
+		await saveDefaultStyles();
+
+		expect( apiClient.put ).toHaveBeenCalledWith( 'h2', style.variants );
+		expect( selectIsDirty( getState() ) ).toBe( false );
+		expect( selectInitialData( getState() ) ).toEqual( { h2: style } );
+	} );
+
+	it( 'should persist edits to pre-loaded tags', async () => {
+		const style = createMockStyleDefinitionWithVariants( {
+			id: 'h2',
+			variants: [
+				{
+					meta: { breakpoint: 'desktop', state: null },
+					props: { 'font-size': '12px' },
+					custom_css: null,
+				},
+			],
+		} );
+
+		dispatch(
+			slice.actions.load( {
+				data: { h2: style },
+			} )
+		);
+
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h2',
+				meta: { breakpoint: 'desktop', state: null },
+				props: { 'font-size': '24px' },
+			} )
+		);
+
+		await saveDefaultStyles();
+
+		expect( apiClient.put ).toHaveBeenCalledWith( 'h2', [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				props: { 'font-size': '24px' },
+				custom_css: null,
+			},
+		] );
+		expect( selectIsDirty( getState() ) ).toBe( false );
+	} );
+
+	it( 'should delete tags removed from the store', async () => {
+		const style = createMockStyleDefinitionWithVariants( { id: 'h2' } );
+
+		dispatch(
+			slice.actions.load( {
+				data: { h2: style },
+			} )
+		);
+
+		dispatch( slice.actions.deleteTag( 'h2' ) );
+
+		await saveDefaultStyles();
+
+		expect( apiClient.delete ).toHaveBeenCalledWith( 'h2' );
+		expect( selectIsDirty( getState() ) ).toBe( false );
+	} );
+
+	it( 'should not call the API when the store is clean', async () => {
+		dispatch(
+			slice.actions.load( {
+				data: {},
+			} )
+		);
+
+		await saveDefaultStyles();
+
+		expect( apiClient.put ).not.toHaveBeenCalled();
+		expect( apiClient.delete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should delete a tag when the last variant becomes empty', async () => {
+		// Arrange
+		dispatch(
+			slice.actions.load( {
+				data: {
+					h3: {
+						id: 'h3',
+						label: 'h3',
+						type: 'class',
+						variants: [
+							{
+								meta: DESKTOP_META,
+								props: { margin: '10px' },
+								custom_css: null,
+							},
+						],
+					},
+				},
+			} )
+		);
+
+		dispatch(
+			slice.actions.updateProps( {
+				id: 'h3',
+				meta: DESKTOP_META,
+				props: { margin: null },
+			} )
+		);
+
+		// Act
+		await saveDefaultStyles();
+
+		// Assert
+		expect( apiClient.delete ).toHaveBeenCalledWith( 'h3' );
+		expect( apiClient.put ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'tracking', () => {
+		const loadTag = ( props: Record< string, string > ) =>
+			dispatch(
+				slice.actions.load( {
+					data: {
+						h1: createMockStyleDefinitionWithVariants( {
+							id: 'h1',
+							variants: [ { meta: DESKTOP_META, props, custom_css: null } ],
+						} ),
+					},
+				} )
+			);
+
+		it( 'should track tagSaved with the modified sections', async () => {
+			// Arrange
+			loadTag( { 'font-size': '12px', margin: '4px' } );
+			dispatch( slice.actions.updateProps( { id: 'h1', meta: DESKTOP_META, props: { 'font-size': '24px' } } ) );
+
+			// Act
+			await saveDefaultStyles();
+
+			// Assert
+			expect( trackDefaultStyles ).toHaveBeenCalledWith( {
+				event: 'tagSaved',
+				tag: 'h1',
+				action: 'set',
+				sections_modified: [ 'typography' ],
+			} );
+		} );
+
+		it( 'should track tagSaved as unset without sections when the tag is deleted', async () => {
+			// Arrange
+			loadTag( { margin: '4px' } );
+			dispatch( slice.actions.deleteTag( 'h1' ) );
+
+			// Act
+			await saveDefaultStyles();
+
+			// Assert
+			expect( trackDefaultStyles ).toHaveBeenCalledWith( {
+				event: 'tagSaved',
+				tag: 'h1',
+				action: 'unset',
+				sections_modified: [],
+			} );
+		} );
+
+		it( 'should track saveFailed and rethrow when saving fails', async () => {
+			// Arrange
+			loadTag( { margin: '4px' } );
+			dispatch( slice.actions.updateProps( { id: 'h1', meta: DESKTOP_META, props: { margin: '8px' } } ) );
+			jest.mocked( apiClient.put ).mockRejectedValueOnce( new Error( 'request failed' ) );
+
+			// Act & Assert
+			await expect( saveDefaultStyles() ).rejects.toThrow( 'request failed' );
+			expect( trackDefaultStyles ).toHaveBeenCalledTimes( 1 );
+			expect( trackDefaultStyles ).toHaveBeenCalledWith( { event: 'saveFailed', tags_changed_count: 1 } );
+		} );
+	} );
+} );

@@ -111,11 +111,26 @@
 			}
 		}
 
-		.eicon-atomic {
+		.eicon-atomic,
+		.e-widget-new-badge {
 			position: absolute;
-			inset-block-start: 5px;
-			inset-inline-end: 5px;
+			inset-block-start: 4px;
+			inset-inline-end: 6px;
+		}
+
+		.eicon-atomic {
 			color: var(--e-a-color-txt);
+		}
+
+		.e-widget-new-badge {
+			border-radius: 4px;
+			background-color: #EBF2FE;
+			color: var(--e-a-color-info);
+			padding: 2px 4px;
+			font-size: 10px;
+			font-weight: 500;
+			line-height: 1.4;
+			pointer-events: none;
 		}
 
 		&:hover,

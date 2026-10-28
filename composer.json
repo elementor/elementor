@@ -6,15 +6,16 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "automattic/jetpack-autoloader": "^5",
-        "elementor/wp-one-package": "1.0.68",
-        "wordpress/mcp-adapter": "^0.5.0"
+        "automattic/jetpack-autoloader": "^6",
+        "elementor/elementor-mcp-composer": "^1.0.20",
+        "elementor/wp-one-package": "1.0.72"
     },
     "repositories": [
         {
             "type": "composer",
             "url": "https://composer.elementor.com",
             "only": [
+                "elementor/elementor-mcp-composer",
                 "elementor/wp-one-package"
             ]
         }

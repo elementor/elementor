@@ -46,7 +46,7 @@ class Test_Default_Styles_REST_API extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertSame( [], $response->get_data()['data'] );
+		$this->assertEquals( (object) [], $response->get_data()['data'] );
 	}
 
 	public function test_all__returns_saved_styles() {
@@ -188,10 +188,23 @@ class Test_Default_Styles_REST_API extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_tag', $response->get_data()['code'] );
 	}
 
-	public function test_all__fails_for_non_admin_user() {
+	public function test_all__allows_editor_user() {
 		$this->act_as_editor();
 
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/default-styles' );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	public function test_put__fails_for_editor_user() {
+		$this->act_as_editor();
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/default-styles/h1' );
+		$request->set_body_params( [
+			'variants' => $this->sample_style_payload()['variants'],
+		] );
+
 		$response = rest_do_request( $request );
 
 		$this->assertSame( 403, $response->get_status() );

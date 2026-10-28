@@ -25,6 +25,8 @@ export const audit: Audit = {
 					auditId: audit.id,
 					label: __( 'Cookiez plugin is not installed or active.', 'elementor' ),
 					externalUrl: ctx.pageContext.cookiez_plugin_url,
+					ctaLabel: __( 'Set up cookie consent', 'elementor' ),
+					appInstalled: ctx.pageContext.cookiez_plugin_active,
 				},
 			],
 		};

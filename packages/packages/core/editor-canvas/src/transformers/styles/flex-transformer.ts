@@ -6,6 +6,13 @@ type Flex = {
 	flexBasis?: { size: number; unit: string } | string | null;
 };
 
+const DEFAULT_FLEX_GROW = 0;
+const DEFAULT_FLEX_SHRINK = 1;
+const DEFAULT_FLEX_BASIS = 'auto';
+
+const formatBasis = ( basis: NonNullable< Flex[ 'flexBasis' ] > ) =>
+	typeof basis === 'object' && basis.size !== undefined ? `${ basis.size }${ basis.unit || '' }` : basis;
+
 export const flexTransformer = createTransformer( ( value: Flex ) => {
 	const grow = value.flexGrow;
 	const shrink = value.flexShrink;
@@ -19,37 +26,9 @@ export const flexTransformer = createTransformer( ( value: Flex ) => {
 		return null;
 	}
 
-	if ( hasGrow && hasShrink && hasBasis ) {
-		return `${ grow } ${ shrink } ${
-			typeof basis === 'object' && basis.size !== undefined ? `${ basis.size }${ basis.unit || '' }` : basis
-		}`;
-	}
+	const growOut = hasGrow ? grow : DEFAULT_FLEX_GROW;
+	const shrinkOut = hasShrink ? shrink : DEFAULT_FLEX_SHRINK;
+	const basisOut = hasBasis ? formatBasis( basis ) : DEFAULT_FLEX_BASIS;
 
-	if ( hasGrow && hasShrink && ! hasBasis ) {
-		return `${ grow } ${ shrink }`;
-	}
-	if ( hasGrow && ! hasShrink && hasBasis ) {
-		return `${ grow } 1 ${
-			typeof basis === 'object' && basis.size !== undefined ? `${ basis.size }${ basis.unit || '' }` : basis
-		}`;
-	}
-	if ( ! hasGrow && hasShrink && hasBasis ) {
-		return `0 ${ shrink } ${
-			typeof basis === 'object' && basis.size !== undefined ? `${ basis.size }${ basis.unit || '' }` : basis
-		}`;
-	}
-
-	if ( hasGrow && ! hasShrink && ! hasBasis ) {
-		return `${ grow }`;
-	}
-	if ( ! hasGrow && hasShrink && ! hasBasis ) {
-		return `0 ${ shrink }`;
-	}
-	if ( ! hasGrow && ! hasShrink && hasBasis ) {
-		return `0 1 ${
-			typeof basis === 'object' && basis.size !== undefined ? `${ basis.size }${ basis.unit || '' }` : basis
-		}`;
-	}
-
-	return null;
+	return `${ growOut } ${ shrinkOut } ${ basisOut }`;
 } );

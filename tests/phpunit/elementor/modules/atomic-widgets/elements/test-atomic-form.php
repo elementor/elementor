@@ -5,7 +5,10 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,6 +27,56 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 
 	public function test_action_webhook_constant_matches_expected_slug() {
 		$this->assertSame( 'webhook', Atomic_Form::ACTION_WEBHOOK );
+	}
+
+	public function test_action_redirect_constant_matches_expected_slug() {
+		$this->assertSame( 'redirect', Atomic_Form::ACTION_REDIRECT );
+	}
+
+	public function test_props_schema_includes_redirect_url_string_prop() {
+		$schema = Atomic_Form::get_props_schema();
+
+		$this->assertArrayHasKey( 'redirect_url', $schema );
+		$this->assertInstanceOf( Prop_Type::class, $schema['redirect_url'] );
+		$this->assertTrue( $schema['redirect_url']->validate( $schema['redirect_url']->get_default() ) );
+	}
+
+	public function test_actions_after_submit_control_includes_redirect_chip() {
+		$form = $this->make_atomic_form_instance();
+
+		$chips = $this->find_control_by_bind( $form->get_atomic_controls(), 'actions-after-submit' );
+		$values = array_column( $chips->get_props()['options'] ?? [], 'value' );
+
+		$this->assertContains( Atomic_Form::ACTION_REDIRECT, $values );
+	}
+
+	public function test_redirect_url_text_control_is_registered() {
+		$form = $this->make_atomic_form_instance();
+
+		$url_control = $this->find_control_by_bind( $form->get_atomic_controls(), 'redirect_url' );
+		$this->assertInstanceOf( Text_Control::class, $url_control );
+	}
+
+	public function test_widget_description_lists_every_action() {
+		foreach ( [ 'email', 'collect-submissions', 'webhook', 'redirect' ] as $action ) {
+			$this->assertStringContainsString( $action, Atomic_Form::$widget_description );
+		}
+	}
+
+	public function test_widget_schema_exposes_redirect_url_description() {
+		if ( ! class_exists( Widget_Context_Helper::class ) ) {
+			$this->markTestSkipped( 'Core MCP Widget_Context_Helper is not available.' );
+		}
+
+		$config = ( new Atomic_Form( [
+			'id' => 'config-probe',
+			'elType' => Atomic_Form::get_element_type(),
+			'settings' => [],
+		] ) )->get_config();
+
+		$schema = Widget_Context_Helper::build_widget_schema( Atomic_Form::get_element_type(), $config );
+
+		$this->assertStringContainsString( 'redirect', $schema['properties']['redirect_url']['description'] ?? '' );
 	}
 
 	public function test_props_schema_includes_webhook_url_string_prop() {
@@ -107,6 +160,30 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 			$email_value['from']['value']
 		);
 		$this->assertSame( '[all-fields]', $email_value['message']['value'] );
+	}
+
+	/**
+	 * @dataProvider form_message_classes_provider
+	 */
+	public function test_form_message_does_not_restrict_child_types( string $class_name ) {
+		$message = new $class_name( [
+			'id' => 'test_form_message',
+			'elType' => $class_name::get_element_type(),
+			'settings' => [],
+		], null );
+
+		$reflection = new \ReflectionMethod( $class_name, 'get_initial_config' );
+		$reflection->setAccessible( true );
+		$config = $reflection->invoke( $message );
+
+		$this->assertSame( [], $config['allowed_child_types'] );
+	}
+
+	public function form_message_classes_provider(): array {
+		return [
+			'success message' => [ Form_Success_Message::class ],
+			'error message' => [ Form_Error_Message::class ],
+		];
 	}
 
 	public function test_initial_config_includes_base_settings() {

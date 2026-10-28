@@ -1,0 +1,69 @@
+name: Playwright PHP and WordPress Compatibility
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      combinations:
+        description: 'JSON list of {"php", "wp"} pairs to run the Playwright suite on'
+        required: true
+        default: '[{"php": "7.4", "wp": "6.8"}, {"php": "8.5", "wp": "7.1"}]'
+      scope:
+        type: choice
+        description: 'Shards to run'
+        required: true
+        default: 'php-heavy'
+        options:
+          - php-heavy
+          - full
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playwright-php-compat-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-combinations:
+    name: Validate combinations
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check PHP and WordPress versions format
+        env:
+          COMBINATIONS: ${{ inputs.combinations || '[{"php":"7.4","wp":"6.8"},{"php":"8.5","wp":"7.1"}]' }}
+        run: |
+          echo "$COMBINATIONS" | jq -e 'all(.[]; (.php | test("^[0-9]+(\\.[0-9]+)*$")) and (.wp | test("^[0-9]+(\\.[0-9]+)*$")))' > /dev/null
+
+  build-plugin:
+    name: Playwright build artifact
+    needs: validate-combinations
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
+
+  run-playwright-suite:
+    name: PHP ${{ matrix.php }} WP ${{ matrix.wp }}
+    needs: build-plugin
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(inputs.combinations || '[{"php":"7.4","wp":"6.8"},{"php":"8.5","wp":"7.1"}]') }}
+    uses: ./.github/workflows/playwright-suite.yml
+    secrets: inherit
+    with:
+      build_artifact_name: ${{ needs.build-plugin.outputs.artifact_name }}
+      php_version: ${{ matrix.php }}
+      wp_core: ${{ matrix.wp }}
+      image_core: ${{ (matrix.php == '7.4' && '6.1') || (matrix.php == '8.1' && startsWith(matrix.wp, '7') && '6.9') || '' }}
+      shards: ${{ inputs.scope != 'full' && '["elements-regression-core", "elements-regression-atomic", "plugin_tester_section_1", "plugin_tester_section_2", "plugin_tester_container_1", "plugin_tester_container_2", "import_export_customization"]' || '' }}
+      collect_debug_log: true

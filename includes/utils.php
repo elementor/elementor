@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
 
@@ -661,6 +662,18 @@ class Utils {
 
 	public static function is_license_active(): bool {
 		return class_exists( '\ElementorPro\License\API' ) && \ElementorPro\License\API::is_license_active();
+	}
+
+	public static function is_license_expired(): bool {
+		return class_exists( '\ElementorPro\License\API' ) && \ElementorPro\License\API::is_license_expired();
+	}
+
+	public static function get_license_access_tier(): string {
+		if ( ! self::is_license_active() ) {
+			return ConnectModule::ACCESS_TIER_FREE;
+		}
+
+		return (string) \ElementorPro\License\API::get_access_tier();
 	}
 
 	public static function is_pro_installed_and_not_active(): bool {

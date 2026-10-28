@@ -76,6 +76,9 @@ export const BASE_ENTRIES = {
 	'pro-install-events': 'modules/pro-install/assets/js/pro-install-events.js',
 	'design-system-sync': 'modules/design-system-sync/assets/js/design-system-sync-handler.js',
 	'assets-manager': 'modules/assets-manager/assets/js/assets-manager.js',
+	'mcp-analytics-registrar': 'modules/mcp/assets/dev/js/mcp-analytics-registrar.js',
+	'agents-ready': 'modules/agents/assets/js/admin/agents-ready.js',
+	'mcp-promotion-registrar': 'modules/mcp/assets/dev/js/mcp-promotion-registrar.js',
 };
 
 /**
@@ -88,10 +91,13 @@ export const FRONTEND_ENTRIES = {
 	'youtube-handler': 'modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js',
 	'tabs-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js',
 	'tabs-preview-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js',
+	'accordion-preview-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/editor-accordion-state.js',
+	'accordion-selected-state-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/accordion-selected-state.js',
 	'background-video-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-handler.js',
 	'background-video-preview-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-preview-handler.js',
 	'atomic-widgets-action-link-handler': 'modules/atomic-widgets/assets/js/frontend/action-link-handlers.js',
 	'atomic-widgets-form-handler': 'modules/atomic-widgets/assets/js/frontend/form-handlers.js',
+	'agents-webmcp-tools': 'modules/agents/assets/js/frontend/webmcp-tools.js',
 };
 
 export const QUNIT_ENTRIES = {

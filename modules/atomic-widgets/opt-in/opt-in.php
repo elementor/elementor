@@ -3,12 +3,15 @@
 namespace Elementor\Modules\AtomicWidgets\OptIn;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Experiments\Exceptions\Dependency_Exception;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 
 class Opt_In {
 	const EXPERIMENT_NAME = 'e_opt_in_v4';
+
+	const OPT_IN_CLICKED_OPTION = 'elementor_v4_opt_in_clicked';
 
 	const OPT_IN_FEATURES = [
 		self::EXPERIMENT_NAME,
@@ -44,18 +47,18 @@ class Opt_In {
 		]);
 	}
 
-	private function opt_out_v4() {
+	public function opt_out_v4() {
 		foreach ( self::OPT_OUT_FEATURES as $feature ) {
-			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
-			update_option( $feature_key, Experiments_Manager::STATE_INACTIVE );
+			Plugin::$instance->experiments->set_feature_state( $feature, Experiments_Manager::STATE_INACTIVE );
 		}
 	}
 
-	private function opt_in_v4() {
+	public function opt_in_v4() {
 		foreach ( self::OPT_IN_FEATURES as $feature ) {
-			$feature_key = Plugin::$instance->experiments->get_feature_option_key( $feature );
-			update_option( $feature_key, Experiments_Manager::STATE_ACTIVE );
+			Plugin::$instance->experiments->set_feature_state( $feature, Experiments_Manager::STATE_ACTIVE );
 		}
+
+		update_option( self::OPT_IN_CLICKED_OPTION, true );
 	}
 
 	public function ajax_opt_out_v4() {
@@ -80,7 +83,14 @@ class Opt_In {
 	}
 
 	private function handle_rest_opt_in_v4() {
-		$this->ajax_opt_in_v4();
+		try {
+			$this->ajax_opt_in_v4();
+		} catch ( \Exception $e ) {
+			$status = $e instanceof Dependency_Exception ? \WP_Http::CONFLICT : \WP_Http::INTERNAL_SERVER_ERROR;
+
+			return new \WP_Error( 'opt_in_v4_failed', $e->getMessage(), [ 'status' => $status ] );
+		}
+
 		return new \WP_REST_Response( [
 			'success' => true,
 		], 200 );

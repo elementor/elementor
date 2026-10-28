@@ -69,7 +69,7 @@ const EMPTY_OPTION = {
 	label: __( 'local', 'elementor' ),
 	value: null,
 	fixed: true,
-	color: getTempStylesProviderColorName( 'accent' ),
+	color: 'accent',
 	icon: <MapPinIcon />,
 	provider: null,
 } satisfies StyleDefOption;
@@ -300,6 +300,7 @@ function useOptions() {
 
 	return useProviders()
 		.filter( isProviderEditable )
+		.filter( ( provider ) => provider.getKey() !== 'default-styles' )
 		.flatMap< StyleDefOption >( ( provider ) => {
 			const isElements = isElementsStylesProvider( provider.getKey() );
 			const styleDefs = provider.actions.all( { elementId: element.id } );
@@ -314,20 +315,12 @@ function useOptions() {
 					label: styleDef.label,
 					value: styleDef.id,
 					fixed: isElements,
-					color: getTempStylesProviderColorName( getStylesProviderColorName( provider.getKey() ) ),
+					color: getStylesProviderColorName( provider.getKey() ),
 					icon: isElements ? <MapPinIcon /> : null,
 					provider: provider.getKey(),
 				};
 			} );
 		} );
-}
-
-function getTempStylesProviderColorName( color: ChipOwnProps[ 'color' ] ): ChipOwnProps[ 'color' ] {
-	if ( color === 'accent' ) {
-		return 'primary';
-	}
-
-	return color;
 }
 
 function useCreateAction() {

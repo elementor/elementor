@@ -1,0 +1,398 @@
+<?php
+
+namespace Elementor\Modules\Agents;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Shared settings object for every Agent Ready module, stored in one option.
+ *
+ * The admin app writes it through the central `elementor/v1/settings/{key}`
+ * REST route, which replaces the whole option value. The sanitize filter
+ * therefore merges incoming module keys onto the stored value, so a save from
+ * one module never wipes another module's data.
+ */
+class Agent_Ready_Settings {
+
+	const OPTION = 'elementor_agent_ready_settings';
+
+	const MODULE_LLMS_TXT = 'llms_txt';
+	const MODULE_MARKDOWN_CONTENT = 'markdown_content';
+	const MODULE_BOT_ACCESS_CONTROL = 'bot_access_control';
+	const MODULE_AGENT_DISCOVERY = 'agent_discovery';
+	const MODULE_BROWSER_TOOLS = 'browser_tools';
+
+	const ACTIVATED_KEY = 'activated';
+
+	const MAX_BUSINESS_DETAILS_LENGTH = 2000;
+
+	const BOT_PERMISSION_SEARCH = 'search';
+	const BOT_PERMISSION_AI_INPUT = 'ai_input';
+	const BOT_PERMISSION_AI_TRAIN = 'ai_train';
+
+	const DEFAULT_BOT_PERMISSIONS = [
+		self::BOT_PERMISSION_SEARCH   => true,
+		self::BOT_PERMISSION_AI_INPUT => true,
+		self::BOT_PERMISSION_AI_TRAIN => false,
+	];
+
+	/**
+	 * Keys only PHP may change; values sent by the client are ignored.
+	 */
+	const SERVER_OWNED_KEYS = [
+		self::MODULE_LLMS_TXT => [ 'is_manually_edited' ],
+	];
+
+	private Content_Generator $generator;
+
+	private Bot_Catalog $bot_catalog;
+
+	/**
+	 * Static because every instance hooks the same option filter; a trusted write
+	 * from one instance must not be reverted by another instance's filter.
+	 *
+	 * @var bool
+	 */
+	private static bool $is_trusted_write = false;
+
+	public function __construct( Content_Generator $generator, ?Bot_Catalog $bot_catalog = null ) {
+		$this->generator   = $generator;
+		$this->bot_catalog = $bot_catalog ?? new Bot_Catalog();
+	}
+
+	public function register(): void {
+		add_filter( 'sanitize_option_' . self::OPTION, [ $this, 'sanitize' ] );
+	}
+
+	public function ensure_option_exists(): void {
+		$this->write_trusted( fn() => add_option( self::OPTION, $this->get_defaults(), '', false ) );
+	}
+
+	public function get_module_settings( string $module ): array {
+		$defaults = $this->get_defaults();
+		$stored   = $this->get_stored();
+
+		return array_merge( $defaults[ $module ] ?? [], $stored[ $module ] ?? [] );
+	}
+
+	/**
+	 * A stored option without the flag predates it, so its admin already opted in.
+	 */
+	public function is_activated(): bool {
+		$stored = $this->get_stored();
+
+		if ( ! array_key_exists( self::ACTIVATED_KEY, $stored ) ) {
+			return [] !== $stored;
+		}
+
+		return (bool) $stored[ self::ACTIVATED_KEY ];
+	}
+
+	public function activate( array $skip_modules = [] ): void {
+		if ( $this->is_activated() ) {
+			return;
+		}
+
+		$settings = $this->get_stored();
+
+		foreach ( array_keys( $this->get_module_sanitizers() ) as $module ) {
+			$enabled = ! in_array( $module, $skip_modules, true );
+			$settings[ $module ] = array_merge( $this->get_module_settings( $module ), [ 'enabled' => $enabled ] );
+		}
+
+		$settings[ self::ACTIVATED_KEY ] = true;
+
+		$this->write_trusted( fn() => update_option( self::OPTION, $settings ) );
+	}
+
+	public function is_llms_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_LLMS_TXT )['enabled'];
+	}
+
+	public function is_llms_manually_edited(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_LLMS_TXT )['is_manually_edited'];
+	}
+
+	/**
+	 * Until the admin saves a selection, every available post type is included,
+	 * so post types registered later still show up by default.
+	 *
+	 * @return string[]
+	 */
+	public function get_llms_post_types(): array {
+		return $this->get_included_post_types( self::MODULE_LLMS_TXT );
+	}
+
+	public function is_markdown_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_MARKDOWN_CONTENT )['enabled'];
+	}
+
+	/**
+	 * Until the admin saves a selection, every available post type is included.
+	 *
+	 * @return string[]
+	 */
+	public function get_markdown_post_types(): array {
+		return $this->get_included_post_types( self::MODULE_MARKDOWN_CONTENT );
+	}
+
+	public function is_bot_access_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_BOT_ACCESS_CONTROL )['enabled'];
+	}
+
+	public function is_agent_discovery_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_AGENT_DISCOVERY )['enabled'];
+	}
+
+	public function is_browser_tools_enabled(): bool {
+		return (bool) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['enabled'];
+	}
+
+	public function get_business_details(): string {
+		return (string) $this->get_module_settings( self::MODULE_BROWSER_TOOLS )['business_details'];
+	}
+
+	public function is_module_active( string $module ): bool {
+		if ( ! $this->is_activated() ) {
+			return false;
+		}
+
+		$settings = $this->get_module_settings( $module );
+
+		return ! empty( $settings['enabled'] );
+	}
+
+	public function has_any_active( array $modules ): bool {
+		foreach ( $modules as $module ) {
+			if ( $this->is_module_active( $module ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Bots listed in the admin table, keyed by user-agent token.
+	 *
+	 * @return array<string, array{search: bool, ai_input: bool, ai_train: bool}>
+	 */
+	public function get_managed_bots(): array {
+		$bots = $this->get_module_settings( self::MODULE_BOT_ACCESS_CONTROL )['bots'] ?? [];
+
+		return is_array( $bots ) ? $this->sanitize_bots( $bots ) : [];
+	}
+
+	/**
+	 * @param mixed $value Incoming option value.
+	 * @return array
+	 */
+	public function sanitize( $value ): array {
+		if ( self::$is_trusted_write ) {
+			return is_array( $value ) ? $value : [];
+		}
+
+		$stored   = $this->get_stored_or_inactive_defaults();
+		$incoming = is_array( $value ) ? $value : [];
+
+		foreach ( $this->get_module_sanitizers() as $module => $sanitizer ) {
+			if ( ! isset( $incoming[ $module ] ) || ! is_array( $incoming[ $module ] ) ) {
+				continue;
+			}
+
+			$stored_module = $stored[ $module ] ?? [];
+			$clean         = $sanitizer( array_merge( $stored_module, $incoming[ $module ] ) );
+
+			$stored[ $module ] = $this->restore_server_owned_keys( $module, $clean, $stored_module );
+		}
+
+		return $stored;
+	}
+
+	/**
+	 * @param string $module Module key, one of the MODULE_* constants.
+	 * @param string $key    Setting key inside the module.
+	 * @param mixed  $value  Setting value.
+	 */
+	public function set_server_value( string $module, string $key, $value ): void {
+		$settings = $this->get_stored_or_inactive_defaults();
+
+		$settings[ $module ][ $key ] = $value;
+
+		$this->write_trusted( fn() => update_option( self::OPTION, $settings ) );
+	}
+
+	private function get_defaults(): array {
+		return [
+			self::ACTIVATED_KEY   => false,
+			self::MODULE_LLMS_TXT => [
+				'enabled'            => false,
+				'is_manually_edited' => false,
+			],
+			self::MODULE_MARKDOWN_CONTENT => [
+				'enabled' => false,
+			],
+			self::MODULE_BOT_ACCESS_CONTROL => [
+				'enabled' => false,
+				'bots'    => array_fill_keys( $this->bot_catalog->get_popular_tokens(), self::DEFAULT_BOT_PERMISSIONS ),
+			],
+			self::MODULE_AGENT_DISCOVERY => [
+				'enabled' => false,
+			],
+			self::MODULE_BROWSER_TOOLS => [
+				'enabled'          => false,
+				'business_details' => '',
+			],
+		];
+	}
+
+	/**
+	 * A first write must not look like a legacy option, which counts as already activated.
+	 */
+	private function get_stored_or_inactive_defaults(): array {
+		$stored = $this->get_stored();
+
+		if ( [] === $stored ) {
+			$stored[ self::ACTIVATED_KEY ] = false;
+		}
+
+		return $stored;
+	}
+
+	private function get_stored(): array {
+		$stored = get_option( self::OPTION, [] );
+
+		return is_array( $stored ) ? $stored : [];
+	}
+
+	/**
+	 * @return array<string, callable>
+	 */
+	private function get_module_sanitizers(): array {
+		return [
+			self::MODULE_LLMS_TXT            => fn( array $settings ) => $this->sanitize_content_module( $settings ),
+			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
+			self::MODULE_BOT_ACCESS_CONTROL  => fn( array $settings ) => $this->sanitize_bot_access_module( $settings ),
+			self::MODULE_AGENT_DISCOVERY     => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
+			self::MODULE_BROWSER_TOOLS       => fn( array $settings ) => $this->sanitize_browser_tools_module( $settings ),
+		];
+	}
+
+	private function sanitize_browser_tools_module( array $settings ): array {
+		return [
+			'enabled'          => rest_sanitize_boolean( $settings['enabled'] ?? false ),
+			'business_details' => $this->sanitize_business_details( $settings['business_details'] ?? '' ),
+		];
+	}
+
+	/**
+	 * @param mixed $details Incoming business details.
+	 */
+	private function sanitize_business_details( $details ): string {
+		if ( ! is_scalar( $details ) ) {
+			return '';
+		}
+
+		return mb_substr( trim( sanitize_textarea_field( (string) $details ) ), 0, self::MAX_BUSINESS_DETAILS_LENGTH );
+	}
+
+	private function sanitize_toggle_module( array $settings ): array {
+		return [
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? false ),
+		];
+	}
+
+	private function sanitize_bot_access_module( array $settings ): array {
+		$clean = [
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? false ),
+		];
+
+		if ( isset( $settings['bots'] ) && is_array( $settings['bots'] ) ) {
+			$clean['bots'] = $this->sanitize_bots( $settings['bots'] );
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * Keeps only catalog tokens, in catalog order, with exactly the three permission booleans.
+	 *
+	 * @param array $bots Incoming bots keyed by token.
+	 * @return array<string, array{search: bool, ai_input: bool, ai_train: bool}>
+	 */
+	private function sanitize_bots( array $bots ): array {
+		$clean = [];
+
+		foreach ( $this->bot_catalog->get_tokens() as $token ) {
+			if ( ! isset( $bots[ $token ] ) || ! is_array( $bots[ $token ] ) ) {
+				continue;
+			}
+
+			foreach ( self::DEFAULT_BOT_PERMISSIONS as $permission => $default ) {
+				$clean[ $token ][ $permission ] = rest_sanitize_boolean( $bots[ $token ][ $permission ] ?? $default );
+			}
+		}
+
+		return $clean;
+	}
+
+	private function sanitize_content_module( array $settings ): array {
+		$clean = [
+			'enabled' => rest_sanitize_boolean( $settings['enabled'] ?? false ),
+		];
+
+		if ( isset( $settings['post_types'] ) && is_array( $settings['post_types'] ) ) {
+			$requested = array_map( 'strval', $settings['post_types'] );
+
+			$clean['post_types'] = array_values(
+				array_intersect( $this->get_available_post_type_names(), $requested )
+			);
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function get_included_post_types( string $module ): array {
+		$settings = $this->get_module_settings( $module );
+
+		if ( ! isset( $settings['post_types'] ) || ! is_array( $settings['post_types'] ) ) {
+			return $this->get_available_post_type_names();
+		}
+
+		return $settings['post_types'];
+	}
+
+	private function restore_server_owned_keys( string $module, array $clean, array $stored_module ): array {
+		foreach ( self::SERVER_OWNED_KEYS[ $module ] ?? [] as $key ) {
+			unset( $clean[ $key ] );
+
+			if ( array_key_exists( $key, $stored_module ) ) {
+				$clean[ $key ] = $stored_module[ $key ];
+			}
+		}
+
+		return $clean;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function get_available_post_type_names(): array {
+		return array_keys( $this->generator->get_available_post_types() );
+	}
+
+	private function write_trusted( callable $write ): void {
+		self::$is_trusted_write = true;
+
+		try {
+			$write();
+		} finally {
+			self::$is_trusted_write = false;
+		}
+	}
+}

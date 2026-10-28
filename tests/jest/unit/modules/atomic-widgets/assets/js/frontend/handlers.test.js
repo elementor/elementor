@@ -282,6 +282,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	} );
 
 	describe( 'atomic form submission behavior', () => {
+		const REDIRECT_DELAY_MS = 1000;
+
 		const createFormWithInput = () => {
 			const form = document.createElement( 'form' );
 			form.setAttribute( 'data-element_type', 'e-form' );
@@ -347,6 +349,53 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( input.value ).toBe( '' );
 		} );
 
+		it( 'sends fields added by before-submit listeners with the request', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			form.addEventListener( 'elementor/atomic-form/before-submit', ( beforeSubmitEvent ) => {
+				beforeSubmitEvent.detail.addFields( Promise.resolve( { recaptcha_score_token: 'token-123' } ) );
+			} );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			const formData = global.fetch.mock.calls[ 0 ][ 1 ].body;
+			expect( formData.get( 'recaptcha_score_token' ) ).toBe( 'token-123' );
+			expect( form.classList.contains( 'form-state-success' ) ).toBe( true );
+		} );
+
+		it( 'fails the submission without a request when a before-submit listener rejects', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			form.addEventListener( 'elementor/atomic-form/before-submit', ( beforeSubmitEvent ) => {
+				beforeSubmitEvent.detail.addFields( Promise.reject( new Error( 'reCAPTCHA failed' ) ) );
+			} );
+
+			global.fetch = jest.fn();
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( global.fetch ).not.toHaveBeenCalled();
+			expect( form.classList.contains( 'form-state-error' ) ).toBe( true );
+			expect( input.value ).toBe( 'Test value' );
+		} );
+
 		it( 'does not clear form fields on failed submission', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
@@ -389,6 +438,253 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
 
+		it( 'dispatches a submit success event with the response', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+			const response = { success: true, data: { data: { actionResults: [] } } };
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( response ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( listener ).toHaveBeenCalledTimes( 1 );
+			expect( listener.mock.calls[ 0 ][ 0 ].target ).toBe( form );
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.response ).toEqual( response );
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.agentInvoked ).toBe( false );
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		it( 'marks the submit success event as agent invoked for agent submissions', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { data: { actionResults: [] } } } ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = jest.fn();
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( listener.mock.calls[ 0 ][ 0 ].detail.agentInvoked ).toBe( true );
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		it( 'does not dispatch a submit success event on failed submission', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+			const listener = jest.fn();
+
+			document.addEventListener( 'elementor/atomic-form/submit-success', listener );
+
+			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( listener ).not.toHaveBeenCalled();
+
+			document.removeEventListener( 'elementor/atomic-form/submit-success', listener );
+		} );
+
+		const successRedirectResponse = {
+			success: true,
+			data: {
+				message: 'Success message',
+				data: {
+					actionResults: [
+						{ type: 'webhook', status: 'success', redirectUrl: 'https://evil.example' },
+						{ type: 'redirect', status: 'success', redirectUrl: 'https://example.org/thank-you' },
+					],
+				},
+			},
+		};
+
+		it( 'redirects after a delay for human submissions', async () => {
+			// Arrange
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( successRedirectResponse ),
+			} );
+
+			try {
+				// Act
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+				// Assert
+				expect( assign ).not.toHaveBeenCalled();
+
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				expect( assign ).toHaveBeenCalledTimes( 1 );
+				expect( assign ).toHaveBeenCalledWith( 'https://example.org/thank-you' );
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'skips redirect for agent-invoked submissions', async () => {
+			// Arrange
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( successRedirectResponse ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			try {
+				// Act
+				await instance.submit( event );
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				// Assert
+				expect( respondWith ).toHaveBeenCalledTimes( 1 );
+				expect( assign ).not.toHaveBeenCalled();
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		} );
+
+		const createRedirectResponse = ( { success = true, redirectUrl = 'https://example.org/thank-you' } = {} ) => ( {
+			success,
+			data: {
+				message: success ? 'Success message' : 'Error message',
+				data: {
+					actionResults: [ { type: 'redirect', status: 'success', redirectUrl } ],
+				},
+			},
+		} );
+
+		const submitAndGetRedirectAssign = async ( response ) => {
+			jest.useFakeTimers();
+			const assign = jest.fn();
+			const originalLocation = window.location;
+
+			Object.defineProperty( window, 'location', {
+				configurable: true,
+				value: { ...originalLocation, assign },
+			} );
+
+			try {
+				const { form, input } = createFormWithInput();
+				input.value = 'Test value';
+
+				const instance = await setupFormHandler( form );
+
+				global.fetch = jest.fn().mockResolvedValue( {
+					ok: true,
+					json: () => Promise.resolve( response ),
+				} );
+
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+				jest.advanceTimersByTime( REDIRECT_DELAY_MS );
+
+				return assign;
+			} finally {
+				Object.defineProperty( window, 'location', {
+					configurable: true,
+					value: originalLocation,
+				} );
+				jest.useRealTimers();
+			}
+		};
+
+		it( 'skips redirect when the submission is not successful', async () => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { success: false } ) );
+
+			// Assert
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
+			[ 'javascript:alert(1)' ],
+			[ 'data:text/html,<script>alert(1)</script>' ],
+			[ 'mailto:user@example.org' ],
+			[ 'http://[invalid' ],
+		] )( 'skips redirect for a disallowed or invalid redirect URL: %s', async ( redirectUrl ) => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { redirectUrl } ) );
+
+			// Assert
+			expect( assign ).not.toHaveBeenCalled();
+		} );
+
+		it( 'redirects to ftp URLs allowed by the server', async () => {
+			// Act
+			const assign = await submitAndGetRedirectAssign( createRedirectResponse( { redirectUrl: 'ftp://files.example.org/file.zip' } ) );
+
+			// Assert
+			expect( assign ).toHaveBeenCalledWith( 'ftp://files.example.org/file.zip' );
+		} );
+
 		it( 'responds to agent-invoked submissions with respondWith', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
@@ -421,6 +717,32 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				message: 'Success message',
 				data: null,
 			} );
+		} );
+
+		it( 'calls respondWith synchronously, before the submission finishes', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { message: 'Success message' } } ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			const submission = instance.submit( event );
+
+			// Assert
+			expect( respondWith ).toHaveBeenCalledTimes( 1 );
+
+			await submission;
 		} );
 
 		it( 'returns nested agent payload data without duplicating the message', async () => {
@@ -592,6 +914,85 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( submitButton.disabled ).toBe( false );
 		} );
 
+		it.each( [ 'toolactivated', 'toolcancel' ] )( 're-enables submit buttons when %s fires on document.modelContext', async ( eventName ) => {
+			// Arrange
+			document.modelContext = new EventTarget();
+
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( eventName );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			document.modelContext.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+
+			delete document.modelContext;
+		} );
+
+		it( 'keeps listening on window when document.modelContext exists', async () => {
+			// Arrange
+			document.modelContext = new EventTarget();
+
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( 'toolcancel' );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			window.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+
+			delete document.modelContext;
+		} );
+
+		it( 're-enables submit buttons when toolcancel fires on navigator.modelContext', async () => {
+			// Arrange
+			const navigatorModelContext = new EventTarget();
+			Object.defineProperty( navigator, 'modelContext', { value: navigatorModelContext, configurable: true } );
+
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( 'toolcancel' );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			navigatorModelContext.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+
+			delete navigator.modelContext;
+		} );
+
 		it( 're-enables submit buttons when a matching toolcancel event fires', async () => {
 			// Arrange
 			const { form } = createFormWithInput();
@@ -641,6 +1042,93 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( body.has( 'referrer' ) ).toBe( true );
 			expect( body.get( 'referer_title' ) ).toBe( 'Submission Contract Page' );
 			expect( body.get( 'referrer' ) ).toBe( window.location.href );
+		} );
+
+		describe( 'field id inside a component', () => {
+			// Mirrors a rendered field: data-interaction-id is the origin id, data-id is the instance-scoped id.
+			const addField = ( form, { type = 'text', name, interactionId, instanceId = null, checked = false } ) => {
+				const field = document.createElement( 'input' );
+				field.setAttribute( 'type', type );
+				field.setAttribute( 'name', name );
+				field.setAttribute( 'data-interaction-id', interactionId );
+
+				if ( instanceId ) {
+					field.setAttribute( 'data-e-type', 'widget' );
+					field.setAttribute( 'data-id', instanceId );
+				}
+
+				field.checked = checked;
+				form.insertBefore( field, form.querySelector( 'button' ) );
+			};
+
+			const createEmptyForm = () => {
+				const { form, input } = createFormWithInput();
+				input.remove();
+				return form;
+			};
+
+			const submitAndGetBody = async ( form ) => {
+				const instance = await setupFormHandler( form );
+
+				global.fetch = jest.fn().mockResolvedValue( {
+					ok: true,
+					json: () => Promise.resolve( { success: true } ),
+				} );
+
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+				return global.fetch.mock.calls[ 0 ][ 1 ].body;
+			};
+
+			it( 'uses data-id over data-interaction-id for a single field', async () => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { name: 'email', interactionId: 'origin-field-1', instanceId: 'instance-field-1' } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'instance-field-1' );
+			} );
+
+			it( 'falls back to data-interaction-id for a single field without data-id', async () => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { name: 'email', interactionId: 'origin-field-1' } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'origin-field-1' );
+			} );
+
+			it.each( [ 'radio', 'checkbox' ] )( 'uses data-id of the checked %s as the group field id', async ( type ) => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { type, name: 'choice', interactionId: 'origin-a', instanceId: 'instance-a' } );
+				addField( form, { type, name: 'choice', interactionId: 'origin-b', instanceId: 'instance-b', checked: true } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'instance-b' );
+			} );
+
+			it.each( [ 'radio', 'checkbox' ] )( 'falls back to data-interaction-id for a %s group without data-id', async ( type ) => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { type, name: 'choice', interactionId: 'origin-a' } );
+				addField( form, { type, name: 'choice', interactionId: 'origin-b', checked: true } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'origin-b' );
+			} );
 		} );
 	} );
 

@@ -52,7 +52,7 @@ Requesting schemas for every component is wasteful on sites with many components
 | `is_archived` | Archived components must not be placed in new compositions |
 | `overridable_props` | Present only when requested via `component_ids`; maps `override_key` → `{ label, group_id?, origin_prop_schema }` |
 
-Override values use plain-value JSON Schema (no `$$type` envelopes), same convention as `get-widget-schema`.
+Override values use plain-value JSON Schema (no `$$type` envelopes), same convention as `get-widget-schemas`.
 
 ## See also
 

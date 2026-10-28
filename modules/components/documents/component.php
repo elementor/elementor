@@ -6,6 +6,8 @@ use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Variants\Component_Variants;
+use Elementor\Modules\Components\Variants\Component_Variants_Parser;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,13 +18,22 @@ class Component extends Document {
 	const TYPE = 'elementor_component';
 	const COMPONENT_UID_META_KEY = '_elementor_component_uid';
 	const OVERRIDABLE_PROPS_META_KEY = '_elementor_component_overridable_props';
+	const VARIANTS_META_KEY = '_elementor_component_variants';
 	const ARCHIVED_META_KEY = '_elementor_component_is_archived';
 	const ARCHIVED_AT_META_KEY = '_elementor_component_archived_at';
 	const COMPONENT_CUSTOM_META_KEYS = [
 		self::COMPONENT_UID_META_KEY,
 		self::OVERRIDABLE_PROPS_META_KEY,
+		self::VARIANTS_META_KEY,
 		self::ARCHIVED_META_KEY,
 		self::ARCHIVED_AT_META_KEY,
+	];
+	const EXPORTABLE_PRIVATE_META_KEYS = [
+		self::COMPONENT_UID_META_KEY,
+		self::OVERRIDABLE_PROPS_META_KEY,
+	];
+	const JSON_META_KEYS = [
+		self::OVERRIDABLE_PROPS_META_KEY,
 	];
 
 	public static function get_properties() {
@@ -111,6 +122,28 @@ class Component extends Document {
 		return $result;
 	}
 
+	public function get_variants(): Component_Variants {
+		$meta = $this->get_json_meta( self::VARIANTS_META_KEY );
+
+		return Component_Variants::make( $meta ?? [] );
+	}
+
+	public function update_variants( $data ): Parse_Result {
+		$parser = Component_Variants_Parser::make();
+
+		$result = $parser->parse( $data );
+
+		if ( ! $result->is_valid() ) {
+			return $result;
+		}
+
+		$sanitized_data = $result->unwrap();
+
+		$this->update_json_meta( self::VARIANTS_META_KEY, $sanitized_data );
+
+		return $result;
+	}
+
 	public function update_title( string $title ): bool {
 		$sanitized_title = sanitize_text_field( $title );
 
@@ -146,6 +179,28 @@ class Component extends Document {
 		}
 
 		return $success;
+	}
+
+	protected function get_export_metadata() {
+		$metadata = parent::get_export_metadata();
+
+		foreach ( self::EXPORTABLE_PRIVATE_META_KEYS as $meta_key ) {
+			$value = $this->get_exportable_meta_value( $meta_key );
+
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			$metadata[ $meta_key ] = $value;
+		}
+
+		return $metadata;
+	}
+
+	private function get_exportable_meta_value( string $meta_key ) {
+		return in_array( $meta_key, self::JSON_META_KEYS, true )
+			? $this->get_json_meta( $meta_key )
+			: $this->get_meta( $meta_key );
 	}
 
 	public function print_elements_without_cache( array $elements_data ) {

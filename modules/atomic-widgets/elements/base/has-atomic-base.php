@@ -18,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -32,6 +33,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+
+	public static function html_tag_follows_link(): bool {
+		return true;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
+	}
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
@@ -266,6 +277,27 @@ trait Has_Atomic_Base {
 		return $data;
 	}
 
+	/**
+	 * Called by the export flows (kit export, template file export) through `Document::process_element_import_export()`,
+	 * and by `Source_Cloud` for atomic elements when saving cloud templates.
+	 *
+	 * @param array $element_data
+	 *
+	 * @return array Element data without the values of non-exportable props.
+	 */
+	public function on_export( $element_data ) {
+		if ( ! is_array( $element_data['settings'] ?? null ) ) {
+			return $element_data;
+		}
+
+		$element_data['settings'] = Prop_Sensitivity::strip_non_exportable_settings(
+			$element_data['settings'],
+			static::get_props_schema()
+		);
+
+		return $element_data;
+	}
+
 	private function set_data_field_for_save( array &$data, string $key, $value ): void {
 		if ( ! empty( $value ) ) {
 			$data[ $key ] = $value;
@@ -379,15 +411,41 @@ trait Has_Atomic_Base {
 	protected function parse_editor_settings( array $data ): array {
 		$editor_data = [];
 
-		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
-			$editor_data['title'] = sanitize_text_field( $data['title'] );
-		}
+		foreach ( $this->get_editor_settings_whitelist() as $key => $type ) {
+			if ( ! array_key_exists( $key, $data ) ) {
+				continue;
+			}
 
-		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
-			$editor_data['grid_outline'] = $data['grid_outline'];
+			$value = $this->sanitize_whitelisted_editor_setting( $data[ $key ], $type );
+
+			if ( null === $value ) {
+				continue;
+			}
+
+			$editor_data[ $key ] = $value;
 		}
 
 		return $editor_data;
+	}
+
+	private function get_editor_settings_whitelist(): array {
+		return [
+			'title' => 'string',
+			'grid_outline' => 'boolean',
+			'decorative' => 'boolean',
+		];
+	}
+
+	private function sanitize_whitelisted_editor_setting( $value, string $type ) {
+		if ( 'string' === $type && is_string( $value ) ) {
+			return sanitize_text_field( $value );
+		}
+
+		if ( 'boolean' === $type && is_bool( $value ) ) {
+			return $value;
+		}
+
+		return null;
 	}
 
 	public static function get_props_schema(): array {
