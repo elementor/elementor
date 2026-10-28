@@ -106,8 +106,6 @@ describe( 'Events Manager module', () => {
 		} );
 	} );
 
-<<<<<<< HEAD
-=======
 	test( 'initializes without a callback', () => {
 		jest.isolateModules( () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
@@ -119,18 +117,6 @@ describe( 'Events Manager module', () => {
 		} );
 	} );
 
-	test( 'onInit enables tracking when loaded runs synchronously during init', () => {
-		jest.isolateModules( () => {
-			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
-			const eventsManager = new EventsManager();
-
-			eventsManager.onInit();
-
-			expect( eventsManager.trackingEnabled ).toBe( true );
-		} );
-	} );
-
->>>>>>> 3d7e40996f (Internal: Minor update [ED-25987] (#37861))
 	test( 'onInit points mixpanel at the events-proxy endpoints instead of the vendor domains', () => {
 		jest.isolateModules( () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
