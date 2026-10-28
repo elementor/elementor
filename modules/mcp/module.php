@@ -11,7 +11,6 @@ use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
-use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
@@ -156,7 +155,6 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_revision_snapshots_experiment();
-		$this->register_media_upload_experiment();
 
 		$this->registry = self::build_core_registry();
 
@@ -181,10 +179,6 @@ class Module extends BaseModule {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 			( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		}
-	}
-
-	private function register_media_upload_experiment(): void {
-		Plugin::$instance->experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
 	}
 
 	private function register_revision_snapshots_experiment(): void {
@@ -295,15 +289,12 @@ class Module extends BaseModule {
 			new Abilities\Get_License_Status_Ability(),
 			new Abilities\List_Experiments_Ability(),
 			new Abilities\Manage_Experiments_Ability(),
+			new Abilities\Upload_Media_Ability(),
+			new Abilities\Request_Media_Upload_Ability(),
 		];
 
 		if ( self::is_revision_snapshots_active() ) {
 			$abilities[] = new Abilities\Manage_Revisions_Ability();
-		}
-
-		if ( Mcp_Media_Feature_Gate::is_enabled() ) {
-			$abilities[] = new Abilities\Upload_Media_Ability();
-			$abilities[] = new Abilities\Request_Media_Upload_Ability();
 		}
 
 		return $abilities;

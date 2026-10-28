@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\RestApi;
 
-use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
@@ -22,10 +21,6 @@ class Mcp_Media_Upload_REST_API {
 	}
 
 	private function register_routes(): void {
-		if ( ! Mcp_Media_Feature_Gate::is_enabled() ) {
-			return;
-		}
-
 		register_rest_route( self::API_NAMESPACE, '/' . self::ROUTE, [
 			'methods' => 'POST',
 			'callback' => fn( $request ) => $this->handle_upload( $request ),

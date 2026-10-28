@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
-use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 
@@ -69,7 +68,7 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( Media_Upload_Config::REQUIRED_CAPABILITY ),
+			fn() => current_user_can( 'manage_options' ),
 			[
 				'type' => 'object',
 				'required' => [ 'consent' ],
@@ -92,6 +91,14 @@ class Request_Media_Upload_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
+		if ( ! $this->check_permission() ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'Only administrators can upload media.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
 		$input = is_array( $input ) ? $input : [];
 
 		if ( true !== ( $input['consent'] ?? null ) ) {

@@ -4,15 +4,12 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Media;
 
 use Elementor\Modules\Mcp\Abilities\Request_Media_Upload_Ability;
 use Elementor\Modules\Mcp\Abilities\Upload_Media_Ability;
-use Elementor\Modules\Mcp\Media\Mcp_Media_Feature_Gate;
 use Elementor\Modules\Mcp\Media\Media_Attachment_Service;
 use Elementor\Modules\Mcp\Media\Media_Mime_Validator;
 use Elementor\Modules\Mcp\Media\Media_Upload_Config;
 use Elementor\Modules\Mcp\Media\Media_Upload_Token_Store;
 use Elementor\Modules\Mcp\Media\Remote_Image_Fetcher;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,12 +45,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-
-		$experiments = Plugin::$instance->experiments;
-		if ( ! $experiments->get_features( Mcp_Media_Feature_Gate::EXPERIMENT_NAME ) ) {
-			$experiments->add_feature( Mcp_Media_Feature_Gate::get_experimental_data() );
-		}
-		$experiments->set_feature_default_state( Mcp_Media_Feature_Gate::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
 
 		global $wp_rest_server;
 
@@ -385,17 +376,16 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'file_too_large', $response->get_data()['code'] );
 	}
 
-	public function test_upload_media__requires_upload_files_capability() {
+	public function test_upload_media__allows_administrators() {
 		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
-		wp_set_current_user( $user_id );
+		$this->act_as_admin();
 		$ability = new Upload_Media_Ability();
 
 		// Act
 		$allowed = $ability->check_permission();
 
 		// Assert
-		$this->assertFalse( $allowed );
+		$this->assertTrue( $allowed );
 	}
 
 	public function test_upload_token__expires() {
@@ -1245,7 +1235,7 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 
 	public function test_upload_token__rejects_user_who_lost_upload_capability() {
 		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		$user_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $user_id );
 		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
 		( new \WP_User( $user_id ) )->set_role( 'subscriber' );
@@ -1341,82 +1331,38 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider roles_without_upload_capability_provider
+	 * @dataProvider roles_that_cannot_upload_media_provider
 	 */
-	public function test_media_abilities__deny_users_without_upload_capability( string $role ) {
-		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => $role ] );
-		wp_set_current_user( $user_id );
-
-		// Act
-		$upload_allowed = ( new Upload_Media_Ability() )->check_permission();
-		$request_allowed = ( new Request_Media_Upload_Ability() )->check_permission();
-
-		// Assert
-		$this->assertFalse( $upload_allowed );
-		$this->assertFalse( $request_allowed );
-	}
-
-	public function roles_without_upload_capability_provider(): array {
-		return [
-			'subscriber' => [ 'subscriber' ],
-		];
-	}
-
-	/**
-	 * @dataProvider roles_with_upload_capability_provider
-	 */
-	public function test_media_flow__works_for_non_administrators( string $role ) {
-		// Arrange
-		$user_id = self::factory()->user->create( [ 'role' => $role ] );
-		wp_set_current_user( $user_id );
-
-		// Act
-		$issued = ( new Request_Media_Upload_Ability() )->execute( [ 'consent' => true ] );
-		wp_set_current_user( 0 );
-
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-media-upload' );
-		$request->set_header( Media_Upload_Config::UPLOAD_TOKEN_HEADER, $issued['upload_token'] );
-		$request->set_header( Media_Upload_Config::UPLOAD_FILENAME_HEADER, 'pixel.png' );
-		$request->set_body( self::MINIMAL_PNG );
-		$response = rest_do_request( $request );
-
-		wp_set_current_user( $user_id );
-		$attachment_id = $response->get_data()['attachment_id'] ?? 0;
-
-		// Assert
-		$this->assertSame( \WP_Http::CREATED, $response->get_status() );
-		$this->assertSame( 'image/png', $response->get_data()['mime'] );
-		$this->assertSame( $user_id, (int) get_post( $attachment_id )->post_author );
-	}
-
-	/**
-	 * @dataProvider roles_with_upload_capability_provider
-	 */
-	public function test_upload_media__works_for_non_administrators( string $role ) {
+	public function test_media_abilities__reject_non_administrators( string $role ) {
 		// Arrange
 		wp_set_current_user( self::factory()->user->create( [ 'role' => $role ] ) );
-		$png = self::MINIMAL_PNG;
-
-		$this->mock_http_response( static function () use ( $png ) {
-			return [
-				'response' => [ 'code' => 200 ],
-				'headers' => [],
-				'body' => $png,
-			];
-		} );
 
 		// Act
-		$result = ( new Upload_Media_Ability() )->execute( [
+		$upload = new Upload_Media_Ability();
+		$upload_result = $upload->execute( [
 			'source_url' => 'https://93.184.215.14/' . $role . '.png',
 			'consent' => true,
 		] );
-
-		$this->clear_http_mocks();
+		$request = new Request_Media_Upload_Ability();
+		$request_result = $request->execute( [ 'consent' => true ] );
 
 		// Assert
-		$this->assertIsArray( $result );
-		$this->assertSame( 'image/png', $result['mime'] );
+		$this->assertFalse( $upload->check_permission() );
+		$this->assertWPError( $upload_result );
+		$this->assertSame( 'rest_forbidden', $upload_result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $upload_result->get_error_data()['status'] );
+		$this->assertFalse( $request->check_permission() );
+		$this->assertWPError( $request_result );
+		$this->assertSame( 'rest_forbidden', $request_result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $request_result->get_error_data()['status'] );
+	}
+
+	public function roles_that_cannot_upload_media_provider(): array {
+		return [
+			'subscriber' => [ 'subscriber' ],
+			'author' => [ 'author' ],
+			'editor' => [ 'editor' ],
+		];
 	}
 
 	public function roles_with_upload_capability_provider(): array {
@@ -1448,32 +1394,6 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertWPError( $result );
 		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
 		$this->assertFalse( file_exists( $tmp ) );
-	}
-
-	public function test_upload_media__rejects_svg_for_editor_from_remote_url() {
-		// Arrange
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
-
-		$this->mock_http_response( static function () use ( $svg ) {
-			return [
-				'response' => [ 'code' => 200 ],
-				'headers' => [],
-				'body' => $svg,
-			];
-		} );
-
-		// Act
-		$result = ( new Upload_Media_Ability() )->execute( [
-			'source_url' => 'https://93.184.215.14/icon.svg',
-			'consent' => true,
-		] );
-
-		$this->clear_http_mocks();
-
-		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'svg_not_allowed', $result->get_error_code() );
 	}
 
 	public function test_upload_token__issued_for_user_without_upload_capability_is_not_redeemable() {
@@ -1844,20 +1764,9 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 		$this->assertSame( 'unsupported_with_images', $result->get_error_code() );
 	}
 
-	public function test_upload_media__list_requires_upload_files_capability_for_the_whole_call() {
+	public function test_upload_media__list_applies_svg_rule_per_item() {
 		// Arrange
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
-
-		// Act
-		$allowed = ( new Upload_Media_Ability() )->check_permission();
-
-		// Assert
-		$this->assertFalse( $allowed );
-	}
-
-	public function test_upload_media__list_applies_svg_rule_per_item_for_editor() {
-		// Arrange
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+		$this->act_as_admin();
 		$png = self::MINIMAL_PNG;
 		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
 
