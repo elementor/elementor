@@ -5,6 +5,8 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
@@ -375,6 +377,61 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( $original_elements, $elements );
+	}
+
+	public function test_build__rejects_sensitive_props_and_allows_non_exportable_ones() {
+		// Arrange
+		$add_props = static function ( array $schema ): array {
+			$schema['test_api_key'] = String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() );
+			$schema['test_list_id'] = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );
+
+			return $schema;
+		};
+		add_filter( 'elementor/atomic-widgets/props-schema', $add_props );
+
+		$make_elements = static fn() => [
+			[
+				'id' => 'h1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'elements' => [],
+			],
+		];
+		$sensitive_elements = $make_elements();
+		$original_elements = $sensitive_elements;
+		$non_exportable_elements = $make_elements();
+
+		try {
+			// Act
+			$sensitive_result = Overridable_Props_Builder::make()->build( $sensitive_elements, [
+				'api_key' => [
+					'target' => 'h1',
+					'prop_key' => 'test_api_key',
+					'label' => 'API Key',
+				],
+			] );
+
+			$non_exportable_result = Overridable_Props_Builder::make()->build( $non_exportable_elements, [
+				'list_id' => [
+					'target' => 'h1',
+					'prop_key' => 'test_list_id',
+					'label' => 'List ID',
+				],
+			] );
+		} finally {
+			remove_filter( 'elementor/atomic-widgets/props-schema', $add_props );
+		}
+
+		// Assert
+		$this->assertWPError( $sensitive_result );
+		$this->assertSame( 'invalid_overridable_props', $sensitive_result->get_error_code() );
+		$this->assertStringContainsString( '[api_key] prop_key "test_api_key" cannot be overridable.', $sensitive_result->get_error_message() );
+		$this->assertSame( $original_elements, $sensitive_elements );
+
+		$this->assertIsArray( $non_exportable_result, 'Expected success array but got: ' . $this->error_message( $non_exportable_result ) );
+		$this->assertArrayHasKey( 'list_id', $non_exportable_result['props'] );
+		$this->assertSame( 'overridable', $non_exportable_elements[0]['settings']['test_list_id']['$$type'] );
 	}
 
 	public function test_create__creates_nested_component_instances_and_exposes_their_props() {
