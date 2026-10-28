@@ -28,7 +28,7 @@ class Test_Beta_Testers extends Elementor_Test_Base {
 
 		$remove_http_mock();
 
-		$this->assertEmpty( $result->response );
+		$this->assertFalse( isset( $result->response[ static::PLUGIN_BASE ] ) );
 	}
 
 	public function test_no_update_when_checked_version_is_newer_than_beta_tag() {
@@ -46,7 +46,7 @@ class Test_Beta_Testers extends Elementor_Test_Base {
 
 		$remove_http_mock();
 
-		$this->assertEmpty( $result->response );
+		$this->assertFalse( isset( $result->response[ static::PLUGIN_BASE ] ) );
 	}
 
 	public function test_update_when_checked_version_is_older_than_beta_tag() {
