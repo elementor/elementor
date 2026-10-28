@@ -71,7 +71,6 @@ export function initializeAndEnableTracking( onReady ) {
 			finishInitialization();
 		} );
 	} catch ( error ) {
-		return;
 	}
 }
 
