@@ -106,8 +106,6 @@ describe( 'Events Manager module', () => {
 		} );
 	} );
 
-<<<<<<< HEAD
-=======
 	test( 'initializes without a callback', () => {
 		jest.isolateModules( () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
@@ -130,7 +128,6 @@ describe( 'Events Manager module', () => {
 		} );
 	} );
 
->>>>>>> 3d7e40996f (Internal: Minor update [ED-25987] (#37861))
 	test( 'onInit points mixpanel at the events-proxy endpoints instead of the vendor domains', () => {
 		jest.isolateModules( () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
