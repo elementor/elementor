@@ -46,64 +46,36 @@ function isMixpanelInitialized() {
 	return false;
 }
 
-export function initializeAndEnableTracking() {
+export function initializeAndEnableTracking( onReady ) {
 	if ( ! isEventsManagerAvailable() ) {
 		return;
 	}
 
-	if ( ! isMixpanelInitialized() ) {
-		try {
-			elementorCommon.eventsManager.initializeMixpanel( () => {
-				if ( ! elementorCommon.eventsManager.trackingEnabled ) {
-					elementorCommon.eventsManager.enableTracking();
-				}
-			} );
-		} catch ( error ) {
-			return;
+	const finishInitialization = () => {
+		if ( ! elementorCommon.eventsManager.trackingEnabled ) {
+			elementorCommon.eventsManager.enableTracking();
 		}
+
+		if ( onReady ) {
+			onReady();
+		}
+	};
+
+	if ( isMixpanelInitialized() ) {
+		finishInitialization();
 		return;
-	}
-
-	if ( ! elementorCommon.eventsManager.trackingEnabled ) {
-		elementorCommon.eventsManager.enableTracking();
-	}
-}
-
-export function dispatch( eventName, payload = {} ) {
-	if ( ! isEventsManagerAvailable() ) {
-		return false;
-	}
-
-	if ( ! canSendEvents() ) {
-		return false;
 	}
 
 	try {
-		return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+		elementorCommon.eventsManager.initializeMixpanel( () => {
+			finishInitialization();
+		} );
 	} catch ( error ) {
-		return false;
-	}
-}
-
-export function trackEvent( eventName, payload, dedupeKey = null ) {
-	const fullPayload = payload.window_name ? payload : createCoreOnboardingPayload( payload );
-
-	if ( canSendEvents() ) {
-		initializeAndEnableTracking();
-		return dispatch( eventName, fullPayload );
-	}
-
-	enqueueEvent( eventName, fullPayload, dedupeKey );
-	return false;
-}
-
-export function flushQueue() {
-	if ( ! canSendEvents() || ! isEventsManagerAvailable() ) {
 		return;
 	}
+}
 
-	initializeAndEnableTracking();
-
+function flushQueueInternal() {
 	const queued = [ ...getEventQueue() ].sort( ( a, b ) => a.timestamp - b.timestamp );
 	const stillPending = [];
 
@@ -128,6 +100,49 @@ export function flushQueue() {
 	} catch ( error ) {
 		// Storage unavailable.
 	}
+}
+
+export function dispatch( eventName, payload = {} ) {
+	if ( ! isEventsManagerAvailable() ) {
+		return false;
+	}
+
+	if ( ! canSendEvents() ) {
+		return false;
+	}
+
+	try {
+		return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
+	} catch ( error ) {
+		return false;
+	}
+}
+
+export function trackEvent( eventName, payload, dedupeKey = null ) {
+	const fullPayload = payload.window_name ? payload : createCoreOnboardingPayload( payload );
+
+	if ( ! canSendEvents() ) {
+		enqueueEvent( eventName, fullPayload, dedupeKey );
+		return false;
+	}
+
+	let dispatchResult = false;
+
+	initializeAndEnableTracking( () => {
+		dispatchResult = dispatch( eventName, fullPayload );
+	} );
+
+	return dispatchResult;
+}
+
+export function flushQueue() {
+	if ( ! canSendEvents() || ! isEventsManagerAvailable() ) {
+		return;
+	}
+
+	initializeAndEnableTracking( () => {
+		flushQueueInternal();
+	} );
 }
 
 export function dispatchIfAllowed( eventName, payload = {} ) {

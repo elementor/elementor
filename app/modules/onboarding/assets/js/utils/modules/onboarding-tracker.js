@@ -217,14 +217,15 @@ class OnboardingTracker {
 	trackConnect( status, data = null, errorMessage = null ) {
 		const isCreateAccount = StorageManager.exists( ONBOARDING_STORAGE_KEYS.CREATE_ACCOUNT_FLOW );
 		const targetName = isCreateAccount ? 'create_account' : 'connect';
-		const success = 'success' === status;
+		const validatedStatus = this.validateConnectStatus( status );
+		const success = 'success' === validatedStatus;
 		const metadata = {
 			tracking_opted_in: data?.tracking_opted_in || false,
 			user_tier: data?.access_tier || null,
 		};
 
-		if ( ! success && errorMessage ) {
-			metadata.error = errorMessage;
+		if ( ! success ) {
+			metadata.error = errorMessage || 'connect_failed';
 		}
 
 		EventDispatcher.trackEvent( ONBOARDING_EVENTS.CONNECT, {
@@ -232,7 +233,7 @@ class OnboardingTracker {
 			target_type: 'button',
 			target_name: targetName,
 			interaction_result: 'user_connect',
-			target_value: success,
+			target_value: validatedStatus,
 			target_location: 'onboarding',
 			location_l1: 'connect_flow',
 			interaction_description: 'user connect process loaded from onboarding',

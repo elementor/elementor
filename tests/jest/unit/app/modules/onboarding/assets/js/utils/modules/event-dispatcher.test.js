@@ -83,4 +83,41 @@ describe( 'onboarding event dispatcher', () => {
 
 		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 2 );
 	} );
+
+	test( 'defers flush until async init completes', () => {
+		jest.resetModules();
+
+		let initCallback = null;
+		window.elementorCommon.config.editor_events.can_send_events = false;
+		window.elementorCommon.config.editor_events.mixpanelInstance = null;
+		window.elementorCommon.eventsManager.isMixpanelReady = () => false;
+		window.elementorCommon.eventsManager.trackingEnabled = false;
+		window.elementorCommon.eventsManager.initializeMixpanel = jest.fn( ( callback ) => {
+			initCallback = callback;
+		} );
+
+		const { trackEvent, flushQueue } = require( '../../../../../../../../../../app/modules/onboarding/assets/js/utils/modules/event-dispatcher.js' );
+
+		trackEvent( 'core_onboarding_initialized', {
+			interaction_type: 'load',
+			target_type: 'loaded',
+			target_name: 'onboarding_first_load',
+			interaction_result: 'onboarding_loaded',
+			target_location: 'onboarding',
+		} );
+
+		window.elementorCommon.config.editor_events.can_send_events = true;
+		flushQueue();
+
+		expect( mockDispatchEvent ).not.toHaveBeenCalled();
+		expect( window.elementorCommon.eventsManager.initializeMixpanel ).toHaveBeenCalledTimes( 1 );
+
+		initCallback();
+		expect( window.elementorCommon.eventsManager.enableTracking ).toHaveBeenCalled();
+		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 1 );
+		expect( mockDispatchEvent ).toHaveBeenCalledWith(
+			'core_onboarding_initialized',
+			expect.objectContaining( { target_name: 'onboarding_first_load' } ),
+		);
+	} );
 } );
