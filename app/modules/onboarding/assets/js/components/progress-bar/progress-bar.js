@@ -66,6 +66,10 @@ export default function ProgressBar() {
 				const currentStepNumber = OnboardingEventTracking.getStepNumber( state.currentStep );
 				const nextStepNumber = OnboardingEventTracking.getStepNumber( itemConfig.id );
 
+				if ( nextStepNumber < currentStepNumber ) {
+					OnboardingEventTracking.trackBackClicked( state.currentStep );
+				}
+
 				if ( 4 === currentStepNumber ) {
 					OnboardingEventTracking.trackStepAction( 4, 'stepper_clicks', {
 						from_step: currentStepNumber,
