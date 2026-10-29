@@ -67,16 +67,7 @@ final class Composition_Compiler {
 			return $dom;
 		}
 
-		$pro_features_discovery = [];
-		foreach ( $xml_parser->iterate_all_descendants( $dom ) as $node ) {
-			$type = $xml_parser->get_tag_name( $node );
-
-			if ( Pro_Features_Discovery_Registry::requires_pro( $type ) ) {
-				$error = Pro_Features_Discovery_Registry::for_widget( $type );
-				$pro_features_discovery[ $error->get_error_message() ] = $error;
-				$xml_parser->remove_element( $node );
-			}
-		}
+		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
 
 		[
 			'configs' => $widget_configs,
@@ -115,7 +106,7 @@ final class Composition_Compiler {
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
 		if ( empty( $subtrees ) ) {
-			return $pro_features_discovery ? reset( $pro_features_discovery ) : new \WP_Error(
+			return $pro_features_discovery[0] ?? new \WP_Error(
 				'empty_composition',
 				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-div-block configuration-id="..."></e-div-block>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
@@ -149,7 +140,7 @@ final class Composition_Compiler {
 			'warnings' => $warnings,
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
-			'pro_features_discovery' => array_values( $pro_features_discovery ),
+			'pro_features_discovery' => $pro_features_discovery,
 		];
 	}
 
