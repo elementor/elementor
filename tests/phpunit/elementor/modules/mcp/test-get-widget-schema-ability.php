@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -141,9 +142,29 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertIsArray( $result );
-		$this->assertStringContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result['errors']['e-form']['message'] );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Forms_Pro_Features_Discovery::UPGRADE_URL . ')', $result['errors']['e-form']['message'] );
+		$this->assertStringContainsString( 'Free path:', $result['errors']['e-form']['message'] );
 		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result['errors']['e-carousel']['code'] );
 		$this->assertStringNotContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result['errors']['e-carousel']['message'] );
+		$this->assertStringContainsString( 'What Pro gives the user:', $result['errors']['e-carousel']['message'] );
+		$this->assertStringContainsString( 'Free path:', $result['errors']['e-carousel']['message'] );
+	}
+
+	public function test_execute__reuses_feature_errors_for_form_fields_and_site_part_widgets_without_pro() {
+		// Arrange.
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$this->act_as_admin();
+
+		// Act.
+		$result = $this->ability->execute( [ 'widget_type' => [ 'e-form-input', 'theme-post-title' ] ] );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertSame( Forms_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['e-form-input']['message'] );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['theme-post-title']['message'] );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {

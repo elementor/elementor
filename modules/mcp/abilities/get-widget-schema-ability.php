@@ -2,11 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Modules\Mcp\Abilities\Utils\Pro_Features_Discovery_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Schema_Pro_Features_Discovery_Registry;
-use Elementor\Modules\Promotions\Widgets\Pro_Widget_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -113,8 +111,8 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 	}
 
 	private function resolve_widget_schema( string $widget_type, array $parents_index ) {
-		if ( $this->is_pro_promotion( $widget_type ) ) {
-			return Widget_Schema_Pro_Features_Discovery_Registry::for_widget_schema( $widget_type );
+		if ( Pro_Features_Discovery_Registry::requires_pro( $widget_type ) ) {
+			return Pro_Features_Discovery_Registry::for_widget( $widget_type );
 		}
 
 		$config = Widget_Context_Helper::get_widget_config( $widget_type );
@@ -139,13 +137,6 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 
 		return Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index )
 			?? $this->unknown_widget_error( $widget_type );
-	}
-
-	private function is_pro_promotion( string $widget_type ): bool {
-		$element = Atomic_Elements_Utils::get_element_instance( $widget_type );
-
-		return $element instanceof Pro_Widget_Promotion
-			|| ( $element && method_exists( $element, 'get_meta_item' ) && $element->get_meta_item( 'is_pro_promotion' ) );
 	}
 
 	private function invalid_input_error(): \WP_Error {

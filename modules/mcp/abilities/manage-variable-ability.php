@@ -6,6 +6,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -161,6 +162,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
+		$pro_message_reported = false;
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) ) {
@@ -171,11 +173,18 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			$translated = $this->translate_operation( $operation );
 
 			if ( is_wp_error( $translated ) ) {
+				$message = $translated->get_error_message();
+
+				if ( Pro_Features_Discovery::ERROR_CODE === $translated->get_error_code() ) {
+					$message = $pro_message_reported ? Variables_Pro_Features_Discovery::get_repeated_message() : $message;
+					$pro_message_reported = true;
+				}
+
 				$results->add_error(
 					$index,
 					$operation['action'] ?? '',
 					$translated->get_error_code(),
-					$translated->get_error_message()
+					$message
 				);
 				continue;
 			}
@@ -338,7 +347,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	}
 
 	private function get_size_variables_pro_notice(): string {
-		return __( 'Note: size variables (global-size-variable, global-custom-size-variable) hold reusable spacing, font-size, and layout values and require Elementor Pro, which is not licensed on this site. Operations that create or update them are rejected with an upgrade link — do not retry them, share the link with the user, and do not store size values in color or font variables as a workaround. Color and font variables, and deleting variables, work normally.', 'elementor' );
+		return __( 'Size variables need Elementor Pro (not licensed on this site). With Pro, spacing and font sizes live in one scale: change a value once and it updates everywhere it\'s used. Color and font variables work on Free.', 'elementor' );
 	}
 
 	private function clear_cache(): void {

@@ -16,11 +16,11 @@ class Widgets_Pro_Features_Discovery {
 	public static function for_widget( string $widget_type ): \WP_Error {
 		return Pro_Features_Discovery::error(
 			sprintf(
-				/* translators: 1: widget type, 2: upgrade URL placeholder. */
-				__( 'No schema is available for %1$s. Do not retry it. Tell the user that this widget requires Elementor Pro and share this upgrade link: %2$s. Do not recreate it with other widgets, HTML or shortcodes as a workaround — only suggest the Pro upgrade.', 'elementor' ),
-				$widget_type,
-				'%s'
+				/* translators: %s: widget type. */
+				__( 'The %1$s widget needs Elementor Pro, which isn\'t installed, so it was not added. What Pro gives the user: the %1$s widget ready to use, styled like the rest of the site.', 'elementor' ),
+				$widget_type
 			),
+			__( 'Free path: build the closest result with native Free widgets if one fits the request; otherwise say plainly that Free can\'t do this.', 'elementor' ),
 			self::UPGRADE_URL,
 			[ 'widget_type' => $widget_type ]
 		);
