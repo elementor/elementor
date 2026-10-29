@@ -76,12 +76,10 @@ class Module extends BaseModule {
 	}
 
 	public function invalidate_sync_stylesheet( $context = null ) {
-		if ( is_string( $context ) && Global_Classes_Repository::CONTEXT_FRONTEND !== $context ) {
+		if ( Global_Classes_Repository::CONTEXT_PREVIEW === $context ) {
 			return;
 		}
 
-		Classes\Variables_Provider::clear_cache();
-		Classes\Classes_Provider::clear_cache();
 		( new Stylesheet_Manager() )->delete();
 	}
 
