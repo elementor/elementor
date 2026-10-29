@@ -2,7 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Import;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
-use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 class Elementor_Content extends Import_Runner_Base {
