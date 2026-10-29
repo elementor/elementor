@@ -100,7 +100,141 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNull( $result );
-		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$this->assertSame( '', file_get_contents( $this->stylesheet_manager->get_path() ) );
+	}
+
+	public function test_generate__does_not_touch_meta_when_empty_css_is_unchanged() {
+		// Arrange
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => false,
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+
+		$meta_writes = 0;
+		$meta_deletes = 0;
+
+		add_filter(
+			'pre_update_option_' . Stylesheet_Manager::META_KEY,
+			function ( $value ) use ( &$meta_writes ) {
+				++$meta_writes;
+
+				return $value;
+			}
+		);
+
+		add_action(
+			'delete_option',
+			function ( $option ) use ( &$meta_deletes ) {
+				if ( Stylesheet_Manager::META_KEY === $option ) {
+					++$meta_deletes;
+				}
+			}
+		);
+
+		// Act
+		$this->stylesheet_manager->generate();
+		$this->stylesheet_manager->generate();
+
+		// Assert
+		$this->assertSame( 0, $meta_writes );
+		$this->assertSame( 0, $meta_deletes );
+	}
+
+	public function test_enqueue__does_not_touch_meta_when_empty_css_is_unchanged() {
+		// Arrange
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => false,
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+
+		$meta_writes = 0;
+		$meta_deletes = 0;
+
+		add_filter(
+			'pre_update_option_' . Stylesheet_Manager::META_KEY,
+			function ( $value ) use ( &$meta_writes ) {
+				++$meta_writes;
+
+				return $value;
+			}
+		);
+
+		add_action(
+			'delete_option',
+			function ( $option ) use ( &$meta_deletes ) {
+				if ( Stylesheet_Manager::META_KEY === $option ) {
+					++$meta_deletes;
+				}
+			}
+		);
+
+		// Act
+		$this->stylesheet_manager->enqueue();
+		$this->stylesheet_manager->enqueue();
+
+		// Assert
+		$this->assertSame( 0, $meta_writes );
+		$this->assertSame( 0, $meta_deletes );
+	}
+
+	public function test_generate__updates_meta_when_synced_css_changes() {
+		// Arrange
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => true,
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+
+		$meta_writes = 0;
+
+		add_filter(
+			'pre_update_option_' . Stylesheet_Manager::META_KEY,
+			function ( $value ) use ( &$meta_writes ) {
+				++$meta_writes;
+
+				return $value;
+			}
+		);
+
+		Variables_Provider::clear_cache();
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => true,
+			],
+			'var-2' => [
+				'type' => 'global-color-variable',
+				'label' => 'Secondary',
+				'value' => [ '$$type' => 'color', 'value' => '#00ff00' ],
+				'sync_to_v3' => true,
+			],
+		] );
+
+		// Act
+		$this->stylesheet_manager->generate();
+
+		// Assert
+		$this->assertGreaterThan( 0, $meta_writes );
 	}
 
 	public function test_generate__excludes_non_synced_variables() {
@@ -203,7 +337,8 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->stylesheet_manager->generate();
 
 		// Assert
-		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$this->assertSame( '', file_get_contents( $this->stylesheet_manager->get_path() ) );
 	}
 
 	public function test_generate__handles_multiple_synced_color_variables() {
