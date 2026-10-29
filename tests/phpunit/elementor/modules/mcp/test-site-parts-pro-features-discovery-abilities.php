@@ -152,7 +152,7 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$operation_properties = $manage_schema['properties']['operations']['items']['properties'];
 		$this->assertSame( [ 'operations' ], $manage_schema['required'] );
 		$this->assertSame( [ 'create', 'update', 'delete' ], $operation_properties['action']['enum'] );
-		$this->assertSame( array_keys( Site_Parts_Pro_Features_Discovery::TYPE_GROUPS ), $operation_properties['type']['enum'] );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::get_types(), $operation_properties['type']['enum'] );
 		$this->assertArrayHasKey( 'active', $list_schema['properties'] );
 	}
 
