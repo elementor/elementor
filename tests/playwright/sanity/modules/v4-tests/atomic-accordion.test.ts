@@ -86,7 +86,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// Arrange
 		await editor.openElementsPanel();
 		const tile = editor.page.locator(
-			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]'
+			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]',
 		);
 
 		// Assert
@@ -99,7 +99,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// Act
 		await editor.openElementsPanel();
 		const tile = editor.page.locator(
-			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]'
+			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]',
 		);
 		await tile.click();
 
