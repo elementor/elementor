@@ -22,6 +22,17 @@ import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
+declare global {
+	interface Window {
+		elementorAppConfig?: {
+			promotion?: {
+				button_text?: string;
+				upgrade_url?: string;
+			};
+		};
+	}
+}
+
 test.describe( 'Editor promotions CDN contracts @promotions @cdn-promotions', () => {
 	test.beforeEach( async () => {
 		await clearPromotionCdnCache( STICKY_PANEL_CDN_OPTION );

@@ -1,0 +1,43 @@
+name: Editor promotions CDN
+
+on:
+  schedule:
+    - cron: '30 5 * * *'
+  workflow_dispatch:
+    inputs:
+      cdn_base_url:
+        description: 'Override CDN base URL (default production assets.elementor.com)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: editor-promotions-cdn-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  validate-live-cdn:
+    name: Validate live editor-promotions JSON
+    if: github.repository == 'elementor/elementor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm run install:ci
+
+      - name: Validate editor-promotions CDN payloads
+        env:
+          EDITOR_PROMOTIONS_CDN_BASE_URL: ${{ github.event.inputs.cdn_base_url }}
+        run: npm run verify:editor-promotions-cdn

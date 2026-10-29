@@ -44,6 +44,10 @@ export const CONVERSION_BANNER_INACTIVE_FIXTURE: PromotionCdnPayload = {
 	is_active: false,
 };
 
+export const PROMOTION_CDN_INACTIVE_FIXTURE: PromotionCdnPayload = {
+	is_active: false,
+};
+
 export const CONVERSION_BANNER_FIXTURE: PromotionCdnPayload = {
 	is_active: true,
 	title: 'Playwright conversion banner title',
