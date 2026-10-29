@@ -14,6 +14,19 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	use Has_Atomic_Base;
 	use Has_Meta;
 
+	/**
+	 * Maps atomic widget type → the minor version when the "New" badge expires.
+	 * Format: 'widget-type' => 'major.minor'  (patch is ignored during comparison).
+	 *
+	 * @var array<string, string>
+	 */
+	private const NEW_ATOMIC_WIDGETS = [
+		'e-google-maps' => '4.4',
+		'e-svg' => '4.4',
+		'e-form-honeypot' => '4.4',
+		'e-form-recaptcha-score' => '4.4',
+	];
+
 	public static $widget_description = null;
 
 	protected $version = '0.0';
@@ -82,6 +95,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['default_html_tag'] = static::get_computed_html_tag( [] );
 		$config['html_tag_follows_link'] = static::html_tag_follows_link();
 		$config['meta'] = $this->get_meta();
+		$config['new_until_version'] = self::NEW_ATOMIC_WIDGETS[ $this->get_name() ] ?? '';
 
 		return $config;
 	}
