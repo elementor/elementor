@@ -304,6 +304,16 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
+		return Global_Classes_Save_Lock::make()->run(
+			fn() => $this->save( $request ),
+			fn() => Error_Builder::make( 'global_classes_save_locked' )
+				->set_status( 409 )
+				->set_message( __( 'Global classes are being saved by another request. Please try again.', 'elementor' ) )
+				->build()
+		);
+	}
+
+	private function save( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
 		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 		$changes = $request->get_param( 'changes' ) ?? [];

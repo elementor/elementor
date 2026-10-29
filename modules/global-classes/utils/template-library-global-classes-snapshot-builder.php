@@ -8,6 +8,7 @@ use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Rest_Api;
+use Elementor\Modules\GlobalClasses\Global_Classes_Save_Lock;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -89,11 +90,24 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
-		return self::make()->merge_and_get_id_map( $snapshot );
+		return Global_Classes_Save_Lock::make()->run(
+			fn() => self::make()->merge_and_get_id_map( $snapshot ),
+			fn() => self::flatten_all_incoming( $snapshot )
+		);
 	}
 
 	public static function create_snapshot_as_new( array $snapshot ): array {
-		return self::make()->create_all_as_new( $snapshot );
+		return Global_Classes_Save_Lock::make()->run(
+			fn() => self::make()->create_all_as_new( $snapshot ),
+			fn() => self::flatten_all_incoming( $snapshot )
+		);
+	}
+
+	private static function flatten_all_incoming( array $snapshot ): array {
+		return [
+			'id_map' => [],
+			'ids_to_flatten' => array_keys( $snapshot['items'] ?? [] ),
+		];
 	}
 
 	protected function is_matching_item( array $existing_item, array $incoming_item ): bool {

@@ -8,6 +8,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Global_Classes_Save_Lock;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
@@ -512,6 +513,38 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			[ 'g-1' ],
 			Global_Classes_Order::make( $this->kit )->set_preview( true )->get_order()
 		);
+	}
+
+	public function test_put__saves_while_holding_the_lock_and_releases_it() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$is_locked_while_saving = false;
+		$record_lock = function () use ( &$is_locked_while_saving ) {
+			$is_locked_while_saving = false !== get_option( Global_Classes_Save_Lock::LOCK_NAME . '.lock' );
+		};
+		add_action( 'elementor/global_classes/update', $record_lock );
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$request->set_body_params( [
+			'items' => [ 'g-1' => $this->create_global_class( 'g-1' ) ],
+			'order' => [ 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-1' ],
+				'deleted' => [],
+				'modified' => [],
+			],
+		] );
+
+		// Act.
+		$response = rest_do_request( $request );
+
+		// Assert.
+		remove_action( 'elementor/global_classes/update', $record_lock );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertTrue( $is_locked_while_saving );
+		$this->assertFalse( get_option( Global_Classes_Save_Lock::LOCK_NAME . '.lock' ) );
 	}
 
 	public function test_put__fails_when_unauthorized() {

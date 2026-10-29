@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Global_Classes_Save_Lock;
 use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Element_Transformer;
 use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Snapshot_Builder;
 use Elementor\Plugin;
@@ -16,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
+
+	private ?bool $is_locked_while_saving = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -292,6 +295,64 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$current = Global_Classes_Repository::make()->all()->get();
 		$this->assertCount( 2, $current['items'] );
 		$this->assertArrayHasKey( 'g-2', $current['items'] );
+	}
+
+	public function test_merge_snapshot_saves_while_holding_the_lock_and_releases_it() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->record_lock_while_saving();
+
+		// Act.
+		Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $this->fresh_class_snapshot() );
+
+		// Assert.
+		$this->assert_saved_while_locked_and_released();
+	}
+
+	public function test_create_snapshot_as_new_saves_while_holding_the_lock_and_releases_it() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->record_lock_while_saving();
+
+		// Act.
+		Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $this->fresh_class_snapshot() );
+
+		// Assert.
+		$this->assert_saved_while_locked_and_released();
+	}
+
+	private function fresh_class_snapshot(): array {
+		return [
+			'items' => [
+				'g-locked' => [
+					'id' => 'g-locked',
+					'type' => 'class',
+					'label' => 'SavedUnderLock',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-locked' ],
+		];
+	}
+
+	private function record_lock_while_saving(): void {
+		$this->is_locked_while_saving = null;
+		add_action( 'elementor/global_classes/update', [ $this, 'record_lock' ] );
+	}
+
+	public function record_lock(): void {
+		$this->is_locked_while_saving = $this->is_save_locked();
+	}
+
+	private function assert_saved_while_locked_and_released(): void {
+		remove_action( 'elementor/global_classes/update', [ $this, 'record_lock' ] );
+
+		$this->assertTrue( $this->is_locked_while_saving );
+		$this->assertFalse( $this->is_save_locked() );
+	}
+
+	private function is_save_locked(): bool {
+		return false !== get_option( Global_Classes_Save_Lock::LOCK_NAME . '.lock' );
 	}
 
 	public function test_rewrite_elements_classes_ids_updates_values() {
