@@ -227,7 +227,13 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 
 		if ( ! isDirectionInlineKeydown ) {
 			return true;
-		} else if ( directionStart === currentKeydown ) {
+		}
+
+		if ( ! this.swiper ) {
+			return;
+		}
+
+		if ( directionStart === currentKeydown ) {
 			this.swiper.slidePrev();
 		} else if ( directionEnd === currentKeydown ) {
 			this.swiper.slideNext();
@@ -235,6 +241,10 @@ export default class CarouselHandlerBase extends SwiperHandlerBase {
 	}
 
 	onFocusDisableAutoplay() {
+		if ( ! this.swiper ) {
+			return;
+		}
+
 		this.swiper.autoplay.stop();
 	}
 
