@@ -31,6 +31,7 @@ jest.mock( '../style-tab', () => ( {
 const ELEMENT_ID = 'test-element-id';
 const ELEMENT_TYPE = 'atomic-heading';
 const PROMOTED_ELEMENT_TYPE = 'promoted-widget';
+const HIDDEN_DESIGN_TABS_ELEMENT_TYPE = 'e-form-hidden';
 const LEARN_MORE_URL = 'https://go.elementor.com/content-only-access-infotip';
 const TAB_GENERAL = 'General';
 const TAB_STYLE = 'Style';
@@ -198,5 +199,26 @@ describe( '<EditingPanelTabs />', () => {
 		expect( screen.getByText( STYLE_TAB_PANEL_TEXT ) ).toBeInTheDocument();
 		fireEvent.click( interactionsTab );
 		expect( screen.getByText( INTERACTIONS_TAB_PANEL_TEXT ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render only the General tab for an element that hides the design tabs', () => {
+		// Arrange
+		jest.mocked( useStateByElement ).mockReturnValue( [ 'style', jest.fn() ] );
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			[ HIDDEN_DESIGN_TABS_ELEMENT_TYPE ]: {
+				title: 'Hidden field',
+				controls: {},
+				meta: { hide_design_tabs: true },
+			},
+		} );
+		renderEditingPanelTabs( HIDDEN_DESIGN_TABS_ELEMENT_TYPE );
+
+		// Assert
+		expect( getTabByName( TAB_GENERAL ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.queryByRole( 'tab', { name: TAB_STYLE } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'tab', { name: TAB_INTERACTIONS } ) ).not.toBeInTheDocument();
+		expect( screen.getByText( SETTINGS_TAB_PANEL_TEXT ) ).toBeInTheDocument();
+		expect( screen.queryByText( STYLE_TAB_PANEL_TEXT ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( INTERACTIONS_TAB_PANEL_TEXT ) ).not.toBeInTheDocument();
 	} );
 } );

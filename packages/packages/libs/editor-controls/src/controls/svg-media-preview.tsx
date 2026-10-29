@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Box, CardMedia, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCustomIconLibraries } from './icon-library/custom-icon-libraries';
 import { findFontAwesome7Icon, type FontAwesome7Icon } from './icon-library/font-awesome-7-catalog';
 import { FontAwesomeGlyph } from './icon-library/font-awesome-glyph';
+import { useIconLibraryProviderIcons, useProviderIconSvg } from './icon-library/icon-library-providers';
+import { mergeIconsById } from './icon-library/merge-icons-by-id';
 import { useFontAwesome7Catalog } from './icon-library/use-font-awesome-7-catalog';
 
 const ICON_PREVIEW_SIZE = 50;
@@ -21,17 +23,37 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	const shouldLoadIconCatalog = Boolean( iconClassName && iconLibrary );
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } =
 		useFontAwesome7Catalog( shouldLoadIconCatalog );
-	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( shouldLoadIconCatalog );
-	const icons = [ ...fontAwesomeIcons, ...customIcons ];
+	const isFontAwesomeLibrary = Boolean( iconLibrary?.startsWith( 'fa-' ) );
+	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons(
+		shouldLoadIconCatalog && ! isFontAwesomeLibrary
+	);
+	const icons = useMemo(
+		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
+		[ fontAwesomeIcons, providerIcons ]
+	);
 	const selectedIcon = findFontAwesome7Icon( icons, iconClassName, iconLibrary );
-	const isLoadingCatalog = shouldLoadIconCatalog && ( isFontAwesomeLoading || isCustomLoading );
+	const isLoadingCatalog =
+		shouldLoadIconCatalog && ( isFontAwesomeLoading || ( ! isFontAwesomeLibrary && isProviderLoading ) );
+	const { data: savedIconSvg, isLoading: isSavedIconLoading } = useProviderIconSvg(
+		iconLibrary,
+		iconClassName,
+		shouldLoadIconCatalog && ! isLoadingCatalog && ! selectedIcon && ! isFontAwesomeLibrary
+	);
 
-	if ( isFetching || isLoadingCatalog ) {
-		return <CircularProgress role="progressbar" />;
+	if ( isFetching || isLoadingCatalog || isSavedIconLoading ) {
+		return <CircularProgress role="progressbar" aria-label={ __( 'Loading icon', 'elementor' ) } />;
 	}
 
 	if ( selectedIcon ) {
 		return <IconPreview icon={ selectedIcon } />;
+	}
+
+	if ( shouldLoadIconCatalog && iconClassName && iconLibrary && isFontAwesomeLibrary ) {
+		return <IconPreview icon={ createLazyIcon( iconLibrary, iconClassName ) } />;
+	}
+
+	if ( savedIconSvg ) {
+		return <IconPreview icon={ toSvgMarkupIcon( savedIconSvg, iconLibrary, iconClassName ) } />;
 	}
 
 	if ( shouldLoadIconCatalog ) {
@@ -41,8 +63,34 @@ export const SvgMediaPreview = ( { isFetching, src, iconClassName, iconLibrary }
 	return <SvgPreview src={ src } />;
 };
 
+const createLazyIcon = ( library: string, value: string ): FontAwesome7Icon => ( {
+	id: `${ library }:${ value }`,
+	name: value,
+	label: value,
+	library,
+	value,
+	aliases: [],
+	width: ICON_PREVIEW_SIZE,
+	height: ICON_PREVIEW_SIZE,
+	paths: [],
+	lazySvg: true,
+} );
+
+const toSvgMarkupIcon = ( svgMarkup: string, library: string | null, value: string | null ): FontAwesome7Icon => ( {
+	id: `${ library }:${ value }`,
+	label: value ?? '',
+	library: library ?? '',
+	value: value ?? '',
+	name: value ?? '',
+	aliases: [],
+	width: 0,
+	height: 0,
+	paths: [],
+	svgMarkup,
+} );
+
 const IconPreview = ( { icon }: { icon: FontAwesome7Icon } ) => (
-	<Box sx={ { color: ICON_PREVIEW_COLOR } }>
+	<Box sx={ { color: ICON_PREVIEW_COLOR, minWidth: ICON_PREVIEW_SIZE, minHeight: ICON_PREVIEW_SIZE } }>
 		<FontAwesomeGlyph
 			icon={ icon }
 			size={ ICON_PREVIEW_SIZE }

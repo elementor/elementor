@@ -32,6 +32,10 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 	}
 
 	public function get_label(): string {
+		return esc_html__( 'Readiness Score', 'elementor' );
+	}
+
+	public function get_wp_menu_label(): string {
 		return esc_html__( 'Agent Ready', 'elementor' );
 	}
 
@@ -52,12 +56,12 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 	}
 
 	public function get_page_title() {
-		return $this->get_label();
+		return $this->get_wp_menu_label();
 	}
 
 	public function render() {
 		echo '<div class="wrap">';
-		echo '<div id="' . esc_attr( Module::MOUNT_ID ) . '"></div>';
+		echo '<div id="' . esc_attr( Module::SCANNER_MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}
 }

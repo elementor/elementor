@@ -7,14 +7,22 @@ type Props = {
 	externalUrl: string;
 	variant?: 'outlined' | 'text';
 	withIcon?: boolean;
+	onOpen?: () => void;
 };
 
-export default function ViolationCtaButton( { ctaLabel, externalUrl, variant = 'outlined', withIcon = false }: Props ) {
+export default function ViolationCtaButton( {
+	ctaLabel,
+	externalUrl,
+	variant = 'outlined',
+	withIcon = false,
+	onOpen,
+}: Props ) {
 	const handleClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.stopPropagation();
 		event.preventDefault();
 
 		window.open( externalUrl, '_blank', 'noopener' );
+		onOpen?.();
 	};
 
 	return (

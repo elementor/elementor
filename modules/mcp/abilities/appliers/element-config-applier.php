@@ -4,22 +4,24 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Libraries;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Writer;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Dynamic_Hoister;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Non_Style_Allowlist;
-use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Settings_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 use Elementor\Modules\Mcp\Abilities\Utils\Dropped_Plain_Keys_Finder;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
+use Elementor\Modules\Mcp\Abilities\Utils\Plain_Schema_Validator;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -34,6 +36,7 @@ class Element_Config_Applier {
 	private Widget_Type_Resolver $type_resolver;
 	private Plain_Values_Resolver $plain_values_resolver;
 	private ?V3_Dynamic_Hoister $v3_dynamic_hoister;
+	private Plain_Schema_Validator $schema_validator;
 
 	public function __construct(
 		Widget_Type_Resolver $type_resolver,
@@ -43,6 +46,7 @@ class Element_Config_Applier {
 		$this->type_resolver = $type_resolver;
 		$this->plain_values_resolver = $plain_values_resolver;
 		$this->v3_dynamic_hoister = $v3_dynamic_hoister;
+		$this->schema_validator = Plain_Schema_Validator::lenient();
 	}
 
 	/**
@@ -73,8 +77,6 @@ class Element_Config_Applier {
 
 			if ( $this->is_v3_settings_node( $node ) ) {
 				$widget_type = (string) $tag;
-				$registry = V3_Widget_Map_Registry::instance();
-				$is_standardized = $registry->is_experiment_active() && null !== $registry->get_validation_contract( $widget_type );
 				$filter = V3_Non_Style_Allowlist::filter( $widget_type, $settings );
 				if ( $filter['error'] ) {
 					$errors[] = sprintf( '[%s] %s', $config_id, $filter['error']->get_error_message() );
@@ -90,19 +92,20 @@ class Element_Config_Applier {
 					$errors[] = sprintf( '[%s] %s', $config_id, $error_message );
 				}
 
-				$shape = V3_Settings_Validator::validate_shape( $widget_type, $hoist_outcome['primitives'], $widget_config );
+				$shape = $this->write_v3_map_settings( $widget_type, $hoist_outcome['primitives'], (string) $config_id, $warnings );
 
 				if ( ! empty( $shape['valid'] ) ) {
 					$node['settings'] = $this->merge_with_clears( $node['settings'] ?? [], $shape['valid'] );
 
-					if ( $is_standardized ) {
-						$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
-						$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
+					$existing_dynamic = is_array( $node['settings']['__dynamic__'] ?? null ) ? $node['settings']['__dynamic__'] : [];
+					$node['settings']['__dynamic__'] = array_diff_key( $existing_dynamic, $shape['valid'] );
 
-						if ( empty( $node['settings']['__dynamic__'] ) ) {
-							unset( $node['settings']['__dynamic__'] );
-						}
+					if ( empty( $node['settings']['__dynamic__'] ) ) {
+						unset( $node['settings']['__dynamic__'] );
 					}
+
+					$written_keys = array_keys( array_filter( $shape['valid'], fn( $value ) => null !== $value ) );
+					V3_Inactive_Condition_Warnings::report( $warnings, (string) $config_id, $widget_type, $written_keys, $node['settings'] );
 				}
 
 				if ( $shape['error'] ) {
@@ -203,7 +206,8 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			if ( null === $canonical ) {
+			// Sensitive props (e.g. API keys) are hidden from agents, so they are treated as unknown props.
+			if ( null === $canonical || Prop_Sensitivity::is_sensitive( $schema[ $canonical ] ?? null ) ) {
 				$warnings->add(
 					'prop_not_in_schema',
 					sprintf(
@@ -228,6 +232,24 @@ class Element_Config_Applier {
 				continue;
 			}
 
+			$checked = $this->check_against_published_schema( $value, $canonical, $prop_type, $element_type );
+
+			if ( null !== $checked['error'] ) {
+				$warnings->add(
+					'prop_value_invalid',
+					sprintf(
+						'Property "%s" on "%s" does not match the published schema and was skipped: %s. See elementor://widgets/schema/%s.',
+						$canonical,
+						$element_type,
+						$checked['error'],
+						$element_type
+					),
+					$config_id
+				);
+				continue;
+			}
+
+			$value = $checked['value'];
 			$resolved_value = $this->plain_values_resolver->resolve( $value, $prop_type );
 
 			if ( null === $resolved_value ) {
@@ -259,6 +281,23 @@ class Element_Config_Applier {
 			'resolved' => $resolved,
 			'cleared' => $cleared,
 		];
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return array{value: mixed, error: string|null}
+	 */
+	private function check_against_published_schema( $value, string $key, Prop_Type $prop_type, string $element_type ): array {
+		$published = Widget_Context_Helper::build_published_property_schema( $key, $prop_type, $element_type );
+
+		if ( null === $published ) {
+			return [
+				'value' => $value,
+				'error' => null,
+			];
+		}
+
+		return $this->schema_validator->validate( $value, $published, $key );
 	}
 
 	private function apply_resolved_v4_settings(
@@ -344,10 +383,6 @@ class Element_Config_Applier {
 			return;
 		}
 
-		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
-			return;
-		}
-
 		$icon = is_array( $resolved_value['value'] ?? null ) ? $resolved_value['value'] : [];
 		$value = $icon['value']['value'] ?? '';
 		$library = $icon['library']['value'] ?? '';
@@ -382,7 +417,7 @@ class Element_Config_Applier {
 			$warnings->add(
 				'icon_not_found',
 				sprintf(
-					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which this site cannot render, so a placeholder renders. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
 					$key,
 					$element_type,
 					$value,
@@ -398,7 +433,7 @@ class Element_Config_Applier {
 			return;
 		}
 
-		$custom_libraries = Custom_Icon_Resolver::get_custom_libraries();
+		$custom_libraries = Icon_Libraries::get_custom_libraries();
 
 		if ( ! isset( $custom_libraries[ $library ] ) ) {
 			$warnings->add(
@@ -415,11 +450,11 @@ class Element_Config_Applier {
 			return;
 		}
 
-		if ( ! Custom_Icon_Resolver::is_renderable_value( $library, $value ) ) {
+		if ( ! Icon_Libraries::is_renderable_value( $library, $value ) ) {
 			$warnings->add(
 				'icon_not_found',
 				sprintf(
-					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so the element will be blank. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
+					'Property "%s" on "%s" was saved with icon "%s" in library "%s", which does not exist in that pack, so a placeholder renders. Call elementor/find-icons and copy a "value" and "library" pair from its results.',
 					$key,
 					$element_type,
 					$value,
@@ -483,10 +518,6 @@ class Element_Config_Applier {
 			return true;
 		}
 
-		if ( ! Widget_Context_Helper::is_standardized_maps_active() ) {
-			return false;
-		}
-
 		$type = $node['widgetType'] ?? $node['elType'] ?? null;
 
 		return is_string( $type ) && Widget_Context_Helper::is_v3_supported( $type );
@@ -504,5 +535,36 @@ class Element_Config_Applier {
 		}
 
 		return $this->v3_dynamic_hoister;
+	}
+
+	/**
+	 * @param string               $widget_type
+	 * @param array<string, mixed> $primitives
+	 * @param string               $config_id
+	 * @param Warnings_Bag         $warnings
+	 * @return array{valid: array<string, mixed>, error: null}
+	 */
+	private function write_v3_map_settings( string $widget_type, array $primitives, string $config_id, Warnings_Bag $warnings ): array {
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+		$result = ( new V3_Map_Settings_Writer( $this->plain_values_resolver ) )->write( $map, $primitives );
+
+		foreach ( $result['rejected'] as $key => $reason ) {
+			$warnings->add(
+				'prop_value_invalid',
+				sprintf(
+					'Property "%s" on "%s" %s and was skipped. See elementor://widgets/schema/%s.',
+					$key,
+					$widget_type,
+					$reason,
+					$widget_type
+				),
+				$config_id
+			);
+		}
+
+		return [
+			'valid' => $result['settings'],
+			'error' => null,
+		];
 	}
 }

@@ -92,10 +92,12 @@ export const FRONTEND_ENTRIES = {
 	'tabs-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js',
 	'tabs-preview-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js',
 	'accordion-preview-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/editor-accordion-state.js',
+	'accordion-selected-state-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/accordion-selected-state.js',
 	'background-video-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-handler.js',
 	'background-video-preview-handler': 'modules/atomic-widgets/elements/atomic-background-video/handlers/background-video-preview-handler.js',
 	'atomic-widgets-action-link-handler': 'modules/atomic-widgets/assets/js/frontend/action-link-handlers.js',
 	'atomic-widgets-form-handler': 'modules/atomic-widgets/assets/js/frontend/form-handlers.js',
+	'agents-webmcp-tools': 'modules/agents/assets/js/frontend/webmcp-tools.js',
 };
 
 export const QUNIT_ENTRIES = {

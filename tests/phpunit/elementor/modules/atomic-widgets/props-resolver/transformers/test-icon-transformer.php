@@ -38,7 +38,6 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( self::JSON_BASE_PATH_FILTER );
-		remove_all_filters( 'elementor/atomic-widgets/custom-icon-libraries/enabled' );
 		Font_Awesome_7_Icon_Resolver::reset();
 		$this->remove_filtered_json_dir();
 
@@ -104,7 +103,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'viewBox="0 0 0 0"', $result['html'] );
 	}
 
-	public function test_transform__returns_empty_html_for_unknown_font_awesome_icon() {
+	public function test_transform__falls_back_to_default_svg_for_unknown_font_awesome_icon() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
@@ -116,13 +115,10 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( [
-			'html' => '',
-			'url' => null,
-		], $result );
+		$this->assert_default_svg_fallback( $result );
 	}
 
-	public function test_transform__returns_empty_html_for_path_traversal_library() {
+	public function test_transform__falls_back_to_default_svg_for_path_traversal_library() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
@@ -134,10 +130,7 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( [
-			'html' => '',
-			'url' => null,
-		], $result );
+		$this->assert_default_svg_fallback( $result );
 	}
 
 	public function test_transform__falls_back_to_default_svg_for_unknown_library() {
@@ -209,9 +202,8 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<path', $result['html'] );
 	}
 
-	public function test_transform__uses_custom_library_svg_html_filter() {
+	public function test_transform__uses_svg_html_filter() {
 		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_true' );
 		$transformer = new Icon_Transformer();
 		$value = [
 			'value' => 'my-icons my-icons-badge',
@@ -236,10 +228,11 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<svg', $result['html'] );
 		$this->assertStringContainsString( 'd="M1 1"', $result['html'] );
 		$this->assertStringContainsString( 'fill="currentColor"', $result['html'] );
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
 		$this->assertNull( $result['url'] );
 	}
 
-	public function test_transform__falls_back_to_default_svg_when_custom_library_is_deleted() {
+	public function test_transform__falls_back_to_default_svg_when_no_filter_returns_markup() {
 		// Arrange.
 		$transformer = new Icon_Transformer();
 		$value = [
@@ -254,40 +247,10 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assert_default_svg_fallback( $result );
 	}
 
-	public function test_transform__falls_back_to_default_svg_when_numeric_custom_library_is_deleted() {
-		// Arrange.
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'icon icon-emo-surprised',
-			'library' => '-1',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		// Assert.
-		$this->assert_default_svg_fallback( $result );
-	}
-
-	public function test_transform__falls_back_to_default_svg_when_pro_license_is_inactive() {
-		// Arrange.
-		add_filter( 'elementor/atomic-widgets/custom-icon-libraries/enabled', '__return_false' );
-		$transformer = new Icon_Transformer();
-		$value = [
-			'value' => 'icon icon-emo-surprised',
-			'library' => '-1',
-		];
-
-		// Act.
-		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
-
-		// Assert.
-		$this->assert_default_svg_fallback( $result );
-	}
-
 	private function assert_default_svg_fallback( array $result ): void {
 		$this->assertStringContainsString( '<svg', $result['html'] );
 		$this->assertStringContainsString( 'M24.9999 4.31543', $result['html'] );
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
 		$this->assertSame( Atomic_Svg::DEFAULT_SVG_URL, $result['url'] );
 	}
 
@@ -331,4 +294,117 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->filtered_json_dir = null;
 	}
 
+
+	public function test_transform__sanitizes_svg_returned_by_third_party_filter() {
+		// Arrange.
+		$filter = static fn() => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><script>alert(1)</script><path d="M0 0h1v1H0z"/></svg>';
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'x x-y',
+				'library' => 'untrusted-pack',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'script', $result['html'] );
+		$this->assertStringNotContainsString( 'onload', $result['html'] );
+	}
+
+	/**
+	 * @dataProvider labelled_svg_provider
+	 */
+	public function test_transform__keeps_filtered_svg_with_accessible_name_visible_to_screen_readers( string $svg ) {
+		// Arrange.
+		$filter = static fn() => $svg;
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'x x-y',
+				'library' => 'labelled-pack',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'aria-hidden', $result['html'] );
+	}
+
+	public function labelled_svg_provider(): array {
+		return [
+			'aria-label' => [ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" aria-label="Star"><path d="M0 0h1v1H0z"/></svg>' ],
+			'title' => [ '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><title>Star</title><path d="M0 0h1v1H0z"/></svg>' ],
+		];
+	}
+
+	public function test_transform__applies_svg_html_filter_for_font_awesome_icon_missing_from_free_data() {
+		// Arrange.
+		$filter = static fn( $html, $icon ) => 'fa-light' === $icon['library']
+			? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M3 3h4v4H3z"></path></svg>'
+			: $html;
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter, 10, 2 );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'fal fa-star',
+				'library' => 'fa-light',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( 'd="M3 3h4v4H3z"', $result['html'] );
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
+		$this->assertNull( $result['url'] );
+	}
+
+	public function test_transform__falls_back_to_default_svg_for_font_awesome_icon_missing_from_free_data_without_filter() {
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'fal fa-star',
+				'library' => 'fa-light',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		// Assert.
+		$this->assert_default_svg_fallback( $result );
+	}
+
+	public function test_transform__sanitizes_svg_filtered_for_font_awesome_icon_missing_from_free_data() {
+		// Arrange.
+		$filter = static fn() => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" onload="alert(1)"><script>alert(1)</script><path d="M0 0h1v1H0z"/></svg>';
+		add_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Act.
+		$result = ( new Icon_Transformer() )->transform(
+			[
+				'value' => 'fal fa-star',
+				'library' => 'fa-light',
+			],
+			Props_Resolver_Context::make()
+		);
+
+		remove_filter( 'elementor/atomic-widgets/icon/svg-html', $filter );
+
+		// Assert.
+		$this->assertStringContainsString( '<path', $result['html'] );
+		$this->assertStringNotContainsString( 'script', $result['html'] );
+		$this->assertStringNotContainsString( 'onload', $result['html'] );
+	}
 }

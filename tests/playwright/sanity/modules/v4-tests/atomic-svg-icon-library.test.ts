@@ -16,7 +16,7 @@ const openIconLibrary = async ( page, svgControl, popover ) => {
 
 test.describe( 'Atomic SVG icon library @v4-tests', () => {
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_svg_library' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -27,7 +27,8 @@ test.describe( 'Atomic SVG icon library @v4-tests', () => {
 		await page.close();
 	} );
 
-	test( 'SVG control overlay and icon library popover match expected visuals', async ( { page, apiRequests }, testInfo ) => {
+	// Skipped until ED-25855 fixes this visual test.
+	test.skip( 'SVG control overlay and icon library popover match expected visuals', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();

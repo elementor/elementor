@@ -22,7 +22,9 @@ describe( 'usePopoverDismiss', () => {
 
 		const { rerender } = renderHook(
 			( { isOpen }: { isOpen: boolean } ) => usePopoverDismiss( { isOpen, onClose } ),
-			{ initialProps: { isOpen: false } }
+			{
+				initialProps: { isOpen: false },
+			}
 		);
 
 		rerender( { isOpen: true } );

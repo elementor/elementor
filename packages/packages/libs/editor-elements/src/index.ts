@@ -36,6 +36,7 @@ export {
 	type DuplicateElementsParams,
 } from './sync/duplicate-elements';
 export { cloneElementTree } from './sync/clone-element-tree';
+export { findClosestContainer } from './sync/find-closest-container';
 export { generateElementId } from './sync/generate-element-id';
 export { getContainer, selectElement } from './sync/get-container';
 export { getPreviewElementDOM } from './sync/get-preview-element-dom';

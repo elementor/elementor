@@ -6,8 +6,6 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -33,7 +31,6 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		parent::setUp();
 		$this->ability = new Get_Widget_Schema_Ability();
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
@@ -47,48 +44,29 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_execute__rejects_heading_when_standardized_maps_inactive() {
+	public function test_execute__rejects_heading_without_registered_map() {
+		// Arrange.
 		$this->act_as_admin();
 		$this->given_widget_manager_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->given_no_registered_v3_maps();
 
-		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'heading' ) );
+		// Act.
+		$error_code = $this->execute_for_error_code( 'heading' );
+
+		// Assert.
+		$this->assertSame( 'elementor_v3_not_supported', $error_code );
 	}
 
-	public function test_execute__returns_standardized_heading_schema_when_experiment_active() {
+	public function test_execute__rejects_v3_container() {
+		// Arrange.
 		$this->act_as_admin();
-		$this->given_widget_manager_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
+		$this->given_no_registered_v3_maps();
 
-		$result = $this->execute_for_schema( 'heading' );
+		// Act.
+		$error_code = $this->execute_for_error_code( 'container' );
 
-		$this->assertIsArray( $result );
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertArrayNotHasKey( 'message', $result );
-		$this->assertArrayHasKey( 'title', $result['properties'] );
-		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertArrayHasKey( 'tag', $result['properties'] );
-		$this->assertSame( [ 'color', 'font-size', 'line-height', 'font-weight' ], $result['style_targets']['heading'] );
-		$this->assertSame( 'Text heading with optional link and HTML tag (h1–h6, div, span, or p).', $result['description'] );
-		$this->assertSame( 'string', $result['properties']['title']['anyOf'][0]['type'] );
-		$this->assertSame( 'object', $result['properties']['title']['anyOf'][1]['type'] );
-		$this->assertSame( 'boolean', $result['properties']['link']['properties']['is_external']['type'] );
-		$this->assertArrayNotHasKey( 'convert', $result['properties']['link']['properties']['is_external'] );
-		$this->assertArrayNotHasKey( 'key', $result['properties']['tag'] );
-	}
-
-	public function test_execute__returns_standardized_container_schema_when_experiment_active() {
-		$this->act_as_admin();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-
-		$result = $this->execute_for_schema( 'container' );
-
-		$this->assertIsArray( $result );
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertArrayHasKey( 'content_width', $result['properties'] );
-		$this->assertSame( [ 'boxed', 'full' ], $result['properties']['content_width']['enum'] );
-		$this->assertSame( [ 'background', 'padding', 'margin' ], $result['style_targets']['container'] );
+		// Assert.
+		$this->assertSame( 'elementor_v3_not_supported', $error_code );
 	}
 
 	public function test_execute__exposes_editor_only_decorative_description_for_atomic_container() {
@@ -119,54 +97,11 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'decorative', $result['editor_settings']['properties'] );
 	}
 
-	public function test_execute__returns_standardized_button_schema_when_experiment_active() {
-		$this->act_as_admin();
-		$this->given_registered_v3_widget_stack( 'button' );
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-
-		$result = $this->execute_for_schema( 'button' );
-
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertArrayHasKey( 'text', $result['properties'] );
-		$this->assertArrayHasKey( 'link', $result['properties'] );
-		$this->assertSame( [ 'color', 'background', 'font-size', 'font-weight', 'padding' ], $result['style_targets']['button'] );
-	}
-
-	public function test_execute__rejects_heading_when_atomic_elements_active() {
-		$this->act_as_admin();
-		$this->given_widget_manager_with_registered_heading();
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-
-		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'heading' ) );
-	}
-
 	public function test_execute__rejects_v3_widget_type() {
 		$this->act_as_admin();
 		$this->given_widget_manager_with_fake_v3_widget( 'fake-v3' );
 
 		$this->assertSame( 'elementor_v3_not_supported', $this->execute_for_error_code( 'fake-v3' ) );
-	}
-
-	public function test_execute__returns_v3_fallback_for_allowlisted_widget() {
-		$this->act_as_admin();
-		$this->given_widget_manager_with_fake_v3_widget( 'nav-menu', [
-			'menu' => [ 'type' => 'select', 'default' => '' ],
-			'layout' => [ 'type' => 'select', 'options' => [ 'horizontal' => 'Horizontal', 'vertical' => 'Vertical' ] ],
-		] );
-
-		$result = $this->execute_for_schema( 'nav-menu' );
-
-		$this->assertIsArray( $result );
-		$this->assertSame( 'object', $result['type'] );
-		$this->assertSame( Widget_Context_Helper::VERSION_V3, $result['widget_version'] );
-		$this->assertSame( Widget_Context_Helper::V3_FALLBACK_MESSAGE, $result['message'] );
-		$this->assertSame( Widget_Context_Helper::V3_FALLBACK_FIELDS_NOTE, $result['fields_note'] );
-		$this->assertArrayHasKey( 'properties', $result );
-		$this->assertArrayHasKey( 'menu', $result['properties'] );
-		$this->assertSame( 'string', $result['properties']['menu']['type'] );
-		$this->assertSame( [ 'horizontal', 'vertical' ], $result['properties']['layout']['enum'] );
 	}
 
 	public function test_execute__returns_404_for_unknown_widget_type() {
@@ -300,21 +235,14 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$heading->get_stack();
 	}
 
-	private function given_registered_v3_widget_stack( string $widget_type ): void {
-		$widget = $this->original_widgets_manager->get_widget_types( $widget_type );
-		if ( $widget && method_exists( $widget, 'get_stack' ) ) {
-			$widget->get_stack();
-		}
+	private function given_no_registered_v3_maps(): void {
+		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
+		V3_Widget_Map_Registry::set_instance( V3_Widget_Map_Registry::create_default( [] ) );
 	}
 
 	private function set_experiment_state( string $experiment_name, string $state ): void {
 		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
 			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
 
 			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
 		}

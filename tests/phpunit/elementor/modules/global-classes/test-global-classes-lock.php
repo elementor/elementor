@@ -16,8 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * The per-kit write lock serializes overlapping global-classes saves so an old (un-versioned)
- * client cannot clobber a concurrent write. These tests drive the lock through the REST layer.
+ * The per-kit write lock serializes overlapping global-classes saves so one request
+ * cannot clobber a concurrent write. These tests drive the lock through the REST layer.
  */
 class Test_Global_Classes_Lock extends Elementor_Test_Base {
 
@@ -55,7 +55,6 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
-		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_VERSION );
 
 		$this->delete_lock_row();
 
@@ -75,7 +74,7 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 		$this->hold_lock( 0 );
 
 		// Act.
-		$response = rest_do_request( $this->put_request( [ 'g-1' ], [ 'version' => 0 ] ) );
+		$response = rest_do_request( $this->put_request( [ 'g-1' ] ) );
 
 		// Assert - could not acquire the lock within the budget -> conflict, nothing written.
 		$this->assertSame( 409, $response->get_status() );
@@ -127,34 +126,47 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 		$this->assertNull( $this->lock_row() );
 	}
 
-	public function test_put__consecutive_saves_with_advancing_version_succeed() {
-		// Arrange - a client that stores the version it just wrote (version + 1) on every save.
+	public function test_put__holds_lock_during_write() {
+		// Arrange - record whether the lock row exists while the save writes the index.
 		$this->act_as_admin();
+		$lock_held_during_write = null;
+
+		add_action( 'elementor/global_classes/update', function () use ( &$lock_held_during_write ) {
+			$lock_held_during_write = null !== $this->lock_row();
+		} );
 
 		// Act.
-		$first = rest_do_request( $this->put_request( [ 'g-1' ], [ 'version' => 0 ] ) );
-		$second = rest_do_request( $this->put_request( [ 'g-2' ], [ 'version' => 1, 'existing' => [ 'g-1' ] ] ) );
-		$repeated_stale = rest_do_request( $this->put_request( [ 'g-3' ], [ 'version' => 1, 'existing' => [ 'g-1', 'g-2' ] ] ) );
+		$response = rest_do_request( $this->put_request( [ 'g-1' ] ) );
 
 		// Assert.
-		$this->assertSame( 204, $first->get_status() );
-		$this->assertSame( 204, $second->get_status() );
-		$this->assertSame( 409, $repeated_stale->get_status() );
-		$this->assertSame( 2, Global_Classes_Repository::make()->get_version() );
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertTrue( $lock_held_during_write );
+		$this->assertNull( $this->lock_row() );
 	}
 
-	public function test_put__preview_then_frontend_save_share_one_version() {
-		// Arrange - a draft save and a publish from the same client use one shared counter.
+	public function test_put__reads_index_committed_by_another_request_inside_the_lock() {
+		// Arrange - this request read the kit index before the lock, so it sits in the runtime cache.
 		$this->act_as_admin();
+		rest_do_request( $this->put_request( [ 'g-a' ] ) );
+		( new Global_Classes_Repository( $this->kit ) )->all_labels();
 
-		// Act.
-		$draft = rest_do_request( $this->put_request( [ 'g-1' ], [ 'version' => 0, 'context' => Global_Classes_Repository::CONTEXT_PREVIEW ] ) );
-		$publish = rest_do_request( $this->put_request( [ 'g-2' ], [ 'version' => 1, 'existing' => [ 'g-1' ] ] ) );
+		// Another request commits g-b straight to the database while this one waits for the lock.
+		$order = get_post_meta( $this->kit_id, Global_Classes_Order::META_KEY, true );
+		$labels = get_post_meta( $this->kit_id, Global_Classes_Labels::META_KEY_FRONTEND, true );
+		$order['order'][] = 'g-b';
+		$labels['g-b'] = 'g-b';
+		$this->update_post_meta_in_db( Global_Classes_Order::META_KEY, $order );
+		$this->update_post_meta_in_db( Global_Classes_Labels::META_KEY_FRONTEND, $labels );
 
-		// Assert.
-		$this->assertSame( 204, $draft->get_status() );
-		$this->assertSame( 204, $publish->get_status() );
-		$this->assertSame( 2, Global_Classes_Repository::make()->get_version() );
+		// Act - this client does not know about g-b.
+		$response = rest_do_request( $this->put_request( [ 'g-c' ], [ 'existing' => [ 'g-a' ] ] ) );
+
+		// Assert - g-b, committed by the other request, is not dropped.
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertSame(
+			[ 'g-a', 'g-c', 'g-b' ],
+			array_keys( ( new Global_Classes_Repository( $this->kit ) )->all_labels() )
+		);
 	}
 
 	public function test_put__does_not_lock_or_conflict_when_there_is_no_kit() {
@@ -166,8 +178,8 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 
 		$this->assertSame( 0, (int) Plugin::$instance->kits_manager->get_active_kit()->get_main_id() );
 
-		// Act - the version is meaningless without a kit, so a client that tracks it must not be rejected.
-		$response = rest_do_request( $this->put_request( [ 'g-1' ], [ 'version' => 5 ] ) );
+		// Act.
+		$response = rest_do_request( $this->put_request( [ 'g-1' ] ) );
 
 		// Assert - the held lock belongs to the real kit, and is not consulted without a kit.
 		$this->assertNotSame( 409, $response->get_status() );
@@ -213,6 +225,19 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 			$this->lock_name(),
 			( time() - $age_in_seconds ) . '|other-request'
 		) );
+	}
+
+	private function update_post_meta_in_db( string $meta_key, $value ) {
+		global $wpdb;
+
+		$wpdb->update(
+			$wpdb->postmeta,
+			[ 'meta_value' => maybe_serialize( $value ) ],
+			[
+				'post_id' => $this->kit_id,
+				'meta_key' => $meta_key,
+			]
+		);
 	}
 
 	private function lock_row() {

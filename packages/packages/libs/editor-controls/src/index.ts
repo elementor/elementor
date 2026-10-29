@@ -23,6 +23,7 @@ export { HtmlTagControl } from './controls/html-tag-control';
 export { QueryChipsControl } from './controls/query-chips-control';
 export { QueryControl } from './controls/query-control';
 export { QueryFilterRepeaterControl } from './controls/query-filter-repeater-control';
+export { QuerySelectControl } from './controls/query-select-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
@@ -37,7 +38,20 @@ export { TransformSettingsControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
-export { isDeletedCustomIconLibrary, resolveCustomIconSvg } from './controls/icon-library/custom-icon-libraries';
+export {
+	registerIconLibraryProvider,
+	resolveProviderIconPreviewSvg,
+	resolveProviderIconSvg,
+	unregisterIconLibraryProvider,
+	type IconLibraryProvider,
+} from './controls/icon-library/icon-library-providers';
+export { enqueueIconFonts } from './controls/open-icon-library';
+export {
+	IconLibraryUploadButton,
+	IconLibraryUploadPromotion,
+	injectIntoIconLibraryUploadAction,
+} from './controls/icon-library/icon-library-upload-action';
+export { type FontAwesome7Icon } from './controls/icon-library/font-awesome-7-catalog';
 export {
 	getFontAwesome7IconName,
 	resetFontAwesome7IconsCache,

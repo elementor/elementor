@@ -15,9 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A lock older than TTL is treated as abandoned (for example after a fatal error) and reclaimed.
  */
 class Global_Classes_Lock {
-	const TTL = 30;
-	const ACQUIRE_ATTEMPTS = 10;
-	const ACQUIRE_DELAY_US = 50000;
+	// One publish can hold the lock for several seconds while it writes many class posts.
+	const TTL = 60;
+	const ACQUIRE_TIMEOUT = 10;
+	const ACQUIRE_DELAY_US = 250000;
 
 	/**
 	 * Returns the lock token on success, or null if the lock could not be acquired
@@ -28,7 +29,9 @@ class Global_Classes_Lock {
 
 		$name = self::option_name( $kit_id );
 
-		for ( $attempt = 0; $attempt < self::ACQUIRE_ATTEMPTS; $attempt++ ) {
+		$deadline = microtime( true ) + self::ACQUIRE_TIMEOUT;
+
+		do {
 			$token = time() . '|' . wp_generate_uuid4();
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -39,7 +42,7 @@ class Global_Classes_Lock {
 			self::clear_if_expired( $name );
 
 			usleep( self::ACQUIRE_DELAY_US );
-		}
+		} while ( microtime( true ) < $deadline );
 
 		return null;
 	}

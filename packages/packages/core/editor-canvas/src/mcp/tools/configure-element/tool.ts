@@ -63,7 +63,7 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			const toUpdate = Object.entries( propertiesToUpdate );
 			const skippedProps: string[] = [];
 			for ( const [ propertyName, propertyValue ] of toUpdate as [ string, PropValue ][] ) {
-				if ( ! Schema.isPropKeyConfigurable( propertyName ) ) {
+				if ( ! Schema.isPropKeyConfigurable( propertyName, widgetData.atomic_props_schema[ propertyName ] ) ) {
 					throw new Error( `Not allowed to update ${ propertyName }` );
 				}
 				try {

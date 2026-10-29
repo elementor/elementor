@@ -14,7 +14,6 @@ import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from 
 import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { useCustomIconLibraries } from './custom-icon-libraries';
 import {
 	createIconSelectionValue,
 	filterFontAwesome7Icons,
@@ -25,7 +24,10 @@ import {
 import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { IconLibraryFilter } from './icon-library-filter';
 import { IconLibraryGrid } from './icon-library-grid';
+import { useIconLibraryProviderIcons } from './icon-library-providers';
+import { IconLibraryUploadAction, IconLibraryUploadActionSlot } from './icon-library-upload-action';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
+import { mergeIconsById } from './merge-icons-by-id';
 import { SvgElementIcon } from './svg-element-icon';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
@@ -53,7 +55,7 @@ const CompactIconLibraryMenuList = styled( StyledMenuList )( ( { theme } ) => ( 
 	},
 } ) );
 
-type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' >;
+type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' > & { iconValue: string };
 
 type IconLibraryPopoverProps = {
 	open: boolean;
@@ -85,14 +87,17 @@ export const IconLibraryPopover = ( {
 	);
 	const view = isIconLibraryView( storedView ) ? storedView : DEFAULT_ICON_LIBRARY_VIEW;
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } = useFontAwesome7Catalog( open );
-	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( open );
-	const isLoading = isFontAwesomeLoading || isCustomLoading;
-	const icons = useMemo( () => [ ...fontAwesomeIcons, ...customIcons ], [ customIcons, fontAwesomeIcons ] );
+	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons( open );
+	const icons = useMemo(
+		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
+		[ providerIcons, fontAwesomeIcons ]
+	);
 
 	const items = useMemo(
 		() => createIconLibraryItems( icons, searchValue, activeLibraries ),
 		[ activeLibraries, icons, searchValue ]
 	);
+	const isLoading = isFontAwesomeLoading || ( isProviderLoading && items.length === 0 );
 	const selectedValue = useMemo(
 		() => findFontAwesome7Icon( icons, selectedIconClass, selectedIconLibrary )?.id,
 		[ icons, selectedIconClass, selectedIconLibrary ]
@@ -127,7 +132,12 @@ export const IconLibraryPopover = ( {
 				title={ __( 'Icon library', 'elementor' ) }
 				onClose={ handleClose }
 				icon={ <LibraryIcon fontSize="tiny" /> }
-				actions={ [ <IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } /> ] }
+				actions={ [
+					<IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } />,
+					<IconLibraryUploadActionSlot key="upload">
+						<IconLibraryUploadAction />
+					</IconLibraryUploadActionSlot>,
+				] }
 				sx={ {
 					pl: ICON_LIBRARY_INLINE_SPACING,
 					pr: 1,
@@ -233,7 +243,7 @@ const IconLibraryContent = ( {
 
 const IconLibraryLoadingState = () => (
 	<Stack alignItems="center" justifyContent="center" height="100%">
-		<CircularProgress role="progressbar" size={ 24 } />
+		<CircularProgress role="progressbar" size={ 24 } aria-label={ __( 'Loading icons', 'elementor' ) } />
 	</Stack>
 );
 
@@ -272,7 +282,11 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					flexShrink: 0,
 				} }
 			>
-				<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
+				<FontAwesomeGlyph
+					icon={ { ...icon, value: icon.iconValue } }
+					size={ ICON_GLYPH_SIZE }
+					color="currentColor"
+				/>
 			</Box>
 			<Typography variant="caption" color="text.primary" noWrap>
 				{ icon.label }
@@ -318,4 +332,5 @@ const createIconLibraryItems = (
 		...icon,
 		type: 'item',
 		value: icon.id,
+		iconValue: icon.value,
 	} ) );

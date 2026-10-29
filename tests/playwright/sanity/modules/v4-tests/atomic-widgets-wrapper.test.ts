@@ -37,7 +37,7 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 			let widgetElement;
 
 			await test.step( 'Add atomic widget by clicking on panel', async () => {
-				widgetElement = await editor.v4Panel.addAtomicWidget( widget.title, widget.name );
+				widgetElement = await editor.v4Panel.addAtomicWidget( widget.name );
 			} );
 
 			await test.step( 'Verify widget is wrapped in e-flexbox', async () => {
@@ -59,7 +59,7 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 		let widgetElementId;
 
 		await test.step( 'Add atomic widget by clicking on panel', async () => {
-			widgetElement = await editor.v4Panel.addAtomicWidget( 'Button', 'e-button' );
+			widgetElement = await editor.v4Panel.addAtomicWidget( 'e-button' );
 			widgetElementId = await widgetElement.getAttribute( 'data-id' );
 
 			expect( widgetElementId ).toBeTruthy();

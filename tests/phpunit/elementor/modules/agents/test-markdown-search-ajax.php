@@ -25,6 +25,7 @@ class Test_Markdown_Search_Ajax extends Elementor_Test_Base {
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 		$this->ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
 	}
 

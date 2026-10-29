@@ -24,6 +24,12 @@ if ( ! function_exists( 'wp_json_encode' ) ) {
 	}
 }
 
+if ( ! function_exists( 'sanitize_text_field' ) ) {
+	function sanitize_text_field( $text ) {
+		return trim( strip_tags( (string) $text ) );
+	}
+}
+
 if ( ! function_exists( '__' ) ) {
 	function __( $text, $domain = 'default' ) {
 		return $text;
@@ -68,6 +74,7 @@ if ( ! class_exists( 'WP_Error' ) ) {
 
 if ( ! class_exists( 'WP_Http' ) ) {
 	class WP_Http {
+		const OK          = 200;
 		const BAD_REQUEST = 400;
 		const NOT_FOUND   = 404;
 	}

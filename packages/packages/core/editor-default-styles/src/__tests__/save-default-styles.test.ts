@@ -9,13 +9,25 @@ import {
 import { apiClient } from '../api';
 import { saveDefaultStyles } from '../save-default-styles';
 import { selectInitialData, selectIsDirty, slice } from '../store';
+import { trackDefaultStyles } from '../utils/tracking';
 
 jest.mock( '../api' );
+
+jest.mock( '../utils/tracking' );
+
+jest.mock( '@elementor/editor-editing-panel', () => ( {
+	STYLE_SECTIONS: [
+		{ name: 'Spacing', fields: [ 'margin', 'padding' ] },
+		{ name: 'Typography', fields: [ 'font-size', 'color' ] },
+	],
+} ) );
 
 const DESKTOP_META = { breakpoint: 'desktop', state: null } as const;
 
 describe( 'saveDefaultStyles', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
+
 		registerSlice( slice );
 		createStore();
 
@@ -153,5 +165,65 @@ describe( 'saveDefaultStyles', () => {
 		// Assert
 		expect( apiClient.delete ).toHaveBeenCalledWith( 'h3' );
 		expect( apiClient.put ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'tracking', () => {
+		const loadTag = ( props: Record< string, string > ) =>
+			dispatch(
+				slice.actions.load( {
+					data: {
+						h1: createMockStyleDefinitionWithVariants( {
+							id: 'h1',
+							variants: [ { meta: DESKTOP_META, props, custom_css: null } ],
+						} ),
+					},
+				} )
+			);
+
+		it( 'should track tagSaved with the modified sections', async () => {
+			// Arrange
+			loadTag( { 'font-size': '12px', margin: '4px' } );
+			dispatch( slice.actions.updateProps( { id: 'h1', meta: DESKTOP_META, props: { 'font-size': '24px' } } ) );
+
+			// Act
+			await saveDefaultStyles();
+
+			// Assert
+			expect( trackDefaultStyles ).toHaveBeenCalledWith( {
+				event: 'tagSaved',
+				tag: 'h1',
+				action: 'set',
+				sections_modified: [ 'typography' ],
+			} );
+		} );
+
+		it( 'should track tagSaved as unset without sections when the tag is deleted', async () => {
+			// Arrange
+			loadTag( { margin: '4px' } );
+			dispatch( slice.actions.deleteTag( 'h1' ) );
+
+			// Act
+			await saveDefaultStyles();
+
+			// Assert
+			expect( trackDefaultStyles ).toHaveBeenCalledWith( {
+				event: 'tagSaved',
+				tag: 'h1',
+				action: 'unset',
+				sections_modified: [],
+			} );
+		} );
+
+		it( 'should track saveFailed and rethrow when saving fails', async () => {
+			// Arrange
+			loadTag( { margin: '4px' } );
+			dispatch( slice.actions.updateProps( { id: 'h1', meta: DESKTOP_META, props: { margin: '8px' } } ) );
+			jest.mocked( apiClient.put ).mockRejectedValueOnce( new Error( 'request failed' ) );
+
+			// Act & Assert
+			await expect( saveDefaultStyles() ).rejects.toThrow( 'request failed' );
+			expect( trackDefaultStyles ).toHaveBeenCalledTimes( 1 );
+			expect( trackDefaultStyles ).toHaveBeenCalledWith( { event: 'saveFailed', tags_changed_count: 1 } );
+		} );
 	} );
 } );

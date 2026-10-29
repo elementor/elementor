@@ -5,6 +5,7 @@ namespace Elementor\Modules\Agents\Components\Discovery;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -39,6 +40,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Link_Headers extends Feature_Component {
 
+	const HOMEPAGE_MARKDOWN_PATH = '/index.md';
+
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
 
@@ -46,9 +49,12 @@ class Link_Headers extends Feature_Component {
 
 	private Agent_Ready_Settings $settings;
 
-	public function __construct( Markdown_Endpoint $markdown_endpoint, Agent_Ready_Settings $settings ) {
+	private Module $module;
+
+	public function __construct( Markdown_Endpoint $markdown_endpoint, Agent_Ready_Settings $settings, Module $module ) {
 		$this->markdown_endpoint = $markdown_endpoint;
 		$this->settings          = $settings;
+		$this->module            = $module;
 	}
 
 	public function get_id(): string {
@@ -57,6 +63,14 @@ class Link_Headers extends Feature_Component {
 
 	public function get_layer(): string {
 		return 'discovery';
+	}
+
+	public function get_required_modules(): array {
+		return [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+		];
 	}
 
 	public function register(): void {
@@ -134,9 +148,11 @@ class Link_Headers extends Feature_Component {
 	private function build_site_links(): array {
 		$home = untrailingslashit( home_url() );
 
-		$links = [
-			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
-		];
+		$links = [];
+
+		if ( $this->module->should_advertise_llms_txt() ) {
+			$links[] = '<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"';
+		}
 
 		if ( $this->settings->is_agent_discovery_enabled() ) {
 			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
@@ -173,14 +189,29 @@ class Link_Headers extends Feature_Component {
 			return null;
 		}
 
-		$permalink = get_permalink( $post->ID );
+		$markdown_url = $this->resolve_markdown_url( $post );
 
-		if ( ! $permalink ) {
+		if ( ! $markdown_url ) {
 			return null;
 		}
 
-		return '<' . esc_url_raw( untrailingslashit( $permalink ) ) . '.md>'
+		return '<' . esc_url_raw( $markdown_url ) . '>'
 			. '; rel="alternate"; type="text/markdown"';
+	}
+
+	private function resolve_markdown_url( \WP_Post $post ): ?string {
+		if ( $this->is_static_front_page( $post ) ) {
+			return untrailingslashit( home_url() ) . self::HOMEPAGE_MARKDOWN_PATH;
+		}
+
+		$permalink = get_permalink( $post->ID );
+
+		return $permalink ? untrailingslashit( $permalink ) . '.md' : null;
+	}
+
+	private function is_static_front_page( \WP_Post $post ): bool {
+		return 'page' === get_option( 'show_on_front' )
+			&& (int) get_option( 'page_on_front' ) === $post->ID;
 	}
 
 	/**

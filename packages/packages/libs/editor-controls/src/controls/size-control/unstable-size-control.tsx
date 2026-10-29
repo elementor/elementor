@@ -33,12 +33,15 @@ export const UnstableSizeControl = createControl(
 			restoreValue,
 		} = useBoundProp( sizePropTypeUtil );
 		const lastNonAutoValue = useRef< SizePropValue[ 'value' ] | null >( null );
+		const clearedUnit = useRef< SizePropValue[ 'value' ][ 'unit' ] | null >( null );
 
-		const { sizeValue, placeholder } = resolveBoundPropValue(
+		const { sizeValue: resolvedSizeValue, placeholder } = resolveBoundPropValue(
 			value ?? lastNonAutoValue.current,
 			boundPropPlaceholder,
 			propPlaceholder
 		);
+
+		const sizeValue = applyClearedUnit( resolvedSizeValue, value, clearedUnit.current );
 
 		const units = getSizeUnits( propType, variant );
 		const defaultUnit = getDefaultUnit( propType );
@@ -47,6 +50,7 @@ export const UnstableSizeControl = createControl(
 			const isRequired = propType.settings.required;
 
 			if ( shouldNullifyValue( value ) && ! isRequired ) {
+				clearedUnit.current = value?.unit ?? null;
 				setValue( null );
 			}
 
@@ -56,6 +60,8 @@ export const UnstableSizeControl = createControl(
 		};
 
 		const handleChange = ( newValue: SizePropValue[ 'value' ], options?: CreateOptions, meta?: SetValueMeta ) => {
+			clearedUnit.current = null;
+
 			if ( isTransitioningFromExtendedUnit( newValue, value ) ) {
 				lastNonAutoValue.current = newValue;
 
@@ -92,6 +98,18 @@ export const UnstableSizeControl = createControl(
 		);
 	}
 );
+
+const applyClearedUnit = (
+	resolvedValue: SizePropValue[ 'value' ] | null,
+	boundValue: SizePropValue[ 'value' ] | null,
+	clearedUnit: SizePropValue[ 'value' ][ 'unit' ] | null
+): SizePropValue[ 'value' ] | null => {
+	if ( boundValue || ! resolvedValue || ! clearedUnit ) {
+		return resolvedValue;
+	}
+
+	return { ...resolvedValue, unit: clearedUnit } as SizePropValue[ 'value' ];
+};
 
 const isTransitioningFromExtendedUnit = (
 	nextValue: SizePropValue[ 'value' ],

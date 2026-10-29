@@ -104,4 +104,25 @@ describe( 'useQueryAutocomplete', () => {
 		// Assert.
 		expect( httpService ).not.toHaveBeenCalled();
 	} );
+
+	it( 'does not refetch when re-rendered with a new params object of equal content', async () => {
+		// Arrange.
+		const getMock = jest.fn( async () => ( { data: { data: flatResponse } } ) );
+		jest.mocked( httpService ).mockReturnValue( { get: getMock } as never );
+
+		const { rerender } = renderHook(
+			( { params } ) => useQueryAutocomplete( { url: '/api', minInputLength: 0, params } ),
+			{ initialProps: { params: { post_type: 'page' } } }
+		);
+
+		await waitFor( () => expect( getMock ).toHaveBeenCalledTimes( 1 ) );
+
+		// Act – rerender with a new object reference but identical content.
+		rerender( { params: { post_type: 'page' } } );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
+
+		// Assert.
+		expect( getMock ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

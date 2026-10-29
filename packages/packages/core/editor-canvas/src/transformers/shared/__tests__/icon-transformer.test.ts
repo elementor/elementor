@@ -1,10 +1,8 @@
-jest.mock( '@elementor/http-client', () => ( {
-	httpService: () => ( {
-		get: jest.fn().mockRejectedValue( new Error( 'no custom svg' ) ),
-	} ),
-} ) );
-
-import { resetFontAwesome7IconsCache } from '@elementor/editor-controls';
+import {
+	registerIconLibraryProvider,
+	resetFontAwesome7IconsCache,
+	unregisterIconLibraryProvider,
+} from '@elementor/editor-controls';
 import { iconPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
 import { iconPropType } from '../../../__tests__/prop-types';
@@ -135,7 +133,7 @@ describe( 'iconTransformer', () => {
 		expect( html ).toContain( 'M10 10' );
 	} );
 
-	it( 'returns null html when the icon cannot be resolved', async () => {
+	it( 'falls back to the default svg when the icon cannot be resolved', async () => {
 		// Arrange.
 		mockFetch( { icons: {} } );
 
@@ -143,7 +141,7 @@ describe( 'iconTransformer', () => {
 		const result = await resolveSavedIcon( 'fas fa-missing', 'fa-solid' );
 
 		// Assert.
-		expect( result ).toEqual( { html: null, url: null } );
+		expect( result ).toEqual( { html: null, url: 'https://example.com/assets/images/default-svg.svg' } );
 	} );
 
 	it( 'fetches json from the localized font awesome 7 base url', async () => {
@@ -182,19 +180,78 @@ describe( 'iconTransformer', () => {
 		const result = await resolveSavedIcon( 'fas fa-star', 'fa-../../wp-config' );
 
 		// Assert.
-		expect( global.fetch ).not.toHaveBeenCalled();
-		expect( result ).toEqual( { html: null, url: null } );
+		expect( ( global.fetch as jest.Mock ).mock.calls.map( ( [ url ] ) => String( url ) ) ).toEqual( [
+			'https://example.com/assets/images/default-svg.svg',
+		] );
+		expect( result ).toEqual(
+			expect.objectContaining( { url: 'https://example.com/assets/images/default-svg.svg' } )
+		);
 	} );
 
-	it( 'falls back to the default svg when a custom library has been deleted', async () => {
+	it( 'asks providers for a font awesome icon missing from the free data', async () => {
 		// Arrange.
-		window.elementor = {
-			config: {
-				icons: {
-					libraries: [ { name: 'fa-solid', prefix: 'fa-', native: true } ],
-				},
-			},
-		} as typeof window.elementor;
+		mockFetch( { icons: {} } );
+		const resolveSvg = jest
+			.fn()
+			.mockResolvedValue(
+				'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M2 2h6v6H2z"></path></svg>'
+			);
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			resolveSvg,
+		} );
+
+		// Act.
+		const result = ( await resolveSavedIcon( 'fal fa-star', 'fa-light' ) ) as { html: string; url: string | null };
+
+		unregisterIconLibraryProvider( 'test-provider' );
+
+		// Assert.
+		expect( resolveSvg ).toHaveBeenCalledWith( 'fa-light', 'fal fa-star', undefined );
+		expect( result.html ).toContain( 'M2 2h6v6H2z' );
+		expect( result.url ).toBeNull();
+	} );
+
+	it( 'falls back to the default svg for a font awesome icon when no provider resolves it', async () => {
+		// Arrange.
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			resolveSvg: async () => null,
+		} );
+		const defaultSvg =
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
+		global.fetch = jest.fn( ( url: string ) =>
+			Promise.resolve(
+				String( url ).endsWith( '.svg' )
+					? {
+							ok: true,
+							headers: new Headers( { 'content-type': 'image/svg+xml' } ),
+							text: () => Promise.resolve( defaultSvg ),
+					  }
+					: { ok: true, json: () => Promise.resolve( { icons: {} } ) }
+			)
+		) as never;
+
+		// Act.
+		const result = await resolveSavedIcon( 'fa-light fa-star', 'fa-light' );
+
+		unregisterIconLibraryProvider( 'test-provider' );
+
+		// Assert.
+		expect( result ).toEqual( {
+			html: expect.stringContaining( 'M24.9999 4.31543' ),
+			url: 'https://example.com/assets/images/default-svg.svg',
+		} );
+	} );
+
+	it( 'falls back to the default svg when no provider resolves a non-native library', async () => {
+		// Arrange.
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+		} );
 		const defaultSvg =
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
 		global.fetch = jest.fn().mockResolvedValue( {
@@ -206,6 +263,8 @@ describe( 'iconTransformer', () => {
 		// Act.
 		const result = await resolveSavedIcon( 'missing-set missing-set-ghost', 'missing-set' );
 
+		unregisterIconLibraryProvider( 'test-provider' );
+
 		// Assert.
 		expect( global.fetch ).toHaveBeenCalledWith(
 			'https://example.com/assets/images/default-svg.svg',
@@ -215,6 +274,59 @@ describe( 'iconTransformer', () => {
 			html: expect.stringContaining( 'M24.9999 4.31543' ),
 			url: 'https://example.com/assets/images/default-svg.svg',
 		} );
+	} );
+
+	it( 'falls back to the default svg for a non-native library when no provider is registered', async () => {
+		// Arrange.
+		const defaultSvg =
+			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50"><path d="M24.9999 4.31543"></path></svg>';
+		global.fetch = jest.fn().mockResolvedValue( {
+			ok: true,
+			headers: new Headers( { 'content-type': 'image/svg+xml' } ),
+			text: () => Promise.resolve( defaultSvg ),
+		} );
+
+		// Act.
+		const result = await resolveSavedIcon( 'my-set my-set-star', 'my-set' );
+
+		// Assert.
+		expect( result ).toEqual( {
+			html: expect.stringContaining( 'M24.9999 4.31543' ),
+			url: 'https://example.com/assets/images/default-svg.svg',
+		} );
+	} );
+
+	it( 'does not replace PHP-managed eicons with the default svg', async () => {
+		// Arrange.
+		global.fetch = jest.fn();
+
+		// Act.
+		const result = await resolveSavedIcon( 'eicon-edit', 'eicons' );
+
+		// Assert.
+		expect( result ).toEqual( { html: null, url: null } );
+		expect( global.fetch ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders and sanitizes svg returned by a provider', async () => {
+		// Arrange.
+		registerIconLibraryProvider( {
+			id: 'test-provider',
+			useIcons: () => ( { data: [], isLoading: false } ),
+			resolveSvg: () =>
+				Promise.resolve(
+					'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><script>alert(1)</script><path d="M1 1h8v8H1z"></path></svg>'
+				),
+		} );
+
+		// Act.
+		const result = ( await resolveSavedIcon( 'my-set my-set-star', 'my-set' ) ) as { html: string };
+
+		unregisterIconLibraryProvider( 'test-provider' );
+
+		// Assert.
+		expect( result.html ).toContain( 'M1 1h8v8H1z' );
+		expect( result.html ).not.toContain( 'script' );
 	} );
 
 	it( 'returns null html when value or library is missing', async () => {
