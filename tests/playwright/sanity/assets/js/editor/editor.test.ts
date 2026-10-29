@@ -1,8 +1,5 @@
 import { expect } from '@playwright/test';
-import {
-	hidePanelNewBadgesForScreenshot,
-	hidePromoChromeForScreenshot,
-} from '../../../../assets/promotion-cdn';
+import { hidePromoChromeForScreenshot } from '../../../../assets/promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
@@ -44,12 +41,14 @@ test.describe( 'Editor tests', () => {
 		await editor.openElementsPanel();
 
 		await hidePromoChromeForScreenshot( editor.page );
-		await hidePanelNewBadgesForScreenshot( editor.page );
+
+		const panel = editor.page.locator( 'aside#elementor-panel' );
 
 		// Assert
-		expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,
+			mask: [ editor.page.locator( '.e-widget-new-badge' ) ],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );

@@ -236,6 +236,7 @@ class Test_Atomic_Google_Maps extends Elementor_Test_Base {
 			'api_key' => 'test-api-key',
 			'key' => 'google',
 		], $config['template_context']['provider'] );
+		$this->assertSame( '4.4', $config['new_until_version'] ?? null );
 	}
 
 	public function test__shared_schema_is_provider_agnostic(): void {

@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { timeouts } from '../../config/timeouts';
 import Content from '../elementor-panel-tabs/content';
 import EditorSelectors from '../../selectors/editor-selectors';
 
@@ -11,10 +12,15 @@ export default class promotionsHelper extends Content {
 	 * @return {Promise<void>}
 	 */
 	async widgetControlPromotionModalScreenshotTest( element: string ): Promise<void> {
-		await this.page.locator( `.e-control-${ element }-promotion` ).click( { force: true } );
-		const modalContainer = this.page.locator( '#elementor-element--promotion__dialog' );
+		const promotionControl = this.page.locator( `.e-control-${ element }-promotion` );
+		await promotionControl.scrollIntoViewIfNeeded();
+		await promotionControl.click( { force: true } );
+
+		const modalContainer = this.page.locator( EditorSelectors.panels.promotionCard );
+		await modalContainer.waitFor( { state: 'visible', timeout: timeouts.longAction } );
 		await expect.soft( modalContainer ).toHaveScreenshot( `${ element }-modal.png` );
-		await this.page.locator( '.dialog-header .eicon-close' ).click();
+		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
+		await expect( modalContainer ).toBeHidden( { timeout: timeouts.longAction } );
 	}
 
 	/**
