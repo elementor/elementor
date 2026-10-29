@@ -3,6 +3,8 @@
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Core\Files\Base as Base_File;
+use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -312,6 +314,62 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+	}
+
+	public function test_invalidate_sync_stylesheet__deletes_file_on_clear_cache() {
+		// Arrange
+		$this->generate_with_synced_class();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		// Act
+		do_action( 'elementor/core/files/clear_cache' );
+
+		// Assert
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+	}
+
+	public function test_invalidate_sync_stylesheet__deletes_file_when_active_kit_changes() {
+		// Arrange
+		$this->generate_with_synced_class();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$previous_active_kit = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		// Act
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Other Kit' );
+
+		// Assert
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+		$this->assertNotSame( $previous_active_kit, $new_kit_id );
+	}
+
+	public function test_invalidate_sync_stylesheet__deletes_file_after_variables_save_clears_files_cache() {
+		// Arrange
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => true,
+			],
+		] );
+		$this->stylesheet_manager->generate();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Secondary',
+				'value' => [ '$$type' => 'color', 'value' => '#00ff00' ],
+				'sync_to_v3' => true,
+			],
+		] );
+		Variables_Provider::clear_cache();
+
+		// Act — mirrors Variables REST API after persisting kit variables.
+		Plugin::$instance->files_manager->clear_cache();
+
+		// Assert
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
 	}
 
 	public function test_enqueue__regenerates_stale_file_after_synced_classes_change() {
