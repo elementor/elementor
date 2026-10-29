@@ -100,8 +100,6 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNull( $result );
-		$this->assertFileExists( $this->stylesheet_manager->get_path() );
-		$this->assertSame( '', file_get_contents( $this->stylesheet_manager->get_path() ) );
 	}
 
 	public function test_generate__does_not_touch_meta_when_empty_css_is_unchanged() {
@@ -117,34 +115,17 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		$this->stylesheet_manager->generate();
 
-		$meta_writes = 0;
-		$meta_deletes = 0;
-
-		add_filter(
-			'pre_update_option_' . Stylesheet_Manager::META_KEY,
-			function ( $value ) use ( &$meta_writes ) {
-				++$meta_writes;
-
-				return $value;
-			}
-		);
-
-		add_action(
-			'delete_option',
-			function ( $option ) use ( &$meta_deletes ) {
-				if ( Stylesheet_Manager::META_KEY === $option ) {
-					++$meta_deletes;
-				}
-			}
-		);
+		$this->stylesheet_manager->generate();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$this->assertSame( 0, filesize( $this->stylesheet_manager->get_path() ) );
+		$meta_time_before = $this->stylesheet_manager->get_meta( 'time' );
 
 		// Act
 		$this->stylesheet_manager->generate();
 		$this->stylesheet_manager->generate();
 
 		// Assert
-		$this->assertSame( 0, $meta_writes );
-		$this->assertSame( 0, $meta_deletes );
+		$this->assertSame( $meta_time_before, $this->stylesheet_manager->get_meta( 'time' ) );
 	}
 
 	public function test_enqueue__does_not_touch_meta_when_empty_css_is_unchanged() {
@@ -160,34 +141,51 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 
 		$this->stylesheet_manager->generate();
 
-		$meta_writes = 0;
-		$meta_deletes = 0;
-
-		add_filter(
-			'pre_update_option_' . Stylesheet_Manager::META_KEY,
-			function ( $value ) use ( &$meta_writes ) {
-				++$meta_writes;
-
-				return $value;
-			}
-		);
-
-		add_action(
-			'delete_option',
-			function ( $option ) use ( &$meta_deletes ) {
-				if ( Stylesheet_Manager::META_KEY === $option ) {
-					++$meta_deletes;
-				}
-			}
-		);
+		$this->stylesheet_manager->generate();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
+		$meta_time_before = $this->stylesheet_manager->get_meta( 'time' );
 
 		// Act
 		$this->stylesheet_manager->enqueue();
 		$this->stylesheet_manager->enqueue();
 
 		// Assert
-		$this->assertSame( 0, $meta_writes );
-		$this->assertSame( 0, $meta_deletes );
+		$this->assertSame( $meta_time_before, $this->stylesheet_manager->get_meta( 'time' ) );
+	}
+
+	public function test_invalidate_sync_stylesheet__regenerates_after_empty_css_is_cached() {
+		// Arrange
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => false,
+			],
+		] );
+
+		$this->stylesheet_manager->generate();
+		$this->assertSame( 0, filesize( $this->stylesheet_manager->get_path() ) );
+
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [] );
+
+		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
+
+		Variables_Provider::clear_cache();
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => true,
+			],
+		] );
+
+		// Act
+		$this->stylesheet_manager->generate();
+
+		// Assert
+		$this->assertGreaterThan( 0, filesize( $this->stylesheet_manager->get_path() ) );
 	}
 
 	public function test_generate__updates_meta_when_synced_css_changes() {
@@ -334,11 +332,11 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->stylesheet_manager->generate();
+		$result = $this->stylesheet_manager->generate();
 
 		// Assert
-		$this->assertFileExists( $this->stylesheet_manager->get_path() );
-		$this->assertSame( '', file_get_contents( $this->stylesheet_manager->get_path() ) );
+		$this->assertNull( $result );
+		$this->assertSame( 0, filesize( $this->stylesheet_manager->get_path() ) );
 	}
 
 	public function test_generate__handles_multiple_synced_color_variables() {

@@ -23,7 +23,11 @@ class Stylesheet_Manager extends Base_File {
 	public function generate(): ?array {
 		$this->update();
 
-		if ( '' === $this->parse_content() ) {
+		if ( ! file_exists( $this->get_path() ) ) {
+			return null;
+		}
+
+		if ( 0 === filesize( $this->get_path() ) ) {
 			return null;
 		}
 
@@ -34,14 +38,15 @@ class Stylesheet_Manager extends Base_File {
 	}
 
 	public function enqueue(): void {
-		$path = $this->get_path();
-		$content = $this->parse_content();
-
-		if ( ! file_exists( $path ) || file_get_contents( $path ) !== $content ) {
-			$this->update();
+		if ( ! file_exists( $this->get_path() ) ) {
+			$this->generate();
 		}
 
-		if ( '' === $content ) {
+		if ( ! file_exists( $this->get_path() ) ) {
+			return;
+		}
+
+		if ( 0 === filesize( $this->get_path() ) ) {
 			return;
 		}
 
@@ -55,26 +60,25 @@ class Stylesheet_Manager extends Base_File {
 
 	public function update() {
 		$content = $this->parse_content();
+
+		if ( '' !== $content ) {
+			parent::update();
+
+			return;
+		}
+
 		$path = $this->get_path();
 
-		if ( file_exists( $path ) && file_get_contents( $path ) === $content ) {
+		if ( file_exists( $path ) && 0 === filesize( $path ) ) {
 			return;
 		}
 
-		if ( '' === $content ) {
-			if ( ! file_exists( $path ) || '' !== file_get_contents( $path ) ) {
-				file_put_contents( $path, '' );
-			}
+		file_put_contents( $path, '' );
 
-			$meta = $this->get_meta();
-			$meta['time'] = time();
+		$meta = $this->get_meta();
+		$meta['time'] = time();
 
-			$this->update_meta( $meta );
-
-			return;
-		}
-
-		parent::update();
+		$this->update_meta( $meta );
 	}
 
 	protected function parse_content(): string {
