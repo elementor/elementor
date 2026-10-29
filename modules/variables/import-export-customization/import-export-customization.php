@@ -20,7 +20,7 @@ class Import_Export_Customization {
 		} );
 
 		add_action( 'elementor/import-export-customization/import-kit', function ( Import $import ) {
-			$import->register( new Import_Runner() );
+			$import->register( new Import_Runner(), Import::PRIORITY_GLOBAL_VARIABLES );
 		} );
 	}
 }

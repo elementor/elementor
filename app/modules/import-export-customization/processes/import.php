@@ -31,6 +31,18 @@ class Import {
 	const ZIP_ARCHIVE_ERROR_KEY = 'zip-archive-module-missing';
 
 	/**
+	 * Site settings creates and activates the imported kit, and the design-system runners write into
+	 * the active kit, so it must run first to keep their data revertible by switching kits back.
+	 */
+	const PRIORITY_SITE_SETTINGS = -40;
+
+	const PRIORITY_GLOBAL_VARIABLES = -30;
+
+	const PRIORITY_GLOBAL_CLASSES = -20;
+
+	const PRIORITY_COMPONENTS = -10;
+
+	/**
 	 * @var array<string, Import_Runner_Base>
 	 */
 	protected $runners = [];
@@ -268,7 +280,7 @@ class Import {
 	}
 
 	public function register_default_runners() {
-		$this->register( new Site_Settings() );
+		$this->register( new Site_Settings(), self::PRIORITY_SITE_SETTINGS );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
 		$this->register( new Taxonomies() );
@@ -888,7 +900,7 @@ class Import {
 			$document = Plugin::$instance->documents->get( $new_id );
 
 			if ( isset( $data['elements'] ) ) {
-				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Components_Module::prepare_imported_elements_for_customization( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
 				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
 				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );
