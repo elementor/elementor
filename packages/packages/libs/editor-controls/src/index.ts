@@ -23,6 +23,7 @@ export { HtmlTagControl } from './controls/html-tag-control';
 export { QueryChipsControl } from './controls/query-chips-control';
 export { QueryControl } from './controls/query-control';
 export { QueryFilterRepeaterControl } from './controls/query-filter-repeater-control';
+export { QuerySelectControl } from './controls/query-select-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
