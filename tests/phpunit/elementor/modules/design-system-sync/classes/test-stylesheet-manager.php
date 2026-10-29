@@ -153,6 +153,34 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->assertSame( $meta_time_before, $this->stylesheet_manager->get_meta( 'time' ) );
 	}
 
+	public function test_update__does_not_persist_meta_when_empty_cache_dir_is_not_writable() {
+		// Arrange
+		$this->set_kit_variables( [
+			'var-1' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [ '$$type' => 'color', 'value' => '#ff0000' ],
+				'sync_to_v3' => false,
+			],
+		] );
+
+		$path = $this->stylesheet_manager->get_path();
+		$dir = dirname( $path );
+
+		wp_mkdir_p( $dir );
+		chmod( $dir, 0500 );
+
+		// Act
+		$this->stylesheet_manager->generate();
+		$this->stylesheet_manager->generate();
+
+		// Assert
+		$this->assertFileDoesNotExist( $path );
+		$this->assertFalse( get_option( Stylesheet_Manager::META_KEY ) );
+
+		chmod( $dir, 0755 );
+	}
+
 	public function test_invalidate_sync_stylesheet__regenerates_after_empty_css_is_cached() {
 		// Arrange
 		$this->set_kit_variables( [
@@ -165,6 +193,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		] );
 
 		$this->stylesheet_manager->generate();
+		$this->assertFileExists( $this->stylesheet_manager->get_path() );
 		$this->assertSame( 0, filesize( $this->stylesheet_manager->get_path() ) );
 
 		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [] );

@@ -73,7 +73,15 @@ class Stylesheet_Manager extends Base_File {
 			return;
 		}
 
-		file_put_contents( $path, '' );
+		$dir = dirname( $path );
+
+		if ( ! wp_mkdir_p( $dir ) || ! is_writable( $dir ) ) {
+			return;
+		}
+
+		if ( false === file_put_contents( $path, '' ) ) {
+			return;
+		}
 
 		$meta = $this->get_meta();
 		$meta['time'] = time();
