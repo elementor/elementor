@@ -20,5 +20,9 @@ export {
 	deleteConversionBannerTestPages,
 	resetConversionBannerTriggerState,
 } from './conversion-banner-test-helpers';
-export { hidePromoChromeForScreenshot, promoChromeScreenshotMasks } from './mask-promo-chrome';
+export {
+	hidePanelNewBadgesForScreenshot,
+	hidePromoChromeForScreenshot,
+	promoChromeScreenshotMasks,
+} from './mask-promo-chrome';
 export { clearPromotionCdnCache, seedPromotionCdnCache } from './seed-promotion-cache';
