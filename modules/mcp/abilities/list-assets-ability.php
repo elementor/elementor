@@ -42,7 +42,9 @@ class List_Assets_Ability extends Abstract_Ability {
 		'video/3gpp2',
 	];
 
-	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. Ask the user to upload the images or SVG icons they want to use (WP Admin → Media → Add New), then call this tool again. Do not fabricate attachment ids.';
+	const EMPTY_RESULT_HINT = 'No matching assets are in the Media Library. After the user consents, use elementor/upload-media when the image has a public HTTPS URL (the server downloads it), or elementor/request-media-upload only if you can run a shell command or send an HTTP request to upload a local file. If those are unavailable, ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
+
+	const EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS = 'No matching assets are in the Media Library. Ask the user to upload via WP Admin → Media → Add New, then call this tool again. Do not fabricate attachment ids.';
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-assets';
@@ -50,7 +52,7 @@ class List_Assets_Ability extends Abstract_Ability {
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'List Media Library Assets', 'elementor' ),
+			esc_html__( 'List Media Library Assets', 'elementor' ),
 			Prompt_Loader::load( 'list-assets' ),
 			'elementor',
 			[
@@ -153,7 +155,7 @@ class List_Assets_Ability extends Abstract_Ability {
 		];
 
 		if ( 0 === $response['total'] ) {
-			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
+			$response['llm_instructions'] = $this->get_empty_result_hint();
 		}
 
 		return $response;
@@ -197,5 +199,13 @@ class List_Assets_Ability extends Abstract_Ability {
 			'width' => isset( $metadata['width'] ) ? (int) $metadata['width'] : null,
 			'height' => isset( $metadata['height'] ) ? (int) $metadata['height'] : null,
 		];
+	}
+
+	private function get_empty_result_hint(): string {
+		if ( current_user_can( 'manage_options' ) ) {
+			return self::EMPTY_RESULT_HINT;
+		}
+
+		return self::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS;
 	}
 }
