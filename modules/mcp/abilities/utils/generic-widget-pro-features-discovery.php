@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Widgets_Pro_Features_Discovery {
+class Generic_Widget_Pro_Features_Discovery {
 
 	const UPGRADE_URL = Mcp_Module::MCP_PROMOTION_UPGRADE_URL;
 

@@ -27,7 +27,7 @@ class Pro_Features_Discovery_Registry {
 	public static function for_widget( string $widget_type ): \WP_Error {
 		$discovery = self::find_discovery( $widget_type );
 
-		return $discovery ? $discovery::for_widget() : Widgets_Pro_Features_Discovery::for_widget( $widget_type );
+		return $discovery ? $discovery::for_widget() : Generic_Widget_Pro_Features_Discovery::for_widget( $widget_type );
 	}
 
 	private static function find_discovery( string $widget_type ): ?string {
