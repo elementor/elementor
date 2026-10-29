@@ -1394,7 +1394,9 @@ export default class EditorPage extends BasePage {
 			}
 		}
 
-		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		const addGalleryButton = this.page.locator( EditorSelectors.media.addGalleryButton );
+		await expect( addGalleryButton ).toBeEnabled( { timeout: timeouts.longAction } );
+		await addGalleryButton.click();
 		await this.page.locator( 'text=Insert gallery' ).click();
 	}
 
