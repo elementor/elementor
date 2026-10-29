@@ -20,6 +20,11 @@ class Form_Structure_Validator {
 		self::RECAPTCHA_SCORE_ELEMENT_TYPE => 'Score-based reCAPTCHA atoms',
 	];
 
+	const FORM_MESSAGE_ELEMENT_TYPES = [
+		'e-form-success-message',
+		'e-form-error-message',
+	];
+
 	const FORM_FIELD_ELEMENT_TYPES = [
 		'e-form-input',
 		'e-form-textarea',
@@ -211,7 +216,7 @@ class Form_Structure_Validator {
 		$errors = [];
 		$xpath = new \DOMXPath( $dom );
 
-		foreach ( $xpath->query( '//e-form-success-message|//e-form-error-message' ) as $node ) {
+		foreach ( $xpath->query( '//' . implode( '|//', self::FORM_MESSAGE_ELEMENT_TYPES ) ) as $node ) {
 			if ( ! $node instanceof \DOMElement ) {
 				continue;
 			}
