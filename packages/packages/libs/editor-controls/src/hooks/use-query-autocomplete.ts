@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { numberPropTypeUtil, type QueryPropValue, stringPropTypeUtil } from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { debounce } from '@elementor/utils';
@@ -47,13 +47,17 @@ export function useQueryAutocomplete( {
 		[ url, excludeIdSet ]
 	);
 
+	const paramsKey = useMemo( () => JSON.stringify( params ), [ params ] );
+	const paramsRef = useRef( params );
+	paramsRef.current = params;
+
 	useEffect( () => {
 		if ( minInputLength === 0 && url ) {
-			fetchOptions( url, { ...params, term: '' } ).then( ( newOptions ) => {
+			fetchOptions( url, { ...paramsRef.current, term: '' } ).then( ( newOptions ) => {
 				setOptions( formatOptions( filterExcludedOptions( newOptions, excludeIdSet ) ) );
 			} );
 		}
-	}, [ url, minInputLength, excludeIdSet, params ] );
+	}, [ url, minInputLength, excludeIdSet, paramsKey ] );
 
 	const updateOptions = ( term: string | null ) => {
 		const termStr = term ?? '';

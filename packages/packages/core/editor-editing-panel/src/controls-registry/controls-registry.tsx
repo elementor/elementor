@@ -15,6 +15,7 @@ import {
 	QueryChipsControl,
 	QueryControl,
 	QueryFilterRepeaterControl,
+	QuerySelectControl,
 	RepeatableControl,
 	SelectControlWrapper,
 	SizeControl,
@@ -71,6 +72,7 @@ const controlTypes = {
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
+	'query-select': { component: QuerySelectControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	'query-filter-repeater': {
 		component: QueryFilterRepeaterControl,
 		layout: 'full',
