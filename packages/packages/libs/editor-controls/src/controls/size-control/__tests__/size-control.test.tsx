@@ -1243,4 +1243,73 @@ describe( 'SizeControl', () => {
 			} );
 		} );
 	} );
+
+	describe( 'Preserving the selected unit when the value is cleared', () => {
+		const bind = 'select';
+
+		const renderClearedRemControl = ( setValue: jest.Mock, placeholder?: ReturnType< typeof mockSizeProp > ) => {
+			const props = {
+				setValue,
+				value: mockSizeProp( { size: 10, unit: 'rem' } ),
+				bind,
+				placeholder,
+				propType: createSizePropType( {
+					settings: {
+						available_units: mockLengthUnits(),
+					},
+				} ),
+			};
+
+			const { rerender } = renderControl( <UnstableSizeControl />, props );
+
+			fireEvent.input( screen.getByRole( 'spinbutton' ), { target: { value: '' } } );
+
+			rerender( <UnstableSizeControl />, {
+				value: { [ bind ]: mockSizeProp( { size: '', unit: 'rem' } ) },
+			} );
+
+			fireEvent.blur( screen.getByRole( 'spinbutton' ) );
+
+			rerender( <UnstableSizeControl />, { value: { [ bind ]: null } } );
+		};
+
+		it( 'should keep the selected unit after clearing the value and blurring', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			// Act.
+			renderClearedRemControl( setValue );
+
+			// Assert.
+			expect( setValue ).toHaveBeenLastCalledWith( null );
+			expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+			expect( screen.getByRole( 'button', { name: 'rem' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should keep the selected unit over the inherited placeholder unit after clearing and blurring', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			// Act.
+			renderClearedRemControl( setValue, mockSizeProp( { size: 0, unit: 'px' } ) );
+
+			// Assert.
+			expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+			expect( screen.getByRole( 'spinbutton' ) ).toHaveAttribute( 'placeholder', '0' );
+			expect( screen.getByRole( 'button', { name: 'rem' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should use the preserved unit when typing a new value after clearing', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			renderClearedRemControl( setValue );
+
+			// Act.
+			fireEvent.input( screen.getByRole( 'spinbutton' ), { target: { value: '5' } } );
+
+			// Assert.
+			expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'size', value: { size: 5, unit: 'rem' } } );
+		} );
+	} );
 } );

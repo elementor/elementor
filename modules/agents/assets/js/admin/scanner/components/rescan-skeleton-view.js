@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import { SCANNER_LAYOUT } from '../scanner-constants';
 import { ActivateBanner } from './activate-banner';
 import { FixesFilters } from './fixes-section';
-import { ScoreRing } from './score-ring';
-
 const FILTER_ALL = 'all';
 const SCORE_GAP = '32px';
 const noop = () => {};
@@ -22,10 +20,20 @@ BlockSkeleton.propTypes = {
 	height: PropTypes.number.isRequired,
 };
 
-export const RescanSkeletonView = ( { score, ringDurationMs, showBanner, agentAccessUrl } ) => (
+const RingSkeleton = () => (
+	<Skeleton
+		variant="circular"
+		width={ SCANNER_LAYOUT.ringSize }
+		height={ SCANNER_LAYOUT.ringSize }
+		animation="wave"
+		sx={ { bgcolor: 'action.hover', flexShrink: 0 } }
+	/>
+);
+
+export const RescanSkeletonView = ( { showBanner, agentAccessUrl } ) => (
 	<Stack gap={ `${ SCANNER_LAYOUT.pageGap }px` } width="100%" aria-busy="true" aria-live="polite" role="status" aria-label={ __( 'Scanning again', 'elementor' ) }>
 		<Stack direction="row" alignItems="flex-start" gap={ SCORE_GAP }>
-			<ScoreRing score={ score } durationMs={ ringDurationMs } />
+			<RingSkeleton />
 			<Stack spacing={ 2 } flex={ 1 } minWidth={ 0 } pt={ 0.5 }>
 				<BlockSkeleton width={ SCANNER_LAYOUT.skeletonHeadingWidth } height={ SCANNER_LAYOUT.skeletonHeadingHeight } />
 				<BlockSkeleton width="100%" height={ SCANNER_LAYOUT.skeletonBlockHeight } />
@@ -74,8 +82,6 @@ export const RescanSkeletonView = ( { score, ringDurationMs, showBanner, agentAc
 );
 
 RescanSkeletonView.propTypes = {
-	score: PropTypes.number,
-	ringDurationMs: PropTypes.number.isRequired,
 	showBanner: PropTypes.bool,
 	agentAccessUrl: PropTypes.string.isRequired,
 };

@@ -40,6 +40,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Link_Headers extends Feature_Component {
 
+	const HOMEPAGE_MARKDOWN_PATH = '/index.md';
+
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
 
@@ -187,14 +189,29 @@ class Link_Headers extends Feature_Component {
 			return null;
 		}
 
-		$permalink = get_permalink( $post->ID );
+		$markdown_url = $this->resolve_markdown_url( $post );
 
-		if ( ! $permalink ) {
+		if ( ! $markdown_url ) {
 			return null;
 		}
 
-		return '<' . esc_url_raw( untrailingslashit( $permalink ) ) . '.md>'
+		return '<' . esc_url_raw( $markdown_url ) . '>'
 			. '; rel="alternate"; type="text/markdown"';
+	}
+
+	private function resolve_markdown_url( \WP_Post $post ): ?string {
+		if ( $this->is_static_front_page( $post ) ) {
+			return untrailingslashit( home_url() ) . self::HOMEPAGE_MARKDOWN_PATH;
+		}
+
+		$permalink = get_permalink( $post->ID );
+
+		return $permalink ? untrailingslashit( $permalink ) . '.md' : null;
+	}
+
+	private function is_static_front_page( \WP_Post $post ): bool {
+		return 'page' === get_option( 'show_on_front' )
+			&& (int) get_option( 'page_on_front' ) === $post->ID;
 	}
 
 	/**

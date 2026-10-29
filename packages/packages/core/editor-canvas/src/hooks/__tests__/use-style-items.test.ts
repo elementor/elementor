@@ -1,11 +1,17 @@
 import { createMockStyleDefinition, createMockStyleDefinitionWithVariants, createMockStylesProvider } from 'test-utils';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { registerDataHook } from '@elementor/editor-v1-adapters';
+import { getCanvasIframeDocument, registerDataHook } from '@elementor/editor-v1-adapters';
 import { act, renderHook } from '@testing-library/react';
 
+import { removeProviderPregeneratedLinks } from '../../utils/pregenerated-links-removal';
 import { useStyleItems } from '../use-style-items';
 import { useStyleRenderer } from '../use-style-renderer';
+
+jest.mock( '../../utils/pregenerated-links-removal', () => ( {
+	removeProviderPregeneratedLinks: jest.fn(),
+	resetRemovedProviders: jest.fn(),
+} ) );
 
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	...jest.requireActual( '@elementor/editor-styles-repository' ),
@@ -17,6 +23,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	registerDataHook: jest.fn(),
+	getCanvasIframeDocument: jest.fn(),
 } ) );
 
 jest.mock( '../use-style-prop-resolver', () => ( {
@@ -512,5 +519,159 @@ describe( 'useStyleItems', () => {
 		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles ).toHaveLength( 1 );
 		expect( renderStylesMock.mock.calls[ 0 ][ 0 ].styles[ 0 ].id ).toBe( 'style2' );
 		expect( result.current ).toHaveLength( 3 );
+	} );
+
+	describe( 'pregenerated links removal', () => {
+		let attachPreviewCallback: () => Promise< void >;
+		let canvasDocument: Document;
+
+		beforeEach( () => {
+			jest.mocked( removeProviderPregeneratedLinks ).mockClear();
+
+			canvasDocument = document.implementation.createHTMLDocument();
+			jest.mocked( getCanvasIframeDocument ).mockReturnValue( canvasDocument );
+
+			jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
+				if ( command === 'editor/documents/attach-preview' && position === 'after' ) {
+					attachPreviewCallback = callback as never;
+				}
+
+				return null as never;
+			} );
+		} );
+
+		const createProviderWithPregeneratedLinks = ( key: string, styles: StyleDefinition[] ) => ( {
+			...createMockStylesProvider( { key }, styles ),
+			isPregeneratedLink: jest.fn(),
+		} );
+
+		it( 'should not remove pregenerated links before the canvas head is available', async () => {
+			// Arrange.
+			const provider = createProviderWithPregeneratedLinks( 'global-classes', [
+				createMockStyleDefinition( { id: 'style1' } ),
+			] );
+
+			jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ provider ] );
+
+			const { result } = renderHook( () => useStyleItems( null ) );
+
+			// Act.
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			// Assert.
+			expect( result.current ).toHaveLength( 1 );
+			expect( removeProviderPregeneratedLinks ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should remove pregenerated links once rendered items are committed into the canvas head', async () => {
+			// Arrange.
+			const provider = createProviderWithPregeneratedLinks( 'global-classes', [
+				createMockStyleDefinition( { id: 'style1' } ),
+			] );
+
+			jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ provider ] );
+
+			const { rerender } = renderHook( ( { head } ) => useStyleItems( head ), {
+				initialProps: { head: null as HTMLElement | null },
+			} );
+
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			// Act.
+			rerender( { head: canvasDocument.head } );
+
+			// Assert.
+			expect( removeProviderPregeneratedLinks ).toHaveBeenCalledTimes( 1 );
+			expect( removeProviderPregeneratedLinks ).toHaveBeenCalledWith(
+				'global-classes',
+				provider.isPregeneratedLink
+			);
+		} );
+
+		it( 'should not remove pregenerated links while the portal targets a stale document head', async () => {
+			// Arrange.
+			const provider = createProviderWithPregeneratedLinks( 'global-classes', [
+				createMockStyleDefinition( { id: 'style1' } ),
+			] );
+
+			jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ provider ] );
+
+			const staleDocument = document.implementation.createHTMLDocument();
+
+			const { rerender } = renderHook( ( { head } ) => useStyleItems( head ), {
+				initialProps: { head: staleDocument.head },
+			} );
+
+			// Act.
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			// Assert.
+			expect( removeProviderPregeneratedLinks ).not.toHaveBeenCalled();
+
+			// Act.
+			rerender( { head: canvasDocument.head } );
+
+			// Assert.
+			expect( removeProviderPregeneratedLinks ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should keep pregenerated links while the provider has no rendered items', async () => {
+			// Arrange.
+			const placeholderStyle: StyleDefinition = {
+				id: 'g-placeholder',
+				type: 'class',
+				label: 'placeholder',
+				variants: [],
+			};
+
+			const provider = createProviderWithPregeneratedLinks( 'global-classes', [ placeholderStyle ] );
+
+			jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ provider ] );
+
+			const { result } = renderHook( () => useStyleItems( canvasDocument.head ) );
+
+			// Act.
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			// Assert.
+			expect( result.current ).toEqual( [] );
+			expect( removeProviderPregeneratedLinks ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not remove links for providers without pregenerated links', async () => {
+			// Arrange.
+			const provider = createMockStylesProvider( { key: 'provider1' }, [
+				createMockStyleDefinition( { id: 'style1' } ),
+			] );
+
+			jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ provider ] );
+
+			const { result } = renderHook( () => useStyleItems( canvasDocument.head ) );
+
+			// Act.
+			await act( async () => {
+				await attachPreviewCallback?.();
+			} );
+
+			// Assert.
+			expect( result.current ).toHaveLength( 1 );
+			expect( removeProviderPregeneratedLinks ).not.toHaveBeenCalled();
+		} );
 	} );
 } );

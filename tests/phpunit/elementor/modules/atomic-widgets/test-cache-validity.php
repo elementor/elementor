@@ -499,4 +499,59 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 			$stored_data,
 		);
 	}
+
+	public function test_is_valid__reads_the_stored_option_once_per_request() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+		$cache_validity->validate( [ ROOT_KEY, 'post-1' ] );
+
+		wp_cache_flush();
+
+		$option_reads = 0;
+		add_filter( 'option_' . Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY, function ( $value ) use ( &$option_reads ) {
+			++$option_reads;
+
+			return $value;
+		} );
+
+		// Act.
+		$cache_validity->is_valid( [ ROOT_KEY, 'post-1' ] );
+		$cache_validity->get_meta( [ ROOT_KEY, 'post-1' ] );
+		$is_valid = $cache_validity->is_valid( [ ROOT_KEY, 'post-1' ] );
+
+		// Assert.
+		$this->assertTrue( $is_valid );
+		$this->assertSame( 1, $option_reads );
+	}
+
+	public function test_validate__skips_option_update_when_tree_is_unchanged() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+		$cache_validity->validate( [ ROOT_KEY, 'post-1', 'desktop' ], [ 'should_exist' => true ] );
+
+		$option_updates = 0;
+		add_filter( 'pre_update_option_' . Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY, function ( $value ) use ( &$option_updates ) {
+			++$option_updates;
+
+			return $value;
+		} );
+
+		// Act.
+		$cache_validity->validate( [ ROOT_KEY, 'post-1', 'desktop' ], [ 'should_exist' => true ] );
+
+		// Assert.
+		$this->assertSame( 0, $option_updates );
+	}
+
+	public function test_is_valid__reflects_option_deleted_outside_cache_validity() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+		$cache_validity->validate( [ ROOT_KEY, 'post-1' ] );
+
+		// Act.
+		delete_option( Cache_Validity_Item::CACHE_KEY_PREFIX . ROOT_KEY );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ ROOT_KEY, 'post-1' ] ) );
+	}
 }

@@ -158,6 +158,31 @@ describe( 'LinkedDimensionsControl', () => {
 		} );
 	} );
 
+	it( 'should keep the selected unit after the linked value is cleared and blurred', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const bind = 'padding';
+		const props = { setValue, value: { $$type: 'size', value: { size: 10, unit: 'rem' } }, bind, propType };
+
+		const { rerender } = renderControl( <LinkedDimensionsControl label="Padding" />, props );
+
+		// Act.
+		fireEvent.input( screen.getAllByRole( 'spinbutton' )[ 0 ], { target: { value: '' } } );
+
+		rerender( <LinkedDimensionsControl label="Padding" />, {
+			value: { [ bind ]: { $$type: 'size', value: { size: '', unit: 'rem' } } },
+		} );
+
+		fireEvent.blur( screen.getAllByRole( 'spinbutton' )[ 0 ] );
+
+		rerender( <LinkedDimensionsControl label="Padding" />, { value: { [ bind ]: null } } );
+
+		// Assert.
+		expect( setValue ).toHaveBeenLastCalledWith( null );
+		expect( screen.getAllByRole( 'button', { name: 'rem' } ) ).not.toHaveLength( 0 );
+		expect( screen.queryAllByRole( 'button', { name: 'px' } ) ).toHaveLength( 0 );
+	} );
+
 	describe( 'placeholder', () => {
 		it( 'should display size placeholder in linked state', () => {
 			// Arrange.

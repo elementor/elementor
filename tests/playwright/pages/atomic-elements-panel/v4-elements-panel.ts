@@ -92,9 +92,11 @@ export default class v4Panel extends BasePage {
 		await this.page.locator( sectionContentSelector ).waitFor();
 	}
 
-	async addAtomicWidget( widgetTitle: string, widgetName: string ) {
+	async addAtomicWidget( widgetName: string ) {
 		await this.editor.openElementsPanel();
-		const panelWidgetButton = this.page.locator( `#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("${ widgetTitle }")` );
+		const panelWidgetButton = this.page.locator(
+			`#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="${ widgetName }"]`,
+		);
 		await panelWidgetButton.waitFor( { state: 'visible' } );
 		await panelWidgetButton.click();
 
