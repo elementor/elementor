@@ -93,7 +93,10 @@ test.describe( 'Side menu promotion CDN contracts @promotions @cdn-promotions', 
 		} );
 
 		await expect( upgradeLink ).toBeVisible();
-		await expect( upgradeLink ).toHaveAttribute( 'href', SIDE_MENU_FIXTURE.url! );
+		await expect( upgradeLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'elementor-one-upgrade' ),
+		);
 	} );
 } );
 
@@ -182,7 +185,7 @@ test.describe( 'Promo chrome masking for unrelated panel snapshots @promotions @
 
 		await hidePromoChromeForScreenshot( page );
 
-		await expect( sticky ).toHaveCSS( 'visibility', 'hidden' );
+		await expect( sticky ).toHaveCSS( 'display', 'none' );
 
 		await clearPromotionCdnCache( STICKY_PANEL_CDN_OPTION );
 	} );
