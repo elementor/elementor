@@ -13,8 +13,10 @@ class Duplicate_Term {
 
 	const NAME_SUFFIX = ' duplicate';
 
+	const MAX_ATTEMPTS = 100;
+
 	public static function generate( string $slug, string $name, string $taxonomy ): array {
-		$base_slug = static::strip_slug_suffix( $slug );
+		$base_slug = static::strip_slug_suffix( sanitize_title( $slug ) );
 		$base_name = static::strip_name_suffix( $name );
 		$counter = 1;
 
@@ -25,7 +27,7 @@ class Duplicate_Term {
 			];
 
 			++$counter;
-		} while ( term_exists( $candidate['slug'], $taxonomy ) );
+		} while ( $counter <= static::MAX_ATTEMPTS && term_exists( $candidate['slug'], $taxonomy ) );
 
 		return $candidate;
 	}

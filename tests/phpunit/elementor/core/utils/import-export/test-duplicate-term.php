@@ -92,6 +92,36 @@ class Test_Duplicate_Term extends Elementor_Test_Base {
 		$this->assertNotWPError( $inserted );
 	}
 
+	public function test_generate__sanitizes_raw_slug_before_building_candidates() {
+		// Arrange
+		$raw_slug = str_repeat( 'é', Duplicate_Term::MAX_LENGTH );
+
+		$this->create_menu( $raw_slug, 'Menu' );
+
+		// Act
+		$duplicate = Duplicate_Term::generate( $raw_slug, 'Menu', self::TAXONOMY );
+
+		// Assert
+		$this->assertSame( $duplicate['slug'], sanitize_title( $duplicate['slug'] ) );
+		$this->assertStringEndsWith( '-duplicate', $duplicate['slug'] );
+		$this->assertLessThanOrEqual( Duplicate_Term::MAX_LENGTH, strlen( $duplicate['slug'] ) );
+	}
+
+	public function test_generate__stops_after_max_attempts() {
+		// Arrange
+		$this->create_menu( 'main-menu-duplicate', 'Main Menu duplicate' );
+
+		for ( $counter = 2; $counter <= Duplicate_Term::MAX_ATTEMPTS; $counter++ ) {
+			$this->create_menu( 'main-menu-duplicate-' . $counter, 'Main Menu duplicate ' . $counter );
+		}
+
+		// Act
+		$duplicate = Duplicate_Term::generate( 'main-menu', 'Main Menu', self::TAXONOMY );
+
+		// Assert
+		$this->assertSame( 'main-menu-duplicate-' . Duplicate_Term::MAX_ATTEMPTS, $duplicate['slug'] );
+	}
+
 	private function create_menu( string $slug, string $name ) {
 		return $this->factory()->term->create( [
 			'taxonomy' => self::TAXONOMY,
