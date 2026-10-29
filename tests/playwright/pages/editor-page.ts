@@ -19,6 +19,7 @@ let Backbone: BackboneType;
 let window: WindowType;
 
 const ADMIN_AJAX_PATH = 'admin-ajax.php';
+const ASYNC_UPLOAD_PATH = 'async-upload.php';
 const SAVE_BUILDER_ACTION = 'save_builder';
 const PUBLISH_STATUS = 'publish';
 
@@ -1383,18 +1384,27 @@ export default class EditorPage extends BasePage {
 
 		await this.page.locator( EditorSelectors.galleryControl.addGalleryBtn ).nth( 0 ).click();
 		await this.page.getByRole( 'tab', { name: 'Media Library' } ).click();
+		await this.page.locator( '#menu-item-upload' ).click();
 
 		const _images = args?.images === undefined ? defaultImages : args.images;
 
 		for ( const i in _images ) {
-			await this.page.setInputFiles( EditorSelectors.media.imageInp, pathResolve( __dirname, `../resources/${ _images[ i ] }` ) );
+			const imagePath = pathResolve( __dirname, `../resources/${ _images[ i ] }` );
+			const uploadResponse = this.page.waitForResponse(
+				( response ) => response.url().includes( ASYNC_UPLOAD_PATH ) && response.ok(),
+				{ timeout: timeouts.longAction },
+			);
+			await this.page.setInputFiles( EditorSelectors.media.imageInp, imagePath );
+			await uploadResponse;
 
 			if ( args?.metaData ) {
 				await this.addTestImageMetaData();
 			}
 		}
 
-		await this.page.locator( EditorSelectors.media.addGalleryButton ).click();
+		const addGalleryButton = this.page.locator( EditorSelectors.media.addGalleryButton );
+		await expect( addGalleryButton ).toBeEnabled( { timeout: timeouts.longAction } );
+		await addGalleryButton.click();
 		await this.page.locator( 'text=Insert gallery' ).click();
 	}
 
