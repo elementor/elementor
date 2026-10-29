@@ -4,15 +4,19 @@ namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 class Module extends BaseModule {
+
+	const ADMIN_NAVIGATION_EXPERIMENT_NAME = 'e_admin_navigation';
 
 	const CUSTOM_REACT_APP_PAGES = [
 		'elementor-element-manager',
@@ -22,12 +26,36 @@ class Module extends BaseModule {
 		return 'editor-one';
 	}
 
+	public static function get_admin_navigation_experimental_data(): array {
+		return [
+			'name' => self::ADMIN_NAVIGATION_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Admin flow', 'elementor' ),
+			'description' => esc_html__( 'Enable the admin flow.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
+	public static function is_admin_navigation_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::ADMIN_NAVIGATION_EXPERIMENT_NAME );
+	}
+
+	private function register_admin_navigation_experiment(): void {
+		Plugin::$instance->experiments->add_feature( self::get_admin_navigation_experimental_data() );
+	}
+
 	public function __construct() {
 		parent::__construct();
+		$this->register_admin_navigation_experiment();
 
 		if ( is_admin() ) {
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
-			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
+
+			if ( ! self::is_admin_navigation_active() ) {
+				$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
+			}
+
 			$this->add_component( 'top-bar-handler', new Top_Bar_Handler() );
 		}
 
