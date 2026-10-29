@@ -128,7 +128,9 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		( new $module_class() )->register_settings_tab( $tools );
 
 		// Assert
-		$this->assertSame( $expected_label, html_entity_decode( $tools->get_tabs()['import-export-kit']['label'] ) );
+		$tab = $tools->get_tabs()['import-export-kit'];
+		$this->assertSame( $expected_label, html_entity_decode( $tab['label'] ) );
+		$this->assertSame( $expected_label, html_entity_decode( $tab['sections']['intro']['label'] ) );
 	}
 
 	public function test_website_templates_menu_label_is_unchanged_when_experiment_is_active() {

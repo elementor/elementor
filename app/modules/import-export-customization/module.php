@@ -120,13 +120,15 @@ class Module extends BaseModule {
 	 * Register the import/export tab in elementor tools.
 	 */
 	public function register_settings_tab( Tools $tools ) {
+		$label = EditorOneModule::is_admin_navigation_active()
+			? esc_html__( 'Import & Export', 'elementor' )
+			: esc_html__( 'Website Templates', 'elementor' );
+
 		$tools->add_tab( 'import-export-kit', [
-			'label' => EditorOneModule::is_admin_navigation_active()
-				? esc_html__( 'Import & Export', 'elementor' )
-				: esc_html__( 'Website Templates', 'elementor' ),
+			'label' => $label,
 			'sections' => [
 				'intro' => [
-					'label' => esc_html__( 'Website Templates', 'elementor' ),
+					'label' => $label,
 					'callback' => function() {
 						$this->render_import_export_tab_content();
 					},
