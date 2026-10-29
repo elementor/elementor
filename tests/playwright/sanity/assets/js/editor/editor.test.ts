@@ -39,6 +39,12 @@ test.describe( 'Editor tests', () => {
 		// Act
 		await editor.openElementsPanel();
 
+		await editor.page.locator( '#elementor-panel .e-widget-new-badge' ).evaluateAll( ( badges ) => {
+			badges.forEach( ( badge ) => {
+				( badge as HTMLElement ).style.visibility = 'hidden';
+			} );
+		} );
+
 		// Assert
 		expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
 			type: 'jpeg',
