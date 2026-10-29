@@ -183,17 +183,27 @@ class Test_List_Assets_Ability extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_execute__empty_result_includes_upload_hint() {
-		// Arrange — no attachments in this test's factory scope; still filter to guarantee empty
+	public function test_execute__empty_result_hint_includes_both_upload_tools_for_administrators() {
+		// Arrange
 		$this->act_as_admin();
 
-		// Act — a search string that cannot match any real attachment
+		// Act
 		$result = $this->ability->execute( [ 'search' => 'nonexistent-needle-' . wp_generate_password( 12, false ) ] );
 
 		// Assert
 		$this->assertSame( 0, $result['total'] );
-		$this->assertArrayHasKey( 'llm_instructions', $result );
-		$this->assertNotEmpty( $result['llm_instructions'] );
+		$this->assertSame( List_Assets_Ability::EMPTY_RESULT_HINT, $result['llm_instructions'] );
+	}
+
+	public function test_execute__empty_result_hint_omits_upload_tools_for_editors() {
+		// Arrange
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+
+		// Act
+		$result = $this->ability->execute( [ 'search' => 'nonexistent-needle-' . wp_generate_password( 12, false ) ] );
+
+		// Assert
+		$this->assertSame( List_Assets_Ability::EMPTY_RESULT_HINT_WITHOUT_UPLOAD_TOOLS, $result['llm_instructions'] );
 	}
 
 	private function create_attachment( string $mime_type, string $filename, string $title = '' ): int {

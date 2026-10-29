@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
@@ -169,13 +170,18 @@ class Module extends BaseModule {
 			return;
 		}
 
-		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
+		// Resolving which abilities are tools or resources builds every ability's
+		// definition, and some (Elementor Pro's site-parts abilities) instantiate
+		// document types while doing so. Only the MCP server reads these slugs, so
+		// collect them when it boots instead of on every request.
+		add_action( 'mcp_adapter_init', [ $this, 'register_shared_registry_slugs' ], 5 );
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
 
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 
 		if ( self::is_site_mcp_exposure_enabled() ) {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
+			( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		}
 	}
 
@@ -287,6 +293,8 @@ class Module extends BaseModule {
 			new Abilities\Get_License_Status_Ability(),
 			new Abilities\List_Experiments_Ability(),
 			new Abilities\Manage_Experiments_Ability(),
+			new Abilities\Upload_Media_Ability(),
+			new Abilities\Request_Media_Upload_Ability(),
 		];
 
 		if ( self::is_revision_snapshots_active() ) {

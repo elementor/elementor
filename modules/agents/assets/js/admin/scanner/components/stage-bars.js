@@ -33,7 +33,7 @@ const StageBar = ( { stage, label, question } ) => {
 	const countLabel = stage.isComingSoon
 		? __( 'Coming soon', 'elementor' )
 		: sprintf(
-			/* Translators: 1: Points earned in this stage, 2: Points available in this stage. */
+			/* Translators: 1: Checks passed in this stage, 2: Total checks in this stage. */
 			__( '%1$d / %2$d', 'elementor' ),
 			stage.earned,
 			stage.total,

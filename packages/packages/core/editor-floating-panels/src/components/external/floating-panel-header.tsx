@@ -18,6 +18,7 @@ type Props = {
 	actions?: FloatingPanelHeaderAction[];
 	badge?: string;
 	titleVariant?: TypographyProps[ 'variant' ];
+	onClose?: () => void;
 };
 
 function HeaderAction( {
@@ -51,8 +52,21 @@ function HeaderAction( {
 	);
 }
 
-export default function FloatingPanelHeader( { panelId, title, icon: Icon, actions, badge, titleVariant }: Props ) {
+export default function FloatingPanelHeader( {
+	panelId,
+	title,
+	icon: Icon,
+	actions,
+	badge,
+	titleVariant,
+	onClose,
+}: Props ) {
 	const { close } = useFloatingPanelActions( panelId );
+
+	const handleClose = () => {
+		onClose?.();
+		close();
+	};
 	const isDraggable = useSelector( ( state: GlobalState ) => selectIsDraggable( state, panelId ) );
 	const hasActions = Boolean( actions?.length );
 	const panelZIndex = useFloatingPanelZIndex( panelId );
@@ -111,7 +125,7 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon, actio
 				size="small"
 				color="inherit"
 				aria-label={ __( 'Close panel', 'elementor' ) }
-				onClick={ close }
+				onClick={ handleClose }
 				sx={ { borderRadius: 0, p: 1 } }
 			>
 				<XIcon fontSize="small" />
