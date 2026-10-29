@@ -4,8 +4,8 @@ namespace Elementor\Modules\DesignSystemSync\Classes;
 
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
-use Elementor\Modules\GlobalClasses\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
