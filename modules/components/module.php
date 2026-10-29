@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
+use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -67,6 +68,7 @@ class Module extends BaseModule {
 		$this->register_variants_experiment();
 
 		$this->register_component_post_type();
+		( new Import_Export_Customization() )->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
