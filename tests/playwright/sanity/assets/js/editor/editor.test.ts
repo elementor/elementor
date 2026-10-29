@@ -39,16 +39,13 @@ test.describe( 'Editor tests', () => {
 		// Act
 		await editor.openElementsPanel();
 
-		await editor.page.locator( '#elementor-panel .e-widget-new-badge' ).evaluateAll( ( badges ) => {
-			badges.forEach( ( badge ) => {
-				( badge as HTMLElement ).style.visibility = 'hidden';
-			} );
-		} );
+		const panel = editor.page.locator( 'aside#elementor-panel' );
 
 		// Assert
-		expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,
+			mask: [ editor.page.locator( '.e-widget-new-badge' ) ],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );
