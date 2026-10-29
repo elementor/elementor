@@ -172,6 +172,29 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertStringContainsString( untrailingslashit( get_permalink( $post->ID ) ) . '.md', $link );
 	}
 
+	public function test_build_singular_markdown_link__uses_index_md_for_static_front_page() {
+		// Arrange
+		$post_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Static Front Page',
+		] );
+		update_option( 'show_on_front', 'page' );
+		update_option( 'page_on_front', $post_id );
+
+		// Act
+		$link = $this->link_headers->build_singular_markdown_link( get_post( $post_id ) );
+
+		// Assert
+		$this->assertSame(
+			'<' . untrailingslashit( home_url() ) . '/index.md>; rel="alternate"; type="text/markdown"',
+			$link
+		);
+
+		delete_option( 'page_on_front' );
+		update_option( 'show_on_front', 'posts' );
+	}
+
 	public function test_build_singular_markdown_link__omits_noindex_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status' => 'publish',

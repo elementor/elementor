@@ -142,8 +142,6 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 	if ( SCANNER_STATE_RESCANNING === view ) {
 		return (
 			<RescanSkeletonView
-				score={ flow.ringScore }
-				ringDurationMs={ flow.ringDurationMs }
 				showBanner={ ! flow.isActivated }
 				agentAccessUrl={ agentAccessUrl }
 			/>

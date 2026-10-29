@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolv
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Style_Target;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Setting;
@@ -484,6 +485,96 @@ class Test_Element_Config_Applier extends TestCase {
 		];
 	}
 
+	public function test_apply__v4_skips_sensitive_props_and_keeps_the_stored_value() {
+		// Arrange.
+		$stored_api_key = [
+			'$$type' => 'string',
+			'value' => 'stored-secret',
+		];
+		$form = [
+			'widgetType' => 'sensitive-widget',
+			'settings' => [ 'api_key' => $stored_api_key ],
+		];
+		$index = [ 'hero-title' => &$form ];
+
+		// Act.
+		$result = $this->make_applier()->apply(
+			$index,
+			[
+				'hero-title' => [
+					'title' => 'Hello',
+					'api_key' => 'agent-secret',
+				],
+			],
+			[
+				'sensitive-widget' => [ 'class' => Sensitive_Settings_Widget::class ],
+			]
+		);
+
+		// Assert.
+		$this->assertNull( $result['error'] );
+		$this->assertSame( $stored_api_key, $form['settings']['api_key'] );
+		$this->assertSame( 'Hello', $form['settings']['title']['value'] );
+
+		$warning = $result['warnings']->all()[0] ?? [];
+		$this->assertSame( 'prop_not_in_schema', $warning['code'] ?? null );
+		$this->assertStringContainsString( '"api_key"', $warning['message'] ?? '' );
+	}
+
+	public function test_apply__v4_does_not_clear_sensitive_props() {
+		// Arrange.
+		$stored_api_key = [
+			'$$type' => 'string',
+			'value' => 'stored-secret',
+		];
+		$form = [
+			'widgetType' => 'sensitive-widget',
+			'settings' => [ 'api_key' => $stored_api_key ],
+		];
+		$index = [ 'hero-title' => &$form ];
+
+		// Act.
+		$result = $this->make_applier()->apply(
+			$index,
+			[ 'hero-title' => [ 'api_key' => null ] ],
+			[
+				'sensitive-widget' => [ 'class' => Sensitive_Settings_Widget::class ],
+			]
+		);
+
+		// Assert.
+		$this->assertSame( $stored_api_key, $form['settings']['api_key'] );
+		$this->assertSame( 'prop_not_in_schema', $result['warnings']->all()[0]['code'] ?? null );
+	}
+
+	public function test_apply__v4_still_writes_props_that_are_only_not_exportable() {
+		// Arrange.
+		$form = [
+			'widgetType' => 'sensitive-widget',
+			'settings' => [],
+		];
+		$index = [ 'hero-title' => &$form ];
+
+		// Act.
+		$result = $this->make_applier()->apply(
+			$index,
+			[ 'hero-title' => [ 'list_id' => 'abc' ] ],
+			[
+				'sensitive-widget' => [ 'class' => Sensitive_Settings_Widget::class ],
+			]
+		);
+
+		// Assert.
+		$this->assertTrue( $result['warnings']->is_empty() );
+		$this->assertSame(
+			[
+				'$$type' => 'string',
+				'value' => 'abc',
+			],
+			$form['settings']['list_id']
+		);
+	}
+
 	private function apply_to_mock_widget( array &$index, array $settings ): array {
 		return $this->make_applier()->apply(
 			$index,
@@ -502,6 +593,16 @@ class Plain_Settings_Widget {
 			'count' => Number_Prop_Type::make(),
 			'visible' => Boolean_Prop_Type::make(),
 			'tag' => String_Prop_Type::make()->enum( [ 'h1', 'h2' ] ),
+		];
+	}
+}
+
+class Sensitive_Settings_Widget {
+	public static function get_props_schema(): array {
+		return [
+			'title' => String_Prop_Type::make(),
+			'api_key' => String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() ),
+			'list_id' => String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() ),
 		];
 	}
 }
