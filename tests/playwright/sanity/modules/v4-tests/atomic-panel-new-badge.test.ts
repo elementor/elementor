@@ -19,10 +19,10 @@ test.describe( 'Atomic panel New badge (ED-25847) @v4-tests', () => {
 	const expectNewBadgeOnTile = async (
 		page: Page,
 		categorySelector: string,
-		libraryElementType: string
+		libraryElementType: string,
 	) => {
 		const tile = page.locator(
-			`${ categorySelector } .elementor-panel-category-items [data-library-element-type="${ libraryElementType }"]`
+			`${ categorySelector } .elementor-panel-category-items [data-library-element-type="${ libraryElementType }"]`,
 		);
 		await expect( tile ).toBeVisible();
 		await expect( tile.locator( '.e-widget-new-badge' ) ).toBeVisible();
