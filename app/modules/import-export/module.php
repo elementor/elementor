@@ -13,6 +13,7 @@ use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -118,7 +119,9 @@ class Module extends BaseModule {
 	 */
 	public function register_settings_tab( Tools $tools ) {
 		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Website Templates', 'elementor' ),
+			'label' => EditorOneModule::is_admin_navigation_active()
+				? esc_html__( 'Import & Export', 'elementor' )
+				: esc_html__( 'Website Templates', 'elementor' ),
 			'sections' => [
 				'intro' => [
 					'label' => esc_html__( 'Website Templates', 'elementor' ),

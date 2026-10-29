@@ -2,9 +2,13 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
+use Elementor\App\Modules\ImportExport\Module as Import_Export_Module;
+use Elementor\App\Modules\ImportExportCustomization\Module as Import_Export_Customization_Module;
+use Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Module;
 use Elementor\Plugin;
+use Elementor\Tools;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -77,5 +81,68 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		$this->assertTrue( Module::is_admin_navigation_active() );
 		$this->assertFalse( $module->get_component( 'sidebar-navigation-handler' ) );
 		$this->assertNotFalse( $module->get_component( 'top-bar-handler' ) );
+	}
+
+	public function settings_title_data_provider(): array {
+		return [
+			'experiment inactive' => [ Experiments_Manager::STATE_INACTIVE, 'Elementor' ],
+			'experiment active' => [ Experiments_Manager::STATE_ACTIVE, 'Settings' ],
+		];
+	}
+
+	/**
+	 * @dataProvider settings_title_data_provider
+	 */
+	public function test_settings_page_title_depends_on_experiment_state( string $state, string $expected_title ) {
+		// Arrange
+		$this->set_experiment_state( $state );
+		$get_page_title = new \ReflectionMethod( Plugin::$instance->settings, 'get_page_title' );
+		$get_page_title->setAccessible( true );
+
+		// Act
+		$title = $get_page_title->invoke( Plugin::$instance->settings );
+
+		// Assert
+		$this->assertSame( $expected_title, $title );
+	}
+
+	public function tools_tab_data_provider(): array {
+		return [
+			'import export, experiment inactive' => [ Import_Export_Module::class, Experiments_Manager::STATE_INACTIVE, 'Website Templates' ],
+			'import export, experiment active' => [ Import_Export_Module::class, Experiments_Manager::STATE_ACTIVE, 'Import & Export' ],
+			'import export customization, experiment inactive' => [ Import_Export_Customization_Module::class, Experiments_Manager::STATE_INACTIVE, 'Website Templates' ],
+			'import export customization, experiment active' => [ Import_Export_Customization_Module::class, Experiments_Manager::STATE_ACTIVE, 'Import & Export' ],
+		];
+	}
+
+	/**
+	 * @dataProvider tools_tab_data_provider
+	 */
+	public function test_import_export_tools_tab_label_depends_on_experiment_state( string $module_class, string $state, string $expected_label ) {
+		// Arrange
+		$this->set_experiment_state( $state );
+		remove_all_actions( 'elementor/admin/after_create_settings/' . Tools::PAGE_ID );
+		$tools = new Tools();
+
+		// Act
+		( new $module_class() )->register_settings_tab( $tools );
+
+		// Assert
+		$this->assertSame( $expected_label, html_entity_decode( $tools->get_tabs()['import-export-kit']['label'] ) );
+	}
+
+	public function test_website_templates_menu_label_is_unchanged_when_experiment_is_active() {
+		// Arrange
+		$this->set_experiment_state( Experiments_Manager::STATE_ACTIVE );
+
+		// Act
+		$label = ( new Editor_One_Website_Templates_Menu() )->get_label();
+
+		// Assert
+		$this->assertSame( 'Website Templates', $label );
+	}
+
+	private function set_experiment_state( string $state ): void {
+		Plugin::$instance->experiments->set_feature_default_state( Module::ADMIN_NAVIGATION_EXPERIMENT_NAME, $state );
 	}
 }

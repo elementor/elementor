@@ -7,6 +7,7 @@ use Elementor\App\Modules\ImportExportCustomization\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Modules\Variables\Storage\Constants;
@@ -120,7 +121,9 @@ class Module extends BaseModule {
 	 */
 	public function register_settings_tab( Tools $tools ) {
 		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Website Templates', 'elementor' ),
+			'label' => EditorOneModule::is_admin_navigation_active()
+				? esc_html__( 'Import & Export', 'elementor' )
+				: esc_html__( 'Website Templates', 'elementor' ),
 			'sections' => [
 				'intro' => [
 					'label' => esc_html__( 'Website Templates', 'elementor' ),
