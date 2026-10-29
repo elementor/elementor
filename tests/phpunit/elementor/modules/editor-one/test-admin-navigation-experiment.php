@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 use Elementor\App\Modules\ImportExport\Module as Import_Export_Module;
 use Elementor\App\Modules\ImportExportCustomization\Module as Import_Export_Customization_Module;
 use Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu;
+use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Module;
 use Elementor\Plugin;
@@ -81,6 +82,30 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		$this->assertTrue( Module::is_admin_navigation_active() );
 		$this->assertFalse( $module->get_component( 'sidebar-navigation-handler' ) );
 		$this->assertNotFalse( $module->get_component( 'top-bar-handler' ) );
+	}
+
+	public function menu_script_data_provider(): array {
+		return [
+			'experiment inactive' => [ Experiments_Manager::STATE_INACTIVE, true ],
+			'experiment active' => [ Experiments_Manager::STATE_ACTIVE, false ],
+		];
+	}
+
+	/**
+	 * @dataProvider menu_script_data_provider
+	 */
+	public function test_menu_script_is_enqueued_only_when_experiment_is_inactive( string $state, bool $expected_enqueued ) {
+		// Arrange
+		$this->set_experiment_state( $state );
+		wp_dequeue_script( 'editor-one-menu' );
+		wp_dequeue_style( 'elementor-admin-menu' );
+
+		// Act
+		( new Elementor_One_Menu_Manager() )->enqueue_admin_menu_assets();
+
+		// Assert
+		$this->assertSame( $expected_enqueued, wp_script_is( 'editor-one-menu', 'enqueued' ) );
+		$this->assertTrue( wp_style_is( 'elementor-admin-menu', 'enqueued' ) );
 	}
 
 	public function settings_title_data_provider(): array {

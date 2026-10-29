@@ -8,6 +8,7 @@ use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -342,6 +343,10 @@ class Elementor_One_Menu_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		if ( Editor_One_Module::is_admin_navigation_active() ) {
+			return;
+		}
 
 		$config = [
 			'editorFlyout' => $this->menu_data_provider->get_third_level_data(
