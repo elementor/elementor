@@ -1,4 +1,5 @@
 import { type BrowserContext, type Page, expect } from '@playwright/test';
+import { hidePromoChromeForScreenshot } from '../../../../assets/promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { cleanupVariables, initVariablesManagerTest } from './utils';
@@ -46,6 +47,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		const variableRow = await variablesManagerPage.createVariableFromManager( addedFontVariable );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedFontVariable.value ) ).toBeVisible();
+		await hidePromoChromeForScreenshot( page );
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'font-variable-screenshot.png' );
 	} );
 
@@ -54,6 +56,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		const variableRow = await variablesManagerPage.createVariableFromManager( addedColorVariable );
 		await expect( variableRow ).toBeVisible();
 		await expect( variableRow.getByText( addedColorVariable.value ) ).toBeVisible();
+		await hidePromoChromeForScreenshot( page );
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'color-variable-screenshot.png' );
 	} );
 
