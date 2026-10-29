@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { hidePromoChromeForScreenshot } from '../../../../assets/promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
@@ -38,6 +39,8 @@ test.describe( 'Editor tests', () => {
 
 		// Act
 		await editor.openElementsPanel();
+
+		await hidePromoChromeForScreenshot( editor.page );
 
 		// Assert
 		expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
