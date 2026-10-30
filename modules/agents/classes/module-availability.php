@@ -67,7 +67,7 @@ class Module_Availability {
 		if ( Module::has_physical_llms_file() ) {
 			return [
 				'code'    => 'physical_file',
-				'message' => __( 'An llms.txt file already exists on your server and is served instead. Delete it to turn this on.', 'elementor' ),
+				'message' => __( 'An llms.txt file already exists on your server and is served instead. Take it over here to turn this on.', 'elementor' ),
 			];
 		}
 
