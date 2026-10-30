@@ -312,6 +312,39 @@ class Global_Classes_REST_API {
 		$order = $request->get_param( 'order' ) ?? [];
 
 		$repository = $this->get_repository()->set_preview( $is_preview );
+		$kit = $this->get_kit();
+		$kit_id = $kit ? (int) $kit->get_main_id() : 0;
+
+		// Without a kit there is no shared index to protect, so there is nothing to lock. Save as before.
+		if ( ! $kit_id ) {
+			return $this->put_serialized( $request, $repository, $changes, $added_ids, $deleted_ids, $order );
+		}
+
+		$lock_token = Global_Classes_Lock::acquire( $kit_id );
+
+		if ( null === $lock_token ) {
+			return Error_Builder::make( 'global_classes_conflict' )
+				->set_status( 409 )
+				->set_message( __( 'Global classes are currently being updated by another request. Please try again.', 'elementor' ) )
+				->build();
+		}
+
+		// The kit meta (order, labels) was cached in memory during boot, before the lock was taken.
+		// Drop it so the read inside the lock sees what the previous lock holder committed.
+		if ( function_exists( 'wp_cache_flush_runtime' ) ) {
+			wp_cache_flush_runtime();
+		}
+
+		try {
+			return $this->put_serialized( $request, $repository, $changes, $added_ids, $deleted_ids, $order );
+		} finally {
+			Global_Classes_Lock::release( $kit_id, $lock_token );
+		}
+	}
+
+	private function put_serialized( \WP_REST_Request $request, Global_Classes_Repository $repository, array $changes, array $added_ids, array $deleted_ids, array $order ) {
+		// Read the authoritative list inside the lock so a concurrent save cannot
+		// interleave between this read and the index rewrite below.
 		$all_label_by_id = $repository->all_labels();
 		$existing_label_list = $this->global_classes_existing_label_list( $all_label_by_id, $deleted_ids );
 		$total_count = count( $all_label_by_id ) - count( $deleted_ids ) + count( $added_ids );
