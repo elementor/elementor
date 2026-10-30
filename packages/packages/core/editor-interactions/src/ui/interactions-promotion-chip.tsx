@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef, type MouseEvent, type RefObject, useCallback, useImperativeHandle, useState } from 'react';
+import { forwardRef, type MouseEvent, type RefObject, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { type PromotionTrackingData, trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
@@ -13,19 +13,24 @@ export type InteractionsPromotionChipProps = {
 };
 
 export type InteractionsPromotionChipRef = {
-	toggle: () => void;
+	toggle: ( context?: { target_value?: string } ) => void;
 };
 
 export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRef, InteractionsPromotionChipProps >(
 	( { content, upgradeUrl, anchorRef, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
+		const trackingPayloadRef = useRef( trackingData );
 
 		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
-		const toggle = useCallback( () => {
+		const toggle = useCallback( ( context?: { target_value?: string } ) => {
 			setIsOpen( ( prev ) => {
 				if ( ! prev ) {
-					trackViewPromotion( trackingData );
+					const payload: PromotionTrackingData = context?.target_value
+						? { ...trackingData, target_value: context.target_value }
+						: trackingData;
+					trackingPayloadRef.current = payload;
+					trackViewPromotion( payload );
 				}
 				return ! prev;
 			} );
@@ -51,7 +56,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 					e.stopPropagation();
 					setIsOpen( false );
 				} }
-				onCtaClick={ () => trackUpgradePromotionClick( trackingData ) }
+				onCtaClick={ () => trackUpgradePromotionClick( trackingPayloadRef.current ) }
 			>
 				<Box
 					onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }

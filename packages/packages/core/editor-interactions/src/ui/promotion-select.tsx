@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type MouseEvent, useRef } from 'react';
+import { type KeyboardEvent, type MouseEvent, useCallback, useRef } from 'react';
 import { type PromotionTrackingData } from '@elementor/editor-controls';
 import { MenuListItem } from '@elementor/editor-ui';
 import { MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
@@ -18,6 +18,12 @@ type PromotionSelectProps = {
 	trackingData: PromotionTrackingData;
 };
 
+const LOCKED_OPTION_SX = {
+	pl: 3,
+	opacity: 0.38,
+	cursor: 'not-allowed',
+};
+
 export function PromotionSelect( {
 	value,
 	onChange,
@@ -31,10 +37,28 @@ export function PromotionSelect( {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 	const anchorRef = useRef< HTMLElement >( null );
 
+	const openPromotionForOption = useCallback( ( optionKey: string ) => {
+		promotionRef.current?.toggle( { target_value: optionKey } );
+	}, [] );
+
+	const handleSelectChange = ( e: SelectChangeEvent< string > ) => {
+		if ( Object.prototype.hasOwnProperty.call( disabledOptions, e.target.value ) ) {
+			return;
+		}
+
+		onChange?.( e.target.value );
+	};
+
+	const handleLockedOptionActivate = ( optionKey: string, event: MouseEvent | KeyboardEvent ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		openPromotionForOption( optionKey );
+	};
+
 	return (
 		<Select
 			value={ value }
-			onChange={ ( e: SelectChangeEvent< string > ) => onChange?.( e.target.value ) }
+			onChange={ handleSelectChange }
 			fullWidth
 			displayEmpty
 			size="tiny"
@@ -71,7 +95,18 @@ export function PromotionSelect( {
 			</MenuSubheader>
 
 			{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
-				<MenuListItem key={ key } value={ key } disabled sx={ { pl: 3 } }>
+				<MenuListItem
+					key={ key }
+					value={ key }
+					aria-disabled
+					sx={ LOCKED_OPTION_SX }
+					onMouseDown={ ( e: MouseEvent ) => handleLockedOptionActivate( key, e ) }
+					onKeyDown={ ( e: KeyboardEvent ) => {
+						if ( 'Enter' === e.key || ' ' === e.key ) {
+							handleLockedOptionActivate( key, e );
+						}
+					} }
+				>
 					{ label }
 				</MenuListItem>
 			) ) }

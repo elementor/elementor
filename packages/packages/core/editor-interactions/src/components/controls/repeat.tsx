@@ -4,7 +4,7 @@ import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/edit
 import { Number123Icon, RepeatIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { InteractionsPromotionChip } from '../../ui/interactions-promotion-chip';
+import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from '../../ui/interactions-promotion-chip';
 import { PromotionOverlayLayout } from '../../ui/promotion-overlay-layout';
 
 const TRACKING_DATA = { target_name: 'interactions_repeat', location_l2: 'interactions' } as const;
@@ -19,31 +19,46 @@ export const REPEAT_TOOLTIPS = {
 	loop: __( 'Infinite repeat', 'elementor' ),
 };
 
+const REPEAT_TARGET_VALUES = {
+	[ REPEAT_OPTIONS.times ]: 'times',
+	[ REPEAT_OPTIONS.loop ]: 'loop',
+} as const;
+
 export function Repeat() {
 	const repeatContainerRef = useRef< HTMLDivElement >( null );
+	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 
 	const options: ToggleButtonGroupItem< string >[] = [
 		{
 			value: REPEAT_OPTIONS.times,
-			disabled: true,
+			promotionLocked: true,
 			label: REPEAT_TOOLTIPS.times,
 			renderContent: ( { size } ) => <Number123Icon fontSize={ size } />,
 			showTooltip: true,
 		},
 		{
 			value: REPEAT_OPTIONS.loop,
-			disabled: true,
+			promotionLocked: true,
 			label: REPEAT_TOOLTIPS.loop,
 			renderContent: ( { size } ) => <RepeatIcon fontSize={ size } />,
 			showTooltip: true,
 		},
 	];
 
+	const handleChange = ( newValue: string ) => {
+		const targetValue = REPEAT_TARGET_VALUES[ newValue as keyof typeof REPEAT_TARGET_VALUES ];
+
+		if ( targetValue ) {
+			promotionRef.current?.toggle( { target_value: targetValue } );
+		}
+	};
+
 	return (
 		<PromotionOverlayLayout
 			ref={ repeatContainerRef }
 			promotionChip={
 				<InteractionsPromotionChip
+					ref={ promotionRef }
 					content={ __( 'Upgrade to control how many times the animation repeats.', 'elementor' ) }
 					upgradeUrl={ 'https://go.elementor.com/go-pro-interactions-repeat-modal/' }
 					anchorRef={ repeatContainerRef }
@@ -51,7 +66,7 @@ export function Repeat() {
 				/>
 			}
 		>
-			<ToggleButtonGroupUi items={ options } exclusive onChange={ () => {} } value={ '' } />
+			<ToggleButtonGroupUi items={ options } exclusive onChange={ handleChange } value={ '' } />
 		</PromotionOverlayLayout>
 	);
 }
