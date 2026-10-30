@@ -36,6 +36,8 @@ class Test_Markdown_Not_Found extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		unset( $_SERVER['HTTP_ACCEPT'], $_GET['format'] );
+
 		remove_action( 'template_redirect', [ $this->not_found, 'on_template_redirect' ], Markdown_Not_Found::AFTER_CANONICAL_REDIRECT_PRIORITY );
 
 		delete_option( Agent_Ready_Settings::OPTION );
@@ -95,6 +97,68 @@ class Test_Markdown_Not_Found extends Elementor_Test_Base {
 		$this->assertSame( 'text/markdown; charset=utf-8', $headers['Content-Type'] );
 		$this->assertSame( 'Accept', $headers['Vary'] );
 		$this->assertSame( 'noindex', $headers['X-Robots-Tag'] );
+	}
+
+	public function test_should_serve_not_found__true_for_markdown_accept_header_on_not_found_page() {
+		// Arrange
+		$_SERVER['HTTP_ACCEPT'] = 'text/markdown';
+		$this->go_to( home_url( '/?p=' . self::NON_EXISTENT_POST_ID ) );
+
+		// Act
+		$should_serve = $this->not_found->should_serve_not_found();
+
+		// Assert
+		$this->assertTrue( is_404() );
+		$this->assertTrue( $should_serve );
+	}
+
+	public function test_should_serve_not_found__true_for_format_query_param_on_not_found_page() {
+		// Arrange
+		$this->go_to( home_url( '/?p=' . self::NON_EXISTENT_POST_ID . '&format=markdown' ) );
+		$_GET['format'] = 'markdown';
+
+		// Act
+		$should_serve = $this->not_found->should_serve_not_found();
+
+		// Assert
+		$this->assertTrue( is_404() );
+		$this->assertTrue( $should_serve );
+	}
+
+	public function test_should_serve_not_found__true_for_md_path_on_not_found_page() {
+		// Arrange
+		$this->go_to( home_url( '/?p=' . self::NON_EXISTENT_POST_ID ) );
+		$_SERVER['REQUEST_URI'] = '/missing-page.md';
+
+		// Act
+		$should_serve = $this->not_found->should_serve_not_found();
+
+		// Assert
+		$this->assertTrue( is_404() );
+		$this->assertTrue( $should_serve );
+	}
+
+	public function test_should_serve_not_found__false_for_html_request_on_not_found_page() {
+		// Arrange
+		$this->go_to( home_url( '/?p=' . self::NON_EXISTENT_POST_ID ) );
+
+		// Act
+		$should_serve = $this->not_found->should_serve_not_found();
+
+		// Assert
+		$this->assertTrue( is_404() );
+		$this->assertFalse( $should_serve );
+	}
+
+	public function test_build_response_headers__matches_markdown_endpoint_base_headers() {
+		// Arrange
+		$endpoint = new Markdown_Endpoint( $this->settings );
+
+		// Act
+		$headers = $this->not_found->build_response_headers();
+
+		// Assert
+		$this->assertSame( $endpoint->build_base_markdown_headers(), $headers );
 	}
 
 	public function test_on_template_redirect__ignores_markdown_request_when_page_exists() {
