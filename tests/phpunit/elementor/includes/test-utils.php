@@ -11,6 +11,8 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function tearDown(): void {
+		$this->remove_elementor_pro_plugin_stub();
+
 		parent::tearDown();
 
 		remove_all_filters( 'elementor/allowed_html_wrapper_tags' );
@@ -585,21 +587,11 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	private function set_pro_plugin_active( bool $active ): void {
-		$active_plugins = (array) get_option( 'active_plugins', [] );
-		$active_plugins = array_values(
-			array_filter(
-				$active_plugins,
-				static function ( $plugin ): bool {
-					return self::PRO_PLUGIN_FILE !== $plugin;
-				}
-			)
-		);
-
 		if ( $active ) {
-			$active_plugins[] = self::PRO_PLUGIN_FILE;
+			activate_plugin( self::PRO_PLUGIN_FILE, '', false, true );
+		} else {
+			deactivate_plugins( self::PRO_PLUGIN_FILE, true );
 		}
-
-		update_option( 'active_plugins', $active_plugins );
 
 		if ( is_multisite() ) {
 			update_site_option( 'active_sitewide_plugins', [] );
@@ -610,6 +602,25 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		if ( is_multisite() ) {
 			wp_cache_delete( 'active_sitewide_plugins', 'options' );
 		}
+
+		wp_clean_plugins_cache();
+	}
+
+	private function remove_elementor_pro_plugin_stub(): void {
+		deactivate_plugins( self::PRO_PLUGIN_FILE, true );
+
+		$plugin_dir = WP_PLUGIN_DIR . '/elementor-pro';
+		$plugin_path = $plugin_dir . '/elementor-pro.php';
+
+		if ( file_exists( $plugin_path ) ) {
+			wp_delete_file( $plugin_path );
+		}
+
+		if ( is_dir( $plugin_dir ) ) {
+			@rmdir( $plugin_dir );
+		}
+
+		wp_clean_plugins_cache();
 	}
 
 	public function test_is_pro_installed_and_not_active__true_when_installed_but_inactive(): void {

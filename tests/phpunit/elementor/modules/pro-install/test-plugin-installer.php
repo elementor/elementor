@@ -11,6 +11,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Plugin_Installer extends Elementor_Test_Base {
 
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->remove_elementor_pro_plugin_stub();
+	}
+
+	public function tearDown(): void {
+		$this->remove_elementor_pro_plugin_stub();
+
+		parent::tearDown();
+	}
+
+	private function remove_elementor_pro_plugin_stub(): void {
+		deactivate_plugins( 'elementor-pro/elementor-pro.php', true );
+
+		$plugin_dir = WP_PLUGIN_DIR . '/elementor-pro';
+		$plugin_path = $plugin_dir . '/elementor-pro.php';
+
+		if ( file_exists( $plugin_path ) ) {
+			wp_delete_file( $plugin_path );
+		}
+
+		if ( is_dir( $plugin_dir ) ) {
+			@rmdir( $plugin_dir );
+		}
+
+		wp_clean_plugins_cache();
+	}
+
 	public function test_install_with_empty_package_url_returns_install_failed_not_subscription_error(): void {
 		$installer = new Plugin_Installer( 'elementor-pro', '' );
 		$result = $installer->install();

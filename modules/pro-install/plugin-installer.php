@@ -16,6 +16,10 @@ class Plugin_Installer {
 
 		$plugin_data = $this->get_plugin_path();
 		if ( empty( $plugin_data ) ) {
+			if ( empty( $this->get_package_url() ) ) {
+				return $this->install_failed_error( 'no_package_url' );
+			}
+
 			$install_result = $this->do_install();
 			if ( is_wp_error( $install_result ) ) {
 				return $this->install_failed_error( $install_result->get_error_code() );
