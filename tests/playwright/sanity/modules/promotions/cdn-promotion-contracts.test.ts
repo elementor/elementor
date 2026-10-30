@@ -111,7 +111,16 @@ test.describe( 'Side menu promotion CDN contracts @promotions @cdn-promotions', 
 		} );
 
 		await expect( upgradeLink ).toBeVisible();
-		await expect( upgradeLink ).toHaveAttribute( 'href', SIDE_MENU_FIXTURE.url! );
+		await expect( upgradeLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'elementor-one-upgrade' ),
+		);
+
+		const upgradePopupPromise = page.waitForEvent( 'popup' );
+		await upgradeLink.click();
+		const upgradePopup = await upgradePopupPromise;
+		await upgradePopup.waitForURL( SIDE_MENU_FIXTURE.url!, { timeout: timeouts.heavyAction } );
+		await upgradePopup.close();
 	} );
 
 	test( 'Side menu shows default Upgrade label when CDN campaign is inactive', async ( { page, apiRequests }, testInfo ) => {
@@ -123,7 +132,10 @@ test.describe( 'Side menu promotion CDN contracts @promotions @cdn-promotions', 
 
 		const upgradeLink = page.locator( '#adminmenu' ).getByRole( 'link', { name: 'Upgrade' } );
 		await expect( upgradeLink ).toBeVisible();
-		await expect( upgradeLink ).not.toHaveAttribute( 'href', SIDE_MENU_FIXTURE.url! );
+		await expect( upgradeLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'elementor-one-upgrade' ),
+		);
 	} );
 } );
 

@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import {
-	hidePanelNewBadgesForScreenshot,
 	hidePromoChromeForScreenshot,
 	seedInactivePromotionCdnForEditorChrome,
 } from '../../../../assets/promotion-cdn';
@@ -49,14 +48,14 @@ test.describe( 'Editor tests', () => {
 		await editor.openElementsPanel();
 
 		await hidePromoChromeForScreenshot( editor.page );
-		await hidePanelNewBadgesForScreenshot( editor.page );
 
 		const panel = editor.page.locator( 'aside#elementor-panel' );
 
-		// Assert
+		// Assert — baseline matches release/beta panel snapshot; mask New badges; hide CDN promo chrome.
 		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,
+			mask: [ editor.page.locator( '.e-widget-new-badge' ) ],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );
