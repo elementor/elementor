@@ -10,11 +10,8 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { getSaveErrorMessage } from '../../hooks/get-save-error-message';
 import { DIALOG_Z_INDEX } from '../content-preview-dialog';
-
-const getErrorMessage = ( reason ) => ( 'string' === typeof reason && reason )
-	? reason
-	: __( 'Something went wrong. Please try again.', 'elementor' );
 
 export const LlmsConfirmDialog = ( { title, message, confirmLabel, onConfirm, onClose } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -27,7 +24,7 @@ export const LlmsConfirmDialog = ( { title, message, confirmLabel, onConfirm, on
 		onConfirm()
 			.then( onClose )
 			.catch( ( reason ) => {
-				setError( getErrorMessage( reason ) );
+				setError( getSaveErrorMessage( reason ) );
 				setIsSubmitting( false );
 			} );
 	};
