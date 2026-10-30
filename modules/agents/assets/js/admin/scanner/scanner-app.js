@@ -39,9 +39,9 @@ import { useScannerFlow } from './use-scanner-flow';
 
 const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
 	<Box
-		bgcolor={ fillViewport ? SCANNER_COLORS.paper : SCANNER_COLORS.page }
 		boxSizing="border-box"
 		sx={ fillViewport ? {
+			backgroundColor: SCANNER_COLORS.paper,
 			display: 'flex',
 			flexDirection: 'column',
 			width: `calc(100% + ${ SCANNER_LAYOUT.wrapInlinePadding * 2 }px)`,
