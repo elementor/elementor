@@ -1,69 +1,83 @@
-import {
-	type PromotionTrackingData,
-	trackUpgradePromotionClick,
-	trackViewPromotion,
-} from '@elementor/editor-controls';
 import { getMixpanel } from '@elementor/events';
 
-export type ProSetupPromotionState = 'install' | 'activate' | 'connect';
+import {
+	CTA_CLICKED_EVENT,
+	CTA_TARGET_NAMES,
+	PANEL_DISMISSED_EVENT,
+	PANEL_VIEWED_EVENT,
+	POPOVER_OPENED_EVENT,
+	type ProSetupPromotionState,
+	STEP_COMPLETED_EVENT,
+	TRACKING_LOCATION_L1,
+	TRACKING_TARGET_LOCATION,
+	TRACKING_WINDOW_NAME,
+} from './analytics/constants';
 
-const TARGET_NAME = 'pro_setup_panel';
-
-function getTrackingData( state: ProSetupPromotionState ): PromotionTrackingData {
-	return {
-		target_name: TARGET_NAME,
-		target_location: 'widget_panel',
-		location_l1: state,
-	};
-}
-
-function dispatchPromotionEvent(
-	state: ProSetupPromotionState,
-	eventNameKey: 'viewPromotion' | 'upgradePromotionClick',
-	interactionResult: string,
-	interactionDescription: string,
-	extra: Record< string, unknown > = {}
-): void {
-	const { dispatchEvent, config } = getMixpanel();
-	const eventName =
-		'viewPromotion' === eventNameKey
-			? config?.names?.promotions?.viewPromotion
-			: config?.names?.promotions?.upgradePromotionClick;
-
-	if ( ! eventName ) {
-		return;
-	}
-
-	dispatchEvent( eventName, {
-		window_name: config?.appTypes?.editor ?? 'editor',
-		interaction_type: config?.triggers?.click ?? 'Click',
-		target_name: TARGET_NAME,
-		target_location: 'widget_panel',
-		location_l1: state,
-		interaction_result: interactionResult,
-		interaction_description: interactionDescription,
-		...extra,
+const dispatch = ( eventName: string, payload: Record< string, unknown > ) => {
+	getMixpanel().dispatchEvent?.( eventName, {
+		window_name: TRACKING_WINDOW_NAME,
+		target_location: TRACKING_TARGET_LOCATION,
+		location_l1: TRACKING_LOCATION_L1,
+		state: payload.state,
+		...payload,
 	} );
-}
+};
 
-/** Banner visible in the widgets panel (`view_promotion`). */
+const withState = ( state: ProSetupPromotionState, payload: Record< string, unknown > ) => ( {
+	state,
+	...payload,
+} );
+
+/** Banner shown in the widgets panel (APT-105-style funnel). */
 export function trackProSetupPromotionImpression( state: ProSetupPromotionState ): void {
-	trackViewPromotion( getTrackingData( state ) );
+	dispatch(
+		PANEL_VIEWED_EVENT,
+		withState( state, {
+			interaction_type: 'view',
+			target_type: 'banner',
+			target_name: 'pro_setup_panel',
+			interaction_result: 'panel_viewed',
+		} )
+	);
 }
 
-/** User opened the setup popover (`view_promotion`). */
+/** User opened the setup popover from the banner. */
 export function trackProSetupPromotionBannerClick( state: ProSetupPromotionState ): void {
-	dispatchPromotionEvent( state, 'viewPromotion', 'promotion_viewed', 'user_opened_pro_setup_popover' );
+	dispatch(
+		POPOVER_OPENED_EVENT,
+		withState( state, {
+			interaction_type: 'click',
+			target_type: 'banner',
+			target_name: 'pro_setup_panel',
+			interaction_result: 'popover_opened',
+		} )
+	);
 }
 
-/** User dismissed the notice (`view_promotion`). */
+/** User dismissed the notice for the cooldown period. */
 export function trackProSetupPromotionDismiss( state: ProSetupPromotionState ): void {
-	dispatchPromotionEvent( state, 'viewPromotion', 'promotion_dismissed', 'user_dismissed_pro_setup_panel' );
+	dispatch(
+		PANEL_DISMISSED_EVENT,
+		withState( state, {
+			interaction_type: 'click',
+			target_type: 'button',
+			target_name: 'dismiss',
+			interaction_result: 'panel_dismissed',
+		} )
+	);
 }
 
-/** Primary CTA in the popover (`upgrade_promotion_click`). */
+/** Primary CTA in the popover (install / activate / connect). */
 export function trackProSetupPromotionCtaClick( state: ProSetupPromotionState ): void {
-	trackUpgradePromotionClick( getTrackingData( state ) );
+	dispatch(
+		CTA_CLICKED_EVENT,
+		withState( state, {
+			interaction_type: 'click',
+			target_type: 'button',
+			target_name: CTA_TARGET_NAMES[ state ],
+			interaction_result: 'cta_clicked',
+		} )
+	);
 }
 
 export function trackProSetupPromotionResult(
@@ -72,18 +86,21 @@ export function trackProSetupPromotionResult(
 	action: string,
 	errorMessage?: string
 ): void {
-	dispatchPromotionEvent(
-		state,
-		'upgradePromotionClick',
-		'success' === result ? 'pro_setup_succeeded' : 'pro_setup_failed',
-		`pro_setup_${ action }_${ result }`,
-		{
+	dispatch(
+		STEP_COMPLETED_EVENT,
+		withState( state, {
+			interaction_type: 'view',
+			target_type: 'workflow',
+			target_name: 'pro_setup',
 			target_value: action,
+			interaction_result: 'success' === result ? 'step_completed' : 'step_failed',
 			...( errorMessage ? { metadata: { error: errorMessage } } : {} ),
-		}
+		} )
 	);
 }
 
 export function trackProSetupPromotionConnectResult( result: 'success' | 'error', errorMessage?: string ): void {
 	trackProSetupPromotionResult( 'connect', result, 'connect', errorMessage );
 }
+
+export type { ProSetupPromotionState } from './analytics/constants';
