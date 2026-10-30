@@ -1,102 +1,30 @@
-import { expect, type APIRequestContext } from '@playwright/test';
-import ApiRequests from '../../../assets/api-requests';
-import { wpCli } from '../../../assets/wp-cli';
+import { expect } from '@playwright/test';
+import {
+	BANNER_READY_SELECTOR,
+	createPublishedElementorPage,
+	deleteConversionBannerTestPages,
+	resetConversionBannerTriggerState,
+} from '../../../assets/promotion-cdn';
 import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 
-const BANNER_READY_SELECTOR = '#e-conversion-banner.e-conversion-banner--ready';
-const ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
-const PENDING_TRANSIENT = 'elementor_conversion_banner_pages_pending';
-const TEST_PAGE_TITLE_PREFIX = 'Conversion banner PW';
-const UNLOCK_OPTION = 'elementor_conversion_banner_unlocked';
-const CDN_CACHE_OPTION = 'elementor_conversion_banner_assets_data';
-
 const testPageIds: string[] = [];
-
-const CONVERSION_BANNER_DISMISS_KEY = 'conversion_banner_go_pro';
-
-const resetBannerTriggerState = async (): Promise<void> => {
-	try {
-		await wpCli( `wp option delete ${ UNLOCK_OPTION }` );
-	} catch {
-		// Option may not exist yet.
-	}
-
-	try {
-		await wpCli( `wp transient delete ${ PENDING_TRANSIENT }` );
-	} catch {
-		// Transient may not exist yet.
-	}
-
-	try {
-		await wpCli(
-			`wp eval update_user_meta(1,"elementor_introduction",array_diff_key((array)get_user_meta(1,"elementor_introduction",true),array("${ CONVERSION_BANNER_DISMISS_KEY }"=>true)));`,
-		);
-	} catch {
-		// Introduction meta may not exist yet.
-	}
-
-	// Seed the CDN cache with inactive data so the banner always uses fallback
-	// copy. Without this, the code fetches from the live CDN which may have an
-	// active campaign with copy that doesn't contain "Elementor Pro".
-	await wpCli(
-		`wp eval update_option('${ CDN_CACHE_OPTION }',['timeout'=>PHP_INT_MAX,'value'=>json_encode(['is_active'=>false])]);`,
-	);
-
-	await clearElementorEditModeMeta();
-};
-
-const clearElementorEditModeMeta = async (): Promise<void> => {
-	await wpCli( `wp eval delete_metadata("post",0,"${ ELEMENTOR_EDIT_MODE }","",true);` );
-};
-
-const deleteTestPages = async ( request: APIRequestContext, apiRequests: ApiRequests ): Promise<void> => {
-	while ( testPageIds.length ) {
-		const postId = testPageIds.pop();
-
-		if ( ! postId ) {
-			continue;
-		}
-
-		try {
-			await apiRequests.delete( request, 'pages', postId );
-		} catch {
-			// Page may already be removed.
-		}
-	}
-};
-
-const createPublishedElementorPage = async (
-	request: APIRequestContext,
-	apiRequests: ApiRequests,
-): Promise<string> => {
-	const postId = await apiRequests.create( request, 'pages', {
-		title: `${ TEST_PAGE_TITLE_PREFIX } ${ Date.now() }-${ Math.random().toString( 36 ).slice( 2, 8 ) }`,
-		status: 'publish',
-		content: '',
-	} );
-
-	await wpCli( `wp post meta update ${ postId } ${ ELEMENTOR_EDIT_MODE } builder` );
-	testPageIds.push( postId );
-
-	return postId;
-};
 
 test.describe.serial( 'Conversion banner admin trigger @promotions', () => {
 	test.beforeEach( async ( { page, apiRequests } ) => {
-		await resetBannerTriggerState();
-		await deleteTestPages( page.context().request, apiRequests );
+		await resetConversionBannerTriggerState();
+		await deleteConversionBannerTestPages( page.context().request, apiRequests, testPageIds );
 	} );
 
 	test.afterEach( async ( { page, apiRequests } ) => {
-		await deleteTestPages( page.context().request, apiRequests );
+		await deleteConversionBannerTestPages( page.context().request, apiRequests, testPageIds );
 	} );
 
 	test( 'Does not show the banner with fewer than two Elementor pages', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await createPublishedElementorPage( page.context().request, apiRequests );
+		await createPublishedElementorPage( page.context().request, apiRequests, testPageIds );
 		await wpAdmin.openWordPressDashboard();
 
 		await expect( page.locator( BANNER_READY_SELECTOR ) ).toHaveCount( 0, { timeout: timeouts.expect } );
@@ -106,8 +34,8 @@ test.describe.serial( 'Conversion banner admin trigger @promotions', () => {
 		const request = page.context().request;
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await createPublishedElementorPage( request, apiRequests );
-		await createPublishedElementorPage( request, apiRequests );
+		await createPublishedElementorPage( request, apiRequests, testPageIds );
+		await createPublishedElementorPage( request, apiRequests, testPageIds );
 		await wpAdmin.openWordPressDashboard();
 
 		const banner = page.locator( BANNER_READY_SELECTOR );

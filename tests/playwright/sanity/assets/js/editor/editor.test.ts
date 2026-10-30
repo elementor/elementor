@@ -1,9 +1,17 @@
 import { expect } from '@playwright/test';
+import {
+	hidePromoChromeForScreenshot,
+	seedInactivePromotionCdnForEditorChrome,
+} from '../../../../assets/promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Editor tests', () => {
+	test.beforeEach( async () => {
+		await seedInactivePromotionCdnForEditorChrome();
+	} );
+
 	test( 'Check that app-bar exists', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -39,9 +47,11 @@ test.describe( 'Editor tests', () => {
 		// Act
 		await editor.openElementsPanel();
 
+		await hidePromoChromeForScreenshot( editor.page );
+
 		const panel = editor.page.locator( 'aside#elementor-panel' );
 
-		// Assert
+		// Assert — baseline matches release/beta panel snapshot; mask New badges; hide CDN promo chrome.
 		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,

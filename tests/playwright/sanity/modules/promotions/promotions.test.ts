@@ -1,10 +1,26 @@
 import { expect, Page } from '@playwright/test';
+import {
+	clearPromotionCdnSeeds,
+	hidePromoChromeForScreenshot,
+	seedStablePromotionCdnForScreenshotTests,
+} from '../../../assets/promotion-cdn';
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-test.describe.skip( 'Promotion tests @promotions', () => {
+test.describe( 'Promotion tests @promotions', () => {
+	test.describe.configure( { mode: 'serial' } );
+
+	test.beforeEach( async () => {
+		await seedStablePromotionCdnForScreenshotTests();
+	} );
+
+	test.afterEach( async () => {
+		await clearPromotionCdnSeeds();
+	} );
+
 	test( 'Menu Items Promotions - screenshots', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = '.e-feature-promotion';
@@ -119,11 +135,11 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 		await expect.soft( saveAsGlobalPromotionLinkContainer ).toHaveAttribute( 'href', saveAsGlobalHref );
 	} );
 
-	test( 'Promotions - Free to Pro - Admin top bar', async ( { page } ) => {
-		// Arrange.
+	test( 'Promotions - Free to Pro - Admin top bar', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const promotionContainer = '.e-admin-top-bar__secondary-area';
 
-		// Act.
+		await wpAdmin.login();
 		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
@@ -158,19 +174,16 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 	} );
 
 	test( 'Promotions - Sticky Free to Pro - Main panel', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const wrapperContainer = '#elementor-panel-inner',
-			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
+		const stickyPromotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
-		// Act.
-		await wpAdmin.openNewPage();
-		const parentContainer = page.locator( wrapperContainer );
-		const promoContainer = page.locator( promotionContainer );
+		const editor = await wpAdmin.openNewPage();
+		await editor.openElementsPanel();
+
+		const promoContainer = page.locator( stickyPromotionContainer );
 		await promoContainer.waitFor();
 
-		// Assert.
-		await expect.soft( parentContainer ).toHaveScreenshot( `elements-panel-promotion.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `elements-panel-promotion.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {
@@ -188,6 +201,8 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
 		await page.waitForLoadState( 'domcontentloaded' );
 
+		await hidePromoChromeForScreenshot( page );
+
 		// Assert.
 		await expect.soft( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
@@ -204,6 +219,6 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 const promotionPageScreenshotTest = async ( page: Page, promotionContainer: string, pageUri: string, screenshotName: string ) => {
 	await page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
 	const promoContainer = page.locator( promotionContainer );
-	await promoContainer.waitFor();
+	await promoContainer.waitFor( { state: 'visible', timeout: timeouts.heavyAction } );
 	await expect.soft( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 };
