@@ -5,15 +5,10 @@ import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v
 import { NoticePortal } from './components/notice-portal';
 import { createNoticeView } from './utils/create-notice-view';
 
-type RegisterOptions = {
-	overwrite?: boolean;
-};
-
-export function register( Component: React.ComponentType, options: RegisterOptions = {} ) {
+export function register( Component: React.ComponentType ) {
 	injectIntoTop( {
 		id: 'editor-elements-panel-notice',
 		component: () => <NoticePortal component={ Component } />,
-		options: { overwrite: options.overwrite ?? false },
 	} );
 
 	listenTo( v1ReadyEvent(), () => {

@@ -3,10 +3,6 @@ import { register } from '@elementor/editor-elements-panel-notice';
 import { AtomicElementsPromo } from './components/atomic-elements-promo';
 
 export function init() {
-	if ( window.elementor?.config?.proSetupPromotion ) {
-		return;
-	}
-
 	const { experimentalFeatures = {} } = window.elementorCommon?.config || {};
 	const currentAtomicElementsExperimentState = experimentalFeatures?.e_atomic_elements;
 	const currentContainerExperimentState = experimentalFeatures?.container;

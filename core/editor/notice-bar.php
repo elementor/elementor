@@ -56,10 +56,6 @@ class Notice_Bar extends Base_Object {
 			return null;
 		}
 
-		if ( empty( $settings['message'] ) && empty( $settings['action_url'] ) ) {
-			return null;
-		}
-
 		$dismissed_time = get_option( $settings['option_key'] );
 
 		if ( $dismissed_time ) {

@@ -137,10 +137,6 @@ class Setup_State {
 		return is_plugin_active( 'elementor-pro/elementor-pro.php' );
 	}
 
-	public static function should_suppress_upgrade_promotions(): bool {
-		return null !== self::get_editor_config();
-	}
-
 	private static function get_popover_copy( string $state, array $assets ): array {
 		$defaults = [
 			self::STATE_INSTALL => [
