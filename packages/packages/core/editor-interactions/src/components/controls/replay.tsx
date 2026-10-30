@@ -40,7 +40,7 @@ export function Replay( { onChange }: ReplayFieldProps ) {
 
 	const handleChange = ( newValue: boolean ) => {
 		if ( true === newValue ) {
-			promotionRef.current?.toggle( { target_value: 'yes' } );
+			promotionRef.current?.openPromotion( { target_value: 'yes' } );
 			return;
 		}
 

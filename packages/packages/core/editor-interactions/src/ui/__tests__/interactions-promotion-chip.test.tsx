@@ -95,7 +95,7 @@ describe( 'InteractionsPromotionChip', () => {
 		renderWithTheme( <InteractionsPromotionChip { ...defaultProps } ref={ ref } /> );
 
 		// Act.
-		ref.current?.toggle( { target_value: 'on_hover' } );
+		ref.current?.openPromotion( { target_value: 'on_hover' } );
 
 		// Assert.
 		expect( trackViewPromotion ).toHaveBeenCalledWith( {

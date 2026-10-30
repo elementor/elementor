@@ -49,7 +49,7 @@ export function Repeat() {
 		const targetValue = REPEAT_TARGET_VALUES[ newValue as keyof typeof REPEAT_TARGET_VALUES ];
 
 		if ( targetValue ) {
-			promotionRef.current?.toggle( { target_value: targetValue } );
+			promotionRef.current?.openPromotion( { target_value: targetValue } );
 		}
 	};
 

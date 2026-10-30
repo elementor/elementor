@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { type KeyboardEvent, type MouseEvent, useCallback, useRef } from 'react';
+import { type MouseEvent, useCallback, useRef } from 'react';
 import { type PromotionTrackingData } from '@elementor/editor-controls';
 import { MenuListItem } from '@elementor/editor-ui';
-import { MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
+import { Box, MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from './interactions-promotion-chip';
@@ -18,12 +18,6 @@ type PromotionSelectProps = {
 	trackingData: PromotionTrackingData;
 };
 
-const LOCKED_OPTION_SX = ( theme: { palette: { action: { disabledOpacity: number } } } ) => ( {
-	pl: 3,
-	opacity: theme.palette.action.disabledOpacity,
-	cursor: 'not-allowed',
-} );
-
 export function PromotionSelect( {
 	value,
 	onChange,
@@ -35,10 +29,12 @@ export function PromotionSelect( {
 	trackingData,
 }: PromotionSelectProps ) {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
-	const anchorRef = useRef< HTMLElement >( null );
+	const selectAnchorRef = useRef< HTMLDivElement >( null );
 
 	const openPromotionForOption = useCallback( ( optionKey: string ) => {
-		promotionRef.current?.toggle( { target_value: optionKey } );
+		window.requestAnimationFrame( () => {
+			promotionRef.current?.openPromotion( { target_value: optionKey } );
+		} );
 	}, [] );
 
 	const handleSelectChange = ( e: SelectChangeEvent< string > ) => {
@@ -49,67 +45,101 @@ export function PromotionSelect( {
 		onChange?.( e.target.value );
 	};
 
-	const handleLockedOptionActivate = ( optionKey: string, event: MouseEvent | KeyboardEvent ) => {
+	const handleLockedOptionMouseDownCapture = ( event: MouseEvent< HTMLUListElement > ) => {
+		const lockedOption = ( event.target as HTMLElement ).closest( '[data-promotion-locked-option]' );
+
+		if ( ! lockedOption ) {
+			return;
+		}
+
 		event.preventDefault();
 		event.stopPropagation();
-		openPromotionForOption( optionKey );
+
+		const optionKey = lockedOption.getAttribute( 'data-promotion-locked-option' );
+
+		if ( optionKey ) {
+			openPromotionForOption( optionKey );
+		}
 	};
 
 	return (
-		<Select
-			value={ value }
-			onChange={ handleSelectChange }
-			fullWidth
-			displayEmpty
-			size="tiny"
-			MenuProps={ { disablePortal: true } }
-		>
-			{ Object.entries( baseOptions ).map( ( [ key, label ] ) => (
-				<MenuListItem key={ key } value={ key }>
-					{ label }
-				</MenuListItem>
-			) ) }
+		<Box ref={ selectAnchorRef } sx={ { width: '100%' } }>
+			<Select
+				value={ value }
+				onChange={ handleSelectChange }
+				fullWidth
+				displayEmpty
+				size="tiny"
+				MenuProps={ {
+					disablePortal: true,
+					MenuListProps: {
+						onMouseDownCapture: handleLockedOptionMouseDownCapture,
+						onKeyDownCapture: ( event: React.KeyboardEvent< HTMLUListElement > ) => {
+							if ( 'Enter' !== event.key && ' ' !== event.key ) {
+								return;
+							}
 
-			<MenuSubheader
-				ref={ anchorRef }
-				sx={ {
-					cursor: 'pointer',
-					color: 'text.tertiary',
-					fontWeight: '400',
-					display: 'flex',
-					alignItems: 'center',
-				} }
-				onMouseDown={ ( e: MouseEvent ) => {
-					e.stopPropagation();
-					promotionRef.current?.toggle();
+							const lockedOption = ( event.target as HTMLElement ).closest(
+								'[data-promotion-locked-option]'
+							);
+
+							if ( ! lockedOption ) {
+								return;
+							}
+
+							event.preventDefault();
+							event.stopPropagation();
+
+							const optionKey = lockedOption.getAttribute( 'data-promotion-locked-option' );
+
+							if ( optionKey ) {
+								openPromotionForOption( optionKey );
+							}
+						},
+					},
 				} }
 			>
-				{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
-				<InteractionsPromotionChip
-					content={ promotionContent }
-					upgradeUrl={ upgradeUrl }
-					ref={ promotionRef }
-					anchorRef={ anchorRef }
-					trackingData={ trackingData }
-				/>
-			</MenuSubheader>
+				{ Object.entries( baseOptions ).map( ( [ key, label ] ) => (
+					<MenuListItem key={ key } value={ key }>
+						{ label }
+					</MenuListItem>
+				) ) }
 
-			{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
-				<MenuListItem
-					key={ key }
-					value={ key }
-					aria-disabled
-					sx={ LOCKED_OPTION_SX }
-					onMouseDown={ ( e: MouseEvent ) => handleLockedOptionActivate( key, e ) }
-					onKeyDown={ ( e: KeyboardEvent ) => {
-						if ( 'Enter' === e.key || ' ' === e.key ) {
-							handleLockedOptionActivate( key, e );
-						}
+				<MenuSubheader
+					sx={ {
+						cursor: 'pointer',
+						color: 'text.tertiary',
+						fontWeight: '400',
+						display: 'flex',
+						alignItems: 'center',
+					} }
+					onMouseDown={ ( e: MouseEvent ) => {
+						e.stopPropagation();
+						promotionRef.current?.toggle();
 					} }
 				>
-					{ label }
-				</MenuListItem>
-			) ) }
-		</Select>
+					{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
+					<InteractionsPromotionChip
+						content={ promotionContent }
+						upgradeUrl={ upgradeUrl }
+						ref={ promotionRef }
+						anchorRef={ selectAnchorRef }
+						trackingData={ trackingData }
+					/>
+				</MenuSubheader>
+
+				{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
+					<MenuListItem
+						key={ key }
+						value={ key }
+						disabled
+						data-promotion-locked-option={ key }
+						sx={ { pl: 3 } }
+					>
+						{ label }
+					</MenuListItem>
+				) ) }
+			</Select>
+		</Box>
 	);
 }

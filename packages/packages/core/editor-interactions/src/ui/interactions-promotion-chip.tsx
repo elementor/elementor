@@ -13,7 +13,8 @@ export type InteractionsPromotionChipProps = {
 };
 
 export type InteractionsPromotionChipRef = {
-	toggle: ( context?: { target_value?: string } ) => void;
+	toggle: () => void;
+	openPromotion: ( context?: { target_value?: string } ) => void;
 };
 
 export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRef, InteractionsPromotionChipProps >(
@@ -23,23 +24,36 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 
 		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
-		const toggle = useCallback(
+		const openPromotion = useCallback(
 			( context?: { target_value?: string } ) => {
+				const payload: PromotionTrackingData = context?.target_value
+					? { ...trackingData, target_value: context.target_value }
+					: trackingData;
+
 				setIsOpen( ( prev ) => {
-					if ( ! prev ) {
-						const payload: PromotionTrackingData = context?.target_value
-							? { ...trackingData, target_value: context.target_value }
-							: trackingData;
-						trackingPayloadRef.current = payload;
-						trackViewPromotion( payload );
+					if ( prev ) {
+						return prev;
 					}
-					return ! prev;
+
+					trackingPayloadRef.current = payload;
+					trackViewPromotion( payload );
+					return true;
 				} );
 			},
 			[ trackingData ]
 		);
 
-		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
+		const toggle = useCallback( () => {
+			setIsOpen( ( prev ) => {
+				if ( ! prev ) {
+					trackingPayloadRef.current = trackingData;
+					trackViewPromotion( trackingData );
+				}
+				return ! prev;
+			} );
+		}, [ trackingData ] );
+
+		useImperativeHandle( ref, () => ( { toggle, openPromotion } ), [ toggle, openPromotion ] );
 
 		const handleToggle = ( e: MouseEvent ) => {
 			e.stopPropagation();

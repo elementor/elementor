@@ -31,6 +31,14 @@ const defaultProps = {
 describe( 'PromotionSelect', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {
+			callback( 0 );
+			return 0;
+		} );
+	} );
+
+	afterEach( () => {
+		jest.restoreAllMocks();
 	} );
 
 	it( 'opens promotion popover when a locked option is clicked', () => {
