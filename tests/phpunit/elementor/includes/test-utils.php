@@ -587,26 +587,39 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	private function set_pro_plugin_active( bool $active ): void {
+		remove_all_filters( 'pre_option_active_plugins' );
+		remove_all_filters( 'pre_site_option_active_sitewide_plugins' );
+
+		add_filter(
+			'pre_site_option_active_sitewide_plugins',
+			static function (): array {
+				return [];
+			}
+		);
+
 		if ( $active ) {
-			activate_plugin( self::PRO_PLUGIN_FILE, '', false, true );
+			add_filter(
+				'pre_option_active_plugins',
+				static function (): array {
+					return [ PLUGIN_PATH, self::PRO_PLUGIN_FILE ];
+				}
+			);
 		} else {
-			deactivate_plugins( self::PRO_PLUGIN_FILE, true );
-		}
-
-		if ( is_multisite() ) {
-			update_site_option( 'active_sitewide_plugins', [] );
-		}
-
-		wp_cache_delete( 'active_plugins', 'options' );
-
-		if ( is_multisite() ) {
-			wp_cache_delete( 'active_sitewide_plugins', 'options' );
+			add_filter(
+				'pre_option_active_plugins',
+				static function (): array {
+					return [ PLUGIN_PATH ];
+				}
+			);
 		}
 
 		wp_clean_plugins_cache();
 	}
 
 	private function remove_elementor_pro_plugin_stub(): void {
+		remove_all_filters( 'pre_option_active_plugins' );
+		remove_all_filters( 'pre_site_option_active_sitewide_plugins' );
+
 		deactivate_plugins( self::PRO_PLUGIN_FILE, true );
 
 		$plugin_dir = WP_PLUGIN_DIR . '/elementor-pro';
