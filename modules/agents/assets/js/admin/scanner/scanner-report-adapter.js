@@ -89,6 +89,7 @@ const toPassingCheck = ( check, layers, activeWeight ) => ( {
 	title: checkCopy.getCheckTitle( check.id, check.label, true ),
 	technicalName: check.label,
 	description: check.description ?? '',
+	evidence: check.message ?? '',
 	stage: getCheckStage( check ),
 	points: getScoreShare( toNumber( check.earned ), layers[ check.layer ], activeWeight ),
 } );

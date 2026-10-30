@@ -8,10 +8,32 @@ export const wpAdminInputResetSx = {
 	},
 };
 
+const muiSwitchInputReset = {
+	top: 0,
+	left: 0,
+	width: '100%',
+	height: '100%',
+	margin: 0,
+	padding: 0,
+	minWidth: 0,
+	minHeight: 0,
+	border: 0,
+	background: 'transparent',
+	boxShadow: 'none',
+	position: 'absolute',
+	opacity: '0 !important',
+	'&::before, &::after': {
+		content: 'none',
+		display: 'none',
+	},
+};
+
 export const wpAdminSwitchSx = {
 	'& .MuiSwitch-input': {
-		position: 'absolute',
-		// WordPress admin sets opacity on disabled checkboxes, which draws the native control through the switch.
-		opacity: '0 !important',
+		...muiSwitchInputReset,
+	},
+	'& .MuiSwitch-input:focus': {
+		outline: 0,
+		boxShadow: 'none',
 	},
 };
