@@ -36,7 +36,7 @@ describe( 'account-screen-config', () => {
 				getAccountScreenIllustrationUrl( {
 					showIllustration: true,
 					illustrationUrl: 'https://assets.elementor.com/onboarding/v1/images/x.svg',
-				} )
+				} ),
 			).toBe( 'https://assets.elementor.com/onboarding/v1/images/x.svg' );
 		} );
 	} );
