@@ -113,6 +113,43 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertSame( 'test test-shopping-bag', $shopping['results'][0]['matches'][0]['value'] );
 	}
 
+	public function test_search__returns_string_library_names_for_a_numeric_looking_custom_library() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ '-1' => 'Numeric Pack', '2024' => 'Year Pack' ] );
+		add_filter( 'elementor/atomic-widgets/icon/library-values', static fn( $result, $library ) => [
+			'values' => [ 'shopping-bag' => 'pack pack-shopping-bag' ],
+			'truncated' => false,
+			'total' => 1,
+		], 10, 2 );
+		add_filter( 'elementor/atomic-widgets/icon/is-renderable', '__return_true' );
+
+		// Act.
+		$matched = Icon_Search::search( [ 'queries' => [ 'shopping bag' ] ] );
+		$browsing = Icon_Search::search( [ 'library' => '-1' ] );
+
+		// Assert.
+		foreach ( array_merge( $matched['results'][0]['matches'], $browsing['results'][0]['matches'] ) as $match ) {
+			$this->assertIsString( $match['library'] );
+		}
+
+		$this->assertSame( [ '-1', '2024' ], array_slice( $browsing['libraries'], -2 ) );
+
+		foreach ( $browsing['libraries'] as $library ) {
+			$this->assertIsString( $library );
+		}
+	}
+
+	public function test_search__serializes_custom_libraries_as_an_object_for_a_pack_named_zero() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ '0' => 'Zero Pack' ] );
+
+		// Act.
+		$response = Icon_Search::search( [ 'library' => 'zzz-unknown' ] );
+
+		// Assert.
+		$this->assertSame( '{"0":"Zero Pack"}', wp_json_encode( $response['custom_libraries'] ) );
+	}
+
 	public function test_search__sends_site_facets_only_when_nothing_matched_or_browsing() {
 		// Act.
 		$matched = Icon_Search::search( [ 'queries' => [ 'star' ] ] );
