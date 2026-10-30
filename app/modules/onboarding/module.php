@@ -173,6 +173,7 @@ class Module extends BaseModule {
 			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
 			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
 			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
+			'accountScreen' => Account_Screen_Assets::get_editor_config(),
 			'experimentNames' => [
 				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
 				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,

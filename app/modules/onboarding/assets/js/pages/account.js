@@ -7,6 +7,10 @@ import AccountContentA from '../components/account-content-a';
 import AccountContentB from '../components/account-content-b';
 import { safeDispatchEvent } from '../utils/utils';
 import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../utils/onboarding-event-tracking';
+import {
+	buildDisconnectedPageTexts,
+	getLegacyAccountScreenConfig,
+} from '../utils/account-screen-config';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -36,11 +40,13 @@ export default function Account() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const accountScreen = ! state.isLibraryConnected ? getLegacyAccountScreenConfig() : null;
+
 	let skipButton;
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
-			text: __( 'Skip setup', 'elementor' ),
+			text: accountScreen?.skipCtaLabel ?? __( 'Skip setup', 'elementor' ),
 			action: () => {
 				OnboardingEventTracking.trackStepAction( 1, 'skip' );
 				OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: 1 } );
@@ -79,22 +85,30 @@ export default function Account() {
 				],
 		};
 	} else {
-		pageTexts = elementorAppConfig.onboarding.experiment ? {
-			firstLine: <>{ __( 'To get the most of Elementor, we\'ll connect your account.', 'elementor' ) }  <br /> { __( 'Then you can:', 'elementor' ) }</>,
-			listItems: [
-				__( 'Access dozens of professionally designed templates', 'elementor' ),
-				__( 'Manage all your sites from the My Elementor dashboard', 'elementor' ),
-				__( 'Unlock tools that streamline your workflow and site setup', 'elementor' ),
-			],
-		} : {
-			firstLine: __( 'To get the most out of Elementor, we\'ll connect your account.', 'elementor' ) +
-			' ' + __( 'Then you can:', 'elementor' ),
-			listItems: [
-				__( 'Choose from countless professional templates', 'elementor' ),
-				__( 'Manage your site with our handy dashboard', 'elementor' ),
-				__( 'Take part in the community forum, share & grow together', 'elementor' ),
-			],
-		};
+		const cdnPageTexts = buildDisconnectedPageTexts( accountScreen );
+
+		if ( cdnPageTexts ) {
+			pageTexts = cdnPageTexts;
+		} else if ( elementorAppConfig.onboarding.experiment ) {
+			pageTexts = {
+				firstLine: <>{ __( 'To get the most of Elementor, we\'ll connect your account.', 'elementor' ) }  <br /> { __( 'Then you can:', 'elementor' ) }</>,
+				listItems: [
+					__( 'Access dozens of professionally designed templates', 'elementor' ),
+					__( 'Manage all your sites from the My Elementor dashboard', 'elementor' ),
+					__( 'Unlock tools that streamline your workflow and site setup', 'elementor' ),
+				],
+			};
+		} else {
+			pageTexts = {
+				firstLine: __( 'To get the most out of Elementor, we\'ll connect your account.', 'elementor' ) +
+				' ' + __( 'Then you can:', 'elementor' ),
+				listItems: [
+					__( 'Choose from countless professional templates', 'elementor' ),
+					__( 'Manage your site with our handy dashboard', 'elementor' ),
+					__( 'Take part in the community forum, share & grow together', 'elementor' ),
+				],
+			};
+		}
 	}
 
 	// If the user is not connected, the on-click action is handled by the <Connect> component, so there is no onclick
@@ -121,7 +135,7 @@ export default function Account() {
 			navigate( 'onboarding/' + nextStep );
 		};
 	} else {
-		actionButton.text = __( 'Start setup', 'elementor' );
+		actionButton.text = accountScreen?.primaryCtaLabel ?? __( 'Start setup', 'elementor' );
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
@@ -224,10 +238,10 @@ export default function Account() {
 				pageId={ pageId }
 			/>
 			{
-				! state.isLibraryConnected && 'B' !== experiment101Variant && (
+				! state.isLibraryConnected && 'B' !== experiment101Variant && ( ! accountScreen || accountScreen.showExistingAccount ) && (
 					<div className="e-onboarding__footnote">
 						<p>
-							{ __( 'Already have an account?', 'elementor' ) + ' ' }
+							{ ( accountScreen?.existingAccountPrefix ?? __( 'Already have an account?', 'elementor' ) ) + ' ' }
 							<a
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
@@ -247,7 +261,7 @@ export default function Account() {
 									);
 								} }
 							>
-								{ __( 'Click here to connect', 'elementor' ) }
+								{ accountScreen?.existingAccountLinkText ?? __( 'Click here to connect', 'elementor' ) }
 							</a>
 						</p>
 						<Connect
