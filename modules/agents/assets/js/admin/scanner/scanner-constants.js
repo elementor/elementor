@@ -184,6 +184,20 @@ export const SCORE_RING_GRADIENTS = {
 	[ SCORE_TIER_HIGH ]: { from: '#0A875A', to: '#10B981', ...SCORE_RING_GRADIENT_VECTOR },
 };
 
+export const getStageHealthLabels = () => ( {
+	[ SCORE_TIER_LOW ]: __( 'Needs work', 'elementor' ),
+	[ SCORE_TIER_MID ]: __( 'Getting there', 'elementor' ),
+	[ SCORE_TIER_HIGH ]: __( 'Strong', 'elementor' ),
+} );
+
+export const STAGE_HEALTH_COLORS = {
+	[ SCORE_TIER_LOW ]: { fill: 'error.light', text: 'error.main' },
+	[ SCORE_TIER_MID ]: { fill: 'warning.light', text: 'warning.main' },
+	[ SCORE_TIER_HIGH ]: { fill: 'success.light', text: 'success.main' },
+};
+
+export const STAGE_COMING_SOON_FILL = 'action.disabled';
+
 export const SCANNER_LAYOUT = {
 	pageGap: 32,
 	summaryBlockBottomSpace: 48,
