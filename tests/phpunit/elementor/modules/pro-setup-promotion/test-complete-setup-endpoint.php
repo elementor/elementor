@@ -23,6 +23,8 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
 
 		$data_manager = Plugin::$instance->data_manager_v2;
+		$data_manager->kill_server();
+
 		$controller = $data_manager->get_controller( 'pro-setup-promotion' );
 
 		if ( ! $controller ) {
@@ -43,6 +45,7 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/pro_setup_promotion/setup_state' );
+		Plugin::$instance->data_manager_v2->kill_server();
 
 		parent::tearDown();
 	}

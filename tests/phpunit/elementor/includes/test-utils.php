@@ -563,61 +563,65 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_is_pro_installed_and_not_active__true_when_installed_but_inactive(): void {
-		add_filter(
-			'all_plugins',
-			static function ( array $plugins ): array {
-				$plugins['elementor-pro/elementor-pro.php'] = [
-					'Name' => 'Elementor Pro',
-					'Version' => '1.0.0',
-				];
+	private const PRO_PLUGIN_FILE = 'elementor-pro/elementor-pro.php';
 
-				return $plugins;
-			},
-			99999
-		);
+	private function seed_elementor_pro_plugin_on_disk(): void {
+		$plugin_dir = WP_PLUGIN_DIR . '/elementor-pro';
+
+		if ( ! is_dir( $plugin_dir ) ) {
+			wp_mkdir_p( $plugin_dir );
+		}
+
+		$plugin_path = $plugin_dir . '/elementor-pro.php';
+
+		if ( ! file_exists( $plugin_path ) ) {
+			file_put_contents(
+				$plugin_path,
+				"<?php\n/**\n * Plugin Name: Elementor Pro\n * Version: 1.0.0\n */\n"
+			);
+		}
 
 		wp_clean_plugins_cache();
+	}
 
+	private function set_pro_plugin_active( bool $active ): void {
 		$active_plugins = (array) get_option( 'active_plugins', [] );
 		$active_plugins = array_values(
 			array_filter(
 				$active_plugins,
 				static function ( $plugin ): bool {
-					return 'elementor-pro/elementor-pro.php' !== $plugin;
+					return self::PRO_PLUGIN_FILE !== $plugin;
 				}
 			)
 		);
+
+		if ( $active ) {
+			$active_plugins[] = self::PRO_PLUGIN_FILE;
+		}
+
 		update_option( 'active_plugins', $active_plugins );
 
 		if ( is_multisite() ) {
 			update_site_option( 'active_sitewide_plugins', [] );
 		}
 
+		wp_cache_delete( 'active_plugins', 'options' );
+
+		if ( is_multisite() ) {
+			wp_cache_delete( 'active_sitewide_plugins', 'options' );
+		}
+	}
+
+	public function test_is_pro_installed_and_not_active__true_when_installed_but_inactive(): void {
+		$this->seed_elementor_pro_plugin_on_disk();
+		$this->set_pro_plugin_active( false );
+
 		$this->assertTrue( Utils::is_pro_installed_and_not_active() );
 	}
 
 	public function test_is_pro_installed_and_not_active__false_when_plugin_is_active(): void {
-		add_filter(
-			'all_plugins',
-			static function ( array $plugins ): array {
-				$plugins['elementor-pro/elementor-pro.php'] = [
-					'Name' => 'Elementor Pro',
-					'Version' => '1.0.0',
-				];
-
-				return $plugins;
-			},
-			99999
-		);
-
-		wp_clean_plugins_cache();
-
-		$active_plugins = (array) get_option( 'active_plugins', [] );
-		if ( ! in_array( 'elementor-pro/elementor-pro.php', $active_plugins, true ) ) {
-			$active_plugins[] = 'elementor-pro/elementor-pro.php';
-		}
-		update_option( 'active_plugins', $active_plugins );
+		$this->seed_elementor_pro_plugin_on_disk();
+		$this->set_pro_plugin_active( true );
 
 		$this->assertFalse( Utils::is_pro_installed_and_not_active() );
 	}
