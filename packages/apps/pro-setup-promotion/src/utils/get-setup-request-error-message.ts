@@ -23,10 +23,7 @@ export function getSetupRequestErrorMessage( error: unknown ): string {
 		}
 
 		if ( 500 === error.response?.status ) {
-			return __(
-				'Server error while setting up Pro. If this persists, use matching Core and Pro versions and check the site error log.',
-				'elementor'
-			);
+			return __( 'We couldn\'t complete Pro setup. Please try again.', 'elementor' );
 		}
 	}
 
@@ -34,5 +31,5 @@ export function getSetupRequestErrorMessage( error: unknown ): string {
 		return error.message;
 	}
 
-	return __( 'Something went wrong. Please try again.', 'elementor' );
+	return __( 'We couldn\'t complete Pro setup. Please try again.', 'elementor' );
 }

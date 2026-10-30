@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
-import { ChevronRightIcon, InfoCircleFilledIcon } from '@elementor/icons';
+import { DownloadIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertTitle,
@@ -11,11 +11,10 @@ import {
 	Button,
 	CircularProgress,
 	CloseButton,
+	DirectionProvider,
 	Infotip,
-	Rotate,
 	Stack,
 	Typography,
-	useTheme,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -30,9 +29,11 @@ import {
 } from '../analytics';
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
+import { markConnectSuccessNotificationForAfterReload } from '../utils/post-reload-connect-success-notification';
 
 const POPOVER_WIDTH = 296;
-const POPOVER_OFFSET: [ number, number ] = [ -24, 12 ];
+const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
+const POPOVER_OFFSET_RTL: [ number, number ] = [ 24, 12 ];
 /** Keeps popover height stable when copy is shorter (e.g. connect vs install). */
 const POPOVER_DESCRIPTION_MIN_HEIGHT = 72;
 const POPOVER_HEADER_MIN_HEIGHT = 48;
@@ -76,6 +77,18 @@ const isEventInside = ( target: EventTarget | null, anchor: HTMLElement | null )
 
 	return !! anchor?.contains( target ) || !! target.closest( '[data-pro-setup-popover], .MuiTooltip-popper' );
 };
+
+function isEditorRtl(): boolean {
+	return 'rtl' === document.dir;
+}
+
+function getPopoverPlacement( isRtl: boolean ) {
+	return isRtl ? 'left-start' : 'right-start';
+}
+
+function getPopoverOffset( isRtl: boolean ): [ number, number ] {
+	return isRtl ? POPOVER_OFFSET_RTL : POPOVER_OFFSET_LTR;
+}
 
 async function postDismiss(): Promise< void > {
 	await httpService().post( `${ REST_BASE }/dismiss` );
@@ -122,9 +135,9 @@ export function ProSetupPanelPromo() {
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const anchorRef = useRef< HTMLDivElement >( null );
 	const isProcessingRef = useRef( false );
-	const theme = useTheme();
-	const placement = 'rtl' === theme.direction ? 'left-start' : 'right-start';
-	const isRtl = 'rtl' === theme.direction;
+	const isRtl = isEditorRtl();
+	const placement = getPopoverPlacement( isRtl );
+	const popoverOffset = getPopoverOffset( isRtl );
 
 	const state = promotionConfig?.state as ProSetupPromotionState | undefined;
 
@@ -149,6 +162,8 @@ export function ProSetupPanelPromo() {
 			if ( ! config ) {
 				applyPromotionConfig( null );
 				trackProSetupPromotionConnectResult( 'success' );
+				markConnectSuccessNotificationForAfterReload();
+				window.location.reload();
 				return;
 			}
 
@@ -175,10 +190,10 @@ export function ProSetupPanelPromo() {
 		} catch {
 			notify( {
 				type: 'error',
-				message: __( 'Could not verify your license. Try again.', 'elementor' ),
+				message: __( 'We couldn\'t confirm your Pro license. Please try again.', 'elementor' ),
 				id: 'pro-setup-promotion-connect-verify-error',
 			} );
-			trackProSetupPromotionConnectResult( 'error', __( 'Could not verify license.', 'elementor' ) );
+			trackProSetupPromotionConnectResult( 'error', __( 'We couldn\'t confirm your Pro license. Please try again.', 'elementor' ) );
 		} finally {
 			isProcessingRef.current = false;
 			setIsProcessing( false );
@@ -259,7 +274,7 @@ export function ProSetupPanelPromo() {
 		return null;
 	}
 
-	const dismissPermanently = async () => {
+	const dismissForCooldownPeriod = async () => {
 		trackProSetupPromotionDismiss( state );
 		setDismissed( true );
 		setOpen( false );
@@ -269,7 +284,7 @@ export function ProSetupPanelPromo() {
 		} catch {
 			notify( {
 				type: 'error',
-				message: __( 'Could not save your preference. Try again.', 'elementor' ),
+				message: __( 'Couldn\'t dismiss this reminder. Please try again.', 'elementor' ),
 				id: 'pro-setup-promotion-dismiss-error',
 			} );
 			setDismissed( false );
@@ -287,12 +302,8 @@ export function ProSetupPanelPromo() {
 
 			trackProSetupPromotionResult( state, 'success', action );
 
-			applyPromotionConfig( result.proSetupPromotion );
+			applyPromotionConfig( result.proSetupPromotion ?? null );
 			setOpen( true );
-
-			if ( result.reload ) {
-				window.location.reload();
-			}
 		} catch ( error ) {
 			const message = getSetupRequestErrorMessage( error );
 
@@ -327,124 +338,153 @@ export function ProSetupPanelPromo() {
 	};
 
 	return (
-		<ThemeProvider>
-			<SetupInfotip
-				arrow
-				disableFocusListener
-				disableHoverListener
-				disableTouchListener
-				open={ open }
-				placement={ placement }
-				PopperProps={ {
-					modifiers: [
-						{
-							name: 'offset',
-							options: { offset: POPOVER_OFFSET },
-						},
-					],
-				} }
-				content={
-					<Box className="dialog-widget" data-pro-setup-popover="" sx={ { width: POPOVER_WIDTH } }>
-						<Stack
-							direction="row"
-							alignItems="center"
-							gap={ 1 }
-							py={ 1 }
-							px={ 2 }
-							sx={ { minHeight: POPOVER_HEADER_MIN_HEIGHT } }
-						>
-							<Typography variant="subtitle2" sx={ { flex: 1, minWidth: 0 } }>
-								{ promotionConfig.popover.title }
-							</Typography>
-							<CloseButton
-								edge="end"
-								sx={ { ml: 'auto', flexShrink: 0 } }
-								slotProps={ { icon: { fontSize: 'small' } } }
-								onClick={ () => setOpen( false ) }
-							/>
-						</Stack>
-						<Stack px={ 2 } sx={ { minHeight: POPOVER_DESCRIPTION_MIN_HEIGHT } }>
-							<Typography variant="body2" color="secondary" sx={ { pt: 0.5, pb: 1 } }>
-								{ promotionConfig.popover.description }
-							</Typography>
-						</Stack>
-						<Stack direction="row" alignItems="center" pt={ 1 } pb={ 1.5 } px={ 2 }>
-							<Button variant="text" size="small" color="secondary" onClick={ dismissPermanently } sx={ { ml: -1 } }>
-								{ __( 'Dismiss', 'elementor' ) }
-							</Button>
-							<Button
-								variant="contained"
-								size="small"
-								color="info"
-								disabled={ isProcessing }
-								onClick={ ( event: React.MouseEvent ) => {
-									event.stopPropagation();
-									onPrimaryClick();
-								} }
-								sx={ { ml: 'auto' } }
-							>
-								{ isProcessing ? (
-									<CircularProgress size={ 16 } color="inherit" />
-								) : (
-									promotionConfig.popover.ctaLabel
-								) }
-							</Button>
-						</Stack>
-					</Box>
-				}
-			>
-				<Box
-					ref={ anchorRef }
-					role="button"
-					tabIndex={ 0 }
-					aria-expanded={ open }
-					onClick={ openPopover }
-					onKeyDown={ ( event: React.KeyboardEvent ) => {
-						if ( 'Enter' === event.key || ' ' === event.key ) {
-							event.preventDefault();
-							openPopover();
-						}
-					} }
-					sx={ {
-						mx: 1.5,
-						my: 1,
-						cursor: 'pointer',
-						'&:hover': { '& .MuiAlert-root': { filter: 'brightness(0.98)' } },
-						'&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
-					} }
-				>
-					<Alert
-						variant="standard"
-						color="info"
-						size="small"
-						icon={ <InfoCircleFilledIcon fontSize="tiny" /> }
-						sx={ {
-							alignItems: 'center',
-							py: 0.75,
-							'& .MuiAlert-message': {
-								display: 'flex',
-								alignItems: 'center',
-								gap: 0.5,
-								flex: 1,
-								minWidth: 0,
-								overflow: 'hidden',
+		<DirectionProvider rtl={ isRtl }>
+			<ThemeProvider>
+				<SetupInfotip
+					arrow
+					disableFocusListener
+					disableHoverListener
+					disableTouchListener
+					open={ open }
+					placement={ placement }
+					PopperProps={ {
+						modifiers: [
+							{
+								name: 'offset',
+								options: { offset: popoverOffset },
 							},
+						],
+					} }
+					content={
+						<Box className="dialog-widget" data-pro-setup-popover="" sx={ { width: POPOVER_WIDTH } }>
+							<Stack
+								direction="row"
+								alignItems="center"
+								gap={ 1 }
+								py={ 1 }
+								px={ 2 }
+								sx={ { minHeight: POPOVER_HEADER_MIN_HEIGHT } }
+							>
+								<Typography variant="subtitle2" sx={ { flex: 1, minWidth: 0 } }>
+									{ promotionConfig.popover.title }
+								</Typography>
+								<CloseButton
+									edge="end"
+									sx={ { marginInlineStart: 'auto', flexShrink: 0 } }
+									slotProps={ { icon: { fontSize: 'small' } } }
+									onClick={ () => setOpen( false ) }
+								/>
+							</Stack>
+							<Stack px={ 2 } sx={ { minHeight: POPOVER_DESCRIPTION_MIN_HEIGHT } }>
+								<Typography variant="body2" color="secondary" sx={ { pt: 0.5, pb: 1 } }>
+									{ promotionConfig.popover.description }
+								</Typography>
+							</Stack>
+							<Stack direction="row" alignItems="center" pt={ 1 } pb={ 1.5 } px={ 2 }>
+								<Button
+									variant="text"
+									size="small"
+									color="secondary"
+									onClick={ dismissForCooldownPeriod }
+									sx={ { marginInlineStart: -1 } }
+								>
+									{ __( 'Dismiss', 'elementor' ) }
+								</Button>
+								<Button
+									variant="contained"
+									size="small"
+									color="info"
+									disabled={ isProcessing }
+									onClick={ ( event: React.MouseEvent ) => {
+										event.stopPropagation();
+										onPrimaryClick();
+									} }
+									sx={ { marginInlineStart: 'auto' } }
+								>
+									{ isProcessing ? (
+										<CircularProgress size={ 16 } color="inherit" />
+									) : (
+										promotionConfig.popover.ctaLabel
+									) }
+								</Button>
+							</Stack>
+						</Box>
+					}
+				>
+					<Box
+						ref={ anchorRef }
+						role="button"
+						tabIndex={ 0 }
+						aria-expanded={ open }
+						onClick={ openPopover }
+						onKeyDown={ ( event: React.KeyboardEvent ) => {
+							if ( 'Enter' === event.key || ' ' === event.key ) {
+								event.preventDefault();
+								openPopover();
+							}
+						} }
+						sx={ {
+							mx: 1.5,
+							my: 1,
+							cursor: 'pointer',
+							'&:hover': { '& .MuiAlert-root': { filter: 'brightness(0.98)' } },
+							'&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
 						} }
 					>
-						<Box sx={ { flex: 1, minWidth: 0, overflow: 'hidden' } }>
-							<AlertTitle sx={ { mb: 0.25, fontSize: 'inherit', lineHeight: 1.3 } }>
+						<Alert
+							variant="standard"
+							color="info"
+							size="small"
+							icon={
+								<DownloadIcon
+									aria-hidden
+									sx={ {
+										display: 'block',
+										fontSize: 20,
+										width: 20,
+										height: 20,
+										color: 'text.secondary',
+									} }
+								/>
+							}
+							sx={ {
+								alignItems: 'flex-start',
+								py: 0.75,
+								'& .MuiAlert-icon': {
+									alignSelf: 'flex-start',
+									opacity: 1,
+									pt: 0.375,
+									pb: 0.125,
+									marginTop: 0,
+									marginBottom: 0,
+									marginInlineEnd: 0.5,
+								},
+								'& .MuiAlert-message': {
+									flex: 1,
+									minWidth: 0,
+									overflow: 'hidden',
+									pt: 0.125,
+									pb: 0.125,
+									marginTop: 0,
+									marginBottom: 0,
+								},
+							} }
+						>
+							<AlertTitle sx={ { m: 0, mb: 0.25, fontSize: 'inherit', lineHeight: 1.3 } }>
 								{ promotionConfig.banner.title }
 							</AlertTitle>
-							<Typography variant="caption" component="span" color="text.secondary" noWrap display="block">
+							<Typography
+								variant="caption"
+								component="div"
+								color="text.secondary"
+								sx={ { lineHeight: 1.35, paddingInlineEnd: 1 } }
+							>
 								{ promotionConfig.banner.description }
 							</Typography>
-						</Box>
-						<Rotate in={ isRtl } sx={ { display: 'flex', flexShrink: 0, alignItems: 'center' } }>
-							<ChevronRightIcon fontSize="small" color="action" />
-						</Rotate>
-					</Alert>
-				</Box>
-			</SetupInfotip>
-		</ThemeProvider>
+						</Alert>
+					</Box>
+				</SetupInfotip>
+			</ThemeProvider>
+		</DirectionProvider>
 	);
 }

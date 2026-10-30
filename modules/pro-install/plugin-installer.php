@@ -18,7 +18,7 @@ class Plugin_Installer {
 		if ( empty( $plugin_data ) ) {
 			$install_result = $this->do_install();
 			if ( null === $install_result || is_wp_error( $install_result ) ) {
-				return new \WP_Error( 'cant_installed', esc_html__( 'There are no available subscriptions at the moment.', 'elementor' ) );
+				return new \WP_Error( 'cant_installed', esc_html__( 'We couldn\'t find an eligible Pro subscription on your connected account.', 'elementor' ) );
 			}
 		}
 

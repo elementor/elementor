@@ -19,7 +19,7 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
 
 		Plugin::$instance->data_manager_v2->run_server();
 		$controller = Plugin::$instance->data_manager_v2->get_controller( 'pro-setup-promotion' );

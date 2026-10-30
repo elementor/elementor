@@ -29,12 +29,12 @@ class Complete_Setup extends Endpoint_Base {
 		$this->register_items_route( WP_REST_Server::CREATABLE );
 	}
 
-	private function success_response( string $action ): array {
+	private function success_response( string $action, bool $reload = false ): array {
 		return [
 			'data' => [
 				'success' => true,
 				'action' => $action,
-				'reload' => false,
+				'reload' => $reload,
 				'proSetupPromotion' => Setup_State::get_editor_config_after_plugin_change(),
 			],
 		];
@@ -90,7 +90,7 @@ class Complete_Setup extends Endpoint_Base {
 		if ( ! $pro_install_app || ! $pro_install_app->is_connected() ) {
 			return new \WP_Error(
 				'not_connected',
-				__( 'You must be connected to install Elementor Pro.', 'elementor' ),
+				__( 'Connect your Elementor account to install Pro.', 'elementor' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -100,7 +100,7 @@ class Complete_Setup extends Endpoint_Base {
 		if ( empty( $download_link ) ) {
 			return new \WP_Error(
 				'no_subscription',
-				__( 'There are no available subscriptions at the moment.', 'elementor' ),
+				__( 'We couldn\'t find an eligible Pro subscription on your connected account.', 'elementor' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -163,7 +163,7 @@ class Complete_Setup extends Endpoint_Base {
 		if ( true !== $result ) {
 			return new \WP_Error(
 				'activate_failed',
-				__( 'Elementor Pro could not be activated.', 'elementor' ),
+				__( 'We couldn\'t activate Elementor Pro. Please try again.', 'elementor' ),
 				[ 'status' => 500 ]
 			);
 		}
