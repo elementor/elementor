@@ -28,7 +28,11 @@ const withState = ( state: ProSetupPromotionState, payload: Record< string, unkn
 	...payload,
 } );
 
-/** Banner shown in the widgets panel (APT-105-style funnel). */
+/**
+ * Banner shown in the widgets panel (APT-105-style funnel).
+ *
+ * @param state Current Pro setup step shown in the panel.
+ */
 export function trackProSetupPromotionImpression( state: ProSetupPromotionState ): void {
 	dispatch(
 		PANEL_VIEWED_EVENT,
@@ -41,7 +45,11 @@ export function trackProSetupPromotionImpression( state: ProSetupPromotionState 
 	);
 }
 
-/** User opened the setup popover from the banner. */
+/**
+ * User opened the setup popover from the banner.
+ *
+ * @param state Current Pro setup step shown in the panel.
+ */
 export function trackProSetupPromotionBannerClick( state: ProSetupPromotionState ): void {
 	dispatch(
 		POPOVER_OPENED_EVENT,
@@ -54,7 +62,11 @@ export function trackProSetupPromotionBannerClick( state: ProSetupPromotionState
 	);
 }
 
-/** User dismissed the notice for the cooldown period. */
+/**
+ * User dismissed the notice for the cooldown period.
+ *
+ * @param state Current Pro setup step shown in the panel.
+ */
 export function trackProSetupPromotionDismiss( state: ProSetupPromotionState ): void {
 	dispatch(
 		PANEL_DISMISSED_EVENT,
@@ -67,7 +79,11 @@ export function trackProSetupPromotionDismiss( state: ProSetupPromotionState ): 
 	);
 }
 
-/** Primary CTA in the popover (install / activate / connect). */
+/**
+ * Primary CTA in the popover (install / activate / connect).
+ *
+ * @param state Current Pro setup step shown in the panel.
+ */
 export function trackProSetupPromotionCtaClick( state: ProSetupPromotionState ): void {
 	dispatch(
 		CTA_CLICKED_EVENT,

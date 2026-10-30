@@ -564,6 +564,8 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	public function test_is_pro_installed_and_not_active__true_when_installed_but_inactive(): void {
+		wp_clean_plugins_cache();
+
 		add_filter(
 			'all_plugins',
 			static function ( array $plugins ): array {
@@ -591,10 +593,19 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 			}
 		);
 
+		add_filter(
+			'pre_option_active_plugins',
+			static function (): array {
+				return [];
+			}
+		);
+
 		$this->assertTrue( Utils::is_pro_installed_and_not_active() );
 	}
 
 	public function test_is_pro_installed_and_not_active__false_when_plugin_is_active(): void {
+		wp_clean_plugins_cache();
+
 		add_filter(
 			'all_plugins',
 			static function ( array $plugins ): array {

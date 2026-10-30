@@ -57,7 +57,7 @@ class Complete_Setup extends Endpoint_Base {
 				__( 'Setup action is not available for the current state.', 'elementor' ),
 				[ 'status' => 400 ]
 			);
-		} catch ( \Throwable ) {
+		} catch ( \Throwable $throwable ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 			return new \WP_Error(
 				'setup_failed',
 				__( 'Elementor Pro setup failed. Please try again.', 'elementor' ),

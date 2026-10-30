@@ -19,13 +19,13 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import {
+	type ProSetupPromotionState,
 	trackProSetupPromotionBannerClick,
 	trackProSetupPromotionConnectResult,
 	trackProSetupPromotionCtaClick,
 	trackProSetupPromotionDismiss,
 	trackProSetupPromotionImpression,
 	trackProSetupPromotionResult,
-	type ProSetupPromotionState,
 } from '../analytics';
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
@@ -190,10 +190,13 @@ export function ProSetupPanelPromo() {
 		} catch {
 			notify( {
 				type: 'error',
-				message: __( 'We couldn\'t confirm your Pro license. Please try again.', 'elementor' ),
+				message: __( "We couldn't confirm your Pro license. Please try again.", 'elementor' ),
 				id: 'pro-setup-promotion-connect-verify-error',
 			} );
-			trackProSetupPromotionConnectResult( 'error', __( 'We couldn\'t confirm your Pro license. Please try again.', 'elementor' ) );
+			trackProSetupPromotionConnectResult(
+				'error',
+				__( "We couldn't confirm your Pro license. Please try again.", 'elementor' )
+			);
 		} finally {
 			isProcessingRef.current = false;
 			setIsProcessing( false );
@@ -284,7 +287,7 @@ export function ProSetupPanelPromo() {
 		} catch {
 			notify( {
 				type: 'error',
-				message: __( 'Couldn\'t dismiss this reminder. Please try again.', 'elementor' ),
+				message: __( "Couldn't dismiss this reminder. Please try again.", 'elementor' ),
 				id: 'pro-setup-promotion-dismiss-error',
 			} );
 			setDismissed( false );

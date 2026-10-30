@@ -18,7 +18,7 @@ class Test_Plugin_Installer extends Elementor_Test_Base {
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertSame( 'install_failed', $result->get_error_code() );
 		$this->assertSame(
-			'We couldn\'t install Elementor Pro. Please try again.',
+			'We couldn&#039;t install Elementor Pro. Please try again.',
 			$result->get_error_message()
 		);
 		$this->assertSame( 'no_package_url', $result->get_error_data()['error_code'] ?? null );

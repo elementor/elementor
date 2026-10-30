@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\ProSetupPromotion;
 
+use Elementor\Modules\ProSetupPromotion\Data\Controller;
 use Elementor\Modules\ProSetupPromotion\Data\Endpoints\Complete_Setup;
 use Elementor\Modules\ProSetupPromotion\Setup_State;
 use Elementor\Plugin;
@@ -21,8 +22,14 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
 
-		Plugin::$instance->data_manager_v2->run_server();
-		$controller = Plugin::$instance->data_manager_v2->get_controller( 'pro-setup-promotion' );
+		$data_manager = Plugin::$instance->data_manager_v2;
+		$controller = $data_manager->get_controller( 'pro-setup-promotion' );
+
+		if ( ! $controller ) {
+			$controller = $data_manager->register_controller( new Controller() );
+		}
+
+		$data_manager->run_server();
 		$this->endpoint = $controller->endpoints['pro-setup-promotion/complete-setup'];
 
 		add_filter(
