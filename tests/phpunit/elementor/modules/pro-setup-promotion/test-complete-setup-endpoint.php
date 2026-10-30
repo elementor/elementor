@@ -29,8 +29,7 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 			$controller = $data_manager->register_controller( new Controller() );
 		}
 
-		$data_manager->run_server();
-		$this->endpoint = $controller->endpoints['pro-setup-promotion/complete-setup'];
+		$this->endpoint = new Complete_Setup( $controller );
 
 		add_filter(
 			'elementor/pro_setup_promotion/setup_state',
