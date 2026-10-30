@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Variables\ImportExportCustomization;
 
+use Elementor\App\Modules\ImportExportCustomization\Kit_Context;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\Variables\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
@@ -323,6 +324,80 @@ class Test_Import_Runner extends Elementor_Test_Base {
 
 		$this->assertCount( 3, $all_ids );
 		$this->assertCount( 3, array_unique( $all_ids ) ); // All IDs are unique.
+	}
+
+	public function test_import__stores_context_mapping_when_id_conflict_generates_new_id() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+		$context = new Kit_Context();
+
+		$existing_data = [
+			'data' => [
+				'e-gv-123' => [
+					'type' => 'color',
+					'label' => 'Existing Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'context' => $context,
+		], [] );
+
+		// Assert
+		$this->assertTrue( $context->group( Kit_Context::GROUP_GLOBAL_VARIABLES )->has( 'e-gv-123' ) );
+		$this->assertNotSame( 'e-gv-123', $context->group( Kit_Context::GROUP_GLOBAL_VARIABLES )->value_of( 'e-gv-123' ) );
+	}
+
+	public function test_import__stores_context_mapping_for_replace_resolution() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+		$context = new Kit_Context();
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+			'context' => $context,
+		], [] );
+
+		// Assert
+		$group = $context->group( Kit_Context::GROUP_GLOBAL_VARIABLES );
+		$this->assertSame( 'e-gv-existing', $group->value_of( 'e-gv-123' ) );
+		$this->assertSame( 'e-gv-456', $group->value_of( 'e-gv-456' ) );
 	}
 
 	public function test_import__override_all_replaces_existing() {
