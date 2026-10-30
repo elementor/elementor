@@ -148,12 +148,18 @@ export const searchMarkdownItems = ( term ) => {
 	} );
 };
 
-export const saveLlmsContent = ( content ) => {
+const requestLlmsAction = ( action, data = {} ) => {
 	return new Promise( ( resolve, reject ) => {
-		elementorCommon.ajax.addRequest( 'agents_ready_save_llms_content', {
-			data: { content },
+		elementorCommon.ajax.addRequest( action, {
+			data,
 			success: resolve,
 			error: reject,
 		} );
 	} );
 };
+
+export const saveLlmsContent = ( content ) => requestLlmsAction( 'agents_ready_save_llms_content', { content } );
+
+export const revertLlmsContent = () => requestLlmsAction( 'agents_ready_revert_llms_content' );
+
+export const takeOverLlmsFile = () => requestLlmsAction( 'agents_ready_takeover_llms_file' );

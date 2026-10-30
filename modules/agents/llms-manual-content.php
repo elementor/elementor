@@ -55,6 +55,10 @@ class Llms_Manual_Content {
 		], false );
 	}
 
+	public function delete(): void {
+		delete_option( self::OPTION );
+	}
+
 	private function get_stored(): array {
 		$stored = get_option( self::OPTION, [] );
 
