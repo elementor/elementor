@@ -20,6 +20,20 @@ export const getScoreTier = ( score ) => {
 	return SCORE_TIER_HIGH;
 };
 
+export const getStagePassPercent = ( stage ) => {
+	if ( stage.isComingSoon || stage.total <= 0 ) {
+		return null;
+	}
+
+	return normalizeReadinessScore( ( stage.earned / stage.total ) * READINESS_SCORE_MAX );
+};
+
+export const getStageHealthTier = ( stage ) => {
+	const passPercent = getStagePassPercent( stage );
+
+	return null === passPercent ? null : getScoreTier( passPercent );
+};
+
 export const getVisibleChecks = ( scan ) => scan?.checks ?? [];
 
 export const normalizeReadinessScore = ( score ) => {

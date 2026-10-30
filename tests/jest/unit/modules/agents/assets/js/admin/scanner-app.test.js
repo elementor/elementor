@@ -14,7 +14,7 @@ import {
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
 import { getMockScanResult, getProgressScanGateDurationMs } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
 import { toFailedScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-report-adapter';
-import { getScoreTier } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-score';
+import { getScoreTier, getStageHealthTier, getStagePassPercent } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-score';
 
 jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 	activateAgentsReady: jest.fn(),
@@ -211,7 +211,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( activateAgentsReady ).toHaveBeenCalledTimes( 1 );
 		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
 		expect( getScoreRing( 30 ) ).toBeTruthy();
-		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
+		expect( screen.getAllByRole( 'button', { name: 'Rescan' } )[ 0 ].textContent ).toBe( 'Rescan' );
 		expect( screen.getByRole( 'link', { name: 'Settings' } ).getAttribute( 'href' ) ).toBe( AGENT_ACCESS_URL );
 		expect( screen.getByText( 'Agent Ready is on' ).parentElement.contains( screen.getByRole( 'link', { name: 'Settings' } ) ) ).toBe( true );
 		expect( screen.queryByText( 'AI agents are blocked by your robots.txt' ) ).toBeNull();
@@ -322,20 +322,19 @@ describe( 'Agent Ready scanner', () => {
 		renderScanner( { ...activatedProps, browserToolsConfig: { enabled: true, isAvailable: true } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
-		const checkSwitch = screen.getByRole( 'switch', { name: 'WebMCP support' } );
+		const row = getRowByTitle( 'WebMCP support' );
 
 		// Assert
-		expect( checkSwitch.checked ).toBe( true );
-		expect( checkSwitch.disabled ).toBe( false );
+		expect( within( row ).queryByRole( 'switch' ) ).toBeNull();
 
 		// Act
-		fireEvent.click( checkSwitch );
+		fireEvent.click( within( row ).getByRole( 'button', { name: 'Undo' } ) );
 		await flushPendingSave();
 
 		// Assert
 		expect( undoCheckFix ).toHaveBeenCalledWith( 'webmcp-support' );
-		expect( checkSwitch.checked ).toBe( false );
-		expect( checkSwitch.disabled ).toBe( false );
+		expect( screen.getByRole( 'switch', { name: 'WebMCP support' } ).checked ).toBe( false );
+		expect( within( row ).queryByRole( 'button', { name: 'Undo' } ) ).toBeNull();
 	} );
 
 	it( 'disables the WebMCP switch and explains why when Agent browser tools are unavailable', async () => {
@@ -380,26 +379,27 @@ describe( 'Agent Ready scanner', () => {
 		expect( getSwitchReason( checkSwitch ) ).toBe( ABILITIES_API_REASON.message );
 	} );
 
-	it( 'shows a mapped switch on when that Agent Ready module is already enabled', async () => {
+	it( 'shows Undo and Rescan instead of the switch when that Agent Ready module is already enabled', async () => {
 		// Arrange
+		const title = 'Agents can\'t read clean versions of your pages';
 		renderScanner( { ...activatedProps, markdownConfig: { enabled: true } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
 		await advanceTimers( SCAN_DURATION_MS );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show all fixes (+2)' } ) );
-		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t read clean versions of your pages' } );
+		const row = getRowByTitle( title );
 
 		// Assert
-		expect( checkSwitch.checked ).toBe( true );
+		expect( within( row ).queryByRole( 'switch' ) ).toBeNull();
+		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ) ).toBeTruthy();
 		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
 
 		// Act
-		fireEvent.click( checkSwitch );
+		fireEvent.click( within( row ).getByRole( 'button', { name: 'Undo' } ) );
 		await flushPendingSave();
 
 		// Assert
 		expect( undoCheckFix ).toHaveBeenCalledWith( 'markdown-pages' );
-		expect( checkSwitch.checked ).toBe( false );
-		expect( checkSwitch.disabled ).toBe( false );
+		expect( screen.getByRole( 'switch', { name: title } ).checked ).toBe( false );
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 	} );
 
@@ -415,7 +415,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'agent-path', { enabled: true } );
-		expect( checkSwitch.checked ).toBe( true );
+		expect( within( getRowByTitle( 'Agents can\'t find a path into your site' ) ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 		expect( getRowByTitle( 'Agents can\'t find a path into your site' ).getAttribute( 'aria-expanded' ) ).toBe( 'false' );
@@ -457,17 +457,51 @@ describe( 'Agent Ready scanner', () => {
 
 		// Act
 		fireEvent.click( checkSwitch );
+		const row = getRowByTitle( 'Agents can\'t find a path into your site' );
 
 		// Assert
-		expect( checkSwitch.checked ).toBe( true );
-		expect( checkSwitch.disabled ).toBe( true );
+		expect( within( row ).queryByRole( 'switch' ) ).toBeNull();
+		expect( within( row ).getByRole( 'button', { name: 'Undo' } ).disabled ).toBe( true );
+		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ).disabled ).toBe( true );
 
 		await act( async () => {
 			resolveFix( {} );
 		} );
 
-		expect( checkSwitch.disabled ).toBe( false );
-		expect( checkSwitch.checked ).toBe( true );
+		expect( within( row ).getByRole( 'button', { name: 'Undo' } ).disabled ).toBe( false );
+		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ).disabled ).toBe( false );
+	} );
+
+	it( 'reverts a handled toggle to its initial state when Undo is clicked', async () => {
+		// Arrange
+		await runFirstScan( activatedProps );
+		const title = 'Agents can\'t find a path into your site';
+		fireEvent.click( screen.getByRole( 'switch', { name: title } ) );
+		await flushPendingSave();
+
+		// Act
+		fireEvent.click( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Undo' } ) );
+		await flushPendingSave();
+
+		// Assert
+		expect( undoCheckFix ).toHaveBeenCalledWith( 'agent-path' );
+		expect( screen.getByRole( 'switch', { name: title } ).checked ).toBe( false );
+		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
+	} );
+
+	it( 'starts a new scan when Rescan is clicked on a handled toggle row', async () => {
+		// Arrange
+		await runFirstScan( activatedProps );
+		const title = 'Agents can\'t find a path into your site';
+		fireEvent.click( screen.getByRole( 'switch', { name: title } ) );
+		await flushPendingSave();
+
+		// Act
+		fireEvent.click( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'rolls back a toggle and shows an error when saving fails', async () => {
@@ -484,26 +518,26 @@ describe( 'Agent Ready scanner', () => {
 		} );
 
 		// Assert
-		expect( checkSwitch.checked ).toBe( false );
+		expect( screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } ).checked ).toBe( false );
 		expect( screen.getByText( 'Save failed' ) ).toBeTruthy();
 	} );
 
 	it( 'drops a pending fix when a rescan still reports the check as failing', async () => {
 		// Arrange
-		await runFirstScan();
-		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+		await runFirstScan( activatedProps );
 		const checkSwitch = screen.getByRole( 'switch', { name: 'Agents can\'t find a path into your site' } );
 		fireEvent.click( checkSwitch );
+		await flushPendingSave();
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan' } ) );
+		fireEvent.click( within( getRowByTitle( 'Agents can\'t find a path into your site' ) ).getByRole( 'button', { name: 'Rescan' } ) );
 		await advanceTimers( SCANNER_MOTION.rescanMinMs );
 
 		// Assert
 		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
-		expect( within( getRowByTitle( 'Agents can\'t find a path into your site' ) ).getByRole( 'switch' ) ).toBeTruthy();
+		expect( within( getRowByTitle( 'Agents can\'t find a path into your site' ) ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
 	} );
 
 	it( 'opens the preference drawer and completes the row once a value is saved', async () => {
@@ -798,5 +832,31 @@ describe( 'getScoreTier', () => {
 		expect( getScoreTier( 31 ) ).toBe( SCORE_TIER_MID );
 		expect( getScoreTier( 79 ) ).toBe( SCORE_TIER_MID );
 		expect( getScoreTier( 80 ) ).toBe( SCORE_TIER_HIGH );
+	} );
+} );
+
+describe( 'stage health', () => {
+	it( 'derives the pass percent from earned and total checks', () => {
+		// Assert
+		expect( getStagePassPercent( { earned: 0, total: 6 } ) ).toBe( 0 );
+		expect( getStagePassPercent( { earned: 2, total: 6 } ) ).toBe( 33 );
+		expect( getStagePassPercent( { earned: 5, total: 6 } ) ).toBe( 83 );
+	} );
+
+	it( 'has no pass percent or tier for coming soon or empty stages', () => {
+		// Arrange
+		const comingSoon = { earned: 0, total: 0, isComingSoon: true };
+
+		// Assert
+		expect( getStagePassPercent( comingSoon ) ).toBeNull();
+		expect( getStageHealthTier( comingSoon ) ).toBeNull();
+		expect( getStageHealthTier( { earned: 0, total: 0 } ) ).toBeNull();
+	} );
+
+	it( 'maps the pass percent to low, mid and high tiers', () => {
+		// Assert
+		expect( getStageHealthTier( { earned: 0, total: 6 } ) ).toBe( SCORE_TIER_LOW );
+		expect( getStageHealthTier( { earned: 3, total: 6 } ) ).toBe( SCORE_TIER_MID );
+		expect( getStageHealthTier( { earned: 4, total: 5 } ) ).toBe( SCORE_TIER_HIGH );
 	} );
 } );
