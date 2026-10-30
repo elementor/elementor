@@ -23,18 +23,21 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 
 		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
-		const toggle = useCallback( ( context?: { target_value?: string } ) => {
-			setIsOpen( ( prev ) => {
-				if ( ! prev ) {
-					const payload: PromotionTrackingData = context?.target_value
-						? { ...trackingData, target_value: context.target_value }
-						: trackingData;
-					trackingPayloadRef.current = payload;
-					trackViewPromotion( payload );
-				}
-				return ! prev;
-			} );
-		}, [ trackingData ] );
+		const toggle = useCallback(
+			( context?: { target_value?: string } ) => {
+				setIsOpen( ( prev ) => {
+					if ( ! prev ) {
+						const payload: PromotionTrackingData = context?.target_value
+							? { ...trackingData, target_value: context.target_value }
+							: trackingData;
+						trackingPayloadRef.current = payload;
+						trackViewPromotion( payload );
+					}
+					return ! prev;
+				} );
+			},
+			[ trackingData ]
+		);
 
 		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
 
