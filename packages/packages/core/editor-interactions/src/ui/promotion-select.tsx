@@ -18,11 +18,11 @@ type PromotionSelectProps = {
 	trackingData: PromotionTrackingData;
 };
 
-const LOCKED_OPTION_SX = {
+const LOCKED_OPTION_SX = ( theme: { palette: { action: { disabledOpacity: number } } } ) => ( {
 	pl: 3,
-	opacity: 0.38,
+	opacity: theme.palette.action.disabledOpacity,
 	cursor: 'not-allowed',
-};
+} );
 
 export function PromotionSelect( {
 	value,
