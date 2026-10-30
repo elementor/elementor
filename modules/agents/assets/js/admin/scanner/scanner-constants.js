@@ -216,6 +216,7 @@ export const SCANNER_LAYOUT = {
 	actionColumnWidth: 200,
 	statusIconSlot: 20,
 	completedIconSize: 24,
+	completedActionHeight: 28,
 	chevronSize: 24,
 	countBadgeSize: 24,
 	drawerRadius: '12px',
