@@ -130,7 +130,6 @@ export const getStageQuestions = () => ( {
 } );
 
 export const SCANNER_COLORS = {
-	page: '#fcfcfc',
 	paper: '#fff',
 	tableHeader: '#f3f4f7',
 	ringTrack: '#edeef2',
