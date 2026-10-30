@@ -1,0 +1,44 @@
+name: PR Test Healer
+
+# Runs the shared Playwright PR test healer from elementor-editor-github-actions
+# when the `heal` label is added to a pull request. Every test that failed in
+# the PR's latest Playwright run gets one verdict — broken by this PR, flaky,
+# already failing on main, or needs a human look — in a single comment on the
+# PR. Flaky tests are fixed in a separate PR against main, never on the PR's
+# branch. The label is removed when the run ends; add it again to re-run.
+#
+# Needs the CURSOR_APIKEY secret and the TEST_HEALER_ENABLED variable
+# (off, manual or all).
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  heal:
+    name: Heal
+    # A fork's code is not run with the healer's secrets.
+    if: |
+      github.repository == 'elementor/elementor' &&
+      github.event.label.name == 'heal' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    # On the job, not the workflow: any other label added meanwhile would
+    # otherwise cancel a heal in progress.
+    concurrency:
+      group: pr-test-healer-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: write
+    uses: elementor/elementor-editor-github-actions/.github/workflows/playwright-pr-test-healer.yml@main
+    with:
+      product: core
+      pr_number: ${{ github.event.pull_request.number }}
+      slack_channel: C0C0TEZN45C
+    secrets:
+      CURSOR_APIKEY: ${{ secrets.CURSOR_APIKEY }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
