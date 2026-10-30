@@ -57,17 +57,17 @@ class Complete_Setup extends Endpoint_Base {
 				__( 'Setup action is not available for the current state.', 'elementor' ),
 				[ 'status' => 400 ]
 			);
-		} catch ( \Throwable $throwable ) {
+		} catch ( \Throwable ) {
 			return new \WP_Error(
 				'setup_failed',
-				$throwable->getMessage(),
+				__( 'Elementor Pro setup failed. Please try again.', 'elementor' ),
 				[ 'status' => 500 ]
 			);
 		}
 	}
 
 	private function install_and_activate_pro() {
-		if ( ! current_user_can( 'install_plugins' ) ) {
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
 			return new \WP_Error(
 				'insufficient_permissions',
 				__( 'You do not have permission to install plugins.', 'elementor' ),
