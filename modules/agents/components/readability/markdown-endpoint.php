@@ -390,7 +390,7 @@ class Markdown_Endpoint extends Feature_Component {
 		exit;
 	}
 
-	private function is_markdown_request(): bool {
+	public function is_markdown_request(): bool {
 		if ( isset( $_GET['format'] ) && 'markdown' === $_GET['format'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
