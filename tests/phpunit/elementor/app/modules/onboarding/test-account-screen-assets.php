@@ -17,7 +17,7 @@ class Test_Account_Screen_Assets extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_get_editor_config_uses_defaults_when_cdn_inactive(): void {
+	public function test_get_editor_config_returns_null_when_cdn_inactive(): void {
 		add_filter(
 			'elementor/onboarding/account_screen_assets',
 			static function (): array {
@@ -28,11 +28,7 @@ class Test_Account_Screen_Assets extends Elementor_Test_Base {
 			}
 		);
 
-		$config = Account_Screen_Assets::get_editor_config();
-
-		$this->assertSame( __( 'You\'re here!', 'elementor' ), $config['headlineLine1'] );
-		$this->assertTrue( $config['showDescription'] );
-		$this->assertSame( __( 'Start setup', 'elementor' ), $config['primaryCtaLabel'] );
+		$this->assertNull( Account_Screen_Assets::get_editor_config() );
 	}
 
 	public function test_get_editor_config_applies_cdn_copy_and_visibility(): void {

@@ -1,4 +1,6 @@
-const DEFAULT_ILLUSTRATION = elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg';
+function getDefaultIllustrationUrl() {
+	return elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg';
+}
 
 export function getLegacyAccountScreenConfig() {
 	return elementorAppConfig.onboarding?.accountScreen ?? null;
@@ -13,7 +15,7 @@ export function getAccountScreenIllustrationUrl( config ) {
 		return config.illustrationUrl;
 	}
 
-	return DEFAULT_ILLUSTRATION;
+	return getDefaultIllustrationUrl();
 }
 
 export function buildDisconnectedPageTexts( config ) {

@@ -18,13 +18,19 @@ export default function AccountContentA( {
 	const accountScreen = ! state.isLibraryConnected ? getLegacyAccountScreenConfig() : null;
 	const useExperimentTitles = elementorAppConfig.onboarding.experiment;
 
-	const title = accountScreen
-		? accountScreen.headlineLine1
-		: ( useExperimentTitles ? __( 'You\'re here!', 'elementor' ) : __( 'You\'re here! Let\'s set things up.', 'elementor' ) );
+	let title;
+	let secondLineTitle;
 
-	const secondLineTitle = accountScreen
-		? accountScreen.headlineLine2
-		: ( useExperimentTitles ? __( 'Let\'s get connected.', 'elementor' ) : '' );
+	if ( accountScreen ) {
+		title = accountScreen.headlineLine1;
+		secondLineTitle = accountScreen.headlineLine2;
+	} else if ( useExperimentTitles ) {
+		title = __( 'You\'re here!', 'elementor' );
+		secondLineTitle = __( 'Let\'s get connected.', 'elementor' );
+	} else {
+		title = __( 'You\'re here! Let\'s set things up.', 'elementor' );
+		secondLineTitle = '';
+	}
 
 	const image = accountScreen
 		? getAccountScreenIllustrationUrl( accountScreen )

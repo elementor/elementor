@@ -12,12 +12,12 @@ class Account_Screen_Assets {
 
 	const TRANSIENT_KEY = '_elementor_onboarding_account_screen_assets';
 
-	public static function get_editor_config(): array {
+	public static function get_editor_config(): ?array {
 		$defaults = self::get_defaults();
 		$assets = self::get_raw_assets_data();
 
 		if ( empty( $assets['is_active'] ) ) {
-			return $defaults;
+			return null;
 		}
 
 		return [
