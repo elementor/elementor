@@ -99,6 +99,7 @@ export const OUTSIDE_SCAN_STATUS_OK = 'ok';
 export const OUTSIDE_SCAN_STATUS_FAILED = 'failed';
 
 export const SCAN_FAILURE_REASON_BLOCKED = 'blocked';
+export const SCAN_FAILURE_REASON_LOCAL = 'local';
 
 export const HTTP_TOO_MANY_REQUESTS = 429;
 
