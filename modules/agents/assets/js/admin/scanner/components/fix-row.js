@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
-	FIX_WITH_TOGGLE,
 	CHECK_STATUS_FAIL,
 	getCheckStatusDotColor,
 	getCheckStatusLabel,
@@ -34,6 +33,7 @@ const stopPropagation = ( event ) => event.stopPropagation();
 const completedCheckSx = {
 	color: 'success.main',
 	fontSize: SCANNER_LAYOUT.completedIconSize,
+	flexShrink: 0,
 	animation: `scannerCheckIn ${ SCANNER_MOTION.completedCheckMs }ms ${ SCANNER_MOTION.overshoot }`,
 	'@keyframes scannerCheckIn': {
 		from: { transform: 'scale(0.4)' },
@@ -105,7 +105,7 @@ export const FixRow = ( {
 	onPreferenceChange,
 	onSavePreference,
 } ) => {
-	const isCompleted = isResolved && FIX_WITH_TOGGLE !== check.fixWith;
+	const isCompleted = isResolved;
 	const titleIsPrimary = isOpen || isCompleted;
 	const showCopyPrompt = FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt ) && ! isCompleted;
 
