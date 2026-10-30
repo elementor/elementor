@@ -147,6 +147,20 @@ declare global {
 					url: string;
 					message: string;
 					button_text: string;
+				} | null;
+				proSetupPromotion?: {
+					state: 'install' | 'activate' | 'connect';
+					dismissId: string;
+					banner: {
+						title: string;
+						description: string;
+					};
+					popover: {
+						title: string;
+						description: string;
+						ctaLabel: string;
+					};
+					connectUrl: string;
 				};
 				user?: {
 					top_bar?: {

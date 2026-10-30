@@ -35,11 +35,29 @@ class Plugin_Installer {
 	}
 
 	private function includes_dependencies() {
-		include_once ABSPATH . '/wp-admin/includes/admin.php';
-		include_once ABSPATH . '/wp-admin/includes/plugin-install.php';
+		include_once ABSPATH . '/wp-admin/includes/file.php';
 		include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		include_once ABSPATH . '/wp-admin/includes/class-wp-upgrader.php';
+		include_once ABSPATH . '/wp-admin/includes/class-wp-upgrader-skin.php';
+		include_once ABSPATH . '/wp-admin/includes/class-automatic-upgrader-skin.php';
 		include_once ABSPATH . '/wp-admin/includes/class-plugin-upgrader.php';
+	}
+
+	private function ensure_wp_filesystem() {
+		global $wp_filesystem;
+
+		if ( $wp_filesystem ) {
+			return true;
+		}
+
+		if ( ! WP_Filesystem() ) {
+			return new \WP_Error(
+				'filesystem_unavailable',
+				esc_html__( 'Could not access the filesystem.', 'elementor' )
+			);
+		}
+
+		return true;
 	}
 
 	private function do_install() {
@@ -48,9 +66,27 @@ class Plugin_Installer {
 			return new \WP_Error( 'no_package_url', sprintf( 'The requested plugin `%s` has no package URL', $this->plugin_slug ) );
 		}
 
-		$upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+		$filesystem = $this->ensure_wp_filesystem();
 
-		return $upgrader->install( $package_url );
+		if ( is_wp_error( $filesystem ) ) {
+			return $filesystem;
+		}
+
+		$upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+		$result = $upgrader->install( $package_url );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( false === $result ) {
+			return new \WP_Error(
+				'install_failed',
+				esc_html__( 'Elementor Pro could not be installed.', 'elementor' )
+			);
+		}
+
+		return $result;
 	}
 
 	private function get_plugin_path() {
@@ -71,13 +107,21 @@ class Plugin_Installer {
 	}
 
 	public function activate() {
+		$this->includes_dependencies();
+
+		$filesystem = $this->ensure_wp_filesystem();
+
+		if ( is_wp_error( $filesystem ) ) {
+			return $filesystem;
+		}
+
 		$plugin_path = $this->get_plugin_path();
 
 		if ( ! $plugin_path ) {
 			return new \WP_Error( 'no_installed', sprintf( 'The requested plugin `%s` is not installed', $this->plugin_slug ) );
 		}
 
-		$activate_result = activate_plugin( $plugin_path );
+		$activate_result = activate_plugin( $plugin_path, '', false, true );
 
 		if ( is_wp_error( $activate_result ) ) {
 			return $activate_result;

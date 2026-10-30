@@ -44,7 +44,7 @@ if ( ! $has_pro ) {
 	>
 	</div>
 	<div id="elementor-navigator__footer">
-		<?php if ( ! $has_pro && ! empty( $promotion_data ) ) : ?>
+		<?php if ( ! $has_pro && ! empty( $promotion_data['text'] ) && ! empty( $promotion_data['url'] ) ) : ?>
 			<div id="elementor-navigator__footer__promotion">
 				<div class="elementor-navigator__promotion-text">
 					<?php echo esc_attr( $promotion_data['text'] ); ?>.
