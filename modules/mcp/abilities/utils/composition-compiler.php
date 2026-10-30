@@ -25,7 +25,6 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,7 +50,7 @@ final class Composition_Compiler {
 	 * @param array     $document_tree Existing document tree used for insertion-context validation.
 	 * @param string    $parent_id     Target parent used for insertion-context validation.
 	 *
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	public function compile(
 		array $input,
@@ -68,9 +67,7 @@ final class Composition_Compiler {
 			return $dom;
 		}
 
-		if ( ! Utils::has_pro() && ( new Form_Structure_Validator( $xml_parser ) )->contains_form_elements( $dom ) ) {
-			return Forms_Pro_Features_Discovery::for_composition();
-		}
+		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
 
 		[
 			'configs' => $widget_configs,
@@ -109,7 +106,7 @@ final class Composition_Compiler {
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
 		if ( empty( $subtrees ) ) {
-			return new \WP_Error(
+			return $pro_features_discovery[0] ?? new \WP_Error(
 				'empty_composition',
 				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-div-block configuration-id="..."></e-div-block>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
@@ -143,6 +140,7 @@ final class Composition_Compiler {
 			'warnings' => $warnings,
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
+			'pro_features_discovery' => $pro_features_discovery,
 		];
 	}
 

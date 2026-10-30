@@ -3,10 +3,16 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Carousel\Carousel_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -27,6 +33,11 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	 */
 	private array $original_experiment_states = [];
 
+	/**
+	 * @var string[]
+	 */
+	private array $registered_element_types = [];
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->ability = new Get_Widget_Schema_Ability();
@@ -34,6 +45,12 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->registered_element_types as $element_type ) {
+			Plugin::$instance->elements_manager->unregister_element_type( $element_type );
+		}
+
+		$this->registered_element_types = [];
+
 		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
 			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
 			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
@@ -108,6 +125,46 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$this->assertSame( 'elementor_not_found', $this->execute_for_error_code( 'does-not-exist-anywhere' ) );
+	}
+
+	public function test_execute__returns_pro_required_error_for_pro_widget_without_pro() {
+		// Arrange.
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$this->act_as_admin();
+		$this->given_element_registered( new Atomic_Form_Promotion() );
+		$this->given_element_registered( new Carousel_Promotion() );
+
+		// Act.
+		$result = $this->ability->execute( [ 'widget_type' => [ 'e-form', 'e-carousel' ] ] );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Forms_Pro_Features_Discovery::UPGRADE_URL . ')', $result['errors']['e-form']['message'] );
+		$this->assertStringContainsString( 'Free path:', $result['errors']['e-form']['message'] );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result['errors']['e-carousel']['code'] );
+		$this->assertStringNotContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result['errors']['e-carousel']['message'] );
+		$this->assertStringContainsString( 'What Pro gives the user:', $result['errors']['e-carousel']['message'] );
+		$this->assertStringContainsString( 'Free path:', $result['errors']['e-carousel']['message'] );
+	}
+
+	public function test_execute__reuses_feature_errors_for_form_fields_and_site_part_widgets_without_pro() {
+		// Arrange.
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$this->act_as_admin();
+
+		// Act.
+		$result = $this->ability->execute( [ 'widget_type' => [ 'e-form-input', 'theme-post-title' ] ] );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertSame( Forms_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['e-form-input']['message'] );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['theme-post-title']['message'] );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {
@@ -228,6 +285,17 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 			}
 		);
 		Plugin::$instance->widgets_manager = $widgets_manager;
+	}
+
+	private function given_element_registered( $element ): void {
+		$element_type = $element::get_type();
+
+		if ( Plugin::$instance->elements_manager->get_element_types( $element_type ) ) {
+			return;
+		}
+
+		Plugin::$instance->elements_manager->register_element_type( $element );
+		$this->registered_element_types[] = $element_type;
 	}
 
 	private function given_widget_manager_with_registered_heading(): void {

@@ -171,8 +171,8 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( $input['action'], $result->get_error_data()['action'] );
 		$this->assertSame( Components_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( Components_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_message() );
-		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Components_Pro_Features_Discovery::UPGRADE_URL . ')', $result->get_error_message() );
+		$this->assertStringContainsString( 'Free path: build the block with native widgets and a global class', $result->get_error_message() );
 	}
 
 	/**
@@ -186,7 +186,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$description = ( new Manage_Component_Ability() )->get_description_for_llm();
 
 		// Assert
-		$notice = 'creating, renaming, and archiving components require an active Elementor Pro license';
+		$notice = '`create`, `rename`, and `archive` need Elementor Pro (not licensed on this site)';
 		$this->assertSame( $expects_notice, str_contains( $description, $notice ) );
 	}
 

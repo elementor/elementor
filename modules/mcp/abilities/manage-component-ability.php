@@ -417,7 +417,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
 		$compiled = Composition_Compiler::make()->compile(
@@ -428,6 +428,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		);
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
+		}
+
+		if ( $compiled['pro_features_discovery'] ) {
+			return $compiled['pro_features_discovery'][0];
 		}
 
 		if ( 1 !== count( $compiled['elements'] ) ) {
@@ -632,7 +636,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function get_components_pro_notice(): string {
-		return __( 'Note: creating, renaming, and archiving components require an active Elementor Pro license, which this site does not have. Those actions are rejected with an upgrade link — do not retry them, share the link with the user, and do not substitute global classes, variables, templates, or duplicated elements for a component as a workaround.', 'elementor' );
+		return __( '`create`, `rename`, and `archive` need Elementor Pro (not licensed on this site). With Pro, a component is built once, reused on any page, and its design is edited in one place. Each copy can still have its own text and images.', 'elementor' );
 	}
 
 	private function check_access( string $action, callable $can ): ?\WP_Error {

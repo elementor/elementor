@@ -14,6 +14,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -24,6 +25,7 @@ use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Mock_Pro_License_API;
 use Spatie\Snapshots\MatchesSnapshots;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -334,16 +336,58 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( Forms_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_message() );
-		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
-		$this->assertStringContainsString( 'workaround', $result->get_error_message() );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Forms_Pro_Features_Discovery::UPGRADE_URL . ')', $result->get_error_message() );
+		$this->assertStringContainsString( 'Free path:', $result->get_error_message() );
 	}
 
 	public function form_pro_features_discovery_cases(): array {
 		return [
 			'valid form' => [ '<e-form configuration-id="form-1"><e-flexbox configuration-id="row-1"><e-form-input configuration-id="input-1"/></e-flexbox><e-form-submit-button configuration-id="btn-1"/></e-form>' ],
-			'orphaned form field' => [ '<e-flexbox><e-form-input configuration-id="input-1"/></e-flexbox>' ],
 		];
+	}
+
+	public function test_execute__skips_pro_elements_and_builds_the_rest_without_pro() {
+		// Arrange
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( false, false );
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+		$xml = '<e-div-block configuration-id="section"><e-heading configuration-id="title"/><e-form configuration-id="form-1"><e-form-input configuration-id="input-1"/><e-form-submit-button configuration-id="btn-1"/></e-form><e-component configuration-id="card"/></e-div-block>';
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'dry_run' => true, 'xml_structure' => $xml ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertStringContainsString( 'configuration-id="title"', $result['resolved_xml'] );
+		$this->assertStringNotContainsString( 'e-form', $result['resolved_xml'] );
+		$this->assertStringNotContainsString( 'e-component', $result['resolved_xml'] );
+		$this->assertCount( 2, $result['pro_features_discovery'] );
+		$this->assertSame( Forms_Pro_Features_Discovery::UPGRADE_URL, $result['pro_features_discovery'][0]['upgrade_url'] );
+		$this->assertStringContainsString( 'the form was not added', $result['pro_features_discovery'][0]['message'] );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Components_Pro_Features_Discovery::UPGRADE_URL . ')', $result['pro_features_discovery'][1]['message'] );
+	}
+
+	public function test_execute__omits_pro_features_discovery_without_pro_elements() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-div-block configuration-id="section"><e-heading configuration-id="title"/></e-div-block>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertArrayNotHasKey( 'pro_features_discovery', $result );
 	}
 
 	public function test_get_description_for_llm__explains_forms_require_pro_without_pro() {
@@ -351,8 +395,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$description = ( new Build_Composition_Ability() )->get_description_for_llm();
 
 		// Assert
-		$this->assertStringContainsString( 'forms require Elementor Pro', $description );
-		$this->assertStringContainsString( 'do not recreate it with regular inputs', $description );
+		$this->assertStringContainsString( 'need Elementor Pro (not installed on this site)', $description );
+		$this->assertStringContainsString( 'Form elements are skipped on this site.', $description );
 	}
 
 	/**

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Pro_Features_Discovery_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
@@ -110,6 +111,10 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 	}
 
 	private function resolve_widget_schema( string $widget_type, array $parents_index ) {
+		if ( Pro_Features_Discovery_Registry::requires_pro( $widget_type ) ) {
+			return Pro_Features_Discovery_Registry::for_widget( $widget_type );
+		}
+
 		$config = Widget_Context_Helper::get_widget_config( $widget_type );
 
 		if ( ! $config || ! Widget_Context_Helper::is_widget_eligible_for_llm( $config ) ) {

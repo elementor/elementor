@@ -72,6 +72,10 @@ class Xml_Parser {
 		return $node->tagName; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOMElement API.
 	}
 
+	public function remove_element( \DOMElement $node ): void {
+		$node->parentNode->removeChild( $node ); // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOMNode API.
+	}
+
 	public function get_configuration_id( \DOMElement $node ): ?string {
 		return $node->hasAttribute( self::CONFIGURATION_ID_ATTRIBUTE )
 			? $node->getAttribute( self::CONFIGURATION_ID_ATTRIBUTE )
