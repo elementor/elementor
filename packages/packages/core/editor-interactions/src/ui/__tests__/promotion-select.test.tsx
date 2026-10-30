@@ -31,7 +31,7 @@ const defaultProps = {
 describe( 'PromotionSelect', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {
+		jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback: FrameRequestCallback ) => {
 			callback( 0 );
 			return 0;
 		} );

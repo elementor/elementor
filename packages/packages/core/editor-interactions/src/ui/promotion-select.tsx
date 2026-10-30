@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type MouseEvent, useCallback, useRef } from 'react';
 import { type PromotionTrackingData } from '@elementor/editor-controls';
 import { MenuListItem } from '@elementor/editor-ui';
-import { Box, MenuSubheader, Select, type SelectChangeEvent } from '@elementor/ui';
+import { Box, MenuSubheader, Select, type SelectChangeEvent, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from './interactions-promotion-chip';
@@ -28,6 +28,7 @@ export function PromotionSelect( {
 	upgradeUrl,
 	trackingData,
 }: PromotionSelectProps ) {
+	const theme = useTheme();
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 	const selectAnchorRef = useRef< HTMLDivElement >( null );
 
@@ -132,9 +133,12 @@ export function PromotionSelect( {
 					<MenuListItem
 						key={ key }
 						value={ key }
-						disabled
 						data-promotion-locked-option={ key }
-						sx={ { pl: 3 } }
+						sx={ {
+							pl: 3,
+							opacity: theme.palette.action.disabledOpacity,
+							color: theme.palette.action.disabled,
+						} }
 					>
 						{ label }
 					</MenuListItem>

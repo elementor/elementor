@@ -26,7 +26,7 @@ describe( 'Easing', () => {
 		expect( screen.getByText( 'Ease In' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render free options as enabled and pro options as disabled', () => {
+	it( 'should render pro options as promotion-locked but still clickable', () => {
 		// Arrange.
 		renderWithTheme( <Easing { ...defaultProps } /> );
 
@@ -36,10 +36,11 @@ describe( 'Easing', () => {
 
 		// Assert.
 		const easeInOption = screen.getByRole( 'option', { name: 'Ease In', hidden: true } );
-		expect( easeInOption ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		expect( easeInOption ).not.toHaveAttribute( 'data-promotion-locked-option' );
 
 		const easeInOutOption = screen.getByRole( 'option', { name: 'Ease In Out', hidden: true } );
-		expect( easeInOutOption ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( easeInOutOption ).toHaveAttribute( 'data-promotion-locked-option' );
+		expect( easeInOutOption ).not.toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	it( 'should show promotion popover when clicking promotion chip', () => {
