@@ -16,9 +16,16 @@ class Plugin_Installer {
 
 		$plugin_data = $this->get_plugin_path();
 		if ( empty( $plugin_data ) ) {
+			if ( empty( $this->get_package_url() ) ) {
+				return $this->install_failed_error( 'no_package_url' );
+			}
+
 			$install_result = $this->do_install();
-			if ( null === $install_result || is_wp_error( $install_result ) ) {
-				return new \WP_Error( 'cant_installed', esc_html__( 'There are no available subscriptions at the moment.', 'elementor' ) );
+			if ( is_wp_error( $install_result ) ) {
+				return $this->install_failed_error( $install_result->get_error_code() );
+			}
+			if ( null === $install_result ) {
+				return $this->install_failed_error( 'install_failed' );
 			}
 		}
 
@@ -30,16 +37,50 @@ class Plugin_Installer {
 		return true;
 	}
 
+	private function install_failed_error( string $underlying_code ): \WP_Error {
+		return new \WP_Error(
+			'install_failed',
+			esc_html__( 'We couldn\'t install Elementor Pro. Please try again.', 'elementor' ),
+			[ 'error_code' => $underlying_code ]
+		);
+	}
+
+	private function activate_failed_error( string $underlying_code ): \WP_Error {
+		return new \WP_Error(
+			'activate_failed',
+			esc_html__( 'We couldn\'t activate Elementor Pro. Please try again.', 'elementor' ),
+			[ 'error_code' => $underlying_code ]
+		);
+	}
+
 	private function get_package_url() {
 		return $this->package_url;
 	}
 
 	private function includes_dependencies() {
-		include_once ABSPATH . '/wp-admin/includes/admin.php';
-		include_once ABSPATH . '/wp-admin/includes/plugin-install.php';
+		include_once ABSPATH . '/wp-admin/includes/file.php';
 		include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		include_once ABSPATH . '/wp-admin/includes/class-wp-upgrader.php';
+		include_once ABSPATH . '/wp-admin/includes/class-wp-upgrader-skin.php';
+		include_once ABSPATH . '/wp-admin/includes/class-automatic-upgrader-skin.php';
 		include_once ABSPATH . '/wp-admin/includes/class-plugin-upgrader.php';
+	}
+
+	private function ensure_wp_filesystem() {
+		global $wp_filesystem;
+
+		if ( $wp_filesystem ) {
+			return true;
+		}
+
+		if ( ! WP_Filesystem() ) {
+			return new \WP_Error(
+				'filesystem_unavailable',
+				esc_html__( 'Could not access the filesystem.', 'elementor' )
+			);
+		}
+
+		return true;
 	}
 
 	private function do_install() {
@@ -48,9 +89,27 @@ class Plugin_Installer {
 			return new \WP_Error( 'no_package_url', sprintf( 'The requested plugin `%s` has no package URL', $this->plugin_slug ) );
 		}
 
-		$upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+		$filesystem = $this->ensure_wp_filesystem();
 
-		return $upgrader->install( $package_url );
+		if ( is_wp_error( $filesystem ) ) {
+			return $filesystem;
+		}
+
+		$upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+		$result = $upgrader->install( $package_url );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( false === $result ) {
+			return new \WP_Error(
+				'install_failed',
+				esc_html__( 'Elementor Pro could not be installed.', 'elementor' )
+			);
+		}
+
+		return $result;
 	}
 
 	private function get_plugin_path() {
@@ -71,16 +130,24 @@ class Plugin_Installer {
 	}
 
 	public function activate() {
+		$this->includes_dependencies();
+
+		$filesystem = $this->ensure_wp_filesystem();
+
+		if ( is_wp_error( $filesystem ) ) {
+			return $this->activate_failed_error( $filesystem->get_error_code() );
+		}
+
 		$plugin_path = $this->get_plugin_path();
 
 		if ( ! $plugin_path ) {
-			return new \WP_Error( 'no_installed', sprintf( 'The requested plugin `%s` is not installed', $this->plugin_slug ) );
+			return $this->activate_failed_error( 'no_installed' );
 		}
 
-		$activate_result = activate_plugin( $plugin_path );
+		$activate_result = activate_plugin( $plugin_path, '', false, true );
 
 		if ( is_wp_error( $activate_result ) ) {
-			return $activate_result;
+			return $this->activate_failed_error( $activate_result->get_error_code() );
 		}
 
 		return true;

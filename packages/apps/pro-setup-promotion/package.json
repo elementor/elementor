@@ -1,0 +1,48 @@
+{
+  "name": "@elementor/pro-setup-promotion",
+  "version": "4.5.0",
+  "private": true,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor.git",
+    "directory": "packages/apps/pro-setup-promotion"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "@elementor/editor-notifications": "4.5.0",
+    "@elementor/editor-ui": "4.5.0",
+    "@elementor/editor-v1-adapters": "4.5.0",
+    "@elementor/events": "4.5.0",
+    "@elementor/http-client": "4.5.0",
+    "@elementor/icons": "~1.78.1",
+    "@elementor/ui": "1.41.4",
+    "@wordpress/i18n": "^5.13.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}

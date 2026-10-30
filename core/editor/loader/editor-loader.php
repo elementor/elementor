@@ -47,6 +47,7 @@ final class Editor_Loader {
 		'editor-panels',
 		'editor-elements-panel',
 		'unlock-v4-promo',
+		'pro-setup-promotion',
 		'editor-mcp',
 		'elementor-v3-mcp',
 		'elementor-kit-mcp',

@@ -684,7 +684,7 @@ class Utils {
 		$file_path = self::get_elementor_pro_file_path();
 		$installed_plugins = get_plugins();
 
-		return isset( $installed_plugins[ $file_path ] );
+		return isset( $installed_plugins[ $file_path ] ) && ! is_plugin_active( $file_path );
 	}
 
 	private static function get_elementor_pro_file_path(): string {

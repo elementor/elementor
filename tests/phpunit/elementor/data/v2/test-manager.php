@@ -304,6 +304,10 @@ class Test_Manager extends Data_Test_Base {
 			'onboarding/install-theme' => 'onboarding',
 			'audits/index' => 'audits/{id}',
 			'audits/page-context' => 'audits/page-context',
+			'pro-setup-promotion/index' => 'pro-setup-promotion/{id}',
+			'pro-setup-promotion/dismiss' => 'pro-setup-promotion',
+			'pro-setup-promotion/complete-setup' => 'pro-setup-promotion',
+			'pro-setup-promotion/setup-state' => 'pro-setup-promotion',
 		], $this->manager->command_formats );
 	}
 }
