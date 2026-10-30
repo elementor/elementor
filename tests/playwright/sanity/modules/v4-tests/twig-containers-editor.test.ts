@@ -170,4 +170,37 @@ test.describe( 'Twig Containers Editor Rendering @twig-containers', () => {
 			return await element.getAttribute( 'id' );
 		} ).toBe( 'my-custom-id' );
 	} );
+
+	test( 'CSS ID change preserves child DOM nodes (attribute-only patch)', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange - a flexbox parent with a child inside so we can detect DOM remounts.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const parentId = await editor.addElement( { elType: flexboxType }, 'document' );
+		const childId = await editor.addElement( { elType: divBlockType }, parentId );
+
+		const parent = editor.getPreviewFrame().locator( `[data-id="${ parentId }"]` );
+		const child = editor.getPreviewFrame().locator( `[data-id="${ childId }"]` );
+
+		await expect( parent ).toBeVisible();
+		await expect( child ).toBeVisible();
+
+		// Mark the child DOM node with a non-standard property so we can detect remounts.
+		await child.evaluate( ( el ) => {
+			( el as Element & { __survivalMarker?: boolean } ).__survivalMarker = true;
+		} );
+
+		// Act - change only the wrapper CSS ID.
+		await editor.applyElementSettings( parentId, {
+			_cssid: { $$type: 'string', value: 'attr-only-patch-test' },
+		} );
+
+		// Assert - id attribute updated on the parent wrapper.
+		await expect.poll( () => parent.getAttribute( 'id' ) ).toBe( 'attr-only-patch-test' );
+
+		// Assert - child DOM node was NOT remounted (marker property still present).
+		const markerSurvived = await child.evaluate(
+			( el ) => ( el as Element & { __survivalMarker?: boolean } ).__survivalMarker === true
+		);
+		expect( markerSurvived ).toBe( true );
+	} );
 } );
