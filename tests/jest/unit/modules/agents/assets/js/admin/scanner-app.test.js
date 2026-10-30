@@ -14,7 +14,7 @@ import {
 } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
 import { getMockScanResult, getProgressScanGateDurationMs } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-mock-data';
 import { toFailedScanResult } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-report-adapter';
-import { getScoreTier } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-score';
+import { getScoreTier, getStageHealthTier, getStagePassPercent } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-score';
 
 jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 	activateAgentsReady: jest.fn(),
@@ -798,5 +798,31 @@ describe( 'getScoreTier', () => {
 		expect( getScoreTier( 31 ) ).toBe( SCORE_TIER_MID );
 		expect( getScoreTier( 79 ) ).toBe( SCORE_TIER_MID );
 		expect( getScoreTier( 80 ) ).toBe( SCORE_TIER_HIGH );
+	} );
+} );
+
+describe( 'stage health', () => {
+	it( 'derives the pass percent from earned and total checks', () => {
+		// Assert
+		expect( getStagePassPercent( { earned: 0, total: 6 } ) ).toBe( 0 );
+		expect( getStagePassPercent( { earned: 2, total: 6 } ) ).toBe( 33 );
+		expect( getStagePassPercent( { earned: 5, total: 6 } ) ).toBe( 83 );
+	} );
+
+	it( 'has no pass percent or tier for coming soon or empty stages', () => {
+		// Arrange
+		const comingSoon = { earned: 0, total: 0, isComingSoon: true };
+
+		// Assert
+		expect( getStagePassPercent( comingSoon ) ).toBeNull();
+		expect( getStageHealthTier( comingSoon ) ).toBeNull();
+		expect( getStageHealthTier( { earned: 0, total: 0 } ) ).toBeNull();
+	} );
+
+	it( 'maps the pass percent to low, mid and high tiers', () => {
+		// Assert
+		expect( getStageHealthTier( { earned: 0, total: 6 } ) ).toBe( SCORE_TIER_LOW );
+		expect( getStageHealthTier( { earned: 3, total: 6 } ) ).toBe( SCORE_TIER_MID );
+		expect( getStageHealthTier( { earned: 4, total: 5 } ) ).toBe( SCORE_TIER_HIGH );
 	} );
 } );
