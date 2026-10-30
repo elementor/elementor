@@ -109,10 +109,18 @@ class Complete_Setup extends Endpoint_Base {
 		$result = $plugin_installer->install();
 
 		if ( is_wp_error( $result ) ) {
+			$error_data = $result->get_error_data();
+			$underlying_code = is_array( $error_data ) && ! empty( $error_data['error_code'] )
+				? $error_data['error_code']
+				: $result->get_error_code();
+
 			return new \WP_Error(
-				'install_failed',
+				$result->get_error_code(),
 				wp_strip_all_tags( $result->get_error_message() ),
-				[ 'status' => 500 ]
+				[
+					'status' => 500,
+					'error_code' => $underlying_code,
+				]
 			);
 		}
 
@@ -144,18 +152,21 @@ class Complete_Setup extends Endpoint_Base {
 		$result = $plugin_installer->activate();
 
 		if ( is_wp_error( $result ) ) {
-			$error_code = $result->get_error_code();
+			$error_data = $result->get_error_data();
+			$underlying_code = is_array( $error_data ) && ! empty( $error_data['error_code'] )
+				? $error_data['error_code']
+				: $result->get_error_code();
 
-			if ( in_array( $error_code, [ 'already_active', 'plugin_already_active' ], true ) ) {
+			if ( in_array( $underlying_code, [ 'already_active', 'plugin_already_active' ], true ) ) {
 				return $this->success_response( 'activate' );
 			}
 
 			return new \WP_Error(
-				'activate_failed',
+				$result->get_error_code(),
 				wp_strip_all_tags( $result->get_error_message() ),
 				[
 					'status' => 500,
-					'error_code' => $error_code,
+					'error_code' => $underlying_code,
 				]
 			);
 		}

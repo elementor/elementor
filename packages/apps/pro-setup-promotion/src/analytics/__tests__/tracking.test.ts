@@ -5,7 +5,7 @@ import {
 	trackProSetupPromotionDismiss,
 	trackProSetupPromotionImpression,
 	trackProSetupPromotionResult,
-} from '../analytics';
+} from '../../analytics';
 import {
 	CTA_CLICKED_EVENT,
 	PANEL_DISMISSED_EVENT,
@@ -15,7 +15,7 @@ import {
 	TRACKING_LOCATION_L1,
 	TRACKING_TARGET_LOCATION,
 	TRACKING_WINDOW_NAME,
-} from '../analytics/constants';
+} from '../constants';
 
 const mockDispatchEvent = jest.fn();
 

@@ -17,8 +17,11 @@ class Plugin_Installer {
 		$plugin_data = $this->get_plugin_path();
 		if ( empty( $plugin_data ) ) {
 			$install_result = $this->do_install();
-			if ( null === $install_result || is_wp_error( $install_result ) ) {
-				return new \WP_Error( 'cant_installed', esc_html__( 'We couldn\'t find an eligible Pro subscription on your connected account.', 'elementor' ) );
+			if ( is_wp_error( $install_result ) ) {
+				return $this->install_failed_error( $install_result->get_error_code() );
+			}
+			if ( null === $install_result ) {
+				return $this->install_failed_error( 'install_failed' );
 			}
 		}
 
@@ -28,6 +31,22 @@ class Plugin_Installer {
 		}
 
 		return true;
+	}
+
+	private function install_failed_error( string $underlying_code ): \WP_Error {
+		return new \WP_Error(
+			'install_failed',
+			esc_html__( 'We couldn\'t install Elementor Pro. Please try again.', 'elementor' ),
+			[ 'error_code' => $underlying_code ]
+		);
+	}
+
+	private function activate_failed_error( string $underlying_code ): \WP_Error {
+		return new \WP_Error(
+			'activate_failed',
+			esc_html__( 'We couldn\'t activate Elementor Pro. Please try again.', 'elementor' ),
+			[ 'error_code' => $underlying_code ]
+		);
 	}
 
 	private function get_package_url() {
@@ -112,19 +131,19 @@ class Plugin_Installer {
 		$filesystem = $this->ensure_wp_filesystem();
 
 		if ( is_wp_error( $filesystem ) ) {
-			return $filesystem;
+			return $this->activate_failed_error( $filesystem->get_error_code() );
 		}
 
 		$plugin_path = $this->get_plugin_path();
 
 		if ( ! $plugin_path ) {
-			return new \WP_Error( 'no_installed', sprintf( 'The requested plugin `%s` is not installed', $this->plugin_slug ) );
+			return $this->activate_failed_error( 'no_installed' );
 		}
 
 		$activate_result = activate_plugin( $plugin_path, '', false, true );
 
 		if ( is_wp_error( $activate_result ) ) {
-			return $activate_result;
+			return $this->activate_failed_error( $activate_result->get_error_code() );
 		}
 
 		return true;
