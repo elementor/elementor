@@ -223,3 +223,21 @@ jobs:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
       ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+
+  # ── Job 9 ────────────────────────────────────────────────────────────────
+  # Published-artifact and editor-upgrade checks. Only runs for stable releases:
+  # skips when the prerelease checkbox is ticked OR when the channel isn't stable
+  # (beta, RC, etc.), since those aren't published to WordPress.org.
+  # ─────────────────────────────────────────────────────────────────────────
+  post-release-check:
+    name: Post-Release Check
+    needs: [publish, tag]
+    if: ${{ !inputs.prerelease && needs.tag.outputs.channel == 'stable' && github.repository_owner == 'elementor' }}
+    permissions:
+      contents: read
+      actions: write
+    uses: ./.github/workflows/post-release-check.yml
+    with:
+      core_version: ${{ inputs.version }}
+    secrets:
+      MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
