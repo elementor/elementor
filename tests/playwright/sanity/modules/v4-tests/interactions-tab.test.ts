@@ -93,7 +93,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( {
+	test( 'Core trigger menu shows promotion-locked "While scrolling" and scrollOn-only controls stay hidden', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {
@@ -133,7 +133,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			const scrollOnOption = pageOption( /while scrolling/i );
 			await expect( scrollOnOption ).toBeVisible();
-			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
+			await expect( scrollOnOption ).toHaveAttribute( 'data-promotion-locked-option', 'scrollOn' );
+			await expect( scrollOnOption ).not.toHaveAttribute( 'aria-disabled', 'true' );
 
 			await pageOption( /page load/i ).click();
 			await waitForNestedSelectMenuToClose( page );
@@ -310,7 +311,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Replay control is visible and disabled in interactions popover', async ( {
+	test( 'Replay control is visible and Yes opens promotion in interactions popover', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {
@@ -342,7 +343,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( replayLabel ).toBeHidden();
 		} );
 
-		await test.step( 'Verify Replay control is visible with Yes button disabled', async () => {
+		await test.step( 'Verify Replay control and promotion-locked Yes button', async () => {
 			// Arrange – use CSS selectors to bypass aria-hidden from disablePortal.
 			const popover = page.locator( '.MuiPopover-root' ).first();
 			const triggerCombobox = popover.locator( '[role="combobox"]' ).first();
@@ -362,9 +363,15 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( yesButton ).toBeVisible();
 			await expect( noButton ).toBeVisible();
 
-			// Assert - Yes button is disabled (promotion), No button is enabled
-			await expect( yesButton ).toBeDisabled();
+			// Assert - Yes is promotion-locked (clickable, not native disabled); No stays selectable
+			await expect( yesButton ).toBeEnabled();
 			await expect( noButton ).toBeEnabled();
+
+			await yesButton.click();
+
+			const upgradeDialog = page.getByRole( 'dialog' ).filter( { hasText: 'Interactions' } );
+			await expect( upgradeDialog ).toBeVisible();
+			await expect( upgradeDialog.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
 		} );
 	} );
 
