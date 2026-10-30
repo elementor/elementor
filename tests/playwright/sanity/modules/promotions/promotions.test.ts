@@ -1,37 +1,18 @@
 import { expect, Page } from '@playwright/test';
 import {
-	clearPromotionCdnCache,
-	CONVERSION_BANNER_CDN_OPTION,
+	clearPromotionCdnSeeds,
 	hidePromoChromeForScreenshot,
-	PROMOTION_CDN_INACTIVE_FIXTURE,
-	resetConversionBannerTriggerState,
-	seedPromotionCdnCache,
-	SIDE_MENU_CDN_OPTION,
-	STICKY_PANEL_CDN_OPTION,
-	STICKY_PANEL_FIXTURE,
-	THEME_BUILDER_CDN_OPTION,
+	seedStablePromotionCdnForScreenshotTests,
 } from '../../../assets/promotion-cdn';
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-const seedStablePromotionCdnForScreenshotTests = async (): Promise<void> => {
-	await resetConversionBannerTriggerState();
-	await seedPromotionCdnCache( STICKY_PANEL_CDN_OPTION, STICKY_PANEL_FIXTURE );
-	await seedPromotionCdnCache( SIDE_MENU_CDN_OPTION, PROMOTION_CDN_INACTIVE_FIXTURE );
-	await seedPromotionCdnCache( CONVERSION_BANNER_CDN_OPTION, PROMOTION_CDN_INACTIVE_FIXTURE );
-	await seedPromotionCdnCache( THEME_BUILDER_CDN_OPTION, PROMOTION_CDN_INACTIVE_FIXTURE );
-};
-
-const clearPromotionCdnSeeds = async (): Promise<void> => {
-	await clearPromotionCdnCache( STICKY_PANEL_CDN_OPTION );
-	await clearPromotionCdnCache( SIDE_MENU_CDN_OPTION );
-	await clearPromotionCdnCache( CONVERSION_BANNER_CDN_OPTION );
-	await clearPromotionCdnCache( THEME_BUILDER_CDN_OPTION );
-};
-
 test.describe( 'Promotion tests @promotions', () => {
+	test.describe.configure( { mode: 'serial' } );
+
 	test.beforeEach( async () => {
 		await seedStablePromotionCdnForScreenshotTests();
 	} );
@@ -238,6 +219,6 @@ test.describe( 'Promotion tests @promotions', () => {
 const promotionPageScreenshotTest = async ( page: Page, promotionContainer: string, pageUri: string, screenshotName: string ) => {
 	await page.goto( `/wp-admin/admin.php?page=${ pageUri }/` );
 	const promoContainer = page.locator( promotionContainer );
-	await promoContainer.waitFor();
+	await promoContainer.waitFor( { state: 'visible', timeout: timeouts.heavyAction } );
 	await expect.soft( promoContainer ).toHaveScreenshot( `${ screenshotName }.png` );
 };

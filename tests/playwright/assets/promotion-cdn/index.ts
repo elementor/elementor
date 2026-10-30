@@ -26,3 +26,8 @@ export {
 	promoChromeScreenshotMasks,
 } from './mask-promo-chrome';
 export { clearPromotionCdnCache, seedPromotionCdnCache } from './seed-promotion-cache';
+export {
+	clearPromotionCdnSeeds,
+	seedInactivePromotionCdnForEditorChrome,
+	seedStablePromotionCdnForScreenshotTests,
+} from './promotion-cdn-test-seed';

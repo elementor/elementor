@@ -10,6 +10,7 @@ import {
 	hidePromoChromeForScreenshot,
 	resetConversionBannerTriggerState,
 	seedPromotionCdnCache,
+	PROMOTION_CDN_INACTIVE_FIXTURE,
 	SIDE_MENU_CDN_OPTION,
 	SIDE_MENU_FIXTURE,
 	STICKY_PANEL_CDN_OPTION,
@@ -34,6 +35,8 @@ declare global {
 }
 
 test.describe( 'Editor promotions CDN contracts @promotions @cdn-promotions', () => {
+	test.describe.configure( { mode: 'serial' } );
+
 	test.beforeEach( async () => {
 		await clearPromotionCdnCache( STICKY_PANEL_CDN_OPTION );
 		await seedPromotionCdnCache( STICKY_PANEL_CDN_OPTION, STICKY_PANEL_FIXTURE );
@@ -72,9 +75,24 @@ test.describe( 'Editor promotions CDN contracts @promotions @cdn-promotions', ()
 			url: STICKY_PANEL_FIXTURE.url,
 		} );
 	} );
+
+	test( 'Sticky panel keeps default copy when CDN campaign is inactive', async ( { page, apiRequests }, testInfo ) => {
+		await clearPromotionCdnCache( STICKY_PANEL_CDN_OPTION );
+		await seedPromotionCdnCache( STICKY_PANEL_CDN_OPTION, PROMOTION_CDN_INACTIVE_FIXTURE );
+
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		await editor.openElementsPanel();
+
+		const sticky = page.locator( STICKY_PANEL_STICKY_ROOT );
+		await expect( sticky ).toBeVisible();
+		await expect( sticky ).not.toContainText( STICKY_PANEL_FIXTURE.message! );
+	} );
 } );
 
 test.describe( 'Side menu promotion CDN contracts @promotions @cdn-promotions', () => {
+	test.describe.configure( { mode: 'serial' } );
+
 	test.beforeEach( async () => {
 		await clearPromotionCdnCache( SIDE_MENU_CDN_OPTION );
 		await seedPromotionCdnCache( SIDE_MENU_CDN_OPTION, SIDE_MENU_FIXTURE );
@@ -93,10 +111,19 @@ test.describe( 'Side menu promotion CDN contracts @promotions @cdn-promotions', 
 		} );
 
 		await expect( upgradeLink ).toBeVisible();
-		await expect( upgradeLink ).toHaveAttribute(
-			'href',
-			expect.stringContaining( 'elementor-one-upgrade' ),
-		);
+		await expect( upgradeLink ).toHaveAttribute( 'href', SIDE_MENU_FIXTURE.url! );
+	} );
+
+	test( 'Side menu shows default Upgrade label when CDN campaign is inactive', async ( { page, apiRequests }, testInfo ) => {
+		await clearPromotionCdnCache( SIDE_MENU_CDN_OPTION );
+		await seedPromotionCdnCache( SIDE_MENU_CDN_OPTION, PROMOTION_CDN_INACTIVE_FIXTURE );
+
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.openWordPressDashboard();
+
+		const upgradeLink = page.locator( '#adminmenu' ).getByRole( 'link', { name: 'Upgrade' } );
+		await expect( upgradeLink ).toBeVisible();
+		await expect( upgradeLink ).not.toHaveAttribute( 'href', SIDE_MENU_FIXTURE.url! );
 	} );
 } );
 
@@ -139,6 +166,8 @@ test.describe.serial( 'Conversion banner promotion CDN contracts @promotions @cd
 } );
 
 test.describe( 'Theme builder promotion CDN contracts @promotions @cdn-promotions', () => {
+	test.describe.configure( { mode: 'serial' } );
+
 	test.beforeEach( async () => {
 		await clearPromotionCdnCache( THEME_BUILDER_CDN_OPTION );
 		await seedPromotionCdnCache( THEME_BUILDER_CDN_OPTION, THEME_BUILDER_FIXTURE );

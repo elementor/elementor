@@ -1,10 +1,18 @@
 import { expect } from '@playwright/test';
-import { hidePromoChromeForScreenshot } from '../../../../assets/promotion-cdn';
+import {
+	hidePanelNewBadgesForScreenshot,
+	hidePromoChromeForScreenshot,
+	seedInactivePromotionCdnForEditorChrome,
+} from '../../../../assets/promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Editor tests', () => {
+	test.beforeEach( async () => {
+		await seedInactivePromotionCdnForEditorChrome();
+	} );
+
 	test( 'Check that app-bar exists', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -41,6 +49,7 @@ test.describe( 'Editor tests', () => {
 		await editor.openElementsPanel();
 
 		await hidePromoChromeForScreenshot( editor.page );
+		await hidePanelNewBadgesForScreenshot( editor.page );
 
 		const panel = editor.page.locator( 'aside#elementor-panel' );
 
@@ -48,7 +57,6 @@ test.describe( 'Editor tests', () => {
 		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-			mask: [ editor.page.locator( '.e-widget-new-badge' ) ],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );

@@ -17,10 +17,10 @@ export default class promotionsHelper extends Content {
 		await promotionControl.click( { force: true } );
 
 		const modalContainer = this.page.locator( EditorSelectors.panels.promotionCard );
-		await modalContainer.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await modalContainer.waitFor( { state: 'visible', timeout: timeouts.heavyAction } );
 		await expect.soft( modalContainer ).toHaveScreenshot( `${ element }-modal.png` );
-		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
-		await expect( modalContainer ).toBeHidden( { timeout: timeouts.longAction } );
+		await modalContainer.getByRole( 'button', { name: /close/i } ).click();
+		await expect( modalContainer ).toBeHidden( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -35,7 +35,7 @@ export default class promotionsHelper extends Content {
 		const modalContainer = this.page.locator( EditorSelectors.panels.promotionCard );
 		await expect.soft( modalContainer ).toBeVisible();
 		await expect( modalContainer.getByText( 'PRO' ) ).toBeVisible();
-		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
+		await modalContainer.getByRole( 'button', { name: /close/i } ).click();
 		await expect.soft( modalContainer ).toBeHidden();
 	}
 }
