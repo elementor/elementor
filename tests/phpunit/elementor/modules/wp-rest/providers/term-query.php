@@ -100,6 +100,15 @@ trait Term_Query {
 		return $term;
 	}
 
+	protected function create_many_matching_terms() {
+		for ( $i = 1; $i <= 120; $i++ ) {
+			$this->terms[] = $this->insert_term( sprintf( 'cats tag %03d', $i ), 'post_tag' );
+		}
+
+		$this->terms[] = $this->insert_term( 'cats', 'category' );
+		$this->terms[] = $this->insert_term( 'Zebra Cats', 'category' );
+	}
+
 	public function data_provider_term_query() {
 		return [
 			[
@@ -143,9 +152,9 @@ trait Term_Query {
 				] ),
 				'expected' => [
 					[
-						'id' => $this->terms[4]->term_id,
-						'label' => $this->terms[4]->name,
-						'groupLabel' => get_taxonomy( $this->terms[4]->taxonomy )->label,
+						'id' => $this->terms[5]->term_id,
+						'label' => $this->terms[5]->name,
+						'groupLabel' => get_taxonomy( $this->terms[5]->taxonomy )->label,
 					],
 				],
 			],
