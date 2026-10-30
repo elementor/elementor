@@ -36,6 +36,26 @@ function execOrLog(command, dryRun = false) {
   }
 }
 
+// Helper function to safely write to GITHUB_OUTPUT
+function setOutput(name, value) {
+  if (!process.env.GITHUB_OUTPUT) {
+    return;
+  }
+
+  if (!/^\w+$/.test(name)) {
+    throw new Error(`Invalid output name: ${name}. Must match /^\\w+$/`);
+  }
+
+  if (/[\r\n]/.test(value)) {
+    throw new Error(`Output value contains newline characters: ${name}`);
+  }
+
+  const outputPath = path.resolve(process.env.GITHUB_OUTPUT);
+  const outputLine = `${name}=${value}\n`;
+  fs.appendFileSync(outputPath, outputLine, 'utf8');
+  console.log(`Set GitHub output: ${name}=${value}`);
+}
+
 // Helper function to update version in file using regex
 function updateVersionInFile(filePath, version, patterns, dryRun) {
   if (!fs.existsSync(filePath)) {
@@ -262,6 +282,16 @@ async function main() {
           console.log('Successfully reset release/beta to main.');
         } catch (error) {
           console.error('Error resetting release/beta to main');
+          process.exit(1);
+        }
+
+        // Write outputs for GitHub Actions (after successful reset)
+        try {
+          const betaVersion = `${major}.${minor}`;
+          setOutput('beta_reset', 'true');
+          setOutput('beta_version', betaVersion);
+        } catch (error) {
+          console.error('Reset succeeded but failed to write GitHub outputs:', error.message);
           process.exit(1);
         }
       }
