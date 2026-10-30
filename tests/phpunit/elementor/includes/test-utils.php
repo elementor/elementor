@@ -562,4 +562,65 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 			],
 		];
 	}
+
+	public function test_is_pro_installed_and_not_active__true_when_installed_but_inactive(): void {
+		add_filter(
+			'all_plugins',
+			static function ( array $plugins ): array {
+				$plugins['elementor-pro/elementor-pro.php'] = [
+					'Name' => 'Elementor Pro',
+				];
+
+				return $plugins;
+			}
+		);
+
+		add_filter(
+			'option_active_plugins',
+			static function ( $active_plugins ): array {
+				$active_plugins = (array) $active_plugins;
+
+				return array_values(
+					array_filter(
+						$active_plugins,
+						static function ( $plugin ): bool {
+							return 'elementor-pro/elementor-pro.php' !== $plugin;
+						}
+					)
+				);
+			}
+		);
+
+		$this->assertTrue( Utils::is_pro_installed_and_not_active() );
+	}
+
+	public function test_is_pro_installed_and_not_active__false_when_plugin_is_active(): void {
+		add_filter(
+			'all_plugins',
+			static function ( array $plugins ): array {
+				$plugins['elementor-pro/elementor-pro.php'] = [
+					'Name' => 'Elementor Pro',
+				];
+
+				return $plugins;
+			}
+		);
+
+		add_filter(
+			'option_active_plugins',
+			static function ( $active_plugins ): array {
+				$active_plugins = (array) $active_plugins;
+
+				if ( in_array( 'elementor-pro/elementor-pro.php', $active_plugins, true ) ) {
+					return $active_plugins;
+				}
+
+				$active_plugins[] = 'elementor-pro/elementor-pro.php';
+
+				return $active_plugins;
+			}
+		);
+
+		$this->assertFalse( Utils::is_pro_installed_and_not_active() );
+	}
 }
