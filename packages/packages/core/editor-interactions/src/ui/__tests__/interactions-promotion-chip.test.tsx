@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from '../interactions-promotion-chip';
 
@@ -114,6 +114,8 @@ describe( 'InteractionsPromotionChip', () => {
 
 		ref.current?.closePromotion();
 
-		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
