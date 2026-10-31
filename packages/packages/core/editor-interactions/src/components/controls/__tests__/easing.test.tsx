@@ -54,8 +54,8 @@ describe( 'Easing', () => {
 		// Assert.
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 
-		const promotionChip = screen.getByLabelText( 'Promotion chip' );
-		fireEvent.click( promotionChip );
+		const promotionChip = screen.getByText( 'PRO features' );
+		fireEvent.mouseDown( promotionChip );
 
 		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Upgrade now' ) ).toBeInTheDocument();

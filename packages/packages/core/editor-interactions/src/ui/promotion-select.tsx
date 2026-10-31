@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { type MouseEvent, useCallback, useRef } from 'react';
+import { type MouseEvent, useCallback, useRef, useState } from 'react';
 import { type PromotionTrackingData } from '@elementor/editor-controls';
-import { MenuListItem } from '@elementor/editor-ui';
-import { CrownFilledIcon } from '@elementor/icons';
+import { MenuListItem, PromotionChip } from '@elementor/editor-ui';
 import { Box, MenuSubheader, Select, type SelectChangeEvent, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -32,6 +31,10 @@ export function PromotionSelect( {
 	const theme = useTheme();
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 	const selectAnchorRef = useRef< HTMLDivElement >( null );
+	const keepSelectOpenRef = useRef( false );
+	const [ selectOpen, setSelectOpen ] = useState( false );
+
+	const proSectionLabel = promotionLabel ?? __( 'PRO features', 'elementor' );
 
 	const openPromotionForOption = useCallback( ( optionKey: string ) => {
 		window.requestAnimationFrame( () => {
@@ -41,12 +44,32 @@ export function PromotionSelect( {
 		} );
 	}, [] );
 
+	const handleLockedOptionActivate = useCallback(
+		( optionKey: string ) => {
+			keepSelectOpenRef.current = true;
+			setSelectOpen( true );
+			openPromotionForOption( optionKey );
+		},
+		[ openPromotionForOption ]
+	);
+
 	const handleSelectChange = ( e: SelectChangeEvent< string > ) => {
 		if ( Object.prototype.hasOwnProperty.call( disabledOptions, e.target.value ) ) {
 			return;
 		}
 
 		onChange?.( e.target.value );
+		setSelectOpen( false );
+	};
+
+	const handleSelectClose = () => {
+		if ( keepSelectOpenRef.current ) {
+			keepSelectOpenRef.current = false;
+			setSelectOpen( true );
+			return;
+		}
+
+		setSelectOpen( false );
 	};
 
 	const handleLockedOptionMouseDownCapture = ( event: MouseEvent< HTMLUListElement > ) => {
@@ -62,14 +85,28 @@ export function PromotionSelect( {
 		const optionKey = lockedOption.getAttribute( 'data-promotion-locked-option' );
 
 		if ( optionKey ) {
-			openPromotionForOption( optionKey );
+			handleLockedOptionActivate( optionKey );
 		}
+	};
+
+	const handleLockedOptionClickCapture = ( event: MouseEvent< HTMLUListElement > ) => {
+		const lockedOption = ( event.target as HTMLElement ).closest( '[data-promotion-locked-option]' );
+
+		if ( ! lockedOption ) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
 	};
 
 	return (
 		<Box ref={ selectAnchorRef } sx={ { width: '100%', position: 'relative' } }>
 			<Select
 				value={ value }
+				open={ selectOpen }
+				onOpen={ () => setSelectOpen( true ) }
+				onClose={ handleSelectClose }
 				onChange={ handleSelectChange }
 				fullWidth
 				displayEmpty
@@ -78,6 +115,7 @@ export function PromotionSelect( {
 					disablePortal: true,
 					MenuListProps: {
 						onMouseDownCapture: handleLockedOptionMouseDownCapture,
+						onClickCapture: handleLockedOptionClickCapture,
 						onKeyDownCapture: ( event: React.KeyboardEvent< HTMLUListElement > ) => {
 							if ( 'Enter' !== event.key && ' ' !== event.key ) {
 								return;
@@ -97,7 +135,7 @@ export function PromotionSelect( {
 							const optionKey = lockedOption.getAttribute( 'data-promotion-locked-option' );
 
 							if ( optionKey ) {
-								openPromotionForOption( optionKey );
+								handleLockedOptionActivate( optionKey );
 							}
 						},
 					},
@@ -122,8 +160,8 @@ export function PromotionSelect( {
 						promotionRef.current?.toggle();
 					} }
 				>
-					{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
-					<CrownFilledIcon fontSize="tiny" sx={ { ml: 1, color: 'promotion.main' } } aria-hidden />
+					{ proSectionLabel }
+					<PromotionChip aria-hidden tabIndex={ -1 } sx={ { pointerEvents: 'none' } } />
 				</MenuSubheader>
 
 				{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
@@ -142,25 +180,14 @@ export function PromotionSelect( {
 					</MenuListItem>
 				) ) }
 			</Select>
-			<Box
-				sx={ {
-					position: 'absolute',
-					width: 1,
-					height: 1,
-					overflow: 'hidden',
-					clip: 'rect(0, 0, 0, 0)',
-					whiteSpace: 'nowrap',
-				} }
-				aria-hidden
-			>
-				<InteractionsPromotionChip
-					content={ promotionContent }
-					upgradeUrl={ upgradeUrl }
-					ref={ promotionRef }
-					anchorRef={ selectAnchorRef }
-					trackingData={ trackingData }
-				/>
-			</Box>
+			<InteractionsPromotionChip
+				content={ promotionContent }
+				upgradeUrl={ upgradeUrl }
+				ref={ promotionRef }
+				anchorRef={ selectAnchorRef }
+				showTrigger={ false }
+				trackingData={ trackingData }
+			/>
 		</Box>
 	);
 }

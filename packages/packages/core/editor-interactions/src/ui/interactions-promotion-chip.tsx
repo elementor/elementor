@@ -9,6 +9,7 @@ export type InteractionsPromotionChipProps = {
 	content: string;
 	upgradeUrl: string;
 	anchorRef?: RefObject< HTMLElement | null >;
+	showTrigger?: boolean;
 	trackingData: PromotionTrackingData;
 };
 
@@ -18,7 +19,7 @@ export type InteractionsPromotionChipRef = {
 };
 
 export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRef, InteractionsPromotionChipProps >(
-	( { content, upgradeUrl, anchorRef, trackingData }, ref ) => {
+	( { content, upgradeUrl, anchorRef, showTrigger = true, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const trackingPayloadRef = useRef( trackingData );
 		const suppressDismissUntilRef = useRef( 0 );
@@ -88,13 +89,17 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 				} }
 				onCtaClick={ () => trackUpgradePromotionClick( trackingPayloadRef.current ) }
 			>
-				<Box
-					onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
-					onClick={ handleToggle }
-					sx={ { cursor: 'pointer', display: 'inline-flex', mr: 1 } }
-				>
-					<PromotionChip />
-				</Box>
+				{ showTrigger ? (
+					<Box
+						onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
+						onClick={ handleToggle }
+						sx={ { cursor: 'pointer', display: 'inline-flex', mr: 1 } }
+					>
+						<PromotionChip />
+					</Box>
+				) : (
+					<Box aria-hidden sx={ { width: 0, height: 0, overflow: 'hidden' } } />
+				) }
 			</PromotionPopover>
 		);
 	}

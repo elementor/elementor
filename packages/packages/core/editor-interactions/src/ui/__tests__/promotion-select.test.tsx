@@ -65,6 +65,19 @@ describe( 'PromotionSelect', () => {
 		expect( onChange ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps the select menu open when a locked option is clicked', () => {
+		renderWithTheme( <PromotionSelect { ...defaultProps } /> );
+
+		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
+
+		const lockedOption = screen.getByRole( 'option', { name: /On hover, Pro/i, hidden: true } );
+
+		fireEvent.mouseDown( lockedOption );
+
+		expect( screen.getByRole( 'option', { name: /On hover, Pro/i, hidden: true } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+	} );
+
 	it( 'opens promotion popover when a locked option is activated from the keyboard', () => {
 		renderWithTheme( <PromotionSelect { ...defaultProps } /> );
 
