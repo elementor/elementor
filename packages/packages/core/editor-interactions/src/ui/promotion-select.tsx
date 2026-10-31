@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { type MouseEvent, useCallback, useRef } from 'react';
 import { type PromotionTrackingData } from '@elementor/editor-controls';
-import { MenuListItem, PromotionChip } from '@elementor/editor-ui';
+import { MenuListItem } from '@elementor/editor-ui';
+import { CrownFilledIcon } from '@elementor/icons';
 import { Box, MenuSubheader, Select, type SelectChangeEvent, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -122,9 +123,7 @@ export function PromotionSelect( {
 					} }
 				>
 					{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
-					<Box sx={ { display: 'inline-flex', ml: 1 } }>
-						<PromotionChip />
-					</Box>
+					<CrownFilledIcon fontSize="tiny" sx={ { ml: 1, color: 'promotion.main' } } aria-hidden />
 				</MenuSubheader>
 
 				{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
