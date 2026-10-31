@@ -20,8 +20,8 @@ describe( 'Repeat', () => {
 		renderWithTheme( <Repeat /> );
 
 		// Assert.
-		const timesButton = screen.getByRole( 'button', { name: 'Enable number' } );
-		const loopButton = screen.getByRole( 'button', { name: 'Infinite repeat' } );
+		const timesButton = screen.getByRole( 'button', { name: 'Enable number, Pro' } );
+		const loopButton = screen.getByRole( 'button', { name: 'Infinite repeat, Pro' } );
 
 		expect( timesButton ).toBeInTheDocument();
 		expect( timesButton ).toBeEnabled();
@@ -34,7 +34,7 @@ describe( 'Repeat', () => {
 		renderWithTheme( <Repeat /> );
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Enable number' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Enable number, Pro' } ) );
 
 		// Assert.
 		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();

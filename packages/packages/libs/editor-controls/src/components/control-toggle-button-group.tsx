@@ -201,9 +201,7 @@ export const ToggleButtonGroupUi = React.forwardRef(
 							>
 								<StyledToggleButton
 									value={ buttonValue }
-									aria-label={
-										promotionLocked ? `${ label }, ${ __( 'Pro', 'elementor' ) }` : label
-									}
+									aria-label={ promotionLocked ? `${ label }, ${ __( 'Pro', 'elementor' ) }` : label }
 									size={ size }
 									fullWidth={ fullWidth }
 									isPlaceholder={ isPlaceholder }

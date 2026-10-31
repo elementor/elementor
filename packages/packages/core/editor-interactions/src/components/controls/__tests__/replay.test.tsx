@@ -32,7 +32,7 @@ describe( 'Replay', () => {
 
 		// Assert.
 		const noButton = screen.getByRole( 'button', { name: 'No' } );
-		const yesButton = screen.getByRole( 'button', { name: 'Yes' } );
+		const yesButton = screen.getByRole( 'button', { name: 'Yes, Pro' } );
 
 		expect( noButton ).toBeInTheDocument();
 		expect( noButton ).toBeEnabled();
@@ -57,7 +57,7 @@ describe( 'Replay', () => {
 		renderWithTheme( <Replay { ...defaultProps } /> );
 
 		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'Yes' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Yes, Pro' } ) );
 
 		// Assert.
 		expect( mockOnChange ).not.toHaveBeenCalled();

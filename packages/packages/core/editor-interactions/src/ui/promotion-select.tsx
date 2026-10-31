@@ -161,7 +161,9 @@ export function PromotionSelect( {
 					} }
 				>
 					{ proSectionLabel }
-					<PromotionChip aria-hidden tabIndex={ -1 } sx={ { pointerEvents: 'none' } } />
+					<Box aria-hidden sx={ { display: 'inline-flex', pointerEvents: 'none' } }>
+						<PromotionChip />
+					</Box>
 				</MenuSubheader>
 
 				{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
