@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type MouseEvent, useCallback, useRef } from 'react';
 import { type PromotionTrackingData } from '@elementor/editor-controls';
-import { MenuListItem } from '@elementor/editor-ui';
+import { MenuListItem, PromotionChip } from '@elementor/editor-ui';
 import { Box, MenuSubheader, Select, type SelectChangeEvent, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -34,7 +34,9 @@ export function PromotionSelect( {
 
 	const openPromotionForOption = useCallback( ( optionKey: string ) => {
 		window.requestAnimationFrame( () => {
-			promotionRef.current?.openPromotion( { target_value: optionKey } );
+			window.requestAnimationFrame( () => {
+				promotionRef.current?.openPromotion( { target_value: optionKey } );
+			} );
 		} );
 	}, [] );
 
@@ -64,7 +66,7 @@ export function PromotionSelect( {
 	};
 
 	return (
-		<Box ref={ selectAnchorRef } sx={ { width: '100%' } }>
+		<Box ref={ selectAnchorRef } sx={ { width: '100%', position: 'relative' } }>
 			<Select
 				value={ value }
 				onChange={ handleSelectChange }
@@ -120,13 +122,9 @@ export function PromotionSelect( {
 					} }
 				>
 					{ promotionLabel ?? __( 'PRO features', 'elementor' ) }
-					<InteractionsPromotionChip
-						content={ promotionContent }
-						upgradeUrl={ upgradeUrl }
-						ref={ promotionRef }
-						anchorRef={ selectAnchorRef }
-						trackingData={ trackingData }
-					/>
+					<Box sx={ { display: 'inline-flex', ml: 1 } }>
+						<PromotionChip />
+					</Box>
 				</MenuSubheader>
 
 				{ Object.entries( disabledOptions ).map( ( [ key, label ] ) => (
@@ -144,6 +142,25 @@ export function PromotionSelect( {
 					</MenuListItem>
 				) ) }
 			</Select>
+			<Box
+				sx={ {
+					position: 'absolute',
+					width: 1,
+					height: 1,
+					overflow: 'hidden',
+					clip: 'rect(0, 0, 0, 0)',
+					whiteSpace: 'nowrap',
+				} }
+				aria-hidden
+			>
+				<InteractionsPromotionChip
+					content={ promotionContent }
+					upgradeUrl={ upgradeUrl }
+					ref={ promotionRef }
+					anchorRef={ selectAnchorRef }
+					trackingData={ trackingData }
+				/>
+			</Box>
 		</Box>
 	);
 }

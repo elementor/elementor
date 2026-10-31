@@ -21,14 +21,26 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 	( { content, upgradeUrl, anchorRef, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const trackingPayloadRef = useRef( trackingData );
+		const suppressDismissUntilRef = useRef( 0 );
 
-		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
+		const dismissPromotion = useCallback( ( e?: MouseEvent ) => {
+			if ( performance.now() < suppressDismissUntilRef.current ) {
+				e?.stopPropagation?.();
+				return;
+			}
+
+			setIsOpen( false );
+		}, [] );
+
+		useCanvasClickHandler( isOpen, dismissPromotion );
 
 		const openPromotion = useCallback(
 			( context?: { target_value?: string } ) => {
 				const payload: PromotionTrackingData = context?.target_value
 					? { ...trackingData, target_value: context.target_value }
 					: trackingData;
+
+				suppressDismissUntilRef.current = performance.now() + 400;
 
 				setIsOpen( ( prev ) => {
 					if ( prev ) {
@@ -46,6 +58,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 		const toggle = useCallback( () => {
 			setIsOpen( ( prev ) => {
 				if ( ! prev ) {
+					suppressDismissUntilRef.current = performance.now() + 400;
 					trackingPayloadRef.current = trackingData;
 					trackViewPromotion( trackingData );
 				}
@@ -71,7 +84,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 				placement={ anchorRef ? 'right-start' : undefined }
 				onClose={ ( e: MouseEvent ) => {
 					e.stopPropagation();
-					setIsOpen( false );
+					dismissPromotion( e );
 				} }
 				onCtaClick={ () => trackUpgradePromotionClick( trackingPayloadRef.current ) }
 			>
