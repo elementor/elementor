@@ -247,7 +247,6 @@ jobs:
       startsWith(github.repository, 'elementor/') &&
       github.event.action != 'labeled' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      !contains(github.event.pull_request.labels.*.name, 'skip-visual-proof') &&
       (
         needs.playground-preview.result == 'success' ||
         github.event.action == 'ready_for_review'

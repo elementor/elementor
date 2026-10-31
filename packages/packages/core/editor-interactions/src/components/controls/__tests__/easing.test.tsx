@@ -38,7 +38,7 @@ describe( 'Easing', () => {
 		const easeInOption = screen.getByRole( 'option', { name: 'Ease In', hidden: true } );
 		expect( easeInOption ).not.toHaveAttribute( 'data-promotion-locked-option' );
 
-		const easeInOutOption = screen.getByRole( 'option', { name: 'Ease In Out', hidden: true } );
+		const easeInOutOption = screen.getByRole( 'option', { name: /Ease In Out, Pro/i, hidden: true } );
 		expect( easeInOutOption ).toHaveAttribute( 'data-promotion-locked-option' );
 		expect( easeInOutOption ).not.toHaveAttribute( 'aria-disabled', 'true' );
 	} );

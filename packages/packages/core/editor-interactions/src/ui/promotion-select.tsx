@@ -131,6 +131,7 @@ export function PromotionSelect( {
 						key={ key }
 						value={ key }
 						data-promotion-locked-option={ key }
+						aria-label={ `${ label }, ${ __( 'Pro', 'elementor' ) }` }
 						sx={ {
 							pl: 3,
 							opacity: theme.palette.action.disabledOpacity,

@@ -224,7 +224,7 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByRole( 'option', { name: /page load/i, hidden: true } ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
 
-			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i, hidden: true } );
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling, Pro/i, hidden: true } );
 			expect( scrollOnOption ).toBeInTheDocument();
 			expect( scrollOnOption ).toHaveAttribute( 'data-promotion-locked-option', 'scrollOn' );
 			expect( scrollOnOption ).not.toHaveAttribute( 'aria-disabled', 'true' );

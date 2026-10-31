@@ -46,7 +46,7 @@ describe( 'PromotionSelect', () => {
 
 		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
 
-		fireEvent.mouseDown( screen.getByRole( 'option', { name: 'On hover', hidden: true } ) );
+		fireEvent.mouseDown( screen.getByRole( 'option', { name: /On hover, Pro/i, hidden: true } ) );
 
 		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 		expect( trackViewPromotion ).toHaveBeenCalledWith( {
@@ -60,7 +60,7 @@ describe( 'PromotionSelect', () => {
 		renderWithTheme( <PromotionSelect { ...defaultProps } onChange={ onChange } /> );
 
 		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
-		fireEvent.mouseDown( screen.getByRole( 'option', { name: 'On hover', hidden: true } ) );
+		fireEvent.mouseDown( screen.getByRole( 'option', { name: /On hover, Pro/i, hidden: true } ) );
 
 		expect( onChange ).not.toHaveBeenCalled();
 	} );
@@ -70,7 +70,7 @@ describe( 'PromotionSelect', () => {
 
 		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
 
-		const lockedOption = screen.getByRole( 'option', { name: 'On click', hidden: true } );
+		const lockedOption = screen.getByRole( 'option', { name: /On click, Pro/i, hidden: true } );
 		fireEvent.keyDown( lockedOption, { key: 'Enter' } );
 
 		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe( 'PromotionSelect', () => {
 		renderWithTheme( <PromotionSelect { ...defaultProps } /> );
 
 		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
-		fireEvent.mouseDown( screen.getByRole( 'option', { name: 'On hover', hidden: true } ) );
+		fireEvent.mouseDown( screen.getByRole( 'option', { name: /On hover, Pro/i, hidden: true } ) );
 
 		fireEvent.click( screen.getByRole( 'link', { name: /Upgrade now/i } ) );
 

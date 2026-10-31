@@ -13,6 +13,7 @@ import {
 	Typography,
 	useTheme,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import ControlActions from '../control-actions/control-actions';
 import { ConditionalTooltip } from './conditional-tooltip';
@@ -200,7 +201,9 @@ export const ToggleButtonGroupUi = React.forwardRef(
 							>
 								<StyledToggleButton
 									value={ buttonValue }
-									aria-label={ label }
+									aria-label={
+										promotionLocked ? `${ label }, ${ __( 'Pro', 'elementor' ) }` : label
+									}
 									size={ size }
 									fullWidth={ fullWidth }
 									isPlaceholder={ isPlaceholder }

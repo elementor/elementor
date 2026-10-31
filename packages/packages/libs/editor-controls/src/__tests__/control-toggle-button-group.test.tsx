@@ -310,7 +310,7 @@ describe( 'ControlToggleButtonGroup', () => {
 				<ControlToggleButtonGroup value={ '' } items={ lockedItems } onChange={ onChange } exclusive />
 			);
 
-			const button = screen.getByRole( 'button', { name: 'Locked' } );
+			const button = screen.getByRole( 'button', { name: 'Locked, Pro' } );
 
 			expect( button ).toBeEnabled();
 
@@ -326,7 +326,7 @@ describe( 'ControlToggleButtonGroup', () => {
 				<ControlToggleButtonGroup value={ '' } items={ lockedItems } onChange={ onChange } exclusive />
 			);
 
-			const button = screen.getByRole( 'button', { name: 'Locked' } );
+			const button = screen.getByRole( 'button', { name: 'Locked, Pro' } );
 
 			expect( button ).toHaveStyle( { opacity: '0.38' } );
 		} );
