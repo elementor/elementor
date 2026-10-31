@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { forwardRef, type MouseEvent, type RefObject, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import {
+	forwardRef,
+	type MouseEvent,
+	type RefObject,
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useRef,
+	useState,
+} from 'react';
 import { type PromotionTrackingData, trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
 import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { Box } from '@elementor/ui';
@@ -10,6 +19,7 @@ export type InteractionsPromotionChipProps = {
 	upgradeUrl: string;
 	anchorRef?: RefObject< HTMLElement | null >;
 	showTrigger?: boolean;
+	onOpenChange?: ( open: boolean ) => void;
 	trackingData: PromotionTrackingData;
 };
 
@@ -19,21 +29,32 @@ export type InteractionsPromotionChipRef = {
 };
 
 export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRef, InteractionsPromotionChipProps >(
-	( { content, upgradeUrl, anchorRef, showTrigger = true, trackingData }, ref ) => {
+	( { content, upgradeUrl, anchorRef, showTrigger = true, onOpenChange, trackingData }, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const trackingPayloadRef = useRef( trackingData );
-		const suppressDismissUntilRef = useRef( 0 );
+		const suppressCanvasDismissUntilRef = useRef( 0 );
 
-		const closePromotionIfAllowed = useCallback( ( e?: { stopPropagation?: () => void } ) => {
-			if ( performance.now() < suppressDismissUntilRef.current ) {
-				e?.stopPropagation?.();
-				return;
-			}
-
+		const closePromotion = useCallback( () => {
 			setIsOpen( false );
 		}, [] );
 
-		useCanvasClickHandler( isOpen, ( e: globalThis.MouseEvent ) => closePromotionIfAllowed( e ) );
+		const handleCanvasDismiss = useCallback(
+			( e: globalThis.MouseEvent ) => {
+				if ( performance.now() < suppressCanvasDismissUntilRef.current ) {
+					e.stopPropagation();
+					return;
+				}
+
+				closePromotion();
+			},
+			[ closePromotion ]
+		);
+
+		useCanvasClickHandler( isOpen, handleCanvasDismiss );
+
+		useEffect( () => {
+			onOpenChange?.( isOpen );
+		}, [ isOpen, onOpenChange ] );
 
 		const openPromotion = useCallback(
 			( context?: { target_value?: string } ) => {
@@ -41,7 +62,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 					? { ...trackingData, target_value: context.target_value }
 					: trackingData;
 
-				suppressDismissUntilRef.current = performance.now() + 400;
+				suppressCanvasDismissUntilRef.current = performance.now() + 150;
 
 				setIsOpen( ( prev ) => {
 					if ( prev ) {
@@ -59,7 +80,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 		const toggle = useCallback( () => {
 			setIsOpen( ( prev ) => {
 				if ( ! prev ) {
-					suppressDismissUntilRef.current = performance.now() + 400;
+					suppressCanvasDismissUntilRef.current = performance.now() + 150;
 					trackingPayloadRef.current = trackingData;
 					trackViewPromotion( trackingData );
 				}
@@ -85,7 +106,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 				placement={ anchorRef ? 'right-start' : undefined }
 				onClose={ ( e: MouseEvent ) => {
 					e.stopPropagation();
-					closePromotionIfAllowed( e );
+					closePromotion();
 				} }
 				onCtaClick={ () => trackUpgradePromotionClick( trackingPayloadRef.current ) }
 			>

@@ -100,6 +100,12 @@ export function PromotionSelect( {
 		event.stopPropagation();
 	};
 
+	const handlePromotionOpenChange = useCallback( ( open: boolean ) => {
+		if ( ! open ) {
+			setSelectOpen( false );
+		}
+	}, [] );
+
 	return (
 		<Box ref={ selectAnchorRef } sx={ { width: '100%', position: 'relative' } }>
 			<Select
@@ -188,6 +194,7 @@ export function PromotionSelect( {
 				ref={ promotionRef }
 				anchorRef={ selectAnchorRef }
 				showTrigger={ false }
+				onOpenChange={ handlePromotionOpenChange }
 				trackingData={ trackingData }
 			/>
 		</Box>
