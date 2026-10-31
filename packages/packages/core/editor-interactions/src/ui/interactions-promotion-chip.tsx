@@ -26,6 +26,7 @@ export type InteractionsPromotionChipProps = {
 export type InteractionsPromotionChipRef = {
 	toggle: () => void;
 	openPromotion: ( context?: { target_value?: string } ) => void;
+	closePromotion: () => void;
 };
 
 export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRef, InteractionsPromotionChipProps >(
@@ -50,7 +51,7 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 			[ closePromotion ]
 		);
 
-		useCanvasClickHandler( isOpen, handleCanvasDismiss );
+		useCanvasClickHandler( isOpen && ! anchorRef, handleCanvasDismiss );
 
 		useEffect( () => {
 			onOpenChange?.( isOpen );
@@ -88,7 +89,11 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 			} );
 		}, [ trackingData ] );
 
-		useImperativeHandle( ref, () => ( { toggle, openPromotion } ), [ toggle, openPromotion ] );
+		useImperativeHandle( ref, () => ( { toggle, openPromotion, closePromotion } ), [
+			toggle,
+			openPromotion,
+			closePromotion,
+		] );
 
 		const handleToggle = ( e: MouseEvent ) => {
 			e.stopPropagation();

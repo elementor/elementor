@@ -103,4 +103,16 @@ describe( 'InteractionsPromotionChip', () => {
 			target_value: 'on_hover',
 		} );
 	} );
+
+	it( 'should close the popover when closePromotion is called', () => {
+		const ref = React.createRef< InteractionsPromotionChipRef >();
+		renderWithTheme( <InteractionsPromotionChip { ...defaultProps } ref={ ref } /> );
+
+		ref.current?.openPromotion();
+		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+
+		ref.current?.closePromotion();
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
 } );

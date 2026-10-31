@@ -32,6 +32,7 @@ export function PromotionSelect( {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
 	const selectAnchorRef = useRef< HTMLDivElement >( null );
 	const keepSelectOpenRef = useRef( false );
+	const isPromotionOpenRef = useRef( false );
 	const [ selectOpen, setSelectOpen ] = useState( false );
 
 	const proSectionLabel = promotionLabel ?? __( 'PRO features', 'elementor' );
@@ -69,6 +70,11 @@ export function PromotionSelect( {
 			return;
 		}
 
+		if ( isPromotionOpenRef.current ) {
+			promotionRef.current?.closePromotion();
+			return;
+		}
+
 		setSelectOpen( false );
 	};
 
@@ -101,7 +107,10 @@ export function PromotionSelect( {
 	};
 
 	const handlePromotionOpenChange = useCallback( ( open: boolean ) => {
+		isPromotionOpenRef.current = open;
+
 		if ( ! open ) {
+			keepSelectOpenRef.current = false;
 			setSelectOpen( false );
 		}
 	}, [] );
