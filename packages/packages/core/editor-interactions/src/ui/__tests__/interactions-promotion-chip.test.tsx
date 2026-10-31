@@ -104,12 +104,13 @@ describe( 'InteractionsPromotionChip', () => {
 		} );
 	} );
 
-	it( 'should close the popover when closePromotion is called', () => {
+	it( 'should close the popover when closePromotion is called', async () => {
 		const ref = React.createRef< InteractionsPromotionChipRef >();
 		renderWithTheme( <InteractionsPromotionChip { ...defaultProps } ref={ ref } /> );
 
 		ref.current?.openPromotion();
-		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+
+		expect( await screen.findByRole( 'dialog' ) ).toBeInTheDocument();
 
 		ref.current?.closePromotion();
 
