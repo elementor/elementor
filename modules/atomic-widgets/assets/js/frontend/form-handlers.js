@@ -243,7 +243,7 @@ function getAtomicFormFields( form ) {
 		}
 
 		inputs.forEach( ( input ) => {
-			const id = input.dataset.interactionId;
+			const id = input.dataset.id || input.dataset.interactionId;
 			const label = getAtomicFormFieldLabel( input, form );
 			const type = getAtomicFormFieldType( input );
 			const value = getAtomicFormFieldValue( input, type );
@@ -266,7 +266,7 @@ function getAtomicFormFields( form ) {
 function getGroupedFieldId( name, inputs, checkedInputs ) {
 	const primaryInput = checkedInputs[ 0 ] ?? inputs[ 0 ];
 
-	return primaryInput?.dataset.interactionId ?? name;
+	return ( primaryInput?.dataset.id || primaryInput?.dataset.interactionId ) ?? name;
 }
 
 function getGroupedFields( name, inputs, type, form ) {

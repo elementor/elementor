@@ -1043,6 +1043,93 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( body.get( 'referer_title' ) ).toBe( 'Submission Contract Page' );
 			expect( body.get( 'referrer' ) ).toBe( window.location.href );
 		} );
+
+		describe( 'field id inside a component', () => {
+			// Mirrors a rendered field: data-interaction-id is the origin id, data-id is the instance-scoped id.
+			const addField = ( form, { type = 'text', name, interactionId, instanceId = null, checked = false } ) => {
+				const field = document.createElement( 'input' );
+				field.setAttribute( 'type', type );
+				field.setAttribute( 'name', name );
+				field.setAttribute( 'data-interaction-id', interactionId );
+
+				if ( instanceId ) {
+					field.setAttribute( 'data-e-type', 'widget' );
+					field.setAttribute( 'data-id', instanceId );
+				}
+
+				field.checked = checked;
+				form.insertBefore( field, form.querySelector( 'button' ) );
+			};
+
+			const createEmptyForm = () => {
+				const { form, input } = createFormWithInput();
+				input.remove();
+				return form;
+			};
+
+			const submitAndGetBody = async ( form ) => {
+				const instance = await setupFormHandler( form );
+
+				global.fetch = jest.fn().mockResolvedValue( {
+					ok: true,
+					json: () => Promise.resolve( { success: true } ),
+				} );
+
+				await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+				return global.fetch.mock.calls[ 0 ][ 1 ].body;
+			};
+
+			it( 'uses data-id over data-interaction-id for a single field', async () => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { name: 'email', interactionId: 'origin-field-1', instanceId: 'instance-field-1' } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'instance-field-1' );
+			} );
+
+			it( 'falls back to data-interaction-id for a single field without data-id', async () => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { name: 'email', interactionId: 'origin-field-1' } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'origin-field-1' );
+			} );
+
+			it.each( [ 'radio', 'checkbox' ] )( 'uses data-id of the checked %s as the group field id', async ( type ) => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { type, name: 'choice', interactionId: 'origin-a', instanceId: 'instance-a' } );
+				addField( form, { type, name: 'choice', interactionId: 'origin-b', instanceId: 'instance-b', checked: true } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'instance-b' );
+			} );
+
+			it.each( [ 'radio', 'checkbox' ] )( 'falls back to data-interaction-id for a %s group without data-id', async ( type ) => {
+				// Arrange
+				const form = createEmptyForm();
+				addField( form, { type, name: 'choice', interactionId: 'origin-a' } );
+				addField( form, { type, name: 'choice', interactionId: 'origin-b', checked: true } );
+
+				// Act
+				const body = await submitAndGetBody( form );
+
+				// Assert
+				expect( body.get( 'form_fields[0][id]' ) ).toBe( 'origin-b' );
+			} );
+		} );
 	} );
 
 	it( 'adds non-whitelisted editor link actions via filter', async () => {

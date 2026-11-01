@@ -102,6 +102,10 @@ if ( 'wp' === ( $args[0] ?? '' ) ) {
 // WP-CLI renders ASCII tables instead of TSV when it believes it owns a TTY.
 putenv( 'SHELL_PIPE=0' );
 
+// Playground's auto-login mu-plugin redirects + exits on `init` for any HTTP request without this
+// cookie, so WP-CLI commands that load WordPress silently did nothing.
+$_COOKIE['playground_auto_login_already_happened'] = '1';
+
 $GLOBALS['argv'] = array_merge( [ ELEMENTOR_BRIDGE_PHAR_PATH, '--path=' . ELEMENTOR_BRIDGE_DOCUMENT_ROOT ], $args );
 $GLOBALS['argc'] = count( $GLOBALS['argv'] );
 $_SERVER['argv'] = $GLOBALS['argv'];

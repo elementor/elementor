@@ -25,6 +25,7 @@ import ElementsColorPicker from 'elementor/modules/elements-color-picker/assets/
 import Breakpoints from 'elementor-utils/breakpoints';
 import Events from 'elementor-utils/events';
 import DocumentComponent from './document/component';
+import PostOnboardingTracker from '../../../../app/modules/onboarding/assets/js/utils/modules/post-onboarding-tracker.js';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
@@ -1319,6 +1320,8 @@ export default class EditorBase extends Marionette.Application {
 		if ( eventsManager ) {
 			eventsManager.dispatchEvent( eventsManager.config?.names?.elementorEditor?.editorLoaded, {} );
 		}
+
+		PostOnboardingTracker.checkAndSendEditorLoadedFromOnboarding();
 	}
 
 	onEditModeSwitched() {
