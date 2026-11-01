@@ -61,8 +61,8 @@ class Complete_Setup extends Endpoint_Base {
 			Plugin::$instance->logger->get_logger()->error(
 				'Pro setup promotion complete-setup failed.',
 				[
+					'exception' => get_class( $throwable ),
 					'message' => $throwable->getMessage(),
-					'trace' => $throwable->getTraceAsString(),
 				]
 			);
 
@@ -173,7 +173,6 @@ class Complete_Setup extends Endpoint_Base {
 				'action' => $action,
 				'code' => $result->get_error_code(),
 				'message' => $result->get_error_message(),
-				'data' => $result->get_error_data(),
 			]
 		);
 

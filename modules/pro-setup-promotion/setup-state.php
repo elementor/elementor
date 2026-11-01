@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Setup_State {
 
+	private const PRO_PLUGIN_FILE = 'elementor-pro/elementor-pro.php';
+
 	private const DOWNLOAD_LINK_ELIGIBILITY_TRANSIENT_PREFIX = 'elementor_pro_setup_download_eligible_';
 
 	private const DOWNLOAD_LINK_ELIGIBILITY_TTL = HOUR_IN_SECONDS;
@@ -41,10 +43,9 @@ class Setup_State {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$file_path = 'elementor-pro/elementor-pro.php';
 		$installed_plugins = get_plugins();
 
-		if ( ! isset( $installed_plugins[ $file_path ] ) ) {
+		if ( ! isset( $installed_plugins[ self::PRO_PLUGIN_FILE ] ) ) {
 			return false;
 		}
 
@@ -52,7 +53,7 @@ class Setup_State {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		return ! is_plugin_active( $file_path );
+		return ! is_plugin_active( self::PRO_PLUGIN_FILE );
 	}
 
 	private static function enforce_capabilities_for_state( string $state ): string {
@@ -186,7 +187,7 @@ class Setup_State {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		return is_plugin_active( 'elementor-pro/elementor-pro.php' );
+		return is_plugin_active( self::PRO_PLUGIN_FILE );
 	}
 
 	private static function get_popover_copy( string $state, array $assets ): array {
@@ -258,10 +259,10 @@ class Setup_State {
 		$download_link = $pro_install_app->get_download_link();
 		$is_eligible = ! empty( $download_link );
 
-		if ( $user_id > 0 ) {
+		if ( $user_id > 0 && $is_eligible ) {
 			set_transient(
 				self::DOWNLOAD_LINK_ELIGIBILITY_TRANSIENT_PREFIX . $user_id,
-				$is_eligible ? 1 : 0,
+				1,
 				self::DOWNLOAD_LINK_ELIGIBILITY_TTL
 			);
 		}
