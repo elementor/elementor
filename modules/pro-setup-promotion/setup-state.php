@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Setup_State {
 
+	private const DOWNLOAD_LINK_ELIGIBILITY_TRANSIENT_PREFIX = 'elementor_pro_setup_download_eligible_';
+
+	private const DOWNLOAD_LINK_ELIGIBILITY_TTL = HOUR_IN_SECONDS;
+
 	public const STATE_HIDDEN = 'hidden';
 	public const STATE_INSTALL = 'install';
 	public const STATE_ACTIVATE = 'activate';
@@ -228,6 +232,16 @@ class Setup_State {
 	}
 
 	private static function has_eligible_pro_subscription(): bool {
+		$user_id = get_current_user_id();
+
+		if ( $user_id > 0 ) {
+			$cached = get_transient( self::DOWNLOAD_LINK_ELIGIBILITY_TRANSIENT_PREFIX . $user_id );
+
+			if ( false !== $cached ) {
+				return (bool) $cached;
+			}
+		}
+
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 
 		if ( ! $connect ) {
@@ -242,8 +256,17 @@ class Setup_State {
 		}
 
 		$download_link = $pro_install_app->get_download_link();
+		$is_eligible = ! empty( $download_link );
 
-		return ! empty( $download_link );
+		if ( $user_id > 0 ) {
+			set_transient(
+				self::DOWNLOAD_LINK_ELIGIBILITY_TRANSIENT_PREFIX . $user_id,
+				$is_eligible ? 1 : 0,
+				self::DOWNLOAD_LINK_ELIGIBILITY_TTL
+			);
+		}
+
+		return $is_eligible;
 	}
 
 	private static function can_manage_license_connection(): bool {

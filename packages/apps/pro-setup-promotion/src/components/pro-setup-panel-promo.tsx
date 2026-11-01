@@ -25,8 +25,10 @@ import {
 	trackProSetupPromotionCtaClick,
 	trackProSetupPromotionDismiss,
 	trackProSetupPromotionImpression,
+	trackProSetupPromotionPopoverClose,
 	trackProSetupPromotionResult,
 } from '../analytics';
+import type { PopoverCloseTargetName } from '../analytics';
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
 import { markConnectSuccessNotificationForAfterReload } from '../utils/post-reload-connect-success-notification';
@@ -140,6 +142,14 @@ export function ProSetupPanelPromo() {
 
 	const state = promotionConfig?.state as ProSetupPromotionState | undefined;
 
+	const closePopover = ( targetName: PopoverCloseTargetName ) => {
+		if ( state ) {
+			trackProSetupPromotionPopoverClose( state, targetName );
+		}
+
+		setOpen( false );
+	};
+
 	const applyPromotionConfig = ( next: ProSetupConfig | null | undefined ) => {
 		if ( undefined === next ) {
 			return;
@@ -236,7 +246,7 @@ export function ProSetupPanelPromo() {
 				return;
 			}
 
-			setOpen( false );
+			closePopover( 'outside_click' );
 		};
 
 		const closeOnEscape = ( event: KeyboardEvent ) => {
@@ -246,10 +256,9 @@ export function ProSetupPanelPromo() {
 
 			event.preventDefault();
 			event.stopPropagation();
-			event.stopImmediatePropagation();
 
 			if ( 'keydown' === event.type ) {
-				setOpen( false );
+				closePopover( 'escape_key' );
 			}
 		};
 
@@ -270,7 +279,7 @@ export function ProSetupPanelPromo() {
 			iframeDocument?.removeEventListener( 'keydown', closeOnEscape, true );
 			iframeDocument?.removeEventListener( 'keyup', closeOnEscape, true );
 		};
-	}, [ open ] );
+	}, [ open, state ] );
 
 	if ( dismissed || ! promotionConfig || ! state ) {
 		return null;
@@ -374,7 +383,7 @@ export function ProSetupPanelPromo() {
 									edge="end"
 									sx={ { marginInlineStart: 'auto', flexShrink: 0 } }
 									slotProps={ { icon: { fontSize: 'small' } } }
-									onClick={ () => setOpen( false ) }
+									onClick={ () => closePopover( 'close_button' ) }
 								/>
 							</Stack>
 							<Stack px={ 2 } sx={ { minHeight: POPOVER_DESCRIPTION_MIN_HEIGHT } }>

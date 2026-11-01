@@ -5,13 +5,16 @@ import {
 	CTA_TARGET_NAMES,
 	PANEL_DISMISSED_EVENT,
 	PANEL_VIEWED_EVENT,
+	POPOVER_CLOSED_EVENT,
 	POPOVER_OPENED_EVENT,
+	type PopoverCloseTargetName,
 	type ProSetupPromotionState,
 	STEP_COMPLETED_EVENT,
 	TRACKING_LOCATION_L1,
 	TRACKING_TARGET_LOCATION,
 	TRACKING_WINDOW_NAME,
 } from './analytics/constants';
+import { shouldTrackPanelViewForState } from './analytics/panel-view-session';
 
 const dispatch = ( eventName: string, payload: Record< string, unknown > ) => {
 	getMixpanel().dispatchEvent?.( eventName, {
@@ -34,6 +37,10 @@ const withState = ( state: ProSetupPromotionState, payload: Record< string, unkn
  * @param state Current Pro setup step shown in the panel.
  */
 export function trackProSetupPromotionImpression( state: ProSetupPromotionState ): void {
+	if ( ! shouldTrackPanelViewForState( state ) ) {
+		return;
+	}
+
 	dispatch(
 		PANEL_VIEWED_EVENT,
 		withState( state, {
@@ -58,6 +65,21 @@ export function trackProSetupPromotionBannerClick( state: ProSetupPromotionState
 			target_type: 'banner',
 			target_name: 'pro_setup_panel',
 			interaction_result: 'popover_opened',
+		} )
+	);
+}
+
+export function trackProSetupPromotionPopoverClose(
+	state: ProSetupPromotionState,
+	targetName: PopoverCloseTargetName
+): void {
+	dispatch(
+		POPOVER_CLOSED_EVENT,
+		withState( state, {
+			interaction_type: 'click',
+			target_type: 'button',
+			target_name: targetName,
+			interaction_result: 'popover_closed',
 		} )
 	);
 }
@@ -119,4 +141,4 @@ export function trackProSetupPromotionConnectResult( result: 'success' | 'error'
 	trackProSetupPromotionResult( 'connect', result, 'connect', errorMessage );
 }
 
-export type { ProSetupPromotionState } from './analytics/constants';
+export type { PopoverCloseTargetName, ProSetupPromotionState } from './analytics/constants';

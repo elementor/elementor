@@ -4,18 +4,21 @@ import {
 	trackProSetupPromotionCtaClick,
 	trackProSetupPromotionDismiss,
 	trackProSetupPromotionImpression,
+	trackProSetupPromotionPopoverClose,
 	trackProSetupPromotionResult,
 } from '../../analytics';
 import {
 	CTA_CLICKED_EVENT,
 	PANEL_DISMISSED_EVENT,
 	PANEL_VIEWED_EVENT,
+	POPOVER_CLOSED_EVENT,
 	POPOVER_OPENED_EVENT,
 	STEP_COMPLETED_EVENT,
 	TRACKING_LOCATION_L1,
 	TRACKING_TARGET_LOCATION,
 	TRACKING_WINDOW_NAME,
 } from '../constants';
+import { resetPanelViewSessionForTests } from '../panel-view-session';
 
 const mockDispatchEvent = jest.fn();
 
@@ -33,6 +36,7 @@ const BASE = {
 describe( 'pro setup promotion tracking', () => {
 	beforeEach( () => {
 		mockDispatchEvent.mockReset();
+		resetPanelViewSessionForTests();
 	} );
 
 	it( 'dispatches pro_setup_panel_viewed', () => {
@@ -45,6 +49,21 @@ describe( 'pro setup promotion tracking', () => {
 			target_name: 'pro_setup_panel',
 			interaction_result: 'panel_viewed',
 		} );
+	} );
+
+	it( 'dedupes pro_setup_panel_viewed per state for the editor session', () => {
+		trackProSetupPromotionImpression( 'install' );
+		trackProSetupPromotionImpression( 'install' );
+
+		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 1 );
+
+		trackProSetupPromotionImpression( 'connect' );
+
+		expect( mockDispatchEvent ).toHaveBeenCalledTimes( 2 );
+		expect( mockDispatchEvent ).toHaveBeenLastCalledWith(
+			PANEL_VIEWED_EVENT,
+			expect.objectContaining( { state: 'connect' } )
+		);
 	} );
 
 	it( 'dispatches pro_setup_cta_clicked with state-specific target_name', () => {
@@ -75,8 +94,9 @@ describe( 'pro setup promotion tracking', () => {
 		} );
 	} );
 
-	it( 'dispatches popover opened and dismiss events', () => {
+	it( 'dispatches popover opened, closed, and dismiss events', () => {
 		trackProSetupPromotionBannerClick( 'install' );
+		trackProSetupPromotionPopoverClose( 'install', 'close_button' );
 		trackProSetupPromotionDismiss( 'install' );
 
 		expect( mockDispatchEvent ).toHaveBeenNthCalledWith(
@@ -86,6 +106,14 @@ describe( 'pro setup promotion tracking', () => {
 		);
 		expect( mockDispatchEvent ).toHaveBeenNthCalledWith(
 			2,
+			POPOVER_CLOSED_EVENT,
+			expect.objectContaining( {
+				interaction_result: 'popover_closed',
+				target_name: 'close_button',
+			} )
+		);
+		expect( mockDispatchEvent ).toHaveBeenNthCalledWith(
+			3,
 			PANEL_DISMISSED_EVENT,
 			expect.objectContaining( { interaction_result: 'panel_dismissed' } )
 		);

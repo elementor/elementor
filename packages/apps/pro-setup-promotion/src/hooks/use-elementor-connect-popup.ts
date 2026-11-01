@@ -117,8 +117,7 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError }: Co
 		const popup = window.open( popupUrl, 'elementorConnect', features );
 
 		if ( ! popup ) {
-			detachListeners();
-			window.location.href = connectUrl;
+			window.location.href = buildPopupUrl( connectUrl, callbackId );
 			return;
 		}
 
