@@ -13,6 +13,8 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-upgrade-site-parts/';
 
+	const PRO_FEATURE = 'site-parts';
+
 	const WIDGET_TYPE_PREFIX = 'theme-';
 
 	const MESSAGES = [
@@ -68,9 +70,11 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 		$matches = $matches ? $matches : [ self::MESSAGES['overview'] ];
 
 		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
 			implode( ' ', array_merge( [ self::MESSAGES['opener'] ], array_column( $matches, 'value' ) ) ),
 			implode( ' ', array_column( $matches, 'free_path' ) ),
-			self::UPGRADE_URL
+			self::UPGRADE_URL,
+			[ 'document_types' => array_values( array_unique( $requested_types ) ) ]
 		);
 	}
 
