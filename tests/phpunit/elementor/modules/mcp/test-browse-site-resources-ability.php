@@ -82,6 +82,7 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 		$this->assertNotEmpty( $with_svg );
 		foreach ( $with_svg as $item ) {
 			$this->assertStringStartsWith( '<svg', $item['icon_svg'] );
+			$this->assertNotSame( '', $item['icon_path_d'] ?? '' );
 		}
 	}
 

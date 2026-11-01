@@ -69,6 +69,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 								'category'  => [ 'type' => 'string' ],
 								'icon'      => [ 'type' => 'string' ],
 								'icon_svg'  => [ 'type' => 'string' ],
+								'icon_path_d' => [ 'type' => 'string' ],
 								'thumbnail' => [ 'type' => 'string' ],
 								'edit_url'  => [ 'type' => 'string' ],
 								'preview_url' => [ 'type' => 'string' ],
@@ -180,6 +181,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 			}
 
 			$item['icon_svg'] = Eicons_Svg_Glyphs::markup_for_icon( $icon );
+			$item['icon_path_d'] = Eicons_Svg_Glyphs::path_d_for_icon( $icon );
 		}
 		unset( $item );
 
