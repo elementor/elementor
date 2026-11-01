@@ -30,6 +30,7 @@ import {
 	trackProSetupPromotionResult,
 } from '../analytics';
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
+import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
 import { markConnectSuccessNotificationForAfterReload } from '../utils/post-reload-connect-success-notification';
 
@@ -169,8 +170,10 @@ export function ProSetupPanelPromo() {
 	};
 
 	const handleConnectSuccess = async () => {
+		setOpen( false );
+
 		try {
-			const config = await fetchPromotionConfig();
+			const config = await fetchPromotionConfigAfterConnect( fetchPromotionConfig );
 
 			if ( ! config ) {
 				applyPromotionConfig( null );
@@ -182,7 +185,7 @@ export function ProSetupPanelPromo() {
 
 			if ( 'connect' === config.state ) {
 				applyPromotionConfig( config );
-				setOpen( true );
+				setOpen( false );
 				trackProSetupPromotionConnectResult(
 					'error',
 					__( 'License was not activated on this site.', 'elementor' )
