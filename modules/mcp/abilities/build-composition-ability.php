@@ -108,9 +108,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$warning_codes = $warnings->codes();
 		$dom           = $compiled['dom'];
 		$xml_parser    = $compiled['xml_parser'];
+		$skipped_pro   = $compiled['pro_features_discovery'];
 
 		if ( $dry_run ) {
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [] );
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [], $skipped_pro );
 			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
 			return $response;
 		}
@@ -125,7 +126,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'] );
+		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro );
 
 		if ( $undo_point ) {
 			$undo_point->commit();
@@ -235,7 +236,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	private function get_forms_pro_notice(): string {
-		return __( 'Note: forms require Elementor Pro, If the user asks for a form, tell them it requires Elementor Pro and do not recreate it with regular inputs, buttons, HTML or shortcode widgets as a workaround. Everything else builds normally.', 'elementor' );
+		return __( 'Forms (`<e-form>` and its fields) need Elementor Pro (not installed on this site). With Pro, a form works with no code. Each submission is emailed to the site owner. After submit, the visitor can be sent to a thank-you page or URL, or a popup can open or close. Form elements are skipped on this site.', 'elementor' );
 	}
 
 	private function get_output_schema(): array {
@@ -270,6 +271,20 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
 					'description' => 'Element IDs removed when mode is replace_children (empty when none existed).',
+				],
+				'pro_features_discovery' => [
+					'type' => 'array',
+					'description' => 'Present when some elements need Elementor Pro and were skipped; the rest was built. Relay each message following its instructions; do not retry the skipped elements.',
+					'items' => [
+						'type' => 'object',
+						'properties' => [
+							'message' => [ 'type' => 'string' ],
+							'upgrade_url' => [
+								'type' => 'string',
+								'format' => 'uri',
+							],
+						],
+					],
 				],
 				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
@@ -402,7 +417,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 		array $root_ids,
 		Warnings_Bag $warnings,
 		string $mode,
-		array $removed_ids
+		array $removed_ids,
+		array $skipped_pro
 	): array {
 		$post = get_post( $post_id );
 
@@ -419,6 +435,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		if ( self::MODE_REPLACE_CHILDREN === $mode ) {
 			$response['removed_element_ids'] = $removed_ids;
+		}
+
+		if ( ! empty( $skipped_pro ) ) {
+			$response['pro_features_discovery'] = array_map(
+				fn ( \WP_Error $error ) => [
+					'message' => $error->get_error_message(),
+					'upgrade_url' => $error->get_error_data()['upgrade_url'],
+				],
+				$skipped_pro
+			);
 		}
 
 		return $response;

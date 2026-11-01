@@ -9,6 +9,7 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Appliers\Component_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
@@ -293,7 +294,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 	/**
 	 * @dataProvider restricted_placement_tiers
 	 */
-	public function test_build_composition__rejects_component_placement_without_pro_access( bool $expired, string $expected_tier ) {
+	public function test_build_composition__skips_component_placement_without_pro_access( bool $expired, string $expected_tier ) {
 		// Arrange
 		$this->act_as_admin();
 		Mock_Pro_License_API::set_license_state( false, $expired );
@@ -304,7 +305,7 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		// Act
 		$result = $ability->execute( [
 			'post_id' => $post_id,
-			'xml_structure' => '<e-flexbox configuration-id="section"><e-component configuration-id="restricted"></e-component></e-flexbox>',
+			'xml_structure' => '<e-flexbox configuration-id="section"><e-heading configuration-id="title"/><e-component configuration-id="restricted"></e-component></e-flexbox>',
 			'element_config' => [
 				'restricted' => [
 					'component_id' => $component_id,
@@ -313,11 +314,10 @@ class Test_Component_Instance_Applier extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
-		$this->assertSame( WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
-		$this->assertSame( 'add_to_page', $result->get_error_data()['action'] );
-		$this->assertSame( $expected_tier, $result->get_error_data()['tier'] );
+		$this->assertIsArray( $result );
+		$this->assertStringNotContainsString( 'e-component', $result['resolved_xml'] );
+		$this->assertStringContainsString( 'configuration-id="title"', $result['resolved_xml'] );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Components_Pro_Features_Discovery::UPGRADE_URL . ')', $result['pro_features_discovery'][0]['message'] );
 	}
 
 	public function restricted_placement_tiers(): array {
