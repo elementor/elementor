@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import Connect from '../utils/connect';
 import PageContentLayout from './layout/page-content-layout';
+import {
+	getLegacyAccountScreenConfig,
+	resolveAccountScreenImage,
+	resolveDisconnectedAccountHeadlines,
+} from '../utils/account-screen-config';
 
 export default function AccountContentA( {
 	actionButton,
@@ -11,11 +16,15 @@ export default function AccountContentA( {
 	connectSuccessCallback,
 	connectFailureCallback,
 } ) {
+	const accountScreen = ! state.isLibraryConnected ? getLegacyAccountScreenConfig() : null;
+	const { title, secondLineTitle } = resolveDisconnectedAccountHeadlines( accountScreen );
+	const image = resolveAccountScreenImage( accountScreen );
+
 	return (
 		<PageContentLayout
-			image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
-			title={ elementorAppConfig.onboarding.experiment ? __( 'You\'re here!', 'elementor' ) : __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
-			secondLineTitle={ elementorAppConfig.onboarding.experiment ? __( 'Let\'s get connected.', 'elementor' ) : '' }
+			image={ image }
+			title={ title }
+			secondLineTitle={ secondLineTitle }
 			actionButton={ actionButton }
 			skipButton={ skipButton }
 			noticeState={ noticeState }
@@ -26,14 +35,16 @@ export default function AccountContentA( {
 				successCallback={ ( event, data ) => connectSuccessCallback( event, data ) }
 				errorCallback={ connectFailureCallback }
 			/> }
+			{ pageTexts.firstLine &&
 			<span>
 				{ pageTexts.firstLine }
-			</span>
+			</span> }
+			{ pageTexts.listItems?.length > 0 &&
 			<ul>
 				{ pageTexts.listItems.map( ( listItem, index ) => {
 					return <li key={ 'listItem' + index }>{ listItem }</li>;
 				} ) }
-			</ul>
+			</ul> }
 		</PageContentLayout>
 	);
 }
