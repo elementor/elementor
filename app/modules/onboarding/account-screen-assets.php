@@ -93,13 +93,11 @@ class Account_Screen_Assets {
 			return $fallback;
 		}
 
-		$parsed = filter_var( $assets[ $key ], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
-
-		if ( null === $parsed ) {
+		if ( ! is_bool( $assets[ $key ] ) ) {
 			return $fallback;
 		}
 
-		return $parsed;
+		return $assets[ $key ];
 	}
 
 	private static function read_illustration_url( array $assets, string $fallback ): string {
