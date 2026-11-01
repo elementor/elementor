@@ -28,6 +28,16 @@ permissions:
   pull-requests: write
 
 jobs:
+  guard-main-only:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    permissions: {}
+    steps:
+      - name: Fail if not run from main
+        run: |
+          echo "::error::Run this workflow from main"
+          exit 1
+
   create-version-change:
     if: github.ref == 'refs/heads/main'
     environment: release-owners
