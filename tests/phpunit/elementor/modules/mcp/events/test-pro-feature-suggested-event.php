@@ -2,8 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
@@ -15,7 +13,6 @@ use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Mcp\Events\Pro_Feature_Suggestion_Tracker;
 use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Mock_Pro_License_API;
@@ -31,9 +28,7 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 
 	const SESSION_ID = 'session-123';
 
-	private array $captured_events = [];
-
-	private ?string $original_atomic_state = null;
+	private array $emitted_events = [];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -43,21 +38,21 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		}
 
 		Mock_Pro_License_API::set_license_state( false, false );
-		$this->activate_atomic_editor();
+		add_filter( 'elementor/mcp/gated_ability_ids', '__return_empty_array' );
 		$this->act_as_admin();
 
-		$this->captured_events = [];
+		$this->emitted_events = [];
 		Mcp_Event_Dispatcher::set_interceptor( function ( string $name, array $payload ) {
-			$this->captured_events[] = [ 'name' => $name, 'payload' => $payload ];
+			$this->emitted_events[ $name ][] = $payload;
 		} );
 	}
 
 	public function tearDown(): void {
 		unset( $_SERVER[ Pro_Feature_Suggestion_Tracker::SESSION_ID_SERVER_KEY ] );
+		remove_filter( 'elementor/mcp/gated_ability_ids', '__return_empty_array' );
 		Mcp_Event_Dispatcher::set_interceptor( null );
 		Pro_Feature_Suggestion_Tracker::reset();
 		Mock_Pro_License_API::reset();
-		$this->restore_atomic_editor();
 
 		parent::tearDown();
 	}
@@ -212,31 +207,6 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 	}
 
 	private function suggestion_events(): array {
-		$payloads = [];
-
-		foreach ( $this->captured_events as $event ) {
-			if ( Pro_Feature_Suggestion_Tracker::EVENT_NAME === $event['name'] ) {
-				$payloads[] = $event['payload'];
-			}
-		}
-
-		return $payloads;
-	}
-
-	private function activate_atomic_editor(): void {
-		$features = Plugin::$instance->experiments->get_features( Atomic_Widgets_Module::EXPERIMENT_NAME );
-		$this->original_atomic_state = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
-
-		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		delete_option( Experiments_Manager::OPTION_PREFIX . Atomic_Widgets_Module::EXPERIMENT_NAME );
-	}
-
-	private function restore_atomic_editor(): void {
-		if ( null === $this->original_atomic_state ) {
-			return;
-		}
-
-		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAME, $this->original_atomic_state );
-		delete_option( Experiments_Manager::OPTION_PREFIX . Atomic_Widgets_Module::EXPERIMENT_NAME );
+		return $this->emitted_events[ Pro_Feature_Suggestion_Tracker::EVENT_NAME ] ?? [];
 	}
 }
