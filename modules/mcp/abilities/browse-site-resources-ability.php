@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Mcp\Preview\Site_Resource_Preview_Token;
+use Elementor\Modules\Mcp\Utils\Eicons_Svg_Glyphs;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -67,6 +68,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 								'title'     => [ 'type' => 'string' ],
 								'category'  => [ 'type' => 'string' ],
 								'icon'      => [ 'type' => 'string' ],
+								'icon_svg'  => [ 'type' => 'string' ],
 								'thumbnail' => [ 'type' => 'string' ],
 								'edit_url'  => [ 'type' => 'string' ],
 								'preview_url' => [ 'type' => 'string' ],
@@ -77,8 +79,6 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 					'counts_by_type' => [
 						'type' => 'object',
 					],
-					'eicons_css_url' => [ 'type' => 'string' ],
-					'eicons_font_url' => [ 'type' => 'string' ],
 				],
 			],
 			[
@@ -141,13 +141,31 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 		$filtered = $this->filter_by_type( $all_items, $type );
 		$filtered = $this->filter_by_search( $filtered, $search );
 		$filtered = array_slice( $filtered, 0, $limit );
+		$filtered = $this->attach_widget_icon_svgs( $filtered );
 
 		return [
-			'items'            => array_values( $filtered ),
-			'counts_by_type'   => $counts,
-			'eicons_css_url'   => ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons.min.css',
-			'eicons_font_url'  => ELEMENTOR_ASSETS_URL . 'lib/eicons/fonts/eicons.woff2',
+			'items'          => array_values( $filtered ),
+			'counts_by_type' => $counts,
 		];
+	}
+
+	private function attach_widget_icon_svgs( array $items ): array {
+		foreach ( $items as &$item ) {
+			if ( 'widget' !== ( $item['kind'] ?? '' ) ) {
+				continue;
+			}
+
+			$icon = is_string( $item['icon'] ?? null ) ? trim( $item['icon'] ) : '';
+
+			if ( '' === $icon ) {
+				continue;
+			}
+
+			$item['icon_svg'] = Eicons_Svg_Glyphs::markup_for_icon( $icon );
+		}
+		unset( $item );
+
+		return $items;
 	}
 
 	private function collect_all_items(): array {

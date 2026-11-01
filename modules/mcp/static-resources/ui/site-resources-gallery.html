@@ -106,7 +106,16 @@
 			gap: 6px;
 			color: var(--muted);
 		}
-		.widget-tile i { font-size: 28px; color: var(--accent); }
+		.widget-tile .widget-icon {
+			display: block;
+			width: 28px;
+			height: 28px;
+			color: var(--accent);
+		}
+		.widget-tile .widget-icon-lg {
+			width: 48px;
+			height: 48px;
+		}
 		.card-body { padding: 8px; }
 		.card-title {
 			font-size: 12px;
@@ -210,8 +219,6 @@
 		let payload = null;
 		let items = [];
 		let counts = {};
-		let eiconsCss = '';
-		let eiconsFont = '';
 		let kindFilter = 'all';
 		let selectedIndex = -1;
 		let filtered = [];
@@ -257,22 +264,6 @@
 			}
 		};
 
-		const ensureEicons = ( cssUrl, fontUrl ) => {
-			if ( cssUrl && ! document.querySelector( 'link[data-eicons]' ) ) {
-				const link = document.createElement( 'link' );
-				link.rel = 'stylesheet';
-				link.href = cssUrl;
-				link.setAttribute( 'data-eicons', '1' );
-				document.head.appendChild( link );
-			}
-			if ( fontUrl && ! document.querySelector( 'style[data-eicons-font]' ) ) {
-				const style = document.createElement( 'style' );
-				style.setAttribute( 'data-eicons-font', '1' );
-				style.textContent = '@font-face{font-family:eicons;src:url("' + fontUrl + '") format("woff2");font-weight:400;font-style:normal;font-display:block}';
-				document.head.appendChild( style );
-			}
-		};
-
 		const applyFilters = () => {
 			const q = el( 'search' ).value.trim().toLowerCase();
 			filtered = items.filter( ( item ) => {
@@ -295,8 +286,8 @@
 			if ( item.preview_url ) {
 				return '<iframe src="' + item.preview_url + '" title="' + item.title + '" loading="lazy"></iframe>';
 			}
-			if ( item.kind === 'widget' && item.icon ) {
-				return '<div class="widget-tile"><i class="' + item.icon + '" aria-hidden="true"></i></div>';
+			if ( item.kind === 'widget' && item.icon_svg ) {
+				return '<div class="widget-tile"><span class="widget-icon">' + item.icon_svg + '</span></div>';
 			}
 			return '<div class="widget-tile"><span>' + ( item.title || '?' ).slice( 0, 1 ) + '</span></div>';
 		};
@@ -354,7 +345,9 @@
 			const box = el( 'inspector-preview' );
 			box.innerHTML = item.preview_url
 				? '<iframe src="' + item.preview_url + '" title="' + item.title + '"></iframe>'
-				: '<div class="widget-tile" style="height:100%"><i class="' + ( item.icon || '' ) + '" style="font-size:48px"></i><div>' + item.title + '</div></div>';
+				: '<div class="widget-tile" style="height:100%">' +
+					( item.icon_svg ? '<span class="widget-icon widget-icon-lg">' + item.icon_svg + '</span>' : '' ) +
+					'<div>' + item.title + '</div></div>';
 			const open = el( 'open-editor' );
 			if ( item.edit_url ) {
 				open.hidden = false;
@@ -382,9 +375,6 @@
 			}
 			items = payload.items || [];
 			counts = payload.counts_by_type || {};
-			eiconsCss = payload.eicons_css_url || '';
-			eiconsFont = payload.eicons_font_url || '';
-			ensureEicons( eiconsCss, eiconsFont );
 			el( 'waiting' ).hidden = true;
 			el( 'app' ).hidden = false;
 			selectedIndex = items.length ? 0 : -1;
