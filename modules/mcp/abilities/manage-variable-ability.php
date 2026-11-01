@@ -77,7 +77,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'string' ],
 								'type' => [
 									'type' => 'string',
-									'enum' => $this->get_allowed_types(),
+									'enum' => [ self::TYPE_COLOR, self::TYPE_FONT, self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ],
 								],
 								'label' => [ 'type' => 'string' ],
 								'value' => [ 'type' => 'string' ],
@@ -87,32 +87,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				],
 			]
 		);
-	}
-
-	public function register(): void {
-		add_filter( 'wp_ability_validate_input', [ $this, 'defer_size_type_rejection' ], 10, 3 );
-
-		parent::register();
-	}
-
-	public function defer_size_type_rejection( $validation_result, $input, string $ability_name ) {
-		if ( $this->get_id() !== $ability_name || ! is_wp_error( $validation_result ) || $this->can_manage_size_variables() ) {
-			return $validation_result;
-		}
-
-		return $this->has_size_type_operation( $input ) ? true : $validation_result;
-	}
-
-	private function has_size_type_operation( $input ): bool {
-		$operations = is_array( $input ) && is_array( $input['operations'] ?? null ) ? $input['operations'] : [];
-
-		foreach ( $operations as $operation ) {
-			if ( is_array( $operation ) && $this->is_size_type( $operation['type'] ?? null ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	public function execute( $input = [] ) {
@@ -325,29 +299,8 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return Utils::is_license_active();
 	}
 
-	private function get_allowed_types(): array {
-		$types = [ self::TYPE_COLOR, self::TYPE_FONT ];
-
-		if ( $this->can_manage_size_variables() ) {
-			$types[] = self::TYPE_SIZE;
-			$types[] = self::TYPE_CUSTOM_SIZE;
-		}
-
-		return $types;
-	}
-
 	private function get_description(): string {
-		$description = __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
-
-		if ( $this->can_manage_size_variables() ) {
-			return $description;
-		}
-
-		return $description . ' ' . $this->get_size_variables_pro_notice();
-	}
-
-	private function get_size_variables_pro_notice(): string {
-		return __( 'When the user asks for a size variable, call this tool anyway, then tell the user that size variables need Elementor Pro (not licensed on this site) and share the upgrade link from the response. With Pro, spacing and font sizes live in one scale: change a value once and it updates everywhere it\'s used. Color and font variables work on Free.', 'elementor' );
+		return __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
 	}
 
 	private function clear_cache(): void {
