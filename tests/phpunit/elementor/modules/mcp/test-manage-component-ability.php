@@ -186,7 +186,7 @@ class Test_Manage_Component_Ability extends Elementor_Test_Base {
 		$description = ( new Manage_Component_Ability() )->get_description_for_llm();
 
 		// Assert
-		$notice = '`create`, `rename`, and `archive` need Elementor Pro (not licensed on this site)';
+		$notice = 'call `create`, `rename`, or `archive` anyway, then tell the user that this needs Elementor Pro (not licensed on this site)';
 		$this->assertSame( $expects_notice, str_contains( $description, $notice ) );
 	}
 

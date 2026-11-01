@@ -319,7 +319,7 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$description = $this->make_ability()->get_description_for_llm();
 
 		// Assert
-		$this->assertStringContainsString( 'Size variables need Elementor Pro', $description );
+		$this->assertStringContainsString( 'When the user asks for a size variable, call this tool anyway', $description );
 	}
 
 	public function test_get_description_for_llm__omits_size_notice_with_active_license() {
@@ -330,7 +330,7 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$description = $this->make_ability()->get_description_for_llm();
 
 		// Assert
-		$this->assertStringNotContainsString( 'Size variables need Elementor Pro', $description );
+		$this->assertStringNotContainsString( 'When the user asks for a size variable, call this tool anyway', $description );
 	}
 
 	public function size_type_provider(): array {
