@@ -40,7 +40,11 @@ export default function Account() {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const accountScreen = ! state.isLibraryConnected ? getLegacyAccountScreenConfig() : null;
+	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
+	const accountScreen =
+		! state.isLibraryConnected && 'B' !== experiment101Variant
+			? getLegacyAccountScreenConfig()
+			: null;
 
 	let skipButton;
 
@@ -214,7 +218,6 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
-	const experiment101Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT101_VARIANT );
 	const ContentComponent = 'B' === experiment101Variant ? AccountContentB : AccountContentA;
 
 	return (

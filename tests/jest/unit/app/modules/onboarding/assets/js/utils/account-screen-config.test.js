@@ -1,7 +1,10 @@
 import {
 	buildDisconnectedPageTexts,
 	getAccountScreenIllustrationUrl,
+	getDefaultIllustrationUrl,
 	getLegacyAccountScreenConfig,
+	resolveAccountScreenImage,
+	resolveDisconnectedAccountHeadlines,
 } from '../../../../../../../../../app/modules/onboarding/assets/js/utils/account-screen-config';
 
 describe( 'account-screen-config', () => {
@@ -38,6 +41,44 @@ describe( 'account-screen-config', () => {
 					illustrationUrl: 'https://assets.elementor.com/onboarding/v1/images/x.svg',
 				} ),
 			).toBe( 'https://assets.elementor.com/onboarding/v1/images/x.svg' );
+		} );
+
+		it( 'returns bundled default when illustration is shown without a CDN url', () => {
+			expect(
+				getAccountScreenIllustrationUrl( {
+					showIllustration: true,
+					illustrationUrl: '',
+				} ),
+			).toBe( getDefaultIllustrationUrl() );
+		} );
+	} );
+
+	describe( 'resolveAccountScreenImage', () => {
+		it( 'returns bundled default when accountScreen is null', () => {
+			expect( resolveAccountScreenImage( null ) ).toBe( getDefaultIllustrationUrl() );
+		} );
+	} );
+
+	describe( 'resolveDisconnectedAccountHeadlines', () => {
+		it( 'uses CDN headlines when accountScreen is set', () => {
+			expect(
+				resolveDisconnectedAccountHeadlines( {
+					headlineLine1: 'CDN one',
+					headlineLine2: 'CDN two',
+				} ),
+			).toEqual( {
+				title: 'CDN one',
+				secondLineTitle: 'CDN two',
+			} );
+		} );
+
+		it( 'uses experiment defaults when accountScreen is null', () => {
+			global.elementorAppConfig = { onboarding: { experiment: true } };
+
+			const headlines = resolveDisconnectedAccountHeadlines( null );
+
+			expect( headlines.title ).toContain( 'here' );
+			expect( headlines.secondLineTitle ).toContain( 'connected' );
 		} );
 	} );
 

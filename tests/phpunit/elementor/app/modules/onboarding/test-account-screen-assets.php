@@ -120,4 +120,42 @@ class Test_Account_Screen_Assets extends Elementor_Test_Base {
 			$config['benefits'][0]
 		);
 	}
+
+	public function test_get_editor_config_returns_null_when_is_active_missing(): void {
+		add_filter(
+			'elementor/onboarding/account_screen_assets',
+			static function (): array {
+				return [];
+			}
+		);
+
+		$this->assertNull( Account_Screen_Assets::get_editor_config() );
+	}
+
+	public function test_get_editor_config_read_bool_falls_back_on_string_false(): void {
+		add_filter(
+			'elementor/onboarding/account_screen_assets',
+			static function (): array {
+				return [
+					'is_active' => true,
+					'show_description' => 'false',
+				];
+			}
+		);
+
+		$config = Account_Screen_Assets::get_editor_config();
+
+		$this->assertTrue( $config['showDescription'] );
+	}
+
+	public function test_get_editor_config_ignores_non_array_filter_return(): void {
+		add_filter(
+			'elementor/onboarding/account_screen_assets',
+			static function () {
+				return null;
+			}
+		);
+
+		$this->assertNull( Account_Screen_Assets::get_editor_config() );
+	}
 }

@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import Connect from '../utils/connect';
 import PageContentLayout from './layout/page-content-layout';
 import {
-	getAccountScreenIllustrationUrl,
 	getLegacyAccountScreenConfig,
+	resolveAccountScreenImage,
+	resolveDisconnectedAccountHeadlines,
 } from '../utils/account-screen-config';
 
 export default function AccountContentA( {
@@ -16,25 +17,8 @@ export default function AccountContentA( {
 	connectFailureCallback,
 } ) {
 	const accountScreen = ! state.isLibraryConnected ? getLegacyAccountScreenConfig() : null;
-	const useExperimentTitles = elementorAppConfig.onboarding.experiment;
-
-	let title;
-	let secondLineTitle;
-
-	if ( accountScreen ) {
-		title = accountScreen.headlineLine1;
-		secondLineTitle = accountScreen.headlineLine2;
-	} else if ( useExperimentTitles ) {
-		title = __( 'You\'re here!', 'elementor' );
-		secondLineTitle = __( 'Let\'s get connected.', 'elementor' );
-	} else {
-		title = __( 'You\'re here! Let\'s set things up.', 'elementor' );
-		secondLineTitle = '';
-	}
-
-	const image = accountScreen
-		? getAccountScreenIllustrationUrl( accountScreen )
-		: elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg';
+	const { title, secondLineTitle } = resolveDisconnectedAccountHeadlines( accountScreen );
+	const image = resolveAccountScreenImage( accountScreen );
 
 	return (
 		<PageContentLayout
@@ -72,7 +56,7 @@ AccountContentA.propTypes = {
 	skipButton: PropTypes.object,
 	noticeState: PropTypes.object,
 	pageTexts: PropTypes.shape( {
-		firstLine: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		firstLine: PropTypes.node,
 		listItems: PropTypes.arrayOf( PropTypes.string ),
 	} ).isRequired,
 	state: PropTypes.shape( {

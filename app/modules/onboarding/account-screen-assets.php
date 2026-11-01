@@ -53,15 +53,16 @@ class Account_Screen_Assets {
 		] );
 
 		$assets = $api->get_assets_data();
+		$filtered = apply_filters( 'elementor/onboarding/account_screen_assets', is_array( $assets ) ? $assets : [] );
 
-		return apply_filters( 'elementor/onboarding/account_screen_assets', is_array( $assets ) ? $assets : [] );
+		return is_array( $filtered ) ? $filtered : [];
 	}
 
 	private static function get_defaults(): array {
 		return [
 			'headlineLine1' => __( 'You\'re here!', 'elementor' ),
 			'headlineLine2' => __( 'Let\'s get connected.', 'elementor' ),
-			'description' => __( 'To get the most of Elementor, we\'ll connect your account.', 'elementor' ) . ' ' . __( 'Then you can:', 'elementor' ),
+			'description' => __( 'To get the most out of Elementor, we\'ll connect your account. Then you can:', 'elementor' ),
 			'showDescription' => true,
 			'benefits' => [
 				__( 'Access dozens of professionally designed templates', 'elementor' ),
@@ -92,7 +93,13 @@ class Account_Screen_Assets {
 			return $fallback;
 		}
 
-		return (bool) $assets[ $key ];
+		$parsed = filter_var( $assets[ $key ], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
+
+		if ( null === $parsed ) {
+			return $fallback;
+		}
+
+		return $parsed;
 	}
 
 	private static function read_illustration_url( array $assets, string $fallback ): string {
