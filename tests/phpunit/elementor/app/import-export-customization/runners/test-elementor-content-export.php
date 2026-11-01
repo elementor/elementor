@@ -37,7 +37,7 @@ class Test_Elementor_Content_Export extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_export__excludes_components_when_import_export_not_supported() {
+	public function test_export__always_excludes_components_from_elementor_content_runner() {
 		// Arrange
 		$runner = new Elementor_Content();
 		$component_id = $this->factory()->post->create( [
