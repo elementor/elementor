@@ -5,31 +5,28 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
+	getStageHealthLabels,
 	getStageLabels,
 	getStageQuestions,
 	REDUCED_MOTION_SX,
 	SCANNER_LAYOUT,
 	SCANNER_MOTION,
-	STAGE_ACT,
-	STAGE_COMMERCE,
-	STAGE_IDENTIFY,
-	STAGE_REACH,
+	STAGE_COMING_SOON_FILL,
+	STAGE_HEALTH_COLORS,
 } from '../scanner-constants';
+import { getStageHealthTier } from '../scanner-score';
 
 const BAR_HEIGHT = 4;
 const BAR_RADIUS = '8px';
-
-const STAGE_FILL_COLORS = {
-	[ STAGE_REACH ]: 'success.light',
-	[ STAGE_IDENTIFY ]: 'warning.light',
-	[ STAGE_ACT ]: 'error.light',
-	[ STAGE_COMMERCE ]: 'action.disabled',
-};
+const COUNT_ROW_GAP = 1;
 
 const getFillRatio = ( stage ) => ( stage.total > 0 ? stage.earned / stage.total : 0 );
 
 const StageBar = ( { stage, label, question } ) => {
-	const fillColor = STAGE_FILL_COLORS[ stage.id ];
+	const healthTier = getStageHealthTier( stage );
+	const healthColors = healthTier ? STAGE_HEALTH_COLORS[ healthTier ] : null;
+	const healthLabel = healthTier ? getStageHealthLabels()[ healthTier ] : '';
+	const fillColor = healthColors?.fill ?? STAGE_COMING_SOON_FILL;
 	const countLabel = stage.isComingSoon
 		? __( 'Coming soon', 'elementor' )
 		: sprintf(
@@ -53,7 +50,10 @@ const StageBar = ( { stage, label, question } ) => {
 					sx={ { transition: `width ${ SCANNER_MOTION.ringArriveMs }ms ${ SCANNER_MOTION.easeOutCubic }`, ...REDUCED_MOTION_SX } }
 				/>
 			</Box>
-			<Typography variant="caption" color="text.disabled">{ countLabel }</Typography>
+			<Stack direction="row" alignItems="center" spacing={ COUNT_ROW_GAP }>
+				<Typography variant="caption" color="text.disabled">{ countLabel }</Typography>
+				{ healthLabel && <Typography variant="caption" color={ healthColors.text }>{ healthLabel }</Typography> }
+			</Stack>
 			{ question && <Typography variant="caption" color="text.tertiary">{ question }</Typography> }
 		</Stack>
 	);
