@@ -5,6 +5,7 @@ use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
@@ -392,6 +393,10 @@ class Settings extends Settings_Page {
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
+		if ( EditorOneModule::is_admin_navigation_active() ) {
+			return esc_html__( 'Settings', 'elementor' );
+		}
+
 		return esc_html__( 'Elementor', 'elementor' );
 	}
 
