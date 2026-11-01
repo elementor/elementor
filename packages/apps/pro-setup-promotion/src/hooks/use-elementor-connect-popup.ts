@@ -38,12 +38,7 @@ function buildPopupUrl( connectUrl: string, callbackId: string ): string {
 	return `${ connectUrl }${ separator }callback_id=${ encodeURIComponent( callbackId ) }${ modeParam }`;
 }
 
-export function useElementorConnectPopup( {
-	connectUrl,
-	onSuccess,
-	onError,
-	onPopupBlocked,
-}: ConnectPopupOptions ) {
+export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPopupBlocked }: ConnectPopupOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	const onErrorRef = useRef( onError );
 	const onPopupBlockedRef = useRef( onPopupBlocked );

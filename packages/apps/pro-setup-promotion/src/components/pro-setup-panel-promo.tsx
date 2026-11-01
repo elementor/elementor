@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
@@ -19,6 +19,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import {
+	type PopoverCloseTargetName,
 	type ProSetupPromotionState,
 	trackProSetupPromotionBannerClick,
 	trackProSetupPromotionConnectResult,
@@ -28,7 +29,6 @@ import {
 	trackProSetupPromotionPopoverClose,
 	trackProSetupPromotionResult,
 } from '../analytics';
-import type { PopoverCloseTargetName } from '../analytics';
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
 import { markConnectSuccessNotificationForAfterReload } from '../utils/post-reload-connect-success-notification';
@@ -143,13 +143,16 @@ export function ProSetupPanelPromo() {
 
 	const state = promotionConfig?.state as ProSetupPromotionState | undefined;
 
-	const closePopover = ( targetName: PopoverCloseTargetName ) => {
-		if ( state ) {
-			trackProSetupPromotionPopoverClose( state, targetName );
-		}
+	const closePopover = useCallback(
+		( targetName: PopoverCloseTargetName ) => {
+			if ( state ) {
+				trackProSetupPromotionPopoverClose( state, targetName );
+			}
 
-		setOpen( false );
-	};
+			setOpen( false );
+		},
+		[ state ]
+	);
 
 	const applyPromotionConfig = ( next: ProSetupConfig | null | undefined ) => {
 		if ( undefined === next ) {
@@ -291,8 +294,7 @@ export function ProSetupPanelPromo() {
 				return;
 			}
 
-			const insidePopover =
-				popoverRef.current?.contains( target ) || anchorRef.current?.contains( target );
+			const insidePopover = popoverRef.current?.contains( target ) || anchorRef.current?.contains( target );
 
 			if ( ! insidePopover ) {
 				return;
@@ -314,7 +316,7 @@ export function ProSetupPanelPromo() {
 			document.removeEventListener( 'keydown', closeOnEscape, true );
 			iframeDocument?.removeEventListener( 'mousedown', closeOnPointerDown, true );
 		};
-	}, [ open, state ] );
+	}, [ closePopover, open, state ] );
 
 	if ( dismissed || ! promotionConfig || ! state ) {
 		return null;
