@@ -56,14 +56,14 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_install_path_requires_install_and_activate_capabilities(): void {
+	public function test_complete_setup_returns_invalid_state_when_install_not_actionable_for_user(): void {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
 		$this->force_setup_state( Setup_State::STATE_INSTALL );
 
 		$result = $this->endpoint->create_items( new WP_REST_Request( 'POST' ) );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'insufficient_permissions', $result->get_error_code() );
+		$this->assertSame( 'invalid_state', $result->get_error_code() );
 	}
 
 	public function test_connect_state_returns_invalid_state_from_complete_setup(): void {

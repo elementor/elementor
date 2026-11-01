@@ -17,7 +17,10 @@ class Plugin_Installer {
 		$plugin_data = $this->get_plugin_path();
 		if ( empty( $plugin_data ) ) {
 			$install_result = $this->do_install();
-			if ( null === $install_result || is_wp_error( $install_result ) ) {
+			if ( is_wp_error( $install_result ) ) {
+				return $this->map_install_error( $install_result );
+			}
+			if ( null === $install_result ) {
 				return new \WP_Error( 'cant_installed', esc_html__( 'There are no available subscriptions at the moment.', 'elementor' ) );
 			}
 		}
@@ -58,6 +61,18 @@ class Plugin_Installer {
 		}
 
 		return true;
+	}
+
+	private function map_install_error( \WP_Error $error ): \WP_Error {
+		if ( 'no_package_url' === $error->get_error_code() ) {
+			return new \WP_Error(
+				'install_failed',
+				esc_html__( 'We couldn\'t install Elementor Pro. Please try again.', 'elementor' ),
+				[ 'error_code' => 'no_package_url' ]
+			);
+		}
+
+		return $error;
 	}
 
 	private function do_install() {

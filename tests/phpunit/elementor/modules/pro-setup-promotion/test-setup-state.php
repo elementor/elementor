@@ -20,6 +20,10 @@ class Test_Setup_State extends Elementor_Test_Base {
 		$this->admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $this->admin_id );
 
+		if ( is_multisite() ) {
+			grant_super_admin( $this->admin_id );
+		}
+
 		add_filter(
 			'elementor/pro_setup_promotion/editor_assets',
 			static function (): array {
@@ -29,6 +33,10 @@ class Test_Setup_State extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		if ( is_multisite() ) {
+			revoke_super_admin( $this->admin_id );
+		}
+
 		delete_user_meta( $this->admin_id, Dismissal::USER_META_KEY );
 		remove_all_filters( 'elementor/pro_setup_promotion/editor_assets' );
 		remove_all_filters( 'elementor/pro_setup_promotion/setup_state' );

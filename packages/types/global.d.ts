@@ -150,7 +150,6 @@ declare global {
 				} | null;
 				proSetupPromotion?: {
 					state: 'install' | 'activate' | 'connect';
-					dismissId: string;
 					banner: {
 						title: string;
 						description: string;
@@ -160,7 +159,7 @@ declare global {
 						description: string;
 						ctaLabel: string;
 					};
-					connectUrl: string;
+					connectUrl?: string;
 				};
 				user?: {
 					top_bar?: {
