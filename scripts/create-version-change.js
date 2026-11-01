@@ -291,8 +291,8 @@ async function main() {
           setOutput('beta_reset', 'true');
           setOutput('beta_version', betaVersion);
         } catch (error) {
-          console.error('Reset succeeded but failed to write GitHub outputs:', error.message);
-          process.exit(1);
+          console.warn('::warning::Reset succeeded but failed to write GitHub outputs:', error.message);
+          console.warn('Continuing without outputs. Slack notification will be skipped.');
         }
       }
     } else {
