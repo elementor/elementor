@@ -162,6 +162,10 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 		$items = [];
 
 		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget ) {
+			if ( ! $widget->show_in_panel() ) {
+				continue;
+			}
+
 			$categories = $widget->get_categories();
 			$category   = is_array( $categories ) && ! empty( $categories ) ? (string) $categories[0] : 'general';
 
@@ -174,7 +178,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 				'icon'      => $widget->get_icon(),
 				'thumbnail' => '',
 				'edit_url'  => '',
-				'access'    => $widget->show_in_panel() ? 'Free' : 'Pro',
+				'access'    => 'Free',
 			];
 		}
 
