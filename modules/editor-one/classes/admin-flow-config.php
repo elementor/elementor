@@ -40,6 +40,18 @@ class Admin_Flow_Config {
 			'pages' => self::get_pages(),
 		];
 
+		/**
+		 * Admin flow config.
+		 *
+		 * Internal while the admin flow is behind the `e_admin_navigation` experiment; the shape may change.
+		 *
+		 * - `parents`: `[ parent_slug => [ 'group' => group_id, 'default_tab' => tab_id ] ]`.
+		 * - `groups`: `[ group_id => [ tab_id => [ 'parent' => parent_slug, 'items' => string[], 'routes' => array[], 'url' => callable ] ] ]`.
+		 *   `items` are menu item slugs or class names, the first accessible one is used. `routes` and `url` are optional.
+		 * - `pages`: `[ page_slug => parent_slug ]` for hidden pages that highlight a parent without a tab.
+		 *
+		 * @param array $config Admin flow config.
+		 */
 		return apply_filters( 'elementor/editor-one/admin-flow/config', $config );
 	}
 

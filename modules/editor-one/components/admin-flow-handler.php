@@ -71,10 +71,13 @@ class Admin_Flow_Handler {
 			return $redirect_url;
 		}
 
-		$redirect_url = remove_query_arg( 'return_to', $redirect_url );
-		$referer = wp_get_referer();
+		$return_to = wp_get_referer();
 
-		return $referer ? add_query_arg( 'return_to', rawurlencode( $referer ), $redirect_url ) : $redirect_url;
+		if ( ! $return_to ) {
+			$return_to = Menu_Config::get_elementor_home_url();
+		}
+
+		return add_query_arg( 'return_to', rawurlencode( $return_to ), remove_query_arg( 'return_to', $redirect_url ) );
 	}
 
 	public function filter_parent_file( $parent_file ) {
@@ -115,9 +118,17 @@ class Admin_Flow_Handler {
 	}
 
 	public function filter_submenu_file( $submenu_file ) {
+		global $submenu;
+
 		$active_parent = $this->get_active_state()['parent'];
 
-		return empty( $active_parent ) ? $submenu_file : $active_parent;
+		if ( empty( $active_parent ) ) {
+			return $submenu_file;
+		}
+
+		$registered_slugs = array_column( $submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] ?? [], 2 );
+
+		return in_array( $active_parent, $registered_slugs, true ) ? $active_parent : $submenu_file;
 	}
 
 	private function get_current_query_args(): array {

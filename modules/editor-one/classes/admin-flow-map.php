@@ -14,6 +14,7 @@ class Admin_Flow_Map {
 	private Menu_Data_Provider $menu_data_provider;
 	private array $config;
 	private ?array $registered_items = null;
+	private array $tabs = [];
 
 	public function __construct( Menu_Data_Provider $menu_data_provider, array $config ) {
 		$this->menu_data_provider = $menu_data_provider;
@@ -25,23 +26,31 @@ class Admin_Flow_Map {
 	}
 
 	public function get_tabs( string $group_id ): array {
+		if ( isset( $this->tabs[ $group_id ] ) ) {
+			return $this->tabs[ $group_id ];
+		}
+
 		$tabs = [];
 
 		foreach ( $this->config['groups'][ $group_id ] ?? [] as $tab_id => $tab ) {
 			$item = $this->find_accessible_item( $tab['items'] ?? [] );
 
-			if ( ! $item ) {
+			if ( ! $item || empty( $tab['parent'] ) ) {
 				continue;
 			}
+
+			$item_url = $this->menu_data_provider->resolve_item_url( $item, $item->get_slug() );
 
 			$tabs[ $tab_id ] = [
 				'id' => $tab_id,
 				'label' => $item->get_label(),
-				'url' => $this->resolve_tab_url( $tab, $item ),
+				'url' => $this->resolve_tab_url( $tab, $item_url ),
 				'parent' => $tab['parent'],
-				'routes' => $this->get_tab_routes( $tab, $item ),
+				'routes' => $this->get_tab_routes( $tab, $item_url ),
 			];
 		}
+
+		$this->tabs[ $group_id ] = $tabs;
 
 		return $tabs;
 	}
@@ -55,8 +64,10 @@ class Admin_Flow_Map {
 
 		$tabs = $this->get_tabs( $parent['group'] );
 
-		if ( isset( $tabs[ $parent['default_tab'] ] ) ) {
-			return $tabs[ $parent['default_tab'] ];
+		$default_tab_id = $parent['default_tab'] ?? '';
+
+		if ( isset( $tabs[ $default_tab_id ] ) ) {
+			return $tabs[ $default_tab_id ];
 		}
 
 		foreach ( $tabs as $tab ) {
@@ -201,20 +212,23 @@ class Admin_Flow_Map {
 		return $this->registered_items;
 	}
 
-	private function resolve_tab_url( array $tab, Menu_Item_Interface $item ): string {
+	private function resolve_tab_url( array $tab, string $item_url ): string {
 		if ( isset( $tab['url'] ) && is_callable( $tab['url'] ) ) {
 			return call_user_func( $tab['url'] );
 		}
 
-		return $this->menu_data_provider->resolve_item_url( $item, $item->get_slug() );
+		return $item_url;
 	}
 
-	private function get_tab_routes( array $tab, Menu_Item_Interface $item ): array {
+	/**
+	 * Routes come from the item URL even when the tab URL is a callable, so tabs whose destination
+	 * differs from the admin page (e.g. Theme Builder) must declare their admin page in `routes`.
+	 */
+	private function get_tab_routes( array $tab, string $item_url ): array {
 		$routes = $tab['routes'] ?? [];
-		$url = $this->menu_data_provider->resolve_item_url( $item, $item->get_slug() );
 
-		if ( false === strpos( $url, '#' ) ) {
-			$routes[] = $this->parse_route( $url );
+		if ( false === strpos( $item_url, '#' ) ) {
+			$routes[] = $this->parse_route( $item_url );
 		}
 
 		return $routes;
