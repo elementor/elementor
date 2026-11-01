@@ -65,7 +65,36 @@ class Admin_Flow_Handler {
 			return $parent_file;
 		}
 
+		$this->map_detected_parent_to_elementor_home();
+
 		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
+	}
+
+	/**
+	 * WordPress re-detects the parent with `get_admin_page_parent()` right after the `parent_file` filter,
+	 * which would pick the hidden legacy Elementor / Templates top-level menus. Since WP 7, a top-level
+	 * plugin page ignores `$_wp_real_parent_file` for the global, so its hidden menu entry is dropped instead.
+	 */
+	private function map_detected_parent_to_elementor_home(): void {
+		global $_wp_real_parent_file, $menu, $pagenow, $plugin_page;
+
+		$detected_parent = get_admin_page_parent();
+
+		if ( empty( $detected_parent ) || Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $detected_parent ) {
+			return;
+		}
+
+		$_wp_real_parent_file[ $detected_parent ] = Menu_Config::ELEMENTOR_HOME_MENU_SLUG; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+
+		if ( 'admin.php' !== $pagenow || $plugin_page !== $detected_parent ) {
+			return;
+		}
+
+		foreach ( (array) $menu as $index => $menu_item ) {
+			if ( ( $menu_item[2] ?? '' ) === $detected_parent ) {
+				unset( $menu[ $index ] );
+			}
+		}
 	}
 
 	public function filter_submenu_file( $submenu_file ) {
