@@ -66,6 +66,7 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		// Assert
 		$this->assertFalse( Module::is_admin_navigation_active() );
 		$this->assertNotFalse( $module->get_component( 'sidebar-navigation-handler' ) );
+		$this->assertFalse( $module->get_component( 'admin-flow-handler' ) );
 	}
 
 	public function test_sidebar_navigation_handler_is_not_loaded_when_experiment_is_active() {
@@ -81,6 +82,7 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		// Assert
 		$this->assertTrue( Module::is_admin_navigation_active() );
 		$this->assertFalse( $module->get_component( 'sidebar-navigation-handler' ) );
+		$this->assertNotFalse( $module->get_component( 'admin-flow-handler' ) );
 		$this->assertNotFalse( $module->get_component( 'top-bar-handler' ) );
 	}
 
