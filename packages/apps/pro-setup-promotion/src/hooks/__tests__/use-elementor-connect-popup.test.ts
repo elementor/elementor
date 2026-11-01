@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+
 import { useElementorConnectPopup } from '../use-elementor-connect-popup';
 
 const POPUP_POLL_INTERVAL_MS = 400;
@@ -27,10 +28,16 @@ function createMockJQuery(): MockJQuery {
 	};
 }
 
-function findConnectEvent( mockJQuery: MockJQuery, kind: 'success' | 'error' ): string | undefined {
-	return mockJQuery.on.mock.calls
-		.map( ( [ event ] ) => event as string )
-		.find( ( event ) => event.includes( `elementor/connect/${ kind }/` ) );
+function requireConnectEvent( mockJQuery: MockJQuery, kind: 'success' | 'error' ): string {
+	const event = mockJQuery.on.mock.calls
+		.map( ( [ eventName ] ) => eventName as string )
+		.find( ( eventName ) => eventName.includes( `elementor/connect/${ kind }/` ) );
+
+	if ( ! event ) {
+		throw new Error( `Expected elementor/connect/${ kind } event` );
+	}
+
+	return event;
 }
 
 describe( 'useElementorConnectPopup', () => {
@@ -97,11 +104,10 @@ describe( 'useElementorConnectPopup', () => {
 			result.current();
 		} );
 
-		const successEvent = findConnectEvent( $body, 'success' );
-		expect( successEvent ).toBeDefined();
+		const successEvent = requireConnectEvent( $body, 'success' );
 
 		act( () => {
-			$body.emit( successEvent! );
+			$body.emit( successEvent );
 		} );
 
 		expect( onSuccess ).toHaveBeenCalledTimes( 1 );
@@ -109,7 +115,7 @@ describe( 'useElementorConnectPopup', () => {
 		expect( popupClose ).toHaveBeenCalledTimes( 1 );
 
 		act( () => {
-			$body.emit( successEvent! );
+			$body.emit( successEvent );
 		} );
 
 		expect( onSuccess ).toHaveBeenCalledTimes( 1 );
@@ -155,10 +161,10 @@ describe( 'useElementorConnectPopup', () => {
 			result.current();
 		} );
 
-		const successEvent = findConnectEvent( $window, 'success' );
+		const successEvent = requireConnectEvent( $window, 'success' );
 
 		act( () => {
-			$window.emit( successEvent! );
+			$window.emit( successEvent );
 		} );
 
 		popup.closed = true;
