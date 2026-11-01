@@ -40,6 +40,25 @@ function requireConnectEvent( mockJQuery: MockJQuery, kind: 'success' | 'error' 
 	return event;
 }
 
+type TestConnectWindow = {
+	elementorCommon?: {
+		elements?: {
+			$body?: MockJQuery;
+			$window?: MockJQuery;
+		};
+	};
+};
+
+function setConnectJQueryMocks( $window: MockJQuery, $body: MockJQuery ) {
+	( window as unknown as TestConnectWindow ).elementorCommon = {
+		elements: { $window, $body },
+	};
+}
+
+function clearConnectJQueryMocks() {
+	delete ( window as unknown as TestConnectWindow ).elementorCommon;
+}
+
 describe( 'useElementorConnectPopup', () => {
 	let $window: MockJQuery;
 	let $body: MockJQuery;
@@ -54,19 +73,17 @@ describe( 'useElementorConnectPopup', () => {
 		popupClose = jest.fn();
 		popup = { closed: false, close: popupClose };
 		openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => popup as unknown as Window );
-		( window as Window & { elementorCommon?: unknown } ).elementorCommon = {
-			elements: { $window, $body },
-		};
+		setConnectJQueryMocks( $window, $body );
 	} );
 
 	afterEach( () => {
 		openSpy.mockRestore();
-		delete ( window as Window & { elementorCommon?: unknown } ).elementorCommon;
+		clearConnectJQueryMocks();
 		jest.useRealTimers();
 	} );
 
 	it( 'calls onError and clears listeners when Connect jQuery targets are missing', () => {
-		delete ( window as Window & { elementorCommon?: unknown } ).elementorCommon;
+		clearConnectJQueryMocks();
 		const onError = jest.fn();
 		const { result } = renderHook( () =>
 			useElementorConnectPopup( {
