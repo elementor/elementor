@@ -3,9 +3,7 @@
 namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
-use Elementor\Modules\EditorOne\Classes\Admin_Flow_Map;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
-use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,7 +20,11 @@ class Admin_Menu_Structure {
 		'go_elementor_pro',
 	];
 
-	public function __construct() {
+	private Admin_Flow_Handler $admin_flow_handler;
+
+	public function __construct( Admin_Flow_Handler $admin_flow_handler ) {
+		$this->admin_flow_handler = $admin_flow_handler;
+
 		add_action( 'admin_menu', [ $this, 'register_parent_aliases' ], 10008 );
 		add_action( 'admin_menu', [ $this, 'place_elementor_below_pages' ], 10020 );
 		add_action( 'admin_head', [ $this, 'rebuild_submenu' ], 20 );
@@ -33,21 +35,14 @@ class Admin_Menu_Structure {
 			return;
 		}
 
-		$parents = $this->get_available_parents();
-
-		foreach ( $parents as $slug => $parent ) {
+		foreach ( $this->get_available_parents() as $slug => $parent ) {
 			if ( $this->has_home_page( $slug ) ) {
 				continue;
 			}
 
-			add_submenu_page(
-				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-				$parent['label'] ?? $slug,
-				$parent['label'] ?? $slug,
-				Menu_Config::CAPABILITY_MANAGE_OPTIONS,
-				$slug,
-				'__return_empty_string'
-			);
+			$label = $this->get_label( $slug, $parent );
+
+			add_submenu_page( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $label, $label, Menu_Config::CAPABILITY_MANAGE_OPTIONS, $slug, '__return_empty_string' );
 		}
 	}
 
@@ -68,48 +63,48 @@ class Admin_Menu_Structure {
 
 		global $submenu;
 
-		$parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
-		$existing_items = $submenu[ $parent_slug ] ?? [];
-		$upgrade_item = $this->extract_upgrade_item( $existing_items );
+		$existing_items = $submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] ?? [];
 
-		$submenu[ $parent_slug ] = $this->build_submenu( // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] = $this->build_submenu( // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$this->get_available_parents(),
 			$existing_items,
-			$upgrade_item
+			$this->extract_upgrade_item( $existing_items )
 		);
 	}
 
 	public function move_below_pages( array $menu, string $item_slug, string $pages_slug ): array {
-		$item_key = $this->find_menu_key( $menu, $item_slug );
-		$pages_key = $this->find_menu_key( $menu, $pages_slug );
+		$slugs = array_map( fn( $item ) => $item[2] ?? '', $menu );
+		$item_key = array_search( $item_slug, $slugs, true );
+		$pages_key = array_search( $pages_slug, $slugs, true );
 
-		if ( null === $item_key || null === $pages_key ) {
+		if ( false === $item_key || false === $pages_key ) {
 			return $menu;
 		}
 
 		$item = $menu[ $item_key ];
 		unset( $menu[ $item_key ] );
+		$position = (float) $pages_key + 1;
 
-		$menu[ $this->next_position( $menu, $pages_key ) ] = $item;
+		while ( isset( $menu[ (string) $position ] ) ) {
+			++$position;
+		}
+
+		$menu[ (string) $position ] = $item;
 
 		return $menu;
 	}
 
 	public function build_submenu( array $parents, array $existing_items, ?array $upgrade_item ): array {
 		$items = [];
-		$previous_group = null;
+		$previous_section = null;
 		$last_slug = '';
 
 		foreach ( $parents as $slug => $parent ) {
-			$section = $this->get_menu_section( $parent );
+			$section = $parent['menu_section'] ?? $parent['group'] ?? '';
 			$item = $this->create_parent_item( $slug, $parent, $existing_items );
 
-			if ( $this->should_separate_sections( $previous_group, $section, $last_slug ) ) {
-				$item = $this->add_divider_before( $item );
-			}
-
-			$items[] = $item;
-			$previous_group = $section;
+			$items[] = $this->should_separate_sections( $previous_section, $section, $last_slug ) ? $this->add_divider_before( $item ) : $item;
+			$previous_section = $section;
 			$last_slug = $slug;
 		}
 
@@ -117,13 +112,23 @@ class Admin_Menu_Structure {
 			return $items;
 		}
 
-		if ( Admin_Flow_Config::PARENT_ACCOUNT !== $last_slug && $this->should_separate_sections( $previous_group, 'upgrade', $last_slug ) ) {
-			$upgrade_item = $this->add_divider_before( $upgrade_item );
-		}
-
-		$items[] = $upgrade_item;
+		$items[] = Admin_Flow_Config::PARENT_ACCOUNT !== $last_slug && $this->should_separate_sections( $previous_section, 'upgrade', $last_slug )
+			? $this->add_divider_before( $upgrade_item )
+			: $upgrade_item;
 
 		return $items;
+	}
+
+	/**
+	 * WordPress links a submenu item to `admin.php?page=` only when it has a page hook under its parent,
+	 * otherwise the raw slug becomes the `href`.
+	 */
+	public function has_home_page( string $slug ): bool {
+		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $slug ) {
+			return true;
+		}
+
+		return $this->is_under_home( $slug ) && null !== get_plugin_page_hook( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
 	}
 
 	private function should_apply(): bool {
@@ -131,59 +136,33 @@ class Admin_Menu_Structure {
 	}
 
 	private function get_available_parents(): array {
-		$config = Admin_Flow_Config::get_config();
-		$map = new Admin_Flow_Map( Menu_Data_Provider::instance(), $config );
-		$parents = [];
+		$map = $this->admin_flow_handler->get_map();
 
-		foreach ( $config['parents'] as $slug => $parent ) {
-			if ( $this->is_parent_available( $slug, $parent, $map ) ) {
-				$parents[ $slug ] = $parent;
-			}
-		}
-
-		return $parents;
-	}
-
-	private function is_parent_available( string $slug, array $parent_config, Admin_Flow_Map $map ): bool {
-		if ( empty( $parent_config['group'] ) ) {
-			return true;
-		}
-
-		if ( '' !== $map->get_default_url( $slug ) ) {
-			return true;
-		}
-
-		return Admin_Flow_Config::PARENT_SUBMISSIONS === $slug && $this->is_under_home( $slug );
+		return array_filter(
+			Admin_Flow_Config::get_config()['parents'],
+			fn( $parent_config, $slug ) => empty( $parent_config['group'] )
+				|| '' !== $map->get_default_url( $slug )
+				|| ( Admin_Flow_Config::PARENT_SUBMISSIONS === $slug && $this->is_under_home( $slug ) ),
+			ARRAY_FILTER_USE_BOTH
+		);
 	}
 
 	private function should_separate_sections( ?string $previous_section, string $section, string $previous_slug ): bool {
-		if ( null === $previous_section || $section === $previous_section ) {
-			return false;
-		}
-
-		return Admin_Flow_Config::PARENT_HOME !== $previous_slug;
+		return null !== $previous_section && $section !== $previous_section && Admin_Flow_Config::PARENT_HOME !== $previous_slug;
 	}
 
-	private function get_menu_section( array $parent_config ): string {
-		if ( isset( $parent_config['menu_section'] ) ) {
-			return $parent_config['menu_section'];
-		}
-
-		return $parent_config['group'] ?? '';
+	private function get_label( string $slug, array $parent_config ): string {
+		return $parent_config['label'] ?? $slug;
 	}
 
 	private function create_parent_item( string $slug, array $parent_config, array $existing_items ): array {
-		$label = $parent_config['label'] ?? $slug;
-		$existing = $this->find_existing_item( $existing_items, $slug );
+		$label = $this->get_label( $slug, $parent_config );
+		$item = $this->find_existing_item( $existing_items, $slug ) ?? [ $label, Menu_Config::CAPABILITY_MANAGE_OPTIONS, $slug, $label ];
 
-		if ( null !== $existing ) {
-			$existing[0] = $label;
-			$existing[2] = $slug;
+		$item[0] = $label;
+		$item[2] = $slug;
 
-			return $existing;
-		}
-
-		return [ $label, Menu_Config::CAPABILITY_MANAGE_OPTIONS, $slug, $label ];
+		return $item;
 	}
 
 	private function find_existing_item( array $existing_items, string $slug ): ?array {
@@ -212,66 +191,20 @@ class Admin_Menu_Structure {
 	}
 
 	private function extract_upgrade_item( array $existing_items ): ?array {
+		$items_by_slug = array_column( $existing_items, null, 2 );
+
 		foreach ( self::UPGRADE_SLUGS as $upgrade_slug ) {
-			foreach ( $existing_items as $item ) {
-				if ( ( $item[2] ?? '' ) === $upgrade_slug ) {
-					return $item;
-				}
+			if ( isset( $items_by_slug[ $upgrade_slug ] ) ) {
+				return $items_by_slug[ $upgrade_slug ];
 			}
 		}
 
 		return null;
-	}
-
-	/**
-	 * WordPress links a submenu item to `admin.php?page=` only when it has a page hook under its parent,
-	 * otherwise the raw slug becomes the `href`.
-	 */
-	public function has_home_page( string $slug ): bool {
-		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $slug ) {
-			return true;
-		}
-
-		return $this->is_under_home( $slug ) && null !== get_plugin_page_hook( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
 	}
 
 	private function is_under_home( string $slug ): bool {
 		global $submenu;
 
-		foreach ( (array) ( $submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] ?? [] ) as $item ) {
-			if ( ( $item[2] ?? '' ) === $slug ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function find_menu_key( array $menu, string $slug ) {
-		foreach ( $menu as $key => $item ) {
-			if ( ( $item[2] ?? '' ) === $slug ) {
-				return $key;
-			}
-		}
-
-		return null;
-	}
-
-	private function next_position( array $menu, $after_key ): string {
-		$position = (float) $after_key + 1;
-
-		while ( $this->is_position_taken( $menu, $position ) ) {
-			++$position;
-		}
-
-		return (string) $position;
-	}
-
-	private function is_position_taken( array $menu, float $position ): bool {
-		if ( isset( $menu[ (string) $position ] ) ) {
-			return true;
-		}
-
-		return floor( $position ) === $position && isset( $menu[ (int) $position ] );
+		return in_array( $slug, array_column( (array) ( $submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] ?? [] ), 2 ), true );
 	}
 }

@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
 use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -23,7 +24,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		$this->original_submenu = $GLOBALS['submenu'] ?? null;
-		$this->structure = new Admin_Menu_Structure();
+		$this->structure = new Admin_Menu_Structure( new Admin_Flow_Handler() );
 	}
 
 	public function tearDown(): void {

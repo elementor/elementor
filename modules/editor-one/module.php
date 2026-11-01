@@ -56,7 +56,7 @@ class Module extends BaseModule {
 
 			if ( self::is_admin_navigation_active() ) {
 				$this->add_component( 'admin-flow-handler', new Admin_Flow_Handler() );
-				$this->add_component( 'admin-menu-structure', new Admin_Menu_Structure() );
+				$this->add_component( 'admin-menu-structure', new Admin_Menu_Structure( $this->get_component( 'admin-flow-handler' ) ) );
 			} else {
 				$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			}
