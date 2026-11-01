@@ -68,6 +68,16 @@ class Test_Admin_Flow_Map extends Elementor_Test_Base {
 				Admin_Flow_Config::PARENT_TEMPLATES,
 				'saved-templates',
 			],
+			'saved templates without tabs group' => [
+				[ 'post_type' => 'elementor_library', 'elementor_library_type' => 'page' ],
+				Admin_Flow_Config::PARENT_TEMPLATES,
+				'saved-templates',
+			],
+			'popups without tabs group' => [
+				[ 'post_type' => 'elementor_library', 'elementor_library_type' => 'popup' ],
+				Admin_Flow_Config::PARENT_POPUPS,
+				'popups',
+			],
 			'theme builder admin page' => [
 				[ 'post_type' => 'elementor_library', 'tabs_group' => 'theme' ],
 				Admin_Flow_Config::PARENT_THEME_BUILDER,

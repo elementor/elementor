@@ -110,6 +110,9 @@ class Admin_Flow_Config {
 				'saved-templates' => [
 					'parent' => self::PARENT_TEMPLATES,
 					'items' => [ Menu_Config::LEGACY_TEMPLATES_SLUG ],
+					'routes' => [
+						[ 'post_type' => 'elementor_library' ],
+					],
 				],
 				'theme-builder' => [
 					'parent' => self::PARENT_THEME_BUILDER,
@@ -128,6 +131,12 @@ class Admin_Flow_Config {
 						'edit.php?post_type=elementor_library&tabs_group=popup&elementor_library_type=popup',
 						'e-popups',
 						'popup_templates',
+					],
+					'routes' => [
+						[
+							'post_type' => 'elementor_library',
+							'elementor_library_type' => 'popup',
+						],
 					],
 				],
 				'website-templates' => [
