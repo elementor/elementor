@@ -209,6 +209,10 @@
 		'use strict';
 
 		const PROTOCOL = '2026-01-26';
+		const ICON_UNITS_PER_EM = 1000;
+		const ICON_FONT_ASCENT = 850;
+		const ICON_PATH_D_PATTERN = /^[MmLlHhVvCcSsQqTtAaZz0-9.,\s+-]+$/;
+		const SITE_ORIGIN_PATTERN = /^https?:\/\//;
 		const KINDS = [
 			{ key: 'all', label: 'All' },
 			{ key: 'widget', label: 'Widgets' },
@@ -283,32 +287,66 @@
 			render();
 		};
 
-		const originOfUrl = ( url ) => {
-			if ( ! url ) {
+		const normalizeSiteOrigin = ( rawOrigin ) => {
+			if ( typeof rawOrigin !== 'string' || ! SITE_ORIGIN_PATTERN.test( rawOrigin ) ) {
 				return '';
 			}
 			try {
-				return new URL( url ).origin;
+				const parsed = new URL( rawOrigin );
+				if ( 'http:' !== parsed.protocol && 'https:' !== parsed.protocol ) {
+					return '';
+				}
+				return parsed.origin;
 			} catch {
 				return '';
 			}
 		};
 
-		const isSameSiteUrl = ( url ) => {
-			return '' !== siteOrigin && originOfUrl( url ) === siteOrigin;
+		const safeSiteUrl = ( rawUrl ) => {
+			if ( typeof rawUrl !== 'string' || '' === rawUrl || '' === siteOrigin ) {
+				return '';
+			}
+			let parsed;
+			try {
+				parsed = new URL( rawUrl );
+			} catch {
+				return '';
+			}
+			if ( 'http:' !== parsed.protocol && 'https:' !== parsed.protocol ) {
+				return '';
+			}
+			if ( parsed.origin !== siteOrigin ) {
+				return '';
+			}
+			return parsed.href;
 		};
 
-		const appendIconSvg = ( parent, svgMarkup, large ) => {
-			if ( ! svgMarkup ) {
+		const safeIconPathD = ( rawPath ) => {
+			if ( typeof rawPath !== 'string' || '' === rawPath || rawPath.length > 8192 ) {
+				return '';
+			}
+			return ICON_PATH_D_PATTERN.test( rawPath ) ? rawPath : '';
+		};
+
+		const appendIconPath = ( parent, pathD, large ) => {
+			if ( ! pathD ) {
 				return;
 			}
 			const wrap = document.createElement( 'span' );
 			wrap.className = 'widget-icon' + ( large ? ' widget-icon-lg' : '' );
-			const doc = new DOMParser().parseFromString( svgMarkup, 'image/svg+xml' );
-			const svg = doc.documentElement;
-			if ( svg && svg.localName === 'svg' && ! doc.querySelector( 'parsererror' ) ) {
-				wrap.appendChild( document.importNode( svg, true ) );
-			}
+			const svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+			svg.setAttribute( 'viewBox', '0 0 ' + ICON_UNITS_PER_EM + ' ' + ICON_UNITS_PER_EM );
+			svg.setAttribute( 'width', '100%' );
+			svg.setAttribute( 'height', '100%' );
+			svg.setAttribute( 'aria-hidden', 'true' );
+			const group = document.createElementNS( 'http://www.w3.org/2000/svg', 'g' );
+			group.setAttribute( 'transform', 'scale(1,-1) translate(0,-' + ICON_FONT_ASCENT + ')' );
+			const path = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+			path.setAttribute( 'fill', 'currentColor' );
+			path.setAttribute( 'd', pathD );
+			group.appendChild( path );
+			svg.appendChild( group );
+			wrap.appendChild( svg );
 			parent.appendChild( wrap );
 		};
 
@@ -316,9 +354,10 @@
 			const opts = options || {};
 			parent.replaceChildren();
 
-			if ( item.preview_url && isSameSiteUrl( item.preview_url ) ) {
+			const previewSrc = safeSiteUrl( item.preview_url );
+			if ( previewSrc ) {
 				const iframe = document.createElement( 'iframe' );
-				iframe.src = item.preview_url;
+				iframe.src = previewSrc;
 				iframe.title = item.title || '';
 				if ( opts.lazy ) {
 					iframe.loading = 'lazy';
@@ -333,8 +372,9 @@
 				tile.style.height = '100%';
 			}
 
-			if ( item.kind === 'widget' && item.icon_svg ) {
-				appendIconSvg( tile, item.icon_svg, !! opts.largeIcon );
+			const iconPath = safeIconPathD( item.icon_path_d );
+			if ( item.kind === 'widget' && iconPath ) {
+				appendIconPath( tile, iconPath, !! opts.largeIcon );
 				if ( opts.fullHeight ) {
 					const label = document.createElement( 'div' );
 					label.textContent = item.title || '';
@@ -414,11 +454,17 @@
 			const box = el( 'inspector-preview' );
 			fillItemPreview( box, item, { fullHeight: true, largeIcon: true } );
 			const open = el( 'open-editor' );
-			const editUrl = item.edit_url;
-			if ( editUrl && isSameSiteUrl( editUrl ) ) {
+			const editUrl = safeSiteUrl( item.edit_url );
+			if ( editUrl ) {
 				open.hidden = false;
 				open.onclick = () => {
-					request( 'ui/open-link', { url: editUrl } ).catch( () => window.open( editUrl, '_blank' ) );
+					const openTarget = safeSiteUrl( item.edit_url );
+					if ( ! openTarget ) {
+						return;
+					}
+					request( 'ui/open-link', { url: openTarget } ).catch( () => {
+						window.open( openTarget, '_blank', 'noopener,noreferrer' );
+					} );
 				};
 			} else {
 				open.hidden = true;
@@ -441,7 +487,7 @@
 			}
 			items = payload.items || [];
 			counts = payload.counts_by_type || {};
-			siteOrigin = typeof payload.site_origin === 'string' ? payload.site_origin : '';
+			siteOrigin = normalizeSiteOrigin( payload.site_origin );
 			el( 'waiting' ).hidden = true;
 			el( 'app' ).hidden = false;
 			selectedIndex = items.length ? 0 : -1;

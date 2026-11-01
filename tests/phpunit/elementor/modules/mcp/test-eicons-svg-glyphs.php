@@ -38,4 +38,17 @@ class Test_Eicons_Svg_Glyphs extends TestCase {
 		// Assert
 		$this->assertSame( '', Eicons_Svg_Glyphs::markup_for_icon( '' ) );
 	}
+
+	public function test_path_d_for_icon_returns_glyph_path() {
+		// Act
+		$path = Eicons_Svg_Glyphs::path_d_for_icon( 'eicon-accordion' );
+
+		// Assert
+		$this->assertStringContainsString( 'M938 600', $path );
+	}
+
+	public function test_path_d_for_icon_returns_empty_for_unknown_glyph() {
+		// Assert
+		$this->assertSame( '', Eicons_Svg_Glyphs::path_d_for_icon( 'eicon-not-a-real-icon-name-xyz' ) );
+	}
 }

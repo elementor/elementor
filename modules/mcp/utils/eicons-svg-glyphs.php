@@ -40,6 +40,16 @@ class Eicons_Svg_Glyphs {
 		);
 	}
 
+	public static function path_d_for_icon( string $icon_class ): string {
+		$glyph_name = self::glyph_name_from_class( $icon_class );
+
+		if ( '' === $glyph_name ) {
+			return '';
+		}
+
+		return self::path_for_glyph( $glyph_name );
+	}
+
 	private static function glyph_name_from_class( string $icon_class ): string {
 		$icon_class = trim( $icon_class );
 
