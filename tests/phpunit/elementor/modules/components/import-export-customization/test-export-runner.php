@@ -162,17 +162,26 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$this->assertSame( [ $inner->get_main_id() ], $dependencies[ $outer->get_main_id() ]['depends_on'] );
 	}
 
-	public function test_should_export__requires_content_to_be_included() {
+	public function test_should_export__follows_gate_when_content_is_included() {
 		// Arrange
 		$runner = new Export_Runner();
 
 		// Act
-		$without_content = $runner->should_export( [ 'include' => [ 'settings' ] ] );
 		$with_content = $runner->should_export( [ 'include' => [ 'content' ] ] );
 
 		// Assert
-		$this->assertFalse( $without_content );
-		$this->assertTrue( $with_content );
+		$this->assertSame( Components_Module::is_import_export_supported(), $with_content );
+	}
+
+	public function test_should_export__returns_false_when_content_is_not_included() {
+		// Arrange
+		$runner = new Export_Runner();
+
+		// Act
+		$result = $runner->should_export( [ 'include' => [ 'settings' ] ] );
+
+		// Assert
+		$this->assertFalse( $result );
 	}
 
 	private function create_component(
@@ -210,7 +219,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			$document->update_json_meta( Component_Document::ARCHIVED_META_KEY, $archived );
 		}
 
-		return Plugin::$instance->documents->get( $document->get_main_id() );
+		return Plugin::$instance->documents->get( $document->get_main_id(), false );
 	}
 
 	private function build_mock_widget_element( string $id ): array {
