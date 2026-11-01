@@ -219,6 +219,7 @@
 		let payload = null;
 		let items = [];
 		let counts = {};
+		let siteOrigin = '';
 		let kindFilter = 'all';
 		let selectedIndex = -1;
 		let filtered = [];
@@ -282,19 +283,75 @@
 			render();
 		};
 
-		const previewMarkup = ( item, scaled ) => {
-			if ( item.preview_url ) {
-				return '<iframe src="' + item.preview_url + '" title="' + item.title + '" loading="lazy"></iframe>';
+		const originOfUrl = ( url ) => {
+			if ( ! url ) {
+				return '';
 			}
+			try {
+				return new URL( url ).origin;
+			} catch {
+				return '';
+			}
+		};
+
+		const isSameSiteUrl = ( url ) => {
+			return '' !== siteOrigin && originOfUrl( url ) === siteOrigin;
+		};
+
+		const appendIconSvg = ( parent, svgMarkup, large ) => {
+			if ( ! svgMarkup ) {
+				return;
+			}
+			const wrap = document.createElement( 'span' );
+			wrap.className = 'widget-icon' + ( large ? ' widget-icon-lg' : '' );
+			const doc = new DOMParser().parseFromString( svgMarkup, 'image/svg+xml' );
+			const svg = doc.documentElement;
+			if ( svg && svg.localName === 'svg' && ! doc.querySelector( 'parsererror' ) ) {
+				wrap.appendChild( document.importNode( svg, true ) );
+			}
+			parent.appendChild( wrap );
+		};
+
+		const fillItemPreview = ( parent, item, options ) => {
+			const opts = options || {};
+			parent.replaceChildren();
+
+			if ( item.preview_url && isSameSiteUrl( item.preview_url ) ) {
+				const iframe = document.createElement( 'iframe' );
+				iframe.src = item.preview_url;
+				iframe.title = item.title || '';
+				if ( opts.lazy ) {
+					iframe.loading = 'lazy';
+				}
+				parent.appendChild( iframe );
+				return;
+			}
+
+			const tile = document.createElement( 'div' );
+			tile.className = 'widget-tile';
+			if ( opts.fullHeight ) {
+				tile.style.height = '100%';
+			}
+
 			if ( item.kind === 'widget' && item.icon_svg ) {
-				return '<div class="widget-tile"><span class="widget-icon">' + item.icon_svg + '</span></div>';
+				appendIconSvg( tile, item.icon_svg, !! opts.largeIcon );
+				if ( opts.fullHeight ) {
+					const label = document.createElement( 'div' );
+					label.textContent = item.title || '';
+					tile.appendChild( label );
+				}
+			} else {
+				const initial = document.createElement( 'span' );
+				initial.textContent = ( item.title || '?' ).slice( 0, 1 );
+				tile.appendChild( initial );
 			}
-			return '<div class="widget-tile"><span>' + ( item.title || '?' ).slice( 0, 1 ) + '</span></div>';
+
+			parent.appendChild( tile );
 		};
 
 		const renderChips = () => {
 			const wrap = el( 'chips' );
-			wrap.innerHTML = '';
+			wrap.replaceChildren();
 			KINDS.forEach( ( kind ) => {
 				const btn = document.createElement( 'button' );
 				btn.type = 'button';
@@ -312,17 +369,29 @@
 
 		const renderGrid = () => {
 			const grid = el( 'grid' );
-			grid.innerHTML = '';
+			grid.replaceChildren();
 			filtered.forEach( ( item, index ) => {
 				const btn = document.createElement( 'button' );
 				btn.type = 'button';
 				btn.className = 'card' + ( index === selectedIndex ? ' is-selected' : '' );
-				btn.innerHTML =
-					'<div class="preview-box">' + previewMarkup( item, true ) + '</div>' +
-					'<div class="card-body">' +
-					'<div class="card-title">' + ( item.title || 'Untitled' ) + '</div>' +
-					'<div class="card-meta">' + item.kind + ' · ' + ( item.subtype || item.category ) + '</div>' +
-					'</div>';
+
+				const previewBox = document.createElement( 'div' );
+				previewBox.className = 'preview-box';
+				fillItemPreview( previewBox, item, { lazy: true } );
+
+				const body = document.createElement( 'div' );
+				body.className = 'card-body';
+				const titleNode = document.createElement( 'div' );
+				titleNode.className = 'card-title';
+				titleNode.textContent = item.title || 'Untitled';
+				const metaNode = document.createElement( 'div' );
+				metaNode.className = 'card-meta';
+				metaNode.textContent = item.kind + ' · ' + ( item.subtype || item.category );
+				body.appendChild( titleNode );
+				body.appendChild( metaNode );
+
+				btn.appendChild( previewBox );
+				btn.appendChild( body );
 				btn.addEventListener( 'click', () => {
 					selectedIndex = index;
 					render();
@@ -343,16 +412,13 @@
 			el( 'sel-kind' ).textContent = item.kind + ' / ' + ( item.subtype || item.category );
 			el( 'sel-access' ).textContent = item.access || '';
 			const box = el( 'inspector-preview' );
-			box.innerHTML = item.preview_url
-				? '<iframe src="' + item.preview_url + '" title="' + item.title + '"></iframe>'
-				: '<div class="widget-tile" style="height:100%">' +
-					( item.icon_svg ? '<span class="widget-icon widget-icon-lg">' + item.icon_svg + '</span>' : '' ) +
-					'<div>' + item.title + '</div></div>';
+			fillItemPreview( box, item, { fullHeight: true, largeIcon: true } );
 			const open = el( 'open-editor' );
-			if ( item.edit_url ) {
+			const editUrl = item.edit_url;
+			if ( editUrl && isSameSiteUrl( editUrl ) ) {
 				open.hidden = false;
 				open.onclick = () => {
-					request( 'ui/open-link', { url: item.edit_url } ).catch( () => window.open( item.edit_url, '_blank' ) );
+					request( 'ui/open-link', { url: editUrl } ).catch( () => window.open( editUrl, '_blank' ) );
 				};
 			} else {
 				open.hidden = true;
@@ -375,6 +441,7 @@
 			}
 			items = payload.items || [];
 			counts = payload.counts_by_type || {};
+			siteOrigin = typeof payload.site_origin === 'string' ? payload.site_origin : '';
 			el( 'waiting' ).hidden = true;
 			el( 'app' ).hidden = false;
 			selectedIndex = items.length ? 0 : -1;

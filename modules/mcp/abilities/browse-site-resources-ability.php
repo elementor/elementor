@@ -79,6 +79,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 					'counts_by_type' => [
 						'type' => 'object',
 					],
+					'site_origin' => [ 'type' => 'string' ],
 				],
 			],
 			[
@@ -146,7 +147,24 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 		return [
 			'items'          => array_values( $filtered ),
 			'counts_by_type' => $counts,
+			'site_origin'    => $this->site_origin_from_home_url(),
 		];
+	}
+
+	private function site_origin_from_home_url(): string {
+		$parsed = wp_parse_url( home_url() );
+
+		if ( empty( $parsed['host'] ) ) {
+			return '';
+		}
+
+		$origin = ( $parsed['scheme'] ?? 'https' ) . '://' . $parsed['host'];
+
+		if ( ! empty( $parsed['port'] ) ) {
+			$origin .= ':' . $parsed['port'];
+		}
+
+		return $origin;
 	}
 
 	private function attach_widget_icon_svgs( array $items ): array {

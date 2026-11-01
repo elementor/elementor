@@ -43,6 +43,7 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'items', $result );
 		$this->assertArrayHasKey( 'counts_by_type', $result );
+		$this->assertArrayHasKey( 'site_origin', $result );
 		$this->assertArrayNotHasKey( 'eicons_css_url', $result );
 		$this->assertArrayNotHasKey( 'eicons_font_url', $result );
 		$this->assertIsArray( $result['items'] );
@@ -53,6 +54,15 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 			$this->assertArrayHasKey( 'kind', $item );
 			$this->assertArrayHasKey( 'title', $item );
 			$this->assertArrayHasKey( 'edit_url', $item );
+		}
+
+		$parsed = wp_parse_url( home_url() );
+		if ( ! empty( $parsed['host'] ) ) {
+			$expected_origin = ( $parsed['scheme'] ?? 'https' ) . '://' . $parsed['host'];
+			if ( ! empty( $parsed['port'] ) ) {
+				$expected_origin .= ':' . $parsed['port'];
+			}
+			$this->assertSame( $expected_origin, $result['site_origin'] );
 		}
 	}
 
