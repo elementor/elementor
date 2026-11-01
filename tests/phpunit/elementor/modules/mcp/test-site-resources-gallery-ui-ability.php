@@ -36,6 +36,8 @@ class Test_Site_Resources_Gallery_Ui_Ability extends TestCase {
 		$this->assertIsString( $result[0]['text'] );
 		$this->assertStringContainsString( '<!DOCTYPE html>', $result[0]['text'] );
 		$this->assertStringContainsString( 'Site library', $result[0]['text'] );
+		$this->assertStringContainsString( 'icon_svg', $result[0]['text'] );
+		$this->assertStringNotContainsString( 'eicons_css_url', $result[0]['text'] );
 	}
 
 	public function test_execute_includes_ui_csp_meta_when_site_has_host() {
@@ -55,6 +57,7 @@ class Test_Site_Resources_Gallery_Ui_Ability extends TestCase {
 			}
 			$this->assertSame( $expected_origin, $result[0]['_meta']['ui']['csp']['resourceDomains'][0] );
 			$this->assertSame( $expected_origin, $result[0]['_meta']['ui']['csp']['frameDomains'][0] );
+			$this->assertArrayNotHasKey( 'fontDomains', $result[0]['_meta']['ui']['csp'] );
 		}
 	}
 

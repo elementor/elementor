@@ -43,6 +43,8 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'items', $result );
 		$this->assertArrayHasKey( 'counts_by_type', $result );
+		$this->assertArrayNotHasKey( 'eicons_css_url', $result );
+		$this->assertArrayNotHasKey( 'eicons_font_url', $result );
 		$this->assertIsArray( $result['items'] );
 		$this->assertGreaterThan( 0, $result['counts_by_type']['widget'] ?? 0 );
 
@@ -51,6 +53,25 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 			$this->assertArrayHasKey( 'kind', $item );
 			$this->assertArrayHasKey( 'title', $item );
 			$this->assertArrayHasKey( 'edit_url', $item );
+		}
+	}
+
+	public function test_execute_widget_items_include_icon_svg_for_eicons() {
+		// Arrange
+		$ability = new Browse_Site_Resources_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'type' => 'widget', 'search' => 'accordion', 'limit' => 5 ] );
+
+		// Assert
+		$this->assertNotEmpty( $result['items'] );
+		$with_svg = array_filter(
+			$result['items'],
+			static fn( $item ) => ! empty( $item['icon_svg'] )
+		);
+		$this->assertNotEmpty( $with_svg );
+		foreach ( $with_svg as $item ) {
+			$this->assertStringStartsWith( '<svg', $item['icon_svg'] );
 		}
 	}
 
