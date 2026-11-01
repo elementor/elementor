@@ -364,6 +364,14 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'id=&quot;', $rendered_output );
 	}
 
+	public function test__initial_config_marks_svg_as_new_in_4_4(): void {
+		// Act.
+		$config = ( new Atomic_Svg() )->get_initial_config();
+
+		// Assert.
+		$this->assertSame( '4.4', $config['new_until_version'] ?? null );
+	}
+
 	private function mock_http_response( string $body ) : array {
 		return [
 			'headers' => [],

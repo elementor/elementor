@@ -85,18 +85,22 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 	test( 'Accordion panel tile shows the accordion eicon', async () => {
 		// Arrange
 		await editor.openElementsPanel();
-		const tile = editor.page.locator( '#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("Accordion")' );
+		const tile = editor.page.locator(
+			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]',
+		);
 
 		// Assert
 		await expect( tile ).toBeVisible();
-		const tileIcon = tile.locator( 'xpath=ancestor::button[1]' ).locator( '.icon i, .icon svg' ).first();
+		const tileIcon = tile.locator( '.icon i, .icon svg' ).first();
 		await expect( tileIcon ).toHaveClass( /eicon-accordion/ );
 	} );
 
 	test( 'Drop from panel creates two items, first expanded, with title, icon and content', async () => {
 		// Act
 		await editor.openElementsPanel();
-		const tile = editor.page.locator( '#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("Accordion")' );
+		const tile = editor.page.locator(
+			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]',
+		);
 		await tile.click();
 
 		const root = editor.getPreviewFrame().locator( `[data-element_type="${ accordionType }"]` ).first();

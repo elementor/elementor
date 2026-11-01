@@ -23,7 +23,7 @@ class Test_Mcp_Site_Settings_Gate extends TestCase {
 			$source
 		);
 		$this->assertStringContainsString(
-			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'wp_abilities_api_init', [ \$this, 'register_abilities' ] );\n\t\t}",
+			"if ( self::is_site_mcp_exposure_enabled() ) {\n\t\t\tadd_action( 'wp_abilities_api_init', [ \$this, 'register_abilities' ] );\n\t\t\t( new Mcp_Media_Upload_REST_API() )->register_hooks();\n\t\t}",
 			$source
 		);
 		$this->assertStringNotContainsString(

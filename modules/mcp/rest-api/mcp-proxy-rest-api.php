@@ -75,7 +75,19 @@ class Mcp_Proxy_REST_API {
 			return $this->build_response( $this->forbidden_error() );
 		}
 
-		$result = $ability->execute_guarded( is_array( $input ) ? $input : [] );
+		$input = is_array( $input ) ? $input : [];
+
+		// The Abilities API validates input against the schema; requests made through the proxy get the same check.
+		$validation = $ability->validate_input_against_schema( $input );
+		if ( is_wp_error( $validation ) ) {
+			return $this->build_response( new \WP_Error(
+				'invalid_input',
+				$validation->get_error_message(),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			) );
+		}
+
+		$result = $ability->execute_guarded( $input );
 
 		return $this->build_response( $result );
 	}
