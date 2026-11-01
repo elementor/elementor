@@ -22,6 +22,7 @@ type ConnectPopupOptions = {
 	connectUrl: string;
 	onSuccess?: () => void | Promise< void >;
 	onError?: () => void;
+	onPopupBlocked?: ( retryOpen: () => void ) => void;
 };
 
 let callbackCounter = 0;
@@ -37,16 +38,24 @@ function buildPopupUrl( connectUrl: string, callbackId: string ): string {
 	return `${ connectUrl }${ separator }callback_id=${ encodeURIComponent( callbackId ) }${ modeParam }`;
 }
 
-export function useElementorConnectPopup( { connectUrl, onSuccess, onError }: ConnectPopupOptions ) {
+export function useElementorConnectPopup( {
+	connectUrl,
+	onSuccess,
+	onError,
+	onPopupBlocked,
+}: ConnectPopupOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	const onErrorRef = useRef( onError );
+	const onPopupBlockedRef = useRef( onPopupBlocked );
 	const activeCallbackRef = useRef< string | null >( null );
 	const successHandlerRef = useRef< ( ( ...args: unknown[] ) => void ) | null >( null );
 	const errorHandlerRef = useRef< ( ( ...args: unknown[] ) => void ) | null >( null );
 	const popupPollRef = useRef< ReturnType< typeof setInterval > | null >( null );
+	const popupUrlRef = useRef< string >( '' );
 
 	onSuccessRef.current = onSuccess;
 	onErrorRef.current = onError;
+	onPopupBlockedRef.current = onPopupBlocked;
 
 	const detachListeners = useCallback( () => {
 		const callbackId = activeCallbackRef.current;
@@ -61,6 +70,7 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError }: Co
 			activeCallbackRef.current = null;
 			successHandlerRef.current = null;
 			errorHandlerRef.current = null;
+			popupUrlRef.current = '';
 			return;
 		}
 
@@ -75,9 +85,44 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError }: Co
 		activeCallbackRef.current = null;
 		successHandlerRef.current = null;
 		errorHandlerRef.current = null;
+		popupUrlRef.current = '';
 	}, [] );
 
 	useEffect( () => detachListeners, [ detachListeners ] );
+
+	const tryOpenPopupWindow = useCallback( (): boolean => {
+		const popupUrl = popupUrlRef.current;
+
+		if ( ! popupUrl ) {
+			return false;
+		}
+
+		const features = `toolbar=no,menubar=no,width=${ POPUP_WIDTH },height=${ POPUP_HEIGHT },top=${ POPUP_TOP },left=${ POPUP_LEFT }`;
+		const popup = window.open( popupUrl, 'elementorConnect', features );
+
+		if ( ! popup ) {
+			return false;
+		}
+
+		popupPollRef.current = setInterval( () => {
+			if ( ! popup.closed ) {
+				return;
+			}
+
+			if ( ! activeCallbackRef.current ) {
+				if ( popupPollRef.current ) {
+					clearInterval( popupPollRef.current );
+					popupPollRef.current = null;
+				}
+				return;
+			}
+
+			detachListeners();
+			onErrorRef.current?.();
+		}, 400 );
+
+		return true;
+	}, [ detachListeners ] );
 
 	return useCallback( () => {
 		if ( ! connectUrl ) {
@@ -112,30 +157,24 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError }: Co
 		$window.on( `elementor/connect/success/${ callbackId }`, successHandler );
 		$window.on( `elementor/connect/error/${ callbackId }`, errorHandler );
 
-		const popupUrl = buildPopupUrl( connectUrl, callbackId );
-		const features = `toolbar=no,menubar=no,width=${ POPUP_WIDTH },height=${ POPUP_HEIGHT },top=${ POPUP_TOP },left=${ POPUP_LEFT }`;
-		const popup = window.open( popupUrl, 'elementorConnect', features );
+		popupUrlRef.current = buildPopupUrl( connectUrl, callbackId );
 
-		if ( ! popup ) {
-			window.location.href = buildPopupUrl( connectUrl, callbackId );
+		if ( tryOpenPopupWindow() ) {
 			return;
 		}
 
-		popupPollRef.current = setInterval( () => {
-			if ( ! popup.closed ) {
+		const retryOpen = () => {
+			if ( ! activeCallbackRef.current || ! popupUrlRef.current ) {
 				return;
 			}
 
-			if ( ! activeCallbackRef.current ) {
-				if ( popupPollRef.current ) {
-					clearInterval( popupPollRef.current );
-					popupPollRef.current = null;
-				}
+			if ( tryOpenPopupWindow() ) {
 				return;
 			}
 
-			detachListeners();
-			onErrorRef.current?.();
-		}, 400 );
-	}, [ connectUrl, detachListeners ] );
+			onPopupBlockedRef.current?.( retryOpen );
+		};
+
+		onPopupBlockedRef.current?.( retryOpen );
+	}, [ connectUrl, detachListeners, tryOpenPopupWindow ] );
 }

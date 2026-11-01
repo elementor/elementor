@@ -135,6 +135,7 @@ export function ProSetupPanelPromo() {
 	const [ open, setOpen ] = useState( false );
 	const [ isProcessing, setIsProcessing ] = useState( false );
 	const anchorRef = useRef< HTMLDivElement >( null );
+	const popoverRef = useRef< HTMLDivElement >( null );
 	const isProcessingRef = useRef( false );
 	const isRtl = isEditorRtl();
 	const placement = getPopoverPlacement( isRtl );
@@ -218,10 +219,36 @@ export function ProSetupPanelPromo() {
 		trackProSetupPromotionConnectResult( 'error', __( 'Connect window closed.', 'elementor' ) );
 	};
 
+	const handleConnectPopupBlocked = ( retryOpen: () => void ) => {
+		isProcessingRef.current = false;
+		setIsProcessing( false );
+
+		notify( {
+			type: 'info',
+			message: __(
+				'Your browser blocked the connect window. Allow pop-ups for this site, or open connect manually.',
+				'elementor'
+			),
+			id: 'pro-setup-promotion-connect-popup-blocked',
+			autoHideDuration: null,
+			additionalActionProps: [
+				{
+					children: __( 'Open connect window', 'elementor' ),
+					onClick: () => {
+						isProcessingRef.current = true;
+						setIsProcessing( true );
+						retryOpen();
+					},
+				},
+			],
+		} );
+	};
+
 	const openConnectPopup = useElementorConnectPopup( {
 		connectUrl: promotionConfig?.connectUrl ?? '',
 		onSuccess: handleConnectSuccess,
 		onError: handleConnectError,
+		onPopupBlocked: handleConnectPopupBlocked,
 	} );
 
 	useEffect( () => {
@@ -254,30 +281,38 @@ export function ProSetupPanelPromo() {
 				return;
 			}
 
+			if ( isProcessingRef.current ) {
+				return;
+			}
+
+			const target = event.target;
+
+			if ( ! ( target instanceof Node ) ) {
+				return;
+			}
+
+			const insidePopover =
+				popoverRef.current?.contains( target ) || anchorRef.current?.contains( target );
+
+			if ( ! insidePopover ) {
+				return;
+			}
+
 			event.preventDefault();
 			event.stopPropagation();
-
-			if ( 'keydown' === event.type ) {
-				closePopover( 'escape_key' );
-			}
+			closePopover( 'escape_key' );
 		};
 
 		const iframeDocument = ( window as PreviewWindow ).elementor?.$preview?.[ 0 ]?.contentDocument;
 
 		document.addEventListener( 'mousedown', closeOnPointerDown, true );
 		document.addEventListener( 'keydown', closeOnEscape, true );
-		document.addEventListener( 'keyup', closeOnEscape, true );
 		iframeDocument?.addEventListener( 'mousedown', closeOnPointerDown, true );
-		iframeDocument?.addEventListener( 'keydown', closeOnEscape, true );
-		iframeDocument?.addEventListener( 'keyup', closeOnEscape, true );
 
 		return () => {
 			document.removeEventListener( 'mousedown', closeOnPointerDown, true );
 			document.removeEventListener( 'keydown', closeOnEscape, true );
-			document.removeEventListener( 'keyup', closeOnEscape, true );
 			iframeDocument?.removeEventListener( 'mousedown', closeOnPointerDown, true );
-			iframeDocument?.removeEventListener( 'keydown', closeOnEscape, true );
-			iframeDocument?.removeEventListener( 'keyup', closeOnEscape, true );
 		};
 	}, [ open, state ] );
 
@@ -367,7 +402,20 @@ export function ProSetupPanelPromo() {
 						],
 					} }
 					content={
-						<Box className="dialog-widget" data-pro-setup-popover="" sx={ { width: POPOVER_WIDTH } }>
+						<Box
+							ref={ popoverRef }
+							className="dialog-widget"
+							data-pro-setup-popover=""
+							tabIndex={ -1 }
+							onKeyDown={ ( event: React.KeyboardEvent ) => {
+								if ( 'Escape' === event.key ) {
+									event.preventDefault();
+									event.stopPropagation();
+									closePopover( 'escape_key' );
+								}
+							} }
+							sx={ { width: POPOVER_WIDTH } }
+						>
 							<Stack
 								direction="row"
 								alignItems="center"
@@ -432,6 +480,13 @@ export function ProSetupPanelPromo() {
 							if ( 'Enter' === event.key || ' ' === event.key ) {
 								event.preventDefault();
 								openPopover();
+								return;
+							}
+
+							if ( open && 'Escape' === event.key ) {
+								event.preventDefault();
+								event.stopPropagation();
+								closePopover( 'escape_key' );
 							}
 						} }
 						sx={ {
