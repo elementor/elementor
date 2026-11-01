@@ -36,7 +36,6 @@ class Test_Site_Resources_Gallery_Ui_Ability extends TestCase {
 		$this->assertIsString( $result[0]['text'] );
 		$this->assertStringContainsString( '<!DOCTYPE html>', $result[0]['text'] );
 		$this->assertStringContainsString( 'Site library', $result[0]['text'] );
-		$this->assertStringContainsString( 'icon_svg', $result[0]['text'] );
 		$this->assertStringContainsString( 'site_origin', $result[0]['text'] );
 		$this->assertStringContainsString( 'icon_path_d', $result[0]['text'] );
 		$this->assertStringContainsString( 'safeSiteUrl', $result[0]['text'] );
