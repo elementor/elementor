@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Preview;
 
 use Elementor\Modules\Mcp\Preview\Site_Resource_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Site_Resource_Preview_Token;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -61,6 +62,31 @@ class Test_Site_Resource_Preview_Handler extends Elementor_Test_Base {
 		$filtered = $this->handler->filter_posts_results( [ $post ] );
 
 		$this->assertSame( 'publish', $filtered[0]->post_status );
+	}
+
+	public function test_valid_token__removes_template_library_frontend_block() {
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$this->assertNotFalse( has_action( 'template_redirect', [ $source, 'block_template_frontend' ] ) );
+
+		$post_id = $this->create_elementor_post();
+		$_GET[ Site_Resource_Preview_Token::QUERY_ARG ] = Site_Resource_Preview_Token::encode(
+			$post_id,
+			time() + 3600,
+			Site_Resource_Preview_Token::secret()
+		);
+
+		$this->handler->maybe_activate( new \WP() );
+
+		$this->assertFalse( has_action( 'template_redirect', [ $source, 'block_template_frontend' ] ) );
+	}
+
+	public function test_invalid_token__keeps_template_library_frontend_block() {
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$_GET[ Site_Resource_Preview_Token::QUERY_ARG ] = 'not.valid';
+
+		$this->handler->maybe_activate( new \WP() );
+
+		$this->assertNotFalse( has_action( 'template_redirect', [ $source, 'block_template_frontend' ] ) );
 	}
 
 	public function test_valid_token__registers_x_frame_options_filter() {
