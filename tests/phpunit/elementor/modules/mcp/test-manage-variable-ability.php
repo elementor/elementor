@@ -253,7 +253,7 @@ class Test_Manage_Variable_Ability extends TestCase {
 		] ) );
 
 		// Assert
-		$this->assertStringContainsString( Variables_Pro_Features_Discovery::UPGRADE_URL, $result['results'][0]['message'] );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Variables_Pro_Features_Discovery::UPGRADE_URL . ')', $result['results'][0]['message'] );
 	}
 
 	public function test_defer_size_type_rejection__passes_size_types_without_active_license() {
@@ -319,7 +319,7 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$description = $this->make_ability()->get_description_for_llm();
 
 		// Assert
-		$this->assertStringContainsString( 'require Elementor Pro', $description );
+		$this->assertStringContainsString( 'Size variables need Elementor Pro', $description );
 	}
 
 	public function test_get_description_for_llm__omits_size_notice_with_active_license() {
@@ -330,7 +330,7 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$description = $this->make_ability()->get_description_for_llm();
 
 		// Assert
-		$this->assertStringNotContainsString( 'require Elementor Pro', $description );
+		$this->assertStringNotContainsString( 'Size variables need Elementor Pro', $description );
 	}
 
 	public function size_type_provider(): array {
@@ -391,6 +391,26 @@ class Test_Manage_Variable_Ability extends TestCase {
 		// Assert
 		$this->assertSame( 'partial_error', $result['status'] );
 		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'pro_license_required', $result['results'][1]['code'] );
+	}
+
+	public function test_create__explains_size_rejection_once_per_batch() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'process_batch' );
+		$size_operation = [
+			'action' => 'create',
+			'type' => Manage_Variable_Ability::TYPE_SIZE,
+			'label' => 'spacing',
+			'value' => '16px',
+		];
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [ $size_operation, $size_operation ] ) );
+
+		// Assert
+		$this->assertStringContainsString( '[Upgrade to Pro](', $result['results'][0]['message'] );
+		$this->assertSame( Variables_Pro_Features_Discovery::get_repeated_message(), $result['results'][1]['message'] );
 		$this->assertSame( 'pro_license_required', $result['results'][1]['code'] );
 	}
 
