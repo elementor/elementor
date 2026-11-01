@@ -15,9 +15,55 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 	private Admin_Menu_Structure $structure;
 
+	private $original_submenu;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$this->original_submenu = $GLOBALS['submenu'] ?? null;
 		$this->structure = new Admin_Menu_Structure();
+	}
+
+	public function tearDown(): void {
+		$GLOBALS['submenu'] = $this->original_submenu;
+
+		parent::tearDown();
+	}
+
+	public function has_home_page_data_provider(): array {
+		return [
+			'only under another parent' => [ [ Menu_Config::ELEMENTOR_MENU_SLUG ], false, false ],
+			'under home without a page hook' => [ [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ], false, false ],
+			'under home with a page hook' => [ [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ], true, true ],
+		];
+	}
+
+	/**
+	 * @dataProvider has_home_page_data_provider
+	 */
+	public function test_has_home_page__requires_a_linkable_page_under_home( array $parents, bool $has_hook, bool $expected ) {
+		// Arrange
+		$slug = Admin_Flow_Config::PARENT_TEMPLATES;
+		$GLOBALS['submenu'] = [];
+
+		foreach ( $parents as $parent_slug ) {
+			$GLOBALS['submenu'][ $parent_slug ] = [ [ 'Templates', 'manage_options', $slug ] ];
+		}
+
+		$hook = get_plugin_page_hookname( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
+
+		if ( $has_hook ) {
+			add_action( $hook, '__return_empty_string' );
+		}
+
+		// Act
+		$result = $this->structure->has_home_page( $slug );
+		remove_all_actions( $hook );
+
+		// Assert
+		$this->assertSame( $expected, $result );
 	}
 
 	public function test_move_below_pages__places_elementor_directly_after_pages() {
@@ -113,32 +159,32 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 				Admin_Flow_Config::PARENT_HOME,
 				Admin_Flow_Config::PARENT_AGENT_READY,
 				Admin_Flow_Config::PARENT_MCP,
-				'elementor-submenu-divider-' . Admin_Flow_Config::PARENT_TEMPLATES,
 				Admin_Flow_Config::PARENT_TEMPLATES,
 				Admin_Flow_Config::PARENT_THEME_BUILDER,
 				Admin_Flow_Config::PARENT_POPUPS,
-				'elementor-submenu-divider-' . Admin_Flow_Config::PARENT_SITE_ASSETS,
 				Admin_Flow_Config::PARENT_SITE_ASSETS,
 				Admin_Flow_Config::PARENT_SUBMISSIONS,
-				'elementor-submenu-divider-' . Admin_Flow_Config::PARENT_SETTINGS,
 				Admin_Flow_Config::PARENT_SETTINGS,
 				Admin_Flow_Config::PARENT_TOOLS,
-				'elementor-submenu-divider-' . Admin_Flow_Config::PARENT_ACCOUNT,
 				Admin_Flow_Config::PARENT_ACCOUNT,
 				'elementor-one-upgrade',
 			],
 			$slugs
 		);
+		$this->assertSame(
+			[
+				Admin_Flow_Config::PARENT_TEMPLATES,
+				Admin_Flow_Config::PARENT_SITE_ASSETS,
+				Admin_Flow_Config::PARENT_SETTINGS,
+				Admin_Flow_Config::PARENT_ACCOUNT,
+			],
+			$this->get_slugs_with_divider( $submenu )
+		);
 		$this->assertSame( 'Home', $submenu[0][0] );
 		$this->assertSame( 'MCP', $submenu[2][0] );
-		$this->assertSame( 'Settings', $submenu[11][0] );
+		$this->assertSame( 'Settings', $submenu[8][0] );
 		$this->assertNotContains( 'angie-app', $slugs );
 		$this->assertNotContains( Menu_Config::LEGACY_TEMPLATES_SLUG, $slugs );
-		$this->assertNotSame( Admin_Menu_Structure::DIVIDER_CLASS, $submenu[1][4] ?? '' );
-		$this->assertSame( Admin_Menu_Structure::DIVIDER_CLASS, $submenu[3][4] );
-		$this->assertNotSame( Admin_Menu_Structure::DIVIDER_CLASS, $submenu[9][4] ?? '' );
-		$this->assertSame( Admin_Flow_Config::PARENT_ACCOUNT, $submenu[14][2] );
-		$this->assertSame( 'elementor-one-upgrade', $submenu[15][2] );
 	}
 
 	public function test_build_submenu__adds_a_divider_before_upgrade_when_account_is_hidden() {
@@ -157,11 +203,23 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 			[
 				Admin_Flow_Config::PARENT_HOME,
 				Admin_Flow_Config::PARENT_SETTINGS,
-				'elementor-submenu-divider-upgrade',
 				'go_elementor_pro',
 			],
 			array_column( $submenu, 2 )
 		);
+		$this->assertSame( [ 'go_elementor_pro' ], $this->get_slugs_with_divider( $submenu ) );
+	}
+
+	private function get_slugs_with_divider( array $submenu ): array {
+		$slugs = [];
+
+		foreach ( $submenu as $item ) {
+			if ( in_array( Admin_Menu_Structure::DIVIDER_CLASS, explode( ' ', $item[4] ?? '' ), true ) ) {
+				$slugs[] = $item[2];
+			}
+		}
+
+		return $slugs;
 	}
 
 	private function parents_for( array $slugs ): array {

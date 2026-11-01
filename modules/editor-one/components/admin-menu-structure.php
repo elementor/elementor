@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Admin_Menu_Structure {
 
-	const DIVIDER_CLASS = 'elementor-submenu-divider';
+	const DIVIDER_CLASS = 'elementor-submenu-has-divider';
 
 	const PAGES_MENU_SLUG = 'edit.php?post_type=page';
 
@@ -36,7 +36,7 @@ class Admin_Menu_Structure {
 		$parents = $this->get_available_parents();
 
 		foreach ( $parents as $slug => $parent ) {
-			if ( $this->slug_exists( $slug ) ) {
+			if ( $this->has_home_page( $slug ) ) {
 				continue;
 			}
 
@@ -102,12 +102,13 @@ class Admin_Menu_Structure {
 
 		foreach ( $parents as $slug => $parent ) {
 			$section = $this->get_menu_section( $parent );
+			$item = $this->create_parent_item( $slug, $parent, $existing_items );
 
 			if ( $this->should_separate_sections( $previous_group, $section, $last_slug ) ) {
-				$items[] = $this->create_divider( $slug );
+				$item = $this->add_divider_before( $item );
 			}
 
-			$items[] = $this->create_parent_item( $slug, $parent, $existing_items );
+			$items[] = $item;
 			$previous_group = $section;
 			$last_slug = $slug;
 		}
@@ -117,7 +118,7 @@ class Admin_Menu_Structure {
 		}
 
 		if ( Admin_Flow_Config::PARENT_ACCOUNT !== $last_slug && $this->should_separate_sections( $previous_group, 'upgrade', $last_slug ) ) {
-			$items[] = $this->create_divider( 'upgrade' );
+			$upgrade_item = $this->add_divider_before( $upgrade_item );
 		}
 
 		$items[] = $upgrade_item;
@@ -152,7 +153,7 @@ class Admin_Menu_Structure {
 			return true;
 		}
 
-		return Admin_Flow_Config::PARENT_SUBMISSIONS === $slug && $this->slug_exists( $slug );
+		return Admin_Flow_Config::PARENT_SUBMISSIONS === $slug && $this->is_under_home( $slug );
 	}
 
 	private function should_separate_sections( ?string $previous_section, string $section, string $previous_slug ): bool {
@@ -203,14 +204,11 @@ class Admin_Menu_Structure {
 		return $home_alias;
 	}
 
-	private function create_divider( string $key ): array {
-		return [
-			'',
-			Menu_Config::CAPABILITY_MANAGE_OPTIONS,
-			'elementor-submenu-divider-' . $key,
-			'',
-			self::DIVIDER_CLASS,
-		];
+	private function add_divider_before( array $item ): array {
+		$item[3] = $item[3] ?? $item[0];
+		$item[4] = trim( ( $item[4] ?? '' ) . ' ' . self::DIVIDER_CLASS );
+
+		return $item;
 	}
 
 	private function extract_upgrade_item( array $existing_items ): ?array {
@@ -225,18 +223,28 @@ class Admin_Menu_Structure {
 		return null;
 	}
 
-	private function slug_exists( string $slug ): bool {
+	/**
+	 * WordPress links a submenu item to `admin.php?page=` only when it has a page hook under its parent,
+	 * otherwise the raw slug becomes the `href`.
+	 */
+	public function has_home_page( string $slug ): bool {
+		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $slug ) {
+			return true;
+		}
+
+		return $this->is_under_home( $slug ) && null !== get_plugin_page_hook( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
+	}
+
+	private function is_under_home( string $slug ): bool {
 		global $submenu;
 
-		foreach ( (array) $submenu as $items ) {
-			foreach ( (array) $items as $item ) {
-				if ( ( $item[2] ?? '' ) === $slug ) {
-					return true;
-				}
+		foreach ( (array) ( $submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] ?? [] ) as $item ) {
+			if ( ( $item[2] ?? '' ) === $slug ) {
+				return true;
 			}
 		}
 
-		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $slug;
+		return false;
 	}
 
 	private function find_menu_key( array $menu, string $slug ) {

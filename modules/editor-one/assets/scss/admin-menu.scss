@@ -165,27 +165,18 @@
     }
 }
 
-#adminmenu .wp-submenu li.elementor-submenu-divider {
-	height: auto;
-	margin: 0;
-	padding: 0;
-	pointer-events: none;
-	cursor: default;
+#adminmenu .wp-submenu li.elementor-submenu-has-divider {
+	position: relative;
+	padding-block-start: 17px;
 
-	a {
-		display: block;
-		height: 0;
-		min-height: 0;
-		margin-block: 8px;
-		margin-inline: 12px;
-		padding: 0;
-		border: 0;
+	& > a::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 8px;
+		inset-inline: 12px;
 		border-block-start: 1px solid currentColor;
-		background: transparent;
-		box-shadow: none;
-		font-size: 0;
-		line-height: 0;
 		opacity: 0.4;
+		pointer-events: none;
 	}
 }
 
