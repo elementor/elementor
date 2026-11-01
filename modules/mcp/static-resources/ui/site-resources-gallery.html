@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Site resources</title>
+	<style>
+		:root {
+			--bg: var(--color-background-primary, #0f1117);
+			--bg-soft: var(--color-background-secondary, #1a1d27);
+			--border: var(--color-border-primary, #2a2f3a);
+			--text: var(--color-text-primary, #f3f4f6);
+			--text-soft: var(--color-text-secondary, #9ca3af);
+			--accent: var(--color-text-link, #3b82f6);
+			--accent-bg: rgba(59, 130, 246, 0.15);
+			--sans: var(--font-sans, system-ui, -apple-system, sans-serif);
+		}
+		* { box-sizing: border-box; }
+		html, body { margin: 0; padding: 0; background: transparent; }
+		body { font-family: var(--sans); color: var(--text); font-size: 13px; }
+		.shell {
+			background: var(--bg);
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			overflow: hidden;
+		}
+		.topbar {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 12px;
+			border-bottom: 1px solid var(--border);
+			font-size: 11px;
+			color: var(--text-soft);
+		}
+		.topbar strong { color: var(--text); font-weight: 600; }
+		.topbar .grow { flex: 1; }
+		.search-wrap { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+		.search-wrap input {
+			width: 100%;
+			padding: 8px 10px;
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			background: var(--bg-soft);
+			color: var(--text);
+			font: inherit;
+		}
+		.tabs {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+			padding: 8px 12px;
+			border-bottom: 1px solid var(--border);
+		}
+		.tab {
+			padding: 5px 10px;
+			border: 1px solid var(--border);
+			border-radius: 999px;
+			background: transparent;
+			color: var(--text-soft);
+			font: inherit;
+			cursor: pointer;
+		}
+		.tab.is-active {
+			border-color: var(--accent);
+			background: var(--accent-bg);
+			color: var(--text);
+		}
+		.preview-stage {
+			position: relative;
+			margin: 12px;
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			background: var(--bg-soft);
+			min-height: 200px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
+		.preview-stage img, .preview-stage svg.placeholder {
+			max-width: 100%;
+			max-height: 220px;
+			object-fit: contain;
+		}
+		.nav-btn {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 36px;
+			height: 36px;
+			border: 1px solid var(--border);
+			border-radius: 50%;
+			background: var(--bg);
+			color: var(--text);
+			font-size: 18px;
+			cursor: pointer;
+			line-height: 1;
+		}
+		.nav-btn.prev { left: 8px; }
+		.nav-btn.next { right: 8px; }
+		.nav-btn:disabled { opacity: 0.35; cursor: default; }
+		.detail {
+			padding: 0 12px 8px;
+		}
+		.detail h2 {
+			margin: 0 0 4px;
+			font-size: 16px;
+			font-weight: 600;
+		}
+		.meta-line {
+			font-size: 12px;
+			color: var(--text-soft);
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			align-items: center;
+		}
+		.badge {
+			padding: 1px 7px;
+			border-radius: 5px;
+			font-size: 11px;
+			border: 1px solid var(--border);
+		}
+		.badge.pro { border-color: #6366f1; color: #a5b4fc; }
+		.badge.free { border-color: #059669; color: #6ee7b7; }
+		.actions {
+			display: flex;
+			gap: 8px;
+			padding: 8px 12px 12px;
+			align-items: center;
+		}
+		.actions .grow { flex: 1; }
+		.btn {
+			font: inherit;
+			cursor: pointer;
+			border-radius: 8px;
+			padding: 8px 14px;
+			border: 0;
+		}
+		.btn-ghost {
+			background: transparent;
+			color: var(--text-soft);
+			border: 1px solid var(--border);
+		}
+		.btn-primary {
+			background: var(--accent);
+			color: #fff;
+			font-weight: 600;
+		}
+		.btn-primary:disabled { opacity: 0.45; cursor: default; }
+		.thumbs {
+			display: flex;
+			gap: 6px;
+			padding: 0 12px 12px;
+			overflow-x: auto;
+		}
+		.thumb {
+			flex: none;
+			width: 56px;
+			height: 42px;
+			border: 2px solid transparent;
+			border-radius: 6px;
+			background: var(--bg-soft);
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
+		.thumb.is-active { border-color: var(--accent); }
+		.thumb img, .thumb svg { width: 100%; height: 100%; object-fit: cover; }
+		.footer {
+			padding: 6px 12px 10px;
+			text-align: center;
+			font-size: 11px;
+			color: var(--text-soft);
+			border-top: 1px solid var(--border);
+		}
+		.toast {
+			position: fixed;
+			left: 50%;
+			bottom: 12px;
+			transform: translateX(-50%);
+			padding: 8px 14px;
+			background: #111827;
+			color: #fff;
+			border-radius: 8px;
+			font-size: 12px;
+			opacity: 0;
+			transition: opacity 0.2s;
+			pointer-events: none;
+			z-index: 9;
+		}
+		.toast.show { opacity: 1; }
+		.empty {
+			padding: 24px;
+			text-align: center;
+			color: var(--text-soft);
+		}
+		[hidden] { display: none !important; }
+	</style>
+</head>
+<body>
+	<div class="shell" id="shell" hidden>
+		<div class="topbar">
+			<strong>Elementor</strong>
+			<span>Site resources</span>
+			<span class="grow"></span>
+			<span id="status">Loading…</span>
+		</div>
+		<div class="search-wrap">
+			<input type="search" id="search" placeholder="Search resources…" autocomplete="off" />
+		</div>
+		<div class="tabs" id="tabs"></div>
+		<div class="preview-stage" id="stage">
+			<button type="button" class="nav-btn prev" id="prev" aria-label="Previous">‹</button>
+			<div id="preview"></div>
+			<button type="button" class="nav-btn next" id="next" aria-label="Next">›</button>
+		</div>
+		<div class="detail">
+			<h2 id="title">—</h2>
+			<div class="meta-line">
+				<span id="meta"></span>
+				<span class="badge" id="access"></span>
+			</div>
+		</div>
+		<div class="actions">
+			<button type="button" class="btn btn-ghost" id="open-editor" hidden>Open in editor</button>
+			<span class="grow"></span>
+			<button type="button" class="btn btn-primary" id="choose" disabled>Choose</button>
+		</div>
+		<div class="thumbs" id="thumbs"></div>
+		<div class="footer" id="counter"></div>
+	</div>
+	<div class="empty" id="empty">Waiting for browse-site-resources result…</div>
+	<div class="toast" id="toast"></div>
+	<script>
+	( () => {
+		'use strict';
+
+		const PROTOCOL_VERSION = '2026-01-26';
+		const TAB_KEYS = [
+			{ key: 'all', label: 'All' },
+			{ key: 'widget', label: 'Widgets' },
+			{ key: 'component', label: 'Components' },
+			{ key: 'template', label: 'Templates' },
+		];
+
+		const pending = new Map();
+		let nextId = 1;
+		let allItems = [];
+		let counts = {};
+		let filtered = [];
+		let index = 0;
+		let activeTab = 'all';
+
+		const el = ( id ) => document.getElementById( id );
+
+		const request = ( method, params ) => {
+			const id = nextId++;
+			return new Promise( ( resolve, reject ) => {
+				pending.set( id, { resolve, reject } );
+				parent.postMessage( { jsonrpc: '2.0', id, method, params: params || {} }, '*' );
+			} );
+		};
+
+		const notify = ( method, params ) => {
+			parent.postMessage( { jsonrpc: '2.0', method, params: params || {} }, '*' );
+		};
+
+		const respond = ( id, result ) => {
+			parent.postMessage( { jsonrpc: '2.0', id, result: result || {} }, '*' );
+		};
+
+		const showToast = ( text ) => {
+			const toast = el( 'toast' );
+			toast.textContent = text;
+			toast.classList.add( 'show' );
+			setTimeout( () => toast.classList.remove( 'show' ), 2200 );
+		};
+
+		const placeholderSvg = ( label ) => {
+			const safe = String( label || '?' ).slice( 0, 2 ).toUpperCase();
+			return '<svg class="placeholder" width="120" height="90" viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">'
+				+ '<rect width="120" height="90" rx="8" fill="#1f2937"/>'
+				+ '<text x="60" y="52" text-anchor="middle" fill="#9ca3af" font-size="22" font-family="system-ui,sans-serif">' + safe + '</text>'
+				+ '</svg>';
+		};
+
+		const readPayload = ( toolResult ) => {
+			if ( toolResult && toolResult.structuredContent && Array.isArray( toolResult.structuredContent.items ) ) {
+				return toolResult.structuredContent;
+			}
+			const block = ( toolResult && toolResult.content || [] ).find( ( item ) => item.type === 'text' );
+			try {
+				const parsed = JSON.parse( block && block.text );
+				return parsed && Array.isArray( parsed.items ) ? parsed : null;
+			} catch {
+				return null;
+			}
+		};
+
+		const applyFilters = () => {
+			const query = el( 'search' ).value.trim().toLowerCase();
+			filtered = allItems.filter( ( item ) => {
+				if ( activeTab !== 'all' && item.kind !== activeTab ) {
+					return false;
+				}
+				if ( ! query ) {
+					return true;
+				}
+				const hay = [ item.title, item.category, item.subtype, item.kind ].join( ' ' ).toLowerCase();
+				return hay.includes( query );
+			} );
+			index = filtered.length ? Math.min( index, filtered.length - 1 ) : 0;
+			render();
+		};
+
+		const renderTabs = () => {
+			const tabs = el( 'tabs' );
+			tabs.innerHTML = '';
+			TAB_KEYS.forEach( ( tab ) => {
+				const btn = document.createElement( 'button' );
+				btn.type = 'button';
+				btn.className = 'tab' + ( tab.key === activeTab ? ' is-active' : '' );
+				const count = tab.key === 'all' ? ( counts.all || allItems.length ) : ( counts[ tab.key ] || 0 );
+				btn.textContent = tab.label + ' (' + count + ')';
+				btn.addEventListener( 'click', () => {
+					activeTab = tab.key;
+					index = 0;
+					applyFilters();
+				} );
+				tabs.appendChild( btn );
+			} );
+		};
+
+		const renderPreview = ( item ) => {
+			const preview = el( 'preview' );
+			if ( item.thumbnail ) {
+				preview.innerHTML = '<img src="' + item.thumbnail + '" alt="" />';
+			} else {
+				preview.innerHTML = placeholderSvg( item.title );
+			}
+		};
+
+		const renderThumbs = () => {
+			const wrap = el( 'thumbs' );
+			wrap.innerHTML = '';
+			filtered.forEach( ( item, i ) => {
+				const btn = document.createElement( 'button' );
+				btn.type = 'button';
+				btn.className = 'thumb' + ( i === index ? ' is-active' : '' );
+				btn.innerHTML = item.thumbnail
+					? '<img src="' + item.thumbnail + '" alt="" />'
+					: placeholderSvg( item.title );
+				btn.addEventListener( 'click', () => {
+					index = i;
+					render();
+				} );
+				wrap.appendChild( btn );
+			} );
+		};
+
+		const render = () => {
+			renderTabs();
+			const hasItems = filtered.length > 0;
+			el( 'choose' ).disabled = ! hasItems;
+			el( 'prev' ).disabled = ! hasItems || index <= 0;
+			el( 'next' ).disabled = ! hasItems || index >= filtered.length - 1;
+
+			if ( ! hasItems ) {
+				el( 'title' ).textContent = 'No matches';
+				el( 'meta' ).textContent = 'Try another tab or search term';
+				el( 'access' ).textContent = '';
+				el( 'preview' ).innerHTML = placeholderSvg( '?' );
+				el( 'counter' ).textContent = '0 / 0';
+				el( 'open-editor' ).hidden = true;
+				renderThumbs();
+				reportHeight();
+				return;
+			}
+
+			const item = filtered[ index ];
+			renderPreview( item );
+			el( 'title' ).textContent = item.title || 'Untitled';
+			el( 'meta' ).textContent = [ item.kind, item.subtype, item.category ].filter( Boolean ).join( ' · ' );
+			const access = el( 'access' );
+			access.textContent = item.access || '';
+			access.className = 'badge' + ( item.access === 'Pro' ? ' pro' : ' free' );
+			el( 'counter' ).textContent = ( index + 1 ) + ' / ' + filtered.length;
+
+			const openBtn = el( 'open-editor' );
+			if ( item.edit_url ) {
+				openBtn.hidden = false;
+				openBtn.onclick = () => {
+					request( 'ui/open-link', { url: item.edit_url } ).catch( () => {
+						window.open( item.edit_url, '_blank', 'noopener' );
+					} );
+				};
+			} else {
+				openBtn.hidden = true;
+			}
+
+			renderThumbs();
+			reportHeight();
+		};
+
+		const ingest = ( toolResult ) => {
+			const payload = readPayload( toolResult );
+			if ( ! payload ) {
+				el( 'empty' ).textContent = 'Tool result did not include site resources.';
+				return;
+			}
+			allItems = payload.items || [];
+			counts = payload.counts_by_type || {};
+			el( 'empty' ).hidden = true;
+			el( 'shell' ).hidden = false;
+			el( 'status' ).textContent = allItems.length + ' resources';
+			index = 0;
+			applyFilters();
+		};
+
+		let lastHeight = 0;
+		const reportHeight = () => {
+			const height = Math.ceil( document.documentElement.scrollHeight );
+			if ( height > 0 && height !== lastHeight ) {
+				lastHeight = height;
+				notify( 'ui/notifications/size-changed', { height } );
+			}
+		};
+
+		if ( window.ResizeObserver ) {
+			new ResizeObserver( reportHeight ).observe( document.documentElement );
+		}
+
+		el( 'search' ).addEventListener( 'input', () => {
+			index = 0;
+			applyFilters();
+		} );
+
+		el( 'prev' ).addEventListener( 'click', () => {
+			if ( index > 0 ) {
+				index -= 1;
+				render();
+			}
+		} );
+
+		el( 'next' ).addEventListener( 'click', () => {
+			if ( index < filtered.length - 1 ) {
+				index += 1;
+				render();
+			}
+		} );
+
+		const buildChoiceMessage = ( item ) => {
+			return 'I chose ' + item.kind + " '" + item.title + "' (id " + item.id + '). Use it.';
+		};
+
+		el( 'choose' ).addEventListener( 'click', async () => {
+			const item = filtered[ index ];
+			if ( ! item ) {
+				return;
+			}
+			const message = buildChoiceMessage( item );
+			try {
+				await request( 'ui/message', {
+					role: 'user',
+					content: [ { type: 'text', text: message } ],
+				} );
+				showToast( 'Sent to agent' );
+			} catch {
+				try {
+					await navigator.clipboard.writeText( message );
+					showToast( 'Copied. Paste into your agent chat.' );
+				} catch {
+					showToast( message );
+				}
+			}
+		} );
+
+		window.addEventListener( 'message', ( event ) => {
+			const msg = event.data;
+			if ( ! msg || msg.jsonrpc !== '2.0' ) {
+				return;
+			}
+			if ( ( 'result' in msg || 'error' in msg ) && pending.has( msg.id ) ) {
+				const entry = pending.get( msg.id );
+				pending.delete( msg.id );
+				if ( msg.error ) {
+					entry.reject( new Error( msg.error.message || 'Request failed' ) );
+				} else {
+					entry.resolve( msg.result );
+				}
+				return;
+			}
+			if ( ! msg.method ) {
+				return;
+			}
+			if ( msg.id !== undefined && msg.id !== null ) {
+				respond( msg.id, {} );
+				return;
+			}
+			if ( msg.method === 'ui/notifications/tool-result' ) {
+				ingest( msg.params );
+			}
+		} );
+
+		const applyHostStyles = ( hostContext ) => {
+			const variables = hostContext && hostContext.styles && hostContext.styles.variables;
+			if ( ! variables ) {
+				return;
+			}
+			Object.keys( variables ).forEach( ( key ) => {
+				if ( variables[ key ] ) {
+					document.documentElement.style.setProperty( key, variables[ key ] );
+				}
+			} );
+		};
+
+		request( 'ui/initialize', {
+			appInfo: { name: 'Site resources gallery', version: '1.0.0' },
+			appCapabilities: {},
+			protocolVersion: PROTOCOL_VERSION,
+		} ).then( ( result ) => {
+			applyHostStyles( result && result.hostContext );
+			notify( 'ui/notifications/initialized', {} );
+			el( 'status' ).textContent = 'Ready';
+			reportHeight();
+		} ).catch( ( error ) => {
+			el( 'empty' ).textContent = error.message || 'Could not connect to host';
+			reportHeight();
+		} );
+	} )();
+	</script>
+</body>
+</html>
