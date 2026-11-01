@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Browse_Site_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\Site_Resources_Gallery_Ui_Ability;
+use Elementor\Modules\Mcp\Preview\Site_Resource_Preview_Token;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -114,6 +115,59 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 		if ( isset( $widget_types['common-base'] ) ) {
 			$ids = wp_list_pluck( $result['items'], 'id' );
 			$this->assertNotContains( 'common-base', $ids );
+		}
+	}
+
+	public function test_execute_includes_preview_url_for_elementor_posts_user_can_edit() {
+		// Arrange
+		$post_id = $this->factory()->post->create(
+			[
+				'post_type' => 'elementor_library',
+				'post_status' => 'publish',
+			]
+		);
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+		update_post_meta( $post_id, '_elementor_data', '[]' );
+		update_post_meta( $post_id, '_elementor_template_type', 'section' );
+
+		$ability = new Browse_Site_Resources_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'type' => 'section', 'limit' => 60 ] );
+
+		// Assert
+		$match = null;
+		foreach ( $result['items'] as $item ) {
+			if ( (int) $item['id'] === $post_id ) {
+				$match = $item;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $match );
+		$this->assertNotSame( '', $match['preview_url'] );
+		$this->assertStringContainsString( Site_Resource_Preview_Token::QUERY_ARG . '=', $match['preview_url'] );
+
+		$query = wp_parse_url( $match['preview_url'], PHP_URL_QUERY );
+		parse_str( (string) $query, $params );
+		$claims = Site_Resource_Preview_Token::decode(
+			$params[ Site_Resource_Preview_Token::QUERY_ARG ],
+			Site_Resource_Preview_Token::secret()
+		);
+
+		$this->assertSame( $post_id, $claims['post_id'] );
+	}
+
+	public function test_execute_widget_items_have_empty_preview_url() {
+		// Arrange
+		$ability = new Browse_Site_Resources_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'type' => 'widget', 'limit' => 10 ] );
+
+		// Assert
+		foreach ( $result['items'] as $item ) {
+			$this->assertSame( '', $item['preview_url'] );
 		}
 	}
 
