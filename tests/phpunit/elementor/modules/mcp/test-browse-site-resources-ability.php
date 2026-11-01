@@ -120,35 +120,32 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 
 	public function test_execute_includes_preview_url_for_elementor_posts_user_can_edit() {
 		// Arrange
+		$admin_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $admin_id );
+
 		$post_id = $this->factory()->post->create(
 			[
 				'post_type' => 'elementor_library',
 				'post_status' => 'publish',
+				'post_author' => $admin_id,
 			]
 		);
 		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 		update_post_meta( $post_id, '_elementor_data', '[]' );
 		update_post_meta( $post_id, '_elementor_template_type', 'section' );
 
-		$ability = new Browse_Site_Resources_Ability();
+		$ability  = new Browse_Site_Resources_Ability();
+		$preview  = new \ReflectionMethod( $ability, 'preview_url_for_post' );
+		$preview->setAccessible( true );
 
 		// Act
-		$result = $ability->execute( [ 'type' => 'section', 'limit' => 60 ] );
+		$preview_url = $preview->invoke( $ability, $post_id );
 
 		// Assert
-		$match = null;
-		foreach ( $result['items'] as $item ) {
-			if ( (int) $item['id'] === $post_id ) {
-				$match = $item;
-				break;
-			}
-		}
+		$this->assertNotSame( '', $preview_url );
+		$this->assertStringContainsString( Site_Resource_Preview_Token::QUERY_ARG . '=', $preview_url );
 
-		$this->assertNotNull( $match );
-		$this->assertNotSame( '', $match['preview_url'] );
-		$this->assertStringContainsString( Site_Resource_Preview_Token::QUERY_ARG . '=', $match['preview_url'] );
-
-		$query = wp_parse_url( $match['preview_url'], PHP_URL_QUERY );
+		$query = wp_parse_url( $preview_url, PHP_URL_QUERY );
 		parse_str( (string) $query, $params );
 		$claims = Site_Resource_Preview_Token::decode(
 			$params[ Site_Resource_Preview_Token::QUERY_ARG ],

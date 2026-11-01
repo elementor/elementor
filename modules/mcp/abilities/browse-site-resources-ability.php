@@ -78,6 +78,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 						'type' => 'object',
 					],
 					'eicons_css_url' => [ 'type' => 'string' ],
+					'eicons_font_url' => [ 'type' => 'string' ],
 				],
 			],
 			[
@@ -86,6 +87,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 					'idempotent'  => true,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 				'mcp'         => [
 					'_meta' => [
 						'ui' => [
@@ -144,6 +146,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 			'items'            => array_values( $filtered ),
 			'counts_by_type'   => $counts,
 			'eicons_css_url'   => ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons.min.css',
+			'eicons_font_url'  => ELEMENTOR_ASSETS_URL . 'lib/eicons/fonts/eicons.woff2',
 		];
 	}
 
