@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
+use Elementor\Modules\Mcp\Preview\Site_Resource_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
@@ -163,6 +164,7 @@ class Module extends BaseModule {
 
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
+		( new Site_Resource_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
 		( new Ability_Hooks() )->register_hooks();
 

@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Mcp\Preview\Site_Resource_Preview_Token;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -68,6 +69,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 								'icon'      => [ 'type' => 'string' ],
 								'thumbnail' => [ 'type' => 'string' ],
 								'edit_url'  => [ 'type' => 'string' ],
+								'preview_url' => [ 'type' => 'string' ],
 								'access'    => [ 'type' => 'string' ],
 							],
 						],
@@ -75,6 +77,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 					'counts_by_type' => [
 						'type' => 'object',
 					],
+					'eicons_css_url' => [ 'type' => 'string' ],
 				],
 			],
 			[
@@ -140,6 +143,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 		return [
 			'items'            => array_values( $filtered ),
 			'counts_by_type'   => $counts,
+			'eicons_css_url'   => ELEMENTOR_ASSETS_URL . 'lib/eicons/css/elementor-icons.min.css',
 		];
 	}
 
@@ -178,6 +182,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 				'icon'      => $widget->get_icon(),
 				'thumbnail' => '',
 				'edit_url'  => '',
+				'preview_url' => '',
 				'access'    => 'Free',
 			];
 		}
@@ -211,6 +216,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 				'icon'      => '',
 				'thumbnail' => '',
 				'edit_url'  => $edit_url,
+				'preview_url' => $this->preview_url_for_post( $post_id ),
 				'access'    => 'Site',
 			];
 		}
@@ -248,6 +254,7 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 				'icon'      => '',
 				'thumbnail' => $thumb,
 				'edit_url'  => $edit_url,
+				'preview_url' => $this->preview_url_for_post( $post_id ),
 				'access'    => $this->template_access_label( $subtype ),
 			];
 		}
@@ -345,5 +352,27 @@ class Browse_Site_Resources_Ability extends Abstract_Ability {
 				}
 			)
 		);
+	}
+
+	private function preview_url_for_post( int $post_id ): string {
+		if ( $post_id <= 0 || ! current_user_can( 'edit_post', $post_id ) ) {
+			return '';
+		}
+
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document instanceof Document || ! $document->is_built_with_elementor() ) {
+			return '';
+		}
+
+		$expires_at = time() + Site_Resource_Preview_Token::TTL_SECONDS;
+		$token      = Site_Resource_Preview_Token::encode( $post_id, $expires_at, Site_Resource_Preview_Token::secret() );
+		$permalink  = get_permalink( $post_id );
+
+		if ( ! is_string( $permalink ) || '' === $permalink ) {
+			$permalink = home_url( '/' );
+		}
+
+		return add_query_arg( Site_Resource_Preview_Token::QUERY_ARG, $token, $permalink );
 	}
 }
