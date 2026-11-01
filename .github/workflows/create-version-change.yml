@@ -152,6 +152,7 @@ jobs:
           echo "Branch $DEV_BRANCH pushed successfully"
 
       - name: Create pull request
+        id: create-pr
         if: github.event.inputs.dry_run != 'true'
         run: |
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
@@ -185,6 +186,7 @@ jobs:
           SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
           BETA_VERSION: ${{ steps.run-script.outputs.beta_version }}
           MAIN_VERSION: ${{ steps.calculate.outputs.next_version }}
+          PR_OUTCOME: ${{ steps.create-pr.outcome }}
         run: |
           # Exit gracefully if webhook URL is not configured
           if [ -z "$SLACK_BRANCH_OUT_WEBHOOK_URL" ]; then
@@ -228,6 +230,16 @@ jobs:
           STABLE_VERSION="${BETA_MAJOR}.${STABLE_MINOR}"
 
           # Build Slack message
+          # Conditionally include main version line based on PR step outcome
+          if [ "$PR_OUTCOME" = "success" ]; then
+            MAIN_LINE=":large_blue_circle: main → ${MAIN_VERSION_SHORT}"
+          else
+            MAIN_LINE=":warning: Main version bump did not complete. Manual follow-up required."
+          fi
+
+          # Build workflow run link
+          RUN_LINK="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
           TEXT="<!channel> :rocket: Beta branch-out is complete!
 
           Repo: https://github.com/elementor/elementor/
@@ -235,7 +247,9 @@ jobs:
           :package: Version mapping:
           :large_green_circle: release/stable → ${STABLE_VERSION}
           :large_yellow_circle: release/beta → ${BETA_VERSION_SHORT}
-          :large_blue_circle: main → ${MAIN_VERSION_SHORT}"
+          ${MAIN_LINE}
+
+          Workflow run: ${RUN_LINK}"
 
           # Build JSON payload with jq
           PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
