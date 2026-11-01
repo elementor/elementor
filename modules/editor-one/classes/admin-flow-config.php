@@ -31,6 +31,7 @@ class Admin_Flow_Config {
 	const GROUP_ACCOUNT = 'account';
 
 	const CODE_SNIPPETS_SLUG = 'elementor-code-snippets';
+	const AI_SETTINGS_SLUG = 'elementor-ai-settings';
 
 	public static function get_config(): array {
 		$config = [
@@ -192,6 +193,10 @@ class Admin_Flow_Config {
 				'element-manager' => [
 					'parent' => self::PARENT_SETTINGS,
 					'items' => [ 'elementor-element-manager' ],
+				],
+				'ai' => [
+					'parent' => self::PARENT_SETTINGS,
+					'items' => [ self::AI_SETTINGS_SLUG ],
 				],
 			],
 			self::GROUP_ACCOUNT => [

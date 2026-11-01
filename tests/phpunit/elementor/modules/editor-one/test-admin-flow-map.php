@@ -2,8 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
+use Elementor\App\AdminMenuItems\Editor_One_Theme_Builder_Menu;
 use Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Map;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
@@ -176,18 +178,62 @@ class Test_Admin_Flow_Map extends Elementor_Test_Base {
 		$this->assertSame( [ 'settings', 'tools', 'role-manager', 'element-manager' ], array_keys( $tabs ) );
 	}
 
-	public function test_get_tabs__code_snippets_hidden_until_registered() {
+	public function reserved_slots_data_provider(): array {
+		return [
+			'code snippets' => [
+				Admin_Flow_Config::GROUP_SITE_ASSETS,
+				Admin_Flow_Config::CODE_SNIPPETS_SLUG,
+				[ 'code', 'fonts', 'icons' ],
+				'code-snippets',
+			],
+			'ai' => [
+				Admin_Flow_Config::GROUP_SETTINGS,
+				Admin_Flow_Config::AI_SETTINGS_SLUG,
+				[ 'settings', 'tools', 'role-manager', 'element-manager' ],
+				'ai',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider reserved_slots_data_provider
+	 */
+	public function test_get_tabs__reserved_slot_hidden_until_registered( string $group, string $slug, array $expected_before, string $reserved_tab ) {
 		// Arrange
 		$this->register_items( self::FREE_ITEMS );
 
 		// Act
-		$tabs_before = $this->create_map()->get_tabs( Admin_Flow_Config::GROUP_SITE_ASSETS );
-		$this->register_items( [ Admin_Flow_Config::CODE_SNIPPETS_SLUG ] );
-		$tabs_after = $this->create_map()->get_tabs( Admin_Flow_Config::GROUP_SITE_ASSETS );
+		$tabs_before = $this->create_map()->get_tabs( $group );
+		$this->register_items( [ $slug ] );
+		$tabs_after = $this->create_map()->get_tabs( $group );
 
 		// Assert
-		$this->assertSame( [ 'code', 'fonts', 'icons' ], array_keys( $tabs_before ) );
-		$this->assertSame( [ 'code', 'fonts', 'icons', 'code-snippets' ], array_keys( $tabs_after ) );
+		$this->assertSame( $expected_before, array_keys( $tabs_before ) );
+		$this->assertSame( array_merge( $expected_before, [ $reserved_tab ] ), array_keys( $tabs_after ) );
+	}
+
+	public function real_templates_items_data_provider(): array {
+		return [
+			'saved templates list' => [ [ 'post_type' => 'elementor_library', 'tabs_group' => 'library' ], Admin_Flow_Config::PARENT_TEMPLATES, 'saved-templates' ],
+			'saved templates without tabs group' => [ [ 'post_type' => 'elementor_library' ], Admin_Flow_Config::PARENT_TEMPLATES, 'saved-templates' ],
+			'saved templates by type' => [ [ 'post_type' => 'elementor_library', 'elementor_library_type' => 'page' ], Admin_Flow_Config::PARENT_TEMPLATES, 'saved-templates' ],
+			'theme builder admin page' => [ [ 'post_type' => 'elementor_library', 'tabs_group' => 'theme' ], Admin_Flow_Config::PARENT_THEME_BUILDER, 'theme-builder' ],		];
+	}
+
+	/**
+	 * @dataProvider real_templates_items_data_provider
+	 */
+	public function test_resolve__real_templates_items( array $query_args, string $expected_parent, string $expected_tab ) {
+		// Arrange
+		$this->provider->register_level4_item( new Editor_One_Saved_Templates_Menu() );
+		$this->provider->register_level4_item( new Editor_One_Theme_Builder_Menu() );
+
+		// Act
+		$state = $this->create_map()->resolve( $query_args );
+
+		// Assert
+		$this->assertSame( $expected_parent, $state['parent'] );
+		$this->assertSame( $expected_tab, $state['tab'] );
 	}
 
 	public function test_get_tabs__hides_items_without_capability() {
