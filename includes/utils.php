@@ -684,7 +684,15 @@ class Utils {
 		$file_path = self::get_elementor_pro_file_path();
 		$installed_plugins = get_plugins();
 
-		return isset( $installed_plugins[ $file_path ] );
+		if ( ! isset( $installed_plugins[ $file_path ] ) ) {
+			return false;
+		}
+
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		return ! is_plugin_active( $file_path );
 	}
 
 	private static function get_elementor_pro_file_path(): string {
