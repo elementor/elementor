@@ -295,6 +295,8 @@ class Module extends BaseModule {
 			new Abilities\Manage_Experiments_Ability(),
 			new Abilities\Upload_Media_Ability(),
 			new Abilities\Request_Media_Upload_Ability(),
+			new Abilities\Browse_Site_Resources_Ability(),
+			new Abilities\Site_Resources_Gallery_Ui_Ability(),
 		];
 
 		if ( self::is_revision_snapshots_active() ) {
