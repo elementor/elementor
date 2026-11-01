@@ -29,7 +29,7 @@ const withState = ( state: ProSetupPromotionState, payload: Record< string, unkn
 } );
 
 /**
- * Banner shown in the widgets panel (APT-105-style funnel).
+ * Banner shown in the widgets panel (editor analytics funnel).
  *
  * @param state Current Pro setup step shown in the panel.
  */

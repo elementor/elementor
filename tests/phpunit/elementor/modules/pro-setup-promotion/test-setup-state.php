@@ -59,7 +59,6 @@ class Test_Setup_State extends Elementor_Test_Base {
 
 		$this->assertIsArray( $config );
 		$this->assertSame( Setup_State::STATE_INSTALL, $config['state'] );
-		$this->assertSame( Dismissal::DISMISS_ID, $config['dismissId'] );
 		$this->assertArrayHasKey( 'banner', $config );
 		$this->assertArrayHasKey( 'popover', $config );
 	}

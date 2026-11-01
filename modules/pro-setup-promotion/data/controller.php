@@ -24,15 +24,15 @@ class Controller extends Base_Controller {
 	}
 
 	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );
+		return current_user_can( 'manage_options' );
 	}
 
 	public function get_item_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );
+		return current_user_can( 'manage_options' );
 	}
 
 	public function create_items_permissions_check( $request ) {
-		return current_user_can( 'edit_posts' );
+		return current_user_can( 'manage_options' );
 	}
 
 	public function create_item_permissions_check( $request ) {

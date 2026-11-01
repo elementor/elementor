@@ -22,9 +22,53 @@ class Setup_State {
 		$state = self::resolve_without_filters();
 
 		/**
+		 * Filter the resolved setup step before capability enforcement.
+		 * Must not expose install/activate/connect to users who lack the required caps.
+		 *
 		 * @param string $state One of Setup_State::STATE_* constants.
 		 */
-		return apply_filters( 'elementor/pro_setup_promotion/setup_state', $state );
+		$state = apply_filters( 'elementor/pro_setup_promotion/setup_state', $state );
+
+		return self::enforce_capabilities_for_state( $state );
+	}
+
+	public static function is_pro_installed_and_inactive_in_wordpress(): bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$file_path = 'elementor-pro/elementor-pro.php';
+		$installed_plugins = get_plugins();
+
+		if ( ! isset( $installed_plugins[ $file_path ] ) ) {
+			return false;
+		}
+
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		return ! is_plugin_active( $file_path );
+	}
+
+	private static function enforce_capabilities_for_state( string $state ): string {
+		if ( self::STATE_HIDDEN === $state ) {
+			return $state;
+		}
+
+		if ( self::STATE_INSTALL === $state && ! current_user_can( 'install_plugins' ) ) {
+			return self::STATE_HIDDEN;
+		}
+
+		if ( self::STATE_ACTIVATE === $state && ! current_user_can( 'activate_plugins' ) ) {
+			return self::STATE_HIDDEN;
+		}
+
+		if ( self::STATE_CONNECT === $state && ! self::can_manage_license_connection() ) {
+			return self::STATE_HIDDEN;
+		}
+
+		return $state;
 	}
 
 	private static function resolve_without_filters(): string {
@@ -48,7 +92,7 @@ class Setup_State {
 			return self::can_manage_license_connection() ? self::STATE_CONNECT : self::STATE_HIDDEN;
 		}
 
-		if ( Utils::is_pro_installed_and_not_active() ) {
+		if ( self::is_pro_installed_and_inactive_in_wordpress() ) {
 			return current_user_can( 'activate_plugins' ) ? self::STATE_ACTIVATE : self::STATE_HIDDEN;
 		}
 
@@ -82,7 +126,9 @@ class Setup_State {
 	private static function resolve_after_plugin_change(): string {
 		$state = self::resolve_without_filters_after_plugin_change();
 
-		return apply_filters( 'elementor/pro_setup_promotion/setup_state', $state );
+		$state = apply_filters( 'elementor/pro_setup_promotion/setup_state', $state );
+
+		return self::enforce_capabilities_for_state( $state );
 	}
 
 	private static function resolve_without_filters_after_plugin_change(): string {
@@ -115,18 +161,20 @@ class Setup_State {
 		}
 
 		$assets = Editor_Assets::get_assets_data();
-		$connect_url = self::get_connect_url();
-
-		return [
+		$config = [
 			'state' => $state,
-			'dismissId' => Dismissal::DISMISS_ID,
 			'banner' => [
 				'title' => self::read_string( $assets, 'banner_title', __( 'Your Elementor Pro is ready', 'elementor' ) ),
 				'description' => self::read_string( $assets, 'banner_description', __( 'Complete the setup to start creating with all the Pro features included in your subscription.', 'elementor' ) ),
 			],
 			'popover' => self::get_popover_copy( $state, $assets ),
-			'connectUrl' => $connect_url,
 		];
+
+		if ( self::STATE_CONNECT === $state ) {
+			$config['connectUrl'] = self::get_connect_url();
+		}
+
+		return $config;
 	}
 
 	private static function is_pro_plugin_marked_active(): bool {

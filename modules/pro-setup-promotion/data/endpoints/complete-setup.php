@@ -57,7 +57,15 @@ class Complete_Setup extends Endpoint_Base {
 				__( 'Setup action is not available for the current state.', 'elementor' ),
 				[ 'status' => 400 ]
 			);
-		} catch ( \Throwable $throwable ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		} catch ( \Throwable $throwable ) {
+			Plugin::$instance->logger->get_logger()->error(
+				'Pro setup promotion complete-setup failed.',
+				[
+					'message' => $throwable->getMessage(),
+					'trace' => $throwable->getTraceAsString(),
+				]
+			);
+
 			return new \WP_Error(
 				'setup_failed',
 				__( 'Elementor Pro setup failed. Please try again.', 'elementor' ),
@@ -109,19 +117,7 @@ class Complete_Setup extends Endpoint_Base {
 		$result = $plugin_installer->install();
 
 		if ( is_wp_error( $result ) ) {
-			$error_data = $result->get_error_data();
-			$underlying_code = is_array( $error_data ) && ! empty( $error_data['error_code'] )
-				? $error_data['error_code']
-				: $result->get_error_code();
-
-			return new \WP_Error(
-				$result->get_error_code(),
-				wp_strip_all_tags( $result->get_error_message() ),
-				[
-					'status' => 500,
-					'error_code' => $underlying_code,
-				]
-			);
+			return $this->log_and_generic_installer_error( $result, 'install' );
 		}
 
 		return $this->success_response( 'install' );
@@ -140,7 +136,7 @@ class Complete_Setup extends Endpoint_Base {
 			return $this->success_response( 'activate' );
 		}
 
-		if ( ! Utils::is_pro_installed_and_not_active() ) {
+		if ( ! Setup_State::is_pro_installed_and_inactive_in_wordpress() ) {
 			return new \WP_Error(
 				'not_installed',
 				__( 'Elementor Pro is not installed.', 'elementor' ),
@@ -152,23 +148,11 @@ class Complete_Setup extends Endpoint_Base {
 		$result = $plugin_installer->activate();
 
 		if ( is_wp_error( $result ) ) {
-			$error_data = $result->get_error_data();
-			$underlying_code = is_array( $error_data ) && ! empty( $error_data['error_code'] )
-				? $error_data['error_code']
-				: $result->get_error_code();
-
-			if ( in_array( $underlying_code, [ 'already_active', 'plugin_already_active' ], true ) ) {
+			if ( in_array( $result->get_error_code(), [ 'already_active', 'plugin_already_active' ], true ) ) {
 				return $this->success_response( 'activate' );
 			}
 
-			return new \WP_Error(
-				$result->get_error_code(),
-				wp_strip_all_tags( $result->get_error_message() ),
-				[
-					'status' => 500,
-					'error_code' => $underlying_code,
-				]
-			);
+			return $this->log_and_generic_installer_error( $result, 'activate' );
 		}
 
 		if ( true !== $result ) {
@@ -180,5 +164,27 @@ class Complete_Setup extends Endpoint_Base {
 		}
 
 		return $this->success_response( 'activate' );
+	}
+
+	private function log_and_generic_installer_error( \WP_Error $result, string $action ): \WP_Error {
+		Plugin::$instance->logger->get_logger()->error(
+			'Pro setup promotion installer failed.',
+			[
+				'action' => $action,
+				'code' => $result->get_error_code(),
+				'message' => $result->get_error_message(),
+				'data' => $result->get_error_data(),
+			]
+		);
+
+		$message = 'install' === $action
+			? __( 'We couldn\'t install Elementor Pro. Please try again.', 'elementor' )
+			: __( 'We couldn\'t activate Elementor Pro. Please try again.', 'elementor' );
+
+		return new \WP_Error(
+			$action . '_failed',
+			$message,
+			[ 'status' => 500 ]
+		);
 	}
 }

@@ -27,6 +27,7 @@ class Editor_Assets {
 	public static function is_enabled(): bool {
 		$assets = self::get_assets_data();
 
+		// Visibility requires a published CDN asset with is_active; missing/failed fetch keeps the promotion off.
 		return ! empty( $assets['is_active'] );
 	}
 }

@@ -55,10 +55,9 @@ type PreviewWindow = Window & {
 
 type ProSetupConfig = {
 	state: ProSetupPromotionState;
-	dismissId: string;
 	banner: { title: string; description: string };
 	popover: { title: string; description: string; ctaLabel: string };
-	connectUrl: string;
+	connectUrl?: string;
 };
 
 function getConfig(): ProSetupConfig | null {
