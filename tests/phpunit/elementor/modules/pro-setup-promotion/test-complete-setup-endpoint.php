@@ -17,10 +17,13 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 
 	private Complete_Setup $endpoint;
 
+	private int $admin_id;
+
 	public function setUp(): void {
 		parent::setUp();
 
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
+		$this->admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $this->admin_id );
 
 		$data_manager = Plugin::$instance->data_manager_v2;
 		$data_manager->kill_server();
@@ -34,13 +37,6 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 		$data_manager->run_server();
 
 		$this->endpoint = $controller->endpoints['pro-setup-promotion/complete-setup'];
-
-		add_filter(
-			'elementor/pro_setup_promotion/setup_state',
-			static function (): string {
-				return Setup_State::STATE_INSTALL;
-			}
-		);
 	}
 
 	public function tearDown(): void {
@@ -50,10 +46,33 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
+	private function force_setup_state( string $state ): void {
+		remove_all_filters( 'elementor/pro_setup_promotion/setup_state' );
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function () use ( $state ): string {
+				return $state;
+			}
+		);
+	}
+
 	public function test_install_path_requires_install_and_activate_capabilities(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'author' ] ) );
+		$this->force_setup_state( Setup_State::STATE_INSTALL );
+
 		$result = $this->endpoint->create_items( new WP_REST_Request( 'POST' ) );
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertSame( 'insufficient_permissions', $result->get_error_code() );
+	}
+
+	public function test_connect_state_returns_invalid_state_from_complete_setup(): void {
+		wp_set_current_user( $this->admin_id );
+		$this->force_setup_state( Setup_State::STATE_CONNECT );
+
+		$result = $this->endpoint->create_items( new WP_REST_Request( 'POST' ) );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invalid_state', $result->get_error_code() );
 	}
 }

@@ -80,4 +80,47 @@ class Test_Setup_State extends Elementor_Test_Base {
 
 		$this->assertSame( Setup_State::STATE_HIDDEN, Setup_State::resolve() );
 	}
+
+	public function test_setup_state_filter_cannot_expose_install_without_install_plugins_cap(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_INSTALL;
+			}
+		);
+
+		$this->assertSame( Setup_State::STATE_HIDDEN, Setup_State::resolve() );
+	}
+
+	public function test_connect_state_includes_connect_url_in_editor_config(): void {
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_CONNECT;
+			}
+		);
+
+		$config = Setup_State::get_editor_config();
+
+		$this->assertIsArray( $config );
+		$this->assertSame( Setup_State::STATE_CONNECT, $config['state'] );
+		$this->assertArrayHasKey( 'connectUrl', $config );
+	}
+
+	public function test_install_state_omits_connect_url_from_editor_config(): void {
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_INSTALL;
+			}
+		);
+
+		$config = Setup_State::get_editor_config();
+
+		$this->assertIsArray( $config );
+		$this->assertSame( Setup_State::STATE_INSTALL, $config['state'] );
+		$this->assertArrayNotHasKey( 'connectUrl', $config );
+	}
 }
