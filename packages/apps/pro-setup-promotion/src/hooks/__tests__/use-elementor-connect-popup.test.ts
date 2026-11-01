@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useElementorConnectPopup } from '../use-elementor-connect-popup';
 
-const POPUP_POLL_INTERVAL_MS = 400;
+const POPUP_CLOSED_POLL_INTERVAL_MS = 400;
 
 type MockJQuery = {
 	on: jest.Mock;
@@ -156,7 +156,7 @@ describe( 'useElementorConnectPopup', () => {
 		popup.closed = true;
 
 		act( () => {
-			jest.advanceTimersByTime( POPUP_POLL_INTERVAL_MS );
+			jest.advanceTimersByTime( POPUP_CLOSED_POLL_INTERVAL_MS );
 		} );
 
 		expect( onError ).toHaveBeenCalledTimes( 1 );
@@ -187,9 +187,38 @@ describe( 'useElementorConnectPopup', () => {
 		popup.closed = true;
 
 		act( () => {
-			jest.advanceTimersByTime( POPUP_POLL_INTERVAL_MS );
+			jest.advanceTimersByTime( POPUP_CLOSED_POLL_INTERVAL_MS );
 		} );
 
+		expect( onSuccess ).toHaveBeenCalledTimes( 1 );
+		expect( onError ).not.toHaveBeenCalled();
+	} );
+
+	it( 'calls onSuccess when popup closes if verifyConnectComplete succeeds', async () => {
+		const onSuccess = jest.fn();
+		const onError = jest.fn();
+		const verifyConnectComplete = jest.fn().mockResolvedValue( true );
+		const { result } = renderHook( () =>
+			useElementorConnectPopup( {
+				connectUrl: 'https://example.com/connect',
+				onSuccess,
+				onError,
+				verifyConnectComplete,
+			} )
+		);
+
+		act( () => {
+			result.current();
+		} );
+
+		popup.closed = true;
+
+		await act( async () => {
+			jest.advanceTimersByTime( POPUP_CLOSED_POLL_INTERVAL_MS );
+			await Promise.resolve();
+		} );
+
+		expect( verifyConnectComplete ).toHaveBeenCalled();
 		expect( onSuccess ).toHaveBeenCalledTimes( 1 );
 		expect( onError ).not.toHaveBeenCalled();
 	} );

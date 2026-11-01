@@ -250,11 +250,18 @@ export function ProSetupPanelPromo() {
 		} );
 	};
 
+	const isProSetupConnectComplete = async (): Promise< boolean > => {
+		const config = await fetchPromotionConfig();
+
+		return ! config || 'connect' !== config.state;
+	};
+
 	const openConnectPopup = useElementorConnectPopup( {
 		connectUrl: promotionConfig?.connectUrl ?? '',
 		onSuccess: handleConnectSuccess,
 		onError: handleConnectError,
 		onPopupBlocked: handleConnectPopupBlocked,
+		verifyConnectComplete: isProSetupConnectComplete,
 	} );
 
 	useEffect( () => {

@@ -4,7 +4,9 @@ const POPUP_WIDTH = 600;
 const POPUP_HEIGHT = 700;
 const POPUP_TOP = 200;
 const POPUP_LEFT = 0;
-const POPUP_POLL_INTERVAL_MS = 400;
+const POPUP_CLOSED_POLL_INTERVAL_MS = 400;
+const SETUP_VERIFY_POLL_INTERVAL_MS = 1500;
+const CONNECT_SUCCESS_WINDOW_EVENT = 'elementor/connect/success';
 
 type JQueryLike = {
 	on: ( event: string, handler: ( ...args: unknown[] ) => void ) => unknown;
@@ -25,6 +27,7 @@ type ConnectPopupOptions = {
 	onSuccess?: () => void | Promise< void >;
 	onError?: () => void;
 	onPopupBlocked?: ( retryOpen: () => void ) => void;
+	verifyConnectComplete?: () => Promise< boolean >;
 };
 
 let callbackCounter = 0;
@@ -56,30 +59,58 @@ function closePopupWindow( popup: Window | null ) {
 	}
 }
 
-export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPopupBlocked }: ConnectPopupOptions ) {
+export function useElementorConnectPopup( {
+	connectUrl,
+	onSuccess,
+	onError,
+	onPopupBlocked,
+	verifyConnectComplete,
+}: ConnectPopupOptions ) {
 	const onSuccessRef = useRef( onSuccess );
 	const onErrorRef = useRef( onError );
 	const onPopupBlockedRef = useRef( onPopupBlocked );
+	const verifyConnectCompleteRef = useRef( verifyConnectComplete );
 	const activeCallbackRef = useRef< string | null >( null );
 	const successHandlerRef = useRef< ( ( ...args: unknown[] ) => void ) | null >( null );
 	const errorHandlerRef = useRef< ( ( ...args: unknown[] ) => void ) | null >( null );
-	const popupPollRef = useRef< ReturnType< typeof setInterval > | null >( null );
+	const nativeSuccessHandlerRef = useRef< ( () => void ) | null >( null );
+	const popupClosedPollRef = useRef< ReturnType< typeof setInterval > | null >( null );
+	const setupVerifyPollRef = useRef< ReturnType< typeof setInterval > | null >( null );
 	const popupUrlRef = useRef< string >( '' );
 	const popupWindowRef = useRef< Window | null >( null );
 	const connectFlowCompletedRef = useRef( false );
+	const verifyInFlightRef = useRef( false );
 
 	onSuccessRef.current = onSuccess;
 	onErrorRef.current = onError;
 	onPopupBlockedRef.current = onPopupBlocked;
+	verifyConnectCompleteRef.current = verifyConnectComplete;
+
+	const clearPopupClosedPoll = useCallback( () => {
+		if ( popupClosedPollRef.current ) {
+			clearInterval( popupClosedPollRef.current );
+			popupClosedPollRef.current = null;
+		}
+	}, [] );
+
+	const clearSetupVerifyPoll = useCallback( () => {
+		if ( setupVerifyPollRef.current ) {
+			clearInterval( setupVerifyPollRef.current );
+			setupVerifyPollRef.current = null;
+		}
+	}, [] );
 
 	const detachListeners = useCallback( () => {
 		const callbackId = activeCallbackRef.current;
 		const $window = getConnectWindow();
 		const $body = getConnectBody();
 
-		if ( popupPollRef.current ) {
-			clearInterval( popupPollRef.current );
-			popupPollRef.current = null;
+		clearPopupClosedPoll();
+		clearSetupVerifyPoll();
+
+		if ( nativeSuccessHandlerRef.current ) {
+			window.removeEventListener( CONNECT_SUCCESS_WINDOW_EVENT, nativeSuccessHandlerRef.current );
+			nativeSuccessHandlerRef.current = null;
 		}
 
 		if ( callbackId ) {
@@ -107,7 +138,8 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 		errorHandlerRef.current = null;
 		popupUrlRef.current = '';
 		popupWindowRef.current = null;
-	}, [] );
+		verifyInFlightRef.current = false;
+	}, [ clearPopupClosedPoll, clearSetupVerifyPoll ] );
 
 	useEffect( () => detachListeners, [ detachListeners ] );
 
@@ -131,6 +163,71 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 		[ detachListeners ]
 	);
 
+	const tryCompleteConnectFlow = useCallback( async () => {
+		if ( connectFlowCompletedRef.current || ! activeCallbackRef.current || verifyInFlightRef.current ) {
+			return;
+		}
+
+		const verify = verifyConnectCompleteRef.current;
+
+		if ( ! verify ) {
+			finishConnectFlow( 'success' );
+			return;
+		}
+
+		verifyInFlightRef.current = true;
+
+		try {
+			if ( await verify() ) {
+				finishConnectFlow( 'success' );
+			}
+		} catch {
+			// Keep listening while the connect popup is open.
+		} finally {
+			verifyInFlightRef.current = false;
+		}
+	}, [ finishConnectFlow ] );
+
+	const handlePopupClosed = useCallback( () => {
+		if ( connectFlowCompletedRef.current || ! activeCallbackRef.current ) {
+			return;
+		}
+
+		clearPopupClosedPoll();
+		clearSetupVerifyPoll();
+
+		void ( async () => {
+			const verify = verifyConnectCompleteRef.current;
+
+			if ( verify ) {
+				try {
+					if ( await verify() ) {
+						finishConnectFlow( 'success' );
+						return;
+					}
+				} catch {
+					// Fall through to error.
+				}
+			}
+
+			finishConnectFlow( 'error' );
+		} )();
+	}, [ clearPopupClosedPoll, clearSetupVerifyPoll, finishConnectFlow ] );
+
+	const startSetupVerifyPoll = useCallback( () => {
+		clearSetupVerifyPoll();
+
+		setupVerifyPollRef.current = setInterval( () => {
+			const popup = popupWindowRef.current;
+
+			if ( connectFlowCompletedRef.current || ! popup || popup.closed ) {
+				return;
+			}
+
+			void tryCompleteConnectFlow();
+		}, SETUP_VERIFY_POLL_INTERVAL_MS );
+	}, [ clearSetupVerifyPoll, tryCompleteConnectFlow ] );
+
 	const tryOpenPopupWindow = useCallback( (): boolean => {
 		const popupUrl = popupUrlRef.current;
 
@@ -146,13 +243,11 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 		}
 
 		popupWindowRef.current = popup;
+		startSetupVerifyPoll();
 
-		popupPollRef.current = setInterval( () => {
+		popupClosedPollRef.current = setInterval( () => {
 			if ( connectFlowCompletedRef.current ) {
-				if ( popupPollRef.current ) {
-					clearInterval( popupPollRef.current );
-					popupPollRef.current = null;
-				}
+				clearPopupClosedPoll();
 				return;
 			}
 
@@ -160,23 +255,15 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 				return;
 			}
 
-			if ( popupPollRef.current ) {
-				clearInterval( popupPollRef.current );
-				popupPollRef.current = null;
-			}
-
-			if ( ! activeCallbackRef.current ) {
-				return;
-			}
-
-			finishConnectFlow( 'error' );
-		}, POPUP_POLL_INTERVAL_MS );
+			handlePopupClosed();
+		}, POPUP_CLOSED_POLL_INTERVAL_MS );
 
 		return true;
-	}, [ finishConnectFlow ] );
+	}, [ clearPopupClosedPoll, handlePopupClosed, startSetupVerifyPoll ] );
 
 	return useCallback( () => {
 		if ( ! connectUrl ) {
+			onErrorRef.current?.();
 			return;
 		}
 
@@ -187,7 +274,7 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 		activeCallbackRef.current = callbackId;
 
 		const successHandler = () => {
-			finishConnectFlow( 'success' );
+			void tryCompleteConnectFlow();
 		};
 
 		const errorHandler = () => {
@@ -196,6 +283,13 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 
 		successHandlerRef.current = successHandler;
 		errorHandlerRef.current = errorHandler;
+
+		const nativeSuccessHandler = () => {
+			void tryCompleteConnectFlow();
+		};
+
+		nativeSuccessHandlerRef.current = nativeSuccessHandler;
+		window.addEventListener( CONNECT_SUCCESS_WINDOW_EVENT, nativeSuccessHandler );
 
 		const $window = getConnectWindow();
 		const $body = getConnectBody();
@@ -237,5 +331,5 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 		};
 
 		onPopupBlockedRef.current?.( retryOpen );
-	}, [ connectUrl, detachListeners, finishConnectFlow, tryOpenPopupWindow ] );
+	}, [ connectUrl, detachListeners, finishConnectFlow, tryCompleteConnectFlow, tryOpenPopupWindow ] );
 }

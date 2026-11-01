@@ -24,7 +24,7 @@ describe( 'fetchPromotionConfigAfterConnect', () => {
 		await jest.runAllTimersAsync();
 
 		await expect( resultPromise ).resolves.toEqual( { state: 'connect' } );
-		expect( fetchConfig ).toHaveBeenCalledTimes( 5 );
+		expect( fetchConfig ).toHaveBeenCalledTimes( 12 );
 	} );
 
 	it( 'returns non-connect state without further retries', async () => {

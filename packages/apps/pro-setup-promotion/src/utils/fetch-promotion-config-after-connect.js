@@ -1,5 +1,5 @@
-const SETUP_STATE_RETRY_ATTEMPTS = 5;
-const SETUP_STATE_RETRY_DELAY_MS = 500;
+const SETUP_STATE_RETRY_ATTEMPTS = 12;
+const SETUP_STATE_RETRY_DELAY_MS = 800;
 
 function delay( ms ) {
 	return new Promise( ( resolve ) => {
