@@ -14,6 +14,7 @@ use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
@@ -180,6 +181,7 @@ class Module extends BaseModule {
 
 		if ( self::is_site_mcp_exposure_enabled() ) {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
+			( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		}
 	}
 
@@ -291,6 +293,8 @@ class Module extends BaseModule {
 			new Abilities\Get_License_Status_Ability(),
 			new Abilities\List_Experiments_Ability(),
 			new Abilities\Manage_Experiments_Ability(),
+			new Abilities\Upload_Media_Ability(),
+			new Abilities\Request_Media_Upload_Ability(),
 		];
 
 		if ( self::is_revision_snapshots_active() ) {

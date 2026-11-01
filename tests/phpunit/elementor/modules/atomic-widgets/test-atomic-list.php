@@ -10,7 +10,11 @@ use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Atomic_List extends Elementor_Test_Base {
 	public function test_default_children_seed_two_numbered_items(): void {
-		$children = Plugin::$instance->elements_manager->get_element_types( 'e-list' )->get_config()['default_children'];
+		$list_config = Plugin::$instance->elements_manager->get_element_types( 'e-list' )->get_config();
+
+		$this->assertSame( '4.4', $list_config['new_until_version'] ?? null );
+
+		$children = $list_config['default_children'];
 
 		$this->assertCount( 2, $children );
 
