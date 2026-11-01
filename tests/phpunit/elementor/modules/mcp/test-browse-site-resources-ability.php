@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Browse_Site_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\Site_Resources_Gallery_Ui_Ability;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -91,6 +92,29 @@ class Test_Browse_Site_Resources_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertLessThanOrEqual( Browse_Site_Resources_Ability::MAX_LIMIT, count( $result['items'] ) );
+	}
+
+	public function test_execute_widget_items_match_editor_panel_visibility() {
+		// Arrange
+		$ability = new Browse_Site_Resources_Ability();
+
+		// Act
+		$result = $ability->execute( [ 'type' => 'widget', 'limit' => Browse_Site_Resources_Ability::MAX_LIMIT ] );
+
+		// Assert
+		$widget_types = Plugin::$instance->widgets_manager->get_widget_types();
+
+		foreach ( $result['items'] as $item ) {
+			$this->assertSame( 'widget', $item['kind'] );
+			$this->assertNotSame( '', trim( (string) $item['title'] ) );
+			$this->assertArrayHasKey( $item['id'], $widget_types );
+			$this->assertTrue( $widget_types[ $item['id'] ]->show_in_panel() );
+		}
+
+		if ( isset( $widget_types['common-base'] ) ) {
+			$ids = wp_list_pluck( $result['items'], 'id' );
+			$this->assertNotContains( 'common-base', $ids );
+		}
 	}
 
 	private function get_ability_id( Browse_Site_Resources_Ability $ability ): string {

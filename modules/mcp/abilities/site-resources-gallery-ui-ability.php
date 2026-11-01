@@ -64,9 +64,15 @@ class Site_Resources_Gallery_Ui_Ability extends Abstract_Ability {
 		];
 
 		$parsed = wp_parse_url( home_url() );
-		$site_origin = ! empty( $parsed['host'] )
-			? ( $parsed['scheme'] ?? 'https' ) . '://' . $parsed['host']
-			: '';
+		$site_origin = '';
+
+		if ( ! empty( $parsed['host'] ) ) {
+			$site_origin = ( $parsed['scheme'] ?? 'https' ) . '://' . $parsed['host'];
+
+			if ( ! empty( $parsed['port'] ) ) {
+				$site_origin .= ':' . $parsed['port'];
+			}
+		}
 
 		if ( '' !== $site_origin ) {
 			$item['_meta'] = [

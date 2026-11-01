@@ -46,10 +46,34 @@ class Test_Site_Resources_Gallery_Ui_Ability extends TestCase {
 		$result = $ability->execute();
 
 		// Assert
-		$host = wp_parse_url( home_url(), PHP_URL_HOST );
-		if ( is_string( $host ) && '' !== $host ) {
+		$parsed = wp_parse_url( home_url() );
+		if ( ! empty( $parsed['host'] ) ) {
 			$this->assertArrayHasKey( '_meta', $result[0] );
-			$this->assertArrayHasKey( 'resourceDomains', $result[0]['_meta']['ui']['csp'] );
+			$expected_origin = ( $parsed['scheme'] ?? 'https' ) . '://' . $parsed['host'];
+			if ( ! empty( $parsed['port'] ) ) {
+				$expected_origin .= ':' . $parsed['port'];
+			}
+			$this->assertSame( $expected_origin, $result[0]['_meta']['ui']['csp']['resourceDomains'][0] );
+			$this->assertSame( $expected_origin, $result[0]['_meta']['ui']['csp']['frameDomains'][0] );
 		}
+	}
+
+	public function test_execute_csp_domains_include_non_default_port_from_home_url() {
+		// Arrange
+		$ability = new Site_Resources_Gallery_Ui_Ability();
+		$filter  = static function () {
+			return 'http://localhost:8888/';
+		};
+		add_filter( 'home_url', $filter, 99 );
+
+		// Act
+		$result = $ability->execute();
+
+		// Assert
+		remove_filter( 'home_url', $filter, 99 );
+		$this->assertSame(
+			'http://localhost:8888',
+			$result[0]['_meta']['ui']['csp']['resourceDomains'][0]
+		);
 	}
 }
