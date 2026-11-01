@@ -35,6 +35,13 @@ class Component extends Document {
 	const JSON_META_KEYS = [
 		self::OVERRIDABLE_PROPS_META_KEY,
 	];
+	const EXPORT_MANIFEST_KEY = 'components';
+	const EXPORT_DIRECTORY = 'content/' . self::TYPE . '/';
+	const EXPORT_DEPENDENCIES_FILE_NAME = 'dependencies';
+	const EXPORT_EXCLUDED_SETTINGS_KEYS = [
+		'overridable_props',
+		'variants',
+	];
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -181,7 +188,14 @@ class Component extends Document {
 		return $success;
 	}
 
-	protected function get_export_metadata() {
+	public function get_kit_export_settings(): array {
+		return array_diff_key(
+			$this->get_data( 'settings' ) ?? [],
+			array_flip( self::EXPORT_EXCLUDED_SETTINGS_KEYS )
+		);
+	}
+
+	public function get_export_metadata() {
 		$metadata = parent::get_export_metadata();
 
 		foreach ( self::EXPORTABLE_PRIVATE_META_KEYS as $meta_key ) {
