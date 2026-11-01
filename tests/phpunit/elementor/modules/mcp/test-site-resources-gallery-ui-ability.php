@@ -35,7 +35,7 @@ class Test_Site_Resources_Gallery_Ui_Ability extends TestCase {
 		$this->assertSame( Site_Resources_Gallery_Ui_Ability::MIME_TYPE, $result[0]['mimeType'] );
 		$this->assertIsString( $result[0]['text'] );
 		$this->assertStringContainsString( '<!DOCTYPE html>', $result[0]['text'] );
-		$this->assertStringContainsString( 'Site resources gallery', $result[0]['text'] );
+		$this->assertStringContainsString( 'Site library', $result[0]['text'] );
 	}
 
 	public function test_execute_includes_ui_csp_meta_when_site_has_host() {

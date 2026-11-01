@@ -80,6 +80,7 @@ class Site_Resources_Gallery_Ui_Ability extends Abstract_Ability {
 					'csp' => [
 						'resourceDomains' => [ $site_origin ],
 						'frameDomains'    => [ $site_origin ],
+						'fontDomains'     => [ $site_origin ],
 					],
 				],
 			];
