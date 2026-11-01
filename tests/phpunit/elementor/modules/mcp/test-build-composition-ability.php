@@ -395,8 +395,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$description = ( new Build_Composition_Ability() )->get_description_for_llm();
 
 		// Assert
-		$this->assertStringContainsString( 'need Elementor Pro (not installed on this site)', $description );
-		$this->assertStringContainsString( 'Form elements are skipped on this site.', $description );
+		$this->assertStringContainsString( 'call this tool with `<e-form>` and its fields anyway', $description );
+		$this->assertStringContainsString( 'tell the user that forms need Elementor Pro (not installed on this site)', $description );
+		$this->assertStringNotContainsString( 'skipped', $description );
 	}
 
 	/**

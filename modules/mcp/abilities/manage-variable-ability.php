@@ -347,7 +347,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	}
 
 	private function get_size_variables_pro_notice(): string {
-		return __( 'Size variables need Elementor Pro (not licensed on this site). With Pro, spacing and font sizes live in one scale: change a value once and it updates everywhere it\'s used. Color and font variables work on Free.', 'elementor' );
+		return __( 'When the user asks for a size variable, call this tool anyway, then tell the user that size variables need Elementor Pro (not licensed on this site) and share the upgrade link from the response. With Pro, spacing and font sizes live in one scale: change a value once and it updates everywhere it\'s used. Color and font variables work on Free.', 'elementor' );
 	}
 
 	private function clear_cache(): void {
