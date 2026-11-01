@@ -523,7 +523,7 @@ class Menu_Data_Provider {
 		return admin_url( 'admin.php?page=' . $item_slug );
 	}
 
-	private function resolve_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+	public function resolve_item_url( Menu_Item_Interface $item, string $item_slug ): string {
 		if ( $item instanceof Menu_Item_With_Custom_Url_Interface ) {
 			return $item->get_menu_url();
 		}
