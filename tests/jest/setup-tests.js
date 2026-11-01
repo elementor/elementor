@@ -42,3 +42,11 @@ global.elementorModules = {
 global.elementorAppConfig = {
 	hasPro: true,
 };
+
+global.elementorCommon = {
+	config: {
+		urls: {
+			assets: 'http://elementor.test/wp-content/plugins/elementor/assets/',
+		},
+	},
+};
