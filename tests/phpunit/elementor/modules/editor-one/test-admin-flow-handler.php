@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
+use Elementor\Modules\EditorOne\Classes\Admin_Flow_Map;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -78,6 +79,68 @@ class Test_Admin_Flow_Handler extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( 'edit.php?post_type=elementor_library', $parent_file );
 		$this->assertEmpty( $GLOBALS['_wp_real_parent_file'] );
+	}
+
+	public function test_get_active_state__falls_back_to_screen_post_type_on_edit_screens() {
+		// Arrange
+		$GLOBALS['typenow'] = 'elementor_snippet';
+		$map = $this->createMock( Admin_Flow_Map::class );
+		$map->expects( $this->once() )
+			->method( 'resolve' )
+			->with( [ 'post_type' => 'elementor_snippet' ] )
+			->willReturn( [
+				'parent' => Admin_Flow_Config::PARENT_SITE_ASSETS,
+				'group' => Admin_Flow_Config::GROUP_SITE_ASSETS,
+				'tab' => 'code',
+			] );
+		$handler = $this->create_handler_with_map( $map );
+
+		// Act
+		$state = $handler->get_active_state();
+
+		// Assert
+		$this->assertSame( Admin_Flow_Config::PARENT_SITE_ASSETS, $state['parent'] );
+	}
+
+	public function redirect_return_to_data_provider(): array {
+		return [
+			'with referer' => [ '/wp-admin/admin.php?page=elementor-settings', true ],
+			'without referer' => [ '', false ],
+		];
+	}
+
+	/**
+	 * @dataProvider redirect_return_to_data_provider
+	 */
+	public function test_get_redirect_url__does_not_return_to_the_alias( string $referer_path, bool $expects_return_to ) {
+		// Arrange
+		$alias_uri = '/wp-admin/admin.php?page=' . Admin_Flow_Config::PARENT_THEME_BUILDER;
+		$original_server = $_SERVER;
+		$_SERVER['REQUEST_URI'] = $alias_uri;
+		$_SERVER['HTTP_REFERER'] = $referer_path ? home_url( $referer_path ) : '';
+		$map = $this->createMock( Admin_Flow_Map::class );
+		$map->method( 'get_parent_redirect_url' )->willReturn(
+			admin_url( 'admin.php?page=elementor-app&return_to=' . $alias_uri . '#/site-editor' )
+		);
+		$handler = $this->create_handler_with_map( $map );
+
+		// Act
+		$redirect_url = $handler->get_redirect_url( Admin_Flow_Config::PARENT_THEME_BUILDER );
+		$_SERVER = $original_server;
+
+		// Assert
+		$this->assertStringNotContainsString( Admin_Flow_Config::PARENT_THEME_BUILDER, $redirect_url );
+		$this->assertStringEndsWith( '#/site-editor', $redirect_url );
+		$this->assertSame( $expects_return_to, false !== strpos( $redirect_url, 'return_to=' . rawurlencode( home_url( $referer_path ) ) ) );
+	}
+
+	private function create_handler_with_map( Admin_Flow_Map $map ): Admin_Flow_Handler {
+		$handler = new Admin_Flow_Handler();
+		$property = new \ReflectionProperty( Admin_Flow_Handler::class, 'map' );
+		$property->setAccessible( true );
+		$property->setValue( $handler, $map );
+
+		return $handler;
 	}
 
 	private function set_menu_globals( string $pagenow, string $typenow, ?string $plugin_page ): void {

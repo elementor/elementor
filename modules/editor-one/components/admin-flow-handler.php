@@ -50,7 +50,7 @@ class Admin_Flow_Handler {
 			return;
 		}
 
-		$redirect_url = $this->get_map()->get_parent_redirect_url( $page );
+		$redirect_url = $this->get_redirect_url( $page );
 
 		if ( empty( $redirect_url ) ) {
 			return;
@@ -58,6 +58,23 @@ class Admin_Flow_Handler {
 
 		wp_safe_redirect( $redirect_url );
 		exit;
+	}
+
+	/**
+	 * Default destinations may carry a `return_to` that points back to the parent alias itself,
+	 * which would redirect into the destination again when it is closed.
+	 */
+	public function get_redirect_url( string $page ): string {
+		$redirect_url = $this->get_map()->get_parent_redirect_url( $page );
+
+		if ( empty( $redirect_url ) || false === strpos( $redirect_url, 'return_to=' ) ) {
+			return $redirect_url;
+		}
+
+		$redirect_url = remove_query_arg( 'return_to', $redirect_url );
+		$referer = wp_get_referer();
+
+		return $referer ? add_query_arg( 'return_to', rawurlencode( $referer ), $redirect_url ) : $redirect_url;
 	}
 
 	public function filter_parent_file( $parent_file ) {
@@ -112,6 +129,10 @@ class Admin_Flow_Handler {
 			if ( ! empty( $value ) ) {
 				$query_args[ $key ] = $value;
 			}
+		}
+
+		if ( empty( $query_args['post_type'] ) && ! empty( $GLOBALS['typenow'] ) ) {
+			$query_args['post_type'] = sanitize_key( $GLOBALS['typenow'] );
 		}
 
 		return $query_args;
