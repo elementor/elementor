@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Preview;
 
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,6 +45,7 @@ class Site_Resource_Preview_Handler {
 
 		$this->rewrite_main_query( $wp, $claims['post_id'] );
 		$this->install_render_filters();
+		$this->bypass_template_library_frontend_block();
 		$this->allow_framing();
 		$this->send_privacy_headers();
 	}
@@ -105,6 +107,14 @@ class Site_Resource_Preview_Handler {
 		}
 
 		return $post;
+	}
+
+	private function bypass_template_library_frontend_block(): void {
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+
+		if ( $source instanceof Source_Local ) {
+			remove_action( 'template_redirect', [ $source, 'block_template_frontend' ] );
+		}
 	}
 
 	private function allow_framing(): void {
