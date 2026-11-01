@@ -230,7 +230,7 @@ export function ProSetupPanelPromo() {
 				'elementor'
 			),
 			id: 'pro-setup-promotion-connect-popup-blocked',
-			autoHideDuration: null,
+			autoHideDuration: 30000,
 			additionalActionProps: [
 				{
 					children: __( 'Open connect window', 'elementor' ),
