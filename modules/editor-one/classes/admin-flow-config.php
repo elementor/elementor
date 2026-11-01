@@ -45,7 +45,8 @@ class Admin_Flow_Config {
 		 *
 		 * Internal while the admin flow is behind the `e_admin_navigation` experiment; the shape may change.
 		 *
-		 * - `parents`: `[ parent_slug => [ 'group' => group_id, 'default_tab' => tab_id ] ]`.
+		 * - `parents`: `[ parent_slug => [ 'label' => string, 'group' => group_id, 'default_tab' => tab_id ] ]`.
+		 *   Parent order is the side-menu order. A divider separates a change of `menu_section`, or of `group` when no section is set.
 		 * - `groups`: `[ group_id => [ tab_id => [ 'parent' => parent_slug, 'items' => string[], 'routes' => array[], 'url' => callable ] ] ]`.
 		 *   `items` are menu item slugs or class names, the first accessible one is used. `routes` and `url` are optional.
 		 * - `pages`: `[ page_slug => parent_slug ]` for hidden pages that highlight a parent without a tab.
@@ -57,44 +58,60 @@ class Admin_Flow_Config {
 
 	private static function get_parents(): array {
 		return [
-			self::PARENT_HOME => [],
+			self::PARENT_HOME => [
+				'label' => esc_html__( 'Home', 'elementor' ),
+			],
 			self::PARENT_AGENT_READY => [
+				'label' => esc_html__( 'Agent Ready', 'elementor' ),
 				'group' => self::GROUP_AGENT_READY,
+				'menu_section' => 'agents',
 				'default_tab' => 'readiness-score',
 			],
 			self::PARENT_MCP => [
+				'label' => esc_html__( 'MCP', 'elementor' ),
 				'group' => self::GROUP_MCP,
+				'menu_section' => 'agents',
 				'default_tab' => 'mcp',
 			],
 			self::PARENT_TEMPLATES => [
+				'label' => esc_html__( 'Templates', 'elementor' ),
 				'group' => self::GROUP_TEMPLATES,
 				'default_tab' => 'saved-templates',
 			],
 			self::PARENT_THEME_BUILDER => [
+				'label' => esc_html__( 'Theme Builder', 'elementor' ),
 				'group' => self::GROUP_TEMPLATES,
 				'default_tab' => 'theme-builder',
 			],
 			self::PARENT_POPUPS => [
+				'label' => esc_html__( 'Popups', 'elementor' ),
 				'group' => self::GROUP_TEMPLATES,
 				'default_tab' => 'popups',
 			],
 			self::PARENT_SITE_ASSETS => [
+				'label' => esc_html__( 'Site Assets', 'elementor' ),
 				'group' => self::GROUP_SITE_ASSETS,
+				'menu_section' => 'assets',
 				'default_tab' => 'code',
 			],
 			self::PARENT_SUBMISSIONS => [
+				'label' => esc_html__( 'Submissions', 'elementor' ),
 				'group' => self::GROUP_SUBMISSIONS,
+				'menu_section' => 'assets',
 				'default_tab' => 'submissions',
 			],
 			self::PARENT_SETTINGS => [
+				'label' => esc_html__( 'Settings', 'elementor' ),
 				'group' => self::GROUP_SETTINGS,
 				'default_tab' => 'settings',
 			],
 			self::PARENT_TOOLS => [
+				'label' => esc_html__( 'Tools', 'elementor' ),
 				'group' => self::GROUP_SETTINGS,
 				'default_tab' => 'tools',
 			],
 			self::PARENT_ACCOUNT => [
+				'label' => esc_html__( 'Account', 'elementor' ),
 				'group' => self::GROUP_ACCOUNT,
 				'default_tab' => 'account',
 			],
