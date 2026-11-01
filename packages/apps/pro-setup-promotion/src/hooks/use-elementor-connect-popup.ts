@@ -201,6 +201,7 @@ export function useElementorConnectPopup( { connectUrl, onSuccess, onError, onPo
 		const $body = getConnectBody();
 
 		if ( ! $window && ! $body ) {
+			detachListeners();
 			onErrorRef.current?.();
 			return;
 		}
