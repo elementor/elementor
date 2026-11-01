@@ -41,7 +41,6 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		add_filter( 'elementor/mcp/gated_ability_ids', '__return_empty_array' );
 		$this->act_as_admin();
 
-		$this->emitted_events = [];
 		Mcp_Event_Dispatcher::set_interceptor( function ( string $name, array $payload ) {
 			$this->emitted_events[ $name ][] = $payload;
 		} );
@@ -51,7 +50,6 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		unset( $_SERVER[ Pro_Feature_Suggestion_Tracker::SESSION_ID_SERVER_KEY ] );
 		remove_filter( 'elementor/mcp/gated_ability_ids', '__return_empty_array' );
 		Mcp_Event_Dispatcher::set_interceptor( null );
-		Pro_Feature_Suggestion_Tracker::reset();
 		Mock_Pro_License_API::reset();
 
 		parent::tearDown();
