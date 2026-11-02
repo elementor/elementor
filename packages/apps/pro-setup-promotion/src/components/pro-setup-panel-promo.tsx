@@ -378,12 +378,26 @@ export function ProSetupPanelPromo() {
 		}
 	};
 
-	const onPrimaryClick = () => {
+	const onPrimaryClick = async () => {
 		if ( 'connect' === state ) {
 			trackProSetupPromotionCtaClick( state );
 			isProcessingRef.current = true;
 			setIsProcessing( true );
-			openConnectPopup();
+
+			let connectUrlForPopup = promotionConfig?.connectUrl ?? '';
+
+			try {
+				const latest = await fetchPromotionConfig();
+
+				if ( latest ) {
+					applyPromotionConfig( latest );
+					connectUrlForPopup = latest.connectUrl ?? connectUrlForPopup;
+				}
+			} catch {
+				// Use the connect URL already loaded in the panel.
+			}
+
+			openConnectPopup( connectUrlForPopup );
 			return;
 		}
 

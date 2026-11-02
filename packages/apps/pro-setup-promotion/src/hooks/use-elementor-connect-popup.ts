@@ -261,8 +261,10 @@ export function useElementorConnectPopup( {
 		return true;
 	}, [ clearPopupClosedPoll, handlePopupClosed, startSetupVerifyPoll ] );
 
-	return useCallback( () => {
-		if ( ! connectUrl ) {
+	return useCallback( ( connectUrlOverride?: string ) => {
+		const activeConnectUrl = connectUrlOverride ?? connectUrl;
+
+		if ( ! activeConnectUrl ) {
 			onErrorRef.current?.();
 			return;
 		}
@@ -312,7 +314,7 @@ export function useElementorConnectPopup( {
 			$body.on( `elementor/connect/error/${ eventSuffix }`, errorHandler );
 		}
 
-		popupUrlRef.current = buildPopupUrl( connectUrl, callbackId );
+		popupUrlRef.current = buildPopupUrl( activeConnectUrl, callbackId );
 
 		if ( tryOpenPopupWindow() ) {
 			return;
