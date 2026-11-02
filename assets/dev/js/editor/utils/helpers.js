@@ -84,13 +84,61 @@ module.exports = {
 	},
 
 	fetchInlineSvg( svgUrl, callback = false ) {
-		fetch( svgUrl )
-			.then( ( response ) => response.ok ? response.text() : '' )
-			.then( ( data ) => {
-				if ( callback ) {
-					callback( data );
-				}
-			} );
+		const done = ( data ) => callback && callback( data );
+		let url;
+
+		try {
+			url = new URL( svgUrl, window.location.href );
+		} catch ( e ) {
+			return done( '' );
+		}
+
+		if ( ! this.isAllowedInlineSvgUrl( url ) ) {
+			return done( '' );
+		}
+
+		fetch( url.href, { credentials: 'same-origin' } )
+			.then( ( response ) => ( response.ok ? response.text() : '' ) )
+			.then( ( text ) => done( this.sanitizeInlineSvg( text ) ) )
+			.catch( () => done( '' ) );
+	},
+
+	isAllowedInlineSvgUrl( url ) {
+		if ( ! [ 'http:', 'https:' ].includes( url.protocol ) ) {
+			return false;
+		}
+
+		if ( url.origin === window.location.origin ) {
+			return true;
+		}
+
+		const uploadsUrl = globalThis.elementor?.config?.urls?.upload;
+
+		if ( ! uploadsUrl ) {
+			return false;
+		}
+
+		try {
+			return url.origin === new URL( uploadsUrl, window.location.href ).origin;
+		} catch ( e ) {
+			return false;
+		}
+	},
+
+	sanitizeInlineSvg( text ) {
+		if ( ! text ) {
+			return '';
+		}
+
+		const clean = DOMPurify.sanitize( text, { USE_PROFILES: { svg: true, svgFilters: true } } );
+		const doc = new DOMParser().parseFromString( clean, 'image/svg+xml' );
+		const root = doc.documentElement;
+
+		if ( doc.querySelector( 'parsererror' ) || ! root || 'svg' !== root.nodeName.toLowerCase() ) {
+			return '';
+		}
+
+		return root.outerHTML;
 	},
 
 	getInlineSvg( value, view ) {
@@ -174,7 +222,8 @@ module.exports = {
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
 			if ( 'panel' === returnType ) {
-				return '<img src="' + iconValue.url + '">';
+				const iconUrl = iconValue && 'string' === typeof iconValue.url ? _.escape( iconValue.url ) : '';
+				return '<img src="' + iconUrl + '">';
 			}
 			return {
 				rendered: true,
@@ -185,7 +234,8 @@ module.exports = {
 		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
-				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
+				const iconClass = 'string' === typeof iconValue ? _.escape( iconValue ) : '';
+				return '<' + tag + ' class="' + iconClass + '"></' + tag + '>';
 			}
 			const tagUniqueID = tag + elementorCommon.helpers.getUniqueId();
 			view.addRenderAttribute( tagUniqueID, attributes );
@@ -354,7 +404,7 @@ module.exports = {
 			icon = '';
 		if ( fallbackControl && ! migrated ) {
 			social = fallbackControl.replace( 'fa fa-', '' );
-			icon = '<i class="' + fallbackControl + '"></i>';
+			icon = '<i class="' + _.escape( fallbackControl ) + '"></i>';
 		} else if ( iconsControl.value && 'svg' !== iconsControl.library ) {
 			social = iconsControl.value.split( ' ' )[ 1 ];
 			if ( ! social ) {

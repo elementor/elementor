@@ -392,6 +392,8 @@ class Documents_Manager {
 			$update_title = true;
 		}
 
+		$meta_data = $this->remove_bypassed_builder_meta( $meta_data );
+
 		$meta_data['_elementor_edit_mode'] = 'builder';
 
 		// Save the type as-is for plugins that hooked at `wp_insert_post`.
@@ -426,6 +428,12 @@ class Documents_Manager {
 		$document->save( [] );
 
 		return $document;
+	}
+
+	private function remove_bypassed_builder_meta( array $meta_data ): array {
+		unset( $meta_data[ Document::ELEMENTOR_DATA_META_KEY ] );
+
+		return $meta_data;
 	}
 
 	/**

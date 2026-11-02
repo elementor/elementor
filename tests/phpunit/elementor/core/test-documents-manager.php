@@ -215,4 +215,30 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 		$updated_document = Plugin::$instance->documents->get($post_id)->get_elements_data();
 		$this->assertStringStartsWith(get_site_url(), $updated_document[0]['settings']['background_image']['url']);
 	}
+
+	public function test_create__drops_caller_elementor_data_and_keeps_other_meta() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$document = Plugin::$instance->documents->create(
+			'post',
+			[
+				'post_title' => 'Meta gate',
+				'post_status' => 'draft',
+			],
+			[
+				Document::ELEMENTOR_DATA_META_KEY => '[{"html":"\\\\u003cmarker\\\\u003e"}]',
+				'_elementor_source' => 'post',
+				'_elementor_component_uid' => 'uid-1',
+			]
+		);
+
+		// Assert
+		$post_id = $document->get_main_id();
+		$this->assertSame( '', get_post_meta( $post_id, Document::ELEMENTOR_DATA_META_KEY, true ) );
+		$this->assertSame( 'post', get_post_meta( $post_id, '_elementor_source', true ) );
+		$this->assertSame( 'uid-1', get_post_meta( $post_id, '_elementor_component_uid', true ) );
+		$this->assertSame( 'builder', get_post_meta( $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, true ) );
+	}
 }
