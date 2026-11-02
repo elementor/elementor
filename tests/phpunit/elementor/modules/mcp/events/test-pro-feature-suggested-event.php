@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Mcp\Events\Pro_Feature_Suggestion_Tracker;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -172,6 +173,22 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$events = $this->suggestion_events();
 		$this->assertCount( 1, $events );
 		$this->assertSame( [ Forms_Pro_Features_Discovery::PRO_FEATURE ], $events[0]['pro_features'] );
+	}
+
+	public function test_flush__falls_back_to_empty_values_when_the_error_has_no_data() {
+		// Arrange
+		$error_without_data = new \WP_Error( Pro_Features_Discovery::ERROR_CODE, 'Pro feature required.' );
+
+		// Act
+		Pro_Feature_Suggestion_Tracker::flush( 'elementor/any-tool', $error_without_data );
+
+		// Assert
+		$events = $this->suggestion_events();
+		$this->assertCount( 1, $events );
+		$this->assertSame( '', $events[0]['pro_feature'] );
+		$this->assertSame( [], $events[0]['pro_features'] );
+		$this->assertSame( '', $events[0]['upgrade_url'] );
+		$this->assertArrayNotHasKey( 'document_types', $events[0] );
 	}
 
 	public function test_execute_guarded__does_not_leak_suggestions_into_the_next_call() {
