@@ -165,6 +165,21 @@
     }
 }
 
+#adminmenu .wp-submenu li.elementor-submenu-has-divider {
+	position: relative;
+	padding-block-start: 17px;
+
+	& > a::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 8px;
+		inset-inline: 12px;
+		border-block-start: 1px solid currentColor;
+		opacity: 0.4;
+		pointer-events: none;
+	}
+}
+
 #menu-posts-elementor_library {
 	display: none !important;
 }
