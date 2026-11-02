@@ -1,0 +1,124 @@
+name: Allure Report
+
+on:
+  workflow_call:
+    inputs:
+      php_version:
+        description: 'PHP version suffix for artifact names and report path. Empty uses the default Playwright run.'
+        type: string
+        required: false
+        default: ''
+      wp_core:
+        description: 'WordPress core version suffix for artifact names and report path. Empty uses the default Playwright run.'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  id-token: write
+  actions: read
+
+jobs:
+  build-report:
+    runs-on: ubuntu-22.04
+    name: Merge reports and build Allure report
+    env:
+      RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+      REPORT_PATH: ${{ github.ref == 'refs/heads/main' && inputs.php_version == '' && 'main' || format('{0}{1}{2}', github.run_id, inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+    steps:
+      - name: Pull repo
+        uses: actions/checkout@v6
+
+      - name: Download allure data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: allure-results${{ env.RUN_SUFFIX }}-*
+          path: allure-results
+          merge-multiple: true
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+
+      - name: Restore dependency cache
+        uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
+
+      - name: GCP Authentication
+        id: 'auth'
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: 'projects/${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+          service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+
+      - name: Display GCP bucket information
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
+          echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ env.REPORT_PATH }}"
+
+      - name: Install gcloud CLI
+        if: env.REPORT_PATH == 'main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Download previous report for main branch
+        if: env.REPORT_PATH == 'main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        run: |
+          mkdir -p previous-report
+          echo "Copying main/history trend data"
+          gsutil -m cp -r "gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main/history" "previous-report/" || echo "No previous report history found, skipping."
+
+      - name: Copy history for main branch
+        if: env.REPORT_PATH == 'main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        run: |
+          if [ -d "previous-report/history" ]; then
+            mkdir -p allure-results/history
+            cp -r previous-report/history/* allure-results/history/
+          fi
+
+      - name: Copy Allure categories config
+        run: |
+          if [ -d "./allure-results" ]; then
+            cp tests/playwright/allure-categories.json allure-results/categories.json
+          fi
+
+      - name: Build test report
+        run: |
+          if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
+            node .github/scripts/retag-playwright-traces.js ./allure-results
+            npx allure generate --clean allure-results -o allure-report || mkdir -p allure-report
+          else
+            echo "No allure-results found. Creating empty report directory."
+            mkdir -p allure-report
+          fi
+
+      - uses: actions/upload-artifact@v7
+        name: Upload generated Allure report
+        with:
+          name: allure-report${{ env.RUN_SUFFIX }}
+          path: allure-report
+          if-no-files-found: ignore
+          retention-days: 1
+
+      - name: Upload Allure report to GCP bucket
+        if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: google-github-actions/upload-cloud-storage@v3
+        with:
+          path: allure-report/
+          destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ env.REPORT_PATH }}
+          parent: false
+          glob: '**'
+
+      - name: Add Allure report link to summary
+        if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          REPORT_LABEL: ${{ inputs.php_version && format(' (PHP {0})', inputs.php_version) || '' }}${{ inputs.wp_core && format(' (WP {0})', inputs.wp_core) || '' }}
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[View Allure Report${REPORT_LABEL}](https://elementor-allure-tests.prod.builder.elementor.red/${REPORT_PATH}/)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
