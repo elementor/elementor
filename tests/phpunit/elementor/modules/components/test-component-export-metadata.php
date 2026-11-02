@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Component_Export_Metadata extends Elementor_Test_Base {
 
+	const ARCHIVED_AT_TIMESTAMP = 1761900000;
+
 	private string $original_atomic_widgets_experiment_state;
 
 	public function setUp(): void {
@@ -74,8 +76,14 @@ class Test_Component_Export_Metadata extends Elementor_Test_Base {
 			],
 		];
 
+		$archived = [
+			'is_archived' => true,
+			'archived_at' => self::ARCHIVED_AT_TIMESTAMP,
+		];
+
 		$document->update_meta( Component_Document::COMPONENT_UID_META_KEY, 'test-uid-123' );
 		$document->update_json_meta( Component_Document::OVERRIDABLE_PROPS_META_KEY, $overridable_props );
+		$document->update_json_meta( Component_Document::ARCHIVED_META_KEY, $archived );
 
 		// Act.
 		$metadata = $document->get_export_data()['metadata'];
@@ -83,6 +91,7 @@ class Test_Component_Export_Metadata extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 'test-uid-123', $metadata[ Component_Document::COMPONENT_UID_META_KEY ] );
 		$this->assertSame( $overridable_props, $metadata[ Component_Document::OVERRIDABLE_PROPS_META_KEY ] );
+		$this->assertSame( $archived, $metadata[ Component_Document::ARCHIVED_META_KEY ] );
 	}
 
 	public function test_get_export_data__excludes_non_whitelisted_private_meta() {
@@ -91,14 +100,12 @@ class Test_Component_Export_Metadata extends Elementor_Test_Base {
 		$document = $this->create_component();
 
 		$document->update_json_meta( Component_Document::VARIANTS_META_KEY, [ 'variants' => [] ] );
-		$document->update_json_meta( Component_Document::ARCHIVED_META_KEY, [ 'is_archived' => true ] );
 
 		// Act.
 		$metadata = $document->get_export_data()['metadata'];
 
 		// Assert.
 		$this->assertArrayNotHasKey( Component_Document::VARIANTS_META_KEY, $metadata );
-		$this->assertArrayNotHasKey( Component_Document::ARCHIVED_META_KEY, $metadata );
 		$this->assertArrayNotHasKey( '_elementor_data', $metadata );
 	}
 
@@ -113,6 +120,7 @@ class Test_Component_Export_Metadata extends Elementor_Test_Base {
 		// Assert.
 		$this->assertArrayNotHasKey( Component_Document::COMPONENT_UID_META_KEY, $metadata );
 		$this->assertArrayNotHasKey( Component_Document::OVERRIDABLE_PROPS_META_KEY, $metadata );
+		$this->assertArrayNotHasKey( Component_Document::ARCHIVED_META_KEY, $metadata );
 	}
 
 	private function create_component(): Component_Document {
