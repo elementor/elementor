@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Utils;
 
+use Elementor\Modules\Mcp\Events\Pro_Feature_Suggestion_Tracker;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,12 +14,13 @@ class Pro_Features_Discovery {
 	const ERROR_CODE = 'pro_license_required';
 
 	/**
+	 * @param string $pro_feature Feature slug reported in analytics, matching the upgrade go-link slug.
 	 * @param string $value       What Pro would do for the user's request.
 	 * @param string $free_path   Native Free alternative the agent can still build. Empty when none exists.
 	 * @param string $default_url Tool-specific go link, used unless the promotion filter returns an allowed URL.
 	 * @param array  $extra_data  Additional error data.
 	 */
-	public static function error( string $value, string $free_path, string $default_url, array $extra_data = [] ): \WP_Error {
+	public static function error( string $pro_feature, string $value, string $free_path, string $default_url, array $extra_data = [] ): \WP_Error {
 		$upgrade_url = Mcp_Module::get_promotion_upgrade_url( $default_url );
 
 		$message_parts = [
@@ -28,17 +30,22 @@ class Pro_Features_Discovery {
 			self::get_shared_rules(),
 		];
 
-		return new \WP_Error(
+		$error = new \WP_Error(
 			self::ERROR_CODE,
 			implode( ' ', array_filter( $message_parts ) ),
 			array_merge(
 				[
 					'status' => \WP_Http::FORBIDDEN,
 					'upgrade_url' => $upgrade_url,
+					'pro_feature' => $pro_feature,
 				],
 				$extra_data
 			)
 		);
+
+		Pro_Feature_Suggestion_Tracker::record( $error );
+
+		return $error;
 	}
 
 	private static function get_shared_rules(): string {

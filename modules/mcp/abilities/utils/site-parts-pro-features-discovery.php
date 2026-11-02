@@ -3,14 +3,19 @@
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Site_Parts_Pro_Features_Discovery {
+class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery {
 
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-upgrade-site-parts/';
+
+	const PRO_FEATURE = 'site-parts';
+
+	const WIDGET_TYPE_PREFIX = 'theme-';
 
 	const MESSAGES = [
 		'opener' => 'Site parts need Elementor Pro, which isn\'t installed, so nothing was created.',
@@ -43,8 +48,17 @@ class Site_Parts_Pro_Features_Discovery {
 		],
 	];
 
+	public static function supports_widget( string $widget_type ): bool {
+		return ! Utils::has_pro() && str_starts_with( $widget_type, self::WIDGET_TYPE_PREFIX );
+	}
+
 	public static function for_manage( array $operations ): \WP_Error {
 		$requested_types = array_filter( array_column( $operations, 'type' ), 'is_string' );
+
+		if ( array_intersect( $requested_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() ) ) {
+			return Woocommerce_Pro_Features_Discovery::for_site_parts( $requested_types );
+		}
+
 		$matches = [];
 
 		foreach ( self::MESSAGES['groups'] as $group ) {
@@ -61,10 +75,16 @@ class Site_Parts_Pro_Features_Discovery {
 		$matches = $matches ? $matches : [ self::MESSAGES['overview'] ];
 
 		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
 			implode( ' ', array_merge( [ self::MESSAGES['opener'] ], array_column( $matches, 'value' ) ) ),
 			implode( ' ', array_column( $matches, 'free_path' ) ),
-			self::UPGRADE_URL
+			self::UPGRADE_URL,
+			[ 'document_types' => array_values( array_unique( $requested_types ) ) ]
 		);
+	}
+
+	public static function for_widget(): \WP_Error {
+		return self::for_manage( [] );
 	}
 
 	public static function for_list(): array {
@@ -72,6 +92,8 @@ class Site_Parts_Pro_Features_Discovery {
 	}
 
 	public static function get_types(): array {
-		return array_merge( ...array_column( self::MESSAGES['groups'], 'types' ) );
+		$group_types = array_merge( ...array_column( self::MESSAGES['groups'], 'types' ) );
+
+		return array_merge( $group_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() );
 	}
 }

@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Schema;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,7 +20,7 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Site Parts', 'elementor' ),
-			Prompt_Loader::load( 'manage-site-parts' ),
+			$this->get_description(),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
@@ -33,6 +34,16 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 			fn() => current_user_can( 'edit_posts' ),
 			Site_Parts_Schema::manage_input()
 		);
+	}
+
+	private function get_description(): string {
+		$description = Prompt_Loader::load( 'manage-site-parts' );
+
+		if ( ! Woocommerce_Pro_Features_Discovery::is_active() ) {
+			return $description;
+		}
+
+		return $description . ' ' . Woocommerce_Pro_Features_Discovery::get_description_notice();
 	}
 
 	public function execute( $input = [] ) {
