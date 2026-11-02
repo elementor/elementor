@@ -125,17 +125,19 @@ class Module extends BaseModule {
 	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
 	 */
 	public static function prepare_imported_elements( array $elements, array $post_ids_map ): array {
-		return self::is_import_export_supported()
-			? Remap_Component_Instance_Ids::apply( $elements, $post_ids_map )
-			: Strip_Component_Instances::apply( $elements );
+		if ( ! self::is_import_export_supported() || empty( $post_ids_map ) ) {
+			return Strip_Component_Instances::apply( $elements );
+		}
+
+		return Remap_Component_Instance_Ids::apply( $elements, $post_ids_map );
 	}
 
 	/**
-	 * Post types that must be excluded from the import/export runners when components
-	 * round-trip is disabled. Same gating as `prepare_imported_elements()`.
+	 * Components are owned by the dedicated `components` runners and should never be
+	 * handled by the generic `elementor-content` runners.
 	 */
 	public static function excluded_import_export_post_types(): array {
-		return self::is_import_export_supported() ? [] : [ Component_Document::TYPE ];
+		return [ Component_Document::TYPE ];
 	}
 
 	/**
