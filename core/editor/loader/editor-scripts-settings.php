@@ -47,6 +47,9 @@ class Editor_Scripts_Settings {
 			'tabs' => Plugin::$instance->controls_manager->get_tabs(),
 			'controls' => Plugin::$instance->controls_manager->get_controls_data(),
 			'elements' => Plugin::$instance->elements_manager->get_element_types_config(),
+			'urls' => [
+				'upload' => wp_upload_dir()['baseurl'],
+			],
 			'globals' => [
 				'defaults_enabled' => [
 					'colors' => $kits_manager->is_custom_colors_enabled(),
