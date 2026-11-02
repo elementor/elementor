@@ -179,13 +179,13 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act.
-		$result = $this->ability->execute( [ 'widget_type' => [ 'woocommerce-cart', 'wc-archive-products' ] ] );
+		$result = $this->ability->execute( [ 'widget_type' => [ 'woocommerce-cart', 'woocommerce-my-account' ] ] );
 
 		// Assert.
 		$this->assertIsArray( $result );
 		$this->assertSame( [], $result['schemas'] );
 		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['woocommerce-cart']['message'] );
-		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['wc-archive-products']['message'] );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['woocommerce-my-account']['message'] );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {
