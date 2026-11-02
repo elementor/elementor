@@ -48,8 +48,6 @@ class Secondary_Bar_Handler {
 			ELEMENTOR_VERSION,
 			true
 		);
-
-		wp_set_script_translations( 'editor-one-secondary-bar', 'elementor' );
 	}
 
 	public function render(): void {

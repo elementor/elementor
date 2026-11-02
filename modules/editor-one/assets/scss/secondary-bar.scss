@@ -13,14 +13,9 @@ $e-admin-secondary-bar-text-active: #0c0d0e;
 $e-admin-secondary-bar-line: #d5d8dc;
 $e-admin-secondary-bar-focus: #0c0d0e;
 
-@mixin e-admin-secondary-bar-forced-colors {
+.e-admin-secondary-bar {
 	background-color: $e-admin-secondary-bar-background;
 	color: $e-admin-secondary-bar-text;
-}
-
-.e-admin-secondary-bar {
-	@include e-admin-secondary-bar-forced-colors;
-
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: stretch;
@@ -34,14 +29,6 @@ $e-admin-secondary-bar-focus: #0c0d0e;
 	font-size: $e-admin-secondary-bar-font-size;
 	font-weight: 400;
 	line-height: 1.4;
-
-	a,
-	button,
-	summary {
-		@include e-admin-secondary-bar-forced-colors;
-
-		color: $e-admin-secondary-bar-text;
-	}
 }
 
 body.e-has-secondary-bar:has(#editor-one-top-bar + .e-admin-secondary-bar) #wpcontent {
@@ -218,13 +205,6 @@ body.e-has-secondary-bar {
 	.e-admin-secondary-bar__addons-toggle,
 	.e-admin-secondary-bar__finder {
 		transition: none;
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	.e-admin-secondary-bar,
-	.e-admin-secondary-bar__addons-menu {
-		@include e-admin-secondary-bar-forced-colors;
 	}
 }
 

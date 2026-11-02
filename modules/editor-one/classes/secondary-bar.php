@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -88,24 +86,18 @@ class Secondary_Bar {
 	}
 
 	public function get_addons( Menu_Data_Provider $provider ): array {
-		$items = $provider->get_level4_items()[ Menu_Config::THIRD_PARTY_GROUP_ID ] ?? [];
 		$addons = [];
-		$seen_labels = [];
 
-		foreach ( $items as $slug => $item ) {
-			$addon = $this->prepare_addon( $provider, $item, $slug, $seen_labels );
+		foreach ( $provider->get_level4_flyout_data()[ Menu_Config::THIRD_PARTY_GROUP_ID ]['items'] ?? [] as $item ) {
+			$label = $this->plain_label( $item['label'] );
 
-			if ( empty( $addon ) ) {
-				continue;
+			if ( '' !== $label ) {
+				$addons[] = [
+					'label' => $label,
+					'url' => $item['url'],
+				];
 			}
-
-			$seen_labels[ strtolower( $addon['label'] ) ] = true;
-			$addons[] = $addon;
 		}
-
-		usort( $addons, function ( array $first, array $second ): int {
-			return $first['position'] <=> $second['position'];
-		} );
 
 		return $addons;
 	}
@@ -147,23 +139,5 @@ class Secondary_Bar {
 
 	private function plain_label( string $label ): string {
 		return trim( wp_strip_all_tags( html_entity_decode( $label, ENT_QUOTES, 'UTF-8' ) ) );
-	}
-
-	private function prepare_addon( Menu_Data_Provider $provider, Menu_Item_Interface $item, string $slug, array $seen_labels ): array {
-		if ( ! $provider->is_item_accessible( $item ) ) {
-			return [];
-		}
-
-		$label = $this->plain_label( $item->get_label() );
-
-		if ( '' === $label || isset( $seen_labels[ strtolower( $label ) ] ) ) {
-			return [];
-		}
-
-		return [
-			'label' => $label,
-			'url' => $provider->resolve_item_url( $item, $slug ),
-			'position' => $item->get_position(),
-		];
 	}
 }
