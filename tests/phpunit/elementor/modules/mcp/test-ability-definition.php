@@ -51,7 +51,7 @@ class Test_Ability_Definition extends TestCase {
 		$result = $definition->to_array();
 
 		// Assert
-		$this->assertSame(
+		$this->assertEquals(
 			Ability_Definition::empty_object_input_schema(),
 			$result['input_schema']
 		);
@@ -131,6 +131,19 @@ class Test_Ability_Definition extends TestCase {
 		$schema = Ability_Definition::empty_object_input_schema();
 
 		// Assert
-		$this->assertSame( [ 'type' => 'object' ], $schema );
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertArrayHasKey( 'default', $schema );
+		$this->assertEquals( (object) [], $schema['default'] );
+	}
+
+	public function test_empty_object_input_schema__default_serializes_as_json_object() {
+		// Arrange
+		$schema = Ability_Definition::empty_object_input_schema();
+
+		// Act
+		$encoded = wp_json_encode( $schema['default'] );
+
+		// Assert
+		$this->assertSame( '{}', $encoded );
 	}
 }
