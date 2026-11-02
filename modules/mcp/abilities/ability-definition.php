@@ -37,6 +37,7 @@ class Ability_Definition {
 	public static function empty_object_input_schema(): array {
 		return [
 			'type' => 'object',
+			'default' => (object) [],
 		];
 	}
 
