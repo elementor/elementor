@@ -10,6 +10,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Widget_Schema_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -19,6 +20,8 @@ use ElementorEditorTesting\Elementor_Test_Base;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+require_once __DIR__ . '/../../../stubs/wc-stubs.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -165,6 +168,24 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertSame( Forms_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['e-form-input']['message'] );
 		$this->assertSame( Site_Parts_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['theme-post-title']['message'] );
+	}
+
+	public function test_execute__returns_woocommerce_error_for_store_widgets_without_pro() {
+		// Arrange.
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$this->act_as_admin();
+
+		// Act.
+		$result = $this->ability->execute( [ 'widget_type' => [ 'woocommerce-cart', 'woocommerce-my-account' ] ] );
+
+		// Assert.
+		$this->assertIsArray( $result );
+		$this->assertSame( [], $result['schemas'] );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['woocommerce-cart']['message'] );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['woocommerce-my-account']['message'] );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {

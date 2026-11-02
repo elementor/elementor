@@ -54,6 +54,11 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 
 	public static function for_manage( array $operations ): \WP_Error {
 		$requested_types = array_filter( array_column( $operations, 'type' ), 'is_string' );
+
+		if ( array_intersect( $requested_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() ) ) {
+			return Woocommerce_Pro_Features_Discovery::for_site_parts( $requested_types );
+		}
+
 		$matches = [];
 
 		foreach ( self::MESSAGES['groups'] as $group ) {
@@ -87,6 +92,8 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 	}
 
 	public static function get_types(): array {
-		return array_merge( ...array_column( self::MESSAGES['groups'], 'types' ) );
+		$group_types = array_merge( ...array_column( self::MESSAGES['groups'], 'types' ) );
+
+		return array_merge( $group_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() );
 	}
 }
