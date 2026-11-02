@@ -47,6 +47,10 @@
 	display: none;
 }
 
+#elementor-panel-elements-notice-area:not(:empty) {
+	padding-block-end: 4px;
+}
+
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 }

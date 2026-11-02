@@ -6,6 +6,7 @@ import {
 	HTTP_TOO_MANY_REQUESTS,
 	PRIORITY_REQUIRED,
 	SCAN_FAILURE_REASON_BLOCKED,
+	SCAN_FAILURE_REASON_LOCAL,
 	SCORE_TIER_HIGH,
 	SCORE_TIER_LOW,
 	SCORE_TIER_MID,
@@ -25,6 +26,7 @@ jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 
 import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from 'elementor/modules/agents/assets/js/admin/api';
 
+const HTTP_UNPROCESSABLE_ENTITY = 422;
 const SITE_DOMAIN = 'example.com';
 const AGENT_ACCESS_URL = 'https://example.com/wp-admin/admin.php?page=elementor-agent-access';
 const SCAN_DURATION_MS = getProgressScanGateDurationMs();
@@ -671,6 +673,21 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
 		expect( screen.getByText( /A firewall or security plugin/ ) ).toBeTruthy();
+	} );
+
+	it( 'explains that the site is not public yet when the scan is rejected for a local site', async () => {
+		// Arrange
+		runSiteScan.mockImplementation( () => Promise.reject( Object.assign( new Error( 'Local' ), { status: HTTP_UNPROCESSABLE_ENTITY, reason: SCAN_FAILURE_REASON_LOCAL } ) ) );
+		renderScanner();
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS + SCANNER_MOTION.errorProgressPauseMs );
+
+		// Assert
+		expect( screen.getByText( 'Your site isn\'t public yet' ) ).toBeTruthy();
+		expect( screen.getByText( /Come back and run the check once the site is live/ ) ).toBeTruthy();
+		expect( screen.queryByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeNull();
 	} );
 
 	it( 'opens on the last stored report instead of the first-run pitch', () => {

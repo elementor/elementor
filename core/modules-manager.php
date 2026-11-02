@@ -109,6 +109,7 @@ class Modules_Manager {
 			'web-cli',
 			'promotions',
 			'pro-install',
+			'pro-setup-promotion',
 			'notes',
 			'performance-lab',
 			'lazyload',
