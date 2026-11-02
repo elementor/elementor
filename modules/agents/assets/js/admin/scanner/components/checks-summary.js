@@ -10,8 +10,6 @@ import { REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION } fro
 import { CheckTableHeader, TableCard } from './fix-table';
 
 export const ChecksSummary = ( { checks, activationFixes, isExpanded, isLoading, onToggle, children } ) => {
-	const otherFixes = Math.max( 0, checks.length - activationFixes );
-
 	return (
 		<TableCard>
 			<Stack
@@ -38,10 +36,10 @@ export const ChecksSummary = ( { checks, activationFixes, isExpanded, isLoading,
 					</Box>
 					<Typography variant="subtitle2" color="text.primary">
 						{ sprintf(
-							/* Translators: 1: Checks turned on by activating Agent Ready, 2: Checks that still need a manual fix. */
-							__( 'Checks to fix. Activate fixes %1$d of them. The other %2$d need you or Angie.', 'elementor' ),
+							/* Translators: 1: Number of failed checks, 2: Failed checks fixed by activating agent access settings. */
+							__( '%1$d failed checks to be fixed. Activating agent access settings fixes %2$d of them, the others require Angie or a manual fix.', 'elementor' ),
+							checks.length,
 							activationFixes,
-							otherFixes,
 						) }
 					</Typography>
 				</Stack>

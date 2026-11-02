@@ -77,6 +77,30 @@ describe( 'createDomRenderer', () => {
 			context: { url: 'javascript:alert(123)' },
 			expected: '',
 		},
+		{
+			title: 'alphanumeric element id in an alpine expression',
+			template: `x-data="{% if (id | e( 'js_identifier' )) != '' %}eTabs{{ id | e( 'js_identifier' ) }}{% else %}{}{% endif %}"`,
+			context: { id: 'tabscontainer' },
+			expected: 'x-data="eTabstabscontainer"',
+		},
+		{
+			title: 'element id with underscore in an alpine expression',
+			template: `x-data="{% if (id | e( 'js_identifier' )) != '' %}eForm{{ id | e( 'js_identifier' ) }}{% else %}{}{% endif %}"`,
+			context: { id: 'test_atomic_form_instance' },
+			expected: 'x-data="eFormtest_atomic_form_instance"',
+		},
+		{
+			title: 'element id that is a javascript expression',
+			template: `x-data="{% if (id | e( 'js_identifier' )) != '' %}eTabs{{ id | e( 'js_identifier' ) }}{% else %}{}{% endif %}"`,
+			context: { id: '=window.alert(document.domain)' },
+			expected: 'x-data="{}"',
+		},
+		{
+			title: 'element id with a hyphen',
+			template: `x-data="{% if (id | e( 'js_identifier' )) != '' %}eBackgroundVideo{{ id | e( 'js_identifier' ) }}{% else %}{}{% endif %}"`,
+			context: { id: 'foo-alert(1)' },
+			expected: 'x-data="{}"',
+		},
 	] )( 'should render template with $title', async ( { template, context, expected } ) => {
 		// Arrange.
 		const domRenderer = createDomRenderer();
