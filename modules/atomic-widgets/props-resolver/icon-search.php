@@ -262,6 +262,10 @@ class Icon_Search {
 		) ) );
 	}
 
+	public static function is_searchable_query( string $query ): bool {
+		return '' !== self::normalize( $query );
+	}
+
 	private static function normalize( string $value ): string {
 		return trim( (string) preg_replace( '/[^a-z0-9]+/', '-', strtolower( $value ) ), '-' );
 	}

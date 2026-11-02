@@ -83,7 +83,7 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 		$truncated_packs = $this->get_truncated_pack_names( $response );
 
-		if ( $truncated_packs && $this->has_searchable_query( $response ) ) {
+		if ( $truncated_packs && $this->lacks_strong_match( $response ) ) {
 			$response['llm_instructions'] = sprintf( self::TRUNCATED_PACK_HINT, implode( ', ', $truncated_packs ) );
 		} elseif ( $this->has_no_matches( $response ) ) {
 			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
@@ -93,20 +93,26 @@ class Find_Icons_Ability extends Abstract_Ability {
 	}
 
 	private function get_truncated_pack_names( array $response ): array {
-		$names = array_map(
-			static fn( $name ) => substr( sanitize_key( (string) $name ), 0, 40 ),
-			$response['truncated_custom_libraries'] ?? []
-		);
+		$names = array_map( 'strval', $response['truncated_custom_libraries'] ?? [] );
 
 		return array_values( array_filter( $names, static fn( $name ) => '' !== $name ) );
 	}
 
 	/**
 	 * A query without Latin letters or digits can never match, so a truncated pack is not the reason it found nothing.
+	 * A name or alias match is trusted; anything weaker could be hiding a better icon past the truncation limit.
 	 */
-	private function has_searchable_query( array $response ): bool {
+	private function lacks_strong_match( array $response ): bool {
+		$strong = [ Icon_Search::MATCHED_ON_NAME, Icon_Search::MATCHED_ON_ALIAS ];
+
 		foreach ( $response['results'] ?? [] as $result ) {
-			if ( preg_match( '/[a-z0-9]/i', (string) ( $result['query'] ?? '' ) ) ) {
+			if ( ! Icon_Search::is_searchable_query( (string) ( $result['query'] ?? '' ) ) ) {
+				continue;
+			}
+
+			$matched_on = array_column( $result['matches'] ?? [], 'matched_on' );
+
+			if ( ! array_intersect( $strong, $matched_on ) ) {
 				return true;
 			}
 		}

@@ -195,6 +195,15 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'libraries', $browsing );
 	}
 
+	public function test_is_searchable_query__requires_latin_letters_or_digits() {
+		// Assert.
+		$this->assertTrue( Icon_Search::is_searchable_query( 'Add to cart' ) );
+		$this->assertTrue( Icon_Search::is_searchable_query( '404' ) );
+		$this->assertFalse( Icon_Search::is_searchable_query( 'корзина' ) );
+		$this->assertFalse( Icon_Search::is_searchable_query( '!!!' ) );
+		$this->assertFalse( Icon_Search::is_searchable_query( '' ) );
+	}
+
 	private function search( array $args ): array {
 		return Icon_Search::search( $args )['results'];
 	}
