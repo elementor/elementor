@@ -20,6 +20,11 @@ class Form_Structure_Validator {
 		self::RECAPTCHA_SCORE_ELEMENT_TYPE => 'Score-based reCAPTCHA atoms',
 	];
 
+	const FORM_MESSAGE_ELEMENT_TYPES = [
+		'e-form-success-message',
+		'e-form-error-message',
+	];
+
 	const FORM_FIELD_ELEMENT_TYPES = [
 		'e-form-input',
 		'e-form-textarea',
@@ -59,18 +64,6 @@ class Form_Structure_Validator {
 			implode( ' ', $errors ),
 			[ 'status' => \WP_Http::BAD_REQUEST ]
 		);
-	}
-
-	public function contains_form_elements( \DOMDocument $dom ): bool {
-		$form_tags = array_merge( [ self::FORM_ELEMENT_TYPE ], self::FORM_FIELD_ELEMENT_TYPES );
-
-		foreach ( $this->xml_parser->iterate_all_descendants( $dom ) as $node ) {
-			if ( in_array( $this->xml_parser->get_tag_name( $node ), $form_tags, true ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -223,7 +216,7 @@ class Form_Structure_Validator {
 		$errors = [];
 		$xpath = new \DOMXPath( $dom );
 
-		foreach ( $xpath->query( '//e-form-success-message|//e-form-error-message' ) as $node ) {
+		foreach ( $xpath->query( '//' . implode( '|//', self::FORM_MESSAGE_ELEMENT_TYPES ) ) as $node ) {
 			if ( ! $node instanceof \DOMElement ) {
 				continue;
 			}
