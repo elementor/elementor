@@ -1,4 +1,4 @@
-import { sanitizeUrl, validateHTMLTag } from 'elementor-editor-utils/helpers';
+import helpers, { sanitizeUrl, validateHTMLTag } from 'elementor-editor-utils/helpers';
 
 const TEST_ALLOWED_HTML_WRAPPER_TAGS = [ 'a', 'div', 'form', 'span' ];
 
@@ -58,5 +58,160 @@ describe( 'elementor.helpers.validateHTMLTag', () => {
 		delete global.elementorCommon;
 
 		expect( validateHTMLTag( 'a' ) ).toBe( 'div' );
+	} );
+} );
+
+describe( 'elementor.helpers.sanitizeInlineSvg', () => {
+	test( 'returns empty string for empty input', () => {
+		expect( helpers.sanitizeInlineSvg( '' ) ).toBe( '' );
+	} );
+
+	test( 'keeps a simple svg root', () => {
+		const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>';
+		const result = helpers.sanitizeInlineSvg( svg );
+
+		expect( result.toLowerCase() ).toContain( '<svg' );
+		expect( result.toLowerCase() ).toContain( 'rect' );
+	} );
+
+	test( 'strips script and event handlers from svg markup', () => {
+		const svg = '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><rect onload="alert(1)" width="1" height="1"/></svg>';
+		const result = helpers.sanitizeInlineSvg( svg );
+
+		expect( result.toLowerCase() ).not.toContain( 'script' );
+		expect( result.toLowerCase() ).not.toContain( 'onload' );
+		expect( result.toLowerCase() ).not.toContain( 'alert' );
+	} );
+
+	test( 'rejects html that is not an svg document', () => {
+		expect( helpers.sanitizeInlineSvg( '<img src=x onerror=alert(1)>' ) ).toBe( '' );
+	} );
+} );
+
+describe( 'elementor.helpers.fetchInlineSvg', () => {
+	const originalFetch = global.fetch;
+
+	beforeEach( () => {
+		global.fetch = jest.fn();
+		delete global.elementor;
+	} );
+
+	afterEach( () => {
+		global.fetch = originalFetch;
+		delete global.elementor;
+	} );
+
+	test( 'does not fetch data urls', ( done ) => {
+		helpers.fetchInlineSvg( 'data:text/html,%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E', ( data ) => {
+			expect( data ).toBe( '' );
+			expect( global.fetch ).not.toHaveBeenCalled();
+			done();
+		} );
+	} );
+
+	test( 'does not fetch off-site https urls', ( done ) => {
+		helpers.fetchInlineSvg( 'https://evil.example/icon.svg', ( data ) => {
+			expect( data ).toBe( '' );
+			expect( global.fetch ).not.toHaveBeenCalled();
+			done();
+		} );
+	} );
+
+	test( 'sanitizes same-origin svg responses', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><circle r="1"/></svg>' ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( global.fetch ).toHaveBeenCalledWith( svgUrl, { credentials: 'same-origin' } );
+			expect( data.toLowerCase() ).toContain( '<svg' );
+			expect( data.toLowerCase() ).not.toContain( 'script' );
+			expect( data.toLowerCase() ).not.toContain( 'alert' );
+			done();
+		} );
+	} );
+
+	test( 'allows the configured uploads origin', ( done ) => {
+		const uploadsOrigin = 'https://cdn.example.com';
+		global.elementor = {
+			config: {
+				urls: {
+					upload: `${ uploadsOrigin }/wp-content/uploads/`,
+				},
+			},
+		};
+		const svgUrl = `${ uploadsOrigin }/wp-content/uploads/icon.svg`;
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( '<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>' ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( global.fetch ).toHaveBeenCalledWith( svgUrl, { credentials: 'same-origin' } );
+			expect( data.toLowerCase() ).toContain( '<svg' );
+			done();
+		} );
+	} );
+
+	test( 'preserves defs and use elements', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithUse = '<svg xmlns="http://www.w3.org/2000/svg"><defs><circle id="dot" r="1"/></defs><use href="#dot" x="5" y="5"/></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithUse ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data.toLowerCase() ).toContain( '<defs' );
+			expect( data.toLowerCase() ).toContain( '<use' );
+			expect( data.toLowerCase() ).toContain( 'href="#dot"' );
+			done();
+		} );
+	} );
+
+	test( 'preserves non-breaking space characters', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithNbsp = '<svg xmlns="http://www.w3.org/2000/svg"><text>Hello&#160;World</text></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithNbsp ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data ).toContain( 'Hello' );
+			expect( data ).toContain( 'World' );
+			done();
+		} );
+	} );
+
+	test( 'strips external use hrefs', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithExternalUse = '<svg xmlns="http://www.w3.org/2000/svg"><use href="https://evil.example/sprite.svg#icon"/><use href="#safe"/></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithExternalUse ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data.toLowerCase() ).toContain( 'href="#safe"' );
+			expect( data.toLowerCase() ).not.toContain( 'evil.example' );
+			done();
+		} );
+	} );
+
+	test( 'strips xlink:href from external use', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithXlinkUse = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use xlink:href="https://evil.example/sprite.svg#icon"/></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithXlinkUse ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data.toLowerCase() ).not.toContain( 'evil.example' );
+			done();
+		} );
 	} );
 } );
