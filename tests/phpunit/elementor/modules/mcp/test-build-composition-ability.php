@@ -334,9 +334,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 		$this->assertSame( Forms_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( Forms_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_message() );
-		$this->assertStringContainsString( 'Do not retry', $result->get_error_message() );
-		$this->assertStringContainsString( 'workaround', $result->get_error_message() );
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Forms_Pro_Features_Discovery::UPGRADE_URL . ')', $result->get_error_message() );
+		$this->assertStringContainsString( 'Free path:', $result->get_error_message() );
 	}
 
 	public function form_pro_features_discovery_cases(): array {
