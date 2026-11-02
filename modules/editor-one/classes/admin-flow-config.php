@@ -46,7 +46,8 @@ class Admin_Flow_Config {
 		 * Internal while the admin flow is behind the `e_admin_navigation` experiment; the shape may change.
 		 *
 		 * - `parents`: `[ parent_slug => [ 'label' => string, 'group' => group_id, 'default_tab' => tab_id ] ]`.
-		 *   Parent order is the side-menu order. A divider separates a change of `menu_section`, or of `group` when no section is set.
+		 *   Parent order is the side-menu order. A divider separates a change of `menu_section`, or of `group` when no section is set,
+		 *   except right after Home and between Account and the upgrade item. Items outside the config are listed before Account.
 		 * - `groups`: `[ group_id => [ tab_id => [ 'parent' => parent_slug, 'items' => string[], 'routes' => array[], 'url' => callable ] ] ]`.
 		 *   `items` are menu item slugs or class names, the first accessible one is used. `routes` and `url` are optional.
 		 * - `pages`: `[ page_slug => parent_slug ]` for hidden pages that highlight a parent without a tab.

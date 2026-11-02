@@ -4,6 +4,7 @@ namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,6 +20,10 @@ class Admin_Menu_Structure {
 		'elementor-one-upgrade',
 		'go_elementor_pro',
 	];
+
+	const HOME_ALIAS_SLUG = 'admin.php?page=' . Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
+
+	const EXTRA_ITEMS_SECTION = 'extra';
 
 	private Admin_Flow_Handler $admin_flow_handler;
 
@@ -68,8 +73,35 @@ class Admin_Menu_Structure {
 		$submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] = $this->build_submenu( // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$this->get_available_parents(),
 			$existing_items,
-			$this->extract_upgrade_item( $existing_items )
+			$this->extract_upgrade_item( $existing_items ),
+			$this->get_extra_items( $existing_items )
 		);
+	}
+
+	/**
+	 * The flyout menu is not loaded with the admin flow, so pages outside of it (e.g. third-party pages)
+	 * are reachable only through these items.
+	 */
+	public function get_extra_items( array $existing_items ): array {
+		$provider = Menu_Data_Provider::instance();
+		$config = Admin_Flow_Config::get_config();
+		$known_slugs = array_merge(
+			array_keys( $config['parents'] ),
+			array_keys( $config['pages'] ),
+			self::UPGRADE_SLUGS,
+			[ self::HOME_ALIAS_SLUG ]
+		);
+
+		$items = array_filter(
+			$existing_items,
+			fn( $item ) => ! in_array( $item[2] ?? '', $known_slugs, true ) && ! $provider->is_item_already_registered( $item[2] ?? '' )
+		);
+
+		foreach ( $provider->get_level4_flyout_data()[ Menu_Config::THIRD_PARTY_GROUP_ID ]['items'] ?? [] as $third_party_item ) {
+			$items[] = [ $third_party_item['label'], Menu_Config::CAPABILITY_MANAGE_OPTIONS, $third_party_item['url'], $third_party_item['label'] ];
+		}
+
+		return array_values( $items );
 	}
 
 	public function move_below_pages( array $menu, string $item_slug, string $pages_slug ): array {
@@ -94,29 +126,26 @@ class Admin_Menu_Structure {
 		return $menu;
 	}
 
-	public function build_submenu( array $parents, array $existing_items, ?array $upgrade_item ): array {
-		$items = [];
-		$previous_section = null;
-		$last_slug = '';
+	public function build_submenu( array $parents, array $existing_items, ?array $upgrade_item, array $extra_items = [] ): array {
+		$entries = [];
 
-		foreach ( $parents as $slug => $parent ) {
-			$section = $parent['menu_section'] ?? $parent['group'] ?? '';
-			$item = $this->create_parent_item( $slug, $parent, $existing_items );
-
-			$items[] = $this->should_separate_sections( $previous_section, $section, $last_slug ) ? $this->add_divider_before( $item ) : $item;
-			$previous_section = $section;
-			$last_slug = $slug;
+		foreach ( $parents as $slug => $parent_config ) {
+			$entries[] = [ $parent_config['menu_section'] ?? $parent_config['group'] ?? '', $this->create_parent_item( $slug, $parent_config, $existing_items ) ];
 		}
 
-		if ( empty( $upgrade_item ) ) {
-			return $items;
+		$account_index = array_search( Admin_Flow_Config::PARENT_ACCOUNT, array_keys( $parents ), true );
+		$extra_entries = array_map( fn( $item ) => [ self::EXTRA_ITEMS_SECTION, $item ], $extra_items );
+
+		array_splice( $entries, false === $account_index ? count( $entries ) : $account_index, 0, $extra_entries );
+
+		if ( ! empty( $upgrade_item ) ) {
+			$last_entry = end( $entries );
+			$follows_account = $last_entry && Admin_Flow_Config::PARENT_ACCOUNT === $last_entry[1][2];
+
+			$entries[] = [ $follows_account ? $last_entry[0] : 'upgrade', $upgrade_item ];
 		}
 
-		$items[] = Admin_Flow_Config::PARENT_ACCOUNT !== $last_slug && $this->should_separate_sections( $previous_section, 'upgrade', $last_slug )
-			? $this->add_divider_before( $upgrade_item )
-			: $upgrade_item;
-
-		return $items;
+		return $this->add_dividers( $entries );
 	}
 
 	/**
@@ -147,6 +176,20 @@ class Admin_Menu_Structure {
 		);
 	}
 
+	private function add_dividers( array $entries ): array {
+		$items = [];
+		$previous_section = null;
+		$previous_slug = '';
+
+		foreach ( $entries as [ $section, $item ] ) {
+			$items[] = $this->should_separate_sections( $previous_section, $section, $previous_slug ) ? $this->add_divider_before( $item ) : $item;
+			$previous_section = $section;
+			$previous_slug = $item[2];
+		}
+
+		return $items;
+	}
+
 	private function should_separate_sections( ?string $previous_section, string $section, string $previous_slug ): bool {
 		return null !== $previous_section && $section !== $previous_section && Admin_Flow_Config::PARENT_HOME !== $previous_slug;
 	}
@@ -175,7 +218,7 @@ class Admin_Menu_Structure {
 				return $item;
 			}
 
-			if ( Admin_Flow_Config::PARENT_HOME === $slug && false !== strpos( $item_slug, 'page=' . $slug ) ) {
+			if ( Admin_Flow_Config::PARENT_HOME === $slug && self::HOME_ALIAS_SLUG === $item_slug ) {
 				$home_alias = $item;
 			}
 		}

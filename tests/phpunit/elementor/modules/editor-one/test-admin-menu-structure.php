@@ -18,6 +18,8 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 	private $original_submenu;
 
+	private ?string $page_hook = null;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -29,6 +31,10 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		$GLOBALS['submenu'] = $this->original_submenu;
+
+		if ( $this->page_hook ) {
+			remove_all_actions( $this->page_hook );
+		}
 
 		parent::tearDown();
 	}
@@ -53,15 +59,14 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 			$GLOBALS['submenu'][ $parent_slug ] = [ [ 'Templates', 'manage_options', $slug ] ];
 		}
 
-		$hook = get_plugin_page_hookname( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
+		$this->page_hook = get_plugin_page_hookname( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
 
 		if ( $has_hook ) {
-			add_action( $hook, '__return_empty_string' );
+			add_action( $this->page_hook, '__return_empty_string' );
 		}
 
 		// Act
 		$result = $this->structure->has_home_page( $slug );
-		remove_all_actions( $hook );
 
 		// Assert
 		$this->assertSame( $expected, $result );
@@ -209,6 +214,66 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 			array_column( $submenu, 2 )
 		);
 		$this->assertSame( [ 'go_elementor_pro' ], $this->get_slugs_with_divider( $submenu ) );
+	}
+
+	public function test_build_submenu__lists_extra_items_in_their_own_section_before_account() {
+		// Arrange
+		$parents = $this->parents_for( [
+			Admin_Flow_Config::PARENT_HOME,
+			Admin_Flow_Config::PARENT_TOOLS,
+			Admin_Flow_Config::PARENT_ACCOUNT,
+		] );
+		$upgrade = [ 'Upgrade', 'manage_options', 'elementor-one-upgrade' ];
+		$extra_items = [ [ 'Addon', 'manage_options', 'my-addon' ] ];
+
+		// Act
+		$submenu = $this->structure->build_submenu( $parents, [], $upgrade, $extra_items );
+
+		// Assert
+		$this->assertSame(
+			[
+				Admin_Flow_Config::PARENT_HOME,
+				Admin_Flow_Config::PARENT_TOOLS,
+				'my-addon',
+				Admin_Flow_Config::PARENT_ACCOUNT,
+				'elementor-one-upgrade',
+			],
+			array_column( $submenu, 2 )
+		);
+		$this->assertSame( [ 'my-addon', Admin_Flow_Config::PARENT_ACCOUNT ], $this->get_slugs_with_divider( $submenu ) );
+	}
+
+	public function test_get_extra_items__keeps_only_items_outside_the_admin_flow() {
+		// Arrange
+		$existing = [
+			[ 'Home', 'manage_options', Admin_Menu_Structure::HOME_ALIAS_SLUG ],
+			[ 'Editor', 'edit_posts', Menu_Config::ELEMENTOR_MENU_SLUG ],
+			[ 'Settings', 'manage_options', Admin_Flow_Config::PARENT_SETTINGS ],
+			[ 'Upgrade', 'manage_options', 'go_elementor_pro' ],
+			[ 'Addon', 'manage_options', 'my-addon' ],
+		];
+
+		// Act
+		$extra_items = $this->structure->get_extra_items( $existing );
+
+		// Assert
+		$this->assertSame( [ 'my-addon' ], array_column( $extra_items, 2 ) );
+	}
+
+	public function test_rebuild_submenu__keeps_the_submenu_for_users_without_manage_options() {
+		// Arrange
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'editor' ] ) );
+		$items = [
+			[ 'Editor', 'edit_posts', Menu_Config::ELEMENTOR_MENU_SLUG ],
+			[ 'Addon', 'edit_posts', 'my-addon' ],
+		];
+		$GLOBALS['submenu'] = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG => $items ];
+
+		// Act
+		$this->structure->rebuild_submenu();
+
+		// Assert
+		$this->assertSame( $items, $GLOBALS['submenu'][ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] );
 	}
 
 	private function get_slugs_with_divider( array $submenu ): array {
