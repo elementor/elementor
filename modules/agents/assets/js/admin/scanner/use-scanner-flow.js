@@ -436,6 +436,7 @@ export const useScannerFlow = ( {
 		resolvedIds,
 		moduleEnabled,
 		isModuleToggleDisabled: isCheckToggleDisabled,
+		isModuleUnavailable: isModuleToggleDisabled,
 		getToggleDisabledReason,
 		savingModuleKeys,
 		openIds,
