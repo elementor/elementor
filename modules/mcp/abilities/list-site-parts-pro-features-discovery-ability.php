@@ -35,10 +35,6 @@ class List_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability {
 		);
 	}
 
-	public function is_available() {
-		return Site_Parts_Pro_Features_Discovery::for_list();
-	}
-
 	public function execute( $input = [] ) {
 		return Site_Parts_Pro_Features_Discovery::for_list();
 	}

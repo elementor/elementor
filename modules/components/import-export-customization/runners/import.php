@@ -17,7 +17,7 @@ class Import extends Import_Runner_Base {
 	public function should_import( array $data ) {
 		return (
 			in_array( 'content', $data['include'] ?? [], true ) &&
-			! empty( $data['manifest']['content'][ Component_Document::TYPE ] ) &&
+			! empty( $data['manifest'][ Component_Document::EXPORT_MANIFEST_KEY ] ) &&
 			! empty( $data['extracted_directory_path'] )
 		);
 	}

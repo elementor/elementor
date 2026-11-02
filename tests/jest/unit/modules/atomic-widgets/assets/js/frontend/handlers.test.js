@@ -745,6 +745,64 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			await submission;
 		} );
 
+		it( 'answers the agent before resetting the form on agent-invoked success', async () => {
+			// Arrange
+			jest.useFakeTimers();
+
+			try {
+				const { form, input } = createFormWithInput();
+				input.value = 'Agent value';
+
+				const instance = await setupFormHandler( form );
+				const callOrder = [];
+				const resetSpy = jest.spyOn( form, 'reset' ).mockImplementation( () => callOrder.push( 'reset' ) );
+				const respondWith = jest.fn( () => callOrder.push( 'respondWith' ) );
+
+				global.fetch = jest.fn().mockResolvedValue( {
+					ok: true,
+					json: () => Promise.resolve( { success: true, data: { message: 'Success message' } } ),
+				} );
+
+				const event = new Event( 'submit', { cancelable: true } );
+				event.agentInvoked = true;
+				event.respondWith = respondWith;
+
+				// Act
+				await instance.submit( event );
+
+				// Assert
+				const [ responsePromise ] = respondWith.mock.calls[ 0 ];
+				await expect( responsePromise ).resolves.toMatchObject( { success: true, state: 'success' } );
+				expect( resetSpy ).not.toHaveBeenCalled();
+
+				jest.runAllTimers();
+
+				expect( resetSpy ).toHaveBeenCalledTimes( 1 );
+				expect( callOrder ).toEqual( [ 'respondWith', 'reset' ] );
+			} finally {
+				jest.useRealTimers();
+			}
+		} );
+
+		it( 'resets the form immediately on successful human submission', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true, data: { message: 'Success message' } } ),
+			} );
+
+			// Act
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			// Assert
+			expect( input.value ).toBe( '' );
+		} );
+
 		it( 'returns nested agent payload data without duplicating the message', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();

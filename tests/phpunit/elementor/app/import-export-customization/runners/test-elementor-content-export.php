@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\App\ImportExportCustomization\Runner
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Export\Elementor_Content;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
-use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +19,11 @@ class Test_Elementor_Content_Export extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		Plugin::$instance->documents->register_document_type(
+			Component_Document::TYPE,
+			Component_Document::get_class_full_name()
+		);
+
 		$this->ensure_component_post_type_supports_elementor();
 	}
 
@@ -32,19 +37,26 @@ class Test_Elementor_Content_Export extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_export__excludes_components_when_import_export_not_supported() {
-		if ( Components_Module::is_import_export_supported() ) {
-			$this->markTestSkipped( 'Components are exported when import/export support is enabled.' );
-		}
-
+	public function test_export__always_excludes_components_from_elementor_content_runner() {
 		// Arrange
 		$runner = new Elementor_Content();
+		$component_id = $this->factory()->post->create( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'publish',
+		] );
+
+		update_post_meta( $component_id, '_elementor_edit_mode', 'builder' );
+		update_post_meta( $component_id, '_elementor_data', '[{"id":"component-root","elType":"container","elements":[],"settings":[]}]' );
 
 		// Act
-		$exported_post_types = $this->get_exported_post_types( $runner->export( [ 'include' => [ 'content' ] ] ) );
+		$result = $runner->export( [ 'include' => [ 'content' ] ] );
+		$exported_post_types = $this->get_exported_post_types( $result );
+		$exported_paths = $this->get_exported_paths( $result );
 
 		// Assert
 		$this->assertNotContains( Component_Document::TYPE, $exported_post_types );
+		$this->assertNotContains( 'content/' . Component_Document::TYPE . '/' . $component_id, $exported_paths );
+		$this->assertNotContains( 'content/' . Component_Document::TYPE . '/dependencies', $exported_paths );
 		$this->assertContains( 'page', $exported_post_types );
 	}
 
@@ -79,6 +91,10 @@ class Test_Elementor_Content_Export extends Elementor_Test_Base {
 
 	private function get_exported_post_types( array $result ): array {
 		return array_keys( $result['manifest'][0]['content'] );
+	}
+
+	private function get_exported_paths( array $result ): array {
+		return array_column( $result['files'], 'path' );
 	}
 
 	private function ensure_component_post_type_supports_elementor(): void {

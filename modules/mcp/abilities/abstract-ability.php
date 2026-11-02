@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Kit_Settings_Host;
+use Elementor\Modules\Mcp\Events\Pro_Feature_Suggestion_Tracker;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
 
@@ -26,6 +27,10 @@ abstract class Abstract_Ability {
 	abstract public function execute( $input = [] );
 
 	final public function execute_guarded( $input = [] ) {
+		if ( ! is_array( $input ) ) {
+			$input = is_object( $input ) ? (array) $input : [];
+		}
+
 		$availability = $this->is_available();
 		if ( is_wp_error( $availability ) ) {
 			return $availability;
@@ -40,8 +45,12 @@ abstract class Abstract_Ability {
 			}
 		}
 
+		Pro_Feature_Suggestion_Tracker::reset();
+
 		$result  = $this->execute( $input );
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
+
+		Pro_Feature_Suggestion_Tracker::flush( $this->get_id(), $result );
 		Kit_Settings_Host::discard_pending();
 
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
