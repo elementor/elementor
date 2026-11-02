@@ -14,6 +14,8 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 	const EMPTY_RESULT_HINT = 'No icon on this site matches these queries. Try a broader phrase (for example "cart" instead of "shopping trolley"), or drop the library and category filters. Never invent an icon value.';
 
+	const TRUNCATED_PACK_HINT = 'The custom icon pack(s) %s are too large to be fully searched, so only their first icons are searchable and the icon may exist past that limit. Do not tell the user the icon does not exist; use a different icon or ask the user to pick it in the editor icon library.';
+
 	const CATALOG_MISSING_NOTICE = 'Note: the icon catalog is not available on this site, so icons cannot be looked up.';
 
 	protected function get_ability_id(): string {
@@ -81,6 +83,13 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 		if ( $this->has_no_matches( $response ) ) {
 			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
+
+			if ( ! empty( $response['truncated_custom_libraries'] ) ) {
+				$response['llm_instructions'] .= ' ' . sprintf(
+					self::TRUNCATED_PACK_HINT,
+					implode( ', ', $response['truncated_custom_libraries'] )
+				);
+			}
 		}
 
 		return $response;

@@ -15,7 +15,7 @@ Call this before placing an `e-svg`. Nothing has to be uploaded to the Media Lib
 
 Write queries the way a person would describe the icon ("shopping cart", "credit card", "phone"), in English. Icons are matched on their name, aliases, Font Awesome search terms and category, so plain language works better than guessed icon names. Words like "icon", "button" and "page" are ignored because they match almost everything.
 
-An empty `matches` array with `total: 0` may mean the site has no such icon, or the query was not in English, or (for custom packs) the pack is listed in `truncated_custom_libraries`, meaning only its first 250 icons are searchable. Try a broader English phrase ("cart" instead of "shopping trolley"); do not invent a value.
+An empty `matches` array with `total: 0` may mean the site has no such icon, or the query was not in English, or (for custom packs) the pack is listed in `truncated_custom_libraries`, meaning only its first 250 icons are searchable and the icon may exist past that limit. When that happens `llm_instructions` names the packs: do not tell the user the icon does not exist. A query with no Latin letters or digits (for example Cyrillic, CJK, emoji or punctuation only) always returns `total: 0`; rewrite it in English. Try a broader English phrase ("cart" instead of "shopping trolley"); do not invent a value.
 
 # READING THE RESULTS
 

@@ -148,6 +148,19 @@ class Icon_Search {
 
 	private static function search_single( array $entries, string $query, int $page, int $per_page, string $browse_matched_on ): array {
 		$normalized = self::normalize( $query );
+
+		// Normalization keeps only [a-z0-9], so a query like "корзина" or "!!!" becomes empty. Only an empty query browses.
+		if ( '' === $normalized && '' !== $query ) {
+			return [
+				'query' => $query,
+				'matches' => [],
+				'total' => 0,
+				'page' => $page,
+				'per_page' => $per_page,
+				'truncated' => false,
+			];
+		}
+
 		$scored = [];
 
 		foreach ( $entries as $entry ) {

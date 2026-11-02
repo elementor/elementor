@@ -57,6 +57,38 @@ class Test_Icon_Search extends Elementor_Test_Base {
 		];
 	}
 
+	/**
+	 * @dataProvider data_queries_without_latin_characters
+	 */
+	public function test_search__returns_no_matches_for_a_query_that_has_no_latin_characters( string $query ) {
+		// Act.
+		$result = $this->search( [ 'queries' => [ $query ] ] )[0];
+
+		// Assert.
+		$this->assertSame( 0, $result['total'] );
+		$this->assertSame( [], $result['matches'] );
+		$this->assertFalse( $result['truncated'] );
+	}
+
+	public function data_queries_without_latin_characters(): array {
+		return [
+			'cyrillic' => [ 'корзина' ],
+			'cjk' => [ '日本' ],
+			'emoji' => [ '😀' ],
+			'punctuation only' => [ '!!!' ],
+			'single dash' => [ '-' ],
+		];
+	}
+
+	public function test_search__answers_the_other_queries_when_one_has_no_latin_characters() {
+		// Act.
+		$results = $this->search( [ 'queries' => [ 'корзина', 'cart-shopping' ] ] );
+
+		// Assert.
+		$this->assertSame( 0, $results[0]['total'] );
+		$this->assertSame( 'fa-solid fa-cart-shopping', $results[1]['matches'][0]['value'] );
+	}
+
 	public function test_search__answers_every_query_in_one_call() {
 		// Act.
 		$results = $this->search( [ 'queries' => [ 'cart', 'star', 'cart' ] ] );
