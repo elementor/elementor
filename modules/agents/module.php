@@ -12,6 +12,8 @@ use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
+use Elementor\Modules\Agents\Classes\Llms_Revert_Ajax;
+use Elementor\Modules\Agents\Classes\Llms_Takeover_Ajax;
 use Elementor\Modules\Agents\Classes\Module_Availability;
 use Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
@@ -236,6 +238,12 @@ class Module extends BaseModule {
 
 		$llms_content_ajax = new Llms_Content_Ajax( $this->settings, $this->manual_content );
 		$ajax->register_ajax_action( Llms_Content_Ajax::ACTION, [ $llms_content_ajax, 'handle' ] );
+
+		$llms_revert_ajax = new Llms_Revert_Ajax( $this->settings, $this->manual_content );
+		$ajax->register_ajax_action( Llms_Revert_Ajax::ACTION, [ $llms_revert_ajax, 'handle' ] );
+
+		$llms_takeover_ajax = new Llms_Takeover_Ajax( $this->settings, $this->manual_content );
+		$ajax->register_ajax_action( Llms_Takeover_Ajax::ACTION, [ $llms_takeover_ajax, 'handle' ] );
 
 		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->markdown_endpoint );
 		$ajax->register_ajax_action( Markdown_Preview_Ajax::ACTION, [ $markdown_preview_ajax, 'handle' ] );
@@ -750,6 +758,16 @@ class Module extends BaseModule {
 		self::$physical_file_cache[ $blog_id ] = file_exists( $root_path . self::LLMS_FILENAME );
 
 		return self::$physical_file_cache[ $blog_id ];
+	}
+
+	public static function delete_physical_llms_file(): bool {
+		$file_path = self::get_llms_file_root_path() . self::LLMS_FILENAME;
+
+		wp_delete_file( $file_path );
+		clearstatcache( true, $file_path );
+		self::reset_physical_file_cache();
+
+		return ! file_exists( $file_path );
 	}
 
 	/**

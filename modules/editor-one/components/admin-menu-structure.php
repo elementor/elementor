@@ -79,7 +79,7 @@ class Admin_Menu_Structure {
 	}
 
 	/**
-	 * The flyout menu is not loaded with the admin flow, so pages outside of it (e.g. third-party pages)
+	 * The flyout menu is not loaded with the admin flow, so pages registered directly under the home menu
 	 * are reachable only through these items.
 	 */
 	public function get_extra_items( array $existing_items ): array {
@@ -92,16 +92,10 @@ class Admin_Menu_Structure {
 			[ self::HOME_ALIAS_SLUG ]
 		);
 
-		$items = array_filter(
+		return array_values( array_filter(
 			$existing_items,
 			fn( $item ) => ! in_array( $item[2] ?? '', $known_slugs, true ) && ! $provider->is_item_already_registered( $item[2] ?? '' )
-		);
-
-		foreach ( $provider->get_level4_flyout_data()[ Menu_Config::THIRD_PARTY_GROUP_ID ]['items'] ?? [] as $third_party_item ) {
-			$items[] = [ $third_party_item['label'], Menu_Config::CAPABILITY_MANAGE_OPTIONS, $third_party_item['url'], $third_party_item['label'] ];
-		}
-
-		return array_values( $items );
+		) );
 	}
 
 	public function move_below_pages( array $menu, string $item_slug, string $pages_slug ): array {
