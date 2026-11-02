@@ -87,6 +87,77 @@ class Components_Repository {
 
 		return $document->get_main_id();
 	}
+
+	public function uid_exists( string $uid, int $exclude_id = 0 ): bool {
+		if ( '' === $uid ) {
+			return false;
+		}
+
+		$ids = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => 1,
+			'fields' => 'ids',
+			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+			'meta_query' => [
+				[
+					'key' => Component_Document::COMPONENT_UID_META_KEY,
+					'value' => $uid,
+				],
+			],
+		] );
+
+		return ! empty( $ids );
+	}
+
+	public function title_exists( string $title, int $exclude_id = 0 ): bool {
+		$ids = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'title' => $title,
+			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+		] );
+
+		foreach ( $ids as $id ) {
+			if ( ! $this->is_archived( $id ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function count_active( int $exclude_id = 0 ): int {
+		$ids = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+		] );
+
+		return count( array_filter( $ids, fn( $id ) => ! $this->is_archived( $id ) ) );
+	}
+
+	/**
+	 * Same shape as `generateUniqueId( 'component' )` in the editor.
+	 */
+	public function generate_uid(): string {
+		do {
+			$uid = 'component-' . (int) floor( microtime( true ) * 1000 ) . '-' . substr( base_convert( (string) wp_rand(), 10, 36 ) . '0000000', 0, 7 );
+		} while ( $this->uid_exists( $uid ) );
+
+		return $uid;
+	}
+
+	private function is_archived( int $post_id ): bool {
+		$archived_meta = json_decode( (string) get_post_meta( $post_id, Component_Document::ARCHIVED_META_KEY, true ), true );
+
+		return ! empty( $archived_meta['is_archived'] );
+	}
+
 	private function extract_styles( array $elements, array $styles = [] ) {
 		foreach ( $elements as $element ) {
 			if ( isset( $element['styles'] ) ) {

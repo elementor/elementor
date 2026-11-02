@@ -3,6 +3,8 @@ namespace Elementor\Modules\Components\Documents;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\Components_REST_API;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -44,6 +46,13 @@ class Component extends Document {
 		'overridable_props',
 		'variants',
 	];
+	const IMPORT_EXCLUDED_SETTINGS_KEYS = [
+		'post_title',
+		'post_status',
+		'overridable_props',
+		'variants',
+	];
+	const TITLE_DUPLICATE_SUFFIX = '_DUP';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -211,6 +220,83 @@ class Component extends Document {
 		}
 
 		return $metadata;
+	}
+
+	/**
+	 * Component meta arrives in `metadata` and is written to its private meta records as-is,
+	 * without the overridable props parser. `Document::import()` would write it through a raw
+	 * `update_meta()`, which stores JSON keys as serialized arrays. Element ids are kept as exported.
+	 */
+	public function import( array $data ) {
+		$component_meta = array_intersect_key( $data['metadata'] ?? [], array_flip( self::EXPORTABLE_PRIVATE_META_KEYS ) );
+		$data['metadata'] = array_diff_key( $data['metadata'] ?? [], $component_meta );
+		$data['settings'] = array_diff_key( $data['settings'] ?? [], array_flip( self::IMPORT_EXCLUDED_SETTINGS_KEYS ) );
+
+		$archived_meta = $component_meta[ self::ARCHIVED_META_KEY ] ?? [];
+		$is_archived = is_array( $archived_meta ) && ! empty( $archived_meta['is_archived'] );
+
+		if ( ! $is_archived ) {
+			$this->assert_components_limit_not_reached();
+		}
+
+		parent::import( $data );
+
+		$this->write_imported_meta( array_diff_key( $component_meta, [ self::COMPONENT_UID_META_KEY => true ] ) );
+		$this->apply_import_identity( (string) ( $component_meta[ self::COMPONENT_UID_META_KEY ] ?? '' ), $is_archived );
+	}
+
+	private function write_imported_meta( array $component_meta ): void {
+		foreach ( $component_meta as $meta_key => $value ) {
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			if ( in_array( $meta_key, self::JSON_META_KEYS, true ) ) {
+				$this->update_json_meta( $meta_key, $value );
+			} else {
+				$this->update_meta( $meta_key, $value );
+			}
+		}
+	}
+
+	private function assert_components_limit_not_reached(): void {
+		$active_count = Components_Repository::make()->count_active( $this->get_main_id() );
+
+		if ( $active_count < Components_REST_API::MAX_COMPONENTS ) {
+			return;
+		}
+
+		throw new \Exception( esc_html__( 'Maximum number of components exceeded.', 'elementor' ) );
+	}
+
+	/**
+	 * An existing component with the same uid means this one is imported as a copy:
+	 * it gets a fresh uid, and its title is suffixed until it is unique among active components.
+	 */
+	private function apply_import_identity( string $source_uid, bool $is_archived ): void {
+		$repository = Components_Repository::make();
+		$self_id = $this->get_main_id();
+
+		$uid = '' !== $source_uid && ! $repository->uid_exists( $source_uid, $self_id )
+			? $source_uid
+			: $repository->generate_uid();
+
+		$this->update_meta( self::COMPONENT_UID_META_KEY, $uid );
+
+		if ( $is_archived ) {
+			return;
+		}
+
+		$title = $this->get_post()->post_title;
+		$unique_title = $title;
+
+		while ( $repository->title_exists( $unique_title, $self_id ) ) {
+			$unique_title .= self::TITLE_DUPLICATE_SUFFIX;
+		}
+
+		if ( $unique_title !== $title ) {
+			$this->update_title( $unique_title );
+		}
 	}
 
 	private function get_exportable_meta_value( string $meta_key ) {

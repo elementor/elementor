@@ -117,19 +117,25 @@ class Module extends BaseModule {
 	/**
 	 * Single entry point for import runners to normalize the elements tree of an imported
 	 * document with respect to component instances. When components round-trip is enabled
-	 * (flag on) it rewrites source-site component ids to their destination-site equivalents;
+	 * (flag on) it rewrites source-site component ids (and override `schema_source` ids) to their
+	 * destination-site equivalents and strips instances whose component was not imported;
 	 * when disabled (flag off) it strips any `e-component` widget that survived from a
 	 * legacy zip so the destination editor never opens a document with dangling instances.
+	 *
+	 * The map must hold component ids only: the generic post ids map also holds pages and
+	 * templates, so an unmapped source component id could match one of them by accident.
 	 *
 	 * Kept as a static helper on the module so both `import-export-customization` and legacy
 	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
 	 */
-	public static function prepare_imported_elements( array $elements, array $post_ids_map ): array {
-		if ( ! self::is_import_export_supported() || empty( $post_ids_map ) ) {
+	public static function prepare_imported_elements( array $elements, array $component_ids_map ): array {
+		if ( ! self::is_import_export_supported() ) {
 			return Strip_Component_Instances::apply( $elements );
 		}
 
-		return Remap_Component_Instance_Ids::apply( $elements, $post_ids_map );
+		$elements = Remap_Component_Instance_Ids::apply( $elements, $component_ids_map );
+
+		return Strip_Component_Instances::apply( $elements, array_map( 'intval', array_values( $component_ids_map ) ) );
 	}
 
 	/**
