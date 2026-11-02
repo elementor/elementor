@@ -2,18 +2,21 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { FEATURE_LLMS_TXT } from '../analytics/agent-ready-events';
 import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-agent-ready-event';
-import { fetchLlmsFile, saveAgentReadySettings, saveLlmsContent } from '../api';
+import { fetchLlmsFile, revertLlmsContent, saveAgentReadySettings, saveLlmsContent, takeOverLlmsFile } from '../api';
 import { LLMS_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
+
+const PHYSICAL_FILE_REASON_CODE = 'physical_file';
 
 const getIncludedPostTypeNames = ( postTypes ) => postTypes
 	.filter( ( postType ) => postType.included )
 	.map( ( postType ) => postType.name );
 
 export const useLlmsSettings = ( initialState ) => {
-	const { fileUrl, hasPhysicalFile } = initialState;
-	const unavailableReason = initialState.unavailableReason ?? null;
+	const { fileUrl } = initialState;
 
+	const [ hasPhysicalFile, setHasPhysicalFile ] = useState( initialState.hasPhysicalFile );
+	const [ unavailableReason, setUnavailableReason ] = useState( initialState.unavailableReason ?? null );
 	const [ isEnabled, setIsEnabled ] = useState( initialState.enabled );
 	const [ isManuallyEdited, setIsManuallyEdited ] = useState( initialState.isManuallyEdited );
 	const [ postTypes, setPostTypes ] = useState( initialState.postTypes );
@@ -84,6 +87,18 @@ export const useLlmsSettings = ( initialState ) => {
 		refreshContent();
 	} );
 
+	const revertContent = () => revertLlmsContent().then( () => {
+		setIsManuallyEdited( false );
+		refreshContent();
+	} );
+
+	const takeOverFile = () => takeOverLlmsFile().then( () => {
+		setHasPhysicalFile( false );
+		setIsManuallyEdited( false );
+		setIsEnabled( true );
+		setUnavailableReason( ( reason ) => ( PHYSICAL_FILE_REASON_CODE === reason?.code ? null : reason ) );
+	} );
+
 	return {
 		content,
 		hasPhysicalFile,
@@ -92,8 +107,10 @@ export const useLlmsSettings = ( initialState ) => {
 		isSaving,
 		saveError,
 		postTypes,
+		revertContent,
 		saveContent,
 		setIsEnabled,
+		takeOverFile,
 		toggleEnabled,
 		togglePostType,
 		unavailableReason,
