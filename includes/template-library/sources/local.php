@@ -1669,7 +1669,7 @@ class Source_Local extends Source_Base {
 			'plural' => '',
 		];
 
-		$template_type = Utils::get_super_global_value( $_GET, self::TAXONOMY_TYPE_SLUG );
+		$template_type = sanitize_key( Utils::get_super_global_value( $_GET, self::TAXONOMY_TYPE_SLUG ) ?? '' );
 
 		if ( $template_type ) {
 			return $this->get_template_labels_by_type( $template_type );
