@@ -191,6 +191,7 @@ class Menu_Data_Provider {
 
 	private function add_return_to_url( string $url, string $return_to ): string {
 		$hash_position = strpos( $url, '#' );
+		$return_to = rawurlencode( $return_to );
 
 		if ( false === $hash_position ) {
 			return add_query_arg( [ 'return_to' => $return_to ], $url );
