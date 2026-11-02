@@ -11,6 +11,7 @@ export function createDomRenderer(): DomRenderer {
 
 	environment.registerEscapingStrategy( escapeHtmlTag, 'html_tag' );
 	environment.registerEscapingStrategy( escapeURL, 'full_url' );
+	environment.registerEscapingStrategy( escapeJsIdentifier, 'js_identifier' );
 
 	return {
 		register: loader.setTemplate,
@@ -32,6 +33,15 @@ function escapeHtmlTag( value: string ) {
 	const normalizedTag = value?.toLowerCase?.() ?? '';
 
 	return allowedTags.includes( normalizedTag ) ? value : 'div';
+}
+
+const JS_IDENTIFIER_PATTERN = /^[A-Za-z0-9_]+$/;
+
+function escapeJsIdentifier( value: unknown ): string {
+	const id = String( value ?? '' );
+	const match = id.match( JS_IDENTIFIER_PATTERN );
+
+	return match?.[ 0 ] === id ? id : '';
 }
 
 function escapeURL( value: string ) {
