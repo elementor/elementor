@@ -135,10 +135,11 @@ class Atomic_Form extends Atomic_Element_Base {
 		];
 
 		$props = array_merge( $props, self::get_emails_prop_settings(), [
-			'webhook_url' => String_Prop_Type::make()
+			'webhook_url' => Form_Action_Url_Prop_Type::webhook()
 				->set_dependencies( $webhook_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
-				->default( '' ),
+				->default( '' )
+				->description( 'Absolute http or https URL to notify after a successful submission. Used only when "webhook" is in actions-after-submit. Credentials in the URL are not allowed.' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		] );
 

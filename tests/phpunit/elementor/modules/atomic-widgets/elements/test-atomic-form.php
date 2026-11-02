@@ -7,7 +7,10 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Action_Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +45,62 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$default = $prop->get_default();
 
 		$this->assertTrue( $prop->validate( $default ) );
+	}
+
+	/**
+	 * @dataProvider action_url_validation_provider
+	 */
+	public function test_action_urls_accept_only_the_schemes_each_action_can_run( string $kind, string $url, bool $expected ) {
+		// Arrange.
+		$prop = 'webhook' === $kind
+			? Atomic_Form::get_props_schema()['webhook_url']
+			: Form_Action_Url_Prop_Type::redirect();
+
+		// Act.
+		$is_valid = $prop->validate( String_Prop_Type::generate( $url ) );
+
+		// Assert.
+		$this->assertSame( $expected, $is_valid );
+	}
+
+	public function action_url_validation_provider(): array {
+		$shortcode = '[field id="email"]';
+
+		return [
+			'redirect https' => [ 'redirect', 'https://example.com/thanks', true ],
+			'redirect http' => [ 'redirect', 'http://example.com', true ],
+			'redirect ftp' => [ 'redirect', 'ftp://files.example.com/a', true ],
+			'redirect ftps' => [ 'redirect', 'ftps://files.example.com/a', true ],
+			'redirect shortcode in path' => [ 'redirect', 'https://example.com/users/' . $shortcode, true ],
+			'redirect shortcode in query' => [ 'redirect', 'https://example.com/?email=' . $shortcode, true ],
+			'redirect shortcode in fragment' => [ 'redirect', 'https://example.com/#' . $shortcode, true ],
+			'redirect javascript protocol' => [ 'redirect', 'javascript:alert(1)', false ],
+			'redirect javascript with slashes' => [ 'redirect', 'javascript://example.com/%0aalert(1)', false ],
+			'redirect shortcode in host' => [ 'redirect', 'https://' . $shortcode . '.example.com/path', false ],
+			'redirect missing scheme' => [ 'redirect', 'example.com', false ],
+			'redirect not a url' => [ 'redirect', 'not-a-url', false ],
+			'webhook https' => [ 'webhook', 'https://example.com/hook', true ],
+			'webhook http with port' => [ 'webhook', 'http://example.com:8080/hook', true ],
+			'webhook not a url' => [ 'webhook', 'not-a-url', false ],
+			'webhook javascript protocol' => [ 'webhook', 'javascript:alert(1)', false ],
+			'webhook ftp' => [ 'webhook', 'ftp://files.example.com/hook', false ],
+			'webhook with credentials' => [ 'webhook', 'https://user:pass@example.com/hook', false ],
+		];
+	}
+
+	public function test_invalid_webhook_url_fails_settings_validation() {
+		// Arrange.
+		$schema = Atomic_Form::get_props_schema();
+		$settings = [
+			'webhook_url' => String_Prop_Type::generate( 'not-a-url' ),
+		];
+
+		// Act.
+		$result = Props_Parser::make( $schema )->validate( $settings );
+
+		// Assert.
+		$this->assertFalse( $result->is_valid() );
+		$this->assertStringContainsString( 'webhook_url', $result->errors()->to_string() );
 	}
 
 	public function test_actions_after_submit_control_includes_webhook_chip() {
