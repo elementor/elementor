@@ -175,6 +175,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function fix_theme_builder_submenu_url( $menu ) {
+		if ( Editor_One_Module::is_admin_navigation_active() && current_user_can( Menu_Config::CAPABILITY_MANAGE_OPTIONS ) ) {
+			return $menu;
+		}
+
 		global $submenu;
 
 		$menu_slugs = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ];
