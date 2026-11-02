@@ -38,6 +38,7 @@ class Secondary_Bar {
 
 			if ( '' !== $label ) {
 				$addons[] = [
+					'id' => $item['slug'],
 					'label' => $label,
 					'url' => esc_url_raw( $item['url'] ),
 				];
@@ -76,7 +77,7 @@ class Secondary_Bar {
 		$label = Admin_Flow_Config::get_config()['parents'][ $parent_slug ]['label'] ?? '';
 
 		if ( '' === $label ) {
-			return esc_html__( 'Elementor', 'elementor' );
+			return __( 'Elementor', 'elementor' );
 		}
 
 		return $this->plain_label( $label );

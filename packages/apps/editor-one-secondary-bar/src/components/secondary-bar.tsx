@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, Tab, Tabs } from '@elementor/ui';
+import { Link, Stack } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { type SecondaryBarConfig } from '../types';
@@ -10,60 +10,65 @@ type Props = {
 	config: SecondaryBarConfig;
 };
 
-const prefersReducedMotion = (): boolean =>
-	typeof window !== 'undefined' && Boolean( window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches );
+const getTabSx = ( isActive: boolean ) => {
+	const boxShadow = isActive ? 'inset 0 -3px 0 currentColor' : 'none';
+	const color = isActive ? 'text.primary' : 'text.secondary';
 
-const tabSx = {
-	color: 'text.secondary',
-	'&:hover, &:focus, &:active': {
-		color: 'text.primary',
-		boxShadow: 'none',
-	},
-	'&.Mui-selected': {
-		color: 'text.primary',
-		fontWeight: 'fontWeightMedium',
-	},
-	'&.Mui-focusVisible': {
-		outline: '2px solid',
-		outlineOffset: '-2px',
-	},
+	return {
+		display: 'inline-flex',
+		alignItems: 'center',
+		flexShrink: 0,
+		px: 2,
+		whiteSpace: 'nowrap',
+		typography: 'body2',
+		color,
+		fontWeight: isActive ? 'fontWeightMedium' : 'fontWeightRegular',
+		boxShadow,
+		'&:visited': {
+			color,
+		},
+		'&:hover, &:focus, &:active': {
+			color: 'text.primary',
+			boxShadow,
+		},
+		'&:focus-visible': {
+			outline: '2px solid',
+			outlineOffset: '-2px',
+		},
+	};
 };
 
 export function SecondaryBar( { config }: Props ) {
-	const activeIndex = config.tabs.findIndex( ( tab ) => tab.is_active );
-	const reduceMotion = prefersReducedMotion();
-
 	/* translators: %s: Admin section name. */
 	const navLabel = sprintf( __( '%s section', 'elementor' ), config.label );
 
 	return (
-		<Stack component="nav" direction="row" alignItems="stretch" sx={ { height: '100%' } } aria-label={ navLabel }>
-			<Tabs
-				value={ activeIndex < 0 ? false : activeIndex }
-				variant="scrollable"
-				scrollButtons={ false }
-				sx={ { flex: 1, minWidth: 0 } }
-				TabIndicatorProps={ {
-					sx: {
-						height: '3px',
-						backgroundColor: 'text.primary',
-						...( reduceMotion && { transition: 'none' } ),
-					},
-				} }
-			>
+		<Stack
+			component="nav"
+			direction="row"
+			sx={ {
+				height: 48,
+				borderBlockEnd: '1px solid',
+				borderColor: 'divider',
+				bgcolor: 'background.paper',
+			} }
+			aria-label={ navLabel }
+		>
+			<Stack direction="row" sx={ { flex: 1, minWidth: 0, overflowX: 'auto', scrollbarWidth: 'none' } }>
 				{ config.tabs.map( ( tab ) => (
-					<Tab
+					<Link
 						key={ tab.id }
-						label={ tab.label }
-						sx={ tabSx }
-						component="a"
 						href={ tab.url }
+						underline="none"
 						aria-current={ tab.is_active ? 'page' : undefined }
-					/>
+						sx={ getTabSx( tab.is_active ) }
+					>
+						{ tab.label }
+					</Link>
 				) ) }
-			</Tabs>
-			{ config.addons.length > 0 && <AddonsMenu addons={ config.addons } reduceMotion={ reduceMotion } /> }
-			<FinderButton />
+			</Stack>
+			{ config.addons.length > 0 && <AddonsMenu addons={ config.addons } /> }
+			{ config.is_finder_available && <FinderButton /> }
 		</Stack>
 	);
 }
