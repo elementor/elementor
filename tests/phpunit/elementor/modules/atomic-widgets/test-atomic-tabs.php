@@ -80,6 +80,29 @@ class Test_Atomic_Tabs extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
+	public function test__render_drops_expression_from_alpine_data_attribute(): void {
+		// Arrange.
+		$payload = '=window.alert(document.domain)';
+		$instance = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => $payload,
+			'elType' => Atomic_Tabs::get_element_type(),
+			'settings' => [],
+			'widgetType' => Atomic_Tabs::get_element_type(),
+			'elements' => [],
+		] );
+
+		// Act.
+		ob_start();
+		$instance->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'x-data="{}"', $rendered_output );
+		$this->assertStringNotContainsString( 'x-data="eTabs' . $payload . '"', $rendered_output );
+		$this->assertDoesNotMatchRegularExpression( '/x-data="[^"]*alert/', $rendered_output );
+		$this->assertStringContainsString( 'data-id="' . $payload . '"', $rendered_output );
+	}
+
 	private function create_tabs_instance( array $settings, array $interactions = [] ): object {
 		$tab_1 = [
 			'id' => self::TAB_ID_1,
