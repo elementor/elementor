@@ -6,13 +6,17 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+require_once __DIR__ . '/../../../stubs/wc-stubs.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -79,6 +83,30 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertStringContainsString( 'this header and footer is built once', $message );
 		$this->assertStringContainsString( 'a popup that opens on the trigger they want', $message );
 		$this->assertSame( 1, substr_count( $message, self::UPGRADE_LINK ) );
+	}
+
+	public function test_manage_execute_guarded__returns_woocommerce_error_for_product_types() {
+		// Arrange
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( $this->create_operations( [ 'header', 'product' ] ) );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::PRO_FEATURE, $result->get_error_data()['pro_feature'] );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertSame( [ 'header', 'product' ], $result->get_error_data()['document_types'] );
+		$this->assert_value_link_free_path_order(
+			$result->get_error_message(),
+			'What Pro gives the user: their agent can design the whole store',
+			'Free path: none. Say plainly that store pages keep WooCommerce\'s default look',
+			'[Upgrade to Pro](' . Woocommerce_Pro_Features_Discovery::UPGRADE_URL . ')'
+		);
 	}
 
 	public function test_manage_execute_guarded__falls_back_to_overview_without_create_type() {
@@ -156,9 +184,9 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertArrayHasKey( 'active', $list_schema['properties'] );
 	}
 
-	private function assert_value_link_free_path_order( string $message, string $value, string $free_path ): void {
+	private function assert_value_link_free_path_order( string $message, string $value, string $free_path, string $upgrade_link = self::UPGRADE_LINK ): void {
 		$value_position = strpos( $message, $value );
-		$link_position = strpos( $message, self::UPGRADE_LINK );
+		$link_position = strpos( $message, $upgrade_link );
 		$free_path_position = strpos( $message, $free_path );
 
 		$this->assertNotFalse( $value_position );

@@ -62,7 +62,7 @@ class Site_Parts_Schema {
 				],
 				'type' => [
 					'type' => 'string',
-					'enum' => self::TYPES,
+					'enum' => array_merge( self::TYPES, Woocommerce_Pro_Features_Discovery::get_site_part_types() ),
 					'description' => 'Site part type slug (create only).',
 				],
 				'title' => [ 'type' => 'string' ],
