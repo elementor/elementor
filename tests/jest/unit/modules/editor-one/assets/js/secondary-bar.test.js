@@ -109,4 +109,26 @@ describe( 'secondary bar', () => {
 		expect( document.activeElement ).toBe( summary );
 		expect( addons.open ).toBe( false );
 	} );
+
+	it( 'closes Addons when the focus leaves the menu', () => {
+		// Arrange
+		document.body.innerHTML = barMarkup;
+		document.querySelectorAll( '.e-admin-secondary-bar__tab' ).forEach( ( tab ) => {
+			tab.scrollIntoView = jest.fn();
+		} );
+		new SecondaryBar( document.querySelector( '.e-admin-secondary-bar' ) ).init();
+		const addons = document.querySelector( '.e-admin-secondary-bar__addons' );
+		const links = addons.querySelectorAll( 'a' );
+		addons.open = true;
+		links[ 0 ].focus();
+
+		// Act
+		links[ 1 ].focus();
+		const openInside = addons.open;
+		document.querySelector( '.e-admin-secondary-bar__finder' ).focus();
+
+		// Assert
+		expect( openInside ).toBe( true );
+		expect( addons.open ).toBe( false );
+	} );
 } );

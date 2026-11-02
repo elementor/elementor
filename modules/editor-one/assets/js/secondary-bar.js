@@ -108,6 +108,12 @@ export class SecondaryBar {
 			this.handleAddonsKeydown( event, summary, links );
 		} );
 
+		this.addons.addEventListener( 'focusout', ( event ) => {
+			if ( ! this.addons.contains( event.relatedTarget ) ) {
+				this.addons.open = false;
+			}
+		} );
+
 		document.addEventListener( 'click', ( event ) => {
 			if ( ! this.addons.open || this.addons.contains( event.target ) ) {
 				return;
@@ -132,7 +138,7 @@ export class SecondaryBar {
 		event.preventDefault();
 		this.addons.open = true;
 
-		const currentIndex = links.indexOf( document.activeElement );
+		const currentIndex = links.indexOf( this.addons.ownerDocument.activeElement );
 		let nextIndex = 0;
 
 		if ( 'End' === event.key ) {
