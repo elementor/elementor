@@ -6,7 +6,7 @@ export default class YoutubeLoader extends BaseLoader {
 	}
 
 	getURLRegex() {
-		return /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user|shorts)\/))([^?&"'>]+)/;
+		return /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|(?:youtube\.com|youtube-nocookie\.com)\/(?:(?:watch)?\?(?:.*&)?vi?=|(?:embed|v|vi|user|shorts)\/))([^?&"'>]+)/;
 	}
 
 	isApiLoaded() {
