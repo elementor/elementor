@@ -6,15 +6,9 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-<<<<<<< HEAD
         "automattic/jetpack-autoloader": "^6",
         "elementor/elementor-mcp-composer": "^1.0.20",
-        "elementor/wp-one-package": "1.0.72"
-=======
-        "automattic/jetpack-autoloader": "^5",
-        "elementor/elementor-mcp-composer": "^1.0.19",
         "elementor/wp-one-package": "1.0.73"
->>>>>>> ad7b50af29 (Internal: Bump wp-one-package to 1.0.73 [ED-26082] (#37954))
     },
     "repositories": [
         {
