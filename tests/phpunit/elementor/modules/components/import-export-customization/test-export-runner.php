@@ -112,6 +112,10 @@ class Test_Export_Runner extends Elementor_Test_Base {
 				],
 			]
 		);
+		$archived = [
+			'is_archived' => true,
+			'archived_at' => time(),
+		];
 		$outer = $this->create_component(
 			'Archived Component',
 			[
@@ -120,10 +124,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			[],
 			null,
 			null,
-			[
-				'is_archived' => true,
-				'archived_at' => time(),
-			]
+			$archived
 		);
 
 		// Act
@@ -157,7 +158,9 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			],
 			$inner_file['metadata'][ Component_Document::OVERRIDABLE_PROPS_META_KEY ]
 		);
+		$this->assertArrayNotHasKey( Component_Document::ARCHIVED_META_KEY, $inner_file['metadata'] );
 		$this->assertSame( 'component-instance-id', $outer_file['content'][0]['id'] );
+		$this->assertSame( $archived, $outer_file['metadata'][ Component_Document::ARCHIVED_META_KEY ] );
 		$this->assertSame( [], $dependencies[ $inner->get_main_id() ]['depends_on'] );
 		$this->assertSame( [ $inner->get_main_id() ], $dependencies[ $outer->get_main_id() ]['depends_on'] );
 	}

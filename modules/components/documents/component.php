@@ -31,9 +31,11 @@ class Component extends Document {
 	const EXPORTABLE_PRIVATE_META_KEYS = [
 		self::COMPONENT_UID_META_KEY,
 		self::OVERRIDABLE_PROPS_META_KEY,
+		self::ARCHIVED_META_KEY,
 	];
 	const JSON_META_KEYS = [
 		self::OVERRIDABLE_PROPS_META_KEY,
+		self::ARCHIVED_META_KEY,
 	];
 	const EXPORT_MANIFEST_KEY = 'components';
 	const EXPORT_DIRECTORY = 'content/' . self::TYPE . '/';

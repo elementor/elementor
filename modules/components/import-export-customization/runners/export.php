@@ -72,6 +72,11 @@ class Export extends Export_Runner_Base {
 		];
 	}
 
+	/**
+	 * Unlike `Document::get_export_data()`, element IDs are intentionally kept as-is
+	 * so that references to them (e.g. overridable props, component instances)
+	 * remain valid in the exported kit.
+	 */
 	private function export_elements( Component_Document $document ): array {
 		return Plugin::$instance->db->iterate_data( $document->get_elements_data(), function ( $element_data ) use ( $document ) {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
