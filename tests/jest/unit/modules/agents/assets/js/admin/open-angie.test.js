@@ -45,6 +45,21 @@ describe( 'deliverPendingAngiePrompt', () => {
 		expect( clearReferrerRedirect ).toHaveBeenCalled();
 	} );
 
+	it( 'keeps the stored prompt when Angie is not ready in time', async () => {
+		// Arrange
+		sessionStorage.setItem( PENDING_PROMPT_STORAGE_KEY, PROMPT );
+		setLocation( '&open-angie=1' );
+		waitForAngiePluginActive.mockResolvedValue( false );
+
+		// Act
+		await deliverPendingAngiePrompt();
+
+		// Assert
+		expect( window.location.hash ).toBe( '' );
+		expect( sessionStorage.getItem( PENDING_PROMPT_STORAGE_KEY ) ).toBe( PROMPT );
+		expect( clearReferrerRedirect ).not.toHaveBeenCalled();
+	} );
+
 	it( 'does nothing on a normal page load', async () => {
 		// Arrange
 		sessionStorage.setItem( PENDING_PROMPT_STORAGE_KEY, PROMPT );

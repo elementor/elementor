@@ -47,12 +47,14 @@ export const deliverPendingAngiePrompt = async () => {
 		return;
 	}
 
-	sessionStorage.removeItem( PENDING_PROMPT_STORAGE_KEY );
+	try {
+		if ( ! await waitForAngiePluginActive( ANGIE_READY_TIMEOUT_MS ) ) {
+			return;
+		}
 
-	if ( ! await waitForAngiePluginActive( ANGIE_READY_TIMEOUT_MS ) ) {
-		return;
+		sessionStorage.removeItem( PENDING_PROMPT_STORAGE_KEY );
+		clearReferrerRedirect();
+		openAngieWithPrompt( prompt );
+	} catch {
 	}
-
-	clearReferrerRedirect();
-	openAngieWithPrompt( prompt );
 };
