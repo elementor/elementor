@@ -81,20 +81,12 @@ class Find_Icons_Ability extends Abstract_Ability {
 			);
 		}
 
-		$hints = [];
-
-		if ( $this->has_no_matches( $response ) ) {
-			$hints[] = self::EMPTY_RESULT_HINT;
-		}
-
 		$truncated_packs = $this->get_truncated_pack_names( $response );
 
 		if ( $truncated_packs && $this->has_searchable_query( $response ) ) {
-			$hints[] = sprintf( self::TRUNCATED_PACK_HINT, implode( ', ', $truncated_packs ) );
-		}
-
-		if ( $hints ) {
-			$response['llm_instructions'] = implode( ' ', $hints );
+			$response['llm_instructions'] = sprintf( self::TRUNCATED_PACK_HINT, implode( ', ', $truncated_packs ) );
+		} elseif ( $this->has_no_matches( $response ) ) {
+			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
 		}
 
 		return $response;
@@ -106,7 +98,7 @@ class Find_Icons_Ability extends Abstract_Ability {
 			$response['truncated_custom_libraries'] ?? []
 		);
 
-		return array_values( array_filter( $names ) );
+		return array_values( array_filter( $names, static fn( $name ) => '' !== $name ) );
 	}
 
 	/**

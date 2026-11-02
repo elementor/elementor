@@ -142,6 +142,7 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertSame( [ 'qamoon' ], $result['truncated_custom_libraries'] );
 		$this->assertStringContainsString( 'qamoon', $result['llm_instructions'] );
 		$this->assertStringContainsString( 'may exist', $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'No icon on this site matches', $result['llm_instructions'] );
 
 	}
 
@@ -181,6 +182,24 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( Find_Icons_Ability::EMPTY_RESULT_HINT, $result['llm_instructions'] );
+	}
+
+	public function test_execute__keeps_a_truncated_pack_named_zero_in_the_hint() {
+		// Arrange.
+		$this->act_as_admin();
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ '0' => 'Zero' ] );
+		add_filter( 'elementor/atomic-widgets/icon/library-values', static fn() => [
+			'values' => [ 'first' => 'x x-first' ],
+			'truncated' => true,
+			'total' => 261,
+		] );
+		add_filter( 'elementor/atomic-widgets/icon/is-renderable', '__return_true' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'multicolor' ] ] );
+
+		// Assert.
+		$this->assertStringContainsString( 'pack(s) 0 are', $result['llm_instructions'] );
 	}
 
 	public function test_execute__sanitizes_pack_names_in_the_hint() {
