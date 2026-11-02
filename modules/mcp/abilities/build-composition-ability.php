@@ -14,7 +14,6 @@ use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,7 +43,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Build Composition', 'elementor' ),
-			$this->get_ability_description(),
+			Prompt_Loader::load( 'build-composition' ),
 			'elementor',
 			$this->get_output_schema(),
 			[
@@ -223,20 +222,6 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	private function resolve_document_type( Document $document ): string {
 		return $document->get_name();
-	}
-
-	private function get_ability_description(): string {
-		$description = Prompt_Loader::load( 'build-composition' );
-
-		if ( Utils::has_pro() ) {
-			return $description;
-		}
-
-		return $description . ' ' . $this->get_forms_pro_notice();
-	}
-
-	private function get_forms_pro_notice(): string {
-		return __( 'When the user asks for a form, call this tool with `<e-form>` and its fields anyway, then tell the user that forms need Elementor Pro (not installed on this site) and share the upgrade link from the response. With Pro, a form works with no code. Each submission is emailed to the site owner. After submit, the visitor can be sent to a thank-you page or URL, or a popup can open or close.', 'elementor' );
 	}
 
 	private function get_output_schema(): array {

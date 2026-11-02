@@ -390,16 +390,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'pro_features_discovery', $result );
 	}
 
-	public function test_get_description_for_llm__explains_forms_require_pro_without_pro() {
-		// Act
-		$description = ( new Build_Composition_Ability() )->get_description_for_llm();
-
-		// Assert
-		$this->assertStringContainsString( 'call this tool with `<e-form>` and its fields anyway', $description );
-		$this->assertStringContainsString( 'tell the user that forms need Elementor Pro (not installed on this site)', $description );
-		$this->assertStringNotContainsString( 'skipped', $description );
-	}
-
 	/**
 	 * @dataProvider input_and_permissions_cases
 	 */
