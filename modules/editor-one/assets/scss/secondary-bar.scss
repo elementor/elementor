@@ -188,6 +188,17 @@ $e-admin-secondary-bar-focus: #0c0d0e;
 }
 
 body.e-has-secondary-bar {
+	#wpcontent #wpbody {
+		position: static;
+		width: auto;
+		margin-block-start: 0;
+	}
+
+	#wpwrap #wpcontent #wpbody-content {
+		height: auto;
+		overflow-y: visible;
+	}
+
 	#screen-meta-links {
 		display: flex;
 		justify-content: flex-end;
