@@ -2,10 +2,14 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
 use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
+use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,6 +29,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
+		$this->act_as_admin();
 		$this->original_submenu = $GLOBALS['submenu'] ?? null;
 		$this->structure = new Admin_Menu_Structure( new Admin_Flow_Handler() );
 	}
@@ -35,6 +40,8 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		if ( $this->page_hook ) {
 			remove_all_actions( $this->page_hook );
 		}
+
+		$this->reset_menu_data_provider();
 
 		parent::tearDown();
 	}
@@ -260,6 +267,103 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( [ 'my-addon' ], array_column( $extra_items, 2 ) );
 	}
 
+	public function test_resolve_subscription_action__prefers_the_registered_action_over_upgrade() {
+		// Arrange
+		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61 );
+		$this->register_subscription_action( 'Unlock More Features', 'https://go.elementor.com/go-pro-advanced-elementor-menu/', 62 );
+		$existing = [
+			[ 'Sale Now!', 'manage_options', 'elementor-one-upgrade' ],
+		];
+
+		// Act
+		$action = $this->structure->resolve_subscription_action( $existing );
+
+		// Assert
+		$this->assertSame( 'Renew Now', $action[0] );
+		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', $action[2] );
+	}
+
+	public function test_resolve_subscription_action__keeps_the_sale_label_on_the_free_upgrade() {
+		// Arrange
+		$existing = [
+			[ 'Sale Now!', 'manage_options', 'elementor-one-upgrade' ],
+		];
+
+		// Act
+		$action = $this->structure->resolve_subscription_action( $existing );
+
+		// Assert
+		$this->assertSame( 'Sale Now!', $action[0] );
+		$this->assertSame( 'elementor-one-upgrade', $action[2] );
+	}
+
+	public function test_resolve_subscription_action__adds_the_sidebar_upgrade_when_it_is_missing() {
+		// Arrange
+		$existing = [];
+
+		// Act
+		$action = $this->structure->resolve_subscription_action( $existing );
+
+		// Assert
+		if ( Utils::has_pro() ) {
+			$this->assertNull( $action );
+			return;
+		}
+
+		$this->assertSame( ( new Go_Pro_Promotion_Item() )->get_label(), $action[0] );
+		$this->assertSame( 'elementor-one-upgrade', $action[2] );
+	}
+
+	public function test_resolve_subscription_action__ignores_a_hidden_registered_action() {
+		// Arrange
+		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61, false );
+		$existing = [
+			[ 'Upgrade', 'manage_options', 'elementor-one-upgrade' ],
+		];
+
+		// Act
+		$action = $this->structure->resolve_subscription_action( $existing );
+
+		// Assert
+		$this->assertSame( 'elementor-one-upgrade', $action[2] );
+	}
+
+	public function test_get_extra_items__drops_locked_items_that_belong_to_the_map() {
+		// Arrange
+		$this->register_subscription_action( 'Popups', 'popup_templates', 50, true, Menu_Config::TEMPLATES_GROUP_ID );
+		$existing = [
+			[ 'Popups', 'manage_options', 'popup_templates' ],
+			[ 'Fonts', 'manage_options', 'elementor_custom_fonts' ],
+			[ 'Addon', 'manage_options', 'my-addon' ],
+		];
+		Menu_Data_Provider::instance()->register_level4_item( $this->create_menu_item( 'Fonts', 'elementor_custom_fonts', 10, true, Menu_Config::CUSTOM_ELEMENTS_GROUP_ID ) );
+
+		// Act
+		$extra_items = $this->structure->get_extra_items( $existing );
+
+		// Assert
+		$this->assertSame( [ 'my-addon' ], array_column( $extra_items, 2 ) );
+	}
+
+	public function test_rebuild_submenu__places_the_subscription_action_after_account() {
+		// Arrange
+		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61 );
+		$GLOBALS['submenu'] = [
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG => [
+				[ 'Upgrade', 'manage_options', 'elementor-one-upgrade' ],
+				[ 'Home', 'manage_options', Admin_Flow_Config::PARENT_HOME ],
+			],
+		];
+
+		// Act
+		$this->structure->rebuild_submenu();
+
+		// Assert
+		$slugs = array_column( $GLOBALS['submenu'][ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ], 2 );
+		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', $slugs[ count( $slugs ) - 1 ] );
+		$this->assertNotContains( 'elementor-one-upgrade', $slugs );
+	}
+
 	public function test_rebuild_submenu__keeps_the_submenu_for_users_without_manage_options() {
 		// Arrange
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'editor' ] ) );
@@ -286,6 +390,30 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		}
 
 		return $slugs;
+	}
+
+	private function register_subscription_action( string $label, string $slug, int $position, bool $visible = true, string $group_id = Menu_Config::SYSTEM_GROUP_ID ): void {
+		Menu_Data_Provider::instance()->register_level4_item( $this->create_menu_item( $label, $slug, $position, $visible, $group_id ) );
+	}
+
+	private function create_menu_item( string $label, string $slug, int $position, bool $visible, string $group_id ): Menu_Item_Interface {
+		$item = $this->createMock( Menu_Item_Interface::class );
+		$item->method( 'get_slug' )->willReturn( $slug );
+		$item->method( 'get_label' )->willReturn( $label );
+		$item->method( 'get_group_id' )->willReturn( $group_id );
+		$item->method( 'get_parent_slug' )->willReturn( Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
+		$item->method( 'get_capability' )->willReturn( 'manage_options' );
+		$item->method( 'get_position' )->willReturn( $position );
+		$item->method( 'is_visible' )->willReturn( $visible );
+
+		return $item;
+	}
+
+	private function reset_menu_data_provider(): void {
+		$reflection = new \ReflectionClass( Menu_Data_Provider::class );
+		$instance_property = $reflection->getProperty( 'instance' );
+		$instance_property->setAccessible( true );
+		$instance_property->setValue( null, null );
 	}
 
 	private function parents_for( array $slugs ): array {

@@ -5,6 +5,7 @@ namespace Elementor\Modules\EditorOne\Components;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Classes\Subscription_Action;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -73,7 +74,7 @@ class Admin_Menu_Structure {
 		$submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ] = $this->build_submenu( // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$this->get_available_parents(),
 			$existing_items,
-			$this->extract_upgrade_item( $existing_items ),
+			$this->resolve_subscription_action( $existing_items ),
 			$this->get_extra_items( $existing_items )
 		);
 	}
@@ -227,16 +228,8 @@ class Admin_Menu_Structure {
 		return $item;
 	}
 
-	private function extract_upgrade_item( array $existing_items ): ?array {
-		$items_by_slug = array_column( $existing_items, null, 2 );
-
-		foreach ( self::UPGRADE_SLUGS as $upgrade_slug ) {
-			if ( isset( $items_by_slug[ $upgrade_slug ] ) ) {
-				return $items_by_slug[ $upgrade_slug ];
-			}
-		}
-
-		return null;
+	public function resolve_subscription_action( array $existing_items ): ?array {
+		return ( new Subscription_Action() )->resolve( $existing_items );
 	}
 
 	private function is_under_home( string $slug ): bool {
