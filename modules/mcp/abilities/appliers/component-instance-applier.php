@@ -264,7 +264,7 @@ class Component_Instance_Applier {
 
 		return Components_Access_Controller::can_add_to_page()
 			? null
-			: Components_Pro_Features_Discovery::for_action( 'add_to_page' );
+			: Components_Pro_Features_Discovery::for_action( Components_Pro_Features_Discovery::ACTION_ADD_TO_PAGE );
 	}
 
 	private function assemble_envelope( int $component_id, array $overrides_list ): array {
