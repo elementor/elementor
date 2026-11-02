@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "c087e01decdb5f8dea926b025cfdd2ba",
+=======
+    "content-hash": "cc727748d81154e5c4dbd4c3743113bc",
+>>>>>>> ad7b50af29 (Internal: Bump wp-one-package to 1.0.73 [ED-26082] (#37954))
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -140,14 +144,15 @@
             "support": {
                 "source": "https://github.com/elementor/wp-notifications-package/tree/1.2.0"
             },
-            "time": "2025-04-28T12:27:21+00:00"
+            "time": "2025-04-28T12:27:21+00:00",
+            "published-time": "2025-04-28T12:27:24+00:00"
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.72",
+            "version": "1.0.73",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.72"
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.73"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -174,7 +179,7 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "time": "2026-09-24T12:01:22+00:00"
+            "time": "2026-11-02T10:50:10+00:00"
         },
         {
             "name": "wordpress/mcp-adapter",
@@ -4895,5 +4900,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }
