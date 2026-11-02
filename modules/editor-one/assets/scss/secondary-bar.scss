@@ -44,8 +44,8 @@ $e-admin-secondary-bar-focus: #0c0d0e;
 	}
 }
 
-#editor-one-top-bar + .e-admin-secondary-bar {
-	margin-top: $e-admin-secondary-bar-top-bar-offset;
+body.e-has-secondary-bar:has(#editor-one-top-bar + .e-admin-secondary-bar) #wpcontent {
+	padding-block-start: $e-admin-secondary-bar-top-bar-offset;
 }
 
 .e-admin-secondary-bar__tabs {
@@ -229,7 +229,7 @@ body.e-has-secondary-bar {
 }
 
 @media screen and (max-width: 782px) {
-	#editor-one-top-bar + .e-admin-secondary-bar {
-		margin-top: $e-admin-secondary-bar-top-bar-offset-mobile;
+	body.e-has-secondary-bar:has(#editor-one-top-bar + .e-admin-secondary-bar) #wpcontent {
+		padding-block-start: $e-admin-secondary-bar-top-bar-offset-mobile;
 	}
 }
