@@ -33,7 +33,7 @@ test.describe( 'Lightbox slideshow video @lightbox', () => {
 					YT: {
 						loaded: number,
 						PlayerState: Record<string, number>,
-						Player: new ( element: unknown, options: PlayerOptions ) => void,
+						Player: new ( element: HTMLElement, options: PlayerOptions ) => void,
 					};
 				};
 
@@ -43,12 +43,16 @@ test.describe( 'Lightbox slideshow video @lightbox', () => {
 					loaded: 1,
 					PlayerState: { UNSTARTED: -1, ENDED: 0, PLAYING: 1, PAUSED: 2, BUFFERING: 3, CUED: 5 },
 					Player: class {
-						constructor( _element: unknown, options: PlayerOptions ) {
+						constructor( element: HTMLElement, options: PlayerOptions ) {
 							w.__ytPlayerOptions.push( {
 								videoId: options.videoId,
 								host: options.host ?? null,
 								origin: options.playerVars?.origin ?? null,
 							} );
+
+							const iframe = document.createElement( 'iframe' );
+							iframe.src = `https://www.youtube.com/embed/${ options.videoId }`;
+							element.replaceWith( iframe );
 
 							const onReady = options.events?.onReady;
 
