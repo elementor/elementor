@@ -101,7 +101,7 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$document = $this->factory()->documents->create_and_get();
-		$original_edit_mode = \Elementor\Plugin::$instance->editor->is_edit_mode();
+		$original_post_id = \Elementor\Plugin::$instance->editor->get_post_id();
 		\Elementor\Plugin::$instance->editor->set_edit_mode( true );
 		\Elementor\Plugin::$instance->editor->set_post_id( $document->get_main_id() );
 		\Elementor\Plugin::$instance->documents->switch_to_document( $document );
@@ -115,7 +115,8 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 			$this->assertArrayHasKey( 'upload', $config['urls'] );
 			$this->assertSame( wp_upload_dir()['baseurl'], $config['urls']['upload'] );
 		} finally {
-			\Elementor\Plugin::$instance->editor->set_edit_mode( $original_edit_mode );
+			\Elementor\Plugin::$instance->editor->set_edit_mode( null );
+			\Elementor\Plugin::$instance->editor->set_post_id( $original_post_id );
 		}
 	}
 }
