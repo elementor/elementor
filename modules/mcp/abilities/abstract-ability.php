@@ -26,6 +26,10 @@ abstract class Abstract_Ability {
 	abstract public function execute( $input = [] );
 
 	final public function execute_guarded( $input = [] ) {
+		if ( ! is_array( $input ) ) {
+			$input = is_object( $input ) ? (array) $input : [];
+		}
+
 		$availability = $this->is_available();
 		if ( is_wp_error( $availability ) ) {
 			return $availability;
