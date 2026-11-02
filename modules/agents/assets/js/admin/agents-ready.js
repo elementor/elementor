@@ -34,6 +34,7 @@ const mountScanner = ( rootElement, config, isRTL ) => {
 			angieAppUrl={ scannerConfig.angieAppUrl || '' }
 			angieInstallHeroUrl={ scannerConfig.angieInstallHeroUrl || '' }
 			isAngieActive={ !! scannerConfig.isAngieActive }
+			isAngieInstalled={ !! scannerConfig.isAngieInstalled }
 			lastReport={ scannerConfig.lastReport || null }
 			retryAt={ scannerConfig.retryAt || null }
 			llmsConfig={ config.llms }
