@@ -914,4 +914,93 @@ describe( 'SizeControl', () => {
 			expect( unitButton ).toHaveTextContent( '%' );
 		} );
 	} );
+
+	describe( 'Preserving the selected unit when the value is cleared', () => {
+		it( 'should keep the selected unit after clearing the value, before and after blur', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const bind = 'select';
+			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind, propType };
+
+			const { rerender } = renderControl( <SizeControl units={ mockLengthUnits() } disableCustom />, props );
+
+			fireEvent.click( screen.getByRole( 'button' ) );
+			fireEvent.click( screen.getByText( 'REM' ) );
+
+			rerender( <SizeControl units={ mockLengthUnits() } disableCustom />, {
+				value: { [ bind ]: mockSizeProp( { size: 10, unit: 'rem' } ) },
+			} );
+
+			// Act.
+			fireEvent.input( screen.getByRole( 'spinbutton' ), { target: { value: '' } } );
+
+			rerender( <SizeControl units={ mockLengthUnits() } disableCustom />, { value: { [ bind ]: null } } );
+
+			// Assert.
+			expect( setValue ).toHaveBeenLastCalledWith( null );
+			expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+			expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'rem' );
+
+			// Act.
+			fireEvent.blur( screen.getByRole( 'spinbutton' ) );
+
+			// Assert.
+			expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'rem' );
+		} );
+
+		it( 'should use the preserved unit when typing a new value after clearing', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const bind = 'select';
+			const props = { setValue, value: mockSizeProp( { size: 16, unit: 'rem' } ), bind, propType };
+
+			const { rerender } = renderControl( <SizeControl units={ mockLengthUnits() } disableCustom />, props );
+
+			fireEvent.input( screen.getByRole( 'spinbutton' ), { target: { value: '' } } );
+
+			rerender( <SizeControl units={ mockLengthUnits() } disableCustom />, { value: { [ bind ]: null } } );
+
+			// Act.
+			fireEvent.input( screen.getByRole( 'spinbutton' ), { target: { value: '5' } } );
+
+			// Assert.
+			expect( setValue ).toHaveBeenLastCalledWith( { $$type: 'size', value: { size: 5, unit: 'rem' } } );
+		} );
+
+		it( 'should keep the unit and clear the size when the value is reset externally', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const bind = 'select';
+			const props = { setValue, value: mockSizeProp( { size: 16, unit: 'rem' } ), bind, propType };
+
+			const { rerender } = renderControl( <SizeControl units={ mockLengthUnits() } disableCustom />, props );
+
+			// Act.
+			rerender( <SizeControl units={ mockLengthUnits() } disableCustom />, { value: { [ bind ]: null } } );
+
+			// Assert.
+			expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
+			expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'rem' );
+		} );
+
+		it( 'should fall back to the default unit when an extended unit value is reset', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const bind = 'select';
+			const props = { setValue, value: mockSizeProp( { size: '', unit: 'auto' } ), bind, propType };
+
+			const { rerender } = renderControl(
+				<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } />,
+				props
+			);
+
+			// Act.
+			rerender( <SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } />, {
+				value: { [ bind ]: null },
+			} );
+
+			// Assert.
+			expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'px' );
+		} );
+	} );
 } );

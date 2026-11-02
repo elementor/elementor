@@ -5,6 +5,8 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
+use Elementor\Modules\Agents\Classes\Llms_Revert_Ajax;
+use Elementor\Modules\Agents\Classes\Llms_Takeover_Ajax;
 use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Llms_Manual_Content;
 use Elementor\Modules\Agents\Module;
@@ -120,6 +122,96 @@ class Test_Llms_Manual_Content extends Elementor_Test_Base {
 		} finally {
 			unlink( $file_path );
 			Module::reset_physical_file_cache();
+		}
+	}
+
+	public function test_revert_ajax_handle__discards_manual_content_and_clears_flag() {
+		// Arrange
+		$this->ajax->handle( [ 'content' => '# Edited by hand' ] );
+		$revert_ajax = new Llms_Revert_Ajax( $this->settings, $this->manual_content );
+
+		// Act
+		$result = $revert_ajax->handle();
+
+		// Assert
+		$this->assertSame( [ 'isManuallyEdited' => false ], $result );
+		$this->assertSame( '', $this->manual_content->get_content() );
+		$this->assertFalse( $this->settings->is_llms_manually_edited() );
+	}
+
+	public function test_revert_ajax_handle__rejects_users_without_manage_options() {
+		// Arrange
+		$this->ajax->handle( [ 'content' => '# Edited by hand' ] );
+		$revert_ajax = new Llms_Revert_Ajax( $this->settings, $this->manual_content );
+		$this->act_as_editor();
+
+		// Act
+		try {
+			$revert_ajax->handle();
+			$this->fail( 'Expected the revert to be refused for non-admins.' );
+		} catch ( \Exception $exception ) {
+			// Assert
+			$this->assertSame( Exceptions::FORBIDDEN, $exception->getCode() );
+			$this->assertTrue( $this->settings->is_llms_manually_edited() );
+		}
+	}
+
+	public function test_takeover_ajax_handle__deletes_physical_file_and_enables_generated_llms_txt() {
+		// Arrange
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+		file_put_contents( $file_path, '# Server file' );
+		Module::reset_physical_file_cache();
+		$takeover_ajax = new Llms_Takeover_Ajax( $this->settings, $this->manual_content );
+
+		try {
+			// Act
+			$result = $takeover_ajax->handle();
+
+			// Assert
+			$this->assertSame( [
+				'hasPhysicalFile'  => false,
+				'enabled'          => true,
+				'isManuallyEdited' => false,
+			], $result );
+			$this->assertFileDoesNotExist( $file_path );
+			$this->assertFalse( Module::has_physical_llms_file() );
+			$this->assertTrue( $this->settings->is_llms_enabled() );
+			$this->assertFalse( $this->settings->is_llms_manually_edited() );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
+	}
+
+	public function test_takeover_ajax_handle__refuses_when_no_physical_file_exists() {
+		// Arrange
+		$takeover_ajax = new Llms_Takeover_Ajax( $this->settings, $this->manual_content );
+
+		// Act
+		try {
+			$takeover_ajax->handle();
+			$this->fail( 'Expected the take over to be refused without a physical llms.txt.' );
+		} catch ( \Exception $exception ) {
+			// Assert
+			$this->assertSame( Exceptions::BAD_REQUEST, $exception->getCode() );
+		}
+	}
+
+	public function test_takeover_ajax_handle__rejects_users_without_manage_options() {
+		// Arrange
+		$takeover_ajax = new Llms_Takeover_Ajax( $this->settings, $this->manual_content );
+		$this->act_as_editor();
+
+		// Act
+		try {
+			$takeover_ajax->handle();
+			$this->fail( 'Expected the take over to be refused for non-admins.' );
+		} catch ( \Exception $exception ) {
+			// Assert
+			$this->assertSame( Exceptions::FORBIDDEN, $exception->getCode() );
 		}
 	}
 }

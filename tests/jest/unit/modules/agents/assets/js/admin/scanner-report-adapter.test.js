@@ -31,7 +31,7 @@ const getReport = () => ( {
 		payments: { weight: 10, earned: 0, possible: 0 },
 	},
 	checks: [
-		{ id: 'sitemap', label: 'Sitemap exists', layer: 'accessibility', tier: 'required', status: 'pass', earned: 2, possible: 2, scorable: true },
+		{ id: 'sitemap', label: 'Sitemap exists', layer: 'accessibility', tier: 'required', status: 'pass', earned: 2, possible: 2, scorable: true, description: 'Sitemaps help agents.', message: 'Found sitemap.xml' },
 		{
 			id: 'llms-txt-exists',
 			label: 'llms.txt exists',
@@ -219,7 +219,8 @@ describe( 'toScanResult', () => {
 			id: 'sitemap',
 			title: 'Sitemap exists',
 			technicalName: 'Sitemap exists',
-			description: '',
+			description: 'Sitemaps help agents.',
+			evidence: 'Found sitemap.xml',
 			stage: STAGE_IDENTIFY,
 			points: 2,
 		} ] );

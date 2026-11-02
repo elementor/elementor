@@ -5,7 +5,6 @@ import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic widget drop wrapping (ED-23790) @v4-tests', () => {
 	const flexboxType = 'e-flexbox';
-	const headingTitle = 'Heading';
 	const headingName = 'e-heading';
 
 	test.beforeAll( async () => {
@@ -34,7 +33,7 @@ test.describe( 'Atomic widget drop wrapping (ED-23790) @v4-tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		const widgetElement = await editor.v4Panel.addAtomicWidget( headingTitle, headingName );
+		const widgetElement = await editor.v4Panel.addAtomicWidget( headingName );
 		const { wrapperId, widgetId } = await getElementIds( widgetElement );
 
 		const wrapper = widgetElement.locator( '..' );
@@ -56,7 +55,7 @@ test.describe( 'Atomic widget drop wrapping (ED-23790) @v4-tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		const widgetElement = await editor.v4Panel.addAtomicWidget( headingTitle, headingName );
+		const widgetElement = await editor.v4Panel.addAtomicWidget( headingName );
 		const { wrapperId, widgetId } = await getElementIds( widgetElement );
 
 		const wrapper = editor.getPreviewFrame().locator( `[data-id="${ wrapperId }"]` );
