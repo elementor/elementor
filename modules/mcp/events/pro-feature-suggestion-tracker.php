@@ -53,25 +53,25 @@ class Pro_Feature_Suggestion_Tracker {
 	}
 
 	private static function extract_suggestion( \WP_Error $error ): array {
-		$data = $error->get_error_data();
+		$data = (array) $error->get_error_data();
 
 		return [
-			'pro_feature'    => $data['pro_feature'] ?? '',
-			'upgrade_url'    => $data['upgrade_url'] ?? '',
-			'document_types' => $data['document_types'] ?? [],
+			'pro_feature'    => (string) ( $data['pro_feature'] ?? '' ),
+			'upgrade_url'    => (string) ( $data['upgrade_url'] ?? '' ),
+			'document_types' => (array) ( $data['document_types'] ?? [] ),
 		];
 	}
 
 	private static function build_payload( string $tool_name, array $suggestions ): array {
-		$pro_features   = array_values( array_unique( array_column( $suggestions, 'pro_feature' ) ) );
-		$document_types = array_values( array_unique( array_merge( ...array_column( $suggestions, 'document_types' ) ) ) );
+		$pro_features   = array_values( array_unique( array_filter( array_column( $suggestions, 'pro_feature' ) ) ) );
+		$document_types = array_values( array_unique( array_merge( [], ...array_column( $suggestions, 'document_types' ) ) ) );
 		$session_id     = Utils::get_super_global_value( $_SERVER, self::SESSION_ID_SERVER_KEY );
 
 		$payload = [
 			'tool_name'    => $tool_name,
-			'pro_feature'  => $pro_features[0],
+			'pro_feature'  => $pro_features[0] ?? '',
 			'pro_features' => $pro_features,
-			'upgrade_url'  => $suggestions[0]['upgrade_url'],
+			'upgrade_url'  => $suggestions[0]['upgrade_url'] ?? '',
 			'license_tier' => self::get_license_tier(),
 		];
 
