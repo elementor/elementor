@@ -45,11 +45,17 @@ class Woocommerce_Pro_Features_Discovery implements Widget_Pro_Features_Discover
 	}
 
 	private static function get_widget_types(): array {
-		$mapped_types = array_keys( require V3_Widget_Map_Registry::REGISTERED_MAPS_FILE );
+		static $widget_types = null;
 
-		return array_values(
-			array_filter( $mapped_types, fn( string $type ) => str_starts_with( $type, self::WIDGET_TYPE_PREFIX ) )
-		);
+		if ( null === $widget_types ) {
+			$mapped_types = array_keys( require V3_Widget_Map_Registry::REGISTERED_MAPS_FILE );
+
+			$widget_types = array_values(
+				array_filter( $mapped_types, fn( string $type ) => str_starts_with( $type, self::WIDGET_TYPE_PREFIX ) )
+			);
+		}
+
+		return $widget_types;
 	}
 
 	private static function error( array $extra_data = [] ): \WP_Error {

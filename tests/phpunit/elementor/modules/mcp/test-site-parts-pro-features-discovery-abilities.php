@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -86,6 +87,10 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 
 	public function test_manage_execute_guarded__returns_woocommerce_error_for_product_types() {
 		// Arrange
+		if ( Utils::has_pro() ) {
+			$this->markTestSkipped( 'Requires Elementor Pro to be inactive.' );
+		}
+
 		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
