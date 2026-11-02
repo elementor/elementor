@@ -261,7 +261,7 @@ class Module extends BaseModule {
 		$markdown_revert_ajax = new Markdown_Revert_Ajax( $this->markdown_manual_content );
 		$ajax->register_ajax_action( Markdown_Revert_Ajax::ACTION, [ $markdown_revert_ajax, 'handle' ] );
 
-		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
 		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
 	}
 
@@ -989,7 +989,7 @@ class Module extends BaseModule {
 			$this->settings,
 			$extractor,
 			[
-				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
+				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ), $this->generator, $sanitizer ),
 				new Get_Site_Structure( $this->generator, $sanitizer ),
 				new Read_Page_Content( $this->settings, $this->markdown_endpoint, $sanitizer ),
 				new Query_Business_Info( $this->settings, $extractor, $sanitizer ),

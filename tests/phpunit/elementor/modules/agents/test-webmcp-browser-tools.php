@@ -72,7 +72,7 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		$this->settings->activate();
 
 		$this->browser_tools = new Webmcp_Browser_Tools( $this->settings, $this->extractor, [
-			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $generator, $sanitizer ),
+			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog( new Markdown_Manual_Content( $generator ) ), $generator, $sanitizer ),
 			new Get_Site_Structure( $generator, $sanitizer ),
 			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( $generator ) ), $sanitizer ),
 			new Query_Business_Info( $this->settings, $this->extractor, $sanitizer ),

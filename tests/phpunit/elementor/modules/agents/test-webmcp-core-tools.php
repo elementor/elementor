@@ -547,7 +547,7 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 	}
 
 	private function create_search_tool(): Search_Site_Content {
-		return new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $this->sanitizer );
+		return new Search_Site_Content( $this->settings, new Markdown_Content_Catalog( new Markdown_Manual_Content( $this->generator ) ), $this->generator, $this->sanitizer );
 	}
 
 	private function create_read_tool(): Read_Page_Content {

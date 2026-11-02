@@ -16,6 +16,12 @@ class Markdown_Content_Catalog {
 
 	const EXCERPT_WORDS = 40;
 
+	private Markdown_Manual_Content $manual_content;
+
+	public function __construct( Markdown_Manual_Content $manual_content ) {
+		$this->manual_content = $manual_content;
+	}
+
 	/**
 	 * Published, public, indexable posts the preview picker can show, ordered by title.
 	 * An empty term puts the static front page first when it qualifies.
@@ -160,7 +166,7 @@ class Markdown_Content_Catalog {
 			'title'        => Post_Title::to_plain_text( get_the_title( $post ) ),
 			'path'         => $this->get_path( $post ),
 			'type'         => $post->post_type,
-			'isOverridden' => metadata_exists( 'post', $post->ID, Markdown_Manual_Content::META_KEY ),
+			'isOverridden' => $this->manual_content->has_override( $post->ID ),
 		];
 	}
 
