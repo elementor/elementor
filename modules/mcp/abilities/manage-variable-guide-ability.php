@@ -41,7 +41,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 	public function build_guide( bool $pro_active ): string {
 		$size_section = $pro_active
 			? "- **global-size-variable** — A simple CSS length with a unit (Elementor Pro). Use this for fixed spacing, font sizes, or layout values. Example: `16px`, `1.5rem`, `2em`, `10vh`\n- **global-custom-size-variable** — Any CSS size expression that goes beyond a simple number + unit (Elementor Pro). Use this when the value is a CSS function, a keyword, or a combination of units that `global-size-variable` cannot represent. Example: `auto`, `clamp(1rem, 2vw, 2rem)`, `calc(100% - 32px)`, `min(50vw, 600px)`, `300ms`, `2ch`. When in doubt: if the value contains a function call or a keyword, use `global-custom-size-variable`."
-			: "- ~~global-size-variable~~ — requires Elementor Pro (not available on this site)\n- ~~global-custom-size-variable~~ — requires Elementor Pro (not available on this site)";
+			: "- ~~global-size-variable~~ and ~~global-custom-size-variable~~ — need Elementor Pro (not licensed on this site). With Pro, spacing and font sizes live in one scale: change a value once and it updates everywhere it's used. Color and font variables work on Free.";
 
 		return <<<GUIDE
 # Purpose
