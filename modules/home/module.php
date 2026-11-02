@@ -79,30 +79,10 @@ class Module extends BaseApp {
 		}
 
 		if ( $active_tab ) {
-			$valid_tab_ids = $this->get_valid_kit_tab_ids();
-
-			if ( in_array( $active_tab, $valid_tab_ids, true ) ) {
-				$edit_link = add_query_arg( 'active-tab', $active_tab, $edit_link );
-			}
+			$edit_link = add_query_arg( 'active-tab', $active_tab, $edit_link );
 		}
 
 		return $edit_link;
-	}
-
-	private function get_valid_kit_tab_ids(): array {
-		try {
-			$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-
-			if ( ! $active_kit ) {
-				return [];
-			}
-
-			$tabs = $active_kit->get_tabs();
-
-			return array_keys( $tabs );
-		} catch ( \Exception $e ) {
-			return [];
-		}
 	}
 
 	private function get_app_js_config(): array {

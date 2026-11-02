@@ -258,18 +258,29 @@ class Test_Document extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$document = $this->factory()->documents->create_and_get();
-		$_GET['active-document'] = '" onfocus="alert(\'Parlix\')" autofocus="" tabindex="1" a="';
+
+		$filter_callback = function( $url ) {
+			return 'https://example.org/wp-admin/post.php?post=1&action=elementor&x=" onfocus="x';
+		};
+
+		add_filter( 'elementor/document/urls/edit', $filter_callback, PHP_INT_MAX );
 
 		// Act
 		$actions = $document->filter_admin_row_actions( [] );
 
 		// Assert
 		$this->assertArrayHasKey( 'edit_with_elementor', $actions );
-		$this->assertStringNotContainsString( 'onfocus', $actions['edit_with_elementor'] );
-		$this->assertDoesNotMatchRegularExpression(
-			'/href="[^"]*"\s+/',
-			$actions['edit_with_elementor']
-		);
+
+		preg_match( '/href="([^"]*)"/', $actions['edit_with_elementor'], $matches );
+		$this->assertNotEmpty( $matches, 'href attribute not found' );
+
+		$href_value = $matches[1];
+		$this->assertStringNotContainsString( '"', html_entity_decode( $href_value, ENT_QUOTES ) );
+
+		$this->assertStringNotContainsString( ' onfocus="', $actions['edit_with_elementor'] );
+
+		// Cleanup
+		remove_filter( 'elementor/document/urls/edit', $filter_callback, PHP_INT_MAX );
 	}
 
 	public function test_get_autosave__creates_autosave_when_not_exists() {
