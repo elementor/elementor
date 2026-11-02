@@ -8,7 +8,7 @@
         "php": ">=7.4",
         "automattic/jetpack-autoloader": "^6",
         "elementor/elementor-mcp-composer": "^1.0.20",
-        "elementor/wp-one-package": "1.0.72"
+        "elementor/wp-one-package": "1.0.73"
     },
     "repositories": [
         {
