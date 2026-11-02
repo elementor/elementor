@@ -58,8 +58,24 @@ function syncNoticeWithActiveRoute() {
 	}
 }
 
+function stripConnectReloadQueryParam() {
+	try {
+		const url = new URL( window.location.href );
+
+		if ( ! url.searchParams.has( 'elementor_pro_setup_connected' ) ) {
+			return;
+		}
+
+		url.searchParams.delete( 'elementor_pro_setup_connected' );
+		window.history.replaceState( null, '', url.toString() );
+	} catch {
+		// ignore
+	}
+}
+
 export function init() {
 	listenTo( v1ReadyEvent(), () => {
+		stripConnectReloadQueryParam();
 		showConnectSuccessNotificationAfterReloadIfPending();
 		syncNoticeWithActiveRoute();
 	} );

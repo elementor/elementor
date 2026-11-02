@@ -6,6 +6,8 @@ const POPUP_TOP = 200;
 const POPUP_LEFT = 0;
 const POPUP_CLOSED_POLL_INTERVAL_MS = 400;
 const SETUP_VERIFY_POLL_INTERVAL_MS = 1500;
+const POPUP_CLOSED_VERIFY_ATTEMPTS = 10;
+const POPUP_CLOSED_VERIFY_DELAY_MS = 800;
 const CONNECT_SUCCESS_WINDOW_EVENT = 'elementor/connect/success';
 
 type JQueryLike = {
@@ -31,6 +33,12 @@ type ConnectPopupOptions = {
 };
 
 let callbackCounter = 0;
+
+function delay( ms: number ): Promise< void > {
+	return new Promise( ( resolve ) => {
+		setTimeout( resolve, ms );
+	} );
+}
 
 function getConnectWindow(): JQueryLike | undefined {
 	return ( window as ElementorConnectWindow ).elementorCommon?.elements?.$window;
@@ -200,13 +208,19 @@ export function useElementorConnectPopup( {
 			const verify = verifyConnectCompleteRef.current;
 
 			if ( verify ) {
-				try {
-					if ( await verify() ) {
-						finishConnectFlow( 'success' );
-						return;
+				for ( let attempt = 0; attempt < POPUP_CLOSED_VERIFY_ATTEMPTS; attempt++ ) {
+					try {
+						if ( await verify() ) {
+							finishConnectFlow( 'success' );
+							return;
+						}
+					} catch {
+						// Retry while license state catches up.
 					}
-				} catch {
-					// Fall through to error.
+
+					if ( attempt < POPUP_CLOSED_VERIFY_ATTEMPTS - 1 ) {
+						await delay( POPUP_CLOSED_VERIFY_DELAY_MS );
+					}
 				}
 			}
 

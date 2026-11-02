@@ -32,7 +32,7 @@ import {
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
-import { markConnectSuccessNotificationForAfterReload } from '../utils/post-reload-connect-success-notification';
+import { reloadEditorAfterConnectSuccess } from '../utils/reload-editor-after-connect-success';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
@@ -101,8 +101,9 @@ async function postCompleteSetup(): Promise< CompleteSetupResult > {
 	return response.data?.data ?? {};
 }
 
-async function fetchPromotionConfig(): Promise< ProSetupConfig | null > {
-	const response = await httpService().get( `${ REST_BASE }/setup-state` );
+async function fetchPromotionConfig( options?: { refreshLicense?: boolean } ): Promise< ProSetupConfig | null > {
+	const params = options?.refreshLicense ? { refresh_license: 1 } : undefined;
+	const response = await httpService().get( `${ REST_BASE }/setup-state`, { params } );
 	const config = response.data?.data?.proSetupPromotion;
 
 	if ( ! config?.state ) {
@@ -173,17 +174,11 @@ export function ProSetupPanelPromo() {
 		setOpen( false );
 
 		try {
-			const config = await fetchPromotionConfigAfterConnect( fetchPromotionConfig );
+			const config = await fetchPromotionConfigAfterConnect( () =>
+				fetchPromotionConfig( { refreshLicense: true } )
+			);
 
-			if ( ! config ) {
-				applyPromotionConfig( null );
-				trackProSetupPromotionConnectResult( 'success' );
-				markConnectSuccessNotificationForAfterReload();
-				window.location.reload();
-				return;
-			}
-
-			if ( 'connect' === config.state ) {
+			if ( config && 'connect' === config.state ) {
 				applyPromotionConfig( config );
 				setOpen( false );
 				trackProSetupPromotionConnectResult(
@@ -197,12 +192,19 @@ export function ProSetupPanelPromo() {
 						'elementor'
 					),
 					id: 'pro-setup-promotion-connect-incomplete',
+					additionalActionProps: [
+						{
+							children: __( 'Reload editor', 'elementor' ),
+							onClick: () => reloadEditorAfterConnectSuccess(),
+						},
+					],
 				} );
 				return;
 			}
 
-			applyPromotionConfig( config );
+			applyPromotionConfig( null );
 			trackProSetupPromotionConnectResult( 'success' );
+			reloadEditorAfterConnectSuccess();
 		} catch {
 			notify( {
 				type: 'error',
@@ -251,7 +253,7 @@ export function ProSetupPanelPromo() {
 	};
 
 	const isProSetupConnectComplete = async (): Promise< boolean > => {
-		const config = await fetchPromotionConfig();
+		const config = await fetchPromotionConfig( { refreshLicense: true } );
 
 		return ! config || 'connect' !== config.state;
 	};

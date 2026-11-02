@@ -117,6 +117,14 @@ class Setup_State {
 		return current_user_can( 'install_plugins' ) ? self::STATE_INSTALL : self::STATE_HIDDEN;
 	}
 
+	public static function refresh_pro_license_from_remote(): void {
+		if ( ! class_exists( '\ElementorPro\License\API' ) ) {
+			return;
+		}
+
+		\ElementorPro\License\API::get_license_data( true );
+	}
+
 	public static function get_editor_config(): ?array {
 		$state = self::resolve();
 

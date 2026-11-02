@@ -27,6 +27,10 @@ class Setup_State_Endpoint extends Endpoint_Base {
 	}
 
 	public function get_items( $request ) {
+		if ( rest_sanitize_boolean( $request->get_param( 'refresh_license' ) ) ) {
+			Setup_State::refresh_pro_license_from_remote();
+		}
+
 		return [
 			'data' => [
 				'proSetupPromotion' => Setup_State::get_editor_config(),

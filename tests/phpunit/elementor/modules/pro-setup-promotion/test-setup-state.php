@@ -131,4 +131,9 @@ class Test_Setup_State extends Elementor_Test_Base {
 		$this->assertSame( Setup_State::STATE_INSTALL, $config['state'] );
 		$this->assertArrayNotHasKey( 'connectUrl', $config );
 	}
+
+	public function test_refresh_pro_license_from_remote_does_not_throw_without_pro(): void {
+		Setup_State::refresh_pro_license_from_remote();
+		$this->assertTrue( true );
+	}
 }
