@@ -33,6 +33,7 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Schema_Parser;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Get_Site_Structure;
@@ -183,6 +184,7 @@ class Module extends BaseModule {
 
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
+		$this->register_component( new Markdown_Not_Found( $this->settings, $this->markdown_endpoint, $this ) );
 
 		$this->webmcp_browser_tools = $this->create_webmcp_browser_tools( $sanitizer );
 		$this->register_component( $this->webmcp_browser_tools );
@@ -952,6 +954,7 @@ class Module extends BaseModule {
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
 			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
+			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 		];
