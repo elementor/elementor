@@ -289,27 +289,6 @@ export const useScannerFlow = ( {
 			} );
 	}, [] );
 
-	const undoFix = useCallback( ( check ) => {
-		const previousPayload = resolvedIds[ check.id ];
-
-		setActionError( '' );
-		setResolvedIds( ( current ) => withoutKey( current, check.id ) );
-		setSavingCheckIds( ( current ) => ( { ...current, [ check.id ]: true } ) );
-
-		undoCheckFix( check.id )
-			.catch( ( error ) => {
-				if ( isMountedRef.current ) {
-					setResolvedIds( ( current ) => ( { ...current, [ check.id ]: previousPayload } ) );
-					setActionError( getSaveErrorMessage( error ) );
-				}
-			} )
-			.finally( () => {
-				if ( isMountedRef.current ) {
-					setSavingCheckIds( ( current ) => withoutKey( current, check.id ) );
-				}
-			} );
-	}, [ resolvedIds ] );
-
 	const fixWithAngie = useCallback( ( check ) => {
 		if ( canOpenAngie( isAngieActive ) ) {
 			openAngieWithPrompt( check.fixPrompt );
@@ -378,6 +357,34 @@ export const useScannerFlow = ( {
 				}
 			} );
 	}, [ setModuleFlag ] );
+
+	const undoFix = useCallback( ( check ) => {
+		const moduleKey = getToggleModuleKey( check.id );
+
+		if ( moduleKey ) {
+			setCheckEnabled( check, false );
+			return;
+		}
+
+		const previousPayload = resolvedIds[ check.id ];
+
+		setActionError( '' );
+		setResolvedIds( ( current ) => withoutKey( current, check.id ) );
+		setSavingCheckIds( ( current ) => ( { ...current, [ check.id ]: true } ) );
+
+		undoCheckFix( check.id )
+			.catch( ( error ) => {
+				if ( isMountedRef.current ) {
+					setResolvedIds( ( current ) => ( { ...current, [ check.id ]: previousPayload } ) );
+					setActionError( getSaveErrorMessage( error ) );
+				}
+			} )
+			.finally( () => {
+				if ( isMountedRef.current ) {
+					setSavingCheckIds( ( current ) => withoutKey( current, check.id ) );
+				}
+			} );
+	}, [ resolvedIds, setCheckEnabled ] );
 
 	const setPreference = useCallback( ( checkId, value ) => {
 		setPreferences( ( current ) => ( { ...current, [ checkId ]: value } ) );
