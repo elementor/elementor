@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\EditorOne\Components;
 
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Secondary_Bar;
 use Elementor\Utils;
@@ -11,6 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Secondary_Bar_Handler {
+
+	const PACKAGE_NAME = 'editor-one-secondary-bar';
+
+	const SCRIPT_HANDLE = 'elementor-v2-' . self::PACKAGE_NAME;
 
 	private Admin_Flow_Handler $admin_flow_handler;
 
@@ -23,7 +28,7 @@ class Secondary_Bar_Handler {
 		$this->secondary_bar = $secondary_bar ?? new Secondary_Bar();
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ], 20 );
-		add_action( 'in_admin_header', [ $this, 'render' ], 20 );
+		add_action( 'in_admin_header', [ $this, 'render_container' ], 20 );
 		add_filter( 'admin_body_class', [ $this, 'add_body_class' ] );
 	}
 
@@ -37,21 +42,22 @@ class Secondary_Bar_Handler {
 		wp_enqueue_style(
 			'elementor-editor-one-secondary-bar',
 			ELEMENTOR_ASSETS_URL . 'css/modules/editor-one/secondary-bar' . $min_suffix . '.css',
-			[ 'elementor-common' ],
+			[],
 			ELEMENTOR_VERSION
 		);
 
-		wp_enqueue_script(
-			'editor-one-secondary-bar',
-			ELEMENTOR_ASSETS_URL . 'js/editor-one-secondary-bar' . $min_suffix . '.js',
-			[ 'elementor-common' ],
-			ELEMENTOR_VERSION,
-			true
-		);
+		$this->register_package();
+		wp_enqueue_script( self::SCRIPT_HANDLE );
+		wp_localize_script( self::SCRIPT_HANDLE, 'editorOneSecondaryBarConfig', $this->get_bar() );
+		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
 	}
 
-	public function render(): void {
-		$this->secondary_bar->render( $this->get_bar() );
+	public function render_container(): void {
+		if ( empty( $this->get_bar() ) ) {
+			return;
+		}
+
+		echo '<div id="editor-one-secondary-bar"></div>';
 	}
 
 	public function add_body_class( $classes ): string {
@@ -62,6 +68,30 @@ class Secondary_Bar_Handler {
 		}
 
 		return $classes . ' e-has-secondary-bar';
+	}
+
+	private function register_package(): void {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$package = self::PACKAGE_NAME;
+
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		$config = $assets_config_provider->load( $package )->get( $package );
+
+		if ( ! $config ) {
+			return;
+		}
+
+		wp_register_script(
+			$config['handle'],
+			ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$min_suffix}.js",
+			$config['deps'],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	private function get_bar(): array {

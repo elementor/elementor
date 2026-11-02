@@ -8,6 +8,8 @@ use Elementor\Modules\EditorOne\Classes\Admin_Flow_Map;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Secondary_Bar;
+use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
+use Elementor\Modules\EditorOne\Components\Secondary_Bar_Handler;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -118,46 +120,47 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$this->assertSame( [], $bar['addons'] );
 	}
 
-	public function test_render__keeps_destinations_in_the_markup() {
-		// Arrange
-		$this->register_item( 'e-form-submissions', 'Submissions' );
-		$bar = $this->secondary_bar->get_bar( $this->create_map(), $this->provider, [
-			'parent' => Admin_Flow_Config::PARENT_SUBMISSIONS,
-			'group' => Admin_Flow_Config::GROUP_SUBMISSIONS,
-			'tab' => 'submissions',
-		] );
-
-		// Act
-		ob_start();
-		$this->secondary_bar->render( $bar );
-		$html = ob_get_clean();
-
-		// Assert
-		$this->assertStringContainsString( 'href="' . esc_url( admin_url( 'admin.php?page=e-form-submissions' ) ) . '"', $html );
-		$this->assertStringContainsString( 'aria-current="page"', $html );
-		$this->assertStringContainsString( 'aria-label="' . esc_attr__( 'Finder', 'elementor' ) . '"', $html );
-		$this->assertStringNotContainsString( 'e-admin-secondary-bar__addons', $html );
-	}
-
-	public function test_render__addons_menu_contains_third_party_links() {
+	public function test_get_bar__keeps_the_destinations_of_tabs_and_addons() {
 		// Arrange
 		$this->register_item( 'elementor-settings', 'Settings' );
 		$this->register_item( 'addon-page', 'Addon Page', Menu_Config::THIRD_PARTY_GROUP_ID );
+
+		// Act
 		$bar = $this->secondary_bar->get_bar( $this->create_map(), $this->provider, [
 			'parent' => Admin_Flow_Config::PARENT_SETTINGS,
 			'group' => Admin_Flow_Config::GROUP_SETTINGS,
 			'tab' => 'settings',
 		] );
 
+		// Assert
+		$this->assertContains( admin_url( 'admin.php?page=elementor-settings' ), array_column( $bar['tabs'], 'url' ) );
+		$this->assertSame( [ admin_url( 'admin.php?page=addon-page' ) ], array_column( $bar['addons'], 'url' ) );
+	}
+
+	public function test_render_container__prints_the_root_only_when_there_is_a_bar() {
+		// Arrange
+		$with_bar = $this->create_handler( [ 'tabs' => [ [ 'id' => 'settings' ] ] ] );
+		$without_bar = $this->create_handler( [] );
+
 		// Act
 		ob_start();
-		$this->secondary_bar->render( $bar );
+		$with_bar->render_container();
 		$html = ob_get_clean();
 
+		ob_start();
+		$without_bar->render_container();
+		$empty_html = ob_get_clean();
+
 		// Assert
-		$this->assertStringContainsString( 'e-admin-secondary-bar__addons', $html );
-		$this->assertStringContainsString( 'href="' . esc_url( admin_url( 'admin.php?page=addon-page' ) ) . '"', $html );
-		$this->assertStringContainsString( 'Addon Page', $html );
+		$this->assertSame( '<div id="editor-one-secondary-bar"></div>', $html );
+		$this->assertSame( '', $empty_html );
+	}
+
+	private function create_handler( array $bar ): Secondary_Bar_Handler {
+		$secondary_bar = $this->createMock( Secondary_Bar::class );
+		$secondary_bar->method( 'get_bar' )->willReturn( $bar );
+
+		return new Secondary_Bar_Handler( $this->createMock( Admin_Flow_Handler::class ), $secondary_bar );
 	}
 
 	private function create_map(): Admin_Flow_Map {

@@ -30,61 +30,6 @@ class Secondary_Bar {
 		];
 	}
 
-	public function render( array $bar ): void {
-		if ( empty( $bar['tabs'] ) ) {
-			return;
-		}
-
-		$aria_label = sprintf(
-			/* translators: %s: admin section name. */
-			esc_html__( '%s section', 'elementor' ),
-			$bar['label']
-		);
-
-		echo '<nav class="e-admin-secondary-bar" aria-label="' . esc_attr( $aria_label ) . '">';
-		echo '<ul class="e-admin-secondary-bar__tabs">';
-
-		foreach ( $bar['tabs'] as $tab ) {
-			$classes = 'e-admin-secondary-bar__tab';
-
-			if ( ! empty( $tab['is_active'] ) ) {
-				$classes .= ' is-active';
-			}
-
-			echo '<li class="e-admin-secondary-bar__tab-item">';
-			echo '<a class="' . esc_attr( $classes ) . '" href="' . esc_url( $tab['url'] ) . '"';
-
-			if ( ! empty( $tab['is_active'] ) ) {
-				echo ' aria-current="page"';
-			}
-
-			echo '>' . esc_html( $tab['label'] ) . '</a>';
-			echo '</li>';
-		}
-
-		echo '</ul>';
-
-		if ( ! empty( $bar['addons'] ) ) {
-			echo '<details class="e-admin-secondary-bar__addons">';
-			echo '<summary class="e-admin-secondary-bar__addons-toggle">' . esc_html__( 'Addons', 'elementor' ) . '</summary>';
-			echo '<ul class="e-admin-secondary-bar__addons-menu">';
-
-			foreach ( $bar['addons'] as $addon ) {
-				echo '<li class="e-admin-secondary-bar__addons-item">';
-				echo '<a class="e-admin-secondary-bar__addons-link" href="' . esc_url( $addon['url'] ) . '">' . esc_html( $addon['label'] ) . '</a>';
-				echo '</li>';
-			}
-
-			echo '</ul>';
-			echo '</details>';
-		}
-
-		echo '<button type="button" class="e-admin-secondary-bar__finder" aria-label="' . esc_attr__( 'Finder', 'elementor' ) . '">';
-		echo '<i class="eicon-search" aria-hidden="true"></i>';
-		echo '</button>';
-		echo '</nav>';
-	}
-
 	public function get_addons( Menu_Data_Provider $provider ): array {
 		$addons = [];
 
@@ -94,7 +39,7 @@ class Secondary_Bar {
 			if ( '' !== $label ) {
 				$addons[] = [
 					'label' => $label,
-					'url' => $item['url'],
+					'url' => esc_url_raw( $item['url'] ),
 				];
 			}
 		}
@@ -115,7 +60,7 @@ class Secondary_Bar {
 			$prepared[] = [
 				'id' => $tab_id,
 				'label' => $label,
-				'url' => $tab['url'],
+				'url' => esc_url_raw( $tab['url'] ),
 				'is_active' => $tab_id === $active_tab_id,
 			];
 		}

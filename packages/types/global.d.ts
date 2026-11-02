@@ -1,6 +1,7 @@
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 import type { DynamicTag, DynamicTags, DynamicTagsManager, InteractionsConfig } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
+import type { SecondaryBarConfig } from '@elementor/editor-one-secondary-bar';
 import type { PropsSchema, PropValue } from '@elementor/editor-props';
 import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 
@@ -47,7 +48,9 @@ interface OnboardingConfig {
 
 declare global {
 	interface Window {
+		editorOneSecondaryBarConfig?: SecondaryBarConfig;
 		$e?: {
+			route?: ( route: string ) => void;
 			routes?: {
 				getCurrent?: () => Record< string, string > | undefined;
 				register?: ( component: string, route: string, callback: () => unknown ) => unknown;
