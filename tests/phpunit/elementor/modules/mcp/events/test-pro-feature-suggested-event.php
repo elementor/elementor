@@ -10,9 +10,11 @@ use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Modules\Mcp\Events\Pro_Feature_Suggestion_Tracker;
 use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Woocommerce_Test_Helpers;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Mock_Pro_License_API;
@@ -21,10 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../fixtures/woocommerce-test-helpers.php';
+
 /**
  * @group Elementor\Modules\Mcp
  */
 class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
+
+	use Woocommerce_Test_Helpers;
 
 	const SESSION_ID = 'session-123';
 
@@ -77,6 +83,22 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertSame( 'free', $events[0]['license_tier'] );
 		$this->assertSame( Mcp_Event_Dispatcher::EXECUTED_BY, $events[0]['executed_by'] );
 		$this->assertSame( Mcp_Event_Dispatcher::INTERACTION_TYPE, $events[0]['interaction_type'] );
+	}
+
+	public function test_manage_site_parts__fires_with_the_woocommerce_feature_for_product_types() {
+		// Arrange
+		$this->given_woocommerce_is_active();
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$ability->execute_guarded( [ 'operations' => [ [ 'action' => 'create', 'type' => 'product' ] ] ] );
+
+		// Assert
+		$events = $this->suggestion_events();
+		$this->assertCount( 1, $events );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::PRO_FEATURE, $events[0]['pro_feature'] );
+		$this->assertSame( [ 'product' ], $events[0]['document_types'] );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::UPGRADE_URL, $events[0]['upgrade_url'] );
 	}
 
 	public function test_list_site_parts__does_not_fire() {

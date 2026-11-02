@@ -12,6 +12,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -232,7 +233,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $description;
 		}
 
-		return $description . ' ' . $this->get_forms_pro_notice();
+		$description .= ' ' . $this->get_forms_pro_notice();
+
+		if ( Woocommerce_Pro_Features_Discovery::is_active() ) {
+			$description .= ' ' . Woocommerce_Pro_Features_Discovery::get_description_notice();
+		}
+
+		return $description;
 	}
 
 	private function get_forms_pro_notice(): string {

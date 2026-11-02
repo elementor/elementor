@@ -6,6 +6,8 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Pro_Elements_Remover;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
+use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Woocommerce_Test_Helpers;
 use Elementor\Utils;
 use PHPUnit\Framework\TestCase;
 
@@ -13,7 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/../../fixtures/woocommerce-test-helpers.php';
+
 class Test_Pro_Elements_Remover extends TestCase {
+
+	use Woocommerce_Test_Helpers;
 
 	private Xml_Parser $xml_parser;
 	private Pro_Elements_Remover $remover;
@@ -84,6 +90,24 @@ class Test_Pro_Elements_Remover extends TestCase {
 			],
 			array_map( fn( \WP_Error $error ) => $error->get_error_message(), $errors )
 		);
+	}
+
+	public function test_remove_and_collect_errors__removes_store_widgets_with_a_single_woocommerce_error() {
+		// Arrange
+		$this->given_woocommerce_is_active();
+		$dom = $this->parse_xml( '<e-div-block><e-heading /><woocommerce-cart /><wc-archive-products /></e-div-block>' );
+
+		// Act
+		$errors = $this->remover->remove_and_collect_errors( $dom );
+
+		// Assert
+		$xml = $dom->saveXML();
+		$this->assertCount( 1, $errors );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $errors[0]->get_error_message() );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::PRO_FEATURE, $errors[0]->get_error_data()['pro_feature'] );
+		$this->assertStringContainsString( '<e-heading', $xml );
+		$this->assertStringNotContainsString( 'woocommerce-cart', $xml );
+		$this->assertStringNotContainsString( 'wc-archive-products', $xml );
 	}
 
 	public function test_remove_and_collect_errors__leaves_the_document_untouched_without_pro_elements() {

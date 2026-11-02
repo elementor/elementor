@@ -6,18 +6,24 @@ use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
+use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Woocommerce_Test_Helpers;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/fixtures/woocommerce-test-helpers.php';
+
 /**
  * @group Elementor\Modules\Mcp
  */
 class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Base {
+
+	use Woocommerce_Test_Helpers;
 
 	const MANAGE_SITE_PARTS_ID = 'elementor/manage-site-parts';
 	const LIST_SITE_PARTS_ID = 'elementor/list-site-parts';
@@ -104,6 +110,73 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		);
 	}
 
+	public function test_manage_execute_guarded__returns_woocommerce_error_for_product_types() {
+		// Arrange
+		$this->given_woocommerce_is_active();
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( $this->create_operations( [ 'header', 'product', 'product-archive' ] ) );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::PRO_FEATURE, $result->get_error_data()['pro_feature'] );
+		$this->assertSame( Woocommerce_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertSame( [ 'header', 'product', 'product-archive' ], $result->get_error_data()['document_types'] );
+		$this->assert_value_link_free_path_order(
+			$result->get_error_message(),
+			'What Pro gives the user: their agent can design the whole store',
+			'Free path: none. Say plainly that store pages keep WooCommerce\'s default look',
+			'[Upgrade to Pro](' . Woocommerce_Pro_Features_Discovery::UPGRADE_URL . ')'
+		);
+	}
+
+	public function test_manage_execute_guarded__treats_product_as_an_unknown_group_without_woocommerce() {
+		// Arrange
+		if ( class_exists( 'WooCommerce' ) ) {
+			$this->markTestSkipped( 'Requires WooCommerce to be inactive.' );
+		}
+
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( $this->create_operations( [ 'product' ] ) );
+
+		// Assert
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::PRO_FEATURE, $result->get_error_data()['pro_feature'] );
+	}
+
+	public function test_manage_schema__accepts_product_types_only_with_woocommerce() {
+		// Arrange
+		$this->given_woocommerce_is_active();
+
+		// Act
+		$types = $this->get_input_schema( new Manage_Site_Parts_Pro_Features_Discovery_Ability() )['properties']['operations']['items']['properties']['type']['enum'];
+
+		// Assert
+		$this->assertContains( 'product', $types );
+		$this->assertContains( 'product-archive', $types );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::get_types(), $types );
+	}
+
+	public function test_get_description_for_llm__includes_woocommerce_notice_only_with_woocommerce() {
+		// Arrange
+		if ( class_exists( 'WooCommerce' ) ) {
+			$this->markTestSkipped( 'Requires WooCommerce to be inactive at the start of the test.' );
+		}
+
+		$description_without_woocommerce = ( new Manage_Site_Parts_Pro_Features_Discovery_Ability() )->get_description_for_llm();
+		$this->given_woocommerce_is_active();
+
+		// Act
+		$description_with_woocommerce = ( new Manage_Site_Parts_Pro_Features_Discovery_Ability() )->get_description_for_llm();
+
+		// Assert
+		$this->assertStringNotContainsString( Woocommerce_Pro_Features_Discovery::get_description_notice(), $description_without_woocommerce );
+		$this->assertStringContainsString( Woocommerce_Pro_Features_Discovery::get_description_notice(), $description_with_woocommerce );
+	}
+
 	public function test_list_execute_guarded__returns_non_error_result_without_link() {
 		// Arrange
 		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
@@ -156,9 +229,9 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertArrayHasKey( 'active', $list_schema['properties'] );
 	}
 
-	private function assert_value_link_free_path_order( string $message, string $value, string $free_path ): void {
+	private function assert_value_link_free_path_order( string $message, string $value, string $free_path, string $upgrade_link = self::UPGRADE_LINK ): void {
 		$value_position = strpos( $message, $value );
-		$link_position = strpos( $message, self::UPGRADE_LINK );
+		$link_position = strpos( $message, $upgrade_link );
 		$free_path_position = strpos( $message, $free_path );
 
 		$this->assertNotFalse( $value_position );
