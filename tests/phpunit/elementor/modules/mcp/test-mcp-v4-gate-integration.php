@@ -153,6 +153,21 @@ class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 		$this->assertStringContainsString( self::ATOMIC_EDITOR_DESCRIPTION_NOTICE, $description );
 	}
 
+	public function test_execute_guarded__normalizes_null_and_empty_object_input_for_parameterless_resource() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Style_Best_Practices_Ability();
+
+		// Act
+		$from_object = $ability->execute_guarded( (object) [] );
+		$from_null = $ability->execute_guarded( null );
+
+		// Assert
+		$this->assertIsString( $from_object );
+		$this->assertNotEmpty( $from_object );
+		$this->assertSame( $from_object, $from_null );
+	}
+
 	private function resource_catalog_by_uri(): array {
 		$catalog = ( new List_Resources_Ability( Mcp_Module::build_core_registry() ) )->execute()['resources'];
 
