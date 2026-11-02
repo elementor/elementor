@@ -138,13 +138,10 @@ function registerAtomicFormAlpineData( form ) {
 				const state = response?.success ? 'success' : 'error';
 
 				setFormState( form, state );
+				respondToAgent( response, state );
 
 				if ( response?.success ) {
-					form.reset();
-
-					form.addEventListener( 'input', () => {
-						setFormState( form, 'default' );
-					}, { once: true } );
+					resetFormAfterSuccess( form, event );
 
 					form.dispatchEvent( new CustomEvent( SUBMIT_SUCCESS_EVENT, {
 						bubbles: true,
@@ -152,7 +149,6 @@ function registerAtomicFormAlpineData( form ) {
 					} ) );
 				}
 
-				respondToAgent( response, state );
 				redirectIfRequested( event, response );
 			} catch ( error ) {
 				setFormState( form, 'error' );
@@ -162,6 +158,23 @@ function registerAtomicFormAlpineData( form ) {
 			}
 		},
 	} ) );
+}
+
+function resetFormAfterSuccess( form, event ) {
+	const resetForm = () => {
+		form.reset();
+
+		form.addEventListener( 'input', () => {
+			setFormState( form, 'default' );
+		}, { once: true } );
+	};
+
+	if ( ! event?.agentInvoked ) {
+		resetForm();
+		return;
+	}
+
+	setTimeout( resetForm );
 }
 
 function redirectIfRequested( event, response ) {
