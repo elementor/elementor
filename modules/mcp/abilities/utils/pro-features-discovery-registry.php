@@ -18,6 +18,7 @@ class Pro_Features_Discovery_Registry {
 		Forms_Pro_Features_Discovery::class,
 		Components_Pro_Features_Discovery::class,
 		Site_Parts_Pro_Features_Discovery::class,
+		Woocommerce_Pro_Features_Discovery::class,
 	];
 
 	public static function requires_pro( string $widget_type ): bool {

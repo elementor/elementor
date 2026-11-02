@@ -13,8 +13,11 @@ class Generic_Widget_Pro_Features_Discovery {
 
 	const UPGRADE_URL = Mcp_Module::MCP_PROMOTION_UPGRADE_URL;
 
+	const PRO_FEATURE = 'widget';
+
 	public static function for_widget( string $widget_type ): \WP_Error {
 		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
 			sprintf(
 				/* translators: %s: widget type. */
 				__( 'The %1$s widget needs Elementor Pro, which isn\'t installed, so it was not added. What Pro gives the user: the %1$s widget ready to use, styled like the rest of the site.', 'elementor' ),
