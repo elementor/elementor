@@ -18,14 +18,12 @@ type Props = {
 	addons: SecondaryBarLink[];
 };
 
-const LINK_COLOR = '#2271b1';
-
 const itemSx = {
 	py: 1,
 	px: 2,
 	typography: 'body2',
 	'&&, &&:hover, &&:focus, &&:active, &&:visited': {
-		color: LINK_COLOR,
+		color: 'info.main',
 		boxShadow: 'none',
 	},
 };
