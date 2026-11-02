@@ -287,7 +287,13 @@ class Setup_State {
 			return '';
 		}
 
-		return $app->get_admin_url( 'authorize', [
+		$connect_action = 'authorize';
+
+		if ( $app->is_connected() && Utils::has_pro() && ! Utils::is_license_active() ) {
+			$connect_action = 'reconnect';
+		}
+
+		return $app->get_admin_url( $connect_action, [
 			'utm_source' => 'editor-app',
 			'utm_medium' => 'wp-dash',
 			'utm_campaign' => 'pro-setup-panel',
