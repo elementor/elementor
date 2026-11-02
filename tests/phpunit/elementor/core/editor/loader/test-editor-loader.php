@@ -98,6 +98,11 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 	}
 
 	public function test_editor_config_exposes_uploads_base_url() {
+		// Arrange
+		$this->act_as_admin();
+		$document = $this->factory()->documents->create_and_get();
+		\Elementor\Plugin::$instance->documents->switch_to_document( $document );
+
 		// Act
 		$config = \Elementor\Core\Editor\Loader\Editor_Scripts_Settings::get();
 
