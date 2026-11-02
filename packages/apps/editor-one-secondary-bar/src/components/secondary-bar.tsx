@@ -21,7 +21,7 @@ const tabSx = {
 	},
 	'&.Mui-selected': {
 		color: 'text.primary',
-		fontWeight: 'fontWeightBold',
+		fontWeight: 'fontWeightMedium',
 	},
 	'&.Mui-focusVisible': {
 		outline: '2px solid',
@@ -44,7 +44,11 @@ export function SecondaryBar( { config }: Props ) {
 				scrollButtons={ false }
 				sx={ { flex: 1, minWidth: 0 } }
 				TabIndicatorProps={ {
-					sx: { backgroundColor: 'text.primary', ...( reduceMotion && { transition: 'none' } ) },
+					sx: {
+						height: '3px',
+						backgroundColor: 'text.primary',
+						...( reduceMotion && { transition: 'none' } ),
+					},
 				} }
 			>
 				{ config.tabs.map( ( tab ) => (
