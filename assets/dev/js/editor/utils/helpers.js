@@ -130,13 +130,25 @@ module.exports = {
 			return '';
 		}
 
-		const clean = DOMPurify.sanitize( text, { USE_PROFILES: { svg: true, svgFilters: true } } );
-		const doc = new DOMParser().parseFromString( clean, 'image/svg+xml' );
-		const root = doc.documentElement;
+		const fragment = DOMPurify.sanitize( text, {
+			USE_PROFILES: { svg: true, svgFilters: true },
+			ADD_TAGS: [ 'use' ],
+			RETURN_DOM_FRAGMENT: true,
+		} );
 
-		if ( doc.querySelector( 'parsererror' ) || ! root || 'svg' !== root.nodeName.toLowerCase() ) {
+		const root = fragment.firstElementChild;
+
+		if ( ! root || 'svg' !== root.nodeName.toLowerCase() ) {
 			return '';
 		}
+
+		root.querySelectorAll( 'use' ).forEach( ( use ) => {
+			const href = use.getAttribute( 'href' ) || use.getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+			if ( href && ! href.startsWith( '#' ) ) {
+				use.removeAttribute( 'href' );
+				use.removeAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+			}
+		} );
 
 		return root.outerHTML;
 	},

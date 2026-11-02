@@ -96,4 +96,14 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 
 		return new Editor_Loader( $config, $assets_config_provider );
 	}
+
+	public function test_editor_config_exposes_uploads_base_url() {
+		// Act
+		$config = \Elementor\Core\Editor\Loader\Editor_Scripts_Settings::get();
+
+		// Assert
+		$this->assertArrayHasKey( 'urls', $config );
+		$this->assertArrayHasKey( 'upload', $config['urls'] );
+		$this->assertSame( wp_upload_dir()['baseurl'], $config['urls']['upload'] );
+	}
 }

@@ -154,4 +154,64 @@ describe( 'elementor.helpers.fetchInlineSvg', () => {
 			done();
 		} );
 	} );
+
+	test( 'preserves defs and use elements', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithUse = '<svg xmlns="http://www.w3.org/2000/svg"><defs><circle id="dot" r="1"/></defs><use href="#dot" x="5" y="5"/></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithUse ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data.toLowerCase() ).toContain( '<defs' );
+			expect( data.toLowerCase() ).toContain( '<use' );
+			expect( data.toLowerCase() ).toContain( 'href="#dot"' );
+			done();
+		} );
+	} );
+
+	test( 'preserves non-breaking space characters', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithNbsp = '<svg xmlns="http://www.w3.org/2000/svg"><text>Hello&#160;World</text></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithNbsp ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data ).toContain( 'Hello' );
+			expect( data ).toContain( 'World' );
+			done();
+		} );
+	} );
+
+	test( 'strips external use hrefs', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithExternalUse = '<svg xmlns="http://www.w3.org/2000/svg"><use href="https://evil.example/sprite.svg#icon"/><use href="#safe"/></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithExternalUse ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data.toLowerCase() ).toContain( 'href="#safe"' );
+			expect( data.toLowerCase() ).not.toContain( 'evil.example' );
+			done();
+		} );
+	} );
+
+	test( 'strips xlink:href from external use', ( done ) => {
+		const svgUrl = `${ window.location.origin }/wp-content/uploads/icon.svg`;
+		const svgWithXlinkUse = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use xlink:href="https://evil.example/sprite.svg#icon"/></svg>';
+		global.fetch.mockResolvedValue( {
+			ok: true,
+			text: () => Promise.resolve( svgWithXlinkUse ),
+		} );
+
+		helpers.fetchInlineSvg( svgUrl, ( data ) => {
+			expect( data.toLowerCase() ).not.toContain( 'evil.example' );
+			done();
+		} );
+	} );
 } );
