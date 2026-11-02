@@ -65,6 +65,7 @@ export const audit: Audit = {
 				? ctx.pageContext.image_optimization_settings_url
 				: ctx.pageContext.image_optimization_plugin_url,
 			ctaLabel: __( 'Optimize all', 'elementor' ),
+			appInstalled: isReady,
 		} ) );
 
 		return violations.length === 0

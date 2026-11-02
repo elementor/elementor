@@ -4,7 +4,7 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { type SetSizeValue } from '../types';
 import { isExtendedUnit } from '../utils/is-extended-unit';
-import { createDefaultSizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
+import { createEmptySizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
 import { useUnitSync } from './use-unit-sync';
 
 type SizeValue = SizePropValue[ 'value' ];
@@ -36,7 +36,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeValue[ 'unit' ]
 			}
 		},
 		persistWhen: ( next ) => hasChanged( next, resolvedValue ),
-		fallback: () => createDefaultSizeValue( units, defaultUnit ),
+		fallback: ( previousValue ) => createEmptySizeValue( previousValue, units, defaultUnit ),
 	} );
 
 	const [ unit, setUnit ] = useUnitSync( {

@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { PROMOTIONS } from '../register-promotions';
 import { type PageAuditReport } from '../types';
 import { findAuditRun } from '../utils/find-audit-run';
+import { trackFixWithApp } from '../utils/tracking';
 import PromotionCard from './promotion-card';
 
 type Props = {
@@ -58,8 +59,14 @@ export default function Promotions( { report }: Props ) {
 						ctaLabel={ config.ctaLabel }
 						ctaDisabled={ ! ctaUrl }
 						onCtaClick={ () => {
-							if ( ctaUrl ) {
-								window.open( ctaUrl, '_blank' );
+							if ( ! ctaUrl ) {
+								return;
+							}
+
+							window.open( ctaUrl, '_blank', 'noopener' );
+
+							if ( run.result.status === 'fail' ) {
+								trackFixWithApp( run.audit, run.result.violations[ 0 ], 'overview' );
 							}
 						} }
 					/>

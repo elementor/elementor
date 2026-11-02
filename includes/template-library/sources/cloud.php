@@ -3,6 +3,7 @@ namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Widgets_Utils;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
@@ -111,6 +112,8 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function format_resource_item_for_create( $template_data ) {
+		$template_data['content'] = $this->strip_non_exportable_atomic_props( $template_data['content'] );
+
 		$content_payload = [
 			'content' => $template_data['content'],
 			'page_settings' => $template_data['page_settings'],
@@ -130,6 +133,49 @@ class Source_Cloud extends Source_Base {
 		];
 	}
 
+	/**
+	 * Cloud templates leave the site, so the values of atomic props marked with `Prop_Sensitivity`
+	 * (not exportable / sensitive) are stripped, like on a template file export.
+	 * Any other element data is sent as is.
+	 *
+	 * @param mixed $content
+	 *
+	 * @return mixed
+	 */
+	private function strip_non_exportable_atomic_props( $content ) {
+		if ( ! $this->is_elements_list( $content ) ) {
+			return $content;
+		}
+
+		return Plugin::$instance->db->iterate_data( $content, function ( $element_data ) {
+			if ( ! is_array( $element_data['settings'] ?? null ) ) {
+				return $element_data;
+			}
+
+			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+			if ( ! Atomic_Widgets_Utils::is_atomic( $element ) ) {
+				return $element_data;
+			}
+
+			return $element->on_export( $element_data );
+		} );
+	}
+
+	private function is_elements_list( $content ): bool {
+		if ( ! is_array( $content ) || empty( $content ) ) {
+			return false;
+		}
+
+		foreach ( $content as $element ) {
+			if ( ! is_array( $element ) || empty( $element['elType'] ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function save_folder( array $folder_data = [] ) {
 		$app = $this->get_app();
 
@@ -146,6 +192,10 @@ class Source_Cloud extends Source_Base {
 	}
 
 	public function update_item( $template_data ) {
+		if ( array_key_exists( 'content', $template_data ) ) {
+			$template_data['content'] = $this->strip_non_exportable_atomic_props( $template_data['content'] );
+		}
+
 		return $this->get_app()->update_resource( $template_data );
 	}
 

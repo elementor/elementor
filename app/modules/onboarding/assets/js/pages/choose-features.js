@@ -65,6 +65,8 @@ export default function ChooseFeatures() {
 			text: __( 'Skip', 'elementor' ),
 			action: () => {
 				OnboardingEventTracking.trackStepAction( 3, 'skipped' );
+				OnboardingEventTracking.trackProFeaturesSelected( selectedFeatures, false );
+				OnboardingEventTracking.sendStepEndState( 3 );
 
 				setAjax( {
 					data: {

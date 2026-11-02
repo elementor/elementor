@@ -1,4 +1,6 @@
-import { decodeResourceVariable } from '../resources';
+import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+import { addElementorResources, decodeResourceVariable, RESOURCE_NAME_ELEMENT_SETTINGS } from '../resources';
 
 describe( 'decodeResourceVariable', () => {
 	beforeEach( () => {
@@ -183,5 +185,93 @@ describe( 'decodeResourceVariable', () => {
 			const result = decodeResourceVariable( input );
 			expect( result ).toBe( 'file.namewithmiddledots.ext' );
 		} );
+	} );
+} );
+
+describe( 'element settings resource', () => {
+	type ResourceHandler = (
+		uri: URL,
+		variables: Record< string, string >
+	) => Promise< { contents: { text: string }[] } >;
+
+	const givenElementor = ( modelProps: Record< string, unknown >, settings: Record< string, unknown > ) => {
+		Object.defineProperty( window, 'elementor', {
+			value: {
+				getContainer: () => ( {
+					id: 'el-1',
+					model: { id: 'el-1', get: ( key: string ) => modelProps[ key ] },
+					settings: { attributes: settings, get: ( key: string ) => settings[ key ] },
+				} ),
+				widgetsCache: {
+					'e-heading': {
+						controls: {},
+						atomic_props_schema: {
+							tag: { meta: {} },
+							api_key: { meta: { sensitive: true } },
+						},
+					},
+					'e-form': {
+						controls: {},
+						atomic_props_schema: {
+							'form-name': { meta: [] },
+							'mailchimp-api-key': { meta: { sensitive: true } },
+						},
+					},
+					heading: { controls: {} },
+				},
+			},
+			writable: true,
+			configurable: true,
+		} );
+	};
+
+	const readSettings = async () => {
+		const resource = jest.fn();
+		addElementorResources( { resource } as unknown as McpServer );
+
+		const handler = resource.mock.calls.find(
+			( call: unknown[] ) => call[ 0 ] === RESOURCE_NAME_ELEMENT_SETTINGS
+		)?.[ 3 ] as ResourceHandler;
+
+		const result = await handler( new URL( 'elementor://editor/element-settings/el-1' ), { elementId: 'el-1' } );
+
+		return JSON.parse( result.contents[ 0 ].text.replaceAll( "'", '"' ) );
+	};
+
+	afterEach( () => {
+		Object.defineProperty( window, 'elementor', { value: undefined, writable: true, configurable: true } );
+	} );
+
+	it( 'omits sensitive props of an atomic widget', async () => {
+		// Arrange.
+		givenElementor( { widgetType: 'e-heading', elType: 'widget' }, { tag: 'h2', api_key: 'secret' } );
+
+		// Act.
+		const settings = await readSettings();
+
+		// Assert.
+		expect( settings ).toEqual( { tag: 'h2' } );
+	} );
+
+	it( 'omits sensitive props of an atomic element that has no widgetType', async () => {
+		// Arrange.
+		givenElementor( { elType: 'e-form' }, { 'form-name': 'Contact', 'mailchimp-api-key': 'secret' } );
+
+		// Act.
+		const settings = await readSettings();
+
+		// Assert.
+		expect( settings ).toEqual( { 'form-name': 'Contact' } );
+	} );
+
+	it( 'returns V3 settings as is', async () => {
+		// Arrange.
+		givenElementor( { widgetType: 'heading', elType: 'widget' }, { title: 'Hello', api_key: 'kept' } );
+
+		// Act.
+		const settings = await readSettings();
+
+		// Assert.
+		expect( settings ).toEqual( { title: 'Hello', api_key: 'kept' } );
 	} );
 } );

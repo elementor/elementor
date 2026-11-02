@@ -26,6 +26,10 @@ abstract class Abstract_Ability {
 	abstract public function execute( $input = [] );
 
 	final public function execute_guarded( $input = [] ) {
+		if ( ! is_array( $input ) ) {
+			$input = is_object( $input ) ? (array) $input : [];
+		}
+
 		$availability = $this->is_available();
 		if ( is_wp_error( $availability ) ) {
 			return $availability;
@@ -51,6 +55,15 @@ abstract class Abstract_Ability {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Validates input against the ability's input schema, the same way the WordPress Abilities API does.
+	 *
+	 * @return true|\WP_Error
+	 */
+	public function validate_input_against_schema( $input ) {
+		return rest_validate_value_from_schema( $input, $this->definition()->to_array()['input_schema'], 'input' );
 	}
 
 	public function check_permission(): bool {

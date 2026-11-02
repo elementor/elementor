@@ -3,6 +3,9 @@ namespace Elementor\Tests\Phpunit\Elementor\App\ImportExportCustomization\Proces
 
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
+use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization as Components_Import_Export_Customization;
+use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization as Global_Classes_Import_Export_Customization;
+use Elementor\Modules\Variables\ImportExportCustomization\Import_Export_Customization as Variables_Import_Export_Customization;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 /**
@@ -39,6 +42,32 @@ class Test_Import_Runner_Order extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( [ 'global-classes', 'components', 'templates' ], $result );
+	}
+
+	public function test_register_default_runners__applies_core_tiers() {
+		// Arrange
+		$import = $this->make_import_process();
+		$import->register_default_runners();
+		$import->register( new Fake_Import_Runner_Global_Variables(), Import::PRIORITY_GLOBAL_VARIABLES );
+		$import->register( new Fake_Import_Runner_Global_Classes(), Import::PRIORITY_GLOBAL_CLASSES );
+		$import->register( new Fake_Import_Runner_Components(), Import::PRIORITY_COMPONENTS );
+
+		// Act
+		$result = array_keys( $this->invoke_method( $import, 'get_sorted_runners' ) );
+
+		// Assert
+		$this->assertSame( [
+			'site-settings',
+			'plugins',
+			'global-variables',
+			'global-classes',
+			'components',
+			'templates',
+			'taxonomies',
+			'elementor-content',
+			'wp-content',
+			'floating-elements',
+		], $result );
 	}
 
 	public function test_register__moves_runner_to_new_priority_bucket_without_duplicates() {
@@ -100,6 +129,29 @@ class Test_Import_Runner_Order extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( [ 'components' ], $import->get_runners_name() );
 		$this->assertArrayNotHasKey( 'templates', $this->get_property( $import, 'runner_priorities' ) );
+	}
+
+	public function test_import_kit_hook__runs_site_settings_before_design_system_runners() {
+		// Arrange
+		$import = $this->make_import_process();
+		$import->register_default_runners();
+		( new Variables_Import_Export_Customization() )->register_hooks();
+		( new Global_Classes_Import_Export_Customization() )->register_hooks();
+		( new Components_Import_Export_Customization() )->register_hooks();
+
+		do_action( 'elementor/import-export-customization/import-kit', $import );
+
+		// Act
+		$order = array_keys( $this->invoke_method( $import, 'get_sorted_runners' ) );
+
+		// Assert
+		$position = array_flip( $order );
+		$this->assertLessThan( $position['global-variables'], $position['site-settings'] );
+		$this->assertLessThan( $position['global-variables'], $position['plugins'] );
+		$this->assertLessThan( $position['global-classes'], $position['global-variables'] );
+		$this->assertLessThan( $position['components'], $position['global-classes'] );
+		$this->assertLessThan( $position['templates'], $position['components'] );
+		$this->assertLessThan( $position['elementor-content'], $position['components'] );
 	}
 
 	private function make_import_process(): Import {
@@ -174,6 +226,12 @@ class Fake_Import_Runner_Templates extends Fake_Import_Runner_Base {
 class Fake_Import_Runner_Components extends Fake_Import_Runner_Base {
 	public static function get_name(): string {
 		return 'components';
+	}
+}
+
+class Fake_Import_Runner_Global_Variables extends Fake_Import_Runner_Base {
+	public static function get_name(): string {
+		return 'global-variables';
 	}
 }
 

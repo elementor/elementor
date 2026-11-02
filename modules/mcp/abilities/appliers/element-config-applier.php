@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Libraries;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\Components\Components_Repository;
@@ -205,7 +206,8 @@ class Element_Config_Applier {
 				continue;
 			}
 
-			if ( null === $canonical ) {
+			// Sensitive props (e.g. API keys) are hidden from agents, so they are treated as unknown props.
+			if ( null === $canonical || Prop_Sensitivity::is_sensitive( $schema[ $canonical ] ?? null ) ) {
 				$warnings->add(
 					'prop_not_in_schema',
 					sprintf(

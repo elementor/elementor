@@ -1,3 +1,5 @@
+import { omitPropsByMeta } from 'elementor-editor-utils/omit-props-by-meta';
+
 export class Copy extends $e.modules.editor.CommandContainerBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
@@ -39,7 +41,10 @@ export class Copy extends $e.modules.editor.CommandContainerBase {
 
 		// TODO: Use package for clipboard saving
 		const clipboard = document.createElement( 'textarea' );
-		clipboard.value = JSON.stringify( storageData );
+		clipboard.value = JSON.stringify( {
+			...storageData,
+			elements: elementsData.map( omitPropsByMeta ),
+		} );
 		document.body.appendChild( clipboard );
 		clipboard.select();
 		document.execCommand( 'copy' );

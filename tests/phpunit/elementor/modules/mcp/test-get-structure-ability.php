@@ -5,7 +5,9 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Core\Documents_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
@@ -29,6 +31,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 	private Get_Structure_Ability $ability;
 	private Documents_Manager $original_documents;
+	private bool $has_sensitive_props_filter = false;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -39,6 +42,14 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		Plugin::$instance->documents = $this->original_documents;
+
+		if ( $this->has_sensitive_props_filter ) {
+			remove_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'add_sensitive_props' ] );
+
+			// Re-register so the cached widget config doesn't keep the test props.
+			Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
+			$this->has_sensitive_props_filter = false;
+		}
 
 		parent::tearDown();
 	}
@@ -877,6 +888,51 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'p', $settings['tag'] );
 	}
 
+	public function test_execute__omits_sensitive_props_from_settings() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+		$this->given_heading_with_sensitive_props();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'heading1', 'e-heading', [
+				'tag' => String_Prop_Type::generate( 'h3' ),
+				'test_api_key' => String_Prop_Type::generate( 'secret-key' ),
+				'test_list_id' => String_Prop_Type::generate( 'list-1' ),
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'heading1' );
+
+		// Assert
+		$settings = (array) $node['settings'];
+
+		$this->assertArrayNotHasKey( 'test_api_key', $settings );
+		$this->assertSame( 'list-1', $settings['test_list_id'] );
+		$this->assertSame( 'h3', $settings['tag'] );
+		$this->assertStringNotContainsString( 'secret-key', wp_json_encode( $node ) );
+	}
+
+	public function test_execute__returns_empty_settings_when_only_sensitive_props_are_set() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+		$this->given_heading_with_sensitive_props();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'heading1', 'e-heading', [
+				'test_api_key' => String_Prop_Type::generate( 'secret-key' ),
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'heading1' );
+
+		// Assert
+		$this->assertEquals( (object) [], $node['settings'] );
+	}
+
 	public function test_execute__returns_link_in_writable_shape_and_keeps_rendered_tag() {
 		// Arrange
 		$this->act_as_admin();
@@ -1143,6 +1199,21 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		}
 
 		return $element;
+	}
+
+	public function add_sensitive_props( array $schema ): array {
+		$schema['test_api_key'] = String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() );
+		$schema['test_list_id'] = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );
+
+		return $schema;
+	}
+
+	private function given_heading_with_sensitive_props(): void {
+		add_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'add_sensitive_props' ] );
+		$this->has_sensitive_props_filter = true;
+
+		// A fresh type instance, so its config is built with the filtered schema.
+		Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
 	}
 
 	private function read_node_with_content( int $post_id, string $element_id ): array {

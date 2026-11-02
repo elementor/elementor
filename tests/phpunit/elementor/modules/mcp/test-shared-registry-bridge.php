@@ -2,6 +2,8 @@
 
 namespace Elementor\Testing\Modules\Mcp;
 
+use Elementor\Modules\Mcp\Module;
+use Elementor\Plugin;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -75,6 +77,22 @@ class Test_Shared_Registry_Bridge extends TestCase {
 
 		$this->assertStringContainsString( 'return true;', $menu_source );
 		$this->assertStringNotContainsString( 'is_connector_page_active', $menu_source );
+	}
+
+	public function test_shared_registry_slugs_are_collected_when_the_mcp_server_boots(): void {
+		if ( ! Module::is_active() ) {
+			$this->markTestSkipped( 'The MCP module is not active in this environment.' );
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'mcp' );
+
+		$this->assertInstanceOf( Module::class, $module );
+
+		// Collecting the slugs builds every ability definition, so it must not run on every request.
+		$this->assertFalse( has_action( 'init', [ $module, 'register_shared_registry_slugs' ] ) );
+
+		// It must run before Server_Bootstrap creates the server at the default priority (10).
+		$this->assertSame( 5, has_action( 'mcp_adapter_init', [ $module, 'register_shared_registry_slugs' ] ) );
 	}
 
 	public function test_editor_one_mcp_menu_registers_after_submissions(): void {

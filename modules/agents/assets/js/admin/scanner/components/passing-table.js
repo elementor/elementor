@@ -20,8 +20,20 @@ import { TableCard } from './fix-table';
 
 const ROW_ACTIVATION_KEYS = [ 'Enter', ' ' ];
 
+const DetailSection = ( { title, body } ) => (
+	<Stack spacing={ 0.5 }>
+		<Typography variant="caption" color="text.primary">{ title }</Typography>
+		<Typography variant="caption" color="text.secondary">{ body }</Typography>
+	</Stack>
+);
+
+DetailSection.propTypes = {
+	title: PropTypes.string.isRequired,
+	body: PropTypes.string.isRequired,
+};
+
 const PassingRow = ( { check, stageLabel, isLast, isOpen, onToggle } ) => {
-	const isExpandable = Boolean( check.description );
+	const isExpandable = Boolean( check.description || check.evidence );
 
 	const handleKeyDown = ( event ) => {
 		if ( event.target !== event.currentTarget || ! ROW_ACTIVATION_KEYS.includes( event.key ) ) {
@@ -82,7 +94,14 @@ const PassingRow = ( { check, stageLabel, isLast, isOpen, onToggle } ) => {
 			{ isExpandable && (
 				<Collapse in={ isOpen } timeout={ SCANNER_MOTION.drawerMs } unmountOnExit>
 					<Box mt={ 2 } mx={ 2 } mb={ 1.5 } p={ 2 } bgcolor={ SCANNER_COLORS.promptBackground } borderRadius={ SCANNER_LAYOUT.drawerRadius }>
-						<Typography variant="caption" color="text.secondary">{ check.description }</Typography>
+						<Stack spacing={ 2 }>
+							{ check.description && (
+								<DetailSection title={ __( 'What it means', 'elementor' ) } body={ check.description } />
+							) }
+							{ check.evidence && (
+								<DetailSection title={ __( 'What we found', 'elementor' ) } body={ check.evidence } />
+							) }
+						</Stack>
 					</Box>
 				</Collapse>
 			) }
@@ -95,6 +114,7 @@ PassingRow.propTypes = {
 		id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		description: PropTypes.string,
+		evidence: PropTypes.string,
 	} ).isRequired,
 	stageLabel: PropTypes.string.isRequired,
 	isLast: PropTypes.bool,

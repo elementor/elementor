@@ -264,7 +264,16 @@ function convertArrayPropType(
 
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
 
+// Sensitive props (e.g. API keys) are hidden from agents: not published, not writable and not readable.
+export function isPropSensitive( propType?: PropType ): boolean {
+	return ! Array.isArray( propType?.meta ) && true === propType?.meta?.sensitive;
+}
+
 export function isPropKeyConfigurable( propKey: string, propType?: PropType ): boolean {
+	if ( isPropSensitive( propType ) ) {
+		return false;
+	}
+
 	if ( ! nonConfigurablePropKeys.includes( propKey ) ) {
 		return true;
 	}
