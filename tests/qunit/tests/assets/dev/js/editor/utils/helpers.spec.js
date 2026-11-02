@@ -90,12 +90,12 @@ QUnit.module( 'File: assets/dev/js/editor/utils/helpers.js', () => {
 			// Act
 			const html = elementor.helpers.renderIcon( null, icon, {}, 'i', 'panel' );
 
-		// Assert
-		assert.strictEqual(
-			html,
-			'<img src="https://example.com/icon.svg&quot; onerror=&quot;alert(1)">',
-		);
-	} );
+			// Assert
+			assert.strictEqual(
+				html,
+				'<img src="https://example.com/icon.svg&quot; onerror=&quot;alert(1)">',
+			);
+		} );
 
 		QUnit.test( 'panel font icon escapes the class attribute', ( assert ) => {
 			// Arrange
@@ -111,13 +111,13 @@ QUnit.module( 'File: assets/dev/js/editor/utils/helpers.js', () => {
 			// Act
 			const html = elementor.helpers.renderIcon( null, icon, {}, 'i', 'panel' );
 
-		// Assert
-		elementor.helpers.getIconLibrarySettings = originalGetIconLibrarySettings;
-		elementor.helpers.enqueueIconFonts = originalEnqueueIconFonts;
-		assert.strictEqual(
-			html,
-			'<i class="fas fa-star&quot; onmouseover=&quot;alert(1)"></i>',
-		);
-	} );
+			// Assert
+			elementor.helpers.getIconLibrarySettings = originalGetIconLibrarySettings;
+			elementor.helpers.enqueueIconFonts = originalEnqueueIconFonts;
+			assert.strictEqual(
+				html,
+				'<i class="fas fa-star&quot; onmouseover=&quot;alert(1)"></i>',
+			);
+		} );
 	} );
 } );
