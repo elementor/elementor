@@ -309,6 +309,47 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'return_to=', $url );
 	}
 
+	public function test_get_theme_builder_url__encodes_quote_in_return_to() {
+		// Arrange.
+		$_SERVER['REQUEST_URI'] = "/wp-admin/index.php?x='onmouseover='alert(1)";
+		$pro_url = admin_url( 'admin.php?page=elementor-app' ) . '#/site-editor';
+		$base_url = admin_url( 'admin.php?page=elementor-app' );
+
+		\Elementor\Plugin::$instance->app = new class( $pro_url, $base_url ) {
+			private string $menu_url;
+			private string $base_url;
+
+			public function __construct( string $menu_url, string $base_url ) {
+				$this->menu_url = $menu_url;
+				$this->base_url = $base_url;
+			}
+
+			public function get_settings( string $key ) {
+				return 'menu_url' === $key ? $this->menu_url : null;
+			}
+
+			public function get_base_url(): string {
+				return $this->base_url;
+			}
+		};
+
+		// Act.
+		$url = $this->provider->get_theme_builder_url();
+		$templates_url = ( new \Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu() )->get_slug();
+
+		// Assert.
+		$this->assertStringNotContainsString( "'", $url );
+		$this->assertStringNotContainsString( "'", $templates_url );
+		$this->assertStringContainsString( '#/site-editor', $url );
+		$this->assertStringContainsString( '#/kit-library', $templates_url );
+
+		wp_parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $theme_query );
+		wp_parse_str( (string) wp_parse_url( $templates_url, PHP_URL_QUERY ), $templates_query );
+
+		$this->assertSame( $_SERVER['REQUEST_URI'], $theme_query['return_to'] );
+		$this->assertSame( $_SERVER['REQUEST_URI'], $templates_query['return_to'] );
+	}
+
 	public function test_get_third_level_data__parent_uses_first_child_custom_url() {
 		$this->set_admin_user();
 		
