@@ -43,22 +43,23 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		parse_str( parse_url( $result, PHP_URL_QUERY ), $query_params );
 
-		if ( isset( $query_params['active-tab'] ) ) {
-			$active_tab_value = $query_params['active-tab'];
-			$this->assertStringNotContainsString( '"', $active_tab_value );
-			$this->assertStringNotContainsString( "'", $active_tab_value );
-			$this->assertStringNotContainsString( ' ', $active_tab_value );
-			$this->assertStringNotContainsString( '<', $active_tab_value );
-			$this->assertStringNotContainsString( '>', $active_tab_value );
-			$this->assertStringNotContainsString( '(', $active_tab_value );
-			$this->assertStringNotContainsString( '=', $active_tab_value );
-		}
+		$this->assertArrayHasKey( 'active-tab', $query_params );
+		$active_tab_value = $query_params['active-tab'];
+
+		$this->assertStringNotContainsString( '"', $active_tab_value );
+		$this->assertStringNotContainsString( "'", $active_tab_value );
+		$this->assertStringNotContainsString( ' ', $active_tab_value );
+		$this->assertStringNotContainsString( '<', $active_tab_value );
+		$this->assertStringNotContainsString( '>', $active_tab_value );
+		$this->assertStringNotContainsString( '(', $active_tab_value );
+		$this->assertStringNotContainsString( '=', $active_tab_value );
+
+		$this->assertSame( 'onfocusx', $query_params['active-tab'] );
 
 		$this->assertStringNotContainsString( '"', $result );
 		$this->assertStringNotContainsString( '<', $result );
 
 		$this->assertStringContainsString( 'active-document=1', $result );
-		$this->assertStringNotContainsString( 'onfocus', $result );
 	}
 
 	private function get_home_module(): Module {
