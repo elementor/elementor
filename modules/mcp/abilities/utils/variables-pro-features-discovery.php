@@ -14,9 +14,13 @@ class Variables_Pro_Features_Discovery {
 
 	public static function for_size_variables(): \WP_Error {
 		return Pro_Features_Discovery::error(
-			/* translators: %s: upgrade URL. */
-			__( 'Size variables require an active Elementor Pro license, so this operation was not applied. Do not retry it. Tell the user that size variables require Elementor Pro and share this upgrade link: %s. Do not store size values in color or font variables as a workaround — only suggest the Pro upgrade.', 'elementor' ),
+			__( 'Size variables need Elementor Pro, so this operation wasn\'t applied. What Pro gives the user: one spacing and type scale for the whole site, where changing a size once updates every element that uses it.', 'elementor' ),
+			__( 'Free path: create the color and font variables now and set sizes directly in global classes. Tell the user sizes will need updating class by class.', 'elementor' ),
 			self::UPGRADE_URL
 		);
+	}
+
+	public static function get_repeated_message(): string {
+		return __( 'Size variables need Elementor Pro, so this operation wasn\'t applied. The upgrade link and what to tell the user are in the first size variable error of this response.', 'elementor' );
 	}
 }
