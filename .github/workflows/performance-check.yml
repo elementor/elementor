@@ -51,7 +51,7 @@ jobs:
       - name: Setup wp-env
         uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@main
         with:
-          php: 7.4
+          php: '8.2'
           active-theme: 'hello-elementor'
           plugins: |-
             ./elementor
@@ -107,7 +107,7 @@ jobs:
 
       - name: Upload reports
         id: upload-reports
-        if: always()
+        if: always() && steps.run-performance-check.outputs.reports-path != ''
         uses: actions/upload-artifact@v7
         with:
           name: compare-v4-to-v3
