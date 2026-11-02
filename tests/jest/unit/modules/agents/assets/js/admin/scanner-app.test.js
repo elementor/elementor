@@ -269,6 +269,19 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByRole( 'button', { name: 'Install Angie & fix issue' } ).hasAttribute( 'disabled' ) ).toBe( true );
 	} );
 
+	it( 'offers to activate Angie when it is installed but inactive', async () => {
+		// Arrange
+		await runFirstScan( { isAngieInstalled: true } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+
+		// Act
+		fireEvent.click( within( getRowByTitle( 'Agents can\'t tell when you\'re open' ) ).getByRole( 'button', { name: 'Fix with Angie' } ) );
+
+		// Assert
+		expect( screen.getByRole( 'button', { name: 'Activate Angie & fix issue' } ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button', { name: 'Install Angie & fix issue' } ) ).toBeNull();
+	} );
+
 	it( 'opens How to fix from Copy prompt and copies that prompt', async () => {
 		// Arrange
 		const writeText = jest.fn().mockResolvedValue( undefined );
