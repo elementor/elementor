@@ -326,16 +326,23 @@ class Markdown_Endpoint extends Feature_Component {
 	 */
 	public function build_response_headers( int $post_id ): array {
 		return array_merge(
-			[
-				'Content-Type'           => 'text/markdown; charset=utf-8',
-				'X-Content-Type-Options' => 'nosniff',
-				'Vary'                   => 'Accept',
-				'X-Robots-Tag'           => 'noindex',
-			],
+			$this->build_base_markdown_headers(),
 			[
 				'Link' => '<' . esc_url_raw( get_permalink( $post_id ) ) . '>; rel="canonical"',
 			]
 		);
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	public function build_base_markdown_headers(): array {
+		return [
+			'Content-Type'           => 'text/markdown; charset=utf-8',
+			'X-Content-Type-Options' => 'nosniff',
+			'Vary'                   => 'Accept',
+			'X-Robots-Tag'           => 'noindex',
+		];
 	}
 
 	/**
@@ -390,7 +397,7 @@ class Markdown_Endpoint extends Feature_Component {
 		exit;
 	}
 
-	private function is_markdown_request(): bool {
+	public function is_markdown_request(): bool {
 		if ( isset( $_GET['format'] ) && 'markdown' === $_GET['format'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
