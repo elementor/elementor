@@ -632,7 +632,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function get_components_pro_notice(): string {
-		return __( 'When the user asks to create, rename, or archive a component, call `create`, `rename`, or `archive` anyway, then tell the user that this needs Elementor Pro (not licensed on this site) and share the upgrade link from the response. With Pro, a component is built once, reused on any page, and its design is edited in one place. Each copy can still have its own text and images.', 'elementor' );
+		return __( 'Note: creating, renaming, and archiving components require an active Elementor Pro license, which this site does not have. Those actions are rejected with an upgrade link — do not retry them, share the link with the user, and do not substitute global classes, variables, templates, or duplicated elements for a component as a workaround.', 'elementor' );
 	}
 
 	private function check_access( string $action, callable $can ): ?\WP_Error {

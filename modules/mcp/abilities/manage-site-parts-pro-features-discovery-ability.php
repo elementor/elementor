@@ -35,9 +35,11 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 		);
 	}
 
-	public function execute( $input = [] ) {
-		$operations = is_array( $input ) && is_array( $input['operations'] ?? null ) ? $input['operations'] : [];
+	public function is_available() {
+		return Site_Parts_Pro_Features_Discovery::for_manage();
+	}
 
-		return Site_Parts_Pro_Features_Discovery::for_manage( $operations );
+	public function execute( $input = [] ) {
+		return Site_Parts_Pro_Features_Discovery::for_manage();
 	}
 }
