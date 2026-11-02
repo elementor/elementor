@@ -261,77 +261,80 @@ export function useElementorConnectPopup( {
 		return true;
 	}, [ clearPopupClosedPoll, handlePopupClosed, startSetupVerifyPoll ] );
 
-	return useCallback( ( connectUrlOverride?: string ) => {
-		const activeConnectUrl = connectUrlOverride ?? connectUrl;
+	return useCallback(
+		( connectUrlOverride?: string ) => {
+			const activeConnectUrl = connectUrlOverride ?? connectUrl;
 
-		if ( ! activeConnectUrl ) {
-			onErrorRef.current?.();
-			return;
-		}
-
-		connectFlowCompletedRef.current = false;
-		detachListeners();
-
-		const callbackId = `proSetupPromo${ ++callbackCounter }`;
-		activeCallbackRef.current = callbackId;
-
-		const successHandler = () => {
-			void tryCompleteConnectFlow();
-		};
-
-		const errorHandler = () => {
-			finishConnectFlow( 'error' );
-		};
-
-		successHandlerRef.current = successHandler;
-		errorHandlerRef.current = errorHandler;
-
-		const nativeSuccessHandler = () => {
-			void tryCompleteConnectFlow();
-		};
-
-		nativeSuccessHandlerRef.current = nativeSuccessHandler;
-		window.addEventListener( CONNECT_SUCCESS_WINDOW_EVENT, nativeSuccessHandler );
-
-		const $window = getConnectWindow();
-		const $body = getConnectBody();
-
-		if ( ! $window && ! $body ) {
-			detachListeners();
-			onErrorRef.current?.();
-			return;
-		}
-
-		const eventSuffix = callbackId;
-
-		if ( $window ) {
-			$window.on( `elementor/connect/success/${ eventSuffix }`, successHandler );
-			$window.on( `elementor/connect/error/${ eventSuffix }`, errorHandler );
-		}
-
-		if ( $body ) {
-			$body.on( `elementor/connect/success/${ eventSuffix }`, successHandler );
-			$body.on( `elementor/connect/error/${ eventSuffix }`, errorHandler );
-		}
-
-		popupUrlRef.current = buildPopupUrl( activeConnectUrl, callbackId );
-
-		if ( tryOpenPopupWindow() ) {
-			return;
-		}
-
-		const retryOpen = () => {
-			if ( ! activeCallbackRef.current || ! popupUrlRef.current ) {
+			if ( ! activeConnectUrl ) {
+				onErrorRef.current?.();
 				return;
 			}
+
+			connectFlowCompletedRef.current = false;
+			detachListeners();
+
+			const callbackId = `proSetupPromo${ ++callbackCounter }`;
+			activeCallbackRef.current = callbackId;
+
+			const successHandler = () => {
+				void tryCompleteConnectFlow();
+			};
+
+			const errorHandler = () => {
+				finishConnectFlow( 'error' );
+			};
+
+			successHandlerRef.current = successHandler;
+			errorHandlerRef.current = errorHandler;
+
+			const nativeSuccessHandler = () => {
+				void tryCompleteConnectFlow();
+			};
+
+			nativeSuccessHandlerRef.current = nativeSuccessHandler;
+			window.addEventListener( CONNECT_SUCCESS_WINDOW_EVENT, nativeSuccessHandler );
+
+			const $window = getConnectWindow();
+			const $body = getConnectBody();
+
+			if ( ! $window && ! $body ) {
+				detachListeners();
+				onErrorRef.current?.();
+				return;
+			}
+
+			const eventSuffix = callbackId;
+
+			if ( $window ) {
+				$window.on( `elementor/connect/success/${ eventSuffix }`, successHandler );
+				$window.on( `elementor/connect/error/${ eventSuffix }`, errorHandler );
+			}
+
+			if ( $body ) {
+				$body.on( `elementor/connect/success/${ eventSuffix }`, successHandler );
+				$body.on( `elementor/connect/error/${ eventSuffix }`, errorHandler );
+			}
+
+			popupUrlRef.current = buildPopupUrl( activeConnectUrl, callbackId );
 
 			if ( tryOpenPopupWindow() ) {
 				return;
 			}
 
-			onPopupBlockedRef.current?.( retryOpen );
-		};
+			const retryOpen = () => {
+				if ( ! activeCallbackRef.current || ! popupUrlRef.current ) {
+					return;
+				}
 
-		onPopupBlockedRef.current?.( retryOpen );
-	}, [ connectUrl, detachListeners, finishConnectFlow, tryCompleteConnectFlow, tryOpenPopupWindow ] );
+				if ( tryOpenPopupWindow() ) {
+					return;
+				}
+
+				onPopupBlockedRef.current?.( retryOpen );
+			};
+
+			onPopupBlockedRef.current?.( retryOpen );
+		},
+		[ connectUrl, detachListeners, finishConnectFlow, tryCompleteConnectFlow, tryOpenPopupWindow ]
+	);
 }
