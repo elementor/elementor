@@ -17,10 +17,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$data = [
 			'include' => [ 'content' ],
 			'manifest' => [
-				'content' => [
-					Component_Document::TYPE => [
-						123 => [ 'title' => 'Component' ],
-					],
+				Component_Document::EXPORT_MANIFEST_KEY => [
+					123 => [ 'title' => 'Component' ],
 				],
 			],
 			'extracted_directory_path' => '/tmp/kit/',
@@ -39,10 +37,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$data = [
 			'include' => [ 'settings' ],
 			'manifest' => [
-				'content' => [
-					Component_Document::TYPE => [
-						123 => [ 'title' => 'Component' ],
-					],
+				Component_Document::EXPORT_MANIFEST_KEY => [
+					123 => [ 'title' => 'Component' ],
 				],
 			],
 			'extracted_directory_path' => '/tmp/kit/',
@@ -60,7 +56,29 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$runner = new Import_Runner();
 		$data = [
 			'include' => [ 'content' ],
-			'manifest' => [ 'content' => [] ],
+			'manifest' => [],
+			'extracted_directory_path' => '/tmp/kit/',
+		];
+
+		// Act
+		$result = $runner->should_import( $data );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_should_import__returns_false_for_legacy_manifest_content_entry() {
+		// Arrange
+		$runner = new Import_Runner();
+		$data = [
+			'include' => [ 'content' ],
+			'manifest' => [
+				'content' => [
+					Component_Document::TYPE => [
+						123 => [ 'title' => 'Component' ],
+					],
+				],
+			],
 			'extracted_directory_path' => '/tmp/kit/',
 		];
 
