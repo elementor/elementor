@@ -14,7 +14,7 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 	const EMPTY_RESULT_HINT = 'No icon on this site matches these queries. Try a broader phrase (for example "cart" instead of "shopping trolley"), or drop the library and category filters. Never invent an icon value.';
 
-	const TRUNCATED_PACK_HINT = 'The custom icon pack(s) %s are too large to be fully searched, so only their first icons are searchable and the icon may exist past that limit. Do not tell the user the icon does not exist; use a different icon or ask the user to pick it in the editor icon library.';
+	const TRUNCATED_PACK_HINT = 'Results may be incomplete: the custom icon pack(s) %s are too large to be fully searched, so only their first icons are searchable and a matching icon may exist past that limit. Do not tell the user an icon does not exist, and do not settle for an unrelated icon; ask the user to pick it in the editor icon library.';
 
 	const CATALOG_MISSING_NOTICE = 'Note: the icon catalog is not available on this site, so icons cannot be looked up.';
 
@@ -81,18 +81,45 @@ class Find_Icons_Ability extends Abstract_Ability {
 			);
 		}
 
-		if ( $this->has_no_matches( $response ) ) {
-			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
+		$hints = [];
 
-			if ( ! empty( $response['truncated_custom_libraries'] ) ) {
-				$response['llm_instructions'] .= ' ' . sprintf(
-					self::TRUNCATED_PACK_HINT,
-					implode( ', ', $response['truncated_custom_libraries'] )
-				);
-			}
+		if ( $this->has_no_matches( $response ) ) {
+			$hints[] = self::EMPTY_RESULT_HINT;
+		}
+
+		$truncated_packs = $this->get_truncated_pack_names( $response );
+
+		if ( $truncated_packs && $this->has_searchable_query( $response ) ) {
+			$hints[] = sprintf( self::TRUNCATED_PACK_HINT, implode( ', ', $truncated_packs ) );
+		}
+
+		if ( $hints ) {
+			$response['llm_instructions'] = implode( ' ', $hints );
 		}
 
 		return $response;
+	}
+
+	private function get_truncated_pack_names( array $response ): array {
+		$names = array_map(
+			static fn( $name ) => substr( sanitize_key( (string) $name ), 0, 40 ),
+			$response['truncated_custom_libraries'] ?? []
+		);
+
+		return array_values( array_filter( $names ) );
+	}
+
+	/**
+	 * A query without Latin letters or digits can never match, so a truncated pack is not the reason it found nothing.
+	 */
+	private function has_searchable_query( array $response ): bool {
+		foreach ( $response['results'] ?? [] as $result ) {
+			if ( preg_match( '/[a-z0-9]/i', (string) ( $result['query'] ?? '' ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function has_no_matches( array $response ): bool {

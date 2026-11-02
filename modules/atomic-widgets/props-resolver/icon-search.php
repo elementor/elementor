@@ -152,16 +152,9 @@ class Icon_Search {
 	private static function search_single( array $entries, string $query, int $page, int $per_page, string $browse_matched_on ): array {
 		$normalized = self::normalize( $query );
 
-		// Normalization keeps only [a-z0-9], so a query like "корзина" or "!!!" becomes empty. Only an empty query browses.
+		// Only a truly empty query browses; a query that normalizes to empty (e.g. Cyrillic) must match nothing.
 		if ( '' === $normalized && '' !== $query ) {
-			return [
-				'query' => $query,
-				'matches' => [],
-				'total' => 0,
-				'page' => $page,
-				'per_page' => $per_page,
-				'truncated' => false,
-			];
+			return self::build_result( $query, [], 0, $page, $per_page, false );
 		}
 
 		$scored = [];
@@ -191,13 +184,17 @@ class Icon_Search {
 			array_slice( $scored, $offset, $per_page )
 		);
 
+		return self::build_result( $query, $matches, count( $scored ), $page, $per_page, count( $scored ) > $offset + count( $matches ) );
+	}
+
+	private static function build_result( string $query, array $matches, int $total, int $page, int $per_page, bool $truncated ): array {
 		return [
 			'query' => $query,
 			'matches' => $matches,
-			'total' => count( $scored ),
+			'total' => $total,
 			'page' => $page,
 			'per_page' => $per_page,
-			'truncated' => count( $scored ) > $offset + count( $matches ),
+			'truncated' => $truncated,
 		];
 	}
 
