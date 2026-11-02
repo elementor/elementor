@@ -254,6 +254,24 @@ class Test_Document extends Elementor_Test_Base {
 		wp_set_current_user( $before_user->ID );
 	}
 
+	public function test_filter_admin_row_actions__escapes_edit_url_in_href() {
+		// Arrange
+		$this->act_as_admin();
+		$document = $this->factory()->documents->create_and_get();
+		$_GET['active-document'] = '" onfocus="alert(\'Parlix\')" autofocus="" tabindex="1" a="';
+
+		// Act
+		$actions = $document->filter_admin_row_actions( [] );
+
+		// Assert
+		$this->assertArrayHasKey( 'edit_with_elementor', $actions );
+		$this->assertStringNotContainsString( 'onfocus', $actions['edit_with_elementor'] );
+		$this->assertDoesNotMatchRegularExpression(
+			'/href="[^"]*"\s+/',
+			$actions['edit_with_elementor']
+		);
+	}
+
 	public function test_get_autosave__creates_autosave_when_not_exists() {
 		// Arrange.
 		$this->act_as_admin();
@@ -269,6 +287,9 @@ class Test_Document extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		unset( $_GET['active-document'] );
+		unset( $_GET['active-tab'] );
+
 		parent::tearDown();
 
 		remove_action( 'elementor/element/section/section_layout/after_section_start', [ __CLASS__, 'add_external_control' ] );
