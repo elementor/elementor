@@ -11,7 +11,7 @@
     data-e-type="{{ type }}"
     data-interaction-id="{{ interaction_id }}"
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-    x-data="eTabs{{ id }}"
+    x-data="{% if (id | e('js_identifier')) != '' %}eTabs{{ id | e('js_identifier') }}{% else %}{}{% endif %}"
     data-e-settings="{{ e_settings | json_encode | e('html_attr') }}"
     {% if settings._cssid is defined and settings._cssid is not empty %}
         id="{{ settings._cssid | e('html_attr') }}"
