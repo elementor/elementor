@@ -20,7 +20,7 @@ class Woocommerce_Pro_Features_Discovery implements Widget_Pro_Features_Discover
 	const SITE_PART_TYPES = [ 'product', 'product-archive' ];
 
 	public static function is_active(): bool {
-		return ! Utils::has_pro() && class_exists( 'WooCommerce' );
+		return ! Utils::has_pro() && function_exists( 'wc_get_page_id' );
 	}
 
 	public static function supports_widget( string $widget_type ): bool {

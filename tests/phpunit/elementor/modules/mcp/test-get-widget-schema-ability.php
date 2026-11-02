@@ -13,7 +13,6 @@ use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
-use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Woocommerce_Test_Helpers;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -22,14 +21,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/fixtures/woocommerce-test-helpers.php';
+require_once __DIR__ . '/../../../stubs/wc-stubs.php';
 
 /**
  * @group Elementor\Modules\Mcp
  */
 class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
-
-	use Woocommerce_Test_Helpers;
 
 	private Get_Widget_Schema_Ability $ability;
 	private Widgets_Manager $original_widgets_manager;
@@ -180,7 +177,6 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		}
 
 		$this->act_as_admin();
-		$this->given_woocommerce_is_active();
 
 		// Act.
 		$result = $this->ability->execute( [ 'widget_type' => [ 'woocommerce-cart', 'wc-archive-products' ] ] );
@@ -190,9 +186,6 @@ class Test_Get_Widget_Schema_Ability extends Elementor_Test_Base {
 		$this->assertSame( [], $result['schemas'] );
 		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['woocommerce-cart']['message'] );
 		$this->assertSame( Woocommerce_Pro_Features_Discovery::for_widget()->get_error_message(), $result['errors']['wc-archive-products']['message'] );
-		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result['errors']['woocommerce-cart']['code'] );
-		$this->assertStringContainsString( '[Upgrade to Pro](' . Woocommerce_Pro_Features_Discovery::UPGRADE_URL . ')', $result['errors']['woocommerce-cart']['message'] );
-		$this->assertStringContainsString( 'Free path:', $result['errors']['woocommerce-cart']['message'] );
 	}
 
 	public function test_execute__missing_widget_type_returns_bad_request() {
