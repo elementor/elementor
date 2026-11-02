@@ -417,7 +417,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
 		$compiled = Composition_Compiler::make()->compile(
@@ -428,6 +428,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		);
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
+		}
+
+		if ( $compiled['pro_features_discovery'] ) {
+			return $compiled['pro_features_discovery'][0];
 		}
 
 		if ( 1 !== count( $compiled['elements'] ) ) {
