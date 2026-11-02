@@ -45,6 +45,15 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 
 			return in_array( $feature_name, self::$features, true );
 		}
+
+		public static function get_license_data( $force_request = false ) {
+			unset( $force_request );
+
+			return [
+				'success' => self::$active,
+				'error' => self::$expired ? 'expired' : '',
+			];
+		}
 	}
 
 	class_alias( 'Mock_Pro_License_API', 'ElementorPro\License\API' );
