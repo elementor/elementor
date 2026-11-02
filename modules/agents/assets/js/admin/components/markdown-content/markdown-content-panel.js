@@ -1,32 +1,49 @@
 import { useEffect, useState } from 'react';
+import { AlertCircleIcon } from '@elementor/icons';
+import Button from '@elementor/ui/Button';
+import Chip from '@elementor/ui/Chip';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { fetchMarkdownPreview } from '../../api';
+import { fetchMarkdownPreview, revertMarkdownContent, saveMarkdownContent } from '../../api';
 import { useMarkdownItems } from '../../hooks/use-markdown-items';
+import { ConfirmDialog } from '../confirm-dialog';
+import { ContentEditDialog } from '../content-edit-dialog';
 import { PostTypeList } from '../post-type-list';
 import { getIncludedTypesKey, getMarkdownFileName } from './markdown-items';
-import { MarkdownPreviewDialog } from './markdown-preview-dialog';
 import { MarkdownPreviewPane } from './markdown-preview-pane';
+
+const DIALOG_MODE_EDIT = 'edit';
+const DIALOG_MODE_VIEW = 'view';
+const DIALOG_MODE_REVERT = 'revert';
 
 export const MarkdownContentPanel = ( { settings } ) => {
 	const { isEnabled, isSaving, postTypes, togglePostType } = settings;
 	const includedTypesKey = getIncludedTypesKey( postTypes );
+	const [ revision, setRevision ] = useState( 0 );
 	const { items: defaultItems } = useMarkdownItems( {
-		refreshKey: includedTypesKey,
+		refreshKey: `${ includedTypesKey }:${ revision }`,
 		isPaused: ! isEnabled || isSaving,
 	} );
 	const [ picked, setPicked ] = useState( null );
 	const [ content, setContent ] = useState( '' );
-	const [ isExpanded, setIsExpanded ] = useState( false );
+	const [ isOverridden, setIsOverridden ] = useState( false );
+	const [ dialogMode, setDialogMode ] = useState( null );
 
 	const pickedItem = picked?.typesKey === includedTypesKey ? picked.item : null;
 	const selectedItem = isEnabled ? pickedItem ?? defaultItems[ 0 ] ?? null : null;
 	const selectedItemId = selectedItem?.id ?? 0;
 
 	const selectItem = ( item ) => setPicked( { typesKey: includedTypesKey, item } );
+	const closeDialog = () => setDialogMode( null );
+
+	const refreshAfterChange = () => setRevision( ( current ) => current + 1 );
+
+	const saveContent = ( nextContent ) => saveMarkdownContent( selectedItemId, nextContent ).then( refreshAfterChange );
+
+	const revertContent = () => revertMarkdownContent( selectedItemId ).then( refreshAfterChange );
 
 	useEffect( () => {
 		if ( ! selectedItemId ) {
@@ -38,21 +55,23 @@ export const MarkdownContentPanel = ( { settings } ) => {
 		setContent( '' );
 
 		fetchMarkdownPreview( selectedItemId )
-			.then( ( nextContent ) => {
+			.then( ( preview ) => {
 				if ( isCurrent ) {
-					setContent( nextContent );
+					setContent( preview.content );
+					setIsOverridden( preview.isOverridden );
 				}
 			} )
 			.catch( () => {
 				if ( isCurrent ) {
 					setContent( '' );
+					setIsOverridden( false );
 				}
 			} );
 
 		return () => {
 			isCurrent = false;
 		};
-	}, [ selectedItemId ] );
+	}, [ selectedItemId, revision ] );
 
 	return (
 		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
@@ -71,6 +90,21 @@ export const MarkdownContentPanel = ( { settings } ) => {
 						onToggle={ togglePostType }
 					/>
 				</Stack>
+				{ isOverridden && (
+					<Stack alignItems="flex-start" spacing={ 1 }>
+						<Chip
+							icon={ <AlertCircleIcon /> }
+							label={ __( 'This page was edited manually and no longer syncs automatically.', 'elementor' ) }
+							color="warning"
+							size="small"
+							shape="rounded"
+							variant="standard"
+						/>
+						<Button variant="outlined" size="small" onClick={ () => setDialogMode( DIALOG_MODE_REVERT ) }>
+							{ __( 'Revert to generated version', 'elementor' ) }
+						</Button>
+					</Stack>
+				) }
 			</Stack>
 			{ selectedItem && (
 				<MarkdownPreviewPane
@@ -78,14 +112,27 @@ export const MarkdownContentPanel = ( { settings } ) => {
 					selectedItem={ selectedItem }
 					content={ content }
 					onSelect={ selectItem }
-					onExpand={ () => setIsExpanded( true ) }
+					hasContent={ '' !== content }
+					onEdit={ () => setDialogMode( DIALOG_MODE_EDIT ) }
+					onExpand={ () => setDialogMode( DIALOG_MODE_VIEW ) }
 				/>
 			) }
-			{ isExpanded && selectedItem && (
-				<MarkdownPreviewDialog
+			{ [ DIALOG_MODE_EDIT, DIALOG_MODE_VIEW ].includes( dialogMode ) && selectedItem && (
+				<ContentEditDialog
 					title={ getMarkdownFileName( selectedItem ) }
 					content={ content }
-					onClose={ () => setIsExpanded( false ) }
+					isEditing={ DIALOG_MODE_EDIT === dialogMode }
+					onClose={ closeDialog }
+					onSave={ saveContent }
+				/>
+			) }
+			{ DIALOG_MODE_REVERT === dialogMode && (
+				<ConfirmDialog
+					title={ __( 'Revert to generated version?', 'elementor' ) }
+					message={ __( 'Your manual edits will be discarded. The markdown for this page will be regenerated from your current site content and kept up to date automatically.', 'elementor' ) }
+					confirmLabel={ __( 'Revert', 'elementor' ) }
+					onConfirm={ revertContent }
+					onClose={ closeDialog }
 				/>
 			) }
 		</Stack>

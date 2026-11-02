@@ -13,6 +13,7 @@ use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use Elementor\Plugin;
@@ -550,7 +551,7 @@ class Test_Webmcp_Core_Tools extends Elementor_Test_Base {
 	}
 
 	private function create_read_tool(): Read_Page_Content {
-		return new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ), $this->sanitizer );
+		return new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( $this->generator ) ), $this->sanitizer );
 	}
 
 	private function delete_all_content(): void {
