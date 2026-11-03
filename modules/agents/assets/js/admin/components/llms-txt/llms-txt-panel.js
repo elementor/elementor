@@ -7,6 +7,7 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { LLMS_SETTINGS_KEY } from '../../constants';
 import { PostTypeList } from '../post-type-list';
 import { LlmsConfirmDialog } from './llms-confirm-dialog';
 import { LlmsPreviewDialog } from './llms-preview-dialog';
@@ -30,8 +31,23 @@ const getWarningMessage = ( hasPhysicalFile, isManuallyEdited ) => {
 };
 
 export const LlmsTxtPanel = ( { settings } ) => {
-	const { content, hasPhysicalFile, isEnabled, isManuallyEdited, isSaving, postTypes, revertContent, saveContent, takeOverFile, togglePostType } = settings;
+	const {
+		content,
+		excludedPostIds,
+		flushExclusions,
+		hasPhysicalFile,
+		isEnabled,
+		isManuallyEdited,
+		isSaving,
+		postTypes,
+		revertContent,
+		saveContent,
+		takeOverFile,
+		togglePostExclusion,
+		togglePostType,
+	} = settings;
 	const [ dialogMode, setDialogMode ] = useState( null );
+	const canChooseItems = ! hasPhysicalFile && ! isManuallyEdited;
 
 	const warningMessage = getWarningMessage( hasPhysicalFile, isManuallyEdited );
 
@@ -57,6 +73,12 @@ export const LlmsTxtPanel = ( { settings } ) => {
 						postTypes={ displayedPostTypes }
 						isDisabled={ ! isEnabled || isManuallyEdited || isSaving }
 						onToggle={ togglePostType }
+						exclusions={ canChooseItems ? {
+							module: LLMS_SETTINGS_KEY,
+							excludedPostIds,
+							onToggle: togglePostExclusion,
+							onClose: flushExclusions,
+						} : undefined }
 					/>
 				</Stack>
 				{ warningMessage && (
@@ -123,6 +145,8 @@ export const LlmsTxtPanel = ( { settings } ) => {
 LlmsTxtPanel.propTypes = {
 	settings: PropTypes.shape( {
 		content: PropTypes.string.isRequired,
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ).isRequired,
+		flushExclusions: PropTypes.func.isRequired,
 		hasPhysicalFile: PropTypes.bool.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
 		isManuallyEdited: PropTypes.bool.isRequired,
@@ -131,6 +155,7 @@ LlmsTxtPanel.propTypes = {
 		revertContent: PropTypes.func.isRequired,
 		saveContent: PropTypes.func.isRequired,
 		takeOverFile: PropTypes.func.isRequired,
+		togglePostExclusion: PropTypes.func.isRequired,
 		togglePostType: PropTypes.func.isRequired,
 	} ).isRequired,
 };

@@ -88,12 +88,13 @@ class Content_Generator {
 	 *   'intro'    – user-supplied intro text (replaces the auto-generated one).
 	 *   'optional' – extra section appended after all content sections.
 	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
-	public function generate_llms_txt( array $overrides = [], ?array $post_types = null ): string {
+	public function generate_llms_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
 		$lines = $this->build_header( $overrides );
 
-		$sections = $this->get_content_sections( $post_types );
+		$sections = $this->get_content_sections( $post_types, false, $excluded_post_ids );
 
 		foreach ( $sections as $title => $items ) {
 			if ( empty( $items ) ) {
@@ -124,12 +125,13 @@ class Content_Generator {
 	 *
 	 * @param array{intro?: string, optional?: string} $overrides
 	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
-	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null ): string {
+	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
 		$lines = $this->build_header( $overrides );
 
-		$sections = $this->get_content_sections( $post_types, true );
+		$sections = $this->get_content_sections( $post_types, true, $excluded_post_ids );
 
 		// Separate WooCommerce products from everything else so we can deprioritise them.
 		$product_section = $sections['Products'] ?? [];
@@ -359,9 +361,10 @@ class Content_Generator {
 	 * @param string[]|null $included_post_types Post types to include; null includes every available type.
 	 * @param bool          $apply_llms_full_limit Whether to cap each post type to the
 	 *   llms-full.txt per-type inline limit instead of MAX_POSTS_PER_TYPE.
+	 * @param int[]         $excluded_post_ids Posts to leave out.
 	 * @return array<string, array<array{id: int, title: string, url: string, description: string}>>
 	 */
-	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false ): array {
+	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false, array $excluded_post_ids = [] ): array {
 		$sections = [];
 
 		foreach ( $this->get_available_post_types() as $post_type => $label ) {
@@ -371,7 +374,7 @@ class Content_Generator {
 
 			$items = $this->get_posts_for_section(
 				$post_type,
-				$this->get_section_order( $post_type ),
+				array_merge( $this->get_section_order( $post_type ), [ 'post__not_in' => $excluded_post_ids ] ),
 				$this->get_posts_per_type_limit( $post_type, $apply_llms_full_limit )
 			);
 

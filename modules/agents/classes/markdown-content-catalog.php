@@ -18,18 +18,24 @@ class Markdown_Content_Catalog {
 	 * Published, public, indexable posts the preview picker can show, ordered by title.
 	 * An empty term puts the static front page first when it qualifies.
 	 *
-	 * @param string[] $post_types Post type slugs to query.
-	 * @param string   $term       Title search term.
+	 * @param string[] $post_types        Post type slugs to query.
+	 * @param string   $term              Title search term.
+	 * @param int[]    $excluded_post_ids Posts to leave out.
 	 * @return array<int, array{id: int, title: string, path: string, type: string}>
 	 */
-	public function search( array $post_types, string $term ): array {
+	public function search( array $post_types, string $term, array $excluded_post_ids = [] ): array {
 		if ( empty( $post_types ) ) {
 			return [];
 		}
 
 		$front_page = '' === $term ? $this->get_front_page( $post_types ) : null;
-		$exclude    = $front_page ? [ $front_page->ID ] : [];
-		$posts      = $this->collect_posts(
+
+		if ( $front_page && in_array( $front_page->ID, $excluded_post_ids, true ) ) {
+			$front_page = null;
+		}
+
+		$exclude = $front_page ? array_merge( $excluded_post_ids, [ $front_page->ID ] ) : $excluded_post_ids;
+		$posts   = $this->collect_posts(
 			$post_types,
 			$term,
 			$front_page ? [ $front_page ] : [],
@@ -44,19 +50,40 @@ class Markdown_Content_Catalog {
 	/**
 	 * Published, public, indexable posts matching the term anywhere in their content, best match first.
 	 *
-	 * @param string[] $post_types Post type slugs to query.
-	 * @param string   $term       Search term.
-	 * @param int      $limit      Maximum number of items.
+	 * @param string[] $post_types        Post type slugs to query.
+	 * @param string   $term              Search term.
+	 * @param int      $limit             Maximum number of items.
+	 * @param int[]    $excluded_post_ids Posts to leave out.
 	 * @return array<int, array{id: int, title: string, url: string, type: string, date: string, excerpt: string}>
 	 */
-	public function search_content( array $post_types, string $term, int $limit ): array {
+	public function search_content( array $post_types, string $term, int $limit, array $excluded_post_ids = [] ): array {
 		if ( empty( $post_types ) ) {
 			return [];
 		}
 
-		$posts = $this->collect_posts( $post_types, $term, [], [], $limit, [ 'orderby' => 'relevance' ] );
+		$posts = $this->collect_posts( $post_types, $term, [], $excluded_post_ids, $limit, [ 'orderby' => 'relevance' ] );
 
 		return array_map( [ $this, 'to_content_item' ], $posts );
+	}
+
+	/**
+	 * One page of published, public, indexable posts of a single type, ordered by title.
+	 *
+	 * @param string $post_type Post type slug.
+	 * @param string $term      Title search term.
+	 * @param int    $page      One-based results page.
+	 * @return array{items: array<int, array{id: int, title: string, url: string}>, hasMore: bool}
+	 */
+	public function list_page( string $post_type, string $term, int $page ): array {
+		$posts = $this->query_posts( [ $post_type ], $term, $page, [], [ 'search_columns' => [ 'post_title' ] ] );
+
+		return [
+			'items'   => array_values( array_map(
+				[ $this, 'to_list_item' ],
+				array_filter( $posts, [ $this, 'is_listable' ] )
+			) ),
+			'hasMore' => count( $posts ) >= self::PAGE_SIZE,
+		];
 	}
 
 	/**
@@ -158,6 +185,17 @@ class Markdown_Content_Catalog {
 			'title' => Post_Title::to_plain_text( get_the_title( $post ) ),
 			'path'  => $this->get_path( $post ),
 			'type'  => $post->post_type,
+		];
+	}
+
+	/**
+	 * @return array{id: int, title: string, url: string}
+	 */
+	private function to_list_item( \WP_Post $post ): array {
+		return [
+			'id'    => $post->ID,
+			'title' => Post_Title::to_plain_text( get_the_title( $post ) ),
+			'url'   => (string) get_permalink( $post ),
 		];
 	}
 

@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { fetchMarkdownPreview } from '../../api';
+import { MARKDOWN_SETTINGS_KEY } from '../../constants';
 import { useMarkdownItems } from '../../hooks/use-markdown-items';
 import { PostTypeList } from '../post-type-list';
 import { getIncludedTypesKey, getMarkdownFileName } from './markdown-items';
@@ -12,21 +13,21 @@ import { MarkdownPreviewDialog } from './markdown-preview-dialog';
 import { MarkdownPreviewPane } from './markdown-preview-pane';
 
 export const MarkdownContentPanel = ( { settings } ) => {
-	const { isEnabled, isSaving, postTypes, togglePostType } = settings;
-	const includedTypesKey = getIncludedTypesKey( postTypes );
+	const { excludedPostIds, exclusionsSavedVersion, flushExclusions, isEnabled, isSaving, postTypes, togglePostExclusion, togglePostType } = settings;
+	const itemsKey = `${ getIncludedTypesKey( postTypes ) }|${ exclusionsSavedVersion }`;
 	const { items: defaultItems } = useMarkdownItems( {
-		refreshKey: includedTypesKey,
+		refreshKey: itemsKey,
 		isPaused: ! isEnabled || isSaving,
 	} );
 	const [ picked, setPicked ] = useState( null );
 	const [ content, setContent ] = useState( '' );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
-	const pickedItem = picked?.typesKey === includedTypesKey ? picked.item : null;
+	const pickedItem = picked?.itemsKey === itemsKey ? picked.item : null;
 	const selectedItem = isEnabled ? pickedItem ?? defaultItems[ 0 ] ?? null : null;
 	const selectedItemId = selectedItem?.id ?? 0;
 
-	const selectItem = ( item ) => setPicked( { typesKey: includedTypesKey, item } );
+	const selectItem = ( item ) => setPicked( { itemsKey, item } );
 
 	useEffect( () => {
 		if ( ! selectedItemId ) {
@@ -69,6 +70,12 @@ export const MarkdownContentPanel = ( { settings } ) => {
 						postTypes={ postTypes }
 						isDisabled={ ! isEnabled || isSaving }
 						onToggle={ togglePostType }
+						exclusions={ {
+							module: MARKDOWN_SETTINGS_KEY,
+							excludedPostIds,
+							onToggle: togglePostExclusion,
+							onClose: flushExclusions,
+						} }
 					/>
 				</Stack>
 			</Stack>
@@ -94,9 +101,13 @@ export const MarkdownContentPanel = ( { settings } ) => {
 
 MarkdownContentPanel.propTypes = {
 	settings: PropTypes.shape( {
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ).isRequired,
+		exclusionsSavedVersion: PropTypes.number.isRequired,
+		flushExclusions: PropTypes.func.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
 		isSaving: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
+		togglePostExclusion: PropTypes.func.isRequired,
 		togglePostType: PropTypes.func.isRequired,
 	} ).isRequired,
 };

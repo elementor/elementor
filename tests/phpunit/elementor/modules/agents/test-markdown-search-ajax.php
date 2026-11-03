@@ -58,6 +58,21 @@ class Test_Markdown_Search_Ajax extends Elementor_Test_Base {
 		$this->assertNotContains( $post_id, $ids );
 	}
 
+	public function test_handle__leaves_out_excluded_posts() {
+		// Arrange
+		$kept_id     = $this->factory()->post->create( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Landing Kept' ] );
+		$excluded_id = $this->factory()->post->create( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Landing Excluded' ] );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'excluded_post_ids', [ $excluded_id ] );
+
+		// Act
+		$result = $this->ajax->handle( [ 'term' => 'Landing' ] );
+
+		// Assert
+		$ids = array_column( $result['items'], 'id' );
+		$this->assertContains( $kept_id, $ids );
+		$this->assertNotContains( $excluded_id, $ids );
+	}
+
 	public function test_handle__returns_no_items_when_markdown_is_disabled() {
 		// Arrange
 		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );

@@ -330,6 +330,30 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->assertFalse( $is_allowed );
 	}
 
+	public function test_is_markdown_access_allowed__denies_excluded_post() {
+		// Arrange
+		$post = $this->create_published_page();
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'excluded_post_ids', [ $post->ID ] );
+
+		// Act
+		$is_allowed = $this->endpoint->is_markdown_access_allowed( $post );
+
+		// Assert
+		$this->assertFalse( $is_allowed );
+	}
+
+	public function test_filter_should_serve__blocks_excluded_post() {
+		// Arrange
+		$post = $this->create_published_page();
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'excluded_post_ids', [ $post->ID ] );
+
+		// Act
+		$should_serve = $this->endpoint->filter_should_serve( true, $post );
+
+		// Assert
+		$this->assertFalse( $should_serve );
+	}
+
 	public function test_filter_should_serve__passes_through_when_markdown_is_disabled() {
 		// Arrange
 		$post = $this->create_published_page();
