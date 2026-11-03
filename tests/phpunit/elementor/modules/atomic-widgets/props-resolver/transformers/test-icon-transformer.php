@@ -202,6 +202,21 @@ class Test_Icon_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( '<path', $result['html'] );
 	}
 
+	public function test_transform__hides_managed_library_icon_from_screen_readers() {
+		// Arrange.
+		$transformer = new Icon_Transformer();
+		$value = [
+			'value' => 'eicon-star',
+			'library' => 'eicons',
+		];
+
+		// Act.
+		$result = $transformer->transform( $value, Props_Resolver_Context::make() );
+
+		// Assert.
+		$this->assertStringContainsString( 'aria-hidden="true"', $result['html'] );
+	}
+
 	public function test_transform__uses_svg_html_filter() {
 		// Arrange.
 		$transformer = new Icon_Transformer();

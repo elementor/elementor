@@ -454,6 +454,17 @@ jobs:
     with:
       build_artifact_name: ${{ needs.build.outputs.artifact_name }}
       pull_request_number: ${{ github.event.pull_request.number }}
+      build_report: false
+
+  allure-report:
+    name: Allure report
+    needs: [playwright]
+    if: always() && needs.playwright.result != 'skipped' && needs.playwright.result != 'cancelled'
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
+    uses: ./.github/workflows/allure-report.yml
 
   summarize:
     name: Summarize PR checks
