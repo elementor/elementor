@@ -641,6 +641,36 @@ describe( 'SvgMediaControl', () => {
 		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
 	} );
 
+	it.each( [
+		[ 'list marker', 'fa-solid fa-circle' ],
+		[ 'carousel previous arrow', 'fa-solid fa-chevron-left' ],
+		[ 'carousel next arrow', 'fa-solid fa-chevron-right' ],
+	] )( 'should not render a broken image for the default %s icon value', ( _name, iconValue ) => {
+		// Arrange
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: false } as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: iconValue },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'img', { name: 'Preview SVG' } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should preview a saved custom icon that only a provider can resolve, when the catalog does not list it', () => {
 		// Arrange
 		const customPath = 'M0 0H100V100H0Z';
