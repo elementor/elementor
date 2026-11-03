@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Merge reports and build Allure report
-        uses: elementor/elementor-editor-github-actions/actions/build-allure-report@feat/build-allure-report-composite-a83c
+        uses: elementor/elementor-editor-github-actions/actions/build-allure-report@bfa24ea593b2864c082af876a48967322a12a34e
         with:
           results-pattern: allure-results${{ env.RUN_SUFFIX }}-*
           preprocess-command: node .github/scripts/retag-playwright-traces.js ./allure-results
