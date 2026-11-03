@@ -30,8 +30,12 @@ import {
 	trackProSetupPromotionResult,
 } from '../analytics';
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
+import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
-import { markConnectSuccessNotificationForAfterReload } from '../utils/post-reload-connect-success-notification';
+import {
+	reloadEditorAfterConnectSuccess,
+	reloadEditorForSetupRefresh,
+} from '../utils/reload-editor-after-connect-success';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
@@ -169,20 +173,13 @@ export function ProSetupPanelPromo() {
 	};
 
 	const handleConnectSuccess = async () => {
+		setOpen( false );
+
 		try {
-			const config = await fetchPromotionConfig();
+			const config = await fetchPromotionConfigAfterConnect( fetchPromotionConfig );
 
-			if ( ! config ) {
-				applyPromotionConfig( null );
-				trackProSetupPromotionConnectResult( 'success' );
-				markConnectSuccessNotificationForAfterReload();
-				window.location.reload();
-				return;
-			}
-
-			if ( 'connect' === config.state ) {
+			if ( config && 'connect' === config.state ) {
 				applyPromotionConfig( config );
-				setOpen( true );
 				trackProSetupPromotionConnectResult(
 					'error',
 					__( 'License was not activated on this site.', 'elementor' )
@@ -190,16 +187,23 @@ export function ProSetupPanelPromo() {
 				notify( {
 					type: 'error',
 					message: __(
-						'Your Pro license is not active yet. Finish activation in the connect window, then try again.',
+						'Your Pro license is not active on this site yet. Reload the editor or connect again from the setup banner.',
 						'elementor'
 					),
 					id: 'pro-setup-promotion-connect-incomplete',
+					additionalActionProps: [
+						{
+							children: __( 'Reload editor', 'elementor' ),
+							onClick: () => reloadEditorForSetupRefresh(),
+						},
+					],
 				} );
 				return;
 			}
 
-			applyPromotionConfig( config );
+			applyPromotionConfig( null );
 			trackProSetupPromotionConnectResult( 'success' );
+			reloadEditorAfterConnectSuccess();
 		} catch {
 			notify( {
 				type: 'error',
@@ -247,11 +251,18 @@ export function ProSetupPanelPromo() {
 		} );
 	};
 
+	const isProSetupConnectComplete = async (): Promise< boolean > => {
+		const config = await fetchPromotionConfig();
+
+		return ! config || 'connect' !== config.state;
+	};
+
 	const openConnectPopup = useElementorConnectPopup( {
 		connectUrl: promotionConfig?.connectUrl ?? '',
 		onSuccess: handleConnectSuccess,
 		onError: handleConnectError,
 		onPopupBlocked: handleConnectPopupBlocked,
+		verifyConnectComplete: isProSetupConnectComplete,
 	} );
 
 	useEffect( () => {
@@ -373,11 +384,37 @@ export function ProSetupPanelPromo() {
 			trackProSetupPromotionCtaClick( state );
 			isProcessingRef.current = true;
 			setIsProcessing( true );
-			openConnectPopup();
+
+			const connectUrlForPopup = promotionConfig?.connectUrl ?? '';
+
+			if ( ! connectUrlForPopup ) {
+				isProcessingRef.current = false;
+				setIsProcessing( false );
+				notify( {
+					type: 'error',
+					message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
+					id: 'pro-setup-promotion-connect-url-missing',
+				} );
+				return;
+			}
+
+			openConnectPopup( connectUrlForPopup );
+
+			void ( async () => {
+				try {
+					const latest = await fetchPromotionConfig();
+
+					if ( latest ) {
+						applyPromotionConfig( latest );
+					}
+				} catch {
+					// Popup already opened with the connect URL loaded in the panel.
+				}
+			} )();
 			return;
 		}
 
-		runServerSetup();
+		void runServerSetup();
 	};
 
 	const openPopover = () => {

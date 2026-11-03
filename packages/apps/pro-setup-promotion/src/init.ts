@@ -9,6 +9,7 @@ import {
 
 import { ProSetupPanelPromo } from './components/pro-setup-panel-promo';
 import { showConnectSuccessNotificationAfterReloadIfPending } from './utils/post-reload-connect-success-notification';
+import { PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM } from './utils/reload-editor-after-connect-success';
 
 const NOTICE_AREA_ID = 'elementor-panel-elements-notice-area';
 const ELEMENTS_PANEL_ROUTE_PREFIX = 'panel/elements/';
@@ -58,8 +59,24 @@ function syncNoticeWithActiveRoute() {
 	}
 }
 
+function stripConnectReloadQueryParam() {
+	try {
+		const url = new URL( window.location.href );
+
+		if ( ! url.searchParams.has( PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM ) ) {
+			return;
+		}
+
+		url.searchParams.delete( PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM );
+		window.history.replaceState( null, '', url.toString() );
+	} catch {
+		// ignore
+	}
+}
+
 export function init() {
 	listenTo( v1ReadyEvent(), () => {
+		stripConnectReloadQueryParam();
 		showConnectSuccessNotificationAfterReloadIfPending();
 		syncNoticeWithActiveRoute();
 	} );
