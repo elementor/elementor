@@ -21,7 +21,7 @@ class Markdown_Preview_Ajax {
 
 	/**
 	 * @param array $data Ajax request data: { postId: int }.
-	 * @return array{content: string}
+	 * @return array{content: string, isOverridden: bool}
 	 * @throws \Exception When the user can't manage options or the post is not included.
 	 */
 	public function handle( array $data ): array {
@@ -45,7 +45,8 @@ class Markdown_Preview_Ajax {
 		}
 
 		return [
-			'content' => $this->endpoint->build_markdown( $post ),
+			'content'      => $this->endpoint->build_markdown( $post ),
+			'isOverridden' => $this->endpoint->has_manual_override( $post ),
 		];
 	}
 }

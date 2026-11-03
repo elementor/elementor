@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\ProSetupPromotion;
 
+use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Modules\ProInstall\Connect;
 use Elementor\Plugin;
@@ -281,13 +282,15 @@ class Setup_State {
 			return '';
 		}
 
-		$app = $connect->get_app( 'activate' ) ?? $connect->get_app( 'library' );
+		$app = self::get_pro_setup_connect_app( $connect );
 
 		if ( ! $app ) {
 			return '';
 		}
 
-		return $app->get_admin_url( 'authorize', [
+		$connect_action = self::resolve_pro_setup_connect_action( $app );
+
+		return $app->get_admin_url( $connect_action, [
 			'utm_source' => 'editor-app',
 			'utm_medium' => 'wp-dash',
 			'utm_campaign' => 'pro-setup-panel',
@@ -295,6 +298,26 @@ class Setup_State {
 			'source' => 'generic',
 			'mode' => 'popup',
 		] );
+	}
+
+	private static function get_pro_setup_connect_app( ConnectModule $connect ) {
+		if ( Utils::has_pro() ) {
+			return $connect->get_app( 'activate' );
+		}
+
+		return $connect->get_app( 'activate' ) ?? $connect->get_app( 'library' );
+	}
+
+	private static function resolve_pro_setup_connect_action( Base_App $app ): string {
+		if ( 'activate' !== $app->get_slug() || ! Utils::has_pro() || Utils::is_license_active() ) {
+			return 'authorize';
+		}
+
+		if ( $app->is_connected() ) {
+			return 'activate_pro';
+		}
+
+		return 'authorize';
 	}
 
 	private static function read_string( array $assets, string $key, string $fallback ): string {
