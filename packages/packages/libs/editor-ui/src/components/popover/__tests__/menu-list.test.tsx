@@ -195,6 +195,17 @@ describe( 'PopoverMenuList', () => {
 			expect( onClose ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		it( 'should prevent the default Enter action so it does not click the element focused after closing', () => {
+			// Arrange.
+			render( <PopoverMenuList items={ mockItems } onSelect={ jest.fn() } onClose={ jest.fn() } rovingFocus /> );
+
+			// Act.
+			const notPrevented = fireEvent.keyDown( getOption( 'Item 1' ), { key: 'Enter' } );
+
+			// Assert.
+			expect( notPrevented ).toBe( false );
+		} );
+
 		it( 'should keep the previous tab behavior when rovingFocus is off', () => {
 			// Arrange.
 			render(

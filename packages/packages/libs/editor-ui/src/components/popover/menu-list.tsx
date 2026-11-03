@@ -259,6 +259,10 @@ export const PopoverMenuList = < T, V extends string >( {
 								}
 								onKeyDown={ ( event: React.KeyboardEvent< HTMLLIElement > ) => {
 									if ( event.key === 'Enter' && ! isDisabled ) {
+										if ( rovingFocus ) {
+											event.preventDefault();
+										}
+
 										onSelect( item.value );
 										onClose();
 									}
