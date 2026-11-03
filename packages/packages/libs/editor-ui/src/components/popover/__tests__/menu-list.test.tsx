@@ -104,4 +104,114 @@ describe( 'PopoverMenuList', () => {
 		fireEvent.click( item1 );
 		expect( onSelect ).toHaveBeenCalledWith( mockItems[ 0 ].value );
 	} );
+	describe( 'rovingFocus', () => {
+		const getOption = ( value: string ) =>
+			screen.getAllByRole( 'option' ).find( ( option ) => option.textContent === value ) as HTMLElement;
+
+		it( 'should make only the first enabled item tabbable when nothing is selected', () => {
+			// Arrange.
+			render( <PopoverMenuList items={ mockItems } onSelect={ jest.fn() } onClose={ jest.fn() } rovingFocus /> );
+
+			// Assert.
+			const tabbable = screen.getAllByRole( 'option' ).filter( ( option ) => option.tabIndex === 0 );
+
+			expect( tabbable ).toHaveLength( 1 );
+			expect( tabbable[ 0 ] ).toBe( getOption( 'Item 1' ) );
+		} );
+
+		it( 'should make only the selected item tabbable', () => {
+			// Arrange.
+			render(
+				<PopoverMenuList
+					items={ mockItems }
+					selectedValue="Item 4"
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+					rovingFocus
+				/>
+			);
+
+			// Assert.
+			const tabbable = screen.getAllByRole( 'option' ).filter( ( option ) => option.tabIndex === 0 );
+
+			expect( tabbable ).toEqual( [ getOption( 'Item 4' ) ] );
+		} );
+
+		it( 'should move focus with the arrow keys and skip disabled items', () => {
+			// Arrange.
+			render( <PopoverMenuList items={ mockItems } onSelect={ jest.fn() } onClose={ jest.fn() } rovingFocus /> );
+
+			getOption( 'Item 1' ).focus();
+
+			// Act.
+			fireEvent.keyDown( getOption( 'Item 1' ), { key: 'ArrowDown' } );
+
+			// Assert.
+			expect( getOption( 'Item 3' ) ).toHaveFocus();
+			expect( getOption( 'Item 3' ).tabIndex ).toBe( 0 );
+			expect( getOption( 'Item 1' ).tabIndex ).toBe( -1 );
+
+			// Act.
+			fireEvent.keyDown( getOption( 'Item 3' ), { key: 'ArrowUp' } );
+
+			// Assert.
+			expect( getOption( 'Item 1' ) ).toHaveFocus();
+		} );
+
+		it( 'should move focus to the first and last enabled items with Home and End', () => {
+			// Arrange.
+			render( <PopoverMenuList items={ mockItems } onSelect={ jest.fn() } onClose={ jest.fn() } rovingFocus /> );
+
+			getOption( 'Item 1' ).focus();
+
+			// Act.
+			fireEvent.keyDown( getOption( 'Item 1' ), { key: 'End' } );
+
+			// Assert.
+			expect( getOption( 'Item 8' ) ).toHaveFocus();
+
+			// Act.
+			fireEvent.keyDown( getOption( 'Item 8' ), { key: 'Home' } );
+
+			// Assert.
+			expect( getOption( 'Item 1' ) ).toHaveFocus();
+		} );
+
+		it( 'should select and close with Enter on the focused item', () => {
+			// Arrange.
+			const onSelect = jest.fn();
+			const onClose = jest.fn();
+
+			render( <PopoverMenuList items={ mockItems } onSelect={ onSelect } onClose={ onClose } rovingFocus /> );
+
+			getOption( 'Item 1' ).focus();
+			fireEvent.keyDown( getOption( 'Item 1' ), { key: 'ArrowDown' } );
+
+			// Act.
+			fireEvent.keyDown( getOption( 'Item 3' ), { key: 'Enter' } );
+
+			// Assert.
+			expect( onSelect ).toHaveBeenCalledWith( 'Item 3' );
+			expect( onClose ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should keep the previous tab behavior when rovingFocus is off', () => {
+			// Arrange.
+			render(
+				<PopoverMenuList
+					items={ mockItems }
+					selectedValue="Item 4"
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+				/>
+			);
+
+			// Act.
+			fireEvent.keyDown( getOption( 'Item 4' ), { key: 'ArrowDown' } );
+
+			// Assert.
+			expect( getOption( 'Item 6' ) ).not.toHaveFocus();
+			expect( getOption( 'Item 1' ).tabIndex ).toBe( -1 );
+		} );
+	} );
 } );

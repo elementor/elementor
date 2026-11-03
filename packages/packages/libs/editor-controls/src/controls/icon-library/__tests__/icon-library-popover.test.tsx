@@ -288,6 +288,46 @@ describe( 'IconLibraryPopover', () => {
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'makes a list option tabbable and moves focus from the search field with ArrowDown', () => {
+		// Arrange.
+		renderPopover();
+		switchToListView();
+
+		const options = screen.getAllByRole( 'option' );
+
+		// Assert.
+		expect( options.filter( ( option ) => option.tabIndex === 0 ) ).toHaveLength( 1 );
+
+		// Act.
+		screen.getByPlaceholderText( 'Search' ).focus();
+		fireEvent.keyDown( screen.getByPlaceholderText( 'Search' ), { key: 'ArrowDown' } );
+
+		// Assert.
+		expect( options[ 0 ] ).toHaveFocus();
+	} );
+
+	it( 'moves between list options with arrows and selects with Enter', () => {
+		// Arrange.
+		const onSelect = jest.fn();
+		const onClose = jest.fn();
+
+		renderPopover( { onSelect, onClose } );
+		switchToListView();
+
+		const [ first, second ] = screen.getAllByRole( 'option' );
+
+		first.focus();
+
+		// Act.
+		fireEvent.keyDown( first, { key: 'ArrowDown' } );
+		fireEvent.keyDown( second, { key: 'Enter' } );
+
+		// Assert.
+		expect( second ).toHaveFocus();
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onClose ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'selects a grid icon and closes', () => {
 		// Arrange.
 		const onSelect = jest.fn();

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
 	PopoverBody,
 	PopoverHeader,
@@ -103,6 +103,8 @@ export const IconLibraryPopover = ( {
 		[ icons, selectedIconClass, selectedIconLibrary ]
 	);
 
+	const contentRef = useRef< HTMLDivElement >( null );
+
 	const handleClose = () => {
 		setSearchValue( '' );
 		setActiveLibraries( [] );
@@ -120,6 +122,19 @@ export const IconLibraryPopover = ( {
 			value: icon.glyphClass ?? createIconSelectionValue( icon.library, icon.name ),
 			library: icon.library,
 		} );
+	};
+
+	const handleSearchKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key !== 'ArrowDown' || view !== 'list' ) {
+			return;
+		}
+
+		const option = contentRef.current?.querySelector< HTMLElement >( '[role="option"][tabindex="0"]' );
+
+		if ( option ) {
+			event.preventDefault();
+			option.focus();
+		}
 	};
 
 	const handleClearSearch = () => {
@@ -148,6 +163,7 @@ export const IconLibraryPopover = ( {
 				direction="row"
 				alignItems="center"
 				gap={ 1 }
+				onKeyDown={ handleSearchKeyDown }
 				sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: ICON_LIBRARY_SEARCH_PADDING_BOTTOM } }
 			>
 				<SearchField
@@ -160,7 +176,7 @@ export const IconLibraryPopover = ( {
 				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
 			</Stack>
 			<Divider />
-			<Box sx={ { flex: 1, overflow: 'hidden', minHeight: 0, minWidth: 0 } }>
+			<Box ref={ contentRef } sx={ { flex: 1, overflow: 'hidden', minHeight: 0, minWidth: 0 } }>
 				<IconLibraryContent
 					isLoading={ isLoading }
 					items={ items }
@@ -235,6 +251,7 @@ const IconLibraryContent = ( {
 			onClose={ onClose }
 			itemHeight={ ICON_LIBRARY_ROW_HEIGHT }
 			menuItemContentTemplate={ IconLibraryRow }
+			rovingFocus
 			noResultsComponent={ emptyState }
 			data-testid="icon-library-list"
 		/>
