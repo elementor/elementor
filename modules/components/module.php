@@ -42,6 +42,9 @@ class Module extends BaseModule {
 	 *
 	 * Remove this constant, `is_import_export_supported()` and every `! is_import_export_supported()`
 	 * branch once components are a first-class part of import/export.
+	 *
+	 * Should be removed in 4.8.0.
+	 * @deprecated 4.8.0
 	 */
 	const IS_IMPORT_EXPORT_SUPPORTED = true;
 
