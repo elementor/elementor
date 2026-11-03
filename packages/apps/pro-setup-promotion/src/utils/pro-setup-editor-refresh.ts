@@ -1,38 +1,46 @@
-type ProSetupPromotionLike = {
-	state?: string;
-	connectUrl?: string;
-} | null | undefined;
+import {
+  PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM,
+  PRO_SETUP_OPEN_CONNECT_QUERY_PARAM,
+} from './pro-setup-query-params';
+
+type ProSetupPromotionLike =
+  | {
+      state?: string;
+      connectUrl?: string;
+    }
+  | null
+  | undefined;
 
 type CompleteSetupLike = {
-	reload?: boolean;
-	proSetupPromotion?: ProSetupPromotionLike;
+  reload?: boolean;
+  proSetupPromotion?: ProSetupPromotionLike;
 };
 
-export const PRO_SETUP_OPEN_CONNECT_QUERY_PARAM = 'elementor_pro_setup_open_connect';
+export { PRO_SETUP_OPEN_CONNECT_QUERY_PARAM };
 
 export function isConnectPromotionMissingUrl( config: ProSetupPromotionLike ): boolean {
-	return 'connect' === config?.state && ! config?.connectUrl;
+  return 'connect' === config?.state && ! config?.connectUrl;
 }
 
 export function shouldReloadEditorAfterSetupStep( result: CompleteSetupLike ): boolean {
-	if ( result.reload ) {
-		return true;
-	}
+  if ( result.reload ) {
+    return true;
+  }
 
-	return isConnectPromotionMissingUrl( result.proSetupPromotion );
+  return isConnectPromotionMissingUrl( result.proSetupPromotion );
 }
 
 export type ReloadEditorForSetupRefreshOptions = {
-	openConnectPopover?: boolean;
+  openConnectPopover?: boolean;
 };
 
 export function appendSetupRefreshQueryParams(
-	url: URL,
-	options: ReloadEditorForSetupRefreshOptions = {}
+  url: URL,
+  options: ReloadEditorForSetupRefreshOptions = {}
 ): void {
-	url.searchParams.set( 'elementor_pro_setup_connected', String( Date.now() ) );
+  url.searchParams.set( PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM, String( Date.now() ) );
 
-	if ( options.openConnectPopover ) {
-		url.searchParams.set( PRO_SETUP_OPEN_CONNECT_QUERY_PARAM, '1' );
-	}
+  if ( options.openConnectPopover ) {
+    url.searchParams.set( PRO_SETUP_OPEN_CONNECT_QUERY_PARAM, '1' );
+  }
 }
