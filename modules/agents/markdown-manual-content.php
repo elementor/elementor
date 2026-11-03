@@ -38,7 +38,7 @@ class Markdown_Manual_Content {
 	 * @throws \InvalidArgumentException When the content is empty or exceeds the size cap.
 	 */
 	public function save( int $post_id, string $content ): void {
-		$clean = $this->generator->prepare_override_text( $content );
+		$clean = $this->generator->prepare_markdown_override_text( $content );
 
 		if ( '' === trim( $clean ) ) {
 			throw new \InvalidArgumentException( esc_html__( 'The markdown content cannot be empty.', 'elementor' ), Exceptions::BAD_REQUEST ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped

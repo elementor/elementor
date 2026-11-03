@@ -97,6 +97,20 @@ describe( 'MarkdownContentPanel', () => {
 		expect( screen.getByRole( 'button', { name: 'Revert to generated version' } ) ).toBeTruthy();
 	} );
 
+	it( 'drops the override warning and revert action when Markdown content is turned off', async () => {
+		// Arrange
+		fetchMarkdownPreview.mockResolvedValue( { content: EDITED_CONTENT, isOverridden: true } );
+		const { rerender } = render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await screen.findByTestId( 'chip' );
+
+		// Act
+		rerender( <MarkdownContentPanel settings={ { ...createSettings(), isEnabled: false } } /> );
+
+		// Assert
+		expect( screen.queryByTestId( 'chip' ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Revert to generated version' } ) ).toBeNull();
+	} );
+
 	it( 'opens the editor with the loaded markdown and saves the draft for the selected page', async () => {
 		// Arrange
 		fetchMarkdownPreview

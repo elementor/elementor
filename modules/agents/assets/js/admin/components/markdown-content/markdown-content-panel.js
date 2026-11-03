@@ -90,7 +90,7 @@ export const MarkdownContentPanel = ( { settings } ) => {
 						onToggle={ togglePostType }
 					/>
 				</Stack>
-				{ isOverridden && (
+				{ selectedItem && isOverridden && (
 					<Stack alignItems="flex-start" spacing={ 1 }>
 						<Chip
 							icon={ <AlertCircleIcon /> }

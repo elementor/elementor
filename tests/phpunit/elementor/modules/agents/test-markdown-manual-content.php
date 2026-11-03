@@ -46,17 +46,38 @@ class Test_Markdown_Manual_Content extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_save__stores_sanitized_content_on_the_post() {
+	public function test_save__stores_content_on_the_post_with_normalized_line_endings_and_no_control_characters() {
 		// Arrange
 		$post_id = $this->create_published_page();
 
 		// Act
-		$this->manual_content->save( $post_id, "# My page\n<script>alert(1)</script>Hello" );
+		$this->manual_content->save( $post_id, "# My page\r\nHello\x00 world\x07\r\n\r\n" );
 
 		// Assert
 		$this->assertTrue( $this->manual_content->has_override( $post_id ) );
-		$this->assertStringContainsString( '# My page', $this->manual_content->get_content( $post_id ) );
-		$this->assertStringNotContainsString( '<script>', $this->manual_content->get_content( $post_id ) );
+		$this->assertSame( "# My page\nHello world", $this->manual_content->get_content( $post_id ) );
+	}
+
+	public function test_save__preserves_markdown_structure() {
+		// Arrange
+		$post_id  = $this->create_published_page();
+		$markdown = implode( "\n", [
+			'## Context',
+			'',
+			'User: asked about [pricing](https://example.com/my%20page?q=a%2Fb)',
+			'- parent',
+			'    - nested item',
+			'',
+			'    indented code block',
+			'hard break  ',
+			'next line',
+		] );
+
+		// Act
+		$this->manual_content->save( $post_id, $markdown );
+
+		// Assert
+		$this->assertSame( $markdown, $this->manual_content->get_content( $post_id ) );
 	}
 
 	public function test_save__rejects_empty_content() {
