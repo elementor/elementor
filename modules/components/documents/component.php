@@ -8,6 +8,7 @@ use Elementor\Modules\Components\Components_REST_API;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Utils\Component_Title_Duplicator;
 use Elementor\Modules\Components\Variants\Component_Variants;
 use Elementor\Modules\Components\Variants\Component_Variants_Parser;
 use Elementor\Modules\Components\Widgets\Component_Instance;
@@ -52,7 +53,6 @@ class Component extends Document {
 		'overridable_props',
 		'variants',
 	];
-	const TITLE_DUPLICATE_SUFFIX = '_DUP';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -288,11 +288,7 @@ class Component extends Document {
 		}
 
 		$title = $this->get_post()->post_title;
-		$unique_title = $title;
-
-		while ( $repository->title_exists( $unique_title, $self_id ) ) {
-			$unique_title .= self::TITLE_DUPLICATE_SUFFIX;
-		}
+		$unique_title = Component_Title_Duplicator::get_unique_title( $title, $self_id );
 
 		if ( $unique_title !== $title ) {
 			$this->update_title( $unique_title );

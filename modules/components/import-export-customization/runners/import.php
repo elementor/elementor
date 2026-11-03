@@ -6,6 +6,7 @@ use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Module as Components_Module;
+use Elementor\Modules\Components\Utils\Component_Title_Duplicator;
 use Elementor\Modules\Components\Utils\Remap_Override_Schema_Source;
 use Elementor\Modules\Components\Utils\Sort_Components_By_Dependencies;
 use Elementor\Plugin;
@@ -45,18 +46,24 @@ class Import extends Import_Runner_Base {
 			static::IMPORT_STATUS_FAILED => [],
 		];
 
-		foreach ( Sort_Components_By_Dependencies::apply( $manifest, $dependencies ) as $source_id => $summary ) {
-			try {
-				$result[ static::IMPORT_STATUS_SUCCEEDED ][ $source_id ] = $this->import_component(
-					$path,
-					(int) $source_id,
-					(array) $summary,
-					(string) ( $data['session_id'] ?? '' ),
-					$result[ static::IMPORT_STATUS_SUCCEEDED ]
-				);
-			} catch ( \Exception $error ) {
-				$result[ static::IMPORT_STATUS_FAILED ][ $source_id ] = $error->getMessage();
+		Component_Title_Duplicator::reset();
+
+		try {
+			foreach ( Sort_Components_By_Dependencies::apply( $manifest, $dependencies ) as $source_id => $summary ) {
+				try {
+					$result[ static::IMPORT_STATUS_SUCCEEDED ][ $source_id ] = $this->import_component(
+						$path,
+						(int) $source_id,
+						(array) $summary,
+						(string) ( $data['session_id'] ?? '' ),
+						$result[ static::IMPORT_STATUS_SUCCEEDED ]
+					);
+				} catch ( \Exception $error ) {
+					$result[ static::IMPORT_STATUS_FAILED ][ $source_id ] = $error->getMessage();
+				}
 			}
+		} finally {
+			Component_Title_Duplicator::reset();
 		}
 
 		return [

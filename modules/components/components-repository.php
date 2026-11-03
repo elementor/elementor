@@ -110,23 +110,17 @@ class Components_Repository {
 		return ! empty( $ids );
 	}
 
-	public function title_exists( string $title, int $exclude_id = 0 ): bool {
-		$ids = get_posts( [
+	public function get_active_titles( int $exclude_id = 0 ): array {
+		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
 			'post_status' => 'any',
 			'posts_per_page' => -1,
-			'fields' => 'ids',
-			'title' => $title,
 			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
 		] );
 
-		foreach ( $ids as $id ) {
-			if ( ! $this->is_archived( $id ) ) {
-				return true;
-			}
-		}
+		$active = array_filter( $posts, fn( $post ) => ! $this->is_archived( $post->ID ) );
 
-		return false;
+		return array_map( fn( $post ) => mb_strtolower( $post->post_title ), array_values( $active ) );
 	}
 
 	public function count_active( int $exclude_id = 0 ): int {

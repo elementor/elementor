@@ -9,6 +9,7 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
+use Elementor\Modules\Components\Utils\Component_Title_Duplicator;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -269,8 +270,40 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertNotSame( $existing, $imported->get_main_id() );
 		$this->assertNotSame( 'uid-shared', $imported->get_component_uid() );
 		$this->assertMatchesRegularExpression( '/^component-\d+-[a-z0-9]{7}$/', $imported->get_component_uid() );
-		$this->assertSame( 'Shared' . Component_Document::TITLE_DUPLICATE_SUFFIX, $imported->get_post()->post_title );
+		$this->assertSame( 'Shared' . Component_Title_Duplicator::SUFFIX, $imported->get_post()->post_title );
 		$this->assertSame( 'uid-shared', $this->get_component( $existing )->get_component_uid() );
+	}
+
+	public function test_import__same_title_within_one_kit_gets_distinct_titles() {
+		// Arrange
+		$this->write_kit( [
+			self::INNER_SOURCE_ID => $this->build_kit_entry( 'Shared', [ $this->build_heading_element( 'inner-heading' ) ], 'uid-inner' ),
+			self::OUTER_SOURCE_ID => $this->build_kit_entry( 'Shared', [ $this->build_heading_element( 'outer-heading' ) ], 'uid-outer' ),
+		] );
+
+		// Act
+		$result = ( new Import_Runner() )->import( $this->build_runner_data(), [] );
+
+		// Assert
+		$succeed = $result['content'][ Component_Document::TYPE ]['succeed'];
+		$this->assertSame( 'Shared', $this->get_component( $succeed[ self::INNER_SOURCE_ID ] )->get_post()->post_title );
+		$this->assertSame( 'Shared' . Component_Title_Duplicator::SUFFIX, $this->get_component( $succeed[ self::OUTER_SOURCE_ID ] )->get_post()->post_title );
+	}
+
+	public function test_import__same_kit_twice_gets_numbered_suffix() {
+		// Arrange
+		$this->create_existing_component( 'Shared', 'uid-existing' );
+		$this->write_kit( [
+			self::INNER_SOURCE_ID => $this->build_kit_entry( 'Shared', [ $this->build_heading_element( 'inner-heading' ) ], 'uid-shared' ),
+		] );
+		( new Import_Runner() )->import( $this->build_runner_data(), [] );
+
+		// Act
+		$result = ( new Import_Runner() )->import( $this->build_runner_data(), [] );
+
+		// Assert
+		$imported = $this->get_component( $result['content'][ Component_Document::TYPE ]['succeed'][ self::INNER_SOURCE_ID ] );
+		$this->assertSame( 'Shared' . Component_Title_Duplicator::SUFFIX . '_2', $imported->get_post()->post_title );
 	}
 
 	public function test_import__restores_archived_flag_and_keeps_title() {
