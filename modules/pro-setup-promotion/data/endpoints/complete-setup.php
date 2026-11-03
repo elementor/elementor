@@ -30,12 +30,23 @@ class Complete_Setup extends Endpoint_Base {
 	}
 
 	private function success_response( string $action, bool $reload = false ): array {
+		$config = Setup_State::get_editor_config_after_plugin_change();
+		$needs_editor_reload = $reload;
+
+		if (
+			is_array( $config )
+			&& Setup_State::STATE_CONNECT === $config['state']
+			&& empty( $config['connectUrl'] )
+		) {
+			$needs_editor_reload = true;
+		}
+
 		return [
 			'data' => [
 				'success' => true,
 				'action' => $action,
-				'reload' => $reload,
-				'proSetupPromotion' => Setup_State::get_editor_config_after_plugin_change(),
+				'reload' => $needs_editor_reload,
+				'proSetupPromotion' => $needs_editor_reload ? null : $config,
 			],
 		];
 	}

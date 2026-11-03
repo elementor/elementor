@@ -1,4 +1,8 @@
 import { markConnectSuccessNotificationForAfterReload } from './post-reload-connect-success-notification';
+import {
+	appendSetupRefreshQueryParams,
+	type ReloadEditorForSetupRefreshOptions,
+} from './pro-setup-editor-refresh';
 
 export const PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM = 'elementor_pro_setup_connected';
 
@@ -7,14 +11,14 @@ export function reloadEditorAfterConnectSuccess(): void {
 	reloadEditorWithCacheBust();
 }
 
-export function reloadEditorForSetupRefresh(): void {
-	reloadEditorWithCacheBust();
+export function reloadEditorForSetupRefresh( options: ReloadEditorForSetupRefreshOptions = {} ): void {
+	reloadEditorWithCacheBust( options );
 }
 
-function reloadEditorWithCacheBust(): void {
+function reloadEditorWithCacheBust( options: ReloadEditorForSetupRefreshOptions = {} ): void {
 	try {
 		const url = new URL( window.location.href );
-		url.searchParams.set( PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM, String( Date.now() ) );
+		appendSetupRefreshQueryParams( url, options );
 		window.location.assign( url.toString() );
 	} catch {
 		window.location.reload();
