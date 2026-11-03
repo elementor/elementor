@@ -7,7 +7,7 @@
       data-e-type="{{ type }}"
       data-interaction-id="{{ interaction_id }}"
       data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-      x-data="eForm{{ id }}"
+      x-data="{% if (id | e('js_identifier')) != '' %}eForm{{ id | e('js_identifier') }}{% else %}{}{% endif %}"
       x-on:submit="submit"
       {%- if settings['form-name'] is not empty %}
       aria-label="{{ settings['form-name'] | e('html_attr') }}"

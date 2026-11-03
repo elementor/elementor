@@ -87,7 +87,7 @@ const toggleFix = ( howToFix ) => ( {
 	fixWith: FIX_WITH_TOGGLE,
 	fixPrompt: '',
 	howToFix,
-	resolvedByActivation: false,
+	resolvedByActivation: true,
 } );
 
 const seoFix = ( howToFix ) => ( {

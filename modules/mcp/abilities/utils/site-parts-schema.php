@@ -14,7 +14,7 @@ class Site_Parts_Schema {
 
 	const ACTIONS = [ self::ACTION_CREATE, self::ACTION_UPDATE, self::ACTION_DELETE ];
 
-	const TYPES = [ 'header', 'footer', 'single', 'single-post', 'single-page', 'archive', 'search-results', 'error-404' ];
+	const TYPES = [ 'header', 'footer', 'single', 'single-post', 'single-page', 'archive', 'search-results', 'loop-item', 'popup', 'error-404' ];
 
 	const MIN_BATCH_SIZE = 1;
 	const MAX_BATCH_SIZE = 50;
@@ -62,7 +62,7 @@ class Site_Parts_Schema {
 				],
 				'type' => [
 					'type' => 'string',
-					'enum' => self::TYPES,
+					'enum' => array_merge( self::TYPES, Woocommerce_Pro_Features_Discovery::get_site_part_types() ),
 					'description' => 'Site part type slug (create only).',
 				],
 				'title' => [ 'type' => 'string' ],
