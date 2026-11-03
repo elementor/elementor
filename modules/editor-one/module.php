@@ -9,6 +9,7 @@ use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
 use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
+use Elementor\Modules\EditorOne\Components\Secondary_Bar_Handler;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
 use Elementor\Plugin;
@@ -57,6 +58,7 @@ class Module extends BaseModule {
 			if ( self::is_admin_navigation_active() ) {
 				$this->add_component( 'admin-flow-handler', new Admin_Flow_Handler() );
 				$this->add_component( 'admin-menu-structure', new Admin_Menu_Structure( $this->get_component( 'admin-flow-handler' ) ) );
+				$this->add_component( 'secondary-bar', new Secondary_Bar_Handler( $this->get_component( 'admin-flow-handler' ) ) );
 			} else {
 				$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			}
