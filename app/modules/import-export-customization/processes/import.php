@@ -10,7 +10,6 @@ use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
-use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
@@ -885,7 +884,7 @@ class Import {
 		return [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
-			'component_ids' => $this->imported_data['content'][ Component_Document::TYPE ]['succeed'] ?? [],
+			'component_ids' => Utils::map_old_new_component_ids( $this->imported_data ),
 		];
 	}
 

@@ -33,7 +33,7 @@ class Import extends Import_Runner_Base {
 
 	/**
 	 * The result is reported under `content.elementor_component` so that
-	 * `Utils::map_old_new_post_ids()` and the final-save component id map pick it up.
+	 * `Utils::map_old_new_post_ids()` and `Utils::map_old_new_component_ids()` pick it up.
 	 */
 	public function import( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . Component_Document::EXPORT_DIRECTORY;
