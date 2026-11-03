@@ -70,7 +70,7 @@ class Subscription_Action {
 
 		$label = $selected->get_label();
 
-		return [ $label, $selected->get_capability(), $selected->get_slug(), $label ];
+		return [ $label, $selected->get_capability(), Admin_Menu_Structure::UPGRADE_SLUGS[0], $label ];
 	}
 
 	private function is_external_action( Menu_Item_Interface $item ): bool {

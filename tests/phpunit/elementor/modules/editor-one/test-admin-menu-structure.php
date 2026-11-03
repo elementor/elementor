@@ -267,6 +267,30 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( [ 'my-addon' ], array_column( $extra_items, 2 ) );
 	}
 
+	public function test_resolve_subscription_action__uses_upgrade_slug_for_renew_now() {
+		// Arrange
+		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61 );
+
+		// Act
+		$action = $this->structure->resolve_subscription_action( [] );
+
+		// Assert
+		$this->assertSame( 'Renew Now', $action[0] );
+		$this->assertSame( 'elementor-one-upgrade', $action[2] );
+	}
+
+	public function test_resolve_subscription_action__uses_upgrade_slug_for_unlock_more_features() {
+		// Arrange
+		$this->register_subscription_action( 'Unlock More Features', 'https://go.elementor.com/go-pro-advanced-elementor-menu/', 62 );
+
+		// Act
+		$action = $this->structure->resolve_subscription_action( [] );
+
+		// Assert
+		$this->assertSame( 'Unlock More Features', $action[0] );
+		$this->assertSame( 'elementor-one-upgrade', $action[2] );
+	}
+
 	public function test_resolve_subscription_action__prefers_the_registered_action_over_upgrade() {
 		// Arrange
 		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61 );
@@ -280,7 +304,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( 'Renew Now', $action[0] );
-		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', $action[2] );
+		$this->assertSame( 'elementor-one-upgrade', $action[2] );
 	}
 
 	public function test_resolve_subscription_action__keeps_the_sale_label_on_the_free_upgrade() {
@@ -345,6 +369,23 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( [ 'my-addon' ], array_column( $extra_items, 2 ) );
 	}
 
+	public function test_rebuild_submenu__styles_unlock_more_features_like_upgrade() {
+		// Arrange
+		$this->register_subscription_action( 'Unlock More Features', 'https://go.elementor.com/go-pro-advanced-elementor-menu/', 62 );
+		$GLOBALS['submenu'] = [
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG => [
+				[ 'Home', 'manage_options', Admin_Flow_Config::PARENT_HOME ],
+			],
+		];
+
+		// Act
+		$this->structure->rebuild_submenu();
+
+		// Assert
+		$slugs = array_column( $GLOBALS['submenu'][ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ], 2 );
+		$this->assertSame( 'elementor-one-upgrade', $slugs[ count( $slugs ) - 1 ] );
+	}
+
 	public function test_rebuild_submenu__places_the_subscription_action_after_account() {
 		// Arrange
 		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61 );
@@ -360,8 +401,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 		// Assert
 		$slugs = array_column( $GLOBALS['submenu'][ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ], 2 );
-		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', $slugs[ count( $slugs ) - 1 ] );
-		$this->assertNotContains( 'elementor-one-upgrade', $slugs );
+		$this->assertSame( 'elementor-one-upgrade', $slugs[ count( $slugs ) - 1 ] );
 	}
 
 	public function test_rebuild_submenu__keeps_the_submenu_for_users_without_manage_options() {

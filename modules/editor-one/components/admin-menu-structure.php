@@ -31,9 +31,32 @@ class Admin_Menu_Structure {
 	public function __construct( Admin_Flow_Handler $admin_flow_handler ) {
 		$this->admin_flow_handler = $admin_flow_handler;
 
+		add_action( 'admin_menu', [ $this, 'register_upgrade_submenu_page' ], 10007 );
 		add_action( 'admin_menu', [ $this, 'register_parent_aliases' ], 10008 );
 		add_action( 'admin_menu', [ $this, 'place_elementor_below_pages' ], 10020 );
 		add_action( 'admin_head', [ $this, 'rebuild_submenu' ], 20 );
+	}
+
+	public function register_upgrade_submenu_page(): void {
+		if ( ! $this->should_apply() ) {
+			return;
+		}
+
+		$slug = self::UPGRADE_SLUGS[0];
+
+		if ( null !== get_plugin_page_hook( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG ) ) {
+			return;
+		}
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			'',
+			'',
+			Menu_Config::CAPABILITY_MANAGE_OPTIONS,
+			$slug,
+			'__return_empty_string',
+			999
+		);
 	}
 
 	public function register_parent_aliases(): void {

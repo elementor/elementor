@@ -55,16 +55,16 @@ class Module extends Base_Module {
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
+		add_action( 'admin_init', function () {
+			$this->handle_external_redirects();
+		} );
+
 		if ( Utils::has_pro() ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 			$this->register_atomic_promotions();
 
 			return;
 		}
-
-		add_action( 'admin_init', function () {
-			$this->handle_external_redirects();
-		} );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
@@ -123,7 +123,9 @@ class Module extends Base_Module {
 				}
 				return $hosts;
 			}, 10, 2 );
-			wp_safe_redirect( Go_Pro_Promotion_Item::get_url() );
+			$url = apply_filters( 'elementor_one/upgrade_url', Go_Pro_Promotion_Item::get_url() );
+
+			wp_safe_redirect( $url );
 			die;
 		}
 	}
