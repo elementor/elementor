@@ -214,6 +214,22 @@ describe( 'PopoverMenuList', () => {
 			expect( notPrevented ).toBe( false );
 		} );
 
+		it( 'should select and close with Space on the focused item', () => {
+			// Arrange.
+			const onSelect = jest.fn();
+			const onClose = jest.fn();
+
+			render( <PopoverMenuList items={ mockItems } onSelect={ onSelect } onClose={ onClose } rovingFocus /> );
+
+			// Act.
+			const notPrevented = fireEvent.keyDown( getOption( 'Item 1' ), { key: ' ' } );
+
+			// Assert.
+			expect( notPrevented ).toBe( false );
+			expect( onSelect ).toHaveBeenCalledWith( 'Item 1' );
+			expect( onClose ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'should keep the tab stop mounted when it is outside the visible range', () => {
 			// Arrange.
 			render(
