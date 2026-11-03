@@ -6,6 +6,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Classes\Subscription_Action;
 use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
 use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
@@ -272,11 +273,12 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61 );
 
 		// Act
-		$action = $this->structure->resolve_subscription_action( [] );
+		$action = $this->resolve_subscription_action( [] );
 
 		// Assert
 		$this->assertSame( 'Renew Now', $action[0] );
 		$this->assertSame( 'elementor-one-upgrade', $action[2] );
+		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', Subscription_Action::get_external_upgrade_url() );
 	}
 
 	public function test_resolve_subscription_action__uses_upgrade_slug_for_unlock_more_features() {
@@ -284,7 +286,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->register_subscription_action( 'Unlock More Features', 'https://go.elementor.com/go-pro-advanced-elementor-menu/', 62 );
 
 		// Act
-		$action = $this->structure->resolve_subscription_action( [] );
+		$action = $this->resolve_subscription_action( [] );
 
 		// Assert
 		$this->assertSame( 'Unlock More Features', $action[0] );
@@ -300,7 +302,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		];
 
 		// Act
-		$action = $this->structure->resolve_subscription_action( $existing );
+		$action = $this->resolve_subscription_action( $existing );
 
 		// Assert
 		$this->assertSame( 'Renew Now', $action[0] );
@@ -314,7 +316,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		];
 
 		// Act
-		$action = $this->structure->resolve_subscription_action( $existing );
+		$action = $this->resolve_subscription_action( $existing );
 
 		// Assert
 		$this->assertSame( 'Sale Now!', $action[0] );
@@ -326,7 +328,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$existing = [];
 
 		// Act
-		$action = $this->structure->resolve_subscription_action( $existing );
+		$action = $this->resolve_subscription_action( $existing );
 
 		// Assert
 		if ( Utils::has_pro() ) {
@@ -346,7 +348,7 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		];
 
 		// Act
-		$action = $this->structure->resolve_subscription_action( $existing );
+		$action = $this->resolve_subscription_action( $existing );
 
 		// Assert
 		$this->assertSame( 'elementor-one-upgrade', $action[2] );
@@ -460,5 +462,12 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$parents = Admin_Flow_Config::get_config()['parents'];
 
 		return array_intersect_key( $parents, array_flip( $slugs ) );
+	}
+
+	private function resolve_subscription_action( array $existing_items ): ?array {
+		$method = new \ReflectionMethod( Admin_Menu_Structure::class, 'resolve_subscription_action' );
+		$method->setAccessible( true );
+
+		return $method->invoke( $this->structure, $existing_items );
 	}
 }

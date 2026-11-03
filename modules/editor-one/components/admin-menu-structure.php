@@ -35,6 +35,19 @@ class Admin_Menu_Structure {
 		add_action( 'admin_menu', [ $this, 'register_parent_aliases' ], 10008 );
 		add_action( 'admin_menu', [ $this, 'place_elementor_below_pages' ], 10020 );
 		add_action( 'admin_head', [ $this, 'rebuild_submenu' ], 20 );
+		add_filter( 'admin_body_class', [ $this, 'add_admin_navigation_body_class' ] );
+	}
+
+	public function add_admin_navigation_body_class( string $classes ): string {
+		if ( ! $this->should_apply() ) {
+			return $classes;
+		}
+
+		if ( ! Menu_Data_Provider::instance()->is_editor_one_admin_page() ) {
+			return $classes;
+		}
+
+		return $classes . ' e-admin-navigation-active';
 	}
 
 	public function register_upgrade_submenu_page(): void {
@@ -251,7 +264,7 @@ class Admin_Menu_Structure {
 		return $item;
 	}
 
-	public function resolve_subscription_action( array $existing_items ): ?array {
+	private function resolve_subscription_action( array $existing_items ): ?array {
 		return ( new Subscription_Action() )->resolve( $existing_items );
 	}
 

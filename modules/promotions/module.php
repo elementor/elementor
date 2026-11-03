@@ -27,6 +27,8 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Classes\Subscription_Action;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,9 +57,9 @@ class Module extends Base_Module {
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
-		add_action( 'admin_init', function () {
+		add_action( 'admin_head', function () {
 			$this->handle_external_redirects();
-		} );
+		}, 21 );
 
 		if ( Utils::has_pro() ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
@@ -116,18 +118,49 @@ class Module extends Base_Module {
 			return;
 		}
 
-		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
-			add_filter( 'allowed_redirect_hosts', function ( $hosts, $host ) {
-				if ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) ) {
-					$hosts[] = $host;
-				}
-				return $hosts;
-			}, 10, 2 );
-			$url = apply_filters( 'elementor_one/upgrade_url', Go_Pro_Promotion_Item::get_url() );
-
-			wp_safe_redirect( $url );
-			die;
+		if ( ! in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
+			return;
 		}
+
+		if ( Utils::has_pro() && ! Editor_One_Module::is_admin_navigation_active() ) {
+			return;
+		}
+
+		add_filter( 'allowed_redirect_hosts', function ( $hosts, $host ) {
+			if ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) ) {
+				$hosts[] = $host;
+			}
+			return $hosts;
+		}, 10, 2 );
+
+		$default_url = Subscription_Action::get_external_upgrade_url() ?? Go_Pro_Promotion_Item::get_url();
+
+		/**
+		 * Upgrade sidebar redirect URL for Editor One.
+		 *
+		 * Internal extension point for Elementor packages (for example Elementor Pro). The URL must
+		 * point to an elementor.com host so `wp_safe_redirect()` can run.
+		 *
+		 * @param string $url Redirect destination.
+		 */
+		$url = apply_filters( 'elementor_one/upgrade_url', $default_url );
+
+		if ( ! $this->is_allowed_upgrade_redirect_url( $url ) ) {
+			$url = Go_Pro_Promotion_Item::get_url();
+		}
+
+		wp_safe_redirect( $url );
+		die;
+	}
+
+	private function is_allowed_upgrade_redirect_url( string $url ): bool {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( empty( $host ) || ! is_string( $host ) ) {
+			return false;
+		}
+
+		return 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' );
 	}
 
 	public function override_one_menu_upgrade_label_during_sale( $menu ) {

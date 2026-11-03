@@ -13,12 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Subscription_Action {
 
+	private static ?string $external_upgrade_url = null;
+
 	/**
 	 * One action under Account. A registered Renew / Unlock item wins over the free Upgrade row
 	 * so the two never stack. The free row is the sidebar button, including when the One package
 	 * hides it for a connected account.
 	 */
 	public function resolve( array $existing_items ): ?array {
+		self::$external_upgrade_url = null;
+
 		$registered_action = $this->get_registered_action();
 
 		if ( null !== $registered_action ) {
@@ -66,23 +70,24 @@ class Subscription_Action {
 			return null;
 		}
 
-		$this->detach_page_hook( $selected->get_slug() );
+		self::$external_upgrade_url = $selected->get_slug();
+		$this->remove_external_submenu_entry( $selected->get_slug() );
 
 		$label = $selected->get_label();
 
 		return [ $label, $selected->get_capability(), Admin_Menu_Structure::UPGRADE_SLUGS[0], $label ];
 	}
 
+	public static function get_external_upgrade_url(): ?string {
+		return self::$external_upgrade_url;
+	}
+
 	private function is_external_action( Menu_Item_Interface $item ): bool {
 		return str_starts_with( $item->get_slug(), 'https://' ) || str_starts_with( $item->get_slug(), 'http://' );
 	}
 
-	private function detach_page_hook( string $slug ): void {
-		$hook = get_plugin_page_hook( $slug, Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
-
-		if ( $hook ) {
-			remove_all_actions( $hook );
-		}
+	private function remove_external_submenu_entry( string $slug ): void {
+		remove_submenu_page( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $slug );
 	}
 
 	private function create_free_upgrade_item(): ?array {
@@ -93,6 +98,6 @@ class Subscription_Action {
 		$promotion = new Go_Pro_Promotion_Item();
 		$label = $promotion->get_label();
 
-		return [ $label, $promotion->get_capability(), 'elementor-one-upgrade', $label ];
+		return [ $label, $promotion->get_capability(), Admin_Menu_Structure::UPGRADE_SLUGS[0], $label ];
 	}
 }

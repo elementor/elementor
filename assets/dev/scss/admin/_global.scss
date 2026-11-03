@@ -32,15 +32,11 @@
 	#toplevel_page_elementor-home {
 		a[href*="elementor-one-upgrade"] {
 			font-weight: 600;
-			font-size: 12px;
-			line-height: 1.5;
 			background-color: $wp-admin-brand-color;
 			color: $white;
 			margin: 3px 10px 0;
-			padding: 5px 0;
 			display: block;
 			text-align: center;
-			white-space: nowrap;
 			border-radius: $default-border-radius;
 			transition: $transition-hover;
 
@@ -61,6 +57,17 @@
 				font-family: eicons;
 				font-size: 18px;
 			}
+		}
+	}
+}
+
+body.e-admin-navigation-active {
+	#adminmenu #toplevel_page_elementor-home {
+		a[href*="elementor-one-upgrade"] {
+			font-size: 12px;
+			line-height: 1.5;
+			padding: 5px 0;
+			white-space: nowrap;
 		}
 	}
 }
