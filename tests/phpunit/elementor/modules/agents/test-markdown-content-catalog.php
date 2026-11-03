@@ -3,16 +3,22 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
+use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 
 	private Markdown_Content_Catalog $catalog;
 
+	private Markdown_Manual_Content $manual_content;
+
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->catalog = new Markdown_Content_Catalog();
+		$this->manual_content = new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->catalog        = new Markdown_Content_Catalog( $this->manual_content );
 	}
 
 	public function tearDown(): void {
@@ -55,6 +61,28 @@ class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 		$this->assertSame( 'Visible Page', $visible['title'] );
 		$this->assertSame( 'page', $visible['type'] );
 		$this->assertStringContainsString( 'visible-page', $visible['path'] );
+	}
+
+	public function test_search__flags_only_posts_with_a_manual_override() {
+		// Arrange
+		$overridden_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Overridden Page',
+		] );
+		$generated_id  = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Generated Page',
+		] );
+		$this->manual_content->save( $overridden_id, '# Hand written' );
+
+		// Act
+		$items = array_column( $this->catalog->search( [ 'page' ], '' ), 'isOverridden', 'id' );
+
+		// Assert
+		$this->assertTrue( $items[ $overridden_id ] );
+		$this->assertFalse( $items[ $generated_id ] );
 	}
 
 	public function test_search__fills_a_full_page_past_noindex_rows() {
