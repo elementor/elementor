@@ -1,0 +1,65 @@
+import {
+	isConnectPromotionMissingUrl,
+	PRO_SETUP_OPEN_CONNECT_QUERY_PARAM,
+	shouldReloadEditorAfterSetupStep,
+	appendSetupRefreshQueryParams,
+} from '../pro-setup-editor-refresh';
+
+describe( 'pro-setup-editor-refresh', () => {
+	describe( 'isConnectPromotionMissingUrl', () => {
+		it( 'returns true when connect state has no connectUrl', () => {
+			expect(
+				isConnectPromotionMissingUrl( {
+					state: 'connect',
+				} )
+			).toBe( true );
+		} );
+
+		it( 'returns false when connectUrl is present', () => {
+			expect(
+				isConnectPromotionMissingUrl( {
+					state: 'connect',
+					connectUrl: 'https://example.com/connect',
+				} )
+			).toBe( false );
+		} );
+	} );
+
+	describe( 'shouldReloadEditorAfterSetupStep', () => {
+		it( 'returns true when server sets reload', () => {
+			expect(
+				shouldReloadEditorAfterSetupStep( {
+					reload: true,
+					proSetupPromotion: { state: 'install' },
+				} )
+			).toBe( true );
+		} );
+
+		it( 'returns true when connect promotion is missing connectUrl', () => {
+			expect(
+				shouldReloadEditorAfterSetupStep( {
+					proSetupPromotion: { state: 'connect' },
+				} )
+			).toBe( true );
+		} );
+
+		it( 'returns false when install promotion is returned', () => {
+			expect(
+				shouldReloadEditorAfterSetupStep( {
+					proSetupPromotion: { state: 'activate' },
+				} )
+			).toBe( false );
+		} );
+	} );
+
+	describe( 'appendSetupRefreshQueryParams', () => {
+		it( 'sets open connect flag when requested', () => {
+			const url = new URL( 'https://example.com/wp-admin/post.php?post=1&action=elementor' );
+
+			appendSetupRefreshQueryParams( url, { openConnectPopover: true } );
+
+			expect( url.searchParams.get( PRO_SETUP_OPEN_CONNECT_QUERY_PARAM ) ).toBe( '1' );
+			expect( url.searchParams.has( 'elementor_pro_setup_connected' ) ).toBe( true );
+		} );
+	} );
+} );

@@ -36,6 +36,10 @@ import {
 	reloadEditorAfterConnectSuccess,
 	reloadEditorForSetupRefresh,
 } from '../utils/reload-editor-after-connect-success';
+import {
+	PRO_SETUP_OPEN_CONNECT_QUERY_PARAM,
+	shouldReloadEditorAfterSetupStep,
+} from '../utils/pro-setup-editor-refresh';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
@@ -274,6 +278,27 @@ export function ProSetupPanelPromo() {
 	}, [ state ] );
 
 	useEffect( () => {
+		try {
+			const url = new URL( window.location.href );
+
+			if ( '1' !== url.searchParams.get( PRO_SETUP_OPEN_CONNECT_QUERY_PARAM ) ) {
+				return;
+			}
+
+			url.searchParams.delete( PRO_SETUP_OPEN_CONNECT_QUERY_PARAM );
+			window.history.replaceState( null, '', url.toString() );
+		} catch {
+			return;
+		}
+
+		if ( 'connect' !== state || ! promotionConfig?.connectUrl ) {
+			return;
+		}
+
+		setOpen( true );
+	}, [ promotionConfig?.connectUrl, state ] );
+
+	useEffect( () => {
 		if ( ! open ) {
 			return undefined;
 		}
@@ -361,6 +386,11 @@ export function ProSetupPanelPromo() {
 
 			trackProSetupPromotionResult( state, 'success', action );
 
+			if ( shouldReloadEditorAfterSetupStep( result ) ) {
+				reloadEditorForSetupRefresh( { openConnectPopover: true } );
+				return;
+			}
+
 			applyPromotionConfig( result.proSetupPromotion ?? null );
 			setOpen( true );
 		} catch ( error ) {
@@ -388,13 +418,7 @@ export function ProSetupPanelPromo() {
 			const connectUrlForPopup = promotionConfig?.connectUrl ?? '';
 
 			if ( ! connectUrlForPopup ) {
-				isProcessingRef.current = false;
-				setIsProcessing( false );
-				notify( {
-					type: 'error',
-					message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
-					id: 'pro-setup-promotion-connect-url-missing',
-				} );
+				reloadEditorForSetupRefresh( { openConnectPopover: true } );
 				return;
 			}
 
