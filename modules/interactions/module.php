@@ -130,7 +130,7 @@ class Module extends BaseModule {
 			self::HANDLE_MOTION_JS,
 			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
-			'11.13.5',
+			'14.9.0',
 			true
 		);
 
