@@ -6,6 +6,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -32,7 +33,7 @@ class Test_Markdown_Not_Found extends Elementor_Test_Base {
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
 
-		$this->not_found = new Markdown_Not_Found( $this->settings, new Markdown_Endpoint( $this->settings ), new Module() );
+		$this->not_found = new Markdown_Not_Found( $this->settings, new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) ), new Module() );
 	}
 
 	public function tearDown(): void {
@@ -152,7 +153,7 @@ class Test_Markdown_Not_Found extends Elementor_Test_Base {
 
 	public function test_build_response_headers__matches_markdown_endpoint_base_headers() {
 		// Arrange
-		$endpoint = new Markdown_Endpoint( $this->settings );
+		$endpoint = new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) );
 
 		// Act
 		$headers = $this->not_found->build_response_headers();
