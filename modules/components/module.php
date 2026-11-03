@@ -33,11 +33,8 @@ class Module extends BaseModule {
 	const PACKAGES        = [ 'editor-components' ];
 
 	/**
-	 * Local kill switch for components import/export. Off by default: on export the
-	 * `elementor_component` post type is excluded, on import any `e-component` widgets
-	 * that survived from a foreign zip are stripped. Flip to `true` in the source
-	 * to unblock the flag-on branch when working on the real feature (`Remap_Component_Instance_Ids`
-	 * and its test cover that path today).
+	 * Local kill switch for components import/export. Keep it enabled for local export
+	 * testing while the dedicated import runner is still incomplete.
 	 *
 	 * Not an experiment on purpose: experiments are serialized into exported kits by
 	 * `Site_Settings::export_experiments()` and rehydrated on import, so a hidden experiment
@@ -46,7 +43,7 @@ class Module extends BaseModule {
 	 * Remove this constant, `is_import_export_supported()` and every `! is_import_export_supported()`
 	 * branch once components are a first-class part of import/export.
 	 */
-	const IS_IMPORT_EXPORT_SUPPORTED = false;
+	const IS_IMPORT_EXPORT_SUPPORTED = true;
 
 	/**
 	 * Variants meta must be persisted before `Global_Classes_Relations::on_document_save()`
