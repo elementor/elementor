@@ -29,7 +29,7 @@ type ConnectPopupOptions = {
 	onSuccess?: () => void | Promise< void >;
 	onError?: () => void;
 	onPopupBlocked?: ( retryOpen: () => void ) => void;
-	verifyConnectComplete?: () => Promise< boolean >;
+	verifyConnectComplete?: ( options?: { refreshLicense?: boolean } ) => Promise< boolean >;
 };
 
 let callbackCounter = 0;
@@ -88,6 +88,7 @@ export function useElementorConnectPopup( {
 	const popupWindowRef = useRef< Window | null >( null );
 	const connectFlowCompletedRef = useRef( false );
 	const verifyInFlightRef = useRef( false );
+	const flowGenerationRef = useRef( 0 );
 
 	onSuccessRef.current = onSuccess;
 	onErrorRef.current = onError;
@@ -149,7 +150,40 @@ export function useElementorConnectPopup( {
 		verifyInFlightRef.current = false;
 	}, [ clearPopupClosedPoll, clearSetupVerifyPoll ] );
 
-	useEffect( () => detachListeners, [ detachListeners ] );
+	useEffect(
+		() => () => {
+			flowGenerationRef.current += 1;
+			connectFlowCompletedRef.current = true;
+			detachListeners();
+		},
+		[ detachListeners ]
+	);
+
+	const isFlowStillActive = useCallback( ( flowGeneration: number, callbackId: string | null ) => {
+		return (
+			! connectFlowCompletedRef.current &&
+			flowGeneration === flowGenerationRef.current &&
+			callbackId === activeCallbackRef.current
+		);
+	}, [] );
+
+	const verifySetupComplete = useCallback( async ( refreshLicense: boolean ): Promise< boolean > => {
+		const verify = verifyConnectCompleteRef.current;
+
+		if ( ! verify ) {
+			return true;
+		}
+
+		return verify( { refreshLicense } );
+	}, [] );
+
+	const verifySetupCompleteWithOptionalRefresh = useCallback( async (): Promise< boolean > => {
+		if ( await verifySetupComplete( false ) ) {
+			return true;
+		}
+
+		return verifySetupComplete( true );
+	}, [ verifySetupComplete ] );
 
 	const finishConnectFlow = useCallback(
 		( outcome: 'success' | 'error' ) => {
@@ -186,7 +220,7 @@ export function useElementorConnectPopup( {
 		verifyInFlightRef.current = true;
 
 		try {
-			if ( await verify() ) {
+			if ( await verifySetupCompleteWithOptionalRefresh() ) {
 				finishConnectFlow( 'success' );
 			}
 		} catch {
@@ -194,12 +228,15 @@ export function useElementorConnectPopup( {
 		} finally {
 			verifyInFlightRef.current = false;
 		}
-	}, [ finishConnectFlow ] );
+	}, [ finishConnectFlow, verifySetupCompleteWithOptionalRefresh ] );
 
 	const handlePopupClosed = useCallback( () => {
 		if ( connectFlowCompletedRef.current || ! activeCallbackRef.current ) {
 			return;
 		}
+
+		const callbackId = activeCallbackRef.current;
+		const flowGeneration = flowGenerationRef.current;
 
 		clearPopupClosedPoll();
 		clearSetupVerifyPoll();
@@ -209,8 +246,17 @@ export function useElementorConnectPopup( {
 
 			if ( verify ) {
 				for ( let attempt = 0; attempt < POPUP_CLOSED_VERIFY_ATTEMPTS; attempt++ ) {
+					if ( ! isFlowStillActive( flowGeneration, callbackId ) ) {
+						return;
+					}
+
 					try {
-						if ( await verify() ) {
+						const isLastAttempt = attempt === POPUP_CLOSED_VERIFY_ATTEMPTS - 1;
+						const isComplete = isLastAttempt
+							? await verifySetupCompleteWithOptionalRefresh()
+							: await verifySetupComplete( false );
+
+						if ( isComplete ) {
 							finishConnectFlow( 'success' );
 							return;
 						}
@@ -220,13 +266,28 @@ export function useElementorConnectPopup( {
 
 					if ( attempt < POPUP_CLOSED_VERIFY_ATTEMPTS - 1 ) {
 						await delay( POPUP_CLOSED_VERIFY_DELAY_MS );
+
+						if ( ! isFlowStillActive( flowGeneration, callbackId ) ) {
+							return;
+						}
 					}
 				}
 			}
 
+			if ( ! isFlowStillActive( flowGeneration, callbackId ) ) {
+				return;
+			}
+
 			finishConnectFlow( 'error' );
 		} )();
-	}, [ clearPopupClosedPoll, clearSetupVerifyPoll, finishConnectFlow ] );
+	}, [
+		clearPopupClosedPoll,
+		clearSetupVerifyPoll,
+		finishConnectFlow,
+		isFlowStillActive,
+		verifySetupComplete,
+		verifySetupCompleteWithOptionalRefresh,
+	] );
 
 	const startSetupVerifyPoll = useCallback( () => {
 		clearSetupVerifyPoll();
@@ -286,6 +347,7 @@ export function useElementorConnectPopup( {
 
 			connectFlowCompletedRef.current = false;
 			detachListeners();
+			flowGenerationRef.current += 1;
 
 			const callbackId = `proSetupPromo${ ++callbackCounter }`;
 			activeCallbackRef.current = callbackId;

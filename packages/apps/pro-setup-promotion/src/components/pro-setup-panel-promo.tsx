@@ -188,7 +188,7 @@ export function ProSetupPanelPromo() {
 				notify( {
 					type: 'error',
 					message: __(
-						'Your Pro license is not active yet. Finish activation in the connect window, then try again.',
+						'Your Pro license is not active on this site yet. Reload the editor or connect again from the setup banner.',
 						'elementor'
 					),
 					id: 'pro-setup-promotion-connect-incomplete',
@@ -252,8 +252,10 @@ export function ProSetupPanelPromo() {
 		} );
 	};
 
-	const isProSetupConnectComplete = async (): Promise< boolean > => {
-		const config = await fetchPromotionConfig( { refreshLicense: true } );
+	const isProSetupConnectComplete = async ( options?: { refreshLicense?: boolean } ): Promise< boolean > => {
+		const config = await fetchPromotionConfig( {
+			refreshLicense: Boolean( options?.refreshLicense ),
+		} );
 
 		return ! config || 'connect' !== config.state;
 	};
@@ -380,30 +382,31 @@ export function ProSetupPanelPromo() {
 		}
 	};
 
-	const onPrimaryClick = async () => {
+	const onPrimaryClick = () => {
 		if ( 'connect' === state ) {
 			trackProSetupPromotionCtaClick( state );
 			isProcessingRef.current = true;
 			setIsProcessing( true );
 
-			let connectUrlForPopup = promotionConfig?.connectUrl ?? '';
-
-			try {
-				const latest = await fetchPromotionConfig();
-
-				if ( latest ) {
-					applyPromotionConfig( latest );
-					connectUrlForPopup = latest.connectUrl ?? connectUrlForPopup;
-				}
-			} catch {
-				// Use the connect URL already loaded in the panel.
-			}
+			const connectUrlForPopup = promotionConfig?.connectUrl ?? '';
 
 			openConnectPopup( connectUrlForPopup );
+
+			void ( async () => {
+				try {
+					const latest = await fetchPromotionConfig();
+
+					if ( latest ) {
+						applyPromotionConfig( latest );
+					}
+				} catch {
+					// Popup already opened with the connect URL loaded in the panel.
+				}
+			} )();
 			return;
 		}
 
-		runServerSetup();
+		void runServerSetup();
 	};
 
 	const openPopover = () => {

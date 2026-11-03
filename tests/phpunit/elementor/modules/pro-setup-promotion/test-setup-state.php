@@ -132,8 +132,15 @@ class Test_Setup_State extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'connectUrl', $config );
 	}
 
-	public function test_refresh_pro_license_from_remote_does_not_throw_without_pro(): void {
+	public function test_refresh_pro_license_from_remote_throttles_remote_calls(): void {
+		delete_transient( 'elementor_pro_setup_license_remote_refresh' );
+		\ElementorPro\License\API::reset();
+
 		Setup_State::refresh_pro_license_from_remote();
-		$this->assertTrue( true );
+		Setup_State::refresh_pro_license_from_remote();
+
+		$this->assertSame( 1, \ElementorPro\License\API::get_force_refresh_call_count() );
+
+		delete_transient( 'elementor_pro_setup_license_remote_refresh' );
 	}
 }

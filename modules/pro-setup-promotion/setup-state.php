@@ -20,6 +20,10 @@ class Setup_State {
 
 	private const DOWNLOAD_LINK_ELIGIBILITY_TTL = HOUR_IN_SECONDS;
 
+	private const LICENSE_REMOTE_REFRESH_TRANSIENT = 'elementor_pro_setup_license_remote_refresh';
+
+	private const LICENSE_REMOTE_REFRESH_TTL = 5;
+
 	public const STATE_HIDDEN = 'hidden';
 	public const STATE_INSTALL = 'install';
 	public const STATE_ACTIVATE = 'activate';
@@ -121,6 +125,12 @@ class Setup_State {
 		if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 			return;
 		}
+
+		if ( get_transient( self::LICENSE_REMOTE_REFRESH_TRANSIENT ) ) {
+			return;
+		}
+
+		set_transient( self::LICENSE_REMOTE_REFRESH_TRANSIENT, 1, self::LICENSE_REMOTE_REFRESH_TTL );
 
 		\ElementorPro\License\API::get_license_data( true );
 	}
