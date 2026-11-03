@@ -741,6 +741,11 @@ class Import {
 		foreach ( $this->documents_data as $new_id => $data ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 
+			// A runner may delete a post it failed to import after its data was collected.
+			if ( ! $document ) {
+				continue;
+			}
+
 			if ( isset( $data['elements'] ) ) {
 				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], [] );
 				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
