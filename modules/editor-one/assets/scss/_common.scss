@@ -462,6 +462,10 @@
 
 body:has(#editor-one-top-bar > *) {
 
+	&:not(.e-has-sidebar-navigation) {
+		--editor-one-sidebar-navigation-width: 0px;
+	}
+
 	#wpbody {
 		margin-block-start: 50px;
 		padding-block-end: 0;
@@ -483,5 +487,9 @@ body:has(#editor-one-top-bar > *) {
 			overflow-y: auto;
 			height: calc(100vh - var(--e-admin-bar-height, 0px) - var(--e-top-bar-header-height, 0px));
 		}
+	}
+
+	#editor-one-secondary-bar {
+		order: -1;
 	}
 }
