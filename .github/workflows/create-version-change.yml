@@ -108,6 +108,13 @@ jobs:
           echo "args=$ARGS" >> $GITHUB_OUTPUT
           echo "Built arguments: $ARGS"
 
+      - name: Unlock release/beta for merges
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        uses: elementor/elementor-editor-github-actions/actions/release-beta-lock@main
+        with:
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          state: unlocked
+
       - name: Run create-version-change script
         id: run-script
         run: |
