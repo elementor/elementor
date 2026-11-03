@@ -20,6 +20,7 @@ import {
 	STAGE_IDENTIFY,
 	STAGE_REACH,
 } from '../scanner-constants';
+import { getToggleModuleKey } from '../scanner-check-settings';
 import { READINESS_SCORE_MAX } from '../scanner-score';
 import { ChecksSummary } from './checks-summary';
 import { FixTable, FixTableRows } from './fix-table';
@@ -56,6 +57,20 @@ const getSubtitle = ( checks, score ) => {
 		heldPoints,
 		missingPoints,
 	);
+};
+
+const isFixedByActivation = ( check, flow ) => {
+	if ( ! check.resolvedByActivation ) {
+		return false;
+	}
+
+	const moduleKey = getToggleModuleKey( check.id );
+
+	if ( ! moduleKey ) {
+		return true;
+	}
+
+	return ! flow.isModuleUnavailable?.( moduleKey ) && ! flow.moduleEnabled?.[ moduleKey ];
 };
 
 export const FixesFilters = ( { priority, stage, onPriorityChange, onStageChange, isDisabled } ) => (
@@ -120,7 +135,7 @@ export const FixesSection = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 	const shownChecks = isShowAllFixes ? filteredChecks : filteredChecks.slice( 0, VISIBLE_FIX_COUNT );
 	const hiddenFixCount = Math.max( 0, filteredChecks.length - VISIBLE_FIX_COUNT );
 	const isFixListVisible = isActivated || isExpanded;
-	const activationFixes = checks.filter( ( check ) => check.resolvedByActivation ).length;
+	const activationFixes = checks.filter( ( check ) => isFixedByActivation( check, flow ) ).length;
 
 	return (
 		<Stack gap={ SECTION_GAP }>

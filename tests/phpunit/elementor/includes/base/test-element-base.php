@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
+use Elementor\Element_Base;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -208,6 +209,99 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		$this->assertEquals( 'On Save', $data['settings']['text'] );
 	}
 
+	public function test_normalize_svg_icon__rebuilds_url_from_attachment() {
+		// Arrange.
+		$attachment_id = $this->create_svg_attachment();
+		$payload_url = 'data:text/html,%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E';
+
+		// Act.
+		$icon = Element_Base::normalize_svg_icon( [
+			'library' => 'svg',
+			'value' => [
+				'id' => $attachment_id,
+				'url' => $payload_url,
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'svg', $icon['library'] );
+		$this->assertSame( $attachment_id, $icon['value']['id'] );
+		$this->assertSame( esc_url_raw( wp_get_attachment_url( $attachment_id ) ), $icon['value']['url'] );
+		$this->assertStringNotContainsString( 'data:', $icon['value']['url'] );
+
+		wp_delete_attachment( $attachment_id, true );
+	}
+
+	public function test_normalize_svg_icon__clears_icon_without_valid_svg_attachment() {
+		// Arrange.
+		$icon = [
+			'library' => 'svg',
+			'value' => [
+				'id' => 0,
+				'url' => 'data:text/html,%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E',
+			],
+		];
+
+		// Act.
+		$result = Element_Base::normalize_svg_icon( $icon );
+
+		// Assert.
+		$this->assertSame( [ 'value' => '', 'library' => '' ], $result );
+	}
+
+	public function test_normalize_svg_icon__leaves_font_icons_unchanged() {
+		// Arrange.
+		$icon = [
+			'library' => 'fa-solid',
+			'value' => 'fas fa-star',
+		];
+
+		// Act.
+		$result = Element_Base::normalize_svg_icon( $icon );
+
+		// Assert.
+		$this->assertSame( $icon, $result );
+	}
+
+	public function test_get_data_for_save__normalizes_repeater_svg_icons() {
+		// Arrange.
+		$attachment_id = $this->create_svg_attachment();
+		$payload_url = 'data:text/html,%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E';
+		$element = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'a1b2c3d',
+			'elType' => 'widget',
+			'isInner' => false,
+			'settings' => [
+				'icon_list' => [
+					[
+						'_id' => 'item1',
+						'text' => 'Item',
+						'selected_icon' => [
+							'library' => 'svg',
+							'value' => [
+								'id' => $attachment_id,
+								'url' => $payload_url,
+							],
+						],
+					],
+				],
+			],
+			'elements' => [],
+			'widgetType' => 'icon-list',
+		] );
+
+		// Act.
+		$data = $element->get_data_for_save();
+
+		// Assert.
+		$saved_icon = $data['settings']['icon_list'][0]['selected_icon'];
+		$this->assertSame( 'svg', $saved_icon['library'] );
+		$this->assertSame( $attachment_id, $saved_icon['value']['id'] );
+		$this->assertSame( esc_url_raw( wp_get_attachment_url( $attachment_id ) ), $saved_icon['value']['url'] );
+
+		wp_delete_attachment( $attachment_id, true );
+	}
+
 	public function test_reset_descendant_render_state_clears_parent_and_child_render_attributes() {
 		// Arrange.
 		$container_data = [
@@ -238,5 +332,18 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		// Assert.
 		$this->assertNull( $container->get_render_attributes( 'parent' ) );
 		$this->assertNull( $child->get_render_attributes( 'child' ) );
+	}
+
+	private function create_svg_attachment(): int {
+		$attachment_id = $this->factory()->attachment->create_object( [
+			'file' => 'test.svg',
+			'post_mime_type' => 'image/svg+xml',
+			'post_title' => 'Test SVG',
+		] );
+
+		$this->assertGreaterThan( 0, $attachment_id );
+		$this->assertSame( 'image/svg+xml', get_post_mime_type( $attachment_id ) );
+
+		return $attachment_id;
 	}
 }

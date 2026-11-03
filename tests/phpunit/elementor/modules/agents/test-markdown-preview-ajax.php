@@ -7,6 +7,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -28,7 +29,7 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->endpoint = new Markdown_Endpoint( $this->settings );
+		$this->endpoint = new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) );
 		$this->ajax     = new Markdown_Preview_Ajax( $this->endpoint );
 	}
 
@@ -53,6 +54,39 @@ class Test_Markdown_Preview_Ajax extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( $this->endpoint->build_markdown( $post ), $result['content'] );
 		$this->assertStringContainsString( 'Preview body is long enough to extract.', $result['content'] );
+	}
+
+	public function test_handle__returns_the_manual_override_and_flags_it() {
+		// Arrange
+		$post = get_post( $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Overridden Page',
+		] ) );
+		( new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) )->save( $post->ID, '# Hand written' );
+
+		// Act
+		$result = $this->ajax->handle( [ 'postId' => $post->ID ] );
+
+		// Assert
+		$this->assertSame( [
+			'content'      => '# Hand written',
+			'isOverridden' => true,
+		], $result );
+	}
+
+	public function test_handle__flags_generated_markdown_as_not_overridden() {
+		// Arrange
+		$post_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+
+		// Act
+		$result = $this->ajax->handle( [ 'postId' => $post_id ] );
+
+		// Assert
+		$this->assertFalse( $result['isOverridden'] );
 	}
 
 	public function test_handle__rejects_a_post_type_that_is_not_included() {

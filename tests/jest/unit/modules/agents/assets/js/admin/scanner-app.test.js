@@ -6,6 +6,7 @@ import {
 	HTTP_TOO_MANY_REQUESTS,
 	PRIORITY_REQUIRED,
 	SCAN_FAILURE_REASON_BLOCKED,
+	SCAN_FAILURE_REASON_LOCAL,
 	SCORE_TIER_HIGH,
 	SCORE_TIER_LOW,
 	SCORE_TIER_MID,
@@ -25,6 +26,7 @@ jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 
 import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from 'elementor/modules/agents/assets/js/admin/api';
 
+const HTTP_UNPROCESSABLE_ENTITY = 422;
 const SITE_DOMAIN = 'example.com';
 const AGENT_ACCESS_URL = 'https://example.com/wp-admin/admin.php?page=elementor-agent-access';
 const SCAN_DURATION_MS = getProgressScanGateDurationMs();
@@ -156,7 +158,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByRole( 'button', { name: 'Turn settings on' } ) ).toBeTruthy();
 		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( '' );
 		expect( screen.getByRole( 'link', { name: /Open agent readiness settings/ } ).getAttribute( 'href' ) ).toBe( AGENT_ACCESS_URL );
-		expect( screen.getByText( 'Checks to fix. Activate fixes 2 of them. The other 5 need you or Angie.' ) ).toBeTruthy();
+		expect( screen.getByText( '7 failed checks to be fixed. Activating agent access settings fixes 2 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
 		expect( screen.queryByText( /\+\d+\s*pts/ ) ).toBeNull();
 	} );
 
@@ -173,7 +175,7 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getAllByText( 'Check' ) ).toHaveLength( 1 );
 		expect( screen.getAllByText( 'Actions' ) ).toHaveLength( 1 );
-		expect( screen.getByText( 'Checks to fix. Activate fixes 2 of them. The other 5 need you or Angie.' ) ).toBeTruthy();
+		expect( screen.getByText( '7 failed checks to be fixed. Activating agent access settings fixes 2 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
 		expect( screen.getByText( 'Agents can\'t find a path into your site' ) ).toBeTruthy();
 		expect( screen.queryByText( 'Agents can\'t read clean versions of your pages' ) ).toBeNull();
 		expect( screen.getByRole( 'button', { name: 'Hide checks' } ).getAttribute( 'aria-expanded' ) ).toBe( 'true' );
@@ -265,6 +267,19 @@ describe( 'Agent Ready scanner', () => {
 		expect( applyCheckFix ).not.toHaveBeenCalled();
 		expect( screen.getByRole( 'heading', { name: 'Prepare your site for agents (with Angie)' } ) ).toBeTruthy();
 		expect( screen.getByRole( 'button', { name: 'Install Angie & fix issue' } ).hasAttribute( 'disabled' ) ).toBe( true );
+	} );
+
+	it( 'offers to activate Angie when it is installed but inactive', async () => {
+		// Arrange
+		await runFirstScan( { isAngieInstalled: true } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+
+		// Act
+		fireEvent.click( within( getRowByTitle( 'Agents can\'t tell when you\'re open' ) ).getByRole( 'button', { name: 'Fix with Angie' } ) );
+
+		// Assert
+		expect( screen.getByRole( 'button', { name: 'Activate Angie & fix issue' } ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button', { name: 'Install Angie & fix issue' } ) ).toBeNull();
 	} );
 
 	it( 'opens How to fix from Copy prompt and copies that prompt', async () => {
@@ -377,6 +392,30 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( checkSwitch.disabled ).toBe( true );
 		expect( getSwitchReason( checkSwitch ) ).toBe( ABILITIES_API_REASON.message );
+	} );
+
+	it( 'leaves checks whose module is unavailable out of the activation fix count', async () => {
+		// Arrange
+		const browserToolsConfig = { enabled: false, isAvailable: false, unavailableReason: ABILITIES_API_REASON };
+		const scan = getScanWithWebmcpCheck();
+		runSiteScan.mockResolvedValue( { ...scan, checks: scan.checks.map( ( check ) => ( { ...check, resolvedByActivation: 'webmcp-support' === check.id || check.resolvedByActivation } ) ) } );
+
+		// Act
+		await runFirstScan( { browserToolsConfig } );
+
+		// Assert
+		expect( screen.getByText( '8 failed checks to be fixed. Activating agent access settings fixes 2 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
+	} );
+
+	it( 'leaves checks whose module is already enabled out of the activation fix count', async () => {
+		// Arrange
+		const markdownConfig = { enabled: true };
+
+		// Act
+		await runFirstScan( { markdownConfig } );
+
+		// Assert
+		expect( screen.getByText( '7 failed checks to be fixed. Activating agent access settings fixes 1 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
 	} );
 
 	it( 'shows Undo and Rescan instead of the switch when that Agent Ready module is already enabled', async () => {
@@ -671,6 +710,21 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
 		expect( screen.getByText( /A firewall or security plugin/ ) ).toBeTruthy();
+	} );
+
+	it( 'explains that the site is not public yet when the scan is rejected for a local site', async () => {
+		// Arrange
+		runSiteScan.mockImplementation( () => Promise.reject( Object.assign( new Error( 'Local' ), { status: HTTP_UNPROCESSABLE_ENTITY, reason: SCAN_FAILURE_REASON_LOCAL } ) ) );
+		renderScanner();
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Check my site' } ) );
+		await advanceTimers( SCAN_DURATION_MS + SCANNER_MOTION.errorProgressPauseMs );
+
+		// Assert
+		expect( screen.getByText( 'Your site isn\'t public yet' ) ).toBeTruthy();
+		expect( screen.getByText( /Come back and run the check once the site is live/ ) ).toBeTruthy();
+		expect( screen.queryByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeNull();
 	} );
 
 	it( 'opens on the last stored report instead of the first-run pitch', () => {

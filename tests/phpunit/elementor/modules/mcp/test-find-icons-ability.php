@@ -48,6 +48,9 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/atomic-widgets/icons/search-index-path' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/custom-libraries' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/library-values' );
+		remove_all_filters( 'elementor/atomic-widgets/icon/is-renderable' );
 
 		if ( file_exists( $this->fixture_path ) ) {
 			unlink( $this->fixture_path );
@@ -120,6 +123,60 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		$this->assertSame( Find_Icons_Ability::EMPTY_RESULT_HINT, $result['llm_instructions'] );
 	}
 
+	public function test_execute__warns_that_a_truncated_custom_pack_may_hold_the_icon() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( 'qamoon' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'multicolor' ] ] );
+
+		// Assert.
+		$this->assertSame( 0, $result['results'][0]['total'] );
+		$this->assertSame( [ 'qamoon' ], $result['truncated_custom_libraries'] );
+		$this->assertStringContainsString( 'qamoon', $result['llm_instructions'] );
+		$this->assertStringContainsString( 'may exist', $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'No icon on this site matches', $result['llm_instructions'] );
+	}
+
+	public function test_execute__warns_about_a_truncated_pack_even_when_an_unrelated_icon_matched() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( 'qamoon' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'buy' ] ] );
+
+		// Assert.
+		$this->assertGreaterThan( 0, $result['results'][0]['total'] );
+		$this->assertStringContainsString( 'qamoon', $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'No icon on this site matches', $result['llm_instructions'] );
+	}
+
+	public function test_execute__does_not_blame_a_truncated_pack_for_a_non_latin_query() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( 'qamoon' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'корзина' ] ] );
+
+		// Assert.
+		$this->assertSame( Find_Icons_Ability::EMPTY_RESULT_HINT, $result['llm_instructions'] );
+	}
+
+	public function test_execute__keeps_a_truncated_pack_named_zero_in_the_hint() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( '0' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'multicolor' ] ] );
+
+		// Assert.
+		$this->assertStringContainsString( 'pack(s) 0 are', $result['llm_instructions'] );
+	}
+
 	public function test_execute__omits_the_instruction_for_a_page_past_the_last_match() {
 		// Arrange.
 		$this->act_as_admin();
@@ -130,6 +187,55 @@ class Test_Find_Icons_Ability extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( [], $result['results'][0]['matches'] );
 		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+	}
+
+	public function test_execute__skips_the_truncation_hint_for_an_exact_name_match() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( 'qamoon' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'cart-shopping' ] ] );
+
+		// Assert.
+		$this->assertSame( [ 'qamoon' ], $result['truncated_custom_libraries'] );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+	}
+
+	public function test_execute__warns_when_only_a_term_matched_in_a_truncated_pack() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( 'qamoon' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'buy' ] ] );
+
+		// Assert.
+		$this->assertSame( 'term', $result['results'][0]['matches'][0]['matched_on'] );
+		$this->assertStringContainsString( 'qamoon', $result['llm_instructions'] );
+	}
+
+	public function test_execute__warns_when_one_query_in_a_batch_has_no_strong_match() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->register_truncated_pack( 'qamoon' );
+
+		// Act.
+		$result = $this->ability->execute( [ 'queries' => [ 'cart-shopping', 'multicolor' ] ] );
+
+		// Assert.
+		$this->assertStringContainsString( 'qamoon', $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'No icon on this site matches', $result['llm_instructions'] );
+	}
+
+	private function register_truncated_pack( $name ): void {
+		add_filter( 'elementor/atomic-widgets/icon/custom-libraries', static fn() => [ $name => 'Pack' ] );
+		add_filter( 'elementor/atomic-widgets/icon/library-values', static fn() => [
+			'values' => [ 'first' => 'x x-first' ],
+			'truncated' => true,
+			'total' => 261,
+		] );
+		add_filter( 'elementor/atomic-widgets/icon/is-renderable', '__return_true' );
 	}
 
 	public function test_is_available__reports_a_missing_catalog() {

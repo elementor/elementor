@@ -686,10 +686,78 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
+			$data['settings'] = $this->normalize_svg_icon_settings( $data['settings'] );
 			$data['settings'] = $this->on_save( $data['settings'] );
 		}
 
 		return $data;
+	}
+
+	private function normalize_svg_icon_settings( array $settings ): array {
+		foreach ( $this->get_controls() as $control ) {
+			$name = $control['name'] ?? '';
+
+			if ( '' === $name || ! isset( $settings[ $name ] ) ) {
+				continue;
+			}
+
+			if ( Controls_Manager::ICONS === $control['type'] ) {
+				$settings[ $name ] = self::normalize_svg_icon( $settings[ $name ] );
+			} elseif ( Controls_Manager::REPEATER === $control['type'] && is_array( $settings[ $name ] ) ) {
+				$settings[ $name ] = $this->normalize_repeater_svg_icon_settings( $control, $settings[ $name ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function normalize_repeater_svg_icon_settings( array $control, array $items ): array {
+		foreach ( $items as $i => $item ) {
+			if ( ! is_array( $item ) || empty( $control['fields'] ) || ! is_array( $control['fields'] ) ) {
+				continue;
+			}
+
+			foreach ( $control['fields'] as $field ) {
+				$field_name = $field['name'] ?? '';
+
+				if ( '' === $field_name || Controls_Manager::ICONS !== ( $field['type'] ?? '' ) || ! isset( $item[ $field_name ] ) ) {
+					continue;
+				}
+
+				$items[ $i ][ $field_name ] = self::normalize_svg_icon( $item[ $field_name ] );
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Rebuild a stored SVG icon from its attachment ID instead of the client URL.
+	 *
+	 * @param mixed $icon Icon control value.
+	 * @return mixed
+	 */
+	public static function normalize_svg_icon( $icon ) {
+		if ( ! is_array( $icon ) || 'svg' !== ( $icon['library'] ?? '' ) ) {
+			return $icon;
+		}
+
+		$id = absint( $icon['value']['id'] ?? 0 );
+
+		if ( ! $id || 'attachment' !== get_post_type( $id ) || 'image/svg+xml' !== get_post_mime_type( $id ) ) {
+			return [
+				'value' => '',
+				'library' => '',
+			];
+		}
+
+		return [
+			'library' => 'svg',
+			'value' => [
+				'id' => $id,
+				'url' => esc_url_raw( wp_get_attachment_url( $id ) ),
+			],
+		];
 	}
 
 	/**

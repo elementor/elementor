@@ -7,6 +7,7 @@ use Elementor\App\Modules\ImportExportCustomization\Module as Import_Export_Cust
 use Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu;
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Module;
 use Elementor\Plugin;
 use Elementor\Tools;
@@ -67,6 +68,7 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		$this->assertFalse( Module::is_admin_navigation_active() );
 		$this->assertNotFalse( $module->get_component( 'sidebar-navigation-handler' ) );
 		$this->assertFalse( $module->get_component( 'admin-flow-handler' ) );
+		$this->assertFalse( $module->get_component( 'secondary-bar' ) );
 	}
 
 	public function test_sidebar_navigation_handler_is_not_loaded_when_experiment_is_active() {
@@ -83,6 +85,7 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		$this->assertTrue( Module::is_admin_navigation_active() );
 		$this->assertFalse( $module->get_component( 'sidebar-navigation-handler' ) );
 		$this->assertNotFalse( $module->get_component( 'admin-flow-handler' ) );
+		$this->assertNotFalse( $module->get_component( 'secondary-bar' ) );
 		$this->assertNotFalse( $module->get_component( 'top-bar-handler' ) );
 	}
 
@@ -108,6 +111,34 @@ class Test_Admin_Navigation_Experiment extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( $expected_enqueued, wp_script_is( 'editor-one-menu', 'enqueued' ) );
 		$this->assertTrue( wp_style_is( 'elementor-admin-menu', 'enqueued' ) );
+	}
+
+	public function theme_builder_url_data_provider(): array {
+		return [
+			'experiment inactive, admin' => [ Experiments_Manager::STATE_INACTIVE, 'administrator', true ],
+			'experiment active, admin' => [ Experiments_Manager::STATE_ACTIVE, 'administrator', false ],
+			'experiment active, editor' => [ Experiments_Manager::STATE_ACTIVE, 'editor', true ],
+		];
+	}
+
+	/**
+	 * @dataProvider theme_builder_url_data_provider
+	 */
+	public function test_theme_builder_url_is_fixed_unless_the_admin_menu_structure_applies( string $state, string $role, bool $expected_fixed ) {
+		// Arrange
+		global $submenu;
+		$original_submenu = $submenu;
+		$this->set_experiment_state( $state );
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => $role ] ) );
+		$submenu = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG => [ [ 'Theme Builder', 'edit_posts', 'elementor-theme-builder' ] ] ];
+
+		// Act
+		( new Elementor_One_Menu_Manager() )->fix_theme_builder_submenu_url( [] );
+		$slug = $submenu[ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ][0][2];
+		$submenu = $original_submenu;
+
+		// Assert
+		$this->assertSame( $expected_fixed, 'elementor-theme-builder' !== $slug );
 	}
 
 	public function settings_title_data_provider(): array {
