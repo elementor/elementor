@@ -29,7 +29,12 @@ export const proSchema = {
 		.enum( [ 'load', 'scrollIn', 'scrollOut', 'scrollOn', 'hover', 'click' ] )
 		.optional()
 		.describe( 'Event that triggers the animation' ),
-	effect: z.enum( [ 'fade', 'slide', 'scale', 'custom' ] ).optional().describe( 'Animation effect type' ),
+	effect: z
+		.enum( [ 'fade', 'slide', 'scale', 'custom' ] )
+		.optional()
+		.describe(
+			'Animation effect type. Code effects (Motion functions) are written with the build-composition or manage-elements tools, not here. See elementor://interactions/motion-code-guide.'
+		),
 	easing: z
 		.enum( [ 'easeIn', 'easeInOut', 'easeOut', 'backIn', 'backInOut', 'backOut', 'linear' ] )
 		.optional()

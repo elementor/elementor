@@ -585,6 +585,74 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
+	describe( 'Code effect', () => {
+		const codeEffectValue = {
+			$$type: 'code-effect',
+			value: { code: { $$type: 'code', value: '({ element, motion }) => motion.hover( element, () => {} )' } },
+		};
+
+		const mockCodeEffectControl = jest.fn( ( { onChange } ) => (
+			<button onClick={ () => onChange( codeEffectValue ) }>Update code effect</button>
+		) );
+
+		const createCodeInteraction = () => {
+			const interaction = createInteractionItemValue( { trigger: 'load', effect: 'code' } );
+			interaction.animation.value.code_effect = codeEffectValue;
+
+			return interaction;
+		};
+
+		beforeEach( () => {
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			const defaultImplementation = getInteractionsControl.getMockImplementation();
+
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'codeEffect' ? { component: mockCodeEffectControl } : defaultImplementation( type )
+			);
+		} );
+
+		it( 'should show only the effect and code effect controls', () => {
+			// Arrange
+			const interaction = createCodeInteraction();
+
+			// Act
+			renderInteractionDetails( interaction );
+
+			// Assert
+			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Update code effect' } ) ).toBeInTheDocument();
+			[ 'Trigger', 'Type', 'Direction', 'Duration', 'Delay', 'Easing', 'Replay' ].forEach( ( label ) => {
+				expect( screen.queryByText( label ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should not render the code effect control for other effects', () => {
+			// Arrange
+			const interaction = createInteractionItemValue( { effect: 'fade' } );
+
+			// Act
+			renderInteractionDetails( interaction );
+
+			// Assert
+			expect( screen.queryByRole( 'button', { name: 'Update code effect' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should keep the load trigger and pass the code effect through on change', () => {
+			// Arrange
+			const interaction = createCodeInteraction();
+			interaction.trigger = { $$type: 'string', value: 'scrollIn' };
+			renderInteractionDetails( interaction );
+
+			// Act
+			fireEvent.click( screen.getByRole( 'button', { name: 'Update code effect' } ) );
+
+			// Assert
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.trigger.value ).toBe( 'load' );
+			expect( updatedInteraction.animation.value.code_effect ).toEqual( codeEffectValue );
+		} );
+	} );
+
 	describe( 'Start / End (size)', () => {
 		let startControlProps: { value: unknown; onChange: ( v: unknown ) => void };
 		let endControlProps: { value: unknown; onChange: ( v: unknown ) => void };

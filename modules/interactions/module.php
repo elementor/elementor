@@ -5,7 +5,10 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Resolvers_Registry;
 use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
+use Elementor\Modules\Interactions\PlainResolvers\Code_Effect_Param_Plain_Resolver;
+use Elementor\Modules\Interactions\Props\Code_Effect_Param_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -72,6 +75,8 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', [ $this, 'handle_interactions' ], 10, 2 );
 		add_action( 'elementor/document/after_save', [ $this, 'handle_interactions_cache' ], 10, 2 );
 
+		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_plain_resolvers( $registry ) );
+
 		// Collect interactions from documents before they render (header, footer, post content)
 		add_filter( 'elementor/frontend/builder_content_data', [
 			$this->get_frontend_handler(),
@@ -82,6 +87,10 @@ class Module extends BaseModule {
 		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
 	}
 
+	private function register_plain_resolvers( Plain_Resolvers_Registry $registry ): void {
+		$registry->register( Code_Effect_Param_Prop_Type::get_key(), new Code_Effect_Param_Plain_Resolver() );
+	}
+
 	/**
 	 * Sanitize and validate data before saving the document.
 	 *
@@ -89,6 +98,10 @@ class Module extends BaseModule {
 	 * @return array
 	 */
 	public function handle_interactions( $data, $document ) {
+		if ( ! current_user_can( 'unfiltered_html' ) ) {
+			$data = ( new Code_Effect_Guard( $this->get_saved_elements( $document ) ) )->protect( $data );
+		}
+
 		$validation = new Validation();
 		$document_after_sanitization = $validation->sanitize( $data );
 
@@ -96,6 +109,17 @@ class Module extends BaseModule {
 
 		$parser = new Parser( $document->get_main_id() );
 		return $parser->assign_interaction_ids( $document_after_sanitization );
+	}
+
+	private function get_saved_elements( Document $document ): array {
+		$elements = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+		$main_document = Plugin::$instance->documents->get( $document->get_main_id() );
+
+		if ( $main_document && $main_document->get_main_id() !== $document->get_post()->ID ) {
+			$elements = array_merge( $main_document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY ), $elements );
+		}
+
+		return $elements;
 	}
 
 	public function handle_interactions_cache( Document $document, $data ) {
