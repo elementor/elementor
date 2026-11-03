@@ -89,46 +89,6 @@ export const PopoverMenuList = < T, V extends string >( {
 		[ items ]
 	);
 
-	const getActiveItemIndices = ( range: { startIndex: number; endIndex: number } ) => {
-		const visibleAndStickyIndexes: number[] = [];
-
-		for ( let i = range.startIndex; i <= range.endIndex; i++ ) {
-			visibleAndStickyIndexes.push( i );
-		}
-
-		const stickyIndicesToShow = getAdjacentStickyIndices( stickyIndices, range );
-
-		stickyIndicesToShow.forEach( ( stickyIndex ) => {
-			if ( ! visibleAndStickyIndexes.includes( stickyIndex ) ) {
-				visibleAndStickyIndexes.push( stickyIndex );
-			}
-		} );
-
-		return visibleAndStickyIndexes.sort( ( a, b ) => a - b );
-	};
-
-	const onChangeCallback = ( { getVirtualIndexes }: Virtualizer< HTMLDivElement, Element > ) => {
-		const visibleItems = getVirtualIndexes().map( ( index ) => items[ index ] );
-		onChange?.( visibleItems );
-	};
-
-	const virtualizer = useVirtualizer( {
-		count: items.length,
-		getScrollElement: () => containerRef.current,
-		estimateSize: () => itemHeight,
-		overscan: LIST_ITEMS_BUFFER,
-		rangeExtractor: getActiveItemIndices,
-		onChange: onChangeCallback,
-	} );
-
-	useEffect( () => {
-		onChangeCallback( virtualizer );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ items ] );
-
-	useScrollToSelected( { selectedValue, items, virtualizer } );
-	const virtualItems = virtualizer.getVirtualItems();
-
 	const enabledIndices = useMemo(
 		() =>
 			items.reduce( ( indices, item, index ) => {
@@ -159,6 +119,52 @@ export const PopoverMenuList = < T, V extends string >( {
 		return enabledIndices[ 0 ] ?? -1;
 	}, [ rovingFocus, focusedValue, selectedValue, items, enabledIndices ] );
 
+	const getActiveItemIndices = ( range: { startIndex: number; endIndex: number } ) => {
+		const visibleAndStickyIndexes: number[] = [];
+
+		for ( let i = range.startIndex; i <= range.endIndex; i++ ) {
+			visibleAndStickyIndexes.push( i );
+		}
+
+		const stickyIndicesToShow = getAdjacentStickyIndices( stickyIndices, range );
+
+		stickyIndicesToShow.forEach( ( stickyIndex ) => {
+			if ( ! visibleAndStickyIndexes.includes( stickyIndex ) ) {
+				visibleAndStickyIndexes.push( stickyIndex );
+			}
+		} );
+
+		if ( tabbableIndex >= 0 && ! visibleAndStickyIndexes.includes( tabbableIndex ) ) {
+			visibleAndStickyIndexes.push( tabbableIndex );
+		}
+
+		return visibleAndStickyIndexes.sort( ( a, b ) => a - b );
+	};
+
+	const onChangeCallback = ( { getVirtualIndexes }: Virtualizer< HTMLDivElement, Element > ) => {
+		const visibleItems = getVirtualIndexes().map( ( index ) => items[ index ] );
+		onChange?.( visibleItems );
+	};
+
+	const virtualizer = useVirtualizer( {
+		count: items.length,
+		getScrollElement: () => containerRef.current,
+		estimateSize: () => itemHeight,
+		overscan: LIST_ITEMS_BUFFER,
+		rangeExtractor: getActiveItemIndices,
+		onChange: onChangeCallback,
+	} );
+
+	useEffect( () => {
+		onChangeCallback( virtualizer );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ items ] );
+
+	useScrollToSelected( { selectedValue, items, virtualizer } );
+	const virtualItems = virtualizer.getVirtualItems();
+
+	const mountedRows = virtualItems.map( ( row ) => row.index ).join( ',' );
+
 	useLayoutEffect( () => {
 		if ( ! shouldFocusOptionRef.current ) {
 			return;
@@ -170,7 +176,7 @@ export const PopoverMenuList = < T, V extends string >( {
 			option.focus();
 			shouldFocusOptionRef.current = false;
 		}
-	} );
+	}, [ tabbableIndex, items, mountedRows ] );
 
 	const moveFocus = ( key: string, currentIndex: number ) => {
 		const position = enabledIndices.indexOf( currentIndex );
@@ -182,7 +188,7 @@ export const PopoverMenuList = < T, V extends string >( {
 		};
 		const targetIndex = targets[ key ];
 
-		if ( targetIndex === undefined ) {
+		if ( targetIndex === undefined || targetIndex === currentIndex ) {
 			return;
 		}
 

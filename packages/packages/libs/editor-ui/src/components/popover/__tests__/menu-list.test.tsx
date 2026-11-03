@@ -14,15 +14,23 @@ const mockItems = [
 	{ value: 'Item 8', type: 'item', disabled: false },
 ];
 
+let mockRangeExtractor: ( range: { startIndex: number; endIndex: number } ) => number[] = () => [];
+
 jest.mock( '@tanstack/react-virtual', () => ( {
-	useVirtualizer: jest.fn().mockImplementation( () => ( {
-		getVirtualItems: jest
-			.fn()
-			.mockReturnValue( mockItems.map( ( item, index ) => ( { key: item.value, index, start: index * 10 } ) ) ),
-		getTotalSize: jest.fn().mockReturnValue( mockItems.length ),
-		scrollToIndex: jest.fn(),
-		getVirtualIndexes: jest.fn().mockReturnValue( mockItems.map( ( _, index ) => index ) ),
-	} ) ),
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		mockRangeExtractor = config.rangeExtractor;
+
+		return {
+			getVirtualItems: jest
+				.fn()
+				.mockReturnValue(
+					mockItems.map( ( item, index ) => ( { key: item.value, index, start: index * 10 } ) )
+				),
+			getTotalSize: jest.fn().mockReturnValue( mockItems.length ),
+			scrollToIndex: jest.fn(),
+			getVirtualIndexes: jest.fn().mockReturnValue( mockItems.map( ( _, index ) => index ) ),
+		};
+	} ),
 } ) );
 
 describe( 'PopoverMenuList', () => {
@@ -204,6 +212,25 @@ describe( 'PopoverMenuList', () => {
 
 			// Assert.
 			expect( notPrevented ).toBe( false );
+		} );
+
+		it( 'should keep the tab stop mounted when it is outside the visible range', () => {
+			// Arrange.
+			render(
+				<PopoverMenuList
+					items={ mockItems }
+					selectedValue="Item 8"
+					onSelect={ jest.fn() }
+					onClose={ jest.fn() }
+					rovingFocus
+				/>
+			);
+
+			// Act.
+			const indices = mockRangeExtractor( { startIndex: 0, endIndex: 2 } );
+
+			// Assert.
+			expect( indices ).toEqual( [ 0, 1, 2, 7 ] );
 		} );
 
 		it( 'should keep the previous tab behavior when rovingFocus is off', () => {

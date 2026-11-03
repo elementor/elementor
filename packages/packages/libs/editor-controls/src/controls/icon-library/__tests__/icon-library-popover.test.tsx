@@ -306,6 +306,22 @@ describe( 'IconLibraryPopover', () => {
 		expect( options[ 0 ] ).toHaveFocus();
 	} );
 
+	it( 'does not move focus into the list when ArrowDown is pressed in the library filter', () => {
+		// Arrange.
+		renderPopover();
+		switchToListView();
+
+		const filterButton = screen.getByRole( 'button', { name: /filter/i } );
+
+		filterButton.focus();
+
+		// Act.
+		fireEvent.keyDown( filterButton, { key: 'ArrowDown' } );
+
+		// Assert.
+		screen.getAllByRole( 'option' ).forEach( ( option ) => expect( option ).not.toHaveFocus() );
+	} );
+
 	it( 'moves between list options with arrows and selects with Enter', () => {
 		// Arrange.
 		const onSelect = jest.fn();

@@ -163,16 +163,17 @@ export const IconLibraryPopover = ( {
 				direction="row"
 				alignItems="center"
 				gap={ 1 }
-				onKeyDown={ handleSearchKeyDown }
 				sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: ICON_LIBRARY_SEARCH_PADDING_BOTTOM } }
 			>
-				<SearchField
-					value={ searchInputValue }
-					onSearch={ handleSearchChange }
-					placeholder={ __( 'Search', 'elementor' ) }
-					id="icon-library-search"
-					sx={ { flex: 1, px: 0, pb: 0 } }
-				/>
+				<Box onKeyDown={ handleSearchKeyDown } sx={ { flex: 1, minWidth: 0 } }>
+					<SearchField
+						value={ searchInputValue }
+						onSearch={ handleSearchChange }
+						placeholder={ __( 'Search', 'elementor' ) }
+						id="icon-library-search"
+						sx={ { width: '100%', px: 0, pb: 0 } }
+					/>
+				</Box>
 				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
 			</Stack>
 			<Divider />
