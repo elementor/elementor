@@ -340,6 +340,24 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( 'elementor-one-upgrade', $action[2] );
 	}
 
+	public function test_resolve_subscription_action__ignores_empty_upgrade_page_placeholder() {
+		// Arrange — register_upgrade_submenu_page() adds an unlabeled row for the page hook.
+		$existing = [
+			[ '', 'manage_options', 'elementor-one-upgrade', '' ],
+		];
+
+		// Act
+		$action = $this->resolve_subscription_action( $existing );
+
+		// Assert
+		if ( Utils::has_pro() ) {
+			$this->assertNull( $action );
+			return;
+		}
+
+		$this->assertSame( ( new Go_Pro_Promotion_Item() )->get_label(), $action[0] );
+	}
+
 	public function test_resolve_subscription_action__ignores_a_hidden_registered_action() {
 		// Arrange
 		$this->register_subscription_action( 'Renew Now', 'https://go.elementor.com/wp-menu-renew/', 61, false );

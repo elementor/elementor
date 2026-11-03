@@ -36,9 +36,18 @@ class Subscription_Action {
 		$items_by_slug = array_column( $existing_items, null, 2 );
 
 		foreach ( Admin_Menu_Structure::UPGRADE_SLUGS as $upgrade_slug ) {
-			if ( isset( $items_by_slug[ $upgrade_slug ] ) ) {
-				return $items_by_slug[ $upgrade_slug ];
+			if ( ! isset( $items_by_slug[ $upgrade_slug ] ) ) {
+				continue;
 			}
+
+			$item = $items_by_slug[ $upgrade_slug ];
+
+			// Placeholder from register_upgrade_submenu_page() has no menu label.
+			if ( '' === (string) ( $item[0] ?? '' ) ) {
+				continue;
+			}
+
+			return $item;
 		}
 
 		return null;
