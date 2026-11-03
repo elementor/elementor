@@ -32,7 +32,6 @@ import {
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
-import { showConnectSuccessNotification } from '../utils/post-reload-connect-success-notification';
 import {
 	reloadEditorAfterConnectSuccess,
 	reloadEditorForSetupRefresh,

@@ -260,13 +260,7 @@ export function useElementorConnectPopup( {
 
 			finishConnectFlow( 'error' );
 		} )();
-	}, [
-		clearPopupClosedPoll,
-		clearSetupVerifyPoll,
-		finishConnectFlow,
-		isFlowStillActive,
-		verifySetupComplete,
-	] );
+	}, [ clearPopupClosedPoll, clearSetupVerifyPoll, finishConnectFlow, isFlowStillActive, verifySetupComplete ] );
 
 	const startSetupVerifyPoll = useCallback( () => {
 		clearSetupVerifyPoll();
