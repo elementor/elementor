@@ -6,6 +6,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use Elementor\Plugin;
@@ -37,7 +38,7 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->endpoint = new Markdown_Endpoint( $this->settings );
+		$this->endpoint = new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) );
 	}
 
 	public function tearDown(): void {
@@ -375,6 +376,30 @@ class Test_Markdown_Endpoint extends Elementor_Test_Base {
 		// Assert
 		$this->assertMatchesRegularExpression( '/---\s*\n[\s\S]*?\n---/', $output );
 		$this->assertStringContainsString( 'Body content for markdown.', $output );
+	}
+
+	public function test_build_markdown__returns_manual_override_instead_of_generated_markdown() {
+		// Arrange
+		$post = $this->create_published_page();
+		( new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) )->save( $post->ID, '# Hand written' );
+
+		// Act
+		$output = $this->endpoint->build_markdown( $post );
+
+		// Assert
+		$this->assertSame( '# Hand written', $output );
+	}
+
+	public function test_filter_should_serve__blocks_markdown_render_when_post_has_manual_override() {
+		// Arrange
+		$post = $this->create_published_page();
+		( new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) )->save( $post->ID, '# Hand written' );
+
+		// Act
+		$should_serve = $this->endpoint->filter_should_serve( true, $post );
+
+		// Assert
+		$this->assertFalse( $should_serve );
 	}
 
 	public function test_send_headers__emits_markdown_response_headers() {

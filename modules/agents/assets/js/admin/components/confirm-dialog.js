@@ -10,10 +10,10 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { getSaveErrorMessage } from '../../hooks/get-save-error-message';
-import { DIALOG_Z_INDEX } from '../content-preview-dialog';
+import { getSaveErrorMessage } from '../hooks/get-save-error-message';
+import { DIALOG_Z_INDEX } from './content-preview-dialog';
 
-export const LlmsConfirmDialog = ( { title, message, confirmLabel, onConfirm, onClose } ) => {
+export const ConfirmDialog = ( { title, message, confirmLabel, onConfirm, onClose } ) => {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ error, setError ] = useState( '' );
 
@@ -50,7 +50,7 @@ export const LlmsConfirmDialog = ( { title, message, confirmLabel, onConfirm, on
 	);
 };
 
-LlmsConfirmDialog.propTypes = {
+ConfirmDialog.propTypes = {
 	title: PropTypes.string.isRequired,
 	message: PropTypes.string.isRequired,
 	confirmLabel: PropTypes.string.isRequired,
