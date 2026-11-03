@@ -15,6 +15,7 @@ use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
 use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Run_Route;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use Elementor\Plugin;
@@ -71,9 +72,9 @@ class Test_Webmcp_Browser_Tools extends Elementor_Test_Base {
 		$this->settings->activate();
 
 		$this->browser_tools = new Webmcp_Browser_Tools( $this->settings, $this->extractor, [
-			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $generator, $sanitizer ),
+			new Search_Site_Content( $this->settings, new Markdown_Content_Catalog( new Markdown_Manual_Content( $generator ) ), $generator, $sanitizer ),
 			new Get_Site_Structure( $generator, $sanitizer ),
-			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings ), $sanitizer ),
+			new Read_Page_Content( $this->settings, new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( $generator ) ), $sanitizer ),
 			new Query_Business_Info( $this->settings, $this->extractor, $sanitizer ),
 		] );
 
