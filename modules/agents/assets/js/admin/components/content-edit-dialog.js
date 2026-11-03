@@ -6,8 +6,7 @@ import TextField from '@elementor/ui/TextField';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-import { LLMS_FILE_NAME } from '../../constants';
-import { ContentPreviewDialog } from '../content-preview-dialog';
+import { ContentPreviewDialog } from './content-preview-dialog';
 
 const EDITOR_MIN_ROWS = 20;
 
@@ -15,7 +14,7 @@ const getErrorMessage = ( reason ) => ( 'string' === typeof reason && reason )
 	? reason
 	: __( 'Something went wrong. Please try again.', 'elementor' );
 
-export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => {
+export const ContentEditDialog = ( { title, content, isEditing, onClose, onSave } ) => {
 	const [ draft, setDraft ] = useState( content );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ error, setError ] = useState( '' );
@@ -46,7 +45,7 @@ export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => 
 	) : null;
 
 	return (
-		<ContentPreviewDialog title={ LLMS_FILE_NAME } onClose={ onClose } actions={ actions }>
+		<ContentPreviewDialog title={ title } onClose={ onClose } actions={ actions }>
 			{ error && <Alert severity="error" sx={ { mb: 2 } }>{ error }</Alert> }
 			{ isEditing ? (
 				<TextField
@@ -55,7 +54,7 @@ export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => 
 					multiline
 					fullWidth
 					minRows={ EDITOR_MIN_ROWS }
-					inputProps={ { 'aria-label': LLMS_FILE_NAME } }
+					inputProps={ { 'aria-label': title } }
 					InputProps={ { sx: { fontFamily: 'monospace' } } }
 				/>
 			) : (
@@ -67,7 +66,8 @@ export const LlmsPreviewDialog = ( { content, isEditing, onClose, onSave } ) => 
 	);
 };
 
-LlmsPreviewDialog.propTypes = {
+ContentEditDialog.propTypes = {
+	title: PropTypes.string.isRequired,
 	content: PropTypes.string.isRequired,
 	isEditing: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,

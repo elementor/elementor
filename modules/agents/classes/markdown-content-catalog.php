@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Classes;
 
+use Elementor\Modules\Agents\Markdown_Manual_Content;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,13 +16,19 @@ class Markdown_Content_Catalog {
 
 	const EXCERPT_WORDS = 40;
 
+	private Markdown_Manual_Content $manual_content;
+
+	public function __construct( Markdown_Manual_Content $manual_content ) {
+		$this->manual_content = $manual_content;
+	}
+
 	/**
 	 * Published, public, indexable posts the preview picker can show, ordered by title.
 	 * An empty term puts the static front page first when it qualifies.
 	 *
 	 * @param string[] $post_types Post type slugs to query.
 	 * @param string   $term       Title search term.
-	 * @return array<int, array{id: int, title: string, path: string, type: string}>
+	 * @return array<int, array{id: int, title: string, path: string, type: string, isOverridden: bool}>
 	 */
 	public function search( array $post_types, string $term ): array {
 		if ( empty( $post_types ) ) {
@@ -150,14 +158,15 @@ class Markdown_Content_Catalog {
 	}
 
 	/**
-	 * @return array{id: int, title: string, path: string, type: string}
+	 * @return array{id: int, title: string, path: string, type: string, isOverridden: bool}
 	 */
 	private function to_item( \WP_Post $post ): array {
 		return [
-			'id'    => $post->ID,
-			'title' => Post_Title::to_plain_text( get_the_title( $post ) ),
-			'path'  => $this->get_path( $post ),
-			'type'  => $post->post_type,
+			'id'           => $post->ID,
+			'title'        => Post_Title::to_plain_text( get_the_title( $post ) ),
+			'path'         => $this->get_path( $post ),
+			'type'         => $post->post_type,
+			'isOverridden' => $this->manual_content->has_override( $post->ID ),
 		];
 	}
 

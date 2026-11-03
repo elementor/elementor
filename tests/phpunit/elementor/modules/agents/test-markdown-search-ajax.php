@@ -7,6 +7,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -26,7 +27,7 @@ class Test_Markdown_Search_Ajax extends Elementor_Test_Base {
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$this->ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog( new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) ) );
 	}
 
 	public function tearDown(): void {

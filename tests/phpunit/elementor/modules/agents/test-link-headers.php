@@ -6,6 +6,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -30,7 +31,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ), $this->settings, $this->module );
+		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) ), $this->settings, $this->module );
 	}
 
 	public function tearDown(): void {
