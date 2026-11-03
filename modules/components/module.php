@@ -45,7 +45,6 @@ class Module extends BaseModule {
 	 *
 	 * @todo Remove in 4.8.0
 	 * @deprecated 4.8.0
-	 *
 	 */
 	const IS_IMPORT_EXPORT_SUPPORTED = true;
 
