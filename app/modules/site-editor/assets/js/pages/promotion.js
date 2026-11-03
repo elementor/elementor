@@ -9,10 +9,14 @@ import Text from 'elementor-app/ui/atoms/text';
 
 import './promotion.scss';
 
+const DEFAULT_THEME_BUILDER_UPGRADE_URL = 'https://go.elementor.com/go-pro-theme-builder/';
+
 export default function Promotion() {
-	const promotionUrl = elementorAppConfig.promotion.upgrade_url || 'https://go.elementor.com/go-pro-theme-builder/',
+	const headerPromotionUrl = elementorAppConfig.promotion?.upgrade_url || DEFAULT_THEME_BUILDER_UPGRADE_URL,
+		overlayPromotionUrl = DEFAULT_THEME_BUILDER_UPGRADE_URL,
+		headerButtonText = elementorAppConfig.promotion?.button_text || __( 'Upgrade Now', 'elementor' ),
 		PromotionHoverElement = ( props ) => {
-			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
+			const promotionUrlWithType = `${ overlayPromotionUrl }?type=${ props.type }`;
 			return (
 				<CardOverlay className="e-site-editor__promotion-overlay">
 					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
@@ -45,9 +49,9 @@ export default function Promotion() {
 							size="sm"
 							color="cta"
 							variant="contained"
-							url={ promotionUrl }
+							url={ headerPromotionUrl }
 							target="_blank"
-							text={ __( 'Upgrade Now', 'elementor' ) }
+							text={ headerButtonText }
 						/>
 					</Grid>
 				</Grid>

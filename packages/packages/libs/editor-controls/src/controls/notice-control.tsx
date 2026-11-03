@@ -83,15 +83,22 @@ export const NoticeControl = createControl(
 		};
 
 		const handleActionClick = () => {
-			setIsDismissed( true );
-
-			if ( dismissible ) {
-				markNoticeAsDismissedInSession( dismissible );
+			if ( ! dismissible ) {
+				return;
 			}
+
+			setIsDismissed( true );
+			markNoticeAsDismissedInSession( dismissible );
 		};
 
 		return (
-			<Alert variant="outlined" severity={ severity } icon={ icon } size="small" onClose={ handleDismiss }>
+			<Alert
+				variant="outlined"
+				severity={ severity }
+				icon={ icon }
+				size="small"
+				onClose={ dismissible ? handleDismiss : undefined }
+			>
 				{ heading && <NoticeTitle>{ heading }</NoticeTitle> }
 				<Typography variant="caption" color="textSecondary" sx={ { fontStyle: 'italic' } }>
 					{ content }

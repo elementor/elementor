@@ -1,10 +1,12 @@
 import { KitPluginsCustomizationDialog } from './components/kit-plugins-customization-dialog';
 import { KitContentCustomizationDialog } from './components/kit-content-customization-dialog';
 import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
+import { KitTemplatesCustomizationDialog } from './components/kit-templates-customization-dialog';
+import { KIT_SECTIONS } from './constants';
 
 const kitContentData = [
 	{
-		type: 'content',
+		type: KIT_SECTIONS.CONTENT,
 		data: {
 			title: __( 'Content', 'elementor' ),
 			features: {
@@ -22,7 +24,7 @@ const kitContentData = [
 		required: false,
 	},
 	{
-		type: 'templates',
+		type: KIT_SECTIONS.TEMPLATES,
 		data: {
 			title: __( 'Templates', 'elementor' ),
 			features: {
@@ -43,11 +45,11 @@ const kitContentData = [
 				tooltip: __( 'To import or export these components, you’ll need Elementor Pro.', 'elementor' ),
 			},
 		},
-		dialog: null,
+		dialog: KitTemplatesCustomizationDialog,
 		required: false,
 	},
 	{
-		type: 'settings',
+		type: KIT_SECTIONS.SETTINGS,
 		data: {
 			title: __( 'Settings & configurations', 'elementor' ),
 			features: {
@@ -71,7 +73,7 @@ const kitContentData = [
 		required: false,
 	},
 	{
-		type: 'plugins',
+		type: KIT_SECTIONS.PLUGINS,
 		data: {
 			title: __( 'Plugins', 'elementor' ),
 			features: {

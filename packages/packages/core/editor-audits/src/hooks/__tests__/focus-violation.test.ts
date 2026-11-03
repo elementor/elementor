@@ -105,6 +105,56 @@ describe( 'focusViolation', () => {
 		extendedWindow.elementor = originalElementor;
 	} );
 
+	it( 'should report element_focused when the element container exists', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( { view: {} } as unknown as ReturnType< typeof getContainer > );
+
+		// Act.
+		const result = focusViolation( { auditId: 'audits/images-alt-text', elementId: 'i1', label: 'Missing alt.' } );
+
+		// Assert.
+		expect( result ).toBe( 'element_focused' );
+	} );
+
+	it( 'should report nothing when the element container is not found', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( null as unknown as ReturnType< typeof getContainer > );
+
+		// Act.
+		const result = focusViolation( { auditId: 'audits/images-alt-text', elementId: 'i1', label: 'Missing alt.' } );
+
+		// Assert.
+		expect( result ).toBeNull();
+		expect( selectElement ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'page-settings', 'page_settings_opened' ],
+		[ 'site-settings', 'site_settings_opened' ],
+		[ 'site-identity-settings', 'site_settings_opened' ],
+	] as const )( 'should report the result for the %s target hint', ( targetHint, expected ) => {
+		// Arrange.
+		jest.mocked( runCommand ).mockResolvedValue( undefined );
+
+		// Act.
+		const result = focusViolation( { auditId: 'audits/site-identity', label: 'Not set.', targetHint } );
+
+		// Assert.
+		expect( result ).toBe( expected );
+	} );
+
+	it( 'should report external_url_opened when the external url is opened', () => {
+		// Act.
+		const result = focusViolation( {
+			auditId: 'audits/privacy-policy',
+			label: 'No privacy policy page is set.',
+			externalUrl: 'https://example.com/wp-admin/options-privacy.php',
+		} );
+
+		// Assert.
+		expect( result ).toBe( 'external_url_opened' );
+	} );
+
 	it( 'should open the external url in a new tab when externalUrl is set', () => {
 		// Arrange.
 		const url = 'https://example.com/wp-admin/options-privacy.php';

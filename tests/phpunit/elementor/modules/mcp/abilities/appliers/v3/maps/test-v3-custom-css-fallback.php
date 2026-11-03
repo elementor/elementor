@@ -56,8 +56,8 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 
 		// Assert.
 		$this->assertSame(
-			"selector .elementor-nav-menu--main .elementor-item { font-weight: 650; }\n"
-				. '@media (max-width: 767px) { selector:hover { box-shadow: 0 1rem 2rem #000; } }',
+			"selector .elementor-nav-menu--main .elementor-item { font-weight: 650 !important; }\n"
+				. '@media (max-width: 767px) { selector:hover { box-shadow: 0 1rem 2rem #000 !important; } }',
 			$css
 		);
 	}
@@ -87,12 +87,125 @@ class Test_V3_Custom_Css_Fallback extends TestCase {
 		// Assert.
 		$this->assertSame(
 			implode( "\n", [
-				'selector { letter-spacing: 3px; }',
-				'@media (max-width: 1024px) { selector { letter-spacing: 2px; } }',
-				'@media (max-width: 767px) { selector { letter-spacing: 1px; } }',
-				'@media (min-width: 2000px) { selector { letter-spacing: 4px; } }',
+				'selector { letter-spacing: 3px !important; }',
+				'@media (max-width: 1024px) { selector { letter-spacing: 2px !important; } }',
+				'@media (max-width: 767px) { selector { letter-spacing: 1px !important; } }',
+				'@media (min-width: 2000px) { selector { letter-spacing: 4px !important; } }',
 			] ),
 			$css
 		);
+	}
+
+	public function test_parse__reads_rendered_rules_back_to_their_targets() {
+		// Arrange.
+		$rules = [
+			self::rule( 'main-menu', null, self::DESKTOP, [ 'font-weight' => '650' ] ),
+			self::rule( 'main-menu', 'hover', self::TABLET, [ 'color' => 'rgba(0, 0, 0, 0.5)' ] ),
+			self::rule( 'wrapper', null, self::DESKTOP, [ 'letter-spacing' => '4px' ], self::WIDESCREEN_MEDIA ),
+		];
+
+		// Act.
+		$parsed = $this->fallback()->parse( $this->fallback()->render( $rules ) );
+
+		// Assert.
+		$this->assertSame( $rules, $parsed['rules'] );
+		$this->assertSame( [], $parsed['unmatched'] );
+	}
+
+	public function test_render__marks_declarations_important_so_they_beat_the_widget_control_rules() {
+		// Act.
+		$css = $this->fallback()->render( [
+			self::rule( 'wrapper', null, self::DESKTOP, [
+				'color' => 'red',
+				'width' => '10px !important',
+			] ),
+		] );
+
+		// Assert.
+		$this->assertSame( 'selector { color: red !important; width: 10px !important; }', $css );
+		$this->assertSame( [
+			'color' => 'red',
+			'width' => '10px',
+		], $this->fallback()->parse( $css )['rules'][0]['declarations'] );
+	}
+
+	public function test_render__scopes_every_node_of_a_selector_list() {
+		// Arrange.
+		$fallback = new V3_Custom_Css_Fallback( [ 'sections' => '.shop_table, address' ], self::MEDIA_QUERIES );
+		$rules = [ self::rule( 'sections', 'hover', self::DESKTOP, [ 'cursor' => 'pointer' ] ) ];
+
+		// Act.
+		$css = $fallback->render( $rules );
+		$parsed = $fallback->parse( $css );
+
+		// Assert.
+		$this->assertSame( 'selector .shop_table:hover, selector address:hover { cursor: pointer !important; }', $css );
+		$this->assertSame( $rules, $parsed['rules'] );
+	}
+
+	public function test_render__puts_the_state_before_a_trailing_pseudo_element() {
+		// Arrange.
+		$fallback = new V3_Custom_Css_Fallback( [ 'pointer' => '.elementor-item:before, .elementor-item::after' ], self::MEDIA_QUERIES );
+		$rules = [ self::rule( 'pointer', 'hover', self::DESKTOP, [ 'background-color' => 'red' ] ) ];
+
+		// Act.
+		$css = $fallback->render( $rules );
+		$parsed = $fallback->parse( $css );
+
+		// Assert.
+		$this->assertSame( 'selector .elementor-item:hover:before, selector .elementor-item:hover::after { background-color: red !important; }', $css );
+		$this->assertSame( $rules, $parsed['rules'] );
+	}
+
+	public function test_parse__reads_a_selector_list_typed_without_spaces() {
+		// Arrange.
+		$fallback = new V3_Custom_Css_Fallback( [ 'sections' => '.shop_table, address' ], self::MEDIA_QUERIES );
+
+		// Act.
+		$parsed = $fallback->parse( 'selector .shop_table,selector  address { cursor: pointer; }' );
+
+		// Assert.
+		$this->assertSame( [ self::rule( 'sections', null, self::DESKTOP, [ 'cursor' => 'pointer' ] ) ], $parsed['rules'] );
+	}
+
+	public function test_parse__keeps_rules_outside_every_target_as_written() {
+		// Arrange.
+		$unknown_rule = 'selector .unknown > a { color: red; }';
+		$unknown_media_rule = '@media (max-width: 767px) { selector .unknown { color: blue; } }';
+
+		// Act.
+		$parsed = $this->fallback()->parse( $unknown_rule . "\n" . $unknown_media_rule . "\nselector { color: green; }" );
+
+		// Assert.
+		$this->assertSame( [ self::rule( 'wrapper', null, self::DESKTOP, [ 'color' => 'green' ] ) ], $parsed['rules'] );
+		$this->assertSame( [ $unknown_rule, $unknown_media_rule ], $parsed['unmatched'] );
+	}
+
+	public function test_merge__overrides_declarations_of_the_same_target_state_and_breakpoint() {
+		// Arrange.
+		$existing = [
+			self::rule( 'main-menu', null, self::DESKTOP, [
+				'font-weight' => '600',
+				'letter-spacing' => '1px',
+			] ),
+			self::rule( 'main-menu', 'hover', self::DESKTOP, [ 'font-weight' => '700' ] ),
+		];
+		$incoming = [
+			self::rule( 'main-menu', null, self::DESKTOP, [ 'font-weight' => '650' ] ),
+			self::rule( 'wrapper', null, self::MOBILE, [ 'color' => 'red' ] ),
+		];
+
+		// Act.
+		$merged = V3_Custom_Css_Fallback::merge( $existing, $incoming );
+
+		// Assert.
+		$this->assertSame( [
+			self::rule( 'main-menu', null, self::DESKTOP, [
+				'font-weight' => '650',
+				'letter-spacing' => '1px',
+			] ),
+			self::rule( 'main-menu', 'hover', self::DESKTOP, [ 'font-weight' => '700' ] ),
+			self::rule( 'wrapper', null, self::MOBILE, [ 'color' => 'red' ] ),
+		], $merged );
 	}
 }

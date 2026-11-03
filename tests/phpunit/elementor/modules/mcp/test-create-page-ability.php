@@ -130,4 +130,52 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 		$post = get_post( $captured_post_id );
 		$this->assertSame( 'Elementor Draft', $post->post_title );
 	}
+
+	public function test_execute__applies_template_and_hide_title() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_type' => 'page',
+			'template' => 'elementor_canvas',
+			'hide_title' => true,
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $result['id'], false );
+		$this->assertSame( 'elementor_canvas', get_post_meta( $result['id'], '_wp_page_template', true ) );
+		$this->assertSame( 'yes', $document->get_settings( 'hide_title' ) );
+		$this->assertSame( 'elementor_canvas', $result['template'] );
+		$this->assertTrue( $result['hide_title'] );
+	}
+
+	public function test_execute__reports_theme_defaults_when_template_and_hide_title_are_omitted() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'page' ] );
+
+		// Assert
+		$this->assertSame( 'default', $result['template'] );
+		$this->assertFalse( $result['hide_title'] );
+		$this->assertSame( '', get_post_meta( $result['id'], '_wp_page_template', true ) );
+	}
+
+	public function test_execute__returns_400_for_unknown_template() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_type' => 'page',
+			'template' => 'no-such-template',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_template', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
 }

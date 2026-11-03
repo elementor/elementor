@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Catalog;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Icon_Search;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
@@ -45,14 +44,6 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 		if ( is_wp_error( $gate ) ) {
 			return $gate;
-		}
-
-		if ( ! AtomicWidgets_Module::is_svg_library_active() ) {
-			return new \WP_Error(
-				'elementor_svg_library_inactive',
-				__( 'The SVG icon library experiment is not active on this site.', 'elementor' ),
-				[ 'status' => \WP_Http::SERVICE_UNAVAILABLE ]
-			);
 		}
 
 		if ( ! Icon_Catalog::is_available() ) {

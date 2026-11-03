@@ -155,25 +155,7 @@ class Well_Known_Router {
 	 * subdirectory WordPress installs — the same logic used by Request_Path::matches().
 	 */
 	private function get_normalized_path(): string {
-		$request_uri = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
-			: '';
-
-		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
-
-		if ( ! is_string( $path ) ) {
-			return '';
-		}
-
-		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
-
-		if ( is_string( $home_path ) && '' !== $home_path && '/' !== $home_path ) {
-			$home_path = untrailingslashit( $home_path );
-
-			if ( 0 === strpos( $path, $home_path ) ) {
-				$path = substr( $path, strlen( $home_path ) );
-			}
-		}
+		$path = \Elementor\Modules\Agents\Classes\Request_Path::get_relative_path();
 
 		return untrailingslashit( $path );
 	}

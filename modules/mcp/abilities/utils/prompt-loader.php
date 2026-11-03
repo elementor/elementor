@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
-use Elementor\Modules\AtomicWidgets\Module as AtomicWidgets_Module;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -33,18 +31,6 @@ class Prompt_Loader {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$extra = ( null !== $extra_file && file_exists( $extra_file ) ) ? rtrim( (string) file_get_contents( $extra_file ) ) : '';
 
-		return self::resolve_icon_library_blocks( implode( "\n\n", array_filter( [ $content, $extra ] ) ) );
-	}
-
-	private static function resolve_icon_library_blocks( string $prompt ): string {
-		$is_active = AtomicWidgets_Module::is_svg_library_active();
-		$block_pattern = '/^<!--if:svg_library-->(.*?)<!--endif:svg_library-->\n?/ms';
-		$inline_pattern = '/<!--if:svg_library-->(.*?)<!--endif:svg_library-->/s';
-
-		if ( $is_active ) {
-			return str_replace( [ '<!--if:svg_library-->', '<!--endif:svg_library-->' ], '', $prompt );
-		}
-
-		return (string) preg_replace( [ $block_pattern, $inline_pattern ], '', $prompt );
+		return implode( "\n\n", array_filter( [ $content, $extra ] ) );
 	}
 }

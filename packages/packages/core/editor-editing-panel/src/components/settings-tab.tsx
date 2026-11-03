@@ -5,6 +5,7 @@ import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { isHiddenByAncestor } from '../utils/ancestor-dependency-utils';
 import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
@@ -88,7 +89,7 @@ function renderSectionItems( {
 				return [];
 			}
 
-			if ( item.type === 'control' && isControlHiddenByDependencies( item, propsSchema, settings ) ) {
+			if ( item.type === 'control' && isControlHiddenByDependencies( item, propsSchema, settings, element.id ) ) {
 				return [];
 			}
 
@@ -97,8 +98,14 @@ function renderSectionItems( {
 	);
 }
 
-function isControlHiddenByDependencies( control: Control, propsSchema: PropsSchema, settings: Props ) {
-	const { isHidden } = extractDependencyEffect( control.value.bind, propsSchema, settings );
+function isControlHiddenByDependencies(
+	control: Control,
+	propsSchema: PropsSchema,
+	settings: Props,
+	elementId: string
+) {
+	const { bind } = control.value;
+	const { isHidden } = extractDependencyEffect( bind, propsSchema, settings );
 
-	return isHidden;
+	return isHidden || isHiddenByAncestor( elementId, propsSchema[ bind ] );
 }

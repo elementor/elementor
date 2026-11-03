@@ -4,7 +4,9 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -37,7 +39,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Variable', 'elementor' ),
-			__( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' ),
+			$this->get_description(),
 			'elementor',
 			[
 				'type' => 'object',
@@ -75,7 +77,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 								'id' => [ 'type' => 'string' ],
 								'type' => [
 									'type' => 'string',
-									'enum' => $this->get_allowed_types(),
+									'enum' => [ self::TYPE_COLOR, self::TYPE_FONT, self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ],
 								],
 								'label' => [ 'type' => 'string' ],
 								'value' => [ 'type' => 'string' ],
@@ -134,6 +136,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
+		$pro_message_reported = false;
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) ) {
@@ -144,11 +147,18 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			$translated = $this->translate_operation( $operation );
 
 			if ( is_wp_error( $translated ) ) {
+				$message = $translated->get_error_message();
+
+				if ( Pro_Features_Discovery::ERROR_CODE === $translated->get_error_code() ) {
+					$message = $pro_message_reported ? Variables_Pro_Features_Discovery::get_repeated_message() : $message;
+					$pro_message_reported = true;
+				}
+
 				$results->add_error(
 					$index,
 					$operation['action'] ?? '',
 					$translated->get_error_code(),
-					$translated->get_error_message()
+					$message
 				);
 				continue;
 			}
@@ -200,7 +210,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				}
 
 				if ( $this->is_size_type( $type ) && ! $this->can_manage_size_variables() ) {
-					return $this->pro_license_required();
+					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
 				return [
@@ -222,7 +232,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				}
 
 				if ( ! $this->can_manage_size_variables() && $this->is_size_variable( $id ) ) {
-					return $this->pro_license_required();
+					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
 				return [
@@ -277,14 +287,6 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
 	}
 
-	private function pro_license_required(): \WP_Error {
-		return new \WP_Error(
-			'pro_license_required',
-			__( 'Size variables require an active Elementor Pro license, so this operation was not applied. Do not retry it — tell the user that size variables are a Pro feature.', 'elementor' ),
-			[ 'status' => \WP_Http::FORBIDDEN ]
-		);
-	}
-
 	private function is_size_type( $type ): bool {
 		return in_array( $type, [ self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ], true );
 	}
@@ -297,15 +299,8 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return Utils::is_license_active();
 	}
 
-	private function get_allowed_types(): array {
-		$types = [ self::TYPE_COLOR, self::TYPE_FONT ];
-
-		if ( $this->can_manage_size_variables() ) {
-			$types[] = self::TYPE_SIZE;
-			$types[] = self::TYPE_CUSTOM_SIZE;
-		}
-
-		return $types;
+	private function get_description(): string {
+		return __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
 	}
 
 	private function clear_cache(): void {

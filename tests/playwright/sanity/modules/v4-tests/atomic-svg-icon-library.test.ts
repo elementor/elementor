@@ -16,7 +16,7 @@ const openIconLibrary = async ( page, svgControl, popover ) => {
 
 test.describe( 'Atomic SVG icon library @v4-tests', () => {
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_svg_library' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

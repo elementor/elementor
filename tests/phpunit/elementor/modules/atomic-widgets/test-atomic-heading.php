@@ -228,6 +228,68 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		$this->assertNull( $title_control->jsonSerialize()['value']['meta'] );
 	}
 
+	public function test__render_span_heading(): void {
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'tag' => 'span',
+				'title' => 'Span title',
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		$this->assertStringContainsString( '<span', $rendered_output );
+		$this->assertStringContainsString( 'Span title', $rendered_output );
+		$this->assertStringNotContainsString( '<h2', $rendered_output );
+	}
+
+	public function test__render_markdown_with_span_tag(): void {
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'tag' => 'span',
+				'title' => 'Plain span title',
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		$this->assertSame( 'Plain span title', $widget_instance->render_markdown() );
+	}
+
+	public function test__render_markdown_with_span_tag_and_link(): void {
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'tag' => 'span',
+				'title' => 'Linked span title',
+				'link' => [
+					'href' => 'https://example.com',
+					'target' => '_blank',
+					'tag' => 'a',
+				],
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		];
+
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		$this->assertSame(
+			'[Linked span title](https://example.com)',
+			$widget_instance->render_markdown()
+		);
+	}
+
 	private function find_content_control( $widget_instance, string $bind ) {
 		foreach ( $widget_instance->get_atomic_controls() as $control ) {
 			if ( ! ( $control instanceof Section ) || 'content' !== $control->get_id() ) {

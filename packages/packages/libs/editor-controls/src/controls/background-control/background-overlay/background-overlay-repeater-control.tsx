@@ -311,7 +311,13 @@ const getGradientValue = ( value: BackgroundOverlayItemPropValue ) => {
 		?.join( ',' );
 
 	if ( gradient.type.value === 'linear' ) {
-		return `linear-gradient(${ gradient.angle.value }deg, ${ stops })`;
+		const angle = gradient.angle?.value;
+
+		if ( typeof angle !== 'number' ) {
+			return `linear-gradient(${ stops })`;
+		}
+
+		return `linear-gradient(${ angle }deg, ${ stops })`;
 	}
 
 	return `radial-gradient(circle at ${ gradient.positions.value }, ${ stops })`;

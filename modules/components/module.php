@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
+use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -67,6 +68,7 @@ class Module extends BaseModule {
 		$this->register_variants_experiment();
 
 		$this->register_component_post_type();
+		( new Import_Export_Customization() )->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
@@ -123,17 +125,19 @@ class Module extends BaseModule {
 	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
 	 */
 	public static function prepare_imported_elements( array $elements, array $post_ids_map ): array {
-		return self::is_import_export_supported()
-			? Remap_Component_Instance_Ids::apply( $elements, $post_ids_map )
-			: Strip_Component_Instances::apply( $elements );
+		if ( ! self::is_import_export_supported() || empty( $post_ids_map ) ) {
+			return Strip_Component_Instances::apply( $elements );
+		}
+
+		return Remap_Component_Instance_Ids::apply( $elements, $post_ids_map );
 	}
 
 	/**
-	 * Post types that must be excluded from the import/export runners when components
-	 * round-trip is disabled. Same gating as `prepare_imported_elements()`.
+	 * Components are owned by the dedicated `components` runners and should never be
+	 * handled by the generic `elementor-content` runners.
 	 */
 	public static function excluded_import_export_post_types(): array {
-		return self::is_import_export_supported() ? [] : [ Component_Document::TYPE ];
+		return [ Component_Document::TYPE ];
 	}
 
 	/**

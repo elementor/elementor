@@ -27,6 +27,7 @@ require_once __DIR__ . '/../../../../../stubs/elementor-utils-stub.php';
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use PHPUnit\Framework\TestCase;
 
@@ -61,5 +62,54 @@ class Test_Widget_Context_Helper extends TestCase {
 		$schema = Widget_Context_Helper::to_plain_llm_schema( $prop_type );
 
 		$this->assertArrayNotHasKey( 'enum', $schema );
+	}
+
+	public function test_build_published_property_schema__hides_sensitive_props() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() );
+
+		// Act.
+		$schema = Widget_Context_Helper::build_published_property_schema( 'api_key', $prop_type, 'mock-widget' );
+
+		// Assert.
+		$this->assertNull( $schema );
+	}
+
+	public function test_build_published_property_schema__hides_sensitive_props_even_when_llm_configurable() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make()
+			->meta( 'llm_configurable', true )
+			->meta( Prop_Sensitivity::sensitive() );
+
+		// Act.
+		$schema = Widget_Context_Helper::build_published_property_schema( 'classes', $prop_type, 'mock-widget' );
+
+		// Assert.
+		$this->assertNull( $schema );
+	}
+
+	public function test_build_published_property_schema__publishes_props_that_are_only_not_exportable() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );
+
+		// Act.
+		$schema = Widget_Context_Helper::build_published_property_schema( 'list_id', $prop_type, 'mock-widget' );
+
+		// Assert.
+		$this->assertIsArray( $schema );
+	}
+
+	public function test_build_published_property_schema__keeps_non_configurable_keys_semantics() {
+		// Act.
+		$hidden = Widget_Context_Helper::build_published_property_schema( 'classes', String_Prop_Type::make(), 'mock-widget' );
+		$opted_in = Widget_Context_Helper::build_published_property_schema(
+			'classes',
+			String_Prop_Type::make()->meta( 'llm_configurable', true ),
+			'mock-widget'
+		);
+
+		// Assert.
+		$this->assertNull( $hidden );
+		$this->assertIsArray( $opted_in );
 	}
 }

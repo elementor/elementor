@@ -20,6 +20,8 @@ class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 		delete_option( Agent_Ready_Settings::OPTION );
 
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 	}
 
 	public function tearDown(): void {

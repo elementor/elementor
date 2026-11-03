@@ -11,10 +11,10 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
-use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -46,7 +46,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Component', 'elementor' ),
-			Prompt_Loader::load( 'manage-component' ),
+			$this->get_description(),
 			'elementor',
 			$this->get_output_schema(),
 			[
@@ -417,7 +417,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
 		$compiled = Composition_Compiler::make()->compile(
@@ -428,6 +428,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		);
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
+		}
+
+		if ( $compiled['pro_features_discovery'] ) {
+			return $compiled['pro_features_discovery'][0];
 		}
 
 		if ( 1 !== count( $compiled['elements'] ) ) {
@@ -621,8 +625,22 @@ class Manage_Component_Ability extends Abstract_Ability {
 		return array_values( $ids );
 	}
 
+	private function get_description(): string {
+		$description = Prompt_Loader::load( 'manage-component' );
+
+		if ( Components_Access_Controller::is_pro_tier() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_components_pro_notice();
+	}
+
+	private function get_components_pro_notice(): string {
+		return __( 'When the user asks to create, rename, or archive a component, call `create`, `rename`, or `archive` anyway, then tell the user that this needs Elementor Pro (not licensed on this site) and share the upgrade link from the response. With Pro, a component is built once, reused on any page, and its design is edited in one place. Each copy can still have its own text and images.', 'elementor' );
+	}
+
 	private function check_access( string $action, callable $can ): ?\WP_Error {
-		return $can() ? null : Insufficient_Permissions_Error::for_action( $action );
+		return $can() ? null : Components_Pro_Features_Discovery::for_action( $action );
 	}
 
 	private function invalid_input( string $message ): \WP_Error {

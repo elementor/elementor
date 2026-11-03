@@ -104,6 +104,7 @@ class Object_Size_Box_Adapter implements V3_Control_Adapter {
 			$sizes[ $physical ] = $size;
 		}
 
+		$sizes = Size_Values::with_zero_in_shared_unit( $sizes );
 		$units = array_unique( array_column( $sizes, 'unit' ) );
 
 		return 1 === count( $units ) ? $sizes : null;

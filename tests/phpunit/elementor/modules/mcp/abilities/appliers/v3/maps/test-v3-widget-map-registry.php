@@ -23,7 +23,7 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 
 	const CONTROLS = [ 'color_menu_item' => [ 'type' => 'color' ] ];
 
-	public function test_get_map__returns_compiled_map_when_experiment_active() {
+	public function test_get_map__returns_compiled_map_of_a_registered_widget() {
 		// Arrange.
 		$registry = $this->registry();
 
@@ -33,17 +33,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		// Assert.
 		$this->assertInstanceOf( Compiled_V3_Map::class, $map );
 		$this->assertTrue( $registry->is_supported( self::WIDGET_TYPE ) );
-	}
-
-	public function test_get_map__null_when_experiment_inactive() {
-		// Arrange.
-		$registry = $this->registry( [ 'is_experiment_active' => false ] );
-
-		// Act.
-		$map = $registry->get_map( self::WIDGET_TYPE );
-
-		// Assert.
-		$this->assertNull( $map );
 	}
 
 	public function test_get_map__null_without_registered_map() {
@@ -133,10 +122,29 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 					'label' => 'Main menu items',
 					'states' => [ 'default', 'current' ],
 					'properties' => [ 'color' ],
+					'properties_by_state' => [
+						'default' => [ 'color' ],
+						'current' => [ 'color' ],
+					],
 				],
 			],
 			$contract['style_targets']
 		);
+	}
+
+	public function test_get_llm_contract__includes_target_description_when_set() {
+		// Arrange.
+		$description = 'Top-level links of the menu. Collapses into the dropdown below the mobile breakpoint.';
+		$registry = $this->registry( [
+			'maps' => [ self::WIDGET_TYPE => $this->map()->default_target( $this->main_menu()->description( $description ) ) ],
+		] );
+
+		// Act.
+		$contract = $registry->get_llm_contract( self::WIDGET_TYPE );
+
+		// Assert.
+		$this->assertSame( 'Main menu items', $contract['style_targets']['main-menu']['label'] );
+		$this->assertSame( $description, $contract['style_targets']['main-menu']['description'] );
 	}
 
 	public function test_get_map__appends_advanced_wrapper_target_for_widgets_with_an_advanced_tab() {
@@ -168,9 +176,19 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 		$this->assertSame( [ 'main-menu' ], array_keys( $targets ) );
 	}
 
+	public function test_create_default__does_not_register_shortcode_map() {
+		// Arrange.
+		$registry = V3_Widget_Map_Registry::create_default();
+
+		// Act.
+		$has_map = $registry->has_registered_map( 'shortcode' );
+
+		// Assert.
+		$this->assertFalse( $has_map );
+	}
+
 	private function registry( array $overrides = [] ): V3_Widget_Map_Registry {
 		$options = array_merge( [
-			'is_experiment_active' => true,
 			'maps' => [ self::WIDGET_TYPE => $this->map() ],
 			'controls' => self::CONTROLS,
 		], $overrides );
@@ -181,7 +199,6 @@ class Test_V3_Widget_Map_Registry extends TestCase {
 				'color' => Color_Prop_Type::make(),
 				'margin' => Dimensions_Prop_Type::make(),
 			] ),
-			static fn() => $options['is_experiment_active'],
 			$options['get_controls'] ?? static fn() => $controls,
 			$options['maps'],
 			$options['has_advanced_tab'] ?? null

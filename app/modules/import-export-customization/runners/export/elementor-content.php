@@ -121,9 +121,11 @@ class Elementor_Content extends Export_Runner_Base {
 
 			$manifest_data[ $post->ID ] = $post_manifest_data;
 
+			$export_data = $document->get_export_data();
+
 			$files[] = [
 				'path' => 'content/' . $post_type . '/' . $post->ID,
-				'data' => $document->get_export_data(),
+				'data' => $export_data,
 			];
 		}
 

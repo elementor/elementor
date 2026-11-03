@@ -7,6 +7,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { useUnfilteredFilesUpload, useUpdateUnfilteredFilesUpload } from '../../hooks/use-unfiltered-files-upload';
 import { IconLibraryPopover } from '../icon-library/icon-library-popover';
+import { useProviderIconSvg } from '../icon-library/icon-library-providers';
 import { useFontAwesome7Catalog } from '../icon-library/use-font-awesome-7-catalog';
 import { SvgMediaControl } from '../svg-media-control';
 import { SVG_MEDIA_ACTION_GROUP_TEST_ID, SVG_MEDIA_CONTROL_CONTAINER_TEST_ID } from '../svg-media-overlay';
@@ -39,6 +40,7 @@ jest.mock( '../icon-library/use-font-awesome-7-catalog', () => ( {
 } ) );
 jest.mock( '../icon-library/icon-library-providers', () => ( {
 	useIconLibraryProviderIcons: jest.fn( () => ( { data: [], isLoading: false } ) ),
+	useProviderIconSvg: jest.fn( () => ( { data: null, isLoading: false } ) ),
 } ) );
 jest.mock( '@elementor/wp-media', () => ( {
 	useWpMediaAttachment: jest.fn(),
@@ -273,7 +275,7 @@ describe( 'SvgMediaControl', () => {
 		expect( open ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not show the icon library when showIconLibrary is not set', () => {
+	it( 'should always show the icon library button', () => {
 		// Arrange
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
@@ -282,7 +284,7 @@ describe( 'SvgMediaControl', () => {
 		renderControl( <SvgMediaControl />, props );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: 'Icon library' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Icon library' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should open the icon library popover when clicking on icon library', () => {
@@ -293,7 +295,7 @@ describe( 'SvgMediaControl', () => {
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 
 		// Assert
@@ -308,7 +310,7 @@ describe( 'SvgMediaControl', () => {
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 
 		// Assert
@@ -325,7 +327,7 @@ describe( 'SvgMediaControl', () => {
 		const props = { setValue, value: {}, bind: 'svg', propType };
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Pick star' } ) );
 
@@ -377,7 +379,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		const preview = screen.getByLabelText( 'Preview icon' );
@@ -421,7 +423,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		const preview = screen.getByLabelText( 'Preview icon' );
@@ -493,7 +495,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Icon library' } ) );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Pick star' } ) );
 
@@ -603,7 +605,7 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		expect( screen.getByRole( 'img' ) ).toHaveAttribute( 'src', ownSvgUrl );
@@ -632,11 +634,67 @@ describe( 'SvgMediaControl', () => {
 		};
 
 		// Act
-		renderControl( <SvgMediaControl showIconLibrary />, props );
+		renderControl( <SvgMediaControl />, props );
 
 		// Assert
 		expect( screen.queryByLabelText( 'Preview icon' ) ).not.toBeInTheDocument();
 		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should preview a saved custom icon that only a provider can resolve, when the catalog does not list it', () => {
+		// Arrange
+		const customPath = 'M0 0H100V100H0Z';
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: false } as never );
+		jest.mocked( useProviderIconSvg ).mockReturnValue( {
+			data: `<svg viewBox="0 0 100 100"><path d="${ customPath }"></path></svg>`,
+			isLoading: false,
+		} as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'icon icon-emo-surprised' },
+					library: { $$type: 'string', value: 'my-icons' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		expect( screen.getByLabelText( 'Preview icon' ) ).toContainHTML( `d="${ customPath }"` );
+	} );
+
+	it( 'should look the saved icon up through the provider only after the catalog finished without it', () => {
+		// Arrange
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: false } as never );
+		jest.mocked( useProviderIconSvg ).mockReturnValue( { data: null, isLoading: false } as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: 'icon icon-emo-surprised' },
+					library: { $$type: 'string', value: 'my-icons' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		expect( useProviderIconSvg ).toHaveBeenCalledWith( 'my-icons', 'icon icon-emo-surprised', true );
 	} );
 
 	it( 'should show infotip on hover for user without admin permissions', async () => {

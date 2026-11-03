@@ -43,6 +43,7 @@ const getGridMetrics = ( containerWidth: number, columnGap: number, inlinePaddin
 type IconLibraryGridItem = FontAwesome7Icon & {
 	id: string;
 	value: string;
+	iconValue?: string;
 };
 
 type IconLibraryGridProps = {
@@ -329,7 +330,7 @@ export const IconLibraryGrid = ( {
 													} }
 												>
 													<FontAwesomeGlyph
-														icon={ item }
+														icon={ { ...item, value: item.iconValue ?? item.value } }
 														size={ ICON_GLYPH_SIZE }
 														color="currentColor"
 													/>

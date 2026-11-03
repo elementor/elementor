@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class List_Widget_Schemas_Ability extends Abstract_Ability {
 
+	const CATALOG_REPLACEMENTS = [
+		'image-carousel' => 'e-carousel',
+	];
+
 	protected function get_ability_id(): string {
 		return 'elementor/list-widget-schemas';
 	}
@@ -61,11 +65,21 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 			ARRAY_FILTER_USE_BOTH
 		);
 
+		$widgets = $this->without_replaced_widgets( $widgets );
+
 		if ( $summary ) {
 			return $this->build_summaries( $widgets );
 		}
 
 		return $this->build_schemas( $widgets );
+	}
+
+	private function without_replaced_widgets( array $widgets ): array {
+		return array_filter(
+			$widgets,
+			static fn( $type ) => ! isset( $widgets[ self::CATALOG_REPLACEMENTS[ $type ] ?? '' ] ),
+			ARRAY_FILTER_USE_KEY
+		);
 	}
 
 	private function build_summaries( array $widgets ): array {

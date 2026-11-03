@@ -6,6 +6,8 @@ import { __ } from '@wordpress/i18n';
 
 import { AUDIT_PANEL_ID } from '../constants';
 import { useAuditReport } from '../hooks/use-audit-report';
+import { useTrackPanelViewed } from '../hooks/use-track-panel-viewed';
+import { trackPanelClosed } from '../utils/tracking';
 import AuditFeedback from './audit-feedback';
 import ErrorPage from './pages/error-page';
 import LoadingPage from './pages/loading-page';
@@ -16,8 +18,10 @@ import RescanButton from './rescan-button';
 export default function AuditPanel() {
 	const { status, report, error, isStale, run } = useAuditReport();
 
+	useTrackPanelViewed();
+
 	const hostDocumentId = getHostDocumentId() ?? 0;
-	const onRun = () => run( hostDocumentId );
+	const onRun = () => run( hostDocumentId, report ? 'rescan' : 'run_audit' );
 	const lastScanLabel = report ? new Date( report.runAt ).toLocaleTimeString() : null;
 
 	return (
@@ -27,6 +31,7 @@ export default function AuditPanel() {
 				title={ __( 'Page Audit', 'elementor' ) }
 				badge={ __( 'Beta', 'elementor' ) }
 				titleVariant="subtitle2"
+				onClose={ trackPanelClosed }
 			/>
 			<FloatingPanelBody
 				sx={

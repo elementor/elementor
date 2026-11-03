@@ -6,11 +6,14 @@ export const MODULE_LLMS_TXT = 'llms-txt';
 export const MODULE_MARKDOWN_CONTENT = 'markdown-content';
 export const MODULE_BOT_ACCESS_CONTROL = 'bot-access-control';
 export const MODULE_AGENT_DISCOVERY = 'agent-discovery';
+export const MODULE_BROWSER_TOOLS = 'browser-tools';
 
 export const LLMS_SETTINGS_KEY = 'llms_txt';
 export const MARKDOWN_SETTINGS_KEY = 'markdown_content';
 export const BOT_ACCESS_SETTINGS_KEY = 'bot_access_control';
 export const AGENT_DISCOVERY_SETTINGS_KEY = 'agent_discovery';
+export const BROWSER_TOOLS_SETTINGS_KEY = 'browser_tools';
+export const BUSINESS_DETAILS_SETTINGS_KEY = 'business_details';
 
 export const BOT_PERMISSION_SEARCH = 'search';
 export const BOT_PERMISSION_AI_INPUT = 'aiInput';
@@ -60,5 +63,10 @@ export const getModules = () => [
 		id: MODULE_AGENT_DISCOVERY,
 		title: __( 'Agent discovery', 'elementor' ),
 		description: __( 'Tell agents what this site offers them', 'elementor' ),
+	},
+	{
+		id: MODULE_BROWSER_TOOLS,
+		title: __( 'Agent browser tools', 'elementor' ),
+		description: __( 'Let agents search and read your site while browsing', 'elementor' ),
 	},
 ];

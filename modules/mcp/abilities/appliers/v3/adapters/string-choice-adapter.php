@@ -23,7 +23,13 @@ class String_Choice_Adapter implements V3_Control_Adapter {
 			return null;
 		}
 
-		return $this->is_listed_option( $value, $control ) ? $value : null;
+		if ( $this->is_listed_option( $value, $control ) ) {
+			return $value;
+		}
+
+		$physical = Text_Alignment::to_physical( $value );
+
+		return null !== $physical && $this->is_listed_option( $physical, $control ) ? $physical : null;
 	}
 
 	public function from_control_value( $control_value, ?array $sides ): ?array {

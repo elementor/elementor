@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { FEATURE_MARKDOWN, FEATURE_MARKDOWN_CONTENT } from '../analytics/agent-ready-events';
+import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-agent-ready-event';
 import { saveAgentReadySettings } from '../api';
 import { MARKDOWN_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
@@ -37,20 +39,32 @@ export const useMarkdownSettings = ( initialState ) => {
 			.finally( () => setIsSaving( false ) );
 	};
 
-	const toggleEnabled = () => saveSettings( ! isEnabled, postTypes );
+	const toggleEnabled = () => {
+		trackFeatureToggled( { featureName: FEATURE_MARKDOWN_CONTENT, isEnabled: ! isEnabled, hasConflict: false } );
 
-	const togglePostType = ( name ) => saveSettings(
-		isEnabled,
-		postTypes.map( ( postType ) => (
+		return saveSettings( ! isEnabled, postTypes );
+	};
+
+	const togglePostType = ( name ) => {
+		const nextPostTypes = postTypes.map( ( postType ) => (
 			postType.name === name ? { ...postType, included: ! postType.included } : postType
-		) ),
-	);
+		) );
+
+		trackPostTypeToggled( {
+			featureName: FEATURE_MARKDOWN,
+			postType: name,
+			isIncluded: nextPostTypes.find( ( postType ) => postType.name === name )?.included,
+		} );
+
+		return saveSettings( isEnabled, nextPostTypes );
+	};
 
 	return {
 		isEnabled,
 		isSaving,
 		postTypes,
 		saveError,
+		setIsEnabled,
 		toggleEnabled,
 		togglePostType,
 	};

@@ -1301,18 +1301,12 @@ class WP_Import extends \WP_Importer {
 	 * @return mixed
 	 */
 	private function handle_duplicated_nav_menu_term( $term ) {
-		$duplicate_slug = $term['slug'] . '-duplicate';
-		$duplicate_name = $term['term_name'] . ' duplicate';
+		$duplicate = Duplicate_Term::generate( $term['slug'], $term['term_name'], 'nav_menu' );
 
-		while ( term_exists( $duplicate_slug, 'nav_menu' ) ) {
-			$duplicate_slug .= '-duplicate';
-			$duplicate_name .= ' duplicate';
-		}
+		$this->mapped_terms_slug[ $term['slug'] ] = $duplicate['slug'];
 
-		$this->mapped_terms_slug[ $term['slug'] ] = $duplicate_slug;
-
-		$term['slug'] = $duplicate_slug;
-		$term['term_name'] = $duplicate_name;
+		$term['slug'] = $duplicate['slug'];
+		$term['term_name'] = $duplicate['name'];
 
 		return $term;
 	}

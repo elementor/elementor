@@ -34,6 +34,7 @@ export const audit: Audit = {
 					label: __( 'No accessibility widget is active on this site.', 'elementor' ),
 					externalUrl: isReady ? ctx.pageContext.ally_widget_settings_url : ctx.pageContext.ally_plugin_url,
 					ctaLabel: __( 'Activate', 'elementor' ),
+					appInstalled: isReady,
 				},
 			],
 		};

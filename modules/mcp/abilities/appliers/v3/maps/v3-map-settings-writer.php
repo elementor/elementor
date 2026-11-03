@@ -4,17 +4,21 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps;
 
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\Mcp\Abilities\Utils\Plain_Schema_Validator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Writes plain map settings the V4 way: resolve the plain value against the setting's prop type,
- * validate and sanitize it, then let the setting adapter convert it to the control's storage.
+ * Writes plain map settings the V4 way: check the raw value against the schema `get-widget-schemas`
+ * publishes, run the setting's explicit exceptions, resolve it against the setting's prop type, then
+ * let the setting adapter convert it to the control's storage.
  * Invalid values are skipped and reported instead of failing the request.
  */
 class V3_Map_Settings_Writer {
+
+	const REASON_SCHEMA = 'does not match the published schema (%s)';
 
 	const REASON_UNRESOLVED = 'could not be resolved';
 
@@ -22,8 +26,11 @@ class V3_Map_Settings_Writer {
 
 	private Plain_Values_Resolver $plain_values_resolver;
 
+	private Plain_Schema_Validator $schema_validator;
+
 	public function __construct( Plain_Values_Resolver $plain_values_resolver ) {
 		$this->plain_values_resolver = $plain_values_resolver;
+		$this->schema_validator = Plain_Schema_Validator::strict();
 	}
 
 	/**
@@ -48,7 +55,26 @@ class V3_Map_Settings_Writer {
 				continue;
 			}
 
-			$prop_value = $this->to_prop_value( $setting, $value );
+			if ( [] === $value && $setting->accepts_empty_list() ) {
+				$settings[ $setting->get_control_key() ] = [];
+				continue;
+			}
+
+			$checked = $this->schema_validator->validate( $value, $setting->get_published_schema(), $public_key );
+
+			if ( null !== $checked['error'] ) {
+				$rejected[ $public_key ] = sprintf( self::REASON_SCHEMA, $checked['error'] );
+				continue;
+			}
+
+			$reason = $setting->reject_reason( $checked['value'] );
+
+			if ( null !== $reason ) {
+				$rejected[ $public_key ] = $reason;
+				continue;
+			}
+
+			$prop_value = $this->to_prop_value( $setting, $checked['value'] );
 
 			if ( is_string( $prop_value ) ) {
 				$rejected[ $public_key ] = $prop_value;

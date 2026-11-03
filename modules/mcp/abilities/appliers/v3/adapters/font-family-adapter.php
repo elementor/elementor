@@ -19,7 +19,28 @@ class Font_Family_Adapter implements V3_Control_Adapter {
 	public function to_control_value( array $prop_value, ?array $sides, array $control ) {
 		$value = $prop_value['value'] ?? null;
 
-		return is_string( $value ) && '' !== $value ? $value : null;
+		if ( ! is_string( $value ) ) {
+			return null;
+		}
+
+		$family = self::single_family( $value );
+
+		return '' !== $family ? $family : null;
+	}
+
+	/**
+	 * V3 font controls hold one bare family name. The CSS the agent reads back quotes names with
+	 * spaces, so quotes are stripped and a stack is reduced to its first family; otherwise a
+	 * read-then-write stores the quotes and the rendered declaration becomes invalid.
+	 */
+	private static function single_family( string $value ): string {
+		$first = trim( explode( ',', $value, 2 )[0] );
+
+		if ( strlen( $first ) >= 2 && in_array( $first[0], [ '"', "'" ], true ) && substr( $first, -1 ) === $first[0] ) {
+			$first = substr( $first, 1, -1 );
+		}
+
+		return trim( $first );
 	}
 
 	public function from_control_value( $control_value, ?array $sides ): ?array {

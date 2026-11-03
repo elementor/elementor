@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 use Elementor\Modules\Components\PropTypes\Component_Override_Parser;
@@ -216,6 +217,10 @@ class Overridable_Props_Builder {
 			$prop_type = Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
 		} catch ( \Exception $e ) {
 			return $this->invalid_definition( sprintf( '[%s] %s', $override_key, $e->getMessage() ) );
+		}
+
+		if ( Prop_Sensitivity::is_sensitive( $prop_type ) ) {
+			return $this->invalid_definition( sprintf( '[%s] prop_key "%s" cannot be overridable.', $override_key, $prop_key ) );
 		}
 
 		$origin_value = $element['settings'][ $prop_key ] ?? $prop_type->get_default();

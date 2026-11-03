@@ -92,20 +92,31 @@ Built by `Llm_Guidance_Builder` from widget config:
 
 Props in `NON_CONFIGURABLE_PROP_KEYS` (`classes`, `attributes`, etc.) are excluded unless `llm_configurable` meta is set. Base settings props get a hint in their schema description.
 
-### v3 fallback
+### Schema (v3 widget with a map)
 
-Widgets without `atomic_props_schema` but with legacy controls return:
+A legacy V3 widget is supported only when it has a map in `modules/mcp/abilities/appliers/v3/maps/registered-maps.php` that compiles against the widget's controls. Its schema comes from the map:
 
 ```json
 {
+  "type": "object",
   "widget_version": "v3",
-  "message": "This widget exists in the editor but has no atomic props schema (V4)...",
-  "fields_note": "All settings are optional...",
-  "properties": { /* control_metadata hints */ }
+  "description": "Map description",
+  "properties": { /* map setting key → JSON schema */ },
+  "editor_settings": { },
+  "additionalProperties": false,
+  "default_style_target": "title",
+  "style_targets": {
+    "title": {
+      "label": "Title",
+      "states": ["hover"],
+      "properties": ["color", "font-size"],
+      "properties_by_state": { }
+    }
+  }
 }
 ```
 
-`build-composition` targets v4 elements; v3 fallback is informational.
+`properties` are the settings accepted in `element_config`. Visual styling goes through the `style` CSS input, which is written to the widget's controls through `style_targets`. CSS that no target binds falls back to the widget's custom CSS, which requires Elementor Pro.
 
 ### Errors
 
@@ -114,7 +125,7 @@ Widgets without `atomic_props_schema` but with legacy controls return:
 The rest are per type, under `errors` with `code` and `message`, and the valid schemas still come back:
 
 - `elementor_not_found` — unknown type or widget with `meta.llm_support: false`
-- `elementor_v3_not_supported` — legacy V3 widget that is not allowlisted
+- `elementor_v3_not_supported` — legacy V3 widget without a map that compiles
 
 ## Extension
 

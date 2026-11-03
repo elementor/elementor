@@ -37,9 +37,34 @@ async function handleGetWidgetSettings( params: { elementId: string; action: str
 	}
 
 	const settings = container.settings.attributes || {};
+
+	// Atomic elements (e.g. e-div-block, e-form) have no widgetType, their config is keyed by elType.
+	const elementType = ( container.model.get?.( 'widgetType' ) ?? container.model.get?.( 'elType' ) ) as
+		| string
+		| undefined;
+	const propsSchema = elementType ? elementor?.widgetsCache?.[ elementType ]?.atomic_props_schema : undefined;
+
 	return {
-		content: [ { type: 'text', text: encodeToolJson( settings ) } ],
+		content: [ { type: 'text', text: encodeToolJson( omitSensitiveProps( settings, propsSchema ) ) } ],
 	};
+}
+
+// Sensitive props (e.g. API keys) are hidden from agents.
+function omitSensitiveProps(
+	settings: Record< string, unknown >,
+	propsSchema?: Record< string, { meta?: unknown } >
+): Record< string, unknown > {
+	if ( ! propsSchema ) {
+		return settings;
+	}
+
+	return Object.fromEntries(
+		Object.entries( settings ).filter( ( [ key ] ) => {
+			const meta = propsSchema[ key ]?.meta as Record< string, unknown > | undefined;
+
+			return ! ( meta && ! Array.isArray( meta ) && true === meta.sensitive );
+		} )
+	);
 }
 
 async function handleGetWidgetSchema( params: { widgetType: string; action: string } ): Promise< {

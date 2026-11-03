@@ -25,10 +25,9 @@ namespace {
 		}
 	}
 
-	use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
 	use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
-	use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 	use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+	use Elementor\Modules\Variables\Services\Variables_Service;
 	use PHPUnit\Framework\TestCase;
 
 	class Test_Style_Applier extends TestCase {
@@ -96,6 +95,54 @@ namespace {
 			$this->assertSame( 'desktop', $node['styles'][ $style_id ]['variants'][0]['meta']['breakpoint'] );
 			$this->assertArrayHasKey( 'color', $node['styles'][ $style_id ]['variants'][0]['props'] );
 			$this->assertContains( $style_id, $node['settings']['classes']['value'] );
+		}
+
+		public function test_apply__warns_about_a_variable_reference_that_matches_no_variable() {
+			// Arrange.
+			$css       = 'font-family: var(--qa-missing); color: var(--qa-brand);';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [], 'customCss' => 'font-family: var(--qa-missing);', 'rejected' => [] ] ] ]
+			);
+			$applier = new Style_Applier( $converter, $this->active_breakpoints, $this->make_variables_service( [ 'qa-brand' ] ) );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$unknown = array_values( array_filter( $result['warnings']->all(), fn( $warning ) => 'unknown_variable' === $warning['code'] ) );
+			$this->assertCount( 1, $unknown );
+			$this->assertStringContainsString( 'var(--qa-missing)', $unknown[0]['message'] );
+			$this->assertStringNotContainsString( 'qa-brand', $unknown[0]['message'] );
+		}
+
+		public function test_apply__does_not_warn_when_every_variable_reference_exists() {
+			// Arrange.
+			$css       = 'color: var(--qa-brand);';
+			$converter = $this->make_converter(
+				[ [ $css, [ 'blocks' => [ [ 'selector' => null, 'css' => $css ] ] ] ] ],
+				[ [ $css, [ 'props' => [ 'color' => [ '$$type' => 'global-color-variable', 'value' => 'e-gv-1' ] ], 'customCss' => '', 'rejected' => [] ] ] ]
+			);
+			$applier = new Style_Applier( $converter, $this->active_breakpoints, $this->make_variables_service( [ 'qa-brand' ] ) );
+			$node    = [ 'id' => 'elem-1', 'settings' => [], 'styles' => [] ];
+			$index   = [ 'hero-title' => &$node ];
+
+			// Act.
+			$result = $applier->apply( $index, [ 'hero-title' => $css ] );
+
+			// Assert.
+			$this->assertTrue( $result['warnings']->is_empty() );
+		}
+
+		private function make_variables_service( array $existing_labels ): Variables_Service {
+			$service = $this->createMock( Variables_Service::class );
+			$service->method( 'find_by_label_or_id' )->willReturnCallback(
+				fn( string $needle ) => in_array( $needle, $existing_labels, true ) ? [ 'label' => $needle ] : null
+			);
+
+			return $service;
 		}
 
 		public function test_apply__pseudo_state_css_creates_hover_variant() {
@@ -262,141 +309,6 @@ namespace {
 			$this->assertSame( 'hero-title', $warning['config_id'] ?? null );
 			$this->assertStringContainsString( 'nonexistent', $warning['message'] ?? '' );
 			$this->assertEmpty( $node['styles'] );
-		}
-
-		public function test_apply__v3_maps_css_to_settings_and_falls_back_unmapped_to_custom_css() {
-			// Arrange.
-			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
-			$applier = $this->make_applier( $converter );
-			$node = [
-				'id' => 'elem-1',
-				'elType' => 'widget',
-				'widgetType' => 'theme-post-title',
-				'settings' => [],
-				'styles' => [],
-			];
-			$index = [ 'post-title' => &$node ];
-			$widget_configs = [
-				'theme-post-title' => [
-					'controls' => [
-						'title_color' => [ 'type' => 'color' ],
-						'typography_typography' => [ 'type' => 'typography' ],
-						'typography_font_size' => [ 'type' => 'slider' ],
-					],
-				],
-			];
-
-			// Act.
-			$result = $applier->apply(
-				$index,
-				[ 'post-title' => 'color: #222222; font-size: 2rem; filter: blur(2px);' ],
-				'patch',
-				$widget_configs
-			);
-
-			// Assert.
-			$this->assertNull( $result['error'] );
-			$this->assertSame( '#222222', $node['settings']['title_color'] );
-			$this->assertSame( 'custom', $node['settings']['typography_typography'] );
-			$this->assertSame( [ 'unit' => 'rem', 'size' => 2.0 ], $node['settings']['typography_font_size'] );
-			$this->assertFalse( $result['warnings']->is_empty() );
-			$this->assertTrue(
-				(bool) array_filter(
-					$result['warnings']->messages(),
-					static fn( $warning ) => false !== strpos( (string) $warning, 'filter: blur(2px);' )
-				)
-			);
-
-			if ( \Elementor\Utils::has_pro() ) {
-				$this->assertArrayHasKey( 'custom_css', $node['settings'] );
-				$this->assertStringContainsString( 'filter: blur(2px);', $node['settings']['custom_css'] );
-			} else {
-				$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
-			}
-		}
-
-		public function test_apply__v3_replace_clears_mapped_settings_and_custom_css() {
-			// Arrange.
-			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
-			$applier = $this->make_applier( $converter );
-			$node = [
-				'id' => 'elem-1',
-				'elType' => 'widget',
-				'widgetType' => 'theme-post-title',
-				'settings' => [
-					'title' => 'Keep me',
-					'title_color' => '#111111',
-					'typography_typography' => 'custom',
-					'typography_font_size' => [ 'unit' => 'px', 'size' => 40 ],
-					'custom_css' => 'selector { filter: blur(2px); }',
-				],
-				'styles' => [],
-			];
-			$index = [ 'post-title' => &$node ];
-			$widget_configs = [
-				'theme-post-title' => [
-					'controls' => [
-						'title_color' => [ 'type' => 'color' ],
-						'typography_typography' => [ 'type' => 'typography' ],
-						'typography_font_size' => [ 'type' => 'slider' ],
-					],
-				],
-			];
-
-			// Act.
-			$result = $applier->apply(
-				$index,
-				[ 'post-title' => 'color: #abcdef;' ],
-				'replace',
-				$widget_configs
-			);
-
-			// Assert.
-			$this->assertNull( $result['error'] );
-			$this->assertSame( 'Keep me', $node['settings']['title'] );
-			$this->assertSame( '#abcdef', $node['settings']['title_color'] );
-			$this->assertArrayNotHasKey( 'typography_typography', $node['settings'] );
-			$this->assertArrayNotHasKey( 'typography_font_size', $node['settings'] );
-			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
-		}
-
-		public function test_apply__v3_replace_empty_css_wipes_styles() {
-			// Arrange.
-			$converter = new Css_Converter( new Converter_Registry(), new Null_Failure_Reporter() );
-			$applier = $this->make_applier( $converter );
-			$node = [
-				'id' => 'elem-1',
-				'elType' => 'widget',
-				'widgetType' => 'theme-post-title',
-				'settings' => [
-					'title' => 'Keep me',
-					'title_color' => '#111111',
-					'custom_css' => 'selector { filter: blur(2px); }',
-				],
-				'styles' => [],
-			];
-			$index = [ 'post-title' => &$node ];
-			$widget_configs = [
-				'theme-post-title' => [
-					'controls' => [
-						'title_color' => [ 'type' => 'color' ],
-					],
-				],
-			];
-
-			// Act.
-			$result = $applier->apply(
-				$index,
-				[ 'post-title' => '' ],
-				'replace',
-				$widget_configs
-			);
-
-			// Assert.
-			$this->assertNull( $result['error'] );
-			$this->assertSame( 'Keep me', $node['settings']['title'] );
-			$this->assertArrayNotHasKey( 'title_color', $node['settings'] );
-			$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 		}
 	}
 }

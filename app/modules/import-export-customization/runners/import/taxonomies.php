@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Import;
 
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\Core\Utils\ImportExport\Duplicate_Term;
 
 class Taxonomies extends Import_Runner_Base {
 
@@ -141,12 +142,7 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 	private function handle_duplicated_nav_menu_term( $term ) {
-		do {
-			$term['slug'] = $term['slug'] . '-duplicate';
-			$term['name'] = $term['name'] . ' duplicate';
-		} while ( term_exists( $term['slug'], 'nav_menu' ) );
-
-		return $term;
+		return array_merge( $term, Duplicate_Term::generate( $term['slug'], $term['name'], 'nav_menu' ) );
 	}
 
 	private function get_term_parent( $term, array $imported_terms ) {

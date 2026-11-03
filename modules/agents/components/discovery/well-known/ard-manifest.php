@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +23,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Always applicable — if any agent feature is active, this document is useful.
  */
 class Ard_Manifest extends Abstract_Well_Known_Endpoint {
+
+	private ?Module $module;
+
+	public function __construct( ?Module $module = null ) {
+		$this->module = $module;
+	}
 
 	public function get_id(): string {
 		return 'ard_manifest';
@@ -62,17 +69,43 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 	// ------------------------------------------------------------------
 
 	/**
+	 * Get the agents module instance.
+	 *
+	 * @return Module|null
+	 */
+	private function get_module(): ?Module {
+		if ( null !== $this->module ) {
+			return $this->module;
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		return $module instanceof Module ? $module : null;
+	}
+
+	/**
 	 * @param string $home Site home URL.
 	 * @return array
 	 */
 	private function build_capabilities( string $home ): array {
 		$caps = [];
 
-		// llms.txt — always present when the agent_ready experiment is active.
-		$caps['llms_txt'] = [
-			'url'      => $home . 'llms.txt',
-			'full_url' => $home . 'llms-full.txt',
-		];
+		$module = $this->get_module();
+
+		$has_llms_txt      = $module ? $module->should_advertise_llms_txt() : false;
+		$has_llms_full_txt = $module ? $module->should_advertise_llms_full_txt() : false;
+
+		if ( $has_llms_txt || $has_llms_full_txt ) {
+			$caps['llms_txt'] = [];
+
+			if ( $has_llms_txt ) {
+				$caps['llms_txt']['url'] = $home . 'llms.txt';
+			}
+
+			if ( $has_llms_full_txt ) {
+				$caps['llms_txt']['full_url'] = $home . 'llms-full.txt';
+			}
+		}
 
 		// REST API — always present on any WordPress site.
 		$caps['rest_api'] = [

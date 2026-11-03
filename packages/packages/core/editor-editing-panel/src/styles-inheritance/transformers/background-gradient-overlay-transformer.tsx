@@ -11,7 +11,7 @@ type ColorStop = Color & {
 
 type Gradient = {
 	type: string;
-	angle?: number;
+	angle?: number | null;
 	positions?: string;
 	stops: ColorStop[];
 };
@@ -43,6 +43,10 @@ const getGradientValue = ( gradient: Gradient ) => {
 		?.join( ',' );
 
 	if ( gradient.type === 'linear' ) {
+		if ( gradient.angle === null || gradient.angle === undefined ) {
+			return `linear-gradient(${ stops })`;
+		}
+
 		return `linear-gradient(${ gradient.angle }deg, ${ stops })`;
 	}
 

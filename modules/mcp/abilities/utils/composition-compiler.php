@@ -50,7 +50,7 @@ final class Composition_Compiler {
 	 * @param array     $document_tree Existing document tree used for insertion-context validation.
 	 * @param string    $parent_id     Target parent used for insertion-context validation.
 	 *
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	public function compile(
 		array $input,
@@ -66,6 +66,8 @@ final class Composition_Compiler {
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
+
+		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
 
 		[
 			'configs' => $widget_configs,
@@ -104,7 +106,7 @@ final class Composition_Compiler {
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
 		if ( empty( $subtrees ) ) {
-			return new \WP_Error(
+			return $pro_features_discovery[0] ?? new \WP_Error(
 				'empty_composition',
 				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-div-block configuration-id="..."></e-div-block>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
@@ -127,8 +129,9 @@ final class Composition_Compiler {
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
 		$warnings->merge( $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) )['warnings'] );
 
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
-		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs )['warnings'] );
+		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints(), $variables_service );
+		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch' )['warnings'] );
+		Grid_Empty_Rows_Warnings::report( $index, $warnings );
 
 		$warnings->merge( $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) )['warnings'] );
 
@@ -137,6 +140,7 @@ final class Composition_Compiler {
 			'warnings' => $warnings,
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
+			'pro_features_discovery' => $pro_features_discovery,
 		];
 	}
 
@@ -261,10 +265,7 @@ final class Composition_Compiler {
 	}
 
 	private function resolve_document_root_wrapper(): string {
-		if (
-			Widget_Context_Helper::is_standardized_maps_active()
-			&& Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER )
-		) {
+		if ( Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER ) ) {
 			return self::DOCUMENT_ROOT_V3_WRAPPER;
 		}
 

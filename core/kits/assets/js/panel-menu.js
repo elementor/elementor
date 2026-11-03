@@ -23,8 +23,7 @@ PanelMenu.createGroupItems = ( groupName ) => {
 };
 
 PanelMenu.initGroups = () => {
-	const agentsItems = PanelMenu.createGroupItems( 'agents' ),
-		settingsItems = PanelMenu.createGroupItems( 'settings' ),
+	const settingsItems = PanelMenu.createGroupItems( 'settings' ),
 		additionalSettingsProps = {
 			name: 'settings-additional-settings',
 			icon: 'eicon-tools',
@@ -48,14 +47,6 @@ PanelMenu.initGroups = () => {
 			items: PanelMenu.createGroupItems( 'theme-style' ),
 		},
 	];
-
-	if ( agentsItems.length ) {
-		groups.push( {
-			name: 'agents',
-			title: __( 'Agents', 'elementor' ),
-			items: agentsItems,
-		} );
-	}
 
 	groups.push( {
 		name: 'settings',

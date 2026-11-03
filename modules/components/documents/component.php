@@ -28,6 +28,22 @@ class Component extends Document {
 		self::ARCHIVED_META_KEY,
 		self::ARCHIVED_AT_META_KEY,
 	];
+	const EXPORTABLE_PRIVATE_META_KEYS = [
+		self::COMPONENT_UID_META_KEY,
+		self::OVERRIDABLE_PROPS_META_KEY,
+		self::ARCHIVED_META_KEY,
+	];
+	const JSON_META_KEYS = [
+		self::OVERRIDABLE_PROPS_META_KEY,
+		self::ARCHIVED_META_KEY,
+	];
+	const EXPORT_MANIFEST_KEY = 'components';
+	const EXPORT_DIRECTORY = 'content/' . self::TYPE . '/';
+	const EXPORT_DEPENDENCIES_FILE_NAME = 'dependencies';
+	const EXPORT_EXCLUDED_SETTINGS_KEYS = [
+		'overridable_props',
+		'variants',
+	];
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -172,6 +188,35 @@ class Component extends Document {
 		}
 
 		return $success;
+	}
+
+	public function get_kit_export_settings(): array {
+		return array_diff_key(
+			$this->get_data( 'settings' ) ?? [],
+			array_flip( self::EXPORT_EXCLUDED_SETTINGS_KEYS )
+		);
+	}
+
+	public function get_export_metadata() {
+		$metadata = parent::get_export_metadata();
+
+		foreach ( self::EXPORTABLE_PRIVATE_META_KEYS as $meta_key ) {
+			$value = $this->get_exportable_meta_value( $meta_key );
+
+			if ( empty( $value ) ) {
+				continue;
+			}
+
+			$metadata[ $meta_key ] = $value;
+		}
+
+		return $metadata;
+	}
+
+	private function get_exportable_meta_value( string $meta_key ) {
+		return in_array( $meta_key, self::JSON_META_KEYS, true )
+			? $this->get_json_meta( $meta_key )
+			: $this->get_meta( $meta_key );
 	}
 
 	public function print_elements_without_cache( array $elements_data ) {

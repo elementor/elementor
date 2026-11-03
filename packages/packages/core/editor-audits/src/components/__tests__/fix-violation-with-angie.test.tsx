@@ -3,10 +3,24 @@ import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../../constants';
+import { type AuditMeta } from '../../types';
+import { trackFindingClicked } from '../../utils/tracking';
 import FixViolationWithAngie from '../fix-violation-with-angie';
 
 const mockIsAngieAvailable = jest.fn();
 const mockSendPromptToAngie = jest.fn();
+
+jest.mock( '../../utils/tracking' );
+
+const AUDIT: AuditMeta = {
+	id: 'audits/page-title',
+	title: 'Page title',
+	description: '',
+	fixHint: '',
+	categories: [ 'seo' ],
+	severity: 'error',
+	weight: 10,
+};
 
 jest.mock( '@elementor/editor-mcp', () => {
 	const { toolPrompts } = jest.requireActual( '@elementor/editor-mcp' ) as { toolPrompts: unknown };
@@ -25,10 +39,11 @@ describe( 'FixViolationWithAngie', () => {
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
 		mockSendPromptToAngie.mockReset();
+		jest.mocked( trackFindingClicked ).mockClear();
 	} );
 
 	it( 'renders a link with the angie-prompt hash', () => {
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Fix with Angie' } );
 
@@ -38,7 +53,7 @@ describe( 'FixViolationWithAngie', () => {
 	it( 'calls sendPromptToAngie when Angie is installed', () => {
 		mockIsAngieAvailable.mockReturnValue( true );
 
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Fix with Angie' } );
 		const stopPropagation = jest.fn();
@@ -49,13 +64,42 @@ describe( 'FixViolationWithAngie', () => {
 		expect( mockSendPromptToAngie ).toHaveBeenCalledWith( PROMPT );
 	} );
 
+	it( 'tracks the finding click when the prompt is sent to Angie', () => {
+		// Arrange.
+		mockIsAngieAvailable.mockReturnValue( true );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'link', { name: 'Fix with Angie' } ) );
+
+		// Assert.
+		expect( trackFindingClicked ).toHaveBeenCalledWith( {
+			audit: AUDIT,
+			locationL2: 'issues',
+			actionType: 'fix_with_angie',
+			interactionResult: 'angie_prompt_sent',
+		} );
+	} );
+
+	it( 'does not track a finding click when Angie is not installed', () => {
+		// Arrange.
+		mockIsAngieAvailable.mockReturnValue( false );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'link', { name: 'Fix with Angie' } ) );
+
+		// Assert.
+		expect( trackFindingClicked ).not.toHaveBeenCalled();
+	} );
+
 	it( 'dispatches create-widget event when Angie is not installed', () => {
 		mockIsAngieAvailable.mockReturnValue( false );
 
 		const handler = jest.fn();
 		window.addEventListener( CREATE_WIDGET_EVENT, handler );
 
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		fireEvent.click( screen.getByRole( 'link', { name: 'Fix with Angie' } ) );
 
@@ -73,7 +117,7 @@ describe( 'FixViolationWithAngie', () => {
 	it( 'stops event propagation on click', () => {
 		mockIsAngieAvailable.mockReturnValue( true );
 
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		const link = screen.getByRole( 'link', { name: 'Fix with Angie' } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
@@ -88,7 +132,7 @@ describe( 'FixViolationWithAngie', () => {
 
 	it( 'renders as an icon-only button with an accessible name but no visible text', () => {
 		// Arrange & Act.
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		// Assert.
 		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( '' );
@@ -96,7 +140,9 @@ describe( 'FixViolationWithAngie', () => {
 
 	it( 'renders visible "Fix with Angie" text when variant is "button"', () => {
 		// Arrange & Act.
-		renderWithTheme( <FixViolationWithAngie prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } variant="button" /> );
+		renderWithTheme(
+			<FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } variant="button" />
+		);
 
 		// Assert.
 		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( 'Fix with Angie' );

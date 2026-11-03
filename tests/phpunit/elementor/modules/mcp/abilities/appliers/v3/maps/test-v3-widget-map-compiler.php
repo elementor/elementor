@@ -533,6 +533,83 @@ class Test_V3_Widget_Map_Compiler extends TestCase {
 		], $schemas['stretch'] );
 	}
 
+	public function test_compile__uses_the_control_default_as_the_schema_default() {
+		// Arrange.
+		$map = $this->valid_map()->settings( [
+			'inner_text' => V3_Setting::bind_to( 'inner_text' )->string(),
+			'stretch' => V3_Setting::bind_to( 'stretch' )->switcher(),
+			'subtitle' => V3_Setting::bind_to( 'subtitle' )->string(),
+		] );
+		$controls = array_merge( $this->controls(), [
+			'inner_text' => [
+				'type' => 'text',
+				'default' => 'Web Designer',
+			],
+			'stretch' => [
+				'type' => 'switcher',
+				'default' => 'yes',
+			],
+			'subtitle' => [
+				'type' => 'text',
+				'default' => '',
+			],
+		] );
+
+		// Act.
+		$schemas = $this->compile( $map, $controls )->get_setting_schemas();
+
+		// Assert.
+		$this->assertSame( 'Web Designer', $schemas['inner_text']['default'] );
+		$this->assertTrue( $schemas['stretch']['default'] );
+		$this->assertArrayNotHasKey( 'default', $schemas['subtitle'] );
+	}
+
+	public function test_compile__describes_dates_switchers_and_empty_choice_keys_in_schema_values() {
+		// Arrange.
+		$map = $this->valid_map()->settings( [
+			'due_date' => V3_Setting::bind_to( 'due_date' )->string(),
+			'show_labels' => V3_Setting::bind_to( 'show_labels' )->switcher(),
+			'gallery_display_caption' => V3_Setting::bind_to( 'gallery_display_caption' )->enum_from_control(),
+		] );
+		$controls = array_merge( $this->controls(), [
+			'due_date' => [
+				'type' => 'date_time',
+				'condition' => [ 'countdown_type' => 'due_date' ],
+			],
+			'countdown_type' => [
+				'type' => 'select',
+				'options' => [ 'due_date' => 'Due Date' ],
+			],
+			'show_labels' => [
+				'type' => 'switcher',
+				'condition' => [ 'show_days' => 'yes' ],
+			],
+			'show_days' => [
+				'type' => 'switcher',
+			],
+			'gallery_display_caption' => [
+				'type' => 'select',
+				'default' => '',
+				'options' => [
+					'none' => 'None',
+					'' => 'Attachment Caption',
+				],
+			],
+		] );
+
+		// Act.
+		$schemas = $this->compile( $map, $controls )->get_setting_schemas();
+
+		// Assert.
+		$this->assertSame(
+			'Date and time as YYYY-MM-DD HH:MM, in the site timezone. Only takes effect when countdown_type is \'due_date\'.',
+			$schemas['due_date']['description']
+		);
+		$this->assertSame( 'Only takes effect when show_days is true.', $schemas['show_labels']['description'] );
+		$this->assertSame( [ 'none', 'attachment-caption' ], $schemas['gallery_display_caption']['enum'] );
+		$this->assertSame( 'attachment-caption', $schemas['gallery_display_caption']['default'] );
+	}
+
 	public function test_compile__drops_setting_when_control_is_missing() {
 		// Arrange.
 		$map = $this->valid_map()->settings( [ 'subtitle' => V3_Setting::bind_to( 'subtitle' )->string() ] );

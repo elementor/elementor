@@ -32,6 +32,7 @@ export const audit: Audit = {
 					ctaLabel: __( 'Create', 'elementor' ),
 					secondaryCtaLabel: __( 'Learn more', 'elementor' ),
 					secondaryCtaUrl: 'https://elementor.com/help/start-using-ally/#statement',
+					appInstalled: isReady,
 				},
 			],
 		};

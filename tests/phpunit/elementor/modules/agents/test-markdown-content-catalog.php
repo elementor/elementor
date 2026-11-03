@@ -167,4 +167,54 @@ class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( [], $items );
 	}
+
+	public function test_search_content__matches_body_text_and_respects_the_limit() {
+		// Arrange
+		$limit = 2;
+		$matching_ids = $this->factory()->post->create_many( $limit + 1, [
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'Services',
+			'post_content' => 'We offer gardening in the city.',
+		] );
+		$this->factory()->post->create( [
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'About',
+			'post_content' => 'Our story.',
+		] );
+
+		// Act
+		$items = $this->catalog->search_content( [ 'page' ], 'gardening', $limit );
+
+		// Assert
+		$this->assertCount( $limit, $items );
+		$this->assertEmpty( array_diff( array_column( $items, 'id' ), $matching_ids ) );
+	}
+
+	public function test_search_content__skips_drafts_and_noindex() {
+		// Arrange
+		$visible_id = $this->factory()->post->create( [
+			'post_type'    => 'post',
+			'post_status'  => 'publish',
+			'post_content' => 'Gardening tips.',
+		] );
+		$this->factory()->post->create( [
+			'post_type'    => 'post',
+			'post_status'  => 'draft',
+			'post_content' => 'Gardening draft.',
+		] );
+		$noindex_id = $this->factory()->post->create( [
+			'post_type'    => 'post',
+			'post_status'  => 'publish',
+			'post_content' => 'Gardening secrets.',
+		] );
+		update_post_meta( $noindex_id, '_yoast_wpseo_meta-robots-noindex', '1' );
+
+		// Act
+		$items = $this->catalog->search_content( [ 'post' ], 'gardening', Markdown_Content_Catalog::PAGE_SIZE );
+
+		// Assert
+		$this->assertSame( [ $visible_id ], array_column( $items, 'id' ) );
+	}
 }

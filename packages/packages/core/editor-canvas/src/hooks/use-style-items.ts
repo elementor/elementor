@@ -6,9 +6,10 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import { type RendererStyleDefinition, type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
 import { abortPreviousRuns } from '../utils/abort-previous-runs';
-import { removeProviderPregeneratedLinks, resetRemovedProviders } from '../utils/pregenerated-links-removal';
+import { resetRemovedProviders } from '../utils/pregenerated-links-removal';
 import { signalizedProcess } from '../utils/signalized-process';
 import { useOnMount } from './use-on-mount';
+import { usePregeneratedLinksHandoff } from './use-pregenerated-links-handoff';
 import { useStylePropResolver } from './use-style-prop-resolver';
 import { useStyleRenderer } from './use-style-renderer';
 
@@ -28,7 +29,7 @@ type ProviderAndSubscriber = {
 
 type ProviderAndStyleItemsMap = Record< string, ProviderAndStyleItems >;
 
-export function useStyleItems() {
+export function useStyleItems( canvasHead?: HTMLElement | null ) {
 	const resolve = useStylePropResolver();
 	const renderStyles = useStyleRenderer( resolve );
 	const breakpoints = useBreakpoints();
@@ -87,6 +88,8 @@ export function useStyleItems() {
 			await Promise.all( promises );
 		} );
 	} );
+
+	usePregeneratedLinksHandoff( canvasHead, styleItems );
 
 	const breakpointSorter = useMemo(
 		() => createBreakpointSorter( breakpoints.map( ( breakpoint ) => breakpoint.id ) ),
@@ -157,11 +160,6 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 				const cache = getCache();
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
-
-				if ( hasCache && provider.isPregeneratedLink ) {
-					// if styles were rendered already (i.e. hasCache = true), we can safely remove the pregenerated css rules imported via <link /> tags
-					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
-				}
 
 				if ( hasDiffInfo && hasCache ) {
 					return updateItems( cache, previous, current, signal );

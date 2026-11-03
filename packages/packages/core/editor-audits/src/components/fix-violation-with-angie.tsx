@@ -5,14 +5,17 @@ import { Button, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../constants';
+import { type AuditMeta } from '../types';
+import { trackFindingClicked } from '../utils/tracking';
 
 type Props = {
+	audit: AuditMeta;
 	prompt: string;
 	panelZIndex: number;
 	variant?: 'icon' | 'button';
 };
 
-export default function FixViolationWithAngie( { prompt, panelZIndex, variant = 'icon' }: Props ) {
+export default function FixViolationWithAngie( { audit, prompt, panelZIndex, variant = 'icon' }: Props ) {
 	const label = __( 'Fix with Angie', 'elementor' );
 	const href = `#angie-prompt=${ encodeURIComponent( prompt ) }`;
 
@@ -22,6 +25,12 @@ export default function FixViolationWithAngie( { prompt, panelZIndex, variant = 
 
 		if ( isAngieAvailable() ) {
 			sendPromptToAngie( prompt );
+			trackFindingClicked( {
+				audit,
+				locationL2: 'issues',
+				actionType: 'fix_with_angie',
+				interactionResult: 'angie_prompt_sent',
+			} );
 			return;
 		}
 

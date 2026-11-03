@@ -34,16 +34,20 @@ export function getElementSettingsWithDefaults( propsSchema: PropsSchema, elemen
 	return elementSettingsWithDefaults as Values;
 }
 
+export function isHiddenByDependency( dependency: Dependency | undefined, values: Values ): boolean {
+	const depCheck = isDependencyMet( dependency, values );
+
+	const failingTerm = ! depCheck.isMet ? depCheck.failingDependencies[ 0 ] : undefined;
+
+	return !! failingTerm && ! isDependency( failingTerm ) && failingTerm.effect === 'hide';
+}
+
 export function extractDependencyEffect( bind: string, propsSchema: PropsSchema, settings: Props ): DependencyEffect {
 	const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, settings );
 	const propType = propsSchema[ bind ];
-	const depCheck = isDependencyMet( propType?.dependencies, settingsWithDefaults );
-
-	const failingTerm = ! depCheck.isMet ? depCheck.failingDependencies[ 0 ] : undefined;
-	const isHidden = !! failingTerm && ! isDependency( failingTerm ) && failingTerm?.effect === 'hide';
 
 	return {
-		isHidden,
+		isHidden: isHiddenByDependency( propType?.dependencies, settingsWithDefaults ),
 		isDisabled: ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, settingsWithDefaults ).isMet,
 	};
 }

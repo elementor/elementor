@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
+	const LOOP_ITEMS_COUNT = 3;
+
 	private $test_style_key = 'test-style';
 	private $test_additional_style_key = 'another-style';
 	private $filesystemMock;
@@ -638,7 +640,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		$this->assertEquals( 1, $call_count, 'First render invokes get_styles once' );
 
-		// Act - second render: files are still missing on disk.
+		// Act - next request: files are still missing on disk.
+		$this->simulate_next_request();
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
 		// Assert - CSS_Files_Manager notices the missing files (should_exist=true but exists=false)
@@ -689,7 +692,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		$this->assertEquals( 1, $call_count );
 
-		// Act - second render.
+		// Act - next request.
+		$this->simulate_next_request();
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
 		// Assert - no regeneration for breakpoints that legitimately produced no CSS.
@@ -746,5 +750,124 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$wp_styles->registered,
 			'A failed write must not enqueue a broken asset URL'
 		);
+	}
+
+	public function test_enqueue__skips_repeated_passes_without_newly_rendered_posts() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		$register_calls = 0;
+		$get_styles_calls = 0;
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( &$register_calls, &$get_styles_calls ) {
+			++$register_calls;
+
+			$styles_manager->register( [ $this->test_style_key ], function () use ( &$get_styles_calls ) {
+				++$get_styles_calls;
+
+				return $this->get_test_style_defs();
+			} );
+		}, 10, 1 );
+
+		// Act.
+		for ( $i = 0; $i < self::LOOP_ITEMS_COUNT; $i++ ) {
+			do_action( 'elementor/post/render', 1 );
+			do_action( 'elementor/frontend/after_enqueue_post_styles' );
+		}
+
+		// Assert.
+		$this->assertSame( 1, $register_calls );
+		$this->assertSame( 1, $get_styles_calls );
+	}
+
+	public function test_enqueue__later_pass_regenerates_only_new_or_invalid_styles() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'exists' )->willReturn( true );
+		$this->filesystemMock->method( 'size' )->willReturn( 1024 );
+
+		$registered_post_ids = [];
+		$get_styles_calls = [];
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager, $post_ids ) use ( &$registered_post_ids, &$get_styles_calls ) {
+			$registered_post_ids[] = $post_ids;
+
+			foreach ( $post_ids as $post_id ) {
+				$styles_manager->register( [ $this->test_style_key, $post_id ], function () use ( $post_id, &$get_styles_calls ) {
+					$get_styles_calls[ $post_id ] = ( $get_styles_calls[ $post_id ] ?? 0 ) + 1;
+
+					return $this->get_test_style_defs();
+				} );
+			}
+		}, 10, 2 );
+
+		// Act.
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		do_action( 'elementor/post/render', 2 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert.
+		global $wp_styles;
+
+		$this->assertSame( [ [ 1 ], [ 1, 2 ] ], $registered_post_ids );
+		$this->assertSame( [ 1 => 1, 2 => 1 ], $get_styles_calls );
+		$this->assertArrayHasKey( $this->test_style_key . '-2-desktop', $wp_styles->registered );
+	}
+
+	public function test_enqueue__later_pass_retries_styles_whose_write_failed() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$is_write_failing = true;
+		$this->filesystemMock->method( 'put_contents' )->willReturnCallback( function () use ( &$is_write_failing ) {
+			return ! $is_write_failing;
+		} );
+
+		$get_styles_calls = 0;
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( &$get_styles_calls ) {
+			$styles_manager->register( [ $this->test_style_key ], function () use ( &$get_styles_calls ) {
+				++$get_styles_calls;
+
+				return $this->get_test_style_defs();
+			} );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$is_write_failing = false;
+
+		// Act.
+		do_action( 'elementor/post/render', 2 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert.
+		global $wp_styles;
+
+		$this->assertSame( 2, $get_styles_calls );
+		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
+	}
+
+	private function simulate_next_request(): void {
+		remove_all_actions( 'elementor/frontend/after_enqueue_post_styles' );
+		remove_all_actions( 'elementor/post/render' );
+		remove_all_actions( 'elementor/atomic-widgets/styles/clear' );
+
+		wp_cache_flush();
+
+		( new Atomic_Styles_Manager() )->register_hooks();
+
+		do_action( 'elementor/post/render', 1 );
 	}
 }
