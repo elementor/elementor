@@ -32,7 +32,7 @@ import {
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
-import { reloadEditorAfterConnectSuccess } from '../utils/reload-editor-after-connect-success';
+import { reloadEditorAfterConnectSuccess, reloadEditorForSetupRefresh } from '../utils/reload-editor-after-connect-success';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
@@ -180,7 +180,6 @@ export function ProSetupPanelPromo() {
 
 			if ( config && 'connect' === config.state ) {
 				applyPromotionConfig( config );
-				setOpen( false );
 				trackProSetupPromotionConnectResult(
 					'error',
 					__( 'License was not activated on this site.', 'elementor' )
@@ -195,7 +194,7 @@ export function ProSetupPanelPromo() {
 					additionalActionProps: [
 						{
 							children: __( 'Reload editor', 'elementor' ),
-							onClick: () => reloadEditorAfterConnectSuccess(),
+							onClick: () => reloadEditorForSetupRefresh(),
 						},
 					],
 				} );
@@ -389,6 +388,17 @@ export function ProSetupPanelPromo() {
 			setIsProcessing( true );
 
 			const connectUrlForPopup = promotionConfig?.connectUrl ?? '';
+
+			if ( ! connectUrlForPopup ) {
+				isProcessingRef.current = false;
+				setIsProcessing( false );
+				notify( {
+					type: 'error',
+					message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
+					id: 'pro-setup-promotion-connect-url-missing',
+				} );
+				return;
+			}
 
 			openConnectPopup( connectUrlForPopup );
 

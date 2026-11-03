@@ -8,7 +8,6 @@ const POPUP_CLOSED_POLL_INTERVAL_MS = 400;
 const SETUP_VERIFY_POLL_INTERVAL_MS = 1500;
 const POPUP_CLOSED_VERIFY_ATTEMPTS = 10;
 const POPUP_CLOSED_VERIFY_DELAY_MS = 800;
-const CONNECT_SUCCESS_WINDOW_EVENT = 'elementor/connect/success';
 
 type JQueryLike = {
 	on: ( event: string, handler: ( ...args: unknown[] ) => void ) => unknown;
@@ -81,7 +80,6 @@ export function useElementorConnectPopup( {
 	const activeCallbackRef = useRef< string | null >( null );
 	const successHandlerRef = useRef< ( ( ...args: unknown[] ) => void ) | null >( null );
 	const errorHandlerRef = useRef< ( ( ...args: unknown[] ) => void ) | null >( null );
-	const nativeSuccessHandlerRef = useRef< ( () => void ) | null >( null );
 	const popupClosedPollRef = useRef< ReturnType< typeof setInterval > | null >( null );
 	const setupVerifyPollRef = useRef< ReturnType< typeof setInterval > | null >( null );
 	const popupUrlRef = useRef< string >( '' );
@@ -116,11 +114,6 @@ export function useElementorConnectPopup( {
 
 		clearPopupClosedPoll();
 		clearSetupVerifyPoll();
-
-		if ( nativeSuccessHandlerRef.current ) {
-			window.removeEventListener( CONNECT_SUCCESS_WINDOW_EVENT, nativeSuccessHandlerRef.current );
-			nativeSuccessHandlerRef.current = null;
-		}
 
 		if ( callbackId ) {
 			if ( $window ) {
@@ -341,7 +334,7 @@ export function useElementorConnectPopup( {
 			const activeConnectUrl = connectUrlOverride ?? connectUrl;
 
 			if ( ! activeConnectUrl ) {
-				onErrorRef.current?.();
+				detachListeners();
 				return;
 			}
 
@@ -362,13 +355,6 @@ export function useElementorConnectPopup( {
 
 			successHandlerRef.current = successHandler;
 			errorHandlerRef.current = errorHandler;
-
-			const nativeSuccessHandler = () => {
-				void tryCompleteConnectFlow();
-			};
-
-			nativeSuccessHandlerRef.current = nativeSuccessHandler;
-			window.addEventListener( CONNECT_SUCCESS_WINDOW_EVENT, nativeSuccessHandler );
 
 			const $window = getConnectWindow();
 			const $body = getConnectBody();

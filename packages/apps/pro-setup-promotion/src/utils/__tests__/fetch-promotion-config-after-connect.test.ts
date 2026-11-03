@@ -1,4 +1,4 @@
-import { fetchPromotionConfigAfterConnect } from '../../../../../../packages/apps/pro-setup-promotion/src/utils/fetch-promotion-config-after-connect.js';
+import { fetchPromotionConfigAfterConnect } from '../fetch-promotion-config-after-connect';
 
 describe( 'fetchPromotionConfigAfterConnect', () => {
 	beforeEach( () => {
@@ -31,6 +31,20 @@ describe( 'fetchPromotionConfigAfterConnect', () => {
 		const fetchConfig = jest
 			.fn()
 			.mockResolvedValueOnce( { state: 'connect' } )
+			.mockResolvedValueOnce( { state: 'install' } );
+
+		const resultPromise = fetchPromotionConfigAfterConnect( fetchConfig );
+
+		await jest.runAllTimersAsync();
+
+		await expect( resultPromise ).resolves.toEqual( { state: 'install' } );
+		expect( fetchConfig ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'retries after a failed fetch and succeeds on a later attempt', async () => {
+		const fetchConfig = jest
+			.fn()
+			.mockRejectedValueOnce( new Error( 'network' ) )
 			.mockResolvedValueOnce( { state: 'install' } );
 
 		const resultPromise = fetchPromotionConfigAfterConnect( fetchConfig );

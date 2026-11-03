@@ -4,7 +4,14 @@ export const PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM = 'elementor_pro_setup_connect
 
 export function reloadEditorAfterConnectSuccess(): void {
 	markConnectSuccessNotificationForAfterReload();
+	reloadEditorWithCacheBust();
+}
 
+export function reloadEditorForSetupRefresh(): void {
+	reloadEditorWithCacheBust();
+}
+
+function reloadEditorWithCacheBust(): void {
 	try {
 		const url = new URL( window.location.href );
 		url.searchParams.set( PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM, String( Date.now() ) );
