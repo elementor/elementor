@@ -32,10 +32,8 @@ import {
 import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
-import {
-	reloadEditorAfterConnectSuccess,
-	reloadEditorForSetupRefresh,
-} from '../utils/reload-editor-after-connect-success';
+import { showConnectSuccessNotification } from '../utils/post-reload-connect-success-notification';
+import { reloadEditorForSetupRefresh } from '../utils/reload-editor-after-connect-success';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
@@ -104,9 +102,8 @@ async function postCompleteSetup(): Promise< CompleteSetupResult > {
 	return response.data?.data ?? {};
 }
 
-async function fetchPromotionConfig( options?: { refreshLicense?: boolean } ): Promise< ProSetupConfig | null > {
-	const params = options?.refreshLicense ? { refresh_license: 1 } : undefined;
-	const response = await httpService().get( `${ REST_BASE }/setup-state`, { params } );
+async function fetchPromotionConfig(): Promise< ProSetupConfig | null > {
+	const response = await httpService().get( `${ REST_BASE }/setup-state` );
 	const config = response.data?.data?.proSetupPromotion;
 
 	if ( ! config?.state ) {
@@ -177,9 +174,7 @@ export function ProSetupPanelPromo() {
 		setOpen( false );
 
 		try {
-			const config = await fetchPromotionConfigAfterConnect( () =>
-				fetchPromotionConfig( { refreshLicense: true } )
-			);
+			const config = await fetchPromotionConfigAfterConnect( fetchPromotionConfig );
 
 			if ( config && 'connect' === config.state ) {
 				applyPromotionConfig( config );
@@ -206,7 +201,7 @@ export function ProSetupPanelPromo() {
 
 			applyPromotionConfig( null );
 			trackProSetupPromotionConnectResult( 'success' );
-			reloadEditorAfterConnectSuccess();
+			showConnectSuccessNotification();
 		} catch {
 			notify( {
 				type: 'error',
@@ -254,10 +249,8 @@ export function ProSetupPanelPromo() {
 		} );
 	};
 
-	const isProSetupConnectComplete = async ( options?: { refreshLicense?: boolean } ): Promise< boolean > => {
-		const config = await fetchPromotionConfig( {
-			refreshLicense: Boolean( options?.refreshLicense ),
-		} );
+	const isProSetupConnectComplete = async (): Promise< boolean > => {
+		const config = await fetchPromotionConfig();
 
 		return ! config || 'connect' !== config.state;
 	};

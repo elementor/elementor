@@ -28,7 +28,7 @@ type ConnectPopupOptions = {
 	onSuccess?: () => void | Promise< void >;
 	onError?: () => void;
 	onPopupBlocked?: ( retryOpen: () => void ) => void;
-	verifyConnectComplete?: ( options?: { refreshLicense?: boolean } ) => Promise< boolean >;
+	verifyConnectComplete?: () => Promise< boolean >;
 };
 
 let callbackCounter = 0;
@@ -160,23 +160,15 @@ export function useElementorConnectPopup( {
 		);
 	}, [] );
 
-	const verifySetupComplete = useCallback( async ( refreshLicense: boolean ): Promise< boolean > => {
+	const verifySetupComplete = useCallback( async (): Promise< boolean > => {
 		const verify = verifyConnectCompleteRef.current;
 
 		if ( ! verify ) {
 			return true;
 		}
 
-		return verify( { refreshLicense } );
+		return verify();
 	}, [] );
-
-	const verifySetupCompleteWithOptionalRefresh = useCallback( async (): Promise< boolean > => {
-		if ( await verifySetupComplete( false ) ) {
-			return true;
-		}
-
-		return verifySetupComplete( true );
-	}, [ verifySetupComplete ] );
 
 	const finishConnectFlow = useCallback(
 		( outcome: 'success' | 'error' ) => {
@@ -213,7 +205,7 @@ export function useElementorConnectPopup( {
 		verifyInFlightRef.current = true;
 
 		try {
-			if ( await verifySetupCompleteWithOptionalRefresh() ) {
+			if ( await verifySetupComplete() ) {
 				finishConnectFlow( 'success' );
 			}
 		} catch {
@@ -221,7 +213,7 @@ export function useElementorConnectPopup( {
 		} finally {
 			verifyInFlightRef.current = false;
 		}
-	}, [ finishConnectFlow, verifySetupCompleteWithOptionalRefresh ] );
+	}, [ finishConnectFlow, verifySetupComplete ] );
 
 	const handlePopupClosed = useCallback( () => {
 		if ( connectFlowCompletedRef.current || ! activeCallbackRef.current ) {
@@ -244,12 +236,7 @@ export function useElementorConnectPopup( {
 					}
 
 					try {
-						const isLastAttempt = attempt === POPUP_CLOSED_VERIFY_ATTEMPTS - 1;
-						const isComplete = isLastAttempt
-							? await verifySetupCompleteWithOptionalRefresh()
-							: await verifySetupComplete( false );
-
-						if ( isComplete ) {
+						if ( await verifySetupComplete() ) {
 							finishConnectFlow( 'success' );
 							return;
 						}
@@ -279,7 +266,6 @@ export function useElementorConnectPopup( {
 		finishConnectFlow,
 		isFlowStillActive,
 		verifySetupComplete,
-		verifySetupCompleteWithOptionalRefresh,
 	] );
 
 	const startSetupVerifyPoll = useCallback( () => {
