@@ -5,24 +5,6 @@ const PIPELINE_MIME_TYPES_BY_EXTENSION: Record< string, string > = {
 
 type MimeMap = Record< string, string >;
 
-type UploadPipelineWindow = Window & {
-	_wpMediaUploadPipelineSettings?: {
-		allowedMimeTypes?: MimeMap;
-	};
-	wp?: {
-		data?: {
-			select: ( store: object ) => {
-				getSettings?: () => {
-					allowedMimeTypes?: MimeMap;
-				};
-			};
-		};
-		uploadMedia?: {
-			store?: object;
-		};
-	};
-};
-
 type AddedMime = {
 	key: string;
 	map: MimeMap;
@@ -55,15 +37,14 @@ export function allowPipelineMimeTypes( extensions: string[] ): () => void {
 }
 
 function collectMimeMaps(): MimeMap[] {
-	const pipelineWindow = window as UploadPipelineWindow;
 	const maps: MimeMap[] = [];
-	const localized = pipelineWindow._wpMediaUploadPipelineSettings?.allowedMimeTypes;
+	const localized = window._wpMediaUploadPipelineSettings?.allowedMimeTypes;
 
 	if ( isMimeMap( localized ) ) {
 		maps.push( localized );
 	}
 
-	const storeMap = readStoreMimeMap( pipelineWindow );
+	const storeMap = readStoreMimeMap();
 
 	if ( storeMap && ! maps.includes( storeMap ) ) {
 		maps.push( storeMap );
@@ -72,15 +53,15 @@ function collectMimeMaps(): MimeMap[] {
 	return maps;
 }
 
-function readStoreMimeMap( pipelineWindow: UploadPipelineWindow ): MimeMap | undefined {
-	const store = pipelineWindow.wp?.uploadMedia?.store;
+function readStoreMimeMap(): MimeMap | undefined {
+	const store = window.wp?.uploadMedia?.store;
 
-	if ( ! store || ! pipelineWindow.wp?.data?.select ) {
+	if ( ! store || ! window.wp?.data?.select ) {
 		return undefined;
 	}
 
 	try {
-		const allowedMimeTypes = pipelineWindow.wp.data.select( store ).getSettings?.()?.allowedMimeTypes;
+		const allowedMimeTypes = window.wp.data.select( store ).getSettings?.()?.allowedMimeTypes;
 
 		return isMimeMap( allowedMimeTypes ) ? allowedMimeTypes : undefined;
 	} catch {
@@ -100,5 +81,5 @@ function addMissingMimeTypes( map: MimeMap, extras: MimeMap ): AddedMime[] {
 }
 
 function isMimeMap( value: unknown ): value is MimeMap {
-	return Boolean( value ) && typeof value === 'object';
+	return Boolean( value ) && 'object' === typeof value;
 }

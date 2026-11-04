@@ -74,5 +74,5 @@ function addMissingMimeTypes( map, extras ) {
 }
 
 function isMimeMap( value ) {
-	return Boolean( value ) && typeof value === 'object';
+	return Boolean( value ) && 'object' === typeof value;
 }

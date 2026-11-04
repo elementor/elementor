@@ -2,40 +2,20 @@ import { allowPipelineMimeTypes } from '../wp-media-upload-pipeline';
 
 type MimeMap = Record< string, string >;
 
-type PipelineWindow = Window & {
-	_wpMediaUploadPipelineSettings?: {
-		allowedMimeTypes?: MimeMap;
-	};
-	wp?: {
-		data?: {
-			select: ( store: object ) => {
-				getSettings?: () => {
-					allowedMimeTypes?: MimeMap;
-				};
-			};
-		};
-		uploadMedia?: {
-			store?: object;
-		};
-	};
-};
-
-const pipelineWindow = window as PipelineWindow;
-
 describe( 'allowPipelineMimeTypes', () => {
 	const store = {};
 
 	afterEach( () => {
-		delete pipelineWindow._wpMediaUploadPipelineSettings;
-		delete pipelineWindow.wp;
+		delete window._wpMediaUploadPipelineSettings;
+		delete window.wp;
 	} );
 
 	it( 'adds svg and json to the localized list and a separate upload-store list', () => {
 		// Arrange.
 		const localized: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
 		const storeMimeTypes: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
-		pipelineWindow._wpMediaUploadPipelineSettings = { allowedMimeTypes: localized };
-		pipelineWindow.wp = {
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes: localized };
+		window.wp = {
 			uploadMedia: { store },
 			data: {
 				select: () => ( {
@@ -66,8 +46,8 @@ describe( 'allowPipelineMimeTypes', () => {
 	it( 'updates a shared mime map once', () => {
 		// Arrange.
 		const shared: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
-		pipelineWindow._wpMediaUploadPipelineSettings = { allowedMimeTypes: shared };
-		pipelineWindow.wp = {
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes: shared };
+		window.wp = {
 			uploadMedia: { store },
 			data: {
 				select: () => ( {
@@ -94,7 +74,7 @@ describe( 'allowPipelineMimeTypes', () => {
 		const restore = allowPipelineMimeTypes( [ 'svg' ] );
 
 		// Assert.
-		expect( pipelineWindow._wpMediaUploadPipelineSettings ).toBeUndefined();
+		expect( window._wpMediaUploadPipelineSettings ).toBeUndefined();
 		expect( () => restore() ).not.toThrow();
 	} );
 } );
