@@ -161,9 +161,8 @@ jobs:
           # empty here unless *this* workflow was the one manually run.
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.tag }}" == "latest" ]; then
             MANUAL_LATEST_PUBLISHERS=",Ntnelbaba,davseve,Svitlana-Dykun,"
-            ACTOR=",${{ github.actor }},"
             TRIGGERING_ACTOR=",${{ github.triggering_actor }},"
-            if ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq "$ACTOR" && ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq "$TRIGGERING_ACTOR"; then
+            if ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq "$TRIGGERING_ACTOR"; then
               echo "Error: tag=latest is restricted to release managers (Ntnelbaba, davseve, Svitlana-Dykun). Use Publish Release or another dist-tag."
               exit 1
             fi
