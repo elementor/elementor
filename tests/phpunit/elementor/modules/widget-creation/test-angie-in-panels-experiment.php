@@ -24,6 +24,12 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		Plugin::$instance->experiments->remove_feature( Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
 		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
 		Plugin::$instance->experiments->add_feature( Module::get_angie_in_panels_experimental_data() );
+
+		// The tests bootstrap activates every registered experiment, so restore the real default.
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
 	}
 
 	public function tear_down() {
