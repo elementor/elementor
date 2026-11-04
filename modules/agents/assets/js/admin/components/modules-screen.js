@@ -251,9 +251,11 @@ ModulesScreen.propTypes = {
 		} ),
 		fileUrl: PropTypes.string.isRequired,
 		postTypes: PropTypes.array.isRequired,
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ),
 	} ).isRequired,
 	markdownConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ),
 	} ).isRequired,
 };
