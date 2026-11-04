@@ -15,10 +15,6 @@ export function flushAllInjections() {
 	flushInjectionsFns.forEach( ( flush ) => flush() );
 }
 
-export function registerFlushInjections( flush: () => void ) {
-	flushInjectionsFns.push( flush );
-}
-
 export type Subscribe = ( listener: () => void ) => () => void;
 
 export function createSubscription() {
