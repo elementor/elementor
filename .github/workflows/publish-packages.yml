@@ -85,46 +85,17 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     name: Publish Packages
     runs-on: ubuntu-24.04
+    environment: ${{ ( github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest' ) && 'release-owners' || '' }}
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest') && inputs.version || github.ref }}
-
-      - name: Get Configuration
-        if: github.event_name == 'workflow_dispatch'
-        id: configuration
-        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
-        with:
-          filename: "./.github/workflows/config.json"
-          prefix: config
-
-      - name: Test permissions
-        if: github.event_name == 'workflow_dispatch'
-        uses: ./.github/workflows/permissions
-        with:
-          ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED_USERS }}
-          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
-
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org/'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-
-      - name: Install Dependencies
-        run: npm run install:ci
-
       - name: Validate Inputs
         env:
           INPUT_VERSION: ${{ inputs.version }}
           INPUT_VERSION_SUFFIX: ${{ inputs.version_suffix }}
           INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_TAG: ${{ github.event.inputs.tag }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
         run: |
           # Validate version format if provided (semver X.Y.Z, no pre-release suffix here)
           if [ -n "$INPUT_VERSION" ]; then
@@ -159,10 +130,9 @@ jobs:
           # (e.g. one-click-release.yml, publish-release.yml). github.event.inputs
           # only carries the directly-dispatched workflow's own inputs, so it's
           # empty here unless *this* workflow was the one manually run.
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.tag }}" == "latest" ]; then
+          if [ "$EVENT_NAME" == "workflow_dispatch" ] && [ "$DISPATCH_TAG" == "latest" ]; then
             MANUAL_LATEST_PUBLISHERS=",Ntnelbaba,davseve,Svitlana-Dykun,"
-            TRIGGERING_ACTOR=",${{ github.triggering_actor }},"
-            if ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq "$TRIGGERING_ACTOR"; then
+            if ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq ",$TRIGGERING_ACTOR,"; then
               echo "Error: tag=latest is restricted to release managers (Ntnelbaba, davseve, Svitlana-Dykun). Use Publish Release or another dist-tag."
               exit 1
             fi
@@ -171,6 +141,39 @@ jobs:
               exit 1
             fi
           fi
+
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ ( github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest' ) && format( 'refs/tags/{0}', inputs.version ) || github.sha }}
+
+      - name: Get Configuration
+        if: github.event_name == 'workflow_dispatch'
+        id: configuration
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
+        with:
+          filename: "./.github/workflows/config.json"
+          prefix: config
+
+      - name: Test permissions
+        if: github.event_name == 'workflow_dispatch'
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED_USERS }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+
+      - name: Install Dependencies
+        run: npm run install:ci
 
       - name: Determine Tag Strategy
         id: tag-strategy
