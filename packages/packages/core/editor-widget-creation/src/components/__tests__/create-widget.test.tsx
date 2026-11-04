@@ -114,7 +114,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 	} );
 
 	describe( 'consent saving', () => {
-		it( 'saves consent to DB when Install and activate is clicked', async () => {
+		it( 'saves consent to DB when Continue is clicked', async () => {
 			mockIsAngieAvailable.mockReturnValue( false );
 			renderWithTheme( <CreateWidget /> );
 
@@ -123,7 +123,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			fireEvent.click( screen.getByRole( 'checkbox' ) );
-			fireEvent.click( screen.getByRole( 'button', { name: /Install and activate/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /^Continue$/i } ) );
 
 			await waitFor( () => {
 				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );

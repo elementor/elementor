@@ -97,7 +97,7 @@ function CreateWidgetModal( { entryPoint, onClose }: CreateWidgetModalProps ) {
 								</Typography>
 								<Typography variant="body2" fontWeight={ 500 }>
 									{ __(
-										'Ask Angie to build you full pages, custom widgets, snippets, and code directly in Elementor. Install and activate Angie once on this site to start building.',
+										'Ask Angie to build pages, layouts, widgets, and more directly in Elementor.',
 										'elementor'
 									) }
 								</Typography>
@@ -117,7 +117,7 @@ function CreateWidgetModal( { entryPoint, onClose }: CreateWidgetModalProps ) {
 											{ interpolateLinks(
 												sprintf(
 													// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
-													__( 'By installing, you agree to our %1$s & %2$s.', 'elementor' ),
+													__( 'By continuing, you agree to our %1$s & %2$s.', 'elementor' ),
 													'{{terms}}',
 													'{{privacy}}'
 												),
@@ -143,7 +143,7 @@ function CreateWidgetModal( { entryPoint, onClose }: CreateWidgetModalProps ) {
 									onClick={ handleContinue }
 									disabled={ isSubmitting || ! agreedToTerms }
 								>
-									{ __( 'Install and activate', 'elementor' ) }
+									{ __( 'Continue', 'elementor' ) }
 								</Button>
 							</Stack>
 						</Stack>
