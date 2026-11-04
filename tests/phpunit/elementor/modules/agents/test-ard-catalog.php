@@ -217,6 +217,66 @@ class Test_Ard_Catalog extends Elementor_Test_Base {
 		$this->assertSame( 'urn:air:example.com:site-a:document:llms-txt', $identifier );
 	}
 
+	public function test_build_identifier__preserves_path_segments_separately() {
+		// Arrange
+		$filter = static fn() => 'https://example.com/team/docs';
+		add_filter( 'home_url', $filter );
+
+		// Act
+		$identifier = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+
+		// Assert
+		remove_filter( 'home_url', $filter );
+		$this->assertSame( 'urn:air:example.com:team:docs:document:llms-txt', $identifier );
+	}
+
+	public function test_build_identifier__distinguishes_slashed_vs_hyphenated_paths() {
+		$filter_slashed = static fn() => 'https://example.com/team/docs';
+		$filter_hyphenated = static fn() => 'https://example.com/team-docs';
+
+		add_filter( 'home_url', $filter_slashed );
+		$identifier_slashed = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+		remove_filter( 'home_url', $filter_slashed );
+
+		add_filter( 'home_url', $filter_hyphenated );
+		$identifier_hyphenated = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+		remove_filter( 'home_url', $filter_hyphenated );
+
+		$this->assertSame( 'urn:air:example.com:team:docs:document:llms-txt', $identifier_slashed );
+		$this->assertSame( 'urn:air:example.com:team-docs:document:llms-txt', $identifier_hyphenated );
+		$this->assertNotSame( $identifier_slashed, $identifier_hyphenated );
+	}
+
+	public function test_build_identifier__distinguishes_slashed_vs_hyphenated_paths_for_skills() {
+		$filter_slashed = static fn() => 'https://example.com/team/docs';
+		$filter_hyphenated = static fn() => 'https://example.com/team-docs';
+
+		add_filter( 'home_url', $filter_slashed );
+		$identifier_slashed = Ard_Catalog::build_identifier( 'skills', 'agent-skills' );
+		remove_filter( 'home_url', $filter_slashed );
+
+		add_filter( 'home_url', $filter_hyphenated );
+		$identifier_hyphenated = Ard_Catalog::build_identifier( 'skills', 'agent-skills' );
+		remove_filter( 'home_url', $filter_hyphenated );
+
+		$this->assertSame( 'urn:air:example.com:team:docs:skills:agent-skills', $identifier_slashed );
+		$this->assertSame( 'urn:air:example.com:team-docs:skills:agent-skills', $identifier_hyphenated );
+		$this->assertNotSame( $identifier_slashed, $identifier_hyphenated );
+	}
+
+	public function test_build_identifier__sanitizes_special_characters_per_segment() {
+		// Arrange
+		$filter = static fn() => 'https://example.com/café/über-docs';
+		add_filter( 'home_url', $filter );
+
+		// Act
+		$identifier = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+
+		// Assert
+		remove_filter( 'home_url', $filter );
+		$this->assertSame( 'urn:air:example.com:cafe:uber-docs:document:llms-txt', $identifier );
+	}
+
 	public function test_is_applicable__returns_false_when_physical_catalog_exists_in_public_home_directory() {
 		// Arrange
 		$home_filter = static fn() => 'https://example.com';
