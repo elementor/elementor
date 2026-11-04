@@ -10,7 +10,13 @@ const ELEMENTOR_MENU_SELECTORS = {
 	SUBMENU_CONTAINER: '.wp-submenu',
 	SUBMENU_ITEM: '.wp-submenu li a',
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
-	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
+};
+
+const ADMIN_NAV_CLICK_EVENT = 'elementor/admin/nav-click';
+
+const EVENT_ID_BY_SLUG = {
+	'edit.php?post_type=elementor_library': 'saved_templates',
+	'elementor-app': 'theme_builder',
 };
 
 class NavigationTracking extends BaseTracking {
@@ -55,21 +61,14 @@ class NavigationTracking extends BaseTracking {
 	}
 
 	static attachSidebarNavigationTracking() {
-		const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
-
-		if ( sidebar ) {
-			this.attachSidebarClickListener( sidebar );
-		}
-	}
-
-	static attachSidebarClickListener( sidebar ) {
 		this.addEventListenerTracked(
-			sidebar,
-			'click',
+			window,
+			ADMIN_NAV_CLICK_EVENT,
 			( event ) => {
-				this.handleSidebarClick( event );
+				const { itemId, rootItem } = event.detail;
+
+				WpDashboardTracking.trackNavClicked( itemId, rootItem || null, NAV_AREAS.SIDEBAR_MENU );
 			},
-			{ capture: true },
 		);
 	}
 
@@ -97,32 +96,6 @@ class NavigationTracking extends BaseTracking {
 		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 
-	static handleSidebarClick( event ) {
-		const clickedElement = event.target.closest( 'a, button, [role="button"]' );
-
-		if ( ! clickedElement ) {
-			return;
-		}
-
-		const itemId = this.extractSidebarItemId( clickedElement );
-
-		WpDashboardTracking.trackNavClicked( itemId, null, NAV_AREAS.SIDEBAR_MENU );
-	}
-
-	static extractSidebarItemId( element ) {
-		const paragraph = element.querySelector( 'p' );
-		if ( paragraph ) {
-			return paragraph.textContent.trim();
-		}
-
-		const textContent = element.textContent.trim();
-		if ( textContent ) {
-			return textContent;
-		}
-
-		return 'unknown';
-	}
-
 	static extractPageFromUrl( href ) {
 		const urlParams = new URLSearchParams( href.split( '?' )[ 1 ] || '' );
 		const page = urlParams.get( 'page' );
@@ -141,13 +114,20 @@ class NavigationTracking extends BaseTracking {
 	}
 
 	static extractItemId( link ) {
+		const href = link.getAttribute( 'href' );
+		const slug = href ? this.extractSlugFromHref( href ) : null;
+		const eventId = slug ? this.deriveEventIdFromSlug( slug ) : '';
+
+		if ( eventId ) {
+			return eventId;
+		}
+
 		const textContent = link.textContent.trim();
 
 		if ( textContent ) {
 			return textContent;
 		}
 
-		const href = link.getAttribute( 'href' );
 		if ( href ) {
 			return this.extractPageFromUrl( href );
 		}
@@ -158,6 +138,31 @@ class NavigationTracking extends BaseTracking {
 		}
 
 		return 'unknown';
+	}
+
+	static extractSlugFromHref( href ) {
+		const urlParams = new URLSearchParams( href.split( '?' )[ 1 ] || '' );
+		const page = urlParams.get( 'page' );
+
+		if ( page ) {
+			return page;
+		}
+
+		const postType = urlParams.get( 'post_type' );
+
+		return postType ? `edit.php?post_type=${ postType }` : null;
+	}
+
+	static deriveEventIdFromSlug( slug ) {
+		if ( EVENT_ID_BY_SLUG[ slug ] ) {
+			return EVENT_ID_BY_SLUG[ slug ];
+		}
+
+		return slug
+			.replace( /^elementor-/, '' )
+			.replace( /[?#].*$/, '' )
+			.replace( /[- ]/g, '_' )
+			.toLowerCase();
 	}
 
 	static determineNavArea( link ) {
