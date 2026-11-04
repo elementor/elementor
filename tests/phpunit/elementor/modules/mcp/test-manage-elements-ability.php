@@ -256,6 +256,42 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( $copy_style_ids, $copy['settings']['classes']['value'] );
 	}
 
+	public function test_duplicate__gives_styled_child_of_copied_container_its_own_local_style() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
+		$style_result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $heading_id, 'style' => 'color: #ff0000;' ],
+			],
+		] );
+		$this->assertOkOperation( $style_result, 0 );
+		$original_child_before = $this->find_element_in_document( $post_id, $heading_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'duplicate', 'element_id' => $container_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$copy = $this->find_element_in_document( $post_id, $result['results'][0]['new_element_id'] );
+		$copied_child = $copy['elements'][0];
+		$original_child_after = $this->find_element_in_document( $post_id, $heading_id );
+		$copied_child_style_ids = array_keys( $copied_child['styles'] );
+
+		$this->assertNotEmpty( $copied_child_style_ids );
+		$this->assertSame( $original_child_before['styles'], $original_child_after['styles'] );
+		$this->assertEmpty( array_intersect( array_keys( $original_child_after['styles'] ), $copied_child_style_ids ) );
+		$this->assertSame( $copied_child_style_ids, $copied_child['settings']['classes']['value'] );
+	}
+
 	public function test_move__reparents_element_to_document_root_at_index() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();

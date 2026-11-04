@@ -71,6 +71,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'items' => [
 							'type' => 'object',
 							'properties' => [
+								'element_id' => [
+									'type' => 'string',
+									'description' => 'The element the operation targeted. For action=duplicate this is the source element.',
+								],
+								'new_element_id' => [
+									'type' => 'string',
+									'description' => 'Only for action=duplicate: the id of the new copy. Use it to edit the copy instead of the source.',
+								],
 								'warnings' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
