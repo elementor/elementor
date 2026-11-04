@@ -1,6 +1,5 @@
+import type { PipelineMimeMap } from '../types';
 import { allowPipelineMimeTypes } from '../wp-media-upload-pipeline';
-
-type MimeMap = Record< string, string >;
 
 describe( 'allowPipelineMimeTypes', () => {
 	const store = {};
@@ -12,8 +11,8 @@ describe( 'allowPipelineMimeTypes', () => {
 
 	it( 'adds svg and json to the localized list and a separate upload-store list', () => {
 		// Arrange.
-		const localized: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
-		const storeMimeTypes: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		const localized: PipelineMimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		const storeMimeTypes: PipelineMimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
 		window._wpMediaUploadPipelineSettings = { allowedMimeTypes: localized };
 		window.wp = {
 			uploadMedia: { store },
@@ -45,7 +44,7 @@ describe( 'allowPipelineMimeTypes', () => {
 
 	it( 'updates a shared mime map once', () => {
 		// Arrange.
-		const shared: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		const shared: PipelineMimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
 		window._wpMediaUploadPipelineSettings = { allowedMimeTypes: shared };
 		window.wp = {
 			uploadMedia: { store },
@@ -81,7 +80,7 @@ describe( 'allowPipelineMimeTypes', () => {
 
 	it( 'lets the WordPress 7.2 client accept svg and json without dropping jpeg', () => {
 		// Arrange.
-		const allowedMimeTypes: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		const allowedMimeTypes: PipelineMimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
 		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
 
 		expect( isAllowedByUploadPipeline( 'image/svg+xml', allowedMimeTypes ) ).toBe( false );
@@ -106,7 +105,7 @@ describe( 'allowPipelineMimeTypes', () => {
 
 	it( 'keeps an svg entry WordPress already allowed', () => {
 		// Arrange.
-		const allowedMimeTypes: MimeMap = {
+		const allowedMimeTypes: PipelineMimeMap = {
 			'jpg|jpeg|jpe': 'image/jpeg',
 			svg: 'image/svg+xml',
 		};
@@ -123,7 +122,7 @@ describe( 'allowPipelineMimeTypes', () => {
 
 	it( 'ignores an upload store that is not registered yet', () => {
 		// Arrange.
-		const allowedMimeTypes: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		const allowedMimeTypes: PipelineMimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
 		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
 		window.wp = {
 			uploadMedia: { store },
@@ -149,7 +148,7 @@ describe( 'allowPipelineMimeTypes', () => {
 	} );
 } );
 
-function isAllowedByUploadPipeline( fileType: string, mimeMap?: MimeMap | null ) {
+function isAllowedByUploadPipeline( fileType: string, mimeMap?: PipelineMimeMap | null ) {
 	const allowedMimeTypes = getMimeTypesArray( mimeMap );
 
 	if ( ! allowedMimeTypes ) {
@@ -159,7 +158,7 @@ function isAllowedByUploadPipeline( fileType: string, mimeMap?: MimeMap | null )
 	return ! fileType || allowedMimeTypes.includes( fileType );
 }
 
-function getMimeTypesArray( mimeMap?: MimeMap | null ) {
+function getMimeTypesArray( mimeMap?: PipelineMimeMap | null ) {
 	if ( ! mimeMap ) {
 		return null;
 	}

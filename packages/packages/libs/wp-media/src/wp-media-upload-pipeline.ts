@@ -1,17 +1,12 @@
+import type { AddedMime, PipelineMimeMap } from './types';
+
 const PIPELINE_MIME_TYPES_BY_EXTENSION: Record< string, string > = {
 	json: 'application/json',
 	svg: 'image/svg+xml',
 };
 
-type MimeMap = Record< string, string >;
-
-type AddedMime = {
-	key: string;
-	map: MimeMap;
-};
-
 export function allowPipelineMimeTypes( extensions: string[] ): () => void {
-	const extras = extensions.reduce< MimeMap >( ( allowed, extension ) => {
+	const extras = extensions.reduce< PipelineMimeMap >( ( allowed, extension ) => {
 		const mimeType = PIPELINE_MIME_TYPES_BY_EXTENSION[ extension ];
 
 		if ( mimeType ) {
@@ -36,7 +31,7 @@ export function allowPipelineMimeTypes( extensions: string[] ): () => void {
 	};
 }
 
-function removeMimeType( map: MimeMap, key: string ) {
+function removeMimeType( map: PipelineMimeMap, key: string ) {
 	if ( 'json' === key ) {
 		delete map.json;
 		return;
@@ -47,8 +42,8 @@ function removeMimeType( map: MimeMap, key: string ) {
 	}
 }
 
-function collectMimeMaps(): MimeMap[] {
-	const maps: MimeMap[] = [];
+function collectMimeMaps(): PipelineMimeMap[] {
+	const maps: PipelineMimeMap[] = [];
 	const localized = window._wpMediaUploadPipelineSettings?.allowedMimeTypes;
 
 	if ( isMimeMap( localized ) ) {
@@ -64,7 +59,7 @@ function collectMimeMaps(): MimeMap[] {
 	return maps;
 }
 
-function readStoreMimeMap(): MimeMap | undefined {
+function readStoreMimeMap(): PipelineMimeMap | undefined {
 	const store = window.wp?.uploadMedia?.store;
 
 	if ( ! store || ! window.wp?.data?.select ) {
@@ -80,7 +75,7 @@ function readStoreMimeMap(): MimeMap | undefined {
 	}
 }
 
-function addMissingMimeTypes( map: MimeMap, extras: MimeMap ): AddedMime[] {
+function addMissingMimeTypes( map: PipelineMimeMap, extras: PipelineMimeMap ): AddedMime[] {
 	return Object.entries( extras ).reduce< AddedMime[] >( ( added, [ key, mimeType ] ) => {
 		if ( ! Object.prototype.hasOwnProperty.call( map, key ) ) {
 			map[ key ] = mimeType;
@@ -91,6 +86,6 @@ function addMissingMimeTypes( map: MimeMap, extras: MimeMap ): AddedMime[] {
 	}, [] );
 }
 
-function isMimeMap( value: unknown ): value is MimeMap {
+function isMimeMap( value: unknown ): value is PipelineMimeMap {
 	return Boolean( value ) && 'object' === typeof value;
 }

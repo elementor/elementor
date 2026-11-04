@@ -1,4 +1,9 @@
-type PipelineMimeMap = Record< string, string >;
+export type PipelineMimeMap = Record< string, string >;
+
+export type AddedMime = {
+	key: string;
+	map: PipelineMimeMap;
+};
 
 declare global {
 	interface Window {
