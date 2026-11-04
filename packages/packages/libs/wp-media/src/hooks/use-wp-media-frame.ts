@@ -93,9 +93,17 @@ function createFrame( {
 	return frame;
 }
 
+const frameUploadSettingsRestore = new WeakMap< MediaFrame, () => void >();
+
 function cleanupFrame( frame?: MediaFrame ) {
-	frame?.detach();
-	frame?.remove();
+	if ( ! frame ) {
+		return;
+	}
+
+	frameUploadSettingsRestore.get( frame )?.();
+	frameUploadSettingsRestore.delete( frame );
+	frame.detach();
+	frame.remove();
 }
 
 function applyMode(
@@ -181,6 +189,16 @@ function handleExtensions( frame: MediaFrame, mediaTypes: MediaType[] ) {
 	const defaultExtensions = wpPluploadSettings().defaults.filters.mime_types?.[ 0 ]?.extensions;
 	let restorePipelineMimeTypes: () => void = () => undefined;
 
+	const restoreUploadSettings = () => {
+		wpPluploadSettings().defaults.filters.mime_types = defaultExtensions
+			? [ { extensions: defaultExtensions } ]
+			: [];
+		restorePipelineMimeTypes();
+		restorePipelineMimeTypes = () => undefined;
+	};
+
+	frameUploadSettingsRestore.set( frame, restoreUploadSettings );
+
 	// Set extensions by media types
 	frame.on( 'ready', () => {
 		const extensions = getExtensions( mediaTypes );
@@ -193,11 +211,7 @@ function handleExtensions( frame: MediaFrame, mediaTypes: MediaType[] ) {
 
 	// Restore default upload extensions
 	frame.on( 'close', () => {
-		wpPluploadSettings().defaults.filters.mime_types = defaultExtensions
-			? [ { extensions: defaultExtensions } ]
-			: [];
-		restorePipelineMimeTypes();
-		restorePipelineMimeTypes = () => undefined;
+		restoreUploadSettings();
 	} );
 }
 

@@ -373,9 +373,81 @@ describe( 'useWpMediaFrame', () => {
 		expect( frame.detach ).not.toHaveBeenCalled();
 		expect( frame.remove ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should restore the upload pipeline after ready when reopening without close', () => {
+		// Arrange.
+		const allowedMimeTypes: Record< string, string > = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+
+		const mockMedia = createMedia( {} );
+		jest.mocked( media ).mockReturnValue( mockMedia );
+
+		const { result } = renderHook( () =>
+			useWpMediaFrame( {
+				selected: null,
+				multiple: false,
+				mediaTypes: [ 'svg' ],
+				onSelect: () => {},
+			} )
+		);
+
+		result.current.open();
+
+		const firstFrame = mockMedia.currentFrame as MockFrame;
+
+		// Act.
+		firstFrame.trigger( 'ready' as Event );
+
+		// Assert.
+		expect( allowedMimeTypes.svg ).toBe( 'image/svg+xml' );
+
+		// Act - re-open tears down the frame without firing close.
+		result.current.open();
+
+		// Assert.
+		expect( allowedMimeTypes ).toEqual( { 'jpg|jpeg|jpe': 'image/jpeg' } );
+
+		delete window._wpMediaUploadPipelineSettings;
+	} );
+
+	it( 'should restore the upload pipeline after ready when unmounting without close', () => {
+		// Arrange.
+		const allowedMimeTypes: Record< string, string > = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+
+		const mockMedia = createMedia( {} );
+		jest.mocked( media ).mockReturnValue( mockMedia );
+
+		const { result, unmount } = renderHook( () =>
+			useWpMediaFrame( {
+				selected: null,
+				multiple: false,
+				mediaTypes: [ 'svg' ],
+				onSelect: () => {},
+			} )
+		);
+
+		result.current.open();
+
+		const frame = mockMedia.currentFrame as MockFrame;
+
+		// Act.
+		frame.trigger( 'ready' as Event );
+
+		// Assert.
+		expect( allowedMimeTypes.svg ).toBe( 'image/svg+xml' );
+
+		// Act.
+		unmount();
+
+		// Assert.
+		expect( allowedMimeTypes ).toEqual( { 'jpg|jpeg|jpe': 'image/jpeg' } );
+
+		delete window._wpMediaUploadPipelineSettings;
+	} );
 } );
 
-type Event = 'open' | 'close' | 'select' | 'insert';
+type Event = 'open' | 'close' | 'select' | 'insert' | 'ready';
 type MockFrame = MediaFrame & {
 	trigger: ( event: Event ) => void;
 	events: { [ k in Event ]?: ( () => void )[] };
