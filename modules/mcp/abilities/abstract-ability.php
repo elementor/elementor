@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Kit_Settings_Host;
 use Elementor\Modules\Mcp\Events\Pro_Feature_Suggestion_Tracker;
+use Elementor\Modules\Mcp\Site_Flag;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Mcp\Utils\Mcp_V4_Gate;
 
@@ -57,6 +58,14 @@ abstract class Abstract_Ability {
 
 		if ( $is_mutating && $post_id > 0 && ! $is_failed ) {
 			Editor_Sync_State::set_mcp_mutation( $post_id );
+		}
+
+		$record_input = is_array( $input ) ? $input : [];
+		if ( $this->should_record_site_capability( $record_input, $result ) ) {
+			$capability = Site_Flag::capability_for_ability( $this->get_id() );
+			if ( $capability ) {
+				Site_Flag::mark( $capability );
+			}
 		}
 
 		return $result;
@@ -150,6 +159,26 @@ abstract class Abstract_Ability {
 	}
 
 	public function is_exposed_on_server(): bool {
+		return true;
+	}
+
+	protected function should_record_site_capability( $input, $result ): bool {
+		if ( null === Site_Flag::capability_for_ability( $this->get_id() ) ) {
+			return false;
+		}
+
+		if ( ! empty( $input['dry_run'] ) ) {
+			return false;
+		}
+
+		if ( is_wp_error( $result ) ) {
+			return false;
+		}
+
+		if ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) ) {
+			return false;
+		}
+
 		return true;
 	}
 
