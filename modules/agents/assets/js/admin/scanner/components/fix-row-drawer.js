@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { wpAdminInputResetSx } from '../../components/wp-admin-sx';
-import { FIX_WITH_PREFERENCE, REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION } from '../scanner-constants';
+import { FIX_WITH_ANGIE, FIX_WITH_PREFERENCE, REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION } from '../scanner-constants';
 
 const DRAWER_RISE = '6px';
 
@@ -18,6 +18,8 @@ const drawerSx = {
 	},
 	...REDUCED_MOTION_SX,
 };
+
+const isPromptFix = ( check ) => FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt );
 
 const ExplanationContent = ( { check } ) => (
 	<Stack spacing={ 2 }>
@@ -31,10 +33,12 @@ const ExplanationContent = ( { check } ) => (
 			<Typography variant="caption" color="text.primary">{ __( 'What it means', 'elementor' ) }</Typography>
 			<Typography variant="caption" color="text.secondary">{ check.explanation.whatItMeans }</Typography>
 		</Stack>
-		<Stack spacing={ 0.5 }>
-			<Typography variant="caption" color="text.primary">{ __( 'How to fix it manually', 'elementor' ) }</Typography>
-			<Typography variant="caption" color="text.secondary">{ check.explanation.howToFix }</Typography>
-		</Stack>
+		{ ! isPromptFix( check ) && (
+			<Stack spacing={ 0.5 }>
+				<Typography variant="caption" color="text.primary">{ __( 'How to fix it manually', 'elementor' ) }</Typography>
+				<Typography variant="caption" color="text.secondary">{ check.explanation.howToFix }</Typography>
+			</Stack>
+		) }
 	</Stack>
 );
 
