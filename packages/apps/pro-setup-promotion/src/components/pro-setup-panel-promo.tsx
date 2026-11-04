@@ -3,10 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
-import { DownloadIcon } from '@elementor/icons';
 import {
-	Alert,
-	AlertTitle,
 	Box,
 	Button,
 	CircularProgress,
@@ -17,6 +14,8 @@ import {
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import { ProSetupBannerCard } from './pro-setup-banner-card';
 
 import {
 	type PopoverCloseTargetName,
@@ -51,6 +50,7 @@ const POPOVER_OFFSET_RTL: [ number, number ] = [ 24, 12 ];
 /** Keeps popover height stable when copy is shorter (e.g. connect vs install). */
 const POPOVER_DESCRIPTION_MIN_HEIGHT = 72;
 const POPOVER_HEADER_MIN_HEIGHT = 48;
+const BANNER_SUBTITLE = __( 'Finish setup to start using Pro', 'elementor' );
 const REST_BASE = 'elementor/v1/pro-setup-promotion';
 
 type InfotipWithPopperProps = React.ComponentProps< typeof Infotip > & {
@@ -517,7 +517,14 @@ export function ProSetupPanelPromo() {
 									closePopover( 'escape_key' );
 								}
 							} }
-							sx={ { width: POPOVER_WIDTH } }
+							sx={ {
+								width: POPOVER_WIDTH,
+								border: 1,
+								borderColor: 'divider',
+								borderRadius: 1.5,
+								overflow: 'hidden',
+								boxShadow: 2,
+							} }
 						>
 							<Stack
 								direction="row"
@@ -596,65 +603,21 @@ export function ProSetupPanelPromo() {
 							mx: 1.5,
 							my: 1,
 							cursor: 'pointer',
-							'&:hover': { '& .MuiAlert-root': { filter: 'brightness(0.98)' } },
+							'&:hover .pro-setup-banner-card': {
+								filter: 'brightness(0.97)',
+							},
 							'&:focus-visible': {
 								outline: '2px solid',
 								outlineColor: 'primary.main',
 								outlineOffset: 2,
+								borderRadius: 1.5,
 							},
 						} }
 					>
-						<Alert
-							variant="standard"
-							color="info"
-							size="small"
-							icon={
-								<DownloadIcon
-									aria-hidden
-									sx={ {
-										display: 'block',
-										fontSize: 20,
-										width: 20,
-										height: 20,
-										color: 'text.secondary',
-									} }
-								/>
-							}
-							sx={ {
-								alignItems: 'flex-start',
-								py: 0.75,
-								'& .MuiAlert-icon': {
-									alignSelf: 'flex-start',
-									opacity: 1,
-									pt: 0.375,
-									pb: 0.125,
-									marginTop: 0,
-									marginBottom: 0,
-									marginInlineEnd: 0.5,
-								},
-								'& .MuiAlert-message': {
-									flex: 1,
-									minWidth: 0,
-									overflow: 'hidden',
-									pt: 0.125,
-									pb: 0.125,
-									marginTop: 0,
-									marginBottom: 0,
-								},
-							} }
-						>
-							<AlertTitle sx={ { m: 0, mb: 0.25, fontSize: 'inherit', lineHeight: 1.3 } }>
-								{ promotionConfig.banner.title }
-							</AlertTitle>
-							<Typography
-								variant="caption"
-								component="div"
-								color="text.secondary"
-								sx={ { lineHeight: 1.35, paddingInlineEnd: 1 } }
-							>
-								{ promotionConfig.banner.description }
-							</Typography>
-						</Alert>
+						<ProSetupBannerCard
+							title={ promotionConfig.banner.title }
+							subtitle={ BANNER_SUBTITLE }
+						/>
 					</Box>
 				</SetupInfotip>
 			</ThemeProvider>
