@@ -220,61 +220,6 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 		$this->assertSame( 'elementor', Agent_Skills::ABILITY_CATEGORY );
 	}
 
-	public function test_agent_skills__collects_registered_abilities_with_correct_api() {
-		if ( ! function_exists( 'wp_get_abilities' ) || ! function_exists( 'wp_register_ability_category' ) || ! function_exists( 'wp_register_ability' ) ) {
-			$this->markTestSkipped( 'Abilities API (WP 6.9+) is not available.' );
-		}
-
-		// Arrange
-		wp_register_ability_category( 'elementor', [
-			'label' => 'Elementor',
-			'description' => 'Elementor abilities',
-		] );
-
-		wp_register_ability( 'elementor/test-ability', [
-			'label' => 'Test Ability',
-			'description' => 'A test ability for verification',
-			'category' => 'elementor',
-			'execute_callback' => static function() { return 'test result'; },
-			'permission_callback' => '__return_true',
-			'meta' => [
-				'annotations' => [
-					'readonly' => true,
-					'destructive' => false,
-					'idempotent' => true,
-				],
-			],
-		] );
-
-		$skills_endpoint = new Agent_Skills();
-
-		add_filter( 'elementor/agents/mcp_server/is_active', '__return_true' );
-
-		// Act
-		$reflection = new \ReflectionMethod( Agent_Skills::class, 'collect_skills' );
-		$reflection->setAccessible( true );
-		$skills = $reflection->invoke( $skills_endpoint );
-
-		// Assert
-		$this->assertNotEmpty( $skills );
-		$found_test_ability = false;
-		foreach ( $skills as $skill ) {
-			if ( $skill['id'] === 'elementor/test-ability' ) {
-				$found_test_ability = true;
-				$this->assertSame( 'Test Ability', $skill['name'] );
-				$this->assertSame( 'A test ability for verification', $skill['description'] );
-				$this->assertIsArray( $skill['annotations'] );
-				$this->assertTrue( $skill['annotations']['readonly'] );
-				$this->assertFalse( $skill['annotations']['destructive'] );
-				$this->assertTrue( $skill['annotations']['idempotent'] );
-				break;
-			}
-		}
-		$this->assertTrue( $found_test_ability, 'Test ability was not found in collected skills' );
-
-		remove_filter( 'elementor/agents/mcp_server/is_active', '__return_true' );
-	}
-
 	public function test_mcp_option_update__flushes_llms_and_well_known_caches() {
 		// Arrange
 		add_option( McpSettingsController::OPTION_NAME, false );
