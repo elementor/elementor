@@ -50,6 +50,7 @@ jobs:
 
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
+        if: github.event_name != 'push' || (!github.event.forced && github.event.before != '0000000000000000000000000000000000000000')
         uses: technote-space/get-diff-action@v6
         with:
           PATTERNS: |
