@@ -62,9 +62,9 @@ export const LlmsTxtPanel = ( { settings } ) => {
 		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
 			<Stack spacing={ 3 } px={ 6 } py={ 3 } flexGrow={ 1 } flexShrink={ 1 } flexBasis={ 0 } minWidth={ 0 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="subtitle1">{ __( 'Help agents find your content', 'elementor' ) }</Typography>
+					<Typography variant="subtitle1">{ __( 'Help AI agents understand your site', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'llms.txt is a simple guide that tells AI agents what your site is about and where to find its public content. We keep it up to date automatically.', 'elementor' ) }
+						{ __( 'llms.txt is a short guide that tells AI agents what your site is about and where its public content is. With llms.txt agents can find your key pages without crawling everything. We keep it up to date when you make changes to your site.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Stack spacing={ 1 }>

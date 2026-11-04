@@ -36,7 +36,7 @@ export const BotAccessPanel = ( { settings } ) => {
 		<Stack spacing={ SECTIONS_SPACING } px={ 6 } py={ 3 }>
 			<Stack spacing={ 2 }>
 				<Typography variant="subtitle1">
-					{ __( 'Control how agents use your content', 'elementor' ) }
+					{ __( 'Decide how AI bots can use your content', 'elementor' ) }
 				</Typography>
 				{ hasPhysicalFile && (
 					<Stack direction="row">
