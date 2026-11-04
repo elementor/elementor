@@ -31,9 +31,20 @@ export function allowPipelineMimeTypes( extensions: string[] ): () => void {
 
 	return () => {
 		added.forEach( ( { map, key } ) => {
-			delete map[ key ];
+			removeMimeType( map, key );
 		} );
 	};
+}
+
+function removeMimeType( map: MimeMap, key: string ) {
+	if ( 'json' === key ) {
+		delete map.json;
+		return;
+	}
+
+	if ( 'svg' === key ) {
+		delete map.svg;
+	}
 }
 
 function collectMimeMaps(): MimeMap[] {

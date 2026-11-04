@@ -267,10 +267,7 @@ describe( 'useWpMediaFrame', () => {
 
 		// Assert.
 		expect( allowedMimeTypes.svg ).toBe( 'image/svg+xml' );
-		expect( frame.uploader.uploader.param ).toHaveBeenCalledWith(
-			'uploadTypeCaller',
-			'elementor-wp-media-upload'
-		);
+		expect( frame.uploader.uploader.param ).toHaveBeenCalledWith( 'uploadTypeCaller', 'elementor-wp-media-upload' );
 
 		// Act.
 		frame.trigger( 'close' );
@@ -339,10 +336,7 @@ describe( 'useWpMediaFrame', () => {
 		// Assert.
 		expect( window._wpMediaUploadPipelineSettings ).toBeUndefined();
 		expect( pluploadWindow._wpPluploadSettings?.defaults.filters.mime_types?.[ 0 ]?.extensions ).toBe( 'svg' );
-		expect( frame.uploader.uploader.param ).toHaveBeenCalledWith(
-			'uploadTypeCaller',
-			'elementor-wp-media-upload'
-		);
+		expect( frame.uploader.uploader.param ).toHaveBeenCalledWith( 'uploadTypeCaller', 'elementor-wp-media-upload' );
 
 		// Act.
 		frame.trigger( 'close' );

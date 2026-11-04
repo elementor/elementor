@@ -24,9 +24,20 @@ export function allowPipelineMimeTypes( extensions ) {
 
 	return () => {
 		added.forEach( ( { map, key } ) => {
-			delete map[ key ];
+			removeMimeType( map, key );
 		} );
 	};
+}
+
+function removeMimeType( map, key ) {
+	if ( 'json' === key ) {
+		delete map.json;
+		return;
+	}
+
+	if ( 'svg' === key ) {
+		delete map.svg;
+	}
 }
 
 function collectMimeMaps() {
