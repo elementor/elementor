@@ -13,16 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Subscription_Action {
 
-	private static ?string $external_upgrade_url = null;
-
 	/**
 	 * One action under Account. A registered Renew / Unlock item wins over the free Upgrade row
 	 * so the two never stack. The free row is the sidebar button, including when the One package
 	 * hides it for a connected account.
 	 */
 	public function resolve( array $existing_items ): ?array {
-		self::$external_upgrade_url = null;
-
 		$registered_action = $this->get_registered_action();
 
 		if ( null !== $registered_action ) {
@@ -53,7 +49,13 @@ class Subscription_Action {
 		return null;
 	}
 
-	private function get_registered_action(): ?array {
+	public static function find_registered_external_upgrade_url(): ?string {
+		$item = self::find_registered_external_action_item();
+
+		return $item ? $item->get_slug() : null;
+	}
+
+	private static function find_registered_external_action_item(): ?Menu_Item_Interface {
 		$provider = Menu_Data_Provider::instance();
 		$selected = null;
 		$selected_position = PHP_INT_MAX;
@@ -62,7 +64,7 @@ class Subscription_Action {
 			$system_items = $groups[ Menu_Config::SYSTEM_GROUP_ID ] ?? [];
 
 			foreach ( $system_items as $item ) {
-				if ( ! $this->is_external_action( $item ) || ! $provider->is_item_accessible( $item ) ) {
+				if ( ! self::is_external_action( $item ) || ! $provider->is_item_accessible( $item ) ) {
 					continue;
 				}
 
@@ -75,11 +77,16 @@ class Subscription_Action {
 			}
 		}
 
+		return $selected;
+	}
+
+	private function get_registered_action(): ?array {
+		$selected = self::find_registered_external_action_item();
+
 		if ( null === $selected ) {
 			return null;
 		}
 
-		self::$external_upgrade_url = $selected->get_slug();
 		$this->remove_external_submenu_entry( $selected->get_slug() );
 
 		$label = $selected->get_label();
@@ -87,12 +94,8 @@ class Subscription_Action {
 		return [ $label, $selected->get_capability(), Admin_Menu_Structure::UPGRADE_SLUGS[0], $label ];
 	}
 
-	public static function get_external_upgrade_url(): ?string {
-		return self::$external_upgrade_url;
-	}
-
-	private function is_external_action( Menu_Item_Interface $item ): bool {
-		return str_starts_with( $item->get_slug(), 'https://' ) || str_starts_with( $item->get_slug(), 'http://' );
+	private static function is_external_action( Menu_Item_Interface $item ): bool {
+		return str_starts_with( $item->get_slug(), 'https://' );
 	}
 
 	private function remove_external_submenu_entry( string $slug ): void {

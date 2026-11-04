@@ -28,6 +28,7 @@ use Elementor\Plugin;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Subscription_Action;
+use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
 use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,9 +58,30 @@ class Module extends Base_Module {
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
-		add_action( 'admin_head', function () {
-			$this->handle_external_redirects();
-		}, 21 );
+		add_action( 'admin_init', function () {
+			$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+			if ( 'go_elementor_pro' === $page ) {
+				$this->handle_external_redirects();
+				return;
+			}
+
+			if ( Admin_Menu_Structure::UPGRADE_SLUGS[0] === $page && ! Editor_One_Module::is_admin_navigation_active() ) {
+				$this->handle_external_redirects();
+			}
+		} );
+
+		add_action( 'admin_menu', function () {
+			if ( ! Editor_One_Module::is_admin_navigation_active() ) {
+				return;
+			}
+
+			$hook = get_plugin_page_hook( Admin_Menu_Structure::UPGRADE_SLUGS[0], Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
+
+			if ( $hook ) {
+				add_action( "load-{$hook}", [ $this, 'handle_external_redirects' ] );
+			}
+		}, 10008 );
 
 		if ( Utils::has_pro() ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
@@ -112,7 +134,7 @@ class Module extends Base_Module {
 		$this->register_atomic_promotions();
 	}
 
-	private function handle_external_redirects() {
+	public function handle_external_redirects() {
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( empty( $page ) ) {
 			return;
@@ -133,7 +155,12 @@ class Module extends Base_Module {
 			return $hosts;
 		}, 10, 2 );
 
-		$default_url = Subscription_Action::get_external_upgrade_url() ?? Go_Pro_Promotion_Item::get_url();
+		wp_safe_redirect( $this->get_upgrade_redirect_url() );
+		die;
+	}
+
+	public function get_upgrade_redirect_url(): string {
+		$default_url = Subscription_Action::find_registered_external_upgrade_url() ?? Go_Pro_Promotion_Item::get_url();
 
 		/**
 		 * Upgrade sidebar redirect URL for Editor One.
@@ -145,12 +172,11 @@ class Module extends Base_Module {
 		 */
 		$url = apply_filters( 'elementor_one/upgrade_url', $default_url );
 
-		if ( ! $this->is_allowed_upgrade_redirect_url( $url ) ) {
-			$url = Go_Pro_Promotion_Item::get_url();
+		if ( ! is_string( $url ) || ! $this->is_allowed_upgrade_redirect_url( $url ) ) {
+			return Go_Pro_Promotion_Item::get_url();
 		}
 
-		wp_safe_redirect( $url );
-		die;
+		return $url;
 	}
 
 	private function is_allowed_upgrade_redirect_url( string $url ): bool {

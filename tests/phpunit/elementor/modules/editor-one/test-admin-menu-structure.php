@@ -278,7 +278,18 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( 'Renew Now', $action[0] );
 		$this->assertSame( 'elementor-one-upgrade', $action[2] );
-		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', Subscription_Action::get_external_upgrade_url() );
+		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', Subscription_Action::find_registered_external_upgrade_url() );
+	}
+
+	public function test_resolve_subscription_action__ignores_non_https_external_slug() {
+		// Arrange
+		$this->register_subscription_action( 'Renew Now', 'http://go.elementor.com/wp-menu-renew/', 61 );
+
+		// Act
+		$url = Subscription_Action::find_registered_external_upgrade_url();
+
+		// Assert
+		$this->assertNull( $url );
 	}
 
 	public function test_resolve_subscription_action__uses_upgrade_slug_for_unlock_more_features() {

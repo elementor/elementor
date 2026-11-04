@@ -43,10 +43,6 @@ class Admin_Menu_Structure {
 			return $classes;
 		}
 
-		if ( ! Menu_Data_Provider::instance()->is_editor_one_admin_page() ) {
-			return $classes;
-		}
-
 		return $classes . ' e-admin-navigation-active';
 	}
 
@@ -61,6 +57,7 @@ class Admin_Menu_Structure {
 			return;
 		}
 
+		// Placeholder is registered before the action is resolved, so it always requires manage_options.
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			'',
