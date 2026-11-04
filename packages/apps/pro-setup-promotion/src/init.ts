@@ -9,7 +9,7 @@ import {
 
 import { ProSetupPanelPromo } from './components/pro-setup-panel-promo';
 import { showConnectSuccessNotificationAfterReloadIfPending } from './utils/post-reload-connect-success-notification';
-import { PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM } from './utils/reload-editor-after-connect-success';
+import { PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM } from './utils/pro-setup-query-params';
 
 const NOTICE_AREA_ID = 'elementor-panel-elements-notice-area';
 const ELEMENTS_PANEL_ROUTE_PREFIX = 'panel/elements/';
