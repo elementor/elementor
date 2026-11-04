@@ -343,10 +343,13 @@ export class EditorOneEventManager {
 				payload.location_l1 = groupEventId;
 			}
 
+			const navClickId = window.crypto?.randomUUID?.() ?? `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+			payload.nav_click_id = navClickId;
+
 			const dispatched = this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
 
 			window.dispatchEvent( new CustomEvent( ADMIN_NAV_CLICK_EVENT, {
-				detail: { itemId: eventId, rootItem: groupEventId },
+				detail: { itemId: eventId, rootItem: groupEventId, navClickId },
 			} ) );
 
 			return dispatched;

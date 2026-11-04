@@ -26,8 +26,9 @@ class NavigationTracking extends BaseTracking {
 			this.attachElementorHomeMenuTracking();
 		} else {
 			this.attachElementorMenuTracking();
-			this.attachTemplatesMenuTracking();
 		}
+
+		this.attachTemplatesMenuTracking();
 	}
 
 	static attachTemplatesMenuTracking() {
@@ -65,9 +66,9 @@ class NavigationTracking extends BaseTracking {
 			window,
 			ADMIN_NAV_CLICK_EVENT,
 			( event ) => {
-				const { itemId, rootItem } = event.detail;
+				const { itemId, rootItem, navClickId } = event.detail;
 
-				WpDashboardTracking.trackNavClicked( itemId, rootItem || null, NAV_AREAS.SIDEBAR_MENU );
+				WpDashboardTracking.trackNavClicked( itemId, rootItem || null, NAV_AREAS.SIDEBAR_MENU, navClickId );
 			},
 		);
 	}

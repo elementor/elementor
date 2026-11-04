@@ -11,6 +11,12 @@ const SESSION_TIMEOUT = SESSION_TIMEOUT_MINUTES * MINUTE_MS;
 const ACTIVITY_CHECK_INTERVAL = 1 * MINUTE_MS;
 const SESSION_STORAGE_KEY = 'elementor_wpdash_session';
 const PENDING_NAV_CLICK_KEY = 'elementor_wpdash_pending_nav';
+const LAST_NAV_KEY = 'elementor_wpdash_last_nav';
+const LAST_NAV_MAX_AGE_MS = 5 * MINUTE_MS;
+
+const generateNavClickId = () => {
+	return window.crypto?.randomUUID?.() ?? `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+};
 
 export const CONTROL_TYPES = {
 	BUTTON: 'button',
@@ -110,19 +116,14 @@ export default class WpDashboardTracking {
 			const pendingNav = sessionStorage.getItem( PENDING_NAV_CLICK_KEY );
 
 			if ( pendingNav ) {
-				const { itemId, rootItem, area } = JSON.parse( pendingNav );
+				const { itemId, rootItem, area, navClickId } = JSON.parse( pendingNav );
 				this.navItemsVisited.add( itemId );
 
-				const properties = {
-					wpdash_nav_item_id: itemId,
-					wpdash_nav_area: area,
-				};
-
-				if ( rootItem ) {
-					properties.wpdash_nav_item_root = rootItem;
-				}
-
-				this.dispatchEvent( 'wpdash_nav_clicked', properties, { send_immediately: true } );
+				this.dispatchEvent(
+					'wpdash_nav_clicked',
+					this.buildNavClickProperties( itemId, rootItem, area, navClickId ),
+					{ send_immediately: true },
+				);
 				sessionStorage.removeItem( PENDING_NAV_CLICK_KEY );
 			}
 		} catch ( error ) {
@@ -304,9 +305,57 @@ export default class WpDashboardTracking {
 		return Number( ( totalSeconds ).toFixed( 2 ) );
 	}
 
-	static trackNavClicked( itemId, rootItem = null, area = NAV_AREAS.LEFT_MENU ) {
+	static buildNavClickProperties( itemId, rootItem, area, navClickId ) {
+		const properties = {
+			wpdash_nav_item_id: itemId,
+			wpdash_nav_area: area,
+			nav_click_id: navClickId,
+		};
+
+		if ( rootItem ) {
+			properties.wpdash_nav_item_root = rootItem;
+		}
+
+		return properties;
+	}
+
+	static storeLastNav( itemId, area ) {
+		sessionStorage.setItem( LAST_NAV_KEY, JSON.stringify( { itemId, area, clickedAt: Date.now() } ) );
+	}
+
+	static consumeLastNavProperties() {
+		try {
+			const stored = sessionStorage.getItem( LAST_NAV_KEY );
+			sessionStorage.removeItem( LAST_NAV_KEY );
+
+			if ( ! stored ) {
+				return {};
+			}
+
+			const { itemId, area, clickedAt } = JSON.parse( stored );
+			const age = Date.now() - clickedAt;
+
+			if ( age > LAST_NAV_MAX_AGE_MS ) {
+				return {};
+			}
+
+			return {
+				last_nav_destination_event_id: itemId,
+				last_nav_area: area,
+				seconds_since_last_nav_click: this.formatDuration( age ),
+			};
+		} catch ( error ) {
+			return {};
+		}
+	}
+
+	static trackNavClicked( itemId, rootItem = null, area = NAV_AREAS.LEFT_MENU, navClickId = null ) {
+		const clickId = navClickId || generateNavClickId();
+
+		this.storeLastNav( itemId, area );
+
 		if ( ! this.initialized ) {
-			const pendingNav = { itemId, rootItem, area };
+			const pendingNav = { itemId, rootItem, area, navClickId: clickId };
 			sessionStorage.setItem( PENDING_NAV_CLICK_KEY, JSON.stringify( pendingNav ) );
 			return;
 		}
@@ -316,16 +365,7 @@ export default class WpDashboardTracking {
 		this.navItemsVisited.add( itemId );
 		this.saveSessionToStorage();
 
-		const properties = {
-			wpdash_nav_item_id: itemId,
-			wpdash_nav_area: area,
-		};
-
-		if ( rootItem ) {
-			properties.wpdash_nav_item_root = rootItem;
-		}
-
-		this.dispatchEvent( 'wpdash_nav_clicked', properties );
+		this.dispatchEvent( 'wpdash_nav_clicked', this.buildNavClickProperties( itemId, rootItem, area, clickId ) );
 	}
 
 	static trackScreenViewed( screenId, screenType = SCREEN_TYPES.TAB ) {
@@ -334,6 +374,7 @@ export default class WpDashboardTracking {
 		const properties = {
 			wpdash_screen_id: screenId,
 			wpdash_screen_type: screenType,
+			...this.consumeLastNavProperties(),
 		};
 
 		this.dispatchEvent( 'wpdash_screen_viewed', properties );
