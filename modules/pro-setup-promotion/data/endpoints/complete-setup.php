@@ -35,12 +35,15 @@ class Complete_Setup extends Endpoint_Base {
 		$needs_editor_reload = $reload || $missing_connect_url;
 
 		return [
-			'data' => [
-				'success' => true,
-				'action' => $action,
-				'reload' => $needs_editor_reload,
-				'proSetupPromotion' => $missing_connect_url ? null : $config,
-			],
+			'data' => array_merge(
+				[
+					'success' => true,
+					'action' => $action,
+					'reload' => $needs_editor_reload,
+					'proSetupPromotion' => $missing_connect_url ? null : $config,
+				],
+				$missing_connect_url ? [ 'reloadReason' => 'missing_connect_url' ] : []
+			),
 		];
 	}
 

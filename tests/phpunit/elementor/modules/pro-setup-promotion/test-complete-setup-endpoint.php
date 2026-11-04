@@ -103,6 +103,7 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 
 		$this->assertTrue( $response['data']['reload'] );
 		$this->assertNull( $response['data']['proSetupPromotion'] );
+		$this->assertSame( 'missing_connect_url', $response['data']['reloadReason'] );
 	}
 
 	public function test_success_response_keeps_promotion_config_when_reload_flag_without_missing_connect_url(): void {
@@ -117,5 +118,6 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 		$this->assertTrue( $response['data']['reload'] );
 		$this->assertIsArray( $response['data']['proSetupPromotion'] );
 		$this->assertSame( Setup_State::STATE_INSTALL, $response['data']['proSetupPromotion']['state'] );
+		$this->assertArrayNotHasKey( 'reloadReason', $response['data'] );
 	}
 }

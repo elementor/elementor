@@ -54,13 +54,23 @@ describe( 'pro-setup-editor-refresh', () => {
 	} );
 
 	describe( 'isReloadDueToMissingConnectUrl', () => {
-		it( 'returns true when reload is set and promotion config is omitted', () => {
+		it( 'returns true when server sets reloadReason to missing_connect_url', () => {
+			expect(
+				isReloadDueToMissingConnectUrl( {
+					reload: true,
+					reloadReason: 'missing_connect_url',
+					proSetupPromotion: null,
+				} )
+			).toBe( true );
+		} );
+
+		it( 'returns false when reload is set with null config but no reloadReason', () => {
 			expect(
 				isReloadDueToMissingConnectUrl( {
 					reload: true,
 					proSetupPromotion: null,
 				} )
-			).toBe( true );
+			).toBe( false );
 		} );
 
 		it( 'returns false when reload is set but promotion config is present', () => {

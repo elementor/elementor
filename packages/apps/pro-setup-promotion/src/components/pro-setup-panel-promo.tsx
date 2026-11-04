@@ -35,7 +35,6 @@ import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-me
 import {
 	clearConnectReloadAttempted,
 	hasConnectReloadBeenAttempted,
-	isOpenConnectQueryParamInUrl,
 	markConnectReloadAttempted,
 	stripOpenConnectQueryParamFromUrl,
 } from '../utils/pro-setup-connect-reload-guard';
@@ -125,6 +124,7 @@ async function fetchPromotionConfig(): Promise< ProSetupConfig | null > {
 
 type CompleteSetupResult = {
 	reload?: boolean;
+	reloadReason?: 'missing_connect_url';
 	proSetupPromotion?: ProSetupConfig | null;
 };
 
@@ -284,7 +284,7 @@ export function ProSetupPanelPromo() {
 	}, [] );
 
 	const reloadEditorForMissingConnectUrl = useCallback( () => {
-		if ( hasConnectReloadBeenAttempted() || ( ! promotionConfig?.connectUrl && isOpenConnectQueryParamInUrl() ) ) {
+		if ( hasConnectReloadBeenAttempted() ) {
 			stripOpenConnectQueryParamFromUrl();
 			notifyConnectUnavailable();
 			return;
@@ -292,7 +292,7 @@ export function ProSetupPanelPromo() {
 
 		markConnectReloadAttempted();
 		reloadEditorForSetupRefresh( { openConnectPopover: true } );
-	}, [ notifyConnectUnavailable, promotionConfig?.connectUrl ] );
+	}, [ notifyConnectUnavailable ] );
 
 	useEffect( () => {
 		if ( ! state ) {

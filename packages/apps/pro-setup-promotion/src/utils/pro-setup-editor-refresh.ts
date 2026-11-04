@@ -10,6 +10,7 @@ type ProSetupPromotionLike =
 
 type CompleteSetupLike = {
 	reload?: boolean;
+	reloadReason?: 'missing_connect_url';
 	proSetupPromotion?: ProSetupPromotionLike;
 };
 
@@ -18,11 +19,11 @@ export function isConnectPromotionMissingUrl( config: ProSetupPromotionLike ): b
 }
 
 export function isReloadDueToMissingConnectUrl( result: CompleteSetupLike ): boolean {
-	if ( isConnectPromotionMissingUrl( result.proSetupPromotion ) ) {
+	if ( 'missing_connect_url' === result.reloadReason ) {
 		return true;
 	}
 
-	return !! result.reload && ! result.proSetupPromotion;
+	return isConnectPromotionMissingUrl( result.proSetupPromotion );
 }
 
 export function shouldReloadEditorAfterSetupStep( result: CompleteSetupLike ): boolean {
