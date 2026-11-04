@@ -1,0 +1,40 @@
+name: Invalidate Changelog Cache
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: 'Changelog product: core or pro.'
+        required: true
+        type: choice
+        options:
+          - core
+          - pro
+      types:
+        description: 'Optional space-separated changelog types (release, beta, dev). Overrides channel mapping.'
+        required: false
+        type: string
+        default: ''
+      channel:
+        description: 'Release channel: ga, stable, beta, or dev. Ignored when types is set.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  invalidate:
+    name: Invalidate changelog cache
+    if: github.repository_owner == 'elementor'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Invalidate changelog cache
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/invalidate-changelog-cache@main
+        with:
+          invalidate_token: ${{ secrets.ELEMENTOR_SITE_CHANGELOG_CACHE_INVALIDATE_API_KEY }}
+          product: ${{ inputs.product }}
+          types: ${{ inputs.types }}
+          channel: ${{ inputs.channel }}
