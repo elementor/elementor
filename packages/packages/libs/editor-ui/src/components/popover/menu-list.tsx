@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, ListItem, MenuList, MenuSubheader, styled, useTheme } from '@elementor/ui';
 import { useVirtualizer, type Virtualizer } from '@tanstack/react-virtual';
 
-import { useScrollTop, useScrollToSelected } from '../../hooks';
+import { useRovingFocus, useScrollTop, useScrollToSelected } from '../../hooks';
 
 export type VirtualizedItem< T, V extends string > = {
 	type: T;
@@ -72,8 +72,6 @@ export const PopoverMenuList = < T, V extends string >( {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const scrollTop = useScrollTop( { containerRef } );
 	const theme = useTheme();
-	const optionRefs = useRef( new Map< string, HTMLLIElement >() );
-	const shouldFocusOptionRef = useRef( false );
 	const [ focusedValue, setFocusedValue ] = useState< V | undefined >();
 
 	const MenuListComponent = CustomMenuList || StyledMenuList;
@@ -163,20 +161,12 @@ export const PopoverMenuList = < T, V extends string >( {
 	useScrollToSelected( { selectedValue, items, virtualizer } );
 	const virtualItems = virtualizer.getVirtualItems();
 
-	const mountedRows = virtualItems.map( ( row ) => row.index ).join( ',' );
+	const mountedSignature = virtualItems.map( ( row ) => row.index ).join( ',' );
 
-	useLayoutEffect( () => {
-		if ( ! shouldFocusOptionRef.current ) {
-			return;
-		}
-
-		const option = optionRefs.current.get( items[ tabbableIndex ]?.value );
-
-		if ( option ) {
-			option.focus();
-			shouldFocusOptionRef.current = false;
-		}
-	}, [ tabbableIndex, items, mountedRows ] );
+	const { registerRef, requestFocus } = useRovingFocus< HTMLLIElement >( {
+		tabbableKey: items[ tabbableIndex ]?.value,
+		mountedSignature,
+	} );
 
 	const moveFocus = ( key: string, currentIndex: number ) => {
 		const position = enabledIndices.indexOf( currentIndex );
@@ -192,7 +182,7 @@ export const PopoverMenuList = < T, V extends string >( {
 			return;
 		}
 
-		shouldFocusOptionRef.current = true;
+		requestFocus();
 		setFocusedValue( items[ targetIndex ].value );
 		virtualizer.scrollToIndex( targetIndex );
 	};
@@ -242,13 +232,7 @@ export const PopoverMenuList = < T, V extends string >( {
 						return (
 							<ListItem
 								key={ virtualRow.key }
-								ref={ ( node: HTMLLIElement | null ) => {
-									if ( node ) {
-										optionRefs.current.set( item.value, node );
-									} else {
-										optionRefs.current.delete( item.value );
-									}
-								} }
+								ref={ registerRef( item.value ) }
 								role="option"
 								aria-selected={ isSelected }
 								aria-disabled={ isDisabled }
