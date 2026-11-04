@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useRovingFocus } from '@elementor/editor-ui';
 import { Box, Tooltip, useTheme } from '@elementor/ui';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import { __ } from '@wordpress/i18n';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
@@ -63,8 +64,6 @@ export const IconLibraryGrid = ( {
 }: IconLibraryGridProps ) => {
 	const theme = useTheme();
 	const containerRef = useRef< HTMLDivElement >( null );
-	const cellRefs = useRef( new Map< string, HTMLButtonElement >() );
-	const shouldRestoreFocusRef = useRef( false );
 	const selectedIndex = items.findIndex( ( item ) => item.id === selectedValue );
 	const [ focusedIndex, setFocusedIndex ] = useState( selectedIndex >= 0 ? selectedIndex : 0 );
 	const [ { columnCount, cellSize }, setGridMetrics ] = useState( () => getGridMetrics( 0, 0, 0 ) );
@@ -79,6 +78,16 @@ export const IconLibraryGrid = ( {
 		paddingStart: verticalPadding,
 		paddingEnd: verticalPadding,
 		overscan: GRID_OVERSCAN,
+		rangeExtractor: ( range ) => {
+			const rowIndexes = defaultRangeExtractor( range );
+			const focusedRow = Math.floor( focusedIndex / columnCount );
+
+			if ( items.length === 0 || rowIndexes.includes( focusedRow ) ) {
+				return rowIndexes;
+			}
+
+			return [ ...rowIndexes, focusedRow ].sort( ( a, b ) => a - b );
+		},
 	} );
 	const focusedItem = items[ focusedIndex ];
 	const visibleRowIndexes = virtualizer.getVirtualIndexes().join( ',' );
@@ -103,20 +112,10 @@ export const IconLibraryGrid = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ cellSize, columnCount, items, selectedIndex, selectedValue ] );
 
-	useLayoutEffect( () => {
-		if ( ! shouldRestoreFocusRef.current || ! focusedItem ) {
-			return;
-		}
-
-		const cell = cellRefs.current.get( focusedItem.id );
-
-		if ( ! cell ) {
-			return;
-		}
-
-		cell.focus();
-		shouldRestoreFocusRef.current = false;
-	}, [ focusedItem, visibleRowIndexes ] );
+	const { registerRef, requestFocus } = useRovingFocus< HTMLButtonElement >( {
+		tabbableKey: focusedItem?.id,
+		mountedSignature: visibleRowIndexes,
+	} );
 
 	useLayoutEffect( () => {
 		const container = containerRef.current;
@@ -152,7 +151,7 @@ export const IconLibraryGrid = ( {
 			return;
 		}
 
-		shouldRestoreFocusRef.current = true;
+		requestFocus();
 		setFocusedIndex( nextIndex );
 		virtualizer.scrollToIndex( Math.floor( nextIndex / columnCount ) );
 	};
@@ -281,13 +280,7 @@ export const IconLibraryGrid = ( {
 													aria-label={ item.label }
 													aria-selected={ isSelected }
 													tabIndex={ tabIndex }
-													ref={ ( node: HTMLButtonElement | null ) => {
-														if ( node ) {
-															cellRefs.current.set( item.id, node );
-														} else {
-															cellRefs.current.delete( item.id );
-														}
-													} }
+													ref={ registerRef( item.id ) }
 													onClick={ () => {
 														onSelect( item.id );
 														onClose();
