@@ -61,6 +61,7 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_get_upgrade_redirect_url__returns_selected_action_url() {
 		// Arrange
+		$this->act_as_admin();
 		$this->reset_menu_data_provider();
 		Menu_Data_Provider::instance()->register_level4_item( $this->create_action_item( 'https://go.elementor.com/wp-menu-renew/' ) );
 
