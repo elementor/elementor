@@ -7,6 +7,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -26,7 +27,7 @@ class Test_Markdown_Search_Ajax extends Elementor_Test_Base {
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$this->ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog( new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) ) );
 	}
 
 	public function tearDown(): void {
@@ -56,6 +57,21 @@ class Test_Markdown_Search_Ajax extends Elementor_Test_Base {
 		$ids = array_column( $result['items'], 'id' );
 		$this->assertContains( $page_id, $ids );
 		$this->assertNotContains( $post_id, $ids );
+	}
+
+	public function test_handle__leaves_out_excluded_posts() {
+		// Arrange
+		$kept_id     = $this->factory()->post->create( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Landing Kept' ] );
+		$excluded_id = $this->factory()->post->create( [ 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Landing Excluded' ] );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'excluded_post_ids', [ $excluded_id ] );
+
+		// Act
+		$result = $this->ajax->handle( [ 'term' => 'Landing' ] );
+
+		// Assert
+		$ids = array_column( $result['items'], 'id' );
+		$this->assertContains( $kept_id, $ids );
+		$this->assertNotContains( $excluded_id, $ids );
 	}
 
 	public function test_handle__returns_no_items_when_markdown_is_disabled() {

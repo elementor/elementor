@@ -88,12 +88,13 @@ class Content_Generator {
 	 *   'intro'    – user-supplied intro text (replaces the auto-generated one).
 	 *   'optional' – extra section appended after all content sections.
 	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
-	public function generate_llms_txt( array $overrides = [], ?array $post_types = null ): string {
-		$lines = $this->build_header( $overrides );
+	public function generate_llms_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
 
-		$sections = $this->get_content_sections( $post_types );
+		$sections = $this->get_content_sections( $post_types, false, $excluded_post_ids );
 
 		foreach ( $sections as $title => $items ) {
 			if ( empty( $items ) ) {
@@ -124,12 +125,13 @@ class Content_Generator {
 	 *
 	 * @param array{intro?: string, optional?: string} $overrides
 	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
-	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null ): string {
-		$lines = $this->build_header( $overrides );
+	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
 
-		$sections = $this->get_content_sections( $post_types, true );
+		$sections = $this->get_content_sections( $post_types, true, $excluded_post_ids );
 
 		// Separate WooCommerce products from everything else so we can deprioritise them.
 		$product_section = $sections['Products'] ?? [];
@@ -269,16 +271,17 @@ class Content_Generator {
 	 * Build the common header lines: site name + blockquote intro.
 	 *
 	 * @param array{intro?: string} $overrides
+	 * @param int[]                 $excluded_post_ids Posts to leave out.
 	 * @return string[]
 	 */
-	private function build_header( array $overrides ): array {
+	private function build_header( array $overrides, array $excluded_post_ids = [] ): array {
 		$lines   = [];
 		$lines[] = '# ' . get_bloginfo( 'name' );
 		$lines[] = '';
 
 		$intro = isset( $overrides['intro'] ) && '' !== trim( (string) $overrides['intro'] )
 			? $this->sanitizer->sanitize( trim( (string) $overrides['intro'] ) )
-			: $this->generate_intro();
+			: $this->generate_intro( $excluded_post_ids );
 
 		if ( '' !== $intro ) {
 			foreach ( explode( "\n", $intro ) as $intro_line ) {
@@ -295,13 +298,13 @@ class Content_Generator {
 	 * Auto-generate the intro from the site tagline and/or the front-page
 	 * description/excerpt.
 	 */
-	private function generate_intro(): string {
+	private function generate_intro( array $excluded_post_ids = [] ): string {
 		$show_on_front = get_option( 'show_on_front' );
 
 		if ( 'page' === $show_on_front ) {
 			$page_id = (int) get_option( 'page_on_front' );
 
-			if ( $page_id ) {
+			if ( $page_id && ! in_array( $page_id, $excluded_post_ids, true ) ) {
 				$candidate = $this->get_post_description( $page_id );
 
 				if ( '' !== $candidate ) {
@@ -359,9 +362,10 @@ class Content_Generator {
 	 * @param string[]|null $included_post_types Post types to include; null includes every available type.
 	 * @param bool          $apply_llms_full_limit Whether to cap each post type to the
 	 *   llms-full.txt per-type inline limit instead of MAX_POSTS_PER_TYPE.
+	 * @param int[]         $excluded_post_ids Posts to leave out.
 	 * @return array<string, array<array{id: int, title: string, url: string, description: string}>>
 	 */
-	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false ): array {
+	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false, array $excluded_post_ids = [] ): array {
 		$sections = [];
 
 		foreach ( $this->get_available_post_types() as $post_type => $label ) {
@@ -371,7 +375,7 @@ class Content_Generator {
 
 			$items = $this->get_posts_for_section(
 				$post_type,
-				$this->get_section_order( $post_type ),
+				array_merge( $this->get_section_order( $post_type ), [ 'post__not_in' => $excluded_post_ids ] ),
 				$this->get_posts_per_type_limit( $post_type, $apply_llms_full_limit )
 			);
 
@@ -582,6 +586,18 @@ class Content_Generator {
 	 */
 	public function prepare_override_text( string $text ): string {
 		return $this->sanitizer->sanitize( sanitize_textarea_field( $text ) );
+	}
+
+	/**
+	 * Sanitize admin-edited markdown without altering its structure: indentation,
+	 * hard line breaks, headings and percent-encoded URLs must survive a save.
+	 */
+	public function prepare_markdown_override_text( string $text ): string {
+		$text = wp_check_invalid_utf8( $text, true );
+		$text = str_replace( [ "\r\n", "\r" ], "\n", $text );
+		$text = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text ) ?? $text;
+
+		return rtrim( $text );
 	}
 
 	/**
