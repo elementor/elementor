@@ -56,10 +56,13 @@ function CreateWidgetModal( { entryPoint, onClose }: CreateWidgetModalProps ) {
 	const handleContinue = async () => {
 		setIsSubmitting( true );
 
-		await saveAngieConsent();
-
-		setIsSubmitting( false );
-		onClose();
+		try {
+			await saveAngieConsent();
+			onClose();
+		} catch {
+		} finally {
+			setIsSubmitting( false );
+		}
 	};
 
 	return (

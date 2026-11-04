@@ -129,5 +129,31 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );
 			} );
 		} );
+
+		it( 'allows closing the modal when saveAngieConsent rejects', async () => {
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockSaveAngieConsent.mockRejectedValue( new Error( 'save failed' ) );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /^Continue$/i } ) );
+
+			await waitFor( () => {
+				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );
+			} );
+
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /^Continue$/i } ) ).toBeEnabled();
+
+			fireEvent.click( screen.getByLabelText( 'Close' ) );
+
+			await waitFor( () => {
+				expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			} );
+		} );
 	} );
 } );

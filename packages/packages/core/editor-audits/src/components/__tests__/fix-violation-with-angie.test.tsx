@@ -100,4 +100,22 @@ describe( 'FixViolationWithAngie', () => {
 		expect( stopPropagation ).toHaveBeenCalled();
 		expect( preventDefault ).toHaveBeenCalled();
 	} );
+
+	it( 'renders as an icon-only button with an accessible name but no visible text', () => {
+		mockIsAngieAvailable.mockReturnValue( true );
+
+		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
+
+		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( '' );
+	} );
+
+	it( 'renders visible "Fix with Angie" text when variant is "button"', () => {
+		mockIsAngieAvailable.mockReturnValue( true );
+
+		renderWithTheme(
+			<FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } variant="button" />
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Fix with Angie' } ) ).toHaveTextContent( 'Fix with Angie' );
+	} );
 } );
