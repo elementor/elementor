@@ -32,11 +32,13 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Mcp_Server_Card;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
@@ -129,7 +131,12 @@ class Module extends BaseModule {
 
 		( new Scanner_Rest_Api( new Scanner_Client(), $this->scanner_store ) )->register_hooks();
 
-		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
+		$watched_options = array_merge(
+			[ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ],
+			Mcp_Discovery::get_settings_option_names()
+		);
+
+		foreach ( $watched_options as $option ) {
 			add_action( "add_option_{$option}", [ $this, 'on_settings_add' ], 10, 2 );
 			add_action( "update_option_{$option}", [ $this, 'on_settings_update' ], 10, 3 );
 		}
@@ -187,10 +194,12 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
 		$this->register_well_known_endpoint( new Ard_Catalog( $this ) );
+		$this->register_well_known_endpoint( new Mcp_Server_Card() );
 
 		$this->markdown_manual_content = new Markdown_Manual_Content( $this->generator );
 		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
 
+		$this->register_component( new Mcp_Discovery() );
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
 		$this->register_component( new Markdown_Not_Found( $this->settings, $this->markdown_endpoint, $this ) );

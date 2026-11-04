@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -58,7 +60,7 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 				'name' => $this->sanitize( get_bloginfo( 'name' ) ),
 				'url'  => $home,
 			],
-			'mcp_endpoint'   => rest_url( 'elementor/agents-mcp' ),
+			'mcp_endpoint'   => Mcp_Discovery::get_server_url(),
 			'auth'           => [
 				'documentation' => $home . '.well-known/auth.md',
 			],
