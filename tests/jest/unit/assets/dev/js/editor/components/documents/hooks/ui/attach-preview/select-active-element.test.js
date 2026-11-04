@@ -163,6 +163,20 @@ describe( `$e.internal( 'editor/documents/attach-preview' ) -- SelectActiveEleme
 		expect( $e.run ).toHaveBeenCalledWith( 'document/elements/select', { container } );
 	} );
 
+	it( 'Should not select when the current document changed before the delayed callback', async () => {
+		// Arrange.
+		window.location = new URL( 'http://localhost/?active-element=abc1234' );
+
+		// Act.
+		await runHook( SelectActiveElement );
+		elementor.documents.getCurrentId.mockReturnValue( 2 );
+		jest.advanceTimersByTime( 1000 );
+
+		// Assert.
+		expect( $e.run ).not.toHaveBeenCalled();
+		expect( scrollingElement.scrollTop ).toBe( 0 );
+	} );
+
 	it( 'Should remove `active-element` when the element cannot be found', async () => {
 		// Arrange.
 		window.location = new URL( 'http://localhost/?active-element=missing1&other-param=test' );

@@ -6,6 +6,9 @@ const SCROLL_RETRY_DELAY = 400;
 const MAX_SCROLL_ATTEMPTS = 8;
 const IN_VIEW_TOLERANCE = 4;
 
+let pendingSelectTimeoutId = null;
+let watchSessionId = 0;
+
 export class SelectActiveElement extends $e.modules.hookUI.After {
 	static calledOnce = false;
 
@@ -50,11 +53,44 @@ export class SelectActiveElement extends $e.modules.hookUI.After {
 			return;
 		}
 
-		window.setTimeout( () => watchElementInView( container, 0 ), SELECT_AFTER_PREVIEW_READY );
+		if ( null !== pendingSelectTimeoutId ) {
+			window.clearTimeout( pendingSelectTimeoutId );
+			pendingSelectTimeoutId = null;
+		}
+
+		const targetDocumentId = parseInt( elementor.documents.getCurrentId() );
+		const sessionId = ++watchSessionId;
+
+		pendingSelectTimeoutId = window.setTimeout( () => {
+			pendingSelectTimeoutId = null;
+			watchElementInView( container, 0, targetDocumentId, sessionId );
+		}, SELECT_AFTER_PREVIEW_READY );
 	}
 }
 
-function watchElementInView( container, attempt ) {
+function shouldSkipScheduledContainerAction( container, targetDocumentId ) {
+	const currentDocumentId = parseInt( elementor.documents.getCurrentId() );
+
+	if ( isNaN( targetDocumentId ) || targetDocumentId !== currentDocumentId ) {
+		return true;
+	}
+
+	const containerDocumentId = container.document?.id;
+
+	if ( undefined !== containerDocumentId && parseInt( containerDocumentId ) !== currentDocumentId ) {
+		return true;
+	}
+
+	const elementNode = container.view?.el || container.view?.$el?.[ 0 ];
+
+	return ! elementNode?.isConnected;
+}
+
+function watchElementInView( container, attempt, targetDocumentId, sessionId ) {
+	if ( sessionId !== watchSessionId || shouldSkipScheduledContainerAction( container, targetDocumentId ) ) {
+		return;
+	}
+
 	if ( 0 === attempt ) {
 		$e.run( 'document/elements/select', { container } );
 	}
@@ -63,7 +99,10 @@ function watchElementInView( container, attempt ) {
 	const shouldCheckAgain = attempt < MAX_SCROLL_ATTEMPTS - 1 && ( 0 === attempt || ! inView );
 
 	if ( shouldCheckAgain ) {
-		window.setTimeout( () => watchElementInView( container, attempt + 1 ), SCROLL_RETRY_DELAY );
+		window.setTimeout(
+			() => watchElementInView( container, attempt + 1, targetDocumentId, sessionId ),
+			SCROLL_RETRY_DELAY,
+		);
 	}
 }
 
