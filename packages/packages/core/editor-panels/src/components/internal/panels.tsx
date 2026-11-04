@@ -1,29 +1,19 @@
 import * as React from 'react';
-import { __useSelector as useSelector } from '@elementor/store';
 
-import { usePanelsInjections } from '../../location';
-import { selectOpenId } from '../../store';
+import useOpenPanelInjection from '../../hooks/use-open-panel-injection';
 import Portal from './portal';
 
 export default function Panels() {
-	const injections = usePanelsInjections();
-	const openId = useSelector( selectOpenId );
+	const openPanel = useOpenPanelInjection();
+	const Component = openPanel?.component ?? null;
 
-	const persistentInjections = injections.filter( ( injection ) => injection.keepMounted );
-	const openInjection = injections.find( ( injection ) => openId === injection.id );
-
-	if ( ! persistentInjections.length && ! openInjection ) {
+	if ( ! Component ) {
 		return null;
 	}
 
 	return (
 		<Portal>
-			{ persistentInjections.map( ( { id, component: Component } ) => (
-				<div key={ id } style={ { display: openId === id ? 'contents' : 'none' } }>
-					<Component />
-				</div>
-			) ) }
-			{ openInjection && ! openInjection.keepMounted && <openInjection.component /> }
+			<Component />
 		</Portal>
 	);
 }
