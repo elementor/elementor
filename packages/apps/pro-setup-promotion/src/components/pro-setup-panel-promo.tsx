@@ -15,8 +15,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ProSetupBannerCard } from './pro-setup-banner-card';
-
 import {
 	type PopoverCloseTargetName,
 	type ProSetupPromotionState,
@@ -43,6 +41,7 @@ import {
 	reloadEditorAfterConnectSuccess,
 	reloadEditorForSetupRefresh,
 } from '../utils/reload-editor-after-connect-success';
+import { ProSetupBannerCard } from './pro-setup-banner-card';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];

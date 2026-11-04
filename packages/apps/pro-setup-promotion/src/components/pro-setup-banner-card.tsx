@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DownloadIcon } from '@elementor/icons';
-import { alpha, Box, Stack, Typography, type Theme } from '@elementor/ui';
+import { alpha, Box, Stack, type Theme, Typography } from '@elementor/ui';
 
 type ProSetupBannerCardProps = {
 	title: string;
