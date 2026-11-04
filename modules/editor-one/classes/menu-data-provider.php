@@ -550,6 +550,21 @@ class Menu_Data_Provider {
 		} );
 	}
 
+	public function get_event_ids_by_slug(): array {
+		$event_ids = [];
+
+		foreach ( array_merge( $this->level3_items, $this->level4_items ) as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$normalized_slug = $this->slug_normalizer->normalize( $item_slug );
+				$event_id = $this->resolve_event_id( $item, $normalized_slug );
+				$event_ids[ $normalized_slug ] = $event_id;
+				$event_ids += [ preg_replace( '/[?#].*$/', '', $normalized_slug ) => $event_id ];
+			}
+		}
+
+		return $event_ids;
+	}
+
 	private function resolve_event_id( Menu_Item_Interface $item, string $item_slug ): string {
 		if ( $item instanceof Menu_Item_With_Event_Id_Interface ) {
 			return $item->get_event_id();

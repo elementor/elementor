@@ -14,11 +14,6 @@ const ELEMENTOR_MENU_SELECTORS = {
 
 const ADMIN_NAV_CLICK_EVENT = 'elementor/admin/nav-click';
 
-const EVENT_ID_BY_SLUG = {
-	'edit.php?post_type=elementor_library': 'saved_templates',
-	'elementor-app': 'theme_builder',
-};
-
 class NavigationTracking extends BaseTracking {
 	static init() {
 		if ( WpDashboardTracking.isEditorOneActive() ) {
@@ -117,7 +112,7 @@ class NavigationTracking extends BaseTracking {
 	static extractItemId( link ) {
 		const href = link.getAttribute( 'href' );
 		const slug = href ? this.extractSlugFromHref( href ) : null;
-		const eventId = slug ? this.deriveEventIdFromSlug( slug ) : '';
+		const eventId = slug ? WpDashboardTracking.getMenuEventId( slug ) : null;
 
 		if ( eventId ) {
 			return eventId;
@@ -152,18 +147,6 @@ class NavigationTracking extends BaseTracking {
 		const postType = urlParams.get( 'post_type' );
 
 		return postType ? `edit.php?post_type=${ postType }` : null;
-	}
-
-	static deriveEventIdFromSlug( slug ) {
-		if ( EVENT_ID_BY_SLUG[ slug ] ) {
-			return EVENT_ID_BY_SLUG[ slug ];
-		}
-
-		return slug
-			.replace( /^elementor-/, '' )
-			.replace( /[?#].*$/, '' )
-			.replace( /[- ]/g, '_' )
-			.toLowerCase();
 	}
 
 	static determineNavArea( link ) {

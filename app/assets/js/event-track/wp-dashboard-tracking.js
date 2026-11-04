@@ -12,7 +12,6 @@ const ACTIVITY_CHECK_INTERVAL = 1 * MINUTE_MS;
 const SESSION_STORAGE_KEY = 'elementor_wpdash_session';
 const PENDING_NAV_CLICK_KEY = 'elementor_wpdash_pending_nav';
 const LAST_NAV_KEY = 'elementor_wpdash_last_nav';
-const LAST_NAV_MAX_AGE_MS = 5 * MINUTE_MS;
 
 const generateNavClickId = () => {
 	return window.crypto?.randomUUID?.() ?? `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
@@ -104,6 +103,11 @@ export default class WpDashboardTracking {
 
 		this.processPendingNavClick();
 		this.saveSessionToStorage();
+	}
+
+	static getMenuEventId( slug ) {
+		const elementorCommon = this.getElementorCommon();
+		return elementorCommon?.config?.editor_events?.menuEventIds?.[ slug ] ?? null;
 	}
 
 	static isEditorOneActive() {
@@ -333,16 +337,11 @@ export default class WpDashboardTracking {
 			}
 
 			const { itemId, area, clickedAt } = JSON.parse( stored );
-			const age = Date.now() - clickedAt;
-
-			if ( age > LAST_NAV_MAX_AGE_MS ) {
-				return {};
-			}
 
 			return {
 				last_nav_destination_event_id: itemId,
 				last_nav_area: area,
-				seconds_since_last_nav_click: this.formatDuration( age ),
+				seconds_since_last_nav_click: this.formatDuration( Date.now() - clickedAt ),
 			};
 		} catch ( error ) {
 			return {};
