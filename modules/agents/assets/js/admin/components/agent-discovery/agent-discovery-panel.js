@@ -27,7 +27,7 @@ export const AgentDiscoveryPanel = ( { settings } ) => {
 				<Stack spacing={ 1 }>
 					<Typography variant="subtitle1">{ __( 'Show agents how to use your site', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'Publishes standard discovery files in your site\'s /.well-known path. Agents can find what your site offers and how to use it.', 'elementor' ) }
+						{ __( 'Publishes standard discovery files in your site’s /.well-known path. Agents can find what your site offers and how to use it.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Stack spacing={ 2 }>

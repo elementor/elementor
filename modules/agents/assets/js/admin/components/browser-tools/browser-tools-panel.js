@@ -32,10 +32,10 @@ export const BrowserToolsPanel = ( { settings, isMarkdownEnabled } ) => {
 			) }
 			<Stack spacing={ 1 } maxWidth={ INTRO_MAX_WIDTH }>
 				<Typography variant="subtitle1">
-					{ __( 'Let visitors\' agents search and read your site', 'elementor' ) }
+					{ __( 'Let visitors’ agents search and read your site', 'elementor' ) }
 				</Typography>
 				<Typography variant="body2" color="text.secondary">
-					{ __( 'Adds read-only WebMCP tools to your site. Visitors using an AI agent get answers from your content and business details, and agents can search pages and understand your site\'s structure.', 'elementor' ) }
+					{ __( 'Adds read-only WebMCP tools to your site. Visitors using an AI agent get answers from your content and business details, and agents can search pages and understand your site’s structure.', 'elementor' ) }
 				</Typography>
 			</Stack>
 			<Stack spacing={ 2 }>

@@ -68,6 +68,6 @@ export const getModules = () => [
 	{
 		id: MODULE_BROWSER_TOOLS,
 		title: __( 'WebMCP tools: in-browser agent actions', 'elementor' ),
-		description: __( 'Help visitors\' agents find answers on your site', 'elementor' ),
+		description: __( 'Help visitors’ agents find answers on your site', 'elementor' ),
 	},
 ];
