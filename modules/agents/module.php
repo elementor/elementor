@@ -15,10 +15,12 @@ use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
 use Elementor\Modules\Agents\Classes\Llms_Revert_Ajax;
 use Elementor\Modules\Agents\Classes\Llms_Takeover_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Content_Ajax;
 use Elementor\Modules\Agents\Classes\Module_Availability;
 use Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Revert_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
 use Elementor\Modules\Agents\Classes\Post_Exclusions;
 use Elementor\Modules\Agents\Classes\Request_Path;
@@ -96,6 +98,8 @@ class Module extends BaseModule {
 	private Llms_Manual_Content $manual_content;
 	private Bot_Catalog $bot_catalog;
 	private Markdown_Endpoint $markdown_endpoint;
+
+	private Markdown_Manual_Content $markdown_manual_content;
 	private Scanner_Report_Store $scanner_store;
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
 	private Seo_Llms_Txt_Detector $seo_detector;
@@ -182,7 +186,8 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
 
-		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
+		$this->markdown_manual_content = new Markdown_Manual_Content( $this->generator );
+		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
 
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
@@ -252,10 +257,16 @@ class Module extends BaseModule {
 		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->markdown_endpoint );
 		$ajax->register_ajax_action( Markdown_Preview_Ajax::ACTION, [ $markdown_preview_ajax, 'handle' ] );
 
-		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$markdown_content_ajax = new Markdown_Content_Ajax( $this->markdown_endpoint, $this->markdown_manual_content );
+		$ajax->register_ajax_action( Markdown_Content_Ajax::ACTION, [ $markdown_content_ajax, 'handle' ] );
+
+		$markdown_revert_ajax = new Markdown_Revert_Ajax( $this->markdown_manual_content );
+		$ajax->register_ajax_action( Markdown_Revert_Ajax::ACTION, [ $markdown_revert_ajax, 'handle' ] );
+
+		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
 		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
 
-		$content_items_ajax = new Content_Items_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$content_items_ajax = new Content_Items_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
 		$ajax->register_ajax_action( Content_Items_Ajax::ACTION, [ $content_items_ajax, 'handle' ] );
 	}
 
@@ -983,7 +994,7 @@ class Module extends BaseModule {
 			$this->settings,
 			$extractor,
 			[
-				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
+				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ), $this->generator, $sanitizer ),
 				new Get_Site_Structure( $this->generator, $sanitizer ),
 				new Read_Page_Content( $this->settings, $this->markdown_endpoint, $sanitizer ),
 				new Query_Business_Info( $this->settings, $extractor, $sanitizer ),

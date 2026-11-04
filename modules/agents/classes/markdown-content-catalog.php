@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Classes;
 
+use Elementor\Modules\Agents\Markdown_Manual_Content;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,6 +16,12 @@ class Markdown_Content_Catalog {
 
 	const EXCERPT_WORDS = 40;
 
+	private Markdown_Manual_Content $manual_content;
+
+	public function __construct( Markdown_Manual_Content $manual_content ) {
+		$this->manual_content = $manual_content;
+	}
+
 	/**
 	 * Published, public, indexable posts the preview picker can show, ordered by title.
 	 * An empty term puts the static front page first when it qualifies.
@@ -21,7 +29,7 @@ class Markdown_Content_Catalog {
 	 * @param string[] $post_types        Post type slugs to query.
 	 * @param string   $term              Title search term.
 	 * @param int[]    $excluded_post_ids Posts to leave out.
-	 * @return array<int, array{id: int, title: string, path: string, type: string}>
+	 * @return array<int, array{id: int, title: string, path: string, type: string, isOverridden: bool}>
 	 */
 	public function search( array $post_types, string $term, array $excluded_post_ids = [] ): array {
 		if ( empty( $post_types ) ) {
@@ -72,18 +80,36 @@ class Markdown_Content_Catalog {
 	 * @param string $post_type Post type slug.
 	 * @param string $term      Title search term.
 	 * @param int    $page      One-based results page.
+	 * @param int[]  $pinned_post_ids Posts listed ahead of the rest, on the first page only.
 	 * @return array{items: array<int, array{id: int, title: string, url: string}>, hasMore: bool}
 	 */
-	public function list_page( string $post_type, string $term, int $page ): array {
-		$posts = $this->query_posts( [ $post_type ], $term, $page, [], [ 'search_columns' => [ 'post_title' ] ] );
+	public function list_page( string $post_type, string $term, int $page, array $pinned_post_ids = [] ): array {
+		$overrides = [ 'search_columns' => [ 'post_title' ] ];
+		$posts     = $this->query_posts( [ $post_type ], $term, $page, $pinned_post_ids, $overrides );
+		$pinned    = 1 === $page ? $this->query_pinned_posts( $post_type, $term, $pinned_post_ids, $overrides ) : [];
 
 		return [
 			'items'   => array_values( array_map(
 				[ $this, 'to_list_item' ],
-				array_filter( $posts, [ $this, 'is_listable' ] )
+				array_filter( array_merge( $pinned, $posts ), [ $this, 'is_listable' ] )
 			) ),
 			'hasMore' => count( $posts ) >= self::PAGE_SIZE,
 		];
+	}
+
+	/**
+	 * @param int[] $pinned_post_ids
+	 * @return \WP_Post[]
+	 */
+	private function query_pinned_posts( string $post_type, string $term, array $pinned_post_ids, array $overrides ): array {
+		if ( empty( $pinned_post_ids ) ) {
+			return [];
+		}
+
+		return $this->query_posts( [ $post_type ], $term, 1, [], array_merge( $overrides, [
+			'post__in'       => $pinned_post_ids,
+			'posts_per_page' => count( $pinned_post_ids ),
+		] ) );
 	}
 
 	/**
@@ -177,14 +203,15 @@ class Markdown_Content_Catalog {
 	}
 
 	/**
-	 * @return array{id: int, title: string, path: string, type: string}
+	 * @return array{id: int, title: string, path: string, type: string, isOverridden: bool}
 	 */
 	private function to_item( \WP_Post $post ): array {
 		return [
-			'id'    => $post->ID,
-			'title' => Post_Title::to_plain_text( get_the_title( $post ) ),
-			'path'  => $this->get_path( $post ),
-			'type'  => $post->post_type,
+			'id'           => $post->ID,
+			'title'        => Post_Title::to_plain_text( get_the_title( $post ) ),
+			'path'         => $this->get_path( $post ),
+			'type'         => $post->post_type,
+			'isOverridden' => $this->manual_content->has_override( $post->ID ),
 		];
 	}
 

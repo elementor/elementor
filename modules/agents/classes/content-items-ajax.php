@@ -50,7 +50,13 @@ class Content_Items_Ajax {
 		$term = isset( $data['term'] ) && is_string( $data['term'] ) ? trim( sanitize_text_field( $data['term'] ) ) : '';
 		$page = isset( $data['page'] ) ? max( 1, absint( $data['page'] ) ) : 1;
 
-		return $this->catalog->list_page( $post_type, $term, $page );
+		return $this->catalog->list_page( $post_type, $term, $page, $this->get_excluded_post_ids( $module ) );
+	}
+
+	private function get_excluded_post_ids( string $module ): array {
+		return Agent_Ready_Settings::MODULE_LLMS_TXT === $module
+			? $this->settings->get_llms_excluded_post_ids()
+			: $this->settings->get_markdown_excluded_post_ids();
 	}
 
 	private function is_listable_post_type( string $module, string $post_type ): bool {

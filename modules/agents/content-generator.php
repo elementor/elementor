@@ -589,6 +589,18 @@ class Content_Generator {
 	}
 
 	/**
+	 * Sanitize admin-edited markdown without altering its structure: indentation,
+	 * hard line breaks, headings and percent-encoded URLs must survive a save.
+	 */
+	public function prepare_markdown_override_text( string $text ): string {
+		$text = wp_check_invalid_utf8( $text, true );
+		$text = str_replace( [ "\r\n", "\r" ], "\n", $text );
+		$text = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text ) ?? $text;
+
+		return rtrim( $text );
+	}
+
+	/**
 	 * Delete the cached inline content for every post at once.
 	 * Used when a global invalidation is needed (e.g. theme switch, plugin activation).
 	 */

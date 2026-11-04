@@ -7,6 +7,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -23,10 +24,11 @@ class Test_Content_Items_Ajax extends Elementor_Test_Base {
 
 		delete_option( Agent_Ready_Settings::OPTION );
 
-		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$generator      = new Content_Generator( new Prompt_Injection_Sanitizer() );
+		$this->settings = new Agent_Ready_Settings( $generator );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->ajax = new Content_Items_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$this->ajax = new Content_Items_Ajax( $this->settings, new Markdown_Content_Catalog( new Markdown_Manual_Content( $generator ) ) );
 	}
 
 	public function tearDown(): void {
@@ -53,6 +55,21 @@ class Test_Content_Items_Ajax extends Elementor_Test_Base {
 		$this->assertFalse( $second_page['hasMore'] );
 		$this->assertEqualsCanonicalizing( $ids, $listed_ids );
 		$this->assertSame( [ 'id', 'title', 'url' ], array_keys( $first_page['items'][0] ) );
+	}
+
+	public function test_handle__lists_excluded_posts_first_on_the_first_page_only() {
+		// Arrange
+		$ids = $this->factory()->post->create_many( Markdown_Content_Catalog::PAGE_SIZE + 1, [ 'post_type' => 'page', 'post_status' => 'publish' ] );
+		$last_id = end( $ids );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'excluded_post_ids', [ $last_id ] );
+
+		// Act
+		$first_page  = $this->ajax->handle( [ 'module' => Agent_Ready_Settings::MODULE_LLMS_TXT, 'postType' => 'page', 'page' => 1 ] );
+		$second_page = $this->ajax->handle( [ 'module' => Agent_Ready_Settings::MODULE_LLMS_TXT, 'postType' => 'page', 'page' => 2 ] );
+
+		// Assert
+		$this->assertSame( $last_id, $first_page['items'][0]['id'] );
+		$this->assertNotContains( $last_id, array_column( $second_page['items'], 'id' ) );
 	}
 
 	public function test_handle__filters_by_title() {

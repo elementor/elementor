@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FileIcon } from '@elementor/icons';
 import Autocomplete from '@elementor/ui/Autocomplete';
 import Box from '@elementor/ui/Box';
+import Chip from '@elementor/ui/Chip';
 import CircularProgress from '@elementor/ui/CircularProgress';
 import Stack from '@elementor/ui/Stack';
 import TextField from '@elementor/ui/TextField';
@@ -26,6 +27,7 @@ const itemShape = PropTypes.shape( {
 	title: PropTypes.string.isRequired,
 	path: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
+	isOverridden: PropTypes.bool,
 } );
 
 const withSelectedItem = ( items, selectedItem ) => {
@@ -100,6 +102,9 @@ export const PagePicker = ( { items, selectedItem, onSelect, disabled = false } 
 			renderOption={ ( optionProps, item ) => (
 				<Box component="li" { ...optionProps } key={ item.id }>
 					<Typography variant="body2" noWrap minWidth={ 0 }>{ item.title }</Typography>
+					{ item.isOverridden && (
+						<Chip label={ __( 'Edited', 'elementor' ) } size="tiny" shape="rounded" color="warning" variant="standard" sx={ { ml: 1 } } />
+					) }
 				</Box>
 			) }
 			ListboxProps={ { sx: { maxHeight: PAGE_MENU_HEIGHT } } }
