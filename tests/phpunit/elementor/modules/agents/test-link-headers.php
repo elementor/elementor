@@ -80,6 +80,21 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		);
 		$this->assertStringNotContainsString( 'api-catalog', implode( '', $links ) );
 		$this->assertStringNotContainsString( 'auth.md', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'rel="ard"', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__includes_ard_catalog_when_agent_discovery_is_enabled() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertContains(
+			'<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"',
+			$links
+		);
 	}
 
 	public function test_build_site_links__omits_llms_txt_when_llms_is_disabled() {

@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Site-wide when the Agent discovery module is enabled:
  *   Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/json"
  *   Link: </.well-known/auth.md>; rel="service-doc"; type="text/markdown"
+ *   Link: </.well-known/ard.json>; rel="ard"; type="application/json"
  *
  * On singular exposed views only:
  *   Link: <{permalink}.md>; rel="alternate"; type="text/markdown"
@@ -157,6 +158,7 @@ class Link_Headers extends Feature_Component {
 		if ( $this->settings->is_agent_discovery_enabled() ) {
 			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
 			$links[] = '<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"';
+			$links[] = '<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"';
 		}
 
 		/**

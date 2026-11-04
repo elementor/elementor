@@ -29,6 +29,7 @@ use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
@@ -185,6 +186,7 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Api_Catalog() );
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
+		$this->register_well_known_endpoint( new Ard_Catalog( $this ) );
 
 		$this->markdown_manual_content = new Markdown_Manual_Content( $this->generator );
 		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
