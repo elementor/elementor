@@ -228,7 +228,7 @@ class Document_Mutator {
 			return $target;
 		}
 
-		$saved = $target->save( [ 'elements' => $elements ] );
+		$saved = $this->save_keeping_live_template( $target, $elements );
 
 		if ( is_wp_error( $saved ) ) {
 			return $saved;
@@ -243,6 +243,31 @@ class Document_Mutator {
 		}
 
 		return $target;
+	}
+
+	/**
+	 * Saving an autosave calls `wp_update_post` on the revision, which re-validates its template against the
+	 * `revision` post type, fails, and writes `default` through `update_post_meta`, which redirects to the live post.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	private function save_keeping_live_template( Document $target, array $elements ) {
+		$live_post_id = (int) $target->get_main_id();
+
+		if ( (int) $target->get_post()->ID === $live_post_id ) {
+			return $target->save( [ 'elements' => $elements ] );
+		}
+
+		$refuse_live_template_write = fn( $check, $object_id, $meta_key ) =>
+			'_wp_page_template' === $meta_key && (int) $object_id === $live_post_id ? false : $check;
+
+		add_filter( 'update_post_metadata', $refuse_live_template_write, 10, 3 );
+
+		try {
+			return $target->save( [ 'elements' => $elements ] );
+		} finally {
+			remove_filter( 'update_post_metadata', $refuse_live_template_write, 10 );
+		}
 	}
 
 	/**
