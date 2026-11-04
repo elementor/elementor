@@ -89,10 +89,10 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 
 		foreach ( $abilities as $ability ) {
 			$skill = [
-				'id'          => $ability->get_id(),
-				'name'        => $ability->get_name(),
+				'id'          => $ability->get_name(),
+				'name'        => $ability->get_label(),
 				'description' => $ability->get_description(),
-				'annotations' => $ability->get_annotations(),
+				'annotations' => $ability->get_meta_item( 'annotations' ),
 			];
 
 			$input_schema = $ability->get_input_schema();
