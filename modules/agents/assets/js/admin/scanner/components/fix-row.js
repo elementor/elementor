@@ -9,8 +9,8 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
-	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
+	isPromptBasedFix,
 	CHECK_STATUS_FAIL,
 	getCheckStatusDotColor,
 	getCheckStatusLabel,
@@ -107,7 +107,7 @@ export const FixRow = ( {
 } ) => {
 	const isCompleted = isResolved;
 	const titleIsPrimary = isOpen || isCompleted;
-	const showCopyPrompt = FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt ) && ! isCompleted;
+	const showCopyPrompt = isPromptBasedFix( check ) && ! isCompleted;
 
 	const handleKeyDown = ( event ) => {
 		if ( event.target !== event.currentTarget || ! ROW_ACTIVATION_KEYS.includes( event.key ) ) {
