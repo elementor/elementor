@@ -4,6 +4,7 @@ namespace Elementor\Testing\Core\Utils\Document;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -135,6 +136,38 @@ class Test_Document_Mutator_Save_As_Draft extends Elementor_Test_Base {
 			'save_as_draft should reuse the existing autosave when passed one, not nest a new autosave under it.'
 		);
 		$this->assertEquals( $post->ID, wp_get_post_parent_id( $result->get_post()->ID ) );
+	}
+
+	public function test_save_as_draft__preserve_flag_on__published_post__keeps_the_live_template() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$document = Plugin::$instance->documents->get( $post->ID );
+		$document->save( [ 'elements' => self::ORIGINAL_ELEMENTS ] );
+		update_post_meta( $post->ID, '_wp_page_template', Page_Templates_Module::TEMPLATE_CANVAS );
+
+		// Act.
+		$result = Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS, true );
+
+		// Assert.
+		$this->assertSame( Page_Templates_Module::TEMPLATE_CANVAS, get_post_meta( $post->ID, '_wp_page_template', true ) );
+		$this->assertSame( Page_Templates_Module::TEMPLATE_CANVAS, get_metadata( 'post', $result->get_post()->ID, '_wp_page_template', true ) );
+	}
+
+	public function test_save_as_draft__preserve_flag_on__published_post__allows_template_writes_after_the_save() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$document = Plugin::$instance->documents->get( $post->ID );
+		$document->save( [ 'elements' => self::ORIGINAL_ELEMENTS ] );
+		update_post_meta( $post->ID, '_wp_page_template', Page_Templates_Module::TEMPLATE_CANVAS );
+		Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS, true );
+
+		// Act.
+		update_post_meta( $post->ID, '_wp_page_template', Page_Templates_Module::TEMPLATE_HEADER_FOOTER );
+
+		// Assert.
+		$this->assertSame( Page_Templates_Module::TEMPLATE_HEADER_FOOTER, get_post_meta( $post->ID, '_wp_page_template', true ) );
 	}
 
 	public function test_save_as_draft__preserve_flag_on__draft_post__writes_to_main_document() {
