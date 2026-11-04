@@ -285,14 +285,25 @@ async function main() {
           process.exit(1);
         }
 
-        // Write outputs for GitHub Actions (after successful reset)
+        let mainSha;
         try {
-          const betaVersion = `${major}.${minor}`;
-          setOutput('beta_reset', 'true');
-          setOutput('beta_version', betaVersion);
+          mainSha = execSync('git rev-parse origin/main', { encoding: 'utf8' }).trim();
         } catch (error) {
-          console.warn('::warning::Reset succeeded but failed to write GitHub outputs:', error.message);
-          console.warn('Continuing without outputs. Slack notification will be skipped.');
+          console.error('Error getting origin/main SHA');
+          process.exit(1);
+        }
+
+        if (releaseBetaSha === mainSha) {
+          console.log('release/beta already matches origin/main. Skipping branch-out outputs.');
+        } else {
+          try {
+            const betaVersion = `${major}.${minor}`;
+            setOutput('beta_reset', 'true');
+            setOutput('beta_version', betaVersion);
+          } catch (error) {
+            console.warn('::warning::Reset succeeded but failed to write GitHub outputs:', error.message);
+            console.warn('Continuing without outputs. Slack notification will be skipped.');
+          }
         }
       }
     } else {

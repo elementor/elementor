@@ -27,6 +27,10 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: create-version-change-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   guard-main-only:
     if: github.ref != 'refs/heads/main'
@@ -48,6 +52,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
           persist-credentials: true
@@ -168,12 +173,14 @@ jobs:
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
           NEXT_VERSION="${{ steps.calculate.outputs.next_version }}"
 
-          if gh pr list --head "$DEV_BRANCH" --base main --state open | grep -q .; then
+          EXISTING_PR_URL=$(gh pr list --head "$DEV_BRANCH" --base main --state open --json url --jq '.[0].url // empty')
+          if [ -n "$EXISTING_PR_URL" ]; then
+            echo "pr_url=$EXISTING_PR_URL" >> "$GITHUB_OUTPUT"
             echo "PR already exists for branch $DEV_BRANCH"
             exit 0
           fi
 
-          gh pr create \
+          PR_URL=$(gh pr create \
             --base main \
             --head "$DEV_BRANCH" \
             --title "chore: bump version to $NEXT_VERSION" \
@@ -185,8 +192,9 @@ jobs:
           - Updated version in packages
 
           **Created by:** GitHub Actions workflow
-          **Branch:** \`$DEV_BRANCH\`"
+          **Branch:** \`$DEV_BRANCH\`")
 
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
           echo "PR created successfully for $DEV_BRANCH"
 
       - name: Announce beta branch-out to Slack
@@ -197,6 +205,7 @@ jobs:
           BETA_VERSION: ${{ steps.run-script.outputs.beta_version }}
           MAIN_VERSION: ${{ steps.calculate.outputs.next_version }}
           PR_OUTCOME: ${{ steps.create-pr.outcome }}
+          PR_URL: ${{ steps.create-pr.outputs.pr_url }}
         run: |
           # Exit gracefully if webhook URL is not configured
           if [ -z "$SLACK_BRANCH_OUT_WEBHOOK_URL" ]; then
@@ -239,18 +248,21 @@ jobs:
           STABLE_MINOR=$((BETA_MINOR - 1))
           STABLE_VERSION="${BETA_MAJOR}.${STABLE_MINOR}"
 
-          # Build Slack message
-          # Conditionally include main version line based on PR step outcome
           if [ "$PR_OUTCOME" = "success" ]; then
-            MAIN_LINE=":large_blue_circle: main → ${MAIN_VERSION_SHORT}"
+            HEADER="<!channel> :rocket: Beta branch-out is complete!"
+            if [ -n "$PR_URL" ]; then
+              MAIN_LINE=":large_blue_circle: Bump PR opened for ${MAIN_VERSION_SHORT}: ${PR_URL}"
+            else
+              MAIN_LINE=":large_blue_circle: Bump PR opened for ${MAIN_VERSION_SHORT}"
+            fi
           else
+            HEADER="<!channel> :warning: Beta branch was reset. Main version bump needs manual follow-up."
             MAIN_LINE=":warning: Main version bump did not complete. Manual follow-up required."
           fi
 
-          # Build workflow run link
           RUN_LINK="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
 
-          TEXT="<!channel> :rocket: Beta branch-out is complete!
+          TEXT="${HEADER}
 
           Repo: https://github.com/elementor/elementor/
 
