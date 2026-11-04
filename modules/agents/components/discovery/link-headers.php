@@ -4,6 +4,7 @@ namespace Elementor\Modules\Agents\Components\Discovery;
 
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Module;
 
@@ -42,6 +43,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Link_Headers extends Feature_Component {
 
 	const HOMEPAGE_MARKDOWN_PATH = '/index.md';
+
+	const ARD_CATALOG_SLUG = 'ard.json';
 
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
@@ -158,7 +161,10 @@ class Link_Headers extends Feature_Component {
 		if ( $this->settings->is_agent_discovery_enabled() ) {
 			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
 			$links[] = '<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"';
-			$links[] = '<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"';
+
+			if ( $this->is_ard_catalog_active() ) {
+				$links[] = '<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"';
+			}
 		}
 
 		/**
@@ -176,6 +182,13 @@ class Link_Headers extends Feature_Component {
 		}
 
 		return $links;
+	}
+
+	private function is_ard_catalog_active(): bool {
+		$router = $this->module->get_component( 'well_known_router' );
+
+		return $router instanceof Well_Known_Router
+			&& isset( $router->get_active_endpoints()[ self::ARD_CATALOG_SLUG ] );
 	}
 
 	/**

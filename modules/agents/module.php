@@ -799,7 +799,7 @@ class Module extends BaseModule {
 	 *
 	 * @return string Path with trailing slash.
 	 */
-	private static function get_llms_file_root_path(): string {
+	public static function get_llms_file_root_path(): string {
 		$home_url = trailingslashit( home_url() );
 		$site_url = trailingslashit( site_url() );
 

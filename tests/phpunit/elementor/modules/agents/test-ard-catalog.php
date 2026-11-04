@@ -196,6 +196,59 @@ class Test_Ard_Catalog extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_build_identifier__omits_site_path_for_root_site() {
+		// Act
+		$identifier = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+
+		// Assert
+		$this->assertSame( 'urn:air:' . $this->get_host() . ':document:llms-txt', $identifier );
+	}
+
+	public function test_build_identifier__includes_site_path_for_subdirectory_site() {
+		// Arrange
+		$filter = static fn() => 'https://example.com/site-a';
+		add_filter( 'home_url', $filter );
+
+		// Act
+		$identifier = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+
+		// Assert
+		remove_filter( 'home_url', $filter );
+		$this->assertSame( 'urn:air:example.com:site-a:document:llms-txt', $identifier );
+	}
+
+	public function test_is_applicable__returns_false_when_physical_catalog_exists_in_public_home_directory() {
+		// Arrange
+		$home_filter = static fn() => 'https://example.com';
+		$wp_directory = basename( untrailingslashit( ABSPATH ) );
+		$site_filter = static fn() => 'https://example.com/' . $wp_directory;
+		add_filter( 'home_url', $home_filter );
+		add_filter( 'site_url', $site_filter );
+		$public_root = trailingslashit( dirname( untrailingslashit( ABSPATH ) ) );
+		$directory   = $public_root . '.well-known';
+		$file_path   = $directory . '/ard.json';
+		$created     = ! is_dir( $directory ) && wp_mkdir_p( $directory );
+
+		try {
+			file_put_contents( $file_path, '{"entries":[]}' );
+
+			// Act
+			$applicable = $this->ard_catalog->is_applicable();
+
+			// Assert
+			$this->assertFalse( $applicable );
+		} finally {
+			remove_filter( 'home_url', $home_filter );
+			remove_filter( 'site_url', $site_filter );
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			if ( $created ) {
+				rmdir( $directory );
+			}
+		}
+	}
+
 	private function get_host(): string {
 		return (string) wp_parse_url( home_url(), PHP_URL_HOST );
 	}

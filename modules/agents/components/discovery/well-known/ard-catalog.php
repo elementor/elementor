@@ -76,11 +76,10 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 	protected function generate_content(): array {
 		$home = trailingslashit( home_url() );
-		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
 
 		$built_in_entries = array_merge(
-			$this->build_llms_txt_entries( $home, $host ),
-			$this->build_agent_skills_entries( $home, $host )
+			$this->build_llms_txt_entries( $home ),
+			$this->build_agent_skills_entries( $home )
 		);
 
 		/**
@@ -96,7 +95,7 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 	}
 
 	private function has_physical_catalog_file(): bool {
-		$well_known_path = ABSPATH . ltrim( Well_Known_Router::WELL_KNOWN_PREFIX, '/' );
+		$well_known_path = Module::get_llms_file_root_path() . ltrim( Well_Known_Router::WELL_KNOWN_PREFIX, '/' );
 
 		foreach ( self::PHYSICAL_CATALOG_FILES as $filename ) {
 			if ( file_exists( $well_known_path . $filename ) ) {
@@ -117,11 +116,19 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 		return $module instanceof Module ? $module : null;
 	}
 
-	private function build_identifier( string $host, string $kind, string $name ): string {
-		return self::URN_PREFIX . $host . ':' . $kind . ':' . $name;
+	public static function build_identifier( string $kind, string $name ): string {
+		$host      = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+		$site_path = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+		$segments  = [ self::URN_PREFIX . $host ];
+
+		if ( '' !== $site_path ) {
+			$segments[] = sanitize_title( str_replace( '/', '-', $site_path ) );
+		}
+
+		return implode( ':', array_merge( $segments, [ $kind, $name ] ) );
 	}
 
-	private function build_llms_txt_entries( string $home, string $host ): array {
+	private function build_llms_txt_entries( string $home ): array {
 		$module = $this->get_module();
 
 		if ( ! $module || ! $module->should_advertise_llms_txt() ) {
@@ -130,7 +137,7 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 		return [
 			[
-				'identifier'            => $this->build_identifier( $host, 'document', 'llms-txt' ),
+				'identifier'            => self::build_identifier( 'document', 'llms-txt' ),
 				'displayName'           => 'llms.txt',
 				'type'                  => self::LLMS_TXT_MEDIA_TYPE,
 				'url'                   => $home . Module::LLMS_FILENAME,
@@ -140,7 +147,7 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 		];
 	}
 
-	private function build_agent_skills_entries( string $home, string $host ): array {
+	private function build_agent_skills_entries( string $home ): array {
 		$module = $this->get_module();
 		$router = $module ? $module->get_component( 'well_known_router' ) : null;
 
@@ -156,7 +163,7 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 		return [
 			[
-				'identifier'            => $this->build_identifier( $host, 'skills', self::AGENT_SKILLS_SLUG ),
+				'identifier'            => self::build_identifier( 'skills', self::AGENT_SKILLS_SLUG ),
 				'displayName'           => 'Agent skills',
 				'type'                  => $active[ self::AGENT_SKILLS_SLUG ]->get_content_type(),
 				'url'                   => $home . ltrim( Well_Known_Router::WELL_KNOWN_PREFIX, '/' ) . self::AGENT_SKILLS_SLUG,

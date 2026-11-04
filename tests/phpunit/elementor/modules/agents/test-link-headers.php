@@ -97,6 +97,18 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_build_site_links__omits_ard_catalog_when_catalog_is_not_applicable() {
+		// Arrange
+		add_filter( 'elementor/agents/ard_catalog/is_applicable', '__return_false' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		remove_filter( 'elementor/agents/ard_catalog/is_applicable', '__return_false' );
+		$this->assertStringNotContainsString( 'rel="ard"', implode( '', $links ) );
+	}
+
 	public function test_build_site_links__omits_llms_txt_when_llms_is_disabled() {
 		// Arrange
 		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
