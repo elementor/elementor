@@ -81,6 +81,17 @@ class Document_Mutator {
 		return null;
 	}
 
+	public function collect_ids( array $tree ): array {
+		$ids = [];
+
+		foreach ( $tree as $node ) {
+			$ids[] = $node['id'];
+			$ids = array_merge( $ids, $this->collect_ids( $node['elements'] ?? [] ) );
+		}
+
+		return $ids;
+	}
+
 	public function generate_id(): string {
 		return Utils::generate_random_string();
 	}
@@ -321,6 +332,7 @@ class Document_Mutator {
 	 */
 	private function generate_ids_recursive( array $element ): array {
 		$element['id'] = $this->generate_id();
+		$element = apply_filters( 'elementor/document/element/replace_id', $element );
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
 			$element['elements'] = array_map(

@@ -262,6 +262,22 @@ class Document_Mutator_Test extends TestCase {
 		$this->assertSame( [], $this->mutator->build_ref_index( $tree, 'ghost' ) );
 	}
 
+	// collect_ids
+
+	public function test_collect_ids_returns_all_ids_parents_before_children() {
+		// Arrange
+		$tree = [
+			$this->make_container( 'c1', [ $this->make_widget( 'w1' ), $this->make_container( 'c2', [ $this->make_widget( 'w2' ) ] ) ] ),
+			$this->make_container( 'c3' ),
+		];
+
+		// Act
+		$result = $this->mutator->collect_ids( $tree );
+
+		// Assert
+		$this->assertSame( [ 'c1', 'w1', 'c2', 'w2', 'c3' ], $result );
+	}
+
 	// duplicate
 
 	public function test_duplicate_inserts_clone_after_source_with_fresh_ids() {
