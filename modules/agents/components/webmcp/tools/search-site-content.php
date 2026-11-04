@@ -102,7 +102,8 @@ class Search_Site_Content extends Abstract_Webmcp_Tool {
 		$items = $this->catalog->search_content(
 			$this->resolve_post_types( (string) ( $input['post_type'] ?? '' ) ),
 			$query,
-			min( self::MAX_LIMIT, max( 1, (int) ( $input['limit'] ?? self::DEFAULT_LIMIT ) ) )
+			min( self::MAX_LIMIT, max( 1, (int) ( $input['limit'] ?? self::DEFAULT_LIMIT ) ) ),
+			$this->get_excluded_post_ids()
 		);
 
 		return [ 'results' => array_map( [ $this, 'sanitize_item' ], $items ) ];
@@ -117,6 +118,13 @@ class Search_Site_Content extends Abstract_Webmcp_Tool {
 		}
 
 		return array_keys( $this->generator->get_available_post_types() );
+	}
+
+	/**
+	 * @return int[]
+	 */
+	private function get_excluded_post_ids(): array {
+		return $this->settings->is_markdown_enabled() ? $this->settings->get_markdown_excluded_post_ids() : [];
 	}
 
 	/**
