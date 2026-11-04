@@ -81,26 +81,27 @@ function shouldSkipScheduledContainerAction( container, targetDocumentId ) {
 		return true;
 	}
 
-	const elementNode = container.view?.el || container.view?.$el?.[ 0 ];
-
-	return ! elementNode?.isConnected;
+	return false;
 }
 
-function watchElementInView( container, attempt, targetDocumentId, sessionId ) {
+function watchElementInView( container, attempt, targetDocumentId, sessionId, isSelected = false ) {
 	if ( sessionId !== watchSessionId || shouldSkipScheduledContainerAction( container, targetDocumentId ) ) {
 		return;
 	}
 
-	if ( 0 === attempt ) {
+	const elementNode = container.view?.el || container.view?.$el?.[ 0 ];
+	const isConnected = !! elementNode?.isConnected;
+
+	if ( isConnected && ! isSelected ) {
 		$e.run( 'document/elements/select', { container } );
 	}
 
-	const inView = scrollContainerIntoView( container );
-	const shouldCheckAgain = attempt < MAX_SCROLL_ATTEMPTS - 1 && ( 0 === attempt || ! inView );
+	const inView = isConnected && scrollContainerIntoView( container );
+	const shouldCheckAgain = attempt < MAX_SCROLL_ATTEMPTS - 1 && ( ! isSelected || ! inView );
 
 	if ( shouldCheckAgain ) {
 		window.setTimeout(
-			() => watchElementInView( container, attempt + 1, targetDocumentId, sessionId ),
+			() => watchElementInView( container, attempt + 1, targetDocumentId, sessionId, isSelected || isConnected ),
 			SCROLL_RETRY_DELAY,
 		);
 	}

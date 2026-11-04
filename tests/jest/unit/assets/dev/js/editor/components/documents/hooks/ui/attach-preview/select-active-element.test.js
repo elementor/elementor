@@ -60,6 +60,7 @@ describe( `$e.internal( 'editor/documents/attach-preview' ) -- SelectActiveEleme
 		jest.clearAllMocks();
 		jest.useRealTimers();
 
+		elementNode.isConnected = true;
 		SelectActiveElement.constructor.calledOnce = false;
 	} );
 
@@ -131,6 +132,24 @@ describe( `$e.internal( 'editor/documents/attach-preview' ) -- SelectActiveEleme
 		expect( scrollingElement.scrollTop ).toBe( 1590.5 );
 
 		elementNode.getBoundingClientRect.mockReturnValue( { top: 1400, bottom: 1600, height: 200 } );
+	} );
+
+	it( 'Should select on a later attempt when the element is not connected yet', async () => {
+		// Arrange.
+		elementNode.isConnected = false;
+		window.location = new URL( 'http://localhost/?active-element=abc1234' );
+
+		// Act.
+		await runHook( SelectActiveElement );
+		jest.advanceTimersByTime( 1000 );
+
+		// Assert.
+		expect( $e.run ).not.toHaveBeenCalled();
+
+		elementNode.isConnected = true;
+		jest.advanceTimersByTime( 400 );
+		expect( $e.run ).toHaveBeenCalledWith( 'document/elements/select', { container } );
+		expect( scrollingElement.scrollTop ).toBe( 1100 );
 	} );
 
 	it( 'Should run only once', async () => {
