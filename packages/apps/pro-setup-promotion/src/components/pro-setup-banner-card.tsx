@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { DownloadIcon } from '@elementor/icons';
 import { alpha, Box, Stack, Typography, type Theme } from '@elementor/ui';
 
@@ -47,7 +48,7 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 			direction="row"
 			alignItems="center"
 			gap={ 1.25 }
-			sx={ ( theme ) => {
+			sx={ ( theme: Theme ) => {
 				const surface = getInfoBannerSurface( theme );
 
 				return {
@@ -67,7 +68,7 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 				<Typography
 					variant="subtitle2"
 					color="text.primary"
-					sx={ ( theme ) => ( {
+					sx={ ( theme: Theme ) => ( {
 						lineHeight: 1.35,
 						fontWeight: resolveFontWeight( theme.typography.fontWeightBold, 100 ),
 						display: '-webkit-box',
@@ -81,7 +82,7 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 				<Typography
 					variant="caption"
 					color="text.secondary"
-					sx={ ( theme ) => ( {
+					sx={ ( theme: Theme ) => ( {
 						lineHeight: 1.35,
 						fontWeight: theme.typography.fontWeightRegular,
 						display: '-webkit-box',
@@ -95,7 +96,7 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 			</Stack>
 			<Box
 				aria-hidden
-				sx={ ( theme ) => {
+				sx={ ( theme: Theme ) => {
 					const tile = getDownloadTileSurface( theme );
 
 					return {
