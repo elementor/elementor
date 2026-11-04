@@ -35,11 +35,12 @@ import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-me
 import {
 	clearConnectReloadAttempted,
 	hasConnectReloadBeenAttempted,
+	isOpenConnectQueryParamInUrl,
 	markConnectReloadAttempted,
 	stripOpenConnectQueryParamFromUrl,
 } from '../utils/pro-setup-connect-reload-guard';
 import {
-	PRO_SETUP_OPEN_CONNECT_QUERY_PARAM,
+	isReloadDueToMissingConnectUrl,
 	shouldReloadEditorAfterSetupStep,
 } from '../utils/pro-setup-editor-refresh';
 import {
@@ -286,16 +287,18 @@ export function ProSetupPanelPromo() {
 	}, [] );
 
 	const reloadEditorForMissingConnectUrl = useCallback( () => {
-		if ( hasConnectReloadBeenAttempted() ) {
+		if (
+			hasConnectReloadBeenAttempted() ||
+			( ! promotionConfig?.connectUrl && isOpenConnectQueryParamInUrl() )
+		) {
 			stripOpenConnectQueryParamFromUrl();
-			clearConnectReloadAttempted();
 			notifyConnectUnavailable();
 			return;
 		}
 
 		markConnectReloadAttempted();
 		reloadEditorForSetupRefresh( { openConnectPopover: true } );
-	}, [ notifyConnectUnavailable ] );
+	}, [ notifyConnectUnavailable, promotionConfig?.connectUrl ] );
 
 	useEffect( () => {
 		if ( ! state ) {
@@ -306,30 +309,30 @@ export function ProSetupPanelPromo() {
 	}, [ state ] );
 
 	useEffect( () => {
-		let shouldOpenConnectPopover = false;
+		let landedWithOpenConnect = false;
 
 		try {
-			const url = new URL( window.location.href );
-			shouldOpenConnectPopover = '1' === url.searchParams.get( PRO_SETUP_OPEN_CONNECT_QUERY_PARAM );
+			landedWithOpenConnect = isOpenConnectQueryParamInUrl();
+
+			if ( landedWithOpenConnect ) {
+				stripOpenConnectQueryParamFromUrl();
+			}
 		} catch {
 			return;
 		}
 
-		if ( ! shouldOpenConnectPopover ) {
+		if ( ! landedWithOpenConnect ) {
 			return;
 		}
 
 		if ( 'connect' !== state || ! promotionConfig?.connectUrl ) {
 			if ( hasConnectReloadBeenAttempted() ) {
-				stripOpenConnectQueryParamFromUrl();
-				clearConnectReloadAttempted();
 				notifyConnectUnavailable();
 			}
 
 			return;
 		}
 
-		stripOpenConnectQueryParamFromUrl();
 		clearConnectReloadAttempted();
 		setOpen( true );
 	}, [ notifyConnectUnavailable, promotionConfig?.connectUrl, state ] );
@@ -423,7 +426,12 @@ export function ProSetupPanelPromo() {
 			trackProSetupPromotionResult( state, 'success', action );
 
 			if ( shouldReloadEditorAfterSetupStep( result ) ) {
-				reloadEditorForMissingConnectUrl();
+				if ( isReloadDueToMissingConnectUrl( result ) ) {
+					reloadEditorForMissingConnectUrl();
+					return;
+				}
+
+				reloadEditorForSetupRefresh();
 				return;
 			}
 

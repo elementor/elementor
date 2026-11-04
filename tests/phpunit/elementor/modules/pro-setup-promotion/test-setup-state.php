@@ -153,4 +153,38 @@ class Test_Setup_State extends Elementor_Test_Base {
 			)
 		);
 	}
+
+	public function test_should_not_reload_editor_when_config_is_null(): void {
+		$this->assertFalse( Setup_State::should_reload_editor_after_plugin_change_config( null ) );
+	}
+
+	public function test_should_not_reload_editor_for_install_state(): void {
+		$this->assertFalse(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_INSTALL,
+				]
+			)
+		);
+	}
+
+	public function test_should_not_reload_editor_for_activate_state(): void {
+		$this->assertFalse(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_ACTIVATE,
+				]
+			)
+		);
+	}
+
+	public function test_should_reload_editor_when_connect_url_key_is_absent(): void {
+		$this->assertTrue(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_CONNECT,
+				]
+			)
+		);
+	}
 }

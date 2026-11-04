@@ -31,14 +31,15 @@ class Complete_Setup extends Endpoint_Base {
 
 	private function success_response( string $action, bool $reload = false ): array {
 		$config = Setup_State::get_editor_config_after_plugin_change();
-		$needs_editor_reload = $reload || Setup_State::should_reload_editor_after_plugin_change_config( $config );
+		$missing_connect_url = Setup_State::should_reload_editor_after_plugin_change_config( $config );
+		$needs_editor_reload = $reload || $missing_connect_url;
 
 		return [
 			'data' => [
 				'success' => true,
 				'action' => $action,
 				'reload' => $needs_editor_reload,
-				'proSetupPromotion' => $needs_editor_reload ? null : $config,
+				'proSetupPromotion' => $missing_connect_url ? null : $config,
 			],
 		];
 	}

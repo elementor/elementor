@@ -1,8 +1,6 @@
 import { markConnectSuccessNotificationForAfterReload } from './post-reload-connect-success-notification';
 import { appendSetupRefreshQueryParams, type ReloadEditorForSetupRefreshOptions } from './pro-setup-editor-refresh';
 
-export { PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM } from './pro-setup-query-params';
-
 export function reloadEditorAfterConnectSuccess(): void {
 	markConnectSuccessNotificationForAfterReload();
 	reloadEditorWithCacheBust();

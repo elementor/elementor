@@ -25,6 +25,13 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 		$this->admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $this->admin_id );
 
+		add_filter(
+			'elementor/pro_setup_promotion/editor_assets',
+			static function (): array {
+				return [ 'is_active' => true ];
+			}
+		);
+
 		$data_manager = Plugin::$instance->data_manager_v2;
 		$data_manager->kill_server();
 
@@ -41,6 +48,7 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/pro_setup_promotion/setup_state' );
+		remove_all_filters( 'elementor/pro_setup_promotion/editor_assets' );
 		Plugin::$instance->data_manager_v2->kill_server();
 
 		parent::tearDown();
@@ -74,5 +82,32 @@ class Test_Complete_Setup_Endpoint extends Elementor_Test_Base {
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertSame( 'invalid_state', $result->get_error_code() );
+	}
+
+	public function test_success_response_requests_reload_without_promotion_when_connect_url_missing(): void {
+		$this->force_setup_state( Setup_State::STATE_CONNECT );
+
+		$method = new \ReflectionMethod( Complete_Setup::class, 'success_response' );
+		$method->setAccessible( true );
+
+		/** @var array $response */
+		$response = $method->invoke( $this->endpoint, 'activate', false );
+
+		$this->assertTrue( $response['data']['reload'] );
+		$this->assertNull( $response['data']['proSetupPromotion'] );
+	}
+
+	public function test_success_response_keeps_promotion_config_when_reload_flag_without_missing_connect_url(): void {
+		$this->force_setup_state( Setup_State::STATE_INSTALL );
+
+		$method = new \ReflectionMethod( Complete_Setup::class, 'success_response' );
+		$method->setAccessible( true );
+
+		/** @var array $response */
+		$response = $method->invoke( $this->endpoint, 'install', true );
+
+		$this->assertTrue( $response['data']['reload'] );
+		$this->assertIsArray( $response['data']['proSetupPromotion'] );
+		$this->assertSame( Setup_State::STATE_INSTALL, $response['data']['proSetupPromotion']['state'] );
 	}
 }

@@ -13,10 +13,16 @@ type CompleteSetupLike = {
 	proSetupPromotion?: ProSetupPromotionLike;
 };
 
-export { PRO_SETUP_OPEN_CONNECT_QUERY_PARAM };
-
 export function isConnectPromotionMissingUrl( config: ProSetupPromotionLike ): boolean {
 	return 'connect' === config?.state && ! config?.connectUrl;
+}
+
+export function isReloadDueToMissingConnectUrl( result: CompleteSetupLike ): boolean {
+	if ( isConnectPromotionMissingUrl( result.proSetupPromotion ) ) {
+		return true;
+	}
+
+	return !! result.reload && ! result.proSetupPromotion;
 }
 
 export function shouldReloadEditorAfterSetupStep( result: CompleteSetupLike ): boolean {
