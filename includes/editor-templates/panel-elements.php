@@ -103,13 +103,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <?php
-$is_angie_active = Hints::is_plugin_active( 'angie' );
 $widget_creation_cta_text = __( 'Create custom widget', 'elementor' );
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-empty-state">
 	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{{ searchTerm }}}"</div>
 	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
-	<?php if ( current_user_can( 'manage_options' ) && $is_angie_active ) : ?>
+	<?php if ( current_user_can( 'manage_options' ) ) : ?>
 	<button type="button" class="elementor-panel-elements-widget-creation__cta"><?php echo esc_html( $widget_creation_cta_text ); ?></button>
 	<?php endif; ?>
 </script>
@@ -117,7 +116,7 @@ $widget_creation_cta_text = __( 'Create custom widget', 'elementor' );
 <script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-search-footer">
 	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( "Couldn't find what you're looking for?", 'elementor' ); ?></div>
 	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
-	<?php if ( current_user_can( 'manage_options' ) && $is_angie_active ) : ?>
+	<?php if ( current_user_can( 'manage_options' ) ) : ?>
 	<button type="button" class="elementor-panel-elements-widget-creation__cta"><?php echo esc_html( $widget_creation_cta_text ); ?></button>
 	<?php endif; ?>
 </script>

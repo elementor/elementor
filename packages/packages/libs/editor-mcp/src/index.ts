@@ -2,10 +2,10 @@ import { getSDK } from './utils/get-sdk';
 export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
 
 export {
-  McpServer,
-  ResourceTemplate,
-  type RegisteredResource,
-  type ToolCallback,
+	McpServer,
+	ResourceTemplate,
+	type RegisteredResource,
+	type ToolCallback,
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 export { isAngieAvailable } from './utils/is-angie-available';
@@ -13,11 +13,7 @@ export { isAngieSidebarOpen } from './utils/is-angie-sidebar-open';
 export * from './mcp-registry';
 export { createSampler } from './sampler';
 export { toolPrompts } from './utils/prompt-builder';
-export {
-  ANGIE_MODEL_PREFERENCES,
-  ANGIE_REQUIRED_RESOURCES,
-  type AngieModelPreferences,
-} from './angie-annotations';
+export { ANGIE_MODEL_PREFERENCES, ANGIE_REQUIRED_RESOURCES, type AngieModelPreferences } from './angie-annotations';
 export { getActiveChatInfo, type ActiveChatInfo } from './utils/get-active-chat-info';
 export { openAngieInAskMode } from './utils/open-angie-in-ask-mode';
 export { sendPromptToAngie } from './utils/send-prompt-to-angie';
@@ -25,7 +21,7 @@ export { saveAngieConsent } from './utils/save-angie-consent';
 export const getAngieSdk = () => getSDK();
 export * from './init';
 export {
-  dispatchMcpStylesAppliedEvent,
-  MCP_STYLES_APPLIED_EVENT,
-  type McpStylesAppliedPayload,
+	dispatchMcpStylesAppliedEvent,
+	MCP_STYLES_APPLIED_EVENT,
+	type McpStylesAppliedPayload,
 } from './events/mcp-styles-applied-event';
