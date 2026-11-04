@@ -6,7 +6,8 @@
 #   push to main (packages/** paths) — automatic build, version suffix = run number, dist-tag = "build"
 #   workflow_call                    — called by other workflows (e.g. one-click-release); permission check is the caller's responsibility
 #   workflow_dispatch                — manual run from the GitHub Actions UI; restricted to users listed in the
-#                                      DEPLOYMENT_PERMITTED_USERS repository variable
+#                                      DEPLOYMENT_PERMITTED_USERS repository variable. tag=latest is allowed only
+#                                      for release managers (see Validate Inputs) and requires version (release tag ref).
 #
 # Inputs (workflow_call / workflow_dispatch):
 #   version        — base semver (e.g. 1.2.3). Omit to read from package.json.
@@ -88,6 +89,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest') && inputs.version || github.ref }}
 
       - name: Get Configuration
         if: github.event_name == 'workflow_dispatch'
@@ -147,7 +150,7 @@ jobs:
             fi
           fi
 
-          # Disallow "latest" tag in manual (workflow_dispatch) runs.
+          # Restrict manual (workflow_dispatch) tag=latest to named release managers.
           # NOTE: must check github.event.inputs (the raw dispatch payload),
           # not github.event_name alone or the `inputs` context. github.event_name
           # reflects the *root* trigger of the whole run, so it's still
@@ -157,8 +160,17 @@ jobs:
           # only carries the directly-dispatched workflow's own inputs, so it's
           # empty here unless *this* workflow was the one manually run.
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.tag }}" == "latest" ]; then
-            echo "Error: 'latest' tag is not allowed for manual workflow_dispatch runs. Use the release workflow to publish as latest."
-            exit 1
+            MANUAL_LATEST_PUBLISHERS=",Ntnelbaba,davseve,Svitlana-Dykun,"
+            ACTOR=",${{ github.actor }},"
+            TRIGGERING_ACTOR=",${{ github.triggering_actor }},"
+            if ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq "$ACTOR" && ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq "$TRIGGERING_ACTOR"; then
+              echo "Error: tag=latest is restricted to release managers (Ntnelbaba, davseve, Svitlana-Dykun). Use Publish Release or another dist-tag."
+              exit 1
+            fi
+            if [ -z "$INPUT_VERSION" ]; then
+              echo "Error: version is required for manual tag=latest runs (existing release tag ref, e.g. 4.3.6)."
+              exit 1
+            fi
           fi
 
       - name: Determine Tag Strategy
