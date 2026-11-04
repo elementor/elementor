@@ -346,9 +346,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		}
 
 		const isAngiePresent = elementorIsAngieIframeInDocument();
-		const isAdministrator = elementor.config.user.is_administrator;
 
-		if ( ! isAngiePresent && ! isAdministrator ) {
+		if ( ! isAngiePresent ) {
 			this.widgetCreation.empty();
 			return;
 		}

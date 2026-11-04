@@ -15,10 +15,6 @@ jest.mock( '../angie-guide-card', () => ( {
 	},
 } ) );
 
-jest.mock( '../../hooks/use-auto-show', () => ( {
-	useAutoShow: jest.fn(),
-} ) );
-
 jest.mock( '@elementor/events', () => ( {
 	useMixpanel: () => ( { dispatchEvent: jest.fn() } ),
 } ) );

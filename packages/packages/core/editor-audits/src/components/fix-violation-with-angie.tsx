@@ -4,67 +4,69 @@ import { AngieIcon } from '@elementor/icons';
 import { Button, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../constants';
 import { type AuditMeta } from '../types';
 import { trackFindingClicked } from '../utils/tracking';
 
 type Props = {
-	audit: AuditMeta;
-	prompt: string;
-	panelZIndex: number;
-	variant?: 'icon' | 'button';
+  audit: AuditMeta;
+  prompt: string;
+  panelZIndex: number;
+  variant?: 'icon' | 'button';
 };
 
-export default function FixViolationWithAngie( { audit, prompt, panelZIndex, variant = 'icon' }: Props ) {
-	const label = __( 'Fix with Angie', 'elementor' );
-	const href = `#angie-prompt=${ encodeURIComponent( prompt ) }`;
+export default function FixViolationWithAngie( {
+  audit,
+  prompt,
+  panelZIndex,
+  variant = 'icon',
+}: Props ) {
+  if ( ! isAngieAvailable() ) {
+    return null;
+  }
 
-	const handleClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
-		event.stopPropagation();
-		event.preventDefault();
+  const label = __( 'Fix with Angie', 'elementor' );
+  const href = `#angie-prompt=${ encodeURIComponent( prompt ) }`;
 
-		if ( isAngieAvailable() ) {
-			sendPromptToAngie( prompt );
-			trackFindingClicked( {
-				audit,
-				locationL2: 'issues',
-				actionType: 'fix_with_angie',
-				interactionResult: 'angie_prompt_sent',
-			} );
-			return;
-		}
+  const handleClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+    event.stopPropagation();
+    event.preventDefault();
 
-		window.dispatchEvent(
-			new CustomEvent( CREATE_WIDGET_EVENT, {
-				detail: {
-					entry_point: ANGIE_FIX_ENTRY_POINT,
-					prompt,
-				},
-			} )
-		);
-	};
+    sendPromptToAngie( prompt );
+    trackFindingClicked( {
+      audit,
+      locationL2: 'issues',
+      actionType: 'fix_with_angie',
+      interactionResult: 'angie_prompt_sent',
+    } );
+  };
 
-	if ( variant === 'button' ) {
-		return (
-			<Button
-				component="a"
-				href={ href }
-				size="small"
-				color="secondary"
-				variant="outlined"
-				startIcon={ <AngieIcon fontSize="tiny" aria-hidden={ true } /> }
-				onClick={ handleClick }
-			>
-				{ label }
-			</Button>
-		);
-	}
+  if ( variant === 'button' ) {
+    return (
+      <Button
+        component="a"
+        href={ href }
+        size="small"
+        color="secondary"
+        variant="outlined"
+        startIcon={ <AngieIcon fontSize="tiny" aria-hidden={ true } /> }
+        onClick={ handleClick }
+      >
+        { label }
+      </Button>
+    );
+  }
 
-	return (
-		<Tooltip title={ label } placement="top" PopperProps={ { sx: { zIndex: panelZIndex } } }>
-			<IconButton component="a" href={ href } size="small" aria-label={ label } onClick={ handleClick }>
-				<AngieIcon fontSize="tiny" />
-			</IconButton>
-		</Tooltip>
-	);
+  return (
+    <Tooltip title={ label } placement="top" PopperProps={ { sx: { zIndex: panelZIndex } } }>
+      <IconButton
+        component="a"
+        href={ href }
+        size="small"
+        aria-label={ label }
+        onClick={ handleClick }
+      >
+        <AngieIcon fontSize="tiny" />
+      </IconButton>
+    </Tooltip>
+  );
 }
