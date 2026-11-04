@@ -241,6 +241,49 @@ describe( 'useWpMediaFrame', () => {
 		expect( frame.remove ).toHaveBeenCalled();
 	} );
 
+	it( 'should allow svg on the WordPress upload pipeline while the frame is open', () => {
+		// Arrange.
+		const allowedMimeTypes: Record< string, string > = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		const pipelineWindow = window as WpPluploadSettingsWindow & {
+			_wpMediaUploadPipelineSettings?: { allowedMimeTypes: Record< string, string > };
+		};
+		pipelineWindow._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+
+		const mockMedia = createMedia( {} );
+		jest.mocked( media ).mockReturnValue( mockMedia );
+
+		const { result } = renderHook( () =>
+			useWpMediaFrame( {
+				selected: null,
+				multiple: false,
+				mediaTypes: [ 'svg' ],
+				onSelect: () => {},
+			} )
+		);
+
+		result.current.open();
+
+		const frame = mockMedia.currentFrame as MockFrame;
+
+		// Act.
+		frame.trigger( 'ready' as Event );
+
+		// Assert.
+		expect( allowedMimeTypes.svg ).toBe( 'image/svg+xml' );
+		expect( frame.uploader.uploader.param ).toHaveBeenCalledWith(
+			'uploadTypeCaller',
+			'elementor-wp-media-upload'
+		);
+
+		// Act.
+		frame.trigger( 'close' );
+
+		// Assert.
+		expect( allowedMimeTypes ).toEqual( { 'jpg|jpeg|jpe': 'image/jpeg' } );
+
+		delete pipelineWindow._wpMediaUploadPipelineSettings;
+	} );
+
 	it( 'should not cleanup on close to avoid WP lifecycle race conditions', () => {
 		// Arrange.
 		const mockMedia = createMedia( {} );

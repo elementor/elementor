@@ -4,6 +4,7 @@ import media from '../media';
 import normalize from '../normalize';
 import { type Attachment } from '../types/attachment';
 import { type MediaFrame } from '../types/wp-media';
+import { allowPipelineMimeTypes } from '../wp-media-upload-pipeline';
 import wpPluploadSettings from '../wp-plupload-settings';
 
 export type OpenOptions = {
@@ -169,16 +170,25 @@ function restrictFrameMenu( frame: MediaFrame ) {
 	frame.$el?.find( FRAME_MENU_ITEMS_TO_REMOVE )?.remove();
 }
 
+const UPLOAD_TYPE_CALLER = 'elementor-wp-media-upload';
+const PIPELINE_EXTENSIONS = new Set( [ 'json', 'svg' ] );
+
 function setTypeCaller( frame: MediaFrame ) {
-	frame.uploader.uploader.param( 'uploadTypeCaller', 'elementor-wp-media-upload' );
+	frame.uploader?.uploader?.param( 'uploadTypeCaller', UPLOAD_TYPE_CALLER );
 }
 
 function handleExtensions( frame: MediaFrame, mediaTypes: MediaType[] ) {
 	const defaultExtensions = wpPluploadSettings().defaults.filters.mime_types?.[ 0 ]?.extensions;
+	let restorePipelineMimeTypes: () => void = () => undefined;
 
 	// Set extensions by media types
 	frame.on( 'ready', () => {
-		wpPluploadSettings().defaults.filters.mime_types = [ { extensions: getExtensions( mediaTypes ) } ];
+		const extensions = getExtensions( mediaTypes );
+
+		wpPluploadSettings().defaults.filters.mime_types = [ { extensions } ];
+		setTypeCaller( frame );
+		restorePipelineMimeTypes();
+		restorePipelineMimeTypes = allowPipelineMimeTypes( pipelineExtensions( extensions ) );
 	} );
 
 	// Restore default upload extensions
@@ -186,7 +196,13 @@ function handleExtensions( frame: MediaFrame, mediaTypes: MediaType[] ) {
 		wpPluploadSettings().defaults.filters.mime_types = defaultExtensions
 			? [ { extensions: defaultExtensions } ]
 			: [];
+		restorePipelineMimeTypes();
+		restorePipelineMimeTypes = () => undefined;
 	} );
+}
+
+function pipelineExtensions( extensions: string ) {
+	return extensions.split( ',' ).filter( ( extension ) => PIPELINE_EXTENSIONS.has( extension ) );
 }
 
 const imageExtensions = [ 'avif', 'bmp', 'gif', 'ico', 'jpe', 'jpeg', 'jpg', 'png', 'webp' ];

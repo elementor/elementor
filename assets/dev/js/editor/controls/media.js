@@ -1,4 +1,5 @@
 import FilesUploadHandler from '../utils/files-upload-handler';
+import { allowPipelineMimeTypes } from '../utils/wp-media-upload-pipeline';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 
 var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
@@ -375,14 +376,20 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	setUploadMimeType( frame, ext ) {
 		// Add unfiltered files to the allowed upload extensions
 		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		const pipelineExtensions = ( 'application/json' === ext ) ? [ 'json' ] : [ 'svg' ];
+		let restorePipelineMimeTypes = () => {};
 
 		frame.on( 'ready', () => {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = ( 'application/json' === ext ) ? 'json' : oldExtensions + ',svg';
+			restorePipelineMimeTypes();
+			restorePipelineMimeTypes = allowPipelineMimeTypes( pipelineExtensions );
 		} );
 
 		this.frame.on( 'close', () => {
 			// Restore allowed upload extensions
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+			restorePipelineMimeTypes();
+			restorePipelineMimeTypes = () => {};
 		} );
 	},
 

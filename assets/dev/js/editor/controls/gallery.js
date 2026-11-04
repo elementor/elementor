@@ -1,4 +1,5 @@
 import FilesUploadHandler from '../utils/files-upload-handler';
+import { allowPipelineMimeTypes } from '../utils/wp-media-upload-pipeline';
 
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlMediaItemView;
@@ -174,13 +175,18 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 
 		// Add the SVG to the currently allowed extensions
 		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		let restorePipelineMimeTypes = () => {};
 		this.frame.on( 'ready', () => {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions + ',svg';
+			restorePipelineMimeTypes();
+			restorePipelineMimeTypes = allowPipelineMimeTypes( [ 'svg' ] );
 		} );
 
 		// Restore allowed upload extensions
 		this.frame.on( 'close', () => {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+			restorePipelineMimeTypes();
+			restorePipelineMimeTypes = () => {};
 		} );
 	},
 

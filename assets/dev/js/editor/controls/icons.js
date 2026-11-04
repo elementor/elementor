@@ -1,4 +1,5 @@
 import FilesUploadHandler from '../utils/files-upload-handler';
+import { allowPipelineMimeTypes } from '../utils/wp-media-upload-pipeline';
 
 const ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' );
 
@@ -199,13 +200,18 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	setUploadMimeType( frame, ext ) {
 		// Set svg as only allowed upload extensions
 		const oldExtensions = _wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions;
+		let restorePipelineMimeTypes = () => {};
 		frame.on( 'ready', () => {
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = ext;
+			restorePipelineMimeTypes();
+			restorePipelineMimeTypes = allowPipelineMimeTypes( [ ext ] );
 		} );
 
 		this.frame.on( 'close', () => {
 			// Restore allowed upload extensions
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
+			restorePipelineMimeTypes();
+			restorePipelineMimeTypes = () => {};
 		} );
 	}
 
