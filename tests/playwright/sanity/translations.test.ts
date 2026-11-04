@@ -12,16 +12,10 @@ test.describe( 'Test site translation for different languages', () => {
 			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
-			const translationButton = 'Form[name=upgrade-translations] input[type=submit]';
 
 			// Act
 			await wpAdmin.setSiteLanguage( languageObj.language );
-			await page.goto( '/wp-admin/update-core.php' );
-			await page.locator( '.update-last-checked' ).click();
-			if ( await page.locator( translationButton ).isVisible() ) {
-				await page.locator( translationButton ).click();
-				await page.waitForLoadState( 'networkidle' );
-			}
+			await wpAdmin.updateTranslations();
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
 			const publishButton = page.locator( 'button.MuiButton-root' ).nth( 1 );
