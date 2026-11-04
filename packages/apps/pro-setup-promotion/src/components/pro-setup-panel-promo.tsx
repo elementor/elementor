@@ -33,6 +33,14 @@ import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
 import {
+	clearConnectReloadAttempted,
+	hasConnectReloadBeenAttempted,
+	isOpenConnectQueryParamInUrl,
+	markConnectReloadAttempted,
+	stripOpenConnectQueryParamFromUrl,
+} from '../utils/pro-setup-connect-reload-guard';
+import { isReloadDueToMissingConnectUrl, shouldReloadEditorAfterSetupStep } from '../utils/pro-setup-editor-refresh';
+import {
 	reloadEditorAfterConnectSuccess,
 	reloadEditorForSetupRefresh,
 } from '../utils/reload-editor-after-connect-success';
@@ -117,6 +125,7 @@ async function fetchPromotionConfig(): Promise< ProSetupConfig | null > {
 
 type CompleteSetupResult = {
 	reload?: boolean;
+	reloadReason?: 'missing_connect_url';
 	proSetupPromotion?: ProSetupConfig | null;
 };
 
@@ -265,6 +274,27 @@ export function ProSetupPanelPromo() {
 		verifyConnectComplete: isProSetupConnectComplete,
 	} );
 
+	const notifyConnectUnavailable = useCallback( () => {
+		isProcessingRef.current = false;
+		setIsProcessing( false );
+		notify( {
+			type: 'error',
+			message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
+			id: 'pro-setup-promotion-connect-url-missing',
+		} );
+	}, [] );
+
+	const reloadEditorForMissingConnectUrl = useCallback( () => {
+		if ( hasConnectReloadBeenAttempted() ) {
+			stripOpenConnectQueryParamFromUrl();
+			notifyConnectUnavailable();
+			return;
+		}
+
+		markConnectReloadAttempted();
+		reloadEditorForSetupRefresh( { openConnectPopover: true } );
+	}, [ notifyConnectUnavailable ] );
+
 	useEffect( () => {
 		if ( ! state ) {
 			return;
@@ -272,6 +302,35 @@ export function ProSetupPanelPromo() {
 
 		trackProSetupPromotionImpression( state );
 	}, [ state ] );
+
+	useEffect( () => {
+		let landedWithOpenConnect = false;
+
+		try {
+			landedWithOpenConnect = isOpenConnectQueryParamInUrl();
+
+			if ( landedWithOpenConnect ) {
+				stripOpenConnectQueryParamFromUrl();
+			}
+		} catch {
+			return;
+		}
+
+		if ( ! landedWithOpenConnect ) {
+			return;
+		}
+
+		if ( 'connect' !== state || ! promotionConfig?.connectUrl ) {
+			if ( hasConnectReloadBeenAttempted() ) {
+				notifyConnectUnavailable();
+			}
+
+			return;
+		}
+
+		clearConnectReloadAttempted();
+		setOpen( true );
+	}, [ notifyConnectUnavailable, promotionConfig?.connectUrl, state ] );
 
 	useEffect( () => {
 		if ( ! open ) {
@@ -361,6 +420,16 @@ export function ProSetupPanelPromo() {
 
 			trackProSetupPromotionResult( state, 'success', action );
 
+			if ( shouldReloadEditorAfterSetupStep( result ) ) {
+				if ( isReloadDueToMissingConnectUrl( result ) ) {
+					reloadEditorForMissingConnectUrl();
+					return;
+				}
+
+				reloadEditorForSetupRefresh();
+				return;
+			}
+
 			applyPromotionConfig( result.proSetupPromotion ?? null );
 			setOpen( true );
 		} catch ( error ) {
@@ -388,16 +457,11 @@ export function ProSetupPanelPromo() {
 			const connectUrlForPopup = promotionConfig?.connectUrl ?? '';
 
 			if ( ! connectUrlForPopup ) {
-				isProcessingRef.current = false;
-				setIsProcessing( false );
-				notify( {
-					type: 'error',
-					message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
-					id: 'pro-setup-promotion-connect-url-missing',
-				} );
+				reloadEditorForMissingConnectUrl();
 				return;
 			}
 
+			clearConnectReloadAttempted();
 			openConnectPopup( connectUrlForPopup );
 
 			void ( async () => {
@@ -533,7 +597,11 @@ export function ProSetupPanelPromo() {
 							my: 1,
 							cursor: 'pointer',
 							'&:hover': { '& .MuiAlert-root': { filter: 'brightness(0.98)' } },
-							'&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
+							'&:focus-visible': {
+								outline: '2px solid',
+								outlineColor: 'primary.main',
+								outlineOffset: 2,
+							},
 						} }
 					>
 						<Alert
