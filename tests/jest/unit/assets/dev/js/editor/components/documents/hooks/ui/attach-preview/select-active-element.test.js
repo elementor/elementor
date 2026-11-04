@@ -113,6 +113,26 @@ describe( `$e.internal( 'editor/documents/attach-preview' ) -- SelectActiveEleme
 		delete elementNode.querySelectorAll;
 	} );
 
+	it( 'Should scroll on a later attempt when the element has no box yet', async () => {
+		// Arrange.
+		elementNode.getBoundingClientRect
+			.mockReturnValueOnce( { top: 0, bottom: 0, height: 0 } )
+			.mockReturnValue( { top: 1742, bottom: 2239, height: 497 } );
+		window.location = new URL( 'http://localhost/?active-element=abc1234' );
+
+		// Act.
+		await runHook( SelectActiveElement );
+		jest.advanceTimersByTime( 1000 );
+
+		// Assert.
+		expect( scrollingElement.scrollTop ).toBe( 0 );
+
+		jest.advanceTimersByTime( 400 );
+		expect( scrollingElement.scrollTop ).toBe( 1590.5 );
+
+		elementNode.getBoundingClientRect.mockReturnValue( { top: 1400, bottom: 1600, height: 200 } );
+	} );
+
 	it( 'Should run only once', async () => {
 		// Arrange.
 		window.location = new URL( 'http://localhost/?active-element=abc1234' );
@@ -120,7 +140,7 @@ describe( `$e.internal( 'editor/documents/attach-preview' ) -- SelectActiveEleme
 		// Act.
 		await runHook( SelectActiveElement );
 		await runHook( SelectActiveElement );
-		jest.advanceTimersByTime( 1600 );
+		jest.advanceTimersByTime( 1000 );
 
 		// Assert.
 		expect( $e.run ).toHaveBeenCalledTimes( 1 );
