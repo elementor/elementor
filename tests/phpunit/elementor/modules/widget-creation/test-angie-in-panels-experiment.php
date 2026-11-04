@@ -20,6 +20,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 		$this->original_experiment_default_state = Plugin::$instance->experiments
 			->get_features( Module::ANGIE_IN_PANELS_EXPERIMENT_NAME )['default'];
+
+		Plugin::$instance->experiments->remove_feature( Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+		Plugin::$instance->experiments->add_feature( Module::get_angie_in_panels_experimental_data() );
 	}
 
 	public function tear_down() {
