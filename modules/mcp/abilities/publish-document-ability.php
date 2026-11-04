@@ -125,9 +125,10 @@ class Publish_Document_Ability extends Abstract_Ability {
 	 * publish flow does in `Page\Manager::save`.
 	 *
 	 * Reuses `Revisions_Manager::restore_revision` so ALL `_elementor*` meta (data, page settings,
-	 * CSS cache, etc.) is copied consistently and Post CSS is regenerated. Running before the
-	 * `wp_update_post` status transition means listeners on `transition_post_status` (Post CSS,
-	 * CDN purges, sitemaps, etc.) see the promoted content on the very same request.
+	 * etc.) is copied consistently, the element cache is invalidated and Post CSS is regenerated.
+	 * Running before the `wp_update_post` status transition means listeners on
+	 * `transition_post_status` (Post CSS, CDN purges, sitemaps, etc.) see the promoted content on
+	 * the very same request.
 	 */
 	private function promote_pending_autosave( int $main_id ): void {
 		$autosave_post = wp_get_post_autosave( $main_id, get_current_user_id() );
