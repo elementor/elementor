@@ -70,8 +70,11 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 					sx={ ( theme ) => ( {
 						lineHeight: 1.35,
 						fontWeight: resolveFontWeight( theme.typography.fontWeightBold, 100 ),
+						display: '-webkit-box',
+						WebkitLineClamp: 2,
+						WebkitBoxOrient: 'vertical',
+						overflow: 'hidden',
 					} ) }
-					noWrap
 				>
 					{ title }
 				</Typography>
