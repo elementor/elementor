@@ -54,19 +54,13 @@ class Post_Exclusions {
 			return $counts;
 		}
 
-		global $wpdb;
-
-		$id_list           = implode( ',', array_map( 'absint', $ids ) );
-		$type_placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- IDs are cast to int, types use placeholders.
-		$rows = $wpdb->get_results( $wpdb->prepare(
-			"SELECT post_type, COUNT(*) AS total FROM {$wpdb->posts} WHERE post_status = 'publish' AND ID IN ( {$id_list} ) AND post_type IN ( {$type_placeholders} ) GROUP BY post_type", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			$post_types
-		) );
-
-		foreach ( $rows as $row ) {
-			$counts[ $row->post_type ] = (int) $row->total;
+		foreach ( $post_types as $post_type ) {
+			$counts[ $post_type ] = count( self::query_ids( [
+				'post_type'      => $post_type,
+				'post_status'    => 'publish',
+				'post__in'       => $ids,
+				'posts_per_page' => count( $ids ),
+			] ) );
 		}
 
 		return $counts;

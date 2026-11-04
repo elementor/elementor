@@ -10,6 +10,7 @@ const LOADING_STATE = {
 	page: 0,
 	hasMore: false,
 	isLoading: true,
+	hasError: false,
 };
 
 const appendNewItems = ( items, nextItems ) => {
@@ -42,11 +43,12 @@ export const useContentItems = ( { module, postType, term = '' } ) => {
 					page,
 					hasMore,
 					isLoading: false,
+					hasError: false,
 				} ) );
 			} )
 			.catch( () => {
 				if ( requestId === requestIdRef.current ) {
-					setState( ( previous ) => ( { ...previous, hasMore: false, isLoading: false } ) );
+					setState( ( previous ) => ( { ...previous, hasMore: false, isLoading: false, hasError: true } ) );
 				}
 			} );
 	}, [ module, postType, trimmedTerm, ignorePendingRequest ] );
@@ -68,10 +70,14 @@ export const useContentItems = ( { module, postType, term = '' } ) => {
 		}
 	}, [ load, state.isLoading, state.hasMore, state.page ] );
 
+	const retry = useCallback( () => load( FIRST_PAGE ), [ load ] );
+
 	return {
 		items: state.items,
 		hasMore: state.hasMore,
 		isLoading: state.isLoading,
+		hasError: state.hasError,
 		loadMore,
+		retry,
 	};
 };

@@ -1068,7 +1068,7 @@ class Module extends BaseModule {
 	 * @param string[] $included_post_types
 	 * @param int[]    $excluded_post_ids
 	 */
-	private function get_post_type_rows( array $included_post_types, array $excluded_post_ids ): array {
+	private function get_post_type_rows( array $included_post_types, array $excluded_post_ids = [] ): array {
 		$available_post_types = $this->generator->get_available_post_types();
 		$excluded_counts      = Post_Exclusions::count_published_by_post_type( $excluded_post_ids, array_keys( $available_post_types ) );
 		$post_types           = [];

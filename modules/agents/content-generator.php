@@ -92,7 +92,7 @@ class Content_Generator {
 	 * @return string
 	 */
 	public function generate_llms_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
-		$lines = $this->build_header( $overrides );
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
 
 		$sections = $this->get_content_sections( $post_types, false, $excluded_post_ids );
 
@@ -129,7 +129,7 @@ class Content_Generator {
 	 * @return string
 	 */
 	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
-		$lines = $this->build_header( $overrides );
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
 
 		$sections = $this->get_content_sections( $post_types, true, $excluded_post_ids );
 
@@ -271,16 +271,17 @@ class Content_Generator {
 	 * Build the common header lines: site name + blockquote intro.
 	 *
 	 * @param array{intro?: string} $overrides
+	 * @param int[]                 $excluded_post_ids Posts to leave out.
 	 * @return string[]
 	 */
-	private function build_header( array $overrides ): array {
+	private function build_header( array $overrides, array $excluded_post_ids = [] ): array {
 		$lines   = [];
 		$lines[] = '# ' . get_bloginfo( 'name' );
 		$lines[] = '';
 
 		$intro = isset( $overrides['intro'] ) && '' !== trim( (string) $overrides['intro'] )
 			? $this->sanitizer->sanitize( trim( (string) $overrides['intro'] ) )
-			: $this->generate_intro();
+			: $this->generate_intro( $excluded_post_ids );
 
 		if ( '' !== $intro ) {
 			foreach ( explode( "\n", $intro ) as $intro_line ) {
@@ -297,13 +298,13 @@ class Content_Generator {
 	 * Auto-generate the intro from the site tagline and/or the front-page
 	 * description/excerpt.
 	 */
-	private function generate_intro(): string {
+	private function generate_intro( array $excluded_post_ids = [] ): string {
 		$show_on_front = get_option( 'show_on_front' );
 
 		if ( 'page' === $show_on_front ) {
 			$page_id = (int) get_option( 'page_on_front' );
 
-			if ( $page_id ) {
+			if ( $page_id && ! in_array( $page_id, $excluded_post_ids, true ) ) {
 				$candidate = $this->get_post_description( $page_id );
 
 				if ( '' !== $candidate ) {

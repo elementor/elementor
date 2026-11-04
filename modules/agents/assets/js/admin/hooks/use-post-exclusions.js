@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { saveAgentReadySettings } from '../api';
+import { MAX_EXCLUDED_POSTS } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
 
 export const EXCLUSIONS_SAVE_DEBOUNCE_MS = 500;
@@ -65,6 +67,17 @@ export const usePostExclusions = ( { settingsKey, initialExcludedPostIds = [], i
 	const togglePostExclusion = useCallback( ( postTypeName, postId ) => {
 		const { ids, counts } = currentRef.current;
 		const isExcluded = ids.includes( postId );
+
+		if ( ! isExcluded && ids.length >= MAX_EXCLUDED_POSTS ) {
+			setSaveError( sprintf(
+				/* Translators: %d: Maximum number of excluded items. */
+				__( 'You can exclude up to %d items.', 'elementor' ),
+				MAX_EXCLUDED_POSTS,
+			) );
+
+			return;
+		}
+
 		const nextCounts = { ...counts, [ postTypeName ]: Math.max( 0, ( counts[ postTypeName ] ?? 0 ) + ( isExcluded ? -1 : 1 ) ) };
 
 		currentRef.current = {

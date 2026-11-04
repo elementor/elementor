@@ -125,7 +125,7 @@ export const PostTypeList = ( { postTypes, isDisabled, onToggle, exclusions } ) 
 
 	const closeItemsDialog = () => {
 		setOpenPostTypeName( null );
-		exclusions.onClose();
+		exclusions?.onClose();
 	};
 
 	const visiblePostTypes = postTypes.slice( 0, LLMS_VISIBLE_POST_TYPES_LIMIT );
@@ -170,7 +170,7 @@ export const PostTypeList = ( { postTypes, isDisabled, onToggle, exclusions } ) 
 					{ isExpanded ? __( 'Show less', 'elementor' ) : __( 'Show more', 'elementor' ) }
 				</Button>
 			) }
-			{ openPostType && (
+			{ openPostType && exclusions && (
 				<PostExclusionDialog
 					module={ exclusions.module }
 					postType={ openPostType }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { act, renderHook } from '@testing-library/react';
 
 import { saveAgentReadySettings } from 'elementor/modules/agents/assets/js/admin/api';
+import { MAX_EXCLUDED_POSTS } from 'elementor/modules/agents/assets/js/admin/constants';
 import { EXCLUSIONS_SAVE_DEBOUNCE_MS, usePostExclusions } from 'elementor/modules/agents/assets/js/admin/hooks/use-post-exclusions';
 
 jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
@@ -10,6 +11,7 @@ jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text ) => text,
+	sprintf: ( format, ...args ) => args.reduce( ( text, arg ) => text.replace( /%(\d\$)?[sd]/, arg ), format ),
 } ) );
 
 const SETTINGS_KEY = 'llms_txt';
@@ -119,6 +121,33 @@ describe( 'usePostExclusions', () => {
 		expect( saveAgentReadySettings ).toHaveBeenCalledWith( {
 			[ SETTINGS_KEY ]: { excluded_post_ids: [ INITIAL_EXCLUDED_ID, PAGE_ID ] },
 		} );
+	} );
+
+	it( 'refuses new exclusions past the limit and shows an error', async () => {
+		// Arrange
+		const fullList = Array.from( { length: MAX_EXCLUDED_POSTS }, ( _, index ) => index + 1 );
+		const { result } = renderHook( () => {
+			const [ , setPostTypes ] = useState( initialPostTypes );
+			const [ saveError, setSaveError ] = useState( '' );
+			const exclusions = usePostExclusions( {
+				settingsKey: SETTINGS_KEY,
+				initialExcludedPostIds: fullList,
+				initialPostTypes,
+				setPostTypes,
+				setSaveError,
+			} );
+
+			return { ...exclusions, saveError };
+		} );
+
+		// Act
+		act( () => result.current.togglePostExclusion( 'page', MAX_EXCLUDED_POSTS + 1 ) );
+		await waitForDebouncedSave();
+
+		// Assert
+		expect( result.current.excludedPostIds ).toEqual( fullList );
+		expect( result.current.saveError ).toBe( `You can exclude up to ${ MAX_EXCLUDED_POSTS } items.` );
+		expect( saveAgentReadySettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'restores the last saved exclusions and shows the error when the save fails', async () => {

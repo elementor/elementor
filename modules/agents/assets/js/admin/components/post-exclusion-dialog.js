@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ExternalLinkIcon, ZoomIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
+import Button from '@elementor/ui/Button';
 import CircularProgress from '@elementor/ui/CircularProgress';
 import Dialog from '@elementor/ui/Dialog';
 import DialogContent from '@elementor/ui/DialogContent';
@@ -69,7 +70,7 @@ ItemRow.propTypes = {
 export const PostExclusionDialog = ( { module, postType, excludedPostIds, isDisabled = false, onToggle, onClose } ) => {
 	const listRef = useRef( null );
 	const [ term, setTerm ] = useState( '' );
-	const { items, isLoading, loadMore } = useContentItems( { module, postType: postType.name, term } );
+	const { items, isLoading, hasError, loadMore, retry } = useContentItems( { module, postType: postType.name, term } );
 	const excludedSet = new Set( excludedPostIds );
 
 	useEffect( () => {
@@ -84,7 +85,7 @@ export const PostExclusionDialog = ( { module, postType, excludedPostIds, isDisa
 		}
 	};
 
-	const hasNoResults = ! isLoading && ! items.length;
+	const hasNoResults = ! isLoading && ! hasError && ! items.length;
 
 	return (
 		<Dialog open maxWidth="sm" fullWidth onClose={ onClose } sx={ { zIndex: DIALOG_Z_INDEX } }>
@@ -137,6 +138,16 @@ export const PostExclusionDialog = ( { module, postType, excludedPostIds, isDisa
 						{ isLoading && (
 							<Stack alignItems="center" py={ 2 }>
 								<CircularProgress size={ PROGRESS_SIZE } aria-label={ __( 'Loading', 'elementor' ) } />
+							</Stack>
+						) }
+						{ hasError && (
+							<Stack alignItems="center" spacing={ 1 } py={ 4 }>
+								<Typography variant="body2" color="text.secondary" align="center">
+									{ __( 'Couldn\'t load items.', 'elementor' ) }
+								</Typography>
+								<Button variant="text" color="info" size="small" onClick={ retry }>
+									{ __( 'Try again', 'elementor' ) }
+								</Button>
 							</Stack>
 						) }
 						{ hasNoResults && (

@@ -145,6 +145,29 @@ describe( 'PostExclusionDialog', () => {
 		expect( screen.getByRole( 'checkbox', { name: 'Pricing' } ) ).toBeTruthy();
 	} );
 
+	it( 'shows an error with a retry instead of an empty-search message when loading fails', async () => {
+		// Arrange
+		listContentItems
+			.mockRejectedValueOnce( new Error( 'network' ) )
+			.mockResolvedValueOnce( { items: firstPage, hasMore: false } );
+
+		// Act
+		renderDialog();
+		await flushTimers();
+
+		// Assert
+		expect( screen.getByText( 'Couldn\'t load items.' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Nothing matched your search.' ) ).toBeNull();
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+		await flushTimers();
+
+		// Assert
+		expect( screen.queryByText( 'Couldn\'t load items.' ) ).toBeNull();
+		expect( screen.getByRole( 'checkbox', { name: 'Home' } ) ).toBeTruthy();
+	} );
+
 	it( 'replaces the list with the first page of results after the search debounce', async () => {
 		// Arrange
 		listContentItems
