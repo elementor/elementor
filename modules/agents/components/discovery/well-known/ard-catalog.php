@@ -122,7 +122,10 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 		$segments  = [ self::URN_PREFIX . $host ];
 
 		if ( '' !== $site_path ) {
-			$segments[] = sanitize_title( str_replace( '/', '-', $site_path ) );
+			$path_parts = array_filter( explode( '/', $site_path ), 'strlen' );
+			foreach ( $path_parts as $part ) {
+				$segments[] = sanitize_title( $part );
+			}
 		}
 
 		return implode( ':', array_merge( $segments, [ $kind, $name ] ) );
