@@ -129,6 +129,14 @@ class Setup_State {
 		return self::build_editor_config_for_state( $state );
 	}
 
+	public static function should_reload_editor_after_plugin_change_config( ?array $config ): bool {
+		if ( ! is_array( $config ) ) {
+			return false;
+		}
+
+		return self::STATE_CONNECT === $config['state'] && empty( $config['connectUrl'] );
+	}
+
 	private static function resolve_after_plugin_change(): string {
 		$state = self::resolve_without_filters_after_plugin_change();
 

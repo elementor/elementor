@@ -61,6 +61,17 @@
 	}
 }
 
+body.e-admin-navigation-active {
+	#adminmenu #toplevel_page_elementor-home {
+		a[href*="elementor-one-upgrade"] {
+			font-size: 12px;
+			line-height: 1.5;
+			padding: 5px 0;
+			white-space: nowrap;
+		}
+	}
+}
+
 #e-admin-menu__kit-library {
 	color: $success;
 }
