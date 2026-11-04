@@ -155,6 +155,7 @@ class Autoloader {
 			'TemplateLibrary\Source_Cloud' => 'includes/template-library/sources/cloud.php',
 			'Tools' => 'includes/settings/tools.php',
 			'Container\Container' => 'includes/container/container.php',
+			'Modules\V4Widgets\Module' => 'modules/v4-widgets/module.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
 			'User_Data' => 'includes/user-data.php',
