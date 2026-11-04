@@ -98,7 +98,10 @@ class Markdown_Content_Catalog {
 	}
 
 	/**
-	 * @param int[] $pinned_post_ids
+	 * @param string $post_type
+	 * @param string $term
+	 * @param int[]  $pinned_post_ids
+	 * @param array  $overrides
 	 * @return \WP_Post[]
 	 */
 	private function query_pinned_posts( string $post_type, string $term, array $pinned_post_ids, array $overrides ): array {
