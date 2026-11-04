@@ -35,6 +35,7 @@ import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-me
 import {
 	clearConnectReloadAttempted,
 	hasConnectReloadBeenAttempted,
+	isOpenConnectQueryParamInUrl,
 	markConnectReloadAttempted,
 	stripOpenConnectQueryParamFromUrl,
 } from '../utils/pro-setup-connect-reload-guard';
