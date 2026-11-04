@@ -50,7 +50,6 @@ const POPOVER_OFFSET_RTL: [ number, number ] = [ 24, 12 ];
 /** Keeps popover height stable when copy is shorter (e.g. connect vs install). */
 const POPOVER_DESCRIPTION_MIN_HEIGHT = 72;
 const POPOVER_HEADER_MIN_HEIGHT = 48;
-const BANNER_SUBTITLE = __( 'Finish setup to start using Pro', 'elementor' );
 const REST_BASE = 'elementor/v1/pro-setup-promotion';
 
 type InfotipWithPopperProps = React.ComponentProps< typeof Infotip > & {
@@ -616,7 +615,7 @@ export function ProSetupPanelPromo() {
 					>
 						<ProSetupBannerCard
 							title={ promotionConfig.banner.title }
-							subtitle={ BANNER_SUBTITLE }
+							subtitle={ promotionConfig.banner.description }
 						/>
 					</Box>
 				</SetupInfotip>
