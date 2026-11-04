@@ -398,10 +398,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function apply_duplicate( array $tree, string $element_id ) {
 		$source_node = $this->get_mutator()->find_by_id( $tree, $element_id );
-		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
-		if ( is_wp_error( $new_tree ) ) {
-			return $this->to_public_error( $new_tree );
+		$duplicate_result = $this->get_mutator()->duplicate( $tree, $element_id );
+		if ( is_wp_error( $duplicate_result ) ) {
+			return $this->to_public_error( $duplicate_result );
 		}
+
+		$new_tree = $duplicate_result['tree'];
 
 		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
@@ -411,7 +413,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
-			'new_element_id' => $this->find_added_element_id( $tree, $new_tree ),
+			'new_element_id' => $duplicate_result['new_element_id'],
 			'event_metadata' => [
 				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
 			],
@@ -426,13 +428,6 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		return $fields;
-	}
-
-	private function find_added_element_id( array $tree_before, array $tree_after ): ?string {
-		$mutator = $this->get_mutator();
-		$added_ids = array_diff( $mutator->collect_ids( $tree_after ), $mutator->collect_ids( $tree_before ) );
-
-		return reset( $added_ids ) ?: null;
 	}
 
 	private function collect_element_types( array $node ): array {

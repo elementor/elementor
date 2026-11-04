@@ -81,17 +81,6 @@ class Document_Mutator {
 		return null;
 	}
 
-	public function collect_ids( array $tree ): array {
-		$ids = [];
-
-		foreach ( $tree as $node ) {
-			$ids[] = $node['id'];
-			$ids = array_merge( $ids, $this->collect_ids( $node['elements'] ?? [] ) );
-		}
-
-		return $ids;
-	}
-
 	public function generate_id(): string {
 		return Utils::generate_random_string();
 	}
@@ -173,9 +162,10 @@ class Document_Mutator {
 
 	/**
 	 * Duplicate an element in place, inserting the clone right after the source
-	 * inside the same parent. All ids in the clone are regenerated.
+	 * inside the same parent. All ids in the clone are regenerated, including
+	 * atomic local style and interaction ids.
 	 *
-	 * @return array|\WP_Error
+	 * @return array{tree: array, new_element_id: string}|\WP_Error
 	 */
 	public function duplicate( array $tree, string $id ) {
 		$location = $this->locate_parent_and_index( $tree, $id );
@@ -190,7 +180,17 @@ class Document_Mutator {
 
 		[ $parent_id, $index, $node ] = $location;
 
-		return $this->insert_subtree( $tree, $parent_id, $index + 1, $node );
+		$subtree_with_ids = $this->generate_ids_recursive( $node, true );
+		$new_tree = $this->insert_at( $tree, $parent_id, $index + 1, $subtree_with_ids );
+
+		if ( is_wp_error( $new_tree ) ) {
+			return $new_tree;
+		}
+
+		return [
+			'tree' => $new_tree,
+			'new_element_id' => $subtree_with_ids['id'],
+		];
 	}
 
 	/**
@@ -330,13 +330,16 @@ class Document_Mutator {
 	 *
 	 * @return array The element with new IDs assigned.
 	 */
-	private function generate_ids_recursive( array $element ): array {
+	private function generate_ids_recursive( array $element, bool $replace_atomic_ids = false ): array {
 		$element['id'] = $this->generate_id();
-		$element = apply_filters( 'elementor/document/element/replace_id', $element );
+
+		if ( $replace_atomic_ids ) {
+			$element = apply_filters( 'elementor/document/element/replace_id', $element );
+		}
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
 			$element['elements'] = array_map(
-				fn( array $child ) => $this->generate_ids_recursive( $child ),
+				fn( array $child ) => $this->generate_ids_recursive( $child, $replace_atomic_ids ),
 				$element['elements']
 			);
 		}
