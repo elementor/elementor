@@ -175,7 +175,7 @@ class Link_Headers extends Feature_Component {
 		 *
 		 * @since 3.30.0
 		 */
-		if ( apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) ) {
+		if ( $this->settings->is_agent_discovery_enabled() && apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) ) {
 			$links[] = '<' . $home . '/.well-known/mcp/server-card.json>'
 				. '; rel="mcp-server-card"; type="application/json"';
 		}

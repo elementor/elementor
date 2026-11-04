@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Agent_Skills extends Abstract_Well_Known_Endpoint {
 
-	/** Abilities API category registered by the MCP component. */
-	const ABILITY_CATEGORY = 'elementor-agents';
+	/** Abilities API category registered by the Elementor MCP module. */
+	const ABILITY_CATEGORY = 'elementor';
 
 	public function get_id(): string {
 		return 'agent_skills';

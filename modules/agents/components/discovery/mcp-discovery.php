@@ -5,6 +5,7 @@ namespace Elementor\Modules\Agents\Components\Discovery;
 use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\MCP\Composer\Mcp\Server_Bootstrap;
 use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,7 +41,7 @@ class Mcp_Discovery extends Feature_Component {
 
 	const TRANSPORT = 'streamable-http';
 
-	const ARD_ENTRY_TYPE = 'application/mcp-server-card+json';
+	const ARD_ENTRY_TYPE = 'application/json';
 
 	const ARD_REPRESENTATIVE_QUERIES = [
 		'Edit a page on this site with Elementor',
@@ -143,7 +144,7 @@ class Mcp_Discovery extends Feature_Component {
 		}
 
 		$entries[] = [
-			'identifier'            => 'urn:air:' . self::get_site_host() . ':server:' . self::SERVER_SLUG,
+			'identifier'            => Ard_Catalog::build_identifier( 'server', self::SERVER_SLUG ),
 			'displayName'           => self::SERVER_TITLE,
 			'type'                  => self::ARD_ENTRY_TYPE,
 			'url'                   => self::get_server_card_url(),

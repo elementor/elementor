@@ -192,7 +192,7 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 		// Assert
 		$this->assertCount( 1, $entries );
 		$this->assertSame( 'urn:air:' . $host . ':server:elementor-mcp', $entries[0]['identifier'] );
-		$this->assertSame( 'application/mcp-server-card+json', $entries[0]['type'] );
+		$this->assertSame( 'application/json', $entries[0]['type'] );
 		$this->assertSame( Mcp_Discovery::get_server_card_url(), $entries[0]['url'] );
 		$this->assertNotEmpty( $entries[0]['displayName'] );
 		$this->assertNotEmpty( $entries[0]['description'] );
@@ -212,6 +212,11 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 		$this->assertStringContainsString( '## ' . Content_Generator::MCP_SECTION_TITLE, $llms );
 		$this->assertStringContainsString( '(' . esc_url_raw( Mcp_Discovery::get_server_url() ) . ')', $llms );
 		$this->assertStringContainsString( '## ' . Content_Generator::MCP_SECTION_TITLE, $llms_full );
+	}
+
+	public function test_agent_skills__queries_the_category_registered_by_mcp_module() {
+		// Assert
+		$this->assertSame( 'elementor', Agent_Skills::ABILITY_CATEGORY );
 	}
 
 	public function test_mcp_option_update__flushes_llms_and_well_known_caches() {
