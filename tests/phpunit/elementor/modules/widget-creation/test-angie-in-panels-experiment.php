@@ -52,9 +52,14 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		);
 
 		// Act
-		$is_active = Plugin::$instance->experiments->is_feature_active( Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+		$is_active = Module::is_angie_in_panels_active();
 
 		// Assert
 		$this->assertTrue( $is_active );
+	}
+
+	public function test_is_angie_in_panels_active_is_false_by_default() {
+		// Act & Assert
+		$this->assertFalse( Module::is_angie_in_panels_active() );
 	}
 }
