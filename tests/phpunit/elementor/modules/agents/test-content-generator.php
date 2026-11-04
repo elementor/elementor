@@ -141,6 +141,32 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertStringContainsString( '> Homepage excerpt used as intro.', $output );
 	}
 
+	public function test_llms_txt_falls_back_to_tagline_when_front_page_is_excluded() {
+		// Arrange
+		$page_id = $this->factory()->post->create( [
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_excerpt' => 'Excluded homepage excerpt.',
+		] );
+		update_option( 'show_on_front', 'page' );
+		update_option( 'page_on_front', $page_id );
+		update_option( 'blogdescription', 'Site tagline fallback' );
+
+		// Act
+		$llms      = $this->generator->generate_llms_txt( [ 'intro' => '' ], null, [ $page_id ] );
+		$llms_full = $this->generator->generate_llms_full_txt( [ 'intro' => '' ], null, [ $page_id ] );
+
+		// Cleanup
+		update_option( 'show_on_front', 'posts' );
+		delete_option( 'page_on_front' );
+
+		// Assert
+		$this->assertStringContainsString( '> Site tagline fallback', $llms );
+		$this->assertStringNotContainsString( 'Excluded homepage excerpt.', $llms );
+		$this->assertStringContainsString( '> Site tagline fallback', $llms_full );
+		$this->assertStringNotContainsString( 'Excluded homepage excerpt.', $llms_full );
+	}
+
 	public function test_llms_full_txt_contains_page_link() {
 		$page_id = $this->factory()->post->create( [
 			'post_type'   => 'page',

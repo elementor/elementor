@@ -319,7 +319,8 @@ class Markdown_Endpoint extends Feature_Component {
 
 	public function is_included_by_settings( \WP_Post $post ): bool {
 		return $this->settings->is_markdown_enabled()
-			&& in_array( $post->post_type, $this->settings->get_markdown_post_types(), true );
+			&& in_array( $post->post_type, $this->settings->get_markdown_post_types(), true )
+			&& ! $this->settings->is_post_excluded( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, $post->ID );
 	}
 
 	/**
