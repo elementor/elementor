@@ -123,6 +123,19 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		$this->assertSame( [ 'status' => 'ok' ], $result );
 	}
 
+	public function test_add_server_time_to_config__adds_current_server_time() {
+		// Arrange
+		$sync_state = new Editor_Sync_State();
+		$before = time();
+
+		// Act
+		$config = $sync_state->add_server_time_to_config( [ 'existing' => 'value' ] );
+
+		// Assert
+		$this->assertSame( 'value', $config['existing'] );
+		$this->assertGreaterThanOrEqual( $before, $config['server_time'] );
+	}
+
 	private function block_with_guard(): void {
 		add_filter( 'elementor/mcp/pre_execute_guard', fn() => new \WP_Error( self::GUARD_ERROR_CODE ) );
 	}
