@@ -39,10 +39,7 @@ import {
 	markConnectReloadAttempted,
 	stripOpenConnectQueryParamFromUrl,
 } from '../utils/pro-setup-connect-reload-guard';
-import {
-	isReloadDueToMissingConnectUrl,
-	shouldReloadEditorAfterSetupStep,
-} from '../utils/pro-setup-editor-refresh';
+import { isReloadDueToMissingConnectUrl, shouldReloadEditorAfterSetupStep } from '../utils/pro-setup-editor-refresh';
 import {
 	reloadEditorAfterConnectSuccess,
 	reloadEditorForSetupRefresh,
@@ -287,10 +284,7 @@ export function ProSetupPanelPromo() {
 	}, [] );
 
 	const reloadEditorForMissingConnectUrl = useCallback( () => {
-		if (
-			hasConnectReloadBeenAttempted() ||
-			( ! promotionConfig?.connectUrl && isOpenConnectQueryParamInUrl() )
-		) {
+		if ( hasConnectReloadBeenAttempted() || ( ! promotionConfig?.connectUrl && isOpenConnectQueryParamInUrl() ) ) {
 			stripOpenConnectQueryParamFromUrl();
 			notifyConnectUnavailable();
 			return;

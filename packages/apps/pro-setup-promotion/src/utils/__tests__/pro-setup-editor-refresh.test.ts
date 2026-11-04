@@ -4,10 +4,7 @@ import {
 	isReloadDueToMissingConnectUrl,
 	shouldReloadEditorAfterSetupStep,
 } from '../pro-setup-editor-refresh';
-import {
-	PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM,
-	PRO_SETUP_OPEN_CONNECT_QUERY_PARAM,
-} from '../pro-setup-query-params';
+import { PRO_SETUP_CONNECT_RELOAD_QUERY_PARAM, PRO_SETUP_OPEN_CONNECT_QUERY_PARAM } from '../pro-setup-query-params';
 
 describe( 'pro-setup-editor-refresh', () => {
 	describe( 'isConnectPromotionMissingUrl', () => {
