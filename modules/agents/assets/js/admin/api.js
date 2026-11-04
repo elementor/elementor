@@ -151,6 +151,19 @@ export const searchMarkdownItems = ( term ) => {
 	} );
 };
 
+export const listContentItems = ( { module, postType, term, page } ) => {
+	return new Promise( ( resolve, reject ) => {
+		elementorCommon.ajax.addRequest( 'agents_ready_list_content_items', {
+			data: { module, postType, term, page },
+			success: ( response ) => resolve( {
+				items: response?.items ?? [],
+				hasMore: Boolean( response?.hasMore ),
+			} ),
+			error: reject,
+		} );
+	} );
+};
+
 const requestAjaxAction = ( action, data = {} ) => {
 	return new Promise( ( resolve, reject ) => {
 		elementorCommon.ajax.addRequest( action, {
