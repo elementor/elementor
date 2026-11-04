@@ -1,5 +1,5 @@
 import { type ComponentType } from 'react';
-import { createLocation } from '@elementor/locations';
+import { __registerFlushInjections, createLocation } from '@elementor/locations';
 
 type PanelsInjectionMeta = {
 	keepMounted?: boolean;
@@ -13,7 +13,11 @@ export type PanelsInjection = {
 
 const panelsMeta = new Map< string, PanelsInjectionMeta >();
 
-const { inject: baseInject, useInjections: baseUseInjections } = createLocation();
+const { inject: baseInject, useInjections: baseUseInjections, getInjections } = createLocation();
+
+__registerFlushInjections( () => {
+	panelsMeta.clear();
+} );
 
 export function injectIntoPanels( {
 	id,
@@ -24,8 +28,13 @@ export function injectIntoPanels( {
 	component: ComponentType;
 	keepMounted?: boolean;
 } ) {
-	panelsMeta.set( id, { keepMounted } );
+	const existedBefore = getInjections().some( ( injection ) => injection.id === id );
+
 	baseInject( { id, component } );
+
+	if ( ! existedBefore ) {
+		panelsMeta.set( id, { keepMounted } );
+	}
 }
 
 export function usePanelsInjections(): PanelsInjection[] {
