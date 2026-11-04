@@ -12,8 +12,11 @@ class Variables_Pro_Features_Discovery {
 
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-mcp-upgrade-variables/';
 
+	const PRO_FEATURE = 'variables';
+
 	public static function for_size_variables(): \WP_Error {
 		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
 			__( 'Size variables need Elementor Pro, so this operation wasn\'t applied. What Pro gives the user: one spacing and type scale for the whole site, where changing a size once updates every element that uses it.', 'elementor' ),
 			__( 'Free path: create the color and font variables now and set sizes directly in global classes. Tell the user sizes will need updating class by class.', 'elementor' ),
 			self::UPGRADE_URL
