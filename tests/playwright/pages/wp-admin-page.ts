@@ -383,6 +383,27 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
+	 * Download pending translation updates from the WordPress Updates screen.
+	 *
+	 * WordPress 7.2+ renders the "Update Translations" button above and below the list, so only the first one is used.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async updateTranslations(): Promise<void> {
+		await this.page.goto( '/wp-admin/update-core.php' );
+		await this.page.locator( '.update-last-checked' ).click();
+
+		const updateTranslationsButton = this.page.locator( 'form[name=upgrade-translations] input[type=submit]' ).first();
+
+		if ( await updateTranslationsButton.isVisible() ) {
+			await Promise.all( [
+				this.page.waitForURL( /update-core\.php\?action=do-translation-upgrade/ ),
+				updateTranslationsButton.click(),
+			] );
+		}
+	}
+
+	/**
 	 * Confirm the Elementor experiment modal if it's open.
 	 *
 	 * @return {Promise<void>}
