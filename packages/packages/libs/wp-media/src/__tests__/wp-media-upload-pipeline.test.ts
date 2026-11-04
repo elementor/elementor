@@ -75,6 +75,99 @@ describe( 'allowPipelineMimeTypes', () => {
 
 		// Assert.
 		expect( window._wpMediaUploadPipelineSettings ).toBeUndefined();
+		expect( window.wp ).toBeUndefined();
 		expect( () => restore() ).not.toThrow();
 	} );
+
+	it( 'lets the WordPress 7.2 client accept svg and json without dropping jpeg', () => {
+		// Arrange.
+		const allowedMimeTypes: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+
+		expect( isAllowedByUploadPipeline( 'image/svg+xml', allowedMimeTypes ) ).toBe( false );
+		expect( isAllowedByUploadPipeline( 'application/json', allowedMimeTypes ) ).toBe( false );
+		expect( isAllowedByUploadPipeline( 'image/jpeg', allowedMimeTypes ) ).toBe( true );
+
+		// Act.
+		const restore = allowPipelineMimeTypes( [ 'svg', 'json' ] );
+
+		// Assert.
+		expect( isAllowedByUploadPipeline( 'image/svg+xml', allowedMimeTypes ) ).toBe( true );
+		expect( isAllowedByUploadPipeline( 'application/json', allowedMimeTypes ) ).toBe( true );
+		expect( isAllowedByUploadPipeline( 'image/jpeg', allowedMimeTypes ) ).toBe( true );
+
+		// Act.
+		restore();
+
+		// Assert.
+		expect( isAllowedByUploadPipeline( 'image/svg+xml', allowedMimeTypes ) ).toBe( false );
+		expect( isAllowedByUploadPipeline( 'image/jpeg', allowedMimeTypes ) ).toBe( true );
+	} );
+
+	it( 'keeps an svg entry WordPress already allowed', () => {
+		// Arrange.
+		const allowedMimeTypes: MimeMap = {
+			'jpg|jpeg|jpe': 'image/jpeg',
+			svg: 'image/svg+xml',
+		};
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+
+		// Act.
+		const restore = allowPipelineMimeTypes( [ 'svg' ] );
+		restore();
+
+		// Assert.
+		expect( allowedMimeTypes.svg ).toBe( 'image/svg+xml' );
+		expect( isAllowedByUploadPipeline( 'image/jpeg', allowedMimeTypes ) ).toBe( true );
+	} );
+
+	it( 'ignores an upload store that is not registered yet', () => {
+		// Arrange.
+		const allowedMimeTypes: MimeMap = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+		window.wp = {
+			uploadMedia: { store },
+			data: {
+				select: () => {
+					throw new Error( 'Store "core/upload-media" is not registered' );
+				},
+			},
+		};
+
+		// Act.
+		const restore = allowPipelineMimeTypes( [ 'svg' ] );
+
+		// Assert.
+		expect( allowedMimeTypes.svg ).toBe( 'image/svg+xml' );
+		expect( isAllowedByUploadPipeline( 'image/jpeg', allowedMimeTypes ) ).toBe( true );
+
+		// Act.
+		restore();
+
+		// Assert.
+		expect( allowedMimeTypes ).toEqual( { 'jpg|jpeg|jpe': 'image/jpeg' } );
+	} );
 } );
+
+function isAllowedByUploadPipeline( fileType: string, mimeMap?: MimeMap | null ) {
+	const allowedMimeTypes = getMimeTypesArray( mimeMap );
+
+	if ( ! allowedMimeTypes ) {
+		return true;
+	}
+
+	return ! fileType || allowedMimeTypes.includes( fileType );
+}
+
+function getMimeTypesArray( mimeMap?: MimeMap | null ) {
+	if ( ! mimeMap ) {
+		return null;
+	}
+
+	return Object.entries( mimeMap ).flatMap( ( [ extensionsString, mime ] ) => {
+		const [ type ] = mime.split( '/' );
+		const extensions = extensionsString.split( '|' );
+
+		return [ mime, ...extensions.map( ( extension ) => `${ type }/${ extension }` ) ];
+	} );
+}

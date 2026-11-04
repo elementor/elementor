@@ -281,6 +281,78 @@ describe( 'useWpMediaFrame', () => {
 		delete window._wpMediaUploadPipelineSettings;
 	} );
 
+	it( 'should leave the upload pipeline unchanged for an image frame', () => {
+		// Arrange.
+		const allowedMimeTypes: Record< string, string > = { 'jpg|jpeg|jpe': 'image/jpeg' };
+		window._wpMediaUploadPipelineSettings = { allowedMimeTypes };
+
+		const mockMedia = createMedia( {} );
+		jest.mocked( media ).mockReturnValue( mockMedia );
+
+		const { result } = renderHook( () =>
+			useWpMediaFrame( {
+				selected: null,
+				multiple: false,
+				mediaTypes: [ 'image' ],
+				onSelect: () => {},
+			} )
+		);
+
+		result.current.open();
+
+		// Act.
+		( mockMedia.currentFrame as MockFrame ).trigger( 'ready' as Event );
+		( mockMedia.currentFrame as MockFrame ).trigger( 'close' );
+
+		// Assert.
+		expect( allowedMimeTypes ).toEqual( { 'jpg|jpeg|jpe': 'image/jpeg' } );
+
+		delete window._wpMediaUploadPipelineSettings;
+	} );
+
+	it( 'should keep plupload svg uploads working when WordPress has no upload pipeline', () => {
+		// Arrange.
+		const pluploadWindow = window as unknown as WpPluploadSettingsWindow;
+		const originalExtensions = pluploadWindow._wpPluploadSettings?.defaults.filters.mime_types?.[ 0 ]?.extensions;
+		delete window._wpMediaUploadPipelineSettings;
+		delete window.wp;
+
+		const mockMedia = createMedia( {} );
+		jest.mocked( media ).mockReturnValue( mockMedia );
+
+		const { result } = renderHook( () =>
+			useWpMediaFrame( {
+				selected: null,
+				multiple: false,
+				mediaTypes: [ 'svg' ],
+				onSelect: () => {},
+			} )
+		);
+
+		result.current.open();
+
+		const frame = mockMedia.currentFrame as MockFrame;
+
+		// Act.
+		frame.trigger( 'ready' as Event );
+
+		// Assert.
+		expect( window._wpMediaUploadPipelineSettings ).toBeUndefined();
+		expect( pluploadWindow._wpPluploadSettings?.defaults.filters.mime_types?.[ 0 ]?.extensions ).toBe( 'svg' );
+		expect( frame.uploader.uploader.param ).toHaveBeenCalledWith(
+			'uploadTypeCaller',
+			'elementor-wp-media-upload'
+		);
+
+		// Act.
+		frame.trigger( 'close' );
+
+		// Assert.
+		expect( pluploadWindow._wpPluploadSettings?.defaults.filters.mime_types?.[ 0 ]?.extensions ).toBe(
+			originalExtensions
+		);
+	} );
+
 	it( 'should not cleanup on close to avoid WP lifecycle race conditions', () => {
 		// Arrange.
 		const mockMedia = createMedia( {} );
