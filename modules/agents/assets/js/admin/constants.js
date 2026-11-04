@@ -38,6 +38,7 @@ export const BOT_TABLE_COLUMN_WIDTHS = {
 };
 export const LLMS_FILE_NAME = 'llms.txt';
 export const LLMS_VISIBLE_POST_TYPES_LIMIT = 4;
+export const MAX_EXCLUDED_POSTS = 5000;
 
 export const MODULE_STATUS_ENABLED = 'enabled';
 export const MODULE_STATUS_DISABLED = 'disabled';

@@ -30,7 +30,7 @@ class Module extends BaseModule {
 		return [
 			'name' => self::ANGIE_IN_PANELS_EXPERIMENT_NAME,
 			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
-			'description' => esc_html__( 'Load Angie inside the native Elementor editor panel instead of the legacy push sidebar.', 'elementor' ),
+			'description' => esc_html__( 'Load Angie in a docked floating panel in the editor instead of the legacy push sidebar.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -47,6 +47,10 @@ class Module extends BaseModule {
 
 	private function register_angie_in_panels_experiment(): void {
 		Plugin::$instance->experiments->add_feature( self::get_angie_in_panels_experimental_data() );
+	}
+
+	public static function is_angie_in_panels_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME );
 	}
 
 	private function register_consent_route(): void {
