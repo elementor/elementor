@@ -59,7 +59,8 @@ If a `motion-dev` MCP is connected:
 
 | API | Signature | Returns |
 |---|---|---|
-| `animate` | `animate(target, keyframes, options)` — target is an element, element array or motion value | controls: `stop()`, `play()`, `pause()`, `cancel()`, `then()` |
+| `animate` | `animate(target, keyframes, options)` — target is an element, element array or motion value | controls: `stop()`, `play()`, `pause()`, `cancel()`, `then()`, `speed` (read/write while running) |
+| `animate` (sequence) | `animate([ [ target, keyframes, { duration, at } ], … ])` — `at`: seconds, `"+0.2"`, `"-0.2"` or `"<"` | controls; pass to `scroll()` to scrub the whole timeline |
 | `inView` | `inView(element, (el, entry) => onLeave?, { root, margin, amount })` — `amount`: `"some"`, `"all"` or 0–1 | stop function |
 | `hover` | `hover(element, (el, event) => onHoverEnd?)` | cancel function |
 | `press` | `press(element, (el, event) => (event, { success }) => void)` | cancel function |
@@ -96,6 +97,14 @@ Other exports available on `motion`: `animateView`, `attrEffect`, `svgEffect`, `
 - Stop infinite loops (`repeat: Infinity`) in the cleanup.
 - Respect `reducedMotion`: skip loops and parallax, use instant or opacity-only transitions.
 - The MCP returns non-blocking `code_effect_*` warnings when these rules look broken. Fix and resend.
+
+## Pitfalls
+
+- Text widgets (`e-heading`, `e-paragraph`) render inline, and transforms don't apply to inline boxes. Give the animated element, or the word and letter children it moves, `display: inline-block` in atomic styles.
+- Motion writes the element's inline `transform`, replacing any CSS `transform` from its styles (e.g. `translate(-50%, -50%)` centring). Position moved elements with `inset`, `margin` or flex, or put the CSS transform on a wrapper.
+- Springs take two keyframes at most (`[ from, to ]` or only the target). Multi-step keyframes need duration-based easing.
+- `animate()` and `styleEffect()` on the same element share one renderer, so pointer-driven `x`/`y` from `styleEffect` compose with an `animate()` on `scale`. Never drive the same property from both.
+- A `transform`, `filter` or `backdrop-filter` on any ancestor becomes the containing block of `position: fixed` descendants. Don't animate ancestors of fixed overlays or cursors.
 
 Pattern cards with grades, fields and snippets: [elementor://interactions/motion-patterns].
 
@@ -222,6 +231,101 @@ Params: `elastic` (slider 0–1, step 0.05, 0.2), `snapBack` (switch, false).
 	elastic: params.elastic,
 	snapToOrigin: params.snapBack,
 } )
+```
+
+### 7. Marquee boosted by scroll velocity (speed)
+
+The element's first child is a `max-content` track holding the items twice, so `-50%` loops seamlessly. Params: `direction` (select `left`/`right`, `left`), `duration` (number 4–80, 22), `boost` (slider 1–12, step 0.5, 6).
+
+```js
+({ element, params, motion, reducedMotion }) => {
+	const { animate, motionValue, scroll } = motion;
+	const track = element.firstElementChild;
+
+	if ( reducedMotion || ! track ) {
+		return;
+	}
+
+	const range = 'left' === params.direction ? [ '0%', '-50%' ] : [ '-50%', '0%' ];
+	const loop = animate( track, { x: range }, { duration: params.duration, ease: 'linear', repeat: Infinity } );
+	const boost = motionValue( 1 );
+	const unsubscribe = boost.on( 'change', ( speed ) => {
+		loop.speed = speed;
+	} );
+	let settle = null;
+
+	const stopScroll = scroll( ( progress, info ) => {
+		settle?.stop();
+		boost.set( Math.min( params.boost, 1 + Math.abs( info.y.velocity ) / 600 ) );
+		settle = animate( boost, 1, { duration: 1, ease: 'easeOut' } );
+	} );
+
+	return () => {
+		settle?.stop();
+		loop.stop();
+		stopScroll();
+		unsubscribe();
+	};
+}
+```
+
+### 8. Scroll-scrubbed word reveal (sequence)
+
+The element's children are the words, each `display: inline-block`. Params: `dim` (slider 0–0.6, step 0.02, 0.1), `lift` (slider 0–80, step 2, 24), `overlap` (slider 0.1–1, step 0.05, 0.35).
+
+```js
+({ element, params, motion, reducedMotion }) => {
+	const { animate, scroll } = motion;
+	const words = Array.from( element.children );
+
+	if ( reducedMotion || ! words.length ) {
+		return;
+	}
+
+	const sequence = words.map( ( word, index ) => [
+		word,
+		{ opacity: [ params.dim, 1 ], y: [ params.lift, 0 ] },
+		{ duration: 1, at: index * params.overlap, ease: 'linear' },
+	] );
+
+	return scroll( animate( sequence ), { target: element, offset: [ 'start 85%', 'end 50%' ] } );
+}
+```
+
+### 9. Pointer parallax with spring follow (motionValue, springValue, styleEffect)
+
+Listens on the parent, so the layer drifts while the pointer is anywhere in the section. Params: `parallax` (slider 0–200, step 5, 70), `stiffness` (slider 10–300, step 5, 50).
+
+```js
+({ element, params, motion, reducedMotion }) => {
+	const { motionValue, springValue, styleEffect } = motion;
+	const area = element.parentElement;
+
+	if ( reducedMotion || ! area ) {
+		return;
+	}
+
+	const pointerX = motionValue( 0 );
+	const pointerY = motionValue( 0 );
+	const spring = { stiffness: params.stiffness, damping: 18 };
+	const stopStyle = styleEffect( element, {
+		x: springValue( pointerX, spring ),
+		y: springValue( pointerY, spring ),
+	} );
+
+	const onPointerMove = ( event ) => {
+		const bounds = area.getBoundingClientRect();
+		pointerX.set( ( ( event.clientX - bounds.left ) / bounds.width - 0.5 ) * -params.parallax );
+		pointerY.set( ( ( event.clientY - bounds.top ) / bounds.height - 0.5 ) * -params.parallax );
+	};
+
+	area.addEventListener( 'pointermove', onPointerMove );
+
+	return () => {
+		stopStyle();
+		area.removeEventListener( 'pointermove', onPointerMove );
+	};
+}
 ```
 
 ## Free motion.dev references per pattern
