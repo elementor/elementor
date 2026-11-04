@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import {
-	isAngieAvailable,
-	saveAngieConsent,
-	sendPromptToAngie,
-} from '@elementor/editor-mcp';
+import { isAngieAvailable, saveAngieConsent, sendPromptToAngie } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackEvent } from '@elementor/events';
 import { XIcon } from '@elementor/icons';
@@ -121,10 +117,7 @@ function CreateWidgetModal( { entryPoint, onClose }: CreateWidgetModalProps ) {
 											{ interpolateLinks(
 												sprintf(
 													// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
-													__(
-														'By installing, you agree to our %1$s & %2$s.',
-														'elementor'
-													),
+													__( 'By installing, you agree to our %1$s & %2$s.', 'elementor' ),
 													'{{terms}}',
 													'{{privacy}}'
 												),
@@ -195,10 +188,5 @@ export function CreateWidget() {
 		return null;
 	}
 
-	return (
-		<CreateWidgetModal
-			entryPoint={ modalData.entry_point }
-			onClose={ () => setModalData( null ) }
-		/>
-	);
+	return <CreateWidgetModal entryPoint={ modalData.entry_point } onClose={ () => setModalData( null ) } />;
 }
