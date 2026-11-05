@@ -8,14 +8,13 @@ export default class Heartbeat {
 
 	constructor( document ) {
 		this.document = document;
-		this.lastSyncedAt = document.config.server_time || 0;
-		this.pendingSyncTime = ! this.lastSyncedAt;
 		this.lastStateOfDocumentChange = document.editor.isChanged;
 
 		this.onSend = this.onSend.bind( this );
 		this.onTick = this.onTick.bind( this );
 		this.onRefreshNonce = this.onRefreshNonce.bind( this );
 		this.onDocumentChanged = this.onDocumentChanged.bind( this );
+		this.onDocumentLoaded = this.onDocumentLoaded.bind( this );
 
 		this.bindEvents();
 
@@ -107,6 +106,10 @@ export default class Heartbeat {
 		}
 	}
 
+	onDocumentLoaded() {
+		this.pendingSyncTime = true;
+	}
+
 	reloadDocument() {
 		$e.internal( 'document/save/set-is-modified', { status: false } );
 		this._doReload();
@@ -185,6 +188,7 @@ export default class Heartbeat {
 		} );
 
 		elementor.channels.editor.on( 'status:change', this.onDocumentChanged );
+		elementor.on( 'document:loaded', this.onDocumentLoaded );
 	}
 
 	destroy() {
@@ -195,5 +199,6 @@ export default class Heartbeat {
 		} );
 
 		elementor.channels.editor.off( 'status:change', this.onDocumentChanged );
+		elementor.off( 'document:loaded', this.onDocumentLoaded );
 	}
 }
