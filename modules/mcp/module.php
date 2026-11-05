@@ -10,6 +10,7 @@ use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
@@ -247,10 +248,17 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		return [
+		$abilities = [
 			new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
 			new Abilities\List_Site_Parts_Pro_Features_Discovery_Ability(),
+			new Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
 		];
+
+		if ( Woocommerce_Pro_Features_Discovery::is_active() ) {
+			$abilities[] = new Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability();
+		}
+
+		return $abilities;
 	}
 
 	/** @return Abstract_Ability[] */

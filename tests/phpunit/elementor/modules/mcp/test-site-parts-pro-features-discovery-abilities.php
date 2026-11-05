@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -27,11 +28,9 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 	const LIST_SITE_PARTS_ID = 'elementor/list-site-parts';
 	const CUSTOM_PROMOTION_FILTER = 'elementor/mcp/custom_promotion';
 	const UPGRADE_LINK = '[Upgrade to Pro](' . Site_Parts_Pro_Features_Discovery::UPGRADE_URL . ')';
-	const DESCRIPTION_NOTICE = 'Requires Elementor Pro (not installed on this site). With Pro, site parts cover three things Free can\'t do';
 
 	public function tearDown(): void {
 		remove_all_filters( self::CUSTOM_PROMOTION_FILTER );
-
 		parent::tearDown();
 	}
 
@@ -132,31 +131,90 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		);
 	}
 
-	public function test_list_execute_guarded__returns_non_error_result_without_link() {
+	public function test_list_execute_guarded__returns_site_part_rows_without_any_pro_mention() {
 		// Arrange
+		$this->act_as_admin();
+		$header_id = $this->create_site_part( 'header', 'Main Header', [ 'include/general' ] );
+		$popup_id = $this->create_site_part( 'popup', 'Offer Popup' );
+		update_post_meta( $popup_id, List_Site_Parts_Pro_Features_Discovery_Ability::POPUP_DISPLAY_SETTINGS_META_KEY, [ 'triggers' => [ 'exit_intent' => 'yes' ] ] );
 		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
 		$result = $ability->execute_guarded( [] );
 
 		// Assert
-		$this->assertIsArray( $result );
-		$this->assertStringContainsString( 'no site parts were checked', $result['llm_instructions'] );
-		$this->assertStringNotContainsString( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result['llm_instructions'] );
+		$rows = array_column( $result, null, 'id' );
+		$this->assertSame( 'header', $rows[ $header_id ]['type'] );
+		$this->assertSame( 'Main Header', $rows[ $header_id ]['title'] );
+		$this->assertTrue( $rows[ $header_id ]['has_conditions'] );
+		$this->assertSame( [ 'include/general' ], $rows[ $header_id ]['conditions'] );
+		$this->assertFalse( $rows[ $header_id ]['is_active'] );
+		$this->assertArrayNotHasKey( 'edit_url', $rows[ $header_id ] );
+		$this->assertArrayNotHasKey( 'display_settings', $rows[ $header_id ] );
+		$this->assertSame( [ 'triggers' => [ 'exit_intent' => 'yes' ], 'timing' => [] ], $rows[ $popup_id ]['display_settings'] );
+		$this->assertStringNotContainsStringIgnoringCase( 'upgrade', wp_json_encode( $result ) );
+		$this->assertStringNotContainsString( 'Elementor Pro', wp_json_encode( $result ) );
 	}
 
-	public function test_get_description_for_llm__includes_site_parts_notice() {
+	public function test_list_execute_guarded__excludes_templates_that_are_not_site_parts() {
+		// Arrange
+		$section_id = $this->create_site_part( 'section', 'Saved Section' );
+		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( [] );
+
+		// Assert
+		$this->assertNotContains( $section_id, array_column( $result, 'id' ) );
+	}
+
+	public function test_list_execute_guarded__returns_nothing_when_only_active_parts_are_requested() {
+		// Arrange
+		$this->create_site_part( 'header', 'Main Header', [ 'include/general' ] );
+		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( [ 'active' => true ] );
+
+		// Assert
+		$this->assertSame( [], $result );
+	}
+
+	public function test_get_description_for_llm__does_not_mention_pro_requirement() {
 		// Arrange
 		$manage = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
 		$list = new List_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
-		$manage_description = $manage->get_description_for_llm();
-		$list_description = $list->get_description_for_llm();
+		$descriptions = [ $manage->get_description_for_llm(), $list->get_description_for_llm() ];
 
 		// Assert
-		$this->assertStringContainsString( self::DESCRIPTION_NOTICE, $manage_description );
-		$this->assertStringContainsString( self::DESCRIPTION_NOTICE, $list_description );
+		foreach ( $descriptions as $description ) {
+			$this->assertStringNotContainsString( 'Requires Elementor Pro', $description );
+			$this->assertStringNotContainsString( 'upgrade link', $description );
+		}
+	}
+
+	public function test_get_description_for_llm__lists_every_supported_site_part_type_in_manage() {
+		// Arrange
+		$manage = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$description = $manage->get_description_for_llm();
+
+		// Assert
+		$this->assertStringContainsString( implode( ', ', Site_Parts_Pro_Features_Discovery::get_types() ), $description );
+	}
+
+	public function test_shared_rules__require_the_final_reply_to_share_the_upgrade_message() {
+		// Arrange
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( $this->create_operations( [ 'popup' ] ) );
+
+		// Assert
+		$this->assertStringContainsString( 'Never end your turn on this error without them', $result->get_error_message() );
 	}
 
 	public function test_execute_guarded__falls_back_to_tool_url_when_filter_returns_foreign_domain() {
@@ -194,6 +252,21 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertNotFalse( $free_path_position );
 		$this->assertLessThan( $link_position, $value_position );
 		$this->assertLessThan( $free_path_position, $link_position );
+	}
+
+	private function create_site_part( string $type, string $title, array $conditions = [] ): int {
+		$post_id = wp_insert_post( [
+			'post_type' => Source_Local::CPT,
+			'post_title' => $title,
+			'post_status' => 'draft',
+			'meta_input' => [ Source_Local::TYPE_META_KEY => $type ],
+		] );
+
+		if ( $conditions ) {
+			update_post_meta( $post_id, List_Site_Parts_Pro_Features_Discovery_Ability::CONDITIONS_META_KEY, $conditions );
+		}
+
+		return $post_id;
 	}
 
 	private function create_operations( array $types ): array {

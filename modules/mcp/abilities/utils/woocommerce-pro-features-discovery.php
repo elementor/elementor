@@ -40,8 +40,8 @@ class Woocommerce_Pro_Features_Discovery implements Widget_Pro_Features_Discover
 		return self::is_active() ? self::SITE_PART_TYPES : [];
 	}
 
-	public static function get_description_notice(): string {
-		return __( 'This site runs WooCommerce. Elementor\'s MCP can\'t work on store pages here. Elementor Pro (Advanced plan or higher) adds store templates and widgets, which the MCP can build with: one product page design used by every product, shop and category pages, cart, checkout, the account area, and the order summary, all in the site\'s design. Products, prices and store settings stay in WooCommerce either way.', 'elementor' );
+	public static function for_settings(): \WP_Error {
+		return self::error();
 	}
 
 	private static function get_widget_types(): array {
