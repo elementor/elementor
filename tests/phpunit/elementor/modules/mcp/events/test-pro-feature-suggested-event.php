@@ -2,6 +2,8 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 
+use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\Abilities\Ability_Definition;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
@@ -210,6 +212,18 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertSame( [ Site_Parts_Pro_Features_Discovery::PRO_FEATURE ], $events[0]['pro_features'] );
 	}
 
+	public function test_execute_guarded__does_not_leak_suggestions_into_the_next_call() {
+		// Arrange
+		Variables_Pro_Features_Discovery::for_size_variables();
+		$ability = $this->make_ability_returning_a_normal_result();
+
+		// Act
+		$ability->execute_guarded( [] );
+
+		// Assert
+		$this->assertSame( [], $this->suggestion_events() );
+	}
+
 	public function test_manage_site_parts__includes_the_mcp_session_id_when_present() {
 		// Arrange
 		$_SERVER[ Pro_Feature_Suggestion_Tracker::SESSION_ID_SERVER_KEY ] = self::SESSION_ID;
@@ -227,6 +241,29 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'mcp_session_id', $this->suggestion_events()[0] );
+	}
+
+	private function make_ability_returning_a_normal_result(): Abstract_Ability {
+		return new class() extends Abstract_Ability {
+			protected function get_ability_id(): string {
+				return 'elementor/test-normal-result';
+			}
+
+			protected function get_definition(): Ability_Definition {
+				return new Ability_Definition(
+					'Test Normal Result',
+					'Returns a normal result without a Pro gate.',
+					'elementor',
+					[ 'type' => 'object' ],
+					[],
+					fn() => true
+				);
+			}
+
+			public function execute( $input = [] ) {
+				return [ 'status' => 'ok' ];
+			}
+		};
 	}
 
 	private function suggestion_events(): array {
