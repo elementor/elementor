@@ -15,7 +15,7 @@ import { closeFloatingPanel, createFloatingPanel, openFloatingPanel, registerFlo
 import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
 import FloatingPanelsHost from '../components/internal/host';
 import { encodePersistedState } from '../persistence';
-import { selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
+import { selectIsDocked, selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type PanelStateStorage, sync } from '../sync';
 import { type FloatingPanelDeclaration, type FloatingPanelState } from '../types';
@@ -132,6 +132,7 @@ describe( 'createFloatingPanel', () => {
 		} );
 
 		// Assert.
+		expect( selectIsDocked( __getState(), declaration.id ) ).toBe( true );
 		expect( selectIsDraggable( __getState(), declaration.id ) ).toBe( false );
 		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( false );
 		expect( selectPanelState( __getState(), declaration.id ) ).toMatchObject( {
