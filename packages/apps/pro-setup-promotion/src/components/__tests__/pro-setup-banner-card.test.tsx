@@ -4,8 +4,7 @@ import { render, screen } from '@testing-library/react';
 
 import { ProSetupBannerCard } from '../pro-setup-banner-card';
 
-const LONG_TITLE =
-	'Your Elementor Pro subscription is ready on this site and waiting for you to finish setup now';
+const LONG_TITLE = 'Your Elementor Pro subscription is ready on this site and waiting for you to finish setup now';
 
 describe( 'ProSetupBannerCard', () => {
 	it( 'renders title and subtitle copy', () => {

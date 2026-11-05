@@ -11,6 +11,7 @@ import {
 	DirectionProvider,
 	Infotip,
 	Stack,
+	type Theme,
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -596,7 +597,7 @@ export function ProSetupPanelPromo() {
 								closePopover( 'escape_key' );
 							}
 						} }
-						sx={ ( theme ) => ( {
+						sx={ ( theme: Theme ) => ( {
 							mx: 1.5,
 							my: 1,
 							cursor: 'pointer',
