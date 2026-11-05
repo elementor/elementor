@@ -42,7 +42,6 @@
     "tsup": "^8.3.5"
   },
   "dependencies": {
-    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.7.1",
-    "@elementor/editor-mcp": "4.5.0"
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.7.1"
   }
 }
