@@ -12,7 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
 
-import { FIX_WITH_ANGIE, SCANNER_COLORS } from '../scanner-constants';
+import { isPromptBasedFix, SCANNER_COLORS } from '../scanner-constants';
 import { copyPromptText } from './fix-row-actions';
 
 const WP_ADMIN_BAR_Z_INDEX = 99999;
@@ -26,7 +26,7 @@ const PROMPT_MAX_HEIGHT = 280;
 const PROMPT_LINE_HEIGHT = '20px';
 const COPIED_FEEDBACK_MS = 2000;
 
-const getPromptChecks = ( checks ) => checks.filter( ( check ) => FIX_WITH_ANGIE === check.fixWith && check.fixPrompt );
+const getPromptChecks = ( checks ) => checks.filter( isPromptBasedFix );
 
 const StepBadge = ( { number } ) => (
 	<Box
