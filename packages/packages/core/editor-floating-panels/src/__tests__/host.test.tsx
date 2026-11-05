@@ -8,7 +8,7 @@ import {
 	__registerSlice,
 	__StoreProvider as StoreProvider,
 } from '@elementor/store';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
 import FloatingPanelsHost from '../components/internal/host';
 import { injectIntoFloatingPanels } from '../location';
@@ -102,5 +102,90 @@ describe( 'FloatingPanelsHost', () => {
 
 		expect( panel ).toHaveTextContent( 'Panel A body' );
 		expect( panel ).toHaveAttribute( 'aria-hidden', 'true' );
+	} );
+
+	it( 'keeps a keepMounted panel mounted, with the same iframe, after close', () => {
+		// Arrange.
+		const PanelA = () => <iframe title="Angie session" />;
+
+		injectIntoFloatingPanels( { id: 'a', component: PanelA, keepMounted: true } );
+
+		__dispatch(
+			slice.actions.register( {
+				id: 'a',
+				defaults: {
+					width: 200,
+					height: 300,
+					minWidth: 100,
+					minHeight: 100,
+					corner: 'block-start-inline-start',
+				},
+			} )
+		);
+		__dispatch( slice.actions.open( 'a' ) );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store not initialized' );
+		}
+
+		renderWithTheme(
+			<StoreProvider store={ store }>
+				<FloatingPanelsHost />
+			</StoreProvider>
+		);
+
+		const iframe = screen.getByTitle( 'Angie session' );
+
+		// Act.
+		act( () => {
+			__dispatch( slice.actions.close( 'a' ) );
+		} );
+
+		// Assert.
+		expect( screen.getByTitle( 'Angie session' ) ).toBe( iframe );
+		expect( screen.getByRole( 'complementary', { hidden: true } ) ).toHaveAttribute( 'aria-hidden', 'true' );
+	} );
+
+	it( 'unmounts a panel that is not keepMounted when it closes', () => {
+		// Arrange.
+		const PanelA = () => <iframe title="Audit session" />;
+
+		injectIntoFloatingPanels( { id: 'a', component: PanelA } );
+
+		__dispatch(
+			slice.actions.register( {
+				id: 'a',
+				defaults: {
+					width: 200,
+					height: 300,
+					minWidth: 100,
+					minHeight: 100,
+					corner: 'block-start-inline-start',
+				},
+			} )
+		);
+		__dispatch( slice.actions.open( 'a' ) );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store not initialized' );
+		}
+
+		renderWithTheme(
+			<StoreProvider store={ store }>
+				<FloatingPanelsHost />
+			</StoreProvider>
+		);
+
+		// Act.
+		act( () => {
+			__dispatch( slice.actions.close( 'a' ) );
+		} );
+
+		// Assert.
+		expect( screen.queryByTitle( 'Audit session' ) ).not.toBeInTheDocument();
 	} );
 } );

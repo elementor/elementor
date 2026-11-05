@@ -11,7 +11,7 @@ import {
 } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
-import { createFloatingPanel, registerFloatingPanel } from '../api';
+import { closeFloatingPanel, createFloatingPanel, openFloatingPanel, registerFloatingPanel } from '../api';
 import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
 import FloatingPanelsHost from '../components/internal/host';
 import { encodePersistedState } from '../persistence';
@@ -105,6 +105,57 @@ describe( 'createFloatingPanel', () => {
 
 		// Assert.
 		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( true );
+	} );
+
+	it( 'forces drag and resize off and ignores persisted geometry when docked', () => {
+		// Arrange.
+		const persisted: FloatingPanelState = {
+			isOpen: true,
+			zIndex: 5,
+			size: { inlineSize: 400, blockSize: 520 },
+			corner: 'block-start-inline-start',
+			position: {
+				insetBlockStart: 240,
+				insetBlockEnd: 0,
+				insetInlineStart: 600,
+				insetInlineEnd: 0,
+			},
+		};
+		sync( memoryStorage( encodePersistedState( { [ declaration.id ]: persisted } ) ) );
+
+		// Act.
+		createFloatingPanel( {
+			...declaration,
+			isDocked: true,
+			isDraggable: true,
+			isResizable: true,
+		} );
+
+		// Assert.
+		expect( selectIsDraggable( __getState(), declaration.id ) ).toBe( false );
+		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( false );
+		expect( selectPanelState( __getState(), declaration.id ) ).toMatchObject( {
+			isOpen: false,
+			size: { inlineSize: 320, blockSize: 480 },
+		} );
+	} );
+
+	it( 'opens and closes a panel from outside React', () => {
+		// Arrange.
+		sync( memoryStorage() );
+		createFloatingPanel( declaration );
+
+		// Act.
+		openFloatingPanel( declaration.id );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id )?.isOpen ).toBe( true );
+
+		// Act.
+		closeFloatingPanel( declaration.id );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id )?.isOpen ).toBe( false );
 	} );
 
 	it( 'defaults isResizable to false when not provided', () => {
