@@ -3,10 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { notify } from '@elementor/editor-notifications';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
-import { DownloadIcon } from '@elementor/icons';
 import {
-	Alert,
-	AlertTitle,
 	Box,
 	Button,
 	CircularProgress,
@@ -14,6 +11,7 @@ import {
 	DirectionProvider,
 	Infotip,
 	Stack,
+	type Theme,
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -33,9 +31,18 @@ import { useElementorConnectPopup } from '../hooks/use-elementor-connect-popup';
 import { fetchPromotionConfigAfterConnect } from '../utils/fetch-promotion-config-after-connect';
 import { getSetupRequestErrorMessage } from '../utils/get-setup-request-error-message';
 import {
+	clearConnectReloadAttempted,
+	hasConnectReloadBeenAttempted,
+	isOpenConnectQueryParamInUrl,
+	markConnectReloadAttempted,
+	stripOpenConnectQueryParamFromUrl,
+} from '../utils/pro-setup-connect-reload-guard';
+import { isReloadDueToMissingConnectUrl, shouldReloadEditorAfterSetupStep } from '../utils/pro-setup-editor-refresh';
+import {
 	reloadEditorAfterConnectSuccess,
 	reloadEditorForSetupRefresh,
 } from '../utils/reload-editor-after-connect-success';
+import { ProSetupBannerCard } from './pro-setup-banner-card';
 
 const POPOVER_WIDTH = 296;
 const POPOVER_OFFSET_LTR: [ number, number ] = [ -24, 12 ];
@@ -117,6 +124,7 @@ async function fetchPromotionConfig(): Promise< ProSetupConfig | null > {
 
 type CompleteSetupResult = {
 	reload?: boolean;
+	reloadReason?: 'missing_connect_url';
 	proSetupPromotion?: ProSetupConfig | null;
 };
 
@@ -265,6 +273,27 @@ export function ProSetupPanelPromo() {
 		verifyConnectComplete: isProSetupConnectComplete,
 	} );
 
+	const notifyConnectUnavailable = useCallback( () => {
+		isProcessingRef.current = false;
+		setIsProcessing( false );
+		notify( {
+			type: 'error',
+			message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
+			id: 'pro-setup-promotion-connect-url-missing',
+		} );
+	}, [] );
+
+	const reloadEditorForMissingConnectUrl = useCallback( () => {
+		if ( hasConnectReloadBeenAttempted() ) {
+			stripOpenConnectQueryParamFromUrl();
+			notifyConnectUnavailable();
+			return;
+		}
+
+		markConnectReloadAttempted();
+		reloadEditorForSetupRefresh( { openConnectPopover: true } );
+	}, [ notifyConnectUnavailable ] );
+
 	useEffect( () => {
 		if ( ! state ) {
 			return;
@@ -272,6 +301,35 @@ export function ProSetupPanelPromo() {
 
 		trackProSetupPromotionImpression( state );
 	}, [ state ] );
+
+	useEffect( () => {
+		let landedWithOpenConnect = false;
+
+		try {
+			landedWithOpenConnect = isOpenConnectQueryParamInUrl();
+
+			if ( landedWithOpenConnect ) {
+				stripOpenConnectQueryParamFromUrl();
+			}
+		} catch {
+			return;
+		}
+
+		if ( ! landedWithOpenConnect ) {
+			return;
+		}
+
+		if ( 'connect' !== state || ! promotionConfig?.connectUrl ) {
+			if ( hasConnectReloadBeenAttempted() ) {
+				notifyConnectUnavailable();
+			}
+
+			return;
+		}
+
+		clearConnectReloadAttempted();
+		setOpen( true );
+	}, [ notifyConnectUnavailable, promotionConfig?.connectUrl, state ] );
 
 	useEffect( () => {
 		if ( ! open ) {
@@ -361,6 +419,16 @@ export function ProSetupPanelPromo() {
 
 			trackProSetupPromotionResult( state, 'success', action );
 
+			if ( shouldReloadEditorAfterSetupStep( result ) ) {
+				if ( isReloadDueToMissingConnectUrl( result ) ) {
+					reloadEditorForMissingConnectUrl();
+					return;
+				}
+
+				reloadEditorForSetupRefresh();
+				return;
+			}
+
 			applyPromotionConfig( result.proSetupPromotion ?? null );
 			setOpen( true );
 		} catch ( error ) {
@@ -388,16 +456,11 @@ export function ProSetupPanelPromo() {
 			const connectUrlForPopup = promotionConfig?.connectUrl ?? '';
 
 			if ( ! connectUrlForPopup ) {
-				isProcessingRef.current = false;
-				setIsProcessing( false );
-				notify( {
-					type: 'error',
-					message: __( "Connect isn't available right now. Reload the editor and try again.", 'elementor' ),
-					id: 'pro-setup-promotion-connect-url-missing',
-				} );
+				reloadEditorForMissingConnectUrl();
 				return;
 			}
 
+			clearConnectReloadAttempted();
 			openConnectPopup( connectUrlForPopup );
 
 			void ( async () => {
@@ -453,7 +516,13 @@ export function ProSetupPanelPromo() {
 									closePopover( 'escape_key' );
 								}
 							} }
-							sx={ { width: POPOVER_WIDTH } }
+							sx={ {
+								width: POPOVER_WIDTH,
+								border: 1,
+								borderColor: 'divider',
+								borderRadius: 1.5,
+								boxShadow: 2,
+							} }
 						>
 							<Stack
 								direction="row"
@@ -528,65 +597,25 @@ export function ProSetupPanelPromo() {
 								closePopover( 'escape_key' );
 							}
 						} }
-						sx={ {
+						sx={ ( theme: Theme ) => ( {
 							mx: 1.5,
 							my: 1,
 							cursor: 'pointer',
-							'&:hover': { '& .MuiAlert-root': { filter: 'brightness(0.98)' } },
-							'&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: 2 },
-						} }
+							'&:hover > *': {
+								filter: 'dark' === theme.palette.mode ? 'brightness(1.06)' : 'brightness(0.97)',
+							},
+							'&:focus-visible': {
+								outline: '2px solid',
+								outlineColor: 'primary.main',
+								outlineOffset: 2,
+								borderRadius: 1.5,
+							},
+						} ) }
 					>
-						<Alert
-							variant="standard"
-							color="info"
-							size="small"
-							icon={
-								<DownloadIcon
-									aria-hidden
-									sx={ {
-										display: 'block',
-										fontSize: 20,
-										width: 20,
-										height: 20,
-										color: 'text.secondary',
-									} }
-								/>
-							}
-							sx={ {
-								alignItems: 'flex-start',
-								py: 0.75,
-								'& .MuiAlert-icon': {
-									alignSelf: 'flex-start',
-									opacity: 1,
-									pt: 0.375,
-									pb: 0.125,
-									marginTop: 0,
-									marginBottom: 0,
-									marginInlineEnd: 0.5,
-								},
-								'& .MuiAlert-message': {
-									flex: 1,
-									minWidth: 0,
-									overflow: 'hidden',
-									pt: 0.125,
-									pb: 0.125,
-									marginTop: 0,
-									marginBottom: 0,
-								},
-							} }
-						>
-							<AlertTitle sx={ { m: 0, mb: 0.25, fontSize: 'inherit', lineHeight: 1.3 } }>
-								{ promotionConfig.banner.title }
-							</AlertTitle>
-							<Typography
-								variant="caption"
-								component="div"
-								color="text.secondary"
-								sx={ { lineHeight: 1.35, paddingInlineEnd: 1 } }
-							>
-								{ promotionConfig.banner.description }
-							</Typography>
-						</Alert>
+						<ProSetupBannerCard
+							title={ promotionConfig.banner.title }
+							subtitle={ promotionConfig.banner.description }
+						/>
 					</Box>
 				</SetupInfotip>
 			</ThemeProvider>

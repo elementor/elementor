@@ -162,9 +162,10 @@ class Document_Mutator {
 
 	/**
 	 * Duplicate an element in place, inserting the clone right after the source
-	 * inside the same parent. All ids in the clone are regenerated.
+	 * inside the same parent. All ids in the clone are regenerated, including
+	 * atomic local style and interaction ids.
 	 *
-	 * @return array|\WP_Error
+	 * @return array{tree: array, new_element_id: string}|\WP_Error
 	 */
 	public function duplicate( array $tree, string $id ) {
 		$location = $this->locate_parent_and_index( $tree, $id );
@@ -179,7 +180,17 @@ class Document_Mutator {
 
 		[ $parent_id, $index, $node ] = $location;
 
-		return $this->insert_subtree( $tree, $parent_id, $index + 1, $node );
+		$subtree_with_ids = $this->generate_ids_recursive( $node, true );
+		$new_tree = $this->insert_at( $tree, $parent_id, $index + 1, $subtree_with_ids );
+
+		if ( is_wp_error( $new_tree ) ) {
+			return $new_tree;
+		}
+
+		return [
+			'tree' => $new_tree,
+			'new_element_id' => $subtree_with_ids['id'],
+		];
 	}
 
 	/**
@@ -228,7 +239,7 @@ class Document_Mutator {
 			return $target;
 		}
 
-		$saved = $target->save( [ 'elements' => $elements ] );
+		$saved = $this->save_keeping_live_template( $target, $elements );
 
 		if ( is_wp_error( $saved ) ) {
 			return $saved;
@@ -243,6 +254,31 @@ class Document_Mutator {
 		}
 
 		return $target;
+	}
+
+	/**
+	 * Saving an autosave calls `wp_update_post` on the revision, which re-validates its template against the
+	 * `revision` post type, fails, and writes `default` through `update_post_meta`, which redirects to the live post.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	private function save_keeping_live_template( Document $target, array $elements ) {
+		$live_post_id = (int) $target->get_main_id();
+
+		if ( (int) $target->get_post()->ID === $live_post_id ) {
+			return $target->save( [ 'elements' => $elements ] );
+		}
+
+		$refuse_live_template_write = fn( $check, $object_id, $meta_key ) =>
+			'_wp_page_template' === $meta_key && (int) $object_id === $live_post_id ? false : $check;
+
+		add_filter( 'update_post_metadata', $refuse_live_template_write, 10, 3 );
+
+		try {
+			return $target->save( [ 'elements' => $elements ] );
+		} finally {
+			remove_filter( 'update_post_metadata', $refuse_live_template_write, 10 );
+		}
 	}
 
 	/**
@@ -319,12 +355,16 @@ class Document_Mutator {
 	 *
 	 * @return array The element with new IDs assigned.
 	 */
-	private function generate_ids_recursive( array $element ): array {
+	private function generate_ids_recursive( array $element, bool $replace_atomic_ids = false ): array {
 		$element['id'] = $this->generate_id();
+
+		if ( $replace_atomic_ids ) {
+			$element = apply_filters( 'elementor/document/element/replace_id', $element );
+		}
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
 			$element['elements'] = array_map(
-				fn( array $child ) => $this->generate_ids_recursive( $child ),
+				fn( array $child ) => $this->generate_ids_recursive( $child, $replace_atomic_ids ),
 				$element['elements']
 			);
 		}

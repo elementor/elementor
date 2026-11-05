@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -125,7 +126,9 @@ class Publish_Document_Ability extends Abstract_Ability {
 	 * publish flow does in `Page\Manager::save`.
 	 *
 	 * Reuses `Revisions_Manager::restore_revision` so ALL `_elementor*` meta (data, page settings,
-	 * CSS cache, etc.) is copied consistently and Post CSS is regenerated. Running before the
+	 * etc.) is copied consistently, the element cache is invalidated and Post CSS is regenerated.
+	 * That copy skips keys the autosave lacks, so the restorable meta (page settings, page template)
+	 * is synced first, which removes live values a staged restore cleared. Running before the
 	 * `wp_update_post` status transition means listeners on `transition_post_status` (Post CSS,
 	 * CDN purges, sitemaps, etc.) see the promoted content on the very same request.
 	 */
@@ -135,6 +138,8 @@ class Publish_Document_Ability extends Abstract_Ability {
 		if ( ! $autosave_post ) {
 			return;
 		}
+
+		Document_Revision_Snapshots::restore_meta( $autosave_post->ID, $main_id );
 
 		Revisions_Manager::restore_revision( $main_id, $autosave_post->ID );
 
