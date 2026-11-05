@@ -52,7 +52,7 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 		return ! Utils::has_pro() && str_starts_with( $widget_type, self::WIDGET_TYPE_PREFIX );
 	}
 
-	public static function for_manage( array $operations ): \WP_Error {
+	public static function for_manage( array $operations, string $opener = self::MESSAGES['opener'] ): \WP_Error {
 		$requested_types = array_filter( array_column( $operations, 'type' ), 'is_string' );
 
 		if ( array_intersect( $requested_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() ) ) {
@@ -76,7 +76,7 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 
 		return Pro_Features_Discovery::error(
 			self::PRO_FEATURE,
-			implode( ' ', array_merge( [ self::MESSAGES['opener'] ], array_column( $matches, 'value' ) ) ),
+			implode( ' ', array_merge( [ $opener ], array_column( $matches, 'value' ) ) ),
 			implode( ' ', array_column( $matches, 'free_path' ) ),
 			self::UPGRADE_URL,
 			[ 'document_types' => array_values( array_unique( $requested_types ) ) ]
@@ -88,12 +88,7 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 	}
 
 	public static function for_list(): \WP_Error {
-		return Pro_Features_Discovery::error(
-			self::PRO_FEATURE,
-			self::MESSAGES['list'] . ' ' . self::MESSAGES['overview']['value'],
-			self::MESSAGES['overview']['free_path'],
-			self::UPGRADE_URL
-		);
+		return self::for_manage( [], self::MESSAGES['list'] );
 	}
 
 	public static function get_types(): array {
