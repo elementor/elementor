@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Ability_Definition;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
@@ -86,6 +87,18 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 	public function test_list_site_parts__does_not_fire_an_event() {
 		// Arrange
 		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$ability->execute_guarded( [] );
+
+		// Assert
+		$this->assertSame( [], $this->suggestion_events() );
+	}
+
+	public function test_list_form_submissions__does_not_fire_an_event() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new List_Form_Submissions_Pro_Features_Discovery_Ability();
 
 		// Act
 		$ability->execute_guarded( [] );

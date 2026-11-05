@@ -251,6 +251,7 @@ class Module extends BaseModule {
 		$abilities = [
 			new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
 			new Abilities\List_Site_Parts_Pro_Features_Discovery_Ability(),
+			new Abilities\List_Form_Submissions_Pro_Features_Discovery_Ability(),
 			new Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
 		];
 

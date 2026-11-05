@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Modules\Mcp\Abilities\List_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
@@ -34,13 +35,13 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		}
 	}
 
-	public function test_build_core_registry__includes_manage_form_submissions_and_omits_the_list_tool() {
+	public function test_build_core_registry__includes_the_form_submissions_tools() {
 		// Act
 		$registry = Mcp_Module::build_core_registry();
 
 		// Assert
 		$this->assertInstanceOf( Manage_Form_Submissions_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::MANAGE_FORM_SUBMISSIONS_ID ) );
-		$this->assertNull( $registry->find_by_id( self::LIST_FORM_SUBMISSIONS_ID ) );
+		$this->assertInstanceOf( List_Form_Submissions_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::LIST_FORM_SUBMISSIONS_ID ) );
 	}
 
 	public function test_build_core_registry__includes_woocommerce_settings_only_when_woocommerce_is_active() {
@@ -77,6 +78,28 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		);
 	}
 
+	/**
+	 * @dataProvider list_form_submissions_input_cases
+	 */
+	public function test_list_form_submissions__returns_an_empty_result_without_any_pro_mention( array $input ) {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new List_Form_Submissions_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( $input );
+
+		// Assert
+		$this->assertSame( [ 'submissions' => [] ], $result );
+	}
+
+	public function list_form_submissions_input_cases(): array {
+		return [
+			'all submissions' => [ [] ],
+			'unread submissions' => [ [ 'status' => 'unread' ] ],
+		];
+	}
+
 	public function test_manage_woocommerce_settings__returns_the_woocommerce_error() {
 		// Arrange
 		$ability = new Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability();
@@ -102,6 +125,7 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 	public function test_fake_descriptions__do_not_mention_the_pro_requirement() {
 		// Arrange
 		$abilities = [
+			new List_Form_Submissions_Pro_Features_Discovery_Ability(),
 			new Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
 			new Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability(),
 		];

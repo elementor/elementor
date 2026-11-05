@@ -30,6 +30,7 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 
 	public function tearDown(): void {
 		remove_all_filters( self::CUSTOM_PROMOTION_FILTER );
+
 		parent::tearDown();
 	}
 

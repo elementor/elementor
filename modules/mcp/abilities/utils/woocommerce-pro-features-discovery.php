@@ -40,10 +40,6 @@ class Woocommerce_Pro_Features_Discovery implements Widget_Pro_Features_Discover
 		return self::is_active() ? self::SITE_PART_TYPES : [];
 	}
 
-	public static function for_settings(): \WP_Error {
-		return self::error();
-	}
-
 	private static function get_widget_types(): array {
 		static $widget_types = null;
 

@@ -87,6 +87,8 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 	}
 
 	public static function get_types(): array {
-		return Site_Parts_Schema::get_types();
+		$group_types = array_merge( ...array_column( self::MESSAGES['groups'], 'types' ) );
+
+		return array_merge( $group_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() );
 	}
 }

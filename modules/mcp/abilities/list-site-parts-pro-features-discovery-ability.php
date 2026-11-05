@@ -18,7 +18,7 @@ class List_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'List Site Parts', 'elementor' ),
-			Prompt_Loader::load( 'list-site-parts' ),
+			Prompt_Loader::load( 'list-site-parts-pro-features-discovery' ),
 			'elementor',
 			[ 'type' => 'array' ],
 			[
