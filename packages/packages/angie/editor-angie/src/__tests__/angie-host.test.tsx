@@ -41,7 +41,6 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	getAngieIframe: () => mockGetAngieIframe(),
 	MessageEventType: {
 		SDK_TRIGGER_ANGIE: 'sdk-trigger-angie',
-		ANGIE_SET_INTERACTION_MODE: 'angie/set-interaction-mode',
 	},
 } ) );
 
@@ -79,7 +78,10 @@ describe( 'editor angie host', () => {
 
 		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 1 );
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledWith( {
-			host: { appId: 'elementor-editor' },
+			host: {
+				appId: 'elementor-editor',
+				instanceId: 'elementor-editor',
+			},
 			container: {
 				id: 'elementor-editor-angie',
 				layout: 'sidebar',
@@ -151,18 +153,8 @@ describe( 'editor angie host', () => {
 	it( 'opens the Angie plugin and leaves the Core SDK closed when the plugin is active', async () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
-		const pluginContainer = document.createElement( 'div' );
-		pluginContainer.id = 'angie-sidebar-container';
 		const pluginIframe = document.createElement( 'iframe' );
-		pluginIframe.src = 'https://angie.example/angie/';
-		const postMessage = jest.fn();
-		Object.defineProperty( pluginIframe, 'contentWindow', {
-			configurable: true,
-			value: { postMessage },
-		} );
-		pluginContainer.append( pluginIframe );
-		document.body.append( pluginContainer );
-		const hostPostMessage = jest.spyOn( window, 'postMessage' ).mockImplementation( () => {} );
+		mockGetAngieIframe.mockReturnValue( pluginIframe );
 		window.elementorEditorAngie = { isAngiePluginActive: true };
 
 		await openAngie( {
@@ -173,29 +165,13 @@ describe( 'editor angie host', () => {
 			},
 		} );
 
-		expect( mockGetAngieIframe ).not.toHaveBeenCalled();
-		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true, 'angie-sidebar-container' );
-		expect( mockSetAngieInteractionMode ).not.toHaveBeenCalled();
-		expect( postMessage ).toHaveBeenCalledWith(
-			{
-				type: 'angie/set-interaction-mode',
-				payload: { mode: 'plan' },
-			},
-			'https://angie.example'
-		);
-		expect( hostPostMessage ).toHaveBeenCalledWith(
-			{
-				type: 'sdk-trigger-angie',
-				payload: {
-					instanceId: 'wp-admin',
-					prompt: 'Help me with ',
-				},
-			},
-			window.location.origin
-		);
+		expect( mockGetAngieIframe ).toHaveBeenCalledTimes( 1 );
+		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true );
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
 		expect( window.location.hash ).toBe( '' );
 		expect( openPanel ).not.toHaveBeenCalled();
 		expect( mockTriggerAngie ).not.toHaveBeenCalled();
+		expect( AngieMcpSdkMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not boot the SDK when the library initializes', () => {
