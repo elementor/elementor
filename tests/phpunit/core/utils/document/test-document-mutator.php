@@ -269,11 +269,13 @@ class Document_Mutator_Test extends TestCase {
 		$tree   = [ $this->make_container( 'c1', [ $widget ] ) ];
 
 		$result = $this->mutator->duplicate( $tree, 'w1' );
+		$tree   = $result['tree'];
 
-		$this->assertCount( 2, $result[0]['elements'] );
-		$this->assertSame( 'w1', $result[0]['elements'][0]['id'] );
-		$this->assertNotSame( 'w1', $result[0]['elements'][1]['id'] );
-		$this->assertSame( 'text-editor', $result[0]['elements'][1]['widgetType'] );
+		$this->assertCount( 2, $tree[0]['elements'] );
+		$this->assertSame( 'w1', $tree[0]['elements'][0]['id'] );
+		$this->assertNotSame( 'w1', $tree[0]['elements'][1]['id'] );
+		$this->assertSame( $tree[0]['elements'][1]['id'], $result['new_element_id'] );
+		$this->assertSame( 'text-editor', $tree[0]['elements'][1]['widgetType'] );
 	}
 
 	public function test_duplicate_regenerates_ids_of_all_descendants() {
@@ -281,10 +283,12 @@ class Document_Mutator_Test extends TestCase {
 		$tree  = [ $this->make_container( 'c1', [ $inner ] ) ];
 
 		$result = $this->mutator->duplicate( $tree, 'c1' );
+		$tree   = $result['tree'];
 
-		$this->assertCount( 2, $result );
-		$this->assertNotSame( 'c1', $result[1]['id'] );
-		$this->assertNotSame( 'w1', $result[1]['elements'][0]['id'] );
+		$this->assertCount( 2, $tree );
+		$this->assertNotSame( 'c1', $tree[1]['id'] );
+		$this->assertSame( $tree[1]['id'], $result['new_element_id'] );
+		$this->assertNotSame( 'w1', $tree[1]['elements'][0]['id'] );
 	}
 
 	public function test_duplicate_absent_id_returns_not_found_error() {
