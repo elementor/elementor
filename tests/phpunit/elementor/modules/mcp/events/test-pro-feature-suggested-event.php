@@ -198,7 +198,7 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'document_types', $events[0] );
 	}
 
-	public function test_list_site_parts__does_not_report_a_suggestion_left_by_a_previous_call() {
+	public function test_execute_guarded__new_call_with_its_own_pro_gate_does_not_repeat_the_suggestion_from_another_call() {
 		// Arrange
 		Variables_Pro_Features_Discovery::for_size_variables();
 		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
@@ -212,7 +212,7 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertSame( [ Site_Parts_Pro_Features_Discovery::PRO_FEATURE ], $events[0]['pro_features'] );
 	}
 
-	public function test_execute_guarded__does_not_leak_suggestions_into_the_next_call() {
+	public function test_execute_guarded__new_call_without_a_pro_gate_does_not_repeat_the_suggestion_from_another_call() {
 		// Arrange
 		Variables_Pro_Features_Discovery::for_size_variables();
 		$ability = $this->make_ability_returning_a_normal_result();
