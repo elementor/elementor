@@ -29,6 +29,7 @@ const waitForAngieContainer = async () => {
 export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	host: {
 		appId: EDITOR_ANGIE_APP_ID,
+		instanceId: EDITOR_ANGIE_APP_ID,
 	},
 	container: {
 		id: EDITOR_ANGIE_CONTAINER_ID,
