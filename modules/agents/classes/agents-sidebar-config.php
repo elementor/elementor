@@ -41,6 +41,7 @@ class Agents_Sidebar_Config {
 		$config['level4Groups']    = [];
 		$config['activeMenuSlug']  = $current_page;
 		$config['activeChildSlug'] = '';
+		$config['siteTitle']       = esc_html__( 'Agent Ready', 'elementor' );
 		$config['isMinimal']       = true;
 
 		return $config;

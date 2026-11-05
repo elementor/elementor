@@ -11,23 +11,10 @@ import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
 import { useAdminMenuOffset } from './hooks/use-admin-menu-offset';
 
 const SidebarNavigation = ( { config } ) => {
-	const { isCollapsed, toggleCollapse } = useSidebarCollapse( { disabled: !! config.isMinimal } );
+	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
 	useAdminMenuOffset();
 
-	if ( config.isMinimal ) {
-		return (
-			<NavContainer component="nav">
-				<ScrollableContent>
-					<SidebarMenu
-						menuItems={ config.menuItems }
-						level4Groups={ config.level4Groups }
-						activeMenuSlug={ config.activeMenuSlug }
-						activeChildSlug={ config.activeChildSlug }
-					/>
-				</ScrollableContent>
-			</NavContainer>
-		);
-	}
+	const showUpgradeCta = ! config.isMinimal;
 
 	if ( isCollapsed ) {
 		return (
@@ -48,13 +35,17 @@ const SidebarNavigation = ( { config } ) => {
 						activeChildSlug={ config.activeChildSlug }
 					/>
 				</ScrollableContent>
-				<Divider />
-				<SidebarUpgradeCta
-					upgradeUrl={ config.upgradeUrl }
-					upgradeText={ config.upgradeText }
-					hasPro={ config.hasPro }
-					collapsed
-				/>
+				{ showUpgradeCta && (
+					<>
+						<Divider />
+						<SidebarUpgradeCta
+							upgradeUrl={ config.upgradeUrl }
+							upgradeText={ config.upgradeText }
+							hasPro={ config.hasPro }
+							collapsed
+						/>
+					</>
+				) }
 			</NavContainer>
 		);
 	}
@@ -70,12 +61,16 @@ const SidebarNavigation = ( { config } ) => {
 					activeChildSlug={ config.activeChildSlug }
 				/>
 			</ScrollableContent>
-			<Divider />
-			<SidebarUpgradeCta
-				upgradeUrl={ config.upgradeUrl }
-				upgradeText={ config.upgradeText }
-				hasPro={ config.hasPro }
-			/>
+			{ showUpgradeCta && (
+				<>
+					<Divider />
+					<SidebarUpgradeCta
+						upgradeUrl={ config.upgradeUrl }
+						upgradeText={ config.upgradeText }
+						hasPro={ config.hasPro }
+					/>
+				</>
+			) }
 		</NavContainer>
 	);
 };
