@@ -1,5 +1,6 @@
 import {
 	AngieMcpSdk,
+	getAngieIframe,
 	LAYOUT_SIDEBAR,
 	type LoadSidebarV2Options,
 	toggleAngieSidebar,
@@ -29,6 +30,7 @@ const waitForAngieContainer = async () => {
 export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	host: {
 		appId: EDITOR_ANGIE_APP_ID,
+		instanceId: EDITOR_ANGIE_APP_ID,
 	},
 	container: {
 		id: EDITOR_ANGIE_CONTAINER_ID,
@@ -42,7 +44,7 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 } );
 
 export const openAngieIframe = () => {
-	const iframe = document.getElementById( EDITOR_ANGIE_CONTAINER_ID )?.querySelector( 'iframe' );
+	const iframe = getAngieIframe();
 
 	if ( ! iframe ) {
 		return;
