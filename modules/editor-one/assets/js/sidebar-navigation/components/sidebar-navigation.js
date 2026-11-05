@@ -11,8 +11,23 @@ import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
 import { useAdminMenuOffset } from './hooks/use-admin-menu-offset';
 
 const SidebarNavigation = ( { config } ) => {
-	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
+	const { isCollapsed, toggleCollapse } = useSidebarCollapse( { disabled: !! config.isMinimal } );
 	useAdminMenuOffset();
+
+	if ( config.isMinimal ) {
+		return (
+			<NavContainer component="nav">
+				<ScrollableContent>
+					<SidebarMenu
+						menuItems={ config.menuItems }
+						level4Groups={ config.level4Groups }
+						activeMenuSlug={ config.activeMenuSlug }
+						activeChildSlug={ config.activeChildSlug }
+					/>
+				</ScrollableContent>
+			</NavContainer>
+		);
+	}
 
 	if ( isCollapsed ) {
 		return (

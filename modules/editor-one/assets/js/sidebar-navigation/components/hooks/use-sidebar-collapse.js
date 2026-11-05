@@ -4,8 +4,8 @@ const STORAGE_KEY = 'elementor_sidebar_collapsed';
 const AUTO_COLLAPSE_BREAKPOINT = 960;
 const TRANSITION_DURATION = 300;
 
-export const useSidebarCollapse = () => {
-	const [ isCollapsed, setIsCollapsed ] = useState( () => {
+export const useSidebarCollapse = ( { disabled = false } = {} ) => {
+	const [ isCollapsedState, setIsCollapsed ] = useState( () => {
 		const stored = localStorage.getItem( STORAGE_KEY );
 
 		if ( null !== stored ) {
@@ -14,6 +14,8 @@ export const useSidebarCollapse = () => {
 
 		return window.innerWidth <= AUTO_COLLAPSE_BREAKPOINT;
 	} );
+
+	const isCollapsed = ! disabled && isCollapsedState;
 
 	useEffect( () => {
 		const mediaQuery = window.matchMedia( `(max-width: ${ AUTO_COLLAPSE_BREAKPOINT }px)` );
