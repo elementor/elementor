@@ -39,6 +39,9 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
 	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
 	getAngieIframe: () => mockGetAngieIframe(),
+	MessageEventType: {
+		SDK_TRIGGER_ANGIE: 'sdk-trigger-angie',
+	},
 } ) );
 
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
@@ -148,6 +151,12 @@ describe( 'editor angie host', () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
 		const pluginIframe = document.createElement( 'iframe' );
+		pluginIframe.src = 'https://angie.example/angie/';
+		const postMessage = jest.fn();
+		Object.defineProperty( pluginIframe, 'contentWindow', {
+			configurable: true,
+			value: { postMessage },
+		} );
 		mockGetAngieIframe.mockReturnValue( pluginIframe );
 		window.elementorEditorAngie = { isAngiePluginActive: true };
 
@@ -161,7 +170,16 @@ describe( 'editor angie host', () => {
 
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
-		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
+		expect( postMessage ).toHaveBeenCalledWith(
+			{
+				type: 'sdk-trigger-angie',
+				payload: {
+					prompt: 'Help me with ',
+				},
+			},
+			'https://angie.example'
+		);
+		expect( window.location.hash ).toBe( '' );
 		expect( openPanel ).not.toHaveBeenCalled();
 		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 	} );
