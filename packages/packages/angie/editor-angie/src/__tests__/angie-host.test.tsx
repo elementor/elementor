@@ -27,6 +27,7 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	getAngieIframe: () => mockGetAngieIframe(),
 	MessageEventType: {
 		SDK_TRIGGER_ANGIE: 'sdk-trigger-angie',
+		ANGIE_SET_INTERACTION_MODE: 'angie/set-interaction-mode',
 	},
 } ) );
 
@@ -111,6 +112,8 @@ describe( 'editor angie host', () => {
 	it( 'opens the Angie plugin and leaves the Core SDK closed when the plugin is active', async () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
+		const pluginContainer = document.createElement( 'div' );
+		pluginContainer.id = 'angie-sidebar-container';
 		const pluginIframe = document.createElement( 'iframe' );
 		pluginIframe.src = 'https://angie.example/angie/';
 		const postMessage = jest.fn();
@@ -118,7 +121,9 @@ describe( 'editor angie host', () => {
 			configurable: true,
 			value: { postMessage },
 		} );
-		mockGetAngieIframe.mockReturnValue( pluginIframe );
+		pluginContainer.append( pluginIframe );
+		document.body.append( pluginContainer );
+		const hostPostMessage = jest.spyOn( window, 'postMessage' ).mockImplementation( () => {} );
 		window.elementorEditorAngie = { isAngiePluginActive: true };
 
 		await openAngie( {
@@ -129,16 +134,25 @@ describe( 'editor angie host', () => {
 			},
 		} );
 
-		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true );
-		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
+		expect( mockGetAngieIframe ).not.toHaveBeenCalled();
+		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true, 'angie-sidebar-container' );
+		expect( mockSetAngieInteractionMode ).not.toHaveBeenCalled();
 		expect( postMessage ).toHaveBeenCalledWith(
+			{
+				type: 'angie/set-interaction-mode',
+				payload: { mode: 'plan' },
+			},
+			'https://angie.example'
+		);
+		expect( hostPostMessage ).toHaveBeenCalledWith(
 			{
 				type: 'sdk-trigger-angie',
 				payload: {
+					instanceId: 'wp-admin',
 					prompt: 'Help me with ',
 				},
 			},
-			'https://angie.example'
+			window.location.origin
 		);
 		expect( window.location.hash ).toBe( '' );
 		expect( openPanel ).not.toHaveBeenCalled();
