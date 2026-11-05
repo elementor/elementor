@@ -1,5 +1,10 @@
-import { openAngieInAskMode } from '@elementor/editor-mcp';
-import { AngieInteractionMode, type AngieTriggerRequest, setAngieInteractionMode } from '@elementor-external/angie-sdk';
+import {
+	type AngieInteractionMode,
+	type AngieTriggerRequest,
+	getAngieIframe,
+	setAngieInteractionMode,
+	toggleAngieSidebar,
+} from '@elementor-external/angie-sdk';
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID, openAngieIframe } from './boot-angie-sdk';
 import { isAngiePluginActive } from './is-angie-plugin-active';
@@ -42,10 +47,17 @@ export const resetAngiePanelOpenerForTests = () => {
 };
 
 const openPluginAngie = ( request: OpenAngieRequest ): void => {
-	openAngieInAskMode( request.prompt );
+	const iframe = getAngieIframe();
 
-	if ( request.mode !== AngieInteractionMode.ASK ) {
-		setAngieInteractionMode( request.mode );
+	if ( ! iframe ) {
+		return;
+	}
+
+	toggleAngieSidebar( iframe, true );
+	setAngieInteractionMode( request.mode );
+
+	if ( request.prompt ) {
+		window.location.hash = `angie-prompt=${ encodeURIComponent( request.prompt ) }`;
 	}
 };
 
