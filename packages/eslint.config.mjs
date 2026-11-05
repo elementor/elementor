@@ -115,13 +115,28 @@ export default [
 							from: [ './packages/*' ],
 							message: 'Tools cannot import from Core, Libs or Tools.',
 						},
+						{
+							target: './packages/angie',
+							from: [ './packages/tools' ],
+							message: 'Angie cannot import from Tools.',
+						},
+						{
+							target: './packages/core',
+							from: [ './packages/angie' ],
+							message: 'Core cannot import from Angie.',
+						},
+						{
+							target: './packages/libs',
+							from: [ './packages/angie' ],
+							message: 'Libraries can only import other libraries.',
+						},
 					],
 				},
 			],
 		},
 	},
 	{
-		files: [ '**/packages/@(core|libs)/**/*.[tj]s?(x)' ],
+		files: [ '**/packages/@(core|libs|angie)/**/*.[tj]s?(x)' ],
 		rules: {
 			'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor' } ],
 		},
