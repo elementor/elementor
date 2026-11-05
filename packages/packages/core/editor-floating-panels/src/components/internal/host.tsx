@@ -24,6 +24,8 @@ export default function FloatingPanelsHost() {
 		return Object.fromEntries( injections.map( ( inj ) => [ inj.id, inj ] ) );
 	}, [ injections ] );
 
+	const openIdSet = useMemo( () => new Set( openIds ), [ openIds ] );
+
 	const mountedIds = useMemo( () => {
 		const ids = new Set< string >( openIds );
 
@@ -51,7 +53,7 @@ export default function FloatingPanelsHost() {
 					<HostedPanel
 						key={ id }
 						id={ id }
-						visible={ openIds.includes( id ) && ! isPreviewMode }
+						visible={ openIdSet.has( id ) && ! isPreviewMode }
 						onFocus={ () => dispatch( slice.actions.bringToFront( id ) ) }
 					>
 						<Component />
