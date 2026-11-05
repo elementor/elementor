@@ -25,8 +25,12 @@ jest.mock( '@elementor/editor-app-bar', () => ( {
 
 jest.mock( '@elementor/editor-angie', () => ( {
 	registerAngiePanelOpener: jest.fn(),
+	openAngie: jest.fn(),
 	bootAngieSdk: jest.fn(),
 	EDITOR_ANGIE_CONTAINER_ID: 'elementor-editor-angie',
+	AngieInteractionMode: {
+		ASK: 'ask',
+	},
 } ) );
 
 describe( 'editor angie panel init', () => {
