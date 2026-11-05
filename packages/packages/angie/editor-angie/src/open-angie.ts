@@ -1,7 +1,6 @@
 import {
 	type AngieInteractionMode,
 	type AngieTriggerRequest,
-	getAngieIframe,
 	MessageEventType,
 	setAngieInteractionMode,
 	toggleAngieSidebar,
@@ -37,6 +36,15 @@ export type OpenAngieRequest = OpenAngieCommonProperties & {
 	plugin?: OpenAngiePluginProperties;
 };
 
+/**
+ * The Angie plugin boots this instance. The host SDK routes `SDK_TRIGGER_ANGIE`
+ * by `payload.instanceId`, and `getAngieIframe()` only resolves instance #1.
+ */
+const PLUGIN_ANGIE_INSTANCE_ID = 'wp-admin';
+
+/** Container id the plugin uses when it does not pass its own. */
+const PLUGIN_ANGIE_CONTAINER_ID = 'angie-sidebar-container';
+
 let openPanel = () => {};
 
 export const registerAngiePanelOpener = ( opener: () => void ) => {
@@ -47,8 +55,14 @@ export const resetAngiePanelOpenerForTests = () => {
 	openPanel = () => {};
 };
 
-const triggerPluginAngie = ( iframe: HTMLIFrameElement, prompt: string ): void => {
-	if ( ! prompt || ! iframe.contentWindow ) {
+const getPluginAngieIframe = (): HTMLIFrameElement | null => {
+	const iframe = document.getElementById( PLUGIN_ANGIE_CONTAINER_ID )?.querySelector( 'iframe' );
+
+	return iframe instanceof HTMLIFrameElement ? iframe : null;
+};
+
+const postToPluginIframe = ( iframe: HTMLIFrameElement, message: Record< string, unknown > ): void => {
+	if ( ! iframe.contentWindow ) {
 		return;
 	}
 
@@ -60,27 +74,39 @@ const triggerPluginAngie = ( iframe: HTMLIFrameElement, prompt: string ): void =
 		return;
 	}
 
-	iframe.contentWindow.postMessage(
+	iframe.contentWindow.postMessage( message, targetOrigin );
+};
+
+const triggerPluginAngie = ( prompt: string ): void => {
+	if ( ! prompt ) {
+		return;
+	}
+
+	window.postMessage(
 		{
 			type: MessageEventType.SDK_TRIGGER_ANGIE,
 			payload: {
+				instanceId: PLUGIN_ANGIE_INSTANCE_ID,
 				prompt,
 			},
 		},
-		targetOrigin
+		window.location.origin
 	);
 };
 
 const openPluginAngie = ( request: OpenAngieRequest ): void => {
-	const iframe = getAngieIframe();
+	const iframe = getPluginAngieIframe();
 
 	if ( ! iframe ) {
 		return;
 	}
 
-	toggleAngieSidebar( iframe, true );
-	setAngieInteractionMode( request.mode );
-	triggerPluginAngie( iframe, request.prompt );
+	toggleAngieSidebar( iframe, true, PLUGIN_ANGIE_CONTAINER_ID );
+	postToPluginIframe( iframe, {
+		type: MessageEventType.ANGIE_SET_INTERACTION_MODE,
+		payload: { mode: request.mode },
+	} );
+	triggerPluginAngie( request.prompt );
 };
 
 const openSdkAngie = async ( request: OpenAngieRequest ): Promise< void > => {
