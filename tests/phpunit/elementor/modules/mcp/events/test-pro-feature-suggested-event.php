@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Get_License_Status_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
@@ -80,7 +81,7 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertSame( Mcp_Event_Dispatcher::INTERACTION_TYPE, $events[0]['interaction_type'] );
 	}
 
-	public function test_list_site_parts__does_not_fire() {
+	public function test_list_site_parts__fires_once_with_feature_and_url() {
 		// Arrange
 		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
 
@@ -88,7 +89,12 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$ability->execute_guarded( [] );
 
 		// Assert
-		$this->assertSame( [], $this->suggestion_events() );
+		$events = $this->suggestion_events();
+		$this->assertCount( 1, $events );
+		$this->assertSame( 'elementor/list-site-parts', $events[0]['tool_name'] );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::PRO_FEATURE, $events[0]['pro_feature'] );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $events[0]['upgrade_url'] );
+		$this->assertArrayNotHasKey( 'document_types', $events[0] );
 	}
 
 	public function test_build_composition__fires_once_for_a_successful_build_with_skipped_features() {
@@ -196,7 +202,7 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		Variables_Pro_Features_Discovery::for_size_variables();
 
 		// Act
-		( new List_Site_Parts_Pro_Features_Discovery_Ability() )->execute_guarded( [] );
+		( new Get_License_Status_Ability() )->execute_guarded( [] );
 
 		// Assert
 		$this->assertSame( [], $this->suggestion_events() );

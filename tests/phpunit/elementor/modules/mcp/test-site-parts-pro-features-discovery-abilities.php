@@ -132,7 +132,7 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		);
 	}
 
-	public function test_list_execute_guarded__returns_non_error_result_without_link() {
+	public function test_list_execute_guarded__returns_pro_gate_with_overview_and_per_feature_rule() {
 		// Arrange
 		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
 
@@ -140,9 +140,16 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$result = $ability->execute_guarded( [] );
 
 		// Assert
-		$this->assertIsArray( $result );
-		$this->assertStringContainsString( 'no site parts were checked', $result['llm_instructions'] );
-		$this->assertStringNotContainsString( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result['llm_instructions'] );
+		$this->assertWPError( $result );
+		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
+		$this->assertStringContainsString( 'no site parts were checked', $result->get_error_message() );
+		$this->assertStringContainsString( 'Mention it once for this feature', $result->get_error_message() );
+		$this->assert_value_link_free_path_order(
+			$result->get_error_message(),
+			'site parts cover three things Free can\'t do',
+			'Free path: build it on the current page'
+		);
 	}
 
 	public function test_get_description_for_llm__includes_site_parts_notice() {
