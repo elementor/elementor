@@ -1,8 +1,8 @@
 import {
-  AngieMcpSdk,
-  LAYOUT_SIDEBAR,
-  type LoadSidebarV2Options,
-  toggleAngieSidebar,
+	AngieMcpSdk,
+	LAYOUT_SIDEBAR,
+	type LoadSidebarV2Options,
+	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor';
@@ -12,60 +12,60 @@ let sdk: AngieMcpSdk | null = null;
 let bootPromise: Promise< AngieMcpSdk > | null = null;
 
 export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
-  host: {
-    appId: EDITOR_ANGIE_APP_ID,
-  },
-  container: {
-    id: EDITOR_ANGIE_CONTAINER_ID,
-    layout: LAYOUT_SIDEBAR,
-    persistOpenState: false,
-    chatToggleButton: {
-      enabled: false,
-      selector: '',
-    },
-  },
+	host: {
+		appId: EDITOR_ANGIE_APP_ID,
+	},
+	container: {
+		id: EDITOR_ANGIE_CONTAINER_ID,
+		layout: LAYOUT_SIDEBAR,
+		persistOpenState: false,
+		chatToggleButton: {
+			enabled: false,
+			selector: '',
+		},
+	},
 } );
 
 export const openAngieIframe = () => {
-  const iframe = document.getElementById( EDITOR_ANGIE_CONTAINER_ID )?.querySelector( 'iframe' );
+	const iframe = document.getElementById( EDITOR_ANGIE_CONTAINER_ID )?.querySelector( 'iframe' );
 
-  if ( ! iframe ) {
-    return;
-  }
+	if ( ! iframe ) {
+		return;
+	}
 
-  toggleAngieSidebar( iframe, true );
+	toggleAngieSidebar( iframe, true );
 };
 
 export const resetAngieSdkForTests = () => {
-  sdk = null;
-  bootPromise = null;
+	sdk = null;
+	bootPromise = null;
 };
 
 export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
-  if ( sdk ) {
-    return Promise.resolve( sdk );
-  }
+	if ( sdk ) {
+		return Promise.resolve( sdk );
+	}
 
-  if ( bootPromise ) {
-    return bootPromise;
-  }
+	if ( bootPromise ) {
+		return bootPromise;
+	}
 
-  bootPromise = ( async () => {
-    try {
-      const instance = new AngieMcpSdk();
+	bootPromise = ( async () => {
+		try {
+			const instance = new AngieMcpSdk();
 
-      await instance.loadSidebarV2( getLoadSidebarOptions() );
-      openAngieIframe();
+			await instance.loadSidebarV2( getLoadSidebarOptions() );
+			openAngieIframe();
 
-      sdk = instance;
+			sdk = instance;
 
-      return instance;
-    } catch ( error ) {
-      bootPromise = null;
-      sdk = null;
-      throw error;
-    }
-  } )();
+			return instance;
+		} catch ( error ) {
+			bootPromise = null;
+			sdk = null;
+			throw error;
+		}
+	} )();
 
-  return bootPromise;
+	return bootPromise;
 };
