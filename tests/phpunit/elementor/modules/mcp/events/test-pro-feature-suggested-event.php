@@ -200,9 +200,10 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 	public function test_execute_guarded__does_not_leak_suggestions_into_the_next_call() {
 		// Arrange
 		Variables_Pro_Features_Discovery::for_size_variables();
+		$ability_without_pro_gate = new Get_License_Status_Ability();
 
 		// Act
-		( new Get_License_Status_Ability() )->execute_guarded( [] );
+		$ability_without_pro_gate->execute_guarded( [] );
 
 		// Assert
 		$this->assertSame( [], $this->suggestion_events() );
