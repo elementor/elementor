@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
-use Elementor\Modules\Mcp\Abilities\Get_License_Status_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
@@ -197,16 +196,18 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'document_types', $events[0] );
 	}
 
-	public function test_execute_guarded__does_not_leak_suggestions_into_the_next_call() {
+	public function test_list_site_parts__does_not_report_a_suggestion_left_by_a_previous_call() {
 		// Arrange
 		Variables_Pro_Features_Discovery::for_size_variables();
-		$ability_without_pro_gate = new Get_License_Status_Ability();
+		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
-		$ability_without_pro_gate->execute_guarded( [] );
+		$ability->execute_guarded( [] );
 
 		// Assert
-		$this->assertSame( [], $this->suggestion_events() );
+		$events = $this->suggestion_events();
+		$this->assertCount( 1, $events );
+		$this->assertSame( [ Site_Parts_Pro_Features_Discovery::PRO_FEATURE ], $events[0]['pro_features'] );
 	}
 
 	public function test_manage_site_parts__includes_the_mcp_session_id_when_present() {
