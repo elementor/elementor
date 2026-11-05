@@ -1,5 +1,5 @@
 import { registerAngiePanelOpener } from '@elementor/editor-angie';
-import { mainMenu, utilitiesMenu } from '@elementor/editor-app-bar';
+import { utilitiesMenu } from '@elementor/editor-app-bar';
 import { openFloatingPanel, registerFloatingPanel } from '@elementor/editor-floating-panels';
 
 import { ANGIE_PANEL_ID, ANGIE_TOGGLE_ID } from '../constants';
@@ -20,9 +20,6 @@ jest.mock( '@elementor/editor-floating-panels', () => ( {
 jest.mock( '@elementor/editor-app-bar', () => ( {
 	utilitiesMenu: {
 		registerToggleAction: jest.fn(),
-	},
-	mainMenu: {
-		registerLink: jest.fn(),
 	},
 } ) );
 
@@ -54,13 +51,6 @@ describe( 'editor angie panel init', () => {
 		expect( utilitiesMenu.registerToggleAction ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				id: ANGIE_TOGGLE_ID,
-			} )
-		);
-		expect( mainMenu.registerLink ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				id: 'open-help-center',
-				group: 'help',
-				overwrite: true,
 			} )
 		);
 		expect( registerAngiePanelOpener ).toHaveBeenCalledTimes( 1 );
