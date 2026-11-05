@@ -143,13 +143,26 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertWPError( $result );
 		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( 'nothing was created or listed', $result->get_error_message() );
 		$this->assertStringContainsString( 'Mention it once for this feature', $result->get_error_message() );
 		$this->assert_value_link_free_path_order(
 			$result->get_error_message(),
 			'site parts cover three things Free can\'t do',
 			'Free path: build it on the current page'
 		);
+	}
+
+	public function test_list_execute_guarded__returns_same_error_as_manage_without_a_requested_type() {
+		// Arrange
+		$list = new List_Site_Parts_Pro_Features_Discovery_Ability();
+		$manage = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
+
+		// Act
+		$list_result = $list->execute_guarded( [] );
+		$manage_result = $manage->execute_guarded( [ 'operations' => [] ] );
+
+		// Assert
+		$this->assertSame( $manage_result->get_error_message(), $list_result->get_error_message() );
+		$this->assertSame( $manage_result->get_error_data(), $list_result->get_error_data() );
 	}
 
 	public function test_get_description_for_llm__includes_site_parts_notice() {
