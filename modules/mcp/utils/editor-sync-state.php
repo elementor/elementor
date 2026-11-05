@@ -16,6 +16,13 @@ class Editor_Sync_State {
 		add_action( 'elementor/heartbeat/unsaved_signal', [ $this, 'handle_unsaved_signal' ], 10, 2 );
 		add_filter( 'elementor/heartbeat/mutation_marker', [ $this, 'build_mutation_marker' ], 10, 2 );
 		add_action( 'elementor/document/after_save', [ $this, 'on_document_saved' ] );
+		add_filter( 'elementor/document/config', [ $this, 'add_server_time_to_config' ] );
+	}
+
+	public function add_server_time_to_config( array $config ): array {
+		$config['server_time'] = time();
+
+		return $config;
 	}
 
 	public function handle_unsaved_signal( int $post_id, $signal_value ): void {
