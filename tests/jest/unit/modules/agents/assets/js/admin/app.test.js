@@ -538,7 +538,7 @@ describe( 'Agents Ready App', () => {
 		expect( screen.queryByText( 'Help AI agents understand and recommend your site' ) ).toBeNull();
 		expect( screen.getByText( 'Help AI agents understand your site' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
-		expect( screen.getByText( 'Decide how AI bots can use your content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents find what your site offers' ) ).toBeTruthy();
 
 		// Act
@@ -548,7 +548,7 @@ describe( 'Agents Ready App', () => {
 		expect( screen.getByText( 'Help AI agents understand and recommend your site' ) ).toBeTruthy();
 		expect( screen.queryByText( 'Help AI agents understand your site' ) ).toBeNull();
 		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
-		expect( screen.getByText( 'Decide how AI bots can use your content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 	} );
 
 	it( 'keeps the welcome screen when activation fails', async () => {

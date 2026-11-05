@@ -58,7 +58,7 @@ export const getModules = () => [
 	{
 		id: MODULE_BOT_ACCESS_CONTROL,
 		title: __( 'robots.txt rules: AI bot access', 'elementor' ),
-		description: __( 'Decide how AI bots can use your content', 'elementor' ),
+		description: __( 'Decide how AI agents can use your content', 'elementor' ),
 	},
 	{
 		id: MODULE_AGENT_DISCOVERY,
