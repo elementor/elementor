@@ -16,7 +16,7 @@ import {
 	SCANNER_MOTION,
 	sectionHeadingSx,
 } from '../scanner-constants';
-import { CollapsibleCardHeader } from './checks-summary';
+import { CHECKS_KIND_PASSED, CollapsibleCardHeader } from './checks-summary';
 import { TableCard } from './fix-table';
 
 const ROW_ACTIVATION_KEYS = [ 'Enter', ' ' ];
@@ -165,6 +165,7 @@ export const PassingTable = ( { checks } ) => {
 			</Stack>
 			<TableCard>
 				<CollapsibleCardHeader
+					kind={ CHECKS_KIND_PASSED }
 					count={ checks.length }
 					title={ sprintf(
 						/* Translators: %d: Number of passed checks. */

@@ -98,9 +98,9 @@ const runFirstScan = async ( props = {} ) => {
 	await advanceTimers( SCAN_DURATION_MS );
 };
 
-const showFixChecks = () => fireEvent.click( screen.getAllByRole( 'button', { name: 'Show checks' } )[ 0 ] );
+const showFixChecks = () => fireEvent.click( screen.getByRole( 'button', { name: 'Show failed checks' } ) );
 
-const showPassedChecks = () => fireEvent.click( screen.getAllByRole( 'button', { name: 'Show checks' } ).at( -1 ) );
+const showPassedChecks = () => fireEvent.click( screen.getByRole( 'button', { name: 'Show passed checks' } ) );
 
 const expectNextScanLabelDisabled = ( label ) => {
 	const buttons = screen.getAllByRole( 'button', { name: label } );
@@ -158,7 +158,7 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByText( `Checking ${ SITE_DOMAIN }` ) ).toBeTruthy();
 		expect( within( screen.getByRole( 'list' ) ).getByText( 'Getting your site ready to scan' ) ).toBeTruthy();
-		expect( screen.queryByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeNull();
+		expect( screen.getByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeTruthy();
 
 		await advanceTimers( SCAN_DURATION_MS );
 
@@ -189,7 +189,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByText( '7 failed checks to be fixed. Activating agent access settings fixes 2 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
 		expect( screen.getByText( 'Agents can\'t find a path into your site' ) ).toBeTruthy();
 		expect( screen.queryByText( 'Agents can\'t read clean versions of your pages' ) ).toBeNull();
-		expect( screen.getByRole( 'button', { name: 'Hide checks' } ).getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+		expect( screen.getByRole( 'button', { name: 'Hide failed checks' } ).getAttribute( 'aria-expanded' ) ).toBe( 'true' );
 	} );
 
 	it( 'shows the first five fixes and toggles the rest', async () => {
@@ -259,7 +259,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( row.getAttribute( 'aria-expanded' ) ).toBe( 'true' );
 		expect( screen.getByText( 'What we found' ) ).toBeTruthy();
 		expect( screen.getByText( 'No openingHours found on your homepage' ) ).toBeTruthy();
-		expect( screen.getByText( 'How to fix it manually' ) ).toBeTruthy();
+		expect( screen.queryByText( 'How to fix it manually' ) ).toBeNull();
 
 		fireEvent.keyDown( row, { key: 'Enter' } );
 
@@ -342,7 +342,7 @@ describe( 'Agent Ready scanner', () => {
 
 	const getScanWithWebmcpCheck = () => getScanWithToggleCheck( 'webmcp-support', 'WebMCP support' );
 
-	it( 'keeps WebMCP support listed when a fresh scan still reports it as failing', async () => {
+	it( 'shows the failure reason with Undo and Rescan when WebMCP support is on but the scan still reports it as failing', async () => {
 		// Arrange
 		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
 		renderScanner( { ...activatedProps, browserToolsConfig: { enabled: true, isAvailable: true } } );
@@ -352,8 +352,12 @@ describe( 'Agent Ready scanner', () => {
 		await advanceTimers( SCAN_DURATION_MS );
 
 		// Assert
+		const row = getRowByTitle( 'WebMCP support' );
 		expect( screen.getAllByText( 'WebMCP support' ) ).toHaveLength( 1 );
-		expect( within( getRowByTitle( 'WebMCP support' ) ).getByRole( 'button', { name: 'Create for me' } ) ).toBeTruthy();
+		expect( within( row ).getByText( 'WebMCP support is missing' ) ).toBeTruthy();
+		expect( within( row ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
+		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ) ).toBeTruthy();
+		expect( within( row ).queryByRole( 'button', { name: 'Create for me' } ) ).toBeNull();
 	} );
 
 	it( 'disables Create for me and explains why when Agent browser tools are unavailable', async () => {
@@ -409,7 +413,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByText( '8 failed checks to be fixed. Activating agent access settings fixes 2 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
 	} );
 
-	it( 'leaves checks whose module is already enabled out of the failing list and the activation fix count', async () => {
+	it( 'keeps checks whose module is already enabled in the failing list but out of the activation fix count', async () => {
 		// Arrange
 		const markdownConfig = { enabled: true };
 
@@ -423,7 +427,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByText( '7 failed checks to be fixed. Activating agent access settings fixes 1 of them, the others require Angie or a manual fix.' ) ).toBeTruthy();
 	} );
 
-	it( 'keeps the scan score and moves the check to the passed checks when Create for me is clicked', async () => {
+	it( 'keeps the check listed with Undo and Rescan and the scan score when Create for me is clicked', async () => {
 		// Arrange
 		const title = 'Agents can\'t find a path into your site';
 		await runFirstScan( activatedProps );
@@ -433,10 +437,55 @@ describe( 'Agent Ready scanner', () => {
 		await flushPendingSave();
 
 		// Assert
+		const row = getRowByTitle( title );
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'agent-path', { enabled: true } );
-		expect( screen.queryByText( title ) ).toBeNull();
+		expect( within( row ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
+		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ) ).toBeTruthy();
+		expect( within( row ).queryByRole( 'button', { name: 'Create for me' } ) ).toBeNull();
+		expect( screen.getByText( /These 7 items hold/ ) ).toBeTruthy();
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
+	} );
+
+	it( 'brings back Create for me when Undo is clicked', async () => {
+		// Arrange
+		const title = 'Agents can\'t find a path into your site';
+		await runFirstScan( activatedProps );
+		fireEvent.click( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Create for me' } ) );
+		await flushPendingSave();
+
+		// Act
+		fireEvent.click( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Undo' } ) );
+		await flushPendingSave();
+
+		// Assert
+		expect( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Create for me' } ) ).toBeTruthy();
+		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
+	} );
+
+	it( 'moves the check to the passed checks and updates both counts when a rescan reports it as passing', async () => {
+		// Arrange
+		const title = 'Agents can\'t find a path into your site';
+		const scan = getMockScanResult();
+		const fixedCheck = scan.checks.find( ( check ) => title === check.title );
+		await runFirstScan( activatedProps );
+		fireEvent.click( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Create for me' } ) );
+		await flushPendingSave();
+		runSiteScan.mockResolvedValue( {
+			...scan,
+			checks: scan.checks.filter( ( check ) => check !== fixedCheck ),
+			passingChecks: [ ...scan.passingChecks, { id: fixedCheck.id, title: fixedCheck.title, description: '', stage: fixedCheck.stage } ],
+		} );
+		const passedBefore = Number( screen.getByText( /Checks? passed/ ).textContent.match( /\d+/ )[ 0 ] );
+
+		// Act
+		fireEvent.click( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Rescan' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( screen.getByText( /These 6 items hold/ ) ).toBeTruthy();
+		expect( screen.getByText( `${ passedBefore + 1 } Checks passed` ) ).toBeTruthy();
+		expect( screen.queryByText( title ) ).toBeNull();
 
 		showPassedChecks();
 
@@ -485,7 +534,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByText( 'Save failed' ) ).toBeTruthy();
 	} );
 
-	it( 'lists the check again when a rescan still reports it as failing', async () => {
+	it( 'keeps Undo and Rescan on the failing check when a rescan still reports it as failing', async () => {
 		// Arrange
 		const title = 'Agents can\'t find a path into your site';
 		await runFirstScan( activatedProps );
@@ -500,10 +549,10 @@ describe( 'Agent Ready scanner', () => {
 		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.queryByText( 'Rescan to update your score.' ) ).toBeNull();
-		expect( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Create for me' } ) ).toBeTruthy();
+		expect( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
 	} );
 
-	it( 'opens the preference drawer and moves the check to the passed checks once a value is saved', async () => {
+	it( 'opens the preference drawer and shows Undo and Rescan once a value is saved', async () => {
 		// Arrange
 		await runFirstScan();
 		showFixChecks();
@@ -517,7 +566,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( applyCheckFix ).toHaveBeenCalledWith( 'service-area', { value: 'London' } );
-		expect( screen.queryByText( title ) ).toBeNull();
+		expect( within( getRowByTitle( title ) ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
 	} );
 
 	it( 'lists the passed checks in a card that is collapsed by default', async () => {
@@ -526,13 +575,13 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( screen.getByText( /Checks? passed/ ) ).toBeTruthy();
-		expect( screen.getAllByRole( 'button', { name: 'Show checks' } ).at( -1 ).getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		expect( screen.getByRole( 'button', { name: 'Show passed checks' } ).getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 
 		// Act
 		showPassedChecks();
 
 		// Assert
-		expect( screen.getByRole( 'button', { name: 'Hide checks' } ).getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+		expect( screen.getByRole( 'button', { name: 'Hide passed checks' } ).getAttribute( 'aria-expanded' ) ).toBe( 'true' );
 	} );
 
 	it( 'shows the error report when the outside half of the scan fails, and still offers Activate', async () => {

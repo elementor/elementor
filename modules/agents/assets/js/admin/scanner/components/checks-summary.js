@@ -9,7 +9,18 @@ import PropTypes from 'prop-types';
 import { REDUCED_MOTION_SX, SCANNER_COLORS, SCANNER_LAYOUT, SCANNER_MOTION } from '../scanner-constants';
 import { CheckTableHeader, TableCard } from './fix-table';
 
-export const CollapsibleCardHeader = ( { count, title, isExpanded, isLoading, onToggle } ) => (
+export const CHECKS_KIND_FAILED = 'failed';
+export const CHECKS_KIND_PASSED = 'passed';
+
+const getToggleLabel = ( kind, isExpanded ) => {
+	if ( CHECKS_KIND_PASSED === kind ) {
+		return isExpanded ? __( 'Hide passed checks', 'elementor' ) : __( 'Show passed checks', 'elementor' );
+	}
+
+	return isExpanded ? __( 'Hide failed checks', 'elementor' ) : __( 'Show failed checks', 'elementor' );
+};
+
+export const CollapsibleCardHeader = ( { kind = CHECKS_KIND_FAILED, count, title, isExpanded, isLoading, onToggle } ) => (
 	<Stack
 		direction="row"
 		alignItems="center"
@@ -18,6 +29,8 @@ export const CollapsibleCardHeader = ( { count, title, isExpanded, isLoading, on
 		p={ 2 }
 		borderBottom={ isExpanded ? 1 : 0 }
 		borderColor="divider"
+		onClick={ isLoading ? undefined : onToggle }
+		sx={ isLoading ? undefined : { cursor: 'pointer' } }
 	>
 		<Stack direction="row" alignItems="center" gap={ 1 } flex={ 1 } minWidth={ 0 }>
 			<Box
@@ -38,9 +51,9 @@ export const CollapsibleCardHeader = ( { count, title, isExpanded, isLoading, on
 			variant="text"
 			color="secondary"
 			size="small"
-			onClick={ onToggle }
 			disabled={ isLoading }
 			aria-expanded={ isExpanded }
+			aria-label={ getToggleLabel( kind, isExpanded ) }
 			endIcon={ (
 				<ChevronDownIcon
 					sx={ {
@@ -57,6 +70,7 @@ export const CollapsibleCardHeader = ( { count, title, isExpanded, isLoading, on
 );
 
 CollapsibleCardHeader.propTypes = {
+	kind: PropTypes.oneOf( [ CHECKS_KIND_FAILED, CHECKS_KIND_PASSED ] ),
 	count: PropTypes.number.isRequired,
 	title: PropTypes.string.isRequired,
 	isExpanded: PropTypes.bool,

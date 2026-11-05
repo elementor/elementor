@@ -29,7 +29,7 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, M
 	}
 
 	public function get_tag(): string {
-		return esc_html__( 'Beta', 'elementor' );
+		return __( 'Beta', 'elementor' );
 	}
 
 	public function get_group_id(): string {

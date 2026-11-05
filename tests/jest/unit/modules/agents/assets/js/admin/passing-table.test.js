@@ -13,7 +13,7 @@ const getCheck = ( overrides = {} ) => ( {
 	...overrides,
 } );
 
-const expandCard = () => fireEvent.click( screen.getByRole( 'button', { name: 'Show checks' } ) );
+const expandCard = () => fireEvent.click( screen.getByRole( 'button', { name: 'Show passed checks' } ) );
 
 const expandRow = () => {
 	expandCard();

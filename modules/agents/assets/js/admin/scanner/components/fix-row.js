@@ -9,8 +9,8 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
-	FIX_WITH_ANGIE,
 	FIX_WITH_PREFERENCE,
+	isPromptBasedFix,
 	CHECK_STATUS_FAIL,
 	getCheckStatusDotColor,
 	getCheckStatusLabel,
@@ -70,6 +70,7 @@ StatusIndicator.propTypes = {
 export const FixRow = ( {
 	check,
 	isOpen,
+	isResolved,
 	isSaving = false,
 	isToggleDisabled = false,
 	toggleDisabledReason = null,
@@ -82,10 +83,12 @@ export const FixRow = ( {
 	onCopyPrompt,
 	onFixWithAngie,
 	onSetEnabled,
+	onUndo,
+	onRescan,
 	onPreferenceChange,
 	onSavePreference,
 } ) => {
-	const showCopyPrompt = FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt );
+	const showCopyPrompt = isPromptBasedFix( check ) && ! isResolved;
 
 	const handleKeyDown = ( event ) => {
 		if ( event.target !== event.currentTarget || ! ROW_ACTIVATION_KEYS.includes( event.key ) ) {
@@ -123,7 +126,12 @@ export const FixRow = ( {
 			>
 				<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 } minWidth={ 0 }>
 					<StatusIndicator check={ check } />
-					<Typography className="scanner-fix-title" variant="body2">{ check.title }</Typography>
+					<Stack minWidth={ 0 }>
+						<Typography className="scanner-fix-title" variant="body2">{ check.title }</Typography>
+						{ isResolved && check.evidence && (
+							<Typography variant="caption" color="text.secondary">{ check.evidence }</Typography>
+						) }
+					</Stack>
 					<PriorityChip priority={ check.priority } />
 				</Stack>
 				<Stack direction="row" alignItems="center" justifyContent="flex-end" gap={ 1 } minWidth={ SCANNER_LAYOUT.actionAreaWidth } flexShrink={ 0 }>
@@ -133,6 +141,7 @@ export const FixRow = ( {
 							{ showCopyPrompt && <CopyPromptButton onCopy={ () => onCopyPrompt( check ) } /> }
 							<RowAction
 								check={ check }
+								isResolved={ isResolved }
 								isSaving={ isSaving }
 								isToggleDisabled={ isToggleDisabled }
 								toggleDisabledReason={ toggleDisabledReason }
@@ -141,6 +150,8 @@ export const FixRow = ( {
 								onOpen={ onOpen }
 								onFixWithAngie={ onFixWithAngie }
 								onSetEnabled={ onSetEnabled }
+								onUndo={ onUndo }
+								onRescan={ onRescan }
 							/>
 						</Stack>
 					</Box>
@@ -178,6 +189,7 @@ export const FixRow = ( {
 FixRow.propTypes = {
 	check: PropTypes.object.isRequired,
 	isOpen: PropTypes.bool,
+	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
 	toggleDisabledReason: PropTypes.string,
@@ -190,6 +202,8 @@ FixRow.propTypes = {
 	onCopyPrompt: PropTypes.func.isRequired,
 	onFixWithAngie: PropTypes.func.isRequired,
 	onSetEnabled: PropTypes.func.isRequired,
+	onUndo: PropTypes.func.isRequired,
+	onRescan: PropTypes.func.isRequired,
 	onPreferenceChange: PropTypes.func.isRequired,
 	onSavePreference: PropTypes.func.isRequired,
 };

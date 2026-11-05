@@ -1,6 +1,4 @@
-import { getToggleModuleKey } from './scanner-check-settings';
 import {
-	FIX_WITH_TOGGLE,
 	SCORE_TIER_HIGH,
 	SCORE_TIER_HIGH_MIN,
 	SCORE_TIER_LOW,
@@ -49,17 +47,3 @@ export const normalizeReadinessScore = ( score ) => {
 export const getBaseScore = ( scan ) => normalizeReadinessScore( scan?.score );
 
 export const hasPendingFixes = ( checks, resolvedIds ) => checks.some( ( check ) => resolvedIds[ check.id ] );
-
-export const isCheckResolvedLocally = ( check, { locallyEnabledModules = {}, resolvedIds = {} } ) => {
-	const moduleKey = FIX_WITH_TOGGLE === check.fixWith ? getToggleModuleKey( check.id ) : null;
-
-	return moduleKey ? Boolean( locallyEnabledModules[ moduleKey ] ) : Boolean( resolvedIds[ check.id ] );
-};
-
-export const toLocallyPassedCheck = ( check ) => ( {
-	id: check.id,
-	title: check.title,
-	description: check.explanation?.whatItMeans ?? '',
-	evidence: check.evidence,
-	stage: check.stage,
-} );

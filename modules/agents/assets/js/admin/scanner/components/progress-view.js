@@ -115,6 +115,14 @@ export const ProgressView = ( { siteDomain, steps, completedStepsCount, isFailed
 						);
 					} ) }
 				</Stack>
+				<Box
+					role="progressbar"
+					aria-label={ __( 'Scan progress', 'elementor' ) }
+					aria-valuemin={ 0 }
+					aria-valuemax={ steps.length }
+					aria-valuenow={ Math.min( completedStepsCount, steps.length ) }
+					sx={ VISUALLY_HIDDEN_SX }
+				/>
 				<Box aria-live="polite" sx={ VISUALLY_HIDDEN_SX }>{ liveMessage }</Box>
 			</Stack>
 		</Box>
