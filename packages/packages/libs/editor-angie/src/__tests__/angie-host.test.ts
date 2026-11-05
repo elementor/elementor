@@ -1,6 +1,7 @@
 import { AngieInteractionMode, AngieMcpSdk } from '@elementor-external/angie-sdk';
 
 import { bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
+import { helpCenterAbility, resetHelpCenterAbilityForTests } from '../help-center-ability';
 import { init } from '../init';
 import { openAngie } from '../open-angie';
 
@@ -8,6 +9,7 @@ const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
+const mockOpenAngieInAskMode = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
   AngieMcpSdk: jest.fn().mockImplementation( () => ( {
@@ -23,6 +25,10 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
   },
   setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
   toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
+} ) );
+
+jest.mock( '@elementor/editor-mcp', () => ( {
+  openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
 } ) );
 
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
@@ -41,6 +47,8 @@ describe( 'editor angie host', () => {
   beforeEach( () => {
     jest.clearAllMocks();
     resetAngieSdkForTests();
+    resetHelpCenterAbilityForTests();
+    delete ( window as Window & { elementorEditorAngie?: unknown } ).elementorEditorAngie;
     document.body.innerHTML = '';
     mockLoadSidebarV2.mockResolvedValue( undefined );
     mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
@@ -78,14 +86,64 @@ describe( 'editor angie host', () => {
     expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 2 );
   } );
 
-  it( 'opens Angie with the prompt and mode', async () => {
-    await openAngie( 'Write a heading', AngieInteractionMode.ASK );
+  it( 'opens the Core SDK with common properties and SDK-only options', async () => {
+    const registerSpy = jest.spyOn( helpCenterAbility, 'register' );
 
+    await openAngie( {
+      prompt: 'Write a heading',
+      mode: AngieInteractionMode.ASK,
+      sdk: {
+        options: { newChat: true },
+      },
+    } );
+
+    expect( mockOpenAngieInAskMode ).not.toHaveBeenCalled();
+    expect( registerSpy ).toHaveBeenCalledTimes( 1 );
     expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
     expect( mockTriggerAngie ).toHaveBeenCalledWith( {
       prompt: 'Write a heading',
       context: { source: 'elementor-editor' },
+      options: { newChat: true },
     } );
+
+    registerSpy.mockRestore();
+  } );
+
+  it( 'opens the Angie plugin when it is active and does not register the help-center ability', async () => {
+    const registerSpy = jest.spyOn( helpCenterAbility, 'register' );
+    (
+      window as Window & { elementorEditorAngie?: { isAngiePluginActive: boolean } }
+     ).elementorEditorAngie = {
+      isAngiePluginActive: true,
+    };
+
+    await openAngie( {
+      prompt: 'Help me with ',
+      mode: AngieInteractionMode.PLAN,
+      sdk: {
+        context: { source: 'should-not-be-sent' },
+      },
+    } );
+
+    expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
+    expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
+    expect( mockTriggerAngie ).not.toHaveBeenCalled();
+    expect( registerSpy ).not.toHaveBeenCalled();
+
+    registerSpy.mockRestore();
+  } );
+
+  it( 'registers the empty help-center ability once when the plugin is inactive', async () => {
+    const registerSpy = jest.spyOn( helpCenterAbility, 'register' );
+
+    init();
+    await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+    init();
+    await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+    expect( registerSpy ).toHaveBeenCalledTimes( 1 );
+
+    registerSpy.mockRestore();
   } );
 
   it( 'boots when the package initializes and reports a boot failure', async () => {

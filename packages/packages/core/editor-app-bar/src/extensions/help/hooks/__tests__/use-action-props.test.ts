@@ -6,64 +6,89 @@ const mockIsAngieAvailable = jest.fn();
 const mockOpenAngieInAskMode = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => ( {
-	isAngieAvailable: () => mockIsAngieAvailable(),
-	openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
+  isAngieAvailable: () => mockIsAngieAvailable(),
+  openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
 } ) );
 
 describe( 'useHelpCenterActionProps', () => {
-	let mockDispatchEvent: jest.Mock;
+  let mockDispatchEvent: jest.Mock;
 
-	beforeEach( () => {
-		mockIsAngieAvailable.mockReset();
-		mockOpenAngieInAskMode.mockReset();
-		mockDispatchEvent = jest.fn();
-		window.elementorCommon = {
-			eventsManager: {
-				dispatchEvent: mockDispatchEvent,
-				config: {
-					names: {
-						topBar: {
-							help: 'top_bar_help',
-						},
-					},
-					locations: {
-						topBar: 'Top Bar',
-					},
-					secondaryLocations: {
-						help: 'Help',
-					},
-					triggers: {
-						click: 'click',
-					},
-					elements: {
-						buttonIcon: 'button_icon',
-					},
-				},
-			},
-		} as unknown as typeof window.elementorCommon;
-	} );
+  beforeEach( () => {
+    mockIsAngieAvailable.mockReset();
+    mockOpenAngieInAskMode.mockReset();
+    delete ( window as Window & { elementorV2?: unknown } ).elementorV2;
+    mockDispatchEvent = jest.fn();
+    window.elementorCommon = {
+      eventsManager: {
+        dispatchEvent: mockDispatchEvent,
+        config: {
+          names: {
+            topBar: {
+              help: 'top_bar_help',
+            },
+          },
+          locations: {
+            topBar: 'Top Bar',
+          },
+          secondaryLocations: {
+            help: 'Help',
+          },
+          triggers: {
+            click: 'click',
+          },
+          elements: {
+            buttonIcon: 'button_icon',
+          },
+        },
+      },
+    } as unknown as typeof window.elementorCommon;
+  } );
 
-	it( 'returns an external link when Angie is inactive', () => {
-		mockIsAngieAvailable.mockReturnValue( false );
+  it( 'returns an external link when Angie is inactive', () => {
+    mockIsAngieAvailable.mockReturnValue( false );
 
-		const { result } = renderHook( () => useActionProps() );
+    const { result } = renderHook( () => useActionProps() );
 
-		expect( result.current.href ).toBe( 'https://go.elementor.com/editor-top-bar-learn/' );
-		expect( result.current.target ).toBe( '_blank' );
-	} );
+    expect( result.current.href ).toBe( 'https://go.elementor.com/editor-top-bar-learn/' );
+    expect( result.current.target ).toBe( '_blank' );
+  } );
 
-	it( 'opens Angie in ask mode when Angie is active', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+  it( 'opens the Core SDK when the editor Angie package is loaded', () => {
+    const openAngie = jest.fn();
+    (
+      window as Window & { elementorV2?: { editorAngie: { openAngie: typeof openAngie } } }
+     ).elementorV2 = {
+      editorAngie: { openAngie },
+    };
+    mockIsAngieAvailable.mockReturnValue( true );
 
-		const { result } = renderHook( () => useActionProps() );
-		const preventDefault = jest.fn();
+    const { result } = renderHook( () => useActionProps() );
+    const preventDefault = jest.fn();
 
-		result.current.onClick?.( { preventDefault } as unknown as React.MouseEvent );
+    result.current.onClick?.( { preventDefault } as unknown as React.MouseEvent );
 
-		expect( preventDefault ).toHaveBeenCalled();
-		expect( mockDispatchEvent ).toHaveBeenCalled();
-		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
-		expect( result.current.href ).toBeUndefined();
-		expect( result.current.target ).toBeUndefined();
-	} );
+    expect( preventDefault ).toHaveBeenCalled();
+    expect( mockDispatchEvent ).toHaveBeenCalled();
+    expect( openAngie ).toHaveBeenCalledWith( {
+      prompt: 'Help me with ',
+      mode: 'ask',
+    } );
+    expect( mockOpenAngieInAskMode ).not.toHaveBeenCalled();
+    expect( result.current.href ).toBeUndefined();
+  } );
+
+  it( 'opens Angie in ask mode when Angie is active', () => {
+    mockIsAngieAvailable.mockReturnValue( true );
+
+    const { result } = renderHook( () => useActionProps() );
+    const preventDefault = jest.fn();
+
+    result.current.onClick?.( { preventDefault } as unknown as React.MouseEvent );
+
+    expect( preventDefault ).toHaveBeenCalled();
+    expect( mockDispatchEvent ).toHaveBeenCalled();
+    expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
+    expect( result.current.href ).toBeUndefined();
+    expect( result.current.target ).toBeUndefined();
+  } );
 } );
