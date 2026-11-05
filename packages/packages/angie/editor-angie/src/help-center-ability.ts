@@ -37,7 +37,7 @@ export const helpCenterAbility: HelpCenterAbility = {
 			name: HELP_CENTER_SERVER_NAME,
 			version: HELP_CENTER_SERVER_VERSION,
 			description: HELP_CENTER_SERVER_DESCRIPTION,
-			server: helpCenter.server as AngieLocalServerConfig[ 'server' ],
+			server: helpCenter.server as unknown as AngieLocalServerConfig[ 'server' ],
 			capabilities: { tools: {} },
 		} );
 	},
