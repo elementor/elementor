@@ -6,6 +6,9 @@ import {
 	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
+import { ensureHelpCenterAbility } from './help-center-ability';
+import { isAngiePluginActive } from './is-angie-plugin-active';
+
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor';
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
 
@@ -77,6 +80,10 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 			openAngieIframe();
 
 			sdk = instance;
+
+			if ( ! isAngiePluginActive() ) {
+				await ensureHelpCenterAbility( instance );
+			}
 
 			return instance;
 		} catch ( error ) {

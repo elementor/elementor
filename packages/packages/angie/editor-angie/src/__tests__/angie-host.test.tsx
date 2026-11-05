@@ -1,19 +1,33 @@
 import { AngieInteractionMode, AngieMcpSdk } from '@elementor-external/angie-sdk';
 
 import { bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
+import { resetHelpCenterAbilityForTests } from '../help-center-ability';
 import { init } from '../init';
 import { openAngie, registerAngiePanelOpener, resetAngiePanelOpenerForTests } from '../open-angie';
 
 const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
+const mockRegisterLocalServer = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
 const mockGetAngieIframe = jest.fn();
+const mockWpSearchMcpServer = jest.fn();
+
+jest.mock( '@elementor-external/wp-search-mcp', () => ( {
+	WpSearchMcpServer: class {
+		server = { name: 'elementor-help-center' };
+
+		constructor( config: unknown ) {
+			mockWpSearchMcpServer( config );
+		}
+	},
+} ) );
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
 		loadSidebarV2: ( ...args: unknown[] ) => mockLoadSidebarV2( ...args ),
 		triggerAngie: ( ...args: unknown[] ) => mockTriggerAngie( ...args ),
+		registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 	} ) ),
 	LAYOUT_SIDEBAR: 'sidebar',
 	AngieInteractionMode: {
@@ -47,11 +61,13 @@ describe( 'editor angie host', () => {
 		jest.clearAllMocks();
 		resetAngieSdkForTests();
 		resetAngiePanelOpenerForTests();
+		resetHelpCenterAbilityForTests();
 		delete window.elementorEditorAngie;
 		window.location.hash = '';
 		document.body.innerHTML = '';
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
+		mockRegisterLocalServer.mockResolvedValue( undefined );
 	} );
 
 	it( 'boots one SDK and opens the iframe it created', async () => {
@@ -78,6 +94,29 @@ describe( 'editor angie host', () => {
 			},
 		} );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
+		expect( mockWpSearchMcpServer ).toHaveBeenCalledWith( {
+			url: 'https://elementor.com/help',
+			server: {
+				name: 'elementor-help-center',
+				title: 'Elementor Help Center',
+				version: '1.2.0',
+			},
+			postTypes: {
+				post: 'posts',
+				page: 'pages',
+				videos: 'videos',
+			},
+		} );
+		expect( mockRegisterLocalServer ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not register the help-center ability when the Angie plugin is active', async () => {
+		window.elementorEditorAngie = { isAngiePluginActive: true };
+
+		await bootAngieSdk();
+
+		expect( mockWpSearchMcpServer ).not.toHaveBeenCalled();
+		expect( mockRegisterLocalServer ).not.toHaveBeenCalled();
 	} );
 
 	it( 'retries after a failed boot', async () => {
