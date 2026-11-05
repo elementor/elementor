@@ -44,6 +44,28 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
+	public function test_editor_angie_package_is_registered_only_when_experiment_is_active() {
+		// Arrange.
+		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+
+		// Act.
+		$inactive_packages = apply_filters( 'elementor/editor/v2/packages', [] );
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		$active_packages = apply_filters( 'elementor/editor/v2/packages', [] );
+
+		// Assert.
+		$this->assertNotContains( Module::ANGIE_PACKAGE, $inactive_packages );
+		$this->assertContains( Module::ANGIE_PACKAGE, $active_packages );
+	}
+
 	public function test_experiment_can_be_activated() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(

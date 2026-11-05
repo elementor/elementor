@@ -22,6 +22,8 @@ class Module extends BaseModule {
 		'editor-widget-creation',
 	];
 
+	const ANGIE_PACKAGE = 'editor-angie';
+
 	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
 
 	public function get_name() {
@@ -129,6 +131,12 @@ class Module extends BaseModule {
 	}
 
 	private function add_packages( array $packages ): array {
-		return array_merge( $packages, self::PACKAGES );
+		$packages = array_merge( $packages, self::PACKAGES );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME ) ) {
+			$packages[] = self::ANGIE_PACKAGE;
+		}
+
+		return $packages;
 	}
 }
