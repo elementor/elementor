@@ -56,6 +56,7 @@ describe( 'editor angie host', () => {
 
 	it( 'boots one SDK and opens the iframe it created', async () => {
 		const iframe = mountIframe();
+		mockGetAngieIframe.mockReturnValue( iframe );
 
 		await bootAngieSdk();
 		await bootAngieSdk();
@@ -102,7 +103,7 @@ describe( 'editor angie host', () => {
 		} );
 
 		expect( openPanel ).toHaveBeenCalledTimes( 1 );
-		expect( mockGetAngieIframe ).not.toHaveBeenCalled();
+		expect( mockGetAngieIframe ).toHaveBeenCalledTimes( 1 );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: 'Write a heading',
@@ -129,7 +130,7 @@ describe( 'editor angie host', () => {
 		expect( mockGetAngieIframe ).toHaveBeenCalledTimes( 1 );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
-		expect( window.location.hash ).toBe( '' );
+		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
 		expect( openPanel ).not.toHaveBeenCalled();
 		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 		expect( AngieMcpSdkMock ).not.toHaveBeenCalled();

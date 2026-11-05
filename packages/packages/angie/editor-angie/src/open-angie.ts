@@ -1,9 +1,7 @@
 import {
 	type AngieInteractionMode,
 	type AngieTriggerRequest,
-	getAngieIframe,
 	setAngieInteractionMode,
-	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID, openAngieIframe } from './boot-angie-sdk';
@@ -47,14 +45,14 @@ export const resetAngiePanelOpenerForTests = () => {
 };
 
 const openPluginAngie = ( request: OpenAngieRequest ): void => {
-	const iframe = getAngieIframe();
+	openAngieIframe();
+	setAngieInteractionMode( request.mode );
 
-	if ( ! iframe ) {
+	if ( ! request.prompt ) {
 		return;
 	}
 
-	toggleAngieSidebar( iframe, true );
-	setAngieInteractionMode( request.mode );
+	window.location.hash = `angie-prompt=${ encodeURIComponent( request.prompt ) }`;
 };
 
 const openSdkAngie = async ( request: OpenAngieRequest ): Promise< void > => {
@@ -62,7 +60,6 @@ const openSdkAngie = async ( request: OpenAngieRequest ): Promise< void > => {
 
 	const sdk = await bootAngieSdk();
 
-	openAngieIframe();
 	setAngieInteractionMode( request.mode );
 
 	await sdk.triggerAngie( {
