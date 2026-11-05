@@ -35,16 +35,9 @@ function getDownloadTileSurface( theme: Theme ) {
 	};
 }
 
-function resolveFontWeight( weight: Theme[ 'typography' ][ 'fontWeightBold' ], extra = 0 ): number {
-	const base = 'number' === typeof weight ? weight : Number.parseInt( String( weight ), 10 );
-
-	return Number.isFinite( base ) ? base + extra : 700 + extra;
-}
-
 export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps ) {
 	return (
 		<Stack
-			className="pro-setup-banner-card"
 			direction="row"
 			alignItems="center"
 			gap={ 1.25 }
@@ -70,7 +63,7 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 					color="text.primary"
 					sx={ ( theme: Theme ) => ( {
 						lineHeight: 1.35,
-						fontWeight: resolveFontWeight( theme.typography.fontWeightBold, 100 ),
+						fontWeight: theme.typography.fontWeightBold,
 						display: '-webkit-box',
 						WebkitLineClamp: 2,
 						WebkitBoxOrient: 'vertical',
@@ -96,6 +89,7 @@ export function ProSetupBannerCard( { title, subtitle }: ProSetupBannerCardProps
 			</Stack>
 			<Box
 				aria-hidden
+				data-testid="pro-setup-banner-decorative-tile"
 				sx={ ( theme: Theme ) => {
 					const tile = getDownloadTileSurface( theme );
 

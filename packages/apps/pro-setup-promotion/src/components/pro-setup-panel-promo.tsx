@@ -520,7 +520,6 @@ export function ProSetupPanelPromo() {
 								border: 1,
 								borderColor: 'divider',
 								borderRadius: 1.5,
-								overflow: 'hidden',
 								boxShadow: 2,
 							} }
 						>
@@ -597,12 +596,12 @@ export function ProSetupPanelPromo() {
 								closePopover( 'escape_key' );
 							}
 						} }
-						sx={ {
+						sx={ ( theme ) => ( {
 							mx: 1.5,
 							my: 1,
 							cursor: 'pointer',
-							'&:hover .pro-setup-banner-card': {
-								filter: 'brightness(0.97)',
+							'&:hover > *': {
+								filter: 'dark' === theme.palette.mode ? 'brightness(1.06)' : 'brightness(0.97)',
 							},
 							'&:focus-visible': {
 								outline: '2px solid',
@@ -610,7 +609,7 @@ export function ProSetupPanelPromo() {
 								outlineOffset: 2,
 								borderRadius: 1.5,
 							},
-						} }
+						} ) }
 					>
 						<ProSetupBannerCard
 							title={ promotionConfig.banner.title }
