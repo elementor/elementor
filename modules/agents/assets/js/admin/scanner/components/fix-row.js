@@ -126,12 +126,7 @@ export const FixRow = ( {
 			>
 				<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 } minWidth={ 0 }>
 					<StatusIndicator check={ check } />
-					<Stack minWidth={ 0 }>
-						<Typography className="scanner-fix-title" variant="body2">{ check.title }</Typography>
-						{ isResolved && check.evidence && (
-							<Typography variant="caption" color="text.secondary">{ check.evidence }</Typography>
-						) }
-					</Stack>
+					<Typography className="scanner-fix-title" variant="body2">{ check.title }</Typography>
 					<PriorityChip priority={ check.priority } />
 				</Stack>
 				<Stack direction="row" alignItems="center" justifyContent="flex-end" gap={ 1 } minWidth={ SCANNER_LAYOUT.actionAreaWidth } flexShrink={ 0 }>

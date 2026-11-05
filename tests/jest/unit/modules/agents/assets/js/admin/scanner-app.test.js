@@ -342,7 +342,7 @@ describe( 'Agent Ready scanner', () => {
 
 	const getScanWithWebmcpCheck = () => getScanWithToggleCheck( 'webmcp-support', 'WebMCP support' );
 
-	it( 'shows the failure reason with Undo and Rescan when WebMCP support is on but the scan still reports it as failing', async () => {
+	it( 'shows Undo and Rescan instead of Create for me when WebMCP support is on but the scan still reports it as failing', async () => {
 		// Arrange
 		runSiteScan.mockResolvedValue( getScanWithWebmcpCheck() );
 		renderScanner( { ...activatedProps, browserToolsConfig: { enabled: true, isAvailable: true } } );
@@ -354,7 +354,6 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		const row = getRowByTitle( 'WebMCP support' );
 		expect( screen.getAllByText( 'WebMCP support' ) ).toHaveLength( 1 );
-		expect( within( row ).getByText( 'WebMCP support is missing' ) ).toBeTruthy();
 		expect( within( row ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
 		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ) ).toBeTruthy();
 		expect( within( row ).queryByRole( 'button', { name: 'Create for me' } ) ).toBeNull();
