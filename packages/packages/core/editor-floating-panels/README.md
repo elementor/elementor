@@ -72,6 +72,16 @@ When `isResizable` is `true`, edge and corner resize handles render on the panel
 
 Programmatic sizing via `setSize` from `useFloatingPanelActions` works regardless of `isResizable`.
 
+### `isDocked`
+
+When `isDocked` is `true`, the panel stays at its declared position and size. Drag and resize are forced off, even if `isDraggable` or `isResizable` is also set, and persisted geometry is ignored. When omitted, the panel keeps the previous floating behavior.
+
+### `keepMounted`
+
+When `keepMounted` is `true`, closing the panel hides it and leaves its component mounted. Use this when the panel hosts an iframe that must keep its session. When omitted or `false`, closing the panel unmounts the component.
+
+`openFloatingPanel( id )` and `closeFloatingPanel( id )` open and close a registered panel from outside React.
+
 ### `defaults`
 
 `defaults` is required and defines the panel's initial dimensions and (optionally) its initial position.

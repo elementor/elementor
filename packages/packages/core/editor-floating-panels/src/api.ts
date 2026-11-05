@@ -19,6 +19,7 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 			title: declaration.title,
 			isDraggable: declaration.isDraggable,
 			isResizable: declaration.isResizable,
+			isDocked: declaration.isDocked,
 			defaults: declaration.defaults,
 			persisted,
 		} )
@@ -31,6 +32,21 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 	};
 }
 
-export function registerFloatingPanel( declaration: Pick< FloatingPanelDeclaration, 'id' | 'component' > ): void {
-	injectIntoFloatingPanels( { id: declaration.id, component: declaration.component } );
+export function registerFloatingPanel(
+	declaration: Pick< FloatingPanelDeclaration, 'id' | 'component' | 'keepMounted' >
+): void {
+	injectIntoFloatingPanels( {
+		id: declaration.id,
+		component: declaration.component,
+		keepMounted: declaration.keepMounted,
+	} );
+}
+
+export function openFloatingPanel( id: string ): void {
+	dispatch( slice.actions.open( id ) );
+	dispatch( slice.actions.bringToFront( id ) );
+}
+
+export function closeFloatingPanel( id: string ): void {
+	dispatch( slice.actions.close( id ) );
 }
