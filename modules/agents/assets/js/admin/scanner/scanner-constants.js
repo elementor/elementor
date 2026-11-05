@@ -16,6 +16,8 @@ export const FIX_WITH_LINK = 'link';
 export const FIX_WITH_SEO = 'seo';
 export const FIX_WITH_MANUAL = 'manual';
 
+export const isPromptBasedFix = ( check ) => FIX_WITH_ANGIE === check?.fixWith && Boolean( check?.fixPrompt );
+
 export const FIX_BY_SEO_PLUGIN = 'seo plugin';
 export const FIX_BY_ANGIE = 'angie';
 export const FIX_BY_ANGIE_MCP = 'angie / mcp';
