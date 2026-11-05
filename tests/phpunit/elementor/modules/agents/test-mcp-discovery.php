@@ -33,8 +33,8 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 
 		delete_option( McpSettingsController::OPTION_NAME );
 
-		$this->discovery = new Mcp_Discovery();
-		$this->discovery->register();
+		$module = \Elementor\Plugin::$instance->modules_manager->get_modules( 'agents' );
+		$this->discovery = $module->get_component( 'mcp_discovery' );
 	}
 
 	public function tearDown(): void {
@@ -86,6 +86,7 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 
 	public function test_rest_server_card__not_registered_when_inactive() {
 		// Arrange
+		$this->setExpectedDeprecated( 'WP\MCP\Core\McpAdapter' );
 		$this->init_rest_server();
 
 		// Act
