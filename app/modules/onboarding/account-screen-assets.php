@@ -23,6 +23,7 @@ class Account_Screen_Assets {
 		return [
 			'headlineLine1' => self::read_string( $assets, 'headline_line1', $defaults['headlineLine1'] ),
 			'headlineLine2' => self::read_string( $assets, 'headline_line2', $defaults['headlineLine2'] ),
+			'showHeadlineLine2' => self::read_bool( $assets, 'show_headline_line2', $defaults['showHeadlineLine2'] ),
 			'description' => self::read_string( $assets, 'description', $defaults['description'] ),
 			'showDescription' => self::read_bool( $assets, 'show_description', $defaults['showDescription'] ),
 			'benefits' => [
@@ -62,6 +63,7 @@ class Account_Screen_Assets {
 		return [
 			'headlineLine1' => __( 'You\'re here!', 'elementor' ),
 			'headlineLine2' => __( 'Let\'s get connected.', 'elementor' ),
+			'showHeadlineLine2' => true,
 			'description' => __( 'To get the most out of Elementor, we\'ll connect your account. Then you can:', 'elementor' ),
 			'showDescription' => true,
 			'benefits' => [
