@@ -187,6 +187,19 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
 	}
 
+	public function test_build_site_links__omits_mcp_card_when_agent_discovery_is_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+		$this->assertStringNotContainsString( 'mcp-server-card', implode( '', $links ) );
+	}
+
 	public function test_build_singular_markdown_link__includes_published_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status'  => 'publish',

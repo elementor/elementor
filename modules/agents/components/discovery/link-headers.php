@@ -27,8 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * On singular exposed views only:
  *   Link: <{permalink}.md>; rel="alternate"; type="text/markdown"
  *
- * When the MCP server card is active (gated by filter, emitted by the MCP
- * component once it registers its server in Phase 3):
+ * When the MCP server card is active (gated by filter, see Mcp_Discovery):
  *   Link: </.well-known/mcp/server-card.json>; rel="mcp-server-card"; type="application/json"
  *
  * Relation types that are not registered in the IANA link relation registry
@@ -170,13 +169,13 @@ class Link_Headers extends Feature_Component {
 		/**
 		 * Fires when the MCP server card is available.
 		 *
-		 * The MCP component (Phase 3, PR15) hooks this to `true` once the
-		 * agents MCP server has been registered and /.well-known/mcp/server-card.json
-		 * is reachable. Keeping it off by default prevents pointing at a 404.
+		 * Mcp_Discovery hooks this to `true` while the site-level Elementor MCP
+		 * setting is on, which is when /.well-known/mcp/server-card.json is
+		 * served. Keeping it off by default prevents pointing at a 404.
 		 *
 		 * @since 3.30.0
 		 */
-		if ( apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) ) {
+		if ( $this->settings->is_agent_discovery_enabled() && apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) ) {
 			$links[] = '<' . $home . '/.well-known/mcp/server-card.json>'
 				. '; rel="mcp-server-card"; type="application/json"';
 		}
