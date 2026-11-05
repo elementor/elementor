@@ -248,18 +248,20 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		$abilities = [
-			new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
-			new Abilities\List_Site_Parts_Pro_Features_Discovery_Ability(),
-			new Abilities\List_Form_Submissions_Pro_Features_Discovery_Ability(),
-			new Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
-		];
+		return array_merge(
+			[
+				new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
+				new Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
+			],
+			self::get_woocommerce_pro_features_discovery_abilities( Woocommerce_Pro_Features_Discovery::is_active() )
+		);
+	}
 
-		if ( Woocommerce_Pro_Features_Discovery::is_active() ) {
-			$abilities[] = new Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability();
-		}
-
-		return $abilities;
+	/** @return Abstract_Ability[] */
+	public static function get_woocommerce_pro_features_discovery_abilities( bool $is_woocommerce_active ): array {
+		return $is_woocommerce_active
+			? [ new Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability() ]
+			: [];
 	}
 
 	/** @return Abstract_Ability[] */

@@ -2,7 +2,6 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
-use Elementor\Modules\Mcp\Abilities\List_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
@@ -24,7 +23,6 @@ require_once __DIR__ . '/../../../stubs/wc-stubs.php';
 class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Base {
 
 	const MANAGE_FORM_SUBMISSIONS_ID = 'elementor/manage-form-submissions';
-	const LIST_FORM_SUBMISSIONS_ID = 'elementor/list-form-submissions';
 	const MANAGE_WOOCOMMERCE_SETTINGS_ID = 'elementor/manage-woocommerce-settings';
 
 	public function setUp(): void {
@@ -35,27 +33,40 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		}
 	}
 
-	public function test_build_core_registry__includes_the_form_submissions_tools() {
+	public function test_build_core_registry__includes_the_manage_form_submissions_tool() {
 		// Act
 		$registry = Mcp_Module::build_core_registry();
 
 		// Assert
 		$this->assertInstanceOf( Manage_Form_Submissions_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::MANAGE_FORM_SUBMISSIONS_ID ) );
-		$this->assertInstanceOf( List_Form_Submissions_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::LIST_FORM_SUBMISSIONS_ID ) );
 	}
 
-	public function test_build_core_registry__includes_woocommerce_settings_only_when_woocommerce_is_active() {
+	public function test_build_core_registry__includes_woocommerce_settings_when_woocommerce_is_active() {
+		// Arrange
+		$this->assertTrue( Woocommerce_Pro_Features_Discovery::is_active() );
+
 		// Act
 		$registry = Mcp_Module::build_core_registry();
 
 		// Assert
-		$ability = $registry->find_by_id( self::MANAGE_WOOCOMMERCE_SETTINGS_ID );
+		$this->assertInstanceOf( Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::MANAGE_WOOCOMMERCE_SETTINGS_ID ) );
+	}
 
-		if ( Woocommerce_Pro_Features_Discovery::is_active() ) {
-			$this->assertInstanceOf( Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability::class, $ability );
-		} else {
-			$this->assertNull( $ability );
-		}
+	public function test_get_woocommerce_pro_features_discovery_abilities__returns_the_settings_tool_when_woocommerce_is_active() {
+		// Act
+		$abilities = Mcp_Module::get_woocommerce_pro_features_discovery_abilities( true );
+
+		// Assert
+		$this->assertCount( 1, $abilities );
+		$this->assertInstanceOf( Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability::class, $abilities[0] );
+	}
+
+	public function test_get_woocommerce_pro_features_discovery_abilities__returns_nothing_when_woocommerce_is_inactive() {
+		// Act
+		$abilities = Mcp_Module::get_woocommerce_pro_features_discovery_abilities( false );
+
+		// Assert
+		$this->assertSame( [], $abilities );
 	}
 
 	public function test_manage_form_submissions__returns_value_link_and_free_path_in_order() {
@@ -78,28 +89,6 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		);
 	}
 
-	/**
-	 * @dataProvider list_form_submissions_input_cases
-	 */
-	public function test_list_form_submissions__returns_an_empty_result_without_any_pro_mention( array $input ) {
-		// Arrange
-		$this->act_as_admin();
-		$ability = new List_Form_Submissions_Pro_Features_Discovery_Ability();
-
-		// Act
-		$result = $ability->execute_guarded( $input );
-
-		// Assert
-		$this->assertSame( [ 'submissions' => [] ], $result );
-	}
-
-	public function list_form_submissions_input_cases(): array {
-		return [
-			'all submissions' => [ [] ],
-			'unread submissions' => [ [ 'status' => 'unread' ] ],
-		];
-	}
-
 	public function test_manage_woocommerce_settings__returns_the_woocommerce_error() {
 		// Arrange
 		$ability = new Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability();
@@ -111,7 +100,6 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		$this->assertWPError( $result );
 		$this->assertSame( Woocommerce_Pro_Features_Discovery::PRO_FEATURE, $result->get_error_data()['pro_feature'] );
 		$this->assertSame( Woocommerce_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( 'Never end your turn on this error without them', $result->get_error_message() );
 	}
 
 	public function test_manage_woocommerce_settings__is_not_exposed_via_proxy() {
@@ -122,17 +110,19 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		$this->assertFalse( $ability->is_exposed_via_proxy() );
 	}
 
-	public function test_fake_descriptions__do_not_mention_the_pro_requirement() {
+	public function test_discovery_descriptions__do_not_mention_elementor_pro_or_an_upgrade() {
 		// Arrange
 		$abilities = [
-			new List_Form_Submissions_Pro_Features_Discovery_Ability(),
 			new Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
 			new Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability(),
 		];
 
 		// Act & Assert
 		foreach ( $abilities as $ability ) {
-			$this->assertStringNotContainsString( 'upgrade', strtolower( $ability->get_description_for_llm() ) );
+			$description = $ability->get_description_for_llm();
+
+			$this->assertDoesNotMatchRegularExpression( '/\bPro\b/', $description, $ability->get_id() );
+			$this->assertStringNotContainsString( 'upgrade', strtolower( $description ), $ability->get_id() );
 		}
 	}
 

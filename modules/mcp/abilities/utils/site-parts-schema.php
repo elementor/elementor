@@ -43,18 +43,6 @@ class Site_Parts_Schema {
 		];
 	}
 
-	public static function list_input(): array {
-		return [
-			'type' => 'object',
-			'properties' => [
-				'active' => [
-					'type' => 'boolean',
-					'description' => 'When true, return only site parts that are currently rendered on the front end (published and matching a Theme Builder location).',
-				],
-			],
-		];
-	}
-
 	private static function operation_schema(): array {
 		return [
 			'type' => 'object',
@@ -74,7 +62,7 @@ class Site_Parts_Schema {
 				'conditions' => self::conditions_schema(),
 				'display_settings' => [
 					'type' => 'object',
-					'description' => 'Popup only. Flat field maps per type, as stored by the editor. Each group is enabled by setting its toggle field to "yes" (or true), and its options are prefixed with the group name. A present type key REPLACES that type entirely (send every group you want kept; {} clears it); an omitted type key is left untouched. Read current values via list-site-parts.',
+					'description' => 'Popup only. Flat field maps per type, as stored by the editor. Each group is enabled by setting its toggle field to "yes" (or true), and its options are prefixed with the group name. A present type key REPLACES that type entirely (send every group you want kept; {} clears it); an omitted type key is left untouched.',
 				],
 			],
 		];
