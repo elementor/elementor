@@ -8,6 +8,7 @@ const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
+const mockOpenAngieInAskMode = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
@@ -23,6 +24,10 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	},
 	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
 	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
+} ) );
+
+jest.mock( '@elementor/editor-mcp', () => ( {
+	openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
 } ) );
 
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
@@ -42,6 +47,7 @@ describe( 'editor angie host', () => {
 		jest.clearAllMocks();
 		resetAngieSdkForTests();
 		resetAngiePanelOpenerForTests();
+		delete window.elementorEditorAngie;
 		document.body.innerHTML = '';
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
@@ -79,18 +85,45 @@ describe( 'editor angie host', () => {
 		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'opens Angie with the prompt and mode', async () => {
+	it( 'opens the Core SDK in the docked panel when the plugin is inactive', async () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
 
-		await openAngie( 'Write a heading', AngieInteractionMode.ASK );
+		await openAngie( {
+			prompt: 'Write a heading',
+			mode: AngieInteractionMode.ASK,
+			sdk: {
+				options: { newChat: true },
+			},
+		} );
 
 		expect( openPanel ).toHaveBeenCalledTimes( 1 );
+		expect( mockOpenAngieInAskMode ).not.toHaveBeenCalled();
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: 'Write a heading',
 			context: { source: 'elementor-editor' },
+			options: { newChat: true },
 		} );
+	} );
+
+	it( 'opens the Angie plugin and leaves the Core SDK closed when the plugin is active', async () => {
+		const openPanel = jest.fn();
+		registerAngiePanelOpener( openPanel );
+		window.elementorEditorAngie = { isAngiePluginActive: true };
+
+		await openAngie( {
+			prompt: 'Help me with ',
+			mode: AngieInteractionMode.PLAN,
+			sdk: {
+				context: { source: 'should-not-be-sent' },
+			},
+		} );
+
+		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
+		expect( openPanel ).not.toHaveBeenCalled();
+		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not boot the SDK when the library initializes', () => {
