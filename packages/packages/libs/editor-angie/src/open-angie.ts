@@ -3,15 +3,15 @@ import { type AngieInteractionMode, setAngieInteractionMode } from '@elementor-e
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID, openAngieIframe } from './boot-angie-sdk';
 
 export const openAngie = async ( prompt: string, mode: AngieInteractionMode ): Promise< void > => {
-  const sdk = await bootAngieSdk();
+	const sdk = await bootAngieSdk();
 
-  openAngieIframe();
-  setAngieInteractionMode( mode );
+	openAngieIframe();
+	setAngieInteractionMode( mode );
 
-  await sdk.triggerAngie( {
-    prompt,
-    context: {
-      source: EDITOR_ANGIE_APP_ID,
-    },
-  } );
+	await sdk.triggerAngie( {
+		prompt,
+		context: {
+			source: EDITOR_ANGIE_APP_ID,
+		},
+	} );
 };
