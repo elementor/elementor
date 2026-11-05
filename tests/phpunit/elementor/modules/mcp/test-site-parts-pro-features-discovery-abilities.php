@@ -143,7 +143,7 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertWPError( $result );
 		$this->assertSame( Pro_Features_Discovery::ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
-		$this->assertStringContainsString( 'no site parts were checked', $result->get_error_message() );
+		$this->assertStringContainsString( 'nothing was created or listed', $result->get_error_message() );
 		$this->assertStringContainsString( 'Mention it once for this feature', $result->get_error_message() );
 		$this->assert_value_link_free_path_order(
 			$result->get_error_message(),
