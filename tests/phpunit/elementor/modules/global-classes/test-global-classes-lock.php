@@ -58,6 +58,8 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 
 		$this->delete_lock_row();
 
+		remove_all_filters( 'elementor/global_classes/lock/acquire_timeout' );
+
 		foreach ( get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'any',
@@ -72,13 +74,14 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 		// Arrange - another request holds a fresh per-kit lock.
 		$this->act_as_admin();
 		$this->hold_lock( 0 );
+		add_filter( 'elementor/global_classes/lock/acquire_timeout', '__return_zero' );
 
 		// Act.
 		$response = rest_do_request( $this->put_request( [ 'g-1' ] ) );
 
 		// Assert - could not acquire the lock within the budget -> conflict, nothing written.
 		$this->assertSame( 409, $response->get_status() );
-		$this->assertSame( 'global_classes_conflict', $response->get_data()['code'] );
+		$this->assertSame( 'global_classes_save_locked', $response->get_data()['code'] );
 		$this->assertArrayNotHasKey( 'g-1', ( new Global_Classes_Repository( $this->kit ) )->all_labels() );
 		$this->assertNotNull( $this->lock_row(), 'The other request must keep its lock.' );
 	}
@@ -175,6 +178,7 @@ class Test_Global_Classes_Lock extends Elementor_Test_Base {
 		add_filter( 'pre_option_elementor_active_kit', '__return_zero' );
 		$this->register_rest_routes();
 		$this->hold_lock( 0 );
+		add_filter( 'elementor/global_classes/lock/acquire_timeout', '__return_zero' );
 
 		$this->assertSame( 0, (int) Plugin::$instance->kits_manager->get_active_kit()->get_main_id() );
 

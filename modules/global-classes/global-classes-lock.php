@@ -13,38 +13,59 @@ if ( ! defined( 'ABSPATH' ) ) {
  * excludes concurrent requests on every site, including sites without a persistent
  * object cache where wp_cache_add() is only per-request. It mirrors WP_Upgrader::create_lock().
  * A lock older than TTL is treated as abandoned (for example after a fatal error) and reclaimed.
+ *
+ * It protects the global-classes REST save and the template library import. Kit import and
+ * migrations also write global classes and are not covered by it.
  */
 class Global_Classes_Lock {
 	// One publish can hold the lock for several seconds while it writes many class posts.
 	const TTL = 60;
 	const ACQUIRE_TIMEOUT = 10;
 	const ACQUIRE_DELAY_US = 250000;
+	const ERROR_CODE = 'global_classes_save_locked';
 
 	/**
 	 * Returns the lock token on success, or null if the lock could not be acquired
-	 * within the give-up budget. Pass the token to release().
+	 * within the wait budget. Pass the token to release().
+	 *
+	 * On success the runtime object cache is flushed, because the kit order and labels are cached
+	 * in memory at boot, before the lock. Without this the caller would read what the previous
+	 * lock holder had before it committed.
 	 */
 	public static function acquire( int $kit_id ): ?string {
 		global $wpdb;
 
 		$name = self::option_name( $kit_id );
 
-		$deadline = microtime( true ) + self::ACQUIRE_TIMEOUT;
+		/**
+		 * Filters how many seconds a request waits for the global classes lock before giving up.
+		 *
+		 * @param int|float $seconds Wait budget in seconds.
+		 */
+		$timeout = (float) apply_filters( 'elementor/global_classes/lock/acquire_timeout', self::ACQUIRE_TIMEOUT );
 
-		do {
+		$deadline = microtime( true ) + $timeout;
+
+		while ( true ) {
 			$token = time() . '|' . wp_generate_uuid4();
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			if ( $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO `$wpdb->options` ( `option_name`, `option_value`, `autoload` ) VALUES (%s, %s, 'off') /* LOCK */", $name, $token ) ) ) {
+				if ( function_exists( 'wp_cache_flush_runtime' ) ) {
+					wp_cache_flush_runtime();
+				}
+
 				return $token;
 			}
 
 			self::clear_if_expired( $name );
 
-			usleep( self::ACQUIRE_DELAY_US );
-		} while ( microtime( true ) < $deadline );
+			if ( microtime( true ) >= $deadline ) {
+				return null;
+			}
 
-		return null;
+			usleep( self::ACQUIRE_DELAY_US );
+		}
 	}
 
 	/**
