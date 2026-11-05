@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export default function AngieToggleIcon() {
 	return (
 		<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
