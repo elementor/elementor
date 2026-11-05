@@ -18,14 +18,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setSiteLanguage( 'he_IL' );
-
-		const translationButton = 'Form[name=upgrade-translations] input[type=submit]';
-		await page.goto( '/wp-admin/update-core.php' );
-		await page.locator( '.update-last-checked' ).click();
-		if ( await page.locator( translationButton ).isVisible() ) {
-			await page.locator( translationButton ).click();
-			await page.waitForLoadState( 'networkidle' );
-		}
+		await wpAdmin.updateTranslations();
 
 		await page.goto( '/wp-admin/admin.php?page=elementor', {
 			timeout: timeouts.singleTest,

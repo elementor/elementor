@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, ListItem, MenuList, MenuSubheader, styled, useTheme } from '@elementor/ui';
 import { useVirtualizer, type Virtualizer } from '@tanstack/react-virtual';
 
-import { useScrollTop, useScrollToSelected } from '../../hooks';
+import { useRovingFocus, useScrollTop, useScrollToSelected } from '../../hooks';
 
 export type VirtualizedItem< T, V extends string > = {
 	type: T;
@@ -28,11 +28,13 @@ export type PopoverMenuListProps< T, V extends string > = {
 	categoryItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
 	itemHeight?: number;
+	rovingFocus?: boolean;
 };
 
 export const ITEM_HEIGHT = 32;
 const LIST_ITEMS_BUFFER = 6;
 const MENU_LIST_PADDING_TOP = 8;
+const ROVING_FOCUS_KEYS = new Set( [ 'ArrowDown', 'ArrowUp', 'Home', 'End' ] );
 
 const menuSubHeaderAbsoluteStyling = ( start: number ) => ( {
 	position: 'absolute',
@@ -65,10 +67,12 @@ export const PopoverMenuList = < T, V extends string >( {
 	noResultsComponent,
 	menuListTemplate: CustomMenuList,
 	itemHeight = ITEM_HEIGHT,
+	rovingFocus = false,
 }: PopoverMenuListProps< T, V > ) => {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const scrollTop = useScrollTop( { containerRef } );
 	const theme = useTheme();
+	const [ focusedValue, setFocusedValue ] = useState< V | undefined >();
 
 	const MenuListComponent = CustomMenuList || StyledMenuList;
 
@@ -82,6 +86,36 @@ export const PopoverMenuList = < T, V extends string >( {
 			}, [] as number[] ),
 		[ items ]
 	);
+
+	const enabledIndices = useMemo(
+		() =>
+			items.reduce( ( indices, item, index ) => {
+				if ( item.type !== 'category' && ! item.disabled ) {
+					indices.push( index );
+				}
+
+				return indices;
+			}, [] as number[] ),
+		[ items ]
+	);
+
+	const tabbableIndex = useMemo( () => {
+		if ( ! rovingFocus ) {
+			return -1;
+		}
+
+		const candidates = [ focusedValue, selectedValue ];
+
+		for ( const candidate of candidates ) {
+			const index = items.findIndex( ( item ) => item.value === candidate );
+
+			if ( enabledIndices.includes( index ) ) {
+				return index;
+			}
+		}
+
+		return enabledIndices[ 0 ] ?? -1;
+	}, [ rovingFocus, focusedValue, selectedValue, items, enabledIndices ] );
 
 	const getActiveItemIndices = ( range: { startIndex: number; endIndex: number } ) => {
 		const visibleAndStickyIndexes: number[] = [];
@@ -97,6 +131,10 @@ export const PopoverMenuList = < T, V extends string >( {
 				visibleAndStickyIndexes.push( stickyIndex );
 			}
 		} );
+
+		if ( tabbableIndex >= 0 && ! visibleAndStickyIndexes.includes( tabbableIndex ) ) {
+			visibleAndStickyIndexes.push( tabbableIndex );
+		}
 
 		return visibleAndStickyIndexes.sort( ( a, b ) => a - b );
 	};
@@ -123,6 +161,32 @@ export const PopoverMenuList = < T, V extends string >( {
 	useScrollToSelected( { selectedValue, items, virtualizer } );
 	const virtualItems = virtualizer.getVirtualItems();
 
+	const mountedSignature = virtualItems.map( ( row ) => row.index ).join( ',' );
+
+	const { registerRef, requestFocus } = useRovingFocus< HTMLLIElement >( {
+		tabbableKey: items[ tabbableIndex ]?.value,
+		mountedSignature,
+	} );
+
+	const moveFocus = ( key: string, currentIndex: number ) => {
+		const position = enabledIndices.indexOf( currentIndex );
+		const targets: Record< string, number | undefined > = {
+			ArrowDown: enabledIndices[ position + 1 ],
+			ArrowUp: position > 0 ? enabledIndices[ position - 1 ] : undefined,
+			Home: enabledIndices[ 0 ],
+			End: enabledIndices[ enabledIndices.length - 1 ],
+		};
+		const targetIndex = targets[ key ];
+
+		if ( targetIndex === undefined || targetIndex === currentIndex ) {
+			return;
+		}
+
+		requestFocus();
+		setFocusedValue( items[ targetIndex ].value );
+		virtualizer.scrollToIndex( targetIndex );
+	};
+
 	return (
 		<Box ref={ containerRef } sx={ { height: '100%', overflowY: 'auto' } }>
 			{ items.length === 0 && noResultsComponent ? (
@@ -141,6 +205,9 @@ export const PopoverMenuList = < T, V extends string >( {
 							items[ 0 ]?.type === 'category' ? virtualRow.index === 1 : virtualRow.index === 0;
 						const isSelected = selectedValue === item.value;
 						const tabIndexFallback = ! selectedValue ? 0 : -1;
+						const defaultTabIndex = isSelected ? 0 : tabIndexFallback;
+						const rovingTabIndex = virtualRow.index === tabbableIndex ? 0 : -1;
+						const optionTabIndex = rovingFocus ? rovingTabIndex : defaultTabIndex;
 
 						if ( ! item ) {
 							return null;
@@ -165,6 +232,7 @@ export const PopoverMenuList = < T, V extends string >( {
 						return (
 							<ListItem
 								key={ virtualRow.key }
+								ref={ registerRef( item.value ) }
 								role="option"
 								aria-selected={ isSelected }
 								aria-disabled={ isDisabled }
@@ -180,9 +248,24 @@ export const PopoverMenuList = < T, V extends string >( {
 										  }
 								}
 								onKeyDown={ ( event: React.KeyboardEvent< HTMLLIElement > ) => {
-									if ( event.key === 'Enter' && ! isDisabled ) {
+									if (
+										( event.key === 'Enter' || ( rovingFocus && event.key === ' ' ) ) &&
+										! isDisabled
+									) {
+										if ( rovingFocus ) {
+											event.preventDefault();
+										}
+
 										onSelect( item.value );
 										onClose();
+									}
+
+									if ( rovingFocus && ROVING_FOCUS_KEYS.has( event.key ) ) {
+										event.preventDefault();
+										event.stopPropagation();
+										moveFocus( event.key, virtualRow.index );
+
+										return;
 									}
 
 									if ( event.key === 'ArrowDown' && isLast ) {
@@ -195,7 +278,8 @@ export const PopoverMenuList = < T, V extends string >( {
 										event.stopPropagation();
 									}
 								} }
-								tabIndex={ isSelected ? 0 : tabIndexFallback }
+								onFocus={ rovingFocus ? () => setFocusedValue( item.value ) : undefined }
+								tabIndex={ optionTabIndex }
 								sx={ {
 									transform: `translateY(${ virtualRow.start + MENU_LIST_PADDING_TOP }px)`,
 									...theme.typography.caption,

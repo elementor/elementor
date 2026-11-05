@@ -129,6 +129,14 @@ class Setup_State {
 		return self::build_editor_config_for_state( $state );
 	}
 
+	public static function should_reload_editor_after_plugin_change_config( ?array $config ): bool {
+		if ( ! is_array( $config ) ) {
+			return false;
+		}
+
+		return self::STATE_CONNECT === $config['state'] && empty( $config['connectUrl'] );
+	}
+
 	private static function resolve_after_plugin_change(): string {
 		$state = self::resolve_without_filters_after_plugin_change();
 
@@ -171,7 +179,7 @@ class Setup_State {
 			'state' => $state,
 			'banner' => [
 				'title' => self::read_string( $assets, 'banner_title', __( 'Your Elementor Pro is ready', 'elementor' ) ),
-				'description' => self::read_string( $assets, 'banner_description', __( 'Complete the setup to start creating with all the Pro features included in your subscription.', 'elementor' ) ),
+				'description' => self::read_string( $assets, 'banner_description', __( 'Finish setup to start using Pro', 'elementor' ) ),
 			],
 			'popover' => self::get_popover_copy( $state, $assets ),
 		];
@@ -195,17 +203,17 @@ class Setup_State {
 		$defaults = [
 			self::STATE_INSTALL => [
 				'title' => __( 'Start using Elementor Pro', 'elementor' ),
-				'description' => __( 'You already have a Pro subscription. Install and activate the plugin to use Pro features on this site.', 'elementor' ),
+				'description' => __( 'Your Pro subscription is ready. Install and activate Pro to get started.', 'elementor' ),
 				'ctaLabel' => __( 'Install & Activate', 'elementor' ),
 			],
 			self::STATE_ACTIVATE => [
 				'title' => __( 'Activate Elementor Pro', 'elementor' ),
-				'description' => __( 'Elementor Pro is installed on this site. Activate the plugin to continue setting it up.', 'elementor' ),
+				'description' => __( 'Pro is already installed. Activate it to continue setup.', 'elementor' ),
 				'ctaLabel' => __( 'Activate Pro', 'elementor' ),
 			],
 			self::STATE_CONNECT => [
 				'title' => __( 'Connect your Pro subscription', 'elementor' ),
-				'description' => __( 'Elementor Pro is installed and active. Connect your subscription to start using Pro features on this site.', 'elementor' ),
+				'description' => __( 'Just one more step! Connect your account to finish setting up Pro.', 'elementor' ),
 				'ctaLabel' => __( 'Connect & Activate', 'elementor' ),
 			],
 		];
