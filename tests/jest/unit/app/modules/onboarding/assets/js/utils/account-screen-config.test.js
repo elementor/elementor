@@ -72,6 +72,19 @@ describe( 'account-screen-config', () => {
 			} );
 		} );
 
+		it( 'hides second headline when showHeadlineLine2 is false', () => {
+			expect(
+				resolveDisconnectedAccountHeadlines( {
+					headlineLine1: 'CDN one',
+					headlineLine2: 'CDN two',
+					showHeadlineLine2: false,
+				} ),
+			).toEqual( {
+				title: 'CDN one',
+				secondLineTitle: '',
+			} );
+		} );
+
 		it( 'uses experiment defaults when accountScreen is null', () => {
 			global.elementorAppConfig = { onboarding: { experiment: true } };
 
