@@ -10,6 +10,8 @@ const makeSpy = () => {
 	return fn;
 };
 
+const INITIAL_SERVER_TIME = 1000;
+
 QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	let heartbeat, mockDocument, mockEnqueue, mockConnectNow, originalChannelsEditor, originalWp;
 
@@ -27,6 +29,7 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 
 		mockDocument = {
 			id: 123,
+			config: { server_time: INITIAL_SERVER_TIME },
 			editor: { isChanged: false },
 		};
 
@@ -98,6 +101,35 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 			assert.equal( mockDoReload.callCount, 1, 'reload called once' );
 
 			$e.internal = originalInternal;
+		} );
+	} );
+
+	QUnit.module( 'sync baseline', () => {
+		QUnit.test( 'starts from the document config server time and ignores later ticks', ( assert ) => {
+			// Arrange.
+			const laterServerTime = INITIAL_SERVER_TIME + 10;
+
+			// Act.
+			heartbeat.onTick( null, { elementor_server_time: laterServerTime } );
+
+			// Assert.
+			assert.equal( heartbeat.lastSyncedAt, INITIAL_SERVER_TIME );
+			assert.notOk( heartbeat.pendingSyncTime );
+		} );
+
+		QUnit.test( 'falls back to the first tick when the config has no server time', ( assert ) => {
+			// Arrange.
+			const tickServerTime = INITIAL_SERVER_TIME + 10;
+			mockDocument.config = {};
+			const fallbackHeartbeat = new Heartbeat( mockDocument );
+
+			// Act.
+			fallbackHeartbeat.onTick( null, { elementor_server_time: tickServerTime } );
+
+			// Assert.
+			assert.equal( fallbackHeartbeat.lastSyncedAt, tickServerTime );
+
+			fallbackHeartbeat.destroy();
 		} );
 	} );
 

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents;
 
+use Elementor\Modules\Agents\Classes\Post_Exclusions;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -125,6 +127,13 @@ class Agent_Ready_Settings {
 		return $this->get_included_post_types( self::MODULE_LLMS_TXT );
 	}
 
+	/**
+	 * @return int[]
+	 */
+	public function get_llms_excluded_post_ids(): array {
+		return $this->get_excluded_post_ids( self::MODULE_LLMS_TXT );
+	}
+
 	public function is_markdown_enabled(): bool {
 		return (bool) $this->get_module_settings( self::MODULE_MARKDOWN_CONTENT )['enabled'];
 	}
@@ -136,6 +145,17 @@ class Agent_Ready_Settings {
 	 */
 	public function get_markdown_post_types(): array {
 		return $this->get_included_post_types( self::MODULE_MARKDOWN_CONTENT );
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public function get_markdown_excluded_post_ids(): array {
+		return $this->get_excluded_post_ids( self::MODULE_MARKDOWN_CONTENT );
+	}
+
+	public function is_post_excluded( string $module, int $post_id ): bool {
+		return in_array( $post_id, $this->get_excluded_post_ids( $module ), true );
 	}
 
 	public function is_bot_access_enabled(): bool {
@@ -351,7 +371,23 @@ class Agent_Ready_Settings {
 			);
 		}
 
+		if ( isset( $settings['excluded_post_ids'] ) ) {
+			$clean['excluded_post_ids'] = Post_Exclusions::sanitize_ids(
+				$settings['excluded_post_ids'],
+				$this->get_available_post_type_names()
+			);
+		}
+
 		return $clean;
+	}
+
+	/**
+	 * @return int[]
+	 */
+	private function get_excluded_post_ids( string $module ): array {
+		$ids = $this->get_module_settings( $module )['excluded_post_ids'] ?? [];
+
+		return is_array( $ids ) ? array_map( 'intval', $ids ) : [];
 	}
 
 	/**

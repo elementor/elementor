@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
 	DirectionProvider,
 	LocalizationProvider,
@@ -34,14 +34,15 @@ import {
 	SCANNER_STATE_PROGRESS,
 	SCANNER_STATE_RESCANNING,
 } from './scanner-constants';
+import { deliverPendingAngiePrompt } from './open-angie';
 import { getLaterRetryAt, toScanResult } from './scanner-report-adapter';
 import { useScannerFlow } from './use-scanner-flow';
 
 const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
 	<Box
-		bgcolor={ fillViewport ? SCANNER_COLORS.paper : SCANNER_COLORS.page }
 		boxSizing="border-box"
 		sx={ fillViewport ? {
+			backgroundColor: SCANNER_COLORS.paper,
 			display: 'flex',
 			flexDirection: 'column',
 			width: `calc(100% + ${ SCANNER_LAYOUT.wrapInlinePadding * 2 }px)`,
@@ -173,11 +174,12 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 	return null;
 };
 
-const FixDialogs = ( { flow, angieInstallHeroUrl, angieAppUrl, angiePluginSearchUrl } ) => (
+const FixDialogs = ( { flow, angieInstallHeroUrl, angieAppUrl, angiePluginSearchUrl, isAngieInstalled } ) => (
 	<>
 		{ flow.installCheck && (
 			<AngieInstallDialog
 				check={ flow.installCheck }
+				isAngieInstalled={ isAngieInstalled }
 				heroUrl={ angieInstallHeroUrl }
 				angieAppUrl={ angieAppUrl }
 				angiePluginSearchUrl={ angiePluginSearchUrl }
@@ -201,6 +203,7 @@ FixDialogs.propTypes = {
 	angieInstallHeroUrl: PropTypes.string.isRequired,
 	angieAppUrl: PropTypes.string.isRequired,
 	angiePluginSearchUrl: PropTypes.string.isRequired,
+	isAngieInstalled: PropTypes.bool.isRequired,
 };
 
 ScannerView.propTypes = {
@@ -219,6 +222,7 @@ const ScannerScreen = ( {
 	angiePluginSearchUrl,
 	isActivated,
 	isAngieActive,
+	isAngieInstalled,
 	lastReport,
 	retryAt = null,
 	llmsConfig,
@@ -242,6 +246,10 @@ const ScannerScreen = ( {
 		agentDiscoveryConfig,
 		browserToolsConfig,
 	} );
+	useEffect( () => {
+		deliverPendingAngiePrompt();
+	}, [] );
+
 	const isFirstRun = SCANNER_STATE_FIRST_RUN === flow.view;
 	const isScanProgress = SCANNER_STATE_PROGRESS === flow.view || SCANNER_STATE_ERROR_PROGRESS === flow.view;
 
@@ -258,6 +266,7 @@ const ScannerScreen = ( {
 				angieInstallHeroUrl={ angieInstallHeroUrl }
 				angieAppUrl={ angieAppUrl }
 				angiePluginSearchUrl={ angiePluginSearchUrl }
+				isAngieInstalled={ isAngieInstalled }
 			/>
 		</ScannerShell>
 	);
@@ -272,6 +281,7 @@ ScannerScreen.propTypes = {
 	angiePluginSearchUrl: PropTypes.string.isRequired,
 	isActivated: PropTypes.bool,
 	isAngieActive: PropTypes.bool,
+	isAngieInstalled: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
 	llmsConfig: PropTypes.object,
@@ -291,6 +301,7 @@ export const ScannerApp = ( {
 	angiePluginSearchUrl = '',
 	isActivated = false,
 	isAngieActive = false,
+	isAngieInstalled = false,
 	lastReport,
 	retryAt = null,
 	llmsConfig,
@@ -311,6 +322,7 @@ export const ScannerApp = ( {
 					angiePluginSearchUrl={ angiePluginSearchUrl }
 					isActivated={ isActivated }
 					isAngieActive={ isAngieActive }
+					isAngieInstalled={ isAngieInstalled }
 					lastReport={ lastReport }
 					retryAt={ retryAt }
 					llmsConfig={ llmsConfig }
@@ -334,6 +346,7 @@ ScannerApp.propTypes = {
 	angiePluginSearchUrl: PropTypes.string,
 	isActivated: PropTypes.bool,
 	isAngieActive: PropTypes.bool,
+	isAngieInstalled: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
 	llmsConfig: PropTypes.object,

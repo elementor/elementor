@@ -25,6 +25,14 @@ class Reorder_Classes_Ability extends Abstract_Ability {
 		return 'elementor/reorder-classes';
 	}
 
+	protected function should_record_site_capability( $input, $result ): bool {
+		if ( ! parent::should_record_site_capability( $input, $result ) ) {
+			return false;
+		}
+
+		return is_array( $result ) && ! empty( $result['changed'] );
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Reorder Global Classes', 'elementor' ),

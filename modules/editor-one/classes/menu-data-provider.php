@@ -191,6 +191,7 @@ class Menu_Data_Provider {
 
 	private function add_return_to_url( string $url, string $return_to ): string {
 		$hash_position = strpos( $url, '#' );
+		$return_to = rawurlencode( $return_to );
 
 		if ( false === $hash_position ) {
 			return add_query_arg( [ 'return_to' => $return_to ], $url );
@@ -523,7 +524,7 @@ class Menu_Data_Provider {
 		return admin_url( 'admin.php?page=' . $item_slug );
 	}
 
-	private function resolve_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+	public function resolve_item_url( Menu_Item_Interface $item, string $item_slug ): string {
 		if ( $item instanceof Menu_Item_With_Custom_Url_Interface ) {
 			return $item->get_menu_url();
 		}

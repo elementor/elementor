@@ -9,14 +9,20 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
+use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
+use Elementor\Modules\Agents\Classes\Llms_Revert_Ajax;
+use Elementor\Modules\Agents\Classes\Llms_Takeover_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Content_Ajax;
 use Elementor\Modules\Agents\Classes\Module_Availability;
 use Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector;
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
+use Elementor\Modules\Agents\Classes\Markdown_Revert_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
+use Elementor\Modules\Agents\Classes\Post_Exclusions;
 use Elementor\Modules\Agents\Classes\Request_Path;
 use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
@@ -31,6 +37,7 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Schema_Parser;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Get_Site_Structure;
@@ -91,6 +98,8 @@ class Module extends BaseModule {
 	private Llms_Manual_Content $manual_content;
 	private Bot_Catalog $bot_catalog;
 	private Markdown_Endpoint $markdown_endpoint;
+
+	private Markdown_Manual_Content $markdown_manual_content;
 	private Scanner_Report_Store $scanner_store;
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
 	private Seo_Llms_Txt_Detector $seo_detector;
@@ -177,10 +186,12 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
 
-		$this->markdown_endpoint = new Markdown_Endpoint( $this->settings );
+		$this->markdown_manual_content = new Markdown_Manual_Content( $this->generator );
+		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
 
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
+		$this->register_component( new Markdown_Not_Found( $this->settings, $this->markdown_endpoint, $this ) );
 
 		$this->webmcp_browser_tools = $this->create_webmcp_browser_tools( $sanitizer );
 		$this->register_component( $this->webmcp_browser_tools );
@@ -237,11 +248,26 @@ class Module extends BaseModule {
 		$llms_content_ajax = new Llms_Content_Ajax( $this->settings, $this->manual_content );
 		$ajax->register_ajax_action( Llms_Content_Ajax::ACTION, [ $llms_content_ajax, 'handle' ] );
 
+		$llms_revert_ajax = new Llms_Revert_Ajax( $this->settings, $this->manual_content );
+		$ajax->register_ajax_action( Llms_Revert_Ajax::ACTION, [ $llms_revert_ajax, 'handle' ] );
+
+		$llms_takeover_ajax = new Llms_Takeover_Ajax( $this->settings, $this->manual_content );
+		$ajax->register_ajax_action( Llms_Takeover_Ajax::ACTION, [ $llms_takeover_ajax, 'handle' ] );
+
 		$markdown_preview_ajax = new Markdown_Preview_Ajax( $this->markdown_endpoint );
 		$ajax->register_ajax_action( Markdown_Preview_Ajax::ACTION, [ $markdown_preview_ajax, 'handle' ] );
 
-		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog() );
+		$markdown_content_ajax = new Markdown_Content_Ajax( $this->markdown_endpoint, $this->markdown_manual_content );
+		$ajax->register_ajax_action( Markdown_Content_Ajax::ACTION, [ $markdown_content_ajax, 'handle' ] );
+
+		$markdown_revert_ajax = new Markdown_Revert_Ajax( $this->markdown_manual_content );
+		$ajax->register_ajax_action( Markdown_Revert_Ajax::ACTION, [ $markdown_revert_ajax, 'handle' ] );
+
+		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
 		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
+
+		$content_items_ajax = new Content_Items_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
+		$ajax->register_ajax_action( Content_Items_Ajax::ACTION, [ $content_items_ajax, 'handle' ] );
 	}
 
 	public function ajax_activate(): void {
@@ -434,7 +460,7 @@ class Module extends BaseModule {
 		}
 
 		$overrides = $this->get_overrides();
-		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types() );
+		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() );
 
 		if ( '' !== $content ) {
 			$this->cache->set_llms( $content );
@@ -454,7 +480,7 @@ class Module extends BaseModule {
 		}
 
 		$overrides = $this->get_overrides();
-		$content   = $this->generator->generate_llms_full_txt( $overrides, $this->settings->get_llms_post_types() );
+		$content   = $this->generator->generate_llms_full_txt( $overrides, $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() );
 
 		if ( '' !== $content ) {
 			$this->cache->set_llms_full( $content );
@@ -752,6 +778,16 @@ class Module extends BaseModule {
 		return self::$physical_file_cache[ $blog_id ];
 	}
 
+	public static function delete_physical_llms_file(): bool {
+		$file_path = self::get_llms_file_root_path() . self::LLMS_FILENAME;
+
+		wp_delete_file( $file_path );
+		clearstatcache( true, $file_path );
+		self::reset_physical_file_cache();
+
+		return ! file_exists( $file_path );
+	}
+
 	/**
 	 * Get the root directory where llms.txt would be served from.
 	 *
@@ -934,6 +970,7 @@ class Module extends BaseModule {
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
 			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
+			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 		];
@@ -957,7 +994,7 @@ class Module extends BaseModule {
 			$this->settings,
 			$extractor,
 			[
-				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog(), $this->generator, $sanitizer ),
+				new Search_Site_Content( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ), $this->generator, $sanitizer ),
 				new Get_Site_Structure( $this->generator, $sanitizer ),
 				new Read_Page_Content( $this->settings, $this->markdown_endpoint, $sanitizer ),
 				new Query_Business_Info( $this->settings, $extractor, $sanitizer ),
@@ -1025,24 +1062,29 @@ class Module extends BaseModule {
 			'hasPhysicalFile'    => self::has_physical_llms_file(),
 			'unavailableReason'  => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
 			'fileUrl'            => home_url( '/' . self::LLMS_FILENAME ),
-			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types() ),
+			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() ),
+			'excludedPostIds'    => $this->settings->get_llms_excluded_post_ids(),
 		];
 	}
 
 	private function get_markdown_state(): array {
 		return [
-			'enabled'   => $this->settings->is_markdown_enabled(),
-			'postTypes' => $this->get_post_type_rows( $this->settings->get_markdown_post_types() ),
+			'enabled'         => $this->settings->is_markdown_enabled(),
+			'postTypes'       => $this->get_post_type_rows( $this->settings->get_markdown_post_types(), $this->settings->get_markdown_excluded_post_ids() ),
+			'excludedPostIds' => $this->settings->get_markdown_excluded_post_ids(),
 		];
 	}
 
 	/**
 	 * @param string[] $included_post_types
+	 * @param int[]    $excluded_post_ids
 	 */
-	private function get_post_type_rows( array $included_post_types ): array {
-		$post_types = [];
+	private function get_post_type_rows( array $included_post_types, array $excluded_post_ids = [] ): array {
+		$available_post_types = $this->generator->get_available_post_types();
+		$excluded_counts      = Post_Exclusions::count_published_by_post_type( $excluded_post_ids, array_keys( $available_post_types ) );
+		$post_types           = [];
 
-		foreach ( $this->generator->get_available_post_types() as $name => $label ) {
+		foreach ( $available_post_types as $name => $label ) {
 			$count = (int) ( wp_count_posts( $name )->publish ?? 0 );
 
 			if ( $count <= 0 ) {
@@ -1050,10 +1092,11 @@ class Module extends BaseModule {
 			}
 
 			$post_types[] = [
-				'name'     => $name,
-				'label'    => $label,
-				'count'    => $count,
-				'included' => in_array( $name, $included_post_types, true ),
+				'name'          => $name,
+				'label'         => $label,
+				'count'         => $count,
+				'included'      => in_array( $name, $included_post_types, true ),
+				'excludedCount' => $excluded_counts[ $name ] ?? 0,
 			];
 		}
 
