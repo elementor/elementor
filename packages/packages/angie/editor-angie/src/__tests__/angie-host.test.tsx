@@ -10,7 +10,7 @@ const mockTriggerAngie = jest.fn();
 const mockRegisterLocalServer = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
-const mockOpenAngieInAskMode = jest.fn();
+const mockGetAngieIframe = jest.fn();
 const mockWpSearchMcpServer = jest.fn();
 
 jest.mock( '@elementor-external/wp-search-mcp', () => ( {
@@ -38,10 +38,7 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	},
 	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
 	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
-} ) );
-
-jest.mock( '@elementor/editor-mcp', () => ( {
-	openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
+	getAngieIframe: () => mockGetAngieIframe(),
 } ) );
 
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
@@ -63,6 +60,7 @@ describe( 'editor angie host', () => {
 		resetAngiePanelOpenerForTests();
 		resetHelpCenterAbilityForTests();
 		delete window.elementorEditorAngie;
+		window.location.hash = '';
 		document.body.innerHTML = '';
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
@@ -137,7 +135,7 @@ describe( 'editor angie host', () => {
 		} );
 
 		expect( openPanel ).toHaveBeenCalledTimes( 1 );
-		expect( mockOpenAngieInAskMode ).not.toHaveBeenCalled();
+		expect( mockGetAngieIframe ).not.toHaveBeenCalled();
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: 'Write a heading',
@@ -149,6 +147,8 @@ describe( 'editor angie host', () => {
 	it( 'opens the Angie plugin and leaves the Core SDK closed when the plugin is active', async () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
+		const pluginIframe = document.createElement( 'iframe' );
+		mockGetAngieIframe.mockReturnValue( pluginIframe );
 		window.elementorEditorAngie = { isAngiePluginActive: true };
 
 		await openAngie( {
@@ -159,8 +159,9 @@ describe( 'editor angie host', () => {
 			},
 		} );
 
-		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
+		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( pluginIframe, true );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'plan' );
+		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
 		expect( openPanel ).not.toHaveBeenCalled();
 		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 	} );
