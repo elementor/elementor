@@ -13,7 +13,6 @@ import { AgentReadyStarIcon } from './agent-ready-star-icon';
 import { FixesSection } from './fixes-section';
 import { FloatingCheckBar } from './floating-check-bar';
 import { PassingTable } from './passing-table';
-import { scannerButtonSx } from './scanner-button-sx';
 import { ScoreRow, ScoreSummaryBlock, useNextScanLabel } from './score-summary-block';
 import { StageBars } from './stage-bars';
 
@@ -154,11 +153,9 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 				</Stack>
 				<Button
 					variant="contained"
-					color="primary"
 					size="large"
 					onClick={ onStart }
 					disabled={ isCoolingDown }
-					sx={ scannerButtonSx.check }
 				>
 					{ isCoolingDown ? nextScanLabel : __( 'Check my site', 'elementor' ) }
 				</Button>

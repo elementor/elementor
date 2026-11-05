@@ -188,10 +188,10 @@ export const ModulesScreen = ( { readinessScoreUrl, agentDiscoveryConfig, botAcc
 			<Stack spacing={ 5 } width="100%" minWidth={ 0 }>
 				<Stack direction="row" alignItems="center" justifyContent="space-between">
 					<PageTitle textAlign="left" />
-					<Stack alignItems="flex-end" spacing={ 0.5 }>
+					<Stack alignItems="flex-start" spacing={ 0.5 }>
 						<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
 						{ readinessScoreUrl && (
-							<Button variant="text" color="info" size="small" href={ readinessScoreUrl } endIcon={ <ArrowRightIcon fontSize="tiny" /> }>
+							<Button variant="text" color="primary" size="small" href={ readinessScoreUrl } endIcon={ <ArrowRightIcon fontSize="tiny" /> }>
 								{ __( 'See your score', 'elementor' ) }
 							</Button>
 						) }

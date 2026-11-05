@@ -1,8 +1,8 @@
 import { SCANNER_COLORS } from '../scanner-constants';
 
-const filledButtonSx = ( background, hoverBackground, color = SCANNER_COLORS.paper ) => ( {
+const filledButtonSx = ( background, hoverBackground ) => ( {
 	bgcolor: background,
-	color,
+	color: SCANNER_COLORS.paper,
 	boxShadow: 'none',
 	'&:hover': {
 		bgcolor: hoverBackground,
@@ -12,10 +12,6 @@ const filledButtonSx = ( background, hoverBackground, color = SCANNER_COLORS.pap
 
 export const scannerButtonSx = {
 	accent: filledButtonSx( SCANNER_COLORS.accent, SCANNER_COLORS.accentHover ),
-	check: {
-		...filledButtonSx( SCANNER_COLORS.checkButton, SCANNER_COLORS.checkButtonHover, SCANNER_COLORS.textPrimary ),
-		'&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' },
-	},
 	activate: filledButtonSx( SCANNER_COLORS.activate, SCANNER_COLORS.activateHover ),
 	plainText: {
 		minWidth: 0,

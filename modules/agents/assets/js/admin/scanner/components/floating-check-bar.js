@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 
 import { SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
 import { useNextScanLabel } from './rescan-control';
-import { scannerButtonSx } from './scanner-button-sx';
 
 const FLOATING_BAR_Z_INDEX = 10;
 const FLOATING_BAR_SHADOW = '0 4px 16px rgba(0, 0, 0, 0.16)';
@@ -42,7 +41,6 @@ export const FloatingCheckBar = ( { retryAt, onCheck } ) => {
 					size="small"
 					onClick={ onCheck }
 					disabled={ isCoolingDown }
-					sx={ { ...scannerButtonSx.check, flexShrink: 0 } }
 				>
 					{ isCoolingDown ? nextScanLabel : __( 'Check my site', 'elementor' ) }
 				</Button>

@@ -157,7 +157,7 @@ describe( 'Agent Ready scanner', () => {
 
 		// Assert
 		expect( screen.getByText( `Checking ${ SITE_DOMAIN }` ) ).toBeTruthy();
-		expect( within( screen.getByRole( 'list' ) ).getByText( 'Reading your site the way an AI assistant would' ) ).toBeTruthy();
+		expect( within( screen.getByRole( 'list' ) ).getByText( 'Getting your site ready to scan' ) ).toBeTruthy();
 		expect( screen.queryByRole( 'progressbar', { name: 'Scan progress' } ) ).toBeNull();
 
 		await advanceTimers( SCAN_DURATION_MS );
