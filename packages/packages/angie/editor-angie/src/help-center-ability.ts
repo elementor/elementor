@@ -1,4 +1,4 @@
-import type { AngieMcpSdk } from '@elementor-external/angie-sdk';
+import type { AngieLocalServerConfig, AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { WpSearchMcpServer } from '@elementor-external/wp-search-mcp';
 
 import { isAngiePluginActive } from './is-angie-plugin-active';
@@ -37,7 +37,7 @@ export const helpCenterAbility: HelpCenterAbility = {
 			name: HELP_CENTER_SERVER_NAME,
 			version: HELP_CENTER_SERVER_VERSION,
 			description: HELP_CENTER_SERVER_DESCRIPTION,
-			server: helpCenter.server,
+			server: helpCenter.server as AngieLocalServerConfig[ 'server' ],
 			capabilities: { tools: {} },
 		} );
 	},

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useEffect } from 'react';
 import { bootAngieSdk, EDITOR_ANGIE_CONTAINER_ID } from '@elementor/editor-angie';
 import { FloatingPanelBody, FloatingPanelHeader } from '@elementor/editor-floating-panels';
