@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.7.1",
+    "@elementor-external/wp-search-mcp": "npm:@elementor/wp-search-mcp@1.2.0",
     "@elementor/editor-mcp": "4.5.0"
   }
 }
