@@ -7,10 +7,9 @@ import {
 import Alert from '@elementor/ui/Alert';
 import Box from '@elementor/ui/Box';
 import Stack from '@elementor/ui/Stack';
-import Typography from '@elementor/ui/Typography';
-import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { BetaChip } from '../components/beta-chip';
 import { ActivateBanner } from './components/activate-banner';
 import { AngieInstallDialog } from './components/angie-install-dialog';
 import { ErrorReportCard } from './components/error-report-card';
@@ -55,11 +54,7 @@ const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
 		} }
 	>
 		<Stack gap={ hideOverline ? 0 : `${ SCANNER_LAYOUT.pageGap }px` } width="100%" flex={ fillViewport ? 1 : undefined } minHeight={ fillViewport ? '100%' : undefined }>
-			{ ! hideOverline && (
-				<Typography variant="overline" component="h2" color="text.tertiary" m={ 0 }>
-					{ __( 'Agent Ready', 'elementor' ) }
-				</Typography>
-			) }
+			{ ! hideOverline && <Box><BetaChip /></Box> }
 			{ children }
 		</Stack>
 	</Box>
@@ -105,7 +100,7 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 			{ ( scan?.stages ?? [] ).length > 0 && <StageBars stages={ scan.stages } /> }
 			{ flow.actionError && <Alert severity="error">{ flow.actionError }</Alert> }
 			<FixesSection
-				checks={ flow.visibleChecks }
+				checks={ flow.failingChecks }
 				flow={ flow }
 				agentAccessUrl={ agentAccessUrl }
 				seoPluginSearchUrl={ seoPluginSearchUrl }
@@ -113,7 +108,7 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 				score={ flow.ringScore }
 				isLoading={ isActivating }
 			/>
-			<PassingTable checks={ scan?.passingChecks ?? [] } />
+			<PassingTable checks={ [ ...flow.locallyPassedChecks, ...( scan?.passingChecks ?? [] ) ] } />
 		</>
 	);
 

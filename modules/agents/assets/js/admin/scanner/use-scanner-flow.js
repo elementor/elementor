@@ -27,7 +27,7 @@ import {
 } from './scanner-constants';
 import { getProgressStepDelaysMs, getProgressSteps } from './scanner-mock-data';
 import { getLaterRetryAt, toFailedScanResult } from './scanner-report-adapter';
-import { getBaseScore, getVisibleChecks, hasPendingFixes } from './scanner-score';
+import { getBaseScore, getVisibleChecks, hasPendingFixes, isCheckResolvedLocally, toLocallyPassedCheck } from './scanner-score';
 
 const MS_PER_SECOND = 1000;
 
@@ -112,6 +112,7 @@ export const useScannerFlow = ( {
 	const [ ringDurationMs, setRingDurationMs ] = useState( SCANNER_MOTION.ringArriveMs );
 	const [ resolvedIds, setResolvedIds ] = useState( {} );
 	const [ moduleEnabled, setModuleEnabled ] = useState( initialModuleEnabledRef.current );
+	const [ locallyEnabledModules, setLocallyEnabledModules ] = useState( initialModuleEnabledRef.current );
 	const [ dirtyModuleKeys, setDirtyModuleKeys ] = useState( {} );
 	const [ savingModuleKeys, setSavingModuleKeys ] = useState( {} );
 	const [ openIds, setOpenIds ] = useState( {} );
@@ -220,6 +221,7 @@ export const useScannerFlow = ( {
 		setCompletedStepsCount( progressSteps.length );
 		setScan( result );
 		setResolvedIds( {} );
+		setLocallyEnabledModules( {} );
 		initialModuleEnabledRef.current = moduleEnabledRef.current;
 		setDirtyModuleKeys( {} );
 		setOpenIds( {} );
@@ -256,6 +258,7 @@ export const useScannerFlow = ( {
 		} );
 		moduleEnabledRef.current = nextModuleEnabled;
 		setModuleEnabled( nextModuleEnabled );
+		setLocallyEnabledModules( nextModuleEnabled );
 		setIsActivated( true );
 		setOpenIds( {} );
 		setRingDurationMs( SCANNER_MOTION.ringLandMs );
@@ -320,6 +323,7 @@ export const useScannerFlow = ( {
 
 		moduleEnabledRef.current = nextModuleEnabled;
 		setModuleEnabled( nextModuleEnabled );
+		setLocallyEnabledModules( ( current ) => withModuleFlag( current, moduleKey, isEnabled ) );
 		setDirtyModuleKeys( ( current ) => withDirtyModuleKey( current, moduleKey, isEnabled, initialModuleEnabledRef.current ) );
 	}, [] );
 
@@ -358,34 +362,6 @@ export const useScannerFlow = ( {
 			} );
 	}, [ setModuleFlag ] );
 
-	const undoFix = useCallback( ( check ) => {
-		const moduleKey = getToggleModuleKey( check.id );
-
-		if ( moduleKey ) {
-			setCheckEnabled( check, false );
-			return;
-		}
-
-		const previousPayload = resolvedIds[ check.id ];
-
-		setActionError( '' );
-		setResolvedIds( ( current ) => withoutKey( current, check.id ) );
-		setSavingCheckIds( ( current ) => ( { ...current, [ check.id ]: true } ) );
-
-		undoCheckFix( check.id )
-			.catch( ( error ) => {
-				if ( isMountedRef.current ) {
-					setResolvedIds( ( current ) => ( { ...current, [ check.id ]: previousPayload } ) );
-					setActionError( getSaveErrorMessage( error ) );
-				}
-			} )
-			.finally( () => {
-				if ( isMountedRef.current ) {
-					setSavingCheckIds( ( current ) => withoutKey( current, check.id ) );
-				}
-			} );
-	}, [ resolvedIds, setCheckEnabled ] );
-
 	const setPreference = useCallback( ( checkId, value ) => {
 		setPreferences( ( current ) => ( { ...current, [ checkId ]: value } ) );
 	}, [] );
@@ -422,6 +398,9 @@ export const useScannerFlow = ( {
 	);
 
 	const visibleChecks = getVisibleChecks( scan );
+	const isResolvedLocally = ( check ) => isCheckResolvedLocally( check, { locallyEnabledModules, resolvedIds } );
+	const failingChecks = visibleChecks.filter( ( check ) => ! isResolvedLocally( check ) );
+	const locallyPassedChecks = visibleChecks.filter( isResolvedLocally ).map( toLocallyPassedCheck );
 
 	return {
 		view,
@@ -430,6 +409,8 @@ export const useScannerFlow = ( {
 		scan,
 		isActivated,
 		visibleChecks,
+		failingChecks,
+		locallyPassedChecks,
 		ringScore: getBaseScore( scan ),
 		ringDurationMs,
 		needsRescanForScore: hasPendingFixes( visibleChecks, resolvedIds ) || hasDirtyModuleChecks( visibleChecks, dirtyModuleKeys ),
@@ -456,7 +437,6 @@ export const useScannerFlow = ( {
 		showHowToFix,
 		closeInstallDialog,
 		fixWithAngie,
-		undoFix,
 		setCheckEnabled,
 		setPreference,
 		savePreference,

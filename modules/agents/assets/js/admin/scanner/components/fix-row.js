@@ -1,4 +1,4 @@
-import { ChevronDownIcon, CircleCheckFilledIcon } from '@elementor/icons';
+import { ChevronDownIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
 import Chip from '@elementor/ui/Chip';
@@ -30,18 +30,6 @@ const ROW_ACTIVATION_KEYS = [ 'Enter', ' ' ];
 
 const stopPropagation = ( event ) => event.stopPropagation();
 
-const completedCheckSx = {
-	color: 'success.main',
-	fontSize: SCANNER_LAYOUT.completedIconSize,
-	flexShrink: 0,
-	animation: `scannerCheckIn ${ SCANNER_MOTION.completedCheckMs }ms ${ SCANNER_MOTION.overshoot }`,
-	'@keyframes scannerCheckIn': {
-		from: { transform: 'scale(0.4)' },
-		to: { transform: 'scale(1)' },
-	},
-	...REDUCED_MOTION_SX,
-};
-
 const PRIORITY_CHIP_COLORS = {
 	[ PRIORITY_REQUIRED ]: 'error',
 	[ PRIORITY_RECOMMENDED ]: 'success',
@@ -61,11 +49,7 @@ PriorityChip.propTypes = {
 
 const getDotColor = ( check ) => getCheckStatusDotColor( check.status ?? CHECK_STATUS_FAIL );
 
-const StatusIndicator = ( { check, isCompleted } ) => {
-	if ( isCompleted ) {
-		return <CircleCheckFilledIcon sx={ completedCheckSx } aria-label={ __( 'Fixed', 'elementor' ) } />;
-	}
-
+const StatusIndicator = ( { check } ) => {
 	return (
 		<Box width={ SCANNER_LAYOUT.statusIconSlot } display="flex" justifyContent="center" flexShrink={ 0 }>
 			<Box
@@ -81,13 +65,11 @@ const StatusIndicator = ( { check, isCompleted } ) => {
 
 StatusIndicator.propTypes = {
 	check: PropTypes.object.isRequired,
-	isCompleted: PropTypes.bool,
 };
 
 export const FixRow = ( {
 	check,
 	isOpen,
-	isResolved,
 	isSaving = false,
 	isToggleDisabled = false,
 	toggleDisabledReason = null,
@@ -100,14 +82,10 @@ export const FixRow = ( {
 	onCopyPrompt,
 	onFixWithAngie,
 	onSetEnabled,
-	onUndo,
-	onRescan,
 	onPreferenceChange,
 	onSavePreference,
 } ) => {
-	const isCompleted = isResolved;
-	const titleIsPrimary = isOpen || isCompleted;
-	const showCopyPrompt = FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt ) && ! isCompleted;
+	const showCopyPrompt = FIX_WITH_ANGIE === check.fixWith && Boolean( check.fixPrompt );
 
 	const handleKeyDown = ( event ) => {
 		if ( event.target !== event.currentTarget || ! ROW_ACTIVATION_KEYS.includes( event.key ) ) {
@@ -135,7 +113,7 @@ export const FixRow = ( {
 				sx={ {
 					cursor: 'pointer',
 					bgcolor: isOpen ? SCANNER_COLORS.paper : undefined,
-					'& .scanner-fix-title': { color: titleIsPrimary ? 'text.primary' : 'text.secondary' },
+					'& .scanner-fix-title': { color: isOpen ? 'text.primary' : 'text.secondary' },
 					'&:hover, &:focus-within': { bgcolor: isOpen ? SCANNER_COLORS.paper : SCANNER_COLORS.rowHover },
 					'&:hover .scanner-fix-title, &:focus-within .scanner-fix-title': { color: 'text.primary' },
 					'& .scanner-copy-fix': { display: 'none' },
@@ -143,10 +121,10 @@ export const FixRow = ( {
 					'&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
 				} }
 			>
-				<Stack direction="row" alignItems="center" gap={ isCompleted ? 1 : 0.5 } flex={ 1 } minWidth={ 0 }>
-					<StatusIndicator check={ check } isCompleted={ isCompleted } />
+				<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 } minWidth={ 0 }>
+					<StatusIndicator check={ check } />
 					<Typography className="scanner-fix-title" variant="body2">{ check.title }</Typography>
-					{ ! isCompleted && <PriorityChip priority={ check.priority } /> }
+					<PriorityChip priority={ check.priority } />
 				</Stack>
 				<Stack direction="row" alignItems="center" justifyContent="flex-end" gap={ 1 } minWidth={ SCANNER_LAYOUT.actionAreaWidth } flexShrink={ 0 }>
 					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Keeps the row's own toggle from firing when an action is used. */ }
@@ -155,7 +133,6 @@ export const FixRow = ( {
 							{ showCopyPrompt && <CopyPromptButton onCopy={ () => onCopyPrompt( check ) } /> }
 							<RowAction
 								check={ check }
-								isResolved={ isResolved }
 								isSaving={ isSaving }
 								isToggleDisabled={ isToggleDisabled }
 								toggleDisabledReason={ toggleDisabledReason }
@@ -164,22 +141,18 @@ export const FixRow = ( {
 								onOpen={ onOpen }
 								onFixWithAngie={ onFixWithAngie }
 								onSetEnabled={ onSetEnabled }
-								onUndo={ onUndo }
-								onRescan={ onRescan }
 							/>
 						</Stack>
 					</Box>
-					{ ! isCompleted && (
-						<ChevronDownIcon
-							sx={ {
-								fontSize: SCANNER_LAYOUT.chevronSize,
-								color: 'text.tertiary',
-								transform: isOpen ? 'rotate(180deg)' : 'none',
-								transition: `transform ${ SCANNER_MOTION.chevronMs }ms ${ SCANNER_MOTION.easeOutExpo }`,
-								...REDUCED_MOTION_SX,
-							} }
-						/>
-					) }
+					<ChevronDownIcon
+						sx={ {
+							fontSize: SCANNER_LAYOUT.chevronSize,
+							color: 'text.tertiary',
+							transform: isOpen ? 'rotate(180deg)' : 'none',
+							transition: `transform ${ SCANNER_MOTION.chevronMs }ms ${ SCANNER_MOTION.easeOutExpo }`,
+							...REDUCED_MOTION_SX,
+						} }
+					/>
 				</Stack>
 			</Stack>
 			<Collapse in={ isOpen } timeout={ SCANNER_MOTION.drawerMs } unmountOnExit>
@@ -205,7 +178,6 @@ export const FixRow = ( {
 FixRow.propTypes = {
 	check: PropTypes.object.isRequired,
 	isOpen: PropTypes.bool,
-	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
 	toggleDisabledReason: PropTypes.string,
@@ -218,8 +190,6 @@ FixRow.propTypes = {
 	onCopyPrompt: PropTypes.func.isRequired,
 	onFixWithAngie: PropTypes.func.isRequired,
 	onSetEnabled: PropTypes.func.isRequired,
-	onUndo: PropTypes.func.isRequired,
-	onRescan: PropTypes.func.isRequired,
 	onPreferenceChange: PropTypes.func.isRequired,
 	onSavePreference: PropTypes.func.isRequired,
 };

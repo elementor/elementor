@@ -8,9 +8,12 @@ import PropTypes from 'prop-types';
 import { SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
 import { getMockScanResult } from '../scanner-mock-data';
 import { getBaseScore, getVisibleChecks } from '../scanner-score';
+import { BetaChip } from '../../components/beta-chip';
 import { AgentReadyStarIcon } from './agent-ready-star-icon';
 import { FixesSection } from './fixes-section';
+import { FloatingCheckBar } from './floating-check-bar';
 import { PassingTable } from './passing-table';
+import { scannerButtonSx } from './scanner-button-sx';
 import { ScoreRow, ScoreSummaryBlock, useNextScanLabel } from './score-summary-block';
 import { StageBars } from './stage-bars';
 
@@ -141,6 +144,7 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 		<Stack alignItems="center" width="100%">
 			<Stack alignItems="center" spacing={ HERO_SECTION_GAP } textAlign="center" width="100%">
 				<Stack alignItems="center" spacing={ 1 }>
+					<BetaChip />
 					<Typography variant="h4" component="h2" color="text.primary">
 						{ __( 'Is your site ready for agents?', 'elementor' ) }
 					</Typography>
@@ -154,6 +158,7 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 					size="large"
 					onClick={ onStart }
 					disabled={ isCoolingDown }
+					sx={ scannerButtonSx.check }
 				>
 					{ isCoolingDown ? nextScanLabel : __( 'Check my site', 'elementor' ) }
 				</Button>
@@ -164,6 +169,7 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 				</Stack>
 			</Stack>
 			<ScannerPreview agentAccessUrl={ agentAccessUrl } seoPluginSearchUrl={ seoPluginSearchUrl } siteDomain={ siteDomain } />
+			<FloatingCheckBar retryAt={ retryAt } onCheck={ onStart } />
 		</Stack>
 	);
 };

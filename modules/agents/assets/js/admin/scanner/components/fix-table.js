@@ -97,7 +97,6 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 						<FixRow
 							check={ check }
 							isOpen={ !! flow.openIds[ check.id ] }
-							isResolved={ moduleKey ? !! flow.moduleEnabled?.[ moduleKey ] : !! flow.resolvedIds[ check.id ] }
 							isSaving={ !! flow.savingCheckIds?.[ check.id ] || !! ( moduleKey && flow.savingModuleKeys?.[ moduleKey ] ) }
 							isToggleDisabled={ !! isToggleDisabled }
 							toggleDisabledReason={ toggleDisabledReason }
@@ -110,8 +109,6 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 							onCopyPrompt={ flow.openHowToFix }
 							onFixWithAngie={ flow.fixWithAngie }
 							onSetEnabled={ flow.setCheckEnabled }
-							onUndo={ flow.undoFix }
-							onRescan={ flow.startScan }
 							onPreferenceChange={ flow.setPreference }
 							onSavePreference={ flow.savePreference }
 						/>
@@ -125,8 +122,6 @@ const fixTableRowsPropTypes = {
 	checks: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	flow: PropTypes.shape( {
 		openIds: PropTypes.object.isRequired,
-		resolvedIds: PropTypes.object.isRequired,
-		moduleEnabled: PropTypes.object,
 		isModuleToggleDisabled: PropTypes.func,
 		getToggleDisabledReason: PropTypes.func,
 		savingModuleKeys: PropTypes.object,
@@ -137,8 +132,6 @@ const fixTableRowsPropTypes = {
 		openHowToFix: PropTypes.func.isRequired,
 		fixWithAngie: PropTypes.func.isRequired,
 		setCheckEnabled: PropTypes.func.isRequired,
-		undoFix: PropTypes.func.isRequired,
-		startScan: PropTypes.func.isRequired,
 		setPreference: PropTypes.func.isRequired,
 		savePreference: PropTypes.func.isRequired,
 	} ).isRequired,

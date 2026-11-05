@@ -25,6 +25,7 @@ const PROMPT_MIN_HEIGHT = 120;
 const PROMPT_MAX_HEIGHT = 280;
 const PROMPT_LINE_HEIGHT = '20px';
 const COPIED_FEEDBACK_MS = 2000;
+const OVERLINE_TOP_SPACE = 24;
 
 const getPromptChecks = ( checks ) => checks.filter( ( check ) => FIX_WITH_ANGIE === check.fixWith && check.fixPrompt );
 
@@ -109,8 +110,8 @@ export const HowToFixDialog = ( { checks, checkId, onClose, onShowCheck } ) => {
 		>
 			<DialogHeader onClose={ onClose } logo={ false }>
 				<Stack spacing={ 0 } minWidth={ 0 }>
-					<Typography variant="overline" color="text.tertiary">{ __( 'How to fix', 'elementor' ) }</Typography>
-					<DialogTitle component="h2">{ check.title }</DialogTitle>
+					<Typography variant="overline" color="text.tertiary" mt={ `${ OVERLINE_TOP_SPACE }px` }>{ __( 'How to fix', 'elementor' ) }</Typography>
+					<DialogTitle component="h2" sx={ { typography: 'h5' } }>{ check.title }</DialogTitle>
 				</Stack>
 			</DialogHeader>
 			<DialogContent>
@@ -162,9 +163,9 @@ export const HowToFixDialog = ( { checks, checkId, onClose, onShowCheck } ) => {
 					</Stack>
 				</Stack>
 			</DialogContent>
-			<DialogActions sx={ { px: 3, py: 2, justifyContent: 'space-between' } }>
+			<DialogActions sx={ { px: 3, py: 2, justifyContent: 'space-between', borderTop: 1, borderColor: 'divider' } }>
 				<Button variant="text" color="secondary" onClick={ onClose }>
-					{ __( 'Skip', 'elementor' ) }
+					{ __( 'Cancel', 'elementor' ) }
 				</Button>
 				<Stack direction="row" spacing={ 2 } alignItems="center">
 					<Typography variant="body2" color="text.disabled">

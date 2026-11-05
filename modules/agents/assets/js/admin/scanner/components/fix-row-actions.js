@@ -1,12 +1,12 @@
 import { ArrowUpRightIcon, CopyIcon } from '@elementor/icons';
+import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
-import Stack from '@elementor/ui/Stack';
+import Infotip from '@elementor/ui/Infotip';
 import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useId } from 'react';
 
-import { DisabledReasonSwitch } from '../../components/disabled-reason-switch';
-import { wpAdminSwitchSx } from '../../components/wp-admin-sx';
 import {
 	FIX_WITH_ANGIE,
 	FIX_WITH_LINK,
@@ -14,8 +14,10 @@ import {
 	FIX_WITH_PREFERENCE,
 	FIX_WITH_SEO,
 	FIX_WITH_TOGGLE,
-	SCANNER_LAYOUT,
+	VISUALLY_HIDDEN_SX,
 } from '../scanner-constants';
+
+const REASON_MAX_WIDTH = 280;
 
 const rowActionSx = {
 	color: 'text.primary',
@@ -80,48 +82,63 @@ CopyPromptButton.propTypes = {
 
 export const copyPromptText = copyText;
 
-const completedActionSx = {
-	minWidth: 0,
-	height: SCANNER_LAYOUT.completedActionHeight,
-	px: '5px',
-	py: '3px',
-};
-
-const CompletedActions = ( { check, isSaving = false, onUndo, onRescan } ) => (
-	<Stack direction="row" alignItems="center">
-		<Button variant="text" color="secondary" size="small" disabled={ isSaving } onClick={ () => onUndo( check ) } sx={ completedActionSx }>
-			{ __( 'Undo', 'elementor' ) }
+const CreateForMeButton = ( { check, isSaving, isDisabled, disabledReason, onSetEnabled } ) => {
+	const reasonId = useId();
+	const button = (
+		<Button
+			variant="text"
+			color="inherit"
+			size="small"
+			disabled={ isSaving || isDisabled }
+			aria-describedby={ disabledReason ? reasonId : undefined }
+			onClick={ () => onSetEnabled( check, true ) }
+			sx={ rowActionSx }
+		>
+			{ __( 'Create for me', 'elementor' ) }
 		</Button>
-		<Button variant="text" color="inherit" size="small" disabled={ isSaving } onClick={ onRescan } sx={ { ...completedActionSx, color: 'text.primary' } }>
-			{ __( 'Rescan', 'elementor' ) }
-		</Button>
-	</Stack>
-);
+	);
 
-CompletedActions.propTypes = {
-	check: PropTypes.object.isRequired,
-	isSaving: PropTypes.bool,
-	onUndo: PropTypes.func.isRequired,
-	onRescan: PropTypes.func.isRequired,
-};
-
-export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabled = false, toggleDisabledReason = null, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled, onUndo, onRescan } ) => {
-	if ( FIX_WITH_TOGGLE === check.fixWith && ! isResolved ) {
-		return (
-			<DisabledReasonSwitch
-				size="small"
-				checked={ isResolved }
-				disabled={ isSaving || isToggleDisabled }
-				disabledReason={ isToggleDisabled ? toggleDisabledReason : null }
-				onChange={ ( event ) => onSetEnabled( check, event.target.checked ) }
-				inputProps={ { role: 'switch', 'aria-checked': isResolved, 'aria-label': check.title } }
-				sx={ wpAdminSwitchSx }
-			/>
-		);
+	if ( ! disabledReason ) {
+		return button;
 	}
 
-	if ( isResolved ) {
-		return <CompletedActions check={ check } isSaving={ isSaving } onUndo={ onUndo } onRescan={ onRescan } />;
+	return (
+		<Infotip
+			arrow
+			placement="top"
+			content={ (
+				<Box p={ 2 } maxWidth={ REASON_MAX_WIDTH } boxSizing="border-box">
+					<Typography variant="body2" color="text.primary">{ disabledReason }</Typography>
+				</Box>
+			) }
+		>
+			<span style={ { display: 'inline-flex' } }>
+				{ button }
+				<Box component="span" id={ reasonId } sx={ VISUALLY_HIDDEN_SX }>{ disabledReason }</Box>
+			</span>
+		</Infotip>
+	);
+};
+
+CreateForMeButton.propTypes = {
+	check: PropTypes.object.isRequired,
+	isSaving: PropTypes.bool,
+	isDisabled: PropTypes.bool,
+	disabledReason: PropTypes.string,
+	onSetEnabled: PropTypes.func.isRequired,
+};
+
+export const RowAction = ( { check, isSaving = false, isToggleDisabled = false, toggleDisabledReason = null, agentAccessUrl, seoPluginSearchUrl, onOpen, onFixWithAngie, onSetEnabled } ) => {
+	if ( FIX_WITH_TOGGLE === check.fixWith ) {
+		return (
+			<CreateForMeButton
+				check={ check }
+				isSaving={ isSaving }
+				isDisabled={ isToggleDisabled }
+				disabledReason={ toggleDisabledReason }
+				onSetEnabled={ onSetEnabled }
+			/>
+		);
 	}
 
 	if ( FIX_WITH_ANGIE === check.fixWith ) {
@@ -159,7 +176,7 @@ export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabl
 	if ( FIX_WITH_MANUAL === check.fixWith ) {
 		return (
 			<Typography variant="body2" color="text.disabled" sx={ { fontWeight: 500, whiteSpace: 'nowrap' } }>
-				{ __( 'Fix manually', 'elementor' ) }
+				{ __( 'Manual fix', 'elementor' ) }
 			</Typography>
 		);
 	}
@@ -169,7 +186,6 @@ export const RowAction = ( { check, isResolved, isSaving = false, isToggleDisabl
 
 RowAction.propTypes = {
 	check: PropTypes.object.isRequired,
-	isResolved: PropTypes.bool,
 	isSaving: PropTypes.bool,
 	isToggleDisabled: PropTypes.bool,
 	toggleDisabledReason: PropTypes.string,
@@ -178,6 +194,4 @@ RowAction.propTypes = {
 	onOpen: PropTypes.func.isRequired,
 	onFixWithAngie: PropTypes.func.isRequired,
 	onSetEnabled: PropTypes.func.isRequired,
-	onUndo: PropTypes.func.isRequired,
-	onRescan: PropTypes.func.isRequired,
 };
