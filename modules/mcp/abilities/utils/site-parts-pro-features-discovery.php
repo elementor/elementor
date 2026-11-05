@@ -86,10 +86,6 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 		return self::for_manage( [] );
 	}
 
-	public static function for_list(): \WP_Error {
-		return self::for_manage( [] );
-	}
-
 	public static function get_types(): array {
 		$group_types = array_merge( ...array_column( self::MESSAGES['groups'], 'types' ) );
 
