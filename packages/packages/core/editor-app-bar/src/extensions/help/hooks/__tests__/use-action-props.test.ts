@@ -16,7 +16,7 @@ describe( 'useHelpCenterActionProps', () => {
   beforeEach( () => {
     mockIsAngieAvailable.mockReset();
     mockOpenAngieInAskMode.mockReset();
-    delete ( window as Window & { elementorV2?: unknown } ).elementorV2;
+    delete window.elementorV2;
     mockDispatchEvent = jest.fn();
     window.elementorCommon = {
       eventsManager: {
@@ -55,9 +55,7 @@ describe( 'useHelpCenterActionProps', () => {
 
   it( 'opens the Core SDK when the editor Angie package is loaded', () => {
     const openAngie = jest.fn();
-    (
-      window as Window & { elementorV2?: { editorAngie: { openAngie: typeof openAngie } } }
-     ).elementorV2 = {
+    window.elementorV2 = {
       editorAngie: { openAngie },
     };
     mockIsAngieAvailable.mockReturnValue( true );

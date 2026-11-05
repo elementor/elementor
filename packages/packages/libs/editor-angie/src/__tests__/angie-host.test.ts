@@ -48,7 +48,7 @@ describe( 'editor angie host', () => {
     jest.clearAllMocks();
     resetAngieSdkForTests();
     resetHelpCenterAbilityForTests();
-    delete ( window as Window & { elementorEditorAngie?: unknown } ).elementorEditorAngie;
+    delete window.elementorEditorAngie;
     document.body.innerHTML = '';
     mockLoadSidebarV2.mockResolvedValue( undefined );
     mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
@@ -111,9 +111,7 @@ describe( 'editor angie host', () => {
 
   it( 'opens the Angie plugin when it is active and does not register the help-center ability', async () => {
     const registerSpy = jest.spyOn( helpCenterAbility, 'register' );
-    (
-      window as Window & { elementorEditorAngie?: { isAngiePluginActive: boolean } }
-     ).elementorEditorAngie = {
+    window.elementorEditorAngie = {
       isAngiePluginActive: true,
     };
 

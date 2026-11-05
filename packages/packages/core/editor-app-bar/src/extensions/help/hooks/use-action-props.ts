@@ -7,21 +7,7 @@ import { type ExtendedWindow } from '../../../types';
 const HELP_CENTER_URL = 'https://go.elementor.com/editor-top-bar-learn/';
 const HELP_CENTER_ANGIE_PROMPT = `${ __( 'Help me with', 'elementor' ) } `;
 
-type CoreOpenAngie = ( request: { prompt: string; mode: 'ask' } ) => void;
-
-const getCoreOpenAngie = (): CoreOpenAngie | undefined => {
-  const editorAngie = (
-    window as Window & {
-      elementorV2?: {
-        editorAngie?: {
-          openAngie?: CoreOpenAngie;
-        };
-      };
-    }
-   ).elementorV2?.editorAngie;
-
-  return editorAngie?.openAngie;
-};
+const getCoreOpenAngie = () => window.elementorV2?.editorAngie?.openAngie;
 
 const dispatchHelpClickEvent = () => {
   const extendedWindow = window as unknown as ExtendedWindow;
