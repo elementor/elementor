@@ -8,8 +8,23 @@ import {
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor';
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
 
+const CONTAINER_POLL_ATTEMPTS = 10;
+const CONTAINER_POLL_INTERVAL_MS = 10;
+
 let sdk: AngieMcpSdk | null = null;
 let bootPromise: Promise< AngieMcpSdk > | null = null;
+
+const waitForAngieContainer = async () => {
+	for ( let attempt = 0; attempt < CONTAINER_POLL_ATTEMPTS; attempt++ ) {
+		if ( document.getElementById( EDITOR_ANGIE_CONTAINER_ID ) ) {
+			return;
+		}
+
+		await new Promise( ( resolve ) => {
+			setTimeout( resolve, CONTAINER_POLL_INTERVAL_MS );
+		} );
+	}
+};
 
 export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	host: {
@@ -52,6 +67,8 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 
 	bootPromise = ( async () => {
 		try {
+			await waitForAngieContainer();
+
 			const instance = new AngieMcpSdk();
 
 			await instance.loadSidebarV2( getLoadSidebarOptions() );

@@ -24,6 +24,10 @@ class Module extends BaseModule {
 
 	const ANGIE_PACKAGE = 'editor-angie';
 
+	const ANGIE_FLOATING_PANELS_PACKAGE = 'editor-floating-panels';
+
+	const ANGIE_PANEL_PACKAGE = 'editor-angie-panel';
+
 	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
 
 	public function get_name() {
@@ -138,9 +142,11 @@ class Module extends BaseModule {
 		$packages = array_merge( $packages, self::PACKAGES );
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME ) ) {
+			$packages[] = self::ANGIE_FLOATING_PANELS_PACKAGE;
 			$packages[] = self::ANGIE_PACKAGE;
+			$packages[] = self::ANGIE_PANEL_PACKAGE;
 		}
 
-		return $packages;
+		return array_values( array_unique( $packages ) );
 	}
 }

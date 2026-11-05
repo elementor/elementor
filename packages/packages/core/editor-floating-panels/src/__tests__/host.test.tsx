@@ -11,6 +11,7 @@ import {
 import { act, screen } from '@testing-library/react';
 
 import FloatingPanelsHost from '../components/internal/host';
+import { DOCKED_BODY_CLASS, DOCKED_WIDTH_VAR } from '../hooks/use-docked-layout';
 import { injectIntoFloatingPanels } from '../location';
 import { slice } from '../store/slice';
 import { mockEditMode } from './mock-edit-mode';
@@ -187,5 +188,56 @@ describe( 'FloatingPanelsHost', () => {
 
 		// Assert.
 		expect( screen.queryByTitle( 'Audit session' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'pins an open docked panel to the canvas edge and releases the width on close', () => {
+		// Arrange.
+		const PanelA = () => <div>Docked body</div>;
+
+		injectIntoFloatingPanels( { id: 'docked', component: PanelA, keepMounted: true } );
+
+		__dispatch(
+			slice.actions.register( {
+				id: 'docked',
+				isDocked: true,
+				defaults: {
+					width: 400,
+					height: 720,
+					minWidth: 320,
+					minHeight: 480,
+					corner: 'block-start-inline-end',
+				},
+			} )
+		);
+		__dispatch( slice.actions.open( 'docked' ) );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store not initialized' );
+		}
+
+		renderWithTheme(
+			<StoreProvider store={ store }>
+				<FloatingPanelsHost />
+			</StoreProvider>
+		);
+
+		const panel = screen.getByRole( 'complementary' );
+
+		// Assert.
+		expect( document.body ).toHaveClass( DOCKED_BODY_CLASS );
+		expect( document.body.style.getPropertyValue( DOCKED_WIDTH_VAR ) ).toBe( '400px' );
+		expect( panel ).toHaveAttribute( 'data-docked', 'true' );
+
+		// Act.
+		act( () => {
+			__dispatch( slice.actions.close( 'docked' ) );
+		} );
+
+		// Assert.
+		expect( document.body ).not.toHaveClass( DOCKED_BODY_CLASS );
+		expect( document.body.style.getPropertyValue( DOCKED_WIDTH_VAR ) ).toBe( '' );
+		expect( screen.getByText( 'Docked body' ) ).toBeInTheDocument();
 	} );
 } );

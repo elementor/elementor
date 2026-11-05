@@ -9,6 +9,7 @@ type SliceState = {
 	titlesById: Record< string, string >;
 	isDraggableById: Record< string, boolean >;
 	isResizableById: Record< string, boolean >;
+	isDockedById: Record< string, boolean >;
 	topZIndex: number;
 };
 
@@ -20,6 +21,7 @@ const initialState: SliceState = {
 	titlesById: {},
 	isDraggableById: {},
 	isResizableById: {},
+	isDockedById: {},
 	topZIndex: 0,
 };
 
@@ -44,6 +46,7 @@ export const slice = __createSlice( {
 			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
 			state.isDraggableById[ id ] = isDocked ? false : isDraggable ?? false;
 			state.isResizableById[ id ] = isDocked ? false : isResizable ?? false;
+			state.isDockedById[ id ] = isDocked ?? false;
 
 			if ( title !== undefined ) {
 				state.titlesById[ id ] = title;
