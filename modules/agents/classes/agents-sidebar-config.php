@@ -6,6 +6,7 @@ use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -52,7 +53,7 @@ class Agents_Sidebar_Config {
 	}
 
 	private function get_current_page(): string {
-		return filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+		return (string) Utils::get_super_global_value( $_GET, 'page' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	private function get_menu_items(): array {
