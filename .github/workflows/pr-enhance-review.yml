@@ -3,15 +3,55 @@ name: Enhanced PR Review
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
 
 jobs:
+  check-files:
+    name: Check Changed Files
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft && startsWith(github.repository, 'elementor/')
+    outputs:
+      docs_only: ${{ steps.check.outputs.docs_only || 'false' }}
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      
+      - name: Check if PR only touches docs/txt files
+        id: check
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          
+          echo "Checking changed files between $BASE_SHA and $HEAD_SHA..."
+          
+          CHANGED_FILES=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No files changed"
+            echo "docs_only=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          DOCS_ONLY=true
+          while IFS= read -r file; do
+            case "$file" in
+              *.md|*.txt|bin/*|.gitignore|docs/*|.vscode/*)
+                continue
+                ;;
+              *)
+                DOCS_ONLY=false
+                break
+                ;;
+            esac
+          done <<< "$CHANGED_FILES"
+          
+          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
+          echo "Changed files are docs-only: $DOCS_ONLY"
+
   check-label:
     name: Check Auto-Reviewed Label
     runs-on: ubuntu-latest
@@ -42,8 +82,8 @@ jobs:
   enhanced-review:
     name: Enhanced Code Review
     runs-on: ubuntu-latest
-    needs: [check-label]
-    if: needs.check-label.outputs.should_skip != 'true'
+    needs: [check-files, check-label]
+    if: needs.check-label.outputs.should_skip != 'true' && needs.check-files.outputs.docs_only != 'true'
     permissions:
       contents: read
       pull-requests: write
@@ -136,11 +176,25 @@ jobs:
           }
           echo "✅ PR review completed successfully"
 
+  skip-docs-only:
+    name: Enhanced Code Review
+    runs-on: ubuntu-latest
+    needs: [check-files, check-label]
+    if: needs.check-label.outputs.should_skip != 'true' && needs.check-files.outputs.docs_only == 'true'
+    steps:
+      - name: Skip review for docs-only changes
+        run: |
+          echo "✅ Skipping enhanced review for docs-only PR"
+          echo "This PR only modifies documentation, changelog, or other non-code files"
+
   add-label:
     name: Add Auto-Reviewed Label
     runs-on: ubuntu-latest
-    needs: [enhanced-review]
-    if: success() && github.event_name == 'pull_request'
+    needs: [enhanced-review, skip-docs-only]
+    if: |
+      always() && 
+      github.event_name == 'pull_request' && 
+      (needs.enhanced-review.result == 'success' || needs.skip-docs-only.result == 'success')
     permissions:
       pull-requests: write
       issues: write
