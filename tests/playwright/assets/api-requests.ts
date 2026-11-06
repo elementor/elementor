@@ -1,6 +1,7 @@
 import { createReadStream } from 'fs';
 import { type APIRequestContext } from '@playwright/test';
 
+import { timeouts } from '../config/timeouts';
 import { Image, Post, WpPage, User } from '../types/types';
 
 export default class ApiRequests {
@@ -154,15 +155,45 @@ export default class ApiRequests {
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
+			timeout: timeouts.heavyAction,
+		} );
+
+		if ( ! response.ok() ) {
+			const responseText = await response.text();
+			if ( responseText.includes( 'folder_exists' ) ) {
+				return await this.setPluginStatus( request, `${ slug }/${ slug }.php`, active );
+			}
+			throw new Error( `
+				Failed to install a plugin: ${ response ? response.status() : '<no status>' }.
+				${ responseText }
+				slug: ${ slug }
+			` );
+		}
+		const { plugin } = await response.json();
+
+		return plugin;
+	}
+
+	private async setPluginStatus( request: APIRequestContext, pluginId: string, active: boolean ): Promise<string> {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins/${ pluginId }`,
+				status: active ? 'active' : 'inactive',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			timeout: timeouts.heavyAction,
 		} );
 
 		if ( ! response.ok() ) {
 			throw new Error( `
-				Failed to install a plugin: ${ response ? response.status() : '<no status>' }.
-				${ response ? await response.text() : '<no response>' }
-				slug: ${ slug }
+				Failed to set plugin status: ${ response.status() }.
+				${ await response.text() }
+				plugin: ${ pluginId }
 			` );
 		}
+
 		const { plugin } = await response.json();
 
 		return plugin;
