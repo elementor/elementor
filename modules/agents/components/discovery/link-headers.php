@@ -161,7 +161,7 @@ class Link_Headers extends Feature_Component {
 		}
 
 		if ( $this->settings->is_agent_discovery_enabled() ) {
-			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
+			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"';
 			$links[] = '<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"';
 
 			if ( $this->is_endpoint_active( self::ARD_CATALOG_SLUG ) ) {
