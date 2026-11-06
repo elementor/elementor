@@ -248,7 +248,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( row.getAttribute( 'aria-expanded' ) ).toBe( 'true' );
 		expect( screen.getByText( 'What we found' ) ).toBeTruthy();
 		expect( screen.getByText( 'No openingHours found on your homepage' ) ).toBeTruthy();
-		expect( screen.getByText( 'How to fix it manually' ) ).toBeTruthy();
+		expect( screen.queryByText( 'How to fix it manually' ) ).toBeNull();
 
 		fireEvent.keyDown( row, { key: 'Enter' } );
 
