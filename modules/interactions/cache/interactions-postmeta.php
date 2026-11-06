@@ -33,7 +33,7 @@ class Interactions_Postmeta {
 			return;
 		}
 
-		update_post_meta( $post_id, self::META_KEY, $interactions );
+		update_post_meta( $post_id, self::META_KEY, wp_slash( $interactions ) );
 	}
 
 	private function skip_processing( array $data ) {

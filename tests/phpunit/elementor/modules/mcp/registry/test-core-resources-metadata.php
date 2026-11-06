@@ -7,6 +7,8 @@ use Elementor\Modules\Mcp\Abilities\Global_Variables_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\Interactions_Schema_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
+use Elementor\Modules\Mcp\Abilities\Motion_Code_Guide_Ability;
+use Elementor\Modules\Mcp\Abilities\Motion_Patterns_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
 use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 use PHPUnit\Framework\TestCase;
@@ -100,6 +102,16 @@ class Test_Core_Resources_Metadata extends TestCase {
 				Interactions_Schema_Resource_Ability::class,
 				Interactions_Schema_Resource_Ability::URI,
 				'application/json',
+			],
+			'motion-code-guide' => [
+				Motion_Code_Guide_Ability::class,
+				Motion_Code_Guide_Ability::URI,
+				'text/markdown',
+			],
+			'motion-patterns' => [
+				Motion_Patterns_Ability::class,
+				Motion_Patterns_Ability::URI,
+				'text/markdown',
 			],
 		];
 	}

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Modules\Interactions\Validators\Breakpoints_Value as BreakpointsValueValidator;
+use Elementor\Modules\Interactions\Validators\Code_Effect_Value;
 use Elementor\Modules\Interactions\Validators\Custom_Effect_Value;
 use Elementor\Modules\Interactions\Validators\String_Value as StringValueValidator;
 use Elementor\Modules\Interactions\Validators\Trigger_Value as TriggerValueValidator;
@@ -15,7 +16,7 @@ class Validation {
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
+	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom', 'code' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
 	private const VALID_REPEAT_MODES = [ '', 'loop', 'times' ];
@@ -150,6 +151,10 @@ class Validation {
 		}
 
 		if ( ! $this->is_valid_breakpoints_prop( $value ) ) {
+			return false;
+		}
+
+		if ( ! Code_Effect_Value::is_valid( $value ) ) {
 			return false;
 		}
 
