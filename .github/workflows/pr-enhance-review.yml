@@ -83,24 +83,33 @@ jobs:
     name: Enhanced Code Review
     runs-on: ubuntu-latest
     needs: [check-files, check-label]
-    if: needs.check-label.outputs.should_skip != 'true' && needs.check-files.outputs.docs_only != 'true'
+    if: needs.check-label.outputs.should_skip != 'true'
     permissions:
       contents: read
       pull-requests: write
       checks: write
 
     steps:
+      - name: Skip review for docs-only changes
+        if: needs.check-files.outputs.docs_only == 'true'
+        run: |
+          echo "✅ Skipping enhanced review for docs-only PR"
+          echo "This PR only modifies documentation, changelog, or other non-code files"
+          
       - name: Checkout repository
+        if: needs.check-files.outputs.docs_only != 'true'
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
+        if: needs.check-files.outputs.docs_only != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '18'
 
       - name: Extract PR Information
+        if: needs.check-files.outputs.docs_only != 'true'
         id: pr-info
         env:
           GH_TOKEN: ${{ github.token }}
@@ -118,11 +127,13 @@ jobs:
           echo "is_manual=false" >> $GITHUB_OUTPUT
 
       - name: Install Cursor CLI
+        if: needs.check-files.outputs.docs_only != 'true'
         run: |
           curl https://cursor.com/install -fsS | bash
           echo "$HOME/.cursor/bin" >> $GITHUB_PATH        
 
       - name: Load PR Review Configuration
+        if: needs.check-files.outputs.docs_only != 'true'
         id: config
         run: |
           if [ -f ".github/pr-instructions/pr-review-config.json" ]; then
@@ -135,6 +146,7 @@ jobs:
           echo "config=$CONFIG" >> $GITHUB_OUTPUT
 
       - name: Perform enhanced code review
+        if: needs.check-files.outputs.docs_only != 'true'
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
           GH_TOKEN: ${{ github.token }}
@@ -176,25 +188,11 @@ jobs:
           }
           echo "✅ PR review completed successfully"
 
-  skip-docs-only:
-    name: Enhanced Code Review
-    runs-on: ubuntu-latest
-    needs: [check-files, check-label]
-    if: needs.check-label.outputs.should_skip != 'true' && needs.check-files.outputs.docs_only == 'true'
-    steps:
-      - name: Skip review for docs-only changes
-        run: |
-          echo "✅ Skipping enhanced review for docs-only PR"
-          echo "This PR only modifies documentation, changelog, or other non-code files"
-
   add-label:
     name: Add Auto-Reviewed Label
     runs-on: ubuntu-latest
-    needs: [enhanced-review, skip-docs-only]
-    if: |
-      always() && 
-      github.event_name == 'pull_request' && 
-      (needs.enhanced-review.result == 'success' || needs.skip-docs-only.result == 'success')
+    needs: [enhanced-review]
+    if: success() && github.event_name == 'pull_request'
     permissions:
       pull-requests: write
       issues: write
