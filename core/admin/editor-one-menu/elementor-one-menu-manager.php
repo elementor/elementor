@@ -6,6 +6,7 @@ use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Ready_Group_Menu;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use Elementor\Modules\EditorOne\Module as Editor_One_Module;
@@ -250,6 +251,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
+		if ( $item instanceof Editor_One_Agent_Ready_Group_Menu ) {
+			return false;
+		}
+
 		$original_parent = $this->get_original_parent_slug( $item );
 		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 		$has_page = method_exists( $item, 'render' );
@@ -318,7 +323,6 @@ class Elementor_One_Menu_Manager {
 			'elementor-theme-builder',
 			'e-form-submissions',
 			'elementor-mcp',
-			'elementor-agent-ready',
 			'elementor-agents-ready',
 			'elementor-agent-access',
 			'elementor-license',

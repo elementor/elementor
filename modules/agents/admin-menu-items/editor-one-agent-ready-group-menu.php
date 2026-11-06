@@ -3,15 +3,13 @@
 namespace Elementor\Modules\Agents\AdminMenuItems;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Editor_One_Agent_Ready_Group_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu_Item_With_Page {
+class Editor_One_Agent_Ready_Group_Menu implements Menu_Item_Third_Level_Interface {
 
 	const SLUG = 'elementor-agent-ready';
 
@@ -51,14 +49,5 @@ class Editor_One_Agent_Ready_Group_Menu implements Menu_Item_Third_Level_Interfa
 
 	public function has_children(): bool {
 		return true;
-	}
-
-	public function get_page_title() {
-		return $this->get_label();
-	}
-
-	public function render() {
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Module::PAGE_ID ) );
-		exit;
 	}
 }
