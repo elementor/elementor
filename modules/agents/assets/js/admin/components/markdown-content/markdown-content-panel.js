@@ -78,9 +78,9 @@ export const MarkdownContentPanel = ( { settings } ) => {
 		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
 			<Stack spacing={ 3 } px={ 6 } py={ 3 } flexGrow={ 1 } flexShrink={ 1 } flexBasis={ 0 } minWidth={ 0 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="subtitle1">{ __( 'Make your content easier to read', 'elementor' ) }</Typography>
+					<Typography variant="subtitle1">{ __( 'Help agents get clearer content', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'Give agents a clean Markdown version of your content', 'elementor' ) }
+						{ __( 'Publishes a clean Markdown version of the pages and posts, so agents can read just the text and hierarchy, without layout code.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Stack spacing={ 1 }>
