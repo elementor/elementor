@@ -9,6 +9,7 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
+use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
@@ -208,6 +209,8 @@ class Module extends BaseModule {
 		$this->register_component( $this->webmcp_browser_tools );
 
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
+
+		( new Agents_Sidebar_Config() )->register();
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
 		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
