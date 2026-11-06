@@ -45,6 +45,8 @@ class Link_Headers extends Feature_Component {
 
 	const ARD_CATALOG_SLUG = 'ard.json';
 
+	const MCP_SERVER_CARD_SLUG = 'mcp/server-card.json';
+
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
 
@@ -161,7 +163,7 @@ class Link_Headers extends Feature_Component {
 			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"';
 			$links[] = '<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"';
 
-			if ( $this->is_ard_catalog_active() ) {
+			if ( $this->is_endpoint_active( self::ARD_CATALOG_SLUG ) ) {
 				$links[] = '<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"';
 			}
 		}
@@ -175,7 +177,7 @@ class Link_Headers extends Feature_Component {
 		 *
 		 * @since 3.30.0
 		 */
-		if ( $this->settings->is_agent_discovery_enabled() && apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) ) {
+		if ( $this->settings->is_agent_discovery_enabled() && apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) && $this->is_endpoint_active( self::MCP_SERVER_CARD_SLUG ) ) {
 			$links[] = '<' . $home . '/.well-known/mcp/server-card.json>'
 				. '; rel="mcp-server-card"; type="application/json"';
 		}
@@ -183,11 +185,11 @@ class Link_Headers extends Feature_Component {
 		return $links;
 	}
 
-	private function is_ard_catalog_active(): bool {
+	private function is_endpoint_active( string $slug ): bool {
 		$router = $this->module->get_component( 'well_known_router' );
 
 		return $router instanceof Well_Known_Router
-			&& isset( $router->get_active_endpoints()[ self::ARD_CATALOG_SLUG ] );
+			&& isset( $router->get_active_endpoints()[ $slug ] );
 	}
 
 	/**

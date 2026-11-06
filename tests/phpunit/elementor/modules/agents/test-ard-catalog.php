@@ -264,6 +264,24 @@ class Test_Ard_Catalog extends Elementor_Test_Base {
 		$this->assertNotSame( $identifier_slashed, $identifier_hyphenated );
 	}
 
+	public function test_build_identifier__distinguishes_paths_that_differ_only_by_case_or_spacing() {
+		// Arrange
+		$filter_spaced = static fn() => 'https://example.com/Team%20Docs';
+		$filter_hyphenated = static fn() => 'https://example.com/team-docs';
+
+		// Act
+		add_filter( 'home_url', $filter_spaced );
+		$identifier_spaced = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+		remove_filter( 'home_url', $filter_spaced );
+
+		add_filter( 'home_url', $filter_hyphenated );
+		$identifier_hyphenated = Ard_Catalog::build_identifier( 'document', 'llms-txt' );
+		remove_filter( 'home_url', $filter_hyphenated );
+
+		// Assert
+		$this->assertNotSame( $identifier_spaced, $identifier_hyphenated );
+	}
+
 	public function test_build_identifier__sanitizes_special_characters_per_segment() {
 		// Arrange
 		$filter = static fn() => 'https://example.com/café/über-docs';
@@ -274,7 +292,7 @@ class Test_Ard_Catalog extends Elementor_Test_Base {
 
 		// Assert
 		remove_filter( 'home_url', $filter );
-		$this->assertSame( 'urn:air:example.com:cafe:uber-docs:document:llms-txt', $identifier );
+		$this->assertSame( 'urn:air:example.com:caf%C3%A9:%C3%BCber-docs:document:llms-txt', $identifier );
 	}
 
 	public function test_is_applicable__returns_false_when_physical_catalog_exists_in_public_home_directory() {

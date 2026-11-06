@@ -124,7 +124,7 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 		if ( '' !== $site_path ) {
 			$path_parts = array_filter( explode( '/', $site_path ), 'strlen' );
 			foreach ( $path_parts as $part ) {
-				$segments[] = sanitize_title( $part );
+				$segments[] = rawurlencode( $part );
 			}
 		}
 
