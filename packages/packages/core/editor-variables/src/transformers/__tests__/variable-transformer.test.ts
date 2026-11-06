@@ -67,6 +67,30 @@ describe( 'variableTransformer', () => {
 		expect( variableTransformer( 'e-gv-4', { key: 'grid-template-rows' } ) ).toBe( 'repeat(5, 1fr)' );
 	} );
 
+	it( 'returns repeat(N, 1fr) for a decimal fr count', () => {
+		setupVariable( 'e-gv-5', {
+			type: 'global-size-variable',
+			label: 'cols-decimal',
+			value: '2.5fr',
+		} );
+
+		expect( variableTransformer( 'e-gv-5', { key: 'grid-template-columns' } ) ).toBe( 'repeat(2, 1fr)' );
+	} );
+
+	it.each( [
+		[ 'minmax(0, 1fr) minmax(0, 2fr)', 'grid-template-columns' ],
+		[ 'repeat(auto-fit, minmax(250px, 1fr))', 'grid-template-columns' ],
+		[ '1fr 2fr', 'grid-template-rows' ],
+	] )( 'returns var(--name, value) for grid track list "%s" on %s', ( value, key ) => {
+		setupVariable( 'e-gv-6', {
+			type: 'global-custom-size-variable',
+			label: 'my-grid',
+			value,
+		} );
+
+		expect( variableTransformer( 'e-gv-6', { key } ) ).toBe( `var(--my-grid, ${ value })` );
+	} );
+
 	it( 'returns null when the variable does not exist', () => {
 		mockService.variables.mockReturnValue( {} );
 		mockService.findVariableByLabel.mockReturnValue( null );
