@@ -65,6 +65,7 @@
     "packages/packages/tools/*",
     "packages/packages/libs/*",
     "packages/packages/core/*",
+    "packages/packages/angie/*",
     "packages/apps/*"
   ],
   "devDependencies": {
