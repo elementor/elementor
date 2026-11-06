@@ -2,6 +2,8 @@ import { type APIRequestContext } from '@playwright/test';
 import { fetchNonce } from '../../../wp-authentication';
 
 export const DEFAULT_SERVER_ROUTE = 'mcp/mcp-adapter-default-server';
+// Elementor's own server, used when the standalone MCP Adapter plugin is not active.
+export const ELEMENTOR_SERVER_ROUTE = 'elementor/mcp';
 
 const PROTOCOL_VERSION = '2025-06-18';
 

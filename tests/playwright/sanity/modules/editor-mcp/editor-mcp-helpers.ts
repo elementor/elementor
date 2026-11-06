@@ -55,3 +55,16 @@ export async function getFrontendHtml( request: APIRequestContext, baseUrl: stri
 
 	return response.text();
 }
+
+// Every string inside a nested report, so a whole response can be checked for HTML at once.
+export function collectStrings( value: unknown, out: string[] = [] ): string[] {
+	if ( 'string' === typeof value ) {
+		out.push( value );
+	} else if ( Array.isArray( value ) ) {
+		value.forEach( ( item ) => collectStrings( item, out ) );
+	} else if ( value && 'object' === typeof value ) {
+		Object.values( value ).forEach( ( item ) => collectStrings( item, out ) );
+	}
+
+	return out;
+}

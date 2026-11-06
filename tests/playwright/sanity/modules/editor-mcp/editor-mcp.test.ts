@@ -4,9 +4,11 @@ import { wpCli } from '../../../assets/wp-cli';
 import type ApiRequests from '../../../assets/api-requests';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
-import { McpClient } from './mcp-client';
+import { fetchNonce } from '../../../wp-authentication';
+import { ELEMENTOR_SERVER_ROUTE, McpClient } from './mcp-client';
 import {
 	buildComposition,
+	collectStrings,
 	createPage,
 	getFrontendHtml,
 	publish,
@@ -18,6 +20,8 @@ import {
 // The wp-playground renders the canvas slowly; give UI assertions room.
 const expect = baseExpect.configure( { timeout: 30_000 } );
 
+const HTML_TAG = /<\/?[a-z][a-z0-9-]*(\s[^>]*)?>/i;
+const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/;
 const AI_UPDATE_DIALOG = 'Page Updated by AI';
 
 type TestUser = { id: string; username: string; password: string };
@@ -94,6 +98,168 @@ test.describe( 'Editor MCP @editor-mcp', () => {
 	test.afterAll( async () => {
 		await setMcpAbilitiesEnabled( true );
 		await mcpRequest.dispose();
+	} );
+
+	test( 'ED-25719 get-system-info returns plain-text reports and report_not_found for unknown names', async ( { request, baseURL } ) => {
+		await test.step( 'Without a filter every report comes back as plain text', async () => {
+			const result = await mcp.callToolOrThrow( 'elementor/get-system-info' );
+			const reports = result.reports as Record<string, unknown>;
+
+			expect( Object.keys( reports ).length ).toBeGreaterThan( 1 );
+			expect( collectStrings( reports ).filter( ( value ) => HTML_TAG.test( value ) ) ).toEqual( [] );
+		} );
+
+		await test.step( 'reports ["server"] returns only the server report, as plain text', async () => {
+			const result = await mcp.callToolOrThrow( 'elementor/get-system-info', { reports: [ 'server' ] } );
+			const reports = result.reports as Record<string, unknown>;
+
+			expect( Object.keys( reports ) ).toEqual( [ 'server' ] );
+			expect( collectStrings( reports ).filter( ( value ) => HTML_TAG.test( value ) ) ).toEqual( [] );
+		} );
+
+		await test.step( 'reports ["nope"] returns report_not_found with the available names', async () => {
+			const result = await mcp.callTool( 'elementor/get-system-info', { reports: [ 'nope' ] } );
+
+			expect( result.isError ).toBe( true );
+			expect( result.text ).toContain( 'server' );
+			expect( result.text ).toContain( 'wordpress' );
+
+			// The MCP result carries only the message, so read the error code from the Abilities REST API.
+			const nonce = await fetchNonce( request, baseURL );
+			const response = await request.get( `${ baseURL }/wp-json/wp-abilities/v1/abilities/elementor/get-system-info/run`, {
+				headers: { 'X-WP-Nonce': nonce },
+				params: { 'input[reports][0]': 'nope' },
+			} );
+
+			expect( ( await response.json() ).code ).toBe( 'report_not_found' );
+		} );
+	} );
+
+	test( 'ED-25806 get-widget-schemas returns batch schemas and per-type errors', async () => {
+		const result = await mcp.callToolOrThrow( 'elementor/get-widget-schemas', { widget_type: [ 'e-heading', 'e-button', 'not-a-widget' ] } );
+		const single = await mcp.callToolOrThrow( 'elementor/get-widget-schemas', { widget_type: [ 'e-heading' ] } );
+		const schemas = result.schemas as Record<string, unknown>;
+
+		expect( Object.keys( schemas ).sort() ).toEqual( [ 'e-button', 'e-heading' ] );
+		expect( schemas[ 'e-heading' ] ).toEqual( ( single.schemas as Record<string, unknown> )[ 'e-heading' ] );
+		expect( ( result.errors as Record<string, unknown> )[ 'not-a-widget' ] ).toBeTruthy();
+
+		const toolNames = ( await mcp.listTools() ).map( ( tool ) => tool.name );
+
+		expect( toolNames ).toContain( 'elementor-get-widget-schemas' );
+		expect( toolNames ).not.toContain( 'elementor-get-widget-schema' );
+	} );
+
+	// Core runs without Pro; the Pro license states are covered in the Pro suite.
+	test( 'ED-25720 get-license-status reports pro_not_installed without Pro, with no key or email', async () => {
+		const result = await mcp.callTool( 'elementor/get-license-status' );
+
+		expect( result.isError ).toBe( false );
+		expect( result.data ).toEqual( { status: 'pro_not_installed', tier: 'free', label: 'Free' } );
+		expect( result.text ).not.toMatch( EMAIL );
+	} );
+
+	test( 'ED-25023 S2 setting an unknown icon on an e-svg fails with an actionable error', async () => {
+		test.fixme( true, 'ED-25023 AC says unknown icons fail; the product saves them with an icon_not_found warning and renders a placeholder. Needs a product decision or bug ticket.' );
+
+		const postId = await createPage( mcp, 'MCP unknown icon' );
+		const result = await buildComposition( mcp, {
+			post_id: postId,
+			xml_structure: '<e-svg configuration-id="icon"></e-svg>',
+			element_config: { icon: { svg: { value: 'fa-solid fa-arrow-right', library: 'fa-solid' } } },
+		} );
+		const svgId = resolvedIds( result ).icon;
+		const before = await mcp.callToolOrThrow( 'elementor/get-page-structure', { post_id: postId, element_id: svgId, include_content: true } );
+
+		const update = await mcp.callTool( 'elementor/manage-elements', {
+			post_id: postId,
+			operations: [ { action: 'update', element_id: svgId, settings: { svg: { value: 'fa-solid fa-not-a-real-icon-zzz', library: 'fa-solid' } } } ],
+		} );
+		const after = await mcp.callToolOrThrow( 'elementor/get-page-structure', { post_id: postId, element_id: svgId, include_content: true } );
+		const opStatus = ( update.data?.results as { status: string }[] | undefined )?.[ 0 ]?.status;
+
+		expect( update.isError || 'error' === opStatus, `Expected an error, got: ${ update.text }` ).toBe( true );
+		expect( update.text ).toContain( 'find-icons' );
+		expect( after ).toEqual( before );
+	} );
+
+	test( 'ED-25717 clear-cache regenerates the page CSS file', async ( { request, baseURL } ) => {
+		await wpCli( 'wp option update elementor_css_print_method external' );
+
+		const postId = await createPage( mcp, 'MCP clear cache' );
+
+		await buildComposition( mcp, { post_id: postId, xml_structure: '<e-heading configuration-id="t"></e-heading>', element_config: { t: { title: 'Cached page' } }, style: { t: 'color: rgb(255, 0, 0);' } } );
+		await publish( mcp, postId );
+
+		// V3 pages load post-<id>.css, V4 (atomic) pages load local-<id>-frontend-<breakpoint>.css.
+		const cssVersion = ( html: string ) => html.match( new RegExp( `(?:post|local)-${ postId }[a-z-]*\\.css\\?ver=(\\w+)` ) )?.[ 1 ];
+		const before = cssVersion( await getFrontendHtml( request, baseURL, postId ) );
+
+		expect( before ).toBeTruthy();
+		// The version is a timestamp in seconds, so let it tick before regenerating.
+		await new Promise( ( resolve ) => setTimeout( resolve, 1100 ) );
+
+		const result = await mcp.callToolOrThrow( 'elementor/clear-cache' );
+
+		expect( result.success ).toBe( true );
+
+		const html = await getFrontendHtml( request, baseURL, postId );
+		const after = cssVersion( html );
+
+		expect( after ).toBeTruthy();
+		expect( after ).not.toBe( before );
+		expect( html ).toContain( 'Cached page' );
+		expect( html ).not.toMatch( /Fatal error|Warning:/ );
+	} );
+
+	test( 'ED-25749 S2 without the MCP Adapter plugin, the Elementor MCP server exists and lists the tools', async ( { request, baseURL } ) => {
+		const client = await McpClient.connect( request, baseURL, ELEMENTOR_SERVER_ROUTE );
+		const names = ( await client.listTools() ).map( ( tool ) => tool.name );
+
+		expect( names ).toContain( 'elementor-build-composition' );
+		expect( names ).toContain( 'elementor-get-page-structure' );
+	} );
+
+	test( 'ED-25849 S1 while disabled the default server lists only the enable tool, which turns the abilities on', async ( { request, baseURL } ) => {
+		await setMcpAbilitiesEnabled( false );
+
+		const client = await McpClient.connect( request, baseURL );
+		const elementorToolsBefore = ( await client.listTools() ).map( ( tool ) => tool.name ).filter( ( name ) => name.startsWith( 'elementor-' ) );
+
+		expect( elementorToolsBefore ).toEqual( [ 'elementor-enable-elementor-abilities' ] );
+
+		const result = await client.callTool( 'elementor/enable-elementor-abilities', { consent: true } );
+
+		expect( result.isError ).toBe( false );
+
+		const reconnected = await McpClient.connect( request, baseURL );
+		const namesAfter = ( await reconnected.listTools() ).map( ( tool ) => tool.name );
+
+		expect( namesAfter ).toContain( 'elementor-build-composition' );
+		expect( namesAfter ).not.toContain( 'elementor-enable-elementor-abilities' );
+	} );
+
+	test( 'ED-25849 S2 an Editor-role user cannot enable the abilities', async ( { request, baseURL, apiRequests } ) => {
+		await setMcpAbilitiesEnabled( false );
+
+		const editor = await createEditorUser( apiRequests, request );
+		const editorRequest = await newUserContext( baseURL, editor );
+
+		try {
+			const client = await McpClient.connect( editorRequest, baseURL );
+			const { json } = await client.rawRpc( 'tools/call', { name: 'elementor-enable-elementor-abilities', arguments: { consent: true } } );
+
+			expect( Boolean( json?.error ) || Boolean( json?.result?.isError ) ).toBe( true );
+
+			const nonce = await fetchNonce( request, baseURL );
+			const settings = await request.get( `${ baseURL }/wp-json/elementor-mcp-composer/v1.0.20/mcp-settings`, { headers: { 'X-WP-Nonce': nonce } } );
+
+			expect( ( await settings.json() ).data.enabled ).toBe( false );
+		} finally {
+			await editorRequest.dispose();
+			await apiRequests.deleteUser( request, editor.id );
+			await setMcpAbilitiesEnabled( true );
+		}
 	} );
 
 	test( 'ED-25734 every MCP write returns an undo_revision_id that restores and re-applies the change', async ( { request, baseURL, browser } ) => {
