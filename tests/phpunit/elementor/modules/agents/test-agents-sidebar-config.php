@@ -104,8 +104,4 @@ class Test_Agents_Sidebar_Config extends Elementor_Test_Base {
 	private function act_as_administrator() {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 	}
-
-	private function act_as_subscriber() {
-		wp_set_current_user( self::factory()->user->create( [ 'role' => 'subscriber' ] ) );
-	}
 }
