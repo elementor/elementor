@@ -4,6 +4,7 @@ import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { timeouts } from '../../../config/timeouts';
 import { FONT_FAMILIES } from './typography/typography-constants';
+import { hidePromoChromeForScreenshot } from '../../../assets/promotion-cdn';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -78,6 +79,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			await editor.v4Panel.openTab( 'style' );
 			await editor.openV2Section( section );
 
+			await hidePromoChromeForScreenshot( editor.page );
 			await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( `expanded-${ section }-section.png` );
 		}
 	} );
@@ -91,12 +93,14 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await editor.page.mouse.wheel( 0, 100 );
 		await editor.page.waitForTimeout( 1000 );
 
+		await hidePromoChromeForScreenshot( editor.page );
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-scrolling-down.png' );
 
 		// Scroll up
 		await editor.page.mouse.wheel( 0, -100 );
 		await editor.page.waitForTimeout( 1000 );
 
+		await hidePromoChromeForScreenshot( editor.page );
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-scrolling-up.png' );
 	} );
 
@@ -126,6 +130,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			await expect( arialFontFamilyLocator ).toBeHidden();
 		} );
 
+		await hidePromoChromeForScreenshot( editor.page );
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
 
@@ -149,6 +154,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await openSections( sectionsToOpen );
 		await verifySectionsOpen( sectionsToOpen );
 
+		await hidePromoChromeForScreenshot( editor.page );
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'style-tab-last-open-sections.png' );
 
 		expect( sectionsStillOpen ).toEqual( expect.any( Array ) );
