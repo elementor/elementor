@@ -21,6 +21,6 @@ export default class VimeoLoader extends BaseLoader {
 		// Vimeo requires the '#t=' param to be last in the URL.
 		const timeMatch = videoURL.match( /#t=[^&]*/ );
 
-		return videoURL.replace( timeMatch[ 0 ], '' ) + timeMatch;
+		return videoURL.replace( timeMatch[ 0 ], '' ) + "&autoplay=1" + timeMatch;
 	}
 }
