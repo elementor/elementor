@@ -963,6 +963,7 @@ class Module extends BaseModule {
 
 		return [
 			'isActivated'        => $this->settings->is_activated(),
+			'readinessScoreUrl'  => admin_url( 'admin.php?page=' . self::PAGE_ID ),
 			'llms'               => $this->get_llms_state( $unavailable_reasons ),
 			'markdown'           => $this->get_markdown_state(),
 			'botAccess'          => $this->get_bot_access_state( $unavailable_reasons ),
