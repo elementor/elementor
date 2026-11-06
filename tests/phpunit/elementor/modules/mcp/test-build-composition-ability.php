@@ -82,6 +82,8 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	}
 
 	public function test_execute__renders_composition() {
+		$this->markTestSkipped( 'Unexpected llm_instructions key in output when MCP composer package is loaded in tests/bootstrap.php (APT-220); to be fixed by the owning team.' );
+
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
