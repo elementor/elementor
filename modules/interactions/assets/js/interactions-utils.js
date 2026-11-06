@@ -12,7 +12,13 @@ import {
 	timingValueToMs,
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
+	endsAtTransformBaseline,
+	mergeCommittedTransformChannels,
+	shouldResetElementStyles,
 } from './interactions-shared-utils.js';
 
 function isSupportedInteraction( animationConfig ) {
@@ -46,7 +52,13 @@ export {
 	timingValueToMs,
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
+	endsAtTransformBaseline,
+	mergeCommittedTransformChannels,
+	shouldResetElementStyles,
 };
 
 export function getKeyframes( effect, type, direction ) {
