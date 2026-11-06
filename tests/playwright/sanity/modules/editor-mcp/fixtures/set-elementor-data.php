@@ -12,5 +12,11 @@ if ( ! defined( 'WP_CLI' ) ) {
 
 [ $post_id, $data ] = $args;
 
+$decoded = base64_decode( $data, true );
+
+if ( false === $decoded ) {
+	WP_CLI::error( 'Invalid base64 payload for Elementor data.' );
+}
+
 update_post_meta( (int) $post_id, '_elementor_edit_mode', 'builder' );
-update_post_meta( (int) $post_id, '_elementor_data', wp_slash( base64_decode( $data ) ) );
+update_post_meta( (int) $post_id, '_elementor_data', wp_slash( $decoded ) );

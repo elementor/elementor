@@ -11,6 +11,17 @@ export type McpTool = {
 	inputSchema?: Record<string, unknown>;
 };
 
+type JsonRpcResponse = {
+	error?: unknown;
+	result?: {
+		tools?: McpTool[];
+		nextCursor?: string;
+		content?: { text?: string }[];
+		isError?: boolean;
+		structuredContent?: Record<string, unknown>;
+	};
+};
+
 export type McpToolResult = {
 	isError: boolean;
 	text: string;
@@ -40,7 +51,7 @@ export class McpClient {
 			clientInfo: { name: 'elementor-playwright', version: '1.0.0' },
 		} );
 
-		client.protocolVersion = ( init.result as { protocolVersion?: string } )?.protocolVersion ?? PROTOCOL_VERSION;
+		client.protocolVersion = ( init?.result as { protocolVersion?: string } | undefined )?.protocolVersion ?? PROTOCOL_VERSION;
 		await client.rpc( 'notifications/initialized', {}, true );
 
 		return client;
@@ -73,7 +84,17 @@ export class McpClient {
 
 		const text = await response.text();
 
-		return { status: response.status(), json: text ? JSON.parse( text ) : null };
+		let json: JsonRpcResponse | null = null;
+
+		if ( text ) {
+			try {
+				json = JSON.parse( text );
+			} catch {
+				throw new Error( `MCP response is not JSON (${ response.status() }): ${ text.slice( 0, 200 ) }` );
+			}
+		}
+
+		return { status: response.status(), json };
 	}
 
 	async rpc( method: string, params: Record<string, unknown> = {}, notification = false ) {
@@ -96,8 +117,8 @@ export class McpClient {
 
 		do {
 			const json = await this.rpc( 'tools/list', cursor ? { cursor } : {} );
-			tools.push( ...json.result.tools );
-			cursor = json.result.nextCursor;
+			tools.push( ...( json?.result?.tools ?? [] ) );
+			cursor = json?.result?.nextCursor;
 		} while ( cursor );
 
 		return tools;
@@ -105,8 +126,8 @@ export class McpClient {
 
 	async callTool( name: string, args: Record<string, unknown> = {} ): Promise<McpToolResult> {
 		const json = await this.rpc( 'tools/call', { name: toToolName( name ), arguments: args } );
-		const result = json.result;
-		const text = ( result.content ?? [] ).map( ( block: { text?: string } ) => block.text ?? '' ).join( '\n' );
+		const result = json?.result ?? {};
+		const text = ( result.content ?? [] ).map( ( block ) => block.text ?? '' ).join( '\n' );
 
 		return {
 			isError: Boolean( result.isError ),

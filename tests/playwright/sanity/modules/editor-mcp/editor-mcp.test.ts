@@ -1,6 +1,7 @@
 import { type APIRequestContext, type Browser, type Page, expect as baseExpect, request as playwrightRequest } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { wpCli } from '../../../assets/wp-cli';
+import type ApiRequests from '../../../assets/api-requests';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import { McpClient } from './mcp-client';
@@ -38,7 +39,7 @@ async function newUserContext( baseUrl: string, user: TestUser ): Promise<APIReq
 	return context;
 }
 
-async function createEditorUser( apiRequests, request: APIRequestContext ): Promise<TestUser> {
+async function createEditorUser( apiRequests: ApiRequests, request: APIRequestContext ): Promise<TestUser> {
 	return apiRequests.createNewUser( request, { username: 'mcpeditor', password: 'password', email: '', roles: [ 'editor' ] } );
 }
 
@@ -59,7 +60,7 @@ async function waitForEditorReady( page: Page ) {
 	await page.waitForFunction( () => !! ( window as unknown as { elementor?: { getPreviewContainer?: () => unknown } } ).elementor?.getPreviewContainer?.(), null, { timeout: 180_000 } );
 }
 
-async function triggerHeartbeat( page ) {
+async function triggerHeartbeat( page: Page ) {
 	await page.evaluate( () => ( window as unknown as { wp: { heartbeat: { connectNow: () => void } } } ).wp.heartbeat.connectNow() );
 }
 
