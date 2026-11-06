@@ -1147,6 +1147,12 @@ class Frontend extends App {
 
 		$data = $document->get_elements_data();
 
+		// When a widget such as Loop Grid is placed through a Template widget or a
+		// Global Widget, its data lives in a separate document. Callers that need
+		// to locate a nested widget from the host page should use
+		// `Utils::find_element_in_document_tree()` so embedded templates are
+		// searched too, not just the host document.
+
 		/**
 		 * Filters document elements data after loading.
 		 *
