@@ -15,6 +15,7 @@ export default class extends Category {
 		this.ui.loadingIcon.show();
 
 		elementorCommon.ajax.addRequest( 'finder_get_category_items', {
+			unique_id: 'finder_get_category_items_' + this.model.get('name'),
 			data: {
 				category: this.model.get( 'name' ),
 				filter: this.getTextFilter(),
