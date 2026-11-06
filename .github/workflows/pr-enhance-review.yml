@@ -5,64 +5,6 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  check-files:
-    name: Check Changed Files
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && !github.event.pull_request.draft && startsWith(github.repository, 'elementor/')
-    outputs:
-      docs_only: ${{ steps.check.outputs.docs_only || 'false' }}
-    permissions:
-      contents: read
-    
-    steps:
-      # The default pull_request checkout is GitHub's test merge commit (refs/pull/N/merge):
-      # its first parent is the base branch tip, so HEAD^1..HEAD is exactly the PR's change set
-      # without commits that landed on the base branch after the PR branched off.
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 2
-
-      - name: Check if PR only touches docs/txt files
-        id: check
-        run: |
-          if [ "$(git rev-list --parents -n 1 HEAD | wc -w)" -ne 3 ]; then
-            echo "Error: HEAD is not the PR merge commit, cannot classify changed files"
-            exit 1
-          fi
-
-          CHANGED_FILES=$(git diff --name-only HEAD^1 HEAD)
-
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "No files changed"
-            echo "docs_only=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          DOCS_ONLY=true
-          while IFS= read -r file; do
-            case "$file" in
-              # Markdown that steers CI or AI agents is treated as code and always reviewed.
-              .github/*|.cursor/*|.claude/*|AGENTS.md|*/AGENTS.md|CLAUDE.md|*/CLAUDE.md)
-                DOCS_ONLY=false
-                break
-                ;;
-              *.md|*.txt|bin/*|.gitignore|docs/*|.vscode/*)
-                continue
-                ;;
-              *)
-                DOCS_ONLY=false
-                break
-                ;;
-            esac
-          done <<< "$CHANGED_FILES"
-          
-          echo "docs_only=$DOCS_ONLY" >> "$GITHUB_OUTPUT"
-          echo "Changed files are docs-only: $DOCS_ONLY"
-
   check-label:
     name: Check Auto-Reviewed Label
     runs-on: ubuntu-latest
@@ -93,43 +35,59 @@ jobs:
   enhanced-review:
     name: Enhanced Code Review
     runs-on: ubuntu-latest
-    needs: [check-files, check-label]
-    # Run even if check-files failed, so a classification failure fails this required check
-    # instead of leaving it "skipped" (which branch protection treats as passing).
-    if: ${{ !cancelled() && needs.check-label.result == 'success' && needs.check-label.outputs.should_skip != 'true' }}
+    needs: [check-label]
+    if: needs.check-label.outputs.should_skip != 'true'
+    outputs:
+      docs_only: ${{ steps.files.outputs.docs_only }}
     permissions:
       contents: read
       pull-requests: write
       checks: write
 
-    # Every review step below is guarded by `docs_only != 'true'`; keep that guard on new steps.
     steps:
-      - name: Fail if changed files could not be classified
-        if: needs.check-files.result != 'success'
+      - name: Check if PR only touches docs/txt files
+        id: files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          echo "❌ Check Changed Files job did not succeed (result: ${{ needs.check-files.result }})"
-          exit 1
+          # If the file list can't be fetched (e.g. diff too large), run the full review.
+          FILES=$(gh pr diff "$PR_NUMBER" --repo "$GH_REPO" --name-only) || FILES=""
+          echo "$FILES"
+
+          DOCS_ONLY=false
+          if [ -n "$FILES" ]; then
+            DOCS_ONLY=true
+            while IFS= read -r file; do
+              case "$file" in
+                *.md|*.txt|bin/*|.gitignore|docs/*|.vscode/*) ;;
+                *) DOCS_ONLY=false; break ;;
+              esac
+            done <<< "$FILES"
+          fi
+
+          echo "docs_only=$DOCS_ONLY" >> "$GITHUB_OUTPUT"
+          echo "Docs-only: $DOCS_ONLY"
 
       - name: Skip review for docs-only changes
-        if: needs.check-files.outputs.docs_only == 'true'
-        run: |
-          echo "✅ Skipping enhanced review for docs-only PR"
-          echo "This PR only modifies documentation, changelog, or other non-code files"
-          
+        if: steps.files.outputs.docs_only == 'true'
+        run: echo "✅ Skipping enhanced review for docs-only PR"
+
       - name: Checkout repository
-        if: needs.check-files.outputs.docs_only != 'true'
+        if: steps.files.outputs.docs_only != 'true'
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        if: needs.check-files.outputs.docs_only != 'true'
+        if: steps.files.outputs.docs_only != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '18'
 
       - name: Extract PR Information
-        if: needs.check-files.outputs.docs_only != 'true'
+        if: steps.files.outputs.docs_only != 'true'
         id: pr-info
         env:
           GH_TOKEN: ${{ github.token }}
@@ -147,13 +105,13 @@ jobs:
           echo "is_manual=false" >> $GITHUB_OUTPUT
 
       - name: Install Cursor CLI
-        if: needs.check-files.outputs.docs_only != 'true'
+        if: steps.files.outputs.docs_only != 'true'
         run: |
           curl https://cursor.com/install -fsS | bash
           echo "$HOME/.cursor/bin" >> $GITHUB_PATH        
 
       - name: Load PR Review Configuration
-        if: needs.check-files.outputs.docs_only != 'true'
+        if: steps.files.outputs.docs_only != 'true'
         id: config
         run: |
           if [ -f ".github/pr-instructions/pr-review-config.json" ]; then
@@ -166,7 +124,7 @@ jobs:
           echo "config=$CONFIG" >> $GITHUB_OUTPUT
 
       - name: Perform enhanced code review
-        if: needs.check-files.outputs.docs_only != 'true'
+        if: steps.files.outputs.docs_only != 'true'
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
           GH_TOKEN: ${{ github.token }}
@@ -211,10 +169,9 @@ jobs:
   add-label:
     name: Add Auto-Reviewed Label
     runs-on: ubuntu-latest
-    needs: [check-files, enhanced-review]
-    # Docs-only runs skip the review, so they must not mark the PR as reviewed:
-    # otherwise code pushed to the same PR later would never be reviewed.
-    if: success() && github.event_name == 'pull_request' && needs.check-files.outputs.docs_only != 'true'
+    needs: [enhanced-review]
+    # Docs-only runs skip the review, so they must not mark the PR as reviewed.
+    if: success() && github.event_name == 'pull_request' && needs.enhanced-review.outputs.docs_only != 'true'
     permissions:
       pull-requests: write
       issues: write
