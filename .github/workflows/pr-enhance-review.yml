@@ -3,13 +3,6 @@ name: Enhanced PR Review
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
 
 jobs:
   check-label:
@@ -44,23 +37,57 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-label]
     if: needs.check-label.outputs.should_skip != 'true'
+    outputs:
+      docs_only: ${{ steps.files.outputs.docs_only }}
     permissions:
       contents: read
       pull-requests: write
       checks: write
 
     steps:
+      - name: Check if PR only touches docs/txt files
+        id: files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          # If the file list can't be fetched (e.g. diff too large), run the full review.
+          FILES=$(gh pr diff "$PR_NUMBER" --repo "$GH_REPO" --name-only) || FILES=""
+          echo "$FILES"
+
+          DOCS_ONLY=false
+          if [ -n "$FILES" ]; then
+            DOCS_ONLY=true
+            while IFS= read -r file; do
+              case "$file" in
+                *.md|*.txt|bin/*|.gitignore|docs/*|.vscode/*) ;;
+                *) DOCS_ONLY=false; break ;;
+              esac
+            done <<< "$FILES"
+          fi
+
+          echo "docs_only=$DOCS_ONLY" >> "$GITHUB_OUTPUT"
+          echo "Docs-only: $DOCS_ONLY"
+
+      - name: Skip review for docs-only changes
+        if: steps.files.outputs.docs_only == 'true'
+        run: echo "✅ Skipping enhanced review for docs-only PR"
+
       - name: Checkout repository
+        if: steps.files.outputs.docs_only != 'true'
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
+        if: steps.files.outputs.docs_only != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '18'
 
       - name: Extract PR Information
+        if: steps.files.outputs.docs_only != 'true'
         id: pr-info
         env:
           GH_TOKEN: ${{ github.token }}
@@ -78,11 +105,13 @@ jobs:
           echo "is_manual=false" >> $GITHUB_OUTPUT
 
       - name: Install Cursor CLI
+        if: steps.files.outputs.docs_only != 'true'
         run: |
           curl https://cursor.com/install -fsS | bash
           echo "$HOME/.cursor/bin" >> $GITHUB_PATH        
 
       - name: Load PR Review Configuration
+        if: steps.files.outputs.docs_only != 'true'
         id: config
         run: |
           if [ -f ".github/pr-instructions/pr-review-config.json" ]; then
@@ -95,6 +124,7 @@ jobs:
           echo "config=$CONFIG" >> $GITHUB_OUTPUT
 
       - name: Perform enhanced code review
+        if: steps.files.outputs.docs_only != 'true'
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
           GH_TOKEN: ${{ github.token }}
@@ -140,7 +170,8 @@ jobs:
     name: Add Auto-Reviewed Label
     runs-on: ubuntu-latest
     needs: [enhanced-review]
-    if: success() && github.event_name == 'pull_request'
+    # Docs-only runs skip the review, so they must not mark the PR as reviewed.
+    if: success() && github.event_name == 'pull_request' && needs.enhanced-review.outputs.docs_only != 'true'
     permissions:
       pull-requests: write
       issues: write
