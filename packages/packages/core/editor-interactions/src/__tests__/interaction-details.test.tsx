@@ -210,7 +210,7 @@ describe( 'InteractionDetails', () => {
 	} );
 
 	describe( 'Trigger menu options', () => {
-		it( 'should show "While scrolling" option as disabled in the trigger menu', () => {
+		it( 'should show "While scrolling" as a promotion-locked trigger option', () => {
 			const interaction = createInteractionItemValue( { trigger: 'load' } );
 
 			renderInteractionDetails( interaction );
@@ -224,10 +224,10 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByRole( 'option', { name: /page load/i, hidden: true } ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
 
-			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
-			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i, hidden: true } );
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling, Pro/i, hidden: true } );
 			expect( scrollOnOption ).toBeInTheDocument();
-			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( scrollOnOption ).toHaveAttribute( 'data-promotion-locked-option', 'scrollOn' );
+			expect( scrollOnOption ).not.toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 	} );
 

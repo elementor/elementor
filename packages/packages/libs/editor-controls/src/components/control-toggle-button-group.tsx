@@ -13,6 +13,7 @@ import {
 	Typography,
 	useTheme,
 } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import ControlActions from '../control-actions/control-actions';
 import { ConditionalTooltip } from './conditional-tooltip';
@@ -22,6 +23,7 @@ type RenderContentProps = { size: ToggleButtonProps[ 'size' ] };
 export type ToggleButtonGroupItem< TValue > = {
 	value: TValue;
 	disabled?: boolean;
+	promotionLocked?: boolean;
 	label: string;
 	renderContent: ( { size }: RenderContentProps ) => React.ReactNode;
 	showTooltip?: boolean;
@@ -44,8 +46,8 @@ export const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 `;
 
 export const StyledToggleButton = styled( ToggleButton, {
-	shouldForwardProp: ( prop ) => prop !== 'isPlaceholder',
-} )< { isPlaceholder: boolean } >`
+	shouldForwardProp: ( prop ) => prop !== 'isPlaceholder' && prop !== 'isPromotionLocked',
+} )< { isPlaceholder: boolean; isPromotionLocked?: boolean } >`
 	${ ( { theme, isPlaceholder } ) =>
 		isPlaceholder &&
 		`
@@ -55,6 +57,12 @@ export const StyledToggleButton = styled( ToggleButton, {
 		&:hover {
 			background-color: ${ theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' };
 		}
+	` }
+	${ ( { theme, isPromotionLocked } ) =>
+		isPromotionLocked &&
+		`
+		opacity: ${ theme.palette.action.disabledOpacity };
+		color: ${ theme.palette.action.disabled };
 	` }
 `;
 
@@ -178,6 +186,7 @@ export const ToggleButtonGroupUi = React.forwardRef(
 						renderContent: Content,
 						showTooltip,
 						disabled: optionDisabled = false,
+						promotionLocked = false,
 					} ) => {
 						const isPlaceholder =
 							placeholderArray.length > 0 &&
@@ -192,11 +201,12 @@ export const ToggleButtonGroupUi = React.forwardRef(
 							>
 								<StyledToggleButton
 									value={ buttonValue }
-									aria-label={ label }
+									aria-label={ promotionLocked ? `${ label }, ${ __( 'Pro', 'elementor' ) }` : label }
 									size={ size }
 									fullWidth={ fullWidth }
 									isPlaceholder={ isPlaceholder }
-									disabled={ optionDisabled }
+									isPromotionLocked={ promotionLocked }
+									disabled={ optionDisabled && ! promotionLocked }
 								>
 									<Content size={ size } />
 								</StyledToggleButton>

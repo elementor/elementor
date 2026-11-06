@@ -6,6 +6,7 @@ export type PromotionTrackingData = {
 	target_location?: 'widget_panel' | 'variables_manager';
 	location_l1?: string;
 	location_l2?: 'style' | 'general' | 'interactions';
+	target_value?: string;
 };
 
 type PromotionEventOptions = {
@@ -23,6 +24,7 @@ const getBaseEventProperties = ( data: PromotionTrackingData, config: MixpanelCo
 	target_location: data.target_location ?? 'widget_panel',
 	location_l1: data.location_l1 ?? getSelectedElements()[ 0 ]?.type ?? '',
 	...( data.location_l2 && { location_l2: data.location_l2 } ),
+	...( data.target_value && { target_value: data.target_value } ),
 } );
 
 const dispatchPromotionEvent = (

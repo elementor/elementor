@@ -291,6 +291,46 @@ describe( 'ControlToggleButtonGroup', () => {
 		expect( within( menu ).queryByText( 'Six' ) ).not.toBeInTheDocument();
 		expect( within( menu ).getByText( 'Five' ) ).toBeInTheDocument();
 	} );
+
+	describe( 'promotionLocked', () => {
+		const lockedItems: ToggleButtonGroupItem< string >[] = [
+			{
+				value: 'locked',
+				label: 'Locked',
+				promotionLocked: true,
+				disabled: true,
+				renderContent: () => 'Locked',
+			},
+		];
+
+		it( 'should keep promotion locked buttons enabled and invoke onChange on click', () => {
+			const onChange = jest.fn();
+
+			renderControlToggleButtonGroup(
+				<ControlToggleButtonGroup value={ '' } items={ lockedItems } onChange={ onChange } exclusive />
+			);
+
+			const button = screen.getByRole( 'button', { name: 'Locked, Pro' } );
+
+			expect( button ).toBeEnabled();
+
+			fireEvent.click( button );
+
+			expect( onChange ).toHaveBeenCalledWith( 'locked' );
+		} );
+
+		it( 'should apply theme disabled opacity to promotion locked buttons', () => {
+			const onChange = jest.fn();
+
+			renderControlToggleButtonGroup(
+				<ControlToggleButtonGroup value={ '' } items={ lockedItems } onChange={ onChange } exclusive />
+			);
+
+			const button = screen.getByRole( 'button', { name: 'Locked, Pro' } );
+
+			expect( button ).toHaveStyle( { opacity: '0.38' } );
+		} );
+	} );
 } );
 
 function getCurrentSplitButton() {
