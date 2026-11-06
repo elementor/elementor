@@ -4,6 +4,7 @@ namespace Elementor\Modules\Agents\Components\Discovery;
 
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Module;
@@ -164,6 +165,10 @@ class Link_Headers extends Feature_Component {
 			if ( $this->is_ard_catalog_active() ) {
 				$links[] = '<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"';
 			}
+
+			if ( $this->is_openapi_publishable() ) {
+				$links[] = '<' . $home . '/openapi.json>; rel="service-desc"; type="application/json"';
+			}
 		}
 
 		/**
@@ -188,6 +193,16 @@ class Link_Headers extends Feature_Component {
 
 		return $router instanceof Well_Known_Router
 			&& isset( $router->get_active_endpoints()[ self::ARD_CATALOG_SLUG ] );
+	}
+
+	private function is_openapi_publishable(): bool {
+		$component = $this->module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec ) {
+			return false;
+		}
+
+		return $component->is_publishable();
 	}
 
 	/**

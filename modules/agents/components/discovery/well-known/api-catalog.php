@@ -3,6 +3,9 @@
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
 use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
+use Elementor\Modules\Agents\Module;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -33,18 +36,23 @@ class Api_Catalog extends Abstract_Well_Known_Endpoint {
 		$apis = [];
 
 		// WordPress REST API — always present.
-		$apis[] = [
+		$api = [
 			'id'          => 'wordpress-rest',
 			'title'       => 'WordPress REST API',
 			'description' => 'WordPress core and plugin REST endpoints.',
 			'url'         => rest_url(),
-			'spec_url'    => rest_url() . '?format=openapi',
 			'type'        => 'rest',
 			'auth'        => [
 				'type'          => 'application_password',
 				'documentation' => $home . '.well-known/auth.md',
 			],
 		];
+
+		if ( $this->is_openapi_publishable() ) {
+			$api['spec_url'] = $home . 'openapi.json';
+		}
+
+		$apis[] = $api;
 
 		// Elementor MCP server — present when active.
 		if ( apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
@@ -80,5 +88,21 @@ class Api_Catalog extends Abstract_Well_Known_Endpoint {
 		 * @param string $home    The site home URL.
 		 */
 		return (array) apply_filters( 'elementor/agents/api_catalog', $catalog, $apis, $home );
+	}
+
+	private function is_openapi_publishable(): bool {
+		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		if ( ! $module instanceof Module ) {
+			return false;
+		}
+
+		$component = $module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec ) {
+			return false;
+		}
+
+		return $component->is_publishable();
 	}
 }
