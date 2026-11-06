@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Settings\Page\Manager as Page_Settings_Manager;
 use Elementor\Core\Utils\Document\Document_Mutator;
@@ -190,6 +191,30 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		$refreshed_main = Plugin::$instance->documents->get( $post->ID, false );
 		$this->assertCount( 2, $refreshed_main->get_elements_data(), 'Main document must now hold the promoted 2-element tree.' );
 		$this->assertNull( get_post( $autosave_id ), 'Promoted autosave should be deleted.' );
+	}
+
+	public function test_execute__clears_live_element_cache_when_promoting_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$main_document = Plugin::$instance->documents->get( $post->ID );
+		$main_document->set_is_built_with_elementor( true );
+		$main_document->save( [ 'elements' => $this->containers( 1 ) ] );
+		$main_document->set_document_cache( [
+			'content' => 'stale',
+			'scripts' => [],
+			'styles' => [],
+		] );
+
+		Document_Mutator::instance()->save_as_draft( $main_document, $this->containers( 2 ), true );
+
+		$this->assertNotEmpty( get_post_meta( $post->ID, Document::CACHE_META_KEY, true ), 'Live cache must survive the staged write.' );
+
+		// Act
+		$this->ability->execute( [ 'post_id' => $post->ID ] );
+
+		// Assert
+		$this->assertEmpty( get_post_meta( $post->ID, Document::CACHE_META_KEY, true ) );
 	}
 
 	public function test_execute__removes_live_page_settings_missing_from_the_autosave() {

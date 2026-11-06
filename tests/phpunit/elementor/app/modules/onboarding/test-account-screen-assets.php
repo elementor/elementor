@@ -68,6 +68,25 @@ class Test_Account_Screen_Assets extends Elementor_Test_Base {
 		$this->assertSame( 'Skip for now', $config['skipCtaLabel'] );
 	}
 
+	public function test_get_editor_config_can_hide_second_headline(): void {
+		add_filter(
+			'elementor/onboarding/account_screen_assets',
+			static function (): array {
+				return [
+					'is_active' => true,
+					'headline_line1' => 'Single line headline',
+					'headline_line2' => '',
+					'show_headline_line2' => false,
+				];
+			}
+		);
+
+		$config = Account_Screen_Assets::get_editor_config();
+
+		$this->assertSame( 'Single line headline', $config['headlineLine1'] );
+		$this->assertFalse( $config['showHeadlineLine2'] );
+	}
+
 	public function test_get_editor_config_rejects_disallowed_illustration_url(): void {
 		add_filter(
 			'elementor/onboarding/account_screen_assets',
