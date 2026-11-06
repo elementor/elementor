@@ -15,6 +15,7 @@ class Menu_Config {
 	const EDITOR_GROUP_ID = 'elementor-editor-items';
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
+	const AGENT_READY_GROUP_ID = 'elementor-editor-agent-ready';
 	const THIRD_PARTY_GROUP_ID = 'elementor-editor-third-party';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
 	const CAPABILITY_EDIT_POSTS = 'edit_posts';

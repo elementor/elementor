@@ -285,6 +285,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::SETTINGS_GROUP_ID => true,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID => true,
 			Menu_Config::SYSTEM_GROUP_ID => true,
+			Menu_Config::AGENT_READY_GROUP_ID => true,
 		];
 
 		if ( isset( $elementor_parent_slugs[ $parent_slug ] ) ) {
@@ -317,7 +318,9 @@ class Elementor_One_Menu_Manager {
 			'elementor-theme-builder',
 			'e-form-submissions',
 			'elementor-mcp',
+			'elementor-agent-ready',
 			'elementor-agents-ready',
+			'elementor-agent-access',
 			'elementor-license',
 			'elementor-connect-account',
 		];

@@ -8,6 +8,7 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
+use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Ready_Group_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Feature_Component;
@@ -212,6 +213,7 @@ class Module extends BaseModule {
 	 * @param Menu_Data_Provider $menu_data_provider Editor One menu registry.
 	 */
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Agent_Ready_Group_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Agent_Access_Menu() );
 	}

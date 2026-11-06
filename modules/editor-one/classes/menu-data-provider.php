@@ -58,6 +58,7 @@ class Menu_Data_Provider {
 			Menu_Config::TEMPLATES_GROUP_ID,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
 			Menu_Config::SYSTEM_GROUP_ID,
+			Menu_Config::AGENT_READY_GROUP_ID,
 		];
 
 		if ( in_array( $group_id, $collapsible_groups, true ) && ! $item->has_children() ) {

@@ -51,7 +51,7 @@ export class SidebarMenuHandler {
 		} else if ( 'elementor-mcp' === page ) {
 			targetSlug = 'elementor-mcp';
 		} else if ( 'elementor-agents-ready' === page || 'elementor-agent-access' === page ) {
-			targetSlug = 'elementor-agents-ready';
+			targetSlug = page;
 		} else if ( 'elementor-theme-builder' === page ) {
 			targetSlug = 'elementor-theme-builder';
 		}

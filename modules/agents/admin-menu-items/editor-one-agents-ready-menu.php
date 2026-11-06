@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\Agents\AdminMenuItems;
 
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu_Item_With_Page {
+class Editor_One_Agents_Ready_Menu implements Menu_Item_Interface, Admin_Menu_Item_With_Page {
 
 	const POSITION_AFTER_MCP = 26;
 
@@ -28,7 +28,7 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 	}
 
 	public function get_group_id(): string {
-		return Menu_Config::EDITOR_GROUP_ID;
+		return Menu_Config::AGENT_READY_GROUP_ID;
 	}
 
 	public function get_label(): string {
@@ -45,14 +45,6 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 
 	public function get_slug(): string {
 		return Module::PAGE_ID;
-	}
-
-	public function get_icon(): string {
-		return 'settings';
-	}
-
-	public function has_children(): bool {
-		return false;
 	}
 
 	public function get_page_title() {
