@@ -13,9 +13,29 @@ const getCheck = ( overrides = {} ) => ( {
 	...overrides,
 } );
 
-const expandRow = () => fireEvent.click( screen.getByRole( 'button', { name: /Sitemap exists/ } ) );
+const expandCard = () => fireEvent.click( screen.getByRole( 'button', { name: 'Show passed checks' } ) );
+
+const expandRow = () => {
+	expandCard();
+	fireEvent.click( screen.getByRole( 'button', { name: /Sitemap exists/ } ) );
+};
 
 describe( 'PassingTable', () => {
+	it( 'keeps the passed checks collapsed behind a count until the card is opened', () => {
+		// Arrange
+		render( <PassingTable checks={ [ getCheck() ] } /> );
+
+		// Assert
+		expect( screen.getByText( '1 Check passed' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Sitemap exists' ) ).toBeNull();
+
+		// Act
+		expandCard();
+
+		// Assert
+		expect( screen.getByText( 'Sitemap exists' ) ).toBeTruthy();
+	} );
+
 	it( 'shows what it means and what we found when a passed row is expanded', () => {
 		// Arrange
 		render( <PassingTable checks={ [ getCheck() ] } /> );
