@@ -173,8 +173,15 @@ class Frontend extends App {
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
 
-		if ( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ) ) {
-			add_filter( 'wp_should_output_buffer_template_for_enhancement', '__return_false', 1 );
+		/* 
+		 * Work around bugs in CSS cascade introduced in 6.9 but fixed in 7.0:
+		 * - https://core.trac.wordpress.org/ticket/64389
+		 * - https://core.trac.wordpress.org/ticket/64354
+		 *
+		 * For more on this, see <https://make.wordpress.org/core/2025/11/18/wordpress-6-9-frontend-performance-field-guide/#load-block-styles-on-demand-in-classic-themes>.
+		 */
+		if ( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ) && version_compare( get_bloginfo( 'version' ), '7.0-beta5', '<' ) ) {
+			add_filter( 'should_load_separate_core_block_assets', '__return_false', 1 );
 		}
 	}
 
