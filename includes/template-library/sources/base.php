@@ -489,6 +489,10 @@ abstract class Source_Base {
 			$this
 		);
 
+		if ( is_wp_error( $import_result ) ) {
+			return $import_result;
+		}
+
 		if ( is_array( $import_result ) && isset( $import_result['content'] ) ) {
 			$content = $import_result['content'];
 		}
