@@ -9,6 +9,8 @@ use Elementor\Core\Common\Modules\EventsManager\RestApi\Events_Proxy_REST_API;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
 
@@ -72,6 +74,12 @@ class Module extends BaseModule {
 			'user_id' => self::get_user_id(),
 			'session_recording_percent' => $session_recording_percent,
 		];
+
+		$settings['menuEventIds'] = Menu_Data_Provider::instance()->get_event_ids_by_slug();
+
+		if ( Editor_One_Module::is_editor_one_active() ) {
+			$settings['isEditorOneActive'] = true;
+		}
 
 		return $settings;
 	}
