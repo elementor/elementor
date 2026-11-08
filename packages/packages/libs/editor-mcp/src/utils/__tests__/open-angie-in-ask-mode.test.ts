@@ -43,6 +43,21 @@ describe( 'openAngieInAskMode', () => {
 		expect( window.location.hash ).toBe( '' );
 	} );
 
+	it( 'logs when the loaded editor Angie package fails to open', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		const openAngie = jest.fn().mockRejectedValue( new Error( 'fail' ) );
+		( window as Window & { elementorV2?: { editorAngie?: { openAngie: typeof openAngie } } } ).elementorV2 = {
+			editorAngie: { openAngie },
+		};
+
+		openAngieInAskMode( 'Help me with ' );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( consoleErrorSpy ).toHaveBeenCalledWith( 'Failed to open Angie:', expect.any( Error ) );
+
+		consoleErrorSpy.mockRestore();
+	} );
+
 	it( 'does nothing when Angie is not available', () => {
 		mockIsAngieAvailable.mockReturnValue( false );
 

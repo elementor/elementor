@@ -7,7 +7,7 @@ import {
 
 import { isAngieAvailable } from './is-angie-available';
 
-type EditorAngieOpen = ( request: { prompt: string; mode: string } ) => void;
+type EditorAngieOpen = ( request: { prompt: string; mode: string } ) => Promise< void > | void;
 
 const getLoadedEditorAngie = (): EditorAngieOpen | undefined => {
 	return (
@@ -26,7 +26,11 @@ export const openLoadedEditorAngie = ( prompt?: string ): boolean => {
 		return false;
 	}
 
-	void openAngie( { prompt: prompt ?? '', mode: 'ask' } );
+	Promise.resolve( openAngie( { prompt: prompt ?? '', mode: AngieInteractionMode.ASK } ) ).catch( ( error ) => {
+		// eslint-disable-next-line no-console
+		console.error( 'Failed to open Angie:', error );
+	} );
+
 	return true;
 };
 
