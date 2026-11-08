@@ -291,6 +291,47 @@ class Test_Update_Settings_Ability extends Elementor_Test_Base {
 		$this->assertSame( 0, get_post_thumbnail_id( $post_id ) );
 	}
 
+	public function test_execute__publish_keeps_live_post_fields_changed_after_the_draft_copy_was_created() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_elementor_post_type_post();
+		$image_id = $this->create_image();
+		$this->ability->execute( [ 'post_id' => $post_id, 'settings' => self::BACKGROUND_SETTINGS ] );
+		wp_update_post( [ 'ID' => $post_id, 'post_title' => 'Live title', 'post_excerpt' => 'Live excerpt' ] );
+		set_post_thumbnail( $post_id, $image_id );
+
+		// Act
+		$this->publish( $post_id );
+
+		// Assert
+		$live_post = get_post( $post_id );
+		$this->assertSame( 'Live title', $live_post->post_title );
+		$this->assertSame( 'Live excerpt', $live_post->post_excerpt );
+		$this->assertSame( $image_id, get_post_thumbnail_id( $post_id ) );
+		$this->assertSame( self::BACKGROUND_SETTINGS, $this->live_page_settings( $post_id ) );
+	}
+
+	public function test_execute__returns_500_when_the_excerpt_cannot_be_staged() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_elementor_post_type_post();
+		$this->ability->execute( [ 'post_id' => $post_id, 'settings' => self::BACKGROUND_SETTINGS ] );
+		add_filter( 'wp_insert_post_empty_content', '__return_true' );
+
+		try {
+			// Act
+			$result = $this->ability->execute( [ 'post_id' => $post_id, 'settings' => [ 'post_excerpt' => 'Staged excerpt' ] ] );
+		} finally {
+			remove_filter( 'wp_insert_post_empty_content', '__return_true' );
+		}
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'save_failed', $result->get_error_code() );
+		$this->assertSame( \WP_Http::INTERNAL_SERVER_ERROR, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'post_excerpt', $result->get_error_message() );
+	}
+
 	/**
 	 * @dataProvider unstageable_settings_provider
 	 */

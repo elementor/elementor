@@ -23,7 +23,14 @@ class Update_Settings_Ability extends Abstract_Ability {
 
 	const EXCERPT_SETTING = 'post_excerpt';
 
+	const TITLE_SETTING = 'post_title';
+
 	const FEATURED_IMAGE_META_KEY = '_thumbnail_id';
+
+	// The autosave snapshots every post field when it is created, so publish-document promotes only the ones listed
+	// here and doesn't overwrite live changes made since. Must not start with `_elementor`: `DB::copy_elementor_meta`
+	// copies those keys from the autosave to the live post.
+	const STAGED_POST_FIELDS_META_KEY = '_mcp_staged_post_fields';
 
 	private ?Document_Mutator $mutator;
 
@@ -202,6 +209,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 		$stage_featured_image = $this->should_stage_featured_image( $document, $settings );
 		$attachment_id = $this->get_featured_image_id( $settings );
 		$excerpt = $this->get_stageable_excerpt( $document, $settings );
+		$staged_post_fields = $this->get_staged_post_fields( $settings, $stage_featured_image );
 		unset( $settings[ self::FEATURED_IMAGE_SETTING ], $settings[ self::EXCERPT_SETTING ] );
 
 		$target = Document_Mutation_Save::settings_preserving_live_status( $this->get_mutator(), $document, $settings );
@@ -216,11 +224,50 @@ class Update_Settings_Ability extends Abstract_Ability {
 			$this->stage_featured_image( $target_id, $attachment_id );
 		}
 
-		if ( null !== $excerpt ) {
-			$this->stage_excerpt( $target_id, $excerpt );
+		$this->mark_staged_post_fields( $target_id, $staged_post_fields );
+
+		if ( null === $excerpt ) {
+			return $target;
 		}
 
+		$excerpt_result = $this->stage_excerpt( $target_id, $excerpt );
+
+		if ( is_wp_error( $excerpt_result ) ) {
+			return $excerpt_result;
+		}
+
+		$this->mark_staged_post_fields( $target_id, [ self::EXCERPT_SETTING ] );
+
 		return $target;
+	}
+
+	/**
+	 * Core stages a non-empty title on the autosave itself (`Page\Manager::ajax_before_save_settings`).
+	 *
+	 * @return string[]
+	 */
+	private function get_staged_post_fields( array $settings, bool $stage_featured_image ): array {
+		$fields = [];
+
+		if ( ! empty( $settings[ self::TITLE_SETTING ] ) ) {
+			$fields[] = self::TITLE_SETTING;
+		}
+
+		if ( $stage_featured_image ) {
+			$fields[] = self::FEATURED_IMAGE_SETTING;
+		}
+
+		return $fields;
+	}
+
+	private function mark_staged_post_fields( int $target_id, array $fields ): void {
+		if ( ! $fields ) {
+			return;
+		}
+
+		$already_staged = (array) get_metadata( 'post', $target_id, self::STAGED_POST_FIELDS_META_KEY, true );
+
+		update_metadata( 'post', $target_id, self::STAGED_POST_FIELDS_META_KEY, array_values( array_unique( array_merge( array_filter( $already_staged ), $fields ) ) ) );
 	}
 
 	private function stage_featured_image( int $target_id, int $attachment_id ): void {
@@ -236,13 +283,29 @@ class Update_Settings_Ability extends Abstract_Ability {
 	/**
 	 * An empty `page_template` stops `wp_update_post` from re-validating the revision's template, which would
 	 * write `default` to the live post.
+	 *
+	 * @return true|\WP_Error
 	 */
-	private function stage_excerpt( int $target_id, string $excerpt ): void {
-		wp_update_post( wp_slash( [
+	private function stage_excerpt( int $target_id, string $excerpt ) {
+		$updated = wp_update_post( wp_slash( [
 			'ID' => $target_id,
 			'post_excerpt' => $excerpt,
 			'page_template' => '',
-		] ) );
+		] ), true );
+
+		if ( is_wp_error( $updated ) ) {
+			return new \WP_Error(
+				'save_failed',
+				sprintf(
+					/* translators: %s: Error message returned by WordPress. */
+					__( 'The settings were staged, but post_excerpt could not be saved to the draft copy: %s', 'elementor' ),
+					$updated->get_error_message()
+				),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return true;
 	}
 
 	private function get_stageable_excerpt( Document $document, array $settings ): ?string {
