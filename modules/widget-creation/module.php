@@ -137,7 +137,7 @@ class Module extends BaseModule {
 	private function add_packages( array $packages ): array {
 		$packages = array_merge( $packages, self::PACKAGES );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME ) ) {
+		if ( self::is_angie_in_panels_active() ) {
 			$packages[] = self::ANGIE_PACKAGE;
 		}
 
