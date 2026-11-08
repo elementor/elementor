@@ -6,7 +6,9 @@ import {
 	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
-export const EDITOR_ANGIE_APP_ID = 'elementor-editor';
+import { ensureHelpCenterAbility } from './help-center-ability';
+
+export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
 export const ANGIE_SIDEBAR_ACTIVE_BODY_CLASS = 'angie-sidebar-active';
 
@@ -95,6 +97,11 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 			openAngieIframe();
 
 			sdk = instance;
+
+			await ensureHelpCenterAbility( instance ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Angie help-center ability registration failed:', error );
+			} );
 
 			return instance;
 		} catch ( error ) {
