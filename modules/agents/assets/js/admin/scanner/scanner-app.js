@@ -113,7 +113,6 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 				agentAccessUrl={ agentAccessUrl }
 				seoPluginSearchUrl={ seoPluginSearchUrl }
 				isActivated={ flow.isActivated }
-				score={ flow.ringScore }
 				isLoading={ isActivating }
 			/>
 			<PassingTable checks={ scan?.passingChecks ?? [] } />
