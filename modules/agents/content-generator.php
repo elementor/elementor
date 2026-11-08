@@ -5,6 +5,7 @@ namespace Elementor\Modules\Agents;
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Classes\Post_Title;
 use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
 use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
@@ -56,6 +57,7 @@ class Content_Generator {
 	const INLINE_CACHE_GEN_OPTION   = 'elementor_agents_inline_cache_gen';
 
 	const MCP_SECTION_TITLE = 'MCP Server';
+	const API_SECTION_TITLE = 'API';
 
 	/** Post types that should never appear in the output. */
 	const EXCLUDED_POST_TYPES = [
@@ -114,6 +116,7 @@ class Content_Generator {
 			$lines[] = '';
 		}
 
+		array_push( $lines, ...$this->get_api_section_lines() );
 		array_push( $lines, ...$this->get_mcp_section_lines() );
 
 		$this->append_optional_section( $lines, $overrides );
@@ -178,6 +181,15 @@ class Content_Generator {
 			$content_blocks[] = [
 				'header' => implode( "\n", $product_lines ),
 				'items'  => [], // no inline content for products
+			];
+		}
+
+		$api_lines = $this->get_api_section_lines();
+
+		if ( ! empty( $api_lines ) ) {
+			$content_blocks[] = [
+				'header' => implode( "\n", $api_lines ),
+				'items'  => [],
 			];
 		}
 
@@ -717,6 +729,34 @@ class Content_Generator {
 		}
 
 		return $line;
+	}
+
+	/**
+	 * @return string[] Empty when the API is not advertised.
+	 */
+	private function get_api_section_lines(): array {
+		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		if ( ! $module instanceof Module ) {
+			return [];
+		}
+
+		$component = $module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec || ! $component->is_publishable() ) {
+			return [];
+		}
+
+		return [
+			'## ' . self::API_SECTION_TITLE,
+			'',
+			$this->format_link_line( [
+				'title'       => 'OpenAPI',
+				'url'         => trailingslashit( home_url() ) . 'openapi.json',
+				'description' => 'OpenAPI 3.0.3 specification for the WordPress REST API',
+			] ),
+			'',
+		];
 	}
 
 	/**
