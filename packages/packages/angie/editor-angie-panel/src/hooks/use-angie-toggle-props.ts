@@ -1,4 +1,3 @@
-import { openInstalledAngieSidebar } from '@elementor/editor-angie';
 import { type ToggleActionProps } from '@elementor/editor-app-bar';
 import { AngieIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -13,12 +12,6 @@ export function useAngieToggleProps(): ToggleActionProps {
 		title: __( 'Angie', 'elementor' ),
 		icon: AngieIcon,
 		selected: isOpen,
-		onClick: () => {
-			if ( openInstalledAngieSidebar() ) {
-				return;
-			}
-
-			toggle();
-		},
+		onClick: () => toggle(),
 	};
 }

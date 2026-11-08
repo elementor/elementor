@@ -8,10 +8,6 @@ const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
-const mockSdkState = {
-	pluginInstalled: false,
-	iframe: null as HTMLIFrameElement | null,
-};
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
@@ -27,8 +23,6 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	},
 	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
 	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
-	isAngiePluginAvailable: () => mockSdkState.pluginInstalled,
-	getAngieIframe: () => mockSdkState.iframe,
 } ) );
 
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
@@ -48,9 +42,6 @@ describe( 'editor angie host', () => {
 		jest.clearAllMocks();
 		resetAngieSdkForTests();
 		resetAngiePanelOpenerForTests();
-		mockSdkState.pluginInstalled = false;
-		mockSdkState.iframe = null;
-		delete window.toggleAngieSidebar;
 		document.body.innerHTML = '';
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
@@ -100,40 +91,6 @@ describe( 'editor angie host', () => {
 			prompt: 'Write a heading',
 			context: { source: 'elementor-editor' },
 		} );
-	} );
-
-	it( 'opens the plugin sidebar when its container is already in the editor', async () => {
-		const openPanel = jest.fn();
-		const pluginToggle = jest.fn();
-		const sidebar = document.createElement( 'div' );
-		sidebar.id = 'angie-sidebar-container';
-		document.body.append( sidebar );
-		registerAngiePanelOpener( openPanel );
-		window.toggleAngieSidebar = pluginToggle;
-
-		await openAngie( 'Write a heading', AngieInteractionMode.ASK );
-
-		expect( pluginToggle ).toHaveBeenCalledWith( true );
-		expect( openPanel ).not.toHaveBeenCalled();
-		expect( mockTriggerAngie ).not.toHaveBeenCalled();
-	} );
-
-	it( 'opens the installed plugin sidebar instead of the SDK panel', async () => {
-		const openPanel = jest.fn();
-		const pluginToggle = jest.fn();
-		const iframe = document.createElement( 'iframe' );
-
-		registerAngiePanelOpener( openPanel );
-		mockSdkState.pluginInstalled = true;
-		mockSdkState.iframe = iframe;
-		window.toggleAngieSidebar = pluginToggle;
-
-		await openAngie( 'Write a heading', AngieInteractionMode.ASK );
-
-		expect( pluginToggle ).toHaveBeenCalledWith( true );
-		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
-		expect( openPanel ).not.toHaveBeenCalled();
-		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not boot the SDK when the library initializes', () => {
