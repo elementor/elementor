@@ -154,7 +154,7 @@ export default [
 			'import/no-unresolved': [
 				'error',
 				{
-					ignore: [ '^test-utils$' ],
+					ignore: [ '^test-utils$', '^@modelcontextprotocol/sdk/' ],
 				},
 			],
 			'testing-library/no-test-id-queries': 'error',
