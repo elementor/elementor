@@ -114,6 +114,23 @@ describe( 'editor angie host', () => {
 		expect( mockRegisterLocalServer ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'keeps the SDK booted when the help-center ability fails to register', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		mockRegisterLocalServer.mockRejectedValueOnce( new Error( 'fail' ) );
+
+		const first = await bootAngieSdk();
+		const second = await bootAngieSdk();
+
+		expect( second ).toBe( first );
+		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 1 );
+		expect( consoleErrorSpy ).toHaveBeenCalledWith(
+			'Angie help-center ability registration failed:',
+			expect.any( Error )
+		);
+
+		consoleErrorSpy.mockRestore();
+	} );
+
 	it( 'does not register the help-center ability when the Angie plugin is active', async () => {
 		window.elementorEditorAngie = { isAngiePluginActive: true };
 
