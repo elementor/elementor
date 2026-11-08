@@ -129,7 +129,6 @@ declare global {
 				};
 				widgetCreation?: {
 					canCreateWidget?: boolean;
-					isAngiePluginActive?: boolean;
 				};
 				controls?: {
 					font?: {

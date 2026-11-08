@@ -1,4 +1,4 @@
-import { handleCreateWidgetEvent } from '../../init';
+import { handleCreateWidgetEvent } from '../init';
 
 const mockCanCreateWidget = jest.fn();
 const mockTrackEvent = jest.fn();
