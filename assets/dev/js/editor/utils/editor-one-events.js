@@ -1,3 +1,5 @@
+const ADMIN_NAV_CLICK_EVENT = 'elementor/admin/nav-click';
+
 export class EditorOneEventManager {
 	static getEventsManager() {
 		return elementorCommon?.eventsManager;
@@ -341,7 +343,16 @@ export class EditorOneEventManager {
 				payload.location_l1 = groupEventId;
 			}
 
-			return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
+			const navClickId = window.crypto?.randomUUID?.() ?? `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+			payload.nav_click_id = navClickId;
+
+			const dispatched = this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
+
+			window.dispatchEvent( new CustomEvent( ADMIN_NAV_CLICK_EVENT, {
+				detail: { itemId: eventId, rootItem: groupEventId, navClickId },
+			} ) );
+
+			return dispatched;
 		} catch ( error ) {
 			return false;
 		}
