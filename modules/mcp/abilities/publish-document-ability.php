@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Publish_Document_Ability extends Abstract_Ability {
 
+	const PROMOTED_POST_FIELDS = [ 'post_title', 'post_excerpt' ];
+
 	protected function get_ability_id(): string {
 		return 'elementor/publish-document';
 	}
@@ -24,7 +26,7 @@ class Publish_Document_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Publish Elementor Document', 'elementor' ),
-			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements or build-composition on published pages are staged in an autosave; calling this promotes the staged autosave to the live document. When there are no pending edits on an already-published document, the call is a no-op success.', 'elementor' ),
+			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements, build-composition or update-page-settings on published pages are staged in an autosave; calling this promotes the staged autosave to the live document. When there are no pending edits on an already-published document, the call is a no-op success.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -128,7 +130,8 @@ class Publish_Document_Ability extends Abstract_Ability {
 	 * Reuses `Revisions_Manager::restore_revision` so ALL `_elementor*` meta (data, page settings,
 	 * etc.) is copied consistently, the element cache is invalidated and Post CSS is regenerated.
 	 * That copy skips keys the autosave lacks, so the restorable meta (page settings, page template)
-	 * is synced first, which removes live values a staged restore cleared. Running before the
+	 * is synced first, which removes live values a staged restore cleared. The copy also skips post
+	 * fields, so a staged title and excerpt are promoted separately. Running before the
 	 * `wp_update_post` status transition means listeners on `transition_post_status` (Post CSS,
 	 * CDN purges, sitemaps, etc.) see the promoted content on the very same request.
 	 */
@@ -141,9 +144,28 @@ class Publish_Document_Ability extends Abstract_Ability {
 
 		Document_Revision_Snapshots::restore_meta( $autosave_post->ID, $main_id );
 
+		$this->promote_post_fields( $autosave_post, $main_id );
+
 		Revisions_Manager::restore_revision( $main_id, $autosave_post->ID );
 
 		wp_delete_post_revision( $autosave_post->ID );
+	}
+
+	private function promote_post_fields( \WP_Post $autosave_post, int $main_id ): void {
+		$main_post = get_post( $main_id );
+		$changed_fields = [];
+
+		foreach ( self::PROMOTED_POST_FIELDS as $field ) {
+			if ( $autosave_post->$field !== $main_post->$field ) {
+				$changed_fields[ $field ] = $autosave_post->$field;
+			}
+		}
+
+		if ( ! $changed_fields ) {
+			return;
+		}
+
+		wp_update_post( wp_slash( [ 'ID' => $main_id ] + $changed_fields ) );
 	}
 
 	private function build_success_response( $document, string $status, string $previous_status ): array {

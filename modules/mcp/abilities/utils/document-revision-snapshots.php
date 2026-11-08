@@ -17,11 +17,13 @@ class Document_Revision_Snapshots {
 	// Must not start with `_elementor`: `DB::copy_elementor_meta` copies those keys from a revision back to its parent.
 	const UNDO_POINT_META_KEY = '_mcp_undo_point';
 
-	// Besides `_elementor_data`, the meta an MCP write can change: page settings and their page template, and a
-	// component's overridable props and variants. Other `_elementor_*` meta (CSS, version, edit mode) is rebuilt on save.
+	// Besides `_elementor_data`, the meta an MCP write can change: page settings with their page template and featured
+	// image, and a component's overridable props and variants. Other `_elementor_*` meta (CSS, version, edit mode) is
+	// rebuilt on save.
 	const RESTORABLE_META_KEYS = [
 		Page_Settings_Manager::META_KEY,
 		'_wp_page_template',
+		'_thumbnail_id',
 		Component_Document::OVERRIDABLE_PROPS_META_KEY,
 		Component_Document::VARIANTS_META_KEY,
 	];
