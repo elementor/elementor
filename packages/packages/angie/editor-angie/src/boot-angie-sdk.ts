@@ -55,6 +55,10 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	},
 } );
 
+export const removeAngieSidebarActiveBodyClass = () => {
+	document.body.classList.remove( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
+};
+
 export const openAngieIframe = () => {
 	const iframe = getAngieIframe();
 
@@ -62,7 +66,7 @@ export const openAngieIframe = () => {
 		return;
 	}
 
-	document.body.classList.add( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
+	removeAngieSidebarActiveBodyClass();
 	toggleAngieSidebar( iframe, true );
 };
 
