@@ -6,7 +6,7 @@ import { type AuditMeta } from '../../types';
 import { trackFindingClicked } from '../../utils/tracking';
 import FixViolationWithAngie from '../fix-violation-with-angie';
 
-const mockIsAngieAvailable = jest.fn();
+const mockIsAngiePluginActive = jest.fn();
 const mockSendPromptToAngie = jest.fn();
 
 jest.mock( '../../utils/tracking' );
@@ -26,7 +26,7 @@ jest.mock( '@elementor/editor-mcp', () => {
 
 	return {
 		toolPrompts,
-		isAngieAvailable: () => mockIsAngieAvailable(),
+		isAngiePluginActive: () => mockIsAngiePluginActive(),
 		sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
 	};
 } );
@@ -36,13 +36,13 @@ const PANEL_Z_INDEX = 1000;
 
 describe( 'FixViolationWithAngie', () => {
 	beforeEach( () => {
-		mockIsAngieAvailable.mockReset();
+		mockIsAngiePluginActive.mockReset();
 		mockSendPromptToAngie.mockReset();
 		jest.mocked( trackFindingClicked ).mockClear();
 	} );
 
 	it( 'renders nothing when Angie is not installed', () => {
-		mockIsAngieAvailable.mockReturnValue( false );
+		mockIsAngiePluginActive.mockReturnValue( false );
 
 		const { container } = renderWithTheme(
 			<FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } />
@@ -52,7 +52,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'renders a link with the angie-prompt hash when Angie is installed', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginActive.mockReturnValue( true );
 
 		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
@@ -62,7 +62,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'calls sendPromptToAngie when Angie is installed', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginActive.mockReturnValue( true );
 
 		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
@@ -72,7 +72,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'tracks the finding click when the prompt is sent to Angie', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginActive.mockReturnValue( true );
 		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
 		fireEvent.click( screen.getByRole( 'link', { name: 'Fix with Angie' } ) );
@@ -86,7 +86,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'stops event propagation on click', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginActive.mockReturnValue( true );
 
 		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
@@ -102,7 +102,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'renders as an icon-only button with an accessible name but no visible text', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginActive.mockReturnValue( true );
 
 		renderWithTheme( <FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } /> );
 
@@ -110,7 +110,7 @@ describe( 'FixViolationWithAngie', () => {
 	} );
 
 	it( 'renders visible "Fix with Angie" text when variant is "button"', () => {
-		mockIsAngieAvailable.mockReturnValue( true );
+		mockIsAngiePluginActive.mockReturnValue( true );
 
 		renderWithTheme(
 			<FixViolationWithAngie audit={ AUDIT } prompt={ PROMPT } panelZIndex={ PANEL_Z_INDEX } variant="button" />

@@ -127,6 +127,9 @@ declare global {
 				angie?: {
 					autoShow?: boolean;
 				};
+				widgetCreation?: {
+					isAngiePluginActive?: boolean;
+				};
 				controls?: {
 					font?: {
 						groups?: Record< string, string >;
