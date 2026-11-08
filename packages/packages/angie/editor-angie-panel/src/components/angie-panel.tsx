@@ -19,12 +19,14 @@ export default function AngiePanel() {
 			return;
 		}
 
-		hasRequestedBoot.current = true;
-
-		void bootAngieSdk().catch( ( error ) => {
-			// eslint-disable-next-line no-console
-			console.error( 'Angie SDK boot failed:', error );
-		} );
+		void bootAngieSdk()
+			.then( () => {
+				hasRequestedBoot.current = true;
+			} )
+			.catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Angie SDK boot failed:', error );
+			} );
 	}, [ isOpen ] );
 
 	return (

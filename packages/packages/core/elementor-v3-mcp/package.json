@@ -45,6 +45,6 @@
     "@elementor/editor-mcp": "4.5.0",
     "@elementor/elementor-mcp-common": "4.5.0",
     "@elementor/schema": "4.5.0",
-    "@modelcontextprotocol/sdk": "1.27.1"
+    "@modelcontextprotocol/sdk": "1.29.0"
   }
 }

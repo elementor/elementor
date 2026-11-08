@@ -327,6 +327,52 @@ class Test_Ard_Catalog extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_generate_content__includes_openapi_entry_when_publishable() {
+		// Arrange: Make OpenAPI publishable
+		add_filter( 'pre_option_permalink_structure', static function () {
+			return '/%postname%/';
+		} );
+		add_filter( 'pre_http_request', static function ( $preempt, $args, $url ) {
+			if ( strpos( $url, rest_url( 'wp/v2/posts' ) ) !== false ) {
+				return [
+					'response' => [ 'code' => 200 ],
+					'body'     => '[]',
+				];
+			}
+			return $preempt;
+		}, 10, 3 );
+
+		// Act
+		$content = $this->invoke_generate_content();
+
+		// Assert
+		$entries = $this->index_entries_by_identifier( $content['entries'] );
+		$openapi_identifier = 'urn:air:' . $this->get_host() . ':api:openapi';
+		$this->assertArrayHasKey( $openapi_identifier, $entries );
+		$this->assertSame( 'OpenAPI', $entries[ $openapi_identifier ]['displayName'] );
+		$this->assertStringContainsString( '/openapi.json', $entries[ $openapi_identifier ]['url'] );
+
+		remove_all_filters( 'pre_option_permalink_structure' );
+		remove_all_filters( 'pre_http_request' );
+	}
+
+	public function test_generate_content__omits_openapi_entry_when_not_publishable() {
+		// Arrange: Make OpenAPI unpublishable by setting plain permalinks
+		add_filter( 'pre_option_permalink_structure', static function () {
+			return '';
+		} );
+
+		// Act
+		$content = $this->invoke_generate_content();
+
+		// Assert
+		$entries = $this->index_entries_by_identifier( $content['entries'] );
+		$openapi_identifier = 'urn:air:' . $this->get_host() . ':api:openapi';
+		$this->assertArrayNotHasKey( $openapi_identifier, $entries );
+
+		remove_all_filters( 'pre_option_permalink_structure' );
+	}
+
 	private function get_host(): string {
 		return (string) wp_parse_url( home_url(), PHP_URL_HOST );
 	}

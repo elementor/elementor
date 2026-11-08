@@ -52,7 +52,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertContains(
-			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"',
+			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
 			$links
 		);
 		$this->assertContains(

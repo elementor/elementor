@@ -17,15 +17,18 @@ export const openInstalledAngieSidebar = (): boolean => {
 		return false;
 	}
 
+	let didOpen = false;
 	const iframe = getAngieIframe();
 
 	if ( iframe ) {
 		toggleAngieSidebar( iframe, true );
+		didOpen = true;
 	}
 
 	if ( typeof window.toggleAngieSidebar === 'function' ) {
 		window.toggleAngieSidebar( true );
+		didOpen = true;
 	}
 
-	return true;
+	return didOpen;
 };
