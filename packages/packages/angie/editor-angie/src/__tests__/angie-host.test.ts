@@ -87,8 +87,8 @@ describe( 'editor angie host', () => {
 		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 1 );
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledWith( {
 			host: {
-				appId: 'elementor-editor',
-				instanceId: 'elementor-editor',
+				appId: 'elementor-editor-core',
+				instanceId: 'elementor-editor-core',
 			},
 			container: {
 				id: 'elementor-editor-angie',
@@ -186,7 +186,7 @@ describe( 'editor angie host', () => {
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: 'Write a heading',
-			context: { source: 'elementor-editor' },
+			context: { source: 'elementor-editor-core' },
 			options: { newChat: true },
 		} );
 	} );
