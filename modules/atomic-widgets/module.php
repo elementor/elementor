@@ -37,6 +37,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon_Open\Atomic_Accordion_Item_Icon_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Items\Atomic_Menu_Items;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle\Atomic_Menu_Toggle;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Closed\Atomic_Menu_Toggle_Closed;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open\Atomic_Menu_Toggle_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -420,6 +427,16 @@ class Module extends BaseModule {
 		return $this;
 	}
 
+	private function register_menu_elements( Elements_Manager $elements_manager ) {
+		$elements_manager->register_element_type( new Atomic_Menu() );
+		$elements_manager->register_element_type( new Atomic_Menu_Items() );
+		$elements_manager->register_element_type( new Atomic_Menu_Entry() );
+		$elements_manager->register_element_type( new Atomic_Menu_Item() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Closed() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Open() );
+	}
+
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
@@ -432,6 +449,10 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
 		$this->register_list_element( $elements_manager );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAV_MENU ) ) {
+			$this->register_menu_elements( $elements_manager );
+		}
 
 		$elements_manager->register_element_type( new Atomic_Accordion() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
