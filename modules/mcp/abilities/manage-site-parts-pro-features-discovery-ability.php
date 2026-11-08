@@ -31,7 +31,7 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( 'edit_posts' ),
+			fn() => current_user_can( 'publish_posts' ),
 			Site_Parts_Schema::manage_input()
 		);
 	}
