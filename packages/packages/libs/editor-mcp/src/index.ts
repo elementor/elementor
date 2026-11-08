@@ -1,3 +1,5 @@
+import './types/open-angie-request';
+
 import { getSDK } from './utils/get-sdk';
 export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
 
@@ -17,7 +19,14 @@ export { createSampler } from './sampler';
 export { toolPrompts } from './utils/prompt-builder';
 export { ANGIE_MODEL_PREFERENCES, ANGIE_REQUIRED_RESOURCES, type AngieModelPreferences } from './angie-annotations';
 export { getActiveChatInfo, type ActiveChatInfo } from './utils/get-active-chat-info';
-export { openAngieInAskMode } from './utils/open-angie-in-ask-mode';
+export { hasLoadedEditorAngie, openAngieInAskMode } from './utils/open-angie-in-ask-mode';
+export type {
+	EditorAngieWindowHost,
+	OpenAngieCommonProperties,
+	OpenAngiePluginProperties,
+	OpenAngieRequest,
+	OpenAngieSdkProperties,
+} from './types/open-angie-request';
 export { sendPromptToAngie } from './utils/send-prompt-to-angie';
 export { redirectToInstallation } from './utils/redirect-to-installation';
 export { redirectToAppAdmin } from './utils/redirect-to-app-admin';

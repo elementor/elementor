@@ -2,6 +2,7 @@ import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice }
 
 import {
 	selectCorner,
+	selectIsDocked,
 	selectIsDraggable,
 	selectIsOpen,
 	selectIsResizable,
@@ -188,6 +189,18 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		expect( selectSize( __getState(), 'a' ) ).toEqual( { inlineSize: 600, blockSize: 700 } );
+	} );
+
+	it( 'stores isDocked only when requested', () => {
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.register( { id: 'b', defaults, isDocked: true } ) );
+
+		// Assert.
+		expect( selectIsDocked( __getState(), 'a' ) ).toBe( false );
+		expect( selectIsDocked( __getState(), 'b' ) ).toBe( true );
+		expect( selectIsDraggable( __getState(), 'b' ) ).toBe( false );
+		expect( selectIsResizable( __getState(), 'b' ) ).toBe( false );
 	} );
 
 	it( 'stores isDraggable as false by default', () => {

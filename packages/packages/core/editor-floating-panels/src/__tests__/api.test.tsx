@@ -11,11 +11,11 @@ import {
 } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
 
-import { createFloatingPanel, registerFloatingPanel } from '../api';
+import { closeFloatingPanel, createFloatingPanel, openFloatingPanel, registerFloatingPanel } from '../api';
 import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
 import FloatingPanelsHost from '../components/internal/host';
 import { encodePersistedState } from '../persistence';
-import { selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
+import { selectIsDocked, selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type PanelStateStorage, sync } from '../sync';
 import { type FloatingPanelDeclaration, type FloatingPanelState } from '../types';
@@ -105,6 +105,87 @@ describe( 'createFloatingPanel', () => {
 
 		// Assert.
 		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( true );
+	} );
+
+	it( 'forces drag and resize off and keeps only the persisted width when docked', () => {
+		// Arrange.
+		const persisted: FloatingPanelState = {
+			isOpen: true,
+			zIndex: 5,
+			size: { inlineSize: 400, blockSize: 520 },
+			corner: 'block-start-inline-start',
+			position: {
+				insetBlockStart: 240,
+				insetBlockEnd: 0,
+				insetInlineStart: 600,
+				insetInlineEnd: 0,
+			},
+		};
+		sync( memoryStorage( encodePersistedState( { [ declaration.id ]: persisted } ) ) );
+
+		// Act.
+		createFloatingPanel( {
+			...declaration,
+			isDocked: true,
+			isDraggable: true,
+			isResizable: true,
+		} );
+
+		// Assert.
+		expect( selectIsDocked( __getState(), declaration.id ) ).toBe( true );
+		expect( selectIsDraggable( __getState(), declaration.id ) ).toBe( false );
+		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( false );
+		expect( selectPanelState( __getState(), declaration.id ) ).toMatchObject( {
+			isOpen: false,
+			size: { inlineSize: 400, blockSize: 480 },
+		} );
+		expect( selectPanelState( __getState(), declaration.id )?.position.insetInlineStart ).not.toBe( 600 );
+	} );
+
+	it.each( [
+		{ case: 'down to the viewport', persistedWidth: 5000, expected: 1000 },
+		{ case: 'up to the minimum width', persistedWidth: 100, expected: 240 },
+	] )( 'clamps the persisted docked width $case', ( { persistedWidth, expected } ) => {
+		// Arrange.
+		Object.defineProperty( window, 'innerWidth', { configurable: true, value: 1000 } );
+
+		const persisted: FloatingPanelState = {
+			isOpen: false,
+			zIndex: 0,
+			size: { inlineSize: persistedWidth, blockSize: 480 },
+			corner: 'block-start-inline-end',
+			position: {
+				insetBlockStart: 0,
+				insetBlockEnd: 0,
+				insetInlineStart: 0,
+				insetInlineEnd: 0,
+			},
+		};
+		sync( memoryStorage( encodePersistedState( { [ declaration.id ]: persisted } ) ) );
+
+		// Act.
+		createFloatingPanel( { ...declaration, isDocked: true } );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id )?.size.inlineSize ).toBe( expected );
+	} );
+
+	it( 'opens and closes a panel from outside React', () => {
+		// Arrange.
+		sync( memoryStorage() );
+		createFloatingPanel( declaration );
+
+		// Act.
+		openFloatingPanel( declaration.id );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id )?.isOpen ).toBe( true );
+
+		// Act.
+		closeFloatingPanel( declaration.id );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id )?.isOpen ).toBe( false );
 	} );
 
 	it( 'defaults isResizable to false when not provided', () => {
