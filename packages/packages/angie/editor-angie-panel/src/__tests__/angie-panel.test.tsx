@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 
 import AngiePanel from '../components/angie-panel';
