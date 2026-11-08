@@ -290,7 +290,7 @@ class Module extends BaseModule {
 	private function register_nav_menu_experiment() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_NAV_MENU,
-			'title' => esc_html__( 'Menu', 'elementor' ),
+			'title' => esc_html__( 'Atomic Menu', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Menu element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
