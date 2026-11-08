@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 
@@ -79,7 +80,8 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 		$built_in_entries = array_merge(
 			$this->build_llms_txt_entries( $home ),
-			$this->build_agent_skills_entries( $home )
+			$this->build_agent_skills_entries( $home ),
+			$this->build_openapi_entries( $home )
 		);
 
 		/**
@@ -172,6 +174,35 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 				'url'                   => $home . ltrim( Well_Known_Router::WELL_KNOWN_PREFIX, '/' ) . self::AGENT_SKILLS_SLUG,
 				'description'           => 'Index of the actions (MCP tools) this site lets AI agents perform, with their input schemas.',
 				'representativeQueries' => self::AGENT_SKILLS_REPRESENTATIVE_QUERIES,
+			],
+		];
+	}
+
+	private function build_openapi_entries( string $home ): array {
+		$module = $this->get_module();
+
+		if ( ! $module ) {
+			return [];
+		}
+
+		$component = $module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec || ! $component->is_publishable() ) {
+			return [];
+		}
+
+		return [
+			[
+				'identifier'            => self::build_identifier( 'api', 'openapi' ),
+				'displayName'           => 'OpenAPI',
+				'type'                  => 'application/json',
+				'url'                   => $home . 'openapi.json',
+				'description'           => 'OpenAPI 3.0.3 specification describing the WordPress REST API endpoints safe for agent access.',
+				'representativeQueries' => [
+					'What REST API endpoints does this site expose?',
+					'How do I access posts and pages via the API?',
+					'What parameters does the search endpoint accept?',
+				],
 			],
 		];
 	}
