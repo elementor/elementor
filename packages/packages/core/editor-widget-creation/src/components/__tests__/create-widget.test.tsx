@@ -1,8 +1,4 @@
-import * as React from 'react';
-import { renderWithTheme } from 'test-utils';
-import { act } from '@testing-library/react';
-
-import { CreateWidget } from '../create-widget';
+import { handleCreateWidgetEvent } from '../../init';
 
 const mockCanCreateWidget = jest.fn();
 const mockTrackEvent = jest.fn();
@@ -21,13 +17,11 @@ jest.mock( '@elementor/events', () => ( {
 	trackEvent: ( ...args: unknown[] ) => mockTrackEvent( ...args ),
 } ) );
 
-const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
-
 function dispatchCreateWidgetEvent( detail: { prompt?: string; entry_point: string } ) {
-	window.dispatchEvent( new CustomEvent( CREATE_WIDGET_EVENT, { detail } ) );
+	handleCreateWidgetEvent( new CustomEvent( 'elementor/editor/create-widget', { detail } ) );
 }
 
-describe( 'CreateWidget', () => {
+describe( 'handleCreateWidgetEvent', () => {
 	beforeEach( () => {
 		mockCanCreateWidget.mockReset();
 		mockTrackEvent.mockReset();
@@ -36,11 +30,8 @@ describe( 'CreateWidget', () => {
 
 	it( 'does nothing when canCreateWidget is false (Angie inactive)', () => {
 		mockCanCreateWidget.mockReturnValue( false );
-		renderWithTheme( <CreateWidget /> );
 
-		act( () => {
-			dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
-		} );
+		dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
 
 		expect( mockTrackEvent ).not.toHaveBeenCalled();
 		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
@@ -48,11 +39,8 @@ describe( 'CreateWidget', () => {
 
 	it( 'does nothing when canCreateWidget is false (non-admin with Angie active)', () => {
 		mockCanCreateWidget.mockReturnValue( false );
-		renderWithTheme( <CreateWidget /> );
 
-		act( () => {
-			dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
-		} );
+		dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
 
 		expect( mockTrackEvent ).not.toHaveBeenCalled();
 		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
@@ -60,22 +48,16 @@ describe( 'CreateWidget', () => {
 
 	it( 'sends the prompt to Angie when canCreateWidget is true (admin with Angie active)', () => {
 		mockCanCreateWidget.mockReturnValue( true );
-		renderWithTheme( <CreateWidget /> );
 
-		act( () => {
-			dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'widgets_panel' } );
-		} );
+		dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'widgets_panel' } );
 
 		expect( mockSendPromptToAngie ).toHaveBeenCalledWith( 'My prompt' );
 	} );
 
 	it( 'tracks ai_widget_cta_clicked when canCreateWidget is true', () => {
 		mockCanCreateWidget.mockReturnValue( true );
-		renderWithTheme( <CreateWidget /> );
 
-		act( () => {
-			dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'auto_show' } );
-		} );
+		dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'auto_show' } );
 
 		expect( mockTrackEvent ).toHaveBeenCalledWith( {
 			eventName: 'ai_widget_cta_clicked',

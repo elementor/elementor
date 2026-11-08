@@ -51,22 +51,6 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_editor_v2_scripts_env_includes_widget_creation_package_config() {
-		// Arrange
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-		new Module();
-
-		// Act
-		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
-
-		// Assert
-		$this->assertArrayHasKey( '@elementor/editor-widget-creation', $env );
-		$this->assertArrayHasKey( 'is_angie_plugin_active', $env['@elementor/editor-widget-creation'] );
-		$this->assertArrayHasKey( 'can_create_widget', $env['@elementor/editor-widget-creation'] );
-		$this->assertIsBool( $env['@elementor/editor-widget-creation']['is_angie_plugin_active'] );
-		$this->assertIsBool( $env['@elementor/editor-widget-creation']['can_create_widget'] );
-	}
-
 	public function test_editor_v2_packages_omit_widget_creation_when_cannot_create() {
 		// Arrange
 		new Module();

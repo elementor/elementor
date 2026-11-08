@@ -51,7 +51,6 @@ class Module extends BaseModule {
 		$this->register_angie_in_panels_experiment();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-		add_filter( 'elementor/editor/v2/scripts/env', fn( $env ) => $this->add_editor_env( $env ) );
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_localize_settings( $settings ) );
 		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
 	}
@@ -84,15 +83,6 @@ class Module extends BaseModule {
 		}
 
 		return array_merge( $packages, self::PACKAGES );
-	}
-
-	private function add_editor_env( array $env ): array {
-		$env['@elementor/editor-widget-creation'] = [
-			'is_angie_plugin_active' => self::is_angie_plugin_active(),
-			'can_create_widget' => self::can_create_widget(),
-		];
-
-		return $env;
 	}
 
 	private function add_localize_settings( array $settings ): array {
