@@ -17,13 +17,6 @@ export type ResizeBounds = {
 	minBlockStart: number;
 };
 
-export function applyDockedInlineResize( size: LogicalSize, inlineDelta: number, bounds: ResizeBounds ): LogicalSize {
-	return {
-		inlineSize: clamp( size.inlineSize - inlineDelta, bounds.minInlineSize, bounds.maxInlineSize ),
-		blockSize: size.blockSize,
-	};
-}
-
 export function applyInlineEndResize( size: LogicalSize, inlineDelta: number, bounds: ResizeBounds ): LogicalSize {
 	return {
 		inlineSize: clamp( size.inlineSize + inlineDelta, bounds.minInlineSize, bounds.maxInlineSize ),

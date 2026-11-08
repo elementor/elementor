@@ -1,7 +1,6 @@
 import {
 	applyBlockEndResize,
 	applyBlockStartResize,
-	applyDockedInlineResize,
 	applyInlineEndResize,
 	applyInlineStartResize,
 	applyResize,
@@ -16,34 +15,6 @@ const bounds: ResizeBounds = {
 	minInlineStart: 300,
 	minBlockStart: 80,
 };
-
-describe( 'applyDockedInlineResize', () => {
-	it( 'grows the width when the inner edge moves toward inline-start', () => {
-		// Act.
-		const next = applyDockedInlineResize( { inlineSize: 400, blockSize: 720 }, -80, bounds );
-
-		// Assert.
-		expect( next ).toEqual( { inlineSize: 480, blockSize: 720 } );
-	} );
-
-	it( 'shrinks the width when the inner edge moves toward inline-end', () => {
-		// Act.
-		const next = applyDockedInlineResize( { inlineSize: 400, blockSize: 720 }, 50, bounds );
-
-		// Assert.
-		expect( next.inlineSize ).toBe( 350 );
-	} );
-
-	it( 'clamps the width between the panel minimum and the free viewport', () => {
-		// Act.
-		const tooSmall = applyDockedInlineResize( { inlineSize: 400, blockSize: 720 }, 1000, bounds );
-		const tooLarge = applyDockedInlineResize( { inlineSize: 400, blockSize: 720 }, -1000, bounds );
-
-		// Assert.
-		expect( tooSmall.inlineSize ).toBe( 240 );
-		expect( tooLarge.inlineSize ).toBe( 800 );
-	} );
-} );
 
 describe( 'applyInlineEndResize', () => {
 	it( 'grows the width by the inline delta and leaves height untouched', () => {
