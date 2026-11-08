@@ -9,6 +9,7 @@ const mockUseFloatingPanelStatus = jest.fn();
 jest.mock( '@elementor/editor-angie', () => ( {
 	bootAngieSdk: ( ...args: unknown[] ) => mockBootAngieSdk( ...args ),
 	EDITOR_ANGIE_CONTAINER_ID: 'elementor-editor-angie',
+	removeAngieSidebarActiveBodyClass: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-floating-panels', () => ( {
@@ -49,5 +50,27 @@ describe( 'AngiePanel lazy boot', () => {
 		rerender( <AngiePanel /> );
 
 		expect( mockBootAngieSdk ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not boot twice while a boot is still pending', async () => {
+		let resolveBoot: ( value: unknown ) => void = () => {};
+		mockBootAngieSdk.mockReturnValueOnce(
+			new Promise( ( resolve ) => {
+				resolveBoot = resolve;
+			} )
+		);
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: true } );
+		const { rerender } = renderWithTheme( <AngiePanel /> );
+
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: false } );
+		rerender( <AngiePanel /> );
+
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: true } );
+		rerender( <AngiePanel /> );
+
+		expect( mockBootAngieSdk ).toHaveBeenCalledTimes( 1 );
+
+		resolveBoot( {} );
+		await mockBootAngieSdk.mock.results[ 0 ].value;
 	} );
 } );
