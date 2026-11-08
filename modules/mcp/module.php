@@ -10,6 +10,7 @@ use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
@@ -247,10 +248,20 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		return [
-			new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
-			new Abilities\List_Site_Parts_Pro_Features_Discovery_Ability(),
-		];
+		return array_merge(
+			[
+				new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
+				new Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
+			],
+			self::get_woocommerce_pro_features_discovery_abilities( Woocommerce_Pro_Features_Discovery::is_active() )
+		);
+	}
+
+	/** @return Abstract_Ability[] */
+	public static function get_woocommerce_pro_features_discovery_abilities( bool $is_woocommerce_active ): array {
+		return $is_woocommerce_active
+			? [ new Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability() ]
+			: [];
 	}
 
 	/** @return Abstract_Ability[] */

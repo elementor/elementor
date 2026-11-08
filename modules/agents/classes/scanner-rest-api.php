@@ -14,8 +14,6 @@ class Scanner_Rest_Api {
 
 	const ROUTE = '/agents-ready/scan';
 
-	const COOLDOWN_ERROR_CODE = 'agents_scanner_cooldown';
-
 	private Scanner_Orchestrator $orchestrator;
 
 	public function __construct( Scanner_Orchestrator $orchestrator ) {

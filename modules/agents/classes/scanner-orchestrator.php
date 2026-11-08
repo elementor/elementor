@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Scanner_Orchestrator {
 
+	const COOLDOWN_ERROR_CODE = 'agents_scanner_cooldown';
+
 	private Scanner_Client $client;
 
 	private Scanner_Report_Store $store;
@@ -59,7 +61,7 @@ class Scanner_Orchestrator {
 	}
 
 	private function cooldown_error( int $retry_at ): \WP_Error {
-		return Error_Builder::make( Scanner_Rest_Api::COOLDOWN_ERROR_CODE, Scanner_Client::HTTP_TOO_MANY_REQUESTS )
+		return Error_Builder::make( self::COOLDOWN_ERROR_CODE, Scanner_Client::HTTP_TOO_MANY_REQUESTS )
 			->set_message( __( 'Your site was scanned a moment ago. Please try again later.', 'elementor' ) )
 			->set_meta( [
 				'reason'  => Scanner_Client::REASON_THROTTLED,

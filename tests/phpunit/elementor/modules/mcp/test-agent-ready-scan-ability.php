@@ -4,7 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
-use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
+use Elementor\Modules\Agents\Classes\Scanner_Orchestrator;
 use Elementor\Modules\Mcp\Abilities\Agent_Ready_Scan_Ability;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -129,7 +129,7 @@ class Test_Agent_Ready_Scan_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertWPError( $result );
-		$this->assertSame( Scanner_Rest_Api::COOLDOWN_ERROR_CODE, $result->get_error_code() );
+		$this->assertSame( Scanner_Orchestrator::COOLDOWN_ERROR_CODE, $result->get_error_code() );
 		$this->assertSame( \WP_Http::TOO_MANY_REQUESTS, $result->get_error_data()['status'] );
 		$this->assertSame( Scanner_Client::REASON_THROTTLED, $result->get_error_data()['meta']['reason'] );
 		$this->assertSame( 1, $this->remote_calls );

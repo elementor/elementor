@@ -44,7 +44,7 @@ class Agent_Ready_Scan_Ability extends Abstract_Ability {
 			[
 				'annotations' => [
 					'readonly' => false,
-					'idempotent' => true,
+					'idempotent' => false,
 					'destructive' => false,
 				],
 				'mutates_page' => false,
