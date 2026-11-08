@@ -179,11 +179,17 @@ class Module extends BaseModule {
 		if ( self::is_site_mcp_exposure_enabled() ) {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 			( new Mcp_Media_Upload_REST_API() )->register_hooks();
-
-			if ( ! Utils::has_pro() ) {
-				( new Pro_Features_Server_Instructions() )->register_hooks();
-			}
 		}
+
+		$this->register_pro_features_server_instructions();
+	}
+
+	private function register_pro_features_server_instructions(): void {
+		if ( ! self::is_site_mcp_exposure_enabled() || Utils::has_pro() ) {
+			return;
+		}
+
+		( new Pro_Features_Server_Instructions() )->register_hooks();
 	}
 
 	private function register_revision_snapshots_experiment(): void {
