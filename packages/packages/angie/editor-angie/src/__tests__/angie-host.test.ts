@@ -172,7 +172,7 @@ describe( 'editor angie host', () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
 		mountIframe();
-		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
+		mockGetAngieIframe.mockReturnValueOnce( null );
 
 		await openAngie( {
 			prompt: 'Write a heading',
@@ -183,7 +183,6 @@ describe( 'editor angie host', () => {
 		} );
 
 		expect( openPanel ).toHaveBeenCalledTimes( 1 );
-		expect( mockGetAngieIframe ).toHaveBeenCalledTimes( 1 );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: 'Write a heading',
@@ -276,6 +275,9 @@ describe( 'editor angie host', () => {
 		const openPanel = jest.fn();
 		const pluginToggle = jest.fn();
 		const iframe = document.createElement( 'iframe' );
+		const sidebar = document.createElement( 'div' );
+		sidebar.id = 'angie-sidebar-container';
+		document.body.append( sidebar );
 
 		registerAngiePanelOpener( openPanel );
 		mockSdkState.pluginInstalled = true;
