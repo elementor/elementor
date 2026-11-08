@@ -3,7 +3,6 @@ import { ReloadIcon } from '@elementor/icons';
 import Box from '@elementor/ui/Box';
 import Button from '@elementor/ui/Button';
 import IconButton from '@elementor/ui/IconButton';
-import Stack from '@elementor/ui/Stack';
 import Tooltip from '@elementor/ui/Tooltip';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -156,7 +155,6 @@ export const RescanControl = ( {
 					</IconButton>
 				</RescanTooltip>
 			) }
-			{ showLabeledButton && <Stack flex={ 1 } /> }
 			{ showLabeledButton && (
 				<OutlinedRescanButton
 					label={ label }
