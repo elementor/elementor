@@ -40,7 +40,9 @@ test( 'Anchor scroll realigns when layout above grows @anchor-scroll-layout-shif
 	await button.click();
 
 	await expect.poll( async () => Math.abs( await target.evaluate( ( el ) => el.getBoundingClientRect().top ) ), {
-		timeout: timeouts.action,
+		// Smooth scroll retarget + realign can outlast a single action timeout.
+		timeout: timeouts.longAction,
+		intervals: [ 50, 100, 200 ],
 	} ).toBeLessThan( 80 );
 	await expect( target ).toBeInViewport();
 } );
