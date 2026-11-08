@@ -1,4 +1,8 @@
-import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../viewport-bounds';
+import {
+	NAVIGATOR_DOCKED_BODY_CLASS,
+	NAVIGATOR_WIDTH_VAR,
+} from '../../hooks/use-docked-layout';
+import { APP_BAR_HEIGHT_PX, getDockedMaxInlineSize, getSidePanelInlineSize } from '../viewport-bounds';
 
 const SIDE_PANEL_WIDTH_PX = 280;
 
@@ -34,5 +38,19 @@ describe( 'viewport-bounds', () => {
 
 		// Assert.
 		expect( inlineSize ).toBe( SIDE_PANEL_WIDTH_PX );
+	} );
+
+	it( 'clamps docked max inline size after subtracting the docked navigator', () => {
+		const sidePanel = document.createElement( 'div' );
+		sidePanel.id = 'elementor-panel';
+		jest.spyOn( sidePanel, 'getBoundingClientRect' ).mockReturnValue( { width: 0 } as DOMRect );
+		document.body.appendChild( sidePanel );
+
+		Object.defineProperty( window, 'innerWidth', { configurable: true, value: 1000 } );
+		document.body.classList.add( NAVIGATOR_DOCKED_BODY_CLASS );
+		document.body.style.setProperty( NAVIGATOR_WIDTH_VAR, '330px' );
+
+		expect( getDockedMaxInlineSize( 240 ) ).toBe( 670 );
+		expect( getDockedMaxInlineSize( 900 ) ).toBe( 900 );
 	} );
 } );

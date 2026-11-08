@@ -52,6 +52,8 @@ export type FloatingPanelDeclaration = {
 	component: ComponentType;
 	isDraggable?: boolean;
 	isResizable?: boolean;
+	isDocked?: boolean;
+	keepMounted?: boolean;
 	defaults: FloatingPanelDefaults;
 };
 
