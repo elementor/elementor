@@ -12,7 +12,7 @@ import {
 import { isRtl } from '../utils/direction';
 import { physicalToLogicalDelta } from '../utils/drag-math';
 import { applyDockedInlineResize, applyResize, type ResizeBounds, type ResizeDirection } from '../utils/resize-math';
-import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../utils/viewport-bounds';
+import { APP_BAR_HEIGHT_PX, getDockedMaxInlineSize, getSidePanelInlineSize } from '../utils/viewport-bounds';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
 import { useFloatingPanelStatus } from './use-floating-panel-status';
 
@@ -32,13 +32,11 @@ type ResizeSession = {
 };
 
 function getDockedResizeBounds( minSize: LogicalSize ): ResizeBounds {
-	const maxInlineSize = window.innerWidth - getSidePanelInlineSize();
-
 	return {
 		minBlockSize: minSize.blockSize,
 		maxBlockSize: minSize.blockSize,
 		minInlineSize: minSize.inlineSize,
-		maxInlineSize,
+		maxInlineSize: getDockedMaxInlineSize( minSize.inlineSize ),
 		minInlineStart: getSidePanelInlineSize(),
 		minBlockStart: APP_BAR_HEIGHT_PX,
 	};
