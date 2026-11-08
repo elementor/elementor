@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Lists the agent-facing artifacts this site serves as ARD entries, each with
  * a domain-anchored URN identifier and the media type its URL actually returns.
  * Also reachable at the predecessor path /.well-known/ai-catalog.json.
+ * The document declares AI Catalog specVersion 1.0, which consumers require.
  *
  * Not applicable when the site owner already publishes a physical catalog, so
  * an existing ard.json or ai-catalog.json is never contradicted.
@@ -25,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 	const PHYSICAL_CATALOG_FILES = [ 'ard.json', 'ai-catalog.json' ];
+
+	const SPEC_VERSION = '1.0';
 
 	const URN_PREFIX = 'urn:air:';
 
@@ -93,7 +96,10 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 		 */
 		$entries = array_values( (array) apply_filters( 'elementor/agents/ard_catalog/entries', $built_in_entries, $home ) );
 
-		return [ 'entries' => $entries ];
+		return [
+			'specVersion' => self::SPEC_VERSION,
+			'entries'     => $entries,
+		];
 	}
 
 	private function has_physical_catalog_file(): bool {
