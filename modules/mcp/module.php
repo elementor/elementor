@@ -181,15 +181,9 @@ class Module extends BaseModule {
 			( new Mcp_Media_Upload_REST_API() )->register_hooks();
 		}
 
-		$this->register_pro_features_server_instructions();
-	}
-
-	private function register_pro_features_server_instructions(): void {
-		if ( ! self::is_site_mcp_exposure_enabled() || Utils::has_pro() ) {
-			return;
+		if ( ! Utils::has_pro() ) {
+			( new Pro_Features_Server_Instructions() )->register_hooks();
 		}
-
-		( new Pro_Features_Server_Instructions() )->register_hooks();
 	}
 
 	private function register_revision_snapshots_experiment(): void {
