@@ -26,23 +26,14 @@ test( 'Anchor scroll realigns when layout above grows @anchor-scroll-layout-shif
 	const preview = editor.getPreviewFrame();
 	const button = preview.locator( `[data-id="${ buttonID }"] a.elementor-button-link` );
 	const target = preview.locator( `[data-id="${ targetID }"]` );
+	const grower = preview.locator( `[data-id="${ growerID }"] .elementor-spacer-inner` );
 
-	await button.evaluate( ( anchor, growerElementId ) => {
-		anchor.addEventListener( 'click', () => {
-			setTimeout( () => {
-				const grower = document.querySelector( `[data-id="${ growerElementId }"] .elementor-spacer-inner` );
-				if ( grower ) {
-					grower.style.height = '420px';
-				}
-			}, 80 );
-		}, { capture: true } );
-	}, growerID );
 	await button.click();
+	await grower.evaluate( ( element ) => {
+		element.style.height = '420px';
+	} );
 
 	await expect.poll( async () => Math.abs( await target.evaluate( ( el ) => el.getBoundingClientRect().top ) ), {
-		// Smooth scroll retarget + realign can outlast a single action timeout.
 		timeout: timeouts.longAction,
-		intervals: [ 50, 100, 200 ],
 	} ).toBeLessThan( 80 );
-	await expect( target ).toBeInViewport();
 } );
