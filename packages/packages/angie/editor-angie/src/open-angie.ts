@@ -59,6 +59,10 @@ const openSdkAngie = async ( request: OpenAngieRequest ): Promise< void > => {
 
 	const sdk = await bootAngieSdk();
 
+	// `loadSidebarV2()` only finishes the iframe boot. Wait for the SDK readiness ping too,
+	// or the first `triggerAngie()` during startup throws "Angie is not ready".
+	await sdk.waitForReady();
+
 	setAngieInteractionMode( request.mode );
 
 	await sdk.triggerAngie( {

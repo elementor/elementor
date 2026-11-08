@@ -7,6 +7,7 @@ import { openAngie, registerAngiePanelOpener, resetAngiePanelOpenerForTests } fr
 
 const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
+const mockWaitForReady = jest.fn();
 const mockRegisterLocalServer = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
@@ -30,6 +31,7 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
 		loadSidebarV2: ( ...args: unknown[] ) => mockLoadSidebarV2( ...args ),
 		triggerAngie: ( ...args: unknown[] ) => mockTriggerAngie( ...args ),
+		waitForReady: () => mockWaitForReady(),
 		registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 	} ) ),
 	LAYOUT_SIDEBAR: 'sidebar',
@@ -72,6 +74,7 @@ describe( 'editor angie host', () => {
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
 		mockRegisterLocalServer.mockResolvedValue( undefined );
+		mockWaitForReady.mockResolvedValue( undefined );
 	} );
 
 	it( 'boots one SDK and opens the iframe it created', async () => {
@@ -170,6 +173,31 @@ describe( 'editor angie host', () => {
 			context: { source: 'elementor-editor' },
 			options: { newChat: true },
 		} );
+	} );
+
+	it( 'waits for the SDK to be ready before setting the mode and triggering the prompt', async () => {
+		let resolveReady: () => void = () => {};
+		mockWaitForReady.mockReturnValueOnce(
+			new Promise< void >( ( resolve ) => {
+				resolveReady = resolve;
+			} )
+		);
+
+		mountIframe();
+
+		const pending = openAngie( { prompt: 'Write a heading', mode: AngieInteractionMode.AGENT } );
+
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( mockWaitForReady ).toHaveBeenCalledTimes( 1 );
+		expect( mockSetAngieInteractionMode ).not.toHaveBeenCalled();
+		expect( mockTriggerAngie ).not.toHaveBeenCalled();
+
+		resolveReady();
+		await pending;
+
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'agent' );
+		expect( mockTriggerAngie ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'opens the Angie plugin and leaves the Core SDK closed when the plugin is active', async () => {
