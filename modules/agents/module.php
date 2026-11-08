@@ -40,6 +40,7 @@ use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
@@ -203,6 +204,7 @@ class Module extends BaseModule {
 		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
 
 		$this->register_component( new Mcp_Discovery() );
+		$this->register_component( new Openapi_Spec( $this->settings ) );
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
 		$this->register_component( new Markdown_Not_Found( $this->settings, $this->markdown_endpoint, $this ) );
