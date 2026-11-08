@@ -9,6 +9,7 @@ type SliceState = {
 	titlesById: Record< string, string >;
 	isDraggableById: Record< string, boolean >;
 	isResizableById: Record< string, boolean >;
+	isDockedById: Record< string, boolean >;
 	topZIndex: number;
 };
 
@@ -20,6 +21,7 @@ const initialState: SliceState = {
 	titlesById: {},
 	isDraggableById: {},
 	isResizableById: {},
+	isDockedById: {},
 	topZIndex: 0,
 };
 
@@ -44,6 +46,7 @@ export const slice = __createSlice( {
 			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
 			state.isDraggableById[ id ] = isDocked ? false : isDraggable ?? false;
 			state.isResizableById[ id ] = isDocked ? false : isResizable ?? false;
+			state.isDockedById[ id ] = isDocked ?? false;
 
 			if ( title !== undefined ) {
 				state.titlesById[ id ] = title;
@@ -55,6 +58,11 @@ export const slice = __createSlice( {
 
 			const corner = defaults.corner ?? DEFAULT_CORNER;
 			const canReusePersisted = ! isDocked && persisted && persisted.corner === corner;
+			const size = { inlineSize: defaults.width, blockSize: defaults.height };
+
+			if ( isDocked && persisted && persisted.size.inlineSize >= defaults.minWidth ) {
+				size.inlineSize = persisted.size.inlineSize;
+			}
 
 			state.byId[ id ] = canReusePersisted
 				? persisted
@@ -62,7 +70,7 @@ export const slice = __createSlice( {
 						isOpen: false,
 						corner,
 						position: buildInitialPosition( corner, defaults.initialPosition ),
-						size: { inlineSize: defaults.width, blockSize: defaults.height },
+						size,
 						zIndex: 0,
 				  };
 

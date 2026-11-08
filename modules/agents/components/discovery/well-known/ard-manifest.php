@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 
@@ -122,8 +123,7 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 			$caps['auth']['protected_resource'] = $home . '.well-known/oauth-protected-resource';
 		}
 
-		// MCP server — added when the agents MCP component is registered and active.
-		$caps = $this->maybe_add_mcp( $caps, $home );
+		$caps = $this->maybe_add_mcp( $caps );
 
 		// Optional endpoints — added only when their component is active.
 		$caps = $this->maybe_add_optional( $caps, $home );
@@ -131,19 +131,13 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 		return $caps;
 	}
 
-	private function maybe_add_mcp( array $caps, string $home ): array {
-		// The MCP server component will be registered in a later PR.
-		// Check for its presence defensively so this document works today
-		// and automatically enriches itself when MCP lands.
-		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
-		$mcp    = $module ? $module->get_component( 'agents_mcp_server' ) : null;
-
-		if ( $mcp && $mcp->is_enabled() ) {
+	private function maybe_add_mcp( array $caps ): array {
+		if ( apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
 			$caps['mcp'] = [
-				'transport'   => 'streamable-http',
-				'url'         => rest_url( 'elementor/agents-mcp' ),
+				'transport'   => Mcp_Discovery::TRANSPORT,
+				'url'         => Mcp_Discovery::get_server_url(),
 				'spec'        => 'mcp-2025-11-25',
-				'server_card' => $home . '.well-known/mcp/server-card.json',
+				'server_card' => Mcp_Discovery::get_server_card_url(),
 			];
 		}
 
