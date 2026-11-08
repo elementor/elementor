@@ -1,3 +1,5 @@
+import { initAnchorLayoutShiftRealign } from './anchor-layout-shift-realign';
+
 export default class extends elementorModules.ViewModule {
 	getDefaultSettings() {
 		return {
@@ -9,6 +11,8 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	onInit() {
+		initAnchorLayoutShiftRealign();
+
 		this.observeStickyElements( () => {
 			this.initializeStickyAndAnchorTracking();
 		} );
