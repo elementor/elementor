@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
@@ -24,10 +23,8 @@ require_once __DIR__ . '/../../../stubs/wc-stubs.php';
 class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Base {
 
 	const MANAGE_SITE_PARTS_ID = 'elementor/manage-site-parts';
-	const LIST_SITE_PARTS_ID = 'elementor/list-site-parts';
 	const CUSTOM_PROMOTION_FILTER = 'elementor/mcp/custom_promotion';
 	const UPGRADE_LINK = '[Upgrade to Pro](' . Site_Parts_Pro_Features_Discovery::UPGRADE_URL . ')';
-	const DESCRIPTION_NOTICE = 'Requires Elementor Pro (not installed on this site). With Pro, site parts cover three things Free can\'t do';
 
 	public function tearDown(): void {
 		remove_all_filters( self::CUSTOM_PROMOTION_FILTER );
@@ -35,13 +32,12 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		parent::tearDown();
 	}
 
-	public function test_build_core_registry__includes_site_parts_discovery_abilities_without_pro() {
+	public function test_build_core_registry__includes_the_manage_site_parts_discovery_ability_without_pro() {
 		// Act
 		$registry = Mcp_Module::build_core_registry();
 
 		// Assert
 		$this->assertInstanceOf( Manage_Site_Parts_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::MANAGE_SITE_PARTS_ID ) );
-		$this->assertInstanceOf( List_Site_Parts_Pro_Features_Discovery_Ability::class, $registry->find_by_id( self::LIST_SITE_PARTS_ID ) );
 	}
 
 	/**
@@ -134,31 +130,27 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		);
 	}
 
-	public function test_list_execute_guarded__returns_non_error_result_without_link() {
+	public function test_get_description_for_llm__does_not_mention_pro_requirement() {
 		// Arrange
-		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
-		$result = $ability->execute_guarded( [] );
+		$description = $ability->get_description_for_llm();
 
 		// Assert
-		$this->assertIsArray( $result );
-		$this->assertStringContainsString( 'no site parts were checked', $result['llm_instructions'] );
-		$this->assertStringNotContainsString( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'Requires Elementor Pro', $description );
+		$this->assertStringNotContainsString( 'upgrade link', $description );
 	}
 
-	public function test_get_description_for_llm__includes_site_parts_notice() {
+	public function test_get_description_for_llm__lists_every_supported_site_part_type_in_manage() {
 		// Arrange
 		$manage = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
-		$list = new List_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
-		$manage_description = $manage->get_description_for_llm();
-		$list_description = $list->get_description_for_llm();
+		$description = $manage->get_description_for_llm();
 
 		// Assert
-		$this->assertStringContainsString( self::DESCRIPTION_NOTICE, $manage_description );
-		$this->assertStringContainsString( self::DESCRIPTION_NOTICE, $list_description );
+		$this->assertStringContainsString( implode( ', ', Site_Parts_Pro_Features_Discovery::get_types() ), $description );
 	}
 
 	public function test_execute_guarded__falls_back_to_tool_url_when_filter_returns_foreign_domain() {
@@ -173,17 +165,15 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 		$this->assertSame( Site_Parts_Pro_Features_Discovery::UPGRADE_URL, $result->get_error_data()['upgrade_url'] );
 	}
 
-	public function test_discovery_abilities__mirror_real_tool_input_schema() {
+	public function test_discovery_ability__mirrors_real_tool_input_schema() {
 		// Act
 		$manage_schema = $this->get_input_schema( new Manage_Site_Parts_Pro_Features_Discovery_Ability() );
-		$list_schema = $this->get_input_schema( new List_Site_Parts_Pro_Features_Discovery_Ability() );
 
 		// Assert
 		$operation_properties = $manage_schema['properties']['operations']['items']['properties'];
 		$this->assertSame( [ 'operations' ], $manage_schema['required'] );
 		$this->assertSame( [ 'create', 'update', 'delete' ], $operation_properties['action']['enum'] );
 		$this->assertSame( Site_Parts_Pro_Features_Discovery::get_types(), $operation_properties['type']['enum'] );
-		$this->assertArrayHasKey( 'active', $list_schema['properties'] );
 	}
 
 	private function assert_value_link_free_path_order( string $message, string $value, string $free_path, string $upgrade_link = self::UPGRADE_LINK ): void {

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 
@@ -15,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Lists the agent-facing artifacts this site serves as ARD entries, each with
  * a domain-anchored URN identifier and the media type its URL actually returns.
  * Also reachable at the predecessor path /.well-known/ai-catalog.json.
+ * The document declares AI Catalog specVersion 1.0, which consumers require.
  *
  * Not applicable when the site owner already publishes a physical catalog, so
  * an existing ard.json or ai-catalog.json is never contradicted.
@@ -24,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 	const PHYSICAL_CATALOG_FILES = [ 'ard.json', 'ai-catalog.json' ];
+
+	const SPEC_VERSION = '1.0';
 
 	const URN_PREFIX = 'urn:air:';
 
@@ -79,7 +83,8 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 
 		$built_in_entries = array_merge(
 			$this->build_llms_txt_entries( $home ),
-			$this->build_agent_skills_entries( $home )
+			$this->build_agent_skills_entries( $home ),
+			$this->build_openapi_entries( $home )
 		);
 
 		/**
@@ -91,7 +96,10 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 		 */
 		$entries = array_values( (array) apply_filters( 'elementor/agents/ard_catalog/entries', $built_in_entries, $home ) );
 
-		return [ 'entries' => $entries ];
+		return [
+			'specVersion' => self::SPEC_VERSION,
+			'entries'     => $entries,
+		];
 	}
 
 	private function has_physical_catalog_file(): bool {
@@ -172,6 +180,35 @@ class Ard_Catalog extends Abstract_Well_Known_Endpoint {
 				'url'                   => $home . ltrim( Well_Known_Router::WELL_KNOWN_PREFIX, '/' ) . self::AGENT_SKILLS_SLUG,
 				'description'           => 'Index of the actions (MCP tools) this site lets AI agents perform, with their input schemas.',
 				'representativeQueries' => self::AGENT_SKILLS_REPRESENTATIVE_QUERIES,
+			],
+		];
+	}
+
+	private function build_openapi_entries( string $home ): array {
+		$module = $this->get_module();
+
+		if ( ! $module ) {
+			return [];
+		}
+
+		$component = $module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec || ! $component->is_publishable() ) {
+			return [];
+		}
+
+		return [
+			[
+				'identifier'            => self::build_identifier( 'api', 'openapi' ),
+				'displayName'           => 'OpenAPI',
+				'type'                  => 'application/json',
+				'url'                   => $home . 'openapi.json',
+				'description'           => 'OpenAPI 3.0.3 specification describing the WordPress REST API endpoints safe for agent access.',
+				'representativeQueries' => [
+					'What REST API endpoints does this site expose?',
+					'How do I access posts and pages via the API?',
+					'What parameters does the search endpoint accept?',
+				],
 			],
 		];
 	}
