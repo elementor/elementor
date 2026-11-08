@@ -4,7 +4,7 @@ import { act } from '@testing-library/react';
 
 import { CreateWidget } from '../create-widget';
 
-const mockIsAngiePluginActive = jest.fn();
+const mockCanCreateWidget = jest.fn();
 const mockTrackEvent = jest.fn();
 const mockSendPromptToAngie = jest.fn();
 
@@ -12,7 +12,7 @@ jest.mock( '@elementor/editor-mcp', () => {
 	const { toolPrompts } = jest.requireActual( '@elementor/editor-mcp' ) as { toolPrompts: unknown };
 	return {
 		toolPrompts,
-		isAngiePluginActive: () => mockIsAngiePluginActive(),
+		canCreateWidget: () => mockCanCreateWidget(),
 		sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
 	};
 } );
@@ -29,13 +29,13 @@ function dispatchCreateWidgetEvent( detail: { prompt?: string; entry_point: stri
 
 describe( 'CreateWidget', () => {
 	beforeEach( () => {
-		mockIsAngiePluginActive.mockReset();
+		mockCanCreateWidget.mockReset();
 		mockTrackEvent.mockReset();
 		mockSendPromptToAngie.mockReset();
 	} );
 
-	it( 'does nothing when the Angie plugin is not active', () => {
-		mockIsAngiePluginActive.mockReturnValue( false );
+	it( 'does nothing when canCreateWidget is false (Angie inactive)', () => {
+		mockCanCreateWidget.mockReturnValue( false );
 		renderWithTheme( <CreateWidget /> );
 
 		act( () => {
@@ -46,8 +46,20 @@ describe( 'CreateWidget', () => {
 		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
 	} );
 
-	it( 'sends the prompt to Angie when the plugin is active', () => {
-		mockIsAngiePluginActive.mockReturnValue( true );
+	it( 'does nothing when canCreateWidget is false (non-admin with Angie active)', () => {
+		mockCanCreateWidget.mockReturnValue( false );
+		renderWithTheme( <CreateWidget /> );
+
+		act( () => {
+			dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
+		} );
+
+		expect( mockTrackEvent ).not.toHaveBeenCalled();
+		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends the prompt to Angie when canCreateWidget is true (admin with Angie active)', () => {
+		mockCanCreateWidget.mockReturnValue( true );
 		renderWithTheme( <CreateWidget /> );
 
 		act( () => {
@@ -57,8 +69,8 @@ describe( 'CreateWidget', () => {
 		expect( mockSendPromptToAngie ).toHaveBeenCalledWith( 'My prompt' );
 	} );
 
-	it( 'tracks ai_widget_cta_clicked when the plugin is active', () => {
-		mockIsAngiePluginActive.mockReturnValue( true );
+	it( 'tracks ai_widget_cta_clicked when canCreateWidget is true', () => {
+		mockCanCreateWidget.mockReturnValue( true );
 		renderWithTheme( <CreateWidget /> );
 
 		act( () => {

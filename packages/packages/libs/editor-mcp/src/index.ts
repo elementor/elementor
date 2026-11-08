@@ -9,6 +9,7 @@ export {
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 export { isAngieAvailable } from './utils/is-angie-available';
+export { canCreateWidget } from './utils/can-create-widget';
 export { isAngiePluginActive } from './utils/is-angie-plugin-active';
 export { isAngieSidebarOpen } from './utils/is-angie-sidebar-open';
 export * from './mcp-registry';

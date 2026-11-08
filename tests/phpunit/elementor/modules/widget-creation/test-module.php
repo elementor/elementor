@@ -13,6 +13,7 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function test_localize_settings_includes_widget_creation_config() {
 		// Arrange
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 		new Module();
 
 		// Act
@@ -21,11 +22,38 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertArrayHasKey( 'widgetCreation', $settings );
 		$this->assertArrayHasKey( 'isAngiePluginActive', $settings['widgetCreation'] );
+		$this->assertArrayHasKey( 'canCreateWidget', $settings['widgetCreation'] );
 		$this->assertIsBool( $settings['widgetCreation']['isAngiePluginActive'] );
+		$this->assertIsBool( $settings['widgetCreation']['canCreateWidget'] );
+	}
+
+	public function test_can_create_widget_is_false_for_non_admin_even_when_exposed() {
+		// Arrange
+		$subscriber_id = $this->factory()->user->create( [ 'role' => 'subscriber' ] );
+		wp_set_current_user( $subscriber_id );
+
+		// Act & Assert
+		$this->assertFalse( Module::can_create_widget() );
+	}
+
+	public function test_can_create_widget_requires_manage_options() {
+		// Arrange
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+
+		// Act
+		$can_create = Module::can_create_widget();
+
+		// Assert
+		if ( Module::is_angie_plugin_active() ) {
+			$this->assertTrue( $can_create );
+		} else {
+			$this->assertFalse( $can_create );
+		}
 	}
 
 	public function test_editor_v2_scripts_env_includes_widget_creation_package_config() {
 		// Arrange
+		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
 		new Module();
 
 		// Act
@@ -34,10 +62,12 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		$this->assertArrayHasKey( '@elementor/editor-widget-creation', $env );
 		$this->assertArrayHasKey( 'is_angie_plugin_active', $env['@elementor/editor-widget-creation'] );
+		$this->assertArrayHasKey( 'can_create_widget', $env['@elementor/editor-widget-creation'] );
 		$this->assertIsBool( $env['@elementor/editor-widget-creation']['is_angie_plugin_active'] );
+		$this->assertIsBool( $env['@elementor/editor-widget-creation']['can_create_widget'] );
 	}
 
-	public function test_editor_v2_packages_omit_widget_creation_when_angie_inactive() {
+	public function test_editor_v2_packages_omit_widget_creation_when_cannot_create() {
 		// Arrange
 		new Module();
 
@@ -45,7 +75,7 @@ class Test_Module extends Elementor_Test_Base {
 		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
 
 		// Assert
-		if ( Module::is_angie_plugin_active() ) {
+		if ( Module::can_create_widget() ) {
 			$this->assertContains( 'editor-widget-creation', $packages );
 		} else {
 			$this->assertNotContains( 'editor-widget-creation', $packages );

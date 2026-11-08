@@ -345,7 +345,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		if ( ! elementorIsAngiePluginActive() ) {
+		if ( ! elementorIsAngiePluginActive() || ! elementor.config.user.is_administrator ) {
 			this.widgetCreation.empty();
 			return;
 		}

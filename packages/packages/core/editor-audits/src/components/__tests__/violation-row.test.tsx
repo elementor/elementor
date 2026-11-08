@@ -22,14 +22,14 @@ jest.mock( '@elementor/editor-floating-panels', () => ( {
 	useFloatingPanelZIndex: jest.fn( () => 1000 ),
 } ) );
 
-const mockIsAngiePluginActive = jest.fn();
+const mockCanCreateWidget = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => {
 	const { toolPrompts } = jest.requireActual( '@elementor/editor-mcp' ) as { toolPrompts: unknown };
 
 	return {
 		toolPrompts,
-		isAngiePluginActive: () => mockIsAngiePluginActive(),
+		canCreateWidget: () => mockCanCreateWidget(),
 		sendPromptToAngie: jest.fn(),
 	};
 } );
@@ -51,7 +51,7 @@ function renderExpanded( violations?: AuditViolation[] ) {
 describe( 'ViolationRow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockIsAngiePluginActive.mockReturnValue( true );
+		mockCanCreateWidget.mockReturnValue( true );
 	} );
 
 	it( 'calls onToggleExpand when the header is clicked', () => {

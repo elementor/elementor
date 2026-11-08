@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { isAngiePluginActive, sendPromptToAngie } from '@elementor/editor-mcp';
+import { canCreateWidget, sendPromptToAngie } from '@elementor/editor-mcp';
 import { AngieIcon } from '@elementor/icons';
 import { Button, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function FixViolationWithAngie( { audit, prompt, panelZIndex, variant = 'icon' }: Props ) {
-	if ( ! isAngiePluginActive() ) {
+	if ( ! canCreateWidget() ) {
 		return null;
 	}
 

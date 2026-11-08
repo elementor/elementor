@@ -42,6 +42,10 @@ class Module extends BaseModule {
 		return Hints::is_plugin_active( 'angie' );
 	}
 
+	public static function can_create_widget(): bool {
+		return self::is_angie_plugin_active() && current_user_can( 'manage_options' );
+	}
+
 	public function __construct() {
 		parent::__construct();
 		$this->register_angie_in_panels_experiment();
@@ -75,7 +79,7 @@ class Module extends BaseModule {
 	}
 
 	private function add_packages( array $packages ): array {
-		if ( ! self::is_angie_plugin_active() ) {
+		if ( ! self::can_create_widget() ) {
 			return $packages;
 		}
 
@@ -85,6 +89,7 @@ class Module extends BaseModule {
 	private function add_editor_env( array $env ): array {
 		$env['@elementor/editor-widget-creation'] = [
 			'is_angie_plugin_active' => self::is_angie_plugin_active(),
+			'can_create_widget' => self::can_create_widget(),
 		];
 
 		return $env;
@@ -93,6 +98,7 @@ class Module extends BaseModule {
 	private function add_localize_settings( array $settings ): array {
 		$settings['widgetCreation'] = [
 			'isAngiePluginActive' => self::is_angie_plugin_active(),
+			'canCreateWidget' => self::can_create_widget(),
 		];
 
 		return $settings;

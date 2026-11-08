@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { isAngiePluginActive, sendPromptToAngie } from '@elementor/editor-mcp';
+import { canCreateWidget, sendPromptToAngie } from '@elementor/editor-mcp';
 import { trackEvent } from '@elementor/events';
 
 type ShowModalEventDetail = {
@@ -14,7 +14,7 @@ const ANGIE_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked' as const;
 export function CreateWidget() {
 	useEffect( () => {
 		const handleShow = ( event: Event ) => {
-			if ( ! isAngiePluginActive() ) {
+			if ( ! canCreateWidget() ) {
 				return;
 			}
 

@@ -128,6 +128,7 @@ declare global {
 					autoShow?: boolean;
 				};
 				widgetCreation?: {
+					canCreateWidget?: boolean;
 					isAngiePluginActive?: boolean;
 				};
 				controls?: {
