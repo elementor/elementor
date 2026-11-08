@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
-use Elementor\Plugin;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,20 +46,17 @@ class Api_Catalog extends Abstract_Well_Known_Endpoint {
 			],
 		];
 
-		// Elementor Agents MCP server — present when active.
-		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
-		$mcp    = $module ? $module->get_component( 'agents_mcp_server' ) : null;
-
-		if ( $mcp && $mcp->is_enabled() ) {
+		// Elementor MCP server — present when active.
+		if ( apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
 			$apis[] = [
-				'id'          => 'elementor-agents-mcp',
-				'title'       => 'Elementor Agent Ready MCP',
-				'description' => 'Model Context Protocol server exposing site content and capabilities to AI agents.',
-				'url'         => rest_url( 'elementor/agents-mcp' ),
-				'spec_url'    => $home . '.well-known/mcp/server-card.json',
+				'id'          => Mcp_Discovery::SERVER_SLUG,
+				'title'       => Mcp_Discovery::SERVER_TITLE,
+				'description' => Mcp_Discovery::SERVER_DESCRIPTION,
+				'url'         => Mcp_Discovery::get_server_url(),
+				'spec_url'    => Mcp_Discovery::get_server_card_url(),
 				'type'        => 'mcp',
 				'spec'        => 'mcp-2025-11-25',
-				'transport'   => 'streamable-http',
+				'transport'   => Mcp_Discovery::TRANSPORT,
 				'auth'        => [
 					'type'          => 'application_password',
 					'documentation' => $home . '.well-known/auth.md',

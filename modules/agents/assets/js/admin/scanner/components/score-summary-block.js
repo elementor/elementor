@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
+import Skeleton from '@elementor/ui/Skeleton';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
@@ -103,6 +104,14 @@ ScoreSummaryBlock.propTypes = {
 	banner: PropTypes.node,
 };
 
+const ScoreCopySkeleton = () => (
+	<Stack spacing={ 1 } aria-hidden="true">
+		<Skeleton variant="text" width={ SCANNER_LAYOUT.skeletonHeadingWidth } height={ SCANNER_LAYOUT.skeletonHeadingHeight } />
+		<Skeleton variant="text" width="100%" />
+		<Skeleton variant="text" width={ SCANNER_LAYOUT.skeletonMetaWidth } />
+	</Stack>
+);
+
 export const ScoreRow = ( {
 	score,
 	ringDurationMs,
@@ -124,17 +133,12 @@ export const ScoreRow = ( {
 			<ScoreRing score={ score } durationMs={ ringDurationMs } isDimmed={ isDimmed } />
 			<Stack spacing={ 2 } flex={ 1 } minWidth={ 0 }>
 				<Stack spacing={ 0 }>
-					<Stack direction="row" alignItems="center" spacing={ 2 }>
-						<Typography variant="h5" component="h3" color="text.primary">{ heading }</Typography>
-						<RescanControl
-							layout={ RESCAN_LAYOUT_SCORE_ROW }
-							retryAt={ retryAt }
-							onRescan={ onRescan }
-							isBusy={ isBusy }
-							isActivated={ isActivated }
-						/>
-					</Stack>
-					<Typography variant="body1" color="text.secondary">{ description }</Typography>
+					{ isBusy ? <ScoreCopySkeleton /> : (
+						<>
+							<Typography variant="h5" component="h3" color="text.primary">{ heading }</Typography>
+							<Typography variant="body1" color="text.secondary">{ description }</Typography>
+						</>
+					) }
 					{ needsRescanForScore && (
 						<Typography variant="caption" color="text.tertiary">
 							{ __( 'Rescan to update your score.', 'elementor' ) }
@@ -165,6 +169,15 @@ export const ScoreRow = ( {
 						</Button>
 					</Stack>
 				) }
+			</Stack>
+			<Stack direction="row" alignItems="center" flexShrink={ 0 }>
+				<RescanControl
+					layout={ RESCAN_LAYOUT_SCORE_ROW }
+					retryAt={ retryAt }
+					onRescan={ onRescan }
+					isBusy={ isBusy }
+					isActivated={ isActivated }
+				/>
 			</Stack>
 		</Stack>
 	);

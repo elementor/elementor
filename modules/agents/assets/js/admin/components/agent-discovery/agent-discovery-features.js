@@ -5,7 +5,7 @@ export const getAgentDiscoveryFeatures = () => [
 		id: 'capability-catalog',
 		title: __( 'Capability catalog', 'elementor' ),
 		description: __( 'Lists everything agents can use on this site, so they find it in one fetch.', 'elementor' ),
-		slugs: [ 'agent.json' ],
+		slugs: [ 'agent.json', 'ard.json' ],
 	},
 	{
 		id: 'api-catalog',
