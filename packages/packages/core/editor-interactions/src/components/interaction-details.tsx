@@ -6,9 +6,10 @@ import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import { type FieldProps, type InteractionItemValue, type SizeStringValue } from '../types';
+import { type FieldProps, type InteractionItemValue, type SizeStringValue, type TriggerFieldProps } from '../types';
 import {
 	CODE_EFFECT,
+	CODE_EFFECT_EXTRA_TRIGGERS,
 	createAnimationPreset,
 	createString,
 	extractBoolean,
@@ -44,8 +45,6 @@ export const DEFAULT_VALUES = {
 };
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
-
-const CODE_EFFECT_TRIGGER = 'load';
 
 type InteractionsControlType =
 	| 'trigger'
@@ -88,8 +87,10 @@ type ControlVisibilityConfig = {
 
 const isCodeEffect = ( values: InteractionValues ) => values.effect === CODE_EFFECT;
 
+const resolveTrigger = ( effect: string, trigger: string ) =>
+	CODE_EFFECT !== effect && CODE_EFFECT_EXTRA_TRIGGERS.includes( trigger ) ? DEFAULT_VALUES.trigger : trigger;
+
 const controlVisibilityConfig: ControlVisibilityConfig = {
-	trigger: ( values ) => ! isCodeEffect( values ),
 	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ) && ! isCodeEffect( values ),
 	custom: ( values ) => values.effect === 'custom',
 	codeEffect: isCodeEffect,
@@ -166,7 +167,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		codeEffect,
 	};
 
-	const TriggerControl = useControlComponent( 'trigger', controlVisibilityConfig.trigger( interactionValues ) );
+	const TriggerControl = useControlComponent( 'trigger' ) as ComponentType< TriggerFieldProps > | null;
 	const EffectControl = useControlComponent( 'effect' );
 	const ReplayControl = useControlComponent( 'replay', controlVisibilityConfig.replay( interactionValues ) );
 	const RelativeToControl = useControlComponent(
@@ -219,7 +220,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		} >
 	): void => {
 		const nextEffect = updates.effect ?? effect;
-		const nextTrigger = CODE_EFFECT === nextEffect ? CODE_EFFECT_TRIGGER : updates.trigger ?? trigger;
+		const nextTrigger = resolveTrigger( nextEffect, updates.trigger ?? trigger );
 
 		const resolvedDirectionValue = resolveDirection(
 			'direction' in updates,
@@ -264,32 +265,29 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 	return (
 		<PopoverContent p={ 1.5 }>
-			{ ( TriggerControl || ReplayControl ) && (
-				<>
-					<Grid container spacing={ 1.5 }>
-						{ TriggerControl && (
-							<Field label={ __( 'Trigger', 'elementor' ) }>
-								<TriggerControl
-									value={ trigger }
-									onChange={ ( v ) => updateInteraction( { trigger: v } ) }
-								/>
-							</Field>
-						) }
+			<Grid container spacing={ 1.5 }>
+				{ TriggerControl && (
+					<Field label={ __( 'Trigger', 'elementor' ) }>
+						<TriggerControl
+							value={ trigger }
+							onChange={ ( v ) => updateInteraction( { trigger: v } ) }
+							effect={ effect }
+						/>
+					</Field>
+				) }
 
-						{ ReplayControl && (
-							<Field label={ __( 'Replay', 'elementor' ) }>
-								<ReplayControl
-									value={ replay }
-									onChange={ ( v ) => updateInteraction( { replay: v } ) }
-									disabled={ true }
-								/>
-							</Field>
-						) }
-					</Grid>
+				{ ReplayControl && (
+					<Field label={ __( 'Replay', 'elementor' ) }>
+						<ReplayControl
+							value={ replay }
+							onChange={ ( v ) => updateInteraction( { replay: v } ) }
+							disabled={ true }
+						/>
+					</Field>
+				) }
+			</Grid>
 
-					<Divider />
-				</>
-			) }
+			<Divider />
 
 			<Grid container spacing={ 1.5 }>
 				{ EffectControl && (

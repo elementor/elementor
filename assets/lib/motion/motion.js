@@ -1732,25 +1732,53 @@
             value: keyframeValues[0],
         };
         /**
-         * Fast setup path for two keyframes one easing. interpolate() handles
-         * a custom mixer, and falls back to the usual one where it declines.
+         * Two keyframes, or keyframes that hold, move once, then hold, as each
+         * value of a sequence does, ease and mix only the pair that moves.
          */
-        if (!customMixer &&
-            keyframeValues.length === 2 &&
-            !Array.isArray(easingFunctions) &&
-            (!times ||
-                times.length !== 2 ||
-                (times[0] === 0 && times[1] === 1))) {
-            const [origin, target] = keyframeValues;
-            const mixer = origin === target
-                ? undefined
-                : (MotionGlobalConfig.mix || mix)(origin, target);
+        let span = -1;
+        if (!customMixer) {
+            for (let i = 1; i < keyframeValues.length; i++) {
+                if (keyframeValues[i] !== keyframeValues[i - 1]) {
+                    if (span >= 0) {
+                        span = -2;
+                        break;
+                    }
+                    span = i - 1;
+                }
+            }
+        }
+        if (span >= 0) {
+            const offsets = times && times.length === keyframeValues.length
+                ? times
+                : defaultOffset$1(keyframeValues);
+            const from = offsets[span] * duration;
+            const to = offsets[span + 1] * duration;
+            const origin = keyframeValues[span];
+            const target = keyframeValues[span + 1];
+            const ease = Array.isArray(easingFunctions)
+                ? easingFunctions[span]
+                : easingFunctions;
+            const mixer = (MotionGlobalConfig.mix || mix)(origin, target);
+            const last = keyframeValues.length - 2;
             return {
                 calculatedDuration: duration,
                 next: (t) => {
-                    state.value = mixer
-                        ? mixer(easingFunctions(duration > 0 ? clamp(0, 1, t / duration) : 1))
-                        : target;
+                    /**
+                     * Held keyframes either side of the move are mixed as
+                     * interpolate() mixes them, so colours keep its format.
+                     */
+                    state.value =
+                        span && t < from
+                            ? mixer(0)
+                            : span < last && (t >= to || !duration)
+                                ? typeof target === "number"
+                                    ? target
+                                    : mixer(1)
+                                : mixer(ease(t >= to || !duration
+                                    ? 1
+                                    : t <= from
+                                        ? 0
+                                        : (t - from) / (to - from)));
                     state.done = t >= duration;
                     return state;
                 },
@@ -1799,13 +1827,27 @@
             : getGeneratorVelocity((s) => generator.next(s).value, t, generator.next(t).value);
     }
 
-    const isNotNull = (value) => value !== null;
     function getFinalKeyframe(keyframes, { repeat, repeatType = "loop" }, finalKeyframe, speed = 1) {
-        const resolvedKeyframes = keyframes.filter(isNotNull);
+        /**
+         * The first and last keyframes that aren't null, and how many there
+         * are. Found in one pass rather than filtering into a new array, as
+         * this runs for every value of every animation.
+         */
+        let first;
+        let last;
+        let numResolved = 0;
+        for (let i = 0; i < keyframes.length; i++) {
+            const keyframe = keyframes[i];
+            if (keyframe !== null) {
+                if (!numResolved++)
+                    first = keyframe;
+                last = keyframe;
+            }
+        }
         const useFirstKeyframe = speed < 0 || (repeat && repeatType !== "loop" && repeat % 2 === 1);
-        const index = useFirstKeyframe ? 0 : resolvedKeyframes.length - 1;
+        const index = useFirstKeyframe ? 0 : numResolved - 1;
         return !index || finalKeyframe === undefined
-            ? resolvedKeyframes[index]
+            ? (index ? last : first)
             : finalKeyframe;
     }
 
@@ -2192,6 +2234,12 @@
             return millisecondsToSeconds(this.currentTime);
         }
         set time(newTime) {
+            /**
+             * Seeking out of "finished" leaves the animation paused, so play()
+             * won't renew finished. Renew it here.
+             */
+            if (this.state === "finished")
+                this.updateFinished();
             newTime = secondsToMilliseconds(newTime);
             this.currentTime = newTime;
             if (this.startTime === null ||
@@ -2478,14 +2526,26 @@
     const getDefaultValueType = (key) => defaultValueTypes[key];
 
     const customTypes = /*@__PURE__*/ new Set([filter, mask]);
+    /**
+     * The last call and its result. animate() on many elements asks for the
+     * same none for each one, and parsing the value is the slow part.
+     */
+    let lastKey;
+    let lastValue;
+    let lastNone;
     function getAnimatableNone(key, value) {
+        if (key === lastKey && value === lastValue)
+            return lastNone;
         let defaultValueType = getDefaultValueType(key);
         if (!customTypes.has(defaultValueType))
             defaultValueType = complex;
         // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
-        return defaultValueType.getAnimatableNone
+        lastNone = defaultValueType.getAnimatableNone
             ? defaultValueType.getAnimatableNone(value)
             : undefined;
+        lastKey = key;
+        lastValue = value;
+        return lastNone;
     }
 
     function fillWildcards(keyframes) {
@@ -2976,7 +3036,8 @@
             if (transition.autoplay === false) {
                 this.animation.pause();
             }
-            this.animation.onfinish = () => {
+            this.animation.onfinish = this.onFinish = () => {
+                this.animation.onfinish = null;
                 this.finishedTime = this.time;
                 if (!pseudoElement) {
                     const keyframe = getFinalKeyframe(keyframes, this.options, finalKeyframe, this.speed);
@@ -3000,6 +3061,7 @@
             if (this.isStopped)
                 return;
             this.manualStartTime = null;
+            this.animation.onfinish = this.onFinish;
             this.animation.play();
             if (this.state === "finished") {
                 this.updateFinished();
@@ -3009,9 +3071,12 @@
             this.animation.pause();
         }
         complete() {
+            if (!this.isStopped)
+                this.animation.onfinish = this.onFinish;
             this.animation.finish?.();
         }
         cancel() {
+            this.animation.onfinish = null;
             try {
                 this.animation.cancel();
             }
@@ -3035,10 +3100,8 @@
             else {
                 this.commitStyles();
             }
-            if (!this.isPseudoElement) {
-                this.animation.onfinish = null;
+            if (!this.isPseudoElement)
                 this.cancel();
-            }
         }
         /**
          * WAAPI doesn't natively have any interruption capabilities.
@@ -3074,8 +3137,13 @@
             this.manualStartTime = null;
             this.finishedTime = null;
             this.animation.currentTime = secondsToMilliseconds(newTime);
+            /**
+             * Seeking out of "finished" leaves the animation paused, so play()
+             * won't renew finished. Renew it here.
+             */
             if (wasFinished) {
                 this.animation.pause();
+                this.updateFinished();
             }
         }
         /**
@@ -3109,7 +3177,7 @@
             if (this.allowFlatten) {
                 this.animation.effect?.updateTiming({ easing: "linear" });
             }
-            this.animation.onfinish = null;
+            this.animation.onfinish = this.onFinish = null;
             if (timeline && supportsScrollTimeline()) {
                 this.animation.timeline = timeline;
                 onAttach?.(this.animation);
@@ -3504,9 +3572,39 @@
      */
     const churnWindow = 100;
     /**
+     * A WAAPI animation that starts moving later than this, as most segments
+     * of a long sequence do, is built this long before it starts, rather than
+     * all at once at the start.
+     */
+    const buildAhead = 100;
+    /**
      * Named easings that are the same cubic-bezier in JS and CSS.
      */
-    const isNativeEasing = (ease) => /^(linear|ease(In|Out|InOut))$/.test(ease);
+    const nativeEasings = new Set(["linear", "easeIn", "easeOut", "easeInOut"]);
+    const isNativeEasing = (ease) => nativeEasings.has(ease);
+    /**
+     * The last trace of each easing WAAPI can't run into linear(), with its
+     * number of samples, so the elements of a sequence that share an easing
+     * and duration trace it once.
+     */
+    const traced = new WeakMap();
+    const trace = (ease, samples) => {
+        let last = traced.get(ease);
+        if (last?.[0] !== samples) {
+            last = [
+                samples,
+                "linear(" +
+                    defaultOffset$1(Array(samples + 1)).map((p) => round(ease(p)) + " " + round(p * 100) + "%") +
+                    ")",
+            ];
+            traced.set(ease, last);
+        }
+        return last[1];
+    };
+    /**
+     * How many samples trace an easing between two timestamps.
+     */
+    const countSamples = (from, to) => Math.min(maxSamples, Math.max(2, Math.ceil((to - from) / sampleDelta)));
     /**
      * Whether two eased progresses match. False if either is NaN.
      */
@@ -3567,6 +3665,54 @@
              */
             !needsMixer(options));
     }
+    /**
+     * Starting or stopping tells the group to update its WAAPI animation.
+     * The frame loop driver is only made once the group is on the main
+     * thread, as accelerated animations never tick.
+     */
+    class TransformDriver {
+        constructor(element, update, makeDriver, animation) {
+            this.element = element;
+            this.update = update;
+            this.makeDriver = makeDriver;
+            this.animation = animation;
+        }
+        get js() {
+            return (this.driver || (this.driver = this.makeDriver(this.update)));
+        }
+        now() {
+            return this.driver || this.makeDriver !== frameloopDriver
+                ? this.js.now()
+                : frameData.isProcessing
+                    ? frameData.timestamp
+                    : time.now();
+        }
+        /**
+         * keepAlive is false when seeking. Seeking the WAAPI animation is
+         * free, but if a seek needs a rebuild and keeps happening, the group
+         * moves to the main thread.
+         */
+        start(keepAlive = true) {
+            const group = getGroup(this.element);
+            !group || group.isJS
+                ? this.js.start(keepAlive)
+                : group.schedule(false, !keepAlive);
+        }
+        stopJS() {
+            this.driver?.stop();
+        }
+        stop() {
+            this.stopJS();
+            const group = getGroup(this.element);
+            group && !group.isFinishing && group.release(this.animation);
+        }
+    }
+    /**
+     * JSAnimation's time setter, looked up on first use rather than at module
+     * load, so the module has no top-level side effects and stays
+     * tree-shakeable in flattened bundles.
+     */
+    let setTime;
     class TransformAnimation extends JSAnimation {
         constructor(options) {
             const element = getOwner(options).current;
@@ -3578,35 +3724,16 @@
             const canAccelerate = canAccelerateTransform(options);
             /**
              * The driver ticks on the main thread only once the group has
-             * moved there. Until then, starting or stopping tells the group to
-             * update its WAAPI animation.
+             * moved there, so its frame loop driver is made then.
              */
-            options.driver = (update) => {
-                const js = driver(update);
-                return {
-                    js,
-                    now: js.now,
-                    start: (keepAlive = true) => {
-                        const group = getGroup(element);
-                        const isJS = !group || group.isJS;
-                        /**
-                         * keepAlive is false when seeking. Seeking the WAAPI
-                         * animation is free, but if a seek needs a rebuild and
-                         * keeps happening, the group moves to the main thread.
-                         */
-                        isJS
-                            ? js.start(keepAlive)
-                            : group.schedule(false, !keepAlive);
-                    },
-                    stop: () => {
-                        js.stop();
-                        const group = getGroup(element);
-                        group && !group.isFinishing && group.release(animation);
-                    },
-                };
-            };
+            options.driver = (update) => new TransformDriver(element, update, driver, animation);
             super(options);
             animation = this;
+            /**
+             * The first driver is made in super(), before this was assigned.
+             */
+            const firstDriver = this.driver;
+            firstDriver && (firstDriver.animation = this);
             this.canAccelerate = canAccelerate;
             /**
              * stop is bound in JSAnimation, so wrap it rather than override.
@@ -3620,11 +3747,28 @@
                 stop();
             };
         }
+        /**
+         * Each keyframe's offset, made once for the keyframes rather than on
+         * every build.
+         */
+        offsets() {
+            const { keyframes, times } = this.options;
+            if (times)
+                return times;
+            if (this.offsetsOf !== keyframes) {
+                this.offsetsOf = keyframes;
+                this.cachedOffsets = defaultOffset$1(keyframes);
+            }
+            return this.cachedOffsets;
+        }
         get group() {
             return getGroup(getOwner(this.options).current);
         }
         get js() {
             return this.driver?.js;
+        }
+        stopJS() {
+            this.driver?.stopJS();
         }
         get name() {
             return this.options.name;
@@ -3665,22 +3809,48 @@
             return this.isAccelerated() ? this.sampleAt(time.now()) : undefined;
         }
         /**
-         * If this is a two-keyframe tween whose easing WAAPI runs exactly,
-         * when it starts and stops moving, and that easing.
+         * If this moves between two keyframes only, holding still either side
+         * of them, as each value of a sequence segment does, when it starts
+         * and stops moving, and its easing: as a string if WAAPI runs it
+         * exactly, otherwise its function, to trace.
          */
         tween() {
-            const { keyframes: keyframes$1, type, ease, times, repeat, delay = 0 } = this.options;
-            const easing = isBezierDefinition(ease)
-                ? cubicBezierAsString(ease)
-                : isNativeEasing(ease) && supportedWaapiEasing[ease];
-            if (easing &&
-                !repeat &&
-                !times &&
-                keyframes$1.length === 2 &&
-                type === keyframes &&
-                this.holdTime === null) {
-                const start = this.startTime + delay / this.speed;
-                return [start, start + this.resolvedDuration / this.speed, easing];
+            const { keyframes: keyframes$1, type, repeat, delay = 0 } = this.options;
+            let span = -1;
+            if (repeat || type !== keyframes || this.holdTime !== null) {
+                return;
+            }
+            for (let i = 1; i < keyframes$1.length; i++) {
+                if (keyframes$1[i] !== keyframes$1[i - 1]) {
+                    if (span >= 0)
+                        return;
+                    span = i - 1;
+                }
+            }
+            let { ease } = this.options;
+            if (isEasingArray(ease))
+                ease = ease[span];
+            const offsets = this.offsets();
+            const at = (i) => this.startTime +
+                (delay + offsets[i] * this.totalDuration) / this.speed;
+            if (span >= 0) {
+                const easing = isBezierDefinition(ease)
+                    ? cubicBezierAsString(ease)
+                    : isNativeEasing(ease)
+                        ? supportedWaapiEasing[ease]
+                        : easingDefinitionToFunction(ease);
+                /**
+                 * An easing that doesn't run from 0 to 1 doesn't move between
+                 * the keyframes, so is traced from the values it gives instead.
+                 */
+                return [
+                    at(span),
+                    at(span + 1),
+                    typeof easing === "string" ||
+                        (isNear$1(easing(0), 0) && isNear$1(easing(1), 1))
+                        ? easing
+                        : undefined,
+                ];
             }
         }
         /**
@@ -3689,9 +3859,9 @@
          */
         boundaries(from, to) {
             const { startTime, speed, resolvedDuration, options } = this;
-            const { delay = 0, repeat = 0, repeatDelay = 0, repeatType, times, keyframes: keyframes$1, type, } = options;
+            const { delay = 0, repeat = 0, repeatDelay = 0, repeatType, type, } = options;
             const offsets = (type || keyframes) === keyframes
-                ? times || defaultOffset$1(keyframes$1)
+                ? this.offsets()
                 : [0, 1];
             const start = startTime + delay / speed;
             const result = [];
@@ -3724,7 +3894,14 @@
          */
         sync() {
             const now = time.now();
-            this.options.motionValue.setWithVelocity(this.sampleAt(now - sampleDelta, true), this.sampleAt(now, true), sampleDelta);
+            const value = this.sampleAt(now, true);
+            /**
+             * A held value doesn't move, so there's no need to sample it
+             * twice.
+             */
+            this.options.motionValue.setWithVelocity(this.holdTime === null
+                ? this.sampleAt(now - sampleDelta, true)
+                : value, value, sampleDelta);
         }
         play() {
             /**
@@ -3738,19 +3915,18 @@
         }
         pause() {
             super.pause();
-            if (this.isAccelerated()) {
-                this.sync();
-                this.group.schedule(false);
-            }
+            this.isAccelerated() && this.group.schedule(false);
         }
         /**
-         * JSAnimation finishes on its next tick, which only happens on the
-         * main thread, so finish now.
+         * JSAnimation finishes on its next tick, which only happens once the
+         * group is on the main thread, so finish now. That includes an
+         * animation that can't be accelerated but reached its end before the
+         * group could move there.
          */
         complete() {
             super.complete();
             const { group } = this;
-            group && !group.isJS && this.canAccelerate && this.tick(time.now());
+            group && !group.isJS && this.tick(time.now());
         }
         /**
          * Without a tick to rebase it, a held time still includes the delay,
@@ -3763,13 +3939,11 @@
             return super.time;
         }
         /**
-         * A JS animation sets its motion value from a seek on its next tick.
-         * This doesn't tick, so set it now, rather than leave it to be set
-         * when this next stops.
+         * Calls JSAnimation's setter directly, as `super.time =` is a slow
+         * path in V8 and this runs for every animation of a seeked sequence.
          */
         set time(newTime) {
-            super.time = newTime;
-            this.isAccelerated() && this.sync();
+            (setTime ?? (setTime = Object.getOwnPropertyDescriptor(JSAnimation.prototype, "time").set)).call(this, newTime);
         }
         /**
          * Scroll timelines set time every frame, so run these on the main
@@ -3781,6 +3955,20 @@
             return super.attachTimeline(timeline);
         }
     }
+    /**
+     * Groups that build straight after the current task build in one
+     * microtask, rather than one each.
+     */
+    let builds;
+    const buildSoon = (build) => {
+        builds ||
+            queueMicrotask(() => {
+                const queue = builds;
+                builds = undefined;
+                queue.forEach((build) => build());
+            });
+        (builds || (builds = [])).push(build);
+    };
     function createGroup(owner) {
         const element = owner.current;
         const tracks = new Set();
@@ -3800,6 +3988,13 @@
         let isEnded = false;
         let hasChurned = false;
         let lastChurn = -Infinity;
+        let wake;
+        let wakeAt = Infinity;
+        /**
+         * While waiting to build a tween that starts later, how long after
+         * the last build to build it.
+         */
+        let buildAt;
         const has = (key) => {
             for (const track of tracks)
                 if (track.name === key)
@@ -3854,12 +4049,24 @@
             element.style.transform = toTransform(values, true);
         };
         /**
+         * Cancel a WAAPI animation and remove its handlers, as WebKit never
+         * collects an animation once it has run, nor anything its handlers
+         * reference (#4034).
+         */
+        const cancel = (animation) => {
+            animation.onfinish = animation.oncancel = null;
+            animation.cancel();
+        };
+        /**
          * Cancel the WAAPI animations, by default first committing the
          * transform. The renderer writes its own version on its next render.
          */
         const stop = (shouldCommit = true) => {
+            clearTimeout(wake);
+            wakeAt = Infinity;
+            buildAt = undefined;
             shouldCommit && commit();
-            segments.forEach(({ animation }) => animation.cancel());
+            segments.forEach(({ animation }) => cancel(animation));
             segments = [];
         };
         /**
@@ -3880,7 +4087,7 @@
                 animation.onfinish = () => {
                     segment.isDone = true;
                     if (segments.some((s) => s.end === Infinity)) {
-                        animation.cancel();
+                        cancel(animation);
                         segments = segments.filter((s) => s !== segment);
                     }
                     group.schedule(false);
@@ -3911,12 +4118,31 @@
          * two timestamps, the easing that describes it.
          */
         const getEasing = (moving, from, to, bounds) => {
-            const samples = Math.min(maxSamples, Math.max(2, Math.ceil((to - from) / sampleDelta)));
+            const samples = countSamples(from, to);
             /**
              * Too many keyframes or repeats to follow with this many samples.
              */
             if (bounds.length * 4 > samples)
                 return;
+            /**
+             * First check half way, where values with different easings
+             * usually differ, before sampling every value many times.
+             */
+            let quick;
+            for (const track of moving) {
+                const first = track.numberAt(from);
+                const p = (track.numberAt((from + to) / 2) - first) /
+                    (track.numberAt(to) - first);
+                /**
+                 * NaN if it doesn't move.
+                 */
+                if (p !== p)
+                    continue;
+                if (quick === undefined)
+                    quick = p;
+                else if (!isNear$1(p, quick))
+                    return;
+            }
             const at = spread(from, to, samples).concat(bounds).sort(byTime);
             const position = (t) => progress(from, to, t);
             let shared;
@@ -3974,10 +4200,29 @@
         const sample = (moving, from, to, bounds) => {
             const times = [from];
             /**
+             * A linear tween is straight between its keyframes, so only the
+             * other values can curve, and a tween only while it moves.
+             */
+            const curved = [];
+            let curveFrom = to;
+            let curveTo = from;
+            for (const track of moving) {
+                const tween = track.tween();
+                if (tween?.[2] !== "linear") {
+                    const [trackEnd, cycle] = track.timing();
+                    const [a, b] = tween || [from, cycle ? to : trackEnd];
+                    curveFrom = Math.min(curveFrom, a);
+                    curveTo = Math.max(curveTo, b);
+                    curved.push(track);
+                }
+            }
+            curveFrom = Math.max(from, curveFrom);
+            curveTo = Math.min(to, curveTo);
+            /**
              * Values that aren't numbers, like calc(), are left to the
              * browser to interpolate.
              */
-            const isStraight = (a, b) => moving.every((track) => !(Math.abs(track.numberAt((a + b) / 2) -
+            const isStraight = (a, b) => curved.every((track) => !(Math.abs(track.numberAt((a + b) / 2) -
                 (track.numberAt(a) + track.numberAt(b)) / 2) >
                 (track.name.startsWith("scale")
                     ? scaleTolerance
@@ -4002,10 +4247,13 @@
                 }
             };
             /**
-             * Split at least every 100ms, and at every keyframe and repeat,
-             * either side of where a value can jump.
+             * Split at least every 100ms where a value can curve, and at every
+             * keyframe and repeat, either side of where a value can jump.
              */
-            const ends = spread(from, to, Math.ceil((to - from) / 100));
+            const ends = curveTo > curveFrom
+                ? spread(curveFrom, curveTo, Math.ceil((curveTo - curveFrom) / 100))
+                : [];
+            ends.push(to);
             for (const t of bounds)
                 ends.push(t, Math.min(t + 0.01, to));
             let start = from;
@@ -4025,12 +4273,20 @@
             for (const track of moving) {
                 const tween = track.tween();
                 if (!tween ||
-                    shared?.some((v, i) => i < 2
-                        ? Math.abs(tween[i] - v) > 1
-                        : tween[i] !== v)) {
+                    (shared &&
+                        (Math.abs(tween[0] - shared[0]) > 1 ||
+                            Math.abs(tween[1] - shared[1]) > 1))) {
                     return;
                 }
-                shared = tween;
+                /**
+                 * Easings that differ, like the springs a sequence makes for
+                 * each value, can still be the same curve.
+                 */
+                shared = [
+                    tween[0],
+                    tween[1],
+                    !shared || tween[2] === shared[2] ? tween[2] : undefined,
+                ];
             }
             return shared;
         };
@@ -4038,7 +4294,13 @@
          * A WAAPI animation of the composed transform between two timestamps.
          */
         const run = (moving, from, to, nativeEasing, options = { fill: "both" }, settled) => {
-            const bounds = moving.flatMap((track) => track.boundaries(from, to));
+            /**
+             * With an easing given, there's nothing to sample, so no need
+             * for the boundaries.
+             */
+            const bounds = nativeEasing
+                ? []
+                : moving.flatMap((track) => track.boundaries(from, to));
             const easing = nativeEasing || getEasing(moving, from, to, bounds);
             const times = easing ? [from, to] : sample(moving, from, to, bounds);
             const transform = times.map((t) => compose(t, settled));
@@ -4060,6 +4322,23 @@
                 duration: to - from,
                 easing: easing || "linear",
             });
+        };
+        /**
+         * Check whether it's time to build in this long. A check that's due
+         * sooner is kept, and checks again if it's early, so pausing and
+         * playing don't each replace a timer. One due later, after a seek or
+         * speed change while held, is replaced.
+         */
+        const wakeIn = (delay) => {
+            const at = time.now() + delay;
+            if (at < wakeAt) {
+                clearTimeout(wake);
+                wakeAt = at;
+                wake = setTimeout(() => {
+                    wakeAt = Infinity;
+                    group.schedule(false);
+                }, delay);
+            }
         };
         /**
          * Replace the WAAPI animations with ones built from now. Returns
@@ -4085,14 +4364,8 @@
                 const [trackEnd, trackCycle] = track.timing();
                 const isHeld = trackEnd === Infinity;
                 built.set(track, [track.at(now), track.speed, isHeld]);
-                /**
-                 * Held animations don't move, so keep their motion values up
-                 * to date, as a JSAnimation would on a seek.
-                 */
-                if (isHeld) {
-                    track.sync();
+                if (isHeld)
                     continue;
-                }
                 if (track.speed < 0)
                     return;
                 if (trackCycle) {
@@ -4132,12 +4405,35 @@
              */
             const tween = !cycle && getTween(moving);
             try {
-                if (tween && tween[1] > now) {
-                    const [from, to, easing] = tween;
-                    add(run(moving, from, to, easing), from - now, to - from);
-                }
-                else if (end > now) {
-                    add(run(moving, now, end), 0, end - now);
+                if (end > now) {
+                    let easing;
+                    if (tween && tween[1] > now) {
+                        const [from, to, ease] = tween;
+                        /**
+                         * Until it's built, the motion values hold where it
+                         * starts, for the renderer to write.
+                         */
+                        if (from - now > buildAhead) {
+                            moving.forEach((track) => track.sync());
+                            wakeIn((buildAt = from - now - buildAhead));
+                            return true;
+                        }
+                        easing =
+                            typeof ease === "string"
+                                ? ease
+                                : ease
+                                    ? trace(ease, countSamples(from, to))
+                                    : getEasing(moving, from, to, []);
+                        /**
+                         * It holds its last keyframe until the animations end.
+                         */
+                        easing &&
+                            add(run(moving, from, to, easing, {
+                                fill: "both",
+                                endDelay: end - to,
+                            }), from - now, end - from);
+                    }
+                    easing || add(run(moving, now, end), 0, end - now);
                     /**
                      * Animations that end sooner finish on the events of
                      * empty animations that end with them.
@@ -4174,9 +4470,11 @@
         /**
          * If every animation has been paused, played, seeked or sped up
          * together since the WAAPI animation was built, do the same to it.
-         * Returns false if it needs rebuilding instead.
+         * Returns false if it needs rebuilding instead. Seeking to before a
+         * tween starts rebuilds, so a running group seeked every frame still
+         * moves to the main thread.
          */
-        const retime = (now) => {
+        const retime = (now, isSeek) => {
             let elapsed;
             let rate = 0;
             for (const track of tracks) {
@@ -4186,9 +4484,14 @@
                 const [builtTime, builtSpeed, wasHeld] = state;
                 const trackTime = track.at(now);
                 const isHeld = track.timing()[0] === Infinity;
+                /**
+                 * With nothing on the compositor, a held animation is set
+                 * where it's held, so it can be seeked as often as needed.
+                 */
                 if (wasHeld) {
-                    if (isHeld && trackTime === builtTime)
+                    if (isHeld && (trackTime === builtTime || !segments.length)) {
                         continue;
+                    }
                     return false;
                 }
                 const trackElapsed = (trackTime - builtTime) / builtSpeed;
@@ -4204,12 +4507,33 @@
             }
             if (elapsed === undefined)
                 return true;
-            if (!segments.length)
-                return false;
+            /**
+             * Waiting to build a tween that starts later. Until then the
+             * values hold where they start, so only when to build changes.
+             * Held, it has nothing on the compositor, so it can be seeked.
+             */
+            if (!segments.length) {
+                if (buildAt === undefined || (isSeek && rate))
+                    return false;
+                if (rate) {
+                    const delay = (buildAt - elapsed) / rate;
+                    if (delay < 1)
+                        return false;
+                    wakeIn(delay);
+                }
+                return true;
+            }
+            /**
+             * Only a tween is built to start later, and it holds its first
+             * keyframe until then, so it can be paused and played before it
+             * starts.
+             */
             for (const { offset, end, isDone } of segments) {
                 const local = elapsed - offset;
                 if (end < Infinity &&
-                    (isDone ? local < end - 1 : local < 0 || local >= end)) {
+                    (isDone
+                        ? local < end - 1
+                        : (local < 0 && (isSeek || offset <= 0)) || local >= end)) {
                     return false;
                 }
             }
@@ -4230,7 +4554,8 @@
                         animation.updatePlaybackRate(rate);
                 }
                 else if (rate) {
-                    animation.playbackRate = rate;
+                    animation.playbackRate !== rate &&
+                        (animation.playbackRate = rate);
                     animation.startTime = now - local / rate;
                 }
                 else {
@@ -4304,12 +4629,12 @@
             if (group.isJS) {
                 group.isJS = false;
                 needsBuild = true;
-                tracks.forEach((track) => track.js?.stop());
+                tracks.forEach((track) => track.stopJS());
             }
             const shouldBuild = needsBuild;
             const churned = hasChurned;
             needsBuild = hasChurned = false;
-            if (shouldBuild || !retime(now)) {
+            if (shouldBuild || !retime(now, churned)) {
                 if (churned) {
                     if (now - lastChurn < churnWindow)
                         return group.demote();
@@ -4318,6 +4643,19 @@
                 if (!animate(now))
                     return group.demote();
             }
+            else if (buildAt !== undefined && !churned) {
+                /**
+                 * Still waiting to build, so the values still hold where
+                 * they start.
+                 */
+                return;
+            }
+            /**
+             * Held animations don't move, so set their motion values to where
+             * they're held, as a JSAnimation would on its next tick. Pausing
+             * and seeking schedule this, so it's once however many there are.
+             */
+            tracks.forEach((track) => track.timing()[0] === Infinity && track.sync());
         };
         const group = {
             tracks,
@@ -4337,7 +4675,7 @@
                     isScheduled = true;
                     frameData.isProcessing
                         ? frame.render(build, false, true)
-                        : queueMicrotask(build);
+                        : buildSoon(build);
                 }
             },
             /**
@@ -4579,7 +4917,10 @@
     class GroupAnimation {
         constructor(animations) {
             // Bound to accommodate common `return animation.stop` pattern
-            this.stop = () => this.runAll("stop");
+            this.stop = () => {
+                for (const animation of this.animations)
+                    animation.stop();
+            };
             this.animations = animations.filter(Boolean);
         }
         get finished() {
@@ -4590,11 +4931,6 @@
          */
         getAll(propName) {
             return this.animations[0][propName];
-        }
-        setAll(propName, newValue) {
-            for (let i = 0; i < this.animations.length; i++) {
-                this.animations[i][propName] = newValue;
-            }
         }
         attachTimeline(timeline) {
             const subscriptions = this.animations.map((animation) => animation.attachTimeline(timeline));
@@ -4608,14 +4944,21 @@
         get time() {
             return this.getAll("time");
         }
+        /**
+         * Setters and methods name the property directly, rather than through
+         * a shared helper, so each call site stays monomorphic. Sequences
+         * call these on every animation, many times a second.
+         */
         set time(time) {
-            this.setAll("time", time);
+            for (const animation of this.animations)
+                animation.time = time;
         }
         get speed() {
             return this.getAll("speed");
         }
         set speed(speed) {
-            this.setAll("speed", speed);
+            for (const animation of this.animations)
+                animation.speed = speed;
         }
         get state() {
             return this.getAll("state");
@@ -4629,20 +4972,21 @@
         get iterationDuration() {
             return getMax(this.animations, "iterationDuration");
         }
-        runAll(methodName) {
-            this.animations.forEach((controls) => controls[methodName]());
-        }
         play() {
-            this.runAll("play");
+            for (const animation of this.animations)
+                animation.play();
         }
         pause() {
-            this.runAll("pause");
+            for (const animation of this.animations)
+                animation.pause();
         }
         cancel() {
-            this.runAll("cancel");
+            for (const animation of this.animations)
+                animation.cancel();
         }
         complete() {
-            this.runAll("complete");
+            for (const animation of this.animations)
+                animation.complete();
         }
     }
     function getMax(animations, propName) {
@@ -4666,7 +5010,8 @@
         constructor(animation) {
             super();
             this.animation = animation;
-            animation.onfinish = () => {
+            animation.onfinish = this.onFinish = () => {
+                animation.onfinish = null;
                 this.finishedTime = this.time;
                 this.notifyFinished();
             };
@@ -5001,28 +5346,32 @@
          * @param animation - A function that starts the provided animation
          */
         start(startAnimation) {
+            return new Promise((resolve) => this.run(startAnimation, resolve));
+        }
+        /**
+         * As start(), without making a promise, for animations started
+         * internally, which complete through their own controls.
+         */
+        run(startAnimation, onComplete) {
             this.stop();
-            return new Promise((resolve) => {
-                this.hasAnimated = true;
-                /**
-                 * Complete synchronously via the callback rather than chaining a
-                 * second promise per animation. Guard against animations that
-                 * complete before startAnimation has returned.
-                 */
-                let isComplete = false;
-                let animation;
-                // eslint-disable-next-line prefer-const -- read by the callback before assignment when completing synchronously
-                animation = startAnimation(() => {
-                    isComplete = true;
-                    this.events.animationComplete?.notify();
-                    if (this.animation === animation)
-                        this.animation = undefined;
-                    resolve();
-                });
-                if (!isComplete)
-                    this.animation = animation;
-                this.events.animationStart?.notify();
+            this.hasAnimated = true;
+            /**
+             * Guard against animations that complete before startAnimation
+             * has returned.
+             */
+            let isComplete = false;
+            let animation;
+            // eslint-disable-next-line prefer-const -- read by the callback before assignment when completing synchronously
+            animation = startAnimation(() => {
+                isComplete = true;
+                this.events.animationComplete?.notify();
+                if (this.animation === animation)
+                    this.animation = undefined;
+                onComplete?.();
             });
+            if (!isComplete)
+                this.animation = animation;
+            this.events.animationStart?.notify();
         }
         /**
          * Stop the currently active animation.
@@ -5644,7 +5993,7 @@
             }
             addValueToWillChange(visualElement, key);
             const shouldReduceMotion = reduceMotion ?? visualElement.shouldReduceMotion;
-            value.start(animateMotionValue(key, value, valueTarget, shouldReduceMotion && positionalKeys.has(key)
+            value.run(animateMotionValue(key, value, valueTarget, shouldReduceMotion && positionalKeys.has(key)
                 ? { type: false }
                 : valueTransition, visualElement, isHandoff));
             const animation = value.animation;
@@ -5779,9 +6128,14 @@
     }
 
     class DOMKeyframesResolver extends KeyframeResolver {
-        constructor() {
-            super(...arguments);
-            this.isAsync = true;
+        /**
+         * Passes isAsync to the base constructor rather than setting it as a
+         * class field, which would compile to a constructor that spreads
+         * `arguments` into super(). That spread is slow in the interpreter,
+         * and animate() constructs one resolver per value.
+         */
+        constructor(unresolvedKeyframes, onComplete, name, motionValue, element) {
+            super(unresolvedKeyframes, onComplete, name, motionValue, element, true);
         }
         /**
          * Keyframes that don't need reading from the DOM, or measuring,
@@ -6080,7 +6434,7 @@
                 frame.update(() => value.set(target));
                 continue;
             }
-            value.start(animateMotionValue(key, value, target, reduceMotion && positionalKeys.has(key)
+            value.run(animateMotionValue(key, value, target, reduceMotion && positionalKeys.has(key)
                 ? { type: false }
                 : transition, element));
             value.animation &&
@@ -6110,8 +6464,14 @@
      * measurement) via `element`.
      */
     function animateEffectSubject(effect, subject, keyframes, transition, element) {
-        return animateValues((key) => {
-            let value = effect.get(subject, key);
+        /**
+         * Values made for this call are bound with one effect call, after the
+         * loop, rather than one each.
+         */
+        let created;
+        let isBound = false;
+        const animations = animateValues((key) => {
+            let value = created?.[key] ?? effect.get(subject, key);
             if (!value) {
                 let initial;
                 if (!element) {
@@ -6122,10 +6482,15 @@
                     exports.invariant(initial !== undefined, `"${key}" can't be read from the animated subject. Provide [from, to] keyframes.`, "effect-unreadable-value");
                 }
                 value = motionValue(initial, { owner: element });
-                effect(subject, { [key]: value });
+                isBound
+                    ? effect(subject, { [key]: value })
+                    : ((created || (created = {}))[key] = value);
             }
             return value;
         }, keyframes, transition, element);
+        isBound = true;
+        created && effect(subject, created);
+        return animations;
     }
     function firstKeyframe(target) {
         const first = Array.isArray(target) ? target[0] : undefined;
@@ -7121,7 +7486,7 @@
 
     function animateSingleValue(value, keyframes, options) {
         const motionValue$1 = isMotionValue(value) ? value : motionValue(value);
-        motionValue$1.start(animateMotionValue("", motionValue$1, keyframes, options));
+        motionValue$1.run(animateMotionValue("", motionValue$1, keyframes, options));
         return motionValue$1.animation;
     }
 
@@ -7621,13 +7986,7 @@
         if (xTranslate || yTranslate || zTranslate) {
             transform = `translate3d(${xTranslate}px, ${yTranslate}px, ${zTranslate}px) `;
         }
-        /**
-         * Apply scale correction for the tree transform.
-         * This will apply scale to the screen-orientated axes.
-         */
-        if (treeScale.x !== 1 || treeScale.y !== 1) {
-            transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `;
-        }
+        let angles = "";
         if (latestTransform) {
             const { transformPerspective } = latestTransform;
             if (transformPerspective)
@@ -7636,20 +7995,48 @@
                 const key = angleTransforms[i];
                 const value = latestTransform[key];
                 if (value)
-                    transform += `${key}(${value}deg) `;
+                    angles += `${key}(${value}deg) `;
                 // Additive `rotate()` so user `rotate` isn't clobbered.
                 if (!i && latestTransform.pathRotation)
-                    transform += `rotate(${latestTransform.pathRotation}deg) `;
+                    angles += `rotate(${latestTransform.pathRotation}deg) `;
             }
         }
-        /**
-         * Apply scale to match the size of the element to the size we want it.
-         * This will apply scale to the element-orientated axes.
-         */
-        const elementScaleX = delta.x.scale * treeScale.x;
-        const elementScaleY = delta.y.scale * treeScale.y;
-        if (elementScaleX !== 1 || elementScaleY !== 1) {
-            transform += `scale(${elementScaleX}, ${elementScaleY})`;
+        if (angles) {
+            /**
+             * Apply scale correction for the tree transform.
+             * This will apply scale to the screen-orientated axes.
+             */
+            if (treeScale.x !== 1 || treeScale.y !== 1) {
+                transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `;
+            }
+            transform += angles;
+            /**
+             * Apply scale to match the size of the element to the size we want it.
+             * This will apply scale to the element-orientated axes.
+             */
+            const elementScaleX = delta.x.scale * treeScale.x;
+            const elementScaleY = delta.y.scale * treeScale.y;
+            if (elementScaleX !== 1 || elementScaleY !== 1) {
+                transform += `scale(${elementScaleX}, ${elementScaleY})`;
+            }
+        }
+        else if (delta.x.scale !== 1 || delta.y.scale !== 1) {
+            /**
+             * With no rotation or skew between them, the tree scale correction
+             * (1 / treeScale) and the element scale (delta.scale * treeScale)
+             * combine into a single scale. A shorter transform is quicker for
+             * the browser to parse, which matters when it's set every frame.
+             */
+            transform += `scale(${delta.x.scale}, ${delta.y.scale})`;
+        }
+        else if (!transform && (treeScale.x !== 1 || treeScale.y !== 1)) {
+            /**
+             * Inside a scaled tree the transform must never be "none", even when
+             * this element's own delta is the identity: scale correction for
+             * borderRadius and boxShadow is skipped for "none", and the element
+             * would gain and lose its stacking context as the delta snaps.
+             */
+            transform = "scale(1, 1)";
         }
         return transform || "none";
     }
@@ -9261,12 +9648,15 @@
             let hasRelativeLayoutChanged = false;
             const relativeParent = node.getClosestProjectingParent();
             /**
-             * A snapshot resumed from another element is only relative to this
-             * node's relativeParent if it's a layoutRoot that contains both.
+             * A snapshot from another element is only relative to this node's
+             * relativeParent if it's a layoutRoot that contains both. A node can
+             * hold one without resumeFrom, when the element it came from changed
+             * layoutId but stayed mounted (see switchLayoutId), or a remix
+             * layout exit cleared it (see markLayoutExit).
              */
-            if (!node.resumeFrom ||
+            if (!isShared ||
                 (relativeParent?.options.layoutRoot &&
-                    node.resumeFrom.path.includes(relativeParent))) {
+                    node.resumeFrom?.path.includes(relativeParent))) {
                 /**
                  * If the relativeParent is itself resuming from a different element then
                  * the relative snapshot is not relavent
@@ -9783,9 +10173,13 @@
              * If this element has been mounted before (e.g. after a Suspense
              * unmount/remount), reset motion values to their initial state
              * so animations replay correctly from initial → animate, unless
-             * the presence asks to keep them.
+             * the presence asks to keep them or the element is only shown
+             * again to exit (#4049).
              */
-            if (this.hasBeenMounted && !this.presenceContext?.keepValuesOnRemount) {
+            const presence = this.presenceContext;
+            if (this.hasBeenMounted &&
+                presence?.isPresent !== false &&
+                !presence?.keepValuesOnRemount) {
                 for (const key in this.initialValues) {
                     this.values.get(key)?.jump(this.initialValues[key]);
                     this.latestValues[key] = this.initialValues[key];
@@ -10858,7 +11252,7 @@
 
     const overflowStyles = /*#__PURE__*/ new Set(["auto", "scroll"]);
     class PanSession {
-        constructor(event, handlers, { transformPagePoint, contextWindow = window, dragSnapToOrigin = false, distanceThreshold = 3, element, } = {}) {
+        constructor(event, handlers, { transformPagePoint, contextWindow = window, dragSnapToOrigin = false, distanceThreshold = 3, element, immediate, } = {}) {
             this.startEvent = null;
             this.lastMoveEvent = null;
             this.lastMoveEventInfo = null;
@@ -10944,7 +11338,7 @@
             this.dragSnapToOrigin = dragSnapToOrigin;
             this.handlers = handlers;
             this.transformPagePoint = transformPagePoint;
-            this.distanceThreshold = distanceThreshold;
+            this.distanceThreshold = immediate ? 0 : distanceThreshold;
             this.contextWindow = contextWindow || window;
             const info = extractEventInfo(event);
             const initialInfo = transformPoint(info, this.transformPagePoint);
@@ -10967,6 +11361,10 @@
             // Start scroll tracking if element provided
             if (element) {
                 this.startScrollTracking(element);
+            }
+            if (immediate) {
+                this.handlePointerMove(event, info);
+                this.updatePoint();
             }
         }
         /**
@@ -11343,14 +11741,14 @@
             this.visualElement = visualElement;
             this.readProps = readProps;
         }
-        start(originEvent, { snapToCursor = false, distanceThreshold } = {}) {
+        start(originEvent, options = {}) {
             /**
              * Don't start dragging if this component is exiting
              */
             if (this.visualElement.presenceContext?.isPresent === false)
                 return;
             const onSessionStart = (event) => {
-                if (snapToCursor)
+                if (options.snapToCursor)
                     this.snapToCursor(event);
                 this.stopAnimation();
             };
@@ -11472,9 +11870,9 @@
                 onSessionEnd,
                 resumeAnimation,
             }, {
+                ...options,
                 transformPagePoint: this.visualElement.getTransformPagePoint(),
                 dragSnapToOrigin,
-                distanceThreshold,
                 contextWindow: this.visualElement.current?.ownerDocument.defaultView,
                 element: this.visualElement.current,
             });
@@ -11922,8 +12320,10 @@
         return isElementConstraints(dragConstraints) && !!onMeasureDragConstraints;
     }
 
-    const toProps = ({ axis, constraints, elastic, momentum, transition, snapToOrigin, directionLock, propagation, onStart, onMove, onEnd, onDirectionLock, onTransitionEnd, onMeasureConstraints, }) => ({
+    const toProps = ({ axis, constraints, elastic, momentum, transition, snapToOrigin, directionLock, propagation, onStart, onMove, onEnd, onDirectionLock, onTransitionEnd, onMeasureConstraints, x, y, }) => ({
         drag: axis || true,
+        _dragX: x || (y && motionValue(0)),
+        _dragY: y || (x && motionValue(0)),
         dragConstraints: constraints,
         dragElastic: elastic,
         dragMomentum: momentum,
@@ -12132,7 +12532,7 @@
          */
         let isKeyPressing = false;
         const handleKeydown = filterEvents(() => {
-            if (isPressing.has(element))
+            if (isKeyPressing || isPressing.has(element))
                 return;
             isKeyPressing = true;
             firePointerEvent(element, "down");
@@ -12165,6 +12565,18 @@
     }
     const claimedPointerDownEvents = new WeakSet();
     /**
+     * Max distance in px between consecutive presses of a `count` sequence.
+     * Android's `ViewConfiguration` double tap slop is 100dp.
+     */
+    const sequenceSlop = 100;
+    /**
+     * Max distance in px a pointer can move during a held press (`hold`
+     * pending, or `repeat`). Android's `ViewConfiguration` touch slop is 8dp.
+     */
+    const holdSlop = 8;
+    const exceeds = (a, b, max) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY) > max;
+    const preventDefault = (event) => event.preventDefault();
+    /**
      * Create a press gesture.
      *
      * Press is different to `"pointerdown"`, `"pointerup"` in that it
@@ -12181,22 +12593,110 @@
      * to be focusable for this to work, whereas a press gesture will
      * make an element focusable by default.
      *
+     * `onPressStart` fires on the first pointer or key down, and can return
+     * a function to call when the press ends, or an object of handlers for
+     * this press:
+     *
+     * ```js
+     * press(button, () => ({
+     *   onHold: (progress) => {},
+     *   onComplete: (event, { success }) => {},
+     * }), { hold: 0.5 })
+     * ```
+     *
      * @public
      */
     function press(targetOrSelector, onPressStart, options = {}) {
         onPressStart = bindToScope(onPressStart);
         const [targets, eventOptions, cancelEvents] = setupGesture(targetOrSelector, options);
+        const sequences = new WeakMap();
         const startPress = (startEvent) => {
             const target = startEvent.currentTarget;
             if (!isValidPressEvent(startEvent))
                 return;
             if (claimedPointerDownEvents.has(startEvent))
                 return;
-            isPressing.add(target);
             if (options.stopPropagation) {
                 claimedPointerDownEvents.add(startEvent);
             }
-            const onPressEnd = onPressStart(target, startEvent);
+            /**
+             * Options are read per press so they can be updated between presses.
+             */
+            const { count: presses = 1, countTimeout = 0.3, hold = 0, repeat, } = options;
+            const downTime = time.now();
+            const holdTime = secondsToMilliseconds(hold);
+            const timeout = secondsToMilliseconds(countTimeout);
+            let previous = sequences.get(target);
+            /**
+             * A press during a `count` sequence continues it. If it's too late
+             * or too far away, the sequence is cancelled and this press starts
+             * a new one.
+             */
+            if (previous?.expire(exceeds(previous.event, startEvent, sequenceSlop))) {
+                previous = undefined;
+            }
+            else if (previous) {
+                cancelFrame(previous.expire);
+                sequences.delete(target);
+            }
+            const count = previous ? previous.count + 1 : 1;
+            const isFinal = count >= presses;
+            const isHeld = isFinal && (hold || repeat);
+            let isActive = !hold;
+            let repeats = 0;
+            let handlers;
+            isPressing.add(target);
+            if (previous) {
+                handlers = previous.handlers;
+            }
+            else {
+                const result = onPressStart(target, startEvent);
+                handlers =
+                    typeof result === "function"
+                        ? { onComplete: result }
+                        : result || {};
+            }
+            isFinal && isActive && handlers.onActive?.();
+            /**
+             * While held, `onHold` reports progress from 0 to 1 over `hold`,
+             * then over each `repeat`. Each cycle reports exactly 1 at its end,
+             * then 0 on the next frame.
+             */
+            const repeatTime = secondsToMilliseconds(repeat);
+            let length = holdTime || repeatTime;
+            let cycleEnd = downTime + length;
+            let isCycleStart = true;
+            const tick = () => {
+                if (eventOptions.signal.aborted)
+                    return cancelFrame(tick);
+                let progress = Math.min(1 - (cycleEnd - time.now()) / length, 1);
+                /**
+                 * The frame after a boundary reports 0, so each cycle visibly
+                 * restarts. Boundaries are timed from `downTime`, so this
+                 * doesn't delay the next one. If a long frame has already
+                 * passed the next boundary, it reports 1 instead.
+                 */
+                if (isCycleStart && progress < 1)
+                    progress = 0;
+                isCycleStart = false;
+                handlers.onHold?.(progress);
+                if (progress < 1)
+                    return;
+                if (isActive) {
+                    handlers.onRepeat?.(++repeats);
+                }
+                else {
+                    isActive = true;
+                    handlers.onActive?.();
+                }
+                if (repeat) {
+                    isCycleStart = true;
+                    cycleEnd += length = repeatTime;
+                }
+                else {
+                    cancelFrame(tick);
+                }
+            };
             /**
              * End listeners run in the capture phase so a descendant calling
              * stopPropagation() in its own pointerup handler can't prevent the
@@ -12207,14 +12707,55 @@
             const onPointerEnd = (endEvent, success) => {
                 window.removeEventListener("pointerup", onPointerUp, endEventOptions);
                 window.removeEventListener("pointercancel", onPointerCancel, endEventOptions);
-                if (isPressing.has(target)) {
-                    isPressing.delete(target);
-                }
-                if (!isValidPressEvent(endEvent)) {
+                window.removeEventListener("pointermove", onPointerMove, endEventOptions);
+                target.removeEventListener("contextmenu", preventDefault);
+                cancelFrame(tick);
+                isPressing.delete(target);
+                if (!isPrimaryPointer(endEvent))
                     return;
+                /**
+                 * A press that ends while a drag is active is a cancel.
+                 */
+                if (isDragActive())
+                    success = false;
+                if (success && !isFinal) {
+                    /**
+                     * Wait for the next press of the sequence, and cancel the
+                     * gesture if it doesn't arrive in time.
+                     */
+                    const end = time.now();
+                    /**
+                     * Cancels the sequence if it's `force`d, or the interval
+                     * has passed. Runs every frame, where `force` is frame
+                     * data, so it's checked with `=== true`.
+                     */
+                    const expire = (force) => {
+                        const isAborted = eventOptions.signal.aborted;
+                        if (isAborted ||
+                            force === true ||
+                            time.now() - end > timeout) {
+                            cancelFrame(expire);
+                            sequences.delete(target);
+                            isAborted ||
+                                handlers.onComplete?.(endEvent, { success: false });
+                            return true;
+                        }
+                    };
+                    sequences.set(target, {
+                        count,
+                        event: startEvent,
+                        handlers,
+                        expire,
+                    });
+                    frame.update(expire, true);
                 }
-                if (typeof onPressEnd === "function") {
-                    onPressEnd(endEvent, { success });
+                else {
+                    /**
+                     * Releasing before `hold` is reached is a cancel.
+                     */
+                    handlers.onComplete?.(endEvent, {
+                        success: success && isActive,
+                    });
                 }
             };
             const onPointerUp = (upEvent) => {
@@ -12226,8 +12767,35 @@
             const onPointerCancel = (cancelEvent) => {
                 onPointerEnd(cancelEvent, false);
             };
+            /**
+             * Moving during a pending long press, or a repeating press, cancels
+             * it, so scrolling on touch devices doesn't trigger it. A drag
+             * starting during a `count` sequence cancels it.
+             */
+            const onPointerMove = (moveEvent) => {
+                if (isPrimaryPointer(moveEvent) &&
+                    (((repeat || !isActive) &&
+                        exceeds(startEvent, moveEvent, holdSlop)) ||
+                        (presses > 1 && isDragActive()))) {
+                    onPointerCancel(moveEvent);
+                }
+            };
             window.addEventListener("pointerup", onPointerUp, endEventOptions);
             window.addEventListener("pointercancel", onPointerCancel, endEventOptions);
+            if (isHeld || presses > 1) {
+                window.addEventListener("pointermove", onPointerMove, endEventOptions);
+            }
+            if (isHeld) {
+                frame.update(tick, true);
+                /**
+                 * Touch devices open a context menu or callout on long press,
+                 * which would cancel the gesture.
+                 */
+                target.addEventListener("contextmenu", preventDefault, {
+                    ...eventOptions,
+                    passive: false,
+                });
+            }
         };
         targets.forEach((target) => {
             const pointerDownTarget = options.useGlobalTarget ? window : target;
@@ -14993,6 +15561,13 @@
             info.labels = timeLabels;
         }
         /**
+         * Exclude `type` from defaultTransition since springs have been
+         * converted to duration-based easing functions in resolveValueSequence.
+         * Including `type: "spring"` would cause JSAnimation to error when
+         * the merged keyframes array has more than 2 keyframes.
+         */
+        const { type: _type, ...remainingDefaultTransition } = defaultTransition;
+        /**
          * For every element and value combination create a new animation.
          */
         sequences.forEach((valueSequences, element) => {
@@ -15042,13 +15617,6 @@
                 }
                 const definition = animationDefinitions.get(element);
                 definition.keyframes[key] = keyframes;
-                /**
-                 * Exclude `type` from defaultTransition since springs have been
-                 * converted to duration-based easing functions in resolveValueSequence.
-                 * Including `type: "spring"` would cause JSAnimation to error when
-                 * the merged keyframes array has more than 2 keyframes.
-                 */
-                const { type: _type, ...remainingDefaultTransition } = defaultTransition;
                 definition.transition[key] = {
                     ...remainingDefaultTransition,
                     duration: totalDuration,
@@ -15163,13 +15731,45 @@
             return segment;
         });
         const animationDefinitions = createAnimationsFromSequence(processedSequence, options, scope, { spring }, info);
+        /**
+         * Transitions are made per value, but reduceMotion is read from the
+         * top level. animate() resolves it into options, and the default
+         * transition covers timelines made directly.
+         */
+        const reduceMotion = options?.reduceMotion ??
+            options?.defaultTransition?.reduceMotion;
         animationDefinitions.forEach(({ keyframes, transition }, subject) => {
-            animations.push(...animateSubject(subject, keyframes, transition));
+            animations.push(...animateSubject(subject, keyframes, {
+                ...transition,
+                reduceMotion,
+            }));
         });
         return animations;
     }
 
     let markerId = 0;
+    /**
+     * Split a time across repeats into its repeat and the playhead position in
+     * the sequence. A time on a repeat boundary is the end of the repeat
+     * before it, as it is for the clock's value. With `index`, join a position
+     * in that repeat back into a time. Mirrored and reversed repeats play
+     * every other repeat backwards.
+     */
+    function inRepeat({ repeat = 0, repeatDelay = 0, repeatType = "loop", delay = 0, }, duration, time, index) {
+        const cycle = duration + repeatDelay;
+        const isSplit = index === undefined;
+        if (isSplit) {
+            const t = Math.max(0, time - delay);
+            index =
+                cycle && t > 0
+                    ? Math.min(repeat, Math.ceil(t / cycle - 1e-9) - 1)
+                    : 0;
+            time = Math.min(t - index * cycle, duration);
+        }
+        if (repeatType !== "loop" && index % 2)
+            time = duration - time;
+        return [index, isSplit ? time : delay + index * cycle + time];
+    }
     /**
      * Copy a segment with a new `at`, adding a transition if it has none.
      */
@@ -15257,15 +15857,6 @@
                 this.invalidate();
                 this.flush();
             }
-            /**
-             * Register with the scope (for instance from useAnimate()) so it
-             * stops when the scope is torn down.
-             */
-            const { scope } = options;
-            if (scope) {
-                scope.animations.push(this);
-                this.finished.then(() => removeItem(scope.animations, this));
-            }
         }
         /**
          * Add a segment, label or timeline. `at` overrides any `at` already
@@ -15340,10 +15931,18 @@
          * Play forwards or backwards to a time or label, then pause there.
          */
         playTo(position) {
-            const target = this.resolve(position);
+            const stopAt = this.resolve(position);
+            const duration = this.iterationDuration;
+            /**
+             * A repeating timeline plays to the position in the repeat it's
+             * already in, rather than all the way back to the first.
+             */
+            const time = this.time;
+            const [index] = inRepeat(this.options, duration, time);
+            const target = inRepeat(this.options, duration, stopAt, index)[1];
             const speed = Math.abs(this.speed);
-            this.speed = target < this.time ? -speed : speed;
-            this.stopAt = target;
+            this.speed = target < time ? -speed : speed;
+            this.stopAt = stopAt;
             this.clock || this.invalidate();
             this.play();
             return this;
@@ -15471,6 +16070,9 @@
             this.parent = parent;
         }
         build() {
+            const prevDuration = this.isWrapped
+                ? this.group.iterationDuration
+                : this.totalDuration;
             this.isDirty = false;
             this.isWrapped = false;
             const prev = this.group;
@@ -15555,9 +16157,19 @@
                 })));
             }
             const group = (this.group = new GroupAnimationWithThen(animations));
-            time = Math.min(time, duration);
-            if (this.isDone && time < duration)
+            /**
+             * Keep the playhead in the same repeat and at the same position,
+             * so changing a repeating timeline doesn't jump it.
+             */
+            const { delay = 0, repeat = 0, repeatDelay = 0 } = this.options;
+            const [index, position] = inRepeat(this.options, prevDuration, time);
+            if (time > delay) {
+                time = inRepeat(this.options, duration, Math.min(position, duration), index)[1];
+            }
+            if (this.isDone &&
+                time < delay + (repeat + 1) * (duration + repeatDelay) - repeatDelay) {
                 this.newFinished();
+            }
             if (this.scrollTimeline) {
                 this.detachScroll = group.attachTimeline(this.scrollTimeline);
             }
@@ -15604,12 +16216,7 @@
          * The repeat the clock is in, from its time across all repeats.
          */
         currentRepeat() {
-            const { repeat = 0, repeatDelay = 0, delay = 0 } = this.options;
-            const cycle = this.totalDuration + repeatDelay;
-            const time = (this.clockAnimation?.time ?? 0) - delay;
-            return cycle && time > 0
-                ? Math.min(repeat, Math.floor(time / cycle))
-                : 0;
+            return inRepeat(this.options, this.totalDuration, this.clockAnimation?.time ?? 0)[0];
         }
         onClock(time) {
             let prevTime = this.prevTime;
@@ -15618,22 +16225,23 @@
                 return;
             const { onUpdate, onRepeat, repeatType = "loop" } = this.options;
             onUpdate?.(time);
+            /**
+             * A frame can cross any number of repeats. Finish crossing each
+             * repeat it leaves, then cross the next from its edge. A loop
+             * starts each repeat from the same edge. The others turn around.
+             */
             const repeatIndex = this.currentRepeat();
-            if (repeatIndex !== this.repeatIndex) {
-                this.repeatIndex = repeatIndex;
+            const step = repeatIndex > this.repeatIndex ? 1 : -1;
+            while (repeatIndex !== this.repeatIndex) {
+                const isForward = (this.speed > 0) ===
+                    (repeatType === "loop" || !(this.repeatIndex % 2));
+                const edge = isForward ? this.totalDuration : 0;
+                if (this.cross(prevTime, edge))
+                    return;
+                this.repeatIndex += step;
                 onRepeat?.();
-                /**
-                 * A loop jumps the playhead back to the start, or to the
-                 * end when playing backwards. Finish crossing the repeat
-                 * that ended, then cross the new one from its edge.
-                 */
-                if (repeatType === "loop") {
-                    const isForward = this.speed > 0;
-                    if (this.cross(prevTime, isForward ? this.totalDuration : 0)) {
-                        return;
-                    }
-                    prevTime = isForward ? -1 : Infinity;
-                }
+                prevTime =
+                    repeatType === "loop" ? (isForward ? -1 : Infinity) : edge;
             }
             this.cross(prevTime, time);
         }
@@ -15660,9 +16268,12 @@
                 return true;
             }
         }
-        pauseAt(time) {
+        /**
+         * Pause at a playhead position in the current repeat.
+         */
+        pauseAt(position) {
             this.pause();
-            this.time = time;
+            this.time = inRepeat(this.options, this.totalDuration, position, this.repeatIndex)[1];
             return true;
         }
         watch() {
@@ -15677,8 +16288,13 @@
                  * direction, as it does for a single animation.
                  */
                 const callback = (this.speed < 0 && onReverseComplete) || onComplete;
+                /**
+                 * Resolve this run's promise, even if the callback plays the
+                 * timeline again and so makes a new one.
+                 */
+                const resolve = this.resolveFinished;
                 callback?.();
-                this.resolveFinished();
+                resolve();
             });
         }
         newFinished() {
@@ -15687,19 +16303,30 @@
                 this.resolveFinished = resolve;
             });
             /**
-             * Stay in the scope while playing, including after a change
-             * restarts a finished timeline.
+             * Stay in the scopeMotion() scope this was created in, and the
+             * useAnimate() scope, while playing. Each replay, including a
+             * change that restarts a finished timeline, registers again.
              */
+            const { scope } = this.options;
             const remove = this.motionScope?.add(() => {
                 this.isKilled = true;
                 this.stop();
             });
-            remove && this.finished.then(remove);
+            scope?.animations.push(this);
+            this.finished.then(() => {
+                remove?.();
+                scope && removeItem(scope.animations, this);
+            });
         }
     }
 
+    /**
+     * A sequence has at least one segment or nested sequence. Labels alone
+     * are never a sequence, as an array of strings isn't a subject either.
+     */
     function isSequence(value) {
-        return Array.isArray(value) && value.some(Array.isArray);
+        return (Array.isArray(value) &&
+            value.some((item) => Array.isArray(item) || item?.sequence));
     }
     /**
      * Creates an animation function that is optionally scoped
@@ -15730,6 +16357,16 @@
                         ...sequenceOptions.defaultTransition,
                     };
                 }
+                /**
+                 * Resolve reduceMotion in the same order as a single
+                 * animation: options, then the default transition (which
+                 * includes the scope's), then useAnimate()'s.
+                 */
+                sequenceOptions.reduceMotion =
+                    optionsOrKeyframes?.reduceMotion ??
+                        sequenceOptions.defaultTransition
+                            ?.reduceMotion ??
+                        reduceMotion;
                 timeline = new Timeline(subjectOrSequence, sequenceOptions);
             }
             else {
@@ -15777,33 +16414,41 @@
     });
 
     function animateElements(elementOrSelector, keyframes, options, scope) {
+        const animationDefinitions = [];
+        addAnimationDefinitions(animationDefinitions, elementOrSelector, keyframes, options, scope);
+        return startAnimationDefinitions(animationDefinitions);
+    }
+    /**
+     * WAAPI doesn't support interrupting animations.
+     *
+     * Therefore, starting animations requires a three-step process:
+     * 1. Stop existing animations (write styles to DOM)
+     * 2. Resolve keyframes (read styles from DOM)
+     * 3. Create new animations (write styles to DOM)
+     *
+     * The hybrid `animate()` function uses AsyncAnimation to resolve
+     * keyframes before creating new animations, which removes style
+     * thrashing. Here, we have much stricter filesize constraints.
+     * Therefore we do this in a synchronous way that ensures that
+     * at least within `animate()` calls there is no style thrashing.
+     *
+     * In the motion-native-animate-mini-interrupt benchmark this
+     * was 80% faster than a single loop.
+     *
+     * Step 1, here, can run for many `animate()`-style calls (as for each
+     * element of a sequence) before steps 2 and 3 start them all together.
+     * Otherwise each call's read would force a style recalc after the last
+     * call's write.
+     */
+    function addAnimationDefinitions(animationDefinitions, elementOrSelector, keyframes, options, scope) {
         // Gracefully handle null/undefined elements (e.g., from querySelector returning null)
-        if (elementOrSelector == null) {
-            return [];
-        }
+        if (elementOrSelector == null)
+            return;
         const elements = resolveElements(elementOrSelector, scope);
         const numElements = elements.length;
         typeof process !== "undefined" &&
             "development" !== "production" &&
             exports.invariant(Boolean(numElements), "No valid elements provided.", "no-valid-elements");
-        /**
-         * WAAPI doesn't support interrupting animations.
-         *
-         * Therefore, starting animations requires a three-step process:
-         * 1. Stop existing animations (write styles to DOM)
-         * 2. Resolve keyframes (read styles from DOM)
-         * 3. Create new animations (write styles to DOM)
-         *
-         * The hybrid `animate()` function uses AsyncAnimation to resolve
-         * keyframes before creating new animations, which removes style
-         * thrashing. Here, we have much stricter filesize constraints.
-         * Therefore we do this in a synchronous way that ensures that
-         * at least within `animate()` calls there is no style thrashing.
-         *
-         * In the motion-native-animate-mini-interrupt benchmark this
-         * was 80% faster than a single loop.
-         */
-        const animationDefinitions = [];
         /**
          * Step 1: Build options and stop existing animations (write)
          */
@@ -15847,6 +16492,8 @@
                 });
             }
         }
+    }
+    function startAnimationDefinitions(animationDefinitions) {
         /**
          * Step 2: Resolve keyframes (read)
          */

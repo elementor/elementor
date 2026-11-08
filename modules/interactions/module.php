@@ -154,7 +154,7 @@ class Module extends BaseModule {
 			self::HANDLE_MOTION_JS,
 			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
-			'14.9.0',
+			'14.10.1',
 			true
 		);
 

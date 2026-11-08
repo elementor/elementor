@@ -2,43 +2,55 @@
 
 Pick a card, build the markup it targets, expose the listed fields as `code_effect.params`, then adapt the snippet. Contract, param format and API reference: [elementor://interactions/motion-code-guide].
 
-Each card is adapted from a free motion.dev vanilla JS example (slug shown; never use Motion+ examples). Grades are motion.dev's own MotionScore filter. Cards marked **14.9 API** use APIs that only exist in the bundled Motion 14.9.0 (`drag`, `arc`, `stagger` `grid` / `"edges"` / `"random"`); don't take older snippets for them from memory.
+Each card is adapted from a free motion.dev vanilla JS example (slug shown; never use Motion+ examples). Grades are motion.dev's own MotionScore filter. Cards marked **14.x API** use APIs that only exist in the bundled Motion 14.10.1 (`drag`, `arc`, `stagger` `grid` / `"edges"` / `"random"`, `press` `count` / `hold`); don't take older snippets for them from memory.
+
+**Trigger** is the interaction's `trigger`. Elementor wires it and runs the code when it fires; the snippet never calls `inView`, `scroll`, `hover`, `press`, `drag` or `resize`. See the trigger table in the guide for what the returned function does.
 
 **Target** says what the code animates: `self` is the element, `children` are its direct children (build them as composition children).
 
 ## Gestures
 
 ### Hover scale — `js-hover` — S
-APIs: `hover`, `animate` (spring). Animates: `scale`. Target: self.
+Trigger: `hover`. APIs: `animate` (spring). Animates: `scale`. Target: self.
 Fields: `scale` (slider 1–1.3, step 0.01, 1.05).
 
 ```js
-({ element, params, motion }) => motion.hover( element, () => {
+({ element, params, motion }) => {
 	const spring = { type: 'spring', stiffness: 300, damping: 20 };
 	motion.animate( element, { scale: params.scale }, spring );
 
 	return () => motion.animate( element, { scale: 1 }, spring );
-} )
+}
 ```
 
 ### Press spring — `js-press` — S
-APIs: `press`, `animate` (spring). Animates: `scale`. Target: self.
+Trigger: `click`. APIs: `animate` (spring). Animates: `scale`. Target: self.
 Fields: `scale` (slider 0.8–1, step 0.01, 0.92), `stiffness` (slider 100–1000, 500).
 
 ```js
-({ element, params, motion }) => motion.press( element, () => {
+({ element, params, motion }) => {
 	const spring = { type: 'spring', stiffness: params.stiffness, damping: 15 };
 	motion.animate( element, { scale: params.scale }, spring );
 
 	return () => motion.animate( element, { scale: 1 }, spring );
-} )
+}
 ```
 
 ### Hover and press — `js-gestures` — S
-APIs: `hover`, `press` (spring). Animates: `scale`. Target: self.
-Fields: `hoverScale`, `pressScale`, `stiffness`. Snippet: guide example 3.
+Triggers: `hover` and `click`, as two interactions on the element. APIs: `animate` (spring). Animates: `scale`. Target: self.
+Fields: `hoverScale`, `pressScale`, `stiffness`. Snippets: guide example 3.
+
+### Double tap pop — `js-tap-double` — S — 14.x API
+Trigger: `doubleClick`. APIs: `animate`. Animates: `scale`, `opacity`. Target: the element's first child (the icon).
+Fields: `scale`. Snippet: guide example 8.
+
+### Press and hold — `js-press-hold` — S — 14.x API
+Trigger: `longPress`. APIs: `animate` (spring). Animates: `scale`. Target: self.
+Fields: `scale`, `bounce`. Snippet: guide example 7.
 
 ## Entrances and transforms
+
+Trigger: `load` for an entrance on page load, or `scrollIn` to play it when the element scrolls into view (return a function that hides it again to replay on every entry).
 
 ### Spring bounce — `js-bounce-easing` — S
 APIs: `animate` (spring). Animates: `y`, `opacity`. Target: self.
@@ -74,13 +86,11 @@ Fields: `degrees` (slider 0–360, 90), `bounce` (slider 0–0.8, step 0.05, 0.4
 		return;
 	}
 
-	const controls = motion.animate(
+	motion.animate(
 		element,
 		{ rotate: params.degrees },
 		{ type: 'spring', bounce: params.bounce, repeat: Infinity, repeatType: 'reverse', repeatDelay: 0.4 }
 	);
-
-	return () => controls.stop();
 }
 ```
 
@@ -101,96 +111,92 @@ Fields: `distance` (slider 0–200, 40), `duration` (number 0.1–3, 0.8), `ease
 ## Scroll
 
 ### Scroll reveal — `js-scroll-triggered` — S
-APIs: `inView`, `animate`. Animates: `opacity`, `x`. Target: self.
-Fields: `distance`, `duration`, `amount`. Snippet: guide example 1.
+Trigger: `scrollIn`. APIs: `animate`. Animates: `opacity`, `x`. Target: self.
+Fields: `distance`, `duration`. Snippet: guide example 1.
 
 ### Scroll fade in and out — `js-scroll-fade` — S
-APIs: `scroll`, `animate` (`times`). Animates: `opacity`. Target: self.
+Trigger: `scrollOn` (Start 100%, End 0%). APIs: `animate` (`times`). Animates: `opacity`. Target: self.
 Fields: `fadeIn` (slider 0.05–0.45, step 0.05, 0.25), `fadeOut` (slider 0.05–0.45, step 0.05, 0.25).
 
 ```js
-({ element, params, motion, reducedMotion }) => {
-	if ( reducedMotion ) {
-		return;
-	}
-
-	return motion.scroll(
-		motion.animate(
-			element,
-			{ opacity: [ 0, 1, 1, 0 ] },
-			{ ease: 'linear', times: [ 0, params.fadeIn, 1 - params.fadeOut, 1 ] }
-		),
-		{ target: element, offset: [ 'start end', 'end start' ] }
-	);
-}
+({ element, params, motion, reducedMotion }) => motion.animate(
+	element,
+	{ opacity: reducedMotion ? 1 : [ 0, 1, 1, 0 ] },
+	{ ease: 'linear', times: [ 0, params.fadeIn, 1 - params.fadeOut, 1 ] }
+)
 ```
 
 ### Parallax — `js-parallax` — S
-APIs: `scroll`, `animate` (`ease: "linear"`). Animates: `y`. Target: self or a child.
+Trigger: `scrollOn`. APIs: `animate` (`ease: "linear"`). Animates: `y`. Target: self or a child.
 Fields: `distance`. Snippet: guide example 2.
+
+### Exit on scroll out — S
+Trigger: `scrollOut`. APIs: `animate`. Animates: `opacity`, `scale`. Target: self.
+Fields: `scale` (slider 0.5–1, step 0.05, 0.9).
+
+```js
+({ element, params, motion, reducedMotion }) => {
+	motion.animate( element, { opacity: 0, scale: reducedMotion ? 1 : params.scale }, { duration: 0.4 } );
+
+	return () => motion.animate( element, { opacity: 1, scale: 1 }, { duration: 0.4 } );
+}
+```
 
 ## Groups (children)
 
 ### Children stagger — `js-stagger` — S
-APIs: `inView`, `animate`, `stagger`. Animates: `opacity`, `y`. Target: children.
+Trigger: `scrollIn`. APIs: `animate`, `stagger`. Animates: `opacity`, `y`. Target: children.
 Fields: `distance` (slider 0–100, 24), `step` (slider 0.02–0.3, step 0.01, 0.08).
 
 ```js
 ({ element, params, motion, reducedMotion }) => {
-	const { animate, inView, stagger } = motion;
+	const { animate, stagger } = motion;
 	const items = Array.from( element.children );
 
 	animate( items, { opacity: 0, y: reducedMotion ? 0 : params.distance }, { duration: 0 } );
-
-	return inView( element, () => {
-		animate( items, { opacity: 1, y: 0 }, { duration: 0.5, delay: stagger( params.step ) } );
-	} );
+	animate( items, { opacity: 1, y: 0 }, { duration: 0.5, delay: stagger( params.step ) } );
 }
 ```
 
-### Grid ripple — `js-stagger-grid` — S — 14.9 API
-APIs: `stagger` with `grid` and `from`, `press`. Animates: `opacity`, `scale`. Target: children laid out as a grid.
+### Grid ripple — `js-stagger-grid` — S — 14.x API
+Trigger: `click`. APIs: `stagger` with `grid` and `from` (the pressed cell, from `event.target`). Animates: `opacity`, `scale`. Target: children laid out as a grid.
 Fields: `columns`, `step`, `scale`. Snippet: guide example 4.
 
-### Stagger from edges — `js-stagger-from-edges` — S — 14.9 API
-APIs: `inView`, `stagger` with `from: "edges"`. Animates: `opacity`, `y`. Target: children.
+### Stagger from edges — `js-stagger-from-edges` — S — 14.x API
+Trigger: `scrollIn`. APIs: `stagger` with `from: "edges"`. Animates: `opacity`, `y`. Target: children.
 Fields: `distance` (slider 0–100, 24), `step` (slider 0.02–0.3, step 0.01, 0.08).
 
 ```js
 ({ element, params, motion, reducedMotion }) => {
-	const { animate, inView, stagger } = motion;
+	const { animate, stagger } = motion;
 	const items = Array.from( element.children );
 
 	animate( items, { opacity: 0, y: reducedMotion ? 0 : params.distance }, { duration: 0 } );
-
-	return inView( element, () => {
-		animate( items, { opacity: 1, y: 0 }, { duration: 0.5, delay: stagger( params.step, { from: 'edges' } ) } );
-	} );
+	animate( items, { opacity: 1, y: 0 }, { duration: 0.5, delay: stagger( params.step, { from: 'edges' } ) } );
 }
 ```
 
-### Random spring stagger — `js-stagger-random` — S — 14.9 API
-APIs: `inView`, `stagger` with `from: "random"`, spring. Animates: `opacity`, `scale`. Target: children.
+### Random spring stagger — `js-stagger-random` — S — 14.x API
+Trigger: `scrollIn`. APIs: `stagger` with `from: "random"`, spring. Animates: `opacity`, `scale`. Target: children.
 Fields: `step` (slider 0.02–0.3, step 0.01, 0.06), `bounce` (slider 0–0.8, step 0.05, 0.4).
 
 ```js
 ({ element, params, motion, reducedMotion }) => {
-	const { animate, inView, stagger } = motion;
+	const { animate, stagger } = motion;
 	const items = Array.from( element.children );
 
 	animate( items, { opacity: 0, scale: reducedMotion ? 1 : 0.5 }, { duration: 0 } );
-
-	return inView( element, () => {
-		animate(
-			items,
-			{ opacity: 1, scale: 1 },
-			{ type: 'spring', bounce: params.bounce, delay: stagger( params.step, { from: 'random' } ) }
-		);
-	} );
+	animate(
+		items,
+		{ opacity: 1, scale: 1 },
+		{ type: 'spring', bounce: params.bounce, delay: stagger( params.step, { from: 'random' } ) }
+	);
 }
 ```
 
 ## Loops
+
+Trigger: `load`. Loops are stopped by Elementor; no cleanup needed.
 
 ### Loading spinner — `js-loading-circle-spinner` — S
 APIs: `animate` (`repeat: Infinity`). Animates: `rotate`. Target: self.
@@ -202,9 +208,7 @@ Fields: `duration` (number 0.3–5, 1).
 		return;
 	}
 
-	const controls = motion.animate( element, { rotate: 360 }, { duration: params.duration, ease: 'linear', repeat: Infinity } );
-
-	return () => controls.stop();
+	motion.animate( element, { rotate: 360 }, { duration: params.duration, ease: 'linear', repeat: Infinity } );
 }
 ```
 
@@ -219,13 +223,12 @@ Fields: `height` (slider 2–40, 12), `step` (slider 0.05–0.4, step 0.05, 0.15
 	}
 
 	const { animate, stagger } = motion;
-	const controls = animate(
+
+	animate(
 		Array.from( element.children ),
 		{ y: [ 0, -params.height, 0 ] },
 		{ duration: 0.6, repeat: Infinity, repeatDelay: 0.2, ease: 'easeInOut', delay: stagger( params.step ) }
 	);
-
-	return () => controls.stop();
 }
 ```
 
@@ -246,69 +249,46 @@ Fields: `duration` (number 0.4–3, 1.2).
 	}
 
 	const { animate, stagger } = motion;
-	const controls = animate(
+
+	animate(
 		segments,
 		{ opacity: [ 1, 0.2 ] },
 		{ duration: params.duration, repeat: Infinity, ease: 'linear', delay: stagger( params.duration / segments.length ) }
 	);
-
-	return () => controls.stop();
 }
 ```
 
 ## Drag and paths
 
-### Drag — `js-drag` — A — 14.9 API
-APIs: `drag`. Animates: transform. Target: self. Fields: none needed.
+### Drag — `js-drag` — A — 14.x API
+Trigger: `drag`. Elementor makes the element draggable with Motion's defaults (both axes, momentum, no constraints) and moves it. Target: self.
+The code only styles the drag; don't animate `x` / `y`. Fields: `liftScale`, `dragOpacity`. Snippet: guide example 6.
 
-```js
-({ element, motion }) => motion.drag( element )
-```
+Constraints, axis lock and snap-back (`js-drag-constraints`, `js-drag-lock-direction`) aren't configurable on the `drag` trigger yet; don't fake them in the code.
 
-### Drag within parent — `js-drag-constraints` — A — 14.9 API
-APIs: `drag` with constraints. Animates: transform. Target: self inside its parent.
-Fields: `elastic`, `snapBack`. Snippet: guide example 6.
-
-### Drag with axis lock — `js-drag-lock-direction` — A — 14.9 API
-APIs: `drag` with `directionLock`, `animate`. Animates: transform, `opacity`. Target: self.
-Fields: `elastic` (slider 0–1, step 0.05, 0.2), `dragOpacity` (slider 0.3–1, step 0.05, 0.7).
-
-```js
-({ element, params, motion }) => motion.drag( element, {
-	directionLock: true,
-	constraints: element.parentElement,
-	elastic: params.elastic,
-	onStart: () => motion.animate( element, { opacity: params.dragOpacity }, { duration: 0.15 } ),
-	onEnd: () => motion.animate( element, { opacity: 1 }, { duration: 0.15 } ),
-} )
-```
-
-### Fly to target — `js-add-to-basket` — S — 14.9 API
-APIs: `arc`, `press`, `animate`. Animates: `x`, `y`, `scale`, `opacity`. Target: the element's first child (the token that flies), pressed via the element.
+### Fly to target — `js-add-to-basket` — S — 14.x API
+Trigger: `click`. APIs: `arc`, `animate`. Animates: `x`, `y`, `scale`, `opacity`. Target: the element's first child (the token that flies), pressed via the element.
 Fields: `x` (number -800–800, 240), `y` (number -800–800, -160), `strength` (slider 0–1, step 0.05, 0.5), `duration` (number 0.2–2, 0.7).
 
 ```js
 ({ element, params, motion, reducedMotion }) => {
-	const { animate, arc, press } = motion;
+	const { animate, arc } = motion;
 	const token = element.firstElementChild;
-	const path = arc( { strength: params.strength } );
 
 	if ( ! token ) {
 		return;
 	}
 
-	return press( element, () => {
-		if ( reducedMotion ) {
-			animate( token, { opacity: [ 1, 0, 1 ] }, { duration: 0.4 } );
-			return;
-		}
+	if ( reducedMotion ) {
+		animate( token, { opacity: [ 1, 0, 1 ] }, { duration: 0.4 } );
+		return;
+	}
 
-		animate(
-			token,
-			{ x: [ 0, params.x ], y: [ 0, params.y ], scale: [ 1, 0.4 ], opacity: [ 1, 0 ] },
-			{ duration: params.duration, path }
-		).then( () => animate( token, { x: 0, y: 0, scale: 1, opacity: 1 }, { duration: 0 } ) );
-	} );
+	animate(
+		token,
+		{ x: [ 0, params.x ], y: [ 0, params.y ], scale: [ 1, 0.4 ], opacity: [ 1, 0 ] },
+		{ duration: params.duration, path: arc( { strength: params.strength } ) }
+	).then( () => animate( token, { x: 0, y: 0, scale: 1, opacity: 1 }, { duration: 0 } ) );
 }
 ```
 
@@ -333,9 +313,7 @@ Do this instead: give the element a child overlay styled with the second colour 
 		return;
 	}
 
-	const controls = motion.animate( overlay, { opacity: [ 0, 1 ] }, { duration: params.duration, repeat: Infinity, repeatType: 'reverse' } );
-
-	return () => controls.stop();
+	motion.animate( overlay, { opacity: [ 0, 1 ] }, { duration: params.duration, repeat: Infinity, repeatType: 'reverse' } );
 }
 ```
 
@@ -345,6 +323,6 @@ These free examples need specific markup or app state and don't fit a per-elemen
 
 ## Quality rules (short)
 
-- Only `transform` and `opacity`. Springs for touch. `scroll(animate(...))` for scroll-linked. One `stagger` call per group.
-- Return a cleanup; stop loops. Respect `reducedMotion`.
+- Only `transform` and `opacity`. Springs for touch. `trigger: "scrollOn"` returning `animate(…, { ease: "linear" })` for scroll-linked. One `stagger` call per group.
+- Set the trigger on the interaction, never in the code. Elementor stops loops and gestures; return a function only for the end phase. Respect `reducedMotion`.
 - 2 to 5 fields with sensible `min` / `max`; read every one in the code.

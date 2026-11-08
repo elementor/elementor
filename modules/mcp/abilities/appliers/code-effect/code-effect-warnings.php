@@ -16,8 +16,9 @@ class Code_Effect_Warnings {
 	const PATTERNS_URI = 'elementor://interactions/motion-patterns';
 
 	const NON_COMPOSITOR_PROPERTY_PATTERN = '/["\']?\b(width|height|top|left|margin[A-Za-z]*|padding[A-Za-z]*|backgroundColor|color|boxShadow)\b["\']?\s*:/';
-	const CLEANUP_API_PATTERN = '/\b(inView|hover|press|scroll|drag)\s*\(|repeat\s*:\s*Infinity/';
-	const LOOP_OR_SCROLL_PATTERN = '/\bscroll\s*\(|repeat\s*:\s*Infinity/';
+	const TRIGGER_API_PATTERN = '/\b(inView|hover|press|scroll|drag|resize)\s*\(/';
+	const LOOP_PATTERN = '/repeat\s*:\s*Infinity/';
+	const SCROLL_ON_TRIGGER = 'scrollOn';
 	const CONCISE_ARROW_PATTERN = '/^\s*(async\s+)?\(?[^)]*\)?\s*=>\s*[^{\s]/s';
 	const RETURN_PATTERN = '/\breturn\b/';
 	const GLOBAL_ACCESS_PATTERN = '/\b(document|window)\s*\./';
@@ -34,9 +35,34 @@ class Code_Effect_Warnings {
 
 		$code_effect = $animation_value['code_effect']['value'] ?? [];
 		$code = (string) ( $code_effect['code']['value'] ?? '' );
+		$trigger = (string) ( $item_value['trigger']['value'] ?? '' );
 		$warnings = $can_save_code() ? [] : [ self::stripped_on_save() ];
 
-		return array_merge( $warnings, self::quality_warnings( $code, self::param_keys( $code_effect ) ) );
+		return array_merge(
+			$warnings,
+			self::trigger_warnings( $code, $trigger ),
+			self::quality_warnings( $code, self::param_keys( $code_effect ) )
+		);
+	}
+
+	private static function trigger_warnings( string $code, string $trigger ): array {
+		$warnings = [];
+
+		if ( preg_match( self::TRIGGER_API_PATTERN, $code ) ) {
+			$warnings[] = self::warning( 'trigger_in_code', 'wires its own trigger with inView/hover/press/scroll/drag/resize. Set the interaction trigger instead; Elementor wires it and runs the code when it fires.' );
+		}
+
+		$is_scroll_on = self::SCROLL_ON_TRIGGER === $trigger;
+
+		if ( $is_scroll_on && ! self::returns_value( $code ) ) {
+			$warnings[] = self::warning( 'scroll_on_without_animation', 'uses trigger "scrollOn" without returning an animation. Return the animate() result so Elementor can link it to scroll.' );
+		}
+
+		if ( ( $is_scroll_on || preg_match( self::LOOP_PATTERN, $code ) ) && ! preg_match( self::REDUCED_MOTION_PATTERN, $code ) ) {
+			$warnings[] = self::warning( 'reduced_motion_ignored', 'runs a loop or scroll-linked animation without checking reducedMotion.' );
+		}
+
+		return $warnings;
 	}
 
 	private static function stripped_on_save(): array {
@@ -53,10 +79,6 @@ class Code_Effect_Warnings {
 			$warnings[] = self::warning( 'non_compositor_property', 'animates layout or paint properties. Animate only transform and opacity (x, y, scale, rotate, opacity).' );
 		}
 
-		if ( preg_match( self::CLEANUP_API_PATTERN, $code ) && ! self::returns_cleanup( $code ) ) {
-			$warnings[] = self::warning( 'missing_cleanup', 'uses inView/hover/press/scroll/drag or an infinite loop without returning a cleanup function.' );
-		}
-
 		if ( preg_match( self::GLOBAL_ACCESS_PATTERN, $code ) ) {
 			$warnings[] = self::warning( 'global_access', 'references document or window. Scope all queries to element.' );
 		}
@@ -71,10 +93,6 @@ class Code_Effect_Warnings {
 			$warnings[] = self::warning( 'unused_param', sprintf( 'declares params never read by the code: %s.', implode( ', ', $unused_keys ) ) );
 		}
 
-		if ( preg_match( self::LOOP_OR_SCROLL_PATTERN, $code ) && ! preg_match( self::REDUCED_MOTION_PATTERN, $code ) ) {
-			$warnings[] = self::warning( 'reduced_motion_ignored', 'runs a loop or scroll-linked animation without checking reducedMotion.' );
-		}
-
 		return $warnings;
 	}
 
@@ -85,7 +103,7 @@ class Code_Effect_Warnings {
 		];
 	}
 
-	private static function returns_cleanup( string $code ): bool {
+	private static function returns_value( string $code ): bool {
 		return preg_match( self::RETURN_PATTERN, $code ) || preg_match( self::CONCISE_ARROW_PATTERN, $code );
 	}
 

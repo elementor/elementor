@@ -38,6 +38,17 @@ describe( 'createAnimationPreset code effect', () => {
 		// Assert
 		expect( label ).toBe( 'On page load: Code ' );
 	} );
+
+	it( 'should label code effect only triggers', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'longPress', effect: 'code' } );
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'Long press: Code ' );
+	} );
 } );
 
 describe( 'Breakpoints Utility Functions', () => {

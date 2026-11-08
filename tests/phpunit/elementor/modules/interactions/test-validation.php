@@ -584,9 +584,21 @@ class Test_Validation extends TestCase {
 		$this->assertSame( 'code', $items[0]['value']['animation']['value']['effect']['value'] );
 	}
 
-	public function test_sanitize__strips_code_effect_with_non_load_trigger() {
+	public function test_sanitize__keeps_code_effect_with_code_effect_only_trigger() {
 		// Arrange.
-		$document = $this->document_with_items( [ $this->create_code_effect_interaction( 'scrollIn' ) ] );
+		$document = $this->document_with_items( [ $this->create_code_effect_interaction( 'drag' ) ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$items = json_decode( $result['elements'][0]['interactions'], true )['items'];
+		$this->assertSame( 'drag', $items[0]['value']['trigger']['value'] );
+	}
+
+	public function test_sanitize__strips_preset_effect_with_code_effect_only_trigger() {
+		// Arrange.
+		$document = $this->document_with_items( [ $this->create_prop_type_interaction( 'longPress', 'fade' ) ] );
 
 		// Act.
 		$result = $this->validation()->sanitize( $document );
@@ -629,7 +641,7 @@ class Test_Validation extends TestCase {
 		$interaction['value']['animation']['value']['code_effect'] = [
 			'$$type' => 'code-effect',
 			'value' => [
-				'code' => [ '$$type' => 'code', 'value' => '({ element, motion }) => motion.hover( element, () => {} )' ],
+				'code' => [ '$$type' => 'code', 'value' => '({ element, motion }) => motion.animate( element, { scale: 1.1 } )' ],
 			],
 		];
 

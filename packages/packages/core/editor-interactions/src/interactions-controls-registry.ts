@@ -7,6 +7,7 @@ import {
 	type RepeatFieldProps,
 	type ReplayFieldProps,
 	type TimesFieldProps,
+	type TriggerFieldProps,
 } from './types';
 
 export type InteractionsControlType =
@@ -27,7 +28,7 @@ export type InteractionsControlType =
 	| 'codeEffect';
 
 type InteractionsControlPropsMap = {
-	trigger: FieldProps;
+	trigger: TriggerFieldProps;
 	effect: FieldProps;
 	customEffects: FieldProps< PropValue >;
 	codeEffect: FieldProps< PropValue >;
@@ -53,7 +54,7 @@ type ControlOptions< T extends InteractionsControlType > = {
 type StoredControlOptions = {
 	type: InteractionsControlType;
 	component: ComponentType<
-		FieldProps | DirectionFieldProps | ReplayFieldProps | RepeatFieldProps | TimesFieldProps
+		FieldProps | TriggerFieldProps | DirectionFieldProps | ReplayFieldProps | RepeatFieldProps | TimesFieldProps
 	>;
 	options?: string[];
 };

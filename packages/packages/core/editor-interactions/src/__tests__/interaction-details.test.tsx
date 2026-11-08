@@ -611,7 +611,7 @@ describe( 'InteractionDetails', () => {
 			);
 		} );
 
-		it( 'should show only the effect and code effect controls', () => {
+		it( 'should show only the trigger, effect and code effect controls', () => {
 			// Arrange
 			const interaction = createCodeInteraction();
 
@@ -619,9 +619,10 @@ describe( 'InteractionDetails', () => {
 			renderInteractionDetails( interaction );
 
 			// Assert
+			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Update code effect' } ) ).toBeInTheDocument();
-			[ 'Trigger', 'Type', 'Direction', 'Duration', 'Delay', 'Easing', 'Replay' ].forEach( ( label ) => {
+			[ 'Type', 'Direction', 'Duration', 'Delay', 'Easing', 'Replay' ].forEach( ( label ) => {
 				expect( screen.queryByText( label ) ).not.toBeInTheDocument();
 			} );
 		} );
@@ -637,10 +638,10 @@ describe( 'InteractionDetails', () => {
 			expect( screen.queryByRole( 'button', { name: 'Update code effect' } ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'should keep the load trigger and pass the code effect through on change', () => {
+		it( 'should keep the trigger and pass the code effect through on change', () => {
 			// Arrange
 			const interaction = createCodeInteraction();
-			interaction.trigger = { $$type: 'string', value: 'scrollIn' };
+			interaction.trigger = { $$type: 'string', value: 'drag' };
 			renderInteractionDetails( interaction );
 
 			// Act
@@ -648,8 +649,43 @@ describe( 'InteractionDetails', () => {
 
 			// Assert
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.trigger.value ).toBe( 'load' );
+			expect( updatedInteraction.trigger.value ).toBe( 'drag' );
 			expect( updatedInteraction.animation.value.code_effect ).toEqual( codeEffectValue );
+		} );
+
+		it( 'should pass the effect to the trigger control', () => {
+			// Arrange
+			const mockTriggerControl = jest.fn( () => null );
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'trigger' ? { component: mockTriggerControl } : null
+			);
+
+			// Act
+			renderInteractionDetails( createCodeInteraction() );
+
+			// Assert
+			expect( mockTriggerControl ).toHaveBeenCalledWith( expect.objectContaining( { effect: 'code' } ), {} );
+		} );
+
+		it( 'should reset a code effect only trigger to load when switching to a preset effect', () => {
+			// Arrange
+			const mockEffectControl = ( { onChange }: { onChange: ( value: string ) => void } ) => (
+				<button onClick={ () => onChange( 'fade' ) }>Use fade</button>
+			);
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'effect' ? { component: mockEffectControl } : null
+			);
+			const interaction = createCodeInteraction();
+			interaction.trigger = { $$type: 'string', value: 'longPress' };
+			renderInteractionDetails( interaction );
+
+			// Act
+			fireEvent.click( screen.getByRole( 'button', { name: 'Use fade' } ) );
+
+			// Assert
+			expect( mockOnChange.mock.calls[ 0 ][ 0 ].trigger.value ).toBe( 'load' );
 		} );
 	} );
 

@@ -39,9 +39,11 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use PHPUnit\Framework\TestCase;
 
 class Test_Interactions_Applier_Code_Effect extends TestCase {
-	const SCROLL_REVEAL_CODE = "({ element, params, motion, reducedMotion }) => {\n\tconst { animate, inView } = motion;\n\tconst hidden = { opacity: 0, x: reducedMotion ? 0 : -params.distance };\n\tanimate( element, hidden, { duration: 0 } );\n\treturn inView( element, () => {\n\t\tanimate( element, { opacity: 1, x: 0 }, { duration: params.duration } );\n\t\treturn () => animate( element, hidden );\n\t} );\n}";
+	const SCROLL_REVEAL_CODE = "({ element, params, motion, reducedMotion }) => {\n\tconst hidden = { opacity: 0, x: reducedMotion ? 0 : -params.distance };\n\tmotion.animate( element, hidden, { duration: 0 } );\n\tmotion.animate( element, { opacity: 1, x: 0 }, { duration: params.duration } );\n\treturn () => motion.animate( element, hidden );\n}";
 
-	const PULSE_DOTS_CODE = "({ element, params, motion, reducedMotion }) => {\n\tif ( reducedMotion ) {\n\t\treturn;\n\t}\n\tconst { animate, stagger } = motion;\n\tconst controls = animate( Array.from( element.children ), { scale: [ 1, params.scale, 1 ] }, { duration: 1.2, repeat: Infinity, delay: stagger( 0.15 ) } );\n\treturn () => controls.stop();\n}";
+	const PULSE_DOTS_CODE = "({ element, params, motion, reducedMotion }) => {\n\tif ( reducedMotion ) {\n\t\treturn;\n\t}\n\tconst { animate, stagger } = motion;\n\tanimate( Array.from( element.children ), { scale: [ 1, params.scale, 1 ] }, { duration: 1.2, repeat: Infinity, delay: stagger( 0.15 ) } );\n}";
+
+	const PARALLAX_CODE = "({ element, params, motion, reducedMotion }) => motion.animate( element, { y: reducedMotion ? 0 : [ -params.distance, params.distance ] }, { ease: 'linear' } )";
 
 	const COLOR_CYCLE_CODE = "({ element, params, motion }) => {\n\tmotion.animate( element, { backgroundColor: [ params.from, params.to ] }, { duration: 2, repeat: Infinity } );\n}";
 
@@ -103,10 +105,25 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 		$this->assertSame( 'color', $resolved_params[2]['value']['value']['$$type'] );
 	}
 
-	public function test_apply__rejects_code_item_with_non_load_trigger() {
+	public function test_apply__keeps_code_item_trigger() {
 		// Arrange
 		$item = $this->code_item( self::SCROLL_REVEAL_CODE, $this->scroll_reveal_params() );
-		$item['trigger'] = 'scrollIn';
+		$item['trigger'] = 'longPress';
+
+		// Act
+		[ $index, $codes ] = $this->apply( $item );
+
+		// Assert
+		$this->assertSame( [], $codes );
+		$this->assertSame( 'longPress', $index['hero']['interactions']['items'][0]['value']['trigger']['value'] );
+	}
+
+	public function test_apply__rejects_preset_item_with_code_effect_only_trigger() {
+		// Arrange
+		$item = [
+			'trigger' => 'drag',
+			'animation' => [ 'effect' => 'fade', 'type' => 'in' ],
+		];
 
 		// Act
 		[ $index, $codes ] = $this->apply( $item );
@@ -119,17 +136,47 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 	public function test_apply__good_patterns_have_no_warnings() {
 		// Arrange
 		$scroll_reveal = $this->code_item( self::SCROLL_REVEAL_CODE, $this->scroll_reveal_params() );
+		$scroll_reveal['trigger'] = 'scrollIn';
 		$pulse_dots = $this->code_item( self::PULSE_DOTS_CODE, [
 			[ 'key' => 'scale', 'label' => 'Scale', 'control' => 'slider', 'value' => 1.4, 'min' => 1, 'max' => 2 ],
 		] );
+		$parallax = $this->code_item( self::PARALLAX_CODE, [
+			[ 'key' => 'distance', 'label' => 'Distance', 'control' => 'slider', 'value' => 80, 'min' => 0, 'max' => 300 ],
+		] );
+		$parallax['trigger'] = 'scrollOn';
 
 		// Act
 		[ , $scroll_reveal_codes ] = $this->apply( $scroll_reveal );
 		[ , $pulse_dots_codes ] = $this->apply( $pulse_dots );
+		[ , $parallax_codes ] = $this->apply( $parallax );
 
 		// Assert
 		$this->assertSame( [], $scroll_reveal_codes );
 		$this->assertSame( [], $pulse_dots_codes );
+		$this->assertSame( [], $parallax_codes );
+	}
+
+	public function test_apply__warns_when_code_wires_its_own_trigger() {
+		// Arrange
+		$code = "({ element, motion }) => motion.hover( element, () => motion.animate( element, { scale: 1.1 } ) )";
+
+		// Act
+		[ , $codes ] = $this->apply( $this->code_item( $code, [] ) );
+
+		// Assert
+		$this->assertSame( [ 'code_effect_trigger_in_code' ], $codes );
+	}
+
+	public function test_apply__warns_when_scroll_on_code_returns_no_animation() {
+		// Arrange
+		$item = $this->code_item( "({ element, motion, reducedMotion }) => {\n\tmotion.animate( element, { y: reducedMotion ? 0 : 100 } );\n}", [] );
+		$item['trigger'] = 'scrollOn';
+
+		// Act
+		[ , $codes ] = $this->apply( $item );
+
+		// Assert
+		$this->assertSame( [ 'code_effect_scroll_on_without_animation' ], $codes );
 	}
 
 	public function test_apply__warns_when_user_cannot_save_code() {
@@ -144,7 +191,7 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 		$this->assertCount( 1, $index['hero']['interactions']['items'] );
 	}
 
-	public function test_apply__warns_on_paint_loop_without_cleanup() {
+	public function test_apply__warns_on_paint_loop_without_reduced_motion() {
 		// Arrange
 		$item = $this->code_item( self::COLOR_CYCLE_CODE, [
 			[ 'key' => 'from', 'label' => 'From', 'control' => 'color', 'value' => '#ff0000' ],
@@ -156,9 +203,8 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 
 		// Assert
 		$this->assertSame( [
-			'code_effect_non_compositor_property',
-			'code_effect_missing_cleanup',
 			'code_effect_reduced_motion_ignored',
+			'code_effect_non_compositor_property',
 		], $codes );
 	}
 
@@ -175,7 +221,7 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 
 	public function test_apply__warns_on_unused_param_but_accepts_destructuring() {
 		// Arrange
-		$code = "({ element, params, motion }) => {\n\tconst { distance } = params;\n\treturn motion.inView( element, () => { motion.animate( element, { x: distance } ); } );\n}";
+		$code = "({ element, params, motion }) => {\n\tconst { distance } = params;\n\tmotion.animate( element, { x: distance } );\n}";
 		$params = $this->scroll_reveal_params();
 
 		$index = [ 'hero' => [ 'widgetType' => 'e-div-block' ] ];

@@ -273,7 +273,7 @@ The response includes the Font Awesome version in use (`font_awesome_version`); 
 # INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
 
-Custom motion beyond the presets (Pro): use `effect: "code"` with a Motion function and editable params. Read [elementor://interactions/motion-code-guide] first, pick a pattern from [elementor://interactions/motion-patterns], and build the markup the code animates as composition children.
+Custom motion beyond the presets (Pro): use `effect: "code"` with a Motion function and editable params. Read [elementor://interactions/motion-code-guide] first, pick a pattern from [elementor://interactions/motion-patterns], and build the markup the code animates as composition children. The interaction's `trigger` decides when the code runs (any trigger, plus the code-only `doubleClick`, `longPress`, `drag` and `resize`); the code never wires events itself.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only

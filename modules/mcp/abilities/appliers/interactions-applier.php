@@ -115,7 +115,7 @@ class Interactions_Applier {
 				$warnings->add(
 					'interaction_invalid',
 					sprintf(
-						'Interaction at index %d is a code effect that needs trigger "load" and a valid code_effect. See %s.',
+						'Interaction at index %d is invalid: a code effect needs a valid code_effect, and the triggers doubleClick, longPress, drag and resize need effect "code". See %s.',
 						$item_index,
 						Code_Effect_Warnings::GUIDE_URI
 					),

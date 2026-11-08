@@ -1,5 +1,6 @@
 <?php
 
+use Elementor\Modules\Interactions\Presets;
 use Elementor\Modules\Interactions\Props\Code_Effect_Params_Prop_Type;
 use Elementor\Modules\Interactions\Props\Code_Prop_Type;
 use Elementor\Modules\Interactions\Validators\Code_Effect_Value;
@@ -35,9 +36,38 @@ class Test_Code_Effect_Value extends TestCase {
 		$this->assertTrue( $result );
 	}
 
-	public function test_is_valid__returns_false_when_code_effect_trigger_is_not_load() {
+	/**
+	 * @dataProvider code_effect_triggers_provider
+	 */
+	public function test_is_valid__returns_true_for_code_effect_with_any_trigger( string $trigger ) {
 		// Arrange.
-		$interaction_value = $this->interaction_value( 'hover', 'code', $this->code_effect( self::VALID_CODE ) );
+		$interaction_value = $this->interaction_value( $trigger, 'code', $this->code_effect( self::VALID_CODE ) );
+
+		// Act.
+		$result = Code_Effect_Value::is_valid( $interaction_value );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function code_effect_triggers_provider(): array {
+		return array_map( fn( $trigger ) => [ $trigger ], Presets::triggers_options() );
+	}
+
+	public function test_is_valid__returns_false_when_code_effect_trigger_is_unknown() {
+		// Arrange.
+		$interaction_value = $this->interaction_value( 'swipe', 'code', $this->code_effect( self::VALID_CODE ) );
+
+		// Act.
+		$result = Code_Effect_Value::is_valid( $interaction_value );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function test_is_valid__returns_false_when_preset_effect_uses_code_effect_only_trigger() {
+		// Arrange.
+		$interaction_value = $this->interaction_value( 'doubleClick', 'fade', null );
 
 		// Act.
 		$result = Code_Effect_Value::is_valid( $interaction_value );

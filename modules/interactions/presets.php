@@ -17,12 +17,13 @@ class Presets {
 
 	const BASE_TRIGGERS = [ 'load', 'scrollIn' ];
 	const ADDITIONAL_TRIGGERS = [ 'scrollOut', 'scrollOn', 'hover', 'click' ];
+	const CODE_EFFECT_ONLY_TRIGGERS = [ 'doubleClick', 'longPress', 'drag', 'resize' ];
 
 	const DEFAULT_EASING = 'easeIn';
 	const BASE_EFFECTS = [ 'fade', 'slide', 'scale' ];
 	const ADDITIONAL_EFFECTS = [ 'custom', 'code' ];
 	const CODE_EFFECT = 'code';
-	const CODE_EFFECT_TRIGGER = 'load';
+	const DEFAULT_CODE_EFFECT_TRIGGER = 'load';
 
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right', '' ];
@@ -42,7 +43,11 @@ class Presets {
 	}
 
 	public static function triggers_options() {
-		return array_merge( self::BASE_TRIGGERS, self::ADDITIONAL_TRIGGERS );
+		return array_merge( self::BASE_TRIGGERS, self::ADDITIONAL_TRIGGERS, self::CODE_EFFECT_ONLY_TRIGGERS );
+	}
+
+	public static function pro_triggers_options() {
+		return array_merge( self::ADDITIONAL_TRIGGERS, self::CODE_EFFECT_ONLY_TRIGGERS );
 	}
 
 	public function defaults() {

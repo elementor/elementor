@@ -17,7 +17,7 @@ class Code_Effect_Prop_Type extends Object_Prop_Type {
 		return [
 			'code' => Code_Prop_Type::make()
 				->required()
-				->description( 'Trusted Motion function source: ({ element, params, motion, reducedMotion }) => cleanup | void. Runs once per element on load. Read elementor://interactions/motion-code-guide and pick a pattern from elementor://interactions/motion-patterns before writing it' ),
+				->description( 'Trusted Motion function source: ({ element, params, motion, reducedMotion, event }) => onEnd | animation | void. Runs per element each time the interaction trigger fires; the trigger is wired by Elementor, never by the code. Read elementor://interactions/motion-code-guide and pick a pattern from elementor://interactions/motion-patterns before writing it' ),
 			'params' => Code_Effect_Params_Prop_Type::make()
 				->description( 'Editable fields shown in the Interactions tab. Their values reach the code as params.<key>' ),
 		];

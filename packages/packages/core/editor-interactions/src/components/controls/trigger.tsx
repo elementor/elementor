@@ -15,6 +15,19 @@ export const TRIGGER_OPTIONS = {
 	click: __( 'On click', 'elementor' ),
 };
 
+export const CODE_EFFECT_TRIGGER_OPTIONS = {
+	load: TRIGGER_OPTIONS.load,
+	scrollIn: TRIGGER_OPTIONS.scrollIn,
+	scrollOut: __( 'Scroll out of view', 'elementor' ),
+	scrollOn: TRIGGER_OPTIONS.scrollOn,
+	hover: TRIGGER_OPTIONS.hover,
+	click: TRIGGER_OPTIONS.click,
+	doubleClick: __( 'On double click', 'elementor' ),
+	longPress: __( 'On long press', 'elementor' ),
+	drag: __( 'On drag', 'elementor' ),
+	resize: __( 'On resize', 'elementor' ),
+};
+
 export const BASE_TRIGGERS: string[] = [ 'load', 'scrollIn' ];
 
 export function Trigger( { value, onChange }: FieldProps ) {

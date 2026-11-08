@@ -22,7 +22,7 @@ class Code_Effect_Defaults {
 			return $plain_item;
 		}
 
-		$plain_item['trigger'] = $plain_item['trigger'] ?? Presets::CODE_EFFECT_TRIGGER;
+		$plain_item['trigger'] = $plain_item['trigger'] ?? Presets::DEFAULT_CODE_EFFECT_TRIGGER;
 		$plain_item['animation'] = $animation + [
 			'type' => self::TYPE,
 			'timing_config' => [

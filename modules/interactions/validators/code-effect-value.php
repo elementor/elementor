@@ -15,14 +15,18 @@ class Code_Effect_Value {
 		return Presets::CODE_EFFECT === ( $animation_value['effect']['value'] ?? null );
 	}
 
+	public static function is_code_effect_only_trigger( array $interaction_value ): bool {
+		return in_array( $interaction_value['trigger']['value'] ?? null, Presets::CODE_EFFECT_ONLY_TRIGGERS, true );
+	}
+
 	public static function is_valid( array $interaction_value ): bool {
 		$animation_value = $interaction_value['animation']['value'] ?? [];
 
 		if ( ! is_array( $animation_value ) || ! self::is_code_effect( $animation_value ) ) {
-			return true;
+			return ! self::is_code_effect_only_trigger( $interaction_value );
 		}
 
-		if ( Presets::CODE_EFFECT_TRIGGER !== ( $interaction_value['trigger']['value'] ?? null ) ) {
+		if ( ! Trigger_Value::is_valid( $interaction_value['trigger'] ?? null ) ) {
 			return false;
 		}
 

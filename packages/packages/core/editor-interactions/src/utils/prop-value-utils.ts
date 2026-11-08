@@ -23,6 +23,8 @@ import { generateTempInteractionId } from './temp-id-utils';
 
 export const CODE_EFFECT = 'code';
 
+export const CODE_EFFECT_EXTRA_TRIGGERS = [ 'scrollOut', 'doubleClick', 'longPress', 'drag', 'resize' ];
+
 const EFFECTS_WITHOUT_TYPE = [ 'custom', CODE_EFFECT ];
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -259,6 +261,8 @@ const TRIGGER_LABELS: Record< string, string > = {
 	scrollIn: 'Scroll into view',
 	scrollOut: 'Scroll out of view',
 	scrollOn: 'While scrolling',
+	doubleClick: 'Double click',
+	longPress: 'Long press',
 };
 
 const capitalize = ( str: string ): string => {

@@ -11,6 +11,10 @@ const TRIGGER_LABELS: Record< string, string > = {
 	scrollOn: 'While scrolling',
 	hover: 'Hover',
 	click: 'Click',
+	doubleClick: 'Double click',
+	longPress: 'Long press',
+	drag: 'Drag',
+	resize: 'Resize',
 };
 
 const capitalize = ( s: string ) => s.charAt( 0 ).toUpperCase() + s.slice( 1 );
