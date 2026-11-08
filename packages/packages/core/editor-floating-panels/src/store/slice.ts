@@ -9,6 +9,7 @@ type SliceState = {
 	titlesById: Record< string, string >;
 	isDraggableById: Record< string, boolean >;
 	isResizableById: Record< string, boolean >;
+	isDockedById: Record< string, boolean >;
 	topZIndex: number;
 };
 
@@ -20,6 +21,7 @@ const initialState: SliceState = {
 	titlesById: {},
 	isDraggableById: {},
 	isResizableById: {},
+	isDockedById: {},
 	topZIndex: 0,
 };
 
@@ -35,14 +37,16 @@ export const slice = __createSlice( {
 				title?: string;
 				isDraggable?: boolean;
 				isResizable?: boolean;
+				isDocked?: boolean;
 				persisted?: FloatingPanelState;
 			} >
 		) {
-			const { id, defaults, title, isDraggable, isResizable, persisted } = action.payload;
+			const { id, defaults, title, isDraggable, isResizable, isDocked, persisted } = action.payload;
 
 			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
-			state.isDraggableById[ id ] = isDraggable ?? false;
-			state.isResizableById[ id ] = isResizable ?? false;
+			state.isDraggableById[ id ] = isDocked ? false : isDraggable ?? false;
+			state.isResizableById[ id ] = isDocked ? false : isResizable ?? false;
+			state.isDockedById[ id ] = isDocked ?? false;
 
 			if ( title !== undefined ) {
 				state.titlesById[ id ] = title;
@@ -53,7 +57,7 @@ export const slice = __createSlice( {
 			}
 
 			const corner = defaults.corner ?? DEFAULT_CORNER;
-			const canReusePersisted = persisted && persisted.corner === corner;
+			const canReusePersisted = ! isDocked && persisted && persisted.corner === corner;
 
 			state.byId[ id ] = canReusePersisted
 				? persisted
