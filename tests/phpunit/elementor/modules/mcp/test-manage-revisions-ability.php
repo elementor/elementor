@@ -254,6 +254,7 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 			'post_id' => $post_id,
 			'settings' => [ 'template' => Page_Templates_Module::TEMPLATE_CANVAS ],
 		] );
+		( new Publish_Document_Ability() )->execute_guarded( [ 'post_id' => $post_id ] );
 
 		// Act
 		$undo = $this->restore( $post_id, $update['undo_revision_id'] );
