@@ -17,13 +17,17 @@ export type OpenAngieRequest = OpenAngieCommonProperties & {
 	plugin?: OpenAngiePluginProperties;
 };
 
+export type EditorAngieWindowHost = {
+	openAngie?: ( request: OpenAngieRequest ) => Promise< void > | void;
+};
+
 declare global {
+	interface ElementorV2Global {
+		editorAngie?: EditorAngieWindowHost;
+	}
+
 	interface Window {
-		elementorV2?: Window[ 'elementorV2' ] & {
-			editorAngie?: {
-				openAngie?: ( request: OpenAngieRequest ) => Promise< void > | void;
-			};
-		};
+		elementorV2?: ElementorV2Global;
 	}
 }
 

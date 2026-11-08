@@ -14,11 +14,6 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
-    "./open-angie-request": {
-      "types": "./src/types/open-angie-request.ts",
-      "import": "./src/types/open-angie-request.ts",
-      "require": "./src/types/open-angie-request.ts"
-    },
     "./package.json": "./package.json"
   },
   "repository": {
