@@ -8,7 +8,7 @@ import {
 
 import { ensureHelpCenterAbility } from './help-center-ability';
 
-export const EDITOR_ANGIE_APP_ID = 'elementor-editor';
+export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
 export const ANGIE_SIDEBAR_ACTIVE_BODY_CLASS = 'angie-sidebar-active';
 
