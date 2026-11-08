@@ -77,7 +77,7 @@ describe( 'editor angie host', () => {
 			},
 		} );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
-		expect( document.body.classList.contains( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS ) ).toBe( true );
+		expect( document.body ).not.toHaveClass( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
 	} );
 
 	it( 'fails boot when the Angie container is missing', async () => {

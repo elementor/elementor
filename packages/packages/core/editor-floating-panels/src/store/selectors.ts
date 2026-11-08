@@ -10,7 +10,25 @@ export function selectPanelState( state: GlobalState, id: string ) {
 }
 
 export function resolvePanelZIndex( state: GlobalState, id: string ): number {
-	return FLOATING_PANEL_Z_INDEX_BASE + ( state.floatingPanels.byId[ id ]?.zIndex ?? 0 );
+	const panelZIndex = FLOATING_PANEL_Z_INDEX_BASE + ( state.floatingPanels.byId[ id ]?.zIndex ?? 0 );
+
+	if ( selectIsDocked( state, id ) ) {
+		return panelZIndex;
+	}
+
+	const highestOpenDockedZIndex = Object.entries( state.floatingPanels.byId ).reduce( ( max, [ panelId, panel ] ) => {
+		if ( panelId === id || ! panel.isOpen || ! selectIsDocked( state, panelId ) ) {
+			return max;
+		}
+
+		return Math.max( max, FLOATING_PANEL_Z_INDEX_BASE + panel.zIndex );
+	}, 0 );
+
+	if ( highestOpenDockedZIndex === 0 ) {
+		return panelZIndex;
+	}
+
+	return Math.max( panelZIndex, highestOpenDockedZIndex + 1 );
 }
 
 export function resolveOverlayZIndex( state: GlobalState, id: string ): number {
