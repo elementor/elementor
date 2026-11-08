@@ -1,9 +1,9 @@
-import { getAngieIframe, toggleAngieSidebar } from '@elementor-external/angie-sdk';
+import { AngieInteractionMode, getAngieIframe, toggleAngieSidebar } from '@elementor-external/angie-sdk';
 
 import { openLoadedEditorAngie } from './open-angie-in-ask-mode';
 
 export const sendPromptToAngie = ( prompt?: string ) => {
-	if ( openLoadedEditorAngie( prompt ) ) {
+	if ( openLoadedEditorAngie( prompt, AngieInteractionMode.AGENT ) ) {
 		return;
 	}
 

@@ -19,14 +19,14 @@ const getLoadedEditorAngie = (): EditorAngieOpen | undefined => {
 
 export const hasLoadedEditorAngie = (): boolean => Boolean( getLoadedEditorAngie() );
 
-export const openLoadedEditorAngie = ( prompt?: string ): boolean => {
+export const openLoadedEditorAngie = ( prompt: string | undefined, mode: AngieInteractionMode ): boolean => {
 	const openAngie = getLoadedEditorAngie();
 
 	if ( ! openAngie ) {
 		return false;
 	}
 
-	Promise.resolve( openAngie( { prompt: prompt ?? '', mode: AngieInteractionMode.ASK } ) ).catch( ( error ) => {
+	Promise.resolve( openAngie( { prompt: prompt ?? '', mode } ) ).catch( ( error ) => {
 		// eslint-disable-next-line no-console
 		console.error( 'Failed to open Angie:', error );
 	} );
@@ -35,7 +35,7 @@ export const openLoadedEditorAngie = ( prompt?: string ): boolean => {
 };
 
 export const openAngieInAskMode = ( prompt?: string ): void => {
-	if ( openLoadedEditorAngie( prompt ) ) {
+	if ( openLoadedEditorAngie( prompt, AngieInteractionMode.ASK ) ) {
 		return;
 	}
 
