@@ -28,7 +28,7 @@ describe( 'handleCreateWidgetEvent', () => {
 		mockSendPromptToAngie.mockReset();
 	} );
 
-	it( 'does nothing when canCreateWidget is false (Angie inactive)', () => {
+	it( 'does nothing when canCreateWidget is false', () => {
 		mockCanCreateWidget.mockReturnValue( false );
 
 		dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
@@ -37,16 +37,7 @@ describe( 'handleCreateWidgetEvent', () => {
 		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does nothing when canCreateWidget is false (non-admin with Angie active)', () => {
-		mockCanCreateWidget.mockReturnValue( false );
-
-		dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'search_widget' } );
-
-		expect( mockTrackEvent ).not.toHaveBeenCalled();
-		expect( mockSendPromptToAngie ).not.toHaveBeenCalled();
-	} );
-
-	it( 'sends the prompt to Angie when canCreateWidget is true (admin with Angie active)', () => {
+	it( 'sends the prompt to Angie when canCreateWidget is true', () => {
 		mockCanCreateWidget.mockReturnValue( true );
 
 		dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'widgets_panel' } );

@@ -28,8 +28,6 @@ class Module extends BaseModule {
 
 	const ANGIE_PANEL_PACKAGE = 'editor-angie-panel';
 
-	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
-
 	public function get_name() {
 		return self::MODULE_NAME;
 	}
@@ -60,7 +58,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_localize_settings( $settings ) );
 		add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'print_angie_config' ] );
-		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
 	}
 
 	private function register_angie_in_panels_experiment(): void {
@@ -69,20 +66,6 @@ class Module extends BaseModule {
 
 	public static function is_angie_in_panels_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME );
-	}
-
-	private function register_consent_route(): void {
-		register_rest_route( 'elementor/v1', '/angie/consent', [
-			'methods'             => 'POST',
-			'callback'            => fn() => $this->handle_save_consent(),
-			'permission_callback' => fn() => current_user_can( 'manage_options' ),
-		] );
-	}
-
-	private function handle_save_consent(): \WP_REST_Response {
-		update_option( self::ANGIE_CONSENT_OPTION, 'yes' );
-
-		return new \WP_REST_Response( [ 'success' => true ], 200 );
 	}
 
 	public function print_angie_config(): void {

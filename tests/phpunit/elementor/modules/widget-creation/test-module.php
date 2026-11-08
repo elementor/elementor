@@ -11,58 +11,89 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Module extends Elementor_Test_Base {
 
-	public function test_localize_settings_includes_widget_creation_config() {
+	const ANGIE_PLUGIN_FILE = 'angie/angie.php';
+
+	public function set_up() {
+		parent::set_up();
+
+		remove_all_filters( 'pre_option_active_plugins' );
+		remove_all_filters( 'elementor/editor/v2/packages' );
+		remove_all_filters( 'elementor/editor/localize_settings' );
+	}
+
+	public function tear_down() {
+		remove_all_filters( 'pre_option_active_plugins' );
+		wp_set_current_user( 0 );
+
+		parent::tear_down();
+	}
+
+	public function data_access_cases(): array {
+		return [
+			'admin with Angie active' => [ true, true, true ],
+			'admin with Angie inactive' => [ true, false, false ],
+			'non-admin with Angie active' => [ false, true, false ],
+			'non-admin with Angie inactive' => [ false, false, false ],
+		];
+	}
+
+	/**
+	 * @dataProvider data_access_cases
+	 */
+	public function test_can_create_widget( bool $is_admin, bool $is_angie_active, bool $expected ) {
 		// Arrange
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
+		$this->arrange_access( $is_admin, $is_angie_active );
+
+		// Act & Assert
+		$this->assertSame( $is_angie_active, Module::is_angie_plugin_active() );
+		$this->assertSame( $expected, Module::can_create_widget() );
+	}
+
+	/**
+	 * @dataProvider data_access_cases
+	 */
+	public function test_localize_settings_expose_widget_creation_access( bool $is_admin, bool $is_angie_active, bool $expected ) {
+		// Arrange
+		$this->arrange_access( $is_admin, $is_angie_active );
 		new Module();
 
 		// Act
 		$settings = apply_filters( 'elementor/editor/localize_settings', [] );
 
 		// Assert
-		$this->assertArrayHasKey( 'widgetCreation', $settings );
-		$this->assertArrayHasKey( 'isAngiePluginActive', $settings['widgetCreation'] );
-		$this->assertArrayHasKey( 'canCreateWidget', $settings['widgetCreation'] );
-		$this->assertIsBool( $settings['widgetCreation']['isAngiePluginActive'] );
-		$this->assertIsBool( $settings['widgetCreation']['canCreateWidget'] );
+		$this->assertSame(
+			[
+				'isAngiePluginActive' => $is_angie_active,
+				'canCreateWidget' => $expected,
+			],
+			$settings['widgetCreation']
+		);
 	}
 
-	public function test_can_create_widget_is_false_for_non_admin_even_when_exposed() {
+	/**
+	 * @dataProvider data_access_cases
+	 */
+	public function test_editor_widget_creation_package_loads_only_when_allowed( bool $is_admin, bool $is_angie_active, bool $expected ) {
 		// Arrange
-		$subscriber_id = $this->factory()->user->create( [ 'role' => 'subscriber' ] );
-		wp_set_current_user( $subscriber_id );
-
-		// Act & Assert
-		$this->assertFalse( Module::can_create_widget() );
-	}
-
-	public function test_can_create_widget_requires_manage_options() {
-		// Arrange
-		wp_set_current_user( $this->factory()->create_and_get_administrator_user()->ID );
-
-		// Act
-		$can_create = Module::can_create_widget();
-
-		// Assert
-		if ( Module::is_angie_plugin_active() ) {
-			$this->assertTrue( $can_create );
-		} else {
-			$this->assertFalse( $can_create );
-		}
-	}
-
-	public function test_editor_v2_packages_omit_widget_creation_when_cannot_create() {
-		// Arrange
+		$this->arrange_access( $is_admin, $is_angie_active );
 		new Module();
 
 		// Act
 		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
 
 		// Assert
-		if ( Module::can_create_widget() ) {
-			$this->assertContains( 'editor-widget-creation', $packages );
-		} else {
-			$this->assertNotContains( 'editor-widget-creation', $packages );
-		}
+		$this->assertSame( $expected, in_array( 'editor-widget-creation', $packages, true ) );
+	}
+
+	private function arrange_access( bool $is_admin, bool $is_angie_active ): void {
+		$user = $is_admin
+			? $this->factory()->create_and_get_administrator_user()
+			: $this->factory()->user->create_and_get( [ 'role' => 'subscriber' ] );
+
+		wp_set_current_user( $user->ID );
+
+		$active_plugins = $is_angie_active ? [ PLUGIN_PATH, self::ANGIE_PLUGIN_FILE ] : [ PLUGIN_PATH ];
+
+		add_filter( 'pre_option_active_plugins', static fn() => $active_plugins );
 	}
 }
