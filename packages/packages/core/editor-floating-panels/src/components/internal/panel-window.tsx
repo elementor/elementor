@@ -4,8 +4,9 @@ import { ThemeProvider } from '@elementor/editor-ui';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
 
+import { useDockedLayout } from '../../hooks/use-docked-layout';
 import { usePanelResizeInteraction } from '../../hooks/use-floating-panel-resize';
-import { type GlobalState, selectIsResizable } from '../../store/selectors';
+import { type GlobalState, selectIsDocked, selectIsResizable } from '../../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../../types';
 import { type PanelCorner, positionToCssInsets } from '../../utils/corner-position';
 import { type ResizeCorner, type ResizeEdge } from '../../utils/resize-math';
@@ -63,12 +64,35 @@ export default function PanelWindow( {
 	children,
 }: Props ) {
 	const isResizable = useSelector( ( state: GlobalState ) => selectIsResizable( state, panelId ) );
+	const isDocked = useSelector( ( state: GlobalState ) => selectIsDocked( state, panelId ) );
+
+	useDockedLayout( isDocked && visible, size.inlineSize );
+
+	const placement = isDocked
+		? {
+				insetInlineEnd: 0,
+				insetInlineStart: 'auto',
+				insetBlockStart: 'var(--editor-v2-top-bar-height, 0px)',
+				insetBlockEnd: 0,
+				inlineSize: `${ size.inlineSize }px`,
+				blockSize: 'auto',
+				height: 'calc(100% - var(--editor-v2-top-bar-height, 0px))',
+				borderRadius: 0,
+				boxShadow: 'none',
+		  }
+		: {
+				...positionToCssInsets( corner, position ),
+				inlineSize: `${ size.inlineSize }px`,
+				blockSize: `${ size.blockSize }px`,
+				boxShadow: '0 2px 20px 0 rgba(0, 0, 0, 0.1)',
+		  };
 
 	return (
 		<Fade in={ visible } timeout={ { enter: FADE_ENTER_MS, exit: FADE_EXIT_MS } }>
 			<Paper
 				component="aside"
 				data-floating-panel={ panelId }
+				data-docked={ isDocked ? 'true' : undefined }
 				elevation={ 0 }
 				aria-label={ title || panelId }
 				aria-hidden={ ! visible }
@@ -77,9 +101,7 @@ export default function PanelWindow( {
 				onFocusCapture={ onFocus }
 				sx={ {
 					position: 'fixed',
-					...positionToCssInsets( corner, position ),
-					inlineSize: `${ size.inlineSize }px`,
-					blockSize: `${ size.blockSize }px`,
+					...placement,
 					zIndex,
 					display: 'flex',
 					flexDirection: 'column',
@@ -87,7 +109,6 @@ export default function PanelWindow( {
 					bgcolor: 'var(--e-a-bg-default)',
 					color: 'var(--e-a-color-txt)',
 					border: 'var(--e-a-border)',
-					boxShadow: `0 2px 20px 0 rgba(0, 0, 0, 0.1)`,
 				} }
 			>
 				<ThemeProvider>
