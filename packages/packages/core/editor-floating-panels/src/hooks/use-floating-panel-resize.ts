@@ -1,7 +1,7 @@
 import { type PointerEvent as ReactPointerEvent, useCallback, useRef } from 'react';
 import { __useSelector as useSelector } from '@elementor/store';
 
-import { type GlobalState, selectMinSize } from '../store/selectors';
+import { type GlobalState, selectIsDocked, selectMinSize } from '../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../types';
 import {
 	activePositionChanged,
@@ -11,7 +11,7 @@ import {
 } from '../utils/corner-position';
 import { isRtl } from '../utils/direction';
 import { physicalToLogicalDelta } from '../utils/drag-math';
-import { applyResize, type ResizeBounds, type ResizeDirection } from '../utils/resize-math';
+import { applyDockedInlineResize, applyResize, type ResizeBounds, type ResizeDirection } from '../utils/resize-math';
 import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../utils/viewport-bounds';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
 import { useFloatingPanelStatus } from './use-floating-panel-status';
@@ -28,7 +28,21 @@ type ResizeSession = {
 	bounds: ResizeBounds;
 	corner: PanelCorner;
 	isRtl: boolean;
+	docked: boolean;
 };
+
+function getDockedResizeBounds( minSize: LogicalSize ): ResizeBounds {
+	const maxInlineSize = window.innerWidth - getSidePanelInlineSize();
+
+	return {
+		minBlockSize: minSize.blockSize,
+		maxBlockSize: minSize.blockSize,
+		minInlineSize: minSize.inlineSize,
+		maxInlineSize,
+		minInlineStart: getSidePanelInlineSize(),
+		minBlockStart: APP_BAR_HEIGHT_PX,
+	};
+}
 
 function getResizeBounds(
 	corner: PanelCorner,
@@ -60,6 +74,7 @@ export function usePanelResizeInteraction( id: string ) {
 	const sessionRef = useRef< ResizeSession | null >( null );
 	const { corner, position, size } = useFloatingPanelStatus( id );
 	const minSize = useSelector( ( state: GlobalState ) => selectMinSize( state, id ) );
+	const isDocked = useSelector( ( state: GlobalState ) => selectIsDocked( state, id ) );
 	const { setPosition, setSize } = useFloatingPanelActions( id );
 
 	const onPointerDown = useCallback(
@@ -79,12 +94,15 @@ export function usePanelResizeInteraction( id: string ) {
 				startSize: size,
 				lastPosition: position,
 				lastSize: size,
-				bounds: getResizeBounds( corner, position, size, minSize ),
+				bounds: isDocked
+					? getDockedResizeBounds( minSize )
+					: getResizeBounds( corner, position, size, minSize ),
 				corner,
 				isRtl: isRtl(),
+				docked: isDocked,
 			};
 		},
-		[ corner, position, size, minSize ]
+		[ corner, position, size, minSize, isDocked ]
 	);
 
 	const onPointerMove = useCallback(
@@ -97,6 +115,22 @@ export function usePanelResizeInteraction( id: string ) {
 
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
 			const logical = physicalToLogicalDelta( physical, session.isRtl );
+
+			if ( session.docked ) {
+				if ( session.direction !== 'inline-start' ) {
+					return;
+				}
+
+				const nextSize = applyDockedInlineResize( session.startSize, logical.inlineDelta, session.bounds );
+
+				if ( nextSize.inlineSize !== session.lastSize.inlineSize ) {
+					setSize( nextSize );
+					session.lastSize = nextSize;
+				}
+
+				return;
+			}
+
 			const viewport = { width: window.innerWidth, height: window.innerHeight };
 			const startAnchoredPosition = toStartAnchoredPosition(
 				session.corner,

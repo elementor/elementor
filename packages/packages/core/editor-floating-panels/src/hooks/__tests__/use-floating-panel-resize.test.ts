@@ -223,4 +223,32 @@ describe( 'usePanelResizeInteraction', () => {
 		// Assert.
 		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( startSize );
 	} );
+
+	it( 'changes only the width when the docked inner edge is dragged', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'docked-resize', defaults, isDocked: true } ) );
+		__dispatch( slice.actions.open( 'docked-resize' ) );
+		__dispatch( slice.actions.setSize( { id: 'docked-resize', size: startSize } ) );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		const positionBefore = selectPosition( __getState(), 'docked-resize' );
+		const target = createPointerTarget();
+		const { result } = renderHookWithStore( () => usePanelResizeInteraction( 'docked-resize' ), store );
+		const handleProps = result.current.getResizeHandleProps( 'inline-start' );
+
+		// Act.
+		act( () => {
+			handleProps.onPointerDown( createPointerEvent( target, { clientX: 100, clientY: 0 } ) );
+			handleProps.onPointerMove( createPointerEvent( target, { clientX: 40, clientY: 30 } ) );
+		} );
+
+		// Assert.
+		expect( selectSize( __getState(), 'docked-resize' ) ).toEqual( { inlineSize: 380, blockSize: 480 } );
+		expect( selectPosition( __getState(), 'docked-resize' ) ).toEqual( positionBefore );
+	} );
 } );

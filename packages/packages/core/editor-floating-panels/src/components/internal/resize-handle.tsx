@@ -49,6 +49,9 @@ export default function ResizeHandle( { edge, onPointerDown, onPointerMove, onPo
 	return (
 		<Box
 			data-resize-edge={ edge }
+			role="separator"
+			aria-orientation={ edge.startsWith( 'inline' ) ? 'vertical' : 'horizontal' }
+			aria-label="Resize panel"
 			aria-hidden="true"
 			onPointerDown={ onPointerDown }
 			onPointerMove={ onPointerMove }

@@ -58,6 +58,11 @@ export const slice = __createSlice( {
 
 			const corner = defaults.corner ?? DEFAULT_CORNER;
 			const canReusePersisted = ! isDocked && persisted && persisted.corner === corner;
+			const size = { inlineSize: defaults.width, blockSize: defaults.height };
+
+			if ( isDocked && persisted && persisted.size.inlineSize >= defaults.minWidth ) {
+				size.inlineSize = persisted.size.inlineSize;
+			}
 
 			state.byId[ id ] = canReusePersisted
 				? persisted
@@ -65,7 +70,7 @@ export const slice = __createSlice( {
 						isOpen: false,
 						corner,
 						position: buildInitialPosition( corner, defaults.initialPosition ),
-						size: { inlineSize: defaults.width, blockSize: defaults.height },
+						size,
 						zIndex: 0,
 				  };
 
