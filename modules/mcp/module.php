@@ -300,6 +300,8 @@ class Module extends BaseModule {
 			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
 			new Abilities\Get_System_Info_Ability(),
+			new Abilities\Enable_Agent_Ready_Ability(),
+			new Abilities\Agent_Ready_Scan_Ability(),
 			new Abilities\Clear_Cache_Ability(),
 			new Abilities\Get_License_Status_Ability(),
 			new Abilities\List_Experiments_Ability(),

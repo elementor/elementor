@@ -225,6 +225,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $document;
 		}
 
+		if ( ! $document->is_editable_by_current_user() ) {
+			$error = new \WP_Error(
+				'elementor_forbidden',
+				__( 'You do not have permission to edit this post.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error, $operations );
+			return $error;
+		}
+
 		return $this->handle_bulk( $document, $operations, $started_at );
 	}
 
