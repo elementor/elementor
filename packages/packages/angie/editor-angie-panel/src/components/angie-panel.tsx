@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { bootAngieSdk, EDITOR_ANGIE_CONTAINER_ID, removeAngieSidebarActiveBodyClass } from '@elementor/editor-angie';
+import {
+	bootAngieSdk,
+	canUseAngiePluginSidebar,
+	EDITOR_ANGIE_CONTAINER_ID,
+	removeAngieSidebarActiveBodyClass,
+} from '@elementor/editor-angie';
 import { FloatingPanelBody, FloatingPanelHeader, useFloatingPanelStatus } from '@elementor/editor-floating-panels';
 import { AngieIcon } from '@elementor/icons';
 
@@ -13,6 +18,10 @@ export default function AngiePanel() {
 	useEffect( () => {
 		if ( ! isOpen ) {
 			removeAngieSidebarActiveBodyClass();
+			return;
+		}
+
+		if ( canUseAngiePluginSidebar() ) {
 			return;
 		}
 
