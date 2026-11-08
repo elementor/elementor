@@ -128,7 +128,7 @@ export default [
 						{
 							target: './packages/libs',
 							from: [ './packages/angie' ],
-							message: 'Libraries can only import other libraries.',
+							message: 'Libs cannot import from Angie.',
 						},
 					],
 				},

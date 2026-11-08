@@ -79,6 +79,14 @@ describe( 'editor angie host', () => {
 		expect( document.body.classList.contains( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS ) ).toBe( true );
 	} );
 
+	it( 'fails boot when the Angie container is missing', async () => {
+		await expect( bootAngieSdk() ).rejects.toThrow(
+			/Angie container #elementor-editor-angie not found after 10 attempts/
+		);
+
+		expect( AngieMcpSdkMock ).not.toHaveBeenCalled();
+	} );
+
 	it( 'retries after a failed boot', async () => {
 		mountIframe();
 		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
