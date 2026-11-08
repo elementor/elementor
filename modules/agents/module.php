@@ -340,14 +340,20 @@ class Module extends BaseModule {
 	}
 
 	private function module_is_enabled( string $module ): bool {
-		return match ( $module ) {
-			Agent_Ready_Settings::MODULE_LLMS_TXT => $this->settings->is_llms_enabled(),
-			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT => $this->settings->is_markdown_enabled(),
-			Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL => $this->settings->is_bot_access_enabled(),
-			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY => $this->settings->is_agent_discovery_enabled(),
-			Agent_Ready_Settings::MODULE_BROWSER_TOOLS => $this->settings->is_browser_tools_enabled(),
-			default => false,
-		};
+		switch ( $module ) {
+			case Agent_Ready_Settings::MODULE_LLMS_TXT:
+				return $this->settings->is_llms_enabled();
+			case Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT:
+				return $this->settings->is_markdown_enabled();
+			case Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL:
+				return $this->settings->is_bot_access_enabled();
+			case Agent_Ready_Settings::MODULE_AGENT_DISCOVERY:
+				return $this->settings->is_agent_discovery_enabled();
+			case Agent_Ready_Settings::MODULE_BROWSER_TOOLS:
+				return $this->settings->is_browser_tools_enabled();
+			default:
+				return false;
+		}
 	}
 
 	// -------------------------------------------------------------------------
