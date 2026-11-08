@@ -17,9 +17,6 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		'e-menu-items',
 		'e-menu-entry',
 		'e-menu-item',
-		'e-menu-toggle',
-		'e-menu-toggle-closed',
-		'e-menu-toggle-open',
 	];
 
 	public function tear_down() {
@@ -106,13 +103,10 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 	public function test_allowed_child_types() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
-		$this->assertSame( [ 'e-menu-items', 'e-menu-toggle' ], $this->get_config( 'e-menu' )['allowed_child_types'] );
+		$this->assertSame( [ 'e-menu-items' ], $this->get_config( 'e-menu' )['allowed_child_types'] );
 		$this->assertSame( [ 'e-menu-entry' ], $this->get_config( 'e-menu-items' )['allowed_child_types'] );
 		$this->assertSame( [ 'e-menu-item' ], $this->get_config( 'e-menu-entry' )['allowed_child_types'] );
 		$this->assertSame( [], $this->get_config( 'e-menu-item' )['allowed_child_types'] );
-		$this->assertSame( [ 'e-menu-toggle-closed', 'e-menu-toggle-open' ], $this->get_config( 'e-menu-toggle' )['allowed_child_types'] );
-		$this->assertSame( [], $this->get_config( 'e-menu-toggle-closed' )['allowed_child_types'] );
-		$this->assertSame( [], $this->get_config( 'e-menu-toggle-open' )['allowed_child_types'] );
 	}
 
 	public function test_default_content() {
@@ -120,7 +114,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		$children = $this->get_config( 'e-menu' )['default_children'];
 
-		$this->assertSame( [ 'e-menu-items', 'e-menu-toggle' ], array_column( $children, 'elType' ) );
+		$this->assertSame( [ 'e-menu-items' ], array_column( $children, 'elType' ) );
 
 		$entries = $children[0]['elements'];
 		$this->assertCount( 4, $entries );
@@ -141,10 +135,6 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 			);
 		}
 
-		$toggle = $children[1];
-		$this->assertSame( [ 'e-menu-toggle-closed', 'e-menu-toggle-open' ], array_column( $toggle['elements'], 'elType' ) );
-		$this->assertEmpty( $toggle['elements'][0]['elements'] );
-		$this->assertEmpty( $toggle['elements'][1]['elements'] );
 	}
 
 	public function test_menu_name_defaults_to_menu() {
@@ -179,10 +169,6 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		}
 		$this->assertSame( [ 'Home', 'Products', 'About', 'Contact' ], $texts );
 
-		$buttons = $xpath->query( '//nav/button' );
-		$this->assertSame( 1, $buttons->length );
-		$this->assertSame( 'button', $buttons->item( 0 )->getAttribute( 'type' ) );
-		$this->assertSame( 2, $xpath->query( '//nav/button/div' )->length );
 	}
 
 	public function test_rendered_aria_label_uses_menu_name() {
