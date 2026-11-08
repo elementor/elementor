@@ -1,31 +1,50 @@
 import { getAngieIframe, isAngiePluginAvailable, toggleAngieSidebar } from '@elementor-external/angie-sdk';
 
+import { EDITOR_ANGIE_CONTAINER_ID } from './boot-angie-sdk';
 import { isAngiePluginActive } from './is-angie-plugin-active';
 
 const PLUGIN_SIDEBAR_ID = 'angie-sidebar-container';
 
-export const isAngiePluginInstalled = (): boolean => {
-	if ( isAngiePluginActive() || isAngiePluginAvailable() ) {
-		return true;
+const getPluginAngieIframe = (): HTMLIFrameElement | null => {
+	const iframe = getAngieIframe();
+
+	if ( ! iframe ) {
+		return null;
 	}
 
-	return Boolean( document.getElementById( PLUGIN_SIDEBAR_ID ) );
+	const coreContainer = document.getElementById( EDITOR_ANGIE_CONTAINER_ID );
+
+	if ( coreContainer?.contains( iframe ) ) {
+		return null;
+	}
+
+	return iframe;
+};
+
+export const canUseAngiePluginSidebar = (): boolean => {
+	return Boolean( getPluginAngieIframe() || document.getElementById( PLUGIN_SIDEBAR_ID ) );
+};
+
+export const isAngiePluginInstalled = (): boolean => {
+	return isAngiePluginActive() || isAngiePluginAvailable() || canUseAngiePluginSidebar();
 };
 
 export const openInstalledAngieSidebar = (): boolean => {
-	if ( ! isAngiePluginInstalled() ) {
+	const iframe = getPluginAngieIframe();
+	const hasSidebarContainer = Boolean( document.getElementById( PLUGIN_SIDEBAR_ID ) );
+
+	if ( ! iframe && ! hasSidebarContainer ) {
 		return false;
 	}
 
 	let didOpen = false;
-	const iframe = getAngieIframe();
 
 	if ( iframe ) {
 		toggleAngieSidebar( iframe, true );
 		didOpen = true;
 	}
 
-	if ( typeof window.toggleAngieSidebar === 'function' ) {
+	if ( hasSidebarContainer && typeof window.toggleAngieSidebar === 'function' ) {
 		window.toggleAngieSidebar( true );
 		didOpen = true;
 	}

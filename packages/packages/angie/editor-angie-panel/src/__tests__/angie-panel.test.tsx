@@ -5,12 +5,13 @@ import AngiePanel from '../components/angie-panel';
 
 const mockBootAngieSdk = jest.fn();
 const mockUseFloatingPanelStatus = jest.fn();
-const mockIsAngiePluginInstalled = jest.fn();
+const mockCanUseAngiePluginSidebar = jest.fn();
 
 jest.mock( '@elementor/editor-angie', () => ( {
 	bootAngieSdk: ( ...args: unknown[] ) => mockBootAngieSdk( ...args ),
-	isAngiePluginInstalled: () => mockIsAngiePluginInstalled(),
+	canUseAngiePluginSidebar: () => mockCanUseAngiePluginSidebar(),
 	EDITOR_ANGIE_CONTAINER_ID: 'elementor-editor-angie',
+	removeAngieSidebarActiveBodyClass: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-floating-panels', () => ( {
@@ -24,11 +25,11 @@ describe( 'AngiePanel lazy boot', () => {
 		jest.clearAllMocks();
 		mockBootAngieSdk.mockResolvedValue( {} );
 		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: false } );
-		mockIsAngiePluginInstalled.mockReturnValue( false );
+		mockCanUseAngiePluginSidebar.mockReturnValue( false );
 	} );
 
-	it( 'does not boot the SDK when the Angie plugin is installed', () => {
-		mockIsAngiePluginInstalled.mockReturnValue( true );
+	it( 'does not boot the SDK when the Angie plugin sidebar is on the page', () => {
+		mockCanUseAngiePluginSidebar.mockReturnValue( true );
 		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: true } );
 
 		renderWithTheme( <AngiePanel /> );
@@ -61,5 +62,27 @@ describe( 'AngiePanel lazy boot', () => {
 		rerender( <AngiePanel /> );
 
 		expect( mockBootAngieSdk ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not boot twice while a boot is still pending', async () => {
+		let resolveBoot: ( value: unknown ) => void = () => {};
+		mockBootAngieSdk.mockReturnValueOnce(
+			new Promise( ( resolve ) => {
+				resolveBoot = resolve;
+			} )
+		);
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: true } );
+		const { rerender } = renderWithTheme( <AngiePanel /> );
+
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: false } );
+		rerender( <AngiePanel /> );
+
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: true } );
+		rerender( <AngiePanel /> );
+
+		expect( mockBootAngieSdk ).toHaveBeenCalledTimes( 1 );
+
+		resolveBoot( {} );
+		await mockBootAngieSdk.mock.results[ 0 ].value;
 	} );
 } );

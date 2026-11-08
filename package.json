@@ -194,6 +194,7 @@
     "validator": "^13.11.0"
   },
   "overrides": {
+    "@modelcontextprotocol/sdk": "1.32.2",
     "nwsapi": "2.2.13",
     "react": "18.3.1",
     "react-dom": "18.3.1",

@@ -1,6 +1,6 @@
 import { AngieInteractionMode, AngieMcpSdk } from '@elementor-external/angie-sdk';
 
-import { bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
+import { ANGIE_SIDEBAR_ACTIVE_BODY_CLASS, bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
 import { resetHelpCenterAbilityForTests } from '../help-center-ability';
 import { init } from '../init';
 import { openAngie, registerAngiePanelOpener, resetAngiePanelOpenerForTests } from '../open-angie';
@@ -101,6 +101,7 @@ describe( 'editor angie host', () => {
 			},
 		} );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
+		expect( document.body ).not.toHaveClass( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
 		expect( mockWpSearchMcpServer ).toHaveBeenCalledWith( {
 			url: 'https://elementor.com/help',
 			server: {
@@ -171,7 +172,7 @@ describe( 'editor angie host', () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
 		mountIframe();
-		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
+		mockGetAngieIframe.mockReturnValueOnce( null );
 
 		await openAngie( {
 			prompt: 'Write a heading',
@@ -182,7 +183,6 @@ describe( 'editor angie host', () => {
 		} );
 
 		expect( openPanel ).toHaveBeenCalledTimes( 1 );
-		expect( mockGetAngieIframe ).toHaveBeenCalledTimes( 1 );
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( mockTriggerAngie ).toHaveBeenCalledWith( {
 			prompt: 'Write a heading',
@@ -275,6 +275,9 @@ describe( 'editor angie host', () => {
 		const openPanel = jest.fn();
 		const pluginToggle = jest.fn();
 		const iframe = document.createElement( 'iframe' );
+		const sidebar = document.createElement( 'div' );
+		sidebar.id = 'angie-sidebar-container';
+		document.body.append( sidebar );
 
 		registerAngiePanelOpener( openPanel );
 		mockSdkState.pluginInstalled = true;
