@@ -1,38 +1,15 @@
-import {
-	type AngieInteractionMode,
-	type AngieTriggerRequest,
-	setAngieInteractionMode,
-} from '@elementor-external/angie-sdk';
+import { setAngieInteractionMode } from '@elementor-external/angie-sdk';
+import type {
+	OpenAngieCommonProperties,
+	OpenAngiePluginProperties,
+	OpenAngieRequest,
+	OpenAngieSdkProperties,
+} from '@elementor/editor-mcp/open-angie-request';
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID } from './boot-angie-sdk';
 import { openInstalledAngieSidebar } from './open-installed-angie';
 
-/**
- * Fields both the Angie plugin host and the Core SDK accept.
- */
-export type OpenAngieCommonProperties = {
-	prompt: string;
-	mode: AngieInteractionMode;
-};
-
-/**
- * Fields only the Core SDK accepts. They are not sent to the plugin.
- */
-export type OpenAngieSdkProperties = {
-	context?: AngieTriggerRequest[ 'context' ];
-	options?: AngieTriggerRequest[ 'options' ];
-};
-
-/**
- * Fields only the Angie plugin host accepts. They are not sent to the Core SDK.
- * None yet.
- */
-export type OpenAngiePluginProperties = Record< string, never >;
-
-export type OpenAngieRequest = OpenAngieCommonProperties & {
-	sdk?: OpenAngieSdkProperties;
-	plugin?: OpenAngiePluginProperties;
-};
+export type { OpenAngieCommonProperties, OpenAngiePluginProperties, OpenAngieRequest, OpenAngieSdkProperties };
 
 let openPanel = () => {};
 

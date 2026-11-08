@@ -7,14 +7,8 @@ import {
 
 import { isAngieAvailable } from './is-angie-available';
 
-type EditorAngieOpen = ( request: { prompt: string; mode: string } ) => Promise< void > | void;
-
-const getLoadedEditorAngie = (): EditorAngieOpen | undefined => {
-	return (
-		window as Window & {
-			elementorV2?: { editorAngie?: { openAngie?: EditorAngieOpen } };
-		}
-	 ).elementorV2?.editorAngie?.openAngie;
+const getLoadedEditorAngie = () => {
+	return window.elementorV2?.editorAngie?.openAngie;
 };
 
 export const hasLoadedEditorAngie = (): boolean => Boolean( getLoadedEditorAngie() );

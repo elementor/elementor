@@ -1,3 +1,5 @@
+import './types/open-angie-request';
+
 import { getSDK } from './utils/get-sdk';
 export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
 
