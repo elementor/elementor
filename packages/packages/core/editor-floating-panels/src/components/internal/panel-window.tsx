@@ -37,6 +37,12 @@ type Props = {
 	children: ReactNode;
 };
 
+function DockedResizeHandle( { panelId }: { panelId: string } ) {
+	const { getResizeHandleProps } = usePanelResizeInteraction( panelId );
+
+	return <ResizeHandle edge="inline-start" { ...getResizeHandleProps( 'inline-start' ) } />;
+}
+
 function PanelResizeHandles( { panelId }: { panelId: string } ) {
 	const { getResizeHandleProps } = usePanelResizeInteraction( panelId );
 
@@ -114,6 +120,7 @@ export default function PanelWindow( {
 				<ThemeProvider>
 					<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
 				</ThemeProvider>
+				{ isDocked && <DockedResizeHandle panelId={ panelId } /> }
 				{ isResizable && <PanelResizeHandles panelId={ panelId } /> }
 			</Paper>
 		</Fade>
