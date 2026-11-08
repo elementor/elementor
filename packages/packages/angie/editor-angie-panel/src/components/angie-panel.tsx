@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { bootAngieSdk, EDITOR_ANGIE_CONTAINER_ID, isAngiePluginInstalled } from '@elementor/editor-angie';
+import { bootAngieSdk, EDITOR_ANGIE_CONTAINER_ID } from '@elementor/editor-angie';
 import { FloatingPanelBody, FloatingPanelHeader, useFloatingPanelStatus } from '@elementor/editor-floating-panels';
 import { AngieIcon } from '@elementor/icons';
 
@@ -11,10 +11,6 @@ export default function AngiePanel() {
 	const hasRequestedBoot = useRef( false );
 
 	useEffect( () => {
-		if ( isAngiePluginInstalled() ) {
-			return;
-		}
-
 		if ( ! isOpen || hasRequestedBoot.current ) {
 			return;
 		}
