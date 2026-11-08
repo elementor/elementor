@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\Promotions\Sticky_Panel_Promotion;
 use Elementor\Utils;
@@ -103,9 +102,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <?php
-if ( Hints::is_plugin_active( 'angie' ) ) {
-	$widget_creation_cta_text = __( 'Create custom widget', 'elementor' );
-	?>
+$widget_creation_cta_text = __( 'Create custom widget', 'elementor' );
+?>
 <script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-empty-state">
 	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{ searchTerm }}"</div>
 	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
@@ -121,9 +119,6 @@ if ( Hints::is_plugin_active( 'angie' ) ) {
 	<button type="button" class="elementor-panel-elements-widget-creation__cta"><?php echo esc_html( $widget_creation_cta_text ); ?></button>
 	<?php endif; ?>
 </script>
-	<?php
-}
-?>
 
 <script type="text/template" id="tmpl-elementor-panel-global">
 	<div class="elementor-nerd-box">
