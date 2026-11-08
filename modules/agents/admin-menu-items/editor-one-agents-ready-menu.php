@@ -4,6 +4,7 @@ namespace Elementor\Modules\Agents\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu_Item_With_Page {
+class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, Menu_Item_With_Tag_Interface, Admin_Menu_Item_With_Page {
 
 	const POSITION_AFTER_MCP = 26;
 
@@ -25,6 +26,10 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, A
 
 	public function is_visible(): bool {
 		return true;
+	}
+
+	public function get_tag(): string {
+		return __( 'Beta', 'elementor' );
 	}
 
 	public function get_group_id(): string {

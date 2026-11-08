@@ -23,18 +23,18 @@ const ExplanationContent = ( { check } ) => (
 	<Stack spacing={ 2 }>
 		{ check.evidence && (
 			<Stack spacing={ 0.5 }>
-				<Typography variant="caption" color="text.primary">{ __( 'What we found', 'elementor' ) }</Typography>
-				<Typography variant="caption" color="text.secondary">{ check.evidence }</Typography>
+				<Typography variant="body2" color="text.primary">{ __( 'What we found', 'elementor' ) }</Typography>
+				<Typography variant="body2" color="text.secondary">{ check.evidence }</Typography>
 			</Stack>
 		) }
 		<Stack spacing={ 0.5 }>
-			<Typography variant="caption" color="text.primary">{ __( 'What it means', 'elementor' ) }</Typography>
-			<Typography variant="caption" color="text.secondary">{ check.explanation.whatItMeans }</Typography>
+			<Typography variant="body2" color="text.primary">{ __( 'What it means', 'elementor' ) }</Typography>
+			<Typography variant="body2" color="text.secondary">{ check.explanation.whatItMeans }</Typography>
 		</Stack>
 		{ ! isPromptBasedFix( check ) && (
 			<Stack spacing={ 0.5 }>
-				<Typography variant="caption" color="text.primary">{ __( 'How to fix it manually', 'elementor' ) }</Typography>
-				<Typography variant="caption" color="text.secondary">{ check.explanation.howToFix }</Typography>
+				<Typography variant="body2" color="text.primary">{ __( 'How to fix it manually', 'elementor' ) }</Typography>
+				<Typography variant="body2" color="text.secondary">{ check.explanation.howToFix }</Typography>
 			</Stack>
 		) }
 	</Stack>
@@ -57,9 +57,9 @@ const PreferenceContent = ( { check, value, onChange, onSave } ) => {
 	return (
 		<Stack spacing={ 2 }>
 			{ check.technicalName && (
-				<Typography variant="caption" color="text.secondary">{ check.technicalName }</Typography>
+				<Typography variant="body2" color="text.secondary">{ check.technicalName }</Typography>
 			) }
-			<Typography variant="caption" color="text.secondary">{ check.explanation.whatItMeans }</Typography>
+			<Typography variant="body2" color="text.secondary">{ check.explanation.whatItMeans }</Typography>
 			<TextField
 				size="small"
 				fullWidth

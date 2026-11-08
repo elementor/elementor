@@ -1,5 +1,6 @@
 import { useCallback, useState } from '@wordpress/element';
 import { Collapse, List, ListItem, ListItemText } from '@elementor/ui';
+import Chip from '@elementor/ui/Chip';
 import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 import PropTypes from 'prop-types';
 import { ChildListItem, ChildMenuItemButton, DEFAULT_ICON, ExpandIcon, ICON_MAP, MenuIcon, MenuItemButton } from '../shared';
@@ -65,6 +66,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 						<IconComponent />
 					</MenuIcon>
 					<ListItemText primary={ item.label } primaryTypographyProps={ { variant: 'body2' } } />
+					{ item.tag && <Chip size="tiny" shape="rounded" variant="outlined" label={ item.tag } /> }
 					{ hasChildren && <ExpandIcon expanded={ isExpanded } /> }
 				</MenuItemButton>
 			</ListItem>
