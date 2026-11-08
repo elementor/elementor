@@ -2,7 +2,19 @@ import { type AngieInteractionMode, setAngieInteractionMode } from '@elementor-e
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID, openAngieIframe } from './boot-angie-sdk';
 
+let openPanel = () => {};
+
+export const registerAngiePanelOpener = ( opener: () => void ) => {
+	openPanel = opener;
+};
+
+export const resetAngiePanelOpenerForTests = () => {
+	openPanel = () => {};
+};
+
 export const openAngie = async ( prompt: string, mode: AngieInteractionMode ): Promise< void > => {
+	openPanel();
+
 	const sdk = await bootAngieSdk();
 
 	openAngieIframe();
