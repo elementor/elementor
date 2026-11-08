@@ -1,4 +1,4 @@
-const WATCH_MS = 600;
+const WATCH_MS = 1200;
 const OFFSET_DRIFT = 2;
 
 function resolveAnchorTarget( hash ) {
@@ -22,9 +22,12 @@ function documentOffset( el ) {
 }
 
 function realign( target ) {
-	target.scrollIntoView( {
-		block: 'start',
-		behavior: window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ? 'instant' : 'smooth',
+	const scrollMarginTop = parseFloat( window.getComputedStyle( target ).scrollMarginTop ) || 0;
+	const nextTop = target.getBoundingClientRect().top + window.scrollY - scrollMarginTop;
+
+	window.scrollTo( {
+		top: nextTop,
+		behavior: 'instant',
 	} );
 }
 
@@ -33,6 +36,7 @@ export function watchAnchorLayoutShift( target ) {
 	const t0 = performance.now();
 	const fix = () => {
 		const next = documentOffset( target );
+
 		if ( Math.abs( next - last ) > OFFSET_DRIFT ) {
 			realign( target );
 			last = documentOffset( target );
@@ -44,9 +48,11 @@ export function watchAnchorLayoutShift( target ) {
 		fix();
 		if ( performance.now() - t0 < WATCH_MS ) {
 			requestAnimationFrame( loop );
-		} else {
-			ro.disconnect();
+			return;
 		}
+
+		ro.disconnect();
+		fix();
 	} )();
 }
 
@@ -60,7 +66,7 @@ export function initAnchorLayoutShiftRealign() {
 		if ( target ) {
 			requestAnimationFrame( () => watchAnchorLayoutShift( target ) );
 		}
-	} );
+	}, true );
 	const hashTarget = resolveAnchorTarget( location.hash );
 	if ( hashTarget ) {
 		requestAnimationFrame( () => watchAnchorLayoutShift( hashTarget ) );
