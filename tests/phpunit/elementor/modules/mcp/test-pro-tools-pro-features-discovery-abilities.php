@@ -89,6 +89,18 @@ class Test_Pro_Tools_Pro_Features_Discovery_Abilities extends Elementor_Test_Bas
 		);
 	}
 
+	public function test_manage_woocommerce_settings__points_to_the_free_page_setup_screen() {
+		// Arrange
+		$ability = new Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( [ 'action' => 'get' ] );
+
+		// Assert
+		$this->assertStringContainsString( 'WooCommerce → Settings → Advanced → Page setup', $result->get_error_message() );
+		$this->assertStringNotContainsString( 'Don\'t try another way into WooCommerce pages or settings', $result->get_error_message() );
+	}
+
 	public function test_manage_woocommerce_settings__returns_the_woocommerce_error() {
 		// Arrange
 		$ability = new Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability();

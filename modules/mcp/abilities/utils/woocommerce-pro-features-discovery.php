@@ -32,6 +32,15 @@ class Woocommerce_Pro_Features_Discovery implements Widget_Pro_Features_Discover
 		return self::error();
 	}
 
+	public static function for_settings(): \WP_Error {
+		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
+			__( 'Assigning WooCommerce store pages through Elementor\'s MCP needs Elementor Pro (Advanced plan or higher), so nothing was changed. What Pro gives the user: their agent can read and assign the cart, checkout, my account, shop and thank-you pages, and flag any that aren\'t built with Elementor.', 'elementor' ),
+			__( 'Free path: the user can assign the store pages themselves in WooCommerce → Settings → Advanced → Page setup. Say plainly that the agent can\'t do it on this site.', 'elementor' ),
+			self::UPGRADE_URL
+		);
+	}
+
 	public static function for_site_parts( array $document_types ): \WP_Error {
 		return self::error( [ 'document_types' => array_values( array_unique( $document_types ) ) ] );
 	}

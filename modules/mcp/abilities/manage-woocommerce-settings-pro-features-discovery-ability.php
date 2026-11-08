@@ -51,6 +51,6 @@ class Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability extends Abstrac
 	}
 
 	public function execute( $input = [] ) {
-		return Woocommerce_Pro_Features_Discovery::for_widget();
+		return Woocommerce_Pro_Features_Discovery::for_settings();
 	}
 }
