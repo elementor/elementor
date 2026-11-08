@@ -11,6 +11,7 @@ export {
 } from '@modelcontextprotocol/sdk/server/mcp.js';
 export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 export { isAngieAvailable } from './utils/is-angie-available';
+export { canCreateWidget } from './utils/can-create-widget';
 export { isAngieSidebarOpen } from './utils/is-angie-sidebar-open';
 export * from './mcp-registry';
 export { createSampler } from './sampler';
@@ -29,7 +30,6 @@ export { sendPromptToAngie } from './utils/send-prompt-to-angie';
 export { redirectToInstallation } from './utils/redirect-to-installation';
 export { redirectToAppAdmin } from './utils/redirect-to-app-admin';
 export { installAngiePlugin, type InstallAngieResult } from './utils/install-angie-plugin';
-export { saveAngieConsent } from './utils/save-angie-consent';
 export const getAngieSdk = () => getSDK();
 export * from './init';
 export {
