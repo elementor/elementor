@@ -251,4 +251,37 @@ describe( 'usePanelResizeInteraction', () => {
 		expect( selectSize( __getState(), 'docked-resize' ) ).toEqual( { inlineSize: 380, blockSize: 480 } );
 		expect( selectPosition( __getState(), 'docked-resize' ) ).toEqual( positionBefore );
 	} );
+
+	it.each( [
+		{ case: 'the panel minimum width', clientX: 5000, expected: defaults.minWidth },
+		{
+			case: 'the viewport next to the side panel',
+			clientX: -5000,
+			expected: VIEWPORT_WIDTH_PX - SIDE_PANEL_WIDTH_PX,
+		},
+	] )( 'clamps the docked width to $case', ( { clientX, expected } ) => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'docked-clamp', defaults, isDocked: true } ) );
+		__dispatch( slice.actions.open( 'docked-clamp' ) );
+		__dispatch( slice.actions.setSize( { id: 'docked-clamp', size: startSize } ) );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		const target = createPointerTarget();
+		const { result } = renderHookWithStore( () => usePanelResizeInteraction( 'docked-clamp' ), store );
+		const handleProps = result.current.getResizeHandleProps( 'inline-start' );
+
+		// Act.
+		act( () => {
+			handleProps.onPointerDown( createPointerEvent( target, { clientX: 0, clientY: 0 } ) );
+			handleProps.onPointerMove( createPointerEvent( target, { clientX, clientY: 0 } ) );
+		} );
+
+		// Assert.
+		expect( selectSize( __getState(), 'docked-clamp' )?.inlineSize ).toBe( expected );
+	} );
 } );

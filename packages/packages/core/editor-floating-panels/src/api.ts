@@ -6,12 +6,31 @@ import { injectIntoFloatingPanels } from './location';
 import { decodePersistedState } from './persistence';
 import { slice } from './store/slice';
 import { getPersistedState, isFloatingPanelsSyncInitialized, localStorageAdapter } from './sync';
-import { type FloatingPanelDeclaration } from './types';
+import { type FloatingPanelDeclaration, type FloatingPanelState } from './types';
+import { clamp } from './utils/clamp';
+import { getDockedMaxInlineSize } from './utils/viewport-bounds';
+
+function clampDockedPersistedWidth(
+	declaration: FloatingPanelDeclaration,
+	persisted: FloatingPanelState | undefined
+): FloatingPanelState | undefined {
+	if ( ! declaration.isDocked || ! persisted ) {
+		return persisted;
+	}
+
+	const { minWidth } = declaration.defaults;
+	const inlineSize = clamp( persisted.size.inlineSize, minWidth, getDockedMaxInlineSize( minWidth ) );
+
+	return { ...persisted, size: { ...persisted.size, inlineSize } };
+}
 
 export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
-	const persisted = isFloatingPanelsSyncInitialized()
-		? getPersistedState( declaration.id )
-		: decodePersistedState( localStorageAdapter.read() )[ declaration.id ];
+	const persisted = clampDockedPersistedWidth(
+		declaration,
+		isFloatingPanelsSyncInitialized()
+			? getPersistedState( declaration.id )
+			: decodePersistedState( localStorageAdapter.read() )[ declaration.id ]
+	);
 
 	dispatch(
 		slice.actions.register( {
