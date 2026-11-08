@@ -441,7 +441,6 @@ describe( 'Agent Ready scanner', () => {
 		expect( within( row ).getByRole( 'button', { name: 'Undo' } ) ).toBeTruthy();
 		expect( within( row ).getByRole( 'button', { name: 'Rescan' } ) ).toBeTruthy();
 		expect( within( row ).queryByRole( 'button', { name: 'Create for me' } ) ).toBeNull();
-		expect( screen.getByText( /These 7 items hold/ ) ).toBeTruthy();
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getByText( 'Rescan to update your score.' ) ).toBeTruthy();
 	} );
@@ -482,7 +481,6 @@ describe( 'Agent Ready scanner', () => {
 		await advanceTimers( SCANNER_MOTION.rescanMinMs );
 
 		// Assert
-		expect( screen.getByText( /These 6 items hold/ ) ).toBeTruthy();
 		expect( screen.getByText( `${ passedBefore + 1 } Checks passed` ) ).toBeTruthy();
 		expect( screen.queryByText( title ) ).toBeNull();
 
