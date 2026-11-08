@@ -120,6 +120,8 @@ describe( 'editor angie host', () => {
 	it( 'keeps the SDK booted when the help-center ability fails to register', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
 		mockRegisterLocalServer.mockRejectedValueOnce( new Error( 'fail' ) );
+		mountIframe();
+		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
 
 		const first = await bootAngieSdk();
 		const second = await bootAngieSdk();
@@ -136,6 +138,8 @@ describe( 'editor angie host', () => {
 
 	it( 'does not register the help-center ability when the Angie plugin is active', async () => {
 		window.elementorEditorAngie = { isAngiePluginActive: true };
+		mountIframe();
+		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
 
 		await bootAngieSdk();
 
@@ -152,6 +156,8 @@ describe( 'editor angie host', () => {
 	} );
 
 	it( 'retries after a failed boot', async () => {
+		mountIframe();
+		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
 		mockLoadSidebarV2.mockRejectedValueOnce( new Error( 'fail' ) );
 
 		await expect( bootAngieSdk() ).rejects.toThrow( 'fail' );
@@ -164,6 +170,8 @@ describe( 'editor angie host', () => {
 	it( 'opens the Core SDK in the docked panel when the plugin is inactive', async () => {
 		const openPanel = jest.fn();
 		registerAngiePanelOpener( openPanel );
+		mountIframe();
+		mockGetAngieIframe.mockReturnValue( document.querySelector( 'iframe' ) );
 
 		await openAngie( {
 			prompt: 'Write a heading',
@@ -205,6 +213,19 @@ describe( 'editor angie host', () => {
 		await pending;
 
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'agent' );
+		expect( mockTriggerAngie ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'falls back to the Core SDK when the plugin is active but the sidebar is not openable yet', async () => {
+		const openPanel = jest.fn();
+		registerAngiePanelOpener( openPanel );
+		window.elementorEditorAngie = { isAngiePluginActive: true };
+		mockGetAngieIframe.mockReturnValue( null );
+		mountIframe();
+
+		await openAngie( { prompt: 'Write a heading', mode: AngieInteractionMode.ASK } );
+
+		expect( openPanel ).toHaveBeenCalledTimes( 1 );
 		expect( mockTriggerAngie ).toHaveBeenCalledTimes( 1 );
 	} );
 
