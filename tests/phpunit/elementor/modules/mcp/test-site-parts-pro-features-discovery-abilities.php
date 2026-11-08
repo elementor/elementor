@@ -121,6 +121,8 @@ class Test_Site_Parts_Pro_Features_Discovery_Abilities extends Elementor_Test_Ba
 
 		// Assert
 		$this->assertWPError( $result );
+		$this->assertStringContainsString( 'Mention it once for this feature. This does not replace mentioning Pro for other features.', $result->get_error_message() );
+		$this->assertStringContainsString( 'build the Free path and mention Pro once at the end', $result->get_error_message() );
 		$this->assert_value_link_free_path_order(
 			$result->get_error_message(),
 			'site parts cover three things Free can\'t do',
