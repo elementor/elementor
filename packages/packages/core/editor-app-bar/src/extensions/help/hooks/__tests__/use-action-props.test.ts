@@ -5,13 +5,11 @@ import useActionProps from '../use-action-props';
 const mockIsAngieAvailable = jest.fn();
 const mockOpenAngieInAskMode = jest.fn();
 const mockHasLoadedEditorAngie = jest.fn();
-const mockOpenLoadedEditorAngie = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => ( {
 	isAngieAvailable: () => mockIsAngieAvailable(),
 	openAngieInAskMode: ( ...args: unknown[] ) => mockOpenAngieInAskMode( ...args ),
 	hasLoadedEditorAngie: () => mockHasLoadedEditorAngie(),
-	openLoadedEditorAngie: ( ...args: unknown[] ) => mockOpenLoadedEditorAngie( ...args ),
 } ) );
 
 describe( 'useHelpCenterActionProps', () => {
@@ -21,7 +19,6 @@ describe( 'useHelpCenterActionProps', () => {
 		mockIsAngieAvailable.mockReset();
 		mockOpenAngieInAskMode.mockReset();
 		mockHasLoadedEditorAngie.mockReset();
-		mockOpenLoadedEditorAngie.mockReset();
 		mockHasLoadedEditorAngie.mockReturnValue( false );
 		mockDispatchEvent = jest.fn();
 		window.elementorCommon = {
@@ -50,7 +47,7 @@ describe( 'useHelpCenterActionProps', () => {
 		} as unknown as typeof window.elementorCommon;
 	} );
 
-	it( 'opens the editor Angie package when it is loaded', () => {
+	it( 'opens Angie in ask mode when the editor Angie package is loaded', () => {
 		mockHasLoadedEditorAngie.mockReturnValue( true );
 		mockIsAngieAvailable.mockReturnValue( false );
 
@@ -61,8 +58,7 @@ describe( 'useHelpCenterActionProps', () => {
 
 		expect( preventDefault ).toHaveBeenCalled();
 		expect( mockDispatchEvent ).toHaveBeenCalled();
-		expect( mockOpenLoadedEditorAngie ).toHaveBeenCalledWith( 'Help me with ' );
-		expect( mockOpenAngieInAskMode ).not.toHaveBeenCalled();
+		expect( mockOpenAngieInAskMode ).toHaveBeenCalledWith( 'Help me with ' );
 		expect( result.current.href ).toBeUndefined();
 	} );
 

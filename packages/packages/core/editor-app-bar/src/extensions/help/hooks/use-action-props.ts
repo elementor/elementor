@@ -1,9 +1,4 @@
-import {
-	hasLoadedEditorAngie,
-	isAngieAvailable,
-	openAngieInAskMode,
-	openLoadedEditorAngie,
-} from '@elementor/editor-mcp';
+import { hasLoadedEditorAngie, isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -27,19 +22,7 @@ const dispatchHelpClickEvent = () => {
 };
 
 export default function useActionProps() {
-	if ( hasLoadedEditorAngie() ) {
-		return {
-			title: __( 'Help Center', 'elementor' ),
-			icon: HelpIcon,
-			onClick: ( event: React.MouseEvent ) => {
-				event.preventDefault();
-				dispatchHelpClickEvent();
-				openLoadedEditorAngie( HELP_CENTER_ANGIE_PROMPT );
-			},
-		};
-	}
-
-	const hasAngieActive = isAngieAvailable();
+	const hasAngieActive = hasLoadedEditorAngie() || isAngieAvailable();
 
 	if ( hasAngieActive ) {
 		return {
