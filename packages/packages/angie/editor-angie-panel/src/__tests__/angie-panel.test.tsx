@@ -5,9 +5,11 @@ import AngiePanel from '../components/angie-panel';
 
 const mockBootAngieSdk = jest.fn();
 const mockUseFloatingPanelStatus = jest.fn();
+const mockIsAngiePluginInstalled = jest.fn();
 
 jest.mock( '@elementor/editor-angie', () => ( {
 	bootAngieSdk: ( ...args: unknown[] ) => mockBootAngieSdk( ...args ),
+	isAngiePluginInstalled: () => mockIsAngiePluginInstalled(),
 	EDITOR_ANGIE_CONTAINER_ID: 'elementor-editor-angie',
 } ) );
 
@@ -22,6 +24,16 @@ describe( 'AngiePanel lazy boot', () => {
 		jest.clearAllMocks();
 		mockBootAngieSdk.mockResolvedValue( {} );
 		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: false } );
+		mockIsAngiePluginInstalled.mockReturnValue( false );
+	} );
+
+	it( 'does not boot the SDK when the Angie plugin is installed', () => {
+		mockIsAngiePluginInstalled.mockReturnValue( true );
+		mockUseFloatingPanelStatus.mockReturnValue( { isOpen: true } );
+
+		renderWithTheme( <AngiePanel /> );
+
+		expect( mockBootAngieSdk ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not boot the SDK when the panel stays closed', () => {
