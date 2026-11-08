@@ -15,7 +15,7 @@ import { closeFloatingPanel, createFloatingPanel, openFloatingPanel, registerFlo
 import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
 import FloatingPanelsHost from '../components/internal/host';
 import { encodePersistedState } from '../persistence';
-import { selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
+import { selectIsDocked, selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type PanelStateStorage, sync } from '../sync';
 import { type FloatingPanelDeclaration, type FloatingPanelState } from '../types';
@@ -107,7 +107,7 @@ describe( 'createFloatingPanel', () => {
 		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( true );
 	} );
 
-	it( 'forces drag and resize off and ignores persisted geometry when docked', () => {
+	it( 'forces drag and resize off and keeps only the persisted width when docked', () => {
 		// Arrange.
 		const persisted: FloatingPanelState = {
 			isOpen: true,
@@ -132,12 +132,14 @@ describe( 'createFloatingPanel', () => {
 		} );
 
 		// Assert.
+		expect( selectIsDocked( __getState(), declaration.id ) ).toBe( true );
 		expect( selectIsDraggable( __getState(), declaration.id ) ).toBe( false );
 		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( false );
 		expect( selectPanelState( __getState(), declaration.id ) ).toMatchObject( {
 			isOpen: false,
-			size: { inlineSize: 320, blockSize: 480 },
+			size: { inlineSize: 400, blockSize: 480 },
 		} );
+		expect( selectPanelState( __getState(), declaration.id )?.position.insetInlineStart ).not.toBe( 600 );
 	} );
 
 	it( 'opens and closes a panel from outside React', () => {

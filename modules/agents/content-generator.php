@@ -4,6 +4,7 @@ namespace Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Post_Noindex;
 use Elementor\Modules\Agents\Classes\Post_Title;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
 use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
 use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
@@ -53,6 +54,8 @@ class Content_Generator {
 	const INLINE_META_KEY           = '_elementor_agents_inline_cache';
 	const INLINE_CACHE_VERSION      = 1;
 	const INLINE_CACHE_GEN_OPTION   = 'elementor_agents_inline_cache_gen';
+
+	const MCP_SECTION_TITLE = 'MCP Server';
 
 	/** Post types that should never appear in the output. */
 	const EXCLUDED_POST_TYPES = [
@@ -110,6 +113,8 @@ class Content_Generator {
 
 			$lines[] = '';
 		}
+
+		array_push( $lines, ...$this->get_mcp_section_lines() );
 
 		$this->append_optional_section( $lines, $overrides );
 
@@ -173,6 +178,15 @@ class Content_Generator {
 			$content_blocks[] = [
 				'header' => implode( "\n", $product_lines ),
 				'items'  => [], // no inline content for products
+			];
+		}
+
+		$mcp_lines = $this->get_mcp_section_lines();
+
+		if ( ! empty( $mcp_lines ) ) {
+			$content_blocks[] = [
+				'header' => implode( "\n", $mcp_lines ),
+				'items'  => [],
 			];
 		}
 
@@ -703,6 +717,26 @@ class Content_Generator {
 		}
 
 		return $line;
+	}
+
+	/**
+	 * @return string[] Empty when the MCP server is not advertised.
+	 */
+	private function get_mcp_section_lines(): array {
+		if ( ! apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
+			return [];
+		}
+
+		return [
+			'## ' . self::MCP_SECTION_TITLE,
+			'',
+			$this->format_link_line( [
+				'title'       => Mcp_Discovery::SERVER_TITLE,
+				'url'         => Mcp_Discovery::get_server_url(),
+				'description' => Mcp_Discovery::SERVER_DESCRIPTION,
+			] ),
+			'',
+		];
 	}
 
 	/**

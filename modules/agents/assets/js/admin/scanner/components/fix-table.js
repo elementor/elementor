@@ -97,7 +97,7 @@ export const FixTableRows = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 						<FixRow
 							check={ check }
 							isOpen={ !! flow.openIds[ check.id ] }
-							isResolved={ moduleKey ? !! flow.moduleEnabled?.[ moduleKey ] : !! flow.resolvedIds[ check.id ] }
+							isResolved={ moduleKey ? !! flow.moduleEnabled?.[ moduleKey ] : !! flow.resolvedIds?.[ check.id ] }
 							isSaving={ !! flow.savingCheckIds?.[ check.id ] || !! ( moduleKey && flow.savingModuleKeys?.[ moduleKey ] ) }
 							isToggleDisabled={ !! isToggleDisabled }
 							toggleDisabledReason={ toggleDisabledReason }
@@ -125,8 +125,8 @@ const fixTableRowsPropTypes = {
 	checks: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	flow: PropTypes.shape( {
 		openIds: PropTypes.object.isRequired,
-		resolvedIds: PropTypes.object.isRequired,
 		moduleEnabled: PropTypes.object,
+		resolvedIds: PropTypes.object,
 		isModuleToggleDisabled: PropTypes.func,
 		getToggleDisabledReason: PropTypes.func,
 		savingModuleKeys: PropTypes.object,

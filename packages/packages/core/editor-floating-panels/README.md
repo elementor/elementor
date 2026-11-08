@@ -74,7 +74,7 @@ Programmatic sizing via `setSize` from `useFloatingPanelActions` works regardles
 
 ### `isDocked`
 
-When `isDocked` is `true`, the panel stays at its declared position and size. Drag and resize are forced off, even if `isDraggable` or `isResizable` is also set, and persisted geometry is ignored. When omitted, the panel keeps the previous floating behavior.
+When `isDocked` is `true`, the panel is pinned to the inline end for as long as it is open, the same way the Navigator is when it is docked. It uses its width and the full height under the top bar. The editor canvas narrows by that width. The inner edge can be dragged to change the width. That width is kept across reloads. The panel cannot be moved or undocked, and `isDraggable` or `isResizable` do not add the floating handles. Closing the panel hides it and returns the width to the canvas. When omitted, the panel keeps the previous floating behavior.
 
 ### `keepMounted`
 
