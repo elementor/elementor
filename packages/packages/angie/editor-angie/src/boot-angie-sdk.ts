@@ -33,6 +33,10 @@ const waitForAngieContainer = async () => {
 			setTimeout( resolve, CONTAINER_POLL_INTERVAL_MS );
 		} );
 	}
+
+	throw new Error(
+		`Angie container #${ EDITOR_ANGIE_CONTAINER_ID } not found after ${ CONTAINER_POLL_ATTEMPTS } attempts`
+	);
 };
 
 export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
