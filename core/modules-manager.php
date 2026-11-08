@@ -126,7 +126,7 @@ class Modules_Manager {
 			'floating-buttons',
 			'content-sanitizer',
 			'atomic-widgets',
-			'v4-widgets',
+			'composite-widgets',
 			'global-classes',
 			'default-styles',
 			'variables',

@@ -1,32 +1,30 @@
-import { generateElementId } from './generate-element-id';
-import { regenerateLocalStyleIds } from './regenerate-local-style-ids';
-import { type V1ElementData, type WidgetDefinitionForInsert, type WidgetTemplateNode } from './types';
+import {
+	cloneElementTree,
+	regenerateLocalStyleIds,
+	type V1ElementData,
+	type V1ElementModelProps,
+} from '@elementor/editor-elements';
 
-export function prepareWidgetTemplateForInsert( { id, version, template }: WidgetDefinitionForInsert ): V1ElementData {
-	const root = assignIdsRecursive( structuredClone( template ) );
+import { type CompositeWidgetDefinition } from './types';
+
+type DefinitionForInsert = Pick< CompositeWidgetDefinition, 'id' | 'version' | 'template' >;
+
+export function prepareWidgetTemplateForInsert( { id, version, template }: DefinitionForInsert ): V1ElementData {
+	const tree = cloneElementTree( structuredClone( template ) as Partial< V1ElementModelProps > ) as V1ElementData;
 
 	return {
-		...root,
-		widget: { id, version, values: {} },
+		...regenerateLocalStyleIdsRecursive( tree ),
+		widget: { id, version },
 	};
 }
 
-function assignIdsRecursive( node: WidgetTemplateNode ): V1ElementData {
-	const element: V1ElementData = {
-		...node,
-		id: generateElementId(),
-		elements: ( node.elements ?? [] ).map( assignIdsRecursive ),
-	};
-
-	if ( ! element.styles ) {
-		return element;
-	}
-
+function regenerateLocalStyleIdsRecursive( element: V1ElementData ): V1ElementData {
 	const { styles, settings } = regenerateLocalStyleIds( element );
 
 	return {
 		...element,
-		styles,
-		...( settings && { settings: { ...element.settings, ...settings } } ),
+		...( styles && { styles } ),
+		...( settings && { settings } ),
+		elements: ( element.elements ?? [] ).map( regenerateLocalStyleIdsRecursive ),
 	};
 }

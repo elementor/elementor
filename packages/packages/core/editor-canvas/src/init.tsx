@@ -20,7 +20,6 @@ import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
-import { initExpandWidgetOnDrop } from './v4-widgets/expand-widget-on-drop';
 
 export function init() {
 	initStyleTransformers();
@@ -32,7 +31,6 @@ export function init() {
 	initHiddenFieldHint();
 	initDuplicateFormAtomsPrevention();
 	initFormAtomAddedHints();
-	initExpandWidgetOnDrop();
 
 	initViewReplacements();
 

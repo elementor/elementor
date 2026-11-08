@@ -181,21 +181,11 @@ export type V1ElementModelProps = {
 export type V1ElementWidgetMarker = {
 	id: string;
 	version: number;
-	values: Record< string, unknown >;
+	values?: Record< string, unknown >;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 	elements?: V1ElementData[];
-};
-
-export type WidgetTemplateNode = Omit< V1ElementData, 'id' | 'elements' | 'widget' > & {
-	elements?: WidgetTemplateNode[];
-};
-
-export type WidgetDefinitionForInsert = {
-	id: string;
-	version: number;
-	template: WidgetTemplateNode;
 };
 
 export type ElementPositionKind = 'last' | 'first' | 'index' | 'after_type' | 'before_type';

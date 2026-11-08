@@ -1,7 +1,8 @@
+import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 
 import { prepareWidgetTemplateForInsert } from '../prepare-widget-template-for-insert';
-import { type V1ElementData, type WidgetDefinitionForInsert } from '../types';
+import { type CompositeWidgetDefinition } from '../types';
 
 const GLOBAL_CLASS_ID = 'g-123abc';
 
@@ -18,10 +19,11 @@ const LOCAL_ROOT_STYLE = {
 	],
 } as StyleDefinition;
 
-function createDefinition(): WidgetDefinitionForInsert {
+function createDefinition(): CompositeWidgetDefinition {
 	return {
 		id: 'elementor/icon-button',
 		version: 1,
+		title: 'Icon button',
 		template: {
 			elType: 'e-flexbox',
 			part: 'root',
@@ -94,6 +96,7 @@ describe( 'prepareWidgetTemplateForInsert', () => {
 			$$type: 'classes',
 			value: [ styleIds[ 0 ], GLOBAL_CLASS_ID ],
 		} );
+		expect( definition.template.styles ).toEqual( { 'local-root': LOCAL_ROOT_STYLE } );
 	} );
 
 	it( 'stamps the widget marker on the root only and keeps parts', () => {
@@ -104,7 +107,7 @@ describe( 'prepareWidgetTemplateForInsert', () => {
 		const result = prepareWidgetTemplateForInsert( definition );
 
 		// Assert.
-		expect( result.widget ).toEqual( { id: 'elementor/icon-button', version: 1, values: {} } );
+		expect( result.widget ).toEqual( { id: 'elementor/icon-button', version: 1 } );
 		expect( result.part ).toBe( 'root' );
 		expect( result.elements?.map( ( child ) => child.part ) ).toEqual( [ 'icon', 'label' ] );
 		expect( result.elements?.some( ( child ) => 'widget' in child ) ).toBe( false );

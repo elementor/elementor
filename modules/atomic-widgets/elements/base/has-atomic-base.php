@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+	use Has_Widget_Markers;
 
 	public static function html_tag_follows_link(): bool {
 		return true;
@@ -344,19 +345,6 @@ trait Has_Atomic_Base {
 		$this->add_widget_markers( $raw_data );
 
 		return $raw_data;
-	}
-
-	private function add_widget_markers( array &$raw_data ): void {
-		$widget = Widget_Markers::sanitize_widget( $this->get_data( Widget_Markers::WIDGET_KEY ) );
-		$part = Widget_Markers::sanitize_part( $this->get_data( Widget_Markers::PART_KEY ) );
-
-		if ( ! empty( $widget ) ) {
-			$raw_data[ Widget_Markers::WIDGET_KEY ] = $widget;
-		}
-
-		if ( '' !== $part ) {
-			$raw_data[ Widget_Markers::PART_KEY ] = $part;
-		}
 	}
 
 	final public function get_stack( $with_common_controls = true ) {

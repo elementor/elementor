@@ -715,13 +715,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertSame( 'feature_icon', $raw_data['part'] );
 	}
 
-	public function test_get_data_for_save__defaults_missing_widget_values_to_empty_array() {
+	public function test_get_data_for_save__omits_empty_widget_values() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'element_data' => [
 				'widget' => [
 					'id' => 'elementor/icon-button',
 					'version' => 1,
+					'values' => [],
 				],
 			],
 		] );
@@ -730,7 +731,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['widget']['values'] );
+		$this->assertSame( [
+			'id' => 'elementor/icon-button',
+			'version' => 1,
+		], $data_for_save['widget'] );
 	}
 
 	public function test_get_data_for_save__omits_markers_when_absent() {

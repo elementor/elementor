@@ -30,11 +30,18 @@ class Widget_Markers {
 			return [];
 		}
 
-		return [
+		$marker = [
 			'id' => $id,
 			'version' => $version,
-			'values' => self::sanitize_values( $value['values'] ?? [], 1 ),
 		];
+
+		$values = self::sanitize_values( $value['values'] ?? [], 1 );
+
+		if ( ! empty( $values ) ) {
+			$marker['values'] = $values;
+		}
+
+		return $marker;
 	}
 
 	public static function sanitize_part( $value ): string {

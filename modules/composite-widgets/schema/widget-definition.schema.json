@@ -1,6 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://elementor.com/schemas/v4-widgets/widget-definition.schema.json",
+	"$id": "https://elementor.com/schemas/composite-widgets/widget-definition.schema.json",
 	"title": "Elementor V4 widget definition",
 	"description": "Shape of a V4 widget definition, shared by the code provider (native and third-party) and the site provider (MCP). Cross-reference rules (unique parts, targets that exist, allowed part types, the global-reference rule) are enforced by the PHP validator, not by this schema.",
 	"type": "object",

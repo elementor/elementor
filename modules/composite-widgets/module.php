@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\V4Widgets;
+namespace Elementor\Modules\CompositeWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -10,19 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_v4_widgets';
+	const EXPERIMENT_NAME = 'e_composite_widgets';
 	const SAMPLE_DEFINITION_FILE = 'schema/examples/icon-button.json';
 	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template' ];
 
+	const PACKAGES = [
+		'editor-composite-widgets',
+	];
+
 	public function get_name() {
-		return 'v4-widgets';
+		return 'composite-widgets';
 	}
 
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'V4 Widgets', 'elementor' ),
-			'description' => esc_html__( 'Enable V4 widgets: ready-made compositions of atomic elements.', 'elementor' ),
+			'title' => esc_html__( 'Composite Widgets', 'elementor' ),
+			'description' => esc_html__( 'Enable composite widgets: ready-made compositions of atomic elements.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -36,7 +40,12 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_editor_settings( $settings ) );
+	}
+
+	private function add_packages( array $packages ): array {
+		return array_merge( $packages, self::PACKAGES );
 	}
 
 	private function add_editor_settings( array $settings ): array {
@@ -46,7 +55,7 @@ class Module extends BaseModule {
 			return $settings;
 		}
 
-		$settings['v4Widgets'] = [
+		$settings['compositeWidgets'] = [
 			$definition['id'] => array_intersect_key( $definition, array_flip( self::EDITOR_DEFINITION_KEYS ) ),
 		];
 
@@ -68,7 +77,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_panel_tile_key( array $definition ): string {
-		return 'v4-widget-' . str_replace( '/', '-', $definition['id'] );
+		return 'composite-widget-' . str_replace( '/', '-', $definition['id'] );
 	}
 
 	/**
@@ -83,7 +92,7 @@ class Module extends BaseModule {
 				'icon' => $definition['icon'] ?? 'eicon-apps',
 				'custom' => [
 					'originalWidget' => $definition['template']['elType'],
-					'v4WidgetId' => $definition['id'],
+					'compositeWidgetId' => $definition['id'],
 				],
 			],
 		];

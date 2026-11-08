@@ -1,50 +1,35 @@
-import { prepareWidgetTemplateForInsert, type WidgetDefinitionForInsert } from '@elementor/editor-elements';
-import { isExperimentActive, registerDataHook } from '@elementor/editor-v1-adapters';
+import { type DropElementParams } from '@elementor/editor-elements';
+import { registerDataHook } from '@elementor/editor-v1-adapters';
 
-export const V4_WIDGETS_EXPERIMENT = 'e_v4_widgets';
+import { prepareWidgetTemplateForInsert } from '../prepare-widget-template-for-insert';
+import { getCompositeWidgetDefinition } from './get-composite-widget-definition';
 
 const DROP_COMMAND = 'preview/drop';
 
 type DropArgs = {
-	model?: Record< string, unknown > & {
-		custom?: { v4WidgetId?: string };
-	};
-};
-
-type WindowWithV4Widgets = Window & {
-	elementor?: {
-		config?: {
-			v4Widgets?: Record< string, WidgetDefinitionForInsert >;
-		};
+	model?: DropElementParams[ 'model' ] & {
+		custom?: { compositeWidgetId?: string };
 	};
 };
 
 export function initExpandWidgetOnDrop() {
-	if ( ! isExperimentActive( V4_WIDGETS_EXPERIMENT ) ) {
-		return;
-	}
-
 	registerDataHook( 'dependency', DROP_COMMAND, ( args: DropArgs ) => expandWidgetOnDrop( args ) );
 }
 
 function expandWidgetOnDrop( args: DropArgs ): boolean {
-	const widgetId = args.model?.custom?.v4WidgetId;
+	const widgetId = args.model?.custom?.compositeWidgetId;
 
 	if ( ! widgetId ) {
 		return true;
 	}
 
-	const definition = getWidgetDefinition( widgetId );
+	const definition = getCompositeWidgetDefinition( widgetId );
 
 	if ( ! definition ) {
 		return false;
 	}
 
-	args.model = prepareWidgetTemplateForInsert( definition );
+	args.model = prepareWidgetTemplateForInsert( definition ) as DropArgs[ 'model' ];
 
 	return true;
-}
-
-function getWidgetDefinition( widgetId: string ): WidgetDefinitionForInsert | null {
-	return ( window as unknown as WindowWithV4Widgets ).elementor?.config?.v4Widgets?.[ widgetId ] ?? null;
 }

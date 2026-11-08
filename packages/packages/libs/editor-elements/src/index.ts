@@ -51,7 +51,6 @@ export { getElementSetting, getElementSettings } from './sync/get-element-settin
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
 export { getElementPart, getElementWidgetMarker } from './sync/get-element-widget-markers';
-export { prepareWidgetTemplateForInsert } from './sync/prepare-widget-template-for-insert';
 export { regenerateLocalStyleIds } from './sync/regenerate-local-style-ids';
 export { getAllDescendants } from './sync/get-all-descendants';
 export {

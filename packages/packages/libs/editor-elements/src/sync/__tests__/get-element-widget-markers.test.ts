@@ -21,9 +21,9 @@ describe( 'getElementWidgetMarker', () => {
 		expect( result ).toEqual( widget );
 	} );
 
-	it( 'normalizes empty values saved by PHP as an array', () => {
+	it( 'defaults missing values to an empty object', () => {
 		// Arrange.
-		const widget = { id: 'elementor/icon-button', version: 1, values: [] as unknown as Record< string, unknown > };
+		const widget = { id: 'elementor/icon-button', version: 1 };
 
 		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } } ) );
 
@@ -31,7 +31,7 @@ describe( 'getElementWidgetMarker', () => {
 		const result = getElementWidgetMarker( ELEMENT_ID );
 
 		// Assert.
-		expect( result?.values ).toEqual( {} );
+		expect( result ).toEqual( { ...widget, values: {} } );
 	} );
 
 	it( 'returns null when the element is not a widget root', () => {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Testing\Modules\V4Widgets;
+namespace Elementor\Testing\Modules\CompositeWidgets;
 
 use JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Widget_Definition_Schema extends TestCase {
-	const SCHEMA_DIR = __DIR__ . '/../../../../../modules/v4-widgets/schema/';
+	const SCHEMA_DIR = __DIR__ . '/../../../../../modules/composite-widgets/schema/';
 	const SCHEMA_FILE = self::SCHEMA_DIR . 'widget-definition.schema.json';
 	const EXAMPLES_DIR = self::SCHEMA_DIR . 'examples/';
 
