@@ -142,6 +142,34 @@ describe( 'createFloatingPanel', () => {
 		expect( selectPanelState( __getState(), declaration.id )?.position.insetInlineStart ).not.toBe( 600 );
 	} );
 
+	it.each( [
+		{ case: 'down to the viewport', persistedWidth: 5000, expected: 1000 },
+		{ case: 'up to the minimum width', persistedWidth: 100, expected: 240 },
+	] )( 'clamps the persisted docked width $case', ( { persistedWidth, expected } ) => {
+		// Arrange.
+		Object.defineProperty( window, 'innerWidth', { configurable: true, value: 1000 } );
+
+		const persisted: FloatingPanelState = {
+			isOpen: false,
+			zIndex: 0,
+			size: { inlineSize: persistedWidth, blockSize: 480 },
+			corner: 'block-start-inline-end',
+			position: {
+				insetBlockStart: 0,
+				insetBlockEnd: 0,
+				insetInlineStart: 0,
+				insetInlineEnd: 0,
+			},
+		};
+		sync( memoryStorage( encodePersistedState( { [ declaration.id ]: persisted } ) ) );
+
+		// Act.
+		createFloatingPanel( { ...declaration, isDocked: true } );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id )?.size.inlineSize ).toBe( expected );
+	} );
+
 	it( 'opens and closes a panel from outside React', () => {
 		// Arrange.
 		sync( memoryStorage() );
