@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
+	const ANGIE_SCRIPT_HANDLE = 'elementor-v2-editor-angie';
+
 	private $original_experiment_default_state;
 
 	public function set_up() {
@@ -39,6 +41,8 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		);
 
 		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+		remove_all_filters( 'pre_option_active_plugins' );
+		wp_deregister_script( self::ANGIE_SCRIPT_HANDLE );
 
 		parent::tear_down();
 	}
@@ -113,6 +117,46 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertContains( Module::ANGIE_PACKAGE, $active_packages );
 	}
 
+	public function test_print_angie_config_prints_nothing_when_experiment_is_inactive() {
+		// Arrange.
+		$this->register_angie_script();
+
+		// Act.
+		$this->get_widget_creation_module()->print_angie_config();
+
+		// Assert.
+		$this->assertFalse( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) );
+	}
+
+	/**
+	 * @dataProvider angie_plugin_active_provider
+	 */
+	public function test_print_angie_config_prints_angie_plugin_state( array $active_plugins, string $expected_config ) {
+		// Arrange.
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		add_filter( 'pre_option_active_plugins', static fn() => $active_plugins );
+		$this->register_angie_script();
+
+		// Act.
+		$this->get_widget_creation_module()->print_angie_config();
+
+		// Assert.
+		$this->assertSame(
+			[ 'var elementorEditorAngie = ' . $expected_config . ';' ],
+			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
+		);
+	}
+
+	public function angie_plugin_active_provider(): array {
+		return [
+			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true}' ],
+			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false}' ],
+		];
+	}
+
 	public function test_experiment_can_be_activated() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
@@ -130,5 +174,13 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 	public function test_is_angie_in_panels_active_is_false_by_default() {
 		// Act & Assert
 		$this->assertFalse( Module::is_angie_in_panels_active() );
+	}
+
+	private function register_angie_script(): void {
+		wp_register_script( self::ANGIE_SCRIPT_HANDLE, 'angie.js', [], '1.0.0', true );
+	}
+
+	private function get_widget_creation_module(): Module {
+		return Plugin::$instance->modules_manager->get_modules( Module::MODULE_NAME );
 	}
 }
