@@ -1,5 +1,6 @@
 import {
 	AngieMcpSdk,
+	getAngieIframe,
 	LAYOUT_SIDEBAR,
 	type LoadSidebarV2Options,
 	toggleAngieSidebar,
@@ -7,13 +8,37 @@ import {
 
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor';
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
+export const ANGIE_SIDEBAR_ACTIVE_BODY_CLASS = 'angie-sidebar-active';
+
+const CONTAINER_POLL_ATTEMPTS = 10;
+const CONTAINER_POLL_INTERVAL_MS = 10;
 
 let sdk: AngieMcpSdk | null = null;
 let bootPromise: Promise< AngieMcpSdk > | null = null;
 
+const waitForAngieContainer = async () => {
+	for ( let attempt = 0; attempt < CONTAINER_POLL_ATTEMPTS; attempt++ ) {
+		const container = document.getElementById( EDITOR_ANGIE_CONTAINER_ID );
+
+		if ( container ) {
+			container.style.display = 'flex';
+			container.style.flexDirection = 'column';
+			container.style.height = '100%';
+			container.style.width = '100%';
+
+			return;
+		}
+
+		await new Promise( ( resolve ) => {
+			setTimeout( resolve, CONTAINER_POLL_INTERVAL_MS );
+		} );
+	}
+};
+
 export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	host: {
 		appId: EDITOR_ANGIE_APP_ID,
+		instanceId: EDITOR_ANGIE_APP_ID,
 	},
 	container: {
 		id: EDITOR_ANGIE_CONTAINER_ID,
@@ -27,18 +52,20 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 } );
 
 export const openAngieIframe = () => {
-	const iframe = document.getElementById( EDITOR_ANGIE_CONTAINER_ID )?.querySelector( 'iframe' );
+	const iframe = getAngieIframe();
 
 	if ( ! iframe ) {
 		return;
 	}
 
+	document.body.classList.add( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
 	toggleAngieSidebar( iframe, true );
 };
 
 export const resetAngieSdkForTests = () => {
 	sdk = null;
 	bootPromise = null;
+	document.body.classList.remove( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
 };
 
 export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
@@ -52,6 +79,8 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 
 	bootPromise = ( async () => {
 		try {
+			await waitForAngieContainer();
+
 			const instance = new AngieMcpSdk();
 
 			await instance.loadSidebarV2( getLoadSidebarOptions() );

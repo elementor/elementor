@@ -6,6 +6,9 @@ export const openAngie = async ( prompt: string, mode: AngieInteractionMode ): P
 	const sdk = await bootAngieSdk();
 
 	openAngieIframe();
+
+	await sdk.waitForReady();
+
 	setAngieInteractionMode( mode );
 
 	await sdk.triggerAngie( {
