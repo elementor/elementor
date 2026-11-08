@@ -8,6 +8,7 @@ use Elementor\Core\Utils\Hints;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,6 +52,7 @@ class Module extends BaseModule {
 		AngiePromotion::init();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+		add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'print_angie_config' ] );
 		add_action( 'elementor/elements/categories_registered', [ $this, 'maybe_register_custom_widgets_category_fallback' ], 100 );
 		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
 	}
@@ -136,6 +138,16 @@ class Module extends BaseModule {
 		}
 
 		return false;
+	}
+
+	public function print_angie_config(): void {
+		if ( ! self::is_angie_in_panels_active() ) {
+			return;
+		}
+
+		Utils::print_js_config( 'elementor-v2-editor-angie', 'elementorEditorAngie', [
+			'isAngiePluginActive' => Hints::is_plugin_active( 'angie' ),
+		] );
 	}
 
 	private function add_packages( array $packages ): array {
