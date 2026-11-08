@@ -6,6 +6,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -370,7 +371,7 @@ class Menu_Data_Provider {
 	private function create_expanded_child_item_data( Menu_Item_Interface $item, string $item_slug, bool $is_first ): array {
 		$url = $this->resolve_item_url( $item, $item_slug );
 
-		return [
+		return $this->with_tag( [
 			'slug' => $item_slug,
 			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $url,
@@ -378,7 +379,7 @@ class Menu_Data_Provider {
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_first,
 			'event_id' => $this->resolve_event_id( $item, $item_slug ),
-		];
+		], $item );
 	}
 
 	private function should_include_flyout_item( Menu_Item_Interface $item, string $item_slug, array $existing_slugs, array $excluded_slugs ): bool {
@@ -406,7 +407,7 @@ class Menu_Data_Provider {
 		$group_id = $has_children ? $item->get_group_id() : '';
 		$is_third_party_parent = Menu_Config::THIRD_PARTY_GROUP_ID === $item->get_group_id();
 
-		return [
+		return $this->with_tag( [
 			'slug' => $item_slug,
 			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
@@ -415,7 +416,17 @@ class Menu_Data_Provider {
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_third_party_parent,
 			'event_id' => $this->resolve_event_id( $item, $item_slug ),
-		];
+		], $item );
+	}
+
+	private function with_tag( array $item_data, Menu_Item_Interface $item ): array {
+		if ( ! $item instanceof Menu_Item_With_Tag_Interface || '' === $item->get_tag() ) {
+			return $item_data;
+		}
+
+		$item_data['tag'] = $item->get_tag();
+
+		return $item_data;
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
