@@ -8,7 +8,6 @@ const mockUseFloatingPanelStatus = jest.fn();
 
 jest.mock( '@elementor/editor-angie', () => ( {
 	bootAngieSdk: ( ...args: unknown[] ) => mockBootAngieSdk( ...args ),
-	isAngiePluginInstalled: jest.fn( () => false ),
 	EDITOR_ANGIE_CONTAINER_ID: 'elementor-editor-angie',
 } ) );
 
