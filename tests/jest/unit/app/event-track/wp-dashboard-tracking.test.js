@@ -10,8 +10,6 @@ describe( 'WpDashboardTracking', () => {
 		jest.isolateModules( () => {
 			const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
 
-			expect( () => WpDashboardTracking.isEditorOneActive() ).not.toThrow();
-			expect( WpDashboardTracking.isEditorOneActive() ).toBe( false );
 			expect( WpDashboardTracking.isEventsManagerAvailable() ).toBeFalsy();
 			expect( WpDashboardTracking.canSendEvents() ).toBe( false );
 			expect( () => WpDashboardTracking.dispatchEvent( 'test_event' ) ).not.toThrow();
@@ -25,7 +23,6 @@ describe( 'WpDashboardTracking', () => {
 			config: {
 				editor_events: {
 					can_send_events: true,
-					isEditorOneActive: true,
 				},
 			},
 			eventsManager: {

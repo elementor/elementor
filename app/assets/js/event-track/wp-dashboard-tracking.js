@@ -110,11 +110,6 @@ export default class WpDashboardTracking {
 		return elementorCommon?.config?.editor_events?.menuEventIds?.[ slug ] ?? null;
 	}
 
-	static isEditorOneActive() {
-		const elementorCommon = this.getElementorCommon();
-		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
-	}
-
 	static processPendingNavClick() {
 		try {
 			const pendingNav = sessionStorage.getItem( PENDING_NAV_CLICK_KEY );

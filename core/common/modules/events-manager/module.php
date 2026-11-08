@@ -10,7 +10,6 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 use Elementor\Plugin;
 use Elementor\Tracker;
 
@@ -76,10 +75,6 @@ class Module extends BaseModule {
 		];
 
 		$settings['menuEventIds'] = Menu_Data_Provider::instance()->get_event_ids_by_slug();
-
-		if ( Editor_One_Module::is_editor_one_active() ) {
-			$settings['isEditorOneActive'] = true;
-		}
 
 		return $settings;
 	}
