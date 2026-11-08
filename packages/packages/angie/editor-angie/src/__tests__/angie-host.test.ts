@@ -43,9 +43,6 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	toggleAngieSidebar: ( ...args: unknown[] ) => mockToggleAngieSidebar( ...args ),
 	isAngiePluginAvailable: () => mockSdkState.pluginInstalled,
 	getAngieIframe: () => mockGetAngieIframe(),
-	MessageEventType: {
-		SDK_TRIGGER_ANGIE: 'sdk-trigger-angie',
-	},
 } ) );
 
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
@@ -70,7 +67,7 @@ describe( 'editor angie host', () => {
 		window.location.hash = '';
 		mockSdkState.pluginInstalled = false;
 		mockGetAngieIframe.mockReturnValue( null );
-		delete window.toggleAngieSidebar;
+		Reflect.deleteProperty( window, 'toggleAngieSidebar' );
 		document.body.innerHTML = '';
 		mockLoadSidebarV2.mockResolvedValue( undefined );
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
@@ -115,6 +112,23 @@ describe( 'editor angie host', () => {
 			},
 		} );
 		expect( mockRegisterLocalServer ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps the SDK booted when the help-center ability fails to register', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		mockRegisterLocalServer.mockRejectedValueOnce( new Error( 'fail' ) );
+
+		const first = await bootAngieSdk();
+		const second = await bootAngieSdk();
+
+		expect( second ).toBe( first );
+		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 1 );
+		expect( consoleErrorSpy ).toHaveBeenCalledWith(
+			'Angie help-center ability registration failed:',
+			expect.any( Error )
+		);
+
+		consoleErrorSpy.mockRestore();
 	} );
 
 	it( 'does not register the help-center ability when the Angie plugin is active', async () => {
@@ -182,7 +196,7 @@ describe( 'editor angie host', () => {
 		expect( AngieMcpSdkMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'opens the plugin sidebar when its container is already in the editor', async () => {
+	it( 'opens the plugin sidebar with the prompt and mode when its container is already in the editor', async () => {
 		const openPanel = jest.fn();
 		const pluginToggle = jest.fn();
 		const sidebar = document.createElement( 'div' );
@@ -194,6 +208,8 @@ describe( 'editor angie host', () => {
 		await openAngie( { prompt: 'Write a heading', mode: AngieInteractionMode.ASK } );
 
 		expect( pluginToggle ).toHaveBeenCalledWith( true );
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
+		expect( window.location.hash ).toBe( '#angie-prompt=Write%20a%20heading' );
 		expect( openPanel ).not.toHaveBeenCalled();
 		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 	} );
