@@ -1,8 +1,4 @@
-import {
-	DOCKED_WIDTH_VAR,
-	NAVIGATOR_DOCKED_BODY_CLASS,
-	NAVIGATOR_WIDTH_VAR,
-} from '../hooks/use-docked-layout';
+import { DOCKED_WIDTH_VAR, NAVIGATOR_DOCKED_BODY_CLASS, NAVIGATOR_WIDTH_VAR } from '../hooks/use-docked-layout';
 
 export const APP_BAR_HEIGHT_PX = 48;
 

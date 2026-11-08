@@ -1,7 +1,4 @@
-import {
-	NAVIGATOR_DOCKED_BODY_CLASS,
-	NAVIGATOR_WIDTH_VAR,
-} from '../../hooks/use-docked-layout';
+import { NAVIGATOR_DOCKED_BODY_CLASS, NAVIGATOR_WIDTH_VAR } from '../../hooks/use-docked-layout';
 import { APP_BAR_HEIGHT_PX, getDockedMaxInlineSize, getSidePanelInlineSize } from '../viewport-bounds';
 
 const SIDE_PANEL_WIDTH_PX = 280;
