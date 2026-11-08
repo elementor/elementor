@@ -7,6 +7,10 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,6 +61,24 @@ abstract class Atomic_Menu_Locked_Element extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_props( array_merge(
+							[
+								'padding' => Size_Prop_Type::generate( [
+									'size' => 0,
+									'unit' => 'px',
+								] ),
+							],
+							$this->define_base_style_props()
+						) )
+				),
+		];
+	}
+
+	protected function define_base_style_props(): array {
 		return [];
 	}
 

@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -109,6 +110,10 @@ class Atomic_Menu extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_props( [
 							'display' => String_Prop_Type::generate( 'flex' ),
+							'padding' => Size_Prop_Type::generate( [
+								'size' => 0,
+								'unit' => 'px',
+							] ),
 						] )
 				),
 		];
