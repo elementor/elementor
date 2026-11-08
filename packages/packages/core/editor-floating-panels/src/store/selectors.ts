@@ -45,6 +45,10 @@ export function selectIsResizable( state: GlobalState, id: string ): boolean {
 	return state.floatingPanels.isResizableById[ id ] ?? false;
 }
 
+export function selectIsDocked( state: GlobalState, id: string ): boolean {
+	return state.floatingPanels.isDockedById[ id ] ?? false;
+}
+
 export function selectPanelTitle( state: GlobalState, id: string ): string | undefined {
 	return state.floatingPanels.titlesById[ id ];
 }

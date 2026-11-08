@@ -6,6 +6,7 @@ import {
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID, openAngieIframe } from './boot-angie-sdk';
 import { isAngiePluginActive } from './is-angie-plugin-active';
+import { openInstalledAngieSidebar } from './open-installed-angie';
 
 /**
  * Fields both the Angie plugin host and the Core SDK accept.
@@ -71,13 +72,18 @@ const openSdkAngie = async ( request: OpenAngieRequest ): Promise< void > => {
 
 /**
  * Opens Angie through one entry point.
- * The Angie plugin wins when it is active. Otherwise the Core SDK opens in the docked panel.
+ * The Angie plugin wins when it is active or its sidebar is already on the page.
+ * Otherwise the Core SDK opens in the docked panel.
  *
  * @param request - Shared prompt and mode, plus host-specific `sdk` or `plugin` fields.
  */
 export const openAngie = async ( request: OpenAngieRequest ): Promise< void > => {
 	if ( isAngiePluginActive() ) {
 		openPluginAngie( request );
+		return;
+	}
+
+	if ( openInstalledAngieSidebar() ) {
 		return;
 	}
 

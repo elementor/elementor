@@ -1,7 +1,7 @@
 import { createFloatingPanel } from '@elementor/editor-floating-panels';
+import { AngieIcon } from '@elementor/icons';
 
 import AngiePanel from './components/angie-panel';
-import AngieToggleIcon from './components/angie-toggle-icon';
 import {
 	ANGIE_PANEL_DEFAULT_HEIGHT,
 	ANGIE_PANEL_DEFAULT_WIDTH,
@@ -14,7 +14,7 @@ import {
 export const angiePanel = createFloatingPanel( {
 	id: ANGIE_PANEL_ID,
 	title: 'Angie',
-	icon: AngieToggleIcon,
+	icon: AngieIcon,
 	component: AngiePanel,
 	isDocked: true,
 	keepMounted: true,
