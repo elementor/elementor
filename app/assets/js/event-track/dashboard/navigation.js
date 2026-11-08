@@ -17,13 +17,9 @@ const ADMIN_NAV_CLICK_EVENT = 'elementor/admin/nav-click';
 
 class NavigationTracking extends BaseTracking {
 	static init() {
-		if ( WpDashboardTracking.isEditorOneActive() ) {
-			this.attachSidebarNavigationTracking();
-			this.attachElementorHomeMenuTracking();
-		} else {
-			this.attachElementorMenuTracking();
-		}
-
+		this.attachSidebarNavigationTracking();
+		this.attachElementorMenuTracking();
+		this.attachElementorHomeMenuTracking();
 		this.attachTemplatesMenuTracking();
 	}
 
