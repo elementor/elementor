@@ -169,7 +169,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
-	public function test_import__creates_dependencies_first_and_keeps_content_as_is() {
+	public function test_import__creates_dependencies_first_with_regenerated_element_ids() {
 		// Arrange
 		$this->write_kit( [
 			self::OUTER_SOURCE_ID => $this->build_kit_entry( 'Outer', [ $this->build_instance_element( 'outer-instance', self::INNER_SOURCE_ID ) ], 'uid-outer' ),
@@ -188,14 +188,74 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertLessThan( $succeed[ self::OUTER_SOURCE_ID ], $succeed[ self::INNER_SOURCE_ID ] );
 
 		$inner = $this->get_component( $succeed[ self::INNER_SOURCE_ID ] );
-		$this->assertSame( 'inner-heading', $inner->get_elements_data()[0]['id'] );
+		$new_heading_id = $inner->get_elements_data()[0]['id'];
+		$this->assertNotSame( 'inner-heading', $new_heading_id );
 		$this->assertSame( 'uid-inner', $inner->get_component_uid() );
 		$this->assertSame( 'Inner', $inner->get_post()->post_title );
 		$this->assertSame( self::SESSION_ID, get_post_meta( $inner->get_main_id(), '_elementor_import_session_id', true ) );
 
 		$raw_overridable_props = get_post_meta( $inner->get_main_id(), Component_Document::OVERRIDABLE_PROPS_META_KEY, true );
 		$this->assertIsString( $raw_overridable_props );
-		$this->assertSame( 'inner-heading', json_decode( $raw_overridable_props, true )['props'][ self::OVERRIDE_KEY ]['elementId'] );
+		$this->assertSame( $new_heading_id, json_decode( $raw_overridable_props, true )['props'][ self::OVERRIDE_KEY ]['elementId'] );
+	}
+
+	public function test_import__nested_prop_points_at_regenerated_ids_of_both_components() {
+		// Arrange
+		$outer_props = $this->build_overridable_props( 'outer-instance' );
+		$outer_props['props'][ self::OVERRIDE_KEY ]['widgetType'] = Component_Instance::get_element_type();
+		$outer_props['props'][ self::OVERRIDE_KEY ]['originValue'] = [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => self::OVERRIDE_KEY,
+				'override_value' => null,
+				'schema_source' => [
+					'type' => 'component',
+					'id' => self::INNER_SOURCE_ID,
+				],
+			],
+		];
+		$outer_props['props'][ self::OVERRIDE_KEY ]['originPropFields'] = [
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'propKey' => 'title',
+			'elementId' => 'inner-heading',
+		];
+		$this->write_kit( [
+			self::OUTER_SOURCE_ID => $this->build_kit_entry( 'Outer', [ $this->build_instance_element( 'outer-instance', self::INNER_SOURCE_ID ) ], 'uid-outer', $outer_props ),
+			self::INNER_SOURCE_ID => $this->build_kit_entry( 'Inner', [ $this->build_heading_element( 'inner-heading' ) ], 'uid-inner', $this->build_overridable_props( 'inner-heading' ) ),
+		], [
+			self::OUTER_SOURCE_ID => [ 'depends_on' => [ self::INNER_SOURCE_ID ] ],
+		] );
+
+		// Act
+		$result = ( new Import_Runner() )->import( $this->build_runner_data(), [] );
+
+		// Assert
+		$succeed = $result['content'][ Component_Document::TYPE ]['succeed'];
+		$inner = $this->get_component( $succeed[ self::INNER_SOURCE_ID ] );
+		$outer = $this->get_component( $succeed[ self::OUTER_SOURCE_ID ] );
+		$stored_prop = $outer->get_json_meta( Component_Document::OVERRIDABLE_PROPS_META_KEY )['props'][ self::OVERRIDE_KEY ];
+
+		$this->assertNotSame( 'outer-instance', $outer->get_elements_data()[0]['id'] );
+		$this->assertSame( $outer->get_elements_data()[0]['id'], $stored_prop['elementId'] );
+		$this->assertSame( $inner->get_elements_data()[0]['id'], $stored_prop['originPropFields']['elementId'] );
+		$this->assertSame( $succeed[ self::INNER_SOURCE_ID ], $stored_prop['originValue']['value']['schema_source']['id'] );
+	}
+
+	public function test_import__same_kit_twice_gets_distinct_element_ids() {
+		// Arrange
+		$this->write_kit( [
+			self::INNER_SOURCE_ID => $this->build_kit_entry( 'Inner', [ $this->build_heading_element( 'inner-heading' ) ], 'uid-inner' ),
+		] );
+		$first = ( new Import_Runner() )->import( $this->build_runner_data(), [] );
+
+		// Act
+		$second = ( new Import_Runner() )->import( $this->build_runner_data(), [] );
+
+		// Assert
+		$first_id = $this->get_component( $first['content'][ Component_Document::TYPE ]['succeed'][ self::INNER_SOURCE_ID ] )->get_elements_data()[0]['id'];
+		$second_id = $this->get_component( $second['content'][ Component_Document::TYPE ]['succeed'][ self::INNER_SOURCE_ID ] )->get_elements_data()[0]['id'];
+		$this->assertNotSame( $first_id, $second_id );
 	}
 
 	public function test_import__writes_overridable_props_meta_as_is_without_validation() {
