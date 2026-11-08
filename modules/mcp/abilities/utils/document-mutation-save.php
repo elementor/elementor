@@ -19,8 +19,24 @@ class Document_Mutation_Save {
 		Document $document,
 		array $elements
 	) {
-		$result = $mutator->save_as_draft( $document, $elements, true );
+		return self::ensure_document( $mutator->save_as_draft( $document, $elements, true ) );
+	}
 
+	/**
+	 * @return Document|\WP_Error
+	 */
+	public static function settings_preserving_live_status(
+		Document_Mutator $mutator,
+		Document $document,
+		array $settings
+	) {
+		return self::ensure_document( $mutator->save_settings_preserving_live_status( $document, $settings ) );
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private static function ensure_document( $result ) {
 		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
