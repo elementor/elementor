@@ -170,6 +170,68 @@ class Test_Document_Mutator_Save_As_Draft extends Elementor_Test_Base {
 		$this->assertSame( Page_Templates_Module::TEMPLATE_HEADER_FOOTER, get_post_meta( $post->ID, '_wp_page_template', true ) );
 	}
 
+	public function test_save_as_draft__preserve_flag_on__published_post__keeps_third_party_template_writes() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$document = Plugin::$instance->documents->get( $post->ID );
+		$document->save( [ 'elements' => self::ORIGINAL_ELEMENTS ] );
+		update_post_meta( $post->ID, '_wp_page_template', Page_Templates_Module::TEMPLATE_CANVAS );
+		$document->get_autosave( 0, true );
+		$this->move_modified_date_to_the_past( $post->ID );
+		$write_live_template_on_save = function ( $post_id ) use ( $post ) {
+			if ( wp_is_post_autosave( $post_id ) ) {
+				update_post_meta( $post->ID, '_wp_page_template', Page_Templates_Module::TEMPLATE_HEADER_FOOTER );
+			}
+		};
+		add_action( 'save_post', $write_live_template_on_save );
+
+		try {
+			// Act.
+			Document_Mutator::instance()->save_as_draft( $document, self::NEW_ELEMENTS, true );
+		} finally {
+			remove_action( 'save_post', $write_live_template_on_save );
+		}
+
+		// Assert.
+		$this->assertSame( Page_Templates_Module::TEMPLATE_HEADER_FOOTER, get_post_meta( $post->ID, '_wp_page_template', true ) );
+	}
+
+	public function test_save_settings_preserving_live_status__published_post__writes_settings_to_the_autosave() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$document = Plugin::$instance->documents->get( $post->ID );
+		$document->save( [ 'elements' => self::ORIGINAL_ELEMENTS ] );
+		update_post_meta( $post->ID, '_wp_page_template', Page_Templates_Module::TEMPLATE_CANVAS );
+
+		// Act.
+		$result = Document_Mutator::instance()->save_settings_preserving_live_status( $document, [
+			'template' => Page_Templates_Module::TEMPLATE_HEADER_FOOTER,
+			'hide_title' => 'yes',
+		] );
+
+		// Assert.
+		$this->assertInstanceOf( Document::class, $result );
+		$this->assertNotEquals( $post->ID, $result->get_post()->ID );
+		$this->assertSame( Page_Templates_Module::TEMPLATE_CANVAS, get_post_meta( $post->ID, '_wp_page_template', true ) );
+		$this->assertEmpty( get_post_meta( $post->ID, '_elementor_page_settings', true ) );
+		$this->assertSame( Page_Templates_Module::TEMPLATE_HEADER_FOOTER, get_metadata( 'post', $result->get_post()->ID, '_wp_page_template', true ) );
+		$this->assertSame( 'yes', get_metadata( 'post', $result->get_post()->ID, '_elementor_page_settings', true )['hide_title'] ?? null );
+	}
+
+	/**
+	 * `Utils::get_post_autosave` only returns autosaves modified strictly after the main post.
+	 */
+	private function move_modified_date_to_the_past( int $post_id ): void {
+		global $wpdb;
+
+		$past = gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) );
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified' => $past, 'post_modified_gmt' => $past ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+	}
+
 	public function test_save_as_draft__preserve_flag_on__draft_post__writes_to_main_document() {
 		// Arrange.
 		$this->act_as_admin();
