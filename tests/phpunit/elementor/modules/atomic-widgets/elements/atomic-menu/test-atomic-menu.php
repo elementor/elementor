@@ -53,12 +53,18 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		return $node;
 	}
 
-	private function render_menu( array $settings = [] ): string {
+	private function render_menu( array $settings = [], ?array $first_item_link = null ): string {
 		$seq = 0;
+		$children = $this->get_config( 'e-menu' )['default_children'];
+
+		if ( null !== $first_item_link ) {
+			$children[0]['elements'][0]['elements'][0]['settings']['link'] = $first_item_link;
+		}
+
 		$tree = $this->expand( [
 			'elType' => 'e-menu',
 			'settings' => $settings,
-			'elements' => $this->get_config( 'e-menu' )['default_children'],
+			'elements' => $children,
 		], $seq );
 
 		$instance = Plugin::$instance->elements_manager->create_element_instance( $tree );
@@ -187,5 +193,74 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$nav = $document->getElementsByTagName( 'nav' )->item( 0 );
 
 		$this->assertSame( 'Main "navigation"', $nav->getAttribute( 'aria-label' ) );
+	}
+
+	private function load_html( string $html ): \DOMXPath {
+		$document = new \DOMDocument();
+		libxml_use_internal_errors( true );
+		$document->loadHTML( '<?xml encoding="utf-8" ?>' . $html );
+
+		return new \DOMXPath( $document );
+	}
+
+	public function test_menu_item_renders_as_anchor_with_url_destination() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$xpath = $this->load_html( $this->render_menu( [], [
+			'$$type' => 'link',
+			'value' => [
+				'destination' => [
+					'$$type' => 'url',
+					'value' => 'https://example.com/home',
+				],
+				'isTargetBlank' => [
+					'$$type' => 'boolean',
+					'value' => true,
+				],
+			],
+		] ) );
+
+		$anchors = $xpath->query( '//nav/ul/li/a' );
+		$this->assertSame( 1, $anchors->length );
+		$this->assertSame( 'https://example.com/home', $anchors->item( 0 )->getAttribute( 'href' ) );
+		$this->assertSame( '_blank', $anchors->item( 0 )->getAttribute( 'target' ) );
+		$this->assertSame( 3, $xpath->query( '//nav/ul/li/span' )->length );
+	}
+
+	public function test_menu_item_link_to_a_page_resolves_to_its_permalink() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$page_id = self::factory()->post->create( [
+			'post_type' => 'page',
+			'post_title' => 'About us',
+			'post_status' => 'publish',
+		] );
+
+		$xpath = $this->load_html( $this->render_menu( [], [
+			'$$type' => 'link',
+			'value' => [
+				'destination' => [
+					'$$type' => 'query',
+					'value' => [
+						'id' => [
+							'$$type' => 'number',
+							'value' => $page_id,
+						],
+					],
+				],
+			],
+		] ) );
+
+		$anchors = $xpath->query( '//nav/ul/li/a' );
+		$this->assertSame( 1, $anchors->length );
+		$this->assertSame( get_permalink( $page_id ), $anchors->item( 0 )->getAttribute( 'href' ) );
+	}
+
+	public function test_menu_item_without_link_stays_a_span() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$xpath = $this->load_html( $this->render_menu() );
+
+		$this->assertSame( 0, $xpath->query( '//nav//a' )->length );
 	}
 }
