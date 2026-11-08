@@ -53,6 +53,20 @@ class Remap_Component_Instance_Ids {
 			return $settings;
 		}
 
-		return Component_Instance_Prop_Type::set_component_id( $settings, (int) $post_ids_map[ (int) $source_id ] );
+		$settings = Component_Instance_Prop_Type::set_component_id( $settings, (int) $post_ids_map[ (int) $source_id ] );
+
+		$overrides = $settings['component_instance']['value']['overrides']['value'] ?? null;
+
+		// Writing an empty overrides array without `$$type` fails `component_instance` validation.
+		if ( ! is_array( $overrides ) ) {
+			return $settings;
+		}
+
+		$settings['component_instance']['value']['overrides']['value'] = array_map(
+			fn( $item ) => is_array( $item ) ? Remap_Override_Schema_Source::apply( $item, $post_ids_map ) : $item,
+			$overrides
+		);
+
+		return $settings;
 	}
 }

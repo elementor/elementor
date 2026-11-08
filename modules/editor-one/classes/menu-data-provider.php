@@ -6,6 +6,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Event_Id_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -370,7 +371,7 @@ class Menu_Data_Provider {
 	private function create_expanded_child_item_data( Menu_Item_Interface $item, string $item_slug, bool $is_first ): array {
 		$url = $this->resolve_item_url( $item, $item_slug );
 
-		return [
+		return $this->with_tag( [
 			'slug' => $item_slug,
 			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $url,
@@ -378,7 +379,7 @@ class Menu_Data_Provider {
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_first,
 			'event_id' => $this->resolve_event_id( $item, $item_slug ),
-		];
+		], $item );
 	}
 
 	private function should_include_flyout_item( Menu_Item_Interface $item, string $item_slug, array $existing_slugs, array $excluded_slugs ): bool {
@@ -406,7 +407,7 @@ class Menu_Data_Provider {
 		$group_id = $has_children ? $item->get_group_id() : '';
 		$is_third_party_parent = Menu_Config::THIRD_PARTY_GROUP_ID === $item->get_group_id();
 
-		return [
+		return $this->with_tag( [
 			'slug' => $item_slug,
 			'label' => $this->format_flyout_label( $item, $item_slug ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
@@ -415,7 +416,17 @@ class Menu_Data_Provider {
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_third_party_parent,
 			'event_id' => $this->resolve_event_id( $item, $item_slug ),
-		];
+		], $item );
+	}
+
+	private function with_tag( array $item_data, Menu_Item_Interface $item ): array {
+		if ( ! $item instanceof Menu_Item_With_Tag_Interface || '' === $item->get_tag() ) {
+			return $item_data;
+		}
+
+		$item_data['tag'] = $item->get_tag();
+
+		return $item_data;
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
@@ -550,6 +561,49 @@ class Menu_Data_Provider {
 		} );
 	}
 
+	public function get_event_ids_by_slug(): array {
+		$event_ids = [];
+
+		foreach ( $this->get_wp_menu_slugs() as $slug ) {
+			$event_ids[ $this->to_menu_href_key( $slug ) ] = $this->derive_event_id_from_slug( $slug );
+		}
+
+		foreach ( array_merge( $this->level3_items, $this->level4_items ) as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$event_ids[ $this->to_menu_href_key( $item_slug ) ] = $this->resolve_event_id( $item, $item_slug );
+			}
+		}
+
+		return $event_ids;
+	}
+
+	private function get_wp_menu_slugs(): array {
+		global $submenu;
+
+		$parent_slugs = [
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			Menu_Config::LEGACY_TEMPLATES_SLUG,
+		];
+		$slugs = $parent_slugs;
+
+		foreach ( $parent_slugs as $parent_slug ) {
+			$slugs = array_merge( $slugs, array_column( (array) ( $submenu[ $parent_slug ] ?? [] ), 2 ) );
+		}
+
+		return array_unique( $slugs );
+	}
+
+	private function to_menu_href_key( string $slug ): string {
+		$normalized_slug = $this->slug_normalizer->normalize( $slug );
+
+		if ( str_contains( $normalized_slug, '.php' ) ) {
+			return $normalized_slug;
+		}
+
+		return 'admin.php?page=' . $normalized_slug;
+	}
+
 	private function resolve_event_id( Menu_Item_Interface $item, string $item_slug ): string {
 		if ( $item instanceof Menu_Item_With_Event_Id_Interface ) {
 			return $item->get_event_id();
@@ -568,11 +622,29 @@ class Menu_Data_Provider {
 			return $slug_event_map[ $slug ];
 		}
 
-		$event_id = preg_replace( '/^elementor-/', '', $slug );
+		$event_id = preg_replace( '/^elementor-/', '', $this->extract_event_id_source( $slug ) );
 		$event_id = preg_replace( '/[?#].*$/', '', $event_id );
 		$event_id = str_replace( [ '-', ' ' ], '_', $event_id );
 
 		return strtolower( $event_id );
+	}
+
+	private function extract_event_id_source( string $slug ): string {
+		$slug = $this->slug_normalizer->normalize( $slug );
+		$query = [];
+		parse_str( (string) wp_parse_url( $slug, PHP_URL_QUERY ), $query );
+
+		if ( ! empty( $query['post_type'] ) ) {
+			return $query['post_type'];
+		}
+
+		if ( empty( $query['page'] ) ) {
+			return $slug;
+		}
+
+		$fragment = trim( (string) wp_parse_url( $slug, PHP_URL_FRAGMENT ), '/' );
+
+		return $fragment ? $fragment : $query['page'];
 	}
 
 	private function format_flyout_label( Menu_Item_Interface $item, string $item_slug ): string {

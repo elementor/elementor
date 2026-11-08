@@ -878,12 +878,13 @@ class Import {
 	/**
 	 * Get the data that requires updating/replacement when imported.
 	 *
-	 * @return array{post_ids: array, term_ids: array}
+	 * @return array{post_ids: array, term_ids: array, component_ids: array}
 	 */
 	private function get_imported_data_replacements(): array {
 		return [
 			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
+			'component_ids' => Utils::map_old_new_component_ids( $this->imported_data ),
 		];
 	}
 
@@ -897,8 +898,13 @@ class Import {
 		foreach ( $this->documents_data as $new_id => $data ) {
 			$document = Plugin::$instance->documents->get( $new_id );
 
+			// A runner may delete a post it failed to import after its data was collected.
+			if ( ! $document ) {
+				continue;
+			}
+
 			if ( isset( $data['elements'] ) ) {
-				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['post_ids'] ?? [] );
+				$data['elements'] = Components_Module::prepare_imported_elements( $data['elements'], $imported_data_replacements['component_ids'] );
 				$data['elements'] = Atomic_Prop_Remap::apply( $data['elements'], $imported_data_replacements );
 				$this->merge_atomic_prop_remap_warnings( Atomic_Prop_Remap::consume_warnings() );
 				$data['elements'] = $document->on_import_update_dynamic_content( $data['elements'], $imported_data_replacements );

@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { fetchMarkdownPreview, revertMarkdownContent, saveMarkdownContent } from '../../api';
+import { MARKDOWN_SETTINGS_KEY } from '../../constants';
 import { useMarkdownItems } from '../../hooks/use-markdown-items';
 import { ConfirmDialog } from '../confirm-dialog';
 import { ContentEditDialog } from '../content-edit-dialog';
@@ -20,11 +21,11 @@ const DIALOG_MODE_VIEW = 'view';
 const DIALOG_MODE_REVERT = 'revert';
 
 export const MarkdownContentPanel = ( { settings } ) => {
-	const { isEnabled, isSaving, postTypes, togglePostType } = settings;
-	const includedTypesKey = getIncludedTypesKey( postTypes );
+	const { excludedPostIds, exclusionsSavedVersion, flushExclusions, isEnabled, isSaving, postTypes, togglePostExclusion, togglePostType } = settings;
 	const [ revision, setRevision ] = useState( 0 );
+	const itemsKey = `${ getIncludedTypesKey( postTypes ) }|${ exclusionsSavedVersion }|${ revision }`;
 	const { items: defaultItems } = useMarkdownItems( {
-		refreshKey: `${ includedTypesKey }:${ revision }`,
+		refreshKey: itemsKey,
 		isPaused: ! isEnabled || isSaving,
 	} );
 	const [ picked, setPicked ] = useState( null );
@@ -32,11 +33,11 @@ export const MarkdownContentPanel = ( { settings } ) => {
 	const [ isOverridden, setIsOverridden ] = useState( false );
 	const [ dialogMode, setDialogMode ] = useState( null );
 
-	const pickedItem = picked?.typesKey === includedTypesKey ? picked.item : null;
+	const pickedItem = picked?.itemsKey === itemsKey ? picked.item : null;
 	const selectedItem = isEnabled ? pickedItem ?? defaultItems[ 0 ] ?? null : null;
 	const selectedItemId = selectedItem?.id ?? 0;
 
-	const selectItem = ( item ) => setPicked( { typesKey: includedTypesKey, item } );
+	const selectItem = ( item ) => setPicked( { itemsKey, item } );
 	const closeDialog = () => setDialogMode( null );
 
 	const refreshAfterChange = () => setRevision( ( current ) => current + 1 );
@@ -77,9 +78,9 @@ export const MarkdownContentPanel = ( { settings } ) => {
 		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
 			<Stack spacing={ 3 } px={ 6 } py={ 3 } flexGrow={ 1 } flexShrink={ 1 } flexBasis={ 0 } minWidth={ 0 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="subtitle1">{ __( 'Make your content easier to read', 'elementor' ) }</Typography>
+					<Typography variant="subtitle1">{ __( 'Help agents get clearer content', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'Give agents a clean Markdown version of your content', 'elementor' ) }
+						{ __( 'Publishes a clean Markdown version of the pages and posts, so agents can read just the text and hierarchy, without layout code.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Stack spacing={ 1 }>
@@ -88,6 +89,12 @@ export const MarkdownContentPanel = ( { settings } ) => {
 						postTypes={ postTypes }
 						isDisabled={ ! isEnabled || isSaving }
 						onToggle={ togglePostType }
+						exclusions={ {
+							module: MARKDOWN_SETTINGS_KEY,
+							excludedPostIds,
+							onToggle: togglePostExclusion,
+							onClose: flushExclusions,
+						} }
 					/>
 				</Stack>
 				{ selectedItem && isOverridden && (
@@ -141,9 +148,13 @@ export const MarkdownContentPanel = ( { settings } ) => {
 
 MarkdownContentPanel.propTypes = {
 	settings: PropTypes.shape( {
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ).isRequired,
+		exclusionsSavedVersion: PropTypes.number.isRequired,
+		flushExclusions: PropTypes.func.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
 		isSaving: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
+		togglePostExclusion: PropTypes.func.isRequired,
 		togglePostType: PropTypes.func.isRequired,
 	} ).isRequired,
 };

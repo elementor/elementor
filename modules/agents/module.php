@@ -9,6 +9,8 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
+use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
+use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
@@ -21,19 +23,24 @@ use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
 use Elementor\Modules\Agents\Classes\Markdown_Preview_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Revert_Ajax;
 use Elementor\Modules\Agents\Classes\Markdown_Search_Ajax;
+use Elementor\Modules\Agents\Classes\Post_Exclusions;
 use Elementor\Modules\Agents\Classes\Request_Path;
 use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Mcp_Server_Card;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
@@ -126,7 +133,12 @@ class Module extends BaseModule {
 
 		( new Scanner_Rest_Api( new Scanner_Client(), $this->scanner_store ) )->register_hooks();
 
-		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
+		$watched_options = array_merge(
+			[ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ],
+			Mcp_Discovery::get_settings_option_names()
+		);
+
+		foreach ( $watched_options as $option ) {
 			add_action( "add_option_{$option}", [ $this, 'on_settings_add' ], 10, 2 );
 			add_action( "update_option_{$option}", [ $this, 'on_settings_update' ], 10, 3 );
 		}
@@ -183,10 +195,14 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Api_Catalog() );
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
+		$this->register_well_known_endpoint( new Ard_Catalog( $this ) );
+		$this->register_well_known_endpoint( new Mcp_Server_Card() );
 
 		$this->markdown_manual_content = new Markdown_Manual_Content( $this->generator );
 		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
 
+		$this->register_component( new Mcp_Discovery() );
+		$this->register_component( new Openapi_Spec( $this->settings ) );
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
 		$this->register_component( new Markdown_Not_Found( $this->settings, $this->markdown_endpoint, $this ) );
@@ -195,6 +211,8 @@ class Module extends BaseModule {
 		$this->register_component( $this->webmcp_browser_tools );
 
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
+
+		( new Agents_Sidebar_Config() )->register();
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
 		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
@@ -263,6 +281,9 @@ class Module extends BaseModule {
 
 		$markdown_search_ajax = new Markdown_Search_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
 		$ajax->register_ajax_action( Markdown_Search_Ajax::ACTION, [ $markdown_search_ajax, 'handle' ] );
+
+		$content_items_ajax = new Content_Items_Ajax( $this->settings, new Markdown_Content_Catalog( $this->markdown_manual_content ) );
+		$ajax->register_ajax_action( Content_Items_Ajax::ACTION, [ $content_items_ajax, 'handle' ] );
 	}
 
 	public function ajax_activate(): void {
@@ -455,7 +476,7 @@ class Module extends BaseModule {
 		}
 
 		$overrides = $this->get_overrides();
-		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types() );
+		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() );
 
 		if ( '' !== $content ) {
 			$this->cache->set_llms( $content );
@@ -475,7 +496,7 @@ class Module extends BaseModule {
 		}
 
 		$overrides = $this->get_overrides();
-		$content   = $this->generator->generate_llms_full_txt( $overrides, $this->settings->get_llms_post_types() );
+		$content   = $this->generator->generate_llms_full_txt( $overrides, $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() );
 
 		if ( '' !== $content ) {
 			$this->cache->set_llms_full( $content );
@@ -792,7 +813,7 @@ class Module extends BaseModule {
 	 *
 	 * @return string Path with trailing slash.
 	 */
-	private static function get_llms_file_root_path(): string {
+	public static function get_llms_file_root_path(): string {
 		$home_url = trailingslashit( home_url() );
 		$site_url = trailingslashit( site_url() );
 
@@ -945,6 +966,7 @@ class Module extends BaseModule {
 
 		return [
 			'isActivated'        => $this->settings->is_activated(),
+			'readinessScoreUrl'  => admin_url( 'admin.php?page=' . self::PAGE_ID ),
 			'llms'               => $this->get_llms_state( $unavailable_reasons ),
 			'markdown'           => $this->get_markdown_state(),
 			'botAccess'          => $this->get_bot_access_state( $unavailable_reasons ),
@@ -1057,24 +1079,29 @@ class Module extends BaseModule {
 			'hasPhysicalFile'    => self::has_physical_llms_file(),
 			'unavailableReason'  => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
 			'fileUrl'            => home_url( '/' . self::LLMS_FILENAME ),
-			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types() ),
+			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() ),
+			'excludedPostIds'    => $this->settings->get_llms_excluded_post_ids(),
 		];
 	}
 
 	private function get_markdown_state(): array {
 		return [
-			'enabled'   => $this->settings->is_markdown_enabled(),
-			'postTypes' => $this->get_post_type_rows( $this->settings->get_markdown_post_types() ),
+			'enabled'         => $this->settings->is_markdown_enabled(),
+			'postTypes'       => $this->get_post_type_rows( $this->settings->get_markdown_post_types(), $this->settings->get_markdown_excluded_post_ids() ),
+			'excludedPostIds' => $this->settings->get_markdown_excluded_post_ids(),
 		];
 	}
 
 	/**
 	 * @param string[] $included_post_types
+	 * @param int[]    $excluded_post_ids
 	 */
-	private function get_post_type_rows( array $included_post_types ): array {
-		$post_types = [];
+	private function get_post_type_rows( array $included_post_types, array $excluded_post_ids = [] ): array {
+		$available_post_types = $this->generator->get_available_post_types();
+		$excluded_counts      = Post_Exclusions::count_published_by_post_type( $excluded_post_ids, array_keys( $available_post_types ) );
+		$post_types           = [];
 
-		foreach ( $this->generator->get_available_post_types() as $name => $label ) {
+		foreach ( $available_post_types as $name => $label ) {
 			$count = (int) ( wp_count_posts( $name )->publish ?? 0 );
 
 			if ( $count <= 0 ) {
@@ -1082,10 +1109,11 @@ class Module extends BaseModule {
 			}
 
 			$post_types[] = [
-				'name'     => $name,
-				'label'    => $label,
-				'count'    => $count,
-				'included' => in_array( $name, $included_post_types, true ),
+				'name'          => $name,
+				'label'         => $label,
+				'count'         => $count,
+				'included'      => in_array( $name, $included_post_types, true ),
+				'excludedCount' => $excluded_counts[ $name ] ?? 0,
 			];
 		}
 

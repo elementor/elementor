@@ -5,7 +5,7 @@ import { LlmsTxtPanel } from 'elementor/modules/agents/assets/js/admin/component
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text ) => text,
-	sprintf: ( format, ...args ) => args.reduce( ( text, arg ) => text.replace( /%[sd]/, arg ), format ),
+	sprintf: ( format, ...args ) => args.reduce( ( text, arg ) => text.replace( /%(\d\$)?[sd]/, arg ), format ),
 } ) );
 
 jest.mock( '@elementor/icons', () => ( {
@@ -14,9 +14,15 @@ jest.mock( '@elementor/icons', () => ( {
 	ArrowsDiagonalIcon: () => <span />,
 	ChevronDownIcon: () => <span />,
 	ChevronUpIcon: () => <span />,
+	ExternalLinkIcon: () => <span />,
 	FileIcon: () => <span />,
 	PencilIcon: () => <span />,
 	PinIcon: () => <span />,
+	ZoomIcon: () => <span />,
+} ) );
+
+jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
+	listContentItems: jest.fn( () => Promise.resolve( { items: [], hasMore: false } ) ),
 } ) );
 
 jest.mock( '@elementor/ui/Alert', () => ( { children } ) => <div role="alert">{ children }</div> );
@@ -51,6 +57,8 @@ const createPostTypes = ( total ) => Array.from( { length: total }, ( _, index )
 
 const createSettings = ( overrides = {} ) => ( {
 	content: '# Site',
+	excludedPostIds: [],
+	flushExclusions: jest.fn( () => Promise.resolve() ),
 	hasPhysicalFile: false,
 	isEnabled: true,
 	isManuallyEdited: false,
@@ -58,6 +66,7 @@ const createSettings = ( overrides = {} ) => ( {
 	revertContent: jest.fn( () => Promise.resolve() ),
 	saveContent: jest.fn( () => Promise.resolve() ),
 	takeOverFile: jest.fn( () => Promise.resolve() ),
+	togglePostExclusion: jest.fn(),
 	togglePostType: jest.fn(),
 	...overrides,
 } );
@@ -101,6 +110,38 @@ describe( 'LlmsTxtPanel', () => {
 
 		// Assert
 		expect( settings.togglePostType ).toHaveBeenCalledWith( 'type-1' );
+	} );
+
+	it( 'shows published and agent-visible counts when posts are excluded', () => {
+		// Arrange
+		const postTypes = [ { name: 'page', label: 'Pages', count: 5, included: true, excludedCount: 2 } ];
+
+		// Act
+		render( <LlmsTxtPanel settings={ createSettings( { postTypes } ) } /> );
+
+		// Assert
+		expect( screen.getByText( '3/5 published' ) ).toBeTruthy();
+	} );
+
+	it( 'opens the post list when the post type name is clicked', async () => {
+		// Arrange
+		const settings = createSettings();
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Choose which Type 1 to include' } ) );
+
+		// Assert
+		expect( await screen.findByRole( 'dialog' ) ).toBeTruthy();
+		expect( screen.getByRole( 'heading', { name: 'Type 1' } ) ).toBeTruthy();
+	} );
+
+	it( 'does not open the post list when the file was edited manually', () => {
+		// Arrange & Act
+		render( <LlmsTxtPanel settings={ createSettings( { isManuallyEdited: true } ) } /> );
+
+		// Assert
+		expect( screen.queryByRole( 'button', { name: 'Choose which Type 1 to include' } ) ).toBeNull();
 	} );
 
 	it( 'keeps rows checked but disabled and shows the warning when the file was edited manually', () => {
