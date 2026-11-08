@@ -179,10 +179,10 @@ class Module extends BaseModule {
 		if ( self::is_site_mcp_exposure_enabled() ) {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 			( new Mcp_Media_Upload_REST_API() )->register_hooks();
-		}
 
-		if ( ! Utils::has_pro() ) {
-			( new Pro_Features_Server_Instructions() )->register_hooks();
+			if ( ! Utils::has_pro() ) {
+				( new Pro_Features_Server_Instructions() )->register_hooks();
+			}
 		}
 	}
 

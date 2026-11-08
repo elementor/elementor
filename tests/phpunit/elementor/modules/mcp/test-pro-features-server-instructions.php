@@ -17,69 +17,57 @@ class Test_Pro_Features_Server_Instructions extends Elementor_Test_Base {
 	const SERVER_CONFIG_FILTER = 'mcp_adapter_default_server_config';
 	const ADAPTER_DESCRIPTION = 'Default MCP server for WordPress abilities discovery and execution';
 
+	private Pro_Features_Server_Instructions $instructions;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->instructions = new Pro_Features_Server_Instructions();
+	}
+
 	public function tearDown(): void {
-		remove_all_filters( self::SERVER_CONFIG_FILTER );
+		remove_filter( self::SERVER_CONFIG_FILTER, [ $this->instructions, 'append_to_server_config' ] );
 
 		parent::tearDown();
 	}
 
 	public function test_append_to_server_config__keeps_the_original_description_first() {
-		// Arrange
-		$instructions = new Pro_Features_Server_Instructions();
-
 		// Act
-		$config = $instructions->append_to_server_config( [ 'server_description' => self::ADAPTER_DESCRIPTION ] );
+		$config = $this->instructions->append_to_server_config( [ 'server_description' => self::ADAPTER_DESCRIPTION ] );
 
 		// Assert
 		$this->assertStringStartsWith( self::ADAPTER_DESCRIPTION, $config['server_description'] );
-		$this->assertStringContainsString( $instructions->get_instructions(), $config['server_description'] );
-	}
-
-	public function test_append_to_server_config__keeps_the_other_config_values() {
-		// Arrange
-		$instructions = new Pro_Features_Server_Instructions();
-
-		// Act
-		$config = $instructions->append_to_server_config( [
-			'server_description' => self::ADAPTER_DESCRIPTION,
-			'tools' => [ 'elementor/get-structure' ],
-		] );
-
-		// Assert
-		$this->assertSame( [ 'elementor/get-structure' ], $config['tools'] );
+		$this->assertStringContainsString( $this->instructions->get_instructions(), $config['server_description'] );
 	}
 
 	public function test_append_to_server_config__returns_non_array_config_unchanged() {
-		// Arrange
-		$instructions = new Pro_Features_Server_Instructions();
-
 		// Act
-		$result = $instructions->append_to_server_config( 'not-an-array' );
+		$result = $this->instructions->append_to_server_config( 'not-an-array' );
 
 		// Assert
 		$this->assertSame( 'not-an-array', $result );
 	}
 
-	public function test_get_instructions__tells_the_agent_to_flag_pro_once_per_feature_without_a_gate() {
+	public function test_get_instructions__routes_the_agent_to_the_tool_instead_of_guessing() {
 		// Act
-		$text = ( new Pro_Features_Server_Instructions() )->get_instructions();
+		$text = $this->instructions->get_instructions();
 
 		// Assert
-		$this->assertStringContainsString( 'Once per feature, never skipped', $text );
-		$this->assertStringContainsString( 'even if no tool returned pro_license_required and even if a widget lookup returned not_found', $text );
-		$this->assertStringContainsString( 'No silent workarounds', $text );
-		$this->assertStringContainsString( 'applies to that feature only', $text );
+		$this->assertStringStartsWith( 'When using Elementor tools:', $text );
+		$this->assertStringContainsString( 'call the Elementor tool that creates it', $text );
+		$this->assertStringContainsString( 'pro_license_required', $text );
 		$this->assertStringContainsString( 'popups', $text );
+		$this->assertStringNotContainsString( 'suspect', $text );
 	}
 
 	public function test_register_hooks__appends_the_instructions_to_the_default_server_config() {
 		// Arrange
-		( new Pro_Features_Server_Instructions() )->register_hooks();
+		$this->instructions->register_hooks();
 
 		// Act
 		$config = apply_filters( self::SERVER_CONFIG_FILTER, [ 'server_description' => self::ADAPTER_DESCRIPTION ] );
 
 		// Assert
-		$this->assertStringContainsString( 'Elementor Pro features.', $config['server_description'] );
+		$this->assertStringContainsString( 'Let the tool decide', $config['server_description'] );
 	}
 }
