@@ -672,6 +672,27 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertEmpty( $output );
 	}
 
+	public function test_activate_agent_ready__matches_ajax_activate_side_effects() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		add_filter( 'elementor/agents/llms_txt/seo_plugin_owner', function() {
+			return 'rank_math';
+		} );
+
+		try {
+			// Act
+			$this->module->activate_agent_ready();
+
+			// Assert
+			$settings = get_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+			$this->assertFalse( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_LLMS_TXT ]['enabled'] );
+			$this->assertTrue( $settings[ \Elementor\Modules\Agents\Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ]['enabled'] );
+		} finally {
+			remove_all_filters( 'elementor/agents/llms_txt/seo_plugin_owner' );
+			\Elementor\Modules\Agents\Classes\Seo_Llms_Txt_Detector::reset_cache();
+		}
+	}
+
 	public function test_ajax_activate__skips_unavailable_modules() {
 		// Arrange
 		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );

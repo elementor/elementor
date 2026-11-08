@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
+use Elementor\Modules\Agents\Classes\Scanner_Orchestrator;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -28,7 +29,8 @@ class Test_Scanner_Rest_Api extends Elementor_Test_Base {
 
 		$wp_rest_server = new \WP_REST_Server();
 
-		( new Scanner_Rest_Api( new Scanner_Client(), new Scanner_Report_Store() ) )->register_hooks();
+		$orchestrator = new Scanner_Orchestrator( new Scanner_Client(), new Scanner_Report_Store() );
+		( new Scanner_Rest_Api( $orchestrator ) )->register_hooks();
 
 		do_action( 'rest_api_init' );
 
