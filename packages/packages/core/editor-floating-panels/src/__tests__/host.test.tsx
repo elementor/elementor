@@ -8,7 +8,7 @@ import {
 	__registerSlice,
 	__StoreProvider as StoreProvider,
 } from '@elementor/store';
-import { act, screen, within } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
 import FloatingPanelsHost from '../components/internal/host';
 import { DOCKED_BODY_CLASS, DOCKED_WIDTH_VAR } from '../hooks/use-docked-layout';
@@ -229,7 +229,10 @@ describe( 'FloatingPanelsHost', () => {
 		expect( document.body ).toHaveClass( DOCKED_BODY_CLASS );
 		expect( document.body.style.getPropertyValue( DOCKED_WIDTH_VAR ) ).toBe( '400px' );
 		expect( panel ).toHaveAttribute( 'data-docked', 'true' );
-		expect( within( panel ).getAllByRole( 'separator', { hidden: true } ) ).toHaveLength( 1 );
+		// eslint-disable-next-line testing-library/no-node-access
+		expect( panel.querySelectorAll( '[data-resize-edge="inline-start"]' ) ).toHaveLength( 1 );
+		// eslint-disable-next-line testing-library/no-node-access
+		expect( panel.querySelectorAll( '[data-resize-edge], [data-resize-corner]' ) ).toHaveLength( 1 );
 
 		// Act.
 		act( () => {

@@ -1,9 +1,11 @@
 import { getAngieIframe, isAngiePluginAvailable, toggleAngieSidebar } from '@elementor-external/angie-sdk';
 
+import { isAngiePluginActive } from './is-angie-plugin-active';
+
 const PLUGIN_SIDEBAR_ID = 'angie-sidebar-container';
 
 export const isAngiePluginInstalled = (): boolean => {
-	if ( isAngiePluginAvailable() ) {
+	if ( isAngiePluginActive() || isAngiePluginAvailable() ) {
 		return true;
 	}
 

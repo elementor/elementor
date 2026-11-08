@@ -4,8 +4,7 @@ import {
 	setAngieInteractionMode,
 } from '@elementor-external/angie-sdk';
 
-import { bootAngieSdk, EDITOR_ANGIE_APP_ID, openAngieIframe } from './boot-angie-sdk';
-import { isAngiePluginActive } from './is-angie-plugin-active';
+import { bootAngieSdk, EDITOR_ANGIE_APP_ID } from './boot-angie-sdk';
 import { openInstalledAngieSidebar } from './open-installed-angie';
 
 /**
@@ -45,8 +44,7 @@ export const resetAngiePanelOpenerForTests = () => {
 	openPanel = () => {};
 };
 
-const openPluginAngie = ( request: OpenAngieRequest ): void => {
-	openAngieIframe();
+const sendRequestToPlugin = ( request: OpenAngieRequest ): void => {
 	setAngieInteractionMode( request.mode );
 
 	if ( ! request.prompt ) {
@@ -78,12 +76,8 @@ const openSdkAngie = async ( request: OpenAngieRequest ): Promise< void > => {
  * @param request - Shared prompt and mode, plus host-specific `sdk` or `plugin` fields.
  */
 export const openAngie = async ( request: OpenAngieRequest ): Promise< void > => {
-	if ( isAngiePluginActive() ) {
-		openPluginAngie( request );
-		return;
-	}
-
 	if ( openInstalledAngieSidebar() ) {
+		sendRequestToPlugin( request );
 		return;
 	}
 
