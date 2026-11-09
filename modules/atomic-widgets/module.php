@@ -183,6 +183,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
+	const EXPERIMENT_NAV_MENU = 'e_nav_menu';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -211,6 +212,7 @@ class Module extends BaseModule {
 
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
+		$this->register_nav_menu_experiment();
 
 		$this->register_hooks();
 
@@ -279,6 +281,17 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ACCORDION,
 			'title' => esc_html__( 'Accordion', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_nav_menu_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_NAV_MENU,
+			'title' => esc_html__( 'Atomic Menu', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Menu element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,

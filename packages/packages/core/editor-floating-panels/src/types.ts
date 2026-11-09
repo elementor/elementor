@@ -52,6 +52,12 @@ export type FloatingPanelDeclaration = {
 	component: ComponentType;
 	isDraggable?: boolean;
 	isResizable?: boolean;
+	isDocked?: boolean;
+	keepMounted?: boolean;
+	/**
+	 * Restores the panel's last open/closed state from localStorage on load, including docked panels.
+	 */
+	persistOpenState?: boolean;
 	defaults: FloatingPanelDefaults;
 };
 

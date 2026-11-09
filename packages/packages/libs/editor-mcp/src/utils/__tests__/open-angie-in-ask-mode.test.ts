@@ -27,6 +27,35 @@ describe( 'openAngieInAskMode', () => {
 		mockSetAngieInteractionMode.mockReset();
 		mockGetAngieIframe.mockReturnValue( mockAngieIframe );
 		window.location.hash = '';
+		delete ( window as Window & { elementorV2?: unknown } ).elementorV2;
+	} );
+
+	it( 'delegates to the loaded editor Angie package', () => {
+		const openAngie = jest.fn();
+		( window as Window & { elementorV2?: { editorAngie?: { openAngie: typeof openAngie } } } ).elementorV2 = {
+			editorAngie: { openAngie },
+		};
+
+		openAngieInAskMode( 'Help me with ' );
+
+		expect( openAngie ).toHaveBeenCalledWith( { prompt: 'Help me with ', mode: 'ask' } );
+		expect( mockToggleAngieSidebar ).not.toHaveBeenCalled();
+		expect( window.location.hash ).toBe( '' );
+	} );
+
+	it( 'logs when the loaded editor Angie package fails to open', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		const openAngie = jest.fn().mockRejectedValue( new Error( 'fail' ) );
+		( window as Window & { elementorV2?: { editorAngie?: { openAngie: typeof openAngie } } } ).elementorV2 = {
+			editorAngie: { openAngie },
+		};
+
+		openAngieInAskMode( 'Help me with ' );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		expect( consoleErrorSpy ).toHaveBeenCalledWith( 'Failed to open Angie:', expect.any( Error ) );
+
+		consoleErrorSpy.mockRestore();
 	} );
 
 	it( 'does nothing when Angie is not available', () => {

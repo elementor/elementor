@@ -14,6 +14,8 @@ const SidebarNavigation = ( { config } ) => {
 	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
 	useAdminMenuOffset();
 
+	const showUpgradeCta = ! config.isMinimal;
+
 	if ( isCollapsed ) {
 		return (
 			<NavContainer component="nav" collapsed>
@@ -33,13 +35,17 @@ const SidebarNavigation = ( { config } ) => {
 						activeChildSlug={ config.activeChildSlug }
 					/>
 				</ScrollableContent>
-				<Divider />
-				<SidebarUpgradeCta
-					upgradeUrl={ config.upgradeUrl }
-					upgradeText={ config.upgradeText }
-					hasPro={ config.hasPro }
-					collapsed
-				/>
+				{ showUpgradeCta && (
+					<>
+						<Divider />
+						<SidebarUpgradeCta
+							upgradeUrl={ config.upgradeUrl }
+							upgradeText={ config.upgradeText }
+							hasPro={ config.hasPro }
+							collapsed
+						/>
+					</>
+				) }
 			</NavContainer>
 		);
 	}
@@ -55,12 +61,16 @@ const SidebarNavigation = ( { config } ) => {
 					activeChildSlug={ config.activeChildSlug }
 				/>
 			</ScrollableContent>
-			<Divider />
-			<SidebarUpgradeCta
-				upgradeUrl={ config.upgradeUrl }
-				upgradeText={ config.upgradeText }
-				hasPro={ config.hasPro }
-			/>
+			{ showUpgradeCta && (
+				<>
+					<Divider />
+					<SidebarUpgradeCta
+						upgradeUrl={ config.upgradeUrl }
+						upgradeText={ config.upgradeText }
+						hasPro={ config.hasPro }
+					/>
+				</>
+			) }
 		</NavContainer>
 	);
 };
