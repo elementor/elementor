@@ -150,7 +150,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Header style tests', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion header style', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -209,7 +209,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Header style tests - Text Stroke and Shadow', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion header text stroke and shadow', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
