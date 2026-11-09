@@ -9,8 +9,46 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	onInit() {
+		this.bindLayoutShiftCorrection();
+
 		this.observeStickyElements( () => {
 			this.initializeStickyAndAnchorTracking();
+		} );
+	}
+
+	// Same-page anchor links scroll natively (CSS `scroll-behavior: smooth`), and the browser fixes the
+	// destination when the scroll starts. If content above the target grows meanwhile (lazy images,
+	// entrance animations, late widgets), the scroll ends short of the anchor (ED-19404). Re-measure the
+	// target when that scroll ends and, if it moved, smoothly scroll to it once more. `scrollIntoView`
+	// keeps honoring the `scroll-margin-top` this class sets for sticky offsets.
+	bindLayoutShiftCorrection() {
+		document.addEventListener( 'click', ( event ) => {
+			const link = event.target.closest( this.getSettings( 'selectors.links' ) );
+
+			if ( ! link?.hash || link.hostname !== location.hostname || link.pathname !== location.pathname ) {
+				return;
+			}
+
+			const target = this.getAnchorTarget( link );
+
+			// Already in place: the browser won't scroll, so no `scrollend` would come to clear the listener.
+			if ( ! target || Math.abs( target.getBoundingClientRect().top - ( parseFloat( target.style.scrollMarginTop ) || 0 ) ) < 2 ) {
+				return;
+			}
+
+			const startPosition = this.getScrollPosition( target );
+			const realignIfShifted = () => {
+				if ( Math.abs( this.getScrollPosition( target ) - startPosition ) > 2 ) {
+					target.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+				}
+			};
+
+			// Browsers without `scrollend` get a single check after a typical smooth-scroll duration.
+			if ( 'onscrollend' in window ) {
+				window.addEventListener( 'scrollend', realignIfShifted, { once: true } );
+			} else {
+				setTimeout( realignIfShifted, 800 );
+			}
 		} );
 	}
 

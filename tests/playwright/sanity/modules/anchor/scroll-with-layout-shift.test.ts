@@ -12,12 +12,16 @@ test( 'Anchor scroll realigns when layout above grows @anchor-scroll-layout-shif
 	const buttonID = await editor.addWidget( { widgetType: 'button', container } );
 	const scrollSpacerID = await editor.addWidget( { widgetType: 'spacer', container } );
 	const targetID = await editor.addWidget( { widgetType: 'heading', container } );
+	// Room below the target, otherwise the page bottom caps the scroll before the target reaches the top.
+	const bottomSpacerID = await editor.addWidget( { widgetType: 'spacer', container } );
 
 	await editor.selectElement( growerID );
 	await editor.setSliderControlValue( 'space', '40' );
 	await editor.selectElement( buttonID );
 	await editor.setTextControlValue( 'url-external-show', `#${ anchorId }` );
 	await editor.selectElement( scrollSpacerID );
+	await editor.setSliderControlValue( 'space', '1500' );
+	await editor.selectElement( bottomSpacerID );
 	await editor.setSliderControlValue( 'space', '1500' );
 	await editor.selectElement( targetID );
 	await editor.openPanelTab( 'advanced' );
@@ -29,6 +33,7 @@ test( 'Anchor scroll realigns when layout above grows @anchor-scroll-layout-shif
 	const grower = preview.locator( `[data-id="${ growerID }"] .elementor-spacer-inner` );
 
 	await button.click();
+	// Grow content above the target while the smooth scroll is still running.
 	await grower.evaluate( ( element ) => {
 		element.style.height = '420px';
 	} );
