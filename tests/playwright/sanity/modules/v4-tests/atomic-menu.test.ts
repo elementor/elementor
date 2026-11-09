@@ -34,7 +34,8 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	};
 
 	const addMenu = async (): Promise<string> => {
-		const menuId = await editor.addElement( { elType: menuType }, 'document' );
+		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const menuId = await editor.addElement( { elType: menuType }, flexboxId );
 
 		await editor.selectElement( menuId );
 		await editor.waitForPanelToLoad();
@@ -42,22 +43,40 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		return menuId;
 	};
 
-	const openStructurePanel = async (): Promise<Locator> => {
-		await editor.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
+	const navigatorSelectors = EditorSelectors.panels.navigator;
 
-		const panel = editor.page.locator( '[role="dialog"], [role="tree"]' ).filter( { hasText: 'Structure' } ).first();
+	const openStructurePanel = async (): Promise<Locator> => {
+		await editor.page.locator( navigatorSelectors.footerButton ).click();
+
+		const panel = editor.page.locator( navigatorSelectors.wrapper );
 
 		await expect( panel ).toBeVisible();
 
 		return panel;
 	};
 
-	const expandAllStructureNodes = async ( panel: Locator ) => {
-		const collapsed = panel.locator( '[role="treeitem"][aria-expanded="false"]' );
+	const expandAllStructureNodes = async () => {
+		await expect.poll( async () => {
+			return await editor.page.evaluate( () => {
+				const collapsed = Array.from(
+					document.querySelectorAll( '#elementor-navigator .elementor-navigator__element--has-children' ),
+				).filter( ( element ) => {
+					const list = element.querySelector( ':scope > .elementor-navigator__elements' );
 
-		while ( await collapsed.count() ) {
-			await collapsed.first().locator( '> div' ).first().getByRole( 'button' ).first().click();
-		}
+					return list && 'none' === getComputedStyle( list ).display;
+				} );
+
+				collapsed.forEach( ( element ) => {
+					( element.querySelector( ':scope > .elementor-navigator__item .elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
+				} );
+
+				return collapsed.length;
+			} );
+		}, { timeout: 15000 } ).toBe( 0 );
+	};
+
+	const getStructureTitles = ( panel: Locator ): Locator => {
+		return panel.locator( '.elementor-navigator__element__title__text' );
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
@@ -124,7 +143,10 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		const field = await openMenuItemsControl();
 
 		// Act
-		await field.locator( 'ul.MuiList-root > li' ).nth( 1 ).getByRole( 'button', { name: 'Remove' } ).click();
+		const secondItem = field.locator( 'ul.MuiList-root > li' ).nth( 1 );
+
+		await secondItem.hover();
+		await secondItem.getByRole( 'button', { name: 'Remove' } ).click();
 
 		// Assert
 		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'About', 'Contact' ] );
@@ -138,7 +160,10 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		const field = await openMenuItemsControl();
 
 		// Act
-		await field.locator( 'ul.MuiList-root > li' ).first().getByRole( 'button', { name: 'Duplicate' } ).click();
+		const firstItem = field.locator( 'ul.MuiList-root > li' ).first();
+
+		await firstItem.hover();
+		await firstItem.getByRole( 'button', { name: 'Duplicate' } ).click();
 
 		// Assert
 		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'Home', 'Products', 'About', 'Contact' ] );
@@ -159,23 +184,28 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( firstItem ).toContainText( 'Start' );
 	} );
 
-	test( 'Structure panel lists the menu, its items and the four entries once expanded', async () => {
+	test( 'Structure panel nests the menu in a flexbox and lists every entry once expanded', async () => {
 		// Arrange
 		await addMenu();
 		const panel = await openStructurePanel();
-
-		// Act
-		await expandAllStructureNodes( panel );
+		const titles = getStructureTitles( panel );
 
 		// Assert
-		const rows = panel.locator( '[role="treeitem"]' );
+		await expect( titles.filter( { hasText: /^Flexbox$/ } ) ).toHaveCount( 1 );
+		await expect( titles.filter( { hasText: /^Menu$/ } ) ).toHaveCount( 1 );
+		await expect( titles.filter( { hasText: /^Menu items$/ } ) ).toBeVisible();
 
-		await expect( rows.filter( { hasText: /^Menu$/ } ) ).toHaveCount( 1 );
-		await expect( rows.filter( { hasText: /^Menu items$/ } ) ).toHaveCount( 1 );
-		await expect( rows.filter( { hasText: /^Menu item$/ } ) ).toHaveCount( 4 );
+		await expect( panel ).toHaveScreenshot( 'menu-structure-panel-collapsed.png' );
+
+		// Act
+		await expandAllStructureNodes();
+
+		// Assert
+		await expect( titles.filter( { hasText: /^Menu item$/ } ) ).toHaveCount( 4 );
+		await expect( titles.filter( { hasText: /^Paragraph$/ } ) ).toHaveCount( 4 );
 
 		for ( const name of [ 'Home', 'Products', 'About', 'Contact' ] ) {
-			await expect( rows.filter( { hasText: new RegExp( `^${ name }` ) } ).first() ).toBeVisible();
+			await expect( titles.filter( { hasText: new RegExp( `^${ name }$` ) } ) ).toHaveCount( 1 );
 		}
 
 		await expect( panel ).toHaveScreenshot( 'menu-structure-panel-expanded.png' );
@@ -233,7 +263,10 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		const field = await openMenuItemsControl();
 
 		await field.getByRole( 'button', { name: 'Add item' } ).click();
-		await field.locator( 'ul.MuiList-root > li' ).nth( 1 ).getByRole( 'button', { name: 'Remove' } ).click();
+		const secondItem = field.locator( 'ul.MuiList-root > li' ).nth( 1 );
+
+		await secondItem.hover();
+		await secondItem.getByRole( 'button', { name: 'Remove' } ).click();
 
 		// Act
 		await editor.publishAndViewPage();
