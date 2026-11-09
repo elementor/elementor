@@ -2,10 +2,12 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { getContainer, getElementSetting } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/ui';
+import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
+import { injectIntoInlineEditorToolbar } from '../inline-editor-toolbar-locations';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	getContainer: jest.fn(),
@@ -296,6 +298,39 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Assert
 			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
+		} );
+	} );
+	describe( 'injected actions', () => {
+		const InjectedAction = ( { elementId }: { elementId: string } ) => <button>{ `Action for ${ elementId }` }</button>;
+
+		beforeEach( () => {
+			injectIntoInlineEditorToolbar( { id: 'test-action', component: InjectedAction } );
+		} );
+
+		afterEach( () => {
+			flushAllInjections();
+		} );
+
+		it( 'renders injected actions with the element id', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId="abc123" /> );
+
+			// Assert.
+			expect( screen.getByRole( 'button', { name: 'Action for abc123' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not render injected actions without an element id', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			// Assert.
+			expect( screen.queryByText( /Action for/ ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
