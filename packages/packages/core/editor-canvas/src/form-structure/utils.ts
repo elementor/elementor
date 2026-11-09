@@ -1,6 +1,6 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 
-export type Model = {
+type Model = {
 	elType?: string;
 	widgetType?: string;
 	elements?: Model[];
