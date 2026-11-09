@@ -72,9 +72,6 @@ export const activateMcpAdapter = async ( adapter: IMcpRegistrationAdapter ): Pr
 	await adapter.activate();
 };
 
-export const hasMcpAdapter = ( type: abstract new ( ...args: never[] ) => IMcpRegistrationAdapter ): boolean =>
-	registrationAdapters.some( ( adapter ) => adapter instanceof type );
-
 export const createAndRegisterAdapters = async (): Promise< void > => {
 	const modelContext = getModelContext();
 

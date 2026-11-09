@@ -59,16 +59,4 @@ describe( 'activateMcpAdapter', () => {
 		// Assert
 		expect( adapter.activate ).toHaveBeenCalledTimes( 1 );
 	} );
-
-	it( 'reports registered adapters by type', async () => {
-		// Arrange
-		const registry = loadRegistry();
-		registry.signalMcpReady();
-
-		// Act
-		await registry.activateMcpAdapter( new TestAdapter() );
-
-		// Assert
-		expect( registry.hasMcpAdapter( TestAdapter ) ).toBe( true );
-	} );
 } );
