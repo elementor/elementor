@@ -18,10 +18,6 @@ class Get_Super_Admin_Status_Ability extends Abstract_Ability {
 		return 'elementor/get-super-admin-status';
 	}
 
-	public function is_exposed_via_proxy(): bool {
-		return false;
-	}
-
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Super Admin Status', 'elementor' ),
@@ -32,6 +28,7 @@ class Get_Super_Admin_Status_Ability extends Abstract_Ability {
 				'properties' => [
 					'enabled' => [ 'type' => 'boolean' ],
 				],
+				'required' => [ 'enabled' ],
 			],
 			[
 				'annotations' => [

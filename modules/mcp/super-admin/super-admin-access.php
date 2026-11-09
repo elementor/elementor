@@ -19,4 +19,12 @@ trait Super_Admin_Access {
 	protected function error( string $code, string $message, int $status ): \WP_Error {
 		return new \WP_Error( $code, $message, [ 'status' => $status ] );
 	}
+
+	public function is_exposed_via_proxy(): bool {
+		return false;
+	}
+
+	public function is_exposed_in_rest(): bool {
+		return false;
+	}
 }

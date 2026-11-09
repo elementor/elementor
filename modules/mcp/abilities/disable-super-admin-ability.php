@@ -18,10 +18,6 @@ class Disable_Super_Admin_Ability extends Abstract_Ability {
 		return 'elementor/disable-super-admin';
 	}
 
-	public function is_exposed_via_proxy(): bool {
-		return false;
-	}
-
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Disable Super Admin', 'elementor' ),
@@ -55,11 +51,11 @@ class Disable_Super_Admin_Ability extends Abstract_Ability {
 		}
 
 		if ( ! Super_Admin_Settings::is_enabled() ) {
-			return $this->error(
-				'already_disabled',
-				__( 'Super Admin is already disabled.', 'elementor' ),
-				\WP_Http::CONFLICT
-			);
+			return [
+				'status' => 'already_disabled',
+				'message' => __( 'Super Admin is already disabled.', 'elementor' ),
+				'reload_tools' => false,
+			];
 		}
 
 		Super_Admin_Settings::set_enabled( false );

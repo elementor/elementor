@@ -96,7 +96,7 @@ abstract class Abstract_Ability {
 			$mcp['description'] = $this->maybe_append_unavailable_notice( (string) $mcp['description'] );
 		}
 		$meta['mcp'] = $mcp;
-		$meta['show_in_rest'] = true;
+		$meta['show_in_rest'] = $this->is_exposed_in_rest();
 		$definition['meta'] = $meta;
 		wp_register_ability( $this->get_id(), $definition );
 	}
@@ -155,6 +155,10 @@ abstract class Abstract_Ability {
 	}
 
 	public function is_exposed_via_proxy(): bool {
+		return true;
+	}
+
+	public function is_exposed_in_rest(): bool {
 		return true;
 	}
 

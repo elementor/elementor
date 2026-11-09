@@ -18,6 +18,9 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 	private const ENABLE_ID = 'elementor/enable-super-admin';
 	private const DISABLE_ID = 'elementor/disable-super-admin';
 	private const STATUS_ID = 'elementor/get-super-admin-status';
+	private const ENABLE_PROXY_SLUG = 'enable-super-admin';
+	private const DISABLE_PROXY_SLUG = 'disable-super-admin';
+	private const STATUS_PROXY_SLUG = 'get-super-admin-status';
 
 	public function setUp(): void {
 		parent::setUp();
@@ -40,6 +43,17 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 		$this->assertNotNull( $registry->find_by_id( self::ENABLE_ID ) );
 		$this->assertNull( $registry->find_by_id( self::DISABLE_ID ) );
 		$this->assertNotNull( $registry->find_by_id( self::STATUS_ID ) );
+	}
+
+	public function test_build_core_registry__super_admin_abilities_not_in_proxy() {
+		// Arrange
+		Super_Admin_Settings::set_enabled( false );
+		$registry = Mcp_Module::build_core_registry();
+
+		// Assert
+		$this->assertNull( $registry->find_by_proxy_slug( self::ENABLE_PROXY_SLUG ) );
+		$this->assertNull( $registry->find_by_proxy_slug( self::DISABLE_PROXY_SLUG ) );
+		$this->assertNull( $registry->find_by_proxy_slug( self::STATUS_PROXY_SLUG ) );
 	}
 
 	public function test_build_core_registry__exposes_disable_when_on() {

@@ -79,6 +79,14 @@ class Test_Abstract_Ability_Accessors extends TestCase {
 		$this->assertTrue( $ability->is_exposed_via_proxy() );
 	}
 
+	public function test_is_exposed_in_rest__defaults_to_true() {
+		// Arrange
+		$ability = $this->tool_ability();
+
+		// Act / Assert
+		$this->assertTrue( $ability->is_exposed_in_rest() );
+	}
+
 	public function test_is_exposed_on_server__defaults_to_true() {
 		// Arrange
 		$ability = $this->tool_ability();

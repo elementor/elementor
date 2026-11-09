@@ -72,8 +72,7 @@ class Test_Disable_Super_Admin_Ability extends Elementor_Test_Base {
 		$result = $this->ability->execute();
 
 		// Assert
-		$this->assertWPError( $result );
-		$this->assertSame( 'already_disabled', $result->get_error_code() );
-		$this->assertSame( \WP_Http::CONFLICT, $result->get_error_data()['status'] );
+		$this->assertSame( 'already_disabled', $result['status'] );
+		$this->assertFalse( $result['reload_tools'] );
 	}
 }

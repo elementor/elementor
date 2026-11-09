@@ -30,6 +30,21 @@ class Test_Super_Admin_Settings extends Elementor_Test_Base {
 		$this->assertFalse( Super_Admin_Settings::is_enabled() );
 	}
 
+	public function test_is_enabled__only_string_one_is_enabled() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( Super_Admin_Settings::OPTION, Super_Admin_Settings::ENABLED_VALUE );
+
+		// Assert
+		$this->assertTrue( Super_Admin_Settings::is_enabled() );
+
+		// Arrange
+		update_option( Super_Admin_Settings::OPTION, 'yes' );
+
+		// Assert
+		$this->assertFalse( Super_Admin_Settings::is_enabled() );
+	}
+
 	public function test_set_enabled__round_trip() {
 		// Act
 		Super_Admin_Settings::set_enabled( true );
