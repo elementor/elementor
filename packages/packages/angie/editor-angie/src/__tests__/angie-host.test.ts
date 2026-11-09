@@ -1,6 +1,6 @@
 import { AngieInteractionMode, AngieMcpSdk } from '@elementor-external/angie-sdk';
 
-import { ANGIE_SIDEBAR_ACTIVE_BODY_CLASS, bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
+import { bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
 import { resetHelpCenterAbilityForTests } from '../help-center-ability';
 import { init } from '../init';
 import { openAngie, registerAngiePanelOpener, resetAngiePanelOpenerForTests } from '../open-angie';
@@ -160,6 +160,7 @@ describe( 'editor angie host', () => {
 			container: {
 				id: 'elementor-editor-angie',
 				layout: 'sidebar',
+				skipDefaultCss: true,
 				persistOpenState: false,
 				chatToggleButton: {
 					enabled: false,
@@ -168,7 +169,6 @@ describe( 'editor angie host', () => {
 			},
 		} );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
-		expect( document.body ).not.toHaveClass( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
 		expect( mockWpSearchMcpServer ).toHaveBeenCalledWith( {
 			url: 'https://elementor.com/help',
 			server: {
