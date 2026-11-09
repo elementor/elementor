@@ -27,10 +27,14 @@ test( 'Anchor scroll realigns when layout above grows @anchor-scroll-layout-shif
 	await editor.openPanelTab( 'advanced' );
 	await editor.setTextControlValue( '_element_id', anchorId );
 
-	const preview = editor.getPreviewFrame();
-	const button = preview.locator( `[data-id="${ buttonID }"] a.elementor-button-link` );
-	const target = preview.locator( `[data-id="${ targetID }"]` );
-	const grower = preview.locator( `[data-id="${ growerID }"] .elementor-spacer-inner` );
+	await editor.publishPage();
+
+	// On the frontend: in the editor preview, link clicks are cancelled and the editor scrolls by itself.
+	await page.goto( `/?p=${ await editor.getPageId() }` );
+
+	const button = page.locator( `[data-id="${ buttonID }"] a.elementor-button-link` );
+	const target = page.locator( `[data-id="${ targetID }"]` );
+	const grower = page.locator( `[data-id="${ growerID }"] .elementor-spacer-inner` );
 
 	await button.click();
 	// Grow content above the target while the smooth scroll is still running.
