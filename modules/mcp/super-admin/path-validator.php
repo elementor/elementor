@@ -31,10 +31,33 @@ class Path_Validator {
 
 		$abspath_normalized = rtrim( wp_normalize_path( ABSPATH ), '/' );
 
-		if ( 0 !== strpos( $normalized, $abspath_normalized . '/' ) && $normalized !== $abspath_normalized ) {
+		if ( ! self::is_under( $normalized, $abspath_normalized ) ) {
+			return '';
+		}
+
+		if ( ! self::real_path_stays_under_abspath( $normalized ) ) {
 			return '';
 		}
 
 		return $normalized;
+	}
+
+	private static function real_path_stays_under_abspath( string $path ): bool {
+		if ( ! file_exists( $path ) ) {
+			return true;
+		}
+
+		$real_path = realpath( $path );
+		$real_abspath = realpath( ABSPATH );
+
+		if ( false === $real_path || false === $real_abspath ) {
+			return false;
+		}
+
+		return self::is_under( wp_normalize_path( $real_path ), rtrim( wp_normalize_path( $real_abspath ), '/' ) );
+	}
+
+	private static function is_under( string $path, string $root ): bool {
+		return $path === $root || 0 === strpos( $path, $root . '/' );
 	}
 }

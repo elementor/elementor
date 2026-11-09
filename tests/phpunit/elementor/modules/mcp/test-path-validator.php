@@ -56,4 +56,21 @@ class Test_Path_Validator extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( $expected, $resolved );
 	}
+
+	public function test_resolve_under_abspath__symlink_pointing_outside() {
+		// Arrange
+		$link_name = 'elementor-test-outside-link-' . wp_generate_password( 8, false );
+		$link_path = trailingslashit( ABSPATH ) . $link_name;
+		symlink( sys_get_temp_dir(), $link_path );
+
+		try {
+			// Act
+			$resolved = Path_Validator::resolve_under_abspath( $link_name );
+
+			// Assert
+			$this->assertSame( '', $resolved );
+		} finally {
+			unlink( $link_path );
+		}
+	}
 }
