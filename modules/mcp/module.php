@@ -17,6 +17,7 @@ use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Settings;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Server_Instructions;
 use Elementor\Plugin;
@@ -172,6 +173,8 @@ class Module extends BaseModule {
 			return;
 		}
 
+		( new Super_Admin_Settings() )->register_hooks();
+
 		// Resolving which abilities are tools or resources builds every ability's
 		// definition, and some (Elementor Pro's site-parts abilities) instantiate
 		// document types while doing so. Only the MCP server reads these slugs, so
@@ -317,6 +320,21 @@ class Module extends BaseModule {
 
 		if ( self::is_revision_snapshots_active() ) {
 			$abilities[] = new Abilities\Manage_Revisions_Ability();
+		}
+
+		return array_merge( $abilities, self::get_super_admin_abilities() );
+	}
+
+	/** @return Abstract_Ability[] */
+	private static function get_super_admin_abilities(): array {
+		$abilities = [
+			new Abilities\Get_Super_Admin_Status_Ability(),
+		];
+
+		if ( Super_Admin_Settings::is_enabled() ) {
+			$abilities[] = new Abilities\Disable_Super_Admin_Ability();
+		} else {
+			$abilities[] = new Abilities\Enable_Super_Admin_Ability();
 		}
 
 		return $abilities;
