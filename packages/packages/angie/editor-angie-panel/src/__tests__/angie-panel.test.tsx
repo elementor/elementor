@@ -12,7 +12,6 @@ jest.mock( '@elementor/editor-angie', () => ( {
 	bootAngieSdk: ( ...args: unknown[] ) => mockBootAngieSdk( ...args ),
 	canUseAngiePluginSidebar: () => mockCanUseAngiePluginSidebar(),
 	EDITOR_ANGIE_CONTAINER_ID: 'elementor-editor-angie',
-	removeAngieSidebarActiveBodyClass: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-floating-panels', () => ( {
