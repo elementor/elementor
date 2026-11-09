@@ -35,7 +35,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 	const expectStableScreenshot = async ( target: Locator, name: string ) => {
 		await editor.page.mouse.move( 0, 0 );
-		await editor.page.evaluate( () => ( document.activeElement as HTMLElement )?.blur?.() );
+		await editor.page.evaluate( () => ( document.body.ownerDocument.activeElement as HTMLElement )?.blur?.() );
 
 		await expect( target ).toHaveScreenshot( name, {
 			animations: 'disabled',
