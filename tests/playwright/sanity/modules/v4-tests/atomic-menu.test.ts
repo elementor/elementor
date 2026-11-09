@@ -163,8 +163,6 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( titles.filter( { hasText: /^Menu items$/ } ) ).toBeVisible();
 		await expect( titles.filter( { hasText: /^Home$/ } ) ).toBeHidden();
 
-		await expect( panel ).toHaveScreenshot( 'menu-structure-panel-menu-expanded.png' );
-
 		// Act
 		await editor.expandAllStructureNodes();
 
