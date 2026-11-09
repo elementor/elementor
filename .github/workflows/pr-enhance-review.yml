@@ -54,7 +54,6 @@ jobs:
         run: |
           # If the file list can't be fetched (e.g. diff too large), run the full review.
           FILES=$(gh pr diff "$PR_NUMBER" --repo "$GH_REPO" --name-only) || FILES=""
-          echo "$FILES"
 
           # Explicit skip list: only WordPress plugin release metadata files that don't need code review.
           # This list intentionally excludes most docs (README.md, CONTRIBUTING.md, docs/, etc.)
