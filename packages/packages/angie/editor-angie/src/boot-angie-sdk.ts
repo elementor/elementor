@@ -6,12 +6,11 @@ import {
 	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
+import { attachEditorMcpServers } from './attach-editor-mcp-servers';
 import { ensureHelpCenterAbility } from './help-center-ability';
 
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
-export const ANGIE_SIDEBAR_ACTIVE_BODY_CLASS = 'angie-sidebar-active';
-
 const CONTAINER_POLL_ATTEMPTS = 10;
 const CONTAINER_POLL_INTERVAL_MS = 10;
 
@@ -49,6 +48,7 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	container: {
 		id: EDITOR_ANGIE_CONTAINER_ID,
 		layout: LAYOUT_SIDEBAR,
+		skipDefaultCss: true,
 		persistOpenState: false,
 		chatToggleButton: {
 			enabled: false,
@@ -57,10 +57,6 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	},
 } );
 
-export const removeAngieSidebarActiveBodyClass = () => {
-	document.body.classList.remove( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
-};
-
 export const openAngieIframe = () => {
 	const iframe = getAngieIframe();
 
@@ -68,14 +64,12 @@ export const openAngieIframe = () => {
 		return;
 	}
 
-	removeAngieSidebarActiveBodyClass();
 	toggleAngieSidebar( iframe, true );
 };
 
 export const resetAngieSdkForTests = () => {
 	sdk = null;
 	bootPromise = null;
-	document.body.classList.remove( ANGIE_SIDEBAR_ACTIVE_BODY_CLASS );
 };
 
 export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
@@ -97,6 +91,13 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 			openAngieIframe();
 
 			sdk = instance;
+
+			// Awaited so `openAngie()` cannot send the first prompt before the editor tools are registered.
+			// The catch keeps the boot alive when registration fails, like the help-center ability below.
+			await attachEditorMcpServers( instance ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Angie editor MCP servers registration failed:', error );
+			} );
 
 			await ensureHelpCenterAbility( instance ).catch( ( error ) => {
 				// eslint-disable-next-line no-console
