@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { InteractionsPromotionChip } from '../interactions-promotion-chip';
+import { InteractionsPromotionChip, type InteractionsPromotionChipRef } from '../interactions-promotion-chip';
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	...jest.requireActual( '@elementor/editor-controls' ),
@@ -87,5 +87,35 @@ describe( 'InteractionsPromotionChip', () => {
 
 		// Assert.
 		expect( trackUpgradePromotionClick ).toHaveBeenCalledWith( TRACKING_DATA );
+	} );
+
+	it( 'should include target_value in tracking when opened from a locked control', () => {
+		// Arrange.
+		const ref = React.createRef< InteractionsPromotionChipRef >();
+		renderWithTheme( <InteractionsPromotionChip { ...defaultProps } ref={ ref } /> );
+
+		// Act.
+		ref.current?.openPromotion( { target_value: 'on_hover' } );
+
+		// Assert.
+		expect( trackViewPromotion ).toHaveBeenCalledWith( {
+			...TRACKING_DATA,
+			target_value: 'on_hover',
+		} );
+	} );
+
+	it( 'should close the popover when closePromotion is called', async () => {
+		const ref = React.createRef< InteractionsPromotionChipRef >();
+		renderWithTheme( <InteractionsPromotionChip { ...defaultProps } ref={ ref } /> );
+
+		ref.current?.openPromotion();
+
+		expect( await screen.findByRole( 'dialog' ) ).toBeInTheDocument();
+
+		ref.current?.closePromotion();
+
+		await waitFor( () => {
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
