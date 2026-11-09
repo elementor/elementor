@@ -39,6 +39,7 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 			isDraggable: declaration.isDraggable,
 			isResizable: declaration.isResizable,
 			isDocked: declaration.isDocked,
+			persistOpenState: declaration.persistOpenState,
 			defaults: declaration.defaults,
 			persisted,
 		} )
