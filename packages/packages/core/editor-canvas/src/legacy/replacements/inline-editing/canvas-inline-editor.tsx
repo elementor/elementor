@@ -6,6 +6,7 @@ import { Box } from '@elementor/ui';
 import { autoUpdate, flip, FloatingPortal, useFloating } from '@floating-ui/react';
 
 import { CANVAS_WRAPPER_ID, OutlineOverlay } from '../../../components/outline-overlay';
+import { AngieTextAction } from './angie-text-action';
 import {
 	type Editor,
 	getInlineEditorElement,
@@ -138,7 +139,11 @@ const InlineEditingToolbar = ( { anchor, editor, id }: { anchor: HTMLElement; ed
 					pointerEvents: 'none',
 				} }
 			>
-				<InlineEditorToolbar editor={ editor } elementId={ id } />
+				<InlineEditorToolbar
+					editor={ editor }
+					elementId={ id }
+					extraActions={ <AngieTextAction elementId={ id } /> }
+				/>
 			</Box>
 		</FloatingPortal>
 	);

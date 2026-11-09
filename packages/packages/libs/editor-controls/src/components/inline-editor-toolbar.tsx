@@ -33,6 +33,7 @@ export type InlineEditorToolbarProps = {
 	elementId?: ElementID;
 	sx?: SxProps< Theme >;
 	inControlPanel?: boolean;
+	extraActions?: React.ReactNode;
 };
 
 type ToolbarButtonKeys = keyof typeof toolbarButtons;
@@ -44,6 +45,7 @@ export const InlineEditorToolbar = ( {
 	elementId,
 	sx = {},
 	inControlPanel = false,
+	extraActions,
 }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
@@ -200,6 +202,7 @@ export const InlineEditorToolbar = ( {
 					</Tooltip>
 				) ) }
 			</ToggleButtonGroup>
+			{ extraActions }
 			<UrlPopover
 				popupState={ linkPopupState }
 				anchorRef={ toolbarRef }
