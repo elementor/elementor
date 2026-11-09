@@ -85,6 +85,39 @@ describe( 'read-console-errors tool', () => {
 		expect( result.errors.map( ( { message } ) => message ) ).toEqual( [ 'second' ] );
 	} );
 
+	it( 'returns no errors for a zero or negative limit', () => {
+		// Arrange
+		startConsoleErrorsMonitor();
+		const handler = getHandler();
+		dispatchError( 'first' );
+
+		// Act & Assert
+		expect( handler( { limit: 0 } ) ).toEqual( expect.objectContaining( { found: 0, errors: [] } ) );
+		expect( handler( { limit: -1 } ) ).toEqual( expect.objectContaining( { found: 0, errors: [] } ) );
+	} );
+
+	it( 'stamps failed resources with their load time so `since` skips older failures', () => {
+		// Arrange
+		const loadedAt = 1_000;
+		Object.defineProperty( performance, 'getEntriesByType', {
+			configurable: true,
+			value: () => [
+				{ name: 'https://example.com/old.js', initiatorType: 'script', responseStatus: 404, responseEnd: 50 },
+			],
+		} );
+		jest.spyOn( performance, 'timeOrigin', 'get' ).mockReturnValue( loadedAt );
+		startConsoleErrorsMonitor();
+		const handler = getHandler();
+
+		// Act
+		const all = handler( {} ) as { errors: Array< { timestamp: number } > };
+		const sinceLater = handler( { since: loadedAt + 100 } );
+
+		// Assert
+		expect( all.errors ).toEqual( [ expect.objectContaining( { timestamp: loadedAt + 50 } ) ] );
+		expect( sinceLater ).toEqual( expect.objectContaining( { found: 0 } ) );
+	} );
+
 	it( 'fails when the monitor was not started', () => {
 		// Arrange
 		const handler = getHandler();

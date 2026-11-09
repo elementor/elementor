@@ -41,8 +41,10 @@ class ConsoleErrorsMonitor {
 		this.collectFailedResources();
 
 		const errors = since ? this.errors.filter( ( error ) => error.timestamp > since ) : this.errors;
+		const count = Math.min( Math.max( limit, 0 ), MAX_LIMIT );
 
-		return errors.slice( -Math.min( limit, MAX_LIMIT ) );
+		// `slice( -0 )` returns the whole buffer, so a zero or negative limit must return nothing explicitly.
+		return count > 0 ? errors.slice( -count ) : [];
 	}
 
 	private onError( event: ErrorEvent ) {
@@ -83,11 +85,21 @@ class ConsoleErrorsMonitor {
 					entry.responseStatus >= HTTP_ERROR_STATUS &&
 					FAILED_RESOURCE_INITIATORS.includes( entry.initiatorType )
 			)
-			.forEach( ( entry ) => this.add( `Resource load error: ${ entry.name }` ) );
+			// Stamp with the time the load failed, not now, so a `since` filter does not report old failures as new.
+			.forEach( ( entry ) =>
+				this.add(
+					`Resource load error: ${ entry.name }`,
+					undefined,
+					performance.timeOrigin + ( entry.responseEnd || entry.startTime )
+				)
+			);
+
+		// Backfilled failures can be older than errors already captured; keep the buffer oldest-first for `limit`.
+		this.errors.sort( ( a, b ) => a.timestamp - b.timestamp );
 	}
 
-	private add( message: string, stack?: string ) {
-		this.errors.push( { timestamp: Date.now(), level: 'error', message, stack } );
+	private add( message: string, stack?: string, timestamp = Date.now() ) {
+		this.errors.push( { timestamp, level: 'error', message, stack } );
 
 		if ( this.errors.length > MAX_STORED_ERRORS ) {
 			this.errors.shift();
