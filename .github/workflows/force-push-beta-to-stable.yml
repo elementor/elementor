@@ -1,0 +1,35 @@
+name: Force Push Beta To Stable
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only list the PRs in release/stable that are not in release/beta. Do not push.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: force-push-beta-to-stable
+  cancel-in-progress: false
+
+jobs:
+  force-push-beta-to-stable:
+    if: github.repository_owner == 'elementor'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Force push release/beta to release/stable
+        uses: elementor/elementor-editor-github-actions/actions/force-push-beta-to-stable@main
+        with:
+          dry-run: ${{ inputs.dry_run }}
