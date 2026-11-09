@@ -141,7 +141,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		const firstItem = field.locator( 'ul.MuiList-root > li' ).first();
 
 		// Act
-		await firstItem.getByRole( 'button' ).first().click();
+		await firstItem.getByLabel( 'Open item' ).click();
 		await editor.page.locator( '.MuiPopover-paper' ).getByRole( 'textbox' ).fill( 'Start' );
 
 		// Assert
