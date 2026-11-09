@@ -45,7 +45,8 @@ module.exports = elementorModules.ViewModule.extend( {
 			return;
 		}
 
-		var scrollTop = $anchor.offset().top,
+		var anchorTop = $anchor.offset().top,
+			scrollTop = anchorTop,
 			$wpAdminBar = elementorFrontend.elements.$wpAdminBar,
 			$activeStickies = jQuery( '.elementor-section.elementor-sticky--active:visible' ),
 			maxStickyHeight = 0;
@@ -72,13 +73,36 @@ module.exports = elementorModules.ViewModule.extend( {
 			elementorFrontend.elements.$body.css( 'scroll-snap-type', 'none' );
 		}
 
-		this.elements.$scrollable.animate( {
-			scrollTop,
-		}, this.getSettings( 'scrollDuration' ), 'linear', () => {
-			// On scroll animation complete: add scroll-snap back.
+		const restoreScrollSnap = () => {
 			if ( isScrollSnapActive() ) {
 				elementorFrontend.elements.$body.css( 'scroll-snap-type', '' );
 			}
+		};
+
+		// `$scrollable` can hold both html and body, so the complete callback may run once per element.
+		let isRealigned = false;
+
+		this.elements.$scrollable.animate( {
+			scrollTop,
+		}, this.getSettings( 'scrollDuration' ), 'linear', () => {
+			// Content above the anchor (lazy images, widgets) can resize while we animate toward the
+			// position measured on click, so re-measure once and close the gap (ED-19404).
+			if ( isRealigned ) {
+				return;
+			}
+
+			const layoutShift = $anchor.offset().top - anchorTop;
+
+			if ( Math.abs( layoutShift ) < 2 ) {
+				restoreScrollSnap();
+				return;
+			}
+
+			isRealigned = true;
+
+			this.elements.$scrollable.animate( {
+				scrollTop: scrollTop + layoutShift,
+			}, this.getSettings( 'scrollDuration' ) / 2, 'linear', restoreScrollSnap );
 		} );
 	},
 

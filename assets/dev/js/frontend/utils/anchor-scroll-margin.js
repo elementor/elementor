@@ -9,48 +9,9 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	onInit() {
-		this.bindLayoutShiftCorrection();
-
 		this.observeStickyElements( () => {
 			this.initializeStickyAndAnchorTracking();
 		} );
-	}
-
-	// Content above the anchor can grow during native smooth scroll (ED-19404); one realign after scroll ends.
-	bindLayoutShiftCorrection() {
-		const scheduleCorrection = ( target ) => {
-			const startPosition = this.getScrollPosition( target );
-			const maybeRealign = () => {
-				if ( 2 < Math.abs( this.getScrollPosition( target ) - startPosition ) ) {
-					target.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-				}
-			};
-
-			if ( 'onscrollend' in window ) {
-				window.addEventListener( 'scrollend', maybeRealign, { once: true } );
-			} else {
-				setTimeout( maybeRealign, 800 );
-			}
-		};
-
-		document.addEventListener( 'click', ( event ) => {
-			const link = event.target.closest( this.getSettings( 'selectors.links' ) );
-			if ( ! link?.hash || link.hostname !== location.hostname || link.pathname !== location.pathname ) {
-				return;
-			}
-
-			const target = this.getAnchorTarget( link );
-			if ( target ) {
-				scheduleCorrection( target );
-			}
-		} );
-
-		if ( this.isValidSelector( location.hash ) ) {
-			const target = document.querySelector( location.hash );
-			if ( target ) {
-				scheduleCorrection( target );
-			}
-		}
 	}
 
 	observeStickyElements( callback ) {
