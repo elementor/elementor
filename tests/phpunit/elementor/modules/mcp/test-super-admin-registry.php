@@ -21,6 +21,9 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 	private const ENABLE_PROXY_SLUG = 'enable-super-admin';
 	private const DISABLE_PROXY_SLUG = 'disable-super-admin';
 	private const STATUS_PROXY_SLUG = 'get-super-admin-status';
+	private const EXECUTE_PHP_ID = 'elementor/execute-php';
+	private const READ_FILE_ID = 'elementor/read-file';
+	private const LIST_DIRECTORY_ID = 'elementor/list-directory';
 
 	public function setUp(): void {
 		parent::setUp();
@@ -43,6 +46,9 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 		$this->assertNotNull( $registry->find_by_id( self::ENABLE_ID ) );
 		$this->assertNull( $registry->find_by_id( self::DISABLE_ID ) );
 		$this->assertNotNull( $registry->find_by_id( self::STATUS_ID ) );
+		$this->assertNull( $registry->find_by_id( self::EXECUTE_PHP_ID ) );
+		$this->assertNull( $registry->find_by_id( self::READ_FILE_ID ) );
+		$this->assertNull( $registry->find_by_id( self::LIST_DIRECTORY_ID ) );
 	}
 
 	public function test_build_core_registry__super_admin_abilities_not_in_proxy() {
@@ -67,5 +73,8 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 		$this->assertNull( $registry->find_by_id( self::ENABLE_ID ) );
 		$this->assertNotNull( $registry->find_by_id( self::DISABLE_ID ) );
 		$this->assertNotNull( $registry->find_by_id( self::STATUS_ID ) );
+		$this->assertNotNull( $registry->find_by_id( self::EXECUTE_PHP_ID ) );
+		$this->assertNotNull( $registry->find_by_id( self::READ_FILE_ID ) );
+		$this->assertNotNull( $registry->find_by_id( self::LIST_DIRECTORY_ID ) );
 	}
 }

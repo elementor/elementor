@@ -1,0 +1,1 @@
+Lists files and directories under the WordPress root (ABSPATH). Path is relative to ABSPATH (for example wp-includes). Very large directories may be truncated. Requires administrator permission and Super Admin enabled.

@@ -333,6 +333,9 @@ class Module extends BaseModule {
 
 		if ( Super_Admin_Settings::is_enabled() ) {
 			$abilities[] = new Abilities\Disable_Super_Admin_Ability();
+			$abilities[] = new Abilities\Execute_Php_Ability();
+			$abilities[] = new Abilities\Read_File_Ability();
+			$abilities[] = new Abilities\List_Directory_Ability();
 		} else {
 			$abilities[] = new Abilities\Enable_Super_Admin_Ability();
 		}

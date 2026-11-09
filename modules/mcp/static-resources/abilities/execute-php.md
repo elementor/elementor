@@ -1,0 +1,1 @@
+Runs PHP on the server under ABSPATH (super admin only). Paths in other Super Admin tools are relative to the WordPress root. Can change the site; use only when the user agreed to Super Admin. Requires administrator permission and Super Admin enabled.
