@@ -33,6 +33,17 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		return field;
 	};
 
+	const expectStableScreenshot = async ( target: Locator, name: string ) => {
+		await editor.page.mouse.move( 0, 0 );
+		await editor.page.evaluate( () => ( document.activeElement as HTMLElement )?.blur?.() );
+
+		await expect( target ).toHaveScreenshot( name, {
+			animations: 'disabled',
+			caret: 'hide',
+			timeout: 20000,
+		} );
+	};
+
 	const addMenu = async (): Promise<string> => {
 		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		const menuId = await editor.addElement( { elType: menuType }, flexboxId );
@@ -104,7 +115,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( menu ).toHaveAttribute( 'aria-label', 'Menu' );
 		await expect( getEntries( menu ) ).toHaveCount( 4 );
 		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'Products', 'About', 'Contact' ] );
-		await expect( menu ).toHaveScreenshot( 'menu-default-canvas.png' );
+		await expectStableScreenshot( menu, 'menu-default-canvas.png' );
 	} );
 
 	test( 'Menu items repeater lists the default entries', async () => {
@@ -116,7 +127,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Assert
 		await expect( field.locator( 'ul.MuiList-root > li' ) ).toHaveCount( 4 );
-		await expect( field ).toHaveScreenshot( 'menu-items-repeater-default.png' );
+		await expectStableScreenshot( field, 'menu-items-repeater-default.png' );
 	} );
 
 	test( 'Add item via the repeater appends an entry to the canvas', async () => {
@@ -132,8 +143,8 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( getEntries( menu ) ).toHaveCount( 5 );
 		await expect( getEntries( menu ).last() ).toHaveText( 'Menu item 1' );
 		await expect( field.locator( 'ul.MuiList-root > li' ) ).toHaveCount( 5 );
-		await expect( menu ).toHaveScreenshot( 'menu-after-add-canvas.png' );
-		await expect( field ).toHaveScreenshot( 'menu-items-repeater-after-add.png' );
+		await expectStableScreenshot( menu, 'menu-after-add-canvas.png' );
+		await expectStableScreenshot( field, 'menu-items-repeater-after-add.png' );
 	} );
 
 	test( 'Remove item via the repeater removes the entry from the canvas', async () => {
@@ -150,7 +161,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Assert
 		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'About', 'Contact' ] );
-		await expect( menu ).toHaveScreenshot( 'menu-after-remove-canvas.png' );
+		await expectStableScreenshot( menu, 'menu-after-remove-canvas.png' );
 	} );
 
 	test( 'Duplicate item via the repeater adds a copy after the original', async () => {
@@ -167,7 +178,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Assert
 		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'Home', 'Products', 'About', 'Contact' ] );
-		await expect( menu ).toHaveScreenshot( 'menu-after-duplicate-canvas.png' );
+		await expectStableScreenshot( menu, 'menu-after-duplicate-canvas.png' );
 	} );
 
 	test( 'Renaming an entry in the repeater updates the repeater label', async () => {
@@ -195,7 +206,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( titles.filter( { hasText: /^Menu$/ } ) ).toHaveCount( 1 );
 		await expect( titles.filter( { hasText: /^Menu items$/ } ) ).toBeVisible();
 
-		await expect( panel ).toHaveScreenshot( 'menu-structure-panel-collapsed.png' );
+		await expectStableScreenshot( panel, 'menu-structure-panel-collapsed.png' );
 
 		// Act
 		await expandAllStructureNodes();
@@ -208,7 +219,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 			await expect( titles.filter( { hasText: new RegExp( `^${ name }$` ) } ) ).toHaveCount( 1 );
 		}
 
-		await expect( panel ).toHaveScreenshot( 'menu-structure-panel-expanded.png' );
+		await expectStableScreenshot( panel, 'menu-structure-panel-expanded.png' );
 	} );
 
 	test( 'Frontend renders the menu as a nav with a list of entries', async () => {
@@ -224,7 +235,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( nav ).toHaveAttribute( 'aria-label', 'Menu' );
 		await expect( nav.locator( 'ul > li' ) ).toHaveText( [ 'Home', 'Products', 'About', 'Contact' ] );
 		await expect( nav.locator( 'a' ) ).toHaveCount( 0 );
-		await expect( nav ).toHaveScreenshot( 'menu-frontend-default.png' );
+		await expectStableScreenshot( nav, 'menu-frontend-default.png' );
 	} );
 
 	test( 'Frontend renders a linked menu item as an anchor and the rest as spans', async () => {
@@ -254,7 +265,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( nav.locator( 'a' ) ).toHaveAttribute( 'href', 'https://example.com/home' );
 		await expect( nav.locator( 'a' ) ).toHaveText( 'Home' );
 		await expect( nav.locator( 'li > span' ) ).toHaveCount( 3 );
-		await expect( nav ).toHaveScreenshot( 'menu-frontend-with-link.png' );
+		await expectStableScreenshot( nav, 'menu-frontend-with-link.png' );
 	} );
 
 	test( 'Frontend reflects added, removed and renamed entries after publish', async () => {
@@ -275,6 +286,6 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		const nav = editor.page.locator( 'nav.e-menu' );
 
 		await expect( nav.locator( 'ul > li' ) ).toHaveText( [ 'Home', 'About', 'Contact', 'Menu item 1' ] );
-		await expect( nav ).toHaveScreenshot( 'menu-frontend-after-edits.png' );
+		await expectStableScreenshot( nav, 'menu-frontend-after-edits.png' );
 	} );
 } );
