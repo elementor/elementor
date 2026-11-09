@@ -10,6 +10,14 @@ body {
 		--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-navigator-width, 0px));
 	}
 
+	&.elementor-floating-panel-docked {
+		--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-docked-panel-width, 0px));
+	}
+
+	&.elementor-navigator-docked.elementor-floating-panel-docked {
+		--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px) - var(--e-editor-navigator-width, 0px) - var(--e-editor-docked-panel-width, 0px));
+	}
+
 	&.elementor-device-desktop {
 
 		#elementor-preview {
