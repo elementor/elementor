@@ -8,8 +8,8 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if ! CHANGELOG=$(node "${SCRIPT_DIR}/get-slack-changelog.js" "$RELEASE_VERSION"); then
-  echo "::error title=Slack release announcement::Could not build the changelog for ${RELEASE_VERSION}. Nothing was posted to Slack."
-  exit 1
+  echo "::warning title=Slack release announcement::Could not build the changelog for ${RELEASE_VERSION}. Announcing without it."
+  CHANGELOG=""
 fi
 
 PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
