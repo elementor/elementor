@@ -183,6 +183,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Act
 		await editor.publishAndViewPage();
+		await editor.waitForFrontendFonts();
 
 		// Assert
 		const nav = editor.page.locator( 'nav.e-menu' );
@@ -212,6 +213,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Act
 		await editor.publishAndViewPage();
+		await editor.waitForFrontendFonts();
 
 		// Assert
 		const nav = editor.page.locator( 'nav.e-menu' );
@@ -236,6 +238,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Act
 		await editor.publishAndViewPage();
+		await editor.waitForFrontendFonts();
 
 		// Assert
 		const nav = editor.page.locator( 'nav.e-menu' );

@@ -1129,6 +1129,18 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 	}
 
+	/**
+	 * Wait until the viewed frontend page finished loading its stylesheets and web fonts,
+	 * so text-dependent screenshots do not capture a fallback font.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForFrontendFonts(): Promise<void> {
+		await this.page.waitForLoadState( 'load', { timeout: timeouts.longAction } );
+		await this.page.waitForLoadState( 'networkidle', { timeout: timeouts.longAction } );
+		await this.page.evaluate( async () => await document.fonts.ready );
+	}
+
 	async viewPage() {
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
