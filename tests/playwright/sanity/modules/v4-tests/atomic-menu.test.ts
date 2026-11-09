@@ -2,6 +2,7 @@ import { expect, type BrowserContext, type Locator } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
+import EditorSelectors from '../../../selectors/editor-selectors';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic Menu @atomic-widgets', () => {
@@ -24,9 +25,8 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	const openMenuItemsControl = async (): Promise<Locator> => {
 		await editor.v4Panel.openTab( 'general' );
 
-		const field = editor.page.locator( '[data-type="settings-field"], .MuiStack-root' )
-			.filter( { hasText: menuItemsLabel } )
-			.last();
+		const field = editor.page.locator( '[data-type="settings-field"]' )
+			.filter( { hasText: menuItemsLabel } );
 
 		await expect( field ).toBeVisible();
 
@@ -40,6 +40,24 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await editor.waitForPanelToLoad();
 
 		return menuId;
+	};
+
+	const openStructurePanel = async (): Promise<Locator> => {
+		await editor.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
+
+		const panel = editor.page.locator( '[role="dialog"], [role="tree"]' ).filter( { hasText: 'Structure' } ).first();
+
+		await expect( panel ).toBeVisible();
+
+		return panel;
+	};
+
+	const expandAllStructureNodes = async ( panel: Locator ) => {
+		const collapsed = panel.locator( '[role="treeitem"][aria-expanded="false"]' );
+
+		while ( await collapsed.count() ) {
+			await collapsed.first().locator( '> div' ).first().getByRole( 'button' ).first().click();
+		}
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
@@ -141,14 +159,89 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( firstItem ).toContainText( 'Start' );
 	} );
 
-	test( 'Navigator nests entries under Menu items under Menu', async () => {
+	test( 'Structure panel lists the menu, its items and the four entries once expanded', async () => {
 		// Arrange
-		const menuId = await addMenu();
-		const menu = getMenuRoot( menuId );
+		await addMenu();
+		const panel = await openStructurePanel();
+
+		// Act
+		await expandAllStructureNodes( panel );
 
 		// Assert
-		await expect( menu.locator( '[data-element_type="e-menu-items"]' ) ).toHaveCount( 1 );
-		await expect( menu.locator( '[data-element_type="e-menu-items"] > [data-element_type="e-menu-entry"]' ) ).toHaveCount( 4 );
-		await expect( menu.locator( '[data-element_type="e-menu-entry"] > [data-element_type="e-menu-item"]' ) ).toHaveCount( 4 );
+		const rows = panel.locator( '[role="treeitem"]' );
+
+		await expect( rows.filter( { hasText: /^Menu$/ } ) ).toHaveCount( 1 );
+		await expect( rows.filter( { hasText: /^Menu items$/ } ) ).toHaveCount( 1 );
+		await expect( rows.filter( { hasText: /^Menu item$/ } ) ).toHaveCount( 4 );
+
+		for ( const name of [ 'Home', 'Products', 'About', 'Contact' ] ) {
+			await expect( rows.filter( { hasText: new RegExp( `^${ name }` ) } ).first() ).toBeVisible();
+		}
+
+		await expect( panel ).toHaveScreenshot( 'menu-structure-panel-expanded.png' );
+	} );
+
+	test( 'Frontend renders the menu as a nav with a list of entries', async () => {
+		// Arrange
+		await addMenu();
+
+		// Act
+		await editor.publishAndViewPage();
+
+		// Assert
+		const nav = editor.page.locator( 'nav.e-menu' );
+
+		await expect( nav ).toHaveAttribute( 'aria-label', 'Menu' );
+		await expect( nav.locator( 'ul > li' ) ).toHaveText( [ 'Home', 'Products', 'About', 'Contact' ] );
+		await expect( nav.locator( 'a' ) ).toHaveCount( 0 );
+		await expect( nav ).toHaveScreenshot( 'menu-frontend-default.png' );
+	} );
+
+	test( 'Frontend renders a linked menu item as an anchor and the rest as spans', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const firstItemId = await getMenuRoot( menuId )
+			.locator( '[data-element_type="e-menu-item"]' )
+			.first()
+			.getAttribute( 'data-id' );
+
+		await editor.applyElementSettings( firstItemId as string, {
+			link: {
+				$$type: 'link',
+				value: { destination: { $$type: 'url', value: 'https://example.com/home' } },
+			},
+		} );
+
+		await expect( getMenuRoot( menuId ).locator( 'a[href="https://example.com/home"]' ) ).toHaveCount( 1 );
+
+		// Act
+		await editor.publishAndViewPage();
+
+		// Assert
+		const nav = editor.page.locator( 'nav.e-menu' );
+
+		await expect( nav.locator( 'a' ) ).toHaveCount( 1 );
+		await expect( nav.locator( 'a' ) ).toHaveAttribute( 'href', 'https://example.com/home' );
+		await expect( nav.locator( 'a' ) ).toHaveText( 'Home' );
+		await expect( nav.locator( 'li > span' ) ).toHaveCount( 3 );
+		await expect( nav ).toHaveScreenshot( 'menu-frontend-with-link.png' );
+	} );
+
+	test( 'Frontend reflects added, removed and renamed entries after publish', async () => {
+		// Arrange
+		await addMenu();
+		const field = await openMenuItemsControl();
+
+		await field.getByRole( 'button', { name: 'Add item' } ).click();
+		await field.locator( 'ul.MuiList-root > li' ).nth( 1 ).getByRole( 'button', { name: 'Remove' } ).click();
+
+		// Act
+		await editor.publishAndViewPage();
+
+		// Assert
+		const nav = editor.page.locator( 'nav.e-menu' );
+
+		await expect( nav.locator( 'ul > li' ) ).toHaveText( [ 'Home', 'About', 'Contact', 'Menu item 1' ] );
+		await expect( nav ).toHaveScreenshot( 'menu-frontend-after-edits.png' );
 	} );
 } );
