@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const AJAX_ACTION = 'elementor_guided_tours_update_progress';
 	const NONCE_ACTION = 'elementor-guided-tours-progress';
+	const EDITOR_SCREEN_ID = 'elementor-editor';
 
 	private const DRIVER_ASSET_VERSION = '1.10.2';
 	private const DRIVER_SCRIPT_HANDLE = 'elementor-guided-tours-driver';
@@ -29,7 +30,8 @@ class Module extends BaseModule {
 		$this->tours_repository = $tours_repository ?? new Tours_Repository();
 		$this->progress_manager = $progress_manager ?? new Progress_Manager();
 
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_assets' ] );
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'update_progress' ] );
 	}
 
@@ -37,7 +39,7 @@ class Module extends BaseModule {
 		return 'guided-tours';
 	}
 
-	public function enqueue_assets(): void {
+	public function enqueue_admin_assets(): void {
 		if ( ! $this->is_current_user_administrator() ) {
 			return;
 		}
@@ -48,14 +50,32 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->maybe_enqueue_tour_assets( $current_screen->id );
+	}
+
+	public function enqueue_editor_assets(): void {
+		if ( ! $this->is_current_user_administrator() ) {
+			return;
+		}
+
+		$this->maybe_enqueue_tour_assets( self::EDITOR_SCREEN_ID, 'editor' );
+	}
+
+	private function maybe_enqueue_tour_assets( string $screen_id, string $context = 'admin' ): void {
 		$tour = $this->tours_repository->get_eligible_tour(
-			$current_screen->id,
+			$screen_id,
 			wp_get_current_user()->roles
 		);
 
+		if ( empty( $tour ) ) {
+			return;
+		}
+
+		$progress = $this->progress_manager->get_progress( $tour['id'], $tour['version'] );
+
 		if (
-			empty( $tour ) ||
-			$this->progress_manager->is_completed( $tour['id'], $tour['version'] )
+			$this->progress_manager->is_completed( $tour['id'], $tour['version'] ) ||
+			! $this->should_run_tour_on_screen( $tour, $screen_id, $progress )
 		) {
 			return;
 		}
@@ -90,14 +110,61 @@ class Module extends BaseModule {
 		);
 
 		wp_localize_script( self::SCRIPT_HANDLE, 'elementorGuidedToursConfig', [
+			'adminUrl' => admin_url(),
+			'context' => $context,
 			'tour' => $tour,
-			'progress' => $this->progress_manager->get_progress( $tour['id'], $tour['version'] ),
+			'screenId' => $screen_id,
+			'progress' => $progress,
 			'ajax' => [
 				'url' => admin_url( 'admin-ajax.php' ),
 				'action' => self::AJAX_ACTION,
 				'nonce' => wp_create_nonce( self::NONCE_ACTION ),
 			],
 		] );
+	}
+
+	private function should_run_tour_on_screen( array $tour, string $screen_id, array $progress ): bool {
+		return ! empty( $this->get_resume_step_for_screen( $tour['steps'] ?? [], $progress, $screen_id ) );
+	}
+
+	private function get_resume_step_for_screen( array $steps, array $progress, string $screen_id ): array {
+		if ( empty( $steps ) || '' === $screen_id ) {
+			return [];
+		}
+
+		if ( empty( $progress['step_id'] ) ) {
+			$first_step = $steps[0];
+
+			return $screen_id === ( $first_step['screen'] ?? '' ) ? $first_step : [];
+		}
+
+		$progress_index = null;
+
+		foreach ( $steps as $index => $step ) {
+			if ( ( $step['id'] ?? '' ) !== $progress['step_id'] ) {
+				continue;
+			}
+
+			$progress_index = $index;
+
+			if ( $screen_id === ( $step['screen'] ?? '' ) ) {
+				return $step;
+			}
+
+			break;
+		}
+
+		if ( null === $progress_index ) {
+			return [];
+		}
+
+		foreach ( array_slice( $steps, $progress_index + 1 ) as $step ) {
+			if ( $screen_id === ( $step['screen'] ?? '' ) ) {
+				return $step;
+			}
+		}
+
+		return [];
 	}
 
 	public function update_progress(): void {

@@ -93,6 +93,7 @@ class Tours_Repository {
 		if (
 			! is_array( $step ) ||
 			empty( $step['id'] ) ||
+			empty( $step['screen'] ) ||
 			empty( $step['selector'] ) ||
 			empty( $step['title'] ) ||
 			empty( $step['description'] ) ||
@@ -101,13 +102,36 @@ class Tours_Repository {
 			return [];
 		}
 
-		return [
+		$normalized = [
 			'id' => sanitize_key( $step['id'] ),
+			'screen' => sanitize_key( $step['screen'] ),
 			'selector' => sanitize_text_field( $step['selector'] ),
 			'title' => sanitize_text_field( $step['title'] ),
 			'description' => sanitize_text_field( $step['description'] ),
 			'side' => $step['side'],
 		];
+
+		$next_url = $this->normalize_next_url( $step['next_url'] ?? '' );
+
+		if ( $next_url ) {
+			$normalized['next_url'] = $next_url;
+		}
+
+		return $normalized;
+	}
+
+	private function normalize_next_url( $next_url ): string {
+		if ( ! is_string( $next_url ) || '' === $next_url ) {
+			return '';
+		}
+
+		$next_url = sanitize_text_field( $next_url );
+
+		if ( ! preg_match( '/^[a-z0-9._\\-]+$/', $next_url ) ) {
+			return '';
+		}
+
+		return $next_url;
 	}
 
 	private function is_eligible( array $tour, string $screen_id, array $roles ): bool {

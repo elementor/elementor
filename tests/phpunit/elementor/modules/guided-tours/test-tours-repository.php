@@ -133,6 +133,7 @@ class Test_Tours_Repository extends Elementor_Test_Base {
 			'steps' => [
 				[
 					'id' => 'dashboard',
+					'screen' => 'dashboard',
 					'selector' => '#menu-dashboard',
 					'title' => 'Dashboard',
 					'description' => 'Start here.',
