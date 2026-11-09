@@ -159,12 +159,7 @@ class ActionControlTracking extends BaseTracking {
 					return;
 				}
 
-				let toggle = null;
-				if ( WpDashboardTracking.isEditorOneActive() ) {
-					toggle = base.closest( '.MuiSwitch-switchBase' );
-				} else {
-					toggle = base.closest( '.components-toggle-control' );
-				}
+				const toggle = base.closest( '.MuiSwitch-switchBase, .components-toggle-control' );
 
 				if ( toggle && ! this.isExcludedElement( toggle ) ) {
 					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
