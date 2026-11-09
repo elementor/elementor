@@ -10,15 +10,30 @@ on:
         default: true
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: force-push-beta-to-stable
   cancel-in-progress: false
 
 jobs:
-  force-push-beta-to-stable:
+  check-push-token:
     if: github.repository_owner == 'elementor'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Require GH_PAT for a live push
+        if: ${{ !inputs.dry_run }}
+        env:
+          HAS_GH_PAT: ${{ secrets.GH_PAT != '' }}
+        run: |
+          if [ "$HAS_GH_PAT" != "true" ]; then
+            echo "::error::GH_PAT is not set. GITHUB_TOKEN cannot force push release/stable."
+            exit 1
+          fi
+
+  force-push-beta-to-stable:
+    needs: check-push-token
     environment: release-owners
     runs-on: ubuntu-latest
 
@@ -26,11 +41,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ inputs.dry_run && secrets.GITHUB_TOKEN || secrets.GH_PAT }}
           fetch-depth: 0
           persist-credentials: true
 
       - name: Force push release/beta to release/stable
-        uses: elementor/elementor-editor-github-actions/actions/force-push-beta-to-stable@main
+        uses: elementor/elementor-editor-github-actions/actions/force-push-beta-to-stable@1c4a0e1051caa270ad83766d4e3e6a6fef6c03e9 # main
         with:
           dry-run: ${{ inputs.dry_run }}
