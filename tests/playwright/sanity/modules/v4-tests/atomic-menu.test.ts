@@ -142,7 +142,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Act
 		await firstItem.getByLabel( 'Open item' ).click();
-		await editor.page.locator( '.MuiPopover-paper' ).getByRole( 'textbox' ).fill( 'Start' );
+		await editor.page.locator( '.MuiPopover-paper input[type="text"]' ).fill( 'Start' );
 
 		// Assert
 		await expect( firstItem ).toContainText( 'Start' );
