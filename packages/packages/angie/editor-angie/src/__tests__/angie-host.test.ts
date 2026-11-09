@@ -96,6 +96,31 @@ describe( 'editor angie host', () => {
 		expect( mockAttachAngieSdk ).toHaveBeenCalledWith( instance );
 	} );
 
+	it( 'resolves the boot only after the editor MCP servers are attached', async () => {
+		// Arrange
+		mountIframe();
+		let resolveAttach!: () => void;
+		mockAttachAngieSdk.mockReturnValueOnce(
+			new Promise< void >( ( resolve ) => {
+				resolveAttach = resolve;
+			} )
+		);
+		const onBooted = jest.fn();
+
+		// Act
+		const boot = bootAngieSdk().then( onBooted );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		// Assert
+		expect( mockAttachAngieSdk ).toHaveBeenCalledTimes( 1 );
+		expect( onBooted ).not.toHaveBeenCalled();
+
+		resolveAttach();
+		await boot;
+
+		expect( onBooted ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'still boots when attaching the editor MCP servers fails', async () => {
 		// Arrange
 		mountIframe();
@@ -265,6 +290,28 @@ describe( 'editor angie host', () => {
 
 		expect( openPanel ).toHaveBeenCalledTimes( 1 );
 		expect( mockTriggerAngie ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'attaches the editor MCP servers before the first prompt when the plugin is active but its sidebar is not', async () => {
+		// Arrange
+		registerAngiePanelOpener( jest.fn() );
+		window.elementorEditorAngie = { isAngiePluginActive: true };
+		mockGetAngieIframe.mockReturnValue( null );
+		mountIframe();
+		const calls: string[] = [];
+		mockAttachAngieSdk.mockImplementationOnce( async () => {
+			calls.push( 'attach' );
+		} );
+		mockTriggerAngie.mockImplementationOnce( async () => {
+			calls.push( 'trigger' );
+			return { success: true, requestId: '1' };
+		} );
+
+		// Act
+		await openAngie( { prompt: 'Write a heading', mode: AngieInteractionMode.ASK } );
+
+		// Assert
+		expect( calls ).toEqual( [ 'attach', 'trigger' ] );
 	} );
 
 	it( 'opens the Angie plugin and leaves the Core SDK closed when the plugin is active', async () => {
