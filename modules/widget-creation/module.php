@@ -28,6 +28,8 @@ class Module extends BaseModule {
 
 	const ANGIE_PANEL_PACKAGE = 'editor-angie-panel';
 
+	const ANGIE_ENTRY_POINTS_PACKAGE = 'editor-angie-entry-points';
+
 	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
 
 	public function get_name() {
@@ -104,6 +106,7 @@ class Module extends BaseModule {
 			$packages[] = self::ANGIE_FLOATING_PANELS_PACKAGE;
 			$packages[] = self::ANGIE_PACKAGE;
 			$packages[] = self::ANGIE_PANEL_PACKAGE;
+			$packages[] = self::ANGIE_ENTRY_POINTS_PACKAGE;
 		}
 
 		return array_values( array_unique( $packages ) );
