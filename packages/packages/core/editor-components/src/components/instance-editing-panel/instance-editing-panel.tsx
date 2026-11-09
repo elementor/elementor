@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PencilIcon } from '@elementor/icons';
+import { SessionStorageProvider } from '@elementor/session';
 import { Box, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -44,12 +45,14 @@ export function InstanceEditingPanel() {
 				overridableProps={ overridableProps }
 			>
 				<InstancePanelHeader componentName={ component.name } actions={ actions } />
-				<InstancePanelBody
-					groups={ groups }
-					isEmpty={ isEmpty }
-					emptyState={ <EmptyState /> }
-					componentInstanceId={ componentInstanceId }
-				/>
+				<SessionStorageProvider prefix={ componentInstanceId }>
+					<InstancePanelBody
+						groups={ groups }
+						isEmpty={ isEmpty }
+						emptyState={ <EmptyState /> }
+						componentInstanceId={ componentInstanceId }
+					/>
+				</SessionStorageProvider>
 			</ComponentInstanceProvider>
 			{ ! isProComponentsSupported() &&
 				( isProOutdatedForComponents() ? (
