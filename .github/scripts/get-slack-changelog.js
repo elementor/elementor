@@ -54,10 +54,20 @@ const formatChangelogForSlack = (section, maxLength = SLACK_SECTION_MAX_LENGTH) 
 	return kept.join('\n');
 };
 
+// Pre-releases (e.g. 4.4.0-beta1) have no changelog section, so they get an empty string.
 const getSlackChangelog = (version, filePath = CHANGELOG_PATH) => {
-	const section = getChangelogSection(version.replace(/^v/, ''), filePath);
+	const cleanVersion = version.replace(/^v/, '');
+	const section = getChangelogSection(cleanVersion, filePath);
 
-	return section ? formatChangelogForSlack(section) : '';
+	if (section) {
+		return formatChangelogForSlack(section);
+	}
+
+	if (cleanVersion.includes('-')) {
+		return '';
+	}
+
+	throw new Error(`Changelog for ${cleanVersion} not found in ${filePath}`);
 };
 
 module.exports = {
@@ -65,7 +75,6 @@ module.exports = {
 	getSlackChangelog,
 };
 
-// Prints nothing for a version without a section (e.g. a beta). Exits 1 on any other error.
 if (require.main === module) {
 	try {
 		process.stdout.write(getSlackChangelog(process.argv[2] || ''));

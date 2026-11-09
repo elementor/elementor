@@ -7,10 +7,9 @@ if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# The release is already published, so a changelog error only warns.
 if ! CHANGELOG=$(node "${SCRIPT_DIR}/get-slack-changelog.js" "$RELEASE_VERSION"); then
-  echo "::warning title=Slack release announcement::Could not build the changelog for ${RELEASE_VERSION}. Announcing without it."
-  CHANGELOG=""
+  echo "::error title=Slack release announcement::Could not build the changelog for ${RELEASE_VERSION}. Nothing was posted to Slack."
+  exit 1
 fi
 
 PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
