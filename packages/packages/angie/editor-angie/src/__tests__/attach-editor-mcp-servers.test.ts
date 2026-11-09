@@ -1,4 +1,4 @@
-import { activateMcpAdapter, AngieMcpAdapter, hasMcpAdapter } from '@elementor/editor-mcp';
+import { activateMcpAdapter, AngieMcpAdapter, waitForMcpReady } from '@elementor/editor-mcp';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 
 import { attachEditorMcpServers, resetEditorMcpServersAttachmentForTests } from '../attach-editor-mcp-servers';
@@ -7,7 +7,6 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 	AngieMcpAdapter: jest.fn(),
 	activateMcpAdapter: jest.fn().mockResolvedValue( undefined ),
 	getRegisteredMcpServers: jest.fn( () => [] ),
-	hasMcpAdapter: jest.fn( () => false ),
 	waitForMcpReady: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
@@ -37,14 +36,25 @@ describe( 'attachEditorMcpServers', () => {
 		expect( activateMcpAdapter ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'skips when editor-mcp already attached an Angie adapter at startup', async () => {
+	it( 'activates only after editor-mcp startup finished', async () => {
 		// Arrange
-		jest.mocked( hasMcpAdapter ).mockReturnValueOnce( true );
+		let resolveReady!: () => void;
+		jest.mocked( waitForMcpReady ).mockReturnValueOnce(
+			new Promise( ( resolve ) => {
+				resolveReady = resolve;
+			} )
+		);
 
 		// Act
-		await attachEditorMcpServers( sdk );
+		const attachment = attachEditorMcpServers( sdk );
+		await Promise.resolve();
 
 		// Assert
 		expect( activateMcpAdapter ).not.toHaveBeenCalled();
+
+		resolveReady();
+		await attachment;
+
+		expect( activateMcpAdapter ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
