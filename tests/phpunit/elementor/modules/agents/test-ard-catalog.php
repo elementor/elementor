@@ -102,6 +102,15 @@ class Test_Ard_Catalog extends Elementor_Test_Base {
 		$this->assertSame( 'application/json', $entries[ $identifier ]['type'] );
 	}
 
+	public function test_generate_content__declares_ai_catalog_spec_version() {
+		// Act
+		$content = $this->invoke_generate_content();
+
+		// Assert
+		$this->assertSame( Ard_Catalog::SPEC_VERSION, $content['specVersion'] );
+		$this->assertIsArray( $content['entries'] );
+	}
+
 	public function test_generate_content__every_entry_has_required_ard_fields() {
 		// Arrange
 		$identifier_prefix = 'urn:air:' . $this->get_host() . ':';

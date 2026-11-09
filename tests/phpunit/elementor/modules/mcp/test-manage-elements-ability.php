@@ -143,6 +143,26 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 	}
 
+	public function test_execute__denied_when_role_is_excluded_from_elementor() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		update_option( 'elementor_exclude_user_roles', [ 'editor' ] );
+		$this->act_as_editor();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'x' ],
+			],
+		] );
+
+		delete_option( 'elementor_exclude_user_roles' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_forbidden', $result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+	}
+
 	public function test_execute__unknown_action_returns_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();

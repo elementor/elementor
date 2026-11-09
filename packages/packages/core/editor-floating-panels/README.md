@@ -72,6 +72,16 @@ When `isResizable` is `true`, edge and corner resize handles render on the panel
 
 Programmatic sizing via `setSize` from `useFloatingPanelActions` works regardless of `isResizable`.
 
+### `isDocked`
+
+When `isDocked` is `true`, the panel is pinned to the inline end for as long as it is open, the same way the Navigator is when it is docked. It uses its width and the full height under the top bar. The editor canvas narrows by that width. The inner edge can be dragged to change the width. That width is kept across reloads. The panel cannot be moved or undocked, and `isDraggable` or `isResizable` do not add the floating handles. Closing the panel hides it and returns the width to the canvas. When omitted, the panel keeps the previous floating behavior.
+
+### `keepMounted`
+
+When `keepMounted` is `true`, closing the panel hides it and leaves its component mounted. Use this when the panel hosts an iframe that must keep its session. When omitted or `false`, closing the panel unmounts the component.
+
+`openFloatingPanel( id )` and `closeFloatingPanel( id )` open and close a registered panel from outside React.
+
 ### `defaults`
 
 `defaults` is required and defines the panel's initial dimensions and (optionally) its initial position.

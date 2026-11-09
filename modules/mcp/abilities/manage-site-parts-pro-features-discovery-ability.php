@@ -5,7 +5,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Site_Parts_Schema;
-use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -31,24 +30,21 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( 'edit_posts' ),
+			fn() => current_user_can( 'publish_posts' ),
 			Site_Parts_Schema::manage_input()
 		);
 	}
 
 	private function get_description(): string {
-		$description = Prompt_Loader::load( 'manage-site-parts' );
-
-		if ( ! Woocommerce_Pro_Features_Discovery::is_active() ) {
-			return $description;
-		}
-
-		return $description . ' ' . Woocommerce_Pro_Features_Discovery::get_description_notice();
+		return sprintf(
+			Prompt_Loader::load( 'manage-site-parts-pro-features-discovery' ),
+			implode( ', ', Site_Parts_Schema::get_types() )
+		);
 	}
 
 	public function execute( $input = [] ) {
 		$operations = is_array( $input ) && is_array( $input['operations'] ?? null ) ? $input['operations'] : [];
 
-		return Site_Parts_Pro_Features_Discovery::for_manage( $operations );
+		return Site_Parts_Pro_Features_Discovery::for_operations( $operations );
 	}
 }
