@@ -6,6 +6,7 @@ import {
 	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
+import { attachEditorMcpServers } from './attach-editor-mcp-servers';
 import { ensureHelpCenterAbility } from './help-center-ability';
 
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
@@ -90,6 +91,13 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 			openAngieIframe();
 
 			sdk = instance;
+
+			// Awaited so `openAngie()` cannot send the first prompt before the editor tools are registered.
+			// The catch keeps the boot alive when registration fails, like the help-center ability below.
+			await attachEditorMcpServers( instance ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Angie editor MCP servers registration failed:', error );
+			} );
 
 			await ensureHelpCenterAbility( instance ).catch( ( error ) => {
 				// eslint-disable-next-line no-console
