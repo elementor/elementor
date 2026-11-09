@@ -2,7 +2,6 @@ import { expect, type BrowserContext, type Locator } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
-import EditorSelectors from '../../../selectors/editor-selectors';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic Menu @atomic-widgets', () => {
@@ -45,78 +44,14 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	};
 
 	const addMenu = async (): Promise<string> => {
-		await editor.openElementsPanel();
+		const menuId = await editor.v4Panel.addAtomicElementFromPanel( menuType );
 
-		const tile = editor.page.locator(
-			`#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="${ menuType }"]`,
-		);
-
-		await tile.waitFor( { state: 'visible' } );
-		await tile.click();
-
-		const menuElement = editor.getPreviewFrame().locator( `[data-element_type="${ menuType }"]` ).first();
-
-		await menuElement.waitFor( { state: 'visible' } );
-
-		const menuId = await menuElement.getAttribute( 'data-id' ) as string;
-
-		await expect( menuElement.locator( '..' ) ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
+		await expect( getMenuRoot( menuId ).locator( '..' ) ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
 
 		await editor.selectElement( menuId );
 		await editor.waitForPanelToLoad();
 
 		return menuId;
-	};
-
-	const navigatorSelectors = EditorSelectors.panels.navigator;
-
-	const openStructurePanel = async (): Promise<Locator> => {
-		await editor.page.locator( navigatorSelectors.footerButton ).click();
-
-		const panel = editor.page.locator( navigatorSelectors.wrapper );
-
-		await expect( panel ).toBeVisible();
-
-		return panel;
-	};
-
-	const selectInStructurePanel = async ( elementId: string ) => {
-		await editor.page.locator( navigatorSelectors.getElementItem( elementId ) ).first().click();
-	};
-
-	const expandStructureNode = async ( elementId: string ) => {
-		const node = editor.page.locator( navigatorSelectors.getElement( elementId ) );
-		const children = node.locator( '> .elementor-navigator__elements' );
-
-		if ( await children.evaluate( ( element ) => 'none' === getComputedStyle( element ).display ) ) {
-			await node.locator( '> .elementor-navigator__item .elementor-navigator__element__list-toggle' ).click();
-		}
-
-		await expect( children ).toBeVisible();
-	};
-
-	const expandAllStructureNodes = async () => {
-		await expect.poll( async () => {
-			return await editor.page.evaluate( () => {
-				const collapsed = Array.from(
-					document.querySelectorAll( '#elementor-navigator .elementor-navigator__element--has-children' ),
-				).filter( ( element ) => {
-					const list = element.querySelector( ':scope > .elementor-navigator__elements' );
-
-					return list && 'none' === getComputedStyle( list ).display;
-				} );
-
-				collapsed.forEach( ( element ) => {
-					( element.querySelector( ':scope > .elementor-navigator__item .elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
-				} );
-
-				return collapsed.length;
-			} );
-		}, { timeout: 15000 } ).toBe( 0 );
-	};
-
-	const getStructureTitles = ( panel: Locator ): Locator => {
-		return panel.locator( '.elementor-navigator__element__title__text' );
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
@@ -227,11 +162,11 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	test( 'Structure panel nests the menu in a flexbox and lists every entry once expanded', async () => {
 		// Arrange
 		const menuId = await addMenu();
-		const panel = await openStructurePanel();
-		const titles = getStructureTitles( panel );
+		const panel = await editor.openStructurePanel();
+		const titles = editor.getStructureTitles();
 
-		await selectInStructurePanel( menuId );
-		await expandStructureNode( menuId );
+		await editor.selectElementInStructurePanel( menuId );
+		await editor.expandStructureNode( menuId );
 
 		// Assert
 		await expect( titles.filter( { hasText: /^Flexbox$/ } ) ).toHaveCount( 1 );
@@ -242,7 +177,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expectStableScreenshot( panel, 'menu-structure-panel-menu-expanded.png' );
 
 		// Act
-		await expandAllStructureNodes();
+		await editor.expandAllStructureNodes();
 
 		// Assert
 		await expect( titles.filter( { hasText: /^Menu item$/ } ) ).toHaveCount( 4 );

@@ -950,6 +950,74 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Open the structure (navigator) panel from the V4 top bar.
+	 *
+	 * @return {Promise<Locator>} The navigator panel.
+	 */
+	async openStructurePanel(): Promise<Locator> {
+		const panel = this.page.locator( EditorSelectors.panels.navigator.wrapper );
+
+		if ( ! await panel.isVisible() ) {
+			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
+		}
+
+		await expect( panel ).toBeVisible();
+
+		return panel;
+	}
+
+	async selectElementInStructurePanel( elementId: string ): Promise<void> {
+		await this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first().click();
+	}
+
+	/**
+	 * Expand a single structure panel node when it is collapsed.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async expandStructureNode( elementId: string ): Promise<void> {
+		const node = this.page.locator( EditorSelectors.panels.navigator.getElement( elementId ) );
+		const children = node.locator( '> .elementor-navigator__elements' );
+
+		if ( await children.evaluate( ( element ) => 'none' === getComputedStyle( element ).display ) ) {
+			await node.locator( '> .elementor-navigator__item .elementor-navigator__element__list-toggle' ).click();
+		}
+
+		await expect( children ).toBeVisible();
+	}
+
+	/**
+	 * Expand every collapsed node in the structure panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async expandAllStructureNodes(): Promise<void> {
+		await expect.poll( async () => {
+			return await this.page.evaluate( () => {
+				const collapsed = Array.from(
+					document.querySelectorAll( '#elementor-navigator .elementor-navigator__element--has-children' ),
+				).filter( ( element ) => {
+					const list = element.querySelector( ':scope > .elementor-navigator__elements' );
+
+					return list && 'none' === getComputedStyle( list ).display;
+				} );
+
+				collapsed.forEach( ( element ) => {
+					( element.querySelector( ':scope > .elementor-navigator__item .elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
+				} );
+
+				return collapsed.length;
+			} );
+		}, { timeout: timeouts.longAction } ).toBe( 0 );
+	}
+
+	getStructureTitles(): Locator {
+		return this.page.locator( `${ EditorSelectors.panels.navigator.wrapper } .elementor-navigator__element__title__text` );
+	}
+
+	/**
 	 * Close the navigator/structure panel.
 	 *
 	 * @return {Promise<void>}
