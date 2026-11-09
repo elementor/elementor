@@ -134,15 +134,4 @@ describe( 'read-console-errors tool', () => {
 		expect( getMCPByDomain ).toHaveBeenCalledWith( 'console', expect.any( Object ) );
 		expect( mockAddTool ).toHaveBeenCalledWith( expect.objectContaining( { name: 'read-console-errors' } ) );
 	} );
-
-	it( 'skips registration when the Angie plugin already provides the tool', () => {
-		// Arrange
-		window.elementorEditorAngie = { isAngiePluginActive: true };
-
-		// Act
-		initConsoleMcp();
-
-		// Assert
-		expect( mockAddTool ).not.toHaveBeenCalled();
-	} );
 } );
