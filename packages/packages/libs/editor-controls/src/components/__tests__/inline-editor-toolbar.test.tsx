@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { getContainer, getElementSetting } from '@elementor/editor-elements';
-import { ThemeProvider } from '@elementor/ui';
 import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
+import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
@@ -301,7 +301,9 @@ describe( 'InlineEditorToolbar', () => {
 		} );
 	} );
 	describe( 'injected actions', () => {
-		const InjectedAction = ( { elementId }: { elementId: string } ) => <button>{ `Action for ${ elementId }` }</button>;
+		const InjectedAction = ( { elementId }: { elementId: string } ) => (
+			<button>{ `Action for ${ elementId }` }</button>
+		);
 
 		beforeEach( () => {
 			injectIntoInlineEditorToolbar( { id: 'test-action', component: InjectedAction } );
