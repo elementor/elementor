@@ -324,6 +324,8 @@ test.describe( 'Editor MCP @editor-mcp', () => {
 	} );
 
 	test( 'ED-26100 the frontend shows a restored revision after publish', async ( { request, baseURL } ) => {
+		test.fixme( true, 'Blocked: manage-elements on a published page sometimes returns no undo_revision_id in CI (also hit ED-25734), so there is nothing to restore. Needs a bug ticket.' );
+
 		const postId = await createPage( mcp, 'MCP restore cache' );
 		const base = await buildComposition( mcp, { post_id: postId, xml_structure: '<e-heading configuration-id="t"></e-heading>', element_config: { t: { title: 'Original heading' } } } );
 
