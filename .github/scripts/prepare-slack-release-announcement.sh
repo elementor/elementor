@@ -7,7 +7,12 @@ if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CHANGELOG=$(node "${SCRIPT_DIR}/get-slack-changelog.js" "$RELEASE_VERSION" || true)
+# The release is already out at this point, so a changelog problem must not block the announcement.
+# Surface it as a workflow warning and announce without the changelog.
+if ! CHANGELOG=$(node "${SCRIPT_DIR}/get-slack-changelog.js" "$RELEASE_VERSION"); then
+  echo "::warning title=Slack release announcement::Could not build the changelog for ${RELEASE_VERSION}. Announcing without it."
+  CHANGELOG=""
+fi
 
 PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
   --arg channel "$CHANNEL" \
