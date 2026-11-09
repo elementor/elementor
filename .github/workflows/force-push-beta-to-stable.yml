@@ -17,8 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  check-push-token:
+  force-push-beta-to-stable:
     if: github.repository_owner == 'elementor'
+    environment: release-owners
     runs-on: ubuntu-latest
 
     steps:
@@ -32,12 +33,6 @@ jobs:
             exit 1
           fi
 
-  force-push-beta-to-stable:
-    needs: check-push-token
-    environment: release-owners
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -46,6 +41,6 @@ jobs:
           persist-credentials: true
 
       - name: Force push release/beta to release/stable
-        uses: elementor/elementor-editor-github-actions/actions/force-push-beta-to-stable@1c4a0e1051caa270ad83766d4e3e6a6fef6c03e9 # main
+        uses: elementor/elementor-editor-github-actions/actions/force-push-beta-to-stable@main
         with:
           dry-run: ${{ inputs.dry_run }}
