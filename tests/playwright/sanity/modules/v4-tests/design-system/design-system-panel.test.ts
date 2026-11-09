@@ -1,4 +1,5 @@
 import { type BrowserContext, expect, type Page } from '@playwright/test';
+import { hidePromoChromeForScreenshot } from '../../../../assets/promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
@@ -215,6 +216,8 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await designSystem.switchToVariablesTab();
 		} );
 
+		await hidePromoChromeForScreenshot( page );
+
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot(
 			'design-system-variables-tab.png',
 		);
@@ -228,6 +231,8 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await designSystem.openFromToolbar();
 			await designSystem.switchToClassesTab();
 		} );
+
+		await hidePromoChromeForScreenshot( page );
 
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot(
 			'design-system-classes-tab.png',

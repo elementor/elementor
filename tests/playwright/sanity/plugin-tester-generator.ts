@@ -1,5 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
+import { hidePromoChromeForScreenshot } from '../assets/promotion-cdn';
 import { wpCli } from '../assets/wp-cli';
 import { timeouts } from '../config/timeouts';
 import EditorPage from '../pages/editor-page';
@@ -140,6 +141,7 @@ export const generatePluginTests = ( testType: string ) => {
 
 				await editor.closeNavigatorIfOpen();
 
+				await hidePromoChromeForScreenshot( page );
 				await expect.soft( page ).toHaveScreenshot( 'editor.png', { fullPage: true } );
 			} finally {
 				if ( 'api' === plugin.installSource ) {

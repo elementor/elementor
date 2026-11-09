@@ -2,6 +2,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect, type Page } from '@playwright/test';
 import { timeouts } from '../../../config/timeouts';
+import { hidePromoChromeForScreenshot } from '../../../assets/promotion-cdn';
 
 function waitForNestedSelectMenuToClose( page: Page ) {
 	return page.waitForFunction(
@@ -87,6 +88,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
 			await interactionsTab.click();
 
+			await hidePromoChromeForScreenshot( page );
 			await expect
 				.soft( page.locator( panelSelector ) )
 				.toHaveScreenshot( 'interactions-empty-state.png' );
