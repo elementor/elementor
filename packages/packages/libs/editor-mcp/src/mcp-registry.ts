@@ -58,6 +58,20 @@ export const signalMcpReady = (): void => {
 	resolveReady();
 };
 
+export const waitForMcpReady = (): Promise< void > => readyPromise;
+
+/**
+ * Registers and activates an adapter that becomes available after startup.
+ * Waits for the startup activation so the adapter is activated exactly once.
+ *
+ * @param adapter - Adapter to register and activate.
+ */
+export const activateMcpAdapter = async ( adapter: IMcpRegistrationAdapter ): Promise< void > => {
+	await readyPromise;
+	registerMcpAdapter( adapter );
+	await adapter.activate();
+};
+
 export const createAndRegisterAdapters = async (): Promise< void > => {
 	const modelContext = getModelContext();
 
