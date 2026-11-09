@@ -10,6 +10,7 @@ use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
 use Elementor\Modules\Mcp\Preview\Woocommerce_Preview_Fixtures;
@@ -17,6 +18,7 @@ use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Modules\Mcp\RestApi\Mcp_Media_Upload_REST_API;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Server_Instructions;
 use Elementor\Plugin;
 use Elementor\Utils;
 use WP\MCP\Core\McpAdapter;
@@ -182,6 +184,10 @@ class Module extends BaseModule {
 		if ( self::is_site_mcp_exposure_enabled() ) {
 			add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
 			( new Mcp_Media_Upload_REST_API() )->register_hooks();
+
+			if ( ! Utils::has_pro() ) {
+				( new Pro_Features_Server_Instructions() )->register_hooks();
+			}
 		}
 	}
 
@@ -251,10 +257,20 @@ class Module extends BaseModule {
 			return [];
 		}
 
-		return [
-			new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
-			new Abilities\List_Site_Parts_Pro_Features_Discovery_Ability(),
-		];
+		return array_merge(
+			[
+				new Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability(),
+				new Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability(),
+			],
+			self::get_woocommerce_pro_features_discovery_abilities( Woocommerce_Pro_Features_Discovery::is_active() )
+		);
+	}
+
+	/** @return Abstract_Ability[] */
+	public static function get_woocommerce_pro_features_discovery_abilities( bool $is_woocommerce_active ): array {
+		return $is_woocommerce_active
+			? [ new Abilities\Manage_Woocommerce_Settings_Pro_Features_Discovery_Ability() ]
+			: [];
 	}
 
 	/** @return Abstract_Ability[] */
@@ -289,6 +305,8 @@ class Module extends BaseModule {
 			new Abilities\Manage_Component_Ability(),
 			new Abilities\List_Posts_Ability(),
 			new Abilities\Get_System_Info_Ability(),
+			new Abilities\Enable_Agent_Ready_Ability(),
+			new Abilities\Agent_Ready_Scan_Ability(),
 			new Abilities\Clear_Cache_Ability(),
 			new Abilities\Get_License_Status_Ability(),
 			new Abilities\List_Experiments_Ability(),

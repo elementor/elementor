@@ -65,6 +65,7 @@
     "packages/packages/tools/*",
     "packages/packages/libs/*",
     "packages/packages/core/*",
+    "packages/packages/angie/*",
     "packages/apps/*"
   ],
   "devDependencies": {
@@ -193,6 +194,8 @@
     "validator": "^13.11.0"
   },
   "overrides": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@hono/node-server": "2.1.6",
     "nwsapi": "2.2.13",
     "react": "18.3.1",
     "react-dom": "18.3.1",

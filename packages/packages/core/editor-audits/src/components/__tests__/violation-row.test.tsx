@@ -22,6 +22,18 @@ jest.mock( '@elementor/editor-floating-panels', () => ( {
 	useFloatingPanelZIndex: jest.fn( () => 1000 ),
 } ) );
 
+const mockIsAngieAvailable = jest.fn();
+
+jest.mock( '@elementor/editor-mcp', () => {
+	const { toolPrompts } = jest.requireActual( '@elementor/editor-mcp' ) as { toolPrompts: unknown };
+
+	return {
+		toolPrompts,
+		isAngieAvailable: () => mockIsAngieAvailable(),
+		sendPromptToAngie: jest.fn(),
+	};
+} );
+
 const AUDIT: AuditMeta = {
 	id: 'audits/page-title',
 	title: 'Page title',
@@ -39,6 +51,7 @@ function renderExpanded( violations?: AuditViolation[] ) {
 describe( 'ViolationRow', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsAngieAvailable.mockReturnValue( true );
 	} );
 
 	it( 'calls onToggleExpand when the header is clicked', () => {

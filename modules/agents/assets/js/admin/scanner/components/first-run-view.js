@@ -121,7 +121,6 @@ const ScannerPreview = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain } ) =>
 					agentAccessUrl={ agentAccessUrl }
 					seoPluginSearchUrl={ seoPluginSearchUrl }
 					isActivated
-					score={ score }
 				/>
 				<PassingTable checks={ scan.passingChecks } />
 			</Stack>

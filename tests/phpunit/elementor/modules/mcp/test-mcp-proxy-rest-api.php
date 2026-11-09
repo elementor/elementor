@@ -114,6 +114,68 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
 	}
 
+	public function test_post__rejects_manage_site_parts_without_theme_builder_capability() {
+		// Arrange — contributor can edit posts, which is not enough for Theme Builder.
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'contributor' ] ) );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-proxy' );
+		$request->set_body_params( [
+			'tool' => 'manage-site-parts',
+			'input' => [
+				'operations' => [
+					[
+						'action' => 'create',
+						'type' => 'footer',
+					],
+				],
+			],
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::FORBIDDEN, $response->get_status() );
+		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_post__allows_manage_site_parts_permission_for_editor() {
+		// Arrange — editor matches the Theme Builder menu capability.
+		$this->act_as_editor();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-proxy' );
+		$request->set_body_params( [
+			'tool' => 'manage-site-parts',
+			'input' => [],
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert — permission passed. Empty input fails validation, or the core discovery payload is returned.
+		$this->assertNotSame( \WP_Http::FORBIDDEN, $response->get_status() );
+	}
+
+	public function test_post__proxy_stays_available_when_site_mcp_is_disabled() {
+		// Arrange
+		update_option( 'elementor_mcp_enabled', false );
+		$this->act_as_editor();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-proxy' );
+		$request->set_body_params( [
+			'tool' => 'find-icons',
+			'input' => [],
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert — WebMCP keeps the proxy when the public MCP server is off.
+		$this->assertNotSame( \WP_Http::NOT_FOUND, $response->get_status() );
+
+		delete_option( 'elementor_mcp_enabled' );
+	}
+
 	public function test_post__allows_manage_classes_permission_for_admin() {
 		// Arrange
 		$role = get_role( 'administrator' );

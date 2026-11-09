@@ -9,6 +9,7 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
+use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
@@ -26,16 +27,21 @@ use Elementor\Modules\Agents\Classes\Post_Exclusions;
 use Elementor\Modules\Agents\Classes\Request_Path;
 use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
+use Elementor\Modules\Agents\Classes\Scanner_Orchestrator;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Mcp_Server_Card;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Webmcp_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Not_Found;
 use Elementor\Modules\Agents\Components\Webmcp\Business_Info_Extractor;
@@ -101,6 +107,7 @@ class Module extends BaseModule {
 
 	private Markdown_Manual_Content $markdown_manual_content;
 	private Scanner_Report_Store $scanner_store;
+	private Scanner_Orchestrator $scanner_orchestrator;
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
 	private Seo_Llms_Txt_Detector $seo_detector;
 	private Module_Availability $module_availability;
@@ -120,15 +127,21 @@ class Module extends BaseModule {
 		$this->settings         = new Agent_Ready_Settings( $this->generator, $this->bot_catalog );
 		$this->robots_handler   = new Robots_Txt_Handler( $this->settings );
 		$this->manual_content   = new Llms_Manual_Content( $this->generator );
-		$this->scanner_store    = new Scanner_Report_Store();
+		$this->scanner_store        = new Scanner_Report_Store();
+		$this->scanner_orchestrator = new Scanner_Orchestrator( new Scanner_Client(), $this->scanner_store );
 		$this->seo_detector     = new Seo_Llms_Txt_Detector();
 		$this->module_availability = new Module_Availability( $this->seo_detector, $this->robots_handler );
 
 		$this->settings->register();
 
-		( new Scanner_Rest_Api( new Scanner_Client(), $this->scanner_store ) )->register_hooks();
+		( new Scanner_Rest_Api( $this->scanner_orchestrator ) )->register_hooks();
 
-		foreach ( [ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ] as $option ) {
+		$watched_options = array_merge(
+			[ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ],
+			Mcp_Discovery::get_settings_option_names()
+		);
+
+		foreach ( $watched_options as $option ) {
 			add_action( "add_option_{$option}", [ $this, 'on_settings_add' ], 10, 2 );
 			add_action( "update_option_{$option}", [ $this, 'on_settings_update' ], 10, 3 );
 		}
@@ -185,10 +198,14 @@ class Module extends BaseModule {
 		$this->register_well_known_endpoint( new Api_Catalog() );
 		$this->register_well_known_endpoint( new Agent_Skills() );
 		$this->register_well_known_endpoint( new Ard_Manifest( $this ) );
+		$this->register_well_known_endpoint( new Ard_Catalog( $this ) );
+		$this->register_well_known_endpoint( new Mcp_Server_Card() );
 
 		$this->markdown_manual_content = new Markdown_Manual_Content( $this->generator );
 		$this->markdown_endpoint       = new Markdown_Endpoint( $this->settings, $this->markdown_manual_content );
 
+		$this->register_component( new Mcp_Discovery() );
+		$this->register_component( new Openapi_Spec( $this->settings ) );
 		$this->register_component( new Link_Headers( $this->markdown_endpoint, $this->settings, $this ) );
 		$this->register_component( $this->markdown_endpoint );
 		$this->register_component( new Markdown_Not_Found( $this->settings, $this->markdown_endpoint, $this ) );
@@ -197,6 +214,8 @@ class Module extends BaseModule {
 		$this->register_component( $this->webmcp_browser_tools );
 
 		add_action( 'admin_init', [ $this, 'maybe_detect_existing_file' ] );
+
+		( new Agents_Sidebar_Config() )->register();
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
 		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
@@ -275,10 +294,71 @@ class Module extends BaseModule {
 			throw new \Exception( esc_html__( 'Permission denied.', 'elementor' ), Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
+		$this->activate_agent_ready();
+	}
+
+	/**
+	 * @return array{
+	 *     activated: bool,
+	 *     enabledModules: string[],
+	 *     skippedModules: array<string, array{code: string, message: string}>
+	 * }
+	 */
+	public function activate_agent_ready(): array {
 		$unavailable_reasons = $this->module_availability->get_unavailable_reasons();
 		$skip_modules        = array_keys( $unavailable_reasons );
 
 		$this->settings->activate( $skip_modules );
+
+		return $this->build_activation_result( $unavailable_reasons );
+	}
+
+	public function get_scanner_orchestrator(): Scanner_Orchestrator {
+		return $this->scanner_orchestrator;
+	}
+
+	/**
+	 * @param array<string, array{code: string, message: string}> $unavailable_reasons
+	 */
+	private function build_activation_result( array $unavailable_reasons ): array {
+		$enabled_modules = [];
+
+		foreach (
+			[
+				Agent_Ready_Settings::MODULE_LLMS_TXT,
+				Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+				Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL,
+				Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+				Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+			] as $module
+		) {
+			if ( $this->module_is_enabled( $module ) ) {
+				$enabled_modules[] = $module;
+			}
+		}
+
+		return [
+			'activated'      => $this->settings->is_activated(),
+			'enabledModules' => $enabled_modules,
+			'skippedModules' => $unavailable_reasons,
+		];
+	}
+
+	private function module_is_enabled( string $module ): bool {
+		switch ( $module ) {
+			case Agent_Ready_Settings::MODULE_LLMS_TXT:
+				return $this->settings->is_llms_enabled();
+			case Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT:
+				return $this->settings->is_markdown_enabled();
+			case Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL:
+				return $this->settings->is_bot_access_enabled();
+			case Agent_Ready_Settings::MODULE_AGENT_DISCOVERY:
+				return $this->settings->is_agent_discovery_enabled();
+			case Agent_Ready_Settings::MODULE_BROWSER_TOOLS:
+				return $this->settings->is_browser_tools_enabled();
+			default:
+				return false;
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -797,7 +877,7 @@ class Module extends BaseModule {
 	 *
 	 * @return string Path with trailing slash.
 	 */
-	private static function get_llms_file_root_path(): string {
+	public static function get_llms_file_root_path(): string {
 		$home_url = trailingslashit( home_url() );
 		$site_url = trailingslashit( site_url() );
 
