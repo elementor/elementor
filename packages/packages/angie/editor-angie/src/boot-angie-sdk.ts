@@ -6,6 +6,7 @@ import {
 	toggleAngieSidebar,
 } from '@elementor-external/angie-sdk';
 
+import { attachEditorMcpServers } from './attach-editor-mcp-servers';
 import { ensureHelpCenterAbility } from './help-center-ability';
 
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
@@ -97,6 +98,11 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 			openAngieIframe();
 
 			sdk = instance;
+
+			void attachEditorMcpServers( instance ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Angie editor MCP servers registration failed:', error );
+			} );
 
 			await ensureHelpCenterAbility( instance ).catch( ( error ) => {
 				// eslint-disable-next-line no-console

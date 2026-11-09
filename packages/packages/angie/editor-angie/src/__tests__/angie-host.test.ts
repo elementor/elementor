@@ -47,6 +47,12 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	getAngieIframe: () => mockGetAngieIframe(),
 } ) );
 
+const mockAttachAngieSdk = jest.fn();
+
+jest.mock( '../attach-editor-mcp-servers', () => ( {
+	attachEditorMcpServers: ( ...args: unknown[] ) => mockAttachAngieSdk( ...args ),
+} ) );
+
 const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
 
 const mountIframe = () => {
@@ -75,6 +81,38 @@ describe( 'editor angie host', () => {
 		mockTriggerAngie.mockResolvedValue( { success: true, requestId: '1' } );
 		mockRegisterLocalServer.mockResolvedValue( undefined );
 		mockWaitForReady.mockResolvedValue( undefined );
+		mockAttachAngieSdk.mockResolvedValue( undefined );
+	} );
+
+	it( 'attaches the editor MCP servers to the SDK it booted', async () => {
+		// Arrange
+		mountIframe();
+
+		// Act
+		const instance = await bootAngieSdk();
+
+		// Assert
+		expect( mockAttachAngieSdk ).toHaveBeenCalledTimes( 1 );
+		expect( mockAttachAngieSdk ).toHaveBeenCalledWith( instance );
+	} );
+
+	it( 'still boots when attaching the editor MCP servers fails', async () => {
+		// Arrange
+		mountIframe();
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		mockAttachAngieSdk.mockRejectedValueOnce( new Error( 'attach failed' ) );
+
+		// Act
+		const instance = await bootAngieSdk();
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+		// Assert
+		expect( instance ).toBeDefined();
+		expect( consoleErrorSpy ).toHaveBeenCalledWith(
+			'Angie editor MCP servers registration failed:',
+			expect.any( Error )
+		);
+		consoleErrorSpy.mockRestore();
 	} );
 
 	it( 'boots one SDK and opens the iframe it created', async () => {
