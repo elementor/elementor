@@ -19,6 +19,7 @@ concurrency:
 jobs:
   force-push-beta-to-stable:
     if: github.repository_owner == 'elementor'
+    environment: release-owners
     runs-on: ubuntu-latest
 
     steps:
