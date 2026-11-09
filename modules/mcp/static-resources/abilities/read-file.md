@@ -1,1 +1,1 @@
-Reads a text file under the WordPress root (ABSPATH). Path is relative to ABSPATH (for example wp-includes/version.php). Large files are rejected. Requires administrator permission and Super Admin enabled.
+Reads a text file under the WordPress root. Paths are relative to the WordPress root (ABSPATH), for example `wp-includes/version.php`. Paths or symlinks that resolve outside the root are refused. Large files are rejected. Requires administrator permission and Super Admin enabled.

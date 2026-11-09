@@ -39,6 +39,20 @@ class Path_Validator {
 			return '';
 		}
 
+		if ( file_exists( $normalized ) ) {
+			$real_path = realpath( $normalized );
+			if ( false === $real_path ) {
+				return '';
+			}
+
+			$real_normalized = wp_normalize_path( $real_path );
+			if ( ! self::is_under( $real_normalized, $abspath_normalized ) ) {
+				return '';
+			}
+
+			return $real_normalized;
+		}
+
 		return $normalized;
 	}
 

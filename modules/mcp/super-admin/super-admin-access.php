@@ -24,6 +24,10 @@ trait Super_Admin_Access {
 		return $this->error( 'super_admin_disabled', __( 'Super Admin is disabled.', 'elementor' ), \WP_Http::FORBIDDEN );
 	}
 
+	protected function can_use_enabled(): bool {
+		return Super_Admin_Settings::current_user_can_use() && Super_Admin_Settings::is_enabled();
+	}
+
 	protected function error( string $code, string $message, int $status ): \WP_Error {
 		return new \WP_Error( $code, $message, [ 'status' => $status ] );
 	}

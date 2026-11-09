@@ -5,7 +5,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Super_Admin\Path_Validator;
 use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Access;
-use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,10 +22,6 @@ class List_Directory_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-directory';
-	}
-
-	public function is_exposed_via_proxy(): bool {
-		return false;
 	}
 
 	protected function get_definition(): Ability_Definition {
@@ -61,7 +56,7 @@ class List_Directory_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => Super_Admin_Settings::current_user_can_use() && Super_Admin_Settings::is_enabled(),
+			fn() => $this->can_use_enabled(),
 			[
 				'type' => 'object',
 				'properties' => [
@@ -100,10 +95,6 @@ class List_Directory_Ability extends Abstract_Ability {
 			);
 		}
 
-		$entries = [];
-		$count = 0;
-		$truncated = false;
-
 		$dh = @opendir( $resolved ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		if ( false === $dh ) {
 			return $this->error(
@@ -113,29 +104,62 @@ class List_Directory_Ability extends Abstract_Ability {
 			);
 		}
 
+		$relative_prefix = $this->relative_path_from_abspath( $raw_path );
+		$valid_names = [];
+
 		while ( false !== ( $name = readdir( $dh ) ) ) {
 			if ( '.' === $name || '..' === $name ) {
 				continue;
 			}
-			if ( $count >= self::MAX_LIST_ENTRIES ) {
-				$truncated = true;
-				break;
+
+			$child_relative = $this->child_relative_path( $relative_prefix, $name );
+			if ( '' === Path_Validator::resolve_under_abspath( $child_relative ) ) {
+				continue;
 			}
-			$full = trailingslashit( $resolved ) . $name;
+
+			$valid_names[] = $name;
+		}
+		closedir( $dh );
+
+		sort( $valid_names, SORT_STRING );
+
+		$truncated = count( $valid_names ) > self::MAX_LIST_ENTRIES;
+		$selected_names = array_slice( $valid_names, 0, self::MAX_LIST_ENTRIES );
+
+		$entries = [];
+		foreach ( $selected_names as $name ) {
+			$child_relative = $this->child_relative_path( $relative_prefix, $name );
+			$full = Path_Validator::resolve_under_abspath( $child_relative );
+			if ( '' === $full ) {
+				continue;
+			}
+
 			$is_dir = is_dir( $full );
 			$entries[] = [
 				'name' => $name,
 				'type' => $is_dir ? 'dir' : 'file',
 				'size' => $is_dir ? null : (int) @filesize( $full ), // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			];
-			$count++;
 		}
-		closedir( $dh );
 
 		return [
 			'path'      => $resolved,
 			'entries'   => $entries,
 			'truncated' => $truncated,
 		];
+	}
+
+	private function relative_path_from_abspath( string $path ): string {
+		$trimmed = trim( $path, '/\\' );
+
+		return $trimmed;
+	}
+
+	private function child_relative_path( string $relative_prefix, string $name ): string {
+		if ( '' === $relative_prefix ) {
+			return $name;
+		}
+
+		return trailingslashit( $relative_prefix ) . $name;
 	}
 }

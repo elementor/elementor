@@ -5,7 +5,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Super_Admin\Php_Executor;
 use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Access;
-use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,10 +20,6 @@ class Execute_Php_Ability extends Abstract_Ability {
 		return 'elementor/execute-php';
 	}
 
-	public function is_exposed_via_proxy(): bool {
-		return false;
-	}
-
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Execute PHP', 'elementor' ),
@@ -34,7 +29,9 @@ class Execute_Php_Ability extends Abstract_Ability {
 				'type' => 'object',
 				'properties' => [
 					'success' => [ 'type' => 'boolean' ],
-					'return_value' => [],
+					'return_value' => [
+						'type' => [ 'string', 'number', 'integer', 'boolean', 'array', 'object', 'null' ],
+					],
 					'output' => [ 'type' => 'string' ],
 					'errors' => [
 						'type' => 'array',
@@ -62,7 +59,7 @@ class Execute_Php_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => Super_Admin_Settings::current_user_can_use() && Super_Admin_Settings::is_enabled(),
+			fn() => $this->can_use_enabled(),
 			[
 				'type' => 'object',
 				'properties' => [

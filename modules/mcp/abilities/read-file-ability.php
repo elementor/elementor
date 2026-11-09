@@ -5,7 +5,6 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Super_Admin\Path_Validator;
 use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Access;
-use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,7 +14,7 @@ class Read_File_Ability extends Abstract_Ability {
 
 	use Super_Admin_Access;
 
-	const MAX_READ_BYTES = 524288;
+	const MAX_READ_BYTES = 512 * KB_IN_BYTES;
 
 	const ERROR_INVALID_PATH = 'invalid_path';
 	const ERROR_NOT_A_FILE = 'not_a_file';
@@ -24,10 +23,6 @@ class Read_File_Ability extends Abstract_Ability {
 
 	protected function get_ability_id(): string {
 		return 'elementor/read-file';
-	}
-
-	public function is_exposed_via_proxy(): bool {
-		return false;
 	}
 
 	protected function get_definition(): Ability_Definition {
@@ -52,7 +47,7 @@ class Read_File_Ability extends Abstract_Ability {
 				],
 				'mutates_page' => false,
 			],
-			fn() => Super_Admin_Settings::current_user_can_use() && Super_Admin_Settings::is_enabled(),
+			fn() => $this->can_use_enabled(),
 			[
 				'type' => 'object',
 				'properties' => [

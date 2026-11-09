@@ -4,7 +4,10 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\Mcp\Abilities\Disable_Super_Admin_Ability;
 use Elementor\Modules\Mcp\Abilities\Enable_Super_Admin_Ability;
+use Elementor\Modules\Mcp\Abilities\Execute_Php_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Super_Admin_Status_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Directory_Ability;
+use Elementor\Modules\Mcp\Abilities\Read_File_Ability;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,15 +22,21 @@ class Test_Super_Admin_Ability_Registration extends Elementor_Test_Base {
 	private const ENABLE_ID = 'elementor/enable-super-admin';
 	private const DISABLE_ID = 'elementor/disable-super-admin';
 	private const STATUS_ID = 'elementor/get-super-admin-status';
+	private const EXECUTE_PHP_ID = 'elementor/execute-php';
+	private const READ_FILE_ID = 'elementor/read-file';
+	private const LIST_DIRECTORY_ID = 'elementor/list-directory';
 
 	/**
-	 * @return array<string, array{0: string, 1: Enable_Super_Admin_Ability|Disable_Super_Admin_Ability|Get_Super_Admin_Status_Ability}>
+	 * @return array<string, array{0: string, 1: object}>
 	 */
 	public function super_admin_ability_provider(): array {
 		return [
 			'enable' => [ self::ENABLE_ID, new Enable_Super_Admin_Ability() ],
 			'disable' => [ self::DISABLE_ID, new Disable_Super_Admin_Ability() ],
 			'status' => [ self::STATUS_ID, new Get_Super_Admin_Status_Ability() ],
+			'execute-php' => [ self::EXECUTE_PHP_ID, new Execute_Php_Ability() ],
+			'read-file' => [ self::READ_FILE_ID, new Read_File_Ability() ],
+			'list-directory' => [ self::LIST_DIRECTORY_ID, new List_Directory_Ability() ],
 		];
 	}
 

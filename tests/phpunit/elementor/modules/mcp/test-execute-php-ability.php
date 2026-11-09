@@ -104,6 +104,22 @@ class Test_Execute_Php_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Exception', $result['error_class'] );
 	}
 
+	public function test_execute__output_schema_validates_success_result() {
+		// Arrange
+		$this->act_as_admin();
+		Super_Admin_Settings::set_enabled( true );
+		$ability_reflection = new \ReflectionClass( $this->ability );
+		$definition_method = $ability_reflection->getMethod( 'definition' );
+		$definition_method->setAccessible( true );
+		$output_schema = $definition_method->invoke( $this->ability )->to_array()['output_schema'];
+
+		// Act
+		$result = $this->ability->execute( [ 'code' => 'return ["ok" => true];' ] );
+
+		// Assert
+		$this->assertTrue( rest_validate_value_from_schema( $result, $output_schema ) );
+	}
+
 	public function test_execute__empty_code() {
 		// Arrange
 		$this->act_as_admin();

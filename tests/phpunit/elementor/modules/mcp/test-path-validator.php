@@ -48,13 +48,14 @@ class Test_Path_Validator extends Elementor_Test_Base {
 
 	public function test_resolve_under_abspath__wp_includes() {
 		// Arrange
-		$expected = wp_normalize_path( trailingslashit( ABSPATH ) . 'wp-includes' );
+		$expected = wp_normalize_path( (string) realpath( trailingslashit( ABSPATH ) . 'wp-includes' ) );
 
 		// Act
 		$resolved = Path_Validator::resolve_under_abspath( 'wp-includes' );
 
 		// Assert
 		$this->assertSame( $expected, $resolved );
+		$this->assertStringNotContainsString( '..', $resolved );
 	}
 
 	public function test_resolve_under_abspath__symlink_pointing_outside() {

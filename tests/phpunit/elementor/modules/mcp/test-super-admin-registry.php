@@ -24,6 +24,9 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 	private const EXECUTE_PHP_ID = 'elementor/execute-php';
 	private const READ_FILE_ID = 'elementor/read-file';
 	private const LIST_DIRECTORY_ID = 'elementor/list-directory';
+	private const EXECUTE_PHP_PROXY_SLUG = 'execute-php';
+	private const READ_FILE_PROXY_SLUG = 'read-file';
+	private const LIST_DIRECTORY_PROXY_SLUG = 'list-directory';
 
 	public function setUp(): void {
 		parent::setUp();
@@ -60,6 +63,9 @@ class Test_Super_Admin_Registry extends Elementor_Test_Base {
 		$this->assertNull( $registry->find_by_proxy_slug( self::ENABLE_PROXY_SLUG ) );
 		$this->assertNull( $registry->find_by_proxy_slug( self::DISABLE_PROXY_SLUG ) );
 		$this->assertNull( $registry->find_by_proxy_slug( self::STATUS_PROXY_SLUG ) );
+		$this->assertNull( $registry->find_by_proxy_slug( self::EXECUTE_PHP_PROXY_SLUG ) );
+		$this->assertNull( $registry->find_by_proxy_slug( self::READ_FILE_PROXY_SLUG ) );
+		$this->assertNull( $registry->find_by_proxy_slug( self::LIST_DIRECTORY_PROXY_SLUG ) );
 	}
 
 	public function test_build_core_registry__exposes_disable_when_on() {

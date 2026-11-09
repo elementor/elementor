@@ -27,16 +27,24 @@ class Php_Executor {
 			E_RECOVERABLE_ERROR => 'Recoverable Error',
 		];
 
-		set_error_handler( static function ( $errno, $errstr, $errfile, $errline ) use ( &$errors, $error_type_labels ) {
-			$errors[] = [
-				'type'    => $error_type_labels[ $errno ] ?? ( 'Unknown (' . (int) $errno . ')' ),
-				'message' => (string) $errstr,
-				'file'    => (string) $errfile,
-				'line'    => (int) $errline,
-			];
-			return true;
-		} );
+		set_error_handler(
+			static function ( $errno, $errstr, $errfile, $errline ) use ( &$errors, $error_type_labels ) {
+				if ( ! ( error_reporting() & $errno ) ) {
+					return false;
+				}
 
+				$errors[] = [
+					'type'    => $error_type_labels[ $errno ] ?? ( 'Unknown (' . (int) $errno . ')' ),
+					'message' => (string) $errstr,
+					'file'    => (string) $errfile,
+					'line'    => (int) $errline,
+				];
+
+				return true;
+			}
+		);
+
+		$buffer_level = ob_get_level();
 		ob_start();
 		$start = microtime( true );
 
@@ -44,21 +52,31 @@ class Php_Executor {
 		$success = true;
 		$error_message = null;
 		$error_class = null;
+		$output = '';
 
 		try {
-			// phpcs:ignore Squiz.PHP.Eval.Discouraged -- This is the entire point of super admin.
-			$return_value = eval( $code ); // @codingStandardsIgnoreLine
+			$run = static function ( string $__code ) {
+				// phpcs:ignore Squiz.PHP.Eval.Discouraged -- This is the entire point of super admin.
+				return eval( $__code ); // @codingStandardsIgnoreLine
+			};
+			$return_value = $run( $code );
 		} catch ( \Throwable $e ) {
 			$success = false;
 			$error_message = $e->getMessage();
 			$error_class = get_class( $e );
+		} finally {
+			while ( ob_get_level() > $buffer_level ) {
+				$chunk = ob_get_clean();
+				if ( is_string( $chunk ) && '' !== $chunk ) {
+					$output .= $chunk;
+				}
+			}
+
+			restore_error_handler();
+			set_time_limit( $original_time_limit );
 		}
 
 		$execution_time_ms = round( ( microtime( true ) - $start ) * 1000, 2 );
-		$output = ob_get_clean();
-
-		restore_error_handler();
-		set_time_limit( $original_time_limit );
 
 		if ( null !== $return_value && false === wp_json_encode( $return_value ) ) {
 			$return_value = print_r( $return_value, true );
@@ -67,7 +85,7 @@ class Php_Executor {
 		$result = [
 			'success'           => $success,
 			'return_value'      => $return_value,
-			'output'            => is_string( $output ) ? $output : '',
+			'output'            => $output,
 			'errors'            => $errors,
 			'execution_time_ms' => $execution_time_ms,
 		];
