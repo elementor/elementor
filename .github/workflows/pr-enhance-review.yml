@@ -45,7 +45,7 @@ jobs:
       checks: write
 
     steps:
-      - name: Check if PR only touches docs/txt files
+      - name: Check if PR only touches release metadata files
         id: files
         env:
           GH_TOKEN: ${{ github.token }}
@@ -56,23 +56,38 @@ jobs:
           FILES=$(gh pr diff "$PR_NUMBER" --repo "$GH_REPO" --name-only) || FILES=""
           echo "$FILES"
 
+          # Explicit skip list: only WordPress plugin release metadata files that don't need code review.
+          # This list intentionally excludes most docs (README.md, CONTRIBUTING.md, docs/, etc.)
+          # which should be reviewed. Extend this list carefully and only for truly irrelevant files.
+          SKIP_LIST=(
+            "changelog.txt"      # WordPress plugin changelog
+            "readme.txt"         # WordPress plugin readme
+          )
+
           DOCS_ONLY=false
           if [ -n "$FILES" ]; then
             DOCS_ONLY=true
             while IFS= read -r file; do
-              case "$file" in
-                *.md|*.txt|bin/*|.gitignore|docs/*|.vscode/*) ;;
-                *) DOCS_ONLY=false; break ;;
-              esac
+              SKIP=false
+              for skip_file in "${SKIP_LIST[@]}"; do
+                if [ "$file" = "$skip_file" ]; then
+                  SKIP=true
+                  break
+                fi
+              done
+              if [ "$SKIP" = "false" ]; then
+                DOCS_ONLY=false
+                break
+              fi
             done <<< "$FILES"
           fi
 
           echo "docs_only=$DOCS_ONLY" >> "$GITHUB_OUTPUT"
-          echo "Docs-only: $DOCS_ONLY"
+          echo "Release metadata only: $DOCS_ONLY"
 
-      - name: Skip review for docs-only changes
+      - name: Skip review for release metadata-only changes
         if: steps.files.outputs.docs_only == 'true'
-        run: echo "✅ Skipping enhanced review for docs-only PR"
+        run: echo "✅ Skipping enhanced review for release metadata-only PR (changelog.txt, readme.txt)"
 
       - name: Checkout repository
         if: steps.files.outputs.docs_only != 'true'
@@ -170,7 +185,7 @@ jobs:
     name: Add Auto-Reviewed Label
     runs-on: ubuntu-latest
     needs: [enhanced-review]
-    # Docs-only runs skip the review, so they must not mark the PR as reviewed.
+    # Release metadata-only runs skip the review, so they must not mark the PR as reviewed.
     if: success() && github.event_name == 'pull_request' && needs.enhanced-review.outputs.docs_only != 'true'
     permissions:
       pull-requests: write
