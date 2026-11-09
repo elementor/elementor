@@ -137,6 +137,18 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'enforce_allowed_children', $this->get_config( 'e-menu-item' )['meta'] );
 	}
 
+	public function test_menu_entries_size_to_their_content_instead_of_the_full_width_container_default() {
+		// Arrange
+		$entry = new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry();
+
+		// Act
+		$styles = $entry->get_base_styles();
+		$props = reset( $styles )['variants'][0]['props'];
+
+		// Assert
+		$this->assertSame( 'auto', $props['width']['value']['unit'] );
+	}
+
 	public function test_default_content() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
