@@ -127,6 +127,16 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( [], $this->get_config( 'e-menu-item' )['allowed_child_types'] );
 	}
 
+	public function test_only_elements_with_restricted_children_enforce_them_in_the_editor() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( [ 'e-menu', 'e-menu-items', 'e-menu-entry' ] as $type ) {
+			$this->assertTrue( $this->get_config( $type )['meta']['enforce_allowed_children'], $type );
+		}
+
+		$this->assertArrayNotHasKey( 'enforce_allowed_children', $this->get_config( 'e-menu-item' )['meta'] );
+	}
+
 	public function test_default_content() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 

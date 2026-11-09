@@ -62,6 +62,8 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 						children_dependencies: [],
 					},
 					'e-locked': { meta: { permanently_locked: true } },
+					'e-strict': { meta: { enforce_allowed_children: true }, allowed_child_types: [ 'e-allowed' ] },
+					'e-lenient': { allowed_child_types: [ 'e-allowed' ] },
 				},
 			},
 		};
@@ -325,6 +327,40 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 		AtomicElementBaseModel.setChildrenDependenciesAdapter( {
 			reconcileInitialChildren: reconcileMock,
 			bindSettingsReconcile: bindMock,
+		} );
+	} );
+
+	describe( 'isValidChild', () => {
+		const createChild = ( { elType, widgetType } ) => {
+			const child = new AtomicElementBaseModel();
+			child.set( 'elType', elType );
+			child.set( 'widgetType', widgetType );
+			return child;
+		};
+
+		it( 'rejects a child outside allowed_child_types when the element enforces them', () => {
+			// Arrange.
+			const parent = createModel( { elType: 'e-strict' } );
+
+			// Act & Assert.
+			expect( parent.isValidChild( createChild( { elType: 'widget', widgetType: 'e-heading' } ) ) ).toBe( false );
+			expect( parent.isValidChild( createChild( { elType: 'e-allowed' } ) ) ).toBe( true );
+		} );
+
+		it( 'ignores allowed_child_types when the element does not enforce them', () => {
+			// Arrange.
+			const parent = createModel( { elType: 'e-lenient' } );
+
+			// Act & Assert.
+			expect( parent.isValidChild( createChild( { elType: 'widget', widgetType: 'e-heading' } ) ) ).toBe( true );
+		} );
+
+		it( 'still rejects sections and columns', () => {
+			// Arrange.
+			const parent = createModel( { elType: 'e-simple' } );
+
+			// Act & Assert.
+			expect( parent.isValidChild( createChild( { elType: 'section' } ) ) ).toBe( false );
 		} );
 	} );
 } );

@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
+	public static $widget_description = 'The content slot of a menu entry. Accepts any element. Renders as a span, or as a link when a link is set.';
+
 	public static function get_type() {
 		return 'e-menu-item';
 	}
