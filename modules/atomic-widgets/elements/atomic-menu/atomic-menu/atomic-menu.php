@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Menu_Items_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
@@ -82,6 +83,11 @@ class Atomic_Menu extends Atomic_Element_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
 				->set_items( [
+					Menu_Items_Control::make()
+						->set_label( __( 'Menu items', 'elementor' ) )
+						->set_meta( [
+							'layout' => 'custom',
+						] ),
 					Text_Control::bind_to( 'menu-name' )
 						->set_label( __( 'Menu name', 'elementor' ) ),
 				] ),
