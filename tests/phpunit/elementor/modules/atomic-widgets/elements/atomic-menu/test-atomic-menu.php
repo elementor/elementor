@@ -19,22 +19,34 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		'e-menu-item',
 	];
 
+	private $original_element_types;
+
+	public function set_up() {
+		parent::set_up();
+
+		$this->original_element_types = $this->get_element_types_property()->getValue( Plugin::$instance->elements_manager );
+	}
+
 	public function tear_down() {
+		$this->get_element_types_property()->setValue( Plugin::$instance->elements_manager, $this->original_element_types );
 		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAV_MENU, Experiments_Manager::STATE_INACTIVE );
 
 		parent::tear_down();
 	}
 
+	private function get_element_types_property(): \ReflectionProperty {
+		$property = new \ReflectionProperty( Plugin::$instance->elements_manager, '_element_types' );
+		$property->setAccessible( true );
+
+		return $property;
+	}
+
 	private function register_elements_with_experiment( string $state ) {
 		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAV_MENU, $state );
 
-		$elements_manager = Plugin::$instance->elements_manager;
-		$reflection = new \ReflectionClass( $elements_manager );
-		$property = $reflection->getProperty( '_element_types' );
-		$property->setAccessible( true );
-		$property->setValue( $elements_manager, null );
+		$this->get_element_types_property()->setValue( Plugin::$instance->elements_manager, null );
 
-		$elements_manager->get_element_types();
+		Plugin::$instance->elements_manager->get_element_types();
 	}
 
 	private function get_config( string $type ): array {
