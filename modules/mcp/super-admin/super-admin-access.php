@@ -16,6 +16,14 @@ trait Super_Admin_Access {
 		return $this->error( 'rest_forbidden', __( 'Sorry, you are not allowed to do that.', 'elementor' ), \WP_Http::FORBIDDEN );
 	}
 
+	protected function disabled_error(): ?\WP_Error {
+		if ( Super_Admin_Settings::is_enabled() ) {
+			return null;
+		}
+
+		return $this->error( 'super_admin_disabled', __( 'Super Admin is disabled.', 'elementor' ), \WP_Http::FORBIDDEN );
+	}
+
 	protected function error( string $code, string $message, int $status ): \WP_Error {
 		return new \WP_Error( $code, $message, [ 'status' => $status ] );
 	}

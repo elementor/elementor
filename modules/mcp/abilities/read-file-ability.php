@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Super_Admin\Path_Validator;
+use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Access;
 use Elementor\Modules\Mcp\Super_Admin\Super_Admin_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Read_File_Ability extends Abstract_Ability {
+
+	use Super_Admin_Access;
 
 	const MAX_READ_BYTES = 524288;
 
@@ -65,16 +68,9 @@ class Read_File_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		if ( ! Super_Admin_Settings::current_user_can_use() ) {
-			return $this->error( 'rest_forbidden', __( 'Sorry, you are not allowed to do that.', 'elementor' ), \WP_Http::FORBIDDEN );
-		}
-
-		if ( ! Super_Admin_Settings::is_enabled() ) {
-			return $this->error(
-				'super_admin_disabled',
-				__( 'Super Admin is disabled.', 'elementor' ),
-				\WP_Http::FORBIDDEN
-			);
+		$refused = $this->forbidden_error() ?? $this->disabled_error();
+		if ( $refused ) {
+			return $refused;
 		}
 
 		$raw_path = is_array( $input ) && isset( $input['path'] ) ? (string) $input['path'] : '';
@@ -122,9 +118,5 @@ class Read_File_Ability extends Abstract_Ability {
 			'size'    => $size,
 			'content' => $content,
 		];
-	}
-
-	private function error( string $code, string $message, int $status ): \WP_Error {
-		return new \WP_Error( $code, $message, [ 'status' => $status ] );
 	}
 }
