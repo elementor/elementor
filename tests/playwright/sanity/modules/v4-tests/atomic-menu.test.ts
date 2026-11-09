@@ -127,7 +127,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Assert
 		await expect( field.locator( 'ul.MuiList-root > li' ) ).toHaveCount( 4 );
-		await expectStableScreenshot( field, 'menu-items-repeater-default.png' );
+		await expectStableScreenshot( field.locator( 'ul.MuiList-root' ), 'menu-items-repeater-default.png' );
 	} );
 
 	test( 'Add item via the repeater appends an entry to the canvas', async () => {
@@ -144,7 +144,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( getEntries( menu ).last() ).toHaveText( 'Menu item 1' );
 		await expect( field.locator( 'ul.MuiList-root > li' ) ).toHaveCount( 5 );
 		await expectStableScreenshot( menu, 'menu-after-add-canvas.png' );
-		await expectStableScreenshot( field, 'menu-items-repeater-after-add.png' );
+		await expectStableScreenshot( field.locator( 'ul.MuiList-root' ), 'menu-items-repeater-after-add.png' );
 	} );
 
 	test( 'Remove item via the repeater removes the entry from the canvas', async () => {
