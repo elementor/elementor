@@ -23,7 +23,10 @@ jest.mock( '@elementor/editor-app-bar', () => ( {
 	},
 } ) );
 
+const mockCanUseAngiePluginSidebar = jest.fn( () => false );
+
 jest.mock( '@elementor/editor-angie', () => ( {
+	canUseAngiePluginSidebar: () => mockCanUseAngiePluginSidebar(),
 	registerAngiePanelOpener: jest.fn(),
 	bootAngieSdk: jest.fn(),
 	openInstalledAngieSidebar: jest.fn( () => false ),
@@ -61,5 +64,17 @@ describe( 'editor angie panel init', () => {
 		opener();
 
 		expect( openFloatingPanel ).toHaveBeenCalledWith( ANGIE_PANEL_ID );
+	} );
+
+	it( 'skips the app-bar toggle when the Angie plugin sidebar can be used', () => {
+		// Arrange
+		mockCanUseAngiePluginSidebar.mockReturnValueOnce( true );
+
+		// Act
+		init();
+
+		// Assert
+		expect( utilitiesMenu.registerToggleAction ).not.toHaveBeenCalled();
+		expect( registerFloatingPanel ).toHaveBeenCalled();
 	} );
 } );
