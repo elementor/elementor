@@ -324,8 +324,6 @@ test.describe( 'Editor MCP @editor-mcp', () => {
 	} );
 
 	test( 'ED-26100 the frontend shows a restored revision after publish', async ( { request, baseURL } ) => {
-		test.fixme( true, 'ED-26100: a revision restore + publish does not clear the element cache, so the frontend keeps the previously rendered version.' );
-
 		const postId = await createPage( mcp, 'MCP restore cache' );
 		const base = await buildComposition( mcp, { post_id: postId, xml_structure: '<e-heading configuration-id="t"></e-heading>', element_config: { t: { title: 'Original heading' } } } );
 
@@ -664,8 +662,6 @@ test.describe( 'Editor MCP @editor-mcp', () => {
 	} );
 
 	test( 'ED-26036 an AI change made right after the editor opens shows "Page Updated by AI"', async ( { baseURL, browser } ) => {
-		test.fixme( true, 'ED-26036: a change before the first heartbeat is treated as already synced, so no modal and the next Publish overwrites it.' );
-
 		const postId = await createPage( mcp, 'MCP early AI change' );
 
 		await buildComposition( mcp, { post_id: postId, xml_structure: '<e-heading configuration-id="t"></e-heading>', element_config: { t: { title: 'Before' } } } );
