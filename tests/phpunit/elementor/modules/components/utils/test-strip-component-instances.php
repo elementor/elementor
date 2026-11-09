@@ -72,12 +72,63 @@ class Test_Strip_Component_Instances extends TestCase {
 		$this->assertSame( $elements, $result );
 	}
 
-	private function component_instance( string $id ): array {
+	public function test_apply__with_kept_ids_strips_only_instances_pointing_elsewhere() {
+		// Arrange
+		$elements = [
+			$this->component_instance( 'kept', 10 ),
+			[
+				'id' => 'container-1',
+				'elType' => 'container',
+				'elements' => [
+					$this->component_instance( 'dangling', 20 ),
+					$this->component_instance( 'kept-nested', 10 ),
+				],
+			],
+		];
+
+		// Act
+		$result = Strip_Component_Instances::apply( $elements, [ 10 ] );
+
+		// Assert
+		$this->assertCount( 2, $result );
+		$this->assertSame( 'kept', $result[0]['id'] );
+		$this->assertCount( 1, $result[1]['elements'] );
+		$this->assertSame( 'kept-nested', $result[1]['elements'][0]['id'] );
+	}
+
+	public function test_apply__with_empty_kept_ids_strips_every_instance() {
+		// Arrange
+		$elements = [
+			$this->component_instance( 'ci-1', 10 ),
+			$this->widget( 'button-1', 'e-button' ),
+		];
+
+		// Act
+		$result = Strip_Component_Instances::apply( $elements, [] );
+
+		// Assert
+		$this->assertCount( 1, $result );
+		$this->assertSame( 'button-1', $result[0]['id'] );
+	}
+
+	private function component_instance( string $id, ?int $component_id = null ): array {
+		$settings = null === $component_id ? [] : [
+			'component_instance' => [
+				'$$type' => 'component-instance',
+				'value' => [
+					'component_id' => [
+						'$$type' => 'number',
+						'value' => $component_id,
+					],
+				],
+			],
+		];
+
 		return [
 			'id' => $id,
 			'elType' => 'widget',
 			'widgetType' => 'e-component',
-			'settings' => [],
+			'settings' => $settings,
 		];
 	}
 

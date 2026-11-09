@@ -359,66 +359,42 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
-= 4.3.5 - 2026-10-13 =
+= 4.4.0 - 2026-11-09 =
 
-* Fix: Page editing can fail when Internal CSS Embedding is enabled ([#37468](https://github.com/elementor/elementor/issues/37468))
-* Fix: Improved code security enforcement across CSS, SVG, and element ID handling
-* Fix: Theme Builder fails to open correctly from "Edit with Elementor" on the frontend
-
-= 4.3.4 - 2026-10-05 =
-
-* Tweak: Improved MCP connector setup instructions across macOS, Windows, and Linux
-* Fix: Dropdown menus do not open on the frontend due to missing feature dependencies (props [@faisalahammad](<https://github.com/faisalahammad))>
-* Fix: Widget styles can be missing when rendered inside saved Templates
-* Fix: Element settings may lost when updating pages through MCP
-* Fix: MCP connection setup does not show an error when WordPress Application Passwords are unavailable
-* Fix: MCP resources fail to load with older adapter versions
-* Fix: Elementor update can fail during version upgrade
-* Fix: Editor can freeze when editing settings or styles in large nested elements
-
-= 4.3.3 - 2026-09-30 =
-
-* Tweak: Improved access control when MCP is disabled
-* Fix: MCP build errors do not clearly identify invalid or unclosed elements
-* Fix: Certain MCP style values are not applied correctly in Atomic elements
-
-= 4.3.2 - 2026-09-24 =
-
-* Tweak: Improved the Editor onboarding flow for a smoother getting-started experience.
-* Fix: HTML Tags do not work correctly with Background Video ([#37393](https://github.com/elementor/elementor/issues/37393))
-* Fix: Improved compatibility with sites protected by HTTP Basic Authentication ([#37421](https://github.com/elementor/elementor/issues/37421))
-* Fix: Page styles may not load correctly after being regenerated
-* Fix: Improved code security enforcement in data handling
-* Fix: Improved update stability between Elementor Core and Pro
-
-= 4.3.1 - 2026-09-23 =
-
-* Fix: Top bar translations are not displayed correctly on Elementor admin pages
-
-= 4.3.0 - 2026-09-22 =
-
-* New: Introducing Elementor MCP - enabling compatible AI tools to build pages, edit elements, and work with your design system
-* New: Introducing a dedicated Elementor MCP page for connecting external AI tools to your site
-* New: Introducing Background Video for placing locally uploaded videos behind section content, with built-in play and pause controls
-* New: Introducing Accordion for building expandable and collapsible content sections with nested content
-* New: Introducing Default Styles for setting and managing styles for supported HTML tags globally
-* Tweak: Added 'nav' and 'main' HTML tag options to Flexbox and Div Block elements ([#33682](https://github.com/elementor/elementor/issues/33682))
-* Tweak: Removed the WordPress section from the widget panel
-* Tweak: Added text decoration controls to the inline text editing toolbar in Heading and Paragraph elements
-* Tweak: Improved element duplication to prevent duplicate IDs
-* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
-* Tweak: Updated Grid layout presets to use Atomic Grid
-* Tweak: Improved nested elements by auto-wrapping them in a Flexbox Container
-* Tweak: Improved the Elementor switch mode button text in the WordPress editor
-* Tweak: Improved Atomic element references when importing kits
-* Fix: Components may not load correctly on pages with multiple or nested Components ([#36647](https://github.com/elementor/elementor/issues/36647))
-* Fix: Divider is not visible inside row containers
-* Fix: Select field names and values are incorrect in submitted forms in Form element
-* Fix: Duplicate IDs may be generated in Tabs element
-* Fix: Draft classes are deleted when importing a Kit
-* Fix: Incorrect ARIA semantics in Floating Button
-* Fix: Converting a local class to a Global Class may not work
-* Fix: Parent Container handles are missing in the Editor for Single template documents
-* Fix: "Edit with Elementor" button incorrectly appears on the Shop archive page
+* New: Introducing Agent Ready to help prepare websites for AI agents with readiness scoring, content discovery tools, and bot access controls
+* New: Introducing the SVG Icon Library with Font Awesome 7 support
+* New: Introducing the List element for creating customizable lists with nested items and custom markers
+* New: Introducing the Google Maps element for displaying locations with customizable address and zoom settings
+* Tweak: Added WebMCP support to forms created through Elementor MCP, allowing compatible AI agents to discover and interact with them
+* Tweak: Extended Elementor MCP support to additional legacy widgets, including Counter, Progress Bar, Social Icons, Image Gallery, and Image Carousel
+* Tweak: Added support for renaming elements in the Structure panel through Elementor MCP
+* Tweak: Added support for viewing and enabling or disabling Elementor experiments through Elementor MCP
+* Tweak: Added support for clearing Elementor cache through Elementor MCP
+* Tweak: Added support for retrieving Elementor System Information through Elementor MCP
+* Tweak: Added support for retrieving Elementor license information through Elementor MCP
+* Tweak: Added support for uploading images to the Media Library through Elementor MCP
+* Tweak: Added support for undoing changes made through Elementor MCP using revisions
+* Tweak: Added support for separate open and closed icons, with customizable icon rotation in the Accordion element
+* Tweak: Added support for content-only editing permissions in Atomic elements
+* Tweak: Added Selected state styling support to the Accordion element
+* Tweak: Improved the user interface for Image, Video, and Background controls
+* Tweak: Added Default Styles support to website import and export
+* Tweak: Added the Span HTML tag option to the Heading element
+* Fix: Improved error handling for REST API permission checks ([#37497](https://github.com/elementor/elementor/issues/37497), props [@robertstaddon](https://github.com/robertstaddon))
+* Fix: Dimensions control does not correctly inherit linked settings and values across responsive breakpoints ([#28107](https://github.com/elementor/elementor/issues/28107), props [@m1ga](https://github.com/m1ga))
+* Fix: Removed an invalid Swiper source map reference that caused 404 errors ([#10764](https://github.com/elementor/elementor/issues/10764), [#5151](https://github.com/elementor/elementor/issues/5151), props [@m1ga](https://github.com/m1ga))
+* Fix: Color picker closes unexpectedly when changing the color format in Variables Manager ([#37423](https://github.com/elementor/elementor/issues/37423))
+* Fix: Form submissions through AI agents may return an error even when submitted successfully ([#37901](https://github.com/elementor/elementor/issues/37901))
+* Fix: Incorrect heading hierarchy in WordPress admin screens (props [@ramiy](https://github.com/ramiy))
+* Fix: Incorrect image URL encoding in the Image Carousel widget (props [@szepeviktor](https://github.com/szepeviktor))
+* Fix: Components may fail to load in the Editor when server rate limits are reached (props [@faisalahammad](https://github.com/faisalahammad))
+* Fix: Custom Mask may attempt to load a nonexistent SVG file when no custom image is selected (props [@szepeviktor](https://github.com/szepeviktor))
+* Fix: Element IDs are not regenerated when pasting Atomic elements at the page root
+* Fix: Unable to clear or enter multi-digit values in Number controls with minimum and maximum limits
+* Fix: Revisions panel may run out of memory when editing pages with large amounts of metadata
+* Fix: Carousel widgets with a single item trigger an error when navigating with the keyboard
+* Fix: Clearing a size value resets the selected unit to PX in Atomic style controls
+* Fix: Styles are missing or briefly disappear when loading large pages in the Editor
+* Fix: Design System styles are not updated correctly after certain site settings changes
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

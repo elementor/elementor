@@ -11,6 +11,7 @@ const mountAgentAccess = ( rootElement, config, isRTL ) => {
 		<App
 			isRTL={ isRTL }
 			isActivated={ !! config.isActivated }
+			readinessScoreUrl={ config.readinessScoreUrl || '' }
 			agentDiscoveryConfig={ config.agentDiscovery }
 			botAccessConfig={ config.botAccess }
 			browserToolsConfig={ config.browserTools }
@@ -34,6 +35,7 @@ const mountScanner = ( rootElement, config, isRTL ) => {
 			angieAppUrl={ scannerConfig.angieAppUrl || '' }
 			angieInstallHeroUrl={ scannerConfig.angieInstallHeroUrl || '' }
 			isAngieActive={ !! scannerConfig.isAngieActive }
+			isAngieInstalled={ !! scannerConfig.isAngieInstalled }
 			lastReport={ scannerConfig.lastReport || null }
 			retryAt={ scannerConfig.retryAt || null }
 			llmsConfig={ config.llms }

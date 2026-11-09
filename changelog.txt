@@ -1,5 +1,53 @@
 == Changelog ==
 
+= 4.4.0 - 2026-11-09 =
+
+* New: Introducing Agent Ready to help prepare websites for AI agents with readiness scoring, content discovery tools, and bot access controls
+* New: Introducing the SVG Icon Library with Font Awesome 7 support
+* New: Introducing the List element for creating customizable lists with nested items and custom markers
+* New: Introducing the Google Maps element for displaying locations with customizable address and zoom settings
+* Tweak: Added WebMCP support to forms created through Elementor MCP, allowing compatible AI agents to discover and interact with them
+* Tweak: Extended Elementor MCP support to additional legacy widgets, including Counter, Progress Bar, Social Icons, Image Gallery, and Image Carousel
+* Tweak: Added support for renaming elements in the Structure panel through Elementor MCP
+* Tweak: Added support for viewing and enabling or disabling Elementor experiments through Elementor MCP
+* Tweak: Added support for clearing Elementor cache through Elementor MCP
+* Tweak: Added support for retrieving Elementor System Information through Elementor MCP
+* Tweak: Added support for retrieving Elementor license information through Elementor MCP
+* Tweak: Added support for uploading images to the Media Library through Elementor MCP
+* Tweak: Added support for undoing changes made through Elementor MCP using revisions
+* Tweak: Added support for separate open and closed icons, with customizable icon rotation in the Accordion element
+* Tweak: Added support for content-only editing permissions in Atomic elements
+* Tweak: Added Selected state styling support to the Accordion element
+* Tweak: Improved the user interface for Image, Video, and Background controls
+* Tweak: Added Default Styles support to website import and export
+* Tweak: Added the Span HTML tag option to the Heading element
+* Fix: Improved error handling for REST API permission checks ([#37497](https://github.com/elementor/elementor/issues/37497), props [@robertstaddon](https://github.com/robertstaddon))
+* Fix: Dimensions control does not correctly inherit linked settings and values across responsive breakpoints ([#28107](https://github.com/elementor/elementor/issues/28107), props [@m1ga](https://github.com/m1ga))
+* Fix: Removed an invalid Swiper source map reference that caused 404 errors ([#10764](https://github.com/elementor/elementor/issues/10764), [#5151](https://github.com/elementor/elementor/issues/5151), props [@m1ga](https://github.com/m1ga))
+* Fix: Color picker closes unexpectedly when changing the color format in Variables Manager ([#37423](https://github.com/elementor/elementor/issues/37423))
+* Fix: Form submissions through AI agents may return an error even when submitted successfully ([#37901](https://github.com/elementor/elementor/issues/37901))
+* Fix: Incorrect heading hierarchy in WordPress admin screens (props [@ramiy](https://github.com/ramiy))
+* Fix: Incorrect image URL encoding in the Image Carousel widget (props [@szepeviktor](https://github.com/szepeviktor))
+* Fix: Components may fail to load in the Editor when server rate limits are reached (props [@faisalahammad](https://github.com/faisalahammad))
+* Fix: Custom Mask may attempt to load a nonexistent SVG file when no custom image is selected (props [@szepeviktor](https://github.com/szepeviktor))
+* Fix: Element IDs are not regenerated when pasting Atomic elements at the page root
+* Fix: Unable to clear or enter multi-digit values in Number controls with minimum and maximum limits
+* Fix: Revisions panel may run out of memory when editing pages with large amounts of metadata
+* Fix: Carousel widgets with a single item trigger an error when navigating with the keyboard
+* Fix: Clearing a size value resets the selected unit to PX in Atomic style controls
+* Fix: Styles are missing or briefly disappear when loading large pages in the Editor
+* Fix: Design System styles are not updated correctly after certain site settings changes
+
+= 4.3.6 - 2026-11-02 =
+
+* Fix: Improved code security enforcement in navigation links
+* Fix: Improved code security enforcement in icon and content handling
+* Fix: Improved code security enforcement in Atomic elements and template handling
+* Fix: Atomic styles trigger unnecessary background operations ([#32220](https://github.com/elementor/elementor/issues/32220))
+* Fix: Frontend styles are not displayed correctly when using the Internal Embedding CSS Print Method ([#37298](https://github.com/elementor/elementor/issues/37298), [#37468](https://github.com/elementor/elementor/issues/37468))
+* Fix: Atomic styles trigger unnecessary background operations ([#37790](https://github.com/elementor/elementor/issues/37790))
+* Fix: MCP resources fail to load when accessed through connected AI tools
+
 = 4.3.5 - 2026-10-13 =
 
 * Fix: Page editing can fail when Internal CSS Embedding is enabled ([#37468](https://github.com/elementor/elementor/issues/37468))

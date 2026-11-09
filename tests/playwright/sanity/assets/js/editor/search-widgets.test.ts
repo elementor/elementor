@@ -12,9 +12,6 @@ test( 'Visible widgets should be shown in search result', async ( { page, apiReq
 	await page.waitForSelector( widgetSearchBar );
 	await page.locator( widgetSearchBar ).fill( 'Spacer' );
 
-	// Wait for search results to update
-	await page.waitForLoadState( 'networkidle' );
-
 	// Assert - the widget should be shown in search result.
 	const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
 	await expect( widgetsInSearchResult ).toHaveCount( 1 );
@@ -29,9 +26,6 @@ test( 'WordPress widgets hidden from panel should still appear in search results
 	const widgetSearchBar = 'input#elementor-panel-elements-search-input';
 	await page.waitForSelector( widgetSearchBar );
 	await page.locator( widgetSearchBar ).fill( 'RSS' );
-
-	// Wait for search results to update
-	await page.waitForLoadState( 'networkidle' );
 
 	// Assert - the RSS WordPress widget should appear in search even though its panel section is hidden.
 	const rssWidget = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element', { hasText: 'RSS' } );

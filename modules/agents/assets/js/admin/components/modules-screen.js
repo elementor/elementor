@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { ArrowRightIcon } from '@elementor/icons';
 import Alert from '@elementor/ui/Alert';
+import Button from '@elementor/ui/Button';
 import Container from '@elementor/ui/Container';
 import Divider from '@elementor/ui/Divider';
 import Stack from '@elementor/ui/Stack';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import {
@@ -52,7 +55,7 @@ const getStatus = ( isEnabled, hasWarning = false ) => {
 	return isEnabled ? MODULE_STATUS_ENABLED : MODULE_STATUS_DISABLED;
 };
 
-export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserToolsConfig, llmsConfig, markdownConfig } ) => {
+export const ModulesScreen = ( { readinessScoreUrl, agentDiscoveryConfig, botAccessConfig, browserToolsConfig, llmsConfig, markdownConfig } ) => {
 	const agentDiscoverySettings = useAgentDiscoverySettings( agentDiscoveryConfig );
 	const botAccessSettings = useBotAccessSettings( botAccessConfig );
 	const browserToolsSettings = useBrowserToolsSettings( browserToolsConfig );
@@ -185,7 +188,14 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 			<Stack spacing={ 5 } width="100%" minWidth={ 0 }>
 				<Stack direction="row" alignItems="center" justifyContent="space-between">
 					<PageTitle textAlign="left" />
-					<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
+					<Stack alignItems="flex-start" spacing={ 0.5 }>
+						<ModulesStatus score={ enabledCount } total={ totalCount } infoIcon={ scoreInfoIcon } />
+						{ readinessScoreUrl && (
+							<Button variant="text" color="primary" size="small" href={ readinessScoreUrl } endIcon={ <ArrowRightIcon fontSize="tiny" /> }>
+								{ __( 'See your score', 'elementor' ) }
+							</Button>
+						) }
+					</Stack>
 				</Stack>
 				<Stack spacing={ 2 }>
 					{ allModules.saveError && (
@@ -216,6 +226,7 @@ export const ModulesScreen = ( { agentDiscoveryConfig, botAccessConfig, browserT
 };
 
 ModulesScreen.propTypes = {
+	readinessScoreUrl: PropTypes.string,
 	agentDiscoveryConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,
 		files: PropTypes.array.isRequired,
@@ -251,9 +262,11 @@ ModulesScreen.propTypes = {
 		} ),
 		fileUrl: PropTypes.string.isRequired,
 		postTypes: PropTypes.array.isRequired,
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ),
 	} ).isRequired,
 	markdownConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,
 		postTypes: PropTypes.array.isRequired,
+		excludedPostIds: PropTypes.arrayOf( PropTypes.number ),
 	} ).isRequired,
 };

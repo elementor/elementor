@@ -16,6 +16,8 @@ class Document_Mutator {
 
 	const WIDGET_EL_TYPE = 'widget';
 
+	const LIVE_STATUSES = [ 'publish', 'private' ];
+
 	/** @var \Elementor\Elements_Manager */
 	private $element_manager;
 
@@ -162,9 +164,10 @@ class Document_Mutator {
 
 	/**
 	 * Duplicate an element in place, inserting the clone right after the source
-	 * inside the same parent. All ids in the clone are regenerated.
+	 * inside the same parent. All ids in the clone are regenerated, including
+	 * atomic local style and interaction ids.
 	 *
-	 * @return array|\WP_Error
+	 * @return array{tree: array, new_element_id: string}|\WP_Error
 	 */
 	public function duplicate( array $tree, string $id ) {
 		$location = $this->locate_parent_and_index( $tree, $id );
@@ -179,7 +182,17 @@ class Document_Mutator {
 
 		[ $parent_id, $index, $node ] = $location;
 
-		return $this->insert_subtree( $tree, $parent_id, $index + 1, $node );
+		$subtree_with_ids = $this->generate_ids_recursive( $node, true );
+		$new_tree = $this->insert_at( $tree, $parent_id, $index + 1, $subtree_with_ids );
+
+		if ( is_wp_error( $new_tree ) ) {
+			return $new_tree;
+		}
+
+		return [
+			'tree' => $new_tree,
+			'new_element_id' => $subtree_with_ids['id'],
+		];
 	}
 
 	/**
@@ -198,10 +211,20 @@ class Document_Mutator {
 	 */
 	public function save_as_draft( Document $document, array $elements, bool $preserve_live_status = false ) {
 		if ( $preserve_live_status ) {
-			return $this->save_preserving_live_status( $document, $elements );
+			return $this->save_preserving_live_status( $document, [ 'elements' => $elements ] );
 		}
 
 		return $this->save_downgrading_publish_to_draft( $document, $elements );
+	}
+
+	/**
+	 * Save document settings while keeping the live post untouched: on `publish`/`private` posts they are
+	 * written to the current user's autosave revision, like `save_as_draft` with `$preserve_live_status`.
+	 *
+	 * @return Document|\WP_Error The Document actually written.
+	 */
+	public function save_settings_preserving_live_status( Document $document, array $settings ) {
+		return $this->save_preserving_live_status( $document, [ 'settings' => $settings ] );
 	}
 
 	/**
@@ -221,14 +244,14 @@ class Document_Mutator {
 	/**
 	 * @return Document|\WP_Error
 	 */
-	private function save_preserving_live_status( Document $document, array $elements ) {
+	private function save_preserving_live_status( Document $document, array $data ) {
 		$target = $this->resolve_autosave_target( $document );
 
 		if ( is_wp_error( $target ) ) {
 			return $target;
 		}
 
-		$saved = $target->save( [ 'elements' => $elements ] );
+		$saved = $this->save_keeping_live_template( $target, $data );
 
 		if ( is_wp_error( $saved ) ) {
 			return $saved;
@@ -243,6 +266,54 @@ class Document_Mutator {
 		}
 
 		return $target;
+	}
+
+	/**
+	 * Saving an autosave calls `wp_update_post` on the revision, which re-validates its template against the
+	 * `revision` post type, fails, and writes `default` through `update_post_meta`, which redirects to the live post.
+	 *
+	 * Only writes made inside `wp_insert_post` for the autosave, between `pre_post_update` and
+	 * `transition_post_status`, are refused, so hooks that run before or after it (e.g. `save_post`) are unaffected.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	private function save_keeping_live_template( Document $target, array $data ) {
+		$live_post_id = (int) $target->get_main_id();
+		$autosave_id = (int) $target->get_post()->ID;
+
+		if ( $autosave_id === $live_post_id ) {
+			return $target->save( $data );
+		}
+
+		$is_inserting_autosave = false;
+
+		$on_autosave_insert_start = function ( $post_id ) use ( $autosave_id, &$is_inserting_autosave ) {
+			if ( (int) $post_id === $autosave_id ) {
+				$is_inserting_autosave = true;
+			}
+		};
+
+		$on_autosave_insert_end = function ( $new_status, $old_status, $post ) use ( $autosave_id, &$is_inserting_autosave ) {
+			if ( (int) $post->ID === $autosave_id ) {
+				$is_inserting_autosave = false;
+			}
+		};
+
+		$refuse_live_template_write = function ( $check, $object_id, $meta_key ) use ( $live_post_id, &$is_inserting_autosave ) {
+			return $is_inserting_autosave && '_wp_page_template' === $meta_key && (int) $object_id === $live_post_id ? false : $check;
+		};
+
+		add_action( 'pre_post_update', $on_autosave_insert_start, PHP_INT_MAX );
+		add_action( 'transition_post_status', $on_autosave_insert_end, PHP_INT_MIN, 3 );
+		add_filter( 'update_post_metadata', $refuse_live_template_write, 10, 3 );
+
+		try {
+			return $target->save( $data );
+		} finally {
+			remove_action( 'pre_post_update', $on_autosave_insert_start, PHP_INT_MAX );
+			remove_action( 'transition_post_status', $on_autosave_insert_end, PHP_INT_MIN );
+			remove_filter( 'update_post_metadata', $refuse_live_template_write, 10 );
+		}
 	}
 
 	/**
@@ -261,7 +332,7 @@ class Document_Mutator {
 
 		$main_status = get_post_status( $main_document->get_main_id() );
 
-		if ( ! in_array( $main_status, [ 'publish', 'private' ], true ) ) {
+		if ( ! in_array( $main_status, self::LIVE_STATUSES, true ) ) {
 			return $main_document;
 		}
 
@@ -319,12 +390,16 @@ class Document_Mutator {
 	 *
 	 * @return array The element with new IDs assigned.
 	 */
-	private function generate_ids_recursive( array $element ): array {
+	private function generate_ids_recursive( array $element, bool $replace_atomic_ids = false ): array {
 		$element['id'] = $this->generate_id();
+
+		if ( $replace_atomic_ids ) {
+			$element = apply_filters( 'elementor/document/element/replace_id', $element );
+		}
 
 		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
 			$element['elements'] = array_map(
-				fn( array $child ) => $this->generate_ids_recursive( $child ),
+				fn( array $child ) => $this->generate_ids_recursive( $child, $replace_atomic_ids ),
 				$element['elements']
 			);
 		}

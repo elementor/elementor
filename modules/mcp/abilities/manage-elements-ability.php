@@ -59,7 +59,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and the V3 widgets elementor/list-widget-schemas lists can be operation targets. V3 widgets whose elementor/get-widget-schemas response has `style_targets`: settings follow that schema; style is written per target, where bare declarations style `default_style_target`, other targets use alias blocks such as `dropdown { }` or `pointer:hover { }` with only the states that target lists, and any other selector is dropped; a value the widget cannot store for a target is written to the widget\'s custom CSS when Elementor Pro is active, otherwise it is skipped with a warning. Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. An update whose only change is editor_settings (for example renaming a layer) is also accepted on any V3 element. Each operation: action=update merges partial plain settings, editor-only fields via editor_settings (layer name, decorative), plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and the V3 widgets elementor/list-widget-schemas lists can be operation targets. V3 widgets whose elementor/get-widget-schemas response has `style_targets`: settings follow that schema; style is written per target, where bare declarations style `default_style_target`, other targets use alias blocks such as `dropdown { }` or `pointer:hover { }` with only the states that target lists, and any other selector is dropped; a value the widget cannot store for a target is written to the widget\'s custom CSS when Elementor Pro is active, otherwise it is skipped with a warning. Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. An update whose only change is editor_settings (for example renaming a layer) is also accepted on any V3 element. Each operation: action=update merges partial plain settings, editor-only fields via editor_settings (layer name, decorative), plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids and its own local styles) right after the source; element_id in the result is the source, new_element_id is the copy, so use new_element_id to edit the copy. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -71,6 +71,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'items' => [
 							'type' => 'object',
 							'properties' => [
+								'element_id' => [
+									'type' => 'string',
+									'description' => 'The element the operation targeted. For action=duplicate this is the source element.',
+								],
+								'new_element_id' => [
+									'type' => 'string',
+									'description' => 'Only for action=duplicate: the id of the new copy. Use it to edit the copy instead of the source.',
+								],
 								'warnings' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
@@ -217,6 +225,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $document;
 		}
 
+		if ( ! $document->is_editable_by_current_user() ) {
+			$error = new \WP_Error(
+				'elementor_forbidden',
+				__( 'You do not have permission to edit this post.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error, $operations );
+			return $error;
+		}
+
 		return $this->handle_bulk( $document, $operations, $started_at );
 	}
 
@@ -255,7 +273,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$tree = $outcome['tree'];
 			$any_change = true;
 
-			$results->add_success( $index, $action, $outcome['warnings']->add_to_response( [ 'element_id' => $element_id ] ) );
+			$results->add_success(
+				$index,
+				$action,
+				$outcome['warnings']->add_to_response( $this->build_operation_success_fields( $action, $element_id, $outcome ) )
+			);
 
 			$all_warnings->merge( $outcome['warnings'] );
 			$class_attachments  += count( $outcome['event_metadata']['applied_classes'] ?? [] );
@@ -394,10 +416,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function apply_duplicate( array $tree, string $element_id ) {
 		$source_node = $this->get_mutator()->find_by_id( $tree, $element_id );
-		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
-		if ( is_wp_error( $new_tree ) ) {
-			return $this->to_public_error( $new_tree );
+		$duplicate_result = $this->get_mutator()->duplicate( $tree, $element_id );
+		if ( is_wp_error( $duplicate_result ) ) {
+			return $this->to_public_error( $duplicate_result );
 		}
+
+		$new_tree = $duplicate_result['tree'];
 
 		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
@@ -407,10 +431,21 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
+			'new_element_id' => $duplicate_result['new_element_id'],
 			'event_metadata' => [
 				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
 			],
 		];
+	}
+
+	private function build_operation_success_fields( string $action, string $element_id, array $outcome ): array {
+		$fields = [ 'element_id' => $element_id ];
+
+		if ( 'duplicate' === $action && array_key_exists( 'new_element_id', $outcome ) ) {
+			$fields['new_element_id'] = $outcome['new_element_id'];
+		}
+
+		return $fields;
 	}
 
 	private function collect_element_types( array $node ): array {

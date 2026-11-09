@@ -16,6 +16,8 @@ export const FIX_WITH_LINK = 'link';
 export const FIX_WITH_SEO = 'seo';
 export const FIX_WITH_MANUAL = 'manual';
 
+export const isPromptBasedFix = ( check ) => FIX_WITH_ANGIE === check?.fixWith && Boolean( check?.fixPrompt );
+
 export const FIX_BY_SEO_PLUGIN = 'seo plugin';
 export const FIX_BY_ANGIE = 'angie';
 export const FIX_BY_ANGIE_MCP = 'angie / mcp';
@@ -99,6 +101,7 @@ export const OUTSIDE_SCAN_STATUS_OK = 'ok';
 export const OUTSIDE_SCAN_STATUS_FAILED = 'failed';
 
 export const SCAN_FAILURE_REASON_BLOCKED = 'blocked';
+export const SCAN_FAILURE_REASON_LOCAL = 'local';
 
 export const HTTP_TOO_MANY_REQUESTS = 429;
 
@@ -129,7 +132,6 @@ export const getStageQuestions = () => ( {
 } );
 
 export const SCANNER_COLORS = {
-	page: '#fcfcfc',
 	paper: '#fff',
 	tableHeader: '#f3f4f7',
 	ringTrack: '#edeef2',
@@ -202,9 +204,6 @@ export const SCANNER_LAYOUT = {
 	pageGap: 32,
 	summaryBlockBottomSpace: 48,
 	progressCardWidth: 450,
-	progressBarWidth: 198,
-	progressBarHeight: 4,
-	progressBarRadius: '50px',
 	progressTrackWash: 0.6,
 	wrapInlinePadding: 32,
 	wrapBlockStart: 24,
@@ -239,6 +238,9 @@ export const SCANNER_LAYOUT = {
 	ringSize: 100,
 	ringStroke: 10,
 	cardRadius: '12px',
+	floatingBarWidth: 500,
+	floatingBarHeight: 52,
+	floatingBarBottomOffset: 24,
 	featureCardRadius: '16px',
 };
 
@@ -250,7 +252,6 @@ export const SCANNER_MOTION = {
 	chevronMs: 220,
 	completedCheckMs: 320,
 	rowAppearMs: 260,
-	progressBarMs: 450,
 	dotShimmerMs: 12000,
 	errorProgressPauseMs: 1500,
 	rescanMinMs: 800,

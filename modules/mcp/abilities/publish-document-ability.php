@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Publish_Document_Ability extends Abstract_Ability {
+
+	const PROMOTED_POST_FIELDS = [ Update_Settings_Ability::TITLE_SETTING, Update_Settings_Ability::EXCERPT_SETTING ];
 
 	protected function get_ability_id(): string {
 		return 'elementor/publish-document';
@@ -23,7 +26,7 @@ class Publish_Document_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Publish Elementor Document', 'elementor' ),
-			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements or build-composition on published pages are staged in an autosave; calling this promotes the staged autosave to the live document. When there are no pending edits on an already-published document, the call is a no-op success.', 'elementor' ),
+			__( 'Transitions an Elementor document (page, post, theme template, popup) to `publish` so it appears on the front end. Call this AFTER all element edits are complete. Edits via manage-elements, build-composition or update-page-settings on published pages are staged in an autosave; calling this promotes the staged autosave to the live document. When there are no pending edits on an already-published document, the call is a no-op success.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -125,7 +128,11 @@ class Publish_Document_Ability extends Abstract_Ability {
 	 * publish flow does in `Page\Manager::save`.
 	 *
 	 * Reuses `Revisions_Manager::restore_revision` so ALL `_elementor*` meta (data, page settings,
-	 * CSS cache, etc.) is copied consistently and Post CSS is regenerated. Running before the
+	 * etc.) is copied consistently, the element cache is invalidated and Post CSS is regenerated.
+	 * That copy skips keys the autosave lacks, so the restorable meta (page settings, page template)
+	 * is synced first, which removes live values a staged restore cleared. The copy also skips post
+	 * fields, so the title, excerpt and featured image that update-page-settings staged are promoted
+	 * separately, and only those, so live changes made since the autosave was created are kept. Running before the
 	 * `wp_update_post` status transition means listeners on `transition_post_status` (Post CSS,
 	 * CDN purges, sitemaps, etc.) see the promoted content on the very same request.
 	 */
@@ -136,9 +143,48 @@ class Publish_Document_Ability extends Abstract_Ability {
 			return;
 		}
 
+		Document_Revision_Snapshots::restore_meta( $autosave_post->ID, $main_id );
+
+		$this->promote_staged_post_fields( $autosave_post, $main_id );
+
 		Revisions_Manager::restore_revision( $main_id, $autosave_post->ID );
 
 		wp_delete_post_revision( $autosave_post->ID );
+	}
+
+	private function promote_staged_post_fields( \WP_Post $autosave_post, int $main_id ): void {
+		$staged_fields = (array) get_metadata( 'post', $autosave_post->ID, Update_Settings_Ability::STAGED_POST_FIELDS_META_KEY, true );
+
+		if ( in_array( Update_Settings_Ability::FEATURED_IMAGE_SETTING, $staged_fields, true ) ) {
+			$this->promote_featured_image( $autosave_post->ID, $main_id );
+		}
+
+		$main_post = get_post( $main_id );
+		$changed_fields = [];
+
+		foreach ( self::PROMOTED_POST_FIELDS as $field ) {
+			if ( in_array( $field, $staged_fields, true ) && $autosave_post->$field !== $main_post->$field ) {
+				$changed_fields[ $field ] = $autosave_post->$field;
+			}
+		}
+
+		if ( ! $changed_fields ) {
+			return;
+		}
+
+		wp_update_post( wp_slash( [ 'ID' => $main_id ] + $changed_fields ) );
+	}
+
+	private function promote_featured_image( int $autosave_id, int $main_id ): void {
+		$attachment_id = get_metadata( 'post', $autosave_id, Update_Settings_Ability::FEATURED_IMAGE_META_KEY, true );
+
+		if ( $attachment_id ) {
+			update_metadata( 'post', $main_id, Update_Settings_Ability::FEATURED_IMAGE_META_KEY, $attachment_id );
+
+			return;
+		}
+
+		delete_metadata( 'post', $main_id, Update_Settings_Ability::FEATURED_IMAGE_META_KEY );
 	}
 
 	private function build_success_response( $document, string $status, string $previous_status ): array {

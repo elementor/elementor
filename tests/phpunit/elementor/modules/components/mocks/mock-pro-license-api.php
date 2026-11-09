@@ -8,11 +8,14 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 		private static array $features = [];
 		private static string $access_tier = 'essential-oct2023';
 
+		private static int $get_license_data_force_calls = 0;
+
 		public static function reset(): void {
 			self::$active = true;
 			self::$expired = false;
 			self::$features = [];
 			self::$access_tier = 'essential-oct2023';
+			self::$get_license_data_force_calls = 0;
 		}
 
 		public static function set_access_tier( string $access_tier ): void {
@@ -44,6 +47,21 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 			unset( $license_check_validator );
 
 			return in_array( $feature_name, self::$features, true );
+		}
+
+		public static function get_license_data( $force_request = false ) {
+			if ( $force_request ) {
+				self::$get_license_data_force_calls++;
+			}
+
+			return [
+				'success' => self::$active,
+				'error' => self::$expired ? 'expired' : '',
+			];
+		}
+
+		public static function get_force_refresh_call_count(): int {
+			return self::$get_license_data_force_calls;
 		}
 	}
 

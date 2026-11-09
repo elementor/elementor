@@ -6,7 +6,8 @@
 #   push to main (packages/** paths) — automatic build, version suffix = run number, dist-tag = "build"
 #   workflow_call                    — called by other workflows (e.g. one-click-release); permission check is the caller's responsibility
 #   workflow_dispatch                — manual run from the GitHub Actions UI; restricted to users listed in the
-#                                      DEPLOYMENT_PERMITTED_USERS repository variable
+#                                      DEPLOYMENT_PERMITTED_USERS repository variable. tag=latest is allowed only
+#                                      for release managers (see Validate Inputs) and requires version (release tag ref).
 #
 # Inputs (workflow_call / workflow_dispatch):
 #   version        — base semver (e.g. 1.2.3). Omit to read from package.json.
@@ -84,10 +85,67 @@ jobs:
     if: startsWith( github.repository, 'elementor/' )
     name: Publish Packages
     runs-on: ubuntu-24.04
+    environment: ${{ ( github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest' ) && 'release-owners' || '' }}
 
     steps:
+      - name: Validate Inputs
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_VERSION_SUFFIX: ${{ inputs.version_suffix }}
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_TAG: ${{ github.event.inputs.tag }}
+          TRIGGERING_ACTOR: ${{ github.triggering_actor }}
+        run: |
+          # Validate version format if provided (semver X.Y.Z, no pre-release suffix here)
+          if [ -n "$INPUT_VERSION" ]; then
+            if ! [[ "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: version must be a base semver version (e.g., 1.2.3). Use version_suffix for pre-release labels."
+              exit 1
+            fi
+          fi
+
+          # Validate version_suffix contains only alphanumeric, dots, and hyphens
+          if [ -n "$INPUT_VERSION_SUFFIX" ]; then
+            if [[ "$INPUT_VERSION_SUFFIX" =~ [^a-zA-Z0-9.-] ]]; then
+              echo "Error: version_suffix contains invalid characters (allowed: alphanumeric, dots, hyphens)"
+              exit 1
+            fi
+          fi
+
+          # Validate tag doesn't contain special characters
+          if [ -n "$INPUT_TAG" ]; then
+            if [[ "$INPUT_TAG" =~ [^a-zA-Z0-9._-] ]]; then
+              echo "Error: tag contains invalid characters"
+              exit 1
+            fi
+          fi
+
+          # Restrict manual (workflow_dispatch) tag=latest to named release managers.
+          # NOTE: must check github.event.inputs (the raw dispatch payload),
+          # not github.event_name alone or the `inputs` context. github.event_name
+          # reflects the *root* trigger of the whole run, so it's still
+          # "workflow_dispatch" even when this workflow is invoked via
+          # workflow_call from another workflow_dispatch-triggered pipeline
+          # (e.g. one-click-release.yml, publish-release.yml). github.event.inputs
+          # only carries the directly-dispatched workflow's own inputs, so it's
+          # empty here unless *this* workflow was the one manually run.
+          if [ "$EVENT_NAME" == "workflow_dispatch" ] && [ "$DISPATCH_TAG" == "latest" ]; then
+            MANUAL_LATEST_PUBLISHERS=",Ntnelbaba,davseve,Svitlana-Dykun,"
+            if ! echo "$MANUAL_LATEST_PUBLISHERS" | grep -Fiq ",$TRIGGERING_ACTOR,"; then
+              echo "Error: tag=latest is restricted to release managers (Ntnelbaba, davseve, Svitlana-Dykun). Use Publish Release or another dist-tag."
+              exit 1
+            fi
+            if [ -z "$INPUT_VERSION" ]; then
+              echo "Error: version is required for manual tag=latest runs (existing release tag ref, e.g. 4.3.6)."
+              exit 1
+            fi
+          fi
+
       - name: Checkout Repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ ( github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest' ) && format( 'refs/tags/{0}', inputs.version ) || github.sha }}
 
       - name: Get Configuration
         if: github.event_name == 'workflow_dispatch'
@@ -116,50 +174,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm run install:ci
-
-      - name: Validate Inputs
-        env:
-          INPUT_VERSION: ${{ inputs.version }}
-          INPUT_VERSION_SUFFIX: ${{ inputs.version_suffix }}
-          INPUT_TAG: ${{ inputs.tag }}
-        run: |
-          # Validate version format if provided (semver X.Y.Z, no pre-release suffix here)
-          if [ -n "$INPUT_VERSION" ]; then
-            if ! [[ "$INPUT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              echo "Error: version must be a base semver version (e.g., 1.2.3). Use version_suffix for pre-release labels."
-              exit 1
-            fi
-          fi
-
-          # Validate version_suffix contains only alphanumeric, dots, and hyphens
-          if [ -n "$INPUT_VERSION_SUFFIX" ]; then
-            if [[ "$INPUT_VERSION_SUFFIX" =~ [^a-zA-Z0-9.-] ]]; then
-              echo "Error: version_suffix contains invalid characters (allowed: alphanumeric, dots, hyphens)"
-              exit 1
-            fi
-          fi
-
-          # Validate tag doesn't contain special characters
-          if [ -n "$INPUT_TAG" ]; then
-            if [[ "$INPUT_TAG" =~ [^a-zA-Z0-9._-] ]]; then
-              echo "Error: tag contains invalid characters"
-              exit 1
-            fi
-          fi
-
-          # Disallow "latest" tag in manual (workflow_dispatch) runs.
-          # NOTE: must check github.event.inputs (the raw dispatch payload),
-          # not github.event_name alone or the `inputs` context. github.event_name
-          # reflects the *root* trigger of the whole run, so it's still
-          # "workflow_dispatch" even when this workflow is invoked via
-          # workflow_call from another workflow_dispatch-triggered pipeline
-          # (e.g. one-click-release.yml, publish-release.yml). github.event.inputs
-          # only carries the directly-dispatched workflow's own inputs, so it's
-          # empty here unless *this* workflow was the one manually run.
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.tag }}" == "latest" ]; then
-            echo "Error: 'latest' tag is not allowed for manual workflow_dispatch runs. Use the release workflow to publish as latest."
-            exit 1
-          fi
 
       - name: Determine Tag Strategy
         id: tag-strategy

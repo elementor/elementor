@@ -19,7 +19,7 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Site Parts', 'elementor' ),
-			Prompt_Loader::load( 'manage-site-parts' ),
+			$this->get_description(),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
@@ -30,16 +30,21 @@ class Manage_Site_Parts_Pro_Features_Discovery_Ability extends Abstract_Ability 
 				],
 				'mutates_page' => false,
 			],
-			fn() => current_user_can( 'edit_posts' ),
+			fn() => current_user_can( 'publish_posts' ),
 			Site_Parts_Schema::manage_input()
 		);
 	}
 
-	public function is_available() {
-		return Site_Parts_Pro_Features_Discovery::for_manage();
+	private function get_description(): string {
+		return sprintf(
+			Prompt_Loader::load( 'manage-site-parts-pro-features-discovery' ),
+			implode( ', ', Site_Parts_Schema::get_types() )
+		);
 	}
 
 	public function execute( $input = [] ) {
-		return Site_Parts_Pro_Features_Discovery::for_manage();
+		$operations = is_array( $input ) && is_array( $input['operations'] ?? null ) ? $input['operations'] : [];
+
+		return Site_Parts_Pro_Features_Discovery::for_operations( $operations );
 	}
 }

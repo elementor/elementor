@@ -7,6 +7,7 @@ test.describe( 'Import Export Customization - Basic Export @import_export_custom
 	let createdItems: CreatedItems;
 
 	test.beforeEach( async ( { page, apiRequests } ) => {
+		createdItems = null;
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 

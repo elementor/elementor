@@ -38,6 +38,7 @@ export const BOT_TABLE_COLUMN_WIDTHS = {
 };
 export const LLMS_FILE_NAME = 'llms.txt';
 export const LLMS_VISIBLE_POST_TYPES_LIMIT = 4;
+export const MAX_EXCLUDED_POSTS = 5000;
 
 export const MODULE_STATUS_ENABLED = 'enabled';
 export const MODULE_STATUS_DISABLED = 'disabled';
@@ -46,27 +47,27 @@ export const MODULE_STATUS_WARNING = 'warning';
 export const getModules = () => [
 	{
 		id: MODULE_LLMS_TXT,
-		title: __( 'LLMs.txt', 'elementor' ),
-		description: __( 'Guide AI agents through your site', 'elementor' ),
+		title: __( 'llms.txt: site guide for AI', 'elementor' ),
+		description: __( 'Help AI agents understand and recommend your site', 'elementor' ),
 	},
 	{
 		id: MODULE_MARKDOWN_CONTENT,
-		title: __( 'Markdown content', 'elementor' ),
-		description: __( 'Make your content easier to read', 'elementor' ),
+		title: __( 'Markdown pages: clean text for AI', 'elementor' ),
+		description: __( 'Help agents get clearer content', 'elementor' ),
 	},
 	{
 		id: MODULE_BOT_ACCESS_CONTROL,
-		title: __( 'Bot access control', 'elementor' ),
-		description: __( 'Control how agents use your content', 'elementor' ),
+		title: __( 'robots.txt rules: AI bot access', 'elementor' ),
+		description: __( 'Decide how AI agents can use your content', 'elementor' ),
 	},
 	{
 		id: MODULE_AGENT_DISCOVERY,
-		title: __( 'Agent discovery', 'elementor' ),
-		description: __( 'Tell agents what this site offers them', 'elementor' ),
+		title: __( 'Discovery files (/.well-known)', 'elementor' ),
+		description: __( 'Help agents find what your site offers', 'elementor' ),
 	},
 	{
 		id: MODULE_BROWSER_TOOLS,
-		title: __( 'Agent browser tools', 'elementor' ),
-		description: __( 'Let agents search and read your site while browsing', 'elementor' ),
+		title: __( 'WebMCP tools: in-browser agent actions', 'elementor' ),
+		description: __( 'Help visitors’ agents find answers on your site', 'elementor' ),
 	},
 ];
