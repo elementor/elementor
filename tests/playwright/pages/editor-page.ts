@@ -972,20 +972,20 @@ export default class EditorPage extends BasePage {
 
 	/**
 	 * Expand a single structure panel node when it is collapsed.
+	 * The navigator marks an expanded node by `elementor-active` on its item row.
 	 *
 	 * @param {string} elementId - Element ID.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async expandStructureNode( elementId: string ): Promise<void> {
-		const node = this.page.locator( EditorSelectors.panels.navigator.getElement( elementId ) );
-		const children = node.locator( '> .elementor-navigator__elements' );
+		const item = this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first();
 
-		if ( await children.evaluate( ( element ) => 'none' === getComputedStyle( element ).display ) ) {
-			await node.locator( '> .elementor-navigator__item .elementor-navigator__element__list-toggle' ).click();
+		if ( ! ( await item.getAttribute( 'class' ) )?.includes( 'elementor-active' ) ) {
+			await item.locator( '.elementor-navigator__element__list-toggle' ).click();
 		}
 
-		await expect( children ).toBeVisible();
+		await expect( item ).toHaveClass( /elementor-active/ );
 	}
 
 	/**
@@ -997,15 +997,13 @@ export default class EditorPage extends BasePage {
 		await expect.poll( async () => {
 			return await this.page.evaluate( () => {
 				const collapsed = Array.from(
-					document.querySelectorAll( '#elementor-navigator .elementor-navigator__element--has-children' ),
-				).filter( ( element ) => {
-					const list = element.querySelector( ':scope > .elementor-navigator__elements' );
+					document.querySelectorAll(
+						'#elementor-navigator .elementor-navigator__element--has-children > .elementor-navigator__item:not(.elementor-active)',
+					),
+				);
 
-					return list && 'none' === getComputedStyle( list ).display;
-				} );
-
-				collapsed.forEach( ( element ) => {
-					( element.querySelector( ':scope > .elementor-navigator__item .elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
+				collapsed.forEach( ( item ) => {
+					( item.querySelector( '.elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
 				} );
 
 				return collapsed.length;
