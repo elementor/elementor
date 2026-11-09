@@ -18,6 +18,7 @@ export const angiePanel = createFloatingPanel( {
 	component: AngiePanel,
 	isDocked: true,
 	keepMounted: true,
+	persistOpenState: true,
 	defaults: {
 		width: ANGIE_PANEL_DEFAULT_WIDTH,
 		height: ANGIE_PANEL_DEFAULT_HEIGHT,
