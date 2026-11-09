@@ -45,8 +45,22 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	};
 
 	const addMenu = async (): Promise<string> => {
-		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
-		const menuId = await editor.addElement( { elType: menuType }, flexboxId );
+		await editor.openElementsPanel();
+
+		const tile = editor.page.locator(
+			`#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="${ menuType }"]`,
+		);
+
+		await tile.waitFor( { state: 'visible' } );
+		await tile.click();
+
+		const menuElement = editor.getPreviewFrame().locator( `[data-element_type="${ menuType }"]` ).first();
+
+		await menuElement.waitFor( { state: 'visible' } );
+
+		const menuId = await menuElement.getAttribute( 'data-id' ) as string;
+
+		await expect( menuElement.locator( '..' ) ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
 
 		await editor.selectElement( menuId );
 		await editor.waitForPanelToLoad();
@@ -64,6 +78,21 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( panel ).toBeVisible();
 
 		return panel;
+	};
+
+	const selectInStructurePanel = async ( elementId: string ) => {
+		await editor.page.locator( navigatorSelectors.getElementItem( elementId ) ).first().click();
+	};
+
+	const expandStructureNode = async ( elementId: string ) => {
+		const node = editor.page.locator( navigatorSelectors.getElement( elementId ) );
+		const children = node.locator( '> .elementor-navigator__elements' );
+
+		if ( await children.evaluate( ( element ) => 'none' === getComputedStyle( element ).display ) ) {
+			await node.locator( '> .elementor-navigator__item .elementor-navigator__element__list-toggle' ).click();
+		}
+
+		await expect( children ).toBeVisible();
 	};
 
 	const expandAllStructureNodes = async () => {
@@ -197,16 +226,20 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 	test( 'Structure panel nests the menu in a flexbox and lists every entry once expanded', async () => {
 		// Arrange
-		await addMenu();
+		const menuId = await addMenu();
 		const panel = await openStructurePanel();
 		const titles = getStructureTitles( panel );
+
+		await selectInStructurePanel( menuId );
+		await expandStructureNode( menuId );
 
 		// Assert
 		await expect( titles.filter( { hasText: /^Flexbox$/ } ) ).toHaveCount( 1 );
 		await expect( titles.filter( { hasText: /^Menu$/ } ) ).toHaveCount( 1 );
 		await expect( titles.filter( { hasText: /^Menu items$/ } ) ).toBeVisible();
+		await expect( titles.filter( { hasText: /^Home$/ } ) ).toBeHidden();
 
-		await expectStableScreenshot( panel, 'menu-structure-panel-collapsed.png' );
+		await expectStableScreenshot( panel, 'menu-structure-panel-menu-expanded.png' );
 
 		// Act
 		await expandAllStructureNodes();
