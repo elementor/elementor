@@ -1,6 +1,8 @@
 import { activateMcpAdapter, AngieMcpAdapter, getRegisteredMcpServers, waitForMcpReady } from '@elementor/editor-mcp';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 
+import { initConsoleMcp } from './mcp/console-mcp';
+
 let attachment: Promise< void > | null = null;
 
 export const resetEditorMcpServersAttachmentForTests = (): void => {
@@ -18,6 +20,8 @@ export const resetEditorMcpServersAttachmentForTests = (): void => {
 export const attachEditorMcpServers = ( sdk: AngieMcpSdk ): Promise< void > => {
 	attachment ??= ( async () => {
 		await waitForMcpReady();
+		// Registered here, before activation, so the adapter sends it with the other editor servers.
+		initConsoleMcp();
 		await activateMcpAdapter( new AngieMcpAdapter( sdk, getRegisteredMcpServers ) );
 	} )();
 

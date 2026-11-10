@@ -69,7 +69,7 @@ test.describe( 'Nested Accordion tests @nested-atomic-repeaters', () => {
 		} );
 	} );
 
-	test( 'Nested Accordion with inner Nested Accordion', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion with inner Nested Accordion atomic repeaters', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 

@@ -49,6 +49,10 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 
 const mockAttachAngieSdk = jest.fn();
 
+jest.mock( '../mcp/console-mcp', () => ( {
+	initConsoleMcp: jest.fn(),
+} ) );
+
 jest.mock( '../attach-editor-mcp-servers', () => ( {
 	attachEditorMcpServers: ( ...args: unknown[] ) => mockAttachAngieSdk( ...args ),
 } ) );
