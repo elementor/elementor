@@ -25,10 +25,6 @@ abstract class Atomic_Menu_Locked_Element extends Atomic_Element_Base {
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'permanently_locked', true );
-
-		if ( ! empty( $this->define_allowed_child_types() ) ) {
-			$this->meta( 'enforce_allowed_children', true );
-		}
 	}
 
 	public static function get_element_type(): string {

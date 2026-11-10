@@ -13,22 +13,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	isValidChild( childModel ) {
 		const elType = childModel.get( 'elType' );
 
-		if ( 'section' === elType || 'column' === elType ) {
-			return false;
-		}
-
-		return this.isAllowedChildType( childModel );
-	}
-
-	isAllowedChildType( childModel ) {
-		const config = elementor.config.elements[ this.get( 'elType' ) ];
-		const allowedTypes = config?.allowed_child_types;
-
-		if ( ! config?.meta?.enforce_allowed_children || ! allowedTypes?.length ) {
-			return true;
-		}
-
-		return allowedTypes.includes( childModel.get( 'widgetType' ) || childModel.get( 'elType' ) );
+		return 'section' !== elType && 'column' !== elType;
 	}
 
 	initialize( attributes, options ) {
