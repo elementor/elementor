@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Fields_Rules {
 	const REPEATER_FIELD_LISTS = [ 'item_fields', 'list_fields' ];
 	const REPEATER_PART_KEYS = [ 'container', 'item' ];
+	const ALLOWS_GROUPS = true;
 
 	private Parse_Errors $errors;
 
@@ -37,11 +38,14 @@ class Fields_Rules {
 				continue;
 			}
 
-			$this->validate_fields( $entry['fields'] ?? null, "{$path}.fields" );
+			$this->validate_fields( $entry['fields'] ?? null, "{$path}.fields", self::ALLOWS_GROUPS );
 		}
 	}
 
-	private function validate_fields( $fields, string $path ): void {
+	/**
+	 * Groups exist only at section level: a group's own fields, and a repeater's fields, are plain fields.
+	 */
+	private function validate_fields( $fields, string $path, bool $allows_groups ): void {
 		if ( ! is_array( $fields ) ) {
 			$this->errors->add( $path, Definition_Error_Codes::DEFINITION_INVALID );
 			return;
@@ -55,13 +59,18 @@ class Fields_Rules {
 				continue;
 			}
 
-			if ( isset( $field['fields'] ) ) {
-				$this->validate_removable_reference( $field['removable'] ?? null, "{$field_path}.removable" );
-				$this->validate_fields( $field['fields'], "{$field_path}.fields" );
+			if ( ! isset( $field['fields'] ) ) {
+				$this->validate_field( $field, $field_path );
 				continue;
 			}
 
-			$this->validate_field( $field, $field_path );
+			if ( ! $allows_groups ) {
+				$this->errors->add( $field_path, Definition_Error_Codes::DEFINITION_INVALID );
+				continue;
+			}
+
+			$this->validate_removable_reference( $field['removable'] ?? null, "{$field_path}.removable" );
+			$this->validate_fields( $field['fields'], "{$field_path}.fields", ! self::ALLOWS_GROUPS );
 		}
 	}
 
@@ -93,7 +102,7 @@ class Fields_Rules {
 
 		foreach ( self::REPEATER_FIELD_LISTS as $key ) {
 			if ( isset( $repeater[ $key ] ) ) {
-				$this->validate_fields( $repeater[ $key ], "{$path}.{$key}" );
+				$this->validate_fields( $repeater[ $key ], "{$path}.{$key}", ! self::ALLOWS_GROUPS );
 			}
 		}
 	}

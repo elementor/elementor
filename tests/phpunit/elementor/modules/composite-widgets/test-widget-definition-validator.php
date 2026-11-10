@@ -204,6 +204,24 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		$this->assert_has_error( $result, 'general.0.fields.2.target.prop', Definition_Error_Codes::TARGET_PROP_NOT_FOUND );
 	}
 
+	public function test_validate__rejects_groups_nested_in_a_group_or_a_repeater() {
+		// Arrange.
+		$definition = $this->read_example( 'pricing-card.json' );
+		$nested_group = [
+			'label' => 'Advanced',
+			'fields' => [ [ 'label' => 'Link', 'target' => [ 'part' => 'button', 'prop' => 'link' ] ] ],
+		];
+		$definition['general'][0]['fields'][3]['fields'][] = $nested_group;
+		$definition['general'][1]['item_fields'][] = $nested_group;
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'general.0.fields.3.fields.2', Definition_Error_Codes::DEFINITION_INVALID );
+		$this->assert_has_error( $result, 'general.1.item_fields.1', Definition_Error_Codes::DEFINITION_INVALID );
+	}
+
 	public function test_validate__rejects_removable_root_and_missing_removable_part() {
 		// Arrange.
 		$definition = $this->icon_button();
