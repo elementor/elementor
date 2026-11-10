@@ -255,6 +255,32 @@ describe( 'GuidedTours', () => {
 		);
 	} );
 
+	it( 'navigates back to the previous screen step on previous click', async () => {
+		// Arrange.
+		const guidedTours = new GuidedTours( {
+			...CONFIG,
+			screenId: 'options-reading',
+			progress: {
+				status: 'in_progress',
+				step_id: 'homepage-display',
+				version: 2,
+			},
+		}, driverFactory, request );
+		guidedTours.init();
+		driver.hasPreviousStep = jest.fn().mockReturnValue( false );
+
+		// Act.
+		driverConfig.onPrevClick( null, driverConfig.steps[ 0 ], { driver } );
+		await guidedTours.progressRequest;
+
+		// Assert.
+		expect( driverConfig.steps[ 0 ].popover.disableButtons ).toEqual( [] );
+		expect( request.mock.calls[ 0 ][ 1 ].body.get( 'stepId' ) ).toBe( 'reading-tab' );
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.test/wp-admin/options-general.php'
+		);
+	} );
+
 	it( 'marks completion on the last step done click', async () => {
 		// Arrange.
 		const guidedTours = new GuidedTours( {

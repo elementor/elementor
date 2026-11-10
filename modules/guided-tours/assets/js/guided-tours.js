@@ -77,6 +77,7 @@ export class GuidedTours {
 		}
 
 		const tourSteps = stepsOnScreen ?? registeredTour.tour.steps;
+		this.activeTour = registeredTour.tour;
 		const steps = tourSteps
 			.filter( ( step ) => this.isValidSelector( step.selector ) )
 			.map( ( step ) => this.toDriverStep( step ) );
@@ -99,6 +100,7 @@ export class GuidedTours {
 			onPopoverRender: ( popover, options ) => this.syncPopoverChrome( popover, this.resolveDriverStep( options ) ),
 			onDoneClick: () => this.handleDoneClick( this.resolveDriverStep(), { driver: this.driver } ),
 			onNextClick: ( element, step, options ) => this.handleNextClick( step ?? this.resolveDriverStep( options ), options ),
+			onPrevClick: ( element, step, options ) => this.handlePrevClick( step, options ),
 		} );
 
 		this.emit( 'start', { tourId, stepIndex } );
@@ -173,11 +175,51 @@ export class GuidedTours {
 		return () => listeners.delete( callback );
 	}
 
+	getPreviousScreenTarget( stepId, tour = this.activeTour ) {
+		const steps = tour?.steps ?? [];
+		const index = steps.findIndex( ( step ) => step.id === stepId );
+		const previousStep = steps[ index - 1 ];
+		const linkingStep = steps[ index - 2 ];
+
+		if ( ! previousStep || previousStep.screen === steps[ index ].screen || ! linkingStep?.next_url ) {
+			return null;
+		}
+
+		if ( linkingStep.screen === previousStep.screen ) {
+			return null;
+		}
+
+		return { stepId: previousStep.id, url: linkingStep.next_url };
+	}
+
+	handlePrevClick( step, options ) {
+		const stepId = ( step ?? this.resolveDriverStep( options ) )?.data?.id;
+
+		if ( options?.driver?.hasPreviousStep?.() ) {
+			options.driver.movePrevious();
+			return;
+		}
+
+		const target = stepId ? this.getPreviousScreenTarget( stepId ) : null;
+
+		if ( ! target ) {
+			return;
+		}
+
+		this.isNavigating = true;
+		this.saveProgressBeforeNavigation( target.stepId ).then( () => {
+			window.location.assign( this.resolveAdminUrl( target.url ) );
+		} );
+	}
+
 	toDriverStep( step ) {
+		const canNavigateBack = Boolean( this.getPreviousScreenTarget( step.id ) );
+
 		return {
 			data: { id: step.id },
 			element: step.selector,
 			popover: {
+				...( canNavigateBack && { disableButtons: [] } ),
 				description: step.description,
 				side: this.getPopoverSide( step.side ),
 				title: step.title,

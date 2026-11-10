@@ -73,7 +73,7 @@ Use stable selectors. The runtime waits up to five seconds per target and skips 
 #elementor-panel-elements-wrapper .elementor-element[data-library-element-type="<widget-name>"]
 ```
 
-Example: `form` (Elementor Pro Form widget). Category headers use selectors such as `#elementor-panel-category-forms`.
+Example: `form` (Elementor Pro Form widget). Category headers use selectors such as `#elementor-panel-category-pro-elements`.
 
 ## Screen IDs
 
