@@ -1,0 +1,125 @@
+{
+	"id": "elementor/icon-button",
+	"version": 1,
+	"source": "code",
+	"title": "Icon button",
+	"icon": "eicon-button",
+	"category": "v4-elements",
+	"detachable": true,
+	"template": {
+		"elType": "e-flexbox",
+		"part": "root",
+		"settings": {
+			"classes": { "$$type": "classes", "value": [ "local-root" ] },
+			"link": {
+				"$$type": "link",
+				"value": {
+					"destination": { "$$type": "url", "value": "#" },
+					"isTargetBlank": { "$$type": "boolean", "value": false }
+				}
+			}
+		},
+		"styles": {
+			"local-root": {
+				"id": "local-root",
+				"type": "class",
+				"label": "local",
+				"variants": [
+					{
+						"meta": { "breakpoint": "desktop", "state": null },
+						"props": {
+							"flex-direction": { "$$type": "string", "value": "row" },
+							"align-items": { "$$type": "string", "value": "center" },
+							"gap": { "$$type": "size", "value": { "size": 8, "unit": "px" } },
+							"padding": { "$$type": "size", "value": { "size": 12, "unit": "px" } },
+							"border-radius": { "$$type": "size", "value": { "size": 8, "unit": "px" } },
+							"border-width": { "$$type": "size", "value": { "size": 1, "unit": "px" } },
+							"border-style": { "$$type": "string", "value": "solid" },
+							"border-color": { "$$type": "color", "value": "#111111" }
+						}
+					}
+				]
+			}
+		},
+		"elements": [
+			{
+				"elType": "widget",
+				"widgetType": "e-svg",
+				"part": "icon"
+			},
+			{
+				"elType": "widget",
+				"widgetType": "e-paragraph",
+				"part": "label",
+				"settings": {
+					"paragraph": { "$$type": "escaped-html", "value": "Click me" }
+				}
+			}
+		]
+	},
+	"general": [
+		{
+			"section": "Content",
+			"fields": [
+				{ "label": "Text", "target": { "part": "label", "prop": "paragraph" } },
+				{ "label": "Icon", "target": { "part": "icon", "prop": "svg" }, "removable": true },
+				{ "label": "Link", "target": { "part": "root", "prop": "link" } }
+			]
+		}
+	],
+	"style": {
+		"appearance": [
+			{
+				"id": "button_style",
+				"label": "Button style",
+				"options": [
+					{
+						"id": "filled",
+						"label": "Filled",
+						"set": [
+							{
+								"part": "root",
+								"style": {
+									"desktop": {
+										"background": { "$$type": "background", "value": { "color": { "$$type": "color", "value": "#111111" } } }
+									}
+								}
+							},
+							{
+								"part": "label",
+								"style": {
+									"desktop": {
+										"color": { "$$type": "color", "value": "#ffffff" }
+									}
+								}
+							}
+						]
+					},
+					{
+						"id": "outline",
+						"label": "Outline",
+						"set": [
+							{
+								"part": "root",
+								"style": {
+									"desktop": {
+										"background": { "$$type": "background", "value": { "color": { "$$type": "color", "value": "transparent" } } }
+									}
+								}
+							},
+							{
+								"part": "label",
+								"style": {
+									"desktop": {
+										"color": { "$$type": "color", "value": "#111111" }
+									}
+								}
+							}
+						]
+					}
+				]
+			}
+		],
+		"quick_edit": []
+	}
+}

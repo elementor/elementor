@@ -1,4 +1,4 @@
-import { generateElementId, type V1ElementData } from '@elementor/editor-elements';
+import { generateElementId, regenerateLocalStyleIds, type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue } from '@elementor/editor-props';
 
 import {
@@ -7,7 +7,6 @@ import {
 } from '../../prop-types/component-instance-override-prop-type';
 import { type ComponentInstanceOverride } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { regenerateLocalStyleIds } from './regenerate-local-style-ids';
 import { resolveOverridableSettings } from './resolve-overridable-settings';
 
 /**
