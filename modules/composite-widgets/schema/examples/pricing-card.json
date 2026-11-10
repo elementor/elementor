@@ -1,0 +1,252 @@
+{
+	"id": "elementor/pricing-card",
+	"version": 1,
+	"source": "code",
+	"title": "Pricing card",
+	"icon": "eicon-price-table",
+	"category": "v4-elements",
+	"detachable": true,
+	"template": {
+		"elType": "e-flexbox",
+		"part": "root",
+		"settings": {
+			"classes": { "$$type": "classes", "value": [ "local-root" ] }
+		},
+		"styles": {
+			"local-root": {
+				"id": "local-root",
+				"type": "class",
+				"label": "local",
+				"variants": [
+					{
+						"meta": { "breakpoint": "desktop", "state": null },
+						"props": {
+							"flex-direction": { "$$type": "string", "value": "column" },
+							"gap": { "$$type": "size", "value": { "size": 16, "unit": "px" } },
+							"padding": { "$$type": "size", "value": { "size": 32, "unit": "px" } }
+						}
+					},
+					{
+						"meta": { "breakpoint": "mobile", "state": null },
+						"props": {
+							"padding": { "$$type": "size", "value": { "size": 20, "unit": "px" } }
+						}
+					}
+				]
+			}
+		},
+		"elements": [
+			{
+				"elType": "widget",
+				"widgetType": "e-paragraph",
+				"part": "badge",
+				"settings": {
+					"paragraph": { "$$type": "escaped-html", "value": "Most popular" }
+				}
+			},
+			{
+				"elType": "widget",
+				"widgetType": "e-heading",
+				"part": "title",
+				"settings": {
+					"title": { "$$type": "escaped-html", "value": "Pro" }
+				}
+			},
+			{
+				"elType": "widget",
+				"widgetType": "e-paragraph",
+				"part": "price",
+				"settings": {
+					"paragraph": { "$$type": "escaped-html", "value": "$29 / month" }
+				}
+			},
+			{
+				"elType": "e-flexbox",
+				"part": "features",
+				"settings": {
+					"classes": { "$$type": "classes", "value": [ "local-features" ] }
+				},
+				"styles": {
+					"local-features": {
+						"id": "local-features",
+						"type": "class",
+						"label": "local",
+						"variants": [
+							{
+								"meta": { "breakpoint": "desktop", "state": null },
+								"props": {
+									"flex-direction": { "$$type": "string", "value": "column" },
+									"gap": { "$$type": "size", "value": { "size": 8, "unit": "px" } }
+								}
+							}
+						]
+					}
+				},
+				"elements": [
+					{
+						"elType": "e-flexbox",
+						"part": "feature",
+						"settings": {
+							"classes": { "$$type": "classes", "value": [ "local-feature" ] }
+						},
+						"styles": {
+							"local-feature": {
+								"id": "local-feature",
+								"type": "class",
+								"label": "local",
+								"variants": [
+									{
+										"meta": { "breakpoint": "desktop", "state": null },
+										"props": {
+											"flex-direction": { "$$type": "string", "value": "row" },
+											"align-items": { "$$type": "string", "value": "center" },
+											"gap": { "$$type": "size", "value": { "size": 8, "unit": "px" } }
+										}
+									}
+								]
+							}
+						},
+						"elements": [
+							{ "elType": "widget", "widgetType": "e-svg", "part": "feature_icon" },
+							{
+								"elType": "widget",
+								"widgetType": "e-paragraph",
+								"part": "feature_text",
+								"settings": {
+									"paragraph": { "$$type": "escaped-html", "value": "Unlimited sites" }
+								}
+							}
+						]
+					},
+					{
+						"elType": "e-flexbox",
+						"part": "feature",
+						"settings": {
+							"classes": { "$$type": "classes", "value": [ "local-feature" ] }
+						},
+						"styles": {
+							"local-feature": {
+								"id": "local-feature",
+								"type": "class",
+								"label": "local",
+								"variants": [
+									{
+										"meta": { "breakpoint": "desktop", "state": null },
+										"props": {
+											"flex-direction": { "$$type": "string", "value": "row" },
+											"align-items": { "$$type": "string", "value": "center" },
+											"gap": { "$$type": "size", "value": { "size": 8, "unit": "px" } }
+										}
+									}
+								]
+							}
+						},
+						"elements": [
+							{ "elType": "widget", "widgetType": "e-svg", "part": "feature_icon" },
+							{
+								"elType": "widget",
+								"widgetType": "e-paragraph",
+								"part": "feature_text",
+								"settings": {
+									"paragraph": { "$$type": "escaped-html", "value": "Priority support" }
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"elType": "widget",
+				"widgetType": "e-button",
+				"part": "button",
+				"settings": {
+					"text": { "$$type": "escaped-html", "value": "Get started" },
+					"link": {
+						"$$type": "link",
+						"value": {
+							"destination": { "$$type": "url", "value": "#" },
+							"isTargetBlank": { "$$type": "boolean", "value": false }
+						}
+					}
+				}
+			}
+		]
+	},
+	"general": [
+		{
+			"section": "Content",
+			"fields": [
+				{ "label": "Badge", "target": { "part": "badge", "prop": "paragraph" }, "removable": true },
+				{ "label": "Title", "target": { "part": "title", "prop": "title" } },
+				{ "label": "Price", "target": { "part": "price", "prop": "paragraph" } },
+				{
+					"label": "Button",
+					"removable": { "part": "button" },
+					"fields": [
+						{ "label": "Button text", "target": { "part": "button", "prop": "text" } },
+						{ "label": "Button link", "target": { "part": "button", "prop": "link" } }
+					]
+				}
+			]
+		},
+		{
+			"repeater": "features",
+			"label": "Features",
+			"item": "feature",
+			"container": "features",
+			"item_label": { "part": "feature_text", "prop": "paragraph" },
+			"item_fields": [
+				{ "label": "Text", "target": { "part": "feature_text", "prop": "paragraph" } }
+			],
+			"list_fields": [
+				{ "label": "List icon", "target": { "part": "feature_icon", "prop": "svg" }, "removable": true }
+			],
+			"min": 1,
+			"max": 10
+		}
+	],
+	"style": {
+		"appearance": [
+			{
+				"id": "card_style",
+				"label": "Card style",
+				"options": [
+					{
+						"id": "plain",
+						"label": "Plain",
+						"set": [
+							{
+								"part": "root",
+								"style": {
+									"desktop": {
+										"border-style": { "$$type": "string", "value": "none" }
+									}
+								}
+							}
+						]
+					},
+					{
+						"id": "card",
+						"label": "Card",
+						"set": [
+							{
+								"part": "root",
+								"style": {
+									"desktop": {
+										"border-style": { "$$type": "string", "value": "solid" },
+										"border-width": { "$$type": "size", "value": { "size": 1, "unit": "px" } },
+										"border-color": { "$$type": "color", "value": "#e0e0e0" },
+										"border-radius": { "$$type": "size", "value": { "size": 12, "unit": "px" } }
+									}
+								}
+							}
+						]
+					}
+				]
+			}
+		],
+		"quick_edit": [
+			{ "label": "Align items", "style_prop": "align-items", "targets": [ "root", "features", "feature" ] }
+		]
+	}
+}
