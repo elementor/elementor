@@ -14,7 +14,6 @@ import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
 import { initLegacyViews } from './legacy/init-legacy-views';
 import { initListType } from './legacy/list-type';
-import { initMenuModelExtensions } from './legacy/menu-model-extensions';
 import { initViewReplacements } from './legacy/replacements/manager';
 import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
@@ -70,7 +69,6 @@ export function init() {
 		} )
 	);
 
-	initMenuModelExtensions();
 	initTabsModelExtensions();
 	initListType();
 }
