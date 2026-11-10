@@ -32,7 +32,7 @@ export function InstanceEditingPanel() {
 
 	const actions = (
 		<Stack direction="row" gap={ 0.5 }>
-			<ComponentInstanceHeaderSlot componentId={ componentId } elementId={ componentInstanceId } />
+			<ComponentInstanceHeaderSlot componentId={ String( componentId ) } elementId={ componentInstanceId } />
 			<DetachAction componentInstanceId={ componentInstanceId } componentId={ componentId } />
 			{ canEdit && <EditComponentAction disabled label={ panelTitle } icon={ PencilIcon } /> }
 		</Stack>
