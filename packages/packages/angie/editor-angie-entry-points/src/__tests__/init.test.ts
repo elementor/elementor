@@ -2,6 +2,7 @@ import { injectIntoControlHeader } from '@elementor/editor-controls';
 import { injectIntoClassSelectorActions, injectIntoStyleTabHeader } from '@elementor/editor-editing-panel';
 import { injectIntoClassManagerHeader } from '@elementor/editor-global-classes';
 import { injectIntoInteractionsHeader } from '@elementor/editor-interactions';
+import { injectIntoVariableFormHeader, injectIntoVariablesManagerHeader } from '@elementor/editor-variables';
 
 import { AngieControlHeaderAction } from '../control-header/angie-control-header-action';
 import { AngieClassManagerHeaderAction } from '../css-classes/angie-class-manager-header-action';
@@ -9,6 +10,8 @@ import { AngieClassSelectorAction } from '../css-classes/angie-class-selector-ac
 import { AngieInteractionsHeaderAction } from '../interactions/angie-interactions-header-action';
 import { init } from '../init';
 import { AngieStyleTabHeaderAction } from '../style-section/angie-style-tab-header-action';
+import { AngieVariableFormHeaderAction } from '../variables/angie-variable-form-header-action';
+import { AngieVariablesManagerHeaderAction } from '../variables/angie-variables-manager-header-action';
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	injectIntoControlHeader: jest.fn(),
@@ -25,6 +28,11 @@ jest.mock( '@elementor/editor-global-classes', () => ( {
 
 jest.mock( '@elementor/editor-interactions', () => ( {
 	injectIntoInteractionsHeader: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-variables', () => ( {
+	injectIntoVariableFormHeader: jest.fn(),
+	injectIntoVariablesManagerHeader: jest.fn(),
 } ) );
 
 describe( 'init', () => {
@@ -52,6 +60,14 @@ describe( 'init', () => {
 		expect( injectIntoInteractionsHeader ).toHaveBeenCalledWith( {
 			id: 'angie-interactions-header-action',
 			component: AngieInteractionsHeaderAction,
+		} );
+		expect( injectIntoVariableFormHeader ).toHaveBeenCalledWith( {
+			id: 'angie-variable-form-header-action',
+			component: AngieVariableFormHeaderAction,
+		} );
+		expect( injectIntoVariablesManagerHeader ).toHaveBeenCalledWith( {
+			id: 'angie-variables-manager-header-action',
+			component: AngieVariablesManagerHeaderAction,
 		} );
 	} );
 } );

@@ -16,6 +16,7 @@ import { NoSearchResults } from '../ui/no-search-results';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
+import { VariablesManagerHeaderSlot } from '../variables-manager-header-location';
 import { VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
@@ -272,7 +273,8 @@ function VariablesManagerPanelContent( { onRequestClose, onExposeCloseAttempt }:
 							alignSelf: 'stretch',
 						} }
 					/>
-					<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center' } }>
+					<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center', gap: 0.5 } }>
+						<VariablesManagerHeaderSlot />
 						<VariableManagerCreateMenu
 							outlinedTrigger
 							onCreate={ handleCreateVariable }
