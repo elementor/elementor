@@ -10,17 +10,18 @@ import { ControlLabel } from '../components/control-label';
 import { InlineEditor } from '../components/inline-editor';
 import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
+import { CONTROL_HEADER_APP_PROMOTION_ID } from '../control-header/init';
 import { createControl } from '../create-control';
 import { extractInlineHtmlContent } from '../utils/inline-editing';
 import { type ControlProps } from '../utils/types';
-import { ImageOptimizeTrigger, type ImagePromotion } from './image-optimize-trigger';
+import { type AppPromotion } from './app-promotion-trigger';
 
 type Props = ControlProps< {
 	sx?: SxProps< Theme >;
 	attributes?: Record< string, string >;
 	props?: ComponentProps< 'div' >;
 	label?: string;
-	promotion?: ImagePromotion;
+	promotion?: AppPromotion;
 } >;
 
 export const InlineEditingControl = createControl(
@@ -114,9 +115,11 @@ export const InlineEditingControl = createControl(
 			</ControlActions>
 		);
 
-		const hasHeaderActions = Boolean( elementId ) && headerInjections.length > 0;
+		const hasThirdPartyHeaderActions =
+			Boolean( elementId ) &&
+			headerInjections.some( ( injection ) => injection.id !== CONTROL_HEADER_APP_PROMOTION_ID );
 
-		if ( ! label && ! promotion && ! hasHeaderActions ) {
+		if ( ! label && ! promotion && ! hasThirdPartyHeaderActions ) {
 			return editorField;
 		}
 
@@ -125,10 +128,11 @@ export const InlineEditingControl = createControl(
 				<Stack direction="row" alignItems="center" justifyContent="space-between">
 					<ControlLabel>{ label }</ControlLabel>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						{ promotion && <ImageOptimizeTrigger promotion={ promotion } /> }
-						{ hasHeaderActions && elementId && (
-							<ControlHeaderActions elementId={ elementId } controlType="inline-editing" />
-						) }
+						<ControlHeaderActions
+							elementId={ elementId }
+							controlType="inline-editing"
+							promotion={ promotion }
+						/>
 					</Stack>
 				</Stack>
 				{ editorField }

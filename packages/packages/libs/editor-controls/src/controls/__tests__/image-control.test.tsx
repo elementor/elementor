@@ -5,6 +5,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { type ControlHeaderProps, injectIntoControlHeader } from '../../components/control-header-location';
+import { initControlHeader } from '../../control-header/init';
 import { ImageControl } from '../image-control';
 import { ImageMediaControl } from '../image-media-control';
 
@@ -180,6 +181,29 @@ describe( 'ImageControl', () => {
 
 			// Assert.
 			expect( screen.queryByRole( 'button', { name: /el-1/ } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should render app promotion before other injected header actions', () => {
+			// Arrange.
+			const promotion = {
+				content: 'Optimize your images to enhance site performance by using Image Optimization.',
+				dismissible: 'image_optimizer_hint',
+			};
+			const promotionLabel = 'Optimize';
+			const LaterAction = () => <button type="button">Later</button>;
+			initControlHeader();
+			injectIntoControlHeader( { id: 'later-header-action', component: LaterAction } );
+
+			// Act.
+			renderControl(
+				<ImageControl sizes={ sizes } promotion={ promotion } context={ { elementId: 'el-1' } } />,
+				headerProps
+			);
+
+			// Assert.
+			const buttons = screen.getAllByRole( 'button' ).map( ( button ) => button.textContent );
+			expect( buttons ).toContain( promotionLabel );
+			expect( buttons.indexOf( 'Later' ) ).toBeGreaterThan( buttons.indexOf( promotionLabel ) );
 		} );
 	} );
 } );
