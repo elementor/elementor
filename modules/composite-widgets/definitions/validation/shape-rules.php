@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Shape_Rules {
 	const SOURCES = [ Widget_Definition::SOURCE_CODE, Widget_Definition::SOURCE_SITE ];
 	const OPTIONAL_STRING_KEYS = [ 'icon', 'category' ];
-	const STYLE_LIST_KEYS = [ 'appearance', 'quick_edit' ];
 
 	public function validate( array $definition, Parse_Errors $errors ): void {
 		$id = $definition['id'] ?? null;
@@ -53,19 +52,8 @@ class Shape_Rules {
 			$errors->add( 'general', Definition_Error_Codes::DEFINITION_INVALID );
 		}
 
-		$this->validate_style( $definition['style'] ?? [], $errors );
-	}
-
-	private function validate_style( $style, Parse_Errors $errors ): void {
-		if ( ! is_array( $style ) ) {
+		if ( isset( $definition['style'] ) && ! is_array( $definition['style'] ) ) {
 			$errors->add( 'style', Definition_Error_Codes::DEFINITION_INVALID );
-			return;
-		}
-
-		foreach ( self::STYLE_LIST_KEYS as $key ) {
-			if ( isset( $style[ $key ] ) && ! is_array( $style[ $key ] ) ) {
-				$errors->add( "style.{$key}", Definition_Error_Codes::DEFINITION_INVALID );
-			}
 		}
 	}
 

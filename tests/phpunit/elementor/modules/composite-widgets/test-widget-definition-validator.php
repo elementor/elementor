@@ -139,6 +139,32 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		$this->assertStringContainsString( Definition_Error_Codes::TEMPLATE_STYLE_INVALID, $result->errors()->to_string() );
 	}
 
+	public function test_validate__rejects_unknown_style_prop_in_local_style() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$definition['template']['styles']['local-root']['variants'][0]['props']['colr'] = [ '$$type' => 'color', 'value' => '#000000' ];
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.styles.local-root.variants.0.props.colr', Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
+	}
+
+	public function test_validate__rejects_style_lists_that_are_not_arrays() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$definition['style']['appearance'] = 'filled';
+		$definition['style']['quick_edit'] = 'align';
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'style.appearance', Definition_Error_Codes::DEFINITION_INVALID );
+		$this->assert_has_error( $result, 'style.quick_edit', Definition_Error_Codes::DEFINITION_INVALID );
+	}
+
 	public function test_validate__rejects_global_class_and_variable_references_in_code_definitions() {
 		// Arrange.
 		$definition = $this->with_global_references( $this->icon_button() );

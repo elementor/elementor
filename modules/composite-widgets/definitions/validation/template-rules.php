@@ -5,8 +5,6 @@ namespace Elementor\Modules\CompositeWidgets\Definitions\Validation;
 use Elementor\Core\Utils\Api\Parse_Errors;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Markers;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 
@@ -31,6 +29,7 @@ class Template_Rules {
 	const FORBIDDEN_NODE_KEYS = [ 'id', Widget_Markers::WIDGET_KEY ];
 
 	private Variable_References $variable_references;
+	private Local_Style_Rules $local_style_rules;
 	private Parse_Errors $errors;
 
 	/** @var array<string, array{path: string, schema: array}> */
@@ -41,8 +40,9 @@ class Template_Rules {
 	private array $allowed_types = [];
 	private bool $forbids_globals = true;
 
-	public function __construct( Variable_References $variable_references ) {
+	public function __construct( Variable_References $variable_references, Local_Style_Rules $local_style_rules ) {
 		$this->variable_references = $variable_references;
+		$this->local_style_rules = $local_style_rules;
 	}
 
 	/**
@@ -71,13 +71,17 @@ class Template_Rules {
 
 		$element_type = $this->get_element_type( $node, $path );
 		$schema = $element_type ? $this->get_props_schema( $element_type, $path ) : null;
-		$part = $this->validate_part( $node, $path, $schema, $indexes_parts );
+		$part = $this->validate_part_name( $node, $path );
+
+		if ( null !== $part && $indexes_parts ) {
+			$this->index_part( $part, $path, $schema );
+		}
 
 		if ( null !== $schema ) {
 			$this->validate_settings( $node, $path, $schema );
 		}
 
-		$this->validate_styles( $node, $path, $part );
+		$this->local_style_rules->validate( $node, $path, $part, $this->errors );
 
 		if ( $this->forbids_globals ) {
 			$this->validate_no_global_references( $node, $path );
@@ -97,34 +101,60 @@ class Template_Rules {
 		}
 
 		$item_part = null !== $part ? ( $this->repeater_items[ $part ] ?? null ) : null;
-		$first_item_parts = null;
+
+		if ( null === $item_part ) {
+			return $this->validate_plain_children( $children, $path, $indexes_parts );
+		}
+
+		return $this->validate_repeater_children( $children, $path, $item_part, $indexes_parts );
+	}
+
+	private function validate_plain_children( array $children, string $path, bool $indexes_parts ): array {
 		$parts = [];
 
 		foreach ( $children as $index => $child ) {
+			$parts = array_merge( $parts, $this->validate_node( $child, "{$path}.elements.{$index}", $indexes_parts ) );
+		}
+
+		return $parts;
+	}
+
+	/**
+	 * Items repeat the same part names: only the first item is indexed, and every later item
+	 * must have the same set of parts as the first one.
+	 */
+	private function validate_repeater_children( array $children, string $path, string $item_part, bool $indexes_parts ): array {
+		$parts = [];
+		$first_item_parts = null;
+
+		foreach ( $children as $index => $child ) {
 			$child_path = "{$path}.elements.{$index}";
-			$child_part = is_array( $child ) ? ( $child[ Widget_Markers::PART_KEY ] ?? null ) : null;
-			$is_repeated_item = null !== $item_part && $child_part === $item_part;
-			$is_first_item = $is_repeated_item && null === $first_item_parts;
 
-			$child_parts = $this->validate_node( $child, $child_path, $indexes_parts && ( ! $is_repeated_item || $is_first_item ) );
-
-			if ( ! $is_repeated_item ) {
-				$parts = array_merge( $parts, $child_parts );
+			if ( ! $this->is_repeater_item( $child, $item_part ) ) {
+				$parts = array_merge( $parts, $this->validate_node( $child, $child_path, $indexes_parts ) );
 				continue;
 			}
 
-			if ( $is_first_item ) {
-				$first_item_parts = $child_parts;
-				$parts = array_merge( $parts, $child_parts );
+			if ( null === $first_item_parts ) {
+				$first_item_parts = $this->validate_node( $child, $child_path, $indexes_parts );
+				$parts = array_merge( $parts, $first_item_parts );
 				continue;
 			}
 
-			if ( ! $this->have_same_parts( $first_item_parts, $child_parts ) ) {
+			$item_parts = $this->validate_node( $child, $child_path, false );
+
+			if ( ! $this->have_same_parts( $first_item_parts, $item_parts ) ) {
 				$this->errors->add( $child_path, Definition_Error_Codes::REPEATER_ITEM_SHAPE_MISMATCH );
 			}
 		}
 
 		return $parts;
+	}
+
+	private function is_repeater_item( $child, string $item_part ): bool {
+		$child_part = is_array( $child ) ? ( $child[ Widget_Markers::PART_KEY ] ?? null ) : null;
+
+		return $child_part === $item_part;
 	}
 
 	private function get_element_type( array $node, string $path ): ?string {
@@ -157,7 +187,7 @@ class Template_Rules {
 		return $element::get_props_schema();
 	}
 
-	private function validate_part( array $node, string $path, ?array $schema, bool $indexes_parts ): ?string {
+	private function validate_part_name( array $node, string $path ): ?string {
 		if ( ! array_key_exists( Widget_Markers::PART_KEY, $node ) ) {
 			return null;
 		}
@@ -169,21 +199,22 @@ class Template_Rules {
 			return null;
 		}
 
-		if ( ! $indexes_parts ) {
-			return $part;
-		}
+		return $part;
+	}
 
+	/**
+	 * The element's props schema is kept so field targets can be checked against it later.
+	 */
+	private function index_part( string $part, string $path, ?array $schema ): void {
 		if ( isset( $this->parts[ $part ] ) ) {
 			$this->errors->add( "{$path}.part", Definition_Error_Codes::PART_DUPLICATE );
-			return $part;
+			return;
 		}
 
 		$this->parts[ $part ] = [
 			'path' => $path,
 			'schema' => $schema ?? [],
 		];
-
-		return $part;
 	}
 
 	private function validate_settings( array $node, string $path, array $schema ): void {
@@ -198,33 +229,6 @@ class Template_Rules {
 
 		foreach ( $result->errors()->all() as $error ) {
 			$this->errors->add( "{$path}.settings.{$error['key']}", Definition_Error_Codes::TEMPLATE_SETTINGS_INVALID );
-		}
-	}
-
-	private function validate_styles( array $node, string $path, ?string $part ): void {
-		$styles = $node['styles'] ?? [];
-
-		if ( ! is_array( $styles ) ) {
-			$this->errors->add( "{$path}.styles", Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
-			return;
-		}
-
-		$expected_style_id = null !== $part ? Widget_Markers::get_template_local_style_id( $part ) : null;
-		$style_parser = Style_Parser::make( Style_Schema::get() );
-
-		foreach ( $styles as $style_id => $style ) {
-			$style_path = "{$path}.styles.{$style_id}";
-
-			if ( $expected_style_id !== $style_id || ! is_array( $style ) || ( $style['id'] ?? null ) !== $style_id ) {
-				$this->errors->add( $style_path, Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
-				continue;
-			}
-
-			$result = $style_parser->parse( $style );
-
-			foreach ( $result->errors()->all() as $error ) {
-				$this->errors->add( "{$style_path}.{$error['key']}", Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
-			}
 		}
 	}
 

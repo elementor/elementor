@@ -16,12 +16,13 @@ class Widget_Definition_Validator {
 
 	public static function make(): self {
 		$variable_references = new Variable_References();
+		$style_props_rules = new Style_Props_Rules();
 
 		return new self(
 			new Shape_Rules(),
-			new Template_Rules( $variable_references ),
+			new Template_Rules( $variable_references, new Local_Style_Rules( $style_props_rules ) ),
 			new Fields_Rules(),
-			new Style_Preset_Rules( $variable_references )
+			new Style_Preset_Rules( $variable_references, $style_props_rules )
 		);
 	}
 
