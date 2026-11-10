@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { useBoundProp } from '../../bound-prop-context';
+import { type ControlHeaderProps, injectIntoControlHeader } from '../../components/control-header-location';
 import { ImageControl } from '../image-control';
 import { ImageMediaControl } from '../image-media-control';
 
@@ -136,6 +138,48 @@ describe( 'ImageControl', () => {
 					value: { id: 1, url: null },
 				},
 			},
+		} );
+	} );
+
+	describe( 'header actions', () => {
+		const HeaderAction = ( { elementId, controlType, bind, path }: ControlHeaderProps ) => (
+			<button>{ `${ controlType } ${ bind } ${ path.join( '.' ) } ${ elementId ?? 'none' }` }</button>
+		);
+
+		const headerProps = { bind: 'image', setValue: jest.fn(), propType, value: null };
+
+		afterEach( () => {
+			flushAllInjections();
+		} );
+
+		it( 'should render injected header actions with the control header props', () => {
+			// Arrange.
+			injectIntoControlHeader( { id: 'test-header-action', component: HeaderAction } );
+
+			// Act.
+			renderControl( <ImageControl sizes={ sizes } context={ { elementId: 'el-1' } } />, headerProps );
+
+			// Assert.
+			expect( screen.getByRole( 'button', { name: 'image image image el-1' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should pass no element id when rendered without an element context', () => {
+			// Arrange.
+			injectIntoControlHeader( { id: 'test-header-action', component: HeaderAction } );
+
+			// Act.
+			renderControl( <ImageControl sizes={ sizes } />, headerProps );
+
+			// Assert.
+			expect( screen.getByRole( 'button', { name: 'image image image none' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render no header actions when nothing is injected', () => {
+			// Act.
+			renderControl( <ImageControl sizes={ sizes } context={ { elementId: 'el-1' } } />, headerProps );
+
+			// Assert.
+			expect( screen.queryByRole( 'button', { name: /el-1/ } ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

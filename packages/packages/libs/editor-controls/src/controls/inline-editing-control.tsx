@@ -5,11 +5,8 @@ import { Box, Stack, type SxProps, type Theme } from '@elementor/ui';
 import { type Editor } from '@tiptap/react';
 
 import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
+import { ControlHeaderActions, useControlHeaderInjections } from '../components/control-header-location';
 import { ControlLabel } from '../components/control-label';
-import {
-	InlineEditingControlHeaderSlot,
-	useInlineEditingControlHeaderInjections,
-} from '../components/inline-editing-locations';
 import { InlineEditor } from '../components/inline-editor';
 import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
@@ -32,7 +29,7 @@ export const InlineEditingControl = createControl(
 		const { value: rawValue } = usePropKeyContext();
 		const content = value ?? extractInlineHtmlContent( rawValue );
 		const [ editor, setEditor ] = useState< Editor | null >( null );
-		const headerInjections = useInlineEditingControlHeaderInjections();
+		const headerInjections = useControlHeaderInjections();
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
@@ -129,7 +126,9 @@ export const InlineEditingControl = createControl(
 					<ControlLabel>{ label }</ControlLabel>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
 						{ promotion && <ImageOptimizeTrigger promotion={ promotion } /> }
-						{ hasHeaderActions && elementId && <InlineEditingControlHeaderSlot elementId={ elementId } /> }
+						{ hasHeaderActions && elementId && (
+							<ControlHeaderActions elementId={ elementId } controlType="inline-editing" />
+						) }
 					</Stack>
 				</Stack>
 				{ editorField }
