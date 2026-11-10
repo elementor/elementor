@@ -65,9 +65,9 @@ export class GuidedTours {
 	}
 
 	/**
-	 * @param {string}      tourId
-	 * @param {number}      stepIndex
-	 * @param {TourStep[]}  stepsOnScreen
+	 * @param {string}     tourId
+	 * @param {number}     stepIndex
+	 * @param {TourStep[]} stepsOnScreen
 	 */
 	startTour( tourId, stepIndex = 0, stepsOnScreen = null ) {
 		const registeredTour = this.tours.get( tourId );
@@ -137,7 +137,7 @@ export class GuidedTours {
 		}
 
 		const nextOnScreen = tour.steps.find(
-			( step, index ) => index > progressIndex && step.screen === screenId
+			( step, index ) => index > progressIndex && step.screen === screenId,
 		);
 
 		return nextOnScreen ?? null;
@@ -261,9 +261,9 @@ export class GuidedTours {
 	}
 
 	resolveDriverStep( options = null ) {
-		return options?.state?.activeStep
-			?? this.driver?.getActiveStep?.()
-			?? this.getActiveDriverStep();
+		return options?.state?.activeStep ??
+			this.driver?.getActiveStep?.() ??
+			this.getActiveDriverStep();
 	}
 
 	getTourStepById( stepId ) {

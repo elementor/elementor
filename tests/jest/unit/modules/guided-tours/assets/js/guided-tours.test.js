@@ -208,7 +208,7 @@ describe( 'GuidedTours', () => {
 		const body = request.mock.calls[ 0 ][ 1 ].body;
 		expect( body.get( 'stepId' ) ).toBe( 'homepage-display' );
 		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://example.test/wp-admin/options-reading.php'
+			'https://example.test/wp-admin/options-reading.php',
 		);
 	} );
 
@@ -225,7 +225,7 @@ describe( 'GuidedTours', () => {
 		const body = request.mock.calls[ 0 ][ 1 ].body;
 		expect( body.get( 'stepId' ) ).toBe( 'reading-tab' );
 		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://example.test/wp-admin/options-general.php'
+			'https://example.test/wp-admin/options-general.php',
 		);
 	} );
 
@@ -251,7 +251,7 @@ describe( 'GuidedTours', () => {
 
 		// Assert.
 		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://example.test/wp-admin/options-general.php'
+			'https://example.test/wp-admin/options-general.php',
 		);
 	} );
 
@@ -277,7 +277,7 @@ describe( 'GuidedTours', () => {
 		expect( driverConfig.steps[ 0 ].popover.disableButtons ).toEqual( [] );
 		expect( request.mock.calls[ 0 ][ 1 ].body.get( 'stepId' ) ).toBe( 'reading-tab' );
 		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://example.test/wp-admin/options-general.php'
+			'https://example.test/wp-admin/options-general.php',
 		);
 	} );
 

@@ -127,7 +127,7 @@ class Tours_Repository {
 
 		$next_url = sanitize_text_field( $next_url );
 
-		if ( ! preg_match( '/^[a-z0-9._\\-]+$/', $next_url ) ) {
+		if ( ! preg_match( '/^[a-z0-9._\\-]+(\\?[a-z0-9_\\-]+=[a-z0-9_\\-]+(&[a-z0-9_\\-]+=[a-z0-9_\\-]+)*)?$/', $next_url ) ) {
 			return '';
 		}
 

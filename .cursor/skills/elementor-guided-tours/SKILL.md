@@ -61,11 +61,17 @@ Each step must include:
 - `side`: `top`, `right`, `bottom`, or `left`.
 
 Optional:
-- `next_url`: Relative path inside `wp-admin`. Navigating to the next step can automatically navigate to this URL.
+- `next_url`: Relative path inside `wp-admin`. Progress is saved (and awaited) before navigating, so the next screen resumes at the following step. The first step on a screen gets an enabled **Previous** button that returns to the previous screen, but only when the step two positions back has a `next_url` leading to that previous screen.
 
 Use stable selectors. Avoid selectors that depend on dynamic content or fragile DOM structures.
 
+A selector that does not resolve is skipped only after a 5 second wait, which looks like a freeze followed by a missing step. Verify each selector in the live DOM.
+
 For Elementor Editor steps, ensure the relevant panel is visible before targeting its elements.
+
+Editor panel selectors:
+- Category: `#elementor-panel-category-<category-name>`. The name is the registered category (e.g. `pro-elements`, `basic`), not the widget `get_group_name()` (the Pro Form widget lives in `pro-elements`, not `forms`).
+- Widget: `#elementor-panel-elements-wrapper .elementor-element[data-library-element-type="<widget-name>"]`.
 
 ### Step 4: Register the tour
 
