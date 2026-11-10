@@ -48,6 +48,10 @@ const CONFIG = {
 		nonce: 'nonce',
 		url: '/wp-admin/admin-ajax.php',
 	},
+	i18n: {
+		next: 'Next',
+		progress: '%1$s of %2$s',
+	},
 	screenId: 'dashboard',
 	progress: {},
 	tour: TOUR,
@@ -135,6 +139,24 @@ describe( 'GuidedTours', () => {
 		expect( driverFactory ).not.toHaveBeenCalled();
 	} );
 
+	it( 'does not start a dismissed tour', () => {
+		// Arrange.
+		const guidedTours = new GuidedTours( {
+			...CONFIG,
+			progress: {
+				status: 'dismissed',
+				step_id: 'settings-menu',
+				version: 2,
+			},
+		}, driverFactory, request );
+
+		// Act.
+		guidedTours.init();
+
+		// Assert.
+		expect( driverFactory ).not.toHaveBeenCalled();
+	} );
+
 	it( 'does not start a completed tour', () => {
 		// Arrange.
 		const guidedTours = new GuidedTours( {
@@ -179,7 +201,7 @@ describe( 'GuidedTours', () => {
 		guidedTours.init();
 
 		// Act.
-		driverConfig.steps[ 0 ].popover.onDoneClick();
+		driverConfig.onDoneClick();
 		await guidedTours.progressRequest;
 
 		// Assert.
@@ -196,7 +218,7 @@ describe( 'GuidedTours', () => {
 		guidedTours.init();
 
 		// Act.
-		driverConfig.steps[ 0 ].popover.onNextClick();
+		driverConfig.onNextClick( null, driverConfig.steps[ 0 ], { driver } );
 		await guidedTours.progressRequest;
 
 		// Assert.
@@ -230,6 +252,21 @@ describe( 'GuidedTours', () => {
 		expect( body.get( 'status' ) ).toBe( 'completed' );
 		expect( body.get( 'stepId' ) ).toBe( 'save-changes' );
 		expect( driver.destroy ).toHaveBeenCalled();
+	} );
+
+	it( 'saves dismissed progress when the tour is closed', async () => {
+		// Arrange.
+		const guidedTours = new GuidedTours( CONFIG, driverFactory, request );
+		guidedTours.init();
+
+		// Act.
+		driverConfig.onDestroyed( null, { data: { id: 'settings-menu' } }, { reason: 'close' } );
+		await guidedTours.progressRequest;
+
+		// Assert.
+		const body = request.mock.calls[ 0 ][ 1 ].body;
+		expect( body.get( 'status' ) ).toBe( 'dismissed' );
+		expect( body.get( 'stepId' ) ).toBe( 'settings-menu' );
 	} );
 
 	it( 'serializes progress updates', async () => {

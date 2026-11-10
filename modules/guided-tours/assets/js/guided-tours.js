@@ -26,6 +26,7 @@ export class GuidedTours {
 		this.listeners = new Map();
 		this.progressRequest = Promise.resolve();
 		this.tours = new Map();
+		this.isNavigating = false;
 	}
 
 	init() {
@@ -35,7 +36,7 @@ export class GuidedTours {
 
 		this.registerTour( this.config.tour, this.config.progress );
 
-		if ( this.isTourDone( this.config.tour.id ) ) {
+		if ( this.shouldSuppressTour( this.config.tour.id ) ) {
 			return;
 		}
 
@@ -78,7 +79,7 @@ export class GuidedTours {
 		const tourSteps = stepsOnScreen ?? registeredTour.tour.steps;
 		const steps = tourSteps
 			.filter( ( step ) => this.isValidSelector( step.selector ) )
-			.map( ( step ) => this.toDriverStep( step, registeredTour.tour ) );
+			.map( ( step ) => this.toDriverStep( step ) );
 
 		if ( ! steps.length ) {
 			return;
@@ -102,32 +103,6 @@ export class GuidedTours {
 
 		this.emit( 'start', { tourId, stepIndex } );
 		this.driver.drive( stepIndex );
-	}
-
-	/**
-	 * @param {string} tourId
-	 */
-	resumeTour( tourId ) {
-		const registeredTour = this.tours.get( tourId );
-
-		if ( ! registeredTour ) {
-			return;
-		}
-
-		const resumeStep = this.getResumeStep(
-			registeredTour.tour,
-			registeredTour.progress,
-			this.config.screenId
-		);
-
-		if ( ! resumeStep ) {
-			return;
-		}
-
-		const stepsOnScreen = this.getStepsForScreen( registeredTour.tour.steps, this.config.screenId );
-		const stepIndex = stepsOnScreen.findIndex( ( step ) => step.id === resumeStep.id );
-
-		this.startTour( tourId, Math.max( stepIndex, 0 ), stepsOnScreen );
 	}
 
 	/**
@@ -179,8 +154,10 @@ export class GuidedTours {
 	 * @param {string} tourId
 	 * @return {boolean}
 	 */
-	isTourDone( tourId ) {
-		return 'completed' === this.tours.get( tourId )?.progress?.status;
+	shouldSuppressTour( tourId ) {
+		const status = this.tours.get( tourId )?.progress?.status;
+
+		return 'completed' === status || 'dismissed' === status;
 	}
 
 	/**
@@ -196,8 +173,8 @@ export class GuidedTours {
 		return () => listeners.delete( callback );
 	}
 
-	toDriverStep( step, tour ) {
-		const driverStep = {
+	toDriverStep( step ) {
+		return {
 			data: { id: step.id },
 			element: step.selector,
 			popover: {
@@ -206,14 +183,10 @@ export class GuidedTours {
 				title: step.title,
 			},
 		};
+	}
 
-		if ( step.next_url && ! this.isLastTourStepForTour( step.id, tour ) ) {
-			const navigate = () => this.handleNextWithNavigation( step, tour );
-			driverStep.popover.onNextClick = navigate;
-			driverStep.popover.onDoneClick = navigate;
-		}
-
-		return driverStep;
+	shouldNavigateOnAdvance( tourStep, stepId, tour = this.activeTour ) {
+		return Boolean( tourStep?.next_url && ! this.isLastTourStep( stepId, tour ) );
 	}
 
 	handleNextWithNavigation( step, tour ) {
@@ -223,19 +196,13 @@ export class GuidedTours {
 			return;
 		}
 
+		this.isNavigating = true;
 		this.saveProgressBeforeNavigation( nextStep.id );
 		window.location.assign( this.resolveAdminUrl( step.next_url ) );
 	}
 
 	saveProgressBeforeNavigation( stepId ) {
-		const body = new URLSearchParams( {
-			action: this.config.ajax.action,
-			nonce: this.config.ajax.nonce,
-			status: 'in_progress',
-			stepId,
-			tourId: this.activeTour.id,
-			version: this.activeTour.version,
-		} );
+		const body = this.createProgressBody( 'in_progress', stepId );
 
 		if ( navigator.sendBeacon ) {
 			const payload = new Blob( [ body.toString() ], {
@@ -269,7 +236,7 @@ export class GuidedTours {
 
 		const tourStep = this.getTourStepById( stepId );
 
-		if ( tourStep?.next_url && ! this.isLastTourStep( stepId ) ) {
+		if ( this.shouldNavigateOnAdvance( tourStep, stepId ) ) {
 			this.handleNextWithNavigation( tourStep, this.activeTour );
 			return;
 		}
@@ -292,7 +259,7 @@ export class GuidedTours {
 
 		const tourStep = this.getTourStepById( stepId );
 
-		if ( tourStep?.next_url ) {
+		if ( this.shouldNavigateOnAdvance( tourStep, stepId ) ) {
 			this.handleNextWithNavigation( tourStep, this.activeTour );
 			return;
 		}
@@ -320,12 +287,18 @@ export class GuidedTours {
 		const { current, total } = this.getTourProgressNumbers( stepId );
 
 		if ( popover.progress ) {
-			popover.progress.textContent = `${ current } of ${ total }`;
+			popover.progress.textContent = this.formatProgressText( current, total );
 		}
 
 		if ( ! this.isLastTourStep( stepId ) && popover.nextButton ) {
-			popover.nextButton.textContent = 'Next';
+			popover.nextButton.textContent = this.config.i18n?.next ?? 'Next';
 		}
+	}
+
+	formatProgressText( current, total ) {
+		const template = this.config.i18n?.progress ?? '%1$s of %2$s';
+
+		return template.replace( '%1$s', current ).replace( '%2$s', total );
 	}
 
 	getTourProgressNumbers( stepId ) {
@@ -389,35 +362,28 @@ export class GuidedTours {
 	}
 
 	handleDestroyed( step, reason ) {
-		if ( ! step?.data?.id ) {
+		if ( ! step?.data?.id || this.isNavigating ) {
 			return;
 		}
 
-		if ( 'done' === reason && this.isLastTourStep( step.data.id ) ) {
-			return;
-		}
+		if ( 'done' === reason ) {
+			if ( this.isLastTourStep( step.data.id ) ) {
+				return;
+			}
 
-		const status = 'done' === reason ? 'completed' : 'in_progress';
-
-		if ( 'completed' === status && ! this.isLastTourStep( step.data.id ) ) {
 			this.saveProgress( 'in_progress', step.data.id );
+			this.emit( 'in_progress', { stepId: step.data.id, tourId: this.activeTour.id } );
 			return;
 		}
 
-		this.saveProgress( status, step.data.id );
-		this.emit( status, { stepId: step.data.id, tourId: this.activeTour.id } );
+		this.saveProgress( 'dismissed', step.data.id );
+		this.emit( 'dismissed', { stepId: step.data.id, tourId: this.activeTour.id } );
 	}
 
-	isLastTourStep( stepId ) {
-		const steps = this.activeTour?.steps ?? [];
-
-		return steps.length && steps[ steps.length - 1 ].id === stepId;
-	}
-
-	isLastTourStepForTour( stepId, tour ) {
+	isLastTourStep( stepId, tour = this.activeTour ) {
 		const steps = tour?.steps ?? [];
 
-		return steps.length && steps[ steps.length - 1 ].id === stepId;
+		return steps.length > 0 && steps[ steps.length - 1 ].id === stepId;
 	}
 
 	getActiveDriverStep() {
@@ -432,8 +398,8 @@ export class GuidedTours {
 		return steps[ index ] ?? null;
 	}
 
-	saveProgress( status, stepId, callback = null ) {
-		const body = new URLSearchParams( {
+	createProgressBody( status, stepId ) {
+		return new URLSearchParams( {
 			action: this.config.ajax.action,
 			nonce: this.config.ajax.nonce,
 			status,
@@ -441,6 +407,10 @@ export class GuidedTours {
 			tourId: this.activeTour.id,
 			version: this.activeTour.version,
 		} );
+	}
+
+	saveProgress( status, stepId, callback = null ) {
+		const body = this.createProgressBody( status, stepId );
 
 		this.progressRequest = this.progressRequest.then( () => this.request( this.config.ajax.url, {
 			body,
@@ -558,6 +528,8 @@ const bootstrapGuidedTours = () => {
 
 	const guidedTours = new GuidedTours( config );
 	guidedTours.init();
+
+	// Intentionally global for manual QA and future in-editor integrations; not a stable public API.
 	window.elementorGuidedTours = guidedTours;
 };
 

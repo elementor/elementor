@@ -74,7 +74,7 @@ class Module extends BaseModule {
 		$progress = $this->progress_manager->get_progress( $tour['id'], $tour['version'] );
 
 		if (
-			$this->progress_manager->is_completed( $tour['id'], $tour['version'] ) ||
+			$this->progress_manager->should_suppress_tour( $tour['id'], $tour['version'] ) ||
 			! $this->should_run_tour_on_screen( $tour, $screen_id, $progress )
 		) {
 			return;
@@ -112,6 +112,11 @@ class Module extends BaseModule {
 		wp_localize_script( self::SCRIPT_HANDLE, 'elementorGuidedToursConfig', [
 			'adminUrl' => admin_url(),
 			'context' => $context,
+			'i18n' => [
+				'next' => esc_html__( 'Next', 'elementor' ),
+				/* translators: 1: Current step number, 2: Total steps in the tour. */
+				'progress' => esc_html__( '%1$s of %2$s', 'elementor' ),
+			],
 			'tour' => $tour,
 			'screenId' => $screen_id,
 			'progress' => $progress,
