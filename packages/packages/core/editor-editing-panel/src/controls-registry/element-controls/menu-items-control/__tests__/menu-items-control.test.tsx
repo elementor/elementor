@@ -58,7 +58,7 @@ describe( '<MenuItemsControl />', () => {
 			} ) ),
 		} );
 
-		renderWithTheme( <MenuItemsControl label="Menu items" /> );
+		return renderWithTheme( <MenuItemsControl label="Menu items" /> );
 	};
 
 	it( 'should render the item name and link in the row popover bound to the entry item', async () => {
@@ -73,11 +73,18 @@ describe( '<MenuItemsControl />', () => {
 		expect( screen.getByTestId( 'settings-control-link' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should not offer removing the only remaining entry', () => {
+	it( 'should offer removing entries only while more than one remains', () => {
 		// Arrange & Act
+		const { unmount } = renderControl( 2 );
+
+		// Assert
+		expect( screen.getAllByLabelText( 'Remove' ) ).toHaveLength( 2 );
+
+		// Act
+		unmount();
 		renderControl( 1 );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: /remove/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Remove' ) ).not.toBeInTheDocument();
 	} );
 } );

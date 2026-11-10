@@ -100,7 +100,11 @@ export const MenuItemsControl = ( { label }: { label: string } ) => {
 
 const ItemLabel = ( { value }: { value: MenuItem } ) => (
 	<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
-		{ value.id ? <EntryLabel elementId={ value.id } fallbackTitle={ value.title } /> : <span>{ value?.title }</span> }
+		{ value.id ? (
+			<EntryLabel elementId={ value.id } fallbackTitle={ value.title } />
+		) : (
+			<span>{ value?.title }</span>
+		) }
 	</Stack>
 );
 
