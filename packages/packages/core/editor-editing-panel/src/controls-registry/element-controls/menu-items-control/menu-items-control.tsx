@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useId } from 'react';
 import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import {
+	type Control,
+	type ControlItem,
+	getElementType,
 	updateElementEditorSettings,
 	useElementChildren,
 	useElementEditorSettings,
@@ -11,9 +14,19 @@ import { type CreateOptions } from '@elementor/editor-props';
 import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useElement } from '../../../contexts/element-context';
+import { SettingsControl } from '../../../components/settings-control';
+import { ElementProvider, useElement } from '../../../contexts/element-context';
 import { getElementByType } from '../get-element-by-type';
-import { MENU_ENTRY_ELEMENT_TYPE, MENU_ITEMS_ELEMENT_TYPE, type MenuItem, useActions } from './use-actions';
+import {
+	MENU_ENTRY_ELEMENT_TYPE,
+	MENU_ITEM_ELEMENT_TYPE,
+	MENU_ITEMS_ELEMENT_TYPE,
+	type MenuItem,
+	useActions,
+} from './use-actions';
+import { useEntryItem } from './use-entry-item';
+
+const LINK_BIND = 'link';
 
 export const MenuItemsControl = ( { label }: { label: string } ) => {
 	const { element } = useElement();
@@ -48,7 +61,7 @@ export const MenuItemsControl = ( { label }: { label: string } ) => {
 		}
 
 		if ( meta?.action?.type === 'remove' ) {
-			return removeItem( { items: meta.action.payload } );
+			return removeItem( { menuItemsId: menuItems.id, items: meta.action.payload } );
 		}
 
 		if ( meta?.action?.type === 'duplicate' ) {
@@ -87,11 +100,7 @@ export const MenuItemsControl = ( { label }: { label: string } ) => {
 
 const ItemLabel = ( { value }: { value: MenuItem } ) => (
 	<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
-		{ value.id ? (
-			<EntryLabel elementId={ value.id } fallbackTitle={ value.title } />
-		) : (
-			<span>{ value?.title }</span>
-		) }
+		{ value.id ? <EntryLabel elementId={ value.id } fallbackTitle={ value.title } /> : <span>{ value?.title }</span> }
 	</Stack>
 );
 
@@ -109,6 +118,7 @@ const ItemContent = ( { value }: { value: MenuItem } ) => {
 	return (
 		<Stack p={ 2 } gap={ 1.5 }>
 			<ItemNameControl elementId={ value.id } />
+			<ItemLinkControl entryId={ value.id } />
 		</Stack>
 	);
 };
@@ -119,7 +129,7 @@ const ItemNameControl = ( { elementId }: { elementId: string } ) => {
 
 	return (
 		<Stack gap={ 1 }>
-			<ControlFormLabel htmlFor={ inputId }>{ __( 'Name', 'elementor' ) }</ControlFormLabel>
+			<ControlFormLabel htmlFor={ inputId }>{ __( 'Item name', 'elementor' ) }</ControlFormLabel>
 			<TextField
 				id={ inputId }
 				size="tiny"
@@ -130,4 +140,42 @@ const ItemNameControl = ( { elementId }: { elementId: string } ) => {
 			/>
 		</Stack>
 	);
+};
+
+const ItemLinkControl = ( { entryId }: { entryId: string } ) => {
+	const { itemId, settings } = useEntryItem( entryId );
+	const elementType = itemId ? getElementType( MENU_ITEM_ELEMENT_TYPE ) : null;
+	const linkControl = elementType ? findControlByBind( elementType.controls, LINK_BIND ) : null;
+
+	if ( ! itemId || ! elementType || ! linkControl ) {
+		return null;
+	}
+
+	return (
+		<ElementProvider
+			element={ { id: itemId, type: MENU_ITEM_ELEMENT_TYPE } }
+			elementType={ elementType }
+			settings={ settings }
+		>
+			<SettingsControl control={ linkControl } />
+		</ElementProvider>
+	);
+};
+
+const findControlByBind = ( items: ControlItem[], bind: string ): Control | null => {
+	for ( const item of items ) {
+		if ( item.type === 'section' ) {
+			const found = findControlByBind( item.value.items, bind );
+
+			if ( found ) {
+				return found;
+			}
+		}
+
+		if ( item.type === 'control' && item.value.bind === bind ) {
+			return item;
+		}
+	}
+
+	return null;
 };
