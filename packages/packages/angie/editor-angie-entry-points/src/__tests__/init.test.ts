@@ -1,21 +1,21 @@
-import { injectIntoInlineEditingControlHeader } from '@elementor/editor-controls';
+import { injectIntoControlHeader } from '@elementor/editor-controls';
 
+import { AngieControlHeaderAction } from '../control-header/angie-control-header-action';
 import { init } from '../init';
-import { AngieTextAction } from '../text/angie-text-action';
 
 jest.mock( '@elementor/editor-controls', () => ( {
-	injectIntoInlineEditingControlHeader: jest.fn(),
+	injectIntoControlHeader: jest.fn(),
 } ) );
 
 describe( 'init', () => {
-	it( 'injects the Angie text action into the panel text control header', () => {
+	it( 'injects the Angie action into the control header', () => {
 		// Act
 		init();
 
 		// Assert
-		expect( injectIntoInlineEditingControlHeader ).toHaveBeenCalledWith( {
-			id: 'angie-text-action',
-			component: AngieTextAction,
+		expect( injectIntoControlHeader ).toHaveBeenCalledWith( {
+			id: 'angie-control-header-action',
+			component: AngieControlHeaderAction,
 		} );
 	} );
 } );

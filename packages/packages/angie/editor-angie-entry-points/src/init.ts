@@ -1,10 +1,10 @@
-import { injectIntoInlineEditingControlHeader } from '@elementor/editor-controls';
+import { injectIntoControlHeader } from '@elementor/editor-controls';
 
-import { AngieTextAction } from './text/angie-text-action';
+import { AngieControlHeaderAction } from './control-header/angie-control-header-action';
 
 export function init(): void {
-	injectIntoInlineEditingControlHeader( {
-		id: 'angie-text-action',
-		component: AngieTextAction,
+	injectIntoControlHeader( {
+		id: 'angie-control-header-action',
+		component: AngieControlHeaderAction,
 	} );
 }
