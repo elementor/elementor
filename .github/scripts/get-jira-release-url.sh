@@ -19,12 +19,10 @@ fi
 
 # Beta fixVersions are named "<prefix>v<version> - Beta <n>" (e.g. "v4.3.0 - Beta 1",
 # or "Pro v4.3.0 - Beta 1" for Elementor Pro).
-# GA fixVersions are named "v<version> - GA" for major/minor releases (e.g. "v4.4.0 - GA"),
+# GA/stable fixVersions are named "v<version> - GA" for major/minor releases (e.g. "v4.4.0 - GA"),
 # or plain "v<version>" for patch releases (e.g. "v4.2.2").
 if [[ "$RELEASE_VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-beta([0-9]+)$ ]]; then
   VERSION_NAME="${JIRA_BETA_VERSION_PREFIX}v${BASH_REMATCH[1]} - Beta ${BASH_REMATCH[2]}"
-else
-  VERSION_NAME="v${RELEASE_VERSION}"
 fi
 
 VERSIONS_RESPONSE=$(curl -s --write-out '\n%{http_code}' \
@@ -38,15 +36,18 @@ if [ "$VERSIONS_HTTP_CODE" != "200" ]; then
   skip "Fetching Jira versions for project ${JIRA_PROJECT_KEY} returned HTTP ${VERSIONS_HTTP_CODE}: ${VERSIONS_JSON:0:300}"
 fi
 
-VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r --arg name "$VERSION_NAME" \
-  '[.[] | select(.name == $name)] | first | .id // empty')
-
-if [ -z "$VERSION_ID" ] && [[ ! "$RELEASE_VERSION" =~ -beta ]]; then
-  VERSION_NAME_GA="v${RELEASE_VERSION} - GA"
-  VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r --arg name "$VERSION_NAME_GA" \
+if [[ "$RELEASE_VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-beta([0-9]+)$ ]]; then
+  VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r --arg name "$VERSION_NAME" \
     '[.[] | select(.name == $name)] | first | .id // empty')
-  if [ -n "$VERSION_ID" ]; then
-    VERSION_NAME="$VERSION_NAME_GA"
+else
+  VERSION_NAME="v${RELEASE_VERSION} - GA"
+  VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r --arg name "$VERSION_NAME" \
+    '[.[] | select(.name == $name)] | first | .id // empty')
+  
+  if [ -z "$VERSION_ID" ]; then
+    VERSION_NAME="v${RELEASE_VERSION}"
+    VERSION_ID=$(echo "$VERSIONS_JSON" | jq -r --arg name "$VERSION_NAME" \
+      '[.[] | select(.name == $name)] | first | .id // empty')
   fi
 fi
 
