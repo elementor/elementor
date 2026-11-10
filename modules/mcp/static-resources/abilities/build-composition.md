@@ -2,7 +2,7 @@
 If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` when that tool is available (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; without it `elementor/manage-site-parts` still responds with the upgrade link, so call it anyway when the request needs a site part. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
 
 # RESOURCES (Read before use)
-- [elementor://style/best-practices] - Building best practices (read FIRST): design system, variable and class naming, units, responsive and mobile rules, semantic structure, accessibility, visual quality
+- [elementor://style/best-practices] - Building best practices (read FIRST): design system, variable and class naming, units, responsive and mobile rules, semantic structure, accessibility, page strategy and original design
 - [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
