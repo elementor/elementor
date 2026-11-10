@@ -10,7 +10,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await wpCli( 'wp elementor experiments deactivate e_opt_in_v4' );
 	} );
 
-	test( 'Test grid container', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Grid container layout', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
@@ -275,7 +275,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test grid outline', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Grid outline single control', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
@@ -357,7 +357,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test grid outline multiple controls', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Grid outline multiple controls', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();
@@ -548,7 +548,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 	} );
 
-	test( 'Test Empty View should not distorse preview', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Test Empty View should not distorse preview on desktop', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 		await wpAdmin.openNewPage();

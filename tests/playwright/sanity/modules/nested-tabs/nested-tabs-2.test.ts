@@ -4,7 +4,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Tabs accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
@@ -58,7 +58,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Tabs accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),

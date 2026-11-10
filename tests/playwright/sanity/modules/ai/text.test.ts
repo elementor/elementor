@@ -32,7 +32,7 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Text', async ( { page, apiRequests }, testInfo ) => {
+	test( 'AI Text generation', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();

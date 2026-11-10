@@ -17,7 +17,7 @@ test.describe( 'Image carousel tests', () => {
 		await breakpoints.resetBreakpoints( editor );
 	} );
 
-	test( 'Image Carousel', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Image Carousel default', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 
