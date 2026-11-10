@@ -17,7 +17,7 @@ class Style_Best_Practices_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Building Best Practices', 'elementor' ),
-			__( 'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.', 'elementor' ),
+			__( 'Core building best practices, read first on every build: priority order, workflow, naming at a glance, must-follow rules, and the pre-flight checklist. Points to four detailed guides.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -26,7 +26,7 @@ class Style_Best_Practices_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'text/markdown',
-					'description' => __( 'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.', 'elementor' ),
+					'description' => __( 'Core building best practices, read first on every build: priority order, workflow, naming at a glance, must-follow rules, and the pre-flight checklist. Points to four detailed guides.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

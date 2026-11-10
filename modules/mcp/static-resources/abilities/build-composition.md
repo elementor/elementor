@@ -2,7 +2,11 @@
 If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` when that tool is available (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; without it `elementor/manage-site-parts` still responds with the upgrade link, so call it anyway when the request needs a site part. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
 
 # RESOURCES (Read before use)
-- [elementor://style/best-practices] - Building best practices (read FIRST): design system, variable and class naming, units, responsive and mobile rules, semantic structure, accessibility, page strategy and original design
+- [elementor://style/best-practices] - Building best practices, core guide (read FIRST): priority order, workflow, naming at a glance, must-follow rules, pre-flight checklist
+- [elementor://style/design-system] - Variables and global classes: naming, values, writing good classes
+- [elementor://style/structure-and-accessibility] - Heading outline, container tags, links vs. buttons, WCAG 2.2 AA accessibility
+- [elementor://style/responsive-and-units] - Units, breakpoints, fluid sizing, mobile requirements
+- [elementor://style/page-strategy] - Visitor brief, first screen, path to one decision, attention, motion, originality process
 - [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
@@ -16,7 +20,7 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
 
 # WORKFLOW
-Follow the workflow, naming conventions, and pre-flight checklist in [elementor://style/best-practices].
+Follow the workflow, naming conventions, and pre-flight checklist in [elementor://style/best-practices], and open its detailed guides as the task needs them.
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
@@ -174,7 +178,7 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
 # DESIGN
-Design direction, typography, color, spacing, units, responsive behavior, semantic tags, and accessibility are defined in [elementor://style/best-practices]. Follow it; the rules below cover only how sizing behaves in this tool.
+Design direction, typography, color, spacing, units, responsive behavior, semantic tags, and accessibility are defined in [elementor://style/best-practices] and the detailed guides it lists. Follow them; the rules below cover only how sizing behaves in this tool.
 
 ## SIZING: DEFAULT IS NO SIZE (CRITICAL)
 

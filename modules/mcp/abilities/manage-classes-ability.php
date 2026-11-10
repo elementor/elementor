@@ -48,7 +48,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Classes', 'elementor' ),
-			__( 'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix. Name classes by purpose following the convention in [elementor://style/best-practices] (e.g. btn-primary, card-title). If the site already uses another convention, follow the site.', 'elementor' ),
+			__( 'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix. Name classes by purpose following the convention in [elementor://style/design-system] (e.g. btn-primary, card-title). If the site already uses another convention, follow the site.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',

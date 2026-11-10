@@ -9,6 +9,10 @@ use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Design_System_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Structure_Accessibility_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Responsive_Units_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Page_Strategy_Ability;
 use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +51,10 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 	private function core_resource_abilities(): array {
 		return [
 			new Style_Best_Practices_Ability(),
+			new Style_Design_System_Ability(),
+			new Style_Structure_Accessibility_Ability(),
+			new Style_Responsive_Units_Ability(),
+			new Style_Page_Strategy_Ability(),
 			new Wordpress_Best_Practices_Ability(),
 			new Manage_Variable_Guide_Ability(),
 			new Global_Classes_Resource_Ability(),
@@ -61,7 +69,31 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 			[
 				'uri' => Style_Best_Practices_Ability::URI,
 				'name' => 'Building Best Practices',
-				'description' => 'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.',
+				'description' => 'Core building best practices, read first on every build: priority order, workflow, naming at a glance, must-follow rules, and the pre-flight checklist. Points to four detailed guides.',
+				'mimeType' => 'text/markdown',
+			],
+			[
+				'uri' => Style_Design_System_Ability::URI,
+				'name' => 'Building Best Practices: Design System',
+				'description' => 'Variables and global classes: what deserves a variable, naming conventions, values, and writing good classes. Read before creating or changing variables or classes.',
+				'mimeType' => 'text/markdown',
+			],
+			[
+				'uri' => Style_Structure_Accessibility_Ability::URI,
+				'name' => 'Building Best Practices: Structure & Accessibility',
+				'description' => 'Heading outline, container tags, links vs. buttons, reading order, and WCAG 2.2 AA accessibility rules. Read before composing a page.',
+				'mimeType' => 'text/markdown',
+			],
+			[
+				'uri' => Style_Responsive_Units_Ability::URI,
+				'name' => 'Building Best Practices: Responsive & Units',
+				'description' => 'Units, Elementor breakpoints, fluid sizing, and mobile requirements. Read before composing a page and before the responsive pass.',
+				'mimeType' => 'text/markdown',
+			],
+			[
+				'uri' => Style_Page_Strategy_Ability::URI,
+				'name' => 'Building Best Practices: Page Strategy',
+				'description' => 'Visitor brief, first-screen mirror test, path to one decision, attention, motion, and the originality process. Read before designing a new page or restyling one.',
 				'mimeType' => 'text/markdown',
 			],
 			[

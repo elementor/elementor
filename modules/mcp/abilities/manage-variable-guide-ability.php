@@ -51,7 +51,7 @@ Create, update, or delete V4 global CSS variables. These are distinct from legac
 - Labels must be **lowercase**, using only letters (a-z), numbers, digits (0-9), dashes (-), or underscores (_)
 - No spaces, no special characters
 - Example: "Headline Primary" → `headline-primary`
-- Follow the variable naming convention in [elementor://style/best-practices] (e.g. color-primary, space-md, text-lg). If the site already uses another convention, follow the site.
+- Follow the variable naming convention in [elementor://style/design-system] (e.g. color-primary, space-md, text-lg). If the site already uses another convention, follow the site.
 - Labels must be unique — always check [elementor://global-variables] first
 
 # Value Rules

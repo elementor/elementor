@@ -8,6 +8,10 @@ use Elementor\Modules\Mcp\Abilities\Interactions_Schema_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Dynamic_Tags_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Design_System_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Structure_Accessibility_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Responsive_Units_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Page_Strategy_Ability;
 use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 use PHPUnit\Framework\TestCase;
 
@@ -69,6 +73,26 @@ class Test_Core_Resources_Metadata extends TestCase {
 			'style-best-practices' => [
 				Style_Best_Practices_Ability::class,
 				Style_Best_Practices_Ability::URI,
+				'text/markdown',
+			],
+			'style-design-system' => [
+				Style_Design_System_Ability::class,
+				Style_Design_System_Ability::URI,
+				'text/markdown',
+			],
+			'style-structure-and-accessibility' => [
+				Style_Structure_Accessibility_Ability::class,
+				Style_Structure_Accessibility_Ability::URI,
+				'text/markdown',
+			],
+			'style-responsive-and-units' => [
+				Style_Responsive_Units_Ability::class,
+				Style_Responsive_Units_Ability::URI,
+				'text/markdown',
+			],
+			'style-page-strategy' => [
+				Style_Page_Strategy_Ability::class,
+				Style_Page_Strategy_Ability::URI,
 				'text/markdown',
 			],
 			'wordpress-best-practices' => [
