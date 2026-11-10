@@ -4,8 +4,6 @@ namespace Elementor\Modules\CompositeWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
-use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 
@@ -58,10 +56,7 @@ class Module extends BaseModule {
 	 */
 	public function get_registry(): Widgets_Definitions_Registry {
 		if ( null === $this->registry ) {
-			$this->registry = new Widgets_Definitions_Registry(
-				Widget_Definition_Validator::make(),
-				new Definition_Migrator( Migrations_Orchestrator::make() )
-			);
+			$this->registry = new Widgets_Definitions_Registry( Widget_Definition_Validator::make() );
 
 			$this->register_core_definitions( $this->registry );
 

@@ -14,14 +14,12 @@ class Widgets_Definitions_Registry {
 	const UNKNOWN_DEFINITION_ID = '(unknown)';
 
 	private Widget_Definition_Validator $validator;
-	private Definition_Migrator $migrator;
 
 	/** @var array<string, array> */
 	private array $definitions = [];
 
-	public function __construct( Widget_Definition_Validator $validator, Definition_Migrator $migrator ) {
+	public function __construct( Widget_Definition_Validator $validator ) {
 		$this->validator = $validator;
-		$this->migrator = $migrator;
 	}
 
 	/**
@@ -38,8 +36,6 @@ class Widgets_Definitions_Registry {
 		}
 
 		$data['source'] = $data['source'] ?? Widget_Definition::SOURCE_CODE;
-
-		$this->migrator->migrate( $data );
 
 		$result = $this->validator->validate( $data );
 		$id = is_string( $data['id'] ?? null ) ? $data['id'] : self::UNKNOWN_DEFINITION_ID;
