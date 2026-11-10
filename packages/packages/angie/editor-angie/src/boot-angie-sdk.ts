@@ -47,7 +47,6 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 	container: {
 		id: EDITOR_ANGIE_CONTAINER_ID,
 		layout: LAYOUT_SIDEBAR,
-		skipDefaultCss: true,
 		persistOpenState: false,
 		chatToggleButton: {
 			enabled: false,

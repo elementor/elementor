@@ -93,7 +93,6 @@ describe( 'editor angie host', () => {
 			container: {
 				id: 'elementor-editor-angie',
 				layout: 'sidebar',
-				skipDefaultCss: true,
 				persistOpenState: false,
 				chatToggleButton: {
 					enabled: false,
