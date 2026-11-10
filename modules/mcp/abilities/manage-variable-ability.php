@@ -123,7 +123,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		$response = $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations, self::is_dry_run( $input ) );
 		if ( is_wp_error( $response ) ) {
 			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, $response );
 		} else {
@@ -132,7 +132,11 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return $response;
 	}
 
-	private function handle_bulk( array $operations ) {
+	public function supports_dry_run(): bool {
+		return true;
+	}
+
+	private function handle_bulk( array $operations, bool $dry_run = false ) {
 		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
@@ -171,11 +175,14 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 		if ( ! empty( $batch_operations ) ) {
 			try {
-				$batch_result = $this->get_service()->process_batch( $batch_operations, true );
+				$batch_result = $this->get_service()->process_batch( $batch_operations, true, $dry_run );
 				$watermark = $batch_result['watermark'] ?? null;
 
 				$this->merge_batch_results( $batch_result['results'], $index_map, $results );
-				$this->emit_variable_events( $batch_result['results'] );
+
+				if ( ! $dry_run ) {
+					$this->emit_variable_events( $batch_result['results'] );
+				}
 			} catch ( FatalError $e ) {
 				return new \WP_Error(
 					'unexpected_server_error',
@@ -184,10 +191,16 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				);
 			}
 
-			$this->clear_cache();
+			if ( ! $dry_run ) {
+				$this->clear_cache();
+			}
 		}
 
 		$response = $results->to_array();
+
+		if ( $dry_run ) {
+			$response['dry_run'] = true;
+		}
 
 		if ( null !== $watermark ) {
 			$response['watermark'] = $watermark;

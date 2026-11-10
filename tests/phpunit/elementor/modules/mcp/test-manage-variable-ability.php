@@ -138,6 +138,52 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$this->assertSame( 7, $result['watermark'] );
 	}
 
+	public function test_dry_run__passes_flag_to_service_and_marks_response() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with( $this->anything(), true, true )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'brand',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$result = $this->make_ability( $service )->execute( [
+			'operations' => [
+				[
+					'action' => 'create',
+					'type' => 'global-color-variable',
+					'label' => 'brand',
+					'value' => '#000',
+				],
+			],
+			'dry_run' => true,
+		] );
+
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'abc', $result['results'][0]['id'] );
+	}
+
+	public function test_dry_run__is_advertised_in_input_schema() {
+		$ability = $this->make_ability();
+
+		$this->assertTrue( $ability->supports_dry_run() );
+		$this->assertTrue( $ability->validate_input_against_schema( [
+			'operations' => [ [ 'action' => 'delete', 'id' => 'abc' ] ],
+			'dry_run' => true,
+		] ) );
+	}
+
 	public function test_create__maps_duplicated_label_to_per_operation_error() {
 		$service = $this->createMock( Variables_Service::class );
 		$service->method( 'process_batch' )->willReturn( [
