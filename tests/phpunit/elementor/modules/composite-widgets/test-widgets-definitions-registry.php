@@ -11,8 +11,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
@@ -24,6 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 	const EXAMPLES_DIR = __DIR__ . '/../../../../../modules/composite-widgets/schema/examples/';
+	const MIGRATIONS_DIR = __DIR__ . '/../../../../../migrations/';
 	const ICON_BUTTON_ID = 'elementor/icon-button';
 	const INCORRECT_USAGE = Widgets_Definitions_Registry::class . '::register';
 
@@ -32,7 +35,18 @@ class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->registry = new Widgets_Definitions_Registry( Widget_Definition_Validator::make() );
+		Migrations_Orchestrator::destroy();
+
+		$this->registry = new Widgets_Definitions_Registry(
+			Widget_Definition_Validator::make(),
+			new Definition_Migrator( Migrations_Orchestrator::make( self::MIGRATIONS_DIR ) )
+		);
+	}
+
+	public function tearDown(): void {
+		Migrations_Orchestrator::destroy();
+
+		parent::tearDown();
 	}
 
 	public function test_register_from_json__registers_every_example() {
@@ -114,6 +128,33 @@ class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 		// Assert.
 		$this->assertFalse( $registered );
 		$this->assertSame( [], $this->registry->all() );
+	}
+
+	public function test_register__migrates_template_and_preset_values() {
+		// Arrange.
+		$definition = $this->read_example( 'pricing-card.json' );
+		$definition['template']['elements'][1]['settings']['title'] = [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => String_Prop_Type::generate( 'Pro' ),
+				'children' => [],
+			],
+		];
+		$definition['style']['appearance'][0]['options'][1]['set'][0]['style']['desktop']['border-radius'] = [
+			'$$type' => 'border-radius',
+			'value' => [ 'top-left' => Size_Prop_Type::generate( [ 'size' => 12, 'unit' => 'px' ] ) ],
+		];
+
+		// Act.
+		$this->registry->register( $definition );
+
+		// Assert.
+		$registered = $this->registry->get( 'elementor/pricing-card' );
+		$preset_props = $registered['style']['appearance'][0]['options'][1]['set'][0]['style']['desktop'];
+
+		$this->assertSame( Escaped_Html_Prop_Type::generate( 'Pro' ), $registered['template']['elements'][1]['settings']['title'] );
+		$this->assertSame( 'border-radius-v2', $preset_props['border-radius']['$$type'] );
+		$this->assertArrayHasKey( 'start-start', $preset_props['border-radius']['value'] );
 	}
 
 	private function build_icon_button_template(): array {
