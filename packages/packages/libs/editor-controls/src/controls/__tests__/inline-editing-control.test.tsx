@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { ControlActionsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
+import { injectIntoInlineEditingControlHeader } from '../../components/inline-editing-locations';
 import { InlineEditor } from '../../components/inline-editor';
 import { InlineEditorToolbar } from '../../components/inline-editor-toolbar';
 import { InlineEditingControl } from '../inline-editing-control';
@@ -200,6 +202,37 @@ describe( '<InlineEditingControl />', () => {
 		// Assert.
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Improve' } ) ).toBeInTheDocument();
+	} );
+
+	describe( 'header actions', () => {
+		const HeaderAction = ( { elementId }: { elementId: string } ) => (
+			<button>{ `Header action for ${ elementId }` }</button>
+		);
+
+		afterEach( () => {
+			flushAllInjections();
+		} );
+
+		it( 'should render injected header actions on the label row with the element id', () => {
+			// Arrange.
+			injectIntoInlineEditingControlHeader( { id: 'test-header-action', component: HeaderAction } );
+
+			// Act.
+			renderControl( <InlineEditingControl context={ { elementId: '1' } } label="Text" />, baseProps );
+
+			// Assert.
+			expect( screen.getByText( 'Text' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Header action for 1' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render the label without header actions when nothing is injected', () => {
+			// Act.
+			renderControl( <InlineEditingControl context={ { elementId: '1' } } label="Text" />, baseProps );
+
+			// Assert.
+			expect( screen.getAllByText( 'Text' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( /Header action/ ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'should pass onEditorDestroy to the inline editor', () => {

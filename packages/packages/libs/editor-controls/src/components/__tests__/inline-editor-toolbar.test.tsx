@@ -6,8 +6,8 @@ import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
+import { injectIntoInlineEditorToolbar } from '../inline-editing-locations';
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
-import { injectIntoInlineEditorToolbar } from '../inline-editor-toolbar-locations';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	getContainer: jest.fn(),
@@ -322,6 +322,17 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Assert.
 			expect( screen.getByRole( 'button', { name: 'Action for abc123' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not render injected actions in the control panel toolbar', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId="abc123" inControlPanel /> );
+
+			// Assert.
+			expect( screen.queryByText( /Action for/ ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'does not render injected actions without an element id', () => {

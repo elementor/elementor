@@ -4,3 +4,11 @@ import { createLocation } from '@elementor/locations';
 export const { Slot: InlineEditorToolbarActionsSlot, inject: injectIntoInlineEditorToolbar } = createLocation< {
 	elementId: ElementID;
 } >();
+
+export const {
+	Slot: InlineEditingControlHeaderSlot,
+	inject: injectIntoInlineEditingControlHeader,
+	useInjections: useInlineEditingControlHeaderInjections,
+} = createLocation< {
+	elementId: ElementID;
+} >();
