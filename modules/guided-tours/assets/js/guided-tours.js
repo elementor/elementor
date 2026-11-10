@@ -19,10 +19,10 @@ const ELEMENT_WAIT_TIMEOUT = 5000;
  */
 
 export class GuidedTours {
-	constructor( config, driverFactory = window.driver?.js?.driver, request = window.fetch ) {
+	constructor( config, driverFactory = window.driver?.js?.driver, request = null ) {
 		this.config = config;
 		this.driverFactory = driverFactory;
-		this.request = request;
+		this.request = request ?? window.fetch.bind( window );
 		this.listeners = new Map();
 		this.progressRequest = Promise.resolve();
 		this.tours = new Map();
@@ -197,22 +197,25 @@ export class GuidedTours {
 		}
 
 		this.isNavigating = true;
-		this.saveProgressBeforeNavigation( nextStep.id );
-		window.location.assign( this.resolveAdminUrl( step.next_url ) );
+		this.saveProgressBeforeNavigation( nextStep.id ).then( () => {
+			window.location.assign( this.resolveAdminUrl( step.next_url ) );
+		} );
 	}
 
 	saveProgressBeforeNavigation( stepId ) {
 		const body = this.createProgressBody( 'in_progress', stepId );
 
-		if ( navigator.sendBeacon ) {
-			const payload = new Blob( [ body.toString() ], {
-				type: 'application/x-www-form-urlencoded',
-			} );
-			navigator.sendBeacon( this.config.ajax.url, payload );
-			return;
-		}
+		this.progressRequest = this.progressRequest.then( () => this.request( this.config.ajax.url, {
+			body,
+			credentials: 'same-origin',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			keepalive: true,
+			method: 'POST',
+		} ) ).catch( () => {} );
 
-		this.saveProgress( 'in_progress', stepId );
+		return this.progressRequest;
 	}
 
 	resolveDriverStep( options = null ) {

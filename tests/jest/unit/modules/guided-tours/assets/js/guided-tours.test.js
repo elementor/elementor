@@ -229,6 +229,32 @@ describe( 'GuidedTours', () => {
 		);
 	} );
 
+	it( 'does not navigate before cross-screen progress is saved', async () => {
+		// Arrange.
+		let resolveRequest;
+		request.mockImplementationOnce( () => new Promise( ( resolve ) => {
+			resolveRequest = resolve;
+		} ) );
+		const guidedTours = new GuidedTours( CONFIG, driverFactory, request );
+		guidedTours.init();
+
+		// Act.
+		driverConfig.onNextClick( null, driverConfig.steps[ 0 ], { driver } );
+		await Promise.resolve();
+
+		// Assert.
+		expect( window.location.assign ).not.toHaveBeenCalled();
+
+		// Act.
+		resolveRequest( {} );
+		await guidedTours.progressRequest;
+
+		// Assert.
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'https://example.test/wp-admin/options-general.php'
+		);
+	} );
+
 	it( 'marks completion on the last step done click', async () => {
 		// Arrange.
 		const guidedTours = new GuidedTours( {
