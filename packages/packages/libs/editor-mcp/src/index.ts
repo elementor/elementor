@@ -20,7 +20,7 @@ export { createSampler } from './sampler';
 export { toolPrompts } from './utils/prompt-builder';
 export { ANGIE_MODEL_PREFERENCES, ANGIE_REQUIRED_RESOURCES, type AngieModelPreferences } from './angie-annotations';
 export { getActiveChatInfo, type ActiveChatInfo } from './utils/get-active-chat-info';
-export { hasLoadedEditorAngie, openAngieInAskMode } from './utils/open-angie-in-ask-mode';
+export { hasLoadedEditorAngie, openAngieInAgentMode, openAngieInAskMode } from './utils/open-angie-in-ask-mode';
 export type {
 	EditorAngieWindowHost,
 	OpenAngieCommonProperties,

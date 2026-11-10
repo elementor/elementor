@@ -78,6 +78,8 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		// Assert.
 		$this->assertNotContains( Module::ANGIE_PACKAGE, $inactive_packages );
 		$this->assertContains( Module::ANGIE_PACKAGE, $active_packages );
+		$this->assertNotContains( Module::ANGIE_ENTRY_POINTS_PACKAGE, $inactive_packages );
+		$this->assertContains( Module::ANGIE_ENTRY_POINTS_PACKAGE, $active_packages );
 	}
 
 	public function test_floating_panels_package_is_registered_with_angie_when_page_audit_is_inactive() {
