@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class Test_Builder_Template_Part extends TestCase {
 
-	public function test_build__without_part_or_styles_keeps_existing_shape() {
+	public function test_build__without_part_or_local_style_keeps_existing_shape() {
 		// Act.
 		$element = Element_Builder::make( 'e-flexbox' )->build();
 		$widget = Widget_Builder::make( 'e-paragraph' )->build();
@@ -46,17 +46,14 @@ class Test_Builder_Template_Part extends TestCase {
 		$this->assertArrayNotHasKey( 'styles', $widget );
 	}
 
-	public function test_styles__merges_definitions_into_one_local_style_keyed_by_part() {
+	public function test_local_style__is_keyed_by_part_with_every_variant() {
 		// Arrange.
-		$desktop = Style_Definition::make()->add_variant(
-			Style_Variant::make()->set_breakpoint( 'desktop' )->add_prop( 'color', $this->color( '#111111' ) )
-		);
-		$mobile = Style_Definition::make()->add_variant(
-			Style_Variant::make()->set_breakpoint( 'mobile' )->add_prop( 'color', $this->color( '#222222' ) )
-		);
+		$style = Style_Definition::make()
+			->add_variant( Style_Variant::make()->set_breakpoint( 'desktop' )->add_prop( 'color', $this->color( '#111111' ) ) )
+			->add_variant( Style_Variant::make()->set_breakpoint( 'mobile' )->add_prop( 'color', $this->color( '#222222' ) ) );
 
 		// Act.
-		$element = Element_Builder::make( 'e-flexbox' )->part( 'root' )->styles( [ $desktop, $mobile ] )->build();
+		$element = Element_Builder::make( 'e-flexbox' )->part( 'root' )->local_style( $style )->build();
 
 		// Assert.
 		$this->assertSame( [ 'local-root' ], array_keys( $element['styles'] ) );
@@ -77,7 +74,7 @@ class Test_Builder_Template_Part extends TestCase {
 		], $element['styles']['local-root'] );
 	}
 
-	public function test_styles__appends_local_style_to_existing_classes_once() {
+	public function test_local_style__appends_to_existing_classes_once() {
 		// Arrange.
 		$style = Style_Definition::make()->add_variant( Style_Variant::make()->set_breakpoint( 'desktop' ) );
 
@@ -88,7 +85,7 @@ class Test_Builder_Template_Part extends TestCase {
 				'paragraph' => [ '$$type' => 'string', 'value' => 'Hi' ],
 			] )
 			->part( 'label' )
-			->styles( [ $style ] )
+			->local_style( $style )
 			->build();
 
 		// Assert.
@@ -96,12 +93,23 @@ class Test_Builder_Template_Part extends TestCase {
 		$this->assertSame( [ '$$type' => 'string', 'value' => 'Hi' ], $widget['settings']['paragraph'] );
 	}
 
-	public function test_styles__without_part_emits_an_unkeyed_local_style_for_the_validator_to_reject() {
+	public function test_local_style__does_not_change_the_callers_definition() {
+		// Arrange.
+		$style = Style_Definition::make()->set_label( 'custom' );
+
+		// Act.
+		Widget_Builder::make( 'e-paragraph' )->part( 'label' )->local_style( $style )->build();
+
+		// Assert.
+		$this->assertSame( 'custom', $style->build( 'any' )['label'] );
+	}
+
+	public function test_local_style__without_part_emits_an_unkeyed_style_for_the_validator_to_reject() {
 		// Arrange.
 		$style = Style_Definition::make()->add_variant( Style_Variant::make()->set_breakpoint( 'desktop' ) );
 
 		// Act.
-		$widget = Widget_Builder::make( 'e-paragraph' )->styles( [ $style ] )->build();
+		$widget = Widget_Builder::make( 'e-paragraph' )->local_style( $style )->build();
 
 		// Assert.
 		$this->assertArrayNotHasKey( 'part', $widget );

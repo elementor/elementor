@@ -52,6 +52,6 @@ class Widget_Builder {
 			$widget_data['meta'] = $this->meta;
 		}
 
-		return $this->add_template_part( $widget_data );
+		return $this->add_local_style( $this->add_part( $widget_data ) );
 	}
 }

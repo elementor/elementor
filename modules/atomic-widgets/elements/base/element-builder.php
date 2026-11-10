@@ -72,6 +72,6 @@ class Element_Builder {
 			$element_data['hydrateDefaultChildren'] = true;
 		}
 
-		return $this->add_template_part( $element_data );
+		return $this->add_local_style( $this->add_part( $element_data ) );
 	}
 }

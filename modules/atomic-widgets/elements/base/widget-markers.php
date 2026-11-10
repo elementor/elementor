@@ -14,8 +14,6 @@ class Widget_Markers {
 	const MIN_VERSION = 1;
 	const MAX_VALUES_DEPTH = 3;
 	const TEMPLATE_LOCAL_STYLE_PREFIX = 'local-';
-	const LOCAL_STYLE_TYPE = 'class';
-	const LOCAL_STYLE_LABEL = 'local';
 
 	public static function get_template_local_style_id( string $part ): string {
 		return self::TEMPLATE_LOCAL_STYLE_PREFIX . $part;
