@@ -2,6 +2,7 @@
 If the user asks about a header, footer, 404, single, archive, or search-results, that content lives in a SEPARATE document — not the current page. Call `elementor/list-site-parts` when that tool is available (or `elementor/manage-site-parts` to create) first to get the correct `post_id`, then invoke this tool on that id. This capability requires Elementor Pro; without it `elementor/manage-site-parts` still responds with the upgrade link, so call it anyway when the request needs a site part. Read [elementor://wordpress/best-practices] for repeating-layout patterns (one single template driven by dynamic data — not N duplicated pages).
 
 # RESOURCES (Read before use)
+- [elementor://style/best-practices] - Building best practices (read FIRST): design system, variable and class naming, units, responsive and mobile rules, semantic structure, accessibility, visual quality
 - [elementor://wordpress/best-practices] - Opinionated WordPress patterns: repeating layouts, condition scoping, Post Content placement, dynamic tags
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
@@ -15,6 +16,7 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
 
 # WORKFLOW
+Follow the workflow, naming conventions, and pre-flight checklist in [elementor://style/best-practices].
 1. Check/create global variables via `elementor/manage-global-variable`
 2. Check/create global classes via `elementor/manage-classes`
 3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
@@ -171,9 +173,8 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps. A category mismatch returns an error for that field and skips merging it.
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
-# DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
-
-**Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
+# DESIGN
+Design direction, typography, color, spacing, units, responsive behavior, semantic tags, and accessibility are defined in [elementor://style/best-practices]. Follow it; the rules below cover only how sizing behaves in this tool.
 
 ## SIZING: DEFAULT IS NO SIZE (CRITICAL)
 
@@ -200,42 +201,6 @@ vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
 
 GOOD: `<e-div-block>content naturally sizes</e-div-block>`
 BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-div-block>`
-
-## Layout Variety (Break the Template)
-- AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
-- VARY heights: Use auto-height sections with generous padding (6rem+). Let content breathe
-- VARY widths: Not everything spans full width. Use contained sections (max-width: 960px) mixed with edge-to-edge
-- ASYMMETRIC grids: 2:1, 1:3, offset layouts. Avoid equal column widths
-- Negative space as design element: Large margins create focus and sophistication
-- Break alignment intentionally: Offset headings, overlapping elements, broken grids
-
-## Visual Depth & Effects
-- Layer elements: Overlapping cards, text over images, floating elements
-- Subtle shadows with color tint (not pure black): `box-shadow: 0 20px 60px rgba(<brand-color-here>, 0.15)`
-- Gradient overlays on images for text readability
-- Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
-- Backdrop blur for glassmorphism where appropriate
-- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
-
-## Typography with Character
-- Display fonts for headlines (from user's brand or contextually appropriate)
-- Size contrast: 4rem+ headlines vs 1rem body. Make hierarchy unmistakable
-- Letter-spacing: Tight for large headlines (-0.02em), loose for small caps (0.1em)
-- Line-height: Tight for headlines (1.1), generous for body (1.6-1.8)
-- Text decoration: Underlines, highlights, gradient text for emphasis
-
-## Color with Purpose
-- Extract palette from user context (brand colors, industry norms, mood)
-- 60-30-10 rule: dominant, secondary, accent
-- Tinted neutrals over pure grays: warm (#faf8f5, #2d2a26) or cool (#f5f7fa, #1e2430)
-- Color blocking: Large colored sections create visual rhythm
-- Gradient directions: Diagonal (135deg, 225deg) feel more dynamic than vertical
-
-## Spacing Strategy
-- Section padding: 6rem-10rem vertical, creating breathing room
-- Rhythm variation: Tight groups (2rem) with generous gaps between (6rem)
-- Use rem/em exclusively for responsive scaling
-- Generous padding on CTAs: min 1rem 2.5rem
 
 # ICONS
 `e-svg` renders either a library icon or an uploaded SVG file. Prefer a library icon for iconography — carts, arrows, social marks, check marks — because it needs no upload and inherits `color` via `currentColor`. Use an uploaded SVG only for custom artwork such as a brand logo.
