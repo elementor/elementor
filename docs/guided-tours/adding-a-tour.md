@@ -17,7 +17,6 @@ The deployed index is at `https://assets.elementor.com/tours/index.json`. Each `
 
 ```json
 {
-  "version": 1,
   "tours": {
     "example-tour": {
       "file": "tours/example-tour.json",

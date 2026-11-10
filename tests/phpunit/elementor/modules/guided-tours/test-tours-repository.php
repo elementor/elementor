@@ -19,7 +19,6 @@ class Test_Tours_Repository extends Elementor_Test_Base {
 
 		$this->responses = [
 			Tours_Repository::INDEX_URL => [
-				'version' => 1,
 				'tours' => [
 					'admin-navigation' => [
 						'file' => 'tours/admin-navigation.json',
