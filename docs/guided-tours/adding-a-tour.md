@@ -123,4 +123,4 @@ Driver assets live under `assets/lib/driver/`. Enqueue version is `DRIVER_ASSET_
 
 ## Further reading
 
-Agent workflow: `.cursor/skills/elementor-guided-tours/SKILL.md` in this repository.
+Agent workflow: the `elementor-guided-tours` skill in the `cursor-editor` plugin of `elementor/elementor-cursor-marketplace`.
