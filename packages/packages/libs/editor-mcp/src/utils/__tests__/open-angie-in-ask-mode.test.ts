@@ -1,4 +1,4 @@
-import { openAngieInAskMode } from '../open-angie-in-ask-mode';
+import { openAngieInAgentMode, openAngieInAskMode } from '../open-angie-in-ask-mode';
 
 const mockIsAngieAvailable = jest.fn();
 const mockGetAngieIframe = jest.fn();
@@ -9,6 +9,7 @@ const mockAngieIframe = document.createElement( 'iframe' );
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	AngieInteractionMode: {
 		ASK: 'ask',
+		AGENT: 'agent',
 	},
 	getAngieIframe: () => mockGetAngieIframe(),
 	setAngieInteractionMode: ( ...args: unknown[] ) => mockSetAngieInteractionMode( ...args ),
@@ -95,5 +96,33 @@ describe( 'openAngieInAskMode', () => {
 
 		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'ask' );
 		expect( window.location.hash ).toBe( '#angie-prompt=Help%20me%20with%20' );
+	} );
+} );
+
+describe( 'openAngieInAgentMode', () => {
+	beforeEach( () => {
+		delete ( window as Window & { elementorV2?: unknown } ).elementorV2;
+		mockIsAngieAvailable.mockReset();
+		mockSetAngieInteractionMode.mockReset();
+		mockGetAngieIframe.mockReturnValue( mockAngieIframe );
+	} );
+
+	it( 'delegates to the loaded editor Angie package in agent mode', () => {
+		const openAngie = jest.fn();
+		( window as Window & { elementorV2?: { editorAngie?: { openAngie: typeof openAngie } } } ).elementorV2 = {
+			editorAngie: { openAngie },
+		};
+
+		openAngieInAgentMode( 'At element abc I want: ' );
+
+		expect( openAngie ).toHaveBeenCalledWith( { prompt: 'At element abc I want: ', mode: 'agent' } );
+	} );
+
+	it( 'sets agent mode on the sidebar fallback', () => {
+		mockIsAngieAvailable.mockReturnValue( true );
+
+		openAngieInAgentMode( 'At element abc I want: ' );
+
+		expect( mockSetAngieInteractionMode ).toHaveBeenCalledWith( 'agent' );
 	} );
 } );

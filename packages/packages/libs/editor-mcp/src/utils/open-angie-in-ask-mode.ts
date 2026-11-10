@@ -29,7 +29,15 @@ export const openLoadedEditorAngie = ( prompt: string | undefined, mode: AngieIn
 };
 
 export const openAngieInAskMode = ( prompt?: string ): void => {
-	if ( openLoadedEditorAngie( prompt, AngieInteractionMode.ASK ) ) {
+	openAngieInMode( prompt, AngieInteractionMode.ASK );
+};
+
+export const openAngieInAgentMode = ( prompt?: string ): void => {
+	openAngieInMode( prompt, AngieInteractionMode.AGENT );
+};
+
+const openAngieInMode = ( prompt: string | undefined, mode: AngieInteractionMode ): void => {
+	if ( openLoadedEditorAngie( prompt, mode ) ) {
 		return;
 	}
 
@@ -44,7 +52,7 @@ export const openAngieInAskMode = ( prompt?: string ): void => {
 	}
 
 	toggleAngieSidebar( angieSidebar, true );
-	setAngieInteractionMode( AngieInteractionMode.ASK );
+	setAngieInteractionMode( mode );
 
 	if ( prompt ) {
 		window.location.hash = `angie-prompt=${ encodeURIComponent( prompt ) }`;
