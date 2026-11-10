@@ -814,6 +814,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'badge' => true,
 						'label' => '<script>alert(1)</script>Sale',
 						'Bad Key!' => 1,
+						'apply_to_all_off' => [ 'feature_text' ],
 						'object' => new \stdClass(),
 						'nested' => [
 							'level_2' => [
@@ -833,7 +834,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertSame( [
 			'badge' => true,
 			'label' => 'Sale',
-			'badkey' => 1,
+			'apply_to_all_off' => [ 'feature_text' ],
 			'nested' => [ 'level_2' => [ 'kept' => 'yes' ] ],
 		], $data_for_save['widget']['values'] );
 	}

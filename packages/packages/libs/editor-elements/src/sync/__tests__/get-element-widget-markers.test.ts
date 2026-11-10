@@ -44,6 +44,23 @@ describe( 'getElementWidgetMarker', () => {
 		// Assert.
 		expect( result ).toBeNull();
 	} );
+
+	it.each( [
+		[ 'a non-namespaced id', { id: 'icon-button', version: 1 } ],
+		[ 'a zero version', { id: 'elementor/icon-button', version: 0 } ],
+		[ 'a string version', { id: 'elementor/icon-button', version: '1' } ],
+		[ 'array values', { id: 'elementor/icon-button', version: 1, values: [] } ],
+		[ 'a non-object marker', 'elementor/icon-button' ],
+	] )( 'returns null for %s', ( _, widget ) => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } as never } ) );
+
+		// Act.
+		const result = getElementWidgetMarker( ELEMENT_ID );
+
+		// Assert.
+		expect( result ).toBeNull();
+	} );
 } );
 
 describe( 'getElementPart', () => {
@@ -61,6 +78,17 @@ describe( 'getElementPart', () => {
 	it( 'returns null when the element is not found', () => {
 		// Arrange.
 		jest.mocked( getContainer ).mockReturnValue( null );
+
+		// Act.
+		const result = getElementPart( ELEMENT_ID );
+
+		// Assert.
+		expect( result ).toBeNull();
+	} );
+
+	it( 'returns null for a part name that does not match the pattern', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { part: 'Feature-Icon' } } ) );
 
 		// Act.
 		const result = getElementPart( ELEMENT_ID );

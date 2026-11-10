@@ -60,20 +60,22 @@ class Widget_Markers {
 		$sanitized = [];
 
 		foreach ( $values as $key => $value ) {
-			$sanitized_key = is_int( $key ) ? $key : sanitize_key( $key );
-
-			if ( '' === $sanitized_key ) {
+			if ( ! self::is_valid_values_key( $key ) ) {
 				continue;
 			}
 
 			$sanitized_value = self::sanitize_value( $value, $depth );
 
 			if ( null !== $sanitized_value ) {
-				$sanitized[ $sanitized_key ] = $sanitized_value;
+				$sanitized[ $key ] = $sanitized_value;
 			}
 		}
 
 		return $sanitized;
+	}
+
+	private static function is_valid_values_key( $key ): bool {
+		return is_int( $key ) || 1 === preg_match( self::PART_PATTERN, $key );
 	}
 
 	private static function sanitize_value( $value, int $depth ) {
