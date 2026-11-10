@@ -83,8 +83,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( field.locator( 'ul.MuiList-root' ) ).toHaveScreenshot( 'menu-items-repeater-default.png' );
 	} );
 
-	// eslint-disable-next-line playwright/no-focused-test
-	test.only( 'Add item via the repeater appends an entry to the canvas', async () => {
+	test( 'Add item via the repeater appends an entry to the canvas', async () => {
 		// Arrange
 		const menuId = await addMenu();
 		const menu = getMenuRoot( menuId );
@@ -226,8 +225,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( nav ).toHaveScreenshot( 'menu-frontend-with-link.png' );
 	} );
 
-	// eslint-disable-next-line playwright/no-focused-test
-	test.only( 'Frontend reflects added, removed and renamed entries after publish', async () => {
+	test( 'Frontend reflects added, removed and renamed entries after publish', async () => {
 		// Arrange
 		await addMenu();
 		const field = await openMenuItemsControl();
