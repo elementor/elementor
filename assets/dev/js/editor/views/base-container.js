@@ -255,7 +255,9 @@ module.exports = Marionette.CompositeView.extend( {
 
 		const dropResult = $e.run( 'preview/drop', args );
 
-		trackAddElement( { dropResult, model: args.model } );
+		if ( dropResult ) {
+			trackAddElement( args.model );
+		}
 	},
 
 	getHistoryType( event ) {
