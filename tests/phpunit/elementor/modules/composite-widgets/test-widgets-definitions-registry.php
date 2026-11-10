@@ -181,7 +181,7 @@ class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 					'isTargetBlank' => Boolean_Prop_Type::generate( false ),
 				] ),
 			] )
-			->styles( [ $root_style ] )
+			->local_style( $root_style )
 			->children( [
 				Widget_Builder::make( 'e-svg' )->part( 'icon' )->build(),
 				Widget_Builder::make( 'e-paragraph' )
