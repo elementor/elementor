@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useId } from 'react';
 import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import {
 	updateElementEditorSettings,
@@ -42,7 +43,6 @@ export const MenuItemsControl = ( { label }: { label: string } ) => {
 		if ( meta?.action?.type === 'add' ) {
 			return addItem( {
 				menuItemsId: menuItems.id,
-				existingTitles: repeaterValues.map( ( { title } ) => title ),
 				items: meta.action.payload,
 			} );
 		}
@@ -115,11 +115,13 @@ const ItemContent = ( { value }: { value: MenuItem } ) => {
 
 const ItemNameControl = ( { elementId }: { elementId: string } ) => {
 	const editorSettings = useElementEditorSettings( elementId );
+	const inputId = useId();
 
 	return (
 		<Stack gap={ 1 }>
-			<ControlFormLabel>{ __( 'Name', 'elementor' ) }</ControlFormLabel>
+			<ControlFormLabel htmlFor={ inputId }>{ __( 'Name', 'elementor' ) }</ControlFormLabel>
 			<TextField
+				id={ inputId }
 				size="tiny"
 				value={ editorSettings?.title ?? '' }
 				onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {

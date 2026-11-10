@@ -94,7 +94,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Assert
 		await expect( getEntries( menu ) ).toHaveCount( 5 );
-		await expect( getEntries( menu ).last() ).toHaveText( 'Menu item 1' );
+		await expect( getEntries( menu ).last() ).toHaveText( 'Menu item' );
 		await expect( field.locator( 'ul.MuiList-root > li' ) ).toHaveCount( 5 );
 		await expect( menu ).toHaveScreenshot( 'menu-after-add-canvas.png' );
 		await expect( field.locator( 'ul.MuiList-root' ) ).toHaveScreenshot( 'menu-items-repeater-after-add.png' );
@@ -243,7 +243,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		// Assert
 		const nav = editor.page.locator( 'nav.e-menu' );
 
-		await expect( nav.locator( 'ul > li' ) ).toHaveText( [ 'Home', 'About', 'Contact', 'Menu item 1' ] );
+		await expect( nav.locator( 'ul > li' ) ).toHaveText( [ 'Home', 'About', 'Contact', 'Menu item' ] );
 		await expect( nav ).toHaveScreenshot( 'menu-frontend-after-edits.png' );
 	} );
 } );

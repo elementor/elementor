@@ -65,9 +65,13 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		return $node;
 	}
 
-	private function render_menu( array $settings = [], ?array $first_item_link = null ): string {
+	private function render_menu( array $settings = [], ?array $first_item_link = null, bool $empty_first_item = false ): string {
 		$seq = 0;
 		$children = $this->get_config( 'e-menu' )['default_children'];
+
+		if ( $empty_first_item ) {
+			$children[0]['elements'][0]['elements'] = [];
+		}
 
 		if ( null !== $first_item_link ) {
 			$children[0]['elements'][0]['elements'][0]['settings']['link'] = $first_item_link;
@@ -199,6 +203,31 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		}
 		$this->assertSame( [ 'Home', 'Products', 'About', 'Contact' ], $texts );
 
+	}
+
+	public function test_entry_without_item_content_is_not_rendered_on_the_frontend() {
+		// Arrange
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act
+		$html = $this->render_menu( [], null, true );
+
+		// Assert
+		$this->assertSame( 3, substr_count( $html, '<li' ) );
+		$this->assertStringNotContainsString( 'Home', $html );
+	}
+
+	public function test_entry_without_item_content_is_rendered_in_the_editor() {
+		// Arrange
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		Plugin::$instance->editor->set_edit_mode( true );
+
+		// Act
+		$html = $this->render_menu( [], null, true );
+
+		// Assert
+		Plugin::$instance->editor->set_edit_mode( false );
+		$this->assertSame( 4, substr_count( $html, '<li' ) );
 	}
 
 	public function test_rendered_aria_label_uses_menu_name() {
