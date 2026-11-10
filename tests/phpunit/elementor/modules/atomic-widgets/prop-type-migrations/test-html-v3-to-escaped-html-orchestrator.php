@@ -107,6 +107,32 @@ class Test_Html_V3_To_Escaped_Html_Orchestrator extends Elementor_Test_Base {
 		$this->assertFalse( $changed );
 	}
 
+	public function test_migrate_data__uses_bundled_manifest_without_remote_calls_on_rollback() {
+		// Arrange.
+		$original_version = get_option( 'elementor_version' );
+		update_option( 'elementor_version', '99.0.0' );
+		$remote_calls = 0;
+		add_filter( 'pre_http_request', function () use ( &$remote_calls ) {
+			$remote_calls++;
+			return new \WP_Error( 'unexpected_remote_call', 'migrate_data must not fetch remote migrations' );
+		} );
+
+		$orchestrator = Migrations_Orchestrator::make();
+		$data = [ $this->make_heading_with_html_v3_title() ];
+
+		try {
+			// Act.
+			$changed = $orchestrator->migrate_data( $data );
+		} finally {
+			update_option( 'elementor_version', $original_version );
+		}
+
+		// Assert.
+		$this->assertTrue( $changed );
+		$this->assertSame( 'escaped-html', $data[0]['settings']['title']['$$type'] );
+		$this->assertSame( 0, $remote_calls );
+	}
+
 	private function make_heading_with_html_v3_title(): array {
 		return [
 			'elType' => 'widget',
