@@ -685,6 +685,160 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
 	}
 
+	public function test_get_data_for_save__keeps_valid_widget_markers() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'widget' => [
+					'id' => 'elementor/icon-button',
+					'version' => 2,
+					'values' => [ 'icon' => false ],
+				],
+				'part' => 'feature_icon',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+		$raw_data = $widget->get_raw_data();
+
+		// Assert.
+		$expected_widget = [
+			'id' => 'elementor/icon-button',
+			'version' => 2,
+			'values' => [ 'icon' => false ],
+		];
+
+		$this->assertSame( $expected_widget, $data_for_save['widget'] );
+		$this->assertSame( 'feature_icon', $data_for_save['part'] );
+		$this->assertSame( $expected_widget, $raw_data['widget'] );
+		$this->assertSame( 'feature_icon', $raw_data['part'] );
+	}
+
+	public function test_get_data_for_save__omits_empty_widget_values() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'widget' => [
+					'id' => 'elementor/icon-button',
+					'version' => 1,
+					'values' => [],
+				],
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'id' => 'elementor/icon-button',
+			'version' => 1,
+		], $data_for_save['widget'] );
+	}
+
+	public function test_get_data_for_save__omits_markers_when_absent() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'widget', $data_for_save );
+		$this->assertArrayNotHasKey( 'part', $data_for_save );
+	}
+
+	/**
+	 * @dataProvider invalid_widget_marker_provider
+	 */
+	public function test_get_data_for_save__drops_invalid_widget_marker( $widget_marker ) {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [ 'widget' => $widget_marker ],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'widget', $data_for_save );
+	}
+
+	public function invalid_widget_marker_provider(): array {
+		return [
+			'not namespaced id' => [ [ 'id' => 'icon-button', 'version' => 1 ] ],
+			'uppercase id' => [ [ 'id' => 'Elementor/Icon-Button', 'version' => 1 ] ],
+			'missing id' => [ [ 'version' => 1 ] ],
+			'version zero' => [ [ 'id' => 'elementor/icon-button', 'version' => 0 ] ],
+			'string version' => [ [ 'id' => 'elementor/icon-button', 'version' => '1' ] ],
+			'not an array' => [ 'elementor/icon-button' ],
+		];
+	}
+
+	/**
+	 * @dataProvider invalid_part_provider
+	 */
+	public function test_get_data_for_save__drops_invalid_part( $part ) {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [ 'part' => $part ],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'part', $data_for_save );
+	}
+
+	public function invalid_part_provider(): array {
+		return [
+			'dash' => [ 'feature-icon' ],
+			'leading digit' => [ '1title' ],
+			'uppercase' => [ 'Title' ],
+			'html' => [ '<b>title</b>' ],
+			'empty' => [ '' ],
+			'not a string' => [ [ 'title' ] ],
+		];
+	}
+
+	public function test_get_data_for_save__sanitizes_widget_values() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'widget' => [
+					'id' => 'elementor/pricing-card',
+					'version' => 1,
+					'values' => [
+						'badge' => true,
+						'label' => '<script>alert(1)</script>Sale',
+						'Bad Key!' => 1,
+						'apply_to_all_off' => [ 'feature_text' ],
+						'object' => new \stdClass(),
+						'nested' => [
+							'level_2' => [
+								'kept' => 'yes',
+								'too_deep' => [ 'level_4' => 'dropped' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'badge' => true,
+			'label' => 'Sale',
+			'apply_to_all_off' => [ 'feature_text' ],
+			'nested' => [ 'level_2' => [ 'kept' => 'yes' ] ],
+		], $data_for_save['widget']['values'] );
+	}
+
 	public function test_get_data_for_save__skips_invalid_styles_meta_state_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -1136,14 +1290,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			public function __construct( $options ) {
 				static::$options = $options;
 
-				parent::__construct( [
+				parent::__construct( array_merge( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'editor_settings' => $options['editor_settings'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'test-widget',
-				], [] );
+				], $options['element_data'] ?? [] ), [] );
 			}
 
 			public static function get_element_type(): string {

@@ -8,12 +8,14 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Attachment_Id_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
@@ -262,6 +264,57 @@ class Test_Atomic_Import_Export extends Elementor_Test_Base {
 				'title' => String_Prop_Type::generate( 'Test' ),
 			],
 		], $result );
+	}
+
+	public function test_template_export_import__keeps_widget_markers() {
+		// Arrange.
+		( new Atomic_Import_Export() )->register_hooks();
+
+		$source = Plugin::$instance->templates_manager->get_source( 'local' );
+		$process_content = new \ReflectionMethod( $source, 'process_export_import_content' );
+		$process_content->setAccessible( true );
+		$replace_ids = new \ReflectionMethod( $source, 'replace_elements_ids' );
+		$replace_ids->setAccessible( true );
+
+		$widget_marker = [
+			'id' => 'elementor/icon-button',
+			'version' => 1,
+			'values' => [ 'icon' => true ],
+		];
+
+		$content = [
+			[
+				'id' => 'root-id',
+				'elType' => Flexbox::get_element_type(),
+				'widget' => $widget_marker,
+				'part' => 'root',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'heading-id',
+						'elType' => 'widget',
+						'widgetType' => Atomic_Heading::get_element_type(),
+						'part' => 'label',
+						'settings' => [
+							'title' => Escaped_Html_Prop_Type::generate( 'Click me' ),
+						],
+						'elements' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$exported = $process_content->invoke( $source, $content, 'on_export' );
+		$imported = $process_content->invoke( $source, $replace_ids->invoke( $source, $exported ), 'on_import' );
+		$saved = Plugin::$instance->elements_manager->create_element_instance( $imported[0] )->get_data_for_save();
+
+		// Assert.
+		$this->assertNotSame( 'root-id', $saved['id'] );
+		$this->assertSame( $widget_marker, $saved['widget'] );
+		$this->assertSame( 'root', $saved['part'] );
+		$this->assertSame( 'label', $saved['elements'][0]['part'] );
+		$this->assertArrayNotHasKey( 'widget', $saved['elements'][0] );
 	}
 
 	public function test_on_export__dynamic_tag_includes_group() {

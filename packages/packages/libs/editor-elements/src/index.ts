@@ -50,6 +50,8 @@ export { getElementTitle } from './sync/get-element-title';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
+export { getElementPart, getElementWidgetMarker } from './sync/get-element-widget-markers';
+export { regenerateLocalStyleIds } from './sync/regenerate-local-style-ids';
 export { getAllDescendants } from './sync/get-all-descendants';
 export {
 	findChildRecursive,

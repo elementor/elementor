@@ -127,7 +127,7 @@ test.describe.skip( 'Promotion tests @promotions', () => {
 		await promotionPageScreenshotTest( page, promotionContainer, 'elementor_custom_icons', 'admin-to-bar-desktop' );
 	} );
 
-	test( 'Promotions - Free to Pro - Navigator', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Free to Pro - Navigator light mode', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = EditorSelectors.panels.navigator.footer;

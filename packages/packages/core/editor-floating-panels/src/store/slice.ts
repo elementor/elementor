@@ -38,10 +38,12 @@ export const slice = __createSlice( {
 				isDraggable?: boolean;
 				isResizable?: boolean;
 				isDocked?: boolean;
+				persistOpenState?: boolean;
 				persisted?: FloatingPanelState;
 			} >
 		) {
-			const { id, defaults, title, isDraggable, isResizable, isDocked, persisted } = action.payload;
+			const { id, defaults, title, isDraggable, isResizable, isDocked, persistOpenState, persisted } =
+				action.payload;
 
 			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
 			state.isDraggableById[ id ] = isDocked ? false : isDraggable ?? false;
@@ -73,6 +75,10 @@ export const slice = __createSlice( {
 						size,
 						zIndex: 0,
 				  };
+
+			if ( persistOpenState && persisted ) {
+				state.byId[ id ].isOpen = persisted.isOpen;
+			}
 
 			if ( persisted && persisted.zIndex > state.topZIndex ) {
 				state.topZIndex = persisted.zIndex;

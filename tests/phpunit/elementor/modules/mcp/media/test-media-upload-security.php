@@ -1189,6 +1189,14 @@ class Test_Media_Upload_Security extends Elementor_Test_Base {
 			$this->markTestSkipped( 'SVG sanitizer is not available in this environment.' );
 		}
 
+		// WordPress core bug: WP 6.8 + PHP 8.5 causes 'Cannot use bool as array' in wp_read_image_metadata for SVG.
+		// Fixed in WordPress 6.9. WP 6.8 does not officially support PHP 8.5.
+		// https://core.trac.wordpress.org/ticket/64295
+		global $wp_version;
+		if ( version_compare( $wp_version, '6.9', '<' ) && PHP_VERSION_ID >= 80500 ) {
+			$this->markTestSkipped( 'WordPress 6.8 does not support PHP 8.5 (wp_read_image_metadata SVG bug, https://core.trac.wordpress.org/ticket/64295).' );
+		}
+
 		$this->act_as_admin();
 		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
 		$provide_dimensions = static function ( $metadata ) {

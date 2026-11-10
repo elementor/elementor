@@ -14,6 +14,8 @@ export { isAngieAvailable } from './utils/is-angie-available';
 export { canCreateWidget } from './utils/can-create-widget';
 export { isAngieSidebarOpen } from './utils/is-angie-sidebar-open';
 export * from './mcp-registry';
+export { AngieMcpAdapter } from './adapters/angie-adapter';
+export type { IMcpRegistrationAdapter } from './adapters/types';
 export { createSampler } from './sampler';
 export { toolPrompts } from './utils/prompt-builder';
 export { ANGIE_MODEL_PREFERENCES, ANGIE_REQUIRED_RESOURCES, type AngieModelPreferences } from './angie-annotations';

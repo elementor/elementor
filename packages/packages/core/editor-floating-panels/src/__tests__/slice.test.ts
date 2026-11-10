@@ -121,6 +121,56 @@ describe( 'floating-panels slice', () => {
 		expect( selectTopZIndex( __getState() ) ).toBeGreaterThanOrEqual( 7 );
 	} );
 
+	describe( 'docked panel open state', () => {
+		const persistedOpen = {
+			isOpen: true,
+			zIndex: 3,
+			size: { inlineSize: 300, blockSize: 500 },
+			corner: 'block-start-inline-start' as const,
+			position: defaultPosition,
+		};
+
+		it( 'restores the persisted open state when persistOpenState is set', () => {
+			// Act.
+			__dispatch(
+				slice.actions.register( {
+					id: 'a',
+					defaults,
+					isDocked: true,
+					persistOpenState: true,
+					persisted: persistedOpen,
+				} )
+			);
+
+			// Assert.
+			expect( selectIsOpen( __getState(), 'a' ) ).toBe( true );
+		} );
+
+		it( 'starts closed when persistOpenState is not set', () => {
+			// Act.
+			__dispatch( slice.actions.register( { id: 'a', defaults, isDocked: true, persisted: persistedOpen } ) );
+
+			// Assert.
+			expect( selectIsOpen( __getState(), 'a' ) ).toBe( false );
+		} );
+
+		it( 'stays closed when the persisted state was closed', () => {
+			// Act.
+			__dispatch(
+				slice.actions.register( {
+					id: 'a',
+					defaults,
+					isDocked: true,
+					persistOpenState: true,
+					persisted: { ...persistedOpen, isOpen: false },
+				} )
+			);
+
+			// Assert.
+			expect( selectIsOpen( __getState(), 'a' ) ).toBe( false );
+		} );
+	} );
+
 	it( 'discards persisted state when persisted corner differs from defaults corner', () => {
 		// Arrange.
 		const persisted = {
