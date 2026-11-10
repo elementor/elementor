@@ -8,6 +8,7 @@ import { ComponentInstanceProvider } from '../../provider/component-instance-con
 import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
 import { ComponentsUpdateAlert } from '../components-update-alert';
 import { ComponentsUpgradeAlert } from '../components-upgrade-alert';
+import { ComponentInstanceHeaderSlot } from './component-instance-header-location';
 import { DetachAction } from './detach-action';
 import { EmptyState } from './empty-state';
 import { InstancePanelBody } from './instance-panel-body';
@@ -31,6 +32,7 @@ export function InstanceEditingPanel() {
 
 	const actions = (
 		<Stack direction="row" gap={ 0.5 }>
+			<ComponentInstanceHeaderSlot componentId={ componentId } elementId={ componentInstanceId } />
 			<DetachAction componentInstanceId={ componentInstanceId } componentId={ componentId } />
 			{ canEdit && <EditComponentAction disabled label={ panelTitle } icon={ PencilIcon } /> }
 		</Stack>
