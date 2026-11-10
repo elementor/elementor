@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { getContainer, getElementSetting } from '@elementor/editor-elements';
-import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
-import { injectIntoInlineEditorToolbar } from '../inline-editing-locations';
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -298,52 +296,6 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Assert
 			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
-		} );
-	} );
-	describe( 'injected actions', () => {
-		const InjectedAction = ( { elementId }: { elementId: string } ) => (
-			<button>{ `Action for ${ elementId }` }</button>
-		);
-
-		beforeEach( () => {
-			injectIntoInlineEditorToolbar( { id: 'test-action', component: InjectedAction } );
-		} );
-
-		afterEach( () => {
-			flushAllInjections();
-		} );
-
-		it( 'renders injected actions with the element id', () => {
-			// Arrange.
-			const mockEditor = createMockEditor();
-
-			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId="abc123" /> );
-
-			// Assert.
-			expect( screen.getByRole( 'button', { name: 'Action for abc123' } ) ).toBeInTheDocument();
-		} );
-
-		it( 'does not render injected actions in the control panel toolbar', () => {
-			// Arrange.
-			const mockEditor = createMockEditor();
-
-			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId="abc123" inControlPanel /> );
-
-			// Assert.
-			expect( screen.queryByText( /Action for/ ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'does not render injected actions without an element id', () => {
-			// Arrange.
-			const mockEditor = createMockEditor();
-
-			// Act.
-			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
-
-			// Assert.
-			expect( screen.queryByText( /Action for/ ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

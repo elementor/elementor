@@ -137,10 +137,7 @@ export {
 	injectIntoRepeaterItemLabel,
 	injectIntoRepeaterItemActions,
 } from './components/control-repeater/locations';
-export {
-	injectIntoInlineEditingControlHeader,
-	injectIntoInlineEditorToolbar,
-} from './components/inline-editing-locations';
+export { injectIntoInlineEditingControlHeader } from './components/inline-editing-locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

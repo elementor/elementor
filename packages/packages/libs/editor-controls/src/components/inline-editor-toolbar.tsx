@@ -26,7 +26,6 @@ import {
 import { type Editor, useEditorState } from '@tiptap/react';
 import { __ } from '@wordpress/i18n';
 
-import { InlineEditorToolbarActionsSlot } from './inline-editing-locations';
 import { UrlPopover } from './url-popover';
 
 export type InlineEditorToolbarProps = {
@@ -201,7 +200,6 @@ export const InlineEditorToolbar = ( {
 					</Tooltip>
 				) ) }
 			</ToggleButtonGroup>
-			{ elementId && ! inControlPanel && <InlineEditorToolbarActionsSlot elementId={ elementId } /> }
 			<UrlPopover
 				popupState={ linkPopupState }
 				anchorRef={ toolbarRef }
