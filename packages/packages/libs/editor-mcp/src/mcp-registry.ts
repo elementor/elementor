@@ -3,7 +3,6 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
-import { AngieMcpAdapter } from './adapters/angie-adapter';
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
 import { WebMCPAdapter } from './adapters/web-mcp-adapter';
 import {
@@ -14,8 +13,6 @@ import {
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getModelContext } from './utils/get-model-context';
-import { getSDK } from './utils/get-sdk';
-import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
 import { toMCPTitle } from './utils/to-mcp-title';
@@ -77,10 +74,6 @@ export const createAndRegisterAdapters = async (): Promise< void > => {
 
 	if ( modelContext ) {
 		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
-	}
-
-	if ( isAngieAvailable() ) {
-		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
 	}
 
 	await Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
