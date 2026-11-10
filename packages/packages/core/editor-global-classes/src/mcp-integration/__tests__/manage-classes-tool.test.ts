@@ -2,16 +2,10 @@
 import { httpService } from '@elementor/http-client';
 
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
-import { slice } from '../../store';
 import { initManageClassesTool } from '../manage-classes-tool';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
-} ) );
-
-const mockDispatch = jest.fn();
-jest.mock( '@elementor/store', () => ( {
-	__dispatch: ( action: any ) => mockDispatch( action ),
 } ) );
 
 jest.mock( '../../global-classes-styles-provider', () => ( {
@@ -24,15 +18,9 @@ jest.mock( '../../global-classes-styles-provider', () => ( {
 	},
 } ) );
 
-jest.mock( '../../store', () => ( {
-	slice: {
-		actions: {
-			reset: jest.fn( ( payload: any ) => ( { type: 'globalClasses/reset', payload } ) ),
-		},
-	},
-} ) );
-
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
+
+const VARIANTS = [ { meta: { breakpoint: 'desktop', state: null }, props: {} } ];
 
 function createMockRegistry() {
 	let registeredTool: any = null;
@@ -52,28 +40,29 @@ function createMockRegistry() {
 	return { registeredTool };
 }
 
-describe( 'manage-classes-tool (thin proxy wrapper)', () => {
+function mockProxyResult( result: Record< string, unknown > ) {
+	return {
+		data: {
+			data: {
+				status: result.status,
+				results: [ { index: 0, ...result } ],
+				order: [],
+				dry_run: true,
+			},
+		},
+	};
+}
+
+describe( 'manage-classes-tool', () => {
 	let httpMock: { post: jest.Mock };
 	let dispatchEventSpy: jest.SpyInstance;
 
 	beforeEach( () => {
-		httpMock = {
-			post: jest.fn().mockResolvedValue( {
-				data: {
-					data: {
-						status: 'ok',
-						results: [ { id: 'g-new123', label: 'hero-heading', variants: [] } ],
-						order: [ 'g-new123' ],
-					},
-				},
-			} ),
-		};
+		httpMock = { post: jest.fn() };
 		( httpService as jest.Mock ).mockReturnValue( httpMock );
-		mockDispatch.mockClear();
 		( globalClassesStylesProvider.actions.create as jest.Mock ).mockClear();
 		( globalClassesStylesProvider.actions.update as jest.Mock ).mockClear();
 		( globalClassesStylesProvider.actions.delete as jest.Mock ).mockClear();
-		jest.mocked( slice.actions.reset ).mockClear();
 		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
 	} );
 
@@ -81,151 +70,100 @@ describe( 'manage-classes-tool (thin proxy wrapper)', () => {
 		dispatchEventSpy.mockRestore();
 	} );
 
-	it( 'proxies create action and mutates store locally', async () => {
+	it( 'calls the proxy in dry run and creates the planned class locally', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResult( {
+				status: 'ok',
+				action: 'create',
+				id: 'g-new123',
+				label: 'hero-heading',
+				type: 'class',
+				variants: VARIANTS,
+			} )
+		);
 		const { registeredTool } = createMockRegistry();
 
+		// Act.
 		const result = await registeredTool.handler( {
 			action: 'create',
 			label: 'hero-heading',
 			css: 'color: #000000;',
 		} );
 
+		// Assert.
 		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
 			tool: 'manage-classes',
 			input: {
-				operations: [
-					{
-						action: 'create',
-						label: 'hero-heading',
-						css: 'color: #000000;',
-					},
-				],
+				operations: [ { action: 'create', label: 'hero-heading', css: 'color: #000000;' } ],
+				dry_run: true,
 			},
 		} );
-		expect( globalClassesStylesProvider.actions.create ).toHaveBeenCalledWith( 'hero-heading', [], 'g-new123' );
-		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
-		expect( dispatchEventSpy ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				type: 'classes:updated',
-				detail: { context: 'frontend' },
-			} )
+		expect( globalClassesStylesProvider.actions.create ).toHaveBeenCalledWith(
+			'hero-heading',
+			VARIANTS,
+			'g-new123'
 		);
+		expect( dispatchEventSpy ).not.toHaveBeenCalledWith( expect.objectContaining( { type: 'classes:updated' } ) );
 		expect( result ).toEqual( { status: 'ok', id: 'g-new123', label: 'hero-heading' } );
 	} );
 
-	it( 'proxies update action and mutates store locally', async () => {
-		const updatedClass = { id: 'g-abc1234', label: 'hero-heading', variants: [ { meta: {}, props: {} } ] };
-		httpMock.post.mockResolvedValueOnce( {
-			data: {
-				data: {
-					status: 'ok',
-					results: [ updatedClass ],
-					order: [ 'g-abc1234' ],
-				},
-			},
-		} );
-
+	it( 'applies the planned update locally', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResult( {
+				status: 'ok',
+				action: 'update',
+				id: 'g-abc1234',
+				label: 'hero-heading',
+				type: 'class',
+				variants: VARIANTS,
+			} )
+		);
 		const { registeredTool } = createMockRegistry();
 
-		await registeredTool.handler( {
-			action: 'update',
+		// Act.
+		await registeredTool.handler( { action: 'update', id: 'g-abc1234', css: 'color: #ffffff;' } );
+
+		// Assert.
+		expect( globalClassesStylesProvider.actions.update ).toHaveBeenCalledWith( {
 			id: 'g-abc1234',
 			label: 'hero-heading',
-			css: 'color: #ffffff;',
+			type: 'class',
+			variants: VARIANTS,
 		} );
-
-		expect( httpMock.post ).toHaveBeenLastCalledWith(
-			MCP_PROXY_URL,
-			expect.objectContaining( {
-				tool: 'manage-classes',
-				input: expect.objectContaining( {
-					operations: expect.arrayContaining( [
-						expect.objectContaining( { action: 'update', id: 'g-abc1234' } ),
-					] ),
-				} ),
-			} )
-		);
-		expect( globalClassesStylesProvider.actions.update ).toHaveBeenCalledWith( updatedClass );
-		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
 	} );
 
-	it( 'proxies delete action and mutates store locally', async () => {
-		httpMock.post.mockResolvedValueOnce( {
-			data: {
-				data: {
-					status: 'ok',
-					results: [],
-					order: [],
-				},
-			},
-		} );
-
+	it( 'deletes the class resolved by the server, even when only a label was given', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResult( { status: 'ok', action: 'delete', id: 'g-abc1234', label: 'hero-heading' } )
+		);
 		const { registeredTool } = createMockRegistry();
 
-		await registeredTool.handler( { action: 'delete', id: 'g-abc1234' } );
+		// Act.
+		await registeredTool.handler( { action: 'delete', label: 'hero-heading' } );
 
-		expect( httpMock.post ).toHaveBeenLastCalledWith(
-			MCP_PROXY_URL,
-			expect.objectContaining( {
-				input: expect.objectContaining( {
-					operations: expect.arrayContaining( [
-						expect.objectContaining( { action: 'delete', id: 'g-abc1234' } ),
-					] ),
-				} ),
-			} )
-		);
+		// Assert.
 		expect( globalClassesStylesProvider.actions.delete ).toHaveBeenCalledWith( 'g-abc1234' );
-		expect( slice.actions.reset ).toHaveBeenCalledWith( { context: 'frontend' } );
 	} );
 
-	it( 'forwards css string and mode fields to the proxy', async () => {
-		const { registeredTool } = createMockRegistry();
-
-		await registeredTool.handler( {
-			action: 'create',
-			label: 'hero-heading',
-			css: 'color: red; @media(--mobile) { &:hover { color: blue; } }',
-			mode: 'replace',
-		} );
-
-		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
-			tool: 'manage-classes',
-			input: {
-				operations: [
-					{
-						action: 'create',
-						label: 'hero-heading',
-						css: 'color: red; @media(--mobile) { &:hover { color: blue; } }',
-						mode: 'replace',
-					},
-				],
-			},
-		} );
-	} );
-
-	it( 'schema exposes css string and mode fields but not styles', () => {
-		const { registeredTool } = createMockRegistry();
-		const schemaKeys = Object.keys( registeredTool.schema );
-
-		expect( schemaKeys ).toContain( 'css' );
-		expect( schemaKeys ).toContain( 'mode' );
-		expect( schemaKeys ).not.toContain( 'styles' );
-	} );
-
-	it( 'propagates server errors from the proxy without mutating store', async () => {
-		httpMock.post.mockRejectedValueOnce( new Error( 'duplicated label' ) );
-
-		const { registeredTool } = createMockRegistry();
-
-		await expect(
-			registeredTool.handler( {
-				action: 'create',
-				label: 'hero-heading',
-				css: 'color: #000000;',
+	it( 'throws and changes nothing locally when the server rejects the operation', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResult( {
+				status: 'error',
+				action: 'update',
+				code: 'class_not_found',
+				message: 'Global class not found',
 			} )
-		).rejects.toThrow( 'duplicated label' );
+		);
+		const { registeredTool } = createMockRegistry();
 
-		expect( globalClassesStylesProvider.actions.create ).not.toHaveBeenCalled();
-		expect( slice.actions.reset ).not.toHaveBeenCalled();
+		// Act & Assert.
+		await expect( registeredTool.handler( { action: 'update', id: 'g-missing' } ) ).rejects.toThrow(
+			'Global class not found'
+		);
+		expect( globalClassesStylesProvider.actions.update ).not.toHaveBeenCalled();
 	} );
 } );

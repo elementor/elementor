@@ -3,18 +3,29 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { isProActive } from '@elementor/utils';
 
-import { applyLocalMutation } from '../service';
-import { type TVariable } from '../storage';
+import { service } from '../service';
 import { MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-global-variable';
 
+type ManageVariableResult = {
+	status: 'ok' | 'error';
+	message?: string;
+};
+
 type ManageVariableResponse = {
 	status: string;
-	variable?: TVariable & { id: string };
-	watermark?: number;
+	results?: ManageVariableResult[];
+};
+
+type ManageVariableParams = {
+	action: 'create' | 'update' | 'delete';
+	id?: string;
+	type: string;
+	label: string;
+	value?: string;
 };
 
 const VARIABLE_TYPES = {
@@ -83,16 +94,39 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 		handler: async ( params ) => {
 			const { data } = await httpService().post< HttpResponse< ManageVariableResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: params,
+				input: { operations: [ params ], dry_run: true },
 			} );
 
-			const payload = data.data;
+			const result = data.data.results?.[ 0 ];
 
-			if ( payload.variable && typeof payload.watermark === 'number' ) {
-				applyLocalMutation( params.action, payload.variable, payload.watermark );
+			if ( result?.status !== 'ok' ) {
+				throw new Error( result?.message || 'Unexpected response from server' );
 			}
+
+			await applyInEditor( params );
 
 			return { status: 'ok' };
 		},
 	} );
+};
+
+const applyInEditor = ( { action, id, type, label, value = '' }: ManageVariableParams ) => {
+	const eventData = { executedBy: 'mcp_tool' } as const;
+
+	switch ( action ) {
+		case 'create':
+			return service.create( { type, label, value }, { eventData } );
+		case 'update':
+			return service.update( requireId( id ), { label, value }, { eventData } );
+		case 'delete':
+			return service.delete( requireId( id ) );
+	}
+};
+
+const requireId = ( id?: string ) => {
+	if ( ! id ) {
+		throw new Error( 'Variable id is required' );
+	}
+
+	return id;
 };

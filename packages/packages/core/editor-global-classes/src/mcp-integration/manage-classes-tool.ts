@@ -2,18 +2,21 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
-import { __dispatch as dispatch } from '@elementor/store';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
-import { slice } from '../store';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-classes';
 
+type ManageClassesResult = Partial< StyleDefinition > & {
+	status: 'ok' | 'error';
+	message?: string;
+};
+
 type ManageClassesResponse = {
 	status: string;
-	results?: StyleDefinition[];
+	results?: ManageClassesResult[];
 	order?: string[];
 };
 
@@ -62,38 +65,45 @@ export const initManageClassesTool = ( reg: MCPRegistryEntry ) => {
 		handler: async ( params ) => {
 			const { data } = await httpService().post< HttpResponse< ManageClassesResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: { operations: [ params ] },
+				input: { operations: [ params ], dry_run: true },
 			} );
 
 			const result = data.data.results?.[ 0 ];
-			const { create, update, delete: del } = globalClassesStylesProvider.actions;
 
-			switch ( params.action ) {
-				case 'create':
-					if ( result && create ) {
-						create( result.label, result.variants, result.id );
-					}
-					break;
-				case 'update':
-					if ( result && update ) {
-						update( result );
-					}
-					break;
-				case 'delete':
-					if ( params.id && del ) {
-						del( params.id );
-					}
-					break;
+			if ( result?.status !== 'ok' ) {
+				throw new Error( result?.message || 'Unexpected response from server' );
 			}
 
-			dispatch( slice.actions.reset( { context: 'frontend' } ) );
-			window.dispatchEvent( new CustomEvent( 'classes:updated', { detail: { context: 'frontend' } } ) );
+			applyInEditor( params.action, result );
 
 			return {
 				status: 'ok' as const,
-				id: result?.id,
-				label: result?.label,
+				id: result.id,
+				label: result.label,
 			};
 		},
 	} );
+};
+
+const applyInEditor = ( action: 'create' | 'update' | 'delete', result: ManageClassesResult ) => {
+	const { create, update, delete: remove } = globalClassesStylesProvider.actions;
+	const { id, label, type, variants } = result;
+
+	if ( ! id ) {
+		throw new Error( 'Class id is missing from the response' );
+	}
+
+	switch ( action ) {
+		case 'create':
+			create?.( label ?? '', variants, id );
+			break;
+		case 'update':
+			if ( label && type && variants ) {
+				update?.( { id, label, type, variants } );
+			}
+			break;
+		case 'delete':
+			remove?.( id );
+			break;
+	}
 };
