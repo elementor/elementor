@@ -148,6 +148,54 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( firstItem ).toContainText( 'Start' );
 	} );
 
+	test( 'Row popover sets the entry link and renders an anchor on the canvas', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const field = await openMenuItemsControl();
+		const firstItem = field.locator( 'ul.MuiList-root > li' ).first();
+
+		// Act
+		await firstItem.getByLabel( 'Open item' ).click();
+
+		const popover = editor.page.locator( '.MuiPopover-paper' );
+
+		await expect( popover.getByText( 'Item name' ) ).toBeVisible();
+		await popover.getByRole( 'button', { name: 'Toggle link' } ).click( { timeout: 30000 } );
+
+		const urlInput = popover.locator( 'input[type="text"]' ).nth( 1 );
+
+		await urlInput.fill( 'https://example.com/home' );
+		await urlInput.press( 'Enter' );
+
+		// Assert
+		await expect( menu.locator( 'a[href="https://example.com/home"]' ) ).toHaveCount( 1 );
+		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'Products', 'About', 'Contact' ] );
+	} );
+
+	test( 'The last remaining entry cannot be removed', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const field = await openMenuItemsControl();
+
+		// Act
+		for ( let remaining = 4; remaining > 1; remaining-- ) {
+			const item = field.locator( 'ul.MuiList-root > li' ).first();
+
+			await item.hover();
+			await item.getByRole( 'button', { name: 'Remove' } ).click();
+			await expect( getEntries( menu ) ).toHaveCount( remaining - 1 );
+		}
+
+		// Assert
+		const lastItem = field.locator( 'ul.MuiList-root > li' ).first();
+
+		await lastItem.hover();
+		await expect( lastItem.getByRole( 'button', { name: 'Remove' } ) ).toHaveCount( 0 );
+		await expect( getEntries( menu ) ).toHaveText( [ 'Contact' ] );
+	} );
+
 	test( 'Structure panel nests the menu in a flexbox and lists every entry once expanded', async () => {
 		// Arrange
 		const menuId = await addMenu();
