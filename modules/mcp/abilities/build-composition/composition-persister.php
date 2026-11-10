@@ -31,7 +31,7 @@ class Composition_Persister {
 	 * @param array[]  $subtrees Root subtrees to insert.
 	 * @param string   $parent_id Parent element id ("document" for root).
 	 * @param string   $mode 'append' (default) or 'replace_children'.
-	 * @return array{tree: array, root_ids: string[], removed_ids: string[]}|\WP_Error
+	 * @return array{tree: array, root_ids: string[], removed_ids: string[], target: Document}|\WP_Error
 	 */
 	public function insert_and_save( Document $document, array $subtrees, string $parent_id, string $mode = self::MODE_APPEND ) {
 		$tree = $document->get_elements_data();
@@ -68,6 +68,7 @@ class Composition_Persister {
 			'tree' => $tree,
 			'root_ids' => $root_ids,
 			'removed_ids' => $removed_ids,
+			'target' => $save_result,
 		];
 	}
 

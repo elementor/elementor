@@ -16,6 +16,7 @@ export default class Heartbeat {
 		this.onTick = this.onTick.bind( this );
 		this.onRefreshNonce = this.onRefreshNonce.bind( this );
 		this.onDocumentChanged = this.onDocumentChanged.bind( this );
+		this.onDocumentSaved = this.onDocumentSaved.bind( this );
 
 		this.bindEvents();
 
@@ -63,7 +64,7 @@ export default class Heartbeat {
 			post_ID: this.document.id,
 		};
 
-		data.elementor_has_unsaved = this.document.editor.isChanged ? this.document.id : null;
+		data.elementor_has_unsaved = this.document.editor.isSaved ? null : this.document.id;
 	}
 
 	onTick( event, response ) {
@@ -87,6 +88,8 @@ export default class Heartbeat {
 		const mutatedAt = response.elementor_mcp_mutation?.mutated_at;
 
 		if ( mutatedAt && mutatedAt > this.lastSyncedAt ) {
+			this.lastSyncedAt = mutatedAt;
+			$e.components.get( 'document/save' ).stopAutoSave( this.document );
 			this.showExternalChangeModal();
 		}
 
@@ -161,6 +164,9 @@ export default class Heartbeat {
 				onEscKeyPress: false,
 				onBackgroundClick: false,
 			},
+			onHide: () => {
+				this.externalChangeModal = null;
+			},
 		} );
 
 		this.externalChangeModal.show();
@@ -177,6 +183,12 @@ export default class Heartbeat {
 		this.lastStateOfDocumentChange = newChangeOfDocumentState;
 	}
 
+	onDocumentSaved() {
+		if ( this.document.editor.isSaved ) {
+			wp.heartbeat.connectNow();
+		}
+	}
+
 	bindEvents() {
 		jQuery( document ).on( {
 			'heartbeat-send': this.onSend,
@@ -185,6 +197,7 @@ export default class Heartbeat {
 		} );
 
 		elementor.channels.editor.on( 'status:change', this.onDocumentChanged );
+		elementor.channels.editor.on( 'saved', this.onDocumentSaved );
 	}
 
 	destroy() {
@@ -195,5 +208,6 @@ export default class Heartbeat {
 		} );
 
 		elementor.channels.editor.off( 'status:change', this.onDocumentChanged );
+		elementor.channels.editor.off( 'saved', this.onDocumentSaved );
 	}
 }

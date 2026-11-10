@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Utils;
 
+use Elementor\Core\Utils\Document\Document_Mutator;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -10,6 +12,9 @@ class Editor_Sync_State {
 
 	const EDITOR_UNSAVED_TTL = 300;
 	const MCP_MUTATION_TTL   = 3600;
+	const POST_LOCK_WINDOW   = 150;
+
+	private static bool $is_mcp_write_in_progress = false;
 
 	public function register_hooks(): void {
 		add_filter( 'elementor/mcp/pre_execute_guard', [ $this, 'check_mutation_guard' ], 10, 2 );
@@ -54,31 +59,86 @@ class Editor_Sync_State {
 			return null;
 		}
 
-		if ( ! function_exists( 'wp_check_post_lock' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
+		$editor_user_id = self::get_open_editor_user_id( $post_id );
 
-		$has_lock    = (bool) wp_check_post_lock( $post_id );
-		$has_unsaved = self::has_editor_unsaved( $post_id );
-
-		if ( ! $has_lock || ! $has_unsaved ) {
+		if ( ! $editor_user_id ) {
 			return null;
 		}
 
+		if ( get_current_user_id() !== $editor_user_id && self::is_live_post( $post_id ) ) {
+			return self::editor_open_by_other_user_error( $post_id, $editor_user_id );
+		}
+
+		if ( ! self::has_editor_unsaved( $post_id ) ) {
+			return null;
+		}
+
+		return self::editor_unsaved_error( $post_id );
+	}
+
+	public static function get_open_editor_user_id( int $post_id ): int {
+		$lock = explode( ':', (string) get_post_meta( $post_id, '_edit_lock', true ) );
+		$locked_at = (int) $lock[0];
+
+		/** This filter is documented in wp-admin/includes/post.php */
+		$window = (int) apply_filters( 'wp_check_post_lock_window', self::POST_LOCK_WINDOW );
+
+		if ( ! $locked_at || $locked_at <= time() - $window ) {
+			return 0;
+		}
+
+		return (int) ( $lock[1] ?? get_post_meta( $post_id, '_edit_last', true ) );
+	}
+
+	public function on_document_saved( $document ): void {
+		if ( self::$is_mcp_write_in_progress ) {
+			return;
+		}
+
+		$post_id = (int) $document->get_main_id();
+		self::clear_editor_unsaved( $post_id );
+		self::delete_mcp_mutation( $post_id );
+	}
+
+	public static function begin_mcp_write(): void {
+		self::$is_mcp_write_in_progress = true;
+	}
+
+	public static function end_mcp_write(): void {
+		self::$is_mcp_write_in_progress = false;
+	}
+
+	private static function is_live_post( int $post_id ): bool {
+		return in_array( get_post_status( $post_id ), Document_Mutator::LIVE_STATUSES, true );
+	}
+
+	private static function editor_open_by_other_user_error( int $post_id, int $editor_user_id ): \WP_Error {
+		$editor_user = get_userdata( $editor_user_id );
+		$editor_name = $editor_user ? $editor_user->display_name : __( 'Another user', 'elementor' );
+
 		return new \WP_Error(
-			'elementor_editor_unsaved_changes',
-			__( 'The editor has unsaved changes for this document. Ask the user to save or discard their changes in the Elementor editor before retrying this operation.', 'elementor' ),
+			'elementor_editor_open_by_other_user',
+			sprintf(
+				/* translators: %s: Display name of the user editing the page. */
+				__( '%s has this page open in the Elementor editor. The page is published, so your changes would go into a separate draft copy they can\'t see. Ask them to connect the agent with their own account, or to close the editor and wait a few minutes before retrying.', 'elementor' ),
+				$editor_name
+			),
 			[
-				'status'  => 409,
+				'status'  => \WP_Http::CONFLICT,
 				'post_id' => $post_id,
 			]
 		);
 	}
 
-	public function on_document_saved( $document ): void {
-		$post_id = (int) $document->get_post()->ID;
-		self::clear_editor_unsaved( $post_id );
-		self::delete_mcp_mutation( $post_id );
+	private static function editor_unsaved_error( int $post_id ): \WP_Error {
+		return new \WP_Error(
+			'elementor_editor_unsaved_changes',
+			__( 'The user has unsaved changes in the Elementor editor. Ask them to save (Ctrl+S), then call elementor/get-page-structure and retry.', 'elementor' ),
+			[
+				'status'  => \WP_Http::CONFLICT,
+				'post_id' => $post_id,
+			]
+		);
 	}
 
 	private static function unsaved_key( int $post_id ): string {

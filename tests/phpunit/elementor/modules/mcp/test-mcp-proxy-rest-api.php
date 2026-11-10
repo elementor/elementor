@@ -24,7 +24,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->test_post_id = self::factory()->post->create();
+		$this->test_post_id = self::factory()->post->create( [ 'post_status' => 'draft' ] );
 
 		global $wp_rest_server;
 
@@ -300,6 +300,98 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_409_when_same_user_editor_has_unsaved_changes() {
+		// Arrange
+		$this->act_as_admin();
+		wp_set_post_lock( $this->test_post_id );
+		Editor_Sync_State::set_editor_unsaved( $this->test_post_id );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'elementor_editor_unsaved_changes', $result->get_error_code() );
+		$this->assertSame( \WP_Http::CONFLICT, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'elementor/get-page-structure', $result->get_error_message() );
+	}
+
+	public function test_mutation_guard__returns_null_when_same_user_editor_is_clean() {
+		// Arrange
+		$this->act_as_admin();
+		wp_set_post_lock( $this->test_post_id );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_same_user_editor_is_clean_on_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = self::factory()->post->create( [ 'post_status' => 'publish' ] );
+		wp_set_post_lock( $post_id );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_lock_is_stale() {
+		// Arrange
+		$this->act_as_admin();
+		$stale_time = time() - Editor_Sync_State::POST_LOCK_WINDOW - 1;
+		update_post_meta( $this->test_post_id, '_edit_lock', $stale_time . ':' . get_current_user_id() );
+		Editor_Sync_State::set_editor_unsaved( $this->test_post_id );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_409_naming_other_user_editor_on_published_page() {
+		// Arrange
+		$post_id = self::factory()->post->create( [ 'post_status' => 'publish' ] );
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor', 'display_name' => 'Dana Editor' ] );
+		wp_set_current_user( $editor_user_id );
+		wp_set_post_lock( $post_id );
+
+		$this->act_as_admin();
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'elementor_editor_open_by_other_user', $result->get_error_code() );
+		$this->assertSame( \WP_Http::CONFLICT, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'Dana Editor', $result->get_error_message() );
+	}
+
+	public function test_mutation_guard__returns_409_for_other_user_editor_with_unsaved_changes_on_published_page() {
+		// Arrange
+		$post_id = self::factory()->post->create( [ 'post_status' => 'publish' ] );
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $editor_user_id );
+		wp_set_post_lock( $post_id );
+		Editor_Sync_State::set_editor_unsaved( $post_id );
+
+		$this->act_as_admin();
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'elementor_editor_open_by_other_user', $result->get_error_code() );
 	}
 
 	public function test_mutation_guard__returns_null_when_post_id_absent() {

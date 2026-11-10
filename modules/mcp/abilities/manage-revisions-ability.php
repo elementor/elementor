@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Staging;
 use Elementor\Modules\Mcp\Abilities\Utils\Revision_Restorer;
 use Elementor\Plugin;
 
@@ -152,7 +153,7 @@ class Manage_Revisions_Ability extends Abstract_Ability {
 			return $target;
 		}
 
-		$is_staged = (int) $target->get_post()->ID !== $main_id;
+		$is_staged = Document_Staging::is_staged_write( $target );
 
 		$response = [
 			'post_id' => $main_id,

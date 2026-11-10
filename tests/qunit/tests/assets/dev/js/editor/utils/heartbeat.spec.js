@@ -30,7 +30,7 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 		mockDocument = {
 			id: 123,
 			config: { server_time: INITIAL_SERVER_TIME },
-			editor: { isChanged: false },
+			editor: { isChanged: false, isSaved: true },
 		};
 
 		originalChannelsEditor = elementor.channels.editor;
@@ -134,16 +134,135 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	} );
 
 	QUnit.module( 'onSend()', () => {
-		QUnit.test( 'always sends current dirty state for stale-transient cleanup', ( assert ) => {
-			const dirtyData = {};
-			mockDocument.editor.isChanged = true;
-			heartbeat.onSend( null, dirtyData );
-			assert.equal( dirtyData.elementor_has_unsaved, 123, 'sends document id when dirty' );
+		QUnit.test( 'always sends current unsaved state for stale-transient cleanup', ( assert ) => {
+			const unsavedData = {};
+			mockDocument.editor.isSaved = false;
+			heartbeat.onSend( null, unsavedData );
+			assert.equal( unsavedData.elementor_has_unsaved, 123, 'sends document id when changes are not saved anywhere' );
 
-			const cleanData = {};
-			mockDocument.editor.isChanged = false;
-			heartbeat.onSend( null, cleanData );
-			assert.strictEqual( cleanData.elementor_has_unsaved, null, 'sends null when clean to clear server transient' );
+			const savedData = {};
+			mockDocument.editor.isSaved = true;
+			heartbeat.onSend( null, savedData );
+			assert.strictEqual( savedData.elementor_has_unsaved, null, 'sends null when saved to clear server transient' );
+		} );
+
+		QUnit.test( 'sends null after an autosave even though the document is still changed', ( assert ) => {
+			// Arrange.
+			const data = {};
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = true;
+
+			// Act.
+			heartbeat.onSend( null, data );
+
+			// Assert.
+			assert.strictEqual( data.elementor_has_unsaved, null );
+		} );
+	} );
+
+	QUnit.module( 'onDocumentSaved()', () => {
+		QUnit.test( 'calls connectNow so the cleared unsaved flag reaches the server', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isSaved = true;
+
+			// Act.
+			heartbeat.onDocumentSaved();
+
+			// Assert.
+			assert.equal( mockConnectNow.callCount, 1 );
+		} );
+
+		QUnit.test( 'does not call connectNow when the document changed during the save', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isSaved = false;
+
+			// Act.
+			heartbeat.onDocumentSaved();
+
+			// Assert.
+			assert.equal( mockConnectNow.callCount, 0 );
+		} );
+	} );
+
+	QUnit.module( 'MCP mutation marker', ( markerHooks ) => {
+		let mockStopAutoSave, mockShowModal, originalComponentsGet;
+
+		markerHooks.beforeEach( () => {
+			mockStopAutoSave = makeSpy();
+			mockShowModal = makeSpy();
+			originalComponentsGet = $e.components.get;
+			$e.components.get = () => ( { stopAutoSave: mockStopAutoSave } );
+			heartbeat.showExternalChangeModal = mockShowModal;
+		} );
+
+		markerHooks.afterEach( () => {
+			$e.components.get = originalComponentsGet;
+		} );
+
+		QUnit.test( 'stops the autosave timer and shows the modal for a new marker', ( assert ) => {
+			// Arrange.
+			const mutatedAt = INITIAL_SERVER_TIME + 5;
+
+			// Act.
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: mutatedAt } } );
+
+			// Assert.
+			assert.equal( mockStopAutoSave.callCount, 1 );
+			assert.strictEqual( mockStopAutoSave.calls[ 0 ][ 0 ], mockDocument );
+			assert.equal( mockShowModal.callCount, 1 );
+			assert.equal( heartbeat.lastSyncedAt, mutatedAt );
+		} );
+
+		QUnit.test( 'announces the same marker only once', ( assert ) => {
+			// Arrange.
+			const response = { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME + 5 } };
+
+			// Act.
+			heartbeat.onTick( null, response );
+			heartbeat.onTick( null, response );
+
+			// Assert.
+			assert.equal( mockShowModal.callCount, 1 );
+		} );
+
+		QUnit.test( 'announces a newer marker again', ( assert ) => {
+			// Act.
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME + 5 } } );
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME + 10 } } );
+
+			// Assert.
+			assert.equal( mockShowModal.callCount, 2 );
+		} );
+
+		QUnit.test( 'ignores markers older than the last sync', ( assert ) => {
+			// Act.
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME - 1 } } );
+
+			// Assert.
+			assert.equal( mockStopAutoSave.callCount, 0 );
+			assert.equal( mockShowModal.callCount, 0 );
+		} );
+	} );
+
+	QUnit.module( 'showExternalChangeModal()', () => {
+		QUnit.test( 'can be shown again after the previous modal is hidden', ( assert ) => {
+			// Arrange.
+			const createdConfigs = [];
+			const originalCreateWidget = elementorCommon.dialogsManager.createWidget;
+			elementorCommon.dialogsManager.createWidget = ( type, config ) => {
+				createdConfigs.push( config );
+				return { show: () => {} };
+			};
+
+			// Act.
+			heartbeat.showExternalChangeModal();
+			createdConfigs[ 0 ].onHide();
+			heartbeat.showExternalChangeModal();
+
+			// Assert.
+			assert.equal( createdConfigs.length, 2 );
+
+			elementorCommon.dialogsManager.createWidget = originalCreateWidget;
 		} );
 	} );
 } );

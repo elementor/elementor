@@ -48,7 +48,18 @@ abstract class Abstract_Ability {
 
 		Pro_Feature_Suggestion_Tracker::reset();
 
-		$result  = $this->execute( $input );
+		if ( $is_mutating ) {
+			Editor_Sync_State::begin_mcp_write();
+		}
+
+		try {
+			$result = $this->execute( $input );
+		} finally {
+			if ( $is_mutating ) {
+				Editor_Sync_State::end_mcp_write();
+			}
+		}
+
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 
 		Pro_Feature_Suggestion_Tracker::flush( $this->get_id(), $result );

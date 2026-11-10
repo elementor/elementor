@@ -1760,6 +1760,48 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		return (array) $result['elements'][0]['settings'];
 	}
 
+	public function test_execute__reports_staged_write_on_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$root_id = $this->given_heading_on_document( $post_id );
+		wp_update_post( [ 'ID' => $post_id, 'post_status' => 'publish' ] );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $root_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringContainsString( 'elementor/publish-document', $result['llm_instructions'] );
+		$this->assertSame( wp_get_post_autosave( $post_id )->post_modified_gmt, $result['version'] );
+	}
+
+	public function test_execute__reports_live_write_on_draft_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$root_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $root_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertFalse( $result['staged'] );
+		$this->assertStringNotContainsString( 'elementor/publish-document', $result['llm_instructions'] ?? '' );
+	}
+
 	private function assertOkOperation( $result, int $index ): void {
 		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
 		$this->assertSame( 'ok', $result['status'] );
