@@ -16,8 +16,8 @@ class Style_Best_Practices_Ability extends Abstract_Ability {
 
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
-			__( 'Style Best Practices', 'elementor' ),
-			__( 'Design quality guidelines for creating distinctive, intentional aesthetics. Covers typography, color strategy, spacing, motion, and visual hierarchy.', 'elementor' ),
+			__( 'Building Best Practices', 'elementor' ),
+			__( 'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'string' ],
 			[
@@ -26,7 +26,7 @@ class Style_Best_Practices_Ability extends Abstract_Ability {
 					'uri'         => self::URI,
 					'public'      => true,
 					'mimeType'    => 'text/markdown',
-					'description' => __( 'Design quality guidelines for creating distinctive, intentional aesthetics. Covers typography, color strategy, spacing, motion, and visual hierarchy.', 'elementor' ),
+					'description' => __( 'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.', 'elementor' ),
 				],
 			],
 			fn() => current_user_can( 'edit_posts' )

@@ -12,7 +12,7 @@ export const initBestPracticesResource = ( reg: MCPRegistryEntry ) => {
 		BEST_PRACTICES_URI,
 		{
 			description:
-				'Design quality guidelines for avoiding generic AI output: typography, color strategy, spacing, motion, and visual hierarchy best practices.',
+				'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.',
 			mimeType: 'text/markdown',
 		},
 		async ( uri: URL ) => {

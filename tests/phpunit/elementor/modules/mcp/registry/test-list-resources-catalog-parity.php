@@ -60,8 +60,8 @@ class Test_List_Resources_Catalog_Parity extends TestCase {
 		return [
 			[
 				'uri' => Style_Best_Practices_Ability::URI,
-				'name' => 'Style Best Practices',
-				'description' => 'Design quality guidelines for creating distinctive, intentional aesthetics. Covers typography, color strategy, spacing, motion, and visual hierarchy.',
+				'name' => 'Building Best Practices',
+				'description' => 'Building best practices to read before building or restyling a page: design system and naming, semantic structure, accessibility (WCAG 2.2 AA), units and mobile, and page strategy and original design.',
 				'mimeType' => 'text/markdown',
 			],
 			[
