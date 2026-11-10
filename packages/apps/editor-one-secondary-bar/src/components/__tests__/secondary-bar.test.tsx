@@ -102,6 +102,14 @@ describe( '<SecondaryBar />', () => {
 		expect( () => fireEvent.click( screen.getByRole( 'button', { name: 'Finder' } ) ) ).not.toThrow();
 	} );
 
+	it( 'should render the finder in a fixed-width slot when addons are shown', () => {
+		// Act
+		render( <SecondaryBar config={ createConfig( { addons } ) } /> );
+
+		// Assert
+		expect( screen.getByTestId( 'editor-one-finder-slot' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should hide Finder when it is not available', () => {
 		// Act
 		render( <SecondaryBar config={ createConfig( { is_finder_available: false } ) } /> );

@@ -492,4 +492,22 @@ body:has(#editor-one-top-bar > *) {
 	#editor-one-secondary-bar {
 		order: -1;
 	}
+
+	.wrap > hr.wp-header-end {
+		margin-block: 20px 0;
+	}
+
+	.nav-tab-wrapper {
+		margin-block-start: 20px;
+	}
+
+	#elementor-system-info {
+		margin: 0;
+		padding: 24px 32px;
+		background-color: var(--e-one-palette-background-default);
+
+		.elementor-system-info-header {
+			margin-block-end: 20px;
+		}
+	}
 }

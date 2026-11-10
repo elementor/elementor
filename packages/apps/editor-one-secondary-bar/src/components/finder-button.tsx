@@ -1,12 +1,47 @@
 import * as React from 'react';
 import { SearchIcon } from '@elementor/icons';
-import { IconButton } from '@elementor/ui';
+import { Box, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export function FinderButton() {
+type Props = {
+	showLeadingDivider?: boolean;
+};
+
+export function FinderButton( { showLeadingDivider = false }: Props ) {
 	return (
-		<IconButton aria-label={ __( 'Finder', 'elementor' ) } onClick={ () => window.$e?.route?.( 'finder' ) }>
-			<SearchIcon fontSize="small" />
-		</IconButton>
+		<Box
+			data-testid="editor-one-finder-slot"
+			sx={ ( theme ) => ( {
+				position: 'relative',
+				width: 60,
+				height: '100%',
+				flexShrink: 0,
+				display: 'grid',
+				placeItems: 'center',
+				...( showLeadingDivider && {
+					'&::before': {
+						content: '""',
+						position: 'absolute',
+						insetBlock: '11px',
+						insetInlineStart: 0,
+						width: '1px',
+						backgroundColor: theme.palette.divider,
+						pointerEvents: 'none',
+					},
+				} ),
+			} ) }
+		>
+			<IconButton
+				aria-label={ __( 'Finder', 'elementor' ) }
+				onClick={ () => window.$e?.route?.( 'finder' ) }
+				sx={ {
+					width: '100%',
+					height: '100%',
+					borderRadius: 0,
+				} }
+			>
+				<SearchIcon fontSize="small" />
+			</IconButton>
+		</Box>
 	);
 }

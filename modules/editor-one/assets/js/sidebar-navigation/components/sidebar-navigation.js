@@ -6,7 +6,7 @@ import { SidebarCollapsedMenu } from './collapsed-menu';
 import { SidebarUpgradeCta } from './cta';
 import { SidebarHeader } from './header';
 import { SidebarMenu } from './menu';
-import { CollapseButton, NavContainer, ScrollableContent, SiteIconBox, CollapsedHeaderContainer } from './shared';
+import { CollapseButton, menuDividerSx, NavContainer, ScrollableContent, SiteIconBox, CollapsedHeaderContainer } from './shared';
 import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
 import { useAdminMenuOffset } from './hooks/use-admin-menu-offset';
 
@@ -37,7 +37,7 @@ const SidebarNavigation = ( { config } ) => {
 				</ScrollableContent>
 				{ showUpgradeCta && (
 					<>
-						<Divider />
+						<Divider sx={ menuDividerSx } />
 						<SidebarUpgradeCta
 							upgradeUrl={ config.upgradeUrl }
 							upgradeText={ config.upgradeText }
@@ -63,7 +63,7 @@ const SidebarNavigation = ( { config } ) => {
 			</ScrollableContent>
 			{ showUpgradeCta && (
 				<>
-					<Divider />
+					<Divider sx={ menuDividerSx } />
 					<SidebarUpgradeCta
 						upgradeUrl={ config.upgradeUrl }
 						upgradeText={ config.upgradeText }

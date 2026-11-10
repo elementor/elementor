@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { ChevronDownIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
 	Button,
 	Menu,
 	MenuItem,
-	SvgIcon,
 	useMediaQuery,
 	usePopupState,
 	useTheme,
@@ -19,20 +19,14 @@ type Props = {
 };
 
 const itemSx = {
-	py: 1,
-	px: 2,
+	py: '11px',
+	px: '14px',
 	typography: 'body2',
 	'&&, &&:hover, &&:focus, &&:active, &&:visited': {
-		color: 'info.main',
+		color: 'text.primary',
 		boxShadow: 'none',
 	},
 };
-
-const CaretIcon = () => (
-	<SvgIcon viewBox="0 0 24 24" fontSize="tiny">
-		<path d="M6 9h12l-6 7z" />
-	</SvgIcon>
-);
 
 export function AddonsMenu( { addons }: Props ) {
 	const theme = useTheme();
@@ -48,13 +42,21 @@ export function AddonsMenu( { addons }: Props ) {
 		<>
 			<Button
 				color="secondary"
-				endIcon={ <CaretIcon /> }
+				endIcon={ <ChevronDownIcon sx={ { fontSize: 14 } } /> }
 				sx={ {
-					px: 4,
+					height: 48,
+					gap: 1,
+					minWidth: 128,
+					paddingInline: '20px 18px',
 					borderRadius: 0,
+					fontSize: 13,
 					color: 'text.primary',
-					fontWeight: 'fontWeightRegular',
+					fontWeight: 500,
 					bgcolor: popupState.isOpen ? 'action.hover' : 'transparent',
+					'&:hover, &[aria-expanded="true"]': {
+						bgcolor: 'action.hover',
+						color: 'text.primary',
+					},
 				} }
 				{ ...bindTrigger( popupState ) }
 			>
@@ -68,7 +70,7 @@ export function AddonsMenu( { addons }: Props ) {
 				PaperProps={ {
 					sx: {
 						mt: '1px',
-						minWidth: 208,
+						minWidth: 236,
 						maxHeight: 340,
 						borderRadius: 0,
 						boxShadow: '0 8px 24px rgba(12, 13, 14, 0.12)',
