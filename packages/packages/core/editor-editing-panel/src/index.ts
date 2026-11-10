@@ -28,6 +28,8 @@ export { PseudoStateMenuItems } from './components/style-states/pseudo-state-men
 export { usePseudoStates } from './components/style-states/use-pseudo-states';
 export { injectIntoGridFields } from './components/style-sections/layout-section/layout-section';
 export { StyleTabSection } from './components/style-tab-section';
+export { injectIntoStyleSectionHeader, type StyleSectionHeaderProps } from './components/style-section-header-location';
+export { injectIntoStyleTabHeader, type StyleTabHeaderProps } from './components/style-tab-header-location';
 export { ClassesPropProvider, useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';
 export { StyleProvider, useStyle } from './contexts/style-context';

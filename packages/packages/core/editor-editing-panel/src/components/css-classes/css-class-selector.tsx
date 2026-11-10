@@ -39,6 +39,7 @@ import {
 	type ValidationResult,
 } from '../creatable-autocomplete';
 import { CssClassItem } from './css-class-item';
+import { StyleTabHeaderSlot } from '../style-tab-header-location';
 import { MissingClassesAlert } from './missing-classes-alert';
 import {
 	useCreateAndApplyClass,
@@ -82,6 +83,7 @@ export const { Slot: ClassSelectorActionsSlot, inject: injectIntoClassSelectorAc
  */
 
 export function CssClassSelector() {
+	const { element } = useElement();
 	const options = useOptions();
 
 	const { id: activeId, setId: setActiveId } = useStyle();
@@ -117,6 +119,7 @@ export function CssClassSelector() {
 					{ __( 'Classes', 'elementor' ) }
 				</FormLabel>
 				<Stack direction="row" gap={ 1 }>
+					<StyleTabHeaderSlot elementId={ element.id } />
 					<ClassSelectorActionsSlot />
 				</Stack>
 			</Stack>
