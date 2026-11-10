@@ -4,6 +4,10 @@ namespace Elementor\Modules\CompositeWidgets;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;
+use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
+use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,12 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_composite_widgets';
-	const SAMPLE_DEFINITION_FILE = 'schema/examples/icon-button.json';
+	const REGISTER_HOOK = 'elementor/composite-widgets/register';
+	const CORE_DEFINITION_FILES = [
+		'schema/examples/icon-button.json',
+	];
 	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template' ];
 
 	const PACKAGES = [
 		'editor-composite-widgets',
 	];
+
+	private ?Widgets_Definitions_Registry $registry = null;
 
 	public function get_name() {
 		return 'composite-widgets';
@@ -44,36 +53,49 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_editor_settings( $settings ) );
 	}
 
+	/**
+	 * Built on first access, so every atomic element type is registered by the time definitions are validated.
+	 */
+	public function get_registry(): Widgets_Definitions_Registry {
+		if ( null === $this->registry ) {
+			$this->registry = new Widgets_Definitions_Registry(
+				Widget_Definition_Validator::make(),
+				new Definition_Migrator( Migrations_Orchestrator::make() )
+			);
+
+			$this->register_core_definitions( $this->registry );
+
+			do_action( self::REGISTER_HOOK, $this->registry );
+		}
+
+		return $this->registry;
+	}
+
+	private function register_core_definitions( Widgets_Definitions_Registry $registry ): void {
+		foreach ( self::CORE_DEFINITION_FILES as $file ) {
+			$registry->register_from_json( __DIR__ . '/' . $file );
+		}
+	}
+
 	private function add_packages( array $packages ): array {
 		return array_merge( $packages, self::PACKAGES );
 	}
 
 	private function add_editor_settings( array $settings ): array {
-		$definition = $this->load_sample_definition();
+		$definitions = $this->get_registry()->all();
 
-		if ( ! $definition ) {
-			return $settings;
-		}
-
-		$settings['compositeWidgets'] = [
-			$definition['id'] => array_intersect_key( $definition, array_flip( self::EDITOR_DEFINITION_KEYS ) ),
-		];
+		$settings['compositeWidgets'] = array_map(
+			fn ( array $definition ) => array_intersect_key( $definition, array_flip( self::EDITOR_DEFINITION_KEYS ) ),
+			$definitions
+		);
 
 		if ( isset( $settings['elementsPresets'] ) ) {
-			$settings['elementsPresets'][ $this->get_panel_tile_key( $definition ) ] = $this->build_panel_tile( $definition );
+			foreach ( $definitions as $definition ) {
+				$settings['elementsPresets'][ $this->get_panel_tile_key( $definition ) ] = $this->build_panel_tile( $definition );
+			}
 		}
 
 		return $settings;
-	}
-
-	private function load_sample_definition(): ?array {
-		$definition = wp_json_file_decode( __DIR__ . '/' . self::SAMPLE_DEFINITION_FILE, [ 'associative' => true ] );
-
-		if ( ! is_array( $definition ) || empty( $definition['id'] ) || empty( $definition['template']['elType'] ) ) {
-			return null;
-		}
-
-		return $definition;
 	}
 
 	private function get_panel_tile_key( array $definition ): string {
