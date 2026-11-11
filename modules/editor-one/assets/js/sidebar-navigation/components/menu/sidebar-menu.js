@@ -3,7 +3,7 @@ import { Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarMenuItem from './sidebar-menu-item';
-import { MenuList } from '../shared';
+import { MenuList, menuDividerSx } from '../shared';
 import { Fragment } from 'react';
 
 const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
@@ -30,7 +30,7 @@ const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug
 		<MenuList>
 			{ menuItems.map( ( item ) => (
 				<Fragment key={ item.slug }>
-					{ item.has_divider_before && <Divider sx={ { my: 1 } } /> }
+					{ item.has_divider_before && <Divider sx={ menuDividerSx } /> }
 					<SidebarMenuItem
 						item={ item }
 						isActive={ activeStateResolver.isMenuActive( item ) }

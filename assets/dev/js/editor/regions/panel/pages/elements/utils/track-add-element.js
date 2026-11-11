@@ -1,5 +1,5 @@
-export function trackAddElement( { dropResult, model } ) {
-	if ( ! dropResult || ! elementorCommon?.eventsManager?.dispatchEvent ) {
+export function trackAddElement( model ) {
+	if ( ! elementorCommon?.eventsManager?.dispatchEvent ) {
 		return;
 	}
 

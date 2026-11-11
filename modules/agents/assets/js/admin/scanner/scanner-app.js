@@ -49,7 +49,6 @@ const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
 			flexDirection: 'column',
 			width: `calc(100% + ${ SCANNER_LAYOUT.wrapInlinePadding * 2 }px)`,
 			marginInline: `-${ SCANNER_LAYOUT.wrapInlinePadding }px`,
-			marginTop: `-${ SCANNER_LAYOUT.wrapBlockStart }px`,
 			minHeight: SCANNER_LAYOUT.progressPaneMinHeight,
 		} : {
 			width: '100%',
