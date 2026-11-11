@@ -198,7 +198,9 @@ module.exports = Marionette.ItemView.extend( {
 			model: modelData,
 		} );
 
-		trackAddElement( { dropResult, model: modelData } );
+		if ( dropResult ) {
+			trackAddElement( modelData );
+		}
 	},
 
 	getSelectedElements() {
