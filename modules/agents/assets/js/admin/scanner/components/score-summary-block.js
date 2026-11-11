@@ -1,5 +1,3 @@
-import { ExternalLinkIcon } from '@elementor/icons';
-import Button from '@elementor/ui/Button';
 import Skeleton from '@elementor/ui/Skeleton';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
@@ -8,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import { ScoreStandardInfotip } from '../../components/score-standard-infotip';
 import { SCANNER_LAYOUT } from '../scanner-constants';
+import { AgentAccessOffBanner } from './agent-access-off-banner';
 import { RESCAN_LAYOUT_SCORE_ROW, RescanControl, useNextScanLabel } from './rescan-control';
 import { ScoreRing } from './score-ring';
 
@@ -117,13 +116,16 @@ export const ScoreRow = ( {
 	ringDurationMs,
 	isDimmed,
 	isActivated,
+	isAgentAccessOn,
 	isBusy,
+	isTurningOn,
 	needsRescanForScore,
 	siteDomain,
 	ranAt,
 	agentAccessUrl,
 	retryAt,
 	onRescan,
+	onTurnBackOn,
 } ) => {
 	const { heading, description } = getScoreCopy( score );
 	const checkedAt = ranAt ? formatCheckedAt( ranAt ) : '';
@@ -153,21 +155,29 @@ export const ScoreRow = ( {
 						<ScoreStandardInfotip />
 					</Stack>
 				) }
-				{ isActivated && (
+				{ isAgentAccessOn && (
 					<Stack direction="row" alignItems="center" spacing={ 0.5 }>
 						<Typography variant="body2" color="info.main">
 							{ __( 'Agent Ready is on', 'elementor' ) }
 						</Typography>
-						<Button
-							variant="text"
-							color="primary"
-							size="small"
+						<Typography
+							component="a"
+							variant="body2"
 							href={ agentAccessUrl }
-							endIcon={ <ExternalLinkIcon fontSize="tiny" /> }
+							color="primary"
 						>
 							{ __( 'Settings', 'elementor' ) }
-						</Button>
+						</Typography>
 					</Stack>
+				) }
+				{ ! isAgentAccessOn && (
+					<AgentAccessOffBanner
+						retryAt={ retryAt }
+						isBusy={ isBusy }
+						isTurningOn={ isTurningOn }
+						onRescan={ onRescan }
+						onTurnBackOn={ onTurnBackOn }
+					/>
 				) }
 			</Stack>
 			<Stack direction="row" alignItems="center" flexShrink={ 0 }>
@@ -188,11 +198,14 @@ ScoreRow.propTypes = {
 	ringDurationMs: PropTypes.number.isRequired,
 	isDimmed: PropTypes.bool,
 	isActivated: PropTypes.bool,
+	isAgentAccessOn: PropTypes.bool,
 	isBusy: PropTypes.bool,
+	isTurningOn: PropTypes.bool,
 	needsRescanForScore: PropTypes.bool,
 	siteDomain: PropTypes.string.isRequired,
 	ranAt: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,
 	retryAt: PropTypes.string,
 	onRescan: PropTypes.func.isRequired,
+	onTurnBackOn: PropTypes.func.isRequired,
 };
