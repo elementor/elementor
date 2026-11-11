@@ -1,6 +1,10 @@
 import { injectIntoComponentInstanceHeader, injectIntoComponentsTabHeader } from '@elementor/editor-components';
 import { injectIntoControlHeader } from '@elementor/editor-controls';
-import { injectIntoClassSelectorActions, injectIntoStyleTabHeader } from '@elementor/editor-editing-panel';
+import {
+	injectIntoClassSelectorActions,
+	injectIntoStyleSectionHeader,
+	injectIntoStyleTabHeader,
+} from '@elementor/editor-editing-panel';
 import { injectIntoClassManagerHeader } from '@elementor/editor-global-classes';
 import { injectIntoInteractionsHeader } from '@elementor/editor-interactions';
 import { injectIntoVariableFormHeader, injectIntoVariablesManagerHeader } from '@elementor/editor-variables';
@@ -12,6 +16,10 @@ import { AngieClassManagerHeaderAction } from '../css-classes/angie-class-manage
 import { AngieClassSelectorAction } from '../css-classes/angie-class-selector-action';
 import { AngieInteractionsHeaderAction } from '../interactions/angie-interactions-header-action';
 import { init } from '../init';
+import {
+	AngieCustomCssHeaderAction,
+	CUSTOM_CSS_SECTION_NAME,
+} from '../style-section/angie-custom-css-header-action';
 import { AngieStyleTabHeaderAction } from '../style-section/angie-style-tab-header-action';
 import { AngieVariableFormHeaderAction } from '../variables/angie-variable-form-header-action';
 import { AngieVariablesManagerHeaderAction } from '../variables/angie-variables-manager-header-action';
@@ -27,6 +35,7 @@ jest.mock( '@elementor/editor-controls', () => ( {
 
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	injectIntoClassSelectorActions: jest.fn(),
+	injectIntoStyleSectionHeader: jest.fn(),
 	injectIntoStyleTabHeader: jest.fn(),
 } ) );
 
@@ -56,6 +65,11 @@ describe( 'init', () => {
 		expect( injectIntoStyleTabHeader ).toHaveBeenCalledWith( {
 			id: 'angie-style-tab-header-action',
 			component: AngieStyleTabHeaderAction,
+		} );
+		expect( injectIntoStyleSectionHeader ).toHaveBeenCalledWith( {
+			id: 'angie-custom-css-header-action',
+			component: AngieCustomCssHeaderAction,
+			sections: [ CUSTOM_CSS_SECTION_NAME ],
 		} );
 		expect( injectIntoClassSelectorActions ).toHaveBeenCalledWith( {
 			id: 'angie-class-selector-action',

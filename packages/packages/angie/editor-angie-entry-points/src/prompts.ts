@@ -1,6 +1,6 @@
 import { type ComponentInstanceHeaderProps } from '@elementor/editor-components';
 import { type ControlHeaderProps } from '@elementor/editor-controls';
-import { type StyleTabHeaderProps } from '@elementor/editor-editing-panel';
+import { type StyleSectionHeaderProps, type StyleTabHeaderProps } from '@elementor/editor-editing-panel';
 import { type InteractionsHeaderProps } from '@elementor/editor-interactions';
 import { type VariableFormHeaderProps } from '@elementor/editor-variables';
 
@@ -17,6 +17,7 @@ type AngiePromptBuilders = {
 	componentInstance: ( params: ComponentInstanceHeaderProps ) => string;
 	componentsTab: () => string;
 	controlHeader: ( params: ControlHeaderPromptParams ) => string | null;
+	customCss: ( params: StyleSectionHeaderProps ) => string;
 	image: ( elementId: string ) => string;
 	interactions: ( params: InteractionsHeaderProps ) => string;
 	namedImage: ( elementId: string, bind: string ) => string;
@@ -53,6 +54,7 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 
 		return null;
 	},
+	customCss: ( { elementId }: StyleSectionHeaderProps ) => `At element ${ elementId }, custom CSS, I want: `,
 	image: ( elementId: string ) => `At element ${ elementId }, image, I want: `,
 	interactions: ( { elementId }: InteractionsHeaderProps ) => `At element ${ elementId }, interactions, I want: `,
 	namedImage: ( elementId: string, bind: string ) => `At element ${ elementId }, image "${ bind }", I want: `,

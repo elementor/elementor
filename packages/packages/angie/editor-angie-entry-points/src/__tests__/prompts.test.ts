@@ -100,6 +100,14 @@ describe( 'ANGIE_PROMPTS', () => {
 		} );
 	} );
 
+	it( 'builds the custom CSS prompt', () => {
+		// Act
+		const prompt = ANGIE_PROMPTS.customCss( { elementId: 'el-css', sectionName: 'Custom CSS' } );
+
+		// Assert
+		expect( prompt ).toBe( 'At element el-css, custom CSS, I want: ' );
+	} );
+
 	it( 'builds the style tab prompt', () => {
 		// Act
 		const prompt = ANGIE_PROMPTS.styleTab( { elementId: 'el-styles' } );
