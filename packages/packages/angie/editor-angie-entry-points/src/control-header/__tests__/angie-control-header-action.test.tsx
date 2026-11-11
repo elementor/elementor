@@ -54,6 +54,24 @@ describe( 'AngieControlHeaderAction', () => {
 		);
 	} );
 
+	it( 'falls back to the selected element when no element id is given', () => {
+		// Arrange
+		render( <AngieControlHeaderAction controlType="image" bind="image" path={ [ 'background', 'image' ] } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
+
+		// Assert
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith(
+			ANGIE_PROMPTS.controlHeader( {
+				elementId: 'selected-1',
+				controlType: 'image',
+				bind: 'image',
+				path: [ 'background', 'image' ],
+			} )
+		);
+	} );
+
 	it( 'renders nothing for a control type without a prompt', () => {
 		// Act
 		render(
