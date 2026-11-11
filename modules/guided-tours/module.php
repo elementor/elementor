@@ -3,7 +3,6 @@
 namespace Elementor\Modules\GuidedTours;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -79,11 +78,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
 		wp_enqueue_style(
 			self::DRIVER_SCRIPT_HANDLE,
-			ELEMENTOR_ASSETS_URL . 'lib/driver/driver' . $min_suffix . '.css',
+			ELEMENTOR_ASSETS_URL . 'lib/driver/driver.css',
 			[],
 			self::DRIVER_ASSET_VERSION
 		);
@@ -95,7 +92,7 @@ class Module extends BaseModule {
 		);
 		wp_enqueue_script(
 			self::DRIVER_SCRIPT_HANDLE,
-			ELEMENTOR_ASSETS_URL . 'lib/driver/driver' . $min_suffix . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/driver/driver.js',
 			[],
 			self::DRIVER_ASSET_VERSION,
 			true
