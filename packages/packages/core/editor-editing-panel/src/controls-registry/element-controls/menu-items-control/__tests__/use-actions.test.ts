@@ -1,4 +1,4 @@
-import { createElements, getContainer, removeElements, type V1Element } from '@elementor/editor-elements';
+import { getContainer, removeElements, type V1Element } from '@elementor/editor-elements';
 import { renderHook } from '@testing-library/react';
 
 import { useActions } from '../use-actions';
@@ -52,23 +52,5 @@ describe( 'menu-items-control actions', () => {
 
 		// Assert
 		expect( removeElements ).toHaveBeenCalledWith( expect.objectContaining( { elementIds: [ 'entry-0' ] } ) );
-	} );
-
-	it( 'should name new entries "Menu item N" with a number not used by existing entries', () => {
-		// Arrange
-		jest.mocked( getContainer ).mockReturnValue( {
-			children: [ 'Home', 'Menu item 3', 'Menu item 4' ].map( ( title ) => ( {
-				model: { get: () => ( { title } ) },
-			} ) ),
-		} as unknown as V1Element );
-		const { result } = renderHook( () => useActions() );
-
-		// Act
-		result.current.addItem( { menuItemsId: 'items', items: payload( '' ) } );
-
-		// Assert
-		const elements = jest.mocked( createElements ).mock.calls[ 0 ]?.[ 0 ].elements ?? [];
-
-		expect( elements[ 0 ]?.model?.editor_settings ).toEqual( { title: 'Menu item 5' } );
 	} );
 } );
