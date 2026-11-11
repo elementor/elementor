@@ -69,9 +69,7 @@ export function SecondaryBar( { config }: Props ) {
 			</Stack>
 			<Stack alignItems="stretch" direction="row" sx={ { flexShrink: 0 } }>
 				{ config.addons.length > 0 && <AddonsMenu addons={ config.addons } /> }
-				{ config.is_finder_available && (
-					<FinderButton showLeadingDivider={ config.addons.length > 0 } />
-				) }
+				{ config.is_finder_available && <FinderButton showLeadingDivider={ config.addons.length > 0 } /> }
 			</Stack>
 		</Stack>
 	);

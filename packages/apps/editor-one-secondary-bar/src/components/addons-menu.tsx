@@ -1,15 +1,6 @@
 import * as React from 'react';
 import { ChevronDownIcon } from '@elementor/icons';
-import {
-	bindMenu,
-	bindTrigger,
-	Button,
-	Menu,
-	MenuItem,
-	useMediaQuery,
-	usePopupState,
-	useTheme,
-} from '@elementor/ui';
+import { bindMenu, bindTrigger, Button, Menu, MenuItem, useMediaQuery, usePopupState, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type SecondaryBarLink } from '../types';

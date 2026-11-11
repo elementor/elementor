@@ -67,7 +67,7 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, M
 
 	public function render() {
 		echo '<div class="wrap">';
-		Admin_Page_Title::render( (string) $this->get_page_title() );
+		Admin_Page_Title::render( __( 'Agent Ready', 'elementor' ) );
 		echo '<div id="' . esc_attr( Module::SCANNER_MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}

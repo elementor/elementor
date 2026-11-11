@@ -90,8 +90,14 @@ class Settings extends Settings_Page {
 	}
 
 	public function display_home_screen() {
+		if ( ! EditorOneModule::is_admin_navigation_active() ) {
+			echo '<div id="e-home-screen"></div>';
+
+			return;
+		}
+
 		echo '<div class="wrap">';
-		Admin_Page_Title::render( esc_html__( 'Quick start', 'elementor' ) );
+		Admin_Page_Title::render( __( 'Quick start', 'elementor' ) );
 		echo '<div id="e-home-screen"></div>';
 		echo '</div>';
 	}

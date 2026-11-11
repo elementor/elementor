@@ -107,7 +107,7 @@ describe( '<SecondaryBar />', () => {
 		render( <SecondaryBar config={ createConfig( { addons } ) } /> );
 
 		// Assert
-		expect( screen.getByTestId( 'editor-one-finder-slot' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Finder' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide Finder when it is not available', () => {

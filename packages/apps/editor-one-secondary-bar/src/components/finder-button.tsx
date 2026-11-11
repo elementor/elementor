@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SearchIcon } from '@elementor/icons';
-import { Box, IconButton } from '@elementor/ui';
+import { Box, IconButton, type Theme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type Props = {
@@ -11,7 +11,7 @@ export function FinderButton( { showLeadingDivider = false }: Props ) {
 	return (
 		<Box
 			data-testid="editor-one-finder-slot"
-			sx={ ( theme ) => ( {
+			sx={ ( theme: Theme ) => ( {
 				position: 'relative',
 				width: 60,
 				height: '100%',

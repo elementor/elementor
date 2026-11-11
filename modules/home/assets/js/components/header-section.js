@@ -1,4 +1,5 @@
 import { Paper } from '@elementor/ui';
+import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
@@ -10,10 +11,16 @@ const HeaderSection = ( props ) => {
 			sx={ {
 				display: 'flex',
 				flexDirection: 'row',
-				justifyContent: 'flex-end',
+				justifyContent: props.hasInAppTitle ? 'space-between' : 'flex-end',
 				alignItems: 'center',
+				...( props.hasInAppTitle && { pt: 2.5 } ),
 			} }
 		>
+			{ props.hasInAppTitle && (
+				<Typography variant="h5" component="h1">
+					{ __( 'Quick Start', 'elementor' ) }
+				</Typography>
+			) }
 			<Button
 				variant="contained"
 				size="medium"
@@ -30,6 +37,7 @@ const HeaderSection = ( props ) => {
 
 HeaderSection.propTypes = {
 	editWebsiteUrl: PropTypes.string.isRequired,
+	hasInAppTitle: PropTypes.bool,
 };
 
 export default HeaderSection;

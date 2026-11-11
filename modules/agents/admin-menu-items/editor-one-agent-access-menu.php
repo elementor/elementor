@@ -58,7 +58,7 @@ class Editor_One_Agent_Access_Menu implements Menu_Item_Third_Level_Interface, A
 
 	public function render() {
 		echo '<div class="wrap">';
-		Admin_Page_Title::render( (string) $this->get_page_title() );
+		Admin_Page_Title::render( __( 'Agent Access', 'elementor' ) );
 		echo '<div id="' . esc_attr( Module::MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}
