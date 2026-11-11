@@ -1,7 +1,7 @@
 import { buildAngieTextPrompt } from 'elementor/modules/ai/assets/js/editor/angie/text-prompts';
 
 describe( 'buildAngieTextPrompt', () => {
-	it( 'includes element, control, current value, and the write-back tool name', () => {
+	it( 'includes element, control, and the write-back tool name without embedding the current value', () => {
 		// Arrange / Act
 		const prompt = buildAngieTextPrompt( {
 			elementId: 'el-1',
@@ -13,7 +13,8 @@ describe( 'buildAngieTextPrompt', () => {
 		// Assert
 		expect( prompt ).toContain( 'el-1' );
 		expect( prompt ).toContain( 'title' );
-		expect( prompt ).toContain( 'Hello' );
+		expect( prompt ).not.toContain( 'Hello' );
+		expect( prompt ).toContain( 'existing text' );
 		expect( prompt ).toContain( 'v3-text-control' );
 		expect( prompt ).toContain( 'change its tone' );
 	} );
