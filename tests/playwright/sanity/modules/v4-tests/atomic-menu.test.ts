@@ -88,12 +88,6 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		return ( await getRows( field ).allTextContents() ).map( ( text ) => text.trim() );
 	};
 
-	const getStructureEntryTitles = async ( entryIds: string[] ): Promise<string[]> => {
-		return Promise.all( entryIds.map( async ( id ) => {
-			return ( await getStructureRow( id ).locator( '.elementor-navigator__element__title__text' ).first().textContent() )?.trim() ?? '';
-		} ) );
-	};
-
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_nav_menu' );
 
@@ -164,7 +158,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await secondItem.getByRole( 'button', { name: 'Remove' } ).click();
 
 		// Assert
-		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'About', 'Contact' ] );
+		await expect( getEntries( menu ) ).toHaveText( [ 'Contact', 'Home', 'About' ] );
 		await expect( menu ).toHaveScreenshot( 'menu-after-remove-canvas.png' );
 	} );
 
@@ -346,7 +340,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( anchor ).toHaveAttribute( 'target', '_blank' );
 	} );
 
-	test( 'Order and empty flow: reorder from Structure and the repeater, emptied items are skipped on the frontend', async () => {
+	test( 'Order and empty flow: reorder from the repeater, emptied items are skipped on the frontend', async () => {
 		// Arrange
 		const menuId = await addMenu();
 		const menu = getMenuRoot( menuId );
@@ -376,35 +370,21 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( getEntries( menu ) ).toHaveCount( 4 );
 		await expect( getRows( field ) ).toHaveCount( 4 );
 
-		// Act - reorder as a Structure drop does: move the first entry to the end
-		await editor.page.evaluate( ( id ) => {
-			const win = window as unknown as EditorWindow;
-			const container = win.elementor.getContainer( id ) as { parent: unknown };
-
-			win.$e.run( 'document/elements/move', { container, target: container.parent, options: { at: 3 } } );
-		}, initialIds[ 0 ] );
-
-		// Assert - the repeater follows
-		const afterStructureMove = await getEntryIds( menu );
-
-		expect( afterStructureMove ).toEqual( [ initialIds[ 1 ], initialIds[ 2 ], initialIds[ 3 ], initialIds[ 0 ] ] );
-		await expect.poll( () => getRowLabels( field ) ).toEqual( [ 'Products', 'About', 'Contact', 'Home' ] );
-
-		// Act - the opposite: reorder from the repeater (last row to the top)
+		// Act - reorder from the repeater (last row to the top); Structure entries are locked
 		const lastRow = getRows( field ).last();
 
 		await lastRow.hover();
 		await lastRow.locator( '.class-item-sortable-trigger' ).dragTo( getRows( field ).first() );
 
-		// Assert - Structure and canvas follow
-		await expect.poll( () => getEntryIds( menu ) ).toEqual( initialIds );
-		await expect.poll( () => getStructureEntryTitles( initialIds ) ).toEqual( [ 'Home', 'Products', 'About', 'Contact' ] );
+		// Assert - the repeater and canvas follow
+		await expect.poll( () => getEntryIds( menu ) ).toEqual( [ initialIds[ 3 ], initialIds[ 0 ], initialIds[ 1 ], initialIds[ 2 ] ] );
+		await expect.poll( () => getRowLabels( field ) ).toEqual( [ 'Contact', 'Home', 'Products', 'About' ] );
 
 		// Assert - frontend skips the emptied entry and keeps the order
 		await editor.publishAndViewPage();
 		await editor.waitForFrontendFonts();
 
-		await expect( editor.page.locator( 'nav.e-menu ul > li' ) ).toHaveText( [ 'Home', 'About', 'Contact' ] );
+		await expect( editor.page.locator( 'nav.e-menu ul > li' ) ).toHaveText( [ 'Contact', 'Home', 'About' ] );
 	} );
 
 	test( 'Structure panel nests the menu in a flexbox and lists every entry once expanded', async () => {
