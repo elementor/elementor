@@ -26,7 +26,7 @@ type AngiePromptBuilders = {
 	variablesManager: () => string;
 };
 
-export const ANGIE_PROMPTS = {
+export const ANGIE_PROMPTS: AngiePromptBuilders = {
 	backgroundImage: ( elementId: string ) => `At element ${ elementId }, background image, I want: `,
 	classManager: () => 'In the design system global classes, I want: ',
 	classSelector: ( elementId: string, classLabel: string ) =>
@@ -66,4 +66,4 @@ export const ANGIE_PROMPTS = {
 		return `For new ${ variableType } variable I want: `;
 	},
 	variablesManager: () => 'In the design system variables, I want: ',
-} satisfies AngiePromptBuilders;
+};
