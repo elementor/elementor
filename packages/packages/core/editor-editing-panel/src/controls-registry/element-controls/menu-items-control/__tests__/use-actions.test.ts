@@ -14,7 +14,10 @@ describe( 'menu-items-control actions', () => {
 
 	const mockEntries = ( count: number ) => {
 		jest.mocked( getContainer ).mockReturnValue( {
-			children: Array.from( { length: count }, ( _, i ) => ( { id: `entry-${ i }` } ) ),
+			children: Array.from( { length: count }, ( _, i ) => ( {
+				id: `entry-${ i }`,
+				model: { get: () => 'e-menu-entry' },
+			} ) ),
 		} as unknown as V1Element );
 	};
 
@@ -52,5 +55,22 @@ describe( 'menu-items-control actions', () => {
 
 		// Assert
 		expect( removeElements ).toHaveBeenCalledWith( expect.objectContaining( { elementIds: [ 'entry-0' ] } ) );
+	} );
+
+	it( 'should count only entries when enforcing the minimum, ignoring other children', () => {
+		// Arrange
+		jest.mocked( getContainer ).mockReturnValue( {
+			children: [
+				{ id: 'entry-0', model: { get: () => 'e-menu-entry' } },
+				{ id: 'other', model: { get: () => 'e-paragraph' } },
+			],
+		} as unknown as V1Element );
+		const { result } = renderHook( () => useActions() );
+
+		// Act
+		result.current.removeItem( { menuItemsId: 'items', items: payload( 'entry-0' ) } );
+
+		// Assert
+		expect( removeElements ).not.toHaveBeenCalled();
 	} );
 } );

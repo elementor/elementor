@@ -71,7 +71,10 @@ export const useActions = () => {
 	};
 
 	const removeItem = ( { menuItemsId, items }: { menuItemsId: string; items: ItemsActionPayload< MenuItem > } ) => {
-		const entriesCount = getContainer( menuItemsId )?.children?.length ?? 0;
+		const entriesCount =
+			getContainer( menuItemsId )?.children?.filter(
+				( child ) => child.model.get( 'elType' ) === MENU_ENTRY_ELEMENT_TYPE
+			).length ?? 0;
 		const removableCount = Math.max( 0, Math.min( items.length, entriesCount - MIN_ENTRIES ) );
 
 		if ( removableCount === 0 ) {
