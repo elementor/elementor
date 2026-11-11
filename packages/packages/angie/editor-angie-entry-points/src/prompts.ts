@@ -1,6 +1,6 @@
 import { type ComponentInstanceHeaderProps } from '@elementor/editor-components';
 import { type ControlHeaderProps } from '@elementor/editor-controls';
-import { type StyleSectionHeaderProps, type StyleTabHeaderProps } from '@elementor/editor-editing-panel';
+import { type StyleTabHeaderProps } from '@elementor/editor-editing-panel';
 import { type InteractionsHeaderProps } from '@elementor/editor-interactions';
 import { type VariableFormHeaderProps } from '@elementor/editor-variables';
 
@@ -20,7 +20,6 @@ type AngiePromptBuilders = {
 	image: ( elementId: string ) => string;
 	interactions: ( params: InteractionsHeaderProps ) => string;
 	namedImage: ( elementId: string, bind: string ) => string;
-	styleSection: ( params: StyleSectionHeaderProps ) => string;
 	styleTab: ( params: StyleTabHeaderProps ) => string;
 	text: ( elementId: string ) => string;
 	variableForm: ( params: VariableFormHeaderProps ) => string;
@@ -57,8 +56,6 @@ export const ANGIE_PROMPTS = {
 	image: ( elementId: string ) => `At element ${ elementId }, image, I want: `,
 	interactions: ( { elementId }: InteractionsHeaderProps ) => `At element ${ elementId }, interactions, I want: `,
 	namedImage: ( elementId: string, bind: string ) => `At element ${ elementId }, image "${ bind }", I want: `,
-	styleSection: ( { elementId, sectionName }: StyleSectionHeaderProps ) =>
-		`At element ${ elementId }, style section "${ sectionName }", I want: `,
 	styleTab: ( { elementId }: StyleTabHeaderProps ) => `At element ${ elementId }, styles, I want: `,
 	text: ( elementId: string ) => `At element ${ elementId } I want: `,
 	variableForm: ( { variableType, label }: VariableFormHeaderProps ) => {

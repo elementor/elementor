@@ -100,14 +100,6 @@ describe( 'ANGIE_PROMPTS', () => {
 		} );
 	} );
 
-	it( 'builds the style section prompt', () => {
-		// Act
-		const prompt = ANGIE_PROMPTS.styleSection( { elementId: 'element-42', sectionName: 'Typography' } );
-
-		// Assert
-		expect( prompt ).toBe( 'At element element-42, style section "Typography", I want: ' );
-	} );
-
 	it( 'builds the style tab prompt', () => {
 		// Act
 		const prompt = ANGIE_PROMPTS.styleTab( { elementId: 'el-styles' } );
