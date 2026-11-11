@@ -6,7 +6,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Global_Classes_Resource_Ability;
 use Elementor\Modules\Mcp\Abilities\List_Resources_Ability;
-use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
+use Elementor\Modules\Mcp\Abilities\Wordpress_Best_Practices_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
 use Elementor\Plugin;
@@ -125,7 +125,7 @@ class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 		);
 		$this->assertStringNotContainsString(
 			self::ATOMIC_EDITOR_DESCRIPTION_NOTICE,
-			$catalog[ Style_Best_Practices_Ability::URI ]['description']
+			$catalog[ Wordpress_Best_Practices_Ability::URI ]['description']
 		);
 	}
 
@@ -156,7 +156,7 @@ class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 	public function test_execute_guarded__normalizes_null_and_empty_object_input_for_parameterless_resource() {
 		// Arrange
 		$this->act_as_admin();
-		$ability = new Style_Best_Practices_Ability();
+		$ability = new Wordpress_Best_Practices_Ability();
 
 		// Act
 		$from_object = $ability->execute_guarded( (object) [] );
