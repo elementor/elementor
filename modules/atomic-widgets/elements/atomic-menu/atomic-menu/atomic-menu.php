@@ -189,7 +189,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 
 			$css[] = "@media(max-width:{$breakpoint->get_value()}px){"
 				. "{$scope}{flex-wrap:wrap;position:relative}"
-				. "{$scope} > {$toggle}{display:flex;order:-1;align-items:center;justify-content:center}"
+				. "{$scope} > {$toggle}{display:flex;order:-1;flex:0 0 auto;width:auto;align-items:center;justify-content:center}"
 				. "{$scope} > {$items}{display:none;flex-direction:column;flex-basis:100%;width:100%}"
 				. "{$scope}[data-e-open=\"true\"] > {$items}{display:flex}"
 				. "{$scope}[data-e-collapsed-position=\"overlay\"] > {$items}{position:absolute;top:100%;inset-inline-start:0;z-index:10}"
