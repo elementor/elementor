@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { useId, useMemo } from 'react';
+import { useId } from 'react';
 import { ControlFormLabel, Repeater, type RepeaterItem, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import {
 	type Control,
 	type ControlItem,
-	getElementEditorSettings,
-	getElementLabel,
 	getElementType,
 	updateElementEditorSettings,
 	useElementChildren,
@@ -14,7 +12,6 @@ import {
 } from '@elementor/editor-elements';
 import { type CreateOptions } from '@elementor/editor-props';
 import { Stack, TextField } from '@elementor/ui';
-import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { SettingsControl } from '../../../components/settings-control';
@@ -129,7 +126,6 @@ const ItemContent = ( { value }: { value: MenuItem } ) => {
 const ItemNameControl = ( { elementId }: { elementId: string } ) => {
 	const editorSettings = useElementEditorSettings( elementId );
 	const inputId = useId();
-	const renameEntry = useUndoableRename( elementId );
 
 	return (
 		<Stack gap={ 1 }>
@@ -139,7 +135,7 @@ const ItemNameControl = ( { elementId }: { elementId: string } ) => {
 				size="tiny"
 				value={ editorSettings?.title ?? '' }
 				onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
-					renameEntry( target.value );
+					updateElementEditorSettings( { elementId, settings: { title: target.value } } );
 				} }
 			/>
 		</Stack>
@@ -182,32 +178,4 @@ const findControlByBind = ( items: ControlItem[], bind: string ): Control | null
 	}
 
 	return null;
-};
-
-const RENAME_HISTORY_DEBOUNCE_WAIT = 800;
-
-const useUndoableRename = ( elementId: string ) => {
-	return useMemo( () => {
-		const rename = undoable(
-			{
-				do: ( { title }: { title: string } ) => {
-					const previousTitle = getElementEditorSettings( elementId )?.title ?? '';
-
-					updateElementEditorSettings( { elementId, settings: { title } } );
-
-					return previousTitle;
-				},
-				undo: ( _: { title: string }, previousTitle: string ) => {
-					updateElementEditorSettings( { elementId, settings: { title: previousTitle } } );
-				},
-			},
-			{
-				title: getElementLabel( elementId ),
-				subtitle: __( 'Item name edited', 'elementor' ),
-				debounce: { wait: RENAME_HISTORY_DEBOUNCE_WAIT },
-			}
-		);
-
-		return ( title: string ) => rename( { title } );
-	}, [ elementId ] );
 };
