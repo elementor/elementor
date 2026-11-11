@@ -1,13 +1,14 @@
 import { getCurrentDocument } from '@elementor/editor-documents';
 import {
+	createElement,
 	type CreateElementParams,
-	createElements,
+	deleteElement,
 	getContainer,
 	getCurrentDocumentContainer,
-	removeElements,
 	type V1Element,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { __ } from '@wordpress/i18n';
@@ -162,16 +163,74 @@ function serializeElements( container: V1Element ): unknown[] {
 	return elements?.toJSON( ELEMENTS_TO_JSON_OPTIONS ) ?? [];
 }
 
+type RemovedElement = {
+	model: PlannedElement;
+	parentId: string;
+	at: number;
+};
+
+type AppliedPlan = {
+	removed: RemovedElement[];
+	createdIds: string[];
+};
+
 function applyPlan(
 	parentContainer: V1Element,
 	{ elements, removed_element_ids: removedIds = [] }: BuildCompositionResponse
 ) {
-	if ( removedIds.length ) {
-		removeElements( { elementIds: removedIds, title: __( 'Build composition', 'elementor' ) } );
+	if ( ! Array.isArray( elements ) || ! elements.length ) {
+		throw new Error( 'The planned composition has no elements to build' );
 	}
 
-	createElements( {
-		title: __( 'Build composition', 'elementor' ),
-		elements: elements.map( ( model ) => ( { container: parentContainer, model } ) ),
-	} );
+	const apply = (): AppliedPlan => {
+		const removed: RemovedElement[] = [];
+
+		removedIds.forEach( ( id ) => {
+			const container = getContainer( id );
+
+			if ( ! container?.parent ) {
+				return;
+			}
+
+			removed.push( {
+				model: container.model.toJSON() as PlannedElement,
+				parentId: container.parent.id,
+				at: container.view?._index ?? 0,
+			} );
+
+			deleteElement( { container, options: { useHistory: false } } );
+		} );
+
+		const target = parentContainer.lookup?.() ?? parentContainer;
+		const createdIds = elements.map(
+			( model ) => createElement( { container: target, model, options: { useHistory: false } } ).id
+		);
+
+		return { removed, createdIds };
+	};
+
+	undoable(
+		{
+			do: apply,
+			undo: ( _: undefined, { removed, createdIds }: AppliedPlan ) => {
+				[ ...createdIds ].reverse().forEach( ( id ) => {
+					const container = getContainer( id );
+
+					if ( container ) {
+						deleteElement( { container, options: { useHistory: false } } );
+					}
+				} );
+
+				[ ...removed ].reverse().forEach( ( { model, parentId, at } ) => {
+					const parent = getContainer( parentId );
+
+					if ( parent ) {
+						createElement( { container: parent, model, options: { useHistory: false, at } } );
+					}
+				} );
+			},
+			redo: apply,
+		},
+		{ title: __( 'Build composition', 'elementor' ) }
+	)();
 }

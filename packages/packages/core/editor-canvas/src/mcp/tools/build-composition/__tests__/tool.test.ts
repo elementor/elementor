@@ -1,5 +1,6 @@
 import { getCurrentDocument } from '@elementor/editor-documents';
-import { createElements, getContainer, getCurrentDocumentContainer, removeElements } from '@elementor/editor-elements';
+import { createElement, deleteElement, getContainer, getCurrentDocumentContainer } from '@elementor/editor-elements';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
 
 import { initBuildCompositionTool } from '../tool';
@@ -14,10 +15,26 @@ jest.mock( '@elementor/editor-documents', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
-	createElements: jest.fn(),
+	createElement: jest.fn( ( { model } ) => ( { id: model.id } ) ),
+	deleteElement: jest.fn(),
 	getContainer: jest.fn(),
 	getCurrentDocumentContainer: jest.fn(),
-	removeElements: jest.fn(),
+} ) );
+
+type UndoableActions = {
+	do: () => unknown;
+	undo: ( payload: undefined, result: unknown ) => void;
+};
+
+let lastUndoable: { actions: UndoableActions; result: unknown } | null = null;
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	undoable: jest.fn( ( actions: UndoableActions ) => () => {
+		const result = actions.do();
+		lastUndoable = { actions, result };
+
+		return result;
+	} ),
 } ) );
 
 type ToolConfig = {
@@ -57,6 +74,7 @@ const givenServerPlan = ( plan: Record< string, unknown > ) => {
 describe( 'build-composition tool', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		lastUndoable = null;
 		jest.mocked( getCurrentDocument ).mockReturnValue( { id: POST_ID } as never );
 		jest.mocked( getCurrentDocumentContainer ).mockReturnValue( documentContainer as never );
 	} );
@@ -84,21 +102,39 @@ describe( 'build-composition tool', () => {
 				document_elements: CURRENT_TREE,
 			},
 		} );
-		expect( createElements ).toHaveBeenCalledWith( {
-			title: 'Build composition',
-			elements: [ { container: documentContainer, model: PLANNED_ELEMENT } ],
+		expect( createElement ).toHaveBeenCalledWith( {
+			container: documentContainer,
+			model: PLANNED_ELEMENT,
+			options: { useHistory: false },
 		} );
-		expect( removeElements ).not.toHaveBeenCalled();
+		expect( deleteElement ).not.toHaveBeenCalled();
+		expect( undoable ).toHaveBeenCalledTimes( 1 );
 		expect( result ).toEqual( {
 			root_element_ids: [ 'a1b2c3' ],
 			resolved_xml: '<e-div-block id="a1b2c3"></e-div-block>',
 		} );
 	} );
 
-	it( 'removes the replaced children before inserting under the parent', async () => {
+	it( 'replaces the children in a single undo step', async () => {
 		// Arrange.
 		const parentContainer = { id: 'parent1' };
-		jest.mocked( getContainer ).mockReturnValue( parentContainer as never );
+		const oldChildren: Record< string, unknown > = {
+			old1: {
+				id: 'old1',
+				parent: parentContainer,
+				model: { toJSON: () => ( { id: 'old1' } ) },
+				view: { _index: 0 },
+			},
+			old2: {
+				id: 'old2',
+				parent: parentContainer,
+				model: { toJSON: () => ( { id: 'old2' } ) },
+				view: { _index: 1 },
+			},
+		};
+		jest.mocked( getContainer ).mockImplementation(
+			( id: string ) => ( id === 'parent1' ? parentContainer : oldChildren[ id ] ?? null ) as never
+		);
 		givenServerPlan( {
 			root_element_ids: [ 'a1b2c3' ],
 			removed_element_ids: [ 'old1', 'old2' ],
@@ -113,14 +149,70 @@ describe( 'build-composition tool', () => {
 		} );
 
 		// Assert.
-		expect( removeElements ).toHaveBeenCalledWith( {
-			elementIds: [ 'old1', 'old2' ],
-			title: 'Build composition',
+		expect( undoable ).toHaveBeenCalledTimes( 1 );
+		expect( undoable ).toHaveBeenCalledWith( expect.anything(), { title: 'Build composition' } );
+		expect( deleteElement ).toHaveBeenCalledWith( { container: oldChildren.old1, options: { useHistory: false } } );
+		expect( deleteElement ).toHaveBeenCalledWith( { container: oldChildren.old2, options: { useHistory: false } } );
+		expect( createElement ).toHaveBeenCalledWith( {
+			container: parentContainer,
+			model: PLANNED_ELEMENT,
+			options: { useHistory: false },
 		} );
-		expect( createElements ).toHaveBeenCalledWith( {
-			title: 'Build composition',
-			elements: [ { container: parentContainer, model: PLANNED_ELEMENT } ],
+	} );
+
+	it( 'undo removes the created elements and restores the replaced children in place', async () => {
+		// Arrange.
+		const parentContainer = { id: 'parent1' };
+		const created = { id: 'a1b2c3' };
+		const old1 = {
+			id: 'old1',
+			parent: parentContainer,
+			model: { toJSON: () => ( { id: 'old1' } ) },
+			view: { _index: 2 },
+		};
+		const containers: Record< string, unknown > = { parent1: parentContainer, old1 };
+		jest.mocked( getContainer ).mockImplementation( ( id: string ) => ( containers[ id ] ?? null ) as never );
+		givenServerPlan( {
+			root_element_ids: [ 'a1b2c3' ],
+			removed_element_ids: [ 'old1' ],
+			elements: [ PLANNED_ELEMENT ],
 		} );
+		await captureTool().handler( {
+			xml_structure: '<e-div-block configuration-id="hero"/>',
+			parent_id: 'parent1',
+			mode: 'replace_children',
+		} );
+		containers.a1b2c3 = created;
+		jest.mocked( createElement ).mockClear();
+		jest.mocked( deleteElement ).mockClear();
+
+		// Act.
+		lastUndoable?.actions.undo( undefined, lastUndoable.result );
+
+		// Assert.
+		expect( deleteElement ).toHaveBeenCalledWith( { container: created, options: { useHistory: false } } );
+		expect( createElement ).toHaveBeenCalledWith( {
+			container: parentContainer,
+			model: { id: 'old1' },
+			options: { useHistory: false, at: 2 },
+		} );
+	} );
+
+	it( 'does not remove anything when the plan has no elements', async () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( { id: 'parent1' } as never );
+		givenServerPlan( { root_element_ids: [], removed_element_ids: [ 'old1' ] } );
+
+		// Act & Assert.
+		await expect(
+			captureTool().handler( {
+				xml_structure: '<e-div-block configuration-id="hero"/>',
+				parent_id: 'parent1',
+				mode: 'replace_children',
+			} )
+		).rejects.toThrow( 'The planned composition has no elements to build' );
+		expect( deleteElement ).not.toHaveBeenCalled();
+		expect( undoable ).not.toHaveBeenCalled();
 	} );
 
 	it( 'fails without calling the server when the parent is not in the editor', async () => {
@@ -142,7 +234,7 @@ describe( 'build-composition tool', () => {
 
 		// Act & Assert.
 		await expect( captureTool().handler( { xml_structure: '<broken' } ) ).rejects.toThrow( 'invalid_xml' );
-		expect( createElements ).not.toHaveBeenCalled();
-		expect( removeElements ).not.toHaveBeenCalled();
+		expect( createElement ).not.toHaveBeenCalled();
+		expect( deleteElement ).not.toHaveBeenCalled();
 	} );
 } );
