@@ -3,6 +3,7 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Includes\EditorAssetsAPI;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -91,6 +92,7 @@ class Module extends BaseApp {
 
 		$config = $api->get_home_screen_items();
 
+		$config['isAdminNavigationActive'] = EditorOneModule::is_admin_navigation_active();
 		$config['wpRestNonce'] = wp_create_nonce( 'wp_rest' );
 
 		return $config;

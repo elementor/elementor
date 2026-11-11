@@ -105,4 +105,19 @@ export default class v4Panel extends BasePage {
 
 		return widgetElement;
 	}
+
+	async addAtomicElementFromPanel( elementType: string ): Promise<string> {
+		await this.editor.openElementsPanel();
+
+		const panelElementButton = this.page.locator(
+			`#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="${ elementType }"]`,
+		);
+		await panelElementButton.waitFor( { state: 'visible' } );
+		await panelElementButton.click();
+
+		const element = this.editor.getPreviewFrame().locator( `[data-element_type="${ elementType }"]` ).first();
+		await element.waitFor( { state: 'visible' } );
+
+		return await element.getAttribute( 'data-id' ) as string;
+	}
 }
