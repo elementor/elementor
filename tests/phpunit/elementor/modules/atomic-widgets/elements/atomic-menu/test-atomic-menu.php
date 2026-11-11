@@ -3,6 +3,8 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements\AtomicMenu;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -17,6 +19,9 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		'e-menu-items',
 		'e-menu-entry',
 		'e-menu-item',
+		'e-menu-toggle',
+		'e-menu-toggle-closed',
+		'e-menu-toggle-open',
 	];
 
 	private $original_element_types;
@@ -125,7 +130,10 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 	public function test_allowed_child_types() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
-		$this->assertSame( [ 'e-menu-items' ], $this->get_config( 'e-menu' )['allowed_child_types'] );
+		$this->assertSame( [ 'e-menu-items', 'e-menu-toggle' ], $this->get_config( 'e-menu' )['allowed_child_types'] );
+		$this->assertSame( [ 'e-menu-toggle-closed', 'e-menu-toggle-open' ], $this->get_config( 'e-menu-toggle' )['allowed_child_types'] );
+		$this->assertSame( [], $this->get_config( 'e-menu-toggle-closed' )['allowed_child_types'] );
+		$this->assertSame( [], $this->get_config( 'e-menu-toggle-open' )['allowed_child_types'] );
 		$this->assertSame( [ 'e-menu-entry' ], $this->get_config( 'e-menu-items' )['allowed_child_types'] );
 		$this->assertSame( [ 'e-menu-item' ], $this->get_config( 'e-menu-entry' )['allowed_child_types'] );
 		$this->assertSame( [], $this->get_config( 'e-menu-item' )['allowed_child_types'] );
@@ -148,7 +156,17 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		$children = $this->get_config( 'e-menu' )['default_children'];
 
-		$this->assertSame( [ 'e-menu-items' ], array_column( $children, 'elType' ) );
+		$this->assertSame( [ 'e-menu-items', 'e-menu-toggle' ], array_column( $children, 'elType' ) );
+
+		$toggle = $children[1];
+		$this->assertSame( [ 'e-menu-toggle-closed', 'e-menu-toggle-open' ], array_column( $toggle['elements'], 'elType' ) );
+		$this->assertTrue( $toggle['elements'][0]['hydrateDefaultChildren'] );
+		$this->assertTrue( $toggle['elements'][1]['hydrateDefaultChildren'] );
+
+		$closed_children = $this->get_config( 'e-menu-toggle-closed' )['default_children'];
+		$open_children = $this->get_config( 'e-menu-toggle-open' )['default_children'];
+		$this->assertStringEndsWith( 'menu-toggle-closed.svg', $closed_children[0]['settings']['svg']['value']['url']['value'] );
+		$this->assertStringEndsWith( 'menu-toggle-open.svg', $open_children[0]['settings']['svg']['value']['url']['value'] );
 
 		$entries = $children[0]['elements'];
 		$this->assertCount( 4, $entries );
@@ -315,5 +333,109 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$xpath = $this->load_html( $this->render_menu() );
 
 		$this->assertSame( 0, $xpath->query( '//nav//a' )->length );
+	}
+
+	public function test_menu_settings_defaults() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$schema = $this->get_config( 'e-menu' )['atomic_props_schema'];
+
+		$this->assertSame( 'click', $schema['open-submenus-on']->get_default()['value'] );
+		$this->assertSame( 'tablet', $schema['collapse-breakpoint']->get_default()['value'] );
+		$this->assertSame( 'one-per-level', $schema['collapsed-submenus']->get_default()['value'] );
+		$this->assertSame( 'overlay', $schema['collapsed-position']->get_default()['value'] );
+	}
+
+	public function test_default_collapse_breakpoint_is_tablet_or_the_lowest_active_one() {
+		$this->assertSame( 'tablet', Atomic_Menu::resolve_default_collapse_breakpoint( [ 'mobile', 'tablet', 'laptop' ] ) );
+		$this->assertSame( 'mobile', Atomic_Menu::resolve_default_collapse_breakpoint( [ 'mobile', 'laptop' ] ) );
+		$this->assertSame( 'tablet', Atomic_Menu::resolve_default_collapse_breakpoint( [] ) );
+	}
+
+	public function test_collapse_css_hides_the_toggle_by_default_and_collapses_at_each_active_breakpoint() {
+		$css = Atomic_Menu::get_collapse_css();
+		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();
+
+		$this->assertStringContainsString( '.e-menu[data-e-collapse] > .e-menu-toggle-base{display:none}', $css );
+		$this->assertStringContainsString( "@media(max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]", $css );
+		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
+	}
+
+	public function test_rendered_toggle_is_a_labelled_button_after_the_items() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$xpath = $this->load_html( $this->render_menu() );
+
+		$buttons = $xpath->query( '//nav/button[@type="button"]' );
+		$this->assertSame( 1, $buttons->length );
+		$this->assertSame( 'Open menu', $buttons->item( 0 )->getAttribute( 'aria-label' ) );
+		$this->assertSame( 'Close menu', $buttons->item( 0 )->getAttribute( 'data-e-label-close' ) );
+		$this->assertSame( 'false', $buttons->item( 0 )->getAttribute( 'aria-expanded' ) );
+		$this->assertSame( 1, $xpath->query( '//nav/ul/following-sibling::button' )->length );
+		$this->assertSame( 2, $xpath->query( '//nav/button/div' )->length );
+	}
+
+	public function test_rendered_nav_carries_the_collapse_settings() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$html = $this->render_menu( [
+			'collapse-breakpoint' => [
+				'$$type' => 'string',
+				'value' => 'mobile',
+			],
+			'collapsed-position' => [
+				'$$type' => 'string',
+				'value' => 'in-flow',
+			],
+		] );
+
+		$nav = $this->load_html( $html )->query( '//nav' )->item( 0 );
+
+		$this->assertSame( 'mobile', $nav->getAttribute( 'data-e-collapse' ) );
+		$this->assertSame( 'in-flow', $nav->getAttribute( 'data-e-collapsed-position' ) );
+	}
+
+	public function test_menu_saved_without_a_toggle_renders_no_toggle() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$seq = 0;
+		$tree = $this->expand( [
+			'elType' => 'e-menu',
+			'settings' => [],
+			'elements' => [ $this->get_config( 'e-menu' )['default_children'][0] ],
+		], $seq );
+
+		$instance = Plugin::$instance->elements_manager->create_element_instance( $tree );
+
+		ob_start();
+		$instance->print_element();
+		$xpath = $this->load_html( ob_get_clean() );
+
+		$this->assertSame( 0, $xpath->query( '//nav/button' )->length );
+	}
+
+	public function test_custom_aria_label_attribute_replaces_the_default_label() {
+		// Arrange
+		$dir = ELEMENTOR_PATH . 'modules/atomic-widgets/elements/atomic-menu/';
+		$renderer = Template_Renderer::instance();
+		$renderer->register( 'elementor/macros', ELEMENTOR_PATH . 'modules/atomic-widgets/elements/base/_macros.html.twig' );
+		$renderer->register( 'test/toggle', $dir . 'atomic-menu-toggle/atomic-menu-toggle.html.twig' );
+
+		// Act
+		$html = $renderer->render( 'test/toggle', [
+			'id' => 'abc',
+			'type' => 'e-menu-toggle',
+			'interaction_id' => 'abc',
+			'base_styles' => [ 'base' => 'e-menu-toggle-base' ],
+			'settings' => [
+				'attributes' => 'aria-label="Site navigation"',
+			],
+		] );
+
+		// Assert
+		$button = $this->load_html( $html )->query( '//button' )->item( 0 );
+		$this->assertSame( 'Site navigation', $button->getAttribute( 'aria-label' ) );
+		$this->assertSame( 'true', $button->getAttribute( 'data-e-custom-label' ) );
+		$this->assertSame( '', $button->getAttribute( 'data-e-label-open' ) );
 	}
 }

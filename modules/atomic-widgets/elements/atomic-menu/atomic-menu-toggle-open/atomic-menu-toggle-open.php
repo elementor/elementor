@@ -1,0 +1,55 @@
+<?php
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open;
+
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Base\Atomic_Menu_Locked_Element;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Atomic_Menu_Toggle_Open extends Atomic_Menu_Locked_Element {
+	const DEFAULT_ICON = 'images/menu-toggle-open.svg';
+	const DEFAULT_ICON_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_ICON;
+
+	public static $widget_description = 'What the menu toggle shows while the menu is open. Accepts any element and holds an e-svg by default.';
+
+	public static function get_type() {
+		return Atomic_Menu::ELEMENT_TYPE_TOGGLE_OPEN;
+	}
+
+	public function get_title() {
+		return esc_html__( 'Toggle open content', 'elementor' );
+	}
+
+	public function get_icon() {
+		return 'eicon-menu-bar';
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return 'div';
+	}
+
+	protected function define_base_style_props(): array {
+		return [
+			'display' => String_Prop_Type::generate( 'flex' ),
+		];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Svg::generate()
+				->settings( [
+					'svg' => Svg_Src_Prop_Type::generate( [
+						'id' => null,
+						'url' => Url_Prop_Type::generate( static::DEFAULT_ICON_URL ),
+					] ),
+				] )
+				->build(),
+		];
+	}
+}
