@@ -69,6 +69,6 @@ describe( 'menu-items-control actions', () => {
 		// Assert
 		const elements = jest.mocked( createElements ).mock.calls[ 0 ]?.[ 0 ].elements ?? [];
 
-		expect( elements[ 0 ]?.model.editor_settings ).toEqual( { title: 'Menu item 5' } );
+		expect( elements[ 0 ]?.model?.editor_settings ).toEqual( { title: 'Menu item 5' } );
 	} );
 } );
