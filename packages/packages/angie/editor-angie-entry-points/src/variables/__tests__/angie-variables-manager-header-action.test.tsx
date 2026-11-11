@@ -2,14 +2,13 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieVariablesManagerHeaderAction } from '../angie-variables-manager-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
 	openAngieInAgentMode: jest.fn(),
 } ) );
-
-const BUTTON_NAME = 'Generate with Angie';
-const PROMPT = 'In the design system variables, I want: ';
 
 describe( 'AngieVariablesManagerHeaderAction', () => {
 	afterEach( () => {
@@ -21,9 +20,9 @@ describe( 'AngieVariablesManagerHeaderAction', () => {
 		render( <AngieVariablesManagerHeaderAction /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( PROMPT );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.variablesManager() );
 	} );
 } );

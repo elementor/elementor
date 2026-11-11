@@ -2,6 +2,8 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieStyleSectionHeaderAction } from '../angie-style-section-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
@@ -9,7 +11,7 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 const ELEMENT_ID = 'element-42';
-const BUTTON_NAME = 'Generate with Angie';
+const SECTION_NAME = 'Typography';
 
 describe( 'AngieStyleSectionHeaderAction', () => {
 	afterEach( () => {
@@ -18,14 +20,14 @@ describe( 'AngieStyleSectionHeaderAction', () => {
 
 	it( 'opens Angie with the style section prompt when clicked', () => {
 		// Arrange
-		render( <AngieStyleSectionHeaderAction elementId={ ELEMENT_ID } sectionName="Typography" /> );
+		render( <AngieStyleSectionHeaderAction elementId={ ELEMENT_ID } sectionName={ SECTION_NAME } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
 		expect( openAngieInAgentMode ).toHaveBeenCalledWith(
-			`At element ${ ELEMENT_ID }, style section "Typography", I want: `
+			ANGIE_PROMPTS.styleSection( { elementId: ELEMENT_ID, sectionName: SECTION_NAME } )
 		);
 	} );
 } );

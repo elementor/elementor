@@ -2,13 +2,13 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieComponentInstanceHeaderAction } from '../angie-component-instance-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
 	openAngieInAgentMode: jest.fn(),
 } ) );
-
-const BUTTON_NAME = 'Generate with Angie';
 
 describe( 'AngieComponentInstanceHeaderAction', () => {
 	afterEach( () => {
@@ -17,12 +17,13 @@ describe( 'AngieComponentInstanceHeaderAction', () => {
 
 	it( 'opens Angie with the component instance prompt when clicked', () => {
 		// Arrange
-		render( <AngieComponentInstanceHeaderAction componentId="comp-1" elementId="el-9" /> );
+		const props = { componentId: 'comp-1', elementId: 'el-9' };
+		render( <AngieComponentInstanceHeaderAction { ...props } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( 'At component comp-1 (instance el-9) I want: ' );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.componentInstance( props ) );
 	} );
 } );
