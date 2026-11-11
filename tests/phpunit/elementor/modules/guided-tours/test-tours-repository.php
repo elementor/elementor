@@ -30,11 +30,9 @@ class Test_Tours_Repository extends Elementor_Test_Base {
 		];
 
 		add_filter( 'pre_http_request', [ $this, 'mock_http_request' ], 10, 3 );
-		add_filter( 'elementor/guided-tours/use_local_assets', '__return_false' );
 	}
 
 	public function tearDown(): void {
-		remove_filter( 'elementor/guided-tours/use_local_assets', '__return_false' );
 		remove_filter( 'pre_http_request', [ $this, 'mock_http_request' ], 10 );
 
 		parent::tearDown();

@@ -144,78 +144,10 @@ class Tours_Repository {
 		return is_string( $path ) && 1 === preg_match( '/^tours\/[a-z0-9-]+\.json$/', $path );
 	}
 
-	/**
-	 * Dev-only: read tour JSON from sibling `wp-content/plugins/editor-assets`.
-	 * Remove before release — production uses CDN only.
-	 */
-	private function should_use_local_assets(): bool {
-		$use_local = false;
-
-		if ( defined( 'ELEMENTOR_GUIDED_TOURS_USE_LOCAL_ASSETS' ) ) {
-			$use_local = (bool) ELEMENTOR_GUIDED_TOURS_USE_LOCAL_ASSETS;
-		} elseif ( defined( 'WP_DEBUG' ) && WP_DEBUG && null !== self::get_local_tours_directory() ) {
-			$use_local = true;
-		}
-
-		return (bool) apply_filters( 'elementor/guided-tours/use_local_assets', $use_local );
-	}
-
-	private static function get_local_tours_directory(): ?string {
-		$candidates = [
-			WP_PLUGIN_DIR . '/editor-assets/src/tours',
-			WP_PLUGIN_DIR . '/editor-assets/out/tours',
-		];
-
-		foreach ( $candidates as $directory ) {
-			if ( is_readable( $directory . '/index.json' ) ) {
-				return $directory;
-			}
-		}
-
-		return null;
-	}
-
 	private function load_assets_json( string $assets_path ): array {
-		if ( $this->should_use_local_assets() ) {
-			return $this->read_local_json( $assets_path );
-		}
-
 		$url = EditorAssetsAPI::PRODUCTION_URL . '/' . ltrim( $assets_path, '/' );
 		$data = EditorAssetsAPI::do_safe_get_request( $url );
 
 		return is_array( $data ) ? $data : [];
-	}
-
-	private function read_local_json( string $assets_path ): array {
-		$file = $this->resolve_local_file_path( $assets_path );
-
-		if ( ! $file ) {
-			return [];
-		}
-
-		$decoded = json_decode( file_get_contents( $file ), true );
-
-		return is_array( $decoded ) ? $decoded : [];
-	}
-
-	private function resolve_local_file_path( string $assets_path ): ?string {
-		$directory = self::get_local_tours_directory();
-
-		if ( ! $directory ) {
-			return null;
-		}
-
-		$relative = preg_replace( '#^tours/#', '', $assets_path );
-
-		if (
-			! is_string( $relative )
-			|| ( 'index.json' !== $relative && ! preg_match( '/^[a-z0-9-]+\.json$/', $relative ) )
-		) {
-			return null;
-		}
-
-		$full_path = $directory . '/' . $relative;
-
-		return is_readable( $full_path ) ? $full_path : null;
 	}
 }

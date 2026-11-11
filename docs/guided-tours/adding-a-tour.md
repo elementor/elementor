@@ -104,8 +104,6 @@ Multiple concurrent tours on the same screen will need a Core change.
 
 ## Local development
 
-Core can load JSON from `wp-content/plugins/editor-assets` when local assets are enabled (`ELEMENTOR_GUIDED_TOURS_USE_LOCAL_ASSETS` or the `elementor/guided-tours/use_local_assets` filter). This is for dev only, not production.
-
 Reset user progress via user meta `elementor_guided_tours`, or bump the tour `version`, before re-testing. Closing the tour with **X** saves `dismissed` so it does not reopen on every load until the version changes.
 
 For editor tours, Core waits for preview load and a visible panel before starting Driver (`modules/guided-tours/assets/js/guided-tours.js`).
