@@ -297,7 +297,7 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 
 	public function test_validate__accepts_a_slot_with_regular_content() {
 		// Arrange.
-		$definition = $this->with_slot( $this->icon_button() );
+		$definition = $this->tabs_like_with_slot();
 
 		// Act.
 		$result = $this->validator->validate( $definition );
@@ -308,11 +308,11 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 
 	public function test_validate__rejects_invalid_slots() {
 		// Arrange.
-		$definition = $this->with_slot( $this->icon_button() );
+		$definition = $this->tabs_like_with_slot();
 		$definition['template']['slot'] = true;
 		$definition['template']['elements'][0]['slot'] = true;
-		$definition['template']['elements'][2]['elements'][0]['slot'] = true;
-		$definition['template']['elements'][2]['slot'] = 'yes';
+		$definition['template']['elements'][1]['slot'] = 'yes';
+		$definition['template']['elements'][1]['elements'][0]['slot'] = true;
 
 		// Act.
 		$result = $this->validator->validate( $definition );
@@ -320,39 +320,55 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		// Assert.
 		$this->assert_has_error( $result, 'template.slot', Definition_Error_Codes::SLOT_INVALID );
 		$this->assert_has_error( $result, 'template.elements.0.slot', Definition_Error_Codes::SLOT_INVALID );
-		$this->assert_has_error( $result, 'template.elements.2.slot', Definition_Error_Codes::SLOT_INVALID );
-		$this->assert_has_error( $result, 'template.elements.2.elements.0.slot', Definition_Error_Codes::SLOT_INVALID );
+		$this->assert_has_error( $result, 'template.elements.1.slot', Definition_Error_Codes::SLOT_INVALID );
+		$this->assert_has_error( $result, 'template.elements.1.elements.0.slot', Definition_Error_Codes::SLOT_INVALID );
 	}
 
 	public function test_validate__rejects_parts_below_a_slot() {
 		// Arrange.
-		$definition = $this->with_slot( $this->icon_button() );
-		$definition['template']['elements'][2]['elements'][0]['part'] = 'slot_title';
+		$definition = $this->tabs_like_with_slot();
+		$definition['template']['elements'][1]['elements'][0]['part'] = 'slot_title';
 
 		// Act.
 		$result = $this->validator->validate( $definition );
 
 		// Assert.
 		$this->assertSame(
-			'template.elements.2.elements.0.part: ' . Definition_Error_Codes::SLOT_CONTENT_PART,
+			'template.elements.1.elements.0.part: ' . Definition_Error_Codes::SLOT_CONTENT_PART,
 			$result->errors()->to_string()
 		);
 	}
 
-	private function with_slot( array $definition ): array {
-		$definition['template']['elements'][] = [
-			'elType' => 'e-flexbox',
-			'part' => 'content',
-			'slot' => true,
-			'elements' => [
-				[
-					'elType' => 'widget',
-					'widgetType' => 'e-heading',
+	private function tabs_like_with_slot(): array {
+		return [
+			'id' => 'test/tabs-like',
+			'version' => 1,
+			'source' => 'code',
+			'title' => 'Tabs like',
+			'template' => [
+				'elType' => 'e-flexbox',
+				'part' => 'root',
+				'elements' => [
+					[
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'part' => 'title',
+					],
+					[
+						'elType' => 'e-flexbox',
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [
+							[
+								'elType' => 'widget',
+								'widgetType' => 'e-heading',
+							],
+						],
+					],
 				],
 			],
+			'general' => [],
 		];
-
-		return $definition;
 	}
 
 	private function with_global_references( array $definition ): array {

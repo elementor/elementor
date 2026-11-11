@@ -3,15 +3,17 @@
 namespace Elementor\Testing\Modules\CompositeWidgets;
 
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
-use Elementor\Modules\CompositeWidgets\Module;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+require_once __DIR__ . '/fixtures/closed-structure-factory.php';
+
 class Test_Closed_Structure extends Elementor_Test_Base {
-	const REGISTERED_WIDGET_ID = 'elementor/icon-button';
+	const REGISTERED_WIDGET_ID = Closed_Structure_Factory::WIDGET_ID;
 	const UNKNOWN_WIDGET_ID = 'acme/missing';
 
 	private Closed_Structure $closed_structure;
@@ -19,7 +21,7 @@ class Test_Closed_Structure extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->closed_structure = ( new Module() )->get_closed_structure();
+		$this->closed_structure = Closed_Structure_Factory::make();
 	}
 
 	/**

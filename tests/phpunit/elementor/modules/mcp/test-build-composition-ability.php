@@ -8,7 +8,6 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
@@ -24,6 +23,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -35,6 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/../composite-widgets/fixtures/closed-structure-factory.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -1692,7 +1693,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	}
 
 	private function make_ability_with_closed_structure(): Build_Composition_Ability {
-		return new Build_Composition_Ability( null, ( new Composite_Widgets_Module() )->get_closed_structure() );
+		return new Build_Composition_Ability( null, Closed_Structure_Factory::make() );
 	}
 
 	private function widget_with_slot_elements(): array {
@@ -1702,7 +1703,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				'elType' => 'e-flexbox',
 				'settings' => [],
 				'part' => 'root',
-				'widget' => [ 'id' => 'elementor/icon-button', 'version' => 1 ],
+				'widget' => [ 'id' => Closed_Structure_Factory::WIDGET_ID, 'version' => 1 ],
 				'elements' => [
 					[
 						'id' => 'widget-slot',

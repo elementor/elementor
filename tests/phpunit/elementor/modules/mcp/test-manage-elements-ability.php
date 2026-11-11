@@ -9,7 +9,6 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
@@ -20,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/../composite-widgets/fixtures/closed-structure-factory.php';
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -2170,7 +2171,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	}
 
 	private function make_ability_with_closed_structure(): Manage_Elements_Ability {
-		return new Manage_Elements_Ability( null, ( new Composite_Widgets_Module() )->get_closed_structure() );
+		return new Manage_Elements_Ability( null, Closed_Structure_Factory::make() );
 	}
 
 	/**
@@ -2190,7 +2191,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 				'elType' => 'e-flexbox',
 				'settings' => [],
 				'part' => 'root',
-				'widget' => [ 'id' => 'elementor/icon-button', 'version' => 1 ],
+				'widget' => [ 'id' => Closed_Structure_Factory::WIDGET_ID, 'version' => 1 ],
 				'elements' => [
 					[
 						'id' => $ids['part'],
