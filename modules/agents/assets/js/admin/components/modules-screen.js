@@ -184,7 +184,7 @@ export const ModulesScreen = ( { readinessScoreUrl, agentDiscoveryConfig, botAcc
 	};
 
 	return (
-		<Container disableGutters maxWidth="lg" sx={ { width: '100%', minWidth: 0, pt: 6 } }>
+		<Container disableGutters maxWidth="lg" sx={ { width: '100%', minWidth: 0 } }>
 			<Stack spacing={ 5 } width="100%" minWidth={ 0 }>
 				<Stack direction="row" alignItems="center" justifyContent="space-between">
 					<PageTitle textAlign="left" />

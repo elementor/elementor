@@ -59,21 +59,37 @@ export const CollapseButton = styled( IconButton, {
 	};
 } );
 
-export const ScrollableContent = styled( Box )( {
+export const ScrollableContent = styled( Box )( ( { theme } ) => ( {
 	flex: 1,
 	overflowY: 'auto',
 	overflowX: 'hidden',
-} );
+	paddingBlockStart: theme.spacing( 2.25 ),
+	paddingBlockEnd: theme.spacing( 2 ),
+} ) );
+
+export const menuDividerSx = {
+	my: '7px',
+	mx: '11px',
+	flexShrink: 0,
+	pointerEvents: 'none',
+	opacity: 1,
+	borderBottomWidth: 'var(--e-one-menu-divider-width, 1px)',
+	borderColor: 'var(--e-one-menu-divider-color, rgba(12, 13, 14, 0.23))',
+};
 
 export const MenuList = styled( List )( ( { theme } ) => ( {
-	padding: theme.spacing( 2 ),
+	padding: 0,
+	paddingInline: theme.spacing( 2 ),
+	display: 'flex',
+	flexDirection: 'column',
+	gap: theme.spacing( 1 ),
 } ) );
 
 export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	paddingLeft: theme.spacing( 1 ),
 	paddingRight: theme.spacing( 1 ),
 	marginBottom: 0,
-	paddingBottom: theme.spacing( 0.5 ),
+	paddingBlock: theme.spacing( 0.75 ),
 	whiteSpace: 'nowrap',
 	justifyContent: 'center',
 	borderRadius: 4,
@@ -152,6 +168,7 @@ export const CollapsedHeaderContainer = styled( Box )( ( { theme } ) => ( {
 	height: 80,
 	marginLeft: theme.spacing( 2 ),
 	marginRight: theme.spacing( 2 ),
+	marginBottom: 0,
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 } ) );
 
