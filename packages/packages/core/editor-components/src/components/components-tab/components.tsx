@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useLayoutEffect } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { Stack } from '@elementor/ui';
+import { Box, Stack } from '@elementor/ui';
 
 import { useComponents } from '../../hooks/use-components';
 import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
@@ -61,10 +61,14 @@ const ComponentsContent = () => {
 	useFullHeightPanel();
 
 	return (
-		<Stack justifyContent="space-between" sx={ { flex: 1, minHeight: 0 } }>
+		<Stack sx={ { flex: 1, minHeight: 0 } }>
 			{ hasComponents && <ComponentSearch /> }
 			<ComponentsList />
-			{ showProNotification && ( isOutdated ? <ComponentsUpdateNotification /> : <ComponentsProNotification /> ) }
+			{ showProNotification && (
+				<Box sx={ { mt: 'auto' } }>
+					{ isOutdated ? <ComponentsUpdateNotification /> : <ComponentsProNotification /> }
+				</Box>
+			) }
 		</Stack>
 	);
 };

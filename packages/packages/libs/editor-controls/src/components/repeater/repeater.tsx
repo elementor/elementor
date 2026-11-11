@@ -101,6 +101,7 @@ type BaseProps< T > = {
 	showRemove?: boolean;
 	openItem?: number;
 	adornment?: React.FC;
+	headerActions?: React.ReactNode;
 };
 
 type SortableProps< T > = BaseProps< T > & {
@@ -132,6 +133,7 @@ export const Repeater = < T, >( {
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 	isSortable = true,
 	adornment = ControlAdornments,
+	headerActions,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
@@ -229,6 +231,7 @@ export const Repeater = < T, >( {
 	return (
 		<SectionContent gap={ 2 }>
 			<RepeaterHeader label={ label } adornment={ adornment }>
+				{ headerActions }
 				{ shouldShowInfotip ? (
 					<Infotip
 						placement="right"

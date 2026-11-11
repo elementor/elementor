@@ -44,6 +44,35 @@ describe( 'Repeater', () => {
 		expect( screen.queryByText( 'Item label' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should render header actions next to the add button', () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: () => <span>Content</span>,
+			initialValues: {
+				$$type: 'example',
+				value: 'Hello World',
+			},
+			getId: ( { index }: { index: number } ) => `item-${ index }`,
+		};
+
+		// Act.
+		renderWithTheme(
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ [] }
+				setValues={ jest.fn() }
+				headerActions={ <button>Header action</button> }
+			/>
+		);
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Header action' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'should render the repeater with initial item, and pass the value to its components', () => {
 		// Arrange.
 		const Icon = ( { value }: { value: { value: string } } ) => <span>Item Icon - { value.value }</span>;
