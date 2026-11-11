@@ -1,7 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { PassingTable } from 'elementor/modules/agents/assets/js/admin/scanner/components/passing-table';
-import { STAGE_REACH } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
+import { SCAN_SOURCE_URL, STAGE_REACH } from 'elementor/modules/agents/assets/js/admin/scanner/scanner-constants';
+
+const expectOraAttribution = () => {
+	expect( screen.getByText( 'Powered by' ) ).toBeTruthy();
+	expect( screen.getByRole( 'link', { name: 'Ora' } ).getAttribute( 'href' ) ).toBe( SCAN_SOURCE_URL );
+};
 
 const getCheck = ( overrides = {} ) => ( {
 	id: 'sitemap',
@@ -48,6 +53,22 @@ describe( 'PassingTable', () => {
 		expect( screen.getByText( 'Sitemaps help agents.' ) ).toBeTruthy();
 		expect( screen.getByText( 'What we found' ) ).toBeTruthy();
 		expect( screen.getByText( 'Found sitemap.xml' ) ).toBeTruthy();
+	} );
+
+	it( 'shows Ora attribution when there are no passed checks', () => {
+		// Arrange
+		render( <PassingTable checks={ [] } /> );
+
+		// Assert
+		expectOraAttribution();
+	} );
+
+	it( 'shows Ora attribution below the passed checks table', () => {
+		// Arrange
+		render( <PassingTable checks={ [ getCheck() ] } /> );
+
+		// Assert
+		expectOraAttribution();
 	} );
 
 	it( 'hides what we found when the evidence is empty', () => {
