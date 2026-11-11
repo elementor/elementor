@@ -56,7 +56,11 @@ export function Section( {
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 					{ titleActions && (
-						<Stack direction="row" alignItems="center" onClick={ ( event: React.MouseEvent ) => event.stopPropagation() }>
+						<Stack
+							direction="row"
+							alignItems="center"
+							onClick={ ( event: React.MouseEvent ) => event.stopPropagation() }
+						>
 							{ titleActions }
 						</Stack>
 					) }

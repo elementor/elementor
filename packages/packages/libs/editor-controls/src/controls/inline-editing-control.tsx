@@ -115,7 +115,8 @@ export const InlineEditingControl = createControl(
 			</ControlActions>
 		);
 
-		const hasThirdPartyHeaderActions = Boolean( elementId ) && hasExternalControlHeaderInjections( headerInjections );
+		const hasThirdPartyHeaderActions =
+			Boolean( elementId ) && hasExternalControlHeaderInjections( headerInjections );
 
 		if ( ! label && ! promotion && ! hasThirdPartyHeaderActions ) {
 			return editorField;

@@ -4,7 +4,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Section } from '../section';
 
 jest.mock( '../../hooks/use-state-by-element', () => ( {
-	useStateByElement: ( _key: string, initialValue: boolean ) => jest.requireActual( 'react' ).useState( initialValue ),
+	useStateByElement: ( _key: string, initialValue: boolean ) =>
+		jest.requireActual( 'react' ).useState( initialValue ),
 } ) );
 
 const SECTION_TITLE = 'Typography';

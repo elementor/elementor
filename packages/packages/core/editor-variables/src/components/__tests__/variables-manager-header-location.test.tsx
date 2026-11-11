@@ -2,10 +2,7 @@ import * as React from 'react';
 import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { render, screen } from '@testing-library/react';
 
-import {
-	injectIntoVariablesManagerHeader,
-	VariablesManagerHeaderSlot,
-} from '../variables-manager-header-location';
+import { injectIntoVariablesManagerHeader, VariablesManagerHeaderSlot } from '../variables-manager-header-location';
 
 describe( 'variables manager header location', () => {
 	afterEach( () => {

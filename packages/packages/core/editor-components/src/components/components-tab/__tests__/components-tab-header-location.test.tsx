@@ -2,10 +2,7 @@ import * as React from 'react';
 import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { render, screen } from '@testing-library/react';
 
-import {
-	ComponentsTabHeaderSlot,
-	injectIntoComponentsTabHeader,
-} from '../components-tab-header-location';
+import { ComponentsTabHeaderSlot, injectIntoComponentsTabHeader } from '../components-tab-header-location';
 
 describe( 'components tab header location', () => {
 	afterEach( () => {

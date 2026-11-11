@@ -3,8 +3,8 @@ import { __flushAllInjections as flushAllInjections } from '@elementor/locations
 import { render, screen } from '@testing-library/react';
 
 import {
-	CustomCssHeaderSlot,
 	type CustomCssHeaderProps,
+	CustomCssHeaderSlot,
 	injectIntoCustomCssHeader,
 } from '../custom-css-header-location';
 
