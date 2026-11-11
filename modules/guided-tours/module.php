@@ -113,7 +113,9 @@ class Module extends BaseModule {
 			'adminUrl' => admin_url(),
 			'context' => $context,
 			'i18n' => [
+				'done' => esc_html__( 'Done', 'elementor' ),
 				'next' => esc_html__( 'Next', 'elementor' ),
+				'previous' => esc_html__( 'Previous', 'elementor' ),
 				/* translators: 1: Current step number, 2: Total steps in the tour. */
 				'progress' => esc_html__( '%1$s of %2$s', 'elementor' ),
 			],
@@ -140,7 +142,7 @@ class Module extends BaseModule {
 		if ( empty( $progress['step_id'] ) ) {
 			$first_step = $steps[0];
 
-			return $screen_id === ( $first_step['screen'] ?? '' ) ? $first_step : [];
+			return ( $first_step['screen'] ?? '' ) === $screen_id ? $first_step : [];
 		}
 
 		$progress_index = null;
@@ -152,7 +154,7 @@ class Module extends BaseModule {
 
 			$progress_index = $index;
 
-			if ( $screen_id === ( $step['screen'] ?? '' ) ) {
+			if ( ( $step['screen'] ?? '' ) === $screen_id ) {
 				return $step;
 			}
 
@@ -164,7 +166,7 @@ class Module extends BaseModule {
 		}
 
 		foreach ( array_slice( $steps, $progress_index + 1 ) as $step ) {
-			if ( $screen_id === ( $step['screen'] ?? '' ) ) {
+			if ( ( $step['screen'] ?? '' ) === $screen_id ) {
 				return $step;
 			}
 		}

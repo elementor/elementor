@@ -51,7 +51,7 @@ class Test_Tours_Repository extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_get_eligible_tour__returns_tour_without_caching(): void {
+	public function test_get_eligible_tour__caches_cdn_responses(): void {
 		// Arrange
 		$repository = new Tours_Repository();
 
@@ -62,7 +62,7 @@ class Test_Tours_Repository extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( 'admin-navigation', $first_result['id'] );
 		$this->assertSame( $first_result, $second_result );
-		$this->assertCount( 4, $this->requests );
+		$this->assertCount( 2, $this->requests );
 	}
 
 	public function test_get_eligible_tour__returns_empty_when_index_is_inactive(): void {
@@ -118,6 +118,61 @@ class Test_Tours_Repository extends Elementor_Test_Base {
 			'wrong screen' => [ 'plugins', [ 'administrator' ] ],
 			'wrong role' => [ 'dashboard', [ 'editor' ] ],
 		];
+	}
+
+	/**
+	 * @dataProvider provide_next_urls
+	 */
+	public function test_get_eligible_tour__normalizes_next_url( string $next_url, ?string $expected ): void {
+		// Arrange
+		$tour = $this->get_tour();
+		$tour['steps'][0]['next_url'] = $next_url;
+		$this->responses[ EditorAssetsAPI::PRODUCTION_URL . '/tours/admin-navigation.json' ] = $tour;
+
+		// Act
+		$result = ( new Tours_Repository() )->get_eligible_tour( 'dashboard', [ 'administrator' ] );
+
+		// Assert
+		$this->assertSame( $expected, $result['steps'][0]['next_url'] ?? null );
+	}
+
+	public function provide_next_urls(): array {
+		return [
+			'admin script' => [ 'options-general.php', 'options-general.php' ],
+			'admin script with query' => [ 'admin.php?page=elementor-templates', 'admin.php?page=elementor-templates' ],
+			'parent directory' => [ '..', null ],
+			'current directory' => [ '.', null ],
+			'absolute url' => [ 'https://example.com/wp-admin/index.php', null ],
+		];
+	}
+
+	public function test_get_eligible_tour__keeps_valid_step_url_and_drops_invalid_one(): void {
+		// Arrange
+		$tour = $this->get_tour();
+		$tour['steps'][] = array_merge( $tour['steps'][0], [ 'id' => 'second', 'url' => 'admin.php?page=elementor-home' ] );
+		$tour['steps'][] = array_merge( $tour['steps'][0], [ 'id' => 'third', 'url' => '..' ] );
+		$this->responses[ EditorAssetsAPI::PRODUCTION_URL . '/tours/admin-navigation.json' ] = $tour;
+
+		// Act
+		$steps = ( new Tours_Repository() )->get_eligible_tour( 'dashboard', [ 'administrator' ] )['steps'];
+
+		// Assert
+		$this->assertArrayNotHasKey( 'url', $steps[0] );
+		$this->assertSame( 'admin.php?page=elementor-home', $steps[1]['url'] );
+		$this->assertArrayNotHasKey( 'url', $steps[2] );
+	}
+
+	public function test_get_eligible_tour__caches_failed_fetch(): void {
+		// Arrange
+		$this->responses = [];
+		$repository = new Tours_Repository();
+
+		// Act
+		$repository->get_eligible_tour( 'dashboard', [ 'administrator' ] );
+		$repository->get_eligible_tour( 'dashboard', [ 'administrator' ] );
+
+		// Assert
+		$this->assertCount( 1, $this->requests );
 	}
 
 	private function get_tour(): array {

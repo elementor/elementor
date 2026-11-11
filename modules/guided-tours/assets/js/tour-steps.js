@@ -7,6 +7,7 @@
  * @property {string}                        description Popover description.
  * @property {'top'|'right'|'bottom'|'left'} side        Popover placement.
  * @property {string}                        [next_url]  Optional admin-relative URL after Next.
+ * @property {string}                        [url]       Optional admin-relative URL of this step's screen, used by Previous.
  */
 
 /**
@@ -61,21 +62,33 @@ export const getStepsForScreen = ( steps, screenId ) => {
 	return steps.filter( ( step ) => step.screen === screenId );
 };
 
+const getPreviousStepUrl = ( steps, index ) => {
+	const previousStep = steps[ index - 1 ];
+	const linkingStep = steps[ index - 2 ];
+
+	if ( previousStep.url ) {
+		return previousStep.url;
+	}
+
+	if ( ! linkingStep?.next_url || linkingStep.screen === previousStep.screen ) {
+		return null;
+	}
+
+	return linkingStep.next_url;
+};
+
 export const getPreviousScreenTarget = ( tour, stepId ) => {
 	const steps = tour?.steps ?? [];
 	const index = steps.findIndex( ( step ) => step.id === stepId );
 	const previousStep = steps[ index - 1 ];
-	const linkingStep = steps[ index - 2 ];
 
-	if ( ! previousStep || previousStep.screen === steps[ index ].screen || ! linkingStep?.next_url ) {
+	if ( ! previousStep || previousStep.screen === steps[ index ].screen ) {
 		return null;
 	}
 
-	if ( linkingStep.screen === previousStep.screen ) {
-		return null;
-	}
+	const url = getPreviousStepUrl( steps, index );
 
-	return { stepId: previousStep.id, url: linkingStep.next_url };
+	return url ? { stepId: previousStep.id, url } : null;
 };
 
 /**

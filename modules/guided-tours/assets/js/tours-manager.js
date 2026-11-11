@@ -81,6 +81,9 @@ export class GuidedTours {
 		this.activeScreenSteps = tourSteps;
 		this.driver = this.driverFactory( {
 			allowClose: true,
+			doneBtnText: this.config.i18n?.done,
+			nextBtnText: this.config.i18n?.next,
+			prevBtnText: this.config.i18n?.previous,
 			showProgress: true,
 			skipMissingElement: true,
 			smoothScroll: true,

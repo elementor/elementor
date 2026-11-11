@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tours_Repository {
 	const INDEX_URL = EditorAssetsAPI::PRODUCTION_URL . '/tours/index.json';
 	const INDEX_ASSETS_PATH = 'tours/index.json';
+	const CACHE_KEY_PREFIX = 'elementor_guided_tours_';
+	const CACHE_EXPIRATION = DAY_IN_SECONDS;
+	const FAILED_FETCH_CACHE_EXPIRATION = 30 * MINUTE_IN_SECONDS;
 
 	private const ALLOWED_SIDES = [ 'top', 'right', 'bottom', 'left' ];
 
@@ -106,32 +109,34 @@ class Tours_Repository {
 			'id' => sanitize_key( $step['id'] ),
 			'screen' => sanitize_key( $step['screen'] ),
 			'selector' => sanitize_text_field( $step['selector'] ),
-			'title' => sanitize_text_field( $step['title'] ),
-			'description' => sanitize_text_field( $step['description'] ),
+			'title' => esc_html( sanitize_text_field( $step['title'] ) ),
+			'description' => esc_html( sanitize_text_field( $step['description'] ) ),
 			'side' => $step['side'],
 		];
 
-		$next_url = $this->normalize_next_url( $step['next_url'] ?? '' );
+		foreach ( [ 'next_url', 'url' ] as $url_key ) {
+			$admin_url = $this->normalize_admin_url( $step[ $url_key ] ?? '' );
 
-		if ( $next_url ) {
-			$normalized['next_url'] = $next_url;
+			if ( $admin_url ) {
+				$normalized[ $url_key ] = $admin_url;
+			}
 		}
 
 		return $normalized;
 	}
 
-	private function normalize_next_url( $next_url ): string {
-		if ( ! is_string( $next_url ) || '' === $next_url ) {
+	private function normalize_admin_url( $admin_url ): string {
+		if ( ! is_string( $admin_url ) || '' === $admin_url ) {
 			return '';
 		}
 
-		$next_url = sanitize_text_field( $next_url );
+		$admin_url = sanitize_text_field( $admin_url );
 
-		if ( ! preg_match( '/^[a-z0-9._\\-]+(\\?[a-z0-9_\\-]+=[a-z0-9_\\-]+(&[a-z0-9_\\-]+=[a-z0-9_\\-]+)*)?$/', $next_url ) ) {
+		if ( ! preg_match( '/^[a-z0-9_\\-]+\\.php(\\?[a-z0-9_\\-]+=[a-z0-9_\\-]+(&[a-z0-9_\\-]+=[a-z0-9_\\-]+)*)?$/', $admin_url ) ) {
 			return '';
 		}
 
-		return $next_url;
+		return $admin_url;
 	}
 
 	private function is_eligible( array $tour, string $screen_id, array $roles ): bool {
@@ -145,9 +150,19 @@ class Tours_Repository {
 	}
 
 	private function load_assets_json( string $assets_path ): array {
+		$cache_key = self::CACHE_KEY_PREFIX . md5( $assets_path );
+		$cached = get_transient( $cache_key );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
 		$url = EditorAssetsAPI::PRODUCTION_URL . '/' . ltrim( $assets_path, '/' );
 		$data = EditorAssetsAPI::do_safe_get_request( $url );
+		$data = is_array( $data ) ? $data : [];
 
-		return is_array( $data ) ? $data : [];
+		set_transient( $cache_key, $data, empty( $data ) ? self::FAILED_FETCH_CACHE_EXPIRATION : self::CACHE_EXPIRATION );
+
+		return $data;
 	}
 }
