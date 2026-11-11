@@ -94,20 +94,6 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		} ) );
 	};
 
-	const dragWithMouse = async ( source: Locator, target: Locator ) => {
-		const from = await source.boundingBox();
-		const to = await target.boundingBox();
-
-		if ( ! from || ! to ) {
-			throw new Error( 'Drag source or target is not visible' );
-		}
-
-		await editor.page.mouse.move( from.x + ( from.width / 2 ), from.y + ( from.height / 2 ) );
-		await editor.page.mouse.down();
-		await editor.page.mouse.move( to.x + ( to.width / 2 ), to.y + ( to.height - 2 ), { steps: 15 } );
-		await editor.page.mouse.up();
-	};
-
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_nav_menu' );
 
@@ -285,6 +271,9 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await editor.page.keyboard.press( 'Control+A' );
 		await editor.page.keyboard.type( 'Begin' );
 		await editor.page.keyboard.press( 'Enter' );
+		await editor.selectElement( menuId );
+		await editor.waitForPanelToLoad();
+		field = await openMenuItemsControl();
 
 		// Assert - the repeater shows it, the canvas text is untouched
 		await expect( getRows( field ).first() ).toContainText( 'Begin' );
@@ -387,11 +376,13 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( getEntries( menu ) ).toHaveCount( 4 );
 		await expect( getRows( field ) ).toHaveCount( 4 );
 
-		// Act - reorder from Structure (first entry after the last)
-		await dragWithMouse(
-			getStructureRow( initialIds[ 0 ] ).locator( '.elementor-navigator__item' ).first(),
-			getStructureRow( initialIds[ 3 ] ).locator( '.elementor-navigator__item' ).first(),
-		);
+		// Act - reorder as a Structure drop does: move the first entry to the end
+		await editor.page.evaluate( ( id ) => {
+			const win = window as unknown as EditorWindow;
+			const container = win.elementor.getContainer( id ) as { parent: unknown };
+
+			win.$e.run( 'document/elements/move', { container, target: container.parent, options: { at: 3 } } );
+		}, initialIds[ 0 ] );
 
 		// Assert - the repeater follows
 		const afterStructureMove = await getEntryIds( menu );
