@@ -280,7 +280,7 @@ export const VISUALLY_HIDDEN_SX = {
 	whiteSpace: 'nowrap',
 };
 
-export const SCAN_SOURCE_URL = 'https://ora.ai/docs';
+export const SCAN_SOURCE_URL = 'https://ora.ai/';
 
 export const sectionHeadingSx = {
 	fontSize: '15px',
