@@ -1,5 +1,4 @@
 import { Paper } from '@elementor/ui';
-import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
@@ -11,14 +10,10 @@ const HeaderSection = ( props ) => {
 			sx={ {
 				display: 'flex',
 				flexDirection: 'row',
-				justifyContent: 'space-between',
+				justifyContent: 'flex-end',
 				alignItems: 'center',
-				pt: 2.5,
 			} }
 		>
-			<Typography variant="h5" component="h1">
-				{ __( 'Quick Start', 'elementor' ) }
-			</Typography>
 			<Button
 				variant="contained"
 				size="medium"

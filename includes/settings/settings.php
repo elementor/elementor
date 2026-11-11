@@ -89,7 +89,10 @@ class Settings extends Settings_Page {
 	}
 
 	public function display_home_screen() {
+		echo '<div class="wrap">';
+		\Elementor\Modules\EditorOne\Classes\Admin_Page_Title::render( esc_html__( 'Quick start', 'elementor' ) );
 		echo '<div id="e-home-screen"></div>';
+		echo '</div>';
 	}
 
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {

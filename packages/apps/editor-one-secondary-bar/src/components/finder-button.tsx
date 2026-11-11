@@ -33,11 +33,15 @@ export function FinderButton( { showLeadingDivider = false }: Props ) {
 		>
 			<IconButton
 				aria-label={ __( 'Finder', 'elementor' ) }
+				disableRipple
 				onClick={ () => window.$e?.route?.( 'finder' ) }
 				sx={ {
 					width: '100%',
 					height: '100%',
 					borderRadius: 0,
+					'&:hover': {
+						backgroundColor: 'transparent',
+					},
 				} }
 			>
 				<SearchIcon fontSize="small" />

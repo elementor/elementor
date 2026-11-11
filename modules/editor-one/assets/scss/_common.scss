@@ -493,6 +493,13 @@ body:has(#editor-one-top-bar > *) {
 		order: -1;
 	}
 
+	#wpbody-content:has(#editor-one-secondary-bar):not(:has(#screen-meta-links)) {
+		> .wrap,
+		> #elementor-system-info {
+			margin-block-start: 48px;
+		}
+	}
+
 	.wrap > hr.wp-header-end {
 		margin-block: 20px 0;
 	}

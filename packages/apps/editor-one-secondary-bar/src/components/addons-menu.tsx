@@ -42,6 +42,7 @@ export function AddonsMenu( { addons }: Props ) {
 		<>
 			<Button
 				color="secondary"
+				disableRipple
 				endIcon={ <ChevronDownIcon sx={ { fontSize: 14 } } /> }
 				sx={ {
 					height: 48,
@@ -53,7 +54,11 @@ export function AddonsMenu( { addons }: Props ) {
 					color: 'text.primary',
 					fontWeight: 500,
 					bgcolor: popupState.isOpen ? 'action.hover' : 'transparent',
-					'&:hover, &[aria-expanded="true"]': {
+					'&:hover': {
+						bgcolor: 'transparent',
+						color: 'text.primary',
+					},
+					'&[aria-expanded="true"]': {
 						bgcolor: 'action.hover',
 						color: 'text.primary',
 					},
