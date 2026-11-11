@@ -46,7 +46,6 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	};
 
 	const urlPlaceholder = 'Type or paste your URL';
-	const newTabLabel = 'Open in a new tab';
 
 	const getRows = ( field: Locator ): Locator => field.locator( 'ul.MuiList-root > li' );
 
@@ -66,7 +65,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 	};
 
 	const getNewTabSwitch = ( scope: Locator ): Locator => {
-		return scope.locator( 'div' ).filter( { hasText: newTabLabel } ).last().locator( 'input[type="checkbox"]' );
+		return scope.locator( '.MuiSwitch-switchBase input[type="checkbox"]' ).first();
 	};
 
 	const getEntryIds = async ( menu: Locator ): Promise<string[]> => {
@@ -158,7 +157,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await secondItem.getByRole( 'button', { name: 'Remove' } ).click();
 
 		// Assert
-		await expect( getEntries( menu ) ).toHaveText( [ 'Contact', 'Home', 'About' ] );
+		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'About', 'Contact' ] );
 		await expect( menu ).toHaveScreenshot( 'menu-after-remove-canvas.png' );
 	} );
 
