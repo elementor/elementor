@@ -107,6 +107,13 @@ class Test_Widget_Definition_Schema extends TestCase {
 					return $definition;
 				},
 			],
+			'slot is not a boolean' => [
+				'icon-button.json',
+				function ( array $definition ) {
+					$definition['template']['elements'][0]['slot'] = 'yes';
+					return $definition;
+				},
+			],
 			'widget node without widgetType' => [
 				'icon-button.json',
 				function ( array $definition ) {

@@ -86,6 +86,10 @@
 				"elType": { "$ref": "#/definitions/elementTypeName" },
 				"widgetType": { "$ref": "#/definitions/elementTypeName" },
 				"part": { "$ref": "#/definitions/partName" },
+				"slot": {
+					"type": "boolean",
+					"description": "Open slot: the node's children are regular elements outside the widget's closed structure. Only on a container part below the root."
+				},
 				"settings": {
 					"type": "object",
 					"additionalProperties": { "$ref": "#/definitions/propValue" }

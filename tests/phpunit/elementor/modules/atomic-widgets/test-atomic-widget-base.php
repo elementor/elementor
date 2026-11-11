@@ -803,6 +803,45 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_get_data_for_save__keeps_slot_on_a_part() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'part' => 'tab_content',
+				'slot' => true,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertTrue( $data_for_save['slot'] );
+	}
+
+	/**
+	 * @dataProvider invalid_slot_provider
+	 */
+	public function test_get_data_for_save__drops_invalid_slot( array $element_data ) {
+		// Arrange.
+		$widget = $this->make_mock_widget( [ 'element_data' => $element_data ] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'slot', $data_for_save );
+	}
+
+	public function invalid_slot_provider(): array {
+		return [
+			'without a part' => [ [ 'slot' => true ] ],
+			'with an invalid part' => [ [ 'part' => 'Tab-Content', 'slot' => true ] ],
+			'string value' => [ [ 'part' => 'tab_content', 'slot' => 'true' ] ],
+			'false' => [ [ 'part' => 'tab_content', 'slot' => false ] ],
+		];
+	}
+
 	public function test_get_data_for_save__sanitizes_widget_values() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
