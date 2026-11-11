@@ -101,10 +101,14 @@ export default class Module extends elementorModules.editor.utils.Module {
 		const textControls = [ 'text', 'textarea' ];
 
 		if ( textControls.includes( aiOptions.type ) ) {
+			const context = this.getContextData( view, controlType );
+
 			behaviors.ai = {
 				behaviorClass: AiBehavior,
 				controlType,
 				type: aiOptions.type,
+				elementId: context.elementId,
+				controlName: context.controlName,
 				getControlValue: view.getControlValue.bind( view ),
 				setControlValue: ( value ) => {
 					if ( 'wysiwyg' === controlType ) {
@@ -118,7 +122,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				additionalOptions: {
 					defaultValue: view.options.model.get( 'default' ),
 				},
-				context: this.getContextData( view, controlType ),
+				context,
 			};
 		}
 

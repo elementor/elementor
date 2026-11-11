@@ -6,6 +6,7 @@ import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
 import { AIMediaGenerateApp } from '../media-library/components';
 import { RequestIdsProvider } from './context/requests-ids';
 import React from 'react';
+import { tryOpenAngieForTextControl } from './angie/open-angie-text';
 
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
@@ -65,6 +66,17 @@ export default class AiBehavior extends Marionette.Behavior {
 	onAiButtonClick( event ) {
 		event.stopPropagation();
 
+		const context = this.getOption( 'context' ) || {};
+
+		if ( tryOpenAngieForTextControl( {
+			type: this.getOption( 'type' ),
+			controlType: this.getOption( 'controlType' ) || context.controlType,
+			getControlValue: this.getOption( 'getControlValue' ),
+			context,
+		} ) ) {
+			return;
+		}
+
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 
 		const isRTL = elementorCommon.config.isRTL;
@@ -72,7 +84,7 @@ export default class AiBehavior extends Marionette.Behavior {
 		const rootElement = document.createElement( 'div' );
 		document.body.append( rootElement );
 
-		window.elementorAiCurrentContext = this.getOption( 'context' );
+		window.elementorAiCurrentContext = context;
 
 		const { unmount } = ReactUtils.render( this.getElementToRender( rootElement, colorScheme, isRTL ), rootElement );
 		this.unmount = unmount;
