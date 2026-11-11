@@ -17,7 +17,7 @@ export const tryOpenAngieForTextControl = ( {
 	context = {},
 	onFallback,
 } ) => {
-	if ( ! isAngieTextControlType( type ) || ! isAngieTextEnabled() ) {
+	if ( ! isAngieTextControlType( type ) || context.isRepeaterItem || ! isAngieTextEnabled() ) {
 		return false;
 	}
 
@@ -37,7 +37,13 @@ export const tryOpenAngieForTextControl = ( {
 		.catch( ( error ) => {
 			// eslint-disable-next-line no-console
 			console.error( 'Failed to open Angie for text control:', error );
-			onFallback?.();
+
+			try {
+				onFallback?.();
+			} catch ( fallbackError ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to open the AI modal fallback:', fallbackError );
+			}
 		} );
 
 	return true;

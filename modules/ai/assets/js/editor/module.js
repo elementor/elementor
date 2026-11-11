@@ -251,6 +251,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			controlName,
 			controlType,
 			controlValue: view.options.container.settings.get( controlName ),
+			isRepeaterItem: 'repeater' === view.options.container.type,
 		};
 	}
 

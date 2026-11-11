@@ -52,7 +52,7 @@ describe( 'tryOpenAngieForTextControl', () => {
 			mode: 'agent',
 		} );
 		expect( openAngie.mock.calls[ 0 ][ 0 ].prompt ).toContain( 'title' );
-		expect( openAngie.mock.calls[ 0 ][ 0 ].prompt ).toContain( 'Hello' );
+		expect( openAngie.mock.calls[ 0 ][ 0 ].prompt ).not.toContain( 'Hello' );
 	} );
 
 	it( 'falls back to the old modal when editor-angie is not loaded', () => {
@@ -82,6 +82,20 @@ describe( 'tryOpenAngieForTextControl', () => {
 			controlType: 'text',
 			getControlValue: () => 'Hello',
 			context: { elementId: 'abc123', controlName: 'title' },
+		} );
+
+		// Assert
+		expect( handled ).toBe( false );
+		expect( openAngie ).not.toHaveBeenCalled();
+	} );
+
+	it( 'falls back to the old modal for repeater items', () => {
+		// Act
+		const handled = tryOpenAngieForTextControl( {
+			type: 'text',
+			controlType: 'text',
+			getControlValue: () => 'Hello',
+			context: { elementId: 'row1', controlName: 'title', isRepeaterItem: true },
 		} );
 
 		// Assert
