@@ -10,6 +10,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
@@ -40,8 +42,14 @@ final class Composition_Compiler {
 
 	public const COMPONENT_PARENT_ID = 'component';
 
-	public static function make(): self {
-		return new self();
+	private ?Closed_Structure $closed_structure;
+
+	private function __construct( ?Closed_Structure $closed_structure ) {
+		$this->closed_structure = $closed_structure;
+	}
+
+	public static function make( ?Closed_Structure $closed_structure = null ): self {
+		return new self( $closed_structure );
 	}
 
 	/**
@@ -164,6 +172,7 @@ final class Composition_Compiler {
 			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
 			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
 			$this->tag_errors( 'elementor_unknown_type', $unknown_widget_tag_errors ),
+			$this->tag_errors( Closed_Structure::ERROR_CODE, $this->collect_closed_parent_errors( $document_tree, $parent_id ) ),
 		);
 
 		if ( empty( $errors ) ) {
@@ -187,6 +196,19 @@ final class Composition_Compiler {
 	 *
 	 * @return array<int, array{code: string, message: string}>
 	 */
+	/**
+	 * @return string[]
+	 */
+	private function collect_closed_parent_errors( array $document_tree, string $parent_id ): array {
+		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
+
+		if ( ! $closed_structure || ! $closed_structure->is_closed_target( $document_tree, $parent_id ) ) {
+			return [];
+		}
+
+		return [ $closed_structure->target_error_message( $parent_id ) ];
+	}
+
 	private function tag_errors( string $code, array $messages ): array {
 		return array_map(
 			fn ( $message ) => [

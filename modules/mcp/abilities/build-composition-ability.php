@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -27,9 +28,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 	const MODE_REPLACE_CHILDREN = 'replace_children';
 
 	private ?Document_Mutator $mutator;
+	private ?Closed_Structure $closed_structure;
 
-	public function __construct( ?Document_Mutator $mutator = null ) {
+	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
 		$this->mutator = $mutator;
+		$this->closed_structure = $closed_structure;
 	}
 
 	protected function get_ability_id(): string {
@@ -91,7 +94,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$elements_data = $document->get_elements_data();
-		$compiled = Composition_Compiler::make()->compile(
+		$compiled = Composition_Compiler::make( $this->closed_structure )->compile(
 			$input,
 			$document,
 			is_array( $elements_data ) ? $elements_data : [],

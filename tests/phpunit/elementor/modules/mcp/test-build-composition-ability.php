@@ -8,6 +8,7 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
@@ -1640,6 +1641,80 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
 		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
 		V3_Widget_Map_Registry::reset_instance();
+	}
+
+	/**
+	 * @dataProvider closed_parent_mode_provider
+	 */
+	public function test_execute__rejects_inserting_inside_a_widget( string $mode ) {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, $this->widget_with_slot_elements() );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="extra"/>',
+			'parent_id' => 'widget-root',
+			'mode' => $mode,
+		] );
+
+		// Assert.
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_widget_structure_closed', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function closed_parent_mode_provider(): array {
+		return [
+			'append' => [ 'append' ],
+			'replace children' => [ 'replace_children' ],
+		];
+	}
+
+	public function test_execute__allows_inserting_into_a_widget_slot() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, $this->widget_with_slot_elements() );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="extra"/>',
+			'parent_id' => 'widget-slot',
+		] );
+
+		// Assert.
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : '' );
+		$this->assertTrue( $result['success'] );
+	}
+
+	private function make_ability_with_closed_structure(): Build_Composition_Ability {
+		return new Build_Composition_Ability( null, ( new Composite_Widgets_Module() )->get_closed_structure() );
+	}
+
+	private function widget_with_slot_elements(): array {
+		return [
+			[
+				'id' => 'widget-root',
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'part' => 'root',
+				'widget' => [ 'id' => 'elementor/icon-button', 'version' => 1 ],
+				'elements' => [
+					[
+						'id' => 'widget-slot',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [],
+					],
+				],
+			],
+		];
 	}
 
 	private function given_document_with_elements( int $post_id, array $elements ): void {

@@ -23,5 +23,9 @@ trait Has_Widget_Markers {
 		if ( '' !== $part ) {
 			$raw_data[ Widget_Markers::PART_KEY ] = $part;
 		}
+
+		if ( '' !== $part && Widget_Markers::sanitize_slot( $this->get_data( Widget_Markers::SLOT_KEY ) ) ) {
+			$raw_data[ Widget_Markers::SLOT_KEY ] = true;
+		}
 	}
 }
