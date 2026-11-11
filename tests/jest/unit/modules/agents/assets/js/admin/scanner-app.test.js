@@ -21,10 +21,11 @@ jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
 	activateAgentsReady: jest.fn(),
 	applyCheckFix: jest.fn(),
 	runSiteScan: jest.fn(),
+	saveAgentReadySettings: jest.fn(),
 	undoCheckFix: jest.fn(),
 } ) );
 
-import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from 'elementor/modules/agents/assets/js/admin/api';
+import { activateAgentsReady, applyCheckFix, runSiteScan, saveAgentReadySettings, undoCheckFix } from 'elementor/modules/agents/assets/js/admin/api';
 
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 const SITE_DOMAIN = 'example.com';
@@ -88,7 +89,23 @@ const getLastReport = () => ( {
 
 const getFailedScanResult = () => toFailedScanResult( SCAN_FAILURE_REASON_BLOCKED );
 
-const activatedProps = { isActivated: true };
+const agentAccessOnConfigs = {
+	llmsConfig: { enabled: true },
+	markdownConfig: { enabled: true },
+	botAccessConfig: { enabled: true },
+	agentDiscoveryConfig: { enabled: false },
+	browserToolsConfig: { enabled: false },
+};
+
+const activatedProps = { isActivated: true, ...agentAccessOnConfigs };
+
+const agentAccessOffConfigs = {
+	llmsConfig: { enabled: false },
+	markdownConfig: { enabled: false },
+	botAccessConfig: { enabled: false },
+	agentDiscoveryConfig: { enabled: false },
+	browserToolsConfig: { enabled: false },
+};
 
 const renderScanner = ( props = {} ) => render( <ScannerApp siteDomain={ SITE_DOMAIN } agentAccessUrl={ AGENT_ACCESS_URL } { ...props } /> );
 
@@ -129,6 +146,7 @@ describe( 'Agent Ready scanner', () => {
 		runSiteScan.mockReset().mockImplementation( () => Promise.resolve( getMockScanResult() ) );
 		activateAgentsReady.mockReset().mockResolvedValue( undefined );
 		applyCheckFix.mockReset().mockResolvedValue( {} );
+		saveAgentReadySettings.mockReset().mockResolvedValue( {} );
 		undoCheckFix.mockReset().mockResolvedValue( {} );
 	} );
 
@@ -773,7 +791,74 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByRole( 'button', { name: 'Rescan' } ).textContent ).toBe( 'Rescan' );
 		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
 		expect( screen.getByRole( 'link', { name: 'Settings' } ).getAttribute( 'href' ) ).toBe( AGENT_ACCESS_URL );
+		expect( screen.queryByText( /You turned off agent readiness settings/ ) ).toBeNull();
 		expect( screen.getByText( 'JSON-LD structured data' ) ).toBeTruthy();
+	} );
+
+	it( 'shows the agent access off banner when modules are off but Agent Ready stays activated', () => {
+		// Arrange
+		renderScanner( { isActivated: true, lastReport: getLastReport(), ...agentAccessOffConfigs } );
+
+		// Assert
+		expect( screen.getByText( /You turned off agent readiness settings/ ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Rescan now' } ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Turn back on' } ) ).toBeTruthy();
+		expect( screen.queryByText( 'Agent Ready is on' ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Settings' } ) ).toBeNull();
+		expect( screen.queryByText( 'Prepare your site for agents' ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Turn settings on' } ) ).toBeNull();
+	} );
+
+	it( 'shows only the prepare banner when modules are off and Agent Ready was never activated', () => {
+		// Arrange
+		renderScanner( { lastReport: getLastReport(), ...agentAccessOffConfigs } );
+
+		// Assert
+		expect( screen.getByText( 'Prepare your site for agents' ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Turn settings on' } ) ).toBeTruthy();
+		expect( screen.queryByText( /You turned off agent readiness settings/ ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Turn back on' } ) ).toBeNull();
+	} );
+
+	it( 're-enables modules from the off banner when Agent Ready is already activated', async () => {
+		// Arrange
+		renderScanner( { isActivated: true, lastReport: getLastReport(), ...agentAccessOffConfigs } );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Turn back on' } ) );
+		await flushPendingSave();
+
+		// Assert
+		expect( saveAgentReadySettings ).toHaveBeenCalledTimes( 1 );
+		expect( activateAgentsReady ).not.toHaveBeenCalled();
+		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
+		expect( screen.queryByText( /You turned off agent readiness settings/ ) ).toBeNull();
+	} );
+
+	it( 'activates Agent Ready from the prepare banner when modules were off and it was never on', async () => {
+		// Arrange
+		renderScanner( { lastReport: getLastReport(), ...agentAccessOffConfigs } );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Turn settings on' } ) );
+		await advanceTimers( SCANNER_MOTION.ringActivatingMs );
+
+		// Assert
+		expect( activateAgentsReady ).toHaveBeenCalledTimes( 1 );
+		expect( saveAgentReadySettings ).not.toHaveBeenCalled();
+		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
+	} );
+
+	it( 'starts a rescan from the off banner', async () => {
+		// Arrange
+		renderScanner( { isActivated: true, lastReport: getLastReport(), ...agentAccessOffConfigs } );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan now' } ) );
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( runSiteScan ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'skips the prepare banner after a first scan when Agent Ready is already on', async () => {
@@ -907,8 +992,8 @@ describe( 'getScoreTier', () => {
 		// Assert
 		expect( getScoreTier( 30 ) ).toBe( SCORE_TIER_LOW );
 		expect( getScoreTier( 31 ) ).toBe( SCORE_TIER_MID );
-		expect( getScoreTier( 79 ) ).toBe( SCORE_TIER_MID );
-		expect( getScoreTier( 80 ) ).toBe( SCORE_TIER_HIGH );
+		expect( getScoreTier( 80 ) ).toBe( SCORE_TIER_MID );
+		expect( getScoreTier( 81 ) ).toBe( SCORE_TIER_HIGH );
 	} );
 } );
 
@@ -934,6 +1019,6 @@ describe( 'stage health', () => {
 		// Assert
 		expect( getStageHealthTier( { earned: 0, total: 6 } ) ).toBe( SCORE_TIER_LOW );
 		expect( getStageHealthTier( { earned: 3, total: 6 } ) ).toBe( SCORE_TIER_MID );
-		expect( getStageHealthTier( { earned: 4, total: 5 } ) ).toBe( SCORE_TIER_HIGH );
+		expect( getStageHealthTier( { earned: 5, total: 6 } ) ).toBe( SCORE_TIER_HIGH );
 	} );
 } );

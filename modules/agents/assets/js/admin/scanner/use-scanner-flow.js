@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { activateAgentsReady, applyCheckFix, runSiteScan, undoCheckFix } from '../api';
+import { activateAgentsReady, applyCheckFix, runSiteScan, saveAgentReadySettings, undoCheckFix } from '../api';
 import { getSaveErrorMessage } from '../hooks/get-save-error-message';
 import { canOpenAngie, openAngieWithPrompt } from './open-angie';
 import {
 	getInitialModuleEnabled,
 	getModuleUnavailableReason,
 	getToggleModuleKey,
+	hasAnyAgentModuleEnabled,
 	hasDirtyModuleChecks,
 	isAgentReadyModuleToggleDisabled,
 } from './scanner-check-settings';
@@ -122,6 +123,9 @@ export const useScannerFlow = ( {
 	const [ installCheck, setInstallCheck ] = useState( null );
 	const [ howToFixId, setHowToFixId ] = useState( null );
 	const [ savingCheckIds, setSavingCheckIds ] = useState( {} );
+	const [ isTurningAgentAccessOn, setIsTurningAgentAccessOn ] = useState( false );
+
+	const isAgentAccessOn = hasAnyAgentModuleEnabled( moduleEnabled );
 
 	useEffect( () => {
 		isMountedRef.current = true;
@@ -282,6 +286,65 @@ export const useScannerFlow = ( {
 		setRingDurationMs( SCANNER_MOTION.ringLandMs );
 		setView( SCANNER_STATE_FIXES );
 	}, [ isModuleToggleDisabled, moduleConfigs, runScan, view ] );
+
+	const enableAllToggleableModules = useCallback( () => {
+		const nextModuleEnabled = { ...moduleEnabledRef.current };
+
+		Object.keys( nextModuleEnabled ).forEach( ( moduleKey ) => {
+			if ( ! isModuleToggleDisabled( moduleKey ) ) {
+				nextModuleEnabled[ moduleKey ] = true;
+			}
+		} );
+
+		return nextModuleEnabled;
+	}, [ isModuleToggleDisabled ] );
+
+	const buildEnableAllModulesPatch = useCallback( () => {
+		const patch = {};
+
+		Object.keys( moduleEnabledRef.current ).forEach( ( moduleKey ) => {
+			if ( ! isModuleToggleDisabled( moduleKey ) ) {
+				patch[ moduleKey ] = { enabled: true };
+			}
+		} );
+
+		return patch;
+	}, [ isModuleToggleDisabled ] );
+
+	const turnAgentAccessBackOn = useCallback( async () => {
+		if ( ! isActivated ) {
+			await activate();
+			return;
+		}
+
+		setActionError( '' );
+		setIsTurningAgentAccessOn( true );
+
+		const patch = buildEnableAllModulesPatch();
+
+		try {
+			await saveAgentReadySettings( patch );
+		} catch ( error ) {
+			if ( isMountedRef.current ) {
+				setActionError( getSaveErrorMessage( error ) );
+			}
+			return;
+		} finally {
+			if ( isMountedRef.current ) {
+				setIsTurningAgentAccessOn( false );
+			}
+		}
+
+		if ( ! isMountedRef.current ) {
+			return;
+		}
+
+		const nextModuleEnabled = enableAllToggleableModules();
+
+		moduleEnabledRef.current = nextModuleEnabled;
+		setModuleEnabled( nextModuleEnabled );
+		setOpenIds( {} );
+	}, [ activate, buildEnableAllModulesPatch, enableAllToggleableModules, isActivated ] );
 
 	const toggleRow = useCallback( ( checkId ) => {
 		setOpenIds( ( current ) => ( current[ checkId ] ? withoutKey( current, checkId ) : { ...current, [ checkId ]: true } ) );
@@ -450,6 +513,8 @@ export const useScannerFlow = ( {
 		completedStepsCount,
 		scan,
 		isActivated,
+		isAgentAccessOn,
+		isTurningAgentAccessOn,
 		visibleChecks,
 		ringScore: getBaseScore( scan ),
 		ringDurationMs,
@@ -470,6 +535,7 @@ export const useScannerFlow = ( {
 		retryAt,
 		startScan,
 		activate,
+		turnAgentAccessBackOn,
 		toggleRow,
 		openRow,
 		openHowToFix,
