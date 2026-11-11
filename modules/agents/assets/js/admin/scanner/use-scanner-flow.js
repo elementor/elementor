@@ -244,8 +244,11 @@ export const useScannerFlow = ( {
 		setRingDurationMs( SCANNER_MOTION.ringActivatingMs );
 		setView( SCANNER_STATE_ACTIVATING );
 
+		// The first-scan banner hands over to the rescan skeleton, so it skips the activation animation.
+		const activationMinMs = SCANNER_STATE_FIRST_CHECK === previousView ? 0 : SCANNER_MOTION.ringActivatingMs;
+
 		try {
-			await Promise.all( [ activateAgentsReady(), wait( SCANNER_MOTION.ringActivatingMs ) ] );
+			await Promise.all( [ activateAgentsReady(), wait( activationMinMs ) ] );
 		} catch ( error ) {
 			if ( isMountedRef.current ) {
 				setActionError( getSaveErrorMessage( error ) );

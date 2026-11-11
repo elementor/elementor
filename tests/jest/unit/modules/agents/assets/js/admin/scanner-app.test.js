@@ -219,7 +219,7 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByRole( 'button', { name: 'Turning on' } ).disabled ).toBe( true );
 
-		await advanceTimers( SCANNER_MOTION.ringActivatingMs );
+		await advanceTimers( 0 );
 
 		expect( activateAgentsReady ).toHaveBeenCalledTimes( 1 );
 		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
