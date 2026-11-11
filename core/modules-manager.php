@@ -142,6 +142,7 @@ class Modules_Manager {
 			'feedback',
 			'widget-creation',
 			'editor-one',
+			'guided-tours',
 			'markdown-render',
 			'agents',
 			'elementor-capabilities-mcp',
