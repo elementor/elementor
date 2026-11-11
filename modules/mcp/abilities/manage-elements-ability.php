@@ -134,7 +134,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								],
 								'style' => [
 									'type' => 'string',
-									'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour.',
+									'description' => 'update only: plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks (e.g. @media(--mobile)). Merged with existing local style variants. Use style_apply_mode to control merge behaviour. Use `var(--label)` for brand colors, fonts and repeated sizes.',
 								],
 								'style_apply_mode' => [
 									'type' => 'string',

@@ -48,7 +48,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Classes', 'elementor' ),
-			__( 'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix.', 'elementor' ),
+			__( 'Manage V4 global CSS classes on the active kit. Bulk create, update, or delete using raw CSS declarations (up to 50 operations). Duplicate labels are auto-renamed with a DUP_ prefix. Create a class only for styles shared by 2+ elements, built on variables rather than raw values. Put `&:hover` and `@media(--…)` blocks inside the class; hover also applies on keyboard focus. Editing a class restyles every element that uses it, site-wide: before changing a class that existed before this conversation, tell the user, or add a variant (`button--large`) instead. When classes conflict, the one earlier in the kit order wins; change it with `elementor/reorder-classes`.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -87,7 +87,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 									'enum' => [ 'create', 'update', 'delete' ],
 								],
 								'id' => [ 'type' => 'string' ],
-								'label' => [ 'type' => 'string' ],
+								'label' => [
+									'type' => 'string',
+									'description' => 'Class name, one of four kinds. Component: `card`, `button`. Part, `{component}-{part}`: `card-title`, `card-image`. Variant, `{component}--{variant}`, applied together with its base: `button` + `button--primary`, `card--raised`. Layout utility, `u-{name}`: `u-row`, `u-gap-md`, `u-grid-3`. States like hover go inside the class, never in a name. Use full words (`button`, not `btn`). Never name by look (`button-gold`), HTML tag (`h2`) or brand (`hw-`). Follow the kit\'s own convention if it has one. 2–50 characters, starts with a letter, only letters, digits, `-` and `_`; can\'t start with `--`; `container` is reserved.',
+								],
 								'css' => [
 									'type' => 'string',
 									'description' => 'Plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. In patch mode: "prop: null" removes that prop; "all: null" wipes the variant.',
