@@ -13,7 +13,7 @@ class Tours_Repository {
 	const INDEX_ASSETS_PATH = 'tours/index.json';
 	const CACHE_KEY_PREFIX = 'elementor_guided_tours_';
 	const CACHE_EXPIRATION = DAY_IN_SECONDS;
-	const FAILED_FETCH_CACHE_EXPIRATION = 30 * MINUTE_IN_SECONDS;
+	const FAILED_FETCH_CACHE_EXPIRATION = 12 * HOUR_IN_SECONDS;
 
 	private const ALLOWED_SIDES = [ 'top', 'right', 'bottom', 'left' ];
 
@@ -161,7 +161,9 @@ class Tours_Repository {
 		$data = EditorAssetsAPI::do_safe_get_request( $url );
 		$data = is_array( $data ) ? $data : [];
 
-		set_transient( $cache_key, $data, empty( $data ) ? self::FAILED_FETCH_CACHE_EXPIRATION : self::CACHE_EXPIRATION );
+		$failed_fetch_expiration = (int) apply_filters( 'elementor/guided_tours/failed_cache_ttl', self::FAILED_FETCH_CACHE_EXPIRATION );
+
+		set_transient( $cache_key, $data, empty( $data ) ? $failed_fetch_expiration : self::CACHE_EXPIRATION );
 
 		return $data;
 	}
