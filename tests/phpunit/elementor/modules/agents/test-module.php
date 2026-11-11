@@ -693,6 +693,27 @@ class Test_Module extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_activate_agent_ready__clears_scanner_cooldown_on_first_activation_only() {
+		// Arrange
+		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
+		set_transient( \Elementor\Modules\Agents\Classes\Scanner_Report_Store::TRANSIENT_RETRY_AT, time() + 300, 300 );
+
+		// Act
+		$this->module->activate_agent_ready();
+
+		// Assert
+		$this->assertFalse( get_transient( \Elementor\Modules\Agents\Classes\Scanner_Report_Store::TRANSIENT_RETRY_AT ) );
+
+		// Arrange
+		set_transient( \Elementor\Modules\Agents\Classes\Scanner_Report_Store::TRANSIENT_RETRY_AT, time() + 300, 300 );
+
+		// Act
+		$this->module->activate_agent_ready();
+
+		// Assert
+		$this->assertNotFalse( get_transient( \Elementor\Modules\Agents\Classes\Scanner_Report_Store::TRANSIENT_RETRY_AT ) );
+	}
+
 	public function test_ajax_activate__skips_unavailable_modules() {
 		// Arrange
 		delete_option( \Elementor\Modules\Agents\Agent_Ready_Settings::OPTION );
