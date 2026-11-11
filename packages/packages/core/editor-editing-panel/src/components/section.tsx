@@ -55,7 +55,11 @@ export function Section( {
 						sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
-					{ titleActions }
+					{ titleActions && (
+						<Stack direction="row" alignItems="center" onClick={ ( event: React.MouseEvent ) => event.stopPropagation() }>
+							{ titleActions }
+						</Stack>
+					) }
 				</Stack>
 				{ action?.component }
 				<CollapseIcon
