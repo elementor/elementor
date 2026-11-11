@@ -1,11 +1,13 @@
 import { register } from '@elementor/frontend-handlers';
-import { Alpine } from '@elementor/alpinejs';
+import { Alpine, refreshTree } from '@elementor/alpinejs';
 import { TOGGLE_CLOSED_ELEMENT_TYPE, TOGGLE_OPEN_ELEMENT_TYPE } from './utils';
 
 register( {
 	elementType: 'e-menu',
 	id: 'e-menu-preview-handler',
 	callback: ( { element, signal } ) => {
+		refreshTree( element );
+
 		window?.parent.addEventListener( 'elementor/navigator/item/click', ( event ) => {
 			const { id, type } = event.detail;
 
