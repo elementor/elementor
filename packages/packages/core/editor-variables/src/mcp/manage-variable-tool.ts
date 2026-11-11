@@ -3,29 +3,29 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { isProActive } from '@elementor/utils';
 
-import { service } from '../service';
+import {
+	applyPlannedVariableChange,
+	getPendingAbilityOperations,
+	syncPendingVariableChangesWithDocumentSave,
+} from './pending-variable-changes';
 import { MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-global-variable';
+const MAX_OPERATIONS_PER_REQUEST = 50;
 
 type ManageVariableResult = {
 	status: 'ok' | 'error';
+	id?: string;
+	type?: string;
+	label?: string;
 	message?: string;
 };
 
 type ManageVariableResponse = {
 	status: string;
 	results?: ManageVariableResult[];
-};
-
-type ManageVariableParams = {
-	action: 'create' | 'update' | 'delete';
-	id?: string;
-	type: string;
-	label: string;
-	value?: string;
 };
 
 const VARIABLE_TYPES = {
@@ -37,6 +37,8 @@ const VARIABLE_TYPES = {
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
+
+	syncPendingVariableChangesWithDocumentSave();
 	const RUNTIME_ALLOWED_VARIABLE_TYPES = isProActive()
 		? ( [ VARIABLE_TYPES.COLOR, VARIABLE_TYPES.FONT, VARIABLE_TYPES.SIZE, VARIABLE_TYPES.CUSTOM_SIZE ] as const )
 		: ( [ VARIABLE_TYPES.COLOR, VARIABLE_TYPES.FONT ] as const );
@@ -81,7 +83,7 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 		},
 		outputSchema: {
 			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
-			message: z.string().optional().describe( 'Error details if status is error' ),
+			id: z.string().describe( 'Id of the affected variable — use it for subsequent update/delete calls.' ),
 		},
 		requiredResources: [
 			{ uri: MANAGE_VARIABLES_GUIDE_URI, description: 'Full guide for variable types, naming rules, and usage' },
@@ -92,41 +94,38 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
+			const pendingOperations = getPendingAbilityOperations();
+
+			if ( pendingOperations.length >= MAX_OPERATIONS_PER_REQUEST ) {
+				throw new Error( 'Too many unsaved variable changes. Save the page, then try again.' );
+			}
+
 			const { data } = await httpService().post< HttpResponse< ManageVariableResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: { operations: [ params ], dry_run: true },
+				input: { operations: [ ...pendingOperations, params ], dry_run: true },
 			} );
 
-			const result = data.data.results?.[ 0 ];
+			const result = data.data.results?.[ pendingOperations.length ];
 
 			if ( result?.status !== 'ok' ) {
 				throw new Error( result?.message || 'Unexpected response from server' );
 			}
 
-			await applyInEditor( params );
+			const id = result.id ?? params.id;
 
-			return { status: 'ok' };
+			if ( ! id ) {
+				throw new Error( 'Variable id is missing from the response' );
+			}
+
+			applyPlannedVariableChange( {
+				action: params.action,
+				id,
+				type: result.type ?? params.type,
+				label: result.label ?? params.label,
+				value: params.value,
+			} );
+
+			return { status: 'ok' as const, id };
 		},
 	} );
-};
-
-const applyInEditor = ( { action, id, type, label, value = '' }: ManageVariableParams ) => {
-	const eventData = { executedBy: 'mcp_tool' } as const;
-
-	switch ( action ) {
-		case 'create':
-			return service.create( { type, label, value }, { eventData } );
-		case 'update':
-			return service.update( requireId( id ), { label, value }, { eventData } );
-		case 'delete':
-			return service.delete( requireId( id ) );
-	}
-};
-
-const requireId = ( id?: string ) => {
-	if ( ! id ) {
-		throw new Error( 'Variable id is required' );
-	}
-
-	return id;
 };

@@ -95,12 +95,18 @@ const applyInEditor = ( action: 'create' | 'update' | 'delete', result: ManageCl
 
 	switch ( action ) {
 		case 'create':
-			create?.( label ?? '', variants, id );
+			if ( ! label ) {
+				throw new Error( 'Planned class is incomplete in the response' );
+			}
+
+			create?.( label, variants, id );
 			break;
 		case 'update':
-			if ( label && type && variants ) {
-				update?.( { id, label, type, variants } );
+			if ( ! label || ! type || ! variants ) {
+				throw new Error( 'Planned class is incomplete in the response' );
 			}
+
+			update?.( { id, label, type, variants } );
 			break;
 		case 'delete':
 			remove?.( id );

@@ -174,6 +174,45 @@ class Test_Manage_Variable_Ability extends TestCase {
 		$this->assertSame( 'abc', $result['results'][0]['id'] );
 	}
 
+	public function test_create__passes_planned_id_to_service() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				$this->callback( function ( $operations ) {
+					return 'e-gv-a1b2c3d' === ( $operations[0]['variable']['id'] ?? null );
+				} ),
+				true,
+				false
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'e-gv-a1b2c3d',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$result = $this->make_ability( $service )->execute( [
+			'operations' => [
+				[
+					'action' => 'create',
+					'id' => 'e-gv-a1b2c3d',
+					'type' => 'global-color-variable',
+					'label' => 'brand',
+					'value' => '#000',
+				],
+			],
+		] );
+
+		$this->assertSame( 'e-gv-a1b2c3d', $result['results'][0]['id'] );
+	}
+
 	public function test_dry_run__is_advertised_in_input_schema() {
 		$ability = $this->make_ability();
 

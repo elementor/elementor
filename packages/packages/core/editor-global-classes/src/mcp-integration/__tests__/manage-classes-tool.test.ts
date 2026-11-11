@@ -134,6 +134,20 @@ describe( 'manage-classes-tool', () => {
 		} );
 	} );
 
+	it( 'throws instead of skipping when the planned update is incomplete', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResult( { status: 'ok', action: 'update', id: 'g-abc1234', label: 'hero-heading' } )
+		);
+		const { registeredTool } = createMockRegistry();
+
+		// Act & Assert.
+		await expect(
+			registeredTool.handler( { action: 'update', id: 'g-abc1234', css: 'color: #ffffff;' } )
+		).rejects.toThrow( 'Planned class is incomplete in the response' );
+		expect( globalClassesStylesProvider.actions.update ).not.toHaveBeenCalled();
+	} );
+
 	it( 'deletes the class resolved by the server, even when only a label was given', async () => {
 		// Arrange.
 		httpMock.post.mockResolvedValue(

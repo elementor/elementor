@@ -27,6 +27,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Variables_Service $service;
+	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Variables_Service $service = null ) {
 		$this->service = $service;
@@ -65,7 +66,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				'properties' => [
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50). Each item requires action; create needs type/label/value, update needs id/label/value, delete needs id.',
+						'description' => 'Bulk operations (1–50). Each item requires action; create needs type/label/value (and may pass an id planned by an earlier dry run), update needs id/label/value, delete needs id.',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action' ],
@@ -92,6 +93,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
+		$this->is_dry_run_execution = self::is_dry_run( $input );
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
@@ -123,7 +125,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		$response = $this->handle_bulk( $operations, self::is_dry_run( $input ) );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
 		if ( is_wp_error( $response ) ) {
 			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, $response );
 		} else {
@@ -226,13 +228,19 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
+				$variable = [
+					'type' => $type,
+					'label' => $label,
+					'value' => $value,
+				];
+
+				if ( is_string( $operation['id'] ?? null ) && '' !== $operation['id'] ) {
+					$variable['id'] = $operation['id'];
+				}
+
 				return [
 					'type' => 'create',
-					'variable' => [
-						'type' => $type,
-						'label' => $label,
-						'value' => $value,
-					],
+					'variable' => $variable,
 				];
 
 			case 'update':
@@ -430,6 +438,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			'failed_operation_codes'  => $failed_codes,
 			'warning_count'           => 0,
 			'warning_types'           => [],
+			'dry_run'                 => $this->is_dry_run_execution,
 		];
 
 		if ( null !== $error_code ) {

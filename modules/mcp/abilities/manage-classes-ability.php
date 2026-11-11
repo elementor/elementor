@@ -35,6 +35,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	private ?Global_Classes_Repository $repository;
 	private ?Css_Converter $css_converter;
+	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Global_Classes_Repository $repository = null, ?Css_Converter $css_converter = null ) {
 		$this->repository = $repository;
@@ -109,6 +110,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
+		$this->is_dry_run_execution = self::is_dry_run( $input );
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
@@ -140,7 +142,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		$response = $this->handle_bulk( $operations, self::is_dry_run( $input ) );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
 		$this->emit_mcp_manage_classes_executed( $started_at, $operations, null, $response );
 		return $response;
 	}
@@ -731,6 +733,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			'variable_labels'            => $var_labels,
 			'warning_count'              => 0,
 			'warning_types'              => [],
+			'dry_run'                    => $this->is_dry_run_execution,
 		];
 
 		if ( null !== $mode_used ) {
