@@ -15,7 +15,7 @@ jest.mock( '../../../../contexts/element-context', () => ( {
 } ) );
 jest.mock( '../../../../components/settings-control', () => ( {
 	SettingsControl: ( { control }: { control: { value: { bind: string } } } ) => (
-		<div data-testid={ `settings-control-${ control.value.bind }` } />
+		<div role="group" aria-label={ `settings-control-${ control.value.bind }` } />
 	),
 } ) );
 jest.mock( '../use-entry-item' );
@@ -70,7 +70,7 @@ describe( '<MenuItemsControl />', () => {
 
 		// Assert
 		expect( await screen.findByText( 'Item name' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'settings-control-link' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'group', { name: 'settings-control-link' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should offer removing entries only while more than one remains', () => {
