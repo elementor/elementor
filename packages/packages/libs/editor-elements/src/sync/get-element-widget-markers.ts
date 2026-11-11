@@ -31,3 +31,7 @@ export function getElementPart( elementId: ElementID ): string | null {
 
 	return result.success ? result.data : null;
 }
+
+export function isElementSlot( elementId: ElementID ): boolean {
+	return true === getContainer( elementId )?.model.get( 'slot' ) && null !== getElementPart( elementId );
+}
