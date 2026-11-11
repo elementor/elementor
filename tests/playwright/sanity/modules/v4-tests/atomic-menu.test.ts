@@ -226,7 +226,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		const popover = editor.page.locator( '.MuiPopover-paper' );
 
 		await expect( popover.getByText( 'Item name' ) ).toBeVisible();
-		await popover.getByRole( 'button', { name: 'Toggle link' } ).click( { timeout: 30000 } );
+		await popover.locator( '[aria-label="Toggle link"]' ).click( { timeout: 30000 } );
 
 		await popover.getByPlaceholder( 'Type or paste your URL' ).fill( 'https://example.com/home' );
 
@@ -292,7 +292,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Act - link and new tab from the repeater
 		popover = await openRowPopover( field, 0 );
-		await popover.getByRole( 'button', { name: 'Toggle link' } ).click();
+		await popover.locator( '[aria-label="Toggle link"]' ).click();
 		await popover.getByPlaceholder( urlPlaceholder ).fill( 'https://example.com/first' );
 		await getNewTabSwitch( popover ).check();
 		await closePopover();
