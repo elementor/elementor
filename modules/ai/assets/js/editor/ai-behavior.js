@@ -63,16 +63,17 @@ export default class AiBehavior extends Marionette.Behavior {
 		return pageTextContent.join( '\n' );
 	}
 
-	onAiButtonClick( event ) {
+	onAiButtonClick( event, { skipAngie = false } = {} ) {
 		event.stopPropagation();
 
 		const context = this.getOption( 'context' ) || {};
 
-		if ( tryOpenAngieForTextControl( {
+		if ( ! skipAngie && tryOpenAngieForTextControl( {
 			type: this.getOption( 'type' ),
 			controlType: this.getOption( 'controlType' ) || context.controlType,
 			getControlValue: this.getOption( 'getControlValue' ),
 			context,
+			onFallback: () => this.onAiButtonClick( event, { skipAngie: true } ),
 		} ) ) {
 			return;
 		}

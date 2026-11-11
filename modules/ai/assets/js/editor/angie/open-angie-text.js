@@ -3,7 +3,10 @@ import { buildAngieTextPrompt } from './text-prompts';
 const ANGIE_TEXT_CONTROL_TYPES = [ 'text', 'textarea' ];
 const AGENT_MODE = 'agent';
 
-export const isAngieTextEnabled = () => Boolean( window.elementorV2?.editorAngie?.openAngie );
+export const isAngieTextEnabled = () => Boolean(
+	window.ElementorAiConfig?.is_angie_text_enabled &&
+	window.elementorV2?.editorAngie?.openAngie,
+);
 
 export const isAngieTextControlType = ( type ) => ANGIE_TEXT_CONTROL_TYPES.includes( type );
 
@@ -12,17 +15,13 @@ export const tryOpenAngieForTextControl = ( {
 	controlType,
 	getControlValue,
 	context = {},
+	onFallback,
 } ) => {
-	if ( ! isAngieTextControlType( type ) ) {
+	if ( ! isAngieTextControlType( type ) || ! isAngieTextEnabled() ) {
 		return false;
 	}
 
-	const editorAngie = window.elementorV2?.editorAngie;
-	const openAngie = editorAngie?.openAngie;
-
-	if ( ! openAngie ) {
-		return false;
-	}
+	const editorAngie = window.elementorV2.editorAngie;
 
 	const prompt = buildAngieTextPrompt( {
 		elementId: context.elementId,
@@ -33,10 +32,13 @@ export const tryOpenAngieForTextControl = ( {
 
 	const mode = editorAngie.AngieInteractionMode?.AGENT ?? AGENT_MODE;
 
-	Promise.resolve( openAngie( { prompt, mode } ) ).catch( ( error ) => {
-		// eslint-disable-next-line no-console
-		console.error( 'Failed to open Angie for text control:', error );
-	} );
+	Promise.resolve()
+		.then( () => editorAngie.openAngie( { prompt, mode } ) )
+		.catch( ( error ) => {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to open Angie for text control:', error );
+			onFallback?.();
+		} );
 
 	return true;
 };

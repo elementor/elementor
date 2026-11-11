@@ -37,13 +37,21 @@ export type TextControlToolParams = {
 };
 
 const getElementor = () =>
-	( window as unknown as { elementor?: {
-		getContainer?: ( id: string ) => ElementorContainer | null | undefined;
-		helpers?: { isAtomicWidget?: ( model: unknown ) => boolean };
-	} } ).elementor;
+	(
+		window as unknown as {
+			elementor?: {
+				getContainer?: ( id: string ) => ElementorContainer | null | undefined;
+				helpers?: { isAtomicWidget?: ( model: unknown ) => boolean };
+			};
+		}
+	 ).elementor;
 
 const getCommands = () =>
-	( window as unknown as { $e?: { run?: ( command: string, args?: Record< string, unknown > ) => Promise< unknown > | unknown } } ).$e;
+	(
+		window as unknown as {
+			$e?: { run?: ( command: string, args?: Record< string, unknown > ) => Promise< unknown > | unknown };
+		}
+	 ).$e;
 
 const isAllowedControlType = ( type: string | undefined ): type is AllowedControlType =>
 	Boolean( type && ( ALLOWED_CONTROL_TYPES as readonly string[] ).includes( type ) );
@@ -73,7 +81,9 @@ export const resolveTextControl = ( elementId: string, controlName: string ) => 
 
 	if ( ! isAllowedControlType( control.type ) ) {
 		throw new Error(
-			`Control "${ controlName }" type "${ control.type }" is not a V3 text control. Allowed: ${ ALLOWED_CONTROL_TYPES.join( ', ' ) }.`
+			`Control "${ controlName }" type "${
+				control.type
+			}" is not a V3 text control. Allowed: ${ ALLOWED_CONTROL_TYPES.join( ', ' ) }.`
 		);
 	}
 
@@ -122,7 +132,13 @@ export const setTextControlValue = async ( {
 	const { container, controlType } = resolveTextControl( elementId, controlName );
 	const normalizedValue = normalizeValueForControl( controlType, value );
 
-	await getCommands()?.run?.( 'document/elements/settings', {
+	const run = getCommands()?.run;
+
+	if ( ! run ) {
+		throw new Error( 'Elementor commands API is not available.' );
+	}
+
+	await run( 'document/elements/settings', {
 		container,
 		settings: {
 			[ controlName ]: normalizedValue,
