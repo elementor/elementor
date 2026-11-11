@@ -19,7 +19,7 @@ export const useEntryItem = ( entryId: ElementID ): EntryItem => {
 
 			return {
 				itemId: item?.id ?? null,
-				settings: ( item?.settings?.toJSON( { remove: [ 'default' ] } ) ?? {} ) as EntryItem[ 'settings' ],
+				settings: item ? getEntrySettings( item.id ) : {},
 			};
 		},
 		[ entryId ]

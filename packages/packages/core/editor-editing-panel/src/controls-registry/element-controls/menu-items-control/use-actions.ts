@@ -23,7 +23,18 @@ export const MENU_ITEM_ELEMENT_TYPE = 'e-menu-item';
 const MIN_ENTRIES = 1;
 const PARAGRAPH_WIDGET_TYPE = 'e-paragraph';
 
-const getEntryTitle = () => __( 'Menu item', 'elementor' );
+const getEntryTitle = ( existingTitles: string[] ) => {
+	const taken = new Set( existingTitles );
+	let number = existingTitles.length + 1;
+
+	while ( taken.has( formatEntryTitle( number ) ) ) {
+		number++;
+	}
+
+	return formatEntryTitle( number );
+};
+
+const formatEntryTitle = ( number: number ) => __( 'Menu item %s', 'elementor' ).replace( '%s', String( number ) );
 
 const buildEntryModel = ( title: string ): V1ElementData => ( {
 	elType: MENU_ENTRY_ELEMENT_TYPE,
@@ -57,13 +68,19 @@ export const useActions = () => {
 			throw new Error( 'Menu items container not found' );
 		}
 
+		const titles = ( menuItems.children ?? [] ).map( ( child ) => child.model.get( 'editor_settings' )?.title ?? '' );
+
 		items.forEach( () => {
+			const title = getEntryTitle( titles );
+
+			titles.push( title );
+
 			createElements( {
 				title: __( 'Menu', 'elementor' ),
 				elements: [
 					{
 						container: menuItems,
-						model: buildEntryModel( getEntryTitle() ) as CreateElementParams[ 'model' ],
+						model: buildEntryModel( title ) as CreateElementParams[ 'model' ],
 					},
 				],
 			} );
