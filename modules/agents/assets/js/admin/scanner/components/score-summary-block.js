@@ -115,7 +115,7 @@ export const ScoreRow = ( {
 	score,
 	ringDurationMs,
 	isDimmed,
-	isActivated,
+	isActivated = false,
 	isAgentAccessOn,
 	isBusy,
 	isTurningOn,
@@ -170,7 +170,7 @@ export const ScoreRow = ( {
 						</Typography>
 					</Stack>
 				) }
-				{ ! isAgentAccessOn && (
+				{ ! isAgentAccessOn && isActivated && (
 					<AgentAccessOffBanner
 						retryAt={ retryAt }
 						isBusy={ isBusy }

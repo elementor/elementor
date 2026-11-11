@@ -767,6 +767,19 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.getByRole( 'button', { name: 'Turn back on' } ) ).toBeTruthy();
 		expect( screen.queryByText( 'Agent Ready is on' ) ).toBeNull();
 		expect( screen.queryByRole( 'link', { name: 'Settings' } ) ).toBeNull();
+		expect( screen.queryByText( 'Prepare your site for agents' ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Turn settings on' } ) ).toBeNull();
+	} );
+
+	it( 'shows only the prepare banner when modules are off and Agent Ready was never activated', () => {
+		// Arrange
+		renderScanner( { lastReport: getLastReport(), ...agentAccessOffConfigs } );
+
+		// Assert
+		expect( screen.getByText( 'Prepare your site for agents' ) ).toBeTruthy();
+		expect( screen.getByRole( 'button', { name: 'Turn settings on' } ) ).toBeTruthy();
+		expect( screen.queryByText( /You turned off agent readiness settings/ ) ).toBeNull();
+		expect( screen.queryByRole( 'button', { name: 'Turn back on' } ) ).toBeNull();
 	} );
 
 	it( 're-enables modules from the off banner when Agent Ready is already activated', async () => {
@@ -784,12 +797,12 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.queryByText( /You turned off agent readiness settings/ ) ).toBeNull();
 	} );
 
-	it( 'activates Agent Ready from the off banner when it was never on', async () => {
+	it( 'activates Agent Ready from the prepare banner when modules were off and it was never on', async () => {
 		// Arrange
 		renderScanner( { lastReport: getLastReport(), ...agentAccessOffConfigs } );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Turn back on' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Turn settings on' } ) );
 		await advanceTimers( SCANNER_MOTION.ringActivatingMs );
 
 		// Assert
@@ -800,7 +813,7 @@ describe( 'Agent Ready scanner', () => {
 
 	it( 'starts a rescan from the off banner', async () => {
 		// Arrange
-		renderScanner( { lastReport: getLastReport(), ...agentAccessOffConfigs } );
+		renderScanner( { isActivated: true, lastReport: getLastReport(), ...agentAccessOffConfigs } );
 
 		// Act
 		fireEvent.click( screen.getByRole( 'button', { name: 'Rescan now' } ) );
