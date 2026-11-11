@@ -57,7 +57,7 @@ register( {
 				},
 				':aria-label'() {
 					if ( this.$el.dataset.eCustomLabel ) {
-						return undefined;
+						return this.$el.getAttribute( 'aria-label' );
 					}
 
 					const { eLabelOpen, eLabelClose } = this.$el.dataset;

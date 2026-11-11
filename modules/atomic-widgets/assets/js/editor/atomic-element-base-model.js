@@ -34,6 +34,10 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			this.unset( 'hydrateDefaultChildren', { silent: true } );
 		}
 
+		if ( isNewElementCreate ) {
+			this.applyBaseSettings();
+		}
+
 		if ( isNewElementCreate || shouldHydrate ) {
 			this.onElementCreate();
 		}
@@ -43,6 +47,16 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		super.initialize( attributes, options );
 
 		this.bindChildrenReconcile();
+	}
+
+	applyBaseSettings() {
+		const baseSettings = this.config?.base_settings;
+
+		if ( ! baseSettings || 0 === Object.keys( baseSettings ).length ) {
+			return;
+		}
+
+		this.set( 'settings', { ...baseSettings, ...( this.get( 'settings' ) ?? {} ) } );
 	}
 
 	reconcileChildrenAgainstSchema( attributes ) {

@@ -4,6 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggl
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Base\Atomic_Menu_Locked_Element;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -51,7 +53,18 @@ class Atomic_Menu_Toggle extends Atomic_Menu_Locked_Element {
 	protected function define_base_style_props(): array {
 		return [
 			'display' => String_Prop_Type::generate( 'flex' ),
+			'width' => Size_Prop_Type::generate( [
+				'size' => '',
+				'unit' => 'auto',
+			] ),
 			'cursor' => String_Prop_Type::generate( 'pointer' ),
+			'padding' => Size_Prop_Type::generate( [
+				'size' => 0,
+				'unit' => 'px',
+			] ),
+			'background' => Background_Prop_Type::generate( [
+				'color' => Color_Prop_Type::generate( 'transparent' ),
+			] ),
 			'border-style' => String_Prop_Type::generate( 'none' ),
 			'color' => Color_Prop_Type::generate( 'currentColor' ),
 		];

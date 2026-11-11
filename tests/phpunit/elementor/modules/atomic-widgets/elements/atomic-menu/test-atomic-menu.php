@@ -352,6 +352,16 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'tablet', Atomic_Menu::resolve_default_collapse_breakpoint( [] ) );
 	}
 
+	public function test_new_menu_stores_the_resolved_collapse_breakpoint_so_later_site_changes_do_not_move_it() {
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$base_settings = $this->get_config( 'e-menu' )['base_settings'];
+
+		$this->assertSame( 'string', $base_settings['collapse-breakpoint']['$$type'] );
+		$this->assertSame( Atomic_Menu::get_default_collapse_breakpoint(), $base_settings['collapse-breakpoint']['value'] );
+		$this->assertArrayNotHasKey( 'collapsed-position', $base_settings );
+	}
+
 	public function test_collapse_css_hides_the_toggle_by_default_and_collapses_at_each_active_breakpoint() {
 		$css = Atomic_Menu::get_collapse_css();
 		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();

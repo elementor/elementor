@@ -96,7 +96,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 				->description( 'How submenus open on a wide screen. One of: click or hover.' ),
 			'collapse-breakpoint' => String_Prop_Type::make()
 				->enum( self::get_collapse_breakpoint_keys() )
-				->default( self::get_default_collapse_breakpoint() )
+				->default( Breakpoints_Manager::BREAKPOINT_KEY_TABLET )
 				->description( 'The breakpoint at and below which the menu items collapse behind the toggle.' ),
 			'collapsed-submenus' => String_Prop_Type::make()
 				->enum( [ self::COLLAPSED_SUBMENUS_ONE, self::COLLAPSED_SUBMENUS_MULTIPLE ] )
@@ -265,6 +265,12 @@ class Atomic_Menu extends Atomic_Element_Base {
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
+		];
+	}
+
+	protected function define_base_settings(): array {
+		return [
+			'collapse-breakpoint' => String_Prop_Type::generate( self::get_default_collapse_breakpoint() ),
 		];
 	}
 
