@@ -1,2 +1,2 @@
-export { runWidgetStructureOperation } from './closed-structure/widget-structure-operation';
+export { WIDGET_STRUCTURE_ORIGIN } from './closed-structure/widget-structure-origin';
 export { init } from './init';

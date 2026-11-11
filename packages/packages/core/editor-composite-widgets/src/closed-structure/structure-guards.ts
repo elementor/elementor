@@ -1,33 +1,17 @@
-import { type V1Element } from '@elementor/editor-elements';
+import { findClosestContainer, type V1Element } from '@elementor/editor-elements';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
-import { type HookOptions, registerDataHook } from '@elementor/editor-v1-adapters';
+import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { findClosingRoot, isClosedElement, isClosedTarget } from './find-closing-root';
-import { type MarkedModel, stripOrphanMarkers } from './strip-orphan-markers';
-import { isWidgetStructureOperationRunning } from './widget-structure-operation';
+import { findLockingWidgetRoot, isElementLocked, isInsertionLocked } from './find-locking-widget-root';
+import { WIDGET_STRUCTURE_ORIGIN } from './widget-structure-origin';
 
-type ContainersArgs = {
+type StructureCommandArgs = {
 	container?: V1Element;
 	containers?: V1Element[];
-};
-
-type CreateArgs = ContainersArgs & {
-	model?: MarkedModel;
-};
-
-type MoveArgs = ContainersArgs & {
 	target?: V1Element;
+	options?: { origin?: string };
 };
-
-const MOVE_COMMAND = 'document/elements/move';
-
-const HISTORY_RESTORE_COMMANDS = [
-	'document/history/undo',
-	'document/history/redo',
-	'document/history/do',
-	'document/history/undo-all',
-];
 
 const STRUCTURE_CLOSED_NOTIFICATION: NotificationData = {
 	type: 'default',
@@ -36,107 +20,51 @@ const STRUCTURE_CLOSED_NOTIFICATION: NotificationData = {
 };
 
 export function initStructureGuards() {
-	registerDataHook( 'dependency', 'document/elements/create', allowCreate );
-	registerDataHook( 'dependency', 'document/elements/delete', allowDelete );
-	registerDataHook( 'dependency', MOVE_COMMAND, allowMove );
-	registerDataHook( 'dependency', 'document/elements/paste', allowPaste );
-	registerDataHook( 'dependency', 'document/elements/duplicate', allowDuplicate );
+	guardCommand( 'document/elements/create', ( args ) => getContainers( args ).some( isInsertionLocked ) );
+	guardCommand( 'document/elements/delete', deletesLockedElement );
+	guardCommand( 'document/elements/move', movesLockedStructure );
+	guardCommand( 'document/elements/paste', ( args ) => getContainers( args ).some( isInsertionLocked ) );
+	guardCommand( 'document/elements/duplicate', ( args ) => getContainers( args ).some( isElementLocked ) );
+	guardCommand( 'document/elements/copy', ( args ) => getContainers( args ).some( isElementLocked ) );
 }
 
-function allowCreate( args: CreateArgs, options?: HookOptions ): boolean {
-	if ( isBypassed( options ) || isInsideMove( options ) ) {
-		return true;
-	}
+function guardCommand( command: string, isBlocked: ( args: StructureCommandArgs ) => boolean ) {
+	blockCommand( {
+		command,
+		condition: ( args ) => {
+			const structureArgs = args as StructureCommandArgs;
 
-	if ( getContainers( args ).some( isClosedTarget ) ) {
-		return block();
-	}
+			if ( WIDGET_STRUCTURE_ORIGIN === structureArgs.options?.origin || ! isBlocked( structureArgs ) ) {
+				return false;
+			}
 
-	if ( args.model ) {
-		args.model = stripOrphanMarkers( args.model );
-	}
+			notify( STRUCTURE_CLOSED_NOTIFICATION );
 
-	return true;
+			return true;
+		},
+	} );
 }
 
-function allowDelete( args: ContainersArgs, options?: HookOptions ): boolean {
-	if ( isBypassed( options ) || isInsideMove( options ) ) {
-		return true;
-	}
-
+function deletesLockedElement( args: StructureCommandArgs ): boolean {
 	const containers = getContainers( args );
 	const deletedIds = new Set( containers.map( ( container ) => container.id ) );
 
-	const deletesClosedElement = containers.some( ( container ) => {
-		const closingRoot = findClosingRoot( container, { includeSelf: false } );
+	return containers.some( ( container ) => {
+		const lockingRoot = findLockingWidgetRoot( container.parent );
 
-		return null !== closingRoot && ! isDeletedWithAncestor( closingRoot, deletedIds );
+		return null !== lockingRoot && null === findClosestContainer( lockingRoot, ( { id } ) => deletedIds.has( id ) );
 	} );
-
-	return deletesClosedElement ? block() : true;
 }
 
-function allowMove( args: MoveArgs, options?: HookOptions ): boolean {
-	if ( isBypassed( options ) ) {
-		return true;
-	}
+function movesLockedStructure( args: StructureCommandArgs ): boolean {
+	const movesLockedElement = getContainers( args ).some( isElementLocked );
+	const movesIntoLockedTarget = !! args.target && isInsertionLocked( args.target );
 
-	const movesClosedElement = getContainers( args ).some( isClosedElement );
-	const movesIntoClosedTarget = !! args.target && isClosedTarget( args.target );
-
-	return movesClosedElement || movesIntoClosedTarget ? block() : true;
+	return movesLockedElement || movesIntoLockedTarget;
 }
 
-function allowPaste( args: ContainersArgs, options?: HookOptions ): boolean {
-	if ( isBypassed( options ) ) {
-		return true;
-	}
-
-	return getContainers( args ).some( isClosedTarget ) ? block() : true;
-}
-
-function allowDuplicate( args: ContainersArgs, options?: HookOptions ): boolean {
-	if ( isBypassed( options ) ) {
-		return true;
-	}
-
-	return getContainers( args ).some( isClosedElement ) ? block() : true;
-}
-
-function isBypassed( options?: HookOptions ): boolean {
-	const trace = options?.commandsCurrentTrace ?? [];
-
-	return (
-		isWidgetStructureOperationRunning() || HISTORY_RESTORE_COMMANDS.some( ( command ) => trace.includes( command ) )
-	);
-}
-
-function isInsideMove( options?: HookOptions ): boolean {
-	return options?.commandsCurrentTrace?.includes( MOVE_COMMAND ) ?? false;
-}
-
-function getContainers( args: ContainersArgs ): V1Element[] {
+function getContainers( args: StructureCommandArgs ): V1Element[] {
 	const containers = args.containers ?? [ args.container ];
 
 	return containers.filter( ( container ): container is V1Element => !! container );
-}
-
-function isDeletedWithAncestor( element: V1Element, deletedIds: Set< string > ): boolean {
-	let current: V1Element | undefined = element;
-
-	while ( current ) {
-		if ( deletedIds.has( current.id ) ) {
-			return true;
-		}
-
-		current = current.parent;
-	}
-
-	return false;
-}
-
-function block(): false {
-	notify( STRUCTURE_CLOSED_NOTIFICATION );
-
-	return false;
 }

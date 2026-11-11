@@ -6,6 +6,7 @@ type Options = {
 	useHistory?: boolean;
 	at?: number;
 	edit?: boolean;
+	origin?: string;
 };
 
 export type MoveElementParams = {

@@ -13,6 +13,7 @@ type RemoveElementsParams = {
 	subtitle?: string;
 	onRemoveElements?: () => void;
 	onRestoreElements?: () => void;
+	origin?: string;
 };
 
 type RemovedElement = {
@@ -34,6 +35,7 @@ export const removeElements = ( {
 	subtitle = __( 'Item removed', 'elementor' ),
 	onRemoveElements,
 	onRestoreElements,
+	origin,
 }: RemoveElementsParams ): RemovedElementsResult => {
 	const undoableRemove = undoable(
 		{
@@ -60,7 +62,7 @@ export const removeElements = ( {
 				removedElements.forEach( ( { container } ) => {
 					deleteElement( {
 						container,
-						options: { useHistory: false },
+						options: { useHistory: false, origin },
 					} );
 				} );
 
@@ -76,7 +78,7 @@ export const removeElements = ( {
 						createElement( {
 							container: freshParent,
 							model,
-							options: { useHistory: false, at },
+							options: { useHistory: false, at, origin },
 						} );
 
 						return;
@@ -100,7 +102,7 @@ export const removeElements = ( {
 					if ( freshContainer && freshParent ) {
 						deleteElement( {
 							container: freshContainer,
-							options: { useHistory: false },
+							options: { useHistory: false, origin },
 						} );
 
 						newRemovedElements.push( {

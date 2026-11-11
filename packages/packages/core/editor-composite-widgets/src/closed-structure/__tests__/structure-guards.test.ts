@@ -2,7 +2,7 @@ import { createHooksRegistry, setupHooksRegistry, type WindowWithHooks } from 't
 import { notify } from '@elementor/editor-notifications';
 
 import { initStructureGuards } from '../structure-guards';
-import { runWidgetStructureOperation } from '../widget-structure-operation';
+import { WIDGET_STRUCTURE_ORIGIN } from '../widget-structure-origin';
 import {
 	cleanupClosedStructureFixture,
 	type ClosedStructureFixture,
@@ -16,6 +16,7 @@ const DELETE = 'document/elements/delete';
 const MOVE = 'document/elements/move';
 const PASTE = 'document/elements/paste';
 const DUPLICATE = 'document/elements/duplicate';
+const COPY = 'document/elements/copy';
 
 describe( 'initStructureGuards', () => {
 	const hooksRegistry = createHooksRegistry();
@@ -23,10 +24,6 @@ describe( 'initStructureGuards', () => {
 
 	const runHook = ( command: string, args: Record< string, unknown > ) =>
 		hooksRegistry.getByCommand( command )?.apply( args );
-
-	const setCommandsTrace = ( trace: string[] ) => {
-		( window as unknown as WindowWithHooks ).$e.commands = { currentTrace: trace };
-	};
 
 	beforeEach( () => {
 		setupHooksRegistry( hooksRegistry );
@@ -65,44 +62,30 @@ describe( 'initStructureGuards', () => {
 			expect( notify ).not.toHaveBeenCalled();
 		} );
 
-		it( 'strips orphan markers from the created model', () => {
-			// Arrange.
-			const args = { container: fixture.slot, model: { elType: 'e-flexbox', part: 'feature', isLocked: true } };
-
+		it( 'lets a command carrying the widget structure origin through', () => {
 			// Act.
-			runHook( CREATE, args );
+			const result = runHook( CREATE, {
+				container: fixture.root,
+				model: { elType: 'widget', part: 'icon' },
+				options: { origin: WIDGET_STRUCTURE_ORIGIN },
+			} );
 
 			// Assert.
-			expect( args.model ).toEqual( { elType: 'e-flexbox' } );
+			expect( result ).toBe( true );
 		} );
 
 		it.each( [
 			[ 'an undo', [ 'document/history/undo' ] ],
-			[ 'a redo', [ 'document/history/redo' ] ],
-			[ 'a history jump', [ 'document/history/do' ] ],
-			[ 'undo all', [ 'document/history/undo-all' ] ],
 			[ 'a move', [ MOVE ] ],
-		] )( 'lets a create inside %s through', ( _, trace ) => {
+		] )( 'no longer lets a create inside %s through by its trace', ( _, trace ) => {
 			// Arrange.
-			setCommandsTrace( trace );
+			( window as unknown as WindowWithHooks ).$e.commands = { currentTrace: trace };
 
 			// Act.
 			const result = runHook( CREATE, { container: fixture.root, model: { elType: 'e-flexbox' } } );
 
 			// Assert.
-			expect( result ).toBe( true );
-		} );
-
-		it( 'lets a widget structure operation through without stripping its parts', () => {
-			// Arrange.
-			const args = { container: fixture.root, model: { elType: 'widget', part: 'icon', isLocked: true } };
-
-			// Act.
-			const result = runWidgetStructureOperation( () => runHook( CREATE, args ) );
-
-			// Assert.
-			expect( result ).toBe( true );
-			expect( args.model ).toEqual( { elType: 'widget', part: 'icon', isLocked: true } );
+			expect( result ).toBe( false );
 		} );
 	} );
 
@@ -128,12 +111,12 @@ describe( 'initStructureGuards', () => {
 			expect( result ).toBe( true );
 		} );
 
-		it( 'lets a delete inside a redo through', () => {
-			// Arrange.
-			setCommandsTrace( [ 'document/history/redo' ] );
-
+		it( 'lets a part removal carrying the widget structure origin through', () => {
 			// Act.
-			const result = runHook( DELETE, { container: fixture.label } );
+			const result = runHook( DELETE, {
+				container: fixture.label,
+				options: { origin: WIDGET_STRUCTURE_ORIGIN },
+			} );
 
 			// Assert.
 			expect( result ).toBe( true );
@@ -184,10 +167,13 @@ describe( 'initStructureGuards', () => {
 		} );
 	} );
 
-	describe( 'duplicate', () => {
-		it( 'blocks duplicating a part', () => {
+	describe.each( [
+		[ 'duplicate', DUPLICATE ],
+		[ 'copy', COPY ],
+	] )( '%s', ( _, command ) => {
+		it( 'blocks a part', () => {
 			// Act.
-			const result = runHook( DUPLICATE, { container: fixture.label } );
+			const result = runHook( command, { container: fixture.label } );
 
 			// Assert.
 			expect( result ).toBe( false );
@@ -196,9 +182,9 @@ describe( 'initStructureGuards', () => {
 		it.each( [
 			[ 'the widget root', 'root' ],
 			[ 'slot content', 'slotChild' ],
-		] as const )( 'allows duplicating %s', ( _, elementKey ) => {
+		] as const )( 'allows %s', ( __, elementKey ) => {
 			// Act.
-			const result = runHook( DUPLICATE, { container: fixture[ elementKey ] } );
+			const result = runHook( command, { container: fixture[ elementKey ] } );
 
 			// Assert.
 			expect( result ).toBe( true );
