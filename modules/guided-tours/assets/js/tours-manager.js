@@ -3,7 +3,6 @@ import { formatProgressText, getPopoverSide, isValidSelector } from './popover-u
 import {
 	getNextTourStep,
 	getPreviousScreenTarget,
-	getResumeStep,
 	getStepsForScreen,
 	getTourProgressNumbers,
 	isLastTourStep,
@@ -31,16 +30,10 @@ export class GuidedTours {
 			return;
 		}
 
-		const resumeStep = getResumeStep( this.config.tour, this.config.progress, this.config.screenId );
-
-		if ( ! resumeStep ) {
-			return;
-		}
-
 		const stepsOnScreen = getStepsForScreen( this.config.tour.steps, this.config.screenId );
-		const startIndex = stepsOnScreen.findIndex( ( step ) => step.id === resumeStep.id );
+		const startIndex = stepsOnScreen.findIndex( ( step ) => step.id === this.config.resumeStepId );
 
-		if ( -1 === startIndex || ! stepsOnScreen.length ) {
+		if ( -1 === startIndex ) {
 			return;
 		}
 
@@ -77,7 +70,6 @@ export class GuidedTours {
 			return;
 		}
 
-		this.activeTour = registeredTour.tour;
 		this.activeScreenSteps = tourSteps;
 		this.driver = this.driverFactory( {
 			allowClose: true,

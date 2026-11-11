@@ -40,7 +40,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_admin_assets(): void {
-		if ( ! $this->is_current_user_administrator() ) {
+		if ( ! $this->can_current_user_view_tours() ) {
 			return;
 		}
 
@@ -54,7 +54,7 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_editor_assets(): void {
-		if ( ! $this->is_current_user_administrator() ) {
+		if ( ! $this->can_current_user_view_tours() ) {
 			return;
 		}
 
@@ -73,10 +73,9 @@ class Module extends BaseModule {
 
 		$progress = $this->progress_manager->get_progress( $tour['id'], $tour['version'] );
 
-		if (
-			$this->progress_manager->should_suppress_tour( $tour['id'], $tour['version'] ) ||
-			! $this->should_run_tour_on_screen( $tour, $screen_id, $progress )
-		) {
+		$resume_step = $this->get_resume_step_for_screen( $tour['steps'] ?? [], $progress, $screen_id );
+
+		if ( $this->progress_manager->should_suppress_tour( $tour['id'], $tour['version'] ) || empty( $resume_step ) ) {
 			return;
 		}
 
@@ -122,16 +121,13 @@ class Module extends BaseModule {
 			'tour' => $tour,
 			'screenId' => $screen_id,
 			'progress' => $progress,
+			'resumeStepId' => $resume_step['id'],
 			'ajax' => [
 				'url' => admin_url( 'admin-ajax.php' ),
 				'action' => self::AJAX_ACTION,
 				'nonce' => wp_create_nonce( self::NONCE_ACTION ),
 			],
 		] );
-	}
-
-	private function should_run_tour_on_screen( array $tour, string $screen_id, array $progress ): bool {
-		return ! empty( $this->get_resume_step_for_screen( $tour['steps'] ?? [], $progress, $screen_id ) );
 	}
 
 	private function get_resume_step_for_screen( array $steps, array $progress, string $screen_id ): array {
@@ -177,7 +173,7 @@ class Module extends BaseModule {
 	public function update_progress(): void {
 		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
-		if ( ! $this->is_current_user_administrator() ) {
+		if ( ! $this->can_current_user_view_tours() ) {
 			wp_send_json_error( null, \WP_Http::FORBIDDEN );
 		}
 
@@ -197,7 +193,7 @@ class Module extends BaseModule {
 		wp_send_json_success();
 	}
 
-	private function is_current_user_administrator(): bool {
-		return in_array( 'administrator', wp_get_current_user()->roles, true );
+	private function can_current_user_view_tours(): bool {
+		return current_user_can( 'manage_options' );
 	}
 }

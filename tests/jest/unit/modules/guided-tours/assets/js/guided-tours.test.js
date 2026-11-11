@@ -54,6 +54,7 @@ const CONFIG = {
 	},
 	screenId: 'dashboard',
 	progress: {},
+	resumeStepId: 'settings-menu',
 	tour: TOUR,
 };
 
@@ -87,6 +88,7 @@ describe( 'GuidedTours', () => {
 		const guidedTours = new GuidedTours( {
 			...CONFIG,
 			screenId: 'options-reading',
+			resumeStepId: 'save-changes',
 			progress: {
 				status: 'in_progress',
 				step_id: 'save-changes',
@@ -106,6 +108,7 @@ describe( 'GuidedTours', () => {
 		const guidedTours = new GuidedTours( {
 			...CONFIG,
 			screenId: 'options-general',
+			resumeStepId: 'reading-tab',
 			progress: {
 				status: 'in_progress',
 				step_id: 'settings-menu',
@@ -125,6 +128,7 @@ describe( 'GuidedTours', () => {
 		const guidedTours = new GuidedTours( {
 			...CONFIG,
 			screenId: 'plugins',
+			resumeStepId: null,
 			progress: {
 				status: 'in_progress',
 				step_id: 'settings-menu',
@@ -192,6 +196,7 @@ describe( 'GuidedTours', () => {
 		const guidedTours = new GuidedTours( {
 			...CONFIG,
 			screenId: 'options-general',
+			resumeStepId: 'reading-tab',
 			progress: {
 				status: 'in_progress',
 				step_id: 'reading-tab',
@@ -260,6 +265,7 @@ describe( 'GuidedTours', () => {
 		const guidedTours = new GuidedTours( {
 			...CONFIG,
 			screenId: 'options-reading',
+			resumeStepId: 'homepage-display',
 			progress: {
 				status: 'in_progress',
 				step_id: 'homepage-display',
@@ -281,11 +287,45 @@ describe( 'GuidedTours', () => {
 		);
 	} );
 
+	it( 'navigates back to the first screen using the previous step url', async () => {
+		// Arrange.
+		const tour = {
+			...TOUR,
+			steps: [
+				{ ...TOUR.steps[ 0 ], url: 'index.php' },
+				TOUR.steps[ 1 ],
+			],
+		};
+		const guidedTours = new GuidedTours( {
+			...CONFIG,
+			screenId: 'options-general',
+			resumeStepId: 'reading-tab',
+			progress: {
+				status: 'in_progress',
+				step_id: 'reading-tab',
+				version: 2,
+			},
+			tour,
+		}, driverFactory, request );
+		guidedTours.init();
+		driver.hasPreviousStep = jest.fn().mockReturnValue( false );
+
+		// Act.
+		driverConfig.onPrevClick( null, driverConfig.steps[ 0 ], { driver } );
+		await guidedTours.progressRequest;
+
+		// Assert.
+		expect( driverConfig.steps[ 0 ].popover.disableButtons ).toEqual( [] );
+		expect( request.mock.calls[ 0 ][ 1 ].body.get( 'stepId' ) ).toBe( 'settings-menu' );
+		expect( window.location.assign ).toHaveBeenCalledWith( 'https://example.test/wp-admin/index.php' );
+	} );
+
 	it( 'marks completion on the last step done click', async () => {
 		// Arrange.
 		const guidedTours = new GuidedTours( {
 			...CONFIG,
 			screenId: 'options-reading',
+			resumeStepId: 'save-changes',
 			progress: {
 				status: 'in_progress',
 				step_id: 'save-changes',

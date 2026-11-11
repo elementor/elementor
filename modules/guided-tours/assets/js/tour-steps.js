@@ -18,42 +18,6 @@
  */
 
 /**
- * @param {Tour}        tour
- * @param {Object}      progress
- * @param {string|null} screenId
- * @return {TourStep|null}
- */
-export const getResumeStep = ( tour, progress, screenId ) => {
-	if ( ! screenId || ! tour.steps?.length ) {
-		return null;
-	}
-
-	if ( ! progress?.step_id ) {
-		const firstStep = tour.steps[ 0 ];
-
-		return firstStep.screen === screenId ? firstStep : null;
-	}
-
-	const progressIndex = tour.steps.findIndex( ( step ) => step.id === progress.step_id );
-
-	if ( -1 === progressIndex ) {
-		return null;
-	}
-
-	const progressStep = tour.steps[ progressIndex ];
-
-	if ( progressStep.screen === screenId ) {
-		return progressStep;
-	}
-
-	const nextOnScreen = tour.steps.find(
-		( step, index ) => index > progressIndex && step.screen === screenId,
-	);
-
-	return nextOnScreen ?? null;
-};
-
-/**
  * @param {TourStep[]} steps
  * @param {string}     screenId
  * @return {TourStep[]}
