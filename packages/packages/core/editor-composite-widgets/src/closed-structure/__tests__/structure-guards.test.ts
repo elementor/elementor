@@ -98,9 +98,18 @@ describe( 'initStructureGuards', () => {
 			expect( result ).toBe( false );
 		} );
 
+		it( 'blocks deleting a part together with its slot content', () => {
+			// Act.
+			const result = runHook( DELETE, { containers: [ fixture.slotChild, fixture.slot ] } );
+
+			// Assert.
+			expect( result ).toBe( false );
+		} );
+
 		it.each( [
 			[ 'the widget root', [ 'root' ] ],
 			[ 'a part together with its widget root', [ 'label', 'root' ] ],
+			[ 'a part together with an ancestor of its widget root', [ 'label', 'section' ] ],
 			[ 'slot content', [ 'slotChild' ] ],
 			[ 'a nested widget inside a slot', [ 'nestedRoot' ] ],
 		] as const )( 'allows deleting %s', ( _, keys ) => {

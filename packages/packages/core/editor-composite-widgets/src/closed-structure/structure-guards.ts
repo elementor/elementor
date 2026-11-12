@@ -3,7 +3,7 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { findLockingWidgetRoot, isElementLocked, isInsertionLocked } from './find-locking-widget-root';
+import { isElementLocked, isInsertionLocked } from './find-locking-widget-root';
 import { WIDGET_STRUCTURE_ORIGIN } from './widget-structure-origin';
 
 type StructureCommandArgs = {
@@ -47,13 +47,15 @@ function guardCommand( command: string, isBlocked: ( args: StructureCommandArgs 
 
 function deletesLockedElement( args: StructureCommandArgs ): boolean {
 	const containers = getContainers( args );
-	const deletedIds = new Set( containers.map( ( container ) => container.id ) );
+	const deletedIds = new Set( containers.map( ( { id } ) => id ) );
 
-	return containers.some( ( container ) => {
-		const lockingRoot = findLockingWidgetRoot( container.parent );
+	return containers.some(
+		( container ) => isElementLocked( container ) && ! isDeletedWithAncestor( container, deletedIds )
+	);
+}
 
-		return null !== lockingRoot && null === findClosestContainer( lockingRoot, ( { id } ) => deletedIds.has( id ) );
-	} );
+function isDeletedWithAncestor( container: V1Element, deletedIds: Set< string > ): boolean {
+	return null !== findClosestContainer( container.parent, ( { id } ) => deletedIds.has( id ) );
 }
 
 function movesLockedStructure( args: StructureCommandArgs ): boolean {
