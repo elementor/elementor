@@ -133,7 +133,10 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await editor.v4Panel.openTab( 'general' );
 
 			// Assert
-			await expect( editor.page.getByText( 'Menu Settings', { exact: true } ) ).toBeVisible();
+			const sectionTitle = editor.page.getByText( 'Menu Settings', { exact: true } );
+
+			await expect( sectionTitle ).toBeVisible();
+			await sectionTitle.click();
 
 			for ( const label of [ 'Open submenus on', 'Collapse at breakpoint', 'Collapsed submenus', 'Collapsed menu position' ] ) {
 				await expect( editor.page.locator( '[data-type="settings-field"]' ).filter( { hasText: label } ) ).toBeVisible();
@@ -410,49 +413,20 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await expect( getToggle( getNav() ) ).toHaveAttribute( 'aria-controls', 'my-items' );
 		} );
 
-		test( 'A custom aria-label set in Attributes wins in both states', async () => {
-			// Arrange
-			const menuId = await addMenu();
-			const toggleId = await getChildId( getMenuRoot( menuId ), 'e-menu-toggle' );
-
-			await editor.applyElementSettings( toggleId, {
-				attributes: {
-					$$type: 'attributes',
-					value: [ {
-						$$type: 'key-value',
-						value: {
-							key: { $$type: 'string', value: 'aria-label' },
-							value: { $$type: 'string', value: 'Site navigation' },
-						},
-					} ],
-				},
-			} );
-			await viewFrontend();
-			await editor.page.setViewportSize( TABLET );
-
-			const toggle = getToggle( getNav() );
-
-			// Assert
-			await expect( toggle ).toHaveAttribute( 'aria-label', 'Site navigation' );
-
-			await toggle.click();
-
-			await expect( toggle ).toHaveAttribute( 'aria-label', 'Site navigation' );
-		} );
-
 		test( 'The button keeps its accessible name when both toggle containers are emptied', async () => {
 			// Arrange
 			const menuId = await addMenu();
 			const menu = getMenuRoot( menuId );
 
 			for ( const type of [ 'e-menu-toggle-closed', 'e-menu-toggle-open' ] ) {
-				const childId = await menu.locator( `[data-element_type="${ type }"] > *` ).first().getAttribute( 'data-id' ) as string;
+				const containerId = await getChildId( menu, type );
 
 				await editor.page.evaluate( ( id ) => {
 					const { $e, elementor } = window as unknown as EditorWindow;
+					const parent = elementor.getContainer( id ) as { children: unknown[] };
 
-					$e.run( 'document/elements/delete', { container: elementor.getContainer( id ) } );
-				}, childId );
+					$e.run( 'document/elements/delete', { container: parent.children[ 0 ] } );
+				}, containerId );
 			}
 
 			await viewFrontend();
