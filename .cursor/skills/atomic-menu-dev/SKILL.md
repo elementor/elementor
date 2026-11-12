@@ -33,3 +33,12 @@ Scope: Internal (Core). Experiment: `e_nav_menu`.
 ## Known limitation
 
 A saved menu already on the page when the editor opens has no Alpine data stack: the editor keeps `x-ignore` on the nav. Menus added from the panel work after `refreshTree( element )` in the preview handler. Already tried without success: listening to child render events, removing `x-ignore` before `refreshTree`, deferring the refresh with a timeout. Next idea: inspect `_initAlpine` in `packages/packages/core/editor-canvas/src/legacy/create-nested-templated-element-type.ts` and whether the editor re-renders the menu and re-adds `x-ignore` after load.
+
+## Sources (internal, Atlassian login required)
+
+The skill describes how the code works. Product behaviour lives in these pages; check them before changing behaviour, and do not copy their content here.
+
+- Spec: https://elementor.atlassian.net/wiki/spaces/RDDEP/pages/2750840844/Menu+Nav+Menu+V4+Element+Spec
+- Product decisions (developer questions): https://elementor.atlassian.net/wiki/spaces/RDDEP/pages/3140648972/Atomic+Menu+Developer+Questions+Product+Decisions
+- Development plan (ED-25503): https://elementor.atlassian.net/wiki/spaces/RDDEP/pages/3141107834/Atomic+Menu+e-menu+Development+Plan+ED-25503
+- This work: ED-26257 (toggle).
