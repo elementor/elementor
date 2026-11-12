@@ -324,6 +324,7 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await expect( popover.getByPlaceholder( urlPlaceholder ) ).toHaveValue( selectedValue );
 
 		// Act - change the link in the repeater and switch the new tab back on
+		await popover.locator( '.MuiInputAdornment-positionEnd button' ).click();
 		await popover.getByPlaceholder( urlPlaceholder ).fill( 'https://example.com/final' );
 		await getNewTabSwitch( popover ).check();
 		await closePopover();
