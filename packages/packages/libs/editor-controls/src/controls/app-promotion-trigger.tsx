@@ -18,7 +18,7 @@ type InfotipWithPopperProps = React.ComponentProps< typeof Infotip > & {
 
 const OptimizeInfotip = Infotip as React.FC< InfotipWithPopperProps >;
 
-export type ImagePromotion = {
+export type AppPromotion = {
 	label?: string;
 	title?: string;
 	content: string;
@@ -41,7 +41,7 @@ const isEventInside = ( target: EventTarget | null, anchor: HTMLElement | null )
 	return !! anchor?.contains( target ) || !! target.closest( '[data-image-optimize-popover], .MuiTooltip-popper' );
 };
 
-export const ImageOptimizeTrigger = ( { promotion }: { promotion?: ImagePromotion } ) => {
+export const AppPromotionTrigger = ( { promotion }: { promotion?: AppPromotion } ) => {
 	const [ open, setOpen ] = useState( false );
 	const [ dismissed, setDismissed ] = useState( () => isNoticeDismissed( promotion?.dismissible ) );
 	const anchorRef = useRef< HTMLButtonElement >( null );
