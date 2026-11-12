@@ -165,8 +165,10 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		$closed_children = $this->get_config( 'e-menu-toggle-closed' )['default_children'];
 		$open_children = $this->get_config( 'e-menu-toggle-open' )['default_children'];
-		$this->assertStringEndsWith( 'menu-toggle-closed.svg', $closed_children[0]['settings']['svg']['value']['url']['value'] );
-		$this->assertStringEndsWith( 'menu-toggle-open.svg', $open_children[0]['settings']['svg']['value']['url']['value'] );
+		$this->assertSame( 'icon', $closed_children[0]['settings']['svg']['$$type'] );
+		$this->assertSame( 'fa-solid fa-bars', $closed_children[0]['settings']['svg']['value']['value']['value'] );
+		$this->assertSame( 'fa-solid', $closed_children[0]['settings']['svg']['value']['library']['value'] );
+		$this->assertSame( 'fa-solid fa-xmark', $open_children[0]['settings']['svg']['value']['value']['value'] );
 
 		$entries = $children[0]['elements'];
 		$this->assertCount( 4, $entries );
