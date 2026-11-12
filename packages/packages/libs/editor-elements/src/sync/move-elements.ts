@@ -23,6 +23,7 @@ type MoveElementsParams = {
 	subtitle?: string;
 	onMoveElements?: () => void;
 	onRestoreElements?: () => void;
+	origin?: string;
 };
 
 type MovedElement = {
@@ -48,6 +49,7 @@ export const moveElements = ( {
 	subtitle = __( 'Elements moved', 'elementor' ),
 	onMoveElements,
 	onRestoreElements,
+	origin,
 }: MoveElementsParams ): MovedElementsResult => {
 	const undoableMove = undoable(
 		{
@@ -77,7 +79,7 @@ export const moveElements = ( {
 					const newElement = moveElement( {
 						element: sourceElement,
 						targetContainer: target,
-						options: { ...options, useHistory: false },
+						options: { ...options, useHistory: false, origin },
 					} );
 
 					movedElements.push( {
@@ -114,6 +116,7 @@ export const moveElements = ( {
 							options: {
 								useHistory: false,
 								at: originalIndex >= 0 ? originalIndex : undefined,
+								origin,
 							},
 						} );
 					} );
@@ -144,7 +147,7 @@ export const moveElements = ( {
 						const newElement = moveElement( {
 							element: freshElement,
 							targetContainer: freshTarget,
-							options: { ...options, useHistory: false },
+							options: { ...options, useHistory: false, origin },
 						} );
 
 						newMovedElements.push( {
