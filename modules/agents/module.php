@@ -308,7 +308,14 @@ class Module extends BaseModule {
 		$unavailable_reasons = $this->module_availability->get_unavailable_reasons();
 		$skip_modules        = array_keys( $unavailable_reasons );
 
+		$was_activated = $this->settings->is_activated();
+
 		$this->settings->activate( $skip_modules );
+
+		if ( ! $was_activated ) {
+			// The first activation changes the score, so let the UI rescan right away instead of waiting out the cooldown.
+			$this->scanner_store->clear_cooldown();
+		}
 
 		return $this->build_activation_result( $unavailable_reasons );
 	}
