@@ -209,7 +209,7 @@ describe( 'Agent Ready scanner', () => {
 		expect( screen.queryByText( 'Agents can\'t read clean versions of your pages' ) ).toBeNull();
 	} );
 
-	it( 'activates Agent Ready and lands on the fixes report', async () => {
+	it( 'activates Agent Ready from the first check, rescans automatically and lands on the fixes report', async () => {
 		// Arrange
 		await runFirstScan();
 
@@ -219,16 +219,54 @@ describe( 'Agent Ready scanner', () => {
 		// Assert
 		expect( screen.getByRole( 'button', { name: 'Turning on' } ).disabled ).toBe( true );
 
-		await advanceTimers( SCANNER_MOTION.ringActivatingMs );
+		await advanceTimers( 0 );
 
 		expect( activateAgentsReady ).toHaveBeenCalledTimes( 1 );
+		expect( runSiteScan ).toHaveBeenCalledTimes( 2 );
+		expect( screen.getByRole( 'status', { name: 'Scanning again' } ) ).toBeTruthy();
+
+		await advanceTimers( SCANNER_MOTION.rescanMinMs );
+
+		expect( screen.queryByRole( 'status', { name: 'Scanning again' } ) ).toBeNull();
 		expect( screen.getByText( 'Agent Ready is on' ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button', { name: 'Turn settings on' } ) ).toBeNull();
 		expect( getScoreRing( 30 ) ).toBeTruthy();
 		expect( screen.getAllByRole( 'button', { name: 'Rescan' } )[ 0 ].textContent ).toBe( 'Rescan' );
 		expect( screen.getByRole( 'link', { name: 'Settings' } ).getAttribute( 'href' ) ).toBe( AGENT_ACCESS_URL );
 		expect( screen.getByText( 'Agent Ready is on' ).parentElement.contains( screen.getByRole( 'link', { name: 'Settings' } ) ) ).toBe( true );
 		expect( screen.queryByText( 'AI agents are blocked by your robots.txt' ) ).toBeNull();
 		expect( screen.getByText( 'Agents can\'t tell when you\'re open' ) ).toBeTruthy();
+	} );
+
+	it( 'keeps Agent Ready on and offers a manual rescan when the automatic rescan fails', async () => {
+		// Arrange
+		await runFirstScan();
+		runSiteScan.mockImplementation( () => Promise.resolve( getFailedScanResult() ) );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Turn settings on' } ) );
+		await advanceTimers( SCANNER_MOTION.ringActivatingMs + SCANNER_MOTION.rescanMinMs );
+
+		// Assert
+		expect( screen.getByText( `We couldn't reach ${ SITE_DOMAIN }` ) ).toBeTruthy();
+		expect( screen.queryByRole( 'button', { name: 'Turn settings on' } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: 'Rescan' } ).disabled ).toBe( false );
+	} );
+
+	it( 'does not rescan automatically when Agent Ready is turned on from the error report', async () => {
+		// Arrange
+		runSiteScan.mockImplementation( () => Promise.resolve( getFailedScanResult() ) );
+		renderScanner();
+		fireEvent.click( screen.getAllByRole( 'button', { name: 'Check my site' } )[ 0 ] );
+		await advanceTimers( SCAN_DURATION_MS + SCANNER_MOTION.errorProgressPauseMs );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Turn settings on' } ) );
+		await advanceTimers( SCANNER_MOTION.ringActivatingMs );
+
+		// Assert
+		expect( activateAgentsReady ).toHaveBeenCalledTimes( 1 );
+		expect( runSiteScan ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'returns to the report with an error when activation fails', async () => {
