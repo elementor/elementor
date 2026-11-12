@@ -39,20 +39,24 @@ body {
 	&__header {
 		border-block-end: var(--e-a-border);
 		color: var(--e-a-color-txt-accent);
+		background-color: var(--e-a-bg-default);
 
 		&__toolbar {
 			display: grid;
 			grid-template-columns: 35px 1fr 35px 35px;
 			align-items: center;
+			min-height: 35px;
 		}
 
 		&__title {
 			text-align: center;
-			font-size: 13px;
-			font-weight: 400;
-			padding: 10px 0;
+			font-size: 12px;
+			font-weight: 500;
+			padding: 8px 0;
 			cursor: move;
 			margin: 0;
+			color: var(--e-a-color-txt-hover);
+			letter-spacing: 0.01em;
 		}
 
 		iframe + &__title,
@@ -62,22 +66,13 @@ body {
 
 	}
 
-	&__search-toggle,
 	&__search {
+		padding: 0 10px 8px;
 		font-size: 13px;
 	}
 
-	&__search {
-		padding: 0 10px 8px;
-	}
-
-	&__inner--search-open {
-
-		#elementor-navigator__search-toggle {
-			color: var(--e-a-color-txt-active);
-			background-color: var(--e-a-bg-chip);
-			border-radius: var(--e-a-border-radius);
-		}
+	&__inner--search-open #elementor-navigator__search-toggle {
+		color: var(--e-a-color-txt-active);
 	}
 
 	&__search-field {
@@ -128,26 +123,32 @@ body {
 	}
 
 	&__close,
-	&__toggle-all {
-		color: var(--e-a-color-txt);
+	&__toggle-all,
+	&__search-toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 35px;
+		min-height: 35px;
+		padding: 0;
+		color: var(--e-a-color-txt-muted);
 		background-color: transparent;
-		border: none;
+		border: 0;
 		outline: 0;
-		padding: 10px;
 		cursor: pointer;
-		transition: color .5s;
+		font-size: 13px;
+		line-height: 1;
+		transition: color .15s ease, background-color .15s ease;
 
 		&:hover {
 			color: var(--e-a-color-txt-hover);
+			background-color: var(--e-a-bg-hover);
 		}
 
-		&:focus {
+		&:focus-visible {
 			color: var(--e-a-color-txt-active);
+			background-color: var(--e-a-bg-hover);
 		}
-	}
-
-	&__toggle-all {
-		font-size: 13px;
 	}
 
 	&__close {
@@ -307,7 +308,7 @@ body {
 
 		&--search-match > .elementor-navigator__item {
 			background-color: var(--e-a-bg-primary);
-			box-shadow: inset var(--e-editor-navigator-indicator-width) 0 0 var(--e-a-color-accent);
+			box-shadow: inset var(--e-editor-navigator-indicator-width) 0 0 var(--e-a-color-primary);
 		}
 
 		&.elementor-dragging-on-child {
@@ -339,17 +340,21 @@ body {
 
 			> .elementor-navigator__item {
 
-				.elementor-navigator__element__toggle {
-					color: var(--e-a-color-txt-default);
+				&:not(:hover):not(:focus-within):not(.elementor-editing) {
 
-					&:hover {
-						color: var(--e-a-color-txt-hover);
+					.elementor-navigator__element__toggle {
+						display: none;
 					}
 				}
 
 				&.elementor-editing {
 					background-color: var(--e-a-bg-primary);
-					box-shadow: inset var(--e-editor-navigator-indicator-width) 0 0 var(--e-a-color-accent);
+					box-shadow: inset var(--e-editor-navigator-indicator-width) 0 0 var(--e-a-color-primary);
+
+					.elementor-navigator__element__indicator,
+					.elementor-navigator__element__toggle {
+						color: var(--e-a-color-txt);
+					}
 				}
 			}
 		}
@@ -440,7 +445,15 @@ body {
 			width: 22px;
 			height: 22px;
 			flex-shrink: 0;
-			font-size: 13px;
+			font-size: 12px;
+			color: var(--e-a-color-txt-muted);
+			border-radius: var(--e-a-border-radius);
+			transition: color .15s ease, background-color .15s ease;
+
+			&:hover {
+				color: var(--e-a-color-txt-hover);
+				background-color: var(--e-a-bg-hover);
+			}
 		}
 
 		&__indicators {
@@ -454,27 +467,28 @@ body {
 			height: 22px;
 			min-width: 22px;
 			width: auto;
-			padding-inline: 4px;
-			border-radius: var(--e-a-border-radius);
-			margin-inline: 1px;
+			padding: 0;
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: var(--e-a-color-txt);
-			background-color: var(--e-a-bg-default);
-			border-inline-end: var(--e-a-border);
-
-			&:first-child {
-				border-inline-start: var(--e-editor-navigator-indicator-width) solid var(--e-a-border-color-accent);
-			}
+			font-size: 12px;
+			color: var(--e-a-color-txt-muted);
+			background-color: transparent;
+			border: 0;
+			border-radius: var(--e-a-border-radius);
+			transition: color .15s ease, background-color .15s ease;
 
 			&:hover {
 				color: var(--e-a-color-txt-hover);
+				background-color: var(--e-a-bg-hover);
 			}
 
 			&--overflow {
+				min-width: unset;
+				padding-inline: 5px;
 				font-size: 10px;
 				font-weight: 500;
+				background-color: var(--e-a-bg-chip);
 			}
 		}
 
@@ -483,6 +497,10 @@ body {
 			.elementor-navigator__element__title,
 			.elementor-navigator__element__toggle {
 				opacity: .5;
+			}
+
+			> .elementor-navigator__item .elementor-navigator__element__toggle {
+				display: inline-flex;
 			}
 		}
 
