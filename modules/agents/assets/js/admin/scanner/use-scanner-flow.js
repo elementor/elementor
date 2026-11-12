@@ -96,6 +96,7 @@ export const useScannerFlow = ( {
 		[ moduleConfigs ],
 	);
 	const isMountedRef = useRef( true );
+	const isActivatedRef = useRef( initialIsActivated );
 	const initialModuleEnabledRef = useRef( getInitialModuleEnabled( {
 		llmsConfig,
 		markdownConfig,
@@ -160,13 +161,20 @@ export const useScannerFlow = ( {
 
 	const retryAt = getLaterRetryAt( scan?.retryAt, cooldownRetryAt );
 
-	const startScan = useCallback( async () => {
-		if ( isRetryAhead( retryAt ) ) {
+	// `ignoreCooldown` is only for the first activation, which clears the server cooldown too.
+	const runScan = useCallback( async ( { ignoreCooldown = false } = {} ) => {
+		if ( ! ignoreCooldown && isRetryAhead( retryAt ) ) {
 			return;
 		}
 
+		if ( ignoreCooldown ) {
+			setCooldownRetryAt( null );
+		}
+
+		const currentScan = ignoreCooldown && scan ? { ...scan, retryAt: null } : scan;
+
 		setActionError( '' );
-		const isRescan = Boolean( scan );
+		const isRescan = Boolean( currentScan );
 
 		if ( isRescan ) {
 			setView( SCANNER_STATE_RESCANNING );
@@ -197,11 +205,11 @@ export const useScannerFlow = ( {
 
 			setCooldownRetryAt( throttledRetryAt );
 
-			if ( scan ) {
-				const hasFailedOutsideScan = OUTSIDE_SCAN_STATUS_FAILED === scan.outsideScan?.status;
+			if ( currentScan ) {
+				const hasFailedOutsideScan = OUTSIDE_SCAN_STATUS_FAILED === currentScan.outsideScan?.status;
 
-				setScan( { ...scan, retryAt: throttledRetryAt } );
-				setView( hasFailedOutsideScan ? SCANNER_STATE_ERROR_REPORT : getReportView( isActivated ) );
+				setScan( { ...currentScan, retryAt: throttledRetryAt } );
+				setView( hasFailedOutsideScan ? SCANNER_STATE_ERROR_REPORT : getReportView( isActivatedRef.current ) );
 				return;
 			}
 
@@ -210,7 +218,7 @@ export const useScannerFlow = ( {
 		}
 
 		if ( ! result || OUTSIDE_SCAN_STATUS_FAILED === result.outsideScan?.status ) {
-			setScan( result ?? withFailedOutsideScan( scan, scanError?.reason ?? null ) );
+			setScan( result ?? withFailedOutsideScan( currentScan, scanError?.reason ?? null ) );
 
 			if ( isRescan ) {
 				setView( SCANNER_STATE_ERROR_REPORT );
@@ -228,8 +236,10 @@ export const useScannerFlow = ( {
 		setDirtyModuleKeys( {} );
 		setOpenIds( {} );
 		setRingDurationMs( SCANNER_MOTION.ringArriveMs );
-		setView( getReportView( isActivated ) );
-	}, [ isActivated, playProgressStepsUntilScanGate, progressSteps.length, retryAt, showScanFailure, scan ] );
+		setView( getReportView( isActivatedRef.current ) );
+	}, [ playProgressStepsUntilScanGate, progressSteps.length, retryAt, showScanFailure, scan ] );
+
+	const startScan = useCallback( () => runScan(), [ runScan ] );
 
 	const activate = useCallback( async () => {
 		const previousView = view;
@@ -238,8 +248,11 @@ export const useScannerFlow = ( {
 		setRingDurationMs( SCANNER_MOTION.ringActivatingMs );
 		setView( SCANNER_STATE_ACTIVATING );
 
+		// The first-scan banner hands over to the rescan skeleton, so it skips the activation animation.
+		const activationMinMs = SCANNER_STATE_FIRST_CHECK === previousView ? 0 : SCANNER_MOTION.ringActivatingMs;
+
 		try {
-			await Promise.all( [ activateAgentsReady(), wait( SCANNER_MOTION.ringActivatingMs ) ] );
+			await Promise.all( [ activateAgentsReady(), wait( activationMinMs ) ] );
 		} catch ( error ) {
 			if ( isMountedRef.current ) {
 				setActionError( getSaveErrorMessage( error ) );
@@ -260,11 +273,19 @@ export const useScannerFlow = ( {
 		} );
 		moduleEnabledRef.current = nextModuleEnabled;
 		setModuleEnabled( nextModuleEnabled );
+		isActivatedRef.current = true;
 		setIsActivated( true );
 		setOpenIds( {} );
+
+		// Only the first-scan banner auto-rescans, so the user sees the score change right after the click.
+		if ( SCANNER_STATE_FIRST_CHECK === previousView ) {
+			runScan( { ignoreCooldown: true } );
+			return;
+		}
+
 		setRingDurationMs( SCANNER_MOTION.ringLandMs );
 		setView( SCANNER_STATE_FIXES );
-	}, [ isModuleToggleDisabled, moduleConfigs, view ] );
+	}, [ isModuleToggleDisabled, moduleConfigs, runScan, view ] );
 
 	const enableAllToggleableModules = useCallback( () => {
 		const nextModuleEnabled = { ...moduleEnabledRef.current };
