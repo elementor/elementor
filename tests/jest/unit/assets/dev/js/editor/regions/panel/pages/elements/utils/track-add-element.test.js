@@ -13,12 +13,12 @@ describe( 'trackAddElement', () => {
 		delete global.elementorCommon;
 	} );
 
-	test( 'dispatches add_element when the drop created an element', () => {
+	test( 'dispatches add_element with the widget type as the name for widgets', () => {
 		// Arrange.
 		const model = { elType: 'widget', widgetType: 'e-heading' };
 
 		// Act.
-		trackAddElement( { dropResult: { id: 'new-element' }, model } );
+		trackAddElement( model );
 
 		// Assert.
 		expect( dispatchEvent ).toHaveBeenCalledWith( 'add_element', {
@@ -34,7 +34,7 @@ describe( 'trackAddElement', () => {
 		const model = { elType: 'e-flexbox' };
 
 		// Act.
-		trackAddElement( { dropResult: { id: 'new-element' }, model } );
+		trackAddElement( model );
 
 		// Assert.
 		expect( dispatchEvent ).toHaveBeenCalledWith( 'add_element', {
@@ -45,19 +45,17 @@ describe( 'trackAddElement', () => {
 		} );
 	} );
 
-	test.each( [
-		[ 'false when a dependency hook blocked the command', false ],
-		[ 'undefined when no element was created', undefined ],
-		[ 'null', null ],
-	] )( 'does not dispatch when the drop returned %s', ( _, dropResult ) => {
-		// Arrange.
-		const model = { elType: 'widget', widgetType: 'e-form-honeypot' };
-
+	test( 'sends empty values when the model is missing', () => {
 		// Act.
-		trackAddElement( { dropResult, model } );
+		trackAddElement( undefined );
 
 		// Assert.
-		expect( dispatchEvent ).not.toHaveBeenCalled();
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'add_element', {
+			location: 'editor_panel',
+			element_name: '',
+			element_type: '',
+			widget_type: '',
+		} );
 	} );
 
 	test( 'does nothing when the events manager is unavailable', () => {
@@ -65,6 +63,6 @@ describe( 'trackAddElement', () => {
 		global.elementorCommon = {};
 
 		// Act & Assert.
-		expect( () => trackAddElement( { dropResult: { id: 'new-element' }, model: {} } ) ).not.toThrow();
+		expect( () => trackAddElement( {} ) ).not.toThrow();
 	} );
 } );

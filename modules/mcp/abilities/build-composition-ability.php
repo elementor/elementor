@@ -40,7 +40,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	public function is_exposed_via_proxy(): bool {
-		return false;
+		return true;
+	}
+
+	public function supports_dry_run(): bool {
+		return true;
 	}
 
 	protected function get_definition(): Ability_Definition {
@@ -93,11 +97,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $document;
 		}
 
-		$elements_data = $document->get_elements_data();
+		$elements_data = $this->resolve_base_tree( $input, $document, $dry_run );
 		$compiled = Composition_Compiler::make( $this->closed_structure )->compile(
 			$input,
 			$document,
-			is_array( $elements_data ) ? $elements_data : [],
+			$elements_data,
 			$parent_id
 		);
 		if ( is_wp_error( $compiled ) ) {
@@ -112,13 +116,24 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$xml_parser    = $compiled['xml_parser'];
 		$skipped_pro   = $compiled['pro_features_discovery'];
 
+		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
+
 		if ( $dry_run ) {
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [], $skipped_pro );
-			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
+			$planned = $persister->plan( $elements_data, $subtrees, $parent_id, $mode );
+			if ( is_wp_error( $planned ) ) {
+				$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $planned, $subtrees, $warning_codes, $document );
+				return $planned;
+			}
+
+			$persister->embed_ids_into_dom( $dom, $planned['tree'], $parent_id, $planned['root_ids'] );
+
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $planned['root_ids'], $warnings, $mode, $planned['removed_ids'], $skipped_pro );
+			$response['dry_run'] = true;
+			$response['elements'] = $persister->get_root_elements( $planned['tree'], $parent_id, $planned['root_ids'] );
+
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $planned['removed_ids'] );
 			return $response;
 		}
-
-		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
 		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
 		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
@@ -255,6 +270,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'description' => 'Every warning is fixable: one field was skipped or adjusted and the rest was saved — correct that field via manage-elements. The composition was still built. Errors fail the call instead.',
 				],
 				'warning_details' => Warnings_Bag::get_details_schema(),
+				'elements' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'object' ],
+					'description' => 'dry_run only: the planned root elements, with descendants and assigned ids, to insert under parent_id.',
+				],
+				'dry_run' => [ 'type' => 'boolean' ],
 				'removed_element_ids' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -335,7 +356,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'dry_run' => [
 					'type' => 'boolean',
 					'default' => false,
-					'description' => 'If true, validate and return resolved tree without persisting.',
+					'description' => 'If true, validate and return the planned elements (with assigned ids) without persisting.',
+				],
+				'document_elements' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'object' ],
+					'description' => 'Editor only, with dry_run: the current unsaved document tree to plan against instead of the saved one.',
 				],
 				'mode' => [
 					'type' => 'string',
@@ -345,6 +371,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 				],
 			],
 		];
+	}
+
+	private function resolve_base_tree( array $input, Document $document, bool $dry_run ): array {
+		if ( $dry_run && isset( $input['document_elements'] ) && is_array( $input['document_elements'] ) ) {
+			return $input['document_elements'];
+		}
+
+		$elements_data = $document->get_elements_data();
+
+		return is_array( $elements_data ) ? $elements_data : [];
 	}
 
 	private function validate_input( array $input ): ?\WP_Error {

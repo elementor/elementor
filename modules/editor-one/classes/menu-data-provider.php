@@ -405,8 +405,6 @@ class Menu_Data_Provider {
 	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
 		$has_children = $item->has_children();
 		$group_id = $has_children ? $item->get_group_id() : '';
-		$is_third_party_parent = Menu_Config::THIRD_PARTY_GROUP_ID === $item->get_group_id();
-
 		return $this->with_tag( [
 			'slug' => $item_slug,
 			'label' => $this->format_flyout_label( $item, $item_slug ),
@@ -414,7 +412,7 @@ class Menu_Data_Provider {
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
 			'priority' => $this->get_item_priority( $item ),
-			'has_divider_before' => $is_third_party_parent,
+			'has_divider_before' => false,
 			'event_id' => $this->resolve_event_id( $item, $item_slug ),
 		], $item );
 	}

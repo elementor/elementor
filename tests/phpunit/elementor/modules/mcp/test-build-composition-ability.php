@@ -305,6 +305,95 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_execute__dry_run_returns_planned_elements_with_ids_without_saving() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-div-block configuration-id="hero"><e-heading configuration-id="hero-title"></e-heading></e-div-block>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertCount( 1, $result['root_element_ids'] );
+		$this->assertCount( 1, $result['elements'] );
+
+		$root = $result['elements'][0];
+		$this->assertSame( $result['root_element_ids'][0], $root['id'] );
+		$this->assertNotEmpty( $root['elements'][0]['id'] );
+		$this->assertStringContainsString( 'id="' . $root['id'] . '"', $result['resolved_xml'] );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+	}
+
+	public function test_execute__dry_run_plans_against_the_given_document_elements() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+		$unsaved_parent = [
+			'id' => 'unsaved1',
+			'elType' => 'e-div-block',
+			'settings' => [],
+			'elements' => [
+				[
+					'id' => 'old1',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'settings' => [],
+					'elements' => [],
+				],
+			],
+		];
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'parent_id' => 'unsaved1',
+			'mode' => 'replace_children',
+			'document_elements' => [ $unsaved_parent ],
+			'xml_structure' => '<e-heading configuration-id="new-title"></e-heading>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : '' );
+		$this->assertSame( [ 'old1' ], $result['removed_element_ids'] );
+		$this->assertSame( 'e-heading', $result['elements'][0]['widgetType'] );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+	}
+
+	public function test_execute__ignores_document_elements_without_dry_run() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'parent_id' => 'unsaved1',
+			'document_elements' => [
+				[
+					'id' => 'unsaved1',
+					'elType' => 'e-div-block',
+					'settings' => [],
+					'elements' => [],
+				],
+			],
+			'xml_structure' => '<e-heading configuration-id="new-title"></e-heading>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+	}
+
 	public function test_execute__duplicate_configuration_id_is_rejected_on_dry_run() {
 		// Arrange
 		$this->act_as_admin();
