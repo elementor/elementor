@@ -11,6 +11,7 @@ import {
 	type V1Element,
 } from '@elementor/editor-elements';
 import { type CreateOptions } from '@elementor/editor-props';
+import { SessionStorageProvider } from '@elementor/session';
 import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -100,7 +101,11 @@ export const MenuItemsControl = ( { label }: { label: string } ) => {
 
 const ItemLabel = ( { value }: { value: MenuItem } ) => (
 	<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
-		{ value.id ? <EntryLabel elementId={ value.id } fallbackTitle={ value.title } /> : <span>{ value?.title }</span> }
+		{ value.id ? (
+			<EntryLabel elementId={ value.id } fallbackTitle={ value.title } />
+		) : (
+			<span>{ value?.title }</span>
+		) }
 	</Stack>
 );
 
@@ -157,7 +162,9 @@ const ItemLinkControl = ( { entryId }: { entryId: string } ) => {
 			elementType={ elementType }
 			settings={ settings }
 		>
-			<SettingsControl control={ linkControl } />
+			<SessionStorageProvider prefix={ itemId }>
+				<SettingsControl control={ linkControl } />
+			</SessionStorageProvider>
 		</ElementProvider>
 	);
 };

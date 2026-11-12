@@ -57,6 +57,7 @@ export const BASE_ENTRIES = {
 	'ai-gutenberg': 'modules/ai/assets/js/gutenberg/index.js',
 	'element-manager-admin': 'modules/element-manager/assets/js/admin.js',
 	'media-hints': 'assets/dev/js/admin/hints/media.js',
+	'guided-tours': 'modules/guided-tours/assets/js/guided-tours.js',
 	'ai-media-library': 'modules/ai/assets/js/media-library/index.js',
 	'ai-unify-product-images': 'modules/ai/assets/js/woocommerce/index.js',
 	'ai-admin': 'modules/ai/assets/js/admin/index.js',
