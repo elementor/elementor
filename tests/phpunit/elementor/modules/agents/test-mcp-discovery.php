@@ -31,12 +31,6 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 			$this->markTestSkipped( 'Elementor MCP composer package is not available.' );
 		}
 
-		$deprecation_key = 'WP\MCP\Core\McpAdapter';
-		$this->expected_deprecated[] = $deprecation_key;
-		if ( ! isset( $this->caught_deprecated[ $deprecation_key ] ) ) {
-			$this->caught_deprecated[ $deprecation_key ] = 'Handled order-independently';
-		}
-
 		delete_option( McpSettingsController::OPTION_NAME );
 
 		$module = \Elementor\Plugin::$instance->modules_manager->get_modules( 'agents' );
