@@ -1,0 +1,30 @@
+.driver-overlay {
+	z-index: 100000000 !important;
+}
+
+[dir="rtl"] {
+	.driver-popover {
+		direction: rtl;
+		text-align: right;
+	}
+
+	.driver-popover-close-btn {
+		right: auto;
+		left: 0;
+	}
+
+	.driver-popover-progress-text {
+		unicode-bidi: plaintext;
+	}
+
+	.driver-popover-footer {
+		text-align: left;
+	}
+
+	.driver-popover-navigation-btns {
+		button + button {
+			margin-right: 4px;
+			margin-left: 0;
+		}
+	}
+}

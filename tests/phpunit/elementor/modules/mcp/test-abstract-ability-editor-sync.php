@@ -44,6 +44,37 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		$this->assertGreaterThan( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
 	}
 
+	public function test_execute_guarded__does_not_mark_page_on_dry_run() {
+		// Arrange
+		$ability = $this->make_ability( [ 'mutates_page' => true ], [ 'status' => 'ok' ], true );
+
+		// Act
+		$result = $ability->execute_guarded( [
+			'post_id' => $this->post_id,
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertSame( [ 'status' => 'ok' ], $result );
+		$this->assertSame( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
+	}
+
+	public function test_execute_guarded__rejects_dry_run_when_unsupported() {
+		// Arrange
+		$ability = $this->make_ability( [ 'mutates_page' => true ] );
+
+		// Act
+		$result = $ability->execute_guarded( [
+			'post_id' => $this->post_id,
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'dry_run_unsupported', $result->get_error_code() );
+		$this->assertSame( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
+	}
+
 	public function test_execute_guarded__does_not_mark_page_when_destructive_without_mutates_page() {
 		// Arrange
 		$ability = $this->make_ability( [ 'annotations' => [ 'destructive' => true ] ] );
@@ -140,14 +171,20 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		add_filter( 'elementor/mcp/pre_execute_guard', fn() => new \WP_Error( self::GUARD_ERROR_CODE ) );
 	}
 
-	private function make_ability( array $meta, array $result = [ 'status' => 'ok' ] ): Abstract_Ability {
-		return new class( $meta, $result ) extends Abstract_Ability {
+	private function make_ability( array $meta, array $result = [ 'status' => 'ok' ], bool $supports_dry_run = false ): Abstract_Ability {
+		return new class( $meta, $result, $supports_dry_run ) extends Abstract_Ability {
 			private array $meta;
 			private array $result;
+			private bool $dry_run_supported;
 
-			public function __construct( array $meta, array $result ) {
+			public function __construct( array $meta, array $result, bool $dry_run_supported ) {
 				$this->meta = $meta;
 				$this->result = $result;
+				$this->dry_run_supported = $dry_run_supported;
+			}
+
+			public function supports_dry_run(): bool {
+				return $this->dry_run_supported;
 			}
 
 			protected function get_ability_id(): string {
