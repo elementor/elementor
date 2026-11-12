@@ -151,6 +151,24 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'auto', $props['width']['value']['unit'] );
 	}
 
+	public function test_menu_item_exposes_only_the_current_style_state() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$item_config = $this->get_config( 'e-menu-item' );
+
+		// Assert.
+		$this->assertSame(
+			[ [ 'name' => 'current', 'value' => 'e--current' ] ],
+			$item_config['atomic_style_states']
+		);
+
+		foreach ( [ 'e-menu', 'e-menu-items', 'e-menu-entry' ] as $type ) {
+			$this->assertSame( [], $this->get_config( $type )['atomic_style_states'], $type );
+		}
+	}
+
 	public function test_default_content() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
