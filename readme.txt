@@ -2,7 +2,7 @@
 Contributors: elemntor
 Tags: ai, drag-and-drop, editor, landing page, mcp
 Requires at least: 6.8
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
 Stable tag: 3.34.2
 Beta tag: 3.34.0-beta3
