@@ -101,6 +101,7 @@ export default class extends Marionette.LayoutView {
 
 		this.ui.searchRow.toggleClass( 'elementor-hidden', ! isHidden );
 		this.ui.searchToggle.attr( 'aria-expanded', isHidden ? 'true' : 'false' );
+		this.$el.toggleClass( 'elementor-navigator__inner--search-open', isHidden );
 
 		if ( isHidden ) {
 			this.ui.searchInput.trigger( 'focus' );

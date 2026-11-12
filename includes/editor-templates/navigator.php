@@ -43,8 +43,7 @@ if ( ! $has_pro ) {
 		</div>
 		<div id="elementor-navigator__search" class="elementor-navigator__search elementor-hidden">
 			<label class="elementor-navigator__search-field">
-				<i class="eicon-search-bold" aria-hidden="true"></i>
-				<input type="search" id="elementor-navigator__search-input" placeholder="<?php echo esc_attr__( 'Search in structure', 'elementor' ); ?>" autocomplete="off" />
+				<input type="search" id="elementor-navigator__search-input" placeholder="<?php echo esc_attr__( 'Search in structure', 'elementor' ); ?>" autocomplete="off" aria-label="<?php echo esc_attr__( 'Search in structure', 'elementor' ); ?>" />
 				<button id="elementor-navigator__search-clear" type="button" class="elementor-hidden" aria-label="<?php echo esc_attr__( 'Clear search', 'elementor' ); ?>">
 					<i class="eicon-close-circle" aria-hidden="true"></i>
 				</button>
@@ -98,11 +97,13 @@ if ( ! $has_pro ) {
 					<span class="elementor-navigator__element__title__hint">{{{ hint }}}</span>
 				<# } #>
 			</div>
-			<div class="elementor-navigator__element__toggle">
-				<i class="eicon-preview-medium" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide Element', 'elementor' ); ?></span>
+			<div class="elementor-navigator__element__actions">
+				<div class="elementor-navigator__element__indicators"></div>
+				<div class="elementor-navigator__element__toggle">
+					<i class="eicon-preview-medium" aria-hidden="true"></i>
+					<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide Element', 'elementor' ); ?></span>
+				</div>
 			</div>
-			<div class="elementor-navigator__element__indicators"></div>
 		</div>
 	<# } #>
 	<div class="elementor-navigator__elements"></div>

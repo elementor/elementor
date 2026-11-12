@@ -28,10 +28,10 @@ export default class extends Marionette.CompositeView {
 			item: '> .elementor-navigator__item',
 			title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
 			hint: '> .elementor-navigator__item .elementor-navigator__element__title__hint',
-			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
+			toggle: '> .elementor-navigator__item > .elementor-navigator__element__actions > .elementor-navigator__element__toggle',
 			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
-			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
-			indicator: '> .elementor-navigator__item > .elementor-navigator__element__indicators > .elementor-navigator__element__indicator',
+			indicators: '> .elementor-navigator__item > .elementor-navigator__element__actions > .elementor-navigator__element__indicators',
+			indicator: '> .elementor-navigator__item > .elementor-navigator__element__actions > .elementor-navigator__element__indicators > .elementor-navigator__element__indicator',
 			elements: '> .elementor-navigator__elements',
 			icon: '> .elementor-navigator__item .elementor-navigator__element__element-type',
 		};

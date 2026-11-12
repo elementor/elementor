@@ -2,6 +2,8 @@ body {
 	--e-editor-navigator-width: 240px;
 	--e-editor-navigator-indicator-width: 3px;
 	--e-editor-navigator-promotion-height: 30px;
+	--e-editor-navigator-row-height: 32px;
+	--e-editor-navigator-tree-inset: 12px;
 }
 
 #elementor-navigator {
@@ -67,6 +69,15 @@ body {
 
 	&__search {
 		padding: 0 10px 8px;
+	}
+
+	&__inner--search-open {
+
+		#elementor-navigator__search-toggle {
+			color: var(--e-a-color-txt-active);
+			background-color: var(--e-a-bg-chip);
+			border-radius: var(--e-a-border-radius);
+		}
 	}
 
 	&__search-field {
@@ -196,10 +207,12 @@ body {
 	&__item {
 		position: relative;
 		display: flex;
-		height: 30px;
+		align-items: center;
+		gap: 4px;
+		min-height: var(--e-editor-navigator-row-height);
+		padding-inline-end: 8px;
 		cursor: pointer;
 		transition: padding .5s linear;
-		overflow: hidden;
 
 		&:hover,
 		&:focus {
@@ -272,18 +285,16 @@ body {
 	&__element {
 		position: relative;
 
-		&::before {
-			content: "";
-			position: absolute;
-			inset-block: 0;
-			width: 1px;
-			background-color: var(--e-a-border-color);
-			inset-inline-start: 12px;
-			pointer-events: none;
+		> .elementor-navigator__elements {
+			margin-inline-start: var(--e-editor-navigator-tree-inset);
+			padding-inline-start: 8px;
+			border-inline-start: 1px solid var(--e-a-border-color);
 		}
 
-		&--path > .elementor-navigator__item {
-			background-color: var(--e-a-bg-hover);
+		&--path > .elementor-navigator__item:not(.elementor-editing) {
+			.elementor-navigator__element__title__text {
+				color: var(--e-a-color-txt-hover);
+			}
 		}
 
 		&--search-hidden {
@@ -296,7 +307,7 @@ body {
 
 		&--search-match > .elementor-navigator__item {
 			background-color: var(--e-a-bg-primary);
-			box-shadow: inset 3px 0 0 var(--e-a-color-accent);
+			box-shadow: inset var(--e-editor-navigator-indicator-width) 0 0 var(--e-a-color-accent);
 		}
 
 		&.elementor-dragging-on-child {
@@ -336,26 +347,24 @@ body {
 					}
 				}
 
-				&:not(:hover) {
-
-					.elementor-navigator__element__toggle {
-						display: none;
-					}
-				}
-			}
-
-			> .elementor-navigator__item {
-
 				&.elementor-editing {
 					background-color: var(--e-a-bg-primary);
-					box-shadow: inset 3px 0 0 var(--e-a-color-accent);
+					box-shadow: inset var(--e-editor-navigator-indicator-width) 0 0 var(--e-a-color-accent);
 				}
 			}
 		}
 
 		&__list-toggle {
-			margin-inline-end: 7px;
+			flex-shrink: 0;
+			width: 18px;
+			margin-inline-end: 4px;
+			justify-content: center;
+			color: var(--e-a-color-txt-muted);
 			transition: transform .3s;
+
+			&:hover {
+				color: var(--e-a-color-txt-hover);
+			}
 		}
 
 		&__lock {
@@ -365,8 +374,10 @@ body {
 		}
 
 		&__element-type {
-			margin-inline-end: 8px;
+			flex-shrink: 0;
+			margin-inline-end: 6px;
 			font-size: 14px;
+			line-height: 1;
 		}
 
 		&--icon-container .elementor-navigator__element__element-type {
@@ -382,10 +393,11 @@ body {
 		}
 
 		&__title {
-			flex-grow: 1;
+			flex: 1 1 auto;
+			min-width: 0;
 			overflow: hidden;
 			display: flex;
-			align-items: baseline;
+			align-items: center;
 			gap: 4px;
 
 			&__text {
@@ -400,7 +412,6 @@ body {
 				}
 
 				&:not([contenteditable="true"]) {
-					padding: 3px 0;
 					@include ellipsis;
 				}
 			}
@@ -414,22 +425,29 @@ body {
 			}
 		}
 
+		&__actions {
+			flex-shrink: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+			margin-inline-start: auto;
+		}
+
 		&__toggle {
-			position: absolute;
-			inset-inline-end: 15px;
-			height: 100%;
-			z-index: 0;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 22px;
+			height: 22px;
+			flex-shrink: 0;
 			font-size: 13px;
 		}
 
 		&__indicators {
-			position: relative;
-			transition: transform .5s;
-			z-index: 91;
-
-			&:not(:hover) {
-				transform: translateX(calc(100% * var(--direction-multiplier) - (var(--e-editor-navigator-indicator-width) * var(--direction-multiplier))));
-			}
+			display: inline-flex;
+			align-items: center;
+			gap: 2px;
+			flex-shrink: 0;
 		}
 
 		&__indicator {
