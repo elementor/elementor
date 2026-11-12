@@ -7,9 +7,10 @@ import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
-import { injectIntoInlineEditingControlHeader } from '../../components/inline-editing-locations';
+import { type ControlHeaderProps, injectIntoControlHeader } from '../../components/control-header-location';
 import { InlineEditor } from '../../components/inline-editor';
 import { InlineEditorToolbar } from '../../components/inline-editor-toolbar';
+import { initControlHeader } from '../../control-header/init';
 import { InlineEditingControl } from '../inline-editing-control';
 
 jest.mock( '../../components/inline-editor', () => ( {
@@ -178,6 +179,7 @@ describe( '<InlineEditingControl />', () => {
 
 	it( 'should show Improve beside the label when a promotion is set', () => {
 		// Arrange.
+		initControlHeader();
 		( window as unknown as { elementor: unknown } ).elementor = {
 			config: { user: { dismissed_editor_notices: [] } },
 		};
@@ -202,11 +204,13 @@ describe( '<InlineEditingControl />', () => {
 		// Assert.
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Improve' } ) ).toBeInTheDocument();
+
+		flushAllInjections();
 	} );
 
 	describe( 'header actions', () => {
-		const HeaderAction = ( { elementId }: { elementId: string } ) => (
-			<button>{ `Header action for ${ elementId }` }</button>
+		const HeaderAction = ( { elementId, controlType }: ControlHeaderProps ) => (
+			<button>{ `Header action for ${ elementId } ${ controlType }` }</button>
 		);
 
 		afterEach( () => {
@@ -215,14 +219,14 @@ describe( '<InlineEditingControl />', () => {
 
 		it( 'should render injected header actions on the label row with the element id', () => {
 			// Arrange.
-			injectIntoInlineEditingControlHeader( { id: 'test-header-action', component: HeaderAction } );
+			injectIntoControlHeader( { id: 'test-header-action', component: HeaderAction } );
 
 			// Act.
 			renderControl( <InlineEditingControl context={ { elementId: '1' } } label="Text" />, baseProps );
 
 			// Assert.
 			expect( screen.getByText( 'Text' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Header action for 1' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Header action for 1 inline-editing' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render the label without header actions when nothing is injected', () => {

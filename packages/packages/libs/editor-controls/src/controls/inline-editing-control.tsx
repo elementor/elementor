@@ -5,25 +5,23 @@ import { Box, Stack, type SxProps, type Theme } from '@elementor/ui';
 import { type Editor } from '@tiptap/react';
 
 import { useBoundProp, usePropKeyContext } from '../bound-prop-context';
+import { ControlHeaderActions, useControlHeaderInjections } from '../components/control-header-location';
 import { ControlLabel } from '../components/control-label';
-import {
-	InlineEditingControlHeaderSlot,
-	useInlineEditingControlHeaderInjections,
-} from '../components/inline-editing-locations';
 import { InlineEditor } from '../components/inline-editor';
 import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
+import { hasExternalControlHeaderInjections } from '../control-header/init';
 import { createControl } from '../create-control';
 import { extractInlineHtmlContent } from '../utils/inline-editing';
 import { type ControlProps } from '../utils/types';
-import { ImageOptimizeTrigger, type ImagePromotion } from './image-optimize-trigger';
+import { type AppPromotion } from './app-promotion-trigger';
 
 type Props = ControlProps< {
 	sx?: SxProps< Theme >;
 	attributes?: Record< string, string >;
 	props?: ComponentProps< 'div' >;
 	label?: string;
-	promotion?: ImagePromotion;
+	promotion?: AppPromotion;
 } >;
 
 export const InlineEditingControl = createControl(
@@ -32,7 +30,7 @@ export const InlineEditingControl = createControl(
 		const { value: rawValue } = usePropKeyContext();
 		const content = value ?? extractInlineHtmlContent( rawValue );
 		const [ editor, setEditor ] = useState< Editor | null >( null );
-		const headerInjections = useInlineEditingControlHeaderInjections();
+		const headerInjections = useControlHeaderInjections();
 
 		const handleChange = useCallback(
 			( newValue: unknown ) => {
@@ -117,9 +115,10 @@ export const InlineEditingControl = createControl(
 			</ControlActions>
 		);
 
-		const hasHeaderActions = Boolean( elementId ) && headerInjections.length > 0;
+		const hasThirdPartyHeaderActions =
+			Boolean( elementId ) && hasExternalControlHeaderInjections( headerInjections );
 
-		if ( ! label && ! promotion && ! hasHeaderActions ) {
+		if ( ! label && ! promotion && ! hasThirdPartyHeaderActions ) {
 			return editorField;
 		}
 
@@ -128,8 +127,11 @@ export const InlineEditingControl = createControl(
 				<Stack direction="row" alignItems="center" justifyContent="space-between">
 					<ControlLabel>{ label }</ControlLabel>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						{ promotion && <ImageOptimizeTrigger promotion={ promotion } /> }
-						{ hasHeaderActions && elementId && <InlineEditingControlHeaderSlot elementId={ elementId } /> }
+						<ControlHeaderActions
+							elementId={ elementId }
+							controlType="inline-editing"
+							promotion={ promotion }
+						/>
 					</Stack>
 				</Stack>
 				{ editorField }
