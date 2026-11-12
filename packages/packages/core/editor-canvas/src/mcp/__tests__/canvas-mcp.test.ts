@@ -14,6 +14,7 @@ jest.mock( '../resources/editor-state-resource', () => ( { initEditorStateResour
 jest.mock( '../resources/general-context-resource', () => ( { initGeneralContextResource: jest.fn() } ) );
 jest.mock( '../resources/selected-element-resource', () => ( { initSelectedElementResource: jest.fn() } ) );
 jest.mock( '../resources/widgets-schema-resource', () => ( { initWidgetsSchemaResource: jest.fn() } ) );
+jest.mock( '../tools/build-composition/tool', () => ( { initBuildCompositionTool: jest.fn() } ) );
 jest.mock( '../tools/configure-element/tool', () => ( { initConfigureElementTool: jest.fn() } ) );
 jest.mock( '../tools/find-icons/tool', () => ( { initFindIconsTool: jest.fn() } ) );
 jest.mock( '../tools/get-page-structure/tool', () => ( { initGetPageStructureTool: jest.fn() } ) );
