@@ -3,6 +3,8 @@ export {
 	type VariablesManagerPanelEmbeddedProps,
 } from './components/variables-manager/variables-manager-panel';
 export { init } from './init';
+export { injectIntoVariableFormHeader, type VariableFormHeaderProps } from './components/variable-form-header-location';
+export { injectIntoVariablesManagerHeader } from './components/variables-manager-header-location';
 export { GLOBAL_VARIABLES_URI } from './mcp/variables-resource';
 export { sizeVariablePropTypeUtil } from './prop-types/size-variable-prop-type';
 export { registerVariableTypes } from './register-variable-types';

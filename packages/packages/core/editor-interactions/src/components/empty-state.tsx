@@ -1,18 +1,28 @@
 import * as React from 'react';
 import { SwipeIcon } from '@elementor/icons';
-import { Button, Stack, Typography } from '@elementor/ui';
+import { Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const EmptyState = ( { onCreateInteraction }: { onCreateInteraction: () => void } ) => {
+import { InteractionsHeaderSlot } from './interactions-header-location';
+
+type EmptyStateProps = {
+	elementId: string;
+	onCreateInteraction: () => void;
+};
+
+export const EmptyState = ( { elementId, onCreateInteraction }: EmptyStateProps ) => {
 	return (
 		<Stack
 			alignItems="center"
 			justifyContent="center"
 			height="100%"
 			color="text.secondary"
-			sx={ { p: 2.5, pt: 8, pb: 5.5 } }
+			sx={ { position: 'relative', p: 2.5, pt: 8, pb: 5.5 } }
 			gap={ 1.5 }
 		>
+			<Box sx={ { position: 'absolute', top: 8, insetInlineEnd: 8 } }>
+				<InteractionsHeaderSlot elementId={ elementId } />
+			</Box>
 			<SwipeIcon fontSize="large" />
 
 			<Typography align="center" variant="subtitle2">
