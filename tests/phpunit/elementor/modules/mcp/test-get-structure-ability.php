@@ -1210,6 +1210,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
 		$write = ( new Build_Composition_Ability() )->execute( [
 			'post_id' => $post_id,
 			'xml_structure' => '<e-div-block configuration-id="hero"/>',

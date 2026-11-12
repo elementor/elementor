@@ -18,6 +18,7 @@ abstract class Abstract_Ability {
 	const KIND_TOOL = 'tool';
 	const KIND_RESOURCE = 'resource';
 	const ABILITY_ID_PREFIX = 'elementor/';
+	const DRY_RUN_PARAM = 'dry_run';
 
 	private ?Ability_Definition $cached_definition = null;
 
@@ -35,6 +36,15 @@ abstract class Abstract_Ability {
 		$availability = $this->is_available();
 		if ( is_wp_error( $availability ) ) {
 			return $availability;
+		}
+
+		$is_dry_run = self::is_dry_run( $input );
+		if ( $is_dry_run && ! $this->supports_dry_run() ) {
+			return new \WP_Error(
+				'dry_run_unsupported',
+				__( 'This ability does not support dry run.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
 		}
 
 		$is_mutating = self::KIND_TOOL === $this->get_kind() && $this->is_page_mutating();
@@ -67,7 +77,7 @@ abstract class Abstract_Ability {
 
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
 
-		if ( $is_mutating && $post_id > 0 && ! $is_failed ) {
+		if ( $is_mutating && $post_id > 0 && ! $is_failed && ! $is_dry_run ) {
 			Editor_Sync_State::set_mcp_mutation( $post_id );
 		}
 
@@ -173,12 +183,24 @@ abstract class Abstract_Ability {
 		return true;
 	}
 
+	/**
+	 * Whether the ability accepts `dry_run: true`. A dry run validates the input and returns
+	 * the exact result a real run would produce, without writing anything, so the editor can apply it locally.
+	 */
+	public function supports_dry_run(): bool {
+		return false;
+	}
+
+	public static function is_dry_run( $input ): bool {
+		return is_array( $input ) && ! empty( $input[ self::DRY_RUN_PARAM ] );
+	}
+
 	protected function should_record_site_capability( $input, $result ): bool {
 		if ( null === Site_Flag::capability_for_ability( $this->get_id() ) ) {
 			return false;
 		}
 
-		if ( ! empty( $input['dry_run'] ) ) {
+		if ( self::is_dry_run( $input ) ) {
 			return false;
 		}
 
@@ -204,9 +226,26 @@ abstract class Abstract_Ability {
 	protected function definition(): Ability_Definition {
 		if ( null === $this->cached_definition ) {
 			$this->cached_definition = $this->get_definition();
+
+			if ( $this->supports_dry_run() ) {
+				$this->add_dry_run_input( $this->cached_definition );
+			}
 		}
 
 		return $this->cached_definition;
+	}
+
+	private function add_dry_run_input( Ability_Definition $definition ): void {
+		if ( isset( $definition->input_schema['properties'][ self::DRY_RUN_PARAM ] ) ) {
+			return;
+		}
+
+		$definition->input_schema['type'] = $definition->input_schema['type'] ?? 'object';
+		$definition->input_schema['properties'][ self::DRY_RUN_PARAM ] = [
+			'type' => 'boolean',
+			'default' => false,
+			'description' => 'Validate and return the planned result without writing anything.',
+		];
 	}
 
 	private function mcp_meta(): array {

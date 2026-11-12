@@ -35,7 +35,33 @@ class Composition_Persister {
 	 */
 	public function insert_and_save( Document $document, array $subtrees, string $parent_id, string $mode = self::MODE_APPEND ) {
 		$tree = $document->get_elements_data();
-		$tree = is_array( $tree ) ? $tree : [];
+		$planned = $this->plan( is_array( $tree ) ? $tree : [], $subtrees, $parent_id, $mode );
+		if ( is_wp_error( $planned ) ) {
+			return $planned;
+		}
+
+		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->mutator, $document, $planned['tree'] );
+		if ( is_wp_error( $save_result ) ) {
+			return $save_result;
+		}
+
+		$this->emit_insertion_events( $planned['tree'], $parent_id, $planned['root_ids'] );
+
+		$planned['target'] = $save_result;
+
+		return $planned;
+	}
+
+	/**
+	 * Applies the insertion to an in-memory tree, assigning element ids, without saving.
+	 *
+	 * @param array[] $tree Current document tree.
+	 * @param array[] $subtrees Root subtrees to insert.
+	 * @param string  $parent_id Parent element id ("document" for root).
+	 * @param string  $mode 'append' (default) or 'replace_children'.
+	 * @return array{tree: array, root_ids: string[], removed_ids: string[]}|\WP_Error
+	 */
+	public function plan( array $tree, array $subtrees, string $parent_id, string $mode = self::MODE_APPEND ) {
 		$root_ids = [];
 		$removed_ids = [];
 
@@ -57,19 +83,27 @@ class Composition_Persister {
 			$root_ids[] = $this->find_last_root_id( $tree, $parent_id );
 		}
 
-		$save_result = Document_Mutation_Save::elements_preserving_live_status( $this->mutator, $document, $tree );
-		if ( is_wp_error( $save_result ) ) {
-			return $save_result;
-		}
-
-		$this->emit_insertion_events( $tree, $parent_id, $root_ids );
-
 		return [
 			'tree' => $tree,
 			'root_ids' => $root_ids,
 			'removed_ids' => $removed_ids,
-			'target' => $save_result,
 		];
+	}
+
+	/**
+	 * @return array[] The inserted root elements, with their descendants.
+	 */
+	public function get_root_elements( array $tree, string $parent_id, array $root_ids ): array {
+		$elements = [];
+
+		foreach ( $root_ids as $root_id ) {
+			$node = $this->find_persisted_subtree( $tree, $parent_id, $root_id );
+			if ( $node ) {
+				$elements[] = $node;
+			}
+		}
+
+		return $elements;
 	}
 
 	/**

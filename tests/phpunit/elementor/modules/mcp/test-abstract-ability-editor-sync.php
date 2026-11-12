@@ -46,6 +46,37 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		$this->assertGreaterThan( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
 	}
 
+	public function test_execute_guarded__does_not_mark_page_on_dry_run() {
+		// Arrange
+		$ability = $this->make_ability( [ 'mutates_page' => true ], [ 'status' => 'ok' ], true );
+
+		// Act
+		$result = $ability->execute_guarded( [
+			'post_id' => $this->post_id,
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertSame( [ 'status' => 'ok' ], $result );
+		$this->assertSame( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
+	}
+
+	public function test_execute_guarded__rejects_dry_run_when_unsupported() {
+		// Arrange
+		$ability = $this->make_ability( [ 'mutates_page' => true ] );
+
+		// Act
+		$result = $ability->execute_guarded( [
+			'post_id' => $this->post_id,
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'dry_run_unsupported', $result->get_error_code() );
+		$this->assertSame( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
+	}
+
 	public function test_execute_guarded__does_not_mark_page_when_destructive_without_mutates_page() {
 		// Arrange
 		$ability = $this->make_ability( [ 'annotations' => [ 'destructive' => true ] ] );
@@ -147,6 +178,7 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		$ability = $this->make_ability(
 			[ 'mutates_page' => true ],
 			[ 'status' => 'ok' ],
+			false,
 			fn() => $sync_state->on_document_saved( $document )
 		);
 
@@ -178,16 +210,22 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		add_filter( 'elementor/mcp/pre_execute_guard', fn() => new \WP_Error( self::GUARD_ERROR_CODE ) );
 	}
 
-	private function make_ability( array $meta, array $result = [ 'status' => 'ok' ], ?callable $on_execute = null ): Abstract_Ability {
-		return new class( $meta, $result, $on_execute ) extends Abstract_Ability {
+	private function make_ability( array $meta, array $result = [ 'status' => 'ok' ], bool $supports_dry_run = false, ?callable $on_execute = null ): Abstract_Ability {
+		return new class( $meta, $result, $supports_dry_run, $on_execute ) extends Abstract_Ability {
 			private array $meta;
 			private array $result;
+			private bool $dry_run_supported;
 			private $on_execute;
 
-			public function __construct( array $meta, array $result, ?callable $on_execute ) {
+			public function __construct( array $meta, array $result, bool $dry_run_supported, ?callable $on_execute ) {
 				$this->meta = $meta;
 				$this->result = $result;
+				$this->dry_run_supported = $dry_run_supported;
 				$this->on_execute = $on_execute;
+			}
+
+			public function supports_dry_run(): bool {
+				return $this->dry_run_supported;
 			}
 
 			protected function get_ability_id(): string {

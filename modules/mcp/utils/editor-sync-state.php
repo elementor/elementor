@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Utils;
 
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -55,7 +56,7 @@ class Editor_Sync_State {
 	public function check_mutation_guard( $error, $input ): ?\WP_Error {
 		$post_id = isset( $input['post_id'] ) ? (int) $input['post_id'] : 0;
 
-		if ( $post_id <= 0 ) {
+		if ( $post_id <= 0 || Abstract_Ability::is_dry_run( $input ) ) {
 			return null;
 		}
 
