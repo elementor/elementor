@@ -72,7 +72,7 @@ See [extending-editor.md](extending-editor.md).
 | Component | Path |
 |-----------|------|
 | Loader | `core/editor/loader/editor-loader.php` |
-| Bundler | `.grunt-config/webpack.packages.js` |
+| Bundler | `scripts/vite/build-packages.mjs` (`npm run packages:assets`) |
 | Entry | `core/editor/loader/js/editor-loader.js` |
 | Pluggable UI | `@elementor/locations` → `createLocation()` |
 

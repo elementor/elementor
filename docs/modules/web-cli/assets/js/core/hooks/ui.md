@@ -3,10 +3,10 @@
 that runs *before/after/catch* the command without affecting the *elementor* data model and history.
 The __hooks__ are attached to `$e.commands`, and each _event_ is being fired when a command is running.
 Mainly used for UI/View manipulation.
-*  **Location**: *core/common/assets/js/api/core/hooks/ui.js*
+*  **Location**: *modules/web-cli/assets/js/core/hooks/ui.js*
 *  **Parent**: [`{HooksBase}`](#HooksBase)
 *  **Methods**: Please look at parent: `{HooksBase}` for all the methods.
-* ***Important***: All hooks should be created by extending [`{( $e.modules.hookUI )}`](#e-modules-hooks-ui) located at: `core/common/assets/js/api/modules/hooks/ui/`.
+* ***Important***: All hooks should be created by extending [`{( $e.modules.hookUI )}`](#e-modules-hooks-ui) located at: `modules/web-cli/assets/js/modules/hooks/ui/`.
 	
 	| Class                           | Description                                                                                            
 	|---------------------------------|--------------------------------------------------------------------------------
