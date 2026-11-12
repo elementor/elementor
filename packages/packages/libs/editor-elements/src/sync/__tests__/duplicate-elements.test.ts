@@ -150,6 +150,37 @@ describe( 'duplicateElements', () => {
 		} );
 	} );
 
+	it( 'should forward the origin to every inner command on do, undo and redo', () => {
+		// Arrange.
+		const { mockDuplicatedElement1 } = setupMockElementsForDuplication( mockGetContainer );
+
+		mockDuplicateElement.mockReturnValueOnce( mockDuplicatedElement1 );
+		mockCreateElement.mockReturnValueOnce(
+			createMockChild( { id: 'recreated-1', elType: 'widget', widgetType: 'button' } )
+		);
+
+		// Act.
+		duplicateElements( { elementIds: [ 'original-1' ], title: 'Duplicate Element', origin: 'test-origin' } );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		act( () => {
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		const innerCalls = [
+			...mockDuplicateElement.mock.calls,
+			...mockDeleteElement.mock.calls,
+			...mockCreateElement.mock.calls,
+		];
+
+		expect( innerCalls ).toHaveLength( 3 );
+		innerCalls.forEach( ( [ params ] ) => expect( params.options?.origin ).toBe( 'test-origin' ) );
+	} );
+
 	it( 'should skip elements without parent containers', () => {
 		// Arrange.
 		const mockElementWithoutParent = createMockContainer( 'no-parent', [] );

@@ -113,6 +113,28 @@ describe( 'prepareWidgetTemplateForInsert', () => {
 		expect( result.elements?.some( ( child ) => 'widget' in child ) ).toBe( false );
 	} );
 
+	it( 'locks every part except the root, and leaves slot content unlocked', () => {
+		// Arrange.
+		const definition = createDefinition();
+
+		definition.template.elements?.push( {
+			elType: 'e-flexbox',
+			part: 'tab_content',
+			slot: true,
+			elements: [ { elType: 'widget', widgetType: 'e-heading' } ],
+		} );
+
+		// Act.
+		const result = prepareWidgetTemplateForInsert( definition );
+
+		// Assert.
+		const [ icon, label, slot ] = result.elements ?? [];
+
+		expect( result.isLocked ).toBeUndefined();
+		expect( [ icon.isLocked, label.isLocked, slot.isLocked ] ).toEqual( [ true, true, true ] );
+		expect( slot.elements?.[ 0 ].isLocked ).toBeUndefined();
+	} );
+
 	it( 'does not mutate the definition template', () => {
 		// Arrange.
 		const definition = createDefinition();

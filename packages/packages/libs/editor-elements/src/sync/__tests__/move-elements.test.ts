@@ -346,4 +346,31 @@ describe( 'moveElements', () => {
 			options: { useHistory: false },
 		} );
 	} );
+
+	it( 'should forward the origin to every move on do, undo and redo', () => {
+		// Arrange.
+		const { mockElement1, mockParentB } = setupMockElementsForMove();
+		const mockMovedElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+
+		mockMoveElement.mockReturnValue( mockMovedElement );
+
+		// Act.
+		moveElements( {
+			moves: [ { element: mockElement1, targetContainer: mockParentB } ],
+			title: 'Move Element',
+			origin: 'test-origin',
+		} );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		act( () => {
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		expect( mockMoveElement ).toHaveBeenCalledTimes( 3 );
+		mockMoveElement.mock.calls.forEach( ( [ params ] ) => expect( params.options?.origin ).toBe( 'test-origin' ) );
+	} );
 } );

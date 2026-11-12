@@ -14,6 +14,7 @@ type DuplicateElementsParams = {
 	subtitle?: string;
 	onDuplicateElements?: () => void;
 	onRestoreElements?: () => void;
+	origin?: string;
 };
 
 type DuplicatedElement = {
@@ -37,6 +38,7 @@ export const duplicateElements = ( {
 	subtitle = __( 'Item duplicated', 'elementor' ),
 	onDuplicateElements,
 	onRestoreElements,
+	origin,
 }: DuplicateElementsParams ): DuplicatedElementsResult => {
 	const undoableDuplicate = undoable(
 		{
@@ -53,7 +55,7 @@ export const duplicateElements = ( {
 
 					const duplicatedElement = duplicateElement( {
 						element: originalContainer,
-						options: { useHistory: false },
+						options: { useHistory: false, origin },
 					} );
 
 					if ( ! duplicatedElement.parent ) {
@@ -81,7 +83,7 @@ export const duplicateElements = ( {
 					if ( freshContainer ) {
 						deleteElement( {
 							container: freshContainer,
-							options: { useHistory: false },
+							options: { useHistory: false, origin },
 						} );
 
 						return;
@@ -104,7 +106,7 @@ export const duplicateElements = ( {
 						const createdElement = createElement( {
 							container: freshParent,
 							model,
-							options: { useHistory: false, clone: false, at },
+							options: { useHistory: false, clone: false, at, origin },
 						} );
 
 						duplicatedElements.push( {
