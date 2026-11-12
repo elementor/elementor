@@ -192,6 +192,48 @@ class Test_Mcp_Tool_Performance_Events extends TestCase {
 		$this->assertContains( 'secondary', $payload['variable_labels'] );
 	}
 
+	public function test_manage_classes_tags_dry_run_in_payload() {
+		// Arrange
+		$repo = $this->createMock( Global_Classes_Repository::class );
+		$repo->method( 'all_labels' )->willReturn( [] );
+		$repo->method( 'get_order' )->willReturn( [] );
+		$ability = $this->make_classes_ability( $repo );
+
+		// Act
+		$ability->execute( [
+			'operations' => [
+				[ 'action' => 'create', 'label' => 'accent', 'css' => 'color: red;' ],
+			],
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertTrue( $this->first_payload( 'mcp_manage_classes_executed' )['dry_run'] );
+	}
+
+	public function test_manage_variable_tags_dry_run_in_payload() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'process_batch' )->willReturn( [
+			'results'   => [
+				[ 'status' => 'ok', 'action' => 'create', 'id' => 'v1', 'label' => 'accent', 'type' => 'global-color-variable' ],
+			],
+			'watermark' => 'w1',
+		] );
+		$ability = $this->make_variable_ability( $service );
+
+		// Act
+		$ability->execute( [
+			'operations' => [
+				[ 'action' => 'create', 'type' => 'global-color-variable', 'label' => 'accent', 'value' => '#f00' ],
+			],
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertTrue( $this->first_payload( 'mcp_manage_global_variable_executed' )['dry_run'] );
+	}
+
 	// ── manage-global-variable: emits exactly once per execute() ─────────────
 
 	public function test_manage_variable_emits_mcp_manage_global_variable_executed_on_success() {
