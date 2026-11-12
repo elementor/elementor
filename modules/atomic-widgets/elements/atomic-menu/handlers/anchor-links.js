@@ -39,7 +39,7 @@ export default class AnchorLinks {
 		this.active.clear();
 	}
 
-	// An anchor counts as in view while it overlaps the top half of the viewport; an anchor taller than half the viewport must also reach past the middle.
+	// Core copy of elementor-pro/assets/dev/js/frontend/utils/anchor-link.js; keep the margin rule in sync with it.
 	calculateRootMargin( target, viewportHeight ) {
 		const halfViewport = viewportHeight / 2;
 		const isTallerThanHalfViewport = ( target.offsetHeight || 0 ) > halfViewport;

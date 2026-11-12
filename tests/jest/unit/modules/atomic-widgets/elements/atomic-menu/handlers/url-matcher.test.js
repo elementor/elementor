@@ -30,6 +30,7 @@ describe( 'url-matcher', () => {
 			[ 'external domain', 'https://other.com/about/', 'https://example.com/about/', false ],
 			[ 'link with a hash is not a page link', 'https://example.com/about/#team', 'https://example.com/about/', false ],
 			[ 'empty href', '', 'https://example.com/about/', false ],
+			[ 'placeholder hash link', '#', 'https://example.com/about/', false ],
 			[ 'null href', null, 'https://example.com/about/', false ],
 			[ 'mailto link', 'mailto:hi@example.com', 'https://example.com/about/', false ],
 			[ 'javascript link', 'javascript:void(0)', 'https://example.com/about/', false ],

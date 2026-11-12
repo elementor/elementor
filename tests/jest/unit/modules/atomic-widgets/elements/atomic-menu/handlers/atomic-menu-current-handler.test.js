@@ -136,6 +136,18 @@ describe( 'atomic-menu current handler', () => {
 		expect( items[ 0 ].hasAttribute( 'aria-current' ) ).toBe( false );
 	} );
 
+	it( 'should never mark a placeholder hash link', () => {
+		// Arrange
+		const { menu, items } = buildMenu( [ '#', `${ ORIGIN }/about/` ] );
+
+		// Act
+		run( menu );
+
+		// Assert
+		expect( items[ 0 ].classList.contains( CURRENT_CLASS ) ).toBe( false );
+		expect( items[ 0 ].hasAttribute( 'aria-current' ) ).toBe( false );
+	} );
+
 	it( 'should never mark a link to an external domain', () => {
 		// Arrange
 		const { menu, items } = buildMenu( [ 'https://example.com/about/' ] );
@@ -193,6 +205,19 @@ describe( 'atomic-menu current handler', () => {
 			expect( contact.hasAttribute( 'aria-current' ) ).toBe( false );
 			expect( home.classList.contains( CURRENT_CLASS ) ).toBe( true );
 			expect( home.getAttribute( 'aria-current' ) ).toBe( 'page' );
+		} );
+
+		it( 'should mark every item that links to the section in view', () => {
+			// Arrange
+			addSection( 'contact' );
+			const { menu, items } = buildMenu( [ `${ ORIGIN }/#contact`, `${ ORIGIN }/#contact` ] );
+			run( menu );
+
+			// Act
+			IntersectionObserverMock.instances.forEach( ( observer ) => observer.trigger( true ) );
+
+			// Assert
+			expect( items.map( ( item ) => item.classList.contains( CURRENT_CLASS ) ) ).toEqual( [ true, true ] );
 		} );
 
 		it( 'should never mark an anchor item whose target does not exist', () => {

@@ -40,6 +40,10 @@ function isSamePage( link, page ) {
 }
 
 export function isCurrentPageLink( href, pageUrl = window.location.href ) {
+	if ( 'string' === typeof href && href.trim().startsWith( '#' ) ) {
+		return false;
+	}
+
 	const link = parseUrl( href, pageUrl );
 	const page = parseUrl( pageUrl, pageUrl );
 

@@ -118,6 +118,23 @@ describe( 'AnchorLinks', () => {
 		expect( IntersectionObserverMock.instances ).toHaveLength( 0 );
 	} );
 
+	it( 'should keep the active items while the viewport is resized', () => {
+		// Arrange
+		const entry = createEntry( 'contact' );
+		const onChange = jest.fn();
+		initialize( [ entry ], onChange );
+		IntersectionObserverMock.instances[ 0 ].trigger( true );
+		onChange.mockClear();
+
+		// Act
+		window.dispatchEvent( new Event( 'resize' ) );
+		IntersectionObserverMock.instances[ 1 ].trigger( true );
+
+		// Assert
+		expect( onChange ).toHaveBeenCalledTimes( 1 );
+		expect( onChange ).toHaveBeenCalledWith( new Set( [ entry.item ] ) );
+	} );
+
 	it( 'should recalculate the margins when the viewport is resized', () => {
 		// Arrange
 		const entry = createEntry( 'contact' );

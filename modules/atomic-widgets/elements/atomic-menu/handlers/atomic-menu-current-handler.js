@@ -59,6 +59,6 @@ register( {
 		const anchorLinks = new AnchorLinks( anchorEntries, render );
 
 		anchorLinks.initialize();
-		signal?.addEventListener( 'abort', () => anchorLinks.destroy(), { once: true } );
+		signal.addEventListener( 'abort', () => anchorLinks.destroy(), { once: true } );
 	},
 } );
