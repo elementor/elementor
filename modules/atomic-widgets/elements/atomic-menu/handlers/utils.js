@@ -12,3 +12,9 @@ export const getItems = ( menu ) => getDirectChild( menu, ITEMS_ELEMENT_TYPE );
 export const getToggle = ( menu ) => getDirectChild( menu, TOGGLE_ELEMENT_TYPE );
 
 export const getItemsId = ( menuId ) => `e-menu-items-${ menuId }`;
+
+export const resolveItemsId = ( menu, menuId ) => getItems( menu )?.id || getItemsId( menuId );
+
+export const getFirstFocusable = ( container ) => {
+	return container?.querySelector( 'a[href], button, [tabindex]:not([tabindex="-1"])' ) ?? null;
+};
