@@ -39,7 +39,6 @@ class Atomic_Menu extends Atomic_Element_Base {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
 		$this->meta( 'is_compound', true );
-		$this->meta( 'enforce_allowed_children', true );
 	}
 
 	public static function get_type() {
