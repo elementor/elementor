@@ -19,7 +19,8 @@ export type MenuItem = {
 
 export const MENU_ITEMS_ELEMENT_TYPE = 'e-menu-items';
 export const MENU_ENTRY_ELEMENT_TYPE = 'e-menu-entry';
-const MENU_ITEM_ELEMENT_TYPE = 'e-menu-item';
+export const MENU_ITEM_ELEMENT_TYPE = 'e-menu-item';
+const MIN_ENTRIES = 1;
 const PARAGRAPH_WIDGET_TYPE = 'e-paragraph';
 
 const getEntryTitle = () => __( 'Menu item', 'elementor' );
@@ -69,10 +70,20 @@ export const useActions = () => {
 		} );
 	};
 
-	const removeItem = ( { items }: { items: ItemsActionPayload< MenuItem > } ) => {
+	const removeItem = ( { menuItemsId, items }: { menuItemsId: string; items: ItemsActionPayload< MenuItem > } ) => {
+		const entriesCount =
+			getContainer( menuItemsId )?.children?.filter(
+				( child ) => child.model.get( 'elType' ) === MENU_ENTRY_ELEMENT_TYPE
+			).length ?? 0;
+		const removableCount = Math.max( 0, Math.min( items.length, entriesCount - MIN_ENTRIES ) );
+
+		if ( removableCount === 0 ) {
+			return;
+		}
+
 		removeElements( {
 			title: __( 'Menu', 'elementor' ),
-			elementIds: items.map( ( { item } ) => item.id ),
+			elementIds: items.slice( 0, removableCount ).map( ( { item } ) => item.id ),
 		} );
 	};
 
