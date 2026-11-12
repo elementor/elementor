@@ -20,13 +20,18 @@ class Term_Query extends Base {
 	 * @return array Modified clauses.
 	 */
 	public function customize_terms_query( $clauses, $taxonomies, $args ) {
-		if ( ! $args['custom_search'] ) {
+		if ( empty( $args['custom_search'] ) ) {
 			return $clauses;
 		}
 
-		if ( is_numeric( $args['name__like'] ) ) {
-			$clauses['where'] = '(' . $clauses['where'] . ' OR t.term_id = ' . $args['name__like'] . ')';
+		$search_term = (string) ( $args['name__like'] ?? '' );
+
+		if ( is_numeric( $search_term ) ) {
+			$clauses['where'] = '(' . $clauses['where'] . ' OR t.term_id = ' . (int) $search_term . ')';
 		}
+
+		$clauses['orderby'] = $this->get_relevance_order_by( $search_term );
+		$clauses['order'] = '';
 
 		if ( empty( $args['excluded_taxonomies'] ) ) {
 			return $clauses;
@@ -38,6 +43,32 @@ class Term_Query extends Base {
 		$clauses['where'] .= " AND tt.taxonomy NOT IN ({$list})";
 
 		return $clauses;
+	}
+
+	/**
+	 * Sorts the closest matches first, so a search for "cats" returns the exact match
+	 * and short names before long ones. The query is fetched without a limit when the
+	 * taxonomy is not given, and then truncated in PHP, so the order decides which
+	 * terms survive the response limit.
+	 *
+	 * @param string $search_term The searched term.
+	 * @return string The ORDER BY clause.
+	 */
+	private function get_relevance_order_by( string $search_term ): string {
+		global $wpdb;
+
+		if ( is_numeric( $search_term ) ) {
+			return $wpdb->prepare(
+				'ORDER BY (t.term_id = %d) DESC, (t.name = %s) DESC, CHAR_LENGTH(t.name) ASC, t.name ASC',
+				(int) $search_term,
+				$search_term
+			);
+		}
+
+		return $wpdb->prepare(
+			'ORDER BY (t.name = %s) DESC, CHAR_LENGTH(t.name) ASC, t.name ASC',
+			$search_term
+		);
 	}
 
 	/**
@@ -57,10 +88,10 @@ class Term_Query extends Base {
 			], 200 );
 		}
 
-		$included_taxonomies = $params[ self::INCLUDED_TYPE_KEY ];
-		$excluded_taxonomies = $params[ self::EXCLUDED_TYPE_KEY ];
+		$included_taxonomies = $params[ self::INCLUDED_TYPE_KEY ] ?? null;
+		$excluded_taxonomies = $params[ self::EXCLUDED_TYPE_KEY ] ?? null;
 
-		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
+		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ] ?? [];
 
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
