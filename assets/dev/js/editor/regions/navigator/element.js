@@ -1,5 +1,20 @@
 import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
+import NavigatorStructureContextMenu from './navigator-structure-context-menu';
+import { renderNavigatorIndicators } from './navigator-indicators';
+import {
+	canMoveStructureDown,
+	canMoveStructureIntoAbove,
+	canMoveStructureOut,
+	canMoveStructureUp,
+	getElementContainer,
+	getNavigatorIconTypeClass,
+	getStructureHint,
+	runMoveStructureDown,
+	runMoveStructureIntoAbove,
+	runMoveStructureOut,
+	runMoveStructureUp,
+} from './navigator-structure-utils';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
 
@@ -12,6 +27,7 @@ export default class extends Marionette.CompositeView {
 		return {
 			item: '> .elementor-navigator__item',
 			title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
+			hint: '> .elementor-navigator__item .elementor-navigator__element__title__hint',
 			toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
 			toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
 			indicators: '> .elementor-navigator__item > .elementor-navigator__element__indicators',
@@ -21,9 +37,16 @@ export default class extends Marionette.CompositeView {
 		};
 	}
 
+	behaviors() {
+		return {
+			NavigatorStructureContextMenu: {
+				behaviorClass: NavigatorStructureContextMenu,
+			},
+		};
+	},
+
 	events() {
 		return {
-			contextmenu: 'onContextMenu',
 			'click @ui.item': 'onItemClick',
 			'keydown @ui.item': 'onItemPress',
 			'click @ui.toggle': 'onToggleClick',
@@ -65,6 +88,7 @@ export default class extends Marionette.CompositeView {
 
 		if ( ! this.isNavigatorContainer() ) {
 			classes += ' elementor-navigator__element-' + elType;
+			classes += ' ' + getNavigatorIconTypeClass( this.model );
 			if ( ! this.isExcludedNestableElement() ) {
 				classes += ' ' + NEW_NESTABLE_CLASS;
 			}
@@ -100,7 +124,8 @@ export default class extends Marionette.CompositeView {
 
 		if ( ! this.isNavigatorContainer() ) {
 			helpers.title = this.model.getTitle();
-
+			helpers.hint = getStructureHint( this.model );
+			helpers.isLocked = !! this.model.get( 'isLocked' );
 			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.model.getIcon();
 		}
 
@@ -172,6 +197,7 @@ export default class extends Marionette.CompositeView {
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
 		if ( undefined !== elementModel.changed?.editor_settings?.title ) {
 			this.ui.title.text( editorSettings.title );
+			this.updateHintLabel();
 		}
 
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_editor_settings', {
@@ -199,7 +225,7 @@ export default class extends Marionette.CompositeView {
 			return false;
 		}
 
-		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
+		return !! this.model.get( 'elements' )?.length;
 	}
 
 	toggleList( state, callback ) {
@@ -355,26 +381,32 @@ export default class extends Marionette.CompositeView {
 	}
 
 	renderIndicators() {
-		const settings = this.model.get( 'settings' ).attributes;
+		renderNavigatorIndicators( this );
+	}
 
-		this.ui.indicators.empty();
+	updateHintLabel() {
+		if ( this.isNavigatorContainer() || ! this.ui.hint?.length ) {
+			return;
+		}
 
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
-			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
+		const hint = getStructureHint( this.model );
 
-			if ( ! isShouldBeIndicated ) {
-				return;
-			}
+		this.ui.hint.text( hint );
+		this.ui.hint.toggleClass( 'elementor-hidden', ! hint );
+	}
 
-			const $indicator = jQuery( '<div>', { class: 'elementor-navigator__element__indicator', title: indicatorSettings.title } )
-				.attr( 'data-section', indicatorSettings.section )
-				.html( `<i class="eicon-${ indicatorSettings.icon }"></i>` );
+	revealForSearch( matchIds ) {
+		if ( matchIds.includes( this.model.id ) ) {
+			this.recursiveParentInvoke( 'toggleList', true );
+		}
+	}
 
-			this.ui.indicators.append( $indicator );
+	addPathClass() {
+		this.$el.addClass( 'elementor-navigator__element--path' );
+	}
 
-			// Added delay of 500ms because the indicators bar has a CSS transition attribute of .5s
-			$indicator.tipsy( { delayIn: 300, gravity: 's' } );
-		} );
+	removePathClass() {
+		this.$el.removeClass( 'elementor-navigator__element--path' );
 	}
 
 	/**
@@ -396,6 +428,7 @@ export default class extends Marionette.CompositeView {
 	 */
 	select() {
 		this.recursiveParentInvoke( 'toggleList', true );
+		this.recursiveParentInvoke( 'addPathClass' );
 
 		this.addEditingClass();
 
@@ -420,6 +453,7 @@ export default class extends Marionette.CompositeView {
 
 		this.toggleHiddenClass();
 		this.renderIndicators();
+		this.updateHintLabel();
 		this.syncNavigatorStructureState();
 	}
 
@@ -435,6 +469,7 @@ export default class extends Marionette.CompositeView {
 	onModelSettingsChange( settingsModel ) {
 		if ( undefined !== settingsModel.changed._title ) {
 			this.ui.title.text( this.model.getTitle() );
+			this.updateHintLabel();
 		}
 
 		if ( undefined !== settingsModel.changed.presetTitle && undefined === settingsModel._title ) {
@@ -445,13 +480,8 @@ export default class extends Marionette.CompositeView {
 			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
 		}
 
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
-			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
-				this.renderIndicators();
-
-				return false;
-			}
-		} );
+		this.renderIndicators();
+		this.updateHintLabel();
 	}
 
 	syncNavigatorStructureState() {
@@ -466,6 +496,11 @@ export default class extends Marionette.CompositeView {
 		const ENTER_KEY = 13,
 			SPACE_KEY = 32;
 
+		if ( event.altKey ) {
+			this.onStructureShortcut( event );
+			return;
+		}
+
 		if ( ENTER_KEY === event.keyCode ) {
 			this.onItemClick( event );
 			return;
@@ -473,6 +508,28 @@ export default class extends Marionette.CompositeView {
 
 		if ( SPACE_KEY === event.keyCode ) {
 			this.onToggleListClick( event );
+		}
+	}
+
+	onStructureShortcut( event ) {
+		const container = getElementContainer( this.model );
+
+		if ( ! container ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const key = event.key;
+
+		if ( 'ArrowUp' === key && canMoveStructureUp( container ) ) {
+			runMoveStructureUp( container );
+		} else if ( 'ArrowDown' === key && canMoveStructureDown( container ) ) {
+			runMoveStructureDown( container );
+		} else if ( 'ArrowLeft' === key && canMoveStructureOut( container ) ) {
+			runMoveStructureOut( container );
+		} else if ( 'ArrowRight' === key && canMoveStructureIntoAbove( container ) ) {
+			runMoveStructureIntoAbove( container );
 		}
 	}
 
@@ -582,10 +639,6 @@ export default class extends Marionette.CompositeView {
 		clearTimeout( this.autoExpandTimeout );
 	}
 
-	onContextMenu( event ) {
-		this.model.trigger( 'request:contextmenu', event, { location: elementorCommon.eventsManager.config.locations.structurePanel } );
-	}
-
 	onEditRequest() {
 		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke( 'removeEditingClass' );
 
@@ -594,6 +647,10 @@ export default class extends Marionette.CompositeView {
 
 	onIndicatorClick( event ) {
 		const section = event.currentTarget.dataset.section;
+
+		if ( ! section ) {
+			return;
+		}
 
 		setTimeout( () => {
 			const editor = elementor.getPanelView().currentPageView,

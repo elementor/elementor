@@ -1,4 +1,5 @@
 import ElementView from './element';
+import { applyNavigatorSearch } from './navigator-search';
 
 export default class extends Marionette.LayoutView {
 	getTemplate() {
@@ -15,6 +16,10 @@ export default class extends Marionette.LayoutView {
 			toggleButtonIcon: '#elementor-navigator__toggle-all i',
 			toggleButtonA11yText: '#elementor-navigator__toggle-all span',
 			closeButton: '#elementor-navigator__close',
+			searchToggle: '#elementor-navigator__search-toggle',
+			searchRow: '#elementor-navigator__search',
+			searchInput: '#elementor-navigator__search-input',
+			searchClear: '#elementor-navigator__search-clear',
 		};
 	}
 
@@ -28,6 +33,9 @@ export default class extends Marionette.LayoutView {
 			'click @ui.toggleButton': 'toggleElements',
 			'click @ui.closeButton': 'onCloseButtonClick',
 			'keyup @ui.closeButton': 'onCloseButtonKeyPress',
+			'click @ui.searchToggle': 'onSearchToggleClick',
+			'input @ui.searchInput': 'onSearchInput',
+			'click @ui.searchClear': 'onSearchClear',
 		};
 	}
 
@@ -66,6 +74,7 @@ export default class extends Marionette.LayoutView {
 	 * Recursively update elements selection in the navigator.
 	 */
 	updateSelection() {
+		this.elements.currentView.recursiveChildInvoke( 'removePathClass' );
 		this.elements.currentView.recursiveChildInvoke( 'updateSelection' );
 	}
 
@@ -85,5 +94,32 @@ export default class extends Marionette.LayoutView {
 		if ( ENTER_KEY === event.keyCode ) {
 			this.onCloseButtonClick();
 		}
+	}
+
+	onSearchToggleClick() {
+		const isHidden = this.ui.searchRow.hasClass( 'elementor-hidden' );
+
+		this.ui.searchRow.toggleClass( 'elementor-hidden', ! isHidden );
+		this.ui.searchToggle.attr( 'aria-expanded', isHidden ? 'true' : 'false' );
+
+		if ( isHidden ) {
+			this.ui.searchInput.trigger( 'focus' );
+		} else {
+			this.onSearchClear();
+		}
+	}
+
+	onSearchInput() {
+		const value = this.ui.searchInput.val();
+
+		this.ui.searchClear.toggleClass( 'elementor-hidden', ! value );
+
+		applyNavigatorSearch( this.elements.currentView, value );
+	}
+
+	onSearchClear() {
+		this.ui.searchInput.val( '' );
+		this.ui.searchClear.addClass( 'elementor-hidden' );
+		applyNavigatorSearch( this.elements.currentView, '' );
 	}
 }
