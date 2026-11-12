@@ -346,11 +346,18 @@ class Widget_Context_Helper {
 			return false;
 		}
 
+		$llm_configurable = $prop_type->get_meta_item( 'llm_configurable' );
+
+		// An explicit opt-out hides any prop, e.g. editor-only notices registered by add-ons.
+		if ( false === $llm_configurable ) {
+			return false;
+		}
+
 		if ( ! in_array( $key, self::NON_CONFIGURABLE_PROP_KEYS, true ) ) {
 			return true;
 		}
 
-		return (bool) $prop_type->get_meta_item( 'llm_configurable', false );
+		return (bool) $llm_configurable;
 	}
 
 	private static function get_description( array $config, ?string $widget_type = null ): ?string {
