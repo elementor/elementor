@@ -55,6 +55,11 @@ export const getLoadSidebarOptions = (): LoadSidebarV2Options => ( {
 			selector: '',
 		},
 	},
+	widgetConfig: {
+		localServers: {
+			skipLoading: true,
+		},
+	},
 } );
 
 export const openAngieIframe = () => {

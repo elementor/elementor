@@ -11,6 +11,11 @@ export { SearchProvider } from './components/components-tab/search-provider';
 export { EmptyState as InstanceEmptyState } from './components/instance-editing-panel/empty-state';
 export { InstancePanelBody } from './components/instance-editing-panel/instance-panel-body';
 export { EditComponentAction, InstancePanelHeader } from './components/instance-editing-panel/instance-panel-header';
+export { injectIntoComponentsTabHeader } from './components/components-tab/components-tab-header-location';
+export {
+	injectIntoComponentInstanceHeader,
+	type ComponentInstanceHeaderProps,
+} from './components/instance-editing-panel/component-instance-header-location';
 export { useInstancePanelData } from './components/instance-editing-panel/use-instance-panel-data';
 export { DetachAction } from './components/instance-editing-panel/detach-action';
 
