@@ -23,6 +23,8 @@ class Widgets_Definitions_Registry {
 	}
 
 	/**
+	 * The code provider's entry point: only `source: code` is accepted, so a definition can't opt out of
+	 * the global-reference rule by declaring itself a site widget.
 	 * Invalid definitions are dropped with `_doing_it_wrong`, so a broken addon can't break the editor.
 	 *
 	 * @param Widget_Definition|array $definition
@@ -35,10 +37,16 @@ class Widgets_Definitions_Registry {
 			return false;
 		}
 
-		$data['source'] = $data['source'] ?? Widget_Definition::SOURCE_CODE;
+		$id = is_string( $data['id'] ?? null ) ? $data['id'] : self::UNKNOWN_DEFINITION_ID;
+
+		if ( Widget_Definition::SOURCE_CODE !== ( $data['source'] ?? Widget_Definition::SOURCE_CODE ) ) {
+			$this->report_invalid( $id, 'source: ' . Definition_Error_Codes::DEFINITION_INVALID );
+			return false;
+		}
+
+		$data['source'] = Widget_Definition::SOURCE_CODE;
 
 		$result = $this->validator->validate( $data );
-		$id = is_string( $data['id'] ?? null ) ? $data['id'] : self::UNKNOWN_DEFINITION_ID;
 
 		if ( ! $result->is_valid() ) {
 			$this->report_invalid( $id, $result->errors()->to_string() );

@@ -102,6 +102,50 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		$this->assert_has_error( $result, 'template.elements.0.widgetType', Definition_Error_Codes::PART_TYPE_NOT_ALLOWED );
 	}
 
+	public function test_validate__falls_back_to_default_allow_list_when_filter_returns_non_array() {
+		// Arrange.
+		add_filter( Template_Rules::ALLOWED_PART_TYPES_FILTER, fn () => 'not-an-array' );
+
+		// Act.
+		$result = $this->validator->validate( $this->icon_button() );
+
+		// Assert.
+		$this->assertSame( '', $result->errors()->to_string() );
+	}
+
+	public function test_validate__resolves_widgets_and_elements_in_their_own_manager() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$definition['template']['elements'][1] = [
+			'elType' => 'e-paragraph',
+			'part' => 'label',
+		];
+		$definition['template']['elements'][0] = [
+			'elType' => 'widget',
+			'widgetType' => 'e-flexbox',
+			'part' => 'icon',
+		];
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, self::LABEL_PATH . '.elType', Definition_Error_Codes::ELEMENT_TYPE_NOT_FOUND );
+		$this->assert_has_error( $result, 'template.elements.0.widgetType', Definition_Error_Codes::ELEMENT_TYPE_NOT_FOUND );
+	}
+
+	public function test_validate__rejects_widget_type_on_an_element_node() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$definition['template']['widgetType'] = 'e-flexbox';
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.widgetType', Definition_Error_Codes::TEMPLATE_NODE_INVALID );
+	}
+
 	public function test_validate__rejects_settings_the_element_would_reject_on_save() {
 		// Arrange.
 		$definition = $this->icon_button();
