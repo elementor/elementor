@@ -290,6 +290,16 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
+	protected function define_render_context(): array {
+		return [
+			[
+				'context' => [
+					'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
+				],
+			],
+		];
+	}
+
 	protected function define_allowed_child_types() {
 		return [ self::ELEMENT_TYPE_ITEMS, self::ELEMENT_TYPE_TOGGLE ];
 	}

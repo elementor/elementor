@@ -448,4 +448,17 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'true', $button->getAttribute( 'data-e-custom-label' ) );
 		$this->assertSame( '', $button->getAttribute( 'data-e-label-open' ) );
 	}
+
+	public function test_render__falls_back_to_resolved_default_breakpoint_when_setting_missing() {
+		// Arrange.
+		$menu = new Atomic_Menu( [ 'id' => 'm1', 'settings' => [], 'elType' => 'e-menu' ] );
+
+		// Act.
+		ob_start();
+		$menu->print_element();
+		$html = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'data-e-collapse="' . Atomic_Menu::get_default_collapse_breakpoint() . '"', $html );
+	}
 }

@@ -1,7 +1,7 @@
 {% import 'elementor/macros' as m %}
 {%- set classes = ['elementor-element', 'elementor-element-' ~ id, 'e-con', 'e-atomic-element', base_styles.base, 'e-menu', m.default_tag_class('nav')] | merge(settings.classes | default([])) | join(' ') -%}
 <nav class="{{ classes }} {{ editor_classes | default('') }}" aria-label="{{ settings['menu-name'] | default('Menu') | e('html_attr') }}"
-	data-e-collapse="{{ settings['collapse-breakpoint'] | default('tablet') | e('html_attr') }}"
+	data-e-collapse="{{ settings['collapse-breakpoint'] | default(default_collapse_breakpoint | default('tablet')) | e('html_attr') }}"
 	data-e-collapsed-position="{{ settings['collapsed-position'] | default('overlay') | e('html_attr') }}"
 	data-e-settings="{{ {
 		'open-submenus-on': settings['open-submenus-on'] | default('click'),
