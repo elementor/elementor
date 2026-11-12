@@ -167,6 +167,11 @@ describe( 'editor angie host', () => {
 					selector: '',
 				},
 			},
+			widgetConfig: {
+				localServers: {
+					skipLoading: true,
+				},
+			},
 		} );
 		expect( mockToggleAngieSidebar ).toHaveBeenCalledWith( iframe, true );
 		expect( mockWpSearchMcpServer ).toHaveBeenCalledWith( {
