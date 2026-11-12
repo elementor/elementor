@@ -10,7 +10,7 @@ import { ControlLabel } from '../components/control-label';
 import { InlineEditor } from '../components/inline-editor';
 import { InlineEditorToolbar } from '../components/inline-editor-toolbar';
 import ControlActions from '../control-actions/control-actions';
-import { CONTROL_HEADER_APP_PROMOTION_ID } from '../control-header/init';
+import { hasExternalControlHeaderInjections } from '../control-header/init';
 import { createControl } from '../create-control';
 import { extractInlineHtmlContent } from '../utils/inline-editing';
 import { type ControlProps } from '../utils/types';
@@ -116,8 +116,7 @@ export const InlineEditingControl = createControl(
 		);
 
 		const hasThirdPartyHeaderActions =
-			Boolean( elementId ) &&
-			headerInjections.some( ( injection ) => injection.id !== CONTROL_HEADER_APP_PROMOTION_ID );
+			Boolean( elementId ) && hasExternalControlHeaderInjections( headerInjections );
 
 		if ( ! label && ! promotion && ! hasThirdPartyHeaderActions ) {
 			return editorField;

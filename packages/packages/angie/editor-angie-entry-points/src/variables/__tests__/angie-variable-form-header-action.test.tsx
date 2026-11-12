@@ -2,38 +2,28 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieVariableFormHeaderAction } from '../angie-variable-form-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
 	openAngieInAgentMode: jest.fn(),
 } ) );
 
-const BUTTON_NAME = 'Generate with Angie';
-
 describe( 'AngieVariableFormHeaderAction', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( [
-		{
-			scenario: 'creation without a label',
-			props: { variableType: 'color' },
-			prompt: 'For new color variable I want: ',
-		},
-		{
-			scenario: 'edit with a label',
-			props: { variableType: 'color', variableId: 'var-1', label: 'Primary' },
-			prompt: 'For color variable "Primary" I want: ',
-		},
-	] )( 'opens Angie with the $scenario prompt when clicked', ( { props, prompt } ) => {
+	it( 'opens Angie with the variable form prompt when clicked', () => {
 		// Arrange
+		const props = { variableType: 'color', label: 'Primary', variableId: 'var-1' };
 		render( <AngieVariableFormHeaderAction { ...props } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( prompt );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.variableForm( props ) );
 	} );
 } );

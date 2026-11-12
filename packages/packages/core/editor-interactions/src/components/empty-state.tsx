@@ -20,7 +20,7 @@ export const EmptyState = ( { elementId, onCreateInteraction }: EmptyStateProps 
 			sx={ { position: 'relative', p: 2.5, pt: 8, pb: 5.5 } }
 			gap={ 1.5 }
 		>
-			<Box sx={ { position: 'absolute', top: 8, right: 8 } }>
+			<Box sx={ { position: 'absolute', top: 8, insetInlineEnd: 8 } }>
 				<InteractionsHeaderSlot elementId={ elementId } />
 			</Box>
 			<SwipeIcon fontSize="large" />
