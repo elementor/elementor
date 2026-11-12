@@ -992,8 +992,8 @@ describe( 'getScoreTier', () => {
 		// Assert
 		expect( getScoreTier( 30 ) ).toBe( SCORE_TIER_LOW );
 		expect( getScoreTier( 31 ) ).toBe( SCORE_TIER_MID );
-		expect( getScoreTier( 79 ) ).toBe( SCORE_TIER_MID );
-		expect( getScoreTier( 80 ) ).toBe( SCORE_TIER_HIGH );
+		expect( getScoreTier( 80 ) ).toBe( SCORE_TIER_MID );
+		expect( getScoreTier( 81 ) ).toBe( SCORE_TIER_HIGH );
 	} );
 } );
 
@@ -1019,6 +1019,6 @@ describe( 'stage health', () => {
 		// Assert
 		expect( getStageHealthTier( { earned: 0, total: 6 } ) ).toBe( SCORE_TIER_LOW );
 		expect( getStageHealthTier( { earned: 3, total: 6 } ) ).toBe( SCORE_TIER_MID );
-		expect( getStageHealthTier( { earned: 4, total: 5 } ) ).toBe( SCORE_TIER_HIGH );
+		expect( getStageHealthTier( { earned: 5, total: 6 } ) ).toBe( SCORE_TIER_HIGH );
 	} );
 } );
