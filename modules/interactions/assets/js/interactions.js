@@ -4,27 +4,137 @@ import {
 	config,
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
+	mergeCommittedTransformChannels,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
+	shouldResetElementStyles,
 } from './interactions-utils.js';
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-function scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
+// Inline transform/opacity/transition the element had before any interaction touched it,
+// and the opacity its stylesheet gives it.
+const originalStyles = new WeakMap();
+// The latest animation writing each style on the element. Motion.js stops an earlier
+// animation of the same style when a new one starts, and a stopped animation never settles.
+const styleOwners = new WeakMap();
+// Transform channels (x / y / scale) an animation has committed away from the stylesheet
+// state. x / y / scale share one inline transform, so a later animation that ends back at
+// the baseline must not clear a channel another animation already committed, while a
+// channel it does bring back to the baseline is cleared again.
+const committedTransforms = new WeakMap();
+
+function rememberOriginalStyles( element ) {
+	if ( ! originalStyles.has( element ) ) {
+		originalStyles.set( element, {
+			transform: element.style.transform,
+			opacity: element.style.opacity,
+			transition: element.style.transition,
+			baselineOpacity: getOpacityBaselineFromComputedStyle( element ),
+		} );
+	}
+}
+
+function getWrittenStyles( keyframes ) {
+	const styles = [];
+
+	if ( undefined !== keyframes.opacity ) {
+		styles.push( 'opacity' );
+	}
+
+	if ( Object.keys( keyframes ).some( ( key ) => 'opacity' !== key ) ) {
+		styles.push( 'transform' );
+	}
+
+	return styles;
+}
+
+function playAnimation( element, keyframes, options, animateFunc, restoreStyles ) {
+	const animation = animateFunc( element, keyframes, options );
+	const writtenStyles = getWrittenStyles( keyframes );
+	const owners = styleOwners.get( element ) || {};
+
+	styleOwners.set( element, owners );
+	writtenStyles.forEach( ( style ) => {
+		owners[ style ] = animation;
+	} );
+
+	const settle = () => {
+		// A style a newer animation took over is not ours to restore.
+		const ownedStyles = writtenStyles.filter( ( style ) => animation === owners[ style ] );
+
+		ownedStyles.forEach( ( style ) => {
+			owners[ style ] = null;
+		} );
+
+		restoreStyles( ownedStyles );
+	};
+
+	animation.then( settle, settle );
+}
+
+function restoreElementStyles( element, transition, keyframes, baseline, ownedStyles ) {
+	element.style.transition = transition;
+
+	const original = originalStyles.get( element );
+
+	// Track which transform channels this animation leaves away from the stylesheet state,
+	// so a later animation that ends at the baseline on the same channel can still clear
+	// it, while channels this one does not write keep what an earlier animation committed.
+	const committedChannels = mergeCommittedTransformChannels(
+		committedTransforms.get( element ),
+		keyframes,
+		baseline,
+	);
+
+	if ( committedChannels.size > 0 ) {
+		committedTransforms.set( element, committedChannels );
+	} else {
+		committedTransforms.delete( element );
+	}
+
+	// Put back the inline transform/opacity the element had before the animation,
+	// once it reaches a state that already matches the stylesheet, so the value
+	// Motion.js leaves behind does not mask `:hover` (and manually authored) CSS.
+	if ( ! shouldResetElementStyles( keyframes, baseline, original.baselineOpacity ) ) {
+		return;
+	}
+
+	requestAnimationFrame( () => {
+		const owners = styleOwners.get( element );
+
+		ownedStyles.forEach( ( style ) => {
+			// A newer animation started meanwhile and owns the style again.
+			if ( owners[ style ] ) {
+				return;
+			}
+
+			// Another animation already committed this transform away from the baseline.
+			if ( 'transform' === style && committedTransforms.has( element ) ) {
+				return;
+			}
+
+			element.style[ style ] = original[ style ];
+		} );
+	} );
+}
+
+function scrollOutAnimation( element, restoreStyles, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
 	const stop = inViewFunc( element, () => {
 		return () => {
-			animateFunc( element, keyframes, options ).then( () => {
-				element.style.transition = transition;
-			} );
+			playAnimation( element, keyframes, options, animateFunc, restoreStyles );
 			if ( false === animConfig.replay ) {
 				Promise.resolve().then( () => stop() );
 			}
@@ -32,33 +142,39 @@ function scrollOutAnimation( element, transition, animConfig, keyframes, resetKe
 	}, viewOptions );
 }
 
-function scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+function scrollInAnimation( element, restoreStyles, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0, root: null };
 	const stop = inViewFunc( element, () => {
-		animateFunc( element, keyframes, options ).then( () => {
-			element.style.transition = transition;
-		} );
+		playAnimation( element, keyframes, options, animateFunc, restoreStyles );
 		if ( false === animConfig.replay ) {
 			stop();
 		}
 	}, viewOptions );
 }
 
-function defaultAnimation( element, transition, keyframes, options, animateFunc ) {
-	animateFunc( element, keyframes, options ).then( () => {
-		element.style.transition = transition;
-	} );
+function defaultAnimation( element, restoreStyles, keyframes, options, animateFunc ) {
+	playAnimation( element, keyframes, options, animateFunc, restoreStyles );
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
+	rememberOriginalStyles( element );
+
+	const { baselineOpacity, transition } = originalStyles.get( element );
+	const fadeTargetOpacity = getFadeTargetOpacity( baselineOpacity );
 	const baseline = getTransformBaselineFromComputedStyle( element );
-	const keyframes = preserveTransformKeyframes(
-		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
-		baseline,
+	const keyframes = preserveOpacityKeyframes(
+		preserveTransformKeyframes(
+			getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+			baseline,
+		),
+		fadeTargetOpacity,
 	);
-	const resetKeyframes = preserveTransformKeyframes(
-		getKeyframes( animConfig.effect, 'in', animConfig.direction ),
-		baseline,
+	const resetKeyframes = preserveOpacityKeyframes(
+		preserveTransformKeyframes(
+			getKeyframes( animConfig.effect, 'in', animConfig.direction ),
+			baseline,
+		),
+		fadeTargetOpacity,
 	);
 
 	const options = {
@@ -68,14 +184,15 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
-	const transition = element.style.transition;
 	element.style.transition = 'none';
+	const restoreStyles = ( ownedStyles ) => restoreElementStyles( element, transition, keyframes, baseline, ownedStyles );
+
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, restoreStyles, animConfig, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
+		scrollInAnimation( element, restoreStyles, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
-		defaultAnimation( element, transition, keyframes, options, animateFunc );
+		defaultAnimation( element, restoreStyles, keyframes, options, animateFunc );
 	}
 }
 

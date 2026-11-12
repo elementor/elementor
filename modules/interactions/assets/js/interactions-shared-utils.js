@@ -248,6 +248,127 @@ export function getTransformBaselineFromComputedStyle( element ) {
 	};
 }
 
+export function getOpacityBaselineFromComputedStyle( element ) {
+	const opacity = Number.parseFloat( window.getComputedStyle( element )?.opacity );
+
+	// What the stylesheet actually renders, so a stylesheet `opacity: 0` stays 0 and an
+	// inline `opacity: 1` left by a fade-in is recognised as a change rather than a duplicate.
+	return Number.isFinite( opacity ) ? opacity : 1;
+}
+
+export function getFadeTargetOpacity( baselineOpacity ) {
+	// Only an authored value between 0 and 1 changes where a fade has to end: a hidden
+	// element still has to fade in to fully visible.
+	return baselineOpacity > 0 && baselineOpacity < 1 ? baselineOpacity : 1;
+}
+
+export function preserveOpacityKeyframes( keyframes, fadeTargetOpacity ) {
+	if ( ! keyframes.opacity || isNearOne( fadeTargetOpacity ) ) {
+		return keyframes;
+	}
+
+	return {
+		...keyframes,
+		opacity: keyframes.opacity.map( ( value ) => isNearOne( value ) ? fadeTargetOpacity : value ),
+	};
+}
+
+function getLastKeyframe( keyframes ) {
+	return Object.keys( keyframes ).reduce( ( acc, key ) => {
+		const values = keyframes[ key ];
+		acc[ key ] = values[ values.length - 1 ];
+		return acc;
+	}, {} );
+}
+
+// The channels (x, y, scale) that share one inline transform, and whether the keyframes leave
+// each channel at the stylesheet state. They are tracked on their own, so an animation that
+// ends back at the baseline does not clear a transform another animation committed on a
+// channel it did not write. `endsAtBaseline` returns undefined when the keyframes do not
+// write the channel at all.
+const TRANSFORM_CHANNELS = [
+	{
+		name: 'x',
+		endsAtBaseline: ( lastKeyframe, baseline ) => (
+			undefined === lastKeyframe.x ? undefined : isNear( lastKeyframe.x, baseline?.x ?? 0 )
+		),
+	},
+	{
+		name: 'y',
+		endsAtBaseline: ( lastKeyframe, baseline ) => (
+			undefined === lastKeyframe.y ? undefined : isNear( lastKeyframe.y, baseline?.y ?? 0 )
+		),
+	},
+	{
+		name: 'scale',
+		// `scale` writes both axes while `scaleX` / `scaleY` write one each, so every written
+		// key is compared with its own axis instead of one value standing for all of them.
+		endsAtBaseline: ( lastKeyframe, baseline ) => {
+			const writtenAxes = [
+				[ lastKeyframe.scale, baseline?.scaleX ?? 1 ],
+				[ lastKeyframe.scale, baseline?.scaleY ?? 1 ],
+				[ lastKeyframe.scaleX, baseline?.scaleX ?? 1 ],
+				[ lastKeyframe.scaleY, baseline?.scaleY ?? 1 ],
+			].filter( ( [ value ] ) => undefined !== value );
+
+			if ( 0 === writtenAxes.length ) {
+				return undefined;
+			}
+
+			return writtenAxes.every( ( [ value, axisBaseline ] ) => isNear( value, axisBaseline ) );
+		},
+	},
+];
+
+function getOffBaselineTransformChannels( keyframes, baseline ) {
+	const lastKeyframe = getLastKeyframe( keyframes );
+
+	return TRANSFORM_CHANNELS
+		.filter( ( { endsAtBaseline } ) => false === endsAtBaseline( lastKeyframe, baseline ) )
+		.map( ( { name } ) => name );
+}
+
+export function endsAtTransformBaseline( keyframes, baseline ) {
+	return 0 === getOffBaselineTransformChannels( keyframes, baseline ).length;
+}
+
+export function mergeCommittedTransformChannels( committedChannels, keyframes, baseline ) {
+	const committed = new Set( committedChannels );
+	const lastKeyframe = getLastKeyframe( keyframes );
+
+	TRANSFORM_CHANNELS.forEach( ( { name, endsAtBaseline } ) => {
+		const atBaseline = endsAtBaseline( lastKeyframe, baseline );
+
+		// A channel this animation does not write keeps the state an earlier one committed.
+		if ( undefined === atBaseline ) {
+			return;
+		}
+
+		if ( atBaseline ) {
+			committed.delete( name );
+		} else {
+			committed.add( name );
+		}
+	} );
+
+	return committed;
+}
+
+export function shouldResetElementStyles( keyframes, baseline, baselineOpacity = 1 ) {
+	// An inline style only needs clearing when the animation's end state matches
+	// what the stylesheet already renders: the CSS default, or the element's own
+	// opacity and transform baseline (e.g. an authored `opacity: 0.6` or a
+	// stylesheet `translateX( -50% )`).
+	// "In" animations (fade in, slide in, scale in) end at that baseline, so the
+	// inline value after the animation is redundant with the stylesheet and would
+	// otherwise mask `:hover` rules.
+	// "Out" and scrollOut animations end off that state and must stay in place.
+	const lastKeyframe = getLastKeyframe( keyframes );
+	const resetOpacity = undefined === lastKeyframe.opacity || isNear( lastKeyframe.opacity, baselineOpacity );
+
+	return resetOpacity && endsAtTransformBaseline( keyframes, baseline );
+}
+
 export function preserveTransformKeyframes( keyframes, baseline ) {
 	if ( ! baseline ) {
 		return keyframes;
@@ -313,5 +434,11 @@ window.elementorModules.interactions = {
 	timingValueToMs,
 	resetElementStyles,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
+	endsAtTransformBaseline,
+	mergeCommittedTransformChannels,
+	shouldResetElementStyles,
 };
