@@ -13,6 +13,11 @@ class Widget_Markers {
 	const PART_PATTERN = '/^[a-z][a-z0-9_]*$/';
 	const MIN_VERSION = 1;
 	const MAX_VALUES_DEPTH = 3;
+	const TEMPLATE_LOCAL_STYLE_PREFIX = 'local-';
+
+	public static function get_template_local_style_id( string $part ): string {
+		return self::TEMPLATE_LOCAL_STYLE_PREFIX . $part;
+	}
 
 	public static function sanitize_widget( $value ): array {
 		if ( ! is_array( $value ) ) {
