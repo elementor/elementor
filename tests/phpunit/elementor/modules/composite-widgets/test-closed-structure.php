@@ -27,9 +27,9 @@ class Test_Closed_Structure extends Elementor_Test_Base {
 	/**
 	 * @dataProvider closed_elements_provider
 	 */
-	public function test_is_closed_element__closes_elements_under_a_registered_widget_root( string $element_id ) {
+	public function test_is_element_locked__locks_elements_under_a_registered_widget_root( string $element_id ) {
 		// Act.
-		$result = $this->closed_structure->is_closed_element( $this->tree(), $element_id );
+		$result = $this->closed_structure->is_element_locked( $this->tree(), $element_id );
 
 		// Assert.
 		$this->assertTrue( $result );
@@ -46,9 +46,9 @@ class Test_Closed_Structure extends Elementor_Test_Base {
 	/**
 	 * @dataProvider open_elements_provider
 	 */
-	public function test_is_closed_element__leaves_roots_slot_content_and_unknown_widgets_open( string $element_id ) {
+	public function test_is_element_locked__leaves_roots_slot_content_and_unknown_widgets_unlocked( string $element_id ) {
 		// Act.
-		$result = $this->closed_structure->is_closed_element( $this->tree(), $element_id );
+		$result = $this->closed_structure->is_element_locked( $this->tree(), $element_id );
 
 		// Assert.
 		$this->assertFalse( $result );
@@ -64,15 +64,15 @@ class Test_Closed_Structure extends Elementor_Test_Base {
 		];
 	}
 
-	public function test_is_closed_target__closes_the_root_and_opens_the_slot_and_the_document() {
+	public function test_is_insertion_locked__locks_the_root_and_leaves_the_slot_and_the_document_open() {
 		// Arrange.
 		$tree = $this->tree();
 
 		// Act & Assert.
-		$this->assertTrue( $this->closed_structure->is_closed_target( $tree, 'root' ) );
-		$this->assertTrue( $this->closed_structure->is_closed_target( $tree, 'label' ) );
-		$this->assertFalse( $this->closed_structure->is_closed_target( $tree, 'slot' ) );
-		$this->assertFalse( $this->closed_structure->is_closed_target( $tree, Closed_Structure::DOCUMENT_ROOT_ID ) );
+		$this->assertTrue( $this->closed_structure->is_insertion_locked( $tree, 'root' ) );
+		$this->assertTrue( $this->closed_structure->is_insertion_locked( $tree, 'label' ) );
+		$this->assertFalse( $this->closed_structure->is_insertion_locked( $tree, 'slot' ) );
+		$this->assertFalse( $this->closed_structure->is_insertion_locked( $tree, Closed_Structure::DOCUMENT_ROOT_ID ) );
 	}
 
 	private function tree(): array {

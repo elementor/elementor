@@ -76,11 +76,7 @@ class Template_Rules {
 		$schema = $element_type ? $this->get_props_schema( $element_type, $path ) : null;
 		$part = $this->validate_part_name( $node, $path );
 		$is_slot = $this->validate_slot( $node, $path, $part );
-
-		if ( null !== $part && $this->is_inside_slot ) {
-			$this->errors->add( "{$path}.part", Definition_Error_Codes::SLOT_CONTENT_PART );
-			$part = null;
-		}
+		$part = $this->drop_part_inside_slot( $path, $part );
 
 		if ( null !== $part && $indexes_parts ) {
 			$this->index_part( $part, $path, $schema );
@@ -97,11 +93,10 @@ class Template_Rules {
 		}
 
 		$parts = null !== $part ? [ $part ] : [];
-
-		$was_inside_slot = $this->is_inside_slot;
-		$this->is_inside_slot = $was_inside_slot || $is_slot;
-		$children_parts = $this->validate_children( $node, $path, $part, $indexes_parts );
-		$this->is_inside_slot = $was_inside_slot;
+		$children_parts = $this->in_slot_scope(
+			$is_slot,
+			fn () => $this->validate_children( $node, $path, $part, $indexes_parts )
+		);
 
 		return array_merge( $parts, $children_parts );
 	}
@@ -111,16 +106,45 @@ class Template_Rules {
 			return false;
 		}
 
-		$is_valid = Widget_Markers::sanitize_slot( $node[ Widget_Markers::SLOT_KEY ] )
-			&& null !== $part
-			&& self::TEMPLATE_PATH !== $path
-			&& self::WIDGET_EL_TYPE !== ( $node['elType'] ?? null );
-
-		if ( ! $is_valid ) {
+		if ( ! $this->can_be_slot( $node, $path, $part ) ) {
 			$this->errors->add( "{$path}.slot", Definition_Error_Codes::SLOT_INVALID );
+			return false;
 		}
 
-		return $is_valid;
+		return true;
+	}
+
+	private function can_be_slot( array $node, string $path, ?string $part ): bool {
+		$is_enabled = Widget_Markers::sanitize_slot( $node[ Widget_Markers::SLOT_KEY ] );
+		$is_named_part = null !== $part;
+		$is_below_root = self::TEMPLATE_PATH !== $path;
+		$is_container = self::WIDGET_EL_TYPE !== ( $node['elType'] ?? null );
+
+		return $is_enabled && $is_named_part && $is_below_root && $is_container;
+	}
+
+	private function drop_part_inside_slot( string $path, ?string $part ): ?string {
+		if ( null === $part || ! $this->is_inside_slot ) {
+			return $part;
+		}
+
+		$this->errors->add( "{$path}.part", Definition_Error_Codes::SLOT_CONTENT_PART );
+
+		return null;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function in_slot_scope( bool $opens_slot, callable $validate ): array {
+		$was_inside_slot = $this->is_inside_slot;
+		$this->is_inside_slot = $was_inside_slot || $opens_slot;
+
+		try {
+			return $validate();
+		} finally {
+			$this->is_inside_slot = $was_inside_slot;
+		}
 	}
 
 	private function validate_children( array $node, string $path, ?string $part, bool $indexes_parts ): array {

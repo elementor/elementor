@@ -202,7 +202,7 @@ final class Composition_Compiler {
 	private function collect_closed_parent_errors( array $document_tree, string $parent_id ): array {
 		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
 
-		if ( ! $closed_structure || ! $closed_structure->is_closed_target( $document_tree, $parent_id ) ) {
+		if ( ! $closed_structure || ! $closed_structure->is_insertion_locked( $document_tree, $parent_id ) ) {
 			return [];
 		}
 

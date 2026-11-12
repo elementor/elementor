@@ -23,7 +23,7 @@ class Closed_Structure {
 		$this->registry = $registry;
 	}
 
-	public function is_closed_element( array $tree, string $element_id ): bool {
+	public function is_element_locked( array $tree, string $element_id ): bool {
 		$path = $this->find_path( $tree, $element_id );
 
 		if ( null === $path ) {
@@ -35,7 +35,7 @@ class Closed_Structure {
 		return $this->is_closed_by( $path );
 	}
 
-	public function is_closed_target( array $tree, string $parent_id ): bool {
+	public function is_insertion_locked( array $tree, string $parent_id ): bool {
 		if ( self::DOCUMENT_ROOT_ID === $parent_id ) {
 			return false;
 		}

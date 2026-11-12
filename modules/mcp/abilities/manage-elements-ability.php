@@ -47,7 +47,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Manage_Elements_Ability extends Abstract_Ability {
 
 	const MAX_BATCH_SIZE = 50;
-	const STRUCTURAL_ACTIONS = [ 'delete', 'move', 'duplicate' ];
 
 	private ?Document_Mutator $mutator;
 	private ?Closed_Structure $closed_structure;
@@ -415,17 +414,17 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	private function reject_closed_structure_edit( array $tree, string $action, string $element_id, array $operation ): ?\WP_Error {
 		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
 
-		if ( ! $closed_structure || ! in_array( $action, self::STRUCTURAL_ACTIONS, true ) ) {
+		if ( ! $closed_structure || 'update' === $action ) {
 			return null;
 		}
 
-		if ( $closed_structure->is_closed_element( $tree, $element_id ) ) {
+		if ( $closed_structure->is_element_locked( $tree, $element_id ) ) {
 			return $closed_structure->element_error( $element_id );
 		}
 
 		$new_parent_id = $operation['new_parent_id'] ?? null;
 
-		if ( 'move' === $action && is_string( $new_parent_id ) && $closed_structure->is_closed_target( $tree, $new_parent_id ) ) {
+		if ( 'move' === $action && is_string( $new_parent_id ) && $closed_structure->is_insertion_locked( $tree, $new_parent_id ) ) {
 			return $closed_structure->target_error( $new_parent_id );
 		}
 
