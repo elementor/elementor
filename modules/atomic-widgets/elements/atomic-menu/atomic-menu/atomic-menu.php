@@ -274,6 +274,10 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
+	public function should_apply_base_settings_on_create(): bool {
+		return true;
+	}
+
 	protected function define_base_styles(): array {
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()

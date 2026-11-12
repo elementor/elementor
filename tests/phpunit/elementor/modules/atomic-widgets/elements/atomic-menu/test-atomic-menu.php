@@ -506,4 +506,14 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 			'unrelated attribute' => [ 'data-aria-label-x="1"', false ],
 		];
 	}
+
+	public function test_only_menu_opts_in_to_applying_base_settings_on_create() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act & Assert.
+		$this->assertTrue( $this->get_config( 'e-menu' )['apply_base_settings_on_create'] );
+		$this->assertFalse( $this->get_config( 'e-menu-items' )['apply_base_settings_on_create'] );
+		$this->assertFalse( $this->get_config( 'e-form' )['apply_base_settings_on_create'] );
+	}
 }

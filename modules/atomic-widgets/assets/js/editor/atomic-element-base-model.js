@@ -50,7 +50,11 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	applyBaseSettings() {
-		const baseSettings = this.config?.base_settings;
+		if ( ! this.config?.apply_base_settings_on_create ) {
+			return;
+		}
+
+		const baseSettings = this.config.base_settings;
 
 		if ( ! baseSettings || 0 === Object.keys( baseSettings ).length ) {
 			return;
