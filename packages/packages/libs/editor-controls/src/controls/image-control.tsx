@@ -6,21 +6,23 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlHeaderActions } from '../components/control-header-location';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
+import { type ControlProps } from '../utils/types';
+import { type AppPromotion } from './app-promotion-trigger';
 import { ImageMediaControl } from './image-media-control';
-import { ImageOptimizeTrigger, type ImagePromotion } from './image-optimize-trigger';
 import { SelectControl } from './select-control';
 
-type ImageControlProps = {
+type ImageControlProps = Partial< ControlProps > & {
 	sizes: { label: string; value: string }[];
 	label?: string;
-	promotion?: ImagePromotion;
+	promotion?: AppPromotion;
 };
 
 export const ImageControl = createControl(
-	( { sizes, promotion, label = __( 'Image', 'elementor' ) }: ImageControlProps ) => {
+	( { sizes, promotion, label = __( 'Image', 'elementor' ), context }: ImageControlProps ) => {
 		const propContext = useBoundProp( imagePropTypeUtil );
 
 		return (
@@ -28,7 +30,11 @@ export const ImageControl = createControl(
 				<Stack gap={ 1.5 }>
 					<Stack direction="row" alignItems="center" justifyContent="space-between">
 						<ControlLabel>{ label }</ControlLabel>
-						<ImageOptimizeTrigger promotion={ promotion } />
+						<ControlHeaderActions
+							elementId={ context?.elementId }
+							controlType="image"
+							promotion={ promotion }
+						/>
 					</Stack>
 					<ImageSrcControl label={ label } />
 					<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
