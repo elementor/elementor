@@ -2,6 +2,8 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieInteractionsHeaderAction } from '../angie-interactions-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
@@ -9,7 +11,6 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 const ELEMENT_ID = 'element-88';
-const BUTTON_NAME = 'Generate with Angie';
 
 describe( 'AngieInteractionsHeaderAction', () => {
 	afterEach( () => {
@@ -21,9 +22,9 @@ describe( 'AngieInteractionsHeaderAction', () => {
 		render( <AngieInteractionsHeaderAction elementId={ ELEMENT_ID } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( `At element ${ ELEMENT_ID }, interactions, I want: ` );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.interactions( { elementId: ELEMENT_ID } ) );
 	} );
 } );

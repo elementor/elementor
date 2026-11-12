@@ -6,8 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
-import { ComponentsTabHeaderSlot } from './components-tab-header-location';
 import { ComponentItem } from './components-item';
+import { ComponentsTabHeaderSlot } from './components-tab-header-location';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
