@@ -21,7 +21,13 @@ register( {
 				return;
 			}
 
-			Alpine.$data( element ).open = type === TOGGLE_OPEN_ELEMENT_TYPE;
+			const data = Alpine.$data( element );
+
+			if ( ! data ) {
+				return;
+			}
+
+			data.open = type === TOGGLE_OPEN_ELEMENT_TYPE;
 		}, { signal } );
 	},
 } );
