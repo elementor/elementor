@@ -1,17 +1,29 @@
-import { createContainer, setGlobalContainers } from '../../utils/container';
-
 describe( 'Apply menu base settings', () => {
 	let hook;
 
 	const collapseBreakpoint = ( value ) => ( { $$type: 'string', value } );
 
-	const createMenu = ( settings = {} ) => createContainer( { elType: 'e-menu', id: 'menu1', settings } );
+	const createModel = ( elType, { settings = {}, elements = [] } = {} ) => {
+		const settingsStore = { ...settings };
+
+		return {
+			get: ( key ) => ( {
+				elType,
+				settings: {
+					get: ( settingKey ) => settingsStore[ settingKey ],
+					set: ( values ) => Object.assign( settingsStore, values ),
+				},
+				elements: { models: elements },
+			}[ key ] ),
+			settingsStore,
+		};
+	};
+
+	const createContainer = ( model ) => ( { model } );
 
 	beforeAll( async () => {
-		global.$e = {
-			modules: { hookData: { After: class {} } },
-			internal: jest.fn(),
-		};
+		global.$e = { modules: { hookData: { After: class {} } } };
+		global.elementor = {};
 
 		const { CreateElement } = await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/apply-menu-base-settings/create-element' );
 
@@ -24,63 +36,55 @@ describe( 'Apply menu base settings', () => {
 	} );
 
 	beforeEach( () => {
-		setGlobalContainers( [] );
 		global.elementor.config = {
 			elements: {
 				'e-menu': { base_settings: { 'collapse-breakpoint': collapseBreakpoint( 'tablet' ) } },
 			},
 		};
-		global.$e.internal.mockClear();
 	} );
 
 	it( 'should store the base settings on a newly created menu', () => {
 		// Arrange.
-		const menu = createMenu();
+		const menu = createModel( 'e-menu' );
 
 		// Act.
-		hook.apply( {}, menu );
+		hook.apply( {}, createContainer( menu ) );
 
 		// Assert.
-		expect( global.$e.internal ).toHaveBeenCalledWith( 'document/elements/set-settings', {
-			container: menu,
-			settings: { 'collapse-breakpoint': collapseBreakpoint( 'tablet' ) },
-			options: { render: false },
-		} );
+		expect( menu.settingsStore ).toEqual( { 'collapse-breakpoint': collapseBreakpoint( 'tablet' ) } );
 	} );
 
-	it( 'should find a menu created inside a wrapper', () => {
+	it( 'should find a menu created inside a wrapper before its container children exist', () => {
 		// Arrange.
-		const menu = createMenu();
-		const wrapper = createContainer( { elType: 'e-flexbox', id: 'wrapper1' } );
-		wrapper.children = [ menu ];
+		const menu = createModel( 'e-menu' );
+		const wrapper = createModel( 'e-flexbox', { elements: [ menu ] } );
 
 		// Act.
-		hook.apply( {}, wrapper );
+		hook.apply( {}, createContainer( wrapper ) );
 
 		// Assert.
-		expect( global.$e.internal ).toHaveBeenCalledTimes( 1 );
-		expect( global.$e.internal.mock.calls[ 0 ][ 1 ].container ).toBe( menu );
+		expect( menu.settingsStore ).toEqual( { 'collapse-breakpoint': collapseBreakpoint( 'tablet' ) } );
 	} );
 
 	it( 'should not override a setting that already has a value', () => {
 		// Arrange.
-		const menu = createMenu( { 'collapse-breakpoint': collapseBreakpoint( 'mobile' ) } );
+		const menu = createModel( 'e-menu', { settings: { 'collapse-breakpoint': collapseBreakpoint( 'mobile' ) } } );
 
 		// Act.
-		hook.apply( {}, menu );
+		hook.apply( {}, createContainer( menu ) );
 
 		// Assert.
-		expect( global.$e.internal ).not.toHaveBeenCalled();
+		expect( menu.settingsStore[ 'collapse-breakpoint' ] ).toEqual( collapseBreakpoint( 'mobile' ) );
 	} );
 
 	it( 'should not touch other element types', () => {
 		// Arrange.
-		const flexbox = createContainer( { elType: 'e-flexbox', id: 'wrapper1' } );
+		const flexbox = createModel( 'e-flexbox' );
 
 		// Act.
-		hook.apply( {}, flexbox );
+		hook.apply( {}, createContainer( flexbox ) );
 
 		// Assert.
-		expect( global.$e.internal ).not.toHaveBeenCalled();
+		expect( flexbox.settingsStore ).toEqual( {} );
 	} );
 } );

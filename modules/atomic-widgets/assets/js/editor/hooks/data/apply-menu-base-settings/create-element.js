@@ -1,29 +1,26 @@
 const MENU_ELEMENT_TYPE = 'e-menu';
 
-const findMenus = ( container ) => {
-	const menus = 'e-menu' === container?.model?.get( 'elType' ) ? [ container ] : [];
+const findMenuModels = ( model ) => {
+	const menus = MENU_ELEMENT_TYPE === model?.get( 'elType' ) ? [ model ] : [];
 
-	return ( container?.children ?? [] ).reduce(
-		( found, child ) => [ ...found, ...findMenus( child ) ],
+	return ( model?.get( 'elements' )?.models ?? [] ).reduce(
+		( found, child ) => [ ...found, ...findMenuModels( child ) ],
 		menus,
 	);
 };
 
-const applyBaseSettings = ( menu ) => {
+const applyBaseSettings = ( menuModel ) => {
 	const baseSettings = elementor.config.elements[ MENU_ELEMENT_TYPE ]?.base_settings ?? {};
+	const settings = menuModel.get( 'settings' );
 	const missing = Object.fromEntries(
-		Object.entries( baseSettings ).filter( ( [ key ] ) => undefined === menu.settings.get( key ) ),
+		Object.entries( baseSettings ).filter( ( [ key ] ) => undefined === settings.get( key ) ),
 	);
 
 	if ( 0 === Object.keys( missing ).length ) {
 		return;
 	}
 
-	$e.internal( 'document/elements/set-settings', {
-		container: menu,
-		settings: missing,
-		options: { render: false },
-	} );
+	settings.set( missing );
 };
 
 export class CreateElement extends $e.modules.hookData.After {
@@ -38,6 +35,9 @@ export class CreateElement extends $e.modules.hookData.After {
 	apply( args, result ) {
 		const containers = Array.isArray( result ) ? result : [ result ];
 
-		containers.filter( Boolean ).flatMap( findMenus ).forEach( applyBaseSettings );
+		containers
+			.filter( Boolean )
+			.flatMap( ( container ) => findMenuModels( container.model ) )
+			.forEach( applyBaseSettings );
 	}
 }
