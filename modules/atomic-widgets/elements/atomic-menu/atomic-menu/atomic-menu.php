@@ -185,9 +185,9 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 
 		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {
-			$scope = ".e-menu[data-e-collapse=\"{$key}\"]:has(> {$toggle})[data-e-ready]";
+			$scope = ".e-menu[data-e-collapse=\"{$key}\"]:has(> {$toggle})";
 
-			$css[] = "@media(max-width:{$breakpoint->get_value()}px){"
+			$css[] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px){"
 				. "{$scope}{flex-wrap:wrap;position:relative}"
 				. "{$scope} > {$toggle}{display:flex;order:-1;flex:0 0 auto;width:auto;align-items:center;justify-content:center}"
 				. "{$scope} > {$items}{display:none;flex-direction:column;flex-basis:100%;width:100%}"

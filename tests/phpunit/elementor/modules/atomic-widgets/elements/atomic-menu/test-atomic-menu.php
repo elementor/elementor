@@ -367,7 +367,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();
 
 		$this->assertStringContainsString( '.e-menu[data-e-collapse] > .e-menu-toggle-base{display:none}', $css );
-		$this->assertStringContainsString( "@media(max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]", $css );
+		$this->assertStringContainsString( "@media(scripting:enabled) and (max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]", $css );
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
 	}
 
@@ -462,15 +462,24 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'data-e-collapse="' . Atomic_Menu::get_default_collapse_breakpoint() . '"', $html );
 	}
 
-	public function test_collapse_css_only_collapses_menus_that_have_a_toggle_and_a_running_handler() {
+	public function test_collapse_css_only_collapses_menus_that_have_a_toggle() {
 		// Act.
 		$css = Atomic_Menu::get_collapse_css();
 		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();
 
 		// Assert.
-		$this->assertStringContainsString( "@media(max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]:has(> .e-menu-toggle-base)[data-e-ready]", $css );
+		$this->assertStringContainsString( "@media(scripting:enabled) and (max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]:has(> .e-menu-toggle-base)", $css );
 		$this->assertStringNotContainsString( '.e-menu[data-e-collapse="tablet"] > .e-menu-items-base{display:none', $css );
-		$this->assertStringContainsString( '.e-menu[data-e-collapse="tablet"]:has(> .e-menu-toggle-base)[data-e-ready] > .e-menu-items-base{display:none', $css );
+		$this->assertStringContainsString( '.e-menu[data-e-collapse="tablet"]:has(> .e-menu-toggle-base) > .e-menu-items-base{display:none', $css );
+	}
+
+	public function test_collapse_css_applies_only_when_scripting_is_enabled() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringNotContainsString( '@media(max-width', $css );
+		$this->assertStringContainsString( '@media(scripting:enabled) and (max-width:', $css );
 	}
 
 	/**

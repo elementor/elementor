@@ -12,8 +12,6 @@ register( {
 			open: false,
 
 			init() {
-				this.$el.dataset.eReady = 'true';
-
 				const items = getItems( this.$el );
 
 				if ( items && ! items.id ) {
