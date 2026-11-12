@@ -13,6 +13,7 @@ import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
+import { VariableFormHeaderSlot } from './variable-form-header-location';
 
 const SIZE = 'tiny';
 
@@ -22,7 +23,7 @@ type Props = {
 };
 
 export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, propTypeUtil, variableType } = useVariableType();
 
 	const { setVariableValue: setVariable, path } = useVariableBoundProp();
 	const { propType } = useBoundProp();
@@ -117,6 +118,13 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 				}
 				title={ __( 'Create variable', 'elementor' ) }
 				onClose={ closePopover }
+				actions={ [
+					<VariableFormHeaderSlot
+						key="variable-form-header"
+						variableType={ variableType }
+						label={ label || undefined }
+					/>,
+				] }
 			/>
 
 			<Divider />
