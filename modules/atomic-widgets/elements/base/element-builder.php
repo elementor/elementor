@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 class Element_Builder {
+	use Has_Template_Part;
+
 	protected $element_type;
 	protected $settings = [];
 	protected $is_locked = false;
@@ -70,6 +72,6 @@ class Element_Builder {
 			$element_data['hydrateDefaultChildren'] = true;
 		}
 
-		return $element_data;
+		return $this->add_local_style( $this->add_part( $element_data ) );
 	}
 }
