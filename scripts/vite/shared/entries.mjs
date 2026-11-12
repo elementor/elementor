@@ -91,6 +91,7 @@ export const FRONTEND_ENTRIES = {
 	frontend: 'assets/dev/js/frontend/frontend.js',
 	'youtube-handler': 'modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js',
 	'tabs-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js',
+	'menu-current-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-current-handler.js',
 	'tabs-preview-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js',
 	'menu-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-handler.js',
 	'menu-preview-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-preview-handler.js',
