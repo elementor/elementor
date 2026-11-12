@@ -46,7 +46,7 @@ class Ability_Hooks {
 
 		$post_id = (int) ( $context['post_id'] ?? 0 );
 
-		if ( ! empty( $context['is_mutating'] ) && $post_id > 0 && empty( $context['is_failed'] ) ) {
+		if ( ! empty( $context['is_mutating'] ) && $post_id > 0 && empty( $context['is_failed'] ) && empty( $context['is_dry_run'] ) ) {
 			Editor_Sync_State::set_mcp_mutation( $post_id );
 		}
 

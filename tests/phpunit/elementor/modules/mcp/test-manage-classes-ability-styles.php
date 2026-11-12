@@ -53,6 +53,58 @@ class Test_Manage_Classes_Ability_Styles extends Test_Manage_Classes_Ability_Bas
 		$this->assertCleanVariants( $captured_variants );
 	}
 
+	public function test_dry_run__returns_planned_classes_without_writing() {
+		// Arrange.
+		$converter = $this->createMock( Css_Converter::class );
+		$converter->method( 'parse_nested' )
+			->willReturn( [ 'blocks' => [ [ 'selector' => null, 'css' => 'color: red;' ] ] ] );
+		$converter->method( 'convert' )
+			->willReturn( [ 'props' => [ 'color' => 'red' ], 'customCss' => '', 'rejected' => [] ] );
+
+		$repository = $this->createMock( Global_Classes_Repository::class );
+		$repository->method( 'all_labels' )->willReturn( [ 'g-existing' => 'existing' ] );
+		$repository->method( 'get_order' )->willReturn( [ 'g-existing' ] );
+		$repository->method( 'get' )->willReturn( [
+			'id' => 'g-existing',
+			'label' => 'existing',
+			'variants' => [],
+		] );
+		$repository->expects( $this->never() )->method( 'apply_changes' );
+
+		// Act.
+		$result = $this->make_ability_with_converter( $repository, $converter )->execute( [
+			'operations' => [
+				[
+					'action' => 'create',
+					'label'  => 'existing',
+					'css'    => 'color: red;',
+				],
+				[
+					'action' => 'delete',
+					'id'     => 'g-existing',
+				],
+			],
+			'dry_run' => true,
+		] );
+
+		// Assert.
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertTrue( $result['dry_run'] );
+
+		$created = $result['results'][0];
+		$this->assertSame( 'create', $created['action'] );
+		$this->assertStringStartsWith( 'g-', $created['id'] );
+		$this->assertSame( 'class', $created['type'] );
+		$this->assertSame( [ 'color' => 'red' ], $created['variants'][0]['props'] );
+		$this->assertCleanVariants( $created['variants'] );
+
+		$deleted = $result['results'][1];
+		$this->assertSame( 'g-existing', $deleted['id'] );
+		$this->assertArrayNotHasKey( 'variants', $deleted );
+
+		$this->assertSame( [ $created['id'] ], $result['order'] );
+	}
+
 	public function test_create__styles_with_hover_produces_two_variants() {
 		// Arrange.
 		$converter = $this->createMock( Css_Converter::class );

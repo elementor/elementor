@@ -8,6 +8,7 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
+use Elementor\Modules\WidgetCreation\Module as Widget_Creation_Module;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -469,6 +470,7 @@ class Module extends BaseModule {
 		$config = [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
+			'is_angie_text_enabled' => Widget_Creation_Module::is_angie_in_panels_active(),
 		];
 
 		wp_localize_script(

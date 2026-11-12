@@ -295,6 +295,7 @@ class Module extends BaseModule {
 			new Abilities\List_Widget_Schemas_Ability(),
 			new Abilities\List_Dynamic_Tags_Ability(),
 			new Abilities\Build_Composition_Ability(),
+			new Abilities\Build_Composition_Guide_Ability(),
 			new Abilities\Manage_Elements_Ability(),
 			new Abilities\Global_Classes_Resource_Ability(),
 			new Abilities\List_Assets_Ability(),
