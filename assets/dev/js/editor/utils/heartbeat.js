@@ -4,13 +4,13 @@ export default class Heartbeat {
 	document = null;
 	lastSyncedAt = 0;
 	pendingSyncTime = true;
-	lastStateOfDocumentChange = false;
+	lastIsSaved = true;
 
 	constructor( document ) {
 		this.document = document;
 		this.lastSyncedAt = document.config.server_time || 0;
 		this.pendingSyncTime = ! this.lastSyncedAt;
-		this.lastStateOfDocumentChange = document.editor.isChanged;
+		this.lastIsSaved = document.editor.isSaved;
 
 		this.onSend = this.onSend.bind( this );
 		this.onTick = this.onTick.bind( this );
@@ -129,7 +129,7 @@ export default class Heartbeat {
 			return;
 		}
 
-		const isDirty = this.document.editor.isChanged;
+		const isDirty = ! this.document.editor.isSaved;
 
 		const baseConfig = {
 			headerMessage: __( 'Page Updated by AI', 'elementor' ),
@@ -173,18 +173,23 @@ export default class Heartbeat {
 	}
 
 	onDocumentChanged() {
-		const newChangeOfDocumentState = this.document.editor.isChanged;
-		if (newChangeOfDocumentState === this.lastStateOfDocumentChange) {
+		const { isSaved } = this.document.editor;
+
+		if ( isSaved === this.lastIsSaved ) {
 			return;
 		}
-		if ( newChangeOfDocumentState ) {
+
+		if ( ! isSaved ) {
 			wp.heartbeat.connectNow();
 		}
-		this.lastStateOfDocumentChange = newChangeOfDocumentState;
+
+		this.lastIsSaved = isSaved;
 	}
 
 	onDocumentSaved() {
-		if ( this.document.editor.isSaved ) {
+		this.lastIsSaved = this.document.editor.isSaved;
+
+		if ( this.lastIsSaved ) {
 			wp.heartbeat.connectNow();
 		}
 	}

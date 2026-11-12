@@ -51,9 +51,9 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	} );
 
 	QUnit.module( 'onDocumentChanged()', () => {
-		QUnit.test( 'false→true: calls connectNow for immediate dirty signal', ( assert ) => {
+		QUnit.test( 'saved→unsaved: calls connectNow for immediate dirty signal', ( assert ) => {
 			mockDocument.editor.isChanged = true;
-			heartbeat.lastStateOfDocumentChange = false;
+			mockDocument.editor.isSaved = false;
 
 			heartbeat.onDocumentChanged();
 
@@ -61,9 +61,11 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 			assert.equal( mockEnqueue.callCount, 0, 'enqueue not called (onSend handles it)' );
 		} );
 
-		QUnit.test( 'true→false: no forced beat, onSend handles state on next tick', ( assert ) => {
-			mockDocument.editor.isChanged = false;
-			heartbeat.lastStateOfDocumentChange = true;
+		QUnit.test( 'no signal while the document stays unsaved', ( assert ) => {
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = false;
+			heartbeat.onDocumentChanged();
+			mockConnectNow.callCount = 0;
 
 			heartbeat.onDocumentChanged();
 
@@ -71,14 +73,23 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 			assert.equal( mockConnectNow.callCount, 0, 'connectNow not called' );
 		} );
 
-		QUnit.test( 'no signal when state is unchanged', ( assert ) => {
+		QUnit.test( 'an edit after an autosave calls connectNow even though isChanged stayed true', ( assert ) => {
+			// Arrange.
 			mockDocument.editor.isChanged = true;
-			heartbeat.lastStateOfDocumentChange = true;
-
+			mockDocument.editor.isSaved = false;
 			heartbeat.onDocumentChanged();
 
-			assert.equal( mockEnqueue.callCount, 0, 'enqueue not called' );
-			assert.equal( mockConnectNow.callCount, 0, 'connectNow not called' );
+			mockDocument.editor.isSaved = true;
+			heartbeat.onDocumentSaved();
+
+			mockConnectNow.callCount = 0;
+
+			// Act.
+			mockDocument.editor.isSaved = false;
+			heartbeat.onDocumentChanged();
+
+			// Assert.
+			assert.equal( mockConnectNow.callCount, 1 );
 		} );
 	} );
 
@@ -244,25 +255,54 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 		} );
 	} );
 
-	QUnit.module( 'showExternalChangeModal()', () => {
-		QUnit.test( 'can be shown again after the previous modal is hidden', ( assert ) => {
-			// Arrange.
-			const createdConfigs = [];
-			const originalCreateWidget = elementorCommon.dialogsManager.createWidget;
+	QUnit.module( 'showExternalChangeModal()', ( modalHooks ) => {
+		let createdWidgets, originalCreateWidget;
+
+		modalHooks.beforeEach( () => {
+			createdWidgets = [];
+			originalCreateWidget = elementorCommon.dialogsManager.createWidget;
 			elementorCommon.dialogsManager.createWidget = ( type, config ) => {
-				createdConfigs.push( config );
+				createdWidgets.push( { type, config } );
 				return { show: () => {} };
 			};
+		} );
 
+		modalHooks.afterEach( () => {
+			elementorCommon.dialogsManager.createWidget = originalCreateWidget;
+		} );
+
+		QUnit.test( 'can be shown again after the previous modal is hidden', ( assert ) => {
 			// Act.
 			heartbeat.showExternalChangeModal();
-			createdConfigs[ 0 ].onHide();
+			createdWidgets[ 0 ].config.onHide();
 			heartbeat.showExternalChangeModal();
 
 			// Assert.
-			assert.equal( createdConfigs.length, 2 );
+			assert.equal( createdWidgets.length, 2 );
+		} );
 
-			elementorCommon.dialogsManager.createWidget = originalCreateWidget;
+		QUnit.test( 'offers only Reload after an autosave even though isChanged stayed true', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = true;
+
+			// Act.
+			heartbeat.showExternalChangeModal();
+
+			// Assert.
+			assert.equal( createdWidgets[ 0 ].type, 'alert' );
+		} );
+
+		QUnit.test( 'offers Force Save when changes are not saved anywhere', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = false;
+
+			// Act.
+			heartbeat.showExternalChangeModal();
+
+			// Assert.
+			assert.equal( createdWidgets[ 0 ].type, 'confirm' );
 		} );
 	} );
 } );

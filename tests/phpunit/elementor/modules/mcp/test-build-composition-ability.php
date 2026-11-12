@@ -1230,7 +1230,7 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'elementor/publish-document', $result['llm_instructions'] ?? '' );
 	}
 
-	public function test_execute__dry_run_reports_staged_from_post_status() {
+	public function test_execute__dry_run_on_published_page_omits_staged_and_writes_nothing() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
@@ -1245,7 +1245,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
-		$this->assertTrue( $result['staged'] );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertArrayNotHasKey( 'staged', $result );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
 		$this->assertFalse( wp_get_post_autosave( $post_id ) );
 	}
 

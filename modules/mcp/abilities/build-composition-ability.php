@@ -444,20 +444,22 @@ class Build_Composition_Ability extends Abstract_Ability {
 		array $removed_ids,
 		array $skipped_pro
 	): array {
-		$is_staged = $written ? Document_Staging::is_staged_write( $written ) : Document_Staging::is_live( $document );
 		$post = $written ? $written->get_post() : get_post( $post_id );
 
 		$response = [
 			'success' => true,
 			'post_id' => $post_id,
-			'staged' => $is_staged,
 			'root_element_ids' => $root_ids,
 			'edit_url' => $document->get_edit_url(),
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];
 
-		if ( $written && $is_staged ) {
+		if ( $written ) {
+			$response['staged'] = Document_Staging::is_staged_write( $written );
+		}
+
+		if ( $response['staged'] ?? false ) {
 			$response['llm_instructions'] = Document_Staging::draft_copy_message( $document );
 		}
 
