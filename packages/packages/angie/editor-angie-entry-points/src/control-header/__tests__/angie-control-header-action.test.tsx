@@ -3,6 +3,8 @@ import { useSelectedElement } from '@elementor/editor-elements';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieControlHeaderAction } from '../angie-control-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
@@ -14,13 +16,11 @@ jest.mock( '@elementor/editor-elements', () => ( {
 } ) );
 
 const ELEMENT_ID = 'abc123';
-const SELECTED_ELEMENT_ID = 'selected-1';
-const BUTTON_NAME = 'Generate with Angie';
 
 describe( 'AngieControlHeaderAction', () => {
 	beforeEach( () => {
 		jest.mocked( useSelectedElement ).mockReturnValue( {
-			element: { id: SELECTED_ELEMENT_ID, type: 'e-div-block' },
+			element: { id: 'selected-1', type: 'e-div-block' },
 			elementType: null,
 		} as unknown as ReturnType< typeof useSelectedElement > );
 	} );
@@ -29,40 +29,47 @@ describe( 'AngieControlHeaderAction', () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( [
-		{
-			source: 'text',
-			props: { elementId: ELEMENT_ID, controlType: 'inline-editing', bind: 'title', path: [ 'title' ] },
-			prompt: `At element ${ ELEMENT_ID } I want: `,
-		},
-		{
-			source: 'image',
-			props: { elementId: ELEMENT_ID, controlType: 'image', bind: 'image', path: [ 'image' ] },
-			prompt: `At element ${ ELEMENT_ID }, image, I want: `,
-		},
-		{
-			source: 'named image',
-			props: { elementId: ELEMENT_ID, controlType: 'image', bind: 'logo', path: [ 'logo' ] },
-			prompt: `At element ${ ELEMENT_ID }, image "logo", I want: `,
-		},
-		{
-			source: 'background image',
-			props: {
-				controlType: 'image',
-				bind: 'image',
-				path: [ 'background', 'background-overlay', '0', 'image' ],
-			},
-			prompt: `At element ${ SELECTED_ELEMENT_ID }, background image, I want: `,
-		},
-	] )( 'opens Angie with the $source prompt when clicked', ( { props, prompt } ) => {
+	it( 'opens Angie with the control header prompt when clicked', () => {
 		// Arrange
-		render( <AngieControlHeaderAction { ...props } /> );
+		render(
+			<AngieControlHeaderAction
+				elementId={ ELEMENT_ID }
+				controlType="inline-editing"
+				bind="title"
+				path={ [ 'title' ] }
+			/>
+		);
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( prompt );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith(
+			ANGIE_PROMPTS.controlHeader( {
+				elementId: ELEMENT_ID,
+				controlType: 'inline-editing',
+				bind: 'title',
+				path: [ 'title' ],
+			} )
+		);
+	} );
+
+	it( 'falls back to the selected element when no element id is given', () => {
+		// Arrange
+		render( <AngieControlHeaderAction controlType="image" bind="image" path={ [ 'background', 'image' ] } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
+
+		// Assert
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith(
+			ANGIE_PROMPTS.controlHeader( {
+				elementId: 'selected-1',
+				controlType: 'image',
+				bind: 'image',
+				path: [ 'background', 'image' ],
+			} )
+		);
 	} );
 
 	it( 'renders nothing for a control type without a prompt', () => {
@@ -72,7 +79,7 @@ describe( 'AngieControlHeaderAction', () => {
 		);
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: BUTTON_NAME } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: getGenerateWithAngieLabel() } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders nothing when no element is known', () => {
@@ -86,6 +93,6 @@ describe( 'AngieControlHeaderAction', () => {
 		render( <AngieControlHeaderAction controlType="image" bind="image" path={ [ 'image' ] } /> );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: BUTTON_NAME } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: getGenerateWithAngieLabel() } ) ).not.toBeInTheDocument();
 	} );
 } );
