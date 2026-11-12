@@ -54,6 +54,57 @@ class Test_Batch_Processor extends TestCase {
 		$this->assertEquals( '#FF0000', $result['variable']['value'] );
 	}
 
+	public function test_apply_operation__create_keeps_planned_id() {
+		// Arrange
+		$collection = Variables_Collection::default();
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'id' => 'e-gv-a1b2c3d',
+				'type' => 'global-color',
+				'label' => 'Planned-Color',
+				'value' => '#FF0000',
+			],
+		];
+
+		// Act
+		$result = $this->processor->apply_operation( $collection, $operation );
+
+		// Assert
+		$this->assertEquals( 'e-gv-a1b2c3d', $result['id'] );
+		$this->assertArrayHasKey( 'e-gv-a1b2c3d', $collection->all() );
+	}
+
+	public function test_apply_operation__create_replaces_planned_id_already_taken() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'e-gv-a1b2c3d' => [
+					'type' => 'global-color',
+					'label' => 'Existing',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'id' => 'e-gv-a1b2c3d',
+				'type' => 'global-color',
+				'label' => 'Another',
+				'value' => '#FF0000',
+			],
+		];
+
+		// Act
+		$result = $this->processor->apply_operation( $collection, $operation );
+
+		// Assert
+		$this->assertNotEquals( 'e-gv-a1b2c3d', $result['id'] );
+	}
+
 	public function test_apply_operation__update_successfully() {
 		// Arrange
 		$collection = Variables_Collection::hydrate( [
