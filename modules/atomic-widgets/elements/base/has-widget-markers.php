@@ -15,6 +15,7 @@ trait Has_Widget_Markers {
 	private function add_widget_markers( array &$raw_data ): void {
 		$widget = Widget_Markers::sanitize_widget( $this->get_data( Widget_Markers::WIDGET_KEY ) );
 		$part = Widget_Markers::sanitize_part( $this->get_data( Widget_Markers::PART_KEY ) );
+		$is_slot = Widget_Markers::sanitize_slot( $this->get_data( Widget_Markers::SLOT_KEY ) );
 
 		if ( ! empty( $widget ) ) {
 			$raw_data[ Widget_Markers::WIDGET_KEY ] = $widget;
@@ -24,7 +25,7 @@ trait Has_Widget_Markers {
 			$raw_data[ Widget_Markers::PART_KEY ] = $part;
 		}
 
-		if ( '' !== $part && Widget_Markers::sanitize_slot( $this->get_data( Widget_Markers::SLOT_KEY ) ) ) {
+		if ( '' !== $part && $is_slot ) {
 			$raw_data[ Widget_Markers::SLOT_KEY ] = true;
 		}
 	}
