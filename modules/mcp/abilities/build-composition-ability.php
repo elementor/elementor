@@ -40,6 +40,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 		return false;
 	}
 
+	public function supports_dry_run(): bool {
+		return true;
+	}
+
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Build Composition', 'elementor' ),
