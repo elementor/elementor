@@ -732,6 +732,10 @@ class Manager {
 			null
 		);
 
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
 		$response = [
 			'content' => $result['content'],
 		];
