@@ -31,6 +31,7 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 				</InteractionsProvider>
 			) : (
 				<EmptyState
+					elementId={ elementId }
 					onCreateInteraction={ () => {
 						firstInteractionState[ 1 ]( true );
 					} }
