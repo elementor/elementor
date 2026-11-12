@@ -462,15 +462,15 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'data-e-collapse="' . Atomic_Menu::get_default_collapse_breakpoint() . '"', $html );
 	}
 
-	public function test_collapse_css_only_collapses_menus_that_have_a_toggle() {
+	public function test_collapse_css_only_collapses_menus_that_have_a_toggle_and_a_running_handler() {
 		// Act.
 		$css = Atomic_Menu::get_collapse_css();
 		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();
 
 		// Assert.
-		$this->assertStringContainsString( "@media(max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]:has(> .e-menu-toggle-base)", $css );
+		$this->assertStringContainsString( "@media(max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]:has(> .e-menu-toggle-base)[data-e-ready]", $css );
 		$this->assertStringNotContainsString( '.e-menu[data-e-collapse="tablet"] > .e-menu-items-base{display:none', $css );
-		$this->assertStringContainsString( '.e-menu[data-e-collapse="tablet"]:has(> .e-menu-toggle-base) > .e-menu-items-base{display:none', $css );
+		$this->assertStringContainsString( '.e-menu[data-e-collapse="tablet"]:has(> .e-menu-toggle-base)[data-e-ready] > .e-menu-items-base{display:none', $css );
 	}
 
 	/**
@@ -505,15 +505,5 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 			'after another attribute' => [ 'data-x="1" aria-label="Site"', true ],
 			'unrelated attribute' => [ 'data-aria-label-x="1"', false ],
 		];
-	}
-
-	public function test_only_menu_opts_in_to_applying_base_settings_on_create() {
-		// Arrange.
-		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
-
-		// Act & Assert.
-		$this->assertTrue( $this->get_config( 'e-menu' )['apply_base_settings_on_create'] );
-		$this->assertFalse( $this->get_config( 'e-menu-items' )['apply_base_settings_on_create'] );
-		$this->assertFalse( $this->get_config( 'e-form' )['apply_base_settings_on_create'] );
 	}
 }

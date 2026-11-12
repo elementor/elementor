@@ -17,8 +17,4 @@ trait Has_Base_Settings {
 	protected function define_base_settings(): array {
 		return [];
 	}
-
-	public function should_apply_base_settings_on_create(): bool {
-		return false;
-	}
 }

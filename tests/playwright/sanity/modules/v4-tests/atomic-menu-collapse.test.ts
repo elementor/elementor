@@ -523,6 +523,27 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await expect( getNav().locator( 'ul > li' ) ).toHaveText( [ 'Home', 'Products', 'About', 'Contact' ] );
 		} );
 
+		test( 'Without JavaScript the menu items stay visible and no toggle is shown', async ( { browser } ) => {
+			// Arrange
+			await addMenu();
+			await viewFrontend();
+
+			const url = editor.page.url();
+			const noScriptContext = await browser.newContext( { javaScriptEnabled: false, viewport: TABLET } );
+			const noScriptPage = await noScriptContext.newPage();
+
+			// Act
+			await noScriptPage.goto( url );
+
+			// Assert
+			const nav = noScriptPage.locator( 'nav.e-menu' );
+
+			await expect( nav.locator( ':scope > ul' ) ).toBeVisible();
+			await expect( nav.locator( ':scope > button[type="button"]' ) ).toBeHidden();
+
+			await noScriptContext.close();
+		} );
+
 		test( 'Saving and reloading the editor does not duplicate the toggle', async () => {
 			// Arrange
 			const menuId = await addMenu();
