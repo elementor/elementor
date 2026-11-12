@@ -1,7 +1,7 @@
 # manage-global-variable
 
 > Audience: external  
-> Module: `modules/mcp/abilities/manage-variable-ability.php`, `manage-variable-guide-ability.php`  
+> Module: `modules/mcp/abilities/manage-variable-ability.php`  
 > Related: [../resources.md](../resources.md), [../../variables/api.md](../../variables/api.md), [build-composition.md](build-composition.md)
 
 ## What it is
@@ -15,10 +15,9 @@ Bulk CRUD for global design tokens on the active kit (`--label: value`). Permiss
 | Symbol | Signature | Purpose |
 |--------|-----------|---------|
 | `Manage_Variable_Ability` | `execute( array $input ): array` | `operations[]`: `create` \| `update` \| `delete` |
-| `Manage_Variable_Guide_Ability` | `execute()` → guide text | Resource: `elementor://variables/tools/manage-global-variable-guide` |
 | Ability ID | `elementor/manage-global-variable` | Stable MCP host identifier |
 
-Verified: `manage-variable-ability.php`, `manage-variable-guide-ability.php`.
+Verified: `manage-variable-ability.php`. Naming and value rules live in the tool and `label` field descriptions.
 
 ## When to use it
 
@@ -106,10 +105,8 @@ New variable types register through `Variable_Types_Registry` and `elementor/var
 
 - Delegates to `Variables_Service::process_batch()` with `Variables_Repository` on active kit
 - Clears file cache and runtime object cache after mutations
-- Detailed agent guide resource: `elementor://variables/tools/manage-global-variable-guide` (`Manage_Variable_Guide_Ability`, ability ID `elementor/manage-global-variable-guide`) — Pro-aware type list
 
 ## See also
 
-- [../resources.md](../resources.md) — `elementor://variables/tools/manage-global-variable-guide` (full operations guide: naming rules, Pro types, examples)
 - [../composition-workflow.md](../composition-workflow.md) — step 3
 - [../../variables/usage-in-styles.md](../../variables/usage-in-styles.md) — `var(--label)` in CSS

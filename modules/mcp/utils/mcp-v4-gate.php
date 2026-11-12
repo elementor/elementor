@@ -28,7 +28,6 @@ class Mcp_V4_Gate {
 		'elementor/manage-default-styles',
 		'elementor/manage-elements',
 		'elementor/manage-global-variable',
-		'elementor/manage-global-variable-guide',
 		'elementor/reorder-classes',
 	];
 

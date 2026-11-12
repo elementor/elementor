@@ -303,7 +303,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'style' => [
 					'type' => 'object',
 					'default' => (object) [],
-					'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure.',
+					'description' => 'Record mapping configuration-id → plain CSS string. Supports &:hover/&:focus/&:active nesting and @media(--breakpoint) blocks. Keys MUST match configuration-id attributes in xml_structure. Use `var(--label)` for brand colors, fonts and repeated sizes.',
 					'additionalProperties' => [ 'type' => 'string' ],
 				],
 				'classes' => [

@@ -15,12 +15,12 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 Discover valid `widget_type` values via `elementor/list-widget-schemas?summary=true`. Any type it lists is workable through the same uniform contract (`element_config`, `style`, `classes`, `interactions`); anything it does not list must be edited manually in the Elementor editor.
 
 # WORKFLOW
-1. Check/create global variables via `elementor/manage-global-variable`
-2. Check/create global classes via `elementor/manage-classes`
-3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused
-4. Read the schema via `elementor/get-widget-schemas` for every element type you will use (in one call), including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout
-5. Build composition (THIS TOOL) - minimal inline styles; attach existing global classes via `classes`
-6. Use returned element IDs for subsequent configuration changes
+1. Read [elementor://global-variables] and [elementor://global-classes]. Reuse what exists: attach an existing class, or add a variant of it (`card--featured`), before creating a new one.
+2. Put shared styling in the design system: brand colors, fonts and repeated sizes in variables (`elementor/manage-global-variable`), styles shared by 2+ elements in classes (`elementor/manage-classes`). One-offs and layout stay in local `style`. Don't create a variable or class for a value used once.
+3. When component capabilities permit, prefer reusable components for cohesive structures that are repeated or likely to be reused.
+4. Read the schema via `elementor/get-widget-schemas` for every element type you will use (in one call), including basic containers like `e-div-block` and `e-flexbox` — their `llm_guidance.default_styles` shape the layout.
+5. Build composition (THIS TOOL). Attach classes via `classes`.
+6. Use returned element IDs for subsequent configuration changes.
 
 ## CRITICAL: Avoid write conflicts after build-composition
 `manage-elements` is a **read → modify → write** operation on the current document. If you call it after `build-composition` using element IDs from a **prior** `get-page-structure` read, it will restore the old tree and silently overwrite what `build-composition` just saved.
@@ -93,6 +93,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - **Prop names must come from the widget schema (use elementor/get-widget-schemas tool with the widget type). A key not in the schema, an unresolvable value, an unknown global class label, a bad interaction item, or unparseable CSS is skipped, the rest is saved, and each skip is returned as a warning (with `code` and `config_id` in `warning_details`). Every warning is fixable; only errors fail the call. Correct only that field via `elementor/manage-elements`; do not rebuild the composition and do not treat the skip as unsupported.**
 - style is a plain CSS string (e.g. `color: red; padding-top: 1rem;`); supports `&:hover`/`&:focus`/`&:active` nesting and `@media(--breakpoint)` blocks (e.g. `@media(--mobile) { font-size: 2rem; }`). The server converts most declarations into native atomic styles. See **Style conversion** below.
 - classes is configuration-id → array of existing global class **labels** from [elementor://global-classes]
+- Breakpoints are desktop-first: the base `style` is desktop, `@media(--tablet)` and `@media(--mobile)` override it downward, and larger custom breakpoints (e.g. `--widescreen`) apply upward. Only breakpoints enabled on the site are valid.
 - LINKS: a `link` prop is valid only when the target widget's schema (via `elementor/get-widget-schemas`) includes a `link` property. On widgets without it, `link` is skipped with a warning — send it on a widget whose schema includes `link`, or wrap the element in a linkable container instead. Plain link shape: `{ "destination": "https://example.com", "isTargetBlank": true, "tag": "a" }`
 - Check `llm_guidance.default_settings` in widget schemas — omit only keys listed there from element_config unless the user explicitly asks to change them
 
@@ -136,7 +137,7 @@ Match the widget schema shape:
 - **dynamic** (where schema allows): `{ "name": "<tag from elementor://dynamic-tags>", "settings": { ... } }` — settings use plain values per the tag schema; omit `group`
 - **image**: two forms, `id` and `url` are mutually exclusive — send one, not both:
   - Library asset (from `elementor/list-assets` tool): `{ "src": { "id": 123 }, "size": "full" }`. Don't send `alt` with `id`; library images render the attachment's Media Library alt text, so ask the user to update it there if it's missing.
-  - External URL: `{ "src": { "url": "https://example.com/photo.jpg" }, "size": "full" }` — works. If no library asset fits and no on-brand external image is available, tell the user which images to upload.
+  - External URL: `{ "src": { "url": "https://example.com/photo.jpg", "alt": "Team at the spring workshop" }, "size": "full" }` — works. Set a meaningful `alt` (`""` if decorative). If no library asset fits and no on-brand external image is available, tell the user which images to upload.
 - **svg** (the `svg` prop on `e-svg`): two mutually exclusive forms — send one, not both. See ICONS for which to pick.
   - Icon from a library (preferred for iconography): `{ "value": "fa-solid fa-cart-shopping", "library": "fa-solid" }`. Both fields come verbatim from `elementor/find-icons` — never assemble them yourself.
   - Uploaded SVG file (for custom artwork, logos): `{ "id": <attachment id from elementor/list-assets with type: "svg"> }`. An external URL on `e-svg` renders an empty div, and a fabricated id renders nothing.
@@ -149,17 +150,17 @@ Match the widget schema shape:
 Read [elementor://global-variables] before styling. Create or update via `elementor/manage-global-variable`. Use variable **labels** from that list — not internal ids.
 
 **In `style` (raw CSS):** reference by label only:
-- `color: var(--wc26-gold)` or `color: var(--wc26-gold, #C6A15B)`
-- `font-family: var(--font-heading)` or `font-size: var(--spacing-lg, 1.5rem)`
+- `color: var(--color-primary)` or `color: var(--color-primary, #C6A15B)`
+- `font-family: var(--font-heading)` or `padding: var(--spacing-lg, 1.5rem)`
 - Literal `font-family` values MUST be a single Google Font family name (e.g. `Playfair Display`). NEVER pass fallback stacks (`Inter, sans-serif`) or generic families as the primary value.
-- Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-wc26-gold)` is wrong; use `var(--wc26-gold)`)
+- Do NOT use the internal `e-gv-` id prefix (e.g. `var(--e-gv-color-primary)` is wrong; use `var(--color-primary)`)
 - Unrecognized variable references fall back to `custom_css` and return an `unknown_variable` warning
 
 ## GLOBAL CLASSES
 Read [elementor://global-classes] before composing. Create or update via `elementor/manage-classes`. Use `elementor/reorder-classes` when conflicting global class declarations need a priority change. Use class **labels** from that list — not internal ids.
 
 **In `classes` (reference-only):** attach existing global classes by label:
-- Map configuration-id → array of labels (e.g. `"section-title": ["hero-heading", "text-muted"]`)
+- Map configuration-id → array of labels (e.g. `"section-title": ["section-title"], "call-to-action": ["button", "button--primary"]`)
 - Create or update classes with `elementor/manage-classes` before referencing them here
 - Global classes are prepended before any local styles from `style`; local styles still win on conflicts
 
@@ -171,11 +172,7 @@ Read [elementor://global-classes] before composing. Create or update via `elemen
 - The tag's categories must intersect the categories declared by the field (visible in the widget schema's dynamic branch). Pick a tag from [elementor://dynamic-tags] whose category list overlaps. A category mismatch returns an error for that field and skips merging it.
 - Do NOT send `group` (resolved automatically). Populate `settings` strictly per the tag's schema; use `{}` only when it has none.
 
-# DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
-
-**Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
-
-## SIZING: DEFAULT IS NO SIZE (CRITICAL)
+# SIZING: DEFAULT IS NO SIZE (CRITICAL)
 
 **DO NOT specify height or width unless you have a specific visual reason.**
 
@@ -201,42 +198,6 @@ vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
 GOOD: `<e-div-block>content naturally sizes</e-div-block>`
 BAD: `<e-div-block style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-div-block>`
 
-## Layout Variety (Break the Template)
-- AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
-- VARY heights: Use auto-height sections with generous padding (6rem+). Let content breathe
-- VARY widths: Not everything spans full width. Use contained sections (max-width: 960px) mixed with edge-to-edge
-- ASYMMETRIC grids: 2:1, 1:3, offset layouts. Avoid equal column widths
-- Negative space as design element: Large margins create focus and sophistication
-- Break alignment intentionally: Offset headings, overlapping elements, broken grids
-
-## Visual Depth & Effects
-- Layer elements: Overlapping cards, text over images, floating elements
-- Subtle shadows with color tint (not pure black): `box-shadow: 0 20px 60px rgba(<brand-color-here>, 0.15)`
-- Gradient overlays on images for text readability
-- Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
-- Backdrop blur for glassmorphism where appropriate
-- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
-
-## Typography with Character
-- Display fonts for headlines (from user's brand or contextually appropriate)
-- Size contrast: 4rem+ headlines vs 1rem body. Make hierarchy unmistakable
-- Letter-spacing: Tight for large headlines (-0.02em), loose for small caps (0.1em)
-- Line-height: Tight for headlines (1.1), generous for body (1.6-1.8)
-- Text decoration: Underlines, highlights, gradient text for emphasis
-
-## Color with Purpose
-- Extract palette from user context (brand colors, industry norms, mood)
-- 60-30-10 rule: dominant, secondary, accent
-- Tinted neutrals over pure grays: warm (#faf8f5, #2d2a26) or cool (#f5f7fa, #1e2430)
-- Color blocking: Large colored sections create visual rhythm
-- Gradient directions: Diagonal (135deg, 225deg) feel more dynamic than vertical
-
-## Spacing Strategy
-- Section padding: 6rem-10rem vertical, creating breathing room
-- Rhythm variation: Tight groups (2rem) with generous gaps between (6rem)
-- Use rem/em exclusively for responsive scaling
-- Generous padding on CTAs: min 1rem 2.5rem
-
 # ICONS
 `e-svg` renders either a library icon or an uploaded SVG file. Prefer a library icon for iconography — carts, arrows, social marks, check marks — because it needs no upload and inherits `color` via `currentColor`. Use an uploaded SVG only for custom artwork such as a brand logo.
 
@@ -259,7 +220,7 @@ Each match returns `{ value, library, name, label, matched_on }`. Place it as-is
   },
   "style": {
     "add-to-cart-row": "display: flex; align-items: center; gap: 0.5rem;",
-    "cart-icon": "width: 1.25rem; height: 1.25rem; color: #1a1a1a;"
+    "cart-icon": "width: 1.25rem; height: 1.25rem; color: var(--color-text);"
   }
 }
 ```
@@ -270,6 +231,12 @@ The response includes the Font Awesome version in use (`font_awesome_version`); 
 
 # INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
+
+# ACCESSIBILITY
+Build to WCAG 2.2 AA. Elementor specifics:
+- Hover styles also apply on keyboard focus. Give every interactive element a clearly visible hover change; that is its focus indicator.
+- `aria-label` can't be set. Pair every icon with visible text. If the user asks for icon-only controls, build them and tell them they won't be accessible.
+- Elementor ignores the visitor's reduced-motion setting, so the page must work without motion. On the first screen, don't use scroll-triggered animations: text and the primary action must show on load.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only
@@ -297,24 +264,25 @@ Redesigning an existing parent? Use `mode: 'replace_children'` with the parent's
 - **dry_run**: If true, validate and return resolved tree without persisting
 
 # EXAMPLE
-Section with heading + button and a decorative glow (only the glow gets an explicit size):
+Section with heading + button and a decorative glow. Shared looks come from classes (created in WORKFLOW step 2) built on variables; local `style` holds only this section's one-offs.
 ```json
 {
   "post_id": 123,
   "xml_structure": "<e-div-block configuration-id=\"main-section\"><e-div-block configuration-id=\"glow\"/><e-heading configuration-id=\"section-title\"></e-heading><e-button configuration-id=\"call-to-action\"></e-button></e-div-block>",
   "element_config": {
-    "section-title": {
-      "tag": "h2",
-      "title": "Welcome"
-    }
+    "section-title": { "tag": "h2", "title": "Welcome" }
   },
   "editor_settings": {
     "glow": { "decorative": true }
   },
+  "classes": {
+    "main-section": ["section"],
+    "section-title": ["section-title"],
+    "call-to-action": ["button", "button--primary"]
+  },
   "style": {
-    "main-section": "position: relative; padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%); @media(--mobile) { padding: 3rem 1.5rem; }",
-    "glow": "position: absolute; top: 2rem; right: 2rem; width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, #c6a15b55, transparent 70%);",
-    "section-title": "font-size: 3.5rem; color: #2d2a26; &:hover { color: var(--wc26-gold); } @media(--mobile) { font-size: 2.25rem; } @media(--tablet) { font-size: 2.75rem; }"
+    "main-section": "position: relative;",
+    "glow": "position: absolute; top: var(--spacing-lg); right: var(--spacing-lg); width: 10rem; height: 10rem; border-radius: 50%; background: radial-gradient(circle, var(--color-secondary), transparent 70%); opacity: 0.3;"
   }
 }
 ```

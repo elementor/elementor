@@ -79,7 +79,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 									'type' => 'string',
 									'enum' => [ self::TYPE_COLOR, self::TYPE_FONT, self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ],
 								],
-								'label' => [ 'type' => 'string' ],
+								'label' => [
+									'type' => 'string',
+									'description' => 'Variable name = the CSS property it feeds + a role or scale step. Use these names, only the ones the build needs: `color-primary`, `color-secondary`, `color-on-primary`, `color-background`, `color-background-alt`, `color-border`, `color-text`, `color-text-muted`, `color-heading`; `font-heading`, `font-body`; `font-size-sm`, `-base`, `-lg`, `-xl`, `-2xl`, `-3xl`; `line-height-body`, `line-height-heading`, `letter-spacing-heading`; `spacing-xs`, `-sm`, `-md`, `-lg`, `-xl`; `radius-sm`, `-md`, `-lg`. If none fits, add one with the same pattern (`color-success`). Never name by look (`color-navy`) or brand (`hw-`). Follow the kit\'s own convention if it has one, and never rename the user\'s variables unless asked.',
+								],
 								'value' => [ 'type' => 'string' ],
 							],
 						],
@@ -300,7 +303,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	}
 
 	private function get_description(): string {
-		return __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
+		return __( 'Manage V4 global variables (color, font, size, custom-size) on the active kit. Bulk create, update or delete (up to 50 operations). Variables hold the site\'s design decisions: brand colors, fonts and repeated sizes. Don\'t create one for a value used once. `global-size-variable` takes a number with a unit (`1.5rem`); use `global-custom-size-variable` for functions or keywords (`clamp(...)`, `auto`). Fonts: one Google Font family name. Update needs id, label and value: to rename, keep the value; to change the value, keep the exact label. Updating a value restyles every page that uses it: before changing a variable that existed before this conversation, tell the user. Delete is destructive: confirm with the user first.', 'elementor' );
 	}
 
 	private function clear_cache(): void {
