@@ -17,6 +17,10 @@ export type ClassState =
 	| {
 			name: 'paused';
 			value: 'e--paused';
+	  }
+	| {
+			name: 'current';
+			value: 'e--current';
 	  };
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';

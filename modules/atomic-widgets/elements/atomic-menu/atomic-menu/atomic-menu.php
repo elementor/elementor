@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
@@ -24,7 +25,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -345,10 +345,10 @@ class Atomic_Menu extends Atomic_Element_Base {
 		$global_depends = parent::get_script_depends();
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return array_merge( $global_depends, [ 'elementor-menu-handler', 'elementor-menu-preview-handler' ] );
+			return array_merge( $global_depends, [ 'elementor-menu-handler', 'elementor-menu-current-handler', 'elementor-menu-preview-handler' ] );
 		}
 
-		return array_merge( $global_depends, [ 'elementor-menu-handler' ] );
+		return array_merge( $global_depends, [ 'elementor-menu-handler', 'elementor-menu-current-handler' ] );
 	}
 
 	public function register_frontend_handlers() {
@@ -364,6 +364,14 @@ class Atomic_Menu extends Atomic_Element_Base {
 				true
 			);
 		}
+
+		wp_register_script(
+			'elementor-menu-current-handler',
+			"{$assets_url}js/menu-current-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	protected function get_templates(): array {

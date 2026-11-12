@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Base\Atomic_Menu_Locked_Element;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -35,6 +36,10 @@ class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
 		return array_merge( parent::define_props_schema(), [
 			'link' => Link_Prop_Type::make(),
 		] );
+	}
+
+	protected function define_atomic_style_states(): array {
+		return [ Style_States::get_class_states_map()['current'] ];
 	}
 
 	protected function define_atomic_controls(): array {

@@ -151,6 +151,68 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'auto', $props['width']['value']['unit'] );
 	}
 
+	public function test_menu_item_exposes_only_the_current_style_state() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$item_config = $this->get_config( 'e-menu-item' );
+
+		// Assert.
+		$this->assertSame(
+			[ [ 'name' => 'current', 'value' => 'e--current' ] ],
+			$item_config['atomic_style_states']
+		);
+
+		foreach ( [ 'e-menu', 'e-menu-items', 'e-menu-entry' ] as $type ) {
+			$this->assertSame( [], $this->get_config( $type )['atomic_style_states'], $type );
+		}
+	}
+
+	public function test_menu_registers_the_current_handler_without_alpine() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$menu = Plugin::$instance->elements_manager->get_element_types( 'e-menu' );
+
+		// Act.
+		$menu->register_frontend_handlers();
+		$registered = wp_scripts()->registered['elementor-menu-current-handler'] ?? null;
+
+		// Assert.
+		$this->assertContains( 'elementor-menu-current-handler', $menu->get_script_depends() );
+		$this->assertNotNull( $registered );
+		$this->assertStringContainsString( 'js/menu-current-handler', $registered->src );
+		$this->assertNotContains( 'elementor-alpinejs', $registered->deps );
+	}
+
+	public function test_rendered_menu_has_no_current_state_on_the_server() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$item = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'menuitem1',
+			'elType' => 'e-menu-item',
+			'settings' => [
+				'link' => [
+					'$$type' => 'link',
+					'value' => [
+						'destination' => [ '$$type' => 'url', 'value' => home_url( '/' ) ],
+						'isTargetBlank' => [ '$$type' => 'boolean', 'value' => false ],
+					],
+				],
+			],
+			'elements' => [],
+		] );
+
+		// Act.
+		ob_start();
+		$item->print_element();
+		$html = ob_get_clean();
+
+		// Assert.
+		$this->assertStringNotContainsString( 'e--current', $html );
+		$this->assertStringNotContainsString( 'aria-current', $html );
+	}
+
 	public function test_default_content() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
