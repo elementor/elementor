@@ -195,6 +195,42 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		$this->assert_has_error( $result, 'template.styles.local-root.variants.0.props.colr', Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
 	}
 
+	public function test_validate__rejects_unknown_breakpoints_in_local_styles_and_presets() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$definition['template']['styles']['local-root']['variants'][0]['meta']['breakpoint'] = 'phone';
+		$definition['style']['appearance'][0]['options'][0]['set'][0]['style']['phone'] = [ 'color' => [ '$$type' => 'color', 'value' => '#000000' ] ];
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.styles.local-root.variants.0.meta.breakpoint', Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
+		$this->assert_has_error( $result, 'style.appearance.0.options.0.set.0.style.phone', Definition_Error_Codes::PRESET_STYLE_INVALID );
+	}
+
+	public function test_validate__accepts_every_defined_breakpoint_active_or_not() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$root_variant = $definition['template']['styles']['local-root']['variants'][0];
+		$preset_write = $definition['style']['appearance'][0]['options'][0]['set'][1];
+
+		foreach ( [ 'widescreen', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile' ] as $breakpoint ) {
+			$variant = $root_variant;
+			$variant['meta']['breakpoint'] = $breakpoint;
+			$definition['template']['styles']['local-root']['variants'][] = $variant;
+			$preset_write['style'][ $breakpoint ] = $preset_write['style']['desktop'];
+		}
+
+		$definition['style']['appearance'][0]['options'][0]['set'][1] = $preset_write;
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assertSame( '', $result->errors()->to_string() );
+	}
+
 	public function test_validate__rejects_style_lists_that_are_not_arrays() {
 		// Arrange.
 		$definition = $this->icon_button();

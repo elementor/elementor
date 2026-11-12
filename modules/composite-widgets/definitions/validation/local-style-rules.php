@@ -53,14 +53,24 @@ class Local_Style_Rules {
 		}
 
 		foreach ( $style['variants'] as $index => $variant ) {
-			if ( is_array( $variant['props'] ?? null ) ) {
-				$this->style_props_rules->validate_known_props(
-					$variant['props'],
-					"{$style_path}.variants.{$index}.props",
-					$errors,
-					Definition_Error_Codes::TEMPLATE_STYLE_INVALID
-				);
-			}
+			$this->validate_variant( $variant, "{$style_path}.variants.{$index}", $errors );
+		}
+	}
+
+	private function validate_variant( $variant, string $variant_path, Parse_Errors $errors ): void {
+		$breakpoint = $variant['meta']['breakpoint'] ?? null;
+
+		if ( is_string( $breakpoint ) && ! $this->style_props_rules->is_known_breakpoint( $breakpoint ) ) {
+			$errors->add( "{$variant_path}.meta.breakpoint", Definition_Error_Codes::TEMPLATE_STYLE_INVALID );
+		}
+
+		if ( is_array( $variant['props'] ?? null ) ) {
+			$this->style_props_rules->validate_known_props(
+				$variant['props'],
+				"{$variant_path}.props",
+				$errors,
+				Definition_Error_Codes::TEMPLATE_STYLE_INVALID
+			);
 		}
 	}
 
