@@ -43,7 +43,7 @@ export default class extends Marionette.CompositeView {
 				behaviorClass: NavigatorStructureContextMenu,
 			},
 		};
-	},
+	}
 
 	events() {
 		return {
