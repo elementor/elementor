@@ -38,8 +38,8 @@ import {
 	type ValidationEvent,
 	type ValidationResult,
 } from '../creatable-autocomplete';
-import { CssClassItem } from './css-class-item';
 import { StyleTabHeaderSlot } from '../style-tab-header-location';
+import { CssClassItem } from './css-class-item';
 import { MissingClassesAlert } from './missing-classes-alert';
 import {
 	useCreateAndApplyClass,

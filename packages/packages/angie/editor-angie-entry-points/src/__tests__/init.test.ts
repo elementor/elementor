@@ -14,8 +14,8 @@ import { AngieComponentsTabHeaderAction } from '../components/angie-components-t
 import { AngieControlHeaderAction } from '../control-header/angie-control-header-action';
 import { AngieClassManagerHeaderAction } from '../css-classes/angie-class-manager-header-action';
 import { AngieClassSelectorAction } from '../css-classes/angie-class-selector-action';
-import { AngieInteractionsHeaderAction } from '../interactions/angie-interactions-header-action';
 import { init } from '../init';
+import { AngieInteractionsHeaderAction } from '../interactions/angie-interactions-header-action';
 import { AngieCustomCssHeaderAction } from '../style-section/angie-custom-css-header-action';
 import { AngieStyleTabHeaderAction } from '../style-section/angie-style-tab-header-action';
 import { AngieVariableFormHeaderAction } from '../variables/angie-variable-form-header-action';

@@ -10,11 +10,7 @@ export const AngieGenerateButton = ( { prompt }: { prompt: string } ) => {
 
 	return (
 		<Tooltip title={ label } placement="top">
-			<IconButton
-				aria-label={ label }
-				size="tiny"
-				onClick={ () => openAngieInAgentMode( prompt ) }
-			>
+			<IconButton aria-label={ label } size="tiny" onClick={ () => openAngieInAgentMode( prompt ) }>
 				<AIIcon fontSize="tiny" />
 			</IconButton>
 		</Tooltip>

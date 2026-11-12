@@ -148,6 +148,11 @@ describe( 'ANGIE_PROMPTS', () => {
 				prompt: 'For new color variable I want: ',
 			},
 			{
+				scenario: 'creation with a typed label',
+				props: { variableType: 'color', label: 'Brand' },
+				prompt: 'For color variable "Brand" I want: ',
+			},
+			{
 				scenario: 'edit with a label',
 				props: { variableType: 'color', variableId: 'var-1', label: 'Primary' },
 				prompt: 'For color variable "Primary" I want: ',

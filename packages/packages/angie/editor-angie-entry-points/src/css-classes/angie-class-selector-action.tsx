@@ -34,7 +34,5 @@ export const AngieClassSelectorAction = () => {
 		return null;
 	}
 
-	return (
-		<AngieGenerateButton prompt={ ANGIE_PROMPTS.classSelector( element.id, activeClassLabel ) } />
-	);
+	return <AngieGenerateButton prompt={ ANGIE_PROMPTS.classSelector( element.id, activeClassLabel ) } />;
 };
