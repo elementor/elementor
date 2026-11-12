@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
+use Elementor\Modules\Mcp\Abilities\Build_Composition_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Read_Resource_Ability;
@@ -194,6 +195,44 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		// Assert — permission passed; empty input fails validation, not auth
 		$this->assertNotSame( \WP_Http::FORBIDDEN, $response->get_status() );
 		$this->assertSame( 'invalid_input', $response->get_data()['code'] );
+	}
+
+	public function test_post__build_composition_dry_run_returns_planned_elements_without_saving() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = self::factory()->post->create( [ 'post_type' => 'page' ] );
+		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-proxy' );
+		$request->set_param( 'tool', 'build-composition' );
+		$request->set_param( 'input', [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-heading configuration-id="title"></e-heading>',
+		] );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::OK, $response->get_status(), wp_json_encode( $response->get_data() ) );
+		$this->assertNotEmpty( $response->get_data()['data']['elements'] );
+		$this->assertEmpty( get_post_meta( $post_id, '_elementor_data', true ) );
+	}
+
+	public function test_get__returns_build_composition_guide_for_editor() {
+		// Arrange
+		$this->act_as_editor();
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/mcp-proxy' );
+		$request->set_param( 'uri', Build_Composition_Guide_Ability::URI );
+
+		// Act
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( \WP_Http::OK, $response->get_status() );
+		$this->assertStringContainsString( 'configuration-id', $response->get_data()['data'] );
 	}
 
 	public function test_get__rejects_manage_global_variable_guide_for_editor() {

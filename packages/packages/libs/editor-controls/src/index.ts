@@ -137,7 +137,9 @@ export {
 	injectIntoRepeaterItemLabel,
 	injectIntoRepeaterItemActions,
 } from './components/control-repeater/locations';
-export { injectIntoInlineEditorToolbar } from './components/inline-editor-toolbar-locations';
+export { injectIntoControlHeader, type ControlHeaderProps } from './components/control-header-location';
+export { init } from './init';
+export { type AppPromotion } from './controls/app-promotion-trigger';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

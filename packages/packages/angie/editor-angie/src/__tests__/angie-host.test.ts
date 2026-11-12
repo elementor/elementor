@@ -53,6 +53,10 @@ jest.mock( '../mcp/console-mcp', () => ( {
 	initConsoleMcp: jest.fn(),
 } ) );
 
+jest.mock( '../mcp/ai-text-mcp', () => ( {
+	initAiTextMcp: jest.fn(),
+} ) );
+
 jest.mock( '../attach-editor-mcp-servers', () => ( {
 	attachEditorMcpServers: ( ...args: unknown[] ) => mockAttachAngieSdk( ...args ),
 } ) );
@@ -165,6 +169,11 @@ describe( 'editor angie host', () => {
 				chatToggleButton: {
 					enabled: false,
 					selector: '',
+				},
+			},
+			widgetConfig: {
+				localServers: {
+					skipLoading: true,
 				},
 			},
 		} );
