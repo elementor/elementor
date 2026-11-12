@@ -1,5 +1,6 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { initBreakpointsResource } from './resources/breakpoints-resource';
 import { initInteractionsSchemaResource } from './resources/interactions-schema-resource';
 import { initManageElementInteractionTool } from './tools/manage-element-interaction-tool';
 
@@ -16,5 +17,6 @@ export const initMcpInteractions = ( reg: MCPRegistryEntry ) => {
 `
 	);
 	initInteractionsSchemaResource( reg );
+	initBreakpointsResource( reg );
 	initManageElementInteractionTool( reg );
 };
