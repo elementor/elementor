@@ -2,6 +2,8 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieStyleTabHeaderAction } from '../angie-style-tab-header-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
@@ -9,8 +11,6 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 const ELEMENT_ID = 'el-styles';
-const BUTTON_NAME = 'Generate with Angie';
-const PROMPT = `At element ${ ELEMENT_ID }, styles, I want: `;
 
 describe( 'AngieStyleTabHeaderAction', () => {
 	afterEach( () => {
@@ -22,9 +22,9 @@ describe( 'AngieStyleTabHeaderAction', () => {
 		render( <AngieStyleTabHeaderAction elementId={ ELEMENT_ID } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( PROMPT );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.styleTab( { elementId: ELEMENT_ID } ) );
 	} );
 } );

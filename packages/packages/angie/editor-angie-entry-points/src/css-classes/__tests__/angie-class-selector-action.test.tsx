@@ -4,6 +4,8 @@ import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { useProviders } from '@elementor/editor-styles-repository';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { getGenerateWithAngieLabel } from '../../labels';
+import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieClassSelectorAction } from '../angie-class-selector-action';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
@@ -20,7 +22,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 } ) );
 
 const ELEMENT_ID = 'element-1';
-const BUTTON_NAME = 'Generate with Angie';
+const CLASS_LABEL = 'My Class';
 
 describe( 'AngieClassSelectorAction', () => {
 	beforeEach( () => {
@@ -40,7 +42,7 @@ describe( 'AngieClassSelectorAction', () => {
 			{
 				getKey: () => 'elements',
 				actions: {
-					all: () => [ { id: 'class-1', label: 'My Class' } ],
+					all: () => [ { id: 'class-1', label: CLASS_LABEL } ],
 				},
 			},
 		] as ReturnType< typeof useProviders > );
@@ -48,10 +50,10 @@ describe( 'AngieClassSelectorAction', () => {
 		render( <AngieClassSelectorAction /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: BUTTON_NAME } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
 		// Assert
-		expect( openAngieInAgentMode ).toHaveBeenCalledWith( `At element ${ ELEMENT_ID }, class "My Class", I want: ` );
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.classSelector( ELEMENT_ID, CLASS_LABEL ) );
 	} );
 
 	it( 'renders nothing when no active class is selected', () => {
@@ -63,6 +65,6 @@ describe( 'AngieClassSelectorAction', () => {
 		render( <AngieClassSelectorAction /> );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: BUTTON_NAME } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: getGenerateWithAngieLabel() } ) ).not.toBeInTheDocument();
 	} );
 } );
