@@ -18,6 +18,7 @@ import {
 } from '../scanner-constants';
 import { CHECKS_KIND_PASSED, CollapsibleCardHeader } from './checks-summary';
 import { TableCard } from './fix-table';
+import { OraLogo } from './ora-logo';
 
 const ROW_ACTIVATION_KEYS = [ 'Enter', ' ' ];
 
@@ -124,21 +125,21 @@ PassingRow.propTypes = {
 };
 
 const SourceLine = () => (
-	<Typography variant="body2" color="text.tertiary">
-		{ __( 'Source:', 'elementor' ) }
-		{ ' ' }
-		<Typography
+	<Stack direction="row" alignItems="center" gap={ 0.5 }>
+		<Typography variant="body2" color="text.tertiary">
+			{ __( 'Powered by', 'elementor' ) }
+		</Typography>
+		<Box
 			component="a"
-			variant="body2"
 			href={ SCAN_SOURCE_URL }
 			target="_blank"
 			rel="noreferrer"
-			color="inherit"
-			sx={ { textDecoration: 'underline' } }
+			aria-label={ __( 'Ora', 'elementor' ) }
+			sx={ { display: 'inline-flex', alignItems: 'center', color: 'text.primary' } }
 		>
-			{ __( 'Ora API', 'elementor' ) }
-		</Typography>
-	</Typography>
+			<OraLogo />
+		</Box>
+	</Stack>
 );
 
 export const PassingTable = ( { checks } ) => {

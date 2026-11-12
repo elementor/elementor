@@ -3,13 +3,6 @@ name: Enhanced PR Review
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
 
 jobs:
   check-label:
@@ -20,7 +13,7 @@ jobs:
       should_skip: ${{ steps.check.outputs.should_skip || 'true' }}
     permissions:
       pull-requests: read
-    
+
     steps:
       - name: Check for auto-reviewed label
         id: check
@@ -30,9 +23,9 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           echo "Checking if PR #$PR_NUMBER has 'auto-reviewed' label..."
-          
+
           LABELS=$(gh pr view "$PR_NUMBER" --repo "$GH_REPO" --json labels --jq '.labels[].name')
-          
+
           if echo "$LABELS" | grep -q "^auto-reviewed$"; then
             echo "should_skip=true" >> $GITHUB_OUTPUT
           else
@@ -44,23 +37,49 @@ jobs:
     runs-on: ubuntu-latest
     needs: [check-label]
     if: needs.check-label.outputs.should_skip != 'true'
+    timeout-minutes: 10
+    outputs:
+      skip_review: ${{ steps.gate.outputs.skip_review }}
     permissions:
       contents: read
       pull-requests: write
       checks: write
 
     steps:
+      - name: Detect release-metadata-only changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          token: ${{ github.token }}
+          filters: |
+            all:
+              - '**'
+            changelog:
+              - 'changelog.txt'
+              - 'readme.txt'
+
+      - name: Decide whether to skip review
+        id: gate
+        run: echo "skip_review=${{ steps.filter.outputs.changelog == 'true' && steps.filter.outputs.all_count == steps.filter.outputs.changelog_count }}" >> "$GITHUB_OUTPUT"
+
+      - name: Skip review for release metadata-only changes
+        if: steps.gate.outputs.skip_review == 'true'
+        run: echo "Skipping enhanced review for release metadata-only PR (changelog.txt, readme.txt)"
+
       - name: Checkout repository
+        if: steps.gate.outputs.skip_review != 'true'
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
+        if: steps.gate.outputs.skip_review != 'true'
         uses: actions/setup-node@v6
         with:
           node-version: '18'
 
       - name: Extract PR Information
+        if: steps.gate.outputs.skip_review != 'true'
         id: pr-info
         env:
           GH_TOKEN: ${{ github.token }}
@@ -68,21 +87,21 @@ jobs:
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          # Checkout the PR head SHA for automatic trigger
           git checkout "$PR_HEAD_SHA"
-          
-          # Set outputs for automatic trigger
+
           echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "pr_head_sha=$PR_HEAD_SHA" >> $GITHUB_OUTPUT
           echo "pr_base_sha=$PR_BASE_SHA" >> $GITHUB_OUTPUT
           echo "is_manual=false" >> $GITHUB_OUTPUT
 
       - name: Install Cursor CLI
+        if: steps.gate.outputs.skip_review != 'true'
         run: |
           curl https://cursor.com/install -fsS | bash
-          echo "$HOME/.cursor/bin" >> $GITHUB_PATH        
+          echo "$HOME/.cursor/bin" >> $GITHUB_PATH
 
       - name: Load PR Review Configuration
+        if: steps.gate.outputs.skip_review != 'true'
         id: config
         run: |
           if [ -f ".github/pr-instructions/pr-review-config.json" ]; then
@@ -95,6 +114,7 @@ jobs:
           echo "config=$CONFIG" >> $GITHUB_OUTPUT
 
       - name: Perform enhanced code review
+        if: steps.gate.outputs.skip_review != 'true'
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
           GH_TOKEN: ${{ github.token }}
@@ -105,15 +125,15 @@ jobs:
           PR_BASE_SHA: ${{ steps.pr-info.outputs.pr_base_sha }}
         run: |
           echo "Starting PR review with 3-minute timeout..."
-          
+
           cd $GITHUB_WORKSPACE
           if [ ! -f ".github/pr-instructions/pr-review-prompt.md" ]; then
             echo "Error: .github/pr-instructions/pr-review-prompt.md not found in $(pwd)"
             exit 1
           fi
-          
+
           PROMPT=$(cat .github/pr-instructions/pr-review-prompt.md)
-          
+
           DYNAMIC_CONTEXT=$(cat << EOF
           ## Context
           - Repository: $GITHUB_REPOSITORY
@@ -123,7 +143,7 @@ jobs:
           - Configuration: $CONFIG
           EOF
           )
-          
+
           timeout 180 cursor-agent --force --model "${{ vars.PR_REVIEW_MODEL }}" --output-format=text --print "$PROMPT" "$DYNAMIC_CONTEXT" || {
             exit_code=$?
             if [ $exit_code -eq 124 ]; then
@@ -140,11 +160,11 @@ jobs:
     name: Add Auto-Reviewed Label
     runs-on: ubuntu-latest
     needs: [enhanced-review]
-    if: success() && github.event_name == 'pull_request'
+    if: success() && github.event_name == 'pull_request' && needs.enhanced-review.outputs.skip_review != 'true'
     permissions:
       pull-requests: write
       issues: write
-    
+
     steps:
       - name: Add auto-reviewed label
         env:
@@ -152,11 +172,10 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_REPO: ${{ github.repository }}
         run: |
-          # Create label if it doesn't exist
           gh label create "auto-reviewed" \
             --repo "$GH_REPO" \
             --description "PR has been automatically reviewed by CI" \
             --color "0e8a16" \
             --force 2>/dev/null || true
-          
+
           gh pr edit "$PR_NUMBER" --repo "$GH_REPO" --add-label "auto-reviewed"

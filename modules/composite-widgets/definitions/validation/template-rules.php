@@ -6,7 +6,7 @@ use Elementor\Core\Utils\Api\Parse_Errors;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Markers;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,6 +26,8 @@ class Template_Rules {
 		'e-divider',
 	];
 	const WIDGET_EL_TYPE = 'widget';
+	const EL_TYPE_KEY = 'elType';
+	const WIDGET_TYPE_KEY = 'widgetType';
 	const FORBIDDEN_NODE_KEYS = [ 'id', Widget_Markers::WIDGET_KEY ];
 
 	private Variable_References $variable_references;
@@ -52,7 +54,7 @@ class Template_Rules {
 		$this->errors = $errors;
 		$this->parts = [];
 		$this->repeater_items = $this->get_repeater_items( $definition['general'] );
-		$this->allowed_types = apply_filters( self::ALLOWED_PART_TYPES_FILTER, self::DEFAULT_ALLOWED_PART_TYPES );
+		$this->allowed_types = $this->get_allowed_types();
 		$this->forbids_globals = Widget_Definition::SOURCE_CODE === $definition['source'];
 
 		$this->validate_node( $definition['template'], 'template', true );
@@ -69,8 +71,7 @@ class Template_Rules {
 			return [];
 		}
 
-		$element_type = $this->get_element_type( $node, $path );
-		$schema = $element_type ? $this->get_props_schema( $element_type, $path ) : null;
+		$schema = $this->get_props_schema( $node, $path );
 		$part = $this->validate_part_name( $node, $path );
 
 		if ( null !== $part && $indexes_parts ) {
@@ -157,11 +158,26 @@ class Template_Rules {
 		return $child_part === $item_part;
 	}
 
-	private function get_element_type( array $node, string $path ): ?string {
-		$el_type = $node['elType'] ?? null;
-		$is_widget = self::WIDGET_EL_TYPE === $el_type;
-		$element_type = $is_widget ? ( $node['widgetType'] ?? null ) : $el_type;
-		$type_path = $is_widget ? "{$path}.widgetType" : "{$path}.elType";
+	private function get_allowed_types(): array {
+		$allowed_types = apply_filters( self::ALLOWED_PART_TYPES_FILTER, self::DEFAULT_ALLOWED_PART_TYPES );
+
+		return is_array( $allowed_types ) ? $allowed_types : self::DEFAULT_ALLOWED_PART_TYPES;
+	}
+
+	/**
+	 * Widgets (`elType: widget` + `widgetType`) and elements (`elType` only) are looked up in their own manager,
+	 * so `{ elType: 'e-heading' }` doesn't resolve to the `e-heading` widget.
+	 */
+	private function get_props_schema( array $node, string $path ): ?array {
+		$is_widget = self::WIDGET_EL_TYPE === ( $node['elType'] ?? null );
+		$type_key = $is_widget ? self::WIDGET_TYPE_KEY : self::EL_TYPE_KEY;
+		$type_path = "{$path}.{$type_key}";
+		$element_type = $node[ $type_key ] ?? null;
+
+		if ( ! $is_widget && array_key_exists( self::WIDGET_TYPE_KEY, $node ) ) {
+			$this->errors->add( "{$path}." . self::WIDGET_TYPE_KEY, Definition_Error_Codes::TEMPLATE_NODE_INVALID );
+			return null;
+		}
 
 		if ( ! is_string( $element_type ) || '' === $element_type ) {
 			$this->errors->add( $type_path, Definition_Error_Codes::TEMPLATE_NODE_INVALID );
@@ -173,14 +189,12 @@ class Template_Rules {
 			return null;
 		}
 
-		return $element_type;
-	}
-
-	private function get_props_schema( string $element_type, string $path ): ?array {
-		$element = Atomic_Elements_Utils::get_element_instance( $element_type );
+		$element = $is_widget
+			? Plugin::$instance->widgets_manager->get_widget_types( $element_type )
+			: Plugin::$instance->elements_manager->get_element_types( $element_type );
 
 		if ( ! $element || ! method_exists( $element, 'get_props_schema' ) ) {
-			$this->errors->add( $path, Definition_Error_Codes::ELEMENT_TYPE_NOT_FOUND );
+			$this->errors->add( $type_path, Definition_Error_Codes::ELEMENT_TYPE_NOT_FOUND );
 			return null;
 		}
 

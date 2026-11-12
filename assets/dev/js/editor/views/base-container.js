@@ -1,6 +1,7 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
 import { cloneElementTree } from 'elementor/packages/packages/libs/editor-elements/src/sync/clone-element-tree';
 import { isCompoundAtomicType } from 'elementor-editor/utils/element-types';
+import { trackAddElement } from 'elementor-panel/pages/elements/utils/track-add-element';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -252,19 +253,10 @@ module.exports = Marionette.CompositeView.extend( {
 		args.container = this.getContainer();
 		args.options = options;
 
-		$e.run( 'preview/drop', args );
+		const dropResult = $e.run( 'preview/drop', args );
 
-		if ( elementorCommon?.eventsManager?.dispatchEvent && args?.model ) {
-			const elType = args.model?.elType ?? '';
-			const widgetType = args.model?.widgetType ?? '';
-			const elementName = 'widget' === elType ? widgetType : elType;
-
-			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
-				location: 'editor_panel',
-				element_name: elementName,
-				element_type: elType,
-				widget_type: widgetType,
-			} );
+		if ( dropResult ) {
+			trackAddElement( args.model );
 		}
 	},
 

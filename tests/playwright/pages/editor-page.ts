@@ -950,6 +950,72 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Open the structure (navigator) panel from the V4 top bar.
+	 *
+	 * @return {Promise<Locator>} The navigator panel.
+	 */
+	async openStructurePanel(): Promise<Locator> {
+		const panel = this.page.locator( EditorSelectors.panels.navigator.wrapper );
+
+		if ( ! await panel.isVisible() ) {
+			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
+		}
+
+		await expect( panel ).toBeVisible();
+
+		return panel;
+	}
+
+	async selectElementInStructurePanel( elementId: string ): Promise<void> {
+		await this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first().click();
+	}
+
+	/**
+	 * Expand a single structure panel node when it is collapsed.
+	 * The navigator marks an expanded node by `elementor-active` on its item row.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async expandStructureNode( elementId: string ): Promise<void> {
+		const item = this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first();
+
+		if ( ! ( await item.getAttribute( 'class' ) )?.includes( 'elementor-active' ) ) {
+			await item.locator( '.elementor-navigator__element__list-toggle' ).click();
+		}
+
+		await expect( item ).toHaveClass( /elementor-active/ );
+	}
+
+	/**
+	 * Expand every collapsed node in the structure panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async expandAllStructureNodes(): Promise<void> {
+		await expect.poll( async () => {
+			return await this.page.evaluate( () => {
+				const collapsed = Array.from(
+					document.querySelectorAll(
+						'#elementor-navigator .elementor-navigator__element--has-children > .elementor-navigator__item:not(.elementor-active)',
+					),
+				);
+
+				collapsed.forEach( ( item ) => {
+					( item.querySelector( '.elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
+				} );
+
+				return collapsed.length;
+			} );
+		}, { timeout: timeouts.longAction } ).toBe( 0 );
+	}
+
+	getStructureTitles(): Locator {
+		return this.page.locator( `${ EditorSelectors.panels.navigator.wrapper } .elementor-navigator__element__title__text` );
+	}
+
+	/**
 	 * Close the navigator/structure panel.
 	 *
 	 * @return {Promise<void>}
@@ -1061,6 +1127,18 @@ export default class EditorPage extends BasePage {
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
 		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
+	}
+
+	/**
+	 * Wait until the viewed frontend page finished loading its stylesheets and web fonts,
+	 * so text-dependent screenshots do not capture a fallback font.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForFrontendFonts(): Promise<void> {
+		await this.page.waitForLoadState( 'load', { timeout: timeouts.longAction } );
+		await this.page.waitForLoadState( 'networkidle', { timeout: timeouts.longAction } );
+		await this.page.evaluate( async () => await document.fonts.ready );
 	}
 
 	async viewPage() {

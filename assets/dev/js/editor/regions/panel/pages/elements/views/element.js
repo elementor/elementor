@@ -1,4 +1,5 @@
 import ContextMenu from 'elementor-behaviors/context-menu';
+import { trackAddElement } from '../utils/track-add-element';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
@@ -188,7 +189,7 @@ module.exports = Marionette.ItemView.extend( {
 
 		const modelData = this.model.toJSON();
 
-		$e.run( 'preview/drop', {
+		const dropResult = $e.run( 'preview/drop', {
 			container,
 			options: {
 				...options,
@@ -197,17 +198,8 @@ module.exports = Marionette.ItemView.extend( {
 			model: modelData,
 		} );
 
-		if ( elementorCommon?.eventsManager?.dispatchEvent ) {
-			const elType = modelData?.elType ?? '';
-			const widgetType = modelData?.widgetType ?? '';
-			const elementName = 'widget' === elType ? widgetType : elType;
-
-			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
-				location: 'editor_panel',
-				element_name: elementName,
-				element_type: elType,
-				widget_type: widgetType,
-			} );
+		if ( dropResult ) {
+			trackAddElement( modelData );
 		}
 	},
 

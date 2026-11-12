@@ -97,7 +97,7 @@ class Style_Preset_Rules {
 		foreach ( $write['style'] as $breakpoint => $props ) {
 			$breakpoint_path = "{$path}.style.{$breakpoint}";
 
-			if ( ! is_array( $props ) ) {
+			if ( ! is_array( $props ) || ! $this->style_props_rules->is_known_breakpoint( $breakpoint ) ) {
 				$this->errors->add( $breakpoint_path, Definition_Error_Codes::PRESET_STYLE_INVALID );
 				continue;
 			}

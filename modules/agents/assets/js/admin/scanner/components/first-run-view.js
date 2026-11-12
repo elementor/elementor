@@ -108,10 +108,12 @@ const ScannerPreview = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain } ) =>
 						score={ score }
 						ringDurationMs={ PREVIEW_RING_DURATION_MS }
 						isActivated
+						isAgentAccessOn
 						siteDomain={ siteDomain }
 						ranAt={ scan.ranAt }
 						agentAccessUrl={ agentAccessUrl }
 						onRescan={ noop }
+						onTurnBackOn={ noop }
 					/>
 				</ScoreSummaryBlock>
 				<StageBars stages={ scan.stages } />

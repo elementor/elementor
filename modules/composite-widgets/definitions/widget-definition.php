@@ -13,7 +13,6 @@ class Widget_Definition {
 
 	private string $id;
 	private int $version = self::DEFAULT_VERSION;
-	private string $source = self::SOURCE_CODE;
 	private string $title = '';
 	private ?string $icon = null;
 	private ?string $category = null;
@@ -32,11 +31,6 @@ class Widget_Definition {
 
 	public function version( int $version ): self {
 		$this->version = $version;
-		return $this;
-	}
-
-	public function source( string $source ): self {
-		$this->source = $source;
 		return $this;
 	}
 
@@ -79,7 +73,7 @@ class Widget_Definition {
 		$definition = [
 			'id' => $this->id,
 			'version' => $this->version,
-			'source' => $this->source,
+			'source' => self::SOURCE_CODE,
 			'title' => $this->title,
 			'icon' => $this->icon,
 			'category' => $this->category,

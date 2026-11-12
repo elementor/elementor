@@ -89,6 +89,20 @@ class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 		$this->assertEquals( $json['template'], $this->strip_builder_defaults( $this->registry->get( self::ICON_BUTTON_ID )['template'] ) );
 	}
 
+	public function test_register__rejects_a_declared_site_source() {
+		// Arrange.
+		$this->setExpectedIncorrectUsage( self::INCORRECT_USAGE );
+		$definition = $this->read_example( 'icon-button.json' );
+		$definition['source'] = Widget_Definition::SOURCE_SITE;
+
+		// Act.
+		$registered = $this->registry->register( $definition );
+
+		// Assert.
+		$this->assertFalse( $registered );
+		$this->assertNull( $this->registry->get( self::ICON_BUTTON_ID ) );
+	}
+
 	public function test_register__drops_invalid_definition_with_doing_it_wrong() {
 		// Arrange.
 		$this->setExpectedIncorrectUsage( self::INCORRECT_USAGE );
