@@ -77,6 +77,81 @@ class Test_Html_V3_To_Escaped_Html_Orchestrator extends Elementor_Test_Base {
 		$this->assertIsString( $document_data[0]['settings']['title']['value'] );
 	}
 
+	public function test_migrate_data__migrates_in_place_without_cache_short_circuit() {
+		// Arrange.
+		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
+		$first = [ $this->make_heading_with_html_v3_title() ];
+		$second = [ $this->make_heading_with_html_v3_title() ];
+
+		// Act.
+		$first_changed = $orchestrator->migrate_data( $first );
+		$second_changed = $orchestrator->migrate_data( $second );
+
+		// Assert.
+		$this->assertTrue( $first_changed );
+		$this->assertTrue( $second_changed );
+		$this->assertSame( 'escaped-html', $first[0]['settings']['title']['$$type'] );
+		$this->assertSame( 'escaped-html', $second[0]['settings']['title']['$$type'] );
+	}
+
+	public function test_migrate_data__returns_false_when_nothing_changes() {
+		// Arrange.
+		$orchestrator = Migrations_Orchestrator::make( dirname( __DIR__, 6 ) . '/migrations/' );
+		$data = [ $this->make_heading_with_html_v3_title() ];
+		$orchestrator->migrate_data( $data );
+
+		// Act.
+		$changed = $orchestrator->migrate_data( $data );
+
+		// Assert.
+		$this->assertFalse( $changed );
+	}
+
+	public function test_migrate_data__uses_bundled_manifest_without_remote_calls_on_rollback() {
+		// Arrange.
+		$original_version = get_option( 'elementor_version' );
+		update_option( 'elementor_version', '99.0.0' );
+		$remote_calls = 0;
+		add_filter( 'pre_http_request', function () use ( &$remote_calls ) {
+			$remote_calls++;
+			return new \WP_Error( 'unexpected_remote_call', 'migrate_data must not fetch remote migrations' );
+		} );
+
+		$orchestrator = Migrations_Orchestrator::make();
+		$data = [ $this->make_heading_with_html_v3_title() ];
+
+		try {
+			// Act.
+			$changed = $orchestrator->migrate_data( $data );
+		} finally {
+			update_option( 'elementor_version', $original_version );
+		}
+
+		// Assert.
+		$this->assertTrue( $changed );
+		$this->assertSame( 'escaped-html', $data[0]['settings']['title']['$$type'] );
+		$this->assertSame( 0, $remote_calls );
+	}
+
+	private function make_heading_with_html_v3_title(): array {
+		return [
+			'elType' => 'widget',
+			'widgetType' => Atomic_Heading::get_element_type(),
+			'settings' => [
+				'title' => [
+					'$$type' => 'html-v3',
+					'value' => [
+						'content' => [
+							'$$type' => 'string',
+							'value' => 'Hello',
+						],
+						'children' => [],
+					],
+				],
+			],
+		];
+	}
+
 	public function test_find_migration_path__escaped_html_to_html_v3_uses_down() {
 		$loader = \Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader::make(
 			dirname( __DIR__, 6 ) . '/migrations/'
