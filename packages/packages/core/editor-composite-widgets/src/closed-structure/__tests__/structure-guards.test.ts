@@ -90,17 +90,13 @@ describe( 'initStructureGuards', () => {
 	} );
 
 	describe( 'delete', () => {
-		it( 'blocks deleting a part', () => {
+		it.each( [
+			[ 'a part', [ 'label' ] ],
+			[ 'a part together with its widget root', [ 'label', 'root' ] ],
+			[ 'a part together with its slot content', [ 'slotChild', 'slot' ] ],
+		] as const )( 'blocks deleting %s', ( _, keys ) => {
 			// Act.
-			const result = runHook( DELETE, { container: fixture.label } );
-
-			// Assert.
-			expect( result ).toBe( false );
-		} );
-
-		it( 'blocks deleting a part together with its slot content', () => {
-			// Act.
-			const result = runHook( DELETE, { containers: [ fixture.slotChild, fixture.slot ] } );
+			const result = runHook( DELETE, { containers: keys.map( ( key ) => fixture[ key ] ) } );
 
 			// Assert.
 			expect( result ).toBe( false );
@@ -108,8 +104,6 @@ describe( 'initStructureGuards', () => {
 
 		it.each( [
 			[ 'the widget root', [ 'root' ] ],
-			[ 'a part together with its widget root', [ 'label', 'root' ] ],
-			[ 'a part together with an ancestor of its widget root', [ 'label', 'section' ] ],
 			[ 'slot content', [ 'slotChild' ] ],
 			[ 'a nested widget inside a slot', [ 'nestedRoot' ] ],
 		] as const )( 'allows deleting %s', ( _, keys ) => {

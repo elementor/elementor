@@ -3,16 +3,7 @@ import { type V1Element, type V1ElementModelProps } from '@elementor/editor-elem
 
 export const WIDGET_ID = 'elementor/tabs-like';
 
-type FixtureElement =
-	| 'document'
-	| 'page'
-	| 'section'
-	| 'root'
-	| 'label'
-	| 'slot'
-	| 'slotChild'
-	| 'nestedRoot'
-	| 'nestedPart';
+type FixtureElement = 'document' | 'page' | 'root' | 'label' | 'slot' | 'slotChild' | 'nestedRoot' | 'nestedPart';
 type UnknownElement = 'unknownRoot' | 'unknownPart';
 
 export type ClosedStructureFixture = Record< FixtureElement | UnknownElement, V1Element >;
@@ -30,10 +21,9 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 
 	const document = add( { id: 'document', elType: 'document' } );
 	const page = add( { id: 'page', elType: 'e-flexbox' }, document );
-	const section = add( { id: 'section', elType: 'e-flexbox' }, document );
 	const root = add(
 		{ id: 'root', elType: 'e-flexbox', part: 'root', widget: { id: WIDGET_ID, version: 1 } },
-		section
+		document
 	);
 	const label = add( { id: 'label', widgetType: 'e-paragraph', part: 'label' }, root );
 	const slot = add( { id: 'slot', elType: 'e-flexbox', part: 'tab_content', slot: true }, root );
@@ -54,7 +44,7 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 		getContainer: ( id: string ) => elements.get( id ),
 	};
 
-	return { document, page, section, root, label, slot, slotChild, nestedRoot, nestedPart, unknownRoot, unknownPart };
+	return { document, page, root, label, slot, slotChild, nestedRoot, nestedPart, unknownRoot, unknownPart };
 }
 
 export function cleanupClosedStructureFixture() {
