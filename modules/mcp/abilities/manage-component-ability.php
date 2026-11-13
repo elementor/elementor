@@ -65,6 +65,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
 
+		if ( self::is_dry_run( $input ) && self::ACTION_CREATE !== ( $input['action'] ?? null ) ) {
+			return new \WP_Error(
+				'dry_run_unsupported',
+				__( 'Dry run is only supported for the create action.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
 		switch ( $input['action'] ?? null ) {
 			case self::ACTION_CREATE:
 				return $this->handle_create( $input );
@@ -135,6 +143,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $non_atomic_error;
 		}
 
+		if ( self::is_dry_run( $input ) ) {
+			return $warnings->add_to_response( [
+				'success' => true,
+				'dry_run' => true,
+				'publish_status' => $this->resolve_status( $input ),
+			] + $item );
+		}
+
 		try {
 			$component_id = $this->get_repository()->create( $title, $elements, $this->resolve_status( $input ), $uid, $settings );
 		} catch ( \Exception $e ) {
@@ -152,6 +168,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		] + $this->document_links( $component );
 
 		return $warnings->add_to_response( $response );
+	}
+
+	public function supports_dry_run(): bool {
+		return true;
 	}
 
 	private function handle_update( array $input ) {
@@ -669,6 +689,24 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'type' => 'string',
 					'description' => 'Server-generated component uid, only present for create.',
 				],
+				'dry_run' => [ 'type' => 'boolean' ],
+				'title' => [
+					'type' => 'string',
+					'description' => 'create dry_run only: the planned component title.',
+				],
+				'publish_status' => [
+					'type' => 'string',
+					'description' => 'create dry_run only: the planned document status.',
+				],
+				'elements' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'object' ],
+					'description' => 'create dry_run only: the planned component elements, with assigned ids and overridable envelopes.',
+				],
+				'settings' => [
+					'type' => 'object',
+					'description' => 'create dry_run only: the planned component settings, including overridable_props with group and override keys.',
+				],
 				'success_ids' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'integer' ],
@@ -787,7 +825,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		foreach ( $elements as $element ) {
 			if ( 'e-component' === ( $element['widgetType'] ?? '' ) ) {
-				$components_count++;
+				++$components_count;
 			}
 
 			$children = $element['elements'] ?? [];
