@@ -1194,6 +1194,63 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertNotFalse( wp_get_post_autosave( $post_id ), 'The write on a live page must be staged in an autosave.' );
 	}
 
+	public function test_execute__reports_staged_write_on_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringContainsString( 'elementor/publish-document', $result['llm_instructions'] );
+		$this->assertSame( wp_get_post_autosave( $post_id )->post_modified_gmt, $result['version'] );
+	}
+
+	public function test_execute__reports_live_write_on_draft_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertFalse( $result['staged'] );
+		$this->assertStringNotContainsString( 'elementor/publish-document', $result['llm_instructions'] ?? '' );
+	}
+
+	public function test_execute__dry_run_on_published_page_omits_staged_and_writes_nothing() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertArrayNotHasKey( 'staged', $result );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertFalse( wp_get_post_autosave( $post_id ) );
+	}
+
 	public function test_execute__warns_when_decorative_is_sent_in_element_config() {
 		// Arrange
 		$this->act_as_admin();

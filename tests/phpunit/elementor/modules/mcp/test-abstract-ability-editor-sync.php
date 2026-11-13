@@ -5,6 +5,7 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Modules\Mcp\Abilities\Ability_Definition;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,6 +30,7 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/mcp/pre_execute_guard' );
 		Editor_Sync_State::delete_mcp_mutation( $this->post_id );
+		delete_transient( "_elementor_editor_unsaved_{$this->post_id}" );
 
 		parent::tearDown();
 	}
@@ -167,20 +169,59 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		$this->assertGreaterThanOrEqual( $before, $config['server_time'] );
 	}
 
+	public function test_execute_guarded__mcp_save_keeps_the_editor_unsaved_flag_and_marks_page() {
+		// Arrange
+		$this->act_as_admin();
+		Editor_Sync_State::set_editor_unsaved( $this->post_id );
+		$sync_state = new Editor_Sync_State();
+		$document = Plugin::$instance->documents->get( $this->post_id );
+		$ability = $this->make_ability(
+			[ 'mutates_page' => true ],
+			[ 'status' => 'ok' ],
+			false,
+			fn() => $sync_state->on_document_saved( $document )
+		);
+
+		// Act
+		$ability->execute_guarded( [ 'post_id' => $this->post_id ] );
+
+		// Assert
+		$this->assertTrue( Editor_Sync_State::has_editor_unsaved( $this->post_id ) );
+		$this->assertGreaterThan( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
+	}
+
+	public function test_on_document_saved__editor_save_clears_the_unsaved_flag_of_the_main_post() {
+		// Arrange
+		$this->act_as_admin();
+		Editor_Sync_State::set_editor_unsaved( $this->post_id );
+		Editor_Sync_State::set_mcp_mutation( $this->post_id );
+		$document = Plugin::$instance->documents->get( $this->post_id );
+		$autosave = $document->get_autosave( 0, true );
+
+		// Act
+		( new Editor_Sync_State() )->on_document_saved( $autosave );
+
+		// Assert
+		$this->assertFalse( Editor_Sync_State::has_editor_unsaved( $this->post_id ) );
+		$this->assertSame( 0, Editor_Sync_State::get_mcp_mutation_time( $this->post_id ) );
+	}
+
 	private function block_with_guard(): void {
 		add_filter( 'elementor/mcp/pre_execute_guard', fn() => new \WP_Error( self::GUARD_ERROR_CODE ) );
 	}
 
-	private function make_ability( array $meta, array $result = [ 'status' => 'ok' ], bool $supports_dry_run = false ): Abstract_Ability {
-		return new class( $meta, $result, $supports_dry_run ) extends Abstract_Ability {
+	private function make_ability( array $meta, array $result = [ 'status' => 'ok' ], bool $supports_dry_run = false, ?callable $on_execute = null ): Abstract_Ability {
+		return new class( $meta, $result, $supports_dry_run, $on_execute ) extends Abstract_Ability {
 			private array $meta;
 			private array $result;
 			private bool $dry_run_supported;
+			private $on_execute;
 
-			public function __construct( array $meta, array $result, bool $dry_run_supported ) {
+			public function __construct( array $meta, array $result, bool $dry_run_supported, ?callable $on_execute ) {
 				$this->meta = $meta;
 				$this->result = $result;
 				$this->dry_run_supported = $dry_run_supported;
+				$this->on_execute = $on_execute;
 			}
 
 			public function supports_dry_run(): bool {
@@ -207,6 +248,10 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 			}
 
 			public function execute( $input = [] ) {
+				if ( $this->on_execute ) {
+					( $this->on_execute )();
+				}
+
 				return $this->result;
 			}
 		};

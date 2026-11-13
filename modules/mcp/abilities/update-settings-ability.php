@@ -8,6 +8,7 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Staging;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -148,7 +149,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 	}
 
 	private function is_live( Document $document ): bool {
-		return in_array( get_post_status( $document->get_main_id() ), Document_Mutator::LIVE_STATUSES, true );
+		return Document_Staging::is_live( $document );
 	}
 
 	private function validate_stageable_settings( Document $document, array $settings ): ?\WP_Error {

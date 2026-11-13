@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Staging;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -124,7 +125,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 			$persister->embed_ids_into_dom( $dom, $planned['tree'], $parent_id, $planned['root_ids'] );
 
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $planned['root_ids'], $warnings, $mode, $planned['removed_ids'], $skipped_pro );
+			$response = $this->build_response( $post_id, $document, null, $xml_parser, $dom, $planned['root_ids'], $warnings, $mode, $planned['removed_ids'], $skipped_pro );
 			$response['dry_run'] = true;
 			$response['elements'] = $persister->get_root_elements( $planned['tree'], $parent_id, $planned['root_ids'] );
 
@@ -140,7 +141,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro );
+		$response = $this->build_response( $post_id, $document, $persisted['target'], $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro );
 
 		if ( $undo_point ) {
 			$undo_point->commit();
@@ -257,6 +258,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor).',
 				],
 				'version' => [ 'type' => 'string' ],
+				'staged' => Document_Staging::schema_property(),
 				'resolved_xml' => [
 					'type' => 'string',
 					'description' => 'The XML with element IDs embedded.',
@@ -433,6 +435,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	private function build_response(
 		int $post_id,
 		Document $document,
+		?Document $written,
 		Xml_Parser $xml_parser,
 		\DOMDocument $dom,
 		array $root_ids,
@@ -441,7 +444,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		array $removed_ids,
 		array $skipped_pro
 	): array {
-		$post = get_post( $post_id );
+		$post = $written ? $written->get_post() : get_post( $post_id );
 
 		$response = [
 			'success' => true,
@@ -451,6 +454,14 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];
+
+		if ( $written ) {
+			$response['staged'] = Document_Staging::is_staged_write( $written );
+		}
+
+		if ( $response['staged'] ?? false ) {
+			$response['llm_instructions'] = Document_Staging::draft_copy_message( $document );
+		}
 
 		$response = $warnings->add_to_response( $response );
 

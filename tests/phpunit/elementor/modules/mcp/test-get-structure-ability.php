@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
+use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -1183,6 +1184,59 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
+	}
+
+	public function test_execute__returns_staged_tree_after_write_on_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->given_published_elementor_post_modified_in_the_past();
+		$write = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+		$this->assertIsArray( $write, is_wp_error( $write ) ? $write->get_error_message() : 'unknown' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['staged'] );
+		$this->assertSame( $write['root_element_ids'], array_column( $result['elements'], 'id' ) );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id, false )->get_elements_data() );
+	}
+
+	public function test_execute__returns_live_tree_on_draft_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+		$write = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+		$this->assertIsArray( $write, is_wp_error( $write ) ? $write->get_error_message() : 'unknown' );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertFalse( $result['staged'] );
+		$this->assertSame( $write['root_element_ids'], array_column( $result['elements'], 'id' ) );
+	}
+
+	private function given_published_elementor_post_modified_in_the_past(): int {
+		global $wpdb;
+
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		$past = gmdate( 'Y-m-d H:i:s', time() - HOUR_IN_SECONDS );
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => $past, 'post_modified' => $past ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+
+		return $post_id;
 	}
 
 	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {

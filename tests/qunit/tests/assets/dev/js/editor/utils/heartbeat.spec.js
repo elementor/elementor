@@ -30,7 +30,7 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 		mockDocument = {
 			id: 123,
 			config: { server_time: INITIAL_SERVER_TIME },
-			editor: { isChanged: false },
+			editor: { isChanged: false, isSaved: true },
 		};
 
 		originalChannelsEditor = elementor.channels.editor;
@@ -51,9 +51,9 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	} );
 
 	QUnit.module( 'onDocumentChanged()', () => {
-		QUnit.test( 'false→true: calls connectNow for immediate dirty signal', ( assert ) => {
+		QUnit.test( 'saved→unsaved: calls connectNow for immediate dirty signal', ( assert ) => {
 			mockDocument.editor.isChanged = true;
-			heartbeat.lastStateOfDocumentChange = false;
+			mockDocument.editor.isSaved = false;
 
 			heartbeat.onDocumentChanged();
 
@@ -61,9 +61,11 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 			assert.equal( mockEnqueue.callCount, 0, 'enqueue not called (onSend handles it)' );
 		} );
 
-		QUnit.test( 'true→false: no forced beat, onSend handles state on next tick', ( assert ) => {
-			mockDocument.editor.isChanged = false;
-			heartbeat.lastStateOfDocumentChange = true;
+		QUnit.test( 'no signal while the document stays unsaved', ( assert ) => {
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = false;
+			heartbeat.onDocumentChanged();
+			mockConnectNow.callCount = 0;
 
 			heartbeat.onDocumentChanged();
 
@@ -71,14 +73,23 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 			assert.equal( mockConnectNow.callCount, 0, 'connectNow not called' );
 		} );
 
-		QUnit.test( 'no signal when state is unchanged', ( assert ) => {
+		QUnit.test( 'an edit after an autosave calls connectNow even though isChanged stayed true', ( assert ) => {
+			// Arrange.
 			mockDocument.editor.isChanged = true;
-			heartbeat.lastStateOfDocumentChange = true;
-
+			mockDocument.editor.isSaved = false;
 			heartbeat.onDocumentChanged();
 
-			assert.equal( mockEnqueue.callCount, 0, 'enqueue not called' );
-			assert.equal( mockConnectNow.callCount, 0, 'connectNow not called' );
+			mockDocument.editor.isSaved = true;
+			heartbeat.onDocumentSaved();
+
+			mockConnectNow.callCount = 0;
+
+			// Act.
+			mockDocument.editor.isSaved = false;
+			heartbeat.onDocumentChanged();
+
+			// Assert.
+			assert.equal( mockConnectNow.callCount, 1 );
 		} );
 	} );
 
@@ -134,16 +145,164 @@ QUnit.module( 'File: assets/dev/js/editor/utils/heartbeat.js', ( hooks ) => {
 	} );
 
 	QUnit.module( 'onSend()', () => {
-		QUnit.test( 'always sends current dirty state for stale-transient cleanup', ( assert ) => {
-			const dirtyData = {};
-			mockDocument.editor.isChanged = true;
-			heartbeat.onSend( null, dirtyData );
-			assert.equal( dirtyData.elementor_has_unsaved, 123, 'sends document id when dirty' );
+		QUnit.test( 'always sends current unsaved state for stale-transient cleanup', ( assert ) => {
+			const unsavedData = {};
+			mockDocument.editor.isSaved = false;
+			heartbeat.onSend( null, unsavedData );
+			assert.equal( unsavedData.elementor_has_unsaved, 123, 'sends document id when changes are not saved anywhere' );
 
-			const cleanData = {};
-			mockDocument.editor.isChanged = false;
-			heartbeat.onSend( null, cleanData );
-			assert.strictEqual( cleanData.elementor_has_unsaved, null, 'sends null when clean to clear server transient' );
+			const savedData = {};
+			mockDocument.editor.isSaved = true;
+			heartbeat.onSend( null, savedData );
+			assert.strictEqual( savedData.elementor_has_unsaved, null, 'sends null when saved to clear server transient' );
+		} );
+
+		QUnit.test( 'sends null after an autosave even though the document is still changed', ( assert ) => {
+			// Arrange.
+			const data = {};
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = true;
+
+			// Act.
+			heartbeat.onSend( null, data );
+
+			// Assert.
+			assert.strictEqual( data.elementor_has_unsaved, null );
+		} );
+	} );
+
+	QUnit.module( 'onDocumentSaved()', () => {
+		QUnit.test( 'calls connectNow so the cleared unsaved flag reaches the server', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isSaved = true;
+
+			// Act.
+			heartbeat.onDocumentSaved();
+
+			// Assert.
+			assert.equal( mockConnectNow.callCount, 1 );
+		} );
+
+		QUnit.test( 'does not call connectNow when the document changed during the save', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isSaved = false;
+
+			// Act.
+			heartbeat.onDocumentSaved();
+
+			// Assert.
+			assert.equal( mockConnectNow.callCount, 0 );
+		} );
+	} );
+
+	QUnit.module( 'MCP mutation marker', ( markerHooks ) => {
+		let mockStopAutoSave, mockShowModal, originalComponentsGet;
+
+		markerHooks.beforeEach( () => {
+			mockStopAutoSave = makeSpy();
+			mockShowModal = makeSpy();
+			originalComponentsGet = $e.components.get;
+			$e.components.get = () => ( { stopAutoSave: mockStopAutoSave } );
+			heartbeat.showExternalChangeModal = mockShowModal;
+		} );
+
+		markerHooks.afterEach( () => {
+			$e.components.get = originalComponentsGet;
+		} );
+
+		QUnit.test( 'stops the autosave timer and shows the modal for a new marker', ( assert ) => {
+			// Arrange.
+			const mutatedAt = INITIAL_SERVER_TIME + 5;
+
+			// Act.
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: mutatedAt } } );
+
+			// Assert.
+			assert.equal( mockStopAutoSave.callCount, 1 );
+			assert.strictEqual( mockStopAutoSave.calls[ 0 ][ 0 ], mockDocument );
+			assert.equal( mockShowModal.callCount, 1 );
+			assert.equal( heartbeat.lastSyncedAt, mutatedAt );
+		} );
+
+		QUnit.test( 'announces the same marker only once', ( assert ) => {
+			// Arrange.
+			const response = { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME + 5 } };
+
+			// Act.
+			heartbeat.onTick( null, response );
+			heartbeat.onTick( null, response );
+
+			// Assert.
+			assert.equal( mockShowModal.callCount, 1 );
+		} );
+
+		QUnit.test( 'announces a newer marker again', ( assert ) => {
+			// Act.
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME + 5 } } );
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME + 10 } } );
+
+			// Assert.
+			assert.equal( mockShowModal.callCount, 2 );
+		} );
+
+		QUnit.test( 'ignores markers older than the last sync', ( assert ) => {
+			// Act.
+			heartbeat.onTick( null, { elementor_mcp_mutation: { post_id: 123, mutated_at: INITIAL_SERVER_TIME - 1 } } );
+
+			// Assert.
+			assert.equal( mockStopAutoSave.callCount, 0 );
+			assert.equal( mockShowModal.callCount, 0 );
+		} );
+	} );
+
+	QUnit.module( 'showExternalChangeModal()', ( modalHooks ) => {
+		let createdWidgets, originalCreateWidget;
+
+		modalHooks.beforeEach( () => {
+			createdWidgets = [];
+			originalCreateWidget = elementorCommon.dialogsManager.createWidget;
+			elementorCommon.dialogsManager.createWidget = ( type, config ) => {
+				createdWidgets.push( { type, config } );
+				return { show: () => {} };
+			};
+		} );
+
+		modalHooks.afterEach( () => {
+			elementorCommon.dialogsManager.createWidget = originalCreateWidget;
+		} );
+
+		QUnit.test( 'can be shown again after the previous modal is hidden', ( assert ) => {
+			// Act.
+			heartbeat.showExternalChangeModal();
+			createdWidgets[ 0 ].config.onHide();
+			heartbeat.showExternalChangeModal();
+
+			// Assert.
+			assert.equal( createdWidgets.length, 2 );
+		} );
+
+		QUnit.test( 'offers only Reload after an autosave even though isChanged stayed true', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = true;
+
+			// Act.
+			heartbeat.showExternalChangeModal();
+
+			// Assert.
+			assert.equal( createdWidgets[ 0 ].type, 'alert' );
+		} );
+
+		QUnit.test( 'offers Force Save when changes are not saved anywhere', ( assert ) => {
+			// Arrange.
+			mockDocument.editor.isChanged = true;
+			mockDocument.editor.isSaved = false;
+
+			// Act.
+			heartbeat.showExternalChangeModal();
+
+			// Assert.
+			assert.equal( createdWidgets[ 0 ].type, 'confirm' );
 		} );
 	} );
 } );
