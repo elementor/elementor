@@ -41,6 +41,9 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Items\Atomic_Menu_Items;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle\Atomic_Menu_Toggle;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Closed\Atomic_Menu_Toggle_Closed;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open\Atomic_Menu_Toggle_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -429,6 +432,9 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Menu_Items() );
 		$elements_manager->register_element_type( new Atomic_Menu_Entry() );
 		$elements_manager->register_element_type( new Atomic_Menu_Item() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Closed() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Open() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -752,6 +758,10 @@ class Module extends BaseModule {
 			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAV_MENU ) ) {
+			$inline_css .= Atomic_Menu::get_collapse_css();
+		}
 
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );
