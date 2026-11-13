@@ -3,6 +3,7 @@ import Component from './component';
 const BaseRegion = require( 'elementor-regions/base' );
 
 import NavigatorLayout from './layout';
+import { registerDefaultNavigatorIndicators } from './navigator-indicators';
 
 export default class extends BaseRegion {
 	constructor( options ) {
@@ -13,14 +14,7 @@ export default class extends BaseRegion {
 		this.isDocked = false;
 		this.setSize();
 
-		this.indicators = {
-			customPosition: {
-				title: __( 'Custom Positioning', 'elementor' ),
-				icon: 'cursor-move',
-				settingKeys: [ '_position' ],
-				section: '_section_position',
-			},
-		};
+		registerDefaultNavigatorIndicators( this );
 
 		this.ensurePosition = this.ensurePosition.bind( this );
 
