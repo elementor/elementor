@@ -9,6 +9,7 @@ use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\Mcp\Abilities\Ability_Hooks;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Woocommerce_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
@@ -163,6 +164,7 @@ class Module extends BaseModule {
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
+		( new Ability_Hooks() )->register_hooks();
 
 		if ( class_exists( 'WooCommerce' ) ) {
 			( new Woocommerce_Preview_Fixtures() )->register();
