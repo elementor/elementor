@@ -6,13 +6,14 @@ import { isProActive } from '@elementor/utils';
 import { interactionsRepository } from '../../interactions-repository';
 import { type ElementInteractions } from '../../types';
 import {
+	CODE_EFFECT,
 	createInteractionItem,
 	extractExcludedBreakpoints,
 	extractSize,
 	extractString,
 } from '../../utils/prop-value-utils';
 import { generateTempInteractionId } from '../../utils/temp-id-utils';
-import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
+import { MAX_INTERACTIONS_PER_ELEMENT, MOTION_CODE_GUIDE_URI } from '../constants';
 import { INTERACTIONS_SCHEMA_URI } from '../resources/interactions-schema-resource';
 import { baseSchema, proSchema } from './schema';
 
@@ -88,6 +89,7 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 						id: extractString( value.interaction_id ),
 						trigger: extractString( value.trigger ),
 						effect: extractString( animValue.effect ),
+						...( animValue.code_effect && { codeEffect: animValue.code_effect } ),
 						effectType: extractString( animValue.type ),
 						direction: extractString( animValue.direction ),
 						duration: extractSize( timingValue.duration ),
@@ -138,6 +140,12 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 					if ( itemIndex === -1 ) {
 						throw new Error(
 							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
+						);
+					}
+
+					if ( extractString( updatedItems[ itemIndex ].value.animation.value.effect ) === CODE_EFFECT ) {
+						throw new Error(
+							`Interaction "${ interactionId }" is a code effect. Update it with the manage-elements tool; see ${ MOTION_CODE_GUIDE_URI }.`
 						);
 					}
 

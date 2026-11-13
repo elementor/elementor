@@ -125,6 +125,7 @@ export type AnimationPresetPropValue = {
 	value: {
 		effect: StringPropValue;
 		custom_effect?: PropValue;
+		code_effect?: PropValue;
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;

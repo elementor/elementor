@@ -421,6 +421,30 @@ describe( 'manage-element-interaction tool', () => {
 				callHandler( { elementId: 'el-abc', action: 'update', interactionId: 'ghost-id', trigger: 'scrollIn' } )
 			).toThrow( /not found/ );
 		} );
+
+		it( 'refuses to rebuild a code effect interaction', () => {
+			// Arrange
+			const codeItem = createInteractionItem( {
+				interactionId: 'code-id',
+				trigger: 'load',
+				effect: 'code',
+				type: 'in',
+				duration: 600,
+				delay: 0,
+				replay: false,
+				easing: 'easeIn',
+			} );
+			mockAll.mockReturnValue( [ makeElementData( 'el-abc', [ codeItem ] ) ] );
+			const callHandler = createRegistryAndGetHandler();
+
+			// Act
+			const update = () =>
+				callHandler( { elementId: 'el-abc', action: 'update', interactionId: 'code-id', effect: 'fade' } );
+
+			// Assert
+			expect( update ).toThrow( /code effect/ );
+			expect( mockUpdateElementInteractions ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'delete action', () => {

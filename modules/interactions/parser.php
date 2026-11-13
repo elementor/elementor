@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Parser {
+	// Document::save() runs wp_kses_post on this JSON for users without unfiltered_html; escaping < > & keeps code effects intact.
+	const KSES_SAFE_JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP;
+
 	protected $post_id;
 	protected $ids_lookup = [];
 
@@ -74,7 +77,7 @@ class Parser {
 			}
 		}
 
-		return wp_json_encode( $interactions );
+		return wp_json_encode( $interactions, self::KSES_SAFE_JSON_FLAGS );
 	}
 
 	private function is_temp_id( $id ) {

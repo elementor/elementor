@@ -300,6 +300,8 @@ class Module extends BaseModule {
 			new Abilities\Find_Icons_Ability(),
 			new Abilities\Global_Variables_Resource_Ability(),
 			new Abilities\Interactions_Schema_Resource_Ability(),
+			new Abilities\Motion_Code_Guide_Ability(),
+			new Abilities\Motion_Patterns_Ability(),
 			new Abilities\List_Resources_Ability( $registry ),
 			new Abilities\Read_Resource_Ability( $registry ),
 			new Abilities\List_Components_Ability(),

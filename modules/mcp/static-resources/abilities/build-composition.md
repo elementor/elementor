@@ -6,6 +6,8 @@ If the user asks about a header, footer, 404, single, archive, or search-results
 - [elementor://global-classes] - Reusable CSS classes from the active kit, ordered from highest to lowest CSS priority; check FIRST before adding inline styles
 - [elementor://global-variables] - Design tokens from the active kit; use labels in CSS as `var(--label)` or `var(--label, fallback)`; ONLY variables listed here are valid
 - [elementor://interactions/schema] - Native interaction item shape and allowed enums for `interactions`
+- [elementor://interactions/motion-code-guide] - Pro code-effect interactions: Motion function contract, params, API reference, examples
+- [elementor://interactions/motion-patterns] - Graded Motion pattern cards to pick from before writing a code effect
 - [elementor/list-widget-schemas?summary=true] - Available widget types this tool can configure
 - `elementor/list-assets` - Images and videos (via `type: "video"`) already in the Media Library; call before placing an `e-image` (for real dimensions and `srcset`), and before `e-self-hosted-video` / `e-background-video` when using a library video. Also lists uploaded SVG files for `e-svg`, but prefer `elementor/find-icons` for iconography
 - `elementor/find-icons` - Font Awesome and site-uploaded icon libraries for `e-svg`; call before placing an `e-svg` so the icon renders without asking the user to upload anything (see ICONS)
@@ -270,6 +272,8 @@ The response includes the Font Awesome version in use (`font_awesome_version`); 
 
 # INTERACTIONS
 Attach element interactions via the `interactions` parameter — a record mapping `configuration-id` → array of native-shape interaction items. Read [elementor://interactions/schema] for the full shape and allowed enum values. Send `[]` for a `configuration-id` to clear its interactions.
+
+Custom motion beyond the presets (Pro): use `effect: "code"` with a Motion function and editable params. Read [elementor://interactions/motion-code-guide] first, pick a pattern from [elementor://interactions/motion-patterns], and build the markup the code animates as composition children.
 
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables]; reference **labels** in `style` as `var(--label)` — the `e-gv-` prefix is internal only

@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { getInteractionsControl } from '../interactions-controls-registry';
 import { type FieldProps, type InteractionItemValue, type SizeStringValue } from '../types';
 import {
+	CODE_EFFECT,
 	createAnimationPreset,
 	createString,
 	extractBoolean,
@@ -44,6 +45,8 @@ export const DEFAULT_VALUES = {
 
 const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn', 'hover', 'click' ];
 
+const CODE_EFFECT_TRIGGER = 'load';
+
 type InteractionsControlType =
 	| 'trigger'
 	| 'effect'
@@ -57,6 +60,7 @@ type InteractionsControlType =
 	| 'start'
 	| 'end'
 	| 'customEffects'
+	| 'codeEffect'
 	| 'repeat'
 	| 'times';
 
@@ -73,6 +77,7 @@ type InteractionValues = {
 	start: SizeStringValue;
 	end: SizeStringValue;
 	customEffects?: PropValue;
+	codeEffect?: PropValue;
 	repeat: string;
 	times: number;
 };
@@ -81,24 +86,29 @@ type ControlVisibilityConfig = {
 	[ key: string ]: ( values: InteractionValues ) => boolean;
 };
 
+const isCodeEffect = ( values: InteractionValues ) => values.effect === CODE_EFFECT;
+
 const controlVisibilityConfig: ControlVisibilityConfig = {
-	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ),
+	trigger: ( values ) => ! isCodeEffect( values ),
+	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ) && ! isCodeEffect( values ),
 	custom: ( values ) => values.effect === 'custom',
-	effectType: ( values ) => values.effect !== 'custom',
-	direction: ( values ) => values.effect !== 'custom',
+	codeEffect: isCodeEffect,
+	effectType: ( values ) => values.effect !== 'custom' && ! isCodeEffect( values ),
+	direction: ( values ) => values.effect !== 'custom' && ! isCodeEffect( values ),
 	relativeTo: ( values ) => values.trigger === 'scrollOn',
 	start: ( values ) => values.trigger === 'scrollOn',
 	end: ( values ) => values.trigger === 'scrollOn',
-	repeat: ( values ) => values.trigger !== 'scrollOn',
-	times: ( values ) => values.trigger !== 'scrollOn' && values.repeat === 'times',
+	repeat: ( values ) => values.trigger !== 'scrollOn' && ! isCodeEffect( values ),
+	times: ( values ) => values.trigger !== 'scrollOn' && values.repeat === 'times' && ! isCodeEffect( values ),
+	easing: ( values ) => ! isCodeEffect( values ),
 
 	duration: ( values ) => {
 		const isRelativeToVisible = values.trigger === 'scrollOn';
-		return ! isRelativeToVisible;
+		return ! isRelativeToVisible && ! isCodeEffect( values );
 	},
 	delay: ( values ) => {
 		const isRelativeToVisible = values.trigger === 'scrollOn';
-		return ! isRelativeToVisible;
+		return ! isRelativeToVisible && ! isCodeEffect( values );
 	},
 };
 
@@ -123,6 +133,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
 	const customEffects = interaction.animation.value.custom_effect;
+	const codeEffect = interaction.animation.value.code_effect;
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractSize( interaction.animation.value.timing_config.value.duration );
@@ -152,9 +163,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		start,
 		end,
 		customEffects,
+		codeEffect,
 	};
 
-	const TriggerControl = useControlComponent( 'trigger', true );
+	const TriggerControl = useControlComponent( 'trigger', controlVisibilityConfig.trigger( interactionValues ) );
 	const EffectControl = useControlComponent( 'effect' );
 	const ReplayControl = useControlComponent( 'replay', controlVisibilityConfig.replay( interactionValues ) );
 	const RelativeToControl = useControlComponent(
@@ -166,6 +178,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const CustomEffectControl = useControlComponent(
 		'customEffects',
 		controlVisibilityConfig.custom( interactionValues )
+	) as ComponentType< FieldProps< PropValue > >;
+	const CodeEffectControl = useControlComponent(
+		'codeEffect',
+		controlVisibilityConfig.codeEffect( interactionValues )
 	) as ComponentType< FieldProps< PropValue > >;
 
 	const EffectTypeControl = useControlComponent(
@@ -181,7 +197,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		'times',
 		controlVisibilityConfig.times( interactionValues )
 	) as ComponentType< FieldProps< number > >;
-	const EasingControl = useControlComponent( 'easing' );
+	const EasingControl = useControlComponent( 'easing', controlVisibilityConfig.easing( interactionValues ) );
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -199,8 +215,12 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			start: SizeStringValue;
 			end: SizeStringValue;
 			customEffects?: PropValue;
+			codeEffect?: PropValue;
 		} >
 	): void => {
+		const nextEffect = updates.effect ?? effect;
+		const nextTrigger = CODE_EFFECT === nextEffect ? CODE_EFFECT_TRIGGER : updates.trigger ?? trigger;
+
 		const resolvedDirectionValue = resolveDirection(
 			'direction' in updates,
 			updates.effect,
@@ -212,9 +232,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		const updatedInteraction = {
 			...interaction,
 			interaction_id: interaction.interaction_id,
-			trigger: createString( updates.trigger ?? trigger ),
+			trigger: createString( nextTrigger ),
 			animation: createAnimationPreset( {
-				effect: updates.effect ?? effect,
+				effect: nextEffect,
 				type: updates.type ?? type,
 				direction: resolvedDirectionValue,
 				duration: updates.duration ?? duration,
@@ -227,17 +247,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				start: updates.start ?? start,
 				end: updates.end ?? end,
 				customEffects: updates.customEffects ?? customEffects,
+				codeEffect: updates.codeEffect ?? codeEffect,
 			} ),
 		};
 
 		onChange( updatedInteraction );
 
-		syncGridOverlay(
-			updates.trigger ?? trigger,
-			updates.start ?? start,
-			updates.end ?? end,
-			updates.relativeTo ?? relativeTo
-		);
+		syncGridOverlay( nextTrigger, updates.start ?? start, updates.end ?? end, updates.relativeTo ?? relativeTo );
 
 		const interactionId = extractString( updatedInteraction.interaction_id );
 
@@ -248,25 +264,32 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 	return (
 		<PopoverContent p={ 1.5 }>
-			<Grid container spacing={ 1.5 }>
-				{ TriggerControl && (
-					<Field label={ __( 'Trigger', 'elementor' ) }>
-						<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
-					</Field>
-				) }
+			{ ( TriggerControl || ReplayControl ) && (
+				<>
+					<Grid container spacing={ 1.5 }>
+						{ TriggerControl && (
+							<Field label={ __( 'Trigger', 'elementor' ) }>
+								<TriggerControl
+									value={ trigger }
+									onChange={ ( v ) => updateInteraction( { trigger: v } ) }
+								/>
+							</Field>
+						) }
 
-				{ ReplayControl && (
-					<Field label={ __( 'Replay', 'elementor' ) }>
-						<ReplayControl
-							value={ replay }
-							onChange={ ( v ) => updateInteraction( { replay: v } ) }
-							disabled={ true }
-						/>
-					</Field>
-				) }
-			</Grid>
+						{ ReplayControl && (
+							<Field label={ __( 'Replay', 'elementor' ) }>
+								<ReplayControl
+									value={ replay }
+									onChange={ ( v ) => updateInteraction( { replay: v } ) }
+									disabled={ true }
+								/>
+							</Field>
+						) }
+					</Grid>
 
-			<Divider />
+					<Divider />
+				</>
+			) }
 
 			<Grid container spacing={ 1.5 }>
 				{ EffectControl && (
@@ -282,6 +305,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 							onChange={ ( v: PropValue ) => updateInteraction( { customEffects: v } ) }
 						/>
 					</Field>
+				) }
+
+				{ CodeEffectControl && (
+					<CodeEffectControl
+						value={ codeEffect }
+						onChange={ ( v: PropValue ) => updateInteraction( { codeEffect: v } ) }
+					/>
 				) }
 
 				{ EffectTypeControl && (

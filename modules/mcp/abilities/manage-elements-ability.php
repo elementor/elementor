@@ -150,7 +150,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 								'interactions' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'object' ],
-									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape.',
+									'description' => 'update only: array of interaction items in the native shape. Replaces existing interactions on the element; send [] to clear. Read elementor://interactions/schema for the full shape, and elementor://interactions/motion-code-guide for code effects.',
 								],
 								'new_parent_id' => [
 									'type' => 'string',
