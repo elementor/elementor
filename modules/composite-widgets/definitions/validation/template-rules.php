@@ -26,6 +26,7 @@ class Template_Rules {
 		'e-divider',
 	];
 	const WIDGET_EL_TYPE = 'widget';
+	const TEMPLATE_PATH = 'template';
 	const EL_TYPE_KEY = 'elType';
 	const WIDGET_TYPE_KEY = 'widgetType';
 	const FORBIDDEN_NODE_KEYS = [ 'id', Widget_Markers::WIDGET_KEY ];
@@ -41,6 +42,7 @@ class Template_Rules {
 	private array $repeater_items = [];
 	private array $allowed_types = [];
 	private bool $forbids_globals = true;
+	private bool $is_inside_slot = false;
 
 	public function __construct( Variable_References $variable_references, Local_Style_Rules $local_style_rules ) {
 		$this->variable_references = $variable_references;
@@ -56,8 +58,9 @@ class Template_Rules {
 		$this->repeater_items = $this->get_repeater_items( $definition['general'] );
 		$this->allowed_types = $this->get_allowed_types();
 		$this->forbids_globals = Widget_Definition::SOURCE_CODE === $definition['source'];
+		$this->is_inside_slot = false;
 
-		$this->validate_node( $definition['template'], 'template', true );
+		$this->validate_node( $definition['template'], self::TEMPLATE_PATH, true );
 
 		return $this->parts;
 	}
@@ -73,6 +76,8 @@ class Template_Rules {
 
 		$schema = $this->get_props_schema( $node, $path );
 		$part = $this->validate_part_name( $node, $path );
+		$is_slot = $this->validate_slot( $node, $path, $part );
+		$part = $this->drop_part_inside_slot( $path, $part );
 
 		if ( null !== $part && $indexes_parts ) {
 			$this->index_part( $part, $path, $schema );
@@ -89,8 +94,58 @@ class Template_Rules {
 		}
 
 		$parts = null !== $part ? [ $part ] : [];
+		$children_parts = $this->in_slot_scope(
+			$is_slot,
+			fn () => $this->validate_children( $node, $path, $part, $indexes_parts )
+		);
 
-		return array_merge( $parts, $this->validate_children( $node, $path, $part, $indexes_parts ) );
+		return array_merge( $parts, $children_parts );
+	}
+
+	private function validate_slot( array $node, string $path, ?string $part ): bool {
+		if ( ! array_key_exists( Widget_Markers::SLOT_KEY, $node ) ) {
+			return false;
+		}
+
+		if ( ! $this->can_be_slot( $node, $path, $part ) ) {
+			$this->errors->add( "{$path}.slot", Definition_Error_Codes::SLOT_INVALID );
+			return false;
+		}
+
+		return true;
+	}
+
+	private function can_be_slot( array $node, string $path, ?string $part ): bool {
+		$is_enabled = Widget_Markers::sanitize_slot( $node[ Widget_Markers::SLOT_KEY ] );
+		$is_named_part = null !== $part;
+		$is_below_root = self::TEMPLATE_PATH !== $path;
+		$is_container = self::WIDGET_EL_TYPE !== ( $node[ self::EL_TYPE_KEY ] ?? null );
+
+		return $is_enabled && $is_named_part && $is_below_root && $is_container;
+	}
+
+	private function drop_part_inside_slot( string $path, ?string $part ): ?string {
+		if ( null === $part || ! $this->is_inside_slot ) {
+			return $part;
+		}
+
+		$this->errors->add( "{$path}.part", Definition_Error_Codes::SLOT_CONTENT_PART );
+
+		return null;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function in_slot_scope( bool $opens_slot, callable $validate ): array {
+		$was_inside_slot = $this->is_inside_slot;
+		$this->is_inside_slot = $was_inside_slot || $opens_slot;
+
+		try {
+			return $validate();
+		} finally {
+			$this->is_inside_slot = $was_inside_slot;
+		}
 	}
 
 	private function validate_children( array $node, string $path, ?string $part, bool $indexes_parts ): array {

@@ -375,6 +375,82 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		$this->assert_has_error( $result, 'general.1.container', Definition_Error_Codes::TARGET_PART_NOT_FOUND );
 	}
 
+	public function test_validate__accepts_a_slot_with_regular_content() {
+		// Arrange.
+		$definition = $this->tabs_like_with_slot();
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assertSame( '', $result->errors()->to_string() );
+	}
+
+	public function test_validate__rejects_invalid_slots() {
+		// Arrange.
+		$definition = $this->tabs_like_with_slot();
+		$definition['template']['slot'] = true;
+		$definition['template']['elements'][0]['slot'] = true;
+		$definition['template']['elements'][1]['slot'] = 'yes';
+		$definition['template']['elements'][1]['elements'][0]['slot'] = true;
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.slot', Definition_Error_Codes::SLOT_INVALID );
+		$this->assert_has_error( $result, 'template.elements.0.slot', Definition_Error_Codes::SLOT_INVALID );
+		$this->assert_has_error( $result, 'template.elements.1.slot', Definition_Error_Codes::SLOT_INVALID );
+		$this->assert_has_error( $result, 'template.elements.1.elements.0.slot', Definition_Error_Codes::SLOT_INVALID );
+	}
+
+	public function test_validate__rejects_parts_below_a_slot() {
+		// Arrange.
+		$definition = $this->tabs_like_with_slot();
+		$definition['template']['elements'][1]['elements'][0]['part'] = 'slot_title';
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assertSame(
+			'template.elements.1.elements.0.part: ' . Definition_Error_Codes::SLOT_CONTENT_PART,
+			$result->errors()->to_string()
+		);
+	}
+
+	private function tabs_like_with_slot(): array {
+		return [
+			'id' => 'test/tabs-like',
+			'version' => 1,
+			'source' => 'code',
+			'title' => 'Tabs like',
+			'template' => [
+				'elType' => 'e-flexbox',
+				'part' => 'root',
+				'elements' => [
+					[
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'part' => 'title',
+					],
+					[
+						'elType' => 'e-flexbox',
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [
+							[
+								'elType' => 'widget',
+								'widgetType' => 'e-heading',
+							],
+						],
+					],
+				],
+			],
+			'general' => [],
+		];
+	}
+
 	private function with_global_references( array $definition ): array {
 		$definition['template']['settings']['classes']['value'][] = 'g-123';
 		$definition['template']['styles']['local-root']['variants'][0]['props']['border-color'] = [
