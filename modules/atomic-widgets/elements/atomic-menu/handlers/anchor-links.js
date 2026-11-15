@@ -20,8 +20,17 @@ export default class AnchorLinks {
 	observe() {
 		const viewportHeight = window.innerHeight;
 
+		this.pendingReports = this.entries.length;
+
 		this.entries.forEach( ( { item, target } ) => {
+			let hasReported = false;
+
 			const observer = new IntersectionObserver( ( [ entry ] ) => {
+				if ( ! hasReported ) {
+					hasReported = true;
+					this.pendingReports--;
+				}
+
 				this.toggle( item, entry.isIntersecting );
 			}, {
 				root: null,
@@ -48,11 +57,19 @@ export default class AnchorLinks {
 		return `${ blockStart }px 0px ${ -halfViewport }px 0px`;
 	}
 
+	hasAllObserversReported() {
+		return 0 === this.pendingReports;
+	}
+
 	toggle( item, isIntersecting ) {
 		if ( isIntersecting ) {
 			this.active.add( item );
 		} else {
 			this.active.delete( item );
+		}
+
+		if ( ! this.hasAllObserversReported() ) {
+			return;
 		}
 
 		this.onChange( new Set( this.active ) );

@@ -48,11 +48,11 @@ register( {
 			} );
 		};
 
-		render( new Set() );
-
 		const anchorEntries = findAnchorEntries( items );
 
 		if ( ! anchorEntries.length ) {
+			render( new Set() );
+
 			return;
 		}
 

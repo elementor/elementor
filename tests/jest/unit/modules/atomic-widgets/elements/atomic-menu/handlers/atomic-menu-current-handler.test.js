@@ -184,7 +184,10 @@ describe( 'atomic-menu current handler', () => {
 			run( menu );
 			const [ observer ] = IntersectionObserverMock.instances;
 
-			// Assert: at the top Home is current.
+			// Act: the observer reports that the section is out of view.
+			observer.trigger( false );
+
+			// Assert
 			expect( home.classList.contains( CURRENT_CLASS ) ).toBe( true );
 			expect( home.getAttribute( 'aria-current' ) ).toBe( 'page' );
 
@@ -205,6 +208,32 @@ describe( 'atomic-menu current handler', () => {
 			expect( contact.hasAttribute( 'aria-current' ) ).toBe( false );
 			expect( home.classList.contains( CURRENT_CLASS ) ).toBe( true );
 			expect( home.getAttribute( 'aria-current' ) ).toBe( 'page' );
+		} );
+
+		it( 'should not paint any state until every anchor observer has reported', () => {
+			// Arrange
+			addSection( 'about' );
+			addSection( 'contact' );
+			const { menu, items } = buildMenu( [ `${ ORIGIN }/`, `${ ORIGIN }/#about`, `${ ORIGIN }/#contact` ] );
+			const [ home, about, contact ] = items;
+			run( menu );
+			const [ aboutObserver, contactObserver ] = IntersectionObserverMock.instances;
+
+			// Act
+			aboutObserver.trigger( true );
+
+			// Assert
+			[ home, about, contact ].forEach( ( item ) => {
+				expect( item.classList.contains( CURRENT_CLASS ) ).toBe( false );
+			} );
+
+			// Act
+			contactObserver.trigger( false );
+
+			// Assert
+			expect( about.classList.contains( CURRENT_CLASS ) ).toBe( true );
+			expect( home.classList.contains( CURRENT_CLASS ) ).toBe( false );
+			expect( contact.classList.contains( CURRENT_CLASS ) ).toBe( false );
 		} );
 
 		it( 'should mark every item that links to the section in view', () => {
