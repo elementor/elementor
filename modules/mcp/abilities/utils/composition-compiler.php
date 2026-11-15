@@ -191,12 +191,6 @@ final class Composition_Compiler {
 	}
 
 	/**
-	 * @param string   $code     Error code to tag each message with.
-	 * @param string[] $messages List of error messages.
-	 *
-	 * @return array<int, array{code: string, message: string}>
-	 */
-	/**
 	 * @return string[]
 	 */
 	private function collect_closed_parent_errors( array $document_tree, string $parent_id ): array {
@@ -209,6 +203,12 @@ final class Composition_Compiler {
 		return [ $closed_structure->target_error_message( $parent_id ) ];
 	}
 
+	/**
+	 * @param string   $code     Error code to tag each message with.
+	 * @param string[] $messages List of error messages.
+	 *
+	 * @return array<int, array{code: string, message: string}>
+	 */
 	private function tag_errors( string $code, array $messages ): array {
 		return array_map(
 			fn ( $message ) => [
