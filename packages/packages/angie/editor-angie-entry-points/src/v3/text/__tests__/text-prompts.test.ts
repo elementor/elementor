@@ -1,4 +1,4 @@
-import { buildAngieTextPrompt } from 'elementor/modules/ai/assets/js/editor/angie/text-prompts';
+import { buildAngieTextPrompt } from '../text-prompts';
 
 describe( 'buildAngieTextPrompt', () => {
 	it( 'includes element, control, and the write-back tool name without embedding the current value', () => {

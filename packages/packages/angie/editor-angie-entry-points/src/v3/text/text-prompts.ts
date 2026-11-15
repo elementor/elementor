@@ -3,7 +3,12 @@ export const buildAngieTextPrompt = ( {
 	controlName,
 	controlType,
 	currentValue,
-} ) => {
+}: {
+	elementId?: string;
+	controlName?: string;
+	controlType?: string;
+	currentValue?: unknown;
+} ): string => {
 	const hasExistingText = 'string' === typeof currentValue && Boolean( currentValue.trim() );
 	const actionHint = hasExistingText
 		? 'Write improved text, edit the current text, change its tone, or translate it.'
