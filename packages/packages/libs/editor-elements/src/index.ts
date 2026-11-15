@@ -51,9 +51,9 @@ export { getElementSetting, getElementSettings } from './sync/get-element-settin
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
 export {
-	getElementPart,
-	getElementWidgetMarker,
-	isElementSlot,
+	getContainerPart,
+	getContainerWidgetMarker,
+	isContainerSlot,
 	WIDGET_MARKER_KEYS,
 } from './sync/get-element-widget-markers';
 export { regenerateLocalStyleIds } from './sync/regenerate-local-style-ids';
