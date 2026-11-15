@@ -156,6 +156,7 @@ describe( 'editor angie host', () => {
 		await bootAngieSdk();
 
 		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 1 );
+		expect( AngieMcpSdkMock ).toHaveBeenCalledWith( { appId: 'elementor-editor-core' } );
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledWith( {
 			host: {
 				appId: 'elementor-editor-core',

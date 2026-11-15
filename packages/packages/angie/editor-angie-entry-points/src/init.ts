@@ -1,10 +1,6 @@
 import { injectIntoComponentInstanceHeader, injectIntoComponentsTabHeader } from '@elementor/editor-components';
 import { injectIntoControlHeader } from '@elementor/editor-controls';
-import {
-	injectIntoClassSelectorActions,
-	injectIntoCustomCssHeader,
-	injectIntoStyleTabHeader,
-} from '@elementor/editor-editing-panel';
+import { injectIntoClassSelectorActions, injectIntoCustomCssHeader } from '@elementor/editor-editing-panel';
 import { injectIntoClassManagerHeader } from '@elementor/editor-global-classes';
 import { injectIntoInteractionsHeader } from '@elementor/editor-interactions';
 import { injectIntoVariableFormHeader, injectIntoVariablesManagerHeader } from '@elementor/editor-variables';
@@ -16,7 +12,6 @@ import { AngieClassManagerHeaderAction } from './css-classes/angie-class-manager
 import { AngieClassSelectorAction } from './css-classes/angie-class-selector-action';
 import { AngieInteractionsHeaderAction } from './interactions/angie-interactions-header-action';
 import { AngieCustomCssHeaderAction } from './style-section/angie-custom-css-header-action';
-import { AngieStyleTabHeaderAction } from './style-section/angie-style-tab-header-action';
 import { AngieVariableFormHeaderAction } from './variables/angie-variable-form-header-action';
 import { AngieVariablesManagerHeaderAction } from './variables/angie-variables-manager-header-action';
 
@@ -24,11 +19,6 @@ export function init(): void {
 	injectIntoControlHeader( {
 		id: 'angie-control-header-action',
 		component: AngieControlHeaderAction,
-	} );
-
-	injectIntoStyleTabHeader( {
-		id: 'angie-style-tab-header-action',
-		component: AngieStyleTabHeaderAction,
 	} );
 
 	injectIntoCustomCssHeader( {
