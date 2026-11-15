@@ -12,8 +12,31 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 const PROMPT = 'Test prompt';
 
 describe( 'AngieGenerateButton', () => {
+	const originalElementorV2 = window.elementorV2;
+
+	beforeEach( () => {
+		window.elementorV2 = {
+			editorAngie: {
+				openAngie: jest.fn(),
+			},
+		};
+	} );
+
 	afterEach( () => {
+		window.elementorV2 = originalElementorV2;
+		delete window.elementorEditorAngie;
 		jest.clearAllMocks();
+	} );
+
+	it( 'renders nothing when showEntryPoints is false (app-bar toggle is unaffected)', () => {
+		// Arrange
+		window.elementorEditorAngie = { showEntryPoints: false };
+
+		// Act
+		const { container } = render( <AngieGenerateButton prompt={ PROMPT } /> );
+
+		// Assert
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'renders the generate label', () => {

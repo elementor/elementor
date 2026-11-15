@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Ai\Preferences;
 use Elementor\Modules\WidgetCreation\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -154,9 +155,29 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 	public function angie_plugin_active_provider(): array {
 		return [
-			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true}' ],
-			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false}' ],
+			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true,"showEntryPoints":true}' ],
+			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false,"showEntryPoints":true}' ],
 		];
+	}
+
+	public function test_print_angie_config_hides_entry_points_when_show_ai_is_disabled() {
+		// Arrange.
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		update_user_option( get_current_user_id(), Preferences::ENABLE_AI, '0' );
+		add_filter( 'pre_option_active_plugins', static fn() => [] );
+		$this->register_angie_script();
+
+		// Act.
+		$this->get_widget_creation_module()->print_angie_config();
+
+		// Assert.
+		$this->assertSame(
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
+		);
 	}
 
 	public function test_experiment_can_be_activated() {
