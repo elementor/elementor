@@ -41,6 +41,7 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 	public function tearDown(): void {
 		delete_post_meta( $this->test_post_id, '_edit_lock' );
 		delete_transient( "_elementor_editor_unsaved_{$this->test_post_id}" );
+		delete_transient( "_elementor_editor_unpersisted_{$this->test_post_id}" );
 
 		parent::tearDown();
 	}
@@ -383,5 +384,90 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( $user_a_id, (int) get_transient( "_elementor_editor_unsaved_{$this->test_post_id}" ) );
+	}
+
+	/**
+	 * @dataProvider own_unpersisted_refused_input_provider
+	 */
+	public function test_mutation_guard__returns_409_when_own_editor_has_unpersisted_changes( array $extra_input ) {
+		// Arrange
+		$this->given_own_editor_with_unpersisted_changes();
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] + $extra_input );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'elementor_own_editor_unsaved_changes', $result->get_error_code() );
+		$this->assertSame( \WP_Http::CONFLICT, $result->get_error_data()['status'] );
+	}
+
+	public function own_unpersisted_refused_input_provider(): array {
+		return [
+			'write' => [ [] ],
+			'dry run' => [ [ 'dry_run' => true ] ],
+		];
+	}
+
+	public function test_mutation_guard__allows_dry_run_after_the_editor_saved() {
+		// Arrange
+		$this->given_own_editor_with_unpersisted_changes();
+		( new Editor_Sync_State() )->handle_unpersisted_signal( $this->test_post_id, '' );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [
+			'post_id' => $this->test_post_id,
+			'dry_run' => true,
+		] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_own_lock_has_no_unpersisted_changes() {
+		// Arrange
+		$this->act_as_admin();
+		wp_set_post_lock( $this->test_post_id );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_unpersisted_changes_belong_to_another_user() {
+		// Arrange
+		$other_user_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $other_user_id );
+		Editor_Sync_State::set_editor_unpersisted( $this->test_post_id );
+
+		$this->act_as_admin();
+		wp_set_post_lock( $this->test_post_id );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_mutation_guard__returns_null_when_own_lock_expired() {
+		// Arrange
+		$this->given_own_editor_with_unpersisted_changes();
+		$expired_at = time() - Editor_Sync_State::DEFAULT_POST_LOCK_WINDOW - 1;
+		update_post_meta( $this->test_post_id, Editor_Sync_State::POST_LOCK_META_KEY, $expired_at . ':' . get_current_user_id() );
+
+		// Act
+		$result = apply_filters( 'elementor/mcp/pre_execute_guard', null, [ 'post_id' => $this->test_post_id ] );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	private function given_own_editor_with_unpersisted_changes(): void {
+		$this->act_as_admin();
+		wp_set_post_lock( $this->test_post_id );
+		( new Editor_Sync_State() )->handle_unpersisted_signal( $this->test_post_id, (string) $this->test_post_id );
 	}
 }

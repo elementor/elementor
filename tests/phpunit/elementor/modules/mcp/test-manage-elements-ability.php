@@ -1779,8 +1779,87 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 	}
 
+	public function test_execute__reports_staged_when_saving_to_a_published_page() {
+		// Arrange
+		$post_id = $this->create_published_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $heading_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringStartsWith( 'Change saved to a draft copy.', $result['llm_instructions'] );
+	}
+
+	public function test_execute__reports_staged_on_the_no_change_path_of_a_published_page() {
+		// Arrange
+		$post_id = $this->create_published_document();
+		$this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result['staged'] );
+	}
+
+	public function test_execute__reports_not_staged_on_a_draft() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$saved = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $heading_id ],
+			],
+		] );
+		$unchanged = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		// Assert
+		$this->assertFalse( $saved['staged'] );
+		$this->assertStringNotContainsString( 'draft copy', $saved['llm_instructions'] ?? '' );
+		$this->assertFalse( $unchanged['staged'] );
+	}
+
 	private function create_real_document(): int {
 		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+	}
+
+	/**
+	 * Autosave detection requires the autosave's `post_modified_gmt` to be strictly newer than the
+	 * main post's, so the main post is backdated.
+	 */
+	private function create_published_document(): int {
+		global $wpdb;
+
+		$this->act_as_admin();
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) ) ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+
+		return $post_id;
 	}
 
 	private function given_heading_on_document( int $post_id ): string {
@@ -1823,7 +1902,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 
 		$container_id = $result['root_element_ids'][0];
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$elements = Plugin::$instance->documents->get_doc_or_auto_save( $post_id, get_current_user_id() )->get_elements_data();
 
 		foreach ( $elements as $element ) {
 			if ( $element['id'] === $container_id ) {
