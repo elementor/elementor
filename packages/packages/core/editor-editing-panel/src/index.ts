@@ -15,6 +15,7 @@ export { Section } from './components/section';
 export { SectionContent } from './components/section-content';
 export { SectionsList } from './components/sections-list';
 export { SettingsControl } from './components/settings-control';
+export { SettingsTab } from './components/settings-tab';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab, StyleTabSlot } from './components/style-tab';

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Section, SectionsList, useElement } from '@elementor/editor-editing-panel';
-import { getContainer, getContainerWidgetMarker } from '@elementor/editor-elements';
+import { ElementProvider, Section, SectionsList, SettingsTab, useElement } from '@elementor/editor-editing-panel';
+import { getContainer, getContainerPart, getContainerWidgetMarker } from '@elementor/editor-elements';
 
 import { getCompositeWidgetDefinition } from '../sync/get-composite-widget-definition';
 import {
@@ -10,6 +10,7 @@ import {
 	type CompositeWidgetGeneralEntry,
 	type CompositeWidgetGeneralSection,
 } from '../types';
+import { omitControlsByBind } from './omit-controls-by-bind';
 import { WidgetGeneralField } from './widget-general-field';
 
 export function WidgetGeneralTab() {
@@ -22,16 +23,37 @@ export function WidgetGeneralTab() {
 		return null;
 	}
 
+	const sections = getSections( definition );
+	const rootPart = getContainerPart( root );
+	const exposedRootProps = sections
+		.flatMap( getSectionFields )
+		.filter( ( field ) => field.target.part === rootPart )
+		.map( ( field ) => field.target.prop );
+
 	return (
-		<SectionsList>
-			{ getSections( definition ).map( ( section, sectionIndex ) => (
-				<Section key={ sectionIndex } title={ section.section } defaultExpanded>
-					{ getSectionFields( section ).map( ( field, fieldIndex ) => (
-						<WidgetGeneralField key={ fieldIndex } root={ root } field={ field } />
-					) ) }
-				</Section>
-			) ) }
-		</SectionsList>
+		<>
+			<SectionsList>
+				{ sections.map( ( section, sectionIndex ) => (
+					<Section key={ sectionIndex } title={ section.section } defaultExpanded>
+						{ getSectionFields( section ).map( ( field, fieldIndex ) => (
+							<WidgetGeneralField key={ fieldIndex } root={ root } field={ field } />
+						) ) }
+					</Section>
+				) ) }
+			</SectionsList>
+			<RootSettings exposedProps={ exposedRootProps } />
+		</>
+	);
+}
+
+function RootSettings( { exposedProps }: { exposedProps: string[] } ) {
+	const { element, elementType, settings } = useElement();
+	const controls = omitControlsByBind( elementType.controls, exposedProps );
+
+	return (
+		<ElementProvider element={ element } elementType={ { ...elementType, controls } } settings={ settings }>
+			<SettingsTab />
+		</ElementProvider>
 	);
 }
 

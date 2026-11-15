@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
 import { ElementProvider } from '@elementor/editor-editing-panel';
-import { type Control, type ElementType, getElementType } from '@elementor/editor-elements';
-import { screen } from '@testing-library/react';
+import { type Control, type ControlItem, type ElementType, getElementType } from '@elementor/editor-elements';
+import { fireEvent, screen } from '@testing-library/react';
 
 import {
 	cleanupClosedStructureFixture,
@@ -29,6 +29,7 @@ jest.mock( '@elementor/editor-editing-panel', () => {
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
+	getElementLabel: jest.fn( () => 'Flexbox' ),
 	getElementType: jest.fn(),
 } ) );
 
@@ -50,8 +51,13 @@ const createControl = ( bind: string ): Control => ( {
 	value: { bind, label: bind, type: 'text', props: {} },
 } );
 
+const ROOT_SETTINGS_SECTION: ControlItem = {
+	type: 'section',
+	value: { label: 'Settings', items: [ createControl( 'link' ), createControl( 'tag' ) ] },
+};
+
 const ELEMENT_TYPES: Record< string, ElementType > = {
-	'e-flexbox': createMockElementType( { key: 'e-flexbox', controls: [ createControl( 'link' ) ] } ),
+	'e-flexbox': createMockElementType( { key: 'e-flexbox', controls: [ ROOT_SETTINGS_SECTION ] } ),
 	'e-paragraph': createMockElementType( { key: 'e-paragraph', controls: [ createControl( 'paragraph' ) ] } ),
 };
 
@@ -71,6 +77,7 @@ describe( '<WidgetGeneralTab />', () => {
 
 	afterEach( () => {
 		cleanupClosedStructureFixture();
+		sessionStorage.clear();
 	} );
 
 	it( "should render each field with the target atom's control in that atom's context", () => {
@@ -88,6 +95,24 @@ describe( '<WidgetGeneralTab />', () => {
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
 		expect( screen.getByText( `Text -> ${ fixture.label.id }` ) ).toBeInTheDocument();
 		expect( screen.getByText( `Link -> ${ fixture.root.id }` ) ).toBeInTheDocument();
+	} );
+
+	it( "should render the root's own settings after the fields, without the props the fields expose", () => {
+		// Arrange
+		const element = { id: fixture.root.id, type: 'e-flexbox' };
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ ELEMENT_TYPES[ 'e-flexbox' ] } settings={ {} }>
+				<WidgetGeneralTab />
+			</ElementProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Settings section' } ) );
+
+		// Assert
+		expect( screen.getByText( 'tag' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'link' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should hide fields whose part or control is missing, and skip repeaters', () => {
