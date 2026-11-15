@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Modules\Ai;
 
+use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
+use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
@@ -152,6 +154,12 @@ class Module extends BaseModule {
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
 		});
+
+		// ED-26128: keep Animate with AI / hover AI control hosts so Angie entry points can attach.
+		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
 	public function is_ai_enabled() {
@@ -197,6 +205,85 @@ class Module extends BaseModule {
 				'session_id' => $last_imported_session['session_id'],
 			],
 		] );
+	}
+
+	/**
+	 * ED-26128 — Hover Transform "Animate With AI" host control for Angie.
+	 *
+	 * @param Element_Base $element Element.
+	 * @return void
+	 */
+	public function register_ai_hover_effect_control( Element_Base $element ) {
+		if ( ! $element->get_controls( 'ai_hover_animation' ) ) {
+			$element->add_control(
+				'ai_hover_animation',
+				[
+					'tabs_wrapper' => '_tabs_positioning',
+					'inner_tab' => '_tab_positioning_hover',
+					'label' => esc_html__( 'Animate With AI', 'elementor' ),
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => '
+<style>
+  .elementor-control-ai_hover_animation .elementor-control-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .elementor-control-ai_hover_animation .elementor-control-raw-html {
+  	display: none;
+  }
+</style>',
+					'render_type' => 'none',
+					'ai' => [
+						'active' => true,
+						'type' => 'hover_animation',
+					],
+				],
+				[
+					'position' => [
+						'of' => '_transform_rotate_popover_hover',
+						'type' => 'control',
+						'at' => 'before',
+					],
+				]
+			);
+		}
+	}
+
+	/**
+	 * ED-26128 — Motion Effects "Animate With AI" host control for Angie (Pro).
+	 *
+	 * @param Element_Base $element Element.
+	 * @return void
+	 */
+	public function register_ai_motion_effect_control( $element ) {
+		if ( Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
+			$element->add_control(
+				'ai_animation',
+				[
+					'label' => esc_html__( 'Animate With AI', 'elementor' ),
+					'type' => Controls_Manager::RAW_HTML,
+					'raw' => '
+	<style>
+	.elementor-control-ai_animation .elementor-control-content {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.elementor-control-ai_animation .elementor-control-raw-html {
+		display: none;
+	}
+	</style>',
+					'render_type' => 'none',
+					'ai' => [
+						'active' => true,
+						'type' => 'animation',
+					],
+				]
+			);
+		}
 	}
 
 	private function get_current_screen() {

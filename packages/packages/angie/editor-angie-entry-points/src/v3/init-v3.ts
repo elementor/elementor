@@ -25,6 +25,9 @@ const ANGIE_IN_PANELS_EXPERIMENT = 'e_angie_in_panels';
  * | Show AI gate                              | ED-26336  |
  * | Entry-points package infra                | ED-26335  |
  *
+ * PHP hosts kept in modules/ai/module.php for ED-26128:
+ * `ai_animation` (Motion Effects) and `ai_hover_animation` (Transform hover).
+ *
  * Intentionally NOT restored (deleted by ED-26337, no Angie replace ticket):
  * media / Create with AI, excerpt, navigator AI titles.
  */
