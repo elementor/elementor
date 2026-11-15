@@ -140,7 +140,8 @@
             "support": {
                 "source": "https://github.com/elementor/wp-notifications-package/tree/1.2.0"
             },
-            "time": "2025-04-28T12:27:21+00:00"
+            "time": "2025-04-28T12:27:21+00:00",
+            "published-time": "2025-04-28T12:27:24+00:00"
         },
         {
             "name": "elementor/wp-one-package",
