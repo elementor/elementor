@@ -166,6 +166,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 	public function test_print_angie_config_hides_entry_points_when_show_ai_is_disabled() {
 		// Arrange.
+		$this->act_as_admin();
 		Plugin::$instance->experiments->set_feature_default_state(
 			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
