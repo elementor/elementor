@@ -12,6 +12,10 @@ jest.mock( '../code/init-code', () => ( {
 	initV3CodeControls: jest.fn(),
 } ) );
 
+jest.mock( '../layout/init-layout', () => ( {
+	initV3Layout: jest.fn(),
+} ) );
+
 jest.mock( '../text/init-text', () => ( {
 	initV3TextControls: jest.fn(),
 } ) );
@@ -22,6 +26,7 @@ import { initV3AnimationControls } from '../animation/init-animation';
 import { applyAngieControlBehavior } from '../apply-angie-control-behavior';
 import { initV3CodeControls } from '../code/init-code';
 import { initV3 } from '../init-v3';
+import { initV3Layout } from '../layout/init-layout';
 import { initV3TextControls } from '../text/init-text';
 
 describe( 'initV3', () => {
@@ -42,6 +47,7 @@ describe( 'initV3', () => {
 		expect( initV3TextControls ).not.toHaveBeenCalled();
 		expect( initV3CodeControls ).not.toHaveBeenCalled();
 		expect( initV3AnimationControls ).not.toHaveBeenCalled();
+		expect( initV3Layout ).not.toHaveBeenCalled();
 	} );
 
 	it( 'listens to v1 ready and registers filter with priority 20 when experiment is on', () => {
@@ -59,6 +65,7 @@ describe( 'initV3', () => {
 		expect( initV3TextControls ).toHaveBeenCalled();
 		expect( initV3CodeControls ).toHaveBeenCalled();
 		expect( initV3AnimationControls ).toHaveBeenCalled();
+		expect( initV3Layout ).toHaveBeenCalled();
 		expect( listenTo ).toHaveBeenCalledWith( v1ReadyEvent(), expect.any( Function ) );
 
 		const readyCallback = jest.mocked( listenTo ).mock.calls[ 0 ][ 1 ];
