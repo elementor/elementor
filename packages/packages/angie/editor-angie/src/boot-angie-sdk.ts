@@ -90,7 +90,7 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 		try {
 			await waitForAngieContainer();
 
-			const instance = new AngieMcpSdk();
+			const instance = new AngieMcpSdk( { appId: EDITOR_ANGIE_APP_ID } );
 
 			await instance.loadSidebarV2( getLoadSidebarOptions() );
 			openAngieIframe();
