@@ -1,14 +1,9 @@
 import { register } from '@elementor/frontend-handlers';
 import AnchorLinks from './anchor-links';
+import { getLinkedItems, setCurrent } from './current-state';
 import { getAnchorId, isCurrentPageLink } from './url-matcher';
 
 const MENU_ELEMENT_TYPE = 'e-menu';
-const ITEM_SELECTOR = '[data-element_type="e-menu-item"]';
-const CURRENT_CLASS = 'e--current';
-
-function getLinkedItems( menu ) {
-	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter( ( item ) => item.matches( 'a[href]' ) );
-}
 
 function findAnchorEntries( items ) {
 	return items.flatMap( ( item ) => {
@@ -17,16 +12,6 @@ function findAnchorEntries( items ) {
 
 		return target ? [ { item, target } ] : [];
 	} );
-}
-
-function setCurrent( item, ariaCurrent ) {
-	item.classList.toggle( CURRENT_CLASS, !! ariaCurrent );
-
-	if ( ariaCurrent ) {
-		item.setAttribute( 'aria-current', ariaCurrent );
-	} else {
-		item.removeAttribute( 'aria-current' );
-	}
 }
 
 register( {

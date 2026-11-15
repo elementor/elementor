@@ -213,6 +213,24 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'aria-current', $html );
 	}
 
+	public function test_read_early_script_strips_the_source_map_comment() {
+		// Arrange.
+		$path = tempnam( sys_get_temp_dir(), 'early' );
+		file_put_contents( $path, "(function(){})();\n//# sourceMappingURL=menu-current-early.js.map\n" );
+
+		// Act.
+		$script = Atomic_Menu::read_early_script( $path );
+		unlink( $path );
+
+		// Assert.
+		$this->assertSame( '(function(){})();', $script );
+	}
+
+	public function test_read_early_script_is_empty_when_the_asset_is_missing() {
+		// Act & Assert.
+		$this->assertSame( '', Atomic_Menu::read_early_script( sys_get_temp_dir() . '/missing-early-script.js' ) );
+	}
+
 	public function test_default_content() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 

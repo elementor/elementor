@@ -23,7 +23,7 @@ function parseUrl( href, base ) {
 		return null;
 	}
 
-	if ( ! SUPPORTED_PROTOCOLS.includes( url.protocol ) ) {
+	if ( SUPPORTED_PROTOCOLS.indexOf( url.protocol ) < 0 ) {
 		return null;
 	}
 
