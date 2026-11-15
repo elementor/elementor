@@ -7,7 +7,6 @@ import {
 	getElementPart,
 	getElementWidgetMarker,
 	isContainerSlot,
-	isElementSlot,
 } from '../get-element-widget-markers';
 
 jest.mock( '../get-container' );
@@ -151,33 +150,14 @@ describe( 'element id getters', () => {
 		expect( result ).toBe( 'label' );
 	} );
 
-	it( 'resolves the element once when checking for a slot', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockClear();
-		jest.mocked( getContainer ).mockReturnValue(
-			createMockElement( { model: { part: 'tab_content', slot: true } } )
-		);
-
-		// Act.
-		const result = isElementSlot( ELEMENT_ID );
-
-		// Assert.
-		expect( result ).toBe( true );
-		expect( getContainer ).toHaveBeenCalledTimes( 1 );
-	} );
-
 	it( 'returns empty results when the element is not found', () => {
 		// Arrange.
 		jest.mocked( getContainer ).mockReturnValue( null );
 
 		// Act.
-		const results = [
-			getElementWidgetMarker( ELEMENT_ID ),
-			getElementPart( ELEMENT_ID ),
-			isElementSlot( ELEMENT_ID ),
-		];
+		const results = [ getElementWidgetMarker( ELEMENT_ID ), getElementPart( ELEMENT_ID ) ];
 
 		// Assert.
-		expect( results ).toEqual( [ null, null, false ] );
+		expect( results ).toEqual( [ null, null ] );
 	} );
 } );

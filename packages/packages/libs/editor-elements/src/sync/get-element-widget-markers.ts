@@ -49,7 +49,3 @@ export function getElementWidgetMarker( elementId: ElementID ): Required< V1Elem
 export function getElementPart( elementId: ElementID ): string | null {
 	return getContainerPart( getContainer( elementId ) );
 }
-
-export function isElementSlot( elementId: ElementID ): boolean {
-	return isContainerSlot( getContainer( elementId ) );
-}

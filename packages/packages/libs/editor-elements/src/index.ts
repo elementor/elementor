@@ -56,7 +56,6 @@ export {
 	getElementPart,
 	getElementWidgetMarker,
 	isContainerSlot,
-	isElementSlot,
 	WIDGET_MARKER_KEYS,
 } from './sync/get-element-widget-markers';
 export { regenerateLocalStyleIds } from './sync/regenerate-local-style-ids';
