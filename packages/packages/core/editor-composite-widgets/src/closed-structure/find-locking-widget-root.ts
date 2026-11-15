@@ -25,7 +25,7 @@ export function findLockingWidgetRoot( start: V1Element | undefined ): V1Element
 	return boundary && ! isContainerSlot( boundary ) ? boundary : null;
 }
 
-function isRegisteredWidgetRoot( element: V1Element ): boolean {
+export function isRegisteredWidgetRoot( element: V1Element ): boolean {
 	const marker = getContainerWidgetMarker( element );
 
 	return null !== marker && null !== getCompositeWidgetDefinition( marker.id );

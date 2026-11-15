@@ -20,7 +20,7 @@ class Module extends BaseModule {
 	const CORE_DEFINITION_FILES = [
 		'schema/examples/icon-button.json',
 	];
-	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template' ];
+	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template', 'general' ];
 
 	const PACKAGES = [
 		'editor-composite-widgets',

@@ -15,6 +15,7 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 		const element = createMockElement( { model, parent } );
 
 		elements.set( model.id, element );
+		parent?.children?.push( element );
 
 		return element;
 	};

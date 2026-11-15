@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { ScrollProvider } from '../contexts/scroll-context';
+import { getSettingsTabReplacement } from '../editing-panel-replacement-registry';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
 import { ContentOnlyInfotip } from './content-only-infotip';
@@ -33,7 +34,8 @@ export const EditingPanelTabs = () => {
 };
 
 const PanelTabContent = () => {
-	const { element } = useElement();
+	const { element, elementType } = useElement();
+	const { component: SettingsTabContent = SettingsTab } = getSettingsTabReplacement( element, elementType ) ?? {};
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const elementMeta = getWidgetsCache()?.[ element.type ]?.meta;
@@ -95,7 +97,7 @@ const PanelTabContent = () => {
 				</Stack>
 				{ ! isPromotedElement && (
 					<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
-						<SettingsTab />
+						<SettingsTabContent />
 					</TabPanel>
 				) }
 				{ hasDesignTabs && ! areDesignTabsRestricted && (

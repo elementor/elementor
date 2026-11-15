@@ -11,6 +11,7 @@ export { injectIntoClassSelectorActions } from './components/css-classes/css-cla
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
 export { EditingPanelTabs } from './components/editing-panel-tabs';
+export { Section } from './components/section';
 export { SectionContent } from './components/section-content';
 export { SectionsList } from './components/sections-list';
 export { SettingsControl } from './components/settings-control';
@@ -44,6 +45,7 @@ export { ControlTypeContainer } from './controls-registry/control-type-container
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
 export { StylesProviderCannotUpdatePropsError } from './errors';
 export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';
+export { useControlsByWidgetType } from './hooks/use-controls-by-widget-type';
 export { useCustomCss } from './hooks/use-custom-css';
 export { useStateByElement } from './hooks/use-state-by-element';
 export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
@@ -52,7 +54,7 @@ export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
-export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
+export { registerEditingPanelReplacement, registerSettingsTabReplacement } from './editing-panel-replacement-registry';
 export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
