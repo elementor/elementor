@@ -36,18 +36,28 @@ function parseUrl( href, base ) {
 }
 
 function isSamePage( link, page ) {
-	return link.host === page.host && link.path === page.path && link.query === page.query;
+	if ( link.host !== page.host || link.path !== page.path ) {
+		return false;
+	}
+
+	return link.query === page.query;
 }
 
 export function isCurrentPageLink( href, pageUrl = window.location.href ) {
-	if ( 'string' === typeof href && href.trim().startsWith( '#' ) ) {
-		return false;
+	if ( 'string' === typeof href ) {
+		if ( 0 === href.trim().indexOf( '#' ) ) {
+			return false;
+		}
 	}
 
 	const link = parseUrl( href, pageUrl );
 	const page = parseUrl( pageUrl, pageUrl );
 
-	return !! link && !! page && '' === link.hash && isSamePage( link, page );
+	if ( ! link || ! page || '' !== link.hash ) {
+		return false;
+	}
+
+	return isSamePage( link, page );
 }
 
 export function getAnchorId( href, pageUrl = window.location.href ) {

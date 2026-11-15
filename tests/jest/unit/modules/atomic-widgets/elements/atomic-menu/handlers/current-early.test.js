@@ -84,3 +84,17 @@ describe( 'menu current early script', () => {
 		expect( items[ 0 ].classList.contains( CURRENT_CLASS ) ).toBe( false );
 	} );
 } );
+
+describe( 'menu current early script source', () => {
+	it( 'should not contain an ampersand, which WordPress content filters rewrite into an entity', () => {
+		// Arrange
+		const fs = require( 'fs' );
+		const dir = require( 'path' ).resolve( __dirname, '../../../../../../../../modules/atomic-widgets/elements/atomic-menu/handlers' );
+
+		// Act
+		const sources = [ 'current-early.js', 'current-state.js', 'url-matcher.js' ].map( ( file ) => fs.readFileSync( `${ dir }/${ file }`, 'utf8' ) );
+
+		// Assert
+		sources.forEach( ( source ) => expect( source ).not.toContain( '&' ) );
+	} );
+} );

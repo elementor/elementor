@@ -11,7 +11,11 @@ if ( menu ) {
 		hasAnchorItems = hasAnchorItems || null !== getAnchorId( items[ index ].getAttribute( 'href' ) );
 	}
 
-	for ( let index = 0; ! hasAnchorItems && index < items.length; index++ ) {
+	for ( let index = 0; index < items.length; index++ ) {
+		if ( hasAnchorItems ) {
+			break;
+		}
+
 		if ( isCurrentPageLink( items[ index ].getAttribute( 'href' ) ) ) {
 			setCurrent( items[ index ], 'page' );
 		}
