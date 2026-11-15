@@ -31,16 +31,24 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 		return behaviors;
 	}
 
+	const aiType = aiOptions.type as string;
+	const boundGetControlValue = view.getControlValue.bind( view );
+	const getControlValue =
+		entry.getGetControlValue?.( view, aiType ) ??
+		( () =>
+			typeof boundGetControlValue === 'function' ? boundGetControlValue() : context.controlValue );
+
 	behaviors.ai = {
 		behaviorClass: getAngieControlBehaviorClass(),
 		type: aiOptions.type,
 		controlType,
-		getControlValue: view.getControlValue.bind( view ),
-		isLabelBlock: model.get( 'label_block' ),
+		getControlValue,
+		isLabelBlock: entry.forceLabelBlock ?? Boolean( model.get( 'label_block' ) ),
 		additionalOptions: {
 			defaultValue: model.get( 'default' ),
 			codeLanguage: aiOptions.language || model.get( 'language' ),
 			elementId: view.options.container?.id,
+			...( entry.getAdditionalOptions?.( view, aiType ) ?? {} ),
 		},
 		context,
 		buildPrompt: entry.buildPrompt,

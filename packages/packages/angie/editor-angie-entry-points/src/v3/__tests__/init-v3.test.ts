@@ -4,6 +4,10 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	v1ReadyEvent: jest.fn( () => ( { type: 'v1-ready' } ) ),
 } ) );
 
+jest.mock( '../animation/init-animation', () => ( {
+	initV3AnimationControls: jest.fn(),
+} ) );
+
 jest.mock( '../code/init-code', () => ( {
 	initV3CodeControls: jest.fn(),
 } ) );
@@ -15,6 +19,7 @@ jest.mock( '../text/init-text', () => ( {
 import { __privateListenTo as listenTo, isExperimentActive, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { applyAngieControlBehavior } from '../apply-angie-control-behavior';
+import { initV3AnimationControls } from '../animation/init-animation';
 import { initV3CodeControls } from '../code/init-code';
 import { initV3 } from '../init-v3';
 import { initV3TextControls } from '../text/init-text';
