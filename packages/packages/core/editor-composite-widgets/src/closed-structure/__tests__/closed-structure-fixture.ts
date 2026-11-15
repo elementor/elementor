@@ -41,10 +41,14 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 
 	( window as unknown as { elementor: unknown } ).elementor = {
 		config: { compositeWidgets: { [ WIDGET_ID ]: { id: WIDGET_ID, version: 1, title: 'Tabs', template: {} } } },
-		getContainer: ( id: string ) => elements.get( id ),
+		getContainer: jest.fn( ( id: string ) => elements.get( id ) ),
 	};
 
 	return { document, page, root, label, slot, slotChild, nestedRoot, nestedPart, unknownRoot, unknownPart };
+}
+
+export function getContainerSpy(): jest.Mock {
+	return ( window as unknown as { elementor: { getContainer: jest.Mock } } ).elementor.getContainer;
 }
 
 export function cleanupClosedStructureFixture() {

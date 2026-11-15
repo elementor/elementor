@@ -1,21 +1,26 @@
 import { createMockElement } from 'test-utils';
 
 import { getContainer } from '../get-container';
-import { getElementPart, getElementWidgetMarker, isElementSlot } from '../get-element-widget-markers';
+import {
+	getContainerPart,
+	getContainerWidgetMarker,
+	getElementPart,
+	getElementWidgetMarker,
+	isContainerSlot,
+	isElementSlot,
+} from '../get-element-widget-markers';
 
 jest.mock( '../get-container' );
 
 const ELEMENT_ID = 'element-id';
 
-describe( 'getElementWidgetMarker', () => {
-	it( 'returns the widget marker of the element', () => {
+describe( 'getContainerWidgetMarker', () => {
+	it( 'returns the widget marker of the container', () => {
 		// Arrange.
 		const widget = { id: 'elementor/icon-button', version: 1, values: { icon: false } };
 
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } } ) );
-
 		// Act.
-		const result = getElementWidgetMarker( ELEMENT_ID );
+		const result = getContainerWidgetMarker( createMockElement( { model: { widget } } ) );
 
 		// Assert.
 		expect( result ).toEqual( widget );
@@ -25,21 +30,24 @@ describe( 'getElementWidgetMarker', () => {
 		// Arrange.
 		const widget = { id: 'elementor/icon-button', version: 1 };
 
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } } ) );
-
 		// Act.
-		const result = getElementWidgetMarker( ELEMENT_ID );
+		const result = getContainerWidgetMarker( createMockElement( { model: { widget } } ) );
 
 		// Assert.
 		expect( result ).toEqual( { ...widget, values: {} } );
 	} );
 
-	it( 'returns null when the element is not a widget root', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: {} } ) );
-
+	it( 'returns null when the container is not a widget root', () => {
 		// Act.
-		const result = getElementWidgetMarker( ELEMENT_ID );
+		const result = getContainerWidgetMarker( createMockElement( { model: {} } ) );
+
+		// Assert.
+		expect( result ).toBeNull();
+	} );
+
+	it( 'returns null when there is no container', () => {
+		// Act.
+		const result = getContainerWidgetMarker( null );
 
 		// Assert.
 		expect( result ).toBeNull();
@@ -52,19 +60,86 @@ describe( 'getElementWidgetMarker', () => {
 		[ 'array values', { id: 'elementor/icon-button', version: 1, values: [] } ],
 		[ 'a non-object marker', 'elementor/icon-button' ],
 	] )( 'returns null for %s', ( _, widget ) => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } as never } ) );
-
 		// Act.
-		const result = getElementWidgetMarker( ELEMENT_ID );
+		const result = getContainerWidgetMarker( createMockElement( { model: { widget } as never } ) );
 
 		// Assert.
 		expect( result ).toBeNull();
 	} );
 } );
 
-describe( 'getElementPart', () => {
-	it( 'returns the part name of the element', () => {
+describe( 'getContainerPart', () => {
+	it( 'returns the part name of the container', () => {
+		// Act.
+		const result = getContainerPart( createMockElement( { model: { part: 'label' } } ) );
+
+		// Assert.
+		expect( result ).toBe( 'label' );
+	} );
+
+	it( 'returns null when there is no container', () => {
+		// Act.
+		const result = getContainerPart( null );
+
+		// Assert.
+		expect( result ).toBeNull();
+	} );
+
+	it( 'returns null for a part name that does not match the pattern', () => {
+		// Act.
+		const result = getContainerPart( createMockElement( { model: { part: 'Feature-Icon' } } ) );
+
+		// Assert.
+		expect( result ).toBeNull();
+	} );
+} );
+
+describe( 'isContainerSlot', () => {
+	it( 'returns true for a part marked as a slot', () => {
+		// Act.
+		const result = isContainerSlot( createMockElement( { model: { part: 'tab_content', slot: true } } ) );
+
+		// Assert.
+		expect( result ).toBe( true );
+	} );
+
+	it( 'returns false when there is no container', () => {
+		// Act.
+		const result = isContainerSlot( null );
+
+		// Assert.
+		expect( result ).toBe( false );
+	} );
+
+	it.each( [
+		[ 'a slot without a part', { slot: true } ],
+		[ 'a non-boolean slot', { part: 'tab_content', slot: 'true' } ],
+		[ 'a part without a slot', { part: 'tab_content' } ],
+	] )( 'returns false for %s', ( _, model ) => {
+		// Act.
+		const result = isContainerSlot( createMockElement( { model: model as never } ) );
+
+		// Assert.
+		expect( result ).toBe( false );
+	} );
+} );
+
+describe( 'element id getters', () => {
+	it( 'reads the widget marker of the element with the given id', () => {
+		// Arrange.
+		const widget = { id: 'elementor/icon-button', version: 1 };
+
+		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } } ) );
+
+		// Act.
+		const result = getElementWidgetMarker( ELEMENT_ID );
+
+		// Assert.
+		expect( getContainer ).toHaveBeenCalledWith( ELEMENT_ID );
+		expect( result ).toEqual( { ...widget, values: {} } );
+	} );
+
+	it( 'reads the part of the element with the given id', () => {
 		// Arrange.
 		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { part: 'label' } } ) );
 
@@ -72,35 +147,13 @@ describe( 'getElementPart', () => {
 		const result = getElementPart( ELEMENT_ID );
 
 		// Assert.
+		expect( getContainer ).toHaveBeenCalledWith( ELEMENT_ID );
 		expect( result ).toBe( 'label' );
 	} );
 
-	it( 'returns null when the element is not found', () => {
+	it( 'resolves the element once when checking for a slot', () => {
 		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( null );
-
-		// Act.
-		const result = getElementPart( ELEMENT_ID );
-
-		// Assert.
-		expect( result ).toBeNull();
-	} );
-
-	it( 'returns null for a part name that does not match the pattern', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { part: 'Feature-Icon' } } ) );
-
-		// Act.
-		const result = getElementPart( ELEMENT_ID );
-
-		// Assert.
-		expect( result ).toBeNull();
-	} );
-} );
-
-describe( 'isElementSlot', () => {
-	it( 'returns true for a part marked as a slot', () => {
-		// Arrange.
+		jest.mocked( getContainer ).mockClear();
 		jest.mocked( getContainer ).mockReturnValue(
 			createMockElement( { model: { part: 'tab_content', slot: true } } )
 		);
@@ -110,20 +163,21 @@ describe( 'isElementSlot', () => {
 
 		// Assert.
 		expect( result ).toBe( true );
+		expect( getContainer ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it.each( [
-		[ 'a slot without a part', { slot: true } ],
-		[ 'a non-boolean slot', { part: 'tab_content', slot: 'true' } ],
-		[ 'a part without a slot', { part: 'tab_content' } ],
-	] )( 'returns false for %s', ( _, model ) => {
+	it( 'returns empty results when the element is not found', () => {
 		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: model as never } ) );
+		jest.mocked( getContainer ).mockReturnValue( null );
 
 		// Act.
-		const result = isElementSlot( ELEMENT_ID );
+		const results = [
+			getElementWidgetMarker( ELEMENT_ID ),
+			getElementPart( ELEMENT_ID ),
+			isElementSlot( ELEMENT_ID ),
+		];
 
 		// Assert.
-		expect( result ).toBe( false );
+		expect( results ).toEqual( [ null, null, false ] );
 	} );
 } );
