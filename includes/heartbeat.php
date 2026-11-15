@@ -46,6 +46,10 @@ class Heartbeat {
 				do_action( 'elementor/heartbeat/unsaved_signal', $post_id, $data['elementor_has_unsaved'] );
 			}
 
+			if ( array_key_exists( 'elementor_has_unpersisted', $data ) ) {
+				do_action( 'elementor/heartbeat/unpersisted_signal', $post_id, $data['elementor_has_unpersisted'] );
+			}
+
 			$mutation_marker = apply_filters( 'elementor/heartbeat/mutation_marker', null, $post_id );
 			if ( $mutation_marker ) {
 				$response['elementor_mcp_mutation'] = $mutation_marker;
