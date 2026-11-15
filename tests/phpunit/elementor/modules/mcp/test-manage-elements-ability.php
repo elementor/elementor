@@ -19,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -27,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/../composite-widgets/fixtures/closed-structure-factory.php';
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -2097,6 +2099,128 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertSame( 'error', $result['status'] );
 		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	public function test_execute__rejects_structural_edits_inside_a_widget_per_op() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+		$page_heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $widget['part'] ],
+				[ 'action' => 'duplicate', 'element_id' => $widget['part'] ],
+				[ 'action' => 'move', 'element_id' => $widget['part'], 'new_parent_id' => 'document' ],
+				[ 'action' => 'move', 'element_id' => $widget['slot'], 'new_parent_id' => 'document' ],
+				[ 'action' => 'move', 'element_id' => $page_heading_id, 'new_parent_id' => $widget['root'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'error', $result['status'] );
+		foreach ( $result['results'] as $row ) {
+			$this->assertSame( 'elementor_widget_structure_closed', $row['code'] );
+		}
+		$this->assertNotNull( $this->find_element_in_document( $post_id, $widget['part'] ) );
+	}
+
+	public function test_execute__allows_content_edits_slot_edits_and_whole_widget_edits() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+		$page_heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $widget['part'], 'settings' => [ 'title' => 'Updated' ] ],
+				[ 'action' => 'move', 'element_id' => $page_heading_id, 'new_parent_id' => $widget['slot'] ],
+				[ 'action' => 'delete', 'element_id' => $widget['slot_child'] ],
+				[ 'action' => 'duplicate', 'element_id' => $widget['root'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'ok', $result['status'], wp_json_encode( $result['results'] ) );
+		$this->assertSame( $page_heading_id, $this->find_element_in_document( $post_id, $widget['slot'] )['elements'][0]['id'] );
+	}
+
+	public function test_execute__does_not_guard_widgets_while_the_experiment_is_off() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+
+		// Act.
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $widget['part'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertOkOperation( $result, 0 );
+		$this->assertNull( $this->find_element_in_document( $post_id, $widget['part'] ) );
+	}
+
+	private function make_ability_with_closed_structure(): Manage_Elements_Ability {
+		return new Manage_Elements_Ability( null, Closed_Structure_Factory::make() );
+	}
+
+	/**
+	 * @return array{root: string, part: string, slot: string, slot_child: string}
+	 */
+	private function given_widget_with_slot_on_document( int $post_id ): array {
+		$ids = [
+			'root' => $this->random_element_id(),
+			'part' => $this->random_element_id(),
+			'slot' => $this->random_element_id(),
+			'slot_child' => $this->random_element_id(),
+		];
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $ids['root'],
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'part' => 'root',
+				'widget' => [ 'id' => Closed_Structure_Factory::WIDGET_ID, 'version' => 1 ],
+				'elements' => [
+					[
+						'id' => $ids['part'],
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [],
+						'part' => 'title',
+						'elements' => [],
+					],
+					[
+						'id' => $ids['slot'],
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [
+							[
+								'id' => $ids['slot_child'],
+								'elType' => 'e-flexbox',
+								'settings' => [],
+								'elements' => [],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		return $ids;
 	}
 
 	private function given_form_element_registered(): void {

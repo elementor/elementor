@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -47,9 +49,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Document_Mutator $mutator;
+	private ?Closed_Structure $closed_structure;
 
-	public function __construct( ?Document_Mutator $mutator = null ) {
+	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
 		$this->mutator = $mutator;
+		$this->closed_structure = $closed_structure;
 	}
 
 	protected function get_ability_id(): string {
@@ -341,6 +345,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $v3_error;
 		}
 
+		$closed_structure_error = $this->reject_closed_structure_edit( $tree, $action, $element_id, $operation );
+		if ( $closed_structure_error ) {
+			return $closed_structure_error;
+		}
+
 		switch ( $action ) {
 			case 'update':
 				return $this->apply_update( $document, $tree, $element_id, $operation );
@@ -400,6 +409,26 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				'version' => 'v3',
 			]
 		);
+	}
+
+	private function reject_closed_structure_edit( array $tree, string $action, string $element_id, array $operation ): ?\WP_Error {
+		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
+
+		if ( ! $closed_structure || 'update' === $action ) {
+			return null;
+		}
+
+		if ( $closed_structure->is_element_locked( $tree, $element_id ) ) {
+			return $closed_structure->element_error( $element_id );
+		}
+
+		$new_parent_id = $operation['new_parent_id'] ?? null;
+
+		if ( 'move' === $action && is_string( $new_parent_id ) && $closed_structure->is_insertion_locked( $tree, $new_parent_id ) ) {
+			return $closed_structure->target_error( $new_parent_id );
+		}
+
+		return null;
 	}
 
 	private function apply_delete( array $tree, string $element_id ) {
