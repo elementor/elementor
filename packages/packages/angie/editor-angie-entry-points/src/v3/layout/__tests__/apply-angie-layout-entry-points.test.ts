@@ -6,14 +6,22 @@ jest.mock( '../../is-angie-entry-points-enabled', () => ( {
 	isAngieEntryPointsEnabled: jest.fn( () => true ),
 } ) );
 
+jest.mock( '../create-angie-layout-behavior', () => ( {
+	getAngieAddSectionLayoutBehaviorClass: jest.fn( () => function AngieAddSectionBehavior() {} ),
+} ) );
+
+jest.mock( '../create-angie-template-library-behavior', () => ( {
+	getAngieTemplateLibraryBehaviorClass: jest.fn( () => function AngieTemplateLibraryBehavior() {} ),
+} ) );
+
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 
+import { isAngieEntryPointsEnabled } from '../../is-angie-entry-points-enabled';
 import {
 	applyAngieAddSectionBehavior,
 	applyAngieContainerContextMenu,
 	applyAngieTemplateLibraryBehaviors,
 } from '../apply-angie-layout-entry-points';
-import { isAngieEntryPointsEnabled } from '../../is-angie-entry-points-enabled';
 
 describe( 'applyAngieLayoutEntryPoints', () => {
 	beforeEach( () => {
