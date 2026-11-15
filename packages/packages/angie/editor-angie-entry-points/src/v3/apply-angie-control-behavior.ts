@@ -35,8 +35,7 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 	const boundGetControlValue = view.getControlValue.bind( view );
 	const getControlValue =
 		entry.getGetControlValue?.( view, aiType ) ??
-		( () =>
-			typeof boundGetControlValue === 'function' ? boundGetControlValue() : context.controlValue );
+		( () => ( typeof boundGetControlValue === 'function' ? boundGetControlValue() : context.controlValue ) );
 
 	behaviors.ai = {
 		behaviorClass: getAngieControlBehaviorClass(),

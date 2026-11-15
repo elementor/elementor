@@ -18,8 +18,8 @@ jest.mock( '../text/init-text', () => ( {
 
 import { __privateListenTo as listenTo, isExperimentActive, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
-import { applyAngieControlBehavior } from '../apply-angie-control-behavior';
 import { initV3AnimationControls } from '../animation/init-animation';
+import { applyAngieControlBehavior } from '../apply-angie-control-behavior';
 import { initV3CodeControls } from '../code/init-code';
 import { initV3 } from '../init-v3';
 import { initV3TextControls } from '../text/init-text';
@@ -41,6 +41,7 @@ describe( 'initV3', () => {
 		expect( listenTo ).not.toHaveBeenCalled();
 		expect( initV3TextControls ).not.toHaveBeenCalled();
 		expect( initV3CodeControls ).not.toHaveBeenCalled();
+		expect( initV3AnimationControls ).not.toHaveBeenCalled();
 	} );
 
 	it( 'listens to v1 ready and registers filter with priority 20 when experiment is on', () => {
@@ -57,6 +58,7 @@ describe( 'initV3', () => {
 		// Assert
 		expect( initV3TextControls ).toHaveBeenCalled();
 		expect( initV3CodeControls ).toHaveBeenCalled();
+		expect( initV3AnimationControls ).toHaveBeenCalled();
 		expect( listenTo ).toHaveBeenCalledWith( v1ReadyEvent(), expect.any( Function ) );
 
 		const readyCallback = jest.mocked( listenTo ).mock.calls[ 0 ][ 1 ];

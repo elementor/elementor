@@ -1,4 +1,4 @@
-import { gatherMotionEffectSettings, summarizeMotionSettings } from '../motion-settings';
+import { gatherMotionEffectSettings } from '../motion-settings';
 
 describe( 'motion-settings helpers', () => {
 	afterEach( () => {

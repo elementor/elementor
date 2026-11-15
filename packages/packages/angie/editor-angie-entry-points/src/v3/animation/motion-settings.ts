@@ -38,10 +38,7 @@ export const resolveWidgetTypeFromView = ( view: V3ControlView ): string => {
 	return ( widgetType as string | undefined ) ?? container.type ?? 'container';
 };
 
-export const gatherMotionEffectSettings = (
-	view: V3ControlView,
-	aiType: string
-): Record< string, unknown > => {
+export const gatherMotionEffectSettings = ( view: V3ControlView, aiType: string ): Record< string, unknown > => {
 	const container = view.options.container as ContainerWithSettings | undefined;
 
 	if ( ! container?.settings?.get ) {
@@ -49,8 +46,11 @@ export const gatherMotionEffectSettings = (
 	}
 
 	const widgetType = resolveWidgetTypeFromView( view );
-	const elementor = ( window as unknown as { elementor?: { widgetsCache?: Record< string, { controls?: Record< string, WidgetCacheControl > } > } } )
-		.elementor;
+	const elementor = (
+		window as unknown as {
+			elementor?: { widgetsCache?: Record< string, { controls?: Record< string, WidgetCacheControl > } > };
+		}
+	 ).elementor;
 	const controls = Object.values( elementor?.widgetsCache?.[ widgetType ]?.controls ?? {} );
 
 	const isHoverScope = aiType === HOVER_ANIMATION_AI_TYPE;

@@ -1,7 +1,7 @@
 import { __privateListenTo as listenTo, isExperimentActive, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
-import { applyAngieControlBehavior } from './apply-angie-control-behavior';
 import { initV3AnimationControls } from './animation/init-animation';
+import { applyAngieControlBehavior } from './apply-angie-control-behavior';
 import { initV3CodeControls } from './code/init-code';
 import { initV3TextControls } from './text/init-text';
 import { getExtendedWindow } from './types';

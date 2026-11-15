@@ -94,8 +94,6 @@ export const buildAngieV3TextPrompt = ( {
 	].join( '\n\n' );
 };
 
-
-
 const hoverAnimationAiType = 'hover_animation';
 
 export const buildAngieV3AnimationPrompt = ( {

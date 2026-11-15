@@ -2,13 +2,13 @@ import { getMotionEffects, handleMotionEffectsTool, setMotionEffects } from '../
 
 const ELEMENT_ID = 'el-motion-1';
 
-const createContainer = () => ({
+const createContainer = () => ( {
 	model: { get: () => 'heading' },
 	settings: {
 		controls: { _animation: { type: 'animation' }, motion_fx_motion_fx_scrolling: { type: 'switcher' } },
 		get: jest.fn( () => 'fadeIn' ),
 	},
-});
+} );
 
 describe( 'v3-motion-effects handler', () => {
 	let run: jest.Mock;

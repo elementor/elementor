@@ -13,12 +13,16 @@ export const initV3MotionEffectsTool = ( reg: MCPRegistryEntry ): void => {
 		schema: {
 			action: z
 				.enum( [ 'get', 'set', 'clear' ] )
-				.describe( 'get returns scoped motion settings; set writes settings (one undo step); clear resets scoped settings.' ),
+				.describe(
+					'get returns scoped motion settings; set writes settings (one undo step); clear resets scoped settings.'
+				),
 			elementId: z.string().describe( 'Element ID that owns the motion settings.' ),
 			scope: z
 				.enum( [ 'entrance', 'hover' ] )
 				.optional()
-				.describe( 'Motion scope: entrance (section_effects) or hover (_tab_positioning_hover). Required for clear.' ),
+				.describe(
+					'Motion scope: entrance (section_effects) or hover (_tab_positioning_hover). Required for clear.'
+				),
 			settings: z
 				.record( z.unknown() )
 				.optional()
