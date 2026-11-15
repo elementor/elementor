@@ -540,6 +540,7 @@ class Documents_Manager {
 		$conflict = apply_filters( 'elementor/documents/ajax_save/conflict', null, $document, $request );
 
 		if ( is_wp_error( $conflict ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new \Exception( esc_html( $conflict->get_error_message() ), \WP_Http::CONFLICT );
 		}
 
