@@ -176,6 +176,7 @@ export type V1ElementModelProps = {
 	hydrateDefaultChildren?: boolean;
 	widget?: V1ElementWidgetMarker;
 	part?: string;
+	slot?: boolean;
 };
 
 export type V1ElementWidgetMarker = {

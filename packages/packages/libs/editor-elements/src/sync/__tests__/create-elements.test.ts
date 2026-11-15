@@ -243,4 +243,29 @@ describe( 'createElements', () => {
 			);
 		} );
 	} );
+
+	it( 'should forward the origin to every inner command on do, undo and redo', () => {
+		// Arrange.
+		const mockParent = createMockContainer( 'parent-1', [] );
+		const mockElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+
+		mockCreateElement.mockReturnValue( mockElement );
+		mockGetContainer.mockReturnValue( mockElement );
+
+		// Act.
+		createElements( {
+			elements: [ { container: mockParent, model: { elType: 'widget', widgetType: 'button' } } ],
+			title: 'Add Element',
+			origin: 'test-origin',
+		} );
+
+		historyMock.instance.undo();
+		historyMock.instance.redo();
+
+		// Assert.
+		const innerCalls = [ ...mockCreateElement.mock.calls, ...mockDeleteElement.mock.calls ];
+
+		expect( innerCalls ).toHaveLength( 3 );
+		innerCalls.forEach( ( [ params ] ) => expect( params.options?.origin ).toBe( 'test-origin' ) );
+	} );
 } );
