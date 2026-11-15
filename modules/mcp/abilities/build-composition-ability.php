@@ -8,6 +8,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
@@ -124,7 +125,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 			$persister->embed_ids_into_dom( $dom, $planned['tree'], $parent_id, $planned['root_ids'] );
 
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $planned['root_ids'], $warnings, $mode, $planned['removed_ids'], $skipped_pro );
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $planned['root_ids'], $warnings, $mode, $planned['removed_ids'], $skipped_pro, true );
 			$response['dry_run'] = true;
 			$response['elements'] = $persister->get_root_elements( $planned['tree'], $parent_id, $planned['root_ids'] );
 
@@ -140,7 +141,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro );
+		$response = $this->build_response( $post_id, $persisted['document'], $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro, false );
 
 		if ( $undo_point ) {
 			$undo_point->commit();
@@ -292,6 +293,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 						],
 					],
 				],
+				'staged' => Document_Mutation_Links::staged_schema_property(),
 				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 			],
@@ -439,7 +441,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 		Warnings_Bag $warnings,
 		string $mode,
 		array $removed_ids,
-		array $skipped_pro
+		array $skipped_pro,
+		bool $is_dry_run
 	): array {
 		$post = get_post( $post_id );
 
@@ -451,6 +454,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];
+
+		if ( ! $is_dry_run ) {
+			$is_staged = Document_Mutation_Save::is_staged( $document );
+			$response['staged'] = $is_staged;
+
+			if ( $is_staged ) {
+				$response['llm_instructions'] = Document_Mutation_Links::staged_write_instructions( $document );
+			}
+		}
 
 		$response = $warnings->add_to_response( $response );
 

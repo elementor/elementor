@@ -94,6 +94,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
 					],
 					'version' => [ 'type' => 'string' ],
+					'staged' => Document_Mutation_Links::staged_schema_property(),
 					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
@@ -293,6 +294,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$post_id             = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
+			$response['staged'] = Document_Mutation_Save::is_staged( $document );
 			$response = $this->with_edit_url( $response, $document );
 			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 			return $response;
@@ -314,7 +316,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
+		$response['staged'] = Document_Mutation_Save::is_staged( $save_result );
 		$response = $this->with_edit_url( $response, $document );
+
+		if ( $response['staged'] ) {
+			$response['llm_instructions'] = Document_Mutation_Links::staged_write_instructions( $save_result );
+		}
 
 		if ( $undo_point ) {
 			$undo_point->commit();

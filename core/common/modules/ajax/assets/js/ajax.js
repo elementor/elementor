@@ -143,7 +143,7 @@ export default class extends elementorModules.Module {
 				if ( this.getCacheKey( pendingRequest.options ) === this.getCacheKey( options ) ) {
 					pendingRequest.options.deferred
 						.done( ( data ) => options.deferred.resolve( data ) )
-						.fail( ( data ) => options.deferred.reject( data ) );
+						.fail( ( data, code ) => options.deferred.reject( data, code ) );
 
 					return options.deferred;
 				}
@@ -189,7 +189,7 @@ export default class extends elementorModules.Module {
 						if ( response.success ) {
 							options.deferred.resolve( response.data );
 						} else if ( ! response.success ) {
-							options.deferred.reject( response.data );
+							options.deferred.reject( response.data, response.code );
 						}
 					}
 				} );

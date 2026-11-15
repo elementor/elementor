@@ -68,6 +68,7 @@ abstract class Abstract_Ability {
 
 		if ( $is_mutating && $post_id > 0 && ! $is_failed && ! $is_dry_run ) {
 			Editor_Sync_State::set_mcp_mutation( $post_id );
+			$result = Editor_Sync_State::add_open_editor_notice( $result, $post_id );
 		}
 
 		$record_input = is_array( $input ) ? $input : [];
