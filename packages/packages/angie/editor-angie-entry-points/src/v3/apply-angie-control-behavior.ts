@@ -1,8 +1,19 @@
+import { getGenerateWithAngieLabel } from '../labels';
 import { getAngieControlBehaviorClass } from './behavior/create-behavior-class';
 import { getV3ControlContext } from './context';
 import { shouldShowAngieEntryPoints } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';
-import type { BehaviorsMap, V3ControlViewWithGetValue } from './types';
+import type { BehaviorsMap, BuildV3AngiePromptArgs, V3AngieControlRegistration, V3ControlViewWithGetValue } from './types';
+
+const placeholderRegistration: V3AngieControlRegistration = {
+	types: [],
+	buildPrompt: ( { type, controlType, context }: BuildV3AngiePromptArgs ) =>
+		[
+			`Help with the V3 "${ type }" AI control "${ context.controlName }" (control type "${ controlType }") on element "${ context.elementId }".`,
+			'Ask the user what they want to change, then guide them.',
+		].join( '\n\n' ),
+	getButtonLabel: () => getGenerateWithAngieLabel(),
+};
 
 export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithGetValue ): BehaviorsMap {
 	if ( ! shouldShowAngieEntryPoints() ) {
@@ -12,13 +23,14 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 	const model = view.options.model;
 	const aiOptions = model.get( 'ai' ) as { active?: boolean; type?: string; language?: string } | undefined;
 
-	if ( ! aiOptions?.active ) {
+	if ( ! aiOptions?.active || ! aiOptions.type ) {
 		return behaviors;
 	}
 
-	const entry = getV3AngieControl( aiOptions.type as string );
+	const aiType = aiOptions.type;
+	const entry = getV3AngieControl( aiType ) ?? placeholderRegistration;
 
-	if ( ! entry ) {
+	if ( entry.shouldApply && ! entry.shouldApply( view, aiType ) ) {
 		return behaviors;
 	}
 
@@ -29,12 +41,11 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 		return behaviors;
 	}
 
-	const aiType = aiOptions.type as string;
 	const getControlValue = entry.getGetControlValue?.( view, aiType ) ?? view.getControlValue.bind( view );
 
 	behaviors.ai = {
 		behaviorClass: getAngieControlBehaviorClass(),
-		type: aiOptions.type,
+		type: aiType,
 		controlType,
 		getControlValue,
 		isLabelBlock: entry.forceLabelBlock ?? Boolean( model.get( 'label_block' ) ),

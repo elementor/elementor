@@ -53,6 +53,13 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 			const buttonLabel = this.getAiButtonLabel();
 
 			let buttonClass = 'e-ai-button';
+			const additionalOptions = this.getOption( 'additionalOptions' ) as
+				| { buttonBorder?: boolean }
+				| undefined;
+
+			if ( additionalOptions?.buttonBorder ) {
+				buttonClass += ' e-ai-border-button';
+			}
 
 			if ( ! isPromotion ) {
 				buttonClass += ' e-active';

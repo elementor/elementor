@@ -19,6 +19,7 @@ function createView(
 		container?: Record< string, unknown > | null;
 		labelBlock?: boolean;
 		controlType?: string;
+		mediaTypes?: string[];
 	} = {}
 ) {
 	const container =
@@ -44,6 +45,7 @@ function createView(
 						label_block: overrides.labelBlock ?? false,
 						default: '',
 						language: 'css',
+						media_types: overrides.mediaTypes ?? [ 'image' ],
 					};
 
 					return map[ key ];
@@ -87,17 +89,22 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( getAngieControlBehaviorClass ).toHaveBeenCalled();
 	} );
 
-	it( 'skips when type is not registered', () => {
+	it( 'uses placeholder behavior when type is not registered', () => {
 		// Arrange
 		const behaviors = {};
-		const view = createView( { ai: { active: true, type: 'media' } } );
+		const view = createView( { ai: { active: true, type: 'unknown-future-type' } } );
 
 		// Act
 		const result = applyAngieControlBehavior( behaviors, view );
 
 		// Assert
-		expect( result ).toEqual( {} );
-		expect( getAngieControlBehaviorClass ).not.toHaveBeenCalled();
+		expect( result.ai ).toEqual(
+			expect.objectContaining( {
+				type: 'unknown-future-type',
+				behaviorClass: expect.any( Function ),
+			} )
+		);
+		expect( getAngieControlBehaviorClass ).toHaveBeenCalled();
 	} );
 
 	it( 'skips when ai.active is false', () => {
@@ -152,6 +159,32 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( ( result.ai as { getControlValue: () => unknown } ).getControlValue() ).toEqual( {
 			_animation: 'fadeIn',
 		} );
+	} );
+
+	it( 'honors shouldApply gate for registered types', () => {
+		// Arrange
+		registerV3AngieControl( {
+			types: [ 'media' ],
+			buildPrompt,
+			shouldApply: ( view ) => {
+				const mediaTypes = view.options.model.get( 'media_types' );
+				return Array.isArray( mediaTypes ) && mediaTypes.includes( 'image' );
+			},
+		} );
+		const skipped = createView( {
+			ai: { active: true, type: 'media' },
+			controlType: 'media',
+			mediaTypes: [ 'video' ],
+		} );
+		const applied = createView( {
+			ai: { active: true, type: 'media' },
+			controlType: 'media',
+			mediaTypes: [ 'image' ],
+		} );
+
+		// Act / Assert
+		expect( applyAngieControlBehavior( {}, skipped ).ai ).toBeUndefined();
+		expect( applyAngieControlBehavior( {}, applied ).ai ).toBeDefined();
 	} );
 
 	it( 'skips when shouldShowAngieEntryPoints returns false', () => {

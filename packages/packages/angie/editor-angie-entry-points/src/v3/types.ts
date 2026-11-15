@@ -30,6 +30,8 @@ export type V3AngieControlRegistration = {
 	getButtonLabel?: ( args: GetButtonLabelArgs ) => string;
 	getAdditionalOptions?: ( view: V3ControlView, aiType: string ) => Record< string, unknown >;
 	getGetControlValue?: ( view: V3ControlViewWithGetValue, aiType: string ) => () => unknown;
+	/** When set, the behavior is applied only if this returns true. */
+	shouldApply?: ( view: V3ControlView, aiType: string ) => boolean;
 	forceLabelBlock?: boolean;
 };
 

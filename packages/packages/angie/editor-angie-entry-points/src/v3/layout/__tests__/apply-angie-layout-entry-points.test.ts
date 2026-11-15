@@ -21,7 +21,10 @@ import {
 	applyAngieAddSectionBehavior,
 	applyAngieContainerContextMenu,
 	applyAngieTemplateLibraryBehaviors,
+	filterLibraryActionButtonTemplate,
 } from '../apply-angie-layout-entry-points';
+import { getAngieAddSectionLayoutBehaviorClass } from '../create-angie-layout-behavior';
+import { getAngieTemplateLibraryBehaviorClass } from '../create-angie-template-library-behavior';
 
 describe( 'applyAngieLayoutEntryPoints', () => {
 	beforeEach( () => {
@@ -34,7 +37,25 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 		} as unknown as Window[ 'elementor' ];
 	} );
 
-	it( 'replaces add-section ai behavior when entry points are enabled', () => {
+	it( 'creates add-section ai behavior when legacy did not register one', () => {
+		// Arrange
+		const behaviors = {};
+
+		// Act
+		const result = applyAngieAddSectionBehavior( behaviors );
+
+		// Assert
+		expect( result.ai ).toMatchObject( {
+			context: { documentType: 'page' },
+			layoutContext: { mode: 'new-layout', documentType: 'page' },
+		} );
+		expect( getAngieAddSectionLayoutBehaviorClass ).toHaveBeenCalled();
+		expect( ( result.ai as { behaviorClass: unknown } ).behaviorClass ).toEqual(
+			expect.any( Function )
+		);
+	} );
+
+	it( 'replaces existing add-section ai behavior when entry points are enabled', () => {
 		// Arrange
 		function LegacyBehavior() {}
 		const behaviors = {
@@ -45,23 +66,40 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 		const result = applyAngieAddSectionBehavior( behaviors );
 
 		// Assert
-		expect( result.ai ).toMatchObject( {
-			context: { documentType: 'page' },
-		} );
 		expect( ( result.ai as { behaviorClass: unknown } ).behaviorClass ).not.toBe( LegacyBehavior );
 	} );
 
-	it( 'skips add-section override when entry points are disabled', () => {
+	it( 'skips add-section when entry points are disabled', () => {
 		// Arrange
 		jest.mocked( shouldShowAngieEntryPoints ).mockReturnValue( false );
-		function LegacyBehavior() {}
-		const behaviors = { ai: { behaviorClass: LegacyBehavior } };
+		const behaviors = {};
 
 		// Act
 		const result = applyAngieAddSectionBehavior( behaviors );
 
 		// Assert
-		expect( ( result.ai as { behaviorClass: unknown } ).behaviorClass ).toBe( LegacyBehavior );
+		expect( result.ai ).toBeUndefined();
+	} );
+
+	it( 'adds container variation action when legacy did not register one', () => {
+		// Arrange
+		const groups = [ { name: 'save', actions: [] as { name?: string; callback?: () => void }[] } ];
+		const currentElement = {
+			getContainer: () => ( {
+				id: 'c1',
+				model: { get: () => 'Container' },
+				view: { _index: 1 },
+				children: { length: 2 },
+			} ),
+		};
+
+		// Act
+		applyAngieContainerContextMenu( groups, currentElement );
+		groups[ 0 ].actions[ 0 ].callback?.();
+
+		// Assert
+		expect( groups[ 0 ].actions[ 0 ].name ).toBe( 'ai' );
+		expect( openAngieInAgentMode ).toHaveBeenCalled();
 	} );
 
 	it( 'overrides container variation callback to open Angie', () => {
@@ -91,6 +129,20 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 		expect( legacyCallback ).not.toHaveBeenCalled();
 	} );
 
+	it( 'creates template library ai behavior when legacy did not register one', () => {
+		// Arrange
+		const behaviors = {};
+
+		// Act
+		const result = applyAngieTemplateLibraryBehaviors( behaviors );
+
+		// Assert
+		expect( getAngieTemplateLibraryBehaviorClass ).toHaveBeenCalled();
+		expect( ( result.applyAiTemplate as { behaviorClass: unknown } ).behaviorClass ).toEqual(
+			expect.any( Function )
+		);
+	} );
+
 	it( 'replaces template library ai behavior class', () => {
 		// Arrange
 		function LegacyBehavior() {}
@@ -101,5 +153,31 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 
 		// Assert
 		expect( ( result.applyAiTemplate as { behaviorClass: unknown } ).behaviorClass ).not.toBe( LegacyBehavior );
+	} );
+
+	it( 'switches blocks library insert template to include Generate Variations', () => {
+		// Arrange
+		( window as unknown as { $e: { routes: { current: { library: string } } } } ).$e = {
+			routes: { current: { library: 'library/templates/blocks' } },
+		};
+
+		// Act
+		const result = filterLibraryActionButtonTemplate( '#tmpl-elementor-template-library-insert-button' );
+
+		// Assert
+		expect( result ).toBe( '#tmpl-elementor-template-library-insert-and-ai-variations-buttons' );
+	} );
+
+	it( 'leaves non-blocks library templates unchanged', () => {
+		// Arrange
+		( window as unknown as { $e: { routes: { current: { library: string } } } } ).$e = {
+			routes: { current: { library: 'library/templates/pages' } },
+		};
+
+		// Act
+		const result = filterLibraryActionButtonTemplate( '#tmpl-elementor-template-library-insert-button' );
+
+		// Assert
+		expect( result ).toBe( '#tmpl-elementor-template-library-insert-button' );
 	} );
 } );

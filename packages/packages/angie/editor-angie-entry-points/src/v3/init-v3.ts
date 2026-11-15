@@ -4,6 +4,7 @@ import { initV3AnimationControls } from './animation/init-animation';
 import { applyAngieControlBehavior } from './apply-angie-control-behavior';
 import { initV3CodeControls } from './code/init-code';
 import { initV3Layout } from './layout/init-layout';
+import { initV3PlaceholderControls } from './placeholders/init-placeholders';
 import { initV3TextControls } from './text/init-text';
 import { getExtendedWindow } from './types';
 
@@ -19,6 +20,7 @@ export function initV3(): void {
 	initV3TextControls();
 	initV3CodeControls();
 	initV3AnimationControls();
+	initV3PlaceholderControls();
 	initV3Layout();
 
 	listenTo( v1ReadyEvent(), () => {

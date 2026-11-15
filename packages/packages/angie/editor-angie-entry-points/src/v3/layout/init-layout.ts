@@ -6,11 +6,13 @@ import {
 	applyAngieAddSectionBehavior,
 	applyAngieContainerContextMenu,
 	applyAngieTemplateLibraryBehaviors,
+	filterLibraryActionButtonTemplate,
 } from './apply-angie-layout-entry-points';
 
 const ADD_SECTION_BEHAVIORS_FILTER = 'views/add-section/behaviors';
 const CONTAINER_CONTEXT_MENU_FILTER = 'elements/container/contextMenuGroups';
 const TEMPLATE_LIBRARY_BEHAVIORS_FILTER = 'elementor/editor/template-library/template/behaviors';
+const TEMPLATE_LIBRARY_ACTION_BUTTON_FILTER = 'elementor/editor/template-library/template/action-button';
 
 export function initV3Layout(): void {
 	listenTo( v1ReadyEvent(), () => {
@@ -35,6 +37,15 @@ export function initV3Layout(): void {
 			TEMPLATE_LIBRARY_BEHAVIORS_FILTER,
 			applyAngieTemplateLibraryBehaviors,
 			ANGIE_LAYOUT_FILTER_PRIORITY
+		);
+
+		hooks.addFilter(
+			TEMPLATE_LIBRARY_ACTION_BUTTON_FILTER,
+			filterLibraryActionButtonTemplate as unknown as (
+				behaviors: Record< string, unknown >,
+				view: unknown
+			) => Record< string, unknown >,
+			11
 		);
 	} );
 }
