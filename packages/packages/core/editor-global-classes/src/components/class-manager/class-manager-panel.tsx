@@ -16,6 +16,7 @@ import { loadExistingClasses } from '../../load-existing-classes';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
+import { ClassManagerHeaderSlot } from '../class-manager-header-location';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
@@ -176,6 +177,7 @@ function ClassManagerPanelContent( {
 									<ClassManagerSearch />
 								</Box>
 								<CssClassFilter />
+								<ClassManagerHeaderSlot />
 								<TotalCssClassCounter />
 							</Stack>
 							<ActiveFilters />

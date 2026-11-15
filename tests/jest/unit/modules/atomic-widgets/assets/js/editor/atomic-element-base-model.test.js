@@ -62,6 +62,14 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 						children_dependencies: [],
 					},
 					'e-locked': { meta: { permanently_locked: true } },
+					'e-with-base-settings': {
+						base_settings: { 'collapse-breakpoint': { $$type: 'string', value: 'tablet' } },
+						apply_base_settings_on_create: true,
+					},
+					'e-without-opt-in': {
+						base_settings: { email: { $$type: 'emails', value: [ 'admin@example.com' ] } },
+						apply_base_settings_on_create: false,
+					},
 				},
 			},
 		};
@@ -325,6 +333,75 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 		AtomicElementBaseModel.setChildrenDependenciesAdapter( {
 			reconcileInitialChildren: reconcileMock,
 			bindSettingsReconcile: bindMock,
+		} );
+	} );
+
+	describe( 'base settings on create', () => {
+		const createModelOnCreate = ( elType ) => {
+			class NoChildren extends AtomicElementBaseModel {
+				getDefaultChildren() {
+					return [];
+				}
+			}
+
+			const model = new NoChildren();
+			model.set( 'id', 'test-id' );
+			model.set( 'elType', elType );
+			model.set( 'elements', [] );
+
+			return model;
+		};
+
+		afterEach( () => {
+			global.$e.commands.currentTrace = [];
+		} );
+
+		it( 'should store the base settings of an element that opts in when it is created', () => {
+			// Arrange.
+			global.$e.commands.currentTrace = [ 'document/elements/create' ];
+			const model = createModelOnCreate( 'e-with-base-settings' );
+
+			// Act.
+			model.initialize( {}, {} );
+
+			// Assert.
+			expect( model.get( 'settings' ) ).toEqual( { 'collapse-breakpoint': { $$type: 'string', value: 'tablet' } } );
+		} );
+
+		it( 'should keep settings that were already set over the base settings', () => {
+			// Arrange.
+			global.$e.commands.currentTrace = [ 'document/elements/create' ];
+			const model = createModelOnCreate( 'e-with-base-settings' );
+			model.set( 'settings', { 'collapse-breakpoint': { $$type: 'string', value: 'mobile' } } );
+
+			// Act.
+			model.initialize( {}, {} );
+
+			// Assert.
+			expect( model.get( 'settings' ) ).toEqual( { 'collapse-breakpoint': { $$type: 'string', value: 'mobile' } } );
+		} );
+
+		it( 'should not store base settings for an element that does not opt in', () => {
+			// Arrange.
+			global.$e.commands.currentTrace = [ 'document/elements/create' ];
+			const model = createModelOnCreate( 'e-without-opt-in' );
+
+			// Act.
+			model.initialize( {}, {} );
+
+			// Assert.
+			expect( model.get( 'settings' ) ).toBeUndefined();
+		} );
+
+		it( 'should not store base settings when the element is not being created', () => {
+			// Arrange.
+			const model = createModel( { elType: 'e-with-base-settings' } );
+
+			// Act.
+			model.initialize( {}, {} );
+
+			// Assert.
+			expect( model.get( 'settings' ) ).toBeUndefined();
 		} );
 	} );
 } );

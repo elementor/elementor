@@ -17,6 +17,7 @@ import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 import { FormField } from './ui/form-field';
+import { VariableFormHeaderSlot } from './variable-form-header-location';
 
 const SIZE = 'tiny';
 const DELETE_LABEL = __( 'Delete variable', 'elementor' );
@@ -125,7 +126,14 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 		setEditConfirmation( false );
 	};
 
-	const actions = [];
+	const actions: React.ReactNode[] = [
+		<VariableFormHeaderSlot
+			key="variable-form-header"
+			variableType={ variableType }
+			variableId={ editId }
+			label={ label }
+		/>,
+	];
 
 	if ( userPermissions.canDelete() ) {
 		actions.push(

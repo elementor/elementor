@@ -44,8 +44,13 @@ const controlProps = {
 	},
 };
 
-describe( 'ImageOptimizeTrigger', () => {
+import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
+
+import { initControlHeader } from '../../control-header/init';
+
+describe( 'AppPromotionTrigger', () => {
 	beforeEach( () => {
+		initControlHeader();
 		jest.mocked( ImageMediaControl ).mockImplementation( () => <></> );
 		jest.mocked( ajax.load ).mockResolvedValue( {} );
 		( window as unknown as { elementor: unknown } ).elementor = {
@@ -54,6 +59,7 @@ describe( 'ImageOptimizeTrigger', () => {
 	} );
 
 	afterEach( () => {
+		flushAllInjections();
 		jest.clearAllMocks();
 	} );
 

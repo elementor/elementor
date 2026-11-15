@@ -74,6 +74,23 @@ class Test_Builder_Template_Part extends TestCase {
 		], $element['styles']['local-root'] );
 	}
 
+	public function test_local_style__appends_to_existing_classes_when_missing() {
+		// Arrange.
+		$style = Style_Definition::make()->add_variant( Style_Variant::make()->set_breakpoint( 'desktop' ) );
+
+		// Act.
+		$widget = Widget_Builder::make( 'e-paragraph' )
+			->settings( [
+				'classes' => [ '$$type' => 'classes', 'value' => [ 'existing' ] ],
+			] )
+			->part( 'label' )
+			->local_style( $style )
+			->build();
+
+		// Assert.
+		$this->assertSame( [ '$$type' => 'classes', 'value' => [ 'existing', 'local-label' ] ], $widget['settings']['classes'] );
+	}
+
 	public function test_local_style__appends_to_existing_classes_once() {
 		// Arrange.
 		$style = Style_Definition::make()->add_variant( Style_Variant::make()->set_breakpoint( 'desktop' ) );

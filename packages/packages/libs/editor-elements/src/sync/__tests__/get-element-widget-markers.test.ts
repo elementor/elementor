@@ -1,7 +1,7 @@
 import { createMockElement } from 'test-utils';
 
 import { getContainer } from '../get-container';
-import { getElementPart, getElementWidgetMarker } from '../get-element-widget-markers';
+import { getElementPart, getElementWidgetMarker, isElementSlot } from '../get-element-widget-markers';
 
 jest.mock( '../get-container' );
 
@@ -95,5 +95,35 @@ describe( 'getElementPart', () => {
 
 		// Assert.
 		expect( result ).toBeNull();
+	} );
+} );
+
+describe( 'isElementSlot', () => {
+	it( 'returns true for a part marked as a slot', () => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue(
+			createMockElement( { model: { part: 'tab_content', slot: true } } )
+		);
+
+		// Act.
+		const result = isElementSlot( ELEMENT_ID );
+
+		// Assert.
+		expect( result ).toBe( true );
+	} );
+
+	it.each( [
+		[ 'a slot without a part', { slot: true } ],
+		[ 'a non-boolean slot', { part: 'tab_content', slot: 'true' } ],
+		[ 'a part without a slot', { part: 'tab_content' } ],
+	] )( 'returns false for %s', ( _, model ) => {
+		// Arrange.
+		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: model as never } ) );
+
+		// Act.
+		const result = isElementSlot( ELEMENT_ID );
+
+		// Assert.
+		expect( result ).toBe( false );
 	} );
 } );

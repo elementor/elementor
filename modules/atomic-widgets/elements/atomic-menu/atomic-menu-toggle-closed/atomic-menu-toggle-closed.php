@@ -5,16 +5,15 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Base\Atomic_Menu_Locked_Element;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Icon_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Atomic_Menu_Toggle_Closed extends Atomic_Menu_Locked_Element {
-	const DEFAULT_ICON = 'images/menu-toggle-closed.svg';
-	const DEFAULT_ICON_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_ICON;
+	const DEFAULT_ICON = 'fa-solid fa-bars';
+	const DEFAULT_ICON_LIBRARY = 'fa-solid';
 
 	public static $widget_description = 'What the menu toggle shows while the menu is closed. Accepts any element and holds an e-svg by default.';
 
@@ -44,9 +43,9 @@ class Atomic_Menu_Toggle_Closed extends Atomic_Menu_Locked_Element {
 		return [
 			Atomic_Svg::generate()
 				->settings( [
-					'svg' => Svg_Src_Prop_Type::generate( [
-						'id' => null,
-						'url' => Url_Prop_Type::generate( static::DEFAULT_ICON_URL ),
+					'svg' => Icon_Prop_Type::generate( [
+						'value' => String_Prop_Type::generate( static::DEFAULT_ICON ),
+						'library' => String_Prop_Type::generate( static::DEFAULT_ICON_LIBRARY ),
 					] ),
 				] )
 				->build(),

@@ -16,7 +16,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
@@ -25,6 +24,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -185,9 +185,9 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 
 		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {
-			$scope = ".e-menu[data-e-collapse=\"{$key}\"]";
+			$scope = ".e-menu[data-e-collapse=\"{$key}\"]:has(> {$toggle})";
 
-			$css[] = "@media(max-width:{$breakpoint->get_value()}px){"
+			$css[] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px){"
 				. "{$scope}{flex-wrap:wrap;position:relative}"
 				. "{$scope} > {$toggle}{display:flex;order:-1;flex:0 0 auto;width:auto;align-items:center;justify-content:center}"
 				. "{$scope} > {$items}{display:none;flex-direction:column;flex-basis:100%;width:100%}"
@@ -274,6 +274,10 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
+	public function should_apply_base_settings_on_create(): bool {
+		return true;
+	}
+
 	protected function define_base_styles(): array {
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -287,6 +291,16 @@ class Atomic_Menu extends Atomic_Element_Base {
 							] ),
 						] )
 				),
+		];
+	}
+
+	protected function define_render_context(): array {
+		return [
+			[
+				'context' => [
+					'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
+				],
+			],
 		];
 	}
 

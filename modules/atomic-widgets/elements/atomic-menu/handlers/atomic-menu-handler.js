@@ -1,6 +1,6 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-import { getItems, getToggle, getItemsId } from './utils';
+import { getItems, getToggle, getItemsId, resolveItemsId, getFirstFocusable } from './utils';
 
 register( {
 	elementType: 'e-menu',
@@ -46,14 +46,20 @@ register( {
 			},
 
 			toggle: {
-				'@click'() {
+				'@click'( event ) {
 					this.open = ! this.open;
+
+					const isKeyboardActivation = 0 === event?.detail;
+
+					if ( this.open && isKeyboardActivation ) {
+						this.$nextTick( () => getFirstFocusable( getItems( this.$root ) )?.focus() );
+					}
 				},
 				':aria-expanded'() {
 					return this.open ? 'true' : 'false';
 				},
 				':aria-controls'() {
-					return getItemsId( menuId );
+					return resolveItemsId( this.$root, menuId );
 				},
 				':aria-label'() {
 					if ( this.$el.dataset.eCustomLabel ) {

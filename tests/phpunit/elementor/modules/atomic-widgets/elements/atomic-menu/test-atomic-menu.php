@@ -227,8 +227,10 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		$closed_children = $this->get_config( 'e-menu-toggle-closed' )['default_children'];
 		$open_children = $this->get_config( 'e-menu-toggle-open' )['default_children'];
-		$this->assertStringEndsWith( 'menu-toggle-closed.svg', $closed_children[0]['settings']['svg']['value']['url']['value'] );
-		$this->assertStringEndsWith( 'menu-toggle-open.svg', $open_children[0]['settings']['svg']['value']['url']['value'] );
+		$this->assertSame( 'icon', $closed_children[0]['settings']['svg']['$$type'] );
+		$this->assertSame( 'fa-solid fa-bars', $closed_children[0]['settings']['svg']['value']['value']['value'] );
+		$this->assertSame( 'fa-solid', $closed_children[0]['settings']['svg']['value']['library']['value'] );
+		$this->assertSame( 'fa-solid fa-xmark', $open_children[0]['settings']['svg']['value']['value']['value'] );
 
 		$entries = $children[0]['elements'];
 		$this->assertCount( 4, $entries );
@@ -429,7 +431,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();
 
 		$this->assertStringContainsString( '.e-menu[data-e-collapse] > .e-menu-toggle-base{display:none}', $css );
-		$this->assertStringContainsString( "@media(max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]", $css );
+		$this->assertStringContainsString( "@media(scripting:enabled) and (max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]", $css );
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
 	}
 
@@ -509,5 +511,72 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'Site navigation', $button->getAttribute( 'aria-label' ) );
 		$this->assertSame( 'true', $button->getAttribute( 'data-e-custom-label' ) );
 		$this->assertSame( '', $button->getAttribute( 'data-e-label-open' ) );
+	}
+
+	public function test_render__falls_back_to_resolved_default_breakpoint_when_setting_missing() {
+		// Arrange.
+		$menu = new Atomic_Menu( [ 'id' => 'm1', 'settings' => [], 'elType' => 'e-menu' ] );
+
+		// Act.
+		ob_start();
+		$menu->print_element();
+		$html = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'data-e-collapse="' . Atomic_Menu::get_default_collapse_breakpoint() . '"', $html );
+	}
+
+	public function test_collapse_css_only_collapses_menus_that_have_a_toggle() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+		$tablet = Plugin::$instance->breakpoints->get_active_breakpoints( 'tablet' )->get_value();
+
+		// Assert.
+		$this->assertStringContainsString( "@media(scripting:enabled) and (max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]:has(> .e-menu-toggle-base)", $css );
+		$this->assertStringNotContainsString( '.e-menu[data-e-collapse="tablet"] > .e-menu-items-base{display:none', $css );
+		$this->assertStringContainsString( '.e-menu[data-e-collapse="tablet"]:has(> .e-menu-toggle-base) > .e-menu-items-base{display:none', $css );
+	}
+
+	public function test_collapse_css_applies_only_when_scripting_is_enabled() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringNotContainsString( '@media(max-width', $css );
+		$this->assertStringContainsString( '@media(scripting:enabled) and (max-width:', $css );
+	}
+
+	/**
+	 * @dataProvider custom_label_attribute_provider
+	 */
+	public function test_custom_label_attribute_forms( string $attributes, bool $is_custom ) {
+		// Arrange.
+		$renderer = Template_Renderer::instance();
+		$renderer->register( 'elementor/macros', ELEMENTOR_PATH . 'modules/atomic-widgets/elements/base/_macros.html.twig' );
+		$renderer->register( 'test/toggle', ELEMENTOR_PATH . 'modules/atomic-widgets/elements/atomic-menu/atomic-menu-toggle/atomic-menu-toggle.html.twig' );
+
+		// Act.
+		$html = $renderer->render( 'test/toggle', [
+			'id' => 'abc',
+			'type' => 'e-menu-toggle',
+			'interaction_id' => 'abc',
+			'base_styles' => [ 'base' => 'e-menu-toggle-base' ],
+			'settings' => [ 'attributes' => $attributes ],
+		] );
+
+		// Assert.
+		$button = $this->load_html( $html )->query( '//button' )->item( 0 );
+		$this->assertSame( $is_custom ? 'true' : '', $button->getAttribute( 'data-e-custom-label' ) );
+	}
+
+	public function custom_label_attribute_provider(): array {
+		return [
+			'plain' => [ 'aria-label="Site navigation"', true ],
+			'upper case' => [ 'ARIA-LABEL="Site navigation"', true ],
+			'spaced' => [ 'aria-label = "Site navigation"', true ],
+			'labelledby' => [ 'aria-labelledby="heading"', true ],
+			'after another attribute' => [ 'data-x="1" aria-label="Site"', true ],
+			'unrelated attribute' => [ 'data-aria-label-x="1"', false ],
+		];
 	}
 }

@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Markers {
 	const WIDGET_KEY = 'widget';
 	const PART_KEY = 'part';
+	const SLOT_KEY = 'slot';
 	const WIDGET_ID_PATTERN = '/^[a-z0-9-]+\/[a-z0-9-]+$/';
 	const PART_PATTERN = '/^[a-z][a-z0-9_]*$/';
 	const MIN_VERSION = 1;
@@ -55,6 +56,10 @@ class Widget_Markers {
 		}
 
 		return $value;
+	}
+
+	public static function sanitize_slot( $value ): bool {
+		return true === $value;
 	}
 
 	private static function sanitize_values( $values, int $depth ): array {
