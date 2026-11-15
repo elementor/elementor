@@ -27,9 +27,9 @@ export const helpCenterAbility: HelpCenterAbility = {
 				version: HELP_CENTER_SERVER_VERSION,
 				tools: {
 					response: {
-						enabled: false
+						enabled: false,
 					},
-				}
+				},
 			},
 			postTypes: {
 				post: 'posts',

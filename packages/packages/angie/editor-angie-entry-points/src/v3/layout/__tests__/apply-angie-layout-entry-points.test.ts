@@ -50,9 +50,7 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 			layoutContext: { mode: 'new-layout', documentType: 'page' },
 		} );
 		expect( getAngieAddSectionLayoutBehaviorClass ).toHaveBeenCalled();
-		expect( ( result.ai as { behaviorClass: unknown } ).behaviorClass ).toEqual(
-			expect.any( Function )
-		);
+		expect( ( result.ai as { behaviorClass: unknown } ).behaviorClass ).toEqual( expect.any( Function ) );
 	} );
 
 	it( 'replaces existing add-section ai behavior when entry points are enabled', () => {

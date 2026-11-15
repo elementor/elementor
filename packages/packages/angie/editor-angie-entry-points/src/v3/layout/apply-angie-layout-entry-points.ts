@@ -45,6 +45,7 @@ const BLOCKS_LIBRARY_ROUTE = 'library/templates/blocks';
 /**
  * Injects (or replaces) the Build with AI button on the empty canvas add-section area.
  * Does not depend on legacy layout-module registering the behavior first.
+ * @param behaviors
  */
 export function applyAngieAddSectionBehavior( behaviors: BehaviorsMap ): BehaviorsMap {
 	if ( ! shouldShowAngieEntryPoints() ) {
@@ -71,6 +72,8 @@ export function applyAngieAddSectionBehavior( behaviors: BehaviorsMap ): Behavio
 
 /**
  * Ensures the container context-menu has a Generate Variations action that opens Angie.
+ * @param groups
+ * @param currentElement
  */
 export function applyAngieContainerContextMenu(
 	groups: ContextMenuGroup[],
@@ -120,6 +123,7 @@ export function applyAngieContainerContextMenu(
 
 /**
  * Injects (or replaces) the template-library Generate Variations behavior.
+ * @param behaviors
  */
 export function applyAngieTemplateLibraryBehaviors( behaviors: BehaviorsMap ): BehaviorsMap {
 	if ( ! shouldShowAngieEntryPoints() ) {
@@ -136,6 +140,7 @@ export function applyAngieTemplateLibraryBehaviors( behaviors: BehaviorsMap ): B
 
 /**
  * Switches the library insert button template to include Generate Variations on Blocks.
+ * @param viewId
  */
 export function filterLibraryActionButtonTemplate( viewId: string ): string {
 	if ( ! shouldShowAngieEntryPoints() ) {
@@ -146,9 +151,7 @@ export function filterLibraryActionButtonTemplate( viewId: string ): string {
 		return viewId;
 	}
 
-	const libraryRoute = (
-		window as unknown as { $e?: { routes?: LibraryRoutes } }
-	).$e?.routes?.current?.library;
+	const libraryRoute = ( window as unknown as { $e?: { routes?: LibraryRoutes } } ).$e?.routes?.current?.library;
 
 	if ( BLOCKS_LIBRARY_ROUTE !== libraryRoute ) {
 		return viewId;

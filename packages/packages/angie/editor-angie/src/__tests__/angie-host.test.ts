@@ -185,6 +185,11 @@ describe( 'editor angie host', () => {
 				name: 'elementor-help-center',
 				title: 'Elementor Help Center',
 				version: '1.2.0',
+				tools: {
+					response: {
+						enabled: false,
+					},
+				},
 			},
 			postTypes: {
 				post: 'posts',
