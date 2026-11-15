@@ -1,8 +1,20 @@
 import { __ } from '@wordpress/i18n';
 
 import type { AngieV3LayoutPromptContext } from '../../prompts';
-import { getExtendedWindow, type MarionetteBehaviorConstructor } from '../types';
+import {
+	type AngieBehaviorView,
+	type BehaviorDomQuery,
+	getExtendedWindow,
+	type MarionetteBehaviorConstructor,
+} from '../types';
 import { openAngieForV3Layout } from './open-angie-layout';
+
+type LayoutBehaviorView = AngieBehaviorView & {
+	view?: { getOption?: ( key: string ) => unknown };
+	ui: {
+		addTemplateButton: BehaviorDomQuery;
+	};
+};
 
 let cachedAddSectionBehavior: MarionetteBehaviorConstructor | undefined;
 
@@ -31,7 +43,7 @@ function createAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConstruct
 			'click @ui.aiButton': 'onAiButtonClick',
 		},
 
-		onAiButtonClick( event: Event ) {
+		onAiButtonClick( this: LayoutBehaviorView, event: Event ) {
 			event.stopPropagation();
 
 			const legacyContext = this.getOption( 'context' ) as { documentType?: string } | undefined;
@@ -41,15 +53,12 @@ function createAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConstruct
 				layoutContext || {
 					mode: 'new-layout',
 					documentType: legacyContext?.documentType,
-					at: ( this.view as { getOption?: ( key: string ) => unknown } )?.getOption?.( 'at' ) as
-						| number
-						| null
-						| undefined,
+					at: this.view?.getOption?.( 'at' ) as number | null | undefined,
 				}
 			);
 		},
 
-		onRender() {
+		onRender( this: LayoutBehaviorView ) {
 			const { jQuery } = getExtendedWindow();
 
 			if ( ! jQuery ) {

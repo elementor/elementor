@@ -24,7 +24,10 @@ export function initV3Layout(): void {
 
 		hooks.addFilter(
 			CONTAINER_CONTEXT_MENU_FILTER,
-			applyAngieContainerContextMenu as unknown as ( groups: unknown, currentElement: unknown ) => unknown,
+			applyAngieContainerContextMenu as unknown as (
+				behaviors: Record< string, unknown >,
+				view: unknown
+			) => Record< string, unknown >,
 			ANGIE_LAYOUT_FILTER_PRIORITY
 		);
 

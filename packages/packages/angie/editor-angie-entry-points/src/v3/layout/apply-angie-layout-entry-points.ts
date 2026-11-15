@@ -10,8 +10,8 @@ type ContainerElementView = {
 		id: string;
 		model: { get: ( key: string ) => unknown };
 		view: { _index: number };
-		parent: unknown;
-		children: { length: number };
+		parent?: unknown;
+		children?: { length: number };
 	};
 };
 

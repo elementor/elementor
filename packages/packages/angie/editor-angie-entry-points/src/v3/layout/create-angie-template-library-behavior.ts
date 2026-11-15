@@ -7,6 +7,11 @@ type TemplateLibraryView = {
 	};
 };
 
+type TemplateLibraryBehavior = {
+	view: TemplateLibraryView;
+	onGenerateVariationClick: () => void;
+};
+
 let cachedLibraryBehavior: MarionetteBehaviorConstructor | undefined;
 
 export function getAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstructor {
@@ -47,8 +52,8 @@ function createAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstructo
 			'click @ui.generateVariation': 'onGenerateVariationClick',
 		},
 
-		onGenerateVariationClick() {
-			const view = this.view as TemplateLibraryView;
+		onGenerateVariationClick( this: TemplateLibraryBehavior ) {
+			const view = this.view;
 			const model = view.model;
 			const libraryComponent = (
 				window as unknown as {
@@ -74,7 +79,7 @@ function createAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstructo
 			( window as unknown as { $e?: { run?: ( command: string ) => void } } ).$e?.run?.( 'library/close' );
 		},
 
-		onApplyButtonClick() {
+		onApplyButtonClick( this: TemplateLibraryBehavior ) {
 			this.onGenerateVariationClick();
 		},
 	} );

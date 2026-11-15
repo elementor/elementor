@@ -1,7 +1,7 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
-import { handleV3LayoutInsertTool } from './handler';
+import { handleV3LayoutInsertTool, type V3LayoutInsertParams } from './handler';
 
 const elementModelSchema = z
 	.object( {
@@ -42,6 +42,6 @@ export const initV3LayoutInsertTool = ( reg: MCPRegistryEntry ): void => {
 			at: z.number(),
 		},
 		isDestructive: true,
-		handler: handleV3LayoutInsertTool,
+		handler: async ( args ) => handleV3LayoutInsertTool( args as V3LayoutInsertParams ),
 	} );
 };
