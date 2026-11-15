@@ -1,5 +1,5 @@
 jest.mock( '../angie-control-behavior', () => ( {
-	getAngieControlBehaviorClass: jest.fn( () => class SentinelBehavior {} ),
+	getAngieControlBehaviorClass: jest.fn( () => function SentinelBehavior() {} ),
 } ) );
 
 jest.mock( '../is-angie-entry-points-enabled', () => ( {
@@ -13,12 +13,14 @@ import { clearV3AngieControls, registerV3AngieControl } from '../registry';
 
 const buildPrompt = jest.fn( () => 'prompt' );
 
-function createView( overrides: {
-	ai?: { active?: boolean; type?: string; language?: string };
-	container?: Record<string, unknown> | null;
-	labelBlock?: boolean;
-	controlType?: string;
-} = {} ) {
+function createView(
+	overrides: {
+		ai?: { active?: boolean; type?: string; language?: string };
+		container?: Record< string, unknown > | null;
+		labelBlock?: boolean;
+		controlType?: string;
+	} = {}
+) {
 	const container =
 		overrides.container === null
 			? undefined
@@ -29,13 +31,13 @@ function createView( overrides: {
 					args: { model: { get: ( key: string ) => ( key === 'elType' ? 'widget' : 'heading' ) } },
 					settings: { get: () => 'value' },
 					...overrides.container,
-				};
+			  };
 
 	return {
 		options: {
 			model: {
 				get: ( key: string ) => {
-					const map: Record<string, unknown> = {
+					const map: Record< string, unknown > = {
 						ai: overrides.ai ?? { active: true, type: 'text' },
 						type: overrides.controlType ?? 'text',
 						name: 'title',

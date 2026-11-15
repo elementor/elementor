@@ -2,7 +2,7 @@ import { openAngieInAgentMode } from '@elementor/editor-mcp';
 
 import { getGenerateWithAngieLabel } from '../labels';
 
-type MarionetteBehaviorConstructor = new () => Record<string, unknown>;
+type MarionetteBehaviorConstructor = new () => Record< string, unknown >;
 
 type BehaviorJQueryElement = {
 	html: ( markup: string ) => BehaviorJQueryElement;
@@ -26,7 +26,13 @@ type AngieBehaviorView = {
 let cachedBehaviorClass: MarionetteBehaviorConstructor | undefined;
 
 function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
-	const Marionette = ( window as { Marionette?: { Behavior: { extend: ( proto: Record<string, unknown> ) => MarionetteBehaviorConstructor } } } ).Marionette;
+	const Marionette = (
+		window as {
+			Marionette?: {
+				Behavior: { extend: ( proto: Record< string, unknown > ) => MarionetteBehaviorConstructor };
+			};
+		}
+	 ).Marionette;
 
 	if ( ! Marionette?.Behavior ) {
 		throw new Error( 'Marionette is not available' );
@@ -45,7 +51,7 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 			event.stopPropagation();
 
 			try {
-				const buildPrompt = this.getOption( 'buildPrompt' ) as ( args: Record<string, unknown> ) => string;
+				const buildPrompt = this.getOption( 'buildPrompt' ) as ( args: Record< string, unknown > ) => string;
 				const prompt = buildPrompt( {
 					type: this.getOption( 'type' ),
 					controlType: this.getOption( 'controlType' ),
@@ -63,13 +69,16 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 
 		getAiButtonLabel( this: AngieBehaviorView ) {
 			const getButtonLabel = this.getOption( 'getButtonLabel' ) as
-				| ( ( args: { getControlValue: () => unknown; additionalOptions?: Record<string, unknown> } ) => string )
+				| ( ( args: {
+						getControlValue: () => unknown;
+						additionalOptions?: Record< string, unknown >;
+				  } ) => string )
 				| undefined;
 
 			if ( getButtonLabel ) {
 				return getButtonLabel( {
 					getControlValue: this.getOption( 'getControlValue' ) as () => unknown,
-					additionalOptions: this.getOption( 'additionalOptions' ) as Record<string, unknown> | undefined,
+					additionalOptions: this.getOption( 'additionalOptions' ) as Record< string, unknown > | undefined,
 				} );
 			}
 
@@ -77,7 +86,8 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 		},
 
 		onRender( this: AngieBehaviorView ) {
-			const config = ( window as { ElementorAiConfig?: { is_get_started?: boolean | string } } ).ElementorAiConfig;
+			const config = ( window as { ElementorAiConfig?: { is_get_started?: boolean | string } } )
+				.ElementorAiConfig;
 			const isPromotion = ! config?.is_get_started;
 			const buttonLabel = this.getAiButtonLabel();
 
@@ -87,8 +97,15 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 				buttonClass += ' e-active';
 			}
 
-			const jQuery = ( window as { jQuery?: ( tag: string, attrs?: Record<string, string> ) => BehaviorJQueryElement } ).jQuery;
-			const $button = jQuery!( '<button>', {
+			const jQuery = (
+				window as { jQuery?: ( tag: string, attrs?: Record< string, string > ) => BehaviorJQueryElement }
+			 ).jQuery;
+
+			if ( ! jQuery ) {
+				return;
+			}
+
+			const $button = jQuery( '<button>', {
 				class: buttonClass,
 			} );
 

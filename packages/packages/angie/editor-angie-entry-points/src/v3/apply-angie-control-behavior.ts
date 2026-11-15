@@ -19,7 +19,7 @@ type ControlView = {
 	getControlValue: () => unknown;
 };
 
-type BehaviorsMap = Record<string, unknown>;
+type BehaviorsMap = Record< string, unknown >;
 
 export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: ControlView ): BehaviorsMap {
 	if ( ! isAngieEntryPointsEnabled() ) {

@@ -7,7 +7,11 @@ const FILTER_PRIORITY = 20;
 const ANGIE_IN_PANELS_EXPERIMENT = 'e_angie_in_panels';
 
 type ElementorHooks = {
-	addFilter: ( name: string, callback: ( behaviors: Record<string, unknown>, view: unknown ) => Record<string, unknown>, priority?: number ) => void;
+	addFilter: (
+		name: string,
+		callback: ( behaviors: Record< string, unknown >, view: unknown ) => Record< string, unknown >,
+		priority?: number
+	) => void;
 };
 
 export function initV3(): void {
@@ -21,9 +25,9 @@ export function initV3(): void {
 		hooks?.addFilter(
 			CONTROLS_BEHAVIORS_FILTER,
 			applyAngieControlBehavior as (
-				behaviors: Record<string, unknown>,
+				behaviors: Record< string, unknown >,
 				view: unknown
-			) => Record<string, unknown>,
+			) => Record< string, unknown >,
 			FILTER_PRIORITY
 		);
 	} );
