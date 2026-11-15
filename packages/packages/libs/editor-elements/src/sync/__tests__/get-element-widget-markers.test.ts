@@ -1,17 +1,6 @@
 import { createMockElement } from 'test-utils';
 
-import { getContainer } from '../get-container';
-import {
-	getContainerPart,
-	getContainerWidgetMarker,
-	getElementPart,
-	getElementWidgetMarker,
-	isContainerSlot,
-} from '../get-element-widget-markers';
-
-jest.mock( '../get-container' );
-
-const ELEMENT_ID = 'element-id';
+import { getContainerPart, getContainerWidgetMarker, isContainerSlot } from '../get-element-widget-markers';
 
 describe( 'getContainerWidgetMarker', () => {
 	it( 'returns the widget marker of the container', () => {
@@ -120,44 +109,5 @@ describe( 'isContainerSlot', () => {
 
 		// Assert.
 		expect( result ).toBe( false );
-	} );
-} );
-
-describe( 'element id getters', () => {
-	it( 'reads the widget marker of the element with the given id', () => {
-		// Arrange.
-		const widget = { id: 'elementor/icon-button', version: 1 };
-
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { widget } } ) );
-
-		// Act.
-		const result = getElementWidgetMarker( ELEMENT_ID );
-
-		// Assert.
-		expect( getContainer ).toHaveBeenCalledWith( ELEMENT_ID );
-		expect( result ).toEqual( { ...widget, values: {} } );
-	} );
-
-	it( 'reads the part of the element with the given id', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( createMockElement( { model: { part: 'label' } } ) );
-
-		// Act.
-		const result = getElementPart( ELEMENT_ID );
-
-		// Assert.
-		expect( getContainer ).toHaveBeenCalledWith( ELEMENT_ID );
-		expect( result ).toBe( 'label' );
-	} );
-
-	it( 'returns empty results when the element is not found', () => {
-		// Arrange.
-		jest.mocked( getContainer ).mockReturnValue( null );
-
-		// Act.
-		const results = [ getElementWidgetMarker( ELEMENT_ID ), getElementPart( ELEMENT_ID ) ];
-
-		// Assert.
-		expect( results ).toEqual( [ null, null ] );
 	} );
 } );

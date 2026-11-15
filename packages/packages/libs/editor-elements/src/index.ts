@@ -53,8 +53,6 @@ export { getElementType } from './sync/get-element-type';
 export {
 	getContainerPart,
 	getContainerWidgetMarker,
-	getElementPart,
-	getElementWidgetMarker,
 	isContainerSlot,
 	WIDGET_MARKER_KEYS,
 } from './sync/get-element-widget-markers';

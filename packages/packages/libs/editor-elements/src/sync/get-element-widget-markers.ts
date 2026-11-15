@@ -1,7 +1,5 @@
 import { z } from '@elementor/schema';
 
-import { type ElementID } from '../types';
-import { getContainer } from './get-container';
 import { type V1Element, type V1ElementWidgetMarker } from './types';
 
 const WIDGET_ID_PATTERN = /^[a-z0-9-]+\/[a-z0-9-]+$/;
@@ -40,12 +38,4 @@ export function getContainerPart( container: V1Element | null ): string | null {
 
 export function isContainerSlot( container: V1Element | null ): boolean {
 	return true === container?.model.get( WIDGET_MARKER_KEYS.slot ) && null !== getContainerPart( container );
-}
-
-export function getElementWidgetMarker( elementId: ElementID ): Required< V1ElementWidgetMarker > | null {
-	return getContainerWidgetMarker( getContainer( elementId ) );
-}
-
-export function getElementPart( elementId: ElementID ): string | null {
-	return getContainerPart( getContainer( elementId ) );
 }
