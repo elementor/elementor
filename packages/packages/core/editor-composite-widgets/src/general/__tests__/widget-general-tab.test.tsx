@@ -40,7 +40,7 @@ const GENERAL: CompositeWidgetGeneralEntry[] = [
 			{ label: 'Text', target: { part: 'label', prop: 'paragraph' } },
 			{ label: 'Icon', target: { part: 'icon', prop: 'svg' } },
 			{ label: 'Unknown prop', target: { part: 'label', prop: 'missing' } },
-			{ label: 'Button', fields: [ { label: 'Link', target: { part: 'root', prop: 'link' } } ] },
+			{ label: 'Panel', fields: [ { label: 'Panel link', target: { part: 'tab_content', prop: 'link' } } ] },
 		],
 	},
 	{ repeater: 'items', label: 'Items', item: 'label', container: 'root', item_fields: [] },
@@ -94,10 +94,10 @@ describe( '<WidgetGeneralTab />', () => {
 		// Assert
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
 		expect( screen.getByText( `Text -> ${ fixture.label.id }` ) ).toBeInTheDocument();
-		expect( screen.getByText( `Link -> ${ fixture.root.id }` ) ).toBeInTheDocument();
+		expect( screen.getByText( `Panel link -> ${ fixture.slot.id }` ) ).toBeInTheDocument();
 	} );
 
-	it( "should render the root's own settings after the fields, without the props the fields expose", () => {
+	it( "should render the root's own settings after the fields", () => {
 		// Arrange
 		const element = { id: fixture.root.id, type: 'e-flexbox' };
 
@@ -111,8 +111,8 @@ describe( '<WidgetGeneralTab />', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Settings section' } ) );
 
 		// Assert
+		expect( screen.getByText( 'link' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'tag' ) ).toBeInTheDocument();
-		expect( screen.queryByText( 'link' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should hide fields whose part or control is missing, and skip repeaters', () => {

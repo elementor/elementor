@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\CompositeWidgets;
 
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
@@ -39,9 +40,14 @@ class Test_Module extends Elementor_Test_Base {
 				Widget_Definition::make( self::THIRD_PARTY_ID )
 					->title( 'Badge' )
 					->template(
-						Widget_Builder::make( 'e-paragraph' )
+						Element_Builder::make( 'e-flexbox' )
 							->part( 'root' )
-							->settings( [ 'paragraph' => Escaped_Html_Prop_Type::generate( 'New' ) ] )
+							->children( [
+								Widget_Builder::make( 'e-paragraph' )
+									->part( 'text' )
+									->settings( [ 'paragraph' => Escaped_Html_Prop_Type::generate( 'New' ) ] )
+									->build(),
+							] )
 							->build()
 					)
 					->general( [
@@ -51,7 +57,7 @@ class Test_Module extends Elementor_Test_Base {
 								[
 									'label' => 'Text',
 									'target' => [
-										'part' => 'root',
+										'part' => 'text',
 										'prop' => 'paragraph',
 									],
 								],
