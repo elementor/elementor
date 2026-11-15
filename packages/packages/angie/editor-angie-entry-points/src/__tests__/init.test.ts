@@ -43,12 +43,19 @@ jest.mock( '@elementor/editor-variables', () => ( {
 	injectIntoVariablesManagerHeader: jest.fn(),
 } ) );
 
+jest.mock( '../v3/init-v3', () => ( {
+	initV3: jest.fn(),
+} ) );
+
+import { initV3 } from '../v3/init-v3';
+
 describe( 'init', () => {
 	it( 'injects Angie actions into every entry point location', () => {
 		// Act
 		init();
 
 		// Assert
+		expect( initV3 ).toHaveBeenCalled();
 		expect( injectIntoControlHeader ).toHaveBeenCalledWith( {
 			id: 'angie-control-header-action',
 			component: AngieControlHeaderAction,
