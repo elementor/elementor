@@ -42,7 +42,8 @@ class State_Key_Tag extends Tag {
 
 	public function render() {
 		$key = (string) $this->get_settings( 'key' );
-		$values = Render_Context::get( CONTEXT_KEY )['values'] ?? [];
+		$context = Render_Context::get( CONTEXT_KEY );
+		$values = array_merge( $context['values'] ?? [], $context['derived'] ?? [] );
 		$has_value = array_key_exists( $key, $values );
 		$text = $has_value ? $values[ $key ] : (string) $this->get_settings( 'pending_text' );
 

@@ -4,8 +4,9 @@
 	const CHANGE_EVENT = 'e-state:change';
 	const SETTLE_MS = 50;
 	const EXPECTED_ENTRIES = 12;
-	const PENDING_TEXT = '...';
+	const SERVER_TOTAL = '20';
 	const EXPECTED_INIT_EFFECT_RUNS = 2;
+	const SELFTEST_PARAM = 'selftest';
 
 	const Alpine = window.elementorV2?.alpinejs?.Alpine;
 	const pocLog = window.__eStatePoc;
@@ -28,6 +29,20 @@
 		window.__eStatePoc.results = results;
 		console.log( '[e-state-poc]\n' + output ); // eslint-disable-line no-console
 	}
+
+	function visualSnapshot() {
+		return {
+			texts: [ ...document.querySelectorAll( '[data-e-state-scope] [data-e-state-key]' ) ].map( ( el ) => el.textContent.trim() ),
+			selectedItems: [ ...document.querySelectorAll( '[data-e-item]' ) ].filter( ( el ) => el.classList.contains( 'is-selected' ) ).map( ( el ) => el.dataset.eItem ),
+			roots: [ ...document.querySelectorAll( '[data-e-state-scope]' ) ].map( ( el ) => ( {
+				id: el.dataset.id,
+				isMax: el.classList.contains( 'is-max' ),
+				qtyVar: el.style.getPropertyValue( '--e-state-qty' ),
+			} ) ),
+		};
+	}
+
+	const firstFrame = visualSnapshot();
 
 	const serverPaint = {
 		qty: keyText( OUTER_ROOT_ID, 'qty' ),
@@ -67,8 +82,9 @@
 
 		const titleValue = payload.entries.find( ( entry ) => entry.dataId === OUTER_ROOT_ID )?.root.values.title;
 
-		check( '2 server-rendered first paint', '2' === serverPaint.qty && serverPaint.total === PENDING_TEXT &&
-			'string' === typeof titleValue && titleValue.length > 0 && serverPaint.title === titleValue, serverPaint );
+		check( '2 server-rendered first paint', '2' === serverPaint.qty && serverPaint.total === SERVER_TOTAL &&
+			'string' === typeof titleValue && titleValue.length > 0 && serverPaint.title === titleValue &&
+			'["m"]' === JSON.stringify( firstFrame.selectedItems ), { ...serverPaint, selectedItems: firstFrame.selectedItems } );
 
 		const marked = pocLog.log.find( ( item ) => 'marked' === item.type )?.detail;
 		const unbound = [ ...document.querySelectorAll( '[data-e-state-scope] [data-e-state-key]:not([x-bind])' ) ].length;
@@ -88,7 +104,14 @@
 		const outer = byId( OUTER_ROOT_ID );
 		const sizeClasses = [ 's', 'm', 'l' ].map( ( size ) => byId( `pocsz_${ size }` )?.classList.contains( 'is-selected' ) );
 
-		check( '5 Alpine.bind under CSP', '20' === keyText( OUTER_ROOT_ID, 'total' ), { total: keyText( OUTER_ROOT_ID, 'total' ) } );
+		const totalSpan = outer.querySelector( '[data-e-state-key="total"]' );
+		const atInit = visualSnapshot();
+
+		check( '2b no visible change at init', JSON.stringify( atInit ) === JSON.stringify( firstFrame ), { firstFrame, atInit } );
+		check( '5 Alpine.bind under CSP', totalSpan?._x_effects?.size > 0 && '20' === keyText( OUTER_ROOT_ID, 'total' ), {
+			total: keyText( OUTER_ROOT_ID, 'total' ),
+			boundEffects: totalSpan?._x_effects?.size,
+		} );
 		check( '6 compute on init in one pass', '20' === keyText( OUTER_ROOT_ID, 'total' ) &&
 			'[false,true,false]' === JSON.stringify( sizeClasses ) && '0' === keyText( INNER_ROOT_ID, 'count' ) &&
 			'2' === outer.style.getPropertyValue( '--e-state-qty' ), { sizeClasses, qtyVar: outer.style.getPropertyValue( '--e-state-qty' ) } );
@@ -172,6 +195,13 @@
 
 		initObserver.disconnect();
 		runInitChecks();
+
+		if ( ! new URLSearchParams( window.location.search ).has( SELFTEST_PARAM ) ) {
+			check( 'interaction checks skipped', true, 'add &selftest=1 to run them (they click and change the values)' );
+			report();
+			return;
+		}
+
 		runInteractionChecks()
 			.catch( ( error ) => check( 'interaction checks threw', false, String( error ) ) )
 			.finally( report );

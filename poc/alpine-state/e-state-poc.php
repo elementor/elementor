@@ -34,6 +34,7 @@ if ( ! isset( $_GET[ QUERY_VAR ] ) || 'local' !== wp_get_environment_type() ) {
 }
 
 require_once __DIR__ . '/state-map.php';
+require_once __DIR__ . '/first-frame.php';
 
 function is_cache_mode(): bool {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -95,7 +96,13 @@ add_action( 'elementor/frontend/before_render', function ( $element ) {
 
 	hook_log( 'before:' . $id );
 
-	if ( ! $config || empty( $config['root'] ) ) {
+	if ( ! $config ) {
+		return;
+	}
+
+	ob_start();
+
+	if ( empty( $config['root'] ) ) {
 		return;
 	}
 
@@ -104,6 +111,7 @@ add_action( 'elementor/frontend/before_render', function ( $element ) {
 	Render_Context::push( CONTEXT_KEY, [
 		'id' => $id,
 		'values' => $values,
+		'derived' => compute_derived( $values, $config['root'] ),
 	] );
 } );
 
@@ -139,12 +147,15 @@ add_action( 'elementor/frontend/after_render', function ( $element ) {
 		return;
 	}
 
+	$context = Render_Context::get( CONTEXT_KEY );
+
+	echo apply_initial_presentation( ob_get_clean(), $config, $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
 	if ( empty( $config['root'] ) ) {
 		collector( array_merge( [ 'dataId' => $id ], $config ) );
 		return;
 	}
 
-	$context = Render_Context::get( CONTEXT_KEY );
 	Render_Context::pop( CONTEXT_KEY );
 
 	collector( [
