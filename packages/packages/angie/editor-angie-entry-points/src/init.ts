@@ -12,9 +12,9 @@ import { AngieClassManagerHeaderAction } from './css-classes/angie-class-manager
 import { AngieClassSelectorAction } from './css-classes/angie-class-selector-action';
 import { AngieInteractionsHeaderAction } from './interactions/angie-interactions-header-action';
 import { AngieCustomCssHeaderAction } from './style-section/angie-custom-css-header-action';
+import { initV3 } from './v3/init-v3';
 import { AngieVariableFormHeaderAction } from './variables/angie-variable-form-header-action';
 import { AngieVariablesManagerHeaderAction } from './variables/angie-variables-manager-header-action';
-import { initV3 } from './v3/init-v3';
 
 export function init(): void {
 	initV3();
