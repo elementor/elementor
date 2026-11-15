@@ -1,26 +1,11 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { type V1ElementData } from '@elementor/editor-elements';
 
 import { prepareWidgetTemplateForInsert } from '../prepare-widget-template-for-insert';
-import { type CompositeWidgetDefinition } from '../types';
-
-const GLOBAL_CLASS_ID = 'g-123abc';
-
-// Shared with the PHP Widget_Instance_Factory tests, so both inserts are checked against the same definition.
-const ICON_BUTTON_PATH = path.resolve(
-	__dirname,
-	'../../../../../../modules/composite-widgets/schema/examples/icon-button.json'
-);
-
-function createDefinition(): CompositeWidgetDefinition {
-	const definition = JSON.parse( fs.readFileSync( ICON_BUTTON_PATH, 'utf8' ) ) as CompositeWidgetDefinition;
-	const classes = definition.template.settings?.classes as { value: string[] };
-
-	classes.value.push( GLOBAL_CLASS_ID );
-
-	return definition;
-}
+import {
+	createIconButtonDefinition as createDefinition,
+	GLOBAL_CLASS_ID,
+	LOCAL_ROOT_STYLE,
+} from './icon-button-definition-fixture';
 
 function collectIds( element: V1ElementData ): string[] {
 	return [ element.id, ...( element.elements ?? [] ).flatMap( collectIds ) ];
@@ -59,7 +44,6 @@ describe( 'prepareWidgetTemplateForInsert', () => {
 	it( 'remaps local style placeholders to element-scoped ids and keeps global classes', () => {
 		// Arrange.
 		const definition = createDefinition();
-		const localRootStyle = structuredClone( definition.template.styles?.[ 'local-root' ] );
 
 		// Act.
 		const result = prepareWidgetTemplateForInsert( definition );
@@ -70,12 +54,12 @@ describe( 'prepareWidgetTemplateForInsert', () => {
 		expect( styleIds ).toHaveLength( 1 );
 		expect( styleIds[ 0 ] ).toMatch( new RegExp( `^e-${ result.id }-.+$` ) );
 		expect( result.styles?.[ styleIds[ 0 ] ].id ).toBe( styleIds[ 0 ] );
-		expect( result.styles?.[ styleIds[ 0 ] ].variants ).toEqual( localRootStyle?.variants );
+		expect( result.styles?.[ styleIds[ 0 ] ].variants ).toEqual( LOCAL_ROOT_STYLE.variants );
 		expect( result.settings?.classes ).toEqual( {
 			$$type: 'classes',
 			value: [ styleIds[ 0 ], GLOBAL_CLASS_ID ],
 		} );
-		expect( definition.template.styles ).toEqual( { 'local-root': localRootStyle } );
+		expect( definition.template.styles ).toEqual( { 'local-root': LOCAL_ROOT_STYLE } );
 	} );
 
 	it( 'stamps the widget marker on the root only and keeps parts', () => {
