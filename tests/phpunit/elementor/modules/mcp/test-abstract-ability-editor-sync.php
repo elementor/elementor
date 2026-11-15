@@ -167,67 +167,6 @@ class Test_Abstract_Ability_Editor_Sync extends Elementor_Test_Base {
 		$this->assertGreaterThanOrEqual( $before, $config['server_time'] );
 	}
 
-	public function test_execute_guarded__appends_open_editor_notice_when_own_editor_is_open() {
-		// Arrange
-		$this->given_own_fresh_lock();
-		$ability = $this->make_ability( [ 'mutates_page' => true ], [
-			'status' => 'ok',
-			'llm_instructions' => 'Change saved.',
-		] );
-
-		// Act
-		$result = $ability->execute_guarded( [ 'post_id' => $this->post_id ] );
-
-		// Assert
-		$this->assertStringStartsWith( 'Change saved. ', $result['llm_instructions'] );
-		$this->assertStringContainsString( 'The Elementor editor is open on this page', $result['llm_instructions'] );
-	}
-
-	public function test_execute_guarded__no_open_editor_notice_without_lock() {
-		// Arrange
-		$this->act_as_admin();
-		$ability = $this->make_ability( [ 'mutates_page' => true ] );
-
-		// Act
-		$result = $ability->execute_guarded( [ 'post_id' => $this->post_id ] );
-
-		// Assert
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
-	}
-
-	public function test_execute_guarded__no_open_editor_notice_on_dry_run() {
-		// Arrange
-		$this->given_own_fresh_lock();
-		$ability = $this->make_ability( [ 'mutates_page' => true ], [ 'status' => 'ok' ], true );
-
-		// Act
-		$result = $ability->execute_guarded( [
-			'post_id' => $this->post_id,
-			'dry_run' => true,
-			'document_elements' => [],
-		] );
-
-		// Assert
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
-	}
-
-	public function test_execute_guarded__no_open_editor_notice_when_execution_fails() {
-		// Arrange
-		$this->given_own_fresh_lock();
-		$ability = $this->make_ability( [ 'mutates_page' => true ], [ 'status' => 'error' ] );
-
-		// Act
-		$result = $ability->execute_guarded( [ 'post_id' => $this->post_id ] );
-
-		// Assert
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
-	}
-
-	private function given_own_fresh_lock(): void {
-		$this->act_as_admin();
-		update_post_meta( $this->post_id, Editor_Sync_State::POST_LOCK_META_KEY, time() . ':' . get_current_user_id() );
-	}
-
 	private function block_with_guard(): void {
 		add_filter( 'elementor/mcp/pre_execute_guard', fn() => new \WP_Error( self::GUARD_ERROR_CODE ) );
 	}

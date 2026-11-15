@@ -15,6 +15,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -153,7 +154,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
 
-		return $response;
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	private function emit_mcp_build_composition_executed(

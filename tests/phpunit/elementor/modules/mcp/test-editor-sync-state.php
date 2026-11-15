@@ -155,6 +155,26 @@ class Test_Editor_Sync_State extends Elementor_Test_Base {
 		$this->assertGreaterThanOrEqual( $before, $result['config']['document']['server_time'] );
 	}
 
+	public function test_add_open_editor_notice__appends_notice_when_own_editor_is_open() {
+		// Arrange
+		update_post_meta( $this->post_id, Editor_Sync_State::POST_LOCK_META_KEY, time() . ':' . get_current_user_id() );
+
+		// Act
+		$result = Editor_Sync_State::add_open_editor_notice( [ 'llm_instructions' => 'Change saved.' ], $this->post_id );
+
+		// Assert
+		$this->assertStringStartsWith( 'Change saved. ', $result['llm_instructions'] );
+		$this->assertStringContainsString( 'The Elementor editor is open on this page', $result['llm_instructions'] );
+	}
+
+	public function test_add_open_editor_notice__leaves_result_unchanged_without_lock() {
+		// Act
+		$result = Editor_Sync_State::add_open_editor_notice( [ 'status' => 'ok' ], $this->post_id );
+
+		// Assert
+		$this->assertSame( [ 'status' => 'ok' ], $result );
+	}
+
 	private function save_request( array $overrides ): array {
 		return $overrides + [
 			'editor_post_id' => $this->post_id,

@@ -34,6 +34,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -333,7 +334,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
-		return $response;
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	private function with_edit_url( array $response, Document $document ): array {
