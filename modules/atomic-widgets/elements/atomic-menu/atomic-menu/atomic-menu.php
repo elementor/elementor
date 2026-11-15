@@ -304,33 +304,6 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
-	protected function build_template_context(): array {
-		return array_merge( $this->build_base_template_context(), [
-			'current_early_script' => $this->get_current_early_script_tag(),
-		] );
-	}
-
-	private function get_current_early_script_tag(): string {
-		if ( Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode() ) {
-			return '';
-		}
-
-		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
-		$script = self::read_early_script( ELEMENTOR_ASSETS_PATH . "js/menu-current-early{$min_suffix}.js" );
-
-		return '' === $script ? '' : wp_get_inline_script_tag( $script );
-	}
-
-	public static function read_early_script( string $path ): string {
-		if ( ! is_readable( $path ) ) {
-			return '';
-		}
-
-		$script = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-
-		return trim( preg_replace( '/^\/\/# sourceMappingURL=.*$/m', '', (string) $script ) );
-	}
-
 	protected function define_allowed_child_types() {
 		return [ self::ELEMENT_TYPE_ITEMS, self::ELEMENT_TYPE_TOGGLE ];
 	}

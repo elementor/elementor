@@ -70,8 +70,6 @@ function sharedDefines( isProduction ) {
 	};
 }
 
-const UNMINIFIED_INLINE_ENTRIES = [ 'menu-current-early' ];
-
 export function createEntryConfig( {
 	entryName,
 	entry,
@@ -145,8 +143,7 @@ export function createEntryConfig( {
 					format: 'iife',
 					entryFileNames: '[name].js',
 					keepNames: true,
-					// Inlined into page HTML, where content filters rewrite `&` into an entity; the minifier would reintroduce `&&`.
-					minify: isProduction && UNMINIFIED_INLINE_ENTRIES.indexOf( entryName ) < 0 ? MINIFY_OPTIONS : false,
+					minify: isProduction ? MINIFY_OPTIONS : false,
 					globals: ( id ) => resolveGlobal( id, entryName ) ?? undefined,
 				},
 			},
