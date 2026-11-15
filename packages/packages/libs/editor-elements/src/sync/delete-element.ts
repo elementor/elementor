@@ -5,6 +5,7 @@ import { type V1Element } from './types';
 type Options = {
 	useHistory?: boolean;
 	at?: number;
+	origin?: string;
 };
 
 type DeleteElementParams = {
