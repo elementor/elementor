@@ -36,7 +36,7 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 
 	it( 'replaces add-section ai behavior when entry points are enabled', () => {
 		// Arrange
-		const LegacyBehavior = class {};
+		function LegacyBehavior() {}
 		const behaviors = {
 			ai: { behaviorClass: LegacyBehavior, context: { documentType: 'page' } },
 		};
@@ -54,7 +54,7 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 	it( 'skips add-section override when entry points are disabled', () => {
 		// Arrange
 		jest.mocked( isAngieEntryPointsEnabled ).mockReturnValue( false );
-		const LegacyBehavior = class {};
+		function LegacyBehavior() {}
 		const behaviors = { ai: { behaviorClass: LegacyBehavior } };
 
 		// Act
@@ -92,7 +92,7 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 
 	it( 'replaces template library ai behavior class', () => {
 		// Arrange
-		const LegacyBehavior = class {};
+		function LegacyBehavior() {}
 		const behaviors = { applyAiTemplate: { behaviorClass: LegacyBehavior } };
 
 		// Act

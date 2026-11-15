@@ -1,5 +1,5 @@
-import { openAngieForV3Layout } from './open-angie-layout';
 import { getExtendedWindow, type MarionetteBehaviorConstructor } from '../types';
+import { openAngieForV3Layout } from './open-angie-layout';
 
 type TemplateLibraryView = {
 	model: {
@@ -52,7 +52,13 @@ function createAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstructo
 			const model = view.model;
 			const libraryComponent = (
 				window as unknown as {
-					$e?: { components?: { get?: ( name: string ) => { manager?: { modalConfig?: { importOptions?: { at?: number } } } } } };
+					$e?: {
+						components?: {
+							get?: ( name: string ) => {
+								manager?: { modalConfig?: { importOptions?: { at?: number } } };
+							};
+						};
+					};
 				}
 			 ).$e?.components?.get?.( 'library' );
 			const at = libraryComponent?.manager?.modalConfig?.importOptions?.at ?? null;

@@ -178,14 +178,18 @@ export const buildAngieV3LayoutPrompt = ( {
 	switch ( mode ) {
 		case 'container-variation':
 			return [
-				`Generate an AI layout variation for V3 container "${ targetContainerId }"${ targetElementTitle ? ` (${ targetElementTitle })` : '' }.`,
+				`Generate an AI layout variation for V3 container "${ targetContainerId }"${
+					targetElementTitle ? ` (${ targetElementTitle })` : ''
+				}.`,
 				`Document type: ${ documentType || 'unknown' }. ${ positionHint }`,
 				'Replace the selected container with the new variation (pass replaceElementId).',
 				toolHint,
 			].join( '\n\n' );
 		case 'library-variation':
 			return [
-				`Generate an AI variation from template library item ${ libraryTemplateId ?? 'unknown' }${ libraryTemplateTitle ? ` (${ libraryTemplateTitle })` : '' }.`,
+				`Generate an AI variation from template library item ${ libraryTemplateId ?? 'unknown' }${
+					libraryTemplateTitle ? ` (${ libraryTemplateTitle })` : ''
+				}.`,
 				`Document type: ${ documentType || 'unknown' }. ${ positionHint }`,
 				toolHint,
 			].join( '\n\n' );

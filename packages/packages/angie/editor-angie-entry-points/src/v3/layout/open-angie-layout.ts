@@ -1,6 +1,6 @@
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 
-import { buildAngieV3LayoutPrompt, type AngieV3LayoutPromptContext } from '../../prompts';
+import { type AngieV3LayoutPromptContext, buildAngieV3LayoutPrompt } from '../../prompts';
 
 export function openAngieForV3Layout( context: AngieV3LayoutPromptContext ): void {
 	try {

@@ -73,7 +73,7 @@ export function applyAngieContainerContextMenu(
 			window as unknown as {
 				elementor?: { documents?: { getCurrent?: () => { config?: { type?: string } } } };
 			}
-		).elementor?.documents?.getCurrent?.()?.config?.type;
+		 ).elementor?.documents?.getCurrent?.()?.config?.type;
 
 		openAngieForV3Layout( {
 			mode: 'container-variation',

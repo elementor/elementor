@@ -8,7 +8,6 @@ import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v
 import {
 	ANGIE_LAYOUT_FILTER_PRIORITY,
 	applyAngieAddSectionBehavior,
-	applyAngieContainerContextMenu,
 	applyAngieTemplateLibraryBehaviors,
 } from '../apply-angie-layout-entry-points';
 import { initV3Layout } from '../init-layout';

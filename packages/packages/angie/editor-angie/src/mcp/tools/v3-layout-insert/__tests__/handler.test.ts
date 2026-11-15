@@ -18,7 +18,7 @@ describe( 'v3-layout-insert handler', () => {
 					getConfig: () => { elements: Record< string, unknown > };
 				};
 			}
-		).elementor = {
+		 ).elementor = {
 			getPreviewContainer: () => ( { id: 'root', children: { at: () => ( {} ) } } ),
 			getContainer: ( id: string ) => ( 'missing' === id ? null : { id } ),
 			helpers: { isAtomicWidget: () => false },
@@ -41,15 +41,22 @@ describe( 'v3-layout-insert handler', () => {
 
 		// Assert
 		expect( result.success ).toBe( true );
-		expect( run ).toHaveBeenCalledWith( 'document/elements/create', expect.objectContaining( { options: { at: 0, edit: false } } ) );
+		expect( run ).toHaveBeenCalledWith(
+			'document/elements/create',
+			expect.objectContaining( { options: { at: 0, edit: false } } )
+		);
 		expect( internal ).toHaveBeenCalledWith( 'document/history/start-log', expect.any( Object ) );
 		expect( internal ).toHaveBeenCalledWith( 'document/history/end-log', { id: 'history-1' } );
 	} );
 
 	it( 'rejects atomic widget models', async () => {
 		// Arrange
-		( window as unknown as { elementor?: { helpers: { isAtomicWidget: () => boolean } } } ).elementor!.helpers =
-			{ isAtomicWidget: () => true };
+		const elementor = (
+			window as unknown as {
+				elementor: { helpers: { isAtomicWidget: () => boolean } };
+			}
+		 ).elementor;
+		elementor.helpers = { isAtomicWidget: () => true };
 
 		// Act / Assert
 		await expect(
@@ -59,11 +66,14 @@ describe( 'v3-layout-insert handler', () => {
 
 	it( 'rejects compound e-* element types', async () => {
 		// Arrange
-		(
+		const elementor = (
 			window as unknown as {
-				elementor?: { getConfig: () => { elements: Record< string, { meta: { is_compound: boolean } } > } };
+				elementor: {
+					getConfig: () => { elements: Record< string, { meta: { is_compound: boolean } } > };
+				};
 			}
-		).elementor!.getConfig = () => ( { elements: { 'e-tabs': { meta: { is_compound: true } } } } );
+		 ).elementor;
+		elementor.getConfig = () => ( { elements: { 'e-tabs': { meta: { is_compound: true } } } } );
 
 		// Act / Assert
 		await expect( handleV3LayoutInsertTool( { elements: { elType: 'e-tabs' } } ) ).rejects.toThrow(
