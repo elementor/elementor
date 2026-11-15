@@ -9,10 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Markers {
 	const WIDGET_KEY = 'widget';
 	const PART_KEY = 'part';
+	const SLOT_KEY = 'slot';
 	const WIDGET_ID_PATTERN = '/^[a-z0-9-]+\/[a-z0-9-]+$/';
 	const PART_PATTERN = '/^[a-z][a-z0-9_]*$/';
 	const MIN_VERSION = 1;
 	const MAX_VALUES_DEPTH = 3;
+	const TEMPLATE_LOCAL_STYLE_PREFIX = 'local-';
+
+	public static function get_template_local_style_id( string $part ): string {
+		return self::TEMPLATE_LOCAL_STYLE_PREFIX . $part;
+	}
 
 	public static function sanitize_widget( $value ): array {
 		if ( ! is_array( $value ) ) {
@@ -50,6 +56,10 @@ class Widget_Markers {
 		}
 
 		return $value;
+	}
+
+	public static function sanitize_slot( $value ): bool {
+		return true === $value;
 	}
 
 	private static function sanitize_values( $values, int $depth ): array {

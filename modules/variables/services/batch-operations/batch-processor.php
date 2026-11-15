@@ -7,6 +7,8 @@ use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 
 class Batch_Processor {
+	private const PLANNED_ID_PREFIX = 'e-gv-';
+
 	private const OPERATION_MAP = [
 		'create'  => 'op_create',
 		'update'  => 'op_update',
@@ -32,7 +34,7 @@ class Batch_Processor {
 	private function op_create( Variables_Collection $collection, array $operation ): array {
 		$data = $operation['variable'];
 		$temp_id = $data['id'] ?? null;
-		$data['id'] = $collection->next_id();
+		$data['id'] = $this->is_reusable_id( $collection, $temp_id ) ? $temp_id : $collection->next_id();
 
 		$collection->assert_limit_not_reached();
 		$collection->assert_label_is_unique( $data['label'] );
@@ -53,6 +55,15 @@ class Batch_Processor {
 			'temp_id' => $temp_id,
 			'variable' => $variable->to_array(),
 		];
+	}
+
+	/**
+	 * Keeps an id the client planned ahead (e.g. from an MCP dry run), so references to it stay valid once saved.
+	 */
+	private function is_reusable_id( Variables_Collection $collection, $id ): bool {
+		return is_string( $id )
+			&& 1 === preg_match( '/^' . self::PLANNED_ID_PREFIX . '[a-z0-9]+$/', $id )
+			&& ! array_key_exists( $id, $collection->all() );
 	}
 
 	private function op_update( Variables_Collection $collection, array $operation ): array {

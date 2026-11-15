@@ -49,7 +49,7 @@ Never put element ids in `xml_structure`. The server generates a **new** id for 
 | Rule | Detail |
 |------|--------|
 | Format | Server-generated lowercase hexadecimal string (one new id per inserted element). |
-| Where to read | After a non-`dry_run` call: `resolved_xml` (each tag gains an `id="..."` attribute) and `root_element_ids` (top-level inserts). `dry_run` does not assign ids. |
+| Where to read | `resolved_xml` (each tag gains an `id="..."` attribute) and `root_element_ids` (top-level inserts). A `dry_run` call returns the ids it would assign, but nothing is saved, so they only exist once something applies the result. |
 | Reuse vs create | **Create:** every element in this composition gets a fresh server id — do not invent or recycle ids in input. **Reuse:** `parent_id` must be an existing container element id in the document (from `elementor/get-page-structure` or from `resolved_xml` of a prior save on this document). Use `document` (or omit `parent_id`) for root-level insertion. |
 | Follow-up edits | For `elementor/manage-elements`, use only element ids from **this** response's `resolved_xml` (see write-conflict rules above). Never substitute a `configuration-id` where an element id is required. |
 

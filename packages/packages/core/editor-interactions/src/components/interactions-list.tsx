@@ -16,6 +16,7 @@ import {
 } from '../utils/scroll-interaction-event';
 import { trackInteractionCreated } from '../utils/tracking';
 import { DEFAULT_VALUES } from './interaction-details';
+import { InteractionsHeaderSlot } from './interactions-header-location';
 import { InteractionsListItem } from './interactions-list-item';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -122,6 +123,7 @@ export function InteractionsList( props: InteractionListProps ) {
 				openOnAdd
 				openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 				label={ __( 'Interactions', 'elementor' ) }
+				headerActions={ <InteractionsHeaderSlot elementId={ elementId } /> }
 				values={ interactions.items }
 				setValues={ handleRepeaterChange }
 				showDuplicate={ false }

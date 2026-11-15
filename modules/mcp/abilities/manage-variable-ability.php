@@ -27,6 +27,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Variables_Service $service;
+	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Variables_Service $service = null ) {
 		$this->service = $service;
@@ -65,7 +66,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				'properties' => [
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50). Each item requires action; create needs type/label/value, update needs id/label/value, delete needs id.',
+						'description' => 'Bulk operations (1–50). Each item requires action; create needs type/label/value (and may pass an id planned by an earlier dry run), update needs id/label/value, delete needs id.',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action' ],
@@ -92,6 +93,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
+		$this->is_dry_run_execution = self::is_dry_run( $input );
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
@@ -123,7 +125,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		$response = $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
 		if ( is_wp_error( $response ) ) {
 			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, $response );
 		} else {
@@ -132,7 +134,11 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return $response;
 	}
 
-	private function handle_bulk( array $operations ) {
+	public function supports_dry_run(): bool {
+		return true;
+	}
+
+	private function handle_bulk( array $operations, bool $dry_run = false ) {
 		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
@@ -171,11 +177,14 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 		if ( ! empty( $batch_operations ) ) {
 			try {
-				$batch_result = $this->get_service()->process_batch( $batch_operations, true );
+				$batch_result = $this->get_service()->process_batch( $batch_operations, true, $dry_run );
 				$watermark = $batch_result['watermark'] ?? null;
 
 				$this->merge_batch_results( $batch_result['results'], $index_map, $results );
-				$this->emit_variable_events( $batch_result['results'] );
+
+				if ( ! $dry_run ) {
+					$this->emit_variable_events( $batch_result['results'] );
+				}
 			} catch ( FatalError $e ) {
 				return new \WP_Error(
 					'unexpected_server_error',
@@ -184,10 +193,16 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				);
 			}
 
-			$this->clear_cache();
+			if ( ! $dry_run ) {
+				$this->clear_cache();
+			}
 		}
 
 		$response = $results->to_array();
+
+		if ( $dry_run ) {
+			$response['dry_run'] = true;
+		}
 
 		if ( null !== $watermark ) {
 			$response['watermark'] = $watermark;
@@ -213,13 +228,19 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
+				$variable = [
+					'type' => $type,
+					'label' => $label,
+					'value' => $value,
+				];
+
+				if ( is_string( $operation['id'] ?? null ) && '' !== $operation['id'] ) {
+					$variable['id'] = $operation['id'];
+				}
+
 				return [
 					'type' => 'create',
-					'variable' => [
-						'type' => $type,
-						'label' => $label,
-						'value' => $value,
-					],
+					'variable' => $variable,
 				];
 
 			case 'update':
@@ -417,6 +438,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			'failed_operation_codes'  => $failed_codes,
 			'warning_count'           => 0,
 			'warning_types'           => [],
+			'dry_run'                 => $this->is_dry_run_execution,
 		];
 
 		if ( null !== $error_code ) {

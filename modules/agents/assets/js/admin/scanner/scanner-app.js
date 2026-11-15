@@ -91,13 +91,16 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 			ringDurationMs={ flow.ringDurationMs }
 			isDimmed={ isActivating }
 			isActivated={ flow.isActivated }
-			isBusy={ isActivating }
+			isAgentAccessOn={ flow.isAgentAccessOn }
+			isBusy={ isActivating || flow.isTurningAgentAccessOn }
+			isTurningOn={ flow.isTurningAgentAccessOn }
 			needsRescanForScore={ flow.needsRescanForScore }
 			siteDomain={ siteDomain }
 			ranAt={ scan?.ranAt }
 			agentAccessUrl={ agentAccessUrl }
-			retryAt={ scan?.retryAt }
+			retryAt={ flow.retryAt }
 			onRescan={ flow.startScan }
+			onTurnBackOn={ flow.turnAgentAccessBackOn }
 		/>
 	);
 

@@ -23,6 +23,7 @@ use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -34,6 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/../composite-widgets/fixtures/closed-structure-factory.php';
 
 /**
  * @group Elementor\Modules\Mcp
@@ -301,6 +303,95 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 				'Element <e-flexbox> is not closed.',
 			],
 		];
+	}
+
+	public function test_execute__dry_run_returns_planned_elements_with_ids_without_saving() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-div-block configuration-id="hero"><e-heading configuration-id="hero-title"></e-heading></e-div-block>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertCount( 1, $result['root_element_ids'] );
+		$this->assertCount( 1, $result['elements'] );
+
+		$root = $result['elements'][0];
+		$this->assertSame( $result['root_element_ids'][0], $root['id'] );
+		$this->assertNotEmpty( $root['elements'][0]['id'] );
+		$this->assertStringContainsString( 'id="' . $root['id'] . '"', $result['resolved_xml'] );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+	}
+
+	public function test_execute__dry_run_plans_against_the_given_document_elements() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+		$unsaved_parent = [
+			'id' => 'unsaved1',
+			'elType' => 'e-div-block',
+			'settings' => [],
+			'elements' => [
+				[
+					'id' => 'old1',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'settings' => [],
+					'elements' => [],
+				],
+			],
+		];
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'parent_id' => 'unsaved1',
+			'mode' => 'replace_children',
+			'document_elements' => [ $unsaved_parent ],
+			'xml_structure' => '<e-heading configuration-id="new-title"></e-heading>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : '' );
+		$this->assertSame( [ 'old1' ], $result['removed_element_ids'] );
+		$this->assertSame( 'e-heading', $result['elements'][0]['widgetType'] );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
+	}
+
+	public function test_execute__ignores_document_elements_without_dry_run() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'parent_id' => 'unsaved1',
+			'document_elements' => [
+				[
+					'id' => 'unsaved1',
+					'elType' => 'e-div-block',
+					'settings' => [],
+					'elements' => [],
+				],
+			],
+			'xml_structure' => '<e-heading configuration-id="new-title"></e-heading>',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id )->get_elements_data() );
 	}
 
 	public function test_execute__duplicate_configuration_id_is_rejected_on_dry_run() {
@@ -1640,6 +1731,80 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
 		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
 		V3_Widget_Map_Registry::reset_instance();
+	}
+
+	/**
+	 * @dataProvider closed_parent_mode_provider
+	 */
+	public function test_execute__rejects_inserting_inside_a_widget( string $mode ) {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, $this->widget_with_slot_elements() );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="extra"/>',
+			'parent_id' => 'widget-root',
+			'mode' => $mode,
+		] );
+
+		// Assert.
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_widget_structure_closed', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+	}
+
+	public function closed_parent_mode_provider(): array {
+		return [
+			'append' => [ 'append' ],
+			'replace children' => [ 'replace_children' ],
+		];
+	}
+
+	public function test_execute__allows_inserting_into_a_widget_slot() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_document_with_elements( $post_id, $this->widget_with_slot_elements() );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="extra"/>',
+			'parent_id' => 'widget-slot',
+		] );
+
+		// Assert.
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : '' );
+		$this->assertTrue( $result['success'] );
+	}
+
+	private function make_ability_with_closed_structure(): Build_Composition_Ability {
+		return new Build_Composition_Ability( null, Closed_Structure_Factory::make() );
+	}
+
+	private function widget_with_slot_elements(): array {
+		return [
+			[
+				'id' => 'widget-root',
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'part' => 'root',
+				'widget' => [ 'id' => Closed_Structure_Factory::WIDGET_ID, 'version' => 1 ],
+				'elements' => [
+					[
+						'id' => 'widget-slot',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [],
+					],
+				],
+			],
+		];
 	}
 
 	private function given_document_with_elements( int $post_id, array $elements ): void {

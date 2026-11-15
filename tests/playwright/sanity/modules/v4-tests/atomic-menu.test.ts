@@ -4,6 +4,8 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { wpCli } from '../../../assets/wp-cli';
 
+type EditorWindow = { $e: { run: ( cmd: string, args?: unknown ) => void }, elementor: { getContainer: ( id: string ) => unknown } };
+
 test.describe( 'Atomic Menu @atomic-widgets', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
@@ -41,6 +43,48 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 		await editor.waitForPanelToLoad();
 
 		return menuId;
+	};
+
+	const urlPlaceholder = 'Type or paste your URL';
+
+	const getRows = ( field: Locator ): Locator => field.locator( 'ul.MuiList-root > li' );
+
+	const openRowPopover = async ( field: Locator, index: number ): Promise<Locator> => {
+		await getRows( field ).nth( index ).getByLabel( 'Open item' ).click();
+
+		const popover = editor.page.locator( '.MuiPopover-paper' ).last();
+
+		await expect( popover.getByText( 'Item name' ) ).toBeVisible();
+
+		return popover;
+	};
+
+	const closePopover = async () => {
+		await editor.page.keyboard.press( 'Escape' );
+		await expect( editor.page.locator( '.MuiPopover-paper' ) ).toHaveCount( 0 );
+	};
+
+	const getNewTabSwitch = ( scope: Locator ): Locator => {
+		return scope.locator( '.MuiSwitch-switchBase input[type="checkbox"]' ).first();
+	};
+
+	const getEntryIds = async ( menu: Locator ): Promise<string[]> => {
+		return menu.locator( `[data-element_type="${ entryType }"]` ).evaluateAll(
+			( nodes ) => nodes.map( ( node ) => node.getAttribute( 'data-id' ) as string ),
+		);
+	};
+
+	const getItemIdOf = async ( menu: Locator, entryId: string ): Promise<string> => {
+		return await menu.locator( `[data-id="${ entryId }"] [data-element_type="e-menu-item"]` )
+			.first().getAttribute( 'data-id' ) as string;
+	};
+
+	const getStructureRow = ( elementId: string ): Locator => {
+		return editor.page.locator( `#elementor-navigator .elementor-navigator__element[data-id="${ elementId }"]` );
+	};
+
+	const getRowLabels = async ( field: Locator ): Promise<string[]> => {
+		return ( await getRows( field ).allTextContents() ).map( ( text ) => text.trim() );
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
@@ -146,6 +190,201 @@ test.describe( 'Atomic Menu @atomic-widgets', () => {
 
 		// Assert
 		await expect( firstItem ).toContainText( 'Start' );
+	} );
+
+	test( 'Row popover sets the entry link and renders an anchor on the canvas', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const field = await openMenuItemsControl();
+		const firstItem = field.locator( 'ul.MuiList-root > li' ).first();
+
+		// Act
+		await firstItem.getByLabel( 'Open item' ).click();
+
+		const popover = editor.page.locator( '.MuiPopover-paper' );
+
+		await expect( popover.getByText( 'Item name' ) ).toBeVisible();
+		await popover.locator( '[aria-label="Toggle link"]' ).click( { timeout: 30000 } );
+
+		await popover.getByPlaceholder( 'Type or paste your URL' ).fill( 'https://example.com/home' );
+
+		// Assert
+		await expect( menu.locator( 'a[href="https://example.com/home"]' ) ).toHaveCount( 1 );
+		await expect( getEntries( menu ) ).toHaveText( [ 'Home', 'Products', 'About', 'Contact' ] );
+	} );
+
+	test( 'The last remaining entry cannot be removed', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const field = await openMenuItemsControl();
+
+		// Act
+		for ( let remaining = 4; remaining > 1; remaining-- ) {
+			const item = field.locator( 'ul.MuiList-root > li' ).first();
+
+			await item.hover();
+			await item.getByRole( 'button', { name: 'Remove' } ).click();
+			await expect( getEntries( menu ) ).toHaveCount( remaining - 1 );
+		}
+
+		// Assert
+		const lastItem = field.locator( 'ul.MuiList-root > li' ).first();
+
+		await lastItem.hover();
+		await expect( lastItem.getByRole( 'button', { name: 'Remove' } ) ).toHaveCount( 0 );
+		await expect( getEntries( menu ) ).toHaveText( [ 'Contact' ] );
+	} );
+
+	test( 'Entry link flow: rename, link, new tab and URL stay in sync between the repeater and the Menu Item', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const [ firstEntryId ] = await getEntryIds( menu );
+		const firstItemId = await getItemIdOf( menu, firstEntryId );
+		let field = await openMenuItemsControl();
+
+		// Act - rename from the repeater
+		let popover = await openRowPopover( field, 0 );
+
+		await popover.getByLabel( 'Item name' ).fill( 'Start' );
+		await closePopover();
+		await editor.openStructurePanel();
+		await editor.expandStructureNode( menuId );
+		await editor.expandAllStructureNodes();
+
+		// Assert - Structure shows it, the canvas text is untouched
+		await expect( getStructureRow( firstEntryId ).locator( '.elementor-navigator__element__title__text' ).first() )
+			.toHaveText( 'Start' );
+		await expect( getEntries( menu ).first() ).toHaveText( 'Home' );
+
+		// Act - rename from Structure
+		await getStructureRow( firstEntryId ).locator( '.elementor-navigator__element__title__text' ).first().dblclick();
+		await editor.page.keyboard.press( 'Control+A' );
+		await editor.page.keyboard.type( 'Begin' );
+		await editor.page.keyboard.press( 'Enter' );
+		await editor.selectElement( menuId );
+		await editor.waitForPanelToLoad();
+		field = await openMenuItemsControl();
+
+		// Assert - the repeater shows it, the canvas text is untouched
+		await expect( getRows( field ).first() ).toContainText( 'Begin' );
+		await expect( getEntries( menu ).first() ).toHaveText( 'Home' );
+
+		// Act - link and new tab from the repeater
+		popover = await openRowPopover( field, 0 );
+		await popover.locator( '[aria-label="Toggle link"]' ).click();
+		await popover.getByPlaceholder( urlPlaceholder ).fill( 'https://example.com/first' );
+		await getNewTabSwitch( popover ).check();
+		await closePopover();
+
+		// Assert - the Menu Item panel matches
+		await editor.selectElementInStructurePanel( firstItemId );
+		await editor.waitForPanelToLoad();
+		await editor.v4Panel.openTab( 'general' );
+
+		await expect( editor.page.getByPlaceholder( urlPlaceholder ) ).toHaveValue( 'https://example.com/first' );
+		await expect( getNewTabSwitch( editor.page.locator( '#elementor-panel' ) ) ).toBeChecked();
+		await expect( menu.locator( '[data-id="' + firstItemId + '"]' ) ).toHaveAttribute( 'target', '_blank' );
+
+		// Act - switch the new tab off on the item itself
+		await getNewTabSwitch( editor.page.locator( '#elementor-panel' ) ).uncheck();
+
+		// Assert - the repeater matches
+		await editor.selectElement( menuId );
+		await editor.waitForPanelToLoad();
+		field = await openMenuItemsControl();
+		popover = await openRowPopover( field, 0 );
+
+		await expect( getNewTabSwitch( popover ) ).not.toBeChecked();
+		await expect( popover.getByPlaceholder( urlPlaceholder ) ).toHaveValue( 'https://example.com/first' );
+		await closePopover();
+
+		// Act - pick a page from the query results on the item itself
+		await editor.selectElementInStructurePanel( firstItemId );
+		await editor.waitForPanelToLoad();
+		await editor.v4Panel.openTab( 'general' );
+
+		const itemUrlInput = editor.page.getByPlaceholder( urlPlaceholder );
+
+		await itemUrlInput.fill( 'Sample' );
+		await editor.page.getByRole( 'option' ).first().click();
+
+		const selectedValue = await itemUrlInput.inputValue();
+
+		expect( selectedValue ).not.toBe( 'https://example.com/first' );
+
+		// Assert - the repeater shows the same selection
+		await editor.selectElement( menuId );
+		await editor.waitForPanelToLoad();
+		field = await openMenuItemsControl();
+		popover = await openRowPopover( field, 0 );
+
+		await expect( popover.getByPlaceholder( urlPlaceholder ) ).toHaveValue( selectedValue );
+
+		// Act - change the link in the repeater and switch the new tab back on
+		await popover.locator( '.MuiInputAdornment-positionEnd button' ).click();
+		await popover.getByPlaceholder( urlPlaceholder ).fill( 'https://example.com/final' );
+		await getNewTabSwitch( popover ).check();
+		await closePopover();
+
+		// Assert - frontend
+		await editor.publishAndViewPage();
+		await editor.waitForFrontendFonts();
+
+		const anchor = editor.page.locator( 'nav.e-menu a' );
+
+		await expect( anchor ).toHaveCount( 1 );
+		await expect( anchor ).toHaveAttribute( 'href', 'https://example.com/final' );
+		await expect( anchor ).toHaveAttribute( 'target', '_blank' );
+	} );
+
+	test( 'Order and empty flow: reorder from the repeater, emptied items are skipped on the frontend', async () => {
+		// Arrange
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const initialIds = await getEntryIds( menu );
+		const field = await openMenuItemsControl();
+
+		await editor.openStructurePanel();
+		await editor.expandStructureNode( menuId );
+		await editor.expandAllStructureNodes();
+
+		// Act - empty one item and undo, then empty it again
+		const emptiedEntryId = initialIds[ 1 ];
+		const emptiedParagraphId = await menu.locator( `[data-id="${ emptiedEntryId }"] [data-element_type="widget"]` )
+			.first().getAttribute( 'data-id' ) as string;
+
+		await editor.removeElement( emptiedParagraphId );
+		await expect( menu.locator( `[data-id="${ emptiedEntryId }"] [data-id="${ emptiedParagraphId }"]` ) ).toHaveCount( 0 );
+
+		await editor.page.evaluate( () => ( window as unknown as EditorWindow ).$e.run( 'document/history/undo' ) );
+		await expect( menu.locator( `[data-id="${ emptiedEntryId }"] [data-id="${ emptiedParagraphId }"]` ) ).toHaveCount( 1 );
+
+		await editor.page.evaluate( ( id ) => {
+			( window as unknown as EditorWindow ).$e.run( 'document/elements/delete', { container: ( window as unknown as EditorWindow ).elementor.getContainer( id ) } );
+		}, emptiedParagraphId );
+
+		// Assert - the entry stays in the editor and in the repeater
+		await expect( getEntries( menu ) ).toHaveCount( 4 );
+		await expect( getRows( field ) ).toHaveCount( 4 );
+
+		// Act - reorder from the repeater (last row to the top); Structure entries are locked
+		const lastRow = getRows( field ).last();
+
+		await lastRow.hover();
+		await lastRow.locator( '.class-item-sortable-trigger' ).dragTo( getRows( field ).first() );
+
+		// Assert - the repeater and canvas follow
+		await expect.poll( () => getEntryIds( menu ) ).toEqual( [ initialIds[ 3 ], initialIds[ 0 ], initialIds[ 1 ], initialIds[ 2 ] ] );
+		await expect.poll( () => getRowLabels( field ) ).toEqual( [ 'Contact', 'Home', 'Products', 'About' ] );
+
+		// Assert - frontend skips the emptied entry and keeps the order
+		await editor.publishAndViewPage();
+		await editor.waitForFrontendFonts();
+
+		await expect( editor.page.locator( 'nav.e-menu ul > li' ) ).toHaveText( [ 'Contact', 'Home', 'About' ] );
 	} );
 
 	test( 'Structure panel nests the menu in a flexbox and lists every entry once expanded', async () => {

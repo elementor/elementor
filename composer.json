@@ -7,7 +7,7 @@
     "require": {
         "php": ">=7.4",
         "automattic/jetpack-autoloader": "^6",
-        "elementor/elementor-mcp-composer": "^1.0.21",
+        "elementor/elementor-mcp-composer": "^1.0.22",
         "elementor/wp-one-package": "1.0.74"
     },
     "repositories": [

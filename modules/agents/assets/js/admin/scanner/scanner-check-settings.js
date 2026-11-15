@@ -81,3 +81,5 @@ export const hasDirtyModuleChecks = ( checks, dirtyModuleKeys ) => checks.some( 
 
 	return Boolean( moduleKey && dirtyModuleKeys?.[ moduleKey ] );
 } );
+
+export const hasAnyAgentModuleEnabled = ( moduleEnabledMap = {} ) => Object.values( moduleEnabledMap ).some( Boolean );

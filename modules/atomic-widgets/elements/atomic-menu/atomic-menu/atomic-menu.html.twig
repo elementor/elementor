@@ -1,6 +1,15 @@
 {% import 'elementor/macros' as m %}
 {%- set classes = ['elementor-element', 'elementor-element-' ~ id, 'e-con', 'e-atomic-element', base_styles.base, 'e-menu', m.default_tag_class('nav')] | merge(settings.classes | default([])) | join(' ') -%}
 <nav class="{{ classes }} {{ editor_classes | default('') }}" aria-label="{{ settings['menu-name'] | default('Menu') | e('html_attr') }}"
+	data-e-collapse="{{ settings['collapse-breakpoint'] | default(default_collapse_breakpoint | default('tablet')) | e('html_attr') }}"
+	data-e-collapsed-position="{{ settings['collapsed-position'] | default('overlay') | e('html_attr') }}"
+	data-e-settings="{{ {
+		'open-submenus-on': settings['open-submenus-on'] | default('click'),
+		'collapsed-submenus': settings['collapsed-submenus'] | default('one-per-level'),
+		'collapsed-position': settings['collapsed-position'] | default('overlay'),
+	} | json_encode | e('html_attr') }}"
+	x-bind="root"
+	x-data="{% if (id | e('js_identifier')) != '' %}eMenu{{ id | e('js_identifier') }}{% else %}{}{% endif %}"
 	{{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }}
 	{{- ' ' }}{{ m.render_interactions(interactions) }}
 	{{- m.render_custom_attributes(settings, editor_attributes) }}>
