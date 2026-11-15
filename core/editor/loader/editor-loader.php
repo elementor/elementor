@@ -51,6 +51,7 @@ final class Editor_Loader {
 		'editor-mcp',
 		'elementor-v3-mcp',
 		'elementor-kit-mcp',
+		'editor-sidebar',
 	];
 
 	const ADDITIONAL_DEPS = [
