@@ -441,7 +441,11 @@ class Module extends BaseModule {
 		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
 	}
 
-	// Every script that localizes `ElementorAiConfig` overwrites the same global, so they must share one shape.
+	/**
+	 * Every script that localizes `ElementorAiConfig` overwrites the same global, so they must share one shape.
+	 *
+	 * @return array
+	 */
 	private function get_ai_config(): array {
 		return [
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
