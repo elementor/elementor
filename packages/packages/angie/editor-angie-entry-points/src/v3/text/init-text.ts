@@ -19,9 +19,7 @@ export function initV3TextControls(): void {
 			const defaultValue = additionalOptions?.defaultValue;
 			const currentValue = getControlValue();
 			const isDefaultValue = defaultValue === currentValue;
-			return isDefaultValue
-				? __( 'Write with AI', 'elementor' )
-				: __( 'Edit with AI', 'elementor' );
+			return isDefaultValue ? __( 'Write with AI', 'elementor' ) : __( 'Edit with AI', 'elementor' );
 		},
 	} );
 }
