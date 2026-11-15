@@ -94,6 +94,25 @@ class Module extends BaseModule {
 			);
 		} );
 
+		// Styles for Angie V3 entry-point buttons (`.e-ai-button`, `.e-ai-layout-button`).
+		add_action( 'elementor/editor/after_enqueue_styles', function() {
+			wp_enqueue_style(
+				'elementor-ai-editor',
+				$this->get_css_assets_url( 'modules/ai/editor' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		} );
+
+		add_action( 'elementor/preview/enqueue_styles', function() {
+			wp_enqueue_style(
+				'elementor-ai-layout-preview',
+				$this->get_css_assets_url( 'modules/ai/layout-preview' ),
+				[],
+				ELEMENTOR_VERSION
+			);
+		} );
+
 		if ( is_admin() ) {
 			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
 			add_action( 'admin_head', [ $this, 'enqueue_ai_media_library_upload_screen' ] );
