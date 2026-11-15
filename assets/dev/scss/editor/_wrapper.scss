@@ -27,8 +27,8 @@ a {
 }
 
 body {
-	&.e-editor-sidebar-active {
-		--e-editor-sidebar-width: 48px;
+	&:has(.e-editor-sidebar) {
+		--e-editor-sidebar-width: 55px;
 	}
 
 	background-color: var(--e-a-bg-default);

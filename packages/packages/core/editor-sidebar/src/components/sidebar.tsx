@@ -1,24 +1,16 @@
 import * as React from 'react';
-import { useEffect } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Box, Stack } from '@elementor/ui';
 
-import { SIDEBAR_ACTIVE_CLASS, SIDEBAR_WIDTH_VAR } from '../constants';
+import { SIDEBAR_CLASS, SIDEBAR_WIDTH_VAR } from '../constants';
 import { SidebarFooterSlot, SidebarToolsSlot } from '../locations';
 
 export default function Sidebar() {
-	useEffect( () => {
-		document.body.classList.add( SIDEBAR_ACTIVE_CLASS );
-
-		return () => {
-			document.body.classList.remove( SIDEBAR_ACTIVE_CLASS );
-		};
-	}, [] );
-
 	return (
 		<ThemeProvider>
 			<Box
 				component="aside"
+				className={ SIDEBAR_CLASS }
 				data-testid="editor-sidebar"
 				aria-label="Editor sidebar"
 				sx={ {

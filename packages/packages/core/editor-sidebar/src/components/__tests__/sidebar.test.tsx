@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { SIDEBAR_ACTIVE_CLASS } from '../../constants';
+import { SIDEBAR_CLASS } from '../../constants';
 import { injectIntoSidebarFooter, injectIntoSidebarTools } from '../../locations';
 import Sidebar from '../sidebar';
 
@@ -19,15 +19,11 @@ describe( 'Sidebar', () => {
 		expect( screen.getByText( 'Footer item' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should toggle the active body class while mounted', () => {
+	it( 'should render the sidebar element with the sidebar class', () => {
 		// Act.
-		const { unmount } = render( <Sidebar /> );
+		render( <Sidebar /> );
 
 		// Assert.
-		expect( document.body ).toHaveClass( SIDEBAR_ACTIVE_CLASS );
-
-		unmount();
-
-		expect( document.body ).not.toHaveClass( SIDEBAR_ACTIVE_CLASS );
+		expect( screen.getByRole( 'complementary', { name: 'Editor sidebar' } ) ).toHaveClass( SIDEBAR_CLASS );
 	} );
 } );
