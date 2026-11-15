@@ -142,6 +142,7 @@ class Modules_Manager {
 			'feedback',
 			'widget-creation',
 			'editor-one',
+			'editor-sidebar',
 			'guided-tours',
 			'markdown-render',
 			'agents',
