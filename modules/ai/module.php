@@ -133,7 +133,6 @@ class Module extends BaseModule {
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
 		});
-
 	}
 
 	public function is_ai_enabled() {
