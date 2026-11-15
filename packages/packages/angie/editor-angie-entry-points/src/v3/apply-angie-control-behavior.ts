@@ -12,15 +12,15 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 	const model = view.options.model;
 	const aiOptions = model.get( 'ai' ) as { active?: boolean; type?: string; language?: string } | undefined;
 
-	if ( ! aiOptions?.active || ! aiOptions.type ) {
+	// `active: false` opts out. Missing `active` still shows when a type is registered
+	// (many widgets only set `ai.type` and rely on control defaults).
+	if ( ! aiOptions?.type || false === aiOptions.active ) {
 		return behaviors;
 	}
 
 	const aiType = aiOptions.type;
 	const entry = getV3AngieControl( aiType );
 
-	// Only show a button when a dedicated Angie replacement is registered
-	// (ticketed). Uncovered types (e.g. media / excerpt per ED-26337) stay gone.
 	if ( ! entry ) {
 		return behaviors;
 	}

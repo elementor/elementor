@@ -89,10 +89,10 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( getAngieControlBehaviorClass ).toHaveBeenCalled();
 	} );
 
-	it( 'skips when type is not registered (no ticketed Angie replacement)', () => {
-		// Arrange — media/excerpt have no replace ticket (ED-26337 deletes them)
+	it( 'skips when type is not registered', () => {
+		// Arrange
 		const behaviors = {};
-		const view = createView( { ai: { active: true, type: 'media' } } );
+		const view = createView( { ai: { active: true, type: 'unknown-type' } } );
 
 		// Act
 		const result = applyAngieControlBehavior( behaviors, view );
@@ -100,6 +100,18 @@ describe( 'applyAngieControlBehavior', () => {
 		// Assert
 		expect( result ).toEqual( {} );
 		expect( getAngieControlBehaviorClass ).not.toHaveBeenCalled();
+	} );
+
+	it( 'applies when type is set even if active is omitted', () => {
+		// Arrange
+		const behaviors = {};
+		const view = createView( { ai: { type: 'text' } } );
+
+		// Act
+		const result = applyAngieControlBehavior( behaviors, view );
+
+		// Assert
+		expect( result.ai ).toBeDefined();
 	} );
 
 	it( 'skips when ai.active is false', () => {
