@@ -1,10 +1,8 @@
 <?php
 namespace Elementor\Modules\Ai;
 
-use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
@@ -88,26 +86,11 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', function() {
-			$this->enqueue_main_script();
-			$this->enqueue_layout_script();
-		} );
-
-		add_action( 'elementor/editor/after_enqueue_styles', function() {
-			wp_enqueue_style(
-				'elementor-ai-editor',
-				$this->get_css_assets_url( 'modules/ai/editor' ),
-				[],
-				ELEMENTOR_VERSION
-			);
-		} );
-
-		add_action( 'elementor/preview/enqueue_styles', function() {
-			wp_enqueue_style(
-				'elementor-ai-layout-preview',
-				$this->get_css_assets_url( 'modules/ai/layout-preview' ),
-				[],
-				ELEMENTOR_VERSION
+		add_action( 'elementor/editor/v2/scripts/enqueue', function() {
+			Utils::print_js_config(
+				'elementor-editor',
+				'ElementorAiConfig',
+				$this->get_ai_config()
 			);
 		} );
 
@@ -151,14 +134,6 @@ class Module extends BaseModule {
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
 		});
 
-		add_filter( 'elementor/document/save/data', function ( $data ) {
-			return $this->remove_temporary_containers( $data );
-		} );
-
-		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
 	public function is_ai_enabled() {
@@ -204,72 +179,6 @@ class Module extends BaseModule {
 				'session_id' => $last_imported_session['session_id'],
 			],
 		] );
-	}
-
-	public function register_ai_hover_effect_control( Element_Base $element ) {
-		if ( ! $element->get_controls( 'ai_hover_animation' ) ) {
-			$element->add_control(
-				'ai_hover_animation',
-				[
-					'tabs_wrapper' => '_tabs_positioning',
-					'inner_tab' => '_tab_positioning_hover',
-					'label' => esc_html__( 'Animate With AI', 'elementor' ),
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => '
-<style>
-  .elementor-control-ai_hover_animation .elementor-control-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .elementor-control-ai_hover_animation .elementor-control-raw-html {
-  	display: none;
-  }
-</style>',
-					'render_type' => 'none',
-					'ai' => [
-						'active' => true,
-						'type' => 'hover_animation',
-					],
-				],
-				[
-					'position' => [
-						'of' => '_transform_rotate_popover_hover',
-						'type' => 'control',
-						'at' => 'before',
-					],
-				]
-			);
-		}
-	}
-	public function register_ai_motion_effect_control( $element ) {
-		if ( Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
-			$element->add_control(
-				'ai_animation',
-				[
-					'label' => esc_html__( 'Animate With AI', 'elementor' ),
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => '
-	<style>
-	.elementor-control-ai_animation .elementor-control-content {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-	}
-	.elementor-control-ai_animation .elementor-control-raw-html {
-		display: none;
-	}
-	</style>',
-					'render_type' => 'none',
-					'ai' => [
-						'active' => true,
-						'type' => 'animation',
-					],
-				]
-			);
-		}
 	}
 
 	private function get_current_screen() {
@@ -450,74 +359,6 @@ class Module extends BaseModule {
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
 		];
-	}
-
-	private function enqueue_main_script() {
-		wp_enqueue_script(
-			'elementor-ai',
-			$this->get_js_assets_url( 'ai' ),
-			[
-				'react',
-				'react-dom',
-				'backbone-marionette',
-				'elementor-web-cli',
-				'wp-date',
-				'elementor-common',
-				'elementor-editor-modules',
-				'elementor-editor-document',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'elementor-ai',
-			'ElementorAiConfig',
-			$this->get_ai_config()
-		);
-
-		wp_set_script_translations( 'elementor-ai', 'elementor' );
-	}
-
-	private function enqueue_layout_script() {
-		wp_enqueue_script(
-			'elementor-ai-layout',
-			$this->get_js_assets_url( 'ai-layout' ),
-			[
-				'react',
-				'react-dom',
-				'backbone-marionette',
-				'elementor-common',
-				'elementor-web-cli',
-				'elementor-editor-modules',
-				'elementor-ai',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
-	}
-
-	private function remove_temporary_containers( $data ) {
-		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
-			return $data;
-		}
-
-		// If for some reason the document has been saved during an AI Layout session,
-		// ensure that the temporary containers are removed from the data.
-		$data['elements'] = array_filter( $data['elements'], function( $element ) {
-			$is_preview_container = strpos( $element['id'], 'e-ai-preview-container' ) === 0;
-			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
-
-			return ! $is_preview_container && ! $is_screenshot_container;
-		} );
-
-		return $data;
 	}
 
 	private function get_ai_connect_url() {
