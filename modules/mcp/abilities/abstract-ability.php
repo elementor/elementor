@@ -55,9 +55,11 @@ abstract class Abstract_Ability {
 		Kit_Settings_Host::discard_pending();
 
 		$is_failed = is_wp_error( $result ) || ( is_array( $result ) && 'error' === ( $result['status'] ?? '' ) );
+		$is_dry_run = ! empty( $input['dry_run'] );
 
-		if ( $is_mutating && $post_id > 0 && ! $is_failed ) {
+		if ( $is_mutating && $post_id > 0 && ! $is_failed && ! $is_dry_run ) {
 			Editor_Sync_State::set_mcp_mutation( $post_id );
+			$result = Editor_Sync_State::add_open_editor_notice( $result, $post_id );
 		}
 
 		$record_input = is_array( $input ) ? $input : [];

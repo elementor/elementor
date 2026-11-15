@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Core\Base\Document;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,6 +21,25 @@ class Document_Mutation_Links {
 			'description' => 'Mandatory next step: include this text (with the preview or editor link) in your reply to the user.',
 		];
 	}
+	public static function staged_schema_property(): array {
+		return [
+			'type' => 'boolean',
+			'description' => 'True when the document is a draft copy of a published page: changes are not live until elementor/publish-document.',
+		];
+	}
+
+	public static function staged_write_instructions( Document $document ): string {
+		if ( $document instanceof Component_Document ) {
+			return __( 'Change saved to a draft copy of the component. Pages using it are unchanged until you call elementor/manage-component with action=publish.', 'elementor' );
+		}
+
+		return __( 'Change saved to a draft copy. The live page is unchanged until you call elementor/publish-document.', 'elementor' );
+	}
+
+	public static function staged_read_instructions(): string {
+		return __( 'This structure includes staged changes that are not live yet. The live page shows them only after you call elementor/publish-document.', 'elementor' );
+	}
+
 	public static function undo_revision_id_schema_property(): array {
 		return [
 			'type' => [ 'integer', 'null' ],
