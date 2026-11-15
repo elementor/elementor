@@ -1,38 +1,19 @@
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 
 import { getGenerateWithAngieLabel } from '../labels';
-
-type MarionetteBehaviorConstructor = new () => Record< string, unknown >;
-
-type BehaviorJQueryElement = {
-	html: ( markup: string ) => BehaviorJQueryElement;
-	addClass: ( className: string ) => BehaviorJQueryElement;
-	append: ( text: string ) => BehaviorJQueryElement;
-	tipsy?: ( options: { gravity: string; title: () => string } ) => void;
-};
-
-type BehaviorDomQuery = {
-	length: number;
-	after: ( element: BehaviorJQueryElement ) => void;
-	find: ( selector: string ) => BehaviorDomQuery;
-};
-
-type AngieBehaviorView = {
-	getOption: ( key: string ) => unknown;
-	$el: BehaviorDomQuery;
-	getAiButtonLabel: () => string;
-};
+import type {
+	AngieBehaviorView,
+	BehaviorJQueryElement,
+	BuildV3AngiePromptArgs,
+	GetButtonLabelArgs,
+	MarionetteBehaviorConstructor,
+	V3AngieControlContext,
+} from './types';
 
 let cachedBehaviorClass: MarionetteBehaviorConstructor | undefined;
 
 function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
-	const Marionette = (
-		window as {
-			Marionette?: {
-				Behavior: { extend: ( proto: Record< string, unknown > ) => MarionetteBehaviorConstructor };
-			};
-		}
-	 ).Marionette;
+	const Marionette = window.Marionette;
 
 	if ( ! Marionette?.Behavior ) {
 		throw new Error( 'Marionette is not available' );
@@ -51,13 +32,15 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 			event.stopPropagation();
 
 			try {
-				const buildPrompt = this.getOption( 'buildPrompt' ) as ( args: Record< string, unknown > ) => string;
+				const buildPrompt = this.getOption( 'buildPrompt' ) as ( args: BuildV3AngiePromptArgs ) => string;
 				const prompt = buildPrompt( {
-					type: this.getOption( 'type' ),
-					controlType: this.getOption( 'controlType' ),
-					getControlValue: this.getOption( 'getControlValue' ),
-					context: this.getOption( 'context' ) || {},
-					additionalOptions: this.getOption( 'additionalOptions' ),
+					type: this.getOption( 'type' ) as string,
+					controlType: this.getOption( 'controlType' ) as string,
+					getControlValue: this.getOption( 'getControlValue' ) as () => unknown,
+					context: ( this.getOption( 'context' ) as V3AngieControlContext ) || {},
+					additionalOptions: this.getOption(
+						'additionalOptions'
+					) as BuildV3AngiePromptArgs[ 'additionalOptions' ],
 				} );
 
 				openAngieInAgentMode( prompt );
@@ -69,16 +52,15 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 
 		getAiButtonLabel( this: AngieBehaviorView ) {
 			const getButtonLabel = this.getOption( 'getButtonLabel' ) as
-				| ( ( args: {
-						getControlValue: () => unknown;
-						additionalOptions?: Record< string, unknown >;
-				  } ) => string )
+				| ( ( args: GetButtonLabelArgs ) => string )
 				| undefined;
 
 			if ( getButtonLabel ) {
 				return getButtonLabel( {
 					getControlValue: this.getOption( 'getControlValue' ) as () => unknown,
-					additionalOptions: this.getOption( 'additionalOptions' ) as Record< string, unknown > | undefined,
+					additionalOptions: this.getOption(
+						'additionalOptions'
+					) as GetButtonLabelArgs[ 'additionalOptions' ],
 				} );
 			}
 
@@ -86,9 +68,7 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 		},
 
 		onRender( this: AngieBehaviorView ) {
-			const config = ( window as { ElementorAiConfig?: { is_get_started?: boolean | string } } )
-				.ElementorAiConfig;
-			const isPromotion = ! config?.is_get_started;
+			const isPromotion = ! window.ElementorAiConfig?.is_get_started;
 			const buttonLabel = this.getAiButtonLabel();
 
 			let buttonClass = 'e-ai-button';
@@ -97,9 +77,7 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 				buttonClass += ' e-active';
 			}
 
-			const jQuery = (
-				window as { jQuery?: ( tag: string, attrs?: Record< string, string > ) => BehaviorJQueryElement }
-			 ).jQuery;
+			const jQuery = window.jQuery;
 
 			if ( ! jQuery ) {
 				return;
@@ -107,7 +85,7 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 
 			const $button = jQuery( '<button>', {
 				class: buttonClass,
-			} );
+			} ) as BehaviorJQueryElement;
 
 			$button.html( '<i class="eicon-ai"></i>' );
 

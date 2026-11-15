@@ -2,26 +2,11 @@ import { getAngieControlBehaviorClass } from './angie-control-behavior';
 import { getV3ControlContext } from './context';
 import { isAngieEntryPointsEnabled } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';
+import type { BehaviorsMap, V3ControlView } from './types';
 
-type ControlView = {
-	options: {
-		model: {
-			get: ( key: string ) => unknown;
-		};
-		container?: {
-			id?: string;
-			type?: string;
-			document?: { config: { type: string } };
-			args?: { model: { get: ( key: string ) => unknown } };
-			settings?: { get: ( key: string ) => unknown };
-		};
-	};
-	getControlValue: () => unknown;
-};
+type V3ControlViewWithValue = V3ControlView & { getControlValue: () => unknown };
 
-type BehaviorsMap = Record< string, unknown >;
-
-export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: ControlView ): BehaviorsMap {
+export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithValue ): BehaviorsMap {
 	if ( ! isAngieEntryPointsEnabled() ) {
 		return behaviors;
 	}

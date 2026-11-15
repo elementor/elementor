@@ -1,21 +1,6 @@
-import type { V3AngieControlContext } from './registry';
+import type { V3AngieControlContext, V3ControlView } from './types';
 
-type ControlView = {
-	options: {
-		model: {
-			get: ( key: string ) => unknown;
-		};
-		container?: {
-			id?: string;
-			type?: string;
-			document?: { config: { type: string } };
-			args?: { model: { get: ( key: string ) => unknown } };
-			settings?: { get: ( key: string ) => unknown };
-		};
-	};
-};
-
-export function getV3ControlContext( view: ControlView, controlType: string ): V3AngieControlContext {
+export function getV3ControlContext( view: V3ControlView, controlType: string ): V3AngieControlContext {
 	const controlName = view.options.model.get( 'name' ) as string | undefined;
 
 	if ( ! view.options.container ) {
