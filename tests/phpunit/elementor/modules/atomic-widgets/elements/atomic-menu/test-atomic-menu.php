@@ -185,6 +185,21 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertNotContains( 'elementor-alpinejs', $registered->deps );
 	}
 
+	public function test_menu_registers_the_current_preview_handler_without_alpine() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$menu = Plugin::$instance->elements_manager->get_element_types( 'e-menu' );
+
+		// Act.
+		$menu->register_frontend_handlers();
+		$registered = wp_scripts()->registered['elementor-menu-current-preview-handler'] ?? null;
+
+		// Assert.
+		$this->assertNotNull( $registered );
+		$this->assertStringContainsString( 'js/menu-current-preview-handler', $registered->src );
+		$this->assertNotContains( 'elementor-alpinejs', $registered->deps );
+	}
+
 	public function test_rendered_menu_has_no_current_state_on_the_server() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );

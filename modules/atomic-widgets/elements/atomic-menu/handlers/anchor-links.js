@@ -4,16 +4,20 @@ export default class AnchorLinks {
 		this.onChange = onChange;
 		this.observers = [];
 		this.active = new Set();
+		this.reported = new Set();
 		this.onResize = this.onResize.bind( this );
+		this.onScroll = this.onScroll.bind( this );
 	}
 
 	initialize() {
 		this.observe();
 		window.addEventListener( 'resize', this.onResize );
+		window.addEventListener( 'scroll', this.onScroll, { passive: true } );
 	}
 
 	destroy() {
 		window.removeEventListener( 'resize', this.onResize );
+		window.removeEventListener( 'scroll', this.onScroll );
 		this.disconnect();
 	}
 
@@ -57,7 +61,49 @@ export default class AnchorLinks {
 			this.active.delete( item );
 		}
 
-		this.onChange( new Set( this.active ) );
+		this.report( this.getActiveItems() );
+	}
+
+	report( items ) {
+		this.reported = items;
+		this.onChange( new Set( items ) );
+	}
+
+	getActiveItems() {
+		const lastEntry = this.getLastEntry();
+
+		if ( lastEntry && this.isScrolledToBottom() && this.isInViewport( lastEntry.target ) ) {
+			return new Set( [ lastEntry.item ] );
+		}
+
+		return new Set( this.active );
+	}
+
+	getLastEntry() {
+		return this.entries.reduce( ( last, entry ) => {
+			const isBelowLast = entry.target.getBoundingClientRect().top > last.target.getBoundingClientRect().top;
+
+			return isBelowLast ? entry : last;
+		} );
+	}
+
+	isScrolledToBottom() {
+		return Math.ceil( window.scrollY + window.innerHeight ) >= document.documentElement.scrollHeight;
+	}
+
+	isInViewport( target ) {
+		const { top, bottom } = target.getBoundingClientRect();
+
+		return bottom > 0 && top < window.innerHeight;
+	}
+
+	onScroll() {
+		const next = this.getActiveItems();
+		const hasChanged = next.size !== this.reported.size || [ ...next ].some( ( item ) => ! this.reported.has( item ) );
+
+		if ( hasChanged ) {
+			this.report( next );
+		}
 	}
 
 	onResize() {

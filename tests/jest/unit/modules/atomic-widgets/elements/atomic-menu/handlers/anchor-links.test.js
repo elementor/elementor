@@ -197,4 +197,111 @@ describe( 'AnchorLinks', () => {
 		// Assert
 		expect( IntersectionObserverMock.instances[ 0 ].options.rootMargin ).toBe( expected );
 	} );
+
+	describe( 'at the bottom of the page', () => {
+		const PAGE_HEIGHT = 2000;
+		let scrollY;
+		let rects;
+
+		function stubGeometry( entries ) {
+			Object.defineProperty( window, 'scrollY', { get: () => scrollY, configurable: true } );
+			Object.defineProperty( document.documentElement, 'scrollHeight', { get: () => PAGE_HEIGHT, configurable: true } );
+
+			entries.forEach( ( { target } ) => {
+				target.getBoundingClientRect = () => rects.get( target );
+			} );
+		}
+
+		function buildPage() {
+			const first = createEntry( 'first', 900 );
+			const last = createEntry( 'last', 200 );
+			document.body.append( first.target, last.target );
+			rects = new Map( [
+				[ first.target, { top: -700, bottom: 200 } ],
+				[ last.target, { top: 600, bottom: 800 } ],
+			] );
+			scrollY = PAGE_HEIGHT - VIEWPORT_HEIGHT;
+			stubGeometry( [ first, last ] );
+
+			return { first, last };
+		}
+
+		afterEach( () => {
+			document.body.innerHTML = '';
+		} );
+
+		it( 'should make a short last section current although it never reaches the midpoint region', () => {
+			// Arrange
+			const { first, last } = buildPage();
+			const onChange = jest.fn();
+			initialize( [ first, last ], onChange );
+			const [ firstObserver ] = IntersectionObserverMock.instances;
+
+			// Act
+			firstObserver.trigger( true );
+
+			// Assert
+			expect( onChange ).toHaveBeenLastCalledWith( new Set( [ last.item ] ) );
+		} );
+
+		it( 'should keep the midpoint rule when the page is not scrolled to the bottom', () => {
+			// Arrange
+			const { first, last } = buildPage();
+			scrollY = 0;
+			const onChange = jest.fn();
+			initialize( [ first, last ], onChange );
+
+			// Act
+			IntersectionObserverMock.instances[ 0 ].trigger( true );
+
+			// Assert
+			expect( onChange ).toHaveBeenLastCalledWith( new Set( [ first.item ] ) );
+		} );
+
+		it( 'should update when scrolling reaches the bottom without any observer firing', () => {
+			// Arrange
+			const { first, last } = buildPage();
+			scrollY = 0;
+			const onChange = jest.fn();
+			initialize( [ first, last ], onChange );
+			IntersectionObserverMock.instances[ 0 ].trigger( true );
+
+			// Act
+			scrollY = PAGE_HEIGHT - VIEWPORT_HEIGHT;
+			window.dispatchEvent( new Event( 'scroll' ) );
+
+			// Assert
+			expect( onChange ).toHaveBeenLastCalledWith( new Set( [ last.item ] ) );
+		} );
+
+		it( 'should not report again while the active items are unchanged', () => {
+			// Arrange
+			const { first, last } = buildPage();
+			const onChange = jest.fn();
+			initialize( [ first, last ], onChange );
+			IntersectionObserverMock.instances[ 0 ].trigger( true );
+			onChange.mockClear();
+
+			// Act
+			window.dispatchEvent( new Event( 'scroll' ) );
+			window.dispatchEvent( new Event( 'scroll' ) );
+
+			// Assert
+			expect( onChange ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should not force the last section when it is outside the viewport', () => {
+			// Arrange
+			const { first, last } = buildPage();
+			rects.set( last.target, { top: 900, bottom: 1100 } );
+			const onChange = jest.fn();
+			initialize( [ first, last ], onChange );
+
+			// Act
+			IntersectionObserverMock.instances[ 0 ].trigger( true );
+
+			// Assert
+			expect( onChange ).toHaveBeenLastCalledWith( new Set( [ first.item ] ) );
+		} );
+	} );
 } );

@@ -359,7 +359,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 		$global_depends = parent::get_script_depends();
 
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return array_merge( $global_depends, [ 'elementor-menu-handler', 'elementor-menu-current-handler', 'elementor-menu-preview-handler' ] );
+			return array_merge( $global_depends, [ 'elementor-menu-handler', 'elementor-menu-current-handler', 'elementor-menu-preview-handler', 'elementor-menu-current-preview-handler' ] );
 		}
 
 		return array_merge( $global_depends, [ 'elementor-menu-handler', 'elementor-menu-current-handler' ] );
@@ -379,13 +379,15 @@ class Atomic_Menu extends Atomic_Element_Base {
 			);
 		}
 
-		wp_register_script(
-			'elementor-menu-current-handler',
-			"{$assets_url}js/menu-current-handler{$min_suffix}.js",
-			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
-			ELEMENTOR_VERSION,
-			true
-		);
+		foreach ( [ 'menu-current-handler', 'menu-current-preview-handler' ] as $handle ) {
+			wp_register_script(
+				"elementor-{$handle}",
+				"{$assets_url}js/{$handle}{$min_suffix}.js",
+				[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
 	}
 
 	protected function get_templates(): array {

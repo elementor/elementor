@@ -30,13 +30,26 @@ function parseUrl( href, base ) {
 	return {
 		host: url.host.toLowerCase().replace( /^www\./, '' ),
 		path: url.pathname.replace( /^\/+|\/+$/g, '' ),
-		query: url.search.replace( /^\?/, '' ),
+		params: url.searchParams,
 		hash: decodeHash( url.hash ),
 	};
 }
 
+function hasLinkParams( linkParams, pageParams ) {
+	for ( const key of new Set( linkParams.keys() ) ) {
+		const wanted = linkParams.getAll( key );
+		const actual = pageParams.getAll( key );
+
+		if ( wanted.length !== actual.length || wanted.some( ( value, index ) => value !== actual[ index ] ) ) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 function isSamePage( link, page ) {
-	return link.host === page.host && link.path === page.path && link.query === page.query;
+	return link.host === page.host && link.path === page.path && hasLinkParams( link.params, page.params );
 }
 
 export function isCurrentPageLink( href, pageUrl = window.location.href ) {

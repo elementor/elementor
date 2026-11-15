@@ -3,11 +3,15 @@ import AnchorLinks from './anchor-links';
 import { getAnchorId, isCurrentPageLink } from './url-matcher';
 
 const MENU_ELEMENT_TYPE = 'e-menu';
+const ITEM_ELEMENT_TYPE = 'e-menu-item';
+const MENU_SELECTOR = '[data-element_type="e-menu"]';
 const ITEM_SELECTOR = '[data-element_type="e-menu-item"]';
 const CURRENT_CLASS = 'e--current';
 
 function getLinkedItems( menu ) {
-	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter( ( item ) => item.matches( 'a[href]' ) );
+	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter(
+		( item ) => item.matches( 'a[href]' ) && item.closest( MENU_SELECTOR ) === menu,
+	);
 }
 
 function findAnchorEntries( items ) {
@@ -32,33 +36,48 @@ function setCurrent( item, ariaCurrent ) {
 register( {
 	elementType: MENU_ELEMENT_TYPE,
 	id: 'e-menu-current-handler',
-	callback: ( { element, signal } ) => {
-		const items = getLinkedItems( element );
-		const pageItems = new Set( items.filter( ( item ) => isCurrentPageLink( item.getAttribute( 'href' ) ) ) );
+	callback: ( { element, signal, listenToChildren } ) => {
+		let anchorLinks = null;
 
-		const render = ( activeAnchorItems ) => {
-			items.forEach( ( item ) => {
-				if ( activeAnchorItems.has( item ) ) {
-					setCurrent( item, 'location' );
-				} else if ( ! activeAnchorItems.size && pageItems.has( item ) ) {
-					setCurrent( item, 'page' );
-				} else {
-					setCurrent( item, null );
-				}
-			} );
+		const setup = () => {
+			anchorLinks?.destroy();
+			anchorLinks = null;
+
+			const items = getLinkedItems( element );
+			const pageItems = new Set( items.filter( ( item ) => isCurrentPageLink( item.getAttribute( 'href' ) ) ) );
+
+			const render = ( activeAnchorItems ) => {
+				items.forEach( ( item ) => {
+					if ( activeAnchorItems.has( item ) ) {
+						setCurrent( item, 'location' );
+					} else if ( ! activeAnchorItems.size && pageItems.has( item ) ) {
+						setCurrent( item, 'page' );
+					} else {
+						setCurrent( item, null );
+					}
+				} );
+			};
+
+			render( new Set() );
+
+			const anchorEntries = findAnchorEntries( items );
+
+			if ( ! anchorEntries.length ) {
+				return;
+			}
+
+			anchorLinks = new AnchorLinks( anchorEntries, render );
+			anchorLinks.initialize();
 		};
 
-		render( new Set() );
+		setup();
 
-		const anchorEntries = findAnchorEntries( items );
+		signal.addEventListener( 'abort', () => anchorLinks?.destroy(), { once: true } );
 
-		if ( ! anchorEntries.length ) {
-			return;
-		}
-
-		const anchorLinks = new AnchorLinks( anchorEntries, render );
-
-		anchorLinks.initialize();
-		signal.addEventListener( 'abort', () => anchorLinks.destroy(), { once: true } );
+		listenToChildren( [ ITEM_ELEMENT_TYPE ] ).render( ( event ) => {
+			if ( event.detail.element.closest( MENU_SELECTOR ) === element ) {
+				setup();
+			}
+		} );
 	},
 } );

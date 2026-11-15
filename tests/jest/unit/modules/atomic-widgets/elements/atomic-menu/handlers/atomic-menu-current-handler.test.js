@@ -89,8 +89,20 @@ describe( 'atomic-menu current handler', () => {
 		document.body.innerHTML = '';
 	} );
 
+	let childRenderCallbacks;
+
 	function run( menu, signal = new AbortController().signal ) {
-		registration.callback( { element: menu, signal } );
+		childRenderCallbacks = [];
+
+		registration.callback( {
+			element: menu,
+			signal,
+			listenToChildren: () => ( { render: ( callback ) => childRenderCallbacks.push( callback ) } ),
+		} );
+	}
+
+	function renderChild( item ) {
+		childRenderCallbacks.forEach( ( callback ) => callback( { detail: { element: item } } ) );
 	}
 
 	it( 'should register for the menu element', () => {
@@ -270,5 +282,98 @@ describe( 'atomic-menu current handler', () => {
 			// Assert
 			expect( IntersectionObserverMock.instances[ 0 ].disconnected ).toBe( true );
 		} );
+	} );
+
+	it( 'should refresh Current when a menu item is rendered again with another link', () => {
+		// Arrange
+		const { menu, items } = buildMenu( [ `${ ORIGIN }/`, `${ ORIGIN }/contact/` ] );
+		run( menu );
+
+		// Act
+		items[ 0 ].setAttribute( 'href', `${ ORIGIN }/about/` );
+		renderChild( items[ 0 ] );
+
+		// Assert
+		expect( items.map( ( item ) => item.classList.contains( CURRENT_CLASS ) ) ).toEqual( [ true, false ] );
+	} );
+
+	it( 'should pick up an item added after the first run', () => {
+		// Arrange
+		const { menu } = buildMenu( [ `${ ORIGIN }/contact/` ] );
+		run( menu );
+		const entry = document.createElement( 'li' );
+		const added = document.createElement( 'a' );
+		added.dataset.element_type = 'e-menu-item';
+		added.setAttribute( 'href', `${ ORIGIN }/about/` );
+		entry.append( added );
+		menu.append( entry );
+
+		// Act
+		renderChild( added );
+
+		// Assert
+		expect( added.classList.contains( CURRENT_CLASS ) ).toBe( true );
+	} );
+
+	it( 'should disconnect the old observers when it refreshes', () => {
+		// Arrange
+		const { menu, items } = buildMenu( [ `${ ORIGIN }/about/#contact` ] );
+		const section = document.createElement( 'section' );
+		section.id = 'contact';
+		document.body.append( section );
+		run( menu );
+		const [ firstObserver ] = IntersectionObserverMock.instances;
+
+		// Act
+		renderChild( items[ 0 ] );
+
+		// Assert
+		expect( firstObserver.disconnected ).toBe( true );
+		expect( IntersectionObserverMock.instances ).toHaveLength( 2 );
+	} );
+
+	it( 'should ignore a child that belongs to a nested menu', () => {
+		// Arrange
+		const { menu } = buildMenu( [ `${ ORIGIN }/contact/` ] );
+		const nested = document.createElement( 'nav' );
+		nested.dataset.element_type = 'e-menu';
+		const nestedItem = document.createElement( 'a' );
+		nestedItem.dataset.element_type = 'e-menu-item';
+		nestedItem.setAttribute( 'href', `${ ORIGIN }/about/#contact` );
+		nested.append( nestedItem );
+		menu.append( nested );
+		const section = document.createElement( 'section' );
+		section.id = 'contact';
+		document.body.append( section );
+		run( menu );
+		const observersBefore = IntersectionObserverMock.instances.length;
+
+		// Act
+		renderChild( nestedItem );
+
+		// Assert
+		expect( IntersectionObserverMock.instances ).toHaveLength( observersBefore );
+	} );
+
+	it( 'should leave the items of a nested menu to that menu', () => {
+		// Arrange
+		const { menu, items } = buildMenu( [ `${ ORIGIN }/about/` ] );
+		const nested = document.createElement( 'nav' );
+		nested.dataset.element_type = 'e-menu';
+		const nestedItem = document.createElement( 'a' );
+		nestedItem.dataset.element_type = 'e-menu-item';
+		nestedItem.setAttribute( 'href', `${ ORIGIN }/about/#sec` );
+		nested.append( nestedItem );
+		items[ 0 ].append( nested );
+		const section = document.createElement( 'section' );
+		section.id = 'sec';
+		document.body.append( section );
+
+		// Act
+		run( menu );
+
+		// Assert
+		expect( IntersectionObserverMock.instances ).toHaveLength( 0 );
+		expect( items[ 0 ].classList.contains( CURRENT_CLASS ) ).toBe( true );
 	} );
 } );
