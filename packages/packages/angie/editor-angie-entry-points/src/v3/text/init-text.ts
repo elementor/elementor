@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
+import { buildAngieV3TextPrompt } from '../../prompts';
 import { registerV3AngieControl } from '../registry';
-import { buildAngieTextPrompt } from './text-prompts';
 
 const ANGIE_TEXT_AI_TYPES = [ 'text', 'textarea', 'wysiwyg' ];
 
@@ -9,7 +9,7 @@ export function initV3TextControls(): void {
 	registerV3AngieControl( {
 		types: ANGIE_TEXT_AI_TYPES,
 		buildPrompt: ( { controlType, getControlValue, context } ) =>
-			buildAngieTextPrompt( {
+			buildAngieV3TextPrompt( {
 				elementId: context.elementId,
 				controlName: context.controlName,
 				controlType: controlType || context.controlType || 'text',

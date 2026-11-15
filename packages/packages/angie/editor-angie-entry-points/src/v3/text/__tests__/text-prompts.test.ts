@@ -1,9 +1,9 @@
-import { buildAngieTextPrompt } from '../text-prompts';
+import { buildAngieV3TextPrompt } from '../../../prompts';
 
-describe( 'buildAngieTextPrompt', () => {
+describe( 'buildAngieV3TextPrompt', () => {
 	it( 'includes element, control, and the write-back tool name without embedding the current value', () => {
 		// Arrange / Act
-		const prompt = buildAngieTextPrompt( {
+		const prompt = buildAngieV3TextPrompt( {
 			elementId: 'el-1',
 			controlName: 'title',
 			controlType: 'text',
@@ -21,7 +21,7 @@ describe( 'buildAngieTextPrompt', () => {
 
 	it( 'mentions an empty control when there is no current value', () => {
 		// Arrange / Act
-		const prompt = buildAngieTextPrompt( {
+		const prompt = buildAngieV3TextPrompt( {
 			elementId: 'el-1',
 			controlName: 'title',
 			controlType: 'textarea',
