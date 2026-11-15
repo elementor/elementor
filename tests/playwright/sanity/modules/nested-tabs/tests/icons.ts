@@ -7,7 +7,7 @@ export async function testIconCount( editor: EditorPage ) {
 		iconCountForMainContainer = await editor.getPreviewFrame().locator( '#elementor-add-new-section .elementor-add-new-section i' ).count();
 
 	// Assert.
-	// Check if the tabs has 1 icon in the Add Section element and the main container 2 icons.
+	// Tabs add-section area has 1 icon; main container has add-section + add-template (no legacy AI layout button).
 	expect.soft( iconCountForTabs ).toBe( 1 );
-	expect.soft( iconCountForMainContainer ).toEqual( 3 );
+	expect.soft( iconCountForMainContainer ).toEqual( 2 );
 }
