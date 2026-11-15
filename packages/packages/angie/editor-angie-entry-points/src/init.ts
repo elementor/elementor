@@ -14,8 +14,11 @@ import { AngieInteractionsHeaderAction } from './interactions/angie-interactions
 import { AngieCustomCssHeaderAction } from './style-section/angie-custom-css-header-action';
 import { AngieVariableFormHeaderAction } from './variables/angie-variable-form-header-action';
 import { AngieVariablesManagerHeaderAction } from './variables/angie-variables-manager-header-action';
+import { initV3 } from './v3/init-v3';
 
 export function init(): void {
+	initV3();
+
 	injectIntoControlHeader( {
 		id: 'angie-control-header-action',
 		component: AngieControlHeaderAction,
