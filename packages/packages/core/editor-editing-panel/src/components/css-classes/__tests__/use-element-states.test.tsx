@@ -25,6 +25,25 @@ describe( 'useElementStates', () => {
 		expect( result.current.elementTitle ).toBe( 'Menu item' );
 	} );
 
+	it( 'should keep the selected and disabled labels for the other atomic elements', () => {
+		// Arrange
+		jest.mocked( useElement ).mockReturnValue( {
+			elementType: {
+				title: 'Tab',
+				styleStates: [
+					{ name: 'selected', value: 'e--selected' },
+					{ name: 'disabled', value: 'e--disabled' },
+				],
+			},
+		} as unknown as ReturnType< typeof useElement > );
+
+		// Act
+		const { result } = renderHook( () => useElementStates() );
+
+		// Assert
+		expect( result.current.elementStates.map( ( { label } ) => label ) ).toEqual( [ 'selected', 'disabled' ] );
+	} );
+
 	it( 'should fall back to the state name when there is no label', () => {
 		// Arrange
 		jest.mocked( useElement ).mockReturnValue( {

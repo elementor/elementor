@@ -40,7 +40,7 @@ function isSamePage( link, page ) {
 }
 
 export function isCurrentPageLink( href, pageUrl = window.location.href ) {
-	if ( 'string' === typeof href && href.trim().startsWith( '#' ) ) {
+	if ( String( href ).trim().startsWith( '#' ) ) {
 		return false;
 	}
 

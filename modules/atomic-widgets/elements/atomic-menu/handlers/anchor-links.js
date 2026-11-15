@@ -21,7 +21,9 @@ export default class AnchorLinks {
 		const viewportHeight = window.innerHeight;
 
 		this.entries.forEach( ( { item, target } ) => {
-			const observer = new IntersectionObserver( ( [ entry ] ) => {
+			const observer = new IntersectionObserver( ( entries ) => {
+				const entry = entries[ entries.length - 1 ];
+
 				this.toggle( item, entry.isIntersecting );
 			}, {
 				root: null,
@@ -42,7 +44,7 @@ export default class AnchorLinks {
 	// Core copy of elementor-pro/assets/dev/js/frontend/utils/anchor-link.js; keep the margin rule in sync with it.
 	calculateRootMargin( target, viewportHeight ) {
 		const halfViewport = viewportHeight / 2;
-		const isTallerThanHalfViewport = ( target.offsetHeight || 0 ) > halfViewport;
+		const isTallerThanHalfViewport = target.offsetHeight > halfViewport;
 		const blockStart = isTallerThanHalfViewport ? -halfViewport : 0;
 
 		return `${ blockStart }px 0px ${ -halfViewport }px 0px`;

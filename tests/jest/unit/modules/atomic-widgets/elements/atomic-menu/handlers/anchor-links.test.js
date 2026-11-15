@@ -165,4 +165,36 @@ describe( 'AnchorLinks', () => {
 		expect( IntersectionObserverMock.instances ).toHaveLength( 1 );
 		expect( IntersectionObserverMock.instances[ 0 ].disconnected ).toBe( true );
 	} );
+
+	it( 'should use the latest entry when the observer reports several at once', () => {
+		// Arrange
+		const entry = createEntry( 'contact' );
+		const onChange = jest.fn();
+		initialize( [ entry ], onChange );
+		const [ observer ] = IntersectionObserverMock.instances;
+
+		// Act
+		observer.callback( [
+			{ target: entry.target, isIntersecting: true },
+			{ target: entry.target, isIntersecting: false },
+		] );
+
+		// Assert
+		expect( onChange ).toHaveBeenLastCalledWith( new Set() );
+	} );
+
+	it.each( [
+		[ 'a section exactly half the viewport', VIEWPORT_HEIGHT / 2, '0px 0px -400px 0px' ],
+		[ 'a section just over half the viewport', ( VIEWPORT_HEIGHT / 2 ) + 1, '-400px 0px -400px 0px' ],
+		[ 'a collapsed section', 0, '0px 0px -400px 0px' ],
+	] )( 'should compute the root margin for %s', ( _, height, expected ) => {
+		// Arrange
+		const entry = createEntry( 'section', height );
+
+		// Act
+		initialize( [ entry ] );
+
+		// Assert
+		expect( IntersectionObserverMock.instances[ 0 ].options.rootMargin ).toBe( expected );
+	} );
 } );
