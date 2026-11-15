@@ -6,8 +6,6 @@ import useFeaturedImagePrompt from './hooks/use-featured-image-prompt';
 import { AIMediaGenerateApp } from '../media-library/components';
 import { RequestIdsProvider } from './context/requests-ids';
 import React from 'react';
-import { tryOpenAngieForTextControl } from './angie/open-angie-text';
-
 export default class AiBehavior extends Marionette.Behavior {
 	initialize() {
 		this.type = 'text';
@@ -63,20 +61,10 @@ export default class AiBehavior extends Marionette.Behavior {
 		return pageTextContent.join( '\n' );
 	}
 
-	onAiButtonClick( event, { skipAngie = false } = {} ) {
+	onAiButtonClick( event ) {
 		event.stopPropagation();
 
 		const context = this.getOption( 'context' ) || {};
-
-		if ( ! skipAngie && tryOpenAngieForTextControl( {
-			type: this.getOption( 'type' ),
-			controlType: this.getOption( 'controlType' ) || context.controlType,
-			getControlValue: this.getOption( 'getControlValue' ),
-			context,
-			onFallback: () => this.onAiButtonClick( event, { skipAngie: true } ),
-		} ) ) {
-			return;
-		}
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 
