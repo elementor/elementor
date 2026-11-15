@@ -140,6 +140,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
 		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			'container',
+			Experiments_Manager::STATE_ACTIVE
+		);
 		add_filter( 'pre_option_active_plugins', static fn() => $active_plugins );
 		$this->register_angie_script();
 
@@ -164,6 +168,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		// Arrange.
 		Plugin::$instance->experiments->set_feature_default_state(
 			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			'container',
 			Experiments_Manager::STATE_ACTIVE
 		);
 		update_user_option( get_current_user_id(), Preferences::ENABLE_AI, '0' );
