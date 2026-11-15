@@ -93,3 +93,33 @@ export const buildAngieV3TextPrompt = ( {
 		'When ready, use the v3-text-control tool to read or set this control value. Do not invent other write paths.',
 	].join( '\n\n' );
 };
+
+export const buildAngieV3CodePrompt = ( {
+	elementId,
+	controlName,
+	controlType,
+	language,
+	currentValue,
+}: {
+	elementId?: string;
+	controlName?: string;
+	controlType?: string;
+	language?: string;
+	currentValue?: unknown;
+} ): string => {
+	const hasExistingCode = 'string' === typeof currentValue && Boolean( currentValue.trim() );
+	const languageLabel = language || 'code';
+	const actionHint = hasExistingCode
+		? `Write improved ${ languageLabel }, edit the current ${ languageLabel }, or generate a replacement.`
+		: `Write new ${ languageLabel } for this control.`;
+
+	return [
+		`Update the V3 ${ controlType || 'code' } control "${ controlName }" on element "${ elementId }".`,
+		language ? `Language: ${ language }.` : 'Language is unspecified.',
+		actionHint,
+		hasExistingCode
+			? 'The control has existing code. Call v3-code-control with action "get" before editing, then action "set" when ready.'
+			: 'The control is currently empty.',
+		'When ready, use the v3-code-control tool to read or set this control value. Do not invent other write paths.',
+	].join( '\n\n' );
+};
