@@ -1,16 +1,16 @@
 import { getGenerateWithAngieLabel } from '../../labels';
-import type {
-	AngieBehaviorView,
-	BehaviorJQueryElement,
-	GetButtonLabelArgs,
-	MarionetteBehaviorConstructor,
+import {
+	type AngieBehaviorView,
+	type GetButtonLabelArgs,
+	getExtendedWindow,
+	type MarionetteBehaviorConstructor,
 } from '../types';
 import { openV3ControlFromBehavior } from './open-v3-control';
 
 let cachedBehaviorClass: MarionetteBehaviorConstructor | undefined;
 
 function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
-	const Marionette = window.Marionette;
+	const { Marionette } = getExtendedWindow();
 
 	if ( ! Marionette?.Behavior ) {
 		throw new Error( 'Marionette is not available' );
@@ -48,7 +48,8 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 		},
 
 		onRender( this: AngieBehaviorView ) {
-			const isPromotion = ! window.ElementorAiConfig?.is_get_started;
+			const { ElementorAiConfig, jQuery } = getExtendedWindow();
+			const isPromotion = ! ElementorAiConfig?.is_get_started;
 			const buttonLabel = this.getAiButtonLabel();
 
 			let buttonClass = 'e-ai-button';
@@ -57,15 +58,13 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 				buttonClass += ' e-active';
 			}
 
-			const jQuery = window.jQuery;
-
 			if ( ! jQuery ) {
 				return;
 			}
 
 			const $button = jQuery( '<button>', {
 				class: buttonClass,
-			} ) as BehaviorJQueryElement;
+			} );
 
 			$button.html( '<i class="eicon-ai"></i>' );
 

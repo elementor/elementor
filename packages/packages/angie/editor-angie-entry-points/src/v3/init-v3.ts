@@ -1,6 +1,7 @@
 import { __privateListenTo as listenTo, isExperimentActive, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { applyAngieControlBehavior } from './apply-angie-control-behavior';
+import { getExtendedWindow } from './types';
 
 const CONTROLS_BEHAVIORS_FILTER = 'controls/base/behaviors';
 const FILTER_PRIORITY = 20;
@@ -12,7 +13,7 @@ export function initV3(): void {
 	}
 
 	listenTo( v1ReadyEvent(), () => {
-		window.elementor?.hooks?.addFilter(
+		getExtendedWindow().elementor?.hooks?.addFilter(
 			CONTROLS_BEHAVIORS_FILTER,
 			applyAngieControlBehavior as (
 				behaviors: Record< string, unknown >,

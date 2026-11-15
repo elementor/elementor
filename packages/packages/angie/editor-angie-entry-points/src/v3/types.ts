@@ -66,3 +66,33 @@ export type AngieBehaviorView = {
 	$el: BehaviorDomQuery;
 	getAiButtonLabel: () => string;
 };
+
+/**
+ * Runtime editor globals used by V3 Angie entry points.
+ * Kept local so we do not narrow the shared Window.elementor / Marionette shapes
+ * in packages/types/global.d.ts (those must stay additive for the monorepo).
+ */
+export type ExtendedWindow = Window & {
+	Marionette?: {
+		Behavior: {
+			extend: ( proto: Record< string, unknown > ) => MarionetteBehaviorConstructor;
+		};
+	};
+	jQuery?: ( tag: string, attrs?: Record< string, string > ) => BehaviorJQueryElement;
+	ElementorAiConfig?: {
+		is_get_started?: boolean | string;
+	};
+	elementor?: Window[ 'elementor' ] & {
+		hooks?: {
+			addFilter: (
+				name: string,
+				callback: ( behaviors: Record< string, unknown >, view: unknown ) => Record< string, unknown >,
+				priority?: number
+			) => void;
+		};
+	};
+};
+
+export function getExtendedWindow(): ExtendedWindow {
+	return window as ExtendedWindow;
+}
