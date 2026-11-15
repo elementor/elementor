@@ -48,18 +48,17 @@ describe( 'menu current early script', () => {
 		expect( items[ 2 ].classList.contains( CURRENT_CLASS ) ).toBe( false );
 	} );
 
-	it( 'should leave the menu to the handler when it has an anchor link to the current page', () => {
+	it( 'should still mark the page link when the menu also has an anchor link', () => {
 		// Arrange
-		const { items, script } = buildMenu( [ `${ ORIGIN }/`, `${ ORIGIN }/#contact` ] );
+		const { items, script } = buildMenu( [ `${ ORIGIN }/#contact`, `${ ORIGIN }/` ] );
 
 		// Act
 		runEarlyScript( script );
 
 		// Assert
-		items.forEach( ( item ) => {
-			expect( item.classList.contains( CURRENT_CLASS ) ).toBe( false );
-			expect( item.hasAttribute( 'aria-current' ) ).toBe( false );
-		} );
+		expect( items[ 0 ].classList.contains( CURRENT_CLASS ) ).toBe( false );
+		expect( items[ 1 ].classList.contains( CURRENT_CLASS ) ).toBe( true );
+		expect( items[ 1 ].getAttribute( 'aria-current' ) ).toBe( 'page' );
 	} );
 
 	it( 'should not mark a placeholder hash link', () => {
