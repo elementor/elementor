@@ -22,6 +22,7 @@ class Module extends BaseModule {
 	const ADMIN_NAVIGATION_EXPERIMENT_NAME = 'e_admin_navigation';
 
 	const EDITOR_ONE_EXPERIMENT_NAME = 'e_editor_one';
+	const EDITOR_SIDEBAR_EXPERIMENT_NAME = 'e_editor_sidebar';
 
 	const CUSTOM_REACT_APP_PAGES = [
 		'elementor-element-manager',
@@ -69,9 +70,20 @@ class Module extends BaseModule {
 		Plugin::$instance->experiments->add_feature( self::get_editor_one_experimental_data() );
 	}
 
+	private function register_editor_sidebar_experiment(): void {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EDITOR_SIDEBAR_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Editor Sidebar', 'elementor' ),
+			'description' => esc_html__( 'Editor sidebar with the relocated top bar controls.', 'elementor' ),
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
 	public function __construct() {
 		parent::__construct();
 		$this->register_editor_one_experiment();
+		$this->register_editor_sidebar_experiment();
 		$this->register_admin_navigation_experiment();
 
 		if ( is_admin() ) {
