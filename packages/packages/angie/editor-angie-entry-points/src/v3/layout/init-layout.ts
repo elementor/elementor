@@ -14,6 +14,7 @@ const CONTAINER_CONTEXT_MENU_FILTER = 'elements/container/contextMenuGroups';
 const TEMPLATE_LIBRARY_BEHAVIORS_FILTER = 'elementor/editor/template-library/template/behaviors';
 const TEMPLATE_LIBRARY_ACTION_BUTTON_FILTER = 'elementor/editor/template-library/template/action-button';
 
+/** ED-26130 — Build with AI: add-section, container variations, library variations. */
 export function initV3Layout(): void {
 	listenTo( v1ReadyEvent(), () => {
 		const hooks = getExtendedWindow().elementor?.hooks;

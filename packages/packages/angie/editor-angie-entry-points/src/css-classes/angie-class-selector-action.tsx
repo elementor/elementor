@@ -26,6 +26,7 @@ const useActiveClassLabel = (): string | null => {
 	return null;
 };
 
+/** ED-26281 — Classes AI entry point (styles prompt when only local is active). */
 export const AngieClassSelectorAction = () => {
 	const { element } = useElement();
 	const activeClassLabel = useActiveClassLabel();

@@ -89,22 +89,17 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( getAngieControlBehaviorClass ).toHaveBeenCalled();
 	} );
 
-	it( 'uses placeholder behavior when type is not registered', () => {
-		// Arrange
+	it( 'skips when type is not registered (no ticketed Angie replacement)', () => {
+		// Arrange — media/excerpt have no replace ticket (ED-26337 deletes them)
 		const behaviors = {};
-		const view = createView( { ai: { active: true, type: 'unknown-future-type' } } );
+		const view = createView( { ai: { active: true, type: 'media' } } );
 
 		// Act
 		const result = applyAngieControlBehavior( behaviors, view );
 
 		// Assert
-		expect( result.ai ).toEqual(
-			expect.objectContaining( {
-				type: 'unknown-future-type',
-				behaviorClass: expect.any( Function ),
-			} )
-		);
-		expect( getAngieControlBehaviorClass ).toHaveBeenCalled();
+		expect( result ).toEqual( {} );
+		expect( getAngieControlBehaviorClass ).not.toHaveBeenCalled();
 	} );
 
 	it( 'skips when ai.active is false', () => {
@@ -164,27 +159,17 @@ describe( 'applyAngieControlBehavior', () => {
 	it( 'honors shouldApply gate for registered types', () => {
 		// Arrange
 		registerV3AngieControl( {
-			types: [ 'media' ],
+			types: [ 'code' ],
 			buildPrompt,
-			shouldApply: ( view ) => {
-				const mediaTypes = view.options.model.get( 'media_types' );
-				return Array.isArray( mediaTypes ) && mediaTypes.includes( 'image' );
-			},
+			shouldApply: () => false,
 		} );
-		const skipped = createView( {
-			ai: { active: true, type: 'media' },
-			controlType: 'media',
-			mediaTypes: [ 'video' ],
-		} );
-		const applied = createView( {
-			ai: { active: true, type: 'media' },
-			controlType: 'media',
-			mediaTypes: [ 'image' ],
-		} );
+		const view = createView( { ai: { active: true, type: 'code' }, controlType: 'code' } );
 
-		// Act / Assert
-		expect( applyAngieControlBehavior( {}, skipped ).ai ).toBeUndefined();
-		expect( applyAngieControlBehavior( {}, applied ).ai ).toBeDefined();
+		// Act
+		const result = applyAngieControlBehavior( {}, view );
+
+		// Assert
+		expect( result.ai ).toBeUndefined();
 	} );
 
 	it( 'skips when shouldShowAngieEntryPoints returns false', () => {

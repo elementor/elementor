@@ -4,7 +4,6 @@ import { initV3AnimationControls } from './animation/init-animation';
 import { applyAngieControlBehavior } from './apply-angie-control-behavior';
 import { initV3CodeControls } from './code/init-code';
 import { initV3Layout } from './layout/init-layout';
-import { initV3PlaceholderControls } from './placeholders/init-placeholders';
 import { initV3TextControls } from './text/init-text';
 import { getExtendedWindow } from './types';
 
@@ -12,6 +11,23 @@ const CONTROLS_BEHAVIORS_FILTER = 'controls/base/behaviors';
 const FILTER_PRIORITY = 20;
 const ANGIE_IN_PANELS_EXPERIMENT = 'e_angie_in_panels';
 
+/**
+ * V3 Angie entry points — ticket coverage (Epic ED-25282):
+ *
+ * | Button / location                         | Ticket    |
+ * | ----------------------------------------- | --------- |
+ * | Write/Edit with AI (text/textarea/wysiwyg)| ED-26124  |
+ * | Code with AI                              | ED-26126  |
+ * | Animate with AI / hover animation         | ED-26128  |
+ * | Build with AI (add-section)               | ED-26130  |
+ * | Generate variations (container menu)      | ED-26130  |
+ * | Generate Variations (template library)    | ED-26130  |
+ * | Show AI gate                              | ED-26336  |
+ * | Entry-points package infra                | ED-26335  |
+ *
+ * Intentionally NOT restored (deleted by ED-26337, no Angie replace ticket):
+ * media / Create with AI, excerpt, navigator AI titles.
+ */
 export function initV3(): void {
 	if ( ! isExperimentActive( ANGIE_IN_PANELS_EXPERIMENT ) ) {
 		return;
@@ -20,7 +36,6 @@ export function initV3(): void {
 	initV3TextControls();
 	initV3CodeControls();
 	initV3AnimationControls();
-	initV3PlaceholderControls();
 	initV3Layout();
 
 	listenTo( v1ReadyEvent(), () => {

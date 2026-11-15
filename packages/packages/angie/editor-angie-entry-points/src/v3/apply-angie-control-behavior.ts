@@ -1,19 +1,8 @@
-import { getGenerateWithAngieLabel } from '../labels';
 import { getAngieControlBehaviorClass } from './behavior/create-behavior-class';
 import { getV3ControlContext } from './context';
 import { shouldShowAngieEntryPoints } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';
-import type { BehaviorsMap, BuildV3AngiePromptArgs, V3AngieControlRegistration, V3ControlViewWithGetValue } from './types';
-
-const placeholderRegistration: V3AngieControlRegistration = {
-	types: [],
-	buildPrompt: ( { type, controlType, context }: BuildV3AngiePromptArgs ) =>
-		[
-			`Help with the V3 "${ type }" AI control "${ context.controlName }" (control type "${ controlType }") on element "${ context.elementId }".`,
-			'Ask the user what they want to change, then guide them.',
-		].join( '\n\n' ),
-	getButtonLabel: () => getGenerateWithAngieLabel(),
-};
+import type { BehaviorsMap, V3ControlViewWithGetValue } from './types';
 
 export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithGetValue ): BehaviorsMap {
 	if ( ! shouldShowAngieEntryPoints() ) {
@@ -28,7 +17,13 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 	}
 
 	const aiType = aiOptions.type;
-	const entry = getV3AngieControl( aiType ) ?? placeholderRegistration;
+	const entry = getV3AngieControl( aiType );
+
+	// Only show a button when a dedicated Angie replacement is registered
+	// (ticketed). Uncovered types (e.g. media / excerpt per ED-26337) stay gone.
+	if ( ! entry ) {
+		return behaviors;
+	}
 
 	if ( entry.shouldApply && ! entry.shouldApply( view, aiType ) ) {
 		return behaviors;
