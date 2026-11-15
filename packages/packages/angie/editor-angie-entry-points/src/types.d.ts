@@ -19,6 +19,11 @@ declare global {
 		ElementorAiConfig?: {
 			is_get_started?: boolean | string;
 		};
+		elementorV2?: {
+			editorAngie?: {
+				openAngie?: unknown;
+			};
+		};
 		elementor?: {
 			hooks?: {
 				addFilter: (

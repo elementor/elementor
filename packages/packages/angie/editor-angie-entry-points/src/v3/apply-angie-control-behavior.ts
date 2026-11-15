@@ -1,4 +1,4 @@
-import { getAngieControlBehaviorClass } from './angie-control-behavior';
+import { getAngieControlBehaviorClass } from './behavior/create-behavior-class';
 import { getV3ControlContext } from './context';
 import { isAngieEntryPointsEnabled } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';

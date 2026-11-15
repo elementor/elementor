@@ -1,14 +1,11 @@
-import { openAngieInAgentMode } from '@elementor/editor-mcp';
-
-import { getGenerateWithAngieLabel } from '../labels';
+import { getGenerateWithAngieLabel } from '../../labels';
 import type {
 	AngieBehaviorView,
 	BehaviorJQueryElement,
-	BuildV3AngiePromptArgs,
 	GetButtonLabelArgs,
 	MarionetteBehaviorConstructor,
-	V3AngieControlContext,
-} from './types';
+} from '../types';
+import { openV3ControlFromBehavior } from './open-v3-control';
 
 let cachedBehaviorClass: MarionetteBehaviorConstructor | undefined;
 
@@ -30,24 +27,7 @@ function createAngieControlBehaviorClass(): MarionetteBehaviorConstructor {
 
 		onAiButtonClick( this: AngieBehaviorView, event: Event ) {
 			event.stopPropagation();
-
-			try {
-				const buildPrompt = this.getOption( 'buildPrompt' ) as ( args: BuildV3AngiePromptArgs ) => string;
-				const prompt = buildPrompt( {
-					type: this.getOption( 'type' ) as string,
-					controlType: this.getOption( 'controlType' ) as string,
-					getControlValue: this.getOption( 'getControlValue' ) as () => unknown,
-					context: ( this.getOption( 'context' ) as V3AngieControlContext ) || {},
-					additionalOptions: this.getOption(
-						'additionalOptions'
-					) as BuildV3AngiePromptArgs[ 'additionalOptions' ],
-				} );
-
-				openAngieInAgentMode( prompt );
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to open Angie for V3 control:', error );
-			}
+			openV3ControlFromBehavior( this );
 		},
 
 		getAiButtonLabel( this: AngieBehaviorView ) {

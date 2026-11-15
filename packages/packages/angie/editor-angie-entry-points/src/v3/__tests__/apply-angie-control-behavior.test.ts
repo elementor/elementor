@@ -1,4 +1,4 @@
-jest.mock( '../angie-control-behavior', () => ( {
+jest.mock( '../behavior/create-behavior-class', () => ( {
 	getAngieControlBehaviorClass: jest.fn( () => function SentinelBehavior() {} ),
 } ) );
 
@@ -6,8 +6,8 @@ jest.mock( '../is-angie-entry-points-enabled', () => ( {
 	isAngieEntryPointsEnabled: jest.fn( () => true ),
 } ) );
 
-import { getAngieControlBehaviorClass } from '../angie-control-behavior';
 import { applyAngieControlBehavior } from '../apply-angie-control-behavior';
+import { getAngieControlBehaviorClass } from '../behavior/create-behavior-class';
 import { isAngieEntryPointsEnabled } from '../is-angie-entry-points-enabled';
 import { clearV3AngieControls, registerV3AngieControl } from '../registry';
 
@@ -90,7 +90,7 @@ describe( 'applyAngieControlBehavior', () => {
 	it( 'skips when type is not registered', () => {
 		// Arrange
 		const behaviors = {};
-		const view = createView( { ai: { active: true, type: 'code' } } );
+		const view = createView( { ai: { active: true, type: 'media' } } );
 
 		// Act
 		const result = applyAngieControlBehavior( behaviors, view );
