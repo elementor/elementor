@@ -10,7 +10,7 @@ export function ComponentsPanel() {
 			<PanelHeader>
 				<PanelHeaderTitle>{ __( 'Components', 'elementor' ) }</PanelHeaderTitle>
 			</PanelHeader>
-			<PanelBody>
+			<PanelBody sx={ { display: 'flex', flexDirection: 'column' } }>
 				<Components />
 			</PanelBody>
 		</Panel>
