@@ -13,6 +13,7 @@ import { useScrollDirection } from '../contexts/scroll-context';
 import { StyleProvider } from '../contexts/style-context';
 import { StyleInheritanceProvider } from '../contexts/styles-inheritance-context';
 import { useActiveStyleDefId } from '../hooks/use-active-style-def-id';
+import { useBroadcastStyleState } from '../hooks/use-broadcast-style-state';
 import { CssClassSelector } from './css-classes/css-class-selector';
 import { SectionsList } from './sections-list';
 import { StyleSections } from './style-sections';
@@ -34,6 +35,8 @@ export const StyleTab = () => {
 	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp ?? '' );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
+
+	useBroadcastStyleState( activeStyleState );
 
 	if ( ! currentClassesProp ) {
 		return null;
