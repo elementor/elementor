@@ -1,8 +1,8 @@
 import { createPanel } from '@elementor/editor-panels';
 
-import { Components } from '../components-tab/components';
+import { ComponentsPanel } from './components-panel';
 
 export const { panel, usePanelStatus, usePanelActions } = createPanel( {
 	id: 'components-panel',
-	component: Components,
+	component: ComponentsPanel,
 } );
