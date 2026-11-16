@@ -8,6 +8,7 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -144,7 +145,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 			$response = $undo_point->add_to_response( $response );
 		}
 
-		return $response;
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	private function is_live( Document $document ): bool {
