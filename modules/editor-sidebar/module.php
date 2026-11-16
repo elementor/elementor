@@ -4,7 +4,6 @@ namespace Elementor\Modules\EditorSidebar;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +29,6 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& EditorOneModule::is_editor_one_active();
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 }

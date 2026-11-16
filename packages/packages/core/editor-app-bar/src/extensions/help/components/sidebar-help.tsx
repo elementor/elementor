@@ -33,7 +33,12 @@ export default function SidebarHelp() {
 					<HelpIcon />
 				</IconButton>
 			</Tooltip>
-			<Menu { ...bindMenu( popupState ) } onClick={ popupState.close }>
+			<Menu
+				{ ...bindMenu( popupState ) }
+				anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
+				transformOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+				onClick={ popupState.close }
+			>
 				<MenuItem component="a" href={ HELP_CENTER_URL } target="_blank" onClick={ dispatchHelpClickEvent }>
 					<ListItemIcon>
 						<HelpIcon />
