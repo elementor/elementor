@@ -39,6 +39,7 @@ class App extends BaseApp {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'register_scripts' ], 9 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_scripts' ], 9 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ], 9 );
+		add_action( 'elementor/frontend/before_register_scripts', [ $this, 'register_vendors_redux' ] );
 
 		add_action( 'elementor/editor/before_enqueue_styles', [ $this, 'register_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'register_styles' ] );
@@ -99,7 +100,7 @@ class App extends BaseApp {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function register_scripts() {
+	public function register_vendors_redux() {
 		wp_register_script(
 			'elementor-vendors-redux',
 			$this->get_js_assets_url( 'vendors-redux' ),
@@ -110,6 +111,10 @@ class App extends BaseApp {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	public function register_scripts() {
+		$this->register_vendors_redux();
 
 		wp_register_script(
 			'elementor-common-modules',
