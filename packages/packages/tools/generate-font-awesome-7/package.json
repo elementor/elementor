@@ -8,7 +8,7 @@
   "scripts": {
     "build": "node --experimental-strip-types ./src/generate.ts",
     "dev": "node --experimental-strip-types ./src/generate.ts",
-    "test": "node ../../../../node_modules/typescript7/bin/tsc --noEmit"
+    "test": "tsc --noEmit"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7",
