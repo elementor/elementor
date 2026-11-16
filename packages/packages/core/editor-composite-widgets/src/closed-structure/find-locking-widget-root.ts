@@ -1,32 +1,33 @@
 import {
 	findClosestContainer,
-	getElementWidgetMarker,
-	isElementSlot,
+	getContainerWidgetMarker,
+	isContainerSlot,
 	type V1Element,
 } from '@elementor/editor-elements';
 
 import { getCompositeWidgetDefinition } from '../sync/get-composite-widget-definition';
+import { hasPart, hasWidgetMarkers } from './has-widget-markers';
 
 export function isInsertionLocked( target: V1Element ): boolean {
-	return null !== findLockingWidgetRoot( target );
+	return hasWidgetMarkers( target ) && null !== findLockingWidgetRoot( target );
 }
 
 export function isElementLocked( element: V1Element ): boolean {
-	return null !== findLockingWidgetRoot( element.parent );
+	return hasPart( element ) && null !== findLockingWidgetRoot( element.parent );
 }
 
 export function findLockingWidgetRoot( start: V1Element | undefined ): V1Element | null {
 	// Slot content is regular page content, outside the widget's closed structure.
 	const boundary = findClosestContainer(
 		start,
-		( container ) => isElementSlot( container.id ) || isRegisteredWidgetRoot( container )
+		( container ) => isContainerSlot( container ) || isRegisteredWidgetRoot( container )
 	);
 
-	return boundary && ! isElementSlot( boundary.id ) ? boundary : null;
+	return boundary && ! isContainerSlot( boundary ) ? boundary : null;
 }
 
 function isRegisteredWidgetRoot( element: V1Element ): boolean {
-	const marker = getElementWidgetMarker( element.id );
+	const marker = getContainerWidgetMarker( element );
 
 	return null !== marker && null !== getCompositeWidgetDefinition( marker.id );
 }

@@ -11,8 +11,11 @@ class Definition_Error_Codes {
 	const DUPLICATE_ID = 'widget_definition_duplicate_id';
 	const TEMPLATE_NODE_INVALID = 'widget_template_node_invalid';
 	const PART_INVALID = 'widget_part_invalid';
+	const PART_MISSING = 'widget_part_missing';
 	const PART_DUPLICATE = 'widget_part_duplicate';
 	const PART_TYPE_NOT_ALLOWED = 'widget_part_type_not_allowed';
+	const SLOT_INVALID = 'widget_slot_invalid';
+	const SLOT_CONTENT_PART = 'widget_slot_content_part';
 	const ELEMENT_TYPE_NOT_FOUND = 'widget_element_type_not_found';
 	const REPEATER_ITEM_SHAPE_MISMATCH = 'widget_repeater_item_shape_mismatch';
 	const TEMPLATE_SETTINGS_INVALID = 'widget_template_settings_invalid';

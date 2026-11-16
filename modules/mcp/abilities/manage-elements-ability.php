@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -32,6 +34,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -47,9 +50,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Document_Mutator $mutator;
+	private ?Closed_Structure $closed_structure;
 
-	public function __construct( ?Document_Mutator $mutator = null ) {
+	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
 		$this->mutator = $mutator;
+		$this->closed_structure = $closed_structure;
 	}
 
 	protected function get_ability_id(): string {
@@ -94,6 +99,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
 					],
 					'version' => [ 'type' => 'string' ],
+					'staged' => Document_Mutation_Links::staged_schema_property(),
 					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
@@ -293,6 +299,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$post_id             = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
+			$response['staged'] = Document_Mutation_Save::is_staged( $document );
 			$response = $this->with_edit_url( $response, $document );
 			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 			return $response;
@@ -314,7 +321,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
+		$response['staged'] = Document_Mutation_Save::is_staged( $save_result );
 		$response = $this->with_edit_url( $response, $document );
+
+		if ( $response['staged'] ) {
+			$response['llm_instructions'] = Document_Mutation_Links::staged_write_instructions( $save_result );
+		}
 
 		if ( $undo_point ) {
 			$undo_point->commit();
@@ -322,7 +334,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
-		return $response;
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	private function with_edit_url( array $response, Document $document ): array {
@@ -339,6 +351,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$v3_error = $this->reject_v3_target( $tree, $element_id );
 		if ( $v3_error ) {
 			return $v3_error;
+		}
+
+		$closed_structure_error = $this->reject_closed_structure_edit( $tree, $action, $element_id, $operation );
+		if ( $closed_structure_error ) {
+			return $closed_structure_error;
 		}
 
 		switch ( $action ) {
@@ -400,6 +417,26 @@ class Manage_Elements_Ability extends Abstract_Ability {
 				'version' => 'v3',
 			]
 		);
+	}
+
+	private function reject_closed_structure_edit( array $tree, string $action, string $element_id, array $operation ): ?\WP_Error {
+		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
+
+		if ( ! $closed_structure || 'update' === $action ) {
+			return null;
+		}
+
+		if ( $closed_structure->is_element_locked( $tree, $element_id ) ) {
+			return $closed_structure->element_error( $element_id );
+		}
+
+		$new_parent_id = $operation['new_parent_id'] ?? null;
+
+		if ( 'move' === $action && is_string( $new_parent_id ) && $closed_structure->is_insertion_locked( $tree, $new_parent_id ) ) {
+			return $closed_structure->target_error( $new_parent_id );
+		}
+
+		return null;
 	}
 
 	private function apply_delete( array $tree, string $element_id ) {
