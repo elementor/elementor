@@ -299,6 +299,34 @@ class Document_Mutator_Test extends TestCase {
 		$this->assertWPError( $result, 'elementor_not_found' );
 	}
 
+	// regenerate_ids
+
+	public function test_regenerate_ids_replaces_ids_of_element_and_descendants() {
+		$element = $this->make_container( 'c1', [ $this->make_widget( 'w1' ) ] );
+
+		$result = $this->mutator->regenerate_ids( $element );
+
+		$this->assertNotSame( 'c1', $result['id'] );
+		$this->assertNotSame( 'w1', $result['elements'][0]['id'] );
+		$this->assertSame( 'text-editor', $result['elements'][0]['widgetType'] );
+	}
+
+	public function test_regenerate_ids_runs_the_replace_id_filter_on_every_element() {
+		$element = $this->make_container( 'c1', [ $this->make_widget( 'w1' ) ] );
+		$filtered_ids = [];
+		$collect_id = function ( array $node ) use ( &$filtered_ids ) {
+			$filtered_ids[] = $node['id'];
+
+			return $node;
+		};
+		add_filter( 'elementor/document/element/replace_id', $collect_id );
+
+		$result = $this->mutator->regenerate_ids( $element );
+		remove_filter( 'elementor/document/element/replace_id', $collect_id );
+
+		$this->assertSame( [ $result['id'], $result['elements'][0]['id'] ], $filtered_ids );
+	}
+
 	// child-type restrictions
 
 	public function test_insert_at_respects_allowed_child_types_when_restricted() {
