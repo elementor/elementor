@@ -171,34 +171,29 @@ export const buildAngieV3LayoutPrompt = ( {
 	libraryTemplateTitle,
 }: AngieV3LayoutPromptContext ): string => {
 	const positionHint =
-		'number' === typeof at ? `Insert position index in parent: ${ at }.` : 'Insert at the chosen canvas position.';
-	const toolHint =
-		'When the layout JSON is ready, call the v3-layout-insert tool once with the element model(s), parentContainerId, at, and replaceElementId when replacing an existing block. Use only standard V3 element types (section, column, container, widget); do not output atomic or e-* element types.';
+		'number' === typeof at
+			? `Canvas position index: ${ at }.`
+			: 'Use the canvas position where the button was clicked.';
 
 	switch ( mode ) {
 		case 'container-variation':
 			return [
-				`Generate an AI layout variation for V3 container "${ targetContainerId }"${
+				`Help with a layout variation for container "${ targetContainerId }"${
 					targetElementTitle ? ` (${ targetElementTitle })` : ''
 				}.`,
 				`Document type: ${ documentType || 'unknown' }. ${ positionHint }`,
-				'Replace the selected container with the new variation (pass replaceElementId).',
-				toolHint,
 			].join( '\n\n' );
 		case 'library-variation':
 			return [
-				`Generate an AI variation from template library item ${ libraryTemplateId ?? 'unknown' }${
+				`Help with a variation from template library item ${ libraryTemplateId ?? 'unknown' }${
 					libraryTemplateTitle ? ` (${ libraryTemplateTitle })` : ''
 				}.`,
 				`Document type: ${ documentType || 'unknown' }. ${ positionHint }`,
-				toolHint,
 			].join( '\n\n' );
 		case 'new-layout':
 		default:
-			return [
-				`Build a new V3 layout with AI for document type "${ documentType || 'unknown' }".`,
-				positionHint,
-				toolHint,
-			].join( '\n\n' );
+			return [ `Help build a layout for document type "${ documentType || 'unknown' }".`, positionHint ].join(
+				'\n\n'
+			);
 	}
 };
