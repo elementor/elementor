@@ -48,8 +48,8 @@ Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor
 - **[Revision history](https://go.elementor.com/wp-repo-description-tab-revision-history)**: Track and revert to previous versions of your designs at any point in the creative process.  
 - **[Developer-friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Extensive documentation, API, developer tools, and custom code areas, let developers extend Elementor and build custom solutions.  
 - **[Floating buttons](https://go.elementor.com/wp-repo-description-tab-floating-buttons)**: Add customizable, floating action buttons that stay in view as users scroll.  
-- **Components [Pro]**: Reuse the same building blocks across pages and sites, and update them everywhere they appear, with controlled content editing, so collaborators and clients  update only exposed content properties.  
-- **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site: headers, footers, posts, and archives,for full control over appearance.  
+- **Components [Pro]**: Reuse the same building blocks across pages and sites, and update them everywhere they appear, with controlled content editing, so collaborators and clients update only exposed content properties.  
+- **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site: headers, footers, posts, and archives, for full control over appearance.  
 - **[Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/) [Pro]**: Create popups with advanced targeting and triggering options to optimize user engagement and conversions.  
 - **[Forms](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/) [Pro]**: Design and integrate custom forms with advanced features and integrations to capture lead submissions.  
 - **[WooCommerce Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-woocommerce-builder/) [Pro]**: Design custom product pages, shop layouts, archives, carts, checkout and account pages for your store.  
@@ -204,7 +204,7 @@ Build professional websites with **[Elementor Pro](https://go.elementor.com/wp-r
 
 = 🔒 Security and compliance =
 
-Elementor places a strong backed by industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications reflect our commitment to robust security measures and recognized industry standards.
+Elementor places a strong emphasis on security, backed by industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications reflect our commitment to robust security measures and recognized industry standards.
 
 We encourage ethical security research through our [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/). We work with leading bug bounty services so researchers can report vulnerabilities in our service backed by a  triage team available 24/7/365.
 
@@ -212,7 +212,7 @@ For more information: [Trust Center](https://go.elementor.com/trust-center/).
 
 = ♿ Accessibility best practices =
 
-Elementor offers accessibility tools and enhancements to help you provide a better experience for all users. Including HTML5 semantics, full keyboard navigation menus, ongoing improvements of features and widget.
+Elementor offers accessibility tools and enhancements to help you provide a better experience for all users. Including HTML5 semantics, full keyboard navigation menus, ongoing improvements of features and widgets.
 
 = 🌐 Translated to 63+ languages, includes RTL support =
 
@@ -239,7 +239,7 @@ To improve the user experience, Elementor may use the following 3rd party servic
 
 **[Cookiez](https://go.elementor.com/wp-repo-description-tab-elementor-cookiez)**: GDPR and CCPA compliant cookie banner with automatic cookie scanning, script blocking and consent logging.
 
-**[Activity Log](https://go.elementor.com/wp-repo-description-tab-elementor-activity-log)**: Records every change on your WordPress site, who did it, when, and where the request came from (WP Admin, REST API, WP-CLI, WP-Cron, or the WP Abilities API), for a full audit trail).
+**[Activity Log](https://go.elementor.com/wp-repo-description-tab-elementor-activity-log)**: Records every change on your WordPress site, who did it, when, and where the request came from (WP Admin, REST API, WP-CLI, WP-Cron, or the WP Abilities API), for a full audit trail.
 
 = 📣 See what our users have to say =
 
@@ -334,7 +334,7 @@ There is also a managed security Bug Bounty program, using the power of communit
 
 **Can I buy templates separately?**
 
-Yes. you can use any template that supports Elementor
+Yes. you can use any template that supports Elementor.
 
 **Is Elementor compatible with Post and Custom Post Types?**
 
