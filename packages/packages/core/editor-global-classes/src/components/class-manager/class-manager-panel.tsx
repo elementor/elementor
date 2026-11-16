@@ -40,16 +40,8 @@ export type ClassManagerPanelEmbeddedProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-export function ClassManagerPanelEmbedded( {
-	onRequestClose,
-	onExposeCloseAttempt,
-}: ClassManagerPanelEmbeddedProps ) {
-	return (
-		<ClassManagerPanelContent
-			onRequestClose={ onRequestClose }
-			onExposeCloseAttempt={ onExposeCloseAttempt }
-		/>
-	);
+export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
+	return <ClassManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />;
 }
 
 type ClassManagerPanelContentProps = {
@@ -57,10 +49,7 @@ type ClassManagerPanelContentProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-function ClassManagerPanelContent( {
-	onRequestClose,
-	onExposeCloseAttempt,
-}: ClassManagerPanelContentProps ) {
+function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelContentProps ) {
 	const isDirty = useDirtyState();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
