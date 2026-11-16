@@ -11,6 +11,7 @@ class Definition_Error_Codes {
 	const DUPLICATE_ID = 'widget_definition_duplicate_id';
 	const TEMPLATE_NODE_INVALID = 'widget_template_node_invalid';
 	const PART_INVALID = 'widget_part_invalid';
+	const PART_MISSING = 'widget_part_missing';
 	const PART_DUPLICATE = 'widget_part_duplicate';
 	const PART_TYPE_NOT_ALLOWED = 'widget_part_type_not_allowed';
 	const SLOT_INVALID = 'widget_slot_invalid';
