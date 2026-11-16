@@ -14,6 +14,24 @@ class Test_Image extends Elementor_Test_Base {
 	const CUSTOM_SIZE = 'custom_100x100';
 	const CUSTOM_SIZE_META_KEY = 'elementor_custom_100x100';
 
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->register_bfi_thumb_filters();
+	}
+
+	private function register_bfi_thumb_filters() {
+		require_once ELEMENTOR_PATH . 'includes/libraries/bfi-thumb/bfi-thumb.php';
+
+		// The test framework restores hooks after every test, while the library registers them only on first load.
+		add_filter( 'wp_image_editors', 'bfi_wp_image_editor' );
+		add_filter( 'image_downsize', 'bfi_image_downsize', 1, 3 );
+
+		if ( ! is_admin() ) {
+			add_filter( 'image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5 );
+		}
+	}
+
 	private function create_image( $author_id = 0 ) {
 		$file_name = __DIR__ . '/../../../resources/mock-image.png';
 
