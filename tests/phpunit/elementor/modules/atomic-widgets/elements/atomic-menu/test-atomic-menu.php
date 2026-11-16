@@ -170,7 +170,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_every_menu_layer__exposes_what_the_style_tab_needs() {
+	public function test_get_config__exposes_style_tab_requirements_for_all_menu_layers() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
@@ -185,7 +185,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_menu_item_current_state__renders_scoped_selector_after_the_base_rule() {
+	public function test_render__scopes_the_current_state_after_the_base_rule() {
 		// Arrange.
 		$styles = [
 			[
@@ -213,7 +213,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertLessThan( strpos( $css, '.menu-item-style.e--current' ), strpos( $css, '.menu-item-style{' ) );
 	}
 
-	public function test_every_menu_layer__has_an_id_control_and_renders_custom_attributes() {
+	public function test_get_config__has_id_control_and_render_outputs_custom_attributes_for_all_menu_layers() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
@@ -228,6 +228,8 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 				$config['atomic_controls'],
 				fn( $section ) => 'settings' === $section->get_id()
 			) );
+			$binds = array_map( fn( $item ) => $item->get_bind(), $settings_section[0]->get_items() ?? [] );
+			$this->assertContains( '_cssid', $binds, $type );
 			$this->assertCount( 1, $settings_section, $type );
 		}
 
