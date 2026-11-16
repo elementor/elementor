@@ -175,4 +175,53 @@ test.describe( 'URL Actions', () => {
 		// Test that the lightbox was NOT OPENED on this page.
 		await expect( frontendSinglelightboxImage ).toBeHidden();
 	} );
+
+	test( 'Lightbox video params are applied as attributes only', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.addWidget( { widgetType: 'heading' } );
+		await editor.publishAndViewPage();
+
+		const dialogMessages: string[] = [];
+
+		page.on( 'dialog', async ( dialog ) => {
+			dialogMessages.push( dialog.message() );
+			await dialog.dismiss();
+		} );
+
+		const settingsJson = JSON.stringify( {
+			type: 'video',
+			videoType: 'hosted',
+			url: 'https://example.com/video.mp4',
+			videoParams: {
+				controls: '',
+				loop: '',
+				html: '<img class="e-injected-markup" src="x" onerror="alert(document.domain)">',
+			},
+		} );
+
+		const actionHref = encodeURIComponent( '#elementor-action:action=lightbox&settings=' + Buffer.from( settingsJson ).toString( 'base64' ) );
+
+		await page.evaluate( ( href ) => {
+			const link = document.createElement( 'a' );
+			link.href = href;
+			link.className = 'e-test-action-link';
+			link.textContent = 'Open video';
+			document.body.prepend( link );
+		}, actionHref );
+
+		// Act
+		await page.locator( '.e-test-action-link' ).click();
+
+		// Assert
+		const lightboxVideo = page.locator( '.elementor-video-container video' );
+
+		await expect( lightboxVideo ).toBeAttached();
+		await expect( lightboxVideo ).toHaveAttribute( 'controls' );
+		await expect( lightboxVideo ).toHaveAttribute( 'loop' );
+		await expect( page.locator( '.e-injected-markup' ) ).toHaveCount( 0 );
+		expect( dialogMessages ).toHaveLength( 0 );
+	} );
 } );

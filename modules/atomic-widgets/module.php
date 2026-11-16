@@ -164,6 +164,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspectiv
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
+use Elementor\Modules\AtomicWidgets\Utils\Custom_Attributes_Trust;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
@@ -297,6 +298,7 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+		Custom_Attributes_Trust::register_hooks();
 
 		add_filter( 'elementor/allowed_html_wrapper_tags', [ $this, 'add_inline_html_tags' ] );
 	}
