@@ -52,7 +52,7 @@ describe( 'editor-components init', () => {
 		( window as never as { elementorCommon: object } ).elementorCommon = {};
 	} );
 
-	it( 'should register the sidebar panel and button alongside the tab when the sidebar is enabled', () => {
+	it( 'should register the sidebar panel and button without the tab when the sidebar is enabled', () => {
 		// Arrange.
 		jest.mocked( isSidebarEnabled ).mockReturnValue( true );
 
@@ -64,7 +64,7 @@ describe( 'editor-components init', () => {
 		expect( sidebarTools.registerToggleAction ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: 'open-components-panel' } )
 		);
-		expect( injectTab ).toHaveBeenCalledWith( expect.objectContaining( { id: 'components' } ) );
+		expect( injectTab ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should inject the elements panel tab only when the sidebar is disabled', () => {

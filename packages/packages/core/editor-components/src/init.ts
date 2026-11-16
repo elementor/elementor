@@ -92,23 +92,23 @@ export function init() {
 }
 
 function registerComponentsEntry() {
+	if ( isSidebarEnabled() ) {
+		registerPanel( panel );
+
+		sidebarTools.registerToggleAction( {
+			id: 'open-components-panel',
+			group: 'design',
+			priority: 5,
+			useProps: useTogglePanelProps,
+		} );
+
+		return;
+	}
+
 	injectTab( {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
 		component: Components,
 		position: 1,
-	} );
-
-	if ( ! isSidebarEnabled() ) {
-		return;
-	}
-
-	registerPanel( panel );
-
-	sidebarTools.registerToggleAction( {
-		id: 'open-components-panel',
-		group: 'design',
-		priority: 5,
-		useProps: useTogglePanelProps,
 	} );
 }
