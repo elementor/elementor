@@ -1,11 +1,6 @@
 import { type ElementType } from '@elementor/editor-elements';
 
-import {
-	getEditingPanelReplacement,
-	getSettingsTabReplacement,
-	registerEditingPanelReplacement,
-	registerSettingsTabReplacement,
-} from '../editing-panel-replacement-registry';
+import { getEditingPanelReplacement, registerEditingPanelReplacement } from '../editing-panel-replacement-registry';
 import { mockElement } from './utils';
 
 const mockElementType = ( key = 'e-heading' ): ElementType => ( {
@@ -84,25 +79,5 @@ describe( 'editing-panel-replacement-registry', () => {
 		expect( result ).not.toBeNull();
 		expect( result?.component ).toBe( MockComponent );
 		expect( result?.priority ).toBe( HIGH_PRIORITY );
-	} );
-
-	it( 'should keep settings tab replacements separate from editing panel replacements', () => {
-		// Arrange
-		const element = mockElement( { type: 'settings-tab-type' } );
-		const elementType = mockElementType( 'settings-tab-type' );
-
-		registerSettingsTabReplacement( {
-			id: 'test-settings-tab',
-			condition: ( _, type ) => type.key === 'settings-tab-type',
-			component: MockComponent,
-		} );
-
-		// Act
-		const settingsTabResult = getSettingsTabReplacement( element, elementType );
-		const editingPanelResult = getEditingPanelReplacement( element, elementType );
-
-		// Assert
-		expect( settingsTabResult?.component ).toBe( MockComponent );
-		expect( editingPanelResult ).toBeNull();
 	} );
 } );

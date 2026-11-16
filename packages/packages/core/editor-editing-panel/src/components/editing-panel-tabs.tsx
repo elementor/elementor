@@ -1,13 +1,13 @@
 import { Fragment } from 'react';
 import * as React from 'react';
 import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
-import { getWidgetsCache } from '@elementor/editor-elements';
+import { type Element, type ElementType, getWidgetsCache } from '@elementor/editor-elements';
+import { createReplaceableLocation } from '@elementor/locations';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { ScrollProvider } from '../contexts/scroll-context';
-import { getSettingsTabReplacement } from '../editing-panel-replacement-registry';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
 import { ContentOnlyInfotip } from './content-only-infotip';
@@ -20,6 +20,14 @@ type TabValue = 'settings' | 'style' | 'interactions';
 const CONTENT_ONLY_TAB: TabValue = 'settings';
 
 const DESIGN_TABS: TabValue[] = [ 'style', 'interactions' ];
+
+type SettingsTabSlotProps = {
+	element: Element;
+	elementType: ElementType;
+};
+
+export const { Slot: SettingsTabSlot, inject: injectIntoSettingsTab } =
+	createReplaceableLocation< SettingsTabSlotProps >();
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
@@ -35,7 +43,6 @@ export const EditingPanelTabs = () => {
 
 const PanelTabContent = () => {
 	const { element, elementType } = useElement();
-	const { component: SettingsTabContent = SettingsTab } = getSettingsTabReplacement( element, elementType ) ?? {};
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const elementMeta = getWidgetsCache()?.[ element.type ]?.meta;
@@ -97,7 +104,9 @@ const PanelTabContent = () => {
 				</Stack>
 				{ ! isPromotedElement && (
 					<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
-						<SettingsTabContent />
+						<SettingsTabSlot element={ element } elementType={ elementType }>
+							<SettingsTab />
+						</SettingsTabSlot>
 					</TabPanel>
 				) }
 				{ hasDesignTabs && ! areDesignTabsRestricted && (

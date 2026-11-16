@@ -5,11 +5,10 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { ElementProvider } from '../../contexts/element-context';
-import { registerSettingsTabReplacement } from '../../editing-panel-replacement-registry';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
 import { useStateByElement } from '../../hooks/use-state-by-element';
 import { ContentOnlyInfotip } from '../content-only-infotip';
-import { EditingPanelTabs } from '../editing-panel-tabs';
+import { EditingPanelTabs, injectIntoSettingsTab } from '../editing-panel-tabs';
 
 jest.mock( '@elementor/editor-current-user' );
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -206,9 +205,9 @@ describe( '<EditingPanelTabs />', () => {
 
 	it( 'should render a settings tab replacement in the General panel and keep the Style tab', () => {
 		// Arrange
-		registerSettingsTabReplacement( {
+		injectIntoSettingsTab( {
 			id: 'test-settings-tab-replacement',
-			condition: ( _, elementType ) => elementType.key === REPLACED_SETTINGS_ELEMENT_TYPE,
+			condition: ( { elementType } ) => elementType.key === REPLACED_SETTINGS_ELEMENT_TYPE,
 			component: () => <div>{ REPLACED_SETTINGS_TAB_PANEL_TEXT }</div>,
 		} );
 

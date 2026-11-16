@@ -2,7 +2,9 @@ import { type Element, type ElementType, getElementType, type V1Element } from '
 import { type AnyTransformable } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
+import { type CompositeWidgetDefinition } from '../types';
 import { findWidgetPart } from './find-widget-part';
+import { getSectionFields, getSections } from './general-fields';
 
 export type WidgetPartElement = {
 	element: Element;
@@ -10,24 +12,41 @@ export type WidgetPartElement = {
 	settings: Record< string, AnyTransformable | null >;
 };
 
-export function useWidgetPartElement( root: V1Element, part: string ): WidgetPartElement | null {
+type WidgetPartElements = Record< string, WidgetPartElement | null >;
+
+export function useWidgetPartElements( root: V1Element, definition: CompositeWidgetDefinition ): WidgetPartElements {
 	return useListenTo(
 		[
 			commandEndEvent( 'document/elements/set-settings' ),
 			commandEndEvent( 'document/elements/create' ),
 			commandEndEvent( 'document/elements/delete' ),
 		],
-		() => getWidgetPartElement( root, part ),
-		[ root, part ]
+		() => getWidgetPartElements( root, definition ),
+		[ root, definition ]
+	);
+}
+
+function getWidgetPartElements( root: V1Element, definition: CompositeWidgetDefinition ): WidgetPartElements {
+	const parts = getSections( definition )
+		.flatMap( getSectionFields )
+		.map( ( field ) => field.target.part );
+
+	return Object.fromEntries(
+		[ ...new Set( parts ) ].map( ( part ) => [ part, getWidgetPartElement( root, part ) ] )
 	);
 }
 
 function getWidgetPartElement( root: V1Element, part: string ): WidgetPartElement | null {
 	const container = findWidgetPart( root, part );
-	const type = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
-	const elementType = type ? getElementType( type ) : null;
 
-	if ( ! container || ! type || ! elementType ) {
+	if ( ! container ) {
+		return null;
+	}
+
+	const type = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
+	const elementType = getElementType( type );
+
+	if ( ! elementType ) {
 		return null;
 	}
 

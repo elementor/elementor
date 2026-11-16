@@ -10,7 +10,7 @@ export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
-export { EditingPanelTabs } from './components/editing-panel-tabs';
+export { EditingPanelTabs, injectIntoSettingsTab } from './components/editing-panel-tabs';
 export { Section } from './components/section';
 export { SectionContent } from './components/section-content';
 export { SectionsList } from './components/sections-list';
@@ -55,7 +55,7 @@ export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
-export { registerEditingPanelReplacement, registerSettingsTabReplacement } from './editing-panel-replacement-registry';
+export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';

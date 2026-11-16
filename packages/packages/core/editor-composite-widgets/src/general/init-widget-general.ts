@@ -1,13 +1,13 @@
-import { registerSettingsTabReplacement } from '@elementor/editor-editing-panel';
+import { injectIntoSettingsTab } from '@elementor/editor-editing-panel';
 import { type Element, getContainer } from '@elementor/editor-elements';
 
 import { isRegisteredWidgetRoot } from '../closed-structure/find-locking-widget-root';
 import { WidgetGeneralTab } from './widget-general-tab';
 
 export function initWidgetGeneral() {
-	registerSettingsTabReplacement( {
+	injectIntoSettingsTab( {
 		id: 'composite-widget-general',
-		condition: isSelectedWidgetRoot,
+		condition: ( { element } ) => isSelectedWidgetRoot( element ),
 		component: WidgetGeneralTab,
 	} );
 }
