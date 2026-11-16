@@ -99,7 +99,7 @@ const ChecklistCardContent = ( { step, setSteps } ) => {
 				}
 
 				<Button
-					color={ promotionData ? 'promotion' : 'primary' }
+					color={ promotionData ? 'promotion' : 'accent' }
 					size="small"
 					variant="contained"
 					onClick={ redirectHandler }

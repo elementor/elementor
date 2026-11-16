@@ -13,6 +13,7 @@ export default function useActionProps() {
 	return {
 		title: __( 'Add Element', 'elementor' ),
 		icon: PlusIcon,
+		id: 'ele-add-element',
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
 			const config = extendedWindow?.elementorCommon?.eventsManager?.config;

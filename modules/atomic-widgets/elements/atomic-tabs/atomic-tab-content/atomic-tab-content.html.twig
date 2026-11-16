@@ -1,4 +1,5 @@
-{% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+{% import 'elementor/macros' as m %}
+{% set classes = ['e-con', 'e-atomic-element', base_styles.base, m.default_tag_class('div')] | merge(settings.classes | default([])) | join(' ') %}
 <div class="{{ classes }} {{ editor_classes | default('') }}{{ is_active ? ' e--selected' : '' }}"
     data-id="{{ id }}"
     data-element_type="{{ type }}"
@@ -7,6 +8,7 @@
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
     role="tabpanel"
     x-bind="tabContent"
+    x-ref="{{ id }}"
     id="{{ tab_content_id }}"
     aria-labelledby="{{ tab_id }}"
     {% if not is_active %} hidden="true" style="display: none;"{% endif %}

@@ -47,6 +47,10 @@
 	display: none;
 }
 
+#elementor-panel-elements-notice-area:not(:empty) {
+	padding-block-end: 4px;
+}
+
 #elementor-panel-elements-search-wrapper {
 	position: relative;
 }
@@ -111,15 +115,26 @@
 			}
 		}
 
-		.eicon-atomic {
+		.eicon-atomic,
+		.e-widget-new-badge {
 			position: absolute;
-			inset-block-start: 5px;
-			inset-inline-end: 5px;
+			inset-block-start: 4px;
+			inset-inline-end: 6px;
+		}
+
+		.eicon-atomic {
 			color: var(--e-a-color-txt);
 		}
 
-		&[data-library-element-type="e-birthday-easter-egg"] .icon {
-			color: $e-pink-900;
+		.e-widget-new-badge {
+			border-radius: 4px;
+			background-color: #EBF2FE;
+			color: var(--e-a-color-info);
+			padding: 2px 4px;
+			font-size: 10px;
+			font-weight: 500;
+			line-height: 1.4;
+			pointer-events: none;
 		}
 
 		&:hover,
@@ -127,8 +142,8 @@
 			background-color: var(--e-a-bg-hover);
 			border-color: var(--e-a-border-color-bold);
 
-			> .eicon-upgrade-crown-full {
-				color: var(--e-a-color-accent-promotion);
+			> .eicon-lock {
+				color: var(--e-a-color-accent);
 			}
 
 			> .eicon-plug {
@@ -152,17 +167,10 @@
 			font-size: 12px;
 		}
 
-		> .eicon-upgrade-crown-full, .eicon-plug {
+		> .eicon-lock, .eicon-plug {
 			position: absolute;
 			inset-block-start: 5px;
 			inset-inline-end: 5px;
-		}
-
-		> .eicon-upgrade-crown-full {
-			color: var(--e-a-color-accent-promotion-disabled);
-		}
-
-		> .eicon-plug {
 			color: var(--e-a-color-txt-disabled);
 		}
 

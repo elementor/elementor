@@ -38,7 +38,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   - missing blur/spread -> 0 px
  *
  * Special values:
- *   - `none` -> empty Box_Shadow array (clears the prop).
+ *   - `none` -> declines to custom_css. An empty Box_Shadow array is not persisted and renders no
+ *     declaration, so it cannot override a shadow from a class or a wider breakpoint.
  */
 class Box_Shadow_Property_Converter extends Property_Converter_Base {
 	const INSET_KEYWORD = 'inset';
@@ -55,13 +56,8 @@ class Box_Shadow_Property_Converter extends Property_Converter_Base {
 	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$value = trim( $rule['value'] );
 
-		if ( '' === $value ) {
+		if ( '' === $value || 'none' === strtolower( $value ) ) {
 			return false;
-		}
-
-		if ( 'none' === strtolower( $value ) ) {
-			$context->set_prop( 'box-shadow', Box_Shadow_Prop_Type::generate( [] ) );
-			return true;
 		}
 
 		$layers = Css_Token_Splitter::split_by_comma( $value );

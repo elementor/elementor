@@ -5,7 +5,6 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Element_Base;
-use Elementor\Modules\Ai\Feature_Intro\Product_Image_Unification_Intro;
 use Elementor\Plugin;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Ai\Connect\Ai;
@@ -29,8 +28,6 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
 	];
-	const MIN_PAGES_FOR_CREATE_WITH_AI_BANNER = 10;
-
 	public function get_name() {
 		return 'ai';
 	}
@@ -48,8 +45,6 @@ class Module extends BaseModule {
 		if ( ! $this->is_ai_enabled() ) {
 			return;
 		}
-
-		add_filter( 'elementor/core/admin/homescreen', [ $this, 'add_create_with_ai_banner_to_homescreen' ] );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -125,7 +120,6 @@ class Module extends BaseModule {
 				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
 				add_action( 'wp_ajax_elementor-ai-get-product-images', [ $this, 'get_product_images_ajax' ] );
 				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
-				Product_Image_Unification_Intro::add_hooks();
 			}
 		}
 
@@ -151,10 +145,7 @@ class Module extends BaseModule {
 			wp_localize_script(
 				'elementor-ai-gutenberg',
 				'ElementorAiConfig',
-				[
-					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'connect_url' => $this->get_ai_connect_url(),
-				]
+				$this->get_ai_config()
 			);
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
@@ -443,13 +434,22 @@ class Module extends BaseModule {
 		wp_localize_script(
 			'elementor-ai-media-library',
 			'ElementorAiConfig',
-			[
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-			]
+			$this->get_ai_config()
 		);
 
 		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
+	}
+
+	/**
+	 * Every script that localizes `ElementorAiConfig` overwrites the same global, so they must share one shape.
+	 *
+	 * @return array
+	 */
+	private function get_ai_config(): array {
+		return [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+		];
 	}
 
 	private function enqueue_main_script() {
@@ -472,15 +472,10 @@ class Module extends BaseModule {
 			true
 		);
 
-		$config = [
-			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-			'connect_url' => $this->get_ai_connect_url(),
-		];
-
 		wp_localize_script(
 			'elementor-ai',
 			'ElementorAiConfig',
-			$config
+			$this->get_ai_config()
 		);
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
@@ -1550,54 +1545,5 @@ class Module extends BaseModule {
 
 		$product->set_gallery_image_ids( $gallery_image_ids );
 		$product->save();
-	}
-
-	private function should_display_create_with_ai_banner() {
-		$elementor_pages = new \WP_Query( [
-			'post_type' => 'page',
-			'post_status' => 'publish',
-			'fields' => 'ids',
-			'posts_per_page' => self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER + 1,
-		] );
-
-		if ( $elementor_pages->post_count > self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER ) {
-			return false;
-		}
-
-		if ( Utils::is_custom_kit_applied() ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private function get_create_with_ai_banner_data() {
-		return [
-			'title' => 'Create and launch your site faster with AI',
-			'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
-			'input_placeholder' => 'Start describing the site you want to create...',
-			'button_title' => 'Create with AI',
-			'button_cta_url' => 'http://planner.elementor.com/chat.html',
-			'background_image' => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
-			'utm_source' => 'editor-home',
-			'utm_medium' => 'wp-dash',
-			'utm_campaign' => 'generate-with-ai',
-		];
-	}
-
-	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
-		if ( Plugin::instance()->experiments->is_feature_active( 'site-builder' ) ) {
-			$home_screen_data['create_with_ai'] = null;
-
-			return $home_screen_data;
-		}
-
-		if ( $this->should_display_create_with_ai_banner() ) {
-			$home_screen_data['create_with_ai'] = $this->get_create_with_ai_banner_data();
-		} else {
-			$home_screen_data['create_with_ai'] = null;
-		}
-
-		return $home_screen_data;
 	}
 }

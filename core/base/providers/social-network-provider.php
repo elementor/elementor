@@ -280,4 +280,65 @@ class Social_Network_Provider {
 			'number' => urlencode( $number ),
 		], 'viber://' . $action );
 	}
+
+	public static function build_platform_link( array $link, string $prefix ): string {
+		$platform = $link['platform'] ?? '';
+
+		switch ( $platform ) {
+			case self::EMAIL:
+				return self::build_email_link( $link['email_data'] ?? [], $prefix );
+			case self::SMS:
+				$number = $link['number'] ?? '';
+
+				return '' !== $number ? 'sms:' . $number : '';
+			case self::MESSENGER:
+				$username = $link['username'] ?? '';
+
+				return '' !== $username ? self::build_messenger_link( $username ) : '';
+			case self::WHATSAPP:
+				$number = $link['number'] ?? '';
+
+				return '' !== $number ? 'https://wa.me/' . $number : '';
+			case self::VIBER:
+				return self::build_viber_link( $link['viber_action'] ?? 'chat', $link['number'] ?? '' );
+			case self::SKYPE:
+				$username = $link['username'] ?? '';
+
+				return '' !== $username ? 'skype:' . $username . '?chat' : '';
+			case self::TELEPHONE:
+				$number = $link['number'] ?? '';
+
+				return '' !== $number ? 'tel:' . $number : '';
+			case self::WAZE:
+				$location = $link['location'] ?? [];
+
+				return is_array( $location ) ? ( $location['url'] ?? '' ) : (string) $location;
+			case self::URL:
+				$url = $link['url'] ?? [];
+
+				return is_array( $url ) ? ( $url['url'] ?? '' ) : (string) $url;
+			case self::FILE_DOWNLOAD:
+			case self::VCF:
+				$file = $link['file'] ?? [];
+
+				return is_array( $file ) ? ( $file['url'] ?? '' ) : (string) $file;
+			default:
+				$url = $link['url'] ?? [];
+
+				return is_array( $url ) ? ( $url['url'] ?? '' ) : (string) $url;
+		}
+	}
+
+	public static function build_contact_link( string $platform, array $data, string $prefix ): string {
+		return self::build_platform_link( [
+			'platform' => $platform,
+			'number' => $data[ $prefix . '_number' ] ?? $data['number'] ?? '',
+			'username' => $data[ $prefix . '_username' ] ?? $data['username'] ?? '',
+			'email_data' => $data,
+			'viber_action' => $data[ $prefix . '_viber_action' ] ?? $data['viber_action'] ?? 'chat',
+			'location' => $data[ $prefix . '_waze' ] ?? $data[ $prefix . '_location' ] ?? $data['location'] ?? [],
+			'url' => $data[ $prefix . '_url' ] ?? $data['url'] ?? [],
+			'file' => $data[ $prefix . '_file' ] ?? $data['file'] ?? [],
+		], $prefix );
+	}
 }

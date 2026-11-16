@@ -51,8 +51,8 @@ export const AspectRatioControl = createControl( ( { label }: { label: string } 
 
 		if ( isCustomValue ) {
 			const [ width, height ] = aspectRatioValue.split( '/' );
-			setCustomWidth( width || '' );
-			setCustomHeight( height || '' );
+			setCustomWidth( width.trim() || '' );
+			setCustomHeight( height.trim() || '' );
 			setSelectedValue( CUSTOM_RATIO );
 			setIsCustom( true );
 		} else {

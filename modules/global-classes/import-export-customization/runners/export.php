@@ -8,7 +8,6 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
-use Elementor\Modules\GlobalClasses\Module as Global_Classes_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,8 +42,7 @@ class Export extends Export_Runner_Base {
 	}
 
 	private function is_feature_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( Global_Classes_Module::NAME )
-			&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
 
 	public function export( array $data ): array {

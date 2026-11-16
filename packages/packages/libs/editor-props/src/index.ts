@@ -4,6 +4,7 @@ import {
 	configurableKeys,
 	enrichWithIntention,
 	isPropKeyConfigurable,
+	isPropSensitive,
 	nonConfigurablePropKeys,
 	propTypeToJsonSchema,
 	removeIntention,
@@ -34,12 +35,20 @@ export {
 	isDependencyMet,
 } from './utils/prop-dependency-utils';
 export { parseHtmlChildren, type ParseResult } from './utils/parse-html-children';
+export {
+	resolveResponsiveValue,
+	responsiveFallbackChain,
+	RESPONSIVE_BREAKPOINT_KEYS,
+	type ActiveBreakpoints,
+	type ResponsiveBreakpointKey,
+} from './utils/resolve-responsive-value';
 
 export const Schema = {
 	jsonSchemaToPropType,
 	propTypeToJsonSchema,
 	adjustLlmPropValueSchema,
 	isPropKeyConfigurable,
+	isPropSensitive,
 	nonConfigurablePropKeys,
 	configurableKeys,
 	validatePropValue,

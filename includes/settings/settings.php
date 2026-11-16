@@ -4,7 +4,9 @@ namespace Elementor;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
@@ -88,7 +90,16 @@ class Settings extends Settings_Page {
 	}
 
 	public function display_home_screen() {
+		if ( ! EditorOneModule::is_admin_navigation_active() ) {
+			echo '<div id="e-home-screen"></div>';
+
+			return;
+		}
+
+		echo '<div class="wrap">';
+		Admin_Page_Title::render( __( 'Quick start', 'elementor' ) );
 		echo '<div id="e-home-screen"></div>';
+		echo '</div>';
 	}
 
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
@@ -392,6 +403,10 @@ class Settings extends Settings_Page {
 	 * @return string Settings page title.
 	 */
 	protected function get_page_title() {
+		if ( EditorOneModule::is_admin_navigation_active() ) {
+			return esc_html__( 'Settings', 'elementor' );
+		}
+
 		return esc_html__( 'Elementor', 'elementor' );
 	}
 
@@ -409,6 +424,8 @@ class Settings extends Settings_Page {
 			'elementor_custom_code',
 			'popup_templates',
 			'elementor-apps',
+			'elementor-agents-ready',
+			'elementor-agent-access',
 		];
 
 		if ( empty( $_GET['page'] ) || ! in_array( $_GET['page'], $elementor_pages, true ) ) {

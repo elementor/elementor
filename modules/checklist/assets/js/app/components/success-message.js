@@ -56,7 +56,7 @@ const SuccessMessage = () => {
 			</CardContent>
 			<CardActions sx={ { justifyContent: 'center' } }>
 				<Button
-					color="primary"
+					color="accent"
 					size="small"
 					variant="contained"
 					onClick={ hideChecklist }

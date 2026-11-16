@@ -1,18 +1,21 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
-import { svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
-import { UploadIcon } from '@elementor/icons';
-import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
+import { iconPropTypeUtil, svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
+import { Box, Card, CardOverlay, Popover, Stack, styled, usePopupState } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
-import { ConditionalControlInfotip } from '../components/conditional-control-infotip';
 import { EnableUnfilteredModal } from '../components/enable-unfiltered-modal';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
+import { type IconLibraryAnchor, measureIconLibraryAnchor } from './icon-library/get-icon-library-anchor';
+import { ICON_LIBRARY_POPOVER_WIDTH, IconLibraryPopover } from './icon-library/icon-library-popover';
+import { createIconPropValue } from './open-icon-library';
+import { SVG_MEDIA_CONTROL_CONTAINER_TEST_ID, SvgMediaOverlay } from './svg-media-overlay';
+import { SvgMediaPreview } from './svg-media-preview';
 
 const TILE_SIZE = 8;
 const TILE_WHITE = 'transparent';
@@ -20,6 +23,7 @@ const TILE_BLACK = '#c1c1c1';
 export const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${ TILE_BLACK } 25%, ${ TILE_WHITE } 0, ${ TILE_WHITE } 75%, ${ TILE_BLACK } 0, ${ TILE_BLACK })`;
 
 const StyledCard = styled( Card )`
+	position: relative;
 	background-color: white;
 	background-image: ${ TILES_GRADIENT_FORMULA }, ${ TILES_GRADIENT_FORMULA };
 	background-size: ${ TILE_SIZE }px ${ TILE_SIZE }px;
@@ -29,6 +33,8 @@ const StyledCard = styled( Card )`
 	border: none;
 `;
 
+const PREVIEW_ICON_COLOR = '#000000';
+
 const StyledCardMediaContainer = styled( Stack )`
 	position: relative;
 	height: 140px;
@@ -37,27 +43,51 @@ const StyledCardMediaContainer = styled( Stack )`
 	justify-content: center;
 	align-items: center;
 	background-color: rgba( 255, 255, 255, 0.37 );
+	color: ${ PREVIEW_ICON_COLOR };
 `;
 
 const MODE_BROWSE: OpenOptions = { mode: 'browse' };
 const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
-export const SvgMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( svgSrcPropTypeUtil );
-	const id = value?.id;
-	const url = value?.url;
-	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
-	const src = attachment?.url ?? url?.value ?? null;
+type SvgMediaControlProps = {
+	label?: string;
+};
+
+export const SvgMediaControl = createControl( ( { label }: SvgMediaControlProps ) => {
+	const groupLabel = label ?? __( 'SVG', 'elementor' );
+	const { value: svgValue, setValue: setSvgValue, placeholder: svgPlaceholder } = useBoundProp( svgSrcPropTypeUtil );
+	const { value: iconValue, setValue: setIconValue, placeholder: iconPlaceholder } = useBoundProp( iconPropTypeUtil );
+	const id = svgValue?.id;
+
+	// Preview only: when there's no own value of either type (e.g. a component instance with no
+	// override yet), fall back to the bound placeholder (the inherited/origin value) so the preview
+	// isn't broken. If there IS an own value, use it as-is — even if it's only one of the two types —
+	// so we never mix an own value with an unrelated inherited placeholder. This never affects what
+	// setValue writes.
+	const hasOwnValue =
+		( svgValue !== null && svgValue !== undefined ) || ( iconValue !== null && iconValue !== undefined );
+	const previewSvgValue = hasOwnValue ? svgValue : svgPlaceholder;
+	const previewIconValue = hasOwnValue ? iconValue : iconPlaceholder;
+
+	const { data: attachment, isFetching } = useWpMediaAttachment( previewSvgValue?.id?.value || null );
+	const src = attachment?.url ?? previewSvgValue?.url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
+	const iconLibraryPopoverState = usePopupState( { variant: 'popover' } );
+	const controlContainerRef = useRef< HTMLDivElement >( null );
+	const buttonGroupRef = useRef< HTMLDivElement >( null );
+	const [ iconLibraryAnchor, setIconLibraryAnchor ] = useState< IconLibraryAnchor | null >( null );
 	const { isAdmin } = useCurrentUserCapabilities();
+	const selectedIconClass = typeof previewIconValue?.value?.value === 'string' ? previewIconValue.value.value : null;
+	const selectedIconLibrary =
+		typeof previewIconValue?.library?.value === 'string' ? previewIconValue.library.value : null;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
 		multiple: false,
 		selected: id?.value || null,
 		onSelect: ( selectedAttachment ) => {
-			setValue( {
+			setSvgValue( {
 				id: {
 					$$type: 'image-attachment-id',
 					value: selectedAttachment.id,
@@ -67,7 +97,7 @@ export const SvgMediaControl = createControl( () => {
 		},
 	} );
 
-	const onCloseUnfilteredModal = ( enabled: boolean ) => {
+	const handleCloseUnfilteredModal = ( enabled: boolean ) => {
 		setUnfilteredModalOpenState( false );
 
 		if ( enabled ) {
@@ -83,73 +113,132 @@ export const SvgMediaControl = createControl( () => {
 		}
 	};
 
-	const infotipProps = {
-		title: __( "Sorry, you can't upload that file yet.", 'elementor' ),
-		description: (
-			<>
-				{ __( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' ) }
-				<br />
-				{ __( 'file uploads.', 'elementor' ) }
-			</>
-		),
-		isEnabled: ! isAdmin,
+	const handleSelectSvg = () => {
+		handleClick( MODE_BROWSE );
 	};
 
+	const handleUpload = () => {
+		handleClick( MODE_UPLOAD );
+	};
+
+	const handleCloseIconLibrary = () => {
+		iconLibraryPopoverState.close();
+		setIconLibraryAnchor( null );
+	};
+
+	const handleIconLibrarySelect = ( icon: { value: string; library: string } ) => {
+		setIconValue( createIconPropValue( icon.value, icon.library ) );
+	};
+
+	const handleOpenIconLibrary = ( event: React.MouseEvent< HTMLElement > ) => {
+		const anchor = measureIconLibraryAnchor( controlContainerRef.current, buttonGroupRef.current );
+
+		if ( ! anchor ) {
+			return;
+		}
+
+		setIconLibraryAnchor( anchor );
+		iconLibraryPopoverState.open( event );
+	};
+
+	useEffect( () => {
+		if ( ! iconLibraryPopoverState.isOpen ) {
+			return;
+		}
+
+		const handleResize = () => {
+			const nextAnchor = measureIconLibraryAnchor( controlContainerRef.current, buttonGroupRef.current );
+
+			if ( nextAnchor ) {
+				setIconLibraryAnchor( nextAnchor );
+			}
+		};
+
+		window.addEventListener( 'resize', handleResize );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+		};
+	}, [ iconLibraryPopoverState.isOpen ] );
+
+	const iconLibraryWidth = iconLibraryAnchor?.width ?? ICON_LIBRARY_POPOVER_WIDTH;
+
 	return (
-		<Stack gap={ 1 } aria-label="SVG Control">
-			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
-			<ControlActions>
-				<StyledCard variant="outlined">
-					<StyledCardMediaContainer>
-						{ isFetching ? (
-							<CircularProgress role="progressbar" />
-						) : (
-							<CardMedia
-								component="img"
-								image={ src }
-								alt={ __( 'Preview SVG', 'elementor' ) }
-								sx={ { maxHeight: '140px', width: '50px' } }
+		<Stack gap={ 1 } aria-label={ __( 'SVG control', 'elementor' ) }>
+			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ handleCloseUnfilteredModal } />
+			{ iconLibraryAnchor ? (
+				<Popover
+					disableScrollLock
+					open={ iconLibraryPopoverState.isOpen }
+					onClose={ handleCloseIconLibrary }
+					anchorReference="anchorPosition"
+					anchorPosition={ { top: iconLibraryAnchor.top, left: iconLibraryAnchor.left } }
+					anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
+					transformOrigin={ { vertical: 'top', horizontal: 'left' } }
+					marginThreshold={ 0 }
+					PaperProps={ {
+						sx: {
+							width: iconLibraryWidth,
+							minWidth: iconLibraryWidth,
+							maxWidth: iconLibraryWidth,
+							m: 0,
+						},
+					} }
+				>
+					<IconLibraryPopover
+						open={ iconLibraryPopoverState.isOpen }
+						selectedIconClass={ selectedIconClass }
+						selectedIconLibrary={ selectedIconLibrary }
+						onSelect={ handleIconLibrarySelect }
+						onClose={ handleCloseIconLibrary }
+						width={ iconLibraryWidth }
+					/>
+				</Popover>
+			) : null }
+			<Box
+				ref={ controlContainerRef }
+				data-testid={ SVG_MEDIA_CONTROL_CONTAINER_TEST_ID }
+				sx={ { width: '100%' } }
+			>
+				<ControlActions>
+					<StyledCard variant="outlined">
+						<StyledCardMediaContainer>
+							<SvgMediaPreview
+								isFetching={ isFetching }
+								src={ src }
+								iconClassName={ selectedIconClass }
+								iconLibrary={ selectedIconLibrary }
 							/>
-						) }
-					</StyledCardMediaContainer>
-					<CardOverlay
-						sx={ {
-							'&:hover': {
-								backgroundColor: 'rgba( 0, 0, 0, 0.75 )',
-							},
-						} }
-					>
-						<Stack gap={ 1 }>
-							<Button
-								size="tiny"
-								color="inherit"
-								variant="outlined"
-								onClick={ () => handleClick( MODE_BROWSE ) }
-								aria-label="Select SVG"
-							>
-								{ __( 'Select SVG', 'elementor' ) }
-							</Button>
-							<ConditionalControlInfotip { ...infotipProps }>
-								<span>
-									<ThemeProvider colorScheme={ isAdmin ? 'light' : 'dark' }>
-										<Button
-											size="tiny"
-											variant="text"
-											color="inherit"
-											startIcon={ <UploadIcon /> }
-											disabled={ ! isAdmin }
-											onClick={ () => isAdmin && handleClick( MODE_UPLOAD ) }
-											aria-label="Upload SVG"
-										>
-											{ __( 'Upload', 'elementor' ) }
-										</Button>
-									</ThemeProvider>
-								</span>
-							</ConditionalControlInfotip>
-						</Stack>
-					</CardOverlay>
-				</StyledCard>
-			</ControlActions>
+						</StyledCardMediaContainer>
+						<CardOverlay
+							sx={ {
+								'&:hover': {
+									backgroundColor: 'rgba( 0, 0, 0, 0.75 )',
+								},
+							} }
+						>
+							<SvgMediaOverlay
+								label={ groupLabel }
+								isAdmin={ isAdmin }
+								buttonGroupRef={ buttonGroupRef }
+								onSelectSvg={ handleSelectSvg }
+								onUpload={ handleUpload }
+								onOpenIconLibrary={ handleOpenIconLibrary }
+								infotipTitle={ __( "Sorry, you can't upload that file yet.", 'elementor' ) }
+								infotipDescription={ <UnfilteredUploadInfotipDescription /> }
+							/>
+						</CardOverlay>
+					</StyledCard>
+				</ControlActions>
+			</Box>
 		</Stack>
 	);
 } );
+
+const UnfilteredUploadInfotipDescription = () => (
+	<>
+		{ __( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' ) }
+		<br />
+		{ __( 'file uploads.', 'elementor' ) }
+	</>
+);

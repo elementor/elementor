@@ -25,7 +25,7 @@ test.describe( 'Global font introduction tests', () => {
 		expect( tooltipDialogCounter ).toBe( 1 );
 	} );
 
-	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check if global font introduction tooltip is not being triggered twice', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();

@@ -32,6 +32,10 @@ class Mock_Prop_Type implements Prop_Type {
 		return null;
 	}
 
+	public function should_persist( $value ): bool {
+		return true;
+	}
+
 	public function validate( $value ): bool {
 		return true;
 	}
@@ -64,6 +68,14 @@ class Mock_Prop_Type implements Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	public function to_json_schema(): array {
+		return [];
+	}
+
+	public function get_aliases(): array {
+		return [];
 	}
 
 	#[\ReturnTypeWillChange]

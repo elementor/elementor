@@ -23,6 +23,7 @@ export { HtmlTagControl } from './controls/html-tag-control';
 export { QueryChipsControl } from './controls/query-chips-control';
 export { QueryControl } from './controls/query-control';
 export { QueryFilterRepeaterControl } from './controls/query-filter-repeater-control';
+export { QuerySelectControl } from './controls/query-select-control';
 export { GapControl } from './controls/gap-control';
 export { AspectRatioControl } from './controls/aspect-ratio-control';
 export { SvgMediaControl } from './controls/svg-media-control';
@@ -37,6 +38,26 @@ export { TransformSettingsControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
+export {
+	registerIconLibraryProvider,
+	resolveProviderIconPreviewSvg,
+	resolveProviderIconSvg,
+	unregisterIconLibraryProvider,
+	type IconLibraryProvider,
+} from './controls/icon-library/icon-library-providers';
+export { enqueueIconFonts } from './controls/open-icon-library';
+export {
+	IconLibraryUploadButton,
+	IconLibraryUploadPromotion,
+	injectIntoIconLibraryUploadAction,
+} from './controls/icon-library/icon-library-upload-action';
+export { type FontAwesome7Icon } from './controls/icon-library/font-awesome-7-catalog';
+export {
+	getFontAwesome7IconName,
+	resetFontAwesome7IconsCache,
+	resolveFontAwesome7Icon,
+	type FontAwesome7IconDefinition,
+} from './controls/icon-library/font-awesome-7-data';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { DateRangeControl } from './controls/date-range-control';
@@ -45,6 +66,7 @@ export { TimeRangeControl } from './controls/time-range-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
 export { AttachmentTypeControl } from './controls/attachment-type-control';
+export { NoticeControl } from './controls/notice-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
 export { GridSpanControl } from './controls/grid-span-control';
 
@@ -115,6 +137,9 @@ export {
 	injectIntoRepeaterItemLabel,
 	injectIntoRepeaterItemActions,
 } from './components/control-repeater/locations';
+export { injectIntoControlHeader, type ControlHeaderProps } from './components/control-header-location';
+export { init } from './init';
+export { type AppPromotion } from './controls/app-promotion-trigger';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

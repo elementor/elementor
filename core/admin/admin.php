@@ -8,6 +8,7 @@ use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -21,6 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin extends App {
+
+	const PLUGINS_PAGE_TRANSIENT_KEY = 'elementor_plugins_page_assets_data';
+	const URL = 'https://go.elementor.com/go-pro-wp-plugins/';
 
 	private $menus = [];
 
@@ -243,8 +247,8 @@ class Admin extends App {
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
 			<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
 				<span class="elementor-switch-mode-on">
-					<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Back to WordPress Editor', 'elementor' ); ?>
+					<i class="eicon-wordpress" aria-hidden="true"></i>
+					<?php echo esc_html__( 'Edit with WordPress', 'elementor' ); ?>
 				</span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
@@ -372,12 +376,17 @@ class Admin extends App {
 
 		array_unshift( $links, $settings_link );
 
-		$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
-		if ( Utils::is_sale_time() ) {
-			$go_pro_text = esc_html__( 'Sale! Upgrade Now', 'elementor' );
+		$assets_data = self::get_plugins_page_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) ) {
+			$go_pro_text = ! empty( $assets_data['label'] ) ? esc_html( $assets_data['label'] ) : esc_html__( 'Get Elementor Pro', 'elementor' );
+			$go_pro_url  = ! empty( $assets_data['url'] ) ? $assets_data['url'] : self::URL;
+		} else {
+			$go_pro_text = esc_html__( 'Get Elementor Pro', 'elementor' );
+			$go_pro_url  = self::URL;
 		}
 
-		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', 'https://go.elementor.com/go-pro-wp-plugins/', $go_pro_text );
+		$links['go_pro'] = sprintf( '<a href="%1$s" target="_blank" class="elementor-plugins-gopro">%2$s</a>', esc_url( $go_pro_url ), $go_pro_text );
 
 		return $links;
 	}
@@ -428,6 +437,11 @@ class Admin extends App {
 	 */
 	public function admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
+
+		if ( $current_screen && str_ends_with( $current_screen->id, 'elementor-mcp' ) ) {
+			return $footer_text;
+		}
+
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->id, 'elementor' ) );
 
 		if ( $is_elementor_screen ) {
@@ -730,11 +744,7 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
-		$meta = [];
-
-		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
-			$meta = array_map( 'sanitize_text_field', wp_unslash( $_GET['meta'] ) );
-		}
+		$meta = $this->get_new_post_meta_from_request();
 
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
@@ -852,6 +862,39 @@ class Admin extends App {
 			ARRAY_FILTER_USE_KEY
 		);
 	}
+
+	private function get_new_post_meta_from_request(): array {
+		$request_meta = Utils::get_super_global_value( $_GET, 'meta' ) ?? [];
+
+		if ( ! is_array( $request_meta ) ) {
+			return [];
+		}
+
+		$allowed_protected_keys = apply_filters(
+			'elementor/admin/create_new_post/allowed_protected_meta_keys',
+			[
+				'_elementor_source',
+				Floating_Buttons_Module::FLOATING_ELEMENTS_TYPE_META_KEY,
+			]
+		);
+
+		$meta = [];
+
+		foreach ( $request_meta as $meta_key => $meta_value ) {
+			if ( ! is_string( $meta_key ) || ! is_scalar( $meta_value ) ) {
+				continue;
+			}
+
+			if ( is_protected_meta( $meta_key, 'post' ) && ! in_array( $meta_key, $allowed_protected_keys, true ) ) {
+				continue;
+			}
+
+			$meta[ $meta_key ] = sanitize_text_field( (string) $meta_value );
+		}
+
+		return $meta;
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public
@@ -1182,7 +1225,6 @@ class Admin extends App {
 
 	public function register_ajax_hints( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
-		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', [ $this, 'ajax_site_mailer_campaign' ] );
 		$ajax_manager->register_ajax_action( 'elementor_core_ally_campaign', [ $this, 'ajax_ally_campaign' ] );
 	}
 
@@ -1214,17 +1256,12 @@ class Admin extends App {
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	public function ajax_site_mailer_campaign( $request ) {
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			return;
-		}
-
-		$campaign_data = [
-			'campaign' => sanitize_key( $request['campaign'] ?? '' ),
-			'source' => sanitize_key( $request['source'] ?? '' ),
-			'medium' => sanitize_key( $request['medium'] ?? '' ),
-		];
-
-		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
+	private static function get_plugins_page_assets_data(): array {
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::PLUGINS_PAGE_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/plugins-page.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'plugins-page',
+		] );
+		return $api->get_assets_data();
 	}
 }

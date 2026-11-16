@@ -1,0 +1,222 @@
+<?php
+
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers;
+
+use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
+use Elementor\Core\Utils\Svg\Svg_Sanitizer;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Utils;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Icon_Transformer extends Transformer_Base {
+	const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
+
+	const FA7_SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: visible;';
+
+	/**
+	 * Font Awesome values that Core cannot resolve go through the `svg-html` filter before the default icon.
+	 * Extensions check for this constant instead of comparing Core versions.
+	 *
+	 * @since 4.4.0
+	 */
+	const RESOLVES_EXTENSION_FONT_AWESOME_ICONS = true;
+
+	public function transform( $value, Props_Resolver_Context $context ) {
+		$icon = [
+			'value' => $value['value'] ?? '',
+			'library' => $value['library'] ?? '',
+		];
+
+		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $icon['library'] ) ) {
+			return $this->transform_font_awesome_7( $icon );
+		}
+
+		$managed_icon = $this->transform_managed_icon( $icon );
+
+		if ( '' !== $managed_icon['html'] ) {
+			return $managed_icon;
+		}
+
+		return $this->transform_filtered_library_icon( $icon );
+	}
+
+	private function transform_filtered_library_icon( array $icon ): array {
+		$html = $this->get_filtered_svg_html( $icon );
+
+		if ( '' === $html ) {
+			return $this->transform_default_svg();
+		}
+
+		return [
+			'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
+			'url' => null,
+		];
+	}
+
+	private function get_filtered_svg_html( array $icon ): string {
+		/**
+		 * Filters inline SVG markup for an icon library value not handled by Core,
+		 * including Font Awesome values that Core's bundled catalog cannot resolve.
+		 *
+		 * @since 4.4.0 Also receives unresolved Font Awesome values.
+		 *
+		 * @param string $html Sanitizable SVG markup. Default empty.
+		 * @param array  $icon {
+		 *     @type string $value   Saved icon class.
+		 *     @type string $library Icon library key.
+		 * }
+		 */
+		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
+
+		return is_string( $html ) ? $html : '';
+	}
+
+	private function transform_default_svg(): array {
+		$content = Utils::file_get_contents( Atomic_Svg::DEFAULT_SVG_PATH );
+
+		if ( ! $content ) {
+			return [
+				'html' => '',
+				'url' => Atomic_Svg::DEFAULT_SVG_URL,
+			];
+		}
+
+		return [
+			'html' => $this->process_svg( $content, self::SVG_INLINE_STYLES ),
+			'url' => Atomic_Svg::DEFAULT_SVG_URL,
+		];
+	}
+
+	private function transform_font_awesome_7( array $icon ): array {
+		$icon_data = Font_Awesome_7_Icon_Resolver::resolve( $icon['value'], $icon['library'] );
+
+		if ( ! $icon_data || empty( $icon_data['paths'] ) ) {
+			return $this->transform_extension_font_awesome_icon( $icon );
+		}
+
+		return [
+			'html' => $this->build_fa7_svg( $icon_data ),
+			'url' => null,
+		];
+	}
+
+	private function transform_extension_font_awesome_icon( array $icon ): array {
+		$html = $this->get_filtered_svg_html( $icon );
+
+		if ( '' === $html ) {
+			return $this->transform_default_svg();
+		}
+
+		return [
+			'html' => $this->process_svg( $html, self::FA7_SVG_INLINE_STYLES ),
+			'url' => null,
+		];
+	}
+
+	private function transform_managed_icon( array $icon ): array {
+		$icon['font_family'] = Font_Icon_Svg_Data_Manager::get_font_family( $icon['library'] );
+
+		if ( ! $icon['font_family'] ) {
+			return [
+				'html' => '',
+				'url' => null,
+			];
+		}
+
+		$icon_data = Font_Icon_Svg_Data_Manager::get_font_icon_svg_data( $icon );
+
+		return [
+			'html' => $this->build_managed_svg( $icon_data ),
+			'url' => null,
+		];
+	}
+
+	private function build_fa7_svg( array $icon_data ): string {
+		$attributes = [
+			'viewBox' => '0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'],
+			'xmlns' => 'http://www.w3.org/2000/svg',
+			'aria-hidden' => 'true',
+		];
+
+		$paths_markup = '';
+
+		foreach ( $icon_data['paths'] as $path ) {
+			$paths_markup .= '<path d="' . esc_attr( $path ) . '"></path>';
+		}
+
+		$svg = '<svg ' . Utils::render_html_attributes( $attributes ) . '>' . $paths_markup . '</svg>';
+
+		return $this->process_svg( $svg, self::FA7_SVG_INLINE_STYLES );
+	}
+
+	private function build_managed_svg( $icon_data ): string {
+		if ( empty( $icon_data['path'] ) ) {
+			return '';
+		}
+
+		$paths = is_array( $icon_data['path'] ) ? $icon_data['path'] : [ $icon_data['path'] ];
+
+		$attributes = [
+			'viewBox' => '0 0 ' . $icon_data['width'] . ' ' . $icon_data['height'],
+			'xmlns' => 'http://www.w3.org/2000/svg',
+		];
+
+		$paths_markup = '';
+
+		foreach ( $paths as $path ) {
+			if ( ! is_string( $path ) || '' === $path ) {
+				continue;
+			}
+
+			$paths_markup .= '<path d="' . esc_attr( $path ) . '"></path>';
+		}
+
+		if ( '' === $paths_markup ) {
+			return '';
+		}
+
+		$svg = '<svg ' . Utils::render_html_attributes( $attributes ) . '>' . $paths_markup . '</svg>';
+
+		return $this->process_svg( $svg, self::SVG_INLINE_STYLES );
+	}
+
+	private function process_svg( string $content, string $inline_styles ): string {
+		$svg = new \WP_HTML_Tag_Processor( $content );
+
+		if ( ! $svg->next_tag( 'svg' ) ) {
+			return '';
+		}
+
+		$svg->set_attribute( 'fill', 'currentColor' );
+
+		if ( ! $this->has_accessible_name( $svg, $content ) ) {
+			$svg->set_attribute( 'aria-hidden', 'true' );
+		}
+
+		$this->merge_inline_styles( $svg, $inline_styles );
+
+		return ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+	}
+
+	private function has_accessible_name( \WP_HTML_Tag_Processor $svg, string $content ): bool {
+		return null !== $svg->get_attribute( 'aria-label' )
+			|| null !== $svg->get_attribute( 'aria-labelledby' )
+			|| false !== stripos( $content, '<title' );
+	}
+
+	private function merge_inline_styles( \WP_HTML_Tag_Processor $svg, string $inline_styles ): void {
+		$existing = trim( (string) $svg->get_attribute( 'style' ) );
+
+		$merged = empty( $existing )
+			? $inline_styles
+			: rtrim( $existing, ';' ) . '; ' . $inline_styles;
+
+		$svg->set_attribute( 'style', $merged );
+	}
+}

@@ -25,11 +25,25 @@ abstract class Property_Converter_Base implements Property_Converter {
 	}
 
 	public function convert( Conversion_Context $context, array $rule ): bool {
+		$custom = $this->get_custom_converter( $context, $rule );
+
+		if ( null !== $custom ) {
+			return $custom();
+		}
+
 		if ( null === $rule['value'] ) {
 			return $this->convert_null( $context, $rule );
 		}
 
 		return $this->do_convert( $context, $rule );
+	}
+
+	/**
+	 * Override to handle special-case rules before the standard null-check and do_convert path.
+	 * Receives the full rule (value may be null). Return null to fall through to default behavior.
+	 */
+	protected function get_custom_converter( Conversion_Context $context, array $rule ): ?callable {
+		return null;
 	}
 
 	/**

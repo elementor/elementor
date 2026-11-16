@@ -1,28 +1,16 @@
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import * as React from 'react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 import KitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
+import PropTypes from 'prop-types';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );
 
-jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits', () => ( {
-	useClassesVariablesLimits: jest.fn( () => ( {
-		existingClassesCount: 0,
-		existingVariablesCount: 0,
-		classesLimit: 100,
-		variablesLimit: 100,
-		calculateLimitInfo: ( existingCount, importedCount, limit ) => {
-			const totalAfterImport = existingCount + importedCount;
-			const isExceeded = totalAfterImport > limit;
-			const overLimitCount = isExceeded ? totalAfterImport - limit : 0;
-			return { isExceeded, overLimitCount, totalAfterImport };
-		},
-	} ) ),
-} ) );
-
-jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => [
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => ( [
 	{
 		type: 'templates',
 		data: {
@@ -31,8 +19,10 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 				open: [ 'Pages', 'Posts', 'Headers', 'Footers' ],
 			},
 		},
+		dialog: function DefaultDialog() {
+			return <div>Default dialog</div>;
+		},
 		required: false,
-		dialog: null,
 	},
 	{
 		type: 'settings',
@@ -56,9 +46,22 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 		required: true,
 		dialog: null,
 	},
-] );
+] ) );
 
-import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits', () => ( {
+	useClassesVariablesLimits: jest.fn( () => ( {
+		existingClassesCount: 0,
+		existingVariablesCount: 0,
+		classesLimit: 100,
+		variablesLimit: 100,
+		calculateLimitInfo: ( existingCount, importedCount, limit ) => {
+			const totalAfterImport = existingCount + importedCount;
+			const isExceeded = totalAfterImport > limit;
+			const overLimitCount = isExceeded ? totalAfterImport - limit : 0;
+			return { isExceeded, overLimitCount, totalAfterImport };
+		},
+	} ) ),
+} ) );
 
 describe( 'KitPartsSelection Component', () => {
 	const mockOnCheckboxChange = jest.fn();
@@ -85,9 +88,70 @@ describe( 'KitPartsSelection Component', () => {
 				data: mockData,
 			},
 		} );
+
+		window.elementorModules = {
+			importExport: {
+				customizationDialogsRegistry: {
+					get: jest.fn().mockReturnValue( {} ),
+				},
+			},
+		};
 	} );
 
 	describe( 'Component Rendering', () => {
+		it( 'renders a section override and uses the registered dialog component', () => {
+			// Arrange
+			const OverrideDialog = ( { open } ) => open ? <div>Override dialog</div> : null;
+			const SectionOverride = ( { DialogComponent, isActive, item, onOpenDialog } ) => (
+				<div>
+					<div>{ item.data.title } custom section</div>
+					<button onClick={ onOpenDialog }>Open section dialog</button>
+					{ DialogComponent && <DialogComponent open={ isActive } /> }
+				</div>
+			);
+
+			OverrideDialog.propTypes = {
+				open: PropTypes.bool,
+			};
+
+			SectionOverride.propTypes = {
+				DialogComponent: PropTypes.elementType,
+				isActive: PropTypes.bool,
+				item: PropTypes.shape( {
+					data: PropTypes.shape( {
+						title: PropTypes.string.isRequired,
+					} ).isRequired,
+				} ).isRequired,
+				onOpenDialog: PropTypes.func,
+			};
+
+			window.elementorModules.importExport.customizationDialogsRegistry.get.mockImplementation( ( sectionKey ) => {
+				if ( 'templates' !== sectionKey ) {
+					return {};
+				}
+
+				return {
+					component: OverrideDialog,
+					section: SectionOverride,
+				};
+			} );
+
+			// Act
+			render(
+				<KitPartsSelection
+					onCheckboxChange={ jest.fn() }
+					handleSaveCustomization={ jest.fn() }
+				/>,
+			);
+
+			fireEvent.click( screen.getByText( 'Open section dialog' ) );
+
+			// Assert
+			expect( screen.getByText( 'Templates custom section' ) ).toBeTruthy();
+			expect( screen.getByText( 'Override dialog' ) ).toBeTruthy();
+			expect( screen.queryByText( 'Default dialog' ) ).toBeFalsy();
+		} );
+
 		it( 'should render all kit content items', () => {
 			// Arrange
 			const props = {

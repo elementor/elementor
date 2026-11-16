@@ -1,0 +1,703 @@
+<?php
+
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Audits;
+
+use Elementor\Core\Kits\Manager as Kits_Manager;
+use Elementor\Modules\Audits\Data\Endpoints\Page_Context;
+use PHPUnit\Framework\TestCase;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Test_Page_Context_Endpoint extends TestCase {
+
+	private $post_id;
+	private $attachment_id;
+	private $large_attachment_ids = [];
+	private $admin_user_id;
+	private $saved_blogname;
+	private $saved_blogdescription;
+	private $saved_custom_logo;
+	private $saved_site_icon;
+	private $saved_blog_public;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->ensure_active_kit_exists();
+
+		do_action( 'rest_api_init' );
+
+		$this->saved_blogname = get_option( 'blogname' );
+		$this->saved_blogdescription = get_option( 'blogdescription' );
+		$this->saved_custom_logo = get_theme_mod( 'custom_logo' );
+		$this->saved_site_icon = get_option( 'site_icon' );
+		$this->saved_blog_public = get_option( 'blog_public' );
+
+		$this->admin_user_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $this->admin_user_id );
+
+		$this->post_id = $this->factory()->post->create( [
+			'post_title' => 'Hello',
+			'post_excerpt' => 'World',
+		] );
+
+		$this->attachment_id = $this->factory()->attachment->create_upload_object(
+			__DIR__ . '/fixtures/sample.jpg',
+			$this->post_id
+		);
+	}
+
+	public function tearDown(): void {
+		update_option( 'blogname', $this->saved_blogname );
+		update_option( 'blogdescription', $this->saved_blogdescription );
+
+		if ( $this->saved_custom_logo ) {
+			set_theme_mod( 'custom_logo', $this->saved_custom_logo );
+		} else {
+			remove_theme_mod( 'custom_logo' );
+		}
+
+		update_option( 'site_icon', $this->saved_site_icon );
+		update_option( 'blog_public', $this->saved_blog_public );
+
+		wp_delete_post( $this->post_id, true );
+		wp_delete_attachment( $this->attachment_id, true );
+
+		foreach ( $this->large_attachment_ids as $attachment_id ) {
+			wp_delete_attachment( $attachment_id, true );
+		}
+
+		wp_delete_user( $this->admin_user_id );
+		parent::tearDown();
+	}
+
+	/**
+	 * `sample.jpg` is a 2x2 pixel fixture, too small for WordPress to generate registered
+	 * image sizes, so size-resolution tests need a large enough attachment of their own.
+	 */
+	private function create_large_attachment(): int {
+		$attachment_id = $this->factory()->attachment->create_upload_object(
+			__DIR__ . '/fixtures/large-sample.jpg',
+			$this->post_id
+		);
+
+		$this->large_attachment_ids[] = $attachment_id;
+
+		return $attachment_id;
+	}
+
+	private function factory() {
+		return new \WP_UnitTest_Factory();
+	}
+
+	public function test_returns_post_title_and_excerpt() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( 'Hello', $response['post_title'] );
+		$this->assertSame( 'World', $response['post_excerpt'] );
+	}
+
+	public function test_returns_null_excerpt_when_empty() {
+		// Arrange.
+		wp_update_post( [
+			'ID' => $this->post_id,
+			'post_excerpt' => '',
+		] );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['post_excerpt'] );
+	}
+
+	public function test_image_sizes_limited_to_passed_image_size_requests() {
+		// Arrange.
+		$request_key = "{$this->attachment_id}:full";
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( $request_key, $response['image_sizes'] );
+		$this->assertArrayHasKey( 'filesize_bytes', $response['image_sizes'][ $request_key ] );
+	}
+
+	public function test_image_sizes_includes_alt_from_attachment_meta() {
+		// Arrange.
+		update_post_meta( $this->attachment_id, '_wp_attachment_image_alt', 'Sample alt text' );
+		$request_key = "{$this->attachment_id}:full";
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'alt', $response['image_sizes'][ $request_key ] );
+		$this->assertSame( 'Sample alt text', $response['image_sizes'][ $request_key ]['alt'] );
+	}
+
+	public function test_image_sizes_alt_is_empty_when_no_attachment_meta_and_title_set() {
+		// Arrange.
+		wp_update_post( [
+			'ID' => $this->attachment_id,
+			'post_title' => 'Some Filename Title',
+		] );
+		$request_key = "{$this->attachment_id}:full";
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( '', $response['image_sizes'][ $request_key ]['alt'] );
+	}
+
+	public function test_image_sizes_empty_when_no_image_size_requests_passed() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( [], $response['image_sizes'] );
+	}
+
+	public function test_image_sizes_resolves_registered_size_filesize_from_metadata() {
+		// Arrange.
+		$attachment_id = $this->create_large_attachment();
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+		$registered_size = array_key_first( $metadata['sizes'] );
+		$request_key = "{$attachment_id}:{$registered_size}";
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame(
+			(int) $metadata['sizes'][ $registered_size ]['width'],
+			$response['image_sizes'][ $request_key ]['width']
+		);
+		$this->assertSame(
+			(int) $metadata['sizes'][ $registered_size ]['filesize'],
+			$response['image_sizes'][ $request_key ]['filesize_bytes']
+		);
+	}
+
+	public function test_image_sizes_falls_back_to_filesystem_stat_when_metadata_filesize_missing() {
+		// Arrange.
+		$attachment_id = $this->create_large_attachment();
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+		$registered_size = array_key_first( $metadata['sizes'] );
+		unset( $metadata['sizes'][ $registered_size ]['filesize'] );
+		wp_update_attachment_metadata( $attachment_id, $metadata );
+
+		$sized_path = trailingslashit( dirname( get_attached_file( $attachment_id ) ) ) . $metadata['sizes'][ $registered_size ]['file'];
+		$request_key = "{$attachment_id}:{$registered_size}";
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( (int) filesize( $sized_path ), $response['image_sizes'][ $request_key ]['filesize_bytes'] );
+	}
+
+	public function test_image_sizes_falls_back_to_original_file_when_size_was_not_generated() {
+		// Arrange.
+		$request_key = "{$this->attachment_id}:non_existent_size";
+		$original_filesize = filesize( get_attached_file( $this->attachment_id ) );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( (int) $original_filesize, $response['image_sizes'][ $request_key ]['filesize_bytes'] );
+	}
+
+	public function test_image_sizes_uses_original_file_for_full_size_request() {
+		// Arrange.
+		$request_key = "{$this->attachment_id}:full";
+		$original_filesize = filesize( get_attached_file( $this->attachment_id ) );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'image_size_requests', [ $request_key ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( (int) $original_filesize, $response['image_sizes'][ $request_key ]['filesize_bytes'] );
+	}
+
+	public function test_privacy_policy_url_is_null_when_not_configured() {
+		// Arrange.
+		update_option( 'wp_page_for_privacy_policy', 0 );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['privacy_policy_url'] );
+	}
+
+	public function test_privacy_policy_url_is_returned_when_published_page_is_set() {
+		// Arrange.
+		$privacy_page_id = $this->factory()->post->create( [
+			'post_title'  => 'Privacy Policy',
+			'post_status' => 'publish',
+			'post_type'   => 'page',
+		] );
+		update_option( 'wp_page_for_privacy_policy', $privacy_page_id );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNotNull( $response['privacy_policy_url'] );
+		$this->assertStringContainsString( get_permalink( $privacy_page_id ), $response['privacy_policy_url'] );
+
+		// Cleanup.
+		wp_delete_post( $privacy_page_id, true );
+		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
+	public function test_privacy_policy_url_is_null_when_page_is_draft() {
+		// Arrange.
+		$privacy_page_id = $this->factory()->post->create( [
+			'post_title'  => 'Privacy Policy',
+			'post_status' => 'draft',
+			'post_type'   => 'page',
+		] );
+		update_option( 'wp_page_for_privacy_policy', $privacy_page_id );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['privacy_policy_url'] );
+
+		// Cleanup.
+		wp_delete_post( $privacy_page_id, true );
+		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
+	public function test_privacy_policy_url_is_null_when_assigned_page_was_deleted() {
+		// Arrange.
+		$privacy_page_id = $this->factory()->post->create( [
+			'post_title'  => 'Privacy Policy',
+			'post_status' => 'publish',
+			'post_type'   => 'page',
+		] );
+		update_option( 'wp_page_for_privacy_policy', $privacy_page_id );
+		wp_delete_post( $privacy_page_id, true );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['privacy_policy_url'] );
+
+		// Cleanup.
+		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
+	public function test_site_identity_all_set_when_configured() {
+		// Arrange.
+		update_option( 'blogname', 'My Studio' );
+		update_option( 'blogdescription', 'We build things.' );
+		set_theme_mod( 'custom_logo', $this->attachment_id );
+		update_option( 'site_icon', $this->attachment_id );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertTrue( $response['site_identity']['site_name_set'] );
+		$this->assertTrue( $response['site_identity']['site_description_set'] );
+		$this->assertTrue( $response['site_identity']['site_logo_set'] );
+		$this->assertTrue( $response['site_identity']['site_favicon_set'] );
+	}
+
+	public function test_site_identity_name_fails_for_default_wordpress() {
+		// Arrange.
+		update_option( 'blogname', 'WordPress' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_name_set'] );
+	}
+
+	public function test_site_identity_description_fails_for_default_tagline() {
+		// Arrange.
+		update_option( 'blogdescription', 'Just another WordPress site' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_description_set'] );
+	}
+
+	public function test_site_identity_logo_false_without_custom_logo() {
+		// Arrange.
+		remove_theme_mod( 'custom_logo' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_logo_set'] );
+	}
+
+	public function test_site_identity_favicon_false_without_site_icon() {
+		// Arrange.
+		update_option( 'site_icon', 0 );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_favicon_set'] );
+	}
+
+	public function test_is_noindex_true_when_blog_public_is_zero() {
+		// Arrange.
+		update_option( 'blog_public', '0' );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertTrue( $response['is_noindex'] );
+	}
+
+	public function test_is_noindex_false_when_blog_public_is_one() {
+		// Arrange.
+		update_option( 'blog_public', '1' );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['is_noindex'] );
+	}
+
+	public function test_reading_settings_url_always_points_to_options_reading_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'reading_settings_url', $response );
+		$this->assertStringContainsString( 'options-reading.php', $response['reading_settings_url'] );
+	}
+
+	public function test_privacy_settings_url_always_points_to_options_privacy_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'privacy_settings_url', $response );
+		$this->assertStringContainsString( 'options-privacy.php', $response['privacy_settings_url'] );
+	}
+
+	public function test_ally_plugin_url_is_a_decoded_nonce_url() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_plugin_url', $response );
+		$this->assertStringNotContainsString( '&amp;', $response['ally_plugin_url'] );
+		$this->assertStringContainsString( '&', $response['ally_plugin_url'] );
+	}
+
+	public function test_ally_accessibility_statement_url_points_to_the_statement_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_accessibility_statement_url', $response );
+		$this->assertStringContainsString( 'page=accessibility-settings#accessibilityStatement', $response['ally_accessibility_statement_url'] );
+	}
+
+	public function test_ally_widget_settings_url_points_to_the_capabilities_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_widget_settings_url', $response );
+		$this->assertStringContainsString( 'page=accessibility-settings#capabilities', $response['ally_widget_settings_url'] );
+	}
+
+	public function test_ally_scan_url_points_to_the_scans_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'ally_scan_url', $response );
+		$this->assertStringContainsString( 'page=accessibility-settings#scans', $response['ally_scan_url'] );
+	}
+
+	public function test_ally_accessibility_statement_created_is_false_when_no_statement_data_option_exists() {
+		// Arrange.
+		delete_option( 'ea11y_accessibility_statement_data' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['ally_accessibility_statement_created'] );
+	}
+
+	public function test_ally_accessibility_statement_created_is_true_when_statement_page_id_is_set() {
+		// Arrange.
+		update_option( 'ea11y_accessibility_statement_data', [ 'pageId' => 123 ] );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertTrue( $response['ally_accessibility_statement_created'] );
+
+		// Cleanup.
+		delete_option( 'ea11y_accessibility_statement_data' );
+	}
+
+	public function test_cookiez_scan_url_always_points_to_cookiez_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'cookiez_scan_url', $response );
+		$this->assertStringContainsString( 'page=cookiez-settings', $response['cookiez_scan_url'] );
+		$this->assertStringContainsString( '#cookie-management', $response['cookiez_scan_url'] );
+	}
+
+	public function test_cookiez_plugin_action_url_is_present() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'cookiez_plugin_action_url', $response );
+		$this->assertIsString( $response['cookiez_plugin_action_url'] );
+		$this->assertStringNotContainsString( '&amp;', $response['cookiez_plugin_action_url'] );
+		$this->assertStringContainsString( '&', $response['cookiez_plugin_action_url'] );
+	}
+
+	public function test_image_optimization_plugin_url_is_a_decoded_nonce_url() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'image_optimization_plugin_url', $response );
+		$this->assertStringNotContainsString( '&amp;', $response['image_optimization_plugin_url'] );
+		$this->assertStringContainsString( '&', $response['image_optimization_plugin_url'] );
+	}
+
+	public function test_image_optimization_settings_url_points_to_the_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'image_optimization_settings_url', $response );
+		$this->assertStringContainsString( 'page=image-optimization-settings', $response['image_optimization_settings_url'] );
+	}
+
+	public function test_cookiez_plugin_installed_is_boolean() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertIsBool( $response['cookiez_plugin_installed'] );
+	}
+
+	public function test_cookiez_consent_mode_settings_url_always_points_to_cookiez_settings_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'cookiez_consent_mode_settings_url', $response );
+		$this->assertStringContainsString( 'page=cookiez-settings', $response['cookiez_consent_mode_settings_url'] );
+	}
+
+	public function test_frontend_url_is_permalink_when_post_is_published() {
+		// Arrange.
+		wp_update_post( [
+			'ID' => $this->post_id,
+			'post_status' => 'publish',
+		] );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertSame( get_permalink( $this->post_id ), $response['frontend_url'] );
+	}
+
+	public function test_frontend_url_is_null_when_post_is_draft() {
+		// Arrange.
+		wp_update_post( [
+			'ID' => $this->post_id,
+			'post_status' => 'draft',
+		] );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['frontend_url'] );
+	}
+
+	public function test_frontend_url_is_null_when_post_does_not_exist() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', 0 );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['frontend_url'] );
+	}
+
+	private function build_controller() {
+		return new \Elementor\Modules\Audits\Data\Controller();
+	}
+
+	/**
+	 * A previous test class may have left OPTION_ACTIVE pointing to a kit that was already
+	 * wiped from the database. `update_option( 'blogname' | 'blogdescription' )` triggers
+	 * Kits_Manager's site-identity sync, which requires a valid active kit to exist.
+	 */
+	private function ensure_active_kit_exists(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
+
+		Kits_Manager::create_default_kit();
+	}
+}

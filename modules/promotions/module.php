@@ -16,11 +16,10 @@ use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
-use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\Pointers\Promotional_Pointer;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
-use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
+use Elementor\Modules\Promotions\Widgets\Atomic_Carousel_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
-use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
 use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
@@ -28,6 +27,9 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Classes\Subscription_Action;
+use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,7 +42,11 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro() || ! Utils::is_license_active();
+		if ( Utils::has_pro() ) {
+			return true;
+		}
+
+		return ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -52,6 +58,31 @@ class Module extends Base_Module {
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
+		add_action( 'admin_init', function () {
+			$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+			if ( 'go_elementor_pro' === $page ) {
+				$this->handle_external_redirects();
+				return;
+			}
+
+			if ( Admin_Menu_Structure::UPGRADE_SLUGS[0] === $page && ! Editor_One_Module::is_admin_navigation_active() ) {
+				$this->handle_external_redirects();
+			}
+		} );
+
+		add_action( 'admin_menu', function () {
+			if ( ! Editor_One_Module::is_admin_navigation_active() ) {
+				return;
+			}
+
+			$hook = get_plugin_page_hook( Admin_Menu_Structure::UPGRADE_SLUGS[0], Menu_Config::ELEMENTOR_HOME_MENU_SLUG );
+
+			if ( $hook ) {
+				add_action( "load-{$hook}", [ $this, 'handle_external_redirects' ] );
+			}
+		}, 10008 );
+
 		if ( Utils::has_pro() ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 			$this->register_atomic_promotions();
@@ -59,17 +90,12 @@ class Module extends Base_Module {
 			return;
 		}
 
-		add_action( 'admin_init', function () {
-			$this->handle_external_redirects();
-		} );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
 
-		if ( Utils::is_sale_time() ) {
-			add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
-		}
+		add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
+		add_filter( 'elementor_one/upgrade_url', [ $this, 'override_one_menu_upgrade_url' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -84,12 +110,16 @@ class Module extends Base_Module {
 			new Birthday();
 		}
 
-		if ( Black_Friday::should_display_notice() ) {
-			new Black_Friday();
+		if ( Promotional_Pointer::should_display_notice() ) {
+			new Promotional_Pointer();
 		}
 
-		if ( Conversion_Banner::should_display_banner() ) {
-			new Conversion_Banner();
+		if ( ! Utils::has_pro() ) {
+			Conversion_Banner::register_cache_invalidation_hooks();
+
+			if ( Conversion_Banner::should_display_banner() ) {
+				new Conversion_Banner();
+			}
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
@@ -101,34 +131,71 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 
-		// Add Ally promo
-		Ally_Dashboard_Widget::init();
-
 		$this->register_atomic_promotions();
 	}
 
-	/**
-	 * Get Ally Scanner URL
-	 *
-	 * @return string
-	 */
-	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://go.elementor.com/acc-checker-dashboard-plg' );
-	}
-
-	private function handle_external_redirects() {
+	public function handle_external_redirects() {
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( empty( $page ) ) {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $page ) {
-			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
-			die;
+		if ( ! in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
+			return;
 		}
+
+		if ( Utils::has_pro() && ! Editor_One_Module::is_admin_navigation_active() ) {
+			return;
+		}
+
+		add_filter( 'allowed_redirect_hosts', function ( $hosts, $host ) {
+			if ( 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' ) ) {
+				$hosts[] = $host;
+			}
+			return $hosts;
+		}, 10, 2 );
+
+		wp_safe_redirect( $this->get_upgrade_redirect_url() );
+		die;
+	}
+
+	public function get_upgrade_redirect_url(): string {
+		$default_url = Subscription_Action::find_registered_external_upgrade_url() ?? Go_Pro_Promotion_Item::get_url();
+
+		/**
+		 * Upgrade sidebar redirect URL for Editor One.
+		 *
+		 * Internal extension point for Elementor packages (for example Elementor Pro). The URL must
+		 * point to an elementor.com host so `wp_safe_redirect()` can run.
+		 *
+		 * @param string $url Redirect destination.
+		 */
+		$url = apply_filters( 'elementor_one/upgrade_url', $default_url );
+
+		if ( ! is_string( $url ) || ! $this->is_allowed_upgrade_redirect_url( $url ) ) {
+			return Go_Pro_Promotion_Item::get_url();
+		}
+
+		return $url;
+	}
+
+	private function is_allowed_upgrade_redirect_url( string $url ): bool {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		if ( empty( $host ) || ! is_string( $host ) ) {
+			return false;
+		}
+
+		return 'elementor.com' === $host || str_ends_with( $host, '.elementor.com' );
 	}
 
 	public function override_one_menu_upgrade_label_during_sale( $menu ) {
+		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
+
+		if ( empty( $assets_data['is_active'] ) || empty( $assets_data['label'] ) ) {
+			return $menu;
+		}
+
 		global $submenu;
 
 		$parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
@@ -140,12 +207,22 @@ class Module extends Base_Module {
 
 		foreach ( $submenu[ $parent_slug ] as &$item ) {
 			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
-				$item[0] = esc_html__( 'Sale!', 'elementor' ) . '<br />' . esc_html__( 'Upgrade Now', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$item[0] = esc_html( $assets_data['label'] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				break;
 			}
 		}
 
 		return $menu;
+	}
+
+	public function override_one_menu_upgrade_url( string $url ): string {
+		$assets_data = Go_Pro_Promotion_Item::get_side_menu_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) ) {
+			return Go_Pro_Promotion_Item::get_url();
+		}
+
+		return $url;
 	}
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
@@ -225,11 +302,9 @@ class Module extends Base_Module {
 	}
 
 	public function add_editing_panel_sticky_promotion( array $settings ): array {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' ) ) {
-			return $settings;
+		if ( ! Utils::has_pro() ) {
+			$settings['editingPanelStickyPromotion'] = Sticky_Panel_Promotion::get_promotion_for_editor();
 		}
-
-		$settings['editingPanelStickyPromotion'] = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
 
 		return $settings;
 	}
@@ -276,7 +351,17 @@ class Module extends Base_Module {
 		];
 	}
 
+	private function should_register_core_atomic_panel_promotions(): bool {
+		// Pro with an active license registers real atomic widgets (or its own panel
+		// promotion layer). Core stubs caused duplicate panel entries after ED-25600.
+		return ! Utils::has_pro() || ! Utils::is_license_active();
+	}
+
 	private function register_atomic_promotions(): void {
+		if ( ! $this->should_register_core_atomic_panel_promotions() ) {
+			return;
+		}
+
 		add_action( 'elementor/init', function() {
 			if ( ! $this->is_atomic_widgets_active() ) {
 				return;
@@ -295,12 +380,11 @@ class Module extends Base_Module {
 					2
 				);
 			}
-
-			( new Birthday_Easter_Egg_Promotion() )->register();
 		} );
 
 		( new Atomic_Form_Widget_Promotion() )->register();
 		( new Collection_Loop_Widget_Promotion() )->register();
+		( new Atomic_Carousel_Widget_Promotion() )->register();
 	}
 
 	public function inject_atomic_promotion_props( array $schema ): array {

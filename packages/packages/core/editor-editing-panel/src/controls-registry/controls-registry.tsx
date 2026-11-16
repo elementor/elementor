@@ -10,10 +10,12 @@ import {
 	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
+	NoticeControl,
 	NumberControl,
 	QueryChipsControl,
 	QueryControl,
 	QueryFilterRepeaterControl,
+	QuerySelectControl,
 	RepeatableControl,
 	SelectControlWrapper,
 	SizeControl,
@@ -33,7 +35,7 @@ import {
 	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailsPropTypeUtil,
-	htmlV3PropTypeUtil,
+	escapedHtmlPropTypeUtil,
 	imagePropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
@@ -70,6 +72,7 @@ const controlTypes = {
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
+	'query-select': { component: QuerySelectControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	'query-filter-repeater': {
 		component: QueryFilterRepeaterControl,
 		layout: 'full',
@@ -84,7 +87,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'custom', propTypeUtil: escapedHtmlPropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
 	'date-range': {
 		component: DateRangeControl,
@@ -97,6 +100,7 @@ const controlTypes = {
 		propTypeUtil: timeRangePropTypeUtil,
 	},
 	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
+	notice: { component: NoticeControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

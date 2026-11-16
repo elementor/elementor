@@ -1,4 +1,5 @@
 import { List, ListItem, ListItemText } from '@elementor/ui';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 import PropTypes from 'prop-types';
 import {
 	MenuItemButton,
@@ -21,6 +22,13 @@ const CollapsedMenuItemPopover = ( {
 	onMouseEnter,
 	anchorRef,
 } ) => {
+	const handleChildClick = ( childItem ) => {
+		EditorOneEventManager.sendSidebarMenuItemClicked( {
+			eventId: childItem.event_id,
+			groupEventId: item.event_id,
+		} );
+	};
+
 	return (
 		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter } ref={ anchorRef }>
 			<MenuItemButton selected={ isActive || isPopoverOpen } sx={ { height: 36 } }>
@@ -50,6 +58,7 @@ const CollapsedMenuItemPopover = ( {
 								<PopoverListItemButton
 									component="a"
 									href={ childItem.url }
+									onClick={ () => handleChildClick( childItem ) }
 									selected={ childItem.slug === activeChildSlug }
 								>
 									<ListItemText

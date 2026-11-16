@@ -22,6 +22,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
+	use Concerns\Has_Json_Schema_Meta;
 
 	protected Prop_Type $item_type;
 
@@ -90,12 +91,23 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function should_persist( $value ): bool {
+		return ! empty( $value['value'] );
+	}
+
 	public function sanitize_value( $value ) {
 		$prop_type = $this->get_item_type();
+		$result = [];
 
-		return array_map( function ( $item ) use ( $prop_type ) {
-			return $prop_type->sanitize( $item );
-		}, $value );
+		foreach ( $value as $item ) {
+			$sanitized_value = $prop_type->sanitize( $item );
+
+			if ( $prop_type->should_persist( $sanitized_value ) ) {
+				$result[] = $sanitized_value;
+			}
+		}
+
+		return $result;
 	}
 
 	public function jsonSerialize(): array {
@@ -122,5 +134,27 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	public function to_json_schema(): array {
+		$schema = $this->with_json_schema_meta( [] );
+
+		$schema['type'] = 'object';
+
+		$value_schema = [ 'type' => 'array' ];
+
+		if ( $this->get_item_type() ) {
+			$value_schema['items'] = $this->get_item_type()->to_json_schema();
+		}
+
+		$schema['properties'] = [
+			'$$type' => [
+				'type' => 'string',
+				'const' => static::get_key(),
+			],
+			'value' => $value_schema,
+		];
+
+		return $schema;
 	}
 }

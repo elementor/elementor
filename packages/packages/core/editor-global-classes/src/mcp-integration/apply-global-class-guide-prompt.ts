@@ -9,8 +9,8 @@ export const generateApplyGlobalClassGuidePrompt = () => {
 
 	prompt.instruction(
 		`## When to use this tool:
-**ALWAYS use this IMMEDIATELY AFTER building compositions** to apply the global classes you created beforehand:
-- After using "build-compositions" tool, apply semantic classes to the created elements
+**ALWAYS use this IMMEDIATELY AFTER creating or updating elements** to apply the global classes you created beforehand:
+- After adding elements to the canvas, apply semantic classes to them
 - When applying consistent typography styles (heading-primary, text-body, etc.)
 - When applying theme colors or brand styles (bg-brand, button-cta, etc.)
 - When ensuring spacing consistency (spacing-section-large, etc.)
@@ -23,7 +23,7 @@ export const generateApplyGlobalClassGuidePrompt = () => {
 	prompt.instruction(
 		`## Prerequisites:
 - **REQUIRED**: Get the list of available global classes from 'elementor://global-classes' resource
-- **REQUIRED**: Get element IDs from the composition XML returned by "build-compositions" tool
+- **REQUIRED**: Get element IDs from the page structure or selected element resources
 - Ensure you have the most up-to-date list of classes applied to the element to avoid duplicates
 - Make sure you have the correct class ID that you want to apply`
 	);

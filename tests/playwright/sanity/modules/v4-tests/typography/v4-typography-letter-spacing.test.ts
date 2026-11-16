@@ -130,8 +130,9 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 			await addWidgetWithOpenTypographySection( driver, widget.type );
 
 			await driver.editor.v4Panel.style.setLetterSpacing( 150, UNITS.percent );
-			// Verify that it falls back to normal (0) since % is not supported
-			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 0, expectedUnit: UNITS.px, cssProperty: 'letterSpacing' } );
+			// Percentage letter spacing is relative to the advance measure of the space
+			// character (U+0020), per CSS Text Level 4.
+			await verifySpacingEditor( { driver, selector: widget.selector, expectedValue: 150, expectedUnit: UNITS.percent, cssProperty: 'letterSpacing' } );
 		} );
 	} );
 } );

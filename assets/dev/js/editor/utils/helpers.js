@@ -1,26 +1,18 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
-import DOMPurify, { isValidAttribute } from 'dompurify';
+import DOMPurify from 'dompurify';
 
-const allowedHTMLWrapperTags = [
-	'article',
-	'aside',
-	'div',
-	'footer',
-	'h1',
-	'h2',
-	'h3',
-	'h4',
-	'h5',
-	'h6',
-	'header',
-	'main',
-	'nav',
-	'p',
-	'section',
-	'span',
-];
+/**
+ * PHP (`Utils::get_allowed_html_wrapper_tags()`) is the single source of truth for this
+ * list; it's localized via `elementorCommon.config`. If it's ever missing, fail closed
+ * (no tags allowed) rather than fall back to a second hardcoded copy that could drift.
+ */
+function getAllowedHTMLWrapperTags() {
+	const { allowedHTMLWrapperTags } = globalThis.elementorCommon?.config ?? {};
+
+	return Array.isArray( allowedHTMLWrapperTags ) ? allowedHTMLWrapperTags : [];
+}
 
 module.exports = {
 	container: ContainerHelper,
@@ -92,13 +84,73 @@ module.exports = {
 	},
 
 	fetchInlineSvg( svgUrl, callback = false ) {
-		fetch( svgUrl )
-			.then( ( response ) => response.ok ? response.text() : '' )
-			.then( ( data ) => {
-				if ( callback ) {
-					callback( data );
-				}
-			} );
+		const done = ( data ) => callback && callback( data );
+		let url;
+
+		try {
+			url = new URL( svgUrl, window.location.href );
+		} catch ( e ) {
+			return done( '' );
+		}
+
+		if ( ! this.isAllowedInlineSvgUrl( url ) ) {
+			return done( '' );
+		}
+
+		fetch( url.href, { credentials: 'same-origin' } )
+			.then( ( response ) => ( response.ok ? response.text() : '' ) )
+			.then( ( text ) => done( this.sanitizeInlineSvg( text ) ) )
+			.catch( () => done( '' ) );
+	},
+
+	isAllowedInlineSvgUrl( url ) {
+		if ( ! [ 'http:', 'https:' ].includes( url.protocol ) ) {
+			return false;
+		}
+
+		if ( url.origin === window.location.origin ) {
+			return true;
+		}
+
+		const uploadsUrl = globalThis.elementor?.config?.urls?.upload;
+
+		if ( ! uploadsUrl ) {
+			return false;
+		}
+
+		try {
+			return url.origin === new URL( uploadsUrl, window.location.href ).origin;
+		} catch ( e ) {
+			return false;
+		}
+	},
+
+	sanitizeInlineSvg( text ) {
+		if ( ! text ) {
+			return '';
+		}
+
+		const fragment = DOMPurify.sanitize( text, {
+			USE_PROFILES: { svg: true, svgFilters: true },
+			ADD_TAGS: [ 'use' ],
+			RETURN_DOM_FRAGMENT: true,
+		} );
+
+		const root = fragment.firstElementChild;
+
+		if ( ! root || 'svg' !== root.nodeName.toLowerCase() ) {
+			return '';
+		}
+
+		root.querySelectorAll( 'use' ).forEach( ( use ) => {
+			const href = use.getAttribute( 'href' ) || use.getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+			if ( href && ! href.startsWith( '#' ) ) {
+				use.removeAttribute( 'href' );
+				use.removeAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+			}
+		} );
+
+		return root.outerHTML;
 	},
 
 	getInlineSvg( value, view ) {
@@ -182,7 +234,8 @@ module.exports = {
 			iconValue = icon.value;
 		if ( 'svg' === iconType ) {
 			if ( 'panel' === returnType ) {
-				return '<img src="' + iconValue.url + '">';
+				const iconUrl = iconValue && 'string' === typeof iconValue.url ? _.escape( iconValue.url ) : '';
+				return '<img src="' + iconUrl + '">';
 			}
 			return {
 				rendered: true,
@@ -193,7 +246,8 @@ module.exports = {
 		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
-				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
+				const iconClass = 'string' === typeof iconValue ? _.escape( iconValue ) : '';
+				return '<' + tag + ' class="' + iconClass + '"></' + tag + '>';
 			}
 			const tagUniqueID = tag + elementorCommon.helpers.getUniqueId();
 			view.addRenderAttribute( tagUniqueID, attributes );
@@ -362,7 +416,7 @@ module.exports = {
 			icon = '';
 		if ( fallbackControl && ! migrated ) {
 			social = fallbackControl.replace( 'fa fa-', '' );
-			icon = '<i class="' + fallbackControl + '"></i>';
+			icon = '<i class="' + _.escape( fallbackControl ) + '"></i>';
 		} else if ( iconsControl.value && 'svg' !== iconsControl.library ) {
 			social = iconsControl.value.split( ' ' )[ 1 ];
 			if ( ! social ) {
@@ -694,7 +748,9 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag?.toLowerCase() ) ? tag : 'div';
+		const allowedTags = getAllowedHTMLWrapperTags();
+
+		return allowedTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {
@@ -711,7 +767,7 @@ module.exports = {
 	},
 
 	sanitizeUrl( url ) {
-		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
+		const isValidUrl = !! url ? DOMPurify.isValidAttribute( 'a', 'href', url ) : false;
 
 		if ( ! isValidUrl ) {
 			return '';

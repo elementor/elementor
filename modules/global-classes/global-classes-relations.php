@@ -278,16 +278,20 @@ class Global_Classes_Relations {
 
 		$elements_data = $document->get_elements_data();
 
-		if ( empty( $elements_data ) ) {
-			return [];
+		if ( ! empty( $elements_data ) ) {
+			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
+				$used_class_ids = array_merge(
+					$used_class_ids,
+					Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
+				);
+			} );
 		}
 
-		Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
-			$used_class_ids = array_merge(
-				$used_class_ids,
-				Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
-			);
-		} );
+		$used_class_ids = apply_filters(
+			'elementor/global_classes/extract_class_ids_from_post',
+			$used_class_ids,
+			$post_id
+		);
 
 		return array_values( array_unique( $used_class_ids ) );
 	}
@@ -344,13 +348,7 @@ class Global_Classes_Relations {
 		$documents = Plugin::$instance->documents;
 
 		if ( ! $this->is_preview() ) {
-			$document = $documents->get( $post_id );
-
-			if ( ! $document ) {
-				return null;
-			}
-
-			return $document ?? null;
+			return $this->get_document_or_null( $documents->get( $post_id ) );
 		}
 
 		$document = $documents->get_doc_or_auto_save( $post_id, get_current_user_id() );
@@ -359,6 +357,14 @@ class Global_Classes_Relations {
 			$document = $documents->get( $post_id );
 		}
 
-		return $document ?? null;
+		return $this->get_document_or_null( $document );
+	}
+
+	private function get_document_or_null( $document ): ?Document {
+		if ( empty( $document ) ) {
+			return null;
+		}
+
+		return $document;
 	}
 }

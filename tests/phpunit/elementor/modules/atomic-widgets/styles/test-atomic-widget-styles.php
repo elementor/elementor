@@ -416,6 +416,47 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
 	}
 
+	public function test_license_data_refresh__does_not_clear_cache_when_the_license_is_unchanged() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+
+		$cache_validity = new Cache_Validity();
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY ] );
+
+		$payload = wp_json_encode( [ 'success' => true, 'license' => 'valid' ] );
+		$old_timeout = time();
+
+		// Act - a routine re-validation only moves the transient timeout forward.
+		do_action(
+			'update_option__elementor_pro_license_v2_data',
+			[ 'timeout' => $old_timeout, 'value' => $payload ],
+			[ 'timeout' => $old_timeout + HOUR_IN_SECONDS, 'value' => $payload ]
+		);
+
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
+	}
+
+	public function test_license_data_refresh__clears_cache_when_the_license_changes() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+
+		$cache_validity = new Cache_Validity();
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY ] );
+
+		$old_timeout = time();
+
+		// Act.
+		do_action(
+			'update_option__elementor_pro_license_v2_data',
+			[ 'timeout' => $old_timeout, 'value' => wp_json_encode( [ 'success' => true, 'license' => 'valid' ] ) ],
+			[ 'timeout' => $old_timeout + HOUR_IN_SECONDS, 'value' => wp_json_encode( [ 'success' => false, 'license' => 'expired' ] ) ]
+		);
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
+	}
+
 	private function make_mock_post( $elements_data = [] ) {
 		$doc = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [

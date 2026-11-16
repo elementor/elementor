@@ -87,7 +87,7 @@ test.describe( 'Global Classes - Undo/Redo @v4-tests', () => {
 
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		const { request } = page.context();
 		await deleteAllGlobalClasses( apiRequests, request );

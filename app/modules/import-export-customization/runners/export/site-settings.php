@@ -2,7 +2,6 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\GlobalClasses\Module as Global_Classes_Module;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Plugin;
 
@@ -18,6 +17,7 @@ class Site_Settings extends Export_Runner_Base {
 		'customIcons',
 		'customFonts',
 		'classes',
+		'defaultStyles',
 		'variables',
 	];
 
@@ -34,7 +34,7 @@ class Site_Settings extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$customization = $data['customization']['settings'] ?? null;
-		if ( $customization ) {
+		if ( null !== $customization ) {
 			return $this->export_customization( $data, $customization );
 		}
 
@@ -84,6 +84,12 @@ class Site_Settings extends Export_Runner_Base {
 			unset( $manifest_data['site-settings']['classes'] );
 		}
 
+		if ( $this->is_default_styles_feature_active() ) {
+			$manifest_data['site-settings']['defaultStylesCount'] = $this->get_default_styles_count();
+		} else {
+			unset( $manifest_data['site-settings']['defaultStyles'] );
+		}
+
 		if ( $this->is_variables_feature_active() ) {
 			$manifest_data['site-settings']['variablesCount'] = $this->get_variables_count();
 		} else {
@@ -126,9 +132,22 @@ class Site_Settings extends Export_Runner_Base {
 		return $count;
 	}
 
+	public function get_default_styles_count(): int {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit ) {
+			return 0;
+		}
+
+		return count( \Elementor\Modules\DefaultStyles\Default_Styles_Repository::make( $kit )->all() );
+	}
+
 	public function is_classes_feature_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( Global_Classes_Module::NAME )
-			&& Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
+	}
+
+	public function is_default_styles_feature_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 	}
 
 	public function is_variables_feature_active(): bool {
@@ -151,6 +170,15 @@ class Site_Settings extends Export_Runner_Base {
 
 			if ( ! $include_classes ) {
 				$export_result['manifest'][0]['site-settings']['classesCount'] = 0;
+			}
+		}
+
+		if ( $this->is_default_styles_feature_active() ) {
+			$include_default_styles = $customization['defaultStyles'] ?? false;
+			$export_result['manifest'][0]['site-settings']['defaultStyles'] = (bool) $include_default_styles;
+
+			if ( ! $include_default_styles ) {
+				$export_result['manifest'][0]['site-settings']['defaultStylesCount'] = 0;
 			}
 		}
 

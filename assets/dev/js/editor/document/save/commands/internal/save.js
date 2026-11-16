@@ -1,3 +1,5 @@
+const HTTP_CONFLICT = 409;
+
 export class Save extends $e.modules.CommandInternalBase {
 	async apply( args ) {
 		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
@@ -8,9 +10,7 @@ export class Save extends $e.modules.CommandInternalBase {
 
 		const container = document.container;
 
-		if ( elementorCommon.config.experimentalFeatures?.e_components ) {
-			await elementorCommon.__beforeSave?.( { container, status } );
-		}
+		await elementorCommon.__beforeSave?.( { container, status } );
 
 		const settings = container.settings.toJSON( { remove: [ 'default' ] } );
 		const oldStatus = container.settings.get( 'post_status' );
@@ -47,8 +47,9 @@ export class Save extends $e.modules.CommandInternalBase {
 					status,
 					elements,
 					settings,
+					...elementor.heartbeat?.getSaveSyncData(),
 				},
-				error: ( data ) => this.onSaveError( data, status, document ),
+				error: ( data, code ) => this.onSaveError( data, status, document, code ),
 			} )
 			.then( ( data ) => this.onSaveSuccess( data, successArgs, onSuccess ) );
 
@@ -131,12 +132,17 @@ export class Save extends $e.modules.CommandInternalBase {
 		return result;
 	}
 
-	onSaveError( data, status, document ) {
+	onSaveError( data, status, document, code ) {
 		this.onAfterAjax( document );
 
 		// TODO: Remove - Backwards compatibility
 		elementor.saver.trigger( 'after:saveError', data )
 			.trigger( 'after:saveError:' + status, data );
+
+		if ( HTTP_CONFLICT === code ) {
+			elementor.heartbeat?.onExternalChangeDetected();
+			return;
+		}
 
 		let message;
 

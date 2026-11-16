@@ -24,26 +24,31 @@ export async function setupCompleteTestData( page: Page, testInfo: TestInfo, api
 		elementorPages: [],
 	};
 
-	createdItems.pages = await createSampleContent( apiRequests, request, 'pages', [
-		{ title: 'Home Page', content: 'Welcome to our website' },
-		{ title: 'About Page', content: 'Learn more about us' },
-		{ title: 'Contact Page', content: 'Get in touch with us' },
-	] );
+	try {
+		createdItems.pages = await createSampleContent( apiRequests, request, 'pages', [
+			{ title: 'Home Page', content: 'Welcome to our website' },
+			{ title: 'About Page', content: 'Learn more about us' },
+			{ title: 'Contact Page', content: 'Get in touch with us' },
+		] );
 
-	createdItems.posts = await createSampleContent( apiRequests, request, 'posts', [
-		{ title: 'Blog Post 1', content: 'First blog post content' },
-		{ title: 'Blog Post 2', content: 'Second blog post content' },
-	] );
+		createdItems.posts = await createSampleContent( apiRequests, request, 'posts', [
+			{ title: 'Blog Post 1', content: 'First blog post content' },
+			{ title: 'Blog Post 2', content: 'Second blog post content' },
+		] );
 
-	const elementorPageId = await createElementorContent( page, testInfo, apiRequests );
-	createdItems.elementorPages.push( { id: elementorPageId } );
+		const elementorPageId = await createElementorContent( page, testInfo, apiRequests );
+		createdItems.elementorPages.push( { id: elementorPageId } );
 
-	const taxonomies = await createTaxonomies( apiRequests, request );
-	createdItems.categories.push( ...taxonomies.categories );
-	createdItems.tags.push( ...taxonomies.tags );
+		const taxonomies = await createTaxonomies( apiRequests, request );
+		createdItems.categories.push( ...taxonomies.categories );
+		createdItems.tags.push( ...taxonomies.tags );
 
-	const navMenu = await createNavigationMenu( apiRequests, request );
-	createdItems.menus.push( navMenu );
+		const navMenu = await createNavigationMenu( apiRequests, request );
+		createdItems.menus.push( navMenu );
+	} catch ( error ) {
+		await cleanupCreatedItems( apiRequests, request, createdItems );
+		throw error;
+	}
 
 	return createdItems;
 }

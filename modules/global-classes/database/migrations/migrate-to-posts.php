@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Core\Kits\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Post_IDs;

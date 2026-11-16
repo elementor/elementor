@@ -4,6 +4,7 @@ namespace Elementor\Core\Files\CSS;
 use Elementor\Controls_Stack;
 use Elementor\Core\DynamicTags\Dynamic_CSS;
 use Elementor\Core\Kits\Manager;
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Element_Base;
 use Elementor\Plugin;
 
@@ -126,7 +127,12 @@ class Post extends Base {
 	 * @param array $meta New meta data.
 	 */
 	protected function update_meta( $meta ) {
-		update_post_meta( $this->post_id, static::META_KEY, $meta );
+		$is_updated = update_post_meta( $this->post_id, static::META_KEY, $meta );
+
+		// When a concurrent request already stored the identical value, WP reports no change and skips its meta cache invalidation.
+		if ( ! $is_updated ) {
+			wp_cache_delete( $this->post_id, 'post_meta' );
+		}
 	}
 
 	/**
@@ -281,6 +287,10 @@ class Post extends Base {
 	 * @param Element_Base $element The element.
 	 */
 	protected function render_styles( Element_Base $element ) {
+		if ( Widget_Content_Render_Mode::is( Widget_Content_Render_Mode::MARKDOWN ) ) {
+			return;
+		}
+
 		/**
 		 * Before element parse CSS.
 		 *

@@ -35,7 +35,7 @@ PanelMenu.initGroups = () => {
 
 	settingsItems.push( additionalSettingsProps );
 
-	PanelMenu.groups = new Backbone.Collection( [
+	const groups = [
 		{
 			name: 'design_system',
 			title: __( 'Design System', 'elementor' ),
@@ -46,12 +46,15 @@ PanelMenu.initGroups = () => {
 			title: __( 'Theme Style', 'elementor' ),
 			items: PanelMenu.createGroupItems( 'theme-style' ),
 		},
-		{
-			name: 'settings',
-			title: __( 'Settings', 'elementor' ),
-			items: settingsItems,
-		},
-	] );
+	];
+
+	groups.push( {
+		name: 'settings',
+		title: __( 'Settings', 'elementor' ),
+		items: settingsItems,
+	} );
+
+	PanelMenu.groups = new Backbone.Collection( groups );
 };
 
 PanelMenu.getGroups = () => {

@@ -109,14 +109,23 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 };
 
 const ItemLabel = ( { value, index }: { value: TabItem; index: number } ) => {
-	const elementTitle = value?.title;
-
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
-			<span>{ elementTitle }</span>
+			{ value.id ? (
+				<TabRepeaterLabel elementId={ value.id } fallbackTitle={ value.title } />
+			) : (
+				<span>{ value?.title }</span>
+			) }
 			<ItemDefaultTab index={ index } />
 		</Stack>
 	);
+};
+
+const TabRepeaterLabel = ( { elementId, fallbackTitle }: { elementId: string; fallbackTitle?: string } ) => {
+	const editorSettings = useElementEditorSettings( elementId );
+	const label = editorSettings?.title ?? fallbackTitle ?? '';
+
+	return <span>{ label }</span>;
 };
 
 const ItemDefaultTab = ( { index }: { index: number } ) => {

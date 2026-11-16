@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function DocTypeChip( { postType, docType, label }: Props ) {
-	const color = 'elementor_library' === postType ? 'global' : 'primary';
+	const color = 'elementor_library' === postType ? 'global' : 'accent';
 	const Icon = iconsMap[ docType ] || PostTypeIcon;
 
 	return (

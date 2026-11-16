@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Export;
 
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Plugin;
 
 class Elementor_Content extends Export_Runner_Base {
@@ -24,7 +25,10 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
+		$elementor_post_types = array_diff(
+			ImportExportUtils::get_elementor_post_types(),
+			Components_Module::excluded_import_export_post_types()
+		);
 
 		$files = [];
 		$manifest = [];

@@ -305,11 +305,19 @@ const getGradientValue = ( value: BackgroundOverlayItemPropValue ) => {
 	const gradient = value.value;
 
 	const stops = gradient.stops.value
-		?.map( ( { value: { color, offset } }: ColorStop ) => `${ color.value } ${ offset.value ?? 0 }%` )
+		?.map( ( { value: { color, offset } }: ColorStop ) =>
+			offset ? `${ color.value } ${ offset.value ?? 0 }%` : `${ color.value }`
+		)
 		?.join( ',' );
 
 	if ( gradient.type.value === 'linear' ) {
-		return `linear-gradient(${ gradient.angle.value }deg, ${ stops })`;
+		const angle = gradient.angle?.value;
+
+		if ( typeof angle !== 'number' ) {
+			return `linear-gradient(${ stops })`;
+		}
+
+		return `linear-gradient(${ angle }deg, ${ stops })`;
 	}
 
 	return `radial-gradient(circle at ${ gradient.positions.value }, ${ stops })`;

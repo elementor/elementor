@@ -1,6 +1,9 @@
 @import "sidebar-variables";
 
 #editor-one-sidebar-navigation {
+	--e-one-menu-divider-width: 1px;
+	--e-one-menu-divider-color: rgba(12, 13, 14, 0.23);
+
 	position: fixed;
 	top: calc(var(--editor-one-sidebar-admin-top-bar-height) + var(--editor-one-wordpress-admin-bar-height));
 	bottom: 0;
@@ -64,6 +67,19 @@
 	}
 
 	#adminmenu {
+		#toplevel_page_elementor-home {
+			margin-block: 7px;
+
+			&.wp-menu-open > .wp-submenu {
+				margin-block-start: 7px;
+				padding-block: 6px 13px;
+			}
+
+			&:not(.wp-menu-open) > a.menu-top {
+				margin-block: 7px;
+			}
+		}
+
 		li {
 			&.wp-has-current-submenu a.wp-has-current-submenu::after,
 			&.wp-has-submenu.wp-not-current-submenu:hover > a::after {

@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,6 +30,24 @@ class Size_Property_Converter extends Property_Converter_Base {
 
 	protected function get_supported_properties(): array {
 		return [ $this->property ];
+	}
+
+	protected function get_custom_converter( Conversion_Context $context, array $rule ): ?callable {
+		if ( 'opacity' !== $rule['property'] || ! preg_match( '/^-?\d*\.?\d+$/', $rule['value'] ?? '' ) ) {
+			return null;
+		}
+
+		return function() use ( $context, $rule ) {
+			$constrained = max( 0.0, min( (float) $rule['value'], 1.0 ) );
+			$size        = round( $constrained * 100, 4 );
+
+			$context->set_prop( 'opacity', Size_Prop_Type::generate( [
+				'size' => 0.0 === $size ? 0 : $size,
+				'unit' => Size_Constants::UNIT_PERCENT,
+			] ) );
+
+			return true;
+		};
 	}
 
 	protected function do_convert( Conversion_Context $context, array $rule ): bool {

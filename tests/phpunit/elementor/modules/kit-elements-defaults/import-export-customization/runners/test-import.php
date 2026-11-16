@@ -3,6 +3,7 @@ namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExportCustomizatio
 
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Runners\Import;
 
@@ -36,7 +37,7 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( [
 			Mock_Widget_Kits_Defaults::NAME => [
-				'text' => 'value Test value',
+				'text' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'value Test value', 'value  value' ),
 				'slider' => [
 					'size' => 10,
 					'unit' => 'px',

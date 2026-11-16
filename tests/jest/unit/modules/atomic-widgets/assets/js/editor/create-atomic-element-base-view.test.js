@@ -26,7 +26,7 @@ describe( 'createAtomicElementBaseView - components Pro gating', () => {
 		global.elementorCommon = {
 			config: {
 				isRTL: false,
-				experimentalFeatures: { e_components: true },
+				experimentalFeatures: {},
 			},
 		};
 

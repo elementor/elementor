@@ -3,6 +3,45 @@ import { toolPrompts } from '@elementor/editor-mcp';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
+const ICONS_SECTION = `# Icons (the \`svg\` property on e-svg)
+The \`svg\` property accepts two variants. Prefer a library icon for iconography (carts, arrows, social marks, check marks) — it needs no upload and inherits \`color\` via \`currentColor\`. Use an uploaded file only for custom artwork such as a brand logo.
+
+Resolve the icon with the \`find-icons\` tool FIRST, then copy its \`value\` and \`library\` verbatim. Never assemble those strings yourself: Font Awesome renamed many icons between major versions (\`shopping-cart\` became \`cart-shopping\`), so a plausible guess renders nothing. \`find-icons\` matches on names, aliases, human search terms, and categories, so describe the intent — "add to cart" finds \`cart-shopping\`. It takes a batch of \`queries\`, so resolve every icon you need in one call.
+
+Library icon (note the nested PropValues — \`value\` and \`library\` are each a \`string\` PropValue):
+{ "$$type": "icon", "value": { "value": { "$$type": "string", "value": "fa-solid fa-cart-shopping" }, "library": { "$$type": "string", "value": "fa-solid" } } }
+
+Uploaded SVG file:
+{ "$$type": "svg-src", "value": { "id": { "$$type": "image-attachment-id", "value": 123 } } }
+
+Size and colour an e-svg through \`style\` (\`width\`, \`height\`, \`color\`), never through \`propertiesToChange\`.
+`;
+
+const ICON_EXAMPLE = `
+Setting a Font Awesome icon on an e-svg, after resolving it with \`find-icons\`:
+
+\`\`\`json
+{
+  propertiesToChange: {
+    svg: {
+      $$type: 'icon',
+      value: {
+        value: { $$type: 'string', value: 'fa-solid fa-cart-shopping' },
+        library: { $$type: 'string', value: 'fa-solid' }
+      }
+    }
+  },
+  style: {
+    'width': '1.25rem',
+    'height': '1.25rem',
+    'color': '#1a1a1a'
+  },
+  elementId: 'element-id',
+  elementType: 'e-svg'
+};
+\`\`\`
+`;
+
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
 export const generatePrompt = () => {
@@ -50,8 +89,6 @@ For all non-primitive entries in \`propertiesToChange\`, provide the schema \`ke
 
 Use the EXACT PropType schema given, and ALWAYS include the \`key\` from the schema for every property you are changing in \`propertiesToChange\`.
 
-Check \`llm_guidance.default_settings\` in the widget schema — include a key in \`propertiesToChange\` only when the user explicitly asks to change it.
-
 # Dynamic tags
 A value can be made dynamic wherever its schema exposes a variant with "$$type": "dynamic". This may be the property root OR a NESTED field: for example an image is made dynamic on its "src" (the root stays "image"), NOT on the whole "image" value.
 Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" variant, in place of the static variant. The variant's "name" enumerates the tags allowed at that node.
@@ -66,7 +103,8 @@ Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" var
 }
 Image example: { "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }
 Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only when the tag has no settings.
-` );
+
+${ ICONS_SECTION }` );
 
 	configureElementToolPrompt.parameter( 'elementId', 'The ID of the element to configure. MANDATORY.' );
 
@@ -82,7 +120,7 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 
 	configureElementToolPrompt.parameter(
 		'style',
-		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "1.25rem", "color": "var(--primary-text, #000)" }. Set a value to null to reset that property to its default. OPTIONAL.'
+		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "1.25rem", "color": "var(--primary-text, #000)" }. font-family must be a single Google Font name or a var(--label) — no fallback stacks. Set a value to null to reset that property to its default. OPTIONAL.'
 	);
 
 	configureElementToolPrompt.example( `
@@ -109,6 +147,8 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 \`\`\`
 ` );
 
+	configureElementToolPrompt.example( ICON_EXAMPLE );
+
 	configureElementToolPrompt.instruction(
 		'The $$type property is MANDATORY for every value in propertiesToChange; it is not used in the style parameter (raw CSS only).'
 	);
@@ -117,11 +157,10 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 V4 only: If MCP fails, give manual steps using V4 UI.
 
 V4 Editor structure:
-Panel tabs: General (→ Settings section: ID, Tag, Link), Style, Interactions.
+Panel tabs: General (→ Settings section: ID, Tag, and Link where the widget supports it), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
+Note: \`link\` is valid only when the element's PropType schema (which you must already have) includes a \`link\` property. Sending \`link\` to a widget whose schema lacks it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
 ` );
 
 	return configureElementToolPrompt.prompt();
 };
-
-export const CONFIGURE_ELEMENT_GUIDE_TEXT = generatePrompt();

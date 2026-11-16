@@ -1,0 +1,581 @@
+<?php
+
+namespace Elementor\Core\Utils\Document;
+
+use Elementor\Core\Base\Document;
+use Elementor\Plugin;
+use Elementor\Utils;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Document_Mutator {
+
+	const DOCUMENT_ROOT = 'document';
+
+	const WIDGET_EL_TYPE = 'widget';
+
+	const LIVE_STATUSES = [ 'publish', 'private' ];
+
+	/** @var \Elementor\Elements_Manager */
+	private $element_manager;
+
+	/** @var \Elementor\Widgets_Manager */
+	private $widgets_manager;
+
+	public function __construct( $element_manager, $widgets_manager ) {
+		$this->element_manager = $element_manager;
+		$this->widgets_manager = $widgets_manager;
+	}
+
+	public static function instance(): self {
+		return new self(
+			Plugin::$instance->elements_manager,
+			Plugin::$instance->widgets_manager
+		);
+	}
+
+	/**
+	 * Locate a node by id and return a by-reference index [ $id => &$node ]
+	 * so callers can mutate the tree in place.
+	 *
+	 * @return array<string, array&>
+	 */
+	public function build_ref_index( array &$tree, string $id ): array {
+		$index = [];
+		$this->walk_for_ref_index( $tree, $id, $index );
+
+		return $index;
+	}
+
+	private function walk_for_ref_index( array &$tree, string $id, array &$index ): bool {
+		foreach ( $tree as &$node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				$index[ $id ] = &$node;
+				return true;
+			}
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				if ( $this->walk_for_ref_index( $node['elements'], $id, $index ) ) {
+					return true;
+				}
+			}
+		}
+		unset( $node );
+
+		return false;
+	}
+
+	public function find_by_id( array $tree, string $id ): ?array {
+		foreach ( $tree as $node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				return $node;
+			}
+
+			if ( ! empty( $node['elements'] ) ) {
+				$found = $this->find_by_id( $node['elements'], $id );
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public function generate_id(): string {
+		return Utils::generate_random_string();
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function insert_at( array $tree, string $parent_id, ?int $index, array $element ) {
+		if ( ! isset( $element['id'] ) ) {
+			$element['id'] = $this->generate_id();
+		}
+
+		if ( self::DOCUMENT_ROOT === $parent_id ) {
+			$root_child_error = $this->check_document_root_child_allowed( $element );
+
+			if ( is_wp_error( $root_child_error ) ) {
+				return $root_child_error;
+			}
+
+			return $this->splice_into( $tree, $index, $element );
+		}
+
+		$result = $this->insert_into_tree( $tree, $parent_id, $index, $element );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( false === $result ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Parent element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function remove( array $tree, string $id ) {
+		$result = $this->remove_from_tree( $tree, $id );
+
+		if ( false === $result ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function move( array $tree, string $id, string $new_parent_id, ?int $index ) {
+		$node = $this->find_by_id( $tree, $id );
+
+		if ( null === $node ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		$tree = $this->remove( $tree, $id );
+
+		if ( is_wp_error( $tree ) ) {
+			return $tree;
+		}
+
+		return $this->insert_at( $tree, $new_parent_id, $index, $node );
+	}
+
+	/**
+	 * Duplicate an element in place, inserting the clone right after the source
+	 * inside the same parent. All ids in the clone are regenerated, including
+	 * atomic local style and interaction ids.
+	 *
+	 * @return array{tree: array, new_element_id: string}|\WP_Error
+	 */
+	public function duplicate( array $tree, string $id ) {
+		$location = $this->locate_parent_and_index( $tree, $id );
+
+		if ( null === $location ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		[ $parent_id, $index, $node ] = $location;
+
+		$subtree_with_ids = $this->generate_ids_recursive( $node, true );
+		$new_tree = $this->insert_at( $tree, $parent_id, $index + 1, $subtree_with_ids );
+
+		if ( is_wp_error( $new_tree ) ) {
+			return $new_tree;
+		}
+
+		return [
+			'tree' => $new_tree,
+			'new_element_id' => $subtree_with_ids['id'],
+		];
+	}
+
+	/**
+	 * Save an elements tree to a document.
+	 *
+	 * Default behavior (backwards compatible): downgrade a `publish` post to `draft`
+	 * before saving so no live changes leak out, then save on the main document.
+	 *
+	 * When `$preserve_live_status` is true: the main post status is kept intact and
+	 * writes on `publish`/`private` posts are redirected to an autosave revision
+	 * (mirroring the editor's in-app "Save as Draft" flow) so the live page keeps
+	 * serving the previous version until the user opens the editor and publishes.
+	 * In this mode the return value is the Document actually written on success.
+	 *
+	 * @return bool|Document|\WP_Error
+	 */
+	public function save_as_draft( Document $document, array $elements, bool $preserve_live_status = false ) {
+		if ( $preserve_live_status ) {
+			return $this->save_preserving_live_status( $document, [ 'elements' => $elements ] );
+		}
+
+		return $this->save_downgrading_publish_to_draft( $document, $elements );
+	}
+
+	/**
+	 * Save document settings while keeping the live post untouched: on `publish`/`private` posts they are
+	 * written to the current user's autosave revision, like `save_as_draft` with `$preserve_live_status`.
+	 *
+	 * @return Document|\WP_Error The Document actually written.
+	 */
+	public function save_settings_preserving_live_status( Document $document, array $settings ) {
+		return $this->save_preserving_live_status( $document, [ 'settings' => $settings ] );
+	}
+
+	/**
+	 * @return bool|int|\WP_Error
+	 */
+	private function save_downgrading_publish_to_draft( Document $document, array $elements ) {
+		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_status' => 'draft',
+			] );
+		}
+
+		return $document->save( [ 'elements' => $elements ] );
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private function save_preserving_live_status( Document $document, array $data ) {
+		$target = $this->resolve_autosave_target( $document );
+
+		if ( is_wp_error( $target ) ) {
+			return $target;
+		}
+
+		$saved = $this->save_keeping_live_template( $target, $data );
+
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
+
+		if ( ! $saved ) {
+			return new \WP_Error(
+				'elementor_save_failed',
+				__( 'Could not save document.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $target;
+	}
+
+	/**
+	 * Saving an autosave calls `wp_update_post` on the revision, which re-validates its template against the
+	 * `revision` post type, fails, and writes `default` through `update_post_meta`, which redirects to the live post.
+	 *
+	 * Only writes made inside `wp_insert_post` for the autosave, between `pre_post_update` and
+	 * `transition_post_status`, are refused, so hooks that run before or after it (e.g. `save_post`) are unaffected.
+	 *
+	 * @return bool|\WP_Error
+	 */
+	private function save_keeping_live_template( Document $target, array $data ) {
+		$live_post_id = (int) $target->get_main_id();
+		$autosave_id = (int) $target->get_post()->ID;
+
+		if ( $autosave_id === $live_post_id ) {
+			return $target->save( $data );
+		}
+
+		$is_inserting_autosave = false;
+
+		$on_autosave_insert_start = function ( $post_id ) use ( $autosave_id, &$is_inserting_autosave ) {
+			if ( (int) $post_id === $autosave_id ) {
+				$is_inserting_autosave = true;
+			}
+		};
+
+		$on_autosave_insert_end = function ( $new_status, $old_status, $post ) use ( $autosave_id, &$is_inserting_autosave ) {
+			if ( (int) $post->ID === $autosave_id ) {
+				$is_inserting_autosave = false;
+			}
+		};
+
+		$refuse_live_template_write = function ( $check, $object_id, $meta_key ) use ( $live_post_id, &$is_inserting_autosave ) {
+			return $is_inserting_autosave && '_wp_page_template' === $meta_key && (int) $object_id === $live_post_id ? false : $check;
+		};
+
+		add_action( 'pre_post_update', $on_autosave_insert_start, PHP_INT_MAX );
+		add_action( 'transition_post_status', $on_autosave_insert_end, PHP_INT_MIN, 3 );
+		add_filter( 'update_post_metadata', $refuse_live_template_write, 10, 3 );
+
+		try {
+			return $target->save( $data );
+		} finally {
+			remove_action( 'pre_post_update', $on_autosave_insert_start, PHP_INT_MAX );
+			remove_action( 'transition_post_status', $on_autosave_insert_end, PHP_INT_MIN );
+			remove_filter( 'update_post_metadata', $refuse_live_template_write, 10 );
+		}
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private function resolve_autosave_target( Document $document ) {
+		$main_document = Plugin::$instance->documents->get( $document->get_main_id() );
+
+		if ( ! $main_document instanceof Document ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Post not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		$main_status = get_post_status( $main_document->get_main_id() );
+
+		if ( ! in_array( $main_status, self::LIVE_STATUSES, true ) ) {
+			return $main_document;
+		}
+
+		$autosave = $main_document->get_autosave( 0, true );
+
+		if ( ! $autosave instanceof Document ) {
+			return new \WP_Error(
+				'elementor_autosave_failed',
+				__( 'Could not create autosave revision.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $autosave;
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function patch_settings( array $tree, string $id, array $partial_settings ) {
+		$result = $this->patch_settings_in_tree( $tree, $id, $partial_settings );
+
+		if ( false === $result ) {
+			return new \WP_Error(
+				'elementor_not_found',
+				__( 'Element not found.', 'elementor' ),
+				[ 'status' => \WP_Http::NOT_FOUND ]
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Insert a subtree into the document tree, recursively generating IDs for all elements.
+	 *
+	 * @param array    $tree      The current document tree.
+	 * @param string   $parent_id Parent element ID or 'document' for root.
+	 * @param int|null $index     Insertion index (null = append).
+	 * @param array    $subtree   The subtree to insert (single element with nested children).
+	 *
+	 * @return array|\WP_Error The updated tree or error.
+	 */
+	public function insert_subtree( array $tree, string $parent_id, ?int $index, array $subtree ) {
+		$subtree_with_ids = $this->generate_ids_recursive( $subtree );
+
+		return $this->insert_at( $tree, $parent_id, $index, $subtree_with_ids );
+	}
+
+	/**
+	 * Recursively generate IDs for an element and all its children.
+	 * Always generates new IDs to avoid duplicates when inserting subtrees.
+	 *
+	 * @param array $element The element to process.
+	 *
+	 * @return array The element with new IDs assigned.
+	 */
+	private function generate_ids_recursive( array $element, bool $replace_atomic_ids = false ): array {
+		$element['id'] = $this->generate_id();
+
+		if ( $replace_atomic_ids ) {
+			$element = apply_filters( 'elementor/document/element/replace_id', $element );
+		}
+
+		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+			$element['elements'] = array_map(
+				fn( array $child ) => $this->generate_ids_recursive( $child, $replace_atomic_ids ),
+				$element['elements']
+			);
+		}
+
+		return $element;
+	}
+
+	/**
+	 * @return array{0: string, 1: int, 2: array}|null [ parent_id, index, node ] or null when not found.
+	 */
+	private function locate_parent_and_index( array $tree, string $id, string $parent_id = self::DOCUMENT_ROOT ): ?array {
+		foreach ( $tree as $i => $node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				return [ $parent_id, $i, $node ];
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$found = $this->locate_parent_and_index( $node['elements'], $id, (string) ( $node['id'] ?? '' ) );
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private function splice_into( array $children, ?int $index, array $element ): array {
+		$count = count( $children );
+
+		if ( null === $index || $index >= $count ) {
+			$children[] = $element;
+			return $children;
+		}
+
+		array_splice( $children, $index, 0, [ $element ] );
+		return $children;
+	}
+
+	/**
+	 * @return array|false|\WP_Error
+	 */
+	private function insert_into_tree( array $tree, string $parent_id, ?int $index, array $element ) {
+		foreach ( $tree as $i => $node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $parent_id ) {
+				if ( isset( $node['elType'] ) && self::WIDGET_EL_TYPE === $node['elType'] ) {
+					return new \WP_Error(
+						'elementor_invalid_parent',
+						__( 'Cannot insert into a widget element.', 'elementor' ),
+						[ 'status' => \WP_Http::BAD_REQUEST ]
+					);
+				}
+
+				$child_type_error = $this->check_child_type_allowed( $node, $element );
+				if ( is_wp_error( $child_type_error ) ) {
+					return $child_type_error;
+				}
+
+				$node['elements'] = $this->splice_into( $node['elements'] ?? [], $index, $element );
+				$tree[ $i ] = $node;
+				return $tree;
+			}
+
+			if ( ! empty( $node['elements'] ) ) {
+				$result = $this->insert_into_tree( $node['elements'], $parent_id, $index, $element );
+
+				if ( false !== $result ) {
+					if ( is_wp_error( $result ) ) {
+						return $result;
+					}
+					$node['elements'] = $result;
+					$tree[ $i ] = $node;
+					return $tree;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return array|false
+	 */
+	private function remove_from_tree( array $tree, string $id ) {
+		foreach ( $tree as $i => $node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				array_splice( $tree, $i, 1 );
+				return $tree;
+			}
+
+			if ( ! empty( $node['elements'] ) ) {
+				$result = $this->remove_from_tree( $node['elements'], $id );
+				if ( false !== $result ) {
+					$node['elements'] = $result;
+					$tree[ $i ] = $node;
+					return $tree;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Mirrors the editor's `Document.isValidChild`: only element types may sit at the document
+	 * root, so widgets inserted here would produce a tree the editor itself refuses to create.
+	 *
+	 * @return null|\WP_Error
+	 */
+	private function check_document_root_child_allowed( array $element ): ?\WP_Error {
+		if ( self::WIDGET_EL_TYPE !== ( $element['elType'] ?? '' ) ) {
+			return null;
+		}
+
+		return new \WP_Error(
+			'elementor_invalid_parent',
+			sprintf(
+				/* translators: %s: widget type */
+				__( '"%s" is a widget and cannot be a direct child of the document. Wrap it in a container element such as e-flexbox or e-div-block.', 'elementor' ),
+				$element['widgetType'] ?? self::WIDGET_EL_TYPE
+			),
+			[ 'status' => \WP_Http::BAD_REQUEST ]
+		);
+	}
+
+	/**
+	 * @return null|\WP_Error
+	 */
+	private function check_child_type_allowed( array $parent_node, array $child ): ?\WP_Error {
+		$parent_instance = $this->element_manager->get_element_types( $parent_node['elType'] ?? '' );
+
+		if ( ! $parent_instance ) {
+			return null;
+		}
+
+		$config  = $parent_instance->get_config();
+		$allowed = $config['allowed_child_types'] ?? [];
+
+		if ( empty( $allowed ) ) {
+			return null;
+		}
+
+		$child_type = $child['widgetType'] ?? $child['elType'] ?? '';
+
+		if ( ! in_array( $child_type, $allowed, true ) ) {
+			return new \WP_Error(
+				'elementor_invalid_parent',
+				__( 'Element type not allowed as child of this parent.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return array|false
+	 */
+	private function patch_settings_in_tree( array $tree, string $id, array $partial_settings ) {
+		foreach ( $tree as $i => $node ) {
+			if ( isset( $node['id'] ) && $node['id'] === $id ) {
+				$node['settings'] = array_merge( $node['settings'] ?? [], $partial_settings );
+				$tree[ $i ] = $node;
+				return $tree;
+			}
+
+			if ( ! empty( $node['elements'] ) ) {
+				$result = $this->patch_settings_in_tree( $node['elements'], $id, $partial_settings );
+				if ( false !== $result ) {
+					$node['elements'] = $result;
+					$tree[ $i ] = $node;
+					return $tree;
+				}
+			}
+		}
+
+		return false;
+	}
+}

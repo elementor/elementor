@@ -2,7 +2,8 @@
 
 namespace Elementor\Modules\Promotions;
 
-use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
+use Elementor\Core\Base\Document;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -20,11 +21,18 @@ class Conversion_Banner {
 	const DISMISS_KEY = 'conversion_banner_go_pro';
 	const AJAX_ACTION = 'elementor_dismiss_conversion_banner';
 	const CONTAINER_ID = 'e-conversion-banner';
-	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
+	const UPGRADE_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrade-notice/';
+	const BANNER_TRANSIENT_KEY = 'elementor_conversion_banner_assets_data';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
+	const THEME_SETTINGS_PAGE_SUFFIX = '-settings';
 	const GO_PRO_TITLE_PREFIX = 'Go Pro';
+	const MIN_ELEMENTOR_PAGES_TO_TRIGGER = 2;
+	const PENDING_TRANSIENT_KEY = 'elementor_conversion_banner_pages_pending';
+	const PENDING_TTL = DAY_IN_SECONDS;
+	const UNLOCK_OPTION_KEY = 'elementor_conversion_banner_unlocked';
+	const UNLOCK_OPTION_VALUE = '1';
 
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
@@ -34,10 +42,35 @@ class Conversion_Banner {
 		add_action( 'current_screen', [ $this, 'maybe_register_banner_hooks' ] );
 	}
 
+	public static function register_cache_invalidation_hooks(): void {
+		static $hooks_registered = false;
+
+		if ( $hooks_registered ) {
+			return;
+		}
+
+		$hooks_registered = true;
+
+		add_action( 'added_post_meta', [ self::class, 'maybe_invalidate_pending_cache' ], 10, 4 );
+		add_action( 'updated_post_meta', [ self::class, 'maybe_invalidate_pending_cache' ], 10, 4 );
+	}
+
+	public static function maybe_invalidate_pending_cache( $meta_id, $post_id, $meta_key, $meta_value ): void {
+		if ( Document::BUILT_WITH_ELEMENTOR_META_KEY !== $meta_key ) {
+			return;
+		}
+
+		if ( self::is_unlocked() ) {
+			return;
+		}
+
+		delete_transient( self::PENDING_TRANSIENT_KEY );
+	}
+
 	public function maybe_register_banner_hooks(): void {
 		$placement = $this->get_active_placement();
 
-		if ( empty( $placement ) ) {
+		if ( empty( $placement ) || ! self::has_min_elementor_pages() ) {
 			return;
 		}
 
@@ -81,7 +114,15 @@ class Conversion_Banner {
 
 		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query_args );
 
-		return in_array( $query_args['page'] ?? '', self::THEME_SLUGS );
+		$page = $query_args['page'] ?? '';
+
+		foreach ( self::THEME_SLUGS as $theme_slug ) {
+			if ( $page === $theme_slug || $page === $theme_slug . self::THEME_SETTINGS_PAGE_SUFFIX ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public function ajax_dismiss_banner(): void {
@@ -171,43 +212,51 @@ class Conversion_Banner {
 	}
 
 	private function get_banner_config(): array {
-		if ( Utils::is_sale_time() ) {
-			return $this->get_birthday_banner_config();
+		$assets_data = $this->get_banner_assets_data();
+
+		if ( ! empty( $assets_data['is_active'] ) && ! empty( $assets_data['title'] ) && ! empty( $assets_data['cta_url'] ) ) {
+			return [
+				'title'   => $assets_data['title'] ?? '',
+				'text'    => $assets_data['text'] ?? '',
+				'buttons' => [
+					[
+						'text'   => ! empty( $assets_data['cta_text'] ) ? $assets_data['cta_text'] : __( 'Upgrade now', 'elementor' ),
+						'link'   => $assets_data['cta_url'] ?? '',
+						'target' => '_blank',
+					],
+				],
+				'image' => [
+					'src' => $assets_data['image_url'] ?? '',
+					'alt' => $assets_data['image_alt'] ?? '',
+				],
+			];
 		}
 
 		return [
-			'title' => esc_html__( 'Go Pro, Go Limitless', 'elementor' ),
-			'text' => esc_html__( 'Unlock the theme builder, popup builder, 100+ widgets and more advanced tools to take your website to the next level.', 'elementor' ),
+			'title'   => __( 'Elevate your site with Elementor Pro', 'elementor' ),
+			'text'    => __( 'Access Elementor\'s Theme Builder, Dynamic Content, WooCommerce Builder, Popup Builder, 85+ Pro widgets and more when you upgrade to Pro', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Upgrade Now', 'elementor' ),
-					'link' => Go_Pro_Promotion_Item::get_url(),
+					'text'   => __( 'Upgrade now', 'elementor' ),
+					'link'   => self::UPGRADE_URL,
 					'target' => '_blank',
 				],
 			],
 			'image' => [
 				'src' => '',
-				'alt' => esc_html__( 'Upgrade to Elementor Pro', 'elementor' ),
+				'alt' => __( 'Upgrade to Elementor Pro', 'elementor' ),
 			],
 		];
 	}
 
-	private function get_birthday_banner_config(): array {
-		return [
-			'title' => esc_html__( 'Celebrate 10 years of Elementor', 'elementor' ),
-			'text' => esc_html__( 'Upgrade your workflow with more capabilities for less. Offer ends June 17.', 'elementor' ),
-			'buttons' => [
-				[
-					'text' => esc_html__( 'Get Discounts', 'elementor' ),
-					'link' => self::BIRTHDAY_PROMOTION_URL,
-					'target' => '_blank',
-				],
-			],
-			'image' => [
-				'src' => ELEMENTOR_ASSETS_URL . 'images/decade-birthday.png',
-				'alt' => esc_html__( 'Celebrate 10 years of Elementor', 'elementor' ),
-			],
-		];
+	private function get_banner_assets_data(): array {
+		$api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => self::BANNER_TRANSIENT_KEY,
+			EditorAssetsAPI::ASSETS_DATA_URL           => EditorAssetsAPI::PRODUCTION_URL . '/editor-promotions/v1/conversion-banner.json',
+			EditorAssetsAPI::ASSETS_DATA_KEY           => 'conversion-banner',
+		] );
+
+		return $api->get_assets_data();
 	}
 
 	public static function should_display_banner(): bool {
@@ -227,7 +276,44 @@ class Conversion_Banner {
 	}
 
 	private static function should_display(): bool {
-		return ! Utils::has_pro() && ! self::is_dismissed();
+		return ! Utils::has_pro() && ! self::is_dismissed() && self::has_min_elementor_pages();
+	}
+
+	private static function is_unlocked(): bool {
+		return self::UNLOCK_OPTION_VALUE === get_option( self::UNLOCK_OPTION_KEY );
+	}
+
+	private static function has_min_elementor_pages(): bool {
+		if ( self::is_unlocked() ) {
+			return true;
+		}
+
+		if ( get_transient( self::PENDING_TRANSIENT_KEY ) ) {
+			return false;
+		}
+
+		$query = new \WP_Query( [
+			'fields' => 'ids',
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'meta_value' => 'builder',
+			'no_found_rows' => true,
+			'post_status' => 'any',
+			'post_type' => 'any',
+			'posts_per_page' => self::MIN_ELEMENTOR_PAGES_TO_TRIGGER,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		] );
+
+		if ( count( $query->posts ) >= self::MIN_ELEMENTOR_PAGES_TO_TRIGGER ) {
+			update_option( self::UNLOCK_OPTION_KEY, self::UNLOCK_OPTION_VALUE, true );
+			delete_transient( self::PENDING_TRANSIENT_KEY );
+
+			return true;
+		}
+
+		set_transient( self::PENDING_TRANSIENT_KEY, 1, self::PENDING_TTL );
+
+		return false;
 	}
 
 	private static function is_user_allowed(): bool {
@@ -240,6 +326,7 @@ class Conversion_Banner {
 
 	private function get_allowed_admin_pages(): array {
 		$default = [ 'selector' => self::DEFAULT_SELECTOR ];
+		$plugin_pages = [ 'selector' => '.wrap hr.wp-header-end' ];
 
 		return [
 			'dashboard' => [ 'selector' => '#wpbody #wpbody-content .wrap h1' ],
@@ -270,9 +357,9 @@ class Conversion_Banner {
 			'themes' => $default,
 			'nav-menus' => $default,
 			'theme-editor' => $default,
-			'plugins' => $default,
-			'plugin-install' => $default,
-			'plugin-editor' => $default,
+			'plugins' => $plugin_pages,
+			'plugin-install' => $plugin_pages,
+			'plugin-editor' => $plugin_pages,
 		];
 	}
 }

@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -44,6 +45,10 @@ class Atomic_Divider extends Atomic_Widget_Base {
 
 	public function get_icon() {
 		return 'eicon-e-divider';
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'hr' );
 	}
 
 	protected static function define_props_schema(): array {
@@ -87,6 +92,11 @@ class Atomic_Divider extends Atomic_Widget_Base {
 			'color' => Color_Prop_Type::generate( '#000' ),
 		]);
 
+		$width_value = Size_Prop_Type::generate([
+			'size' => 100,
+			'unit' => '%',
+		]);
+
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
@@ -96,6 +106,7 @@ class Atomic_Divider extends Atomic_Widget_Base {
 						->add_prop( 'border-style', 'none' )
 						->add_prop( 'background', $background_value )
 						->add_prop( 'height', $height_value )
+						->add_prop( 'width', $width_value )
 				),
 		];
 	}

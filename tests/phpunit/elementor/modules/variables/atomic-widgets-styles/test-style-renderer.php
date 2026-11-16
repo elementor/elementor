@@ -176,6 +176,10 @@ class Test_Style_Renderer extends TestCase {
 					'props' => [ 'color' => '#222' ],
 						'meta' => [ 'state' => Style_States::SELECTED ],
 					],
+					[
+					'props' => [ 'color' => '#333' ],
+						'meta' => [ 'state' => Style_States::DISABLED ],
+					],
 				],
 			],
 		];
@@ -188,6 +192,7 @@ class Test_Style_Renderer extends TestCase {
 		// Assert.
 		$this->assertStringContainsString( '.state-test:hover,.state-test:focus-visible{color:#111;}', $css );
 		$this->assertStringContainsString( '.state-test.e--selected{color:#222;}', $css );
+		$this->assertStringContainsString( '.state-test.e--disabled{color:#333;}', $css );
 	}
 
 }

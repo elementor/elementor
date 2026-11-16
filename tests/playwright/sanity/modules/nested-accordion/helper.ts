@@ -26,6 +26,11 @@ export async function setTitleTextTag( optionToSelect: string, nestedAccordionWi
  * @return {Promise<void>}
  */
 export async function expectScreenshotToMatchLocator( fileName: string, locator: Locator ): Promise<void> {
+	// A preceding title-tag/position change re-renders this element, so it can still be mid-swap
+	// when the screenshot fires; waiting for it to be attached avoids a `screenshot: Element is
+	// not attached to the DOM` error racing the re-render.
+	await locator.waitFor( { state: 'attached' } );
+
 	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
@@ -134,8 +139,7 @@ export async function deleteItemFromRepeater( editor: EditorPage, accordionID: s
 		numberOfTitles = await nestedAccordionItemTitle.count(),
 		numberOfContents = await nestedAccordionItemContent.count();
 
-	// Act
-	await deleteItemButton.nth( 1 ).click();
+	await deleteItemButton.nth( numberOfTitles - 1 ).click();
 
 	await editor.getPreviewFrame().waitForSelector( `.elementor-element-${ accordionID }` );
 

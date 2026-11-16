@@ -140,4 +140,18 @@ describe( 'hashString', () => {
 			expect( result.length ).toBeLessThanOrEqual( maxLength );
 		} );
 	} );
+
+	describe( 'PHP parity', () => {
+		it.each( [
+			[ 'b559a00_32975a4', '1b1w3wv' ],
+			[ 'b559a00_32975a4_3ddd07a', '1ose7z5' ],
+			[ 'b559a00_32975a4_ff531ef', '0dr8u4k' ],
+			[ 'b559a00_32975a4_ff531ef_8f7a2dc', '10muleu' ],
+			[ 'parent1_e-reconcile-test-child', '0f3lpg5' ],
+			[ '0f3lpg5_0', '0p2wcv5' ],
+			[ '0f3lpg5_1', '1ed1jog' ],
+		] )( 'matches Format_Element_Ids::hash_string for %s', ( input, expected ) => {
+			expect( hashString( input, 7 ) ).toBe( expected );
+		} );
+	} );
 } );

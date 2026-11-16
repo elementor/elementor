@@ -213,12 +213,11 @@ export async function createElementorKitServer(): Promise< McpServer > {
 		}
 	);
 
-	const availableTabs = await getAvailableTabs();
-
 	server.registerResource(
 		RESOURCE_NAME_KIT_SCHEMA,
 		new ResourceTemplate( RESOURCE_URI_KIT_SCHEMA_TEMPLATE, {
 			list: async () => {
+				const availableTabs = await getAvailableTabs();
 				return {
 					resources: availableTabs.map( ( tab ) => {
 						return {

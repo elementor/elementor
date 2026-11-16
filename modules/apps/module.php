@@ -18,8 +18,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		Admin_Pointer::add_hooks();
-
 		add_filter( 'elementor/finder/categories', function( array $categories ) {
 			$categories['site']['items']['apps'] = [
 				'title' => esc_html__( 'Add-ons', 'elementor' ),

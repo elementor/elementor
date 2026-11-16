@@ -5,9 +5,14 @@ import ContextMenu from '../../../pages/widgets/context-menu';
 import widgets from '../../../enums/widgets';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Container tests #2 @container', () => {
-	test( 'Justify icons are displayed correctly', async ( { page, apiRequests }, testInfo ) => {
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
+	} );
+
+	test( 'Justify icons are displayed correctly for LTR', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const breakpoints = Breakpoints.getBasic().reverse();

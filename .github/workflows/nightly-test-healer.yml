@@ -1,0 +1,101 @@
+name: Nightly Test Healer
+
+# Runs the shared Playwright test healer from elementor-editor-github-actions
+# against Core. Unattended, it heals one hard failure from each scheduled
+# Playwright run on main, and reports a green run as nothing to heal. On
+# demand, give it a flaky test title and
+# it finds recent evidence for that test by itself.
+#
+# Needs the CURSOR_APIKEY secret and the TEST_HEALER_ENABLED variable
+# (off, manual or all).
+
+on:
+  workflow_run:
+    workflows: ['Playwright']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      test_name:
+        description: 'Flaky test to heal — the exact test title as it appears in the Allure report. Leave empty to auto-rank the evidence run''s hard failures.'
+        required: false
+      source_run_id:
+        description: 'Playwright run ID to take failure evidence from. Required when test_name is empty; otherwise recent scheduled runs are searched automatically.'
+        required: false
+      base_ref:
+        description: 'Branch to fix and open the PR against. Leave empty to use the branch the evidence run tested; a different branch is refused.'
+        required: false
+        default: ''
+      fix_branch:
+        description: 'Verify this existing fix branch instead of dispatching the agent. Requires test_name. No PR is opened and no retry follows.'
+        required: false
+        default: ''
+      verify_repeat:
+        description: 'The fewest consecutive passes the fix must produce. A test verified on its own, rather than with its whole file, needs at least 10 whatever this says. The fix must also pass three times as many runs as the test took to fail without it, so rare flakes need more.'
+        required: false
+        default: '3'
+      max_fix_attempts:
+        description: 'How many times the agent may try before the healer gives up. A fix that fails verification is re-dispatched with the failure as evidence.'
+        required: false
+        default: '2'
+      attempt:
+        description: 'Set by the healer when it retries itself. Leave empty.'
+        required: false
+        default: '1'
+      previous_branch:
+        description: 'Set by the healer when it retries itself. Leave empty.'
+        required: false
+      previous_run_id:
+        description: 'Set by the healer when it retries itself. Leave empty.'
+        required: false
+      allow_duplicate_pr:
+        description: 'On-demand only: heal the named test even if it already has an open PR into the same branch. Auto mode never opens a second PR for a test.'
+        required: false
+        type: boolean
+        default: false
+      trigger_mode:
+        description: 'Set by the healer when it retries itself. Leave empty.'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  heal:
+    name: Heal
+    # Dispatched Playwright runs are not the nightly baseline. A green nightly
+    # still runs, so it reports no-hard-failures to Slack; a cancelled one has
+    # nothing to rank.
+    if: |
+      github.repository == 'elementor/elementor' && (
+        github.event_name == 'workflow_dispatch' || (
+          github.event.workflow_run.event == 'schedule' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          contains(fromJSON('["failure","success"]'), github.event.workflow_run.conclusion)
+        )
+      )
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: write
+    uses: elementor/elementor-editor-github-actions/.github/workflows/playwright-test-healer.yml@main
+    with:
+      product: core
+      slack_channel: C0C0TEZN45C
+      test_name: ${{ inputs.test_name }}
+      source_run_id: ${{ github.event.workflow_run.id || inputs.source_run_id }}
+      base_ref: ${{ inputs.base_ref }}
+      fix_branch: ${{ inputs.fix_branch }}
+      verify_repeat: ${{ inputs.verify_repeat }}
+      max_fix_attempts: ${{ inputs.max_fix_attempts }}
+      attempt: ${{ inputs.attempt }}
+      previous_branch: ${{ inputs.previous_branch }}
+      previous_run_id: ${{ inputs.previous_run_id }}
+      scheduled: ${{ github.event_name == 'workflow_run' && 'true' || 'false' }}
+      allow_duplicate_pr: ${{ inputs.allow_duplicate_pr == true }}
+      trigger_mode: ${{ inputs.trigger_mode }}
+    secrets:
+      CURSOR_APIKEY: ${{ secrets.CURSOR_APIKEY }}
+      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}

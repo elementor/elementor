@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -16,6 +17,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -30,6 +33,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+	use Has_Widget_Markers;
+
+	public static function html_tag_follows_link(): bool {
+		return true;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
+	}
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
@@ -89,20 +103,27 @@ trait Has_Atomic_Base {
 	private function parse_atomic_styles( array $data ): array {
 		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$validated_styles = [];
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				throw new \Exception(
-					esc_html( $this->format_styles_validation_error_message( $style_id, $data, $style, $result->errors()->to_string() ) )
+				Logger::warning(
+					$this->format_styles_validation_error_message(
+						$style_id,
+						$data,
+						$style,
+						$result->errors()->to_string()
+					)
 				);
+				continue;
 			}
 
-			$styles[ $style_id ] = $result->unwrap();
+			$validated_styles[ $style_id ] = $result->unwrap();
 		}
 
-		return $styles;
+		return $validated_styles;
 	}
 
 	private function format_styles_validation_error_message(
@@ -229,16 +250,62 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data );
-		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
-		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
-			$data['interactions'] = $this->transform_interactions_for_save( $data['interactions'] );
-		} else {
-			$data['interactions'] = [];
-		}
+		$this->set_data_field_for_save(
+			$data,
+			'settings',
+			$this->parse_atomic_settings( $data['settings'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'styles',
+			$this->parse_atomic_styles( $data )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'editor_settings',
+			$this->parse_editor_settings( $data['editor_settings'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'interactions',
+			$this->transform_interactions_for_save( $data['interactions'] ?? [] )
+		);
+
 		return $data;
+	}
+
+	/**
+	 * Called by the export flows (kit export, template file export) through `Document::process_element_import_export()`,
+	 * and by `Source_Cloud` for atomic elements when saving cloud templates.
+	 *
+	 * @param array $element_data
+	 *
+	 * @return array Element data without the values of non-exportable props.
+	 */
+	public function on_export( $element_data ) {
+		if ( ! is_array( $element_data['settings'] ?? null ) ) {
+			return $element_data;
+		}
+
+		$element_data['settings'] = Prop_Sensitivity::strip_non_exportable_settings(
+			$element_data['settings'],
+			static::get_props_schema()
+		);
+
+		return $element_data;
+	}
+
+	private function set_data_field_for_save( array &$data, string $key, $value ): void {
+		if ( ! empty( $value ) ) {
+			$data[ $key ] = $value;
+			return;
+		}
+
+		unset( $data[ $key ] );
 	}
 
 	private function transform_interactions_for_save( $interactions ) {
@@ -274,6 +341,8 @@ trait Has_Atomic_Base {
 		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
+
+		$this->add_widget_markers( $raw_data );
 
 		return $raw_data;
 	}
@@ -345,22 +414,50 @@ trait Has_Atomic_Base {
 	protected function parse_editor_settings( array $data ): array {
 		$editor_data = [];
 
-		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
-			$editor_data['title'] = sanitize_text_field( $data['title'] );
-		}
+		foreach ( $this->get_editor_settings_whitelist() as $key => $type ) {
+			if ( ! array_key_exists( $key, $data ) ) {
+				continue;
+			}
 
-		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
-			$editor_data['grid_outline'] = $data['grid_outline'];
+			$value = $this->sanitize_whitelisted_editor_setting( $data[ $key ], $type );
+
+			if ( null === $value ) {
+				continue;
+			}
+
+			$editor_data[ $key ] = $value;
 		}
 
 		return $editor_data;
+	}
+
+	private function get_editor_settings_whitelist(): array {
+		return [
+			'title' => 'string',
+			'grid_outline' => 'boolean',
+			'decorative' => 'boolean',
+		];
+	}
+
+	private function sanitize_whitelisted_editor_setting( $value, string $type ) {
+		if ( 'string' === $type && is_string( $value ) ) {
+			return sanitize_text_field( $value );
+		}
+
+		if ( 'boolean' === $type && is_bool( $value ) ) {
+			return $value;
+		}
+
+		return null;
 	}
 
 	public static function get_props_schema(): array {
 		$schema = static::define_props_schema();
 
 		if ( ! isset( $schema['_cssid'] ) ) {
-			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+			$schema['_cssid'] = String_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->meta( Prop_Duplication_Behavior::clear() );
 		}
 
 		return apply_filters(

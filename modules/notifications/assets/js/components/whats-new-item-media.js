@@ -13,7 +13,7 @@ export const WhatsNewItemMedia = ( { item } ) => {
 				<Box
 					component="iframe"
 					src={ src }
-					title={ item.title }
+					title={ item.title || 'Video' }
 					allow={ allow }
 					allowFullScreen={ true }
 					sx={ { aspectRatio: '16/9', width: '100%', display: 'block', border: 'none' } }

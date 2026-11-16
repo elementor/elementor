@@ -214,7 +214,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 
 		expect( remainingTabIds ).not.toContain( initialTabIds[ 1 ] );
 		expect( remainingContentIds ).not.toContain( initialContentIds[ 1 ] );
-		expect( remainingTabIds.length ).toBe( remainingContentIds.length );
+		expect( remainingTabIds ).toHaveLength( remainingContentIds.length );
 	} );
 
 	test( 'Duplicate a tab via control', async () => {

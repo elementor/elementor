@@ -81,6 +81,7 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 
 		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
 		$mock_document->method( 'get_edit_url' )->willReturn( 'https://example.com/edit/1' );
+		$mock_document->method( 'get_wp_preview_url' )->willReturn( 'https://example.com/?p=1&preview_id=1&preview_nonce=abc&preview=true' );
 
 		$mock_docs = $this->createMock( Documents_Manager::class );
 		$mock_docs->method( 'get' )->willReturn( $mock_document );
@@ -97,6 +98,11 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'type', $result );
 		$this->assertSame( 'page', $result['type'] );
 		$this->assertSame( 'draft', $result['status'] );
+		$this->assertArrayHasKey( 'preview_url', $result );
+		$this->assertArrayHasKey( 'llm_instructions', $result );
+		$this->assertStringContainsString( $result['preview_url'], $result['llm_instructions'] );
+		$this->assertStringNotContainsString( 'preview_nonce=', $result['preview_url'] );
+		$this->assertStringContainsString( 'preview=true', $result['preview_url'] );
 	}
 
 	public function test_execute__uses_default_title_when_not_provided() {
@@ -107,6 +113,7 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 
 		$mock_document = $this->createMock( \Elementor\Core\Base\Document::class );
 		$mock_document->method( 'get_edit_url' )->willReturn( 'https://example.com/edit/1' );
+		$mock_document->method( 'get_wp_preview_url' )->willReturn( 'https://example.com/?p=1&preview_id=1&preview_nonce=abc&preview=true' );
 
 		$mock_docs = $this->createMock( Documents_Manager::class );
 		$mock_docs->method( 'get' )->willReturnCallback( function ( $post_id ) use ( &$captured_post_id, $mock_document ) {
@@ -122,5 +129,53 @@ class Test_Create_Page_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$post = get_post( $captured_post_id );
 		$this->assertSame( 'Elementor Draft', $post->post_title );
+	}
+
+	public function test_execute__applies_template_and_hide_title() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_type' => 'page',
+			'template' => 'elementor_canvas',
+			'hide_title' => true,
+		] );
+
+		// Assert
+		$document = Plugin::$instance->documents->get( $result['id'], false );
+		$this->assertSame( 'elementor_canvas', get_post_meta( $result['id'], '_wp_page_template', true ) );
+		$this->assertSame( 'yes', $document->get_settings( 'hide_title' ) );
+		$this->assertSame( 'elementor_canvas', $result['template'] );
+		$this->assertTrue( $result['hide_title'] );
+	}
+
+	public function test_execute__reports_theme_defaults_when_template_and_hide_title_are_omitted() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [ 'post_type' => 'page' ] );
+
+		// Assert
+		$this->assertSame( 'default', $result['template'] );
+		$this->assertFalse( $result['hide_title'] );
+		$this->assertSame( '', get_post_meta( $result['id'], '_wp_page_template', true ) );
+	}
+
+	public function test_execute__returns_400_for_unknown_template() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$result = $this->ability->execute( [
+			'post_type' => 'page',
+			'template' => 'no-such-template',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_template', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
 	}
 }

@@ -19,7 +19,13 @@ import {
 	useElement,
 } from '@elementor/editor-editing-panel';
 import { type Control } from '@elementor/editor-elements';
-import { type AnyTransformable, type CreateOptions, type PropType, type PropValue } from '@elementor/editor-props';
+import {
+	type AnyTransformable,
+	type CreateOptions,
+	isEmpty,
+	type PropType,
+	type PropValue,
+} from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -136,6 +142,14 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		overridableProp.label
 	);
 
+	// When there's a real inherited (base) value, let the control's bound placeholder show it,
+	// instead of the control definition's own placeholder (instance panel only).
+	// `controlProps` is the control definition's own props object (shared with the normal editing
+	// panel via the widgets cache), so it must never be mutated here — build a derived object instead.
+	const effectiveControlProps = hasInheritedValue( resolvedBaseValue )
+		? omitPlaceholder( controlProps )
+		: controlProps;
+
 	const propTypeSchema = createTopLevelObjectType( {
 		schema: { [ overridableProp.overrideKey ]: propType },
 	} );
@@ -213,7 +227,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 							<Box mb={ 1.5 }>
 								<ControlTypeContainer layout={ layout }>
 									{ layout !== 'custom' && <ControlLabel>{ overridableProp.label }</ControlLabel> }
-									<OriginalControl control={ control } controlProps={ controlProps } />
+									<OriginalControl control={ control } controlProps={ effectiveControlProps } />
 								</ControlTypeContainer>
 							</Box>
 						</ControlReplacementsProvider>
@@ -239,6 +253,18 @@ function resolveOverrideValues(
 	const baseValue = overrideValue || isInheritedDynamic ? null : inheritedValue;
 
 	return { propValue, baseValue };
+}
+
+// An empty inherited value (e.g. an empty string, or an object whose fields are all empty) isn't
+// worth showing as a placeholder, so the control's own placeholder is kept instead.
+function hasInheritedValue( baseValue: AnyTransformable | null ): boolean {
+	return !! baseValue && ! isEmpty( baseValue );
+}
+
+function omitPlaceholder( controlProps: Record< string, unknown > ): Record< string, unknown > {
+	const { placeholder: _placeholder, ...rest } = controlProps;
+
+	return rest;
 }
 
 // Temp solution: when removing an override on a dynamic value, fall back to propType.default

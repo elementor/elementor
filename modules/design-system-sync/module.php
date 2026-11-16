@@ -3,8 +3,10 @@
 namespace Elementor\Modules\DesignSystemSync;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\DesignSystemSync\Classes\Stylesheet_Manager;
 use Elementor\Modules\DesignSystemSync\Classes\Controller;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -35,6 +37,10 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/global_classes/update', [ $this, 'clear_classes_cache' ] );
+		add_action( 'elementor/global_classes/update', [ $this, 'invalidate_sync_stylesheet' ] );
+		add_action( 'elementor/core/files/clear_cache', [ $this, 'invalidate_sync_stylesheet' ] );
+		add_action( 'elementor/kit/after_new_kit_created', [ $this, 'invalidate_sync_stylesheet' ] );
+		add_action( 'update_option_' . Kits_Manager::OPTION_ACTIVE, [ $this, 'invalidate_sync_stylesheet' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_sync_stylesheet' ] );
 	}
 
@@ -67,6 +73,14 @@ class Module extends BaseModule {
 
 	public function clear_classes_cache() {
 		Classes\Classes_Provider::clear_cache();
+	}
+
+	public function invalidate_sync_stylesheet( $context = null ) {
+		if ( Global_Classes_Repository::CONTEXT_PREVIEW === $context ) {
+			return;
+		}
+
+		( new Stylesheet_Manager() )->delete();
 	}
 
 	public function enqueue_sync_stylesheet() {

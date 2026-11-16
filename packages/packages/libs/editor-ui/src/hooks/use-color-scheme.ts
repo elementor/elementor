@@ -14,14 +14,22 @@ export type ExtendedWindow = Window & {
 	};
 };
 
-export function useColorScheme() {
+export function useColorScheme( staticColorScheme?: ColorScheme ) {
 	const [ colorScheme, setColorScheme ] = useState< ColorScheme >( () => getV1ColorScheme() );
 
 	useEffect( () => {
+		if ( staticColorScheme ) {
+			return;
+		}
+
 		return listenTo( v1ReadyEvent(), () => setColorScheme( getV1ColorScheme() ) );
-	}, [] );
+	}, [ staticColorScheme ] );
 
 	useEffect( () => {
+		if ( staticColorScheme ) {
+			return;
+		}
+
 		return listenTo( commandEndEvent( 'document/elements/settings' ), ( e ) => {
 			const event = e as CommandEvent< {
 				settings: {
@@ -36,9 +44,9 @@ export function useColorScheme() {
 				setColorScheme( getV1ColorScheme() );
 			}
 		} );
-	}, [] );
+	}, [ staticColorScheme ] );
 
-	return colorScheme;
+	return staticColorScheme || colorScheme;
 }
 
 function getV1ColorScheme() {

@@ -10,6 +10,7 @@ use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Frontend\Performance;
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
@@ -201,6 +202,10 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function enqueue() {
+		if ( $this->should_skip_enqueue() ) {
+			return;
+		}
+
 		$handle_id = $this->get_file_handle_id();
 
 		if ( isset( self::$printed[ $handle_id ] ) ) {
@@ -232,15 +237,18 @@ abstract class Base extends Base_File {
 		}
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
+			$meta['css'] = $this->sanitize_inline_css_output( (string) ( $meta['css'] ?? '' ) );
+
 			$dep = $this->get_inline_dependency();
-			// If the dependency has already been printed ( like a template in footer )
-			if ( wp_styles()->query( $dep, 'done' ) ) {
+			$is_dependency_registered = (bool) wp_styles()->query( $dep, 'registered' );
+
+			if ( ! $is_dependency_registered || wp_styles()->query( $dep, 'done' ) ) {
 				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				wp_add_inline_style( $dep, $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
-			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
+			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_registered_enqueue_dependencies(), null );
 		}
 
 		// Handle fonts.
@@ -606,6 +614,41 @@ abstract class Base extends Base_File {
 	 */
 	abstract protected function get_file_handle_id();
 
+	protected function should_skip_enqueue(): bool {
+		if ( Widget_Content_Render_Mode::is( Widget_Content_Render_Mode::MARKDOWN ) ) {
+			return true;
+		}
+
+		// Post CSS is skipped during REST handling so styles are not echoed outside the JSON envelope.
+		// Third-party internal rest_do_request() rendering therefore returns markup without post CSS unless with_css inlines it in the HTML string.
+		global $wp_rest_server;
+
+		if ( false !== $wp_rest_server && function_exists( 'wp_is_rest_endpoint' ) && wp_is_rest_endpoint() ) {
+			return true;
+		}
+
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return true;
+		}
+
+		if ( ! is_admin() ) {
+			return false;
+		}
+
+		$editor = Plugin::$instance->editor;
+
+		return $editor && $editor->is_editor_request();
+	}
+
+	protected function get_registered_enqueue_dependencies(): array {
+		return array_values( array_filter(
+			$this->get_enqueue_dependencies(),
+			static function ( $handle ) {
+				return (bool) wp_styles()->query( $handle, 'registered' );
+			}
+		) );
+	}
+
 	/**
 	 * Render CSS.
 	 *
@@ -705,7 +748,13 @@ abstract class Base extends Base_File {
 
 		Performance::set_use_style_controls( false );
 
-		return $this->get_stylesheet()->__toString();
+		return $this->sanitize_inline_css_output( $this->get_stylesheet()->__toString() );
+	}
+
+	private function sanitize_inline_css_output( string $css ): string {
+		$sanitized_css = preg_replace( '/<\/(style)/i', '<\\\\/$1', $css );
+
+		return is_string( $sanitized_css ) ? $sanitized_css : $css;
 	}
 
 	/**

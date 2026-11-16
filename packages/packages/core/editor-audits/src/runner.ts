@@ -1,0 +1,52 @@
+import { getHostDocumentElements, getHostDocumentId } from '@elementor/editor-elements';
+
+import { fetchPageContext } from './api/page-context-client';
+import { getRegisteredAudits } from './registry';
+import {
+	type Audit,
+	type AuditContext,
+	type AuditMeta,
+	type AuditRun,
+	type ElementsModelSnapshot,
+	type KitSnapshot,
+	type PageAuditReport,
+} from './types';
+import { computeReport } from './utils/compute-report';
+import { fetchRenderedHtml } from './utils/fetch-rendered-html';
+import { extractImageSizeRequests } from './utils/page-attachments';
+import { readKitSnapshot } from './utils/read-kit-snapshot';
+import { buildSnapshotTree } from './utils/v1-snapshot';
+
+export async function runPageAudit( documentId: number ): Promise< PageAuditReport > {
+	if ( documentId !== getHostDocumentId() ) {
+		throw new Error( 'runPageAudit: documentId must match the host document.' );
+	}
+
+	const tree = buildSnapshotTree( getHostDocumentElements() );
+	const imageSizeRequests = extractImageSizeRequests( tree );
+	const pageContext = await fetchPageContext( documentId, imageSizeRequests );
+
+	const elements: ElementsModelSnapshot = { documentId, tree };
+	const [ kit, renderedHtml ]: [ KitSnapshot, string | null ] = await Promise.all( [
+		readKitSnapshot( pageContext.kit_id ),
+		fetchRenderedHtml( pageContext.frontend_url ),
+	] );
+
+	const ctx: AuditContext = { documentId, elements, pageContext, kit, renderedHtml };
+	const registered = getRegisteredAudits();
+
+	const auditResults: AuditRun[] = await Promise.all(
+		registered.map( async ( audit ) => {
+			const { evaluate: _evaluate, ...meta }: AuditMeta & Pick< Audit, 'evaluate' > = audit;
+			try {
+				const result = await audit.evaluate( ctx );
+				return { audit: meta, result };
+			} catch ( error ) {
+				const reason = error instanceof Error ? error.message : 'unknown-error';
+				return { audit: meta, result: { status: 'skipped' as const, reason } };
+			}
+		} )
+	);
+
+	return computeReport( documentId, auditResults );
+}

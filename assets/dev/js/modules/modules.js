@@ -5,7 +5,7 @@ import Masonry from './imports/utils/masonry';
 import Scroll from './imports/utils/scroll';
 import ForceMethodImplementation from './imports/force-method-implementation';
 import { createGetInitialState } from '../../../../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers';
-import { customizationDialogsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
+import { customizationDialogsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs-base';
 
 const baseModules = {
 	Module,

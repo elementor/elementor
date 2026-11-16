@@ -1,0 +1,190 @@
+<?php
+
+namespace Elementor\Tests\Phpunit\Elementor\Modules\ProSetupPromotion;
+
+use Elementor\Modules\ProSetupPromotion\Dismissal;
+use Elementor\Modules\ProSetupPromotion\Setup_State;
+use ElementorEditorTesting\Elementor_Test_Base;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Test_Setup_State extends Elementor_Test_Base {
+
+	private int $admin_id;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $this->admin_id );
+
+		if ( is_multisite() ) {
+			grant_super_admin( $this->admin_id );
+		}
+
+		add_filter(
+			'elementor/pro_setup_promotion/editor_assets',
+			static function (): array {
+				return [ 'is_active' => true ];
+			}
+		);
+	}
+
+	public function tearDown(): void {
+		if ( is_multisite() ) {
+			revoke_super_admin( $this->admin_id );
+		}
+
+		delete_user_meta( $this->admin_id, Dismissal::USER_META_KEY );
+		remove_all_filters( 'elementor/pro_setup_promotion/editor_assets' );
+		remove_all_filters( 'elementor/pro_setup_promotion/setup_state' );
+
+		parent::tearDown();
+	}
+
+	public function test_get_editor_config_returns_null_when_state_is_hidden(): void {
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_HIDDEN;
+			}
+		);
+
+		$this->assertNull( Setup_State::get_editor_config() );
+	}
+
+	public function test_get_editor_config_includes_state_when_not_hidden(): void {
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_INSTALL;
+			}
+		);
+
+		$config = Setup_State::get_editor_config();
+
+		$this->assertIsArray( $config );
+		$this->assertSame( Setup_State::STATE_INSTALL, $config['state'] );
+		$this->assertArrayHasKey( 'banner', $config );
+		$this->assertArrayHasKey( 'popover', $config );
+	}
+
+	public function test_resolve_returns_hidden_during_dismissal_cooldown(): void {
+		Dismissal::record_dismissal();
+
+		$this->assertSame( Setup_State::STATE_HIDDEN, Setup_State::resolve() );
+	}
+
+	public function test_resolve_returns_hidden_when_cdn_inactive(): void {
+		remove_all_filters( 'elementor/pro_setup_promotion/editor_assets' );
+		add_filter(
+			'elementor/pro_setup_promotion/editor_assets',
+			static function (): array {
+				return [ 'is_active' => false ];
+			}
+		);
+
+		$this->assertSame( Setup_State::STATE_HIDDEN, Setup_State::resolve() );
+	}
+
+	public function test_setup_state_filter_cannot_expose_install_without_install_plugins_cap(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_INSTALL;
+			}
+		);
+
+		$this->assertSame( Setup_State::STATE_HIDDEN, Setup_State::resolve() );
+	}
+
+	public function test_connect_state_includes_connect_url_in_editor_config(): void {
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_CONNECT;
+			}
+		);
+
+		$config = Setup_State::get_editor_config();
+
+		$this->assertIsArray( $config );
+		$this->assertSame( Setup_State::STATE_CONNECT, $config['state'] );
+		$this->assertArrayHasKey( 'connectUrl', $config );
+	}
+
+	public function test_install_state_omits_connect_url_from_editor_config(): void {
+		add_filter(
+			'elementor/pro_setup_promotion/setup_state',
+			static function (): string {
+				return Setup_State::STATE_INSTALL;
+			}
+		);
+
+		$config = Setup_State::get_editor_config();
+
+		$this->assertIsArray( $config );
+		$this->assertSame( Setup_State::STATE_INSTALL, $config['state'] );
+		$this->assertArrayNotHasKey( 'connectUrl', $config );
+	}
+
+	public function test_should_reload_editor_when_connect_config_has_no_connect_url(): void {
+		$this->assertTrue(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_CONNECT,
+					'connectUrl' => '',
+				]
+			)
+		);
+	}
+
+	public function test_should_not_reload_editor_when_connect_config_has_connect_url(): void {
+		$this->assertFalse(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_CONNECT,
+					'connectUrl' => 'https://example.com/connect',
+				]
+			)
+		);
+	}
+
+	public function test_should_not_reload_editor_when_config_is_null(): void {
+		$this->assertFalse( Setup_State::should_reload_editor_after_plugin_change_config( null ) );
+	}
+
+	public function test_should_not_reload_editor_for_install_state(): void {
+		$this->assertFalse(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_INSTALL,
+				]
+			)
+		);
+	}
+
+	public function test_should_not_reload_editor_for_activate_state(): void {
+		$this->assertFalse(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_ACTIVATE,
+				]
+			)
+		);
+	}
+
+	public function test_should_reload_editor_when_connect_url_key_is_absent(): void {
+		$this->assertTrue(
+			Setup_State::should_reload_editor_after_plugin_change_config(
+				[
+					'state' => Setup_State::STATE_CONNECT,
+				]
+			)
+		);
+	}
+}

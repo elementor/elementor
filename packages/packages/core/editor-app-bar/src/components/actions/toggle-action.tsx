@@ -8,6 +8,7 @@ import ToolbarMenuToggleItem from '../ui/toolbar-menu-toggle-item';
 export type Props = {
 	title: string;
 	icon: ElementType;
+	id?: string;
 	selected?: boolean;
 	disabled?: boolean;
 	visible?: boolean;

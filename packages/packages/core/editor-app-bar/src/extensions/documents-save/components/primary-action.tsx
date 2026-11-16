@@ -46,7 +46,7 @@ export default function PrimaryAction() {
 
 	return (
 		<>
-			<ButtonGroup size="large" variant="contained">
+			<ButtonGroup size="large" variant="contained" color="accent">
 				<Button
 					onClick={ () => {
 						const extendedWindow = window as unknown as ExtendedWindow;

@@ -5,10 +5,34 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 	class Mock_Pro_License_API {
 		private static bool $active = true;
 		private static bool $expired = false;
+		private static array $features = [];
+		private static string $access_tier = 'essential-oct2023';
+
+		private static int $get_license_data_force_calls = 0;
+
+		public static function reset(): void {
+			self::$active = true;
+			self::$expired = false;
+			self::$features = [];
+			self::$access_tier = 'essential-oct2023';
+			self::$get_license_data_force_calls = 0;
+		}
+
+		public static function set_access_tier( string $access_tier ): void {
+			self::$access_tier = $access_tier;
+		}
+
+		public static function get_access_tier(): string {
+			return self::$active ? self::$access_tier : 'free';
+		}
 
 		public static function set_license_state( bool $active, bool $expired = false ): void {
 			self::$active = $active;
 			self::$expired = $expired;
+		}
+
+		public static function set_features( array $features ): void {
+			self::$features = $features;
 		}
 
 		public static function is_license_active(): bool {
@@ -17,6 +41,27 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 
 		public static function is_license_expired(): bool {
 			return self::$expired;
+		}
+
+		public static function is_licence_has_feature( $feature_name, $license_check_validator = null ): bool {
+			unset( $license_check_validator );
+
+			return in_array( $feature_name, self::$features, true );
+		}
+
+		public static function get_license_data( $force_request = false ) {
+			if ( $force_request ) {
+				self::$get_license_data_force_calls++;
+			}
+
+			return [
+				'success' => self::$active,
+				'error' => self::$expired ? 'expired' : '',
+			];
+		}
+
+		public static function get_force_refresh_call_count(): int {
+			return self::$get_license_data_force_calls;
 		}
 	}
 

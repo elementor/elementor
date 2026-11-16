@@ -64,6 +64,7 @@ describe( '<StyleRenderer />', () => {
 		render( <StyleRenderer /> );
 
 		// Assert.
+		expect( useStyleItems ).toHaveBeenCalledWith( mockContainer );
 		// eslint-disable-next-line testing-library/no-test-id-queries
 		expect( screen.getByTestId( 'portal' ) ).toMatchSnapshot();
 	} );

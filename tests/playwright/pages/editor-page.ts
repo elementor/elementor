@@ -1,10 +1,10 @@
 import { readFile } from 'fs/promises';
 import { addElement, getElementSelector } from '../assets/elements-utils';
-import { expect, type Page, type Frame, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
+import { comparePngBuffers } from '../assets/image-comparator';
+import { expect, type Page, type Frame, type Request, type Response, type TestInfo, type ElementHandle, Locator } from '@playwright/test';
 import BasePage from './base-page';
 import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
-import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
 import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, ContainerType, ContainerPreset } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
@@ -17,6 +17,83 @@ let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
+
+const ADMIN_AJAX_PATH = 'admin-ajax.php';
+const SAVE_BUILDER_ACTION = 'save_builder';
+const PUBLISH_STATUS = 'publish';
+
+type AjaxBatchAction = {
+	action?: string;
+	data?: {
+		status?: string;
+	};
+};
+
+type AjaxBatchResponse = {
+	success?: boolean;
+	data?: unknown;
+};
+
+function parseAjaxBatchActions( request: Request ): Record<string, AjaxBatchAction> | null {
+	try {
+		const postData = request.postDataJSON() as { actions?: string | Record<string, AjaxBatchAction> } | null;
+		if ( ! postData?.actions ) {
+			return null;
+		}
+
+		if ( 'string' === typeof postData.actions ) {
+			return JSON.parse( postData.actions ) as Record<string, AjaxBatchAction>;
+		}
+
+		return postData.actions;
+	} catch {
+		return null;
+	}
+}
+
+function isPublishSaveBuilderAction( action: AjaxBatchAction ): boolean {
+	return SAVE_BUILDER_ACTION === action.action && PUBLISH_STATUS === action.data?.status;
+}
+
+function isPublishSaveBuilderResponse( response: Response ): boolean {
+	if ( ! response.url().includes( ADMIN_AJAX_PATH ) || 'POST' !== response.request().method() ) {
+		return false;
+	}
+
+	const actions = parseAjaxBatchActions( response.request() );
+	if ( ! actions ) {
+		return false;
+	}
+
+	return Object.values( actions ).some( isPublishSaveBuilderAction );
+}
+
+async function assertPublishSaveBuilderSucceeded( saveResponse: Response ): Promise<void> {
+	let body: { data?: { responses?: Record<string, AjaxBatchResponse> } };
+
+	try {
+		body = await saveResponse.json();
+	} catch {
+		throw new Error( `Publish save_builder failed: HTTP ${ saveResponse.status() } (non-JSON body)` );
+	}
+
+	const actions = parseAjaxBatchActions( saveResponse.request() ) ?? {};
+	const responses = body?.data?.responses ?? {};
+	const publishSaveIds = Object.entries( actions )
+		.filter( ( [ , action ] ) => isPublishSaveBuilderAction( action ) )
+		.map( ( [ id ] ) => id );
+	const failedSave = publishSaveIds.find( ( id ) => ! responses[ id ]?.success );
+
+	if ( saveResponse.ok() && ! failedSave && publishSaveIds.length > 0 ) {
+		return;
+	}
+
+	const failedPayload = failedSave ? responses[ failedSave ]?.data : responses[ SAVE_BUILDER_ACTION ]?.data;
+
+	throw new Error(
+		`Publish save_builder failed: HTTP ${ saveResponse.status() } ${ JSON.stringify( failedPayload ) }`,
+	);
+}
 
 /**
  * Helper design contract:
@@ -348,7 +425,10 @@ export default class EditorPage extends BasePage {
 		const frame = this.getPreviewFrame();
 		await frame.locator( '.elementor-add-section-button' ).click();
 		await frame.locator( `.${ element }-preset-button` ).click();
-		await frame.locator( `[data-preset=${ preset }]` ).click();
+		const presetSelector = 'grid' === element
+			? `[data-structure="${ preset }"]`
+			: `[data-preset="${ preset }"]`;
+		await frame.locator( presetSelector ).click();
 	}
 
 	/**
@@ -870,6 +950,72 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Open the structure (navigator) panel from the V4 top bar.
+	 *
+	 * @return {Promise<Locator>} The navigator panel.
+	 */
+	async openStructurePanel(): Promise<Locator> {
+		const panel = this.page.locator( EditorSelectors.panels.navigator.wrapper );
+
+		if ( ! await panel.isVisible() ) {
+			await this.page.locator( EditorSelectors.panels.navigator.footerButton ).click();
+		}
+
+		await expect( panel ).toBeVisible();
+
+		return panel;
+	}
+
+	async selectElementInStructurePanel( elementId: string ): Promise<void> {
+		await this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first().click();
+	}
+
+	/**
+	 * Expand a single structure panel node when it is collapsed.
+	 * The navigator marks an expanded node by `elementor-active` on its item row.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async expandStructureNode( elementId: string ): Promise<void> {
+		const item = this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first();
+
+		if ( ! ( await item.getAttribute( 'class' ) )?.includes( 'elementor-active' ) ) {
+			await item.locator( '.elementor-navigator__element__list-toggle' ).click();
+		}
+
+		await expect( item ).toHaveClass( /elementor-active/ );
+	}
+
+	/**
+	 * Expand every collapsed node in the structure panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async expandAllStructureNodes(): Promise<void> {
+		await expect.poll( async () => {
+			return await this.page.evaluate( () => {
+				const collapsed = Array.from(
+					document.querySelectorAll(
+						'#elementor-navigator .elementor-navigator__element--has-children > .elementor-navigator__item:not(.elementor-active)',
+					),
+				);
+
+				collapsed.forEach( ( item ) => {
+					( item.querySelector( '.elementor-navigator__element__list-toggle' ) as HTMLElement )?.click();
+				} );
+
+				return collapsed.length;
+			} );
+		}, { timeout: timeouts.longAction } ).toBe( 0 );
+	}
+
+	getStructureTitles(): Locator {
+		return this.page.locator( `${ EditorSelectors.panels.navigator.wrapper } .elementor-navigator__element__title__text` );
+	}
+
+	/**
 	 * Close the navigator/structure panel.
 	 *
 	 * @return {Promise<void>}
@@ -957,9 +1103,16 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage(): Promise<void> {
+		const saveResponsePromise = this.page.waitForResponse(
+			isPublishSaveBuilderResponse,
+			{ timeout: timeouts.heavyAction },
+		);
+
 		await this.clickTopBarItem( TopBarSelectors.publish );
-		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
+
+		const saveResponse = await saveResponsePromise;
+
+		await assertPublishSaveBuilderSucceeded( saveResponse );
 	}
 
 	/**
@@ -974,6 +1127,18 @@ export default class EditorPage extends BasePage {
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
 		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
+	}
+
+	/**
+	 * Wait until the viewed frontend page finished loading its stylesheets and web fonts,
+	 * so text-dependent screenshots do not capture a fallback font.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async waitForFrontendFonts(): Promise<void> {
+		await this.page.waitForLoadState( 'load', { timeout: timeouts.longAction } );
+		await this.page.waitForLoadState( 'networkidle', { timeout: timeouts.longAction } );
+		await this.page.evaluate( async () => await document.fonts.ready );
 	}
 
 	async viewPage() {
@@ -1184,7 +1349,6 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async isUiStable( locator: Locator, retries: number = 3, timeout: number = 500 ): Promise<void> {
-		const comparator = getComparator( 'image/png' );
 		let retry = 0,
 			beforeImage: Buffer,
 			afterImage: Buffer;
@@ -1206,7 +1370,7 @@ export default class EditorPage extends BasePage {
 				path: `./after.png`,
 			} );
 			retry = retry++;
-		} while ( null !== comparator( beforeImage, afterImage ) );
+		} while ( null !== comparePngBuffers( beforeImage, afterImage ) );
 	}
 
 	/**
@@ -1330,8 +1494,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async saveSiteSettings( toReload: boolean ): Promise<void> {
-		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
-			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
+		const saveButton = this.page.locator( EditorSelectors.panels.siteSettings.saveButton );
+		const isSaveEnabled = await saveButton.isEnabled();
+
+		if ( isSaveEnabled ) {
+			await saveButton.click();
 		} else {
 			await this.page.evaluate( ( selector ) => {
 				const button: HTMLElement = document.evaluate( selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE ).singleNodeValue as HTMLElement;
@@ -1339,8 +1506,11 @@ export default class EditorPage extends BasePage {
 			}, EditorSelectors.panels.siteSettings.saveButton );
 		}
 
-		if ( toReload ) {
-			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
+		if ( toReload && isSaveEnabled ) {
+			const reloadButton = this.page.locator( EditorSelectors.refreshPopup.reloadButton );
+			await reloadButton.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+			await reloadButton.click( { timeout: timeouts.longAction } );
+			await this.page.locator( '#elementor-editor-wrapper' ).waitFor( { state: 'visible', timeout: timeouts.heavyAction } );
 		}
 	}
 
@@ -1406,5 +1576,47 @@ export default class EditorPage extends BasePage {
 		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
 
 		await button.click();
+	}
+
+	getPanelContentSection(): Locator {
+		return this.page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
+	}
+
+	getPanelInlineEditor(): Locator {
+		return this.getPanelContentSection().locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+	}
+
+	async togglePanelInlineEditingAttribute( attribute: string ): Promise<void> {
+		const label = INLINE_EDITING_SELECTORS.formatButtonLabels[ attribute as keyof typeof INLINE_EDITING_SELECTORS.formatButtonLabels ];
+
+		if ( ! label ) {
+			return;
+		}
+
+		await this.getPanelContentSection().getByRole( 'button', { name: label } ).click();
+	}
+
+	async selectPanelInlineEditedText( substring: string ): Promise<void> {
+		const panelInlineEditor = this.getPanelInlineEditor();
+
+		await panelInlineEditor.click();
+
+		const entireText = await panelInlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		await this.page.keyboard.press( 'Home' );
+
+		const startIndex = entireText.indexOf( substring );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
+		}
 	}
 }

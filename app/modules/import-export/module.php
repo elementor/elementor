@@ -13,6 +13,7 @@ use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -117,11 +118,15 @@ class Module extends BaseModule {
 	 * Register the import/export tab in elementor tools.
 	 */
 	public function register_settings_tab( Tools $tools ) {
+		$label = EditorOneModule::is_admin_navigation_active()
+			? esc_html__( 'Import & Export', 'elementor' )
+			: esc_html__( 'Website Templates', 'elementor' );
+
 		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Website Templates', 'elementor' ),
+			'label' => $label,
 			'sections' => [
 				'intro' => [
-					'label' => esc_html__( 'Website Templates', 'elementor' ),
+					'label' => $label,
 					'callback' => function() {
 						$this->render_import_export_tab_content();
 					},
@@ -245,7 +250,7 @@ class Module extends BaseModule {
 		?>
 		<div class="tab-import-export-kit__container">
 			<div class="tab-import-export-kit__box">
-				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+				<h3><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h3>
 			</div>
 			<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
 

@@ -99,6 +99,34 @@ describe( 'store', () => {
 			expect( data.items.existing.label ).toBe( 'Original' );
 		} );
 
+		it( 'should not add a missing frontend definition to the frontend baseline', () => {
+			// Arrange
+			const previewOnlyClass = createMockStyleDefinition( { id: 'preview-only' } );
+
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: {}, order: [] },
+					preview: { items: {}, order: [ previewOnlyClass.id ] },
+					classLabels: { [ previewOnlyClass.id ]: previewOnlyClass.label },
+				} )
+			);
+
+			// Act
+			dispatch(
+				slice.actions.mergeExistingClasses( {
+					preview: { [ previewOnlyClass.id ]: previewOnlyClass },
+					frontend: {},
+				} )
+			);
+
+			// Assert
+			expect( selectFrontendInitialData( getState() ).items ).not.toHaveProperty( previewOnlyClass.id );
+			expect( selectPreviewInitialData( getState() ).items ).toHaveProperty(
+				previewOnlyClass.id,
+				previewOnlyClass
+			);
+		} );
+
 		it( 'should not change order array length when merging', () => {
 			// Arrange
 			const existingClass = createMockStyleDefinition( { id: 'existing' } );

@@ -4,6 +4,7 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -145,7 +146,7 @@ class Circular_Dependency_Validator {
 	}
 
 	private function extract_component_id_from_settings( array $settings ) {
-		return $settings['component_instance']['value']['component_id']['value'] ?? null;
+		return Component_Instance_Prop_Type::extract_component_id( $settings );
 	}
 
 	private function build_error_response( $component_id, $via_component_id = null ): array {

@@ -9,13 +9,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Image_Control extends Atomic_Control_Base {
+	private ?array $promotion = null;
+
 	public function get_type(): string {
 		return 'image';
 	}
 
+	public function set_promotion( array $promotion ): self {
+		$this->promotion = $promotion;
+
+		return $this;
+	}
+
 	public function get_props(): array {
-		return [
+		$props = [
 			'sizes' => Image_Sizes::get_all(),
 		];
+
+		if ( null !== $this->promotion ) {
+			$props['promotion'] = $this->promotion;
+		}
+
+		return $props;
 	}
 }

@@ -87,6 +87,71 @@ class Components_Repository {
 
 		return $document->get_main_id();
 	}
+
+	public function uid_exists( string $uid, int $exclude_id = 0 ): bool {
+		if ( '' === $uid ) {
+			return false;
+		}
+
+		$ids = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => 1,
+			'fields' => 'ids',
+			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+			'meta_query' => [
+				[
+					'key' => Component_Document::COMPONENT_UID_META_KEY,
+					'value' => $uid,
+				],
+			],
+		] );
+
+		return ! empty( $ids );
+	}
+
+	public function get_active_titles( int $exclude_id = 0 ): array {
+		$posts = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+		] );
+
+		$active = array_filter( $posts, fn( $post ) => ! $this->is_archived( $post->ID ) );
+
+		return array_map( fn( $post ) => mb_strtolower( $post->post_title ), array_values( $active ) );
+	}
+
+	public function count_active( int $exclude_id = 0 ): int {
+		$ids = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'post__not_in' => $exclude_id ? [ $exclude_id ] : [],
+		] );
+
+		return count( array_filter( $ids, fn( $id ) => ! $this->is_archived( $id ) ) );
+	}
+
+	/**
+	 * Same shape as `generateUniqueId( 'component' )` in the editor.
+	 */
+	public function generate_uid(): string {
+		do {
+			$uid = 'component-' . (int) floor( microtime( true ) * 1000 ) . '-' . substr( base_convert( (string) wp_rand(), 10, 36 ) . '0000000', 0, 7 );
+		} while ( $this->uid_exists( $uid ) );
+
+		return $uid;
+	}
+
+	private function is_archived( int $post_id ): bool {
+		$archived_meta = json_decode( (string) get_post_meta( $post_id, Component_Document::ARCHIVED_META_KEY, true ), true );
+
+		return ! empty( $archived_meta['is_archived'] );
+	}
+
 	private function extract_styles( array $elements, array $styles = [] ) {
 		foreach ( $elements as $element ) {
 			if ( isset( $element['styles'] ) ) {
@@ -107,7 +172,7 @@ class Components_Repository {
 
 		foreach ( $ids as $id ) {
 			try {
-				$component = $this->get_component_for_edit( $id, $status );
+				$component = $this->get_for_edit( $id, $status );
 
 				if ( ! $component ) {
 					$failed_ids[] = $id;
@@ -128,7 +193,7 @@ class Components_Repository {
 	}
 
 	public function update_title( int $component_id, string $title, string $status ): bool {
-		$component = $this->get_component_for_edit( $component_id, $status );
+		$component = $this->get_for_edit( $component_id, $status );
 
 		if ( ! $component ) {
 			return false;
@@ -151,7 +216,7 @@ class Components_Repository {
 	 * If target status is publish:
 	 * - Will return the main document. If it's an autosave, it will be published later by the publish_component method.
 	 */
-	private function get_component_for_edit( int $component_id, string $target_status ): ?Component_Document {
+	public function get_for_edit( int $component_id, string $target_status ): ?Component_Document {
 		$component = $this->get( $component_id );
 
 		if ( ! $component ) {

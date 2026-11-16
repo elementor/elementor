@@ -83,7 +83,10 @@ export interface ElementorInstance {
 	selection: {
 		elements: Record< string, unknown >;
 	};
-	widgetsCache: Record< string, { controls: ElementorControls } >;
+	widgetsCache: Record<
+		string,
+		{ controls: ElementorControls; atomic_props_schema?: Record< string, { meta?: unknown } > }
+	>;
 	config: {
 		controls: Record< string, unknown >;
 	};

@@ -177,6 +177,7 @@ export default class Component extends ComponentBase {
 
 		return {
 			action: 'get_document_config',
+			retry: true,
 			unique_id: `document-${ id }`,
 			data: { id },
 			success: ( config ) => config,

@@ -32,6 +32,7 @@ const EXPORT_REQUEST_BODY = {
 		settings: {
 			theme: false,
 			classes: true,
+			defaultStyles: true,
 			variables: true,
 		},
 	},

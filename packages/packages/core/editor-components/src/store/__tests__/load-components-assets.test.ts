@@ -1,4 +1,4 @@
-import { createMockDocument } from 'test-utils';
+import { createMockDocument, createMockElementData } from 'test-utils';
 import { type Document } from '@elementor/editor-documents';
 import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
 
@@ -40,6 +40,13 @@ const OVERRIDABLE_PROPS_FIRST_DOCUMENT = createMockDocument( { id: OVERRIDABLE_P
 const OVERRIDABLE_PROPS_SECOND_ID = 40;
 const OVERRIDABLE_PROPS_SECOND_DOCUMENT = createMockDocument( { id: OVERRIDABLE_PROPS_SECOND_ID } );
 
+const MOCK_ELEMENTS = [
+	createMockElementData( {
+		widgetType: 'e-component',
+		elType: 'widget',
+	} ),
+];
+
 describe( 'loadComponentsAssets', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -67,7 +74,7 @@ describe( 'loadComponentsAssets', () => {
 		mockGetComponentDocuments.mockResolvedValue( documents );
 
 		// Act
-		await loadComponentsAssets( [] );
+		await loadComponentsAssets( MOCK_ELEMENTS );
 
 		// Assert
 		expect( mockSetDocument ).toHaveBeenCalledTimes( expectedSetDocumentCalls.length );
@@ -76,12 +83,22 @@ describe( 'loadComponentsAssets', () => {
 		} );
 	} );
 
+	it( 'should return early when elements array is empty', async () => {
+		// Act
+		await loadComponentsAssets( [] );
+
+		// Assert
+		expect( mockGetComponentDocuments ).not.toHaveBeenCalled();
+		expect( mockSetDocument ).not.toHaveBeenCalled();
+		expect( mockLoadComponentsOverridableProps ).not.toHaveBeenCalled();
+	} );
+
 	it( 'should not call setDocument when documents map is empty', async () => {
 		// Arrange
 		mockGetComponentDocuments.mockResolvedValue( createDocumentsMap( [] ) );
 
 		// Act
-		await loadComponentsAssets( [] );
+		await loadComponentsAssets( MOCK_ELEMENTS );
 
 		// Assert
 		expect( mockSetDocument ).not.toHaveBeenCalled();
@@ -96,7 +113,7 @@ describe( 'loadComponentsAssets', () => {
 		mockGetComponentDocuments.mockResolvedValue( documents );
 
 		// Act
-		await loadComponentsAssets( [] );
+		await loadComponentsAssets( MOCK_ELEMENTS );
 
 		// Assert
 		expect( mockLoadComponentsOverridableProps ).toHaveBeenCalledWith( [

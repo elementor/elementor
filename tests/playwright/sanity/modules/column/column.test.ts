@@ -14,9 +14,10 @@ test.describe( 'Column tests @column', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await page.close();
+		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
-	test( 'Section Background slideshow', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Section slideshow background', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const sectionId = await editor.addElement( { elType: 'section' }, 'document' );

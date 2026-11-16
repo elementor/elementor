@@ -1,3 +1,5 @@
+const ADMIN_NAV_CLICK_EVENT = 'elementor/admin/nav-click';
+
 export class EditorOneEventManager {
 	static getEventsManager() {
 		return elementorCommon?.eventsManager;
@@ -17,11 +19,16 @@ export class EditorOneEventManager {
 	}
 
 	static dispatchEvent( eventName, payload ) {
-		if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
+		try {
+			if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
+				return false;
+			}
+
+			this.getEventsManager().dispatchEvent( eventName, payload );
+			return true;
+		} catch ( error ) {
 			return false;
 		}
-
-		this.getEventsManager().dispatchEvent( eventName, payload );
 	}
 
 	static toLowerSnake( value ) {
@@ -56,7 +63,6 @@ export class EditorOneEventManager {
 	static createBasePayload( overrides = {} ) {
 		const config = this.getConfig();
 		return {
-			app_type: config?.appTypes?.editor ?? 'editor',
 			window_name: config?.appTypes?.editor ?? 'editor',
 			...overrides,
 		};
@@ -319,6 +325,57 @@ export class EditorOneEventManager {
 			location_l1: this.toLowerSnake( config?.secondaryLocations?.wpDashThemeBuilder ),
 			interaction_description: 'core_user_clicked_theme_builder_menu_item',
 		} ) );
+	}
+
+	static sendSidebarMenuItemClicked( { eventId, groupEventId } ) {
+		try {
+			const config = this.getConfig();
+			const payload = this.createBasePayload( {
+				window_name: config?.windowNames?.sidebarMenu,
+				interaction_type: this.toLowerSnake( config?.triggers?.click ),
+				target_type: config?.targetTypes?.link,
+				target_name: eventId,
+				interaction_result: config?.interactionResults?.pageOpened,
+				target_location: this.toLowerSnake( config?.locations?.sidebar ),
+			} );
+
+			if ( groupEventId ) {
+				payload.location_l1 = groupEventId;
+			}
+
+			const navClickId = window.crypto?.randomUUID?.() ?? `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+			payload.nav_click_id = navClickId;
+
+			const dispatched = this.dispatchEvent( config?.names?.editorOne?.sidebarMenuItemClicked, payload );
+
+			window.dispatchEvent( new CustomEvent( ADMIN_NAV_CLICK_EVENT, {
+				detail: { itemId: eventId, rootItem: groupEventId, navClickId },
+			} ) );
+
+			return dispatched;
+		} catch ( error ) {
+			return false;
+		}
+	}
+
+	static sendSidebarMenuGroupToggled( { eventId, isExpanded } ) {
+		try {
+			const config = this.getConfig();
+			const interactionResult = isExpanded
+				? config?.interactionResults?.expanded
+				: config?.interactionResults?.collapsed;
+
+			return this.dispatchEvent( config?.names?.editorOne?.sidebarMenuGroupToggled, this.createBasePayload( {
+				window_name: config?.windowNames?.sidebarMenu,
+				interaction_type: this.toLowerSnake( config?.triggers?.click ),
+				target_type: config?.targetTypes?.toggle,
+				target_name: eventId,
+				interaction_result: interactionResult,
+				target_location: this.toLowerSnake( config?.locations?.sidebar ),
+			} ) );
+		} catch ( error ) {
+			return false;
+		}
 	}
 }
 

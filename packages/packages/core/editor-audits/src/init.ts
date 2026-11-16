@@ -1,0 +1,16 @@
+import { registerFloatingPanel } from '@elementor/editor-floating-panels';
+import { __registerSlice as registerSlice } from '@elementor/store';
+
+import { registerAppBarAuditsToggle } from './editor-app-bar';
+import { auditPanel } from './editor-panel';
+import { registerAllAudits } from './register-audits';
+import { slice } from './store/slice';
+import { syncReportStaleness } from './sync-report-staleness';
+
+export function init(): void {
+	registerSlice( slice );
+	registerAllAudits();
+	registerFloatingPanel( auditPanel.panel );
+	registerAppBarAuditsToggle();
+	syncReportStaleness();
+}

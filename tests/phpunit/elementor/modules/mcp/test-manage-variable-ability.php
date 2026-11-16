@@ -1,0 +1,809 @@
+<?php
+
+namespace Elementor\Tests\Phpunit\Modules\Mcp;
+
+use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
+use Mock_Pro_License_API;
+use PHPUnit\Framework\TestCase;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
+
+/**
+ * @group Elementor\Modules\Mcp
+ */
+class Test_Manage_Variable_Ability extends TestCase {
+
+	const ABILITY_ID = 'elementor/manage-global-variable';
+
+	public function setUp(): void {
+		parent::setUp();
+
+		Mock_Pro_License_API::set_license_state( false );
+	}
+
+	public function tearDown(): void {
+		Mock_Pro_License_API::reset();
+		parent::tearDown();
+	}
+
+	private function assertWPError( $actual ): void {
+		$this->assertInstanceOf( \WP_Error::class, $actual );
+	}
+
+	private function make_ability( ?Variables_Service $service = null ): Manage_Variable_Ability {
+		return new Manage_Variable_Ability( $service ?? $this->createMock( Variables_Service::class ) );
+	}
+
+	private function operations_input( array $operations ): array {
+		return [ 'operations' => $operations ];
+	}
+
+	public function test_execute__requires_operations_array() {
+		$result = $this->make_ability()->execute( [] );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	public function test_execute__rejects_empty_operations() {
+		$result = $this->make_ability()->execute( $this->operations_input( [] ) );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'invalid_input', $result->get_error_code() );
+	}
+
+	public function test_execute__rejects_batch_size_over_limit() {
+		$operations = array_fill( 0, Manage_Variable_Ability::MAX_BATCH_SIZE + 1, [
+			'action' => 'delete',
+			'id' => 'abc',
+		] );
+
+		$result = $this->make_ability()->execute( $this->operations_input( $operations ) );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'batch_size_exceeded', $result->get_error_code() );
+		$this->assertSame( Manage_Variable_Ability::MAX_BATCH_SIZE, $result->get_error_data()['max_allowed'] );
+	}
+
+	public function test_execute__returns_error_for_unknown_action() {
+		$result = $this->make_ability()->execute( $this->operations_input( [
+			[ 'action' => 'noop' ],
+		] ) );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_create__requires_type_label_and_value() {
+		$result = $this->make_ability()->execute( $this->operations_input( [
+			[ 'action' => 'create', 'type' => 'global-color-variable' ],
+		] ) );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_create__delegates_to_service_and_returns_compact_ok() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'create',
+						'variable' => [
+							'type' => 'global-color-variable',
+							'label' => 'brand',
+							'value' => '#000',
+						],
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'brand',
+					],
+				],
+				'watermark' => 7,
+			] );
+
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-color-variable',
+				'label' => 'brand',
+				'value' => '#000',
+			],
+		] ) );
+
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'abc', $result['results'][0]['id'] );
+		$this->assertSame( 'brand', $result['results'][0]['label'] );
+		$this->assertArrayNotHasKey( 'variable', $result );
+		$this->assertArrayNotHasKey( 'value', $result['results'][0] );
+		$this->assertSame( 7, $result['watermark'] );
+	}
+
+	public function test_dry_run__passes_flag_to_service_and_marks_response() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with( $this->anything(), true, true )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'brand',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$result = $this->make_ability( $service )->execute( [
+			'operations' => [
+				[
+					'action' => 'create',
+					'type' => 'global-color-variable',
+					'label' => 'brand',
+					'value' => '#000',
+				],
+			],
+			'dry_run' => true,
+		] );
+
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'abc', $result['results'][0]['id'] );
+	}
+
+	public function test_create__passes_planned_id_to_service() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				$this->callback( function ( $operations ) {
+					return 'e-gv-a1b2c3d' === ( $operations[0]['variable']['id'] ?? null );
+				} ),
+				true,
+				false
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'e-gv-a1b2c3d',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$result = $this->make_ability( $service )->execute( [
+			'operations' => [
+				[
+					'action' => 'create',
+					'id' => 'e-gv-a1b2c3d',
+					'type' => 'global-color-variable',
+					'label' => 'brand',
+					'value' => '#000',
+				],
+			],
+		] );
+
+		$this->assertSame( 'e-gv-a1b2c3d', $result['results'][0]['id'] );
+	}
+
+	public function test_dry_run__is_advertised_in_input_schema() {
+		$ability = $this->make_ability();
+
+		$this->assertTrue( $ability->supports_dry_run() );
+		$this->assertTrue( $ability->validate_input_against_schema( [
+			'operations' => [ [ 'action' => 'delete', 'id' => 'abc' ] ],
+			'dry_run' => true,
+		] ) );
+	}
+
+	public function test_create__maps_duplicated_label_to_per_operation_error() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'process_batch' )->willReturn( [
+			'success' => false,
+			'results' => [
+				[
+					'index' => 0,
+					'status' => 'error',
+					'action' => 'create',
+					'code' => 'duplicated_label',
+					'message' => 'Variable label already exists',
+				],
+			],
+			'watermark' => 5,
+		] );
+
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-color-variable',
+				'label' => 'brand',
+				'value' => '#000',
+			],
+		] ) );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'duplicated_label', $result['results'][0]['code'] );
+	}
+
+	public function test_bulk__returns_partial_error_when_mixed_results() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'process_batch' )->willReturn( [
+			'success' => true,
+			'results' => [
+				[
+					'index' => 0,
+					'status' => 'ok',
+					'action' => 'create',
+					'id' => 'abc',
+					'label' => 'brand',
+				],
+				[
+					'index' => 1,
+					'status' => 'error',
+					'action' => 'update',
+					'id' => 'missing',
+					'code' => 'variable_not_found',
+					'message' => 'Variable not found',
+				],
+			],
+			'watermark' => 8,
+		] );
+
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-color-variable',
+				'label' => 'brand',
+				'value' => '#000',
+			],
+			[
+				'action' => 'update',
+				'id' => 'missing',
+				'label' => 'brand',
+				'value' => '#fff',
+			],
+		] ) );
+
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'error', $result['results'][1]['status'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_create__rejects_size_types_without_active_license( string $type ) {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'process_batch' );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => $type,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'pro_license_required', $result['results'][0]['code'] );
+	}
+
+	public function test_create__size_rejection_includes_upgrade_link() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_SIZE,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertStringContainsString( '[Upgrade to Pro](' . Variables_Pro_Features_Discovery::UPGRADE_URL . ')', $result['results'][0]['message'] );
+	}
+
+	public function test_validate_input_against_schema__accepts_size_types_without_active_license() {
+		// Arrange
+		$input = $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_SIZE,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] );
+
+		// Act
+		$result = $this->make_ability()->validate_input_against_schema( $input );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_get_description_for_llm__does_not_mention_pro_without_active_license() {
+		// Act
+		$description = $this->make_ability()->get_description_for_llm();
+
+		// Assert
+		$this->assertStringNotContainsStringIgnoringCase( 'pro', $description );
+	}
+
+	public function size_type_provider(): array {
+		return [
+			'size' => [ Manage_Variable_Ability::TYPE_SIZE ],
+			'custom size' => [ Manage_Variable_Ability::TYPE_CUSTOM_SIZE ],
+		];
+	}
+
+	public function test_create__keeps_non_size_operations_when_size_is_rejected() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'create',
+						'variable' => [
+							'type' => 'global-color-variable',
+							'label' => 'brand',
+							'value' => '#000',
+						],
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'brand',
+					],
+				],
+				'watermark' => 9,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-color-variable',
+				'label' => 'brand',
+				'value' => '#000',
+			],
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_SIZE,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'pro_license_required', $result['results'][1]['code'] );
+	}
+
+	public function test_create__explains_size_rejection_once_per_batch() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'process_batch' );
+		$size_operation = [
+			'action' => 'create',
+			'type' => Manage_Variable_Ability::TYPE_SIZE,
+			'label' => 'spacing',
+			'value' => '16px',
+		];
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [ $size_operation, $size_operation ] ) );
+
+		// Assert
+		$this->assertStringContainsString( '[Upgrade to Pro](', $result['results'][0]['message'] );
+		$this->assertSame( Variables_Pro_Features_Discovery::get_repeated_message(), $result['results'][1]['message'] );
+		$this->assertSame( 'pro_license_required', $result['results'][1]['code'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_update__rejects_size_variables_without_active_license( string $type ) {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_type' )->with( 'abc' )->willReturn( $type );
+		$service->expects( $this->never() )->method( 'process_batch' );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'abc',
+				'label' => 'spacing',
+				'value' => '24px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'pro_license_required', $result['results'][0]['code'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_create__size_error_comes_from_pro_features_discovery( string $type ) {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'process_batch' );
+		$discovery_error = Variables_Pro_Features_Discovery::for_size_variables();
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => $type,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( $discovery_error->get_error_code(), $result['results'][0]['code'] );
+		$this->assertSame( $discovery_error->get_error_message(), $result['results'][0]['message'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_update__size_error_comes_from_pro_features_discovery( string $type ) {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_type' )->with( 'abc' )->willReturn( $type );
+		$service->expects( $this->never() )->method( 'process_batch' );
+		$discovery_error = Variables_Pro_Features_Discovery::for_size_variables();
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'abc',
+				'label' => 'spacing',
+				'value' => '24px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( $discovery_error->get_error_code(), $result['results'][0]['code'] );
+		$this->assertSame( $discovery_error->get_error_message(), $result['results'][0]['message'] );
+	}
+
+	public function test_bulk__never_sends_size_operations_to_service_without_active_license() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_type' )->willReturnMap( [
+			[ 'size-id', Manage_Variable_Ability::TYPE_SIZE ],
+			[ 'custom-size-id', Manage_Variable_Ability::TYPE_CUSTOM_SIZE ],
+		] );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->with(
+				[
+					[
+						'type' => 'create',
+						'variable' => [
+							'type' => Manage_Variable_Ability::TYPE_COLOR,
+							'label' => 'brand',
+							'value' => '#000',
+						],
+					],
+					[
+						'type' => 'delete',
+						'id' => 'size-id',
+					],
+				],
+				true
+			)
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'brand',
+					],
+					[
+						'index' => 1,
+						'status' => 'ok',
+						'action' => 'delete',
+						'id' => 'size-id',
+					],
+				],
+				'watermark' => 9,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_COLOR,
+				'label' => 'brand',
+				'value' => '#000',
+			],
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_SIZE,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+			[
+				'action' => 'create',
+				'type' => Manage_Variable_Ability::TYPE_CUSTOM_SIZE,
+				'label' => 'fluid',
+				'value' => 'clamp(1rem, 2vw, 2rem)',
+			],
+			[
+				'action' => 'update',
+				'id' => 'size-id',
+				'label' => 'spacing',
+				'value' => '24px',
+			],
+			[
+				'action' => 'update',
+				'id' => 'custom-size-id',
+				'label' => 'fluid',
+				'value' => 'auto',
+			],
+			[
+				'action' => 'delete',
+				'id' => 'size-id',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'partial_error', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'pro_license_required', $result['results'][1]['code'] );
+		$this->assertSame( 'pro_license_required', $result['results'][2]['code'] );
+		$this->assertSame( 'pro_license_required', $result['results'][3]['code'] );
+		$this->assertSame( 'pro_license_required', $result['results'][4]['code'] );
+		$this->assertSame( 'ok', $result['results'][5]['status'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_create__allows_size_types_with_active_license( string $type ) {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'create',
+						'id' => 'abc',
+						'label' => 'spacing',
+					],
+				],
+				'watermark' => 12,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => $type,
+				'label' => 'spacing',
+				'value' => '16px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	/**
+	 * @dataProvider size_type_provider
+	 */
+	public function test_update__allows_size_variables_with_active_license( string $type ) {
+		// Arrange
+		Mock_Pro_License_API::set_license_state( true );
+		$service = $this->createMock( Variables_Service::class );
+		$service->expects( $this->never() )->method( 'find_type' );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'update',
+						'id' => 'abc',
+						'type' => $type,
+					],
+				],
+				'watermark' => 13,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'abc',
+				'label' => 'spacing',
+				'value' => '24px',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	public function test_update__allows_non_size_variables_without_active_license() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_type' )->willReturn( Manage_Variable_Ability::TYPE_COLOR );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'update',
+						'id' => 'abc',
+					],
+				],
+				'watermark' => 10,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'update',
+				'id' => 'abc',
+				'label' => 'brand',
+				'value' => '#fff',
+			],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	public function test_delete__allows_size_variables_without_active_license() {
+		// Arrange
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_type' )->willReturn( Manage_Variable_Ability::TYPE_SIZE );
+		$service->expects( $this->once() )
+			->method( 'process_batch' )
+			->willReturn( [
+				'success' => true,
+				'results' => [
+					[
+						'index' => 0,
+						'status' => 'ok',
+						'action' => 'delete',
+						'id' => 'abc',
+					],
+				],
+				'watermark' => 11,
+			] );
+
+		// Act
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[ 'action' => 'delete', 'id' => 'abc' ],
+		] ) );
+
+		// Assert
+		$this->assertSame( 'ok', $result['status'] );
+	}
+
+	public function test_update__requires_id_label_and_value() {
+		$result = $this->make_ability()->execute( $this->operations_input( [
+			[ 'action' => 'update', 'label' => 'x', 'value' => '#000' ],
+		] ) );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_delete__requires_id() {
+		$result = $this->make_ability()->execute( $this->operations_input( [
+			[ 'action' => 'delete' ],
+		] ) );
+
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'invalid_input', $result['results'][0]['code'] );
+	}
+
+	public function test_delete__success_returns_ok_and_watermark() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'process_batch' )->willReturn( [
+			'success' => true,
+			'results' => [
+				[
+					'index' => 0,
+					'status' => 'ok',
+					'action' => 'delete',
+					'id' => 'abc',
+				],
+			],
+			'watermark' => 9,
+		] );
+
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[ 'action' => 'delete', 'id' => 'abc' ],
+		] ) );
+
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 9, $result['watermark'] );
+	}
+
+	public function test_bulk__maps_fatal_error_to_wp_error() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'process_batch' )->willThrowException( new FatalError( 'Failed to save batch operations' ) );
+
+		$result = $this->make_ability( $service )->execute( $this->operations_input( [
+			[
+				'action' => 'create',
+				'type' => 'global-color-variable',
+				'label' => 'brand',
+				'value' => '#000',
+			],
+		] ) );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'unexpected_server_error', $result->get_error_code() );
+	}
+}

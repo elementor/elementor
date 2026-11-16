@@ -616,6 +616,60 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		], $data_for_save['editor_settings'] );
 	}
 
+	public function test_get_data_for_save__preserves_boolean_decorative_editor_setting() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'decorative' => true,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'decorative' => true,
+		], $data_for_save['editor_settings'] );
+	}
+
+	public function test_get_data_for_save__drops_editor_settings_outside_the_whitelist() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => 'Hero',
+				'grid_outline' => true,
+				'decorative' => false,
+				'unexpected' => true,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'title' => 'Hero',
+			'grid_outline' => true,
+			'decorative' => false,
+		], $data_for_save['editor_settings'] );
+	}
+
+	public function test_get_data_for_save__drops_non_boolean_decorative_editor_setting() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'decorative' => 'yes',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
+	}
+
 	public function test_get_data_for_save__removes_editor_settings_on_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
@@ -628,10 +682,203 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame( [], $data_for_save['editor_settings'] );
+		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_meta_state_validation_error() {
+	public function test_get_data_for_save__keeps_valid_widget_markers() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'widget' => [
+					'id' => 'elementor/icon-button',
+					'version' => 2,
+					'values' => [ 'icon' => false ],
+				],
+				'part' => 'feature_icon',
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+		$raw_data = $widget->get_raw_data();
+
+		// Assert.
+		$expected_widget = [
+			'id' => 'elementor/icon-button',
+			'version' => 2,
+			'values' => [ 'icon' => false ],
+		];
+
+		$this->assertSame( $expected_widget, $data_for_save['widget'] );
+		$this->assertSame( 'feature_icon', $data_for_save['part'] );
+		$this->assertSame( $expected_widget, $raw_data['widget'] );
+		$this->assertSame( 'feature_icon', $raw_data['part'] );
+	}
+
+	public function test_get_data_for_save__omits_empty_widget_values() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'widget' => [
+					'id' => 'elementor/icon-button',
+					'version' => 1,
+					'values' => [],
+				],
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'id' => 'elementor/icon-button',
+			'version' => 1,
+		], $data_for_save['widget'] );
+	}
+
+	public function test_get_data_for_save__omits_markers_when_absent() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'widget', $data_for_save );
+		$this->assertArrayNotHasKey( 'part', $data_for_save );
+	}
+
+	/**
+	 * @dataProvider invalid_widget_marker_provider
+	 */
+	public function test_get_data_for_save__drops_invalid_widget_marker( $widget_marker ) {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [ 'widget' => $widget_marker ],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'widget', $data_for_save );
+	}
+
+	public function invalid_widget_marker_provider(): array {
+		return [
+			'not namespaced id' => [ [ 'id' => 'icon-button', 'version' => 1 ] ],
+			'uppercase id' => [ [ 'id' => 'Elementor/Icon-Button', 'version' => 1 ] ],
+			'missing id' => [ [ 'version' => 1 ] ],
+			'version zero' => [ [ 'id' => 'elementor/icon-button', 'version' => 0 ] ],
+			'string version' => [ [ 'id' => 'elementor/icon-button', 'version' => '1' ] ],
+			'not an array' => [ 'elementor/icon-button' ],
+		];
+	}
+
+	/**
+	 * @dataProvider invalid_part_provider
+	 */
+	public function test_get_data_for_save__drops_invalid_part( $part ) {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [ 'part' => $part ],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'part', $data_for_save );
+	}
+
+	public function invalid_part_provider(): array {
+		return [
+			'dash' => [ 'feature-icon' ],
+			'leading digit' => [ '1title' ],
+			'uppercase' => [ 'Title' ],
+			'html' => [ '<b>title</b>' ],
+			'empty' => [ '' ],
+			'not a string' => [ [ 'title' ] ],
+		];
+	}
+
+	public function test_get_data_for_save__keeps_slot_on_a_part() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'part' => 'tab_content',
+				'slot' => true,
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertTrue( $data_for_save['slot'] );
+	}
+
+	/**
+	 * @dataProvider invalid_slot_provider
+	 */
+	public function test_get_data_for_save__drops_invalid_slot( array $element_data ) {
+		// Arrange.
+		$widget = $this->make_mock_widget( [ 'element_data' => $element_data ] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'slot', $data_for_save );
+	}
+
+	public function invalid_slot_provider(): array {
+		return [
+			'without a part' => [ [ 'slot' => true ] ],
+			'with an invalid part' => [ [ 'part' => 'Tab-Content', 'slot' => true ] ],
+			'string value' => [ [ 'part' => 'tab_content', 'slot' => 'true' ] ],
+			'false' => [ [ 'part' => 'tab_content', 'slot' => false ] ],
+		];
+	}
+
+	public function test_get_data_for_save__sanitizes_widget_values() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'element_data' => [
+				'widget' => [
+					'id' => 'elementor/pricing-card',
+					'version' => 1,
+					'values' => [
+						'badge' => true,
+						'label' => '<script>alert(1)</script>Sale',
+						'Bad Key!' => 1,
+						'apply_to_all_off' => [ 'feature_text' ],
+						'object' => new \stdClass(),
+						'nested' => [
+							'level_2' => [
+								'kept' => 'yes',
+								'too_deep' => [ 'level_4' => 'dropped' ],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertSame( [
+			'badge' => true,
+			'label' => 'Sale',
+			'apply_to_all_off' => [ 'feature_text' ],
+			'nested' => [ 'level_2' => [ 'kept' => 'yes' ] ],
+		], $data_for_save['widget']['values'] );
+	}
+
+	public function test_get_data_for_save__skips_invalid_styles_meta_state_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -658,15 +905,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. meta.state: missing_or_invalid_value' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_meta_breakpoint_validation_error() {
+	public function test_get_data_for_save__skips_invalid_styles_meta_breakpoint_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -693,15 +939,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. meta.breakpoint: missing_or_invalid_value' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_id_validation_error() {
+	public function test_get_data_for_save__skips_invalid_styles_id_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -730,18 +975,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `1234` (widget `1`). Element: `test-widget`. id: missing_or_invalid, label: missing_or_invalid' );
-
 		// Act.
-		$data = $widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
 
 		// Assert.
-		$this->assertSame($data['styles']['1234'], []);
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_type_validation_error() {
+	public function test_get_data_for_save__skips_invalid_styles_type_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -771,15 +1012,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. type: missing_or_invalid' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_label_validation_error() {
+	public function test_get_data_for_save__skips_invalid_styles_label_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [
@@ -808,15 +1048,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. label: missing_or_invalid' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_variant_validation_error() {
+	public function test_get_data_for_save__skips_invalid_styles_variant_validation_error() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [],
@@ -851,15 +1090,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			]
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `Test`. variants[1].padding: invalid_value' );
-
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
 	}
 
-	public function test_get_data_for_save__throws_on_styles_validation_error_with_element_context() {
+	public function test_get_data_for_save__skips_invalid_styles_with_element_context() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [
 			'editor_settings' => [
@@ -890,12 +1128,174 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			],
 		] );
 
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Structure label: `Hero Section`. Style label: `hero-style`. variants[0].gap: invalid_value' );
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+	}
+
+	public function test_get_data_for_save__skips_invalid_styles_and_saves_valid_styles() {
+		// Arrange.
+		$valid_style = [
+			'id' => 's-valid',
+			'type' => 'class',
+			'label' => 'valid-class',
+			'variants' => [
+				[
+					'props' => [],
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'custom_css' => null,
+				],
+			],
+		];
+
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				's-valid' => $valid_style,
+				's-invalid' => [
+					'id' => 's-invalid',
+					'type' => 'invalid-type',
+					'label' => 'invalid-class',
+					'variants' => [
+						[
+							'props' => [],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				],
+			],
+		] );
 
 		// Act.
-		$widget->get_data_for_save();
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayHasKey( 's-valid', $data_for_save['styles'] );
+		$this->assertArrayNotHasKey( 's-invalid', $data_for_save['styles'] );
+		$this->assertSame( $valid_style, $data_for_save['styles']['s-valid'] );
+	}
+
+	public function test_get_data_for_save__skips_all_invalid_styles() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				's-invalid-1' => [
+					'id' => 's-invalid-1',
+					'type' => 'invalid-type',
+					'label' => 'invalid-class-1',
+					'variants' => [
+						[
+							'props' => [],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				],
+				's-invalid-2' => [
+					'id' => 's-invalid-2',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+	}
+
+	public function test_get_data_for_save__logs_skipped_invalid_styles() {
+		$debug_log_enabled = defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG;
+		$debug_display_disabled = ! defined( 'WP_DEBUG_DISPLAY' ) || ! WP_DEBUG_DISPLAY;
+
+		if ( ! $debug_log_enabled || ! $debug_display_disabled ) {
+			$this->markTestSkipped( 'Requires WP_DEBUG_LOG enabled and WP_DEBUG_DISPLAY disabled.' );
+		}
+
+		$log_file = tempnam( sys_get_temp_dir(), 'elementor-atomic-log-' );
+		$previous_log = ini_get( 'error_log' );
+		ini_set( 'error_log', $log_file );
+
+		try {
+			$widget = $this->make_mock_widget( [
+				'props_schema' => [],
+				'settings' => [],
+				'styles' => [
+					's-invalid' => [
+						'id' => 's-invalid',
+						'type' => 'invalid-type',
+						'label' => 'invalid-class',
+						'variants' => [
+							[
+								'props' => [],
+								'meta' => [
+									'breakpoint' => 'desktop',
+									'state' => null,
+								],
+							],
+						],
+					],
+				],
+			] );
+
+			$widget->get_data_for_save();
+
+			$log_contents = file_get_contents( $log_file );
+
+			$this->assertStringContainsString(
+				'Styles validation failed for style `s-invalid` (widget `1`)',
+				$log_contents
+			);
+			$this->assertStringContainsString( 'type: missing_or_invalid', $log_contents );
+		} finally {
+			ini_set( 'error_log', $previous_log );
+			@unlink( $log_file );
+		}
+	}
+
+	public function test_get_data_for_save__omits_empty_root_props() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'string_prop' => String_Prop_Type::make()->default( '' ),
+			],
+			'settings' => [],
+			'styles' => [],
+			'editor_settings' => [],
+			'interactions' => [],
+		] );
+
+		// Act.
+		$data_for_save = $widget->get_data_for_save();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'settings', $data_for_save );
+		$this->assertArrayNotHasKey( 'styles', $data_for_save );
+		$this->assertArrayNotHasKey( 'editor_settings', $data_for_save );
+		$this->assertArrayNotHasKey( 'interactions', $data_for_save );
 	}
 
 	public function test_get_data_for_save__throws_on_settings_validation_error() {
@@ -929,14 +1329,14 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			public function __construct( $options ) {
 				static::$options = $options;
 
-				parent::__construct( [
+				parent::__construct( array_merge( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'editor_settings' => $options['editor_settings'] ?? [],
 					'elType' => 'widget',
 					'widgetType' => 'test-widget',
-				], [] );
+				], $options['element_data'] ?? [] ), [] );
 			}
 
 			public static function get_element_type(): string {

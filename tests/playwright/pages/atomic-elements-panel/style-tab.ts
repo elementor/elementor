@@ -71,7 +71,7 @@ type DisplayOptions = {
 
 const FLEX_DISPLAY_OPTIONS: Record<keyof DisplayOptions[DisplayValue.FLEX], string> = {
 	flexDirection: 'direction',
-	flexWrap: 'flex wrap',
+	flexWrap: 'wrap',
 	justifyContent: 'justify content',
 	alignItems: 'align items',
 };

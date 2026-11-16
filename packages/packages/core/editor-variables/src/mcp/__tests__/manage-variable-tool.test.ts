@@ -1,370 +1,237 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { httpService } from '@elementor/http-client';
 import { isProActive } from '@elementor/utils';
 
 import { service } from '../../service';
 import { initManageVariableTool } from '../manage-variable-tool';
-import { generateVariablesPrompt } from '../variable-tool-prompt';
+import { getPendingAbilityOperations, resetPendingVariableChanges } from '../pending-variable-changes';
 
-jest.mock( '../../service' );
-jest.mock( '../../sync/get-font-configs', () => ( {
-	getFontConfigs: jest.fn( () => ( {
-		Inter: 'google-font',
-		Roboto: 'google-font',
-	} ) ),
+jest.mock( '@elementor/http-client', () => ( {
+	httpService: jest.fn(),
 } ) );
+
 jest.mock( '@elementor/utils', () => ( {
 	...jest.requireActual( '@elementor/utils' ),
 	isProActive: jest.fn( () => true ),
 } ) );
-jest.mock( '../variable-tool-prompt', () => ( {
-	MANAGE_VARIABLES_GUIDE_URI: 'elementor://variables/tools/manage-global-variable-guide',
-	generateVariablesPrompt: jest.fn( () => 'mock guide' ),
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	__privateRunCommandSync: jest.fn(),
+	registerDataHook: jest.fn(),
 } ) );
 
-function createMockRegistryAndGetHandler(): { handler: any; getRegisteredTool: () => any } {
+jest.mock( '../../service', () => ( {
+	service: {
+		variables: jest.fn( () => ( {} ) ),
+		applyLocalChange: jest.fn(),
+		saveOperations: jest.fn(),
+		create: jest.fn(),
+		update: jest.fn(),
+		delete: jest.fn(),
+	},
+} ) );
+
+const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
+
+function createMockRegistry() {
 	let registeredTool: any = null;
+	const registeredResources: Array< { name: string; uri: string; handler: any } > = [];
+
 	const reg = {
 		addTool: ( tool: any ) => {
 			registeredTool = tool;
 		},
-		resource: jest.fn(),
+		resource: ( name: string, uri: string, _opts: any, handler: any ) => {
+			registeredResources.push( { name, uri, handler } );
+		},
 		setMCPDescription: jest.fn(),
 		sendResourceUpdated: jest.fn(),
 		waitForReady: jest.fn(),
 	};
+
 	initManageVariableTool( reg as any );
+
+	return { registeredTool, registeredResources };
+}
+
+function mockProxyResults( results: Array< Record< string, unknown > > ) {
 	return {
-		handler: registeredTool?.handler,
-		getRegisteredTool: () => registeredTool,
+		data: {
+			data: {
+				status: 'ok',
+				results: results.map( ( result, index ) => ( { index, ...result } ) ),
+				dry_run: true,
+			},
+		},
 	};
 }
 
-describe( 'manage-variable-tool validation', () => {
-	let toolHandler: any;
-	let mockVariables: Record< string, any >;
+describe( 'manage-variable-tool', () => {
+	let httpMock: { post: jest.Mock; get: jest.Mock };
 
 	beforeEach( () => {
-		mockVariables = {};
-
-		const mockService = {
-			create: jest.fn().mockResolvedValue( { id: '123' } ),
-			update: jest.fn().mockResolvedValue( { id: '123' } ),
-			delete: jest.fn().mockResolvedValue( undefined ),
-			variables: jest.fn( () => mockVariables ),
+		resetPendingVariableChanges();
+		httpMock = {
+			post: jest.fn(),
+			get: jest.fn().mockResolvedValue( { data: { data: 'guide text' } } ),
 		};
-
-		( service as any ).create = mockService.create;
-		( service as any ).update = mockService.update;
-		( service as any ).delete = mockService.delete;
-		( service as any ).variables = mockService.variables;
-
+		( httpService as jest.Mock ).mockReturnValue( httpMock );
 		( isProActive as jest.Mock ).mockReturnValue( true );
-		const { handler } = createMockRegistryAndGetHandler();
-		toolHandler = handler;
+		jest.mocked( service.variables ).mockReturnValue( {} );
+		jest.mocked( service.applyLocalChange ).mockClear();
+		jest.mocked( service.create ).mockClear();
+		jest.mocked( service.update ).mockClear();
+		jest.mocked( service.delete ).mockClear();
 	} );
 
-	describe( 'create action', () => {
-		it( 'should reject label with spaces', async () => {
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-color-variable',
-					label: 'Headline Primary',
-					value: '#000',
-				} )
-			).rejects.toThrow( 'Use letters, numbers, dashes (-), or underscores (_) for the name.' );
+	it( 'applies the planned create locally, without a second write, and returns the planned id', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResults( [
+				{ status: 'ok', action: 'create', id: 'e-gv-a1b2c3d', label: 'brand', type: 'global-color-variable' },
+			] )
+		);
+		const { registeredTool } = createMockRegistry();
+		const params = { action: 'create', type: 'global-color-variable', label: 'brand', value: '#000' };
 
-			expect( service.create ).not.toHaveBeenCalled();
+		// Act.
+		const result = await registeredTool.handler( params );
+
+		// Assert.
+		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
+			tool: 'manage-global-variable',
+			input: { operations: [ params ], dry_run: true },
 		} );
-
-		it( 'should reject label with special characters', async () => {
-			await expect(
-				toolHandler( { action: 'create', type: 'global-color-variable', label: 'font!@#$', value: '#000' } )
-			).rejects.toThrow( 'Use letters, numbers, dashes (-), or underscores (_) for the name.' );
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should reject label with only dashes/underscores', async () => {
-			await expect(
-				toolHandler( { action: 'create', type: 'global-color-variable', label: '---', value: '#000' } )
-			).rejects.toThrow( 'Names have to include at least one non-special character.' );
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should allow valid label', async () => {
-			await toolHandler( {
-				action: 'create',
-				type: 'global-color-variable',
-				label: 'headline-primary',
-				value: '#000',
-			} );
-
-			expect( service.create ).toHaveBeenCalledWith(
-				{
-					type: 'global-color-variable',
-					label: 'headline-primary',
-					value: '#000',
-				},
-				{ eventData: { executedBy: 'mcp_tool' } }
-			);
-		} );
-
-		it( 'should allow label with underscores', async () => {
-			await toolHandler( {
-				action: 'create',
-				type: 'global-color-variable',
-				label: 'headline_primary',
-				value: '#000',
-			} );
-
-			expect( service.create ).toHaveBeenCalledWith(
-				{
-					type: 'global-color-variable',
-					label: 'headline_primary',
-					value: '#000',
-				},
-				{ eventData: { executedBy: 'mcp_tool' } }
-			);
-		} );
-
-		it( 'should reject empty label', async () => {
-			await expect(
-				toolHandler( { action: 'create', type: 'global-color-variable', label: '', value: '#000' } )
-			).rejects.toThrow();
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
+		expect( service.applyLocalChange ).toHaveBeenCalledWith(
+			'e-gv-a1b2c3d',
+			{ type: 'global-color-variable', label: 'brand', value: '#000' },
+			true
+		);
+		expect( service.create ).not.toHaveBeenCalled();
+		expect( result ).toEqual( { status: 'ok', id: 'e-gv-a1b2c3d' } );
 	} );
 
-	describe( 'size variable Pro gating', () => {
-		it( 'should allow size variable creation when Pro is active', async () => {
-			// toolHandler in beforeEach is initialized with isProActive() = true
-			await toolHandler( {
-				action: 'create',
-				type: 'global-size-variable',
-				label: 'spacing-md',
-				value: '16px',
-			} );
-
-			expect( service.create ).toHaveBeenCalledWith(
-				{
-					type: 'global-size-variable',
-					label: 'spacing-md',
-					value: '16px',
-				},
-				{ eventData: { executedBy: 'mcp_tool' } }
+	it( 'replays unsaved changes in the dry run so a later update can target a planned id', async () => {
+		// Arrange.
+		httpMock.post
+			.mockResolvedValueOnce(
+				mockProxyResults( [
+					{
+						status: 'ok',
+						action: 'create',
+						id: 'e-gv-a1b2c3d',
+						label: 'brand',
+						type: 'global-color-variable',
+					},
+				] )
+			)
+			.mockResolvedValueOnce(
+				mockProxyResults( [
+					{ status: 'ok', action: 'create', id: 'e-gv-a1b2c3d' },
+					{
+						status: 'ok',
+						action: 'update',
+						id: 'e-gv-a1b2c3d',
+						label: 'brand',
+						type: 'global-color-variable',
+					},
+				] )
 			);
+		const { registeredTool } = createMockRegistry();
+
+		// Act.
+		await registeredTool.handler( {
+			action: 'create',
+			type: 'global-color-variable',
+			label: 'brand',
+			value: '#000',
+		} );
+		const result = await registeredTool.handler( {
+			action: 'update',
+			id: 'e-gv-a1b2c3d',
+			type: 'global-color-variable',
+			label: 'brand',
+			value: '#fff',
 		} );
 
-		it( 'should block size variable creation when Pro is not active at call time', async () => {
-			// The Pro check happens inside the handler on every call, not at init time,
-			// so flipping the mock here (after init) is enough to simulate a free-tier user.
-			( isProActive as jest.Mock ).mockReturnValue( false );
-
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-size-variable',
-					label: 'spacing-md',
-					value: '16px',
-				} )
-			).rejects.toThrow( 'Creating size variables requires Elementor Pro.' );
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should generate prompt without global-size-variable when Pro is not active', () => {
-			( isProActive as jest.Mock ).mockReturnValue( false );
-			( generateVariablesPrompt as jest.Mock ).mockRestore?.();
-
-			const { generateVariablesPrompt: realPrompt } = jest.requireActual( '../variable-tool-prompt' );
-			const prompt = ( realPrompt as typeof generateVariablesPrompt )();
-
-			expect( prompt ).not.toContain( '**global-size-variable**' );
-			expect( prompt ).toContain( 'requires Elementor Pro' );
-		} );
-
-		it( 'should generate prompt with global-size-variable when Pro is active', () => {
-			( isProActive as jest.Mock ).mockReturnValue( true );
-
-			const { generateVariablesPrompt: realGeneratePrompt } = jest.requireActual( '../variable-tool-prompt' );
-			const prompt = ( realGeneratePrompt as typeof generateVariablesPrompt )();
-
-			expect( prompt ).toContain( '**global-size-variable**' );
-		} );
+		// Assert.
+		const secondInput = httpMock.post.mock.calls[ 1 ][ 1 ].input;
+		expect( secondInput.operations ).toHaveLength( 2 );
+		expect( secondInput.operations[ 0 ] ).toEqual(
+			expect.objectContaining( { action: 'create', id: 'e-gv-a1b2c3d', label: 'brand' } )
+		);
+		expect( service.applyLocalChange ).toHaveBeenLastCalledWith(
+			'e-gv-a1b2c3d',
+			{ type: 'global-color-variable', label: 'brand', value: '#fff' },
+			false
+		);
+		expect( service.update ).not.toHaveBeenCalled();
+		expect( result ).toEqual( { status: 'ok', id: 'e-gv-a1b2c3d' } );
+		expect( getPendingAbilityOperations() ).toHaveLength( 2 );
 	} );
 
-	describe( 'value type validation on create', () => {
-		it( 'should reject px value for a font variable', async () => {
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-font-variable',
-					label: 'heading-font',
-					value: '24px',
-				} )
-			).rejects.toThrow( 'Font variable value must be a font family name' );
+	it( 'marks a deleted variable locally', async () => {
+		// Arrange.
+		jest.mocked( service.variables ).mockReturnValue( {
+			'e-gv-old': { type: 'global-color-variable', label: 'brand', value: '#000' },
+		} );
+		httpMock.post.mockResolvedValue( mockProxyResults( [ { status: 'ok', action: 'delete', id: 'e-gv-old' } ] ) );
+		const { registeredTool } = createMockRegistry();
 
-			expect( service.create ).not.toHaveBeenCalled();
+		// Act.
+		await registeredTool.handler( {
+			action: 'delete',
+			id: 'e-gv-old',
+			type: 'global-color-variable',
+			label: 'brand',
 		} );
 
-		it( 'should reject rem value for a font variable', async () => {
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-font-variable',
-					label: 'heading-font',
-					value: '1.5rem',
-				} )
-			).rejects.toThrow( 'Font variable value must be a font family name' );
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should allow a font family name for a font variable', async () => {
-			await toolHandler( {
-				action: 'create',
-				type: 'global-font-variable',
-				label: 'heading-font',
-				value: 'Roboto',
-			} );
-
-			expect( service.create ).toHaveBeenCalledWith(
-				{
-					type: 'global-font-variable',
-					label: 'heading-font',
-					value: 'Roboto',
-				},
-				{ eventData: { executedBy: 'mcp_tool' } }
-			);
-		} );
-
-		it( 'should reject unsupported font family on create', async () => {
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-font-variable',
-					label: 'heading-font',
-					value: 'NonExistentFont',
-				} )
-			).rejects.toThrow(
-				'Font "NonExistentFont" is not supported in WordPress. Please choose one of the available font families.'
-			);
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should allow px value for a size variable', async () => {
-			await toolHandler( {
-				action: 'create',
-				type: 'global-size-variable',
-				label: 'spacing-md',
-				value: '24px',
-			} );
-
-			expect( service.create ).toHaveBeenCalledWith(
-				{
-					type: 'global-size-variable',
-					label: 'spacing-md',
-					value: '24px',
-				},
-				{ eventData: { executedBy: 'mcp_tool' } }
-			);
-		} );
-
-		it( 'should reject non-unit value for a size variable', async () => {
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-size-variable',
-					label: 'spacing-md',
-					value: 'Roboto',
-				} )
-			).rejects.toThrow( 'Size variable value should include a CSS unit' );
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should reject non-color value for a color variable', async () => {
-			await expect(
-				toolHandler( {
-					action: 'create',
-					type: 'global-color-variable',
-					label: 'brand-primary',
-					value: '24px',
-				} )
-			).rejects.toThrow( 'Color variable value should be a CSS color' );
-
-			expect( service.create ).not.toHaveBeenCalled();
-		} );
+		// Assert.
+		expect( service.applyLocalChange ).toHaveBeenCalledWith(
+			'e-gv-old',
+			{ type: 'global-color-variable', label: 'brand', value: '#000', deleted: true },
+			false
+		);
+		expect( service.delete ).not.toHaveBeenCalled();
 	} );
 
-	describe( 'value type validation on update', () => {
-		it( 'should reject px value when updating a font variable', async () => {
-			mockVariables[ '123' ] = { type: 'global-font-variable', label: 'heading-font', value: 'Roboto' };
+	it( 'throws and changes nothing when the dry run rejects the operation', async () => {
+		// Arrange.
+		httpMock.post.mockResolvedValue(
+			mockProxyResults( [ { status: 'error', code: 'duplicated_label', message: 'duplicated label' } ] )
+		);
+		const { registeredTool } = createMockRegistry();
 
-			await expect(
-				toolHandler( { action: 'update', id: '123', label: 'heading-font', value: '24px' } )
-			).rejects.toThrow( 'Font variable value must be a font family name' );
-
-			expect( service.update ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should allow font family when updating a font variable', async () => {
-			mockVariables[ '123' ] = { type: 'global-font-variable', label: 'heading-font', value: 'Roboto' };
-
-			await toolHandler( { action: 'update', id: '123', label: 'heading-font', value: 'Inter' } );
-
-			expect( service.update ).toHaveBeenCalledWith(
-				'123',
-				{ label: 'heading-font', value: 'Inter' },
-				{ eventData: { executedBy: 'mcp_tool' } }
-			);
-		} );
-
-		it( 'should reject unsupported font family on update', async () => {
-			mockVariables[ '123' ] = { type: 'global-font-variable', label: 'heading-font', value: 'Roboto' };
-
-			await expect(
-				toolHandler( { action: 'update', id: '123', label: 'heading-font', value: 'NonExistentFont' } )
-			).rejects.toThrow(
-				'Font "NonExistentFont" is not supported in WordPress. Please choose one of the available font families.'
-			);
-
-			expect( service.update ).not.toHaveBeenCalled();
-		} );
+		// Act & Assert.
+		await expect(
+			registeredTool.handler( { action: 'create', type: 'global-color-variable', label: 'brand', value: '#000' } )
+		).rejects.toThrow( 'duplicated label' );
+		expect( service.applyLocalChange ).not.toHaveBeenCalled();
+		expect( getPendingAbilityOperations() ).toHaveLength( 0 );
 	} );
 
-	describe( 'update action', () => {
-		it( 'should reject label with spaces', async () => {
-			await expect(
-				toolHandler( { action: 'update', id: '123', label: 'Headline Primary', value: '#000' } )
-			).rejects.toThrow( 'Use letters, numbers, dashes (-), or underscores (_) for the name.' );
+	it( 'fetches the guide resource from mcp-proxy GET', async () => {
+		// Arrange.
+		const { registeredResources } = createMockRegistry();
+		const guide = registeredResources.find( ( r ) => r.name === 'manage-global-variable-guide' );
+		const uri = new URL( 'elementor://variables/tools/manage-global-variable-guide' );
 
-			expect( service.update ).not.toHaveBeenCalled();
-		} );
+		// Act.
+		const result = await guide?.handler( uri );
 
-		it( 'should reject label with special characters', async () => {
-			await expect(
-				toolHandler( { action: 'update', id: '123', label: 'font!@#', value: '#000' } )
-			).rejects.toThrow( 'Use letters, numbers, dashes (-), or underscores (_) for the name.' );
+		// Assert.
+		expect( httpMock.get ).toHaveBeenCalledWith( MCP_PROXY_URL, { params: { uri: uri.href } } );
+		expect( result.contents[ 0 ].text ).toBe( 'guide text' );
+	} );
 
-			expect( service.update ).not.toHaveBeenCalled();
-		} );
+	it( 'restricts tool enum to non-Pro types when Pro is inactive', () => {
+		// Arrange.
+		( isProActive as jest.Mock ).mockReturnValueOnce( false );
 
-		it( 'should allow valid label', async () => {
-			await toolHandler( { action: 'update', id: '123', label: 'headline-primary', value: '#000' } );
+		// Act.
+		const { registeredTool } = createMockRegistry();
 
-			expect( service.update ).toHaveBeenCalledWith(
-				'123',
-				{
-					label: 'headline-primary',
-					value: '#000',
-				},
-				{ eventData: { executedBy: 'mcp_tool' } }
-			);
-		} );
+		// Assert.
+		expect( registeredTool.schema.type.options ).toEqual( [ 'global-color-variable', 'global-font-variable' ] );
 	} );
 } );

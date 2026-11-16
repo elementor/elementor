@@ -19,7 +19,6 @@ function trackEditorEvent( eventName, eventData ) {
 
 window.trackUpgradeNowClickEvent = function() {
 	trackEditorEvent( 'upgrade_subscription', {
-		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'click',
@@ -29,7 +28,6 @@ window.trackUpgradeNowClickEvent = function() {
 window.trackConnectAccountEvent = function() {
 	Promise.resolve(
 		trackEditorEvent( 'connect_account', {
-			app_type: 'editor',
 			location: 'Elementor WP-admin pages',
 			secondaryLocation: 'Connect account page',
 			trigger: 'click',
@@ -39,7 +37,6 @@ window.trackConnectAccountEvent = function() {
 
 window.trackOpenConnectPageEvent = function() {
 	trackEditorEvent( 'open_connect_page', {
-		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'page_load',
@@ -48,7 +45,6 @@ window.trackOpenConnectPageEvent = function() {
 
 window.trackProInstallEvent = function() {
 	trackEditorEvent( 'pro_install', {
-		app_type: 'editor',
 		location: 'Elementor WP-admin pages',
 		secondaryLocation: 'Connect account page',
 		trigger: 'click',

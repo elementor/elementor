@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@elementor/editor-current-user';
+import { getCurrentUser, isContentOnlyUser } from '@elementor/editor-current-user';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
@@ -32,7 +32,7 @@ function triggerSave( panelActions?: { open: () => void }, context: 'preview' | 
 	const user = getCurrentUser();
 	const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
 
-	if ( ! canEdit ) {
+	if ( ! canEdit || isContentOnlyUser() ) {
 		return null;
 	}
 

@@ -7,6 +7,13 @@ export class Close extends $e.modules.CommandBase {
 		this.component.iframe.remove();
 		this.component.iframe = null;
 
+		if ( this.component.backdrop ) {
+			this.component.backdrop.remove();
+			this.component.backdrop = null;
+		}
+
+		document.body.style.overflow = '';
+
 		return true;
 	}
 }

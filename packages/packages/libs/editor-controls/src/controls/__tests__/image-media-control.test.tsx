@@ -95,7 +95,7 @@ describe( 'ImageMediaControl', () => {
 		const props = { setValue, value: {}, bind: 'src', propType };
 		// Act.
 		renderControl( <ImageMediaControl />, props );
-		const selectImage = screen.getByRole( 'button', { name: 'Select image' } );
+		const selectImage = screen.getByRole( 'button', { name: 'Select' } );
 
 		fireEvent.click( selectImage );
 
@@ -121,5 +121,21 @@ describe( 'ImageMediaControl', () => {
 
 		// Assert.
 		expect( open ).toHaveBeenCalledWith( { mode: 'upload' } );
+	} );
+
+	it( 'should open wp media frame in url mode when clicking insert url', () => {
+		// Arrange.
+		const open = jest.fn();
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
+
+		const setValue = jest.fn();
+		const props = { setValue, value: {}, bind: 'src', propType };
+
+		// Act.
+		renderControl( <ImageMediaControl />, props );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Insert URL' } ) );
+
+		// Assert.
+		expect( open ).toHaveBeenCalledWith( { mode: 'url', currentUrl: undefined, currentAlt: undefined } );
 	} );
 } );

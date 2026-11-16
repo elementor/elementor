@@ -1,0 +1,30 @@
+.elementor-app-backdrop {
+	position: fixed;
+	z-index: 99998;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	transition: opacity 0.25s ease;
+
+	&--visible {
+		opacity: 1;
+	}
+}
+
+.elementor-app-iframe {
+	position: fixed;
+	top: 30px;
+	left: 40px;
+	width: calc(100% - 80px);
+	height: calc(100% - 60px);
+	z-index: 100000; // Above Finder (99999) and WP Admin Bar
+	border-radius: 12px;
+	box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3);
+	background-color: transparent;
+	opacity: 0;
+	transition: opacity 0.25s ease;
+
+	&--visible {
+		opacity: 1;
+	}
+}

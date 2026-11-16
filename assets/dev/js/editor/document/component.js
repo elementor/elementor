@@ -1,4 +1,5 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import { cloneElementTree } from 'elementor/packages/packages/libs/editor-elements/src/sync/clone-element-tree';
 
 import * as components from './';
 import * as hooks from './hooks/';
@@ -103,7 +104,9 @@ export default class Component extends ComponentBase {
 					return false;
 				}
 
-				elements.add( childData, { at: options?.at, silent: true } );
+				const modelToAdd = options?.clone ? cloneElementTree( childData ) : childData;
+
+				elements.add( modelToAdd, { at: options?.at, silent: true } );
 
 				return true;
 			},

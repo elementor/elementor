@@ -11,6 +11,7 @@ import { act, renderHook } from '@testing-library/react';
 import { useFormFieldSuggestions } from '../use-form-field-suggestions';
 
 jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
 	getContainer: jest.fn(),
 	getSelectedElements: jest.fn(),
 	getWidgetsCache: jest.fn(),

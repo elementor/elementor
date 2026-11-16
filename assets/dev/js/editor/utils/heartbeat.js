@@ -1,13 +1,24 @@
 export default class Heartbeat {
 	modal = null;
+	externalChangeModal = null;
 	document = null;
+	lastSyncedAt = 0;
+	pendingSyncTime = true;
+	lastStateOfDocumentChange = false;
+	lastSentUnpersisted = null;
+	isOverridingExternalChanges = false;
 
 	constructor( document ) {
 		this.document = document;
+		this.lastSyncedAt = document.config.server_time || 0;
+		this.pendingSyncTime = ! this.lastSyncedAt;
+		this.lastStateOfDocumentChange = document.editor.isChanged;
 
 		this.onSend = this.onSend.bind( this );
 		this.onTick = this.onTick.bind( this );
 		this.onRefreshNonce = this.onRefreshNonce.bind( this );
+		this.onDocumentChanged = this.onDocumentChanged.bind( this );
+		this.onSaved = this.onSaved.bind( this );
 
 		this.bindEvents();
 
@@ -54,9 +65,19 @@ export default class Heartbeat {
 		data.elementor_post_lock = {
 			post_ID: this.document.id,
 		};
+
+		data.elementor_has_unsaved = this.document.editor.isChanged ? this.document.id : null;
+		data.elementor_has_unpersisted = this.document.editor.isSaved ? null : this.document.id;
+
+		this.lastSentUnpersisted = data.elementor_has_unpersisted;
 	}
 
 	onTick( event, response ) {
+		if ( this.pendingSyncTime && response.elementor_server_time ) {
+			this.lastSyncedAt = response.elementor_server_time;
+			this.pendingSyncTime = false;
+		}
+
 		if ( response.locked_user ) {
 			if ( this.document.editor.isChanged ) {
 				$e.run( 'document/save/auto', {
@@ -67,6 +88,12 @@ export default class Heartbeat {
 			this.showLockMessage( response.locked_user );
 		} else {
 			this.getModal().hide();
+		}
+
+		const mutatedAt = response.elementor_mcp_mutation?.mutated_at;
+
+		if ( mutatedAt && mutatedAt > this.lastSyncedAt ) {
+			this.onExternalChangeDetected();
 		}
 
 		elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
@@ -86,12 +113,118 @@ export default class Heartbeat {
 		}
 	}
 
+	reloadDocument() {
+		$e.internal( 'document/save/set-is-modified', { status: false } );
+		this._doReload();
+	}
+
+	_doReload() {
+		window.location.reload();
+	}
+
+	getSaveSyncData() {
+		const data = {
+			last_synced_at: this.lastSyncedAt,
+			ignore_external_changes: this.isOverridingExternalChanges,
+		};
+
+		this.isOverridingExternalChanges = false;
+
+		return data;
+	}
+
+	forceSave() {
+		this.isOverridingExternalChanges = true;
+		this.pendingSyncTime = true;
+		this.externalChangeModal = null;
+
+		return $e.run( 'document/save/draft', { document: this.document } );
+	}
+
+	onExternalChangeDetected() {
+		$e.components.get( 'document/save' ).stopAutoSave( this.document );
+		this.showExternalChangeModal();
+	}
+
+	showExternalChangeModal() {
+		if ( this.externalChangeModal ) {
+			return;
+		}
+
+		const isDirty = this.document.editor.isChanged;
+
+		const baseConfig = {
+			headerMessage: __( 'Page Updated by AI', 'elementor' ),
+			defaultOption: 'confirm',
+			onConfirm: () => this.reloadDocument(),
+		};
+
+		const config = isDirty
+			? {
+				...baseConfig,
+				message: __( 'This page was changed externally. Save your changes or reload to get the latest version.', 'elementor' ),
+				strings: {
+					confirm: __( 'Force Save', 'elementor' ),
+					cancel: __( 'Reload', 'elementor' ),
+				},
+				onConfirm: () => this.forceSave(),
+				onCancel: () => this.reloadDocument(),
+			}
+			: {
+				...baseConfig,
+				message: __( 'This page was changed externally. Reload to get the latest version.', 'elementor' ),
+				strings: {
+					confirm: __( 'Reload', 'elementor' ),
+				},
+			};
+
+		this.externalChangeModal = elementorCommon.dialogsManager.createWidget( isDirty ? 'confirm' : 'alert', {
+			...config,
+			closeButton: false,
+			hide: {
+				onOutsideClick: false,
+				onEscKeyPress: false,
+				onBackgroundClick: false,
+			},
+		} );
+
+		this.externalChangeModal.show();
+	}
+
+	onDocumentChanged() {
+		const isChanged = this.document.editor.isChanged;
+		const becameChanged = isChanged && isChanged !== this.lastStateOfDocumentChange;
+		const hasUnreportedEdit = ! this.document.editor.isSaved && ! this.lastSentUnpersisted;
+
+		this.lastStateOfDocumentChange = isChanged;
+
+		if ( becameChanged || hasUnreportedEdit ) {
+			wp.heartbeat.connectNow();
+		}
+	}
+
+	onSaved( data ) {
+		const serverTime = data?.config?.document?.server_time;
+
+		if ( serverTime ) {
+			this.lastSyncedAt = Math.max( this.lastSyncedAt, serverTime );
+			this.pendingSyncTime = false;
+		}
+
+		if ( this.lastSentUnpersisted && this.document.editor.isSaved ) {
+			wp.heartbeat.connectNow();
+		}
+	}
+
 	bindEvents() {
 		jQuery( document ).on( {
 			'heartbeat-send': this.onSend,
 			'heartbeat-tick': this.onTick,
 			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
 		} );
+
+		elementor.channels.editor.on( 'status:change', this.onDocumentChanged );
+		elementor.channels.editor.on( 'saved', this.onSaved );
 	}
 
 	destroy() {
@@ -100,5 +233,8 @@ export default class Heartbeat {
 			'heartbeat-tick': this.onTick,
 			'heartbeat-tick.wp-refresh-nonces': this.onRefreshNonce,
 		} );
+
+		elementor.channels.editor.off( 'status:change', this.onDocumentChanged );
+		elementor.channels.editor.off( 'saved', this.onSaved );
 	}
 }

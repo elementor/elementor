@@ -12,9 +12,11 @@ import { __ } from '@wordpress/i18n';
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useDirtyState } from '../../hooks/use-dirty-state';
 import { useFilters } from '../../hooks/use-filters';
+import { loadExistingClasses } from '../../load-existing-classes';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
+import { ClassManagerHeaderSlot } from '../class-manager-header-location';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
@@ -100,7 +102,9 @@ function ClassManagerPanelContent( {
 		};
 	}, [] );
 
-	const handleStopSync = useCallback( ( classId: string ) => {
+	const handleStopSync = useCallback( async ( classId: string ) => {
+		await loadExistingClasses( [ classId ] );
+
 		dispatch(
 			slice.actions.update( {
 				style: {
@@ -113,7 +117,9 @@ function ClassManagerPanelContent( {
 		setStopSyncConfirmation( null );
 	}, [] );
 
-	const handleStartSync = useCallback( ( classId: string ) => {
+	const handleStartSync = useCallback( async ( classId: string ) => {
+		await loadExistingClasses( [ classId ] );
+
 		dispatch(
 			slice.actions.update( {
 				style: {
@@ -165,6 +171,7 @@ function ClassManagerPanelContent( {
 									<ClassManagerSearch />
 								</Box>
 								<CssClassFilter />
+								<ClassManagerHeaderSlot />
 								<TotalCssClassCounter />
 							</Stack>
 							<ActiveFilters />

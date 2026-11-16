@@ -109,7 +109,7 @@ test.describe.skip( 'Global Classes Memory Stress Test @stress', () => {
 		logProgress( 'Starting stress test...' );
 
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 		const { request } = page.context();
 
 		logProgress( 'Experiments enabled, opening editor...' );

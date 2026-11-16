@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 
 /**
  * Component styles fetching for render
@@ -68,8 +69,8 @@ class Component_Styles {
 
 		$components = $this->get_components_from_post( $post_id );
 		$component_ids = Collection::make( $components )
-			->filter( fn( $component ) => isset( $component['settings']['component_instance']['value']['component_id']['value'] ) )
-			->map( fn( $component ) => $component['settings']['component_instance']['value']['component_id']['value'] )
+			->map( fn( $component ) => Component_Instance_Prop_Type::extract_component_id( $component['settings'] ?? [] ) )
+			->filter( fn( $component_id ) => null !== $component_id )
 			->unique()
 			->all();
 

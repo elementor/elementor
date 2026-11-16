@@ -174,6 +174,9 @@ class Test_Format_Component_Elements_Id extends Elementor_Test_Base {
 			'b559a00_32975a4_3ddd07a' => '1ose7z5',
 			'b559a00_32975a4_ff531ef' => '0dr8u4k',
 			'b559a00_32975a4_ff531ef_8f7a2dc' => '10muleu',
+			'parent1_e-reconcile-test-child' => '0f3lpg5',
+			'0f3lpg5_0' => '0p2wcv5',
+			'0f3lpg5_1' => '1ed1jog',
 		];
 
 		// Act & Assert

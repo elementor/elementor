@@ -12,6 +12,7 @@ export type UseDebounceStateResult = {
 	debouncedValue: string;
 	inputValue: string;
 	handleChange: ( val: string ) => void;
+	setImmediateValue: ( val: string ) => void;
 	setInputValue: React.Dispatch< React.SetStateAction< string > >;
 };
 
@@ -45,10 +46,17 @@ export function useDebounceState( options: UseDebounceStateOptions = {} ): UseDe
 		debouncedSetValue( val );
 	};
 
+	const setImmediateValue = ( val: string ) => {
+		runRef.current?.cancel?.();
+		setInputValue( val );
+		setDebouncedValue( val );
+	};
+
 	return {
 		debouncedValue,
 		inputValue,
 		handleChange,
+		setImmediateValue,
 		setInputValue,
 	};
 }

@@ -98,6 +98,10 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 			floatingElement = newPage.locator( '.e-contact-buttons' );
 			await expect( floatingElement ).toBeVisible();
 
+			// Regression: the layout element must expose a valid `role` attribute, not the invalid `aria-role`.
+			await expect( floatingElement ).toHaveAttribute( 'role', 'dialog' );
+			await expect( floatingElement ).not.toHaveAttribute( 'aria-role' );
+
 			expect( await floatingElement.screenshot(
 				{
 					type: 'png',

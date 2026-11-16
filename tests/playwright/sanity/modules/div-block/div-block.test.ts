@@ -166,6 +166,7 @@ test.describe( 'Div Block tests @div-block', () => {
 			await expect( secondContainerHandles ).toHaveScreenshot( 'normal-handles.png' );
 		} );
 	} );
+
 	test( 'Verify that text stroke style do not apply to empty view and frame handle elements', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

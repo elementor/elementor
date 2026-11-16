@@ -1,6 +1,7 @@
 import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
+import { type ChildDependencyRule } from '../children-dependencies/types';
 import { type ControlItem, type PseudoState } from '../types';
 
 export type ExtendedWindow = Window & {
@@ -9,7 +10,11 @@ export type ExtendedWindow = Window & {
 			get?: ( name: string ) => {
 				utils?: {
 					findModelById?: ( id: string, collection?: unknown ) => BackboneModel | null;
-					addModelToParent?: ( parentId: string, childData: unknown, options?: { at?: number } ) => boolean;
+					addModelToParent?: (
+						parentId: string,
+						childData: unknown,
+						options?: { at?: number; clone?: boolean }
+					) => boolean;
 					removeModelFromParent?: ( parentId: string, childId: string ) => boolean;
 				};
 			};
@@ -27,6 +32,12 @@ export type ExtendedWindow = Window & {
 				  }
 				| undefined;
 			getCurrentId?: () => number;
+			getInitialId?: () => number;
+			get?: ( id: number ) =>
+				| {
+						container: V1Element;
+				  }
+				| undefined;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
 		getPreviewContainer?: () => V1Element | undefined;
@@ -162,10 +173,27 @@ export type V1ElementModelProps = {
 	interactions?: string | ElementInteractions;
 	isGlobal?: boolean;
 	skipDefaultChildren?: boolean;
+	hydrateDefaultChildren?: boolean;
+	widget?: V1ElementWidgetMarker;
+	part?: string;
+	slot?: boolean;
+};
+
+export type V1ElementWidgetMarker = {
+	id: string;
+	version: number;
+	values?: Record< string, unknown >;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 	elements?: V1ElementData[];
+};
+
+export type ElementPositionKind = 'last' | 'first' | 'index' | 'after_type' | 'before_type';
+
+export type ElementPosition = {
+	kind: ElementPositionKind;
+	value: number | string | null;
 };
 
 export type V1ElementEditorSettingsProps = {
@@ -173,6 +201,8 @@ export type V1ElementEditorSettingsProps = {
 	initial_position?: number;
 	component_uid?: string;
 	grid_outline?: boolean;
+	empty_state_preview?: boolean;
+	decorative?: boolean;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
@@ -189,6 +219,7 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	dependencies_per_target_mapping?: Record< string, string[] >;
 	twig_templates?: Record< string, string >;
 	twig_main_template?: string;
+	template_context?: Record< string, unknown >;
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	base_settings?: Record< string, PropValue >;
@@ -197,7 +228,10 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	show_in_panel?: boolean;
 	allowed_child_types?: string[];
 	default_children?: Array< Record< string, TChild > >;
+	children_dependencies?: ChildDependencyRule[];
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
+	default_html_tag?: string;
+	html_tag_follows_link?: boolean;
 } & T;
 
 type V1Model< T > = {
@@ -205,4 +239,6 @@ type V1Model< T > = {
 	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
 	toJSON: ( options?: { remove?: string[] } ) => T;
 	trigger?: ( event: string, ...args: unknown[] ) => void;
+	on?: ( event: string, callback: ( ...args: unknown[] ) => void, context?: unknown ) => void;
+	off?: ( event: string, callback?: ( ...args: unknown[] ) => void, context?: unknown ) => void;
 };

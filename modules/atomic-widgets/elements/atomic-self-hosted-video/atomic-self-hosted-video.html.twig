@@ -1,5 +1,5 @@
+{% import 'elementor/macros' as m %}
 {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
-{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 {% set video_classes = base_styles.base %}
 {% set video_start_time = settings.start_time %}
 {% set video_end_time = settings.end_time %}
@@ -16,9 +16,7 @@
 	<video
     data-id="{{ id }}" data-interaction-id="{{ interaction_id }}"
     data-e-type="{{ type }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-    {{ id_attribute }}
-    class="{{ classes }}"
-    {{ settings.attributes | raw }}
+    class="{{ classes }}"{{ m.render_custom_attributes(settings) }}
 		class="{{ video_classes }}"
 		{% if settings.poster_enabled %}poster="{{ settings.poster.src | e('full_url') }}"{% endif %}
 		{% if settings.autoplay %}autoplay{% endif %}

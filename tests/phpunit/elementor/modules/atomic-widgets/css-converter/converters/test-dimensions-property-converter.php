@@ -124,7 +124,7 @@ class Test_Dimensions_Property_Converter extends TestCase {
 		$this->assertTrue( $converted );
 		$this->assertSame(
 			[
-				'$$type' => 'border-width',
+				'$$type' => 'border-width-v2',
 				'value' => [
 					'block-start' => $this->px( '1px' ),
 					'inline-end' => $this->px( '2px' ),

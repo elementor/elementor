@@ -6,6 +6,7 @@ import { useBindReactPropsToElement } from '../hooks/use-bind-react-props-to-ele
 import { useFloatingOnElement } from '../hooks/use-floating-on-element';
 import { useHasOverlapping } from '../hooks/use-has-overlapping';
 import type { ElementOverlayProps } from '../types/element-overlay';
+import { shouldUseSmallerOutlineOffset } from '../utils/outline-offset-utils';
 
 export const CANVAS_WRAPPER_ID = 'elementor-preview-responsive-wrapper';
 
@@ -18,20 +19,26 @@ const OverlayBox = styled( Box, {
 } )< Pick< Props, 'isSelected' | 'isSmallerOffset' | 'isGlobal' > >(
 	( { theme, isSelected, isSmallerOffset, isGlobal } ) => ( {
 		outline: `${ isSelected ? '2px' : '1px' } solid ${
-			isGlobal ? theme.palette.global.main : theme.palette.primary.light
+			isGlobal ? theme.palette.global.main : theme.palette.accent.light
 		}`,
 		outlineOffset: isSelected && ! isSmallerOffset ? '-2px' : '-1px',
 		pointerEvents: 'none',
 	} )
 );
 
-export const OutlineOverlay = ( { element, isSelected, id, isGlobal = false }: Props ): React.ReactElement | false => {
+export const OutlineOverlay = ( {
+	element,
+	isSelected,
+	id,
+	isGlobal = false,
+	widgetType,
+}: Props ): React.ReactElement | false => {
 	const { context, floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	const { getFloatingProps, getReferenceProps } = useInteractions( [ useHover( context ) ] );
 	const hasOverlapping = useHasOverlapping();
 
 	useBindReactPropsToElement( element, getReferenceProps );
-	const isSmallerOffset = element.offsetHeight <= 1;
+	const isSmallerOffset = shouldUseSmallerOutlineOffset( element, widgetType );
 
 	return (
 		isVisible &&

@@ -3,13 +3,25 @@ module.exports = {
 	rootDir: __dirname,
 	testEnvironment: 'jsdom',
 	transform: {
-		'^.+\\.(t|j)sx?$': '@swc/jest',
+		'^.+\\.(t|j)sx?$': [
+			'@swc/jest',
+			{
+				jsc: {
+					transform: {
+						react: {
+							runtime: 'automatic',
+						},
+					},
+				},
+			},
+		],
 	},
 	moduleNameMapper: {
 		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [
 			'<rootDir>/packages/core/$1/src',
 			'<rootDir>/packages/libs/$1/src',
 			'<rootDir>/packages/tools/$1/src',
+			'<rootDir>/packages/angie/$1/src',
 		],
 	},
 	// By default, jest will treat everything under `__tests__` as a test file, we only need `__tests__/*.test.ts`.

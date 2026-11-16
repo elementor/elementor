@@ -1,11 +1,12 @@
 {% import 'elementor/macros' as m %}
 {%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+{%- set link_tag = settings.link.tag | default('a') -%}
 {%- if has_link -%}
-	<{{ settings.link.tag | default('a') | e('html_tag') }}
-		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}" data-interaction-id="{{ interaction_id }}"
+	<{{ link_tag | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }} {{ m.default_tag_class(link_tag) }}" data-interaction-id="{{ interaction_id }}"
 	>
 {%- endif %}
-<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
+<img class="{{ base_styles['base'] }} {{ m.default_tag_class('img') }} {{ settings.classes | join(' ') }}"
 	{%- if not has_link %} data-interaction-id="{{ interaction_id }}"{% endif -%}
 	{{- m.render_custom_attributes(settings) }}
 	{%- for attr, value in settings.image -%}

@@ -58,12 +58,13 @@ export default class {
 
 		const removeBreakpointButton = EditorSelectors.panels.siteSettings.layout.breakpoints.removeBreakpointButton;
 		const breakpointsToReset = this.page.locator( removeBreakpointButton );
+		const hadRemovableBreakpoints = await breakpointsToReset.count() > 0;
 
 		while ( await breakpointsToReset.count() > 0 ) {
-			await this.page.click( removeBreakpointButton );
+			await breakpointsToReset.first().click();
 		}
 
-		if ( await breakpointsToReset.count() > 0 ) {
+		if ( hadRemovableBreakpoints ) {
 			await editor.saveSiteSettings( true );
 		}
 	}

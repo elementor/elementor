@@ -20,7 +20,6 @@ test.describe( 'Design System Sync - Typography V4 - V3 @v4-tests', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
-			e_classes: 'active',
 		} );
 
 		const { request } = page.context();

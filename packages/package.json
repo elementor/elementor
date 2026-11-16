@@ -3,19 +3,18 @@
   "author": "Elementor Team",
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">=20.19.0",
-    "npm": ">=10.0.0"
+    "node": ">=24.15.0",
+    "npm": ">=11.0.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.6.0",
-    "@typescript-eslint/parser": "^8.6.0",
-    "@wordpress/eslint-plugin": "^21.1.0",
+    "@wordpress/eslint-plugin": "^25.8.0",
+    "typescript-eslint": "^8.65.0",
     "tsup": "^8.3.5"
   },
   "scripts": {
     "test": "jest --config='./jest.config.js'",
     "test:coverage": "npm run test -- --coverage",
-    "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc\"",
+    "lint": "concurrently -n eslint,tsc -c magenta,blue \"eslint . --report-unused-disable-directives-severity error\" \"tsc && tsc -p packages/tools/generate-font-awesome-7/tsconfig.json --noEmit\"",
     "lint:fix": "eslint . --fix --report-unused-disable-directives-severity error",
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",

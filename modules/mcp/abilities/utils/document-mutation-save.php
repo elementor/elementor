@@ -1,0 +1,60 @@
+<?php
+
+namespace Elementor\Modules\Mcp\Abilities\Utils;
+
+use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Document\Document_Mutator;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Document_Mutation_Save {
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	public static function elements_preserving_live_status(
+		Document_Mutator $mutator,
+		Document $document,
+		array $elements
+	) {
+		return self::ensure_document( $mutator->save_as_draft( $document, $elements, true ) );
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	public static function settings_preserving_live_status(
+		Document_Mutator $mutator,
+		Document $document,
+		array $settings
+	) {
+		return self::ensure_document( $mutator->save_settings_preserving_live_status( $document, $settings ) );
+	}
+
+	public static function is_staged( Document $document ): bool {
+		$post = $document->get_post();
+
+		return $post && (int) $post->ID !== (int) $document->get_main_id();
+	}
+
+	/**
+	 * @return Document|\WP_Error
+	 */
+	private static function ensure_document( $result ) {
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( ! $result instanceof Document ) {
+			return new \WP_Error(
+				'elementor_save_failed',
+				__( 'Could not save document.', 'elementor' ),
+				[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]
+			);
+		}
+
+		return $result;
+	}
+}

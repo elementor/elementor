@@ -302,7 +302,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		if ( 'media' === skin || 'svg' !== iconType ) {
-			const previewHTML = '<i class="' + iconValue + '"></i>';
+			const iconClass = 'string' === typeof iconValue ? _.escape( iconValue ) : '';
+			const previewHTML = '<i class="' + iconClass + '"></i>';
 
 			iconContainer.html( previewHTML );
 		}
@@ -314,7 +315,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		// Check if the control has a default icon
 		if ( '' !== defaultIcon.value && 'svg' !== defaultIcon.library ) {
 			// If the default icon is not an SVG, set the icon-library label's icon to the default icon
-			iconContainer.html( '<i class="' + defaultIcon.value + '"></i>' );
+			iconContainer.html( '<i class="' + _.escape( defaultIcon.value ) + '"></i>' );
 		} else {
 			// If (1) the control does NOT have a default icon,
 			// OR (2) the control DOES have a default icon BUT the default icon is an SVG,

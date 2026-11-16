@@ -1,0 +1,48 @@
+import { renderHookWithStore } from 'test-utils';
+import { __createStore, __deleteStore, __dispatch, __getStore, __registerSlice } from '@elementor/store';
+
+import { FLOATING_PANEL_Z_INDEX_BASE } from '../../constants';
+import { slice } from '../../store/slice';
+import { type FloatingPanelDefaults } from '../../types';
+import { useFloatingPanelZIndex } from '../use-floating-panel-z-index';
+
+const PANEL_ID = 'panel';
+
+const defaults: FloatingPanelDefaults = {
+	width: 320,
+	height: 480,
+	minWidth: 240,
+	minHeight: 320,
+	corner: 'block-start-inline-start',
+};
+
+describe( 'useFloatingPanelZIndex', () => {
+	beforeEach( () => {
+		__registerSlice( slice );
+		__createStore();
+		__dispatch( slice.actions.register( { id: PANEL_ID, defaults } ) );
+		__dispatch( slice.actions.open( PANEL_ID ) );
+		__dispatch( slice.actions.bringToFront( PANEL_ID ) );
+	} );
+
+	afterEach( () => {
+		__deleteStore();
+	} );
+
+	it( 'returns one above the panel z-index', () => {
+		// Arrange.
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		// Act.
+		const { result } = renderHookWithStore( () => useFloatingPanelZIndex( PANEL_ID ), store );
+
+		// Assert.
+		const BRING_TO_FRONT_Z = 1;
+		const OVERLAY_OFFSET = 1;
+		expect( result.current ).toBe( FLOATING_PANEL_Z_INDEX_BASE + BRING_TO_FRONT_Z + OVERLAY_OFFSET );
+	} );
+} );

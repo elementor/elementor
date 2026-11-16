@@ -98,6 +98,11 @@ class Images_Manager {
 
 				$image_meta = wp_get_attachment_metadata( $id );
 
+				if ( ! $image_meta ) {
+					$urls[ $size ] = null;
+					continue;
+				}
+
 				// Attach custom image to original.
 				$image_meta['sizes'][ 'elementor_' . $size ] = [
 					'file' => $thumbs_path,
@@ -110,7 +115,9 @@ class Images_Manager {
 
 				$urls[ $size ] = $url;
 			} else {
-				$urls[ $size ] = wp_get_attachment_image_src( $id, $size )[0];
+				$image_src = wp_get_attachment_image_src( $id, $size );
+
+				$urls[ $size ] = $image_src ? $image_src[0] : null;
 			}
 		}
 

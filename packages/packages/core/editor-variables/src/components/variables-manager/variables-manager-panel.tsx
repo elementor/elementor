@@ -13,6 +13,7 @@ import { getMenuActionsForVariable, getVariableType } from '../../variables-regi
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
+import { VariablesManagerHeaderSlot } from '../variables-manager-header-location';
 import { useAutoEdit } from './hooks/use-auto-edit';
 import { useErrorNavigation } from './hooks/use-error-navigation';
 import { useVariablesManagerState } from './hooks/use-variables-manager-state';
@@ -272,7 +273,8 @@ function VariablesManagerPanelContent( { onRequestClose, onExposeCloseAttempt }:
 							alignSelf: 'stretch',
 						} }
 					/>
-					<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center' } }>
+					<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center', gap: 0.5 } }>
+						<VariablesManagerHeaderSlot />
 						<VariableManagerCreateMenu
 							outlinedTrigger
 							onCreate={ handleCreateVariable }

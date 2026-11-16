@@ -11,6 +11,7 @@ export function createDomRenderer(): DomRenderer {
 
 	environment.registerEscapingStrategy( escapeHtmlTag, 'html_tag' );
 	environment.registerEscapingStrategy( escapeURL, 'full_url' );
+	environment.registerEscapingStrategy( escapeJsIdentifier, 'js_identifier' );
 
 	return {
 		register: loader.setTemplate,
@@ -18,29 +19,29 @@ export function createDomRenderer(): DomRenderer {
 	};
 }
 
-function escapeHtmlTag( value: string ) {
-	const allowedTags = [
-		'a',
-		'article',
-		'aside',
-		'button',
-		'div',
-		'footer',
-		'h1',
-		'h2',
-		'h3',
-		'h4',
-		'h5',
-		'h6',
-		'header',
-		'main',
-		'nav',
-		'p',
-		'section',
-		'span',
-	];
+/**
+ * PHP (`Utils::get_allowed_html_wrapper_tags()`) is the single source of truth for this
+ * list; it's localized via `elementorCommon.config`. If it's ever missing, fail closed
+ * (no tags allowed) rather than fall back to a second hardcoded copy that could drift.
+ */
+function getAllowedHtmlWrapperTags(): readonly string[] {
+	return window.elementorCommon?.config?.allowedHTMLWrapperTags ?? [];
+}
 
-	return allowedTags.includes( value ) ? value : 'div';
+function escapeHtmlTag( value: string ) {
+	const allowedTags = getAllowedHtmlWrapperTags();
+	const normalizedTag = value?.toLowerCase?.() ?? '';
+
+	return allowedTags.includes( normalizedTag ) ? value : 'div';
+}
+
+const JS_IDENTIFIER_PATTERN = /^[A-Za-z0-9_]+$/;
+
+function escapeJsIdentifier( value: unknown ): string {
+	const id = String( value ?? '' );
+	const match = id.match( JS_IDENTIFIER_PATTERN );
+
+	return match?.[ 0 ] === id ? id : '';
 }
 
 function escapeURL( value: string ) {

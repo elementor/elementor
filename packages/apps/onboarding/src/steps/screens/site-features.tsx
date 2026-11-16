@@ -4,87 +4,8 @@ import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import {
-	AccessibilityToolsIcon,
-	AIGeneratorIcon,
-	ClassesVariablesIcon,
-	CorePlaceholderIcon,
-	CustomCodeIcon,
-	EmailDeliverabilityIcon,
-	ImageOptimizationIcon,
-	InteractionsIcon,
-	ThemeBuilderIcon,
-	WoocommerceIcon,
-} from '../../icons';
 import { t } from '../../utils/translations';
-import { FeatureGrid, type FeatureOption } from '../components/site-features';
-
-export const FEATURE_OPTIONS: FeatureOption[] = [
-	{
-		id: 'classes_variables',
-		labelKey: 'steps.site_features.option_classes_variables',
-		Icon: ClassesVariablesIcon,
-		licenseType: 'core',
-	},
-	{
-		id: 'interactions',
-		labelKey: 'steps.site_features.option_interactions',
-		Icon: InteractionsIcon,
-		licenseType: 'core',
-	},
-	{
-		id: 'theme_builder',
-		labelKey: 'steps.site_features.option_theme_builder',
-		Icon: ThemeBuilderIcon,
-		licenseType: 'pro',
-	},
-	{
-		id: 'lead_collection',
-		labelKey: 'steps.site_features.option_lead_collection',
-		Icon: CorePlaceholderIcon,
-		licenseType: 'pro',
-	},
-	{
-		id: 'custom_code_css',
-		labelKey: 'steps.site_features.option_custom_code',
-		Icon: CustomCodeIcon,
-		licenseType: 'pro',
-	},
-	{
-		id: 'email_deliverability',
-		labelKey: 'steps.site_features.option_email_deliverability',
-		Icon: EmailDeliverabilityIcon,
-		licenseType: 'one',
-	},
-	{
-		id: 'ai_features',
-		labelKey: 'steps.site_features.option_ai_generator',
-		Icon: AIGeneratorIcon,
-		licenseType: 'one',
-	},
-	{
-		id: 'image_optimization',
-		labelKey: 'steps.site_features.option_image_optimization',
-		Icon: ImageOptimizationIcon,
-		licenseType: 'one',
-	},
-	{
-		id: 'accessibility',
-		labelKey: 'steps.site_features.option_accessibility_tools',
-		Icon: AccessibilityToolsIcon,
-		licenseType: 'one',
-	},
-	{
-		id: 'woocommerce_builder',
-		labelKey: 'steps.site_features.woocommerce',
-		Icon: WoocommerceIcon,
-		licenseType: 'pro',
-	},
-];
-
-export const CORE_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) )
-);
+import { CORE_FEATURE_IDS, FEATURE_OPTIONS, FeatureGrid } from '../components/site-features';
 
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
@@ -93,27 +14,30 @@ export function SiteFeatures() {
 
 	const theme = useTheme();
 
-	const storedPaidFeatures = useMemo(
-		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
-		[ choices.site_features ]
+	const rawSiteFeatures = choices.site_features as string[] | undefined;
+
+	const storedSelectableFeatures = useMemo(
+		() =>
+			( rawSiteFeatures || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) && ! CORE_FEATURE_IDS.has( id ) ),
+		[ rawSiteFeatures ]
 	);
 
 	const selectedValues = useMemo( () => {
-		const combined = [ ...CORE_FEATURE_IDS, ...storedPaidFeatures ];
+		const combined = [ ...CORE_FEATURE_IDS, ...storedSelectableFeatures ];
 		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
-	}, [ storedPaidFeatures ] );
+	}, [ storedSelectableFeatures ] );
 
 	function handleFeatureClick( id: string ) {
-		if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+		if ( CORE_FEATURE_IDS.has( id ) ) {
 			return;
 		}
 
-		const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
-		const updatedPaidFeatureSelection = hasPaidFeaturesSelected
-			? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
-			: [ ...storedPaidFeatures, id ];
+		const isCurrentlySelected = storedSelectableFeatures.includes( id );
+		const updatedSelectableFeatures = isCurrentlySelected
+			? storedSelectableFeatures.filter( ( featureId ) => featureId !== id )
+			: [ ...storedSelectableFeatures, id ];
 
-		actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
+		actions.setUserChoice( 'site_features', updatedSelectableFeatures );
 	}
 
 	return (

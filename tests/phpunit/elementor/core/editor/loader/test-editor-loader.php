@@ -96,4 +96,27 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 
 		return new Editor_Loader( $config, $assets_config_provider );
 	}
+
+	public function test_editor_config_exposes_uploads_base_url() {
+		// Arrange
+		$this->act_as_admin();
+		$document = $this->factory()->documents->create_and_get();
+		$original_post_id = \Elementor\Plugin::$instance->editor->get_post_id();
+		\Elementor\Plugin::$instance->editor->set_edit_mode( true );
+		\Elementor\Plugin::$instance->editor->set_post_id( $document->get_main_id() );
+		\Elementor\Plugin::$instance->documents->switch_to_document( $document );
+
+		try {
+			// Act
+			$config = \Elementor\Core\Editor\Loader\Editor_Scripts_Settings::get();
+
+			// Assert
+			$this->assertArrayHasKey( 'urls', $config );
+			$this->assertArrayHasKey( 'upload', $config['urls'] );
+			$this->assertSame( wp_upload_dir()['baseurl'], $config['urls']['upload'] );
+		} finally {
+			\Elementor\Plugin::$instance->editor->set_edit_mode( null );
+			\Elementor\Plugin::$instance->editor->set_post_id( $original_post_id );
+		}
+	}
 }

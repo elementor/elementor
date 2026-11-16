@@ -1426,7 +1426,7 @@ class Frontend extends App {
 			],
 			'i18n' => [
 				'shareOnFacebook' => esc_html__( 'Share on Facebook', 'elementor' ),
-				'shareOnTwitter' => esc_html__( 'Share on Twitter', 'elementor' ),
+				'shareOnX' => esc_html__( 'Share on X', 'elementor' ),
 				'pinIt' => esc_html__( 'Pin it', 'elementor' ),
 				'download' => esc_html__( 'Download', 'elementor' ),
 				'downloadImage' => esc_html__( 'Download image', 'elementor' ),

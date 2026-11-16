@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
-use Elementor\Modules\AtomicWidgets\Utils\Image\Image_Sizes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -162,7 +163,12 @@ class Test_Html_V2_Prop_Type extends TestCase {
 		] );
 
 		// Assert.
-		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result['value']['content'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result['value']['content'],
+			'Hello alert("xss")<strong>world</strong>',
+			'Hello <strong>world</strong>'
+		);
 	}
 
 	public function test_sanitize__preserves_id_attributes_on_inline_elements() {
@@ -256,5 +262,56 @@ class Test_Html_V2_Prop_Type extends TestCase {
 		// Assert.
 		$this->assertCount( 1, $result['value']['children'] );
 		$this->assertSame( 'e-2', $result['value']['children'][0]['id'] );
+	}
+
+	public function test_sanitize__adds_empty_children_when_missing() {
+		// Arrange.
+		$prop_type = Html_V2_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => 'Hello',
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'Hello', $result['value']['content'] );
+		$this->assertSame( [], $result['value']['children'] );
+	}
+
+	public function test_should_persist__false_for_empty_html() {
+		// Arrange.
+		$prop_type = Html_V2_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => null,
+				'children' => [],
+			],
+		] );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function test_should_persist__true_for_non_empty_content() {
+		// Arrange.
+		$prop_type = Html_V2_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->should_persist( [
+			'$$type' => 'html-v2',
+			'value' => [
+				'content' => 'Hello',
+				'children' => [],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result );
 	}
 }

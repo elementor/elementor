@@ -197,6 +197,10 @@ class Atomic_Global_Styles {
 			$added_posts = array_diff( $new_related_posts, $old_related_posts );
 			$removed_posts = array_diff( $old_related_posts, $new_related_posts );
 
+			if ( empty( $added_posts ) && empty( $removed_posts ) ) {
+				continue;
+			}
+
 			$cache_validity->validate( $forward_path, $new_related_posts );
 
 			foreach ( $added_posts as $added_post ) {
@@ -407,7 +411,7 @@ class Atomic_Global_Styles {
 		return Plugin::$instance->preview->is_editor_or_preview();
 	}
 
-	private function get_cache_root_key( string $key = null ): string {
+	private function get_cache_root_key( ?string $key = null ): string {
 		return $key ? self::STYLES_KEY . '_' . $key : self::STYLES_KEY;
 	}
 }

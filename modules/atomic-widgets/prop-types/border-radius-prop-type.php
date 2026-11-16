@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Border_Radius_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'border-radius';
+		return 'border-radius-v2';
 	}
 
 	protected function define_shape(): array {

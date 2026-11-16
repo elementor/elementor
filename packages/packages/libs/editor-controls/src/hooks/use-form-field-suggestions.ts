@@ -1,4 +1,10 @@
-import { getContainer, getSelectedElements, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
+import {
+	findClosestContainer,
+	getContainer,
+	getSelectedElements,
+	getWidgetsCache,
+	type V1Element,
+} from '@elementor/editor-elements';
 import { type PropsSchema, stringPropTypeUtil } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
@@ -49,17 +55,10 @@ function getFieldCssId( child: V1Element, widgetType: string ): string | null {
 }
 
 function getFormContainer( elementId: string ): V1Element | null {
-	let container = getContainer( elementId );
-
-	while ( container ) {
-		if ( container.model.get( 'elType' ) === FORM_ELEMENT_TYPE ) {
-			return container;
-		}
-
-		container = container.parent ?? null;
-	}
-
-	return null;
+	return findClosestContainer(
+		getContainer( elementId ),
+		( container ) => container.model.get( 'elType' ) === FORM_ELEMENT_TYPE
+	);
 }
 
 export function useFormFieldSuggestions( options?: Options ): Suggestion[] {

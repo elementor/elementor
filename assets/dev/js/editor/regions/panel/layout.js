@@ -4,6 +4,7 @@ var EditModeItemView = require( 'elementor-regions/panel/edit-mode' ),
 import PanelComponent from './component';
 import ElementsComponent from './pages/elements/component';
 import EditorComponent from './pages/editor/component';
+import { escapeFromPanelField } from 'elementor-editor-utils/keyboard-nav';
 
 PanelLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel',
@@ -18,6 +19,10 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	pages: {},
+
+	events: {
+		keydown: 'onKeyDown',
+	},
 
 	childEvents: {
 		'click:add'() {
@@ -90,10 +95,6 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.getChildView( 'header' );
 	},
 
-	getFooterView() {
-		return this.getChildView( 'footer' );
-	},
-
 	getCurrentPageName() {
 		return this.currentPageName;
 	},
@@ -146,9 +147,13 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		return this.currentPageView;
 	},
 
+	onKeyDown( event ) {
+		escapeFromPanelField( event, this.el );
+	},
+
 	onBeforeShow() {
-		var PanelFooterItemView = require( 'elementor-regions/panel/footer' ),
-			PanelHeaderItemView = require( 'elementor-regions/panel/header' );
+		var PanelHeaderItemView = require( 'elementor-regions/panel/header' ),
+			PanelFooterBackCompatView = require( 'elementor-regions/panel/footer-back-compat' );
 
 		// Edit Mode
 		this.showChildView( 'modeSwitcher', new EditModeItemView() );
@@ -156,8 +161,8 @@ PanelLayoutView = Marionette.LayoutView.extend( {
 		// Header
 		this.showChildView( 'header', new PanelHeaderItemView() );
 
-		// Footer
-		this.showChildView( 'footer', new PanelFooterItemView() );
+		// Back-compat for Elementor Pro < 4.3 (ED-25418).
+		this.showChildView( 'footer', new PanelFooterBackCompatView() );
 
 		// Added Editor events
 		this.updateScrollbar = _.throttle( this.updateScrollbar, 100 );

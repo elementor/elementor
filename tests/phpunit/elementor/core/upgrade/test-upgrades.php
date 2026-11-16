@@ -420,7 +420,6 @@ class Test_Upgrades extends Elementor_Test_Base {
 	public function test_v_3_16_0_container_updates() {
 
 		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
-		Plugin::$instance->experiments->set_feature_default_state( 'nested-elements', 'active' );
 
 		$documents = [];
 		$updater = $this->create_updater();

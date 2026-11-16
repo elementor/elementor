@@ -285,6 +285,7 @@ class App extends BaseApp {
 				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			],
 			'editor_events' => Events_Manager::get_editor_events_config(),
+			'allowedHTMLWrapperTags' => Utils::get_allowed_html_wrapper_tags(),
 		];
 
 		/**

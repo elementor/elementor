@@ -25,6 +25,8 @@ class Atomic_Styles_Manager {
 
 	private array $post_ids = [];
 
+	private array $enqueued_post_ids = [];
+
 	private CSS_Files_Manager $css_files_manager;
 
 	const DEFAULT_BREAKPOINT = 'desktop';
@@ -32,8 +34,8 @@ class Atomic_Styles_Manager {
 	private array $fonts = [];
 
 	public function __construct() {
-		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
+		$this->css_files_manager = new CSS_Files_Manager( $this->cache_validity );
 	}
 
 	public static function instance() {
@@ -48,7 +50,7 @@ class Atomic_Styles_Manager {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
 
 		add_action( 'elementor/post/render', function( $post_id ) {
-			$this->post_ids[] = $post_id;
+			$this->post_ids[ $post_id ] = $post_id;
 		} );
 
 		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $path ) => $this->clear_styles( $path ) );
@@ -64,11 +66,13 @@ class Atomic_Styles_Manager {
 	}
 
 	private function enqueue_styles() {
-		if ( empty( $this->post_ids ) ) {
+		if ( ! $this->has_post_ids_to_enqueue() ) {
 			return;
 		}
 
-		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
+		$this->enqueued_post_ids = $this->post_ids;
+
+		do_action( 'elementor/atomic-widgets/styles/register', $this, array_values( $this->post_ids ) );
 
 		$get_styles_memo = new Memo();
 
@@ -86,6 +90,10 @@ class Atomic_Styles_Manager {
 		$this->render( $styles_by_key );
 
 		$this->after_render( $styles_by_key );
+	}
+
+	private function has_post_ids_to_enqueue(): bool {
+		return ! empty( array_diff_key( $this->post_ids, $this->enqueued_post_ids ) );
 	}
 
 	private function before_render( array $styles_by_key ) {
@@ -125,14 +133,16 @@ class Atomic_Styles_Manager {
 
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
 
+				// `CSS_Files_Manager::get()` owns the per-breakpoint decision: it consults the
+				// cache-validity leaf under `$breakpoint_path` (including the `should_exist`
+				// meta), regenerates when the cache is invalid or when a should-be-present file
+				// is missing on disk, and validates the leaf on success. See ED-24903.
 				$style_file = $this->css_files_manager->get(
 					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
 					$render_css,
-					$this->cache_validity->is_valid( $breakpoint_path )
+					$breakpoint_path
 				);
-
-				$this->cache_validity->validate( $breakpoint_path );
 
 				if ( ! $style_file ) {
 					continue;
@@ -177,12 +187,22 @@ class Atomic_Styles_Manager {
 			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
 				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
+				if ( empty( $breakpoint ) ) {
+					$breakpoint = self::DEFAULT_BREAKPOINT;
+				}
+
 				if ( ! isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
-					$group[ $breakpoint ][ $style['id'] ] = [
+					$style_for_breakpoint = [
 						'id' => $style['id'],
 						'type' => $style['type'],
 						'variants' => [],
 					];
+
+					if ( isset( $style['cssName'] ) ) {
+						$style_for_breakpoint['cssName'] = $style['cssName'];
+					}
+
+					$group[ $breakpoint ][ $style['id'] ] = $style_for_breakpoint;
 				}
 
 				$group[ $breakpoint ][ $style['id'] ]['variants'][] = $variant;

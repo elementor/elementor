@@ -1,13 +1,92 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
+import { getModelContext } from '../../../../agents/assets/js/frontend/model-context';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
+
+const REDIRECT_DELAY_MS = 1000;
+const SUBMIT_SUCCESS_EVENT = 'elementor/atomic-form/submit-success';
+const BEFORE_SUBMIT_EVENT = 'elementor/atomic-form/before-submit';
+const ALLOWED_REDIRECT_PROTOCOLS = [ 'http:', 'https:', 'ftp:', 'ftps:' ];
+
+let webmcpFormListenersRegistered = false;
 
 registerBySelector( {
 	id: 'atomic-form-submit-handler',
 	selector: ATOMIC_FORM_SELECTOR,
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
+
+function registerWebmcpFormListeners() {
+	if ( webmcpFormListenersRegistered ) {
+		return;
+	}
+
+	webmcpFormListenersRegistered = true;
+
+	const modelContext = getModelContext( document, navigator );
+	const eventTargets = modelContext ? [ window, modelContext ] : [ window ];
+
+	eventTargets.forEach( ( eventTarget ) => {
+		eventTarget.addEventListener( 'toolactivated', ( { toolName } ) => resetWebmcpFormState( toolName ) );
+		eventTarget.addEventListener( 'toolcancel', ( { toolName } ) => resetWebmcpFormState( toolName ) );
+	} );
+}
+
+function resetWebmcpFormState( toolName ) {
+	document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
+		if ( form.getAttribute( 'toolname' ) !== toolName ) {
+			return;
+		}
+
+		delete form.dataset.atomicFormSubmitting;
+		form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
+			button.disabled = false;
+		} );
+	} );
+}
+
+function extractAgentToolData( payload ) {
+	if ( ! payload || 'object' !== typeof payload ) {
+		return null;
+	}
+
+	if ( undefined !== payload.data ) {
+		return payload.data;
+	}
+
+	const { message: ignoredMessage, ...rest } = payload;
+
+	if ( ! Object.keys( rest ).length ) {
+		return null;
+	}
+
+	return rest;
+}
+
+function buildAgentToolResponse( response, state ) {
+	const payload = response?.data ?? null;
+	const message = payload?.message ?? response?.message ?? '';
+
+	return {
+		success: 'success' === state,
+		state,
+		message,
+		data: extractAgentToolData( payload ),
+	};
+}
+
+function createAgentResponder( event ) {
+	if ( ! event?.agentInvoked || 'function' !== typeof event.respondWith ) {
+		return () => {};
+	}
+
+	const { promise, resolve } = Promise.withResolvers();
+
+	event.respondWith( promise );
+
+	return ( response, state ) => resolve( buildAgentToolResponse( response, state ) );
+}
 
 function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
@@ -28,7 +107,10 @@ function registerAtomicFormAlpineData( form ) {
 
 			event.preventDefault();
 
+			const respondToAgent = createAgentResponder( event );
+
 			if ( form.dataset.atomicFormSubmitting ) {
+				respondToAgent( { success: false, message: 'Form is already submitting.' }, 'error' );
 				return;
 			}
 
@@ -42,34 +124,90 @@ function registerAtomicFormAlpineData( form ) {
 
 			const payload = buildAtomicFormPayload( form );
 
-			if ( payload ) {
-				try {
-					const response = await submitAtomicForm( payload );
-					const state = response?.success ? 'success' : 'error';
-
-					setFormState( form, state );
-
-					if ( response?.success ) {
-						form.reset();
-
-						form.addEventListener( 'input', () => {
-							setFormState( form, 'default' );
-						}, { once: true } );
-					}
-				} catch ( error ) {
-					setFormState( form, 'error' );
-				} finally {
-					clearAtomicFormSubmittingState( form, submitButtons );
-				}
-			} else {
+			if ( ! payload ) {
 				setFormState( form, 'error' );
+				respondToAgent( { success: false, message: 'Invalid form payload.' }, 'error' );
+				clearAtomicFormSubmittingState( form, submitButtons );
+				return;
+			}
+
+			try {
+				payload.extraFields = await collectBeforeSubmitFields( form );
+
+				const response = await submitAtomicForm( payload );
+				const state = response?.success ? 'success' : 'error';
+
+				setFormState( form, state );
+				respondToAgent( response, state );
+
+				if ( response?.success ) {
+					resetFormAfterSuccess( form, event );
+
+					form.dispatchEvent( new CustomEvent( SUBMIT_SUCCESS_EVENT, {
+						bubbles: true,
+						detail: { response, agentInvoked: Boolean( event?.agentInvoked ) },
+					} ) );
+				}
+
+				redirectIfRequested( event, response );
+			} catch ( error ) {
+				setFormState( form, 'error' );
+				respondToAgent( { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
+			} finally {
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
 	} ) );
 }
 
+function resetFormAfterSuccess( form, event ) {
+	const resetForm = () => {
+		form.reset();
+
+		form.addEventListener( 'input', () => {
+			setFormState( form, 'default' );
+		}, { once: true } );
+	};
+
+	if ( ! event?.agentInvoked ) {
+		resetForm();
+		return;
+	}
+
+	setTimeout( resetForm );
+}
+
+function redirectIfRequested( event, response ) {
+	if ( event?.agentInvoked || ! response?.success ) {
+		return;
+	}
+
+	const actionResults = response?.data?.data?.actionResults ?? [];
+	const redirectUrl = actionResults.find( ( result ) => 'redirect' === result.type && 'success' === result.status )?.redirectUrl;
+
+	const safeRedirectUrl = getSafeRedirectUrl( redirectUrl );
+
+	if ( safeRedirectUrl ) {
+		setTimeout( () => window.location.assign( safeRedirectUrl ), REDIRECT_DELAY_MS );
+	}
+}
+
+function getSafeRedirectUrl( redirectUrl ) {
+	if ( ! redirectUrl ) {
+		return null;
+	}
+
+	try {
+		const url = new URL( redirectUrl, window.location.href );
+
+		return ALLOWED_REDIRECT_PROTOCOLS.includes( url.protocol ) ? url.href : null;
+	} catch {
+		return null;
+	}
+}
+
 function handleAtomicFormSubmit( form ) {
+	registerWebmcpFormListeners();
 	registerAtomicFormAlpineData( form );
 
 	return refreshDom( form );
@@ -118,7 +256,7 @@ function getAtomicFormFields( form ) {
 		}
 
 		inputs.forEach( ( input ) => {
-			const id = input.dataset.interactionId;
+			const id = input.dataset.id || input.dataset.interactionId;
 			const label = getAtomicFormFieldLabel( input, form );
 			const type = getAtomicFormFieldType( input );
 			const value = getAtomicFormFieldValue( input, type );
@@ -141,7 +279,7 @@ function getAtomicFormFields( form ) {
 function getGroupedFieldId( name, inputs, checkedInputs ) {
 	const primaryInput = checkedInputs[ 0 ] ?? inputs[ 0 ];
 
-	return primaryInput?.dataset.interactionId ?? name;
+	return ( primaryInput?.dataset.id || primaryInput?.dataset.interactionId ) ?? name;
 }
 
 function getGroupedFields( name, inputs, type, form ) {
@@ -254,6 +392,23 @@ function appendFormField( formData, field, index ) {
 	appendFieldValue( formData, `${ prefix }[value]`, field.value );
 }
 
+// Listeners call `event.detail.addFields( fieldsOrPromise )` to send extra request fields (e.g. a spam protection token).
+// A rejected promise fails the submission.
+async function collectBeforeSubmitFields( form ) {
+	const pendingFields = [];
+
+	form.dispatchEvent( new CustomEvent( BEFORE_SUBMIT_EVENT, {
+		bubbles: true,
+		detail: {
+			addFields: ( fields ) => pendingFields.push( fields ),
+		},
+	} ) );
+
+	const resolved = await Promise.all( pendingFields );
+
+	return Object.assign( {}, ...resolved.filter( ( fields ) => fields && 'object' === typeof fields ) );
+}
+
 async function submitAtomicForm( payload ) {
 	const ajaxUrl = elementorFrontendConfig?.urls?.ajaxurl;
 
@@ -270,6 +425,7 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => appendFormField( formData, field, index ) );
+	Object.entries( payload.extraFields ?? {} ).forEach( ( [ key, value ] ) => formData.append( key, value ) );
 
 	const response = await fetch( ajaxUrl, {
 		method: 'POST',

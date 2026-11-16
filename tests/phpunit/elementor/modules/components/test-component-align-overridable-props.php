@@ -48,14 +48,8 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$new_origin_value = [
-			'$$type' => 'html-v3',
-			'value'  => [
-				'content'  => [
-					'$$type' => 'string',
-					'value' => 'Migrated Title',
-				],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value'  => 'Migrated Title',
 		];
 
 		$elements_data = [
@@ -145,14 +139,8 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$inner_component_id = $this->create_test_component_with_data( [], $inner_component_overridable_props );
 
 		$new_origin_value = [
-			'$$type' => 'html-v3',
-			'value'  => [
-				'content'  => [
-					'$$type' => 'string',
-					'value' => 'Title',
-				],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value'  => 'Title',
 		];
 
 		$elements_data = [
@@ -207,14 +195,8 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 					'propKey'     => 'title',
 					'label'       => 'Title',
 					'originValue' => [
-						'$$type' => 'html-v3',
-						'value'  => [
-							'content'  => [
-								'$$type' => 'string',
-								'value' => 'Old Title',
-							],
-							'children' => [],
-						],
+						'$$type' => 'escaped-html',
+						'value'  => 'Old Title',
 					],
 					'groupId' => 'group-1',
 				],
@@ -309,14 +291,8 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$new_origin_value = [
-			'$$type' => 'html-v3',
-			'value'  => [
-				'content'  => [
-					'$$type' => 'string',
-					'value' => 'Nested Migrated Value',
-				],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value'  => 'Nested Migrated Value',
 		];
 
 		$elements_data = [
@@ -393,14 +369,8 @@ class Test_Component_Align_Overridable_Props extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$new_title_origin_value = [
-			'$$type' => 'html-v3',
-			'value'  => [
-				'content'  => [
-					'$$type' => 'string',
-					'value' => 'New Title',
-				],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value'  => 'New Title',
 		];
 
 		$new_tag_origin_value = [

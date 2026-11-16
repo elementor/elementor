@@ -1,32 +1,60 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { type ObjectPropType, type UnionPropType } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import * as boundPropContext from '../../bound-prop-context';
 import { EmailFormActionControl } from '../email-form-action-control';
-
-const propType = createMockPropType( {
-	kind: 'object',
-	shape: {
-		to: createMockPropType( { kind: 'array', item_prop_type: createMockPropType( { kind: 'plain' } ) } ),
-		subject: createMockPropType( { kind: 'plain' } ),
-		message: createMockPropType( { kind: 'plain' } ),
-		from: createMockPropType( { kind: 'plain' } ),
-		'meta-data': createMockPropType( { kind: 'array', item_prop_type: createMockPropType( { kind: 'plain' } ) } ),
-		'send-as': createMockPropType( { kind: 'plain' } ),
-		'from-name': createMockPropType( { kind: 'plain' } ),
-		'reply-to': createMockPropType( { kind: 'plain' } ),
-		cc: createMockPropType( { kind: 'plain' } ),
-		bcc: createMockPropType( { kind: 'plain' } ),
-	},
-} );
-const setValue = jest.fn();
 
 const wrap = ( val: string ) => ( { $$type: 'string' as const, value: val } );
 const wrapStringArray = ( vals: string[] ) => ( {
 	$$type: 'string-array' as const,
 	value: vals.map( ( v ) => wrap( v ) ),
 } );
+
+const createStringPropType = () => createMockPropType( { kind: 'plain', key: 'string' } );
+
+const createStringArrayPropType = () =>
+	createMockPropType( {
+		kind: 'array',
+		key: 'string-array',
+		item_prop_type: createStringPropType(),
+	} );
+
+const createRecipientUnionPropType = (): UnionPropType =>
+	createMockPropType( {
+		kind: 'union',
+		prop_types: {
+			'string-array': createStringArrayPropType(),
+			dynamic: createMockPropType( {
+				kind: 'plain',
+				key: 'dynamic',
+				settings: { categories: [ 'text' ] },
+			} ),
+		},
+	} ) as UnionPropType;
+
+const propType = createMockPropType( {
+	kind: 'object',
+	shape: {
+		to: createRecipientUnionPropType(),
+		subject: createMockPropType( { kind: 'plain', key: 'string' } ),
+		message: createMockPropType( { kind: 'plain', key: 'string' } ),
+		from: createMockPropType( { kind: 'plain', key: 'string' } ),
+		'meta-data': createMockPropType( {
+			kind: 'array',
+			key: 'string-array',
+			item_prop_type: createStringPropType(),
+		} ),
+		'send-as': createMockPropType( { kind: 'plain', key: 'string' } ),
+		'from-name': createMockPropType( { kind: 'plain', key: 'string' } ),
+		'reply-to': createMockPropType( { kind: 'plain', key: 'string' } ),
+		cc: createRecipientUnionPropType(),
+		bcc: createRecipientUnionPropType(),
+	},
+} );
+
+const setValue = jest.fn();
 
 jest.mock( '../../bound-prop-context', () => ( {
 	...jest.requireActual( '../../bound-prop-context' ),
@@ -38,12 +66,12 @@ const mockUseBoundProp = boundPropContext.useBoundProp as jest.MockedFunction< t
 const defaultEmailValue = {
 	to: wrapStringArray( [ 'admin@test.com' ] ),
 	from: wrap( '' ),
-	fromName: wrap( '' ),
+	'from-name': wrap( '' ),
 	cc: null,
 	bcc: null,
 	subject: wrap( '' ),
 	message: wrap( '' ),
-	replyTo: wrap( '' ),
+	'reply-to': wrap( '' ),
 	'meta-data': null,
 	'send-as': wrap( 'html' ),
 };
@@ -55,11 +83,22 @@ const setupMock = ( emailValue = defaultEmailValue ) => {
 				value: emailValue.to?.value ?? [],
 				setValue,
 				disabled: false,
-				propType:
-					( propType as unknown as { shape: Record< string, unknown > } ).shape?.to ??
-					createMockPropType( { kind: 'array' } ),
+				propType: ( propType as ObjectPropType ).shape.to,
 				bind: 'to',
 				path: [ 'to' ],
+				resetValue: jest.fn(),
+				restoreValue: jest.fn(),
+			};
+		}
+
+		if ( propTypeUtil?.key === 'string' ) {
+			return {
+				value: '',
+				setValue,
+				disabled: false,
+				propType: createStringPropType(),
+				bind: 'subject',
+				path: [ 'subject' ],
 				resetValue: jest.fn(),
 				restoreValue: jest.fn(),
 			};
@@ -82,6 +121,25 @@ describe( 'EmailFormActionControl', () => {
 	beforeEach( () => {
 		setValue.mockClear();
 		setupMock();
+	} );
+
+	it( 'should define to, cc, and bcc as union prop types with dynamic support', () => {
+		// Arrange
+		const shape = ( propType as ObjectPropType ).shape;
+
+		// Assert
+		for ( const fieldBind of [ 'to', 'cc', 'bcc' ] as const ) {
+			const fieldPropType = shape[ fieldBind ];
+
+			expect( fieldPropType.kind ).toBe( 'union' );
+
+			if ( fieldPropType.kind !== 'union' ) {
+				throw new Error( `Expected ${ fieldBind } to be a union prop type` );
+			}
+
+			expect( fieldPropType.prop_types.dynamic?.key ).toBe( 'dynamic' );
+			expect( fieldPropType.prop_types[ 'string-array' ]?.key ).toBe( 'string-array' );
+		}
 	} );
 
 	it( 'should render email control with all required fields', () => {

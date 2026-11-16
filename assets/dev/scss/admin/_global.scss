@@ -11,8 +11,26 @@
 			margin-block-start: 1px;
 		}
 
-		// Menu Go Pro
 		a[href="admin.php?page=go_elementor_pro"] {
+			font-weight: 600;
+			background-color: $wp-admin-brand-color;
+			color: $white;
+			margin: 3px 10px 0;
+			display: block;
+			text-align: center;
+			border-radius: $default-border-radius;
+			transition: $transition-hover;
+
+			&:hover,
+			&:focus {
+				background-color: lighten($wp-admin-brand-color, 10%);
+				box-shadow: none;
+			}
+		}
+	}
+
+	#toplevel_page_elementor-home {
+		a[href*="elementor-one-upgrade"] {
 			font-weight: 600;
 			background-color: $wp-admin-brand-color;
 			color: $white;
@@ -39,6 +57,17 @@
 				font-family: eicons;
 				font-size: 18px;
 			}
+		}
+	}
+}
+
+body.e-admin-navigation-active {
+	#adminmenu #toplevel_page_elementor-home {
+		a[href*="elementor-one-upgrade"] {
+			font-size: 12px;
+			line-height: 1.5;
+			padding: 5px 0;
+			white-space: nowrap;
 		}
 	}
 }

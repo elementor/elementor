@@ -62,7 +62,7 @@ export function Login( { onConnect, onSignUp, onContinueAsGuest }: LoginProps ) 
 						onClick={ ( event: React.SyntheticEvent ) => onContinueAsGuest?.( event ) }
 						sx={ { textDecoration: 'none' } }
 					>
-						{ t( 'login.continue_as_guest' ) }
+						{ t( 'common.skip' ) }
 					</TextButton>
 				</Stack>
 			</Stack>

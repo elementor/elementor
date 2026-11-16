@@ -1,4 +1,7 @@
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import { cloneElementTree } from 'elementor/packages/packages/libs/editor-elements/src/sync/clone-element-tree';
+import { isCompoundAtomicType } from 'elementor-editor/utils/element-types';
+import { trackAddElement } from 'elementor-panel/pages/elements/utils/track-add-element';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -22,6 +25,38 @@ module.exports = Marionette.CompositeView.extend( {
 
 	addChildModel( model, options ) {
 		return this.collection.add( model, options, true );
+	},
+
+	/**
+	 * Find a descendant view that accepts `elType` as a direct child.
+	 * Prefers a direct child that accepts the type over a deeper match inside
+	 * an earlier sibling (e.g. accordion item content over header → title).
+	 *
+	 * @param {string} elType
+	 * @return {Marionette.View|null}
+	 */
+	findFirstViewAccepting( elType ) {
+		let directAccepting = null;
+		let recursiveAccepting = null;
+
+		this.children.each( ( child ) => {
+			if ( ! child?.getChildType ) {
+				return;
+			}
+
+			if ( -1 !== child.getChildType().indexOf( elType ) ) {
+				if ( ! directAccepting ) {
+					directAccepting = child;
+				}
+				return;
+			}
+
+			if ( ! recursiveAccepting && child.findFirstViewAccepting ) {
+				recursiveAccepting = child.findFirstViewAccepting( elType );
+			}
+		} );
+
+		return directAccepting || recursiveAccepting;
 	},
 
 	addElement( data, options ) {
@@ -60,7 +95,10 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		if ( -1 === childTypes.indexOf( elType ) ) {
-			return this.children.last().addElement( newItem, options );
+			const acceptingChild = this.findFirstViewAccepting( elType );
+			const fallbackChild = acceptingChild || this.children.last();
+
+			return fallbackChild.addElement( newItem, options );
 		}
 
 		if ( options.clone ) {
@@ -79,7 +117,7 @@ module.exports = Marionette.CompositeView.extend( {
 			this.filterSettings( newItem );
 		}
 
-		var newModel = this.addChildModel( newItem, { at: options.at } ),
+		const newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
 		if ( options.onAfterAdd ) {
@@ -159,7 +197,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	getWrappingContainer( container, model, settings ) {
-		const isAtomic = elementor.helpers.isAtomicWidget( model );
+		const isAtomic = elementor.helpers.isAtomicWidget( model ) || isCompoundAtomicType( model.elType );
 		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
 
 		if ( isAtomic ) {
@@ -215,19 +253,10 @@ module.exports = Marionette.CompositeView.extend( {
 		args.container = this.getContainer();
 		args.options = options;
 
-		$e.run( 'preview/drop', args );
+		const dropResult = $e.run( 'preview/drop', args );
 
-		if ( elementorCommon?.eventsManager?.dispatchEvent && args?.model ) {
-			const elType = args.model?.elType ?? '';
-			const widgetType = args.model?.widgetType ?? '';
-			const elementName = 'widget' === elType ? widgetType : elType;
-
-			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
-				location: 'editor_panel',
-				element_name: elementName,
-				element_type: elType,
-				widget_type: widgetType,
-			} );
+		if ( dropResult ) {
+			trackAddElement( args.model );
 		}
 	},
 
@@ -249,21 +278,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	cloneItem( item ) {
-		var self = this;
-
-		if ( item instanceof Backbone.Model ) {
-			return item.clone();
-		}
-
-		item.id = elementorCommon.helpers.getUniqueId();
-
-		item.settings._element_id = '';
-
-		item.elements.forEach( function( childItem, index ) {
-			item.elements[ index ] = self.cloneItem( childItem );
-		} );
-
-		return item;
+		return cloneElementTree( item );
 	},
 
 	lookup() {

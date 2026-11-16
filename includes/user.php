@@ -127,6 +127,10 @@ class User {
 			return false;
 		}
 
+		if ( function_exists( 'wc_get_page_id' ) && intval( wc_get_page_id( 'shop' ) ) === $post->ID ) {
+			return false;
+		}
+
 		return true;
 	}
 

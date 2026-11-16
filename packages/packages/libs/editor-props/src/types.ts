@@ -29,8 +29,14 @@ export type Dependency = {
 	newValue?: TransformablePropValue< string >;
 };
 
+export type AncestorDependency = {
+	element_type: string;
+	dependency: Dependency;
+};
+
 type BasePropTypeMeta = {
 	description?: string;
+	ancestor_dependency?: AncestorDependency;
 	[ key: string ]: unknown;
 };
 

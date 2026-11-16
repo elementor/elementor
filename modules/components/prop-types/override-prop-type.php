@@ -14,6 +14,30 @@ class Override_Prop_Type extends Plain_Prop_Type {
 		return 'override';
 	}
 
+	public function validate( $value ): bool {
+		if ( is_null( $value ) ) {
+			return ! $this->is_required();
+		}
+
+		if ( ! $this->is_transformable( $value ) ) {
+			return false;
+		}
+
+		if ( ! is_array( $value['value'] ) ) {
+			if ( null === $value['value'] ) {
+				return ! $this->is_required();
+			}
+
+			return false;
+		}
+
+		return $this->validate_value( $value['value'] );
+	}
+
+	public function should_persist( $value ): bool {
+		return true;
+	}
+
 	protected function validate_value( $value ): bool {
 		if ( ! is_array( $value ) ) {
 			return false;

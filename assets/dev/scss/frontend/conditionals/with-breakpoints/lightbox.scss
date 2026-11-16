@@ -503,29 +503,29 @@
 
 				.eicon {
 
-					&-twitter {
-						color: $twitter;
-					}
-
-					&-facebook {
-						color: $facebook;
-					}
-
-					&-pinterest {
-						color: $pinterest;
-					}
-
-					&-download-bold {
-						color: $editor-light;
-					}
+				&-x-twitter {
+					color: $x-twitter;
 				}
 
-				// SVG Icons.
-				.e-eicon {
+				&-facebook {
+					color: $facebook;
+				}
 
-					&-twitter {
-						fill: $twitter;
-					}
+				&-pinterest {
+					color: $pinterest;
+				}
+
+				&-download-bold {
+					color: $editor-light;
+				}
+			}
+
+			// SVG Icons.
+			.e-eicon {
+
+				&-x-twitter {
+					fill: $x-twitter;
+				}
 
 					&-facebook {
 						fill: $facebook;

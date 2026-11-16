@@ -1,4 +1,11 @@
 const mockTrack = jest.fn();
+const mockInit = jest.fn( ( token, config ) => {
+	if ( config.loaded ) {
+		config.loaded( mockMixpanelInstance );
+	}
+
+	return mockMixpanelInstance;
+} );
 const mockMixpanelInstance = {
 	isInitialized: true,
 	get_distinct_id: () => 'test-id',
@@ -11,13 +18,7 @@ const mockMixpanelInstance = {
 jest.mock( 'mixpanel-browser', () => ( {
 	__esModule: true,
 	default: {
-		init: jest.fn( ( token, config ) => {
-			if ( config.loaded ) {
-				config.loaded( mockMixpanelInstance );
-			}
-
-			return mockMixpanelInstance;
-		} ),
+		init: mockInit,
 	},
 	Mixpanel: {},
 } ) );
@@ -26,17 +27,23 @@ describe( 'Events Manager module', () => {
 	beforeEach( () => {
 		jest.resetModules();
 		mockTrack.mockReset();
+		mockInit.mockClear();
+
+		window.fetch = jest.fn();
 
 		window.elementorCommon = {
 			config: {
 				editor_events: {
 					can_send_events: true,
+					token: 'mixpanel-project-token',
 					user_id: 'user-1',
 					site_url: 'https://example.com',
 					wp_version: '6.0',
 					site_key: 'key',
 					elementor_version: '3.0',
 					site_language: 'en',
+					proxy_api_host: 'https://example.com/wp-json/elementor/v1/events-proxy/api',
+					proxy_lib_base_path: 'https://example.com/wp-json/elementor/v1/events-proxy/libs/',
 				},
 				library_connect: {
 					user_roles: [ 'administrator' ],
@@ -50,6 +57,7 @@ describe( 'Events Manager module', () => {
 
 	afterEach( () => {
 		delete window.elementorCommon;
+		delete window.__elementorEventsProxyFetchInstalled;
 	} );
 
 	test( 'dispatchEvent does not throw when event dispatch fails', () => {
@@ -95,6 +103,47 @@ describe( 'Events Manager module', () => {
 			eventsManager.dispatchEvent( 'test_event', { foo: 'bar' } );
 
 			expect( mockTrack ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	test( 'initializes without a callback', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			expect( () => eventsManager.initializeMixpanel() ).not.toThrow();
+			expect( mockInit ).toHaveBeenCalled();
+			expect( window.elementorCommon.config.editor_events.mixpanelInstance ).toBe( mockMixpanelInstance );
+		} );
+	} );
+
+	test( 'onInit enables tracking when loaded runs synchronously during init', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			eventsManager.onInit();
+
+			expect( eventsManager.trackingEnabled ).toBe( true );
+		} );
+	} );
+
+	test( 'onInit points mixpanel at the events-proxy endpoints instead of the vendor domains', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			eventsManager.onInit();
+
+			expect( mockInit ).toHaveBeenCalledWith(
+				'mixpanel-project-token',
+				expect.objectContaining( {
+					api_host: 'https://example.com/wp-json/elementor/v1/events-proxy/api',
+					lib_base_path: 'https://example.com/wp-json/elementor/v1/events-proxy/libs/',
+				} ),
+				'elementor-builder-editor',
+			);
+			expect( window.__elementorEventsProxyFetchInstalled ).toBe( true );
 		} );
 	} );
 

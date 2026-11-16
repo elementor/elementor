@@ -87,6 +87,76 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertEquals( 'Primary Font', $collection->get( 'e-gv-456' )->label() );
 	}
 
+	public function test_import__preserves_sync_to_v3_flag() {
+		// Act.
+		( new Import_Runner() )->import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+		], [] );
+
+		// Assert.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertTrue( $collection->get( 'e-gv-synced' )->sync_to_v3() );
+		$this->assertFalse( $collection->get( 'e-gv-unsynced' )->sync_to_v3() );
+	}
+
+	private function seed_variable( string $id, string $label, bool $sync_to_v3 ): void {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$kit->update_json_meta( self::VARIABLES_META_KEY, [
+			'data' => [
+				$id => [
+					'type' => 'global-color-variable',
+					'label' => $label,
+					'value' => '#000000',
+					'order' => 1,
+					'sync_to_v3' => $sync_to_v3,
+				],
+			],
+			'watermark' => 1,
+		] );
+	}
+
+	public function test_replace__applies_incoming_sync_to_v3_flag() {
+		// Arrange.
+		$this->seed_variable( 'e-gv-local', 'Synced Color', false );
+
+		// Act.
+		$result = ( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+			'customization' => [ 'design-system' => [ 'conflict_resolution' => 'replace' ] ],
+		], [] );
+
+		// Assert.
+		$this->assertCount( 1, $result['replaced'] );
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertTrue( $collection->get( 'e-gv-local' )->sync_to_v3() );
+	}
+
+	public function test_replace__clears_sync_to_v3_when_incoming_is_unsynced() {
+		// Arrange.
+		$this->seed_variable( 'e-gv-local', 'Unsynced Color', true );
+
+		// Act.
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/synced',
+			'customization' => [ 'design-system' => [ 'conflict_resolution' => 'replace' ] ],
+		], [] );
+
+		// Assert.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$collection = ( new Variables_Repository( $kit ) )->load();
+
+		$this->assertFalse( $collection->get( 'e-gv-local' )->sync_to_v3() );
+	}
+
 	public function test_import__invalid_data_missing_required_fields() {
 		// Assert - Variable::from_array() throws InvalidArgumentException on missing fields.
 		$this->expectException( \InvalidArgumentException::class );

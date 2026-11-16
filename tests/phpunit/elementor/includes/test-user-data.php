@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\RoleManager\Role_Manager;
+use Elementor\Plugin;
 use Elementor\User;
 use Elementor\User_Data;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -11,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_User_Data extends Elementor_Test_Base {
 
+	private $original_role_manager = null;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -18,6 +22,15 @@ class Test_User_Data extends Elementor_Test_Base {
 		$wp_rest_server = new \WP_REST_Server();
 
 		do_action( 'rest_api_init' );
+	}
+
+	public function tearDown(): void {
+		if ( $this->original_role_manager ) {
+			Plugin::$instance->role_manager = $this->original_role_manager;
+			$this->original_role_manager = null;
+		}
+
+		parent::tearDown();
 	}
 
 	public function test_get_current_user__returns_user_data_when_logged_in() {
@@ -38,6 +51,45 @@ class Test_User_Data extends Elementor_Test_Base {
 		$this->assertSame( $suppressed_messages, $data['suppressedMessages'] );
 		$this->assertIsArray( $data['capabilities'] );
 		$this->assertContains( 'manage_options', $data['capabilities'] );
+	}
+
+	public function test_get_current_user__returns_role_manager_restrictions() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_user_restrictions( [ 'design', 'json-upload' ] );
+
+		// Act
+		$response = $this->make_get_request();
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [ 'design', 'json-upload' ], $response->get_data()['restrictions'] );
+	}
+
+	public function test_get_current_user__returns_empty_restrictions_for_unrestricted_role() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_user_restrictions( [] );
+
+		// Act
+		$response = $this->make_get_request();
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [], $response->get_data()['restrictions'] );
+	}
+
+	public function test_get_current_user__reindexes_restrictions_so_they_serialize_as_a_json_array() {
+		// Arrange
+		$this->act_as_admin();
+		$this->mock_user_restrictions( [ 0 => 'design', 2 => 'json-upload' ] );
+
+		// Act
+		$response = $this->make_get_request();
+
+		// Assert
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '["design","json-upload"]', wp_json_encode( $response->get_data()['restrictions'] ) );
 	}
 
 	public function test_get_current_user__returns_empty_suppressed_messages_when_none_set() {
@@ -198,6 +250,24 @@ class Test_User_Data extends Elementor_Test_Base {
 		$this->assertSame( 200, $final_get_response->get_status() );
 		$final_data = $final_get_response->get_data();
 		$this->assertSame( $messages, $final_data['suppressedMessages'] );
+	}
+
+	/**
+	 * Role_Manager::get_user_restrictions() memoizes into a method level static, so the
+	 * restrictions cannot be varied per test through the filter. Substituting the manager
+	 * keeps each test isolated and asserts the REST payload rather than the role plumbing.
+	 */
+	private function mock_user_restrictions( array $restrictions ) {
+		$role_manager = $this->getMockBuilder( Role_Manager::class )
+			->disableOriginalConstructor()
+			->onlyMethods( [ 'get_user_restrictions_array' ] )
+			->getMock();
+
+		$role_manager->method( 'get_user_restrictions_array' )->willReturn( $restrictions );
+
+		$this->original_role_manager = Plugin::$instance->role_manager;
+
+		Plugin::$instance->role_manager = $role_manager;
 	}
 
 	private function setup_user_with_suppressed_messages( array $messages ) {

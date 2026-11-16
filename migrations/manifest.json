@@ -33,10 +33,20 @@
       "toType": "html-v3",
       "path": "operations/html-v2-to-html-v3.json"
     },
+    "html-v3-to-escaped-html": {
+      "fromType": "html-v3",
+      "toType": "escaped-html",
+      "path": "operations/html-v3-to-escaped-html.json"
+    },
     "image-src-to-svg-src": {
       "fromType": "image-src",
       "toType": "svg-src",
       "path": "operations/image-src-to-svg-src.json"
+    },
+    "svg-src-to-icon": {
+      "fromType": "svg-src",
+      "toType": "icon",
+      "path": "operations/svg-src-to-icon.json"
     },
     "config-to-config-v2": {
       "fromType": "config",
@@ -52,6 +62,16 @@
       "fromType": "string",
       "toType": "font-family",
       "path": "operations/string-to-font-family.json"
+    },
+    "border-radius-to-border-radius-v2": {
+      "fromType": "border-radius",
+      "toType": "border-radius-v2",
+      "path": "operations/border-radius-to-border-radius-v2.json"
+    },
+    "border-width-to-border-width-v2": {
+      "fromType": "border-width",
+      "toType": "border-width-v2",
+      "path": "operations/border-width-to-border-width-v2.json"
     }
   }
 }

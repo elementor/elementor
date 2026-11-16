@@ -381,4 +381,29 @@ describe( 'removeElements', () => {
 		expect( mockDeleteElement ).toHaveBeenCalledTimes( 1 );
 		expect( mockCreateElement ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'should forward the origin to every inner command on do, undo and redo', () => {
+		// Arrange.
+		setupMockElementsForRemoval();
+		mockCreateElement.mockReturnValue(
+			createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } )
+		);
+
+		// Act.
+		removeElements( { elementIds: [ 'element-1' ], title: 'Remove Element', origin: 'test-origin' } );
+
+		act( () => {
+			historyMock.instance.undo();
+		} );
+
+		act( () => {
+			historyMock.instance.redo();
+		} );
+
+		// Assert.
+		const innerCalls = [ ...mockDeleteElement.mock.calls, ...mockCreateElement.mock.calls ];
+
+		expect( innerCalls ).toHaveLength( 3 );
+		innerCalls.forEach( ( [ params ] ) => expect( params.options?.origin ).toBe( 'test-origin' ) );
+	} );
 } );

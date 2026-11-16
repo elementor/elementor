@@ -88,37 +88,33 @@ type SortableItemSettings< T > = BaseItemSettings< T > & {
 	getId: ( { item, index }: { item: T; index: number } ) => string;
 };
 
-type RepeaterProps< T > =
-	| {
-			label: string;
-			values?: T[];
-			openOnAdd?: boolean;
-			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
-			disabled?: boolean;
-			disableAddItemButton?: boolean;
-			addButtonInfotipContent?: React.ReactNode;
-			showDuplicate?: boolean;
-			showToggle?: boolean;
-			showRemove?: boolean;
-			openItem?: number;
-			isSortable: false;
-			itemSettings: BaseItemSettings< T >;
-	  }
-	| {
-			label: string;
-			values?: T[];
-			openOnAdd?: boolean;
-			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
-			disabled?: boolean;
-			disableAddItemButton?: boolean;
-			addButtonInfotipContent?: React.ReactNode;
-			showDuplicate?: boolean;
-			showToggle?: boolean;
-			showRemove?: boolean;
-			openItem?: number;
-			isSortable?: true;
-			itemSettings: SortableItemSettings< T >;
-	  };
+type BaseProps< T > = {
+	label: string;
+	values?: T[];
+	openOnAdd?: boolean;
+	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
+	disabled?: boolean;
+	disableAddItemButton?: boolean;
+	addButtonInfotipContent?: React.ReactNode;
+	showDuplicate?: boolean;
+	showToggle?: boolean;
+	showRemove?: boolean;
+	openItem?: number;
+	adornment?: React.FC;
+	headerActions?: React.ReactNode;
+};
+
+type SortableProps< T > = BaseProps< T > & {
+	isSortable?: true;
+	itemSettings: SortableItemSettings< T >;
+};
+
+type NonSortableProps< T > = BaseProps< T > & {
+	isSortable?: false;
+	itemSettings: BaseItemSettings< T >;
+};
+
+type RepeaterProps< T > = SortableProps< T > | NonSortableProps< T >;
 
 const EMPTY_OPEN_ITEM = -1;
 
@@ -136,6 +132,8 @@ export const Repeater = < T, >( {
 	addButtonInfotipContent,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 	isSortable = true,
+	adornment = ControlAdornments,
+	headerActions,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
@@ -232,7 +230,8 @@ export const Repeater = < T, >( {
 
 	return (
 		<SectionContent gap={ 2 }>
-			<RepeaterHeader label={ label } adornment={ ControlAdornments }>
+			<RepeaterHeader label={ label } adornment={ adornment }>
+				{ headerActions }
 				{ shouldShowInfotip ? (
 					<Infotip
 						placement="right"

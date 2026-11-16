@@ -3,10 +3,12 @@ import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 type Model = {
 	elType?: string;
 	widgetType?: string;
+	elements?: Model[];
 };
 
 export type CreateArgs = {
 	container?: V1Element;
+	containers?: V1Element[];
 	model?: Model;
 };
 
@@ -34,6 +36,9 @@ export type StorageContent = {
 };
 
 export const FORM_ELEMENT_TYPE = 'e-form';
+export const FORM_HIDDEN_FIELD_ELEMENT_TYPE = 'e-form-hidden';
+export const FORM_HONEYPOT_ELEMENT_TYPE = 'e-form-honeypot';
+export const FORM_RECAPTCHA_SCORE_ELEMENT_TYPE = 'e-form-recaptcha-score';
 export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-input',
 	'e-form-textarea',
@@ -45,10 +50,39 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-file-upload',
 	'e-form-date-picker',
 	'e-form-time-picker',
+	FORM_HIDDEN_FIELD_ELEMENT_TYPE,
+	FORM_HONEYPOT_ELEMENT_TYPE,
+	FORM_RECAPTCHA_SCORE_ELEMENT_TYPE,
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
 	return args.model?.widgetType || args.model?.elType;
+}
+
+export function hasModelElementType( model: Model | undefined, type: string ): boolean {
+	if ( ! model ) {
+		return false;
+	}
+
+	if ( ( model.widgetType || model.elType ) === type ) {
+		return true;
+	}
+
+	return ( model.elements ?? [] ).some( ( child ) => hasModelElementType( child, type ) );
+}
+
+export function getFormContainer( element?: V1Element ): V1Element | undefined {
+	let current = element;
+
+	while ( current ) {
+		if ( getElementType( current ) === FORM_ELEMENT_TYPE ) {
+			return current;
+		}
+
+		current = current.parent;
+	}
+
+	return undefined;
 }
 
 export function getElementType( element?: V1Element ): string | undefined {
@@ -113,4 +147,50 @@ export function clipboardRootsAreAtomicForms( elements: ClipboardElement[] ): bo
 	}
 
 	return elements.every( ( el ) => getClipboardElementType( el ) === FORM_ELEMENT_TYPE );
+}
+
+export function hasFormAncestor( node: Element ): boolean {
+	return node.closest( FORM_ELEMENT_TYPE ) !== null;
+}
+
+export function collectFormAncestorErrors( xml: Document ): string[] {
+	const errors: string[] = [];
+	for ( const node of xml.querySelectorAll( '*' ) ) {
+		if ( ! FORM_FIELD_ELEMENT_TYPES.has( node.tagName.toLowerCase() ) ) {
+			continue;
+		}
+		if ( hasFormAncestor( node ) ) {
+			continue;
+		}
+		const id = node.getAttribute( 'configuration-id' );
+		errors.push(
+			`<${ node.tagName }${
+				id ? ` configuration-id="${ id }"` : ''
+			}> must be nested inside <e-form> (any ancestor depth is allowed).`
+		);
+	}
+	return errors;
+}
+
+export function collectSubmitButtonErrors( xml: Document ): string[] {
+	const errors: string[] = [];
+	for ( const form of xml.querySelectorAll( 'e-form' ) ) {
+		const submitButtons = form.querySelectorAll( 'e-form-submit-button' );
+		if ( submitButtons.length === 0 ) {
+			errors.push( `<e-form> has no <e-form-submit-button>.` );
+		} else if ( submitButtons.length > 1 ) {
+			errors.push( `<e-form> has ${ submitButtons.length } submit buttons — only 1 is allowed.` );
+		}
+	}
+	return errors;
+}
+
+export function collectEmptyMessageErrors( xml: Document ): string[] {
+	const errors: string[] = [];
+	for ( const node of xml.querySelectorAll( 'e-form-success-message, e-form-error-message' ) ) {
+		if ( node.children.length === 0 ) {
+			errors.push( `<${ node.tagName }> must have at least one child element (e.g. <e-atomic-paragraph>).` );
+		}
+	}
+	return errors;
 }

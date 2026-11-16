@@ -6,10 +6,14 @@ import { ElementsOverlays } from './components/elements-overlays';
 import { InteractionsRenderer } from './components/interactions-renderer';
 import { StyleRenderer } from './components/style-renderer';
 import { initFormAncestorEnforcement } from './form-structure/enforce-form-ancestor-commands';
+import { initFormAtomAddedHints } from './form-structure/form-atom-added-hints';
+import { initHiddenFieldHint } from './form-structure/hidden-field-hint';
+import { initDuplicateFormAtomsPrevention } from './form-structure/prevent-duplicate-form-atoms-commands';
 import { initFormNestingPrevention } from './form-structure/prevent-form-nesting-commands';
 import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
 import { initLegacyViews } from './legacy/init-legacy-views';
+import { initListType } from './legacy/list-type';
 import { initViewReplacements } from './legacy/replacements/manager';
 import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
@@ -24,6 +28,9 @@ export function init() {
 	initLinkInLinkPrevention();
 	initFormNestingPrevention();
 	initFormAncestorEnforcement();
+	initHiddenFieldHint();
+	initDuplicateFormAtomsPrevention();
+	initFormAtomAddedHints();
 
 	initViewReplacements();
 
@@ -54,14 +61,14 @@ export function init() {
 	initCanvasMcp(
 		getMCPByDomain( 'canvas', {
 			instructions: `Everything related to V4 ( Atomic ) canvas.
-# Canvas workflow for new compositions
-- Configure elements settings and styles
-- Build compositions/sections out of V4 atomic elements using context aware designs using the website resources
-- Get and retrieve element configuration values
+# Canvas workflow
+- Configure element settings and styles with configure-element
+- Get page structure and element configuration values
 `,
 			docs: mcpDescription,
 		} )
 	);
 
 	initTabsModelExtensions();
+	initListType();
 }

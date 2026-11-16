@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\Components;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,11 +59,8 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 					'widgetType' => 'e-heading',
 					'elType' => 'widget',
 				'originValue' => [
-					'$$type' => 'html-v3',
-					'value' => [
-						'content' => ['$$type' => 'string', 'value' => '<strong>Original text</strong><script>alert("xss")</script>'],
-						'children' => [],
-					],
+					'$$type' => 'escaped-html',
+					'value' => '<strong>Original text</strong><script>alert("xss")</script>',
 				],
 					'groupId' => 'group-uuid-1',
 				],
@@ -87,7 +85,12 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['props']['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['props']['prop-uuid-1']['originValue']['value']['content']['value'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$sanitized['props']['prop-uuid-1']['originValue']['value'],
+			'<strong>Original text</strong>alert("xss")',
+			'<strong>Original text</strong>'
+		);
 		$this->assertEquals( 'User Info', $sanitized['groups']['items']['group-uuid-1']['label'] );
 	}
 
@@ -214,11 +217,8 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
 		'originValue' => [
-			'$$type' => 'html-v3',
-			'value' => [
-				'content' => ['$$type' => 'string', 'value' => 'Original text'],
-				'children' => [],
-			],
+			'$$type' => 'escaped-html',
+			'value' => 'Original text',
 		],
 		'groupId' => 'group-uuid-1' 
 	];

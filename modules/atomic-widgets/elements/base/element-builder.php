@@ -3,12 +3,15 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 class Element_Builder {
+	use Has_Template_Part;
+
 	protected $element_type;
 	protected $settings = [];
 	protected $is_locked = false;
 	protected $children = [];
 	protected $editor_settings = [];
 	protected $meta = [];
+	protected $hydrate_default_children = false;
 
 	public static function make( string $element_type ) {
 		return new self( $element_type );
@@ -43,6 +46,15 @@ class Element_Builder {
 		return $this;
 	}
 
+	/**
+	 * Marks this payload to seed its default children client-side (via
+	 * `AtomicElementBaseModel::onElementCreate()`) once inserted into the editor.
+	 */
+	public function hydrate_default_children( bool $hydrate = true ) {
+		$this->hydrate_default_children = $hydrate;
+		return $this;
+	}
+
 	public function build() {
 		$element_data = [
 			'elType' => $this->element_type,
@@ -56,6 +68,10 @@ class Element_Builder {
 			$element_data['meta'] = $this->meta;
 		}
 
-		return $element_data;
+		if ( $this->hydrate_default_children ) {
+			$element_data['hydrateDefaultChildren'] = true;
+		}
+
+		return $this->add_local_style( $this->add_part( $element_data ) );
 	}
 }

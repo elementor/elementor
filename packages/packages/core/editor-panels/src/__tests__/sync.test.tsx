@@ -20,7 +20,6 @@ describe( '@elementor/editor-panels sync', () => {
 		'elementor-panel-header-wrapper',
 		'elementor-panel-content-wrapper',
 		'elementor-panel-state-loading',
-		'elementor-panel-footer',
 	];
 
 	beforeEach( () => {

@@ -42,6 +42,57 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 		$this->assertInstanceOf( '\Elementor\Core\Editor\Editor', $this->elementor()->editor );
 	}
 
+	public function test_is_editor_request__returns_true_for_elementor_action() {
+		// Arrange
+		$_REQUEST['action'] = 'elementor';
+		$editor = $this->elementor()->editor;
+
+		// Act
+		$result = $editor->is_editor_request();
+
+		// Cleanup
+		unset( $_REQUEST['action'] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_editor_request__remains_true_when_edit_mode_is_disabled() {
+		// Arrange
+		$_REQUEST['action'] = 'elementor';
+		$editor = $this->elementor()->editor;
+		$editor->set_edit_mode( false );
+
+		// Act
+		$result = $editor->is_editor_request();
+
+		// Cleanup
+		unset( $_REQUEST['action'] );
+		$editor->set_edit_mode( null );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_is_edit_mode__returns_false_when_edit_mode_is_disabled() {
+		// Arrange
+		$_REQUEST['action'] = 'elementor';
+		$editor = $this->elementor()->editor;
+		$post_id = $GLOBALS['post'];
+		$editor->set_post_id( $post_id );
+		$editor->set_edit_mode( false );
+
+		// Act
+		$result = $editor->is_edit_mode( $post_id );
+
+		// Cleanup
+		unset( $_REQUEST['action'] );
+		$editor->set_edit_mode( null );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
 	/*
 	public function test_enqueueScripts() {
 		ini_set( 'memory_limit', '85M' );
@@ -157,5 +208,36 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 		);
 
 		remove_filter( 'elementor/editor/use_document_isolation_policy', '__return_true' );
+	}
+
+	public function test_dequeue_media_frame_upload_script__removes_handle_on_wp_enqueue_media() {
+		// Arrange
+		$editor = $this->elementor()->editor;
+		add_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+		wp_register_script( 'media-frame-upload', '', [], false );
+		wp_enqueue_script( 'media-frame-upload' );
+		$this->assertTrue( wp_script_is( 'media-frame-upload', 'enqueued' ) );
+
+		// Act
+		do_action( 'wp_enqueue_media' );
+
+		// Assert
+		$this->assertFalse( wp_script_is( 'media-frame-upload', 'enqueued' ) );
+
+		remove_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+	}
+
+	public function test_dequeue_media_frame_upload_script__no_op_when_handle_missing() {
+		// Arrange
+		$editor = $this->elementor()->editor;
+		add_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+
+		// Act
+		do_action( 'wp_enqueue_media' );
+
+		// Assert
+		$this->assertFalse( wp_script_is( 'media-frame-upload', 'enqueued' ) );
+
+		remove_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
 	}
 }

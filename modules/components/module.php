@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
+use Elementor\Modules\Components\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -16,15 +17,42 @@ use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
+use Elementor\Modules\Components\Utils\Remap_Component_Instance_Ids;
+use Elementor\Modules\Components\Utils\Strip_Component_Instances;
+use Elementor\Modules\Components\Variants\Component_Variant_Class_Collector;
 use Elementor\Modules\Components\Widgets\Component_Instance;
+use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_components';
+	const EXPERIMENT_NAME = AtomicWidgetsModule::EXPERIMENT_NAME;
+	const EXPERIMENT_VARIANTS_NAME = 'e_component_variants';
 	const PACKAGES        = [ 'editor-components' ];
+
+	/**
+	 * Local kill switch for components import/export. Keep it enabled for local export
+	 * testing while the dedicated import runner is still incomplete.
+	 *
+	 * Not an experiment on purpose: experiments are serialized into exported kits by
+	 * `Site_Settings::export_experiments()` and rehydrated on import, so a hidden experiment
+	 * here would let a source-site override silently turn the guard off on every destination site.
+	 *
+	 * Remove this constant, `is_import_export_supported()` and every `! is_import_export_supported()`
+	 * branch once components are a first-class part of import/export.
+	 *
+	 * @todo Remove in 4.8.0
+	 * @deprecated 4.8.0
+	 */
+	const IS_IMPORT_EXPORT_SUPPORTED = true;
+
+	/**
+	 * Variants meta must be persisted before `Global_Classes_Relations::on_document_save()`
+	 * (default priority 10) reads it via the `extract_class_ids_from_post` filter.
+	 */
+	const SAVE_VARIANTS_PRIORITY = 9;
 
 	public function get_name() {
 		return 'components';
@@ -33,42 +61,105 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		if ( ! $this->is_experiment_active() ) {
+		if ( ! self::is_experiment_active() ) {
 			return;
 		}
 
+		$this->register_variants_experiment();
+
 		$this->register_component_post_type();
+		( new Import_Export_Customization() )->register_hooks();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
+
+		if ( self::is_variants_experiment_active() ) {
+			add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_variants( $document, $data ), self::SAVE_VARIANTS_PRIORITY, 2 );
+			add_filter(
+				'elementor/global_classes/extract_class_ids_from_post',
+				fn( array $ids, $post_id ) => $this->add_variant_class_ids( $ids, $post_id ),
+				10,
+				2
+			);
+		}
+
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 		add_filter( 'elementor/utils/find_element_recursive/inner_elements', fn( array $inner_elements, array $element_data ) => $this->get_inner_elements_for_search( $inner_elements, $element_data ), 10, 2 );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 		add_action( 'elementor/document/after_migrate', fn( Document $document, array $data ) => $this->after_component_migrate( $document, $data ), 10, 2 );
 
+		add_filter(
+			'elementor/atomic-widgets/llm-json-schema',
+			fn( array $schema ) => ( new Overridable_LLM_Filter() )->apply( $schema )
+		);
+
 		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
 	}
 
-	public function is_experiment_active() {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	public static function is_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
-	public static function get_experimental_data() {
-		return [
-			'name'           => self::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Components', 'elementor' ),
-			'description'    => esc_html__( 'Enable components.', 'elementor' ),
-			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		];
+	public static function is_variants_experiment_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VARIANTS_NAME );
+	}
+
+	public static function is_import_export_supported(): bool {
+		return self::IS_IMPORT_EXPORT_SUPPORTED;
+	}
+
+	/**
+	 * Single entry point for import runners to normalize the elements tree of an imported
+	 * document with respect to component instances. When components round-trip is enabled
+	 * (flag on) it rewrites source-site component ids (and override `schema_source` ids) to their
+	 * destination-site equivalents and strips instances whose component was not imported;
+	 * when disabled (flag off) it strips any `e-component` widget that survived from a
+	 * legacy zip so the destination editor never opens a document with dangling instances.
+	 *
+	 * The map must hold component ids only: the generic post ids map also holds pages and
+	 * templates, so an unmapped source component id could match one of them by accident.
+	 *
+	 * Kept as a static helper on the module so both `import-export-customization` and legacy
+	 * `import-export` import paths stay in sync when `IS_IMPORT_EXPORT_SUPPORTED` flips.
+	 */
+	public static function prepare_imported_elements( array $elements, array $component_ids_map ): array {
+		if ( ! self::is_import_export_supported() ) {
+			return Strip_Component_Instances::apply( $elements );
+		}
+
+		$elements = Remap_Component_Instance_Ids::apply( $elements, $component_ids_map );
+
+		return Strip_Component_Instances::apply( $elements, array_map( 'intval', array_values( $component_ids_map ) ) );
+	}
+
+	/**
+	 * Components are owned by the dedicated `components` runners and should never be
+	 * handled by the generic `elementor-content` runners.
+	 */
+	public static function excluded_import_export_post_types(): array {
+		return [ Component_Document::TYPE ];
+	}
+
+	/**
+	 * Dev-only gate that keeps per-instance Component Variants off trunk while the feature ships
+	 * across several tickets. Hidden experiments cannot declare dependencies on other experiments,
+	 * so activation is checked manually in the constructor after the parent atomic-elements gate.
+	 */
+	private function register_variants_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_VARIANTS_NAME,
+			'title' => esc_html__( 'Component Variants', 'elementor' ),
+			'description' => esc_html__( 'Enable per-instance class variants on components.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	public function get_widgets() {
@@ -140,6 +231,38 @@ class Module extends BaseModule {
 		if ( ! $result->is_valid() ) {
 			throw new \Exception( esc_html( 'Settings validation failed for component overridable props: ' . $result->errors()->to_string() ) );
 		}
+	}
+
+	private function set_component_variants( Document $document, array $data ) {
+		if ( ! isset( $data['settings'] ) ) {
+			return;
+		}
+		if ( ( ! $document instanceof Component_Document ) ||
+			( ! isset( $data['settings']['variants'] ) )
+		) {
+			return;
+		}
+
+		if ( ! Components_Access_Controller::can_edit() ) {
+			throw new \Exception( esc_html__( 'You do not have permission to edit component source.', 'elementor' ) );
+		}
+
+		/* @var Component_Document $document */
+		$result = $document->update_variants( $data['settings']['variants'] );
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed for component variants: ' . $result->errors()->to_string() ) );
+		}
+	}
+
+	private function add_variant_class_ids( array $ids, $post_id ): array {
+		$document = Plugin::$instance->documents->get( (int) $post_id );
+
+		if ( ! $document instanceof Component_Document ) {
+			return $ids;
+		}
+
+		return array_merge( $ids, Component_Variant_Class_Collector::collect( $document->get_variants() ) );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {

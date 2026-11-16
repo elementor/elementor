@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { MODE_VARIATION } from './pages/form-layout/context/config';
 import ApplyTemplateForAi from './integration/library/apply-template-for-ai-behavior';
 import { ELEMENTOR_LIBRARY_SOURCE, USER_VARIATION_SOURCE } from './pages/form-layout/components/attachments';
+import { omitPropsByMeta } from 'elementor-editor-utils/omit-props-by-meta';
 
 export const AI_ATTACHMENT = 'ai-attachment';
 export default class Module extends elementorModules.editor.utils.Module {
@@ -89,7 +90,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			title: __( 'Generate variations with AI', 'elementor' ),
 			callback: async () => {
 				const container = currentElement.getContainer();
-				const json = container.model.toJSON( { remove: [ 'default' ] } );
+				const json = omitPropsByMeta( container.model.toJSON( { remove: [ 'default' ] } ) );
 				const attachments = [ {
 					type: 'json',
 					previewHTML: '',

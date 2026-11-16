@@ -1,0 +1,21 @@
+---
+description: Visual proof on elementor/elementor PRs is authored in CI, not by local agents
+alwaysApply: false
+---
+
+# Visual proof on PRs
+
+**Trigger:** this file. Local Cursor agents must **not** write `## Visual proof`
+on `gh pr create` or `gh pr edit`.
+
+**Who writes it:** CI `cursor-agent` in
+`.github/workflows/visual-proof-author.yml`, only when the section is still
+missing and the PR is **opened** or marked **ready for review**.
+
+**How CI writes it:** the skill bundled in the shared
+`elementor/elementor-editor-github-actions` `visual-proof-author` action
+(not a local skill file).
+
+- Leave `## Visual proof` out of the PR body unless a human already put it there
+- Do not ask the user to fill it in
+- Capture (`visual-proof-shots`) tries to follow CI-written **Steps** via storyboard actor; when that produces no screenshots, it falls back to generic Admin → Pages → Edit with Elementor walk

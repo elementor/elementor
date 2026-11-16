@@ -3,4 +3,3 @@ declare module '@alpinejs/csp' {
 
 	export const Alpine: AlpineBase;
 }
-

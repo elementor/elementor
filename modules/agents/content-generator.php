@@ -1,0 +1,839 @@
+<?php
+
+namespace Elementor\Modules\Agents;
+
+use Elementor\Modules\Agents\Classes\Post_Noindex;
+use Elementor\Modules\Agents\Classes\Post_Title;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
+use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
+use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
+use Elementor\Plugin;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Generates llms.txt and llms-full.txt content entirely from the WordPress
+ * database — no AI, no external calls.
+ *
+ * Both files conform to the llmstxt.org spec:
+ *   # Site Name
+ *   > intro / summary (blockquote)
+ *   ## Section
+ *   - [Title](URL): description
+ *
+ * llms-full.txt additionally inlines the full content of each page/post,
+ * size-capped at ~500 KB target / 1 MB hard ceiling.
+ */
+class Content_Generator {
+
+	/** Target byte size for llms-full.txt before we start dropping content. */
+	const LLMS_FULL_TARGET_SIZE = 512000; // 500 KB
+
+	/** Hard byte ceiling for llms-full.txt — we never exceed this. */
+	const LLMS_FULL_HARD_CAP = 1048576; // 1 MB
+
+	/**
+	 * Maximum number of posts fetched per post type.
+	 * Keeps single-site queries bounded on large sites.
+	 */
+	const MAX_POSTS_PER_TYPE = 500;
+
+	/**
+	 * Default number of posts inlined per post type in llms-full.txt.
+	 * Keeps the inline-content loop bounded so the request cannot time out.
+	 * Overridable per post type via the `elementor/agents/llms_full/posts_per_type` filter.
+	 */
+	const LLMS_FULL_POSTS_PER_TYPE = 20;
+
+	/**
+	 * Post-meta key for the per-post inline-content cache (used in llms-full.txt).
+	 * Bump INLINE_CACHE_VERSION to silently invalidate all cached entries.
+	 */
+	const INLINE_META_KEY           = '_elementor_agents_inline_cache';
+	const INLINE_CACHE_VERSION      = 1;
+	const INLINE_CACHE_GEN_OPTION   = 'elementor_agents_inline_cache_gen';
+
+	const MCP_SECTION_TITLE = 'MCP Server';
+	const API_SECTION_TITLE = 'API';
+
+	/** Post types that should never appear in the output. */
+	const EXCLUDED_POST_TYPES = [
+		'attachment',
+		'revision',
+		'nav_menu_item',
+		'custom_css',
+		'customize_changeset',
+		'oembed_cache',
+		'user_request',
+		'wp_block',
+		'wp_template',
+		'wp_template_part',
+		'wp_global_styles',
+		'wp_navigation',
+		'elementor_library',
+	];
+
+	private Prompt_Injection_Sanitizer $sanitizer;
+
+	public function __construct( Prompt_Injection_Sanitizer $sanitizer ) {
+		$this->sanitizer = $sanitizer;
+	}
+
+	// -------------------------------------------------------------------------
+	// Public API
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Generate the full llms.txt content.
+	 *
+	 * @param array{intro?: string, optional?: string} $overrides
+	 *   'intro'    – user-supplied intro text (replaces the auto-generated one).
+	 *   'optional' – extra section appended after all content sections.
+	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
+	 * @return string
+	 */
+	public function generate_llms_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
+
+		$sections = $this->get_content_sections( $post_types, false, $excluded_post_ids );
+
+		foreach ( $sections as $title => $items ) {
+			if ( empty( $items ) ) {
+				continue;
+			}
+
+			$lines[] = '## ' . $title;
+			$lines[] = '';
+
+			foreach ( $items as $item ) {
+				$lines[] = $this->format_link_line( $item );
+			}
+
+			$lines[] = '';
+		}
+
+		array_push( $lines, ...$this->get_api_section_lines() );
+		array_push( $lines, ...$this->get_mcp_section_lines() );
+
+		$this->append_optional_section( $lines, $overrides );
+
+		return implode( "\n", $lines );
+	}
+
+	/**
+	 * Generate the full llms-full.txt content (links + inlined page/post content).
+	 *
+	 * WooCommerce products are linked but their content is not inlined.
+	 * Total output is capped at LLMS_FULL_HARD_CAP bytes; pages and posts are
+	 * prioritised over WooCommerce catalog data.
+	 *
+	 * @param array{intro?: string, optional?: string} $overrides
+	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
+	 * @return string
+	 */
+	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
+
+		$sections = $this->get_content_sections( $post_types, true, $excluded_post_ids );
+
+		// Separate WooCommerce products from everything else so we can deprioritise them.
+		$product_section = $sections['Products'] ?? [];
+		unset( $sections['Products'] );
+
+		$content_blocks = []; // [ 'header' => string, 'body' => string ]
+
+		foreach ( $sections as $title => $items ) {
+			if ( empty( $items ) ) {
+				continue;
+			}
+
+			$block_lines = [];
+			$block_lines[] = '## ' . $title;
+			$block_lines[] = '';
+
+			foreach ( $items as $item ) {
+				$block_lines[] = $this->format_link_line( $item );
+			}
+
+			$block_lines[] = '';
+			$content_blocks[] = [
+				'header' => implode( "\n", $block_lines ),
+				'items'  => $items,
+			];
+		}
+
+		// Always append WooCommerce products as links-only at the end.
+		if ( ! empty( $product_section ) ) {
+			$product_lines   = [];
+			$product_lines[] = '## Products';
+			$product_lines[] = '';
+
+			foreach ( $product_section as $item ) {
+				$product_lines[] = $this->format_link_line( $item );
+			}
+
+			$product_lines[] = '';
+			$content_blocks[] = [
+				'header' => implode( "\n", $product_lines ),
+				'items'  => [], // no inline content for products
+			];
+		}
+
+		$api_lines = $this->get_api_section_lines();
+
+		if ( ! empty( $api_lines ) ) {
+			$content_blocks[] = [
+				'header' => implode( "\n", $api_lines ),
+				'items'  => [],
+			];
+		}
+
+		$mcp_lines = $this->get_mcp_section_lines();
+
+		if ( ! empty( $mcp_lines ) ) {
+			$content_blocks[] = [
+				'header' => implode( "\n", $mcp_lines ),
+				'items'  => [],
+			];
+		}
+
+		// Build output, inlining content and respecting the size cap.
+		$header_text = implode( "\n", $lines );
+		$output      = $header_text;
+
+		foreach ( $content_blocks as $block ) {
+			$section_text = $block['header'];
+
+			if ( ! empty( $block['items'] ) ) {
+				foreach ( $block['items'] as $item ) {
+					if ( empty( $item['id'] ) ) {
+						continue;
+					}
+
+					$inline = $this->get_inline_content( (int) $item['id'] );
+
+					if ( '' === $inline ) {
+						continue;
+					}
+
+					$inline_block = "\n---\n\n" . $inline . "\n";
+
+					if ( $this->llms_full_would_exceed_cap( $output, "\n" . $section_text . $inline_block ) ) {
+						break;
+					}
+
+					$section_text .= $inline_block;
+				}
+			}
+
+			if ( $this->llms_full_would_exceed_cap( $output, "\n" . $section_text ) ) {
+				break;
+			}
+
+			$output .= "\n" . $section_text;
+		}
+
+		$optional = $this->get_sanitized_optional( $overrides );
+
+		if ( '' !== $optional ) {
+			$optional_block = "\n## Optional\n\n" . $optional . "\n";
+
+			if ( ! $this->llms_full_would_exceed_cap( $output, $optional_block ) ) {
+				$output .= $optional_block;
+			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Return an array of human-readable warnings about missing requirements
+	 * that would improve the generated output quality.
+	 *
+	 * @return string[]
+	 */
+	public function get_missing_requirements(): array {
+		$warnings = [];
+
+		if ( empty( get_bloginfo( 'description' ) ) ) {
+			$warnings[] = __( 'Site tagline is empty — add one under Settings → General for a better intro summary.', 'elementor' );
+		}
+
+		$show_on_front = get_option( 'show_on_front' );
+
+		if ( 'page' === $show_on_front ) {
+			$page_on_front = (int) get_option( 'page_on_front' );
+
+			if ( ! $page_on_front || 'publish' !== get_post_status( $page_on_front ) ) {
+				$warnings[] = __( 'A static front page is configured but the page is missing or not published.', 'elementor' );
+			}
+		}
+
+		$page_count = wp_count_posts( 'page' );
+
+		if ( empty( $page_count->publish ) ) {
+			$warnings[] = __( 'No published pages found — add some pages to populate the Pages section.', 'elementor' );
+		}
+
+		$post_count = wp_count_posts( 'post' );
+
+		if ( empty( $post_count->publish ) ) {
+			$warnings[] = __( 'No published posts found — add some posts to populate the Posts section.', 'elementor' );
+		}
+
+		return $warnings;
+	}
+
+	// -------------------------------------------------------------------------
+	// Header / intro helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Build the common header lines: site name + blockquote intro.
+	 *
+	 * @param array{intro?: string} $overrides
+	 * @param int[]                 $excluded_post_ids Posts to leave out.
+	 * @return string[]
+	 */
+	private function build_header( array $overrides, array $excluded_post_ids = [] ): array {
+		$lines   = [];
+		$lines[] = '# ' . get_bloginfo( 'name' );
+		$lines[] = '';
+
+		$intro = isset( $overrides['intro'] ) && '' !== trim( (string) $overrides['intro'] )
+			? $this->sanitizer->sanitize( trim( (string) $overrides['intro'] ) )
+			: $this->generate_intro( $excluded_post_ids );
+
+		if ( '' !== $intro ) {
+			foreach ( explode( "\n", $intro ) as $intro_line ) {
+				$lines[] = '> ' . $intro_line;
+			}
+
+			$lines[] = '';
+		}
+
+		return $lines;
+	}
+
+	/**
+	 * Auto-generate the intro from the site tagline and/or the front-page
+	 * description/excerpt.
+	 */
+	private function generate_intro( array $excluded_post_ids = [] ): string {
+		$show_on_front = get_option( 'show_on_front' );
+
+		if ( 'page' === $show_on_front ) {
+			$page_id = (int) get_option( 'page_on_front' );
+
+			if ( $page_id && ! in_array( $page_id, $excluded_post_ids, true ) ) {
+				$candidate = $this->get_post_description( $page_id );
+
+				if ( '' !== $candidate ) {
+					return $candidate;
+				}
+			}
+		}
+
+		$tagline = get_bloginfo( 'description' );
+
+		return '' !== $tagline
+			? $this->sanitizer->sanitize( $tagline )
+			: '';
+	}
+
+	// -------------------------------------------------------------------------
+	// Content section builders
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Post types that can appear in llms.txt, in output order, keyed by slug.
+	 *
+	 * Pages first, then posts, public custom post types, and WooCommerce
+	 * products last (links only in llms-full.txt).
+	 *
+	 * @return array<string, string> Post type slug => plural label.
+	 */
+	public function get_available_post_types(): array {
+		$post_types = [
+			'page' => __( 'Pages', 'elementor' ),
+			'post' => __( 'Posts', 'elementor' ),
+		];
+
+		foreach ( $this->get_public_custom_post_types() as $cpt ) {
+			$post_types[ $cpt->name ] = $cpt->labels->name ?? $cpt->name;
+		}
+
+		if ( $this->is_woocommerce_active() ) {
+			$post_types['product'] = __( 'Products', 'elementor' );
+		}
+
+		/**
+		 * Filters the post types that can be included in llms.txt.
+		 *
+		 * @param array<string, string> $post_types Post type slug => plural label, in output order.
+		 */
+		$filtered = apply_filters( 'elementor/agents/llms_txt/post_types', $post_types );
+
+		return is_array( $filtered ) ? $filtered : $post_types;
+	}
+
+	/**
+	 * Build an ordered map of section_title => items for all eligible content.
+	 *
+	 * @param string[]|null $included_post_types Post types to include; null includes every available type.
+	 * @param bool          $apply_llms_full_limit Whether to cap each post type to the
+	 *   llms-full.txt per-type inline limit instead of MAX_POSTS_PER_TYPE.
+	 * @param int[]         $excluded_post_ids Posts to leave out.
+	 * @return array<string, array<array{id: int, title: string, url: string, description: string}>>
+	 */
+	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false, array $excluded_post_ids = [] ): array {
+		$sections = [];
+
+		foreach ( $this->get_available_post_types() as $post_type => $label ) {
+			if ( null !== $included_post_types && ! in_array( $post_type, $included_post_types, true ) ) {
+				continue;
+			}
+
+			$items = $this->get_posts_for_section(
+				$post_type,
+				array_merge( $this->get_section_order( $post_type ), [ 'post__not_in' => $excluded_post_ids ] ),
+				$this->get_posts_per_type_limit( $post_type, $apply_llms_full_limit )
+			);
+
+			if ( ! empty( $items ) ) {
+				$sections[ $label ] = $items;
+			}
+		}
+
+		return $sections;
+	}
+
+	/**
+	 * Pages follow their menu order (site hierarchy); everything else is latest first.
+	 */
+	private function get_section_order( string $post_type ): array {
+		if ( 'page' === $post_type ) {
+			return [
+				'orderby' => 'menu_order',
+				'order'   => 'ASC',
+			];
+		}
+
+		return [
+			'orderby' => 'date',
+			'order'   => 'DESC',
+		];
+	}
+
+	/**
+	 * Resolve the posts-per-type query limit for a post type.
+	 *
+	 * When not building llms-full.txt, the limit stays at MAX_POSTS_PER_TYPE
+	 * so the link-only llms.txt output is unaffected.
+	 *
+	 * @param string $post_type Post type slug.
+	 * @param bool   $apply_llms_full_limit Whether the llms-full.txt cap applies.
+	 * @return int
+	 */
+	private function get_posts_per_type_limit( string $post_type, bool $apply_llms_full_limit ): int {
+		if ( ! $apply_llms_full_limit ) {
+			return self::MAX_POSTS_PER_TYPE;
+		}
+
+		$limit = apply_filters( 'elementor/agents/llms_full/posts_per_type', self::LLMS_FULL_POSTS_PER_TYPE, $post_type );
+		$limit = is_numeric( $limit ) ? (int) $limit : self::LLMS_FULL_POSTS_PER_TYPE;
+
+		return max( 1, min( $limit, self::MAX_POSTS_PER_TYPE ) );
+	}
+
+	/**
+	 * Fetch published, indexable, public posts of a given type.
+	 *
+	 * @param string $post_type Post type slug.
+	 * @param array  $query_overrides Additional WP_Query args.
+	 * @param int    $posts_per_type Maximum number of posts to fetch.
+	 * @return array<array{id: int, title: string, url: string, description: string}>
+	 */
+	private function get_posts_for_section( string $post_type, array $query_overrides = [], int $posts_per_type = self::MAX_POSTS_PER_TYPE ): array {
+		$args = array_merge(
+			[
+				'post_type'              => $post_type,
+				'post_status'            => 'publish',
+				'posts_per_page'         => $posts_per_type,
+				'orderby'                => 'date',
+				'order'                  => 'DESC',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => true,
+				'update_post_term_cache' => false,
+				'has_password'           => false,
+			],
+			$query_overrides
+		);
+
+		$query  = new \WP_Query( $args );
+		$result = [];
+
+		foreach ( $query->posts as $post ) {
+			if ( ! ( $post instanceof \WP_Post ) ) {
+				continue;
+			}
+
+			// Skip password-protected content (belt-and-suspenders — has_password handles most).
+			if ( post_password_required( $post ) ) {
+				continue;
+			}
+
+			// Respect noindex signals from SEO plugins.
+			if ( Post_Noindex::is_noindex( $post->ID ) ) {
+				continue;
+			}
+
+			$permalink = get_permalink( $post->ID );
+
+			if ( ! is_string( $permalink ) || '' === $permalink ) {
+				continue;
+			}
+
+			$result[] = [
+				'id'          => $post->ID,
+				'title'       => Post_Title::to_plain_text( get_the_title( $post->ID ) ),
+				'url'         => $permalink,
+				'description' => $this->get_post_description( $post->ID ),
+			];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Return all public, non-built-in, non-excluded CPTs except WooCommerce
+	 * products (handled separately) and page/post (handled above).
+	 *
+	 * @return \WP_Post_Type[]
+	 */
+	private function get_public_custom_post_types(): array {
+		$excluded = array_merge( self::EXCLUDED_POST_TYPES, [ 'page', 'post', 'product' ] );
+
+		$all = get_post_types(
+			[
+				'public'   => true,
+				'_builtin' => false,
+			],
+			'objects'
+		);
+
+		return array_filter(
+			$all,
+			static fn( \WP_Post_Type $pt ) => ! in_array( $pt->name, $excluded, true )
+		);
+	}
+
+	// -------------------------------------------------------------------------
+	// Description / content helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Derive a short description for a post.
+	 *
+	 * Priority: SEO plugin metadesc → manual excerpt → (nothing).
+	 * The result is always run through the prompt-injection sanitizer.
+	 */
+	private function get_post_description( int $post_id ): string {
+		$candidates = [
+			get_post_meta( $post_id, '_yoast_wpseo_metadesc', true ),
+			get_post_meta( $post_id, 'rank_math_description', true ),
+			get_post_meta( $post_id, '_aioseo_description', true ),
+			get_post_meta( $post_id, '_seopress_titles_desc', true ),
+			get_post_field( 'post_excerpt', $post_id ),
+		];
+
+		foreach ( $candidates as $candidate ) {
+			if ( is_string( $candidate ) && '' !== trim( $candidate ) ) {
+				return $this->sanitizer->sanitize( $candidate );
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get the inline content for a post to embed in llms-full.txt.
+	 *
+	 * For Elementor documents: uses the Markdown_Renderer.
+	 * For non-Elementor posts: falls back to the post excerpt then stripped content.
+	 *
+	 * @param int $post_id
+	 * @return string Markdown-formatted content, or '' if unavailable.
+	 */
+	/**
+	 * Get the inline content for a post, serving from the post-meta cache when
+	 * available and storing a fresh result there on a miss.
+	 *
+	 * Cache storage by content type:
+	 *   - Posts, pages, singles → post meta (cleared on save/trash via Module hooks)
+	 *   - Assembled llms.txt / llms-full.txt → transients (managed by Llms_Cache)
+	 *
+	 * @param int $post_id
+	 * @return string Markdown-formatted content, or '' if unavailable.
+	 */
+	private function get_inline_content( int $post_id ): string {
+		$cached = $this->read_inline_meta_cache( $post_id );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$content = $this->generate_inline_content( $post_id );
+
+		if ( '' !== $content ) {
+			$this->write_inline_meta_cache( $post_id, $content );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Delete the cached inline content for a single post.
+	 * Called by Module when the post is saved, trashed, or permanently deleted.
+	 *
+	 * @param int $post_id
+	 */
+	public function clear_post_cache( int $post_id ): void {
+		delete_post_meta( $post_id, self::INLINE_META_KEY );
+	}
+
+	/**
+	 * Sanitize admin-editable override text before persistence.
+	 */
+	public function prepare_override_text( string $text ): string {
+		return $this->sanitizer->sanitize( sanitize_textarea_field( $text ) );
+	}
+
+	/**
+	 * Sanitize admin-edited markdown without altering its structure: indentation,
+	 * hard line breaks, headings and percent-encoded URLs must survive a save.
+	 */
+	public function prepare_markdown_override_text( string $text ): string {
+		$text = wp_check_invalid_utf8( $text, true );
+		$text = str_replace( [ "\r\n", "\r" ], "\n", $text );
+		$text = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text ) ?? $text;
+
+		return rtrim( $text );
+	}
+
+	/**
+	 * Delete the cached inline content for every post at once.
+	 * Used when a global invalidation is needed (e.g. theme switch, plugin activation).
+	 */
+	public function clear_all_post_caches(): void {
+		$generation = $this->get_inline_cache_generation() + 1;
+		update_option( self::INLINE_CACHE_GEN_OPTION, $generation, false );
+	}
+
+	// -------------------------------------------------------------------------
+	// Inline content — generation
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Generate inline content for a single post using the Content_Extractor chain.
+	 *
+	 * Handles Elementor, Gutenberg, classic, and third-party builder content.
+	 * No caching — callers handle cache read/write.
+	 *
+	 * @param int $post_id
+	 * @return string Markdown-formatted content including frontmatter, or '' if unavailable.
+	 */
+	private function generate_inline_content( int $post_id ): string {
+		$post = get_post( $post_id );
+
+		if ( ! ( $post instanceof \WP_Post ) ) {
+			return '';
+		}
+
+		$extractor   = new Content_Extractor();
+		$extraction  = $extractor->extract_with_id( $post );
+
+		if ( '' === $extraction['body'] ) {
+			return '';
+		}
+
+		$frontmatter = ( new Frontmatter_Builder() )->build( $post, $extraction['id'] );
+		$body        = $extraction['body'];
+
+		return $frontmatter . "\n\n" . $body;
+	}
+
+	// -------------------------------------------------------------------------
+	// Inline content — post-meta cache primitives
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @return string|false Cached content, or false on miss / version mismatch.
+	 */
+	private function read_inline_meta_cache( int $post_id ) {
+		$meta = get_post_meta( $post_id, self::INLINE_META_KEY, true );
+
+		if ( ! is_array( $meta ) ) {
+			return false;
+		}
+
+		if ( ( $meta['v'] ?? 0 ) !== self::INLINE_CACHE_VERSION ) {
+			return false;
+		}
+
+		if ( (int) ( $meta['gen'] ?? 0 ) !== $this->get_inline_cache_generation() ) {
+			return false;
+		}
+
+		$content = $meta['content'] ?? false;
+
+		return is_string( $content ) ? $content : false;
+	}
+
+	private function write_inline_meta_cache( int $post_id, string $content ): void {
+		update_post_meta( $post_id, self::INLINE_META_KEY, [
+			'v'       => self::INLINE_CACHE_VERSION,
+			'gen'     => $this->get_inline_cache_generation(),
+			'content' => $content,
+		] );
+	}
+
+	// -------------------------------------------------------------------------
+	// Formatting helpers
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @param string $output Current llms-full.txt body.
+	 * @param string $append Bytes about to be appended.
+	 * @return bool
+	 */
+	private function llms_full_would_exceed_cap( string $output, string $append ): bool {
+		return strlen( $output ) + strlen( $append ) > self::LLMS_FULL_HARD_CAP;
+	}
+
+	/**
+	 * Format a single link line per the llmstxt.org spec.
+	 *
+	 * @param array{title: string, url: string, description: string} $item
+	 */
+	private function format_link_line( array $item ): string {
+		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url_raw( $item['url'] ) . ')';
+
+		if ( '' !== $item['description'] ) {
+			$line .= ': ' . $item['description'];
+		}
+
+		return $line;
+	}
+
+	/**
+	 * @return string[] Empty when the API is not advertised.
+	 */
+	private function get_api_section_lines(): array {
+		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		if ( ! $module instanceof Module ) {
+			return [];
+		}
+
+		$component = $module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec || ! $component->is_publishable() ) {
+			return [];
+		}
+
+		return [
+			'## ' . self::API_SECTION_TITLE,
+			'',
+			$this->format_link_line( [
+				'title'       => 'OpenAPI',
+				'url'         => trailingslashit( home_url() ) . 'openapi.json',
+				'description' => 'OpenAPI 3.0.3 specification for the WordPress REST API',
+			] ),
+			'',
+		];
+	}
+
+	/**
+	 * @return string[] Empty when the MCP server is not advertised.
+	 */
+	private function get_mcp_section_lines(): array {
+		if ( ! apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
+			return [];
+		}
+
+		return [
+			'## ' . self::MCP_SECTION_TITLE,
+			'',
+			$this->format_link_line( [
+				'title'       => Mcp_Discovery::SERVER_TITLE,
+				'url'         => Mcp_Discovery::get_server_url(),
+				'description' => Mcp_Discovery::SERVER_DESCRIPTION,
+			] ),
+			'',
+		];
+	}
+
+	/**
+	 * Append the user-editable "Optional" section if supplied.
+	 *
+	 * @param string[]                 $lines Passed by reference.
+	 * @param array{optional?: string} $overrides Override values.
+	 */
+	private function append_optional_section( array &$lines, array $overrides ): void {
+		$optional = $this->get_sanitized_optional( $overrides );
+
+		if ( '' === $optional ) {
+			return;
+		}
+
+		$lines[] = '## Optional';
+		$lines[] = '';
+		$lines[] = $optional;
+		$lines[] = '';
+	}
+
+	/**
+	 * Sanitize the user-editable "Optional" override for rendering.
+	 *
+	 * Shared by generate_llms_txt() and generate_llms_full_txt() so both
+	 * files neutralize prompt-injection patterns the same way.
+	 *
+	 * @param array{optional?: string} $overrides Override values.
+	 */
+	private function get_sanitized_optional( array $overrides ): string {
+		$optional = trim( $overrides['optional'] ?? '' );
+
+		return '' !== $optional
+			? $this->sanitizer->sanitize( $optional )
+			: '';
+	}
+
+	private function escape_markdown_link_text( string $text ): string {
+		return strtr( $text, [
+			'\\' => '\\\\',
+			'['  => '\\[',
+			']'  => '\\]',
+		] );
+	}
+
+	private function get_inline_cache_generation(): int {
+		return max( 1, (int) get_option( self::INLINE_CACHE_GEN_OPTION, 1 ) );
+	}
+
+	// -------------------------------------------------------------------------
+	// Plugin detection
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @return bool
+	 */
+	private function is_woocommerce_active(): bool {
+		return class_exists( 'WooCommerce' );
+	}
+}

@@ -8,6 +8,7 @@ use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -80,21 +81,31 @@ class Elementor_One_Menu_Manager {
 	 * TODO: This can be removed in v4.1.0 [ED-22806]
 	 */
 	public function register_pro_submenus(): void {
-		if ( ! $this->is_pro_module_enabled &&
-			Utils::has_pro() &&
-			class_exists( '\ElementorPro\License\API' ) &&
-			\ElementorPro\License\API::is_license_active()
-		) {
-			add_submenu_page(
-				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-				esc_html__( 'Theme Builder', 'elementor' ),
-				esc_html__( 'Theme Builder', 'elementor' ),
-				Menu_Config::CAPABILITY_EDIT_POSTS,
-				'elementor-theme-builder',
-				'',
-				70
-			);
+		if ( $this->is_pro_module_enabled ) {
+			return;
+		}
 
+		$has_active_pro = Utils::has_pro() &&
+			class_exists( '\ElementorPro\License\API' ) &&
+			\ElementorPro\License\API::is_license_active();
+
+		$is_free = ! Utils::has_pro();
+
+		if ( ! $is_free && ! $has_active_pro ) {
+			return;
+		}
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			Menu_Config::CAPABILITY_EDIT_POSTS,
+			'elementor-theme-builder',
+			'',
+			70
+		);
+
+		if ( $has_active_pro ) {
 			add_submenu_page(
 				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 				esc_html__( 'Submissions', 'elementor' ),
@@ -164,6 +175,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function fix_theme_builder_submenu_url( $menu ) {
+		if ( Editor_One_Module::is_admin_navigation_active() && current_user_can( Menu_Config::CAPABILITY_MANAGE_OPTIONS ) ) {
+			return $menu;
+		}
+
 		global $submenu;
 
 		$menu_slugs = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ];
@@ -243,10 +258,12 @@ class Elementor_One_Menu_Manager {
 		$capability = $item->get_capability();
 		$position = $item->get_position();
 
+		$menu_label = method_exists( $item, 'get_wp_menu_label' ) ? $item->get_wp_menu_label() : $item->get_label();
+
 		return add_submenu_page(
 			$parent_slug,
 			$page_title,
-			$item->get_label(),
+			$menu_label,
 			$capability,
 			$item_slug,
 			$callback,
@@ -299,6 +316,10 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::EDITOR_MENU_SLUG,
 			'elementor-theme-builder',
 			'e-form-submissions',
+			'elementor-mcp',
+			'elementor-agents-ready',
+			'elementor-license',
+			'elementor-connect-account',
 		];
 
 		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( $protected_wp_menu_slugs ) {
@@ -326,6 +347,10 @@ class Elementor_One_Menu_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		if ( Editor_One_Module::is_admin_navigation_active() ) {
+			return;
+		}
 
 		$config = [
 			'editorFlyout' => $this->menu_data_provider->get_third_level_data(

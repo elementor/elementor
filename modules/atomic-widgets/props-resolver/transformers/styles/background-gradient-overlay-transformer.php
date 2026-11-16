@@ -11,13 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
-		$type = $value['type'];
-		$angle = $value['angle'];
-		$positions = $value['positions'];
-		$stops = $value['stops'];
+		$type = $value['type'] ?? null;
+		$angle = $value['angle'] ?? null;
+		$positions = $value['positions'] ?? null;
+		$stops = $value['stops'] ?? '';
 
 		if ( 'radial' === $type ) {
 			return sprintf( 'radial-gradient(circle at %s, %s)', $positions, $stops );
+		}
+
+		if ( ! is_numeric( $angle ) ) {
+			return sprintf( 'linear-gradient(%s)', $stops );
 		}
 
 		return sprintf( 'linear-gradient(%ddeg, %s)', $angle, $stops );

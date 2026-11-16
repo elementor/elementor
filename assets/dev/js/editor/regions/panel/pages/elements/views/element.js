@@ -1,4 +1,5 @@
 import ContextMenu from 'elementor-behaviors/context-menu';
+import { trackAddElement } from '../utils/track-add-element';
 
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
@@ -6,7 +7,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() && ! this.isBirthdayEasterEgg() ) {
+		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() ) {
 			className += ' elementor-element--promotion';
 		}
 
@@ -20,7 +21,7 @@ module.exports = Marionette.ItemView.extend( {
 	events() {
 		const events = {};
 
-		if ( ! this.isEditable() && ! this.isBirthdayEasterEgg() ) {
+		if ( ! this.isEditable() ) {
 			events.mousedown = 'onMouseDown';
 		}
 
@@ -58,22 +59,8 @@ module.exports = Marionette.ItemView.extend( {
 		return !! this.model.get( 'promotionType' );
 	},
 
-	isBirthdayEasterEgg() {
-		return !! this.model.get( 'birthdayEasterEgg' );
-	},
-
 	onRender() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
-
-		if ( this.isBirthdayEasterEgg() ) {
-			this.ui.element.on( 'click', () => this.openBirthdayEasterEgg() );
-			this.bindBirthdayEasterEggDrag();
-			return;
-		}
-
-		if ( ! this.isEditable() ) {
+		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
 		}
 
@@ -95,31 +82,6 @@ module.exports = Marionette.ItemView.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
-	},
-
-	bindBirthdayEasterEggDrag() {
-		this.ui.element.html5Draggable( {
-			onDragStart: () => {
-				elementor.channels.editor.reply( 'element:dragged', null );
-
-				elementor.channels.panelElements
-					.reply( 'element:selected', this )
-					.trigger( 'element:drag:start' );
-			},
-
-			onDragEnd: () => {
-				elementor.channels.panelElements.trigger( 'element:drag:end' );
-				this.openBirthdayEasterEgg();
-			},
-
-			groups: [ 'elementor-element' ],
-		} );
-	},
-
-	openBirthdayEasterEgg() {
-		document.dispatchEvent( new CustomEvent( 'birthday-easter-egg:open', {
-			detail: { target: this.el },
-		} ) );
 	},
 
 	onMouseDown( event ) {
@@ -227,7 +189,7 @@ module.exports = Marionette.ItemView.extend( {
 
 		const modelData = this.model.toJSON();
 
-		$e.run( 'preview/drop', {
+		const dropResult = $e.run( 'preview/drop', {
 			container,
 			options: {
 				...options,
@@ -236,17 +198,8 @@ module.exports = Marionette.ItemView.extend( {
 			model: modelData,
 		} );
 
-		if ( elementorCommon?.eventsManager?.dispatchEvent ) {
-			const elType = modelData?.elType ?? '';
-			const widgetType = modelData?.widgetType ?? '';
-			const elementName = 'widget' === elType ? widgetType : elType;
-
-			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
-				location: 'editor_panel',
-				element_name: elementName,
-				element_type: elType,
-				widget_type: widgetType,
-			} );
+		if ( dropResult ) {
+			trackAddElement( modelData );
 		}
 	},
 
