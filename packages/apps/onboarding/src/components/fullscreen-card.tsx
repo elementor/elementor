@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Link, Paper, styled } from '@elementor/ui';
+import { Box, Button, Link, type LinkProps, Paper, styled } from '@elementor/ui';
 
 import { getLoginVisualConfig } from '../steps/step-visuals';
 
@@ -101,7 +101,7 @@ export const SocialIconWrapper = styled( Paper )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const TextButton = styled( Link )( ( { theme } ) => ( {
+export const TextButton: React.ComponentType< LinkProps > = styled( Link )( ( { theme } ) => ( {
 	textTransform: 'none',
 	fontSize: theme.typography.pxToRem( 13 ),
 	fontWeight: 500,
