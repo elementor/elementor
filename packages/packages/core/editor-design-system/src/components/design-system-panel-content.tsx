@@ -198,7 +198,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								onExposeCloseAttempt={ ( fn ) => {
 									classesCloseAttemptRef.current = fn;
 								} }
-								isActive={ currentTab === 'classes' }
 							/>
 						</Box>
 					</Stack>

@@ -125,15 +125,6 @@ export async function openClassManager( page: Page, editor: EditorPage, divBlock
 	if ( await saveAndContinueButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
 		await saveAndContinueButton.click();
 	}
-
-	await dismissClassManagerIntro( page );
-}
-
-export async function dismissClassManagerIntro( page: Page ): Promise<void> {
-	const introDialog = page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
-	const gotItButton = introDialog.getByRole( 'button', { name: 'Got it introduction' } );
-
-	await gotItButton.click( { timeout: 2000, force: true } ).catch( () => {} );
 }
 
 export async function saveAndCloseClassManager( page: Page ): Promise<void> {

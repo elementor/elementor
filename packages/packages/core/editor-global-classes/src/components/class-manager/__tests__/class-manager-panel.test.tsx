@@ -42,7 +42,6 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-documents' );
-jest.mock( '../class-manager-introduction' );
 jest.mock( '../start-sync-to-v3-modal' );
 
 jest.mock( '../../../api' );

@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
-import { deleteClassFromClassManager, dismissClassManagerIntro, getGlobalClasses, saveAndCloseClassManager } from './utils';
+import { deleteClassFromClassManager, getGlobalClasses, saveAndCloseClassManager } from './utils';
 
 const BACKGROUND_COLOR = '#ff0000';
 const BACKGROUND_COLOR_RGB = 'rgb(255, 0, 0)';
@@ -29,7 +29,6 @@ async function openClassManagerFromStyleTab( page: Page ): Promise< void > {
 	if ( await saveAndContinueButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
 		await saveAndContinueButton.click();
 	}
-	await dismissClassManagerIntro( page );
 }
 
 async function assertEditingPanelRestoredAfterClose(

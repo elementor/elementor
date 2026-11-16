@@ -1,8 +1,6 @@
 import { expect, type Download, type Locator, type Page } from '@playwright/test';
 import * as path from 'path';
 import EditorPage from '../../../../pages/editor-page';
-import { dismissClassManagerIntro } from '../global-classes/utils';
-
 export type ConflictStrategy = 'keep' | 'replace';
 
 export default class DesignSystemPage {
@@ -131,16 +129,7 @@ export default class DesignSystemPage {
 		}
 
 		await this.dismissUnsavedChangesDialogIfVisible();
-		await this.dismissClassManagerIntroIfVisible();
 		await this.panelHeading.waitFor( { state: 'visible' } );
-	}
-
-	async dismissClassManagerIntroIfVisible(): Promise< void > {
-		const introDialog = this.page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
-
-		if ( await introDialog.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
-			await dismissClassManagerIntro( this.page );
-		}
 	}
 
 	async closePanel(): Promise< void > {
@@ -155,7 +144,6 @@ export default class DesignSystemPage {
 
 	async switchToClassesTab(): Promise< void > {
 		await this.classesTab.click();
-		await dismissClassManagerIntro( this.page );
 		await expect( this.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
 	}
 
@@ -164,7 +152,6 @@ export default class DesignSystemPage {
 		await editor.v4Panel.openTab( 'style' );
 		await this.page.getByRole( 'button', { name: 'Class Manager' } ).click();
 		await this.dismissUnsavedChangesDialogIfVisible();
-		await dismissClassManagerIntro( this.page );
 		await this.panelHeading.waitFor( { state: 'visible' } );
 	}
 
