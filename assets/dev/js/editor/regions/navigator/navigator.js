@@ -227,6 +227,13 @@ export default class extends BaseRegion {
 		}
 	}
 
+	getDockedFloatingPanelWidth() {
+		const raw = elementorCommon.elements.$body.css( '--e-editor-docked-panel-width' );
+		const parsed = parseFloat( raw );
+
+		return Number.isFinite( parsed ) ? parsed : 0;
+	}
+
 	onDrag( event, ui ) {
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
@@ -244,10 +251,12 @@ export default class extends BaseRegion {
 			ui.position.top = 0;
 		}
 
-		const isOutOfLeft = 0 > ui.position.left,
-			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
+		const dockedFloatingWidth = this.getDockedFloatingPanelWidth();
+		const isRtl = elementorCommon.config.isRTL;
+		const isOutOfLeft = ui.position.left < ( isRtl ? dockedFloatingWidth : 0 );
+		const isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth - ( isRtl ? 0 : dockedFloatingWidth );
 
-		if ( elementorCommon.config.isRTL ) {
+		if ( isRtl ) {
 			if ( isOutOfRight ) {
 				ui.position.left = innerWidth - this.el.offsetWidth;
 			}
@@ -255,7 +264,7 @@ export default class extends BaseRegion {
 			ui.position.left = 0;
 		}
 
-		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementorCommon.config.isRTL ? isOutOfLeft : isOutOfRight );
+		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', isRtl ? isOutOfLeft : isOutOfRight );
 	}
 
 	onDragStop( event, ui ) {
@@ -265,9 +274,13 @@ export default class extends BaseRegion {
 
 		this.saveSize();
 
+		const dockedFloatingWidth = this.getDockedFloatingPanelWidth();
+		const isRtl = elementorCommon.config.isRTL;
 		const elementRight = ui.position.left + this.el.offsetWidth;
+		const crossedInlineStart = ui.position.left < ( isRtl ? dockedFloatingWidth : 0 );
+		const crossedInlineEnd = elementRight > innerWidth - ( isRtl ? 0 : dockedFloatingWidth );
 
-		if ( 0 > ui.position.left || elementRight > innerWidth ) {
+		if ( crossedInlineStart || crossedInlineEnd ) {
 			this.dock();
 		}
 
