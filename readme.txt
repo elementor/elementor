@@ -46,7 +46,7 @@ Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor
 - **CSS transform**: Use CSS Transform to rotate, scale, and skew elements, adding dynamic styling to your site.  
 - **Entrance animations**:  Add entrance animations to elements to create engaging and interactive user experiences.  
 - **[Revision history](https://go.elementor.com/wp-repo-description-tab-revision-history)**: Track and revert to previous versions of your designs at any point in the creative process.  
-- **[Developer-friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Extensive documentation, API, developer tools, and custom code areas, let developers extendElementor and build custom solutions.  
+- **[Developer-friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Extensive documentation, API, developer tools, and custom code areas, let developers extend Elementor and build custom solutions.  
 - **[Floating buttons](https://go.elementor.com/wp-repo-description-tab-floating-buttons)**: Add customizable, floating action buttons that stay in view as users scroll.  
 - **Components [Pro]**: Reuse the same building blocks across pages and sites, and update them everywhere they appear, with controlled content editing, so collaborators and clients  update only exposed content properties.  
 - **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site: headers, footers, posts, and archives,for full control over appearance.  
@@ -235,9 +235,9 @@ To improve the user experience, Elementor may use the following 3rd party servic
 
 **[Ally](http://go.elementor.com/editor-acc-wp-repo)**: Improves website usability for people with disabilities. Ally scans, detects, and remediates key accessibility violations, and works on all WordPress and Elementor websites.
 
-**[Manage](https://go.elementor.com/wp-repo-description-tab-elementor-manage)**: Centralized dashboard to monitor, optimize, and maintain multiple WordPres sites without switching between individual site admins.
+**[Manage](https://go.elementor.com/wp-repo-description-tab-elementor-manage)**: Centralized dashboard to monitor, optimize, and maintain multiple WordPress sites without switching between individual site admins.
 
-**[Cookiez](https://go.elementor.com/wp-repo-description-tab-elementor-cookiez)**: GDPR and CCPA compliant cookie banner with automatic cooking scanning, script blocking and consent logging.
+**[Cookiez](https://go.elementor.com/wp-repo-description-tab-elementor-cookiez)**: GDPR and CCPA compliant cookie banner with automatic cookie scanning, script blocking and consent logging.
 
 **[Activity Log](https://go.elementor.com/wp-repo-description-tab-elementor-activity-log)**: Records every change on your WordPress site, who did it, when, and where the request came from (WP Admin, REST API, WP-CLI, WP-Cron, or the WP Abilities API), for a full audit trail).
 
