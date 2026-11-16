@@ -107,6 +107,9 @@ describe( 'useExportKit Hook', () => {
 							source: 'file',
 						},
 						include: mockIncludes,
+						customization: {
+							components: false,
+						},
 					} ),
 				},
 			);
