@@ -33,7 +33,12 @@ class Heartbeat {
 	 */
 	public function heartbeat_received( $response, $data ) {
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
-			$post_id     = $data['elementor_post_lock']['post_ID'];
+			$post_id = $data['elementor_post_lock']['post_ID'];
+
+			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+				return $response;
+			}
+
 			$locked_user = Plugin::$instance->editor->get_locked_user( $post_id );
 
 			if ( ! $locked_user || ! empty( $data['elementor_force_post_lock'] ) ) {
@@ -86,6 +91,10 @@ class Heartbeat {
 	 */
 	public function refresh_nonces( $response, $data ) {
 		if ( isset( $data['elementor_post_lock']['post_ID'] ) ) {
+			if ( ! current_user_can( 'edit_post', $data['elementor_post_lock']['post_ID'] ) ) {
+				return $response;
+			}
+
 			/** @var Core\Common\Modules\Ajax\Module $ajax */
 			$ajax = Plugin::$instance->common->get_component( 'ajax' );
 
