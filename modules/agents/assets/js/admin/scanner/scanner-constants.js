@@ -176,7 +176,7 @@ export const SCORE_TIER_LOW = 'low';
 export const SCORE_TIER_MID = 'mid';
 export const SCORE_TIER_HIGH = 'high';
 export const SCORE_TIER_LOW_MAX = 30;
-export const SCORE_TIER_HIGH_MIN = 80;
+export const SCORE_TIER_HIGH_MIN = 81;
 
 const SCORE_RING_GRADIENT_VECTOR = { x1: -28, y1: -35.5, x2: 95.5, y2: 56 };
 
@@ -280,7 +280,7 @@ export const VISUALLY_HIDDEN_SX = {
 	whiteSpace: 'nowrap',
 };
 
-export const SCAN_SOURCE_URL = 'https://ora.ai/docs';
+export const SCAN_SOURCE_URL = 'https://ora.ai/';
 
 export const sectionHeadingSx = {
 	fontSize: '15px',

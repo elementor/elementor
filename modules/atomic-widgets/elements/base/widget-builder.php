@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 class Widget_Builder {
+	use Has_Template_Part;
+
 	protected $widget_type;
 	protected $settings = [];
 	protected $is_locked = false;
@@ -50,6 +52,6 @@ class Widget_Builder {
 			$widget_data['meta'] = $this->meta;
 		}
 
-		return $widget_data;
+		return $this->add_local_style( $this->add_part( $widget_data ) );
 	}
 }

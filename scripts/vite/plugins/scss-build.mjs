@@ -31,6 +31,7 @@ const SASS_TARGETS = [
 	{ cwd: 'core/editor/loader/scss', src: '*.scss', dest: 'assets/css' },
 	{ cwd: 'modules/container-converter/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/container-converter' },
 	{ cwd: 'modules/design-system-sync/assets/scss', src: 'design-system-sync.scss', dest: 'assets/css/modules/design-system-sync' },
+	{ cwd: 'modules/guided-tours/assets/scss', src: 'guided-tours.scss', dest: 'assets/css/modules/guided-tours' },
 	{ cwd: 'modules/notes/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/notes' },
 	{ cwd: 'modules/announcements/assets/scss', src: 'announcements.scss', dest: 'assets/css/modules/announcements' },
 	{ cwd: 'modules/styleguide/assets/scss', src: 'editor.scss', dest: 'assets/css/modules/styleguide' },

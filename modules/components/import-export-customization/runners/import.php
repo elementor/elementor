@@ -7,6 +7,7 @@ use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\Utils\Component_Title_Duplicator;
+use Elementor\Modules\Components\Utils\Regenerate_Component_Element_Ids;
 use Elementor\Modules\Components\Utils\Remap_Override_Schema_Source;
 use Elementor\Modules\Components\Utils\Sort_Components_By_Dependencies;
 use Elementor\Plugin;
@@ -18,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Import extends Import_Runner_Base {
 	const IMPORT_STATUS_SUCCEEDED = 'succeed';
 	const IMPORT_STATUS_FAILED = 'failed';
+
+	private array $imported_overridable_props = [];
 
 	public static function get_name(): string {
 		return 'components';
@@ -47,6 +50,7 @@ class Import extends Import_Runner_Base {
 		];
 
 		Component_Title_Duplicator::reset();
+		$this->imported_overridable_props = [];
 
 		try {
 			foreach ( Sort_Components_By_Dependencies::apply( $manifest, $dependencies ) as $source_id => $summary ) {
@@ -79,6 +83,9 @@ class Import extends Import_Runner_Base {
 		if ( empty( $post_data ) ) {
 			throw new \Exception( esc_html__( 'Component file is missing or invalid.', 'elementor' ) );
 		}
+
+		$post_data = Regenerate_Component_Element_Ids::apply( $post_data, $this->imported_overridable_props );
+		$rewritten_props = $post_data['metadata'][ Component_Document::OVERRIDABLE_PROPS_META_KEY ]['props'] ?? [];
 
 		$post_data['metadata'] = $this->remap_overridable_props_schema_source( $post_data['metadata'] ?? [], $imported_component_ids );
 
@@ -122,6 +129,8 @@ class Import extends Import_Runner_Base {
 		$new_post_id = $document->get_main_id();
 
 		$this->set_session_post_meta( $new_post_id, $session_id );
+
+		$this->imported_overridable_props[ $source_id ] = is_array( $rewritten_props ) ? $rewritten_props : [];
 
 		return $new_post_id;
 	}

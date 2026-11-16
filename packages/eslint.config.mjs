@@ -115,13 +115,28 @@ export default [
 							from: [ './packages/*' ],
 							message: 'Tools cannot import from Core, Libs or Tools.',
 						},
+						{
+							target: './packages/angie',
+							from: [ './packages/tools' ],
+							message: 'Angie cannot import from Tools.',
+						},
+						{
+							target: './packages/core',
+							from: [ './packages/angie' ],
+							message: 'Core cannot import from Angie.',
+						},
+						{
+							target: './packages/libs',
+							from: [ './packages/angie' ],
+							message: 'Libs cannot import from Angie.',
+						},
 					],
 				},
 			],
 		},
 	},
 	{
-		files: [ '**/packages/@(core|libs)/**/*.[tj]s?(x)' ],
+		files: [ '**/packages/@(core|libs|angie)/**/*.[tj]s?(x)' ],
 		rules: {
 			'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor' } ],
 		},
@@ -139,7 +154,7 @@ export default [
 			'import/no-unresolved': [
 				'error',
 				{
-					ignore: [ '^test-utils$' ],
+					ignore: [ '^test-utils$', '^@modelcontextprotocol/sdk/' ],
 				},
 			],
 			'testing-library/no-test-id-queries': 'error',

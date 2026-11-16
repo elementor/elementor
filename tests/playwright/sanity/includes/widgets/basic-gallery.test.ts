@@ -5,7 +5,7 @@ import EditorPage from '../../../pages/editor-page';
 import Breakpoints from '../../../assets/breakpoints';
 import { viewportSize } from '../../../enums/viewport-sizes';
 
-test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
+test( 'Basic Gallery default', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
@@ -24,7 +24,7 @@ test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 		.toMatchSnapshot( 'gallery.jpeg' );
 } );
 
-test( 'Basic Gallery Lightbox', async ( { page, apiRequests }, testInfo ) => {
+test( 'Basic Gallery lightbox open', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
@@ -44,7 +44,7 @@ test( 'Basic Gallery Lightbox', async ( { page, apiRequests }, testInfo ) => {
 	await assertLightboxStyling( editor, editor.page, '-frontend' );
 } );
 
-test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequests }, testInfo ) => {
+test( 'Basic Gallery lightbox breakpoints', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();

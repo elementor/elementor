@@ -1,0 +1,1 @@
+Turns on Elementor Agent Ready using the same activation flow as the WordPress admin UI. Available modules are enabled; modules blocked by availability checks (for example an existing llms.txt from an SEO plugin) are skipped and listed with a reason. Requires administrator permission. Idempotent when Agent Ready is already activated.

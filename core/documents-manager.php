@@ -526,6 +526,24 @@ class Documents_Manager {
 			$status = $request['status'];
 		}
 
+		/**
+		 * Documents ajax save conflict.
+		 *
+		 * Filters whether the save must be rejected before anything is written, for example
+		 * because the document was changed elsewhere after the editor loaded it. Runs before an
+		 * autosave is created, so a rejected save leaves no revision behind.
+		 *
+		 * @param null|\WP_Error $conflict Null to allow the save, or a WP_Error to reject it.
+		 * @param Document       $document The main document the editor is saving.
+		 * @param array          $request  The save request.
+		 */
+		$conflict = apply_filters( 'elementor/documents/ajax_save/conflict', null, $document, $request );
+
+		if ( is_wp_error( $conflict ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Exception( esc_html( $conflict->get_error_message() ), \WP_Http::CONFLICT );
+		}
+
 		if ( Document::STATUS_AUTOSAVE === $status ) {
 			// If the post is a draft - save the `autosave` to the original draft.
 			// Allow a revision only if the original post is already published.

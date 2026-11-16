@@ -33,6 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+	use Has_Widget_Markers;
 
 	public static function html_tag_follows_link(): bool {
 		return true;
@@ -340,6 +341,8 @@ trait Has_Atomic_Base {
 		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
+
+		$this->add_widget_markers( $raw_data );
 
 		return $raw_data;
 	}

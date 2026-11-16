@@ -3,7 +3,7 @@ import { Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
-import { MenuList } from '../shared';
+import { MenuList, menuDividerSx } from '../shared';
 
 const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const [ openPopoverSlug, setOpenPopoverSlug ] = useState( null );
@@ -39,7 +39,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 		<MenuList isCollapsed onMouseLeave={ handleClosePopover }>
 			{ menuItems.map( ( item ) => (
 				<>
-					{ item.has_divider_before && <Divider key={ `divider-${ item.slug }` } sx={ { my: 1 } } /> }
+					{ item.has_divider_before && <Divider key={ `divider-${ item.slug }` } sx={ menuDividerSx } /> }
 					<SidebarCollapsedMenuItem
 						key={ item.slug }
 						item={ item }

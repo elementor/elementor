@@ -11,14 +11,16 @@ const HeaderSection = ( props ) => {
 			sx={ {
 				display: 'flex',
 				flexDirection: 'row',
-				justifyContent: 'space-between',
+				justifyContent: props.hasInAppTitle ? 'space-between' : 'flex-end',
 				alignItems: 'center',
-				pt: 2.5,
+				...( props.hasInAppTitle && { pt: 2.5 } ),
 			} }
 		>
-			<Typography variant="h5" component="h1">
-				{ __( 'Quick Start', 'elementor' ) }
-			</Typography>
+			{ props.hasInAppTitle && (
+				<Typography variant="h5" component="h1">
+					{ __( 'Quick Start', 'elementor' ) }
+				</Typography>
+			) }
 			<Button
 				variant="contained"
 				size="medium"
@@ -35,6 +37,7 @@ const HeaderSection = ( props ) => {
 
 HeaderSection.propTypes = {
 	editWebsiteUrl: PropTypes.string.isRequired,
+	hasInAppTitle: PropTypes.bool,
 };
 
 export default HeaderSection;

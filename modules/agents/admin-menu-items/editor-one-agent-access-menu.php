@@ -5,6 +5,7 @@ namespace Elementor\Modules\Agents\AdminMenuItems;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\Agents\Module;
+use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,6 +58,7 @@ class Editor_One_Agent_Access_Menu implements Menu_Item_Third_Level_Interface, A
 
 	public function render() {
 		echo '<div class="wrap">';
+		Admin_Page_Title::render( __( 'Agent Access', 'elementor' ) );
 		echo '<div id="' . esc_attr( Module::MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}

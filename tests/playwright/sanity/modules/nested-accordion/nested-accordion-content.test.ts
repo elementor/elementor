@@ -60,7 +60,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Nested Accordion test SVG Icon and No Icon', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion SVG Icon and No Icon with Title Icons', async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 

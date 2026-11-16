@@ -24,9 +24,23 @@ export default function FloatingPanelsHost() {
 		return Object.fromEntries( injections.map( ( inj ) => [ inj.id, inj ] ) );
 	}, [ injections ] );
 
+	const openIdSet = useMemo( () => new Set( openIds ), [ openIds ] );
+
+	const mountedIds = useMemo( () => {
+		const ids = new Set< string >( openIds );
+
+		injections.forEach( ( injection ) => {
+			if ( injection.keepMounted ) {
+				ids.add( injection.id );
+			}
+		} );
+
+		return Array.from( ids );
+	}, [ injections, openIds ] );
+
 	return (
 		<>
-			{ openIds.map( ( id ) => {
+			{ mountedIds.map( ( id ) => {
 				const declaration = declarationById[ id ];
 
 				if ( ! declaration ) {
@@ -39,7 +53,7 @@ export default function FloatingPanelsHost() {
 					<HostedPanel
 						key={ id }
 						id={ id }
-						visible={ ! isPreviewMode }
+						visible={ openIdSet.has( id ) && ! isPreviewMode }
 						onFocus={ () => dispatch( slice.actions.bringToFront( id ) ) }
 					>
 						<Component />

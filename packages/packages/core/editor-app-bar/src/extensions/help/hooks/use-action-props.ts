@@ -1,4 +1,4 @@
-import { isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
+import { hasLoadedEditorAngie, isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -22,7 +22,7 @@ const dispatchHelpClickEvent = () => {
 };
 
 export default function useActionProps() {
-	const hasAngieActive = isAngieAvailable();
+	const hasAngieActive = hasLoadedEditorAngie() || isAngieAvailable();
 
 	if ( hasAngieActive ) {
 		return {

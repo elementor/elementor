@@ -70,7 +70,7 @@ From `Editor_Loader::EXTENSIONS`:
 | Package | Module | Notes |
 |---------|--------|-------|
 | `editor-site-navigation` | `site-navigation` | Pages panel |
-| `editor-widget-creation` | `widget-creation` | Promo gated by `e_widget_creation` |
+| `editor-widget-creation` | `widget-creation` | Create widget handoff to Angie; loaded only for admins with the Angie plugin active |
 
 ## Public API
 

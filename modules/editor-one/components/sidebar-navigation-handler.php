@@ -95,7 +95,7 @@ class Sidebar_Navigation_Handler {
 		$promotion = $this->get_promotion_data();
 		$active_state = $this->get_active_menu_state( $flyout_data['items'], $level4_groups );
 
-		return [
+		$config = [
 			'menuItems' => $flyout_data['items'],
 			'level4Groups' => $level4_groups,
 			'activeMenuSlug' => $active_state['menu_slug'],
@@ -104,7 +104,15 @@ class Sidebar_Navigation_Handler {
 			'hasPro' => Utils::has_pro(),
 			'upgradeUrl' => $promotion['url'],
 			'upgradeText' => $promotion['text'],
+			'isMinimal' => false,
 		];
+
+		/**
+		 * Filters the Editor One sidebar configuration passed to the sidebar app.
+		 *
+		 * @param array $config Sidebar config. Set `isMinimal` to render only the menu items.
+		 */
+		return apply_filters( 'elementor/editor-one/sidebar/config', $config );
 	}
 
 	private function get_promotion_data(): array {

@@ -2,8 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Events;
 
+use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\Abilities\Ability_Definition;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
-use Elementor\Modules\Mcp\Abilities\List_Site_Parts_Pro_Features_Discovery_Ability;
+use Elementor\Modules\Mcp\Abilities\Manage_Form_Submissions_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Site_Parts_Pro_Features_Discovery_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
@@ -80,15 +82,19 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertSame( Mcp_Event_Dispatcher::INTERACTION_TYPE, $events[0]['interaction_type'] );
 	}
 
-	public function test_list_site_parts__does_not_fire() {
+	public function test_manage_form_submissions__fires_once_with_forms_feature_and_url() {
 		// Arrange
-		$ability = new List_Site_Parts_Pro_Features_Discovery_Ability();
+		$ability = new Manage_Form_Submissions_Pro_Features_Discovery_Ability();
 
 		// Act
-		$ability->execute_guarded( [] );
+		$ability->execute_guarded( [ 'operations' => [ [ 'action' => 'mark_read', 'submission_id' => 5 ] ] ] );
 
 		// Assert
-		$this->assertSame( [], $this->suggestion_events() );
+		$events = $this->suggestion_events();
+		$this->assertCount( 1, $events );
+		$this->assertSame( 'elementor/manage-form-submissions', $events[0]['tool_name'] );
+		$this->assertSame( Forms_Pro_Features_Discovery::PRO_FEATURE, $events[0]['pro_feature'] );
+		$this->assertSame( Forms_Pro_Features_Discovery::UPGRADE_URL, $events[0]['upgrade_url'] );
 	}
 
 	public function test_build_composition__fires_once_for_a_successful_build_with_skipped_features() {
@@ -191,12 +197,27 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'document_types', $events[0] );
 	}
 
-	public function test_execute_guarded__does_not_leak_suggestions_into_the_next_call() {
+	public function test_execute_guarded__new_call_with_its_own_pro_gate_does_not_repeat_the_suggestion_from_another_call() {
 		// Arrange
 		Variables_Pro_Features_Discovery::for_size_variables();
+		$ability = new Manage_Site_Parts_Pro_Features_Discovery_Ability();
 
 		// Act
-		( new List_Site_Parts_Pro_Features_Discovery_Ability() )->execute_guarded( [] );
+		$ability->execute_guarded( [ 'operations' => [ [ 'action' => 'create', 'type' => 'header' ] ] ] );
+
+		// Assert
+		$events = $this->suggestion_events();
+		$this->assertCount( 1, $events );
+		$this->assertSame( [ Site_Parts_Pro_Features_Discovery::PRO_FEATURE ], $events[0]['pro_features'] );
+	}
+
+	public function test_execute_guarded__new_call_without_a_pro_gate_does_not_repeat_the_suggestion_from_another_call() {
+		// Arrange
+		Variables_Pro_Features_Discovery::for_size_variables();
+		$ability = $this->make_ability_returning_a_normal_result();
+
+		// Act
+		$ability->execute_guarded( [] );
 
 		// Assert
 		$this->assertSame( [], $this->suggestion_events() );
@@ -219,6 +240,29 @@ class Test_Pro_Feature_Suggested_Event extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayNotHasKey( 'mcp_session_id', $this->suggestion_events()[0] );
+	}
+
+	private function make_ability_returning_a_normal_result(): Abstract_Ability {
+		return new class() extends Abstract_Ability {
+			protected function get_ability_id(): string {
+				return 'elementor/test-normal-result';
+			}
+
+			protected function get_definition(): Ability_Definition {
+				return new Ability_Definition(
+					'Test Normal Result',
+					'Returns a normal result without a Pro gate.',
+					'elementor',
+					[ 'type' => 'object' ],
+					[],
+					fn() => true
+				);
+			}
+
+			public function execute( $input = [] ) {
+				return [ 'status' => 'ok' ];
+			}
+		};
 	}
 
 	private function suggestion_events(): array {

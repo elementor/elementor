@@ -193,7 +193,7 @@ test.describe( 'Nested Accordion tests @nested-accordion', () => {
 		expect.soft( nestedAccordionWidth ).toEqual( containerWidth );
 	} );
 
-	test( 'Nested Accordion with inner Nested Accordion', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion with inner Nested Accordion nesting', async ( { browser, apiRequests }, testInfo ) => {
 		// Act
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
@@ -215,7 +215,7 @@ test.describe( 'Nested Accordion tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
@@ -235,7 +235,7 @@ test.describe( 'Nested Accordion tests @nested-accordion', () => {
 		} );
 	} );
 
-	test( 'Accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion accessibility on the Front End', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),

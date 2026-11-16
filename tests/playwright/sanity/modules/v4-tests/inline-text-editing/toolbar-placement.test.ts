@@ -25,7 +25,7 @@ test.describe( 'Inline editing toolbar placement @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Edit the heading-title from the canvas and check the value in the panel and in the front', async () => {
+	test( 'Edit the heading-title from the toolbar placement flow and check the value in the panel and in the front', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, containerId );

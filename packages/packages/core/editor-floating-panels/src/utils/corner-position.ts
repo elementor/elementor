@@ -134,13 +134,14 @@ export function getDragBounds(
 	size: LogicalSize,
 	viewport: { width: number; height: number },
 	sidePanelInlineSize: number,
-	appBarHeight: number
+	appBarHeight: number,
+	inlineEndDockedInset = 0
 ): DragBounds {
 	return {
 		minInlineStart: sidePanelInlineSize,
 		maxInlineStart: viewport.width - size.inlineSize,
 		minInlineEnd: 0,
-		maxInlineEnd: viewport.width - sidePanelInlineSize - size.inlineSize,
+		maxInlineEnd: viewport.width - sidePanelInlineSize - inlineEndDockedInset - size.inlineSize,
 		minBlockStart: appBarHeight,
 		maxBlockStart: viewport.height - size.blockSize,
 		minBlockEnd: 0,

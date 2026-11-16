@@ -40,6 +40,12 @@ copy_language_files( $_tests_dir );
 require_once $_tests_dir . '/includes/functions.php';
 
 tests_add_filter( 'muplugins_loaded', function () {
+	// Load MCP composer package if available
+	$mcp_runner = dirname( __DIR__ ) . '/vendor/elementor/elementor-mcp-composer/runner.php';
+	if ( file_exists( $mcp_runner ) ) {
+		require $mcp_runner;
+	}
+
 	// Manually load plugin
 	require dirname( __DIR__ ) . '/' . PLUGIN_FILE;
 } );

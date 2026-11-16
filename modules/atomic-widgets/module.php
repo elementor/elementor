@@ -37,6 +37,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon_Open\Atomic_Accordion_Item_Icon_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Items\Atomic_Menu_Items;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle\Atomic_Menu_Toggle;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Closed\Atomic_Menu_Toggle_Closed;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open\Atomic_Menu_Toggle_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -183,6 +190,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
+	const EXPERIMENT_NAV_MENU = 'e_nav_menu';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -211,6 +219,7 @@ class Module extends BaseModule {
 
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
+		$this->register_nav_menu_experiment();
 
 		$this->register_hooks();
 
@@ -279,6 +288,17 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_ACCORDION,
 			'title' => esc_html__( 'Accordion', 'elementor' ),
 			'description' => esc_html__( 'Enable the V4 Accordion element.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+	}
+
+	private function register_nav_menu_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_NAV_MENU,
+			'title' => esc_html__( 'Atomic Menu', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Menu element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -407,6 +427,16 @@ class Module extends BaseModule {
 		return $this;
 	}
 
+	private function register_menu_elements( Elements_Manager $elements_manager ) {
+		$elements_manager->register_element_type( new Atomic_Menu() );
+		$elements_manager->register_element_type( new Atomic_Menu_Items() );
+		$elements_manager->register_element_type( new Atomic_Menu_Entry() );
+		$elements_manager->register_element_type( new Atomic_Menu_Item() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Closed() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Open() );
+	}
+
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
@@ -419,6 +449,10 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 
 		$this->register_list_element( $elements_manager );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAV_MENU ) ) {
+			$this->register_menu_elements( $elements_manager );
+		}
 
 		$elements_manager->register_element_type( new Atomic_Accordion() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
@@ -724,6 +758,10 @@ class Module extends BaseModule {
 			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAV_MENU ) ) {
+			$inline_css .= Atomic_Menu::get_collapse_css();
+		}
 
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

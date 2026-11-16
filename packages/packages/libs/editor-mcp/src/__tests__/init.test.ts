@@ -31,11 +31,19 @@ jest.mock( '../utils/is-angie-available', () => ( {
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type InitModule = typeof import('../init');
 
-const loadStartMCPServer = (): InitModule[ 'startMCPServer' ] => {
+const loadInit = ( readyState: DocumentReadyState ): InitModule => {
 	jest.resetModules();
+	const readyStateSpy = jest.spyOn( document, 'readyState', 'get' ).mockReturnValue( readyState );
 
-	return ( require( '../init' ) as InitModule ).startMCPServer;
+	try {
+		return require( '../init' ) as InitModule;
+	} finally {
+		readyStateSpy.mockRestore();
+	}
 };
+
+// Loads while the document is still parsing, so the module waits for DOMContentLoaded and each test starts it.
+const loadStartMCPServer = (): InitModule[ 'startMCPServer' ] => loadInit( 'loading' ).startMCPServer;
 
 const createModelContext = (): ModelContext => ( {
 	registerTool: jest.fn(),
@@ -132,6 +140,40 @@ describe( 'startMCPServer', () => {
 		resolveRegisterTool();
 		await flushPromises();
 
+		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'starts right away when loaded after DOMContentLoaded', async () => {
+		// Arrange.
+		jest.clearAllMocks();
+
+		// Act.
+		loadInit( 'complete' );
+		await flushPromises();
+
+		// Assert.
+		expect( mockCreateAndRegisterAdapters ).toHaveBeenCalledTimes( 1 );
+		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'waits for DOMContentLoaded while the document is still loading', async () => {
+		// Arrange.
+		jest.clearAllMocks();
+		const addEventListenerSpy = jest.spyOn( document, 'addEventListener' );
+		loadInit( 'loading' );
+		const [ , onDomContentLoaded ] =
+			addEventListenerSpy.mock.calls.find( ( [ type ] ) => type === 'DOMContentLoaded' ) ?? [];
+		addEventListenerSpy.mockRestore();
+		await flushPromises();
+
+		// Assert.
+		expect( mockSignalMcpReady ).not.toHaveBeenCalled();
+
+		// Act.
+		( onDomContentLoaded as () => void )();
+		await flushPromises();
+
+		// Assert.
 		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 

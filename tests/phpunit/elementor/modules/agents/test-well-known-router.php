@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Agent_Ready_Settings;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
@@ -208,7 +209,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'oauth-protected-resource', $content );
 		$this->assertStringNotContainsString( 'server-card.json', $content );
 		$this->assertStringNotContainsString( '## MCP Endpoint', $content );
-		$this->assertStringNotContainsString( 'elementor/agents-mcp', $content );
+		$this->assertStringNotContainsString( Mcp_Discovery::get_server_url(), $content );
 		$this->assertStringNotContainsString( 'with every MCP request', $content );
 		$this->assertStringNotContainsString( '## Audit Log', $content );
 	}
@@ -230,7 +231,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'oauth-protected-resource', $content );
 		$this->assertStringContainsString( 'server-card.json', $content );
 		$this->assertStringContainsString( '## MCP Endpoint', $content );
-		$this->assertStringContainsString( 'elementor/agents-mcp', $content );
+		$this->assertStringContainsString( Mcp_Discovery::get_server_url(), $content );
 		$this->assertStringContainsString( 'with every MCP request', $content );
 		$this->assertStringContainsString( '## Audit Log', $content );
 		$this->assertLessThan(
