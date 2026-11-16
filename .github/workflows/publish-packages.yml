@@ -53,6 +53,11 @@ on:
         required: false
         default: ''
         description: 'npm dist-tag for the published packages. Empty/"manual" = "manual", "latest" = no version suffix and published as latest, other = custom dist-tag.'
+      ref:
+        type: string
+        required: false
+        default: ''
+        description: 'Git ref to build and publish from (e.g. release tag 4.2.3). Defaults to the triggering commit.'
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN:
         required: true
@@ -145,7 +150,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
         with:
-          ref: ${{ ( github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest' ) && format( 'refs/tags/{0}', inputs.version ) || github.sha }}
+          ref: ${{ inputs.ref || ( github.event_name == 'workflow_dispatch' && github.event.inputs.tag == 'latest' ) && format( 'refs/tags/{0}', inputs.version ) || github.sha }}
 
       - name: Get Configuration
         if: github.event_name == 'workflow_dispatch'
