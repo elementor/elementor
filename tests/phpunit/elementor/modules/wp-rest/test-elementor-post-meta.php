@@ -170,4 +170,122 @@ class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 200, $data->get_status(), 'Status should be 200' );
 	}
+
+	public function test_sanitize_elementor_data__keeps_allowed_link_destinations_for_contributor() {
+		// Arrange.
+		$this->act_as( 'contributor' );
+		$destinations = [
+			$this->url_destination( 'https://example.com/welcome' ),
+			$this->url_destination( 'mailto:user@example.com' ),
+			$this->url_destination( '/welcome' ),
+			$this->url_destination( '#welcome' ),
+			[
+				'$$type' => 'query',
+				'value' => [
+					'id' => [
+						'$$type' => 'number',
+						'value' => 15,
+					],
+				],
+			],
+		];
+
+		// Act.
+		$stored = json_decode( $this->post_meta->sanitize_elementor_data( $this->elementor_data_with_destinations( $destinations ) ), true );
+
+		// Assert.
+		$this->assertSame( $destinations, $this->destinations_from( $stored ) );
+	}
+
+	public function test_sanitize_elementor_data__clears_disallowed_link_protocol_for_contributor() {
+		// Arrange.
+		$this->act_as( 'contributor' );
+		$stored_input = $this->elementor_data_with_destinations( [
+			$this->url_destination( 'notascheme:value' ),
+			'notascheme:value',
+		] );
+
+		// Act.
+		$stored = json_decode( $this->post_meta->sanitize_elementor_data( $stored_input ), true );
+
+		// Assert.
+		$destinations = $this->destinations_from( $stored );
+		$this->assertSame( $this->url_destination( '' ), $destinations[0] );
+		$this->assertSame( '', $destinations[1] );
+	}
+
+	public function test_rest_update__keeps_link_destination_added_by_admin() {
+		// Arrange.
+		$this->act_as_admin();
+		$elementor_data = $this->elementor_data_with_destinations( [
+			'notascheme:value',
+		] );
+		$request = new \WP_REST_Request( 'POST', '/wp/v2/posts/' . $this->post_id );
+		$request->set_param( 'meta', [
+			'_elementor_edit_mode' => 'builder',
+			'_elementor_data' => $elementor_data,
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$saved = json_decode( get_post_meta( $this->post_id, '_elementor_data', true ), true );
+		$this->assertSame( [ 'notascheme:value' ], $this->destinations_from( $saved ) );
+	}
+
+	public function test_sanitize_elementor_data__keeps_link_destination_for_unfiltered_user() {
+		// Arrange.
+		$this->act_as_admin();
+		$stored_input = $this->elementor_data_with_destinations( [ 'notascheme:value' ] );
+
+		// Act.
+		$stored = $this->post_meta->sanitize_elementor_data( $stored_input );
+
+		// Assert.
+		$this->assertSame( $stored_input, $stored );
+	}
+
+	private function elementor_data_with_destinations( array $destinations ): string {
+		$elements = [];
+
+		foreach ( $destinations as $index => $destination ) {
+			$elements[] = [
+				'id' => 'button-' . $index,
+				'elType' => 'widget',
+				'widgetType' => 'e-button',
+				'settings' => [
+					'link' => [
+						'$$type' => 'link',
+						'value' => [
+							'destination' => $destination,
+							'isTargetBlank' => false,
+							'tag' => 'a',
+						],
+					],
+				],
+				'elements' => [],
+			];
+		}
+
+		return wp_json_encode( $elements );
+	}
+
+	private function url_destination( string $url ): array {
+		return [
+			'$$type' => 'url',
+			'value' => $url,
+		];
+	}
+
+	private function destinations_from( array $elements ): array {
+		$destinations = [];
+
+		foreach ( $elements as $element ) {
+			$destinations[] = $element['settings']['link']['value']['destination'];
+		}
+
+		return $destinations;
+	}
 }

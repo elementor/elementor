@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\WpRest\Classes;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -88,7 +90,7 @@ class Elementor_Post_Meta {
 		}
 
 		if ( ! is_string( $value ) ) {
-			return Utils::kses_post_deep( $value );
+			return $this->sanitize_stored_links( Utils::kses_post_deep( $value ) );
 		}
 
 		$elementor_data = json_decode( $value, true );
@@ -98,7 +100,37 @@ class Elementor_Post_Meta {
 			return wp_kses_post( $value );
 		}
 
-		return wp_json_encode( Utils::kses_post_deep( $elementor_data ) );
+		return wp_json_encode( $this->sanitize_stored_links( Utils::kses_post_deep( $elementor_data ) ) );
+	}
+
+	private function sanitize_stored_links( $data ) {
+		if ( ! is_array( $data ) ) {
+			return $data;
+		}
+
+		if ( Link_Prop_Type::get_key() === ( $data['$$type'] ?? null ) && isset( $data['value']['destination'] ) ) {
+			$data['value']['destination'] = $this->sanitize_link_destination( $data['value']['destination'] );
+		}
+
+		foreach ( $data as $key => $item ) {
+			if ( is_array( $item ) ) {
+				$data[ $key ] = $this->sanitize_stored_links( $item );
+			}
+		}
+
+		return $data;
+	}
+
+	private function sanitize_link_destination( $destination ) {
+		if ( is_string( $destination ) && ! is_numeric( $destination ) ) {
+			return esc_url_raw( $destination );
+		}
+
+		if ( Url_Prop_Type::get_key() === ( $destination['$$type'] ?? null ) && is_string( $destination['value'] ?? null ) ) {
+			return Url_Prop_Type::make()->sanitize( $destination );
+		}
+
+		return $destination;
 	}
 
 	private function register_page_settings_meta( string $post_type ): void {
