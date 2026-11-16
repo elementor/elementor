@@ -160,7 +160,11 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame(
-			[ [ 'name' => 'current', 'value' => 'e--current' ] ],
+			[
+				[ 'name' => 'current', 'value' => 'e--current' ],
+				[ 'name' => 'current-ancestor', 'value' => 'e--current-ancestor' ],
+				[ 'name' => 'expanded', 'value' => 'e--expanded' ],
+			],
 			$item_config['atomic_style_states']
 		);
 

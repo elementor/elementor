@@ -39,7 +39,9 @@ class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
 	}
 
 	protected function define_atomic_style_states(): array {
-		return [ Style_States::get_class_states_map()['current'] ];
+		$states = Style_States::get_class_states_map();
+
+		return [ $states['current'], $states['current-ancestor'], $states['expanded'] ];
 	}
 
 	protected function define_atomic_controls(): array {

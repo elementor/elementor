@@ -46,4 +46,15 @@ class Test_Style_States extends TestCase {
 		// Assert.
 		$this->assertSame( '.menu-item.e--current', $selector );
 	}
+
+	public function test_current_ancestor_and_expanded_are_valid_class_states() {
+		// Assert.
+		$map = Style_States::get_class_states_map();
+
+		$this->assertSame( 'e--current-ancestor', $map['current-ancestor']['value'] );
+		$this->assertSame( 'e--expanded', $map['expanded']['value'] );
+		$this->assertTrue( Style_States::is_class_state( Style_States::CURRENT_ANCESTOR ) );
+		$this->assertTrue( Style_States::is_valid_state( Style_States::EXPANDED ) );
+		$this->assertSame( '.item.e--expanded', Style_States::get_selector_with_state( '.item', Style_States::EXPANDED ) );
+	}
 }

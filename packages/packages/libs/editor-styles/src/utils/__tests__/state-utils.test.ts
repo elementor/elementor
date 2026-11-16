@@ -14,4 +14,11 @@ describe( 'state-utils', () => {
 		// Assert
 		expect( selector ).toBe( '.menu-item.e--current' );
 	} );
+
+	it( 'should treat current ancestor and expanded as class states with class selectors', () => {
+		// Act & Assert
+		expect( isClassState( 'e--current-ancestor' ) ).toBe( true );
+		expect( isClassState( 'e--expanded' ) ).toBe( true );
+		expect( getSelectorWithState( '.menu-item', 'e--expanded' ) ).toBe( '.menu-item.e--expanded' );
+	} );
 } );
