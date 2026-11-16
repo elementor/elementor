@@ -101,11 +101,11 @@ function registerAtomicFormAlpineData( form ) {
 
 	Alpine.data( alpineId, () => ( {
 		async submit( event ) {
+			event.preventDefault();
+
 			if ( isEditorContext() ) {
 				return;
 			}
-
-			event.preventDefault();
 
 			const respondToAgent = createAgentResponder( event );
 
