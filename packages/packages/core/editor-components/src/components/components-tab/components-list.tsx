@@ -7,6 +7,7 @@ import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { isProComponentsSupported, isProOutdatedForComponents } from '../../utils/is-pro-components-supported';
 import { ComponentItem } from './components-item';
+import { ComponentsTabHeaderSlot } from './components-tab-header-location';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
@@ -140,6 +141,9 @@ const EmptyState = () => {
 			gap={ 2 }
 			overflow="hidden"
 		>
+			<Box sx={ { alignSelf: 'flex-end' } }>
+				<ComponentsTabHeaderSlot />
+			</Box>
 			<Stack alignItems="center" gap={ 1 }>
 				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 

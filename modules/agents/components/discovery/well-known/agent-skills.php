@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -19,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Agent_Skills extends Abstract_Well_Known_Endpoint {
 
-	/** Abilities API category registered by the MCP component. */
-	const ABILITY_CATEGORY = 'elementor-agents';
+	/** Abilities API category registered by the Elementor MCP module. */
+	const ABILITY_CATEGORY = 'elementor';
 
 	public function get_id(): string {
 		return 'agent_skills';
@@ -58,7 +60,7 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 				'name' => $this->sanitize( get_bloginfo( 'name' ) ),
 				'url'  => $home,
 			],
-			'mcp_endpoint'   => rest_url( 'elementor/agents-mcp' ),
+			'mcp_endpoint'   => Mcp_Discovery::get_server_url(),
 			'auth'           => [
 				'documentation' => $home . '.well-known/auth.md',
 			],
@@ -87,10 +89,10 @@ class Agent_Skills extends Abstract_Well_Known_Endpoint {
 
 		foreach ( $abilities as $ability ) {
 			$skill = [
-				'id'          => $ability->get_id(),
-				'name'        => $ability->get_name(),
+				'id'          => $ability->get_name(),
+				'name'        => $ability->get_label(),
 				'description' => $ability->get_description(),
-				'annotations' => $ability->get_annotations(),
+				'annotations' => $ability->get_meta_item( 'annotations' ),
 			];
 
 			$input_schema = $ability->get_input_schema();

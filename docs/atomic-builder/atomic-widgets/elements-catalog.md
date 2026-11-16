@@ -72,6 +72,13 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-tab` | element | no | — | Single tab trigger |
 | `e-tabs-content-area` | element | yes | `e-tab-content`, `container` | Tab panels wrapper |
 | `e-tab-content` | element | yes | any | Panel body |
+| `e-menu` | element | yes | `e-menu-items`, `e-menu-toggle` | `<nav>`; experiment `e_nav_menu`; collapses into the toggle at a breakpoint; default: items + toggle |
+| `e-menu-items` | element | yes | `e-menu-entry` | `<ul>` of entries; permanently locked |
+| `e-menu-entry` | element | yes | `e-menu-item` | `<li>`; permanently locked |
+| `e-menu-item` | element | yes | any | Link inside an entry; permanently locked |
+| `e-menu-toggle` | element | yes | `e-menu-toggle-closed`, `e-menu-toggle-open` | `<button>` that opens and closes the collapsed menu; permanently locked |
+| `e-menu-toggle-closed` | element | yes | any | Shown while the menu is closed; seeds an `e-svg` icon child (`fa-solid fa-bars`); permanently locked |
+| `e-menu-toggle-open` | element | yes | any | Shown while the menu is open; seeds an `e-svg` icon child (`fa-solid fa-xmark`); permanently locked |
 | `e-form` | element | yes | any | Pro + `e_pro_atomic_form` |
 | `e-form-success-message` | element | yes | `e-paragraph` | Required child of `e-form` |
 | `e-form-error-message` | element | yes | `e-paragraph` | Required child of `e-form` |
@@ -136,6 +143,12 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 | `e-accordion-item-icon` | `e-accordion-item-head` |
 | `e-tab` | `e-tabs-menu` |
 | `e-tab-content` | `e-tabs-content-area` |
+| `e-menu-entry` | `e-menu-items` |
+| `e-menu-item` | `e-menu-entry` |
+| `e-menu-items` | `e-menu` |
+| `e-menu-toggle` | `e-menu` |
+| `e-menu-toggle-closed` | `e-menu-toggle` |
+| `e-menu-toggle-open` | `e-menu-toggle` |
 | `e-paragraph` | `e-form-success-message`, `e-form-error-message` |
 | `e-carousel-viewport` | `e-carousel` |
 | `e-carousel-container` | `e-carousel-viewport` |

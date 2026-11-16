@@ -25,7 +25,7 @@ test.describe( 'Global color introduction tests', () => {
 		expect( tooltipDialogCounter ).toBe( 1 );
 	} );
 
-	test( 'Check if globals introduction tooltip is not being triggered twice', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check if global color introduction tooltip is not being triggered twice', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();

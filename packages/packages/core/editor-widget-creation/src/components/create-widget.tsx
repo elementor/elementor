@@ -1,20 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import {
-	installAngiePlugin,
-	isAngieAvailable,
-	redirectToAppAdmin,
-	redirectToInstallation,
-	saveAngieConsent,
-	sendPromptToAngie,
-} from '@elementor/editor-mcp';
+import { isAngieAvailable, saveAngieConsent, sendPromptToAngie } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackEvent } from '@elementor/events';
 import { XIcon } from '@elementor/icons';
 import {
 	Button,
 	Checkbox,
-	CircularProgress,
 	Dialog,
 	DialogContent,
 	FormControlLabel,
@@ -32,10 +24,7 @@ type ShowModalEventDetail = {
 	entry_point: string;
 };
 
-type InstallState = 'idle' | 'installing' | 'error';
-
 type CreateWidgetModalProps = {
-	prompt?: string;
 	entryPoint: string;
 	onClose: () => void;
 };
@@ -44,54 +33,36 @@ const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 const ANGIE_MODAL_PROMOTION_IMAGE_URL =
 	'https://assets.elementor.com/packages/v1/images/angie-top-bar-promotion-modal-0926.png';
 const ANGIE_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked' as const;
-const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
-const ANGIE_INSTALL_COMPLETED_EVENT = 'angie_install_completed' as const;
 const ANGIE_INSTALL_ABANDONED_EVENT = 'angie_install_abandoned' as const;
 
-function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalProps ) {
-	const [ installState, setInstallState ] = useState< InstallState >( 'idle' );
+function CreateWidgetModal( { entryPoint, onClose }: CreateWidgetModalProps ) {
 	const [ agreedToTerms, setAgreedToTerms ] = useState( false );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const handleClose = () => {
-		if ( installState === 'installing' ) {
+		if ( isSubmitting ) {
 			return;
 		}
 
 		trackEvent( {
 			eventName: ANGIE_INSTALL_ABANDONED_EVENT,
-			abandon_step: installState === 'error' ? 'install_error' : 'install_modal',
+			abandon_step: 'install_modal',
 			trigger_source: entryPoint,
 		} );
 
 		onClose();
 	};
 
-	const handleInstall = async () => {
-		setInstallState( 'installing' );
+	const handleContinue = async () => {
+		setIsSubmitting( true );
 
-		trackEvent( {
-			eventName: ANGIE_INSTALL_STARTED_EVENT,
-			trigger_source: entryPoint,
-		} );
-
-		const [ result ] = await Promise.all( [ installAngiePlugin(), saveAngieConsent() ] );
-
-		if ( ! result.success ) {
-			setInstallState( 'error' );
-
-			return;
+		try {
+			await saveAngieConsent();
+			onClose();
+		} catch {
+		} finally {
+			setIsSubmitting( false );
 		}
-
-		trackEvent( {
-			eventName: ANGIE_INSTALL_COMPLETED_EVENT,
-			trigger_source: entryPoint,
-		} );
-
-		redirectToAppAdmin( prompt );
-	};
-
-	const handleFallbackInstall = () => {
-		redirectToInstallation( prompt );
 	};
 
 	return (
@@ -123,89 +94,60 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 						<Stack justifyContent="space-between" p={ 4 }>
 							<Stack gap={ 2.5 } justifyContent="center" sx={ { flex: 1, paddingInlineEnd: 2.5 } }>
 								<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
-									{ installState === 'error' ? (
-										__( 'Installation failed', 'elementor' )
-									) : (
-										<>
-											{ __( 'Pages, layouts,', 'elementor' ) }
-											<br />
-											{ __( 'widgets and more', 'elementor' ) }
-										</>
-									) }
+									{ __( 'Pages, layouts,', 'elementor' ) }
+									<br />
+									{ __( 'widgets and more', 'elementor' ) }
 								</Typography>
 								<Typography variant="body2" fontWeight={ 500 }>
-									{ installState === 'error'
-										? __(
-												"We couldn't install Angie automatically. Click below to install it manually.",
-												'elementor'
-										  )
-										: __(
-												'Ask Angie to build you full pages, custom widgets, snippets, and code directly in Elementor. Install and activate Angie once on this site to start building.',
-												'elementor'
-										  ) }
+									{ __(
+										'Ask Angie to build pages, layouts, widgets, and more directly in Elementor.',
+										'elementor'
+									) }
 								</Typography>
-								{ installState !== 'error' && (
-									<FormControlLabel
-										control={
-											<Checkbox
-												size="small"
-												checked={ agreedToTerms }
-												onChange={ (
-													_e: React.ChangeEvent< HTMLInputElement >,
-													checked: boolean
-												) => setAgreedToTerms( checked ) }
-											/>
-										}
-										label={
-											<Typography variant="body2" color="text.secondary">
-												{ interpolateLinks(
-													sprintf(
-														// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
-														__(
-															'By installing, you agree to our %1$s & %2$s.',
-															'elementor'
-														),
-														'{{terms}}',
-														'{{privacy}}'
-													),
-													{
-														terms: {
-															label: __( 'Terms', 'elementor' ),
-															href: 'https://elementor.com/terms/angie-terms-conditions/',
-														},
-														privacy: {
-															label: __( 'Privacy Policy', 'elementor' ),
-															href: 'https://elementor.com/about/privacy/',
-														},
-													}
-												) }
-											</Typography>
-										}
-									/>
-								) }
+								<FormControlLabel
+									control={
+										<Checkbox
+											size="small"
+											checked={ agreedToTerms }
+											onChange={ (
+												_e: React.ChangeEvent< HTMLInputElement >,
+												checked: boolean
+											) => setAgreedToTerms( checked ) }
+										/>
+									}
+									label={
+										<Typography variant="body2" color="text.secondary">
+											{ interpolateLinks(
+												sprintf(
+													// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
+													__( 'By continuing, you agree to our %1$s & %2$s.', 'elementor' ),
+													'{{terms}}',
+													'{{privacy}}'
+												),
+												{
+													terms: {
+														label: __( 'Terms', 'elementor' ),
+														href: 'https://elementor.com/terms/angie-terms-conditions/',
+													},
+													privacy: {
+														label: __( 'Privacy Policy', 'elementor' ),
+														href: 'https://elementor.com/about/privacy/',
+													},
+												}
+											) }
+										</Typography>
+									}
+								/>
 							</Stack>
 							<Stack direction="row" justifyContent="flex-end">
-								{ installState === 'error' ? (
-									<Button variant="contained" color="accent" onClick={ handleFallbackInstall }>
-										{ __( 'Install Manually', 'elementor' ) }
-									</Button>
-								) : (
-									<Button
-										variant="contained"
-										color="accent"
-										onClick={ handleInstall }
-										disabled={ installState === 'installing' || ! agreedToTerms }
-										startIcon={
-											installState === 'installing' ? (
-												<CircularProgress size={ 18 } color="inherit" />
-											) : undefined
-										}
-									>
-										{ installState === 'installing'
-											? __( 'Installing…', 'elementor' )
-											: __( 'Install and activate', 'elementor' ) }
-									</Button>
-								) }
+								<Button
+									variant="contained"
+									color="accent"
+									onClick={ handleContinue }
+									disabled={ isSubmitting || ! agreedToTerms }
+								>
+									{ __( 'Continue', 'elementor' ) }
+								</Button>
 							</Stack>
 						</Stack>
 					</Stack>
@@ -249,11 +191,5 @@ export function CreateWidget() {
 		return null;
 	}
 
-	return (
-		<CreateWidgetModal
-			prompt={ modalData.prompt }
-			entryPoint={ modalData.entry_point }
-			onClose={ () => setModalData( null ) }
-		/>
-	);
+	return <CreateWidgetModal entryPoint={ modalData.entry_point } onClose={ () => setModalData( null ) } />;
 }

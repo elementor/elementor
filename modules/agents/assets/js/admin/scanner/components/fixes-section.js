@@ -21,7 +21,6 @@ import {
 	STAGE_REACH,
 } from '../scanner-constants';
 import { getToggleModuleKey } from '../scanner-check-settings';
-import { READINESS_SCORE_MAX } from '../scanner-score';
 import { ChecksSummary } from './checks-summary';
 import { FixTable, FixTableRows } from './fix-table';
 
@@ -38,25 +37,6 @@ const getTypeOptions = () => {
 		{ id: TYPE_ALL, label: __( 'All', 'elementor' ) },
 		...FILTER_STAGES.map( ( stage ) => ( { id: stage, label: stageLabels[ stage ] } ) ),
 	];
-};
-
-const getSubtitle = ( checks, score ) => {
-	const ordered = __( 'Ordered by points on the table, not by effort.', 'elementor' );
-
-	if ( 'number' !== typeof score ) {
-		return ordered;
-	}
-
-	const heldPoints = checks.reduce( ( total, check ) => total + check.points, 0 );
-	const missingPoints = Math.max( 0, READINESS_SCORE_MAX - score );
-
-	return sprintf(
-		/* Translators: 1: Number of listed fixes, 2: Points those fixes are worth, 3: Points still missing from the score. */
-		__( 'Ordered by points on the table, not by effort. These %1$d items hold %2$d of the %3$d missing points.', 'elementor' ),
-		checks.length,
-		heldPoints,
-		missingPoints,
-	);
 };
 
 const isFixedByActivation = ( check, flow ) => {
@@ -121,7 +101,7 @@ FixesFilters.propTypes = {
 	isDisabled: PropTypes.bool,
 };
 
-export const FixesSection = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl, isActivated, score, isLoading } ) => {
+export const FixesSection = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl, isActivated, isLoading } ) => {
 	const [ selectedType, setSelectedType ] = useState( TYPE_ALL );
 	const [ priority, setPriority ] = useState( PRIORITY_ALL );
 	const [ isShowAllFixes, setIsShowAllFixes ] = useState( false );
@@ -139,10 +119,7 @@ export const FixesSection = ( { checks, flow, agentAccessUrl, seoPluginSearchUrl
 
 	return (
 		<Stack gap={ SECTION_GAP }>
-			<Stack spacing={ 0.5 }>
-				<Typography component="h3" color="text.primary" sx={ sectionHeadingSx }>{ __( 'Fix these next', 'elementor' ) }</Typography>
-				<Typography variant="body2" color="text.secondary">{ getSubtitle( checks, score ) }</Typography>
-			</Stack>
+			<Typography component="h3" color="text.primary" sx={ sectionHeadingSx }>{ __( 'Fix these next', 'elementor' ) }</Typography>
 			<FixesFilters
 				priority={ priority }
 				stage={ selectedType }
@@ -188,6 +165,5 @@ FixesSection.propTypes = {
 	agentAccessUrl: PropTypes.string.isRequired,
 	seoPluginSearchUrl: PropTypes.string.isRequired,
 	isActivated: PropTypes.bool,
-	score: PropTypes.number,
 	isLoading: PropTypes.bool,
 };

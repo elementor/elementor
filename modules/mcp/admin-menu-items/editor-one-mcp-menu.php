@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\AdminMenuItems;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\MCP\Composer\Admin\Page;
+use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\Mcp\Module;
 
@@ -63,8 +64,20 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 	}
 
 	public function render() {
+		ob_start();
 		Module::instance()->enqueue_analytics_registrar();
 		$this->page->render();
 		Module::instance()->enqueue_promotion_registrar();
+		$html = ob_get_clean();
+
+		if ( ! is_string( $html ) || '' === $html ) {
+			return;
+		}
+
+		$title_markup = Admin_Page_Title::get_markup( (string) $this->get_page_title() );
+		$html = preg_replace( '/(<div class="wrap">\s*)/', '$1' . $title_markup, $html, 1 );
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Injected markup is escaped; MCP page HTML is trusted plugin output.
+		echo $html;
 	}
 }

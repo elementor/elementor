@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -115,14 +117,14 @@ MD;
 		$lines[] = '> - API catalog: `' . $home . '.well-known/api-catalog`';
 
 		if ( $advertise_mcp ) {
-			$lines[] = '> - MCP server card: `' . $home . '.well-known/mcp/server-card.json`';
+			$lines[] = '> - MCP server card: `' . Mcp_Discovery::get_server_card_url() . '`';
 		}
 
 		return implode( "\n", $lines );
 	}
 
 	private function mcp_endpoint_section(): string {
-		$mcp_endpoint = rest_url( 'elementor/agents-mcp' );
+		$mcp_endpoint = Mcp_Discovery::get_server_url();
 		$is_ssl       = is_ssl() ? 'yes' : 'no (HTTPS required in production)';
 
 		return <<<MD

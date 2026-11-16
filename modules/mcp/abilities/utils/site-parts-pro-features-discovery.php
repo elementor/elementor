@@ -19,7 +19,6 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 
 	const MESSAGES = [
 		'opener' => 'Site parts need Elementor Pro, which isn\'t installed, so nothing was created.',
-		'list' => 'Site parts can\'t be listed because Elementor Pro isn\'t installed, so no site parts were checked. Do not tell the user the site has no header, footer, or other site parts; that was not verified. Mention Elementor Pro only if the user\'s request is about a site part.',
 		'overview' => [
 			'value' => 'With Pro, site parts cover three things Free can\'t do: reusable parts (header, footer) built once and shown on every page; dynamic templates (post, page, archive, search results, loop item, product) where one design fills itself for every post; and site functionality (popups, a custom 404 page).',
 			'free_path' => 'Free path: build it on the current page with native widgets and a global class. Tell the user it only appears on this page and must be added and updated on each page separately.',
@@ -52,7 +51,7 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 		return ! Utils::has_pro() && str_starts_with( $widget_type, self::WIDGET_TYPE_PREFIX );
 	}
 
-	public static function for_manage( array $operations ): \WP_Error {
+	public static function for_operations( array $operations = [] ): \WP_Error {
 		$requested_types = array_filter( array_column( $operations, 'type' ), 'is_string' );
 
 		if ( array_intersect( $requested_types, Woocommerce_Pro_Features_Discovery::get_site_part_types() ) ) {
@@ -84,11 +83,7 @@ class Site_Parts_Pro_Features_Discovery implements Widget_Pro_Features_Discovery
 	}
 
 	public static function for_widget(): \WP_Error {
-		return self::for_manage( [] );
-	}
-
-	public static function for_list(): array {
-		return [ 'llm_instructions' => self::MESSAGES['list'] ];
+		return self::for_operations();
 	}
 
 	public static function get_types(): array {

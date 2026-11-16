@@ -145,10 +145,7 @@ class Module extends BaseModule {
 			wp_localize_script(
 				'elementor-ai-gutenberg',
 				'ElementorAiConfig',
-				[
-					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'connect_url' => $this->get_ai_connect_url(),
-				]
+				$this->get_ai_config()
 			);
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
@@ -437,13 +434,22 @@ class Module extends BaseModule {
 		wp_localize_script(
 			'elementor-ai-media-library',
 			'ElementorAiConfig',
-			[
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-			]
+			$this->get_ai_config()
 		);
 
 		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
+	}
+
+	/**
+	 * Every script that localizes `ElementorAiConfig` overwrites the same global, so they must share one shape.
+	 *
+	 * @return array
+	 */
+	private function get_ai_config(): array {
+		return [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+		];
 	}
 
 	private function enqueue_main_script() {
@@ -466,15 +472,10 @@ class Module extends BaseModule {
 			true
 		);
 
-		$config = [
-			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-			'connect_url' => $this->get_ai_connect_url(),
-		];
-
 		wp_localize_script(
 			'elementor-ai',
 			'ElementorAiConfig',
-			$config
+			$this->get_ai_config()
 		);
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );

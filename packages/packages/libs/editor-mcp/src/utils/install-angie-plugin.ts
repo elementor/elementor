@@ -46,6 +46,9 @@ const installPlugin = async (): Promise< PluginResponse > => {
 	}
 };
 
+/**
+ * @deprecated Kept only for Elementor Pro compatibility. Will be removed in a future version.
+ */
 export const installAngiePlugin = async (): Promise< InstallAngieResult > => {
 	try {
 		await installPlugin();

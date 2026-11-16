@@ -21,6 +21,10 @@ class Site_Parts_Schema {
 
 	const SITE_WIDE_CONDITION = 'include/general';
 
+	public static function get_types(): array {
+		return array_merge( self::TYPES, Woocommerce_Pro_Features_Discovery::get_site_part_types() );
+	}
+
 	public static function manage_input(): array {
 		return [
 			'type' => 'object',
@@ -29,23 +33,11 @@ class Site_Parts_Schema {
 				'operations' => [
 					'type' => 'array',
 					'description' => sprintf(
-						'Bulk operations (%d-%d). Each item requires action; create needs type (optional title, optional conditions); update needs post_id plus at least one mutable field (currently only conditions); delete needs post_id.',
+						'Bulk operations (%d-%d). Each item requires action; create needs type (optional title, optional conditions, optional display_settings for popups); update needs post_id plus at least one mutable field (conditions, display_settings); delete needs post_id.',
 						self::MIN_BATCH_SIZE,
 						self::MAX_BATCH_SIZE
 					),
 					'items' => self::operation_schema(),
-				],
-			],
-		];
-	}
-
-	public static function list_input(): array {
-		return [
-			'type' => 'object',
-			'properties' => [
-				'active' => [
-					'type' => 'boolean',
-					'description' => 'When true, return only site parts that are currently rendered on the front end (published and matching a Theme Builder location).',
 				],
 			],
 		];
@@ -62,12 +54,16 @@ class Site_Parts_Schema {
 				],
 				'type' => [
 					'type' => 'string',
-					'enum' => array_merge( self::TYPES, Woocommerce_Pro_Features_Discovery::get_site_part_types() ),
+					'enum' => self::get_types(),
 					'description' => 'Site part type slug (create only).',
 				],
 				'title' => [ 'type' => 'string' ],
 				'post_id' => [ 'type' => 'integer' ],
 				'conditions' => self::conditions_schema(),
+				'display_settings' => [
+					'type' => 'object',
+					'description' => 'Popup only. Flat field maps per type, as stored by the editor. Each group is enabled by setting its toggle field to "yes" (or true), and its options are prefixed with the group name. A present type key REPLACES that type entirely (send every group you want kept; {} clears it); an omitted type key is left untouched.',
+				],
 			],
 		];
 	}

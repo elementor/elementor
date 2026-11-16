@@ -35,6 +35,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 
 	private ?Global_Classes_Repository $repository;
 	private ?Css_Converter $css_converter;
+	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Global_Classes_Repository $repository = null, ?Css_Converter $css_converter = null ) {
 		$this->repository = $repository;
@@ -109,6 +110,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
+		$this->is_dry_run_execution = self::is_dry_run( $input );
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
@@ -140,12 +142,16 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		$response = $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
 		$this->emit_mcp_manage_classes_executed( $started_at, $operations, null, $response );
 		return $response;
 	}
 
-	private function handle_bulk( array $operations ): array {
+	public function supports_dry_run(): bool {
+		return true;
+	}
+
+	private function handle_bulk( array $operations, bool $dry_run = false ): array {
 		$results = new Bulk_Operations_Result();
 		$repo = $this->get_repository();
 		$all_labels = $repo->all_labels();
@@ -173,6 +179,10 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		}
 		unset( $item, $variant );
 
+		if ( $dry_run ) {
+			return $this->build_dry_run_response( $results, $touched_items, $new_order );
+		}
+
 		if ( ! empty( $added_ids ) || ! empty( $modified_ids ) || ! empty( $deleted_ids ) ) {
 			$repo->apply_changes(
 				$touched_items,
@@ -190,6 +200,27 @@ class Manage_Classes_Ability extends Abstract_Ability {
 		}
 
 		return $results->to_array() + [ 'order' => $new_order ];
+	}
+
+	private function build_dry_run_response( Bulk_Operations_Result $results, array $touched_items, array $new_order ): array {
+		$response = $results->to_array();
+
+		foreach ( $response['results'] as &$row ) {
+			$id = $row['id'] ?? null;
+
+			if ( 'ok' !== $row['status'] || 'delete' === $row['action'] || ! isset( $touched_items[ $id ] ) ) {
+				continue;
+			}
+
+			$row['type'] = $touched_items[ $id ]['type'];
+			$row['variants'] = $touched_items[ $id ]['variants'];
+		}
+		unset( $row );
+
+		return $response + [
+			'order' => $new_order,
+			'dry_run' => true,
+		];
 	}
 
 	private function translate_operations( array $operations, array $all_labels, array $current_order, Bulk_Operations_Result $results ): array {
@@ -702,6 +733,7 @@ class Manage_Classes_Ability extends Abstract_Ability {
 			'variable_labels'            => $var_labels,
 			'warning_count'              => 0,
 			'warning_types'              => [],
+			'dry_run'                    => $this->is_dry_run_execution,
 		];
 
 		if ( null !== $mode_used ) {

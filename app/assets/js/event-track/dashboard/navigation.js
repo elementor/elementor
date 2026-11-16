@@ -7,21 +7,20 @@ const ELEMENTOR_MENU_SELECTORS = {
 	ELEMENTOR_HOME_TOP_LEVEL: 'li#toplevel_page_elementor-home',
 	ADMIN_MENU: '#adminmenu',
 	TOP_LEVEL_LINK: '.wp-menu-name',
+	TOP_LEVEL_ANCHOR: 'a.menu-top',
 	SUBMENU_CONTAINER: '.wp-submenu',
 	SUBMENU_ITEM: '.wp-submenu li a',
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
-	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
 };
+
+const ADMIN_NAV_CLICK_EVENT = 'elementor/admin/nav-click';
 
 class NavigationTracking extends BaseTracking {
 	static init() {
-		if ( WpDashboardTracking.isEditorOneActive() ) {
-			this.attachSidebarNavigationTracking();
-			this.attachElementorHomeMenuTracking();
-		} else {
-			this.attachElementorMenuTracking();
-			this.attachTemplatesMenuTracking();
-		}
+		this.attachSidebarNavigationTracking();
+		this.attachElementorMenuTracking();
+		this.attachElementorHomeMenuTracking();
+		this.attachTemplatesMenuTracking();
 	}
 
 	static attachTemplatesMenuTracking() {
@@ -31,7 +30,7 @@ class NavigationTracking extends BaseTracking {
 			return;
 		}
 
-		this.attachMenuTracking( templatesMenu, 'Templates' );
+		this.attachMenuTracking( templatesMenu );
 	}
 
 	static attachElementorHomeMenuTracking() {
@@ -41,7 +40,7 @@ class NavigationTracking extends BaseTracking {
 			return;
 		}
 
-		this.attachMenuTracking( elementorHomeMenu, 'Elementor' );
+		this.attachMenuTracking( elementorHomeMenu );
 	}
 
 	static attachElementorMenuTracking() {
@@ -51,39 +50,32 @@ class NavigationTracking extends BaseTracking {
 			return;
 		}
 
-		this.attachMenuTracking( elementorMenu, 'Elementor' );
+		this.attachMenuTracking( elementorMenu );
 	}
 
 	static attachSidebarNavigationTracking() {
-		const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
-
-		if ( sidebar ) {
-			this.attachSidebarClickListener( sidebar );
-		}
-	}
-
-	static attachSidebarClickListener( sidebar ) {
 		this.addEventListenerTracked(
-			sidebar,
-			'click',
+			window,
+			ADMIN_NAV_CLICK_EVENT,
 			( event ) => {
-				this.handleSidebarClick( event );
+				const { itemId, rootItem, navClickId } = event.detail;
+
+				WpDashboardTracking.trackNavClicked( itemId, rootItem || null, NAV_AREAS.SIDEBAR_MENU, navClickId );
 			},
-			{ capture: true },
 		);
 	}
 
-	static attachMenuTracking( menuElement, menuName ) {
+	static attachMenuTracking( menuElement ) {
 		this.addEventListenerTracked(
 			menuElement,
 			'click',
 			( event ) => {
-				this.handleMenuClick( event, menuName );
+				this.handleMenuClick( event, menuElement );
 			},
 		);
 	}
 
-	static handleMenuClick( event, menuName ) {
+	static handleMenuClick( event, menuElement ) {
 		const link = event.target.closest( 'a' );
 
 		if ( ! link ) {
@@ -94,33 +86,13 @@ class NavigationTracking extends BaseTracking {
 		const itemId = this.extractItemId( link );
 		const area = this.determineNavArea( link );
 
-		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
+		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : this.extractRootItemId( menuElement ), area );
 	}
 
-	static handleSidebarClick( event ) {
-		const clickedElement = event.target.closest( 'a, button, [role="button"]' );
+	static extractRootItemId( menuElement ) {
+		const rootLink = menuElement.querySelector( ELEMENTOR_MENU_SELECTORS.TOP_LEVEL_ANCHOR );
 
-		if ( ! clickedElement ) {
-			return;
-		}
-
-		const itemId = this.extractSidebarItemId( clickedElement );
-
-		WpDashboardTracking.trackNavClicked( itemId, null, NAV_AREAS.SIDEBAR_MENU );
-	}
-
-	static extractSidebarItemId( element ) {
-		const paragraph = element.querySelector( 'p' );
-		if ( paragraph ) {
-			return paragraph.textContent.trim();
-		}
-
-		const textContent = element.textContent.trim();
-		if ( textContent ) {
-			return textContent;
-		}
-
-		return 'unknown';
+		return rootLink ? this.extractItemId( rootLink ) : null;
 	}
 
 	static extractPageFromUrl( href ) {
@@ -141,13 +113,19 @@ class NavigationTracking extends BaseTracking {
 	}
 
 	static extractItemId( link ) {
+		const href = link.getAttribute( 'href' );
+		const eventId = href ? WpDashboardTracking.getMenuEventId( this.toMenuHrefKey( href ) ) : null;
+
+		if ( eventId ) {
+			return eventId;
+		}
+
 		const textContent = link.textContent.trim();
 
 		if ( textContent ) {
 			return textContent;
 		}
 
-		const href = link.getAttribute( 'href' );
 		if ( href ) {
 			return this.extractPageFromUrl( href );
 		}
@@ -158,6 +136,12 @@ class NavigationTracking extends BaseTracking {
 		}
 
 		return 'unknown';
+	}
+
+	static toMenuHrefKey( href ) {
+		const url = new URL( href, window.location.href );
+
+		return `${ url.pathname.split( '/' ).pop() }${ url.search }${ url.hash }`;
 	}
 
 	static determineNavArea( link ) {
