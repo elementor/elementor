@@ -107,8 +107,8 @@ function registerComponentsEntry() {
 
 	sidebarTools.registerToggleAction( {
 		id: 'open-components-panel',
-		group: 'elements',
-		priority: 2,
+		group: 'design',
+		priority: 5,
 		useProps: useTogglePanelProps,
 	} );
 }
