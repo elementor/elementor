@@ -1,4 +1,6 @@
 const SUPPORTED_PROTOCOLS = [ 'http:', 'https:' ];
+const IGNORED_PARAM_PREFIX = 'utm_';
+const IGNORED_PARAMS = [ 'fbclid', 'gclid', 'elementor-preview', 'ver', 'preview', 'preview_id', 'preview_nonce' ];
 
 function decodeHash( hash ) {
 	const raw = hash.replace( /^#/, '' );
@@ -35,21 +37,20 @@ function parseUrl( href, base ) {
 	};
 }
 
-function hasLinkParams( linkParams, pageParams ) {
-	for ( const key of new Set( linkParams.keys() ) ) {
-		const wanted = linkParams.getAll( key );
-		const actual = pageParams.getAll( key );
+function isIgnoredParam( key ) {
+	return IGNORED_PARAMS.includes( key ) || key.startsWith( IGNORED_PARAM_PREFIX );
+}
 
-		if ( wanted.length !== actual.length || wanted.some( ( value, index ) => value !== actual[ index ] ) ) {
-			return false;
-		}
-	}
-
-	return true;
+function toComparableParams( params ) {
+	return [ ...params.entries() ]
+		.filter( ( [ key ] ) => ! isIgnoredParam( key ) )
+		.map( ( [ key, value ] ) => `${ key }=${ value }` )
+		.sort()
+		.join( '&' );
 }
 
 function isSamePage( link, page ) {
-	return link.host === page.host && link.path === page.path && hasLinkParams( link.params, page.params );
+	return link.host === page.host && link.path === page.path && toComparableParams( link.params ) === toComparableParams( page.params );
 }
 
 export function isCurrentPageLink( href, pageUrl = window.location.href ) {
