@@ -109,6 +109,53 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$this->assertFalse( get_transient( self::UNSAVED_TRANSIENT_KEY ) );
 	}
 
+	/**
+	 * @dataProvider unpersisted_signal_value_provider
+	 */
+	public function test_heartbeat_received__fires_unpersisted_signal_with_the_sent_value( $signal_value ) {
+		// Arrange
+		$received = [];
+		add_action( 'elementor/heartbeat/unpersisted_signal', function( int $post_id, $value ) use ( &$received ) {
+			$received[] = [ $post_id, $value ];
+		}, 10, 2 );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+			'elementor_has_unpersisted' => $signal_value,
+		];
+
+		// Act
+		( new Heartbeat() )->heartbeat_received( [], $data );
+
+		// Assert
+		$this->assertSame( [ [ self::TEST_POST_ID, $signal_value ] ], $received );
+	}
+
+	public function unpersisted_signal_value_provider(): array {
+		return [
+			'document id' => [ (string) self::TEST_POST_ID ],
+			'null sent through form encoding' => [ '' ],
+		];
+	}
+
+	public function test_heartbeat_received__no_unpersisted_signal_when_field_absent() {
+		// Arrange
+		$fired = false;
+		add_action( 'elementor/heartbeat/unpersisted_signal', function() use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+		];
+
+		// Act
+		( new Heartbeat() )->heartbeat_received( [], $data );
+
+		// Assert
+		$this->assertFalse( $fired );
+	}
+
 	public function test_heartbeat_received__always_injects_mutation_marker_in_response() {
 		// Arrange
 		set_transient( self::MUTATION_TRANSIENT_KEY, 1234567890 );

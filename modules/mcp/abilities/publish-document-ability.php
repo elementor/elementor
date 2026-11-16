@@ -5,6 +5,7 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\History\Revisions_Manager;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -119,7 +120,9 @@ class Publish_Document_Ability extends Abstract_Ability {
 			}
 		}
 
-		return $this->build_success_response( $document, get_post_status( $main_id ), $previous_status );
+		$response = $this->build_success_response( $document, get_post_status( $main_id ), $previous_status );
+
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	/**
