@@ -8,7 +8,13 @@ import {
 
 const PSEUDO_STATES: StyleDefinitionPseudoState[] = [ 'hover', 'focus', 'active', 'focus-visible' ];
 
-const CLASS_STATES: StyleDefinitionClassState[] = [ 'e--selected', 'e--disabled', 'e--playing', 'e--paused' ];
+const CLASS_STATES: StyleDefinitionClassState[] = [
+	'e--selected',
+	'e--disabled',
+	'e--playing',
+	'e--paused',
+	'e--current',
+];
 
 function getAdditionalStates( state: StyleDefinitionState ): StyleDefinitionAdditionalPseudoState[] {
 	if ( state === 'hover' ) {

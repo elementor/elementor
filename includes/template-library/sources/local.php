@@ -454,12 +454,19 @@ class Source_Local extends Source_Base {
 
 		$query_args = wp_parse_args( $args, $defaults );
 
+		// This source only lists its own post type.
+		$query_args['post_type'] = self::CPT;
+
 		$templates_query = new \WP_Query( $query_args );
 
 		$templates = [];
 
 		if ( $templates_query->have_posts() ) {
 			foreach ( $templates_query->get_posts() as $post ) {
+				if ( ! is_post_status_viewable( $post->post_status ) && ! current_user_can( 'read_post', $post->ID ) ) {
+					continue;
+				}
+
 				$templates[] = $this->get_item( $post->ID );
 			}
 		}
