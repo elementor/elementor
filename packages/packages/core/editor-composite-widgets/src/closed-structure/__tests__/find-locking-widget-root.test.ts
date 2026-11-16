@@ -4,6 +4,7 @@ import { isElementLocked, isInsertionLocked } from '../find-locking-widget-root'
 import {
 	cleanupClosedStructureFixture,
 	type ClosedStructureFixture,
+	getContainerSpy,
 	setupClosedStructureFixture,
 } from './closed-structure-fixture';
 
@@ -51,6 +52,21 @@ describe( 'find-locking-widget-root', () => {
 
 			// Assert.
 			expect( result ).toBe( false );
+		} );
+	} );
+
+	describe( 'element lookups', () => {
+		it.each( [
+			[ 'a part', 'label' ],
+			[ 'slot content', 'slotChild' ],
+			[ 'a part inside a nested widget', 'nestedPart' ],
+		] as const )( 'reads the markers of %s from the model without resolving elements by id', ( _, elementKey ) => {
+			// Act.
+			isElementLocked( fixture[ elementKey ] );
+			isInsertionLocked( fixture[ elementKey ] );
+
+			// Assert.
+			expect( getContainerSpy() ).not.toHaveBeenCalled();
 		} );
 	} );
 

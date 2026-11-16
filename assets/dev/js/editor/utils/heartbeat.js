@@ -5,6 +5,8 @@ export default class Heartbeat {
 	lastSyncedAt = 0;
 	pendingSyncTime = true;
 	lastStateOfDocumentChange = false;
+	lastSentUnpersisted = null;
+	isOverridingExternalChanges = false;
 
 	constructor( document ) {
 		this.document = document;
@@ -16,6 +18,7 @@ export default class Heartbeat {
 		this.onTick = this.onTick.bind( this );
 		this.onRefreshNonce = this.onRefreshNonce.bind( this );
 		this.onDocumentChanged = this.onDocumentChanged.bind( this );
+		this.onSaved = this.onSaved.bind( this );
 
 		this.bindEvents();
 
@@ -64,6 +67,9 @@ export default class Heartbeat {
 		};
 
 		data.elementor_has_unsaved = this.document.editor.isChanged ? this.document.id : null;
+		data.elementor_has_unpersisted = this.document.editor.isSaved ? null : this.document.id;
+
+		this.lastSentUnpersisted = data.elementor_has_unpersisted;
 	}
 
 	onTick( event, response ) {
@@ -87,7 +93,7 @@ export default class Heartbeat {
 		const mutatedAt = response.elementor_mcp_mutation?.mutated_at;
 
 		if ( mutatedAt && mutatedAt > this.lastSyncedAt ) {
-			this.showExternalChangeModal();
+			this.onExternalChangeDetected();
 		}
 
 		elementorCommon.ajax.addRequestConstant( '_nonce', response.elementorNonce );
@@ -116,9 +122,28 @@ export default class Heartbeat {
 		window.location.reload();
 	}
 
+	getSaveSyncData() {
+		const data = {
+			last_synced_at: this.lastSyncedAt,
+			ignore_external_changes: this.isOverridingExternalChanges,
+		};
+
+		this.isOverridingExternalChanges = false;
+
+		return data;
+	}
+
 	forceSave() {
+		this.isOverridingExternalChanges = true;
 		this.pendingSyncTime = true;
-		$e.run( 'document/save/save', { document: this.document } );
+		this.externalChangeModal = null;
+
+		return $e.run( 'document/save/draft', { document: this.document } );
+	}
+
+	onExternalChangeDetected() {
+		$e.components.get( 'document/save' ).stopAutoSave( this.document );
+		this.showExternalChangeModal();
 	}
 
 	showExternalChangeModal() {
@@ -167,14 +192,28 @@ export default class Heartbeat {
 	}
 
 	onDocumentChanged() {
-		const newChangeOfDocumentState = this.document.editor.isChanged;
-		if (newChangeOfDocumentState === this.lastStateOfDocumentChange) {
-			return;
-		}
-		if ( newChangeOfDocumentState ) {
+		const isChanged = this.document.editor.isChanged;
+		const becameChanged = isChanged && isChanged !== this.lastStateOfDocumentChange;
+		const hasUnreportedEdit = ! this.document.editor.isSaved && ! this.lastSentUnpersisted;
+
+		this.lastStateOfDocumentChange = isChanged;
+
+		if ( becameChanged || hasUnreportedEdit ) {
 			wp.heartbeat.connectNow();
 		}
-		this.lastStateOfDocumentChange = newChangeOfDocumentState;
+	}
+
+	onSaved( data ) {
+		const serverTime = data?.config?.document?.server_time;
+
+		if ( serverTime ) {
+			this.lastSyncedAt = Math.max( this.lastSyncedAt, serverTime );
+			this.pendingSyncTime = false;
+		}
+
+		if ( this.lastSentUnpersisted && this.document.editor.isSaved ) {
+			wp.heartbeat.connectNow();
+		}
 	}
 
 	bindEvents() {
@@ -185,6 +224,7 @@ export default class Heartbeat {
 		} );
 
 		elementor.channels.editor.on( 'status:change', this.onDocumentChanged );
+		elementor.channels.editor.on( 'saved', this.onSaved );
 	}
 
 	destroy() {
@@ -195,5 +235,6 @@ export default class Heartbeat {
 		} );
 
 		elementor.channels.editor.off( 'status:change', this.onDocumentChanged );
+		elementor.channels.editor.off( 'saved', this.onSaved );
 	}
 }

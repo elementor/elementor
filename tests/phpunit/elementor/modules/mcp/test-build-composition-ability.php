@@ -14,6 +14,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
@@ -1194,6 +1195,114 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
 		$this->assertSame( Page_Templates_Module::TEMPLATE_CANVAS, get_post_meta( $post_id, '_wp_page_template', true ) );
 		$this->assertNotFalse( wp_get_post_autosave( $post_id ), 'The write on a live page must be staged in an autosave.' );
+	}
+
+	public function test_execute__reports_staged_on_first_write_to_a_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_published_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringStartsWith( 'Change saved to a draft copy.', $result['llm_instructions'] );
+		$this->assertStringContainsString( 'elementor/publish-document', $result['llm_instructions'] );
+	}
+
+	public function test_execute__reports_not_staged_on_a_draft() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		// Act
+		$result = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+
+		// Assert
+		$this->assertFalse( $result['staged'] );
+		$this->assertStringNotContainsString( 'draft copy', $result['llm_instructions'] ?? '' );
+	}
+
+	/**
+	 * @dataProvider dry_run_document_elements_provider
+	 */
+	public function test_execute__dry_run_does_not_report_staged( bool $with_document_elements ) {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_published_document();
+		$ability = new Build_Composition_Ability();
+		$ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+		$input = [
+			'post_id' => $post_id,
+			'dry_run' => true,
+			'xml_structure' => '<e-heading configuration-id="title"/>',
+		];
+
+		if ( $with_document_elements ) {
+			$input['document_elements'] = [];
+		}
+
+		// Act
+		$result = $ability->execute( $input );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertArrayNotHasKey( 'staged', $result );
+		$this->assertStringNotContainsString( 'draft copy', $result['llm_instructions'] ?? '' );
+	}
+
+	public function dry_run_document_elements_provider(): array {
+		return [
+			'without document_elements' => [ false ],
+			'with document_elements' => [ true ],
+		];
+	}
+
+	public function test_execute__staged_build_is_visible_to_get_page_structure() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_published_document();
+
+		// Act
+		$build = ( new Build_Composition_Ability() )->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-div-block configuration-id="hero"/>',
+		] );
+		$structure = ( new Get_Structure_Ability() )->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertIsArray( $structure, is_wp_error( $structure ) ? $structure->get_error_message() : 'unknown' );
+		$this->assertTrue( $structure['staged'] );
+		$this->assertSame( $build['root_element_ids'], array_column( $structure['elements'], 'id' ) );
+		$this->assertEmpty( Plugin::$instance->documents->get( $post_id, false )->get_elements_data() );
+	}
+
+	/**
+	 * Autosave detection requires the autosave's `post_modified_gmt` to be strictly newer than the
+	 * main post's, so the main post is backdated.
+	 */
+	private function create_published_document(): int {
+		global $wpdb;
+
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) ) ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+
+		return $post_id;
 	}
 
 	public function test_execute__warns_when_decorative_is_sent_in_element_config() {
