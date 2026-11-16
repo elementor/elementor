@@ -537,6 +537,37 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
 	}
 
+	public function test_get_config__menu_items_base_style_has_no_flex_direction() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$config = $this->get_config( 'e-menu-items' );
+
+		// Assert.
+		$props = $config['base_styles']['e-menu-items-base']['variants'][0]['props'];
+		$this->assertArrayNotHasKey( 'flex-direction', $props );
+	}
+
+	public function test_get_collapse_css__defaults_items_layout_with_zero_specificity() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringContainsString( ':where(.e-menu-items-base){flex-direction:row}', $css );
+		$this->assertStringContainsString( '{flex-direction:column;flex-basis:100%;width:100%}', $css );
+		$this->assertMatchesRegularExpression( '/:where\([^{]*> \.e-menu-items-base\)\{flex-direction:column;flex-basis:100%;width:100%\}/', $css );
+		$this->assertDoesNotMatchRegularExpression( '/> \.e-menu-items-base\{[^}]*flex-direction/', $css );
+	}
+
+	public function test_get_collapse_css__keeps_toggle_rules_forced() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringContainsString( '> .e-menu-toggle-base{display:flex;order:-1;flex:0 0 auto;width:auto;', $css );
+	}
+
 	public function test_rendered_toggle_is_a_labelled_button_after_the_items() {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
