@@ -27,7 +27,7 @@ on:
         required: false
         default: ''
       shards:
-        description: 'JSON list that replaces numeric shards 1-17. Named shards from the matrix include list always run; listing one here avoids a duplicate job. Empty runs every shard.'
+        description: 'JSON list that replaces numeric shards 1-30. Named shards from the matrix include list always run; listing one here avoids a duplicate job. Empty runs every shard.'
         type: string
         required: false
         default: ''
@@ -91,8 +91,8 @@ jobs:
     strategy:
       fail-fast: ${{ github.event.inputs.fail_fast == true || github.event.inputs.fail_fast == 'true' }}
       matrix:
-        shardIndex: ${{ fromJSON(inputs.shards || '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]') }}
-        shardTotal: [17]
+        shardIndex: ${{ fromJSON(inputs.shards || '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]') }}
+        shardTotal: [30]
         include:
           - shardIndex: "elements-regression-core"
           - shardIndex: "elements-regression-atomic"
