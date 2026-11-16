@@ -21,7 +21,7 @@ export default function Sidebar() {
 				aria-label="Editor sidebar"
 				sx={ {
 					position: 'fixed',
-					zIndex: 1,
+					zIndex: 2,
 					insetBlockStart: APP_BAR_HEIGHT,
 					insetBlockEnd: 0,
 					insetInlineStart: 0,
