@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 4.4.1 - 2026-11-16 =
+
+* Tweak: Updated WordPress compatibility to version 7.2
+* Fix: Improved code security enforcement across attributes, permissions, and data handling
+* Fix: Anchor links scroll to the incorrect section on mobile devices when the page first loads
+* Fix: MCP manual configuration instructions may fail in certain environments
+* Fix: MCP may fail to update valid Atomic elements due to image validation errors
+* Fix: MCP changes to published pages may be lost or overwritten
+* Fix: Improved stability and reliability of Agent Ready features
+
 = 4.4.0 - 2026-11-09 =
 
 * New: Introducing Agent Ready to help prepare websites for AI agents with readiness scoring, content discovery tools, and bot access controls
