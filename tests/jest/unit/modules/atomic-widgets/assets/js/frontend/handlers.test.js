@@ -330,6 +330,23 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			delete global.elementorFrontendConfig;
 		} );
 
+		it( 'does not submit the form natively or send a request inside the editor', async () => {
+			// Arrange
+			global.elementor = {};
+			const { form } = createFormWithInput();
+			const instance = await setupFormHandler( form );
+			const event = new Event( 'submit', { cancelable: true } );
+
+			global.fetch = jest.fn();
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( event.defaultPrevented ).toBe( true );
+			expect( global.fetch ).not.toHaveBeenCalled();
+		} );
+
 		it( 'clears form fields on successful submission', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
