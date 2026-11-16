@@ -1,4 +1,10 @@
-import { type Element, type ElementType, getElementType, type V1Element } from '@elementor/editor-elements';
+import {
+	type Element,
+	type ElementType,
+	getElementSettings,
+	getElementType,
+	type V1Element,
+} from '@elementor/editor-elements';
 import { type AnyTransformable } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
@@ -53,12 +59,6 @@ function getWidgetPartElement( root: V1Element, part: string ): WidgetPartElemen
 	return {
 		element: { id: container.id, type },
 		elementType,
-		settings: readSettings( container, Object.keys( elementType.propsSchema ) ),
+		settings: getElementSettings< AnyTransformable >( container.id, Object.keys( elementType.propsSchema ) ),
 	};
-}
-
-function readSettings( container: V1Element, keys: string[] ): Record< string, AnyTransformable | null > {
-	return Object.fromEntries(
-		keys.map( ( key ) => [ key, ( container.settings?.get( key ) as AnyTransformable ) ?? null ] )
-	);
 }
