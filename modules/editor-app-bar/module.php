@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const PACKAGES = [
 		'editor-app-bar',
+		'editor-sidebar',
 	];
 
 	const STYLES = [
