@@ -320,7 +320,7 @@ class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 
 	public function test_rest_update__keeps_link_destination_added_by_admin() {
 		// Arrange.
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 		$elementor_data = $this->elementor_data_with_destinations( [
 			'notascheme:value',
 		] );
@@ -341,7 +341,7 @@ class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 
 	public function test_sanitize_elementor_data__keeps_link_destination_for_unfiltered_user() {
 		// Arrange.
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 		$stored_input = $this->elementor_data_with_destinations( [ 'notascheme:value' ] );
 
 		// Act.
