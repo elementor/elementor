@@ -258,6 +258,7 @@ class Template_Rules {
 
 	private function validate_part_name( array $node, string $path ): ?string {
 		if ( ! array_key_exists( Widget_Markers::PART_KEY, $node ) ) {
+			$this->require_part_outside_slot( $path );
 			return null;
 		}
 
@@ -269,6 +270,16 @@ class Template_Rules {
 		}
 
 		return $part;
+	}
+
+	/**
+	 * Every atom of the closed structure is named, so a part on an element marks it as a widget atom.
+	 * Slot content is regular page content and stays unnamed.
+	 */
+	private function require_part_outside_slot( string $path ): void {
+		if ( ! $this->is_inside_slot ) {
+			$this->errors->add( "{$path}.part", Definition_Error_Codes::PART_MISSING );
+		}
 	}
 
 	/**
