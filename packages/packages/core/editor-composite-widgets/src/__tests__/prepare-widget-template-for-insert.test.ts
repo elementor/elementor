@@ -1,48 +1,11 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { type StyleDefinition } from '@elementor/editor-styles';
 
 import { prepareWidgetTemplateForInsert } from '../prepare-widget-template-for-insert';
-import { type CompositeWidgetDefinition } from '../types';
-
-const GLOBAL_CLASS_ID = 'g-123abc';
-
-const LOCAL_ROOT_STYLE = {
-	id: 'local-root',
-	type: 'class',
-	label: 'local',
-	variants: [
-		{
-			meta: { breakpoint: 'desktop', state: null },
-			props: { padding: { $$type: 'size', value: { size: 12, unit: 'px' } } },
-			custom_css: null,
-		},
-	],
-} as StyleDefinition;
-
-function createDefinition(): CompositeWidgetDefinition {
-	return {
-		id: 'elementor/icon-button',
-		version: 1,
-		title: 'Icon button',
-		template: {
-			elType: 'e-flexbox',
-			part: 'root',
-			settings: {
-				classes: { $$type: 'classes', value: [ 'local-root', GLOBAL_CLASS_ID ] },
-			},
-			styles: { 'local-root': LOCAL_ROOT_STYLE },
-			elements: [
-				{ elType: 'widget', widgetType: 'e-svg', part: 'icon' },
-				{
-					elType: 'widget',
-					widgetType: 'e-paragraph',
-					part: 'label',
-					settings: { paragraph: { $$type: 'escaped-html', value: 'Click me' } },
-				},
-			],
-		},
-	};
-}
+import {
+	createIconButtonDefinition as createDefinition,
+	GLOBAL_CLASS_ID,
+	LOCAL_ROOT_STYLE,
+} from './icon-button-definition-fixture';
 
 function collectIds( element: V1ElementData ): string[] {
 	return [ element.id, ...( element.elements ?? [] ).flatMap( collectIds ) ];

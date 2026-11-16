@@ -1,5 +1,6 @@
 import { injectIntoPageIndication, toolsMenu } from '@elementor/editor-app-bar';
 import { registerPanel } from '@elementor/editor-panels';
+import { isSidebarEnabled, sidebarTools } from '@elementor/editor-sidebar';
 
 import { panel } from './components/panel/panel';
 import RecentlyEdited from './components/top-bar/recently-edited';
@@ -23,7 +24,9 @@ function registerTopBarMenuItems() {
 }
 
 function registerButton() {
-	toolsMenu.registerToggleAction( {
+	const menu = isSidebarEnabled() ? sidebarTools : toolsMenu;
+
+	menu.registerToggleAction( {
 		id: 'toggle-site-navigation-panel',
 		priority: 6,
 		useProps: useToggleButtonProps,

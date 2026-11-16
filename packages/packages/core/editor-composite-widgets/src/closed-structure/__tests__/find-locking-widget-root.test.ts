@@ -1,3 +1,5 @@
+import { findClosestContainer } from '@elementor/editor-elements';
+
 import { isElementLocked, isInsertionLocked } from '../find-locking-widget-root';
 import {
 	cleanupClosedStructureFixture,
@@ -6,11 +8,18 @@ import {
 	setupClosedStructureFixture,
 } from './closed-structure-fixture';
 
+jest.mock( '@elementor/editor-elements', () => {
+	const actual = jest.requireActual( '@elementor/editor-elements' );
+
+	return { ...actual, findClosestContainer: jest.fn( actual.findClosestContainer ) };
+} );
+
 describe( 'find-locking-widget-root', () => {
 	let fixture: ClosedStructureFixture;
 
 	beforeEach( () => {
 		fixture = setupClosedStructureFixture();
+		jest.mocked( findClosestContainer ).mockClear();
 	} );
 
 	afterEach( () => {
@@ -36,6 +45,7 @@ describe( 'find-locking-widget-root', () => {
 			[ 'a nested widget root inside a slot', 'nestedRoot' ],
 			[ 'a page element', 'page' ],
 			[ 'a part of a widget whose definition is not registered', 'unknownPart' ],
+			[ 'an unnamed node inside a widget, which definitions reject', 'unnamedNode' ],
 		] as const )( 'leaves %s unlocked', ( _, elementKey ) => {
 			// Act.
 			const result = isElementLocked( fixture[ elementKey ] );
@@ -68,12 +78,27 @@ describe( 'find-locking-widget-root', () => {
 			[ 'slot content', 'slotChild', false ],
 			[ 'the page', 'page', false ],
 			[ 'a widget whose definition is not registered', 'unknownRoot', false ],
+			[ 'an unnamed node inside a widget, which definitions reject', 'unnamedNode', false ],
 		] as const )( 'inserting into %s is locked: %s', ( _, targetKey, expected ) => {
 			// Act.
 			const result = isInsertionLocked( fixture[ targetKey ] );
 
 			// Assert.
 			expect( result ).toBe( expected );
+		} );
+	} );
+
+	describe( 'elements without markers', () => {
+		it.each( [
+			[ 'a page element', 'page' ],
+			[ 'slot content', 'slotChild' ],
+		] as const )( 'skips the ancestor walk for %s', ( _, elementKey ) => {
+			// Act.
+			isElementLocked( fixture[ elementKey ] );
+			isInsertionLocked( fixture[ elementKey ] );
+
+			// Assert.
+			expect( findClosestContainer ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

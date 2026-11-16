@@ -2,7 +2,9 @@
 
 namespace Elementor\Testing\Modules\CompositeWidgets\Fixtures;
 
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 
@@ -14,7 +16,10 @@ class Closed_Structure_Factory {
 	const WIDGET_ID = 'test/closed-widget';
 
 	public static function make(): Closed_Structure {
-		$registry = new Widgets_Definitions_Registry( Widget_Definition_Validator::make() );
+		$registry = new Widgets_Definitions_Registry(
+			Widget_Definition_Validator::make(),
+			new Definition_Migrator( Migrations_Orchestrator::make() )
+		);
 
 		if ( ! $registry->register( self::definition() ) ) {
 			throw new \RuntimeException( 'The closed-structure test definition did not register.' );
