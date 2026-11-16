@@ -9,6 +9,8 @@ import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
+import { registerPanel } from '@elementor/editor-panels';
+import { isSidebarEnabled, sidebarTools } from '@elementor/editor-sidebar';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
@@ -16,12 +18,14 @@ import { __ } from '@wordpress/i18n';
 import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { componentOverrideTransformer } from './component-override-transformer';
+import { panel } from './components/components-panel/panel';
 import { Components } from './components/components-tab/components';
 import { openDetachConfirmDialog } from './components/detach-instance-confirmation-dialog';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
 import { LoadTemplateComponents } from './components/load-template-components';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { useTogglePanelProps } from './hooks/use-toggle-panel-props';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
@@ -44,12 +48,7 @@ export function init() {
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
-	injectTab( {
-		id: 'components',
-		label: __( 'Components', 'elementor' ),
-		component: Components,
-		position: 1,
-	} );
+	registerComponentsEntry();
 
 	injectIntoLogic( {
 		id: 'components-populate-store',
@@ -90,4 +89,26 @@ export function init() {
 	initCircularNestingPrevention();
 
 	initLoadComponentDataAfterInstanceAdded();
+}
+
+function registerComponentsEntry() {
+	if ( isSidebarEnabled() ) {
+		registerPanel( panel );
+
+		sidebarTools.registerToggleAction( {
+			id: 'open-components-panel',
+			group: 'elements',
+			priority: 2,
+			useProps: useTogglePanelProps,
+		} );
+
+		return;
+	}
+
+	injectTab( {
+		id: 'components',
+		label: __( 'Components', 'elementor' ),
+		component: Components,
+		position: 1,
+	} );
 }
