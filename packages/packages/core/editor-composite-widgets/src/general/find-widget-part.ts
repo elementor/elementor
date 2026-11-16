@@ -1,22 +1,15 @@
-import { getContainerPart, isContainerSlot, type V1Element } from '@elementor/editor-elements';
+import { getAllDescendants, getContainerPart, type V1Element } from '@elementor/editor-elements';
 
-export function findWidgetPart( container: V1Element, part: string ): V1Element | null {
-	if ( getContainerPart( container ) === part ) {
-		return container;
-	}
+import { findLockingWidgetRoot } from '../closed-structure/find-locking-widget-root';
 
-	// Slot content is page content, outside the closed structure: a nested widget there reuses the same part names.
-	if ( isContainerSlot( container ) ) {
-		return null;
-	}
+export function findWidgetPart( root: V1Element, part: string ): V1Element | null {
+	return (
+		getAllDescendants( root ).find(
+			( element ) => getContainerPart( element ) === part && isInWidgetStructure( element, root )
+		) ?? null
+	);
+}
 
-	for ( const child of container.children ?? [] ) {
-		const found = findWidgetPart( child, part );
-
-		if ( found ) {
-			return found;
-		}
-	}
-
-	return null;
+function isInWidgetStructure( element: V1Element, root: V1Element ): boolean {
+	return element === root || findLockingWidgetRoot( element.parent ) === root;
 }
