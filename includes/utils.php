@@ -23,6 +23,17 @@ class Utils {
 
 	const EDITOR_BREAK_LINES_OPTION_KEY = 'elementor_editor_break_lines';
 
+	const CUSTOM_ATTRIBUTE_NAME_PATTERN = '/^[a-zA-Z0-9_-]+$/D';
+
+	const CUSTOM_ATTRIBUTE_PAIR_PATTERN = '/([a-zA-Z0-9_-]+)\s*=\s*(["\'])(.*?)\2/s';
+
+	const EVENT_HANDLER_ATTRIBUTE_NAME_PATTERN = '/^on[a-z]*$/iD';
+	const BLOCKED_CUSTOM_ATTRIBUTE_NAME_PREFIXES = [ 'x-' ];
+
+	const URL_CUSTOM_ATTRIBUTE_NAMES = [ 'action', 'formaction', 'href', 'src' ];
+
+	const HTML_CUSTOM_ATTRIBUTE_NAMES = [ 'srcdoc' ];
+
 	/**
 	 * A list of safe tags for `validate_html_tag` method.
 	 */
@@ -768,6 +779,84 @@ class Utils {
 		}
 
 		return $result;
+	}
+
+	public static function is_allowed_custom_attribute_name( $name, bool $allow_unfiltered_names = false ): bool {
+		if ( ! is_string( $name ) || ! preg_match( self::CUSTOM_ATTRIBUTE_NAME_PATTERN, $name ) ) {
+			return false;
+		}
+
+		if ( $allow_unfiltered_names ) {
+			return true;
+		}
+
+		$normalized_name = strtolower( $name );
+
+		if ( self::is_html_custom_attribute_name( $normalized_name ) ) {
+			return false;
+		}
+
+		if ( preg_match( self::EVENT_HANDLER_ATTRIBUTE_NAME_PATTERN, $name ) ) {
+			return false;
+		}
+
+		foreach ( self::BLOCKED_CUSTOM_ATTRIBUTE_NAME_PREFIXES as $prefix ) {
+			if ( 0 === strpos( $normalized_name, $prefix ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private static function is_html_custom_attribute_name( string $name ): bool {
+		return in_array( strtolower( $name ), self::HTML_CUSTOM_ATTRIBUTE_NAMES, true );
+	}
+
+	private static function escape_custom_attribute_value( string $name, string $value ): string {
+		if ( self::is_html_custom_attribute_name( $name ) ) {
+			return htmlspecialchars( $value, ENT_QUOTES, 'UTF-8', true );
+		}
+
+		return esc_attr( $value );
+	}
+
+	public static function sanitize_custom_attribute_value( string $name, string $value ): string {
+		$normalized_name = strtolower( $name );
+
+		if ( in_array( $normalized_name, self::URL_CUSTOM_ATTRIBUTE_NAMES, true ) ) {
+			return wp_kses_bad_protocol( $value, wp_allowed_protocols() );
+		}
+
+		if ( self::is_html_custom_attribute_name( $normalized_name ) ) {
+			return wp_kses_post( $value );
+		}
+
+		return $value;
+	}
+
+	public static function sanitize_custom_attributes_string( $attributes_string, bool $allow_unfiltered_names = false ): string {
+		if ( ! is_string( $attributes_string ) || '' === $attributes_string ) {
+			return '';
+		}
+
+		preg_match_all( self::CUSTOM_ATTRIBUTE_PAIR_PATTERN, $attributes_string, $matches, PREG_SET_ORDER );
+
+		$sanitized = [];
+
+		foreach ( $matches as $match ) {
+			$name = $match[1];
+
+			if ( ! self::is_allowed_custom_attribute_name( $name, $allow_unfiltered_names ) ) {
+				continue;
+			}
+
+			$value = html_entity_decode( $match[3], ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+			$value = self::sanitize_custom_attribute_value( $name, $value );
+			$sanitized[] = $name . '="' . self::escape_custom_attribute_value( $name, $value ) . '"';
+		}
+
+		return implode( ' ', $sanitized );
 	}
 
 	public static function find_element_recursive( $elements, $id ) {

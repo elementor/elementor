@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\WpRest\Classes;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Plugin;
@@ -100,7 +101,11 @@ class Elementor_Post_Meta {
 			return wp_kses_post( $value );
 		}
 
-		return wp_json_encode( $this->sanitize_stored_links( Utils::kses_post_deep( $elementor_data ) ) );
+		$elementor_data = Utils::kses_post_deep( $elementor_data );
+		$elementor_data = $this->sanitize_stored_links( $elementor_data );
+		$elementor_data = $this->sanitize_custom_attributes( $elementor_data );
+
+		return wp_json_encode( $elementor_data );
 	}
 
 	private function sanitize_stored_links( $data ) {
@@ -131,6 +136,33 @@ class Elementor_Post_Meta {
 		}
 
 		return $destination;
+	}
+
+	private function sanitize_custom_attributes( array $elements ): array {
+		$attributes_key = Attributes_Prop_Type::get_key();
+		$attributes_prop_type = Attributes_Prop_Type::make();
+
+		foreach ( $elements as $index => $element ) {
+			if ( ! is_array( $element ) ) {
+				continue;
+			}
+
+			if ( isset( $element['settings'][ $attributes_key ] ) ) {
+				$attributes = $element['settings'][ $attributes_key ];
+
+				if ( $attributes_prop_type->validate( $attributes ) ) {
+					$elements[ $index ]['settings'][ $attributes_key ] = $attributes_prop_type->sanitize( $attributes );
+				} else {
+					unset( $elements[ $index ]['settings'][ $attributes_key ] );
+				}
+			}
+
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$elements[ $index ]['elements'] = $this->sanitize_custom_attributes( $element['elements'] );
+			}
+		}
+
+		return $elements;
 	}
 
 	private function register_page_settings_meta( string $post_type ): void {

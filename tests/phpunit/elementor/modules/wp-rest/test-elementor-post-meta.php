@@ -143,6 +143,110 @@ class Test_Elementor_Post_Meta extends Elementor_Test_Base {
 		$this->assertEquals( $page_settings, $saved_value, 'Saved value should be an array' );
 	}
 
+	public function test_sanitize_elementor_data__cleans_attributes_for_users_without_unfiltered_html() {
+		// Arrange.
+		$this->act_as( 'contributor' );
+		$elementor_data = $this->make_elementor_data_with_attributes( $this->make_attributes( [
+			'role' => 'button',
+			'href' => 'custom-scheme:page',
+			'onclick' => 'a',
+			'x-init' => 'a',
+		] ) );
+
+		// Act.
+		$sanitized = json_decode( $this->post_meta->sanitize_elementor_data( $elementor_data ), true );
+
+		// Assert.
+		$expected = [
+			'role' => 'button',
+			'href' => 'page',
+		];
+		$this->assertSame( $expected, $this->get_attribute_pairs( $sanitized[0]['settings']['attributes'] ) );
+		$this->assertSame( $expected, $this->get_attribute_pairs( $sanitized[0]['elements'][0]['settings']['attributes'] ) );
+		$this->assertSame( 'a', $sanitized[0]['settings']['tag']['value'] );
+	}
+
+	public function test_sanitize_elementor_data__removes_malformed_attributes_for_users_without_unfiltered_html() {
+		// Arrange.
+		$this->act_as( 'contributor' );
+		$elementor_data = $this->make_elementor_data_with_attributes( [
+			'$$type' => 'attributes',
+			'value' => 'role="button"',
+		] );
+
+		// Act.
+		$sanitized = json_decode( $this->post_meta->sanitize_elementor_data( $elementor_data ), true );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'attributes', $sanitized[0]['settings'] );
+		$this->assertArrayNotHasKey( 'attributes', $sanitized[0]['elements'][0]['settings'] );
+	}
+
+	public function test_sanitize_elementor_data__keeps_attributes_for_users_with_unfiltered_html() {
+		// Arrange.
+		$this->act_as_admin_or_network_admin();
+		$elementor_data = $this->make_elementor_data_with_attributes();
+
+		// Act.
+		$sanitized = $this->post_meta->sanitize_elementor_data( $elementor_data );
+
+		// Assert.
+		$this->assertSame( $elementor_data, $sanitized );
+	}
+
+	private function make_attributes( array $pairs ): array {
+		$items = [];
+
+		foreach ( $pairs as $key => $value ) {
+			$items[] = [
+				'$$type' => 'key-value',
+				'value' => [
+					'key' => [ '$$type' => 'string', 'value' => $key ],
+					'value' => [ '$$type' => 'string', 'value' => $value ],
+				],
+			];
+		}
+
+		return [
+			'$$type' => 'attributes',
+			'value' => $items,
+		];
+	}
+
+	private function get_attribute_pairs( array $attributes ): array {
+		$pairs = [];
+
+		foreach ( $attributes['value'] as $item ) {
+			$pairs[ $item['value']['key']['value'] ] = $item['value']['value']['value'];
+		}
+
+		return $pairs;
+	}
+
+	private function make_elementor_data_with_attributes( ?array $attributes = null ): string {
+		$attributes = $attributes ?? $this->make_attributes( [ 'href' => 'https://example.com' ] );
+
+		return wp_json_encode( [
+			[
+				'id' => 'parent1',
+				'elType' => 'e-div-block',
+				'settings' => [
+					'tag' => [ '$$type' => 'string', 'value' => 'a' ],
+					'attributes' => $attributes,
+				],
+				'elements' => [
+					[
+						'id' => 'child01',
+						'elType' => 'widget',
+						'widgetType' => 'e-paragraph',
+						'settings' => [ 'attributes' => $attributes ],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+	}
+
 	/**
 	 * @see https://github.com/elementor/elementor/issues/30160
 	 * Issue caused by WP_REST_Meta_Fields::is_meta_value_same_as_stored_value() function that attempted to
