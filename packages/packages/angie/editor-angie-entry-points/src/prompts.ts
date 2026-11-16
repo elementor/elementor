@@ -70,6 +70,16 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 	variablesManager: () => 'In the design system variables, I want: ',
 };
 
+export const buildAngieSiteLogoPrompt = (): string =>
+	[
+		'Update the Site Identity site logo on the active kit.',
+		'Call v3-kit-site-identity with action "get" to read the current site name, description, logo, and favicon.',
+		'Use the image agent to create or pick an appropriate site logo. Do not use an MCP tool for image generation.',
+		'When you have a public HTTPS image URL, call elementor/upload-media to import it into the WordPress Media Library (admin only).',
+		'Call v3-kit-site-identity with action "set" and patch { site_logo: { id, url } } using the attachment id and URL from the upload step.',
+		'Do not invent other write paths.',
+	].join( '\n\n' );
+
 export const buildAngieV3TextPrompt = ( {
 	elementId,
 	controlName,
