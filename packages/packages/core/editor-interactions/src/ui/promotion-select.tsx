@@ -34,7 +34,7 @@ export function PromotionSelect( {
 	return (
 		<Select
 			value={ value }
-			onChange={ ( e: SelectChangeEvent< unknown > ) => onChange?.( String( e.target.value ) ) }
+			onChange={ ( e: SelectChangeEvent< unknown > ) => onChange?.( e.target.value as string ) }
 			fullWidth
 			displayEmpty
 			size="tiny"

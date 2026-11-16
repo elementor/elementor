@@ -64,7 +64,7 @@ export const AspectRatioControl = createControl( ( { label }: { label: string } 
 	}, [ aspectRatioValue ] );
 
 	const handleSelectChange = ( event: SelectChangeEvent< unknown > ) => {
-		const newValue = String( event.target.value );
+		const newValue = event.target.value as string;
 		const isCustomRatio = newValue === CUSTOM_RATIO;
 
 		setIsCustom( isCustomRatio );
