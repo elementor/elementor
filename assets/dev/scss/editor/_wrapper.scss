@@ -27,6 +27,10 @@ a {
 }
 
 body {
+	&:has(.e-editor-sidebar) {
+		--e-editor-sidebar-width: 55px;
+	}
+
 	background-color: var(--e-a-bg-default);
     color: var(--e-a-color-txt);
     font-family: var(--e-a-font-family);
@@ -86,6 +90,8 @@ body {
 	display: flex;
 	width: 100%;
 	height: 100vh;
+	position: relative;
+	inset-inline-start: var(--e-editor-sidebar-width, 0px);
 }
 
 #elementor-panel,
