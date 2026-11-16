@@ -15,20 +15,6 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_editor_sidebar';
 
-	const PACKAGES = [
-		'editor-sidebar',
-	];
-
-	public function __construct() {
-		parent::__construct();
-
-		if ( ! self::is_active() ) {
-			return;
-		}
-
-		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => array_merge( $packages, self::PACKAGES ) );
-	}
-
 	public function get_name(): string {
 		return 'editor-sidebar';
 	}
