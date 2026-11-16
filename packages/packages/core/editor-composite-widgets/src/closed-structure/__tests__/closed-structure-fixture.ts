@@ -5,8 +5,9 @@ export const WIDGET_ID = 'elementor/tabs-like';
 
 type FixtureElement = 'document' | 'page' | 'root' | 'label' | 'slot' | 'slotChild' | 'nestedRoot' | 'nestedPart';
 type UnknownElement = 'unknownRoot' | 'unknownPart';
+type UnnamedElement = 'unnamedNode';
 
-export type ClosedStructureFixture = Record< FixtureElement | UnknownElement, V1Element >;
+export type ClosedStructureFixture = Record< FixtureElement | UnknownElement | UnnamedElement, V1Element >;
 
 export function setupClosedStructureFixture(): ClosedStructureFixture {
 	const elements = new Map< string, V1Element >();
@@ -26,6 +27,7 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 		document
 	);
 	const label = add( { id: 'label', widgetType: 'e-paragraph', part: 'label' }, root );
+	const unnamedNode = add( { id: 'unnamed-node', elType: 'e-flexbox' }, root );
 	const slot = add( { id: 'slot', elType: 'e-flexbox', part: 'tab_content', slot: true }, root );
 	const slotChild = add( { id: 'slot-child', elType: 'e-flexbox' }, slot );
 	const nestedRoot = add(
@@ -44,7 +46,19 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 		getContainer: jest.fn( ( id: string ) => elements.get( id ) ),
 	};
 
-	return { document, page, root, label, slot, slotChild, nestedRoot, nestedPart, unknownRoot, unknownPart };
+	return {
+		document,
+		page,
+		root,
+		label,
+		slot,
+		slotChild,
+		nestedRoot,
+		nestedPart,
+		unknownRoot,
+		unknownPart,
+		unnamedNode,
+	};
 }
 
 export function getContainerSpy(): jest.Mock {

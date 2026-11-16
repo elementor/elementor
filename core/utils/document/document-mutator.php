@@ -383,6 +383,13 @@ class Document_Mutator {
 	}
 
 	/**
+	 * Regenerate the ids of an element and all its children, including atomic local style and interaction ids.
+	 */
+	public function regenerate_ids( array $element ): array {
+		return $this->generate_ids_recursive( $element, true );
+	}
+
+	/**
 	 * Recursively generate IDs for an element and all its children.
 	 * Always generates new IDs to avoid duplicates when inserting subtrees.
 	 *
