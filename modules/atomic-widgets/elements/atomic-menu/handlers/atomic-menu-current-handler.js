@@ -7,6 +7,7 @@ const ITEM_ELEMENT_TYPE = 'e-menu-item';
 const MENU_SELECTOR = '[data-element_type="e-menu"]';
 const ITEM_SELECTOR = '[data-element_type="e-menu-item"]';
 const CURRENT_CLASS = 'e--current';
+const PREVIEW_STATE_ATTRIBUTE = 'data-e-preview-state';
 
 function getLinkedItems( menu ) {
 	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter(
@@ -24,7 +25,9 @@ function findAnchorEntries( items ) {
 }
 
 function setCurrent( item, ariaCurrent ) {
-	item.classList.toggle( CURRENT_CLASS, !! ariaCurrent );
+	const isPreviewed = item.hasAttribute( PREVIEW_STATE_ATTRIBUTE );
+
+	item.classList.toggle( CURRENT_CLASS, !! ariaCurrent || isPreviewed );
 
 	if ( ariaCurrent ) {
 		item.setAttribute( 'aria-current', ariaCurrent );

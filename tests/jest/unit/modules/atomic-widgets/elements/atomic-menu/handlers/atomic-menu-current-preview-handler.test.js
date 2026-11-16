@@ -123,6 +123,24 @@ describe( 'menu item current preview handler', () => {
 		expect( rerendered.classList.contains( CURRENT_CLASS ) ).toBe( true );
 	} );
 
+	it( 'should mark the previewed item so real detection leaves its class alone', () => {
+		// Arrange
+		const item = buildItem( 'a1' );
+		run( item );
+
+		// Act
+		selectState( 'a1', 'e--current' );
+
+		// Assert
+		expect( item.getAttribute( 'data-e-preview-state' ) ).toBe( 'e--current' );
+
+		// Act
+		selectState( 'a1', null );
+
+		// Assert
+		expect( item.hasAttribute( 'data-e-preview-state' ) ).toBe( false );
+	} );
+
 	it( 'should never remove a class that real detection set', () => {
 		// Arrange
 		const item = buildItem( 'a1' );

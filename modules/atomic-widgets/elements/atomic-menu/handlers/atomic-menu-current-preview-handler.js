@@ -2,6 +2,7 @@ import { register } from '@elementor/frontend-handlers';
 
 const ITEM_ELEMENT_TYPE = 'e-menu-item';
 const CURRENT_CLASS = 'e--current';
+const PREVIEW_STATE_ATTRIBUTE = 'data-e-preview-state';
 const STYLE_STATE_EVENT = 'elementor/editor/style-state/change';
 
 let activeState = { id: null, state: null };
@@ -14,8 +15,13 @@ register( {
 			const isPreviewed = activeState.id === element.dataset.id && CURRENT_CLASS === activeState.state;
 
 			if ( isPreviewed ) {
+				element.setAttribute( PREVIEW_STATE_ATTRIBUTE, CURRENT_CLASS );
 				element.classList.add( CURRENT_CLASS );
-			} else if ( ! element.hasAttribute( 'aria-current' ) ) {
+			} else {
+				element.removeAttribute( PREVIEW_STATE_ATTRIBUTE );
+			}
+
+			if ( ! isPreviewed && ! element.hasAttribute( 'aria-current' ) ) {
 				element.classList.remove( CURRENT_CLASS );
 			}
 		};

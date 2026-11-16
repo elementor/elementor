@@ -125,6 +125,21 @@ describe( 'atomic-menu current handler', () => {
 		expect( items.map( ( item ) => item.getAttribute( 'aria-current' ) ) ).toEqual( [ null, 'page', null ] );
 	} );
 
+	it( 'should keep the editor preview class on an item that detection does not match', () => {
+		// Arrange
+		const { menu, items } = buildMenu( [ `${ ORIGIN }/`, `${ ORIGIN }/about` ] );
+		items[ 0 ].setAttribute( 'data-e-preview-state', CURRENT_CLASS );
+		items[ 0 ].classList.add( CURRENT_CLASS );
+
+		// Act
+		run( menu );
+
+		// Assert
+		expect( items[ 0 ].classList.contains( CURRENT_CLASS ) ).toBe( true );
+		expect( items[ 0 ].hasAttribute( 'aria-current' ) ).toBe( false );
+		expect( items[ 1 ].classList.contains( CURRENT_CLASS ) ).toBe( true );
+	} );
+
 	it( 'should mark every item that links to the current page', () => {
 		// Arrange
 		const { menu, items } = buildMenu( [ `${ ORIGIN }/about/`, `${ ORIGIN }/about`, `${ ORIGIN }/contact/` ] );
