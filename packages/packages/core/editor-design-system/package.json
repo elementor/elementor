@@ -41,6 +41,7 @@
   "dependencies": {
     "@elementor/editor": "4.5.0",
     "@elementor/editor-app-bar": "4.5.0",
+    "@elementor/editor-sidebar": "4.5.0",
     "@elementor/editor-canvas": "4.5.0",
     "@elementor/editor-default-styles": "4.5.0",
     "@elementor/editor-current-user": "4.5.0",

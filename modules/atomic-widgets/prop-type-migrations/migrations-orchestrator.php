@@ -124,6 +124,30 @@ class Migrations_Orchestrator {
 		}
 	}
 
+	/**
+	 * Migrates data that isn't stored as an entity (no migrations cache, no save step),
+	 * for example composite widget templates registered from code.
+	 *
+	 * Always uses the bundled manifest: without a per-entity cache, the remote rollback loader
+	 * would repeat its uncached operation requests on every call.
+	 *
+	 * @param array $data Data structure to migrate, modified by reference
+	 * @return bool Whether anything changed
+	 */
+	public function migrate_data( array &$data ): bool {
+		$this->loader = $this->get_bundled_loader();
+
+		try {
+			return $this->walk_and_migrate( $data, [] );
+		} catch ( \Exception $e ) {
+			Logger::warning( 'Migration failed', [
+				'error' => $e->getMessage(),
+			] );
+
+			return false;
+		}
+	}
+
 	private function walk_and_migrate( array &$data, array $path ): bool {
 		$has_changes = false;
 
@@ -356,6 +380,14 @@ class Migrations_Orchestrator {
 
 		if ( self::is_rollback() ) {
 			return $this->get_remote_loader();
+		}
+
+		return $this->get_local_loader();
+	}
+
+	private function get_bundled_loader(): Migrations_Loader {
+		if ( $this->migrations_path ) {
+			return Migrations_Loader::make( $this->migrations_path );
 		}
 
 		return $this->get_local_loader();
