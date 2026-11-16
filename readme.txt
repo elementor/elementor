@@ -1,4 +1,4 @@
-=== Elementor Website Builder - more than just a page builder ===
+=== Elementor Agent Ready Website Builder ===
 Contributors: elemntor
 Tags: ai, drag-and-drop, editor, landing page, mcp
 Requires at least: 6.8
@@ -15,15 +15,17 @@ The Elementor Website Builder has it all: drag and drop page builder, Atomic Edi
 
 https://www.youtube.com/watch?v=ROEC0CPRO3w
 
-= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING 23M+ WEBSITES WORLDWIDE, NOW WITH AGENTIC AI. =
+= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING 24M+ WEBSITES WORLDWIDE, NOW WITH AGENTIC AI. =
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Atomic Editor.
 
 Supporting the full website lifecycle, Elementor lets you build, optimize, and manage your website with extended capabilities such as agentic AI creation, native MCP connection, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
 
+Build beautiful websites for humans, while making sure AI agents can find, read, and act on them too. Elementor generates the files agents look for, like llms.txt, agent discovery files, markdown files and WebMCP tools, straight from your content, with a free Agent Ready score and a fix for every check that fails.
+
 Elementor is now in version 4, with a new generation of performance-first atomic building blocks that put you in control of every part of your site. Define your global design systems and reusable components once, and they apply everywhere instantly – turning hours or even days of work into single clicks.
 
-NEW! Connect your favorite AI tools, including Claude, Codex, and Cursor, directly to your Elementor sites. **[The Elementor MCP](https://go.elementor.com/wp-repo-description-tab-elementor-mcp)** acts as a new execution layer, turning plain-language prompts into real, fully editable Elementor structures, layouts, and design systems while keeping you in complete control. 
+Connect your favorite AI tools, including Claude, Codex, and Cursor, directly to your Elementor sites. **[The Elementor MCP](https://go.elementor.com/wp-repo-description-tab-elementor-mcp)** acts as a new execution layer, turning plain-language prompts into real, fully editable Elementor structures, layouts, and design systems while keeping you in complete control. 
 
 Unlock all Pro features with **[Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/)**.
 
@@ -99,16 +101,6 @@ Access a suite of free widgets and tools built to support your website creation 
 ### 🚀 Enhance your website
 
 **[High-performing websites](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/)**: Website performance affects your visitors’ experience and search result ranking. Elementor, in partnership with Google Chrome, continuously improves performance without compromising design.
-
-**Key features include:**
-
-- **Reduced DOM output**: Streamlined HTML structure for faster rendering.  
-- **Improved media file loading**: Optimized loading of images, videos, and other media assets.  
-- **Reduced CSS and JS files**: Minimized stylesheets and scripts individually loaded only on demand for quicker load times.  
-- **Lazy loading**: Deferred loading of non-critical resources to improve initial page load speed.  
-- **Faster font loading**: Efficient delivery of web fonts to enhance text rendering speed.  
-- **Optimized front-end asset loading**: Efficient loading of assets like JavaScript and CSS to minimize render-blocking.  
-- **Element caching**: Cache frequently accessed design elements to reduce server response time and enhance overall performance.
 
 ### 🔥 Elementor Editor Pro features
 
