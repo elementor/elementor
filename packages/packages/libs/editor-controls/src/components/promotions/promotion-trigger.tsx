@@ -45,14 +45,14 @@ export const PromotionTrigger = forwardRef< PromotionTriggerRef, PromotionTrigge
 						assetUrl={ promotion.image }
 						ctaUrl={ promotion.ctaUrl }
 						open={ isOpen }
-						onClose={ ( e: MouseEvent ) => {
+						onClose={ ( e ) => {
 							e.stopPropagation();
 							setIsOpen( false );
 						} }
 						onCtaClick={ () => trackUpgradePromotionClick( trackingData ) }
 					>
 						<Box
-							onClick={ ( e: MouseEvent ) => {
+							onClick={ ( e: React.MouseEvent ) => {
 								e.stopPropagation();
 								toggle();
 							} }

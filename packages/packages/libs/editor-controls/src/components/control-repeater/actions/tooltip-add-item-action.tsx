@@ -53,6 +53,7 @@ const ConditionalToolTip = ( {
 } > ) =>
 	enable && content ? (
 		<Infotip placement="right" color="secondary" content={ content }>
+			{ /* @ts-expect-error TS7 migration */ }
 			{ children }
 		</Infotip>
 	) : (

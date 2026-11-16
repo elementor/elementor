@@ -43,6 +43,7 @@ type MediaActionGroupProps = {
 export const MediaActionGroup = ( { label, onSelect, uploadSlot, groupRef, testId }: MediaActionGroupProps ) => (
 	<SplitButtonGroup ref={ groupRef } role="group" aria-label={ label } direction="row" data-testid={ testId }>
 		<Button
+			// @ts-expect-error TS7 migration: custom Button size "tiny" from @elementor/ui
 			size="tiny"
 			color="inherit"
 			variant="text"
@@ -73,6 +74,7 @@ type MediaUploadButtonProps = {
 export const MediaUploadButton = ( { disabled = false, onClick }: MediaUploadButtonProps ) => (
 	<Button
 		sx={ { ...actionButtonSx, width: '100%' } }
+		// @ts-expect-error TS7 migration: custom Button size "tiny" from @elementor/ui
 		size="tiny"
 		color="inherit"
 		variant="text"
@@ -98,7 +100,13 @@ export const MediaSelectActions = ( { label, onSelect, onUpload, onInsertUrl }: 
 			onSelect={ onSelect }
 			uploadSlot={ <MediaUploadButton onClick={ onUpload } /> }
 		/>
-		<Button size="tiny" variant="text" color="inherit" onClick={ onInsertUrl }>
+		<Button
+			// @ts-expect-error TS7 migration: custom Button size "tiny" from @elementor/ui
+			size="tiny"
+			variant="text"
+			color="inherit"
+			onClick={ onInsertUrl }
+		>
 			{ __( 'Insert URL', 'elementor' ) }
 		</Button>
 	</Stack>

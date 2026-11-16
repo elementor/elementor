@@ -77,7 +77,7 @@ export const UnitSelector = < T extends string >( {
 
 const StyledButton = styled( Button, {
 	shouldForwardProp: ( prop ) => prop !== 'isHighlighted',
-} )( ( { isHighlighted, theme } ) => ( {
+} )< { isHighlighted?: boolean } >( ( { isHighlighted, theme } ) => ( {
 	color: isHighlighted ? theme.palette.text.primary : theme.palette.text.tertiary,
 	font: 'inherit',
 	minWidth: 'initial',

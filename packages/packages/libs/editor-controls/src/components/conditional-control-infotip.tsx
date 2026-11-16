@@ -52,6 +52,7 @@ export const ConditionalControlInfotip = React.forwardRef(
 								</InfoAlert>
 							}
 						>
+							{ /* @ts-expect-error TS7 migration */ }
 							{ children }
 						</Infotip>
 					</DirectionProvider>

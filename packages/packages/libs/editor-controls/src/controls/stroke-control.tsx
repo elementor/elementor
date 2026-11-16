@@ -38,7 +38,7 @@ export const StrokeControl = createControl( () => {
 	);
 } );
 
-const Control = forwardRef( ( { bind, label, children }: StrokeProps, ref ) => (
+const Control = forwardRef< HTMLDivElement, StrokeProps >( ( { bind, label, children }, ref ) => (
 	<PropKeyProvider bind={ bind }>
 		<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap" ref={ ref }>
 			<Grid item xs={ 6 }>

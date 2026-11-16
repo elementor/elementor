@@ -30,7 +30,10 @@ export const MenuListItem = ( {
 		>
 			<MenuItemText
 				primary={ children }
-				primaryTypographyProps={ primaryTypographyProps }
+				primaryTypographyProps={ {
+					...primaryTypographyProps,
+					component: 'span',
+				} }
 				{ ...menuItemTextProps }
 			/>
 		</MenuItem>
@@ -51,7 +54,7 @@ export const MenuItemInfotip = forwardRef(
 
 		return (
 			<Infotip
-				ref={ ref }
+				ref={ ref as React.Ref< unknown > }
 				placement={ 'right' }
 				arrow={ false }
 				content={ <InfoAlert sx={ { maxWidth: 325 } }>{ content }</InfoAlert> }

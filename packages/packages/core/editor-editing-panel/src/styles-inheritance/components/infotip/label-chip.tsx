@@ -28,6 +28,7 @@ export const LabelChip = ( { displayLabel, provider }: Props ) => {
 			size={ SIZE }
 			color={ getStylesProviderColorName( provider ) }
 			variant="standard"
+			// @ts-expect-error TS7 migration
 			state="enabled"
 			icon={ chipIcon }
 			sx={ ( theme: Theme ) => ( {

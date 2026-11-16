@@ -95,7 +95,12 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 								justifyContent: 'center',
 							} }
 						>
-							<Button onClick={ fetchNextPage } color="secondary">
+							<Button
+								onClick={ () => {
+									void fetchNextPage();
+								} }
+								color="secondary"
+							>
 								{ isFetchingNextPage ? <CircularProgress /> : 'Load More' }
 							</Button>
 						</Box>

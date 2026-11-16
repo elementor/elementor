@@ -94,6 +94,7 @@ export function ProInstall() {
 					href={ '#' }
 					align="center"
 					onClick={ ( event: React.SyntheticEvent ) => handleDismiss( event ) }
+					// @ts-expect-error TS7 migration
 					disabled={ isInstalling }
 					sx={ { textDecoration: 'none' } }
 				>

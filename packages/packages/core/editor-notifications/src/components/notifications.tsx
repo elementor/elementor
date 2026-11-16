@@ -22,6 +22,7 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	return (
 		<ThemeProvider palette="unstable">
 			<SnackbarContent
+				// @ts-expect-error TS7 migration
 				ref={ ref }
 				{ ...filteredProps }
 				sx={ {
@@ -51,6 +52,7 @@ const AlertSnackbar = forwardRef< HTMLDivElement, AlertSnackbarProps >( ( { colo
 				color={ color }
 				icon={ icon }
 				role="alert"
+				// @ts-expect-error TS7 migration
 				action={ props.action }
 				onClose={ () => closeSnackbar( props.id ) }
 				sx={ {

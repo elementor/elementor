@@ -38,6 +38,7 @@ export const PromotionInfotip = ( { children, open, onClose, onCtaClick, ...card
 			content={ <InfotipCard onClose={ onClose } onCtaClick={ onCtaClick } { ...cardProps } /> }
 			open={ open }
 		>
+			{ /* @ts-expect-error TS7 migration */ }
 			{ children }
 		</Infotip>
 	);
@@ -49,13 +50,16 @@ function InfotipCard( { title, content, assetUrl, ctaUrl, onClose, onCtaClick }:
 			disableReactTree={ true }
 			mouseEvent="onMouseDown"
 			touchEvent="onTouchStart"
+			// @ts-expect-error TS7 migration
 			onClickAway={ onClose }
 		>
 			<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
 				<CardHeader
 					title={ title }
+					// @ts-expect-error TS7 migration
 					action={ <CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ onClose } /> }
 				/>
+				{ /* @ts-expect-error TS7 migration */ }
 				<CardMedia component="img" image={ assetUrl } alt="" sx={ { width: '100%', aspectRatio: '16 / 9' } } />
 				<CardContent>
 					<Typography variant="body2" color="text.secondary">

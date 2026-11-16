@@ -9,7 +9,7 @@
     "create-release-branch": "node scripts/create-version-change.js",
     "start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
     "watch": "npm run build:tools && npm run composer:no-dev && npx concurrently \"npm run watch:packages\" \"npm run styles:watch\" \"npm run scripts:watch\"",
-    "watch:packages": "concurrently 'turbo dev --parallel' 'tsc -w --project packages/tsconfig.json'",
+    "watch:packages": "concurrently 'turbo dev --parallel' 'node node_modules/typescript7/bin/tsc -w --project packages/tsconfig.json'",
     "build": "npm run build:packages && node scripts/vite/build-all.mjs",
     "build:docker": "rm -rf docker-output && docker build --target output --output type=local,dest=./docker-output . && cd docker-output/elementor && zip -r elementor.zip . && echo 'Build output available in ./docker-output/elementor/elementor.zip'",
     "build:packages": "turbo build",
@@ -161,6 +161,7 @@
     "tsup": "^8.3.5",
     "turbo": "^2.3.3",
     "typescript": "^6.0.3",
+    "typescript7": "npm:typescript@^7.0.2",
     "typescript-eslint": "^8.65.0",
     "vite-plus": "^0.2.6",
     "webpack": "^5.97.1"

@@ -19,6 +19,7 @@ export const WarningInfotip = forwardRef(
 	) => {
 		return (
 			<Infotip
+				// @ts-expect-error TS7 migration
 				ref={ ref }
 				open={ open }
 				placement={ placement }
@@ -42,6 +43,7 @@ export const WarningInfotip = forwardRef(
 					</Alert>
 				}
 			>
+				{ /* @ts-expect-error TS7 migration */ }
 				{ children }
 			</Infotip>
 		);

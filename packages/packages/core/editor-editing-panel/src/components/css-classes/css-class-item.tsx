@@ -100,6 +100,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 				ref={ setChipRef }
 				{ ...chipGroupProps }
 				aria-label={ `Edit ${ label }` }
+				// @ts-expect-error TS7 migration
 				role="group"
 				sx={ ( theme: Theme ) => ( {
 					'&.MuiChipGroup-root.MuiAutocomplete-tag': { margin: theme.spacing( 0.125 ) },
@@ -116,6 +117,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 					}
 					variant={ isActive && ! meta.state && ! isEditing ? 'filled' : 'standard' }
 					shape="rounded"
+					// @ts-expect-error TS7 migration
 					icon={ icon }
 					color={ color }
 					onClick={ () => {

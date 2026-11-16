@@ -73,17 +73,19 @@ const VideoStack = React.memo( function ( { activeUrl }: { activeUrl: string | u
 			{ ALL_VIDEO_URLS.map( ( videoUrl ) => (
 				<Box
 					key={ videoUrl }
-					component="video"
-					src={ videoUrl }
-					preload="auto"
-					muted
-					playsInline
-					onLoadedData={ () => markReady( videoUrl ) }
-					ref={ ( element: HTMLVideoElement | null ) => {
-						if ( element ) {
-							videoRefs.current.set( videoUrl, element );
-						}
-					} }
+					{ ...( {
+						component: 'video',
+						src: videoUrl,
+						preload: 'auto',
+						muted: true,
+						playsInline: true,
+						onLoadedData: () => markReady( videoUrl ),
+						ref: ( element: HTMLVideoElement | null ) => {
+							if ( element ) {
+								videoRefs.current.set( videoUrl, element );
+							}
+						},
+					} as React.ComponentProps< typeof Box > ) }
 					sx={ {
 						position: 'absolute',
 						inset: 0,

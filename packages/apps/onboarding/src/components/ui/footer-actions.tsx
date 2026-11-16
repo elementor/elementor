@@ -30,7 +30,10 @@ const BackButton = styled( Button )( ( { theme } ) => ( {
 } ) );
 
 const SkipButton = styled( Button )( ( { theme } ) => {
-	const outlinedBorderColor = theme.palette.primary?.states?.outlinedBorder ?? theme.palette.divider;
+	const primaryPalette = theme.palette.primary as typeof theme.palette.primary & {
+		states?: { outlinedBorder?: string };
+	};
+	const outlinedBorderColor = primaryPalette?.states?.outlinedBorder ?? theme.palette.divider;
 
 	return {
 		color: theme.palette.text.primary,

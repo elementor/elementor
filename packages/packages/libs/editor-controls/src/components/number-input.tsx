@@ -4,7 +4,7 @@ import { TextField, type TextFieldProps } from '@elementor/ui';
 
 const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+' ];
 
-export const NumberInput = forwardRef( ( props: TextFieldProps, ref ) => {
+export const NumberInput = forwardRef< HTMLDivElement, TextFieldProps >( ( props, ref ) => {
 	const [ key, setKey ] = useState< number >( 0 );
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {

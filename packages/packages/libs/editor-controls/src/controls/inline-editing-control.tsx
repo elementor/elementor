@@ -58,6 +58,7 @@ export const InlineEditingControl = createControl(
 						/>
 					) }
 					<Box
+						// @ts-expect-error TS7 migration: nested sx selector array inference
 						sx={ ( theme: Theme ) => ( {
 							p: 0.8,
 							border: '1px solid',

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { forwardRef, type MouseEvent, useRef, useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 import { PromotionPopover, useCanvasClickHandler } from '@elementor/editor-ui';
 import { UploadIcon } from '@elementor/icons';
 import { createReplaceableLocation } from '@elementor/locations';
@@ -81,7 +81,7 @@ export const IconLibraryUploadPromotion = ( {
 			content={ content }
 			ctaText={ ctaText }
 			ctaUrl={ ctaUrl }
-			onClose={ ( event: MouseEvent ) => {
+			onClose={ ( event ) => {
 				event.stopPropagation();
 				close();
 			} }

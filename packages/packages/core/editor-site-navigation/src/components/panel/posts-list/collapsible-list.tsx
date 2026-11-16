@@ -64,6 +64,7 @@ export default function CollapsibleList( {
 					</IconButton>
 				</StyledListItemIcon>
 				<StyledListItemIcon
+					// @ts-expect-error TS7 migration
 					size="small"
 					sx={ {
 						color: 'inherit',

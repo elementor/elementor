@@ -110,6 +110,7 @@ export default function RecentlyEdited() {
 				) }
 
 				{ /* It appears that there might be a bug in Material UI. When the divider is the first active element, it attempts to receive focus instead of the item below it. */ }
+				{ /* @ts-expect-error TS7 migration */ }
 				<Divider disabled={ recentPosts.length === 0 } />
 
 				<CreatePostListItem closePopup={ popupState.close } />

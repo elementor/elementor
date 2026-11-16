@@ -36,6 +36,7 @@ type SortableItemProps = {
 export const SortableItem = ( { children, id, style, ...props }: SortableItemProps ) => {
 	return (
 		<UnstableSortableItem
+			key={ String( id ) }
 			{ ...props }
 			id={ id }
 			render={ ( {

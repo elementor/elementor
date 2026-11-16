@@ -157,7 +157,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, min }: Prop
 						sx={ { marginLeft: 'auto' } }
 						onChange={ onLinkToggle }
 						disabled={ disabled }
-						isPlaceholder={ hasPlaceholders }
+						isPlaceholder={ Boolean( hasPlaceholders ) }
 					>
 						<LinkedIcon fontSize={ 'tiny' } />
 					</StyledToggleButton>

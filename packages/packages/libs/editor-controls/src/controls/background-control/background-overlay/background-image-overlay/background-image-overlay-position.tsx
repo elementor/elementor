@@ -44,8 +44,8 @@ export const BackgroundImageOverlayPosition = () => {
 	const isCustom = !! backgroundImageOffsetContext.value;
 	const rowRef = useRef< HTMLDivElement >( null );
 
-	const handlePositionChange = ( event: SelectChangeEvent< Positions > ) => {
-		const value = event.target.value || null;
+	const handlePositionChange = ( event: SelectChangeEvent< unknown > ) => {
+		const value = ( event.target.value as Positions | '' ) || null;
 
 		if ( value === 'custom' ) {
 			backgroundImageOffsetContext.setValue( { x: null, y: null } );

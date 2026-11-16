@@ -21,6 +21,7 @@ export const PromotionAlert = ( { message, upgradeUrl, onCtaClick }: PromotionAl
 	>
 		{ message }
 		<Button
+			// @ts-expect-error TS7 migration: custom Button size "tiny" from @elementor/ui
 			size={ 'tiny' }
 			variant={ 'text' }
 			color={ 'promotion' }

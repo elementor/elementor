@@ -61,7 +61,14 @@ export const StartSyncToV3Modal = ( {
 	return (
 		<Dialog open={ !! externalOpen } onClose={ handleClose } maxWidth="sm" fullWidth>
 			<DialogContent sx={ { p: 0 } }>
-				<Box component="img" src={ IMAGE_URL } alt="" sx={ { width: '100%', display: 'block' } } />
+				<Box
+					{ ...( {
+						component: 'img',
+						src: IMAGE_URL,
+						alt: '',
+					} as React.ComponentProps< typeof Box > ) }
+					sx={ { width: '100%', display: 'block' } }
+				/>
 				<Box sx={ { px: 3, pt: 4, pb: 1 } }>
 					<Typography variant="h6">{ __( 'Sync class to Global Fonts', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="secondary" sx={ { mb: 2, pt: 1 } }>

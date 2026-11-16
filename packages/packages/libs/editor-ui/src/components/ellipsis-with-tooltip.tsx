@@ -19,7 +19,8 @@ export const EllipsisWithTooltip = < T extends React.ElementType >( {
 	if ( isOverflowing ) {
 		return (
 			<Tooltip title={ title } placement="top">
-				<Content maxWidth={ maxWidth } ref={ setRef } as={ as } { ...props }>
+				{ /* @ts-ignore TS7 migration: polymorphic as prop */ }
+				<Content maxWidth={ maxWidth } ref={ setRef } as={ as as never } { ...props }>
 					{ title }
 				</Content>
 			</Tooltip>
@@ -27,7 +28,7 @@ export const EllipsisWithTooltip = < T extends React.ElementType >( {
 	}
 
 	return (
-		<Content maxWidth={ maxWidth } ref={ setRef } as={ as } { ...props }>
+		<Content maxWidth={ maxWidth } ref={ setRef } as={ as as never } { ...props }>
 			{ title }
 		</Content>
 	);
@@ -38,18 +39,18 @@ type ContentProps< T extends React.ElementType > = React.PropsWithChildren<
 >;
 
 const Content = React.forwardRef(
-	< T extends React.ElementType >(
-		{ maxWidth, as: Component = Box, ...props }: ContentProps< T >,
-		// forwardRef loses the typing when using generic components.
-		ref: unknown
-	) => (
-		<Component
-			ref={ ref }
-			position="relative"
-			{ ...props }
-			style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth } }
-		/>
-	)
+	< T extends React.ElementType >( { maxWidth, as, ...props }: ContentProps< T >, ref: unknown ) => {
+		const Component = ( as ?? Box ) as React.ElementType;
+
+		return (
+			<Component
+				ref={ ref }
+				position="relative"
+				{ ...props }
+				style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth } }
+			/>
+		);
+	}
 );
 
 const useIsOverflowing = () => {

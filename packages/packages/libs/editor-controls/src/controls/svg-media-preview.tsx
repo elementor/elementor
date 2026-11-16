@@ -114,6 +114,7 @@ const IconPreviewPlaceholder = () => (
 const SvgPreview = ( { src }: { src: string | null } ) => (
 	<CardMedia
 		component="img"
+		// @ts-expect-error TS7 migration
 		image={ src }
 		alt={ __( 'Preview SVG', 'elementor' ) }
 		sx={ { maxHeight: '140px', width: `${ ICON_PREVIEW_SIZE }px`, color: ICON_PREVIEW_COLOR } }

@@ -8,8 +8,8 @@ type PopoverGridContainerProps = PropsWithChildren< {
 	flexWrap?: React.ComponentProps< typeof Grid >[ 'flexWrap' ];
 } >;
 
-export const PopoverGridContainer = forwardRef(
-	( { gap = 1.5, alignItems = 'center', flexWrap = 'nowrap', children }: PopoverGridContainerProps, ref ) => (
+export const PopoverGridContainer = forwardRef< HTMLDivElement, PopoverGridContainerProps >(
+	( { gap = 1.5, alignItems = 'center', flexWrap = 'nowrap', children }, ref ) => (
 		<Grid container gap={ gap } alignItems={ alignItems } flexWrap={ flexWrap } ref={ ref }>
 			{ children }
 		</Grid>

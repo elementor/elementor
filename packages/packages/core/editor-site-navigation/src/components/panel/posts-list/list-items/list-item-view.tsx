@@ -40,6 +40,7 @@ const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactN
 		return (
 			<Tooltip title={ title } placement="bottom" arrow={ false }>
 				{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
+				{ /* @ts-expect-error TS7 migration */ }
 				{ children }
 			</Tooltip>
 		);
@@ -69,6 +70,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<ListItem
 					disablePadding
 					secondaryAction={
+						// @ts-expect-error TS7 migration
 						<IconButton value size="small" { ...bindTrigger( popupState ) }>
 							<DotsVerticalIcon fontSize="small" />
 						</IconButton>

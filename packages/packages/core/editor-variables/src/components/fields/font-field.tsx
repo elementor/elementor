@@ -62,6 +62,7 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 			<Popover
 				disablePortal
 				disableScrollLock
+				// @ts-expect-error TS7 migration
 				anchorEl={ anchorRef }
 				anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
 				transformOrigin={ { vertical: 'top', horizontal: -28 } }

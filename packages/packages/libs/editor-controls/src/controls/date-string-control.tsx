@@ -50,8 +50,8 @@ export const DateStringControl = createControl(
 			<LocalizationProvider>
 				<ControlActions>
 					<DatePicker
-						value={ parseDateString( value ?? '' ) }
-						onChange={ ( newValue: Dayjs | null ) => handleChange( newValue, DATE_FORMAT ) }
+						value={ parseDateString( value ?? '' ) as unknown as Date | null }
+						onChange={ ( newValue ) => handleChange( newValue as unknown as Dayjs | null, DATE_FORMAT ) }
 						disabled={ isDisabled }
 						slotProps={ slotProps }
 					/>

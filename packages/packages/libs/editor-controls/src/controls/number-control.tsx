@@ -135,9 +135,7 @@ export const NumberControl = createControl(
 					inputProps={ { step, min, ...( maxProp !== null && maxProp !== undefined && { max } ) } }
 					InputProps={ {
 						startAdornment: startIcon ? (
-							<InputAdornment position="start" disabled={ inputDisabled ?? disabled }>
-								{ startIcon }
-							</InputAdornment>
+							<InputAdornment position="start">{ startIcon }</InputAdornment>
 						) : undefined,
 						endAdornment: renderSuffix( propType ),
 					} }

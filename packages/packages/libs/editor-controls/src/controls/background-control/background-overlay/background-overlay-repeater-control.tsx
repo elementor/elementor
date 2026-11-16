@@ -181,7 +181,7 @@ const ItemIconImage = ( { value }: { value: BackgroundImageOverlay } ) => {
 
 	return (
 		<CardMedia
-			image={ imageUrl }
+			image={ imageUrl ?? undefined }
 			sx={ ( theme: Theme ) => ( {
 				height: '1rem',
 				width: '1rem',

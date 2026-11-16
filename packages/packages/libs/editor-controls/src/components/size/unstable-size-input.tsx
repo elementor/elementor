@@ -19,8 +19,8 @@ type Props = {
 	};
 };
 
-export const UnstableSizeInput = forwardRef(
-	( { type, value, onChange, onKeyDown, onKeyUp, InputProps, onBlur, focused, disabled }: Props, ref ) => {
+export const UnstableSizeInput = forwardRef< HTMLDivElement, Props >(
+	( { type, value, onChange, onKeyDown, onKeyUp, InputProps, onBlur, focused, disabled }, ref ) => {
 		return (
 			<NumberInput
 				ref={ ref }

@@ -135,18 +135,17 @@ export default function SendFeedbackPopupLocation() {
 							{ isUserConnected ? (
 								<>
 									<TextField
-										autofocus
 										placeholder={ __(
 											'E.g. Can you add ABC features? I want to do ABC and it’s important because …',
 											'elementor'
 										) }
-										fullwith
+										fullWidth
 										label={ __( 'Your Feedback', 'elementor' ) }
 										multiline
 										id="elementor-feedback-usercontent"
 										rows={ 6 }
-										cols={ 80 }
-										disabled={ isFetching || feedbackResult?.success }
+										inputProps={ { cols: 80 } }
+										disabled={ Boolean( isFetching || feedbackResult?.success ) }
 										onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 											setFeedbackContent( event.target.value )
 										}

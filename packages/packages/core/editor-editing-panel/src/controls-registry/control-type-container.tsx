@@ -7,7 +7,7 @@ export const ControlTypeContainer = ( { children, layout }: React.PropsWithChild
 		return children;
 	}
 
-	return <StyledContainer layout={ layout }>{ children }</StyledContainer>;
+	return <StyledContainer layout={ layout ?? 'full' }>{ children }</StyledContainer>;
 };
 
 const StyledContainer = styled( Box, {

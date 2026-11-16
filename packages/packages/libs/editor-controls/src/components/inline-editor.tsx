@@ -39,7 +39,7 @@ type InlineEditorProps = {
 	mountElement?: HTMLElement | null;
 };
 
-export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
+export const InlineEditor = React.forwardRef< HTMLDivElement, InlineEditorProps >( ( props, ref ) => {
 	const {
 		value,
 		setValue,

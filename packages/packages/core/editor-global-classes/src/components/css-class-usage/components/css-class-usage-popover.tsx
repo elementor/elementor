@@ -119,7 +119,7 @@ export const CssClassUsagePopover = ( {
 							</Box>
 							<Box sx={ { pr: 0.5, maxWidth: '173px' } } display={ 'flex' }>
 								<EllipsisWithTooltip
-									title={ cssClassUsageRecord.label }
+									title={ cssClassUsageRecord.label ?? '' }
 									as={ Typography }
 									variant="caption"
 									maxWidth="173px"

@@ -52,7 +52,7 @@ export const VariablePromotionChip = forwardRef< VariablePromotionChipRef, Varia
 				content={ content }
 				ctaText={ __( 'Upgrade now', 'elementor' ) }
 				ctaUrl={ upgradeUrl }
-				onClose={ ( e: MouseEvent ) => {
+				onClose={ ( e ) => {
 					e.stopPropagation();
 					setIsOpen( false );
 				} }

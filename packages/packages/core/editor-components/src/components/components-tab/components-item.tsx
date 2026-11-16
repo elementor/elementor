@@ -43,6 +43,7 @@ export const ComponentItem = forwardRef< HTMLElement, ComponentItemProps >(
 				onDragStart={ onDragStart }
 				onDragEnd={ onDragEnd }
 				shape="rounded"
+				// @ts-expect-error TS7 migration
 				ref={ ref }
 				sx={ {
 					border: 'solid 1px',
@@ -57,9 +58,11 @@ export const ComponentItem = forwardRef< HTMLElement, ComponentItemProps >(
 				{ ...props }
 			>
 				<Box display="flex" alignItems="center" gap={ 1 } minWidth={ 0 } flexGrow={ 1 } onClick={ onClick }>
+					{ /* @ts-expect-error TS7 migration */ }
 					<ListItemIcon size="tiny">
 						<ComponentsIcon fontSize="tiny" />
 					</ListItemIcon>
+					{ /* @ts-expect-error TS7 migration */ }
 					<Indicator isActive={ isEditing } isError={ !! error }>
 						<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
 							{ nameSlot ?? <ComponentName name={ component.name } /> }

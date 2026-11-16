@@ -89,6 +89,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 			isOptionEqualToValue={ isOptionEqualToValue }
 			filterOptions={ () => optionKeys }
 			renderOption={ ( optionProps, optionId ) => (
+				// @ts-expect-error TS7 migration: Autocomplete optionProps target li vs Box div
 				<Box component="li" { ...optionProps } key={ optionProps.id }>
 					{ findMatchingOption( options, optionId )?.label ?? optionId }
 				</Box>

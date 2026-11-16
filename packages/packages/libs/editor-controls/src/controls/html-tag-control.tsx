@@ -34,8 +34,8 @@ export const HtmlTagControl = createControl( ( props: Props ) => {
 	} = props;
 
 	const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
-	const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
-		const newValue = event.target.value || null;
+	const handleChange = ( event: SelectChangeEvent< unknown > ) => {
+		const newValue = ( event.target.value as StringPropValue[ 'value' ] ) || null;
 
 		onChange?.( newValue, value );
 		setValue( newValue );
@@ -52,9 +52,10 @@ export const HtmlTagControl = createControl( ( props: Props ) => {
 		isEnabled: !! disabled,
 	};
 
-	const renderValue = ( selectedValue: string | null ) => {
-		if ( selectedValue ) {
-			return findOptionByValue( selectedValue )?.label || fallbackLabels[ selectedValue ] || selectedValue;
+	const renderValue = ( selectedValue: unknown ) => {
+		const selected = selectedValue as string | null;
+		if ( selected ) {
+			return findOptionByValue( selected )?.label || fallbackLabels[ selected ] || selected;
 		}
 
 		if ( ! placeholder ) {

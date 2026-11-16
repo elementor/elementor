@@ -14,7 +14,7 @@ export default function AuditToggleIcon() {
 			color="warning"
 			invisible={ ! isStale }
 			overlap="circular"
-			slotProps={ { badge: { 'data-testid': 'audit-stale-indicator' } } }
+			slotProps={ { badge: { 'data-testid': 'audit-stale-indicator' } as Record< string, unknown > } }
 		>
 			<ShieldCheckIcon />
 		</Badge>

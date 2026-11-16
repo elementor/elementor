@@ -50,8 +50,8 @@ export const TimeStringControl = createControl(
 			<LocalizationProvider>
 				<ControlActions>
 					<TimePicker
-						value={ parseTimeString( value ?? '' ) }
-						onChange={ ( newValue: Dayjs | null ) => handleChange( newValue, TIME_FORMAT ) }
+						value={ parseTimeString( value ?? '' ) as unknown as Date | null }
+						onChange={ ( newValue ) => handleChange( newValue as unknown as Dayjs | null, TIME_FORMAT ) }
 						disabled={ isDisabled }
 						slotProps={ slotProps }
 					/>

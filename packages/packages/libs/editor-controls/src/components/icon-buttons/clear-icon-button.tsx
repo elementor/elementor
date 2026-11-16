@@ -16,7 +16,12 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 
 export const ClearIconButton = ( { tooltipText, onClick, disabled, size = 'tiny' }: ClearIconButtonProps ) => (
 	<Tooltip title={ tooltipText } placement="top" disableInteractive>
-		<CustomIconButton aria-label={ tooltipText } size={ size } onClick={ onClick } disabled={ disabled }>
+		<CustomIconButton
+			aria-label={ typeof tooltipText === 'string' ? tooltipText : undefined }
+			size={ size }
+			onClick={ onClick }
+			disabled={ disabled }
+		>
 			<BrushBigIcon fontSize={ size } />
 		</CustomIconButton>
 	</Tooltip>

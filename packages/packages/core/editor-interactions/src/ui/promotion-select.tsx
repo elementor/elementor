@@ -29,12 +29,12 @@ export function PromotionSelect( {
 	trackingData,
 }: PromotionSelectProps ) {
 	const promotionRef = useRef< InteractionsPromotionChipRef >( null );
-	const anchorRef = useRef< HTMLElement >( null );
+	const anchorRef = useRef< HTMLLIElement >( null );
 
 	return (
 		<Select
 			value={ value }
-			onChange={ ( e: SelectChangeEvent< string > ) => onChange?.( e.target.value ) }
+			onChange={ ( e: SelectChangeEvent< unknown > ) => onChange?.( String( e.target.value ) ) }
 			fullWidth
 			displayEmpty
 			size="tiny"

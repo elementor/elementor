@@ -22,7 +22,7 @@ type Props = {
 	inputProps?: TextFieldProps[ 'inputProps' ];
 };
 
-export const SizeInput = forwardRef(
+export const SizeInput = forwardRef< HTMLDivElement, Props >(
 	(
 		{
 			id,

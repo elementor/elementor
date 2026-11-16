@@ -38,11 +38,13 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 			error={ errorMessage || undefined }
 			slotProps={ {
 				colorPicker: {
+					// @ts-expect-error TS7 migration: anchor may be a RefObject
 					anchorEl: anchorRef,
 					anchorOrigin: { vertical: 'top', horizontal: 'right' },
 					transformOrigin: { vertical: 'top', horizontal: -10 },
 					slotProps: {
 						colorIndicator: {
+							// @ts-expect-error TS7 migration: aria-label missing from ColorIndicatorProps
 							'aria-label': 'Color indicator',
 							size: 'inherit',
 							sx: {

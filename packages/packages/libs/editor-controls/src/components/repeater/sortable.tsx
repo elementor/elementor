@@ -30,7 +30,9 @@ type SortableItemProps = {
 export const SortableItem = ( { id, children, disabled }: SortableItemProps ): React.ReactNode => {
 	return (
 		<UnstableSortableItem
+			key={ String( id ) }
 			id={ id }
+			// @ts-expect-error TS7 migration: disabled not in SortableItemProps typings
 			disabled={ disabled }
 			render={ ( {
 				itemProps,

@@ -36,7 +36,7 @@ const LIST_ITEMS_BUFFER = 6;
 const MENU_LIST_PADDING_TOP = 8;
 const ROVING_FOCUS_KEYS = new Set( [ 'ArrowDown', 'ArrowUp', 'Home', 'End' ] );
 
-const menuSubHeaderAbsoluteStyling = ( start: number ) => ( {
+const menuSubHeaderAbsoluteStyling = ( start: number ): React.CSSProperties => ( {
 	position: 'absolute',
 	transform: `translateY(${ start + MENU_LIST_PADDING_TOP }px)`,
 } );
@@ -280,6 +280,7 @@ export const PopoverMenuList = < T, V extends string >( {
 								} }
 								onFocus={ rovingFocus ? () => setFocusedValue( item.value ) : undefined }
 								tabIndex={ optionTabIndex }
+								// @ts-expect-error TS7 migration: virtualized list item sx merges caption with CSSProperties
 								sx={ {
 									transform: `translateY(${ virtualRow.start + MENU_LIST_PADDING_TOP }px)`,
 									...theme.typography.caption,

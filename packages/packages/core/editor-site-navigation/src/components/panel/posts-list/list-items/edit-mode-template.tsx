@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type FocusEvent, type FormEvent, type MutableRefObject, useRef, useState } from 'react';
+import { type FocusEvent, type MutableRefObject, useRef, useState } from 'react';
 import { XIcon } from '@elementor/icons';
 import { Box, CircularProgress, IconButton, ListItem, ListItemText, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -16,7 +16,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 	const [ title, setTitle ] = useState( postTitle );
 	const [ touched, setTouched ] = useState( false );
 	const [ inputError, setInputError ] = useState< string | null >( null );
-	const closeButton = useRef< HTMLButtonElement >();
+	const closeButton = useRef< HTMLButtonElement | null >( null );
 
 	const onBlur = ( e: FocusEvent ) => {
 		if ( closeButton.current === e.relatedTarget ) {
@@ -26,7 +26,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 		runCallback();
 	};
 
-	const onFormSubmit = ( e: FormEvent< HTMLFormElement > ) => {
+	const onFormSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		runCallback();
 	};
@@ -86,7 +86,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 
 type CloseButtonProps = {
 	isLoading: boolean;
-	closeButton: MutableRefObject< HTMLButtonElement | undefined >;
+	closeButton: MutableRefObject< HTMLButtonElement | null >;
 };
 
 function CloseButton( { isLoading, closeButton }: CloseButtonProps ) {

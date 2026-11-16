@@ -8,6 +8,7 @@ export const ConditionalTooltip = ( {
 }: React.PropsWithChildren< { showTooltip: boolean; label: string } > ) => {
 	return showTooltip && label ? (
 		<Tooltip title={ label } disableFocusListener={ true } placement="top">
+			{ /* @ts-expect-error TS7 migration */ }
 			{ children }
 		</Tooltip>
 	) : (

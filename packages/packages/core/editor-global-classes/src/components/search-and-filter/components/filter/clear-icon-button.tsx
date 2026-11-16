@@ -23,7 +23,12 @@ export const ClearIconButton = ( { tooltipText, sx, trigger }: ClearIconButtonPr
 	return (
 		<Tooltip title={ tooltipText } placement="top" disableInteractive>
 			<Box>
-				<CustomIconButton aria-label={ tooltipText } size="tiny" onClick={ handleClearFilters } sx={ sx }>
+				<CustomIconButton
+					aria-label={ typeof tooltipText === 'string' ? tooltipText : undefined }
+					size="tiny"
+					onClick={ handleClearFilters }
+					sx={ sx }
+				>
 					<BrushBigIcon fontSize="tiny" />
 				</CustomIconButton>
 			</Box>

@@ -273,22 +273,26 @@ export const IconLibraryGrid = ( {
 												disableFocusListener
 											>
 												<Box
-													component="button"
-													type="button"
-													role="gridcell"
-													aria-colindex={ columnIndex + 1 }
-													aria-label={ item.label }
-													aria-selected={ isSelected }
-													tabIndex={ tabIndex }
-													ref={ registerRef( item.id ) }
-													onClick={ () => {
-														onSelect( item.id );
-														onClose();
-													} }
-													onFocus={ () => setFocusedIndex( index ) }
-													onKeyDown={ ( event: React.KeyboardEvent< HTMLButtonElement > ) =>
-														handleKeyDown( event, index )
-													}
+													{ ...( {
+														component: 'button',
+														type: 'button',
+														role: 'gridcell',
+														'aria-colindex': columnIndex + 1,
+														'aria-label': item.label,
+														'aria-selected': isSelected,
+														tabIndex,
+														ref: registerRef( item.id ),
+														onClick: () => {
+															onSelect( item.id );
+															onClose();
+														},
+														onFocus: () => setFocusedIndex( index ),
+														onKeyDown: ( event: React.KeyboardEvent ) =>
+															handleKeyDown(
+																event as React.KeyboardEvent< HTMLButtonElement >,
+																index
+															),
+													} as React.ComponentProps< typeof Box > ) }
 													sx={ {
 														boxSizing: 'border-box',
 														appearance: 'none',

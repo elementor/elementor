@@ -27,7 +27,7 @@ const ItemIconImage = ( { value }: { value: Image } ) => {
 
 	return (
 		<CardMedia
-			image={ imageUrl }
+			image={ imageUrl ?? undefined }
 			sx={ ( theme: Theme ) => ( {
 				height: '1em',
 				width: '1em',

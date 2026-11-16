@@ -89,11 +89,7 @@ export const SizeField = < T extends SizePropValue[ 'value' ], U extends SizeUni
 				...InputProps,
 				autoComplete: 'off',
 				readOnly: isExtendedUnit( unit ),
-				startAdornment: startIcon && (
-					<InputAdornment position="start" disabled={ disabled }>
-						{ startIcon }
-					</InputAdornment>
-				),
+				startAdornment: startIcon && <InputAdornment position="start">{ startIcon }</InputAdornment>,
 				endAdornment: (
 					<InputAdornment position="end">
 						<UnitSelector< U >

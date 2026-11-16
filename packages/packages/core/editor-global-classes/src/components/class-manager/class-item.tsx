@@ -47,7 +47,7 @@ export const ClassItem = ( {
 	syncToV3,
 	onToggleSync,
 }: ClassItemProps ) => {
-	const itemRef = useRef< HTMLElement >( null );
+	const itemRef = useRef< HTMLDivElement >( null );
 	const {
 		ref: editableRef,
 		openEditMode,
@@ -83,7 +83,7 @@ export const ClassItem = ( {
 						ref={ itemRef }
 						dense
 						disableGutters
-						showSortIndicator={ showSortIndicator }
+						showSortIndicator={ showSortIndicator ?? false }
 						showActions={ isSelected || isEditing }
 						shape="rounded"
 						onDoubleClick={ openEditMode }

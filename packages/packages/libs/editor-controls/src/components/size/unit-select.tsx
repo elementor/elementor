@@ -61,7 +61,7 @@ export const UnitSelect = ( { value, showPrimaryColor, onClick, options }: Props
 
 const StyledButton = styled( Button, {
 	shouldForwardProp: ( prop ) => prop !== 'isPrimaryColor',
-} )( ( { isPrimaryColor, theme } ) => ( {
+} )< { isPrimaryColor?: boolean } >( ( { isPrimaryColor, theme } ) => ( {
 	color: isPrimaryColor ? theme.palette.text.primary : theme.palette.text.tertiary,
 	font: 'inherit',
 	minWidth: 'initial',

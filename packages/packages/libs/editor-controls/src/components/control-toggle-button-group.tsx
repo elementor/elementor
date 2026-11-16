@@ -27,7 +27,7 @@ export type ToggleButtonGroupItem< TValue > = {
 	showTooltip?: boolean;
 };
 
-export const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
+export const StyledToggleButtonGroup = styled( ToggleButtonGroup )< { justify?: StackProps[ 'justifyContent' ] } >`
 	${ ( { justify } ) => `justify-content: ${ justify };` }
 	button:not( :last-of-type ) {
 		border-start-end-radius: 0;
@@ -191,7 +191,7 @@ export const ToggleButtonGroupUi = React.forwardRef(
 								showTooltip={ showTooltip || false }
 							>
 								<StyledToggleButton
-									value={ buttonValue }
+									value={ buttonValue as NonNullable< unknown > }
 									aria-label={ label }
 									size={ size }
 									fullWidth={ fullWidth }
@@ -265,7 +265,7 @@ const SplitButtonGroup = < TValue, >( {
 	return (
 		<>
 			<ToggleButton
-				value={ previewButton.value }
+				value={ previewButton.value as NonNullable< unknown > }
 				aria-label={ previewButton.label }
 				size={ size }
 				fullWidth={ fullWidth }
@@ -307,7 +307,7 @@ const SplitButtonGroup = < TValue, >( {
 					.filter( ( item ) => item.value !== previewButton.value )
 					.map( ( { label, value: buttonValue } ) => (
 						<MenuItem
-							key={ buttonValue }
+							key={ String( buttonValue ) }
 							selected={ buttonValue === value }
 							onClick={ () => onMenuItemClick( buttonValue ) }
 						>

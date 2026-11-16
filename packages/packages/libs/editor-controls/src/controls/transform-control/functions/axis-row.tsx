@@ -21,7 +21,7 @@ export const AxisRow = ( { label, bind, startIcon, anchorRef, units, variant = '
 	const safeId = label.replace( /\s+/g, '-' ).toLowerCase();
 	return (
 		<Grid item xs={ 12 }>
-			<PopoverGridContainer ref={ anchorRef }>
+			<PopoverGridContainer ref={ anchorRef as React.Ref< HTMLDivElement > }>
 				<Grid item xs={ 6 }>
 					<ControlLabel htmlFor={ safeId }>{ label }</ControlLabel>
 				</Grid>

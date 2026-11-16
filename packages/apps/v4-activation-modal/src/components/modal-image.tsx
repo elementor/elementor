@@ -25,11 +25,13 @@ export const ModalImage: React.FC< ModalImageProps > = ( { id, images } ) => {
 			{ images.map( ( { id: key, src } ) => (
 				<Box
 					key={ key }
-					component="img"
-					src={ src }
-					alt={ `Modal image ${ key }` }
-					onLoad={ () => markLoaded( key ) }
-					onError={ () => markLoaded( key ) }
+					{ ...( {
+						component: 'img',
+						src,
+						alt: `Modal image ${ key }`,
+						onLoad: () => markLoaded( key ),
+						onError: () => markLoaded( key ),
+					} as React.ComponentProps< typeof Box > ) }
 					sx={ {
 						display: showSkeleton ? 'none' : 'block',
 						width: key === id ? '100%' : '0',

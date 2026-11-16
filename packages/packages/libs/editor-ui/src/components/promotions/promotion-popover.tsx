@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type MouseEvent, type RefObject } from 'react';
+import { type RefObject } from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Alert,
@@ -17,7 +17,7 @@ type PromotionPopoverCardProps = {
 	content: string;
 	ctaUrl: string;
 	ctaText?: string;
-	onClose: ( e: MouseEvent ) => void;
+	onClose: ( e: { stopPropagation: () => void } ) => void;
 	onCtaClick?: () => void;
 };
 
@@ -64,6 +64,7 @@ export const PromotionPopover = ( {
 			open={ open }
 			slotProps={ slotProps || defaultSlotProps }
 		>
+			{ /* @ts-expect-error TS7 migration: Infotip expects a single ReactElement child */ }
 			{ children }
 		</Infotip>
 	);
@@ -75,14 +76,14 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose, onCtaClick }:
 			disableReactTree={ true }
 			mouseEvent="onMouseDown"
 			touchEvent="onTouchStart"
-			onClickAway={ onClose }
+			onClickAway={ ( event ) => onClose( event ) }
 		>
 			<Alert
 				variant="standard"
 				color="promotion"
 				icon={ <CrownFilledIcon fontSize="tiny" /> }
-				onClose={ onClose }
-				onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
+				onClose={ ( event ) => onClose( event ) }
+				onMouseDown={ ( e ) => e.stopPropagation() }
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={

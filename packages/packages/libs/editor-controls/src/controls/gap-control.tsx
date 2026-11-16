@@ -131,7 +131,7 @@ export const GapControl = ( { label }: { label: string } ) => {
 						sx={ { marginLeft: 'auto' } }
 						onChange={ onLinkToggle }
 						disabled={ disabled }
-						isPlaceholder={ hasPlaceholders }
+						isPlaceholder={ Boolean( hasPlaceholders ) }
 					>
 						<LinkedIcon fontSize={ 'tiny' } />
 					</StyledToggleButton>

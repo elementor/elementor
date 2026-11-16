@@ -99,11 +99,7 @@ export const SizeInput = ( {
 		autoComplete: 'off',
 		onClick,
 		onFocus,
-		startAdornment: startIcon ? (
-			<InputAdornment position="start" disabled={ disabled }>
-				{ startIcon }
-			</InputAdornment>
-		) : undefined,
+		startAdornment: startIcon ? <InputAdornment position="start">{ startIcon }</InputAdornment> : undefined,
 		endAdornment: (
 			<SelectionEndAdornment
 				disabled={ disabled }

@@ -47,14 +47,14 @@ export const InteractionsPromotionChip = forwardRef< InteractionsPromotionChipRe
 				ctaUrl={ upgradeUrl }
 				anchorRef={ anchorRef }
 				placement={ anchorRef ? 'right-start' : undefined }
-				onClose={ ( e: MouseEvent ) => {
+				onClose={ ( e ) => {
 					e.stopPropagation();
 					setIsOpen( false );
 				} }
 				onCtaClick={ () => trackUpgradePromotionClick( trackingData ) }
 			>
 				<Box
-					onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
+					onMouseDown={ ( e: React.MouseEvent ) => e.stopPropagation() }
 					onClick={ handleToggle }
 					sx={ { cursor: 'pointer', display: 'inline-flex', mr: 1 } }
 				>

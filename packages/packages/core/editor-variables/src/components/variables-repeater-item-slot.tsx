@@ -31,7 +31,7 @@ const useColorVariable = ( value: BackgroundColorOverlayPropValue | BoxShadowPro
 export const BackgroundRepeaterColorIndicator = ( { value }: Props ) => {
 	const colorVariable = useColorVariable( value as BackgroundColorOverlayPropValue );
 
-	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value } />;
+	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value ?? '' } />;
 };
 
 export const BackgroundRepeaterLabel = ( { value }: Props ) => {
@@ -43,7 +43,7 @@ export const BackgroundRepeaterLabel = ( { value }: Props ) => {
 export const BoxShadowRepeaterColorIndicator = ( { value }: Props ) => {
 	const colorVariable = useColorVariable( value as BoxShadowPropValue );
 
-	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value } />;
+	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value ?? '' } />;
 };
 
 export const FilterDropShadowIconIndicator = ( { value }: Props ) => {
@@ -51,7 +51,7 @@ export const FilterDropShadowIconIndicator = ( { value }: Props ) => {
 	const { color } = dropShadowFilterPropTypeUtil.extract( args ) || {};
 	const colorVariable = getVariable( color?.value || '' );
 
-	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value } />;
+	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value ?? '' } />;
 };
 
 export const FilterSingleSizeRepeaterLabel = ( { value }: Props ) => {

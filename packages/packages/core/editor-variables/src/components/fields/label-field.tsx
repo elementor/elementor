@@ -53,7 +53,7 @@ export const LabelField = ( {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
-	const fieldRef = useRef< HTMLElement >( null );
+	const fieldRef = useRef< HTMLDivElement >( null );
 
 	const handleChange = ( newValue: string ) => {
 		setLabel( newValue );

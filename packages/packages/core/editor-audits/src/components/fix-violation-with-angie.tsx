@@ -22,7 +22,7 @@ export default function FixViolationWithAngie( { audit, prompt, panelZIndex, var
 	const label = __( 'Fix with Angie', 'elementor' );
 	const href = `#angie-prompt=${ encodeURIComponent( prompt ) }`;
 
-	const handleClick = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+	const handleClick = ( event: React.MouseEvent ) => {
 		event.stopPropagation();
 		event.preventDefault();
 

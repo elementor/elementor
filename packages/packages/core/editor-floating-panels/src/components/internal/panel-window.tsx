@@ -105,6 +105,7 @@ export default function PanelWindow( {
 				elevation={ 0 }
 				aria-label={ title || panelId }
 				aria-hidden={ ! visible }
+				// @ts-expect-error TS7 migration: inert not yet on PaperProps
 				inert={ ! visible ? '' : undefined }
 				onMouseDown={ onFocus }
 				onFocusCapture={ onFocus }

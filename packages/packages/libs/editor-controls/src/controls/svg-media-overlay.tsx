@@ -52,6 +52,7 @@ export const SvgMediaOverlay = ( {
 			}
 		/>
 		<Button
+			// @ts-expect-error TS7 migration: custom Button size "tiny" from @elementor/ui
 			size="tiny"
 			color="inherit"
 			variant="text"

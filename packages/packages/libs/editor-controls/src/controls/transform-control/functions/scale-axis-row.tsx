@@ -17,7 +17,7 @@ type ScaleAxisRowProps = {
 export const ScaleAxisRow = ( { label, bind, startIcon, anchorRef }: ScaleAxisRowProps ) => {
 	return (
 		<Grid item xs={ 12 }>
-			<PopoverGridContainer ref={ anchorRef }>
+			<PopoverGridContainer ref={ anchorRef as React.Ref< HTMLDivElement > }>
 				<Grid item xs={ 6 }>
 					<ControlLabel>{ label }</ControlLabel>
 				</Grid>

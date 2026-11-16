@@ -73,9 +73,11 @@ export function AtomicElementsPromo() {
 					} }
 				>
 					<Box
-						component="img"
-						src={ PROMO_IMAGE }
-						alt=""
+						{ ...( {
+							component: 'img',
+							src: PROMO_IMAGE,
+							alt: '',
+						} as React.ComponentProps< typeof Box > ) }
 						sx={ {
 							width: '100%',
 							objectFit: 'cover',

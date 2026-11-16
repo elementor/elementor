@@ -217,6 +217,7 @@ function TooltipOrInfotip( {
 					onClose={ onClose }
 					disableHoverListener
 				>
+					{ /* @ts-expect-error TS7 migration */ }
 					{ children }
 				</Infotip>
 			</>
@@ -225,6 +226,7 @@ function TooltipOrInfotip( {
 
 	return (
 		<Tooltip title={ __( 'Style origin', 'elementor' ) } placement="top">
+			{ /* @ts-expect-error TS7 migration */ }
 			{ children }
 		</Tooltip>
 	);

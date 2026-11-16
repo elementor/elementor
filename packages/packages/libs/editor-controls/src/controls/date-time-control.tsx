@@ -73,9 +73,13 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 					<Box display="flex" gap={ 1 } alignItems="center">
 						<PropKeyProvider bind="date">
 							<DatePicker
-								value={ parseDateValue( stringPropTypeUtil.extract( value?.date ) ) }
-								onChange={ ( v: Dayjs | null ) =>
-									handleChange( { date: v } as Props, { bind: 'date' } )
+								value={
+									parseDateValue(
+										stringPropTypeUtil.extract( value?.date )
+									) as unknown as Date | null
+								}
+								onChange={ ( v ) =>
+									handleChange( { date: v as unknown as Dayjs | null } as Props, { bind: 'date' } )
 								}
 								disabled={ inputDisabled }
 								slotProps={ {
@@ -88,9 +92,13 @@ export const DateTimeControl = createControl( ( { inputDisabled }: { inputDisabl
 
 						<PropKeyProvider bind="time">
 							<TimePicker
-								value={ parseTimeValue( stringPropTypeUtil.extract( value?.time ) ) }
-								onChange={ ( v: Dayjs | null ) =>
-									handleChange( { time: v } as Props, { bind: 'time' } )
+								value={
+									parseTimeValue(
+										stringPropTypeUtil.extract( value?.time )
+									) as unknown as Date | null
+								}
+								onChange={ ( v ) =>
+									handleChange( { time: v as unknown as Dayjs | null } as Props, { bind: 'time' } )
 								}
 								disabled={ inputDisabled }
 								slotProps={ {

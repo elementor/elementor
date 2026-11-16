@@ -71,7 +71,7 @@ const PanelTabContent = () => {
 								return;
 							}
 
-							getTabsProps().onChange( _, newValue );
+							getTabsProps().onChange( _ as React.SyntheticEvent, newValue );
 							setCurrentTab( newValue );
 						} }
 					>

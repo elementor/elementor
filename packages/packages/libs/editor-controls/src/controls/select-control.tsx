@@ -37,8 +37,8 @@ const DEFAULT_MENU_PROPS = {
 export const SelectControl = createControl(
 	( { options = [], groups = [], onChange, MenuProps = DEFAULT_MENU_PROPS, ariaLabel }: SelectControlProps ) => {
 		const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
-		const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
-			const newValue = event.target.value || null;
+		const handleChange = ( event: SelectChangeEvent< unknown > ) => {
+			const newValue = ( event.target.value as StringPropValue[ 'value' ] ) || null;
 
 			onChange?.( newValue, value );
 			setValue( newValue );
@@ -49,13 +49,14 @@ export const SelectControl = createControl(
 		return (
 			<ControlActions>
 				<Select
+					variant="standard"
 					sx={ { overflow: 'hidden' } }
 					displayEmpty
 					size="tiny"
 					MenuProps={ MenuProps }
-					aria-label={ ariaLabel || placeholder }
-					renderValue={ ( selectedValue: string | null ) =>
-						getSelectRenderValue( flatOptions, placeholder, selectedValue )
+					aria-label={ ariaLabel || placeholder || undefined }
+					renderValue={ ( selectedValue: unknown ) =>
+						getSelectRenderValue( flatOptions, placeholder, selectedValue as string | null )
 					}
 					value={ value ?? '' }
 					onChange={ handleChange }

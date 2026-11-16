@@ -34,7 +34,7 @@ type TextFieldInnerSelectionProps = {
 	id?: string;
 };
 
-export const TextFieldInnerSelection = forwardRef(
+export const TextFieldInnerSelection = forwardRef< HTMLDivElement, TextFieldInnerSelectionProps >(
 	(
 		{
 			placeholder,
@@ -49,7 +49,7 @@ export const TextFieldInnerSelection = forwardRef(
 			disabled,
 			isPopoverOpen,
 			id,
-		}: TextFieldInnerSelectionProps,
+		},
 		ref
 	) => {
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
@@ -176,7 +176,7 @@ function useUnitPlaceholder( value: string ) {
 
 const StyledButton = styled( Button, {
 	shouldForwardProp: ( prop ) => prop !== 'isPrimaryColor',
-} )( ( { isPrimaryColor, theme } ) => ( {
+} )< { isPrimaryColor?: boolean } >( ( { isPrimaryColor, theme } ) => ( {
 	color: isPrimaryColor ? theme.palette.text.primary : theme.palette.text.tertiary,
 	font: 'inherit',
 	minWidth: 'initial',

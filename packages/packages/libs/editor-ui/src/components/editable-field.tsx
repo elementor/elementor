@@ -15,7 +15,7 @@ export const EditableField = forwardRef(
 	) => {
 		return (
 			<Tooltip title={ error } open={ !! error } placement="top">
-				<StyledField ref={ ref } component={ as } { ...props }>
+				<StyledField ref={ ref as React.Ref< HTMLDivElement > } component={ as } { ...props }>
 					{ value }
 				</StyledField>
 			</Tooltip>

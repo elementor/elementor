@@ -205,7 +205,9 @@ function ClassManagerPanelContent( {
 								size="small"
 								color="global"
 								variant="contained"
-								onClick={ publish }
+								onClick={ () => {
+									void publish();
+								} }
 								disabled={ ! isDirty }
 								loading={ isPublishing }
 							>

@@ -35,8 +35,7 @@ export function OverridePropsGroup( { group }: Props ) {
 				aria-controls={ contentId }
 				aria-label={ `${ title } section` }
 				onClick={ handleClick }
-				p={ 0 }
-				sx={ { '&:hover': { backgroundColor: 'transparent' } } }
+				sx={ { p: 0, '&:hover': { backgroundColor: 'transparent' } } }
 			>
 				<Stack direction="row" alignItems="center" justifyItems="start" flexGrow={ 1 } gap={ 0.5 }>
 					<ListItemText

@@ -41,6 +41,7 @@ export function TagChip( { label, chipProps, activeState, onSelectState }: TagCh
 				ref={ setChipRef }
 				{ ...chipGroupProps }
 				aria-label={ `Edit ${ label }` }
+				// @ts-expect-error TS7 migration
 				role="group"
 				sx={ ( theme: Theme ) => ( {
 					'&.MuiChipGroup-root.MuiAutocomplete-tag': {

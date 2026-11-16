@@ -43,8 +43,8 @@ export const PositionControl = () => {
 
 	const placeholder = positionContext.placeholder ? 'custom' : stringPropContext.placeholder ?? null;
 
-	const handlePositionChange = ( event: SelectChangeEvent< Positions > ) => {
-		const value = event.target.value || null;
+	const handlePositionChange = ( event: SelectChangeEvent< unknown > ) => {
+		const value = ( event.target.value as Positions | '' ) || null;
 
 		if ( value === 'custom' ) {
 			positionContext.setValue( { x: null, y: null } );
@@ -67,8 +67,8 @@ export const PositionControl = () => {
 							disabled={ stringPropContext.disabled }
 							value={ ( positionContext.value ? 'custom' : stringPropContext.value ) ?? '' }
 							onChange={ handlePositionChange }
-							renderValue={ ( selectedValue: string | null ) =>
-								getSelectRenderValue( positionOptions, placeholder, selectedValue )
+							renderValue={ ( selectedValue: unknown ) =>
+								getSelectRenderValue( positionOptions, placeholder, selectedValue as string | null )
 							}
 							fullWidth
 						>
