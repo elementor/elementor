@@ -6,6 +6,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -166,6 +167,90 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		foreach ( [ 'e-menu', 'e-menu-items', 'e-menu-entry' ] as $type ) {
 			$this->assertSame( [], $this->get_config( $type )['atomic_style_states'], $type );
+		}
+	}
+
+	public function test_every_menu_layer__exposes_what_the_style_tab_needs() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( array_merge( [ 'e-menu' ], self::LOCKED_TYPES ) as $type ) {
+			// Act.
+			$config = $this->get_config( $type );
+
+			// Assert.
+			$this->assertArrayNotHasKey( 'hide_design_tabs', $config['meta'], $type );
+			$this->assertArrayHasKey( 'classes', $config['atomic_props_schema'], $type );
+			$this->assertNotEmpty( $config['base_styles'], $type );
+		}
+	}
+
+	public function test_menu_item_current_state__renders_scoped_selector_after_the_base_rule() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'menu-item-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'color' => 'blue' ],
+						'meta' => [ 'breakpoint' => null, 'state' => null ],
+					],
+					[
+						'props' => [ 'color' => 'red' ],
+						'meta' => [ 'breakpoint' => null, 'state' => 'e--current' ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( '.menu-item-style{color:blue;}', $css );
+		$this->assertStringContainsString( '.menu-item-style.e--current{color:red;}', $css );
+		$this->assertLessThan( strpos( $css, '.menu-item-style.e--current' ), strpos( $css, '.menu-item-style{' ) );
+	}
+
+	public function test_every_menu_layer__has_an_id_control_and_renders_custom_attributes() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( array_merge( [ 'e-menu' ], self::LOCKED_TYPES ) as $type ) {
+			// Act.
+			$config = $this->get_config( $type );
+
+			// Assert.
+			$this->assertArrayHasKey( 'attributes', $config['atomic_props_schema'], $type );
+
+			$settings_section = array_values( array_filter(
+				$config['atomic_controls'],
+				fn( $section ) => 'settings' === $section->get_id()
+			) );
+			$this->assertCount( 1, $settings_section, $type );
+		}
+
+		$renderer = Template_Renderer::instance();
+		$renderer->register( 'elementor/macros', ELEMENTOR_PATH . 'modules/atomic-widgets/elements/base/_macros.html.twig' );
+
+		foreach ( [
+			'menu' => 'atomic-menu/atomic-menu/atomic-menu.html.twig',
+			'toggle' => 'atomic-menu/atomic-menu-toggle/atomic-menu-toggle.html.twig',
+			'locked' => 'atomic-menu/base/atomic-menu-locked-element.html.twig',
+		] as $name => $path ) {
+			$renderer->register( "test/{$name}", ELEMENTOR_PATH . 'modules/atomic-widgets/elements/' . $path );
+
+			$html = $renderer->render( "test/{$name}", [
+				'id' => 'abc',
+				'type' => 'e-menu',
+				'tag' => 'div',
+				'settings' => [ 'attributes' => 'data-test-attr="yes"' ],
+				'base_styles' => [],
+				'interactions' => [],
+			] );
+
+			$this->assertStringContainsString( 'data-test-attr="yes"', $html, $name );
 		}
 	}
 
