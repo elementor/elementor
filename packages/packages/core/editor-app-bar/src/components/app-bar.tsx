@@ -36,12 +36,11 @@ export default function AppBar() {
 						<AppBarSizeProvider value={ maxToolbarActions }>
 							<Grid container flexWrap="nowrap" sx={ { minWidth: 0, overflow: 'hidden' } }>
 								<MainMenuLocation />
+								<PageIndicationLocation />
 								{ document?.permissions?.allowAddingWidgets && <ToolsMenuLocation /> }
 							</Grid>
 							<Grid container justifyContent="center">
 								<ToolbarMenu spacing={ 1.5 }>
-									<Divider orientation="vertical" />
-									<PageIndicationLocation />
 									<Divider orientation="vertical" />
 									<ResponsiveLocation />
 									<Divider orientation="vertical" />
