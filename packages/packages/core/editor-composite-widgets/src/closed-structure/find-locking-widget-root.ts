@@ -6,13 +6,14 @@ import {
 } from '@elementor/editor-elements';
 
 import { getCompositeWidgetDefinition } from '../sync/get-composite-widget-definition';
+import { hasPart, hasWidgetMarkers } from './has-widget-markers';
 
 export function isInsertionLocked( target: V1Element ): boolean {
-	return null !== findLockingWidgetRoot( target );
+	return hasWidgetMarkers( target ) && null !== findLockingWidgetRoot( target );
 }
 
 export function isElementLocked( element: V1Element ): boolean {
-	return null !== findLockingWidgetRoot( element.parent );
+	return hasPart( element ) && null !== findLockingWidgetRoot( element.parent );
 }
 
 export function findLockingWidgetRoot( start: V1Element | undefined ): V1Element | null {

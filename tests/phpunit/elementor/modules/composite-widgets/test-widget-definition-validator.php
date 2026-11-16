@@ -438,6 +438,50 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_validate__rejects_nodes_without_a_part() {
+		// Arrange.
+		$definition = $this->icon_button();
+		unset( $definition['template']['part'], $definition['template']['elements'][0]['part'] );
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.part', Definition_Error_Codes::PART_MISSING );
+		$this->assert_has_error( $result, 'template.elements.0.part', Definition_Error_Codes::PART_MISSING );
+	}
+
+	public function test_validate__rejects_a_repeater_item_node_without_a_part() {
+		// Arrange.
+		$definition = $this->read_example( 'pricing-card.json' );
+		unset( $definition['template']['elements'][3]['elements'][1]['elements'][0]['part'] );
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.elements.3.elements.1.elements.0.part', Definition_Error_Codes::PART_MISSING );
+	}
+
+	public function test_validate__keeps_invalid_part_code_for_a_present_but_invalid_part() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$definition['template']['elements'][0]['part'] = '';
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'template.elements.0.part', Definition_Error_Codes::PART_INVALID );
+		$this->assertNotContains(
+			[
+				'key' => 'template.elements.0.part',
+				'error' => Definition_Error_Codes::PART_MISSING,
+			],
+			$result->errors()->all()
+		);
+	}
+
 	private function tabs_like_with_slot(): array {
 		return [
 			'id' => 'test/tabs-like',
