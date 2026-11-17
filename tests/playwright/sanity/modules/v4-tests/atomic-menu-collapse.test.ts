@@ -589,5 +589,44 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			// Assert
 			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'row' );
 		} );
+
+		test( 'A value set at the tablet breakpoint applies only at and below it', async () => {
+			// Arrange
+			const menuId = await addMenu();
+			const itemsId = await getChildId( getMenuRoot( menuId ), 'e-menu-items' );
+
+			// Act
+			await editor.selectElement( itemsId );
+			await editor.changeResponsiveView( 'tablet' );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.v4Panel.style.openSection( 'Layout' );
+			await editor.v4Panel.style.setLayoutSectionValue( 'flex' as never, { flexWrap: 'wrap' } );
+			await editor.changeResponsiveView( 'desktop' );
+			await viewFrontend();
+
+			// Assert
+			await editor.page.setViewportSize( DESKTOP );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-wrap', 'nowrap' );
+
+			await editor.page.setViewportSize( TABLET );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-wrap', 'wrap' );
+		} );
+
+		test( 'Deselecting the active direction unsets the author value', async () => {
+			// Arrange
+			const menuId = await addMenu();
+
+			await styleItemsLayout( menuId, 'column' );
+
+			// Act
+			const directionControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'direction' );
+
+			await directionControl.locator( 'button[value="column"]' ).click();
+			await viewFrontend();
+			await editor.page.setViewportSize( DESKTOP );
+
+			// Assert
+			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'row' );
+		} );
 	} );
 } );
