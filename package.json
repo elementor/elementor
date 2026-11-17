@@ -166,6 +166,7 @@
     "webpack": "^5.97.1"
   },
   "dependencies": {
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.10.3",
     "@elementor/elementor-one-assets": "0.4.44",
     "@elementor/icons": "~1.78.1",
     "@elementor/ui": "1.41.4",
