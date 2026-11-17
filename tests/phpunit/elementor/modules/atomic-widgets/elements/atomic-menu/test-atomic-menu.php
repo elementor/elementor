@@ -537,6 +537,86 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
 	}
 
+	public function test_render__items_value_at_a_breakpoint_applies_only_inside_that_media_query() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'items-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'flex-direction' => 'column' ],
+						'meta' => [ 'breakpoint' => 'mobile', 'state' => null ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [
+			'mobile' => [ 'direction' => 'max', 'value' => 768, 'is_enabled' => true ],
+		], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '@media(max-width:768px){.items-style{flex-direction:column;}}', $css );
+	}
+
+	public function test_render__current_state_at_a_breakpoint_is_scoped_to_the_class_inside_the_media_query() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'item-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'color' => 'red' ],
+						'meta' => [ 'breakpoint' => 'mobile', 'state' => 'e--current' ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [
+			'mobile' => [ 'direction' => 'max', 'value' => 768, 'is_enabled' => true ],
+		], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '@media(max-width:768px){.item-style.e--current{color:red;}}', $css );
+	}
+
+	public function test_render__current_state_without_a_base_value_leaves_no_base_rule() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'item-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'color' => 'red' ],
+						'meta' => [ 'breakpoint' => null, 'state' => 'e--current' ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.item-style.e--current{color:red;}', $css );
+	}
+
+	public function test_get_collapse_css__defaults_items_layout_in_every_collapsible_breakpoint_block() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$blocks = substr_count( $css, '@media(scripting:enabled)' );
+		$this->assertGreaterThan( 0, $blocks );
+		$this->assertSame( $blocks, substr_count( $css, '> .e-menu-items-base){flex-direction:column;flex-basis:100%;width:100%}' ) );
+	}
+
 	public function test_get_config__menu_items_base_style_has_no_flex_direction() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
