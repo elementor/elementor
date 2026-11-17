@@ -59,6 +59,19 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 		await editor.applyElementSettings( menuId, typed );
 	};
 
+	const styleItemsLayout = async ( menuId: string, flexDirection: 'row' | 'column' ) => {
+		const itemsId = await getChildId( getMenuRoot( menuId ), 'e-menu-items' );
+
+		await editor.selectElement( itemsId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+		await editor.v4Panel.style.setLayoutSectionValue( 'flex' as never, { flexDirection } );
+	};
+
+	const getFlexDirection = async ( locator: Locator ): Promise<string> => {
+		return await locator.evaluate( ( element ) => getComputedStyle( element ).flexDirection );
+	};
+
 	const viewFrontend = async () => {
 		await editor.publishAndViewPage();
 		await editor.waitForFrontendFonts();
@@ -530,6 +543,51 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 
 			// Assert
 			await expect( getMenuRoot( menuId ).locator( '[data-element_type="e-menu-toggle"]' ) ).toHaveCount( 1 );
+		} );
+	} );
+	test.describe( 'Items layout styling', () => {
+		test( 'Author direction on the items container takes effect on desktop', async () => {
+			// Arrange
+			const menuId = await addMenu();
+
+			// Act
+			await styleItemsLayout( menuId, 'column' );
+			await viewFrontend();
+			await editor.page.setViewportSize( DESKTOP );
+
+			// Assert
+			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'column' );
+		} );
+
+		test( 'The collapsed menu stacks the items by default', async () => {
+			// Arrange
+			await addMenu();
+			await viewFrontend();
+
+			// Act
+			await editor.page.setViewportSize( DESKTOP );
+			const desktopDirection = await getFlexDirection( getItems( getNav() ) );
+
+			await editor.page.setViewportSize( TABLET );
+			await getToggle( getNav() ).click();
+
+			// Assert
+			expect( desktopDirection ).toBe( 'row' );
+			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'column' );
+		} );
+
+		test( 'Author layout on the items overrides the collapsed default at the breakpoint', async () => {
+			// Arrange
+			const menuId = await addMenu();
+
+			// Act
+			await styleItemsLayout( menuId, 'row' );
+			await viewFrontend();
+			await editor.page.setViewportSize( TABLET );
+			await getToggle( getNav() ).click();
+
+			// Assert
+			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'row' );
 		} );
 	} );
 } );
