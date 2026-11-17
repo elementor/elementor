@@ -1,6 +1,8 @@
 import {
 	type Element,
+	type ElementID,
 	type ElementType,
+	getContainer,
 	getElementSettings,
 	getElementType,
 	type V1Element,
@@ -20,19 +22,21 @@ export type WidgetPartElement = {
 
 type WidgetPartElements = Record< string, WidgetPartElement | null >;
 
-export function useWidgetPartElements( root: V1Element, definition: CompositeWidgetDefinition ): WidgetPartElements {
+export function useWidgetPartElements( rootId: ElementID, definition: CompositeWidgetDefinition ): WidgetPartElements {
 	return useListenTo(
-		[
-			commandEndEvent( 'document/elements/set-settings' ),
-			commandEndEvent( 'document/elements/create' ),
-			commandEndEvent( 'document/elements/delete' ),
-		],
-		() => getWidgetPartElements( root, definition ),
-		[ root, definition ]
+		commandEndEvent( 'document/elements/set-settings' ),
+		() => getWidgetPartElements( rootId, definition ),
+		[ rootId, definition ]
 	);
 }
 
-function getWidgetPartElements( root: V1Element, definition: CompositeWidgetDefinition ): WidgetPartElements {
+function getWidgetPartElements( rootId: ElementID, definition: CompositeWidgetDefinition ): WidgetPartElements {
+	const root = getContainer( rootId );
+
+	if ( ! root ) {
+		return {};
+	}
+
 	const parts = getSections( definition )
 		.flatMap( getSectionFields )
 		.map( ( field ) => field.target.part );

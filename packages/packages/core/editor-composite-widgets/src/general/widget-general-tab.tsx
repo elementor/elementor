@@ -1,31 +1,31 @@
 import * as React from 'react';
 import { Section, SectionsList, SettingsTab, useElement } from '@elementor/editor-editing-panel';
-import { type V1Element } from '@elementor/editor-elements';
+import { type ElementID } from '@elementor/editor-elements';
 
 import { type CompositeWidgetDefinition } from '../types';
 import { getSectionFields, getSections } from './general-fields';
+import { useWidgetDefinition } from './use-widget-definition';
 import { useWidgetPartElements } from './use-widget-part-elements';
-import { useWidgetRoot } from './use-widget-root';
 import { WidgetGeneralField } from './widget-general-field';
 
 export function WidgetGeneralTab() {
 	const { element } = useElement();
-	const widgetRoot = useWidgetRoot( element.id );
+	const definition = useWidgetDefinition( element.id );
 
-	if ( ! widgetRoot ) {
+	if ( ! definition ) {
 		return null;
 	}
 
-	return <WidgetGeneral root={ widgetRoot.root } definition={ widgetRoot.definition } />;
+	return <WidgetGeneral rootId={ element.id } definition={ definition } />;
 }
 
 type WidgetGeneralProps = {
-	root: V1Element;
+	rootId: ElementID;
 	definition: CompositeWidgetDefinition;
 };
 
-function WidgetGeneral( { root, definition }: WidgetGeneralProps ) {
-	const partElements = useWidgetPartElements( root, definition );
+function WidgetGeneral( { rootId, definition }: WidgetGeneralProps ) {
+	const partElements = useWidgetPartElements( rootId, definition );
 
 	return (
 		<>
