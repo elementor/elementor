@@ -19,7 +19,8 @@ class Export extends Export_Runner_Base {
 
 	public function should_export( array $data ): bool {
 		return Components_Module::is_import_export_supported()
-			&& in_array( 'content', $data['include'] ?? [], true );
+			&& in_array( 'templates', $data['include'] ?? [], true )
+			&& true === ( $data['customization']['components'] ?? null );
 	}
 
 	public function export( array $data ): array {

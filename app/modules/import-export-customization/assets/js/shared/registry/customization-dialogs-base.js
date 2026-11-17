@@ -52,6 +52,15 @@ export function createCustomizationDialogsRegistry() {
 			title: 'Templates',
 		},
 		{
+			key: KIT_SECTION_ITEMS.TEMPLATES_COMPONENTS,
+			parentKey: KIT_SECTIONS.TEMPLATES,
+			title: 'Components',
+			order: 5,
+			settingKey: 'components',
+			isAvailable: () => false,
+			getInitialState: () => ( { enabled: false } ),
+		},
+		{
 			key: KIT_SECTIONS.SETTINGS,
 			title: 'Settings',
 		},
