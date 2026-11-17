@@ -91,11 +91,12 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_should_import__follows_gate_when_content_is_included_and_manifest_has_components() {
+	public function test_should_import__follows_gate_when_templates_are_included_and_manifest_has_components() {
 		// Arrange
 		$runner = new Import_Runner();
 		$data = [
-			'include' => [ 'content' ],
+			'include' => [ 'templates' ],
+			'customization' => [ 'components' => true ],
 			'manifest' => [
 				Component_Document::EXPORT_MANIFEST_KEY => [
 					123 => [ 'title' => 'Component' ],
@@ -111,11 +112,55 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertSame( Components_Module::is_import_export_supported(), $result );
 	}
 
-	public function test_should_import__returns_false_when_content_is_not_included() {
+	/**
+	 * @dataProvider not_enabled_components_customization_provider
+	 */
+	public function test_should_import__returns_false_when_components_customization_is_not_true( $customization ) {
 		// Arrange
 		$runner = new Import_Runner();
 		$data = [
-			'include' => [ 'settings' ],
+			'include' => [ 'templates' ],
+			'customization' => $customization,
+			'manifest' => [
+				Component_Document::EXPORT_MANIFEST_KEY => [
+					123 => [ 'title' => 'Component' ],
+				],
+			],
+			'extracted_directory_path' => '/tmp/kit/',
+		];
+
+		// Act
+		$result = $runner->should_import( $data );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function not_enabled_components_customization_provider(): array {
+		return [
+			'customization is missing' => [ null ],
+			'components key is missing' => [ [ 'content' => null ] ],
+			'components is false' => [ [ 'components' => false ] ],
+			'components is a truthy non-boolean' => [ [ 'components' => 'true' ] ],
+		];
+	}
+
+	public function templates_not_included_provider(): array {
+		return [
+			'settings only' => [ [ 'settings' ] ],
+			'content only' => [ [ 'content' ] ],
+		];
+	}
+
+	/**
+	 * @dataProvider templates_not_included_provider
+	 */
+	public function test_should_import__returns_false_when_templates_are_not_included( array $include ) {
+		// Arrange
+		$runner = new Import_Runner();
+		$data = [
+			'include' => $include,
+			'customization' => [ 'components' => true ],
 			'manifest' => [
 				Component_Document::EXPORT_MANIFEST_KEY => [
 					123 => [ 'title' => 'Component' ],
@@ -135,7 +180,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		// Arrange
 		$runner = new Import_Runner();
 		$data = [
-			'include' => [ 'content' ],
+			'include' => [ 'templates' ],
+			'customization' => [ 'components' => true ],
 			'manifest' => [],
 			'extracted_directory_path' => '/tmp/kit/',
 		];
@@ -151,7 +197,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		// Arrange
 		$runner = new Import_Runner();
 		$data = [
-			'include' => [ 'content' ],
+			'include' => [ 'templates' ],
+			'customization' => [ 'components' => true ],
 			'manifest' => [
 				'content' => [
 					Component_Document::TYPE => [
@@ -454,7 +501,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 
 	private function build_runner_data(): array {
 		return [
-			'include' => [ 'content' ],
+			'include' => [ 'templates' ],
+			'customization' => [ 'components' => true ],
 			'session_id' => self::SESSION_ID,
 			'extracted_directory_path' => $this->kit_path,
 			'manifest' => [

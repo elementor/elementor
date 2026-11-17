@@ -41,7 +41,7 @@ class Component extends Document {
 		self::ARCHIVED_META_KEY,
 	];
 	const EXPORT_MANIFEST_KEY = 'components';
-	const EXPORT_DIRECTORY = 'content/' . self::TYPE . '/';
+	const EXPORT_DIRECTORY = 'components/';
 	const EXPORT_DEPENDENCIES_FILE_NAME = 'dependencies';
 	const EXPORT_EXCLUDED_SETTINGS_KEYS = [
 		'overridable_props',
