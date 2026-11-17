@@ -2,11 +2,9 @@ import { getAngieControlBehaviorClass } from './behavior/create-behavior-class';
 import { getV3ControlContext } from './context';
 import { isAngieEntryPointsEnabled } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';
-import type { BehaviorsMap, V3ControlView } from './types';
+import type { BehaviorsMap, V3ControlViewWithGetValue } from './types';
 
-type V3ControlViewWithValue = V3ControlView & { getControlValue: () => unknown };
-
-export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithValue ): BehaviorsMap {
+export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithGetValue ): BehaviorsMap {
 	if ( ! isAngieEntryPointsEnabled() ) {
 		return behaviors;
 	}
@@ -32,10 +30,7 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 	}
 
 	const aiType = aiOptions.type as string;
-	const boundGetControlValue = view.getControlValue.bind( view );
-	const getControlValue =
-		entry.getGetControlValue?.( view, aiType ) ??
-		( () => ( typeof boundGetControlValue === 'function' ? boundGetControlValue() : context.controlValue ) );
+	const getControlValue = entry.getGetControlValue?.( view, aiType ) ?? view.getControlValue.bind( view );
 
 	behaviors.ai = {
 		behaviorClass: getAngieControlBehaviorClass(),

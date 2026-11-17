@@ -8,7 +8,12 @@ type WidgetCacheControl = {
 	name?: string;
 	section?: string;
 	inner_tab?: string;
+	type?: string;
+	default?: unknown;
 };
+
+const UI_ONLY_CONTROL_TYPES = new Set( [ 'section', 'heading', 'raw_html', 'popover_toggle', 'divider' ] );
+const ENTRANCE_CONTROL_NAMES = new Set( [ '_animation', 'animation_duration', '_animation_delay' ] );
 
 type ElementorContainer = {
 	model: {
@@ -64,16 +69,31 @@ export const resolveWidgetType = ( container: ElementorContainer ): string => {
 	return ( widgetType as string | undefined ) ?? 'container';
 };
 
+const isUiOnlyControl = ( control: WidgetCacheControl ): boolean =>
+	Boolean( control.type && UI_ONLY_CONTROL_TYPES.has( control.type ) );
+
+const matchesScope = ( control: WidgetCacheControl, scope: MotionScope ): boolean => {
+	if ( 'hover' === scope ) {
+		return control.inner_tab === TAB_POSITIONING_HOVER;
+	}
+
+	return control.section === SECTION_EFFECTS && Boolean( control.name && ENTRANCE_CONTROL_NAMES.has( control.name ) );
+};
+
 const listScopeControlNames = ( widgetType: string, scope: MotionScope ): string[] => {
 	const elementor = getElementor();
 	const controls = Object.values( elementor?.widgetsCache?.[ widgetType ]?.controls ?? {} );
 
 	return controls
-		.filter( ( control ) =>
-			'hover' === scope ? control.inner_tab === TAB_POSITIONING_HOVER : control.section === SECTION_EFFECTS
-		)
+		.filter( ( control ) => matchesScope( control, scope ) && ! isUiOnlyControl( control ) )
 		.map( ( control ) => control.name )
 		.filter( ( name ): name is string => Boolean( name ) );
+};
+
+const getControlDefault = ( widgetType: string, controlName: string ): unknown => {
+	const control = getElementor()?.widgetsCache?.[ widgetType ]?.controls?.[ controlName ];
+
+	return control && 'default' in control ? control.default : '';
 };
 
 const readScopeSettings = ( container: ElementorContainer, scope: MotionScope ): Record< string, unknown > => {
@@ -87,18 +107,27 @@ const readScopeSettings = ( container: ElementorContainer, scope: MotionScope ):
 	}, {} );
 };
 
-const assertKnownControlNames = ( container: ElementorContainer, settings: Record< string, unknown > ) => {
-	const knownControls = container.settings?.controls ?? {};
+const isDocumentContainer = ( container: ElementorContainer ): boolean =>
+	container.model.get( 'elType' ) === 'document';
+
+const assertKnownControlNames = (
+	container: ElementorContainer,
+	scope: MotionScope,
+	settings: Record< string, unknown >
+) => {
+	const allowed = new Set( listScopeControlNames( resolveWidgetType( container ), scope ) );
 
 	for ( const controlName of Object.keys( settings ) ) {
-		if ( ! knownControls[ controlName ] ) {
-			throw new Error( `Control "${ controlName }" not found on element.` );
+		if ( ! allowed.has( controlName ) ) {
+			throw new Error( `Control "${ controlName }" is not a ${ scope } motion control on this element.` );
 		}
 	}
 };
 
 const assertProMotionSettingsAllowed = ( settings: Record< string, unknown > ) => {
-	const hasProMotionKeys = Object.keys( settings ).some( isProMotionSettingKey );
+	const hasProMotionKeys = Object.entries( settings ).some(
+		( [ key, value ] ) => isProMotionSettingKey( key ) && value !== '' && value !== undefined && value !== null
+	);
 
 	if ( ! hasProMotionKeys ) {
 		return;
@@ -128,6 +157,10 @@ export const resolveMotionEffectsContainer = ( elementId: string ) => {
 
 	if ( elementor.helpers?.isAtomicWidget?.( container.model ) ) {
 		throw new Error( `Element "${ elementId }" is an atomic element and is not supported by ${ TOOL_NAME }.` );
+	}
+
+	if ( isDocumentContainer( container ) ) {
+		throw new Error( `Element "${ elementId }" is a document and is not supported by ${ TOOL_NAME }.` );
 	}
 
 	return container;
@@ -166,7 +199,7 @@ export const setMotionEffects = async ( {
 	}
 
 	assertProMotionSettingsAllowed( settings );
-	assertKnownControlNames( container, settings );
+	assertKnownControlNames( container, scope, settings );
 
 	const run = getCommands()?.run;
 
@@ -199,12 +232,17 @@ export const clearMotionEffects = async ( {
 	scope: MotionScope;
 } ): Promise< SetMotionEffectsResult > => {
 	const container = resolveMotionEffectsContainer( elementId );
-	const controlNames = listScopeControlNames( resolveWidgetType( container ), scope );
+	const widgetType = resolveWidgetType( container );
+	const controlNames = listScopeControlNames( widgetType, scope );
+
+	if ( ! controlNames.length ) {
+		throw new Error( `No ${ scope } motion controls found on element "${ elementId }".` );
+	}
 
 	const clearedSettings = controlNames.reduce< Record< string, unknown > >( ( accumulated, controlName ) => {
 		return {
 			...accumulated,
-			[ controlName ]: '',
+			[ controlName ]: getControlDefault( widgetType, controlName ),
 		};
 	}, {} );
 

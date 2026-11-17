@@ -12,7 +12,7 @@ export function addStylingTool( server: McpServer ): void {
 		{
 			description: `Apply custom CSS to legacy/V3 elements.
 - Do NOT use for V4 elements — V4 has its own MCP and tools.
-- Do NOT use for animations or motion — use the interactions tools.
+- Do NOT use for animations or motion — use v3-motion-effects for V3 widgets, or the V4 interactions tools for atomic elements.
 - Do NOT use for basic styling — V3 elements support basic styling via the V3 settings tool.`,
 			inputSchema: {
 				action: z

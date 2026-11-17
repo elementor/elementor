@@ -94,8 +94,6 @@ export const buildAngieV3TextPrompt = ( {
 	].join( '\n\n' );
 };
 
-const hoverAnimationAiType = 'hover_animation';
-
 export const buildAngieV3AnimationPrompt = ( {
 	elementId,
 	controlName,
@@ -107,7 +105,7 @@ export const buildAngieV3AnimationPrompt = ( {
 	animationType?: string;
 	motionSettingsSummary?: string;
 } ): string => {
-	const isHover = 'hover' === animationType || hoverAnimationAiType === animationType;
+	const isHover = 'hover' === animationType;
 	const scopeLabel = isHover ? 'hover' : 'entrance';
 
 	return [
