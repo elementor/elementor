@@ -16,6 +16,7 @@ import {
 	ElementProvider,
 	isDynamicPropValue,
 	SettingsField,
+	useControlsByWidgetType,
 	useElement,
 } from '@elementor/editor-editing-panel';
 import { type Control } from '@elementor/editor-elements';
@@ -28,7 +29,6 @@ import {
 } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
-import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
 import {
 	type ComponentInstanceOverrideProp,
 	componentInstanceOverridePropTypeUtil,
