@@ -243,6 +243,7 @@ jobs:
       version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
       version_suffix: ${{ needs.publish.outputs.VERSION_SUFFIX }}
       tag: ${{ needs.publish.outputs.NPM_TAG }}
+      ref: ${{ inputs.version }}
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

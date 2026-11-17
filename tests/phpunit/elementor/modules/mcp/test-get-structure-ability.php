@@ -1185,6 +1185,59 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
 	}
 
+	public function test_execute__reads_the_staged_autosave_of_a_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_document_with_elements( 'publish', [ $this->make_atomic_widget( 'live1', 'e-heading', [] ) ] );
+		$this->backdate_post( $post_id );
+		Plugin::$instance->documents->get( $post_id, false )
+			->get_autosave( 0, true )
+			->save( [ 'elements' => [ $this->make_atomic_widget( 'staged1', 'e-heading', [] ) ] ] );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertSame( [ 'staged1' ], array_column( $result['elements'], 'id' ) );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringContainsString( 'elementor/publish-document', $result['llm_instructions'] );
+	}
+
+	public function test_execute__reports_not_staged_for_a_draft() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_document_with_elements( 'draft', [ $this->make_atomic_widget( 'draft1', 'e-heading', [] ) ] );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( [ 'draft1' ], array_column( $result['elements'], 'id' ) );
+		$this->assertFalse( $result['staged'] );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+	}
+
+	private function create_document_with_elements( string $post_status, array $elements ): int {
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => $post_status ] )->ID;
+		$document = Plugin::$instance->documents->get( $post_id, false );
+		$document->set_is_built_with_elementor( true );
+		$document->save( [ 'elements' => $elements ] );
+
+		return $post_id;
+	}
+
+	/**
+	 * Autosave detection requires the autosave's `post_modified_gmt` to be strictly newer than the
+	 * main post's.
+	 */
+	private function backdate_post( int $post_id ): void {
+		global $wpdb;
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) ) ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+	}
+
 	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {
 		$element = [
 			'id' => $id,

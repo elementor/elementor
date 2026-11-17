@@ -1,4 +1,4 @@
-=== Elementor Website Builder - more than just a page builder ===
+=== Elementor Agent Ready Website Builder ===
 Contributors: elemntor
 Tags: ai, drag-and-drop, editor, landing page, mcp
 Requires at least: 6.8
@@ -15,15 +15,17 @@ The Elementor Website Builder has it all: drag and drop page builder, Atomic Edi
 
 https://www.youtube.com/watch?v=ROEC0CPRO3w
 
-= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING 23M+ WEBSITES WORLDWIDE, NOW WITH AGENTIC AI. =
+= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING 24M+ WEBSITES WORLDWIDE, NOW WITH AGENTIC AI. =
 
 Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Atomic Editor.
 
 Supporting the full website lifecycle, Elementor lets you build, optimize, and manage your website with extended capabilities such as agentic AI creation, native MCP connection, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
 
+Build beautiful websites for humans, while making sure AI agents can find, read, and act on them too. Elementor generates the files agents look for, like llms.txt, agent discovery files, markdown files and WebMCP tools, straight from your content, with a free Agent Ready score and a fix for every check that fails.
+
 Elementor is now in version 4, with a new generation of performance-first atomic building blocks that put you in control of every part of your site. Define your global design systems and reusable components once, and they apply everywhere instantly – turning hours or even days of work into single clicks.
 
-NEW! Connect your favorite AI tools, including Claude, Codex, and Cursor, directly to your Elementor sites. **[The Elementor MCP](https://go.elementor.com/wp-repo-description-tab-elementor-mcp)** acts as a new execution layer, turning plain-language prompts into real, fully editable Elementor structures, layouts, and design systems while keeping you in complete control. 
+Connect your favorite AI tools, including Claude, Codex, and Cursor, directly to your Elementor sites. **[The Elementor MCP](https://go.elementor.com/wp-repo-description-tab-elementor-mcp)** acts as a new execution layer, turning plain-language prompts into real, fully editable Elementor structures, layouts, and design systems while keeping you in complete control. 
 
 Unlock all Pro features with **[Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/)**.
 
@@ -46,10 +48,10 @@ Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor
 - **CSS transform**: Use CSS Transform to rotate, scale, and skew elements, adding dynamic styling to your site.  
 - **Entrance animations**:  Add entrance animations to elements to create engaging and interactive user experiences.  
 - **[Revision history](https://go.elementor.com/wp-repo-description-tab-revision-history)**: Track and revert to previous versions of your designs at any point in the creative process.  
-- **[Developer-friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Extensive documentation, API, developer tools, and custom code areas, let developers extendElementor and build custom solutions.  
+- **[Developer-friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Extensive documentation, API, developer tools, and custom code areas, let developers extend Elementor and build custom solutions.  
 - **[Floating buttons](https://go.elementor.com/wp-repo-description-tab-floating-buttons)**: Add customizable, floating action buttons that stay in view as users scroll.  
-- **Components [Pro]**: Reuse the same building blocks across pages and sites, and update them everywhere they appear, with controlled content editing, so collaborators and clients  update only exposed content properties.  
-- **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site: headers, footers, posts, and archives,for full control over appearance.  
+- **Components [Pro]**: Reuse the same building blocks across pages and sites, and update them everywhere they appear, with controlled content editing, so collaborators and clients update only exposed content properties.  
+- **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site: headers, footers, posts, and archives, for full control over appearance.  
 - **[Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/) [Pro]**: Create popups with advanced targeting and triggering options to optimize user engagement and conversions.  
 - **[Forms](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/) [Pro]**: Design and integrate custom forms with advanced features and integrations to capture lead submissions.  
 - **[WooCommerce Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-woocommerce-builder/) [Pro]**: Design custom product pages, shop layouts, archives, carts, checkout and account pages for your store.  
@@ -99,16 +101,6 @@ Access a suite of free widgets and tools built to support your website creation 
 ### 🚀 Enhance your website
 
 **[High-performing websites](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/)**: Website performance affects your visitors’ experience and search result ranking. Elementor, in partnership with Google Chrome, continuously improves performance without compromising design.
-
-**Key features include:**
-
-- **Reduced DOM output**: Streamlined HTML structure for faster rendering.  
-- **Improved media file loading**: Optimized loading of images, videos, and other media assets.  
-- **Reduced CSS and JS files**: Minimized stylesheets and scripts individually loaded only on demand for quicker load times.  
-- **Lazy loading**: Deferred loading of non-critical resources to improve initial page load speed.  
-- **Faster font loading**: Efficient delivery of web fonts to enhance text rendering speed.  
-- **Optimized front-end asset loading**: Efficient loading of assets like JavaScript and CSS to minimize render-blocking.  
-- **Element caching**: Cache frequently accessed design elements to reduce server response time and enhance overall performance.
 
 ### 🔥 Elementor Editor Pro features
 
@@ -204,7 +196,7 @@ Build professional websites with **[Elementor Pro](https://go.elementor.com/wp-r
 
 = 🔒 Security and compliance =
 
-Elementor places a strong backed by industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications reflect our commitment to robust security measures and recognized industry standards.
+Elementor places a strong emphasis on security, backed by industry certifications such as ISO/IEC 27001, ISO/IEC 27017, ISO/IEC 27018, ISO/IEC 27701, and SOC 2 Type II. These certifications reflect our commitment to robust security measures and recognized industry standards.
 
 We encourage ethical security research through our [Bug Bounty program](https://go.elementor.com/wp-repo-description-tab-bug-crowd-bug-bounty-program/). We work with leading bug bounty services so researchers can report vulnerabilities in our service backed by a  triage team available 24/7/365.
 
@@ -212,7 +204,7 @@ For more information: [Trust Center](https://go.elementor.com/trust-center/).
 
 = ♿ Accessibility best practices =
 
-Elementor offers accessibility tools and enhancements to help you provide a better experience for all users. Including HTML5 semantics, full keyboard navigation menus, ongoing improvements of features and widget.
+Elementor offers accessibility tools and enhancements to help you provide a better experience for all users. Including HTML5 semantics, full keyboard navigation menus, ongoing improvements of features and widgets.
 
 = 🌐 Translated to 63+ languages, includes RTL support =
 
@@ -235,11 +227,11 @@ To improve the user experience, Elementor may use the following 3rd party servic
 
 **[Ally](http://go.elementor.com/editor-acc-wp-repo)**: Improves website usability for people with disabilities. Ally scans, detects, and remediates key accessibility violations, and works on all WordPress and Elementor websites.
 
-**[Manage](https://go.elementor.com/wp-repo-description-tab-elementor-manage)**: Centralized dashboard to monitor, optimize, and maintain multiple WordPres sites without switching between individual site admins.
+**[Manage](https://go.elementor.com/wp-repo-description-tab-elementor-manage)**: Centralized dashboard to monitor, optimize, and maintain multiple WordPress sites without switching between individual site admins.
 
-**[Cookiez](https://go.elementor.com/wp-repo-description-tab-elementor-cookiez)**: GDPR and CCPA compliant cookie banner with automatic cooking scanning, script blocking and consent logging.
+**[Cookiez](https://go.elementor.com/wp-repo-description-tab-elementor-cookiez)**: GDPR and CCPA compliant cookie banner with automatic cookie scanning, script blocking and consent logging.
 
-**[Activity Log](https://go.elementor.com/wp-repo-description-tab-elementor-activity-log)**: Records every change on your WordPress site, who did it, when, and where the request came from (WP Admin, REST API, WP-CLI, WP-Cron, or the WP Abilities API), for a full audit trail).
+**[Activity Log](https://go.elementor.com/wp-repo-description-tab-elementor-activity-log)**: Records every change on your WordPress site, who did it, when, and where the request came from (WP Admin, REST API, WP-CLI, WP-Cron, or the WP Abilities API), for a full audit trail.
 
 = 📣 See what our users have to say =
 
@@ -334,7 +326,7 @@ There is also a managed security Bug Bounty program, using the power of communit
 
 **Can I buy templates separately?**
 
-Yes. you can use any template that supports Elementor
+Yes. you can use any template that supports Elementor.
 
 **Is Elementor compatible with Post and Custom Post Types?**
 
@@ -358,6 +350,16 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 4.4.1 - 2026-11-16 =
+
+* Tweak: Updated WordPress compatibility to version 7.2
+* Fix: Improved code security enforcement across attributes, permissions, and data handling
+* Fix: Anchor links scroll to the incorrect section on mobile devices when the page first loads
+* Fix: MCP manual configuration instructions may fail in certain environments
+* Fix: MCP may fail to update valid Atomic elements due to image validation errors
+* Fix: MCP changes to published pages may be lost or overwritten
+* Fix: Improved stability and reliability of Agent Ready features
 
 = 4.4.0 - 2026-11-09 =
 

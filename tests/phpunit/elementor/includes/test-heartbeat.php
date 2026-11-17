@@ -23,9 +23,13 @@ class Test_Heartbeat extends Elementor_Test_Base {
 
 	private $original_editor;
 	private $original_common;
+	private $editor_mock;
 
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->act_as_admin();
+		$this->factory()->post->create( [ 'import_id' => self::TEST_POST_ID ] );
 
 		$this->original_editor = Plugin::$instance->editor;
 		$this->original_common = Plugin::$instance->common;
@@ -51,14 +55,13 @@ class Test_Heartbeat extends Elementor_Test_Base {
 			->getMock();
 		$common_mock->method( 'get_component' )->with( 'ajax' )->willReturn( $ajax_mock );
 
-		$editor_mock = $this->getMockBuilder( Editor::class )
+		$this->editor_mock = $this->getMockBuilder( Editor::class )
 			->disableOriginalConstructor()
 			->onlyMethods( [ 'get_locked_user', 'lock_post' ] )
 			->getMock();
-		$editor_mock->method( 'get_locked_user' )->willReturn( null );
-		$editor_mock->method( 'lock_post' )->willReturn( null );
+		$this->editor_mock->method( 'get_locked_user' )->willReturn( null );
 
-		Plugin::$instance->editor = $editor_mock;
+		Plugin::$instance->editor = $this->editor_mock;
 		Plugin::$instance->common = $common_mock;
 	}
 
@@ -107,6 +110,53 @@ class Test_Heartbeat extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse( get_transient( self::UNSAVED_TRANSIENT_KEY ) );
+	}
+
+	/**
+	 * @dataProvider unpersisted_signal_value_provider
+	 */
+	public function test_heartbeat_received__fires_unpersisted_signal_with_the_sent_value( $signal_value ) {
+		// Arrange
+		$received = [];
+		add_action( 'elementor/heartbeat/unpersisted_signal', function( int $post_id, $value ) use ( &$received ) {
+			$received[] = [ $post_id, $value ];
+		}, 10, 2 );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+			'elementor_has_unpersisted' => $signal_value,
+		];
+
+		// Act
+		( new Heartbeat() )->heartbeat_received( [], $data );
+
+		// Assert
+		$this->assertSame( [ [ self::TEST_POST_ID, $signal_value ] ], $received );
+	}
+
+	public function unpersisted_signal_value_provider(): array {
+		return [
+			'document id' => [ (string) self::TEST_POST_ID ],
+			'null sent through form encoding' => [ '' ],
+		];
+	}
+
+	public function test_heartbeat_received__no_unpersisted_signal_when_field_absent() {
+		// Arrange
+		$fired = false;
+		add_action( 'elementor/heartbeat/unpersisted_signal', function() use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+		];
+
+		// Act
+		( new Heartbeat() )->heartbeat_received( [], $data );
+
+		// Assert
+		$this->assertFalse( $fired );
 	}
 
 	public function test_heartbeat_received__always_injects_mutation_marker_in_response() {
@@ -159,5 +209,65 @@ class Test_Heartbeat extends Elementor_Test_Base {
 		$transient_expiry  = (int) get_option( '_transient_timeout_' . self::MUTATION_TRANSIENT_KEY );
 		$expected_expiry   = time() + Editor_Sync_State::MCP_MUTATION_TTL;
 		$this->assertEqualsWithDelta( $expected_expiry, $transient_expiry, 2 );
+	}
+
+	public function test_heartbeat_received__locks_post_for_user_who_can_edit_it() {
+		// Arrange
+		$this->editor_mock->expects( $this->once() )->method( 'lock_post' )->with( self::TEST_POST_ID );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+		];
+
+		// Act
+		$response = ( new Heartbeat() )->heartbeat_received( [], $data );
+
+		// Assert
+		$this->assertSame( 'test-nonce', $response['elementorNonce'] );
+	}
+
+	public function test_heartbeat_received__ignores_post_lock_for_user_who_cannot_edit_it() {
+		// Arrange
+		$this->act_as( 'subscriber' );
+		$this->editor_mock->expects( $this->never() )->method( 'lock_post' );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+			'elementor_force_post_lock' => true,
+		];
+
+		// Act
+		$response = ( new Heartbeat() )->heartbeat_received( [ 'existing' => true ], $data );
+
+		// Assert
+		$this->assertSame( [ 'existing' => true ], $response );
+	}
+
+	public function test_refresh_nonces__returns_nonces_for_user_who_can_edit_the_post() {
+		// Arrange
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+		];
+
+		// Act
+		$response = ( new Heartbeat() )->refresh_nonces( [], $data );
+
+		// Assert
+		$this->assertSame( 'test-nonce', $response['elementor-refresh-nonces']['elementorNonce'] );
+	}
+
+	public function test_refresh_nonces__returns_no_nonces_for_user_who_cannot_edit_the_post() {
+		// Arrange
+		$this->act_as( 'subscriber' );
+
+		$data = [
+			'elementor_post_lock' => [ 'post_ID' => self::TEST_POST_ID ],
+		];
+
+		// Act
+		$response = ( new Heartbeat() )->refresh_nonces( [], $data );
+
+		// Assert
+		$this->assertSame( [], $response );
 	}
 }
