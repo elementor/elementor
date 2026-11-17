@@ -71,8 +71,11 @@ class Test_Module extends Elementor_Test_Base {
 		delete_transient( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
 		Menu_Data_Provider::instance()->register_level4_item( $this->create_action_item( 'https://go.elementor.com/wp-menu-renew/' ) );
 
+		$module = new Module();
+		remove_filter( 'elementor_one/upgrade_url', [ $module, 'override_one_menu_upgrade_url' ] );
+
 		// Act
-		$url = ( new Module() )->get_upgrade_redirect_url();
+		$url = $module->get_upgrade_redirect_url();
 
 		// Assert
 		$this->assertSame( 'https://go.elementor.com/wp-menu-renew/', $url );
