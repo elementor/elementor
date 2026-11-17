@@ -37,11 +37,16 @@ export type KitSiteIdentityToolParams = {
 	patch?: SiteIdentityPatch;
 };
 
-type GetSiteIdentityResult = Partial< Record< SiteIdentityField, string | MediaValue > >;
+type GetSiteIdentityResult = {
+	site_name?: string;
+	site_description?: string;
+	site_logo?: MediaValue;
+	site_favicon?: MediaValue;
+};
 
 type SetSiteIdentityResult = {
 	success: true;
-} & Partial< Record< SiteIdentityField, string | MediaValue > >;
+} & GetSiteIdentityResult;
 
 const getElementor = () =>
 	(
@@ -62,8 +67,6 @@ const getCommands = () =>
 			$e?: { run?: ( command: string, args?: Record< string, unknown > ) => Promise< unknown > | unknown };
 		}
 	 ).$e;
-
-const isMediaField = ( field: SiteIdentityField ): boolean => 'site_logo' === field || 'site_favicon' === field;
 
 const assertAllowedFields = ( fields: SiteIdentityField[] ) => {
 	const invalid = fields.filter( ( field ) => ! ( SITE_IDENTITY_FIELDS as readonly string[] ).includes( field ) );
@@ -151,9 +154,9 @@ export const getSiteIdentityValues = ( fields?: SiteIdentityField[] ): GetSiteId
 	for ( const field of selectedFields ) {
 		const raw = container.settings?.get?.( field );
 
-		if ( isMediaField( field ) ) {
+		if ( 'site_logo' === field || 'site_favicon' === field ) {
 			result[ field ] = normalizeMediaValue( raw );
-		} else {
+		} else if ( 'site_name' === field || 'site_description' === field ) {
 			result[ field ] = 'string' === typeof raw ? raw : '';
 		}
 	}
@@ -172,7 +175,7 @@ export const setSiteIdentityValues = async ( patch: SiteIdentityPatch ): Promise
 
 	const container = resolveKitContainer();
 	const settings: Record< string, unknown > = {};
-	const applied: Partial< Record< SiteIdentityField, string | MediaValue > > = {};
+	const applied: GetSiteIdentityResult = {};
 
 	for ( const field of patchKeys ) {
 		const value = patch[ field ];
@@ -181,15 +184,17 @@ export const setSiteIdentityValues = async ( patch: SiteIdentityPatch ): Promise
 			continue;
 		}
 
-		if ( isMediaField( field ) ) {
+		if ( 'site_logo' === field || 'site_favicon' === field ) {
 			const media = validateMediaPatch( value, field );
 			settings[ field ] = media;
 			applied[ field ] = media;
-		} else if ( 'string' === typeof value ) {
+		} else if ( 'site_name' === field || 'site_description' === field ) {
+			if ( 'string' !== typeof value ) {
+				throw new Error( `Invalid value for "${ field }". Expected a string.` );
+			}
+
 			settings[ field ] = value;
 			applied[ field ] = value;
-		} else {
-			throw new Error( `Invalid value for "${ field }". Expected a string.` );
 		}
 	}
 
