@@ -65,7 +65,7 @@ describe( 'use-submenu', () => {
 
 		// Assert
 		const { elements } = jest.mocked( createElements ).mock.calls[ 0 ][ 0 ];
-		expect( elements.map( ( { model } ) => model.elType ) ).toEqual( [
+		expect( elements.map( ( { model } ) => model?.elType ) ).toEqual( [
 			'e-menu-submenu-trigger',
 			'e-menu-submenu',
 		] );
