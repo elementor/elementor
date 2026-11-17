@@ -1,0 +1,134 @@
+import * as React from 'react';
+import { createMockElementType, renderWithTheme } from 'test-utils';
+import { ElementProvider } from '@elementor/editor-editing-panel';
+import { type Control, type ControlItem, type ElementType, getElementType } from '@elementor/editor-elements';
+import { fireEvent, screen } from '@testing-library/react';
+
+import {
+	cleanupClosedStructureFixture,
+	type ClosedStructureFixture,
+	setupClosedStructureFixture,
+	WIDGET_ID,
+} from '../../closed-structure/__tests__/closed-structure-fixture';
+import { type CompositeWidgetGeneralEntry } from '../../types';
+import { WidgetGeneralTab } from '../widget-general-tab';
+
+jest.mock( '@elementor/editor-editing-panel', () => {
+	const actual = jest.requireActual( '@elementor/editor-editing-panel' );
+	const { createElement } = jest.requireActual( 'react' );
+
+	return {
+		...actual,
+		SettingsControl: ( { control }: { control: Control } ) => {
+			const { element } = actual.useElement();
+
+			return createElement( 'div', null, `${ control.value.label } -> ${ element.id }` );
+		},
+	};
+} );
+
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getElementLabel: jest.fn( () => 'Flexbox' ),
+	getElementType: jest.fn(),
+} ) );
+
+const GENERAL: CompositeWidgetGeneralEntry[] = [
+	{
+		section: 'Content',
+		fields: [
+			{ label: 'Text', target: { part: 'label', prop: 'paragraph' } },
+			{ label: 'Icon', target: { part: 'icon', prop: 'svg' } },
+			{ label: 'Unknown prop', target: { part: 'label', prop: 'missing' } },
+			{ label: 'Panel', fields: [ { label: 'Panel link', target: { part: 'tab_content', prop: 'link' } } ] },
+		],
+	},
+	{ repeater: 'items', label: 'Items', item: 'label', container: 'root', item_fields: [] },
+];
+
+const createControl = ( bind: string ): Control => ( {
+	type: 'control',
+	value: { bind, label: bind, type: 'text', props: {} },
+} );
+
+const ROOT_SETTINGS_SECTION: ControlItem = {
+	type: 'section',
+	value: { label: 'Settings', items: [ createControl( 'link' ), createControl( 'tag' ) ] },
+};
+
+const ELEMENT_TYPES: Record< string, ElementType > = {
+	'e-flexbox': createMockElementType( { key: 'e-flexbox', controls: [ ROOT_SETTINGS_SECTION ] } ),
+	'e-paragraph': createMockElementType( { key: 'e-paragraph', controls: [ createControl( 'paragraph' ) ] } ),
+};
+
+describe( '<WidgetGeneralTab />', () => {
+	let fixture: ClosedStructureFixture;
+
+	beforeEach( () => {
+		fixture = setupClosedStructureFixture();
+
+		const config = (
+			window as unknown as { elementor: { config: { compositeWidgets: Record< string, object > } } }
+		 ).elementor.config;
+		config.compositeWidgets[ WIDGET_ID ] = { ...config.compositeWidgets[ WIDGET_ID ], general: GENERAL };
+
+		jest.mocked( getElementType ).mockImplementation( ( type ) => ELEMENT_TYPES[ type ] ?? null );
+	} );
+
+	afterEach( () => {
+		cleanupClosedStructureFixture();
+		sessionStorage.clear();
+	} );
+
+	it( "should render each field with the target atom's control in that atom's context", () => {
+		// Arrange
+		const element = { id: fixture.root.id, type: 'e-flexbox' };
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ ELEMENT_TYPES[ 'e-flexbox' ] } settings={ {} }>
+				<WidgetGeneralTab />
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+		expect( screen.getByText( `Text -> ${ fixture.label.id }` ) ).toBeInTheDocument();
+		expect( screen.getByText( `Panel link -> ${ fixture.slot.id }` ) ).toBeInTheDocument();
+	} );
+
+	it( "should render the root's own settings after the fields", () => {
+		// Arrange
+		const element = { id: fixture.root.id, type: 'e-flexbox' };
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ ELEMENT_TYPES[ 'e-flexbox' ] } settings={ {} }>
+				<WidgetGeneralTab />
+			</ElementProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Settings section' } ) );
+
+		// Assert
+		expect( screen.getByText( 'link' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'tag' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should hide fields whose part or control is missing, and skip repeaters', () => {
+		// Arrange
+		const element = { id: fixture.root.id, type: 'e-flexbox' };
+
+		// Act
+		renderWithTheme(
+			<ElementProvider element={ element } elementType={ ELEMENT_TYPES[ 'e-flexbox' ] } settings={ {} }>
+				<WidgetGeneralTab />
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.queryByText( /^Icon/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Unknown prop/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Items' ) ).not.toBeInTheDocument();
+	} );
+} );
