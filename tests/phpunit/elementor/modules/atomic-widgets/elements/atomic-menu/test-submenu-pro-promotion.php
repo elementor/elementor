@@ -203,4 +203,16 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertSame( 'par0001', $saved_submenu['elements'][0]['id'] );
 		$this->assertSame( 'nested1', $saved_submenu['elements'][1]['id'] );
 	}
+
+	public function test_menu_item_controls_serialize_with_the_submenu_toggle() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$json = wp_json_encode( Plugin::$instance->elements_manager->get_element_types( 'e-menu-item' )->get_config()['atomic_controls'] );
+
+		// Assert.
+		$this->assertIsString( $json );
+		$this->assertStringContainsString( '"type":"submenu-toggle"', $json );
+	}
 }
