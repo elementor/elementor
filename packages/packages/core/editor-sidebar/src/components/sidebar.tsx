@@ -2,7 +2,14 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Box, Divider, Stack } from '@elementor/ui';
 
-import { APP_BAR_HEIGHT, SIDEBAR_CLASS, SIDEBAR_WIDTH_VAR } from '../constants';
+import {
+	APP_BAR_HEIGHT,
+	SIDEBAR_CLASS,
+	SIDEBAR_FOOTER_ITEM_GAP_SPACING,
+	SIDEBAR_HORIZONTAL_PADDING_SPACING,
+	SIDEBAR_TOOLS_ITEM_GAP_SPACING,
+	SIDEBAR_WIDTH_VAR,
+} from '../constants';
 import { sidebarFooter, SidebarFooterSlot, sidebarTools, SidebarToolsSlot } from '../locations';
 
 const { useMenuItems: useToolsMenuItems } = sidebarTools;
@@ -30,7 +37,7 @@ export default function Sidebar() {
 					flexDirection: 'column',
 					justifyContent: 'space-between',
 					alignItems: 'center',
-					px: 1,
+					px: SIDEBAR_HORIZONTAL_PADDING_SPACING,
 					backgroundColor: 'rgb( 242, 242, 242 )',
 				} }
 			>
@@ -38,11 +45,15 @@ export default function Sidebar() {
 					<Groups
 						groups={ [ toolsItems.elements, toolsItems.design, toolsItems.default ] }
 						firstGroupHeight={ APP_BAR_HEIGHT }
+						itemGap={ SIDEBAR_TOOLS_ITEM_GAP_SPACING }
 					/>
 					<SidebarToolsSlot />
 				</Stack>
 				<Stack alignItems="center" pb={ 1.5 } width="100%">
-					<Groups groups={ [ footerItems.document, footerItems.default ] } />
+					<Groups
+						groups={ [ footerItems.document, footerItems.default ] }
+						itemGap={ SIDEBAR_FOOTER_ITEM_GAP_SPACING }
+					/>
 					<SidebarFooterSlot />
 				</Stack>
 			</Box>
@@ -52,7 +63,15 @@ export default function Sidebar() {
 
 type MenuItems = ReturnType< typeof useToolsMenuItems >[ 'default' ];
 
-function Groups( { groups, firstGroupHeight }: { groups: MenuItems[]; firstGroupHeight?: number } ) {
+function Groups( {
+	groups,
+	firstGroupHeight,
+	itemGap,
+}: {
+	groups: MenuItems[];
+	firstGroupHeight?: number;
+	itemGap: number;
+} ) {
 	return (
 		<>
 			{ groups
@@ -63,7 +82,7 @@ function Groups( { groups, firstGroupHeight }: { groups: MenuItems[]; firstGroup
 						<Stack
 							alignItems="center"
 							justifyContent="center"
-							gap={ 1 }
+							gap={ itemGap }
 							py={ 1.5 }
 							height={ index === 0 ? firstGroupHeight : undefined }
 							boxSizing="border-box"
