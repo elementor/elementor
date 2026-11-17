@@ -90,7 +90,8 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
 		foreach ( [ 'e-menu-submenu', 'e-menu-submenu-trigger' ] as $type ) {
-			$element = new ( get_class( Plugin::$instance->elements_manager->get_element_types( $type ) ) )( [ 'id' => 'abc123', 'elType' => $type ] );
+			$class = get_class( Plugin::$instance->elements_manager->get_element_types( $type ) );
+			$element = new $class( [ 'id' => 'abc123', 'elType' => $type ] );
 
 			// Act.
 			ob_start();
