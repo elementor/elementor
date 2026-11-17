@@ -2,6 +2,7 @@ import * as React from 'react';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { mockAngieEntryPointsEnabled } from '../../__tests__/mock-angie-entry-points-enabled';
 import { getGenerateWithAngieLabel } from '../../labels';
 import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieComponentInstanceHeaderAction } from '../angie-component-instance-header-action';
@@ -11,6 +12,10 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 describe( 'AngieComponentInstanceHeaderAction', () => {
+	beforeEach( () => {
+		mockAngieEntryPointsEnabled();
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
