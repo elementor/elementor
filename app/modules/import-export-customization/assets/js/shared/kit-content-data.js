@@ -26,7 +26,7 @@ const kitContentData = [
 	{
 		type: KIT_SECTIONS.TEMPLATES,
 		data: {
-			title: __( 'Templates', 'elementor' ),
+			title: __( 'Templates & Components', 'elementor' ),
 			features: {
 				open: [
 					__( 'Saved Templates', 'elementor' ),
