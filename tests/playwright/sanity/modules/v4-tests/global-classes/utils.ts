@@ -126,19 +126,10 @@ export async function openClassManager( page: Page, editor: EditorPage, divBlock
 		await saveAndContinueButton.click();
 	}
 
-	await dismissClassManagerIntro( page );
-
 	const panel = page.locator( '#elementor-panel' );
 	await panel.getByRole( 'heading', { level: 2, name: 'Design system' } ).waitFor( { state: 'visible' } );
 	await expect( panel.getByRole( 'tab', { name: 'Classes' } ) ).toHaveAttribute( 'aria-selected', 'true' );
 	await expect( panel.getByRole( 'button', { name: 'Save changes' } ) ).toBeVisible();
-}
-
-export async function dismissClassManagerIntro( page: Page ): Promise<void> {
-	const introDialog = page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
-	const gotItButton = introDialog.getByRole( 'button', { name: 'Got it introduction' } );
-
-	await gotItButton.click( { timeout: 2000, force: true } ).catch( () => {} );
 }
 
 export async function saveAndCloseClassManager( page: Page ): Promise<void> {
