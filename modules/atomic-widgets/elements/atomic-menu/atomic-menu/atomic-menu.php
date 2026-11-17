@@ -183,7 +183,6 @@ class Atomic_Menu extends Atomic_Element_Base {
 			'.e-menu-toggle-closed-base,.e-menu-toggle-open-base{--e-svg-width:24px;--e-svg-height:24px}',
 			".e-menu[data-e-open=\"true\"] > {$toggle} .e-menu-toggle-closed-base{display:none}",
 			".e-menu:not([data-e-open=\"true\"]) > {$toggle} .e-menu-toggle-open-base{display:none}",
-			":where({$items}){flex-direction:row}",
 		];
 
 		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {

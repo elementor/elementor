@@ -679,7 +679,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$css = Atomic_Menu::get_collapse_css();
 
 		// Assert.
-		$this->assertStringContainsString( ':where(.e-menu-items-base){flex-direction:row}', $css );
+		$this->assertStringNotContainsString( ':where(.e-menu-items-base)', $css );
 		$this->assertStringContainsString( '{flex-direction:column;flex-basis:100%;width:100%}', $css );
 		$this->assertMatchesRegularExpression( '/:where\([^{]*> \.e-menu-items-base\)\{flex-direction:column;flex-basis:100%;width:100%\}/', $css );
 		$this->assertDoesNotMatchRegularExpression( '/> \.e-menu-items-base\{[^}]*flex-direction/', $css );
