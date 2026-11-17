@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { disablePromotionCdn } from '../../../../assets/disable-promotion-cdn';
 import { parallelTest as test } from '../../../../parallelTest';
 import EditorSelectors from '../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../pages/wp-admin-page';
@@ -33,6 +34,7 @@ test.describe( 'Editor tests', () => {
 
 	test( 'Check for panel styles', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
+		await disablePromotionCdn();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -45,7 +47,10 @@ test.describe( 'Editor tests', () => {
 		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-			mask: [ editor.page.locator( '.e-widget-new-badge' ) ],
+			mask: [
+				editor.page.locator( '.e-widget-new-badge' ),
+				editor.page.locator( '#elementor-panel-get-pro-elements-sticky' ),
+			],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );
