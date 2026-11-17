@@ -28,10 +28,13 @@ class Test_Module extends Elementor_Test_Base {
 
 		\Mock_Pro_License_API::reset();
 		\Mock_Pro_License_API::set_license_state( true );
+
+		$this->seed_side_menu_assets_data( [ 'is_active' => false ] );
 	}
 
 	public function tear_down() {
 		remove_all_filters( 'elementor_one/upgrade_url' );
+		delete_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
 		\Mock_Pro_License_API::reset();
 
 		parent::tear_down();
@@ -107,6 +110,13 @@ class Test_Module extends Elementor_Test_Base {
 		$item->method( 'is_visible' )->willReturn( true );
 
 		return $item;
+	}
+
+	private function seed_side_menu_assets_data( array $payload ): void {
+		update_option( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY, [
+			'timeout' => PHP_INT_MAX,
+			'value' => wp_json_encode( $payload ),
+		] );
 	}
 
 	private function reset_menu_data_provider(): void {
