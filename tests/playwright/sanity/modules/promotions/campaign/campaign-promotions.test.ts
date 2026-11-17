@@ -5,6 +5,7 @@ import { wpCli } from '../../../../assets/wp-cli';
 import { timeouts } from '../../../../config/timeouts';
 import {
 	NO_PROMOTION_SCENARIO,
+	assertScenarioFetched,
 	cdnFieldOrDefault,
 	readEditorPromotion,
 	readFirstFullNotification,
@@ -12,7 +13,7 @@ import {
 	useCdnScenario,
 } from './cdn-scenario';
 
-const CAMPAIGN_SCENARIO = process.env.E2E_CDN_SCENARIO || 'bfcm-2026';
+const CAMPAIGN_SCENARIO = process.env.E2E_CDN_SCENARIO || 'live';
 
 const CORE_DEFAULTS = {
 	pluginsPage: { label: 'Get Elementor Pro', url: 'https://go.elementor.com/go-pro-wp-plugins/' },
@@ -49,6 +50,7 @@ const getPointerDismissKey = ( campaignId: unknown ): string =>
 for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 	test.describe( `Editor promotions from CDN - ${ scenario } @promotions`, () => {
 		test.beforeEach( async ( { page, baseURL } ) => {
+			assertScenarioFetched( scenario );
 			await useCdnScenario( page.context(), baseURL, scenario );
 		} );
 
@@ -163,6 +165,7 @@ for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 
 test.describe( `Campaign content from CDN - ${ CAMPAIGN_SCENARIO } @promotions`, () => {
 	test.beforeEach( async ( { page, baseURL } ) => {
+		assertScenarioFetched( CAMPAIGN_SCENARIO );
 		await useCdnScenario( page.context(), baseURL, CAMPAIGN_SCENARIO );
 	} );
 

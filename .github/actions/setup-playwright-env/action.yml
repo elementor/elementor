@@ -65,6 +65,10 @@ runs:
         set -euo pipefail
         jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
+    - name: Fetch live CDN promotions
+      shell: bash
+      run: npm run test:playwright:fetch-cdn
+
     - name: Install WordPress environment
       shell: bash
       run: npm run start-local-server

@@ -125,6 +125,8 @@ jobs:
           echo "PHP version set to:"
           cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
+      - name: Fetch live CDN promotions
+        run: npm run test:playwright:fetch-cdn
       - name: Install WordPress environment
         run: |
           npm run start-local-server

@@ -52,6 +52,12 @@ const readFixture = <T>( scenario: string, path: string, key: string ): T | unde
 	return file ? JSON.parse( readFileSync( file, 'utf8' ) )[ key ] as T : undefined;
 };
 
+export const assertScenarioFetched = ( scenario: string ): void => {
+	if ( ! existsSync( resolve( FIXTURES_DIR, scenario ) ) ) {
+		throw new Error( `CDN scenario "${ scenario }" is missing. Run \`npm run test:playwright:fetch-cdn\` before starting WordPress.` );
+	}
+};
+
 export const useCdnScenario = async ( context: BrowserContext, baseURL: string, scenario: string ): Promise<void> => {
 	await context.addCookies( [ { name: SCENARIO_COOKIE, value: scenario, url: baseURL } ] );
 };
