@@ -26,7 +26,7 @@ export default function Action( { icon: Icon, title, selected, visible = true, .
 					aria-label={ title }
 					aria-pressed={ selected }
 					size="medium"
-					sx={ { color: selected ? 'primary.main' : 'grey.800' } }
+					sx={ { color: selected ? 'primary.main' : 'grey.800', borderRadius: 1 } }
 				>
 					<Icon />
 				</IconButton>
