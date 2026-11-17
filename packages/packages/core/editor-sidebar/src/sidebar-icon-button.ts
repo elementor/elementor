@@ -19,7 +19,6 @@ export function getSidebarIconButtonSx( {
 		width: SIDEBAR_ICON_BUTTON_SIZE_PX,
 		height: SIDEBAR_ICON_BUTTON_SIZE_PX,
 		padding: '6px',
-		borderRadius: '50%',
 		color: isEmphasized ? 'primary.main' : 'grey.800',
 		backgroundColor: isEmphasized ? 'action.selected' : 'transparent',
 		'&:hover': {
