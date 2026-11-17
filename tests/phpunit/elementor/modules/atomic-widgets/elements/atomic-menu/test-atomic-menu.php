@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Elements\AtomicMenu;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
@@ -152,7 +153,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'auto', $props['width']['value']['unit'] );
 	}
 
-	public function test_get_config__menu_item_exposes_current_current_ancestor_and_expanded_states() {
+	public function test_get_config__menu_item_exposes_its_style_states() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
@@ -161,12 +162,8 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame(
-			[
-				[ 'name' => 'current', 'value' => 'e--current' ],
-				[ 'name' => 'current-ancestor', 'value' => 'e--current-ancestor' ],
-				[ 'name' => 'expanded', 'value' => 'e--expanded' ],
-			],
-			$item_config['atomic_style_states']
+			Atomic_Menu_Item::STYLE_STATES,
+			array_column( $item_config['atomic_style_states'], 'value' )
 		);
 
 		foreach ( [ 'e-menu', 'e-menu-items', 'e-menu-entry' ] as $type ) {
@@ -174,9 +171,9 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_get_selector_with_state__scopes_each_menu_item_class_state() {
+	public function test_get_selector_with_state__scopes_each_menu_item_state() {
 		// Act & Assert.
-		foreach ( [ 'e--current', 'e--current-ancestor', 'e--expanded' ] as $state ) {
+		foreach ( Atomic_Menu_Item::STYLE_STATES as $state ) {
 			$this->assertTrue( Style_States::is_valid_state( $state ), $state );
 			$this->assertSame( ".menu-item.{$state}", Style_States::get_selector_with_state( '.menu-item', $state ), $state );
 		}
