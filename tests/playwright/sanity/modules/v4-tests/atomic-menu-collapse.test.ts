@@ -628,5 +628,43 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			// Assert
 			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'row' );
 		} );
+
+		test( 'Current state styles apply only while the current class is present', async () => {
+			// Arrange
+			const menuId = await addMenu();
+			const firstItemId = await getChildId( getMenuRoot( menuId ), 'e-menu-item' );
+			const currentColor = 'rgb(255, 0, 0)';
+
+			await editor.selectElement( firstItemId );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.v4Panel.style.selectClassState( 'current' as never );
+			await editor.v4Panel.style.openSection( 'Typography' );
+			await editor.v4Panel.style.setFontColor( '#ff0000' );
+			await viewFrontend();
+
+			const frontendUrl = editor.page.url();
+
+			await editor.page.goBack();
+			await editor.waitForPanelToLoad();
+			await editor.applyElementSettings( firstItemId, {
+				link: {
+					$$type: 'link',
+					value: { destination: { $$type: 'url', value: frontendUrl } },
+				},
+			} );
+
+			// Act
+			await viewFrontend();
+
+			const item = getNav().locator( '[data-element_type="e-menu-item"]' ).first();
+
+			// Assert
+			await expect( item ).toHaveClass( /e--current/ );
+			await expect( item ).toHaveCSS( 'color', currentColor );
+
+			await item.evaluate( ( element ) => element.classList.remove( 'e--current' ) );
+
+			await expect( item ).not.toHaveCSS( 'color', currentColor );
+		} );
 	} );
 } );
