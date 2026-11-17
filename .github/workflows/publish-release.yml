@@ -45,7 +45,7 @@ on:
         required: false
       SLACK_CHANNEL_RELEASE:
         required: false
-      SLACK_BRANCH_OUT_WEBHOOK_URL:
+      SLACK_CHANNEL_BRANCH_OUT:
         required: false
       JIRA_API_EMAIL:
         required: false
@@ -180,11 +180,12 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
           PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
 
-      - name: Announce stable branch structure to Slack
+      - name: Prepare stable branch structure announcement
+        id: prepare_branch_structure_announcement
         if: inputs.channel == 'stable'
         continue-on-error: true
         env:
-          SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
+          SLACK_CHANNEL_BRANCH_OUT: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
           EVENT: stable-release
           REPO_NAME: ${{ github.event.repository.name }}
           STABLE_VERSION: ${{ inputs.version }}
@@ -193,6 +194,15 @@ jobs:
           git fetch --no-tags origin "$WORKFLOW_SHA"
           git show "$WORKFLOW_SHA:.github/scripts/announce-branch-structure.sh" > "${RUNNER_TEMP}/announce-branch-structure.sh"
           bash "${RUNNER_TEMP}/announce-branch-structure.sh"
+
+      - name: Post stable branch structure to Slack
+        if: steps.prepare_branch_structure_announcement.outputs.payload != ''
+        continue-on-error: true
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
+          PAYLOAD: ${{ steps.prepare_branch_structure_announcement.outputs.payload }}
 
       - name: Output Package Data for Next Job
         id: output-data

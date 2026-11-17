@@ -4,7 +4,6 @@ set -euo pipefail
 VERSION_PATTERN='^[0-9]+\.[0-9]+\.[0-9]+$'
 NEW_STABLE_LINE_PATTERN='^[0-9]+\.[0-9]+\.0$'
 REPO_NAME_PATTERN='^[A-Za-z0-9._-]+$'
-WEBHOOK_PATTERN='^https://hooks\.slack\.com/services/[A-Za-z0-9/_-]+$'
 
 read_branch_version() {
   local branch="$1"
@@ -26,13 +25,8 @@ if [ "${EVENT:-}" != "stable-release" ]; then
   exit 0
 fi
 
-if [ -z "${SLACK_BRANCH_OUT_WEBHOOK_URL:-}" ]; then
-  echo "::warning::SLACK_BRANCH_OUT_WEBHOOK_URL is not set. Skipping Slack announcement."
-  exit 0
-fi
-
-if [ "${DRY_RUN:-false}" != "true" ] && [[ ! "$SLACK_BRANCH_OUT_WEBHOOK_URL" =~ $WEBHOOK_PATTERN ]]; then
-  echo "::warning::SLACK_BRANCH_OUT_WEBHOOK_URL does not match the expected Slack webhook format. Skipping Slack announcement."
+if [ "${DRY_RUN:-false}" != "true" ] && [ -z "${SLACK_CHANNEL_BRANCH_OUT:-}" ]; then
+  echo "::warning::SLACK_CHANNEL_BRANCH_OUT is not set. Skipping Slack announcement."
   exit 0
 fi
 
@@ -72,15 +66,11 @@ Repo: https://github.com/elementor/${REPO_NAME}
 EOF
 )"
 
-PAYLOAD="$(jq -n --arg text "$TEXT" '{text:$text}')"
+PAYLOAD="$(jq -c -n --arg text "$TEXT" '{text:$text}')"
 
 if [ "${DRY_RUN:-false}" = "true" ]; then
   echo "$PAYLOAD"
   exit 0
 fi
 
-if curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" --proto '=https' --max-time 15 --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""; then
-  echo "Slack announcement sent successfully"
-else
-  echo "::warning::Slack branch-structure announcement failed"
-fi
+echo "payload=${PAYLOAD}" >> "$GITHUB_OUTPUT"

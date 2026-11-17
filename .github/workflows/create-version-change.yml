@@ -197,25 +197,19 @@ jobs:
           echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
           echo "PR created successfully for $DEV_BRANCH"
 
-      - name: Announce beta branch-out to Slack
+      - name: Prepare beta branch-out announcement
+        id: prepare_branch_out_announcement
         if: ${{ !cancelled() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true' }}
         continue-on-error: true
         env:
-          SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
+          SLACK_CHANNEL_BRANCH_OUT: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
           BETA_VERSION: ${{ steps.run-script.outputs.beta_version }}
           MAIN_VERSION: ${{ steps.calculate.outputs.next_version }}
           PR_OUTCOME: ${{ steps.create-pr.outcome }}
           PR_URL: ${{ steps.create-pr.outputs.pr_url }}
         run: |
-          # Exit gracefully if webhook URL is not configured
-          if [ -z "$SLACK_BRANCH_OUT_WEBHOOK_URL" ]; then
-            echo "::warning::SLACK_BRANCH_OUT_WEBHOOK_URL secret is not set. Skipping Slack notification."
-            exit 0
-          fi
-
-          # Validate webhook URL
-          if [[ ! "$SLACK_BRANCH_OUT_WEBHOOK_URL" =~ ^https://hooks\.slack\.com/services/[A-Za-z0-9/_-]+$ ]]; then
-            echo "::warning::SLACK_BRANCH_OUT_WEBHOOK_URL must match https://hooks.slack.com/services/[A-Za-z0-9/_-]+. Skipping Slack notification."
+          if [ -z "$SLACK_CHANNEL_BRANCH_OUT" ]; then
+            echo "::warning::SLACK_CHANNEL_BRANCH_OUT secret is not set. Skipping Slack notification."
             exit 0
           fi
 
@@ -273,14 +267,15 @@ jobs:
 
           Workflow run: ${RUN_LINK}"
 
-          # Build JSON payload with jq
-          PAYLOAD=$(jq -n --arg text "$TEXT" '{text:$text}')
+          PAYLOAD=$(jq -c -n --arg text "$TEXT" '{text:$text}')
+          echo "payload=${PAYLOAD}" >> "$GITHUB_OUTPUT"
 
-          # Post to Slack (keep webhook URL off argv)
-          if curl -fsS -X POST -H 'Content-type: application/json' --proto '=https' --max-time 15 --data "$PAYLOAD" --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""; then
-            echo "Slack notification sent successfully."
-          else
-            echo "::warning::Slack post failed"
-          fi
-          exit 0
+      - name: Post beta branch-out to Slack
+        if: ${{ !cancelled() && steps.prepare_branch_out_announcement.outputs.payload != '' }}
+        continue-on-error: true
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
+          PAYLOAD: ${{ steps.prepare_branch_out_announcement.outputs.payload }}
 
