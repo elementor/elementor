@@ -13,8 +13,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		await context.close();
 	} );
 
-	// Skipped until home-screen.json from the editor-assets CDN is mocked: the live BFCM sidebar banner breaks the screenshot [ED-26387].
-	test.skip( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
 		test.setTimeout( timeouts.singleTest );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -27,6 +26,8 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		} );
 
 		await wpAdmin.cleanAdminPageForScreenshot();
+		// The conversion banner unlocks once earlier tests create two Elementor pages, so it depends on test order.
+		await page.addStyleTag( { content: '#e-conversion-banner { display: none !important; }' } );
 
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
