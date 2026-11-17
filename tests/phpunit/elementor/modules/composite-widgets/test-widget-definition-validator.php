@@ -274,14 +274,29 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 		// Arrange.
 		$definition = $this->icon_button();
 		$definition['general'][0]['fields'][0]['target'] = [ 'part' => 'missing', 'prop' => 'paragraph' ];
-		$definition['general'][0]['fields'][2]['target']['prop'] = 'not_a_prop';
+		$definition['general'][0]['fields'][1]['target']['prop'] = 'not_a_prop';
 
 		// Act.
 		$result = $this->validator->validate( $definition );
 
 		// Assert.
 		$this->assert_has_error( $result, 'general.0.fields.0.target.part', Definition_Error_Codes::TARGET_PART_NOT_FOUND );
-		$this->assert_has_error( $result, 'general.0.fields.2.target.prop', Definition_Error_Codes::TARGET_PROP_NOT_FOUND );
+		$this->assert_has_error( $result, 'general.0.fields.1.target.prop', Definition_Error_Codes::TARGET_PROP_NOT_FOUND );
+	}
+
+	public function test_validate__rejects_fields_targeting_the_root() {
+		// Arrange.
+		$definition = $this->icon_button();
+		$root_link = [ 'label' => 'Link', 'target' => [ 'part' => 'root', 'prop' => 'link' ] ];
+		$definition['general'][0]['fields'][] = $root_link;
+		$definition['general'][0]['fields'][] = [ 'label' => 'Button', 'fields' => [ $root_link ] ];
+
+		// Act.
+		$result = $this->validator->validate( $definition );
+
+		// Assert.
+		$this->assert_has_error( $result, 'general.0.fields.2.target.part', Definition_Error_Codes::TARGET_PART_IS_ROOT );
+		$this->assert_has_error( $result, 'general.0.fields.3.fields.0.target.part', Definition_Error_Codes::TARGET_PART_IS_ROOT );
 	}
 
 	public function test_validate__rejects_groups_nested_in_a_group_or_a_repeater() {
@@ -305,7 +320,11 @@ class Test_Widget_Definition_Validator extends Elementor_Test_Base {
 	public function test_validate__rejects_removable_root_and_missing_removable_part() {
 		// Arrange.
 		$definition = $this->icon_button();
-		$definition['general'][0]['fields'][2]['removable'] = true;
+		$definition['general'][0]['fields'][] = [
+			'label' => 'Content',
+			'removable' => [ 'part' => 'root' ],
+			'fields' => [ [ 'label' => 'Text', 'target' => [ 'part' => 'label', 'prop' => 'paragraph' ] ] ],
+		];
 		$definition['general'][0]['fields'][0]['removable'] = [ 'part' => 'missing' ];
 
 		// Act.

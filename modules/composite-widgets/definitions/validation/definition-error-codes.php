@@ -23,6 +23,7 @@ class Definition_Error_Codes {
 	const GLOBAL_REFERENCE_NOT_ALLOWED = 'widget_global_reference_not_allowed';
 	const TARGET_PART_NOT_FOUND = 'widget_target_part_not_found';
 	const TARGET_PROP_NOT_FOUND = 'widget_target_prop_not_found';
+	const TARGET_PART_IS_ROOT = 'widget_target_root';
 	const REMOVABLE_PART_INVALID = 'widget_removable_part_invalid';
 	const PRESET_STYLE_INVALID = 'widget_preset_style_invalid';
 	const QUICK_EDIT_INVALID = 'widget_quick_edit_invalid';

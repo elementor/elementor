@@ -75,7 +75,7 @@ class Fields_Rules {
 	}
 
 	private function validate_field( array $field, string $path ): void {
-		$is_target_valid = $this->validate_target( $field['target'] ?? null, "{$path}.target" );
+		$is_target_valid = $this->validate_field_target( $field['target'] ?? null, "{$path}.target" );
 		$removable = $field['removable'] ?? false;
 
 		if ( true === $removable && $is_target_valid ) {
@@ -105,6 +105,22 @@ class Fields_Rules {
 				$this->validate_fields( $repeater[ $key ], "{$path}.{$key}", ! self::ALLOWS_GROUPS );
 			}
 		}
+	}
+
+	/**
+	 * The widget General always shows the root's own settings, so a field on the root would duplicate one of them.
+	 */
+	private function validate_field_target( $target, string $path ): bool {
+		if ( ! $this->validate_target( $target, $path ) ) {
+			return false;
+		}
+
+		if ( $this->root_part === $target['part'] ) {
+			$this->errors->add( "{$path}.part", Definition_Error_Codes::TARGET_PART_IS_ROOT );
+			return false;
+		}
+
+		return true;
 	}
 
 	private function validate_target( $target, string $path ): bool {
