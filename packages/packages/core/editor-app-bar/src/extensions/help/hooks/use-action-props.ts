@@ -4,10 +4,10 @@ import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from '../../../types';
 
-const HELP_CENTER_URL = 'https://go.elementor.com/editor-top-bar-learn/';
-const HELP_CENTER_ANGIE_PROMPT = `${ __( 'Help me with', 'elementor' ) } `;
+export const HELP_CENTER_URL = 'https://go.elementor.com/editor-top-bar-learn/';
+export const HELP_CENTER_ANGIE_PROMPT = `${ __( 'Help me with', 'elementor' ) } `;
 
-const dispatchHelpClickEvent = () => {
+export const dispatchHelpClickEvent = () => {
 	const extendedWindow = window as unknown as ExtendedWindow;
 	const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 

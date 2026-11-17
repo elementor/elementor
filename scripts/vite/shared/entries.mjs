@@ -93,6 +93,8 @@ export const FRONTEND_ENTRIES = {
 	'tabs-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js',
 	'tabs-preview-handler': 'modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js',
 	'menu-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-handler.js',
+	'menu-current-preview-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-current-preview-handler.js',
+	'menu-current-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-current-handler.js',
 	'menu-preview-handler': 'modules/atomic-widgets/elements/atomic-menu/handlers/atomic-menu-preview-handler.js',
 	'accordion-preview-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/editor-accordion-state.js',
 	'accordion-selected-state-handler': 'modules/atomic-widgets/elements/atomic-accordion/handlers/accordion-selected-state.js',

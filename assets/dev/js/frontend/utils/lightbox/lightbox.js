@@ -259,7 +259,7 @@ module.exports = elementorModules.ViewModule.extend( {
 				}
 			} );
 
-			$videoElement = $( '<video>', videoParams );
+			$videoElement = $( '<video>' ).attr( videoParams );
 		} else {
 			let apiProvider;
 

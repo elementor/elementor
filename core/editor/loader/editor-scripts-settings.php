@@ -76,6 +76,7 @@ class Editor_Scripts_Settings {
 			'user' => [
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
+				'can_save_unfiltered_html' => current_user_can( 'unfiltered_html' ),
 				'introduction' => User::get_introduction_meta(),
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),

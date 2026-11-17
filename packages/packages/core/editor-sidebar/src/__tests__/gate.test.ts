@@ -15,7 +15,7 @@ describe( 'isSidebarEnabled', () => {
 
 	it( 'should be disabled when one of the experiments is inactive', () => {
 		// Arrange.
-		jest.mocked( isExperimentActive ).mockImplementation( ( name ) => name !== 'e_editor_one' );
+		jest.mocked( isExperimentActive ).mockImplementation( ( name ) => name !== 'e_editor_sidebar' );
 
 		// Assert.
 		expect( isSidebarEnabled() ).toBe( false );
