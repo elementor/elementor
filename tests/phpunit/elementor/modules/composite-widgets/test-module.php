@@ -7,19 +7,25 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
+use Elementor\Modules\CompositeWidgets\Definitions\Site_Definitions_Registrar;
 use Elementor\Modules\CompositeWidgets\Module;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Site_Definition_Fixture;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+require_once __DIR__ . '/fixtures/site-definition-fixture.php';
+require_once __DIR__ . '/../components/mocks/mock-pro-license-api.php';
+
 class Test_Module extends Elementor_Test_Base {
 	const ICON_BUTTON_ID = 'elementor/icon-button';
 	const THIRD_PARTY_ID = 'acme/badge';
 	const LOCKING_WIDGET_ID = 'acme/card';
 	const UNREGISTERED_WIDGET_ID = 'acme/removed';
+	const SITE_WIDGET_TILE = 'composite-widget-site-promo-card';
 
 	public function test_editor_settings__expose_registered_definitions_and_temporary_tiles() {
 		// Arrange.
@@ -95,6 +101,97 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertSame( 1, $calls );
 	}
 
+	public function test_register_site_hook__registers_site_definitions_before_code_ones() {
+		// Arrange.
+		$this->register_site_widget();
+		$module = new Module();
+
+		// Act.
+		$definitions = $module->get_registry()->all();
+
+		// Assert.
+		$this->assertSame( Site_Definition_Fixture::WIDGET_ID, array_key_first( $definitions ) );
+		$this->assertSame( Widget_Definition::SOURCE_SITE, $definitions[ Site_Definition_Fixture::WIDGET_ID ]['source'] );
+	}
+
+	public function test_editor_settings__flag_archived_site_widgets_and_give_them_no_tile() {
+		// Arrange.
+		$this->register_site_widget( true );
+		new Module();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'elementsPresets' => [] ] );
+
+		// Assert.
+		$this->assertTrue( $settings['compositeWidgets'][ Site_Definition_Fixture::WIDGET_ID ][ Widgets_Definitions_Registry::ARCHIVED_KEY ] );
+		$this->assertArrayNotHasKey( self::SITE_WIDGET_TILE, $settings['elementsPresets'] );
+	}
+
+	/**
+	 * @dataProvider site_widget_tile_provider
+	 */
+	public function test_editor_settings__give_site_widgets_a_tile_only_with_an_active_license( bool $is_active, bool $is_expired, bool $has_tile ) {
+		// Arrange.
+		\Mock_Pro_License_API::set_license_state( $is_active, $is_expired );
+		$this->register_site_widget();
+		new Module();
+
+		// Act.
+		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'elementsPresets' => [] ] );
+
+		// Assert.
+		$this->assertArrayHasKey( Site_Definition_Fixture::WIDGET_ID, $settings['compositeWidgets'] );
+		$this->assertSame( $has_tile, isset( $settings['elementsPresets'][ self::SITE_WIDGET_TILE ] ) );
+	}
+
+	public function site_widget_tile_provider(): array {
+		return [
+			'active license' => [ true, false, true ],
+			'expired license' => [ false, true, false ],
+			'no license' => [ false, false, false ],
+		];
+	}
+
+	/**
+	 * @dataProvider site_widget_render_provider
+	 */
+	public function test_frontend_content__renders_site_widget_copies_only_with_pro( bool $is_active, bool $is_expired, array $expected_ids ) {
+		// Arrange.
+		\Mock_Pro_License_API::set_license_state( $is_active, $is_expired );
+		new Module();
+		$data = [
+			[
+				'id' => 'site-copy',
+				'elType' => 'e-flexbox',
+				'part' => 'root',
+				'widget' => [
+					'id' => Site_Definition_Fixture::WIDGET_ID,
+					'version' => 1,
+				],
+				'elements' => [],
+			],
+			[
+				'id' => 'plain',
+				'elType' => 'e-flexbox',
+				'elements' => [],
+			],
+		];
+
+		// Act.
+		$result = apply_filters( 'elementor/frontend/builder_content_data', $data, 0 );
+
+		// Assert.
+		$this->assertSame( $expected_ids, array_column( $result, 'id' ) );
+	}
+
+	public function site_widget_render_provider(): array {
+		return [
+			'active license' => [ true, false, [ 'site-copy', 'plain' ] ],
+			'expired license' => [ false, true, [ 'site-copy', 'plain' ] ],
+			'no license' => [ false, false, [ 'plain' ] ],
+		];
+	}
+
 	public function test_document_load__syncs_widget_locks_in_edit_mode() {
 		// Arrange.
 		$this->register_locking_widget();
@@ -126,8 +223,15 @@ class Test_Module extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		Plugin::$instance->editor->set_edit_mode( null );
+		\Mock_Pro_License_API::reset();
 
 		parent::tearDown();
+	}
+
+	private function register_site_widget( bool $is_archived = false ): void {
+		add_action( Module::REGISTER_SITE_HOOK, function ( Site_Definitions_Registrar $registrar ) use ( $is_archived ) {
+			$registrar->register( Site_Definition_Fixture::definition(), $is_archived );
+		} );
 	}
 
 	private function register_locking_widget(): void {

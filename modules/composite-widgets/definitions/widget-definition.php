@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Definition {
 	const SOURCE_CODE = 'code';
 	const SOURCE_SITE = 'site';
+	const SITE_ID_PREFIX = 'site/';
 	const DEFAULT_VERSION = 1;
 
 	private string $id;
