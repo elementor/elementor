@@ -1,11 +1,11 @@
 import { getAngieControlBehaviorClass } from './behavior/create-behavior-class';
 import { getV3ControlContext } from './context';
-import { isAngieEntryPointsEnabled } from './is-angie-entry-points-enabled';
+import { shouldShowAngieEntryPoints } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';
 import type { BehaviorsMap, V3ControlViewWithGetValue } from './types';
 
 export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithGetValue ): BehaviorsMap {
-	if ( ! isAngieEntryPointsEnabled() ) {
+	if ( ! shouldShowAngieEntryPoints() ) {
 		return behaviors;
 	}
 

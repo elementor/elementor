@@ -83,14 +83,6 @@ let globalOriginalProps: PropertyKey[];
 beforeEach( () => {
 	setReady( true );
 
-	if ( typeof window !== 'undefined' ) {
-		window.elementorV2 = {
-			editorAngie: {
-				openAngie: jest.fn(),
-			},
-		};
-	}
-
 	globalOriginalProps = Object.keys( globalThis );
 } );
 

@@ -7,5 +7,3 @@ export function shouldShowAngieEntryPoints(): boolean {
 
 	return Boolean( window.elementorV2?.editorAngie?.openAngie );
 }
-
-export const isAngieEntryPointsEnabled = shouldShowAngieEntryPoints;

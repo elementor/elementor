@@ -1,6 +1,6 @@
-import { isAngieEntryPointsEnabled } from '../is-angie-entry-points-enabled';
+import { shouldShowAngieEntryPoints } from '../is-angie-entry-points-enabled';
 
-describe( 'isAngieEntryPointsEnabled', () => {
+describe( 'shouldShowAngieEntryPoints', () => {
 	const originalElementorV2 = window.elementorV2;
 	const originalElementorEditorAngie = window.elementorEditorAngie;
 
@@ -19,7 +19,7 @@ describe( 'isAngieEntryPointsEnabled', () => {
 		};
 
 		// Act
-		const enabled = isAngieEntryPointsEnabled();
+		const enabled = shouldShowAngieEntryPoints();
 
 		// Assert
 		expect( enabled ).toBe( true );
@@ -35,7 +35,7 @@ describe( 'isAngieEntryPointsEnabled', () => {
 		};
 
 		// Act
-		const enabled = isAngieEntryPointsEnabled();
+		const enabled = shouldShowAngieEntryPoints();
 
 		// Assert
 		expect( enabled ).toBe( false );
@@ -46,7 +46,7 @@ describe( 'isAngieEntryPointsEnabled', () => {
 		window.elementorV2 = {};
 
 		// Act
-		const enabled = isAngieEntryPointsEnabled();
+		const enabled = shouldShowAngieEntryPoints();
 
 		// Assert
 		expect( enabled ).toBe( false );
@@ -57,7 +57,7 @@ describe( 'isAngieEntryPointsEnabled', () => {
 		window.elementorV2 = undefined;
 
 		// Act
-		const enabled = isAngieEntryPointsEnabled();
+		const enabled = shouldShowAngieEntryPoints();
 
 		// Assert
 		expect( enabled ).toBe( false );

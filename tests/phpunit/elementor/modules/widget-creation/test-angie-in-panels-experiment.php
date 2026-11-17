@@ -189,6 +189,36 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_print_angie_config_hides_entry_points_when_container_experiment_is_inactive() {
+		// Arrange.
+		$original_container_default = Plugin::$instance->experiments->get_features( 'container' )['default'] ?? null;
+		$this->act_as_admin();
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		delete_option( Experiments_Manager::OPTION_PREFIX . 'container' );
+		Plugin::$instance->experiments->set_feature_default_state(
+			'container',
+			Experiments_Manager::STATE_INACTIVE
+		);
+		add_filter( 'pre_option_active_plugins', static fn() => [] );
+		$this->register_angie_script();
+
+		// Act.
+		$this->get_widget_creation_module()->print_angie_config();
+
+		// Assert.
+		$this->assertSame(
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
+		);
+
+		if ( null !== $original_container_default ) {
+			Plugin::$instance->experiments->set_feature_default_state( 'container', $original_container_default );
+		}
+	}
+
 	public function test_experiment_can_be_activated() {
 		// Arrange
 		Plugin::$instance->experiments->set_feature_default_state(
