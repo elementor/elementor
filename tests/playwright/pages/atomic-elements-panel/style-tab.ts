@@ -341,8 +341,8 @@ export default class StyleTab extends BasePage {
 		await this.page.locator( 'li[role="menuitem"] span', { hasText: 'Remove' } ).click();
 	}
 
-	async selectClassState( state: 'normal'|'active'|'hover'|'focus', target: string = 'local' ) {
-		const stateRegex = new RegExp( state, 'i' );
+	async selectClassState( state: 'normal'|'active'|'hover'|'focus'|'current'|'current-ancestor'|'expanded', target: string = 'local' ) {
+		const stateRegex = new RegExp( `^\\s*${ state.replace( '-', '[ -]' ) }\\s*$`, 'i' );
 		const classesSection = this.page.locator( 'label', { hasText: 'Classes' } ).locator( '../..' );
 		const classChip = classesSection.locator( `[aria-label="Edit ${ target }"]` );
 		const menuTrigger = classChip.locator( '[aria-label="Open CSS Class Menu"]' );

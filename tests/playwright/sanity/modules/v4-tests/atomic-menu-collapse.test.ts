@@ -69,10 +69,6 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 		await editor.v4Panel.style.setLayoutSectionValue( DisplayValue.FLEX, { flexDirection } );
 	};
 
-	const getFlexDirection = async ( locator: Locator ): Promise<string> => {
-		return await locator.evaluate( ( element ) => getComputedStyle( element ).flexDirection );
-	};
-
 	const viewFrontend = async () => {
 		await editor.publishAndViewPage();
 		await editor.waitForFrontendFonts();
@@ -546,6 +542,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await expect( getMenuRoot( menuId ).locator( '[data-element_type="e-menu-toggle"]' ) ).toHaveCount( 1 );
 		} );
 	} );
+
 	test.describe( 'Items layout styling', () => {
 		test( 'Author direction on the items container takes effect on desktop', async () => {
 			// Arrange
@@ -557,7 +554,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await editor.page.setViewportSize( DESKTOP );
 
 			// Assert
-			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'column' );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'column' );
 		} );
 
 		test( 'The collapsed menu stacks the items by default', async () => {
@@ -567,14 +564,14 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 
 			// Act
 			await editor.page.setViewportSize( DESKTOP );
-			const desktopDirection = await getFlexDirection( getItems( getNav() ) );
+
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'row' );
 
 			await editor.page.setViewportSize( TABLET );
 			await getToggle( getNav() ).click();
 
 			// Assert
-			expect( desktopDirection ).toBe( 'row' );
-			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'column' );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'column' );
 		} );
 
 		test( 'Author layout on the items overrides the collapsed default at the breakpoint', async () => {
@@ -588,7 +585,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await getToggle( getNav() ).click();
 
 			// Assert
-			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'row' );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'row' );
 		} );
 
 		test( 'A value set at the tablet breakpoint applies only at and below it', async () => {
@@ -601,7 +598,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await editor.changeResponsiveView( 'tablet' );
 			await editor.v4Panel.openTab( 'style' );
 			await editor.v4Panel.style.openSection( 'Layout' );
-			await editor.v4Panel.style.setLayoutSectionValue( 'flex' as never, { flexWrap: 'wrap' } );
+			await editor.v4Panel.style.setLayoutSectionValue( DisplayValue.FLEX, { flexWrap: 'wrap' } );
 			await editor.changeResponsiveView( 'desktop' );
 			await viewFrontend();
 
@@ -627,7 +624,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 			await editor.page.setViewportSize( DESKTOP );
 
 			// Assert
-			expect( await getFlexDirection( getItems( getNav() ) ) ).toBe( 'row' );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'row' );
 		} );
 
 		test( 'Current state styles apply only while the current class is present', async () => {
@@ -638,7 +635,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 
 			await editor.selectElement( firstItemId );
 			await editor.v4Panel.openTab( 'style' );
-			await editor.v4Panel.style.selectClassState( 'current' as never );
+			await editor.v4Panel.style.selectClassState( 'current' );
 			await editor.v4Panel.style.openSection( 'Typography' );
 			await editor.v4Panel.style.setFontColor( '#ff0000' );
 			await viewFrontend();
