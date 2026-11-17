@@ -200,7 +200,7 @@ jobs:
       - name: Announce beta branch-out to Slack
         if: ${{ !cancelled() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true' }}
         continue-on-error: true
-        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@97f23ce4fad39dd8069f4e82a821cf3cadc2da6c
+        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@main
         with:
           event: beta-branch-out
           slack-token: ${{ secrets.SLACK_TOKEN }}

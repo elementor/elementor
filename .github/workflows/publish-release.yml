@@ -183,7 +183,7 @@ jobs:
       - name: Announce stable branch structure to Slack
         if: inputs.channel == 'stable'
         continue-on-error: true
-        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@97f23ce4fad39dd8069f4e82a821cf3cadc2da6c
+        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@main
         with:
           event: stable-release
           slack-token: ${{ secrets.SLACK_TOKEN }}
