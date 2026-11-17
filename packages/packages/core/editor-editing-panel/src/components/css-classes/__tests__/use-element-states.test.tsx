@@ -25,6 +25,28 @@ describe( 'useElementStates', () => {
 		expect( result.current.elementTitle ).toBe( 'Menu item' );
 	} );
 
+	it( 'should label the current ancestor and expanded menu item states', () => {
+		// Arrange
+		jest.mocked( useElement ).mockReturnValue( {
+			elementType: {
+				title: 'Menu item',
+				styleStates: [
+					{ name: 'current-ancestor', value: 'e--current-ancestor' },
+					{ name: 'expanded', value: 'e--expanded' },
+				],
+			},
+		} as unknown as ReturnType< typeof useElement > );
+
+		// Act
+		const { result } = renderHook( () => useElementStates() );
+
+		// Assert
+		expect( result.current.elementStates ).toEqual( [
+			{ key: 'e--current-ancestor', value: 'e--current-ancestor', label: 'current ancestor' },
+			{ key: 'e--expanded', value: 'e--expanded', label: 'expanded' },
+		] );
+	} );
+
 	it( 'should keep the selected and disabled labels for the other atomic elements', () => {
 		// Arrange
 		jest.mocked( useElement ).mockReturnValue( {
