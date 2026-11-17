@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { timeouts } from '../../../config/timeouts';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor One Menu Visual Tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -19,6 +20,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 
 		await wpAdmin.setSiteLanguage( 'he_IL' );
 		await wpAdmin.updateTranslations();
+		await wpCli( 'wp language plugin install elementor he_IL' );
 
 		await page.goto( '/wp-admin/admin.php?page=elementor', {
 			timeout: timeouts.singleTest,
