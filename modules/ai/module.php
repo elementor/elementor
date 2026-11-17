@@ -161,8 +161,8 @@ class Module extends BaseModule {
 		// ED-26128: keep Animate with AI / hover AI control hosts so Angie entry points can attach.
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/common/_section_transform/after_section_start', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/container/_section_transform/after_section_start', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
 	public function is_ai_enabled() {
@@ -217,13 +217,24 @@ class Module extends BaseModule {
 	 * @return void
 	 */
 	public function register_ai_hover_effect_control( Element_Base $element ) {
-		if ( ! $element->get_controls( 'ai_hover_animation' ) ) {
-			$element->add_control(
-				'ai_hover_animation',
-				[
-					'label' => esc_html__( 'Animate With AI', 'elementor' ),
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => '
+		if ( $element->get_controls( 'ai_hover_animation' ) ) {
+			return;
+		}
+
+		$element->start_controls_section(
+			'section_ai_hover_animation',
+			[
+				'label' => esc_html__( 'Animate With AI', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$element->add_control(
+			'ai_hover_animation',
+			[
+				'label' => esc_html__( 'Animate With AI', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '
 <style>
   .elementor-control-ai_hover_animation .elementor-control-content {
     display: flex;
@@ -235,14 +246,15 @@ class Module extends BaseModule {
   	display: none;
   }
 </style>',
-					'render_type' => 'none',
-					'ai' => [
-						'active' => true,
-						'type' => 'hover_animation',
-					],
-				]
-			);
-		}
+				'render_type' => 'none',
+				'ai' => [
+					'active' => true,
+					'type' => 'hover_animation',
+				],
+			]
+		);
+
+		$element->end_controls_section();
 	}
 
 	/**
