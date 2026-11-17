@@ -7,15 +7,12 @@ import {
 	NO_PROMOTION_SCENARIO,
 	cdnFieldOrDefault,
 	readEditorPromotion,
-	readNotification,
+	readFirstFullNotification,
 	readSidebarPromotion,
 	useCdnScenario,
 } from './cdn-scenario';
 
-const ACTIVE_CAMPAIGN = {
-	scenario: 'bfcm-2026',
-	notificationId: 'black-friday-bfcm-26',
-};
+const CAMPAIGN_SCENARIO = process.env.E2E_CDN_SCENARIO || 'bfcm-2026';
 
 const CORE_DEFAULTS = {
 	pluginsPage: { label: 'Get Elementor Pro', url: 'https://go.elementor.com/go-pro-wp-plugins/' },
@@ -49,7 +46,7 @@ const resetPointerSeenToday = () =>
 const getPointerDismissKey = ( campaignId: unknown ): string =>
 	'string' === typeof campaignId && campaignId ? `${ POINTER_DISMISS_KEY_PREFIX }_${ campaignId }` : POINTER_DISMISS_KEY_PREFIX;
 
-for ( const scenario of [ ACTIVE_CAMPAIGN.scenario, NO_PROMOTION_SCENARIO ] ) {
+for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 	test.describe( `Editor promotions from CDN - ${ scenario } @promotions`, () => {
 		test.beforeEach( async ( { page, baseURL } ) => {
 			await useCdnScenario( page.context(), baseURL, scenario );
@@ -164,14 +161,15 @@ for ( const scenario of [ ACTIVE_CAMPAIGN.scenario, NO_PROMOTION_SCENARIO ] ) {
 	} );
 }
 
-test.describe( `Campaign content from CDN - ${ ACTIVE_CAMPAIGN.scenario } @promotions`, () => {
+test.describe( `Campaign content from CDN - ${ CAMPAIGN_SCENARIO } @promotions`, () => {
 	test.beforeEach( async ( { page, baseURL } ) => {
-		await useCdnScenario( page.context(), baseURL, ACTIVE_CAMPAIGN.scenario );
+		await useCdnScenario( page.context(), baseURL, CAMPAIGN_SCENARIO );
 	} );
 
-	test( 'What\'s New campaign card', async ( { page, apiRequests }, testInfo ) => {
+	test( 'What\'s New card', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const notification = readNotification( ACTIVE_CAMPAIGN.scenario, ACTIVE_CAMPAIGN.notificationId, false );
+		const notification = readFirstFullNotification( CAMPAIGN_SCENARIO, false );
+		test.skip( ! notification, 'The CDN has no What\'s New card for Free users' );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
@@ -180,14 +178,21 @@ test.describe( `Campaign content from CDN - ${ ACTIVE_CAMPAIGN.scenario } @promo
 
 		// Assert.
 		const drawer = page.locator( '.MuiDrawer-paper' );
-		await expect( drawer.getByText( notification.title, { exact: true } ) ).toBeVisible( { timeout: timeouts.longAction } );
-		await expect( drawer.getByText( notification.description, { exact: true } ) ).toBeVisible();
-		await expect( drawer.getByRole( 'link', { name: notification.cta } ) ).toHaveAttribute( 'href', notification.ctaLink );
+		await expect( drawer.getByText( notification.title, { exact: true } ).first() ).toBeVisible( { timeout: timeouts.longAction } );
+
+		if ( notification.description ) {
+			await expect( drawer.getByText( notification.description ).first() ).toBeVisible();
+		}
+
+		if ( notification.cta && notification.ctaLink ) {
+			await expect( drawer.locator( `a[href="${ notification.ctaLink }"]` ).filter( { hasText: notification.cta } ).first() ).toBeVisible();
+		}
 	} );
 
 	test( 'Home screen sidebar banner', async ( { page } ) => {
 		// Arrange.
-		const variant = readSidebarPromotion( ACTIVE_CAMPAIGN.scenario, FREE_LICENSE );
+		const variant = readSidebarPromotion( CAMPAIGN_SCENARIO, FREE_LICENSE );
+		test.skip( ! variant, 'The CDN has no enabled sidebar banner for Free users' );
 
 		// Act.
 		await page.goto( '/wp-admin/admin.php?page=elementor' );

@@ -73,6 +73,7 @@ test-results/
 tests/playwright/config/local.config.js
 playwright-report
 tests/playwright/blob-report
+tests/playwright/mu-plugins/editor-assets-cdn/live/
 **/allure-results
 playwright-test-results
 **/.env

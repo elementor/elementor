@@ -34,6 +34,7 @@ export type Notification = {
 	chipTags?: string[];
 	cta?: string;
 	ctaLink?: string;
+	featured?: boolean;
 	conditions?: NotificationCondition[][];
 };
 
@@ -43,11 +44,12 @@ export type SidebarPromotionVariant = {
 	data: { image: string; link: string };
 };
 
-const readFixture = <T>( scenario: string, path: string, key: string ): T => {
-	const scenarioFile = resolve( FIXTURES_DIR, scenario, path );
-	const file = existsSync( scenarioFile ) ? scenarioFile : resolve( FIXTURES_DIR, NO_PROMOTION_SCENARIO, path );
+const readFixture = <T>( scenario: string, path: string, key: string ): T | undefined => {
+	const file = [ scenario, NO_PROMOTION_SCENARIO ]
+		.map( ( candidate ) => resolve( FIXTURES_DIR, candidate, path ) )
+		.find( ( candidate ) => existsSync( candidate ) );
 
-	return JSON.parse( readFileSync( file, 'utf8' ) )[ key ] as T;
+	return file ? JSON.parse( readFileSync( file, 'utf8' ) )[ key ] as T : undefined;
 };
 
 export const useCdnScenario = async ( context: BrowserContext, baseURL: string, scenario: string ): Promise<void> => {
@@ -55,32 +57,41 @@ export const useCdnScenario = async ( context: BrowserContext, baseURL: string, 
 };
 
 export const readEditorPromotion = ( scenario: string, name: EditorPromotionName ): EditorPromotion =>
-	readFixture<EditorPromotion>( scenario, `editor-promotions/v1/${ name }.json`, name );
+	readFixture<EditorPromotion>( scenario, `editor-promotions/v1/${ name }.json`, name ) ?? {};
 
 const PRO_PLUGIN = 'elementor-pro/elementor-pro.php';
 
-const isProConditionMet = ( condition: NotificationCondition, hasPro: boolean ): boolean => {
-	if ( 'plugin' !== condition.type || PRO_PLUGIN !== condition.plugin ) {
-		return true;
-	}
+const isProCondition = ( condition: NotificationCondition ): boolean =>
+	'plugin' === condition.type && PRO_PLUGIN === condition.plugin;
 
-	return '!=' === condition.operator ? ! hasPro : hasPro;
-};
+const isProConditionMet = ( condition: NotificationCondition, hasPro: boolean ): boolean =>
+	'!=' === condition.operator ? ! hasPro : hasPro;
+
+const hasOnlyProConditions = ( notification: Notification ): boolean =>
+	( notification.conditions ?? [] ).every( ( group ) => group.every( isProCondition ) );
 
 const isNotificationShown = ( notification: Notification, hasPro: boolean ): boolean =>
 	! notification.conditions?.length ||
 	notification.conditions.some( ( group ) => group.every( ( condition ) => isProConditionMet( condition, hasPro ) ) );
 
-export const readNotification = ( scenario: string, id: string, hasPro: boolean ): Notification => {
-	const notifications = readFixture<Notification[]>( scenario, 'notifications/v1/notifications.json', 'notifications' );
+const isImageOnly = ( notification: Notification ): boolean => ! notification.title && ! notification.description;
 
-	return notifications.find( ( notification ) => notification.id === id && isNotificationShown( notification, hasPro ) );
+export const readFirstFullNotification = ( scenario: string, hasPro: boolean ): Notification | undefined => {
+	const notifications = readFixture<Notification[]>( scenario, 'notifications/v1/notifications.json', 'notifications' ) ?? [];
+	const mayBeShown = notifications.filter( ( notification ) => ! hasOnlyProConditions( notification ) || isNotificationShown( notification, hasPro ) );
+	const hasFeatured = mayBeShown.some( ( notification ) => notification.featured );
+
+	return mayBeShown.find( ( notification ) =>
+		hasOnlyProConditions( notification ) &&
+		! isImageOnly( notification ) &&
+		( ! hasFeatured || notification.featured ),
+	);
 };
 
-export const readSidebarPromotion = ( scenario: string, license: string ): SidebarPromotionVariant => {
-	const homeScreen = readFixture<{ sidebar_promotion_variants: SidebarPromotionVariant[] }>( scenario, 'home-screen/v1/home-screen.json', 'home-screen' );
+export const readSidebarPromotion = ( scenario: string, license: string ): SidebarPromotionVariant | undefined => {
+	const homeScreen = readFixture<{ sidebar_promotion_variants?: SidebarPromotionVariant[] }>( scenario, 'home-screen/v1/home-screen.json', 'home-screen' );
 
-	return homeScreen.sidebar_promotion_variants.find( ( variant ) => 'true' === variant.is_enabled && variant.license.includes( license ) );
+	return homeScreen?.sidebar_promotion_variants?.find( ( variant ) => 'true' === variant.is_enabled && variant.license.includes( license ) );
 };
 
 export const cdnFieldOrDefault = ( promotion: EditorPromotion, field: string, coreDefault: string ): string => {

@@ -1,0 +1,96 @@
+name: Playwright Live CDN Promotions
+
+# Runs the campaign promotion tests against what the editor-assets CDN serves
+# right now. Pull requests test fixed fixtures, so a marketing change never
+# fails them; this run catches a live campaign that Core renders wrong.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playwright-cdn-live-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
+  build-plugin:
+    name: Playwright build artifact
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
+
+  live-cdn-promotions:
+    name: Live CDN promotions on PHP (${{ needs.get-php-version.outputs.php_version }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    needs: [build-plugin, get-php-version]
+    if: startsWith( github.repository, 'elementor/' )
+    permissions:
+      contents: read
+    env:
+      PHP_VERSION: ${{ needs.get-php-version.outputs.php_version }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          package-manager-cache: false
+
+      - name: Restore dependency cache
+        uses: ./.github/actions/restore-dependencies-cache
+        with:
+          install-on-miss: 'true'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Fetch live CDN data into the live scenario
+        run: npm run test:playwright:cdn-live:fetch
+
+      - name: Install WordPress environment
+        run: npm run start-local-server
+
+      - name: Setup test data
+        run: npm run test:setup:playwright
+
+      - name: Install playwright/test
+        run: npx playwright install --with-deps chromium
+
+      - name: Run live CDN promotion tests
+        run: npm run test:playwright:cdn-live
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-cdn-live-results
+          path: |
+            test-results/
+            tests/playwright/mu-plugins/editor-assets-cdn/live/
+          if-no-files-found: ignore
+          retention-days: 7

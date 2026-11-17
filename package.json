@@ -31,6 +31,8 @@
     "test:setup:playwright": "wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command=\"bash elementor-config/setup.sh\" && wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command=\"bash elementor-config/setup.sh\"",
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
     "test:playwright:debug": "npm run test:playwright -- --debug",
+    "test:playwright:cdn-live:fetch": "node scripts/fetch-live-cdn-scenario.mjs",
+    "test:playwright:cdn-live": "E2E_CDN_SCENARIO=live npm run test:playwright -- sanity/modules/promotions/campaign",
     "test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",
     "test:playwright:elements-regression:core": "playwright test -c tests/elements-regression/playwright.config.ts tests/elements-regression/tests/elements-regression.test.ts",
     "test:playwright:elements-regression:atomic": "playwright test -c tests/elements-regression/playwright.config.ts tests/elements-regression/tests/atomic-elements-regression.test.ts",
