@@ -7,6 +7,8 @@ import {
 	SIDEBAR_CLASS,
 	SIDEBAR_FOOTER_ITEM_GAP_SPACING,
 	SIDEBAR_HORIZONTAL_PADDING_SPACING,
+	SIDEBAR_RAIL_BOTTOM_INSET_SPACING,
+	SIDEBAR_RAIL_TOP_INSET_SPACING,
 	SIDEBAR_TOOLS_ITEM_GAP_SPACING,
 	SIDEBAR_WIDTH_VAR,
 } from '../constants';
@@ -41,17 +43,18 @@ export default function Sidebar() {
 					backgroundColor: 'rgb( 242, 242, 242 )',
 				} }
 			>
-				<Stack alignItems="center" pb={ 1.25 } width="100%">
+				<Stack alignItems="center" width="100%">
 					<Groups
 						groups={ [ toolsItems.elements, toolsItems.design, toolsItems.default ] }
-						firstGroupHeight={ APP_BAR_HEIGHT }
+						firstGroupPaddingTop={ SIDEBAR_RAIL_TOP_INSET_SPACING }
 						itemGap={ SIDEBAR_TOOLS_ITEM_GAP_SPACING }
 					/>
 					<SidebarToolsSlot />
 				</Stack>
-				<Stack alignItems="center" pb={ 1.5 } width="100%">
+				<Stack alignItems="center" pb={ SIDEBAR_RAIL_BOTTOM_INSET_SPACING } width="100%">
 					<Groups
 						groups={ [ footerItems.document, footerItems.default ] }
+						groupPaddingBlockEnd={ 0 }
 						itemGap={ SIDEBAR_FOOTER_ITEM_GAP_SPACING }
 					/>
 					<SidebarFooterSlot />
@@ -65,13 +68,17 @@ type MenuItems = ReturnType< typeof useToolsMenuItems >[ 'default' ];
 
 function Groups( {
 	groups,
-	firstGroupHeight,
+	firstGroupPaddingTop,
+	groupPaddingBlockEnd = 1.5,
 	itemGap,
 }: {
 	groups: MenuItems[];
-	firstGroupHeight?: number;
+	firstGroupPaddingTop?: number;
+	groupPaddingBlockEnd?: number;
 	itemGap: number;
 } ) {
+	const groupPaddingBlockStart = 1.5;
+
 	return (
 		<>
 			{ groups
@@ -83,8 +90,12 @@ function Groups( {
 							alignItems="center"
 							justifyContent="center"
 							gap={ itemGap }
-							py={ 1.5 }
-							height={ index === 0 ? firstGroupHeight : undefined }
+							pt={
+								index === 0 && firstGroupPaddingTop !== undefined
+									? firstGroupPaddingTop
+									: groupPaddingBlockStart
+							}
+							pb={ groupPaddingBlockEnd }
 							boxSizing="border-box"
 						>
 							{ items.map( ( { MenuItem, id } ) => (

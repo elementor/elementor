@@ -7,7 +7,11 @@ interface StyledElementorLogoProps extends SvgIconProps {
 	showMenuIcon?: boolean;
 }
 
-type ToolbarLogoProps = Omit< ToggleButtonProps, 'value' >;
+export const TOOLBAR_LOGO_COMPACT_SIZE_PX = 24;
+
+type ToolbarLogoProps = Omit< ToggleButtonProps, 'value' > & {
+	alignWithSidebar?: boolean;
+};
 
 const ElementorLogo = ( props: SvgIconProps ) => {
 	return (
@@ -62,7 +66,7 @@ const StyledElementorLogo = styled( ElementorLogo, {
 	},
 } ) );
 
-export default function ToolbarLogo( props: ToolbarLogoProps ) {
+export default function ToolbarLogo( { alignWithSidebar = false, ...props }: ToolbarLogoProps ) {
 	const [ isHoverState, setIsHoverState ] = useState( false );
 	const showMenuIcon = props.selected || isHoverState;
 
@@ -70,12 +74,12 @@ export default function ToolbarLogo( props: ToolbarLogoProps ) {
 		<StyledToggleButton
 			{ ...props }
 			value="selected"
-			size="large"
+			size={ alignWithSidebar ? 'small' : 'large' }
 			onMouseEnter={ () => setIsHoverState( true ) }
 			onMouseLeave={ () => setIsHoverState( false ) }
 		>
 			<StyledElementorLogo
-				fontSize="large"
+				fontSize={ alignWithSidebar ? TOOLBAR_LOGO_COMPACT_SIZE_PX : 'large' }
 				showMenuIcon={ showMenuIcon }
 				titleAccess={ __( 'Elementor Logo', 'elementor' ) }
 			/>
