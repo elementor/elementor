@@ -29,6 +29,9 @@ test.describe( 'Editor tests', () => {
 		expect.soft( await appBar.screenshot( {
 			type: 'jpeg',
 			quality: 70,
+			mask: [
+				appBar.getByRole( 'button', { name: 'Angie' } ),
+			],
 		} ) ).toMatchSnapshot( 'editor-app-bar.jpg', { maxDiffPixels: 100 } );
 	} );
 
@@ -50,6 +53,8 @@ test.describe( 'Editor tests', () => {
 			mask: [
 				editor.page.locator( '.e-widget-new-badge' ),
 				editor.page.locator( '#elementor-panel-get-pro-elements-sticky' ),
+				editor.page.locator( '.e-ai-button' ),
+				editor.page.locator( '.e-ai-layout-button' ),
 			],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
