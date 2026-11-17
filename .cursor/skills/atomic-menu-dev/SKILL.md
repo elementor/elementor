@@ -23,6 +23,7 @@ Scope: Internal (Core). Experiment: `e_nav_menu`.
 - Never return `undefined` from an Alpine `x-bind` for `aria-label`: it removes the attribute. Return the current attribute value.
 - Atomic base styles are cached per page and in WP Playground. After changing them: Elementor > Tools > Regenerate CSS, and restart the playground (use `--workers=1`).
 - Toggle width: the collapse CSS sets `flex:0 0 auto;width:auto` on the toggle so themes cannot stretch it.
+- Items layout defaults: the items' `flex-direction` is not in their base style. `get_collapse_css()` defaults it to `row` through `:where(.e-menu-items-base)` and to `column` (plus `flex-basis:100%;width:100%`) through `:where(<scope> > items)` in each collapse breakpoint block. Zero specificity means anything the author sets on `e-menu-items` in the Style tab wins at that breakpoint. Toggle rules stay forced, so authors cannot override the toggle's `order`, `flex` or `width` while collapsed.
 
 ## Verify
 
