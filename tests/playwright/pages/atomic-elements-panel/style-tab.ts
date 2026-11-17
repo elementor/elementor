@@ -49,7 +49,7 @@ export enum BorderTypeLabel {
 	OUTSET = 'Outset',
 }
 
-enum DisplayValue {
+export enum DisplayValue {
 	BLOCK = 'block',
 	FLEX = 'flex',
 	INLINE_BLOCK = 'inline-block',

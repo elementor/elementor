@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { wpCli } from '../../../assets/wp-cli';
+import { DisplayValue } from '../../../pages/atomic-elements-panel/style-tab';
 
 type EditorWindow = {
 	$e: { run: ( cmd: string, args?: unknown ) => void };
@@ -65,7 +66,7 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 		await editor.selectElement( itemsId );
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Layout' );
-		await editor.v4Panel.style.setLayoutSectionValue( 'flex' as never, { flexDirection } );
+		await editor.v4Panel.style.setLayoutSectionValue( DisplayValue.FLEX, { flexDirection } );
 	};
 
 	const getFlexDirection = async ( locator: Locator ): Promise<string> => {

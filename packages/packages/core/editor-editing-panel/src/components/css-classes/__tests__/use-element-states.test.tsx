@@ -13,7 +13,7 @@ describe( 'useElementStates', () => {
 				title: 'Menu item',
 				styleStates: [ { name: 'current', value: 'e--current' } ],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );
@@ -35,7 +35,7 @@ describe( 'useElementStates', () => {
 					{ name: 'expanded', value: 'e--expanded' },
 				],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );
@@ -57,7 +57,7 @@ describe( 'useElementStates', () => {
 					{ name: 'disabled', value: 'e--disabled' },
 				],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );
@@ -73,7 +73,7 @@ describe( 'useElementStates', () => {
 				title: 'Tab',
 				styleStates: [ { name: 'playing', value: 'e--playing' } ],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );
