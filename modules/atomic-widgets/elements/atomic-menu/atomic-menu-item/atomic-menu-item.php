@@ -58,7 +58,9 @@ class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
 				->set_label( __( 'Submenu', 'elementor' ) )
 				->set_id( 'submenu' )
 				->set_items( [
-					Submenu_Toggle_Control::make(),
+					Submenu_Toggle_Control::make()
+						->set_label( __( 'Enable Submenu', 'elementor' ) )
+						->set_meta( [ 'layout' => 'custom' ] ),
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
