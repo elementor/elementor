@@ -79,5 +79,8 @@ if [ "${DRY_RUN:-false}" = "true" ]; then
   exit 0
 fi
 
-curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" --proto '=https' --max-time 15 --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""
-echo "Slack announcement sent successfully"
+if curl -fsS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" --proto '=https' --max-time 15 --config - <<<"url = \"$SLACK_BRANCH_OUT_WEBHOOK_URL\""; then
+  echo "Slack announcement sent successfully"
+else
+  echo "::warning::Slack branch-structure announcement failed"
+fi

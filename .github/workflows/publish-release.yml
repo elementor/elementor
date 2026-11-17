@@ -181,7 +181,7 @@ jobs:
           PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
 
       - name: Announce stable branch structure to Slack
-        if: inputs.channel != 'beta'
+        if: inputs.channel == 'stable'
         continue-on-error: true
         env:
           SLACK_BRANCH_OUT_WEBHOOK_URL: ${{ secrets.SLACK_BRANCH_OUT_WEBHOOK_URL }}
