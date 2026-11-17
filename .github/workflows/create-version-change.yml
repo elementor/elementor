@@ -197,85 +197,15 @@ jobs:
           echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
           echo "PR created successfully for $DEV_BRANCH"
 
-      - name: Prepare beta branch-out announcement
-        id: prepare_branch_out_announcement
+      - name: Announce beta branch-out to Slack
         if: ${{ !cancelled() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true' }}
         continue-on-error: true
-        env:
-          SLACK_CHANNEL_BRANCH_OUT: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
-          BETA_VERSION: ${{ steps.run-script.outputs.beta_version }}
-          MAIN_VERSION: ${{ steps.calculate.outputs.next_version }}
-          PR_OUTCOME: ${{ steps.create-pr.outcome }}
-          PR_URL: ${{ steps.create-pr.outputs.pr_url }}
-        run: |
-          if [ -z "$SLACK_CHANNEL_BRANCH_OUT" ]; then
-            echo "::warning::SLACK_CHANNEL_BRANCH_OUT secret is not set. Skipping Slack notification."
-            exit 0
-          fi
-
-          # Extract major.minor from versions
-          BETA_VERSION_SHORT=$(echo "$BETA_VERSION" | grep -oE '^[0-9]+\.[0-9]+' || echo "")
-          MAIN_VERSION_SHORT=$(echo "$MAIN_VERSION" | grep -oE '^[0-9]+\.[0-9]+' || echo "")
-
-          # Validate versions
-          if [[ ! "$BETA_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            SAFE_BETA_VERSION="${BETA_VERSION//[$'\r\n']/}"
-            echo "::warning::Invalid BETA_VERSION format: ${SAFE_BETA_VERSION}. Skipping Slack notification."
-            exit 0
-          fi
-
-          if [[ ! "$MAIN_VERSION_SHORT" =~ ^[0-9]+\.[0-9]+$ ]]; then
-            SAFE_MAIN_VERSION="${MAIN_VERSION//[$'\r\n']/}"
-            echo "::warning::Invalid MAIN_VERSION format: ${SAFE_MAIN_VERSION}. Skipping Slack notification."
-            exit 0
-          fi
-
-          # Compute stable version (major.minor-1)
-          BETA_MAJOR=$(echo "$BETA_VERSION_SHORT" | cut -d. -f1)
-          BETA_MINOR=$(echo "$BETA_VERSION_SHORT" | cut -d. -f2)
-          
-          if [ "$BETA_MINOR" -eq 0 ]; then
-            echo "::warning::BETA_MINOR is 0, cannot derive STABLE_VERSION. Skipping Slack notification."
-            exit 0
-          fi
-
-          STABLE_MINOR=$((BETA_MINOR - 1))
-          STABLE_VERSION="${BETA_MAJOR}.${STABLE_MINOR}"
-
-          if [ "$PR_OUTCOME" = "success" ]; then
-            HEADER="<!channel> :rocket: Beta branch-out is complete!"
-            if [ -n "$PR_URL" ]; then
-              MAIN_LINE=":large_blue_circle: Bump PR opened for ${MAIN_VERSION_SHORT}: ${PR_URL}"
-            else
-              MAIN_LINE=":large_blue_circle: Bump PR opened for ${MAIN_VERSION_SHORT}"
-            fi
-          else
-            HEADER="<!channel> :warning: Beta branch was reset. Main version bump needs manual follow-up."
-            MAIN_LINE=":warning: Main version bump did not complete. Manual follow-up required."
-          fi
-
-          RUN_LINK="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-
-          TEXT="${HEADER}
-
-          Repo: https://github.com/elementor/elementor/
-
-          :package: Version mapping:
-          :large_green_circle: release/stable → ${STABLE_VERSION}
-          :large_yellow_circle: release/beta → ${BETA_VERSION_SHORT}
-          ${MAIN_LINE}
-
-          Workflow run: ${RUN_LINK}"
-
-          PAYLOAD=$(jq -c -n --arg text "$TEXT" '{text:$text}')
-          echo "payload=${PAYLOAD}" >> "$GITHUB_OUTPUT"
-
-      - name: Post beta branch-out to Slack
-        if: ${{ !cancelled() && steps.prepare_branch_out_announcement.outputs.payload != '' }}
-        continue-on-error: true
-        uses: ./.github/workflows/post-to-slack
+        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@97f23ce4fad39dd8069f4e82a821cf3cadc2da6c
         with:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
-          PAYLOAD: ${{ steps.prepare_branch_out_announcement.outputs.payload }}
+          event: beta-branch-out
+          slack-token: ${{ secrets.SLACK_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
+          beta-version: ${{ steps.run-script.outputs.beta_version }}
+          main-version: ${{ steps.calculate.outputs.next_version }}
+          bump-pr-outcome: ${{ steps.create-pr.outcome }}
 

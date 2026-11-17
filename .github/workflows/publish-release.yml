@@ -180,29 +180,15 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
           PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
 
-      - name: Prepare stable branch structure announcement
-        id: prepare_branch_structure_announcement
+      - name: Announce stable branch structure to Slack
         if: inputs.channel == 'stable'
         continue-on-error: true
-        env:
-          SLACK_CHANNEL_BRANCH_OUT: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
-          EVENT: stable-release
-          REPO_NAME: ${{ github.event.repository.name }}
-          STABLE_VERSION: ${{ inputs.version }}
-          WORKFLOW_SHA: ${{ github.sha }}
-        run: |
-          git fetch --no-tags origin "$WORKFLOW_SHA"
-          git show "$WORKFLOW_SHA:.github/scripts/announce-branch-structure.sh" > "${RUNNER_TEMP}/announce-branch-structure.sh"
-          bash "${RUNNER_TEMP}/announce-branch-structure.sh"
-
-      - name: Post stable branch structure to Slack
-        if: steps.prepare_branch_structure_announcement.outputs.payload != ''
-        continue-on-error: true
-        uses: ./.github/workflows/post-to-slack
+        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@97f23ce4fad39dd8069f4e82a821cf3cadc2da6c
         with:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
-          PAYLOAD: ${{ steps.prepare_branch_structure_announcement.outputs.payload }}
+          event: stable-release
+          slack-token: ${{ secrets.SLACK_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
+          stable-version: ${{ inputs.version }}
 
       - name: Output Package Data for Next Job
         id: output-data
