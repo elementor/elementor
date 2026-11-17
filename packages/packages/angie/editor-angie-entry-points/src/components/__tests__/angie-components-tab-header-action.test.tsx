@@ -6,6 +6,7 @@ import { mockAngieEntryPointsEnabled } from '../../__tests__/mock-angie-entry-po
 import { getGenerateWithAngieLabel } from '../../labels';
 import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieComponentsTabHeaderAction } from '../angie-components-tab-header-action';
+import { mockAngieEntryPointsEnabled } from '../../__tests__/mock-angie-entry-points-enabled';
 
 jest.mock( '@elementor/editor-mcp', () => ( {
 	openAngieInAgentMode: jest.fn(),

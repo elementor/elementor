@@ -65,7 +65,7 @@ const handleAIModalEvent = ( event ) => {
 				...additionalParams,
 			} }
 		/>,
-		rootElement
+		rootElement,
 	) );
 };
 
