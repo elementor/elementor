@@ -8,7 +8,7 @@ import { ElementProvider } from '../../contexts/element-context';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
 import { useStateByElement } from '../../hooks/use-state-by-element';
 import { ContentOnlyInfotip } from '../content-only-infotip';
-import { EditingPanelTabs } from '../editing-panel-tabs';
+import { EditingPanelTabs, injectIntoSettingsTab } from '../editing-panel-tabs';
 
 jest.mock( '@elementor/editor-current-user' );
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -32,6 +32,8 @@ const ELEMENT_ID = 'test-element-id';
 const ELEMENT_TYPE = 'atomic-heading';
 const PROMOTED_ELEMENT_TYPE = 'promoted-widget';
 const HIDDEN_DESIGN_TABS_ELEMENT_TYPE = 'e-form-hidden';
+const REPLACED_SETTINGS_ELEMENT_TYPE = 'replaced-settings-element';
+const REPLACED_SETTINGS_TAB_PANEL_TEXT = 'Replaced settings tab panel';
 const LEARN_MORE_URL = 'https://go.elementor.com/content-only-access-infotip';
 const TAB_GENERAL = 'General';
 const TAB_STYLE = 'Style';
@@ -199,6 +201,24 @@ describe( '<EditingPanelTabs />', () => {
 		expect( screen.getByText( STYLE_TAB_PANEL_TEXT ) ).toBeInTheDocument();
 		fireEvent.click( interactionsTab );
 		expect( screen.getByText( INTERACTIONS_TAB_PANEL_TEXT ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render a settings tab replacement in the General panel and keep the Style tab', () => {
+		// Arrange
+		injectIntoSettingsTab( {
+			id: 'test-settings-tab-replacement',
+			condition: ( { elementType } ) => elementType.key === REPLACED_SETTINGS_ELEMENT_TYPE,
+			component: () => <div>{ REPLACED_SETTINGS_TAB_PANEL_TEXT }</div>,
+		} );
+
+		// Act
+		renderEditingPanelTabs( REPLACED_SETTINGS_ELEMENT_TYPE );
+
+		// Assert
+		expect( screen.getByText( REPLACED_SETTINGS_TAB_PANEL_TEXT ) ).toBeInTheDocument();
+		expect( screen.queryByText( SETTINGS_TAB_PANEL_TEXT ) ).not.toBeInTheDocument();
+		fireEvent.click( getTabByName( TAB_STYLE ) );
+		expect( screen.getByText( STYLE_TAB_PANEL_TEXT ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render only the General tab for an element that hides the design tabs', () => {

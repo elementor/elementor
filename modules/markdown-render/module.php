@@ -141,6 +141,7 @@ class Module extends BaseModule {
 			status_header( 200 );
 			header( 'Content-Type: text/markdown; charset=utf-8' );
 			header( 'X-Content-Type-Options: nosniff' );
+			header( 'Vary: Accept' );
 			Utils::print_unescaped_internal_string( $markdown );
 			exit;
 		} );
