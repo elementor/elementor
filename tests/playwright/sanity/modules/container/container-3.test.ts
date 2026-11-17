@@ -219,8 +219,6 @@ test.describe( 'Container tests #3 @container', () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( '_section_transform' );
-		// Hover AI host lives on the Hover inner tab; keep Normal visible for rotate/scale.
-		await page.locator( '.elementor-control-_tab_positioning' ).click();
 		// Set rotation.
 		await page.locator( '.elementor-control-_transform_rotate_popover .elementor-control-popover-toggle-toggle-label' ).click();
 		await page.locator( '.elementor-control-_transform_rotateZ_effect .elementor-control-input-wrapper input' ).fill( '2' );

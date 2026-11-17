@@ -161,8 +161,8 @@ class Module extends BaseModule {
 		// ED-26128: keep Animate with AI / hover AI control hosts so Angie entry points can attach.
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
-		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/common/_section_transform/after_section_start', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
+		add_action( 'elementor/element/container/_section_transform/after_section_start', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
 	public function is_ai_enabled() {
@@ -221,8 +221,6 @@ class Module extends BaseModule {
 			$element->add_control(
 				'ai_hover_animation',
 				[
-					'tabs_wrapper' => '_tabs_positioning',
-					'inner_tab' => '_tab_positioning_hover',
 					'label' => esc_html__( 'Animate With AI', 'elementor' ),
 					'type' => Controls_Manager::RAW_HTML,
 					'raw' => '
@@ -241,13 +239,6 @@ class Module extends BaseModule {
 					'ai' => [
 						'active' => true,
 						'type' => 'hover_animation',
-					],
-				],
-				[
-					'position' => [
-						'of' => '_transform_rotate_popover_hover',
-						'type' => 'control',
-						'at' => 'before',
 					],
 				]
 			);
