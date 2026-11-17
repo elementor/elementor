@@ -33,6 +33,12 @@ class Document_Mutation_Save {
 		return self::ensure_document( $mutator->save_settings_preserving_live_status( $document, $settings ) );
 	}
 
+	public static function is_staged( Document $document ): bool {
+		$post = $document->get_post();
+
+		return $post && (int) $post->ID !== (int) $document->get_main_id();
+	}
+
 	/**
 	 * @return Document|\WP_Error
 	 */
