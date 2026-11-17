@@ -1,3 +1,5 @@
+import { applyDocumentElementSettings } from '../editor-api';
+
 const TOOL_NAME = 'v3-motion-effects';
 const SECTION_EFFECTS = 'section_effects';
 const TAB_POSITIONING_HOVER = '_tab_positioning_hover';
@@ -53,13 +55,6 @@ const getElementor = () =>
 			};
 		}
 	 ).elementor;
-
-const getCommands = () =>
-	(
-		window as unknown as {
-			$e?: { run?: ( command: string, args?: Record< string, unknown > ) => Promise< unknown > | unknown };
-		}
-	 ).$e;
 
 const isProMotionSettingKey = ( key: string ): boolean =>
 	key.startsWith( 'motion_fx_' ) || key.startsWith( 'background_motion_fx_' );
@@ -201,19 +196,7 @@ export const setMotionEffects = async ( {
 	assertProMotionSettingsAllowed( settings );
 	assertKnownControlNames( container, scope, settings );
 
-	const run = getCommands()?.run;
-
-	if ( ! run ) {
-		throw new Error( 'Elementor commands API is not available.' );
-	}
-
-	await run( 'document/elements/settings', {
-		container,
-		settings,
-		options: {
-			external: true,
-		},
-	} );
+	await applyDocumentElementSettings( container, settings );
 
 	return {
 		success: true,

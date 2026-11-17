@@ -52,7 +52,7 @@ describe( 'v3-kit-site-identity handler', () => {
 			writable: true,
 			value: {
 				config: { kit_id: KIT_ID },
-				documents: { get: documentsGet },
+				documents: { get: documentsGet, getCurrentId: () => KIT_ID },
 				getContainer,
 			},
 		} );
@@ -76,6 +76,24 @@ describe( 'v3-kit-site-identity handler', () => {
 		expect( documentsGet ).toHaveBeenCalledWith( KIT_ID );
 		expect( resolved ).toBe( container );
 		expect( getContainer ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects when the kit is not the current document', () => {
+		// Arrange
+		const container = createKitContainer();
+		documentsGet.mockReturnValue( { container } );
+		Object.defineProperty( window, 'elementor', {
+			configurable: true,
+			writable: true,
+			value: {
+				config: { kit_id: KIT_ID },
+				documents: { get: documentsGet, getCurrentId: () => 999 },
+				getContainer,
+			},
+		} );
+
+		// Act / Assert
+		expect( () => resolveKitContainer() ).toThrow( /current document/ );
 	} );
 
 	it( 'falls back to getContainer when the kit document has no container', () => {
@@ -139,7 +157,7 @@ describe( 'v3-kit-site-identity handler', () => {
 		Object.defineProperty( window, 'elementor', {
 			configurable: true,
 			writable: true,
-			value: { config: {}, documents: { get: documentsGet }, getContainer },
+			value: { config: {}, documents: { get: documentsGet, getCurrentId: () => KIT_ID }, getContainer },
 		} );
 
 		// Act / Assert

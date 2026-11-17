@@ -1,3 +1,5 @@
+import { applyDocumentElementSettings } from '../editor-api';
+
 const TOOL_NAME = 'v3-kit-site-identity';
 
 const SITE_IDENTITY_FIELDS = [ 'site_description', 'site_favicon', 'site_logo', 'site_name' ] as const;
@@ -55,18 +57,12 @@ const getElementor = () =>
 				config?: { kit_id?: number | string };
 				documents?: {
 					get?: ( id: number | string ) => KitDocument | null | undefined;
+					getCurrentId?: () => number | string;
 				};
 				getContainer?: ( id: string ) => ElementorContainer | null | undefined;
 			};
 		}
 	 ).elementor;
-
-const getCommands = () =>
-	(
-		window as unknown as {
-			$e?: { run?: ( command: string, args?: Record< string, unknown > ) => Promise< unknown > | unknown };
-		}
-	 ).$e;
 
 const assertAllowedFields = ( fields: SiteIdentityField[] ) => {
 	const invalid = fields.filter( ( field ) => ! ( SITE_IDENTITY_FIELDS as readonly string[] ).includes( field ) );
@@ -128,6 +124,14 @@ export const resolveKitContainer = (): ElementorContainer => {
 
 	if ( undefined === kitId || null === kitId || '' === kitId ) {
 		throw new Error( 'Kit ID is missing from the editor configuration.' );
+	}
+
+	const currentDocumentId = elementor.documents?.getCurrentId?.();
+
+	if ( Number( currentDocumentId ) !== Number( kitId ) ) {
+		throw new Error(
+			`Site Settings (kit) must be the current document for ${ TOOL_NAME }. Open Site Settings / Site Identity first, then retry.`
+		);
 	}
 
 	const kitDocument = elementor.documents?.get?.( kitId );
@@ -202,19 +206,7 @@ export const setSiteIdentityValues = async ( patch: SiteIdentityPatch ): Promise
 		throw new Error( 'patch must include at least one site identity field for set action.' );
 	}
 
-	const run = getCommands()?.run;
-
-	if ( ! run ) {
-		throw new Error( 'Elementor commands API is not available.' );
-	}
-
-	await run( 'document/elements/settings', {
-		container,
-		settings,
-		options: {
-			external: true,
-		},
-	} );
+	await applyDocumentElementSettings( container, settings );
 
 	return {
 		success: true,
