@@ -1,0 +1,77 @@
+import * as React from 'react';
+import { useRef, useState } from 'react';
+import { ControlFormLabel } from '@elementor/editor-controls';
+import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
+import { Box, Button, Stack, Switch } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+
+import { disableSubmenu, enableSubmenu, selectSubmenu, useSubmenu } from './use-submenu';
+
+type Props = {
+	entryId: string | null;
+	showEditButton?: boolean;
+};
+
+export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
+	const { submenuId, locked, promotion } = useSubmenu( entryId );
+	const [ isPromotionOpen, setIsPromotionOpen ] = useState( false );
+	const anchorRef = useRef< HTMLDivElement >( null );
+
+	if ( ! entryId ) {
+		return null;
+	}
+
+	const isEnabled = !! submenuId;
+	const isLockedOff = locked && ! isEnabled;
+
+	const onToggle = () => {
+		if ( isLockedOff ) {
+			setIsPromotionOpen( ( open ) => ! open );
+
+			return;
+		}
+
+		if ( isEnabled ) {
+			disableSubmenu( entryId );
+
+			return;
+		}
+
+		enableSubmenu( entryId );
+	};
+
+	return (
+		<Stack gap={ 1.5 }>
+			<Stack direction="row" alignItems="center" justifyContent="space-between" ref={ anchorRef }>
+				<ControlFormLabel>{ __( 'Enable Submenu', 'elementor' ) }</ControlFormLabel>
+				<Stack direction="row" alignItems="center">
+					{ isLockedOff && promotion && (
+						<PromotionPopover
+							open={ isPromotionOpen }
+							title={ promotion.title }
+							content={ promotion.content }
+							ctaUrl={ promotion.ctaUrl }
+							onClose={ () => setIsPromotionOpen( false ) }
+							anchorRef={ anchorRef }
+						>
+							<Box component="span" sx={ { display: 'inline-flex' } }>
+								<PromotionChip onClick={ onToggle } />
+							</Box>
+						</PromotionPopover>
+					) }
+					<Switch
+						size="small"
+						checked={ isEnabled }
+						onChange={ onToggle }
+						inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
+					/>
+				</Stack>
+			</Stack>
+			{ showEditButton && isEnabled && submenuId && (
+				<Button size="small" color="secondary" variant="outlined" onClick={ () => selectSubmenu( submenuId ) }>
+					{ __( 'Edit Submenu', 'elementor' ) }
+				</Button>
+			) }
+		</Stack>
+	);
+};
