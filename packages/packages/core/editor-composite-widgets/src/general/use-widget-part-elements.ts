@@ -24,7 +24,11 @@ type WidgetPartElements = Record< string, WidgetPartElement | null >;
 
 export function useWidgetPartElements( rootId: ElementID, definition: CompositeWidgetDefinition ): WidgetPartElements {
 	return useListenTo(
-		commandEndEvent( 'document/elements/set-settings' ),
+		[
+			commandEndEvent( 'document/elements/set-settings' ),
+			commandEndEvent( 'document/elements/create' ),
+			commandEndEvent( 'document/elements/delete' ),
+		],
 		() => getWidgetPartElements( rootId, definition ),
 		[ rootId, definition ]
 	);

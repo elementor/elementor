@@ -58,6 +58,25 @@ describe( 'useWidgetPartElements', () => {
 		expect( result.current.label?.settings.paragraph ).toBe( CHANGED_PARAGRAPH );
 	} );
 
+	it( 'should drop a deleted part and restore it when it is created again', () => {
+		// Arrange
+		const { result } = renderHook( () => useWidgetPartElements( fixture.root.id, DEFINITION ) );
+		const { children: rootChildren = [] } = fixture.root;
+		const labelIndex = rootChildren.indexOf( fixture.label );
+
+		// Act
+		rootChildren.splice( labelIndex, 1 );
+		act( () => dispatchCommandAfter( 'document/elements/delete', { container: fixture.label } ) );
+		const afterDelete = result.current.label;
+
+		rootChildren.splice( labelIndex, 0, fixture.label );
+		act( () => dispatchCommandAfter( 'document/elements/create', { container: fixture.root } ) );
+
+		// Assert
+		expect( afterDelete ).toBeNull();
+		expect( result.current.label?.element.id ).toBe( fixture.label.id );
+	} );
+
 	it( 'should read the re-created root after a move, not the old tree', () => {
 		// Arrange
 		const { result } = renderHook( () => useWidgetPartElements( fixture.root.id, DEFINITION ) );
