@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getSidebarIconButtonSx } from '@elementor/editor-sidebar';
 import { hasLoadedEditorAngie, isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
+import { getSidebarIconButtonSx } from '@elementor/editor-sidebar';
 import { AngieIcon, HelpIcon } from '@elementor/icons';
 import {
 	bindMenu,

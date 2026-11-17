@@ -9,7 +9,10 @@ type SidebarIconButtonState = {
 	active?: boolean;
 };
 
-export function getSidebarIconButtonSx( { selected = false, active = false }: SidebarIconButtonState = {} ): SxProps< Theme > {
+export function getSidebarIconButtonSx( {
+	selected = false,
+	active = false,
+}: SidebarIconButtonState = {} ): SxProps< Theme > {
 	const isEmphasized = selected || active;
 
 	return {
