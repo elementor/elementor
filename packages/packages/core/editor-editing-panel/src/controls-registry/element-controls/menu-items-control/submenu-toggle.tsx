@@ -54,8 +54,12 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 							onClose={ () => setIsPromotionOpen( false ) }
 							anchorRef={ anchorRef }
 						>
-							<Box component="span" sx={ { display: 'inline-flex' } }>
-								<PromotionChip onClick={ onToggle } />
+							<Box
+								component="span"
+								onClick={ onToggle }
+								sx={ { display: 'inline-flex', cursor: 'pointer' } }
+							>
+								<PromotionChip />
 							</Box>
 						</PromotionPopover>
 					) }
