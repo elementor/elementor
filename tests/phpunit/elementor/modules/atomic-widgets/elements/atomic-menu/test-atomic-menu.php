@@ -617,6 +617,51 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( $blocks, substr_count( $css, '> .e-menu-items-base){flex-direction:column;flex-basis:100%;width:100%}' ) );
 	}
 
+	public function test_get_collapse_css__uses_logical_properties_so_rtl_flips() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringContainsString( 'inset-inline-start:0', $css );
+		$this->assertDoesNotMatchRegularExpression( '/[{;](left|right|margin-left|margin-right|padding-left|padding-right):/', $css );
+	}
+
+	public function test_get_config__menu_items_keeps_the_skeleton_base_style_apart_from_flex_direction() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$config = $this->get_config( 'e-menu-items' );
+
+		// Assert.
+		$props = $config['base_styles']['e-menu-items-base']['variants'][0]['props'];
+		$this->assertSame( 'flex', $props['display']['value'] );
+		$this->assertSame( 'none', $props['list-style-type']['value'] );
+		$this->assertSame( 16, $props['gap']['value']['size'] );
+	}
+
+	public function test_render__class_and_local_styles_on_the_same_item_keep_source_order() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'global-class',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'color' => 'blue' ], 'meta' => [ 'breakpoint' => null, 'state' => null ] ] ],
+			],
+			[
+				'id' => 'local-style',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'color' => 'red' ], 'meta' => [ 'breakpoint' => null, 'state' => null ] ] ],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.global-class{color:blue;}.local-style{color:red;}', $css );
+	}
+
 	public function test_get_config__menu_items_base_style_has_no_flex_direction() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
