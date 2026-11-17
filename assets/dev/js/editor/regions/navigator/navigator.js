@@ -234,6 +234,19 @@ export default class extends BaseRegion {
 		return Number.isFinite( parsed ) ? parsed : 0;
 	}
 
+	getEdgeCrossings( left ) {
+		const dockedFloatingWidth = this.getDockedFloatingPanelWidth();
+		const isRtl = elementorCommon.config.isRTL;
+		const isOutOfLeft = left < ( isRtl ? dockedFloatingWidth : 0 );
+		const isOutOfRight = left + this.el.offsetWidth > innerWidth - ( isRtl ? 0 : dockedFloatingWidth );
+
+		return {
+			isOutOfLeft,
+			isOutOfRight,
+			isOutOfDockEdge: isRtl ? isOutOfLeft : isOutOfRight,
+		};
+	}
+
 	onDrag( event, ui ) {
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
@@ -251,10 +264,8 @@ export default class extends BaseRegion {
 			ui.position.top = 0;
 		}
 
-		const dockedFloatingWidth = this.getDockedFloatingPanelWidth();
 		const isRtl = elementorCommon.config.isRTL;
-		const isOutOfLeft = ui.position.left < ( isRtl ? dockedFloatingWidth : 0 );
-		const isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth - ( isRtl ? 0 : dockedFloatingWidth );
+		const { isOutOfLeft, isOutOfRight, isOutOfDockEdge } = this.getEdgeCrossings( ui.position.left );
 
 		if ( isRtl ) {
 			if ( isOutOfRight ) {
@@ -264,7 +275,7 @@ export default class extends BaseRegion {
 			ui.position.left = 0;
 		}
 
-		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', isRtl ? isOutOfLeft : isOutOfRight );
+		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', isOutOfDockEdge );
 	}
 
 	onDragStop( event, ui ) {
@@ -274,13 +285,9 @@ export default class extends BaseRegion {
 
 		this.saveSize();
 
-		const dockedFloatingWidth = this.getDockedFloatingPanelWidth();
-		const isRtl = elementorCommon.config.isRTL;
-		const elementRight = ui.position.left + this.el.offsetWidth;
-		const crossedInlineStart = ui.position.left < ( isRtl ? dockedFloatingWidth : 0 );
-		const crossedInlineEnd = elementRight > innerWidth - ( isRtl ? 0 : dockedFloatingWidth );
+		const { isOutOfLeft, isOutOfRight } = this.getEdgeCrossings( ui.position.left );
 
-		if ( crossedInlineStart || crossedInlineEnd ) {
+		if ( isOutOfLeft || isOutOfRight ) {
 			this.dock();
 		}
 
