@@ -79,8 +79,17 @@ export default function ToolbarLogo( { alignWithSidebar = false, ...props }: Too
 			onMouseLeave={ () => setIsHoverState( false ) }
 		>
 			<StyledElementorLogo
-				fontSize={ alignWithSidebar ? TOOLBAR_LOGO_COMPACT_SIZE_PX : 'large' }
+				fontSize={ alignWithSidebar ? 'inherit' : 'large' }
 				showMenuIcon={ showMenuIcon }
+				sx={
+					alignWithSidebar
+						? {
+								fontSize: TOOLBAR_LOGO_COMPACT_SIZE_PX,
+								width: TOOLBAR_LOGO_COMPACT_SIZE_PX,
+								height: TOOLBAR_LOGO_COMPACT_SIZE_PX,
+						  }
+						: undefined
+				}
 				titleAccess={ __( 'Elementor Logo', 'elementor' ) }
 			/>
 		</StyledToggleButton>
