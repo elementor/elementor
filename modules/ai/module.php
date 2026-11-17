@@ -94,7 +94,10 @@ class Module extends BaseModule {
 				'ElementorAiConfig',
 				$this->get_ai_config()
 			);
+			$this->enqueue_main_script();
 		} );
+
+		add_filter( 'elementor/document/save/data', [ $this, 'remove_temporary_containers' ] );
 
 		// Styles for Angie V3 entry-point buttons (`.e-ai-button`, `.e-ai-layout-button`).
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
@@ -464,6 +467,45 @@ class Module extends BaseModule {
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
 		];
+	}
+
+	private function enqueue_main_script() {
+		wp_enqueue_script(
+			'elementor-ai',
+			$this->get_js_assets_url( 'ai' ),
+			[
+				'react',
+				'react-dom',
+				'elementor-common',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-ai',
+			'ElementorAiConfig',
+			$this->get_ai_config()
+		);
+
+		wp_set_script_translations( 'elementor-ai', 'elementor' );
+	}
+
+	public function remove_temporary_containers( $data ) {
+		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
+			return $data;
+		}
+
+		$data['elements'] = array_filter( $data['elements'], function( $element ) {
+			$is_preview_container = isset( $element['id'] ) && strpos( $element['id'], 'e-ai-preview-container' ) === 0;
+			$is_screenshot_container = isset( $element['id'] ) && strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
+
+			return ! $is_preview_container && ! $is_screenshot_container;
+		} );
+
+		return $data;
 	}
 
 	private function get_ai_connect_url() {

@@ -52,6 +52,7 @@ export const BASE_ENTRIES = {
 	'responsive-bar': 'assets/dev/js/editor/regions/responsive-bar/index.js',
 	'admin-notifications': 'modules/notifications/assets/js/admin.js',
 	'editor-notifications': 'modules/notifications/assets/js/editor.js',
+	ai: 'modules/ai/assets/js/editor/ai-modal-listener.js',
 	'ai-gutenberg': 'modules/ai/assets/js/gutenberg/index.js',
 	'element-manager-admin': 'modules/element-manager/assets/js/admin.js',
 	'media-hints': 'assets/dev/js/admin/hints/media.js',

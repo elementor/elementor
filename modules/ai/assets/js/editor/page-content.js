@@ -91,6 +91,19 @@ const PageContent = (
 		);
 	};
 
+	if ( [ 'code', 'animation', 'hover_animation' ].includes( type ) ) {
+		return (
+			<PromptDialog onClose={ onClose } { ...promptDialogStyleProps } maxWidth="sm">
+				<PromptDialog.Header onClose={ onClose } />
+				<PromptDialog.Content dividers>
+					<Typography variant="body1" color="secondary">
+						{ `The "${ type }" AI control is no longer supported in this editor.` }
+					</Typography>
+				</PromptDialog.Content>
+			</PromptDialog>
+		);
+	}
+
 	if ( isLoading || ! isInitUsageDone ) {
 		return (
 
