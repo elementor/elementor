@@ -17,4 +17,14 @@ describe( 'getSidebarIconButtonSx', () => {
 			backgroundColor: 'action.selected',
 		} );
 	} );
+
+	it( 'keeps selected background on hover when emphasized', () => {
+		const sx = getSidebarIconButtonSx( { selected: true } );
+
+		expect( sx ).toMatchObject( {
+			'&:hover': {
+				backgroundColor: 'action.selected',
+			},
+		} );
+	} );
 } );

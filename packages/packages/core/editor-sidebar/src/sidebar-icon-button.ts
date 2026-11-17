@@ -20,7 +20,7 @@ export function getSidebarIconButtonSx( { selected = false, active = false }: Si
 		color: isEmphasized ? 'primary.main' : 'grey.800',
 		backgroundColor: isEmphasized ? 'action.selected' : 'transparent',
 		'&:hover': {
-			backgroundColor: 'action.hover',
+			backgroundColor: isEmphasized ? 'action.selected' : 'action.hover',
 		},
 		'& .MuiSvgIcon-root': {
 			fontSize: SIDEBAR_ICON_SIZE_PX,
