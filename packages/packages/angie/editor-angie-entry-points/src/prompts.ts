@@ -189,7 +189,9 @@ export const buildAngieV3LayoutPrompt = ( {
 				`Help with a layout variation for container "${ targetContainerId }"${
 					targetElementTitle ? ` (${ targetElementTitle })` : ''
 				}.`,
-				`Document type: ${ documentType || 'unknown' }. ${ positionHint } ${ parentHint } ${ replaceHint }`.trim(),
+				`Document type: ${
+					documentType || 'unknown'
+				}. ${ positionHint } ${ parentHint } ${ replaceHint }`.trim(),
 			].join( '\n\n' );
 		case 'library-variation':
 			return [

@@ -63,9 +63,7 @@ function createAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConstruct
 			const layoutContext = this.getOption( 'layoutContext' ) as AngieV3LayoutPromptContext | undefined;
 			const at = this.view?.getOption?.( 'at' ) as number | null | undefined;
 
-			openAngieForV3Layout(
-				resolveLayoutClickContext( layoutContext, legacyContext, at )
-			);
+			openAngieForV3Layout( resolveLayoutClickContext( layoutContext, legacyContext, at ) );
 		},
 
 		onRender( this: LayoutBehaviorView ) {

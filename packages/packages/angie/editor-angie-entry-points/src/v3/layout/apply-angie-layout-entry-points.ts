@@ -1,6 +1,6 @@
 import type { AngieV3LayoutPromptContext } from '../../prompts';
 import { shouldShowAngieEntryPoints } from '../is-angie-entry-points-enabled';
-import { getCurrentDocumentType, type BehaviorsMap } from '../types';
+import { type BehaviorsMap, getCurrentDocumentType } from '../types';
 import { getAngieAddSectionLayoutBehaviorClass } from './create-angie-layout-behavior';
 import { getAngieTemplateLibraryBehaviorClass } from './create-angie-template-library-behavior';
 import { openAngieForV3Layout } from './open-angie-layout';
