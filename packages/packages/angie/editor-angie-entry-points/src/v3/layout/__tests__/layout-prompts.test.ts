@@ -25,4 +25,17 @@ describe( 'buildAngieV3LayoutPrompt', () => {
 		// Assert
 		expect( prompt ).toContain( 'abc123' );
 	} );
+
+	it( 'includes parent and replace ids for variation mode', () => {
+		const prompt = buildAngieV3LayoutPrompt( {
+			mode: 'container-variation',
+			targetContainerId: 'abc123',
+			parentContainerId: 'parent-1',
+			replaceElementId: 'abc123',
+			documentType: 'page',
+		} );
+
+		expect( prompt ).toContain( 'parent-1' );
+		expect( prompt ).toContain( 'Replace element id: abc123' );
+	} );
 } );

@@ -1,4 +1,4 @@
-import { getExtendedWindow, type MarionetteBehaviorConstructor } from '../types';
+import { getCurrentDocumentType, getExtendedWindow, type MarionetteBehaviorConstructor } from '../types';
 import { openAngieForV3Layout } from './open-angie-layout';
 
 type TemplateLibraryView = {
@@ -20,18 +20,6 @@ export function getAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstr
 	}
 
 	return cachedLibraryBehavior;
-}
-
-function getDocumentType(): string | undefined {
-	const elementor = getExtendedWindow().elementor as
-		| {
-				documents?: {
-					getCurrent?: () => { config?: { type?: string } } | null | undefined;
-				};
-		  }
-		| undefined;
-
-	return elementor?.documents?.getCurrent?.()?.config?.type;
 }
 
 function createAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstructor {
@@ -70,7 +58,7 @@ function createAngieTemplateLibraryBehaviorClass(): MarionetteBehaviorConstructo
 
 			openAngieForV3Layout( {
 				mode: 'library-variation',
-				documentType: getDocumentType(),
+				documentType: getCurrentDocumentType(),
 				at,
 				libraryTemplateId: model.get( 'template_id' ) as string | number,
 				libraryTemplateTitle: model.get( 'title' ) as string,

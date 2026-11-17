@@ -156,6 +156,7 @@ export type AngieV3LayoutPromptContext = {
 	at?: number | null;
 	targetContainerId?: string;
 	parentContainerId?: string;
+	replaceElementId?: string;
 	targetElementTitle?: string;
 	libraryTemplateId?: string | number;
 	libraryTemplateTitle?: string;
@@ -166,6 +167,8 @@ export const buildAngieV3LayoutPrompt = ( {
 	documentType,
 	at,
 	targetContainerId,
+	parentContainerId,
+	replaceElementId,
 	targetElementTitle,
 	libraryTemplateId,
 	libraryTemplateTitle,
@@ -175,13 +178,18 @@ export const buildAngieV3LayoutPrompt = ( {
 			? `Canvas position index: ${ at }.`
 			: 'Use the canvas position where the button was clicked.';
 
+	const parentHint = parentContainerId ? `Parent container id: ${ parentContainerId }.` : '';
+	const replaceHint = replaceElementId
+		? `Replace element id: ${ replaceElementId } (pass this as the layout tool replace/target id).`
+		: '';
+
 	switch ( mode ) {
 		case 'container-variation':
 			return [
 				`Help with a layout variation for container "${ targetContainerId }"${
 					targetElementTitle ? ` (${ targetElementTitle })` : ''
 				}.`,
-				`Document type: ${ documentType || 'unknown' }. ${ positionHint }`,
+				`Document type: ${ documentType || 'unknown' }. ${ positionHint } ${ parentHint } ${ replaceHint }`.trim(),
 			].join( '\n\n' );
 		case 'library-variation':
 			return [

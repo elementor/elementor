@@ -26,6 +26,19 @@ export function getAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConst
 	return cachedAddSectionBehavior;
 }
 
+export function resolveLayoutClickContext(
+	layoutContext: AngieV3LayoutPromptContext | undefined,
+	legacyContext: { documentType?: string } | undefined,
+	at: number | null | undefined
+): AngieV3LayoutPromptContext {
+	return {
+		mode: 'new-layout',
+		documentType: legacyContext?.documentType,
+		...layoutContext,
+		at: at ?? layoutContext?.at,
+	};
+}
+
 function createAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConstructor {
 	const { Marionette } = getExtendedWindow();
 
@@ -48,13 +61,10 @@ function createAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConstruct
 
 			const legacyContext = this.getOption( 'context' ) as { documentType?: string } | undefined;
 			const layoutContext = this.getOption( 'layoutContext' ) as AngieV3LayoutPromptContext | undefined;
+			const at = this.view?.getOption?.( 'at' ) as number | null | undefined;
 
 			openAngieForV3Layout(
-				layoutContext || {
-					mode: 'new-layout',
-					documentType: legacyContext?.documentType,
-					at: this.view?.getOption?.( 'at' ) as number | null | undefined,
-				}
+				resolveLayoutClickContext( layoutContext, legacyContext, at )
 			);
 		},
 

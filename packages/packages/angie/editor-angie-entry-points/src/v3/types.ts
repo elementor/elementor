@@ -95,9 +95,16 @@ export type ExtendedWindow = Window & {
 				priority?: number
 			) => void;
 		};
+		documents?: {
+			getCurrent?: () => { config?: { type?: string } } | null | undefined;
+		};
 	};
 };
 
 export function getExtendedWindow(): ExtendedWindow {
 	return window as ExtendedWindow;
+}
+
+export function getCurrentDocumentType(): string | undefined {
+	return getExtendedWindow().elementor?.documents?.getCurrent?.()?.config?.type;
 }

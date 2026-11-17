@@ -3,7 +3,7 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 jest.mock( '../../is-angie-entry-points-enabled', () => ( {
-	isAngieEntryPointsEnabled: jest.fn( () => true ),
+	shouldShowAngieEntryPoints: jest.fn( () => true ),
 } ) );
 
 jest.mock( '../create-angie-layout-behavior', () => ( {
@@ -16,7 +16,7 @@ jest.mock( '../create-angie-template-library-behavior', () => ( {
 
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 
-import { isAngieEntryPointsEnabled } from '../../is-angie-entry-points-enabled';
+import { shouldShowAngieEntryPoints } from '../../is-angie-entry-points-enabled';
 import {
 	applyAngieAddSectionBehavior,
 	applyAngieContainerContextMenu,
@@ -26,7 +26,7 @@ import {
 describe( 'applyAngieLayoutEntryPoints', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.mocked( isAngieEntryPointsEnabled ).mockReturnValue( true );
+		jest.mocked( shouldShowAngieEntryPoints ).mockReturnValue( true );
 		window.elementor = {
 			documents: {
 				getCurrent: () => ( { config: { type: 'page' } } ),
@@ -53,7 +53,7 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 
 	it( 'skips add-section override when entry points are disabled', () => {
 		// Arrange
-		jest.mocked( isAngieEntryPointsEnabled ).mockReturnValue( false );
+		jest.mocked( shouldShowAngieEntryPoints ).mockReturnValue( false );
 		function LegacyBehavior() {}
 		const behaviors = { ai: { behaviorClass: LegacyBehavior } };
 
@@ -78,6 +78,7 @@ describe( 'applyAngieLayoutEntryPoints', () => {
 				id: 'c1',
 				model: { get: () => 'Container' },
 				view: { _index: 1 },
+				parent: { id: 'parent-1' },
 			} ),
 		};
 
