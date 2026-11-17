@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Submenu_Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Base\Atomic_Menu_Locked_Element;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
@@ -53,6 +54,12 @@ class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
 
 	protected function define_atomic_controls(): array {
 		return [
+			Section::make()
+				->set_label( __( 'Submenu', 'elementor' ) )
+				->set_id( 'submenu' )
+				->set_items( [
+					Submenu_Toggle_Control::make(),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
