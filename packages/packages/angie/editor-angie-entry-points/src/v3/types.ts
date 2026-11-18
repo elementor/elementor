@@ -22,10 +22,17 @@ export type GetButtonLabelArgs = {
 	additionalOptions?: Record< string, unknown >;
 };
 
+export type V3ControlViewWithGetValue = V3ControlView & { getControlValue: () => unknown };
+
 export type V3AngieControlRegistration = {
 	types: string[];
 	buildPrompt: ( args: BuildV3AngiePromptArgs ) => string;
 	getButtonLabel?: ( args: GetButtonLabelArgs ) => string;
+	getAdditionalOptions?: ( view: V3ControlView, aiType: string ) => Record< string, unknown >;
+	getGetControlValue?: ( view: V3ControlViewWithGetValue, aiType: string ) => () => unknown;
+	/** When set, the behavior is applied only if this returns true. */
+	shouldApply?: ( view: V3ControlView, aiType: string ) => boolean;
+	forceLabelBlock?: boolean;
 };
 
 export type V3ControlView = {
@@ -90,9 +97,16 @@ export type ExtendedWindow = Window & {
 				priority?: number
 			) => void;
 		};
+		documents?: {
+			getCurrent?: () => { config?: { type?: string } } | null | undefined;
+		};
 	};
 };
 
 export function getExtendedWindow(): ExtendedWindow {
 	return window as ExtendedWindow;
+}
+
+export function getCurrentDocumentType(): string | undefined {
+	return getExtendedWindow().elementor?.documents?.getCurrent?.()?.config?.type;
 }

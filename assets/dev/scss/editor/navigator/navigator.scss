@@ -24,6 +24,10 @@ body {
 		height: 100%;
 	}
 
+	body.elementor-navigator-docked.elementor-floating-panel-docked & {
+		inset-inline-end: var(--e-editor-docked-panel-width, 0px);
+	}
+
 	body:not(.elementor-navigator-docked) & {
 		border-radius: 5px;
 	}

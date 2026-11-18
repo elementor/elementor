@@ -5,6 +5,7 @@ namespace Elementor\Modules\WidgetCreation;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Hints;
+use Elementor\Modules\Ai\Module as Ai_Module;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -42,7 +43,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
 			'description' => esc_html__( 'Load Angie in a docked floating panel in the editor instead of the legacy push sidebar.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
 	}
@@ -80,6 +81,7 @@ class Module extends BaseModule {
 
 		Utils::print_js_config( 'elementor-v2-editor-angie', 'elementorEditorAngie', [
 			'isAngiePluginActive' => Hints::is_plugin_active( 'angie' ),
+			'showEntryPoints' => $this->should_show_angie_entry_points(),
 		] );
 	}
 
@@ -119,5 +121,15 @@ class Module extends BaseModule {
 		];
 
 		return $settings;
+	}
+
+	private function should_show_angie_entry_points(): bool {
+		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
+
+		if ( ! $ai_module instanceof Ai_Module ) {
+			return false;
+		}
+
+		return $ai_module->is_ai_enabled();
 	}
 }

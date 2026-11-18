@@ -531,7 +531,7 @@ export default class WpAdminPage extends BasePage {
 
 	async cleanAdminPageForScreenshot(): Promise<void> {
 		await this.page.addStyleTag( {
-			content: '.notice, .update-nag, .e-notice { display: none !important; }',
+			content: '.notice, .update-nag, .e-notice, #e-conversion-banner, .e-conversion-banner-inline { display: none !important; }',
 		} );
 
 		await this.page.evaluate( () => {

@@ -3,12 +3,12 @@ jest.mock( '../behavior/create-behavior-class', () => ( {
 } ) );
 
 jest.mock( '../is-angie-entry-points-enabled', () => ( {
-	isAngieEntryPointsEnabled: jest.fn( () => true ),
+	shouldShowAngieEntryPoints: jest.fn( () => true ),
 } ) );
 
 import { applyAngieControlBehavior } from '../apply-angie-control-behavior';
 import { getAngieControlBehaviorClass } from '../behavior/create-behavior-class';
-import { isAngieEntryPointsEnabled } from '../is-angie-entry-points-enabled';
+import { shouldShowAngieEntryPoints } from '../is-angie-entry-points-enabled';
 import { clearV3AngieControls, registerV3AngieControl } from '../registry';
 
 const buildPrompt = jest.fn( () => 'prompt' );
@@ -19,6 +19,7 @@ function createView(
 		container?: Record< string, unknown > | null;
 		labelBlock?: boolean;
 		controlType?: string;
+		mediaTypes?: string[];
 	} = {}
 ) {
 	const container =
@@ -44,6 +45,7 @@ function createView(
 						label_block: overrides.labelBlock ?? false,
 						default: '',
 						language: 'css',
+						media_types: overrides.mediaTypes ?? [ 'image' ],
 					};
 
 					return map[ key ];
@@ -59,7 +61,7 @@ describe( 'applyAngieControlBehavior', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		clearV3AngieControls();
-		jest.mocked( isAngieEntryPointsEnabled ).mockReturnValue( true );
+		jest.mocked( shouldShowAngieEntryPoints ).mockReturnValue( true );
 		registerV3AngieControl( { types: [ 'text' ], buildPrompt } );
 	} );
 
@@ -90,7 +92,7 @@ describe( 'applyAngieControlBehavior', () => {
 	it( 'skips when type is not registered', () => {
 		// Arrange
 		const behaviors = {};
-		const view = createView( { ai: { active: true, type: 'media' } } );
+		const view = createView( { ai: { active: true, type: 'unknown-type' } } );
 
 		// Act
 		const result = applyAngieControlBehavior( behaviors, view );
@@ -98,6 +100,18 @@ describe( 'applyAngieControlBehavior', () => {
 		// Assert
 		expect( result ).toEqual( {} );
 		expect( getAngieControlBehaviorClass ).not.toHaveBeenCalled();
+	} );
+
+	it( 'applies when type is set even if active is omitted', () => {
+		// Arrange
+		const behaviors = {};
+		const view = createView( { ai: { type: 'text' } } );
+
+		// Act
+		const result = applyAngieControlBehavior( behaviors, view );
+
+		// Assert
+		expect( result.ai ).toBeDefined();
 	} );
 
 	it( 'skips when ai.active is false', () => {
@@ -124,9 +138,55 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( result ).toEqual( {} );
 	} );
 
-	it( 'skips when isAngieEntryPointsEnabled returns false', () => {
+	it( 'applies animation behavior with label block and motion additional options', () => {
 		// Arrange
-		jest.mocked( isAngieEntryPointsEnabled ).mockReturnValue( false );
+		registerV3AngieControl( {
+			types: [ 'animation' ],
+			forceLabelBlock: true,
+			buildPrompt,
+			getAdditionalOptions: () => ( { animationType: 'entrance', widgetType: 'heading' } ),
+			getGetControlValue: () => () => ( { _animation: 'fadeIn' } ),
+		} );
+		const behaviors = {};
+		const view = createView( { ai: { active: true, type: 'animation' }, controlType: 'animation' } );
+
+		// Act
+		const result = applyAngieControlBehavior( behaviors, view );
+
+		// Assert
+		expect( result.ai ).toEqual(
+			expect.objectContaining( {
+				isLabelBlock: true,
+				additionalOptions: expect.objectContaining( {
+					animationType: 'entrance',
+					widgetType: 'heading',
+				} ),
+			} )
+		);
+		expect( ( result.ai as { getControlValue: () => unknown } ).getControlValue() ).toEqual( {
+			_animation: 'fadeIn',
+		} );
+	} );
+
+	it( 'honors shouldApply gate for registered types', () => {
+		// Arrange
+		registerV3AngieControl( {
+			types: [ 'code' ],
+			buildPrompt,
+			shouldApply: () => false,
+		} );
+		const view = createView( { ai: { active: true, type: 'code' }, controlType: 'code' } );
+
+		// Act
+		const result = applyAngieControlBehavior( {}, view );
+
+		// Assert
+		expect( result.ai ).toBeUndefined();
+	} );
+
+	it( 'skips when shouldShowAngieEntryPoints returns false', () => {
+		// Arrange
+		jest.mocked( shouldShowAngieEntryPoints ).mockReturnValue( false );
 		const behaviors = {};
 		const view = createView();
 

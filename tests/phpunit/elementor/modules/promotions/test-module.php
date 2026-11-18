@@ -66,6 +66,9 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$this->reset_menu_data_provider();
+		// Drop any bootstrapped sale override so this assertion only covers the registered Renew URL.
+		remove_all_filters( 'elementor_one/upgrade_url' );
+		delete_transient( Go_Pro_Promotion_Item::SIDE_MENU_TRANSIENT_KEY );
 		Menu_Data_Provider::instance()->register_level4_item( $this->create_action_item( 'https://go.elementor.com/wp-menu-renew/' ) );
 
 		// Act

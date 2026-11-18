@@ -1,39 +1,22 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
-import {
-	getDockedPanelInsetInlineEnd,
-	NAVIGATOR_DOCKED_BODY_CLASS,
-	NAVIGATOR_WIDTH_VAR,
-	useDockedPanelInsetInlineEnd,
-} from '../use-docked-layout';
+import { DOCKED_BODY_CLASS, DOCKED_WIDTH_VAR, useDockedLayout } from '../use-docked-layout';
 
-describe( 'useDockedLayout navigator offset', () => {
+describe( 'useDockedLayout', () => {
 	afterEach( () => {
 		document.body.className = '';
-		document.body.style.removeProperty( NAVIGATOR_WIDTH_VAR );
+		document.body.style.removeProperty( DOCKED_WIDTH_VAR );
 	} );
 
-	it( 'returns zero inset when the navigator is not docked', () => {
-		expect( getDockedPanelInsetInlineEnd() ).toBe( '0' );
-	} );
+	it( 'sets the docked body class and width while active', () => {
+		const { unmount } = renderHook( () => useDockedLayout( true, 360 ) );
 
-	it( 'returns the navigator width variable when the navigator is docked', () => {
-		document.body.classList.add( NAVIGATOR_DOCKED_BODY_CLASS );
+		expect( document.body ).toHaveClass( DOCKED_BODY_CLASS );
+		expect( document.body.style.getPropertyValue( DOCKED_WIDTH_VAR ) ).toBe( '360px' );
 
-		expect( getDockedPanelInsetInlineEnd() ).toBe( `var(${ NAVIGATOR_WIDTH_VAR }, 0px)` );
-	} );
+		unmount();
 
-	it( 'updates the inset when the navigator docked class toggles', async () => {
-		const { result } = renderHook( () => useDockedPanelInsetInlineEnd( true ) );
-
-		expect( result.current ).toBe( '0' );
-
-		await act( async () => {
-			document.body.classList.add( NAVIGATOR_DOCKED_BODY_CLASS );
-		} );
-
-		await waitFor( () => {
-			expect( result.current ).toBe( `var(${ NAVIGATOR_WIDTH_VAR }, 0px)` );
-		} );
+		expect( document.body ).not.toHaveClass( DOCKED_BODY_CLASS );
+		expect( document.body.style.getPropertyValue( DOCKED_WIDTH_VAR ) ).toBe( '' );
 	} );
 } );

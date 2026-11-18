@@ -3,6 +3,7 @@ import { useSelectedElement } from '@elementor/editor-elements';
 import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { mockAngieEntryPointsEnabled } from '../../__tests__/mock-angie-entry-points-enabled';
 import { getGenerateWithAngieLabel } from '../../labels';
 import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieControlHeaderAction } from '../angie-control-header-action';
@@ -19,6 +20,7 @@ const ELEMENT_ID = 'abc123';
 
 describe( 'AngieControlHeaderAction', () => {
 	beforeEach( () => {
+		mockAngieEntryPointsEnabled();
 		jest.mocked( useSelectedElement ).mockReturnValue( {
 			element: { id: 'selected-1', type: 'e-div-block' },
 			elementType: null,

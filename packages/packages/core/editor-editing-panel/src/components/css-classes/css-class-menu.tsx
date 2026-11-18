@@ -133,6 +133,12 @@ const CLASS_STATES_MAP: Record< string, { label: string } > = {
 	current: {
 		label: __( 'current', 'elementor' ),
 	},
+	'current-ancestor': {
+		label: __( 'current ancestor', 'elementor' ),
+	},
+	expanded: {
+		label: __( 'expanded', 'elementor' ),
+	},
 };
 
 export function useElementStates() {
