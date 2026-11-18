@@ -98,6 +98,8 @@ class Test_Agent_Ready_Notice extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( Agent_Ready_Notice::NOTICE_ID, $config['id'] );
+		$this->assertSame( 'inline', $config['type'] );
+		$this->assertTrue( $config['dismissible'] ?? true );
 		$this->assertStringContainsString( 'page=' . Module::PAGE_ID, $config['description'] );
 	}
 }
