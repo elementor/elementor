@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type PropsWithChildren, useState } from 'react';
+import { type PropsWithChildren, type ReactNode } from 'react';
 import { ChevronDownIcon } from '@elementor/icons';
 import {
 	Collapse,
@@ -15,15 +15,15 @@ import {
 
 type Props = {
 	label: string;
-	Icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > >;
-	isOpenByDefault?: boolean;
+	isOpen: boolean;
+	onOpenChange: ( isOpen: boolean ) => void;
+	secondaryAction?: ReactNode;
 };
 
 interface RotateIconProps extends SvgIconProps {
 	isOpen: boolean;
 }
 
-// TODO 21/06/2023 : Should replace this with future Rotate component that will be implemented in elementor-ui
 const RotateIcon = styled( ChevronDownIcon, {
 	shouldForwardProp: ( prop ) => prop !== 'isOpen',
 } )< RotateIconProps >( ( { theme, isOpen } ) => ( {
@@ -39,41 +39,42 @@ const StyledListItemIcon = styled( ListItemIcon )( ( { theme } ) => ( {
 
 export default function CollapsibleList( {
 	label,
-	Icon,
-	isOpenByDefault = false,
+	isOpen,
+	onOpenChange,
+	secondaryAction,
 	children,
 }: PropsWithChildren< Props > ) {
-	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
+	const toggle = () => onOpenChange( ! isOpen );
 
 	return (
 		<>
-			<ListItem>
+			<ListItem
+				secondaryAction={ secondaryAction }
+				sx={ {
+					pr: secondaryAction ? 1 : undefined,
+				} }
+			>
 				<StyledListItemIcon
 					sx={ {
 						color: 'text.secondary',
 					} }
 				>
 					<IconButton
-						onClick={ () => setIsOpen( ( prev ) => ! prev ) }
+						onClick={ toggle }
 						size="small"
 						sx={ {
 							color: 'inherit',
 						} }
+						aria-expanded={ isOpen }
 					>
 						<RotateIcon fontSize="small" isOpen={ isOpen } />
 					</IconButton>
 				</StyledListItemIcon>
-				<StyledListItemIcon
-					size="small"
-					sx={ {
-						color: 'inherit',
-					} }
-				>
-					<Icon fontSize="small" />
-				</StyledListItemIcon>
 				<ListItemText
 					primaryTypographyProps={ { variant: 'subtitle2', component: 'span' } }
 					primary={ label }
+					onClick={ toggle }
+					sx={ { cursor: 'pointer', userSelect: 'none' } }
 				/>
 			</ListItem>
 			<Collapse in={ isOpen } timeout="auto" unmountOnExit>

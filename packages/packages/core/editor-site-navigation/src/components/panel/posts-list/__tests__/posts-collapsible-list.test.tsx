@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { createMockDocument, renderWithQuery } from 'test-utils';
 import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
+import { ContentPanelCoordinatorProvider } from '../../../../contexts/content-panel-coordinator';
 import { PostListContextProvider } from '../../../../contexts/post-list-context';
 import { usePosts } from '../../../../hooks/use-posts';
 import PostsCollapsibleList from '../posts-collapsible-list';
@@ -74,6 +75,9 @@ jest.mock( '../../../../hooks/use-user', () => ( {
 	__esModule: true,
 } ) );
 
+const renderList = ( ui: React.ReactElement ) =>
+	renderWithQuery( <ContentPanelCoordinatorProvider>{ ui }</ContentPanelCoordinatorProvider> );
+
 describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	beforeEach( () => {
 		jest.mocked( useActiveDocument ).mockReturnValue(
@@ -89,7 +93,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 	it( 'should render closed list', () => {
 		// Act.
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ false } /> );
+		renderList( <PostsCollapsibleList isOpenByDefault={ false } /> );
 
 		// Assert.
 		const label = screen.getByText( `Pages (2)` );
@@ -101,7 +105,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 	it( 'should render open list with home icon and page status', () => {
 		// Act.
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ true } /> );
+		renderList( <PostsCollapsibleList isOpenByDefault={ true } /> );
 
 		// Assert.
 		const items = screen.getAllByRole( 'listitem' );
@@ -116,16 +120,16 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		expect( items[ 2 ] ).toHaveTextContent( '(draft)' );
 	} );
 
-	it( 'should create a new post after clicking "Add New" button', async () => {
+	it( 'should create a new post after clicking section add button', async () => {
 		// Arrange.
-		renderWithQuery(
+		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
 				<PostsCollapsibleList isOpenByDefault={ true } />
 			</PostListContextProvider>
 		);
 
 		// Act.
-		const addNewButton = screen.getByRole( 'button', { name: 'Add New' } );
+		const addNewButton = screen.getByRole( 'button', { name: 'New Page' } );
 		fireEvent.click( addNewButton );
 
 		const input = screen.getByRole( 'textbox' );
@@ -157,15 +161,21 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 	it( 'should append a new list item in edit mode, when "Duplicate" action is clicked', () => {
 		// Arrange.
-		renderWithQuery(
+		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
 				<PostsCollapsibleList isOpenByDefault={ true } />
 			</PostListContextProvider>
 		);
 
 		// Act.
-		const buttons = screen.getAllByRole( 'button' );
-		fireEvent.click( buttons[ 3 ] ); // Button to open the actions' menu of the first post.
+		const homeRow = screen.getByText( 'Home' ).closest( 'li' );
+
+		if ( ! homeRow ) {
+			throw new Error( 'Home row not found.' );
+		}
+
+		const homeRowButtons = within( homeRow ).getAllByRole( 'button' );
+		fireEvent.click( homeRowButtons[ homeRowButtons.length - 1 ] );
 
 		const duplicateButton = screen.getByRole( 'menuitem', { name: 'Duplicate' } );
 		fireEvent.click( duplicateButton );
@@ -208,10 +218,10 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 				total: 2,
 			},
 		} as ReturnType< typeof usePosts > );
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ true } /> );
+		renderList( <PostsCollapsibleList isOpenByDefault={ true } /> );
 
 		// Assert.
-		expect( screen.queryByRole( 'button', { name: 'Load More' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'Should render load button when there is next page', () => {
@@ -241,9 +251,9 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 				total: 2,
 			},
 		} as ReturnType< typeof usePosts > );
-		renderWithQuery( <PostsCollapsibleList isOpenByDefault={ true } /> );
+		renderList( <PostsCollapsibleList isOpenByDefault={ true } /> );
 
 		// Assert.
-		expect( screen.getByRole( 'button', { name: 'Load More' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Load more' } ) ).toBeInTheDocument();
 	} );
 } );
