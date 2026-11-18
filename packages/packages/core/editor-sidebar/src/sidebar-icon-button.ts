@@ -4,8 +4,17 @@ export const SIDEBAR_ICON_SIZE_PX = 20;
 
 export const SIDEBAR_ICON_BUTTON_SIZE_PX = 28;
 
+const EDITOR_CHROME_BORDER_RADIUS_MULTIPLIER_INDEX = 2;
+
+export function getEditorChromeIconBorderRadiusPx( theme: Theme ): string {
+	const multiplier =
+		theme.shape.__unstableBorderRadiusMultipliers?.[ EDITOR_CHROME_BORDER_RADIUS_MULTIPLIER_INDEX ] ?? 1;
+
+	return `${ theme.shape.borderRadius * multiplier }px`;
+}
+
 export const editorChromeIconBorderRadiusSx: SxProps< Theme > = {
-	borderRadius: ( theme: Theme ) => theme.shape.borderRadius,
+	borderRadius: ( theme: Theme ) => getEditorChromeIconBorderRadiusPx( theme ),
 };
 
 type SidebarIconButtonState = {

@@ -1,4 +1,6 @@
-import { getSidebarIconButtonSx } from '../sidebar-icon-button';
+import { type Theme } from '@elementor/ui';
+
+import { getEditorChromeIconBorderRadiusPx, getSidebarIconButtonSx } from '../sidebar-icon-button';
 
 describe( 'getSidebarIconButtonSx', () => {
 	it( 'uses compact 28px control dimensions for default state', () => {
@@ -17,6 +19,17 @@ describe( 'getSidebarIconButtonSx', () => {
 			color: 'primary.main',
 			backgroundColor: 'action.selected',
 		} );
+	} );
+
+	it( 'returns px border radius matching editor chrome controls', () => {
+		const theme = {
+			shape: {
+				borderRadius: 8,
+				__unstableBorderRadiusMultipliers: [ 0, 0.75, 1, 1.5, 2.5 ],
+			},
+		} as Theme;
+
+		expect( getEditorChromeIconBorderRadiusPx( theme ) ).toBe( '8px' );
 	} );
 
 	it( 'keeps selected background on hover when emphasized', () => {
