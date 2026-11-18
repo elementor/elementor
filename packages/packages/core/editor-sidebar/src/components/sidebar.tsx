@@ -95,7 +95,7 @@ function Groups( {
 					paddingTop = SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
 				}
 
-				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : 0;
+				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
 
 				return (
 					<React.Fragment key={ index }>
