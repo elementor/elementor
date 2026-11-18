@@ -4,6 +4,7 @@ import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { useProviders } from '@elementor/editor-styles-repository';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { mockAngieEntryPointsEnabled } from '../../__tests__/mock-angie-entry-points-enabled';
 import { getGenerateWithAngieLabel } from '../../labels';
 import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieClassSelectorAction } from '../angie-class-selector-action';
@@ -26,6 +27,7 @@ const CLASS_LABEL = 'My Class';
 
 describe( 'AngieClassSelectorAction', () => {
 	beforeEach( () => {
+		mockAngieEntryPointsEnabled();
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: ELEMENT_ID, type: 'e-div-block' },
 		} as ReturnType< typeof useElement > );
