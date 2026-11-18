@@ -46,8 +46,9 @@ export const SubmenuToggle = ( { entryId }: Props ) => {
 				<Switch
 					size="small"
 					checked={ false }
-					disabled
-					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ), style: { opacity: 0 } } }
+					onChange={ () => setIsPromotionOpen( ( open ) => ! open ) }
+					sx={ { cursor: 'pointer' } }
+					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ), style: { cursor: 'pointer' } } }
 				/>
 			</Box>
 		</Stack>
