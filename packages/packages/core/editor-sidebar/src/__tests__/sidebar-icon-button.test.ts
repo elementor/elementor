@@ -1,6 +1,6 @@
 import { type Theme } from '@elementor/ui';
 
-import { getSidebarIconButtonSx } from '../sidebar-icon-button';
+import { editorChromeIconBorderRadiusSx, getSidebarIconButtonSx } from '../sidebar-icon-button';
 
 describe( 'getSidebarIconButtonSx', () => {
 	it( 'uses compact 28px control dimensions for default state', () => {
@@ -29,10 +29,15 @@ describe( 'getSidebarIconButtonSx', () => {
 			},
 		} as Theme;
 
-		const borderRadius = getSidebarIconButtonSx().borderRadius;
+		expect( getSidebarIconButtonSx() ).toMatchObject( {
+			borderRadius: expect.any( Function ),
+		} );
 
-		expect( typeof borderRadius ).toBe( 'function' );
-		expect( ( borderRadius as ( t: Theme ) => string )( theme ) ).toBe( '8px' );
+		const { borderRadius } = editorChromeIconBorderRadiusSx as {
+			borderRadius: ( t: Theme ) => string;
+		};
+
+		expect( borderRadius( theme ) ).toBe( '8px' );
 	} );
 
 	it( 'keeps selected background on hover when emphasized', () => {
