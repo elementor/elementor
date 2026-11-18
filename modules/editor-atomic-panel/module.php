@@ -4,6 +4,7 @@ namespace Elementor\Modules\EditorAtomicPanel;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +31,8 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
+			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public function __construct() {
