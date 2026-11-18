@@ -4,8 +4,13 @@ import { AIIcon } from '@elementor/icons';
 import { IconButton, Tooltip } from '@elementor/ui';
 
 import { getGenerateWithAngieLabel } from './labels';
+import { shouldShowAngieEntryPoints } from './v3/is-angie-entry-points-enabled';
 
 export const AngieGenerateButton = ( { prompt }: { prompt: string } ) => {
+	if ( ! shouldShowAngieEntryPoints() ) {
+		return null;
+	}
+
 	const label = getGenerateWithAngieLabel();
 
 	return (
