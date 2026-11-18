@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { SIDEBAR_ICON_SIZE_PX } from '@elementor/editor-sidebar';
 import { styled, SvgIcon, type SvgIconProps, ToggleButton, type ToggleButtonProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
