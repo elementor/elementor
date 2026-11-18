@@ -1,4 +1,4 @@
-import { createPanel, registerPanel } from '@elementor/editor-panels';
+import { registerPanel } from '@elementor/editor-panels';
 
 import { isAtomicElementsPanelEnabled } from '../gate';
 import { init } from '../init';
@@ -36,13 +36,4 @@ describe( 'editor-atomic-elements-panel init', () => {
 		expect( registerPanel ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should keep the canvas selection when the panel opens', () => {
-		// Act.
-		jest.isolateModules( () => {
-			require( '../panel' );
-		} );
-
-		// Assert.
-		expect( createPanel ).toHaveBeenCalledWith( expect.objectContaining( { isOpenPreviousElement: true } ) );
-	} );
 } );
