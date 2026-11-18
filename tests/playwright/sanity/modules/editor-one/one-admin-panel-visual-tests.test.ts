@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { disablePromotionCdn } from '../../../assets/disable-promotion-cdn';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { timeouts } from '../../../config/timeouts';
@@ -18,6 +19,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		test.setTimeout( timeouts.singleTest );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
+		await disablePromotionCdn();
 		await wpAdmin.setSiteLanguage( 'he_IL' );
 		await wpAdmin.updateTranslations();
 
@@ -36,7 +38,11 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		await expect.soft( page ).toHaveScreenshot( 'editor-one-quickstart-full-page-hebrew.png', {
 			timeout: timeouts.heavyAction,
 			maxDiffPixelRatio: 0.1,
-			mask: [ page.locator( '#wpadminbar' ), page.locator( '#adminmenumain' ) ],
+			mask: [
+				page.locator( '#wpadminbar' ),
+				page.locator( '#adminmenumain' ),
+				page.locator( '#e-conversion-banner' ),
+			],
 		} );
 	} );
 } );

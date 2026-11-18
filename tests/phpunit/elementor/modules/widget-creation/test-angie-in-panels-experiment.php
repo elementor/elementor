@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Ai\Preferences;
 use Elementor\Modules\WidgetCreation\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -47,14 +48,14 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		parent::tear_down();
 	}
 
-	public function test_experiment_is_registered_as_default_inactive() {
+	public function test_experiment_is_registered_as_default_active() {
 		// Arrange
 		$data = Module::get_angie_in_panels_experimental_data();
 
 		// Act & Assert
 		$this->assertSame( Module::ANGIE_IN_PANELS_EXPERIMENT_NAME, $data['name'] );
 		$this->assertTrue( $data['hidden'] );
-		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
+		$this->assertSame( Experiments_Manager::STATE_ACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
@@ -139,6 +140,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
 			Experiments_Manager::STATE_ACTIVE
 		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			'container',
+			Experiments_Manager::STATE_ACTIVE
+		);
 		add_filter( 'pre_option_active_plugins', static fn() => $active_plugins );
 		$this->register_angie_script();
 
@@ -154,9 +159,64 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 	public function angie_plugin_active_provider(): array {
 		return [
-			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true}' ],
-			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false}' ],
+			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true,"showEntryPoints":true}' ],
+			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false,"showEntryPoints":true}' ],
 		];
+	}
+
+	public function test_print_angie_config_hides_entry_points_when_show_ai_is_disabled() {
+		// Arrange.
+		$this->act_as_admin();
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			'container',
+			Experiments_Manager::STATE_ACTIVE
+		);
+		update_user_option( get_current_user_id(), Preferences::ENABLE_AI, '0' );
+		add_filter( 'pre_option_active_plugins', static fn() => [] );
+		$this->register_angie_script();
+
+		// Act.
+		$this->get_widget_creation_module()->print_angie_config();
+
+		// Assert.
+		$this->assertSame(
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
+		);
+	}
+
+	public function test_print_angie_config_hides_entry_points_when_container_experiment_is_inactive() {
+		// Arrange.
+		$original_container_default = Plugin::$instance->experiments->get_features( 'container' )['default'] ?? null;
+		$this->act_as_admin();
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		delete_option( Experiments_Manager::OPTION_PREFIX . 'container' );
+		Plugin::$instance->experiments->set_feature_default_state(
+			'container',
+			Experiments_Manager::STATE_INACTIVE
+		);
+		add_filter( 'pre_option_active_plugins', static fn() => [] );
+		$this->register_angie_script();
+
+		// Act.
+		$this->get_widget_creation_module()->print_angie_config();
+
+		// Assert.
+		$this->assertSame(
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
+		);
+
+		if ( null !== $original_container_default ) {
+			Plugin::$instance->experiments->set_feature_default_state( 'container', $original_container_default );
+		}
 	}
 
 	public function test_experiment_can_be_activated() {
