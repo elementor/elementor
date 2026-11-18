@@ -18,9 +18,7 @@ const TABLET = { width: 900, height: 800 };
 const MOBILE = { width: 400, height: 800 };
 const OUTSIDE_CLICK_OFFSET = 5;
 
-// TEMP: targeted snapshot update, remove .only before merge
-// eslint-disable-next-line playwright/no-focused-test
-test.describe.only( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
+test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;

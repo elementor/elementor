@@ -6,9 +6,7 @@ import { wpCli } from '../../../assets/wp-cli';
 
 type EditorWindow = { $e: { run: ( cmd: string, args?: unknown ) => void }, elementor: { getContainer: ( id: string ) => unknown } };
 
-// TEMP: targeted snapshot update, remove .only before merge
-// eslint-disable-next-line playwright/no-focused-test
-test.describe.only( 'Atomic Menu @atomic-widgets', () => {
+test.describe( 'Atomic Menu @atomic-widgets', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
