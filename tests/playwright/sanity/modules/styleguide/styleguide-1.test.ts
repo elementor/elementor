@@ -138,26 +138,25 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	test( 'Switching between tabs makes relevant area visible', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
+		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 		await styleguideSaveChanges( page );
-		await page.waitForTimeout( 2000 );
+		await expect( styleguidePreviewDialog ).toBeHidden( { timeout: timeouts.heavyAction } );
 
-		// Act.
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Fonts")' );
 
-		// Assert
-		await expect( editor.getPreviewFrame().getByText( 'Global Fonts' ) ).toBeVisible( { timeout: timeouts.heavyAction } );
+		await expect( styleguidePreviewDialog ).toBeVisible( { timeout: timeouts.heavyAction } );
+		await expect( styleguidePreviewDialog.getByText( 'Global Fonts' ) ).toBeVisible( { timeout: timeouts.heavyAction } );
 
-		// Act 2.
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 		await styleguideSaveChanges( page );
-		await page.waitForTimeout( 2000 );
+		await expect( styleguidePreviewDialog ).toBeHidden( { timeout: timeouts.heavyAction } );
 
 		await page.click( '.elementor-panel-menu-item-title:has-text("Global Colors")' );
 
-		// Assert 2
-		await expect( editor.getPreviewFrame().getByText( 'Global Colors' ) ).toBeVisible( { timeout: timeouts.heavyAction } );
+		await expect( styleguidePreviewDialog ).toBeVisible( { timeout: timeouts.heavyAction } );
+		await expect( styleguidePreviewDialog.getByText( 'Global Colors' ) ).toBeVisible( { timeout: timeouts.heavyAction } );
 	} );
 
 	test( 'Enabling Styleguide Preview at Global Colors shows the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
