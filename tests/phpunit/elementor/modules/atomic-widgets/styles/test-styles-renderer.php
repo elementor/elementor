@@ -1613,4 +1613,124 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 	}
+
+	public function test_render__class_state_selector_comes_after_the_base_rule() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'menu-item-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'color' => 'blue' ],
+						'meta' => [ 'breakpoint' => null, 'state' => null ],
+					],
+					[
+						'props' => [ 'color' => 'red' ],
+						'meta' => [ 'breakpoint' => null, 'state' => 'e--current' ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( '.menu-item-style{color:blue;}', $css );
+		$this->assertStringContainsString( '.menu-item-style.e--current{color:red;}', $css );
+		$this->assertLessThan( strpos( $css, '.menu-item-style.e--current' ), strpos( $css, '.menu-item-style{' ) );
+	}
+
+	public function test_render__variant_with_breakpoint_renders_only_inside_its_media_query() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'items-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'flex-direction' => 'column' ],
+						'meta' => [ 'breakpoint' => 'mobile', 'state' => null ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [
+			'mobile' => [ 'direction' => 'max', 'value' => 768, 'is_enabled' => true ],
+		], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '@media(max-width:768px){.items-style{flex-direction:column;}}', $css );
+	}
+
+	public function test_render__class_state_with_breakpoint_renders_inside_the_media_query() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'item-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'color' => 'red' ],
+						'meta' => [ 'breakpoint' => 'mobile', 'state' => 'e--current' ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [
+			'mobile' => [ 'direction' => 'max', 'value' => 768, 'is_enabled' => true ],
+		], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '@media(max-width:768px){.item-style.e--current{color:red;}}', $css );
+	}
+
+	public function test_render__class_state_without_a_base_variant_leaves_no_base_rule() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'item-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [ 'color' => 'red' ],
+						'meta' => [ 'breakpoint' => null, 'state' => 'e--current' ],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.item-style.e--current{color:red;}', $css );
+	}
+
+	public function test_render__styles_keep_their_source_order() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'global-class',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'color' => 'blue' ], 'meta' => [ 'breakpoint' => null, 'state' => null ] ] ],
+			],
+			[
+				'id' => 'local-style',
+				'type' => 'class',
+				'variants' => [ [ 'props' => [ 'color' => 'red' ], 'meta' => [ 'breakpoint' => null, 'state' => null ] ] ],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertSame( '.global-class{color:blue;}.local-style{color:red;}', $css );
+	}
 }

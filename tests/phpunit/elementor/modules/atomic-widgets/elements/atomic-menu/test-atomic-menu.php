@@ -4,8 +4,10 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Elements\AtomicMenu;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -151,7 +153,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( 'auto', $props['width']['value']['unit'] );
 	}
 
-	public function test_menu_item_exposes_only_the_current_style_state() {
+	public function test_get_config__menu_item_exposes_its_style_states() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
@@ -160,12 +162,78 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame(
-			[ [ 'name' => 'current', 'value' => 'e--current' ] ],
-			$item_config['atomic_style_states']
+			Atomic_Menu_Item::STYLE_STATES,
+			array_column( $item_config['atomic_style_states'], 'value' )
 		);
 
 		foreach ( [ 'e-menu', 'e-menu-items', 'e-menu-entry' ] as $type ) {
 			$this->assertSame( [], $this->get_config( $type )['atomic_style_states'], $type );
+		}
+	}
+
+	public function test_get_selector_with_state__scopes_each_menu_item_state() {
+		// Act & Assert.
+		foreach ( Atomic_Menu_Item::STYLE_STATES as $state ) {
+			$this->assertTrue( Style_States::is_valid_state( $state ), $state );
+			$this->assertSame( ".menu-item.{$state}", Style_States::get_selector_with_state( '.menu-item', $state ), $state );
+		}
+	}
+
+	public function test_get_config__exposes_style_tab_requirements_for_all_menu_layers() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( array_merge( [ 'e-menu' ], self::LOCKED_TYPES ) as $type ) {
+			// Act.
+			$config = $this->get_config( $type );
+
+			// Assert.
+			$this->assertArrayNotHasKey( 'hide_design_tabs', $config['meta'], $type );
+			$this->assertArrayHasKey( 'classes', $config['atomic_props_schema'], $type );
+			$this->assertNotEmpty( $config['base_styles'], $type );
+		}
+	}
+
+	public function test_get_config__has_id_control_and_render_outputs_custom_attributes_for_all_menu_layers() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( array_merge( [ 'e-menu' ], self::LOCKED_TYPES ) as $type ) {
+			// Act.
+			$config = $this->get_config( $type );
+
+			// Assert.
+			$this->assertArrayHasKey( 'attributes', $config['atomic_props_schema'], $type );
+
+			$settings_section = array_values( array_filter(
+				$config['atomic_controls'],
+				fn( $section ) => 'settings' === $section->get_id()
+			) );
+			$binds = array_map( fn( $item ) => $item->get_bind(), $settings_section[0]->get_items() ?? [] );
+			$this->assertContains( '_cssid', $binds, $type );
+			$this->assertCount( 1, $settings_section, $type );
+		}
+
+		$renderer = Template_Renderer::instance();
+		$renderer->register( 'elementor/macros', ELEMENTOR_PATH . 'modules/atomic-widgets/elements/base/_macros.html.twig' );
+
+		foreach ( [
+			'menu' => 'atomic-menu/atomic-menu/atomic-menu.html.twig',
+			'toggle' => 'atomic-menu/atomic-menu-toggle/atomic-menu-toggle.html.twig',
+			'locked' => 'atomic-menu/base/atomic-menu-locked-element.html.twig',
+		] as $name => $path ) {
+			$renderer->register( "test/{$name}", ELEMENTOR_PATH . 'modules/atomic-widgets/elements/' . $path );
+
+			$html = $renderer->render( "test/{$name}", [
+				'id' => 'abc',
+				'type' => 'e-menu',
+				'tag' => 'div',
+				'settings' => [ 'attributes' => 'data-test-attr="yes"' ],
+				'base_styles' => [],
+				'interactions' => [],
+			] );
+
+			$this->assertStringContainsString( 'data-test-attr="yes"', $html, $name );
 		}
 	}
 
@@ -448,6 +516,59 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( '.e-menu[data-e-collapse] > .e-menu-toggle-base{display:none}', $css );
 		$this->assertStringContainsString( "@media(scripting:enabled) and (max-width:{$tablet}px){.e-menu[data-e-collapse=\"tablet\"]", $css );
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
+	}
+
+	public function test_get_collapse_css__defaults_items_layout_in_every_collapsible_breakpoint_block() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$blocks = substr_count( $css, '@media(scripting:enabled)' );
+		$this->assertGreaterThan( 0, $blocks );
+		$this->assertSame( $blocks, substr_count( $css, '> .e-menu-items-base){flex-direction:column;flex-basis:100%;width:100%}' ) );
+	}
+
+	public function test_get_collapse_css__uses_logical_properties_so_rtl_flips() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringContainsString( 'inset-inline-start:0', $css );
+		$this->assertDoesNotMatchRegularExpression( '/[{;](left|right|margin-left|margin-right|padding-left|padding-right):/', $css );
+	}
+
+	public function test_get_config__menu_items_base_style_keeps_the_skeleton_without_a_flex_direction() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$config = $this->get_config( 'e-menu-items' );
+
+		// Assert.
+		$props = $config['base_styles']['e-menu-items-base']['variants'][0]['props'];
+		$this->assertArrayNotHasKey( 'flex-direction', $props );
+		$this->assertSame( 'flex', $props['display']['value'] );
+		$this->assertSame( 'none', $props['list-style-type']['value'] );
+		$this->assertSame( 16, $props['gap']['value']['size'] );
+	}
+
+	public function test_get_collapse_css__defaults_items_layout_with_zero_specificity() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringNotContainsString( ':where(.e-menu-items-base)', $css );
+		$this->assertStringContainsString( '{flex-direction:column;flex-basis:100%;width:100%}', $css );
+		$this->assertMatchesRegularExpression( '/:where\([^{]*> \.e-menu-items-base\)\{flex-direction:column;flex-basis:100%;width:100%\}/', $css );
+		$this->assertDoesNotMatchRegularExpression( '/> \.e-menu-items-base\{[^}]*flex-direction/', $css );
+	}
+
+	public function test_get_collapse_css__keeps_toggle_rules_forced() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringContainsString( '> .e-menu-toggle-base{display:flex;order:-1;flex:0 0 auto;width:auto;', $css );
 	}
 
 	public function test_rendered_toggle_is_a_labelled_button_after_the_items() {

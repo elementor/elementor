@@ -14,6 +14,8 @@ const CLASS_STATES: StyleDefinitionClassState[] = [
 	'e--playing',
 	'e--paused',
 	'e--current',
+	'e--current-ancestor',
+	'e--expanded',
 ];
 
 function getAdditionalStates( state: StyleDefinitionState ): StyleDefinitionAdditionalPseudoState[] {

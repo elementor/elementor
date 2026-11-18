@@ -171,6 +171,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 	 * CSS that collapses the items behind the toggle, one block per breakpoint the site has.
 	 * Lives in a stylesheet (not in the element's atomic styles) because the breakpoint is a setting of
 	 * the menu, not a style of it, and the widths are the site's own.
+	 * The items' layout defaults sit in `:where()` so anything the author sets on the items overrides them.
 	 */
 	public static function get_collapse_css(): string {
 		$menu = '.e-menu[data-e-collapse]';
@@ -190,7 +191,8 @@ class Atomic_Menu extends Atomic_Element_Base {
 			$css[] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px){"
 				. "{$scope}{flex-wrap:wrap;position:relative}"
 				. "{$scope} > {$toggle}{display:flex;order:-1;flex:0 0 auto;width:auto;align-items:center;justify-content:center}"
-				. "{$scope} > {$items}{display:none;flex-direction:column;flex-basis:100%;width:100%}"
+				. "{$scope} > {$items}{display:none}"
+				. ":where({$scope} > {$items}){flex-direction:column;flex-basis:100%;width:100%}"
 				. "{$scope}[data-e-open=\"true\"] > {$items}{display:flex}"
 				. "{$scope}[data-e-collapsed-position=\"overlay\"] > {$items}{position:absolute;top:100%;inset-inline-start:0;z-index:10}"
 				. '}';

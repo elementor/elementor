@@ -14,4 +14,11 @@ describe( 'state-utils', () => {
 		// Assert
 		expect( selector ).toBe( '.menu-item.e--current' );
 	} );
+
+	it.each( [ 'e--current-ancestor', 'e--expanded' ] as const )( 'should treat %s as a class state', ( state ) => {
+		// Act & Assert
+		expect( isClassState( state ) ).toBe( true );
+		expect( isPseudoState( state as never ) ).toBe( false );
+		expect( getSelectorWithState( '.menu-item', state ) ).toBe( `.menu-item.${ state }` );
+	} );
 } );
