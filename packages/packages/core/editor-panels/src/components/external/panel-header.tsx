@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Box, type BoxProps, styled } from '@elementor/ui';
 
-import { isSidebarPanelChromeEnabled } from '../../panel-chrome-gate';
 import { sidebarPanelHeaderSx } from '../../panel-header-chrome';
 
 const Header = styled( Box )( ( { theme } ) => ( {
@@ -13,7 +13,7 @@ const Header = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 export default function PanelHeader( { children, sx, ...props }: BoxProps ) {
-	const sidebarChrome = isSidebarPanelChromeEnabled();
+	const sidebarChrome = isSidebarEnabled();
 
 	return (
 		<>

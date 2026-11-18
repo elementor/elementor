@@ -6,7 +6,7 @@ export const SIDEBAR_ICON_BUTTON_SIZE_PX = 28;
 
 const EDITOR_CHROME_BORDER_RADIUS_MULTIPLIER_INDEX = 2;
 
-export function getEditorChromeIconBorderRadiusPx( theme: Theme ): string {
+function getEditorChromeIconBorderRadiusPx( theme: Theme ): string {
 	const multiplier =
 		theme.shape.__unstableBorderRadiusMultipliers?.[ EDITOR_CHROME_BORDER_RADIUS_MULTIPLIER_INDEX ] ?? 1;
 

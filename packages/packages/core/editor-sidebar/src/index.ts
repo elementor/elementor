@@ -6,12 +6,7 @@ export {
 	sidebarFooter,
 	sidebarTools,
 } from './locations';
-export { SIDEBAR_RAIL_BOTTOM_INSET_SPACING, SIDEBAR_WIDTH_VAR } from './constants';
+export { SIDEBAR_WIDTH_VAR } from './constants';
 export { isSidebarEnabled } from './gate';
 export { init } from './init';
-export {
-	editorChromeIconBorderRadiusSx,
-	getEditorChromeIconBorderRadiusPx,
-	getSidebarIconButtonSx,
-	SIDEBAR_ICON_SIZE_PX,
-} from './sidebar-icon-button';
+export { editorChromeIconBorderRadiusSx, getSidebarIconButtonSx, SIDEBAR_ICON_SIZE_PX } from './sidebar-icon-button';

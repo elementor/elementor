@@ -7,8 +7,3 @@ export const sidebarPanelHeaderSx: SxProps< Theme > = {
 	p: 1,
 	pl: 2,
 };
-
-export const sidebarPanelHeaderTitleSx: SxProps< Theme > = {
-	flex: 1,
-	minWidth: 0,
-};
