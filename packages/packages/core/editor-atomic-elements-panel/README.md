@@ -1,3 +1,3 @@
 # Editor Atomic Elements Panel
 
-Atomic elements catalog panel. Active only when `e_atomic_elements` and `e_editor_sidebar` are both on.
+Atomic elements catalog panel. Active only when the `e_editor_atomic_panel` experiment is on.

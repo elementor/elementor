@@ -5,18 +5,11 @@ import { isAtomicElementsPanelEnabled } from '../gate';
 jest.mock( '@elementor/editor-v1-adapters', () => ( { isExperimentActive: jest.fn() } ) );
 
 describe( 'isAtomicElementsPanelEnabled', () => {
-	it.each( [
-		[ true, true, true ],
-		[ true, false, false ],
-		[ false, true, false ],
-		[ false, false, false ],
-	] )( 'should be %s/%s => %s', ( atomic, sidebar, expected ) => {
+	it.each( [ true, false ] )( 'should return %s when the experiment is %s', ( isActive ) => {
 		// Arrange.
-		jest.mocked( isExperimentActive ).mockImplementation( ( name ) =>
-			name === 'e_atomic_elements' ? atomic : sidebar
-		);
+		jest.mocked( isExperimentActive ).mockImplementation( ( name ) => name === 'e_editor_atomic_panel' && isActive );
 
 		// Act & Assert.
-		expect( isAtomicElementsPanelEnabled() ).toBe( expected );
+		expect( isAtomicElementsPanelEnabled() ).toBe( isActive );
 	} );
 } );
