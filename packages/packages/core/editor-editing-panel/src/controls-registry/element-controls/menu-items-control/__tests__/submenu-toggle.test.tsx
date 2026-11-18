@@ -18,20 +18,20 @@ describe( '<SubmenuToggle />', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should show the locked promotion with the approved copy and not enable', () => {
+	it( 'should disable the switch and show the promotion from the crown when locked', () => {
 		// Arrange
 		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: null, locked: true, promotion } );
 		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) );
+		fireEvent.click( screen.getByLabelText( 'Promotion chip' ) );
 
 		// Assert
 		expect( screen.getByText( 'Mega Menu' ) ).toBeInTheDocument();
 		expect( screen.getByText( promotion.content ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Upgrade Now' } ) ).toHaveAttribute( 'href', promotion.ctaUrl );
 		expect( enableSubmenu ).not.toHaveBeenCalled();
-		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toBeDisabled();
 	} );
 
 	it( 'should enable the submenu when entitled', () => {
@@ -50,6 +50,18 @@ describe( '<SubmenuToggle />', () => {
 	it( 'should disable an existing submenu', () => {
 		// Arrange
 		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: false, promotion } );
+		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) );
+
+		// Assert
+		expect( disableSubmenu ).toHaveBeenCalledWith( 'entry-1' );
+	} );
+
+	it( 'should allow turning an existing submenu off when new ones are locked', () => {
+		// Arrange
+		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: true, promotion } );
 		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
 
 		// Act
