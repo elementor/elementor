@@ -40,6 +40,8 @@ class Module extends BaseModule {
 	/**
 	 * The site provider loads its saved widget documents while the registry is built, and each load runs
 	 * the lock sync, which needs the registry: without this flag the build would start over without end.
+	 *
+	 * @var bool
 	 */
 	private bool $is_building_registry = false;
 
