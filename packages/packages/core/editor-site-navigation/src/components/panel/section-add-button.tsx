@@ -1,16 +1,29 @@
 import * as React from 'react';
 import { PlusIcon } from '@elementor/icons';
-import { IconButton } from '@elementor/ui';
+import { Button, ListItem } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getPostTypeCreateCapability, postTypesMap, type Slug } from '../../api/post';
+import { getPostTypeCreateCapability, type Slug } from '../../api/post';
 import { usePostListContext } from '../../contexts/post-list-context';
 import useUser from '../../hooks/use-user';
+import { contentPanelSectionAddRowSx } from './content-panel-chrome';
 
 type Props = {
 	postTypeSlug?: Slug;
 	onBeforeCreate?: () => void;
 };
+
+function getSectionAddLabel( type: Slug ): string {
+	if ( type === 'page' ) {
+		return __( 'Add page', 'elementor' );
+	}
+
+	if ( type === 'post' ) {
+		return __( 'Add post', 'elementor' );
+	}
+
+	return __( 'Add new', 'elementor' );
+}
 
 export default function SectionAddButton( { postTypeSlug, onBeforeCreate }: Props ) {
 	const context = usePostListContext();
@@ -18,24 +31,23 @@ export default function SectionAddButton( { postTypeSlug, onBeforeCreate }: Prop
 	const setEditMode = context.setEditMode;
 	const { data: user } = useUser();
 	const createCapability = getPostTypeCreateCapability( type );
-	const singularName = postTypesMap[ type ].labels.singular_name;
-
-	// translators: %s: Post type singular name (e.g. Page, Post).
-	const ariaLabel = __( 'New %s', 'elementor' ).replace( '%s', singularName );
+	const label = getSectionAddLabel( type );
 
 	return (
-		<IconButton
-			size="small"
-			aria-label={ ariaLabel }
-			disabled={ ! user?.capabilities?.[ createCapability ] }
-			sx={ { borderRadius: 1 } }
-			onClick={ ( event ) => {
-				event.stopPropagation();
-				onBeforeCreate?.();
-				setEditMode( { mode: 'create', details: {} } );
-			} }
-		>
-			<PlusIcon fontSize="small" />
-		</IconButton>
+		<ListItem disablePadding dense sx={ contentPanelSectionAddRowSx }>
+			<Button
+				color="inherit"
+				disabled={ ! user?.capabilities?.[ createCapability ] }
+				size="small"
+				startIcon={ <PlusIcon fontSize="small" /> }
+				sx={ { px: 1.5, textTransform: 'none' } }
+				onClick={ () => {
+					onBeforeCreate?.();
+					setEditMode( { mode: 'create', details: {} } );
+				} }
+			>
+				{ label }
+			</Button>
+		</ListItem>
 	);
 }

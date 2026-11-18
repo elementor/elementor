@@ -110,14 +110,14 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		// Assert.
 		const items = screen.getAllByRole( 'listitem' );
 
-		expect( items.length ).toBe( 3 );
+		expect( items.length ).toBe( 4 );
 
-		// First item is the list title.
 		expect( items[ 0 ] ).toHaveTextContent( `Pages (2)` );
-		expect( items[ 1 ] ).toHaveTextContent( 'Home' );
-		expect( items[ 1 ] ).toHaveTextContent( 'Homepage' ); // Home icon.
-		expect( items[ 2 ] ).toHaveTextContent( 'About' );
-		expect( items[ 2 ] ).toHaveTextContent( '(draft)' );
+		expect( items[ 1 ] ).toHaveTextContent( 'Add page' );
+		expect( items[ 2 ] ).toHaveTextContent( 'Home' );
+		expect( items[ 2 ] ).toHaveTextContent( 'Homepage' );
+		expect( items[ 3 ] ).toHaveTextContent( 'About' );
+		expect( items[ 3 ] ).toHaveTextContent( '(draft)' );
 	} );
 
 	it( 'should create a new post after clicking section add button', async () => {
@@ -129,7 +129,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		);
 
 		// Act.
-		const addNewButton = screen.getByRole( 'button', { name: 'New Page' } );
+		const addNewButton = screen.getByRole( 'button', { name: 'Add page' } );
 		fireEvent.click( addNewButton );
 
 		const input = screen.getByRole( 'textbox' );

@@ -100,13 +100,8 @@ export default function PostsCollapsibleList( { isLastSection = false, isOpenByD
 	const showNoResults = trimmedSearch && filteredPosts.length === 0;
 
 	return (
-		<CollapsibleList
-			isLastSection={ isLastSection }
-			label={ label }
-			isOpen={ isOpen }
-			onOpenChange={ setIsOpen }
-			trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
-		>
+		<CollapsibleList isLastSection={ isLastSection } label={ label } isOpen={ isOpen } onOpenChange={ setIsOpen }>
+			<SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } />
 			{ showNoResults && (
 				<Box sx={ { py: 2, px: 2 } }>
 					<Typography variant="body2" color="text.secondary">

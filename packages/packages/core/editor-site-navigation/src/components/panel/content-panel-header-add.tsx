@@ -3,7 +3,7 @@ import { PageTypeIcon, PlusIcon, PostTypeIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
-	Button,
+	IconButton,
 	ListItemIcon,
 	ListItemText,
 	Menu,
@@ -21,6 +21,8 @@ const typeIcons: Record< Slug, typeof PageTypeIcon > = {
 	post: PostTypeIcon,
 };
 
+const HEADER_ADD_ICON_SIZE = 'tiny';
+
 export default function ContentPanelHeaderAdd() {
 	const { requestCreate } = useContentPanelCoordinator();
 	const { data: user } = useUser();
@@ -34,15 +36,14 @@ export default function ContentPanelHeaderAdd() {
 
 	return (
 		<>
-			<Button
-				color="inherit"
-				size="small"
-				startIcon={ <PlusIcon fontSize="small" /> }
-				sx={ { flexShrink: 0 } }
+			<IconButton
+				aria-label={ __( 'Add new', 'elementor' ) }
+				size={ HEADER_ADD_ICON_SIZE }
+				variant="outlined"
 				{ ...buttonProps }
 			>
-				{ __( 'Add new', 'elementor' ) }
-			</Button>
+				<PlusIcon fontSize={ HEADER_ADD_ICON_SIZE } />
+			</IconButton>
 			<Menu { ...menuProps }>
 				{ panelPostTypeSlugs.map( ( slug ) => {
 					const Icon = typeIcons[ slug ];
