@@ -19,6 +19,7 @@ class Site_Widgets_Access_Controller {
 	const ACCESS_ACTIVE = 'active';
 	const ACCESS_EXPIRED = 'expired';
 	const ACCESS_NONE = 'none';
+	const ACCESS_LEVELS = [ self::ACCESS_ACTIVE, self::ACCESS_EXPIRED, self::ACCESS_NONE ];
 
 	public static function can_add_to_page(): bool {
 		return self::ACCESS_ACTIVE === self::get_access();
@@ -28,8 +29,14 @@ class Site_Widgets_Access_Controller {
 		return in_array( self::get_access(), [ self::ACCESS_ACTIVE, self::ACCESS_EXPIRED ], true );
 	}
 
+	/**
+	 * An unknown answer falls back to the license, so a broken listener can't hide copies site-wide.
+	 */
 	public static function get_access(): string {
-		return (string) apply_filters( self::ACCESS_FILTER, self::get_license_access() );
+		$license_access = self::get_license_access();
+		$access = apply_filters( self::ACCESS_FILTER, $license_access );
+
+		return in_array( $access, self::ACCESS_LEVELS, true ) ? $access : $license_access;
 	}
 
 	private static function get_license_access(): string {

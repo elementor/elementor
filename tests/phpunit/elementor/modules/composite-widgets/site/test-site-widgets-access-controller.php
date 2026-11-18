@@ -64,6 +64,32 @@ class Test_Site_Widgets_Access_Controller extends Elementor_Test_Base {
 		], $access );
 	}
 
+	/**
+	 * @dataProvider unknown_answers_provider
+	 */
+	public function test_access__falls_back_to_the_license_on_an_unknown_pro_answer( $answer ) {
+		// Arrange.
+		\Mock_Pro_License_API::set_license_state( false, true );
+		add_filter( Site_Widgets_Access_Controller::ACCESS_FILTER, fn () => $answer );
+
+		// Act.
+		$access = $this->get_access();
+
+		// Assert.
+		$this->assertSame( [
+			'add_to_page' => false,
+			'display' => true,
+		], $access );
+	}
+
+	public function unknown_answers_provider(): array {
+		return [
+			'typo' => [ 'expird' ],
+			'empty string' => [ '' ],
+			'null' => [ null ],
+		];
+	}
+
 	private function get_access(): array {
 		return [
 			'add_to_page' => Site_Widgets_Access_Controller::can_add_to_page(),
