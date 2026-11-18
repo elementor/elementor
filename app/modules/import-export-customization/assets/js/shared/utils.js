@@ -1,3 +1,5 @@
+import { KIT_SECTIONS, KIT_SECTION_ITEMS } from './constants';
+
 export function isExperimentActive( experimentName ) {
 	const common = typeof globalThis !== 'undefined' ? globalThis.elementorCommon : undefined;
 
@@ -69,6 +71,7 @@ export function getAvailableCustomizationDialogChildren( dialogKey ) {
 const SITE_SETTINGS_MANIFEST_KEY = 'site-settings';
 const WP_CONTENT_MANIFEST_KEY = 'wp-content';
 const CUSTOM_POST_TYPE_TITLES_MANIFEST_KEY = 'custom-post-type-title';
+const COMPONENTS_MANIFEST_KEY = 'components';
 
 export function getImportManifest( contextData ) {
 	return contextData?.data?.uploadedData?.manifest ?? null;
@@ -119,6 +122,26 @@ export function isContentSettingsExported( contextData ) {
 		getManifestItem( contextData, WP_CONTENT_MANIFEST_KEY ) ||
 		getManifestItem( contextData, CUSTOM_POST_TYPE_TITLES_MANIFEST_KEY )
 	);
+}
+
+export function hasExportedComponents( contextData ) {
+	return Object.keys( getManifestItem( contextData, COMPONENTS_MANIFEST_KEY ) || {} ).length > 0;
+}
+
+export function resolveComponentsCustomization( { customization, includes, data, isImport } ) {
+	if ( ! includes?.includes( KIT_SECTIONS.TEMPLATES ) ) {
+		return false;
+	}
+
+	const savedValue = customization?.templates?.components?.enabled;
+
+	if ( 'boolean' === typeof savedValue ) {
+		return savedValue;
+	}
+
+	const componentsDialog = getCustomizationDialog( KIT_SECTION_ITEMS.TEMPLATES_COMPONENTS );
+
+	return !! componentsDialog?.getInitialState?.( { contextData: { data }, includesTemplates: true, isImport } )?.enabled;
 }
 
 export function getImportedClassesCount( contextData ) {

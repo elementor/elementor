@@ -29,7 +29,8 @@ class Import extends Import_Runner_Base {
 	public function should_import( array $data ) {
 		return (
 			Components_Module::is_import_export_supported() &&
-			in_array( 'content', $data['include'] ?? [], true ) &&
+			in_array( 'templates', $data['include'] ?? [], true ) &&
+			true === ( $data['customization']['components'] ?? null ) &&
 			! empty( $data['manifest'][ Component_Document::EXPORT_MANIFEST_KEY ] ) &&
 			! empty( $data['extracted_directory_path'] )
 		);
