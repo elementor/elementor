@@ -4,3 +4,4 @@ export { createPanel, registerPanel } from './api';
 export { createPanel as __createPanel, registerPanel as __registerPanel } from './api';
 
 export * from './components/external';
+export { sidebarPanelHeaderSx, sidebarPanelHeaderTitleSx } from './panel-header-chrome';

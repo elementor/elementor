@@ -2,8 +2,8 @@ import * as React from 'react';
 import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { DefaultStylesTabEmbedded, trackDefaultStyles } from '@elementor/editor-default-styles';
 import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
+import { Panel, PanelBody, PanelHeader, PanelHeaderTitle, sidebarPanelHeaderTitleSx } from '@elementor/editor-panels';
 import { isSidebarEnabled } from '@elementor/editor-sidebar';
-import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
@@ -143,7 +143,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 						spacing={ 0.5 }
 						sx={ sidebarPanelChrome ? undefined : { p: 1, pl: 2 } }
 					>
-						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
+						<PanelHeaderTitle sx={ sidebarPanelHeaderTitleSx }>
 							{ __( 'Design system', 'elementor' ) }
 						</PanelHeaderTitle>
 						<DesignSystemHeaderMenu />
