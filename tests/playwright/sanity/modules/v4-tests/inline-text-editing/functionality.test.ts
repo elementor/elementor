@@ -4,6 +4,17 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 
+async function hideAngieControlHeaderButtons( page: Page ): Promise<void> {
+	const angieButtons = page.getByRole( 'button', { name: 'Generate with Angie' } );
+
+	await angieButtons.first().waitFor( { state: 'attached', timeout: 5000 } ).catch( () => null );
+	await angieButtons.evaluateAll( ( buttons ) => {
+		buttons.forEach( ( button ) => {
+			( button as HTMLElement ).style.display = 'none';
+		} );
+	} );
+}
+
 test.describe( 'Inline Editing Control @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
@@ -30,6 +41,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
 
+			await hideAngieControlHeaderButtons( page );
 			await expect.soft( page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
 		} );
 	} );
@@ -79,6 +91,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 
 			await editor.selectElement( containerId );
 			await editor.selectElement( paragraphId );
+			await hideAngieControlHeaderButtons( page );
 			await expect.soft( contentSection ).toHaveScreenshot( 'inline-edited-paragraph-control-panel.png' );
 		} );
 

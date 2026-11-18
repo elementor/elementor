@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { buildAngieV3CodePrompt } from '../../prompts';
 import { registerV3AngieControl } from '../registry';
 
+/** ED-26126 — Replace V3 Code / Custom CSS / HTML AI with Angie. */
 export function initV3CodeControls(): void {
 	registerV3AngieControl( {
 		types: [ 'code' ],
