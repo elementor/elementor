@@ -1,2 +1,2 @@
 export const ELEMENTS_ROUTE = 'panel/elements';
-export const NOTICE_AREA_ID = 'elementor-panel-elements-notice-area';
+export const PANEL_HEADER_ID = 'elementor-panel-header';

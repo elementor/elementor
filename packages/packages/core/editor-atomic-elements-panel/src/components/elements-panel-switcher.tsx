@@ -60,9 +60,9 @@ export function ElementsPanelSwitcher( { value }: Props ) {
 				<AtomIcon sx={ { fontSize: ICON_SIZE } } />
 				{ value === 'atomic' && <Label>{ __( 'Atomic', 'elementor' ) }</Label> }
 			</ToggleButton>
-			<ToggleButton value="non_atomic" aria-label={ __( 'Existing elements panel', 'elementor' ) }>
+			<ToggleButton value="non_atomic" aria-label={ __( 'Legacy elements panel', 'elementor' ) }>
 				<WidgetsIcon sx={ { fontSize: ICON_SIZE } } />
-				{ value === 'non_atomic' && <Label>{ __( 'Existing', 'elementor' ) }</Label> }
+				{ value === 'non_atomic' && <Label>{ __( 'Legacy', 'elementor' ) }</Label> }
 			</ToggleButton>
 		</ToggleButtonGroup>
 	);
