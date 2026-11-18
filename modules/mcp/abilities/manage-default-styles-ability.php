@@ -30,6 +30,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 	private ?Default_Styles_Repository $repository;
 	private ?Css_Converter $css_converter;
+	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Default_Styles_Repository $repository = null, ?Css_Converter $css_converter = null ) {
 		$this->repository = $repository;
@@ -101,6 +102,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
+		$this->is_dry_run_execution = self::is_dry_run( $input );
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
@@ -126,7 +128,13 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 			);
 		}
 
-		$response = $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
+
+		if ( $this->is_dry_run_execution ) {
+			$response['dry_run'] = true;
+
+			return $response;
+		}
 
 		$failed_count = $this->count_failed_operations( $response['results'] );
 
@@ -140,21 +148,25 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		return $response;
 	}
 
+	public function supports_dry_run(): bool {
+		return true;
+	}
+
 	private function count_failed_operations( array $results ): int {
 		return count( array_filter( $results, fn( $result ) => 'ok' !== ( $result['status'] ?? '' ) ) );
 	}
 
-	private function handle_bulk( array $operations ): array {
+	private function handle_bulk( array $operations, bool $dry_run = false ): array {
 		$results = new Bulk_Operations_Result();
 
 		foreach ( $operations as $index => $operation ) {
-			$this->process_operation( (int) $index, $operation, $results );
+			$this->process_operation( (int) $index, $operation, $results, $dry_run );
 		}
 
 		return $results->to_array();
 	}
 
-	private function process_operation( int $index, $operation, Bulk_Operations_Result $results ): void {
+	private function process_operation( int $index, $operation, Bulk_Operations_Result $results, bool $dry_run ): void {
 		if ( ! is_array( $operation ) ) {
 			$results->add_error( $index, '', 'invalid_input', __( 'Invalid operation.', 'elementor' ) );
 			return;
@@ -179,11 +191,11 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 		switch ( $action ) {
 			case 'update':
-				$this->handle_update( $index, $tag, $operation, $results );
+				$this->handle_update( $index, $tag, $operation, $results, $dry_run );
 				return;
 
 			case 'delete':
-				$this->handle_delete( $index, $tag, $results );
+				$this->handle_delete( $index, $tag, $results, $dry_run );
 				return;
 
 			default:
@@ -195,7 +207,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		}
 	}
 
-	private function handle_update( int $index, string $tag, array $operation, Bulk_Operations_Result $results ): void {
+	private function handle_update( int $index, string $tag, array $operation, Bulk_Operations_Result $results, bool $dry_run ): void {
 		$css_string = $operation['css'] ?? null;
 
 		if ( ! is_string( $css_string ) || '' === trim( $css_string ) ) {
@@ -243,6 +255,15 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 		$merged = $this->strip_null_props( $merged );
 
+		if ( $dry_run ) {
+			$results->add_success( $index, 'update', [
+				'tag' => $tag,
+				'type' => self::CLASS_TYPE,
+				'variants' => $merged,
+			] );
+			return;
+		}
+
 		$persisted = $this->get_repository()->put( $tag, [
 			'type' => self::CLASS_TYPE,
 			'variants' => $merged,
@@ -258,11 +279,16 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		$results->add_success( $index, 'update', [ 'tag' => $tag ] );
 	}
 
-	private function handle_delete( int $index, string $tag, Bulk_Operations_Result $results ): void {
+	private function handle_delete( int $index, string $tag, Bulk_Operations_Result $results, bool $dry_run ): void {
 		$existing = $this->get_repository()->get( $tag );
 
 		if ( null === $existing ) {
 			$results->add_error( $index, 'delete', 'not_found', __( 'Default style not found for this tag.', 'elementor' ) );
+			return;
+		}
+
+		if ( $dry_run ) {
+			$results->add_success( $index, 'delete', [ 'tag' => $tag ] );
 			return;
 		}
 
