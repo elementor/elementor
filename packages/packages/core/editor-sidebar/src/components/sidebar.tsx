@@ -104,9 +104,7 @@ function Groups( {
 
 				return (
 					<React.Fragment key={ index }>
-						{ index > 0 && ! skipLeadingDivider && (
-							<Divider sx={ { ...sidebarInsetDividerSx, my: 0 } } />
-						) }
+						{ index > 0 && ! skipLeadingDivider && <Divider sx={ { ...sidebarInsetDividerSx, my: 0 } } /> }
 						<Stack
 							alignItems="center"
 							boxSizing="border-box"
