@@ -63,7 +63,6 @@ class Test_Module extends Elementor_Test_Base {
 	}
 
 	public function test_get_upgrade_redirect_url__returns_selected_action_url() {
-		return;
 		// Arrange
 		$this->act_as_admin();
 		$this->reset_menu_data_provider();
