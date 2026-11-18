@@ -11,8 +11,8 @@ class Submenu_Entitlement {
 	const LICENSE_OPTION = '_elementor_pro_license_v2_data';
 	const LICENSE_STATUS_EXPIRED = 'expired';
 
-	// Single place to set the dedicated Elementor Go link once it is supplied.
-	const UPGRADE_URL = '';
+	// Single place to change the Elementor Go link of the locked Submenu popover.
+	const UPGRADE_URL = 'https://go.elementor.com/go-pro-atomic-mega-menu/';
 
 	public static function is_locked(): bool {
 		$locked = self::is_locked_for( Utils::has_pro(), self::get_license_data() );

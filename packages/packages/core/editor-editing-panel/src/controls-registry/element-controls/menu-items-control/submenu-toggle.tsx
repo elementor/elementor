@@ -43,14 +43,15 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 	return (
 		<Stack gap={ 1.5 }>
 			<Stack direction="row" alignItems="center" justifyContent="space-between" ref={ anchorRef }>
-				<ControlFormLabel>{ __( 'Enable Submenu', 'elementor' ) }</ControlFormLabel>
 				<Stack direction="row" alignItems="center">
+					<ControlFormLabel>{ __( 'Enable Submenu', 'elementor' ) }</ControlFormLabel>
 					{ isLockedOff && promotion && (
 						<PromotionPopover
 							open={ isPromotionOpen }
 							title={ promotion.title }
 							content={ promotion.content }
 							ctaUrl={ promotion.ctaUrl }
+							ctaText={ __( 'Upgrade Now', 'elementor' ) }
 							onClose={ () => setIsPromotionOpen( false ) }
 							anchorRef={ anchorRef }
 						>
@@ -63,13 +64,13 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 							</Box>
 						</PromotionPopover>
 					) }
-					<Switch
-						size="small"
-						checked={ isEnabled }
-						onChange={ onToggle }
-						inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
-					/>
 				</Stack>
+				<Switch
+					size="small"
+					checked={ isEnabled }
+					onChange={ onToggle }
+					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
+				/>
 			</Stack>
 			{ showEditButton && isEnabled && submenuId && (
 				<Button size="small" color="secondary" variant="outlined" onClick={ () => selectSubmenu( submenuId ) }>

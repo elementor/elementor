@@ -29,6 +29,7 @@ describe( '<SubmenuToggle />', () => {
 		// Assert
 		expect( screen.getByText( 'Mega Menu' ) ).toBeInTheDocument();
 		expect( screen.getByText( promotion.content ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Upgrade Now' } ) ).toHaveAttribute( 'href', promotion.ctaUrl );
 		expect( enableSubmenu ).not.toHaveBeenCalled();
 	} );
 
