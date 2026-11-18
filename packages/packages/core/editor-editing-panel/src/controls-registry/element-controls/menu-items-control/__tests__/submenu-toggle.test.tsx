@@ -3,7 +3,7 @@ import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { SubmenuToggle } from '../submenu-toggle';
-import { disableSubmenu, enableSubmenu, selectSubmenu, useSubmenu } from '../use-submenu';
+import { getSubmenuPromotion } from '../use-submenu';
 
 jest.mock( '../use-submenu' );
 
@@ -16,11 +16,21 @@ const promotion = {
 describe( '<SubmenuToggle />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.mocked( getSubmenuPromotion ).mockReturnValue( promotion );
 	} );
 
-	it( 'should disable the switch and show the promotion from the crown when locked', () => {
+	it( 'should render a disabled, unchecked switch with the Pro crown', () => {
+		// Act
+		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
+
+		// Assert
+		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toBeDisabled();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).not.toBeChecked();
+		expect( screen.getByLabelText( 'Promotion chip' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should open the promotion with the approved copy and the upgrade link from the crown', () => {
 		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: null, locked: true, promotion } );
 		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
 
 		// Act
@@ -30,75 +40,20 @@ describe( '<SubmenuToggle />', () => {
 		expect( screen.getByText( 'Mega Menu' ) ).toBeInTheDocument();
 		expect( screen.getByText( promotion.content ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Upgrade Now' } ) ).toHaveAttribute( 'href', promotion.ctaUrl );
-		expect( enableSubmenu ).not.toHaveBeenCalled();
-		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toBeDisabled();
 	} );
 
-	it( 'should enable the submenu when entitled', () => {
+	it( 'should render nothing when there is no promotion to show', () => {
 		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: null, locked: false, promotion } );
-		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
+		jest.mocked( getSubmenuPromotion ).mockReturnValue( null );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) );
+		const { container } = renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
 
 		// Assert
-		expect( enableSubmenu ).toHaveBeenCalledWith( 'entry-1' );
-		expect( screen.queryByText( 'Mega Menu' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'should disable an existing submenu', () => {
-		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: false, promotion } );
-		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
-
-		// Act
-		fireEvent.click( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) );
-
-		// Assert
-		expect( disableSubmenu ).toHaveBeenCalledWith( 'entry-1' );
-	} );
-
-	it( 'should allow turning an existing submenu off when new ones are locked', () => {
-		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: true, promotion } );
-		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
-
-		// Act
-		fireEvent.click( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) );
-
-		// Assert
-		expect( disableSubmenu ).toHaveBeenCalledWith( 'entry-1' );
-	} );
-
-	it( 'should keep an existing submenu editable when new ones are locked', () => {
-		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: true, promotion } );
-		renderWithTheme( <SubmenuToggle entryId="entry-1" showEditButton /> );
-
-		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Edit Submenu' } ) );
-
-		// Assert
-		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toBeChecked();
-		expect( selectSubmenu ).toHaveBeenCalledWith( 'sub-1' );
-	} );
-
-	it( 'should show Edit Submenu only when requested and enabled', () => {
-		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: false, promotion } );
-
-		// Act
-		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
-
-		// Assert
-		expect( screen.queryByRole( 'button', { name: 'Edit Submenu' } ) ).not.toBeInTheDocument();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'should render nothing without an entry', () => {
-		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: null, locked: true, promotion: null } );
-
 		// Act
 		const { container } = renderWithTheme( <SubmenuToggle entryId={ null } /> );
 
