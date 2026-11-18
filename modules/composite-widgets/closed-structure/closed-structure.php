@@ -78,9 +78,9 @@ class Closed_Structure {
 	}
 
 	/**
-	 * `isLocked` is saved with each part, but the definition can be unregistered later (a deleted site
-	 * widget, a deactivated addon). Re-deriving it keeps the UI in line with the guard: parts are locked
-	 * only while their widget closes them.
+	 * `isLocked` is saved with each part, but a widget's definition can stop being registered: a site
+	 * widget is deleted, or the plugin that registered it is deactivated. Re-deriving it on editor load
+	 * keeps the UI in line with the guard: parts are locked only while their widget closes them.
 	 */
 	public function sync_locks( array $elements ): array {
 		return $this->sync_locks_below( $elements, false );
