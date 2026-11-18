@@ -15,11 +15,10 @@ import ErrorState from './error-state';
 import PostListItem from './post-list-item';
 
 type Props = {
-	isLastSection?: boolean;
 	isOpenByDefault?: boolean;
 };
 
-export default function PostsCollapsibleList( { isLastSection = false, isOpenByDefault = false }: Props ) {
+export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
 	const { type, editMode, setEditMode } = usePostListContext();
 	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
@@ -102,7 +101,6 @@ export default function PostsCollapsibleList( { isLastSection = false, isOpenByD
 	return (
 		<CollapsibleList
 			count={ displayCount }
-			isLastSection={ isLastSection }
 			isOpen={ isOpen }
 			onOpenChange={ setIsOpen }
 			title={ sectionTitle }

@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { panelPostTypeSlugs } from '../../api/post';
 import { ContentPanelCoordinatorProvider } from '../../contexts/content-panel-coordinator';
 import { PostListContextProvider } from '../../contexts/post-list-context';
-import { contentPanelFullBleedDividerSx, contentPanelHeaderStackSx } from './content-panel-chrome';
+import { contentPanelHeaderStackSx } from './content-panel-chrome';
 import ContentPanelHeaderAdd from './content-panel-header-add';
 import ContentPanelSearch from './content-panel-search';
 import ErrorSnackbar from './error-snackbar';
@@ -34,7 +34,7 @@ const Shell = () => {
 						<ContentPanelHeaderAdd />
 					</Stack>
 				</PanelHeader>
-				<Divider sx={ contentPanelFullBleedDividerSx } />
+				<Divider />
 				<PanelBody>
 					<ContentPanelSearch />
 					<List dense disablePadding sx={ { py: 0, width: '100%' } }>
@@ -44,10 +44,7 @@ const Shell = () => {
 								type={ postTypeSlug }
 								setError={ () => setIsErrorSnackbarOpen( true ) }
 							>
-								<PostsCollapsibleList
-									isLastSection={ index === panelPostTypeSlugs.length - 1 }
-									isOpenByDefault={ index === 0 }
-								/>
+								<PostsCollapsibleList isOpenByDefault={ index === 0 } />
 							</PostListContextProvider>
 						) ) }
 					</List>

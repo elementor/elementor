@@ -108,16 +108,15 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		renderList( <PostsCollapsibleList isOpenByDefault={ true } /> );
 
 		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Pages (2)' } ) ).toBeInTheDocument();
+
 		const items = screen.getAllByRole( 'listitem' );
 
-		expect( items.length ).toBe( 3 );
-
-		expect( items[ 0 ] ).toHaveTextContent( 'Pages' );
-		expect( items[ 0 ] ).toHaveTextContent( '2' );
-		expect( items[ 1 ] ).toHaveTextContent( 'Home' );
-		expect( items[ 1 ] ).toHaveTextContent( 'Homepage' );
-		expect( items[ 2 ] ).toHaveTextContent( 'About' );
-		expect( items[ 2 ] ).toHaveTextContent( '(draft)' );
+		expect( items.length ).toBe( 2 );
+		expect( items[ 0 ] ).toHaveTextContent( 'Home' );
+		expect( items[ 0 ] ).toHaveTextContent( 'Homepage' );
+		expect( items[ 1 ] ).toHaveTextContent( 'About' );
+		expect( items[ 1 ] ).toHaveTextContent( '(draft)' );
 	} );
 
 	it( 'should create a new post after clicking section add button', async () => {
@@ -168,12 +167,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		);
 
 		// Act.
-		const homeRow = screen.getByText( 'Home' ).closest( 'li' );
-
-		if ( ! homeRow ) {
-			throw new Error( 'Home row not found.' );
-		}
-
+		const [ homeRow ] = screen.getAllByRole( 'listitem' );
 		const homeRowButtons = within( homeRow ).getAllByRole( 'button' );
 		fireEvent.click( homeRowButtons[ homeRowButtons.length - 1 ] );
 

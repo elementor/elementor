@@ -1,13 +1,5 @@
 import * as React from 'react';
-import {
-	createContext,
-	type ReactNode,
-	useCallback,
-	useContext,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { type Slug } from '../api/post';
 
