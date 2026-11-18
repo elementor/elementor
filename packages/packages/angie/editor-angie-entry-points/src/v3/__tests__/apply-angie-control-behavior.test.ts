@@ -124,6 +124,36 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( result ).toEqual( {} );
 	} );
 
+	it( 'applies animation behavior with label block and motion additional options', () => {
+		// Arrange
+		registerV3AngieControl( {
+			types: [ 'animation' ],
+			forceLabelBlock: true,
+			buildPrompt,
+			getAdditionalOptions: () => ( { animationType: 'entrance', widgetType: 'heading' } ),
+			getGetControlValue: () => () => ( { _animation: 'fadeIn' } ),
+		} );
+		const behaviors = {};
+		const view = createView( { ai: { active: true, type: 'animation' }, controlType: 'animation' } );
+
+		// Act
+		const result = applyAngieControlBehavior( behaviors, view );
+
+		// Assert
+		expect( result.ai ).toEqual(
+			expect.objectContaining( {
+				isLabelBlock: true,
+				additionalOptions: expect.objectContaining( {
+					animationType: 'entrance',
+					widgetType: 'heading',
+				} ),
+			} )
+		);
+		expect( ( result.ai as { getControlValue: () => unknown } ).getControlValue() ).toEqual( {
+			_animation: 'fadeIn',
+		} );
+	} );
+
 	it( 'skips when isAngieEntryPointsEnabled returns false', () => {
 		// Arrange
 		jest.mocked( isAngieEntryPointsEnabled ).mockReturnValue( false );

@@ -94,6 +94,30 @@ export const buildAngieV3TextPrompt = ( {
 	].join( '\n\n' );
 };
 
+export const buildAngieV3AnimationPrompt = ( {
+	elementId,
+	controlName,
+	animationType,
+	motionSettingsSummary,
+}: {
+	elementId?: string;
+	controlName?: string;
+	animationType?: string;
+	motionSettingsSummary?: string;
+} ): string => {
+	const isHover = 'hover' === animationType;
+	const scopeLabel = isHover ? 'hover' : 'entrance';
+
+	return [
+		`Update ${ scopeLabel } motion on V3 element "${ elementId }" (control "${ controlName }").`,
+		`Animation scope: ${ scopeLabel }.`,
+		motionSettingsSummary
+			? `Current motion settings:\n${ motionSettingsSummary }`
+			: 'Current motion settings are empty or unavailable.',
+		'When ready, use the v3-motion-effects tool with action "get" to inspect settings, then "set" to apply changes (one undo step). Do not invent other write paths.',
+	].join( '\n\n' );
+};
+
 export const buildAngieV3CodePrompt = ( {
 	elementId,
 	controlName,

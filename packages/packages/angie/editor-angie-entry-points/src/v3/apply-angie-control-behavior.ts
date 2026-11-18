@@ -2,11 +2,9 @@ import { getAngieControlBehaviorClass } from './behavior/create-behavior-class';
 import { getV3ControlContext } from './context';
 import { isAngieEntryPointsEnabled } from './is-angie-entry-points-enabled';
 import { getV3AngieControl } from './registry';
-import type { BehaviorsMap, V3ControlView } from './types';
+import type { BehaviorsMap, V3ControlViewWithGetValue } from './types';
 
-type V3ControlViewWithValue = V3ControlView & { getControlValue: () => unknown };
-
-export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithValue ): BehaviorsMap {
+export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3ControlViewWithGetValue ): BehaviorsMap {
 	if ( ! isAngieEntryPointsEnabled() ) {
 		return behaviors;
 	}
@@ -31,16 +29,20 @@ export function applyAngieControlBehavior( behaviors: BehaviorsMap, view: V3Cont
 		return behaviors;
 	}
 
+	const aiType = aiOptions.type as string;
+	const getControlValue = entry.getGetControlValue?.( view, aiType ) ?? view.getControlValue.bind( view );
+
 	behaviors.ai = {
 		behaviorClass: getAngieControlBehaviorClass(),
 		type: aiOptions.type,
 		controlType,
-		getControlValue: view.getControlValue.bind( view ),
-		isLabelBlock: model.get( 'label_block' ),
+		getControlValue,
+		isLabelBlock: entry.forceLabelBlock ?? Boolean( model.get( 'label_block' ) ),
 		additionalOptions: {
 			defaultValue: model.get( 'default' ),
 			codeLanguage: aiOptions.language || model.get( 'language' ),
 			elementId: view.options.container?.id,
+			...( entry.getAdditionalOptions?.( view, aiType ) ?? {} ),
 		},
 		context,
 		buildPrompt: entry.buildPrompt,
