@@ -135,7 +135,7 @@ test.describe.only( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		const popover = await openEntryPopover( field, 0 );
 
 		// Act
-		await getEnableSubmenuSwitch( popover ).click( { force: true } );
+		await getSwitchRow( popover ).locator( '.MuiSwitch-root' ).click();
 
 		// Assert
 		await expectPromotionCard();
@@ -166,7 +166,7 @@ test.describe.only( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		await selectMenuItemOfEntry( getMenuRoot( menuId ), 2 );
 
 		// Act
-		await getEnableSubmenuSwitch( editor.page ).click( { force: true } );
+		await getSwitchRow( editor.page ).locator( '.MuiSwitch-root' ).click();
 
 		// Assert
 		await expectPromotionCard();
