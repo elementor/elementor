@@ -26,9 +26,13 @@ export function getToolbarChromeTabsIconSx(): SxProps< Theme > {
 		return {};
 	}
 
-	const iconSx = getToolbarChromeIconSvgSx();
+	const iconSize = `${ SIDEBAR_ICON_SIZE_PX }px`;
 
 	return {
-		'& .MuiTab-root svg': iconSx,
+		'& .MuiTab-root svg': {
+			fontSize: iconSize,
+			height: iconSize,
+			width: iconSize,
+		},
 	};
 }
