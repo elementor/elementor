@@ -55,7 +55,7 @@ class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
-				->set_label( __( 'Submenu', 'elementor' ) )
+				->set_label( __( 'Content', 'elementor' ) )
 				->set_id( 'content' )
 				->set_items( [
 					Submenu_Toggle_Control::make()
