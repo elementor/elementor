@@ -13,12 +13,10 @@ import {
 	SIDEBAR_WIDTH_VAR,
 } from '../constants';
 import { sidebarFooter, SidebarFooterSlot, sidebarTools, SidebarToolsSlot } from '../locations';
-import { sidebarInsetDividerSx } from '../sidebar-chrome';
+import { SIDEBAR_CHROME_ROW_HEIGHT_PX, sidebarInsetDividerSx } from '../sidebar-chrome';
 
 const { useMenuItems: useToolsMenuItems } = sidebarTools;
 const { useMenuItems: useFooterMenuItems } = sidebarFooter;
-
-const SIDEBAR_FIRST_GROUP_PADDING_BLOCK_END = 0.375;
 
 export default function Sidebar() {
 	const toolsItems = useToolsMenuItems();
@@ -48,7 +46,7 @@ export default function Sidebar() {
 			>
 				<Stack alignItems="center" width="100%">
 					<Groups
-						firstGroupHeight={ APP_BAR_HEIGHT }
+						chromeRowHeightPx={ SIDEBAR_CHROME_ROW_HEIGHT_PX }
 						groups={ [ toolsItems.elements, toolsItems.design, toolsItems.default ] }
 						itemGap={ SIDEBAR_TOOLS_ITEM_GAP_SPACING }
 					/>
@@ -71,55 +69,72 @@ type MenuItems = ReturnType< typeof useToolsMenuItems >[ 'default' ];
 
 function Groups( {
 	groups,
-	firstGroupHeight,
+	chromeRowHeightPx,
 	groupPaddingBlockEnd = 1.5,
 	itemGap,
 }: {
 	groups: MenuItems[];
-	firstGroupHeight?: number;
+	chromeRowHeightPx?: number;
 	groupPaddingBlockEnd?: number;
 	itemGap: number;
 } ) {
 	const groupPaddingBlockStart = 1.5;
 	const visibleGroups = groups.filter( ( items ) => items.length > 0 );
+	const usesChromeRow = chromeRowHeightPx !== undefined && visibleGroups.length > 0;
 
 	return (
 		<>
 			{ visibleGroups.map( ( items, index ) => {
 				const isFirstGroup = index === 0;
 				const isLastGroup = index === visibleGroups.length - 1;
-				const usesChromeRowHeight = isFirstGroup && firstGroupHeight !== undefined;
+				const isChromeRow = isFirstGroup && usesChromeRow;
+				const skipLeadingDivider = index === 1 && usesChromeRow;
 
 				let paddingTop = groupPaddingBlockStart;
 
-				if ( usesChromeRowHeight ) {
+				if ( isChromeRow ) {
 					paddingTop = 0;
 				} else if ( ! isFirstGroup ) {
 					paddingTop = SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
 				}
 
-				let paddingBottom = isLastGroup ? groupPaddingBlockEnd : SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
+				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
 
-				if ( usesChromeRowHeight ) {
-					paddingBottom = SIDEBAR_FIRST_GROUP_PADDING_BLOCK_END;
-				}
+				const menuItems = items.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> );
 
 				return (
 					<React.Fragment key={ index }>
-						{ index > 0 && <Divider sx={ { ...sidebarInsetDividerSx, my: 0 } } /> }
+						{ index > 0 && ! skipLeadingDivider && (
+							<Divider sx={ { ...sidebarInsetDividerSx, my: 0 } } />
+						) }
 						<Stack
 							alignItems="center"
 							boxSizing="border-box"
-							gap={ itemGap }
-							height={ usesChromeRowHeight ? firstGroupHeight : undefined }
+							gap={ isChromeRow ? 0 : itemGap }
+							sx={ isChromeRow ? { height: `${ chromeRowHeightPx }px` } : undefined }
 							justifyContent="center"
-							pt={ paddingTop }
-							pb={ paddingBottom }
+							pt={ isChromeRow ? 0 : paddingTop }
+							pb={ isChromeRow ? 0 : paddingBottom }
 							width="100%"
 						>
-							{ items.map( ( { MenuItem, id } ) => (
-								<MenuItem key={ id } />
-							) ) }
+							{ isChromeRow ? (
+								<>
+									<Stack
+										alignItems="center"
+										flex={ 1 }
+										justifyContent="center"
+										minHeight={ 0 }
+										width="100%"
+									>
+										{ menuItems }
+									</Stack>
+									{ visibleGroups.length > 1 && (
+										<Divider sx={ { ...sidebarInsetDividerSx, flexShrink: 0 } } />
+									) }
+								</>
+							) : (
+								menuItems
+							) }
 						</Stack>
 					</React.Fragment>
 				);
