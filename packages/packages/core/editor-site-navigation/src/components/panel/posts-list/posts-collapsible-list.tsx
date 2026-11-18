@@ -104,7 +104,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 				label={ label }
 				isOpen={ isOpen }
 				onOpenChange={ setIsOpen }
-				secondaryAction={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
+				trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
 			>
 				{ showNoResults && (
 					<Box sx={ { py: 2, px: 2 } }>

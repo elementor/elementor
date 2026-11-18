@@ -23,6 +23,10 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 			return;
 		}
 
+		if ( ! touched ) {
+			return;
+		}
+
 		runCallback();
 	};
 

@@ -55,7 +55,9 @@ export default function ContentPanelHeaderAdd() {
 							disabled={ ! user?.capabilities?.[ createCapability ] }
 							onClick={ () => {
 								popupState.close();
-								requestCreate( slug );
+								requestAnimationFrame( () => {
+									requestCreate( slug );
+								} );
 							} }
 						>
 							<ListItemIcon>

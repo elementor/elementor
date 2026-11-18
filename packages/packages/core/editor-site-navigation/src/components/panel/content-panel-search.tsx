@@ -4,12 +4,13 @@ import { Box, InputAdornment, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { contentPanelInsetPaddingSx } from './content-panel-chrome';
 
 export default function ContentPanelSearch() {
 	const { searchQuery, setSearchQuery } = useContentPanelCoordinator();
 
 	return (
-		<Box sx={ { px: 2, pt: 1, pb: 1 } }>
+		<Box sx={ { ...contentPanelInsetPaddingSx, pb: 1, pt: 1 } }>
 			<TextField
 				fullWidth
 				role="search"

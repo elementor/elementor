@@ -28,6 +28,7 @@ export default function SectionAddButton( { postTypeSlug, onBeforeCreate }: Prop
 			size="small"
 			aria-label={ ariaLabel }
 			disabled={ ! user?.capabilities?.[ createCapability ] }
+			sx={ { borderRadius: 1 } }
 			onClick={ ( event ) => {
 				event.stopPropagation();
 				onBeforeCreate?.();

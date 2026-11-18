@@ -7,17 +7,19 @@ import {
 	IconButton,
 	List,
 	ListItem,
-	ListItemIcon,
 	ListItemText,
+	Stack,
 	styled,
 	type SvgIconProps,
 } from '@elementor/ui';
+
+import { contentPanelInsetDividerSx, contentPanelInsetPaddingSx } from '../content-panel-chrome';
 
 type Props = {
 	label: string;
 	isOpen: boolean;
 	onOpenChange: ( isOpen: boolean ) => void;
-	secondaryAction?: ReactNode;
+	trailingActions?: ReactNode;
 };
 
 interface RotateIconProps extends SvgIconProps {
@@ -33,15 +35,11 @@ const RotateIcon = styled( ChevronDownIcon, {
 	} ),
 } ) );
 
-const StyledListItemIcon = styled( ListItemIcon )( ( { theme } ) => ( {
-	minWidth: theme.spacing( 4 ),
-} ) );
-
 export default function CollapsibleList( {
 	label,
 	isOpen,
 	onOpenChange,
-	secondaryAction,
+	trailingActions,
 	children,
 }: PropsWithChildren< Props > ) {
 	const toggle = () => onOpenChange( ! isOpen );
@@ -49,38 +47,36 @@ export default function CollapsibleList( {
 	return (
 		<>
 			<ListItem
-				secondaryAction={ secondaryAction }
+				dense
+				secondaryAction={
+					<Stack alignItems="center" direction="row" spacing={ 0.25 } sx={ { pr: 0.5 } }>
+						<IconButton
+							aria-expanded={ isOpen }
+							onClick={ toggle }
+							size="small"
+							sx={ { color: 'text.secondary' } }
+						>
+							<RotateIcon fontSize="small" isOpen={ isOpen } />
+						</IconButton>
+						{ trailingActions }
+					</Stack>
+				}
 				sx={ {
-					pr: secondaryAction ? 1 : undefined,
+					...contentPanelInsetPaddingSx,
+					py: 0.75,
 				} }
 			>
-				<StyledListItemIcon
-					sx={ {
-						color: 'text.secondary',
-					} }
-				>
-					<IconButton
-						onClick={ toggle }
-						size="small"
-						sx={ {
-							color: 'inherit',
-						} }
-						aria-expanded={ isOpen }
-					>
-						<RotateIcon fontSize="small" isOpen={ isOpen } />
-					</IconButton>
-				</StyledListItemIcon>
 				<ListItemText
-					primaryTypographyProps={ { variant: 'subtitle2', component: 'span' } }
 					primary={ label }
+					primaryTypographyProps={ { variant: 'subtitle2', component: 'span' } }
 					onClick={ toggle }
-					sx={ { cursor: 'pointer', userSelect: 'none' } }
+					sx={ { cursor: 'pointer', m: 0, userSelect: 'none' } }
 				/>
 			</ListItem>
 			<Collapse in={ isOpen } timeout="auto" unmountOnExit>
 				<List dense>{ children }</List>
 			</Collapse>
-			<Divider sx={ { mt: 1 } } />
+			<Divider sx={ { mt: 1, ...contentPanelInsetDividerSx } } />
 		</>
 	);
 }
