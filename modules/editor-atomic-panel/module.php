@@ -27,6 +27,7 @@ class Module extends BaseModule {
 			'description' => esc_html__( 'Atomic elements panel in the editor.', 'elementor' ),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'hidden' => true,
 		];
 	}
 
