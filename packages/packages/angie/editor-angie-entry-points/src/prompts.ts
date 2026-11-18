@@ -147,3 +147,63 @@ export const buildAngieV3CodePrompt = ( {
 		'When ready, use the v3-code-control tool to read or set this control value. Do not invent other write paths.',
 	].join( '\n\n' );
 };
+
+export type AngieV3LayoutPromptMode = 'new-layout' | 'container-variation' | 'library-variation';
+
+export type AngieV3LayoutPromptContext = {
+	mode: AngieV3LayoutPromptMode;
+	documentType?: string;
+	at?: number | null;
+	targetContainerId?: string;
+	parentContainerId?: string;
+	replaceElementId?: string;
+	targetElementTitle?: string;
+	libraryTemplateId?: string | number;
+	libraryTemplateTitle?: string;
+};
+
+export const buildAngieV3LayoutPrompt = ( {
+	mode,
+	documentType,
+	at,
+	targetContainerId,
+	parentContainerId,
+	replaceElementId,
+	targetElementTitle,
+	libraryTemplateId,
+	libraryTemplateTitle,
+}: AngieV3LayoutPromptContext ): string => {
+	const positionHint =
+		'number' === typeof at
+			? `Canvas position index: ${ at }.`
+			: 'Use the canvas position where the button was clicked.';
+
+	const parentHint = parentContainerId ? `Parent container id: ${ parentContainerId }.` : '';
+	const replaceHint = replaceElementId
+		? `Replace element id: ${ replaceElementId } (pass this as the layout tool replace/target id).`
+		: '';
+
+	switch ( mode ) {
+		case 'container-variation':
+			return [
+				`Help with a layout variation for container "${ targetContainerId }"${
+					targetElementTitle ? ` (${ targetElementTitle })` : ''
+				}.`,
+				`Document type: ${
+					documentType || 'unknown'
+				}. ${ positionHint } ${ parentHint } ${ replaceHint }`.trim(),
+			].join( '\n\n' );
+		case 'library-variation':
+			return [
+				`Help with a variation from template library item ${ libraryTemplateId ?? 'unknown' }${
+					libraryTemplateTitle ? ` (${ libraryTemplateTitle })` : ''
+				}.`,
+				`Document type: ${ documentType || 'unknown' }. ${ positionHint }`,
+			].join( '\n\n' );
+		case 'new-layout':
+		default:
+			return [ `Help build a layout for document type "${ documentType || 'unknown' }".`, positionHint ].join(
+				'\n\n'
+			);
+	}
+};

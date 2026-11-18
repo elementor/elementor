@@ -29,7 +29,7 @@ describe( 'initAiTextMcp', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'registers the v3 text, code, and motion tools on the ai MCP domain', () => {
+	it( 'registers the v3 ai tools on the ai MCP domain', () => {
 		// Act
 		initAiTextMcp();
 

@@ -3,6 +3,7 @@ import { __privateListenTo as listenTo, isExperimentActive, v1ReadyEvent } from 
 import { initV3AnimationControls } from './animation/init-animation';
 import { applyAngieControlBehavior } from './apply-angie-control-behavior';
 import { initV3CodeControls } from './code/init-code';
+import { initV3Layout } from './layout/init-layout';
 import { initV3TextControls } from './text/init-text';
 import { getExtendedWindow } from './types';
 
@@ -18,6 +19,7 @@ export function initV3(): void {
 	initV3TextControls();
 	initV3CodeControls();
 	initV3AnimationControls();
+	initV3Layout();
 
 	listenTo( v1ReadyEvent(), () => {
 		getExtendedWindow().elementor?.hooks?.addFilter(
