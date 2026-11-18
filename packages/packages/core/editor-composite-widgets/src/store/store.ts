@@ -5,11 +5,11 @@ import { type CompositeWidgetDefinitions } from '../types';
 export const SLICE_NAME = 'compositeWidgets';
 
 type CompositeWidgetsState = {
-	loaded: CompositeWidgetDefinitions | null;
+	definitions: CompositeWidgetDefinitions;
 };
 
 const initialState: CompositeWidgetsState = {
-	loaded: null,
+	definitions: {},
 };
 
 export const slice = createSlice( {
@@ -17,10 +17,10 @@ export const slice = createSlice( {
 	initialState,
 	reducers: {
 		load: ( state, { payload }: PayloadAction< CompositeWidgetDefinitions > ) => {
-			state.loaded = payload;
+			state.definitions = payload;
 		},
 	},
 } );
 
-export const selectLoadedDefinitions = ( state: SliceState< typeof slice > ): CompositeWidgetDefinitions | null =>
-	state[ SLICE_NAME ]?.loaded ?? null;
+export const selectDefinitions = ( state: SliceState< typeof slice > ): CompositeWidgetDefinitions =>
+	state[ SLICE_NAME ]?.definitions ?? {};
