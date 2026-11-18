@@ -10,6 +10,7 @@ const HOVER_ANIMATION_AI_TYPE = 'hover_animation';
 const animationScopeFromAiType = ( aiType: string ): 'hover' | 'entrance' =>
 	aiType === HOVER_ANIMATION_AI_TYPE ? 'hover' : 'entrance';
 
+/** ED-26128 — Replace V3 Animate with AI and hover animation with Angie. */
 export function initV3AnimationControls(): void {
 	registerV3AngieControl( {
 		types: [ 'animation', HOVER_ANIMATION_AI_TYPE ],

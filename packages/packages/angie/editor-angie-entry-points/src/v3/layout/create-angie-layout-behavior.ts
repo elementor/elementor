@@ -73,6 +73,12 @@ function createAngieAddSectionLayoutBehaviorClass(): MarionetteBehaviorConstruct
 				return;
 			}
 
+			// Prefer the durable host from tmpl-elementor-add-section (ED-26130).
+			// Inject only when the template host is missing (e.g. older markup).
+			if ( this.$el.find( '.e-ai-layout-button' ).length ) {
+				return;
+			}
+
 			const $button = jQuery( '<button>', {
 				type: 'button',
 				class: 'e-ai-layout-button elementor-add-section-area-button e-button-primary',

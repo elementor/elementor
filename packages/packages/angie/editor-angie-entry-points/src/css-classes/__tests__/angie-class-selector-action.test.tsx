@@ -58,15 +58,17 @@ describe( 'AngieClassSelectorAction', () => {
 		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.classSelector( ELEMENT_ID, CLASS_LABEL ) );
 	} );
 
-	it( 'renders nothing when no active class is selected', () => {
+	it( 'opens Angie with the styles prompt when no named class is selected', () => {
 		// Arrange
 		jest.mocked( useStyle ).mockReturnValue( { id: null } as ReturnType< typeof useStyle > );
 		jest.mocked( useProviders ).mockReturnValue( [] );
 
-		// Act
 		render( <AngieClassSelectorAction /> );
 
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
+
 		// Assert
-		expect( screen.queryByRole( 'button', { name: getGenerateWithAngieLabel() } ) ).not.toBeInTheDocument();
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.styleTab( { elementId: ELEMENT_ID } ) );
 	} );
 } );

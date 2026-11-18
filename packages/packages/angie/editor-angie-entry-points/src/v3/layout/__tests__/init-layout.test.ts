@@ -9,6 +9,7 @@ import {
 	ANGIE_LAYOUT_FILTER_PRIORITY,
 	applyAngieAddSectionBehavior,
 	applyAngieTemplateLibraryBehaviors,
+	filterLibraryActionButtonTemplate,
 } from '../apply-angie-layout-entry-points';
 import { initV3Layout } from '../init-layout';
 
@@ -52,6 +53,11 @@ describe( 'initV3Layout', () => {
 			'elementor/editor/template-library/template/behaviors',
 			applyAngieTemplateLibraryBehaviors,
 			ANGIE_LAYOUT_FILTER_PRIORITY
+		);
+		expect( addFilter ).toHaveBeenCalledWith(
+			'elementor/editor/template-library/template/action-button',
+			filterLibraryActionButtonTemplate,
+			11
 		);
 	} );
 } );

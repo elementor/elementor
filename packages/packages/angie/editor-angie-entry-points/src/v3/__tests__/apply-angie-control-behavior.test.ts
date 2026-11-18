@@ -19,6 +19,7 @@ function createView(
 		container?: Record< string, unknown > | null;
 		labelBlock?: boolean;
 		controlType?: string;
+		mediaTypes?: string[];
 	} = {}
 ) {
 	const container =
@@ -44,6 +45,7 @@ function createView(
 						label_block: overrides.labelBlock ?? false,
 						default: '',
 						language: 'css',
+						media_types: overrides.mediaTypes ?? [ 'image' ],
 					};
 
 					return map[ key ];
@@ -90,7 +92,7 @@ describe( 'applyAngieControlBehavior', () => {
 	it( 'skips when type is not registered', () => {
 		// Arrange
 		const behaviors = {};
-		const view = createView( { ai: { active: true, type: 'media' } } );
+		const view = createView( { ai: { active: true, type: 'unknown-type' } } );
 
 		// Act
 		const result = applyAngieControlBehavior( behaviors, view );
@@ -98,6 +100,18 @@ describe( 'applyAngieControlBehavior', () => {
 		// Assert
 		expect( result ).toEqual( {} );
 		expect( getAngieControlBehaviorClass ).not.toHaveBeenCalled();
+	} );
+
+	it( 'applies when type is set even if active is omitted', () => {
+		// Arrange
+		const behaviors = {};
+		const view = createView( { ai: { type: 'text' } } );
+
+		// Act
+		const result = applyAngieControlBehavior( behaviors, view );
+
+		// Assert
+		expect( result.ai ).toBeDefined();
 	} );
 
 	it( 'skips when ai.active is false', () => {
@@ -152,6 +166,22 @@ describe( 'applyAngieControlBehavior', () => {
 		expect( ( result.ai as { getControlValue: () => unknown } ).getControlValue() ).toEqual( {
 			_animation: 'fadeIn',
 		} );
+	} );
+
+	it( 'honors shouldApply gate for registered types', () => {
+		// Arrange
+		registerV3AngieControl( {
+			types: [ 'code' ],
+			buildPrompt,
+			shouldApply: () => false,
+		} );
+		const view = createView( { ai: { active: true, type: 'code' }, controlType: 'code' } );
+
+		// Act
+		const result = applyAngieControlBehavior( {}, view );
+
+		// Assert
+		expect( result.ai ).toBeUndefined();
 	} );
 
 	it( 'skips when shouldShowAngieEntryPoints returns false', () => {

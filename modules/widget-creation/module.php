@@ -43,7 +43,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
 			'description' => esc_html__( 'Load Angie in a docked floating panel in the editor instead of the legacy push sidebar.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
 	}

@@ -25,6 +25,11 @@ export const helpCenterAbility: HelpCenterAbility = {
 				name: HELP_CENTER_SERVER_NAME,
 				title: 'Elementor Help Center',
 				version: HELP_CENTER_SERVER_VERSION,
+				tools: {
+					response: {
+						enabled: false,
+					},
+				},
 			},
 			postTypes: {
 				post: 'posts',
