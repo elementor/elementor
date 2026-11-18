@@ -1,12 +1,13 @@
 import { registerPanel } from '@elementor/editor-panels';
 
-import { isAtomicElementsPanelEnabled } from '../gate';
+import { isAtomicElementsPanelEnabled, isElementsPanelSwitcherEnabled } from '../gate';
 import { init } from '../init';
 
 jest.mock( '@elementor/editor-panels', () => ( {
 	createPanel: jest.fn( () => ( { panel: { id: 'atomic-elements-panel' } } ) ),
 	registerPanel: jest.fn(),
 } ) );
+jest.mock( '@elementor/editor', () => ( { injectIntoLogic: jest.fn(), injectIntoTop: jest.fn() } ) );
 jest.mock( '../gate' );
 
 describe( 'editor-atomic-elements-panel init', () => {

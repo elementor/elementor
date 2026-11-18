@@ -1,6 +1,9 @@
+import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { registerPanel } from '@elementor/editor-panels';
 
-import { isAtomicElementsPanelEnabled } from './gate';
+import { AtomicEntryRedirect } from './components/atomic-entry-redirect';
+import { LegacyPanelSwitcher } from './components/legacy-panel-switcher';
+import { isAtomicElementsPanelEnabled, isElementsPanelSwitcherEnabled } from './gate';
 import { panel } from './panel';
 
 export function init() {
@@ -9,4 +12,11 @@ export function init() {
 	}
 
 	registerPanel( panel );
+
+	if ( ! isElementsPanelSwitcherEnabled() ) {
+		return;
+	}
+
+	injectIntoLogic( { id: 'atomic-elements-panel-entry-redirect', component: AtomicEntryRedirect } );
+	injectIntoTop( { id: 'atomic-elements-panel-legacy-switcher', component: LegacyPanelSwitcher } );
 }
