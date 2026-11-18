@@ -96,12 +96,18 @@ export default function PostsCollapsibleList( { isLastSection = false, isOpenByD
 	}
 
 	const displayCount = trimmedSearch ? filteredPosts.length : total;
-	const label = `${ postTypesMap[ type ].labels.plural_name } (${ displayCount.toString() })`;
+	const sectionTitle = postTypesMap[ type ].labels.plural_name;
 	const showNoResults = trimmedSearch && filteredPosts.length === 0;
 
 	return (
-		<CollapsibleList isLastSection={ isLastSection } label={ label } isOpen={ isOpen } onOpenChange={ setIsOpen }>
-			<SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } />
+		<CollapsibleList
+			count={ displayCount }
+			isLastSection={ isLastSection }
+			isOpen={ isOpen }
+			onOpenChange={ setIsOpen }
+			title={ sectionTitle }
+			trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
+		>
 			{ showNoResults && (
 				<Box sx={ { py: 2, px: 2 } }>
 					<Typography variant="body2" color="text.secondary">

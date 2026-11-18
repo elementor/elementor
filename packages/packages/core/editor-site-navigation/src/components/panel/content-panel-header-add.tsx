@@ -1,27 +1,17 @@
 import * as React from 'react';
-import { PageTypeIcon, PlusIcon, PostTypeIcon } from '@elementor/icons';
-import {
-	bindMenu,
-	bindTrigger,
-	IconButton,
-	ListItemIcon,
-	ListItemText,
-	Menu,
-	MenuItem,
-	usePopupState,
-} from '@elementor/ui';
+import { PageTypeIcon, PostTypeIcon } from '@elementor/icons';
+import { bindMenu, bindTrigger, ListItemIcon, ListItemText, Menu, MenuItem, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getPostTypeCreateCapability, panelPostTypeSlugs, postTypesMap, type Slug } from '../../api/post';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
 import useUser from '../../hooks/use-user';
+import ContentPanelAddIconButton from './content-panel-add-icon-button';
 
 const typeIcons: Record< Slug, typeof PageTypeIcon > = {
 	page: PageTypeIcon,
 	post: PostTypeIcon,
 };
-
-const HEADER_ADD_ICON_SIZE = 'tiny';
 
 export default function ContentPanelHeaderAdd() {
 	const { requestCreate } = useContentPanelCoordinator();
@@ -36,14 +26,7 @@ export default function ContentPanelHeaderAdd() {
 
 	return (
 		<>
-			<IconButton
-				aria-label={ __( 'Add new', 'elementor' ) }
-				size={ HEADER_ADD_ICON_SIZE }
-				variant="outlined"
-				{ ...buttonProps }
-			>
-				<PlusIcon fontSize={ HEADER_ADD_ICON_SIZE } />
-			</IconButton>
+			<ContentPanelAddIconButton aria-label={ __( 'Add new', 'elementor' ) } { ...buttonProps } />
 			<Menu { ...menuProps }>
 				{ panelPostTypeSlugs.map( ( slug ) => {
 					const Icon = typeIcons[ slug ];

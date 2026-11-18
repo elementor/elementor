@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { type PropsWithChildren } from 'react';
+import { type PropsWithChildren, type ReactNode } from 'react';
 import { ChevronDownIcon } from '@elementor/icons';
 import {
 	Box,
+	Chip,
 	Collapse,
 	Divider,
 	IconButton,
 	List,
 	ListItem,
+	Stack,
 	styled,
 	type SvgIconProps,
 	Typography,
@@ -16,10 +18,12 @@ import {
 import { contentPanelSectionHeaderPaddingSx, getContentPanelSectionDividerSx } from '../content-panel-chrome';
 
 type Props = {
+	count: number;
 	isLastSection?: boolean;
-	label: string;
 	isOpen: boolean;
 	onOpenChange: ( isOpen: boolean ) => void;
+	title: string;
+	trailingActions?: ReactNode;
 };
 
 interface RotateIconProps extends SvgIconProps {
@@ -35,14 +39,21 @@ const RotateIcon = styled( ChevronDownIcon, {
 	} ),
 } ) );
 
+function getSectionHeaderAriaLabel( title: string, count: number ) {
+	return `${ title } (${ count.toString() })`;
+}
+
 export default function CollapsibleList( {
+	count,
 	isLastSection = false,
-	label,
 	isOpen,
 	onOpenChange,
+	title,
+	trailingActions,
 	children,
 }: PropsWithChildren< Props > ) {
 	const toggle = () => onOpenChange( ! isOpen );
+	const sectionHeaderAriaLabel = getSectionHeaderAriaLabel( title, count );
 
 	return (
 		<>
@@ -56,13 +67,17 @@ export default function CollapsibleList( {
 					} }
 				>
 					<Box
+						aria-expanded={ isOpen }
+						aria-label={ sectionHeaderAriaLabel }
 						component="button"
 						onClick={ toggle }
 						sx={ {
+							alignItems: 'center',
 							background: 'none',
 							border: 0,
 							color: 'text.primary',
 							cursor: 'pointer',
+							display: 'flex',
 							flex: 1,
 							minWidth: 0,
 							p: 0,
@@ -70,19 +85,25 @@ export default function CollapsibleList( {
 						} }
 						type="button"
 					>
-						<Typography component="span" variant="subtitle2">
-							{ label }
-						</Typography>
+						<Stack alignItems="center" direction="row" gap={ 0.5 }>
+							<Typography component="span" variant="subtitle2">
+								{ title }
+							</Typography>
+							<Chip label={ count } size="tiny" />
+						</Stack>
 					</Box>
-					<IconButton
-						aria-expanded={ isOpen }
-						aria-label={ label }
-						onClick={ toggle }
-						size="small"
-						sx={ { color: 'text.secondary', flexShrink: 0, mr: -0.5 } }
-					>
-						<RotateIcon fontSize="small" isOpen={ isOpen } />
-					</IconButton>
+					<Stack alignItems="center" direction="row" flexShrink={ 0 } gap={ 0.25 }>
+						<IconButton
+							aria-expanded={ isOpen }
+							aria-label={ sectionHeaderAriaLabel }
+							onClick={ toggle }
+							size="small"
+							sx={ { color: 'text.secondary', mr: trailingActions ? 0 : -0.5 } }
+						>
+							<RotateIcon fontSize="small" isOpen={ isOpen } />
+						</IconButton>
+						{ trailingActions }
+					</Stack>
 				</Box>
 			</ListItem>
 			<Collapse in={ isOpen } timeout="auto" unmountOnExit>

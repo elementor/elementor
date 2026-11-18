@@ -96,8 +96,8 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		renderList( <PostsCollapsibleList isOpenByDefault={ false } /> );
 
 		// Assert.
-		const label = screen.getByText( `Pages (2)` );
-		expect( label ).toBeInTheDocument();
+		expect( screen.getByText( 'Pages' ) ).toBeInTheDocument();
+		expect( screen.getByText( '2' ) ).toBeInTheDocument();
 
 		const postInList = screen.queryByText( 'Home' );
 		expect( postInList ).not.toBeInTheDocument();
@@ -110,14 +110,14 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		// Assert.
 		const items = screen.getAllByRole( 'listitem' );
 
-		expect( items.length ).toBe( 4 );
+		expect( items.length ).toBe( 3 );
 
-		expect( items[ 0 ] ).toHaveTextContent( `Pages (2)` );
-		expect( items[ 1 ] ).toHaveTextContent( 'Add page' );
-		expect( items[ 2 ] ).toHaveTextContent( 'Home' );
-		expect( items[ 2 ] ).toHaveTextContent( 'Homepage' );
-		expect( items[ 3 ] ).toHaveTextContent( 'About' );
-		expect( items[ 3 ] ).toHaveTextContent( '(draft)' );
+		expect( items[ 0 ] ).toHaveTextContent( 'Pages' );
+		expect( items[ 0 ] ).toHaveTextContent( '2' );
+		expect( items[ 1 ] ).toHaveTextContent( 'Home' );
+		expect( items[ 1 ] ).toHaveTextContent( 'Homepage' );
+		expect( items[ 2 ] ).toHaveTextContent( 'About' );
+		expect( items[ 2 ] ).toHaveTextContent( '(draft)' );
 	} );
 
 	it( 'should create a new post after clicking section add button', async () => {
@@ -129,7 +129,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		);
 
 		// Act.
-		const addNewButton = screen.getByRole( 'button', { name: 'Add page' } );
+		const addNewButton = screen.getByRole( 'button', { name: 'New Page' } );
 		fireEvent.click( addNewButton );
 
 		const input = screen.getByRole( 'textbox' );
