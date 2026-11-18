@@ -1,99 +1,45 @@
-import {
-	createElements,
-	getContainer,
-	getWidgetsCache,
-	removeElements,
-	type V1Element,
-} from '@elementor/editor-elements';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { renderHook } from '@testing-library/react';
+import { getContainer, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
 
-import { disableSubmenu, enableSubmenu, getParentEntryId, selectSubmenu, useSubmenu } from '../use-submenu';
+import { getParentEntryId, getSubmenuPromotion } from '../use-submenu';
 
 jest.mock( '@elementor/editor-elements' );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	__privateRunCommand: jest.fn(),
-	__privateUseListenTo: jest.fn( ( _events, getSnapshot ) => getSnapshot() ),
-} ) );
 
-const child = ( id: string, elType: string ) => ( { id, model: { get: () => elType } } );
+const promotion = { title: 'Mega Menu', content: 'content', ctaUrl: 'https://go.example' };
 
 describe( 'use-submenu', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.mocked( getWidgetsCache ).mockReturnValue( {
-			'e-menu-entry': {
-				meta: {
-					submenu_entitlement: { locked: false, promotion: { title: 'Mega Menu', content: 'c', ctaUrl: '' } },
-				},
-			},
-		} as never );
 	} );
 
-	it( 'should report the submenu child and the entitlement of the entry', () => {
+	it( 'should return the promotion when the entitlement is locked', () => {
 		// Arrange
-		jest.mocked( getContainer ).mockReturnValue( {
-			children: [ child( 'item-1', 'e-menu-item' ), child( 'sub-1', 'e-menu-submenu' ) ],
-		} as unknown as V1Element );
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			'e-menu-entry': { meta: { submenu_entitlement: { locked: true, promotion } } },
+		} as never );
 
-		// Act
-		const { result } = renderHook( () => useSubmenu( 'entry-1' ) );
-
-		// Assert
-		expect( result.current.submenuId ).toBe( 'sub-1' );
-		expect( result.current.locked ).toBe( false );
+		// Act & Assert
+		expect( getSubmenuPromotion() ).toEqual( promotion );
 	} );
 
-	it( 'should be locked when the entitlement is missing', () => {
+	it( 'should return nothing when the entitlement is unlocked', () => {
+		// Arrange
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			'e-menu-entry': { meta: { submenu_entitlement: { locked: false, promotion } } },
+		} as never );
+
+		// Act & Assert
+		expect( getSubmenuPromotion() ).toBeNull();
+	} );
+
+	it( 'should return nothing when the entitlement meta is missing', () => {
 		// Arrange
 		jest.mocked( getWidgetsCache ).mockReturnValue( {} as never );
-		jest.mocked( getContainer ).mockReturnValue( { children: [] } as unknown as V1Element );
 
-		// Act
-		const { result } = renderHook( () => useSubmenu( 'entry-1' ) );
-
-		// Assert
-		expect( result.current ).toEqual( { submenuId: null, locked: true, promotion: null } );
+		// Act & Assert
+		expect( getSubmenuPromotion() ).toBeNull();
 	} );
 
-	it( 'should create the trigger and the submenu under the entry', () => {
-		// Arrange
-		const entry = { id: 'entry-1' } as unknown as V1Element;
-		jest.mocked( getContainer ).mockReturnValue( entry );
-
-		// Act
-		enableSubmenu( 'entry-1' );
-
-		// Assert
-		const { elements } = jest.mocked( createElements ).mock.calls[ 0 ][ 0 ];
-		expect( elements.map( ( { model } ) => model?.elType ) ).toEqual( [
-			'e-menu-submenu-trigger',
-			'e-menu-submenu',
-		] );
-		expect( elements.every( ( { container } ) => container === entry ) ).toBe( true );
-	} );
-
-	it( 'should remove only the trigger and the submenu', () => {
-		// Arrange
-		jest.mocked( getContainer ).mockReturnValue( {
-			children: [
-				child( 'item-1', 'e-menu-item' ),
-				child( 'trig-1', 'e-menu-submenu-trigger' ),
-				child( 'sub-1', 'e-menu-submenu' ),
-			],
-		} as unknown as V1Element );
-
-		// Act
-		disableSubmenu( 'entry-1' );
-
-		// Assert
-		expect( removeElements ).toHaveBeenCalledWith(
-			expect.objectContaining( { elementIds: [ 'trig-1', 'sub-1' ] } )
-		);
-	} );
-
-	it( 'should resolve the entry of a menu item only', () => {
+	it( 'should resolve the parent entry of a menu item', () => {
 		// Arrange
 		jest.mocked( getContainer ).mockReturnValue( {
 			parent: { id: 'entry-1', model: { get: () => 'e-menu-entry' } },
@@ -101,44 +47,15 @@ describe( 'use-submenu', () => {
 
 		// Act & Assert
 		expect( getParentEntryId( 'item-1' ) ).toBe( 'entry-1' );
+	} );
 
+	it( 'should not resolve a parent that is not a menu entry', () => {
+		// Arrange
 		jest.mocked( getContainer ).mockReturnValue( {
 			parent: { id: 'x', model: { get: () => 'e-div-block' } },
 		} as unknown as V1Element );
 
-		expect( getParentEntryId( 'item-1' ) ).toBeNull();
-	} );
-
-	it( 'should select the submenu container', () => {
-		// Arrange
-		const container = { id: 'sub-1' } as unknown as V1Element;
-		jest.mocked( getContainer ).mockReturnValue( container );
-
-		// Act
-		selectSubmenu( 'sub-1' );
-
-		// Assert
-		expect( runCommand ).toHaveBeenCalledWith( 'document/elements/select', { container } );
-	} );
-
-	it( 'should not remove anything when the entry has no submenu', () => {
-		// Arrange
-		jest.mocked( getContainer ).mockReturnValue( {
-			children: [ child( 'item-1', 'e-menu-item' ) ],
-		} as unknown as V1Element );
-
-		// Act
-		disableSubmenu( 'entry-1' );
-
-		// Assert
-		expect( removeElements ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should throw when enabling a submenu on a missing entry', () => {
-		// Arrange
-		jest.mocked( getContainer ).mockReturnValue( undefined as never );
-
 		// Act & Assert
-		expect( () => enableSubmenu( 'missing' ) ).toThrow( 'Menu entry not found' );
+		expect( getParentEntryId( 'item-1' ) ).toBeNull();
 	} );
 } );

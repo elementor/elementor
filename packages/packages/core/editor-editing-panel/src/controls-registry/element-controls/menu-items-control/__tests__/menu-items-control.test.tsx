@@ -7,7 +7,7 @@ import { mockElement } from '../../../../__tests__/utils';
 import { useElement } from '../../../../contexts/element-context';
 import { MenuItemsControl } from '../menu-items-control';
 import { useEntryItem } from '../use-entry-item';
-import { useSubmenu } from '../use-submenu';
+import { getSubmenuPromotion } from '../use-submenu';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../../../contexts/element-context', () => ( {
@@ -22,7 +22,7 @@ jest.mock( '../../../../components/settings-control', () => ( {
 jest.mock( '../use-entry-item' );
 jest.mock( '../use-submenu', () => ( {
 	...jest.requireActual( '../use-submenu' ),
-	useSubmenu: jest.fn(),
+	getSubmenuPromotion: jest.fn(),
 } ) );
 
 describe( '<MenuItemsControl />', () => {
@@ -53,10 +53,10 @@ describe( '<MenuItemsControl />', () => {
 		} );
 		jest.mocked( useElementEditorSettings ).mockReturnValue( { title: 'Home' } );
 		jest.mocked( useEntryItem ).mockReturnValue( { itemId: 'item-1', settings: {} } );
-		jest.mocked( useSubmenu ).mockReturnValue( {
-			submenuId: null,
-			locked: true,
-			promotion: { title: 'Mega Menu', content: 'content', ctaUrl: 'https://go.example' },
+		jest.mocked( getSubmenuPromotion ).mockReturnValue( {
+			title: 'Mega Menu',
+			content: 'content',
+			ctaUrl: 'https://go.example',
 		} );
 	} );
 
@@ -94,19 +94,6 @@ describe( '<MenuItemsControl />', () => {
 		expect( await screen.findByText( 'Item name' ) ).toBeInTheDocument();
 		expect( screen.getByLabelText( 'Enable Submenu', { selector: 'input' } ) ).not.toBeChecked();
 		expect( screen.getByLabelText( 'Promotion chip' ) ).toBeInTheDocument();
-		expect( useSubmenu ).toHaveBeenCalledWith( 'entry-1' );
-	} );
-
-	it( 'should offer Edit Submenu in the row popover when the entry has a submenu', async () => {
-		// Arrange
-		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: false, promotion: null } );
-		renderControl( 1 );
-
-		// Act
-		fireEvent.click( screen.getAllByRole( 'button', { name: 'Open item' } )[ 0 ] );
-
-		// Assert
-		expect( await screen.findByText( 'Edit Submenu' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should offer removing entries only while more than one remains', () => {
