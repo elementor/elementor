@@ -89,15 +89,18 @@ class Content_Generator {
 	/**
 	 * Generate the full llms.txt content.
 	 *
-	 * @param array{intro?: string, optional?: string} $overrides
-	 *   'intro'    – user-supplied intro text (replaces the auto-generated one).
-	 *   'optional' – extra section appended after all content sections.
-	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
-	 * @param int[]                                    $excluded_post_ids Posts to leave out.
+	 * @param array{intro?: string, optional?: string, custom_text?: string} $overrides
+	 *   'intro'       – user-supplied intro text (replaces the auto-generated one).
+	 *   'optional'    – extra section appended after all content sections.
+	 *   'custom_text' – user-supplied text placed between the intro and the first content section.
+	 * @param string[]|null                                                  $post_types Post types to include; null includes every available type.
+	 * @param int[]                                                          $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
 	public function generate_llms_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
 		$lines = $this->build_header( $overrides, $excluded_post_ids );
+
+		$this->append_custom_text( $lines, $overrides );
 
 		$sections = $this->get_content_sections( $post_types, false, $excluded_post_ids );
 
@@ -777,6 +780,21 @@ class Content_Generator {
 			] ),
 			'',
 		];
+	}
+
+	/**
+	 * @param string[]                    $lines Passed by reference.
+	 * @param array{custom_text?: string} $overrides Override values.
+	 */
+	private function append_custom_text( array &$lines, array $overrides ): void {
+		$custom_text = trim( $overrides['custom_text'] ?? '' );
+
+		if ( '' === $custom_text ) {
+			return;
+		}
+
+		$lines[] = $this->sanitizer->sanitize( $custom_text );
+		$lines[] = '';
 	}
 
 	/**

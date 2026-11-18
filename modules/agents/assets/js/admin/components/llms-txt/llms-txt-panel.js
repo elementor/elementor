@@ -11,6 +11,7 @@ import { LLMS_FILE_NAME, LLMS_SETTINGS_KEY } from '../../constants';
 import { ConfirmDialog } from '../confirm-dialog';
 import { ContentEditDialog } from '../content-edit-dialog';
 import { PostTypeList } from '../post-type-list';
+import { CustomTextSection } from './custom-text-section';
 import { LlmsPreviewPane } from './llms-preview-pane';
 
 const DIALOG_MODE_EDIT = 'edit';
@@ -33,15 +34,18 @@ const getWarningMessage = ( hasPhysicalFile, isManuallyEdited ) => {
 export const LlmsTxtPanel = ( { settings } ) => {
 	const {
 		content,
+		customText,
 		excludedPostIds,
 		flushExclusions,
 		hasPhysicalFile,
 		isEnabled,
 		isManuallyEdited,
 		isSaving,
+		maxCustomTextLength,
 		postTypes,
 		revertContent,
 		saveContent,
+		saveCustomText,
 		takeOverFile,
 		togglePostExclusion,
 		togglePostType,
@@ -81,6 +85,14 @@ export const LlmsTxtPanel = ( { settings } ) => {
 						} : undefined }
 					/>
 				</Stack>
+				{ canChooseItems && (
+					<CustomTextSection
+						customText={ customText }
+						maxLength={ maxCustomTextLength }
+						isDisabled={ ! isEnabled || isSaving }
+						onSave={ saveCustomText }
+					/>
+				) }
 				{ warningMessage && (
 					<Stack alignItems="flex-start" spacing={ 1 }>
 						<Chip
@@ -146,15 +158,18 @@ export const LlmsTxtPanel = ( { settings } ) => {
 LlmsTxtPanel.propTypes = {
 	settings: PropTypes.shape( {
 		content: PropTypes.string.isRequired,
+		customText: PropTypes.string.isRequired,
 		excludedPostIds: PropTypes.arrayOf( PropTypes.number ).isRequired,
 		flushExclusions: PropTypes.func.isRequired,
 		hasPhysicalFile: PropTypes.bool.isRequired,
 		isEnabled: PropTypes.bool.isRequired,
 		isManuallyEdited: PropTypes.bool.isRequired,
 		isSaving: PropTypes.bool.isRequired,
+		maxCustomTextLength: PropTypes.number,
 		postTypes: PropTypes.array.isRequired,
 		revertContent: PropTypes.func.isRequired,
 		saveContent: PropTypes.func.isRequired,
+		saveCustomText: PropTypes.func.isRequired,
 		takeOverFile: PropTypes.func.isRequired,
 		togglePostExclusion: PropTypes.func.isRequired,
 		togglePostType: PropTypes.func.isRequired,

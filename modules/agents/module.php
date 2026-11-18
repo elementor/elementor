@@ -546,7 +546,7 @@ class Module extends BaseModule {
 			return $cached;
 		}
 
-		$overrides = $this->get_overrides();
+		$overrides = array_merge( $this->get_overrides(), [ 'custom_text' => $this->settings->get_llms_custom_text() ] );
 		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() );
 
 		if ( '' !== $content ) {
@@ -1145,13 +1145,15 @@ class Module extends BaseModule {
 
 	private function get_llms_state( array $unavailable_reasons ): array {
 		return [
-			'enabled'            => $this->settings->is_llms_enabled(),
-			'isManuallyEdited'   => $this->settings->is_llms_manually_edited(),
-			'hasPhysicalFile'    => self::has_physical_llms_file(),
-			'unavailableReason'  => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
-			'fileUrl'            => home_url( '/' . self::LLMS_FILENAME ),
-			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() ),
-			'excludedPostIds'    => $this->settings->get_llms_excluded_post_ids(),
+			'enabled'             => $this->settings->is_llms_enabled(),
+			'isManuallyEdited'    => $this->settings->is_llms_manually_edited(),
+			'hasPhysicalFile'     => self::has_physical_llms_file(),
+			'unavailableReason'   => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
+			'fileUrl'             => home_url( '/' . self::LLMS_FILENAME ),
+			'postTypes'           => $this->get_post_type_rows( $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() ),
+			'excludedPostIds'     => $this->settings->get_llms_excluded_post_ids(),
+			'customText'          => $this->settings->get_llms_custom_text(),
+			'maxCustomTextLength' => Agent_Ready_Settings::MAX_LLMS_CUSTOM_TEXT_LENGTH,
 		];
 	}
 
