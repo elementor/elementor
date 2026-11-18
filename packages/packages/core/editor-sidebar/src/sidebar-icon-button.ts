@@ -4,8 +4,8 @@ export const SIDEBAR_ICON_SIZE_PX = 20;
 
 export const SIDEBAR_ICON_BUTTON_SIZE_PX = 28;
 
-export const editorChromeIconBorderRadiusSx: Pick< SxProps< Theme >, 'borderRadius' > = {
-	borderRadius: ( theme ) => theme.shape.borderRadius,
+export const editorChromeIconBorderRadiusSx: SxProps< Theme > = {
+	borderRadius: ( theme: Theme ) => theme.shape.borderRadius,
 };
 
 type SidebarIconButtonState = {
