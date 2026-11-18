@@ -22,8 +22,23 @@ export const postTypesMap = {
 			plural_name: __( 'Pages', 'elementor' ),
 		},
 		rest_base: 'pages',
+		createCapability: 'edit_pages',
+	},
+	post: {
+		labels: {
+			singular_name: __( 'Post', 'elementor' ),
+			plural_name: __( 'Posts', 'elementor' ),
+		},
+		rest_base: 'posts',
+		createCapability: 'edit_posts',
 	},
 };
+
+export const panelPostTypeSlugs = Object.keys( postTypesMap ) as Slug[];
+
+export function getPostTypeCreateCapability( postTypeSlug: Slug ): string {
+	return postTypesMap[ postTypeSlug ].createCapability;
+}
 
 export const POST_PER_PAGE = 10;
 

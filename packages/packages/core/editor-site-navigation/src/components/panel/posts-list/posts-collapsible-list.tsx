@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PageTypeIcon } from '@elementor/icons';
+import { PageTypeIcon, PostTypeIcon } from '@elementor/icons';
 import { Box, Button, CircularProgress, List, Skeleton } from '@elementor/ui';
 
 import { postTypesMap } from '../../../api/post';
@@ -26,6 +26,8 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		isFetchingNextPage,
 	} = usePosts( type );
 	const { data: homepageId } = useHomepage();
+	const isPageType = type === 'page';
+	const ListIcon = type === 'post' ? PostTypeIcon : PageTypeIcon;
 
 	if ( postsError ) {
 		return <ErrorState />;
@@ -49,25 +51,23 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 
 	const label = `${ postTypesMap[ type ].labels.plural_name } (${ total.toString() })`;
 
-	const mappedPosts = posts.map( ( post ) => {
-		if ( post.id === homepageId ) {
-			return { ...post, isHome: true };
-		}
+	const mappedPosts = isPageType
+		? posts.map( ( post ) => ( post.id === homepageId ? { ...post, isHome: true } : post ) )
+		: posts;
 
-		return post;
-	} );
+	const sortedPosts = isPageType
+		? mappedPosts.sort( ( a, b ) => {
+				if ( a.id === homepageId ) {
+					return -1;
+				}
 
-	const sortedPosts = mappedPosts.sort( ( a, b ) => {
-		if ( a.id === homepageId ) {
-			return -1;
-		}
+				if ( b.id === homepageId ) {
+					return 1;
+				}
 
-		if ( b.id === homepageId ) {
-			return 1;
-		}
-
-		return 0;
-	} );
+				return 0;
+		  } )
+		: mappedPosts;
 
 	return (
 		<>
@@ -83,7 +83,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 				<AddNewButton />
 			</Box>
 			<List dense>
-				<CollapsibleList label={ label } Icon={ PageTypeIcon } isOpenByDefault={ isOpenByDefault || false }>
+				<CollapsibleList label={ label } Icon={ ListIcon } isOpenByDefault={ isOpenByDefault || false }>
 					{ sortedPosts.map( ( post ) => {
 						return <PostListItem key={ post.id } post={ post } />;
 					} ) }

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { __ } from '@wordpress/i18n';
 
+import { panelPostTypeSlugs } from '../../api/post';
 import { PostListContextProvider } from '../../contexts/post-list-context';
 import ErrorSnackbar from './error-snackbar';
 import PostsCollapsibleList from './posts-list/posts-collapsible-list';
@@ -13,12 +14,18 @@ const Shell = () => {
 	return (
 		<Panel>
 			<PanelHeader>
-				<PanelHeaderTitle>{ __( 'Pages', 'elementor' ) }</PanelHeaderTitle>
+				<PanelHeaderTitle>{ __( 'Content', 'elementor' ) }</PanelHeaderTitle>
 			</PanelHeader>
 			<PanelBody>
-				<PostListContextProvider type={ 'page' } setError={ () => setIsErrorSnackbarOpen( true ) }>
-					<PostsCollapsibleList isOpenByDefault={ true } />
-				</PostListContextProvider>
+				{ panelPostTypeSlugs.map( ( postTypeSlug, index ) => (
+					<PostListContextProvider
+						key={ postTypeSlug }
+						type={ postTypeSlug }
+						setError={ () => setIsErrorSnackbarOpen( true ) }
+					>
+						<PostsCollapsibleList isOpenByDefault={ index === 0 } />
+					</PostListContextProvider>
+				) ) }
 				<ErrorSnackbar open={ isErrorSnackbarOpen } onClose={ () => setIsErrorSnackbarOpen( false ) } />
 			</PanelBody>
 		</Panel>

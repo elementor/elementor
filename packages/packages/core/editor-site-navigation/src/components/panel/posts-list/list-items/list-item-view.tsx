@@ -19,6 +19,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
 import Delete from '../../actions-menu/actions/delete';
@@ -49,6 +50,7 @@ const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactN
 };
 
 export default function ListItemView( { post }: { post: Post } ) {
+	const { type } = usePostListContext();
 	const activeDocument = useActiveDocument();
 	const navigateToDocument = useNavigateToDocument();
 
@@ -100,8 +102,12 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<Duplicate post={ post } popupState={ popupState } />
 				<Delete post={ post } />
 				<View post={ post } />
-				<Divider />
-				<SetHome post={ post } closeMenu={ () => popupState.close() } />
+				{ type === 'page' && (
+					<>
+						<Divider />
+						<SetHome post={ post } closeMenu={ () => popupState.close() } />
+					</>
+				) }
 			</Menu>
 		</>
 	);

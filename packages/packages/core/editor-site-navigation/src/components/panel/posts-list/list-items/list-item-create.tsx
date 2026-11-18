@@ -2,6 +2,7 @@ import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
+import { postTypesMap } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
 import { usePostActions } from '../../../../hooks/use-posts-actions';
 import EditModeTemplate from './edit-mode-template';
@@ -27,9 +28,12 @@ export default function ListItemCreate() {
 		}
 	};
 
+	// translators: %s: Post type singular name (e.g. Page, Post).
+	const newItemLabel = __( 'New %s', 'elementor' ).replace( '%s', postTypesMap[ type ].labels.singular_name );
+
 	return (
 		<EditModeTemplate
-			postTitle={ __( 'New Page', 'elementor' ) }
+			postTitle={ newItemLabel }
 			isLoading={ createPost.isPending }
 			callback={ createPostCallback }
 		/>
