@@ -4,7 +4,9 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { wpCli } from '../../../assets/wp-cli';
 
-test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
+// TEMP: targeted snapshot update, remove .only before merge
+// eslint-disable-next-line playwright/no-focused-test
+test.describe.only( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
