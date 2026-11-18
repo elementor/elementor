@@ -4,13 +4,12 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { getAtomicWidgets, type WidgetsCache } from '../utils/get-atomic-widgets';
 
 const REFRESHED_ACTION = 'elementor/widgets/refreshed';
-const LISTENER_ID = 'atomic-elements-panel';
 
 type HooksWindow = {
 	elementor?: {
 		hooks?: {
-			addAction: ( name: string, id: string, callback: () => void ) => void;
-			removeAction: ( name: string, id: string ) => void;
+			addAction: ( name: string, callback: () => void ) => void;
+			removeAction: ( name: string, callback: () => void ) => void;
 		};
 	};
 };
@@ -23,9 +22,11 @@ export function useAtomicWidgets() {
 	useEffect( () => {
 		const hooks = ( window as unknown as HooksWindow ).elementor?.hooks;
 
-		hooks?.addAction( REFRESHED_ACTION, LISTENER_ID, () => setWidgets( readWidgets() ) );
+		const onRefresh = () => setWidgets( readWidgets() );
 
-		return () => hooks?.removeAction( REFRESHED_ACTION, LISTENER_ID );
+		hooks?.addAction( REFRESHED_ACTION, onRefresh );
+
+		return () => hooks?.removeAction( REFRESHED_ACTION, onRefresh );
 	}, [] );
 
 	return widgets;

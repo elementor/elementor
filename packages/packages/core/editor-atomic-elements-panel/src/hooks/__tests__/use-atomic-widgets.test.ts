@@ -7,7 +7,7 @@ jest.mock( '@elementor/editor-elements' );
 
 describe( 'useAtomicWidgets', () => {
 	const handlers: Record< string, () => void > = {};
-	const addAction = jest.fn( ( name: string, _id: string, callback: () => void ) => {
+	const addAction = jest.fn( ( name: string, callback: () => void ) => {
 		handlers[ name ] = callback;
 	} );
 	const removeAction = jest.fn();
@@ -41,6 +41,6 @@ describe( 'useAtomicWidgets', () => {
 		unmount();
 
 		// Assert.
-		expect( removeAction ).toHaveBeenCalledWith( 'elementor/widgets/refreshed', expect.any( String ) );
+		expect( removeAction ).toHaveBeenCalledWith( 'elementor/widgets/refreshed', handlers[ 'elementor/widgets/refreshed' ] );
 	} );
 } );
