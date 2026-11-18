@@ -2,6 +2,7 @@ import * as React from 'react';
 import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { DefaultStylesTabEmbedded, trackDefaultStyles } from '@elementor/editor-default-styles';
 import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
@@ -47,6 +48,7 @@ const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
 };
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
+	const sidebarPanelChrome = isSidebarEnabled();
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
 	const defaultsCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
@@ -134,7 +136,13 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		<ThemeProvider>
 			<Panel>
 				<PanelHeader>
-					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center" spacing={ 0.5 }>
+					<Stack
+						width="100%"
+						direction="row"
+						alignItems="center"
+						spacing={ 0.5 }
+						sx={ sidebarPanelChrome ? undefined : { p: 1, pl: 2 } }
+					>
 						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
 							{ __( 'Design system', 'elementor' ) }
 						</PanelHeaderTitle>
