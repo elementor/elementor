@@ -28,8 +28,8 @@ Scope: Internal (Core). Experiment: `e_nav_menu`.
 ## Submenu lock (Free and not-connected Pro)
 
 - Types `e-menu-submenu` and `e-menu-submenu-trigger` are children of `e-menu-entry`. Without Pro, Core registers placeholders (`Atomic_Menu_Submenu_Promotion`, `Atomic_Menu_Submenu_Trigger_Promotion`, built on `Atomic_Pro_Promotion_Element_Base`): hidden from the panel, render nothing, data kept on save by `Pro_Promotion_Data_Preservation`. Pro must register the same types and schema.
-- `Submenu_Entitlement` decides the lock: locked unless Pro is installed and its stored license is valid or `expired`. Filters: `elementor/atomic-widgets/menu/submenu/is_locked` and `.../upgrade_url`. The Go URL lives only in `Submenu_Entitlement::UPGRADE_URL` (empty until supplied).
-- The entry type exposes the result as meta `submenu_entitlement`. The editor reads it in `menu-items-control/use-submenu.ts`; `SubmenuToggle` renders the lock in the row popover and in the Menu Item panel (`submenu-toggle` control, which also shows Edit Submenu). Update this section when the Pro Submenu ticket changes the types or the toggle behavior.
+- `Submenu_Entitlement` decides the lock: locked unless Pro is installed, registers the Submenu type, and its license is active or expired (read through `Utils::is_license_active()` / `is_license_expired()`). The Go URL lives in `Submenu_Entitlement::UPGRADE_URL`, overridable with the `elementor/atomic-widgets/menu/submenu/upgrade_url` filter.
+- The entry type exposes the result as meta `submenu_entitlement`, computed when the editor config is built. The editor reads it in `menu-items-control/use-submenu.ts`; `SubmenuToggle` renders the lock in the row popover and in the Menu Item panel (`submenu-toggle` control, which also shows Edit Submenu). Update this section when the Pro Submenu ticket changes the types or the toggle behavior.
 
 ## Verify
 

@@ -12,11 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Menu_Entry extends Atomic_Menu_Locked_Element {
-	public function __construct( $data = [], $args = null ) {
-		parent::__construct( $data, $args );
-		$this->meta( 'submenu_entitlement', [
-			'locked' => Submenu_Entitlement::is_locked(),
-			'promotion' => Submenu_Entitlement::get_promotion(),
+	public function get_meta(): array {
+		return array_merge( parent::get_meta(), [
+			'submenu_entitlement' => [
+				'locked' => Submenu_Entitlement::is_locked(),
+				'promotion' => Submenu_Entitlement::get_promotion(),
+			],
 		] );
 	}
 

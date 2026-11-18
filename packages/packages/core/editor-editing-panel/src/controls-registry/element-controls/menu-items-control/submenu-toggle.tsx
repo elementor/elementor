@@ -70,7 +70,10 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 						size="small"
 						checked={ isEnabled }
 						onChange={ onToggle }
-						inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
+						inputProps={ {
+							'aria-label': __( 'Enable Submenu', 'elementor' ),
+							...( isLockedOff && { 'aria-haspopup': 'dialog', 'aria-expanded': isPromotionOpen } ),
+						} }
 					/>
 				</Box>
 			</Stack>

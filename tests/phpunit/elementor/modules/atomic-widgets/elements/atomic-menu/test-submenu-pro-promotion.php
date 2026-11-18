@@ -30,7 +30,6 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->get_element_types_property()->setValue( Plugin::$instance->elements_manager, $this->original_element_types );
 		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAV_MENU, Experiments_Manager::STATE_INACTIVE );
 		remove_all_filters( 'elementor/document/save/data' );
-		remove_all_filters( 'elementor/atomic-widgets/menu/submenu/is_locked' );
 		remove_all_filters( 'elementor/atomic-widgets/menu/submenu/upgrade_url' );
 
 		parent::tear_down();
@@ -116,25 +115,20 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 	}
 
 	public function test_lock_matrix() {
-		$valid = [ 'success' => true ];
-		$expired = [ 'success' => false, 'error' => 'expired' ];
-		$not_connected = [];
-		$inactive = [ 'success' => false, 'error' => 'site_inactive' ];
-
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, [] ), 'Free' );
-		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, $valid ), 'Pro active, valid' );
-		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, $expired ), 'Pro active, expired' );
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, $not_connected ), 'Pro not connected' );
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, $inactive ), 'Pro with an inactive site' );
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, $valid ), 'Pro deactivated with stale license data' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, false, false, true ), 'Free' );
+		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, true, false, true ), 'Pro active, valid license' );
+		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, false, true, true ), 'Pro active, expired license' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, false, false, true ), 'Pro not connected' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, true, false, true ), 'Pro deactivated with stale license data' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, true, false, false ), 'Pro without the Submenu types' );
 	}
 
-	public function test_is_locked_is_overridable_by_filter() {
+	public function test_is_locked_without_pro() {
 		// Arrange.
-		add_filter( 'elementor/atomic-widgets/menu/submenu/is_locked', '__return_false' );
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
 
 		// Assert.
-		$this->assertFalse( Submenu_Entitlement::is_locked() );
+		$this->assertTrue( Submenu_Entitlement::is_locked() );
 	}
 
 	public function test_promotion_copy_and_single_configurable_url() {
@@ -168,6 +162,11 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
 
 		$item = [ 'id' => 'item001', 'elType' => 'e-menu-item', 'settings' => [], 'elements' => [] ];
+		$trigger = [ 'id' => 'trig001', 'elType' => 'e-menu-submenu-trigger', 'settings' => [], 'elements' => [] ];
+		$inner_entry = [ 'id' => 'ientry1', 'elType' => 'e-menu-entry', 'settings' => [], 'elements' => [
+			[ 'id' => 'iitem001', 'elType' => 'e-menu-item', 'settings' => [], 'elements' => [] ],
+			[ 'id' => 'isub0001', 'elType' => 'e-menu-submenu', 'settings' => [], 'elements' => [] ],
+		] ];
 		$submenu = [
 			'id' => 'sub0001',
 			'elType' => 'e-menu-submenu',
@@ -178,11 +177,11 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 					'id' => 'nested1',
 					'elType' => 'e-menu',
 					'settings' => [],
-					'elements' => [ [ 'id' => 'nitems1', 'elType' => 'e-menu-items', 'settings' => [], 'elements' => [] ] ],
+					'elements' => [ [ 'id' => 'nitems1', 'elType' => 'e-menu-items', 'settings' => [], 'elements' => [ $inner_entry ] ] ],
 				],
 			],
 		];
-		$entry = [ 'id' => 'entry01', 'elType' => 'e-menu-entry', 'settings' => [], 'elements' => [ $item, $submenu ] ];
+		$entry = [ 'id' => 'entry01', 'elType' => 'e-menu-entry', 'settings' => [], 'elements' => [ $item, $trigger, $submenu ] ];
 		$menu = [ 'id' => 'menu001', 'elType' => 'e-menu', 'settings' => [], 'elements' => [ [ 'id' => 'items01', 'elType' => 'e-menu-items', 'settings' => [], 'elements' => [ $entry ] ] ] ];
 
 		$document = $this->factory()->documents->create_and_get();
@@ -190,18 +189,23 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 
 		// Act - the editor re-saves with the placeholder's content stripped.
 		$stripped = $menu;
-		$stripped['elements'][0]['elements'][0]['elements'][1]['elements'] = [];
 		$stripped['elements'][0]['elements'][0]['elements'][1]['settings'] = [];
+		$stripped['elements'][0]['elements'][0]['elements'][2]['elements'] = [];
+		$stripped['elements'][0]['elements'][0]['elements'][2]['settings'] = [];
 		$document->save( [ 'elements' => [ $stripped ], 'settings' => [] ] );
 
 		// Assert.
 		$saved_entry = $document->get_elements_data()[0]['elements'][0]['elements'][0];
-		$saved_submenu = $saved_entry['elements'][1];
+		$saved_trigger = $saved_entry['elements'][1];
+		$saved_submenu = $saved_entry['elements'][2];
 
+		$this->assertSame( 'e-menu-submenu-trigger', $saved_trigger['elType'] );
+		$this->assertSame( 'trig001', $saved_trigger['id'] );
 		$this->assertSame( 'e-menu-submenu', $saved_submenu['elType'] );
 		$this->assertSame( [ 'keep-me' ], $saved_submenu['settings']['classes']['value'] );
 		$this->assertSame( 'par0001', $saved_submenu['elements'][0]['id'] );
 		$this->assertSame( 'nested1', $saved_submenu['elements'][1]['id'] );
+		$this->assertSame( 'isub0001', $saved_submenu['elements'][1]['elements'][0]['elements'][0]['elements'][1]['id'] );
 	}
 
 	public function test_menu_item_controls_serialize_with_the_submenu_toggle() {
