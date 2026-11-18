@@ -67,7 +67,7 @@ test.describe.only( 'Atomic Menu @atomic-widgets', () => {
 	};
 
 	const getNewTabSwitch = ( scope: Locator ): Locator => {
-		return scope.locator( '.MuiSwitch-switchBase input[type="checkbox"]' ).first();
+		return scope.locator( '.MuiSwitch-switchBase input[type="checkbox"]:not([aria-label="Enable Submenu"])' ).first();
 	};
 
 	const getEntryIds = async ( menu: Locator ): Promise<string[]> => {
