@@ -306,4 +306,47 @@ describe( 'floating-panels slice', () => {
 
 		expect( b.zIndex ).toBeGreaterThan( a.zIndex );
 	} );
+	it( 'bringToFront ignores docked panels', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'docked', defaults, isDocked: true } ) );
+		const before = selectTopZIndex( __getState() );
+
+		// Act.
+		__dispatch( slice.actions.bringToFront( 'docked' ) );
+		__dispatch( slice.actions.bringToFront( 'docked' ) );
+
+		// Assert.
+		expect( selectTopZIndex( __getState() ) ).toBe( before );
+	} );
+
+	it( 'bringToFront does not grow topZIndex for the panel already on top', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.bringToFront( 'a' ) );
+		const before = selectTopZIndex( __getState() );
+
+		// Act.
+		__dispatch( slice.actions.bringToFront( 'a' ) );
+
+		// Assert.
+		expect( selectTopZIndex( __getState() ) ).toBe( before );
+	} );
+
+	it( 'bringToFront compacts zIndex values when the ceiling is reached', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.register( { id: 'b', defaults } ) );
+
+		// Act.
+		for ( let i = 0; i < 1200; i++ ) {
+			__dispatch( slice.actions.bringToFront( i % 2 ? 'a' : 'b' ) );
+		}
+
+		// Assert.
+		const a = selectPanelState( __getState(), 'a' );
+		const b = selectPanelState( __getState(), 'b' );
+
+		expect( selectTopZIndex( __getState() ) ).toBeLessThanOrEqual( 1000 );
+		expect( a?.zIndex ).toBeGreaterThan( b?.zIndex ?? Infinity );
+	} );
 } );
