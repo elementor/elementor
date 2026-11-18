@@ -4,6 +4,7 @@ import { Box, Divider, Stack } from '@elementor/ui';
 
 import { APP_BAR_HEIGHT, SIDEBAR_CLASS, SIDEBAR_WIDTH_VAR } from '../constants';
 import { sidebarFooter, SidebarFooterSlot, sidebarTools, SidebarToolsSlot } from '../locations';
+import { SIDEBAR_CHROME_ROW_HEIGHT_PX, sidebarInsetDividerSx } from '../sidebar-chrome';
 
 const { useMenuItems: useToolsMenuItems } = sidebarTools;
 const { useMenuItems: useFooterMenuItems } = sidebarFooter;
@@ -37,7 +38,7 @@ export default function Sidebar() {
 				<Stack alignItems="center" pb={ 1.25 } width="100%">
 					<Groups
 						groups={ [ toolsItems.elements, toolsItems.design, toolsItems.default ] }
-						firstGroupHeight={ APP_BAR_HEIGHT }
+						firstGroupHeight={ SIDEBAR_CHROME_ROW_HEIGHT_PX }
 					/>
 					<SidebarToolsSlot />
 				</Stack>
@@ -59,14 +60,22 @@ function Groups( { groups, firstGroupHeight }: { groups: MenuItems[]; firstGroup
 				.filter( ( items ) => items.length > 0 )
 				.map( ( items, index ) => (
 					<React.Fragment key={ index }>
-						{ index > 0 && <Divider flexItem /> }
+						{ index > 0 && <Divider sx={ sidebarInsetDividerSx } /> }
 						<Stack
 							alignItems="center"
-							justifyContent="center"
-							gap={ 1 }
-							py={ 1.5 }
-							height={ index === 0 ? firstGroupHeight : undefined }
 							boxSizing="border-box"
+							gap={ index === 0 ? 0 : 1 }
+							justifyContent="center"
+							py={ index === 0 ? 0 : 1.25 }
+							sx={
+								index === 0 && firstGroupHeight
+									? {
+											height: firstGroupHeight,
+											paddingBlockEnd: 0.375,
+									  }
+									: undefined
+							}
+							width="100%"
 						>
 							{ items.map( ( { MenuItem, id } ) => (
 								<MenuItem key={ id } />
