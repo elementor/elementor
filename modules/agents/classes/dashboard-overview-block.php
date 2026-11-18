@@ -18,9 +18,11 @@ class Dashboard_Overview_Block {
 	const STATE_GETTING_THERE = 'getting_there';
 	const STATE_STRONG = 'strong';
 
-	const SCORE_MAX = 100;
-	const SCORE_NEEDS_WORK_MAX = 30;
-	const SCORE_STRONG_MIN = 81;
+	const STATE_BY_TIER = [
+		Score_Tiers::TIER_LOW => self::STATE_NEEDS_WORK,
+		Score_Tiers::TIER_MID => self::STATE_GETTING_THERE,
+		Score_Tiers::TIER_HIGH => self::STATE_STRONG,
+	];
 
 	const FAILING_CHECK_STATUSES = [ 'fail', 'partial' ];
 
@@ -48,15 +50,7 @@ class Dashboard_Overview_Block {
 			return self::STATE_NOT_SCANNED;
 		}
 
-		if ( $score <= self::SCORE_NEEDS_WORK_MAX ) {
-			return self::STATE_NEEDS_WORK;
-		}
-
-		if ( $score < self::SCORE_STRONG_MIN ) {
-			return self::STATE_GETTING_THERE;
-		}
-
-		return self::STATE_STRONG;
+		return self::STATE_BY_TIER[ Score_Tiers::get_tier( $score ) ];
 	}
 
 	public function get_score( ?array $report ): ?int {
@@ -66,7 +60,7 @@ class Dashboard_Overview_Block {
 			return null;
 		}
 
-		return (int) round( min( max( (float) $score, 0 ), self::SCORE_MAX ) );
+		return (int) round( min( max( (float) $score, 0 ), Score_Tiers::SCORE_MAX ) );
 	}
 
 	public function get_fixes_count( ?array $report ): int {

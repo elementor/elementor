@@ -30,6 +30,7 @@ use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
 use Elementor\Modules\Agents\Classes\Scanner_Orchestrator;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
+use Elementor\Modules\Agents\Classes\Score_Tiers;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
@@ -1084,6 +1085,7 @@ class Module extends BaseModule {
 			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
+			'scoreTiers'             => Score_Tiers::to_array(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 		];
 	}
