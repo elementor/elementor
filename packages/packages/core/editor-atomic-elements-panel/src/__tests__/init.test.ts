@@ -35,5 +35,4 @@ describe( 'editor-atomic-elements-panel init', () => {
 		// Assert.
 		expect( registerPanel ).not.toHaveBeenCalled();
 	} );
-
 } );
