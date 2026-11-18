@@ -65,12 +65,14 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 						</PromotionPopover>
 					) }
 				</Stack>
-				<Switch
-					size="small"
-					checked={ isEnabled }
-					onChange={ onToggle }
-					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
-				/>
+				<Box sx={ { marginInlineEnd: -1 } }>
+					<Switch
+						size="small"
+						checked={ isEnabled }
+						onChange={ onToggle }
+						inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
+					/>
+				</Box>
 			</Stack>
 			{ showEditButton && isEnabled && submenuId && (
 				<Button size="small" color="secondary" variant="outlined" onClick={ () => selectSubmenu( submenuId ) }>
