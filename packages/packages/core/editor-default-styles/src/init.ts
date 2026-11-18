@@ -1,11 +1,13 @@
 import { injectIntoLogic } from '@elementor/editor';
 import { registerElementPanelDefaults } from '@elementor/editor-editing-panel';
+import { getMCPByDomain } from '@elementor/editor-mcp';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
 import { PopulateStore } from './components/populate-store';
 import { defaultStylesStylesProvider } from './default-styles-provider';
+import { initMcp } from './mcp';
 import { slice } from './store';
 
 export function init() {
@@ -29,4 +31,15 @@ export function init() {
 		id: 'default-styles-populate-store',
 		component: PopulateStore,
 	} );
+
+	initMcp(
+		getMCPByDomain( 'default-styles', {
+			instructions: 'MCP server for management of Elementor default styles',
+			docs: `Everything related to V4 ( Atomic ) site-wide default styles.
+# Default styles
+- Update/delete default styles by HTML wrapper tag
+- Get default styles for a tag via get-default-styles
+`,
+		} )
+	);
 }
