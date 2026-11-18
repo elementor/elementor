@@ -7,6 +7,7 @@ import { mockElement } from '../../../../__tests__/utils';
 import { useElement } from '../../../../contexts/element-context';
 import { MenuItemsControl } from '../menu-items-control';
 import { useEntryItem } from '../use-entry-item';
+import { useSubmenu } from '../use-submenu';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../../../contexts/element-context', () => ( {
@@ -19,6 +20,10 @@ jest.mock( '../../../../components/settings-control', () => ( {
 	),
 } ) );
 jest.mock( '../use-entry-item' );
+jest.mock( '../use-submenu', () => ( {
+	...jest.requireActual( '../use-submenu' ),
+	useSubmenu: jest.fn(),
+} ) );
 
 describe( '<MenuItemsControl />', () => {
 	beforeEach( () => {
@@ -48,6 +53,11 @@ describe( '<MenuItemsControl />', () => {
 		} );
 		jest.mocked( useElementEditorSettings ).mockReturnValue( { title: 'Home' } );
 		jest.mocked( useEntryItem ).mockReturnValue( { itemId: 'item-1', settings: {} } );
+		jest.mocked( useSubmenu ).mockReturnValue( {
+			submenuId: null,
+			locked: true,
+			promotion: { title: 'Mega Menu', content: 'content', ctaUrl: 'https://go.example' },
+		} );
 	} );
 
 	const renderControl = ( entryCount: number ) => {
@@ -71,6 +81,20 @@ describe( '<MenuItemsControl />', () => {
 		// Assert
 		expect( await screen.findByText( 'Item name' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'settings-control-link' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render the locked Enable Submenu switch for the entry in the row popover', async () => {
+		// Arrange
+		renderControl( 2 );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'button', { name: 'Open item' } )[ 1 ] );
+
+		// Assert
+		expect( await screen.findByText( 'Item name' ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( 'Enable Submenu', { selector: 'input' } ) ).not.toBeChecked();
+		expect( screen.getByLabelText( 'Promotion chip' ) ).toBeInTheDocument();
+		expect( useSubmenu ).toHaveBeenCalledWith( 'entry-1' );
 	} );
 
 	it( 'should offer removing entries only while more than one remains', () => {

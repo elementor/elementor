@@ -5,13 +5,15 @@ import {
 	removeElements,
 	type V1Element,
 } from '@elementor/editor-elements';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
-import { disableSubmenu, enableSubmenu, getParentEntryId, useSubmenu } from '../use-submenu';
+import { disableSubmenu, enableSubmenu, getParentEntryId, selectSubmenu, useSubmenu } from '../use-submenu';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	__privateRunCommand: jest.fn(),
 	__privateUseListenTo: jest.fn( ( _events, getSnapshot ) => getSnapshot() ),
 } ) );
 
@@ -105,5 +107,38 @@ describe( 'use-submenu', () => {
 		} as unknown as V1Element );
 
 		expect( getParentEntryId( 'item-1' ) ).toBeNull();
+	} );
+
+	it( 'should select the submenu container', () => {
+		// Arrange
+		const container = { id: 'sub-1' } as unknown as V1Element;
+		jest.mocked( getContainer ).mockReturnValue( container );
+
+		// Act
+		selectSubmenu( 'sub-1' );
+
+		// Assert
+		expect( runCommand ).toHaveBeenCalledWith( 'document/elements/select', { container } );
+	} );
+
+	it( 'should not remove anything when the entry has no submenu', () => {
+		// Arrange
+		jest.mocked( getContainer ).mockReturnValue( {
+			children: [ child( 'item-1', 'e-menu-item' ) ],
+		} as unknown as V1Element );
+
+		// Act
+		disableSubmenu( 'entry-1' );
+
+		// Assert
+		expect( removeElements ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should throw when enabling a submenu on a missing entry', () => {
+		// Arrange
+		jest.mocked( getContainer ).mockReturnValue( undefined as never );
+
+		// Act & Assert
+		expect( () => enableSubmenu( 'missing' ) ).toThrow( 'Menu entry not found' );
 	} );
 } );
