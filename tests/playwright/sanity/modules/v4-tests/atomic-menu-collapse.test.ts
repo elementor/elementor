@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { wpCli } from '../../../assets/wp-cli';
+import { DisplayValue } from '../../../pages/atomic-elements-panel/style-tab';
 
 type EditorWindow = {
 	$e: { run: ( cmd: string, args?: unknown ) => void };
@@ -57,6 +58,15 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 		);
 
 		await editor.applyElementSettings( menuId, typed );
+	};
+
+	const styleItemsLayout = async ( menuId: string, flexDirection: 'row' | 'column' ) => {
+		const itemsId = await getChildId( getMenuRoot( menuId ), 'e-menu-items' );
+
+		await editor.selectElement( itemsId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+		await editor.v4Panel.style.setLayoutSectionValue( DisplayValue.FLEX, { flexDirection } );
 	};
 
 	const viewFrontend = async () => {
@@ -530,6 +540,129 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 
 			// Assert
 			await expect( getMenuRoot( menuId ).locator( '[data-element_type="e-menu-toggle"]' ) ).toHaveCount( 1 );
+		} );
+	} );
+
+	test.describe( 'Items layout styling', () => {
+		test( 'Author direction on the items container takes effect on desktop', async () => {
+			// Arrange
+			const menuId = await addMenu();
+
+			// Act
+			await styleItemsLayout( menuId, 'column' );
+			await viewFrontend();
+			await editor.page.setViewportSize( DESKTOP );
+
+			// Assert
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'column' );
+		} );
+
+		test( 'The collapsed menu stacks the items by default', async () => {
+			// Arrange
+			await addMenu();
+			await viewFrontend();
+
+			// Act
+			await editor.page.setViewportSize( DESKTOP );
+
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'row' );
+
+			await editor.page.setViewportSize( TABLET );
+			await getToggle( getNav() ).click();
+
+			// Assert
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'column' );
+		} );
+
+		test( 'Author layout on the items overrides the collapsed default at the breakpoint', async () => {
+			// Arrange
+			const menuId = await addMenu();
+
+			// Act
+			await styleItemsLayout( menuId, 'row' );
+			await viewFrontend();
+			await editor.page.setViewportSize( TABLET );
+			await getToggle( getNav() ).click();
+
+			// Assert
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'row' );
+		} );
+
+		test( 'A value set at the tablet breakpoint applies only at and below it', async () => {
+			// Arrange
+			const menuId = await addMenu();
+			const itemsId = await getChildId( getMenuRoot( menuId ), 'e-menu-items' );
+
+			// Act
+			await editor.selectElement( itemsId );
+			await editor.changeResponsiveView( 'tablet' );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.v4Panel.style.openSection( 'Layout' );
+			await editor.v4Panel.style.setLayoutSectionValue( DisplayValue.FLEX, { flexWrap: 'wrap' } );
+			await editor.changeResponsiveView( 'desktop' );
+			await viewFrontend();
+
+			// Assert
+			await editor.page.setViewportSize( DESKTOP );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-wrap', 'nowrap' );
+
+			await editor.page.setViewportSize( TABLET );
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-wrap', 'wrap' );
+		} );
+
+		test( 'Deselecting the active direction unsets the author value', async () => {
+			// Arrange
+			const menuId = await addMenu();
+
+			await styleItemsLayout( menuId, 'column' );
+
+			// Act
+			const directionControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'direction' );
+
+			await directionControl.locator( 'button[value="column"]' ).click();
+			await viewFrontend();
+			await editor.page.setViewportSize( DESKTOP );
+
+			// Assert
+			await expect( getItems( getNav() ) ).toHaveCSS( 'flex-direction', 'row' );
+		} );
+
+		test( 'Current state styles apply only while the current class is present', async () => {
+			// Arrange
+			const menuId = await addMenu();
+			const firstItemId = await getChildId( getMenuRoot( menuId ), 'e-menu-item' );
+			const currentColor = 'rgb(255, 0, 0)';
+
+			await editor.selectElement( firstItemId );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.v4Panel.style.selectClassState( 'current' );
+			await editor.v4Panel.style.openSection( 'Typography' );
+			await editor.v4Panel.style.setFontColor( '#ff0000' );
+			await viewFrontend();
+
+			const frontendUrl = editor.page.url();
+
+			await editor.page.goBack();
+			await editor.waitForPanelToLoad();
+			await editor.applyElementSettings( firstItemId, {
+				link: {
+					$$type: 'link',
+					value: { destination: { $$type: 'url', value: frontendUrl } },
+				},
+			} );
+
+			// Act
+			await viewFrontend();
+
+			const item = getNav().locator( '[data-element_type="e-menu-item"]' ).first();
+
+			// Assert
+			await expect( item ).toHaveClass( /e--current/ );
+			await expect( item ).toHaveCSS( 'color', currentColor );
+
+			await item.evaluate( ( element ) => element.classList.remove( 'e--current' ) );
+
+			await expect( item ).not.toHaveCSS( 'color', currentColor );
 		} );
 	} );
 } );

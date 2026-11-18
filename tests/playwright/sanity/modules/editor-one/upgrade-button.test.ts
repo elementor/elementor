@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { disablePromotionCdn } from '../../../assets/disable-promotion-cdn';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
@@ -9,6 +10,7 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
+		await disablePromotionCdn();
 		await wpAdmin.openWordPressDashboard();
 		await page.goto( '/wp-admin/admin.php?page=elementor' );
 		await page.waitForLoadState( 'domcontentloaded' );

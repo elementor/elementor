@@ -1,3 +1,5 @@
+import { applyDocumentElementSettings } from '../editor-api';
+
 const TOOL_NAME = 'v3-code-control';
 const ALLOWED_CONTROL_TYPES = [ 'code' ] as const;
 
@@ -48,13 +50,6 @@ const getElementor = () =>
 			};
 		}
 	 ).elementor;
-
-const getCommands = () =>
-	(
-		window as unknown as {
-			$e?: { run?: ( command: string, args?: Record< string, unknown > ) => Promise< unknown > | unknown };
-		}
-	 ).$e;
 
 const isAllowedControlType = ( type: string | undefined ): type is AllowedControlType =>
 	Boolean( type && ( ALLOWED_CONTROL_TYPES as readonly string[] ).includes( type ) );
@@ -129,20 +124,8 @@ export const setCodeControlValue = async ( {
 } ): Promise< SetCodeControlResult > => {
 	const { container, controlType, language } = resolveCodeControl( elementId, controlName );
 
-	const run = getCommands()?.run;
-
-	if ( ! run ) {
-		throw new Error( 'Elementor commands API is not available.' );
-	}
-
-	await run( 'document/elements/settings', {
-		container,
-		settings: {
-			[ controlName ]: value,
-		},
-		options: {
-			external: true,
-		},
+	await applyDocumentElementSettings( container, {
+		[ controlName ]: value,
 	} );
 
 	return {

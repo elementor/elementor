@@ -26,13 +26,16 @@ const useActiveClassLabel = (): string | null => {
 	return null;
 };
 
+/** ED-26281 — Classes AI entry point (styles prompt when only local is active). */
 export const AngieClassSelectorAction = () => {
 	const { element } = useElement();
 	const activeClassLabel = useActiveClassLabel();
 
-	if ( ! activeClassLabel ) {
-		return null;
-	}
+	// Always show one Angie control next to Class Manager. Prefer a named-class
+	// prompt when available; otherwise use the generic styles prompt (local / no label).
+	const prompt = activeClassLabel
+		? ANGIE_PROMPTS.classSelector( element.id, activeClassLabel )
+		: ANGIE_PROMPTS.styleTab( { elementId: element.id } );
 
-	return <AngieGenerateButton prompt={ ANGIE_PROMPTS.classSelector( element.id, activeClassLabel ) } />;
+	return <AngieGenerateButton prompt={ prompt } />;
 };

@@ -13,7 +13,7 @@ describe( 'useElementStates', () => {
 				title: 'Menu item',
 				styleStates: [ { name: 'current', value: 'e--current' } ],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );
@@ -23,6 +23,28 @@ describe( 'useElementStates', () => {
 			{ key: 'e--current', value: 'e--current', label: 'current' },
 		] );
 		expect( result.current.elementTitle ).toBe( 'Menu item' );
+	} );
+
+	it( 'should label the current ancestor and expanded menu item states', () => {
+		// Arrange
+		jest.mocked( useElement ).mockReturnValue( {
+			elementType: {
+				title: 'Menu item',
+				styleStates: [
+					{ name: 'current-ancestor', value: 'e--current-ancestor' },
+					{ name: 'expanded', value: 'e--expanded' },
+				],
+			},
+		} as ReturnType< typeof useElement > );
+
+		// Act
+		const { result } = renderHook( () => useElementStates() );
+
+		// Assert
+		expect( result.current.elementStates ).toEqual( [
+			{ key: 'e--current-ancestor', value: 'e--current-ancestor', label: 'current ancestor' },
+			{ key: 'e--expanded', value: 'e--expanded', label: 'expanded' },
+		] );
 	} );
 
 	it( 'should keep the selected and disabled labels for the other atomic elements', () => {
@@ -35,7 +57,7 @@ describe( 'useElementStates', () => {
 					{ name: 'disabled', value: 'e--disabled' },
 				],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );
@@ -51,7 +73,7 @@ describe( 'useElementStates', () => {
 				title: 'Tab',
 				styleStates: [ { name: 'playing', value: 'e--playing' } ],
 			},
-		} as unknown as ReturnType< typeof useElement > );
+		} as ReturnType< typeof useElement > );
 
 		// Act
 		const { result } = renderHook( () => useElementStates() );

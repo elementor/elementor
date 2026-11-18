@@ -5,6 +5,7 @@ import { registerV3AngieControl } from '../registry';
 
 const ANGIE_TEXT_AI_TYPES = [ 'text', 'textarea', 'wysiwyg' ];
 
+/** ED-26124 — Replace V3 Text AI modal with Angie. */
 export function initV3TextControls(): void {
 	registerV3AngieControl( {
 		types: ANGIE_TEXT_AI_TYPES,

@@ -25,7 +25,7 @@ export const V3_DESCRIPTION = `## Elementor Page Builder
 - Cannot create or edit individual Elementor elements such as widgets or containers
 - Cannot build page layouts or create containers
 - Cannot modify widget-level settings
-- Cannot apply motion effects
+- Apply V3 entrance/hover motion with the v3-motion-effects tool (not V4 interactions tools)
 - Cannot reorder sections or perform detailed canvas-level edits
 - Cannot create fully designed or polished pages
 - Cannot fully resolve responsiveness issues
