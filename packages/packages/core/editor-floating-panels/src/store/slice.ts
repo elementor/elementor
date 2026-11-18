@@ -13,6 +13,8 @@ type SliceState = {
 	topZIndex: number;
 };
 
+const MAX_TOP_Z_INDEX = 1000;
+
 const DEFAULT_CORNER: PanelCorner = 'block-start-inline-start';
 
 const initialState: SliceState = {
@@ -115,8 +117,22 @@ export const slice = __createSlice( {
 		bringToFront( state, action: PayloadAction< string > ) {
 			const panel = state.byId[ action.payload ];
 
-			if ( ! panel ) {
+			if ( ! panel || state.isDockedById[ action.payload ] ) {
 				return;
+			}
+
+			if ( panel.zIndex === state.topZIndex && state.topZIndex > 0 ) {
+				return;
+			}
+
+			if ( state.topZIndex >= MAX_TOP_Z_INDEX ) {
+				Object.values( state.byId )
+					.sort( ( a, b ) => a.zIndex - b.zIndex )
+					.forEach( ( entry, index ) => {
+						entry.zIndex = index + 1;
+					} );
+
+				state.topZIndex = Object.keys( state.byId ).length;
 			}
 
 			state.topZIndex += 1;

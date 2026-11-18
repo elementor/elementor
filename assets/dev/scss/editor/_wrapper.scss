@@ -59,7 +59,7 @@ body {
 		content: '';
 		position: absolute;
 		inset-block-start: 0;
-		inset-inline-end: 0;
+		inset-inline-end: var(--e-editor-docked-panel-width, 0px);
 		height: 100%;
 		width: 0;
 		background-color: var(--e-a-bg-default);
