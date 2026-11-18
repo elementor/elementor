@@ -50,8 +50,8 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 	const getSwitchRow = ( scope: Locator ): Locator => {
 		return scope
 			.locator( 'div' )
-			.filter( { has: getEnableSubmenuSwitch( scope ) } )
-			.filter( { has: scope.getByLabel( 'Promotion chip' ) } )
+			.filter( { has: editor.page.locator( 'input[aria-label="Enable Submenu"]' ) } )
+			.filter( { has: editor.page.getByLabel( 'Promotion chip' ) } )
 			.last();
 	};
 
