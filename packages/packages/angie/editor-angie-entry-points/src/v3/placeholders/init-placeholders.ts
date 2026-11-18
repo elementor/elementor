@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
+import { buildAngieSiteLogoPrompt } from '../../prompts';
 import { registerV3AngieControl } from '../registry';
 import type { V3ControlView } from '../types';
 
@@ -23,11 +24,16 @@ export function initV3PlaceholderControls(): void {
 	registerV3AngieControl( {
 		types: [ 'media' ],
 		shouldApply: ( view ) => isMediaImageControl( view ),
-		buildPrompt: ( { context } ) =>
-			[
+		buildPrompt: ( { context } ) => {
+			if ( 'site_logo' === context.controlName ) {
+				return buildAngieSiteLogoPrompt();
+			}
+
+			return [
 				`Update the media / image control "${ context.controlName }" on element "${ context.elementId }".`,
 				'Help the user create or replace this image with AI.',
-			].join( '\n\n' ),
+			].join( '\n\n' );
+		},
 		getButtonLabel: () => __( 'Create with AI', 'elementor' ),
 	} );
 

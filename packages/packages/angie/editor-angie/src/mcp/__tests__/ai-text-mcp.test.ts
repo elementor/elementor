@@ -2,6 +2,7 @@ import { getMCPByDomain } from '@elementor/editor-mcp';
 
 import { initAiTextMcp } from '../ai-text-mcp';
 import { initV3CodeControlTool } from '../tools/v3-code-control/tool';
+import { initV3KitSiteIdentityTool } from '../tools/v3-kit-site-identity/tool';
 import { initV3MotionEffectsTool } from '../tools/v3-motion-effects/tool';
 import { initV3TextControlTool } from '../tools/v3-text-control/tool';
 
@@ -14,6 +15,10 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 
 jest.mock( '../tools/v3-code-control/tool', () => ( {
 	initV3CodeControlTool: jest.fn(),
+} ) );
+
+jest.mock( '../tools/v3-kit-site-identity/tool', () => ( {
+	initV3KitSiteIdentityTool: jest.fn(),
 } ) );
 
 jest.mock( '../tools/v3-motion-effects/tool', () => ( {
@@ -35,8 +40,9 @@ describe( 'initAiTextMcp', () => {
 
 		// Assert
 		expect( getMCPByDomain ).toHaveBeenCalledWith( 'ai', expect.any( Object ) );
-		expect( initV3TextControlTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );
 		expect( initV3CodeControlTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );
+		expect( initV3KitSiteIdentityTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );
 		expect( initV3MotionEffectsTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );
+		expect( initV3TextControlTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );
 	} );
 } );

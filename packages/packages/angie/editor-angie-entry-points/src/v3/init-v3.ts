@@ -23,6 +23,7 @@ const ANGIE_IN_PANELS_EXPERIMENT = 'e_angie_in_panels';
  * | Build with AI (structure / add-section)   | ED-26130 (+ template)|
  * | Generate variations (container menu)      | ED-26130             |
  * | Generate Variations (template library)    | ED-26130             |
+ * | Create with AI (site logo / identity)     | ED-26337 (+ v3-kit-site-identity)   |
  * | Create with AI (media) / excerpt          | Placeholder (no replace ticket yet) |
  * | Show AI gate                              | ED-26336             |
  * | Entry-points package infra                | ED-26335             |
