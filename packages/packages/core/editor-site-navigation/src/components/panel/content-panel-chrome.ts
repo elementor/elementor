@@ -1,6 +1,7 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 
 const CONTENT_PANEL_SECTION_HEADER_PADDING_BLOCK = 1.25;
+const CONTENT_PANEL_SECTION_HEADER_TRAILING_GAP = 0.75;
 const CONTENT_PANEL_SEARCH_PADDING_BLOCK_START = 1.5;
 const CONTENT_PANEL_SEARCH_PADDING_BLOCK_END = 2;
 
@@ -24,6 +25,8 @@ export const contentPanelSearchBoxSx = {
 export const contentPanelSectionHeaderSx = {
 	py: CONTENT_PANEL_SECTION_HEADER_PADDING_BLOCK,
 };
+
+export const contentPanelSectionHeaderTrailingGap = CONTENT_PANEL_SECTION_HEADER_TRAILING_GAP;
 
 export const contentPanelFullBleedDividerSx = {
 	marginInline: 0,

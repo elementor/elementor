@@ -3,7 +3,7 @@ import { type PropsWithChildren, type ReactNode, useId } from 'react';
 import { CollapseIcon } from '@elementor/editor-ui';
 import { Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
-import { contentPanelSectionHeaderSx } from '../content-panel-chrome';
+import { contentPanelSectionHeaderSx, contentPanelSectionHeaderTrailingGap } from '../content-panel-chrome';
 
 type Props = {
 	count: number;
@@ -52,8 +52,15 @@ export default function CollapsibleList( {
 					...sectionHeaderListItemButtonSx,
 				} }
 			>
-				<Stack alignItems="center" direction="row" gap={ 0.5 } width="100%">
-					<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } minWidth={ 0 }>
+				<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } width="100%">
+					<Stack
+						alignItems="center"
+						direction="row"
+						flexGrow={ 1 }
+						gap={ 0.5 }
+						justifyContent="flex-start"
+						minWidth={ 0 }
+					>
 						<ListItemText
 							secondary={ title }
 							secondaryTypographyProps={ {
@@ -65,7 +72,13 @@ export default function CollapsibleList( {
 						/>
 						<Chip label={ count } size="tiny" />
 					</Stack>
-					<Stack alignItems="center" direction="row" flexShrink={ 0 } gap={ 0.25 }>
+					<Stack
+						alignItems="center"
+						direction="row"
+						flexShrink={ 0 }
+						gap={ contentPanelSectionHeaderTrailingGap }
+						justifyContent="flex-end"
+					>
 						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } />
 						{ trailingActions && (
 							<Stack
