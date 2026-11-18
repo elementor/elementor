@@ -7,7 +7,7 @@ interface StyledElementorLogoProps extends SvgIconProps {
 	showMenuIcon?: boolean;
 }
 
-export const TOOLBAR_LOGO_COMPACT_SIZE_PX = 24;
+export const TOOLBAR_LOGO_COMPACT_SIZE_PX = 28;
 
 type ToolbarLogoProps = Omit< ToggleButtonProps, 'value' > & {
 	alignWithSidebar?: boolean;
