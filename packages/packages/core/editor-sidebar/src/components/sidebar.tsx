@@ -6,6 +6,7 @@ import {
 	APP_BAR_HEIGHT,
 	SIDEBAR_CLASS,
 	SIDEBAR_FOOTER_ITEM_GAP_SPACING,
+	SIDEBAR_GROUP_DIVIDER_INSET_SPACING,
 	SIDEBAR_HORIZONTAL_PADDING_SPACING,
 	SIDEBAR_RAIL_BOTTOM_INSET_SPACING,
 	SIDEBAR_RAIL_TOP_INSET_SPACING,
@@ -78,24 +79,33 @@ function Groups( {
 	itemGap: number;
 } ) {
 	const groupPaddingBlockStart = 1.5;
+	const visibleGroups = groups.filter( ( items ) => items.length > 0 );
 
 	return (
 		<>
-			{ groups
-				.filter( ( items ) => items.length > 0 )
-				.map( ( items, index ) => (
+			{ visibleGroups.map( ( items, index ) => {
+				const isFirstGroup = index === 0;
+				const isLastGroup = index === visibleGroups.length - 1;
+
+				let paddingTop = groupPaddingBlockStart;
+
+				if ( isFirstGroup && firstGroupPaddingTop !== undefined ) {
+					paddingTop = firstGroupPaddingTop;
+				} else if ( ! isFirstGroup ) {
+					paddingTop = SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
+				}
+
+				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : 0;
+
+				return (
 					<React.Fragment key={ index }>
-						{ index > 0 && <Divider flexItem /> }
+						{ index > 0 && <Divider flexItem sx={ { my: 0 } } /> }
 						<Stack
 							alignItems="center"
 							justifyContent="center"
 							gap={ itemGap }
-							pt={
-								index === 0 && firstGroupPaddingTop !== undefined
-									? firstGroupPaddingTop
-									: groupPaddingBlockStart
-							}
-							pb={ groupPaddingBlockEnd }
+							pt={ paddingTop }
+							pb={ paddingBottom }
 							boxSizing="border-box"
 						>
 							{ items.map( ( { MenuItem, id } ) => (
@@ -103,7 +113,8 @@ function Groups( {
 							) ) }
 						</Stack>
 					</React.Fragment>
-				) ) }
+				);
+			} ) }
 		</>
 	);
 }
