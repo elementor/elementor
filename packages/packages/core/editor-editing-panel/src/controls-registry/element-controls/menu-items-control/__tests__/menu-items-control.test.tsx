@@ -97,6 +97,18 @@ describe( '<MenuItemsControl />', () => {
 		expect( useSubmenu ).toHaveBeenCalledWith( 'entry-1' );
 	} );
 
+	it( 'should offer Edit Submenu in the row popover when the entry has a submenu', async () => {
+		// Arrange
+		jest.mocked( useSubmenu ).mockReturnValue( { submenuId: 'sub-1', locked: false, promotion: null } );
+		renderControl( 1 );
+
+		// Act
+		fireEvent.click( screen.getAllByRole( 'button', { name: 'Open item' } )[ 0 ] );
+
+		// Assert
+		expect( await screen.findByText( 'Edit Submenu' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should offer removing entries only while more than one remains', () => {
 		// Arrange & Act
 		const { unmount } = renderControl( 2 );

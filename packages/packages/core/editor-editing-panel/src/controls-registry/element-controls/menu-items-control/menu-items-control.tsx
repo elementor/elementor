@@ -125,7 +125,7 @@ const ItemContent = ( { value }: { value: MenuItem } ) => {
 		<Stack p={ 2 } gap={ 1.5 }>
 			<ItemNameControl elementId={ value.id } />
 			<ItemLinkControl entryId={ value.id } />
-			<SubmenuToggle entryId={ value.id } />
+			<SubmenuToggle entryId={ value.id } showEditButton />
 		</Stack>
 	);
 };
