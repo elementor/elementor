@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { SIDEBAR_ICON_SIZE_PX } from '@elementor/editor-sidebar';
 import { styled, SvgIcon, type SvgIconProps, ToggleButton, type ToggleButtonProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -7,7 +8,7 @@ interface StyledElementorLogoProps extends SvgIconProps {
 	showMenuIcon?: boolean;
 }
 
-export const TOOLBAR_LOGO_COMPACT_SIZE_PX = 24;
+export const TOOLBAR_LOGO_COMPACT_SIZE_PX = SIDEBAR_ICON_SIZE_PX;
 
 type ToolbarLogoProps = Omit< ToggleButtonProps, 'value' > & {
 	alignWithSidebar?: boolean;

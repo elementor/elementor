@@ -2,6 +2,8 @@ import * as React from 'react';
 import { editorChromeIconBorderRadiusSx, isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Box, ToggleButton, type ToggleButtonProps, Tooltip } from '@elementor/ui';
 
+import { getToolbarChromeIconSvgSx } from '../../utils/toolbar-chrome-icon-sx';
+
 type ToolbarMenuToggleItemProps = Omit< ToggleButtonProps, 'onChange' > & {
 	title?: string;
 	onClick?: () => void;
@@ -25,11 +27,7 @@ export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Too
 						'&.Mui-disabled': {
 							border: 0, // Temp fix until the style of the ToggleButton component will be decided.
 						},
-						'& svg': {
-							fontSize: '1.25rem',
-							height: '1em',
-							width: '1em',
-						},
+						'& svg': getToolbarChromeIconSvgSx(),
 					} }
 				/>
 			</Box>

@@ -18,6 +18,7 @@ import { Tab, Tabs, Tooltip as BaseTooltip, type TooltipProps } from '@elementor
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from '../../../types';
+import { getToolbarChromeTabsIconSx } from '../../../utils/toolbar-chrome-icon-sx';
 
 export default function BreakpointsSwitcher() {
 	const breakpoints = useBreakpoints();
@@ -56,6 +57,7 @@ export default function BreakpointsSwitcher() {
 				'& .MuiTabs-indicator': {
 					backgroundColor: 'text.primary',
 				},
+				...getToolbarChromeTabsIconSx(),
 			} }
 		>
 			{ breakpoints.map( ( { id, label, type, width } ) => {

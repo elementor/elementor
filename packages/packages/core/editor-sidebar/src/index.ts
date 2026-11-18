@@ -13,4 +13,5 @@ export {
 	editorChromeIconBorderRadiusSx,
 	getEditorChromeIconBorderRadiusPx,
 	getSidebarIconButtonSx,
+	SIDEBAR_ICON_SIZE_PX,
 } from './sidebar-icon-button';
