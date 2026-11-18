@@ -49,6 +49,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@elementor/store": "4.5.0",
     "tsup": "^8.3.5"
   }
 }
