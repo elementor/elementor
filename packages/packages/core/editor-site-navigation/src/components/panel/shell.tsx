@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
-import { Divider, Stack } from '@elementor/ui';
+import { Divider, List, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { panelPostTypeSlugs } from '../../api/post';
 import { ContentPanelCoordinatorProvider } from '../../contexts/content-panel-coordinator';
 import { PostListContextProvider } from '../../contexts/post-list-context';
-import { contentPanelHeaderStackSx, contentPanelInsetDividerSx } from './content-panel-chrome';
+import { contentPanelFullBleedDividerSx, contentPanelHeaderStackSx } from './content-panel-chrome';
 import ContentPanelHeaderAdd from './content-panel-header-add';
 import ContentPanelSearch from './content-panel-search';
 import ErrorSnackbar from './error-snackbar';
@@ -34,18 +34,23 @@ const Shell = () => {
 						<ContentPanelHeaderAdd />
 					</Stack>
 				</PanelHeader>
-				<Divider sx={ contentPanelInsetDividerSx } />
+				<Divider sx={ contentPanelFullBleedDividerSx } />
 				<PanelBody>
 					<ContentPanelSearch />
-					{ panelPostTypeSlugs.map( ( postTypeSlug, index ) => (
-						<PostListContextProvider
-							key={ postTypeSlug }
-							type={ postTypeSlug }
-							setError={ () => setIsErrorSnackbarOpen( true ) }
-						>
-							<PostsCollapsibleList isOpenByDefault={ index === 0 } />
-						</PostListContextProvider>
-					) ) }
+					<List dense disablePadding sx={ { py: 0, width: '100%' } }>
+						{ panelPostTypeSlugs.map( ( postTypeSlug, index ) => (
+							<PostListContextProvider
+								key={ postTypeSlug }
+								type={ postTypeSlug }
+								setError={ () => setIsErrorSnackbarOpen( true ) }
+							>
+								<PostsCollapsibleList
+									isLastSection={ index === panelPostTypeSlugs.length - 1 }
+									isOpenByDefault={ index === 0 }
+								/>
+							</PostListContextProvider>
+						) ) }
+					</List>
 					<ErrorSnackbar open={ isErrorSnackbarOpen } onClose={ () => setIsErrorSnackbarOpen( false ) } />
 				</PanelBody>
 			</Panel>

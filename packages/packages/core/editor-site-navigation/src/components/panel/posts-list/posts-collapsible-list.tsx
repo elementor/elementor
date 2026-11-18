@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, CircularProgress, List, Skeleton, Typography } from '@elementor/ui';
+import { Box, Button, CircularProgress, Skeleton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { postTypesMap } from '../../../api/post';
@@ -15,10 +15,11 @@ import ErrorState from './error-state';
 import PostListItem from './post-list-item';
 
 type Props = {
+	isLastSection?: boolean;
 	isOpenByDefault?: boolean;
 };
 
-export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
+export default function PostsCollapsibleList( { isLastSection = false, isOpenByDefault = false }: Props ) {
 	const { type, editMode, setEditMode } = usePostListContext();
 	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
@@ -99,37 +100,36 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	const showNoResults = trimmedSearch && filteredPosts.length === 0;
 
 	return (
-		<List dense sx={ { px: 0 } }>
-			<CollapsibleList
-				label={ label }
-				isOpen={ isOpen }
-				onOpenChange={ setIsOpen }
-				trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
-			>
-				{ showNoResults && (
-					<Box sx={ { py: 2, px: 2 } }>
-						<Typography variant="body2" color="text.secondary">
-							{ __( 'No results found', 'elementor' ) }
-						</Typography>
-					</Box>
-				) }
-				{ filteredPosts.map( ( post ) => {
-					return <PostListItem key={ post.id } post={ post } />;
-				} ) }
-				{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
-				{ hasNextPage && ! trimmedSearch && (
-					<Box
-						sx={ {
-							display: 'flex',
-							justifyContent: 'center',
-						} }
-					>
-						<Button onClick={ fetchNextPage } color="secondary">
-							{ isFetchingNextPage ? <CircularProgress /> : __( 'Load more', 'elementor' ) }
-						</Button>
-					</Box>
-				) }
-			</CollapsibleList>
-		</List>
+		<CollapsibleList
+			isLastSection={ isLastSection }
+			label={ label }
+			isOpen={ isOpen }
+			onOpenChange={ setIsOpen }
+			trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
+		>
+			{ showNoResults && (
+				<Box sx={ { py: 2, px: 2 } }>
+					<Typography variant="body2" color="text.secondary">
+						{ __( 'No results found', 'elementor' ) }
+					</Typography>
+				</Box>
+			) }
+			{ filteredPosts.map( ( post ) => {
+				return <PostListItem key={ post.id } post={ post } />;
+			} ) }
+			{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
+			{ hasNextPage && ! trimmedSearch && (
+				<Box
+					sx={ {
+						display: 'flex',
+						justifyContent: 'center',
+					} }
+				>
+					<Button onClick={ fetchNextPage } color="secondary">
+						{ isFetchingNextPage ? <CircularProgress /> : __( 'Load more', 'elementor' ) }
+					</Button>
+				</Box>
+			) }
+		</CollapsibleList>
 	);
 }

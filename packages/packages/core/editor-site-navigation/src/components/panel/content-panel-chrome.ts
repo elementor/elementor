@@ -14,3 +14,8 @@ export const contentPanelHeaderStackSx = {
 export const contentPanelInsetDividerSx = {
 	marginInline: CONTENT_PANEL_INSET_SPACING,
 };
+
+export const contentPanelFullBleedDividerSx = {
+	marginInline: 0,
+	width: '100%',
+};
