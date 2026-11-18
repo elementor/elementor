@@ -3,6 +3,7 @@ import { getSidebarIconButtonSx } from '../sidebar-icon-button';
 describe( 'getSidebarIconButtonSx', () => {
 	it( 'uses compact 28px control dimensions for default state', () => {
 		expect( getSidebarIconButtonSx() ).toMatchObject( {
+			borderRadius: expect.any( Function ),
 			width: 28,
 			height: 28,
 			padding: '6px',

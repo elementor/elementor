@@ -4,6 +4,10 @@ export const SIDEBAR_ICON_SIZE_PX = 20;
 
 export const SIDEBAR_ICON_BUTTON_SIZE_PX = 28;
 
+export const editorChromeIconBorderRadiusSx: Pick< SxProps< Theme >, 'borderRadius' > = {
+	borderRadius: ( theme ) => theme.shape.borderRadius,
+};
+
 type SidebarIconButtonState = {
 	selected?: boolean;
 	active?: boolean;
@@ -16,6 +20,7 @@ export function getSidebarIconButtonSx( {
 	const isEmphasized = selected || active;
 
 	return {
+		...editorChromeIconBorderRadiusSx,
 		width: SIDEBAR_ICON_BUTTON_SIZE_PX,
 		height: SIDEBAR_ICON_BUTTON_SIZE_PX,
 		padding: '6px',

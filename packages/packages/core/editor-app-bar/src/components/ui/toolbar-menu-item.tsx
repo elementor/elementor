@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { editorChromeIconBorderRadiusSx, isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Box, IconButton, type IconButtonProps, Tooltip as BaseTooltip, type TooltipProps } from '@elementor/ui';
 
 type ToolbarMenuItemProps = IconButtonProps & {
@@ -7,6 +8,8 @@ type ToolbarMenuItemProps = IconButtonProps & {
 };
 
 export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemProps ) {
+	const sidebarChrome = isSidebarEnabled();
+
 	return (
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
@@ -16,6 +19,7 @@ export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemPro
 					aria-label={ title }
 					size="medium"
 					sx={ {
+						...( sidebarChrome ? editorChromeIconBorderRadiusSx : {} ),
 						'& svg': {
 							fontSize: '1.25rem',
 							height: '1em',

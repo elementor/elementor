@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { editorChromeIconBorderRadiusSx, isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Box, ToggleButton, type ToggleButtonProps, Tooltip } from '@elementor/ui';
 
 type ToolbarMenuToggleItemProps = Omit< ToggleButtonProps, 'onChange' > & {
@@ -7,6 +8,8 @@ type ToolbarMenuToggleItemProps = Omit< ToggleButtonProps, 'onChange' > & {
 };
 
 export default function ToolbarMenuToggleItem( { title, onClick, ...props }: ToolbarMenuToggleItemProps ) {
+	const sidebarChrome = isSidebarEnabled();
+
 	return (
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
@@ -17,6 +20,7 @@ export default function ToolbarMenuToggleItem( { title, onClick, ...props }: Too
 					aria-label={ title }
 					size="small"
 					sx={ {
+						...( sidebarChrome ? editorChromeIconBorderRadiusSx : {} ),
 						border: 0, // Temp fix until the style of the ToggleButton component will be decided.
 						'&.Mui-disabled': {
 							border: 0, // Temp fix until the style of the ToggleButton component will be decided.
