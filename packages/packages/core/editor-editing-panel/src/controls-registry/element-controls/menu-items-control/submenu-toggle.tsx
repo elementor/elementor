@@ -47,7 +47,7 @@ export const SubmenuToggle = ( { entryId }: Props ) => {
 					size="small"
 					checked={ false }
 					disabled
-					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
+					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ), style: { opacity: 0 } } }
 				/>
 			</Box>
 		</Stack>
