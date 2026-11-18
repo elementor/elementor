@@ -48,14 +48,14 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		parent::tear_down();
 	}
 
-	public function test_experiment_is_registered_as_default_active() {
+	public function test_experiment_is_registered_as_default_inactive() {
 		// Arrange
 		$data = Module::get_angie_in_panels_experimental_data();
 
 		// Act & Assert
 		$this->assertSame( Module::ANGIE_IN_PANELS_EXPERIMENT_NAME, $data['name'] );
 		$this->assertTrue( $data['hidden'] );
-		$this->assertSame( Experiments_Manager::STATE_ACTIVE, $data['default'] );
+		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
 	}
 
