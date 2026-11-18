@@ -5,16 +5,19 @@ import { type CompositeWidgetDefinitions } from '../types';
 import { slice } from './store';
 import { toDefinitionsMap } from './to-definitions-map';
 
-type WindowWithCompositeWidgets = Window & {
-	elementor?: {
-		config?: {
-			compositeWidgets?: CompositeWidgetDefinitions | [];
-		};
+type WindowWithElementorConfig = Window & {
+	ElementorConfig?: {
+		compositeWidgets?: CompositeWidgetDefinitions | [];
 	};
 };
 
+/**
+ * Runs from the package init, before the editor starts: `elementor.config` isn't set yet, but it will be
+ * this same `ElementorConfig` object. The store holds the action until the editor creates it, so the
+ * definitions are there before the panel, the canvas or the Navigator first render.
+ */
 export function loadCompositeWidgetsFromConfig() {
-	const definitions = ( window as unknown as WindowWithCompositeWidgets ).elementor?.config?.compositeWidgets;
+	const definitions = ( window as unknown as WindowWithElementorConfig ).ElementorConfig?.compositeWidgets;
 
 	dispatch( slice.actions.load( toDefinitionsMap( definitions ) ) );
 }

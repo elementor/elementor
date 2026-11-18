@@ -20,7 +20,7 @@ const createDefinition = ( id: string, overrides: Partial< CompositeWidgetDefini
 } );
 
 const setEditorConfig = ( compositeWidgets: unknown ) => {
-	( window as unknown as { elementor: unknown } ).elementor = { config: { compositeWidgets } };
+	( window as unknown as { ElementorConfig: unknown } ).ElementorConfig = { compositeWidgets };
 };
 
 const mockRestResponse = ( data: unknown ) => {
@@ -37,8 +37,22 @@ describe( 'composite widget definitions store', () => {
 
 	afterEach( () => {
 		__deleteStore();
-		delete ( window as unknown as { elementor?: unknown } ).elementor;
+		delete ( window as unknown as { ElementorConfig?: unknown } ).ElementorConfig;
 		jest.clearAllMocks();
+	} );
+
+	it( 'holds the definitions loaded before the store exists until it is created', () => {
+		// Arrange.
+		__deleteStore();
+		registerSlice( slice );
+		setEditorConfig( { [ CONFIG_WIDGET_ID ]: createDefinition( CONFIG_WIDGET_ID ) } );
+
+		// Act.
+		loadCompositeWidgetsFromConfig();
+		__createStore();
+
+		// Assert.
+		expect( getCompositeWidgetDefinition( CONFIG_WIDGET_ID )?.id ).toBe( CONFIG_WIDGET_ID );
 	} );
 
 	it( 'has no definitions before the editor config is loaded', () => {
