@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu;
 
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -8,21 +9,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Submenu_Entitlement {
-	const LICENSE_OPTION = '_elementor_pro_license_v2_data';
-	const LICENSE_STATUS_EXPIRED = 'expired';
+	const SUBMENU_TYPE = 'e-menu-submenu';
 
 	// Single place to change the Elementor Go link of the locked Submenu popover.
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-atomic-mega-menu/';
 
 	public static function is_locked(): bool {
-		$locked = self::is_locked_for( Utils::has_pro(), self::get_license_data() );
+		return self::is_locked_for(
+			Utils::has_pro(),
+			Utils::is_license_active(),
+			Utils::is_license_expired(),
+			null !== Plugin::$instance->elements_manager->get_element_types( self::SUBMENU_TYPE )
+		);
+	}
 
-		/**
-		 * Filters whether creating Menu Submenus is locked for the current site.
-		 *
-		 * @param bool $locked Whether new Submenus are locked.
-		 */
-		return (bool) apply_filters( 'elementor/atomic-widgets/menu/submenu/is_locked', $locked );
+	public static function is_locked_for( bool $has_pro, bool $license_active, bool $license_expired, bool $submenu_registered ): bool {
+		if ( ! $has_pro || ! $submenu_registered ) {
+			return true;
+		}
+
+		return ! $license_active && ! $license_expired;
 	}
 
 	public static function get_upgrade_url(): string {
@@ -36,29 +42,9 @@ class Submenu_Entitlement {
 
 	public static function get_promotion(): array {
 		return [
-			'title' => esc_html__( 'Mega Menu', 'elementor' ),
-			'content' => esc_html__( 'Create rich navigation menus with custom layouts, images, and interactive content.', 'elementor' ),
+			'title' => __( 'Mega Menu', 'elementor' ),
+			'content' => __( 'Create rich navigation menus with custom layouts, images, and interactive content.', 'elementor' ),
 			'ctaUrl' => self::get_upgrade_url(),
 		];
-	}
-
-	public static function is_locked_for( bool $has_pro, array $license ): bool {
-		if ( ! $has_pro || empty( $license ) ) {
-			return true;
-		}
-
-		return empty( $license['success'] ) && self::LICENSE_STATUS_EXPIRED !== ( $license['error'] ?? '' );
-	}
-
-	private static function get_license_data(): array {
-		$stored = get_option( self::LICENSE_OPTION );
-
-		if ( ! is_array( $stored ) || ! isset( $stored['value'] ) ) {
-			return [];
-		}
-
-		$data = json_decode( $stored['value'], true );
-
-		return is_array( $data ) ? $data : [];
 	}
 }

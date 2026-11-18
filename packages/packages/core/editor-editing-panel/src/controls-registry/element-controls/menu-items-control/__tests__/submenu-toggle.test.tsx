@@ -31,6 +31,7 @@ describe( '<SubmenuToggle />', () => {
 		expect( screen.getByText( promotion.content ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Upgrade Now' } ) ).toHaveAttribute( 'href', promotion.ctaUrl );
 		expect( enableSubmenu ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toHaveAttribute( 'aria-expanded', 'true' );
 	} );
 
 	it( 'should enable the submenu when entitled', () => {

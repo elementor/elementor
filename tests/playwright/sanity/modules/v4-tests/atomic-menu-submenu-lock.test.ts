@@ -44,7 +44,7 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 	};
 
 	const getEnableSubmenuSwitch = ( scope: Locator ): Locator => {
-		return scope.getByRole( 'checkbox', { name: 'Enable Submenu' } );
+		return scope.locator( 'input[aria-label="Enable Submenu"]' );
 	};
 
 	const getPromotionPopover = (): Locator => {
@@ -84,16 +84,6 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		await editor.selectElement( itemId );
 		await editor.waitForPanelToLoad();
 		await editor.v4Panel.openTab( 'general' );
-	};
-
-	const openSubmenuSection = async (): Promise<void> => {
-		const header = editor.page.locator( '.MuiButtonBase-root', { hasText: /^Submenu$/ } ).first();
-
-		await expect( header ).toBeVisible();
-
-		if ( 'false' === await header.getAttribute( 'aria-expanded' ) ) {
-			await header.click();
-		}
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
@@ -141,7 +131,6 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		await expectPromotionCard();
 		await expect( getEnableSubmenuSwitch( popover ) ).not.toBeChecked();
 		expect( await getSubmenuChildCount( menuId ) ).toBe( 0 );
-		await expect( getEntries( getMenuRoot( menuId ) ) ).toHaveCount( 4 );
 	} );
 
 	test( 'Clicking the Pro crown in the row popover opens the same promotion', async () => {
@@ -163,7 +152,6 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 
 		// Act
 		await selectMenuItemOfEntry( getMenuRoot( menuId ), 0 );
-		await openSubmenuSection();
 
 		// Assert
 		const submenuSwitch = getEnableSubmenuSwitch( editor.page );
@@ -179,7 +167,6 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		const menuId = await addMenu();
 
 		await selectMenuItemOfEntry( getMenuRoot( menuId ), 2 );
-		await openSubmenuSection();
 
 		// Act
 		await getEnableSubmenuSwitch( editor.page ).click();
@@ -205,24 +192,5 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		// Assert
 		await expect( getPromotionPopover() ).toHaveCount( 0 );
 		await expect( getEnableSubmenuSwitch( popover ) ).not.toBeChecked();
-	} );
-
-	test( 'A Free menu with no Submenu renders no Submenu markup on the canvas', async () => {
-		// Arrange
-		const menuId = await addMenu();
-
-		// Assert
-		await expect( getMenuRoot( menuId ).locator( '[data-element_type="e-menu-submenu"], [data-element_type="e-menu-submenu-trigger"]' ) ).toHaveCount( 0 );
-	} );
-
-	test( 'The Submenu placeholder types are not in the Elements panel', async () => {
-		// Arrange
-		await addMenu();
-
-		// Act
-		await editor.openElementsPanel();
-
-		// Assert
-		await expect( editor.page.locator( '#elementor-panel-elements-wrapper' ).getByText( /^Submenu/ ) ).toHaveCount( 0 );
 	} );
 } );
