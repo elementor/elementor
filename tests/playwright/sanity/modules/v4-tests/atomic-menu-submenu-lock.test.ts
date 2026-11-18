@@ -47,6 +47,14 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		return scope.locator( 'input[aria-label="Enable Submenu"]' );
 	};
 
+	const getSwitchRow = ( scope: Locator ): Locator => {
+		return scope
+			.locator( 'div' )
+			.filter( { has: getEnableSubmenuSwitch( scope ) } )
+			.filter( { has: scope.getByLabel( 'Promotion chip' ) } )
+			.last();
+	};
+
 	const getPromotionPopover = (): Locator => {
 		return editor.page.locator( '.MuiAlert-root' ).filter( { hasText: promotionTitle } );
 	};
@@ -179,5 +187,54 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		// Assert
 		await expect( getPromotionPopover() ).toHaveCount( 0 );
 		await expect( getEnableSubmenuSwitch( popover ) ).not.toBeChecked();
+	} );
+
+	test( 'Visual: the locked Enable Submenu row in the Menu items row popover', async () => {
+		// Arrange
+		await addMenu();
+		const field = await openMenuItemsControl();
+		const popover = await openEntryPopover( field, 0 );
+
+		// Assert
+		await expect( getSwitchRow( popover ) ).toHaveScreenshot( 'submenu-lock-row-popover-switch.png' );
+	} );
+
+	test( 'Visual: the Pro promotion opened from the Menu items row popover', async () => {
+		// Arrange
+		await addMenu();
+		const field = await openMenuItemsControl();
+		const popover = await openEntryPopover( field, 0 );
+
+		// Act
+		await popover.getByLabel( 'Promotion chip' ).click();
+		await expectPromotionCard();
+
+		// Assert
+		await expect( getPromotionPopover() ).toHaveScreenshot( 'submenu-lock-row-popover-promotion.png' );
+	} );
+
+	test( 'Visual: the locked Enable Submenu row in the Menu Item settings', async () => {
+		// Arrange
+		const menuId = await addMenu();
+
+		// Act
+		await selectMenuItemOfEntry( getMenuRoot( menuId ), 0 );
+
+		// Assert
+		await expect( getSwitchRow( editor.page ) ).toHaveScreenshot( 'submenu-lock-item-settings-switch.png' );
+	} );
+
+	test( 'Visual: the Pro promotion opened from the Menu Item settings', async () => {
+		// Arrange
+		const menuId = await addMenu();
+
+		await selectMenuItemOfEntry( getMenuRoot( menuId ), 0 );
+
+		// Act
+		await editor.page.getByLabel( 'Promotion chip' ).first().click();
+		await expectPromotionCard();
+
+		// Assert
+		await expect( getPromotionPopover() ).toHaveScreenshot( 'submenu-lock-item-settings-promotion.png' );
 	} );
 } );
