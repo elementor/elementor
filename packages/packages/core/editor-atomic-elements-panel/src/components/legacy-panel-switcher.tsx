@@ -5,7 +5,7 @@ import {
 	routeOpenEvent,
 	v1ReadyEvent,
 } from '@elementor/editor-v1-adapters';
-import { Portal } from '@elementor/ui';
+import { Box, Portal } from '@elementor/ui';
 
 import { ELEMENTS_ROUTE, NOTICE_AREA_ID } from '../consts';
 import { ElementsPanelSwitcher } from './elements-panel-switcher';
@@ -19,7 +19,9 @@ export function LegacyPanelSwitcher() {
 
 	return isActive && container ? (
 		<Portal container={ container }>
-			<ElementsPanelSwitcher value="non_atomic" />
+			<Box sx={ { display: 'flex', justifyContent: 'flex-end', px: 2, py: 1 } }>
+				<ElementsPanelSwitcher value="non_atomic" />
+			</Box>
 		</Portal>
 	) : null;
 }

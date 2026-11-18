@@ -9,10 +9,10 @@ import { ElementsPanelSwitcher } from './elements-panel-switcher';
 export function AtomicElementsPanel() {
 	return (
 		<Panel>
-			<PanelHeader>
+			<PanelHeader sx={ { justifyContent: 'space-between', px: 2 } }>
 				<PanelHeaderTitle>{ __( 'Elements', 'elementor' ) }</PanelHeaderTitle>
+				{ isElementsPanelSwitcherEnabled() && <ElementsPanelSwitcher value="atomic" /> }
 			</PanelHeader>
-			{ isElementsPanelSwitcherEnabled() && <ElementsPanelSwitcher value="atomic" /> }
 			<Divider />
 			<PanelBody />
 		</Panel>

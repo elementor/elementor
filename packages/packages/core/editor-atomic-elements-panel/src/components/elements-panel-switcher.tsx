@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { ToggleButton, ToggleButtonGroup } from '@elementor/ui';
+import { AtomIcon, WidgetsIcon } from '@elementor/icons';
+import { Box, ToggleButton, ToggleButtonGroup } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type ElementsPanelSelection, setElementsPanelSelection } from '../elements-panel-selection';
@@ -9,6 +10,8 @@ import { usePanelActions } from '../panel';
 type Props = {
 	value: ElementsPanelSelection;
 };
+
+const ICON_SIZE = 16;
 
 export function ElementsPanelSwitcher( { value }: Props ) {
 	const isDragging = useIsDragging();
@@ -27,16 +30,48 @@ export function ElementsPanelSwitcher( { value }: Props ) {
 	return (
 		<ToggleButtonGroup
 			exclusive
-			fullWidth
-			size="tiny"
 			value={ value }
 			onChange={ onChange }
 			disabled={ isDragging }
 			aria-label={ __( 'Elements panel', 'elementor' ) }
-			sx={ { px: 2, py: 1 } }
+			sx={ {
+				p: '3px',
+				gap: 0,
+				borderRadius: 2,
+				backgroundColor: 'action.selected',
+				'& .MuiToggleButtonGroup-grouped': {
+					m: 0,
+					border: 0,
+					height: 24,
+					px: 1,
+					gap: 0.5,
+					borderRadius: 1,
+					textTransform: 'none',
+					color: 'text.primary',
+					'&.Mui-selected, &.Mui-selected:hover': {
+						backgroundColor: 'common.white',
+						boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12)',
+					},
+					'&.Mui-focusVisible': { outline: '2px solid', outlineColor: 'primary.main' },
+				},
+			} }
 		>
-			<ToggleButton value="atomic">{ __( 'Atomic', 'elementor' ) }</ToggleButton>
-			<ToggleButton value="non_atomic">{ __( 'Existing', 'elementor' ) }</ToggleButton>
+			<ToggleButton value="atomic" aria-label={ __( 'Atomic elements panel', 'elementor' ) }>
+				<AtomIcon sx={ { fontSize: ICON_SIZE } } />
+				{ value === 'atomic' && <Label>{ __( 'Atomic', 'elementor' ) }</Label> }
+			</ToggleButton>
+			<ToggleButton value="non_atomic" aria-label={ __( 'Existing elements panel', 'elementor' ) }>
+				<WidgetsIcon sx={ { fontSize: ICON_SIZE } } />
+				{ value === 'non_atomic' && <Label>{ __( 'Existing', 'elementor' ) }</Label> }
+			</ToggleButton>
 		</ToggleButtonGroup>
+	);
+}
+
+function Label( { children }: React.PropsWithChildren ) {
+	return (
+		<Box component="span" sx={ { fontSize: 13, fontWeight: 500, lineHeight: '18px' } }>
+			{ children }
+		</Box>
 	);
 }
