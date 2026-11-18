@@ -118,32 +118,20 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		expect( await getSubmenuChildCount( menuId ) ).toBe( 0 );
 	} );
 
-	test( 'Clicking the locked switch in the row popover opens the Pro promotion and does not create a Submenu', async () => {
+	test( 'The locked switch in the row popover is disabled and the crown opens the Pro promotion', async () => {
 		// Arrange
 		const menuId = await addMenu();
 		const field = await openMenuItemsControl();
 		const popover = await openEntryPopover( field, 0 );
 
 		// Act
-		await getEnableSubmenuSwitch( popover ).click();
-
-		// Assert
-		await expectPromotionCard();
-		await expect( getEnableSubmenuSwitch( popover ) ).not.toBeChecked();
-		expect( await getSubmenuChildCount( menuId ) ).toBe( 0 );
-	} );
-
-	test( 'Clicking the Pro crown in the row popover opens the same promotion', async () => {
-		// Arrange
-		await addMenu();
-		const field = await openMenuItemsControl();
-		const popover = await openEntryPopover( field, 1 );
-
-		// Act
 		await popover.getByLabel( 'Promotion chip' ).click();
 
 		// Assert
 		await expectPromotionCard();
+		await expect( getEnableSubmenuSwitch( popover ) ).toBeDisabled();
+		await expect( getEnableSubmenuSwitch( popover ) ).not.toBeChecked();
+		expect( await getSubmenuChildCount( menuId ) ).toBe( 0 );
 	} );
 
 	test( 'Menu Item settings show Enable Submenu locked with the Pro crown', async () => {
@@ -162,17 +150,18 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		await expect( editor.page.getByRole( 'button', { name: 'Edit Submenu' } ) ).toHaveCount( 0 );
 	} );
 
-	test( 'Clicking the locked switch in the Menu Item settings opens the Pro promotion and does not create a Submenu', async () => {
+	test( 'The locked switch in the Menu Item settings is disabled and the crown opens the Pro promotion', async () => {
 		// Arrange
 		const menuId = await addMenu();
 
 		await selectMenuItemOfEntry( getMenuRoot( menuId ), 2 );
 
 		// Act
-		await getEnableSubmenuSwitch( editor.page ).click();
+		await editor.page.getByLabel( 'Promotion chip' ).first().click();
 
 		// Assert
 		await expectPromotionCard();
+		await expect( getEnableSubmenuSwitch( editor.page ) ).toBeDisabled();
 		await expect( getEnableSubmenuSwitch( editor.page ) ).not.toBeChecked();
 		expect( await getSubmenuChildCount( menuId ) ).toBe( 0 );
 	} );
@@ -183,7 +172,7 @@ test.describe( 'Atomic Menu Submenu Pro lock @atomic-widgets', () => {
 		const field = await openMenuItemsControl();
 		const popover = await openEntryPopover( field, 0 );
 
-		await getEnableSubmenuSwitch( popover ).click();
+		await popover.getByLabel( 'Promotion chip' ).click();
 		await expectPromotionCard();
 
 		// Act

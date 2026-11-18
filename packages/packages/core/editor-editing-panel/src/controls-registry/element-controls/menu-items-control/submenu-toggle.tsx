@@ -25,12 +25,6 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 	const isLockedOff = locked && ! isEnabled;
 
 	const onToggle = () => {
-		if ( isLockedOff ) {
-			setIsPromotionOpen( ( open ) => ! open );
-
-			return;
-		}
-
 		if ( isEnabled ) {
 			disableSubmenu( entryId );
 
@@ -57,7 +51,7 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 						>
 							<Box
 								component="span"
-								onClick={ onToggle }
+								onClick={ () => setIsPromotionOpen( ( open ) => ! open ) }
 								sx={ { display: 'inline-flex', cursor: 'pointer' } }
 							>
 								<PromotionChip />
@@ -70,10 +64,8 @@ export const SubmenuToggle = ( { entryId, showEditButton = false }: Props ) => {
 						size="small"
 						checked={ isEnabled }
 						onChange={ onToggle }
-						inputProps={ {
-							'aria-label': __( 'Enable Submenu', 'elementor' ),
-							...( isLockedOff && { 'aria-haspopup': 'dialog', 'aria-expanded': isPromotionOpen } ),
-						} }
+						disabled={ isLockedOff }
+						inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ) } }
 					/>
 				</Box>
 			</Stack>

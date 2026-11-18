@@ -32,7 +32,7 @@ describe( '<SubmenuToggle /> with the widgets cache entitlement', () => {
 		renderWithTheme( <SubmenuToggle entryId="entry-1" /> );
 
 		// Act
-		fireEvent.click( screen.getByLabelText( 'Enable Submenu', { selector: 'input' } ) );
+		fireEvent.click( screen.getByLabelText( 'Promotion chip' ) );
 
 		// Assert
 		expect( screen.getByLabelText( 'Promotion chip' ) ).toBeInTheDocument();
