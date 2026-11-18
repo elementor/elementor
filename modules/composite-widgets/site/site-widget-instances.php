@@ -10,35 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * A copy of a site widget is recognised by its root marker: only site widgets use the `site/` id namespace.
+ * A copy of a site widget is recognised by its root marker: only site widgets use the `site` id namespace.
  */
 class Site_Widget_Instances {
-	public static function remove( array $elements ): array {
-		$kept = [];
+	public static function is_site_widget_root( array $element_data ): bool {
+		$marker = Widget_Markers::sanitize_widget( $element_data[ Widget_Markers::WIDGET_KEY ] ?? null );
 
-		foreach ( $elements as $element ) {
-			if ( ! is_array( $element ) ) {
-				$kept[] = $element;
-				continue;
-			}
-
-			if ( self::is_site_widget_root( $element ) ) {
-				continue;
-			}
-
-			if ( is_array( $element['elements'] ?? null ) ) {
-				$element['elements'] = self::remove( $element['elements'] );
-			}
-
-			$kept[] = $element;
-		}
-
-		return $kept;
-	}
-
-	public static function is_site_widget_root( array $element ): bool {
-		$marker = Widget_Markers::sanitize_widget( $element[ Widget_Markers::WIDGET_KEY ] ?? null );
-
-		return ! empty( $marker ) && 0 === strpos( $marker['id'], Widget_Definition::SITE_ID_PREFIX );
+		return ! empty( $marker ) && Widget_Definition::is_site_namespace( $marker['id'] );
 	}
 }

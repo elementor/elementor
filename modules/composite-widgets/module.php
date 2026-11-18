@@ -12,8 +12,8 @@ use Elementor\Modules\CompositeWidgets\Definitions\Site_Definitions_Registrar;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
-use Elementor\Modules\CompositeWidgets\Site\Site_Widget_Instances;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
+use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Visibility;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,6 +37,10 @@ class Module extends BaseModule {
 
 	private ?Widgets_Definitions_Registry $registry = null;
 	private ?Closed_Structure $closed_structure = null;
+	/**
+	 * The site provider loads its saved widget documents while the registry is built, and each load runs
+	 * the lock sync, which needs the registry: without this flag the build would start over without end.
+	 */
 	private bool $is_building_registry = false;
 
 	public function get_name() {
@@ -75,7 +79,8 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_editor_settings( $settings ) );
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->sync_widget_locks( $data, $document ), self::SYNC_LOCKS_PRIORITY, 2 );
-		add_filter( 'elementor/frontend/builder_content_data', fn ( $data ) => $this->hide_site_widgets_without_pro( $data ) );
+
+		( new Site_Widgets_Visibility() )->register_hooks();
 	}
 
 	/**
@@ -119,8 +124,7 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Editor loads only, after the prop-type migrations. Skipped while the registry is being built: the
-	 * site provider loads its saved widget documents then.
+	 * Editor loads only, after the prop-type migrations.
 	 */
 	private function sync_widget_locks( $data, $document ) {
 		if (
@@ -175,17 +179,6 @@ class Module extends BaseModule {
 		}
 
 		return empty( $definition[ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) && Site_Widgets_Access_Controller::can_add_to_page();
-	}
-
-	/**
-	 * Copies of site widgets stay in the page data without Pro; they're only left out of the render.
-	 */
-	private function hide_site_widgets_without_pro( $data ) {
-		if ( ! is_array( $data ) || Site_Widgets_Access_Controller::can_display() || Plugin::$instance->preview->is_preview_mode() ) {
-			return $data;
-		}
-
-		return Site_Widget_Instances::remove( $data );
 	}
 
 	private function get_panel_tile_key( array $definition ): string {

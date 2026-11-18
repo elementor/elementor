@@ -27,7 +27,7 @@ class Widgets_Definitions_Registry {
 	 *
 	 * @param Widget_Definition_Validator $validator
 	 * @param Definition_Migrator         $migrator
-	 * @param callable|null               $register_site_definitions Receives a `Site_Definitions_Registrar`.
+	 * @param callable|null               $register_site_definitions Receives a `Site_Definitions_Registrar`; null when there's no site provider.
 	 */
 	public function __construct(
 		Widget_Definition_Validator $validator,
@@ -66,7 +66,7 @@ class Widgets_Definitions_Registry {
 			return false;
 		}
 
-		if ( $this->is_site_id( $id ) ) {
+		if ( Widget_Definition::is_site_namespace( $id ) ) {
 			$this->report_invalid( $id, 'id: ' . Definition_Error_Codes::DEFINITION_INVALID );
 			return false;
 		}
@@ -106,7 +106,7 @@ class Widgets_Definitions_Registry {
 
 		unset( $definition[ self::ARCHIVED_KEY ] );
 
-		if ( ! $this->is_site_id( $id ) ) {
+		if ( ! Widget_Definition::is_site_namespace( $id ) ) {
 			$this->report_invalid( $id, 'id: ' . Definition_Error_Codes::DEFINITION_INVALID );
 			return false;
 		}
@@ -146,10 +146,6 @@ class Widgets_Definitions_Registry {
 
 	private function get_id( array $data ): string {
 		return is_string( $data['id'] ?? null ) ? $data['id'] : self::UNKNOWN_DEFINITION_ID;
-	}
-
-	private function is_site_id( string $id ): bool {
-		return 0 === strpos( $id, Widget_Definition::SITE_ID_PREFIX );
 	}
 
 	private function report_invalid( string $id, string $errors ): void {

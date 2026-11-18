@@ -21,15 +21,12 @@ class Test_Site_Widgets_Access_Controller extends Elementor_Test_Base {
 	/**
 	 * @dataProvider tiers_provider
 	 */
-	public function test_access__follows_the_license_tier( bool $is_active, bool $is_expired, array $expected ) {
+	public function test_access__follows_the_license_without_a_pro_answer( bool $is_active, bool $is_expired, array $expected ) {
 		// Arrange.
 		\Mock_Pro_License_API::set_license_state( $is_active, $is_expired );
 
 		// Act.
-		$access = [
-			'add_to_page' => Site_Widgets_Access_Controller::can_add_to_page(),
-			'display' => Site_Widgets_Access_Controller::can_display(),
-		];
+		$access = $this->get_access();
 
 		// Assert.
 		$this->assertSame( $expected, $access );
@@ -49,6 +46,28 @@ class Test_Site_Widgets_Access_Controller extends Elementor_Test_Base {
 				'add_to_page' => false,
 				'display' => false,
 			] ],
+		];
+	}
+
+	public function test_access__follows_the_pro_answer_over_the_license() {
+		// Arrange.
+		\Mock_Pro_License_API::set_license_state( true );
+		add_filter( Site_Widgets_Access_Controller::ACCESS_FILTER, fn () => Site_Widgets_Access_Controller::ACCESS_EXPIRED );
+
+		// Act.
+		$access = $this->get_access();
+
+		// Assert.
+		$this->assertSame( [
+			'add_to_page' => false,
+			'display' => true,
+		], $access );
+	}
+
+	private function get_access(): array {
+		return [
+			'add_to_page' => Site_Widgets_Access_Controller::can_add_to_page(),
+			'display' => Site_Widgets_Access_Controller::can_display(),
 		];
 	}
 }

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Definition {
 	const SOURCE_CODE = 'code';
 	const SOURCE_SITE = 'site';
-	const SITE_ID_PREFIX = 'site/';
+	const ID_NAMESPACE_SEPARATOR = '/';
 	const DEFAULT_VERSION = 1;
 
 	private string $id;
@@ -21,6 +21,19 @@ class Widget_Definition {
 	private array $template = [];
 	private array $general = [];
 	private ?array $style = null;
+
+	/**
+	 * Ids are `<namespace>/<name>`; site widgets use the `site` namespace.
+	 */
+	public static function get_id_namespace( string $id ): string {
+		$separator_position = strpos( $id, self::ID_NAMESPACE_SEPARATOR );
+
+		return false === $separator_position ? '' : substr( $id, 0, $separator_position );
+	}
+
+	public static function is_site_namespace( string $id ): bool {
+		return self::SOURCE_SITE === self::get_id_namespace( $id );
+	}
 
 	public static function make( string $id ): self {
 		return new self( $id );

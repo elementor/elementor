@@ -155,41 +155,64 @@ class Test_Module extends Elementor_Test_Base {
 	/**
 	 * @dataProvider site_widget_render_provider
 	 */
-	public function test_frontend_content__renders_site_widget_copies_only_with_pro( bool $is_active, bool $is_expired, array $expected_ids ) {
+	public function test_frontend_render__renders_site_widget_copies_only_with_access( bool $is_active, bool $is_expired, bool $is_copy_rendered ) {
 		// Arrange.
 		\Mock_Pro_License_API::set_license_state( $is_active, $is_expired );
 		new Module();
-		$data = [
-			[
-				'id' => 'site-copy',
-				'elType' => 'e-flexbox',
-				'part' => 'root',
-				'widget' => [
-					'id' => Site_Definition_Fixture::WIDGET_ID,
-					'version' => 1,
+		$site_copy = $this->create_element( [
+			'id' => 'sitecopy',
+			'part' => 'root',
+			'widget' => [
+				'id' => Site_Definition_Fixture::WIDGET_ID,
+				'version' => 1,
+			],
+			'elements' => [
+				[
+					'id' => 'sitechild',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'part' => 'title',
+					'settings' => [],
+					'elements' => [],
 				],
-				'elements' => [],
 			],
-			[
-				'id' => 'plain',
-				'elType' => 'e-flexbox',
-				'elements' => [],
-			],
-		];
+		] );
+		$plain = $this->create_element( [ 'id' => 'plainbox' ] );
 
 		// Act.
-		$result = apply_filters( 'elementor/frontend/builder_content_data', $data, 0 );
+		$site_copy_html = $this->render( $site_copy );
+		$plain_html = $this->render( $plain );
 
 		// Assert.
-		$this->assertSame( $expected_ids, array_column( $result, 'id' ) );
+		$this->assertSame( $is_copy_rendered, false !== strpos( $site_copy_html, 'sitecopy' ) );
+		$this->assertSame( $is_copy_rendered, false !== strpos( $site_copy_html, 'sitechild' ) );
+		$this->assertStringContainsString( 'plainbox', $plain_html );
 	}
 
 	public function site_widget_render_provider(): array {
 		return [
-			'active license' => [ true, false, [ 'site-copy', 'plain' ] ],
-			'expired license' => [ false, true, [ 'site-copy', 'plain' ] ],
-			'no license' => [ false, false, [ 'plain' ] ],
+			'active license' => [ true, false, true ],
+			'expired license' => [ false, true, true ],
+			'no license' => [ false, false, false ],
 		];
+	}
+
+	public function test_get_registry__finishes_when_the_site_provider_loads_documents_in_edit_mode() {
+		// Arrange.
+		$document = Plugin::$instance->documents->get( $this->factory()->post->create() );
+		Plugin::$instance->editor->set_edit_mode( true );
+		add_action( Module::REGISTER_SITE_HOOK, function ( Site_Definitions_Registrar $registrar ) use ( $document ) {
+			apply_filters( 'elementor/document/load/data', $this->stale_widget_instances(), $document );
+
+			$registrar->register( Site_Definition_Fixture::definition() );
+		} );
+		$module = new Module();
+
+		// Act.
+		$registry = $module->get_registry();
+
+		// Assert.
+		$this->assertNotNull( $registry->get( Site_Definition_Fixture::WIDGET_ID ) );
 	}
 
 	public function test_document_load__syncs_widget_locks_in_edit_mode() {
@@ -226,6 +249,21 @@ class Test_Module extends Elementor_Test_Base {
 		\Mock_Pro_License_API::reset();
 
 		parent::tearDown();
+	}
+
+	private function create_element( array $data ) {
+		return Plugin::$instance->elements_manager->create_element_instance( array_merge( [
+			'elType' => 'e-flexbox',
+			'settings' => [],
+			'elements' => [],
+		], $data ) );
+	}
+
+	private function render( $element ): string {
+		ob_start();
+		$element->print_element();
+
+		return (string) ob_get_clean();
 	}
 
 	private function register_site_widget( bool $is_archived = false ): void {
