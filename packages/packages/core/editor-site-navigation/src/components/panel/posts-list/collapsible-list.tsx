@@ -3,6 +3,8 @@ import { type PropsWithChildren, type ReactNode, useId } from 'react';
 import { CollapseIcon } from '@elementor/editor-ui';
 import { Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
+import { contentPanelSectionHeaderSx } from '../content-panel-chrome';
+
 type Props = {
 	count: number;
 	isOpen: boolean;
@@ -45,26 +47,37 @@ export default function CollapsibleList( {
 				aria-label={ sectionHeaderAriaLabel }
 				disableRipple
 				onClick={ handleClick }
-				sx={ sectionHeaderListItemButtonSx }
+				sx={ {
+					...contentPanelSectionHeaderSx,
+					...sectionHeaderListItemButtonSx,
+				} }
 			>
-				<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } justifyItems="start">
-					<ListItemText
-						secondary={ title }
-						secondaryTypographyProps={ { color: 'text.primary', fontWeight: 'bold', variant: 'caption' } }
-						sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
-					/>
-					<Chip label={ count } size="tiny" />
-					{ trailingActions && (
-						<Stack
-							alignItems="center"
-							direction="row"
-							onClick={ ( event: React.MouseEvent ) => event.stopPropagation() }
-						>
-							{ trailingActions }
-						</Stack>
-					) }
+				<Stack alignItems="center" direction="row" gap={ 0.5 } width="100%">
+					<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } minWidth={ 0 }>
+						<ListItemText
+							secondary={ title }
+							secondaryTypographyProps={ {
+								color: 'text.primary',
+								fontWeight: 'bold',
+								variant: 'caption',
+							} }
+							sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
+						/>
+						<Chip label={ count } size="tiny" />
+					</Stack>
+					<Stack alignItems="center" direction="row" flexShrink={ 0 } gap={ 0.25 }>
+						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } />
+						{ trailingActions && (
+							<Stack
+								alignItems="center"
+								direction="row"
+								onClick={ ( event: React.MouseEvent ) => event.stopPropagation() }
+							>
+								{ trailingActions }
+							</Stack>
+						) }
+					</Stack>
 				</Stack>
-				<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } sx={ { ml: 1 } } />
 			</ListItemButton>
 			<Collapse aria-labelledby={ labelId } id={ contentId } in={ isOpen } timeout="auto" unmountOnExit>
 				<List dense disablePadding>
