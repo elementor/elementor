@@ -10,7 +10,7 @@ export function AtomicElementsPanel() {
 	return (
 		<Panel>
 			<PanelHeader sx={ { justifyContent: 'space-between', px: 2 } }>
-				<PanelHeaderTitle>{ __( 'Elements', 'elementor' ) }</PanelHeaderTitle>
+				<PanelHeaderTitle>{ __( 'Add', 'elementor' ) }</PanelHeaderTitle>
 				{ isElementsPanelSwitcherEnabled() && <ElementsPanelSwitcher value="atomic" /> }
 			</PanelHeader>
 			<Divider />
