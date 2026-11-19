@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Site library</title>
+	<style>
+		:root {
+			--bg: var(--color-background-primary, #0d1117);
+			--surface: var(--color-background-secondary, #161b22);
+			--border: var(--color-border-primary, #30363d);
+			--text: var(--color-text-primary, #e6edf3);
+			--muted: var(--color-text-secondary, #8b949e);
+			--accent: var(--color-text-link, #58a6ff);
+			--accent-soft: rgba(88, 166, 255, 0.12);
+			--sans: var(--font-sans, system-ui, sans-serif);
+		}
+		* { box-sizing: border-box; }
+		html, body { margin: 0; padding: 0; background: transparent; color: var(--text); font: 13px/1.4 var(--sans); }
+		.wrap {
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			background: var(--bg);
+			overflow: hidden;
+		}
+		.head {
+			padding: 10px 12px;
+			border-bottom: 1px solid var(--border);
+			display: flex;
+			align-items: baseline;
+			gap: 8px;
+		}
+		.head h1 { margin: 0; font-size: 14px; font-weight: 600; }
+		.head span { color: var(--muted); font-size: 12px; }
+		.toolbar {
+			padding: 10px 12px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			border-bottom: 1px solid var(--border);
+		}
+		.toolbar input {
+			flex: 1 1 160px;
+			min-width: 120px;
+			padding: 7px 10px;
+			border-radius: 6px;
+			border: 1px solid var(--border);
+			background: var(--surface);
+			color: var(--text);
+			font: inherit;
+		}
+		.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+		.chip {
+			border: 1px solid var(--border);
+			background: transparent;
+			color: var(--muted);
+			border-radius: 6px;
+			padding: 5px 9px;
+			font: inherit;
+			cursor: pointer;
+		}
+		.chip.is-on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+			gap: 10px;
+			padding: 12px;
+			max-height: 340px;
+			overflow: auto;
+		}
+		.card {
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			background: var(--surface);
+			cursor: pointer;
+			text-align: left;
+			padding: 0;
+			overflow: hidden;
+			font: inherit;
+			color: inherit;
+		}
+		.card.is-selected { outline: 2px solid var(--accent); outline-offset: 1px; }
+		.preview-box {
+			height: 96px;
+			background: #010409;
+			position: relative;
+			overflow: hidden;
+		}
+		.preview-box iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 400%;
+			height: 400%;
+			border: 0;
+			transform: scale(0.25);
+			transform-origin: 0 0;
+			pointer-events: none;
+		}
+		.widget-tile {
+			height: 96px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 6px;
+			color: var(--muted);
+		}
+		.widget-tile .widget-icon {
+			display: block;
+			width: 28px;
+			height: 28px;
+			color: var(--accent);
+		}
+		.widget-tile .widget-icon-lg {
+			width: 48px;
+			height: 48px;
+		}
+		.card-body { padding: 8px; }
+		.card-title {
+			font-size: 12px;
+			font-weight: 600;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.card-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+		.inspector {
+			border-top: 1px solid var(--border);
+			padding: 10px 12px 12px;
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 10px;
+		}
+		.inspector-preview {
+			height: 220px;
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			overflow: hidden;
+			background: #010409;
+			position: relative;
+		}
+		.inspector-preview iframe {
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+		.inspector-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+		.inspector-head h2 { margin: 0; font-size: 15px; flex: 1; min-width: 120px; }
+		.tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--muted); }
+		.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+		.btn {
+			font: inherit;
+			border-radius: 6px;
+			padding: 7px 12px;
+			cursor: pointer;
+			border: 1px solid var(--border);
+			background: var(--surface);
+			color: var(--text);
+		}
+		.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+		.empty { padding: 28px; text-align: center; color: var(--muted); }
+		.toast {
+			position: fixed;
+			left: 50%;
+			bottom: 10px;
+			transform: translateX(-50%);
+			background: #21262d;
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 12px;
+			opacity: 0;
+			transition: opacity 0.2s;
+			pointer-events: none;
+		}
+		.toast.show { opacity: 1; }
+		[hidden] { display: none !important; }
+	</style>
+</head>
+<body>
+	<div class="empty" id="waiting">Waiting for site resources…</div>
+	<div class="wrap" id="app" hidden>
+		<div class="head">
+			<h1>Site library</h1>
+			<span id="summary"></span>
+		</div>
+		<div class="toolbar">
+			<input type="search" id="search" placeholder="Filter by name…" autocomplete="off" />
+			<div class="chips" id="chips"></div>
+		</div>
+		<div class="grid" id="grid"></div>
+		<div class="inspector" id="inspector" hidden>
+			<div class="inspector-preview" id="inspector-preview"></div>
+			<div class="inspector-head">
+				<h2 id="sel-title">—</h2>
+				<span class="tag" id="sel-kind"></span>
+				<span class="tag" id="sel-access"></span>
+			</div>
+			<div class="actions">
+				<button type="button" class="btn" id="open-editor" hidden>Open in editor</button>
+				<button type="button" class="btn btn-primary" id="choose">Choose for agent</button>
+			</div>
+		</div>
+	</div>
+	<div class="toast" id="toast"></div>
+	<script>
+	( () => {
+		'use strict';
+
+		const PROTOCOL = '2026-01-26';
+		const ICON_UNITS_PER_EM = 1000;
+		const ICON_FONT_ASCENT = 850;
+		const ICON_PATH_D_PATTERN = /^[MmLlHhVvCcSsQqTtAaZz0-9.,\s+-]+$/;
+		const SITE_ORIGIN_PATTERN = /^https?:\/\//;
+		const KINDS = [
+			{ key: 'all', label: 'All' },
+			{ key: 'widget', label: 'Widgets' },
+			{ key: 'component', label: 'Components' },
+			{ key: 'template', label: 'Templates' },
+		];
+
+		let payload = null;
+		let items = [];
+		let counts = {};
+		let siteOrigin = '';
+		let kindFilter = 'all';
+		let selectedIndex = -1;
+		let filtered = [];
+
+		const pending = new Map();
+		let nextId = 1;
+
+		const el = ( id ) => document.getElementById( id );
+
+		const request = ( method, params ) => {
+			const id = nextId++;
+			return new Promise( ( resolve, reject ) => {
+				pending.set( id, { resolve, reject } );
+				parent.postMessage( { jsonrpc: '2.0', id, method, params: params || {} }, '*' );
+			} );
+		};
+
+		const notify = ( method, params ) => {
+			parent.postMessage( { jsonrpc: '2.0', method, params: params || {} }, '*' );
+		};
+
+		const respond = ( id, result ) => {
+			parent.postMessage( { jsonrpc: '2.0', id, result: result || {} }, '*' );
+		};
+
+		const toast = ( text ) => {
+			const node = el( 'toast' );
+			node.textContent = text;
+			node.classList.add( 'show' );
+			setTimeout( () => node.classList.remove( 'show' ), 2200 );
+		};
+
+		const readPayload = ( toolResult ) => {
+			if ( toolResult && toolResult.structuredContent && Array.isArray( toolResult.structuredContent.items ) ) {
+				return toolResult.structuredContent;
+			}
+			const block = ( toolResult && toolResult.content || [] ).find( ( row ) => row.type === 'text' );
+			try {
+				const parsed = JSON.parse( block && block.text );
+				return parsed && Array.isArray( parsed.items ) ? parsed : null;
+			} catch {
+				return null;
+			}
+		};
+
+		const applyFilters = () => {
+			const q = el( 'search' ).value.trim().toLowerCase();
+			filtered = items.filter( ( item ) => {
+				if ( kindFilter !== 'all' && item.kind !== kindFilter ) {
+					return false;
+				}
+				if ( ! q ) {
+					return true;
+				}
+				const hay = [ item.title, item.category, item.subtype, item.kind ].join( ' ' ).toLowerCase();
+				return hay.includes( q );
+			} );
+			if ( selectedIndex >= filtered.length ) {
+				selectedIndex = filtered.length ? 0 : -1;
+			}
+			render();
+		};
+
+		const normalizeSiteOrigin = ( rawOrigin ) => {
+			if ( typeof rawOrigin !== 'string' || ! SITE_ORIGIN_PATTERN.test( rawOrigin ) ) {
+				return '';
+			}
+			try {
+				const parsed = new URL( rawOrigin );
+				if ( 'http:' !== parsed.protocol && 'https:' !== parsed.protocol ) {
+					return '';
+				}
+				return parsed.origin;
+			} catch {
+				return '';
+			}
+		};
+
+		const safeSiteUrl = ( rawUrl ) => {
+			if ( typeof rawUrl !== 'string' || '' === rawUrl || '' === siteOrigin ) {
+				return '';
+			}
+			let parsed;
+			try {
+				parsed = new URL( rawUrl );
+			} catch {
+				return '';
+			}
+			if ( 'http:' !== parsed.protocol && 'https:' !== parsed.protocol ) {
+				return '';
+			}
+			if ( parsed.origin !== siteOrigin ) {
+				return '';
+			}
+			return parsed.href;
+		};
+
+		const safeIconPathD = ( rawPath ) => {
+			if ( typeof rawPath !== 'string' || '' === rawPath || rawPath.length > 8192 ) {
+				return '';
+			}
+			return ICON_PATH_D_PATTERN.test( rawPath ) ? rawPath : '';
+		};
+
+		const appendIconPath = ( parent, pathD, large ) => {
+			if ( ! pathD ) {
+				return;
+			}
+			const wrap = document.createElement( 'span' );
+			wrap.className = 'widget-icon' + ( large ? ' widget-icon-lg' : '' );
+			const svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+			svg.setAttribute( 'viewBox', '0 0 ' + ICON_UNITS_PER_EM + ' ' + ICON_UNITS_PER_EM );
+			svg.setAttribute( 'width', '100%' );
+			svg.setAttribute( 'height', '100%' );
+			svg.setAttribute( 'aria-hidden', 'true' );
+			const group = document.createElementNS( 'http://www.w3.org/2000/svg', 'g' );
+			group.setAttribute( 'transform', 'scale(1,-1) translate(0,-' + ICON_FONT_ASCENT + ')' );
+			const path = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+			path.setAttribute( 'fill', 'currentColor' );
+			path.setAttribute( 'd', pathD );
+			group.appendChild( path );
+			svg.appendChild( group );
+			wrap.appendChild( svg );
+			parent.appendChild( wrap );
+		};
+
+		const fillItemPreview = ( parent, item, options ) => {
+			const opts = options || {};
+			parent.replaceChildren();
+
+			const previewSrc = safeSiteUrl( item.preview_url );
+			if ( previewSrc ) {
+				const iframe = document.createElement( 'iframe' );
+				iframe.src = previewSrc;
+				iframe.title = item.title || '';
+				if ( opts.lazy ) {
+					iframe.loading = 'lazy';
+				}
+				parent.appendChild( iframe );
+				return;
+			}
+
+			const tile = document.createElement( 'div' );
+			tile.className = 'widget-tile';
+			if ( opts.fullHeight ) {
+				tile.style.height = '100%';
+			}
+
+			const iconPath = safeIconPathD( item.icon_path_d );
+			if ( item.kind === 'widget' && iconPath ) {
+				appendIconPath( tile, iconPath, !! opts.largeIcon );
+				if ( opts.fullHeight ) {
+					const label = document.createElement( 'div' );
+					label.textContent = item.title || '';
+					tile.appendChild( label );
+				}
+			} else {
+				const initial = document.createElement( 'span' );
+				initial.textContent = ( item.title || '?' ).slice( 0, 1 );
+				tile.appendChild( initial );
+			}
+
+			parent.appendChild( tile );
+		};
+
+		const renderChips = () => {
+			const wrap = el( 'chips' );
+			wrap.replaceChildren();
+			KINDS.forEach( ( kind ) => {
+				const btn = document.createElement( 'button' );
+				btn.type = 'button';
+				btn.className = 'chip' + ( kindFilter === kind.key ? ' is-on' : '' );
+				const count = kind.key === 'all' ? ( counts.all || items.length ) : ( counts[ kind.key ] || 0 );
+				btn.textContent = kind.label + ' · ' + count;
+				btn.addEventListener( 'click', () => {
+					kindFilter = kind.key;
+					selectedIndex = filtered.length ? 0 : -1;
+					applyFilters();
+				} );
+				wrap.appendChild( btn );
+			} );
+		};
+
+		const renderGrid = () => {
+			const grid = el( 'grid' );
+			grid.replaceChildren();
+			filtered.forEach( ( item, index ) => {
+				const btn = document.createElement( 'button' );
+				btn.type = 'button';
+				btn.className = 'card' + ( index === selectedIndex ? ' is-selected' : '' );
+
+				const previewBox = document.createElement( 'div' );
+				previewBox.className = 'preview-box';
+				fillItemPreview( previewBox, item, { lazy: true } );
+
+				const body = document.createElement( 'div' );
+				body.className = 'card-body';
+				const titleNode = document.createElement( 'div' );
+				titleNode.className = 'card-title';
+				titleNode.textContent = item.title || 'Untitled';
+				const metaNode = document.createElement( 'div' );
+				metaNode.className = 'card-meta';
+				metaNode.textContent = item.kind + ' · ' + ( item.subtype || item.category );
+				body.appendChild( titleNode );
+				body.appendChild( metaNode );
+
+				btn.appendChild( previewBox );
+				btn.appendChild( body );
+				btn.addEventListener( 'click', () => {
+					selectedIndex = index;
+					render();
+				} );
+				grid.appendChild( btn );
+			} );
+		};
+
+		const renderInspector = () => {
+			const inspector = el( 'inspector' );
+			const item = filtered[ selectedIndex ];
+			if ( ! item ) {
+				inspector.hidden = true;
+				return;
+			}
+			inspector.hidden = false;
+			el( 'sel-title' ).textContent = item.title || 'Untitled';
+			el( 'sel-kind' ).textContent = item.kind + ' / ' + ( item.subtype || item.category );
+			el( 'sel-access' ).textContent = item.access || '';
+			const box = el( 'inspector-preview' );
+			fillItemPreview( box, item, { fullHeight: true, largeIcon: true } );
+			const open = el( 'open-editor' );
+			const editUrl = safeSiteUrl( item.edit_url );
+			if ( editUrl ) {
+				open.hidden = false;
+				open.onclick = () => {
+					const openTarget = safeSiteUrl( item.edit_url );
+					if ( ! openTarget ) {
+						return;
+					}
+					request( 'ui/open-link', { url: openTarget } ).catch( () => {
+						window.open( openTarget, '_blank', 'noopener,noreferrer' );
+					} );
+				};
+			} else {
+				open.hidden = true;
+			}
+		};
+
+		const render = () => {
+			renderChips();
+			renderGrid();
+			renderInspector();
+			el( 'summary' ).textContent = filtered.length + ' shown · ' + items.length + ' total';
+			reportHeight();
+		};
+
+		const ingest = ( toolResult ) => {
+			payload = readPayload( toolResult );
+			if ( ! payload ) {
+				el( 'waiting' ).textContent = 'No site resources in tool result.';
+				return;
+			}
+			items = payload.items || [];
+			counts = payload.counts_by_type || {};
+			siteOrigin = normalizeSiteOrigin( payload.site_origin );
+			el( 'waiting' ).hidden = true;
+			el( 'app' ).hidden = false;
+			selectedIndex = items.length ? 0 : -1;
+			applyFilters();
+		};
+
+		let lastHeight = 0;
+		const reportHeight = () => {
+			const height = Math.ceil( document.documentElement.scrollHeight );
+			if ( height > 0 && height !== lastHeight ) {
+				lastHeight = height;
+				notify( 'ui/notifications/size-changed', { height } );
+			}
+		};
+
+		if ( window.ResizeObserver ) {
+			new ResizeObserver( reportHeight ).observe( document.documentElement );
+		}
+
+		el( 'search' ).addEventListener( 'input', applyFilters );
+
+		el( 'choose' ).addEventListener( 'click', async () => {
+			const item = filtered[ selectedIndex ];
+			if ( ! item ) {
+				return;
+			}
+			const message = 'I chose ' + item.kind + " '" + item.title + "' (id " + item.id + '). Use it.';
+			try {
+				await request( 'ui/message', {
+					role: 'user',
+					content: [ { type: 'text', text: message } ],
+				} );
+				toast( 'Sent to agent' );
+			} catch {
+				try {
+					await navigator.clipboard.writeText( message );
+					toast( 'Copied to clipboard' );
+				} catch {
+					toast( message );
+				}
+			}
+		} );
+
+		window.addEventListener( 'message', ( event ) => {
+			const msg = event.data;
+			if ( ! msg || msg.jsonrpc !== '2.0' ) {
+				return;
+			}
+			if ( ( 'result' in msg || 'error' in msg ) && pending.has( msg.id ) ) {
+				const entry = pending.get( msg.id );
+				pending.delete( msg.id );
+				if ( msg.error ) {
+					entry.reject( new Error( msg.error.message || 'Failed' ) );
+				} else {
+					entry.resolve( msg.result );
+				}
+				return;
+			}
+			if ( ! msg.method ) {
+				return;
+			}
+			if ( msg.id !== undefined && msg.id !== null ) {
+				respond( msg.id, {} );
+				return;
+			}
+			if ( msg.method === 'ui/notifications/tool-result' ) {
+				ingest( msg.params );
+			}
+		} );
+
+		request( 'ui/initialize', {
+			appInfo: { name: 'Site library', version: '2.0.0' },
+			appCapabilities: {},
+			protocolVersion: PROTOCOL,
+		} ).then( ( result ) => {
+			const vars = result && result.hostContext && result.hostContext.styles && result.hostContext.styles.variables;
+			if ( vars ) {
+				Object.keys( vars ).forEach( ( key ) => {
+					if ( vars[ key ] ) {
+						document.documentElement.style.setProperty( key, vars[ key ] );
+					}
+				} );
+			}
+			notify( 'ui/notifications/initialized', {} );
+			reportHeight();
+		} ).catch( ( error ) => {
+			el( 'waiting' ).textContent = error.message || 'Host unavailable';
+		} );
+	} )();
+	</script>
+</body>
+</html>
