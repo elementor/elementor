@@ -28,6 +28,7 @@ import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-t
 import { useTogglePanelProps } from './hooks/use-toggle-panel-props';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
+import { loadAncestorDocumentsAssets } from './store/actions/load-ancestor-documents-assets';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { slice } from './store/store';
@@ -65,6 +66,7 @@ export function init() {
 		removeComponentStyles( id );
 
 		void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
+		void loadAncestorDocumentsAssets();
 	} );
 
 	embeddedDocumentsManager.onDocumentLoad( ( _documentId, data ) => {
