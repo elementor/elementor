@@ -94,8 +94,39 @@ function SearchHarness() {
 	);
 }
 
+const defaultUsePostsValue = {
+	isLoading: false,
+	data: {
+		posts: [
+			{
+				id: 1,
+				type: 'page',
+				title: { rendered: 'Home' },
+				status: 'publish',
+				link: 'www.test.demo',
+				user_can: { edit: true, delete: true },
+			},
+			{
+				id: 2,
+				type: 'page',
+				title: { rendered: 'About' },
+				status: 'draft',
+				link: 'www.test.demo',
+				user_can: { edit: true, delete: true },
+			},
+		],
+		total: 2,
+	},
+} as ReturnType< typeof usePosts >;
+
+const restoreDefaultUsePosts = () => {
+	jest.mocked( usePosts ).mockReset();
+	jest.mocked( usePosts ).mockImplementation( () => defaultUsePostsValue );
+};
+
 describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	beforeEach( () => {
+		restoreDefaultUsePosts();
 		jest.mocked( useActiveDocument ).mockReturnValue(
 			createMockDocument( {
 				id: 3,
@@ -105,6 +136,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
+		restoreDefaultUsePosts();
 	} );
 
 	it( 'should render closed list', () => {
@@ -159,22 +191,15 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		fireEvent.blur( input );
 
 		// Assert.
-		waitFor( () => {
-			expect( input ).toHaveAttribute( 'aria-disabled', 'true' );
-		} ).then();
-
-		expect( mockMutateAsync ).toHaveBeenCalledTimes( 1 );
-
-		waitFor( () => {
-			expect( input ).not.toBeInTheDocument();
-		} ).then();
-
-		waitFor( () => {
-			expect( screen.getByText( 'New Page Title' ) ).toBeInTheDocument();
-		} ).then();
+		await waitFor( () => {
+			expect( mockMutateAsync ).toHaveBeenCalledWith( {
+				title: 'New Page Title',
+				status: 'draft',
+			} );
+		} );
 	} );
 
-	it( 'should append a new list item in edit mode, when "Duplicate" action is clicked', () => {
+	it( 'should append a new list item in edit mode, when "Duplicate" action is clicked', async () => {
 		// Arrange.
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
@@ -191,13 +216,8 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		fireEvent.click( duplicateButton );
 
 		// Assert.
-		waitFor( () => {
-			expect( duplicateButton ).not.toBeInTheDocument();
-		} ).then();
+		const input = await waitFor( () => screen.getByRole( 'textbox' ) );
 
-		const input = screen.getByRole( 'textbox' );
-
-		expect( input ).toBeInTheDocument();
 		expect( input ).toHaveValue( 'Home copy' );
 	} );
 
@@ -235,33 +255,14 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	} );
 
 	it( 'shows empty state when search has no matches', async () => {
-		const defaultPagePosts = [
-			{
-				id: 1,
-				type: 'page',
-				title: { rendered: 'Home' },
-				status: 'publish',
-				link: 'www.test.demo',
-				user_can: { edit: true, delete: true },
-			},
-			{
-				id: 2,
-				type: 'page',
-				title: { rendered: 'About' },
-				status: 'draft',
-				link: 'www.test.demo',
-				user_can: { edit: true, delete: true },
-			},
-		];
-
 		jest.mocked( usePosts ).mockImplementation( ( _type, search = '' ) => {
 			const isEmptySearchResult = search === 'missing';
 
 			return {
 				isLoading: false,
 				data: {
-					posts: isEmptySearchResult ? [] : defaultPagePosts,
-					total: isEmptySearchResult ? 0 : 2,
+					posts: isEmptySearchResult ? [] : defaultUsePostsValue.data.posts,
+					total: isEmptySearchResult ? 0 : defaultUsePostsValue.data.total,
 				},
 			} as ReturnType< typeof usePosts >;
 		} );
