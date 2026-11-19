@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Submenu_Trigger_Promotion;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Atomic_Pro_Promotion_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Menu_Submenu_Trigger_Promotion extends Atomic_Pro_Promotion_Element_Base {
-	const TYPE = 'e-menu-submenu-trigger';
+	const TYPE = Atomic_Menu::ELEMENT_TYPE_SUBMENU_TRIGGER;
 
 	public static function get_type() {
 		return self::TYPE;

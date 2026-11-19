@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Submenu_Promotion;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Atomic_Pro_Promotion_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -12,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Menu_Submenu_Promotion extends Atomic_Pro_Promotion_Element_Base {
-	const TYPE = 'e-menu-submenu';
+	const TYPE = Atomic_Menu::ELEMENT_TYPE_SUBMENU;
 
 	public static function get_type() {
 		return self::TYPE;
