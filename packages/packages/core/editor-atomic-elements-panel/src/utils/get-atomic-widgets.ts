@@ -6,8 +6,10 @@ export type WidgetsCache = Record< string, WidgetConfig >;
 const EXCLUDED_CATEGORIES = [ 'angie-widgets', 'custom-widgets' ];
 
 export function getAtomicWidgets( cache: WidgetsCache | null ): WidgetsCache {
+	const resolvedCache = cache ?? {};
+
 	return Object.fromEntries(
-		Object.entries( cache ?? {} ).filter( ( [ , widget ] ) => isListed( widget, cache as WidgetsCache ) )
+		Object.entries( resolvedCache ).filter( ( [ , widget ] ) => isListed( widget, resolvedCache ) )
 	);
 }
 

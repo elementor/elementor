@@ -1,5 +1,5 @@
-import { act, renderHook } from '@testing-library/react';
 import { getWidgetsCache } from '@elementor/editor-elements';
+import { act, renderHook } from '@testing-library/react';
 
 import { useAtomicWidgets } from '../use-atomic-widgets';
 
@@ -41,6 +41,9 @@ describe( 'useAtomicWidgets', () => {
 		unmount();
 
 		// Assert.
-		expect( removeAction ).toHaveBeenCalledWith( 'elementor/widgets/refreshed', handlers[ 'elementor/widgets/refreshed' ] );
+		expect( removeAction ).toHaveBeenCalledWith(
+			'elementor/widgets/refreshed',
+			handlers[ 'elementor/widgets/refreshed' ]
+		);
 	} );
 } );

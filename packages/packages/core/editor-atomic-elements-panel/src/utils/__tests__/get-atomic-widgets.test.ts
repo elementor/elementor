@@ -1,11 +1,22 @@
-import { getAtomicWidgets } from '../get-atomic-widgets';
+import { getAtomicWidgets as filterWidgets, type WidgetsCache } from '../get-atomic-widgets';
 
-const widget = ( overrides: Record< string, unknown > = {} ) => ( { title: 'Widget', atomic: true, ...overrides } );
+const widget = ( overrides: Record< string, unknown > = {} ) => ( {
+	title: 'Widget',
+	atomic: true,
+	controls: {},
+	...overrides,
+} );
+
+const getAtomicWidgets = ( cache: Record< string, unknown > | null ) => filterWidgets( cache as WidgetsCache | null );
 
 describe( 'getAtomicWidgets', () => {
 	it( 'should return only atomic widgets', () => {
 		// Arrange.
-		const cache = { 'e-heading': widget(), heading: widget( { atomic: false } ), legacy: widget( { atomic: undefined } ) };
+		const cache = {
+			'e-heading': widget(),
+			heading: widget( { atomic: false } ),
+			legacy: widget( { atomic: undefined } ),
+		};
 
 		// Act.
 		const result = getAtomicWidgets( cache );
