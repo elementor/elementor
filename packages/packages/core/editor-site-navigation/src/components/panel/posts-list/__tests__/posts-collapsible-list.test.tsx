@@ -164,7 +164,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		expect( items[ 0 ] ).toHaveTextContent( 'Home' );
 		expect( items[ 0 ] ).toHaveTextContent( 'Homepage' );
 		expect( items[ 1 ] ).toHaveTextContent( 'About' );
-		expect( items[ 1 ] ).toHaveTextContent( '(draft)' );
+		expect( items[ 1 ] ).toHaveTextContent( 'Draft' );
 	} );
 
 	it( 'should create a new post after clicking section add button', async () => {
