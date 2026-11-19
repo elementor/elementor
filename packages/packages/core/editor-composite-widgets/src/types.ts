@@ -52,4 +52,7 @@ export type CompositeWidgetDefinition = {
 	icon?: string;
 	template: CompositeWidgetTemplateNode;
 	general?: CompositeWidgetGeneralEntry[];
+	archived?: boolean;
 };
+
+export type CompositeWidgetDefinitions = Record< string, CompositeWidgetDefinition >;

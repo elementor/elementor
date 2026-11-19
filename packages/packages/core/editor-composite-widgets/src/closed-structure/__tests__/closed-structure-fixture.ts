@@ -1,7 +1,18 @@
 import { createMockElement } from 'test-utils';
 import { type V1Element, type V1ElementModelProps } from '@elementor/editor-elements';
+import { __deleteStore as deleteStore } from '@elementor/store';
+
+import { setCompositeWidgetDefinitions } from '../../__tests__/set-composite-widget-definitions';
+import { type CompositeWidgetDefinition } from '../../types';
 
 export const WIDGET_ID = 'elementor/tabs-like';
+
+export const WIDGET_DEFINITION: CompositeWidgetDefinition = {
+	id: WIDGET_ID,
+	version: 1,
+	title: 'Tabs',
+	template: { elType: 'e-flexbox', part: 'root' },
+};
 
 type FixtureElement = 'document' | 'page' | 'root' | 'label' | 'slot' | 'slotChild' | 'nestedRoot' | 'nestedPart';
 type UnknownElement = 'unknownRoot' | 'unknownPart';
@@ -42,8 +53,9 @@ export function setupClosedStructureFixture(): ClosedStructureFixture {
 	);
 	const unknownPart = add( { id: 'unknown-part', widgetType: 'e-heading', part: 'label' }, unknownRoot );
 
+	setCompositeWidgetDefinitions( { [ WIDGET_ID ]: WIDGET_DEFINITION } );
+
 	( window as unknown as { elementor: unknown } ).elementor = {
-		config: { compositeWidgets: { [ WIDGET_ID ]: { id: WIDGET_ID, version: 1, title: 'Tabs', template: {} } } },
 		getContainer: jest.fn( ( id: string ) => elements.get( id ) ),
 	};
 
@@ -67,5 +79,6 @@ export function getContainerSpy(): jest.Mock {
 }
 
 export function cleanupClosedStructureFixture() {
+	deleteStore();
 	delete ( window as unknown as { elementor?: unknown } ).elementor;
 }
