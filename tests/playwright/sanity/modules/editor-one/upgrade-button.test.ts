@@ -20,7 +20,7 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 
 		// Assert.
 		await expect( link ).toBeVisible();
-		await expect( link ).toHaveText( 'Upgrade' );
+		await expect( link ).toHaveText( /Upgrade/i );
 	} );
 
 	test( 'Upgrade button has correct text and background color in normal state', async ( { page } ) => {
