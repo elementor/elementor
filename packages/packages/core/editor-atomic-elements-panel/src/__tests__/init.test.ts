@@ -1,6 +1,6 @@
 import { registerPanel } from '@elementor/editor-panels';
 
-import { isAtomicElementsPanelEnabled, isElementsPanelSwitcherEnabled } from '../gate';
+import { isAtomicElementsPanelEnabled } from '../gate';
 import { init } from '../init';
 
 jest.mock( '@elementor/editor-panels', () => ( {
