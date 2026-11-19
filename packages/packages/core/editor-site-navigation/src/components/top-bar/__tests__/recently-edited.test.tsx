@@ -9,7 +9,6 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import useRecentPosts from '../../../hooks/use-recent-posts';
 import { type RecentPost } from '../../../types';
-import RecentlyEdited from '../recently-edited';
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	__useActiveDocument: jest.fn(),
@@ -34,19 +33,22 @@ jest.mock( '../../../hooks/use-user', () => ( {
 	__esModule: true,
 } ) );
 
-const mockEnv = { is_pages_panel_active: false };
-
 jest.mock( '../../../env', () => ( {
-	env: mockEnv,
+	env: { is_pages_panel_active: false },
 } ) );
+
+import { env } from '../../../env';
+import RecentlyEdited from '../recently-edited';
+
+type PagesPanelEnv = { is_pages_panel_active: boolean };
 
 describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
 	beforeEach( () => {
-		mockEnv.is_pages_panel_active = false;
+		( env as PagesPanelEnv ).is_pages_panel_active = false;
 	} );
 
 	it( 'shows document title without recent dropdown when pages panel experiment is active', () => {
-		mockEnv.is_pages_panel_active = true;
+		( env as PagesPanelEnv ).is_pages_panel_active = true;
 
 		jest.mocked( useActiveDocument ).mockReturnValue(
 			createMockDocument( {

@@ -23,18 +23,19 @@ jest.mock( '../hooks/use-toggle-button-props', () => ( {
 	useToggleButtonProps: jest.fn(),
 } ) );
 
-const mockEnv = { is_pages_panel_active: false };
-
 jest.mock( '../env', () => ( {
-	env: mockEnv,
+	env: { is_pages_panel_active: false },
 } ) );
 
+import { env } from '../env';
 import { init } from '../init';
+
+type PagesPanelEnv = { is_pages_panel_active: boolean };
 
 describe( '@elementor/editor-site-navigation - init', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockEnv.is_pages_panel_active = false;
+		( env as PagesPanelEnv ).is_pages_panel_active = false;
 	} );
 
 	it( 'registers document title area without site content panel when experiment is inactive', () => {
@@ -48,7 +49,7 @@ describe( '@elementor/editor-site-navigation - init', () => {
 	} );
 
 	it( 'registers document title area and site content panel when experiment is active', () => {
-		mockEnv.is_pages_panel_active = true;
+		( env as PagesPanelEnv ).is_pages_panel_active = true;
 
 		init();
 
