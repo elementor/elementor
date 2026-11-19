@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { hasLoadedEditorAngie, isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
-import { getSidebarIconButtonSx } from '@elementor/editor-sidebar';
 import { AngieIcon, HelpIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
 	IconButton,
+	type IconButtonProps,
 	ListItemIcon,
 	ListItemText,
 	Menu,
@@ -28,10 +28,9 @@ export default function SidebarHelp() {
 				<IconButton
 					{ ...bindTrigger( popupState ) }
 					aria-label={ title }
-					size="small"
-					sx={ getSidebarIconButtonSx( { active: popupState.isOpen } ) }
+					size={ 'unstableTiny' as IconButtonProps[ 'size' ] }
 				>
-					<HelpIcon />
+					<HelpIcon fontSize="small" />
 				</IconButton>
 			</Tooltip>
 			<Menu

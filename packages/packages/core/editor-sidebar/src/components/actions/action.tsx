@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { type ElementType } from 'react';
-import { Box, IconButton, Tooltip } from '@elementor/ui';
-
-import { getSidebarIconButtonSx } from '../../sidebar-icon-button';
+import { Box, IconButton, type IconButtonProps, Tooltip } from '@elementor/ui';
 
 export type Props = {
 	title: string;
@@ -27,10 +25,9 @@ export default function Action( { icon: Icon, title, selected, visible = true, .
 					{ ...props }
 					aria-label={ title }
 					aria-pressed={ selected }
-					size="small"
-					sx={ getSidebarIconButtonSx( { selected } ) }
+					size={ 'unstableTiny' as IconButtonProps[ 'size' ] }
 				>
-					<Icon />
+					<Icon fontSize="small" />
 				</IconButton>
 			</Box>
 		</Tooltip>

@@ -2,21 +2,18 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { Box, Divider, Stack } from '@elementor/ui';
 
-import {
-	APP_BAR_HEIGHT,
-	SIDEBAR_CLASS,
-	SIDEBAR_FOOTER_ITEM_GAP_SPACING,
-	SIDEBAR_GROUP_DIVIDER_INSET_SPACING,
-	SIDEBAR_HORIZONTAL_PADDING_SPACING,
-	SIDEBAR_RAIL_BOTTOM_INSET_SPACING,
-	SIDEBAR_TOOLS_ITEM_GAP_SPACING,
-	SIDEBAR_WIDTH_VAR,
-} from '../constants';
+import { APP_BAR_HEIGHT, SIDEBAR_CLASS, SIDEBAR_WIDTH_VAR } from '../constants';
 import { sidebarFooter, SidebarFooterSlot, sidebarTools, SidebarToolsSlot } from '../locations';
-import { SIDEBAR_CHROME_ROW_HEIGHT_PX, sidebarInsetDividerSx } from '../sidebar-chrome';
+import { sidebarRailIconButtonsSx } from '../sidebar-rail-icon-buttons-sx';
 
 const { useMenuItems: useToolsMenuItems } = sidebarTools;
 const { useMenuItems: useFooterMenuItems } = sidebarFooter;
+
+const SIDEBAR_INSET_DIVIDER_SX = {
+	alignSelf: 'center',
+	flexShrink: 0,
+	width: 28,
+} as const;
 
 export default function Sidebar() {
 	const toolsItems = useToolsMenuItems();
@@ -30,6 +27,7 @@ export default function Sidebar() {
 				data-testid="editor-sidebar"
 				aria-label="Editor sidebar"
 				sx={ {
+					...sidebarRailIconButtonsSx,
 					position: 'fixed',
 					zIndex: 2,
 					insetBlockStart: APP_BAR_HEIGHT,
@@ -40,23 +38,23 @@ export default function Sidebar() {
 					flexDirection: 'column',
 					justifyContent: 'space-between',
 					alignItems: 'center',
-					px: SIDEBAR_HORIZONTAL_PADDING_SPACING,
+					px: 1.25,
 					backgroundColor: 'rgb( 242, 242, 242 )',
 				} }
 			>
 				<Stack alignItems="center" width="100%">
 					<Groups
-						chromeRowHeightPx={ SIDEBAR_CHROME_ROW_HEIGHT_PX }
+						chromeRowHeightPx={ APP_BAR_HEIGHT }
 						groups={ [ toolsItems.elements, toolsItems.design, toolsItems.default ] }
-						itemGap={ SIDEBAR_TOOLS_ITEM_GAP_SPACING }
+						itemGap={ 1.5 }
 					/>
 					<SidebarToolsSlot />
 				</Stack>
-				<Stack alignItems="center" pb={ SIDEBAR_RAIL_BOTTOM_INSET_SPACING } width="100%">
+				<Stack alignItems="center" pb={ 1.5 } width="100%">
 					<Groups
 						groups={ [ footerItems.document, footerItems.default ] }
 						groupPaddingBlockEnd={ 0 }
-						itemGap={ SIDEBAR_FOOTER_ITEM_GAP_SPACING }
+						itemGap={ 1 }
 					/>
 					<SidebarFooterSlot />
 				</Stack>
@@ -95,16 +93,18 @@ function Groups( {
 				if ( isChromeRow ) {
 					paddingTop = 0;
 				} else if ( ! isFirstGroup ) {
-					paddingTop = SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
+					paddingTop = 1.5;
 				}
 
-				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : SIDEBAR_GROUP_DIVIDER_INSET_SPACING;
+				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : 1.5;
 
 				const menuItems = items.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> );
 
 				return (
 					<React.Fragment key={ index }>
-						{ index > 0 && ! skipLeadingDivider && <Divider sx={ { ...sidebarInsetDividerSx, my: 0 } } /> }
+						{ index > 0 && ! skipLeadingDivider && (
+							<Divider sx={ { ...SIDEBAR_INSET_DIVIDER_SX, my: 0 } } />
+						) }
 						<Stack
 							alignItems="center"
 							boxSizing="border-box"
@@ -127,7 +127,7 @@ function Groups( {
 										{ menuItems }
 									</Stack>
 									{ visibleGroups.length > 1 && (
-										<Divider sx={ { ...sidebarInsetDividerSx, flexShrink: 0 } } />
+										<Divider sx={ { ...SIDEBAR_INSET_DIVIDER_SX, flexShrink: 0 } } />
 									) }
 								</>
 							) : (

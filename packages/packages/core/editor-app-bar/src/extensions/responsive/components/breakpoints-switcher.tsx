@@ -14,16 +14,17 @@ import {
 	TabletPortraitIcon,
 	WidescreenIcon,
 } from '@elementor/icons';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Tab, Tabs, Tooltip as BaseTooltip, type TooltipProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from '../../../types';
-import { getToolbarChromeTabsIconSx } from '../../../utils/toolbar-chrome-icon-sx';
 
 export default function BreakpointsSwitcher() {
 	const breakpoints = useBreakpoints();
 	const activeBreakpoint = useActiveBreakpoint();
 	const activateBreakpoint = useActivateBreakpoint();
+	const sidebarChrome = isSidebarEnabled();
 
 	if ( ! breakpoints.length || ! activeBreakpoint ) {
 		return null;
@@ -57,7 +58,6 @@ export default function BreakpointsSwitcher() {
 				'& .MuiTabs-indicator': {
 					backgroundColor: 'text.primary',
 				},
-				...getToolbarChromeTabsIconSx(),
 			} }
 		>
 			{ breakpoints.map( ( { id, label, type, width } ) => {
@@ -74,7 +74,7 @@ export default function BreakpointsSwitcher() {
 						aria-label={ title }
 						icon={
 							<Tooltip title={ title }>
-								<Icon />
+								<Icon fontSize={ sidebarChrome ? 'small' : undefined } />
 							</Tooltip>
 						}
 						sx={ { minWidth: 'auto' } }

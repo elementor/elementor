@@ -1,13 +1,17 @@
 import * as React from 'react';
-import { editorChromeIconBorderRadiusSx, isSidebarEnabled } from '@elementor/editor-sidebar';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Box, IconButton, type IconButtonProps, Tooltip as BaseTooltip, type TooltipProps } from '@elementor/ui';
-
-import { getToolbarChromeIconSvgSx } from '../../utils/toolbar-chrome-icon-sx';
 
 type ToolbarMenuItemProps = IconButtonProps & {
 	title?: string;
 	selected?: boolean;
 };
+
+const LEGACY_TOOLBAR_ICON_SVG_SX = {
+	fontSize: '1.25rem',
+	height: '1em',
+	width: '1em',
+} as const;
 
 export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemProps ) {
 	const sidebarChrome = isSidebarEnabled();
@@ -21,8 +25,8 @@ export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemPro
 					aria-label={ title }
 					size="medium"
 					sx={ {
-						...( sidebarChrome ? editorChromeIconBorderRadiusSx : {} ),
-						'& svg': getToolbarChromeIconSvgSx(),
+						...( sidebarChrome ? { borderRadius: 1 } : {} ),
+						'& svg': LEGACY_TOOLBAR_ICON_SVG_SX,
 						'&:hover': {
 							color: 'text.primary',
 						},
