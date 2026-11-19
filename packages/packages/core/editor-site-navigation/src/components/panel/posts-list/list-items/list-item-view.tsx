@@ -17,8 +17,9 @@ import {
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
+import { postTypesMap, type Slug } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
@@ -29,13 +30,26 @@ import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
 
-const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactNode; isDisabled: boolean } ) => {
+const DisabledPostTooltip = ( {
+	children,
+	isDisabled,
+	postTypeSlug,
+}: {
+	children: React.ReactNode;
+	isDisabled: boolean;
+	postTypeSlug: Slug;
+} ) => {
 	if ( isDisabled ) {
+		const typeLabel = postTypesMap[ postTypeSlug ].labels.singular_name;
 		const title = (
 			<Typography variant="caption">
-				You cannot edit this page.
+				{ sprintf(
+					/* translators: %s: Post type singular name (e.g. Page, Post). */
+					__( 'You cannot edit this %s.', 'elementor' ),
+					typeLabel
+				) }
 				<br />
-				To edit it directly, contact the site owner
+				{ __( 'To edit it directly, contact the site owner', 'elementor' ) }
 			</Typography>
 		);
 
@@ -69,7 +83,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled }>
+			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
 				<ListItem
 					disablePadding
 					sx={ contentPanelListRowPaddingSx }
