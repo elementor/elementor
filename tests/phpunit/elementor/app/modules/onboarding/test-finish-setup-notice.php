@@ -74,6 +74,7 @@ class Test_Finish_Setup_Notice extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( Finish_Setup_Notice::NOTICE_ID, $config['id'] );
+		$this->assertSame( 'info', $config['type'] );
 		$this->assertSame( 'Finish setting up Elementor', $config['title'] );
 		$this->assertSame( 'Run setup', $config['button']['text'] );
 		$this->assertSame( Onboarding_Entry::get_url(), $config['button']['url'] );
