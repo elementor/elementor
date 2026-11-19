@@ -31,6 +31,7 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAV_MENU, Experiments_Manager::STATE_INACTIVE );
 		remove_all_filters( 'elementor/document/save/data' );
 		remove_all_filters( 'elementor/atomic-widgets/menu/submenu/upgrade_url' );
+		remove_all_filters( 'elementor/atomic-widgets/menu/submenu/is_locked' );
 
 		parent::tear_down();
 	}
@@ -115,12 +116,27 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 	}
 
 	public function test_lock_matrix() {
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, false, false, true ), 'Free' );
-		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, true, false, true ), 'Pro active, valid license' );
-		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, false, true, true ), 'Pro active, expired license' );
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, false, false, true ), 'Pro not connected' );
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, true, false, true ), 'Pro deactivated with stale license data' );
-		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, true, false, false ), 'Pro without the Submenu types' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, false ), 'Free' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, true ), 'Pro deactivated' );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, false ), 'Pro without the Submenu types' );
+		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, true ), 'Pro with the Submenu types' );
+	}
+
+	public function test_is_locked_is_decided_by_pro_through_a_filter() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		add_filter( 'elementor/atomic-widgets/menu/submenu/is_locked', '__return_false' );
+
+		// Act & Assert.
+		$this->assertFalse( Submenu_Entitlement::is_locked() );
+	}
+
+	public function test_upgrade_url_is_sanitized() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/menu/submenu/upgrade_url', fn () => 'javascript:alert(1)' );
+
+		// Act & Assert.
+		$this->assertSame( '', Submenu_Entitlement::get_upgrade_url() );
 	}
 
 	public function test_is_locked_without_pro() {

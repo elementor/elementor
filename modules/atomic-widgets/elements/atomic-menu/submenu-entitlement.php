@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -9,26 +10,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Submenu_Entitlement {
-	const SUBMENU_TYPE = 'e-menu-submenu';
-
 	// Single place to change the Elementor Go link of the locked Submenu popover.
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-atomic-mega-menu/';
 
 	public static function is_locked(): bool {
-		return self::is_locked_for(
+		$is_locked = self::is_locked_for(
 			Utils::has_pro(),
-			Utils::is_license_active(),
-			Utils::is_license_expired(),
-			null !== Plugin::$instance->elements_manager->get_element_types( self::SUBMENU_TYPE )
+			null !== Plugin::$instance->elements_manager->get_element_types( Atomic_Menu::ELEMENT_TYPE_SUBMENU )
 		);
+
+		/**
+		 * Filters whether the Submenu is locked. Pro owns the license and tier rules.
+		 *
+		 * @param bool $is_locked Whether the Submenu is locked.
+		 */
+		return (bool) apply_filters( 'elementor/atomic-widgets/menu/submenu/is_locked', $is_locked );
 	}
 
-	public static function is_locked_for( bool $has_pro, bool $license_active, bool $license_expired, bool $submenu_registered ): bool {
-		if ( ! $has_pro || ! $submenu_registered ) {
-			return true;
-		}
-
-		return ! $license_active && ! $license_expired;
+	public static function is_locked_for( bool $has_pro, bool $submenu_registered ): bool {
+		return ! $has_pro || ! $submenu_registered;
 	}
 
 	public static function get_upgrade_url(): string {
@@ -37,7 +37,7 @@ class Submenu_Entitlement {
 		 *
 		 * @param string $url The upgrade URL.
 		 */
-		return (string) apply_filters( 'elementor/atomic-widgets/menu/submenu/upgrade_url', self::UPGRADE_URL );
+		return esc_url_raw( (string) apply_filters( 'elementor/atomic-widgets/menu/submenu/upgrade_url', self::UPGRADE_URL ) );
 	}
 
 	public static function get_promotion(): array {
