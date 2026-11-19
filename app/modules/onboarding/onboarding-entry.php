@@ -1,0 +1,239 @@
+<?php
+namespace Elementor\App\Modules\Onboarding;
+
+use Elementor\Core\Common\Modules\EventsManager\Module as Events_Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Utils;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Onboarding_Entry {
+
+	const PENDING_OPTION = 'elementor_onboarding_pending';
+	const ACTIVATED_AT_OPTION = 'elementor_onboarding_activated_at';
+	const EVENT_QUEUE_OPTION = 'elementor_onboarding_redirect_event_queue';
+	const EVENT_NAME = 'core_onboarding_redirect_decision';
+	const MIN_ONBOARDING_VERSION = '3.6.0-beta';
+	const ELIGIBILITY_WINDOW = 14 * DAY_IN_SECONDS;
+
+	const DECISION_REDIRECT = 'redirect';
+	const DECISION_NOTICE = 'notice';
+	const DECISION_SKIP = 'skip';
+
+	const REASON_REDIRECTED = 'redirected';
+	const REASON_ALREADY_ONBOARDED = 'already_onboarded';
+	const REASON_ALREADY_LOGGED_IN = 'already_logged_in';
+	const REASON_EXPIRED = 'expired';
+	const REASON_AJAX = 'ajax';
+	const REASON_CLI_INSTALL = 'cli_install';
+	const REASON_THIRD_PARTY_SKIP = 'third_party_skip';
+
+	public static function get_url(): string {
+		return admin_url( 'admin.php?page=elementor-app#onboarding' );
+	}
+
+	public static function mark_activation(): void {
+		if ( self::should_skip_pending_for_logged_in_existing_site() ) {
+			self::track_decision( self::REASON_ALREADY_LOGGED_IN );
+
+			return;
+		}
+
+		update_option( self::PENDING_OPTION, true );
+
+		if ( ! get_option( self::ACTIVATED_AT_OPTION ) ) {
+			update_option( self::ACTIVATED_AT_OPTION, time() );
+		}
+	}
+
+	public static function clear_pending(): void {
+		delete_option( self::PENDING_OPTION );
+	}
+
+	public static function is_pending(): bool {
+		return (bool) get_option( self::PENDING_OPTION );
+	}
+
+	public static function is_within_eligibility_window(): bool {
+		$activated_at = (int) get_option( self::ACTIVATED_AT_OPTION );
+
+		if ( $activated_at <= 0 ) {
+			return false;
+		}
+
+		return ( time() - $activated_at ) <= self::ELIGIBILITY_WINDOW;
+	}
+
+	public static function is_new_install(): bool {
+		$latest_install = key( Upgrade_Manager::get_installs_history() );
+
+		if ( ! empty( $latest_install ) ) {
+			return version_compare( $latest_install, self::MIN_ONBOARDING_VERSION, '>=' );
+		}
+
+		return true;
+	}
+
+	public static function has_finished_onboarding(): bool {
+		return (bool) get_option( Module::ONBOARDING_OPTION );
+	}
+
+	public static function decide(): array {
+		self::flush_event_queue();
+
+		if ( ! self::is_pending() ) {
+			return self::skip( '' );
+		}
+
+		if ( wp_doing_ajax() ) {
+			self::track_decision( self::REASON_AJAX );
+
+			return self::skip( self::REASON_AJAX );
+		}
+
+		if ( self::is_rest_request() ) {
+			return self::skip( '' );
+		}
+
+		if ( Utils::is_wp_cli() ) {
+			self::track_decision( self::REASON_CLI_INSTALL );
+
+			return self::skip( self::REASON_CLI_INSTALL );
+		}
+
+		if ( wp_doing_cron() ) {
+			return self::skip( '' );
+		}
+
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return self::skip( '' );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return self::skip( '' );
+		}
+
+		if ( isset( $_GET['page'] ) && 'elementor-app' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return self::skip( '' );
+		}
+
+		if ( ! self::is_within_eligibility_window() ) {
+			self::clear_pending();
+			self::track_decision( self::REASON_EXPIRED );
+
+			return self::skip( self::REASON_EXPIRED );
+		}
+
+		if ( ! self::is_new_install() ) {
+			self::clear_pending();
+			self::track_decision( self::REASON_ALREADY_ONBOARDED );
+
+			return self::skip( self::REASON_ALREADY_ONBOARDED );
+		}
+
+		if ( self::has_finished_onboarding() ) {
+			self::track_decision( self::REASON_THIRD_PARTY_SKIP );
+
+			return [
+				'type' => self::DECISION_NOTICE,
+				'reason' => self::REASON_THIRD_PARTY_SKIP,
+			];
+		}
+
+		self::clear_pending();
+		self::track_decision( self::REASON_REDIRECTED );
+
+		return [
+			'type' => self::DECISION_REDIRECT,
+			'reason' => self::REASON_REDIRECTED,
+		];
+	}
+
+	public static function should_show_partner_notice(): bool {
+		return current_user_can( 'manage_options' )
+			&& self::is_pending()
+			&& self::is_within_eligibility_window()
+			&& self::is_new_install()
+			&& self::has_finished_onboarding();
+	}
+
+	public static function flush_event_queue(): void {
+		$queue = get_option( self::EVENT_QUEUE_OPTION, [] );
+
+		if ( empty( $queue ) || ! is_array( $queue ) ) {
+			return;
+		}
+
+		if ( ! self::can_send_events() ) {
+			return;
+		}
+
+		foreach ( $queue as $item ) {
+			if ( empty( $item['reason'] ) ) {
+				continue;
+			}
+
+			Events_Manager::dispatch_event( self::EVENT_NAME, [
+				'reason' => $item['reason'],
+			] );
+		}
+
+		delete_option( self::EVENT_QUEUE_OPTION );
+	}
+
+	private static function should_skip_pending_for_logged_in_existing_site(): bool {
+		if ( ! get_current_user_id() ) {
+			return false;
+		}
+
+		$has_install_history = ! empty( Upgrade_Manager::get_installs_history() );
+
+		return self::has_finished_onboarding() || $has_install_history;
+	}
+
+	private static function is_rest_request(): bool {
+		if ( function_exists( 'wp_is_serving_rest_request' ) && wp_is_serving_rest_request() ) {
+			return true;
+		}
+
+		return defined( 'REST_REQUEST' ) && REST_REQUEST;
+	}
+
+	private static function skip( string $reason ): array {
+		return [
+			'type' => self::DECISION_SKIP,
+			'reason' => $reason,
+		];
+	}
+
+	private static function track_decision( string $reason ): void {
+		$payload = [ 'reason' => $reason ];
+
+		if ( self::can_send_events() ) {
+			Events_Manager::dispatch_event( self::EVENT_NAME, $payload );
+
+			return;
+		}
+
+		$queue = get_option( self::EVENT_QUEUE_OPTION, [] );
+
+		if ( ! is_array( $queue ) ) {
+			$queue = [];
+		}
+
+		foreach ( $queue as $item ) {
+			if ( ( $item['reason'] ?? '' ) === $reason ) {
+				return;
+			}
+		}
+
+		$queue[] = $payload;
+		update_option( self::EVENT_QUEUE_OPTION, $queue );
+	}
+
+	private static function can_send_events(): bool {
+		return ! empty( Events_Manager::get_editor_events_config()['can_send_events'] );
+	}
+}

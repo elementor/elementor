@@ -18,6 +18,7 @@ export const ONBOARDING_EVENTS = {
 	EDITOR_LOADED: 'core_onboarding_editor_loaded',
 	POST_CLICK: 'core_onboarding_post_click',
 	SESSION_REPLAY_START: 'core_onboarding_session_replay_start',
+	REDIRECT_DECISION: 'core_onboarding_redirect_decision',
 };
 
 export const STEP_TARGET_NAMES = {

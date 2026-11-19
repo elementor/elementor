@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\Onboarding;
 
 use Automatic_Upgrader_Skin;
+use Elementor\App\Modules\Onboarding\Notices\Finish_Setup_Notice;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
@@ -471,6 +472,7 @@ class Module extends BaseModule {
 
 		if ( ! $db_option ) {
 			update_option( self::ONBOARDING_OPTION, true );
+			Onboarding_Entry::clear_pending();
 		}
 
 		return [
@@ -560,5 +562,11 @@ class Module extends BaseModule {
 		} );
 
 		$this->get_component( 'features_usage' )->register();
+
+		add_filter( 'elementor/core/admin/notices', function ( array $notices ) {
+			$notices[] = new Finish_Setup_Notice();
+
+			return $notices;
+		} );
 	}
 }
