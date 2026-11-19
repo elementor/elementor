@@ -1,5 +1,7 @@
 import { createHooksRegistry, setupHooksRegistry } from 'test-utils';
+import { __deleteStore as deleteStore } from '@elementor/store';
 
+import { setCompositeWidgetDefinitions } from '../../__tests__/set-composite-widget-definitions';
 import { prepareWidgetTemplateForInsert } from '../../prepare-widget-template-for-insert';
 import { type CompositeWidgetDefinition } from '../../types';
 import { initExpandWidgetOnDrop } from '../expand-widget-on-drop';
@@ -29,15 +31,13 @@ describe( 'initExpandWidgetOnDrop', () => {
 		setupHooksRegistry( hooksRegistry );
 		jest.mocked( prepareWidgetTemplateForInsert ).mockReturnValue( PREPARED_TREE );
 
-		( window as unknown as { elementor: unknown } ).elementor = {
-			config: { compositeWidgets: { [ WIDGET_ID ]: DEFINITION } },
-		};
+		setCompositeWidgetDefinitions( { [ WIDGET_ID ]: DEFINITION } );
 
 		initExpandWidgetOnDrop();
 	} );
 
 	afterEach( () => {
-		delete ( window as unknown as { elementor?: unknown } ).elementor;
+		deleteStore();
 		jest.clearAllMocks();
 	} );
 
