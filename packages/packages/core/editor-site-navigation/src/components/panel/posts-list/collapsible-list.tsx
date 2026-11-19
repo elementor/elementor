@@ -3,7 +3,11 @@ import { type PropsWithChildren, type ReactNode, useId } from 'react';
 import { CollapseIcon } from '@elementor/editor-ui';
 import { Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
-import { contentPanelSectionHeaderSx, contentPanelSectionHeaderTrailingGap } from '../content-panel-chrome';
+import {
+	contentPanelListSectionListSx,
+	contentPanelSectionHeaderSx,
+	contentPanelSectionHeaderTrailingGap,
+} from '../content-panel-chrome';
 
 type Props = {
 	count: number;
@@ -93,7 +97,7 @@ export default function CollapsibleList( {
 				</Stack>
 			</ListItemButton>
 			<Collapse aria-labelledby={ labelId } id={ contentId } in={ isOpen } timeout="auto" unmountOnExit>
-				<List dense disablePadding>
+				<List dense disablePadding sx={ contentPanelListSectionListSx }>
 					{ children }
 				</List>
 			</Collapse>

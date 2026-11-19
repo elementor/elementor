@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { postTypesMap } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -28,8 +28,11 @@ export default function ListItemCreate() {
 		}
 	};
 
-	// translators: %s: Post type singular name (e.g. Page, Post).
-	const newItemLabel = __( 'New %s', 'elementor' ).replace( '%s', postTypesMap[ type ].labels.singular_name );
+	const newItemLabel = sprintf(
+		/* translators: %s: Post type singular name (e.g. Page, Post). */
+		__( 'New %s', 'elementor' ),
+		postTypesMap[ type ].labels.singular_name
+	);
 
 	return (
 		<EditModeTemplate
