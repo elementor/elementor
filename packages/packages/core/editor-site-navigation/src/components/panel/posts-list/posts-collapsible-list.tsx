@@ -72,9 +72,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			return sorted;
 		}
 
-		return sorted.filter( ( post ) =>
-			postRowMatchesSearch( post, trimmedSearch, activeDocument )
-		);
+		return sorted.filter( ( post ) => postRowMatchesSearch( post, trimmedSearch, activeDocument ) );
 	}, [ posts, isPageType, homepageId, trimmedSearch, activeDocument ] );
 
 	useEffect( () => {

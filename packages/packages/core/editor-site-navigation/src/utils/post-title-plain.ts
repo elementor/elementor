@@ -30,8 +30,7 @@ export function postRowMatchesSearch(
 		return true;
 	}
 
-	const title =
-		activeDocument?.id === post.id ? activeDocument.title : post.title.rendered;
+	const title = activeDocument?.id === post.id ? activeDocument.title : post.title.rendered;
 
 	return postTitleMatchesSearch( title, query );
 }

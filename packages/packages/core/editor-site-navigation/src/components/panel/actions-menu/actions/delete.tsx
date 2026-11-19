@@ -62,12 +62,9 @@ function DeleteDialog( {
 
 	const singularName = postTypesMap[ type ].labels.singular_name;
 
-	/* translators: %s: Post type singular name (e.g. Page, Post). */
 	const dialogBody = sprintf(
-		__(
-			'The %s and its content will be deleted forever and we won’t be able to recover them.',
-			'elementor'
-		),
+		/* translators: %s: Post type singular name (e.g. Page, Post). */
+		__( 'The %s and its content will be deleted forever and we won’t be able to recover them.', 'elementor' ),
 		singularName.toLowerCase()
 	);
 
