@@ -5,6 +5,7 @@ import {
 	useActiveBreakpoint,
 	useBreakpoints,
 } from '@elementor/editor-responsive';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import {
 	DesktopIcon,
 	LaptopIcon,
@@ -14,7 +15,6 @@ import {
 	TabletPortraitIcon,
 	WidescreenIcon,
 } from '@elementor/icons';
-import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Tab, Tabs, Tooltip as BaseTooltip, type TooltipProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
