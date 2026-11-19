@@ -65,6 +65,10 @@ class Scanner_Report_Store {
 		set_transient( self::TRANSIENT_RETRY_AT, $retry_at, $ttl );
 	}
 
+	public function clear_cooldown(): void {
+		delete_transient( self::TRANSIENT_RETRY_AT );
+	}
+
 	public function get_report_retry_at( array $report ): int {
 		$retry_at = is_string( $report['retryAt'] ?? null ) ? strtotime( $report['retryAt'] ) : false;
 

@@ -120,6 +120,9 @@ class Editor {
 
 		self::send_document_isolation_policy_header();
 
+		// Keep the editor media modal on the classic uploader on WP 7.2+.
+		add_action( 'wp_enqueue_media', [ $this, 'dequeue_media_frame_upload_script' ] );
+
 		add_filter( 'show_admin_bar', '__return_false' );
 
 		// Remove all WordPress actions
@@ -660,6 +663,13 @@ class Editor {
 		}
 
 		header( 'Document-Isolation-Policy: isolate-and-credentialless' );
+	}
+
+	/**
+	 * @since 4.5.0
+	 */
+	public function dequeue_media_frame_upload_script() {
+		wp_dequeue_script( 'media-frame-upload' );
 	}
 
 	/**

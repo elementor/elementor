@@ -16,7 +16,9 @@ export async function startMCPServer() {
 	}
 }
 
-if ( typeof document !== 'undefined' ) {
+// Start right away when the bundle loads after DOMContentLoaded (late or deferred load): the event will
+// not fire again, and `waitForMcpReady()` callers would wait forever.
+if ( typeof document !== 'undefined' && document.readyState === 'loading' ) {
 	document.addEventListener( 'DOMContentLoaded', () => void startMCPServer(), { once: true } );
 } else {
 	void startMCPServer();

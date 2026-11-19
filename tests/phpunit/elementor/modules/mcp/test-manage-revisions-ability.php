@@ -9,6 +9,7 @@ use Elementor\Modules\Mcp\Abilities\Manage_Revisions_Ability;
 use Elementor\Modules\Mcp\Abilities\Publish_Document_Ability;
 use Elementor\Modules\Mcp\Abilities\Update_Settings_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Fake_Elements_Write_Ability;
 use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Revision_Test_Helpers;
@@ -244,6 +245,26 @@ class Test_Manage_Revisions_Ability extends Elementor_Test_Base {
 		// Assert
 		$this->assertIsInt( $undo['undo_revision_id'] );
 		$this->assertSame( 'yes', get_post_meta( $post_id, Page_Settings_Manager::META_KEY, true )['hide_title'] ?? null );
+	}
+
+	public function test_restore__keeps_the_live_template_until_publish() {
+		// Arrange
+		$post_id = $this->create_elementor_page( 'publish', $this->containers( 1 ) );
+		$update = ( new Update_Settings_Ability() )->execute_guarded( [
+			'post_id' => $post_id,
+			'settings' => [ 'template' => Page_Templates_Module::TEMPLATE_CANVAS ],
+		] );
+		( new Publish_Document_Ability() )->execute_guarded( [ 'post_id' => $post_id ] );
+
+		// Act
+		$undo = $this->restore( $post_id, $update['undo_revision_id'] );
+		$live_template_before_publish = get_post_meta( $post_id, '_wp_page_template', true );
+		( new Publish_Document_Ability() )->execute_guarded( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertTrue( $undo['staged'] );
+		$this->assertSame( Page_Templates_Module::TEMPLATE_CANVAS, $live_template_before_publish, 'A staged restore must not change the live template.' );
+		$this->assertSame( '', get_page_template_slug( $post_id ), 'Publishing the restore must bring back the default template.' );
 	}
 
 	public function test_restore__rejects_users_who_cannot_edit_the_post() {

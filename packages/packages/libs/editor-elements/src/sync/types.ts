@@ -175,6 +175,15 @@ export type V1ElementModelProps = {
 	isGlobal?: boolean;
 	skipDefaultChildren?: boolean;
 	hydrateDefaultChildren?: boolean;
+	widget?: V1ElementWidgetMarker;
+	part?: string;
+	slot?: boolean;
+};
+
+export type V1ElementWidgetMarker = {
+	id: string;
+	version: number;
+	values?: Record< string, unknown >;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {

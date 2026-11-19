@@ -157,6 +157,38 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		$this->assertEquals( 'builder', get_post_meta( $post_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, true ) );
 	}
 
+	public function test_restore_revision__deletes_parent_element_cache() {
+		// Arrange
+		$res = $this->factory()->create_and_get_parent_and_child_posts();
+		$post_id = $res['parent_id'];
+		$revision_id = $res['child_id'];
+
+		update_metadata( 'post', $revision_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		update_post_meta( $post_id, Document::CACHE_META_KEY, $this->stale_element_cache() );
+
+		// Act
+		Revisions_Manager::restore_revision( $post_id, $revision_id );
+
+		// Assert
+		$this->assertEmpty( get_post_meta( $post_id, Document::CACHE_META_KEY, true ) );
+	}
+
+	public function test_restore_revision__does_not_copy_revision_element_cache_to_parent() {
+		// Arrange
+		$res = $this->factory()->create_and_get_parent_and_child_posts();
+		$post_id = $res['parent_id'];
+		$revision_id = $res['child_id'];
+
+		update_metadata( 'post', $revision_id, Document::BUILT_WITH_ELEMENTOR_META_KEY, 'builder' );
+		update_metadata( 'post', $revision_id, Document::CACHE_META_KEY, $this->stale_element_cache() );
+
+		// Act
+		Revisions_Manager::restore_revision( $post_id, $revision_id );
+
+		// Assert
+		$this->assertEmpty( get_post_meta( $post_id, Document::CACHE_META_KEY, true ) );
+	}
+
 	public function test_should_add_revision_support_for_all_post_types() {
 		Revisions_Manager::add_revision_support_for_all_post_types();
 
@@ -210,6 +242,13 @@ class Elementor_Test_Revisions_Manager extends Elementor_Test_Base {
 		update_post_meta( $post_id, '_elementor_meta_data', 'content' );
 
 		return $parent_and_child_posts;
+	}
+
+	private function stale_element_cache() {
+		return [
+			'timeout' => time() + HOUR_IN_SECONDS,
+			'value' => [ 'content' => 'stale' ],
+		];
 	}
 
 	private function check_revisions( $post_id, $autosave_post_id ) {

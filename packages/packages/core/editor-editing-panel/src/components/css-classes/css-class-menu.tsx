@@ -130,6 +130,15 @@ const CLASS_STATES_MAP: Record< string, { label: string } > = {
 	disabled: {
 		label: __( 'disabled', 'elementor' ),
 	},
+	current: {
+		label: __( 'current', 'elementor' ),
+	},
+	'current-ancestor': {
+		label: __( 'current ancestor', 'elementor' ),
+	},
+	expanded: {
+		label: __( 'expanded', 'elementor' ),
+	},
 };
 
 export function useElementStates() {
@@ -140,7 +149,7 @@ export function useElementStates() {
 	const elementStates = styleStates.map( ( { value, name } ) => ( {
 		key: value,
 		value,
-		label: CLASS_STATES_MAP[ value ]?.label ?? name,
+		label: CLASS_STATES_MAP[ name ]?.label ?? name,
 	} ) );
 
 	return {

@@ -2,8 +2,10 @@
 
 namespace Elementor\Modules\Mcp\RestApi;
 
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
 use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Modules\Mcp\Registry\Ability_Registry;
 use Elementor\Plugin;
@@ -31,7 +33,7 @@ class Mcp_Proxy_REST_API {
 			[
 				'methods'             => 'POST',
 				'callback'            => fn( $request ) => $this->route_wrapper( fn() => $this->handle_tool( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn( $request ) => $this->user_can_call_tool( $request ),
 				'args'                => [
 					'tool'  => [
 						'type'     => 'string',
@@ -46,7 +48,7 @@ class Mcp_Proxy_REST_API {
 			[
 				'methods'             => 'GET',
 				'callback'            => fn( $request ) => $this->route_wrapper( fn() => $this->handle_resource( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn( $request ) => $this->user_can_read_resource( $request ),
 				'args'                => [
 					'uri' => [
 						'type'     => 'string',
@@ -112,6 +114,26 @@ class Mcp_Proxy_REST_API {
 		$result = $ability->execute();
 
 		return $this->build_response( $result );
+	}
+
+	private function user_can_call_tool( \WP_REST_Request $request ): bool {
+		return $this->user_can_run(
+			$this->resolve_registry()->find_by_proxy_slug( (string) $request->get_param( 'tool' ) )
+		);
+	}
+
+	private function user_can_read_resource( \WP_REST_Request $request ): bool {
+		return $this->user_can_run(
+			$this->resolve_registry()->find_resource_by_uri( (string) $request->get_param( 'uri' ) )
+		);
+	}
+
+	private function user_can_run( ?Abstract_Ability $ability ): bool {
+		if ( null === $ability ) {
+			return current_user_can( Editor::EDITING_CAPABILITY );
+		}
+
+		return $ability->check_permission();
 	}
 
 	private function resolve_registry(): Ability_Registry {

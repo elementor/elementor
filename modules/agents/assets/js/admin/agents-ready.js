@@ -11,6 +11,7 @@ const mountAgentAccess = ( rootElement, config, isRTL ) => {
 		<App
 			isRTL={ isRTL }
 			isActivated={ !! config.isActivated }
+			readinessScoreUrl={ config.readinessScoreUrl || '' }
 			agentDiscoveryConfig={ config.agentDiscovery }
 			botAccessConfig={ config.botAccess }
 			browserToolsConfig={ config.browserTools }

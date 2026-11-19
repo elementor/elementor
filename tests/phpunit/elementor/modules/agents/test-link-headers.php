@@ -6,6 +6,7 @@ use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -30,7 +31,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
 		$this->settings->activate();
-		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ), $this->settings, $this->module );
+		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) ), $this->settings, $this->module );
 	}
 
 	public function tearDown(): void {
@@ -51,7 +52,7 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertContains(
-			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"',
+			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
 			$links
 		);
 		$this->assertContains(
@@ -79,6 +80,33 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		);
 		$this->assertStringNotContainsString( 'api-catalog', implode( '', $links ) );
 		$this->assertStringNotContainsString( 'auth.md', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'rel="ard"', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__includes_ard_catalog_when_agent_discovery_is_enabled() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertContains(
+			'<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"',
+			$links
+		);
+	}
+
+	public function test_build_site_links__omits_ard_catalog_when_catalog_is_not_applicable() {
+		// Arrange
+		add_filter( 'elementor/agents/ard_catalog/is_applicable', '__return_false' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		remove_filter( 'elementor/agents/ard_catalog/is_applicable', '__return_false' );
+		$this->assertStringNotContainsString( 'rel="ard"', implode( '', $links ) );
 	}
 
 	public function test_build_site_links__omits_llms_txt_when_llms_is_disabled() {
@@ -157,6 +185,19 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		);
 
 		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+	}
+
+	public function test_build_site_links__omits_mcp_card_when_agent_discovery_is_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+		$this->assertStringNotContainsString( 'mcp-server-card', implode( '', $links ) );
 	}
 
 	public function test_build_singular_markdown_link__includes_published_post() {

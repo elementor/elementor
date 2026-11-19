@@ -11,6 +11,7 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { BetaChip } from '../components/beta-chip';
 import { ActivateBanner } from './components/activate-banner';
 import { AngieInstallDialog } from './components/angie-install-dialog';
 import { ErrorReportCard } from './components/error-report-card';
@@ -33,6 +34,7 @@ import {
 	SCANNER_STATE_FIXES,
 	SCANNER_STATE_PROGRESS,
 	SCANNER_STATE_RESCANNING,
+	VISUALLY_HIDDEN_SX,
 } from './scanner-constants';
 import { deliverPendingAngiePrompt } from './open-angie';
 import { getLaterRetryAt, toScanResult } from './scanner-report-adapter';
@@ -47,7 +49,6 @@ const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
 			flexDirection: 'column',
 			width: `calc(100% + ${ SCANNER_LAYOUT.wrapInlinePadding * 2 }px)`,
 			marginInline: `-${ SCANNER_LAYOUT.wrapInlinePadding }px`,
-			marginTop: `-${ SCANNER_LAYOUT.wrapBlockStart }px`,
 			minHeight: SCANNER_LAYOUT.progressPaneMinHeight,
 		} : {
 			width: '100%',
@@ -56,9 +57,10 @@ const ScannerShell = ( { children, hideOverline, fillViewport } ) => (
 	>
 		<Stack gap={ hideOverline ? 0 : `${ SCANNER_LAYOUT.pageGap }px` } width="100%" flex={ fillViewport ? 1 : undefined } minHeight={ fillViewport ? '100%' : undefined }>
 			{ ! hideOverline && (
-				<Typography variant="overline" component="h2" color="text.tertiary" m={ 0 }>
-					{ __( 'Agent Ready', 'elementor' ) }
-				</Typography>
+				<Box>
+					<Typography component="h2" m={ 0 } sx={ VISUALLY_HIDDEN_SX }>{ __( 'Agent Ready', 'elementor' ) }</Typography>
+					<BetaChip />
+				</Box>
 			) }
 			{ children }
 		</Stack>
@@ -89,13 +91,16 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 			ringDurationMs={ flow.ringDurationMs }
 			isDimmed={ isActivating }
 			isActivated={ flow.isActivated }
-			isBusy={ isActivating }
+			isAgentAccessOn={ flow.isAgentAccessOn }
+			isBusy={ isActivating || flow.isTurningAgentAccessOn }
+			isTurningOn={ flow.isTurningAgentAccessOn }
 			needsRescanForScore={ flow.needsRescanForScore }
 			siteDomain={ siteDomain }
 			ranAt={ scan?.ranAt }
 			agentAccessUrl={ agentAccessUrl }
-			retryAt={ scan?.retryAt }
+			retryAt={ flow.retryAt }
 			onRescan={ flow.startScan }
+			onTurnBackOn={ flow.turnAgentAccessBackOn }
 		/>
 	);
 
@@ -110,7 +115,6 @@ const ScannerView = ( { flow, siteDomain, agentAccessUrl, seoPluginSearchUrl } )
 				agentAccessUrl={ agentAccessUrl }
 				seoPluginSearchUrl={ seoPluginSearchUrl }
 				isActivated={ flow.isActivated }
-				score={ flow.ringScore }
 				isLoading={ isActivating }
 			/>
 			<PassingTable checks={ scan?.passingChecks ?? [] } />

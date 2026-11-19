@@ -3,7 +3,7 @@ import Box from '@elementor/ui/Box';
 import Collapse from '@elementor/ui/Collapse';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
@@ -16,14 +16,16 @@ import {
 	SCANNER_MOTION,
 	sectionHeadingSx,
 } from '../scanner-constants';
+import { CHECKS_KIND_PASSED, CollapsibleCardHeader } from './checks-summary';
 import { TableCard } from './fix-table';
+import { OraLogo } from './ora-logo';
 
 const ROW_ACTIVATION_KEYS = [ 'Enter', ' ' ];
 
 const DetailSection = ( { title, body } ) => (
 	<Stack spacing={ 0.5 }>
-		<Typography variant="caption" color="text.primary">{ title }</Typography>
-		<Typography variant="caption" color="text.secondary">{ body }</Typography>
+		<Typography variant="body2" color="text.primary">{ title }</Typography>
+		<Typography variant="body2" color="text.secondary">{ body }</Typography>
 	</Stack>
 );
 
@@ -123,25 +125,26 @@ PassingRow.propTypes = {
 };
 
 const SourceLine = () => (
-	<Typography variant="body2" color="text.tertiary">
-		{ __( 'Source:', 'elementor' ) }
-		{ ' ' }
-		<Typography
+	<Stack direction="row" alignItems="center" gap={ 0.5 }>
+		<Typography variant="body2" color="text.tertiary">
+			{ __( 'Powered by', 'elementor' ) }
+		</Typography>
+		<Box
 			component="a"
-			variant="body2"
 			href={ SCAN_SOURCE_URL }
 			target="_blank"
 			rel="noreferrer"
-			color="inherit"
-			sx={ { textDecoration: 'underline' } }
+			aria-label={ __( 'Ora', 'elementor' ) }
+			sx={ { display: 'inline-flex', alignItems: 'center', color: 'text.primary' } }
 		>
-			{ __( 'Ora API', 'elementor' ) }
-		</Typography>
-	</Typography>
+			<OraLogo />
+		</Box>
+	</Stack>
 );
 
 export const PassingTable = ( { checks } ) => {
 	const [ openIds, setOpenIds ] = useState( {} );
+	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const toggleRow = ( checkId ) => setOpenIds( ( current ) => ( { ...current, [ checkId ]: ! current[ checkId ] } ) );
 
@@ -162,7 +165,18 @@ export const PassingTable = ( { checks } ) => {
 				</Typography>
 			</Stack>
 			<TableCard>
-				{ checks.map( ( check, index ) => (
+				<CollapsibleCardHeader
+					kind={ CHECKS_KIND_PASSED }
+					count={ checks.length }
+					title={ sprintf(
+						/* Translators: %d: Number of passed checks. */
+						_n( '%d Check passed', '%d Checks passed', checks.length, 'elementor' ),
+						checks.length,
+					) }
+					isExpanded={ isExpanded }
+					onToggle={ () => setIsExpanded( ( current ) => ! current ) }
+				/>
+				{ isExpanded && checks.map( ( check, index ) => (
 					<PassingRow
 						key={ check.id }
 						check={ check }

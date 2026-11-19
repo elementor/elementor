@@ -41,7 +41,6 @@ This MCP provides information about Elementor's page building capabilities. When
 ### Elementor Limitations (What Cannot Be Done):
 
 **Element Management Limitations:**
-- Cannot apply motion effects
 - Cannot create fully designed or polished pages in a single step
 - Cannot fully resolve responsiveness issues
 - Layout generation (Copilot) is not currently available
@@ -94,8 +93,10 @@ This MCP provides information about Elementor's page building capabilities. When
 - "Create a new section with containers" (Navigate to editor - container creation supported)
 - "Change the color of a button" (Navigate to editor - widget settings supported)
 
+**Examples of when to navigate to editor (motion now supported for V3):**
+- "Add motion effects to my page" (Navigate to editor - use v3-motion-effects for V3 widgets, or V4 interactions tools for atomic elements)
+
 **Examples of what Elementor CANNOT do (don't navigate):**
-- "Add motion effects to my page" (Motion effects not supported)
 - "Create a header template" (Theme Builder not available)
 - "Set up a popup trigger" (Popup triggers and advanced rules not supported)
 - "Change Elementor settings" (System-level settings restricted)

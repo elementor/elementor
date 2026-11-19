@@ -88,6 +88,17 @@ class Test_Widget_Context_Helper extends TestCase {
 		$this->assertNull( $schema );
 	}
 
+	public function test_build_published_property_schema__hides_custom_props_marked_not_llm_configurable() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make()->meta( 'llm_configurable', false );
+
+		// Act.
+		$schema = Widget_Context_Helper::build_published_property_schema( 'editor_notice', $prop_type, 'mock-widget' );
+
+		// Assert.
+		$this->assertNull( $schema );
+	}
+
 	public function test_build_published_property_schema__publishes_props_that_are_only_not_exportable() {
 		// Arrange.
 		$prop_type = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );

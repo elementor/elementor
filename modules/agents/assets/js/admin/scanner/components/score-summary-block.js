@@ -1,5 +1,4 @@
-import { ExternalLinkIcon } from '@elementor/icons';
-import Button from '@elementor/ui/Button';
+import Skeleton from '@elementor/ui/Skeleton';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __, sprintf } from '@wordpress/i18n';
@@ -7,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import { ScoreStandardInfotip } from '../../components/score-standard-infotip';
 import { SCANNER_LAYOUT } from '../scanner-constants';
+import { AgentAccessOffBanner } from './agent-access-off-banner';
 import { RESCAN_LAYOUT_SCORE_ROW, RescanControl, useNextScanLabel } from './rescan-control';
 import { ScoreRing } from './score-ring';
 
@@ -103,18 +103,29 @@ ScoreSummaryBlock.propTypes = {
 	banner: PropTypes.node,
 };
 
+const ScoreCopySkeleton = () => (
+	<Stack spacing={ 1 } aria-hidden="true">
+		<Skeleton variant="text" width={ SCANNER_LAYOUT.skeletonHeadingWidth } height={ SCANNER_LAYOUT.skeletonHeadingHeight } />
+		<Skeleton variant="text" width="100%" />
+		<Skeleton variant="text" width={ SCANNER_LAYOUT.skeletonMetaWidth } />
+	</Stack>
+);
+
 export const ScoreRow = ( {
 	score,
 	ringDurationMs,
 	isDimmed,
-	isActivated,
+	isActivated = false,
+	isAgentAccessOn,
 	isBusy,
+	isTurningOn,
 	needsRescanForScore,
 	siteDomain,
 	ranAt,
 	agentAccessUrl,
 	retryAt,
 	onRescan,
+	onTurnBackOn,
 } ) => {
 	const { heading, description } = getScoreCopy( score );
 	const checkedAt = ranAt ? formatCheckedAt( ranAt ) : '';
@@ -124,17 +135,12 @@ export const ScoreRow = ( {
 			<ScoreRing score={ score } durationMs={ ringDurationMs } isDimmed={ isDimmed } />
 			<Stack spacing={ 2 } flex={ 1 } minWidth={ 0 }>
 				<Stack spacing={ 0 }>
-					<Stack direction="row" alignItems="center" spacing={ 2 }>
-						<Typography variant="h5" component="h3" color="text.primary">{ heading }</Typography>
-						<RescanControl
-							layout={ RESCAN_LAYOUT_SCORE_ROW }
-							retryAt={ retryAt }
-							onRescan={ onRescan }
-							isBusy={ isBusy }
-							isActivated={ isActivated }
-						/>
-					</Stack>
-					<Typography variant="body1" color="text.secondary">{ description }</Typography>
+					{ isBusy ? <ScoreCopySkeleton /> : (
+						<>
+							<Typography variant="h5" component="h3" color="text.primary">{ heading }</Typography>
+							<Typography variant="body1" color="text.secondary">{ description }</Typography>
+						</>
+					) }
 					{ needsRescanForScore && (
 						<Typography variant="caption" color="text.tertiary">
 							{ __( 'Rescan to update your score.', 'elementor' ) }
@@ -149,22 +155,39 @@ export const ScoreRow = ( {
 						<ScoreStandardInfotip />
 					</Stack>
 				) }
-				{ isActivated && (
+				{ isAgentAccessOn && (
 					<Stack direction="row" alignItems="center" spacing={ 0.5 }>
 						<Typography variant="body2" color="info.main">
 							{ __( 'Agent Ready is on', 'elementor' ) }
 						</Typography>
-						<Button
-							variant="text"
-							color="primary"
-							size="small"
+						<Typography
+							component="a"
+							variant="body2"
 							href={ agentAccessUrl }
-							endIcon={ <ExternalLinkIcon fontSize="tiny" /> }
+							color="primary"
 						>
 							{ __( 'Settings', 'elementor' ) }
-						</Button>
+						</Typography>
 					</Stack>
 				) }
+				{ ! isAgentAccessOn && isActivated && (
+					<AgentAccessOffBanner
+						retryAt={ retryAt }
+						isBusy={ isBusy }
+						isTurningOn={ isTurningOn }
+						onRescan={ onRescan }
+						onTurnBackOn={ onTurnBackOn }
+					/>
+				) }
+			</Stack>
+			<Stack direction="row" alignItems="center" flexShrink={ 0 }>
+				<RescanControl
+					layout={ RESCAN_LAYOUT_SCORE_ROW }
+					retryAt={ retryAt }
+					onRescan={ onRescan }
+					isBusy={ isBusy }
+					isActivated={ isActivated }
+				/>
 			</Stack>
 		</Stack>
 	);
@@ -175,11 +198,14 @@ ScoreRow.propTypes = {
 	ringDurationMs: PropTypes.number.isRequired,
 	isDimmed: PropTypes.bool,
 	isActivated: PropTypes.bool,
+	isAgentAccessOn: PropTypes.bool,
 	isBusy: PropTypes.bool,
+	isTurningOn: PropTypes.bool,
 	needsRescanForScore: PropTypes.bool,
 	siteDomain: PropTypes.string.isRequired,
 	ranAt: PropTypes.string,
 	agentAccessUrl: PropTypes.string.isRequired,
 	retryAt: PropTypes.string,
 	onRescan: PropTypes.func.isRequired,
+	onTurnBackOn: PropTypes.func.isRequired,
 };

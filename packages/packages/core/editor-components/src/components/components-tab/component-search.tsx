@@ -3,6 +3,7 @@ import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { ComponentsTabHeaderSlot } from './components-tab-header-location';
 import { useSearch } from './search-provider';
 
 export const ComponentSearch = () => {
@@ -27,6 +28,7 @@ export const ComponentSearch = () => {
 					} }
 				/>
 			</Box>
+			<ComponentsTabHeaderSlot />
 		</Stack>
 	);
 };

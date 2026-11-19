@@ -19,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
+use Elementor\Modules\AtomicWidgets\Utils\Custom_Attributes_Trust;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -33,6 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+	use Has_Widget_Markers;
 
 	public static function html_tag_follows_link(): bool {
 		return true;
@@ -341,6 +343,8 @@ trait Has_Atomic_Base {
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
+		$this->add_widget_markers( $raw_data );
+
 		return $raw_data;
 	}
 
@@ -362,6 +366,14 @@ trait Has_Atomic_Base {
 		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
 		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+		$attributes_key = Attributes_Prop_Type::get_key();
+
+		if ( is_string( $parsed[ $attributes_key ] ?? null ) ) {
+			$parsed[ $attributes_key ] = Utils::sanitize_custom_attributes_string(
+				$parsed[ $attributes_key ],
+				Custom_Attributes_Trust::can_print_unfiltered_in_current_document()
+			);
+		}
 
 		return $this->transform_link_for_render( $parsed );
 	}
@@ -404,8 +416,16 @@ trait Has_Atomic_Base {
 		$single_props = [ $key => $prop_value ];
 
 		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props );
+		$resolved_value = $resolved[ $key ] ?? null;
 
-		return $resolved[ $key ] ?? null;
+		if ( Attributes_Prop_Type::get_key() === $key && is_string( $resolved_value ) ) {
+			return Utils::sanitize_custom_attributes_string(
+				$resolved_value,
+				Custom_Attributes_Trust::can_print_unfiltered_in_current_document()
+			);
+		}
+
+		return $resolved_value;
 	}
 
 	protected function parse_editor_settings( array $data ): array {

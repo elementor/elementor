@@ -42,6 +42,10 @@ class Test_Module_Availability extends Elementor_Test_Base {
 	}
 
 	public function test_get_unavailable_reasons__returns_empty_when_all_available() {
+		if ( ! function_exists( 'wp_get_abilities' ) ) {
+			$this->markTestSkipped( 'Browser tools (WordPress Abilities API) require WordPress 6.9 or later.' );
+		}
+
 		$reasons = $this->module_availability->get_unavailable_reasons();
 
 		$this->assertIsArray( $reasons );

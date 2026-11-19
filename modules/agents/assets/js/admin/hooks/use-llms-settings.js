@@ -5,6 +5,7 @@ import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-ag
 import { fetchLlmsFile, revertLlmsContent, saveAgentReadySettings, saveLlmsContent, takeOverLlmsFile } from '../api';
 import { LLMS_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
+import { usePostExclusions } from './use-post-exclusions';
 
 const PHYSICAL_FILE_REASON_CODE = 'physical_file';
 
@@ -37,6 +38,15 @@ export const useLlmsSettings = ( initialState ) => {
 	useEffect( () => {
 		refreshContent();
 	}, [ refreshContent ] );
+
+	const exclusions = usePostExclusions( {
+		settingsKey: LLMS_SETTINGS_KEY,
+		initialExcludedPostIds: initialState.excludedPostIds,
+		initialPostTypes: initialState.postTypes,
+		setPostTypes,
+		setSaveError,
+		onSaved: refreshContent,
+	} );
 
 	const saveSettings = ( nextIsEnabled, nextPostTypes ) => {
 		const previousIsEnabled = isEnabled;
@@ -100,6 +110,7 @@ export const useLlmsSettings = ( initialState ) => {
 	} );
 
 	return {
+		...exclusions,
 		content,
 		hasPhysicalFile,
 		isEnabled: isEnabled && ! unavailableReason,

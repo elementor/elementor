@@ -1,3 +1,18 @@
+body.e-admin-navigation-active #adminmenu {
+	#toplevel_page_elementor-home {
+		margin-block: 7px;
+
+		&.wp-menu-open > .wp-submenu {
+			margin-block-start: 7px;
+			padding-block: 6px 13px;
+		}
+
+		&:not(.wp-menu-open) > a.menu-top {
+			margin-block: 7px;
+		}
+	}
+}
+
 #adminmenu {
 	--editor-one-flyout-menu-bg: #2c3338;
 	--editor-one-flyout-menu-bg-level-4: #23282d;
@@ -6,6 +21,8 @@
 	--editor-one-flyout-menu-text: #c3c4c7;
 	--editor-one-flyout-menu-text-hover: #72aee6;
 	--editor-one-flyout-menu-border: #3c434a;
+	--editor-one-flyout-menu-divider: #5c636a;
+	--editor-one-flyout-menu-divider-width: 1px;
 	--editor-one-flyout-menu-scrollbar-thumb-hover: #50575e;
 	--editor-one-flyout-menu-spacing-xs: 5px;
 	--editor-one-flyout-menu-spacing-sm: 8px;
@@ -121,9 +138,16 @@
 
                 &.elementor-flyout-divider, 
                 &.elementor-menu-separator {
-                    border-top: var(--editor-one-flyout-menu-border-width) solid var(--editor-one-flyout-menu-border);
-                    margin: var(--editor-one-flyout-menu-spacing-xs) 0;
+                    border-top: var(--editor-one-flyout-menu-divider-width) solid var(--editor-one-flyout-menu-divider);
+                    margin: 7px 11px;
                     padding: 0;
+                    pointer-events: none;
+
+                    &:hover,
+                    &:focus {
+                        background: transparent;
+                        border-top-color: var(--editor-one-flyout-menu-divider);
+                    }
                 }
             }
 
@@ -174,9 +198,15 @@
 		position: absolute;
 		inset-block-start: 8px;
 		inset-inline: 12px;
-		border-block-start: 1px solid currentColor;
-		opacity: 0.4;
+		border-block-start: var(--editor-one-flyout-menu-divider-width) solid var(--editor-one-flyout-menu-divider);
+		opacity: 0.7;
 		pointer-events: none;
+	}
+
+	& > a:hover::before,
+	& > a:focus::before {
+		border-block-start-color: var(--editor-one-flyout-menu-divider);
+		opacity: 0.7;
 	}
 }
 

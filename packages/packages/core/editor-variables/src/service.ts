@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-import { apiClient } from './api';
+import { apiClient, type BatchOperation } from './api';
 import { buildOperationsArray, type OperationResult } from './batch-operations';
 import { OP_RW, Storage, type TVariable, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
@@ -216,8 +216,21 @@ export const service = {
 			} );
 	},
 
+	applyLocalChange: ( id: string, variable: TVariable, isNew: boolean ) => {
+		if ( isNew ) {
+			storage.add( id, variable );
+		} else {
+			storage.update( id, variable );
+		}
+
+		styleVariablesRepository.update( { [ id ]: variable } );
+	},
+
 	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
-		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
+		return service.saveOperations( buildOperationsArray( originalVariables, currentVariables, deletedVariables ) );
+	},
+
+	saveOperations: ( operations: BatchOperation[] ) => {
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
 		if ( operations.length === 0 ) {
@@ -276,24 +289,4 @@ const handleWatermark = ( operation: string, newWatermark: number ) => {
 		setTimeout( () => service.load(), 500 );
 	}
 	storage.watermark( newWatermark );
-};
-
-export const applyLocalMutation = (
-	action: 'create' | 'update' | 'delete',
-	variableWithId: TVariable & { id: string },
-	watermark: number
-) => {
-	const { id: variableId, ...variable } = variableWithId;
-
-	handleWatermark( OP_RW, watermark );
-
-	if ( action === 'create' ) {
-		storage.add( variableId, variable );
-	} else {
-		storage.update( variableId, variable );
-	}
-
-	styleVariablesRepository.update( {
-		[ variableId ]: variable,
-	} );
 };

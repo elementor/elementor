@@ -11,10 +11,8 @@ import {
 	PROGRESS_STEP_DONE,
 	PROGRESS_STEP_FAILED,
 	PROGRESS_STEP_PENDING,
-	REDUCED_MOTION_SX,
 	SCANNER_COLORS,
 	SCANNER_LAYOUT,
-	SCANNER_MOTION,
 	VISUALLY_HIDDEN_SX,
 } from '../scanner-constants';
 import { ERROR_HIDDEN_STEP_ID } from '../scanner-mock-data';
@@ -22,7 +20,6 @@ import { DottedBackground } from './dotted-background';
 
 const STEP_ICON_SIZE = 16;
 const PENDING_DOT_SIZE = 6;
-const LABEL_BAR_GAP = 2;
 const SECTION_GAP = 4;
 const CARD_ROW_GAP = 1;
 const ICON_LABEL_GAP = 0.5;
@@ -49,7 +46,7 @@ const StepIcon = ( { status } ) => {
 	}
 
 	if ( PROGRESS_STEP_ACTIVE === status ) {
-		return <CircularProgress size={ STEP_ICON_SIZE } thickness={ 5 } sx={ { color: SCANNER_COLORS.accent } } />;
+		return <CircularProgress size={ STEP_ICON_SIZE } thickness={ 5 } sx={ { color: 'text.primary' } } />;
 	}
 
 	return (
@@ -65,7 +62,6 @@ StepIcon.propTypes = {
 
 export const ProgressView = ( { siteDomain, steps, completedStepsCount, isFailed } ) => {
 	const visibleSteps = isFailed ? steps.filter( ( step ) => ERROR_HIDDEN_STEP_ID !== step.id ) : steps;
-	const progressRatio = isFailed ? 1 : Math.min( completedStepsCount / steps.length, 1 );
 	const activeStep = steps[ completedStepsCount ];
 	const liveMessage = isFailed
 		? __( 'We couldn\'t reach your site from outside.', 'elementor' )
@@ -75,7 +71,7 @@ export const ProgressView = ( { siteDomain, steps, completedStepsCount, isFailed
 		<Box position="relative" display="flex" alignItems="center" justifyContent="center" width="100%" flex={ 1 } minHeight="100%">
 			<DottedBackground />
 			<Stack alignItems="center" spacing={ SECTION_GAP } position="relative" zIndex={ 1 } width="100%" px={ 2 }>
-				<Stack alignItems="center" spacing={ LABEL_BAR_GAP }>
+				<Stack alignItems="center">
 					<Typography
 						component="p"
 						m={ 0 }
@@ -92,28 +88,6 @@ export const ProgressView = ( { siteDomain, steps, completedStepsCount, isFailed
 							siteDomain,
 						) }
 					</Typography>
-					<Box
-						width={ SCANNER_LAYOUT.progressBarWidth }
-						height={ SCANNER_LAYOUT.progressBarHeight }
-						borderRadius={ SCANNER_LAYOUT.progressBarRadius }
-						overflow="hidden"
-						position="relative"
-						bgcolor={ SCANNER_COLORS.accent }
-						role="progressbar"
-						aria-valuemin={ 0 }
-						aria-valuemax={ 100 }
-						aria-valuenow={ Math.round( progressRatio * 100 ) }
-						aria-label={ __( 'Scan progress', 'elementor' ) }
-					>
-						<Box position="absolute" inset={ 0 } bgcolor={ SCANNER_COLORS.paper } sx={ { opacity: SCANNER_LAYOUT.progressTrackWash } } />
-						<Box
-							position="relative"
-							height="100%"
-							width={ `${ progressRatio * 100 }%` }
-							bgcolor={ SCANNER_COLORS.accent }
-							sx={ { transition: `width ${ SCANNER_MOTION.progressBarMs }ms ease-out`, ...REDUCED_MOTION_SX } }
-						/>
-					</Box>
 				</Stack>
 				<Stack
 					component="ul"
@@ -141,6 +115,14 @@ export const ProgressView = ( { siteDomain, steps, completedStepsCount, isFailed
 						);
 					} ) }
 				</Stack>
+				<Box
+					role="progressbar"
+					aria-label={ __( 'Scan progress', 'elementor' ) }
+					aria-valuemin={ 0 }
+					aria-valuemax={ steps.length }
+					aria-valuenow={ Math.min( completedStepsCount, steps.length ) }
+					sx={ VISUALLY_HIDDEN_SX }
+				/>
 				<Box aria-live="polite" sx={ VISUALLY_HIDDEN_SX }>{ liveMessage }</Box>
 			</Stack>
 		</Box>

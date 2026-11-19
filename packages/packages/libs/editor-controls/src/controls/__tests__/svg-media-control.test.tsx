@@ -7,7 +7,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { useUnfilteredFilesUpload, useUpdateUnfilteredFilesUpload } from '../../hooks/use-unfiltered-files-upload';
 import { IconLibraryPopover } from '../icon-library/icon-library-popover';
-import { useProviderIconSvg } from '../icon-library/icon-library-providers';
+import { resolveProviderIconPreviewSvg, useProviderIconSvg } from '../icon-library/icon-library-providers';
 import { useFontAwesome7Catalog } from '../icon-library/use-font-awesome-7-catalog';
 import { SvgMediaControl } from '../svg-media-control';
 import { SVG_MEDIA_ACTION_GROUP_TEST_ID, SVG_MEDIA_CONTROL_CONTAINER_TEST_ID } from '../svg-media-overlay';
@@ -41,6 +41,7 @@ jest.mock( '../icon-library/use-font-awesome-7-catalog', () => ( {
 jest.mock( '../icon-library/icon-library-providers', () => ( {
 	useIconLibraryProviderIcons: jest.fn( () => ( { data: [], isLoading: false } ) ),
 	useProviderIconSvg: jest.fn( () => ( { data: null, isLoading: false } ) ),
+	resolveProviderIconPreviewSvg: jest.fn(),
 } ) );
 jest.mock( '@elementor/wp-media', () => ( {
 	useWpMediaAttachment: jest.fn(),
@@ -62,6 +63,7 @@ const propType = createMockPropType( {
 describe( 'SvgMediaControl', () => {
 	beforeEach( () => {
 		jest.mocked( useWpMediaAttachment ).mockReturnValue( {} as never );
+		jest.mocked( resolveProviderIconPreviewSvg ).mockResolvedValue( null );
 		jest.mocked( useUnfilteredFilesUpload ).mockReturnValue( { data: true } as UseQueryResult< boolean, Error > );
 		jest.mocked( useUpdateUnfilteredFilesUpload ).mockReturnValue( {
 			mutateAsync: jest.fn().mockResolvedValue( { data: { success: true } } ),
@@ -638,6 +640,39 @@ describe( 'SvgMediaControl', () => {
 
 		// Assert
 		expect( screen.queryByLabelText( 'Preview icon' ) ).not.toBeInTheDocument();
+		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'list marker', 'fa-solid fa-circle' ],
+		[ 'carousel previous arrow', 'fa-solid fa-chevron-left' ],
+		[ 'carousel next arrow', 'fa-solid fa-chevron-right' ],
+	] )( 'should preview the default %s icon value without a broken image', async ( _name, iconValue ) => {
+		// Arrange
+		jest.mocked( resolveProviderIconPreviewSvg ).mockResolvedValue(
+			'<svg viewBox="0 0 10 10"><path d="M0 0h10v10H0z"/></svg>'
+		);
+		jest.mocked( useWpMediaFrame ).mockReturnValue( { open: jest.fn() } );
+		jest.mocked( useFontAwesome7Catalog ).mockReturnValue( { data: [], isLoading: false } as never );
+
+		const props = {
+			setValue: jest.fn(),
+			bind: 'svg',
+			propType,
+			value: {
+				$$type: 'icon',
+				value: {
+					value: { $$type: 'string', value: iconValue },
+					library: { $$type: 'string', value: 'fa-solid' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <SvgMediaControl />, props );
+
+		// Assert
+		expect( await screen.findByLabelText( 'Preview icon' ) ).toBeInTheDocument();
 		expect( screen.queryByAltText( 'Preview SVG' ) ).not.toBeInTheDocument();
 	} );
 

@@ -5,6 +5,7 @@ import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-ag
 import { saveAgentReadySettings } from '../api';
 import { MARKDOWN_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
+import { usePostExclusions } from './use-post-exclusions';
 
 const getIncludedPostTypeNames = ( postTypes ) => postTypes
 	.filter( ( postType ) => postType.included )
@@ -15,6 +16,13 @@ export const useMarkdownSettings = ( initialState ) => {
 	const [ postTypes, setPostTypes ] = useState( initialState.postTypes );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ saveError, setSaveError ] = useState( '' );
+	const exclusions = usePostExclusions( {
+		settingsKey: MARKDOWN_SETTINGS_KEY,
+		initialExcludedPostIds: initialState.excludedPostIds,
+		initialPostTypes: initialState.postTypes,
+		setPostTypes,
+		setSaveError,
+	} );
 
 	const saveSettings = ( nextIsEnabled, nextPostTypes ) => {
 		const previousIsEnabled = isEnabled;
@@ -60,6 +68,7 @@ export const useMarkdownSettings = ( initialState ) => {
 	};
 
 	return {
+		...exclusions,
 		isEnabled,
 		isSaving,
 		postTypes,

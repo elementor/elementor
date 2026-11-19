@@ -8,9 +8,11 @@ export function getLegacyAccountScreenConfig() {
 
 export function resolveDisconnectedAccountHeadlines( accountScreen ) {
 	if ( accountScreen ) {
+		const showSecondLine = accountScreen.showHeadlineLine2 !== false;
+
 		return {
 			title: accountScreen.headlineLine1,
-			secondLineTitle: accountScreen.headlineLine2,
+			secondLineTitle: showSecondLine ? accountScreen.headlineLine2 : '',
 		};
 	}
 

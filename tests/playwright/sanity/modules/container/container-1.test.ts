@@ -10,7 +10,7 @@ test.describe( 'Container tests #1 @container', () => {
 		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
-	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Container background slideshow', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();

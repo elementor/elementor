@@ -48,6 +48,7 @@ interface OnboardingConfig {
 declare global {
 	interface Window {
 		$e?: {
+			route?: ( route: string ) => void;
 			routes?: {
 				getCurrent?: () => Record< string, string > | undefined;
 				register?: ( component: string, route: string, callback: () => unknown ) => unknown;
@@ -125,6 +126,9 @@ declare global {
 			config?: {
 				angie?: {
 					autoShow?: boolean;
+				};
+				widgetCreation?: {
+					canCreateWidget?: boolean;
 				};
 				controls?: {
 					font?: {

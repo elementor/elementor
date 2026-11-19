@@ -180,7 +180,7 @@ describe( 'Agents Ready App', () => {
 
 		// Assert
 		expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeTruthy();
-		expect( screen.queryByText( 'LLMs.txt' ) ).toBeNull();
+		expect( screen.queryByText( 'llms.txt: site guide for AI' ) ).toBeNull();
 	} );
 
 	it( 'uses the Argon theme palette', () => {
@@ -196,11 +196,11 @@ describe( 'Agents Ready App', () => {
 		renderActiveApp();
 
 		// Assert
-		expect( screen.getByText( 'LLMs.txt' ) ).toBeTruthy();
-		expect( screen.getByText( 'Markdown content' ) ).toBeTruthy();
-		expect( screen.getByText( 'Bot access control' ) ).toBeTruthy();
-		expect( screen.getByText( 'Agent discovery' ) ).toBeTruthy();
-		expect( screen.getByText( 'Agent browser tools' ) ).toBeTruthy();
+		expect( screen.getByText( 'llms.txt: site guide for AI' ) ).toBeTruthy();
+		expect( screen.getByText( 'Markdown pages: clean text for AI' ) ).toBeTruthy();
+		expect( screen.getByText( 'robots.txt rules: AI bot access' ) ).toBeTruthy();
+		expect( screen.getByText( 'Discovery files (/.well-known)' ) ).toBeTruthy();
+		expect( screen.getByText( 'WebMCP tools: in-browser agent actions' ) ).toBeTruthy();
 		expect( screen.getByText( '5/5' ) ).toBeTruthy();
 		expect( screen.queryByRole( 'tab' ) ).toBeNull();
 		expect( screen.queryByRole( 'button', { name: 'Activate' } ) ).toBeNull();
@@ -535,20 +535,20 @@ describe( 'Agents Ready App', () => {
 		render( <App isActivated agentDiscoveryConfig={ agentDiscoveryConfig } botAccessConfig={ botAccessConfig } llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } browserToolsConfig={ browserToolsConfig } /> );
 
 		// Assert - the first module starts open; the rest stay collapsed
-		expect( screen.queryByText( 'Guide AI agents through your site' ) ).toBeNull();
-		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
-		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
-		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
-		expect( screen.getByText( 'Tell agents what this site offers them' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Help AI agents understand and recommend your site' ) ).toBeNull();
+		expect( screen.getByText( 'Help AI agents understand your site' ) ).toBeTruthy();
+		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Help agents find what your site offers' ) ).toBeTruthy();
 
 		// Act
-		fireEvent.click( screen.getByText( 'LLMs.txt' ) );
+		fireEvent.click( screen.getByText( 'llms.txt: site guide for AI' ) );
 
 		// Assert
-		expect( screen.getByText( 'Guide AI agents through your site' ) ).toBeTruthy();
-		expect( screen.queryByText( 'Help agents find your content' ) ).toBeNull();
-		expect( screen.getByText( 'Make your content easier to read' ) ).toBeTruthy();
-		expect( screen.getByText( 'Control how agents use your content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Help AI agents understand and recommend your site' ) ).toBeTruthy();
+		expect( screen.queryByText( 'Help AI agents understand your site' ) ).toBeNull();
+		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
+		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 	} );
 
 	it( 'keeps the welcome screen when activation fails', async () => {

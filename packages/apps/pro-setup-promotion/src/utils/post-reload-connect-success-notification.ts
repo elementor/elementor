@@ -18,13 +18,16 @@ export function showConnectSuccessNotificationAfterReloadIfPending(): void {
 		}
 
 		sessionStorage.removeItem( SESSION_STORAGE_KEY );
-
-		notify( {
-			type: 'success',
-			message: __( 'Elementor Pro is connected and ready to use', 'elementor' ),
-			id: 'pro-setup-promotion-connect-success',
-		} );
+		showConnectSuccessNotification();
 	} catch {
 		// ignore
 	}
+}
+
+export function showConnectSuccessNotification(): void {
+	notify( {
+		type: 'success',
+		message: __( 'Elementor Pro is connected and ready to use', 'elementor' ),
+		id: 'pro-setup-promotion-connect-success',
+	} );
 }

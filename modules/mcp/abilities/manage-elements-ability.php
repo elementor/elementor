@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -32,6 +34,7 @@ use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -47,9 +50,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Document_Mutator $mutator;
+	private ?Closed_Structure $closed_structure;
 
-	public function __construct( ?Document_Mutator $mutator = null ) {
+	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
 		$this->mutator = $mutator;
+		$this->closed_structure = $closed_structure;
 	}
 
 	protected function get_ability_id(): string {
@@ -59,7 +64,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elements', 'elementor' ),
-			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and the V3 widgets elementor/list-widget-schemas lists can be operation targets. V3 widgets whose elementor/get-widget-schemas response has `style_targets`: settings follow that schema; style is written per target, where bare declarations style `default_style_target`, other targets use alias blocks such as `dropdown { }` or `pointer:hover { }` with only the states that target lists, and any other selector is dropped; a value the widget cannot store for a target is written to the widget\'s custom CSS when Elementor Pro is active, otherwise it is skipped with a warning. Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. An update whose only change is editor_settings (for example renaming a layer) is also accepted on any V3 element. Each operation: action=update merges partial plain settings, editor-only fields via editor_settings (layer name, decorative), plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids) right after the source. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
+			__( 'Bulk surgical edits on existing V4 (atomic) elements in a document (up to 50 operations applied to a single document tree, saved once). V4 elements and the V3 widgets elementor/list-widget-schemas lists can be operation targets. V3 widgets whose elementor/get-widget-schemas response has `style_targets`: settings follow that schema; style is written per target, where bare declarations style `default_style_target`, other targets use alias blocks such as `dropdown { }` or `pointer:hover { }` with only the states that target lists, and any other selector is dropped; a value the widget cannot store for a target is written to the widget\'s custom CSS when Elementor Pro is active, otherwise it is skipped with a warning. Other V3 targets return elementor_v3_not_supported per-op and must be edited directly in the Elementor editor. new_parent_id on action=move may reference either V3 or V4 containers. An update whose only change is editor_settings (for example renaming a layer) is also accepted on any V3 element. Each operation: action=update merges partial plain settings, editor-only fields via editor_settings (layer name, decorative), plain-CSS string style (with pseudo-state and breakpoint support; breakpoints use @media (--mobile) syntax — NOT pixel queries), global class labels, and native-shape interactions; action=delete removes the element; action=move re-parents it under new_parent_id at optional index; action=duplicate clones the element (with fresh ids and its own local styles) right after the source; element_id in the result is the source, new_element_id is the copy, so use new_element_id to edit the copy. Every warning is fixable: one field was skipped or adjusted and the rest of the update was saved. Correct only that field (see warning_details config_id and code). Do not treat the skip as unsupported. An error means that operation was not saved. WARNING: This tool performs a read-modify-write on the current document. Do NOT use element IDs obtained from a prior get-page-structure read if build-composition was called in between — use only IDs from the build-composition resolved_xml response to avoid silently overwriting its changes.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -71,6 +76,14 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'items' => [
 							'type' => 'object',
 							'properties' => [
+								'element_id' => [
+									'type' => 'string',
+									'description' => 'The element the operation targeted. For action=duplicate this is the source element.',
+								],
+								'new_element_id' => [
+									'type' => 'string',
+									'description' => 'Only for action=duplicate: the id of the new copy. Use it to edit the copy instead of the source.',
+								],
 								'warnings' => [
 									'type' => 'array',
 									'items' => [ 'type' => 'string' ],
@@ -86,6 +99,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 						'description' => 'Elementor editor URL for the document. Share with the user when they need a link (they must be logged into WordPress as an editor). To self-validate the render, call elementor/create-preview-link.',
 					],
 					'version' => [ 'type' => 'string' ],
+					'staged' => Document_Mutation_Links::staged_schema_property(),
 					'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 					'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 				],
@@ -217,6 +231,16 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			return $document;
 		}
 
+		if ( ! $document->is_editable_by_current_user() ) {
+			$error = new \WP_Error(
+				'elementor_forbidden',
+				__( 'You do not have permission to edit this post.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, null, $error, $operations );
+			return $error;
+		}
+
 		return $this->handle_bulk( $document, $operations, $started_at );
 	}
 
@@ -255,7 +279,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 			$tree = $outcome['tree'];
 			$any_change = true;
 
-			$results->add_success( $index, $action, $outcome['warnings']->add_to_response( [ 'element_id' => $element_id ] ) );
+			$results->add_success(
+				$index,
+				$action,
+				$outcome['warnings']->add_to_response( $this->build_operation_success_fields( $action, $element_id, $outcome ) )
+			);
 
 			$all_warnings->merge( $outcome['warnings'] );
 			$class_attachments  += count( $outcome['event_metadata']['applied_classes'] ?? [] );
@@ -271,6 +299,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$post_id             = (int) $document->get_main_id();
 
 		if ( ! $any_change ) {
+			$response['staged'] = Document_Mutation_Save::is_staged( $document );
 			$response = $this->with_edit_url( $response, $document );
 			$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
 			return $response;
@@ -292,7 +321,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 		$saved_post = $save_result->get_post();
 		$response['version'] = $saved_post ? $saved_post->post_modified_gmt : current_time( 'mysql', true );
+		$response['staged'] = Document_Mutation_Save::is_staged( $save_result );
 		$response = $this->with_edit_url( $response, $document );
+
+		if ( $response['staged'] ) {
+			$response['llm_instructions'] = Document_Mutation_Links::staged_write_instructions( $save_result );
+		}
 
 		if ( $undo_point ) {
 			$undo_point->commit();
@@ -300,7 +334,7 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		}
 
 		$this->emit_mcp_manage_elements_executed( $started_at, $post_id, $document, null, $operations, $response, $all_warnings->codes(), $class_attachments, $interactions_count );
-		return $response;
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	private function with_edit_url( array $response, Document $document ): array {
@@ -317,6 +351,11 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		$v3_error = $this->reject_v3_target( $tree, $element_id );
 		if ( $v3_error ) {
 			return $v3_error;
+		}
+
+		$closed_structure_error = $this->reject_closed_structure_edit( $tree, $action, $element_id, $operation );
+		if ( $closed_structure_error ) {
+			return $closed_structure_error;
 		}
 
 		switch ( $action ) {
@@ -380,6 +419,26 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		);
 	}
 
+	private function reject_closed_structure_edit( array $tree, string $action, string $element_id, array $operation ): ?\WP_Error {
+		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
+
+		if ( ! $closed_structure || 'update' === $action ) {
+			return null;
+		}
+
+		if ( $closed_structure->is_element_locked( $tree, $element_id ) ) {
+			return $closed_structure->element_error( $element_id );
+		}
+
+		$new_parent_id = $operation['new_parent_id'] ?? null;
+
+		if ( 'move' === $action && is_string( $new_parent_id ) && $closed_structure->is_insertion_locked( $tree, $new_parent_id ) ) {
+			return $closed_structure->target_error( $new_parent_id );
+		}
+
+		return null;
+	}
+
 	private function apply_delete( array $tree, string $element_id ) {
 		$new_tree = $this->get_mutator()->remove( $tree, $element_id );
 		if ( is_wp_error( $new_tree ) ) {
@@ -394,10 +453,12 @@ class Manage_Elements_Ability extends Abstract_Ability {
 
 	private function apply_duplicate( array $tree, string $element_id ) {
 		$source_node = $this->get_mutator()->find_by_id( $tree, $element_id );
-		$new_tree = $this->get_mutator()->duplicate( $tree, $element_id );
-		if ( is_wp_error( $new_tree ) ) {
-			return $this->to_public_error( $new_tree );
+		$duplicate_result = $this->get_mutator()->duplicate( $tree, $element_id );
+		if ( is_wp_error( $duplicate_result ) ) {
+			return $this->to_public_error( $duplicate_result );
 		}
+
+		$new_tree = $duplicate_result['tree'];
 
 		$form_structure_error = $this->reject_new_single_instance_violations( $tree, $new_tree );
 		if ( $form_structure_error ) {
@@ -407,10 +468,21 @@ class Manage_Elements_Ability extends Abstract_Ability {
 		return [
 			'tree' => $new_tree,
 			'warnings' => Warnings_Bag::make(),
+			'new_element_id' => $duplicate_result['new_element_id'],
 			'event_metadata' => [
 				'duplicated_element_types' => is_array( $source_node ) ? $this->collect_element_types( $source_node ) : [],
 			],
 		];
+	}
+
+	private function build_operation_success_fields( string $action, string $element_id, array $outcome ): array {
+		$fields = [ 'element_id' => $element_id ];
+
+		if ( 'duplicate' === $action && array_key_exists( 'new_element_id', $outcome ) ) {
+			$fields['new_element_id'] = $outcome['new_element_id'];
+		}
+
+		return $fields;
 	}
 
 	private function collect_element_types( array $node ): array {

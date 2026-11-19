@@ -31,6 +31,15 @@ class Forms_Pro_Features_Discovery implements Widget_Pro_Features_Discovery {
 		);
 	}
 
+	public static function for_submissions(): \WP_Error {
+		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
+			__( 'Form submissions need Elementor Pro, which isn\'t installed, so nothing was changed. What Pro gives the user: forms that save every message in WP admin, where their agent can list, search, read, mark and trash them. Each one is also emailed to them.', 'elementor' ),
+			__( 'Free path: none for stored messages. Say plainly that Free has no Elementor forms, so nothing is collected. Offer a button or text with their contact email (mailto link) so visitors can still reach them.', 'elementor' ),
+			self::UPGRADE_URL
+		);
+	}
+
 	private static function get_widget_types(): array {
 		return array_merge(
 			[ self::LEGACY_WIDGET_TYPE, Form_Structure_Validator::FORM_ELEMENT_TYPE ],

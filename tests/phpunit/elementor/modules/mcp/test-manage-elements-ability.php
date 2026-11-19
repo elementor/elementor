@@ -19,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -27,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
+require_once __DIR__ . '/../composite-widgets/fixtures/closed-structure-factory.php';
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -143,6 +145,26 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 	}
 
+	public function test_execute__denied_when_role_is_excluded_from_elementor() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		update_option( 'elementor_exclude_user_roles', [ 'editor' ] );
+		$this->act_as_editor();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'x' ],
+			],
+		] );
+
+		delete_option( 'elementor_exclude_user_roles' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_forbidden', $result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+	}
+
 	public function test_execute__unknown_action_returns_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -217,6 +239,79 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( $container_id, $elements[0]['id'] );
 		$this->assertNotSame( $container_id, $elements[1]['id'] );
 		$this->assertNotSame( $heading_id, $elements[1]['elements'][0]['id'] ?? null );
+	}
+
+	public function test_duplicate__gives_copy_its_own_local_style_and_returns_copy_id() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+		$style_result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $heading_id, 'style' => 'color: #ff0000;' ],
+			],
+		] );
+		$this->assertOkOperation( $style_result, 0 );
+		$original_before = $this->find_element_in_document( $post_id, $heading_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'duplicate', 'element_id' => $heading_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( $heading_id, $result['results'][0]['element_id'] );
+
+		$copy_id = $result['results'][0]['new_element_id'];
+		$copy = $this->find_element_in_document( $post_id, $copy_id );
+		$original_after = $this->find_element_in_document( $post_id, $heading_id );
+		$copy_style_ids = array_keys( $copy['styles'] );
+
+		$this->assertNotSame( $heading_id, $copy_id );
+		$this->assertSame( $original_before['styles'], $original_after['styles'] );
+		$this->assertEmpty( array_intersect( array_keys( $original_after['styles'] ), $copy_style_ids ) );
+		$this->assertSame( $copy_style_ids, $copy['settings']['classes']['value'] );
+	}
+
+	public function test_duplicate__gives_styled_child_of_copied_container_its_own_local_style() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
+		$style_result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $heading_id, 'style' => 'color: #ff0000;' ],
+			],
+		] );
+		$this->assertOkOperation( $style_result, 0 );
+		$original_child_before = $this->find_element_in_document( $post_id, $heading_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'duplicate', 'element_id' => $container_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$copy = $this->find_element_in_document( $post_id, $result['results'][0]['new_element_id'] );
+		$copied_child = $copy['elements'][0];
+		$original_child_after = $this->find_element_in_document( $post_id, $heading_id );
+		$copied_child_style_ids = array_keys( $copied_child['styles'] );
+
+		$this->assertNotEmpty( $copied_child_style_ids );
+		$this->assertSame( $original_child_before['styles'], $original_child_after['styles'] );
+		$this->assertEmpty( array_intersect( array_keys( $original_child_after['styles'] ), $copied_child_style_ids ) );
+		$this->assertSame( $copied_child_style_ids, $copied_child['settings']['classes']['value'] );
 	}
 
 	public function test_move__reparents_element_to_document_root_at_index() {
@@ -1686,8 +1781,87 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		] );
 	}
 
+	public function test_execute__reports_staged_when_saving_to_a_published_page() {
+		// Arrange
+		$post_id = $this->create_published_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $heading_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringStartsWith( 'Change saved to a draft copy.', $result['llm_instructions'] );
+	}
+
+	public function test_execute__reports_staged_on_the_no_change_path_of_a_published_page() {
+		// Arrange
+		$post_id = $this->create_published_document();
+		$this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result['staged'] );
+	}
+
+	public function test_execute__reports_not_staged_on_a_draft() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$saved = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $heading_id ],
+			],
+		] );
+		$unchanged = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		// Assert
+		$this->assertFalse( $saved['staged'] );
+		$this->assertStringNotContainsString( 'draft copy', $saved['llm_instructions'] ?? '' );
+		$this->assertFalse( $unchanged['staged'] );
+	}
+
 	private function create_real_document(): int {
 		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+	}
+
+	/**
+	 * Autosave detection requires the autosave's `post_modified_gmt` to be strictly newer than the
+	 * main post's, so the main post is backdated.
+	 */
+	private function create_published_document(): int {
+		global $wpdb;
+
+		$this->act_as_admin();
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) ) ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+
+		return $post_id;
 	}
 
 	private function given_heading_on_document( int $post_id ): string {
@@ -1730,7 +1904,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 
 		$container_id = $result['root_element_ids'][0];
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$elements = Plugin::$instance->documents->get_doc_or_auto_save( $post_id, get_current_user_id() )->get_elements_data();
 
 		foreach ( $elements as $element ) {
 			if ( $element['id'] === $container_id ) {
@@ -2004,6 +2178,128 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertSame( 'error', $result['status'] );
 		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	public function test_execute__rejects_structural_edits_inside_a_widget_per_op() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+		$page_heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $widget['part'] ],
+				[ 'action' => 'duplicate', 'element_id' => $widget['part'] ],
+				[ 'action' => 'move', 'element_id' => $widget['part'], 'new_parent_id' => 'document' ],
+				[ 'action' => 'move', 'element_id' => $widget['slot'], 'new_parent_id' => 'document' ],
+				[ 'action' => 'move', 'element_id' => $page_heading_id, 'new_parent_id' => $widget['root'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'error', $result['status'] );
+		foreach ( $result['results'] as $row ) {
+			$this->assertSame( 'elementor_widget_structure_closed', $row['code'] );
+		}
+		$this->assertNotNull( $this->find_element_in_document( $post_id, $widget['part'] ) );
+	}
+
+	public function test_execute__allows_content_edits_slot_edits_and_whole_widget_edits() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+		$page_heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $widget['part'], 'settings' => [ 'title' => 'Updated' ] ],
+				[ 'action' => 'move', 'element_id' => $page_heading_id, 'new_parent_id' => $widget['slot'] ],
+				[ 'action' => 'delete', 'element_id' => $widget['slot_child'] ],
+				[ 'action' => 'duplicate', 'element_id' => $widget['root'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'ok', $result['status'], wp_json_encode( $result['results'] ) );
+		$this->assertSame( $page_heading_id, $this->find_element_in_document( $post_id, $widget['slot'] )['elements'][0]['id'] );
+	}
+
+	public function test_execute__does_not_guard_widgets_while_the_experiment_is_off() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+
+		// Act.
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $widget['part'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertOkOperation( $result, 0 );
+		$this->assertNull( $this->find_element_in_document( $post_id, $widget['part'] ) );
+	}
+
+	private function make_ability_with_closed_structure(): Manage_Elements_Ability {
+		return new Manage_Elements_Ability( null, Closed_Structure_Factory::make() );
+	}
+
+	/**
+	 * @return array{root: string, part: string, slot: string, slot_child: string}
+	 */
+	private function given_widget_with_slot_on_document( int $post_id ): array {
+		$ids = [
+			'root' => $this->random_element_id(),
+			'part' => $this->random_element_id(),
+			'slot' => $this->random_element_id(),
+			'slot_child' => $this->random_element_id(),
+		];
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $ids['root'],
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'part' => 'root',
+				'widget' => [ 'id' => Closed_Structure_Factory::WIDGET_ID, 'version' => 1 ],
+				'elements' => [
+					[
+						'id' => $ids['part'],
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [],
+						'part' => 'title',
+						'elements' => [],
+					],
+					[
+						'id' => $ids['slot'],
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [
+							[
+								'id' => $ids['slot_child'],
+								'elType' => 'e-flexbox',
+								'settings' => [],
+								'elements' => [],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		return $ids;
 	}
 
 	private function given_form_element_registered(): void {

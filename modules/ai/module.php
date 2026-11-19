@@ -88,11 +88,18 @@ class Module extends BaseModule {
 			}
 		} );
 
-		add_action( 'elementor/editor/before_enqueue_scripts', function() {
+		add_action( 'elementor/editor/v2/scripts/enqueue', function() {
+			Utils::print_js_config(
+				'elementor-editor',
+				'ElementorAiConfig',
+				$this->get_ai_config()
+			);
 			$this->enqueue_main_script();
-			$this->enqueue_layout_script();
 		} );
 
+		add_filter( 'elementor/document/save/data', [ $this, 'remove_temporary_containers' ] );
+
+		// Styles for Angie V3 entry-point buttons (`.e-ai-button`, `.e-ai-layout-button`).
 		add_action( 'elementor/editor/after_enqueue_styles', function() {
 			wp_enqueue_style(
 				'elementor-ai-editor',
@@ -145,19 +152,13 @@ class Module extends BaseModule {
 			wp_localize_script(
 				'elementor-ai-gutenberg',
 				'ElementorAiConfig',
-				[
-					'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-					'connect_url' => $this->get_ai_connect_url(),
-				]
+				$this->get_ai_config()
 			);
 
 			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
 		});
 
-		add_filter( 'elementor/document/save/data', function ( $data ) {
-			return $this->remove_temporary_containers( $data );
-		} );
-
+		// ED-26128: keep Animate with AI / hover AI control hosts so Angie entry points can attach.
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/container/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
 		add_action( 'elementor/element/common/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
@@ -209,16 +210,31 @@ class Module extends BaseModule {
 		] );
 	}
 
+	/**
+	 * ED-26128 — Hover Transform "Animate With AI" host control for Angie.
+	 *
+	 * @param Element_Base $element Element.
+	 * @return void
+	 */
 	public function register_ai_hover_effect_control( Element_Base $element ) {
-		if ( ! $element->get_controls( 'ai_hover_animation' ) ) {
-			$element->add_control(
-				'ai_hover_animation',
-				[
-					'tabs_wrapper' => '_tabs_positioning',
-					'inner_tab' => '_tab_positioning_hover',
-					'label' => esc_html__( 'Animate With AI', 'elementor' ),
-					'type' => Controls_Manager::RAW_HTML,
-					'raw' => '
+		if ( $element->get_controls( 'ai_hover_animation' ) ) {
+			return;
+		}
+
+		$element->start_controls_section(
+			'section_ai_hover_animation',
+			[
+				'label' => esc_html__( 'Animate With AI', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$element->add_control(
+			'ai_hover_animation',
+			[
+				'label' => esc_html__( 'Animate With AI', 'elementor' ),
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => '
 <style>
   .elementor-control-ai_hover_animation .elementor-control-content {
     display: flex;
@@ -230,22 +246,23 @@ class Module extends BaseModule {
   	display: none;
   }
 </style>',
-					'render_type' => 'none',
-					'ai' => [
-						'active' => true,
-						'type' => 'hover_animation',
-					],
+				'render_type' => 'none',
+				'ai' => [
+					'active' => true,
+					'type' => 'hover_animation',
 				],
-				[
-					'position' => [
-						'of' => '_transform_rotate_popover_hover',
-						'type' => 'control',
-						'at' => 'before',
-					],
-				]
-			);
-		}
+			]
+		);
+
+		$element->end_controls_section();
 	}
+
+	/**
+	 * ED-26128 — Motion Effects "Animate With AI" host control for Angie (Pro).
+	 *
+	 * @param Element_Base $element Element.
+	 * @return void
+	 */
 	public function register_ai_motion_effect_control( $element ) {
 		if ( Utils::has_pro() && ! $element->get_controls( 'ai_animation' ) ) {
 			$element->add_control(
@@ -437,13 +454,22 @@ class Module extends BaseModule {
 		wp_localize_script(
 			'elementor-ai-media-library',
 			'ElementorAiConfig',
-			[
-				'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-				'connect_url' => $this->get_ai_connect_url(),
-			]
+			$this->get_ai_config()
 		);
 
 		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
+	}
+
+	/**
+	 * Every script that localizes `ElementorAiConfig` overwrites the same global, so they must share one shape.
+	 *
+	 * @return array
+	 */
+	private function get_ai_config(): array {
+		return [
+			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
+			'connect_url' => $this->get_ai_connect_url(),
+		];
 	}
 
 	private function enqueue_main_script() {
@@ -453,12 +479,7 @@ class Module extends BaseModule {
 			[
 				'react',
 				'react-dom',
-				'backbone-marionette',
-				'elementor-web-cli',
-				'wp-date',
 				'elementor-common',
-				'elementor-editor-modules',
-				'elementor-editor-document',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
 			],
@@ -466,52 +487,23 @@ class Module extends BaseModule {
 			true
 		);
 
-		$config = [
-			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
-			'connect_url' => $this->get_ai_connect_url(),
-		];
-
 		wp_localize_script(
 			'elementor-ai',
 			'ElementorAiConfig',
-			$config
+			$this->get_ai_config()
 		);
 
 		wp_set_script_translations( 'elementor-ai', 'elementor' );
 	}
 
-	private function enqueue_layout_script() {
-		wp_enqueue_script(
-			'elementor-ai-layout',
-			$this->get_js_assets_url( 'ai-layout' ),
-			[
-				'react',
-				'react-dom',
-				'backbone-marionette',
-				'elementor-common',
-				'elementor-web-cli',
-				'elementor-editor-modules',
-				'elementor-ai',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_set_script_translations( 'elementor-ai-layout', 'elementor' );
-	}
-
-	private function remove_temporary_containers( $data ) {
+	public function remove_temporary_containers( $data ) {
 		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
 			return $data;
 		}
 
-		// If for some reason the document has been saved during an AI Layout session,
-		// ensure that the temporary containers are removed from the data.
 		$data['elements'] = array_filter( $data['elements'], function( $element ) {
-			$is_preview_container = strpos( $element['id'], 'e-ai-preview-container' ) === 0;
-			$is_screenshot_container = strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
+			$is_preview_container = isset( $element['id'] ) && strpos( $element['id'], 'e-ai-preview-container' ) === 0;
+			$is_screenshot_container = isset( $element['id'] ) && strpos( $element['id'], 'e-ai-screenshot-container' ) === 0;
 
 			return ! $is_preview_container && ! $is_screenshot_container;
 		} );

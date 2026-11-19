@@ -42,6 +42,6 @@
     "tsup": "^8.3.5"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.27.1"
+    "@modelcontextprotocol/sdk": "1.32.2"
   }
 }

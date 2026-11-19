@@ -54,7 +54,7 @@ const StageBar = ( { stage, label, question } ) => {
 				<Typography variant="caption" color="text.disabled">{ countLabel }</Typography>
 				{ healthLabel && <Typography variant="caption" color={ healthColors.text }>{ healthLabel }</Typography> }
 			</Stack>
-			{ question && <Typography variant="caption" color="text.tertiary">{ question }</Typography> }
+			{ question && <Typography variant="body2" color="text.tertiary">{ question }</Typography> }
 		</Stack>
 	);
 };

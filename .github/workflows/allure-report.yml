@@ -1,0 +1,46 @@
+name: Allure Report
+
+on:
+  workflow_call:
+    inputs:
+      php_version:
+        description: 'PHP version suffix for artifact names and report path. Empty uses the default Playwright run.'
+        type: string
+        required: false
+        default: ''
+      wp_core:
+        description: 'WordPress core version suffix for artifact names and report path. Empty uses the default Playwright run.'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  id-token: write
+  actions: read
+
+jobs:
+  build-report:
+    runs-on: ubuntu-22.04
+    name: Merge reports and build Allure report
+    env:
+      RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+      REPORT_PATH: ${{ github.ref == 'refs/heads/main' && inputs.php_version == '' && 'main' || format('{0}{1}{2}', github.run_id, inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
+    steps:
+      - name: Pull repo
+        uses: actions/checkout@v6
+
+      - name: Merge reports and build Allure report
+        uses: elementor/elementor-editor-github-actions/actions/build-allure-report@bfa24ea593b2864c082af876a48967322a12a34e
+        with:
+          results-pattern: allure-results${{ env.RUN_SUFFIX }}-*
+          preprocess-command: node .github/scripts/retag-playwright-traces.js ./allure-results
+          categories-file: tests/playwright/allure-categories.json
+          gcs-upload: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'true' || 'false' }}
+          gcs-bucket: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}
+          gcs-dest: ${{ env.REPORT_PATH }}
+          gcp-project-number: ${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}
+          gcp-project-id: ${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}
+          report-url-base: https://elementor-allure-tests.prod.builder.elementor.red
+          artifact-name: allure-report${{ env.RUN_SUFFIX }}
+          fail-on-upload-error: 'true'

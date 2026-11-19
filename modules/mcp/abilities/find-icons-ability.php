@@ -14,6 +14,8 @@ class Find_Icons_Ability extends Abstract_Ability {
 
 	const EMPTY_RESULT_HINT = 'No icon on this site matches these queries. Try a broader phrase (for example "cart" instead of "shopping trolley"), or drop the library and category filters. Never invent an icon value.';
 
+	const TRUNCATED_PACK_HINT = 'Results may be incomplete: the custom icon pack(s) %s are too large to be fully searched, so only their first icons are searchable and a matching icon may exist past that limit. Do not tell the user an icon does not exist, and do not settle for an unrelated icon; ask the user to pick it in the editor icon library.';
+
 	const CATALOG_MISSING_NOTICE = 'Note: the icon catalog is not available on this site, so icons cannot be looked up.';
 
 	protected function get_ability_id(): string {
@@ -79,11 +81,43 @@ class Find_Icons_Ability extends Abstract_Ability {
 			);
 		}
 
-		if ( $this->has_no_matches( $response ) ) {
+		$truncated_packs = $this->get_truncated_pack_names( $response );
+
+		if ( $truncated_packs && $this->lacks_strong_match( $response ) ) {
+			$response['llm_instructions'] = sprintf( self::TRUNCATED_PACK_HINT, implode( ', ', $truncated_packs ) );
+		} elseif ( $this->has_no_matches( $response ) ) {
 			$response['llm_instructions'] = self::EMPTY_RESULT_HINT;
 		}
 
 		return $response;
+	}
+
+	private function get_truncated_pack_names( array $response ): array {
+		$names = array_map( 'strval', $response['truncated_custom_libraries'] ?? [] );
+
+		return array_values( array_filter( $names, static fn( $name ) => '' !== $name ) );
+	}
+
+	/**
+	 * A query without Latin letters or digits can never match, so a truncated pack is not the reason it found nothing.
+	 * A name or alias match is trusted; anything weaker could be hiding a better icon past the truncation limit.
+	 */
+	private function lacks_strong_match( array $response ): bool {
+		$strong = [ Icon_Search::MATCHED_ON_NAME, Icon_Search::MATCHED_ON_ALIAS ];
+
+		foreach ( $response['results'] ?? [] as $result ) {
+			if ( ! Icon_Search::is_searchable_query( (string) ( $result['query'] ?? '' ) ) ) {
+				continue;
+			}
+
+			$matched_on = array_column( $result['matches'] ?? [], 'matched_on' );
+
+			if ( ! array_intersect( $strong, $matched_on ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function has_no_matches( array $response ): bool {

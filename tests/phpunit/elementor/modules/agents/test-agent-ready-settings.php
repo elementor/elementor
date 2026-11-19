@@ -231,6 +231,88 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		$this->assertSame( [ 'page' ], $this->settings->get_llms_post_types() );
 	}
 
+	public function test_rest_update__keeps_only_existing_excluded_posts_per_module() {
+		// Arrange
+		$page_id    = $this->factory()->post->create( [ 'post_type' => 'page', 'post_status' => 'publish' ] );
+		$post_id    = $this->factory()->post->create( [ 'post_type' => 'post', 'post_status' => 'publish' ] );
+		$trashed_id = $this->factory()->post->create( [ 'post_type' => 'post', 'post_status' => 'trash' ] );
+		$missing_id = $post_id + 1000;
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [
+				'excluded_post_ids' => [ $page_id, (string) $page_id, $trashed_id, $missing_id, 'not-an-id' ],
+			],
+			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT => [
+				'excluded_post_ids' => [ $post_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( [ $page_id ], $this->settings->get_llms_excluded_post_ids() );
+		$this->assertSame( [ $post_id ], $this->settings->get_markdown_excluded_post_ids() );
+		$this->assertTrue( $this->settings->is_post_excluded( Agent_Ready_Settings::MODULE_LLMS_TXT, $page_id ) );
+		$this->assertFalse( $this->settings->is_post_excluded( Agent_Ready_Settings::MODULE_LLMS_TXT, $post_id ) );
+	}
+
+	public function test_rest_update__keeps_excluded_posts_when_only_post_types_are_saved() {
+		// Arrange
+		$page_id = $this->factory()->post->create( [ 'post_type' => 'page', 'post_status' => 'publish' ] );
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'excluded_post_ids' => [ $page_id ] ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'post_types' => [ 'page' ] ],
+		] );
+
+		// Assert
+		$this->assertSame( [ $page_id ], $this->settings->get_llms_excluded_post_ids() );
+	}
+
+	public function test_get_generated_llms_txt__leaves_out_excluded_posts() {
+		// Arrange
+		$this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Kept Page Title',
+		] );
+		$excluded_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Excluded Page Title',
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'excluded_post_ids' => [ $excluded_id ] ],
+		] );
+		$output = $this->module->get_generated_llms_txt();
+
+		// Assert
+		$this->assertStringContainsString( 'Kept Page Title', $output );
+		$this->assertStringNotContainsString( 'Excluded Page Title', $output );
+	}
+
+	public function test_get_generated_llms_full_txt__leaves_out_excluded_posts() {
+		// Arrange
+		$excluded_id = $this->factory()->post->create( [
+			'post_type'   => 'post',
+			'post_status' => 'publish',
+			'post_title'  => 'Excluded Full Post Title',
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'excluded_post_ids' => [ $excluded_id ] ],
+		] );
+		$output = $this->module->get_generated_llms_full_txt();
+
+		// Assert
+		$this->assertStringNotContainsString( 'Excluded Full Post Title', $output );
+	}
+
 	public function test_rest_update__invalidates_llms_cache() {
 		// Arrange
 		$fired = false;

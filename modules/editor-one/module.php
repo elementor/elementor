@@ -9,6 +9,7 @@ use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Admin_Flow_Handler;
 use Elementor\Modules\EditorOne\Components\Admin_Menu_Structure;
+use Elementor\Modules\EditorOne\Components\Secondary_Bar_Handler;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
 use Elementor\Plugin;
@@ -19,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const ADMIN_NAVIGATION_EXPERIMENT_NAME = 'e_admin_navigation';
+
+	const EDITOR_ONE_EXPERIMENT_NAME = 'e_editor_one';
 
 	const CUSTOM_REACT_APP_PAGES = [
 		'elementor-element-manager',
@@ -43,12 +46,32 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::ADMIN_NAVIGATION_EXPERIMENT_NAME );
 	}
 
+	public static function get_editor_one_experimental_data(): array {
+		return [
+			'name' => self::EDITOR_ONE_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Editor One', 'elementor' ),
+			'description' => esc_html__( 'Editor One admin experience.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
+	public static function is_editor_one_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EDITOR_ONE_EXPERIMENT_NAME );
+	}
+
 	private function register_admin_navigation_experiment(): void {
 		Plugin::$instance->experiments->add_feature( self::get_admin_navigation_experimental_data() );
 	}
 
+	private function register_editor_one_experiment(): void {
+		Plugin::$instance->experiments->add_feature( self::get_editor_one_experimental_data() );
+	}
+
 	public function __construct() {
 		parent::__construct();
+		$this->register_editor_one_experiment();
 		$this->register_admin_navigation_experiment();
 
 		if ( is_admin() ) {
@@ -57,6 +80,7 @@ class Module extends BaseModule {
 			if ( self::is_admin_navigation_active() ) {
 				$this->add_component( 'admin-flow-handler', new Admin_Flow_Handler() );
 				$this->add_component( 'admin-menu-structure', new Admin_Menu_Structure( $this->get_component( 'admin-flow-handler' ) ) );
+				$this->add_component( 'secondary-bar', new Secondary_Bar_Handler( $this->get_component( 'admin-flow-handler' ) ) );
 			} else {
 				$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			}

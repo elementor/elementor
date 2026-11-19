@@ -87,7 +87,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: escapedHtmlPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'custom', propTypeUtil: escapedHtmlPropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
 	'date-range': {
 		component: DateRangeControl,

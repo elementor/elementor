@@ -6,10 +6,6 @@ export const AUDIT_PANEL_ID = 'audit-panel';
 
 export const REPORT_STORAGE_KEY_PREFIX = 'elementor/audits/report';
 
-export const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
-
-export const ANGIE_FIX_ENTRY_POINT = 'audit_violation';
-
 export const FEEDBACK_EXPERIMENT_NAME = 'in_editor_feedback';
 export const FEEDBACK_ENTRY_POINT = 'audit_panel';
 

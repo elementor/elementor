@@ -1,7 +1,8 @@
 import { Fragment } from 'react';
 import * as React from 'react';
 import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
-import { getWidgetsCache } from '@elementor/editor-elements';
+import { type Element, type ElementType, getWidgetsCache } from '@elementor/editor-elements';
+import { createReplaceableLocation } from '@elementor/locations';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -20,6 +21,14 @@ const CONTENT_ONLY_TAB: TabValue = 'settings';
 
 const DESIGN_TABS: TabValue[] = [ 'style', 'interactions' ];
 
+type SettingsTabSlotProps = {
+	element: Element;
+	elementType: ElementType;
+};
+
+export const { Slot: SettingsTabSlot, inject: injectIntoSettingsTab } =
+	createReplaceableLocation< SettingsTabSlotProps >();
+
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
 
@@ -33,7 +42,7 @@ export const EditingPanelTabs = () => {
 };
 
 const PanelTabContent = () => {
-	const { element } = useElement();
+	const { element, elementType } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const elementMeta = getWidgetsCache()?.[ element.type ]?.meta;
@@ -95,7 +104,9 @@ const PanelTabContent = () => {
 				</Stack>
 				{ ! isPromotedElement && (
 					<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
-						<SettingsTab />
+						<SettingsTabSlot element={ element } elementType={ elementType }>
+							<SettingsTab />
+						</SettingsTabSlot>
 					</TabPanel>
 				) }
 				{ hasDesignTabs && ! areDesignTabsRestricted && (

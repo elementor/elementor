@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization;
 
 use Elementor\Core\Utils\Str;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
 use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\TemplateLibrary\Source_Local;
@@ -56,6 +57,16 @@ class Utils {
 		}
 
 		return $result;
+	}
+
+	public static function map_old_new_component_ids( array $imported_data ) {
+		$result = [];
+
+		if ( ! isset( $imported_data['content'][ Component_Document::TYPE ]['succeed'] ) ) {
+			return $result;
+		}
+
+		return $imported_data['content'][ Component_Document::TYPE ]['succeed'];
 	}
 
 	public static function get_elementor_post_types( $exclude = [] ) {

@@ -151,6 +151,12 @@ class Icon_Search {
 
 	private static function search_single( array $entries, string $query, int $page, int $per_page, string $browse_matched_on ): array {
 		$normalized = self::normalize( $query );
+
+		// Only a truly empty query browses; a query that normalizes to empty (e.g. Cyrillic) must match nothing.
+		if ( '' === $normalized && '' !== $query ) {
+			return self::build_result( $query, [], 0, $page, $per_page, false );
+		}
+
 		$scored = [];
 
 		foreach ( $entries as $entry ) {
@@ -178,13 +184,17 @@ class Icon_Search {
 			array_slice( $scored, $offset, $per_page )
 		);
 
+		return self::build_result( $query, $matches, count( $scored ), $page, $per_page, count( $scored ) > $offset + count( $matches ) );
+	}
+
+	private static function build_result( string $query, array $matches, int $total, int $page, int $per_page, bool $truncated ): array {
 		return [
 			'query' => $query,
 			'matches' => $matches,
-			'total' => count( $scored ),
+			'total' => $total,
 			'page' => $page,
 			'per_page' => $per_page,
-			'truncated' => count( $scored ) > $offset + count( $matches ),
+			'truncated' => $truncated,
 		];
 	}
 
@@ -250,6 +260,10 @@ class Icon_Search {
 			explode( '-', $query ),
 			static fn( $word ) => strlen( $word ) >= self::MIN_WORD_LENGTH && ! in_array( $word, self::IGNORED_WORDS, true )
 		) ) );
+	}
+
+	public static function is_searchable_query( string $query ): bool {
+		return '' !== self::normalize( $query );
 	}
 
 	private static function normalize( string $value ): string {

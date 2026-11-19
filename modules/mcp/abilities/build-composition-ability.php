@@ -4,15 +4,18 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,9 +30,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 	const MODE_REPLACE_CHILDREN = 'replace_children';
 
 	private ?Document_Mutator $mutator;
+	private ?Closed_Structure $closed_structure;
 
-	public function __construct( ?Document_Mutator $mutator = null ) {
+	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
 		$this->mutator = $mutator;
+		$this->closed_structure = $closed_structure;
 	}
 
 	protected function get_ability_id(): string {
@@ -37,7 +42,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 	}
 
 	public function is_exposed_via_proxy(): bool {
-		return false;
+		return true;
+	}
+
+	public function supports_dry_run(): bool {
+		return true;
 	}
 
 	protected function get_definition(): Ability_Definition {
@@ -90,11 +99,11 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $document;
 		}
 
-		$elements_data = $document->get_elements_data();
-		$compiled = Composition_Compiler::make()->compile(
+		$elements_data = $this->resolve_base_tree( $input, $document, $dry_run );
+		$compiled = Composition_Compiler::make( $this->closed_structure )->compile(
 			$input,
 			$document,
-			is_array( $elements_data ) ? $elements_data : [],
+			$elements_data,
 			$parent_id
 		);
 		if ( is_wp_error( $compiled ) ) {
@@ -109,13 +118,24 @@ class Build_Composition_Ability extends Abstract_Ability {
 		$xml_parser    = $compiled['xml_parser'];
 		$skipped_pro   = $compiled['pro_features_discovery'];
 
+		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
+
 		if ( $dry_run ) {
-			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, [], $warnings, $mode, [], $skipped_pro );
-			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, [] );
+			$planned = $persister->plan( $elements_data, $subtrees, $parent_id, $mode );
+			if ( is_wp_error( $planned ) ) {
+				$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, $planned, $subtrees, $warning_codes, $document );
+				return $planned;
+			}
+
+			$persister->embed_ids_into_dom( $dom, $planned['tree'], $parent_id, $planned['root_ids'] );
+
+			$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $planned['root_ids'], $warnings, $mode, $planned['removed_ids'], $skipped_pro, true );
+			$response['dry_run'] = true;
+			$response['elements'] = $persister->get_root_elements( $planned['tree'], $parent_id, $planned['root_ids'] );
+
+			$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $planned['removed_ids'] );
 			return $response;
 		}
-
-		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
 		$undo_point = Document_Revision_Snapshots::capture( $document, $this->get_id() );
 		$persisted = $persister->insert_and_save( $document, $subtrees, $parent_id, $mode );
 		if ( is_wp_error( $persisted ) ) {
@@ -125,7 +145,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$persister->embed_ids_into_dom( $dom, $persisted['tree'], $parent_id, $persisted['root_ids'] );
 
-		$response = $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro );
+		$response = $this->build_response( $post_id, $persisted['document'], $xml_parser, $dom, $persisted['root_ids'], $warnings, $mode, $persisted['removed_ids'], $skipped_pro, false );
 
 		if ( $undo_point ) {
 			$undo_point->commit();
@@ -134,7 +154,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 		$this->emit_mcp_build_composition_executed( $started_at, $post_id, $mode, $dry_run, null, $subtrees, $warning_codes, $document, $response, $persisted['removed_ids'] );
 
-		return $response;
+		return Editor_Sync_State::add_open_editor_notice( $response, $post_id );
 	}
 
 	private function emit_mcp_build_composition_executed(
@@ -252,6 +272,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 					'description' => 'Every warning is fixable: one field was skipped or adjusted and the rest was saved — correct that field via manage-elements. The composition was still built. Errors fail the call instead.',
 				],
 				'warning_details' => Warnings_Bag::get_details_schema(),
+				'elements' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'object' ],
+					'description' => 'dry_run only: the planned root elements, with descendants and assigned ids, to insert under parent_id.',
+				],
+				'dry_run' => [ 'type' => 'boolean' ],
 				'removed_element_ids' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'string' ],
@@ -271,6 +297,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 						],
 					],
 				],
+				'staged' => Document_Mutation_Links::staged_schema_property(),
 				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 				'llm_instructions' => Document_Mutation_Links::llm_instructions_schema_property(),
 			],
@@ -332,7 +359,12 @@ class Build_Composition_Ability extends Abstract_Ability {
 				'dry_run' => [
 					'type' => 'boolean',
 					'default' => false,
-					'description' => 'If true, validate and return resolved tree without persisting.',
+					'description' => 'If true, validate and return the planned elements (with assigned ids) without persisting.',
+				],
+				'document_elements' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'object' ],
+					'description' => 'Editor only, with dry_run: the current unsaved document tree to plan against instead of the saved one.',
 				],
 				'mode' => [
 					'type' => 'string',
@@ -342,6 +374,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 				],
 			],
 		];
+	}
+
+	private function resolve_base_tree( array $input, Document $document, bool $dry_run ): array {
+		if ( $dry_run && isset( $input['document_elements'] ) && is_array( $input['document_elements'] ) ) {
+			return $input['document_elements'];
+		}
+
+		$elements_data = $document->get_elements_data();
+
+		return is_array( $elements_data ) ? $elements_data : [];
 	}
 
 	private function validate_input( array $input ): ?\WP_Error {
@@ -403,7 +445,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 		Warnings_Bag $warnings,
 		string $mode,
 		array $removed_ids,
-		array $skipped_pro
+		array $skipped_pro,
+		bool $is_dry_run
 	): array {
 		$post = get_post( $post_id );
 
@@ -415,6 +458,15 @@ class Build_Composition_Ability extends Abstract_Ability {
 			'version' => $post ? $post->post_modified_gmt : current_time( 'mysql', true ),
 			'resolved_xml' => $xml_parser->serialize_children( $dom ),
 		];
+
+		if ( ! $is_dry_run ) {
+			$is_staged = Document_Mutation_Save::is_staged( $document );
+			$response['staged'] = $is_staged;
+
+			if ( $is_staged ) {
+				$response['llm_instructions'] = Document_Mutation_Links::staged_write_instructions( $document );
+			}
+		}
 
 		$response = $warnings->add_to_response( $response );
 

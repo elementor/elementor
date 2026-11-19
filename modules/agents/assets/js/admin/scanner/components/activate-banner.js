@@ -52,7 +52,7 @@ export const ActivateBanner = ( { isActivating, onActivate, agentAccessUrl } ) =
 				startIcon={ isActivating ? <CircularProgress size={ SPINNER_SIZE } color="inherit" /> : null }
 				sx={ { ...scannerButtonSx.activate, flexShrink: 0 } }
 			>
-				{ isActivating ? __( 'Activating', 'elementor' ) : __( 'Turn settings on', 'elementor' ) }
+				{ isActivating ? __( 'Turning on', 'elementor' ) : __( 'Turn settings on', 'elementor' ) }
 			</Button>
 		</Stack>
 	</Stack>

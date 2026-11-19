@@ -8,13 +8,14 @@ import PropTypes from 'prop-types';
 import { ModulesScreen } from './components/modules-screen';
 import { WelcomeScreen } from './components/welcome-screen';
 
-export const App = ( { isRTL, isActivated, agentDiscoveryConfig, botAccessConfig, browserToolsConfig, llmsConfig, markdownConfig } ) => {
+export const App = ( { isRTL, isActivated, readinessScoreUrl, agentDiscoveryConfig, botAccessConfig, browserToolsConfig, llmsConfig, markdownConfig } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme="light" palette="argon-beta">
 					{ isActivated ? (
 						<ModulesScreen
+							readinessScoreUrl={ readinessScoreUrl }
 							agentDiscoveryConfig={ agentDiscoveryConfig }
 							botAccessConfig={ botAccessConfig }
 							browserToolsConfig={ browserToolsConfig }
@@ -31,6 +32,7 @@ export const App = ( { isRTL, isActivated, agentDiscoveryConfig, botAccessConfig
 App.propTypes = {
 	isRTL: PropTypes.bool,
 	isActivated: PropTypes.bool,
+	readinessScoreUrl: PropTypes.string,
 	agentDiscoveryConfig: PropTypes.object,
 	botAccessConfig: PropTypes.object,
 	browserToolsConfig: PropTypes.object,

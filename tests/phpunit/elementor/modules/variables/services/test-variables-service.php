@@ -61,6 +61,41 @@ class Test_Variables_Service extends TestCase {
 		] );
 	}
 
+	public function test_process_batch__dry_run_returns_results_without_saving() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->expects( $this->never() )->method( 'save' );
+
+		// Act
+		$result = $this->service->process_batch( [
+			[
+				'type' => 'update',
+				'id' => 'id-1',
+				'variable' => [
+					'label' => 'Updated-Primary',
+					'value' => '#00FF00',
+				],
+			],
+		], true, true );
+
+		// Assert
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 5, $result['watermark'] );
+		$this->assertSame( 'ok', $result['results'][0]['status'] );
+		$this->assertSame( 'Updated-Primary', $result['results'][0]['label'] );	}
+
 	public function test_process_batch_operations__successful() {
 		// Arrange
 		$collection = Variables_Collection::hydrate( [

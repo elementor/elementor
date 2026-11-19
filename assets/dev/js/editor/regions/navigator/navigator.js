@@ -227,6 +227,26 @@ export default class extends BaseRegion {
 		}
 	}
 
+	getDockedFloatingPanelWidth() {
+		const raw = elementorCommon.elements.$body.css( '--e-editor-docked-panel-width' );
+		const parsed = parseFloat( raw );
+
+		return Number.isFinite( parsed ) ? parsed : 0;
+	}
+
+	getEdgeCrossings( left ) {
+		const dockedFloatingWidth = this.getDockedFloatingPanelWidth();
+		const isRtl = elementorCommon.config.isRTL;
+		const isOutOfLeft = left < ( isRtl ? dockedFloatingWidth : 0 );
+		const isOutOfRight = left + this.el.offsetWidth > innerWidth - ( isRtl ? 0 : dockedFloatingWidth );
+
+		return {
+			isOutOfLeft,
+			isOutOfRight,
+			isOutOfDockEdge: isRtl ? isOutOfLeft : isOutOfRight,
+		};
+	}
+
 	onDrag( event, ui ) {
 		if ( this.isDocked ) {
 			if ( ui.position.left === ui.originalPosition.left ) {
@@ -244,10 +264,10 @@ export default class extends BaseRegion {
 			ui.position.top = 0;
 		}
 
-		const isOutOfLeft = 0 > ui.position.left,
-			isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
+		const isRtl = elementorCommon.config.isRTL;
+		const { isOutOfLeft, isOutOfRight, isOutOfDockEdge } = this.getEdgeCrossings( ui.position.left );
 
-		if ( elementorCommon.config.isRTL ) {
+		if ( isRtl ) {
 			if ( isOutOfRight ) {
 				ui.position.left = innerWidth - this.el.offsetWidth;
 			}
@@ -255,7 +275,7 @@ export default class extends BaseRegion {
 			ui.position.left = 0;
 		}
 
-		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', elementorCommon.config.isRTL ? isOutOfLeft : isOutOfRight );
+		elementorCommon.elements.$body.toggleClass( 'elementor-navigator--dock-hint', isOutOfDockEdge );
 	}
 
 	onDragStop( event, ui ) {
@@ -265,9 +285,9 @@ export default class extends BaseRegion {
 
 		this.saveSize();
 
-		const elementRight = ui.position.left + this.el.offsetWidth;
+		const { isOutOfLeft, isOutOfRight } = this.getEdgeCrossings( ui.position.left );
 
-		if ( 0 > ui.position.left || elementRight > innerWidth ) {
+		if ( isOutOfLeft || isOutOfRight ) {
 			this.dock();
 		}
 

@@ -8,8 +8,10 @@ import PropTypes from 'prop-types';
 import { SCANNER_COLORS, SCANNER_LAYOUT } from '../scanner-constants';
 import { getMockScanResult } from '../scanner-mock-data';
 import { getBaseScore, getVisibleChecks } from '../scanner-score';
+import { BetaChip } from '../../components/beta-chip';
 import { AgentReadyStarIcon } from './agent-ready-star-icon';
 import { FixesSection } from './fixes-section';
+import { FloatingCheckBar } from './floating-check-bar';
 import { PassingTable } from './passing-table';
 import { ScoreRow, ScoreSummaryBlock, useNextScanLabel } from './score-summary-block';
 import { StageBars } from './stage-bars';
@@ -106,10 +108,12 @@ const ScannerPreview = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain } ) =>
 						score={ score }
 						ringDurationMs={ PREVIEW_RING_DURATION_MS }
 						isActivated
+						isAgentAccessOn
 						siteDomain={ siteDomain }
 						ranAt={ scan.ranAt }
 						agentAccessUrl={ agentAccessUrl }
 						onRescan={ noop }
+						onTurnBackOn={ noop }
 					/>
 				</ScoreSummaryBlock>
 				<StageBars stages={ scan.stages } />
@@ -119,7 +123,6 @@ const ScannerPreview = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain } ) =>
 					agentAccessUrl={ agentAccessUrl }
 					seoPluginSearchUrl={ seoPluginSearchUrl }
 					isActivated
-					score={ score }
 				/>
 				<PassingTable checks={ scan.passingChecks } />
 			</Stack>
@@ -141,6 +144,7 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 		<Stack alignItems="center" width="100%">
 			<Stack alignItems="center" spacing={ HERO_SECTION_GAP } textAlign="center" width="100%">
 				<Stack alignItems="center" spacing={ 1 }>
+					<BetaChip />
 					<Typography variant="h4" component="h2" color="text.primary">
 						{ __( 'Is your site ready for agents?', 'elementor' ) }
 					</Typography>
@@ -150,7 +154,6 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 				</Stack>
 				<Button
 					variant="contained"
-					color="primary"
 					size="large"
 					onClick={ onStart }
 					disabled={ isCoolingDown }
@@ -164,6 +167,7 @@ export const FirstRunView = ( { agentAccessUrl, seoPluginSearchUrl, siteDomain, 
 				</Stack>
 			</Stack>
 			<ScannerPreview agentAccessUrl={ agentAccessUrl } seoPluginSearchUrl={ seoPluginSearchUrl } siteDomain={ siteDomain } />
+			<FloatingCheckBar retryAt={ retryAt } onCheck={ onStart } />
 		</Stack>
 	);
 };

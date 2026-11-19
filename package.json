@@ -52,8 +52,8 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "npm run version -w elementor-packages",
     "packages:release": "turbo build && npm run release -w elementor-packages",
-    "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
-    "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
+    "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/local.json",
+    "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/ci.json",
     "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"WP_CLI_TARGET=playground npm run test:playwright -- --ui\""
   },
   "engines": {
@@ -65,6 +65,7 @@
     "packages/packages/tools/*",
     "packages/packages/libs/*",
     "packages/packages/core/*",
+    "packages/packages/angie/*",
     "packages/apps/*"
   ],
   "devDependencies": {
@@ -165,6 +166,7 @@
     "webpack": "^5.97.1"
   },
   "dependencies": {
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.10.3",
     "@elementor/elementor-one-assets": "0.4.44",
     "@elementor/icons": "~1.78.1",
     "@elementor/ui": "1.41.4",
@@ -193,6 +195,8 @@
     "validator": "^13.11.0"
   },
   "overrides": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@hono/node-server": "2.1.6",
     "nwsapi": "2.2.13",
     "react": "18.3.1",
     "react-dom": "18.3.1",

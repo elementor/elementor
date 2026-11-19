@@ -57,7 +57,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Edit the heading-title from the canvas and check the value in the panel and in the front', async ( {}, testInfo ) => {
+	test( 'Edit the heading-title from the canvas editing flow and check the value in the panel and in the front', async ( {}, testInfo ) => {
 		const NEW_TITLE = 'this is the first test';
 
 		// Arrange

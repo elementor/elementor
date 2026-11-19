@@ -36,6 +36,26 @@ function execOrLog(command, dryRun = false) {
   }
 }
 
+// Helper function to safely write to GITHUB_OUTPUT
+function setOutput(name, value) {
+  if (!process.env.GITHUB_OUTPUT) {
+    return;
+  }
+
+  if (!/^\w+$/.test(name)) {
+    throw new Error(`Invalid output name: ${name}. Must match /^\\w+$/`);
+  }
+
+  if (/[\r\n]/.test(value)) {
+    throw new Error(`Output value contains newline characters: ${name}`);
+  }
+
+  const outputPath = path.resolve(process.env.GITHUB_OUTPUT);
+  const outputLine = `${name}=${value}\n`;
+  fs.appendFileSync(outputPath, outputLine, 'utf8');
+  console.log(`Set GitHub output: ${name}=${value}`);
+}
+
 // Helper function to update version in file using regex
 function updateVersionInFile(filePath, version, patterns, dryRun) {
   if (!fs.existsSync(filePath)) {
@@ -263,6 +283,27 @@ async function main() {
         } catch (error) {
           console.error('Error resetting release/beta to main');
           process.exit(1);
+        }
+
+        let mainSha;
+        try {
+          mainSha = execSync('git rev-parse origin/main', { encoding: 'utf8' }).trim();
+        } catch (error) {
+          console.error('Error getting origin/main SHA');
+          process.exit(1);
+        }
+
+        if (releaseBetaSha === mainSha) {
+          console.log('release/beta already matches origin/main. Skipping branch-out outputs.');
+        } else {
+          try {
+            const betaVersion = `${major}.${minor}`;
+            setOutput('beta_reset', 'true');
+            setOutput('beta_version', betaVersion);
+          } catch (error) {
+            console.warn('::warning::Reset succeeded but failed to write GitHub outputs:', error.message);
+            console.warn('Continuing without outputs. Slack notification will be skipped.');
+          }
         }
       }
     } else {

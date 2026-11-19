@@ -12,7 +12,7 @@ test.describe( 'Container tests #2 @container', () => {
 		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
-	test( 'Justify icons are displayed correctly', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Justify icons are displayed correctly for LTR', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const breakpoints = Breakpoints.getBasic().reverse();

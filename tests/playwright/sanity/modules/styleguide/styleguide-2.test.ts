@@ -116,12 +116,13 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 		// Act.
 		await picker.click();
 		const select = page.locator( '.elementor-repeater-fields' ).nth( 2 ).getByRole( 'combobox', { name: 'Style' } );
+		const content = textFont.locator( 'p' ).nth( 1 );
 		await select.selectOption( { label: 'Italic' } );
+		await expect( content ).toHaveCSS( 'font-style', 'italic' );
 		const select2 = page.locator( '.elementor-repeater-fields' ).nth( 2 ).getByRole( 'combobox', { name: 'Decoration' } );
 		await select2.selectOption( { label: 'Underline' } );
 
 		// Assert
-		const content = textFont.locator( 'p' ).nth( 1 );
 		await expect( content ).toHaveCSS( 'font-style', 'italic' );
 		await expect( content ).toHaveCSS( 'text-decoration-line', 'underline' );
 	} );

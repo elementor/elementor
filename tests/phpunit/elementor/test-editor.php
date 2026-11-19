@@ -209,4 +209,35 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 
 		remove_filter( 'elementor/editor/use_document_isolation_policy', '__return_true' );
 	}
+
+	public function test_dequeue_media_frame_upload_script__removes_handle_on_wp_enqueue_media() {
+		// Arrange
+		$editor = $this->elementor()->editor;
+		add_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+		wp_register_script( 'media-frame-upload', '', [], false );
+		wp_enqueue_script( 'media-frame-upload' );
+		$this->assertTrue( wp_script_is( 'media-frame-upload', 'enqueued' ) );
+
+		// Act
+		do_action( 'wp_enqueue_media' );
+
+		// Assert
+		$this->assertFalse( wp_script_is( 'media-frame-upload', 'enqueued' ) );
+
+		remove_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+	}
+
+	public function test_dequeue_media_frame_upload_script__no_op_when_handle_missing() {
+		// Arrange
+		$editor = $this->elementor()->editor;
+		add_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+
+		// Act
+		do_action( 'wp_enqueue_media' );
+
+		// Assert
+		$this->assertFalse( wp_script_is( 'media-frame-upload', 'enqueued' ) );
+
+		remove_action( 'wp_enqueue_media', [ $editor, 'dequeue_media_frame_upload_script' ] );
+	}
 }

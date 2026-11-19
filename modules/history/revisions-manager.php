@@ -236,6 +236,8 @@ class Revisions_Manager {
 
 		Plugin::$instance->db->copy_elementor_meta( $revision_id, $parent_id );
 
+		$parent->delete_meta( Document::CACHE_META_KEY );
+
 		$post_css = Post_CSS::create( $parent_id );
 
 		$post_css->update();

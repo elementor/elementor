@@ -132,7 +132,10 @@ export const fetchMarkdownPreview = ( postId ) => {
 	return new Promise( ( resolve, reject ) => {
 		elementorCommon.ajax.addRequest( 'agents_ready_preview_markdown', {
 			data: { postId },
-			success: ( response ) => resolve( response?.content ?? '' ),
+			success: ( response ) => resolve( {
+				content: response?.content ?? '',
+				isOverridden: Boolean( response?.isOverridden ),
+			} ),
 			error: reject,
 		} );
 	} );
@@ -148,7 +151,20 @@ export const searchMarkdownItems = ( term ) => {
 	} );
 };
 
-const requestLlmsAction = ( action, data = {} ) => {
+export const listContentItems = ( { module, postType, term, page } ) => {
+	return new Promise( ( resolve, reject ) => {
+		elementorCommon.ajax.addRequest( 'agents_ready_list_content_items', {
+			data: { module, postType, term, page },
+			success: ( response ) => resolve( {
+				items: response?.items ?? [],
+				hasMore: Boolean( response?.hasMore ),
+			} ),
+			error: reject,
+		} );
+	} );
+};
+
+const requestAjaxAction = ( action, data = {} ) => {
 	return new Promise( ( resolve, reject ) => {
 		elementorCommon.ajax.addRequest( action, {
 			data,
@@ -158,8 +174,12 @@ const requestLlmsAction = ( action, data = {} ) => {
 	} );
 };
 
-export const saveLlmsContent = ( content ) => requestLlmsAction( 'agents_ready_save_llms_content', { content } );
+export const saveLlmsContent = ( content ) => requestAjaxAction( 'agents_ready_save_llms_content', { content } );
 
-export const revertLlmsContent = () => requestLlmsAction( 'agents_ready_revert_llms_content' );
+export const revertLlmsContent = () => requestAjaxAction( 'agents_ready_revert_llms_content' );
 
-export const takeOverLlmsFile = () => requestLlmsAction( 'agents_ready_takeover_llms_file' );
+export const takeOverLlmsFile = () => requestAjaxAction( 'agents_ready_takeover_llms_file' );
+
+export const saveMarkdownContent = ( postId, content ) => requestAjaxAction( 'agents_ready_save_markdown_content', { postId, content } );
+
+export const revertMarkdownContent = ( postId ) => requestAjaxAction( 'agents_ready_revert_markdown_content', { postId } );
