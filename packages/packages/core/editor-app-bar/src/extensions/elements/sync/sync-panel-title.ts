@@ -1,7 +1,6 @@
 import {
 	__privateIsRouteActive as isRouteActive,
 	__privateListenTo as listenTo,
-	isExperimentActive,
 	routeOpenEvent,
 	v1ReadyEvent,
 } from '@elementor/editor-v1-adapters';
@@ -17,11 +16,8 @@ type ExtendedWindow = Window & {
 	};
 };
 
-const V4_EXPERIMENT = 'e_atomic_elements';
-const ATOMIC_PANEL_EXPERIMENT = 'e_editor_atomic_panel';
-
 export default function syncPanelTitle() {
-	const panelTitle = isAtomicElementsPanelEnabled() ? __( 'Add', 'elementor' ) : __( 'Elements', 'elementor' );
+	const panelTitle = __( 'Elements', 'elementor' );
 	const tabTitle = __( 'Widgets', 'elementor' );
 
 	listenTo( routeOpenEvent( 'panel/elements' ), () => {
@@ -35,10 +31,6 @@ export default function syncPanelTitle() {
 			setTabTitle( tabTitle );
 		}
 	} );
-}
-
-function isAtomicElementsPanelEnabled() {
-	return isExperimentActive( V4_EXPERIMENT ) && isExperimentActive( ATOMIC_PANEL_EXPERIMENT );
 }
 
 function setPanelTitle( title: string ) {

@@ -25,11 +25,7 @@ export function ElementsPanelSwitcher( { value, isBlocked, open, close }: Elemen
 
 		setElementsPanelSelection( next );
 
-		try {
-			await ( next === 'atomic' ? open() : close() );
-		} catch {
-			setElementsPanelSelection( value );
-		}
+		await ( next === 'atomic' ? open() : close() );
 	};
 
 	return (

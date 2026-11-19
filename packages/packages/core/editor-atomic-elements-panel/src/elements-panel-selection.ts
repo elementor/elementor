@@ -8,7 +8,9 @@ const SELECTIONS: ElementsPanelSelection[] = [ 'atomic', 'non_atomic' ];
 
 const listeners = new Set< () => void >();
 
-export function getElementsPanelSelection(): ElementsPanelSelection {
+let currentSelection: ElementsPanelSelection | null = null;
+
+function readStoredSelection(): ElementsPanelSelection {
 	try {
 		const stored = window.localStorage.getItem( STORAGE_KEY ) as ElementsPanelSelection | null;
 
@@ -18,7 +20,15 @@ export function getElementsPanelSelection(): ElementsPanelSelection {
 	}
 }
 
+export function getElementsPanelSelection(): ElementsPanelSelection {
+	currentSelection ??= readStoredSelection();
+
+	return currentSelection;
+}
+
 export function setElementsPanelSelection( selection: ElementsPanelSelection ) {
+	currentSelection = selection;
+
 	try {
 		window.localStorage.setItem( STORAGE_KEY, selection );
 	} catch {}

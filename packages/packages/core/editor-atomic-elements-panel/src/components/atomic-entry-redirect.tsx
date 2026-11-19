@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { __privateUseRouteStatus as useRouteStatus } from '@elementor/editor-v1-adapters';
 
 import { ELEMENTS_ROUTE } from '../consts';
@@ -10,16 +10,13 @@ export function AtomicEntryRedirect() {
 	const { isActive } = useRouteStatus( ELEMENTS_ROUTE );
 	const { isOpen, isBlocked } = usePanelStatus();
 	const { open } = usePanelActions();
-	const hasFailed = useRef( false );
 
 	useEffect( () => {
-		if ( ! isActive || isOpen || isBlocked || hasFailed.current || selection !== 'atomic' ) {
+		if ( ! isActive || isOpen || isBlocked || selection !== 'atomic' ) {
 			return;
 		}
 
-		open().catch( () => {
-			hasFailed.current = true;
-		} );
+		open();
 	}, [ isActive, isOpen, isBlocked, selection, open ] );
 
 	return null;
