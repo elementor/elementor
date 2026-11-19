@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type ElementsPanelSelection, setElementsPanelSelection } from '../elements-panel-selection';
 import { useIsDragging } from '../hooks/use-is-dragging';
-import { usePanelActions } from '../panel';
+import { usePanelActions, usePanelStatus } from '../panel';
 
 type Props = {
 	value: ElementsPanelSelection;
@@ -15,16 +15,21 @@ const ICON_SIZE = 16;
 
 export function ElementsPanelSwitcher( { value }: Props ) {
 	const isDragging = useIsDragging();
+	const { isBlocked } = usePanelStatus();
 	const { open, close } = usePanelActions();
 
 	const onChange = async ( _: React.MouseEvent, next: ElementsPanelSelection | null ) => {
-		if ( ! next || next === value || isDragging ) {
+		if ( ! next || next === value || isDragging || isBlocked ) {
 			return;
 		}
 
 		setElementsPanelSelection( next );
 
-		await ( next === 'atomic' ? open() : close() );
+		try {
+			await ( next === 'atomic' ? open() : close() );
+		} catch {
+			setElementsPanelSelection( value );
+		}
 	};
 
 	return (
