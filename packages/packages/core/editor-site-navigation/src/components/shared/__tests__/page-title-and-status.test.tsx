@@ -23,9 +23,24 @@ describe( 'PageTitleAndStatus', () => {
 		expect( screen.queryByText( '(draft)' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a pending status badge', () => {
-		render( <PageTitleAndStatus status="pending" title="Review me" /> );
+	it( 'renders a pending status badge with warning color', () => {
+		const { container } = render( <PageTitleAndStatus status="pending" title="Review me" /> );
 
-		expect( screen.getByText( 'Pending' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Pending Review' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.MuiChip-colorWarning' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders draft with neutral badge color', () => {
+		const { container } = render( <PageTitleAndStatus status="draft" title="About" /> );
+
+		expect( screen.getByText( 'Draft' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.MuiChip-colorWarning' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'uses neutral badge for unknown custom statuses', () => {
+		render( <PageTitleAndStatus status="custom-plugin-status" title="Plugin post" /> );
+
+		expect( screen.getByText( 'custom-plugin-status' ) ).toBeInTheDocument();
 	} );
 } );
+

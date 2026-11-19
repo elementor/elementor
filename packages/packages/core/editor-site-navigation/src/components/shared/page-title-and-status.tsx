@@ -1,19 +1,45 @@
 import * as React from 'react';
-import { Box, Chip, Typography } from '@elementor/ui';
+import { Box, Chip, Typography, type ChipProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
 import { contentPanelListRowTitleSx } from '../panel/content-panel-chrome';
 
-const statusLabels: Record< string, string > = {
-	draft: __( 'Draft', 'elementor' ),
-	future: __( 'Scheduled', 'elementor' ),
-	pending: __( 'Pending', 'elementor' ),
-	private: __( 'Private', 'elementor' ),
+type StatusChipConfig = {
+	color: ChipProps[ 'color' ];
+	label: string;
 };
 
-function getStatusLabel( status: string ): string {
-	return statusLabels[ status ] ?? status;
+const statusChipConfig: Record< string, StatusChipConfig > = {
+	draft: {
+		color: 'default',
+		label: __( 'Draft', 'elementor' ),
+	},
+	future: {
+		color: 'default',
+		label: __( 'Scheduled', 'elementor' ),
+	},
+	pending: {
+		color: 'warning',
+		label: __( 'Pending Review', 'elementor' ),
+	},
+	private: {
+		color: 'default',
+		label: __( 'Private', 'elementor' ),
+	},
+};
+
+function getStatusChipConfig( status: string ): StatusChipConfig {
+	const known = statusChipConfig[ status ];
+
+	if ( known ) {
+		return known;
+	}
+
+	return {
+		color: 'default',
+		label: status,
+	};
 }
 
 const PageStatus = ( { status }: { status: string } ) => {
@@ -21,10 +47,13 @@ const PageStatus = ( { status }: { status: string } ) => {
 		return null;
 	}
 
+	const { color, label } = getStatusChipConfig( status );
+
 	return (
 		<Chip
+			color={ color }
 			component="span"
-			label={ getStatusLabel( status ) }
+			label={ label }
 			size="tiny"
 			sx={ { flexShrink: 0, ml: 0.5, textTransform: 'capitalize' } }
 			variant="standard"
