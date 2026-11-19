@@ -28,6 +28,7 @@ import { blockPanelInteractions, unblockPanelInteractions } from './panel-intera
 import { StartSyncToV3Modal } from './start-sync-to-v3-modal';
 
 const STOP_SYNC_MESSAGE_KEY = 'stop-sync-class';
+const START_SYNC_MESSAGE_KEY = 'start-sync-class';
 
 type StopSyncConfirmationDialogProps = {
 	open: boolean;
@@ -55,6 +56,7 @@ function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: Cla
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+	const [ isStartSyncSuppressed, suppressStartSyncMessage ] = useSuppressedMessage( START_SYNC_MESSAGE_KEY );
 	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
@@ -132,6 +134,17 @@ function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: Cla
 		[ isStopSyncSuppressed, handleStopSync ]
 	);
 
+	const handleStartSyncRequest = useCallback(
+		( classId: string ) => {
+			if ( ! isStartSyncSuppressed ) {
+				setStartSyncConfirmation( classId );
+			} else {
+				handleStartSync( classId );
+			}
+		},
+		[ isStartSyncSuppressed, handleStartSync ]
+	);
+
 	usePreventUnload();
 
 	return (
@@ -179,7 +192,7 @@ function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: Cla
 								disabled={ isPublishing }
 								scrollElement={ scrollElement }
 								onStopSyncRequest={ handleStopSyncRequest }
-								onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
+								onStartSyncRequest={ handleStartSyncRequest }
 							/>
 						</Box>
 						<PanelFooter>
@@ -204,6 +217,7 @@ function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: Cla
 					classId={ startSyncConfirmation }
 					onExternalClose={ () => setStartSyncConfirmation( null ) }
 					onConfirm={ () => handleStartSync( startSyncConfirmation ) }
+					onSuppressMessage={ suppressStartSyncMessage }
 				/>
 			) }
 			{ stopSyncConfirmation && (
