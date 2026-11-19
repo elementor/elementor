@@ -2,17 +2,12 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Dashboard_Overview_Block;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
-use Elementor\Modules\Agents\Content_Generator;
 use Elementor\Modules\Agents\Module;
-use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Dashboard_Overview_Block extends Elementor_Test_Base {
-
-	private Agent_Ready_Settings $settings;
 
 	private Scanner_Report_Store $scanner_store;
 
@@ -21,18 +16,15 @@ class Test_Dashboard_Overview_Block extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Scanner_Report_Store::OPTION_LAST_REPORT );
 
-		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->scanner_store = new Scanner_Report_Store();
-		$this->block = new Dashboard_Overview_Block( $this->settings, $this->scanner_store );
+		$this->block = new Dashboard_Overview_Block( $this->scanner_store );
 
 		$this->act_as_admin();
 	}
 
 	public function tearDown(): void {
-		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Scanner_Report_Store::OPTION_LAST_REPORT );
 
 		parent::tearDown();
@@ -90,18 +82,7 @@ class Test_Dashboard_Overview_Block extends Elementor_Test_Base {
 		$this->assertSame( 2, $count );
 	}
 
-	public function test_get_cta_url__targets_welcome_page_before_activation() {
-		// Act
-		$url = $this->block->get_cta_url();
-
-		// Assert
-		$this->assertStringContainsString( 'page=' . Module::AGENT_ACCESS_PAGE_ID, $url );
-	}
-
-	public function test_get_cta_url__targets_scanner_page_after_activation() {
-		// Arrange
-		$this->settings->activate();
-
+	public function test_get_cta_url__targets_scanner_page() {
 		// Act
 		$url = $this->block->get_cta_url();
 

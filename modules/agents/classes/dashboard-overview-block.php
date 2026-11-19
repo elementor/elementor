@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Agents\Classes;
 
-use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,12 +25,9 @@ class Dashboard_Overview_Block {
 
 	const FAILING_CHECK_STATUSES = [ 'fail', 'partial' ];
 
-	private Agent_Ready_Settings $settings;
-
 	private Scanner_Report_Store $scanner_store;
 
-	public function __construct( Agent_Ready_Settings $settings, Scanner_Report_Store $scanner_store ) {
-		$this->settings = $settings;
+	public function __construct( Scanner_Report_Store $scanner_store ) {
 		$this->scanner_store = $scanner_store;
 	}
 
@@ -75,9 +71,7 @@ class Dashboard_Overview_Block {
 	}
 
 	public function get_cta_url(): string {
-		$page = $this->settings->is_activated() ? Module::PAGE_ID : Module::AGENT_ACCESS_PAGE_ID;
-
-		return admin_url( 'admin.php?page=' . $page );
+		return admin_url( 'admin.php?page=' . Module::PAGE_ID );
 	}
 
 	public function render(): void {

@@ -12,8 +12,6 @@ const DOT = `${ BLOCK } .e-overview__agent-ready-dot`;
 const META = `${ BLOCK } .e-overview__agent-ready-meta`;
 
 const SCANNER_PAGE = 'page=elementor-agents-ready';
-const WELCOME_PAGE = 'page=elementor-agent-access';
-
 const TRACKING_EVENT = 'agent_readiness_dashboard_cta_clicked';
 
 const SCORE_NEEDS_WORK = 30;
@@ -26,10 +24,6 @@ const seedReport = async ( score: number, statuses: CheckStatus[] ): Promise<voi
 	const checks = statuses.map( ( status ) => `['status'=>'${ status }']` ).join( ',' );
 
 	await wpCli( `wp eval update_option('${ REPORT_OPTION }',['score'=>${ score },'checks'=>[${ checks }]]);` );
-};
-
-const seedActivated = async (): Promise<void> => {
-	await wpCli( `wp eval remove_all_filters('sanitize_option_${ SETTINGS_OPTION }')&&update_option('${ SETTINGS_OPTION }',['activated'=>true]);` );
 };
 
 const resetAgentReadyState = async (): Promise<void> => {
@@ -124,24 +118,12 @@ test.describe( 'Agent Readiness block in the dashboard Elementor Overview widget
 		await expect( page.locator( CTA ) ).toHaveText( 'View report' );
 	} );
 
-	test( 'Routes an activated user to the Agent Ready scanner page', async ( { page } ) => {
-		// Arrange.
-		await seedReport( SCORE_GETTING_THERE, [ 'fail' ] );
-		await seedActivated();
-
+	test( 'Routes the CTA to the Agent Ready scanner page', async ( { page } ) => {
 		// Act.
 		await page.reload();
 
 		// Assert.
 		await expect( page.locator( CTA ) ).toHaveAttribute( 'href', new RegExp( SCANNER_PAGE ) );
-	} );
-
-	test( 'Routes a user who has not activated the feature to the Welcome page', async ( { page } ) => {
-		// Act.
-		await page.reload();
-
-		// Assert.
-		await expect( page.locator( CTA ) ).toHaveAttribute( 'href', new RegExp( WELCOME_PAGE ) );
 	} );
 
 	test( 'Tracks the CTA click with the current state', async ( { page } ) => {
