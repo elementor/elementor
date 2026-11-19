@@ -1,8 +1,6 @@
 import { injectIntoPageIndication, toolsMenu } from '@elementor/editor-app-bar';
 import { registerPanel } from '@elementor/editor-panels';
 
-const mockEnv = { is_pages_panel_active: false };
-
 jest.mock( '@elementor/editor-app-bar', () => ( {
 	injectIntoPageIndication: jest.fn(),
 	toolsMenu: { registerToggleAction: jest.fn() },
@@ -16,6 +14,16 @@ jest.mock( '@elementor/editor-sidebar', () => ( {
 	isSidebarEnabled: jest.fn( () => false ),
 	sidebarTools: { registerToggleAction: jest.fn() },
 } ) );
+
+jest.mock( '../components/panel/panel', () => ( {
+	panel: 'site-navigation-panel',
+} ) );
+
+jest.mock( '../hooks/use-toggle-button-props', () => ( {
+	useToggleButtonProps: jest.fn(),
+} ) );
+
+const mockEnv = { is_pages_panel_active: false };
 
 jest.mock( '../env', () => ( {
 	env: mockEnv,
