@@ -68,7 +68,7 @@ class Onboarding_Entry {
 			return false;
 		}
 
-		return ( time() - $activated_at ) <= self::ELIGIBILITY_WINDOW;
+		return ( time() - $activated_at ) < self::ELIGIBILITY_WINDOW;
 	}
 
 	public static function has_finished_onboarding(): bool {
@@ -103,6 +103,10 @@ class Onboarding_Entry {
 			return self::skip( '' );
 		}
 
+		if ( self::is_admin_post_request() ) {
+			return self::skip( '' );
+		}
+
 		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return self::skip( '' );
 		}
@@ -115,7 +119,7 @@ class Onboarding_Entry {
 			return self::skip( '' );
 		}
 
-		// After 14 days from activation we stop pushing setup.
+		// Window is exclusive: day 13 still redirects; at 14 days we stop pushing setup.
 		if ( ! self::is_within_eligibility_window() ) {
 			self::clear_pending();
 			self::track_decision( self::REASON_EXPIRED );
@@ -183,6 +187,12 @@ class Onboarding_Entry {
 		$has_install_history = ! empty( Upgrade_Manager::get_installs_history() );
 
 		return self::has_finished_onboarding() || $has_install_history;
+	}
+
+	private static function is_admin_post_request(): bool {
+		global $pagenow;
+
+		return isset( $pagenow ) && 'admin-post.php' === $pagenow;
 	}
 
 	private static function is_rest_request(): bool {
