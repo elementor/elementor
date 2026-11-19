@@ -48,7 +48,7 @@ class Atomic_Menu_Entry extends Atomic_Menu_Locked_Element {
 		return array_merge( parent::define_props_schema(), [
 			self::SUBMENU_PROP => Boolean_Prop_Type::make()
 				->default( false )
-				->description( 'Whether the entry has a submenu. When true the entry holds an e-menu-submenu-trigger and an e-menu-submenu after its e-menu-item.' ),
+				->description( 'Whether the entry has a submenu. Requires Elementor Pro; without it the submenu renders nothing. When true the entry holds an e-menu-submenu-trigger and an e-menu-submenu after its e-menu-item.' ),
 		] );
 	}
 
@@ -61,8 +61,8 @@ class Atomic_Menu_Entry extends Atomic_Menu_Locked_Element {
 	}
 
 	private function is_empty(): bool {
-		foreach ( $this->get_children() as $item ) {
-			if ( ! empty( $item->get_children() ) ) {
+		foreach ( $this->get_children() as $child ) {
+			if ( Atomic_Menu::ELEMENT_TYPE_ITEM === $child->get_data( 'elType' ) && ! empty( $child->get_children() ) ) {
 				return false;
 			}
 		}
