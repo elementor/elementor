@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ElementType } from 'react';
-import { Box, IconButton, Tooltip } from '@elementor/ui';
+import { Box, IconButton, type IconButtonProps, Tooltip } from '@elementor/ui';
 
 export type Props = {
 	title: string;
@@ -25,10 +25,9 @@ export default function Action( { icon: Icon, title, selected, visible = true, .
 					{ ...props }
 					aria-label={ title }
 					aria-pressed={ selected }
-					size="medium"
-					sx={ { color: selected ? 'primary.main' : 'grey.800', borderRadius: 1 } }
+					size={ 'unstableTiny' as IconButtonProps[ 'size' ] }
 				>
-					<Icon />
+					<Icon fontSize="small" />
 				</IconButton>
 			</Box>
 		</Tooltip>

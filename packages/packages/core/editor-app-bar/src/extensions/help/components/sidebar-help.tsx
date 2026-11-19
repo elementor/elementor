@@ -5,6 +5,7 @@ import {
 	bindMenu,
 	bindTrigger,
 	IconButton,
+	type IconButtonProps,
 	ListItemIcon,
 	ListItemText,
 	Menu,
@@ -27,10 +28,9 @@ export default function SidebarHelp() {
 				<IconButton
 					{ ...bindTrigger( popupState ) }
 					aria-label={ title }
-					size="medium"
-					sx={ { color: popupState.isOpen ? 'primary.main' : 'grey.800' } }
+					size={ 'unstableTiny' as IconButtonProps[ 'size' ] }
 				>
-					<HelpIcon />
+					<HelpIcon fontSize="small" />
 				</IconButton>
 			</Tooltip>
 			<Menu
