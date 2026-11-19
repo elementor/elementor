@@ -19,7 +19,10 @@ type Props = {
 
 const sectionHeaderListItemButtonSx = {
 	flexGrow: 1,
+	justifyContent: 'flex-start',
 	minWidth: 0,
+	paddingInlineStart: 0,
+	textAlign: 'start',
 	'&:focus': { backgroundColor: 'transparent' },
 	'&:hover': { backgroundColor: 'transparent' },
 	'&.Mui-focusVisible': { backgroundColor: 'transparent' },
@@ -60,6 +63,8 @@ export default function CollapsibleList( {
 					aria-controls={ contentId }
 					aria-expanded={ isOpen }
 					aria-label={ sectionHeaderAriaLabel }
+					dense
+					disableGutters
 					disableRipple
 					onClick={ handleClick }
 					sx={ sectionHeaderListItemButtonSx }

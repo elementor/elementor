@@ -1,6 +1,6 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
-const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
+const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0;
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
 
@@ -49,7 +49,9 @@ export const contentPanelListSectionListSx = {
 };
 
 export const contentPanelListItemButtonSx = {
+	justifyContent: 'flex-start',
 	paddingInline: CONTENT_PANEL_LIST_ROW_INSET_INLINE,
+	textAlign: 'start',
 	width: '100%',
 	'&.Mui-selected': {
 		backgroundColor: 'action.selected',

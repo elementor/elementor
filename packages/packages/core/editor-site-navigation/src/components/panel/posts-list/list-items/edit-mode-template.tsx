@@ -1,15 +1,11 @@
 import * as React from 'react';
 import { type FocusEvent, type FormEvent, type MutableRefObject, useRef, useState } from 'react';
 import { XIcon } from '@elementor/icons';
-import { Box, CircularProgress, IconButton, ListItem, TextField } from '@elementor/ui';
+import { CircularProgress, IconButton, ListItem, ListItemButton, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
-import {
-	contentPanelListItemButtonSx,
-	contentPanelListRowPaddingSx,
-	contentPanelListRowTitleSx,
-} from '../../content-panel-chrome';
+import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx, contentPanelListRowTitleSx } from '../../content-panel-chrome';
 
 type Props = {
 	postTitle: string;
@@ -17,25 +13,16 @@ type Props = {
 	callback: ( inputValue: string ) => void;
 };
 
-const editFieldBorderWidth = 2;
-
-const editFieldContainerSx = ( hasError: boolean ) => ( {
-	border: `${ editFieldBorderWidth }px solid`,
-	borderColor: hasError ? 'error.main' : 'secondary.main',
-	borderRadius: 0.5,
-	display: 'flex',
+const editModeTextFieldSx = {
 	flex: 1,
 	minWidth: 0,
-	px: 1,
-	width: '100%',
-} );
-
-const editModeTextFieldSx = {
 	'& .MuiInputBase-input': {
 		...contentPanelListRowTitleSx,
+		height: 'auto',
 		padding: 0,
 	},
 	'& .MuiInput-root': {
+		minHeight: 0,
 		padding: 0,
 	},
 };
@@ -97,38 +84,50 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 			sx={ contentPanelListRowPaddingSx }
 			secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
 		>
-			<Box
+			<ListItemButton
 				component="form"
+				dense
+				disableGutters
+				disableRipple
 				onSubmit={ onFormSubmit }
+				selected
+				shape="rounded"
 				sx={ {
 					...contentPanelListItemButtonSx,
-					display: 'flex',
-					width: '100%',
+					...( inputError
+						? {
+								outline: '2px solid',
+								outlineColor: 'error.main',
+								outlineOffset: -2,
+						  }
+						: {
+								outline: '2px solid',
+								outlineColor: 'secondary.main',
+								outlineOffset: -2,
+						  } ),
 				} }
 			>
-				<Box sx={ editFieldContainerSx( !! inputError ) }>
-					<TextField
-						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-						color="secondary"
-						disabled={ isLoading }
-						error={ !! inputError }
-						fullWidth
-						inputProps={ {
-							'aria-invalid': !! inputError,
-							'aria-label': __( 'Name', 'elementor' ),
-						} }
-						onBlur={ onBlur }
-						onChange={ onChange }
-						size="tiny"
-						sx={ editModeTextFieldSx }
-						value={ title }
-						variant="standard"
-						InputProps={ {
-							disableUnderline: true,
-						} }
-					/>
-				</Box>
-			</Box>
+				<TextField
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+					color="secondary"
+					disabled={ isLoading }
+					error={ !! inputError }
+					fullWidth
+					inputProps={ {
+						'aria-invalid': !! inputError,
+						'aria-label': __( 'Name', 'elementor' ),
+					} }
+					onBlur={ onBlur }
+					onChange={ onChange }
+					size="tiny"
+					sx={ editModeTextFieldSx }
+					value={ title }
+					variant="standard"
+					InputProps={ {
+						disableUnderline: true,
+					} }
+				/>
+			</ListItemButton>
 		</ListItem>
 	);
 }
@@ -142,8 +141,8 @@ function CloseButton( { isLoading, closeButton }: CloseButtonProps ) {
 	const { resetEditMode } = usePostListContext();
 
 	return (
-		<IconButton size="small" color="secondary" onClick={ resetEditMode } ref={ closeButton } disabled={ isLoading }>
-			{ isLoading ? <CircularProgress /> : <XIcon fontSize="small" /> }
+		<IconButton size="tiny" color="secondary" onClick={ resetEditMode } ref={ closeButton } disabled={ isLoading }>
+			{ isLoading ? <CircularProgress size="1rem" /> : <XIcon fontSize="tiny" /> }
 		</IconButton>
 	);
 }
