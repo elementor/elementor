@@ -75,6 +75,70 @@ class Test_Closed_Structure extends Elementor_Test_Base {
 		$this->assertFalse( $this->closed_structure->is_insertion_locked( $tree, Closed_Structure::DOCUMENT_ROOT_ID ) );
 	}
 
+	public function test_sync_locks__locks_parts_the_guard_closes_and_unlocks_the_rest() {
+		// Arrange.
+		$tree = $this->lock_every_part( $this->tree() );
+
+		// Act.
+		$synced = $this->closed_structure->sync_locks( $tree );
+
+		// Assert.
+		$this->assertSame( [ 'label', 'slot', 'nested-part' ], $this->collect_locked_ids( $synced ) );
+	}
+
+	public function test_sync_locks__leaves_elements_without_a_part_untouched() {
+		// Arrange.
+		$tree = $this->tree();
+		$tree[0]['elements'][1]['elements'][0]['isLocked'] = true;
+
+		// Act.
+		$synced = $this->closed_structure->sync_locks( $tree );
+
+		// Assert.
+		$this->assertTrue( $synced[0]['elements'][1]['elements'][0]['isLocked'] );
+	}
+
+	public function test_contains_widget_root__finds_a_nested_marker() {
+		// Arrange.
+		$page = [
+			[
+				'id' => 'section',
+				'elType' => 'e-flexbox',
+				'elements' => $this->tree(),
+			],
+		];
+
+		// Act & Assert.
+		$this->assertTrue( Closed_Structure::contains_widget_root( $page ) );
+		$this->assertFalse( Closed_Structure::contains_widget_root( [ [ 'id' => 'plain', 'elType' => 'e-flexbox' ] ] ) );
+	}
+
+	private function lock_every_part( array $elements ): array {
+		return array_map( function ( array $element ) {
+			if ( isset( $element['part'] ) ) {
+				$element['isLocked'] = true;
+			}
+
+			$element['elements'] = $this->lock_every_part( $element['elements'] ?? [] );
+
+			return $element;
+		}, $elements );
+	}
+
+	private function collect_locked_ids( array $elements ): array {
+		$ids = [];
+
+		foreach ( $elements as $element ) {
+			if ( ! empty( $element['isLocked'] ) ) {
+				$ids[] = $element['id'];
+			}
+
+			$ids = array_merge( $ids, $this->collect_locked_ids( $element['elements'] ?? [] ) );
+		}
+
+		return $ids;
+	}
+
 	private function tree(): array {
 		return [
 			[
