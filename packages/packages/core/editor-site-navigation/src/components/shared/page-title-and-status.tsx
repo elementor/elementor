@@ -88,4 +88,3 @@ export default function PageTitleAndStatus( { title, status }: { title: string; 
 		</Box>
 	);
 }
-
