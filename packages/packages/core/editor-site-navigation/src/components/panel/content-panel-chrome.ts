@@ -9,6 +9,10 @@ export const contentPanelInsetPaddingSx = {
 	paddingInline: CONTENT_PANEL_INSET_SPACING,
 };
 
+export const contentPanelListRowPaddingSx = {
+	...contentPanelInsetPaddingSx,
+};
+
 export const contentPanelHeaderStackSx = {
 	paddingInlineEnd: CONTENT_PANEL_INSET_SPACING,
 	paddingInlineStart: CONTENT_PANEL_INSET_SPACING,
@@ -31,4 +35,17 @@ export const contentPanelSectionHeaderTrailingGap = CONTENT_PANEL_SECTION_HEADER
 export const contentPanelFullBleedDividerSx = {
 	marginInline: 0,
 	width: '100%',
+};
+
+export const contentPanelListItemButtonSx = {
+	width: '100%',
+	'&.Mui-selected': {
+		backgroundColor: 'action.selected',
+	},
+	'&.Mui-selected:hover': {
+		backgroundColor: 'action.selected',
+	},
+	'&:hover:not(.Mui-disabled)': {
+		backgroundColor: 'action.hover',
+	},
 };

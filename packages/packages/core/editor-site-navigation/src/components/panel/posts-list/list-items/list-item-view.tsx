@@ -13,6 +13,7 @@ import {
 	ListItemButton,
 	ListItemText,
 	Menu,
+	Stack,
 	Tooltip,
 	Typography,
 	usePopupState,
@@ -27,6 +28,7 @@ import Duplicate from '../../actions-menu/actions/duplicate';
 import Rename from '../../actions-menu/actions/rename';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
+import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
 
 const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactNode; isDisabled: boolean } ) => {
 	if ( isDisabled ) {
@@ -64,32 +66,44 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const status = isActive ? activeDocument?.status.value : post.status;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
 	const isDisabled = ! post.user_can.edit;
+	const menuTriggerProps = bindTrigger( popupState );
 
 	return (
 		<>
 			<DisabledPostTooltip isDisabled={ isDisabled }>
-				<ListItem
-					disablePadding
-					secondaryAction={
-						<IconButton value size="small" { ...bindTrigger( popupState ) }>
-							<DotsVerticalIcon fontSize="small" />
-						</IconButton>
-					}
-				>
+				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
 					<ListItemButton
-						selected={ isActive }
+						dense
+						disableGutters
 						disabled={ isDisabled }
 						onClick={ () => {
 							if ( ! isActive ) {
 								navigateToDocument( post.id );
 							}
 						} }
-						dense
+						selected={ isActive }
+						shape="rounded"
+						sx={ contentPanelListItemButtonSx }
 					>
-						<ListItemText disableTypography={ true }>
+						<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 							<PageTitleAndStatus title={ title } status={ status } />
 						</ListItemText>
-						{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
+						<Stack alignItems="center" direction="row" flexShrink={ 0 } gap={ 0.25 }>
+							{ post.isHome && (
+								<HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" />
+							) }
+							<IconButton
+								aria-label={ __( 'More actions', 'elementor' ) }
+								size="tiny"
+								{ ...menuTriggerProps }
+								onClick={ ( event: React.MouseEvent ) => {
+									event.stopPropagation();
+									menuTriggerProps.onClick?.( event );
+								} }
+							>
+								<DotsVerticalIcon fontSize="tiny" />
+							</IconButton>
+						</Stack>
 					</ListItemButton>
 				</ListItem>
 			</DisabledPostTooltip>

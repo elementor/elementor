@@ -5,6 +5,7 @@ import { Box, CircularProgress, IconButton, ListItem, ListItemText, TextField } 
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
+import { contentPanelListRowPaddingSx } from '../../content-panel-chrome';
 
 type Props = {
 	postTitle: string;
@@ -63,7 +64,11 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 
 	return (
 		<>
-			<ListItem secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }>
+			<ListItem
+				disablePadding
+				sx={ contentPanelListRowPaddingSx }
+				secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
+			>
 				<Box width="100%" component="form" onSubmit={ onFormSubmit }>
 					<TextField
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
@@ -80,7 +85,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 				</Box>
 			</ListItem>
 			{ inputError && (
-				<ListItem>
+				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
 					<ListItemText sx={ { color: 'error.main' } }>{ inputError }</ListItemText>
 				</ListItem>
 			) }
