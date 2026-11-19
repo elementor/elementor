@@ -3,6 +3,7 @@ import { useNavigate } from '@reach/router';
 import { generateScreenshot } from '../utils/screenshot';
 import { EXPORT_STATUS } from '../context/export-context';
 import { ImportExportError } from '../../shared/error/import-export-error';
+import { resolveComponentsCustomization } from '../../shared/utils';
 
 const STATUS_PROCESSING = 'processing';
 const STATUS_PROCESSING_MEDIA = 'processing-media';
@@ -89,7 +90,10 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 					source: kitInfo.source,
 				},
 				include: includes,
-				customization,
+				customization: {
+					...customization,
+					components: resolveComponentsCustomization( { customization, includes, data: null, isImport: false } ),
+				},
 			};
 
 			const isCloudExport = 'cloud' === kitInfo.source;

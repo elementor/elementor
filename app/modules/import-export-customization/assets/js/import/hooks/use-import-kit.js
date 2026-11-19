@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { IMPORT_STATUS } from '../context/import-context';
 import { ImportExportError } from '../../shared/error/import-export-error';
+import { resolveComponentsCustomization } from '../../shared/utils';
 
 async function request( {
 	data,
@@ -92,7 +93,10 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 				referrer: data.kitUploadParams?.referrer,
 				session: data?.uploadedData?.session,
 				include: includes,
-				customization,
+				customization: {
+					...customization,
+					components: resolveComponentsCustomization( { customization, includes, data, isImport: true } ),
+				},
 			};
 
 			const result = await request( {

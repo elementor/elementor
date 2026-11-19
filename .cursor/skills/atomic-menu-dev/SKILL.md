@@ -23,6 +23,13 @@ Scope: Internal (Core). Experiment: `e_nav_menu`.
 - Never return `undefined` from an Alpine `x-bind` for `aria-label`: it removes the attribute. Return the current attribute value.
 - Atomic base styles are cached per page and in WP Playground. After changing them: Elementor > Tools > Regenerate CSS, and restart the playground (use `--workers=1`).
 - Toggle width: the collapse CSS sets `flex:0 0 auto;width:auto` on the toggle so themes cannot stretch it.
+- Items layout defaults: the items' base style has no `flex-direction` (the browser default `row` applies). `get_collapse_css()` defaults the collapsed layout to `column;flex-basis:100%;width:100%` through `:where(<scope> > items)` in each collapse breakpoint block. Zero specificity means anything the author sets on `e-menu-items` in the Style tab wins, including a desktop value without a breakpoint, as with any Atomic element; the author sets a smaller-breakpoint value to change it. Toggle rules stay forced, so authors cannot override the toggle's `order`, `flex` or `width` while collapsed. Base styles are cached per page, so after changing them run Regenerate CSS.
+
+## Submenu lock (Free and not-connected Pro)
+
+- Types `e-menu-submenu` and `e-menu-submenu-trigger` are children of `e-menu-entry`. Without Pro, Core registers placeholders (`Atomic_Menu_Submenu_Promotion`, `Atomic_Menu_Submenu_Trigger_Promotion`, built on `Atomic_Pro_Promotion_Element_Base`): hidden from the panel, render nothing, data kept on save by `Pro_Promotion_Data_Preservation`. Pro must register the same types and schema.
+- `Submenu_Entitlement` decides the lock: Core locks only when Pro is missing or does not register the Submenu type; Pro owns license and tier rules through the `elementor/atomic-widgets/menu/submenu/is_locked` filter. The Go URL lives in `Submenu_Entitlement::UPGRADE_URL`, overridable with the `elementor/atomic-widgets/menu/submenu/upgrade_url` filter.
+- The entry type exposes the result as meta `submenu_entitlement`, computed when the editor config is built. The editor reads it in `menu-items-control/use-submenu.ts`; `SubmenuToggle` renders the lock in the row popover and in the Menu Item panel (`submenu-toggle` control); it is an unchecked switch with the crown that opens the promotion without flipping, and renders nothing when unlocked. Both places render the component from `registerSubmenuToggle` (exported by `@elementor/editor-editing-panel`), so Pro registers its real toggle over the Core default. Update this section when the Pro Submenu ticket changes the types or the toggle behavior.
 
 ## Verify
 

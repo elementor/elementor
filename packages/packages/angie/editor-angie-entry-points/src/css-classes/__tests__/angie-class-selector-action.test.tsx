@@ -4,6 +4,7 @@ import { openAngieInAgentMode } from '@elementor/editor-mcp';
 import { useProviders } from '@elementor/editor-styles-repository';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { mockAngieEntryPointsEnabled } from '../../__tests__/mock-angie-entry-points-enabled';
 import { getGenerateWithAngieLabel } from '../../labels';
 import { ANGIE_PROMPTS } from '../../prompts';
 import { AngieClassSelectorAction } from '../angie-class-selector-action';
@@ -26,6 +27,7 @@ const CLASS_LABEL = 'My Class';
 
 describe( 'AngieClassSelectorAction', () => {
 	beforeEach( () => {
+		mockAngieEntryPointsEnabled();
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: ELEMENT_ID, type: 'e-div-block' },
 		} as ReturnType< typeof useElement > );
@@ -56,15 +58,17 @@ describe( 'AngieClassSelectorAction', () => {
 		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.classSelector( ELEMENT_ID, CLASS_LABEL ) );
 	} );
 
-	it( 'renders nothing when no active class is selected', () => {
+	it( 'opens Angie with the styles prompt when no named class is selected', () => {
 		// Arrange
 		jest.mocked( useStyle ).mockReturnValue( { id: null } as ReturnType< typeof useStyle > );
 		jest.mocked( useProviders ).mockReturnValue( [] );
 
-		// Act
 		render( <AngieClassSelectorAction /> );
 
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
+
 		// Assert
-		expect( screen.queryByRole( 'button', { name: getGenerateWithAngieLabel() } ) ).not.toBeInTheDocument();
+		expect( openAngieInAgentMode ).toHaveBeenCalledWith( ANGIE_PROMPTS.styleTab( { elementId: ELEMENT_ID } ) );
 	} );
 } );

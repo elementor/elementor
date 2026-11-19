@@ -165,26 +165,68 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$this->assertSame( [ $inner->get_main_id() ], $dependencies[ $outer->get_main_id() ]['depends_on'] );
 	}
 
-	public function test_should_export__follows_gate_when_content_is_included() {
+	public function test_should_export__follows_gate_when_templates_are_included() {
 		// Arrange
 		$runner = new Export_Runner();
 
 		// Act
-		$with_content = $runner->should_export( [ 'include' => [ 'content' ] ] );
+		$with_templates = $runner->should_export( [
+			'include' => [ 'templates' ],
+			'customization' => [ 'components' => true ],
+		] );
 
 		// Assert
-		$this->assertSame( Components_Module::is_import_export_supported(), $with_content );
+		$this->assertSame( Components_Module::is_import_export_supported(), $with_templates );
 	}
 
-	public function test_should_export__returns_false_when_content_is_not_included() {
+	/**
+	 * @dataProvider templates_not_included_provider
+	 */
+	public function test_should_export__returns_false_when_templates_are_not_included( array $include ) {
 		// Arrange
 		$runner = new Export_Runner();
 
 		// Act
-		$result = $runner->should_export( [ 'include' => [ 'settings' ] ] );
+		$result = $runner->should_export( [
+			'include' => $include,
+			'customization' => [ 'components' => true ],
+		] );
 
 		// Assert
 		$this->assertFalse( $result );
+	}
+
+	public function templates_not_included_provider(): array {
+		return [
+			'settings only' => [ [ 'settings' ] ],
+			'content only' => [ [ 'content' ] ],
+		];
+	}
+
+	/**
+	 * @dataProvider not_enabled_components_customization_provider
+	 */
+	public function test_should_export__returns_false_when_components_customization_is_not_true( $customization ) {
+		// Arrange
+		$runner = new Export_Runner();
+
+		// Act
+		$result = $runner->should_export( [
+			'include' => [ 'templates' ],
+			'customization' => $customization,
+		] );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function not_enabled_components_customization_provider(): array {
+		return [
+			'customization is missing' => [ null ],
+			'components key is missing' => [ [ 'content' => null ] ],
+			'components is false' => [ [ 'components' => false ] ],
+			'components is a truthy non-boolean' => [ [ 'components' => 'true' ] ],
+		];
 	}
 
 	private function create_component(

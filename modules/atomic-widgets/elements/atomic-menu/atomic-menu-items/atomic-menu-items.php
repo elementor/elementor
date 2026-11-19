@@ -34,7 +34,6 @@ class Atomic_Menu_Items extends Atomic_Menu_Locked_Element {
 	protected function define_base_style_props(): array {
 		return [
 			'display' => String_Prop_Type::generate( 'flex' ),
-			'flex-direction' => String_Prop_Type::generate( 'row' ),
 			'gap' => Size_Prop_Type::generate( [
 				'size' => 16,
 				'unit' => 'px',

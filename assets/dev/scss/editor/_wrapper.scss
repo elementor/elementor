@@ -28,7 +28,21 @@ a {
 
 body {
 	&:has(.e-editor-sidebar) {
-		--e-editor-sidebar-width: 55px;
+		--e-editor-sidebar-width: 48px;
+
+		.elementor-panel #elementor-panel-header {
+			justify-content: flex-start;
+			padding-block: 8px;
+			padding-inline: 16px 8px;
+		}
+
+		.elementor-panel #elementor-panel-header > * {
+			justify-content: flex-start;
+		}
+
+		.elementor-panel #elementor-panel-header-title {
+			text-align: start;
+		}
 	}
 
 	background-color: var(--e-a-bg-default);
@@ -45,7 +59,7 @@ body {
 		content: '';
 		position: absolute;
 		inset-block-start: 0;
-		inset-inline-end: 0;
+		inset-inline-end: var(--e-editor-docked-panel-width, 0px);
 		height: 100%;
 		width: 0;
 		background-color: var(--e-a-bg-default);

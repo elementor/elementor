@@ -4,7 +4,7 @@ import { ThemeProvider } from '@elementor/editor-ui';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
 
-import { useDockedLayout, useDockedPanelInsetInlineEnd } from '../../hooks/use-docked-layout';
+import { useDockedLayout } from '../../hooks/use-docked-layout';
 import { usePanelResizeInteraction } from '../../hooks/use-floating-panel-resize';
 import { type GlobalState, selectIsDocked, selectIsResizable } from '../../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../../types';
@@ -73,13 +73,12 @@ export default function PanelWindow( {
 	const isDocked = useSelector( ( state: GlobalState ) => selectIsDocked( state, panelId ) );
 
 	const dockedLayoutActive = isDocked && visible;
-	const dockedInsetInlineEnd = useDockedPanelInsetInlineEnd( dockedLayoutActive );
 
 	useDockedLayout( dockedLayoutActive, size.inlineSize );
 
 	const placement = isDocked
 		? {
-				insetInlineEnd: dockedInsetInlineEnd,
+				insetInlineEnd: 0,
 				insetInlineStart: 'auto',
 				insetBlockStart: 'var(--editor-v2-top-bar-height, 0px)',
 				insetBlockEnd: 0,

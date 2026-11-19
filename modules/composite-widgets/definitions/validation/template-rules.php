@@ -30,6 +30,19 @@ class Template_Rules {
 	const EL_TYPE_KEY = 'elType';
 	const WIDGET_TYPE_KEY = 'widgetType';
 	const FORBIDDEN_NODE_KEYS = [ 'id', Widget_Markers::WIDGET_KEY ];
+	/**
+	 * The keys a template node may have (`templateNode` in the schema), for providers that build a
+	 * template from saved elements.
+	 */
+	const TEMPLATE_NODE_KEYS = [
+		self::EL_TYPE_KEY,
+		self::WIDGET_TYPE_KEY,
+		Widget_Markers::PART_KEY,
+		Widget_Markers::SLOT_KEY,
+		'settings',
+		'styles',
+		'elements',
+	];
 
 	private Variable_References $variable_references;
 	private Local_Style_Rules $local_style_rules;
