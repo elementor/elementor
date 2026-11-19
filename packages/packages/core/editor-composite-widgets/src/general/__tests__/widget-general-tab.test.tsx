@@ -4,10 +4,12 @@ import { ElementProvider } from '@elementor/editor-editing-panel';
 import { type Control, type ControlItem, type ElementType, getElementType } from '@elementor/editor-elements';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { setCompositeWidgetDefinitions } from '../../__tests__/set-composite-widget-definitions';
 import {
 	cleanupClosedStructureFixture,
 	type ClosedStructureFixture,
 	setupClosedStructureFixture,
+	WIDGET_DEFINITION,
 	WIDGET_ID,
 } from '../../closed-structure/__tests__/closed-structure-fixture';
 import { type CompositeWidgetGeneralEntry } from '../../types';
@@ -67,10 +69,7 @@ describe( '<WidgetGeneralTab />', () => {
 	beforeEach( () => {
 		fixture = setupClosedStructureFixture();
 
-		const config = (
-			window as unknown as { elementor: { config: { compositeWidgets: Record< string, object > } } }
-		 ).elementor.config;
-		config.compositeWidgets[ WIDGET_ID ] = { ...config.compositeWidgets[ WIDGET_ID ], general: GENERAL };
+		setCompositeWidgetDefinitions( { [ WIDGET_ID ]: { ...WIDGET_DEFINITION, general: GENERAL } } );
 
 		jest.mocked( getElementType ).mockImplementation( ( type ) => ELEMENT_TYPES[ type ] ?? null );
 	} );
