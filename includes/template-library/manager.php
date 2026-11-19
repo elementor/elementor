@@ -226,9 +226,11 @@ class Manager {
 
 		$library_data = Api::get_library_data( $force_update );
 
-		if ( empty( $library_data ) ) {
-			return $library_data;
-		}
+	if ( empty( $library_data ) ) {
+		$library_data = [
+			'types_data' => [],
+		];
+	}
 
 		// Ensure all document are registered.
 		Plugin::$instance->documents->get_document_types();
@@ -237,7 +239,7 @@ class Manager {
 
 		$full_library_data = [
 			'templates' => $this->get_templates( $filter_sources, $force_update ),
-			'config' => $library_data['types_data'],
+			'config' => $library_data['types_data'] ?? [],
 		];
 
 		/**
