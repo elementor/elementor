@@ -234,7 +234,41 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'shows empty state when search has no matches', () => {
+	it( 'shows empty state when search has no matches', async () => {
+		const searchDebounceMs = 300;
+
+		jest.useFakeTimers();
+
+		jest.mocked( usePosts ).mockImplementation( ( _type, search = '' ) =>
+			( {
+				isLoading: false,
+				data: {
+					posts:
+						search === 'missing'
+							? []
+							: [
+									{
+										id: 1,
+										type: 'page',
+										title: { rendered: 'Home' },
+										status: 'publish',
+										link: 'www.test.demo',
+										user_can: { edit: true, delete: true },
+									},
+									{
+										id: 2,
+										type: 'page',
+										title: { rendered: 'About' },
+										status: 'draft',
+										link: 'www.test.demo',
+										user_can: { edit: true, delete: true },
+									},
+							  ],
+					total: search === 'missing' ? 0 : 2,
+				},
+			} ) as ReturnType< typeof usePosts >
+		);
+
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
 				<SearchHarness />
@@ -242,8 +276,40 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		);
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Search missing' } ) );
+		jest.advanceTimersByTime( searchDebounceMs );
 
-		expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
+		} );
+
+		jest.useRealTimers();
+
+		jest.mocked( usePosts ).mockImplementation( () =>
+			( {
+				isLoading: false,
+				data: {
+					posts: [
+						{
+							id: 1,
+							type: 'page',
+							title: { rendered: 'Home' },
+							status: 'publish',
+							link: 'www.test.demo',
+							user_can: { edit: true, delete: true },
+						},
+						{
+							id: 2,
+							type: 'page',
+							title: { rendered: 'About' },
+							status: 'draft',
+							link: 'www.test.demo',
+							user_can: { edit: true, delete: true },
+						},
+					],
+					total: 2,
+				},
+			} ) as ReturnType< typeof usePosts >
+		);
 	} );
 
 	it( 'Should render load button when there is next page', () => {
