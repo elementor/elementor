@@ -7,11 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { getSubmenuPromotion } from './use-submenu';
 
-type Props = {
-	entryId: string | null;
-};
-
-export const SubmenuToggle = ( { entryId }: Props ) => {
+export const SubmenuToggle = ( { entryId }: { entryId: string | null } ) => {
 	const [ isPromotionOpen, setIsPromotionOpen ] = useState( false );
 	const anchorRef = useRef< HTMLDivElement >( null );
 	const promotion = getSubmenuPromotion();

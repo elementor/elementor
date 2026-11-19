@@ -18,7 +18,7 @@ import { __ } from '@wordpress/i18n';
 import { SettingsControl } from '../../../components/settings-control';
 import { ElementProvider, useElement } from '../../../contexts/element-context';
 import { getElementByType } from '../get-element-by-type';
-import { SubmenuToggle } from './submenu-toggle';
+import { getSubmenuToggle } from './submenu-toggle-registry';
 import {
 	MENU_ENTRY_ELEMENT_TYPE,
 	MENU_ITEM_ELEMENT_TYPE,
@@ -125,7 +125,7 @@ const ItemContent = ( { value }: { value: MenuItem } ) => {
 		<Stack p={ 2 } gap={ 1.5 }>
 			<ItemNameControl elementId={ value.id } />
 			<ItemLinkControl entryId={ value.id } />
-			<SubmenuToggle entryId={ value.id } />
+			<SubmenuToggleSlot entryId={ value.id } />
 		</Stack>
 	);
 };
@@ -187,4 +187,10 @@ const findControlByBind = ( items: ControlItem[], bind: string ): Control | null
 	}
 
 	return null;
+};
+
+const SubmenuToggleSlot = ( { entryId }: { entryId: string } ) => {
+	const Toggle = getSubmenuToggle();
+
+	return <Toggle entryId={ entryId } />;
 };
