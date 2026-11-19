@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type FocusEvent, type FormEvent, type MutableRefObject, useRef, useState } from 'react';
 import { XIcon } from '@elementor/icons';
-import { Box, CircularProgress, IconButton, ListItem, ListItemText, TextField } from '@elementor/ui';
+import { Box, CircularProgress, IconButton, ListItem, ListItemButton, ListItemText, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -17,14 +17,33 @@ type Props = {
 	callback: ( inputValue: string ) => void;
 };
 
-const editModeFieldSx = {
+const EDIT_ROW_FOCUS_BORDER_WIDTH_PX = 2;
+
+const editRowIndicatorSx = ( hasError: boolean ) => ( {
+	alignItems: 'center',
+	border: `${ EDIT_ROW_FOCUS_BORDER_WIDTH_PX }px solid`,
+	borderColor: hasError ? 'error.main' : 'secondary.main',
+	borderRadius: 0.5,
+	display: 'flex',
+	flex: 1,
+	minWidth: 0,
+	px: 1,
+	py: 0,
+} );
+
+const editModeListItemButtonSx = {
 	...contentPanelListItemButtonSx,
-	display: 'block',
-	py: 0.25,
-	width: '100%',
+	backgroundColor: 'transparent',
+	minHeight: 'unset',
+	py: 0,
+	'&:hover': {
+		backgroundColor: 'action.hover',
+	},
 };
 
 const editModeTextFieldSx = {
+	flex: 1,
+	minWidth: 0,
 	'& .MuiInputBase-input': {
 		...contentPanelListRowTitleSx,
 		height: '1.25rem',
@@ -32,6 +51,7 @@ const editModeTextFieldSx = {
 		padding: 0,
 	},
 	'& .MuiInput-root': {
+		height: '1.25rem',
 		minHeight: 0,
 		padding: 0,
 	},
@@ -91,35 +111,46 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 	return (
 		<>
 			<ListItem
+				dense
 				disablePadding
 				sx={ contentPanelListRowPaddingSx }
 				secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
 			>
-				<Box component="form" onSubmit={ onFormSubmit } sx={ editModeFieldSx }>
-					<TextField
-						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-						color="secondary"
-						disabled={ isLoading }
-						error={ !! inputError }
-						fullWidth
-						inputProps={ {
-							'aria-invalid': !! inputError,
-							'aria-label': __( 'Name', 'elementor' ),
-						} }
-						onBlur={ onBlur }
-						onChange={ onChange }
-						size="tiny"
-						sx={ editModeTextFieldSx }
-						value={ title }
-						variant="standard"
-						InputProps={ {
-							disableUnderline: true,
-						} }
-					/>
-				</Box>
+				<ListItemButton
+					component="form"
+					dense
+					disableGutters
+					disableRipple
+					onSubmit={ onFormSubmit }
+					shape="rounded"
+					sx={ editModeListItemButtonSx }
+				>
+					<Box sx={ editRowIndicatorSx( !! inputError ) }>
+						<TextField
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							color="secondary"
+							disabled={ isLoading }
+							error={ !! inputError }
+							fullWidth
+							inputProps={ {
+								'aria-invalid': !! inputError,
+								'aria-label': __( 'Name', 'elementor' ),
+							} }
+							onBlur={ onBlur }
+							onChange={ onChange }
+							size="tiny"
+							sx={ editModeTextFieldSx }
+							value={ title }
+							variant="standard"
+							InputProps={ {
+								disableUnderline: true,
+							} }
+						/>
+					</Box>
+				</ListItemButton>
 			</ListItem>
 			{ inputError && (
-				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
+				<ListItem dense disablePadding sx={ contentPanelListRowPaddingSx }>
 					<ListItemText sx={ { color: 'error.main', ...contentPanelListRowTitleSx } }>
 						{ inputError }
 					</ListItemText>
