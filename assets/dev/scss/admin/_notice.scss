@@ -47,6 +47,38 @@
 		}
 	}
 
+	// Single-row notice: message and link on one line
+	&--inline {
+		--e-notice-context-color: #{$e-pink-400};
+		--e-notice-context-tint: #{$e-pink-50};
+
+		.e-notice__aside {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 44px;
+			padding-block-start: 0;
+		}
+
+		.e-notice__icon-wrapper {
+			color: $e-pink-700;
+		}
+
+		.e-notice__content {
+			padding-block: 12px;
+			padding-inline: 12px 8px;
+
+			p {
+				line-height: pxToRem(20px);
+			}
+		}
+
+		.e-notice__dismiss {
+			inset-block-start: 50%;
+			transform: translateY(-50%);
+		}
+	}
+
 	// Notice extended style (with optional icon)
 	&--extended {
 		--e-notice-is-extended: 1;
