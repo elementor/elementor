@@ -200,5 +200,5 @@ function requestNavigatorRefresh( parentId: string ): void {
 function getDirectChildData( parentId: string ): V1ElementData[] {
 	const elements = findModelInDocument( parentId )?.get( 'elements' ) as BackboneCollection | undefined;
 
-	return ( elements?.models ?? [] ).map( ( model ) => model.toJSON() as unknown as V1ElementData );
+	return ( elements?.models ?? [] ).map( ( model ) => ( { elType: model.get( 'elType' ) } ) as V1ElementData );
 }

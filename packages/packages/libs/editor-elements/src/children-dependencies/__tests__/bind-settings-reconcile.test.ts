@@ -363,8 +363,14 @@ describe( 'bindSettingsReconcile', () => {
 
 	it( 'places a child after a sibling attached by an earlier rule in the same change', () => {
 		// Arrange.
+		const createChildModel = ( data: Record< string, unknown > ): BackboneModel => ( {
+			get: ( key: string ) => data[ key ],
+			set: jest.fn(),
+			toJSON: () => data,
+		} );
 		const childModels: BackboneModel[] = [
-			{ get: jest.fn(), set: jest.fn(), toJSON: () => ( { id: 'item-1', elType: 'e-menu-item' } ) },
+			createChildModel( { id: 'item-1', elType: 'e-menu-item' } ),
+			createChildModel( { id: 'trailing-1', elType: 'e-trailing' } ),
 		];
 
 		mockGetContainer.mockReturnValue( createMockContainer( 'entry-1', [] ) );
@@ -374,11 +380,11 @@ describe( 'bindSettingsReconcile', () => {
 			toJSON: () => ( {} ),
 		} );
 		mockAddModelToParent.mockImplementation( ( _parentId, childData, options ) => {
-			childModels.splice( options?.at ?? childModels.length, 0, {
-				get: jest.fn(),
-				set: jest.fn(),
-				toJSON: () => childData as unknown as Record< string, unknown >,
-			} );
+			childModels.splice(
+				options?.at ?? childModels.length,
+				0,
+				createChildModel( childData as unknown as Record< string, unknown > )
+			);
 
 			return true;
 		} );
@@ -415,6 +421,7 @@ describe( 'bindSettingsReconcile', () => {
 			'e-menu-item',
 			'e-menu-submenu-trigger',
 			'e-menu-submenu',
+			'e-trailing',
 		] );
 	} );
 
