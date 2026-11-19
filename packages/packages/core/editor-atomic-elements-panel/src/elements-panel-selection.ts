@@ -27,14 +27,11 @@ export function setElementsPanelSelection( selection: ElementsPanelSelection ) {
 }
 
 export function useElementsPanelSelection() {
-	return useSyncExternalStore(
-		( listener ) => {
-			listeners.add( listener );
+	return useSyncExternalStore( ( listener ) => {
+		listeners.add( listener );
 
-			return () => {
-				listeners.delete( listener );
-			};
-		},
-		getElementsPanelSelection
-	);
+		return () => {
+			listeners.delete( listener );
+		};
+	}, getElementsPanelSelection );
 }

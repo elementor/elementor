@@ -5,18 +5,18 @@ import { __ } from '@wordpress/i18n';
 
 import { type ElementsPanelSelection, setElementsPanelSelection } from '../elements-panel-selection';
 import { useIsDragging } from '../hooks/use-is-dragging';
-import { usePanelActions, usePanelStatus } from '../panel';
 
-type Props = {
+export type ElementsPanelSwitcherProps = {
 	value: ElementsPanelSelection;
+	isBlocked: boolean;
+	open: () => Promise< void >;
+	close: () => Promise< void >;
 };
 
 const ICON_SIZE = 16;
 
-export function ElementsPanelSwitcher( { value }: Props ) {
+export function ElementsPanelSwitcher( { value, isBlocked, open, close }: ElementsPanelSwitcherProps ) {
 	const isDragging = useIsDragging();
-	const { isBlocked } = usePanelStatus();
-	const { open, close } = usePanelActions();
 
 	const onChange = async ( _: React.MouseEvent, next: ElementsPanelSelection | null ) => {
 		if ( ! next || next === value || isDragging || isBlocked ) {

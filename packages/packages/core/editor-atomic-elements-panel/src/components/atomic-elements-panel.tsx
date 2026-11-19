@@ -3,14 +3,14 @@ import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/edit
 import { Divider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ElementsPanelSwitcher } from './elements-panel-switcher';
+import { ElementsPanelSwitcher, type ElementsPanelSwitcherProps } from './elements-panel-switcher';
 
-export function AtomicElementsPanel() {
+export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'value' > ) {
 	return (
 		<Panel>
 			<PanelHeader sx={ { justifyContent: 'space-between', px: 2 } }>
 				<PanelHeaderTitle>{ __( 'Add', 'elementor' ) }</PanelHeaderTitle>
-				<ElementsPanelSwitcher value="atomic" />
+				<ElementsPanelSwitcher value="atomic" { ...props } />
 			</PanelHeader>
 			<Divider />
 			<PanelBody />
