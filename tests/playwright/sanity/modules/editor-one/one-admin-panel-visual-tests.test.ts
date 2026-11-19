@@ -15,8 +15,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		await context.close();
 	} );
 
-	// Skipped until home-screen.json from the editor-assets CDN is mocked: the live BFCM sidebar banner breaks the screenshot [ED-26387].
-	test.skip( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
 		test.setTimeout( timeouts.singleTest );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
