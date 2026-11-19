@@ -10,7 +10,7 @@ export function useToggleButtonProps(): ToggleActionProps {
 	const { open, close } = usePanelActions();
 
 	return {
-		title: __( 'Pages', 'elementor' ),
+		title: __( 'Site content', 'elementor' ),
 		icon: PagesIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
