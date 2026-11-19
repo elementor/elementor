@@ -216,7 +216,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		fireEvent.click( duplicateButton );
 
 		// Assert.
-		const input = await waitFor( () => screen.getByRole( 'textbox' ) );
+		const input = await screen.findByRole( 'textbox' );
 
 		expect( input ).toHaveValue( 'Home copy' );
 	} );
