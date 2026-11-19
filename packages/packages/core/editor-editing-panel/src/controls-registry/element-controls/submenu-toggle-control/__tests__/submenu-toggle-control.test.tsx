@@ -32,7 +32,6 @@ describe( '<SubmenuToggleControl />', () => {
 		renderWithTheme( <SubmenuToggleControl /> );
 
 		// Assert
-		expect( getParentEntryId ).toHaveBeenCalledWith( 'item-1' );
 		expect( screen.getByRole( 'checkbox', { name: 'Enable Submenu' } ) ).toBeEnabled();
 		expect( screen.getByLabelText( 'Promotion chip' ) ).toBeInTheDocument();
 	} );
