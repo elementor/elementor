@@ -21,7 +21,6 @@ const sectionHeaderListItemButtonSx = {
 	flexGrow: 1,
 	justifyContent: 'flex-start',
 	minWidth: 0,
-	paddingInlineStart: 0,
 	textAlign: 'start',
 	'&:focus': { backgroundColor: 'transparent' },
 	'&:hover': { backgroundColor: 'transparent' },
