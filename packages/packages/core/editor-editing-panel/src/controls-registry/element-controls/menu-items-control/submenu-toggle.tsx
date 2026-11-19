@@ -21,7 +21,13 @@ export const SubmenuToggle = ( { entryId }: Props ) => {
 	}
 
 	return (
-		<Stack direction="row" alignItems="center" justifyContent="space-between" ref={ anchorRef }>
+		<Stack
+			direction="row"
+			alignItems="center"
+			justifyContent="space-between"
+			ref={ anchorRef }
+			data-testid="submenu-toggle-row"
+		>
 			<Stack direction="row" alignItems="center">
 				<ControlFormLabel>{ __( 'Enable Submenu', 'elementor' ) }</ControlFormLabel>
 				<PromotionPopover
@@ -35,6 +41,7 @@ export const SubmenuToggle = ( { entryId }: Props ) => {
 				>
 					<Box
 						component="span"
+						onMouseDown={ ( e: React.MouseEvent ) => e.stopPropagation() }
 						onClick={ () => setIsPromotionOpen( ( open ) => ! open ) }
 						sx={ { display: 'inline-flex', cursor: 'pointer' } }
 					>
@@ -42,13 +49,18 @@ export const SubmenuToggle = ( { entryId }: Props ) => {
 					</Box>
 				</PromotionPopover>
 			</Stack>
-			<Box sx={ { marginInlineEnd: -1 } }>
+			<Box sx={ { marginInlineEnd: -1 } } onMouseDown={ ( e: React.MouseEvent ) => e.stopPropagation() }>
 				<Switch
 					size="small"
 					checked={ false }
 					onChange={ () => setIsPromotionOpen( ( open ) => ! open ) }
 					sx={ { cursor: 'pointer' } }
-					inputProps={ { 'aria-label': __( 'Enable Submenu', 'elementor' ), style: { cursor: 'pointer' } } }
+					inputProps={ {
+						'aria-label': __( 'Enable Submenu', 'elementor' ),
+						'aria-haspopup': 'dialog',
+						'aria-expanded': isPromotionOpen,
+						style: { cursor: 'pointer' },
+					} }
 				/>
 			</Box>
 		</Stack>
