@@ -143,7 +143,7 @@ class Module extends BaseModule {
 
 		( new Scanner_Rest_Api( $this->scanner_orchestrator ) )->register_hooks();
 
-		$this->dashboard_overview_block = new Dashboard_Overview_Block( $this->settings, $this->scanner_store );
+		$this->dashboard_overview_block = new Dashboard_Overview_Block( $this->scanner_store );
 		$this->dashboard_overview_block->register();
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_dashboard_tracking' ] );
 
