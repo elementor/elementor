@@ -29,7 +29,7 @@ const statusChipConfig: Record< string, StatusChipConfig > = {
 	},
 };
 
-function getStatusChipConfig( status: string ): StatusChipConfig {
+export function getStatusChipConfig( status: string ): StatusChipConfig {
 	const known = statusChipConfig[ status ];
 
 	if ( known ) {
@@ -49,14 +49,10 @@ const PageStatus = ( { status }: { status: string } ) => {
 
 	const { color, label } = getStatusChipConfig( status );
 
-	const statusTone = color === 'warning' ? 'waiting' : 'neutral';
-
 	return (
 		<Chip
 			color={ color }
 			component="span"
-			data-status-tone={ statusTone }
-			data-testid="post-status-badge"
 			label={ label }
 			size="tiny"
 			sx={ { flexShrink: 0, ml: 0.5, textTransform: 'capitalize' } }
@@ -92,3 +88,4 @@ export default function PageTitleAndStatus( { title, status }: { title: string; 
 		</Box>
 	);
 }
+

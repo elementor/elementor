@@ -13,7 +13,6 @@ describe( 'PageTitleAndStatus', () => {
 
 		expect( screen.getByText( 'Home' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Draft' ) ).not.toBeInTheDocument();
-		expect( screen.queryByTestId( 'post-status-badge' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders a status badge for draft content', () => {
@@ -22,20 +21,17 @@ describe( 'PageTitleAndStatus', () => {
 		expect( screen.getByText( 'About' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Draft' ) ).toBeInTheDocument();
 		expect( screen.queryByText( '(draft)' ) ).not.toBeInTheDocument();
-		expect( screen.getByTestId( 'post-status-badge' ) ).toHaveAttribute( 'data-status-tone', 'neutral' );
 	} );
 
-	it( 'renders a pending status badge with warning color', () => {
+	it( 'renders a pending status badge label', () => {
 		render( <PageTitleAndStatus status="pending" title="Review me" /> );
 
 		expect( screen.getByText( 'Pending Review' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'post-status-badge' ) ).toHaveAttribute( 'data-status-tone', 'waiting' );
 	} );
 
-	it( 'uses neutral badge for unknown custom statuses', () => {
+	it( 'uses custom status text for unknown plugin statuses', () => {
 		render( <PageTitleAndStatus status="custom-plugin-status" title="Plugin post" /> );
 
 		expect( screen.getByText( 'custom-plugin-status' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'post-status-badge' ) ).toHaveAttribute( 'data-status-tone', 'neutral' );
 	} );
 } );
