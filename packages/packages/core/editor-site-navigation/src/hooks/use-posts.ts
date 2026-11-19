@@ -3,12 +3,17 @@ import { keepPreviousData, useInfiniteQuery } from '@elementor/query';
 import { getRequest, type PostsResponse, type Slug } from '../api/post';
 import { type Post } from '../types';
 
-export const postsQueryKey = ( postTypeSlug: string, search = '' ) => [
-	'site-navigation',
-	'posts',
-	postTypeSlug,
-	search.trim(),
-];
+export const postsQueryKeyBase = ( postTypeSlug: string ) => [ 'site-navigation', 'posts', postTypeSlug ];
+
+export const postsQueryKey = ( postTypeSlug: string, search = '' ) => {
+	const trimmedSearch = search.trim();
+
+	if ( ! trimmedSearch ) {
+		return postsQueryKeyBase( postTypeSlug );
+	}
+
+	return [ ...postsQueryKeyBase( postTypeSlug ), trimmedSearch ];
+};
 
 const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	if ( ! data ) {

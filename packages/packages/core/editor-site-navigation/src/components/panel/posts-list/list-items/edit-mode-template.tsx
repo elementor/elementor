@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type FocusEvent, type FormEvent, type MutableRefObject, useRef, useState } from 'react';
 import { XIcon } from '@elementor/icons';
-import { Box, CircularProgress, IconButton, ListItem, ListItemButton, ListItemText } from '@elementor/ui';
+import { Box, CircularProgress, IconButton, ListItem, ListItemText } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -115,14 +115,10 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 				sx={ contentPanelListRowPaddingSx }
 				secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
 			>
-				<ListItemButton
+				<Box
 					component="form"
-					dense
-					disableGutters
-					disableRipple
 					onSubmit={ onFormSubmit }
-					shape="rounded"
-					sx={ editModeListItemButtonSx }
+					sx={ { ...editModeListItemButtonSx, display: 'flex', width: '100%' } }
 				>
 					<Box sx={ editRowIndicatorSx( !! inputError ) }>
 						<Box
@@ -138,7 +134,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 							value={ title }
 						/>
 					</Box>
-				</ListItemButton>
+				</Box>
 			</ListItem>
 			{ inputError && (
 				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>

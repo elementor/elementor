@@ -14,7 +14,6 @@ import {
 } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { postTypesMap } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
 import { usePostActions } from '../../../../hooks/use-posts-actions';
 import { type Post } from '../../../../types';
@@ -60,13 +59,16 @@ function DeleteDialog( {
 	/* translators: %s: Post title. */
 	const dialogTitle = sprintf( __( 'Delete "%s"?', 'elementor' ), post.title.rendered );
 
-	const singularName = postTypesMap[ type ].labels.singular_name;
-
-	const dialogBody = sprintf(
-		/* translators: %s: Post type singular name (e.g. Page, Post). */
-		__( 'The %s and its content will be deleted forever and we won’t be able to recover them.', 'elementor' ),
-		singularName.toLowerCase()
-	);
+	const dialogBody =
+		type === 'post'
+			? __(
+					'The post and its content will be deleted forever and we won’t be able to recover them.',
+					'elementor'
+			  )
+			: __(
+					'The page and its content will be deleted forever and we won’t be able to recover them.',
+					'elementor'
+			  );
 
 	const deletePage = async () => {
 		try {

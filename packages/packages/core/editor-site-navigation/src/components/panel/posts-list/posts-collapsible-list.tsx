@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
 import { Box, Button, CircularProgress, Skeleton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -9,11 +8,12 @@ import { useContentPanelCoordinator } from '../../../contexts/content-panel-coor
 import { usePostListContext } from '../../../contexts/post-list-context';
 import { useHomepage } from '../../../hooks/use-homepage';
 import { usePosts } from '../../../hooks/use-posts';
-import { postRowMatchesSearch } from '../../../utils/post-title-plain';
 import SectionAddButton from '../section-add-button';
 import CollapsibleList from './collapsible-list';
 import ErrorState from './error-state';
 import PostListItem from './post-list-item';
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 type Props = {
 	isOpenByDefault?: boolean;
@@ -22,9 +22,16 @@ type Props = {
 export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
 	const { type, editMode, setEditMode } = usePostListContext();
 	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
-	const activeDocument = useActiveDocument();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const trimmedSearch = searchQuery.trim();
+	const [ debouncedSearch, setDebouncedSearch ] = useState( trimmedSearch );
+
+	useEffect( () => {
+		const handle = window.setTimeout( () => setDebouncedSearch( trimmedSearch ), SEARCH_DEBOUNCE_MS );
+
+		return () => window.clearTimeout( handle );
+	}, [ trimmedSearch ] );
+
 	const {
 		data: { posts, total },
 		isError: postsError,
@@ -32,7 +39,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type, trimmedSearch );
+	} = usePosts( type, debouncedSearch );
 	const { data: homepageId } = useHomepage();
 	const isPageType = type === 'page';
 
@@ -68,18 +75,14 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			  } )
 			: mappedPosts;
 
-		if ( ! trimmedSearch ) {
-			return sorted;
-		}
-
-		return sorted.filter( ( post ) => postRowMatchesSearch( post, trimmedSearch, activeDocument ) );
-	}, [ posts, isPageType, homepageId, trimmedSearch, activeDocument ] );
+		return sorted;
+	}, [ posts, isPageType, homepageId ] );
 
 	useEffect( () => {
-		if ( trimmedSearch && filteredPosts.length > 0 ) {
+		if ( debouncedSearch && filteredPosts.length > 0 ) {
 			setIsOpen( true );
 		}
-	}, [ trimmedSearch, filteredPosts.length ] );
+	}, [ debouncedSearch, filteredPosts.length ] );
 
 	if ( postsError ) {
 		return <ErrorState />;
@@ -100,7 +103,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 
 	const displayCount = total;
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
-	const showNoResults = trimmedSearch && filteredPosts.length === 0;
+	const showNoResults = debouncedSearch && filteredPosts.length === 0;
 
 	return (
 		<CollapsibleList
