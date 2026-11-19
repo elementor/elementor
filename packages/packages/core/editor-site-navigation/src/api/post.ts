@@ -40,6 +40,14 @@ export function getPostTypeCreateCapability( postTypeSlug: Slug ): string {
 	return postTypesMap[ postTypeSlug ].createCapability;
 }
 
+export function getAccessiblePanelPostTypes( capabilities: Record< string, boolean > ): Slug[] {
+	return panelPostTypeSlugs.filter( ( slug ) => capabilities[ getPostTypeCreateCapability( slug ) ] );
+}
+
+export function canAccessSiteContentPanel( capabilities: Record< string, boolean > ): boolean {
+	return getAccessiblePanelPostTypes( capabilities ).length > 0;
+}
+
 export const POST_PER_PAGE = 10;
 
 type WpPostsResponse = {
