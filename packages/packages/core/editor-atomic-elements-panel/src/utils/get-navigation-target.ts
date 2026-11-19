@@ -30,7 +30,7 @@ export function getNavigationTarget( { items, current, key, columns, isRtl }: Pa
 
 	return current.dataset.navItem === 'tile'
 		? getVerticalTileTarget( items, current, verticalStep, columns )
-		: ( items[ index + verticalStep ] ?? null );
+		: items[ index + verticalStep ] ?? null;
 }
 
 function getVerticalTileTarget( items: HTMLElement[], current: HTMLElement, step: number, columns: number ) {

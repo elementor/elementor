@@ -25,8 +25,20 @@ describe( 'getNavigationTarget', () => {
 		const { items, tiles } = buildItems();
 
 		// Act.
-		const ltr = getNavigationTarget( { items, current: tiles[ 0 ], key: 'ArrowRight', columns: COLUMNS, isRtl: false } );
-		const rtl = getNavigationTarget( { items, current: tiles[ 1 ], key: 'ArrowRight', columns: COLUMNS, isRtl: true } );
+		const ltr = getNavigationTarget( {
+			items,
+			current: tiles[ 0 ],
+			key: 'ArrowRight',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
+		const rtl = getNavigationTarget( {
+			items,
+			current: tiles[ 1 ],
+			key: 'ArrowRight',
+			columns: COLUMNS,
+			isRtl: true,
+		} );
 
 		// Assert.
 		expect( ltr ).toBe( tiles[ 1 ] );
@@ -38,9 +50,27 @@ describe( 'getNavigationTarget', () => {
 		const { items, header, tiles } = buildItems();
 
 		// Act.
-		const down = getNavigationTarget( { items, current: tiles[ 0 ], key: 'ArrowDown', columns: COLUMNS, isRtl: false } );
-		const up = getNavigationTarget( { items, current: tiles[ 3 ], key: 'ArrowUp', columns: COLUMNS, isRtl: false } );
-		const toHeader = getNavigationTarget( { items, current: tiles[ 1 ], key: 'ArrowUp', columns: COLUMNS, isRtl: false } );
+		const down = getNavigationTarget( {
+			items,
+			current: tiles[ 0 ],
+			key: 'ArrowDown',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
+		const up = getNavigationTarget( {
+			items,
+			current: tiles[ 3 ],
+			key: 'ArrowUp',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
+		const toHeader = getNavigationTarget( {
+			items,
+			current: tiles[ 1 ],
+			key: 'ArrowUp',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
 
 		// Assert.
 		expect( down ).toBe( tiles[ 3 ] );
@@ -53,8 +83,20 @@ describe( 'getNavigationTarget', () => {
 		const { items, header, tiles, nextHeader } = buildItems();
 
 		// Act.
-		const fromHeader = getNavigationTarget( { items, current: header, key: 'ArrowDown', columns: COLUMNS, isRtl: false } );
-		const fromLastRow = getNavigationTarget( { items, current: tiles[ 3 ], key: 'ArrowDown', columns: COLUMNS, isRtl: false } );
+		const fromHeader = getNavigationTarget( {
+			items,
+			current: header,
+			key: 'ArrowDown',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
+		const fromLastRow = getNavigationTarget( {
+			items,
+			current: tiles[ 3 ],
+			key: 'ArrowDown',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
 
 		// Assert.
 		expect( fromHeader ).toBe( tiles[ 0 ] );

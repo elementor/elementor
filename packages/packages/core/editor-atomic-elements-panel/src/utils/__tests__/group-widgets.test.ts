@@ -6,7 +6,10 @@ const widget = ( title: string, categories?: string[] ) => ( { title, atomic: tr
 describe( 'groupWidgets', () => {
 	it( 'should group registered widgets by the local map and hide empty groups', () => {
 		// Arrange.
-		const widgets = { 'e-flexbox': widget( 'Flexbox' ), 'e-heading': widget( 'Heading' ) } as unknown as WidgetsCache;
+		const widgets = {
+			'e-flexbox': widget( 'Flexbox' ),
+			'e-heading': widget( 'Heading' ),
+		} as unknown as WidgetsCache;
 
 		// Act.
 		const groups = groupWidgets( widgets );

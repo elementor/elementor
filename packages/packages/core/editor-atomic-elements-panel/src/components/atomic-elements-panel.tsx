@@ -75,9 +75,7 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 		<ErrorBoundary fallback={ <AtomicPanelFallback close={ props.close } /> }>
 			<Panel>
 				<PanelHeader sx={ HEADER_SX }>
-					<PanelHeaderTitle sx={ TITLE_SX }>
-						{ __( 'Add', 'elementor' ) }
-					</PanelHeaderTitle>
+					<PanelHeaderTitle sx={ TITLE_SX }>{ __( 'Add', 'elementor' ) }</PanelHeaderTitle>
 					<Box sx={ { display: 'flex', alignItems: 'center', px: 1.5 } }>
 						<ElementsPanelSwitcher value="atomic" { ...props } />
 					</Box>

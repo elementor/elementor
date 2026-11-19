@@ -34,12 +34,10 @@ describe( 'AtomicElementsPanel groups', () => {
 		render( <AtomicElementsPanel { ...props } /> );
 
 		// Assert.
-		expect( screen.getAllByRole( 'button', { expanded: true } ).map( ( { textContent } ) => textContent ) ).toEqual( [
-			'Layout',
-			'Basic',
-			'Form',
-		] );
-		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeTruthy();
+		expect( screen.getAllByRole( 'button', { expanded: true } ).map( ( { textContent } ) => textContent ) ).toEqual(
+			[ 'Layout', 'Basic', 'Form' ]
+		);
+		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should collapse and expand a group and update aria-expanded', () => {
@@ -52,13 +50,13 @@ describe( 'AtomicElementsPanel groups', () => {
 		fireEvent.click( header );
 
 		// Assert.
-		expect( header.getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		expect( header ).toHaveAttribute( 'aria-expanded', 'false' );
 
 		// Act.
 		fireEvent.click( header );
 
 		// Assert.
-		expect( header.getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+		expect( header ).toHaveAttribute( 'aria-expanded', 'true' );
 	} );
 
 	it( 'should render the empty state when there are no eligible widgets', () => {
@@ -69,7 +67,7 @@ describe( 'AtomicElementsPanel groups', () => {
 		render( <AtomicElementsPanel { ...props } /> );
 
 		// Assert.
-		expect( screen.getByText( 'No atomic elements available.' ) ).toBeTruthy();
-		expect( screen.queryByRole( 'button', { expanded: true } ) ).toBeNull();
+		expect( screen.getByText( 'No atomic elements available.' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { expanded: true } ) ).not.toBeInTheDocument();
 	} );
 } );
