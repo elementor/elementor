@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
 import { Box, Button, CircularProgress, Skeleton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -8,7 +9,7 @@ import { useContentPanelCoordinator } from '../../../contexts/content-panel-coor
 import { usePostListContext } from '../../../contexts/post-list-context';
 import { useHomepage } from '../../../hooks/use-homepage';
 import { usePosts } from '../../../hooks/use-posts';
-import { postTitleMatchesSearch } from '../../../utils/post-title-plain';
+import { postRowMatchesSearch } from '../../../utils/post-title-plain';
 import SectionAddButton from '../section-add-button';
 import CollapsibleList from './collapsible-list';
 import ErrorState from './error-state';
@@ -21,7 +22,9 @@ type Props = {
 export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
 	const { type, editMode, setEditMode } = usePostListContext();
 	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
+	const activeDocument = useActiveDocument();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
+	const trimmedSearch = searchQuery.trim();
 	const {
 		data: { posts, total },
 		isLoading: postsLoading,
@@ -29,10 +32,9 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type );
+	} = usePosts( type, trimmedSearch );
 	const { data: homepageId } = useHomepage();
 	const isPageType = type === 'page';
-	const trimmedSearch = searchQuery.trim();
 
 	useEffect( () => {
 		registerSection( type, {
@@ -43,9 +45,9 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		return () => unregisterSection( type );
 	}, [ registerSection, unregisterSection, type, setEditMode ] );
 
-	const { filteredPosts } = useMemo( () => {
+	const filteredPosts = useMemo( () => {
 		if ( ! posts ) {
-			return { sortedPosts: [], filteredPosts: [] };
+			return [];
 		}
 
 		const mappedPosts = isPageType
@@ -53,7 +55,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			: posts;
 
 		const sorted = isPageType
-			? mappedPosts.sort( ( a, b ) => {
+			? [ ...mappedPosts ].sort( ( a, b ) => {
 					if ( a.id === homepageId ) {
 						return -1;
 					}
@@ -66,10 +68,14 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			  } )
 			: mappedPosts;
 
-		const filtered = sorted.filter( ( post ) => postTitleMatchesSearch( post.title.rendered, searchQuery ) );
+		if ( ! trimmedSearch ) {
+			return sorted;
+		}
 
-		return { filteredPosts: filtered };
-	}, [ posts, isPageType, homepageId, searchQuery ] );
+		return sorted.filter( ( post ) =>
+			postRowMatchesSearch( post, trimmedSearch, activeDocument )
+		);
+	}, [ posts, isPageType, homepageId, trimmedSearch, activeDocument ] );
 
 	useEffect( () => {
 		if ( trimmedSearch && filteredPosts.length > 0 ) {
@@ -94,7 +100,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		);
 	}
 
-	const displayCount = trimmedSearch ? filteredPosts.length : total;
+	const displayCount = total;
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
 	const showNoResults = trimmedSearch && filteredPosts.length === 0;
 
@@ -117,7 +123,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 				return <PostListItem key={ post.id } post={ post } />;
 			} ) }
 			{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
-			{ hasNextPage && ! trimmedSearch && (
+			{ hasNextPage && (
 				<Box
 					sx={ {
 						display: 'flex',

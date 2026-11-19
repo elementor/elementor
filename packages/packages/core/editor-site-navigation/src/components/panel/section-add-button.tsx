@@ -1,25 +1,25 @@
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
-import { getPostTypeCreateCapability, postTypesMap, type Slug } from '../../api/post';
+import { getPostTypeCreateCapability, postTypesMap } from '../../api/post';
 import { usePostListContext } from '../../contexts/post-list-context';
 import useUser from '../../hooks/use-user';
 import ContentPanelAddIconButton from './content-panel-add-icon-button';
 
 type Props = {
-	postTypeSlug?: Slug;
 	onBeforeCreate?: () => void;
 };
 
-export default function SectionAddButton( { postTypeSlug, onBeforeCreate }: Props ) {
-	const context = usePostListContext();
-	const type = postTypeSlug ?? context.type;
-	const setEditMode = context.setEditMode;
+export default function SectionAddButton( { onBeforeCreate }: Props ) {
+	const { type, setEditMode } = usePostListContext();
 	const { data: user } = useUser();
 	const createCapability = getPostTypeCreateCapability( type );
 	const singularName = postTypesMap[ type ].labels.singular_name;
-	// translators: %s: Post type singular name (e.g. Page, Post).
-	const ariaLabel = __( 'New %s', 'elementor' ).replace( '%s', singularName );
+	const ariaLabel = sprintf(
+		/* translators: %s: Post type singular name (e.g. Page, Post). */
+		__( 'New %s', 'elementor' ),
+		singularName
+	);
 
 	return (
 		<ContentPanelAddIconButton

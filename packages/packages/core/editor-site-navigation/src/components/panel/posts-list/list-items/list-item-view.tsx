@@ -13,7 +13,6 @@ import {
 	ListItemButton,
 	ListItemText,
 	Menu,
-	Stack,
 	Tooltip,
 	Typography,
 	usePopupState,
@@ -43,7 +42,7 @@ const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactN
 		return (
 			<Tooltip title={ title } placement="bottom" arrow={ false }>
 				{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-				{ children }
+				<span>{ children }</span>
 			</Tooltip>
 		);
 	}
@@ -71,7 +70,23 @@ export default function ListItemView( { post }: { post: Post } ) {
 	return (
 		<>
 			<DisabledPostTooltip isDisabled={ isDisabled }>
-				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
+				<ListItem
+					disablePadding
+					sx={ contentPanelListRowPaddingSx }
+					secondaryAction={
+						<IconButton
+							aria-label={ __( 'More actions', 'elementor' ) }
+							size="tiny"
+							{ ...menuTriggerProps }
+							onClick={ ( event: React.MouseEvent ) => {
+								event.stopPropagation();
+								menuTriggerProps.onClick?.( event );
+							} }
+						>
+							<DotsVerticalIcon fontSize="tiny" />
+						</IconButton>
+					}
+				>
 					<ListItemButton
 						dense
 						disableGutters
@@ -88,22 +103,9 @@ export default function ListItemView( { post }: { post: Post } ) {
 						<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 							<PageTitleAndStatus title={ title } status={ status } />
 						</ListItemText>
-						<Stack alignItems="center" direction="row" flexShrink={ 0 } gap={ 0.25 }>
-							{ post.isHome && (
-								<HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" />
-							) }
-							<IconButton
-								aria-label={ __( 'More actions', 'elementor' ) }
-								size="tiny"
-								{ ...menuTriggerProps }
-								onClick={ ( event: React.MouseEvent ) => {
-									event.stopPropagation();
-									menuTriggerProps.onClick?.( event );
-								} }
-							>
-								<DotsVerticalIcon fontSize="tiny" />
-							</IconButton>
-						</Stack>
+						{ post.isHome && (
+							<HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" />
+						) }
 					</ListItemButton>
 				</ListItem>
 			</DisabledPostTooltip>

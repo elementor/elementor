@@ -5,10 +5,8 @@ export function getPostTitlePlain( renderedTitle: string ): string {
 
 	const textarea = document.createElement( 'textarea' );
 	textarea.innerHTML = renderedTitle;
-	const { value } = textarea;
-	textarea.remove();
 
-	return value;
+	return textarea.value;
 }
 
 export function postTitleMatchesSearch( renderedTitle: string, searchQuery: string ): boolean {
@@ -19,4 +17,21 @@ export function postTitleMatchesSearch( renderedTitle: string, searchQuery: stri
 	}
 
 	return getPostTitlePlain( renderedTitle ).toLowerCase().includes( query );
+}
+
+export function postRowMatchesSearch(
+	post: { id: number; title: { rendered: string } },
+	searchQuery: string,
+	activeDocument?: { id: number; title: string } | null
+): boolean {
+	const query = searchQuery.trim();
+
+	if ( ! query ) {
+		return true;
+	}
+
+	const title =
+		activeDocument?.id === post.id ? activeDocument.title : post.title.rendered;
+
+	return postTitleMatchesSearch( title, query );
 }

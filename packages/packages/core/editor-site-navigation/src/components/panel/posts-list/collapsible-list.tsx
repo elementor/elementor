@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type PropsWithChildren, type ReactNode, useId } from 'react';
 import { CollapseIcon } from '@elementor/editor-ui';
-import { Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
+import { Box, Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
 import {
 	contentPanelListSectionListSx,
@@ -18,6 +18,8 @@ type Props = {
 };
 
 const sectionHeaderListItemButtonSx = {
+	flexGrow: 1,
+	minWidth: 0,
 	'&:focus': { backgroundColor: 'transparent' },
 	'&:hover': { backgroundColor: 'transparent' },
 	'&.Mui-focusVisible': { backgroundColor: 'transparent' },
@@ -44,27 +46,25 @@ export default function CollapsibleList( {
 
 	return (
 		<>
-			<ListItemButton
-				id={ labelId }
-				aria-controls={ contentId }
-				aria-expanded={ isOpen }
-				aria-label={ sectionHeaderAriaLabel }
-				disableRipple
-				onClick={ handleClick }
+			<Box
 				sx={ {
 					...contentPanelSectionHeaderSx,
-					...sectionHeaderListItemButtonSx,
+					alignItems: 'center',
+					display: 'flex',
+					flexDirection: 'row',
+					width: '100%',
 				} }
 			>
-				<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } width="100%">
-					<Stack
-						alignItems="center"
-						direction="row"
-						flexGrow={ 1 }
-						gap={ 0.5 }
-						justifyContent="flex-start"
-						minWidth={ 0 }
-					>
+				<ListItemButton
+					id={ labelId }
+					aria-controls={ contentId }
+					aria-expanded={ isOpen }
+					aria-label={ sectionHeaderAriaLabel }
+					disableRipple
+					onClick={ handleClick }
+					sx={ sectionHeaderListItemButtonSx }
+				>
+					<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } minWidth={ 0 }>
 						<ListItemText
 							secondary={ title }
 							secondaryTypographyProps={ {
@@ -75,27 +75,21 @@ export default function CollapsibleList( {
 							sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
 						/>
 						<Chip label={ count } size="tiny" />
+						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } />
 					</Stack>
+				</ListItemButton>
+				{ trailingActions && (
 					<Stack
 						alignItems="center"
 						direction="row"
 						flexShrink={ 0 }
 						gap={ contentPanelSectionHeaderTrailingGap }
-						justifyContent="flex-end"
+						sx={ { marginInlineStart: 0.5 } }
 					>
-						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } />
-						{ trailingActions && (
-							<Stack
-								alignItems="center"
-								direction="row"
-								onClick={ ( event: React.MouseEvent ) => event.stopPropagation() }
-							>
-								{ trailingActions }
-							</Stack>
-						) }
+						{ trailingActions }
 					</Stack>
-				</Stack>
-			</ListItemButton>
+				) }
+			</Box>
 			<Collapse aria-labelledby={ labelId } id={ contentId } in={ isOpen } timeout="auto" unmountOnExit>
 				<List dense disablePadding sx={ contentPanelListSectionListSx }>
 					{ children }

@@ -10,14 +10,16 @@ export default function ContentPanelSearch() {
 	const { searchQuery, setSearchQuery } = useContentPanelCoordinator();
 
 	return (
-		<Box sx={ contentPanelSearchBoxSx }>
+		<Box component="search" sx={ contentPanelSearchBoxSx } aria-label={ __( 'Search site content', 'elementor' ) }>
 			<TextField
 				fullWidth
-				role="search"
 				size="tiny"
 				value={ searchQuery }
 				placeholder={ __( 'Search', 'elementor' ) }
 				onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => setSearchQuery( event.target.value ) }
+				inputProps={ {
+					'aria-label': __( 'Search', 'elementor' ),
+				} }
 				InputProps={ {
 					startAdornment: (
 						<InputAdornment position="start">

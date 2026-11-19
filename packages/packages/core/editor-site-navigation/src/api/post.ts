@@ -56,7 +56,11 @@ export type PostsResponse = {
 	currentPage: number;
 };
 
-export const getRequest = async ( postTypeSlug: Slug, page: number ): Promise< PostsResponse > => {
+export const getRequest = async (
+	postTypeSlug: Slug,
+	page: number,
+	search = ''
+): Promise< PostsResponse > => {
 	const baseUri = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
 
 	const keys: Array< keyof Post > = [ 'id', 'type', 'title', 'link', 'status', 'user_can' ];
@@ -68,6 +72,12 @@ export const getRequest = async ( postTypeSlug: Slug, page: number ): Promise< P
 		per_page: POST_PER_PAGE.toString(),
 		_fields: keys.join( ',' ),
 	} );
+
+	const trimmedSearch = search.trim();
+
+	if ( trimmedSearch ) {
+		queryParams.set( 'search', trimmedSearch );
+	}
 
 	const uri = baseUri + '?' + queryParams.toString();
 

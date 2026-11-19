@@ -14,6 +14,7 @@ type Props = {
 };
 
 export default function EditModeTemplate( { postTitle, isLoading, callback }: Props ) {
+	const { resetEditMode } = usePostListContext();
 	const [ title, setTitle ] = useState( postTitle );
 	const [ touched, setTouched ] = useState( false );
 	const [ inputError, setInputError ] = useState< string | null >( null );
@@ -25,6 +26,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 		}
 
 		if ( ! touched ) {
+			resetEditMode();
 			return;
 		}
 

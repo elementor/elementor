@@ -3,7 +3,10 @@ import { createMockDocument, renderWithQuery } from 'test-utils';
 import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { ContentPanelCoordinatorProvider } from '../../../../contexts/content-panel-coordinator';
+import {
+	ContentPanelCoordinatorProvider,
+	useContentPanelCoordinator,
+} from '../../../../contexts/content-panel-coordinator';
 import { PostListContextProvider } from '../../../../contexts/post-list-context';
 import { usePosts } from '../../../../hooks/use-posts';
 import PostsCollapsibleList from '../posts-collapsible-list';
@@ -77,6 +80,19 @@ jest.mock( '../../../../hooks/use-user', () => ( {
 
 const renderList = ( ui: React.ReactElement ) =>
 	renderWithQuery( <ContentPanelCoordinatorProvider>{ ui }</ContentPanelCoordinatorProvider> );
+
+function SearchHarness() {
+	const { setSearchQuery } = useContentPanelCoordinator();
+
+	return (
+		<>
+			<button type="button" onClick={ () => setSearchQuery( 'missing' ) }>
+				Search missing
+			</button>
+			<PostsCollapsibleList isOpenByDefault />
+		</>
+	);
+}
 
 describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	beforeEach( () => {
@@ -216,6 +232,18 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 		// Assert.
 		expect( screen.queryByRole( 'button', { name: 'Load more' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows empty state when search has no matches', () => {
+		renderList(
+			<PostListContextProvider type={ 'page' } setError={ () => {} }>
+				<SearchHarness />
+			</PostListContextProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Search missing' } ) );
+
+		expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
 	} );
 
 	it( 'Should render load button when there is next page', () => {
