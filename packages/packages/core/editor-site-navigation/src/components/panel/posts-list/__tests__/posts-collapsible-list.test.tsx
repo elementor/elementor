@@ -235,35 +235,36 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	} );
 
 	it( 'shows empty state when search has no matches', async () => {
-		jest.mocked( usePosts ).mockImplementation( ( _type, search = '' ) =>
-			( {
+		const defaultPagePosts = [
+			{
+				id: 1,
+				type: 'page',
+				title: { rendered: 'Home' },
+				status: 'publish',
+				link: 'www.test.demo',
+				user_can: { edit: true, delete: true },
+			},
+			{
+				id: 2,
+				type: 'page',
+				title: { rendered: 'About' },
+				status: 'draft',
+				link: 'www.test.demo',
+				user_can: { edit: true, delete: true },
+			},
+		];
+
+		jest.mocked( usePosts ).mockImplementation( ( _type, search = '' ) => {
+			const isEmptySearchResult = search === 'missing';
+
+			return {
 				isLoading: false,
 				data: {
-					posts:
-						search === 'missing'
-							? []
-							: [
-									{
-										id: 1,
-										type: 'page',
-										title: { rendered: 'Home' },
-										status: 'publish',
-										link: 'www.test.demo',
-										user_can: { edit: true, delete: true },
-									},
-									{
-										id: 2,
-										type: 'page',
-										title: { rendered: 'About' },
-										status: 'draft',
-										link: 'www.test.demo',
-										user_can: { edit: true, delete: true },
-									},
-							  ],
-					total: search === 'missing' ? 0 : 2,
+					posts: isEmptySearchResult ? [] : defaultPagePosts,
+					total: isEmptySearchResult ? 0 : 2,
 				},
-			} ) as ReturnType< typeof usePosts >
-		);
+			} as ReturnType< typeof usePosts >;
+		} );
 
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
