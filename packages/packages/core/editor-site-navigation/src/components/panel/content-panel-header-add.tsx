@@ -14,22 +14,13 @@ const typeIcons: Record< Slug, typeof PageTypeIcon > = {
 	post: PostTypeIcon,
 };
 
-function HeaderAddMenuItem( {
-	slug,
-	onSelect,
-}: {
-	slug: Slug;
-	onSelect: ( slug: Slug ) => void;
-} ) {
+function HeaderAddMenuItem( { slug, onSelect }: { slug: Slug; onSelect: ( slug: Slug ) => void } ) {
 	const canCreate = useCanCreate( slug );
 	const Icon = typeIcons[ slug ];
 	const singularName = postTypesMap[ slug ].labels.singular_name;
 
 	return (
-		<MenuItem
-			disabled={ ! canCreate }
-			onClick={ () => onSelect( slug ) }
-		>
+		<MenuItem disabled={ ! canCreate } onClick={ () => onSelect( slug ) }>
 			<ListItemIcon>
 				<Icon fontSize="small" />
 			</ListItemIcon>

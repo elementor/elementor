@@ -5,5 +5,5 @@ export default function useCanCreate( postTypeSlug: Slug ): boolean {
 	const { data: user } = useUser();
 	const capability = getPostTypeCreateCapability( postTypeSlug );
 
-	return !!user?.capabilities?.[ capability ];
+	return !! user?.capabilities?.[ capability ];
 }

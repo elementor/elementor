@@ -17,10 +17,7 @@ import PostsCollapsibleList from './posts-list/posts-collapsible-list';
 const Shell = () => {
 	const [ isErrorSnackbarOpen, setIsErrorSnackbarOpen ] = useState( false );
 	const { data: user, isPending: isUserPending } = useUser();
-	const accessiblePostTypes = useMemo(
-		() => getAccessiblePanelPostTypes( user?.capabilities ?? {} ),
-		[ user ]
-	);
+	const accessiblePostTypes = useMemo( () => getAccessiblePanelPostTypes( user?.capabilities ?? {} ), [ user ] );
 
 	return (
 		<ContentPanelCoordinatorProvider>

@@ -132,7 +132,7 @@ const defaultUseUserValue = {
 			edit_pages: true,
 		},
 	},
-} as ReturnType< typeof useUser >;
+} as unknown as ReturnType< typeof useUser >;
 
 describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	beforeEach( () => {
@@ -218,7 +218,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 					edit_posts: true,
 				},
 			},
-		} as ReturnType< typeof useUser > );
+		} as unknown as ReturnType< typeof useUser > );
 
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
