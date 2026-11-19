@@ -23,6 +23,16 @@
                 "event_id": "settings"
             },
             {
+                "slug": "elementor-mcp",
+                "label": "Elementor MCP",
+                "url": "/wp-admin/admin.php?page=elementor-mcp",
+                "icon": "extension",
+                "group_id": "",
+                "priority": 25,
+                "has_divider_before": false,
+                "event_id": "mcp"
+            },
+            {
                 "slug": "elementor-tools",
                 "label": "Tools",
                 "url": "/wp-admin/admin.php?page=elementor-tools",
