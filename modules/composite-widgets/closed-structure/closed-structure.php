@@ -4,6 +4,7 @@ namespace Elementor\Modules\CompositeWidgets\ClosedStructure;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Markers;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
+use Elementor\Modules\CompositeWidgets\Instance\Widget_Instance_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -74,6 +75,67 @@ class Closed_Structure {
 			__( 'Element "%s" is inside a widget, so elements can’t be added to it or moved into it.', 'elementor' ),
 			$parent_id
 		);
+	}
+
+	/**
+	 * `isLocked` is saved with each part, but a widget's definition can stop being registered: a site
+	 * widget is deleted, or the plugin that registered it is deactivated. Re-deriving it on editor load
+	 * keeps the UI in line with the guard: parts are locked only while their widget closes them.
+	 */
+	public function sync_locks( array $elements ): array {
+		return $this->sync_locks_below( $elements, false );
+	}
+
+	public static function contains_widget_root( array $elements ): bool {
+		foreach ( $elements as $element ) {
+			if ( ! is_array( $element ) ) {
+				continue;
+			}
+
+			if ( isset( $element[ Widget_Markers::WIDGET_KEY ] ) || self::contains_widget_root( $element['elements'] ?? [] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function sync_locks_below( array $elements, bool $is_closed ): array {
+		foreach ( $elements as $index => $element ) {
+			if ( ! is_array( $element ) ) {
+				continue;
+			}
+
+			if ( '' !== Widget_Markers::sanitize_part( $element[ Widget_Markers::PART_KEY ] ?? null ) ) {
+				$element = $this->with_lock( $element, $is_closed );
+			}
+
+			if ( is_array( $element['elements'] ?? null ) ) {
+				$element['elements'] = $this->sync_locks_below( $element['elements'], $this->closes_children( $element, $is_closed ) );
+			}
+
+			$elements[ $index ] = $element;
+		}
+
+		return $elements;
+	}
+
+	private function with_lock( array $element, bool $is_locked ): array {
+		if ( $is_locked ) {
+			$element[ Widget_Instance_Factory::LOCKED_KEY ] = true;
+		} else {
+			unset( $element[ Widget_Instance_Factory::LOCKED_KEY ] );
+		}
+
+		return $element;
+	}
+
+	private function closes_children( array $element, bool $is_closed ): bool {
+		if ( $this->is_slot( $element ) ) {
+			return false;
+		}
+
+		return $is_closed || $this->is_registered_widget_root( $element );
 	}
 
 	private function is_closed_by( array $ancestors ): bool {

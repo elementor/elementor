@@ -43,6 +43,8 @@ class Atomic_Menu extends Atomic_Element_Base {
 	const ELEMENT_TYPE_TOGGLE = 'e-menu-toggle';
 	const ELEMENT_TYPE_TOGGLE_CLOSED = 'e-menu-toggle-closed';
 	const ELEMENT_TYPE_TOGGLE_OPEN = 'e-menu-toggle-open';
+	const ELEMENT_TYPE_SUBMENU_TRIGGER = 'e-menu-submenu-trigger';
+	const ELEMENT_TYPE_SUBMENU = 'e-menu-submenu';
 
 	const POSITION_OVERLAY = 'overlay';
 	const POSITION_IN_FLOW = 'in-flow';
