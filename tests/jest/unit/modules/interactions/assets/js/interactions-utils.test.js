@@ -1,7 +1,13 @@
 import {
 	getKeyframes,
 	getTransformBaselineFromComputedStyle,
+	getOpacityBaselineFromComputedStyle,
+	getFadeTargetOpacity,
 	preserveTransformKeyframes,
+	preserveOpacityKeyframes,
+	endsAtTransformBaseline,
+	mergeCommittedTransformChannels,
+	shouldResetElementStyles,
 	parseAnimationName,
 	skipInteraction,
 	extractAnimationConfig,
@@ -632,6 +638,152 @@ describe( 'interactions-utils', () => {
 
 			const result = extractInteractionId( interaction );
 			expect( result ).toBe( 'temp-abc123xyz' );
+		} );
+	} );
+
+	describe( 'shouldResetElementStyles', () => {
+		it( 'returns true for an "in" end state that matches the CSS default', () => {
+			expect( shouldResetElementStyles( { scale: [ 0, 1 ] } ) ).toBe( true );
+			expect( shouldResetElementStyles( { x: [ -100, 0 ], y: [ 50, 0 ] } ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ] } ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], x: [ -50, 0 ] } ) ).toBe( true );
+		} );
+
+		it( 'returns false for an "out" end state that is off-identity', () => {
+			expect( shouldResetElementStyles( { opacity: [ 1, 0 ] } ) ).toBe( false );
+			expect( shouldResetElementStyles( { scale: [ 1, 0 ] } ) ).toBe( false );
+			expect( shouldResetElementStyles( { x: [ 0, -100 ] } ) ).toBe( false );
+		} );
+
+		it( 'returns true when no end state differs from the CSS default', () => {
+			expect( shouldResetElementStyles( {} ) ).toBe( true );
+		} );
+
+		it( 'compares the end state against the transform baseline when one is given', () => {
+			const baseline = { x: -100, y: 0, scaleX: 1.2, scaleY: 1.2 };
+
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], x: [ -100, -100 ] }, baseline ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], scale: [ 1.2, 1.2 ] }, baseline ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ], x: [ -100, -100 ] } ) ).toBe( false );
+		} );
+
+		it( 'returns false when the end state differs from the transform baseline', () => {
+			const baseline = { x: -100, y: 0, scaleX: 1.2, scaleY: 1.2 };
+
+			expect( shouldResetElementStyles( { x: [ -50, 0 ] }, baseline ) ).toBe( false );
+			expect( shouldResetElementStyles( { scale: [ 0, 1 ] }, baseline ) ).toBe( false );
+		} );
+
+		it( 'compares the opacity end state against the opacity baseline', () => {
+			expect( shouldResetElementStyles( { opacity: [ 0, 0.6 ] }, null, 0.6 ) ).toBe( true );
+			expect( shouldResetElementStyles( { opacity: [ 0, 1 ] }, null, 0.6 ) ).toBe( false );
+			expect( shouldResetElementStyles( { opacity: [ 0.6, 0 ] }, null, 0.6 ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getOpacityBaselineFromComputedStyle', () => {
+		afterEach( () => {
+			jest.restoreAllMocks();
+		} );
+
+		it( 'returns the authored opacity when it is between 0 and 1', () => {
+			jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( { opacity: '0.6' } );
+
+			expect( getOpacityBaselineFromComputedStyle( document.createElement( 'div' ) ) ).toBe( 0.6 );
+		} );
+
+		it( 'returns 0 for a hidden element, so the reset sees the real stylesheet state', () => {
+			jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( { opacity: '0' } );
+
+			expect( getOpacityBaselineFromComputedStyle( document.createElement( 'div' ) ) ).toBe( 0 );
+		} );
+
+		it( 'returns 1 for the default and an unreadable opacity', () => {
+			const element = document.createElement( 'div' );
+			const getComputedStyle = jest.spyOn( window, 'getComputedStyle' );
+
+			[ '1', '', undefined ].forEach( ( opacity ) => {
+				getComputedStyle.mockReturnValue( { opacity } );
+
+				expect( getOpacityBaselineFromComputedStyle( element ) ).toBe( 1 );
+			} );
+		} );
+	} );
+
+	describe( 'getFadeTargetOpacity', () => {
+		it( 'keeps an authored opacity between 0 and 1 as the fade target', () => {
+			expect( getFadeTargetOpacity( 0.6 ) ).toBe( 0.6 );
+		} );
+
+		it( 'keeps the fade target at 1 for a default or a hidden element', () => {
+			expect( getFadeTargetOpacity( 1 ) ).toBe( 1 );
+			expect( getFadeTargetOpacity( 0 ) ).toBe( 1 );
+		} );
+	} );
+
+	describe( 'endsAtTransformBaseline', () => {
+		it( 'returns true when the keyframes do not write a transform', () => {
+			expect( endsAtTransformBaseline( { opacity: [ 1, 0 ] } ) ).toBe( true );
+		} );
+
+		it( 'returns true when the transform end state matches the baseline', () => {
+			const baseline = { x: -100, y: 0, scaleX: 1.2, scaleY: 1.2 };
+
+			expect( endsAtTransformBaseline( { x: [ -200, -100 ] }, baseline ) ).toBe( true );
+			expect( endsAtTransformBaseline( { scale: [ 0, 1.2 ] }, baseline ) ).toBe( true );
+		} );
+
+		it( 'returns false when the transform end state is off the baseline', () => {
+			expect( endsAtTransformBaseline( { x: [ 0, -100 ] } ) ).toBe( false );
+			expect( endsAtTransformBaseline( { scale: [ 0, 1 ] }, { x: 0, y: 0, scaleX: 1.2, scaleY: 1.2 } ) ).toBe( false );
+		} );
+
+		it( 'ignores a written channel that already matches the baseline', () => {
+			expect( endsAtTransformBaseline( { x: [ -100, 0 ], scale: [ 0, 1 ] } ) ).toBe( true );
+		} );
+
+		it( 'checks each written scale axis against its own baseline', () => {
+			expect( endsAtTransformBaseline( { scaleX: [ 1, 1 ], scaleY: [ 1, 0.5 ] } ) ).toBe( false );
+			expect( endsAtTransformBaseline( { scaleX: [ 1, 1.2 ], scaleY: [ 1, 1.2 ] }, { scaleX: 1.2, scaleY: 1.2 } ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'mergeCommittedTransformChannels', () => {
+		it( 'adds the channels an animation leaves off the baseline', () => {
+			expect( [ ...mergeCommittedTransformChannels( undefined, { x: [ 0, -100 ] }, null ) ] ).toEqual( [ 'x' ] );
+			expect( [ ...mergeCommittedTransformChannels( undefined, { scale: [ 1, 0.5 ] }, null ) ] ).toEqual( [ 'scale' ] );
+		} );
+
+		it( 'keeps a committed channel the new animation does not write', () => {
+			const committed = mergeCommittedTransformChannels( [ 'x' ], { opacity: [ 0, 1 ] }, null );
+
+			expect( [ ...committed ] ).toEqual( [ 'x' ] );
+		} );
+
+		it( 'clears a committed channel that an animation brings back to the baseline', () => {
+			const committed = mergeCommittedTransformChannels( [ 'x' ], { x: [ -100, 0 ] }, null );
+
+			expect( committed.size ).toBe( 0 );
+		} );
+
+		it( 'tracks channels independently on one element', () => {
+			const committed = mergeCommittedTransformChannels( [ 'x' ], { scale: [ 1, 0.5 ] }, null );
+
+			expect( [ ...committed ].sort() ).toEqual( [ 'scale', 'x' ] );
+		} );
+	} );
+
+	describe( 'preserveOpacityKeyframes', () => {
+		it( 'ends an "in" fade and starts an "out" fade at the baseline opacity', () => {
+			expect( preserveOpacityKeyframes( { opacity: [ 0, 1 ] }, 0.6 ) ).toEqual( { opacity: [ 0, 0.6 ] } );
+			expect( preserveOpacityKeyframes( { opacity: [ 1, 0 ] }, 0.6 ) ).toEqual( { opacity: [ 0.6, 0 ] } );
+		} );
+
+		it( 'returns the keyframes untouched when there is nothing to change', () => {
+			const keyframes = { opacity: [ 0, 1 ] };
+
+			expect( preserveOpacityKeyframes( keyframes, 1 ) ).toBe( keyframes );
+			expect( preserveOpacityKeyframes( { x: [ -50, 0 ] }, 0.6 ) ).toEqual( { x: [ -50, 0 ] } );
 		} );
 	} );
 } );
