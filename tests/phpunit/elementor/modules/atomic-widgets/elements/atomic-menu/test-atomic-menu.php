@@ -797,4 +797,18 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 			'unrelated attribute' => [ 'data-aria-label-x="1"', false ],
 		];
 	}
+
+	public function test_entry_base_styles__lays_out_content_as_a_row() {
+		// Arrange.
+		$entry = new Atomic_Menu_Entry( [ 'id' => 'e1', 'elType' => 'e-menu-entry' ] );
+		$method = new \ReflectionMethod( $entry, 'define_base_style_props' );
+		$method->setAccessible( true );
+
+		// Act.
+		$styles = $method->invoke( $entry );
+
+		// Assert.
+		$this->assertSame( 'flex', $styles['display']['value'] );
+		$this->assertSame( 'center', $styles['align-items']['value'] );
+	}
 }

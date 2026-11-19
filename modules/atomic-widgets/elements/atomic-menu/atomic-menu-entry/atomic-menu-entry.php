@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Submenu_Entitlement;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use Elementor\Plugin;
@@ -106,6 +107,12 @@ class Atomic_Menu_Entry extends Atomic_Menu_Locked_Element {
 
 	protected function define_base_style_props(): array {
 		return [
+			'display' => String_Prop_Type::generate( 'flex' ),
+			'align-items' => String_Prop_Type::generate( 'center' ),
+			'gap' => Size_Prop_Type::generate( [
+				'size' => 4,
+				'unit' => 'px',
+			] ),
 			'width' => Size_Prop_Type::generate( [
 				'size' => '',
 				'unit' => 'auto',
