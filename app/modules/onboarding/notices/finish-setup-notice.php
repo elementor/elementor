@@ -21,6 +21,7 @@ class Finish_Setup_Notice extends Base_Notice {
 	public function get_config() {
 		return [
 			'id' => self::NOTICE_ID,
+			'type' => 'info',
 			'title' => esc_html__( 'Finish setting up Elementor', 'elementor' ),
 			'description' => esc_html__( 'Complete setup to get the most out of Elementor - connect your account, pick your starting point, and start building.', 'elementor' ),
 			'dismissible' => true,
