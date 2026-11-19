@@ -131,6 +131,13 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'enqueue_block_editor_assets', function() {
+			// Skip Elementor AI assets in the WordPress Widgets editor.
+			$screen = get_current_screen();
+
+			if ( $screen && 'widgets' === $screen->id ) {
+				return;
+			}
+
 			wp_enqueue_script( 'elementor-ai-gutenberg',
 				$this->get_js_assets_url( 'ai-gutenberg' ),
 				[
