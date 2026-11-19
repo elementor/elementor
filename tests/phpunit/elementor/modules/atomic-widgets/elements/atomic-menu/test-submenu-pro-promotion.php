@@ -224,6 +224,46 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertSame( 'isub0001', $saved_submenu['elements'][1]['elements'][0]['elements'][0]['elements'][1]['id'] );
 	}
 
+	public function test_childless_trigger_and_empty_submenu_settings_survive_a_save_while_pro_is_off() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+
+		$trigger_settings = [
+			'show-indicator' => [ '$$type' => 'boolean', 'value' => false ],
+			'closed-angle' => [ '$$type' => 'number', 'value' => 90 ],
+			'open-angle' => [ '$$type' => 'number', 'value' => -90 ],
+			'label-open' => [ '$$type' => 'string', 'value' => 'Show products' ],
+			'label-close' => [ '$$type' => 'string', 'value' => 'Hide products' ],
+		];
+		$submenu_settings = [
+			'position-relative-to' => [ '$$type' => 'string', 'value' => 'viewport' ],
+			'horizontal-alignment' => [ '$$type' => 'string', 'value' => 'end' ],
+		];
+		$entry = [
+			'id' => 'entry01',
+			'elType' => 'e-menu-entry',
+			'settings' => [ 'submenu' => [ '$$type' => 'boolean', 'value' => true ] ],
+			'elements' => [
+				[ 'id' => 'item001', 'elType' => 'e-menu-item', 'settings' => [], 'elements' => [] ],
+				[ 'id' => 'trig001', 'elType' => 'e-menu-submenu-trigger', 'settings' => $trigger_settings, 'elements' => [] ],
+				[ 'id' => 'sub0001', 'elType' => 'e-menu-submenu', 'settings' => $submenu_settings, 'elements' => [] ],
+			],
+		];
+		$menu = [ 'id' => 'menu001', 'elType' => 'e-menu', 'settings' => [], 'elements' => [ [ 'id' => 'items01', 'elType' => 'e-menu-items', 'settings' => [], 'elements' => [ $entry ] ] ] ];
+
+		// Act.
+		$document = $this->factory()->documents->create_and_get();
+		$document->save( [ 'elements' => [ $menu ], 'settings' => [] ] );
+
+		// Assert.
+		$saved_entry = $document->get_elements_data()[0]['elements'][0]['elements'][0];
+
+		$this->assertTrue( $saved_entry['settings']['submenu']['value'] );
+		$this->assertSame( $trigger_settings, $saved_entry['elements'][1]['settings'] );
+		$this->assertSame( $submenu_settings, $saved_entry['elements'][2]['settings'] );
+	}
+
 	public function test_menu_item_controls_serialize_with_the_submenu_toggle() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
