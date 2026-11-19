@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Elements\AtomicMenu;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
@@ -37,6 +38,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 	public function tear_down() {
 		$this->get_element_types_property()->setValue( Plugin::$instance->elements_manager, $this->original_element_types );
 		Plugin::$instance->experiments->set_feature_default_state( Atomic_Widgets_Module::EXPERIMENT_NAV_MENU, Experiments_Manager::STATE_INACTIVE );
+		remove_all_filters( 'elementor/atomic-widgets/menu/submenu/is_locked' );
 
 		parent::tear_down();
 	}
@@ -139,6 +141,86 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( [ 'e-menu-entry' ], $this->get_config( 'e-menu-items' )['allowed_child_types'] );
 		$this->assertSame( [ 'e-menu-item', 'e-menu-submenu-trigger', 'e-menu-submenu' ], $this->get_config( 'e-menu-entry' )['allowed_child_types'] );
 		$this->assertSame( [], $this->get_config( 'e-menu-item' )['allowed_child_types'] );
+	}
+
+	public function test_entry_submenu_defaults_to_off() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$prop = Atomic_Menu_Entry::get_props_schema()[ Atomic_Menu_Entry::SUBMENU_PROP ];
+
+		// Assert.
+		$this->assertSame( 'submenu', Atomic_Menu_Entry::SUBMENU_PROP );
+		$this->assertSame( [
+			'$$type' => 'boolean',
+			'value' => false,
+		], $prop->get_default() );
+	}
+
+	public function test_get_config__entry_declares_submenu_children_dependencies() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$dependencies = $this->get_config( 'e-menu-entry' )['children_dependencies'];
+
+		// Assert.
+		$this->assertSame( [ 'e-menu-submenu-trigger', 'e-menu-submenu' ], array_column( $dependencies, 'child_type' ) );
+		$this->assertSame(
+			[
+				[
+					'kind' => 'after_type',
+					'value' => 'e-menu-item',
+				],
+				[
+					'kind' => 'after_type',
+					'value' => 'e-menu-submenu-trigger',
+				],
+			],
+			array_column( $dependencies, 'position' )
+		);
+
+		foreach ( $dependencies as $dependency ) {
+			$this->assertTrue( $dependency['stash'] );
+			$this->assertSame( 'eq', $dependency['when']['terms'][0]['operator'] );
+			$this->assertSame( [ 'submenu' ], $dependency['when']['terms'][0]['path'] );
+			$this->assertTrue( $dependency['when']['terms'][0]['value'] );
+			$this->assertSame( $dependency['child_type'], $dependency['default_model']['elType'] );
+			$this->assertTrue( $dependency['default_model']['isLocked'] );
+			$this->assertTrue( $dependency['default_model']['hydrateDefaultChildren'] );
+		}
+	}
+
+	public function test_default_content__no_entry_enables_submenu_when_locked() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$entries = $this->get_config( 'e-menu' )['default_children'][0]['elements'];
+
+		// Assert.
+		foreach ( $entries as $entry ) {
+			$this->assertArrayNotHasKey( Atomic_Menu_Entry::SUBMENU_PROP, $entry['settings'] ?? [] );
+		}
+	}
+
+	public function test_default_content__products_entry_enables_submenu_when_unlocked() {
+		// Arrange.
+		add_filter( 'elementor/atomic-widgets/menu/submenu/is_locked', '__return_false' );
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$entries = $this->get_config( 'e-menu' )['default_children'][0]['elements'];
+
+		// Assert.
+		$enabled = array_map(
+			fn( $entry ) => $entry['settings'][ Atomic_Menu_Entry::SUBMENU_PROP ]['value'] ?? false,
+			$entries
+		);
+		$this->assertSame( [ false, true, false, false ], $enabled );
+		$this->assertSame( 'boolean', $entries[1]['settings'][ Atomic_Menu_Entry::SUBMENU_PROP ]['$$type'] );
+		$this->assertSame( [ 'e-menu-item' ], array_column( $entries[1]['elements'], 'elType' ) );
 	}
 
 	public function test_menu_entries_size_to_their_content_instead_of_the_full_width_container_default() {
