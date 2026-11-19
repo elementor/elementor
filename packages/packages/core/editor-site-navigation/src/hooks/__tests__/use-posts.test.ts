@@ -104,6 +104,8 @@ describe( '@elementor/site-settings/use-posts', () => {
 			} );
 		} );
 
-		expect( component.result.current.isLoading ).toBeFalsy();
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
 	} );
 } );

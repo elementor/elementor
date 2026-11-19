@@ -103,9 +103,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 						<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 							<PageTitleAndStatus title={ title } status={ status } />
 						</ListItemText>
-						{ post.isHome && (
-							<HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" />
-						) }
+						{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
 					</ListItemButton>
 				</ListItem>
 			</DisabledPostTooltip>
