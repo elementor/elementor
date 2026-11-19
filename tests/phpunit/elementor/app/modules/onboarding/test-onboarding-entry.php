@@ -138,21 +138,6 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 		$this->assertTrue( Onboarding_Entry::is_pending() );
 	}
 
-	public function test_decide__skips_old_installs() {
-		// Arrange
-		$this->act_as_admin();
-		$this->prime_pending_window();
-		update_option( Upgrade_Manager::get_install_history_meta(), [ '3.5.0' => time() ] );
-
-		// Act
-		$decision = Onboarding_Entry::decide();
-
-		// Assert
-		$this->assertSame( Onboarding_Entry::DECISION_SKIP, $decision['type'] );
-		$this->assertSame( Onboarding_Entry::REASON_ALREADY_ONBOARDED, $decision['reason'] );
-		$this->assertFalse( Onboarding_Entry::is_pending() );
-	}
-
 	public function test_decide__skips_when_not_pending() {
 		// Arrange
 		$this->act_as_admin();

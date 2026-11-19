@@ -15,7 +15,6 @@ class Onboarding_Entry {
 	const ACTIVATED_AT_OPTION = 'elementor_onboarding_activated_at';
 	const EVENT_QUEUE_OPTION = 'elementor_onboarding_redirect_event_queue';
 	const EVENT_NAME = 'core_onboarding_redirect_decision';
-	const MIN_ONBOARDING_VERSION = '3.6.0-beta';
 	const ELIGIBILITY_WINDOW = 14 * DAY_IN_SECONDS;
 
 	const DECISION_REDIRECT = 'redirect';
@@ -23,7 +22,6 @@ class Onboarding_Entry {
 	const DECISION_SKIP = 'skip';
 
 	const REASON_REDIRECTED = 'redirected';
-	const REASON_ALREADY_ONBOARDED = 'already_onboarded';
 	const REASON_ALREADY_LOGGED_IN = 'already_logged_in';
 	const REASON_EXPIRED = 'expired';
 	const REASON_AJAX = 'ajax';
@@ -64,16 +62,6 @@ class Onboarding_Entry {
 		}
 
 		return ( time() - $activated_at ) <= self::ELIGIBILITY_WINDOW;
-	}
-
-	public static function is_new_install(): bool {
-		$latest_install = key( Upgrade_Manager::get_installs_history() );
-
-		if ( ! empty( $latest_install ) ) {
-			return version_compare( $latest_install, self::MIN_ONBOARDING_VERSION, '>=' );
-		}
-
-		return true;
 	}
 
 	public static function has_finished_onboarding(): bool {
@@ -126,13 +114,6 @@ class Onboarding_Entry {
 			return self::skip( self::REASON_EXPIRED );
 		}
 
-		if ( ! self::is_new_install() ) {
-			self::clear_pending();
-			self::track_decision( self::REASON_ALREADY_ONBOARDED );
-
-			return self::skip( self::REASON_ALREADY_ONBOARDED );
-		}
-
 		if ( self::has_finished_onboarding() ) {
 			self::track_decision( self::REASON_THIRD_PARTY_SKIP );
 
@@ -155,7 +136,6 @@ class Onboarding_Entry {
 		return current_user_can( 'manage_options' )
 			&& self::is_pending()
 			&& self::is_within_eligibility_window()
-			&& self::is_new_install()
 			&& self::has_finished_onboarding();
 	}
 
