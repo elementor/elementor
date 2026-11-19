@@ -9,6 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * New-install onboarding reach (ED-26365).
+ *
+ * A/B/E: one forced setup entry on the first real admin visit within 14 days of activation.
+ * C: partner already marked onboarded — do not redirect; offer a dismissible notice.
+ * D: existing sites (plugin update, or logged-in reactivate) — no push.
+ */
 class Onboarding_Entry {
 
 	const PENDING_OPTION = 'elementor_onboarding_pending';
@@ -33,17 +40,14 @@ class Onboarding_Entry {
 	}
 
 	public static function mark_activation(): void {
-		// Reactivate from wp-admin: keep elementor_onboarded, do not open a new 14-day nudge.
 		if ( self::should_skip_pending_for_logged_in_existing_site() ) {
 			self::track_decision( self::REASON_ALREADY_LOGGED_IN );
 
 			return;
 		}
 
-		// First activate (UI with empty history, or CLI/host with no user): start the window.
 		update_option( self::PENDING_OPTION, true );
 
-		// Keep the original activation timestamp if pending is set again before it is consumed.
 		if ( ! get_option( self::ACTIVATED_AT_OPTION ) ) {
 			update_option( self::ACTIVATED_AT_OPTION, time() );
 		}
@@ -74,12 +78,11 @@ class Onboarding_Entry {
 	public static function decide(): array {
 		self::flush_event_queue();
 
-		// Updates never set pending, so existing sites exit here with no nudge.
 		if ( ! self::is_pending() ) {
 			return self::skip( '' );
 		}
 
-		// Non-interactive contexts must not consume pending; a later real admin visit still needs the redirect.
+		// Do not burn the 14-day window on AJAX/REST/CLI/cron; delayed first login is still eligible (B).
 		if ( wp_doing_ajax() ) {
 			self::track_decision( self::REASON_AJAX );
 
@@ -108,12 +111,11 @@ class Onboarding_Entry {
 			return self::skip( '' );
 		}
 
-		// Already in the app; avoid fighting the current screen.
 		if ( isset( $_GET['page'] ) && 'elementor-app' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return self::skip( '' );
 		}
 
-		// Server clock: PHP time() vs stored activation Unix timestamp, 14 days.
+		// After 14 days from activation we stop pushing setup.
 		if ( ! self::is_within_eligibility_window() ) {
 			self::clear_pending();
 			self::track_decision( self::REASON_EXPIRED );
@@ -121,7 +123,7 @@ class Onboarding_Entry {
 			return self::skip( self::REASON_EXPIRED );
 		}
 
-		// Theme/plugin set elementor_onboarded without our flow: notice, keep pending until dismiss or real complete.
+		// Partner skip: never force the wizard; keep an opt-in notice instead.
 		if ( self::has_finished_onboarding() ) {
 			self::track_decision( self::REASON_THIRD_PARTY_SKIP );
 
@@ -131,7 +133,7 @@ class Onboarding_Entry {
 			];
 		}
 
-		// Segments A/B/E: one redirect, then pending is gone so it cannot fire again.
+		// One forced setup entry; later visits are not redirected.
 		self::clear_pending();
 		self::track_decision( self::REASON_REDIRECTED );
 
@@ -142,7 +144,6 @@ class Onboarding_Entry {
 	}
 
 	public static function should_show_partner_notice(): bool {
-		// Segment C: admin-only, still in the 14-day pending window, onboarded by a third party.
 		return current_user_can( 'manage_options' )
 			&& self::is_pending()
 			&& self::is_within_eligibility_window()
@@ -174,7 +175,7 @@ class Onboarding_Entry {
 	}
 
 	private static function should_skip_pending_for_logged_in_existing_site(): bool {
-		// CLI/host activate has no user; those installs still get pending for a later first login.
+		// Logged-in reactivate of an existing site must not look like a new install.
 		if ( ! get_current_user_id() ) {
 			return false;
 		}
@@ -202,7 +203,6 @@ class Onboarding_Entry {
 	private static function track_decision( string $reason ): void {
 		$payload = [ 'reason' => $reason ];
 
-		// First visit often happens before tracker consent; queue until can_send_events is true.
 		if ( self::can_send_events() ) {
 			Events_Manager::dispatch_event( self::EVENT_NAME, $payload );
 
