@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type FocusEvent, type FormEvent, type MutableRefObject, useRef, useState } from 'react';
 import { XIcon } from '@elementor/icons';
-import { Box, CircularProgress, IconButton, ListItem, ListItemButton, ListItemText, TextField } from '@elementor/ui';
+import { Box, CircularProgress, IconButton, ListItem, ListItemButton, ListItemText } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -18,43 +18,43 @@ type Props = {
 };
 
 const EDIT_ROW_FOCUS_BORDER_WIDTH_PX = 2;
+const EDIT_ROW_MIN_HEIGHT_PX = 36;
+
+const editModeListItemButtonSx = {
+	...contentPanelListItemButtonSx,
+	alignItems: 'center',
+	backgroundColor: 'transparent',
+	boxSizing: 'border-box',
+	minHeight: EDIT_ROW_MIN_HEIGHT_PX,
+	py: 0,
+};
 
 const editRowIndicatorSx = ( hasError: boolean ) => ( {
 	alignItems: 'center',
 	border: `${ EDIT_ROW_FOCUS_BORDER_WIDTH_PX }px solid`,
 	borderColor: hasError ? 'error.main' : 'secondary.main',
 	borderRadius: 0.5,
+	boxSizing: 'border-box',
 	display: 'flex',
 	flex: 1,
+	minHeight: 0,
 	minWidth: 0,
 	px: 1,
 	py: 0,
 } );
 
-const editModeListItemButtonSx = {
-	...contentPanelListItemButtonSx,
+const editRowInputSx = {
+	...contentPanelListRowTitleSx,
 	backgroundColor: 'transparent',
-	minHeight: 'unset',
-	py: 0,
-	'&:hover': {
-		backgroundColor: 'action.hover',
-	},
-};
-
-const editModeTextFieldSx = {
+	border: 0,
+	color: 'text.secondary',
 	flex: 1,
+	fontFamily: 'inherit',
+	lineHeight: 1.25,
 	minWidth: 0,
-	'& .MuiInputBase-input': {
-		...contentPanelListRowTitleSx,
-		height: '1.25rem',
-		lineHeight: 1.25,
-		padding: 0,
-	},
-	'& .MuiInput-root': {
-		height: '1.25rem',
-		minHeight: 0,
-		padding: 0,
-	},
+	outline: 0,
+	padding: 0,
+	width: '100%',
 };
 
 export default function EditModeTemplate( { postTitle, isLoading, callback }: Props ) {
@@ -94,7 +94,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 		callback( title );
 	};
 
-	const onChange = ( e: React.ChangeEvent< { value: string } > ) => {
+	const onChange = ( e: React.ChangeEvent< HTMLInputElement > ) => {
 		if ( ! touched ) {
 			setTouched( true );
 		}
@@ -111,7 +111,6 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 	return (
 		<>
 			<ListItem
-				dense
 				disablePadding
 				sx={ contentPanelListRowPaddingSx }
 				secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
@@ -126,31 +125,23 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 					sx={ editModeListItemButtonSx }
 				>
 					<Box sx={ editRowIndicatorSx( !! inputError ) }>
-						<TextField
+						<Box
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							color="secondary"
+							aria-invalid={ !! inputError }
+							aria-label={ __( 'Name', 'elementor' ) }
+							component="input"
 							disabled={ isLoading }
-							error={ !! inputError }
-							fullWidth
-							inputProps={ {
-								'aria-invalid': !! inputError,
-								'aria-label': __( 'Name', 'elementor' ),
-							} }
 							onBlur={ onBlur }
 							onChange={ onChange }
-							size="tiny"
-							sx={ editModeTextFieldSx }
+							sx={ editRowInputSx }
+							type="text"
 							value={ title }
-							variant="standard"
-							InputProps={ {
-								disableUnderline: true,
-							} }
 						/>
 					</Box>
 				</ListItemButton>
 			</ListItem>
 			{ inputError && (
-				<ListItem dense disablePadding sx={ contentPanelListRowPaddingSx }>
+				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
 					<ListItemText sx={ { color: 'error.main', ...contentPanelListRowTitleSx } }>
 						{ inputError }
 					</ListItemText>
