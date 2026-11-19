@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { isSidebarEnabled } from '@elementor/editor-sidebar';
+import { isSidebarEnabled, SIDEBAR_WIDTH_VAR } from '@elementor/editor-sidebar';
 import { bindMenu, bindTrigger, Divider, Stack, usePopupState } from '@elementor/ui';
 
 import { mainMenu } from '../../locations';
@@ -35,9 +35,25 @@ export default function MainMenuLocation() {
 		toolbarLogoProps.onClick( e );
 	};
 
+	const sidebarEnabled = isSidebarEnabled();
+
 	return (
-		<Stack sx={ { paddingInlineStart: isSidebarEnabled() ? 1.25 : 3 } } direction="row" alignItems="center">
-			<ToolbarLogo { ...toolbarLogoProps } onClick={ onToolbarClick } selected={ popupState.isOpen } />
+		<Stack
+			direction="row"
+			alignItems="center"
+			justifyContent={ sidebarEnabled ? 'center' : 'flex-start' }
+			sx={ {
+				flexShrink: 0,
+				paddingInlineStart: sidebarEnabled ? 0 : 3,
+				width: sidebarEnabled ? `var(${ SIDEBAR_WIDTH_VAR })` : undefined,
+			} }
+		>
+			<ToolbarLogo
+				{ ...toolbarLogoProps }
+				alignWithSidebar={ sidebarEnabled }
+				onClick={ onToolbarClick }
+				selected={ popupState.isOpen }
+			/>
 			<PopoverMenu onClick={ popupState.close } { ...bindMenu( popupState ) } marginThreshold={ 8 }>
 				{ menuItems.default.map( ( { MenuItem, id } ) => (
 					<MenuItem key={ id } />
