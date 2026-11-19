@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Chip, Typography, type ChipProps } from '@elementor/ui';
+import { Box, Chip, type ChipProps, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
@@ -49,10 +49,14 @@ const PageStatus = ( { status }: { status: string } ) => {
 
 	const { color, label } = getStatusChipConfig( status );
 
+	const statusTone = color === 'warning' ? 'waiting' : 'neutral';
+
 	return (
 		<Chip
 			color={ color }
 			component="span"
+			data-status-tone={ statusTone }
+			data-testid="post-status-badge"
 			label={ label }
 			size="tiny"
 			sx={ { flexShrink: 0, ml: 0.5, textTransform: 'capitalize' } }
