@@ -4,9 +4,16 @@ import { Box, Divider, Stack } from '@elementor/ui';
 
 import { APP_BAR_HEIGHT, SIDEBAR_CLASS, SIDEBAR_WIDTH_VAR } from '../constants';
 import { sidebarFooter, SidebarFooterSlot, sidebarTools, SidebarToolsSlot } from '../locations';
+import { sidebarRailIconButtonsSx } from '../sidebar-rail-icon-buttons-sx';
 
 const { useMenuItems: useToolsMenuItems } = sidebarTools;
 const { useMenuItems: useFooterMenuItems } = sidebarFooter;
+
+const SIDEBAR_INSET_DIVIDER_SX = {
+	alignSelf: 'center',
+	flexShrink: 0,
+	width: 28,
+} as const;
 
 export default function Sidebar() {
 	const toolsItems = useToolsMenuItems();
@@ -20,6 +27,7 @@ export default function Sidebar() {
 				data-testid="editor-sidebar"
 				aria-label="Editor sidebar"
 				sx={ {
+					...sidebarRailIconButtonsSx,
 					position: 'fixed',
 					zIndex: 2,
 					insetBlockStart: APP_BAR_HEIGHT,
@@ -30,19 +38,24 @@ export default function Sidebar() {
 					flexDirection: 'column',
 					justifyContent: 'space-between',
 					alignItems: 'center',
-					px: 1,
+					px: 1.25,
 					backgroundColor: 'rgb( 242, 242, 242 )',
 				} }
 			>
-				<Stack alignItems="center" pb={ 1.25 } width="100%">
+				<Stack alignItems="center" width="100%">
 					<Groups
+						chromeRowHeightPx={ APP_BAR_HEIGHT }
 						groups={ [ toolsItems.elements, toolsItems.design, toolsItems.default ] }
-						firstGroupHeight={ APP_BAR_HEIGHT }
+						itemGap={ 1.5 }
 					/>
 					<SidebarToolsSlot />
 				</Stack>
 				<Stack alignItems="center" pb={ 1.5 } width="100%">
-					<Groups groups={ [ footerItems.document, footerItems.default ] } />
+					<Groups
+						groups={ [ footerItems.document, footerItems.default ] }
+						groupPaddingBlockEnd={ 0 }
+						itemGap={ 1 }
+					/>
 					<SidebarFooterSlot />
 				</Stack>
 			</Box>
@@ -52,28 +65,78 @@ export default function Sidebar() {
 
 type MenuItems = ReturnType< typeof useToolsMenuItems >[ 'default' ];
 
-function Groups( { groups, firstGroupHeight }: { groups: MenuItems[]; firstGroupHeight?: number } ) {
+function Groups( {
+	groups,
+	chromeRowHeightPx,
+	groupPaddingBlockEnd = 1.5,
+	itemGap,
+}: {
+	groups: MenuItems[];
+	chromeRowHeightPx?: number;
+	groupPaddingBlockEnd?: number;
+	itemGap: number;
+} ) {
+	const groupPaddingBlockStart = 1.5;
+	const visibleGroups = groups.filter( ( items ) => items.length > 0 );
+	const usesChromeRow = chromeRowHeightPx !== undefined && visibleGroups.length > 0;
+
 	return (
 		<>
-			{ groups
-				.filter( ( items ) => items.length > 0 )
-				.map( ( items, index ) => (
+			{ visibleGroups.map( ( items, index ) => {
+				const isFirstGroup = index === 0;
+				const isLastGroup = index === visibleGroups.length - 1;
+				const isChromeRow = isFirstGroup && usesChromeRow;
+				const skipLeadingDivider = index === 1 && usesChromeRow;
+
+				let paddingTop = groupPaddingBlockStart;
+
+				if ( isChromeRow ) {
+					paddingTop = 0;
+				} else if ( ! isFirstGroup ) {
+					paddingTop = 1.5;
+				}
+
+				const paddingBottom = isLastGroup ? groupPaddingBlockEnd : 1.5;
+
+				const menuItems = items.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> );
+
+				return (
 					<React.Fragment key={ index }>
-						{ index > 0 && <Divider flexItem /> }
+						{ index > 0 && ! skipLeadingDivider && (
+							<Divider sx={ { ...SIDEBAR_INSET_DIVIDER_SX, my: 0 } } />
+						) }
 						<Stack
 							alignItems="center"
-							justifyContent="center"
-							gap={ 1 }
-							py={ 1.5 }
-							height={ index === 0 ? firstGroupHeight : undefined }
 							boxSizing="border-box"
+							gap={ isChromeRow ? 0 : itemGap }
+							sx={ isChromeRow ? { height: `${ chromeRowHeightPx }px` } : undefined }
+							justifyContent="center"
+							pt={ isChromeRow ? 0 : paddingTop }
+							pb={ isChromeRow ? 0 : paddingBottom }
+							width="100%"
 						>
-							{ items.map( ( { MenuItem, id } ) => (
-								<MenuItem key={ id } />
-							) ) }
+							{ isChromeRow ? (
+								<>
+									<Stack
+										alignItems="center"
+										flex={ 1 }
+										justifyContent="center"
+										minHeight={ 0 }
+										width="100%"
+									>
+										{ menuItems }
+									</Stack>
+									{ visibleGroups.length > 1 && (
+										<Divider sx={ { ...SIDEBAR_INSET_DIVIDER_SX, flexShrink: 0 } } />
+									) }
+								</>
+							) : (
+								menuItems
+							) }
 						</Stack>
 					</React.Fragment>
-				) ) }
+				);
+			} ) }
 		</>
 	);
 }

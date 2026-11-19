@@ -5,6 +5,7 @@ import {
 	useActiveBreakpoint,
 	useBreakpoints,
 } from '@elementor/editor-responsive';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import {
 	DesktopIcon,
 	LaptopIcon,
@@ -23,6 +24,7 @@ export default function BreakpointsSwitcher() {
 	const breakpoints = useBreakpoints();
 	const activeBreakpoint = useActiveBreakpoint();
 	const activateBreakpoint = useActivateBreakpoint();
+	const sidebarChrome = isSidebarEnabled();
 
 	if ( ! breakpoints.length || ! activeBreakpoint ) {
 		return null;
@@ -72,7 +74,7 @@ export default function BreakpointsSwitcher() {
 						aria-label={ title }
 						icon={
 							<Tooltip title={ title }>
-								<Icon />
+								<Icon fontSize={ sidebarChrome ? 'small' : undefined } />
 							</Tooltip>
 						}
 						sx={ { minWidth: 'auto' } }
