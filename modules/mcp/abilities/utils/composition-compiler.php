@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -18,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Appliers\Widget_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -43,13 +45,15 @@ final class Composition_Compiler {
 	public const COMPONENT_PARENT_ID = 'component';
 
 	private ?Closed_Structure $closed_structure;
+	private ?Widgets_Definitions_Registry $widgets_registry;
 
-	private function __construct( ?Closed_Structure $closed_structure ) {
+	private function __construct( ?Closed_Structure $closed_structure, ?Widgets_Definitions_Registry $widgets_registry ) {
 		$this->closed_structure = $closed_structure;
+		$this->widgets_registry = $widgets_registry;
 	}
 
-	public static function make( ?Closed_Structure $closed_structure = null ): self {
-		return new self( $closed_structure );
+	public static function make( ?Closed_Structure $closed_structure = null, ?Widgets_Definitions_Registry $widgets_registry = null ): self {
+		return new self( $closed_structure, $widgets_registry );
 	}
 
 	/**
@@ -67,13 +71,15 @@ final class Composition_Compiler {
 		string $parent_id = self::DEFAULT_PARENT_ID
 	) {
 		$xml_parser = new Xml_Parser();
-		$type_resolver = new Widget_Type_Resolver( $xml_parser );
 		$subtree_builder = new Subtree_Builder( $xml_parser );
 
 		$dom = $xml_parser->parse( (string) ( $input['xml_structure'] ?? '' ) );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
+
+		$widgets_registry = $this->resolve_widgets_registry( $dom, $xml_parser );
+		$type_resolver = new Widget_Type_Resolver( $xml_parser, null !== $widgets_registry );
 
 		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
 
@@ -122,11 +128,23 @@ final class Composition_Compiler {
 		}
 
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
+		$element_config = $this->as_map( $input['element_config'] ?? [] );
+
+		if ( $widgets_registry ) {
+			$widget_result = ( new Widget_Instance_Applier( $widgets_registry ) )->apply( $index, $element_config, $this->collect_referenced_config_ids( $input ) );
+			if ( $widget_result['error'] ) {
+				return $widget_result['error'];
+			}
+
+			$warnings->merge( $widget_result['warnings'] );
+			$element_config = $widget_result['element_config'];
+			$widget_configs = $this->add_type_configs( $widget_configs, $widget_result['element_types'], $type_resolver );
+		}
 
 		$variables_service = $this->create_variables_service();
 
 		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
-		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs, $document );
+		$config_result = $config_applier->apply( $index, $element_config, $widget_configs, $document );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
 		}
@@ -246,7 +264,7 @@ final class Composition_Compiler {
 			$tag = $xml_parser->get_tag_name( $child );
 			$config = $widget_configs[ $tag ] ?? [];
 
-			if ( 'widget' !== ( $config['elType'] ?? null ) ) {
+			if ( 'widget' !== ( $config['elType'] ?? null ) || Widget_Instance_Applier::WIDGET_TAG === $tag ) {
 				continue;
 			}
 
@@ -316,6 +334,56 @@ final class Composition_Compiler {
 		}
 
 		return $warnings;
+	}
+
+	/**
+	 * Building the registry loads the saved site widgets, so it's done only for a composition with a widget tag.
+	 */
+	private function resolve_widgets_registry( \DOMDocument $dom, Xml_Parser $xml_parser ): ?Widgets_Definitions_Registry {
+		foreach ( $xml_parser->iterate_all_descendants( $dom ) as $node ) {
+			if ( Widget_Instance_Applier::WIDGET_TAG === $xml_parser->get_tag_name( $node ) ) {
+				return $this->widgets_registry ?? Composite_Widgets_Module::get_active_registry();
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function collect_referenced_config_ids( array $input ): array {
+		$referenced = [];
+
+		foreach ( [ 'element_config', 'editor_settings', 'style', 'classes', 'interactions' ] as $map_key ) {
+			$referenced = array_merge( $referenced, array_keys( $this->as_map( $input[ $map_key ] ?? [] ) ) );
+		}
+
+		return $referenced;
+	}
+
+	/**
+	 * Widget parts aren't tags in the XML, so their types are resolved here for the appliers' schemas.
+	 *
+	 * @param array<string, array> $widget_configs
+	 * @param string[]             $element_types
+	 *
+	 * @return array<string, array>
+	 */
+	private function add_type_configs( array $widget_configs, array $element_types, Widget_Type_Resolver $type_resolver ): array {
+		foreach ( $element_types as $element_type ) {
+			if ( isset( $widget_configs[ $element_type ] ) ) {
+				continue;
+			}
+
+			$config = $type_resolver->resolve_type_config( $element_type );
+
+			if ( ! is_wp_error( $config ) ) {
+				$widget_configs[ $element_type ] = $config;
+			}
+		}
+
+		return $widget_configs;
 	}
 
 	private function as_map( $value ): array {

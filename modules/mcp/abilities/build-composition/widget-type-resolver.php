@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\Widget_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -15,9 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Widget_Type_Resolver {
 
 	private Xml_Parser $xml_parser;
+	private bool $resolves_widget_tag;
 
-	public function __construct( Xml_Parser $xml_parser ) {
+	/**
+	 * @param Xml_Parser $xml_parser
+	 * @param bool       $resolves_widget_tag Whether `<e-widget>` is a placeholder for a composite widget instance.
+	 */
+	public function __construct( Xml_Parser $xml_parser, bool $resolves_widget_tag = false ) {
 		$this->xml_parser = $xml_parser;
+		$this->resolves_widget_tag = $resolves_widget_tag;
 	}
 
 	/**
@@ -130,6 +137,16 @@ class Widget_Type_Resolver {
 	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class', 'controls']
 	 */
 	public function resolve_type_config( string $type ) {
+		if ( $this->resolves_widget_tag && Widget_Instance_Applier::WIDGET_TAG === $type ) {
+			return [
+				'elType' => 'widget',
+				'widgetType' => Widget_Instance_Applier::WIDGET_TAG,
+				'allowed_child_types' => [],
+				'default_children' => [],
+				'class' => null,
+			];
+		}
+
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			if (

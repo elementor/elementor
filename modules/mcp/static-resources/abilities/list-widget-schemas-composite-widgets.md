@@ -1,0 +1,1 @@
+With `summary=true` the response also has `composite_widgets: [{ id, title }, ...]`: ready-made widgets that can be added to a page now. Prefer one when it matches the request. Read its parts with `elementor/get-widget-schemas` and the widget id, and place it with the `<e-widget>` tag in `elementor/build-composition`.
