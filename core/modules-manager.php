@@ -143,6 +143,7 @@ class Modules_Manager {
 			'widget-creation',
 			'editor-one',
 			'editor-sidebar',
+			'editor-atomic-panel',
 			'guided-tours',
 			'markdown-render',
 			'agents',

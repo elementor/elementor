@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Box, IconButton, type IconButtonProps, Tooltip as BaseTooltip, type TooltipProps } from '@elementor/ui';
 
 type ToolbarMenuItemProps = IconButtonProps & {
@@ -6,7 +7,15 @@ type ToolbarMenuItemProps = IconButtonProps & {
 	selected?: boolean;
 };
 
+const LEGACY_TOOLBAR_ICON_SVG_SX = {
+	fontSize: '1.25rem',
+	height: '1em',
+	width: '1em',
+} as const;
+
 export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemProps ) {
+	const sidebarChrome = isSidebarEnabled();
+
 	return (
 		<Tooltip title={ title }>
 			{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
@@ -16,11 +25,8 @@ export default function ToolbarMenuItem( { title, ...props }: ToolbarMenuItemPro
 					aria-label={ title }
 					size="medium"
 					sx={ {
-						'& svg': {
-							fontSize: '1.25rem',
-							height: '1em',
-							width: '1em',
-						},
+						...( sidebarChrome ? { borderRadius: 1 } : {} ),
+						'& svg': LEGACY_TOOLBAR_ICON_SVG_SX,
 						'&:hover': {
 							color: 'text.primary',
 						},

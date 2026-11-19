@@ -1,6 +1,6 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
-import { FLOATING_PANEL_Z_INDEX_BASE } from '../../constants';
+import { DOCKED_FLOATING_PANEL_Z_INDEX, FLOATING_PANEL_Z_INDEX_BASE } from '../../constants';
 import { resolvePanelZIndex } from '../selectors';
 import { slice } from '../slice';
 
@@ -21,16 +21,18 @@ describe( 'resolvePanelZIndex', () => {
 		__deleteStore();
 	} );
 
-	it( 'raises floating panels above an open docked panel', () => {
+	it( 'keeps undocked panels above docked panels regardless of relative z-index', () => {
 		__dispatch( slice.actions.register( { id: 'docked', defaults, isDocked: true } ) );
 		__dispatch( slice.actions.register( { id: 'navigator', defaults, isDraggable: true } ) );
 		__dispatch( slice.actions.open( 'docked' ) );
 		__dispatch( slice.actions.open( 'navigator' ) );
+		__dispatch( slice.actions.bringToFront( 'docked' ) );
 
 		const dockedZIndex = resolvePanelZIndex( __getState(), 'docked' );
 		const navigatorZIndex = resolvePanelZIndex( __getState(), 'navigator' );
 
-		expect( dockedZIndex ).toBe( FLOATING_PANEL_Z_INDEX_BASE );
+		expect( dockedZIndex ).toBe( DOCKED_FLOATING_PANEL_Z_INDEX );
+		expect( navigatorZIndex ).toBeGreaterThanOrEqual( FLOATING_PANEL_Z_INDEX_BASE );
 		expect( navigatorZIndex ).toBeGreaterThan( dockedZIndex );
 	} );
 } );

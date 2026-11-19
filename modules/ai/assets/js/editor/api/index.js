@@ -39,10 +39,6 @@ export const getFeaturedImage = ( payload ) => request( 'ai_get_featured_image',
 
 export const getEditText = ( payload ) => request( 'ai_get_edit_text', { payload } );
 
-export const getCustomCode = ( payload ) => request( 'ai_get_custom_code', { payload } );
-
-export const getCustomCSS = ( payload ) => request( 'ai_get_custom_css', { payload } );
-
 export const setGetStarted = () => request( 'ai_set_get_started' );
 
 export const setStatusFeedback = ( responseId ) => request( 'ai_set_status_feedback', { response_id: responseId }, true );
@@ -71,32 +67,10 @@ export const getImagePromptEnhanced = ( prompt ) => request( 'ai_get_image_promp
 
 export const getProductImageUnification = ( payload, immediately ) => request( 'ai_get_product_image_unification', { payload }, immediately );
 
-export const getAnimation = ( payload ) => request( 'ai_get_animation', { payload } );
-
 export const uploadImage = ( image ) => request( 'ai_upload_image', {
 	...image,
 	editor_post_id: image.image.editor_post_id,
 	unique_id: image.image.unique_id,
-} );
-
-/**
- * @typedef {Object} AttachmentPropType - See ./types/attachment.js
- * @typedef {Object} requestBody
- * @property {string}               prompt             - Prompt to generate the layout from.
- * @property {0|1|2}                [variationType]    - Type of the layout to generate (actually it's a position).
- * @property {string[]}             [prevGeneratedIds] - Previously generated ids for exclusion on regeneration.
- * @property {AttachmentPropType[]} [attachments]      - Attachments to use for the generation. currently only `json` type is supported - a container JSON to generate variations from.
- */
-
-/**
- * @param {requestBody} requestBody
- * @param {AbortSignal} [signal]
- */
-export const generateLayout = ( requestBody, signal ) => request( 'ai_generate_layout', requestBody, true, signal );
-
-export const getLayoutPromptEnhanced = ( prompt, enhanceType ) => request( 'ai_get_layout_prompt_enhancer', {
-	prompt,
-	enhance_type: enhanceType,
 } );
 
 export const getHistory = ( type, page, limit ) => request( 'ai_get_history', { type, page, limit } );

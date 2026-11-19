@@ -21,6 +21,14 @@ export type ClassState =
 	| {
 			name: 'current';
 			value: 'e--current';
+	  }
+	| {
+			name: 'current-ancestor';
+			value: 'e--current-ancestor';
+	  }
+	| {
+			name: 'expanded';
+			value: 'e--expanded';
 	  };
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';

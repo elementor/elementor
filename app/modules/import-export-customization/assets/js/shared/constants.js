@@ -8,6 +8,7 @@ export const KIT_SECTIONS = Object.freeze( {
 export const KIT_SECTION_ITEMS = Object.freeze( {
 	CONTENT_CUSTOM_POST_TYPES: 'content/custom-post-types',
 	CONTENT_MEDIA_FORMAT: 'content/media-format',
+	TEMPLATES_COMPONENTS: 'templates/components',
 	SETTINGS_DESIGN_SYSTEM: 'settings/design-system',
 	SETTINGS_THEME: 'settings/theme',
 	SETTINGS_GLOBAL_CLASSES: 'settings/design-system/global-classes',

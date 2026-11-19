@@ -41,6 +41,8 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Items\Atomic_Menu_Items;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Submenu_Promotion\Atomic_Menu_Submenu_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Submenu_Trigger_Promotion\Atomic_Menu_Submenu_Trigger_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle\Atomic_Menu_Toggle;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Closed\Atomic_Menu_Toggle_Closed;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open\Atomic_Menu_Toggle_Open;
@@ -437,6 +439,11 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Menu_Toggle() );
 		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Closed() );
 		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Open() );
+
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Atomic_Menu_Submenu_Trigger_Promotion() );
+			$elements_manager->register_element_type( new Atomic_Menu_Submenu_Promotion() );
+		}
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {

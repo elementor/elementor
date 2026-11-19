@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Submenu_Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Base\Atomic_Menu_Locked_Element;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
@@ -14,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
+	const STYLE_STATES = [
+		Style_States::CURRENT,
+		Style_States::CURRENT_ANCESTOR,
+		Style_States::EXPANDED,
+	];
+
 	public static $widget_description = 'The content slot of a menu entry. Accepts any element. Renders as a span, or as a link when a link is set.';
 
 	public static function get_type() {
@@ -39,11 +46,22 @@ class Atomic_Menu_Item extends Atomic_Menu_Locked_Element {
 	}
 
 	protected function define_atomic_style_states(): array {
-		return [ Style_States::get_class_states_map()['current'] ];
+		return array_values( array_filter(
+			Style_States::get_class_states_map(),
+			fn( array $state ) => in_array( $state['value'], self::STYLE_STATES, true )
+		) );
 	}
 
 	protected function define_atomic_controls(): array {
 		return [
+			Section::make()
+				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
+				->set_items( [
+					Submenu_Toggle_Control::make()
+						->set_label( __( 'Enable Submenu', 'elementor' ) )
+						->set_meta( [ 'layout' => 'custom' ] ),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
