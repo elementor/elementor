@@ -137,7 +137,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertSame( [], $this->get_config( 'e-menu-toggle-closed' )['allowed_child_types'] );
 		$this->assertSame( [], $this->get_config( 'e-menu-toggle-open' )['allowed_child_types'] );
 		$this->assertSame( [ 'e-menu-entry' ], $this->get_config( 'e-menu-items' )['allowed_child_types'] );
-		$this->assertSame( [ 'e-menu-item' ], $this->get_config( 'e-menu-entry' )['allowed_child_types'] );
+		$this->assertSame( [ 'e-menu-item', 'e-menu-submenu-trigger', 'e-menu-submenu' ], $this->get_config( 'e-menu-entry' )['allowed_child_types'] );
 		$this->assertSame( [], $this->get_config( 'e-menu-item' )['allowed_child_types'] );
 	}
 
