@@ -82,6 +82,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 			$children[0]['elements'][0]['elements'] = [];
 		}
 
+
 		if ( null !== $first_item_link ) {
 			$children[0]['elements'][0]['elements'][0]['settings']['link'] = $first_item_link;
 		}
@@ -462,6 +463,44 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		// Assert
 		$this->assertSame( 3, substr_count( $html, '<li' ) );
 		$this->assertStringNotContainsString( 'Home', $html );
+	}
+
+	public function test_is_empty__ignores_submenu_layers_and_counts_only_item_content() {
+		// Arrange
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$entry = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'entry1',
+			'elType' => Atomic_Menu::ELEMENT_TYPE_ENTRY,
+			'settings' => [],
+			'elements' => [],
+		] );
+		$children_property = new \ReflectionProperty( \Elementor\Element_Base::class, 'children' );
+		$children_property->setAccessible( true );
+		$is_empty = new \ReflectionMethod( $entry, 'is_empty' );
+		$is_empty->setAccessible( true );
+		$item = fn ( array $children ) => $this->make_child_stub( Atomic_Menu::ELEMENT_TYPE_ITEM, $children );
+		$layers = [
+			$this->make_child_stub( Atomic_Menu::ELEMENT_TYPE_SUBMENU_TRIGGER, [ 'content' ] ),
+			$this->make_child_stub( Atomic_Menu::ELEMENT_TYPE_SUBMENU, [ 'content' ] ),
+		];
+
+		// Act
+		$children_property->setValue( $entry, array_merge( [ $item( [] ) ], $layers ) );
+		$empty_item_with_layers = $is_empty->invoke( $entry );
+		$children_property->setValue( $entry, array_merge( [ $item( [ 'content' ] ) ], $layers ) );
+		$filled_item_with_layers = $is_empty->invoke( $entry );
+
+		// Assert
+		$this->assertTrue( $empty_item_with_layers );
+		$this->assertFalse( $filled_item_with_layers );
+	}
+
+	private function make_child_stub( string $el_type, array $children ) {
+		$stub = $this->createMock( \Elementor\Element_Base::class );
+		$stub->method( 'get_data' )->willReturnCallback( fn ( $key = null ) => 'elType' === $key ? $el_type : null );
+		$stub->method( 'get_children' )->willReturn( $children );
+
+		return $stub;
 	}
 
 	public function test_entry_without_item_content_is_rendered_in_the_editor() {
