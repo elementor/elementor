@@ -1,15 +1,10 @@
+import { __getStore as getStore } from '@elementor/store';
+
+import { selectDefinitions } from '../store/store';
 import { type CompositeWidgetDefinition } from '../types';
 
-type WindowWithCompositeWidgets = Window & {
-	elementor?: {
-		config?: {
-			compositeWidgets?: Record< string, CompositeWidgetDefinition >;
-		};
-	};
-};
-
 export function getCompositeWidgetDefinition( widgetId: string ): CompositeWidgetDefinition | null {
-	return (
-		( window as unknown as WindowWithCompositeWidgets ).elementor?.config?.compositeWidgets?.[ widgetId ] ?? null
-	);
+	const state = getStore()?.getState();
+
+	return state ? selectDefinitions( state )[ widgetId ] ?? null : null;
 }

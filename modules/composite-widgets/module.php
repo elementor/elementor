@@ -8,8 +8,12 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
 use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;
+use Elementor\Modules\CompositeWidgets\Definitions\Site_Definitions_Registrar;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
+use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
+use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
+use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Visibility;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,6 +24,7 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'composite-widgets';
 	const EXPERIMENT_NAME = 'e_composite_widgets';
 	const REGISTER_HOOK = 'elementor/composite-widgets/register';
+	const REGISTER_SITE_HOOK = 'elementor/composite-widgets/register-site';
 	const CORE_DEFINITION_FILES = [
 		'schema/examples/icon-button.json',
 	];
@@ -32,6 +37,13 @@ class Module extends BaseModule {
 
 	private ?Widgets_Definitions_Registry $registry = null;
 	private ?Closed_Structure $closed_structure = null;
+	/**
+	 * The site provider loads its saved widget documents while the registry is built, and each load runs
+	 * the lock sync, which needs the registry: without this flag the build would start over without end.
+	 *
+	 * @var bool
+	 */
+	private bool $is_building_registry = false;
 
 	public function get_name() {
 		return self::MODULE_NAME;
@@ -64,24 +76,36 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		( new Definitions_REST_API( fn () => $this->get_editor_definitions() ) )->register_hooks();
+
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_editor_settings( $settings ) );
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->sync_widget_locks( $data, $document ), self::SYNC_LOCKS_PRIORITY, 2 );
+
+		( new Site_Widgets_Visibility() )->register_hooks();
 	}
 
 	/**
 	 * Built on first access, so every atomic element type is registered by the time definitions are validated.
+	 * Site definitions come first, from the site provider (Elementor Pro), then code definitions.
 	 */
 	public function get_registry(): Widgets_Definitions_Registry {
 		if ( null === $this->registry ) {
-			$this->registry = new Widgets_Definitions_Registry(
-				Widget_Definition_Validator::make(),
-				new Definition_Migrator( Migrations_Orchestrator::make() )
-			);
+			$this->is_building_registry = true;
 
-			$this->register_core_definitions( $this->registry );
+			try {
+				$this->registry = new Widgets_Definitions_Registry(
+					Widget_Definition_Validator::make(),
+					new Definition_Migrator( Migrations_Orchestrator::make() ),
+					fn ( Site_Definitions_Registrar $registrar ) => do_action( self::REGISTER_SITE_HOOK, $registrar )
+				);
 
-			do_action( self::REGISTER_HOOK, $this->registry );
+				$this->register_core_definitions( $this->registry );
+
+				do_action( self::REGISTER_HOOK, $this->registry );
+			} finally {
+				$this->is_building_registry = false;
+			}
 		}
 
 		return $this->registry;
@@ -106,7 +130,8 @@ class Module extends BaseModule {
 	 */
 	private function sync_widget_locks( $data, $document ) {
 		if (
-			! is_array( $data )
+			$this->is_building_registry
+			|| ! is_array( $data )
 			|| ! $document instanceof Document
 			|| ! Closed_Structure::contains_widget_root( $data )
 			|| ! Plugin::$instance->editor->is_edit_mode( $document->get_main_id() )
@@ -122,20 +147,40 @@ class Module extends BaseModule {
 	}
 
 	private function add_editor_settings( array $settings ): array {
-		$definitions = $this->get_registry()->all();
-
-		$settings['compositeWidgets'] = array_map(
-			fn ( array $definition ) => array_intersect_key( $definition, array_flip( self::EDITOR_DEFINITION_KEYS ) ),
-			$definitions
-		);
+		$settings['compositeWidgets'] = $this->get_editor_definitions();
 
 		if ( isset( $settings['elementsPresets'] ) ) {
-			foreach ( $definitions as $definition ) {
+			foreach ( $this->get_registry()->all() as $definition ) {
+				if ( ! $this->can_insert( $definition ) ) {
+					continue;
+				}
+
 				$settings['elementsPresets'][ $this->get_panel_tile_key( $definition ) ] = $this->build_panel_tile( $definition );
 			}
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Archived definitions stay registered, so existing copies keep their panel and locks; the flag
+	 * only hides them from new drops.
+	 */
+	private function get_editor_definitions(): array {
+		$keys = array_flip( array_merge( self::EDITOR_DEFINITION_KEYS, [ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) );
+
+		return array_map(
+			fn ( array $definition ) => array_intersect_key( $definition, $keys ),
+			$this->get_registry()->all()
+		);
+	}
+
+	private function can_insert( array $definition ): bool {
+		if ( Widget_Definition::SOURCE_SITE !== $definition['source'] ) {
+			return true;
+		}
+
+		return empty( $definition[ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) && Site_Widgets_Access_Controller::can_add_to_page();
 	}
 
 	private function get_panel_tile_key( array $definition ): string {
