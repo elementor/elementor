@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\CompositeWidgets;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
@@ -23,6 +24,7 @@ class Module extends BaseModule {
 		'schema/examples/icon-button.json',
 	];
 	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template', 'general' ];
+	const SYNC_LOCKS_PRIORITY = 20;
 
 	const PACKAGES = [
 		'editor-composite-widgets',
@@ -64,6 +66,7 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_editor_settings( $settings ) );
+		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->sync_widget_locks( $data, $document ), self::SYNC_LOCKS_PRIORITY, 2 );
 	}
 
 	/**
@@ -96,6 +99,22 @@ class Module extends BaseModule {
 		foreach ( self::CORE_DEFINITION_FILES as $file ) {
 			$registry->register_from_json( __DIR__ . '/' . $file );
 		}
+	}
+
+	/**
+	 * Editor loads only, after the prop-type migrations.
+	 */
+	private function sync_widget_locks( $data, $document ) {
+		if (
+			! is_array( $data )
+			|| ! $document instanceof Document
+			|| ! Closed_Structure::contains_widget_root( $data )
+			|| ! Plugin::$instance->editor->is_edit_mode( $document->get_main_id() )
+		) {
+			return $data;
+		}
+
+		return $this->get_closed_structure()->sync_locks( $data );
 	}
 
 	private function add_packages( array $packages ): array {
