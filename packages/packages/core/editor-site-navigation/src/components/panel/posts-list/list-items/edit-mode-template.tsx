@@ -1,16 +1,43 @@
 import * as React from 'react';
 import { type FocusEvent, type FormEvent, type MutableRefObject, useRef, useState } from 'react';
 import { XIcon } from '@elementor/icons';
-import { Box, CircularProgress, IconButton, ListItem, ListItemText, TextField } from '@elementor/ui';
+import { Box, CircularProgress, IconButton, ListItem, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
-import { contentPanelListRowPaddingSx } from '../../content-panel-chrome';
+import {
+	contentPanelListItemButtonSx,
+	contentPanelListRowPaddingSx,
+	contentPanelListRowTitleSx,
+} from '../../content-panel-chrome';
 
 type Props = {
 	postTitle: string;
 	isLoading: boolean;
 	callback: ( inputValue: string ) => void;
+};
+
+const editFieldBorderWidth = 2;
+
+const editFieldContainerSx = ( hasError: boolean ) => ( {
+	border: `${ editFieldBorderWidth }px solid`,
+	borderColor: hasError ? 'error.main' : 'secondary.main',
+	borderRadius: 0.5,
+	display: 'flex',
+	flex: 1,
+	minWidth: 0,
+	px: 1,
+	width: '100%',
+} );
+
+const editModeTextFieldSx = {
+	'& .MuiInputBase-input': {
+		...contentPanelListRowTitleSx,
+		padding: 0,
+	},
+	'& .MuiInput-root': {
+		padding: 0,
+	},
 };
 
 export default function EditModeTemplate( { postTitle, isLoading, callback }: Props ) {
@@ -65,33 +92,44 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 	};
 
 	return (
-		<>
-			<ListItem
-				disablePadding
-				sx={ contentPanelListRowPaddingSx }
-				secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
+		<ListItem
+			disablePadding
+			sx={ contentPanelListRowPaddingSx }
+			secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
+		>
+			<Box
+				component="form"
+				onSubmit={ onFormSubmit }
+				sx={ {
+					...contentPanelListItemButtonSx,
+					display: 'flex',
+					width: '100%',
+				} }
 			>
-				<Box width="100%" component="form" onSubmit={ onFormSubmit }>
+				<Box sx={ editFieldContainerSx( !! inputError ) }>
 					<TextField
 						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-						fullWidth
-						value={ title }
-						onChange={ onChange }
+						color="secondary"
 						disabled={ isLoading }
 						error={ !! inputError }
+						fullWidth
+						inputProps={ {
+							'aria-invalid': !! inputError,
+							'aria-label': __( 'Name', 'elementor' ),
+						} }
 						onBlur={ onBlur }
-						variant="outlined"
-						color="secondary"
-						size="small"
+						onChange={ onChange }
+						size="tiny"
+						sx={ editModeTextFieldSx }
+						value={ title }
+						variant="standard"
+						InputProps={ {
+							disableUnderline: true,
+						} }
 					/>
 				</Box>
-			</ListItem>
-			{ inputError && (
-				<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
-					<ListItemText sx={ { color: 'error.main' } }>{ inputError }</ListItemText>
-				</ListItem>
-			) }
-		</>
+			</Box>
+		</ListItem>
 	);
 }
 

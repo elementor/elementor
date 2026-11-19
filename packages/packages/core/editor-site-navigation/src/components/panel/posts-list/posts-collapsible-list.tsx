@@ -27,8 +27,8 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	const trimmedSearch = searchQuery.trim();
 	const {
 		data: { posts, total },
-		isLoading: postsLoading,
 		isError: postsError,
+		isPending: postsPending,
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
@@ -87,7 +87,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		return <ErrorState />;
 	}
 
-	if ( ! posts || postsLoading ) {
+	if ( postsPending && ! posts?.length ) {
 		return (
 			<Box sx={ { px: 2 } }>
 				<Box>

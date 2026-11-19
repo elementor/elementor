@@ -6,8 +6,7 @@ const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
 
 const CONTENT_PANEL_SECTION_HEADER_PADDING_BLOCK = 1.25;
 const CONTENT_PANEL_SECTION_HEADER_TRAILING_GAP = 0.75;
-const CONTENT_PANEL_SEARCH_PADDING_BLOCK_START = 1.5;
-const CONTENT_PANEL_SEARCH_PADDING_BLOCK_END = 2;
+const CONTENT_PANEL_SEARCH_PADDING_BLOCK = 1.5;
 
 export const contentPanelInsetPaddingSx = {
 	paddingInline: CONTENT_PANEL_INSET_SPACING,
@@ -18,19 +17,16 @@ export const contentPanelListRowPaddingSx = {
 };
 
 export const contentPanelHeaderStackSx = {
-	paddingInlineEnd: CONTENT_PANEL_INSET_SPACING,
-	paddingInlineStart: CONTENT_PANEL_INSET_SPACING,
-	paddingBlock: 1,
 	width: '100%',
 };
 
 export const contentPanelSearchBoxSx = {
 	...contentPanelInsetPaddingSx,
-	pb: CONTENT_PANEL_SEARCH_PADDING_BLOCK_END,
-	pt: CONTENT_PANEL_SEARCH_PADDING_BLOCK_START,
+	py: CONTENT_PANEL_SEARCH_PADDING_BLOCK,
 };
 
 export const contentPanelSectionHeaderSx = {
+	...contentPanelInsetPaddingSx,
 	py: CONTENT_PANEL_SECTION_HEADER_PADDING_BLOCK,
 };
 

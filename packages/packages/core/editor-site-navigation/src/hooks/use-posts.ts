@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@elementor/query';
+import { keepPreviousData, useInfiniteQuery } from '@elementor/query';
 
 import { getRequest, type PostsResponse, type Slug } from '../api/post';
 import { type Post } from '../types';
@@ -34,6 +34,7 @@ export function usePosts( postTypeSlug: Slug, search = '' ) {
 		getNextPageParam: ( lastPage ) => {
 			return lastPage.currentPage < lastPage.totalPages ? lastPage.currentPage + 1 : undefined;
 		},
+		placeholderData: keepPreviousData,
 	} );
 
 	return { ...query, data: { posts: flattenData( query.data ), total: query.data?.pages[ 0 ]?.totalPosts ?? 0 } };

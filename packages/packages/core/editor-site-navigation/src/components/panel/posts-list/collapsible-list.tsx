@@ -64,18 +64,20 @@ export default function CollapsibleList( {
 					onClick={ handleClick }
 					sx={ sectionHeaderListItemButtonSx }
 				>
-					<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } minWidth={ 0 }>
-						<ListItemText
-							secondary={ title }
-							secondaryTypographyProps={ {
-								color: 'text.primary',
-								fontWeight: 'bold',
-								variant: 'caption',
-							} }
-							sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
-						/>
-						<Chip label={ count } size="tiny" />
-						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } />
+					<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } minWidth={ 0 } width="100%">
+						<Stack alignItems="center" direction="row" flex={ 1 } gap={ 0.5 } minWidth={ 0 }>
+							<ListItemText
+								secondary={ title }
+								secondaryTypographyProps={ {
+									color: 'text.primary',
+									fontWeight: 'bold',
+									variant: 'caption',
+								} }
+								sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
+							/>
+							<Chip label={ count } size="tiny" />
+						</Stack>
+						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } sx={ { flexShrink: 0 } } />
 					</Stack>
 				</ListItemButton>
 				{ trailingActions && (
