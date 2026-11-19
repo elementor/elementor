@@ -34,7 +34,33 @@ jest.mock( '../../../hooks/use-user', () => ( {
 	__esModule: true,
 } ) );
 
+const mockEnv = { is_pages_panel_active: false };
+
+jest.mock( '../../../env', () => ( {
+	env: mockEnv,
+} ) );
+
 describe( '@elementor/recently-edited - Top bar Recently Edited', () => {
+	beforeEach( () => {
+		mockEnv.is_pages_panel_active = false;
+	} );
+
+	it( 'shows document title without recent dropdown when pages panel experiment is active', () => {
+		mockEnv.is_pages_panel_active = true;
+
+		jest.mocked( useActiveDocument ).mockReturnValue(
+			createMockDocument( {
+				id: 1,
+				title: 'Active Document',
+			} )
+		);
+
+		renderWithTheme( <RecentlyEdited /> );
+
+		expect( screen.getByText( 'Active Document' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Recent' ) ).not.toBeInTheDocument();
+	} );
 	it( 'should show the title of the active document without its status when the document is published', async () => {
 		// Arrange.
 		jest.mocked( useActiveDocument ).mockReturnValue(
