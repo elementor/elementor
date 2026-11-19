@@ -4,8 +4,10 @@ namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Lock;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes;
 use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Element_Transformer;
 use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Snapshot_Builder;
 use Elementor\Plugin;
@@ -24,6 +26,9 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		remove_all_filters( 'elementor/global_classes/lock/acquire_timeout' );
+		$this->delete_lock_row();
+
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit ) {
@@ -610,5 +615,135 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 		$styles = $result[0]['styles'];
 		$local_styles = array_filter( $styles, fn( $s ) => 'local' === ( $s['label'] ?? '' ) );
 		$this->assertCount( 1, $local_styles, 'Only one local style entry should exist' );
+	}
+
+	public function test_merge_snapshot_and_get_id_map_returns_lock_error_and_writes_nothing_when_lock_is_busy() {
+		// Arrange - another request holds the per-kit lock.
+		$this->act_as_admin();
+		$this->seed_global_classes( [ 'g-1' => $this->make_class( 'g-1', 'Existing' ) ], [ 'g-1' ] );
+		$this->hold_lock();
+
+		// Act.
+		$result = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $this->make_snapshot( 'g-remote', 'Imported' ) );
+
+		// Assert - the import fails, it does not flatten, and nothing is written.
+		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
+		$this->assertSame( Global_Classes_Lock::ERROR_CODE, $result['error']->get_error_code() );
+		$this->assertSame( [], $result['id_map'] );
+		$this->assertSame( [], $result['ids_to_flatten'] );
+		$this->assertSame( [ 'g-1' ], array_keys( Global_Classes_Repository::make()->all()->get()['items'] ) );
+		$this->assertNotNull( $this->lock_row(), 'The other request must keep its lock.' );
+	}
+
+	public function test_create_snapshot_as_new_returns_lock_error_and_writes_nothing_when_lock_is_busy() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->seed_global_classes( [ 'g-1' => $this->make_class( 'g-1', 'Existing' ) ], [ 'g-1' ] );
+		$this->hold_lock();
+
+		// Act.
+		$result = Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $this->make_snapshot( 'g-remote', 'Imported' ) );
+
+		// Assert.
+		$this->assertInstanceOf( \WP_Error::class, $result['error'] );
+		$this->assertSame( [], $result['ids_to_flatten'] );
+		$this->assertSame( [ 'g-1' ], array_keys( Global_Classes_Repository::make()->all()->get()['items'] ) );
+	}
+
+	public function test_snapshot_import_releases_the_lock_after_it_finishes() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$merged = Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $this->make_snapshot( 'g-a', 'LabelA' ) );
+		$created = Template_Library_Global_Classes_Snapshot_Builder::create_snapshot_as_new( $this->make_snapshot( 'g-b', 'LabelB' ) );
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'error', $merged );
+		$this->assertArrayNotHasKey( 'error', $created );
+		$this->assertCount( 2, Global_Classes_Repository::make()->all()->get()['items'] );
+		$this->assertNull( $this->lock_row() );
+	}
+
+	public function test_snapshot_import_holds_the_lock_while_it_writes() {
+		// Arrange.
+		$this->act_as_admin();
+		$lock_held_during_write = null;
+
+		add_action( 'elementor/global_classes/update', function () use ( &$lock_held_during_write ) {
+			$lock_held_during_write = null !== $this->lock_row();
+		} );
+
+		// Act.
+		Template_Library_Global_Classes_Snapshot_Builder::merge_snapshot_and_get_id_map( $this->make_snapshot( 'g-a', 'LabelA' ) );
+
+		// Assert.
+		$this->assertTrue( $lock_held_during_write );
+	}
+
+	public function test_process_global_classes_import_returns_wp_error_when_lock_is_busy() {
+		// Arrange.
+		$this->act_as_admin();
+		$this->hold_lock();
+
+		$content = [ [ 'id' => 'el-1', 'elType' => 'widget', 'settings' => [ 'classes' => [ 'value' => [ 'g-remote' ] ] ], 'elements' => [] ] ];
+
+		// Act.
+		$result = Template_Library_Global_Classes::process_global_classes_import(
+			[ 'content' => $content ],
+			Template_Library_Import_Export_Utils::IMPORT_MODE_MATCH_SITE,
+			[ 'global_classes' => $this->make_snapshot( 'g-remote', 'Imported' ) ]
+		);
+
+		// Assert - the import fails instead of flattening the class into a local style.
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 409, $result->get_error_data()['status'] );
+	}
+
+	private function make_class( string $id, string $label ): array {
+		return [
+			'id' => $id,
+			'type' => 'class',
+			'label' => $label,
+			'variants' => [],
+		];
+	}
+
+	private function make_snapshot( string $id, string $label ): array {
+		return [
+			'items' => [ $id => $this->make_class( $id, $label ) ],
+			'order' => [ $id ],
+		];
+	}
+
+	private function lock_name(): string {
+		return 'elementor_global_classes_lock_' . (int) Plugin::$instance->kits_manager->get_active_kit()->get_main_id();
+	}
+
+	private function hold_lock() {
+		global $wpdb;
+
+		add_filter( 'elementor/global_classes/lock/acquire_timeout', '__return_zero' );
+
+		$wpdb->query( $wpdb->prepare(
+			"INSERT INTO `$wpdb->options` ( `option_name`, `option_value`, `autoload` ) VALUES (%s, %s, 'off')",
+			$this->lock_name(),
+			time() . '|other-request'
+		) );
+	}
+
+	private function lock_row() {
+		global $wpdb;
+
+		return $wpdb->get_var( $wpdb->prepare(
+			"SELECT option_value FROM `$wpdb->options` WHERE option_name = %s",
+			$this->lock_name()
+		) );
+	}
+
+	private function delete_lock_row() {
+		global $wpdb;
+
+		$wpdb->delete( $wpdb->options, [ 'option_name' => $this->lock_name() ] );
 	}
 }
