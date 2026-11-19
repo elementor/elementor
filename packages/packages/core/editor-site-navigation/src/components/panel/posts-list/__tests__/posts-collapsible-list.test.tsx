@@ -235,10 +235,6 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	} );
 
 	it( 'shows empty state when search has no matches', async () => {
-		const searchDebounceMs = 300;
-
-		jest.useFakeTimers();
-
 		jest.mocked( usePosts ).mockImplementation( ( _type, search = '' ) =>
 			( {
 				isLoading: false,
@@ -276,39 +272,12 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		);
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Search missing' } ) );
-		jest.advanceTimersByTime( searchDebounceMs );
 
-		await waitFor( () => {
-			expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
-		} );
-
-		jest.useRealTimers();
-
-		jest.mocked( usePosts ).mockImplementation( () =>
-			( {
-				isLoading: false,
-				data: {
-					posts: [
-						{
-							id: 1,
-							type: 'page',
-							title: { rendered: 'Home' },
-							status: 'publish',
-							link: 'www.test.demo',
-							user_can: { edit: true, delete: true },
-						},
-						{
-							id: 2,
-							type: 'page',
-							title: { rendered: 'About' },
-							status: 'draft',
-							link: 'www.test.demo',
-							user_can: { edit: true, delete: true },
-						},
-					],
-					total: 2,
-				},
-			} ) as ReturnType< typeof usePosts >
+		await waitFor(
+			() => {
+				expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
+			},
+			{ timeout: 500 }
 		);
 	} );
 
