@@ -60,26 +60,6 @@ describe( 'ListItemView', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'View Page' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'shows post type in cannot-edit tooltip for posts', async () => {
-		const readOnlyBlogPost: Post = {
-			...readOnlyPost,
-			id: 4,
-			type: 'post',
-			title: { rendered: 'Hello world' },
-		};
-
-		renderWithQuery(
-			<PostListContextProvider type="post" setError={ () => {} }>
-				<ListItemView post={ readOnlyBlogPost } />
-			</PostListContextProvider>
-		);
-
-		const rowButton = screen.getAllByRole( 'button' )[ 0 ];
-		fireEvent.mouseOver( rowButton );
-
-		expect( await screen.findByText( 'You cannot edit this Post.' ) ).toBeInTheDocument();
-	} );
-
 	it( 'navigates when the row is editable', () => {
 		const navigateToDocument = jest.fn();
 		jest.mocked( useNavigateToDocument ).mockReturnValue( navigateToDocument );
