@@ -9,6 +9,7 @@ use Elementor\Core\Utils\Exceptions;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agent_Access_Menu;
 use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
+use Elementor\Modules\Agents\AdminNotices\Agent_Ready_Notice;
 use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Feature_Component;
@@ -217,6 +218,7 @@ class Module extends BaseModule {
 
 		( new Agents_Sidebar_Config() )->register();
 
+		add_filter( 'elementor/core/admin/notices', [ $this, 'register_admin_notices' ] );
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], self::EDITOR_ONE_MENU_REGISTER_PRIORITY );
 		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', [ $this, 'enqueue_assets_for_editor_one_menu' ] );
 	}
@@ -233,6 +235,12 @@ class Module extends BaseModule {
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
 		$menu_data_provider->register_menu( new Editor_One_Agents_Ready_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Agent_Access_Menu() );
+	}
+
+	public function register_admin_notices( array $notices ): array {
+		$notices[] = new Agent_Ready_Notice( $this->settings, $this->scanner_store );
+
+		return $notices;
 	}
 
 	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
