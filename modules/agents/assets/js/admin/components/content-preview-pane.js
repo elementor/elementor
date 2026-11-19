@@ -9,7 +9,7 @@ const scrollbarSx = {
 	'&::-webkit-scrollbar': { display: 'none' },
 };
 
-export const ContentPreviewPane = ( { header, content } ) => {
+export const ContentPreviewPane = ( { header, content, footer } ) => {
 	return (
 		<Stack
 			spacing={ 2 }
@@ -35,6 +35,7 @@ export const ContentPreviewPane = ( { header, content } ) => {
 			>
 				{ content }
 			</Box>
+			{ footer }
 		</Stack>
 	);
 };
@@ -42,4 +43,5 @@ export const ContentPreviewPane = ( { header, content } ) => {
 ContentPreviewPane.propTypes = {
 	header: PropTypes.node.isRequired,
 	content: PropTypes.string.isRequired,
+	footer: PropTypes.node,
 };

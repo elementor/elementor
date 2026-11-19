@@ -41,7 +41,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '## Optional', $output );
 	}
 
-	public function test_llms_txt_places_custom_text_between_intro_and_first_section() {
+	public function test_llms_txt_places_custom_text_under_its_own_heading_between_intro_and_first_section() {
 		// Arrange
 		$this->factory()->post->create( [
 			'post_type'   => 'page',
@@ -56,13 +56,13 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		] );
 
 		// Assert
-		$intro_position       = strpos( $output, '> My custom intro.' );
-		$custom_text_position = strpos( $output, 'Our own note for agents.' );
-		$pages_position       = strpos( $output, '## Pages' );
+		$intro_position   = strpos( $output, '> My custom intro.' );
+		$heading_position = strpos( $output, "## Instructions for agents\n\nOur own note for agents." );
+		$pages_position   = strpos( $output, '## Pages' );
 
-		$this->assertNotFalse( $custom_text_position );
-		$this->assertGreaterThan( $intro_position, $custom_text_position );
-		$this->assertLessThan( $pages_position, $custom_text_position );
+		$this->assertNotFalse( $heading_position );
+		$this->assertGreaterThan( $intro_position, $heading_position );
+		$this->assertLessThan( $pages_position, $heading_position );
 	}
 
 	public function test_llms_txt_is_unchanged_when_custom_text_is_empty() {
@@ -74,6 +74,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( $expected, $output );
+		$this->assertStringNotContainsString( '## Instructions for agents', $output );
 	}
 
 	public function test_llms_txt_custom_text_is_sanitized_against_injection() {
@@ -93,6 +94,7 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertStringNotContainsString( 'Our own note for agents.', $output );
+		$this->assertStringNotContainsString( '## Instructions for agents', $output );
 	}
 
 	public function test_llms_txt_includes_published_page() {

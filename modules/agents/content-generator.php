@@ -58,6 +58,7 @@ class Content_Generator {
 
 	const MCP_SECTION_TITLE = 'MCP Server';
 	const API_SECTION_TITLE = 'API';
+	const CUSTOM_TEXT_SECTION_TITLE = 'Instructions for agents';
 
 	/** Post types that should never appear in the output. */
 	const EXCLUDED_POST_TYPES = [
@@ -92,7 +93,7 @@ class Content_Generator {
 	 * @param array{intro?: string, optional?: string, custom_text?: string} $overrides
 	 *   'intro'       – user-supplied intro text (replaces the auto-generated one).
 	 *   'optional'    – extra section appended after all content sections.
-	 *   'custom_text' – user-supplied text placed between the intro and the first content section.
+	 *   'custom_text' – user-supplied text placed in an "Instructions for agents" section between the intro and the first content section.
 	 * @param string[]|null                                                  $post_types Post types to include; null includes every available type.
 	 * @param int[]                                                          $excluded_post_ids Posts to leave out.
 	 * @return string
@@ -793,6 +794,8 @@ class Content_Generator {
 			return;
 		}
 
+		$lines[] = '## ' . self::CUSTOM_TEXT_SECTION_TITLE;
+		$lines[] = '';
 		$lines[] = $this->sanitizer->sanitize( $custom_text );
 		$lines[] = '';
 	}

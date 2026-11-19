@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { AlertCircleIcon } from '@elementor/icons';
+import Alert from '@elementor/ui/Alert';
 import Button from '@elementor/ui/Button';
 import Chip from '@elementor/ui/Chip';
+import Link from '@elementor/ui/Link';
 import Stack from '@elementor/ui/Stack';
 import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
@@ -18,18 +20,6 @@ const DIALOG_MODE_EDIT = 'edit';
 const DIALOG_MODE_VIEW = 'view';
 const DIALOG_MODE_REVERT = 'revert';
 const DIALOG_MODE_TAKE_OVER = 'take-over';
-
-const getWarningMessage = ( hasPhysicalFile, isManuallyEdited ) => {
-	if ( hasPhysicalFile ) {
-		return __( 'This file is managed outside Agent Ready and can’t be controlled from here.', 'elementor' );
-	}
-
-	if ( isManuallyEdited ) {
-		return __( 'This file was edited manually and no longer syncs automatically.', 'elementor' );
-	}
-
-	return '';
-};
 
 export const LlmsTxtPanel = ( { settings } ) => {
 	const {
@@ -53,8 +43,6 @@ export const LlmsTxtPanel = ( { settings } ) => {
 	const [ dialogMode, setDialogMode ] = useState( null );
 	const canChooseItems = ! hasPhysicalFile && ! isManuallyEdited;
 
-	const warningMessage = getWarningMessage( hasPhysicalFile, isManuallyEdited );
-
 	// Edited rows keep their values so the admin still sees what the file was generated from; nothing is generated from a server file.
 	const displayedPostTypes = hasPhysicalFile
 		? postTypes.map( ( postType ) => ( { ...postType, included: false } ) )
@@ -66,9 +54,9 @@ export const LlmsTxtPanel = ( { settings } ) => {
 		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
 			<Stack spacing={ 3 } px={ 6 } py={ 3 } flexGrow={ 1 } flexShrink={ 1 } flexBasis={ 0 } minWidth={ 0 }>
 				<Stack spacing={ 1 }>
-					<Typography variant="subtitle1">{ __( 'Help AI agents understand your site', 'elementor' ) }</Typography>
+					<Typography variant="subtitle1">{ __( 'Help agents find your content', 'elementor' ) }</Typography>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'llms.txt is a short guide that tells AI agents what your site is about and where its public content is. With llms.txt agents can find your key pages without crawling everything. We keep it up to date when you make changes to your site.', 'elementor' ) }
+						{ __( 'llms.txt is a simple guide that tells AI agents what your site is about and where to find its public content. We keep it up to date automatically.', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<Stack spacing={ 1 }>
@@ -85,40 +73,42 @@ export const LlmsTxtPanel = ( { settings } ) => {
 						} : undefined }
 					/>
 				</Stack>
-				{ canChooseItems && (
+				{ ! hasPhysicalFile && (
 					<CustomTextSection
 						customText={ customText }
 						maxLength={ maxCustomTextLength }
-						isDisabled={ ! isEnabled || isSaving }
+						isDisabled={ ! isEnabled || isManuallyEdited || isSaving }
 						onSave={ saveCustomText }
 					/>
 				) }
-				{ warningMessage && (
+				{ hasPhysicalFile && (
 					<Stack alignItems="flex-start" spacing={ 1 }>
 						<Chip
 							icon={ <AlertCircleIcon /> }
-							label={ warningMessage }
+							label={ __( 'This file is managed outside Agent Ready and can’t be controlled from here.', 'elementor' ) }
 							color="warning"
 							size="small"
 							shape="rounded"
 							variant="standard"
 						/>
-						{ isManuallyEdited && ! hasPhysicalFile && (
-							<Button variant="outlined" size="small" onClick={ () => setDialogMode( DIALOG_MODE_REVERT ) }>
-								{ __( 'Revert to generated version', 'elementor' ) }
-							</Button>
-						) }
-						{ hasPhysicalFile && (
-							<Button variant="outlined" size="small" onClick={ () => setDialogMode( DIALOG_MODE_TAKE_OVER ) }>
-								{ __( 'Take over llms.txt', 'elementor' ) }
-							</Button>
-						) }
+						<Button variant="outlined" size="small" onClick={ () => setDialogMode( DIALOG_MODE_TAKE_OVER ) }>
+							{ __( 'Take over llms.txt', 'elementor' ) }
+						</Button>
 					</Stack>
 				) }
 			</Stack>
 			{ ( isEnabled || hasPhysicalFile ) && (
 				<LlmsPreviewPane
 					content={ hasPhysicalFile ? '' : content }
+					footer={ isManuallyEdited && ! hasPhysicalFile && (
+						<Alert severity="warning">
+							{ __( 'You’re editing llms.txt by hand. Switch back to auto-sync to use this field.', 'elementor' ) }
+							{ ' ' }
+							<Link component="button" type="button" variant="body2" color="inherit" onClick={ () => setDialogMode( DIALOG_MODE_REVERT ) }>
+								{ __( 'Switch back', 'elementor' ) }
+							</Link>
+						</Alert>
+					) }
 					hasActions={ ! hasPhysicalFile }
 					onEdit={ () => setDialogMode( DIALOG_MODE_EDIT ) }
 					onExpand={ () => setDialogMode( DIALOG_MODE_VIEW ) }
@@ -165,7 +155,7 @@ LlmsTxtPanel.propTypes = {
 		isEnabled: PropTypes.bool.isRequired,
 		isManuallyEdited: PropTypes.bool.isRequired,
 		isSaving: PropTypes.bool.isRequired,
-		maxCustomTextLength: PropTypes.number,
+		maxCustomTextLength: PropTypes.number.isRequired,
 		postTypes: PropTypes.array.isRequired,
 		revertContent: PropTypes.func.isRequired,
 		saveContent: PropTypes.func.isRequired,

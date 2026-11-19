@@ -47,8 +47,8 @@ jest.mock( '@elementor/ui/Stack', () => ( { children, component, onSubmit } ) =>
 jest.mock( '@elementor/ui/Switch', () => ( { checked, disabled, onChange, inputProps } ) => (
 	<input type="checkbox" role="switch" aria-label={ inputProps?.[ 'aria-label' ] } checked={ checked } disabled={ disabled } onChange={ onChange } />
 ) );
-jest.mock( '@elementor/ui/TextField', () => ( { value, onChange, inputProps } ) => (
-	<textarea aria-label={ inputProps[ 'aria-label' ] } maxLength={ inputProps.maxLength } value={ value } onChange={ onChange } />
+jest.mock( '@elementor/ui/TextField', () => ( { value, onChange, disabled, inputProps } ) => (
+	<textarea aria-label={ inputProps[ 'aria-label' ] } maxLength={ inputProps.maxLength } value={ value } disabled={ disabled } onChange={ onChange } />
 ) );
 jest.mock( '@elementor/ui/Tooltip', () => ( { children } ) => children );
 jest.mock( '@elementor/ui/Typography', () => ( { children } ) => <span>{ children }</span> );
@@ -61,6 +61,7 @@ const createPostTypes = ( total ) => Array.from( { length: total }, ( _, index )
 } ) );
 
 const MAX_CUSTOM_TEXT_LENGTH = 2000;
+const CUSTOM_TEXT_FIELD_NAME = 'Instructions for agents';
 
 const createSettings = ( overrides = {} ) => ( {
 	content: '# Site',
@@ -163,7 +164,8 @@ describe( 'LlmsTxtPanel', () => {
 			expect( row.checked ).toBe( true );
 			expect( row.disabled ).toBe( true );
 		} );
-		expect( screen.getByTestId( 'chip' ).textContent ).toBe( 'This file was edited manually and no longer syncs automatically.' );
+		expect( screen.getByRole( 'alert' ).textContent ).toContain( 'You’re editing llms.txt by hand.' );
+		expect( screen.queryByTestId( 'chip' ) ).toBeNull();
 		expect( screen.getByRole( 'button', { name: 'Edit' } ) ).toBeTruthy();
 	} );
 
@@ -196,7 +198,7 @@ describe( 'LlmsTxtPanel', () => {
 		render( <LlmsTxtPanel settings={ settings } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Revert to generated version' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Switch back' } ) );
 
 		// Assert
 		expect( settings.revertContent ).not.toHaveBeenCalled();
@@ -242,62 +244,67 @@ describe( 'LlmsTxtPanel', () => {
 		expect( settings.takeOverFile ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'saves the custom text and closes the form', async () => {
+	it( 'shows the saved instructions in a persistent field with a character count and caps its length', () => {
+		// Arrange & Act
+		render( <LlmsTxtPanel settings={ createSettings( { customText: 'Existing note.' } ) } /> );
+
+		// Assert
+		const field = screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } );
+		expect( field.value ).toBe( 'Existing note.' );
+		expect( field.maxLength ).toBe( MAX_CUSTOM_TEXT_LENGTH );
+		expect( screen.getByText( '14/2,000' ) ).toBeTruthy();
+	} );
+
+	it( 'enables Save only after the instructions change and keeps the text in the field after saving', async () => {
 		// Arrange
 		const settings = createSettings();
 		render( <LlmsTxtPanel settings={ settings } /> );
-
-		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Add custom text' } ) );
-		fireEvent.change( screen.getByRole( 'textbox', { name: 'Custom text' } ), { target: { value: 'Our note.' } } );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
 
 		// Assert
-		await waitFor( () => expect( screen.queryByRole( 'textbox', { name: 'Custom text' } ) ).toBeNull() );
-		expect( settings.saveCustomText ).toHaveBeenCalledWith( 'Our note.' );
-	} );
-
-	it( 'offers to edit existing custom text and caps its length', () => {
-		// Arrange
-		render( <LlmsTxtPanel settings={ createSettings( { customText: 'Existing note.' } ) } /> );
+		expect( saveButton.disabled ).toBe( true );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Edit custom text' } ) );
+		fireEvent.change( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ), { target: { value: 'Our note.' } } );
 
 		// Assert
-		const field = screen.getByRole( 'textbox', { name: 'Custom text' } );
-		expect( field.value ).toBe( 'Existing note.' );
-		expect( field.maxLength ).toBe( MAX_CUSTOM_TEXT_LENGTH );
+		expect( saveButton.disabled ).toBe( false );
+
+		// Act
+		fireEvent.click( saveButton );
+
+		// Assert
+		await waitFor( () => expect( settings.saveCustomText ).toHaveBeenCalledWith( 'Our note.' ) );
+		expect( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ).value ).toBe( 'Our note.' );
 	} );
 
-	it( 'keeps the custom text form open and shows the error when saving fails', async () => {
+	it( 'shows the error and keeps the typed text when saving fails', async () => {
 		// Arrange
 		const serverError = 'Could not save.';
 		const settings = createSettings( { saveCustomText: jest.fn( () => Promise.reject( serverError ) ) } );
 		render( <LlmsTxtPanel settings={ settings } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Add custom text' } ) );
-		fireEvent.change( screen.getByRole( 'textbox', { name: 'Custom text' } ), { target: { value: 'Our note.' } } );
+		fireEvent.change( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ), { target: { value: 'Our note.' } } );
 		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		// Assert
 		expect( await screen.findByRole( 'alert' ) ).toHaveProperty( 'textContent', serverError );
-		expect( screen.getByRole( 'textbox', { name: 'Custom text' } ) ).toBeTruthy();
+		expect( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ).value ).toBe( 'Our note.' );
 	} );
 
-	it( 'hides the custom text section when the file was edited manually or is a physical file', () => {
+	it( 'disables the instructions field when the file was edited manually and hides it for a physical file', () => {
 		// Arrange & Act
 		const { rerender } = render( <LlmsTxtPanel settings={ createSettings( { isManuallyEdited: true } ) } /> );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: 'Add custom text' } ) ).toBeNull();
+		expect( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ).disabled ).toBe( true );
 
 		// Act
 		rerender( <LlmsTxtPanel settings={ createSettings( { hasPhysicalFile: true, isEnabled: false } ) } /> );
 
 		// Assert
-		expect( screen.queryByRole( 'button', { name: 'Add custom text' } ) ).toBeNull();
+		expect( screen.queryByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ) ).toBeNull();
 	} );
 
 	it( 'keeps the dialog open and shows the server error when the take over fails', async () => {
