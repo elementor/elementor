@@ -564,9 +564,9 @@ class Module extends BaseModule {
 		$this->get_component( 'features_usage' )->register();
 
 		add_filter( 'elementor/core/admin/notices', function ( array $notices ) {
-			$notices[] = new Finish_Setup_Notice();
+			array_unshift( $notices, new Finish_Setup_Notice() );
 
 			return $notices;
-		} );
+		}, 5 );
 	}
 }

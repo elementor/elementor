@@ -108,11 +108,11 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 		$this->assertTrue( Onboarding_Entry::is_pending() );
 	}
 
-	public function test_decide__expires_after_fourteen_days() {
+	public function test_decide__expires_at_exactly_fourteen_days() {
 		// Arrange
 		$this->act_as_admin();
 		update_option( Onboarding_Entry::PENDING_OPTION, true );
-		update_option( Onboarding_Entry::ACTIVATED_AT_OPTION, time() - ( 15 * DAY_IN_SECONDS ) );
+		update_option( Onboarding_Entry::ACTIVATED_AT_OPTION, time() - ( 14 * DAY_IN_SECONDS ) );
 
 		// Act
 		$decision = Onboarding_Entry::decide();
@@ -121,6 +121,24 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 		$this->assertSame( Onboarding_Entry::DECISION_SKIP, $decision['type'] );
 		$this->assertSame( Onboarding_Entry::REASON_EXPIRED, $decision['reason'] );
 		$this->assertFalse( Onboarding_Entry::is_pending() );
+	}
+
+	public function test_decide__keeps_pending_on_admin_post() {
+		// Arrange
+		global $pagenow;
+
+		$this->act_as_admin();
+		$this->prime_pending_window();
+		$previous_pagenow = $pagenow;
+		$pagenow = 'admin-post.php';
+
+		// Act
+		$decision = Onboarding_Entry::decide();
+
+		// Assert
+		$pagenow = $previous_pagenow;
+		$this->assertSame( Onboarding_Entry::DECISION_SKIP, $decision['type'] );
+		$this->assertTrue( Onboarding_Entry::is_pending() );
 	}
 
 	public function test_decide__returns_notice_when_third_party_onboarded() {
