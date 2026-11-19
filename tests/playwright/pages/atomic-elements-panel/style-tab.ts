@@ -104,6 +104,7 @@ export default class StyleTab extends BasePage {
 	}
 
 	protected async changeUnit( unitButton: Locator, targetUnit: string ): Promise<void> {
+		await unitButton.waitFor( { state: 'visible', timeout: timeouts.action } );
 		const currentUnitText = await unitButton.textContent();
 
 		if ( currentUnitText?.toLowerCase() === targetUnit.toLowerCase() ) {
@@ -113,8 +114,8 @@ export default class StyleTab extends BasePage {
 		const unitOption = this.page.getByRole( 'menuitem', { name: targetUnit.toUpperCase(), exact: true } );
 
 		await unitButton.click();
-		await this.page.locator( '[role="presentation"] .MuiList-root' ).waitFor();
-		await unitOption.waitFor( { state: 'visible' } );
+		await this.page.locator( '[role="presentation"] .MuiList-root' ).waitFor( { state: 'visible', timeout: timeouts.action } );
+		await unitOption.waitFor( { state: 'visible', timeout: timeouts.action } );
 		await unitOption.click();
 	}
 
@@ -159,6 +160,9 @@ export default class StyleTab extends BasePage {
 		}, contentSelector );
 
 		if ( isContentVisible ) {
+			if ( expandAdvancedSection ) {
+				await this.clickShowMore( sectionId );
+			}
 			return;
 		}
 
