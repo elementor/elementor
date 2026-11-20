@@ -4,6 +4,9 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import { wpCli } from '../../../../assets/wp-cli';
 import { timeouts } from '../../../../config/timeouts';
 import {
+	EDITOR_PROMOTION_PATHS,
+	HOME_SCREEN_PATH,
+	NOTIFICATIONS_PATH,
 	NO_PROMOTION_SCENARIO,
 	assertScenarioFetched,
 	cdnFieldOrDefault,
@@ -50,7 +53,7 @@ const getPointerDismissKey = ( campaignId: unknown ): string =>
 for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 	test.describe( `Editor promotions from CDN - ${ scenario } @promotions`, () => {
 		test.beforeEach( async ( { page, baseURL } ) => {
-			assertScenarioFetched( scenario );
+			assertScenarioFetched( scenario, EDITOR_PROMOTION_PATHS );
 			await useCdnScenario( page.context(), baseURL, scenario );
 		} );
 
@@ -165,7 +168,7 @@ for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 
 test.describe( `Campaign content from CDN - ${ CAMPAIGN_SCENARIO } @promotions`, () => {
 	test.beforeEach( async ( { page, baseURL } ) => {
-		assertScenarioFetched( CAMPAIGN_SCENARIO );
+		assertScenarioFetched( CAMPAIGN_SCENARIO, [ NOTIFICATIONS_PATH, HOME_SCREEN_PATH ] );
 		await useCdnScenario( page.context(), baseURL, CAMPAIGN_SCENARIO );
 	} );
 

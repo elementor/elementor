@@ -7,13 +7,22 @@ export const NO_PROMOTION_SCENARIO = 'no-promotion';
 const SCENARIO_COOKIE = 'e2e_cdn_scenario';
 const FIXTURES_DIR = resolve( __dirname, '../../../../mu-plugins/editor-assets-cdn' );
 
-export type EditorPromotionName =
-	| 'conversion-banner'
-	| 'plugins-page'
-	| 'pointer'
-	| 'side-menu'
-	| 'sticky-panel'
-	| 'theme-builder';
+const EDITOR_PROMOTION_NAMES = [
+	'conversion-banner',
+	'plugins-page',
+	'pointer',
+	'side-menu',
+	'sticky-panel',
+	'theme-builder',
+] as const;
+
+export type EditorPromotionName = typeof EDITOR_PROMOTION_NAMES[ number ];
+
+const getEditorPromotionPath = ( name: EditorPromotionName ): string => `editor-promotions/v1/${ name }.json`;
+
+export const EDITOR_PROMOTION_PATHS = EDITOR_PROMOTION_NAMES.map( getEditorPromotionPath );
+export const NOTIFICATIONS_PATH = 'notifications/v1/notifications.json';
+export const HOME_SCREEN_PATH = 'home-screen/v1/home-screen.json';
 
 export type EditorPromotion = {
 	is_active?: boolean;
@@ -44,17 +53,14 @@ export type SidebarPromotionVariant = {
 	data: { image: string; link: string };
 };
 
-const readFixture = <T>( scenario: string, path: string, key: string ): T | undefined => {
-	const file = [ scenario, NO_PROMOTION_SCENARIO ]
-		.map( ( candidate ) => resolve( FIXTURES_DIR, candidate, path ) )
-		.find( ( candidate ) => existsSync( candidate ) );
+const readFixture = <T>( scenario: string, path: string, key: string ): T | undefined =>
+	JSON.parse( readFileSync( resolve( FIXTURES_DIR, scenario, path ), 'utf8' ) )[ key ] as T | undefined;
 
-	return file ? JSON.parse( readFileSync( file, 'utf8' ) )[ key ] as T : undefined;
-};
+export const assertScenarioFetched = ( scenario: string, paths: string[] ): void => {
+	const missing = paths.filter( ( path ) => ! existsSync( resolve( FIXTURES_DIR, scenario, path ) ) );
 
-export const assertScenarioFetched = ( scenario: string ): void => {
-	if ( ! existsSync( resolve( FIXTURES_DIR, scenario ) ) ) {
-		throw new Error( `CDN scenario "${ scenario }" is missing. Run \`npm run test:playwright:fetch-cdn\` before starting WordPress.` );
+	if ( missing.length ) {
+		throw new Error( `CDN scenario "${ scenario }" is missing ${ missing.join( ', ' ) }. Run \`npm run test:playwright:fetch-cdn\` before starting WordPress.` );
 	}
 };
 
@@ -63,7 +69,7 @@ export const useCdnScenario = async ( context: BrowserContext, baseURL: string, 
 };
 
 export const readEditorPromotion = ( scenario: string, name: EditorPromotionName ): EditorPromotion =>
-	readFixture<EditorPromotion>( scenario, `editor-promotions/v1/${ name }.json`, name ) ?? {};
+	readFixture<EditorPromotion>( scenario, getEditorPromotionPath( name ), name ) ?? {};
 
 const PRO_PLUGIN = 'elementor-pro/elementor-pro.php';
 
@@ -83,7 +89,7 @@ const isNotificationShown = ( notification: Notification, hasPro: boolean ): boo
 const isImageOnly = ( notification: Notification ): boolean => ! notification.title && ! notification.description;
 
 export const readFirstFullNotification = ( scenario: string, hasPro: boolean ): Notification | undefined => {
-	const notifications = readFixture<Notification[]>( scenario, 'notifications/v1/notifications.json', 'notifications' ) ?? [];
+	const notifications = readFixture<Notification[]>( scenario, NOTIFICATIONS_PATH, 'notifications' ) ?? [];
 	const mayBeShown = notifications.filter( ( notification ) => ! hasOnlyProConditions( notification ) || isNotificationShown( notification, hasPro ) );
 	const hasFeatured = mayBeShown.some( ( notification ) => notification.featured );
 
@@ -95,7 +101,7 @@ export const readFirstFullNotification = ( scenario: string, hasPro: boolean ): 
 };
 
 export const readSidebarPromotion = ( scenario: string, license: string ): SidebarPromotionVariant | undefined => {
-	const homeScreen = readFixture<{ sidebar_promotion_variants?: SidebarPromotionVariant[] }>( scenario, 'home-screen/v1/home-screen.json', 'home-screen' );
+	const homeScreen = readFixture<{ sidebar_promotion_variants?: SidebarPromotionVariant[] }>( scenario, HOME_SCREEN_PATH, 'home-screen' );
 
 	return homeScreen?.sidebar_promotion_variants?.find( ( variant ) => 'true' === variant.is_enabled && variant.license.includes( license ) );
 };
