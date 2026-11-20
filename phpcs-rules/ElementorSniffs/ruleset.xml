@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<ruleset name="ElementorSniffs">
+	<description>Elementor-specific PHPCS sniffs</description>
+	<rule ref="ElementorSniffs.Security.AbilityLabelTranslation"/>
+</ruleset>

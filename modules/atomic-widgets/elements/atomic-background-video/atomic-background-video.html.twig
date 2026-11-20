@@ -10,7 +10,7 @@
 	data-e-type="{{ type }}"
 	data-interaction-id="{{ interaction_id }}"
 	data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-	x-data="eBackgroundVideo{{ id }}"
+	x-data="{% if (id | e('js_identifier')) != '' %}eBackgroundVideo{{ id | e('js_identifier') }}{% else %}{}{% endif %}"
 	x-bind="rootState"
 	data-e-settings="{{ settings | json_encode | e('html_attr') }}"
 	{% if settings._cssid is defined and settings._cssid is not empty %}

@@ -3,12 +3,11 @@
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
@@ -19,8 +18,8 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Manage_Elements_Ability;
-use Elementor\Modules\Mcp\Module as Mcp_Module;
 use Elementor\Plugin;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Closed_Structure_Factory;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -29,25 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/fixtures/fake-v3-widget.php';
-
-class Manage_Elements_V3_Heading_Dynamic_Tag extends Tag {
-	public function get_name() {
-		return 'mcp-v3-heading-title';
-	}
-
-	public function get_title() {
-		return 'MCP V3 Heading Title';
-	}
-
-	public function get_group() {
-		return 'site';
-	}
-
-	public function get_categories() {
-		return [ 'text' ];
-	}
-}
-
+require_once __DIR__ . '/../composite-widgets/fixtures/closed-structure-factory.php';
 /**
  * @group Elementor\Modules\Mcp
  */
@@ -57,10 +38,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 	private Widgets_Manager $original_widgets_manager;
 	private Elements_Manager $original_elements_manager;
 
-	/**
-	 * @var array<string, string>
-	 */
-	private array $original_experiment_states = [];
+	private bool $registered_form_element = false;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -72,17 +50,15 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->original_documents = Plugin::$instance->documents;
 		$this->original_widgets_manager = Plugin::$instance->widgets_manager;
 		$this->original_elements_manager = Plugin::$instance->elements_manager;
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
 	}
 
 	public function tearDown(): void {
-		foreach ( $this->original_experiment_states as $experiment_name => $default_state ) {
-			Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $default_state );
-			delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
+		if ( $this->registered_form_element ) {
+			Plugin::$instance->elements_manager->unregister_element_type( Atomic_Form_Promotion::get_type() );
+			$this->registered_form_element = false;
 		}
 
 		V3_Widget_Map_Registry::reset_instance();
-		Plugin::$instance->dynamic_tags->unregister( 'mcp-v3-heading-title' );
 		Plugin::$instance->documents = $this->original_documents;
 		Plugin::$instance->widgets_manager = $this->original_widgets_manager;
 		Plugin::$instance->elements_manager = $this->original_elements_manager;
@@ -169,6 +145,26 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
 	}
 
+	public function test_execute__denied_when_role_is_excluded_from_elementor() {
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		update_option( 'elementor_exclude_user_roles', [ 'editor' ] );
+		$this->act_as_editor();
+
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'x' ],
+			],
+		] );
+
+		delete_option( 'elementor_exclude_user_roles' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_forbidden', $result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+	}
+
 	public function test_execute__unknown_action_returns_per_op_error() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -220,7 +216,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result );
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertStringNotContainsString( 'preview=true', $result['llm_instructions'] ?? '' );
 		$this->assertNull( $this->find_element_in_document( $post_id, $root_id ) );
 	}
 
@@ -243,6 +239,79 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( $container_id, $elements[0]['id'] );
 		$this->assertNotSame( $container_id, $elements[1]['id'] );
 		$this->assertNotSame( $heading_id, $elements[1]['elements'][0]['id'] ?? null );
+	}
+
+	public function test_duplicate__gives_copy_its_own_local_style_and_returns_copy_id() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+		$style_result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $heading_id, 'style' => 'color: #ff0000;' ],
+			],
+		] );
+		$this->assertOkOperation( $style_result, 0 );
+		$original_before = $this->find_element_in_document( $post_id, $heading_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'duplicate', 'element_id' => $heading_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( $heading_id, $result['results'][0]['element_id'] );
+
+		$copy_id = $result['results'][0]['new_element_id'];
+		$copy = $this->find_element_in_document( $post_id, $copy_id );
+		$original_after = $this->find_element_in_document( $post_id, $heading_id );
+		$copy_style_ids = array_keys( $copy['styles'] );
+
+		$this->assertNotSame( $heading_id, $copy_id );
+		$this->assertSame( $original_before['styles'], $original_after['styles'] );
+		$this->assertEmpty( array_intersect( array_keys( $original_after['styles'] ), $copy_style_ids ) );
+		$this->assertSame( $copy_style_ids, $copy['settings']['classes']['value'] );
+	}
+
+	public function test_duplicate__gives_styled_child_of_copied_container_its_own_local_style() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		[ $container_id, $heading_id ] = $this->given_container_with_heading( $post_id );
+		$style_result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $heading_id, 'style' => 'color: #ff0000;' ],
+			],
+		] );
+		$this->assertOkOperation( $style_result, 0 );
+		$original_child_before = $this->find_element_in_document( $post_id, $heading_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'duplicate', 'element_id' => $container_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$copy = $this->find_element_in_document( $post_id, $result['results'][0]['new_element_id'] );
+		$copied_child = $copy['elements'][0];
+		$original_child_after = $this->find_element_in_document( $post_id, $heading_id );
+		$copied_child_style_ids = array_keys( $copied_child['styles'] );
+
+		$this->assertNotEmpty( $copied_child_style_ids );
+		$this->assertSame( $original_child_before['styles'], $original_child_after['styles'] );
+		$this->assertEmpty( array_intersect( array_keys( $original_child_after['styles'] ), $copied_child_style_ids ) );
+		$this->assertSame( $copied_child_style_ids, $copied_child['settings']['classes']['value'] );
 	}
 
 	public function test_move__reparents_element_to_document_root_at_index() {
@@ -791,142 +860,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'title', $node['settings'] ?? [] );
 	}
 
-	public function test_update__applies_standardized_v3_heading_settings() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => 'Updated Heading',
-						'tag' => 'h4',
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Updated Heading', $heading['settings']['title'] ?? null );
-		$this->assertSame( 'h4', $heading['settings']['header_size'] ?? null );
-		$this->assertArrayNotHasKey( 'tag', $heading['settings'] );
-	}
-
-	public function test_update__rejects_invalid_standardized_v3_heading_settings_without_mutation() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => [ 'settings' => [] ],
-						'tag' => 'h4',
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertArrayNotHasKey( 'title', $heading['settings'] ?? [] );
-		$this->assertArrayNotHasKey( 'header_size', $heading['settings'] ?? [] );
-	}
-
-	public function test_update__rejects_dynamic_on_non_dynamic_mapped_heading_link() {
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'link' => [
-							'name' => 'post-url',
-							'settings' => [],
-						],
-					],
-				],
-			],
-		] );
-
-		$this->assertSame( 'error', $result['status'] );
-		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
-		$this->assertStringContainsString( 'dynamic tags are not supported', $result['results'][0]['message'] );
-	}
-
-	public function test_update__applies_dynamic_standardized_v3_heading_title() {
-		// Arrange
-		$this->act_as_admin();
-		$post_id = $this->create_real_document();
-		$heading_id = $this->given_v3_heading_on_document( $post_id );
-		$this->enable_standardized_v3_maps();
-		$this->register_v3_heading_dynamic_tag();
-
-		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [
-						'title' => [
-							'name' => 'mcp-v3-heading-title',
-							'settings' => [],
-						],
-					],
-				],
-			],
-		] );
-
-		// Assert
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$dynamic_title = $heading['settings']['__dynamic__']['title'] ?? null;
-		$this->assertIsString( $dynamic_title );
-		$this->assertStringContainsString( 'mcp-v3-heading-title', $dynamic_title );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $heading_id,
-					'settings' => [ 'title' => 'Static Heading' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$heading = $this->find_element_in_document( $post_id, $heading_id );
-		$this->assertSame( 'Static Heading', $heading['settings']['title'] ?? null );
-		$this->assertArrayNotHasKey( 'title', $heading['settings']['__dynamic__'] ?? [] );
-	}
-
 	public function test_execute__rejects_v3_delete_move_duplicate_per_op() {
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -1001,89 +934,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'Survived', $node['settings']['title']['value'] );
 	}
 
-	/**
-	 * @dataProvider standardized_maps_states
-	 */
-	public function test_execute__allowlisted_v3_update_merges_raw_settings( bool $standardized_maps_active ) {
+	public function test_execute__mapped_v3_classes_write_to_css_classes() {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
-
-		if ( $standardized_maps_active ) {
-			$this->enable_standardized_v3_maps();
-		}
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'settings' => [ 'menu' => '3', 'layout' => 'horizontal' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertNotNull( $node );
-		$this->assertSame( '3', $node['settings']['menu'] );
-		$this->assertSame( 'horizontal', $node['settings']['layout'] );
-	}
-
-	public function standardized_maps_states(): array {
-		return [
-			'inactive' => [ false ],
-			'active' => [ true ],
-		];
-	}
-
-	public function test_execute__allowlisted_v3_static_update_preserves_dynamic_setting_when_standardized_maps_inactive() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->random_element_id();
-		$this->register_v3_heading_dynamic_tag();
-		$tag = Plugin::$instance->dynamic_tags->create_tag( 'legacy', 'mcp-v3-heading-title', [] );
-		$this->assertInstanceOf( Tag::class, $tag );
-		$shortcode = Plugin::$instance->dynamic_tags->tag_to_text( $tag );
-		$this->append_elements_to_document( $post_id, [
-			[
-				'id' => $v3_id,
-				'elType' => 'widget',
-				'widgetType' => 'nav-menu',
-				'settings' => [
-					'__dynamic__' => [ 'menu' => $shortcode ],
-				],
-				'elements' => [],
-			],
-		] );
-
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $v3_id,
-					'settings' => [ 'menu' => '3' ],
-				],
-			],
-		] );
-
-		$this->assertOkOperation( $result, 0 );
-		$node = $this->find_element_in_document( $post_id, $v3_id );
-		$this->assertSame( '3', $node['settings']['menu'] );
-		$this->assertArrayHasKey( 'menu', $node['settings']['__dynamic__'] ?? [] );
-		$this->assertSame( $shortcode, $node['settings']['__dynamic__']['menu'] );
-	}
-
-	public function test_execute__allowlisted_v3_classes_write_to_css_classes() {
-		$this->act_as_admin();
-		$this->given_fake_v3_widget_registered( 'nav-menu' );
-		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 		$this->given_kit_global_class( 'menu-primary', '#111111' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
@@ -1104,7 +959,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'classes', $node['settings'] );
 	}
 
-	public function test_execute__allowlisted_v3_style_bridged_to_custom_css_when_pro_active() {
+	public function test_execute__mapped_v3_style_falls_back_to_custom_css_when_pro_active() {
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Requires Elementor Pro for custom_css bridge.' );
 		}
@@ -1112,7 +967,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1132,7 +987,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'styles', $node );
 	}
 
-	public function test_execute__allowlisted_v3_style_warns_when_pro_missing() {
+	public function test_execute__mapped_v3_style_warns_when_pro_missing() {
 		if ( \Elementor\Utils::has_pro() ) {
 			$this->markTestSkipped( 'Applies only when Pro is inactive.' );
 		}
@@ -1140,7 +995,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'nav-menu' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'nav-menu' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1167,11 +1022,11 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'custom_css', $node['settings'] );
 	}
 
-	public function test_execute__allowlisted_v3_delete_succeeds() {
+	public function test_execute__v3_delete_succeeds() {
 		$this->act_as_admin();
 		$this->given_fake_v3_widget_registered( 'theme-post-content' );
 		$post_id = $this->create_real_document();
-		$v3_id = $this->given_allowlisted_v3_widget_on_document( $post_id, 'theme-post-content' );
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'theme-post-content' );
 
 		$result = ( new Manage_Elements_Ability() )->execute( [
 			'post_id' => $post_id,
@@ -1280,22 +1135,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertTrue( empty( $items ) );
 	}
 
-	public function test_execute__update_stores_decorative_setting_as_editor_setting() {
+	public function test_execute__update_stores_decorative_editor_setting() {
 		// Arrange
 		$post_id = $this->create_real_document();
 		[ , $inner_id ] = $this->given_nested_containers( $post_id );
 
 		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $inner_id,
-					'settings' => [ 'decorative' => true ],
-				],
-			],
-		] );
+		$result = $this->update_editor_settings( $post_id, $inner_id, [ 'decorative' => true ] );
 
 		// Assert
 		$this->assertOkOperation( $result, 0 );
@@ -1306,22 +1152,13 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
 	}
 
-	public function test_execute__update_skips_non_boolean_decorative_setting_with_warning() {
+	public function test_execute__update_skips_non_boolean_decorative_editor_setting_with_warning() {
 		// Arrange
 		$post_id = $this->create_real_document();
 		[ , $inner_id ] = $this->given_nested_containers( $post_id );
 
 		// Act
-		$result = ( new Manage_Elements_Ability() )->execute( [
-			'post_id' => $post_id,
-			'operations' => [
-				[
-					'action' => 'update',
-					'element_id' => $inner_id,
-					'settings' => [ 'decorative' => 'yes' ],
-				],
-			],
-		] );
+		$result = $this->update_editor_settings( $post_id, $inner_id, [ 'decorative' => 'yes' ] );
 
 		// Assert
 		$this->assertOkOperation( $result, 0 );
@@ -1329,7 +1166,197 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 		$node = $this->find_element_in_document( $post_id, $inner_id );
 		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
-		$this->assertArrayNotHasKey( 'decorative', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_renames_v4_element_through_editor_settings_title() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'name' => 'Hero Title' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'Hero Title', $node['editor_settings']['title'] );
+		$this->assertArrayNotHasKey( '_title', $node['settings'] ?? [] );
+		$this->assertNotSame( 'Hero Title', $node['settings']['title']['value'] ?? null );
+	}
+
+	public function test_execute__update_renames_unsupported_v3_element_through_settings_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $v3_id, [ 'name' => 'Legacy Hero' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertSame( 'Legacy Hero', $node['settings']['_title'] );
+		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_with_settings_and_editor_settings_still_rejects_unsupported_v3_element() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'title' => 'Nope' ],
+					'editor_settings' => [ 'name' => 'Legacy Hero' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( 'elementor_v3_not_supported', $result['results'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertArrayNotHasKey( '_title', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__update_clears_name_with_empty_string() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+		$this->update_editor_settings( $post_id, $heading_id, [ 'name' => 'Hero Title' ] );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'name' => '' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertArrayNotHasKey( 'title', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_skips_non_string_name_with_warning() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'name' => 42 ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_value_invalid', $result['results'][0]['warning_details'][0]['code'] );
+	}
+
+	public function test_execute__update_warns_on_unsupported_editor_setting_key() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'decorative' => true ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'editor_setting_not_supported', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertArrayNotHasKey( 'decorative', $node['editor_settings'] ?? [] );
+	}
+
+	public function test_execute__update_points_to_name_when_title_is_sent_in_editor_settings() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		[ $container_id ] = $this->given_container_with_heading( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $container_id, [ 'title' => 'Wrapper' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$warning = $result['results'][0]['warning_details'][0];
+		$this->assertSame( 'editor_setting_not_supported', $warning['code'] );
+		$this->assertStringContainsString( 'Use "name"', $warning['message'] );
+	}
+
+	public function test_execute__update_rejects_prop_sent_in_editor_settings() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = $this->update_editor_settings( $post_id, $heading_id, [ 'title' => 'Visible text' ] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'prop_in_editor_settings', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'h1', $node['editor_settings']['title'] );
+		$this->assertNotSame( 'Visible text', $node['settings']['title']['value'] ?? null );
+	}
+
+	public function test_execute__update_warns_when_editor_setting_is_sent_in_settings() {
+		// Arrange
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $heading_id,
+					'settings' => [ 'name' => 'Hero Title' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertSame( 'editor_setting_in_settings', $result['results'][0]['warning_details'][0]['code'] );
+
+		$node = $this->find_element_in_document( $post_id, $heading_id );
+		$this->assertSame( 'h1', $node['editor_settings']['title'] );
+		$this->assertArrayNotHasKey( 'name', $node['settings'] ?? [] );
+	}
+
+	public function test_execute__mapped_v3_update_rejects_editor_setting_in_settings_with_hint() {
+		// Arrange
+		$this->act_as_admin();
+		$this->given_fake_v3_widget_registered( 'nav-menu' );
+		$post_id = $this->create_real_document();
+		$v3_id = $this->given_v3_widget_on_document( $post_id, 'nav-menu' );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $v3_id,
+					'settings' => [ 'name' => 'Main Menu' ],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertSame( 'elementor_invalid_settings', $result['results'][0]['code'] );
+		$this->assertStringContainsString( 'send in `editor_settings`', $result['results'][0]['message'] );
+
+		$node = $this->find_element_in_document( $post_id, $v3_id );
+		$this->assertArrayNotHasKey( 'name', $node['settings'] ?? [] );
+		$this->assertArrayNotHasKey( '_title', $node['settings'] ?? [] );
 	}
 
 	public function test_bulk__invalid_interactions_update_still_persists_settings() {
@@ -1741,8 +1768,100 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		$this->assertSame( 'ok', $result['results'][ $index ]['status'] ?? null );
 	}
 
+	private function update_editor_settings( int $post_id, string $element_id, array $editor_settings ) {
+		return ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'update',
+					'element_id' => $element_id,
+					'editor_settings' => $editor_settings,
+				],
+			],
+		] );
+	}
+
+	public function test_execute__reports_staged_when_saving_to_a_published_page() {
+		// Arrange
+		$post_id = $this->create_published_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $heading_id ],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringStartsWith( 'Change saved to a draft copy.', $result['llm_instructions'] );
+	}
+
+	public function test_execute__reports_staged_on_the_no_change_path_of_a_published_page() {
+		// Arrange
+		$post_id = $this->create_published_document();
+		$this->given_heading_on_document( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result['staged'] );
+	}
+
+	public function test_execute__reports_not_staged_on_a_draft() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act
+		$saved = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $heading_id ],
+			],
+		] );
+		$unchanged = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => 'ghost' ],
+			],
+		] );
+
+		// Assert
+		$this->assertFalse( $saved['staged'] );
+		$this->assertStringNotContainsString( 'draft copy', $saved['llm_instructions'] ?? '' );
+		$this->assertFalse( $unchanged['staged'] );
+	}
+
 	private function create_real_document(): int {
 		return $this->factory()->create_and_get_custom_post( [ 'post_status' => 'draft' ] )->ID;
+	}
+
+	/**
+	 * Autosave detection requires the autosave's `post_modified_gmt` to be strictly newer than the
+	 * main post's, so the main post is backdated.
+	 */
+	private function create_published_document(): int {
+		global $wpdb;
+
+		$this->act_as_admin();
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] )->ID;
+		Plugin::$instance->documents->get( $post_id, false )->set_is_built_with_elementor( true );
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) ) ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+
+		return $post_id;
 	}
 
 	private function given_heading_on_document( int $post_id ): string {
@@ -1785,7 +1904,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		}
 
 		$container_id = $result['root_element_ids'][0];
-		$elements = Plugin::$instance->documents->get( $post_id )->get_elements_data();
+		$elements = Plugin::$instance->documents->get_doc_or_auto_save( $post_id, get_current_user_id() )->get_elements_data();
 
 		foreach ( $elements as $element ) {
 			if ( $element['id'] === $container_id ) {
@@ -1815,7 +1934,7 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 		return $id;
 	}
 
-	private function given_allowlisted_v3_widget_on_document( int $post_id, string $widget_type ): string {
+	private function given_v3_widget_on_document( int $post_id, string $widget_type ): string {
 		$id = $this->random_element_id();
 
 		$this->append_elements_to_document( $post_id, [
@@ -1833,32 +1952,6 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 
 	private function given_fake_v3_widget_registered( string $type ): void {
 		Plugin::$instance->widgets_manager->register( Fake_V3_Widget_Factory::create( $type ) );
-	}
-
-	private function enable_standardized_v3_maps(): void {
-		$this->set_experiment_state( Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME, Experiments_Manager::STATE_ACTIVE );
-		$this->set_experiment_state( Atomic_Widgets_Module::EXPERIMENT_NAME, Experiments_Manager::STATE_INACTIVE );
-	}
-
-	private function set_experiment_state( string $experiment_name, string $state ): void {
-		if ( ! array_key_exists( $experiment_name, $this->original_experiment_states ) ) {
-			$features = Plugin::$instance->experiments->get_features( $experiment_name );
-
-			if ( empty( $features ) && Mcp_Module::V3_STANDARDIZED_MAPS_EXPERIMENT_NAME === $experiment_name ) {
-				Plugin::$instance->experiments->add_feature( Mcp_Module::get_v3_standardized_maps_experimental_data() );
-				$features = Plugin::$instance->experiments->get_features( $experiment_name );
-			}
-
-			$this->original_experiment_states[ $experiment_name ] = $features['default'] ?? Experiments_Manager::STATE_DEFAULT;
-		}
-
-		Plugin::$instance->experiments->set_feature_default_state( $experiment_name, $state );
-		delete_option( Experiments_Manager::OPTION_PREFIX . $experiment_name );
-		V3_Widget_Map_Registry::reset_instance();
-	}
-
-	private function register_v3_heading_dynamic_tag(): void {
-		Plugin::$instance->dynamic_tags->register( new Manage_Elements_V3_Heading_Dynamic_Tag() );
 	}
 
 	private function given_v3_container_on_document( int $post_id ): string {
@@ -1967,5 +2060,336 @@ class Test_Manage_Elements_Ability extends Elementor_Test_Base {
 			$experiments->set_feature_default_state( $name, $original_default );
 			update_option( $feature_option_key, $original_option );
 		}
+	}
+
+	public function test_move__succeeds_when_page_has_preexisting_honeypot_violation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		[ $unrelated_container_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'move',
+					'element_id' => $unrelated_container_id,
+					'new_parent_id' => 'document',
+					'index' => 0,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_duplicate__succeeds_when_page_has_preexisting_honeypot_violation() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		[ $unrelated_container_id ] = $this->given_nested_containers( $post_id );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $unrelated_container_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertOkOperation( $result, 0 );
+	}
+
+	public function test_duplicate__rejects_duplicating_container_with_honeypot_when_form_already_has_one() {
+		// Arrange: form has a container with honeypot + another container with honeypot
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$container_id = $this->given_form_with_atom_in_container( $post_id, 'e-form-honeypot' );
+
+		// Act: duplicate the container (would create a second honeypot in the form)
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_id,
+				],
+			],
+		] );
+
+		// Assert: should be rejected because form would have 2 honeypots
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	public function test_duplicate__rejects_duplicating_container_with_recaptcha_score_when_form_already_has_one() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$container_id = $this->given_form_with_atom_in_container( $post_id, 'e-form-recaptcha-score' );
+
+		// Act
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_id,
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+		$this->assertStringContainsString( 'Score-based reCAPTCHA', $result['results'][0]['message'] );
+	}
+
+	public function test_duplicate__rejects_when_page_has_preexisting_violation_and_new_violation_introduced() {
+		// Arrange: form A has 2 honeypots (pre-existing violation), form B has honeypot in container
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$this->given_form_with_two_honeypots( $post_id );
+		$container_in_form_b = $this->given_form_with_atom_in_container( $post_id, 'e-form-honeypot' );
+
+		// Act: duplicate container in form B (would create a new violation in form B)
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[
+					'action' => 'duplicate',
+					'element_id' => $container_in_form_b,
+				],
+			],
+		] );
+
+		// Assert: should be rejected because form B would now have 2 honeypots
+		// (pre-existing violation in form A is ignored)
+		$this->assertIsArray( $result );
+		$this->assertSame( 'error', $result['status'] );
+		$this->assertSame( 'elementor_invalid_form_structure', $result['results'][0]['code'] );
+	}
+
+	public function test_execute__rejects_structural_edits_inside_a_widget_per_op() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+		$page_heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $widget['part'] ],
+				[ 'action' => 'duplicate', 'element_id' => $widget['part'] ],
+				[ 'action' => 'move', 'element_id' => $widget['part'], 'new_parent_id' => 'document' ],
+				[ 'action' => 'move', 'element_id' => $widget['slot'], 'new_parent_id' => 'document' ],
+				[ 'action' => 'move', 'element_id' => $page_heading_id, 'new_parent_id' => $widget['root'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'error', $result['status'] );
+		foreach ( $result['results'] as $row ) {
+			$this->assertSame( 'elementor_widget_structure_closed', $row['code'] );
+		}
+		$this->assertNotNull( $this->find_element_in_document( $post_id, $widget['part'] ) );
+	}
+
+	public function test_execute__allows_content_edits_slot_edits_and_whole_widget_edits() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+		$page_heading_id = $this->given_heading_on_document( $post_id );
+
+		// Act.
+		$result = $this->make_ability_with_closed_structure()->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'update', 'element_id' => $widget['part'], 'settings' => [ 'title' => 'Updated' ] ],
+				[ 'action' => 'move', 'element_id' => $page_heading_id, 'new_parent_id' => $widget['slot'] ],
+				[ 'action' => 'delete', 'element_id' => $widget['slot_child'] ],
+				[ 'action' => 'duplicate', 'element_id' => $widget['root'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertSame( 'ok', $result['status'], wp_json_encode( $result['results'] ) );
+		$this->assertSame( $page_heading_id, $this->find_element_in_document( $post_id, $widget['slot'] )['elements'][0]['id'] );
+	}
+
+	public function test_execute__does_not_guard_widgets_while_the_experiment_is_off() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+		$widget = $this->given_widget_with_slot_on_document( $post_id );
+
+		// Act.
+		$result = ( new Manage_Elements_Ability() )->execute( [
+			'post_id' => $post_id,
+			'operations' => [
+				[ 'action' => 'delete', 'element_id' => $widget['part'] ],
+			],
+		] );
+
+		// Assert.
+		$this->assertOkOperation( $result, 0 );
+		$this->assertNull( $this->find_element_in_document( $post_id, $widget['part'] ) );
+	}
+
+	private function make_ability_with_closed_structure(): Manage_Elements_Ability {
+		return new Manage_Elements_Ability( null, Closed_Structure_Factory::make() );
+	}
+
+	/**
+	 * @return array{root: string, part: string, slot: string, slot_child: string}
+	 */
+	private function given_widget_with_slot_on_document( int $post_id ): array {
+		$ids = [
+			'root' => $this->random_element_id(),
+			'part' => $this->random_element_id(),
+			'slot' => $this->random_element_id(),
+			'slot_child' => $this->random_element_id(),
+		];
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $ids['root'],
+				'elType' => 'e-flexbox',
+				'settings' => [],
+				'part' => 'root',
+				'widget' => [ 'id' => Closed_Structure_Factory::WIDGET_ID, 'version' => 1 ],
+				'elements' => [
+					[
+						'id' => $ids['part'],
+						'elType' => 'widget',
+						'widgetType' => 'e-heading',
+						'settings' => [],
+						'part' => 'title',
+						'elements' => [],
+					],
+					[
+						'id' => $ids['slot'],
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'part' => 'content',
+						'slot' => true,
+						'elements' => [
+							[
+								'id' => $ids['slot_child'],
+								'elType' => 'e-flexbox',
+								'settings' => [],
+								'elements' => [],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		return $ids;
+	}
+
+	private function given_form_element_registered(): void {
+		if ( Plugin::$instance->elements_manager->get_element_types( Atomic_Form_Promotion::get_type() ) ) {
+			return;
+		}
+
+		Plugin::$instance->elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		$this->registered_form_element = true;
+	}
+
+	private function given_form_with_two_honeypots( int $post_id ): void {
+		$this->given_form_element_registered();
+
+		$form_id = $this->random_element_id();
+		$honeypot1_id = $this->random_element_id();
+		$honeypot2_id = $this->random_element_id();
+		$submit_id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $form_id,
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => $honeypot1_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+					[
+						'id' => $honeypot2_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-honeypot',
+						'settings' => [],
+						'elements' => [],
+					],
+					[
+						'id' => $submit_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-submit-button',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+	}
+
+	private function given_form_with_atom_in_container( int $post_id, string $widget_type ): string {
+		$this->given_form_element_registered();
+
+		$form_id = $this->random_element_id();
+		$container_id = $this->random_element_id();
+		$atom_id = $this->random_element_id();
+		$submit_id = $this->random_element_id();
+
+		$this->append_elements_to_document( $post_id, [
+			[
+				'id' => $form_id,
+				'elType' => 'e-form',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => $container_id,
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'elements' => [
+							[
+								'id' => $atom_id,
+								'elType' => 'widget',
+								'widgetType' => $widget_type,
+								'settings' => [],
+								'elements' => [],
+							],
+						],
+					],
+					[
+						'id' => $submit_id,
+						'elType' => 'widget',
+						'widgetType' => 'e-form-submit-button',
+						'settings' => [],
+						'elements' => [],
+					],
+				],
+			],
+		] );
+
+		return $container_id;
 	}
 }

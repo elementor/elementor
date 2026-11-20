@@ -6,7 +6,7 @@ import DialogTitle from '@elementor/ui/DialogTitle';
 import PropTypes from 'prop-types';
 
 const WP_ADMIN_BAR_Z_INDEX = 99999;
-const DIALOG_Z_INDEX = WP_ADMIN_BAR_Z_INDEX + 1;
+export const DIALOG_Z_INDEX = WP_ADMIN_BAR_Z_INDEX + 1;
 
 export const ContentPreviewDialog = ( { title, onClose, children, actions = null } ) => {
 	return (

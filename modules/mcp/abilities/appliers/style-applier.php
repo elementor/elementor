@@ -4,12 +4,19 @@ namespace Elementor\Modules\Mcp\Abilities\Appliers;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\Kit_Settings_Host;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Custom_Css_Fallback;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Fallback_Css;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Clearer;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Settings_Patch;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Inactive_Condition_Warnings;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Overridden_Setting_Warnings;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\V3_Style_Mapper_Factory;
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Style_Variants_Merger;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
-use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
 use Elementor\Plugin;
 
@@ -25,23 +32,28 @@ class Style_Applier {
 	const LOCAL_STYLE_TYPE = 'class';
 
 	const UNSUPPORTED_CSS_CODE = 'unsupported_css';
+	const UNKNOWN_VARIABLE_CODE = 'unknown_variable';
+	const BORDER_STYLE_NONE = 'none';
+	const SITE_WIDE_STYLE_CODE = 'site_wide_style';
+	const SITE_WIDE_STYLE_FORBIDDEN_CODE = 'site_wide_style_forbidden';
 
 	private Css_Converter $css_converter;
 	private array $active_breakpoints;
+	private ?Variables_Service $variables_service;
 
-	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [] ) {
+	public function __construct( Css_Converter $css_converter, array $active_breakpoints = [], ?Variables_Service $variables_service = null ) {
 		$this->css_converter      = $css_converter;
 		$this->active_breakpoints = $active_breakpoints;
+		$this->variables_service  = $variables_service;
 	}
 
 	/**
 	 * @param array<string, array&> $config_id_index Index of subtree refs.
 	 * @param array<string, string> $styles          Per-config-id CSS strings.
 	 * @param string                $style_apply_mode `patch` or `replace`.
-	 * @param array<string, array>  $widget_configs  Optional widget_type => config map (used for V3 mapping).
 	 * @return array{error: null, warnings: Warnings_Bag, variable_connections: array<string, array<string, string>>}
 	 */
-	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch', array $widget_configs = [] ): array {
+	public function apply( array $config_id_index, array $styles, string $style_apply_mode = 'patch' ): array {
 		$warnings = Warnings_Bag::make();
 
 		if ( empty( $styles ) ) {
@@ -72,7 +84,7 @@ class Style_Applier {
 			$node = &$config_id_index[ $config_id ];
 
 			if ( V3_Node_Bridge::is_v3_node( $node ) ) {
-				$this->apply_v3_style( $node, $css_string, (string) $config_id, $warnings, $style_apply_mode, $widget_configs );
+				$this->apply_v3_style( $node, $css_string, (string) $config_id, $warnings, $style_apply_mode );
 				unset( $node );
 				continue;
 			}
@@ -127,6 +139,8 @@ class Style_Applier {
 				);
 			}
 
+			$this->warn_about_unknown_variables( $css_string, (string) $config_id, $warnings );
+
 			$affected_bps           = array_column( $parsed['breakpoint_blocks'], 'breakpoint' );
 			$removal_bps            = $parsed['removal_breakpoints'];
 			$existing_style_id      = $this->find_existing_local_style_id( $node );
@@ -155,82 +169,154 @@ class Style_Applier {
 		];
 	}
 
-	/**
-	 * @param array                $node
-	 * @param string               $css_string
-	 * @param string               $config_id
-	 * @param Warnings_Bag         $warnings
-	 * @param string               $style_apply_mode
-	 * @param array<string, array> $widget_configs
-	 */
-	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch', array $widget_configs = [] ): void {
-		$widget_type = $node['widgetType'] ?? $node['elType'] ?? '';
-		$widget_config = [];
+	private function apply_v3_style( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode = 'patch' ): void {
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
 
-		if ( is_string( $widget_type ) && '' !== $widget_type ) {
-			$widget_config = $widget_configs[ $widget_type ]
-				?? Widget_Context_Helper::get_widget_config( $widget_type )
-				?? [];
+		if ( null === $map ) {
+			return;
 		}
 
-		$is_empty_css = '' === trim( $css_string );
-		$is_replace = 'replace' === $style_apply_mode;
+		$host = $map->get_settings_host();
+		$settings = $host->read( $node );
+		$hosted_node = array_merge( $node, [ 'settings' => $settings ] );
 
-		if ( $is_replace ) {
-			V3_Node_Bridge::clear_style_settings( $node, (string) $widget_type, $widget_config );
+		$this->apply_v3_style_to_node( $hosted_node, $css_string, $config_id, $warnings, $style_apply_mode );
+
+		$updated_settings = $hosted_node['settings'];
+		$site_settings = $host->site_settings( $settings );
+		$changes_site_settings = $host->site_settings( $updated_settings ) !== $site_settings;
+
+		if ( $changes_site_settings && ! Kit_Settings_Host::can_write() ) {
+			$warnings->add( self::SITE_WIDE_STYLE_FORBIDDEN_CODE, __( 'This style is stored in Site Settings, which you do not have permission to edit, so it was not saved.', 'elementor' ), $config_id );
+			$updated_settings = $host->with_site_settings( $updated_settings, $site_settings );
+			$changes_site_settings = false;
+		}
+
+		if ( $updated_settings === $settings ) {
+			return;
+		}
+
+		$host->write( $node, $updated_settings );
+
+		if ( $changes_site_settings ) {
+			$warnings->add( self::SITE_WIDE_STYLE_CODE, __( 'This style is stored in Site Settings and applies to the whole site, not only this element. It goes live when the page is saved, even if the page itself stays a draft.', 'elementor' ), $config_id );
+		}
+	}
+
+	private function apply_v3_style_to_node( array &$node, string $css_string, string $config_id, Warnings_Bag $warnings, string $style_apply_mode ): void {
+		$widget_type = (string) ( $node['widgetType'] ?? $node['elType'] ?? '' );
+		$map = V3_Widget_Map_Registry::instance()->get_map( $widget_type );
+
+		if ( null === $map ) {
+			return;
+		}
+
+		$css_string = V3_Custom_Css_Fallback::without_statements( $css_string, V3_Map_Style_Clearer::user_css_rules( $node['settings'] ?? [], $map ) );
+		$is_empty_css = '' === trim( $css_string );
+		$result = null;
+
+		if ( ! $is_empty_css ) {
+			$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
+			$result = $mapper->apply( $css_string, $widget_type );
+		}
+
+		if ( null !== ( $result['error'] ?? null ) ) {
+			$warnings->add( 'css_parse_failed', $result['error'], $config_id );
+			return;
+		}
+
+		if ( 'replace' === $style_apply_mode ) {
+			$patch = is_array( $result ) ? ( $result['settings_patch'] ?? [] ) : [];
+			( new V3_Map_Style_Clearer() )->clear( $node, $map->for_replace( $patch ), $widget_type );
 		}
 
 		if ( $is_empty_css ) {
 			return;
 		}
 
-		$mapper = V3_Style_Mapper_Factory::create( $this->css_converter, $this->get_active_breakpoints() );
-		$result = $mapper->apply( $css_string, (string) $widget_type, $widget_config );
-
 		foreach ( $result['warnings'] as $warning ) {
 			$warnings->add( 'v3_css_skipped', $warning, $config_id );
 		}
 
-		if ( ! empty( $result['settings_patch'] ) ) {
-			$node['settings'] = array_merge( $node['settings'] ?? [], $result['settings_patch'] );
+		$controls = V3_Widget_Map_Registry::instance()->get_registered_controls( $widget_type );
+		V3_Overridden_Setting_Warnings::report( $warnings, $config_id, $node['settings'] ?? [], $result['required_settings'] ?? [], $controls );
+
+		$settings_patch = self::with_border_style_defaults( $result['settings_patch'] ?? [], $result['border_style_defaults'] ?? [], $node['settings'] ?? [] );
+		$settings_patch = self::with_list_requirements( $settings_patch, $result['list_requirements'] ?? [], $node['settings'] ?? [] );
+
+		if ( ! empty( $settings_patch ) ) {
+			$node['settings'] = V3_Settings_Patch::merge( $node['settings'] ?? [], $settings_patch );
 		}
 
-		$is_map_driven = null !== V3_Widget_Map_Registry::instance()->get_style_bindings( (string) $widget_type );
-		$unmapped = $result['unmapped_css'] ?? '';
+		V3_Inactive_Condition_Warnings::report( $warnings, $config_id, $widget_type, array_keys( $settings_patch ), $node['settings'] ?? [] );
+		( new V3_Map_Fallback_Css() )->apply( $node, $result, $widget_type, $config_id, $warnings );
+	}
 
-		if ( $is_map_driven ) {
+	private function warn_about_unknown_variables( string $css_string, string $config_id, Warnings_Bag $warnings ): void {
+		if ( null === $this->variables_service || ! preg_match_all( '/var\(\s*--([A-Za-z0-9_-]+)/', $css_string, $matches ) ) {
 			return;
 		}
 
-		$pro_warning = V3_Node_Bridge::apply_custom_css( $node, $unmapped, (string) $widget_type );
-		if ( null !== $pro_warning ) {
-			$warnings->add( 'v3_style_needs_pro', $pro_warning, $config_id );
+		$unknown = array_filter(
+			array_unique( $matches[1] ),
+			fn( string $reference ) => null === $this->variables_service->find_by_label_or_id( $reference )
+		);
+
+		if ( empty( $unknown ) ) {
+			return;
 		}
 
-		if ( '' !== trim( $unmapped ) ) {
-			$snippet = self::truncate_css_snippet( $unmapped );
-			if ( null !== $pro_warning ) {
-				$warnings->add(
-					'css_dropped',
-					sprintf(
-						/* translators: %s: CSS snippet that could not be mapped */
-						__( 'Some CSS could not be mapped to V3 settings and was dropped: %s', 'elementor' ),
-						$snippet
-					),
-					$config_id
-				);
-			} else {
-				$warnings->add(
-					'css_fallback_custom_css',
-					sprintf(
-						/* translators: %s: CSS snippet that could not be mapped */
-						__( 'Some CSS could not be mapped to V3 settings and was written to custom_css: %s', 'elementor' ),
-						$snippet
-					),
-					$config_id
-				);
+		$warnings->add(
+			self::UNKNOWN_VARIABLE_CODE,
+			sprintf(
+				/* translators: %s: Comma-separated var() references */
+				__( 'No Elementor variable matches %s. The declaration was kept as plain CSS and only works if that CSS custom property is defined elsewhere on the page; otherwise the browser ignores it. Use an existing variable from elementor://global-variables or create one with elementor-manage-global-variable.', 'elementor' ),
+				implode( ', ', array_map( fn( string $reference ) => 'var(--' . $reference . ')', $unknown ) )
+			),
+			$config_id
+		);
+	}
+
+	/**
+	 * @param array<string, mixed>  $settings_patch
+	 * @param array<string, string> $border_style_defaults
+	 * @param array<string, mixed>  $saved_settings
+	 * @return array<string, mixed>
+	 */
+	private static function with_border_style_defaults( array $settings_patch, array $border_style_defaults, array $saved_settings ): array {
+		$unset_defaults = array_filter(
+			$border_style_defaults,
+			fn( string $setting ) => ! self::has_border_style( $settings_patch[ $setting ] ?? null ) && ! self::has_border_style( $saved_settings[ $setting ] ?? null ),
+			ARRAY_FILTER_USE_KEY
+		);
+
+		return array_merge( $unset_defaults, $settings_patch );
+	}
+
+	/**
+	 * A requirement on a multi-select control adds its value to the saved list instead of replacing it.
+	 *
+	 * @param array<string, mixed>    $settings_patch
+	 * @param array<string, string[]> $list_requirements Setting => values the list must contain.
+	 * @param array<string, mixed>    $saved_settings
+	 * @return array<string, mixed>
+	 */
+	private static function with_list_requirements( array $settings_patch, array $list_requirements, array $saved_settings ): array {
+		foreach ( $list_requirements as $setting => $values ) {
+			$saved = is_array( $saved_settings[ $setting ] ?? null ) ? $saved_settings[ $setting ] : [];
+			$missing = array_values( array_diff( $values, $saved ) );
+
+			if ( ! empty( $missing ) ) {
+				$settings_patch[ $setting ] = array_merge( $saved, $missing );
 			}
 		}
+
+		return $settings_patch;
+	}
+
+	private static function has_border_style( $value ): bool {
+		return is_string( $value ) && '' !== $value && self::BORDER_STYLE_NONE !== $value;
 	}
 
 	private static function truncate_css_snippet( string $css, int $max_length = 200 ): string {

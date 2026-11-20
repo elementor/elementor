@@ -195,6 +195,7 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 					'elementor-v2-ui',
 					'elementor-v2-icons',
 					'elementor-v2-editor-app-bar',
+					'elementor-v2-editor-ui',
 					'elementor-web-cli',
 				],
 				ELEMENTOR_VERSION,

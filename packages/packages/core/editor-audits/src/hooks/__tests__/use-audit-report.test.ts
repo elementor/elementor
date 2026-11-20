@@ -14,6 +14,7 @@ import { slice } from '../../store/slice';
 import { type PageAuditReport } from '../../types';
 import { getPersistedReport, persistReport } from '../../utils/report-storage';
 import { SessionExpiredError } from '../../utils/session-expiration';
+import { trackRunCompleted, trackRunFailed, trackRunStarted } from '../../utils/tracking';
 import { useAuditReport } from '../use-audit-report';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -22,6 +23,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 
 jest.mock( '../../runner' );
 jest.mock( '../../utils/report-storage' );
+jest.mock( '../../utils/tracking' );
 
 const DOCUMENT_ID = 1;
 const OTHER_DOCUMENT_ID = 2;
@@ -133,7 +135,7 @@ describe( 'useAuditReport', () => {
 
 		// Act.
 		await act( async () => {
-			await result.current.run( DOCUMENT_ID );
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
 		} );
 
 		// Assert.
@@ -148,12 +150,60 @@ describe( 'useAuditReport', () => {
 
 		// Act.
 		await act( async () => {
-			await result.current.run( DOCUMENT_ID );
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
 		} );
 
 		// Assert.
 		expect( result.current.status ).toBe( 'error' );
 		expect( persistReport ).not.toHaveBeenCalled();
+	} );
+
+	it( 'tracks run start and completion for a successful run', async () => {
+		// Arrange.
+		const nextReport = makeReport( DOCUMENT_ID );
+		jest.mocked( runPageAudit ).mockResolvedValue( nextReport );
+		const { result } = renderUseAuditReport();
+
+		// Act.
+		await act( async () => {
+			await result.current.run( DOCUMENT_ID, 'rescan' );
+		} );
+
+		// Assert.
+		expect( trackRunStarted ).toHaveBeenCalledWith( 'rescan' );
+		expect( trackRunCompleted ).toHaveBeenCalledWith( nextReport );
+		expect( trackRunFailed ).not.toHaveBeenCalled();
+	} );
+
+	it( 'tracks a failed run when the audit throws', async () => {
+		// Arrange.
+		jest.mocked( runPageAudit ).mockRejectedValue( new Error( 'boom' ) );
+		const { result } = renderUseAuditReport();
+
+		// Act.
+		await act( async () => {
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
+		} );
+
+		// Assert.
+		expect( trackRunFailed ).toHaveBeenCalledTimes( 1 );
+		expect( trackRunCompleted ).not.toHaveBeenCalled();
+	} );
+
+	it( 'tracks a failed run when the session expires', async () => {
+		// Arrange.
+		jest.mocked( runPageAudit ).mockRejectedValue( new SessionExpiredError( 'Session expired' ) );
+		const { result } = renderUseAuditReport();
+
+		// Act.
+		await act( async () => {
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
+		} );
+
+		// Assert.
+		expect( trackRunStarted ).toHaveBeenCalledTimes( 1 );
+		expect( trackRunFailed ).toHaveBeenCalledTimes( 1 );
+		expect( trackRunCompleted ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reverts to idle without an error when the session expires and there is no report yet', async () => {
@@ -163,7 +213,7 @@ describe( 'useAuditReport', () => {
 
 		// Act.
 		await act( async () => {
-			await result.current.run( DOCUMENT_ID );
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
 		} );
 
 		// Assert.
@@ -180,13 +230,13 @@ describe( 'useAuditReport', () => {
 			.mockRejectedValueOnce( new SessionExpiredError( 'Session expired' ) );
 		const { result } = renderUseAuditReport();
 		await act( async () => {
-			await result.current.run( DOCUMENT_ID );
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
 		} );
 		await waitFor( () => expect( result.current.status ).toBe( 'ready' ) );
 
 		// Act.
 		await act( async () => {
-			await result.current.run( DOCUMENT_ID );
+			await result.current.run( DOCUMENT_ID, 'run_audit' );
 		} );
 
 		// Assert.

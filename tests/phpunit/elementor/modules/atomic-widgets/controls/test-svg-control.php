@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Svg_Control extends Elementor_Test_Base {
-	public function test_get_props__defaults_icon_library_to_false() {
+	public function test_get_props__returns_the_svg_media_type() {
 		// Arrange.
 		$control = Svg_Control::bind_to( 'svg' );
 
@@ -18,17 +18,6 @@ class Test_Svg_Control extends Elementor_Test_Base {
 		$props = $control->get_props();
 
 		// Assert.
-		$this->assertFalse( $props['showIconLibrary'] );
-	}
-
-	public function test_get_props__includes_true_when_icon_library_is_enabled() {
-		// Arrange.
-		$control = Svg_Control::bind_to( 'svg' )->set_show_icon_library( true );
-
-		// Act.
-		$props = $control->get_props();
-
-		// Assert.
-		$this->assertTrue( $props['showIconLibrary'] );
+		$this->assertSame( [ 'type' => 'svg-media' ], $props );
 	}
 }

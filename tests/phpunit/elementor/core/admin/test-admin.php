@@ -455,4 +455,53 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'action=elementor' );
 		$admin->admin_action_edit_website_redirect();
 	}
+
+	public function test_admin_action_new_post__drops_protected_meta_and_keeps_allowed_keys() {
+		// Arrange
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'author' ] ) );
+
+		$admin = new Admin();
+		$_GET['post_type'] = 'post';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_new_post' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+		$_GET['post_data'] = [
+			'post_title' => 'Protected meta',
+			'post_status' => 'publish',
+		];
+		$_GET['meta'] = [
+			Document::ELEMENTOR_DATA_META_KEY => '[{"html":"\\\\u003cmarker\\\\u003e"}]',
+			'_elementor_page_settings' => 'not-allowed',
+			'_elementor_source' => 'post',
+			'custom_library_field' => 'kept',
+		];
+
+		$created_post_id = 0;
+		$redirect_filter = function( $location ) use ( &$created_post_id ) {
+			$query = [];
+			wp_parse_str( (string) wp_parse_url( $location, PHP_URL_QUERY ), $query );
+			$created_post_id = isset( $query['post'] ) ? (int) $query['post'] : 0;
+
+			throw new \Exception( 'redirected' );
+		};
+		add_filter( 'wp_redirect', $redirect_filter );
+
+		// Act
+		try {
+			$admin->admin_action_new_post();
+			$this->fail( 'Expected redirect.' );
+		} catch ( \Exception $e ) {
+			$exception_message = $e->getMessage();
+		} finally {
+			remove_filter( 'wp_redirect', $redirect_filter );
+			unset( $_GET['meta'], $_GET['post_data'], $_GET['post_type'], $_GET['_wpnonce'], $_REQUEST['_wpnonce'] );
+		}
+
+		// Assert
+		$this->assertSame( 'redirected', $exception_message );
+		$this->assertGreaterThan( 0, $created_post_id );
+		$this->assertSame( '', get_post_meta( $created_post_id, Document::ELEMENTOR_DATA_META_KEY, true ) );
+		$this->assertSame( '', get_post_meta( $created_post_id, '_elementor_page_settings', true ) );
+		$this->assertSame( 'post', get_post_meta( $created_post_id, '_elementor_source', true ) );
+		$this->assertSame( 'kept', get_post_meta( $created_post_id, 'custom_library_field', true ) );
+	}
 }

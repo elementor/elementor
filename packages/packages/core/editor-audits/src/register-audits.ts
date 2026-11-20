@@ -22,7 +22,6 @@ import * as robotsNoindex from './audits/robots-noindex';
 import * as scanForCookies from './audits/scan-for-cookies';
 import * as sectionsAndColumns from './audits/sections-and-columns';
 import * as siteIdentity from './audits/site-identity';
-import * as tooManyWidgets from './audits/too-many-widgets';
 import { registerAudit } from './registry';
 import { type Audit } from './types';
 
@@ -33,7 +32,6 @@ const AUDITS: Audit[] = [
 
 	hiddenElements.audit,
 	deprecatedWidgets.audit,
-	tooManyWidgets.audit,
 	sectionsAndColumns.audit,
 	deepNesting.audit,
 	nestedBoxedContainers.audit,

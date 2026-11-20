@@ -12,7 +12,7 @@ class Test_Elementor_User_Meta extends Elementor_Test_Base {
 		parent::setUp();
 		$this->user_id = $this->factory()->create_and_get_administrator_user()->ID;
 
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 
 		do_action( 'rest_api_init' );
 	}

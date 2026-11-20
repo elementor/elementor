@@ -45,6 +45,8 @@ on:
         required: false
       SLACK_CHANNEL_RELEASE:
         required: false
+      SLACK_CHANNEL_BRANCH_OUT:
+        required: false
       JIRA_API_EMAIL:
         required: false
       JIRA_API_TOKEN:
@@ -178,6 +180,16 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
           PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
 
+      - name: Announce stable branch structure to Slack
+        if: inputs.channel == 'stable'
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@main
+        with:
+          event: stable-release
+          slack-token: ${{ secrets.SLACK_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
+          stable-version: ${{ inputs.version }}
+
       - name: Output Package Data for Next Job
         id: output-data
         env:
@@ -217,6 +229,7 @@ jobs:
       version: ${{ needs.publish.outputs.CLEAN_PACKAGE_VERSION }}
       version_suffix: ${{ needs.publish.outputs.VERSION_SUFFIX }}
       tag: ${{ needs.publish.outputs.NPM_TAG }}
+      ref: ${{ inputs.version }}
     secrets:
       NPMJS_CLOUD_DEVOPS_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
       MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}

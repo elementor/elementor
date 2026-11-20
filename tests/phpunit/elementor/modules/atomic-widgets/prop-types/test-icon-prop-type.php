@@ -42,4 +42,33 @@ class Test_Icon_Prop_Type extends Elementor_Test_Base {
 		// Assert.
 		$this->assertFalse( $result );
 	}
+
+	public function test_validate__accepts_a_custom_icon_pack_library() {
+		// Arrange — custom packs and a future Font Awesome Pro tier must keep validating.
+		$prop_type = Icon_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->validate(
+			Icon_Prop_Type::generate( [
+				'value' => String_Prop_Type::generate( 'my-pack my-pack-logo' ),
+				'library' => String_Prop_Type::generate( 'my-pack' ),
+			] )
+		);
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	public function test_to_json_schema__points_agents_at_the_find_icons_tool() {
+		// Arrange.
+		$prop_type = Icon_Prop_Type::make();
+
+		// Act.
+		$properties = $prop_type->to_json_schema()['properties']['value']['properties'];
+
+		// Assert.
+		$this->assertStringContainsString( 'elementor/find-icons', $properties['value']['description'] );
+		$this->assertStringContainsString( 'fa-solid fa-cart-shopping', $properties['value']['description'] );
+		$this->assertStringContainsString( 'elementor/find-icons', $properties['library']['description'] );
+	}
 }

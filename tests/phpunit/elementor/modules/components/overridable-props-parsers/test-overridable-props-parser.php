@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\Components;
 use Elementor\Modules\Components\OverridableProps\Overridable_Props_Parser;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -101,7 +102,12 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value'] );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$sanitized['prop-uuid-1']['originValue']['value'],
+			'<strong>Original text</strong>alert("xss")',
+			'<strong>Original text</strong>'
+		);
 	}
 
 	public function test_parser__sanitizes_origin_value_by_origin_prop_fields() {
@@ -135,7 +141,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 		$sanitized = $result->unwrap();
 		$this->assertEquals( [
 			'$$type' => 'escaped-html',
-			'value' => 'alert("xss")Click here',
+			'value' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'alert("xss")Click here', 'Click here' ),
 		], $sanitized['prop-uuid-1']['originValue'] );
 	}
 

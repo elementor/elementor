@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Agent_Ready_Settings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -29,6 +31,12 @@ class Well_Known_Router {
 
 	/** @var Abstract_Well_Known_Endpoint[] Keyed by well-known slug. */
 	private array $endpoints = [];
+
+	private Agent_Ready_Settings $settings;
+
+	public function __construct( Agent_Ready_Settings $settings ) {
+		$this->settings = $settings;
+	}
 
 	/**
 	 * Wire the router into WordPress.
@@ -63,6 +71,10 @@ class Well_Known_Router {
 		$path = $this->get_normalized_path();
 
 		if ( '' === $path || 0 !== strpos( $path, self::WELL_KNOWN_PREFIX ) ) {
+			return;
+		}
+
+		if ( ! $this->settings->is_agent_discovery_enabled() ) {
 			return;
 		}
 
@@ -116,6 +128,24 @@ class Well_Known_Router {
 		);
 	}
 
+	/**
+	 * Return each endpoint once (aliases dropped) when it is relevant to this site,
+	 * regardless of whether the admin has switched discovery on.
+	 *
+	 * @return Abstract_Well_Known_Endpoint[] Keyed by canonical slug.
+	 */
+	public function get_applicable_endpoints(): array {
+		$applicable = [];
+
+		foreach ( $this->endpoints as $endpoint ) {
+			if ( $endpoint->is_applicable() ) {
+				$applicable[ $endpoint->get_well_known_slug() ] = $endpoint;
+			}
+		}
+
+		return $applicable;
+	}
+
 	// ------------------------------------------------------------------
 	// Internals
 	// ------------------------------------------------------------------
@@ -125,25 +155,7 @@ class Well_Known_Router {
 	 * subdirectory WordPress installs — the same logic used by Request_Path::matches().
 	 */
 	private function get_normalized_path(): string {
-		$request_uri = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
-			: '';
-
-		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
-
-		if ( ! is_string( $path ) ) {
-			return '';
-		}
-
-		$home_path = wp_parse_url( home_url(), PHP_URL_PATH );
-
-		if ( is_string( $home_path ) && '' !== $home_path && '/' !== $home_path ) {
-			$home_path = untrailingslashit( $home_path );
-
-			if ( 0 === strpos( $path, $home_path ) ) {
-				$path = substr( $path, strlen( $home_path ) );
-			}
-		}
+		$path = \Elementor\Modules\Agents\Classes\Request_Path::get_relative_path();
 
 		return untrailingslashit( $path );
 	}

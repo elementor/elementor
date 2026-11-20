@@ -2,10 +2,11 @@ import { getContainer, selectElement } from '@elementor/editor-elements';
 import { __privateOpenRoute as openRoute, __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 import { type AuditViolation } from '../types';
+import { type ViewIssueResult } from '../utils/tracking';
 
 const SCROLL_TO_VIEW_DELAY_MS = 200;
 
-export function focusViolation( violation: AuditViolation ): void {
+export function focusViolation( violation: AuditViolation ): ViewIssueResult | null {
 	if ( violation.elementId ) {
 		const container = getContainer( violation.elementId );
 
@@ -27,27 +28,30 @@ export function focusViolation( violation: AuditViolation ): void {
 			runCommand( 'panel/editor/open' );
 		}
 
-		return;
+		return container ? 'element_focused' : null;
 	}
 
 	if ( violation.externalUrl ) {
 		window.open( violation.externalUrl, '_blank' );
-		return;
+		return 'external_url_opened';
 	}
 
 	if ( violation.targetHint === 'page-settings' ) {
 		openRoute( 'panel/page-settings/settings' );
-		return;
+		return 'page_settings_opened';
 	}
 
 	if ( violation.targetHint === 'site-settings' ) {
 		runCommand( 'panel/global/open' );
-		return;
+		return 'site_settings_opened';
 	}
 
 	if ( violation.targetHint === 'site-identity-settings' ) {
 		void runCommand( 'panel/global/open' ).then( () => {
 			openRoute( 'panel/global/settings-site-identity' );
 		} );
+		return 'site_settings_opened';
 	}
+
+	return null;
 }

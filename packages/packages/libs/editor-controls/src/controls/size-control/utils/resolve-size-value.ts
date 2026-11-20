@@ -60,6 +60,20 @@ export const createDefaultSizeValue = < T extends SizeValue >( units: SizeUnit[]
 	return { size: DEFAULT_SIZE, unit } as T;
 };
 
+export const createEmptySizeValue = < T extends SizeValue >(
+	previousValue: T | null,
+	units: SizeUnit[],
+	defaultUnit?: SizeUnit
+): T => {
+	const previousUnit = previousValue?.unit;
+
+	if ( ! previousUnit || isExtendedUnit( previousUnit ) || ! units.includes( previousUnit ) ) {
+		return createDefaultSizeValue< T >( units, defaultUnit );
+	}
+
+	return { size: DEFAULT_SIZE, unit: previousUnit } as T;
+};
+
 const resolveFallbackUnit = < TUnit extends SizeUnit >(
 	unit: TUnit,
 	units: readonly TUnit[],

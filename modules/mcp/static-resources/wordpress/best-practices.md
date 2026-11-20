@@ -12,18 +12,18 @@ When the user describes a design that repeats across posts or pages ("each proje
 Real sites have one repeating design for a post type plus a few one-off exceptions (bespoke Home, a landing page). Default to a broad include with explicit exclusions:
 - Posts of a CPT: `include/singular/<cpt>` + `exclude/singular/<cpt>/<id>` per exception. Built-in posts use `post`; a `project` CPT uses `project`.
 - Pages: `include/singular/page` + `exclude/singular/page/<id>` for each page with its own design (Home, About, …).
-- Ask the user which items are the exceptions when it is not obvious, and call `elementor/list-site-parts` before creating a new single to avoid duplicates.
+- Ask the user which items are the exceptions when it is not obvious, and, when `elementor/list-site-parts` is available, call it before creating a new single to avoid duplicates.
 - Fall back to `include/singular/<cpt>/<id>` only when the user is explicitly designing for one specific post.
 
 ### Post Content slot pattern
 Every single template has one optional editorial slot: a `theme-post-content` widget wrapped in a full-width `e-div-block`, placed between the fixed hero and the fixed bottom section. Posts with no body render nothing in that slot; posts with body content render it there.
 
 ```xml
-<e-div-block configuration-id="Post Hero">...</e-div-block>
-<e-div-block configuration-id="Post Body">
-  <theme-post-content configuration-id="Post Content"></theme-post-content>
+<e-div-block configuration-id="post-hero">...</e-div-block>
+<e-div-block configuration-id="post-body">
+  <theme-post-content configuration-id="post-content"></theme-post-content>
 </e-div-block>
-<e-div-block configuration-id="Post Bottom">...</e-div-block>
+<e-div-block configuration-id="post-bottom">...</e-div-block>
 ```
 
 `theme-post-content` is the widget name. Emit `<theme-post-content>` in `xml_structure` with no `element_config` — the composition write path accepts it as-is.

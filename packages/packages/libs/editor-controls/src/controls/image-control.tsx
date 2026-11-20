@@ -6,45 +6,58 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlHeaderActions } from '../components/control-header-location';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
+import { type ControlProps } from '../utils/types';
+import { type AppPromotion } from './app-promotion-trigger';
 import { ImageMediaControl } from './image-media-control';
 import { SelectControl } from './select-control';
 
-type ImageControlProps = {
+type ImageControlProps = Partial< ControlProps > & {
 	sizes: { label: string; value: string }[];
 	label?: string;
+	promotion?: AppPromotion;
 };
 
-export const ImageControl = createControl( ( { sizes, label = __( 'Image', 'elementor' ) }: ImageControlProps ) => {
-	const propContext = useBoundProp( imagePropTypeUtil );
+export const ImageControl = createControl(
+	( { sizes, promotion, label = __( 'Image', 'elementor' ), context }: ImageControlProps ) => {
+		const propContext = useBoundProp( imagePropTypeUtil );
 
-	return (
-		<PropProvider { ...propContext }>
-			<Stack gap={ 1.5 }>
-				<ControlLabel>{ label }</ControlLabel>
-				<ImageSrcControl />
-				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
-					<Grid item xs={ 6 }>
-						<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+		return (
+			<PropProvider { ...propContext }>
+				<Stack gap={ 1.5 }>
+					<Stack direction="row" alignItems="center" justifyContent="space-between">
+						<ControlLabel>{ label }</ControlLabel>
+						<ControlHeaderActions
+							elementId={ context?.elementId }
+							controlType="image"
+							promotion={ promotion }
+						/>
+					</Stack>
+					<ImageSrcControl label={ label } />
+					<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
+						<Grid item xs={ 6 }>
+							<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+						</Grid>
+						<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
+							<ImageSizeControl sizes={ sizes } />
+						</Grid>
 					</Grid>
-					<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-						<ImageSizeControl sizes={ sizes } />
-					</Grid>
-				</Grid>
-			</Stack>
-		</PropProvider>
-	);
-} );
+				</Stack>
+			</PropProvider>
+		);
+	}
+);
 
-const ImageSrcControl = () => {
+const ImageSrcControl = ( { label }: { label: string } ) => {
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const mediaTypes: MediaType[] = allowSvgUpload ? [ 'image', 'svg' ] : [ 'image' ];
 
 	return (
 		<PropKeyProvider bind={ 'src' }>
-			<ImageMediaControl mediaTypes={ mediaTypes } />
+			<ImageMediaControl mediaTypes={ mediaTypes } label={ label } />
 		</PropKeyProvider>
 	);
 };

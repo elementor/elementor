@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\PropsResolver\Transformers\Set
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Escaped_Html_Transformer;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,7 +32,12 @@ class Test_Escaped_Html_Transformer extends TestCase {
 		$result = $transformer->transform( 'Hello <script>alert("xss")</script><strong>world</strong>', Props_Resolver_Context::make() );
 
 		// Assert.
-		$this->assertSame( 'Hello alert("xss")<strong>world</strong>', $result );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string(
+			$this,
+			$result,
+			'Hello alert("xss")<strong>world</strong>',
+			'Hello <strong>world</strong>'
+		);
 	}
 
 	public function test_transform__strips_disallowed_attributes() {

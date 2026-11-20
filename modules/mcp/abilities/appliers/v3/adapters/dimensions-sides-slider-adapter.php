@@ -14,7 +14,7 @@ class Dimensions_Sides_Slider_Adapter implements V3_Control_Adapter {
 	const CONTROL_TYPE = 'slider';
 
 	public function supports( string $prop_type, string $control_type, bool $has_sides ): bool {
-		return in_array( $prop_type, [ Dimensions_Prop_Type::get_key(), Size_Prop_Type::get_key() ], true )
+		return in_array( $prop_type, array_merge( Size_Values::sides_prop_types(), [ Size_Prop_Type::get_key() ] ), true )
 			&& self::CONTROL_TYPE === $control_type
 			&& $has_sides;
 	}
@@ -45,7 +45,7 @@ class Dimensions_Sides_Slider_Adapter implements V3_Control_Adapter {
 			return $single;
 		}
 
-		if ( empty( $sides ) || Dimensions_Prop_Type::get_key() !== ( $prop_value['$$type'] ?? null ) ) {
+		if ( empty( $sides ) || ! Size_Values::is_sides_prop( $prop_value ) ) {
 			return null;
 		}
 

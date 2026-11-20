@@ -6,6 +6,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Webmcp_Utils {
+	public static function resolve_tool_name( string $tool_name, string $form_name, string $element_id = '' ): string {
+		return self::build_tool_name( '' !== trim( $tool_name ) ? $tool_name : $form_name, $element_id );
+	}
+
+	public static function resolve_tool_description( string $tool_description, string $form_name ): string {
+		if ( '' !== trim( $tool_description ) ) {
+			return $tool_description;
+		}
+
+		return self::build_tool_description( $form_name );
+	}
+
 	public static function build_tool_name( string $form_name, string $element_id = '' ): string {
 		$slug = sanitize_title( $form_name );
 		$slug = str_replace( '-', '_', $slug );

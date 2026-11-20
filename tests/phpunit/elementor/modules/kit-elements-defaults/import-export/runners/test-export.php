@@ -3,6 +3,7 @@ namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExport\Runners;
 
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 use Elementor\Modules\KitElementsDefaults\Module;
 use Elementor\Modules\KitElementsDefaults\ImportExport\Runners\Export;
 
@@ -61,7 +62,7 @@ class Test_Export extends Elementor_Test_Base {
 				'path' => 'kit-elements-defaults',
 				'data' => [
 					Mock_Widget_Kits_Defaults::NAME => [
-						'text' => 'value Test value',
+						'text' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'value Test value', 'value  value' ),
 						'slider' => [
 							'size' => 10,
 							'unit' => 'px',
@@ -71,7 +72,10 @@ class Test_Export extends Elementor_Test_Base {
 							'color' => 'global-color',
 						],
 						'__dynamic__' => [
-							'link' => '[text="some value"]alert("hack!")',
+							'link' => Kses_Test_Expectations::expected_wp_kses_plain_string(
+								'[text="some value"]alert("hack!")',
+								'[text="some value"]'
+							),
 						],
 					],
 				],

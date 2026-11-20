@@ -341,7 +341,7 @@ class V3_Json_Schema_Builder {
 	private static function to_public_map_schema( array $schema ): array {
 		$is_dynamic = true === ( $schema['dynamic'] ?? false );
 
-		unset( $schema['convert'], $schema['dynamic'], $schema['key'] );
+		unset( $schema['dynamic'] );
 
 		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) ) {
 			foreach ( $schema['properties'] as $key => $property_schema ) {

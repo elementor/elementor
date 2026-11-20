@@ -85,18 +85,22 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 	test( 'Accordion panel tile shows the accordion eicon', async () => {
 		// Arrange
 		await editor.openElementsPanel();
-		const tile = editor.page.locator( '#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("Accordion")' );
+		const tile = editor.page.locator(
+			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]',
+		);
 
 		// Assert
 		await expect( tile ).toBeVisible();
-		const tileIcon = tile.locator( 'xpath=ancestor::button[1]' ).locator( '.icon i, .icon svg' ).first();
+		const tileIcon = tile.locator( '.icon i, .icon svg' ).first();
 		await expect( tileIcon ).toHaveClass( /eicon-accordion/ );
 	} );
 
 	test( 'Drop from panel creates two items, first expanded, with title, icon and content', async () => {
 		// Act
 		await editor.openElementsPanel();
-		const tile = editor.page.locator( '#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("Accordion")' );
+		const tile = editor.page.locator(
+			'#elementor-panel-category-v4-elements .elementor-panel-category-items [data-library-element-type="e-accordion"]',
+		);
 		await tile.click();
 
 		const root = editor.getPreviewFrame().locator( `[data-element_type="${ accordionType }"]` ).first();
@@ -431,8 +435,9 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// Grounded directly in `modules/atomic-widgets/module.php::add_inline_styles()`, the only
 		// place this animation is defined (there is no frontend JS handler for the toggle — the
 		// element ships none, by design):
-		//   '.e-accordion-item-icon-base svg { transition: transform .3s ease; }'
-		//   '.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }'
+		//   '.e-accordion-item-icon-base svg, .e-accordion-item-icon-open-base svg { transition: transform .3s ease; }'
+		//   '.e-accordion-item-base:not([open]) > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation-closed)); }'
+		//   '.e-accordion-item-base[open] > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation, 180deg)); }'
 		//   '.e-accordion-item-base::details-content { block-size: 0; overflow: hidden;
 		//      transition: block-size .3s ease, content-visibility .3s ease allow-discrete; }'
 		//   '.e-accordion-item-base[open]::details-content { block-size: auto; }'
@@ -461,7 +466,7 @@ test.describe( 'Atomic Accordion Editor Interactions @atomic-widgets', () => {
 		// "animation" rather than a plain visibility toggle.
 		expect( closedIconStyle.transitionProperty ).toContain( 'transform' );
 		expect( closedIconStyle.transitionDuration ).toBe( '0.3s' );
-		// No `[open]` ancestor yet, so no rotation rule applies.
+		// No close angle is saved, so the closed rotation declaration is dropped and transform stays none.
 		expect( closedIconStyle.transform ).toBe( 'none' );
 
 		// Act

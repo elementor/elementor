@@ -133,17 +133,17 @@ class Module extends BaseModule {
 		( new Rest_Api() )->register_routes();
 	}
 
-	public function get_reports_data(): array {
+	public function get_reports_data( string $format = '' ): array {
 		$reports = $this->load_reports( self::get_allowed_reports() );
 
-		return $this->build_reports_data( $reports );
+		return $this->build_reports_data( $reports, $format );
 	}
 
-	private function build_reports_data( array $reports ): array {
+	private function build_reports_data( array $reports, string $format ): array {
 		$data = [];
 
 		foreach ( $reports as $report_name => $report_details ) {
-			$report = $report_details['report']->get_report();
+			$report = $report_details['report']->get_report( $format );
 
 			if ( is_wp_error( $report ) ) {
 				continue;
@@ -155,7 +155,7 @@ class Module extends BaseModule {
 			];
 
 			if ( ! empty( $report_details['sub'] ) ) {
-				$report_data['sub'] = $this->build_reports_data( $report_details['sub'] );
+				$report_data['sub'] = $this->build_reports_data( $report_details['sub'], $format );
 			}
 
 			$data[ $report_name ] = $report_data;

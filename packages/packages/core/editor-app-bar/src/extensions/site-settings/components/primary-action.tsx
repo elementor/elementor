@@ -21,6 +21,7 @@ export default function PrimaryAction() {
 		>
 			<Button
 				variant="contained"
+				color="accent"
 				disabled={ ! document || ! document.isDirty }
 				size="medium"
 				sx={ { width: '100%' } }

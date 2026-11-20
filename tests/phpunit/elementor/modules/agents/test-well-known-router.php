@@ -2,21 +2,22 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Agents\Agent_Ready_Settings;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Manifest;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Auth_Md;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Authorization_Server;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Oauth_Protected_Resource;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
-use Elementor\Modules\Agents\Module;
-use Elementor\Plugin;
+use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Well_Known_Router extends Elementor_Test_Base {
 
 	private Well_Known_Router $router;
 
-	private $original_experiment_default_state;
+	private Agent_Ready_Settings $settings;
 
 	private string $original_request_uri;
 
@@ -25,25 +26,20 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? '/';
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
+		delete_option( Agent_Ready_Settings::OPTION );
 
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
+		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->settings->ensure_option_exists();
+		$this->settings->activate();
 
-		$this->router = new Well_Known_Router();
+		$this->router = new Well_Known_Router( $this->settings );
 		$this->router->register_endpoint( new Auth_Md() );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		$_SERVER['REQUEST_URI'] = $this->original_request_uri;
+
+		delete_option( Agent_Ready_Settings::OPTION );
 
 		parent::tearDown();
 	}
@@ -74,12 +70,9 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertSame( '', $output );
 	}
 
-	public function test_maybe_handle__falls_through_when_endpoint_disabled() {
+	public function test_maybe_handle__falls_through_when_agent_discovery_disabled() {
 		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
 		$_SERVER['REQUEST_URI'] = '/.well-known/auth.md';
 
 		// Act
@@ -89,6 +82,18 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( '', $output );
+	}
+
+	public function test_get_applicable_endpoints__lists_canonical_slugs_of_applicable_endpoints_only() {
+		// Arrange
+		$this->router->register_endpoint( new Oauth_Authorization_Server() );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+
+		// Act
+		$applicable = $this->router->get_applicable_endpoints();
+
+		// Assert
+		$this->assertSame( [ 'auth.md' ], array_keys( $applicable ) );
 	}
 
 	public function test_get_normalized_path__matches_subdirectory_install() {
@@ -109,6 +114,40 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( '/.well-known/auth.md', $path );
+	}
+
+	public function test_get_normalized_path__decodes_percent_encoded_path() {
+		// Arrange
+		$_SERVER['REQUEST_URI'] = '/%D7%A9%D7%9C%D7%95%D7%9D/.well-known/auth.md';
+
+		$method = new \ReflectionMethod( Well_Known_Router::class, 'get_normalized_path' );
+		$method->setAccessible( true );
+
+		// Act
+		$path = $method->invoke( $this->router );
+
+		// Assert
+		$this->assertSame( '/שלום/.well-known/auth.md', $path );
+	}
+
+	public function test_get_normalized_path__rejects_blogpost_on_blog_install() {
+		// Arrange
+		add_filter( 'home_url', static function () {
+			return 'http://example.com/blog';
+		} );
+		$_SERVER['REQUEST_URI'] = '/blogpost/.well-known/auth.md';
+
+		$method = new \ReflectionMethod( Well_Known_Router::class, 'get_normalized_path' );
+		$method->setAccessible( true );
+
+		// Act
+		$path = $method->invoke( $this->router );
+
+		// Cleanup
+		remove_all_filters( 'home_url' );
+
+		// Assert
+		$this->assertSame( '', $path );
 	}
 
 	public function test_get_active_endpoints__includes_auth_md_when_enabled() {
@@ -170,7 +209,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'oauth-protected-resource', $content );
 		$this->assertStringNotContainsString( 'server-card.json', $content );
 		$this->assertStringNotContainsString( '## MCP Endpoint', $content );
-		$this->assertStringNotContainsString( 'elementor/agents-mcp', $content );
+		$this->assertStringNotContainsString( Mcp_Discovery::get_server_url(), $content );
 		$this->assertStringNotContainsString( 'with every MCP request', $content );
 		$this->assertStringNotContainsString( '## Audit Log', $content );
 	}
@@ -192,7 +231,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'oauth-protected-resource', $content );
 		$this->assertStringContainsString( 'server-card.json', $content );
 		$this->assertStringContainsString( '## MCP Endpoint', $content );
-		$this->assertStringContainsString( 'elementor/agents-mcp', $content );
+		$this->assertStringContainsString( Mcp_Discovery::get_server_url(), $content );
 		$this->assertStringContainsString( 'with every MCP request', $content );
 		$this->assertStringContainsString( '## Audit Log', $content );
 		$this->assertLessThan(
@@ -301,7 +340,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 
 	public function test_ard_manifest__omits_protected_resource_when_mcp_card_off() {
 		// Arrange
-		$manifest = new Ard_Manifest();
+		$manifest = new Ard_Manifest( null );
 		$method   = new \ReflectionMethod( Ard_Manifest::class, 'generate_content' );
 		$method->setAccessible( true );
 
@@ -316,7 +355,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 	public function test_ard_manifest__includes_protected_resource_when_mcp_card_on() {
 		// Arrange
 		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
-		$manifest = new Ard_Manifest();
+		$manifest = new Ard_Manifest( null );
 		$method   = new \ReflectionMethod( Ard_Manifest::class, 'generate_content' );
 		$method->setAccessible( true );
 

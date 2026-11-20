@@ -1,5 +1,6 @@
 import { getContainer, getSelectedElements, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { Schema } from '@elementor/editor-props';
 import {
 	__privateListenTo as listenTo,
 	commandEndEvent,
@@ -167,13 +168,22 @@ function getElementProperties(
 		return null;
 	}
 
-	const widgetConfig = widgetType ? getWidgetsCache()?.[ widgetType ] : null;
+	const widgetsCache = getWidgetsCache();
+	const widgetConfig = widgetType ? widgetsCache?.[ widgetType ] : null;
 	const controls = widgetConfig?.controls as Record< string, { default?: unknown } > | undefined;
+
+	// Atomic elements (e.g. e-div-block, e-form) have no widgetType, their config is keyed by elType.
+	const schemaType = widgetType ?? container.model.get( 'elType' ) ?? null;
+	const propsSchema = schemaType ? widgetsCache?.[ schemaType ]?.atomic_props_schema : undefined;
 
 	const filtered: Record< string, unknown > = {};
 
 	for ( const [ key, value ] of Object.entries( settings ) ) {
 		if ( value === undefined || value === null || value === '' ) {
+			continue;
+		}
+
+		if ( Schema.isPropSensitive( propsSchema?.[ key ] ) ) {
 			continue;
 		}
 

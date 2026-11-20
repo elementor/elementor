@@ -744,11 +744,7 @@ class Admin extends App {
 		 *
 		 * @param array $meta Post meta data.
 		 */
-		$meta = [];
-
-		if ( isset( $_GET['meta'] ) && is_array( $_GET['meta'] ) ) {
-			$meta = array_map( 'sanitize_text_field', wp_unslash( $_GET['meta'] ) );
-		}
+		$meta = $this->get_new_post_meta_from_request();
 
 		$meta = apply_filters( 'elementor/admin/create_new_post/meta', $meta );
 
@@ -866,6 +862,39 @@ class Admin extends App {
 			ARRAY_FILTER_USE_KEY
 		);
 	}
+
+	private function get_new_post_meta_from_request(): array {
+		$request_meta = Utils::get_super_global_value( $_GET, 'meta' ) ?? [];
+
+		if ( ! is_array( $request_meta ) ) {
+			return [];
+		}
+
+		$allowed_protected_keys = apply_filters(
+			'elementor/admin/create_new_post/allowed_protected_meta_keys',
+			[
+				'_elementor_source',
+				Floating_Buttons_Module::FLOATING_ELEMENTS_TYPE_META_KEY,
+			]
+		);
+
+		$meta = [];
+
+		foreach ( $request_meta as $meta_key => $meta_value ) {
+			if ( ! is_string( $meta_key ) || ! is_scalar( $meta_value ) ) {
+				continue;
+			}
+
+			if ( is_protected_meta( $meta_key, 'post' ) && ! in_array( $meta_key, $allowed_protected_keys, true ) ) {
+				continue;
+			}
+
+			$meta[ $meta_key ] = sanitize_text_field( (string) $meta_value );
+		}
+
+		return $meta;
+	}
+
 	/**
 	 * @since 2.3.0
 	 * @access public

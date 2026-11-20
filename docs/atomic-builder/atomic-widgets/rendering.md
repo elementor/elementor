@@ -27,6 +27,8 @@ Widgets using `Has_Template` render via `Template_Renderer`:
 2. Build context: `id`, `interaction_id`, `type`, `settings` (resolved), `base_styles`
 3. `echo $renderer->render( $main_template, $context )`
 
+Static, element-level template values (e.g. a site-wide API key) go in `get_template_extra_context()`. Its result is merged into the PHP render context and sent to the editor as `template_context` in the element config, where the canvas merges it into the Twing render context. Core keys win on conflict. The editor reads it once per page load, so it must not depend on element settings.
+
 Container elements default to PHP `before_render` / `after_render` wrappers.
 
 ### Render_Props_Resolver
@@ -79,6 +81,7 @@ Extension: `elementor/atomic-widgets/frontend/loader/scripts/register`.
 | `Atomic_Styles_Manager` | `public static function instance(): self` | Singleton |
 | `Atomic_Styles_Manager` | `public function register( array $path, callable $get_style_defs ): void` | Register CSS provider |
 | `Has_Atomic_Base` | `public function get_atomic_settings(): array` | Entry point for Twig `settings` context |
+| `Has_Template` | `protected function get_template_extra_context(): array` | Extra static Twig context, shared by frontend and editor canvas |
 
 Source: `props-resolver/render-props-resolver.php`, `styles/style-schema.php`, `styles/atomic-styles-manager.php`, `elements/base/has-atomic-base.php`.
 

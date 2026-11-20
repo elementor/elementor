@@ -1,28 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
 
-import { fetchLlmsFile, saveAgentReadySettings, saveLlmsContent } from '../api';
+import { FEATURE_LLMS_TXT } from '../analytics/agent-ready-events';
+import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-agent-ready-event';
+import { fetchLlmsFile, revertLlmsContent, saveAgentReadySettings, saveLlmsContent, takeOverLlmsFile } from '../api';
 import { LLMS_SETTINGS_KEY } from '../constants';
+import { getSaveErrorMessage } from './get-save-error-message';
+import { usePostExclusions } from './use-post-exclusions';
+
+const PHYSICAL_FILE_REASON_CODE = 'physical_file';
 
 const getIncludedPostTypeNames = ( postTypes ) => postTypes
 	.filter( ( postType ) => postType.included )
 	.map( ( postType ) => postType.name );
 
-const getSaveErrorMessage = ( reason ) => {
-	if ( reason && 'string' === typeof reason.message && reason.message ) {
-		return reason.message;
-	}
-
-	if ( 'string' === typeof reason && reason ) {
-		return reason;
-	}
-
-	return __( 'Something went wrong. Please try again.', 'elementor' );
-};
-
 export const useLlmsSettings = ( initialState ) => {
-	const { fileUrl, hasPhysicalFile } = initialState;
+	const { fileUrl } = initialState;
 
+	const [ hasPhysicalFile, setHasPhysicalFile ] = useState( initialState.hasPhysicalFile );
+	const [ unavailableReason, setUnavailableReason ] = useState( initialState.unavailableReason ?? null );
 	const [ isEnabled, setIsEnabled ] = useState( initialState.enabled );
 	const [ isManuallyEdited, setIsManuallyEdited ] = useState( initialState.isManuallyEdited );
 	const [ postTypes, setPostTypes ] = useState( initialState.postTypes );
@@ -43,6 +38,15 @@ export const useLlmsSettings = ( initialState ) => {
 	useEffect( () => {
 		refreshContent();
 	}, [ refreshContent ] );
+
+	const exclusions = usePostExclusions( {
+		settingsKey: LLMS_SETTINGS_KEY,
+		initialExcludedPostIds: initialState.excludedPostIds,
+		initialPostTypes: initialState.postTypes,
+		setPostTypes,
+		setSaveError,
+		onSaved: refreshContent,
+	} );
 
 	const saveSettings = ( nextIsEnabled, nextPostTypes ) => {
 		const previousIsEnabled = isEnabled;
@@ -68,30 +72,58 @@ export const useLlmsSettings = ( initialState ) => {
 			.finally( () => setIsSaving( false ) );
 	};
 
-	const toggleEnabled = () => saveSettings( ! isEnabled, postTypes );
+	const toggleEnabled = () => {
+		trackFeatureToggled( { featureName: FEATURE_LLMS_TXT, isEnabled: ! isEnabled, hasConflict: hasPhysicalFile } );
 
-	const togglePostType = ( name ) => saveSettings(
-		isEnabled,
-		postTypes.map( ( postType ) => (
+		return saveSettings( ! isEnabled, postTypes );
+	};
+
+	const togglePostType = ( name ) => {
+		const nextPostTypes = postTypes.map( ( postType ) => (
 			postType.name === name ? { ...postType, included: ! postType.included } : postType
-		) ),
-	);
+		) );
+
+		trackPostTypeToggled( {
+			featureName: FEATURE_LLMS_TXT,
+			postType: name,
+			isIncluded: nextPostTypes.find( ( postType ) => postType.name === name )?.included,
+		} );
+
+		return saveSettings( isEnabled, nextPostTypes );
+	};
 
 	const saveContent = ( nextContent ) => saveLlmsContent( nextContent ).then( () => {
 		setIsManuallyEdited( true );
 		refreshContent();
 	} );
 
+	const revertContent = () => revertLlmsContent().then( () => {
+		setIsManuallyEdited( false );
+		refreshContent();
+	} );
+
+	const takeOverFile = () => takeOverLlmsFile().then( () => {
+		setHasPhysicalFile( false );
+		setIsManuallyEdited( false );
+		setIsEnabled( true );
+		setUnavailableReason( ( reason ) => ( PHYSICAL_FILE_REASON_CODE === reason?.code ? null : reason ) );
+	} );
+
 	return {
+		...exclusions,
 		content,
 		hasPhysicalFile,
-		isEnabled: isEnabled && ! hasPhysicalFile,
+		isEnabled: isEnabled && ! unavailableReason,
 		isManuallyEdited,
 		isSaving,
 		saveError,
 		postTypes,
+		revertContent,
 		saveContent,
+		setIsEnabled,
+		takeOverFile,
 		toggleEnabled,
 		togglePostType,
+		unavailableReason,
 	};
 };

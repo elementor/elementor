@@ -660,8 +660,8 @@ abstract class Document extends Controls_Stack {
 		if ( $this->is_editable_with_elementor() ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
-				$this->get_edit_url(),
-				__( 'Edit with Elementor', 'elementor' )
+				esc_url( $this->get_edit_url() ),
+				esc_html__( 'Edit with Elementor', 'elementor' )
 			);
 		}
 

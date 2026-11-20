@@ -61,9 +61,28 @@ describe( audit.id, () => {
 		if ( result.status === 'fail' ) {
 			expect( result.metadata?.oversizedImageCount ).toBe( 1 );
 			expect( result.violations[ 0 ].externalUrl ).toBe(
-				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization'
+				'https://example.com/wp-admin/admin.php?page=image-optimization-settings'
 			);
 			expect( result.violations[ 0 ].ctaLabel ).toBe( 'Optimize all' );
+		}
+	} );
+
+	it( 'points to the Image Optimization plugin install URL when the plugin is not active', async () => {
+		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
+		const pageContext = {
+			image_sizes: { '1:full': imageSize( ONE_MB ) },
+			image_optimization_plugin_active: false,
+			image_optimization_plugin_url:
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization',
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization'
+			);
 		}
 	} );
 
@@ -224,6 +243,24 @@ describe( audit.id, () => {
 		if ( result.status === 'fail' ) {
 			expect( result.violations ).toHaveLength( 1 );
 			expect( result.violations[ 0 ].elementId ).toBe( 'e-image' );
+		}
+	} );
+
+	it( 'reports the same oversized image for v3 and v4 image widgets', async () => {
+		const pageContext = { image_sizes: { '13:full': imageSize( ONE_MB ) } };
+		const v3Tree = [ makeWidget( 'v3', 'image', { image: { id: 13 } } ) ];
+		const v4Tree = [ makeWidget( 'v4', 'e-image', { image: atomicImageProp( 13 ) } ) ];
+
+		const v3Result = await audit.evaluate( makeContext( { tree: v3Tree, pageContext } ) );
+		const v4Result = await audit.evaluate( makeContext( { tree: v4Tree, pageContext } ) );
+
+		expect( v3Result.status ).toBe( 'fail' );
+		expect( v4Result.status ).toBe( 'fail' );
+
+		if ( v3Result.status === 'fail' && v4Result.status === 'fail' ) {
+			expect( v4Result.violations ).toHaveLength( v3Result.violations.length );
+			expect( v4Result.metadata?.oversizedImageCount ).toBe( v3Result.metadata?.oversizedImageCount );
+			expect( v4Result.violations[ 0 ].label ).toBe( v3Result.violations[ 0 ].label );
 		}
 	} );
 

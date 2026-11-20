@@ -6,11 +6,13 @@ import { screen } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
+import { isHiddenByAncestor } from '../../utils/ancestor-dependency-utils';
 import { SettingsTab } from '../settings-tab';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../../contexts/element-context' );
 jest.mock( '../../hooks/use-default-panel-settings' );
+jest.mock( '../../utils/ancestor-dependency-utils' );
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getElementLabel: jest.fn(),
@@ -40,6 +42,7 @@ jest.mock( '../../controls-registry/control', () => ( {
 describe( '<SettingsTab />', () => {
 	beforeEach( () => {
 		jest.mocked( getElementLabel ).mockReturnValue( 'Mock Element' );
+		jest.mocked( isHiddenByAncestor ).mockReturnValue( false );
 	} );
 
 	it( 'should render the widget sections', () => {
@@ -375,6 +378,46 @@ describe( '<SettingsTab />', () => {
 		expect( screen.getByText( 'Mixed Section' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Visible Control' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Hidden Control' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should hide a section when its only control is hidden by an ancestor dependency', () => {
+		// Arrange.
+		const ancestorHiddenPropType = createMockPropType( { kind: 'plain' } );
+
+		jest.mocked( isHiddenByAncestor ).mockImplementation( ( _, propType ) => propType === ancestorHiddenPropType );
+
+		const elementType = createMockElementType( {
+			propsSchema: {
+				'webmcp-param-description': ancestorHiddenPropType,
+			},
+			controls: [
+				mockSection( {
+					label: 'Agents',
+					items: [
+						mockTextAreaControl( { bind: 'webmcp-param-description', label: 'Parameter description' } ),
+					],
+				} ),
+			],
+		} );
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { type: 'mock-type', id: 'mock-id' },
+			elementType,
+			settings: {},
+		} );
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [ 'section' ],
+			},
+			defaultTab: 'settings',
+		} );
+
+		// Act.
+		renderWithTheme( <SettingsTab /> );
+
+		// Assert.
+		expect( screen.queryByText( 'Agents' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Parameter description' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should keep section visible when it contains element-control items', () => {

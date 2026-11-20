@@ -5,9 +5,11 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accor
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item\Atomic_Accordion_Item;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
@@ -18,6 +20,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -76,6 +79,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 			// changes (see `useShowIconWriteThrough` alongside the accordion items repeater control) -
 			// it is never surfaced in the panel and must never grow a per-item control of its own.
 			'show_icon' => Boolean_Prop_Type::make()->default( true ),
+			'different_open_icon' => Boolean_Prop_Type::make()->default( false ),
 		];
 	}
 
@@ -94,6 +98,10 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	 */
 	public static function get_computed_html_tag( array $settings ): string {
 		return Html_Tag_Computer::compute( $settings, 'summary' );
+	}
+
+	protected function define_atomic_style_states(): array {
+		return [ Style_States::get_class_states_map()['selected'] ];
 	}
 
 	protected function define_base_styles(): array {
@@ -123,6 +131,7 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 		return [
 			Atomic_Accordion::ELEMENT_TYPE_TITLE,
 			Atomic_Accordion::ELEMENT_TYPE_ICON,
+			Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN,
 		];
 	}
 
@@ -151,14 +160,24 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 	 * Controls child.
 	 */
 	protected function define_children_dependencies(): array {
+		$show_icon = [
+			'operator' => 'ne',
+			'path' => [ 'show_icon' ],
+			'value' => false,
+		];
+
+		$open_icon_when = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( $show_icon )
+			->where( [
+				'operator' => 'eq',
+				'path' => [ 'different_open_icon' ],
+				'value' => true,
+			] );
+
 		return [
 			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON )
-				->when( Dependency_Manager::make()->where( [
-					'operator' => 'ne',
-					'path' => [ 'show_icon' ],
-					'value' => false,
-				] ) )
-				->position( Element_Position::last() )
+				->when( Dependency_Manager::make()->where( $show_icon ) )
+				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_TITLE ) )
 				->stash( true )
 				->default_model(
 					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON )
@@ -166,7 +185,88 @@ class Atomic_Accordion_Item_Header extends Atomic_Element_Base {
 						->hydrate_default_children( true )
 						->build()
 				),
+			Child_Dependency::for( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
+				->when( $open_icon_when )
+				->position( Element_Position::after_type( Atomic_Accordion::ELEMENT_TYPE_ICON ) )
+				->stash( true )
+				->default_model(
+					Element_Builder::make( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->editor_settings( [
+							'title' => esc_html__( 'Open icon', 'elementor' ),
+						] )
+						->build()
+				),
 		];
+	}
+
+	/**
+	 * Documents saved while this change was in progress can still point the open slot at the
+	 * bundled upward chevron, which this plugin no longer ships. Point those at the closed
+	 * chevron. An uploaded file with the same name is left alone.
+	 *
+	 * @param mixed $elements
+	 * @return mixed
+	 */
+	public static function replace_saved_upward_chevron( $elements ) {
+		if ( ! is_array( $elements ) ) {
+			return $elements;
+		}
+
+		$replaced = [];
+
+		foreach ( $elements as $element ) {
+			if ( ! is_array( $element ) ) {
+				$replaced[] = $element;
+				continue;
+			}
+
+			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+				$element['elements'] = self::replace_saved_upward_chevron( $element['elements'] );
+			}
+
+			if ( Atomic_Accordion::ELEMENT_TYPE_ICON_OPEN === ( $element['elType'] ?? '' ) ) {
+				$element = self::point_default_open_chevron_the_same_way( $element );
+			}
+
+			$replaced[] = $element;
+		}
+
+		return $replaced;
+	}
+
+	private static function point_default_open_chevron_the_same_way( array $element ): array {
+		if ( empty( $element['elements'] ) || ! is_array( $element['elements'] ) ) {
+			return $element;
+		}
+
+		$upward_chevron = 'assets/images/chevron-up.svg';
+
+		foreach ( $element['elements'] as $index => $child ) {
+			if ( ! is_array( $child ) ) {
+				continue;
+			}
+
+			$url = $child['settings']['svg']['value']['url']['value'] ?? null;
+
+			if ( ! is_string( $url ) || substr( $url, -strlen( $upward_chevron ) ) !== $upward_chevron ) {
+				continue;
+			}
+
+			$element['elements'][ $index ]['settings']['svg']['value']['url']['value'] = Atomic_Accordion_Item_Icon::DEFAULT_ICON_URL;
+		}
+
+		return $element;
+	}
+
+	protected function build_template_context(): array {
+		$item_context = Render_Context::get( Atomic_Accordion_Item::class );
+		$is_open = $item_context['is_open'] ?? false;
+
+		return array_merge( $this->build_base_template_context(), [
+			'is_open' => $is_open,
+		] );
 	}
 
 	protected function get_templates(): array {

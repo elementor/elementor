@@ -11,7 +11,7 @@ Infrastructure for rendering **React** UI inside Elementor **Site Settings** tab
 | Package | Role |
 |---------|------|
 | `@elementor/editor-site-settings` | Tab registry + portal host; loads with atomic widgets |
-| Feature packages (e.g. `@elementor/editor-agents`) | One package per tab, gated by its own experiment |
+| Feature packages | One package per tab, gated by its own experiment |
 
 API surface is small — read it directly in `packages/packages/core/editor-site-settings/src/index.ts` (`injectSiteSettingsTab`, `registerSiteSettingsTab`).
 
@@ -21,7 +21,7 @@ API surface is small — read it directly in `packages/packages/core/editor-site
 2. JS: create a feature package that calls `injectSiteSettingsTab( { id, component } )` from `init()`. The `id` must match the PHP tab `get_id()`.
 3. PHP: add your feature package to `elementor/editor/v2/packages` (gated by the same experiment). `editor-site-settings` itself already loads with atomic widgets.
 
-Reference implementation: `@elementor/editor-agents` (`packages/packages/core/editor-agents/`) and `core/kits/documents/tabs/settings-agents.php`.
+The pattern follows the same architecture as other editor extension packages: feature detection via experiment, conditional package loading, and registration through a central registry.
 
 ## See also
 

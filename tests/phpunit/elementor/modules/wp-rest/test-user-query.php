@@ -19,7 +19,7 @@ class Test_User_Query extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->init();
-		$this->act_as_admin();
+		$this->act_as_admin_or_network_admin();
 	}
 
 	public function tearDown(): void {

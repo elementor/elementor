@@ -33,4 +33,20 @@ describe( audit.id, () => {
 			expect( result.violations[ 0 ].elementId ).toBe( 'inner' );
 		}
 	} );
+
+	it( 'offers an Angie fix prompt for the nested boxed violation', async () => {
+		const tree = [
+			makeContainer( 'outer', { content_width: 'boxed' }, [
+				makeContainer( 'inner', { content_width: 'boxed' } ),
+			] ),
+		];
+		const result = await audit.evaluate( makeContext( { tree } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].angieFix ).toBe( true );
+			expect( result.violations[ 0 ].angiePrompt ).toEqual( expect.stringContaining( 'Full Width' ) );
+		}
+	} );
 } );

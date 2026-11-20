@@ -2,8 +2,12 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery;
 
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Classes\Feature_Component;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
+use Elementor\Modules\Agents\Components\Discovery\Well_Known\Well_Known_Router;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
+use Elementor\Modules\Agents\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,14 +19,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Site-wide (all frontend responses):
  *   Link: </llms.txt>; rel="llms-txt"; type="text/plain"
+ *
+ * Site-wide when the Agent discovery module is enabled:
  *   Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/json"
  *   Link: </.well-known/auth.md>; rel="service-doc"; type="text/markdown"
+ *   Link: </.well-known/ard.json>; rel="ard"; type="application/json"
  *
  * On singular exposed views only:
  *   Link: <{permalink}.md>; rel="alternate"; type="text/markdown"
  *
- * When the MCP server card is active (gated by filter, emitted by the MCP
- * component once it registers its server in Phase 3):
+ * When the MCP server card is active (gated by filter, see Mcp_Discovery):
  *   Link: </.well-known/mcp/server-card.json>; rel="mcp-server-card"; type="application/json"
  *
  * Relation types that are not registered in the IANA link relation registry
@@ -36,13 +42,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Link_Headers extends Feature_Component {
 
+	const HOMEPAGE_MARKDOWN_PATH = '/index.md';
+
+	const ARD_CATALOG_SLUG = 'ard.json';
+
+	const MCP_SERVER_CARD_SLUG = 'mcp/server-card.json';
+
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
 
 	private Markdown_Endpoint $markdown_endpoint;
 
-	public function __construct( Markdown_Endpoint $markdown_endpoint ) {
+	private Agent_Ready_Settings $settings;
+
+	private Module $module;
+
+	public function __construct( Markdown_Endpoint $markdown_endpoint, Agent_Ready_Settings $settings, Module $module ) {
 		$this->markdown_endpoint = $markdown_endpoint;
+		$this->settings          = $settings;
+		$this->module            = $module;
 	}
 
 	public function get_id(): string {
@@ -51,6 +69,14 @@ class Link_Headers extends Feature_Component {
 
 	public function get_layer(): string {
 		return 'discovery';
+	}
+
+	public function get_required_modules(): array {
+		return [
+			Agent_Ready_Settings::MODULE_LLMS_TXT,
+			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+			Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+		];
 	}
 
 	public function register(): void {
@@ -128,27 +154,57 @@ class Link_Headers extends Feature_Component {
 	private function build_site_links(): array {
 		$home = untrailingslashit( home_url() );
 
-		$links = [
-			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
-			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"',
-			'<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"',
-		];
+		$links = [];
+
+		if ( $this->module->should_advertise_llms_txt() ) {
+			$links[] = '<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"';
+		}
+
+		if ( $this->settings->is_agent_discovery_enabled() ) {
+			$links[] = '<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"';
+			$links[] = '<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"';
+
+			if ( $this->is_endpoint_active( self::ARD_CATALOG_SLUG ) ) {
+				$links[] = '<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"';
+			}
+
+			if ( $this->is_openapi_publishable() ) {
+				$links[] = '<' . $home . '/openapi.json>; rel="service-desc"; type="application/json"';
+			}
+		}
 
 		/**
 		 * Fires when the MCP server card is available.
 		 *
-		 * The MCP component (Phase 3, PR15) hooks this to `true` once the
-		 * agents MCP server has been registered and /.well-known/mcp/server-card.json
-		 * is reachable. Keeping it off by default prevents pointing at a 404.
+		 * Mcp_Discovery hooks this to `true` while the site-level Elementor MCP
+		 * setting is on, which is when /.well-known/mcp/server-card.json is
+		 * served. Keeping it off by default prevents pointing at a 404.
 		 *
 		 * @since 3.30.0
 		 */
-		if ( apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) ) {
+		if ( $this->settings->is_agent_discovery_enabled() && apply_filters( 'elementor/agents/link_headers/emit_mcp_card', false ) && $this->is_endpoint_active( self::MCP_SERVER_CARD_SLUG ) ) {
 			$links[] = '<' . $home . '/.well-known/mcp/server-card.json>'
 				. '; rel="mcp-server-card"; type="application/json"';
 		}
 
 		return $links;
+	}
+
+	private function is_endpoint_active( string $slug ): bool {
+		$router = $this->module->get_component( 'well_known_router' );
+
+		return $router instanceof Well_Known_Router
+			&& isset( $router->get_active_endpoints()[ $slug ] );
+	}
+
+	private function is_openapi_publishable(): bool {
+		$component = $this->module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec ) {
+			return false;
+		}
+
+		return $component->is_publishable();
 	}
 
 	/**
@@ -164,14 +220,29 @@ class Link_Headers extends Feature_Component {
 			return null;
 		}
 
-		$permalink = get_permalink( $post->ID );
+		$markdown_url = $this->resolve_markdown_url( $post );
 
-		if ( ! $permalink ) {
+		if ( ! $markdown_url ) {
 			return null;
 		}
 
-		return '<' . esc_url_raw( untrailingslashit( $permalink ) ) . '.md>'
+		return '<' . esc_url_raw( $markdown_url ) . '>'
 			. '; rel="alternate"; type="text/markdown"';
+	}
+
+	private function resolve_markdown_url( \WP_Post $post ): ?string {
+		if ( $this->is_static_front_page( $post ) ) {
+			return untrailingslashit( home_url() ) . self::HOMEPAGE_MARKDOWN_PATH;
+		}
+
+		$permalink = get_permalink( $post->ID );
+
+		return $permalink ? untrailingslashit( $permalink ) . '.md' : null;
+	}
+
+	private function is_static_front_page( \WP_Post $post ): bool {
+		return 'page' === get_option( 'show_on_front' )
+			&& (int) get_option( 'page_on_front' ) === $post->ID;
 	}
 
 	/**

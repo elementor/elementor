@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { ControlActionsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { __flushAllInjections as flushAllInjections } from '@elementor/locations';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
 
+import { type ControlHeaderProps, injectIntoControlHeader } from '../../components/control-header-location';
 import { InlineEditor } from '../../components/inline-editor';
 import { InlineEditorToolbar } from '../../components/inline-editor-toolbar';
+import { initControlHeader } from '../../control-header/init';
 import { InlineEditingControl } from '../inline-editing-control';
 
 jest.mock( '../../components/inline-editor', () => ( {
@@ -172,6 +175,68 @@ describe( '<InlineEditingControl />', () => {
 
 		// Assert.
 		expect( screen.queryByRole( 'toolbar' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should show Improve beside the label when a promotion is set', () => {
+		// Arrange.
+		initControlHeader();
+		( window as unknown as { elementor: unknown } ).elementor = {
+			config: { user: { dismissed_editor_notices: [] } },
+		};
+
+		// Act.
+		renderControl(
+			<InlineEditingControl
+				context={ { elementId: '1' } }
+				label="Title"
+				promotion={ {
+					label: 'Improve',
+					title: 'Make your site accessible',
+					content: 'Ally detects common accessibility issues across your site and helps you fix them.',
+					buttonText: 'Install now',
+					buttonUrl: 'https://example.com/install',
+					dismissible: 'ally_atomic_notice',
+				} }
+			/>,
+			baseProps
+		);
+
+		// Assert.
+		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Improve' } ) ).toBeInTheDocument();
+
+		flushAllInjections();
+	} );
+
+	describe( 'header actions', () => {
+		const HeaderAction = ( { elementId, controlType }: ControlHeaderProps ) => (
+			<button>{ `Header action for ${ elementId } ${ controlType }` }</button>
+		);
+
+		afterEach( () => {
+			flushAllInjections();
+		} );
+
+		it( 'should render injected header actions on the label row with the element id', () => {
+			// Arrange.
+			injectIntoControlHeader( { id: 'test-header-action', component: HeaderAction } );
+
+			// Act.
+			renderControl( <InlineEditingControl context={ { elementId: '1' } } label="Text" />, baseProps );
+
+			// Assert.
+			expect( screen.getByText( 'Text' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Header action for 1 inline-editing' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'should render the label without header actions when nothing is injected', () => {
+			// Act.
+			renderControl( <InlineEditingControl context={ { elementId: '1' } } label="Text" />, baseProps );
+
+			// Assert.
+			expect( screen.getAllByText( 'Text' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( /Header action/ ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'should pass onEditorDestroy to the inline editor', () => {

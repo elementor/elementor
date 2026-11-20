@@ -13,6 +13,31 @@ import { EmailChipsField } from './email-chips-field';
 import { EmailField } from './email-field';
 import { shouldShowMentionsInfo } from './utils';
 
+const FieldValueMentionField = ( {
+	bind,
+	label,
+	placeholder,
+}: {
+	bind: string;
+	label: string;
+	placeholder?: string;
+} ) => {
+	const suggestions = useFormFieldSuggestions();
+
+	return (
+		<PropKeyProvider bind={ bind }>
+			<Grid container direction="column" gap={ 0.5 }>
+				<Grid item>
+					<ControlFormLabel>{ label }</ControlFormLabel>
+				</Grid>
+				<Grid item>
+					<MentionTextAreaControl suggestions={ suggestions } rows={ 1 } placeholder={ placeholder } />
+				</Grid>
+			</Grid>
+		</PropKeyProvider>
+	);
+};
+
 export const SendToField = ( { placeholder }: { placeholder?: string } ) => {
 	const suggestions = useFormFieldSuggestions( { inputType: 'email' } );
 
@@ -35,7 +60,7 @@ export const SendToField = ( { placeholder }: { placeholder?: string } ) => {
 };
 
 export const SubjectField = () => (
-	<EmailField
+	<FieldValueMentionField
 		bind="subject"
 		label={ __( 'Email subject', 'elementor' ) }
 		placeholder={ __( 'New form submission', 'elementor' ) }
@@ -78,7 +103,7 @@ export const FromEmailField = () => (
 );
 
 export const FromNameField = () => (
-	<EmailField
+	<FieldValueMentionField
 		bind="from-name"
 		label={ __( 'From name', 'elementor' ) }
 		placeholder={ __( 'What name should appear as the sender?', 'elementor' ) }

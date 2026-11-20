@@ -134,6 +134,25 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 		];
 	}
 
+	/** Exposes `is_open` to the accordion item header Twig template. */
+	protected function define_render_context(): array {
+		$state = $this->resolve_item_render_state();
+
+		return [
+			[
+				'context' => [
+					'is_open' => $state['is_open'],
+				],
+			],
+		];
+	}
+
+	protected function build_template_context(): array {
+		$state = $this->resolve_item_render_state();
+
+		return array_merge( $this->build_base_template_context(), $state );
+	}
+
 	/**
 	 * Resolves this item's position among its siblings, and the `open`/`name` attributes that
 	 * depend on it, via the accordion's render context.
@@ -148,9 +167,9 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 	 * therefore renders collapsed and without a `name` — it has no accordion identity to be
 	 * exclusive within, so asserting `open` or a `name` would be guessing.
 	 *
-	 * @return array
+	 * @return array{item_index: ?int, is_open: bool, group_name: ?string}
 	 */
-	protected function build_template_context(): array {
+	private function resolve_item_render_state(): array {
 		$accordion_context = Render_Context::get( Atomic_Accordion::class );
 		$get_item_index = $accordion_context['get-item-index'] ?? null;
 		$item_index = is_callable( $get_item_index ) ? $get_item_index( $this->get_id() ) : null;
@@ -162,10 +181,10 @@ class Atomic_Accordion_Item extends Atomic_Element_Base {
 		$is_open = 'first_expanded' === $default_state && 0 === $item_index;
 		$group_name = ( 'one' === $max_expanded && $accordion_id ) ? $accordion_id : null;
 
-		return array_merge( $this->build_base_template_context(), [
+		return [
 			'item_index' => $item_index,
 			'is_open' => $is_open,
 			'group_name' => $group_name,
-		] );
+		];
 	}
 }

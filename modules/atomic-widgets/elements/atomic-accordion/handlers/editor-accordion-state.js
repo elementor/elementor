@@ -1,8 +1,10 @@
 import { register } from '@elementor/frontend-handlers';
-
-const ACCORDION_ELEMENT_TYPE = 'e-accordion';
-const ITEM_ELEMENT_TYPE = 'e-accordion-item';
-const HEADER_ELEMENT_TYPE = 'e-accordion-item-header';
+import {
+	ACCORDION_ELEMENT_TYPE,
+	HEADER_ELEMENT_TYPE,
+	ITEM_ELEMENT_TYPE,
+	syncHeaderSelectedClass,
+} from './accordion-header-selected';
 const MAX_EXPANDED_ONE = 'one';
 const DEFAULT_STATE_FIRST_EXPANDED = 'first_expanded';
 const SELECT_COMMAND = 'document/elements/select';
@@ -129,6 +131,22 @@ register( {
 			if ( belongsToThisAccordion( event.detail.element ) ) {
 				applyDefaultState();
 			}
+		} );
+
+		listenToChildren( [ HEADER_ELEMENT_TYPE ] ).render( ( event ) => {
+			const header = event.detail.element;
+
+			if ( ! header || ! belongsToThisAccordion( header ) ) {
+				return;
+			}
+
+			const item = header.closest( `[data-element_type="${ ITEM_ELEMENT_TYPE }"]` );
+
+			if ( ! item || ! belongsToThisAccordion( item ) ) {
+				return;
+			}
+
+			syncHeaderSelectedClass( item );
 		} );
 
 		// The item toggled by the click currently being dispatched, if any. Clicking a header also

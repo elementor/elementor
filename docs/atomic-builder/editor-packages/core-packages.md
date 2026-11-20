@@ -1,7 +1,7 @@
 # Core Editor Packages (Snapshot)
 
 > Audience: internal
-> Module: `modules/atomic-widgets/`, `modules/global-classes/`, `modules/variables/`, `modules/components/`, `modules/editor-app-bar/`
+> Module: `modules/atomic-widgets/`, `modules/global-classes/`, `modules/variables/`, `modules/components/`, `modules/composite-widgets/`, `modules/editor-app-bar/`
 > Related: [extending-editor.md](extending-editor.md), [overview.md](overview.md), [../architecture/packages-map.md](../architecture/packages-map.md)
 
 ## What it is
@@ -49,6 +49,7 @@ add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packa
 | `editor-global-classes` | `global-classes` | `e_classes` + `e_atomic_elements` |
 | `editor-variables` | `variables` | `e_variables` + `e_atomic_elements` |
 | `editor-components` | `components` | `e_components` + `e_atomic_elements` |
+| `editor-composite-widgets` | `composite-widgets` | `e_composite_widgets` (hidden) + `e_atomic_elements` |
 | `editor-app-bar` | `editor-app-bar` | None |
 
 ### Base loader extensions
@@ -70,8 +71,7 @@ From `Editor_Loader::EXTENSIONS`:
 | Package | Module | Notes |
 |---------|--------|-------|
 | `editor-site-navigation` | `site-navigation` | Pages panel |
-| `editor-widget-creation` | `widget-creation` | Promo gated by `e_widget_creation` |
-| `editor-agents` | `agents` | `agents_llms_txt` |
+| `editor-widget-creation` | `widget-creation` | Create widget handoff to Angie; loaded only for admins with the Angie plugin active |
 
 ## Public API
 
@@ -85,9 +85,9 @@ Per-package `init()` entry points in `packages/packages/core/{package}/src/init.
 | `editor-global-classes` | Classes store, style provider, classes MCP domain |
 | `editor-variables` | Variables UI, variables MCP domain |
 | `editor-components` | Component type, panel tab, instance panel |
+| `editor-composite-widgets` | Widget insert on `preview/drop`, closed-structure guards |
 | `editor-interactions` | Interactions repo, interactions MCP domain |
 | `editor-site-settings` | Site Settings tab registry and portal host |
-| `editor-agents` | Agents Site Settings tab (`llms.txt`) |
 
 ## Extension
 

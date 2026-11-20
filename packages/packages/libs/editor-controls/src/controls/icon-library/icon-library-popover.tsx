@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
 	PopoverBody,
 	PopoverHeader,
@@ -8,13 +8,12 @@ import {
 	StyledMenuList,
 	type VirtualizedItem,
 } from '@elementor/editor-ui';
-import { ComponentsIcon } from '@elementor/icons';
+import { LibraryIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Box, CircularProgress, Divider, Link, Stack, styled, Typography } from '@elementor/ui';
 import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { useCustomIconLibraries } from './custom-icon-libraries';
 import {
 	createIconSelectionValue,
 	filterFontAwesome7Icons,
@@ -25,30 +24,38 @@ import {
 import { FontAwesomeGlyph } from './font-awesome-glyph';
 import { IconLibraryFilter } from './icon-library-filter';
 import { IconLibraryGrid } from './icon-library-grid';
+import { useIconLibraryProviderIcons } from './icon-library-providers';
+import { IconLibraryUploadAction, IconLibraryUploadActionSlot } from './icon-library-upload-action';
 import { type IconLibraryView, IconLibraryViewToggle } from './icon-library-view-toggle';
+import { mergeIconsById } from './merge-icons-by-id';
+import { SvgElementIcon } from './svg-element-icon';
 import { useFontAwesome7Catalog } from './use-font-awesome-7-catalog';
 
 export const ICON_LIBRARY_POPOVER_WIDTH = 300;
-export const ICON_LIBRARY_ROW_HEIGHT = 48;
 export const ICON_LIBRARY_SEARCH_DEBOUNCE_DELAY = 300;
 export const ICON_LIBRARY_VIEW_STORAGE_KEY = 'icon-library-view';
 export const ICON_LIBRARY_VIEW_STORAGE_PREFIX = 'editor-controls';
-const DEFAULT_ICON_LIBRARY_VIEW: IconLibraryView = 'list';
+const DEFAULT_ICON_LIBRARY_VIEW: IconLibraryView = 'grid';
 
 const isIconLibraryView = ( value: unknown ): value is IconLibraryView => {
 	return value === 'grid' || value === 'list';
 };
 const ICON_TILE_SIZE = 40;
+const ICON_LIBRARY_ROW_VERTICAL_PADDING = 0.5;
+const ICON_LIBRARY_ROW_VERTICAL_PADDING_PX = 4;
+export const ICON_LIBRARY_ROW_HEIGHT = ICON_TILE_SIZE + ICON_LIBRARY_ROW_VERTICAL_PADDING_PX * 2;
 const ICON_GLYPH_SIZE = 20;
-const ICON_LIBRARY_INLINE_SPACING = 1;
+const ICON_LIBRARY_INLINE_SPACING = 2;
+const ICON_LIBRARY_SEARCH_PADDING_BOTTOM = 2;
+const ICON_LIBRARY_TITLE_SIZE = '14px';
 
 const CompactIconLibraryMenuList = styled( StyledMenuList )( ( { theme } ) => ( {
 	'& > [role="option"]': {
-		padding: theme.spacing( 0.75, ICON_LIBRARY_INLINE_SPACING ),
+		padding: theme.spacing( ICON_LIBRARY_ROW_VERTICAL_PADDING, ICON_LIBRARY_INLINE_SPACING ),
 	},
 } ) );
 
-type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' >;
+type IconLibraryItem = VirtualizedItem< 'item', string > & Omit< FontAwesome7Icon, 'value' > & { iconValue: string };
 
 type IconLibraryPopoverProps = {
 	open: boolean;
@@ -80,18 +87,23 @@ export const IconLibraryPopover = ( {
 	);
 	const view = isIconLibraryView( storedView ) ? storedView : DEFAULT_ICON_LIBRARY_VIEW;
 	const { data: fontAwesomeIcons = [], isLoading: isFontAwesomeLoading } = useFontAwesome7Catalog( open );
-	const { data: customIcons = [], isLoading: isCustomLoading } = useCustomIconLibraries( open );
-	const isLoading = isFontAwesomeLoading || isCustomLoading;
-	const icons = useMemo( () => [ ...fontAwesomeIcons, ...customIcons ], [ customIcons, fontAwesomeIcons ] );
+	const { data: providerIcons = [], isLoading: isProviderLoading } = useIconLibraryProviderIcons( open );
+	const icons = useMemo(
+		() => mergeIconsById( fontAwesomeIcons, providerIcons ),
+		[ providerIcons, fontAwesomeIcons ]
+	);
 
 	const items = useMemo(
 		() => createIconLibraryItems( icons, searchValue, activeLibraries ),
 		[ activeLibraries, icons, searchValue ]
 	);
+	const isLoading = isFontAwesomeLoading || ( isProviderLoading && items.length === 0 );
 	const selectedValue = useMemo(
 		() => findFontAwesome7Icon( icons, selectedIconClass, selectedIconLibrary )?.id,
 		[ icons, selectedIconClass, selectedIconLibrary ]
 	);
+
+	const contentRef = useRef< HTMLDivElement >( null );
 
 	const handleClose = () => {
 		setSearchValue( '' );
@@ -112,6 +124,19 @@ export const IconLibraryPopover = ( {
 		} );
 	};
 
+	const handleSearchKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key !== 'ArrowDown' || view !== 'list' ) {
+			return;
+		}
+
+		const option = contentRef.current?.querySelector< HTMLElement >( '[role="option"][tabindex="0"]' );
+
+		if ( option ) {
+			event.preventDefault();
+			option.focus();
+		}
+	};
+
 	const handleClearSearch = () => {
 		setSearchValue( '' );
 	};
@@ -121,22 +146,38 @@ export const IconLibraryPopover = ( {
 			<PopoverHeader
 				title={ __( 'Icon library', 'elementor' ) }
 				onClose={ handleClose }
-				icon={ <ComponentsIcon fontSize="tiny" /> }
-				actions={ [ <IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } /> ] }
-				sx={ { pl: ICON_LIBRARY_INLINE_SPACING, pr: 0.5 } }
+				icon={ <LibraryIcon fontSize="tiny" /> }
+				actions={ [
+					<IconLibraryViewToggle key="view" value={ view } onChange={ setStoredView } />,
+					<IconLibraryUploadActionSlot key="upload">
+						<IconLibraryUploadAction />
+					</IconLibraryUploadActionSlot>,
+				] }
+				sx={ {
+					pl: ICON_LIBRARY_INLINE_SPACING,
+					pr: 1,
+					'& .MuiTypography-subtitle2': { fontSize: ICON_LIBRARY_TITLE_SIZE },
+				} }
 			/>
-			<Stack direction="row" alignItems="center" gap={ 1 } sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: 1 } }>
-				<SearchField
-					value={ searchInputValue }
-					onSearch={ handleSearchChange }
-					placeholder={ __( 'Search', 'elementor' ) }
-					id="icon-library-search"
-					sx={ { flex: 1, px: 0, pb: 0 } }
-				/>
+			<Stack
+				direction="row"
+				alignItems="center"
+				gap={ 1 }
+				sx={ { px: ICON_LIBRARY_INLINE_SPACING, pb: ICON_LIBRARY_SEARCH_PADDING_BOTTOM } }
+			>
+				<Box onKeyDown={ handleSearchKeyDown } sx={ { flex: 1, minWidth: 0 } }>
+					<SearchField
+						value={ searchInputValue }
+						onSearch={ handleSearchChange }
+						placeholder={ __( 'Search', 'elementor' ) }
+						id="icon-library-search"
+						sx={ { width: '100%', px: 0, pb: 0 } }
+					/>
+				</Box>
 				<IconLibraryFilter value={ activeLibraries } onChange={ setActiveLibraries } />
 			</Stack>
 			<Divider />
-			<Box sx={ { flex: 1, overflow: 'hidden', minHeight: 0, minWidth: 0 } }>
+			<Box ref={ contentRef } sx={ { flex: 1, overflow: 'hidden', minHeight: 0, minWidth: 0 } }>
 				<IconLibraryContent
 					isLoading={ isLoading }
 					items={ items }
@@ -211,6 +252,7 @@ const IconLibraryContent = ( {
 			onClose={ onClose }
 			itemHeight={ ICON_LIBRARY_ROW_HEIGHT }
 			menuItemContentTemplate={ IconLibraryRow }
+			rovingFocus
 			noResultsComponent={ emptyState }
 			data-testid="icon-library-list"
 		/>
@@ -219,7 +261,7 @@ const IconLibraryContent = ( {
 
 const IconLibraryLoadingState = () => (
 	<Stack alignItems="center" justifyContent="center" height="100%">
-		<CircularProgress role="progressbar" size={ 24 } />
+		<CircularProgress role="progressbar" size={ 24 } aria-label={ __( 'Loading icons', 'elementor' ) } />
 	</Stack>
 );
 
@@ -258,7 +300,11 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 					flexShrink: 0,
 				} }
 			>
-				<FontAwesomeGlyph icon={ icon } size={ ICON_GLYPH_SIZE } color="currentColor" />
+				<FontAwesomeGlyph
+					icon={ { ...icon, value: icon.iconValue } }
+					size={ ICON_GLYPH_SIZE }
+					color="currentColor"
+				/>
 			</Box>
 			<Typography variant="caption" color="text.primary" noWrap>
 				{ icon.label }
@@ -269,7 +315,7 @@ const IconLibraryRow = ( item: VirtualizedItem< string, string > ) => {
 
 const CatalogUnavailable = () => (
 	<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
-		<ComponentsIcon fontSize="large" />
+		<SvgElementIcon fontSize="large" />
 		<Typography align="center" variant="subtitle2" color="text.secondary">
 			{ __( "Icons couldn't be loaded.", 'elementor' ) }
 		</Typography>
@@ -278,7 +324,7 @@ const CatalogUnavailable = () => (
 
 const NoResults = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
 	<Stack alignItems="center" justifyContent="center" height="100%" p={ 2.5 } gap={ 1.5 }>
-		<ComponentsIcon fontSize="large" />
+		<SvgElementIcon fontSize="large" />
 		<Typography align="center" variant="subtitle2" color="text.secondary">
 			{ __( 'Sorry, nothing matched', 'elementor' ) }
 		</Typography>
@@ -304,4 +350,5 @@ const createIconLibraryItems = (
 		...icon,
 		type: 'item',
 		value: icon.id,
+		iconValue: icon.value,
 	} ) );

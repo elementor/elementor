@@ -454,12 +454,19 @@ class Source_Local extends Source_Base {
 
 		$query_args = wp_parse_args( $args, $defaults );
 
+		// This source only lists its own post type.
+		$query_args['post_type'] = self::CPT;
+
 		$templates_query = new \WP_Query( $query_args );
 
 		$templates = [];
 
 		if ( $templates_query->have_posts() ) {
 			foreach ( $templates_query->get_posts() as $post ) {
+				if ( ! is_post_status_viewable( $post->post_status ) && ! current_user_can( 'read_post', $post->ID ) ) {
+					continue;
+				}
+
 				$templates[] = $this->get_item( $post->ID );
 			}
 		}
@@ -1669,7 +1676,7 @@ class Source_Local extends Source_Base {
 			'plural' => '',
 		];
 
-		$template_type = Utils::get_super_global_value( $_GET, self::TAXONOMY_TYPE_SLUG );
+		$template_type = sanitize_key( Utils::get_super_global_value( $_GET, self::TAXONOMY_TYPE_SLUG ) ?? '' );
 
 		if ( $template_type ) {
 			return $this->get_template_labels_by_type( $template_type );

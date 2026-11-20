@@ -2,14 +2,13 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Components\Discovery\Link_Headers;
 use Elementor\Modules\Agents\Components\Readability\Markdown_Endpoint;
 use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Link_Headers extends Elementor_Test_Base {
@@ -18,33 +17,28 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 	private Agent_Ready_Settings $settings;
 
-	private $original_experiment_default_state;
+	private Module $module;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->original_experiment_default_state = Plugin::$instance->experiments
-			->get_features( Module::EXPERIMENT_NAME )['default'];
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
+		Module::reset_physical_file_cache();
 
 		delete_option( Agent_Ready_Settings::OPTION );
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
 
+		$this->module = new Module();
 		$this->settings = new Agent_Ready_Settings( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
 		$this->settings->ensure_option_exists();
-		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings ) );
+		$this->settings->activate();
+		$this->link_headers = new Link_Headers( new Markdown_Endpoint( $this->settings, new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) ) ), $this->settings, $this->module );
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			$this->original_experiment_default_state
-		);
-
 		delete_option( Agent_Ready_Settings::OPTION );
+		delete_option( Module::OPTION_EXISTING_FILE_DECISION );
+
+		Module::reset_physical_file_cache();
 
 		parent::tearDown();
 	}
@@ -58,13 +52,118 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertContains(
-			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/json"',
+			'<' . $home . '/.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
 			$links
 		);
 		$this->assertContains(
 			'<' . $home . '/.well-known/auth.md>; rel="service-doc"; type="text/markdown"',
 			$links
 		);
+		$this->assertContains(
+			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
+			$links
+		);
+	}
+
+	public function test_build_site_links__omits_discovery_links_when_agent_discovery_is_disabled() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertContains(
+			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
+			$links
+		);
+		$this->assertStringNotContainsString( 'api-catalog', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'auth.md', implode( '', $links ) );
+		$this->assertStringNotContainsString( 'rel="ard"', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__includes_ard_catalog_when_agent_discovery_is_enabled() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertContains(
+			'<' . $home . '/.well-known/ard.json>; rel="ard"; type="application/json"',
+			$links
+		);
+	}
+
+	public function test_build_site_links__omits_ard_catalog_when_catalog_is_not_applicable() {
+		// Arrange
+		add_filter( 'elementor/agents/ard_catalog/is_applicable', '__return_false' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		remove_filter( 'elementor/agents/ard_catalog/is_applicable', '__return_false' );
+		$this->assertStringNotContainsString( 'rel="ard"', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__omits_llms_txt_when_llms_is_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__omits_llms_txt_when_decision_is_keep() {
+		// Arrange
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
+	}
+
+	public function test_build_site_links__omits_llms_txt_when_physical_file_exists() {
+		// Arrange
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+
+		try {
+			file_put_contents( $file_path, '# Physical file' );
+			update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+			Module::reset_physical_file_cache();
+
+			// Act
+			$links = $this->invoke_build_site_links();
+
+			// Assert
+			$this->assertStringNotContainsString( 'llms.txt', implode( '', $links ) );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
+	}
+
+	public function test_build_site_links__includes_llms_txt_when_enabled_and_no_physical_file() {
+		// Arrange
+		$home = untrailingslashit( home_url() );
+		Module::reset_physical_file_cache();
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
 		$this->assertContains(
 			'<' . $home . '/llms.txt>; rel="llms-txt"; type="text/plain"',
 			$links
@@ -88,6 +187,19 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
 	}
 
+	public function test_build_site_links__omits_mcp_card_when_agent_discovery_is_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY, 'enabled', false );
+		add_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+
+		// Act
+		$links = $this->invoke_build_site_links();
+
+		// Assert
+		remove_filter( 'elementor/agents/link_headers/emit_mcp_card', '__return_true' );
+		$this->assertStringNotContainsString( 'mcp-server-card', implode( '', $links ) );
+	}
+
 	public function test_build_singular_markdown_link__includes_published_post() {
 		$post = get_post( $this->factory()->post->create( [
 			'post_status'  => 'publish',
@@ -99,6 +211,29 @@ class Test_Link_Headers extends Elementor_Test_Base {
 
 		$this->assertNotNull( $link );
 		$this->assertStringContainsString( untrailingslashit( get_permalink( $post->ID ) ) . '.md', $link );
+	}
+
+	public function test_build_singular_markdown_link__uses_index_md_for_static_front_page() {
+		// Arrange
+		$post_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Static Front Page',
+		] );
+		update_option( 'show_on_front', 'page' );
+		update_option( 'page_on_front', $post_id );
+
+		// Act
+		$link = $this->link_headers->build_singular_markdown_link( get_post( $post_id ) );
+
+		// Assert
+		$this->assertSame(
+			'<' . untrailingslashit( home_url() ) . '/index.md>; rel="alternate"; type="text/markdown"',
+			$link
+		);
+
+		delete_option( 'page_on_front' );
+		update_option( 'show_on_front', 'posts' );
 	}
 
 	public function test_build_singular_markdown_link__omits_noindex_post() {
@@ -135,22 +270,80 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertNull( $link );
 	}
 
-	public function test_is_enabled__follows_agent_ready_experiment() {
-		// Arrange
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-
-		// Act & Assert
-		$this->assertFalse( $this->link_headers->is_enabled() );
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
+	public function test_is_enabled__returns_true_when_activated() {
 		$this->assertTrue( $this->link_headers->is_enabled() );
+	}
+
+	public function test_add_rest_headers__includes_llms_txt_when_enabled() {
+		// Arrange
+		$response = new \WP_HTTP_Response();
+		$request  = new \WP_REST_Request( 'GET', '/elementor/v1/test' );
+
+		// Act
+		$result = $this->link_headers->add_rest_headers( $response, null, $request );
+
+		// Assert
+		$link_headers = $result->get_headers()['Link'] ?? [];
+		$all_links    = is_array( $link_headers ) ? implode( '', $link_headers ) : $link_headers;
+		$this->assertStringContainsString( 'llms.txt', $all_links );
+	}
+
+	public function test_add_rest_headers__omits_llms_txt_when_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_LLMS_TXT, 'enabled', false );
+		$response = new \WP_HTTP_Response();
+		$request  = new \WP_REST_Request( 'GET', '/elementor/v1/test' );
+
+		// Act
+		$result = $this->link_headers->add_rest_headers( $response, null, $request );
+
+		// Assert
+		$link_headers = $result->get_headers()['Link'] ?? [];
+		$all_links    = is_array( $link_headers ) ? implode( '', $link_headers ) : $link_headers;
+		$this->assertStringNotContainsString( 'llms.txt', $all_links );
+	}
+
+	public function test_add_rest_headers__omits_llms_txt_when_decision_is_keep() {
+		// Arrange
+		update_option( Module::OPTION_EXISTING_FILE_DECISION, 'keep' );
+		$response = new \WP_HTTP_Response();
+		$request  = new \WP_REST_Request( 'GET', '/elementor/v1/test' );
+
+		// Act
+		$result = $this->link_headers->add_rest_headers( $response, null, $request );
+
+		// Assert
+		$link_headers = $result->get_headers()['Link'] ?? [];
+		$all_links    = is_array( $link_headers ) ? implode( '', $link_headers ) : $link_headers;
+		$this->assertStringNotContainsString( 'llms.txt', $all_links );
+	}
+
+	public function test_add_rest_headers__omits_llms_txt_when_physical_file_exists() {
+		// Arrange
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$file_path = get_home_path() . Module::LLMS_FILENAME;
+
+		try {
+			file_put_contents( $file_path, '# Physical file' );
+			update_option( Module::OPTION_EXISTING_FILE_DECISION, 'replace' );
+			Module::reset_physical_file_cache();
+
+			$response = new \WP_HTTP_Response();
+			$request  = new \WP_REST_Request( 'GET', '/elementor/v1/test' );
+
+			// Act
+			$result = $this->link_headers->add_rest_headers( $response, null, $request );
+
+			// Assert
+			$link_headers = $result->get_headers()['Link'] ?? [];
+			$all_links    = is_array( $link_headers ) ? implode( '', $link_headers ) : $link_headers;
+			$this->assertStringNotContainsString( 'llms.txt', $all_links );
+		} finally {
+			if ( file_exists( $file_path ) ) {
+				unlink( $file_path );
+			}
+			Module::reset_physical_file_cache();
+		}
 	}
 
 	/**

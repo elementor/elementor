@@ -10,10 +10,12 @@ export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
-export { EditingPanelTabs } from './components/editing-panel-tabs';
+export { EditingPanelTabs, injectIntoSettingsTab } from './components/editing-panel-tabs';
+export { Section } from './components/section';
 export { SectionContent } from './components/section-content';
 export { SectionsList } from './components/sections-list';
 export { SettingsControl } from './components/settings-control';
+export { SettingsTab } from './components/settings-tab';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab, StyleTabSlot } from './components/style-tab';
@@ -28,6 +30,13 @@ export { PseudoStateMenuItems } from './components/style-states/pseudo-state-men
 export { usePseudoStates } from './components/style-states/use-pseudo-states';
 export { injectIntoGridFields } from './components/style-sections/layout-section/layout-section';
 export { StyleTabSection } from './components/style-tab-section';
+export {
+	CustomCssHeaderSlot,
+	injectIntoCustomCssHeader,
+	type CustomCssHeaderProps,
+} from './components/custom-css-header-location';
+export { injectIntoStyleSectionHeader, type StyleSectionHeaderProps } from './components/style-section-header-location';
+export { injectIntoStyleTabHeader, type StyleTabHeaderProps } from './components/style-tab-header-location';
 export { ClassesPropProvider, useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';
 export { StyleProvider, useStyle } from './contexts/style-context';
@@ -37,6 +46,7 @@ export { ControlTypeContainer } from './controls-registry/control-type-container
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
 export { StylesProviderCannotUpdatePropsError } from './errors';
 export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';
+export { useControlsByWidgetType } from './hooks/use-controls-by-widget-type';
 export { useCustomCss } from './hooks/use-custom-css';
 export { useStateByElement } from './hooks/use-state-by-element';
 export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
@@ -59,3 +69,8 @@ export {
 	getUpdatedValues,
 	extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
+export {
+	registerSubmenuToggle,
+	type SubmenuToggleProps,
+} from './controls-registry/element-controls/menu-items-control/submenu-toggle-registry';
+export { SubmenuToggle } from './controls-registry/element-controls/menu-items-control/submenu-toggle';

@@ -254,6 +254,35 @@ class Test_Document extends Elementor_Test_Base {
 		wp_set_current_user( $before_user->ID );
 	}
 
+	public function test_filter_admin_row_actions__escapes_edit_url_in_href() {
+		// Arrange
+		$this->act_as_admin();
+		$document = $this->factory()->documents->create_and_get();
+
+		$filter_callback = function( $url ) {
+			return 'https://example.org/wp-admin/post.php?post=1&action=elementor&x=" onfocus="x';
+		};
+
+		add_filter( 'elementor/document/urls/edit', $filter_callback, PHP_INT_MAX );
+
+		// Act
+		$actions = $document->filter_admin_row_actions( [] );
+
+		// Assert
+		$this->assertArrayHasKey( 'edit_with_elementor', $actions );
+
+		preg_match( '/href="([^"]*)"/', $actions['edit_with_elementor'], $matches );
+		$this->assertNotEmpty( $matches, 'href attribute not found' );
+
+		$href_value = $matches[1];
+		$this->assertStringNotContainsString( '"', html_entity_decode( $href_value, ENT_QUOTES ) );
+
+		$this->assertStringNotContainsString( ' onfocus="', $actions['edit_with_elementor'] );
+
+		// Cleanup
+		remove_filter( 'elementor/document/urls/edit', $filter_callback, PHP_INT_MAX );
+	}
+
 	public function test_get_autosave__creates_autosave_when_not_exists() {
 		// Arrange.
 		$this->act_as_admin();
@@ -269,6 +298,9 @@ class Test_Document extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		unset( $_GET['active-document'] );
+		unset( $_GET['active-tab'] );
+
 		parent::tearDown();
 
 		remove_action( 'elementor/element/section/section_layout/after_section_start', [ __CLASS__, 'add_external_control' ] );

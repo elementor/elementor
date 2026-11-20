@@ -31,3 +31,4 @@ export { SectionRefContext, useSectionWidth } from './contexts/section-context';
 export { useEditable } from './hooks/use-editable';
 export { useTextFieldAutoSelect } from './hooks/use-text-field-auto-select';
 export { useCanvasClickHandler } from './hooks/use-canvas-click-handler';
+export { useRovingFocus } from './hooks/use-roving-focus';

@@ -88,6 +88,7 @@ class Test_Install_Theme extends Test_Base {
 
 	public function test_valid_slug_does_not_return_validation_error() {
 		// Arrange
+		$this->act_as_admin_or_network_admin();
 		$request = new WP_REST_Request( 'POST' );
 		$request->set_body( json_encode( [ 'theme_slug' => 'hello-elementor' ] ) );
 		$request->set_header( 'Content-Type', 'application/json' );

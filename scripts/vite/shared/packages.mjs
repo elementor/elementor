@@ -5,7 +5,7 @@ import { resolveFromRoot } from './paths.mjs';
 
 const PACKAGES_ROOT = resolveFromRoot( 'packages' );
 
-const PACKAGE_GROUPS = [ 'packages/core', 'packages/libs', 'apps' ];
+const PACKAGE_GROUPS = [ 'packages/core', 'packages/libs', 'packages/angie', 'apps' ];
 
 /**
  * `ui` and `icons` ship prebuilt in node_modules rather than living in the monorepo, but they are

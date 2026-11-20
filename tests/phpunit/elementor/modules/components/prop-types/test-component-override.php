@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\Components\PropTypes;
 use Elementor\Modules\Components\PropTypes\Component_Override_Parser;
 use Elementor\Modules\Components\Documents\Component_Overridable_Props;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -282,7 +283,7 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 				'override_key' => 'prop-uuid-5',
 				'override_value' => [
 					'$$type' => 'escaped-html',
-					'value' => 'New button text alert(1)',
+					'value' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'New button text alert(1)', 'New button text ' ),
 				],
 				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
 			],

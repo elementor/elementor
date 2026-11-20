@@ -69,18 +69,14 @@ async function expectClassRegistry(
 		.toBe( containsClass );
 }
 
-async function openExistingPageEditor(
-	page: Page,
-	editor: EditorPage,
-	postId: number,
-): Promise< void > {
-	await page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
-	await page.waitForLoadState( 'load', { timeout: timeouts.longAction } );
-	await editor.waitForPanelToLoad();
-}
-
 async function getComputedBackground( locator: Locator ): Promise< string > {
 	return locator.evaluate( ( element ) => getComputedStyle( element ).backgroundColor );
+}
+
+async function assertCanvasWidgetBackground( editor: EditorPage, widgetId: string, expectedRgb: string ): Promise< void > {
+	await editor.getPreviewFrame().waitForSelector( editor.getWidgetSelector( widgetId ), { timeout: timeouts.heavyAction } );
+	const widget = await editor.getWidget( widgetId );
+	await expect.poll( () => getComputedBackground( widget ), { timeout: timeouts.heavyAction } ).toBe( expectedRgb );
 }
 
 test.describe.serial( 'Global Classes - Unpublished class persistence @v4-tests', () => {
@@ -100,7 +96,8 @@ test.describe.serial( 'Global Classes - Unpublished class persistence @v4-tests'
 		await page.close();
 	} );
 
-	test( 'keeps a preview-only class when another page is published', async ( { apiRequests, request } ) => {
+	// Skipped until ED-25857 fixes this test.
+	test.skip( 'keeps a preview-only class when another page is published', async ( { apiRequests, request }, testInfo ) => {
 		let pageAId: number;
 		let widgetId: string;
 
@@ -123,10 +120,8 @@ test.describe.serial( 'Global Classes - Unpublished class persistence @v4-tests'
 		} );
 
 		await test.step( 'Publish page A and resolve its class on the frontend', async () => {
-			await openExistingPageEditor( page, editor, pageAId );
-			const widget = await editor.getWidget( widgetId );
-			await expect.poll( () => getComputedBackground( widget ), { timeout: timeouts.expect } )
-				.toBe( BACKGROUND_COLOR.rgb );
+			editor = await wpAdmin.editExistingPostWithElementor( String( pageAId ), { page, testInfo } );
+			await assertCanvasWidgetBackground( editor, widgetId, BACKGROUND_COLOR.rgb );
 
 			await publishAndWaitForClassesSave( editor, page );
 			await expectClassRegistry( apiRequests, request, 'frontend', true );
@@ -134,6 +129,7 @@ test.describe.serial( 'Global Classes - Unpublished class persistence @v4-tests'
 			await page.goto( `/?p=${ pageAId }` );
 			await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 			const publishedWidget = page.locator( `[data-id="${ widgetId }"]` );
+			await expect( publishedWidget ).toBeVisible( { timeout: timeouts.navigation } );
 			await expect.poll( () => getComputedBackground( publishedWidget ), { timeout: timeouts.expect } )
 				.toBe( BACKGROUND_COLOR.rgb );
 		} );

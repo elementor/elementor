@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 
-	private const ATOMIC_EDITOR_REQUIRED_MESSAGE = 'This site needs the Atomic Editor turned on before this can be built. Turn it on in WP Admin → Elementor → Settings → Atomic Editor, then try again.';
+	private const ATOMIC_EDITOR_REQUIRED_MESSAGE = 'This site needs the Atomic Editor turned on before this can be built. Ask the user for permission, then call elementor/manage-experiments with enable_atomic_editor, or they can turn it on in WP Admin → Elementor → Settings → Atomic Editor. Then try again.';
 	private const ATOMIC_EDITOR_DESCRIPTION_NOTICE = 'Note: needs Atomic Editor (currently off for this site).';
 
 	private array $original_experiment_states = [];
@@ -151,6 +151,21 @@ class Test_Mcp_V4_Gate_Integration extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertStringContainsString( self::ATOMIC_EDITOR_DESCRIPTION_NOTICE, $description );
+	}
+
+	public function test_execute_guarded__normalizes_null_and_empty_object_input_for_parameterless_resource() {
+		// Arrange
+		$this->act_as_admin();
+		$ability = new Style_Best_Practices_Ability();
+
+		// Act
+		$from_object = $ability->execute_guarded( (object) [] );
+		$from_null = $ability->execute_guarded( null );
+
+		// Assert
+		$this->assertIsString( $from_object );
+		$this->assertNotEmpty( $from_object );
+		$this->assertSame( $from_object, $from_null );
 	}
 
 	private function resource_catalog_by_uri(): array {

@@ -13,7 +13,7 @@ import { type StyleItem } from '../renderers/create-styles-renderer';
 export function StyleRenderer() {
 	const container = usePortalContainer();
 
-	const styleItems = useStyleItems();
+	const styleItems = useStyleItems( container );
 	const linksAttrs = useDocumentsCssLinks();
 
 	if ( ! container ) {

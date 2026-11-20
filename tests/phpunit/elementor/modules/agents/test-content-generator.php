@@ -141,6 +141,32 @@ class Test_Content_Generator extends Elementor_Test_Base {
 		$this->assertStringContainsString( '> Homepage excerpt used as intro.', $output );
 	}
 
+	public function test_llms_txt_falls_back_to_tagline_when_front_page_is_excluded() {
+		// Arrange
+		$page_id = $this->factory()->post->create( [
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_excerpt' => 'Excluded homepage excerpt.',
+		] );
+		update_option( 'show_on_front', 'page' );
+		update_option( 'page_on_front', $page_id );
+		update_option( 'blogdescription', 'Site tagline fallback' );
+
+		// Act
+		$llms      = $this->generator->generate_llms_txt( [ 'intro' => '' ], null, [ $page_id ] );
+		$llms_full = $this->generator->generate_llms_full_txt( [ 'intro' => '' ], null, [ $page_id ] );
+
+		// Cleanup
+		update_option( 'show_on_front', 'posts' );
+		delete_option( 'page_on_front' );
+
+		// Assert
+		$this->assertStringContainsString( '> Site tagline fallback', $llms );
+		$this->assertStringNotContainsString( 'Excluded homepage excerpt.', $llms );
+		$this->assertStringContainsString( '> Site tagline fallback', $llms_full );
+		$this->assertStringNotContainsString( 'Excluded homepage excerpt.', $llms_full );
+	}
+
 	public function test_llms_full_txt_contains_page_link() {
 		$page_id = $this->factory()->post->create( [
 			'post_type'   => 'page',
@@ -173,6 +199,40 @@ class Test_Content_Generator extends Elementor_Test_Base {
 	public function test_llms_full_txt_omits_optional_section_when_empty() {
 		$output = $this->generator->generate_llms_full_txt( [ 'optional' => '' ] );
 		$this->assertStringNotContainsString( '## Optional', $output );
+	}
+
+	public function test_llms_full_txt_keeps_partial_section_when_later_inline_would_exceed_cap() {
+		$this->draft_all_published_posts_of_type( 'page' );
+
+		$first_page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Cap Partial Page First',
+			'menu_order'  => 1,
+		] );
+		$second_page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Cap Partial Page Second',
+			'menu_order'  => 2,
+		] );
+
+		$this->seed_inline_cache( $first_page_id, 'First page inlined body.' );
+		$this->seed_inline_cache( $second_page_id, str_repeat( 'x', Content_Generator::LLMS_FULL_HARD_CAP ) );
+
+		$output = $this->generator->generate_llms_full_txt();
+
+		$this->assertStringContainsString( 'First page inlined body.', $output );
+		$this->assertStringNotContainsString( str_repeat( 'x', 5000 ), $output );
+		$this->assertLessThanOrEqual( Content_Generator::LLMS_FULL_HARD_CAP, strlen( $output ) );
+	}
+
+	public function test_llms_full_txt_never_exceeds_hard_cap_with_large_optional() {
+		$output = $this->generator->generate_llms_full_txt( [
+			'optional' => str_repeat( 'o', Content_Generator::LLMS_FULL_HARD_CAP ),
+		] );
+
+		$this->assertLessThanOrEqual( Content_Generator::LLMS_FULL_HARD_CAP, strlen( $output ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -236,6 +296,14 @@ class Test_Content_Generator extends Elementor_Test_Base {
 	 * Drafts any published posts of the given type left behind by earlier
 	 * tests, so post-count assertions in these tests are deterministic.
 	 */
+	private function seed_inline_cache( int $post_id, string $content ): void {
+		update_post_meta( $post_id, Content_Generator::INLINE_META_KEY, [
+			'v'       => Content_Generator::INLINE_CACHE_VERSION,
+			'gen'     => max( 1, (int) get_option( 'elementor_agents_inline_cache_gen', 1 ) ),
+			'content' => $content,
+		] );
+	}
+
 	private function draft_all_published_posts_of_type( string $post_type ): void {
 		$ids = get_posts( [
 			'post_type'      => $post_type,
@@ -385,6 +453,20 @@ class Test_Content_Generator extends Elementor_Test_Base {
 
 		$this->assertStringContainsString( 'See \\[docs\\](http://evil.test)', $output );
 		$this->assertStringNotContainsString( 'See [docs](http://evil.test)', $output );
+	}
+
+	public function test_format_link_line_keeps_ampersand_in_url() {
+		$method = new \ReflectionMethod( Content_Generator::class, 'format_link_line' );
+		$method->setAccessible( true );
+
+		$line = $method->invoke( $this->generator, [
+			'title'       => 'Docs',
+			'url'         => 'https://example.test/page?a=1&b=2',
+			'description' => '',
+		] );
+
+		$this->assertSame( '- [Docs](https://example.test/page?a=1&b=2)', $line );
+		$this->assertStringNotContainsString( '&#038;', $line );
 	}
 
 	public function test_stale_cache_version_is_ignored() {

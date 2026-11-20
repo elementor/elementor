@@ -19,15 +19,15 @@ abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Meta;
 
 	/**
-	 * Maps atomic element type → the minor version when the "New" badge expires.
-	 * Format: 'element-type' => 'major.minor'  (patch is ignored during comparison).
+	 * Maps atomic element type → Core minor version through which the panel "New" badge shows.
+	 * Compared against `elementor.config.version` (Core), not Pro.
 	 *
 	 * @var array<string, string>
 	 */
 	private const NEW_ATOMIC_ELEMENTS = [
 		'e-background-video' => '4.3',
 		'e-accordion' => '4.3',
-		'e-list' => '4.3',
+		'e-list' => '4.4',
 	];
 
 	protected $version = '0.0';
@@ -99,6 +99,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
 		$config['base_settings'] = $this->get_base_settings();
+		$config['apply_base_settings_on_create'] = $this->should_apply_base_settings_on_create();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = $this->should_show_in_panel();
 		$config['categories'] = $this->define_panel_categories();

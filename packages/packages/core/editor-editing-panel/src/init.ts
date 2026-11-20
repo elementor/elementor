@@ -1,4 +1,5 @@
 import { injectIntoLogic } from '@elementor/editor';
+import { init as initEditorControls } from '@elementor/editor-controls';
 import { registerPanel } from '@elementor/editor-panels';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 
@@ -12,6 +13,8 @@ import { init as initStylesInheritance } from './styles-inheritance/init';
 import { isAtomicWidgetSelected } from './sync/is-atomic-widget-selected';
 
 export function init() {
+	initEditorControls();
+
 	registerPanel( panel );
 	blockV1Panel();
 

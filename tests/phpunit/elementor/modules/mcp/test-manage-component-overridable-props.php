@@ -5,12 +5,15 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Manage_Component_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
+use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -109,6 +112,77 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 		$heading = $elements[0]['elements'][0];
 		$this->assertSame( 'overridable', $heading['settings']['tag']['$$type'] );
 		$this->assertArrayHasKey( 'heading_tag', $component->get_overridable_props()->props );
+	}
+
+	public function test_create__dry_run_returns_the_planned_component_without_writing_anything() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+		$emitted_events = [];
+		Mcp_Event_Dispatcher::set_interceptor( function ( string $name ) use ( &$emitted_events ) {
+			$emitted_events[] = $name;
+		} );
+
+		// Act
+		$result = $ability->execute_guarded( [
+			'action' => 'create',
+			'dry_run' => true,
+			'title' => 'Planned Hero',
+			'xml_structure' => '<e-flexbox configuration-id="wrap"><e-heading configuration-id="h1"/></e-flexbox>',
+			'overridable_props' => [
+				'heading_tag' => [
+					'target' => 'h1',
+					'prop_key' => 'tag',
+					'label' => 'Heading Tag',
+					'group' => 'Content',
+				],
+			],
+		] );
+		Mcp_Event_Dispatcher::set_interceptor( null );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . $this->error_message( $result ) );
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'Planned Hero', $result['title'] );
+		$this->assertStringStartsWith( 'component-', $result['uid'] );
+		$this->assertArrayNotHasKey( 'component_id', $result );
+
+		$heading = $result['elements'][0]['elements'][0];
+		$this->assertNotEmpty( $heading['id'] );
+		$this->assertSame( 'overridable', $heading['settings']['tag']['$$type'] );
+		$this->assertSame( 'heading_tag', $heading['settings']['tag']['value']['override_key'] );
+
+		$overridable = $result['settings']['overridable_props'];
+		$this->assertArrayHasKey( 'heading_tag', $overridable['props'] );
+		$group_id = $overridable['props']['heading_tag']['groupId'];
+		$this->assertSame( 'Content', $overridable['groups']['items'][ $group_id ]['label'] );
+
+		$this->assertEmpty( get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+		] ) );
+		$this->assertNotContains( 'component_created', $emitted_events );
+	}
+
+	public function test_update__dry_run_is_unsupported() {
+		// Arrange
+		$this->act_as_admin();
+		Mock_Pro_License_API::set_license_state( true );
+		$ability = new Manage_Component_Ability();
+
+		// Act
+		$result = $ability->execute_guarded( [
+			'action' => 'rename',
+			'dry_run' => true,
+			'component_id' => 1,
+			'title' => 'Renamed',
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'dry_run_unsupported', $result->get_error_code() );
 	}
 
 	public function test_create__copy_from_source_applies_overridable_props_using_live_source_ids() {
@@ -375,6 +449,61 @@ class Test_Manage_Component_Overridable_Props extends Elementor_Test_Base {
 		// Assert
 		$this->assertWPError( $result );
 		$this->assertSame( $original_elements, $elements );
+	}
+
+	public function test_build__rejects_sensitive_props_and_allows_non_exportable_ones() {
+		// Arrange
+		$add_props = static function ( array $schema ): array {
+			$schema['test_api_key'] = String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() );
+			$schema['test_list_id'] = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );
+
+			return $schema;
+		};
+		add_filter( 'elementor/atomic-widgets/props-schema', $add_props );
+
+		$make_elements = static fn() => [
+			[
+				'id' => 'h1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [],
+				'elements' => [],
+			],
+		];
+		$sensitive_elements = $make_elements();
+		$original_elements = $sensitive_elements;
+		$non_exportable_elements = $make_elements();
+
+		try {
+			// Act
+			$sensitive_result = Overridable_Props_Builder::make()->build( $sensitive_elements, [
+				'api_key' => [
+					'target' => 'h1',
+					'prop_key' => 'test_api_key',
+					'label' => 'API Key',
+				],
+			] );
+
+			$non_exportable_result = Overridable_Props_Builder::make()->build( $non_exportable_elements, [
+				'list_id' => [
+					'target' => 'h1',
+					'prop_key' => 'test_list_id',
+					'label' => 'List ID',
+				],
+			] );
+		} finally {
+			remove_filter( 'elementor/atomic-widgets/props-schema', $add_props );
+		}
+
+		// Assert
+		$this->assertWPError( $sensitive_result );
+		$this->assertSame( 'invalid_overridable_props', $sensitive_result->get_error_code() );
+		$this->assertStringContainsString( '[api_key] prop_key "test_api_key" cannot be overridable.', $sensitive_result->get_error_message() );
+		$this->assertSame( $original_elements, $sensitive_elements );
+
+		$this->assertIsArray( $non_exportable_result, 'Expected success array but got: ' . $this->error_message( $non_exportable_result ) );
+		$this->assertArrayHasKey( 'list_id', $non_exportable_result['props'] );
+		$this->assertSame( 'overridable', $non_exportable_elements[0]['settings']['test_list_id']['$$type'] );
 	}
 
 	public function test_create__creates_nested_component_instances_and_exposes_their_props() {

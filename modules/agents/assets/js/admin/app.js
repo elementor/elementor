@@ -8,12 +8,21 @@ import PropTypes from 'prop-types';
 import { ModulesScreen } from './components/modules-screen';
 import { WelcomeScreen } from './components/welcome-screen';
 
-export const App = ( { isRTL, isExperimentActive, llmsConfig, markdownConfig } ) => {
+export const App = ( { isRTL, isActivated, readinessScoreUrl, agentDiscoveryConfig, botAccessConfig, browserToolsConfig, llmsConfig, markdownConfig } ) => {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme="light" palette="argon-beta">
-					{ isExperimentActive ? <ModulesScreen llmsConfig={ llmsConfig } markdownConfig={ markdownConfig } /> : <WelcomeScreen /> }
+					{ isActivated ? (
+						<ModulesScreen
+							readinessScoreUrl={ readinessScoreUrl }
+							agentDiscoveryConfig={ agentDiscoveryConfig }
+							botAccessConfig={ botAccessConfig }
+							browserToolsConfig={ browserToolsConfig }
+							llmsConfig={ llmsConfig }
+							markdownConfig={ markdownConfig }
+						/>
+					) : <WelcomeScreen /> }
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>
@@ -22,7 +31,11 @@ export const App = ( { isRTL, isExperimentActive, llmsConfig, markdownConfig } )
 
 App.propTypes = {
 	isRTL: PropTypes.bool,
-	isExperimentActive: PropTypes.bool,
+	isActivated: PropTypes.bool,
+	readinessScoreUrl: PropTypes.string,
+	agentDiscoveryConfig: PropTypes.object,
+	botAccessConfig: PropTypes.object,
+	browserToolsConfig: PropTypes.object,
 	llmsConfig: PropTypes.object,
 	markdownConfig: PropTypes.object,
 };

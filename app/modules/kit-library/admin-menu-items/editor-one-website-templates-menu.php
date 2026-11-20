@@ -39,7 +39,7 @@ class Editor_One_Website_Templates_Menu implements Menu_Item_Interface {
 			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 			return add_query_arg(
 				[
-					'return_to' => $return_to,
+					'return_to' => rawurlencode( $return_to ),
 					'source' => 'wp_db_templates_menu',
 				],
 				$app->get_base_url()

@@ -57,6 +57,12 @@ class Variables_Service {
 		return null;
 	}
 
+	public function find_type( string $id ): ?string {
+		$variable = $this->repo->load()->get( $id );
+
+		return $variable ? $variable->type() : null;
+	}
+
 	public function load() {
 		$collection = $this->repo->load()->serialize( true );
 		foreach ( $collection['data'] as $id => $variable ) {
@@ -71,7 +77,7 @@ class Variables_Service {
 	 * @throws BatchOperationFailed Thrown when one of the operations fails and $lenient is false.
 	 * @throws FatalError Failed to save after batch.
 	 */
-	public function process_batch( array $operations, bool $lenient = false ) {
+	public function process_batch( array $operations, bool $lenient = false, bool $dry_run = false ) {
 		$collection = $this->repo->load();
 		$results = [];
 		$errors = [];
@@ -114,9 +120,9 @@ class Variables_Service {
 			throw new BatchOperationFailed( 'Batch failed', $errors );
 		}
 
-		if ( ! $has_success ) {
+		if ( ! $has_success || $dry_run ) {
 			return [
-				'success' => false,
+				'success' => $has_success,
 				'results' => $results,
 				'watermark' => $collection->watermark(),
 			];
@@ -150,7 +156,6 @@ class Variables_Service {
 		if ( isset( $batch_result['variable']['type'] ) ) {
 			$result['type'] = $batch_result['variable']['type'];
 		}
-
 		return $result;
 	}
 

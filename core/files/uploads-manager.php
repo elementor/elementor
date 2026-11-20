@@ -196,7 +196,9 @@ class Uploads_Manager extends Base_Object {
 	/**
 	 * Handle Elementor WP Media Upload
 	 *
-	 * Runs on the 'wp_handle_upload_prefilter' filter.
+	 * Runs on `wp_handle_upload_prefilter` and `wp_handle_sideload_prefilter`.
+	 * Validates any Elementor upload (`is_elementor_upload()`), not only
+	 * `uploadTypeCaller=elementor-wp-media-upload`.
 	 *
 	 * @since 3.2.0
 	 * @access public
@@ -206,7 +208,7 @@ class Uploads_Manager extends Base_Object {
 	 */
 	public function handle_elementor_wp_media_upload( $file ) {
 		// If it isn't a file uploaded by Elementor, we do not intervene.
-		if ( ! $this->is_elementor_wp_media_upload() ) {
+		if ( ! $this->is_elementor_upload() ) {
 			return $file;
 		}
 
@@ -766,6 +768,7 @@ class Uploads_Manager extends Base_Object {
 
 		add_filter( 'upload_mimes', [ $this, 'support_unfiltered_elementor_file_uploads' ] );
 		add_filter( 'wp_handle_upload_prefilter', [ $this, 'handle_elementor_wp_media_upload' ] );
+		add_filter( 'wp_handle_sideload_prefilter', [ $this, 'handle_elementor_wp_media_upload' ] );
 		add_filter( 'wp_check_filetype_and_ext', [ $this, 'check_filetype_and_ext' ], 10, 4 );
 
 		// Ajax.

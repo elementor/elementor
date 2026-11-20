@@ -27,8 +27,8 @@ test( 'audit panel opens, runs, lists a violation, and deep-links to the offendi
 
 	await page.getByText( /images alt text/i ).click();
 	await page
-		.getByRole( 'button' )
-		.filter( { hasText: /image is missing alt text/i } )
+		.getByRole( 'list' )
+		.getByRole( 'button', { name: 'Image', exact: true } )
 		.first()
 		.click();
 

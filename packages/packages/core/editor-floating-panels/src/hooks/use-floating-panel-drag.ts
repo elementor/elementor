@@ -4,7 +4,7 @@ import { type LogicalPosition } from '../types';
 import { activePositionChanged, getDragBounds, type PanelCorner } from '../utils/corner-position';
 import { isRtl } from '../utils/direction';
 import { applyDragDelta, type DragBounds, physicalToLogicalDelta } from '../utils/drag-math';
-import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../utils/viewport-bounds';
+import { APP_BAR_HEIGHT_PX, getInlineEndDockedInsetPx, getSidePanelInlineSize } from '../utils/viewport-bounds';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
 import { useFloatingPanelStatus } from './use-floating-panel-status';
 
@@ -42,7 +42,8 @@ export function useFloatingPanelDrag( id: string ) {
 					size,
 					{ width: window.innerWidth, height: window.innerHeight },
 					getSidePanelInlineSize(),
-					APP_BAR_HEIGHT_PX
+					APP_BAR_HEIGHT_PX,
+					getInlineEndDockedInsetPx()
 				),
 				corner,
 				isRtl: isRtl(),

@@ -13,6 +13,9 @@ class Style_States {
 	const DISABLED = 'e--disabled';
 	const PLAYING = 'e--playing';
 	const PAUSED = 'e--paused';
+	const CURRENT = 'e--current';
+	const CURRENT_ANCESTOR = 'e--current-ancestor';
+	const EXPANDED = 'e--expanded';
 
 	private static function get_pseudo_states(): array {
 		return [
@@ -30,6 +33,9 @@ class Style_States {
 			self::DISABLED,
 			self::PLAYING,
 			self::PAUSED,
+			self::CURRENT,
+			self::CURRENT_ANCESTOR,
+			self::EXPANDED,
 		];
 	}
 
@@ -110,6 +116,18 @@ class Style_States {
 			'paused' => [
 				'name' => 'paused',
 				'value' => self::PAUSED,
+			],
+			'current' => [
+				'name' => 'current',
+				'value' => self::CURRENT,
+			],
+			'current-ancestor' => [
+				'name' => 'current-ancestor',
+				'value' => self::CURRENT_ANCESTOR,
+			],
+			'expanded' => [
+				'name' => 'expanded',
+				'value' => self::EXPANDED,
 			],
 		];
 	}

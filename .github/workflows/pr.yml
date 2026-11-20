@@ -81,6 +81,10 @@ jobs:
               - 'packages/**'
               - 'modules/**'
               - 'core/**'
+              - 'includes/**'
+              - 'app/**'
+              - 'data/**'
+              - 'migrations/**'
               - 'license/**'
               - 'assets/**'
               - '*.php'
@@ -410,7 +414,7 @@ jobs:
 
   phpunit:
     name: PHPUnit
-    needs: [install, detect-changes]
+    needs: [detect-changes]
     if: |
       github.event.action != 'ready_for_review' &&
       needs.detect-changes.outputs.skip_checks != 'true' &&
@@ -420,6 +424,7 @@ jobs:
       job_name: PHPUnit (PR)
       wordpress_versions: '["latest"]'
       php_versions: '["8.1", "8.4"]'
+      multisite: both
 
   playwright:
     name: Playwright
@@ -449,6 +454,17 @@ jobs:
     with:
       build_artifact_name: ${{ needs.build.outputs.artifact_name }}
       pull_request_number: ${{ github.event.pull_request.number }}
+      build_report: false
+
+  allure-report:
+    name: Allure report
+    needs: [playwright]
+    if: always() && needs.playwright.result != 'skipped' && needs.playwright.result != 'cancelled'
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
+    uses: ./.github/workflows/allure-report.yml
 
   summarize:
     name: Summarize PR checks

@@ -8,6 +8,7 @@ use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -174,6 +175,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function fix_theme_builder_submenu_url( $menu ) {
+		if ( Editor_One_Module::is_admin_navigation_active() && current_user_can( Menu_Config::CAPABILITY_MANAGE_OPTIONS ) ) {
+			return $menu;
+		}
+
 		global $submenu;
 
 		$menu_slugs = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ];
@@ -253,10 +258,12 @@ class Elementor_One_Menu_Manager {
 		$capability = $item->get_capability();
 		$position = $item->get_position();
 
+		$menu_label = method_exists( $item, 'get_wp_menu_label' ) ? $item->get_wp_menu_label() : $item->get_label();
+
 		return add_submenu_page(
 			$parent_slug,
 			$page_title,
-			$item->get_label(),
+			$menu_label,
 			$capability,
 			$item_slug,
 			$callback,
@@ -340,6 +347,10 @@ class Elementor_One_Menu_Manager {
 			[],
 			ELEMENTOR_VERSION
 		);
+
+		if ( Editor_One_Module::is_admin_navigation_active() ) {
+			return;
+		}
 
 		$config = [
 			'editorFlyout' => $this->menu_data_provider->get_third_level_data(

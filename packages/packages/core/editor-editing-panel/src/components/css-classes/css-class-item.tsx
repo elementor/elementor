@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type ReactElement, useEffect, useMemo, useState } from 'react';
 import { isClassState } from '@elementor/editor-styles';
 import { stylesRepository, useUserStylesCapability, validateStyleLabel } from '@elementor/editor-styles-repository';
-import { EditableField, EllipsisWithTooltip, useEditable } from '@elementor/editor-ui';
+import { EditableField, EllipsisWithTooltip, ThemeProvider, useEditable } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import {
@@ -12,7 +12,6 @@ import {
 	type ChipOwnProps,
 	Stack,
 	type Theme,
-	ThemeProvider,
 	Typography,
 	UnstableChipGroup,
 	usePopupState,
@@ -96,7 +95,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	}, [ id, convertedFromLocalId ] );
 
 	return (
-		<ThemeProvider palette="default">
+		<ThemeProvider>
 			<UnstableChipGroup
 				ref={ setChipRef }
 				{ ...chipGroupProps }

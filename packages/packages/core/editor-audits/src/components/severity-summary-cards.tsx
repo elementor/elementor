@@ -33,7 +33,7 @@ function SeverityCard( { severity, count }: SeverityCardProps ) {
 			flex={ 1 }
 			flexDirection="column"
 			gap={ 1 }
-			bgcolor="grey.50"
+			bgcolor="action.hover"
 			borderRadius={ 1.5 }
 			px={ 1.5 }
 			py={ 1 }

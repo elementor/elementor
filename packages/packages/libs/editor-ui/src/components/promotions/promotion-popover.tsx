@@ -25,6 +25,7 @@ type PromotionPopoverProps = React.PropsWithChildren<
 	PromotionPopoverCardProps & {
 		open: boolean;
 		placement?: InfotipProps[ 'placement' ];
+		arrow?: boolean;
 		slotProps?: InfotipProps[ 'slotProps' ];
 		anchorRef?: RefObject< HTMLElement | null >;
 	}
@@ -34,6 +35,7 @@ export const PromotionPopover = ( {
 	children,
 	open,
 	placement = 'right',
+	arrow = false,
 	slotProps,
 	anchorRef,
 	...cardProps
@@ -57,7 +59,7 @@ export const PromotionPopover = ( {
 	return (
 		<Infotip
 			placement={ placement }
-			arrow={ false }
+			arrow={ arrow }
 			content={ <PopoverAlert { ...cardProps } /> }
 			open={ open }
 			slotProps={ slotProps || defaultSlotProps }

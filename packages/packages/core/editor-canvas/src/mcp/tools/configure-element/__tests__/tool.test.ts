@@ -13,7 +13,7 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-props', () => ( {
-	Schema: { isPropKeyConfigurable: () => true },
+	Schema: { isPropKeyConfigurable: jest.requireActual( '@elementor/editor-props' ).Schema.isPropKeyConfigurable },
 } ) );
 
 jest.mock( '../prompt', () => ( {
@@ -126,5 +126,57 @@ describe( 'configure-element handler unsupported props', () => {
 				style: {},
 			} )
 		).rejects.toThrow( /Invalid PropValue/ );
+	} );
+} );
+
+describe( 'configure-element handler sensitive props', () => {
+	beforeEach( () => {
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			[ ELEMENT_TYPE ]: {
+				atomic_props_schema: {
+					title: { key: 'string', kind: 'plain', settings: {}, meta: {} },
+					api_key: { key: 'string', kind: 'plain', settings: {}, meta: { sensitive: true } },
+				},
+			},
+		} as never );
+		jest.mocked( getContainer ).mockReturnValue( {
+			settings: { get: () => ELEMENT_TYPE },
+		} as never );
+		jest.mocked( doUpdateElementProperty ).mockReset();
+	} );
+
+	it( 'rejects a write to a sensitive prop', async () => {
+		// Arrange
+		const handler = getHandler();
+
+		// Act & Assert
+		await expect(
+			handler( {
+				elementId: ELEMENT_ID,
+				elementType: ELEMENT_TYPE,
+				propertiesToChange: { api_key: { $$type: 'string', value: 'secret' } },
+				style: {},
+			} )
+		).rejects.toThrow( 'Not allowed to update api_key' );
+
+		expect( doUpdateElementProperty ).not.toHaveBeenCalled();
+	} );
+
+	it( 'still writes non sensitive props', async () => {
+		// Arrange
+		jest.mocked( doUpdateElementProperty ).mockImplementation( () => undefined );
+		const handler = getHandler();
+
+		// Act
+		const result = await handler( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertiesToChange: { title: { $$type: 'string', value: 'Hi' } },
+			style: {},
+		} );
+
+		// Assert
+		expect( result.success ).toBe( true );
+		expect( doUpdateElementProperty ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

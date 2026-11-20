@@ -36,6 +36,7 @@ export {
 	type DuplicateElementsParams,
 } from './sync/duplicate-elements';
 export { cloneElementTree } from './sync/clone-element-tree';
+export { findClosestContainer } from './sync/find-closest-container';
 export { generateElementId } from './sync/generate-element-id';
 export { getContainer, selectElement } from './sync/get-container';
 export { getPreviewElementDOM } from './sync/get-preview-element-dom';
@@ -49,6 +50,13 @@ export { getElementTitle } from './sync/get-element-title';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
+export {
+	getContainerPart,
+	getContainerWidgetMarker,
+	isContainerSlot,
+	WIDGET_MARKER_KEYS,
+} from './sync/get-element-widget-markers';
+export { regenerateLocalStyleIds } from './sync/regenerate-local-style-ids';
 export { getAllDescendants } from './sync/get-all-descendants';
 export {
 	findChildRecursive,

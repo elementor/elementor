@@ -6,6 +6,7 @@ test.describe( 'Import Export Customization - Content Customization @import_expo
 	let createdItems: CreatedItems;
 
 	test.beforeEach( async ( { page, apiRequests } ) => {
+		createdItems = null;
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 

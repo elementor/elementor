@@ -46,6 +46,19 @@ function echo_select_your_structure_title() {
 					<i class="eicon-folder" aria-hidden="true"></i>
 				</button>
 			<# } #>
+			<# // ED-26130 — Build with AI host next to Add Template (Select your structure area).
+			if ( typeof elementorEditorAngie !== 'undefined' && false !== elementorEditorAngie.showEntryPoints ) { #>
+				<button type="button" class="e-ai-layout-button elementor-add-section-area-button e-button-primary" data-tooltip="<?php echo esc_attr__( 'Build with AI', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Build with AI', 'elementor' ); ?>">
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<span class="e-ai-layout-button--sparkle" aria-hidden="true"></span>
+					<i class="eicon-ai" aria-hidden="true"></i>
+				</button>
+			<# } #>
 			<div class="elementor-add-section-drag-title"><?php echo esc_html__( 'Drag widget here', 'elementor' ); ?></div>
 		</div>
 		<div class="e-view e-con-shared-styles e-con-select-type">

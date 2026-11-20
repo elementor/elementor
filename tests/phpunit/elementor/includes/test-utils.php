@@ -4,12 +4,15 @@ namespace Elementor\Testing\Includes;
 use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Kses_Test_Expectations;
 
 class Elementor_Test_Utils extends Elementor_Test_Base {
 
 	const BASE_LINK = 'https://elementor.com/pro/?utm_source=wp-role-manager&utm_campaign=gopro&utm_medium=wp-dash';
 
 	public function tearDown(): void {
+		$this->remove_elementor_pro_plugin_stub();
+
 		parent::tearDown();
 
 		remove_all_filters( 'elementor/allowed_html_wrapper_tags' );
@@ -349,7 +352,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		$this->assertEquals( 'valuealert(1)', $value );
+		Kses_Test_Expectations::assert_same_wp_kses_plain_string( $this, $value, 'valuealert(1)', 'value' );
 	}
 
 	public function test_get_super_global_value__returns_sanitized_array() {
@@ -360,7 +363,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		$this->assertEquals( [ 'valuealert(1)' ], $value );
+		$this->assertEquals(
+			[ Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
+			$value
+		);
 	}
 
 	public function test_get_super_global_value__returns_sanitized_associative_array() {
@@ -371,7 +377,10 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 		$value = Utils::get_super_global_value( $_REQUEST, 'key' );
 
 		// Assert
-		$this->assertEquals( [ 'key' => 'valuealert(1)' ], $value );
+		$this->assertEquals(
+			[ 'key' => Kses_Test_Expectations::expected_wp_kses_plain_string( 'valuealert(1)', 'value' ) ],
+			$value
+		);
 	}
 
 	public function test_get_super_global_value__single_file() {
@@ -554,5 +563,90 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 				]
 			],
 		];
+	}
+
+	private const PRO_PLUGIN_FILE = 'elementor-pro/elementor-pro.php';
+
+	private function seed_elementor_pro_plugin_on_disk(): void {
+		$plugin_dir = WP_PLUGIN_DIR . '/elementor-pro';
+
+		if ( ! is_dir( $plugin_dir ) ) {
+			wp_mkdir_p( $plugin_dir );
+		}
+
+		$plugin_path = $plugin_dir . '/elementor-pro.php';
+
+		if ( ! file_exists( $plugin_path ) ) {
+			file_put_contents(
+				$plugin_path,
+				"<?php\n/**\n * Plugin Name: Elementor Pro\n * Version: 1.0.0\n */\n"
+			);
+		}
+
+		wp_clean_plugins_cache();
+	}
+
+	private function set_pro_plugin_active( bool $active ): void {
+		remove_all_filters( 'pre_option_active_plugins' );
+		remove_all_filters( 'pre_site_option_active_sitewide_plugins' );
+
+		add_filter(
+			'pre_site_option_active_sitewide_plugins',
+			static function (): array {
+				return [];
+			}
+		);
+
+		if ( $active ) {
+			add_filter(
+				'pre_option_active_plugins',
+				static function (): array {
+					return [ PLUGIN_PATH, self::PRO_PLUGIN_FILE ];
+				}
+			);
+		} else {
+			add_filter(
+				'pre_option_active_plugins',
+				static function (): array {
+					return [ PLUGIN_PATH ];
+				}
+			);
+		}
+
+		wp_clean_plugins_cache();
+	}
+
+	private function remove_elementor_pro_plugin_stub(): void {
+		remove_all_filters( 'pre_option_active_plugins' );
+		remove_all_filters( 'pre_site_option_active_sitewide_plugins' );
+
+		deactivate_plugins( self::PRO_PLUGIN_FILE, true );
+
+		$plugin_dir = WP_PLUGIN_DIR . '/elementor-pro';
+		$plugin_path = $plugin_dir . '/elementor-pro.php';
+
+		if ( file_exists( $plugin_path ) ) {
+			wp_delete_file( $plugin_path );
+		}
+
+		if ( is_dir( $plugin_dir ) ) {
+			@rmdir( $plugin_dir );
+		}
+
+		wp_clean_plugins_cache();
+	}
+
+	public function test_is_pro_installed_and_not_active__true_when_installed_but_inactive(): void {
+		$this->seed_elementor_pro_plugin_on_disk();
+		$this->set_pro_plugin_active( false );
+
+		$this->assertTrue( Utils::is_pro_installed_and_not_active() );
+	}
+
+	public function test_is_pro_installed_and_not_active__false_when_plugin_is_active(): void {
+		$this->seed_elementor_pro_plugin_on_disk();
+		$this->set_pro_plugin_active( true );
+
+		$this->assertFalse( Utils::is_pro_installed_and_not_active() );
 	}
 }

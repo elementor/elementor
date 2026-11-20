@@ -4,9 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers;
 
 use Elementor\Core\Page_Assets\Data_Managers\Font_Icon_Svg\Manager as Font_Icon_Svg_Data_Manager;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
-use Elementor\Icons_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Availability;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Font_Awesome_7_Icon_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
@@ -20,6 +18,14 @@ class Icon_Transformer extends Transformer_Base {
 	const SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: unset;';
 
 	const FA7_SVG_INLINE_STYLES = 'width: 100%; height: 100%; overflow: visible;';
+
+	/**
+	 * Font Awesome values that Core cannot resolve go through the `svg-html` filter before the default icon.
+	 * Extensions check for this constant instead of comparing Core versions.
+	 *
+	 * @since 4.4.0
+	 */
+	const RESOLVES_EXTENSION_FONT_AWESOME_ICONS = true;
 
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$icon = [
@@ -37,16 +43,28 @@ class Icon_Transformer extends Transformer_Base {
 			return $managed_icon;
 		}
 
-		return $this->transform_custom_library_icon( $icon );
+		return $this->transform_filtered_library_icon( $icon );
 	}
 
-	private function transform_custom_library_icon( array $icon ): array {
-		if ( ! Availability::is_enabled() ) {
+	private function transform_filtered_library_icon( array $icon ): array {
+		$html = $this->get_filtered_svg_html( $icon );
+
+		if ( '' === $html ) {
 			return $this->transform_default_svg();
 		}
 
+		return [
+			'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
+			'url' => null,
+		];
+	}
+
+	private function get_filtered_svg_html( array $icon ): string {
 		/**
-		 * Filters inline SVG markup for a custom icon library value.
+		 * Filters inline SVG markup for an icon library value not handled by Core,
+		 * including Font Awesome values that Core's bundled catalog cannot resolve.
+		 *
+		 * @since 4.4.0 Also receives unresolved Font Awesome values.
 		 *
 		 * @param string $html Sanitizable SVG markup. Default empty.
 		 * @param array  $icon {
@@ -56,60 +74,7 @@ class Icon_Transformer extends Transformer_Base {
 		 */
 		$html = apply_filters( 'elementor/atomic-widgets/icon/svg-html', '', $icon );
 
-		if ( is_string( $html ) && '' !== $html ) {
-			return [
-				'html' => $this->process_svg( $html, self::SVG_INLINE_STYLES ),
-				'url' => null,
-			];
-		}
-
-		if ( $this->is_deleted_custom_icon_library( $icon ) ) {
-			return $this->transform_default_svg();
-		}
-
-		return [
-			'html' => '',
-			'url' => null,
-		];
-	}
-
-	private function get_registered_icon_library_tab( string $library ): ?array {
-		foreach ( Icons_Manager::get_icon_manager_tabs() as $name => $tab ) {
-			if ( ! is_array( $tab ) ) {
-				continue;
-			}
-
-			$tab_name = isset( $tab['name'] ) && is_scalar( $tab['name'] ) ? (string) $tab['name'] : '';
-
-			if ( (string) $name === $library || $tab_name === $library ) {
-				return $tab;
-			}
-		}
-
-		return null;
-	}
-
-	private function is_deleted_custom_icon_library( array $icon ): bool {
-		$library = $icon['library'];
-		$value = $icon['value'];
-
-		if ( '' === $library || '' === $value ) {
-			return false;
-		}
-
-		if ( Font_Awesome_7_Icon_Resolver::is_supported_library( $library ) ) {
-			return false;
-		}
-
-		if ( in_array( $library, Font_Awesome_7_Icon_Resolver::SKIPPED_TAB_NAMES, true ) ) {
-			return false;
-		}
-
-		if ( Font_Icon_Svg_Data_Manager::get_font_family( $library ) ) {
-			return false;
-		}
-
-		return ! $this->get_registered_icon_library_tab( $library );
+		return is_string( $html ) ? $html : '';
 	}
 
 	private function transform_default_svg(): array {
@@ -132,14 +97,24 @@ class Icon_Transformer extends Transformer_Base {
 		$icon_data = Font_Awesome_7_Icon_Resolver::resolve( $icon['value'], $icon['library'] );
 
 		if ( ! $icon_data || empty( $icon_data['paths'] ) ) {
-			return [
-				'html' => '',
-				'url' => null,
-			];
+			return $this->transform_extension_font_awesome_icon( $icon );
 		}
 
 		return [
 			'html' => $this->build_fa7_svg( $icon_data ),
+			'url' => null,
+		];
+	}
+
+	private function transform_extension_font_awesome_icon( array $icon ): array {
+		$html = $this->get_filtered_svg_html( $icon );
+
+		if ( '' === $html ) {
+			return $this->transform_default_svg();
+		}
+
+		return [
+			'html' => $this->process_svg( $html, self::FA7_SVG_INLINE_STYLES ),
 			'url' => null,
 		];
 	}
@@ -219,9 +194,20 @@ class Icon_Transformer extends Transformer_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
+
+		if ( ! $this->has_accessible_name( $svg, $content ) ) {
+			$svg->set_attribute( 'aria-hidden', 'true' );
+		}
+
 		$this->merge_inline_styles( $svg, $inline_styles );
 
 		return ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
+	}
+
+	private function has_accessible_name( \WP_HTML_Tag_Processor $svg, string $content ): bool {
+		return null !== $svg->get_attribute( 'aria-label' )
+			|| null !== $svg->get_attribute( 'aria-labelledby' )
+			|| false !== stripos( $content, '<title' );
 	}
 
 	private function merge_inline_styles( \WP_HTML_Tag_Processor $svg, string $inline_styles ): void {

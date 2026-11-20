@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { LlmsTxtPanel } from 'elementor/modules/agents/assets/js/admin/components/llms-txt/llms-txt-panel';
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text ) => text,
-	sprintf: ( format, ...args ) => args.reduce( ( text, arg ) => text.replace( /%[sd]/, arg ), format ),
+	sprintf: ( format, ...args ) => args.reduce( ( text, arg ) => text.replace( /%(\d\$)?[sd]/, arg ), format ),
 } ) );
 
 jest.mock( '@elementor/icons', () => ( {
@@ -14,11 +14,23 @@ jest.mock( '@elementor/icons', () => ( {
 	ArrowsDiagonalIcon: () => <span />,
 	ChevronDownIcon: () => <span />,
 	ChevronUpIcon: () => <span />,
+	ExternalLinkIcon: () => <span />,
 	FileIcon: () => <span />,
 	PencilIcon: () => <span />,
 	PinIcon: () => <span />,
+	ZoomIcon: () => <span />,
 } ) );
 
+jest.mock( 'elementor/modules/agents/assets/js/admin/api', () => ( {
+	listContentItems: jest.fn( () => Promise.resolve( { items: [], hasMore: false } ) ),
+} ) );
+
+jest.mock( '@elementor/ui/Alert', () => ( { children } ) => <div role="alert">{ children }</div> );
+jest.mock( '@elementor/ui/Dialog', () => ( { children } ) => <div role="dialog">{ children }</div> );
+jest.mock( '@elementor/ui/DialogActions', () => ( { children } ) => <div>{ children }</div> );
+jest.mock( '@elementor/ui/DialogContent', () => ( { children } ) => <div>{ children }</div> );
+jest.mock( '@elementor/ui/DialogHeader', () => ( { children } ) => <div>{ children }</div> );
+jest.mock( '@elementor/ui/DialogTitle', () => ( { children } ) => <h2>{ children }</h2> );
 jest.mock( '@elementor/ui/Box', () => ( { children } ) => <div>{ children }</div> );
 jest.mock( '@elementor/ui/Button', () => ( { children, onClick } ) => (
 	<button type="button" onClick={ onClick }>{ children }</button>
@@ -45,11 +57,16 @@ const createPostTypes = ( total ) => Array.from( { length: total }, ( _, index )
 
 const createSettings = ( overrides = {} ) => ( {
 	content: '# Site',
+	excludedPostIds: [],
+	flushExclusions: jest.fn( () => Promise.resolve() ),
 	hasPhysicalFile: false,
 	isEnabled: true,
 	isManuallyEdited: false,
 	postTypes: createPostTypes( 2 ),
+	revertContent: jest.fn( () => Promise.resolve() ),
 	saveContent: jest.fn( () => Promise.resolve() ),
+	takeOverFile: jest.fn( () => Promise.resolve() ),
+	togglePostExclusion: jest.fn(),
 	togglePostType: jest.fn(),
 	...overrides,
 } );
@@ -95,6 +112,38 @@ describe( 'LlmsTxtPanel', () => {
 		expect( settings.togglePostType ).toHaveBeenCalledWith( 'type-1' );
 	} );
 
+	it( 'shows published and agent-visible counts when posts are excluded', () => {
+		// Arrange
+		const postTypes = [ { name: 'page', label: 'Pages', count: 5, included: true, excludedCount: 2 } ];
+
+		// Act
+		render( <LlmsTxtPanel settings={ createSettings( { postTypes } ) } /> );
+
+		// Assert
+		expect( screen.getByText( '3/5 published' ) ).toBeTruthy();
+	} );
+
+	it( 'opens the post list when the post type name is clicked', async () => {
+		// Arrange
+		const settings = createSettings();
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Choose which Type 1 to include' } ) );
+
+		// Assert
+		expect( await screen.findByRole( 'dialog' ) ).toBeTruthy();
+		expect( screen.getByRole( 'heading', { name: 'Type 1' } ) ).toBeTruthy();
+	} );
+
+	it( 'does not open the post list when the file was edited manually', () => {
+		// Arrange & Act
+		render( <LlmsTxtPanel settings={ createSettings( { isManuallyEdited: true } ) } /> );
+
+		// Assert
+		expect( screen.queryByRole( 'button', { name: 'Choose which Type 1 to include' } ) ).toBeNull();
+	} );
+
 	it( 'keeps rows checked but disabled and shows the warning when the file was edited manually', () => {
 		// Arrange & Act
 		render( <LlmsTxtPanel settings={ createSettings( { isManuallyEdited: true } ) } /> );
@@ -117,7 +166,7 @@ describe( 'LlmsTxtPanel', () => {
 			expect( row.checked ).toBe( false );
 			expect( row.disabled ).toBe( true );
 		} );
-		expect( screen.getByTestId( 'chip' ).textContent ).toBe( 'LLMs.txt file already exists and can’t be managed here.' );
+		expect( screen.getByTestId( 'chip' ).textContent ).toBe( 'This file is managed outside Agent Ready and can’t be controlled from here.' );
 		expect( screen.queryByRole( 'button', { name: 'Edit' } ) ).toBeNull();
 		expect( screen.queryByText( '# Site' ) ).toBeNull();
 	} );
@@ -129,5 +178,72 @@ describe( 'LlmsTxtPanel', () => {
 		// Assert
 		expect( screen.queryByText( '# Site' ) ).toBeNull();
 		screen.getAllByRole( 'switch' ).forEach( ( row ) => expect( row.disabled ).toBe( true ) );
+	} );
+
+	it( 'reverts to the generated version only after the admin confirms', async () => {
+		// Arrange
+		const settings = createSettings( { isManuallyEdited: true } );
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Revert to generated version' } ) );
+
+		// Assert
+		expect( settings.revertContent ).not.toHaveBeenCalled();
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Revert' } ) );
+
+		// Assert
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+		expect( settings.revertContent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'warns before taking over a physical file and leaves it untouched on cancel', () => {
+		// Arrange
+		const settings = createSettings( { hasPhysicalFile: true, isEnabled: false } );
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Take over llms.txt' } ) );
+
+		// Assert
+		expect( screen.getByRole( 'dialog' ).textContent ).toContain( 'will be replaced' );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+
+		// Assert
+		expect( screen.queryByRole( 'dialog' ) ).toBeNull();
+		expect( settings.takeOverFile ).not.toHaveBeenCalled();
+	} );
+
+	it( 'takes over the physical file after the admin confirms', async () => {
+		// Arrange
+		const settings = createSettings( { hasPhysicalFile: true, isEnabled: false } );
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Take over llms.txt' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Take over' } ) );
+
+		// Assert
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+		expect( settings.takeOverFile ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'keeps the dialog open and shows the server error when the take over fails', async () => {
+		// Arrange
+		const serverError = 'The llms.txt file couldn’t be replaced.';
+		const settings = createSettings( { hasPhysicalFile: true, isEnabled: false, takeOverFile: jest.fn( () => Promise.reject( serverError ) ) } );
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Take over llms.txt' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Take over' } ) );
+
+		// Assert
+		expect( await screen.findByRole( 'alert' ) ).toHaveProperty( 'textContent', serverError );
+		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
 	} );
 } );

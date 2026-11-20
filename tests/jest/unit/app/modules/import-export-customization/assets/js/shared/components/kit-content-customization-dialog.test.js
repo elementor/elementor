@@ -21,6 +21,7 @@ import useContextDetection from 'elementor/app/modules/import-export-customizati
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 import { KitContentCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-content-customization-dialog';
+import { createRegisteredCustomizationDialogsRegistry } from 'elementor/app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
 
 global.__ = jest.fn( ( text ) => text );
 
@@ -51,6 +52,11 @@ describe( 'KitContentCustomizationDialog Component', () => {
 						},
 					},
 				},
+			},
+		};
+		global.elementorModules = {
+			importExport: {
+				customizationDialogsRegistry: createRegisteredCustomizationDialogsRegistry(),
 			},
 		};
 

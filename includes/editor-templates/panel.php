@@ -1,14 +1,14 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\Promotions\Sticky_Panel_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $show_editing_panel_sticky_promotion = ! Utils::has_pro();
-$editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtered_Promotions_Manager::get_editor_panel_sticky_promotion() : [];
+$editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Sticky_Panel_Promotion::get_promotion_for_editor() : [];
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-panel-state-loading">

@@ -28,6 +28,28 @@ class Test_Template_Renderer extends Elementor_Test_Base {
 		Template_Renderer::reset();
 	}
 
+	public function test_render__html_attr_escapes_multibyte_characters() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'templates' => [
+				'elementor/elements/test' => __DIR__ . '/mocks/html-attr.html.twig',
+			],
+			'settings' => [
+				'title' => 'Café',
+			],
+		] );
+
+		// Act.
+		ob_start();
+
+		$widget->render_content();
+
+		$content = ob_get_clean();
+
+		// Assert.
+		$this->assertSame( '<div title="Caf&#x00E9;"></div>', trim( $content ) );
+	}
+
 	public function test_render__basic_template() {
 		// Arrange.
 		$widget = $this->make_mock_widget( [

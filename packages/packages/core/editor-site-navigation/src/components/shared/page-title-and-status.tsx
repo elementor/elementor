@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Box, Typography } from '@elementor/ui';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
+import { contentPanelListRowTitleSx } from '../panel/content-panel-chrome';
 
 const PageStatus = ( { status }: { status: string } ) => {
 	if ( 'publish' === status ) {
@@ -14,6 +15,7 @@ const PageStatus = ( { status }: { status: string } ) => {
 			variant="body2"
 			color="text.secondary"
 			sx={ {
+				...contentPanelListRowTitleSx,
 				textTransform: 'capitalize',
 				fontStyle: 'italic',
 				whiteSpace: 'nowrap',
@@ -35,6 +37,7 @@ const PageTitle = ( { title }: { title: string } ) => {
 			color="text.secondary"
 			noWrap
 			sx={ {
+				...contentPanelListRowTitleSx,
 				flexBasis: 'auto',
 			} }
 		>

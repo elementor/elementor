@@ -47,6 +47,9 @@ class Editor_Scripts_Settings {
 			'tabs' => Plugin::$instance->controls_manager->get_tabs(),
 			'controls' => Plugin::$instance->controls_manager->get_controls_data(),
 			'elements' => Plugin::$instance->elements_manager->get_element_types_config(),
+			'urls' => [
+				'upload' => wp_upload_dir()['baseurl'],
+			],
 			'globals' => [
 				'defaults_enabled' => [
 					'colors' => $kits_manager->is_custom_colors_enabled(),
@@ -73,6 +76,7 @@ class Editor_Scripts_Settings {
 			'user' => [
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
 				'is_administrator' => current_user_can( 'manage_options' ),
+				'can_save_unfiltered_html' => current_user_can( 'unfiltered_html' ),
 				'introduction' => User::get_introduction_meta(),
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),

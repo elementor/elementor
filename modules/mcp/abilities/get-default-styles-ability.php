@@ -46,6 +46,7 @@ class Get_Default_Styles_Ability extends Abstract_Ability {
 					'idempotent' => true,
 					'destructive' => false,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'edit_posts' ),
 			[

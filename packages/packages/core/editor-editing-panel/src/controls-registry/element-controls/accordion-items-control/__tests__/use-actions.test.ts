@@ -107,7 +107,10 @@ describe( 'accordion-items-control actions', () => {
 			expect( title.elType ).toBe( 'e-accordion-item-title' );
 			expect( icon.elType ).toBe( 'e-accordion-item-icon' );
 			expect( icon.hydrateDefaultChildren ).toBe( true );
-			expect( header.settings ).toEqual( { show_icon: { $$type: 'boolean', value: true } } );
+			expect( header.settings ).toEqual( {
+				show_icon: { $$type: 'boolean', value: true },
+				different_open_icon: { $$type: 'boolean', value: false },
+			} );
 		} );
 
 		it( "should seed the new item's header from the root's current show_icon value, not the schema default", () => {
@@ -126,7 +129,10 @@ describe( 'accordion-items-control actions', () => {
 			const model = getCreatedItemModel();
 			const [ header ] = model.elements ?? [];
 
-			expect( header.settings ).toEqual( { show_icon: { $$type: 'boolean', value: false } } );
+			expect( header.settings ).toEqual( {
+				show_icon: { $$type: 'boolean', value: false },
+				different_open_icon: { $$type: 'boolean', value: false },
+			} );
 		} );
 
 		it( 'should number the rendered title paragraph the same way the default tree does', () => {

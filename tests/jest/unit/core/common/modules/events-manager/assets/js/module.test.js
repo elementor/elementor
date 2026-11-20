@@ -106,6 +106,28 @@ describe( 'Events Manager module', () => {
 		} );
 	} );
 
+	test( 'initializes without a callback', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			expect( () => eventsManager.initializeMixpanel() ).not.toThrow();
+			expect( mockInit ).toHaveBeenCalled();
+			expect( window.elementorCommon.config.editor_events.mixpanelInstance ).toBe( mockMixpanelInstance );
+		} );
+	} );
+
+	test( 'onInit enables tracking when loaded runs synchronously during init', () => {
+		jest.isolateModules( () => {
+			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
+			const eventsManager = new EventsManager();
+
+			eventsManager.onInit();
+
+			expect( eventsManager.trackingEnabled ).toBe( true );
+		} );
+	} );
+
 	test( 'onInit points mixpanel at the events-proxy endpoints instead of the vendor domains', () => {
 		jest.isolateModules( () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;

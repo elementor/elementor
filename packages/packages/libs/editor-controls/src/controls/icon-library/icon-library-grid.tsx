@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useRovingFocus } from '@elementor/editor-ui';
 import { Box, Tooltip, useTheme } from '@elementor/ui';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import { __ } from '@wordpress/i18n';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
@@ -13,8 +14,9 @@ export const ICON_LIBRARY_GRID_TOOLTIP_ENTER_DELAY = 1000;
 
 const ICON_GLYPH_SIZE = 20;
 const GRID_OVERSCAN = 6;
-const GRID_COLUMN_GAP = 1;
-const GRID_HORIZONTAL_PADDING = 1;
+const GRID_CELL_GAP = 1;
+const GRID_HORIZONTAL_PADDING = 2;
+const GRID_VERTICAL_PADDING = 1.5;
 const HOME_END_KEYS = new Set( [ 'Home', 'End' ] );
 
 const getGridMetrics = ( containerWidth: number, columnGap: number, inlinePadding: number ) => {
@@ -42,6 +44,7 @@ const getGridMetrics = ( containerWidth: number, columnGap: number, inlinePaddin
 type IconLibraryGridItem = FontAwesome7Icon & {
 	id: string;
 	value: string;
+	iconValue?: string;
 };
 
 type IconLibraryGridProps = {
@@ -61,17 +64,30 @@ export const IconLibraryGrid = ( {
 }: IconLibraryGridProps ) => {
 	const theme = useTheme();
 	const containerRef = useRef< HTMLDivElement >( null );
-	const cellRefs = useRef( new Map< string, HTMLButtonElement >() );
-	const shouldRestoreFocusRef = useRef( false );
 	const selectedIndex = items.findIndex( ( item ) => item.id === selectedValue );
 	const [ focusedIndex, setFocusedIndex ] = useState( selectedIndex >= 0 ? selectedIndex : 0 );
 	const [ { columnCount, cellSize }, setGridMetrics ] = useState( () => getGridMetrics( 0, 0, 0 ) );
 	const rowCount = Math.ceil( items.length / columnCount );
+	const cellGap = Number.parseFloat( theme.spacing( GRID_CELL_GAP ) );
+	const verticalPadding = Number.parseFloat( theme.spacing( GRID_VERTICAL_PADDING ) );
 	const virtualizer = useVirtualizer( {
 		count: rowCount,
 		getScrollElement: () => containerRef.current,
 		estimateSize: () => cellSize,
+		gap: cellGap,
+		paddingStart: verticalPadding,
+		paddingEnd: verticalPadding,
 		overscan: GRID_OVERSCAN,
+		rangeExtractor: ( range ) => {
+			const rowIndexes = defaultRangeExtractor( range );
+			const focusedRow = Math.floor( focusedIndex / columnCount );
+
+			if ( items.length === 0 || rowIndexes.includes( focusedRow ) ) {
+				return rowIndexes;
+			}
+
+			return [ ...rowIndexes, focusedRow ].sort( ( a, b ) => a - b );
+		},
 	} );
 	const focusedItem = items[ focusedIndex ];
 	const visibleRowIndexes = virtualizer.getVirtualIndexes().join( ',' );
@@ -90,25 +106,16 @@ export const IconLibraryGrid = ( {
 		} );
 
 		if ( selectedIndex >= 0 ) {
-			virtualizer.scrollToIndex( Math.floor( selectedIndex / columnCount ) );
+			virtualizer.measure();
+			virtualizer.scrollToIndex( Math.floor( selectedIndex / columnCount ), { align: 'center' } );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ columnCount, items, selectedIndex, selectedValue ] );
+	}, [ cellSize, columnCount, items, selectedIndex, selectedValue ] );
 
-	useLayoutEffect( () => {
-		if ( ! shouldRestoreFocusRef.current || ! focusedItem ) {
-			return;
-		}
-
-		const cell = cellRefs.current.get( focusedItem.id );
-
-		if ( ! cell ) {
-			return;
-		}
-
-		cell.focus();
-		shouldRestoreFocusRef.current = false;
-	}, [ focusedItem, visibleRowIndexes ] );
+	const { registerRef, requestFocus } = useRovingFocus< HTMLButtonElement >( {
+		tabbableKey: focusedItem?.id,
+		mountedSignature: visibleRowIndexes,
+	} );
 
 	useLayoutEffect( () => {
 		const container = containerRef.current;
@@ -118,9 +125,8 @@ export const IconLibraryGrid = ( {
 		}
 
 		const measureGrid = () => {
-			const columnGap = Number.parseFloat( theme.spacing( GRID_COLUMN_GAP ) );
 			const inlinePadding = Number.parseFloat( theme.spacing( GRID_HORIZONTAL_PADDING ) ) * 2;
-			setGridMetrics( getGridMetrics( container.clientWidth, columnGap, inlinePadding ) );
+			setGridMetrics( getGridMetrics( container.clientWidth, cellGap, inlinePadding ) );
 		};
 
 		measureGrid();
@@ -130,7 +136,7 @@ export const IconLibraryGrid = ( {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [ theme, items.length ] );
+	}, [ theme, cellGap, items.length ] );
 
 	useLayoutEffect( () => {
 		virtualizer.measure();
@@ -145,7 +151,7 @@ export const IconLibraryGrid = ( {
 			return;
 		}
 
-		shouldRestoreFocusRef.current = true;
+		requestFocus();
 		setFocusedIndex( nextIndex );
 		virtualizer.scrollToIndex( Math.floor( nextIndex / columnCount ) );
 	};
@@ -242,7 +248,7 @@ export const IconLibraryGrid = ( {
 									transform: `translateY(${ virtualRow.start }px)`,
 									display: 'grid',
 									gridTemplateColumns: `repeat(${ columnCount }, minmax(0, 1fr))`,
-									gap: GRID_COLUMN_GAP,
+									gap: GRID_CELL_GAP,
 									px: GRID_HORIZONTAL_PADDING,
 									boxSizing: 'border-box',
 								} }
@@ -274,13 +280,7 @@ export const IconLibraryGrid = ( {
 													aria-label={ item.label }
 													aria-selected={ isSelected }
 													tabIndex={ tabIndex }
-													ref={ ( node: HTMLButtonElement | null ) => {
-														if ( node ) {
-															cellRefs.current.set( item.id, node );
-														} else {
-															cellRefs.current.delete( item.id );
-														}
-													} }
+													ref={ registerRef( item.id ) }
 													onClick={ () => {
 														onSelect( item.id );
 														onClose();
@@ -323,7 +323,7 @@ export const IconLibraryGrid = ( {
 													} }
 												>
 													<FontAwesomeGlyph
-														icon={ item }
+														icon={ { ...item, value: item.iconValue ?? item.value } }
 														size={ ICON_GLYPH_SIZE }
 														color="currentColor"
 													/>

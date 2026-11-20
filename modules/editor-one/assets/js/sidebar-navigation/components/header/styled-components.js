@@ -4,6 +4,7 @@ export const HeaderContainer = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
 	marginLeft: theme.spacing( 2 ),
 	marginRight: theme.spacing( 2 ),
+	marginBottom: 0,
 	height: 80,
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 	display: 'flex',

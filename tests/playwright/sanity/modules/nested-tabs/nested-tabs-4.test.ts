@@ -71,7 +71,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( contentContainerOne.locator( '.elementor-background-video-container iframe' ) ).toHaveCount( 1 );
 	} );
 
-	test( 'Nested tabs horizontal scroll', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested tabs horizontal scroll LTR', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),

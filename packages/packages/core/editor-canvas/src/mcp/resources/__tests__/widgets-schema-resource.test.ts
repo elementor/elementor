@@ -69,10 +69,15 @@ describe( 'widgets-schema-resource', () => {
 		] );
 	} );
 
-	it( 'reads a single widget schema via the get-widget-schema tool', async () => {
+	it( 'reads a single widget schema via the get-widget-schemas tool', async () => {
 		// Arrange
 		const post = jest.fn().mockResolvedValue( {
-			data: { data: { type: 'object', properties: { text: { mocked: true } } } },
+			data: {
+				data: {
+					schemas: { 'e-heading': { type: 'object', properties: { text: { mocked: true } } } },
+					errors: {},
+				},
+			},
 		} );
 		mockedHttpService.mockReturnValue( { post } as never );
 		const { readHandler } = captureHandlers();
@@ -83,13 +88,35 @@ describe( 'widgets-schema-resource', () => {
 
 		// Assert
 		expect( post ).toHaveBeenCalledWith( 'elementor/v1/mcp-proxy', {
-			tool: 'get-widget-schema',
-			input: { widget_type: 'e-heading' },
+			tool: 'get-widget-schemas',
+			input: { widget_type: [ 'e-heading' ] },
 		} );
 		expect( JSON.parse( result.contents[ 0 ].text ) ).toEqual( {
 			type: 'object',
 			properties: { text: { mocked: true } },
 		} );
+	} );
+
+	it( 'throws the tool error when the widget type has no schema', async () => {
+		// Arrange
+		const post = jest.fn().mockResolvedValue( {
+			data: {
+				data: {
+					schemas: {},
+					errors: {
+						'e-missing': { code: 'elementor_not_found', message: 'Unknown widget type: e-missing.' },
+					},
+				},
+			},
+		} );
+		mockedHttpService.mockReturnValue( { post } as never );
+		const { readHandler } = captureHandlers();
+		const uri = new URL( 'elementor://widgets/schema/e-missing' );
+
+		// Act & Assert
+		await expect( readHandler( uri, { widgetType: 'e-missing' } ) ).rejects.toThrow(
+			'Unknown widget type: e-missing.'
+		);
 	} );
 
 	it( 'throws when no widget type variable is provided', async () => {

@@ -39,11 +39,16 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_should_import__requires_include_context_and_atomic_widgets() {
+	public function test_should_import__requires_include_context_atomic_widgets_and_enabled_default_styles() {
 		$runner = new Import_Runner();
 		$import_data = [
 			'include' => [ 'settings' ],
 			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => true,
+				],
+			],
 		];
 
 		Plugin::$instance->experiments->set_feature_default_state(
@@ -62,6 +67,97 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertFalse( $runner->should_import( [
 			'include' => [ 'templates' ],
 			'extracted_directory_path' => __DIR__ . '/mocks',
+		] ) );
+	}
+
+	public function test_should_import__returns_false_when_default_styles_are_disabled() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertFalse( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'settings' => [
+					'defaultStyles' => false,
+				],
+			],
+		] ) );
+	}
+
+	public function test_should_import__returns_true_when_default_styles_key_is_missing() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'customization' => [
+				'settings' => [],
+			],
+		] ) );
+	}
+
+	public function test_should_import__returns_true_when_manifest_explicitly_exports_default_styles() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'manifest' => [
+				'site-settings' => [
+					'defaultStyles' => true,
+				],
+			],
+		] ) );
+	}
+
+	public function test_should_import__returns_true_when_manifest_flag_is_false_and_customization_is_missing() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'manifest' => [
+				'site-settings' => [
+					'defaultStyles' => false,
+				],
+			],
+		] ) );
+	}
+
+	public function test_should_import__returns_true_when_manifest_is_missing_default_styles_flag() {
+		$runner = new Import_Runner();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		$this->assertTrue( $runner->should_import( [
+			'include' => [ 'settings' ],
+			'extracted_directory_path' => __DIR__ . '/mocks',
+			'manifest' => [
+				'site-settings' => [],
+			],
 		] ) );
 	}
 

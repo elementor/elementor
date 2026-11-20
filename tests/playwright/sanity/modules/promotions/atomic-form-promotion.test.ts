@@ -1,7 +1,12 @@
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import {
+	expandPanelCategory,
+	getPromotionWidgetByType,
+	openPromotionPopover,
+} from './promotion-popover-helper';
 
 test.describe( 'Atomic Form promotion test @promotions', () => {
 	const categorySelector = '#elementor-panel-category-atomic-form';
@@ -36,15 +41,10 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await wpAdmin.openNewPage();
 
 		const category = page.locator( categorySelector );
-		await category.locator( '.elementor-panel-category-title' ).click();
-		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
+		await expandPanelCategory( category );
 
-		const formWidget = category.locator( '.elementor-element' ).filter( { hasText: 'Form' } ).first();
-		await formWidget.evaluate( ( el ) => el.scrollIntoView( { block: 'center', behavior: 'instant' } ) );
-		await formWidget.click( { force: true } );
-
-		const popover = page.locator( '.MuiTooltip-tooltip > .MuiBox-root' );
-		await expect( popover ).toBeVisible();
+		const formWidget = getPromotionWidgetByType( category, 'e-form' );
+		const popover = await openPromotionPopover( formWidget, { hasText: 'Atomic form' } );
 		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
 

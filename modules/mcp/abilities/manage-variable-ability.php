@@ -4,12 +4,15 @@ namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\Mcp\Abilities\Utils\Bulk_Operations_Result;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
+use Elementor\Modules\Mcp\Abilities\Utils\Variables_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
+use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,6 +27,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	const MAX_BATCH_SIZE = 50;
 
 	private ?Variables_Service $service;
+	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Variables_Service $service = null ) {
 		$this->service = $service;
@@ -36,7 +40,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Global Variable', 'elementor' ),
-			__( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' ),
+			$this->get_description(),
 			'elementor',
 			[
 				'type' => 'object',
@@ -51,8 +55,9 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				'annotations' => [
 					'readonly' => false,
 					'idempotent' => false,
-					'destructive' => false,
+					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'manage_options' ),
 			[
@@ -61,7 +66,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				'properties' => [
 					'operations' => [
 						'type' => 'array',
-						'description' => 'Bulk operations (1–50). Each item requires action; create needs type/label/value, update needs id/label/value, delete needs id.',
+						'description' => 'Bulk operations (1–50). Each item requires action; create needs type/label/value (and may pass an id planned by an earlier dry run), update needs id/label/value, delete needs id.',
 						'items' => [
 							'type' => 'object',
 							'required' => [ 'action' ],
@@ -88,6 +93,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$started_at = hrtime( true );
 		$input      = is_array( $input ) ? $input : [];
+		$this->is_dry_run_execution = self::is_dry_run( $input );
 		$operations = $input['operations'] ?? null;
 
 		if ( ! is_array( $operations ) ) {
@@ -119,7 +125,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			return $error;
 		}
 
-		$response = $this->handle_bulk( $operations );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
 		if ( is_wp_error( $response ) ) {
 			$this->emit_mcp_manage_global_variable_executed( $started_at, $operations, $response );
 		} else {
@@ -128,10 +134,15 @@ class Manage_Variable_Ability extends Abstract_Ability {
 		return $response;
 	}
 
-	private function handle_bulk( array $operations ) {
+	public function supports_dry_run(): bool {
+		return true;
+	}
+
+	private function handle_bulk( array $operations, bool $dry_run = false ) {
 		$results = new Bulk_Operations_Result();
 		$batch_operations = [];
 		$index_map = [];
+		$pro_message_reported = false;
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) ) {
@@ -142,11 +153,18 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			$translated = $this->translate_operation( $operation );
 
 			if ( is_wp_error( $translated ) ) {
+				$message = $translated->get_error_message();
+
+				if ( Pro_Features_Discovery::ERROR_CODE === $translated->get_error_code() ) {
+					$message = $pro_message_reported ? Variables_Pro_Features_Discovery::get_repeated_message() : $message;
+					$pro_message_reported = true;
+				}
+
 				$results->add_error(
 					$index,
 					$operation['action'] ?? '',
 					$translated->get_error_code(),
-					$translated->get_error_message()
+					$message
 				);
 				continue;
 			}
@@ -159,11 +177,14 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 		if ( ! empty( $batch_operations ) ) {
 			try {
-				$batch_result = $this->get_service()->process_batch( $batch_operations, true );
+				$batch_result = $this->get_service()->process_batch( $batch_operations, true, $dry_run );
 				$watermark = $batch_result['watermark'] ?? null;
 
 				$this->merge_batch_results( $batch_result['results'], $index_map, $results );
-				$this->emit_variable_events( $batch_result['results'] );
+
+				if ( ! $dry_run ) {
+					$this->emit_variable_events( $batch_result['results'] );
+				}
 			} catch ( FatalError $e ) {
 				return new \WP_Error(
 					'unexpected_server_error',
@@ -172,10 +193,16 @@ class Manage_Variable_Ability extends Abstract_Ability {
 				);
 			}
 
-			$this->clear_cache();
+			if ( ! $dry_run ) {
+				$this->clear_cache();
+			}
 		}
 
 		$response = $results->to_array();
+
+		if ( $dry_run ) {
+			$response['dry_run'] = true;
+		}
 
 		if ( null !== $watermark ) {
 			$response['watermark'] = $watermark;
@@ -197,13 +224,23 @@ class Manage_Variable_Ability extends Abstract_Ability {
 					return $this->bad_request( __( 'Create requires type, label, and value.', 'elementor' ) );
 				}
 
+				if ( $this->is_size_type( $type ) && ! $this->can_manage_size_variables() ) {
+					return Variables_Pro_Features_Discovery::for_size_variables();
+				}
+
+				$variable = [
+					'type' => $type,
+					'label' => $label,
+					'value' => $value,
+				];
+
+				if ( is_string( $operation['id'] ?? null ) && '' !== $operation['id'] ) {
+					$variable['id'] = $operation['id'];
+				}
+
 				return [
 					'type' => 'create',
-					'variable' => [
-						'type' => $type,
-						'label' => $label,
-						'value' => $value,
-					],
+					'variable' => $variable,
 				];
 
 			case 'update':
@@ -213,6 +250,10 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 				if ( '' === $id || '' === $label || '' === $value ) {
 					return $this->bad_request( __( 'Update requires id, label, and value.', 'elementor' ) );
+				}
+
+				if ( ! $this->can_manage_size_variables() && $this->is_size_variable( $id ) ) {
+					return Variables_Pro_Features_Discovery::for_size_variables();
 				}
 
 				return [
@@ -265,6 +306,22 @@ class Manage_Variable_Ability extends Abstract_Ability {
 
 	private function bad_request( string $message ): \WP_Error {
 		return new \WP_Error( 'invalid_input', $message, [ 'status' => \WP_Http::BAD_REQUEST ] );
+	}
+
+	private function is_size_type( $type ): bool {
+		return in_array( $type, [ self::TYPE_SIZE, self::TYPE_CUSTOM_SIZE ], true );
+	}
+
+	private function is_size_variable( $id ): bool {
+		return is_string( $id ) && $this->is_size_type( $this->get_service()->find_type( $id ) );
+	}
+
+	private function can_manage_size_variables(): bool {
+		return Utils::is_license_active();
+	}
+
+	private function get_description(): string {
+		return __( 'Manage V4 global variables (color, font, size, custom-size). Bulk create, update, or delete on the active kit (up to 50 operations).', 'elementor' );
 	}
 
 	private function clear_cache(): void {
@@ -381,6 +438,7 @@ class Manage_Variable_Ability extends Abstract_Ability {
 			'failed_operation_codes'  => $failed_codes,
 			'warning_count'           => 0,
 			'warning_types'           => [],
+			'dry_run'                 => $this->is_dry_run_execution,
 		];
 
 		if ( null !== $error_code ) {

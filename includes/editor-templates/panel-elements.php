@@ -1,8 +1,8 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\Promotions\Sticky_Panel_Promotion;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 		'show_banner' => ! $has_pro,
 	] );
-	$promotion_data_sticky = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
+	$promotion_data_sticky = ! $has_pro ? Sticky_Panel_Promotion::get_promotion_for_editor() : [];
 	?>
 	<?php if ( $get_pro_details['show_banner'] ) : ?>
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
@@ -102,12 +102,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <?php
-$widget_creation_cta_text = Hints::is_plugin_active( 'angie' )
-	? __( 'Create custom widget', 'elementor' )
-	: __( 'Try for free', 'elementor' );
+$widget_creation_cta_text = __( 'Create custom widget', 'elementor' );
 ?>
 <script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-empty-state">
-	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{{ searchTerm }}}"</div>
+	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{ searchTerm }}"</div>
 	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
 	<?php if ( current_user_can( 'manage_options' ) ) : ?>
 	<button type="button" class="elementor-panel-elements-widget-creation__cta"><?php echo esc_html( $widget_creation_cta_text ); ?></button>

@@ -48,6 +48,7 @@ interface OnboardingConfig {
 declare global {
 	interface Window {
 		$e?: {
+			route?: ( route: string ) => void;
 			routes?: {
 				getCurrent?: () => Record< string, string > | undefined;
 				register?: ( component: string, route: string, callback: () => unknown ) => unknown;
@@ -82,10 +83,7 @@ declare global {
 						jsonFiles?: string[];
 						jsonBaseUrl?: string;
 						filter?: unknown;
-						customIconPacks?: Record<
-							string,
-							{ configUrl?: string; fontUrl?: string; selectionUrl?: string; type?: string }
-						>;
+						customIconPacks?: unknown;
 						customIconLibrariesEnabled?: boolean;
 					};
 				};
@@ -129,6 +127,9 @@ declare global {
 				angie?: {
 					autoShow?: boolean;
 				};
+				widgetCreation?: {
+					canCreateWidget?: boolean;
+				};
 				controls?: {
 					font?: {
 						groups?: Record< string, string >;
@@ -150,6 +151,19 @@ declare global {
 					url: string;
 					message: string;
 					button_text: string;
+				} | null;
+				proSetupPromotion?: {
+					state: 'install' | 'activate' | 'connect';
+					banner: {
+						title: string;
+						description: string;
+					};
+					popover: {
+						title: string;
+						description: string;
+						ctaLabel: string;
+					};
+					connectUrl?: string;
 				};
 				user?: {
 					top_bar?: {

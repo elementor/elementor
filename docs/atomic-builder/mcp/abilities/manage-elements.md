@@ -48,7 +48,7 @@ Requires at least one of `settings`, `style`, or `classes`.
 | `style` | Raw CSS declarations; `null` resets a property |
 | `classes` | Array of global class **labels** to attach (prepended to existing) |
 
-Schema source: `elementor/get-widget-schema` for the element's widget type.
+Schema source: `elementor/get-widget-schemas` for the element's widget type.
 
 ### action: delete
 

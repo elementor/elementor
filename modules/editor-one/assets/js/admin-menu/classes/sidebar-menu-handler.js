@@ -50,7 +50,7 @@ export class SidebarMenuHandler {
 			targetSlug = 'e-form-submissions';
 		} else if ( 'elementor-mcp' === page ) {
 			targetSlug = 'elementor-mcp';
-		} else if ( 'elementor-agents-ready' === page ) {
+		} else if ( 'elementor-agents-ready' === page || 'elementor-agent-access' === page ) {
 			targetSlug = 'elementor-agents-ready';
 		} else if ( 'elementor-theme-builder' === page ) {
 			targetSlug = 'elementor-theme-builder';

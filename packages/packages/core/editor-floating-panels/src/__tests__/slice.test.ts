@@ -2,6 +2,7 @@ import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice }
 
 import {
 	selectCorner,
+	selectIsDocked,
 	selectIsDraggable,
 	selectIsOpen,
 	selectIsResizable,
@@ -120,6 +121,56 @@ describe( 'floating-panels slice', () => {
 		expect( selectTopZIndex( __getState() ) ).toBeGreaterThanOrEqual( 7 );
 	} );
 
+	describe( 'docked panel open state', () => {
+		const persistedOpen = {
+			isOpen: true,
+			zIndex: 3,
+			size: { inlineSize: 300, blockSize: 500 },
+			corner: 'block-start-inline-start' as const,
+			position: defaultPosition,
+		};
+
+		it( 'restores the persisted open state when persistOpenState is set', () => {
+			// Act.
+			__dispatch(
+				slice.actions.register( {
+					id: 'a',
+					defaults,
+					isDocked: true,
+					persistOpenState: true,
+					persisted: persistedOpen,
+				} )
+			);
+
+			// Assert.
+			expect( selectIsOpen( __getState(), 'a' ) ).toBe( true );
+		} );
+
+		it( 'starts closed when persistOpenState is not set', () => {
+			// Act.
+			__dispatch( slice.actions.register( { id: 'a', defaults, isDocked: true, persisted: persistedOpen } ) );
+
+			// Assert.
+			expect( selectIsOpen( __getState(), 'a' ) ).toBe( false );
+		} );
+
+		it( 'stays closed when the persisted state was closed', () => {
+			// Act.
+			__dispatch(
+				slice.actions.register( {
+					id: 'a',
+					defaults,
+					isDocked: true,
+					persistOpenState: true,
+					persisted: { ...persistedOpen, isOpen: false },
+				} )
+			);
+
+			// Assert.
+			expect( selectIsOpen( __getState(), 'a' ) ).toBe( false );
+		} );
+	} );
+
 	it( 'discards persisted state when persisted corner differs from defaults corner', () => {
 		// Arrange.
 		const persisted = {
@@ -190,6 +241,18 @@ describe( 'floating-panels slice', () => {
 		expect( selectSize( __getState(), 'a' ) ).toEqual( { inlineSize: 600, blockSize: 700 } );
 	} );
 
+	it( 'stores isDocked only when requested', () => {
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.register( { id: 'b', defaults, isDocked: true } ) );
+
+		// Assert.
+		expect( selectIsDocked( __getState(), 'a' ) ).toBe( false );
+		expect( selectIsDocked( __getState(), 'b' ) ).toBe( true );
+		expect( selectIsDraggable( __getState(), 'b' ) ).toBe( false );
+		expect( selectIsResizable( __getState(), 'b' ) ).toBe( false );
+	} );
+
 	it( 'stores isDraggable as false by default', () => {
 		// Act.
 		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
@@ -242,5 +305,48 @@ describe( 'floating-panels slice', () => {
 		}
 
 		expect( b.zIndex ).toBeGreaterThan( a.zIndex );
+	} );
+	it( 'bringToFront ignores docked panels', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'docked', defaults, isDocked: true } ) );
+		const before = selectTopZIndex( __getState() );
+
+		// Act.
+		__dispatch( slice.actions.bringToFront( 'docked' ) );
+		__dispatch( slice.actions.bringToFront( 'docked' ) );
+
+		// Assert.
+		expect( selectTopZIndex( __getState() ) ).toBe( before );
+	} );
+
+	it( 'bringToFront does not grow topZIndex for the panel already on top', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.bringToFront( 'a' ) );
+		const before = selectTopZIndex( __getState() );
+
+		// Act.
+		__dispatch( slice.actions.bringToFront( 'a' ) );
+
+		// Assert.
+		expect( selectTopZIndex( __getState() ) ).toBe( before );
+	} );
+
+	it( 'bringToFront compacts zIndex values when the ceiling is reached', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.register( { id: 'b', defaults } ) );
+
+		// Act.
+		for ( let i = 0; i < 1200; i++ ) {
+			__dispatch( slice.actions.bringToFront( i % 2 ? 'a' : 'b' ) );
+		}
+
+		// Assert.
+		const a = selectPanelState( __getState(), 'a' );
+		const b = selectPanelState( __getState(), 'b' );
+
+		expect( selectTopZIndex( __getState() ) ).toBeLessThanOrEqual( 1000 );
+		expect( a?.zIndex ).toBeGreaterThan( b?.zIndex ?? Infinity );
 	} );
 } );

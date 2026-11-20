@@ -1,4 +1,4 @@
-# get-widget-schema
+# get-widget-schemas
 
 > Audience: external  
 > Module: `modules/mcp/abilities/get-widget-schema-ability.php`  
@@ -6,16 +6,16 @@
 
 ## What it is
 
-Ability ID: **`elementor/get-widget-schema`**
+Ability ID: **`elementor/get-widget-schemas`**
 
-Live JSON schema for one widget type — source of truth for `element_config`. Permission: `edit_posts`.
+Live JSON schemas for the requested widget types, returned in one call — source of truth for `element_config`. Permission: `edit_posts`.
 
 ## Public API
 
 | Symbol | Signature | Purpose |
 |--------|-----------|---------|
-| `Get_Widget_Schema_Ability` | `execute( array $input ): array` | Returns schema + `llm_guidance` for `widget_type` |
-| Ability ID | `elementor/get-widget-schema` | Stable MCP host identifier |
+| `Get_Widget_Schema_Ability` | `execute( array $input ): array\|\WP_Error` | Returns `{ schemas, errors }` keyed by widget type |
+| Ability ID | `elementor/get-widget-schemas` | Stable MCP host identifier |
 
 Verified: `get-widget-schema-ability.php`.
 
@@ -25,7 +25,7 @@ Verified: `get-widget-schema-ability.php`.
 - To check nesting rules (`allowed_child_types`, `required_direct_children`)
 - To see which props accept dynamic tag bindings
 
-Call once per widget type in your composition. For discovery of available types, use [list-widget-schemas.md](list-widget-schemas.md) first.
+Pass every type in the composition as one `widget_type` array, including containers. For discovery of available types, use [list-widget-schemas.md](list-widget-schemas.md) first.
 
 ## Key concepts
 
@@ -33,11 +33,29 @@ Call once per widget type in your composition. For discovery of available types,
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `widget_type` | yes | Registry identifier, e.g. `e-heading`, `e-flexbox` |
+| `widget_type` | yes | Array of registry identifiers, e.g. `["e-heading", "e-flexbox"]`. A single string is also accepted and treated as a one-item array. |
 
-### Output (v4 atomic widget)
+### Output
 
-For widgets with `atomic_props_schema`:
+```json
+{
+  "schemas": {
+    "e-heading": { }
+  },
+  "errors": {
+    "missing-type": {
+      "code": "elementor_not_found",
+      "message": "Unknown widget type: missing-type."
+    }
+  }
+}
+```
+
+`errors` is present even when empty. One failing type does not fail the call. The parents index is built once per call, then reused for every v4 type.
+
+### Schema (v4 atomic widget)
+
+For widgets with `atomic_props_schema`, each value in `schemas` looks like:
 
 ```json
 {
@@ -74,25 +92,40 @@ Built by `Llm_Guidance_Builder` from widget config:
 
 Props in `NON_CONFIGURABLE_PROP_KEYS` (`classes`, `attributes`, etc.) are excluded unless `llm_configurable` meta is set. Base settings props get a hint in their schema description.
 
-### v3 fallback
+### Schema (v3 widget with a map)
 
-Widgets without `atomic_props_schema` but with legacy controls return:
+A legacy V3 widget is supported only when it has a map in `modules/mcp/abilities/appliers/v3/maps/registered-maps.php` that compiles against the widget's controls. Its schema comes from the map:
 
 ```json
 {
+  "type": "object",
   "widget_version": "v3",
-  "message": "This widget exists in the editor but has no atomic props schema (V4)...",
-  "fields_note": "All settings are optional...",
-  "properties": { /* control_metadata hints */ }
+  "description": "Map description",
+  "properties": { /* map setting key → JSON schema */ },
+  "editor_settings": { },
+  "additionalProperties": false,
+  "default_style_target": "title",
+  "style_targets": {
+    "title": {
+      "label": "Title",
+      "states": ["hover"],
+      "properties": ["color", "font-size"],
+      "properties_by_state": { }
+    }
+  }
 }
 ```
 
-`build-composition` targets v4 elements; v3 fallback is informational.
+`properties` are the settings accepted in `element_config`. Visual styling goes through the `style` CSS input, which is written to the widget's controls through `style_targets`. CSS that no target binds falls back to the widget's custom CSS, which requires Elementor Pro.
 
 ### Errors
 
-- `invalid_input` — missing `widget_type`
+`invalid_input` fails the whole call as a `WP_Error`: missing `widget_type`, a value that is neither an array nor a string, an empty array, or a non-string item.
+
+The rest are per type, under `errors` with `code` and `message`, and the valid schemas still come back:
+
 - `elementor_not_found` — unknown type or widget with `meta.llm_support: false`
+- `elementor_v3_not_supported` — legacy V3 widget without a map that compiles
 
 ## Extension
 
@@ -101,6 +134,7 @@ Widget authors enable LLM support via widget config `meta.llm_support` and `defi
 ## Internals
 
 - `Widget_Context_Helper::get_widget_config()` → `build_widget_schema()`
+- `build_parents_index()` runs once per call and is reused for every type
 - Eligibility: `is_widget_eligible_for_llm()` checks `llm_support`, excludes Component widget title
 - Properties converted via `Plain_Llm_Schema_Converter` for agent-friendly plain schemas
 

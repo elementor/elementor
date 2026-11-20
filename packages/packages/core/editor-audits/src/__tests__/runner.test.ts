@@ -33,6 +33,7 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	ally_accessibility_statement_url:
 		'https://example.com/wp-admin/admin.php?page=accessibility-settings#accessibilityStatement',
 	ally_widget_settings_url: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#capabilities',
+	ally_scan_url: 'https://example.com/wp-admin/admin.php?page=accessibility-settings#scans',
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
 	cookiez_plugin_installed: false,
@@ -41,6 +42,7 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	cookiez_consent_mode_settings_url: 'https://example.com/wp-admin/admin.php?page=cookiez-settings#settings',
 	image_optimization_plugin_active: false,
 	image_optimization_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
+	image_optimization_settings_url: 'https://example.com/wp-admin/admin.php?page=image-optimization-settings',
 	frontend_url: null,
 	site_identity: {
 		site_name_set: true,

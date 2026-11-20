@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box } from '@elementor/ui';
 
 import { type FontAwesome7Icon } from './font-awesome-7-catalog';
+import { resolveProviderIconPreviewSvg } from './icon-library-providers';
 import { sanitizeIconSvgMarkup } from './sanitize-icon-svg-markup';
 
 type FontAwesomeGlyphProps = {
@@ -11,7 +13,71 @@ type FontAwesomeGlyphProps = {
 	label?: string;
 };
 
-export const FontAwesomeGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
+export const FontAwesomeGlyph = ( props: FontAwesomeGlyphProps ) => {
+	const { icon } = props;
+
+	if ( icon.lazySvg && ! icon.svgMarkup ) {
+		return <LazyProviderGlyph { ...props } />;
+	}
+
+	return <ResolvedGlyph { ...props } />;
+};
+
+const LazyProviderGlyph = ( props: FontAwesomeGlyphProps ) => {
+	const { icon, size } = props;
+	const [ resolved, setResolved ] = useState< { id: string; markup: string | null } | null >( null );
+	const [ isVisible, setIsVisible ] = useState( typeof IntersectionObserver === 'undefined' );
+	const placeholderRef = useRef< HTMLSpanElement >( null );
+	const svgMarkup = resolved?.id === icon.id ? resolved.markup : null;
+
+	useEffect( () => {
+		const element = placeholderRef.current;
+
+		if ( isVisible || ! element ) {
+			return;
+		}
+
+		const observer = new IntersectionObserver( ( entries ) => {
+			if ( entries.some( ( entry ) => entry.isIntersecting ) ) {
+				setIsVisible( true );
+				observer.disconnect();
+			}
+		} );
+
+		observer.observe( element );
+
+		return () => observer.disconnect();
+	}, [ isVisible ] );
+
+	useEffect( () => {
+		if ( ! isVisible ) {
+			return;
+		}
+
+		const controller = new AbortController();
+
+		resolveProviderIconPreviewSvg( icon.library, icon.value, controller.signal )
+			.then( ( markup ) => ! controller.signal.aborted && setResolved( { id: icon.id, markup } ) )
+			.catch( () => {} );
+
+		return () => controller.abort();
+	}, [ isVisible, icon.id, icon.library, icon.value ] );
+
+	if ( ! svgMarkup ) {
+		return (
+			<Box
+				component="span"
+				ref={ placeholderRef }
+				aria-hidden="true"
+				sx={ { display: 'inline-block', width: size, height: size } }
+			/>
+		);
+	}
+
+	return <ResolvedGlyph { ...props } icon={ { ...icon, svgMarkup } } />;
+};
+
+const ResolvedGlyph = ( { icon, size, color, label }: FontAwesomeGlyphProps ) => {
 	const svgMarkup = sanitizeIconSvgMarkup( icon.svgMarkup );
 
 	if ( svgMarkup ) {

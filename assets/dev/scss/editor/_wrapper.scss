@@ -27,6 +27,24 @@ a {
 }
 
 body {
+	&:has(.e-editor-sidebar) {
+		--e-editor-sidebar-width: 48px;
+
+		.elementor-panel #elementor-panel-header {
+			justify-content: flex-start;
+			padding-block: 8px;
+			padding-inline: 16px 8px;
+		}
+
+		.elementor-panel #elementor-panel-header > * {
+			justify-content: flex-start;
+		}
+
+		.elementor-panel #elementor-panel-header-title {
+			text-align: start;
+		}
+	}
+
 	background-color: var(--e-a-bg-default);
     color: var(--e-a-color-txt);
     font-family: var(--e-a-font-family);
@@ -41,7 +59,7 @@ body {
 		content: '';
 		position: absolute;
 		inset-block-start: 0;
-		inset-inline-end: 0;
+		inset-inline-end: var(--e-editor-docked-panel-width, 0px);
 		height: 100%;
 		width: 0;
 		background-color: var(--e-a-bg-default);
@@ -86,6 +104,8 @@ body {
 	display: flex;
 	width: 100%;
 	height: 100vh;
+	position: relative;
+	inset-inline-start: var(--e-editor-sidebar-width, 0px);
 }
 
 #elementor-panel,

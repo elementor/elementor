@@ -75,15 +75,19 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
+		$image_control = Image_Control::bind_to( 'image' )
+			->set_label( __( 'Image', 'elementor' ) );
+		$promotion = $this->get_io_promotion_trigger();
+
+		if ( $promotion ) {
+			$image_control->set_promotion( $promotion );
+		}
+
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_id( 'content' )
-				->set_items( array_filter( [
-					Image_Control::bind_to( 'image' )
-						->set_label( __( 'Image', 'elementor' ) ),
-					$this->get_io_promotion_notice_control(),
-				] ) ),
+				->set_items( [ $image_control ] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )

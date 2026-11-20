@@ -28,6 +28,7 @@
         "./packages/core/*/src",
         "./packages/libs/*/src",
         "./packages/tools/*/src",
+        "./packages/angie/*/src",
         "./packages/apps/*/src"
       ],
       "test-utils": [
@@ -36,6 +37,7 @@
     },
   },
   "exclude": [
-    "**/dist/**"
+    "**/dist/**",
+    "packages/tools/generate-font-awesome-7"
   ]
 }

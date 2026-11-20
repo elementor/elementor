@@ -3,16 +3,22 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Markdown_Content_Catalog;
+use Elementor\Modules\Agents\Content_Generator;
+use Elementor\Modules\Agents\Markdown_Manual_Content;
+use Elementor\Modules\Agents\Prompt_Injection_Sanitizer;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 
 	private Markdown_Content_Catalog $catalog;
 
+	private Markdown_Manual_Content $manual_content;
+
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->catalog = new Markdown_Content_Catalog();
+		$this->manual_content = new Markdown_Manual_Content( new Content_Generator( new Prompt_Injection_Sanitizer() ) );
+		$this->catalog        = new Markdown_Content_Catalog( $this->manual_content );
 	}
 
 	public function tearDown(): void {
@@ -55,6 +61,28 @@ class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 		$this->assertSame( 'Visible Page', $visible['title'] );
 		$this->assertSame( 'page', $visible['type'] );
 		$this->assertStringContainsString( 'visible-page', $visible['path'] );
+	}
+
+	public function test_search__flags_only_posts_with_a_manual_override() {
+		// Arrange
+		$overridden_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Overridden Page',
+		] );
+		$generated_id  = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Generated Page',
+		] );
+		$this->manual_content->save( $overridden_id, '# Hand written' );
+
+		// Act
+		$items = array_column( $this->catalog->search( [ 'page' ], '' ), 'isOverridden', 'id' );
+
+		// Assert
+		$this->assertTrue( $items[ $overridden_id ] );
+		$this->assertFalse( $items[ $generated_id ] );
 	}
 
 	public function test_search__fills_a_full_page_past_noindex_rows() {
@@ -135,6 +163,25 @@ class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 		$this->assertSame( [ $pricing_id ], array_column( $items, 'id' ) );
 	}
 
+	public function test_search__returns_plain_text_titles() {
+		// Arrange
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+			'post_title'  => 'Tom & Jerry',
+		] );
+
+		// Act
+		$items = $this->catalog->search( [ 'page' ], 'Tom' );
+
+		// Assert
+		$ids = array_column( $items, 'id' );
+		$visible = $items[ array_search( $page_id, $ids, true ) ];
+		$this->assertSame( 'Tom & Jerry', $visible['title'] );
+		$this->assertStringNotContainsString( '&amp;', $visible['title'] );
+		$this->assertStringNotContainsString( '&#038;', $visible['title'] );
+	}
+
 	public function test_search__returns_nothing_without_post_types() {
 		// Arrange
 		$this->factory()->post->create( [
@@ -147,5 +194,55 @@ class Test_Markdown_Content_Catalog extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( [], $items );
+	}
+
+	public function test_search_content__matches_body_text_and_respects_the_limit() {
+		// Arrange
+		$limit = 2;
+		$matching_ids = $this->factory()->post->create_many( $limit + 1, [
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'Services',
+			'post_content' => 'We offer gardening in the city.',
+		] );
+		$this->factory()->post->create( [
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+			'post_title'   => 'About',
+			'post_content' => 'Our story.',
+		] );
+
+		// Act
+		$items = $this->catalog->search_content( [ 'page' ], 'gardening', $limit );
+
+		// Assert
+		$this->assertCount( $limit, $items );
+		$this->assertEmpty( array_diff( array_column( $items, 'id' ), $matching_ids ) );
+	}
+
+	public function test_search_content__skips_drafts_and_noindex() {
+		// Arrange
+		$visible_id = $this->factory()->post->create( [
+			'post_type'    => 'post',
+			'post_status'  => 'publish',
+			'post_content' => 'Gardening tips.',
+		] );
+		$this->factory()->post->create( [
+			'post_type'    => 'post',
+			'post_status'  => 'draft',
+			'post_content' => 'Gardening draft.',
+		] );
+		$noindex_id = $this->factory()->post->create( [
+			'post_type'    => 'post',
+			'post_status'  => 'publish',
+			'post_content' => 'Gardening secrets.',
+		] );
+		update_post_meta( $noindex_id, '_yoast_wpseo_meta-robots-noindex', '1' );
+
+		// Act
+		$items = $this->catalog->search_content( [ 'post' ], 'gardening', Markdown_Content_Catalog::PAGE_SIZE );
+
+		// Assert
+		$this->assertSame( [ $visible_id ], array_column( $items, 'id' ) );
 	}
 }

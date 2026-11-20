@@ -15,6 +15,7 @@ import {
 	QueryChipsControl,
 	QueryControl,
 	QueryFilterRepeaterControl,
+	QuerySelectControl,
 	RepeatableControl,
 	SelectControlWrapper,
 	SizeControl,
@@ -71,6 +72,7 @@ const controlTypes = {
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
+	'query-select': { component: QuerySelectControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
 	'query-filter-repeater': {
 		component: QueryFilterRepeaterControl,
 		layout: 'full',
@@ -85,7 +87,7 @@ const controlTypes = {
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: escapedHtmlPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'custom', propTypeUtil: escapedHtmlPropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
 	'date-range': {
 		component: DateRangeControl,

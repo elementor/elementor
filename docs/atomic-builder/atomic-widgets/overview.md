@@ -41,7 +41,7 @@ Built-in types appear under **`v4-elements`**.
 
 ### Built-in catalog (summary)
 
-**Widgets:** `e-heading`, `e-image`, `e-paragraph`, `e-svg`, `e-button`, `e-youtube`, `e-divider`, `e-self-hosted-video`
+**Widgets:** `e-heading`, `e-image`, `e-paragraph`, `e-svg`, `e-button`, `e-youtube`, `e-divider`, `e-self-hosted-video`, `e-google-maps`
 
 **Elements:** `e-div-block`, `e-flexbox`, `e-grid`, `e-tabs` (+ `e-tabs-menu`, `e-tab`, `e-tabs-content-area`, `e-tab-content`)
 

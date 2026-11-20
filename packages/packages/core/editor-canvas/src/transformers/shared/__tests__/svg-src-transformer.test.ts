@@ -47,7 +47,10 @@ describe( 'svgSrcTransformer', () => {
 		const result = ( await svgSrcTransformer(
 			{ id: null, url: 'https://example.com/icon.svg' },
 			{ key: 'svg' }
-		) ) as { html: string; url: string };
+		) ) as {
+			html: string;
+			url: string;
+		};
 
 		// Assert.
 		expect( result.html ).toContain( 'width: 100%' );
@@ -91,7 +94,10 @@ describe( 'svgSrcTransformer', () => {
 		const result = ( await svgSrcTransformer(
 			{ id: 99, url: 'https://example.com/fallback.svg' },
 			{ key: 'svg' }
-		) ) as { html: string; url: string };
+		) ) as {
+			html: string;
+			url: string;
+		};
 
 		// Assert.
 		expect( result.url ).toBe( 'https://example.com/fallback.svg' );
@@ -146,7 +152,10 @@ describe( 'svgSrcTransformer', () => {
 		const result = ( await svgSrcTransformer(
 			{ id: null, url: 'https://example.com/styled.svg' },
 			{ key: 'svg' }
-		) ) as { html: string; url: string };
+		) ) as {
+			html: string;
+			url: string;
+		};
 
 		// Assert.
 		expect( result.html ).toContain( 'display: block' );

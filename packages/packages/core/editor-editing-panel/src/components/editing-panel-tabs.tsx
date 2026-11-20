@@ -1,7 +1,8 @@
 import { Fragment } from 'react';
 import * as React from 'react';
 import { useHasContentOnlyAccess } from '@elementor/editor-current-user';
-import { getWidgetsCache } from '@elementor/editor-elements';
+import { type Element, type ElementType, getWidgetsCache } from '@elementor/editor-elements';
+import { createReplaceableLocation } from '@elementor/locations';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -20,6 +21,14 @@ const CONTENT_ONLY_TAB: TabValue = 'settings';
 
 const DESIGN_TABS: TabValue[] = [ 'style', 'interactions' ];
 
+type SettingsTabSlotProps = {
+	element: Element;
+	elementType: ElementType;
+};
+
+export const { Slot: SettingsTabSlot, inject: injectIntoSettingsTab } =
+	createReplaceableLocation< SettingsTabSlotProps >();
+
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
 
@@ -33,17 +42,19 @@ export const EditingPanelTabs = () => {
 };
 
 const PanelTabContent = () => {
-	const { element } = useElement();
+	const { element, elementType } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
-	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
+	const elementMeta = getWidgetsCache()?.[ element.type ]?.meta;
+	const isPromotedElement = !! elementMeta?.is_pro_promotion;
+	const hasDesignTabs = ! elementMeta?.hide_design_tabs;
 	const hasContentOnlyAccess = useHasContentOnlyAccess();
 
 	// A promoted element has no General tab, and its Style tab only renders an upsell, so restricting it would leave the panel empty.
 	const areDesignTabsRestricted = hasContentOnlyAccess && ! isPromotedElement;
 
 	const [ storedTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
-	const currentTab = resolveCurrentTab( { storedTab, isPromotedElement, areDesignTabsRestricted } );
+	const currentTab = resolveCurrentTab( { storedTab, isPromotedElement, areDesignTabsRestricted, hasDesignTabs } );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );
 
 	const getDesignTabProps = ( tab: TabValue ) => ( {
@@ -76,23 +87,29 @@ const PanelTabContent = () => {
 						{ ! isPromotedElement && (
 							<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						) }
-						<Tab
-							label={ withRestrictionInfotip( __( 'Style', 'elementor' ) ) }
-							{ ...getDesignTabProps( 'style' ) }
-						/>
-						<Tab
-							label={ withRestrictionInfotip( __( 'Interactions', 'elementor' ) ) }
-							{ ...getDesignTabProps( 'interactions' ) }
-						/>
+						{ hasDesignTabs && (
+							<Tab
+								label={ withRestrictionInfotip( __( 'Style', 'elementor' ) ) }
+								{ ...getDesignTabProps( 'style' ) }
+							/>
+						) }
+						{ hasDesignTabs && (
+							<Tab
+								label={ withRestrictionInfotip( __( 'Interactions', 'elementor' ) ) }
+								{ ...getDesignTabProps( 'interactions' ) }
+							/>
+						) }
 					</Tabs>
 					<Divider />
 				</Stack>
 				{ ! isPromotedElement && (
 					<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
-						<SettingsTab />
+						<SettingsTabSlot element={ element } elementType={ elementType }>
+							<SettingsTab />
+						</SettingsTabSlot>
 					</TabPanel>
 				) }
-				{ ! areDesignTabsRestricted && (
+				{ hasDesignTabs && ! areDesignTabsRestricted && (
 					<>
 						<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 							<StyleTab />
@@ -111,12 +128,14 @@ const resolveCurrentTab = ( {
 	storedTab,
 	isPromotedElement,
 	areDesignTabsRestricted,
+	hasDesignTabs,
 }: {
 	storedTab: TabValue;
 	isPromotedElement: boolean;
 	areDesignTabsRestricted: boolean;
+	hasDesignTabs: boolean;
 } ): TabValue => {
-	if ( areDesignTabsRestricted && DESIGN_TABS.includes( storedTab ) ) {
+	if ( ( areDesignTabsRestricted || ! hasDesignTabs ) && DESIGN_TABS.includes( storedTab ) ) {
 		return CONTENT_ONLY_TAB;
 	}
 

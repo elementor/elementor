@@ -152,6 +152,10 @@ class Export extends Base_Route {
 						'type' => [ 'object', 'null' ],
 						'description' => 'Plugins customization',
 					],
+					'components' => [
+						'type' => [ 'boolean', 'null' ],
+						'description' => 'Whether to include components',
+					],
 				],
 			],
 			'plugins' => [

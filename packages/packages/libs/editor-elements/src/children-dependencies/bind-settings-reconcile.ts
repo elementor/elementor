@@ -82,6 +82,7 @@ function attachChildFromRule( parentId: string, rule: ChildDependencyRule, stash
 	const alreadyPresent = currentChildren.some( ( child ) => child.elType === rule.child_type );
 
 	if ( alreadyPresent ) {
+		placeAnchoredChild( parentId, rule );
 		return;
 	}
 
@@ -120,6 +121,53 @@ function detachChildFromRule( parentId: string, rule: ChildDependencyRule, stash
 		stash.save( parentId, rule.child_type, childSnapshot );
 	}
 
+	requestNavigatorRefresh( parentId );
+}
+
+function placeAnchoredChild( parentId: string, rule: ChildDependencyRule ): void {
+	if ( rule.position.kind !== 'after_type' && rule.position.kind !== 'before_type' ) {
+		return;
+	}
+
+	let parent: V1Element | undefined;
+
+	try {
+		parent = getContainer( parentId ) ?? undefined;
+	} catch {
+		return;
+	}
+
+	const collection = parent?.model?.get?.( 'elements' ) as
+		| {
+				models?: Array< { get: ( key: string ) => unknown } >;
+				remove?: ( model: unknown, options?: { silent?: boolean } ) => void;
+				add?: ( model: unknown, options?: { at?: number; silent?: boolean } ) => void;
+		  }
+		| undefined;
+	const models = collection?.models;
+
+	if ( ! models || ! collection?.remove || ! collection?.add ) {
+		return;
+	}
+
+	const existingIndex = models.findIndex( ( model ) => model.get( 'elType' ) === rule.child_type );
+
+	if ( existingIndex < 0 ) {
+		return;
+	}
+
+	const siblings = models.map( ( model ) => ( { elType: model.get( 'elType' ) } ) as V1ElementData );
+	const remaining = siblings.filter( ( _, index ) => index !== existingIndex );
+	const insertAt = resolveInsertIndex( rule.position, remaining );
+
+	if ( insertAt === existingIndex ) {
+		return;
+	}
+
+	const model = models[ existingIndex ];
+
+	collection.remove( model, { silent: true } );
+	collection.add( model, { at: insertAt, silent: true } );
 	requestNavigatorRefresh( parentId );
 }
 

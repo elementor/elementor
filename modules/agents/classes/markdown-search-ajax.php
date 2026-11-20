@@ -39,7 +39,11 @@ class Markdown_Search_Ajax {
 		$term = isset( $data['term'] ) && is_string( $data['term'] ) ? trim( sanitize_text_field( $data['term'] ) ) : '';
 
 		return [
-			'items' => $this->catalog->search( $this->settings->get_markdown_post_types(), $term ),
+			'items' => $this->catalog->search(
+				$this->settings->get_markdown_post_types(),
+				$term,
+				$this->settings->get_markdown_excluded_post_ids()
+			),
 		];
 	}
 }

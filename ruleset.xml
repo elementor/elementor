@@ -10,6 +10,8 @@
 
 	<config name="text_domain" value="elementor" />
 
+	<config name="installed_paths" value="vendor/wp-coding-standards/wpcs,vendor/phpcsstandards/phpcsextra,vendor/phpcsstandards/phpcsutils,phpcs-rules" />
+
 	<exclude-pattern>vendor/</exclude-pattern>
 	<exclude-pattern>vendor_prefixed/</exclude-pattern>
 	<exclude-pattern>tmp/</exclude-pattern>
@@ -20,6 +22,7 @@
 	<exclude-pattern>assets/js/packages/</exclude-pattern>
 	<exclude-pattern>tests/*.php</exclude-pattern>
 	<exclude-pattern>examples/</exclude-pattern>
+	<exclude-pattern>phpcs-rules/</exclude-pattern>
 
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 
@@ -28,6 +31,14 @@
 	</rule>
 
 	<rule ref="WordPress.Security" />
+
+	<rule ref="WordPress.Security.EscapeOutput"/>
+
+	<rule ref="ElementorSniffs.Security.AbilityLabelTranslation">
+		<include-pattern>modules/mcp/abilities/list-assets-ability.php</include-pattern>
+		<include-pattern>modules/mcp/abilities/request-media-upload-ability.php</include-pattern>
+		<include-pattern>modules/mcp/abilities/upload-media-ability.php</include-pattern>
+	</rule>
 
 	<rule ref="WordPress-Extra">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />

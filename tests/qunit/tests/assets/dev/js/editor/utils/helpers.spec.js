@@ -76,4 +76,48 @@ QUnit.module( 'File: assets/dev/js/editor/utils/helpers.js', () => {
 			assert.true( actual );
 		} );
 	} );
+
+	QUnit.module( 'renderIcon()', () => {
+		QUnit.test( 'panel svg escapes a url so it cannot break out of the image attribute', ( assert ) => {
+			// Arrange
+			const icon = {
+				library: 'svg',
+				value: {
+					url: 'https://example.com/icon.svg" onerror="alert(1)',
+				},
+			};
+
+			// Act
+			const html = elementor.helpers.renderIcon( null, icon, {}, 'i', 'panel' );
+
+			// Assert
+			assert.strictEqual(
+				html,
+				'<img src="https://example.com/icon.svg&quot; onerror=&quot;alert(1)">',
+			);
+		} );
+
+		QUnit.test( 'panel font icon escapes the class attribute', ( assert ) => {
+			// Arrange
+			const icon = {
+				library: 'fa-solid',
+				value: 'fas fa-star" onmouseover="alert(1)',
+			};
+			const originalGetIconLibrarySettings = elementor.helpers.getIconLibrarySettings;
+			const originalEnqueueIconFonts = elementor.helpers.enqueueIconFonts;
+			elementor.helpers.getIconLibrarySettings = () => ( { name: 'fa-solid' } );
+			elementor.helpers.enqueueIconFonts = () => {};
+
+			// Act
+			const html = elementor.helpers.renderIcon( null, icon, {}, 'i', 'panel' );
+
+			// Assert
+			elementor.helpers.getIconLibrarySettings = originalGetIconLibrarySettings;
+			elementor.helpers.enqueueIconFonts = originalEnqueueIconFonts;
+			assert.strictEqual(
+				html,
+				'<i class="fas fa-star&quot; onmouseover=&quot;alert(1)"></i>',
+			);
+		} );
+	} );
 } );

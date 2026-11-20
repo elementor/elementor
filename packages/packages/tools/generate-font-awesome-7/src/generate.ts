@@ -7,13 +7,24 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
+import {
+	buildSearchIndex,
+	readCategories,
+	readIconMetadata,
+	SEARCH_INDEX_FILE_NAME,
+	serializeSearchIndex,
+} from './search-index.ts';
+
 const FONT_AWESOME_MAJOR_VERSION = 7;
 
 const FONT_AWESOME_7_PACKAGES = [
 	'@fortawesome/free-solid-svg-icons',
 	'@fortawesome/free-regular-svg-icons',
 	'@fortawesome/free-brands-svg-icons',
+	'@fortawesome/fontawesome-free',
 ] as const;
+
+const FONT_AWESOME_METADATA_PACKAGE = '@fortawesome/fontawesome-free';
 
 type FontAwesome7PackageName = ( typeof FONT_AWESOME_7_PACKAGES )[ number ];
 
@@ -63,6 +74,10 @@ export function readPackageVersion( packageName: FontAwesome7PackageName ): stri
 	return JSON.parse( readFileSync( packageJsonPath, 'utf8' ) ).version as string;
 }
 
+function defaultMetadataDir(): string {
+	return join( dirname( require.resolve( `${ FONT_AWESOME_METADATA_PACKAGE }/package.json` ) ), 'metadata' );
+}
+
 export function assertFontAwesome7Packages( readVersion: ReadVersion = readPackageVersion ): void {
 	for ( const packageName of FONT_AWESOME_7_PACKAGES ) {
 		const version = readVersion( packageName );
@@ -103,16 +118,28 @@ export function serializeIconsJson( iconsJson: IconsJson ): string {
 	return `{\n  "icons": {\n${ iconEntries }\n  }\n}\n`;
 }
 
+export function resolveMetadataPaths( metadataDir: string = defaultMetadataDir() ): {
+	iconMetadataPath: string;
+	categoriesPath: string;
+} {
+	return {
+		iconMetadataPath: join( metadataDir, 'icon-families.json' ),
+		categoriesPath: join( metadataDir, 'categories.yml' ),
+	};
+}
+
 export function writeFontAwesomeArtifacts( {
 	targetDir,
 	version,
 	iconsByFileName,
 	licenseSourcePath,
+	metadataDir,
 }: {
 	targetDir: string;
 	version: string;
 	iconsByFileName: Record< string, IconsJson >;
 	licenseSourcePath?: string;
+	metadataDir?: string;
 } ): void {
 	mkdirSync( join( targetDir, 'json' ), { recursive: true } );
 
@@ -125,14 +152,25 @@ export function writeFontAwesomeArtifacts( {
 	for ( const [ fileName, iconsJson ] of Object.entries( iconsByFileName ) ) {
 		writeFileSync( join( targetDir, 'json', `${ fileName }.json` ), serializeIconsJson( iconsJson ) );
 	}
+
+	const { iconMetadataPath, categoriesPath } = resolveMetadataPaths( metadataDir );
+	const searchIndex = buildSearchIndex( {
+		iconsByFileName,
+		metadata: readIconMetadata( iconMetadataPath ),
+		categoriesByIconName: readCategories( categoriesPath ),
+	} );
+
+	writeFileSync( join( targetDir, 'json', SEARCH_INDEX_FILE_NAME ), serializeSearchIndex( searchIndex ) );
 }
 
 export function generateFontAwesome7( {
 	targetDir = outputDir,
 	readVersion = readPackageVersion,
+	metadataDir,
 }: {
 	targetDir?: string;
 	readVersion?: ReadVersion;
+	metadataDir?: string;
 } = {} ): { targetDir: string; version: string } {
 	assertFontAwesome7Packages( readVersion );
 
@@ -153,6 +191,7 @@ export function generateFontAwesome7( {
 		version,
 		iconsByFileName,
 		licenseSourcePath,
+		metadataDir,
 	} );
 
 	return { targetDir, version };

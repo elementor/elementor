@@ -1,4 +1,5 @@
-import { ThemeProvider, DirectionProvider } from '@elementor/ui';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { DirectionProvider } from '@elementor/ui';
 import { useQuery } from '@elementor/query';
 import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import Checklist from './components/checklist';

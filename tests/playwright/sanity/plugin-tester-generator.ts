@@ -1,12 +1,23 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
+import { wpCli } from '../assets/wp-cli';
+import { timeouts } from '../config/timeouts';
 import EditorPage from '../pages/editor-page';
 import WpAdminPage from '../pages/wp-admin-page';
-import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
 const isBelowVersion = ( currentVersion?: string, minVersion?: string ) => {
 	return !! minVersion && !! currentVersion && currentVersion.localeCompare( minVersion, undefined, { numeric: true } ) < 0;
+};
+
+const lawFirmAboutEditorUrl = '/law-firm-about/?elementor';
+
+const openLawFirmAboutInElementor = async ( page: Page, wpAdmin: WpAdminPage ): Promise<void> => {
+	await page.goto( lawFirmAboutEditorUrl, {
+		waitUntil: 'domcontentloaded',
+		timeout: timeouts.heavyAction,
+	} );
+	await wpAdmin.waitForPanel();
 };
 
 const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string, minPhp?: string, minWp?: string }[] = [
@@ -100,16 +111,16 @@ export const generatePluginTests = ( testType: string ) => {
 					}
 				}
 
-				await page.goto( '/law-firm-about/?elementor' );
+				await openLawFirmAboutInElementor( page, wpAdmin );
 
 				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
 					await page.getByRole( 'link', { name: 'Not right now' } ).click();
-					await page.goto( '/law-firm-about/?elementor' );
+					await openLawFirmAboutInElementor( page, wpAdmin );
 				}
 
 				if ( 'header-footer-elementor' === plugin.pluginName && page.url().includes( 'page=hfe' ) ) {
 					await page.getByText( 'Exit Guided Setup' ).click();
-					await page.goto( '/law-firm-about/?elementor' );
+					await openLawFirmAboutInElementor( page, wpAdmin );
 				}
 
 				await wpAdmin.closeAnnouncementsIfVisible();

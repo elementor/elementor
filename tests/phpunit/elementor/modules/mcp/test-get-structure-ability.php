@@ -5,7 +5,12 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Core\Documents_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Adapters\V3_Control_Adapter_Registry;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
+use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Style_Reader;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -20,8 +25,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
+	const KIT_PRIMARY_HEX = '#6EC1E4';
+
+	const KIT_SECONDARY_HEX = '#54595F';
+
 	private Get_Structure_Ability $ability;
 	private Documents_Manager $original_documents;
+	private bool $has_sensitive_props_filter = false;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -32,6 +42,15 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		Plugin::$instance->documents = $this->original_documents;
+
+		if ( $this->has_sensitive_props_filter ) {
+			remove_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'add_sensitive_props' ] );
+
+			// Re-register so the cached widget config doesn't keep the test props.
+			Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
+			$this->has_sensitive_props_filter = false;
+		}
+
 		parent::tearDown();
 	}
 
@@ -722,7 +741,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'version', $container['elements'][1] );
 	}
 
-	public function test_execute__strips_non_allowlisted_v3_settings_and_styles_when_include_content_true() {
+	public function test_execute__strips_settings_and_styles_of_unmapped_v3_widgets_when_include_content_true() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
@@ -754,41 +773,46 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertSame( [ 'css' => '' ], $node['styles'] );
 	}
 
-	public function test_execute__serializes_allowlisted_v3_style_when_include_content_true() {
+	public function test_execute__returns_default_styles_for_map_driven_v3_widgets() {
 		// Arrange
 		$this->act_as_admin();
+		$kit_colors = [
+			'globals/colors?id=primary' => self::KIT_PRIMARY_HEX,
+			'globals/colors?id=secondary' => self::KIT_SECONDARY_HEX,
+		];
+		$this->ability = new Get_Structure_Ability(
+			null,
+			new V3_Map_Default_Styles(
+				new V3_Map_Style_Reader( V3_Control_Adapter_Registry::create_default() ),
+				fn( string $global_key ) => $kit_colors[ $global_key ] ?? null,
+				[ V3_Map_Default_Styles::COLOR ]
+			)
+		);
 		$post_id = $this->factory()->post->create();
 
-		$elements = [
+		$this->mock_document_with_elements( $post_id, [
 			[
-				'id' => 'post-title-1',
+				'id' => 'counter1',
 				'elType' => 'widget',
-				'widgetType' => 'theme-post-title',
-				'settings' => [
-					'title' => 'Hello',
-					'title_color' => '#222222',
-					'custom_css' => 'selector { filter: blur(2px); }',
-				],
+				'widgetType' => 'counter',
+				'settings' => [ 'number_color' => '#000000' ],
 				'elements' => [],
 			],
-		];
-
-		$this->mock_document_with_elements( $post_id, $elements );
+		] );
 
 		// Act
 		$result = $this->ability->execute( [
 			'post_id' => $post_id,
-			'element_id' => 'post-title-1',
+			'element_id' => 'counter1',
 			'include_content' => true,
 		] );
 
 		// Assert
 		$node = $result['elements'][0];
-		$this->assertArrayNotHasKey( 'version', $node );
-		$this->assertArrayNotHasKey( 'style', $node );
-		$this->assertSame( [ 'title' => 'Hello' ], $node['settings'] );
-		$this->assertStringContainsString( 'color: #222222;', $node['styles']['css'] );
-		$this->assertStringContainsString( 'filter: blur(2px);', $node['styles']['css'] );
+		$this->assertStringContainsString( 'color: #000000;', $node['styles']['css'] );
+		$this->assertStringContainsString( 'color: ' . self::KIT_PRIMARY_HEX . ';', $node['default_styles'] );
+		$this->assertStringContainsString( 'title { color: ' . self::KIT_SECONDARY_HEX . '; }', $node['default_styles'] );
+		$this->assertStringNotContainsString( '#000000', $node['default_styles'] );
 	}
 
 	public function test_execute__omits_version_for_unknown_type() {
@@ -862,6 +886,51 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 			$settings['paragraph']
 		);
 		$this->assertSame( 'p', $settings['tag'] );
+	}
+
+	public function test_execute__omits_sensitive_props_from_settings() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+		$this->given_heading_with_sensitive_props();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'heading1', 'e-heading', [
+				'tag' => String_Prop_Type::generate( 'h3' ),
+				'test_api_key' => String_Prop_Type::generate( 'secret-key' ),
+				'test_list_id' => String_Prop_Type::generate( 'list-1' ),
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'heading1' );
+
+		// Assert
+		$settings = (array) $node['settings'];
+
+		$this->assertArrayNotHasKey( 'test_api_key', $settings );
+		$this->assertSame( 'list-1', $settings['test_list_id'] );
+		$this->assertSame( 'h3', $settings['tag'] );
+		$this->assertStringNotContainsString( 'secret-key', wp_json_encode( $node ) );
+	}
+
+	public function test_execute__returns_empty_settings_when_only_sensitive_props_are_set() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+		$this->given_heading_with_sensitive_props();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'heading1', 'e-heading', [
+				'test_api_key' => String_Prop_Type::generate( 'secret-key' ),
+			] ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'heading1' );
+
+		// Assert
+		$this->assertEquals( (object) [], $node['settings'] );
 	}
 
 	public function test_execute__returns_link_in_writable_shape_and_keeps_rendered_tag() {
@@ -1003,7 +1072,7 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		);
 	}
 
-	public function test_execute__returns_decorative_editor_setting_as_plain_setting() {
+	public function test_execute__returns_decorative_editor_setting_separately_from_settings() {
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->factory()->post->create();
@@ -1017,7 +1086,64 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$node = $this->read_node_with_content( $post_id, 'block1' );
 
 		// Assert
-		$this->assertSame( [ 'decorative' => true ], (array) $node['settings'] );
+		$this->assertSame( [ 'decorative' => true ], $node['editor_settings'] );
+		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
+	}
+
+	public function test_execute__returns_atomic_layer_name_as_editor_setting_name() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$heading = $this->make_atomic_widget( 'heading1', 'e-heading', [] );
+		$heading['editor_settings'] = [ 'title' => 'Hero Title' ];
+
+		$this->mock_document_with_elements( $post_id, [ $heading ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'heading1' );
+
+		// Assert
+		$this->assertSame( [ 'name' => 'Hero Title' ], $node['editor_settings'] );
+		$this->assertArrayNotHasKey( 'name', (array) $node['settings'] );
+	}
+
+	public function test_execute__returns_legacy_layer_name_as_editor_setting_name() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$legacy_heading = [
+			'id' => 'legacy1',
+			'elType' => 'widget',
+			'widgetType' => 'heading',
+			'settings' => [ '_title' => 'Legacy Hero' ],
+			'elements' => [],
+		];
+
+		$this->mock_document_with_elements( $post_id, [ $legacy_heading ] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'legacy1' );
+
+		// Assert
+		$this->assertSame( [ 'name' => 'Legacy Hero' ], $node['editor_settings'] );
+	}
+
+	public function test_execute__omits_editor_settings_when_nothing_is_set() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create();
+
+		$this->mock_document_with_elements( $post_id, [
+			$this->make_atomic_widget( 'block1', 'e-div-block', [], 'e-div-block' ),
+		] );
+
+		// Act
+		$node = $this->read_node_with_content( $post_id, 'block1' );
+
+		// Assert
+		$this->assertArrayNotHasKey( 'editor_settings', $node );
 	}
 
 	public function test_execute__decorative_keeps_frontend_base_styles_in_default_styles() {
@@ -1059,6 +1185,59 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'decorative', (array) $node['settings'] );
 	}
 
+	public function test_execute__reads_the_staged_autosave_of_a_published_page() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_document_with_elements( 'publish', [ $this->make_atomic_widget( 'live1', 'e-heading', [] ) ] );
+		$this->backdate_post( $post_id );
+		Plugin::$instance->documents->get( $post_id, false )
+			->get_autosave( 0, true )
+			->save( [ 'elements' => [ $this->make_atomic_widget( 'staged1', 'e-heading', [] ) ] ] );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : 'unknown' );
+		$this->assertSame( [ 'staged1' ], array_column( $result['elements'], 'id' ) );
+		$this->assertTrue( $result['staged'] );
+		$this->assertStringContainsString( 'elementor/publish-document', $result['llm_instructions'] );
+	}
+
+	public function test_execute__reports_not_staged_for_a_draft() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_document_with_elements( 'draft', [ $this->make_atomic_widget( 'draft1', 'e-heading', [] ) ] );
+
+		// Act
+		$result = $this->ability->execute( [ 'post_id' => $post_id ] );
+
+		// Assert
+		$this->assertSame( [ 'draft1' ], array_column( $result['elements'], 'id' ) );
+		$this->assertFalse( $result['staged'] );
+		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+	}
+
+	private function create_document_with_elements( string $post_status, array $elements ): int {
+		$post_id = $this->factory()->create_and_get_custom_post( [ 'post_status' => $post_status ] )->ID;
+		$document = Plugin::$instance->documents->get( $post_id, false );
+		$document->set_is_built_with_elementor( true );
+		$document->save( [ 'elements' => $elements ] );
+
+		return $post_id;
+	}
+
+	/**
+	 * Autosave detection requires the autosave's `post_modified_gmt` to be strictly newer than the
+	 * main post's.
+	 */
+	private function backdate_post( int $post_id ): void {
+		global $wpdb;
+
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => gmdate( 'Y-m-d H:i:s', strtotime( '-1 day' ) ) ], [ 'ID' => $post_id ] );
+		clean_post_cache( $post_id );
+	}
+
 	private function make_atomic_widget( string $id, string $widget_type, array $settings, string $el_type = 'widget' ): array {
 		$element = [
 			'id' => $id,
@@ -1073,6 +1252,21 @@ class Test_Get_Structure_Ability extends Elementor_Test_Base {
 		}
 
 		return $element;
+	}
+
+	public function add_sensitive_props( array $schema ): array {
+		$schema['test_api_key'] = String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() );
+		$schema['test_list_id'] = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );
+
+		return $schema;
+	}
+
+	private function given_heading_with_sensitive_props(): void {
+		add_filter( 'elementor/atomic-widgets/props-schema', [ $this, 'add_sensitive_props' ] );
+		$this->has_sensitive_props_filter = true;
+
+		// A fresh type instance, so its config is built with the filtered schema.
+		Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
 	}
 
 	private function read_node_with_content( int $post_id, string $element_id ): array {

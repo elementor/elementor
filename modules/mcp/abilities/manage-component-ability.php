@@ -11,8 +11,10 @@ use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
 use Elementor\Modules\Components\Save_Components_Validator;
+use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
-use Elementor\Modules\Mcp\Abilities\Utils\Insufficient_Permissions_Error;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
 use Elementor\Modules\Mcp\Abilities\Utils\Overridable_Props_Builder;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
@@ -44,7 +46,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Component', 'elementor' ),
-			Prompt_Loader::load( 'manage-component' ),
+			$this->get_description(),
 			'elementor',
 			$this->get_output_schema(),
 			[
@@ -53,6 +55,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'idempotent' => false,
 					'destructive' => true,
 				],
+				'mutates_page' => false,
 			],
 			fn() => current_user_can( 'manage_options' ),
 			$this->get_input_schema()
@@ -61,6 +64,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 	public function execute( $input = [] ) {
 		$input = is_array( $input ) ? $input : [];
+
+		if ( self::is_dry_run( $input ) && self::ACTION_CREATE !== ( $input['action'] ?? null ) ) {
+			return new \WP_Error(
+				'dry_run_unsupported',
+				__( 'Dry run is only supported for the create action.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
 
 		switch ( $input['action'] ?? null ) {
 			case self::ACTION_CREATE:
@@ -132,6 +143,14 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return $non_atomic_error;
 		}
 
+		if ( self::is_dry_run( $input ) ) {
+			return $warnings->add_to_response( [
+				'success' => true,
+				'dry_run' => true,
+				'publish_status' => $this->resolve_status( $input ),
+			] + $item );
+		}
+
 		try {
 			$component_id = $this->get_repository()->create( $title, $elements, $this->resolve_status( $input ), $uid, $settings );
 		} catch ( \Exception $e ) {
@@ -149,6 +168,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		] + $this->document_links( $component );
 
 		return $warnings->add_to_response( $response );
+	}
+
+	public function supports_dry_run(): bool {
+		return true;
 	}
 
 	private function handle_update( array $input ) {
@@ -302,6 +325,8 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	private function save_component( Component_Document $component, array $elements, array $settings ) {
+		$undo_point = Document_Revision_Snapshots::capture( $component, $this->get_id() );
+
 		try {
 			$saved = $component->save( [
 				'elements' => $elements,
@@ -323,10 +348,17 @@ class Manage_Component_Ability extends Abstract_Ability {
 			return new \WP_Error( 'save_failed', __( 'Failed to save component.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );
 		}
 
-		return [
+		$response = [
 			'success' => true,
 			'component_id' => $component->get_main_id(),
 		] + $this->document_links( $component );
+
+		if ( $undo_point ) {
+			$undo_point->commit();
+			$response = $undo_point->add_to_response( $response );
+		}
+
+		return $response;
 	}
 
 	private function validate_circular_dependency( callable $validate ): ?\WP_Error {
@@ -405,7 +437,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 	}
 
 	/**
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: \Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	private function compile_composition( array $input, ?Document $document = null ) {
 		$compiled = Composition_Compiler::make()->compile(
@@ -416,6 +448,10 @@ class Manage_Component_Ability extends Abstract_Ability {
 		);
 		if ( is_wp_error( $compiled ) ) {
 			return $compiled;
+		}
+
+		if ( $compiled['pro_features_discovery'] ) {
+			return $compiled['pro_features_discovery'][0];
 		}
 
 		if ( 1 !== count( $compiled['elements'] ) ) {
@@ -609,8 +645,22 @@ class Manage_Component_Ability extends Abstract_Ability {
 		return array_values( $ids );
 	}
 
+	private function get_description(): string {
+		$description = Prompt_Loader::load( 'manage-component' );
+
+		if ( Components_Access_Controller::is_pro_tier() ) {
+			return $description;
+		}
+
+		return $description . ' ' . $this->get_components_pro_notice();
+	}
+
+	private function get_components_pro_notice(): string {
+		return __( 'When the user asks to create, rename, or archive a component, call `create`, `rename`, or `archive` anyway, then tell the user that this needs Elementor Pro (not licensed on this site) and share the upgrade link from the response. With Pro, a component is built once, reused on any page, and its design is edited in one place. Each copy can still have its own text and images.', 'elementor' );
+	}
+
 	private function check_access( string $action, callable $can ): ?\WP_Error {
-		return $can() ? null : Insufficient_Permissions_Error::for_action( $action );
+		return $can() ? null : Components_Pro_Features_Discovery::for_action( $action );
 	}
 
 	private function invalid_input( string $message ): \WP_Error {
@@ -639,6 +689,24 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'type' => 'string',
 					'description' => 'Server-generated component uid, only present for create.',
 				],
+				'dry_run' => [ 'type' => 'boolean' ],
+				'title' => [
+					'type' => 'string',
+					'description' => 'create dry_run only: the planned component title.',
+				],
+				'publish_status' => [
+					'type' => 'string',
+					'description' => 'create dry_run only: the planned document status.',
+				],
+				'elements' => [
+					'type' => 'array',
+					'items' => [ 'type' => 'object' ],
+					'description' => 'create dry_run only: the planned component elements, with assigned ids and overridable envelopes.',
+				],
+				'settings' => [
+					'type' => 'object',
+					'description' => 'create dry_run only: the planned component settings, including overridable_props with group and override keys.',
+				],
 				'success_ids' => [
 					'type' => 'array',
 					'items' => [ 'type' => 'integer' ],
@@ -663,6 +731,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 					'description' => 'Every warning is fixable: one field was skipped or adjusted during XML compilation and the rest was saved. Errors fail the call instead.',
 				],
 				'warning_details' => Warnings_Bag::get_details_schema(),
+				'undo_revision_id' => Document_Mutation_Links::undo_revision_id_schema_property(),
 			],
 		];
 	}
@@ -756,7 +825,7 @@ class Manage_Component_Ability extends Abstract_Ability {
 
 		foreach ( $elements as $element ) {
 			if ( 'e-component' === ( $element['widgetType'] ?? '' ) ) {
-				$components_count++;
+				++$components_count;
 			}
 
 			$children = $element['elements'] ?? [];

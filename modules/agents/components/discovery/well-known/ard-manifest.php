@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents\Components\Discovery\Well_Known;
 
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +24,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Always applicable — if any agent feature is active, this document is useful.
  */
 class Ard_Manifest extends Abstract_Well_Known_Endpoint {
+
+	private ?Module $module;
+
+	public function __construct( ?Module $module = null ) {
+		$this->module = $module;
+	}
 
 	public function get_id(): string {
 		return 'ard_manifest';
@@ -62,17 +70,43 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 	// ------------------------------------------------------------------
 
 	/**
+	 * Get the agents module instance.
+	 *
+	 * @return Module|null
+	 */
+	private function get_module(): ?Module {
+		if ( null !== $this->module ) {
+			return $this->module;
+		}
+
+		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		return $module instanceof Module ? $module : null;
+	}
+
+	/**
 	 * @param string $home Site home URL.
 	 * @return array
 	 */
 	private function build_capabilities( string $home ): array {
 		$caps = [];
 
-		// llms.txt — always present when the agent_ready experiment is active.
-		$caps['llms_txt'] = [
-			'url'      => $home . 'llms.txt',
-			'full_url' => $home . 'llms-full.txt',
-		];
+		$module = $this->get_module();
+
+		$has_llms_txt      = $module ? $module->should_advertise_llms_txt() : false;
+		$has_llms_full_txt = $module ? $module->should_advertise_llms_full_txt() : false;
+
+		if ( $has_llms_txt || $has_llms_full_txt ) {
+			$caps['llms_txt'] = [];
+
+			if ( $has_llms_txt ) {
+				$caps['llms_txt']['url'] = $home . 'llms.txt';
+			}
+
+			if ( $has_llms_full_txt ) {
+				$caps['llms_txt']['full_url'] = $home . 'llms-full.txt';
+			}
+		}
 
 		// REST API — always present on any WordPress site.
 		$caps['rest_api'] = [
@@ -89,8 +123,7 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 			$caps['auth']['protected_resource'] = $home . '.well-known/oauth-protected-resource';
 		}
 
-		// MCP server — added when the agents MCP component is registered and active.
-		$caps = $this->maybe_add_mcp( $caps, $home );
+		$caps = $this->maybe_add_mcp( $caps );
 
 		// Optional endpoints — added only when their component is active.
 		$caps = $this->maybe_add_optional( $caps, $home );
@@ -98,19 +131,13 @@ class Ard_Manifest extends Abstract_Well_Known_Endpoint {
 		return $caps;
 	}
 
-	private function maybe_add_mcp( array $caps, string $home ): array {
-		// The MCP server component will be registered in a later PR.
-		// Check for its presence defensively so this document works today
-		// and automatically enriches itself when MCP lands.
-		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
-		$mcp    = $module ? $module->get_component( 'agents_mcp_server' ) : null;
-
-		if ( $mcp && $mcp->is_enabled() ) {
+	private function maybe_add_mcp( array $caps ): array {
+		if ( apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
 			$caps['mcp'] = [
-				'transport'   => 'streamable-http',
-				'url'         => rest_url( 'elementor/agents-mcp' ),
+				'transport'   => Mcp_Discovery::TRANSPORT,
+				'url'         => Mcp_Discovery::get_server_url(),
 				'spec'        => 'mcp-2025-11-25',
-				'server_card' => $home . '.well-known/mcp/server-card.json',
+				'server_card' => Mcp_Discovery::get_server_card_url(),
 			];
 		}
 

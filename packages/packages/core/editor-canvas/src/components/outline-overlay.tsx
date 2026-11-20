@@ -19,7 +19,7 @@ const OverlayBox = styled( Box, {
 } )< Pick< Props, 'isSelected' | 'isSmallerOffset' | 'isGlobal' > >(
 	( { theme, isSelected, isSmallerOffset, isGlobal } ) => ( {
 		outline: `${ isSelected ? '2px' : '1px' } solid ${
-			isGlobal ? theme.palette.global.main : theme.palette.primary.light
+			isGlobal ? theme.palette.global.main : theme.palette.accent.light
 		}`,
 		outlineOffset: isSelected && ! isSmallerOffset ? '-2px' : '-1px',
 		pointerEvents: 'none',

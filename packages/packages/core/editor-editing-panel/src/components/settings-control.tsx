@@ -22,7 +22,7 @@ export const SettingsControl = ( { control: { value, type } }: { control: Contro
 	const layout = value.meta?.layout || controlsRegistry.getLayout( value.type as ControlType );
 	const controlProps = populateChildControlProps( value.props );
 
-	if ( layout === 'custom' ) {
+	if ( layout === 'custom' || value.type === 'video' || value.type === 'svg-media' ) {
 		controlProps.label = value.label;
 	}
 

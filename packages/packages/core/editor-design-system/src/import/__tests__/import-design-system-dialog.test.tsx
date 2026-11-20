@@ -418,7 +418,9 @@ describe( '<DesignSystemHeaderMenu />', () => {
 
 		await waitFor(
 			() => expect( downloadBlob ).toHaveBeenCalledWith( expect.any( Blob ), 'design-system-export.zip' ),
-			{ timeout: ASYNC_TIMEOUT_MS }
+			{
+				timeout: ASYNC_TIMEOUT_MS,
+			}
 		);
 
 		const exportCall = post.mock.calls.find( ( [ url ] ) => url.endsWith( '/export' ) );

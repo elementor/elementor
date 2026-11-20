@@ -1,17 +1,24 @@
 import * as React from 'react';
 import { isAngieAvailable, sendPromptToAngie } from '@elementor/editor-mcp';
 import { AngieIcon } from '@elementor/icons';
-import { IconButton, Tooltip } from '@elementor/ui';
+import { Button, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../constants';
+import { type AuditMeta } from '../types';
+import { trackFindingClicked } from '../utils/tracking';
 
 type Props = {
+	audit: AuditMeta;
 	prompt: string;
 	panelZIndex: number;
+	variant?: 'icon' | 'button';
 };
 
-export default function FixViolationWithAngie( { prompt, panelZIndex }: Props ) {
+export default function FixViolationWithAngie( { audit, prompt, panelZIndex, variant = 'icon' }: Props ) {
+	if ( ! isAngieAvailable() ) {
+		return null;
+	}
+
 	const label = __( 'Fix with Angie', 'elementor' );
 	const href = `#angie-prompt=${ encodeURIComponent( prompt ) }`;
 
@@ -19,20 +26,30 @@ export default function FixViolationWithAngie( { prompt, panelZIndex }: Props ) 
 		event.stopPropagation();
 		event.preventDefault();
 
-		if ( isAngieAvailable() ) {
-			sendPromptToAngie( prompt );
-			return;
-		}
-
-		window.dispatchEvent(
-			new CustomEvent( CREATE_WIDGET_EVENT, {
-				detail: {
-					entry_point: ANGIE_FIX_ENTRY_POINT,
-					prompt,
-				},
-			} )
-		);
+		sendPromptToAngie( prompt );
+		trackFindingClicked( {
+			audit,
+			locationL2: 'issues',
+			actionType: 'fix_with_angie',
+			interactionResult: 'angie_prompt_sent',
+		} );
 	};
+
+	if ( variant === 'button' ) {
+		return (
+			<Button
+				component="a"
+				href={ href }
+				size="small"
+				color="secondary"
+				variant="outlined"
+				startIcon={ <AngieIcon fontSize="tiny" aria-hidden={ true } /> }
+				onClick={ handleClick }
+			>
+				{ label }
+			</Button>
+		);
+	}
 
 	return (
 		<Tooltip title={ label } placement="top" PopperProps={ { sx: { zIndex: panelZIndex } } }>

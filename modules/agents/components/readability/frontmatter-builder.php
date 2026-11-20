@@ -44,7 +44,7 @@ class Frontmatter_Builder {
 		$permalink = get_permalink( $post_id );
 
 		if ( is_string( $permalink ) && '' !== $permalink ) {
-			$url     = esc_url( $permalink );
+			$url     = esc_url_raw( $permalink );
 			$lines[] = 'url: "' . $url . '"';
 			$lines[] = 'canonical: "' . $url . '"';
 		}
@@ -76,7 +76,7 @@ class Frontmatter_Builder {
 		$featured_image = get_the_post_thumbnail_url( $post_id, 'full' );
 
 		if ( is_string( $featured_image ) && '' !== $featured_image ) {
-			$lines[] = 'featured_image: "' . esc_url( $featured_image ) . '"';
+			$lines[] = 'featured_image: "' . esc_url_raw( $featured_image ) . '"';
 		}
 
 		// Categories and tags (blog posts only).

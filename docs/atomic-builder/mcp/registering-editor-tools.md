@@ -21,7 +21,7 @@ API for registering tools and resources in Elementor's **in-editor** MCP layer. 
 | `MCPRegistryEntry.waitForReady` | `() → Promise<void>` | Await adapter activation |
 | `MCPRegistryEntry.sendResourceUpdated` | `( { uri } )` | Push resource update to adapters |
 | `registerMcpAdapter` | `( adapter: IMcpRegistrationAdapter )` | Custom host bridge |
-| `createAndRegisterAdapters` | `() → Promise<void>` | Wire WebMCP + Angie adapters |
+| `createAndRegisterAdapters` | `() → Promise<void>` | Wire the WebMCP adapter (Angie is attached separately, see below) |
 | `signalMcpReady` | `() → void` | Unblock buffered tool registration |
 
 Verified: `mcp-registry.ts`, `adapters/types.ts`.
@@ -66,12 +66,14 @@ class MyHostAdapter implements IMcpRegistrationAdapter {
 registerMcpAdapter( new MyHostAdapter() );
 ```
 
-Built-in adapters (`init.ts`):
+Built-in adapters:
 
-| Adapter | When | Role |
-|---------|------|------|
-| `WebMCPAdapter` | `getModelContext()` available | `registerModelContextTool` + `editor-resource-getter` |
-| `AngieMcpAdapter` | `isAngieAvailable()` | Local `McpServer` via Angie SDK |
+| Adapter | Registered by | Role |
+|---------|---------------|------|
+| `WebMCPAdapter` | `createAndRegisterAdapters` (`init.ts`), when `getModelContext()` is available | `registerModelContextTool` + `editor-resource-getter` |
+| `AngieMcpAdapter` | `attachEditorMcpServers` in `@elementor/editor-angie`, on Core's Angie SDK instance once Angie boots | Local `McpServer` via Angie SDK |
+
+`createAndRegisterAdapters` does not add `AngieMcpAdapter`. Core's Angie boot attaches the editor servers to its own SDK instance, so they are registered once, with the host that owns them.
 
 ## Extension
 

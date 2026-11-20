@@ -1,13 +1,13 @@
-import { isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
+import { hasLoadedEditorAngie, isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from '../../../types';
 
-const HELP_CENTER_URL = 'https://go.elementor.com/editor-top-bar-learn/';
-const HELP_CENTER_ANGIE_PROMPT = `${ __( 'Help me with', 'elementor' ) } `;
+export const HELP_CENTER_URL = 'https://go.elementor.com/editor-top-bar-learn/';
+export const HELP_CENTER_ANGIE_PROMPT = `${ __( 'Help me with', 'elementor' ) } `;
 
-const dispatchHelpClickEvent = () => {
+export const dispatchHelpClickEvent = () => {
 	const extendedWindow = window as unknown as ExtendedWindow;
 	const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
@@ -22,7 +22,7 @@ const dispatchHelpClickEvent = () => {
 };
 
 export default function useActionProps() {
-	const hasAngieActive = isAngieAvailable();
+	const hasAngieActive = hasLoadedEditorAngie() || isAngieAvailable();
 
 	if ( hasAngieActive ) {
 		return {

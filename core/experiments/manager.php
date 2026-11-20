@@ -337,6 +337,42 @@ class Manager extends Base_Object {
 		return static::OPTION_PREFIX . $feature_name;
 	}
 
+	/**
+	 * Set Feature State
+	 *
+	 * Saves a feature state and runs the same side effects as the experiments settings page,
+	 * also outside of the admin (REST, WP-CLI). Dependencies are validated before anything is saved,
+	 * and a Dependency_Exception is thrown when the feature can't be activated because a dependency is inactive.
+	 *
+	 * @param string $feature_name
+	 * @param string $state One of STATE_ACTIVE, STATE_INACTIVE or STATE_DEFAULT.
+	 *
+	 * @throws \InvalidArgumentException If the feature does not exist, is not mutable, or the state is invalid.
+	 */
+	public function set_feature_state( string $feature_name, string $state ): void {
+		$feature = $this->get_features( $feature_name );
+
+		if ( ! $feature ) {
+			throw new \InvalidArgumentException( sprintf( 'Experiment `%s` does not exist.', esc_html( $feature_name ) ) );
+		}
+
+		if ( ! $feature['mutable'] ) {
+			throw new \InvalidArgumentException( sprintf( 'Experiment `%s` can not be changed.', esc_html( $feature_name ) ) );
+		}
+
+		if ( ! in_array( $state, [ self::STATE_ACTIVE, self::STATE_INACTIVE, self::STATE_DEFAULT ], true ) ) {
+			throw new \InvalidArgumentException( sprintf( 'Invalid experiment state `%s`.', esc_html( $state ) ) );
+		}
+
+		$blocking_dependency = $this->find_dependency_blocking_state( $feature, $state );
+
+		if ( $blocking_dependency ) {
+			throw $this->create_inactive_dependency_exception( esc_html( $feature_name ), esc_html( $blocking_dependency['name'] ) );
+		}
+
+		$this->write_feature_state( $feature_name, $state );
+	}
+
 	private function add_default_features() {
 		$this->add_feature( [
 			'name' => 'e_font_icon_svg',
@@ -803,61 +839,12 @@ class Manager extends Base_Object {
 		$feature_option_key = $this->get_feature_option_key( $feature['name'] );
 
 		if ( self::STATE_ACTIVE === $new_state ) {
-			if ( empty( $feature['dependencies'] ) ) {
-				return;
-			}
+			$inactive_dependency = $this->find_inactive_dependency( $feature );
 
-			// Validate if the current feature dependency is available.
-			foreach ( $feature['dependencies'] as $dependency ) {
-				if ( $dependency instanceof Non_Existing_Dependency ) {
-					$this->warn_removed_or_hidden_dependency(
-						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available in Core.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency->get_name() )
-						)
-					);
-					continue;
-				}
+			if ( $inactive_dependency ) {
+				$rollback( $feature_option_key, self::STATE_INACTIVE );
 
-				$dependency_feature = $this->get_features( $dependency->get_name() );
-
-				if ( ! $dependency_feature ) {
-					$this->warn_removed_or_hidden_dependency(
-						sprintf(
-							'The feature `%s` has a dependency `%s` that is not available in Core.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency->get_name() )
-						)
-					);
-					continue;
-				}
-
-				if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
-					$this->warn_removed_or_hidden_dependency(
-						sprintf(
-							'The feature `%1$s` depends on hidden experiment `%2$s`.',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency_feature['name'] )
-						)
-					);
-					continue;
-				}
-
-				$dependency_state = $this->get_feature_actual_state( $dependency_feature );
-
-				// If dependency is not active.
-				if ( self::STATE_INACTIVE === $dependency_state ) {
-					$rollback( $feature_option_key, self::STATE_INACTIVE );
-
-					throw new Exceptions\Dependency_Exception(
-						sprintf(
-							'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
-							esc_html( $feature['name'] ),
-							esc_html( $dependency_feature['name'] )
-						)
-					);
-				}
+				throw $this->create_inactive_dependency_exception( esc_html( $feature['name'] ), esc_html( $inactive_dependency['name'] ) );
 			}
 		} elseif ( self::STATE_INACTIVE === $new_state ) {
 			// Make sure to deactivate a dependant experiment of the current feature when it's deactivated.
@@ -870,11 +857,89 @@ class Manager extends Base_Object {
 
 				foreach ( $current_feature['dependencies'] as $dependency ) {
 					if ( self::STATE_ACTIVE === $current_feature_state && $feature['name'] === $dependency->get_name() ) {
-						update_option( $this->get_feature_option_key( $current_feature['name'] ), static::STATE_INACTIVE );
+						$this->write_feature_state( $current_feature['name'], static::STATE_INACTIVE );
 					}
 				}
 			}
 		}
+	}
+
+	private function create_inactive_dependency_exception( string $feature_name, string $dependency_name ): Exceptions\Dependency_Exception {
+		return new Exceptions\Dependency_Exception(
+			sprintf(
+				'To turn on `%1$s`, Experiment: `%2$s` activity is required!',
+				$feature_name,
+				$dependency_name
+			)
+		);
+	}
+
+	private function find_dependency_blocking_state( array $feature, string $state ): ?array {
+		$resolved_state = self::STATE_DEFAULT === $state ? $feature['default'] : $state;
+
+		if ( self::STATE_ACTIVE !== $resolved_state ) {
+			return null;
+		}
+
+		return $this->find_inactive_dependency( $feature );
+	}
+
+	private function find_inactive_dependency( array $feature ): ?array {
+		foreach ( $feature['dependencies'] ?? [] as $dependency ) {
+			if ( $dependency instanceof Non_Existing_Dependency ) {
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'The feature `%s` has a dependency `%s` that is not available in Core.',
+						esc_html( $feature['name'] ),
+						esc_html( $dependency->get_name() )
+					)
+				);
+				continue;
+			}
+
+			$dependency_feature = $this->get_features( $dependency->get_name() );
+
+			if ( ! $dependency_feature ) {
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'The feature `%s` has a dependency `%s` that is not available in Core.',
+						esc_html( $feature['name'] ),
+						esc_html( $dependency->get_name() )
+					)
+				);
+				continue;
+			}
+
+			if ( $this->is_removed_or_hidden_dependency( $dependency_feature ) ) {
+				$this->warn_removed_or_hidden_dependency(
+					sprintf(
+						'The feature `%1$s` depends on hidden experiment `%2$s`.',
+						esc_html( $feature['name'] ),
+						esc_html( $dependency_feature['name'] )
+					)
+				);
+				continue;
+			}
+
+			if ( self::STATE_INACTIVE === $this->get_feature_actual_state( $dependency_feature ) ) {
+				return $dependency_feature;
+			}
+		}
+
+		return null;
+	}
+
+	private function write_feature_state( string $feature_name, string $state ): void {
+		update_option( $this->get_feature_option_key( $feature_name ), $state );
+
+		$feature = $this->features[ $feature_name ];
+
+		if ( ! $feature['mutable'] ) {
+			return;
+		}
+
+		// Read after saving: when the admin option hook already applied this change, the states match and this is a no-op.
+		$this->on_feature_state_change( $feature, $state, $feature['state'] );
 	}
 
 	private function should_show_hidden() {

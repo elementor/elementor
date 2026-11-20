@@ -13,3 +13,7 @@ export function selectReport( state: GlobalState ) {
 export function selectError( state: GlobalState ) {
 	return state.audits.error;
 }
+
+export function selectIsStale( state: GlobalState ) {
+	return state.audits.isStale;
+}

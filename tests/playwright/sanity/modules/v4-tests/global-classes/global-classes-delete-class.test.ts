@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
-import { deleteClassFromClassManager, dismissClassManagerIntro, getGlobalClasses, saveAndCloseClassManager } from './utils';
+import { deleteClassFromClassManager, getGlobalClasses, saveAndCloseClassManager } from './utils';
 
 const BACKGROUND_COLOR = '#ff0000';
 const BACKGROUND_COLOR_RGB = 'rgb(255, 0, 0)';
@@ -29,7 +29,6 @@ async function openClassManagerFromStyleTab( page: Page ): Promise< void > {
 	if ( await saveAndContinueButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
 		await saveAndContinueButton.click();
 	}
-	await dismissClassManagerIntro( page );
 }
 
 async function assertEditingPanelRestoredAfterClose(
@@ -67,9 +66,7 @@ test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
 		await expect( divBlock ).toHaveClass( new RegExp( `\\b${ className }\\b` ) );
 
-		await page.getByRole( 'button', { name: 'Class Manager' } ).click();
-		await page.getByRole( 'button', { name: 'Save & Continue' } ).click();
-		await page.locator( '[aria-label="Got it introduction"]' ).click();
+		await openClassManagerFromStyleTab( page );
 		await page.locator( '[aria-label="More actions"]' ).first().click();
 		await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
 		await page.getByRole( 'button', { name: 'Delete' } ).click();

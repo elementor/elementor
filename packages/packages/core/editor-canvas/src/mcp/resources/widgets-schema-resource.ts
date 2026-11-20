@@ -29,13 +29,24 @@ const listWidgetTypes = async (): Promise< string[] > => {
 	return ( data.data?.widgets ?? [] ).map( ( widget ) => widget.type );
 };
 
+type WidgetSchemasResponse = {
+	schemas?: Record< string, Record< string, unknown > >;
+	errors?: Record< string, { code: string; message: string } >;
+};
+
 const fetchWidgetSchema = async ( widgetType: string ): Promise< Record< string, unknown > > => {
-	const { data } = await httpService().post< HttpResponse< Record< string, unknown > > >( MCP_PROXY_URL, {
-		tool: 'get-widget-schema',
-		input: { widget_type: widgetType },
+	const { data } = await httpService().post< HttpResponse< WidgetSchemasResponse > >( MCP_PROXY_URL, {
+		tool: 'get-widget-schemas',
+		input: { widget_type: [ widgetType ] },
 	} );
 
-	return data.data ?? {};
+	const schema = data.data?.schemas?.[ widgetType ];
+
+	if ( ! schema ) {
+		throw new Error( data.data?.errors?.[ widgetType ]?.message ?? `No schema found for ${ widgetType }.` );
+	}
+
+	return schema;
 };
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {

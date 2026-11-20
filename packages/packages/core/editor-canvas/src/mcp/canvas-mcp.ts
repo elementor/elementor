@@ -10,7 +10,9 @@ import { initEditorStateResource } from './resources/editor-state-resource';
 import { initGeneralContextResource } from './resources/general-context-resource';
 import { initSelectedElementResource } from './resources/selected-element-resource';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
+import { initBuildCompositionTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
+import { initFindIconsTool } from './tools/find-icons/tool';
 import { initGetPageStructureTool } from './tools/get-page-structure/tool';
 import { getDynamicTagNamesByCategories } from './utils/resolve-dynamic-tag';
 
@@ -28,6 +30,8 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initGeneralContextResource( reg );
 	initBestPracticesResource( reg );
 	initConfigureElementTool( reg );
+	initFindIconsTool( reg );
 	initGetPageStructureTool( reg );
+	initBuildCompositionTool( reg );
 	initBreakpointsResource( reg );
 };

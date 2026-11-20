@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
 
@@ -29,19 +30,38 @@ class Images_Manager {
 	 * @access public
 	 */
 	public function get_images_details() {
+		if ( ! $this->verify_request_nonce() ) {
+			wp_send_json_error( 'Invalid nonce', 403 );
+		}
+
+		// Kept at 200: a non-200 status triggers the editor's error toast for Contributors.
 		if ( ! current_user_can( 'publish_posts' ) ) {
 			wp_send_json_error( 'Permission denied' );
 		}
 
-		// PHPCS - Already validated by wp_ajax.
+		// PHPCS - Nonce verified by $this->verify_request_nonce().
 		$items = Utils::get_super_global_value( $_POST, 'items' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$urls  = [];
 
-		foreach ( $items as $item ) {
-			$urls[ $item['id'] ] = $this->get_details( $item['id'], $item['size'], $item['is_first_time'] );
+		foreach ( (array) $items as $item ) {
+			$id = absint( $item['id'] ?? 0 );
+
+			$urls[ $id ] = $this->get_details(
+				$id,
+				$item['size'],
+				$item['is_first_time'],
+				current_user_can( 'edit_post', $id )
+			);
 		}
 
 		wp_send_json_success( $urls );
+	}
+
+	private function verify_request_nonce() {
+		/** @var Ajax $ajax */
+		$ajax = Plugin::$instance->common->get_component( 'ajax' );
+
+		return $ajax->verify_request_nonce();
 	}
 
 	/**
@@ -60,10 +80,12 @@ class Images_Manager {
 	 *                                    values in pixels (in that order).
 	 * @param string       $is_first_time Set 'true' string to force reloading
 	 *                                    all image sizes.
+	 * @param bool         $persist_custom_size Whether to record custom sizes in
+	 *                                    the attachment metadata.
 	 *
 	 * @return array URLs with different image sizes.
 	 */
-	public function get_details( $id, $size, $is_first_time ) {
+	public function get_details( $id, $size, $is_first_time, $persist_custom_size = true ) {
 		if ( ! class_exists( 'Group_Control_Image_Size' ) ) {
 			require_once ELEMENTOR_PATH . '/includes/controls/groups/image-size.php';
 		}
@@ -98,6 +120,11 @@ class Images_Manager {
 
 				$image_meta = wp_get_attachment_metadata( $id );
 
+				if ( ! $image_meta ) {
+					$urls[ $size ] = null;
+					continue;
+				}
+
 				// Attach custom image to original.
 				$image_meta['sizes'][ 'elementor_' . $size ] = [
 					'file' => $thumbs_path,
@@ -106,11 +133,15 @@ class Images_Manager {
 					'mime-type' => get_post_mime_type( $id ),
 				];
 
-				wp_update_attachment_metadata( $id, $image_meta );
+				if ( $persist_custom_size ) {
+					wp_update_attachment_metadata( $id, $image_meta );
+				}
 
 				$urls[ $size ] = $url;
 			} else {
-				$urls[ $size ] = wp_get_attachment_image_src( $id, $size )[0];
+				$image_src = wp_get_attachment_image_src( $id, $size );
+
+				$urls[ $size ] = $image_src ? $image_src[0] : null;
 			}
 		}
 

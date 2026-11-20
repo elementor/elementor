@@ -10,6 +10,7 @@ type CreateElementsParams = {
 	elements: CreateElementParams[];
 	title: string;
 	subtitle?: string;
+	origin?: string;
 };
 
 type CreatedElement = {
@@ -31,6 +32,7 @@ export const createElements = ( {
 	elements,
 	title,
 	subtitle = __( 'Item added', 'elementor' ),
+	origin,
 }: CreateElementsParams ): CreatedElementsResult => {
 	const undoableCreate = undoable(
 		{
@@ -47,7 +49,7 @@ export const createElements = ( {
 					const element = createElement( {
 						container: parentContainer,
 						...elementParams,
-						options: { ...options, useHistory: false },
+						options: { ...options, useHistory: false, origin },
 					} );
 
 					createdElements.push( {
@@ -69,7 +71,7 @@ export const createElements = ( {
 					if ( freshContainer ) {
 						deleteElement( {
 							container: freshContainer,
-							options: { useHistory: false },
+							options: { useHistory: false, origin },
 						} );
 
 						return;
@@ -91,7 +93,7 @@ export const createElements = ( {
 						const element = createElement( {
 							container: freshParent,
 							model,
-							options: { ...options, useHistory: false },
+							options: { ...options, useHistory: false, origin },
 						} );
 
 						newElements.push( {

@@ -16,11 +16,11 @@ import { loadExistingClasses } from '../../load-existing-classes';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
+import { ClassManagerHeaderSlot } from '../class-manager-header-location';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
 import { SearchAndFilterProvider } from '../search-and-filter/context';
-import { ClassManagerIntroduction } from './class-manager-introduction';
 import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
@@ -38,34 +38,18 @@ type StopSyncConfirmationDialogProps = {
 export type ClassManagerPanelEmbeddedProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
-	isActive?: boolean;
 };
 
-export function ClassManagerPanelEmbedded( {
-	onRequestClose,
-	onExposeCloseAttempt,
-	isActive,
-}: ClassManagerPanelEmbeddedProps ) {
-	return (
-		<ClassManagerPanelContent
-			onRequestClose={ onRequestClose }
-			onExposeCloseAttempt={ onExposeCloseAttempt }
-			isActive={ isActive }
-		/>
-	);
+export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
+	return <ClassManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />;
 }
 
 type ClassManagerPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
-	isActive?: boolean;
 };
 
-function ClassManagerPanelContent( {
-	onRequestClose,
-	onExposeCloseAttempt,
-	isActive = true,
-}: ClassManagerPanelContentProps ) {
+function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelContentProps ) {
 	const isDirty = useDirtyState();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
@@ -176,6 +160,7 @@ function ClassManagerPanelContent( {
 									<ClassManagerSearch />
 								</Box>
 								<CssClassFilter />
+								<ClassManagerHeaderSlot />
 								<TotalCssClassCounter />
 							</Stack>
 							<ActiveFilters />
@@ -213,7 +198,6 @@ function ClassManagerPanelContent( {
 					</Stack>
 				</SearchAndFilterProvider>
 			</ErrorBoundary>
-			{ isActive && <ClassManagerIntroduction /> }
 			{ startSyncConfirmation && (
 				<StartSyncToV3Modal
 					externalOpen

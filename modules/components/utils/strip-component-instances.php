@@ -9,15 +9,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Removes every `e-component` widget from an elements tree.
+ * Removes `e-component` widgets from an elements tree.
  *
- * Used at import time when components round-trip is disabled, to clean up any dangling
- * `e-component` widgets that survived from a zip exported before the flag or by an
- * external site. Dangling instances would point at nonexistent component posts and
- * either render empty or throw in the editor panel.
+ * Used at import time to clean up dangling `e-component` widgets: when components round-trip
+ * is disabled every instance is removed, and otherwise only instances whose component was not
+ * imported. Dangling instances would point at nonexistent (or unrelated) posts and either
+ * render empty or throw in the editor panel.
  */
 class Strip_Component_Instances {
-	public static function apply( array $elements ): array {
+	/**
+	 * @param array      $elements
+	 * @param int[]|null $kept_component_ids `null` strips every instance; a list strips only instances pointing elsewhere.
+	 */
+	public static function apply( array $elements, ?array $kept_component_ids = null ): array {
 		$result = [];
 
 		foreach ( $elements as $element ) {
@@ -26,17 +30,27 @@ class Strip_Component_Instances {
 				continue;
 			}
 
-			if ( Component_Instance_Prop_Type::is_instance_element( $element ) ) {
+			if ( Component_Instance_Prop_Type::is_instance_element( $element ) && ! self::is_kept( $element, $kept_component_ids ) ) {
 				continue;
 			}
 
 			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = self::apply( $element['elements'] );
+				$element['elements'] = self::apply( $element['elements'], $kept_component_ids );
 			}
 
 			$result[] = $element;
 		}
 
 		return $result;
+	}
+
+	private static function is_kept( array $element, ?array $kept_component_ids ): bool {
+		if ( null === $kept_component_ids ) {
+			return false;
+		}
+
+		$component_id = Component_Instance_Prop_Type::extract_component_id( $element['settings'] ?? [] );
+
+		return is_numeric( $component_id ) && in_array( (int) $component_id, $kept_component_ids, true );
 	}
 }

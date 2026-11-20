@@ -59,6 +59,17 @@ function DeleteDialog( {
 	/* translators: %s: Post title. */
 	const dialogTitle = sprintf( __( 'Delete "%s"?', 'elementor' ), post.title.rendered );
 
+	const dialogBody =
+		type === 'post'
+			? __(
+					'The post and its content will be deleted forever and we won’t be able to recover them.',
+					'elementor'
+			  )
+			: __(
+					'The page and its content will be deleted forever and we won’t be able to recover them.',
+					'elementor'
+			  );
+
 	const deletePage = async () => {
 		try {
 			await deletePost.mutateAsync( post.id );
@@ -81,12 +92,7 @@ function DeleteDialog( {
 			<DialogTitle noWrap>{ dialogTitle }</DialogTitle>
 			<Divider />
 			<DialogContent>
-				<DialogContentText>
-					{ __(
-						'The page and its content will be deleted forever and we won’t be able to recover them.',
-						'elementor'
-					) }
-				</DialogContentText>
+				<DialogContentText>{ dialogBody }</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button

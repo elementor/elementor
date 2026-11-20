@@ -18,6 +18,9 @@ use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Number_Plain_Resolv
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\Size_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Resolvers\String_Plain_Resolver;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Google_Maps\Atomic_Google_Maps;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Map\Map_Providers_Registry;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Map\Providers\Google\Google_Maps_Provider;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Grid\Grid;
@@ -32,7 +35,17 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_I
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Content\Atomic_Accordion_Item_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Header\Atomic_Accordion_Item_Header;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon\Atomic_Accordion_Item_Icon;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Icon_Open\Atomic_Accordion_Item_Icon_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Accordion\Atomic_Accordion_Item_Title\Atomic_Accordion_Item_Title;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Items\Atomic_Menu_Items;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Submenu_Promotion\Atomic_Menu_Submenu_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Submenu_Trigger_Promotion\Atomic_Menu_Submenu_Trigger_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle\Atomic_Menu_Toggle;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Closed\Atomic_Menu_Toggle_Closed;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Toggle_Open\Atomic_Menu_Toggle_Open;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
@@ -132,8 +145,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Resolver as Custom_Icon_Svg_Resolver;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Custom_Icon_Svg\Rest_Api as Custom_Icon_Svg_Rest_Api;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Background_Video\Atomic_Background_Video_Content\Atomic_Background_Video_Content;
@@ -162,6 +173,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspectiv
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Atomic_Prop_Remap;
+use Elementor\Modules\AtomicWidgets\Utils\Custom_Attributes_Trust;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
@@ -181,7 +193,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_ICON_BUTTON = 'e_icon_button';
 	const EXPERIMENT_ACCORDION = 'e_accordion';
-	const EXPERIMENT_ICON_LIBRARY = 'e_svg_library';
+	const EXPERIMENT_NAV_MENU = 'e_nav_menu';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -210,10 +222,11 @@ class Module extends BaseModule {
 
 		$this->register_icon_button_experiment();
 		$this->register_accordion_experiment();
-		$this->register_icon_library_experiment();
+		$this->register_nav_menu_experiment();
 
 		$this->register_hooks();
 
+		add_filter( 'elementor/document/load/data', [ Atomic_Accordion_Item_Header::class, 'replace_saved_upward_chevron' ] );
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_font_awesome_7_config( $settings ) );
@@ -239,6 +252,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/plain/transformers/register', fn ( $transformers ) => $this->register_plain_transformers( $transformers ) );
 		add_action( 'elementor/atomic-widgets/settings-resolvers/register', fn ( $registry ) => $this->register_settings_resolvers( $registry ) );
+		add_action( 'elementor/atomic-widgets/map-providers/register', fn ( Map_Providers_Registry $registry ) => $this->register_map_providers( $registry ) );
 		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
@@ -283,11 +297,11 @@ class Module extends BaseModule {
 		] );
 	}
 
-	private function register_icon_library_experiment() {
+	private function register_nav_menu_experiment() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_ICON_LIBRARY,
-			'title' => esc_html__( 'SVG Library', 'elementor' ),
-			'description' => esc_html__( 'Enable SVG library support in the SVG element.', 'elementor' ),
+			'name' => self::EXPERIMENT_NAV_MENU,
+			'title' => esc_html__( 'Atomic Menu', 'elementor' ),
+			'description' => esc_html__( 'Enable the V4 Menu element.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -305,23 +319,10 @@ class Module extends BaseModule {
 		Atomic_Prop_Remap::register_builtin_handlers();
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
-		( new Custom_Icon_Svg_Rest_Api() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+		Custom_Attributes_Trust::register_hooks();
 
-		add_filter( 'elementor/atomic-widgets/icon/svg-html', [ $this, 'fill_custom_icon_svg' ], 20, 2 );
 		add_filter( 'elementor/allowed_html_wrapper_tags', [ $this, 'add_inline_html_tags' ] );
-	}
-
-	public function fill_custom_icon_svg( $html, $icon ) {
-		if ( is_string( $html ) && '' !== $html ) {
-			return $html;
-		}
-
-		if ( ! is_array( $icon ) ) {
-			return is_string( $html ) ? $html : '';
-		}
-
-		return Custom_Icon_Svg_Resolver::resolve( $icon );
 	}
 
 	public function add_inline_html_tags( array $tags ): array {
@@ -411,6 +412,14 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
 		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
+
+		if ( Atomic_Google_Maps::has_provider() ) {
+			$widgets_manager->register( new Atomic_Google_Maps() );
+		}
+	}
+
+	private function register_map_providers( Map_Providers_Registry $registry ) {
+		$registry->register( new Google_Maps_Provider() );
 	}
 
 	private function register_list_element( Elements_Manager $elements_manager ) {
@@ -420,6 +429,21 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_List_Item_Content() );
 
 		return $this;
+	}
+
+	private function register_menu_elements( Elements_Manager $elements_manager ) {
+		$elements_manager->register_element_type( new Atomic_Menu() );
+		$elements_manager->register_element_type( new Atomic_Menu_Items() );
+		$elements_manager->register_element_type( new Atomic_Menu_Entry() );
+		$elements_manager->register_element_type( new Atomic_Menu_Item() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Closed() );
+		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Open() );
+
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Atomic_Menu_Submenu_Trigger_Promotion() );
+			$elements_manager->register_element_type( new Atomic_Menu_Submenu_Promotion() );
+		}
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -435,11 +459,16 @@ class Module extends BaseModule {
 
 		$this->register_list_element( $elements_manager );
 
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAV_MENU ) ) {
+			$this->register_menu_elements( $elements_manager );
+		}
+
 		$elements_manager->register_element_type( new Atomic_Accordion() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Header() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Title() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon() );
+		$elements_manager->register_element_type( new Atomic_Accordion_Item_Icon_Open() );
 		$elements_manager->register_element_type( new Atomic_Accordion_Item_Content() );
 
 		$elements_manager->register_element_type( new Atomic_Background_Video() );
@@ -608,10 +637,6 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
-	public static function is_svg_library_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ICON_LIBRARY );
-	}
-
 	private function get_element_usage_name( $title, $type ) {
 		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
@@ -716,11 +741,24 @@ class Module extends BaseModule {
 			'}',
 			'.e-accordion-item-base[open]::details-content { block-size: auto; }',
 			// Accordion icon slot: see docs/accordion_v4_icon_slot_behaviors.md
-			'.e-accordion-item-icon-base { --e-svg-width: auto; --e-svg-height: 100%; }',
-			':where(.e-accordion-item-icon-base) .e-svg-base { max-width: 100%; }',
-			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg { width: auto !important; }',
-			'.e-accordion-item-icon-base svg { transition: transform .3s ease; }',
-			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-base svg { transform: rotate(180deg); }',
+			'.e-accordion-item-icon-base, .e-accordion-item-icon-open-base { --e-svg-width: auto; --e-svg-height: 100%; }',
+			':where(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) .e-svg-base { max-width: 100%; }',
+			'.e-accordion-item-icon-base.e-accordion-item-icon-base .e-svg-base svg, .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base .e-svg-base svg { width: auto !important; }',
+			'.e-accordion-item-icon-base svg, .e-accordion-item-icon-open-base svg { transition: transform .3s ease; }',
+			// No fallback: a missing variable makes this declaration invalid, so it is dropped and the
+			// closed icon stays at transform none. That is the published accordion. 0 is omitted by the
+			// template for the same reason. A saved close angle is the only thing that rotates it.
+			'.e-accordion-item-base:not([open]) > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation-closed)); }',
+			'.e-accordion-item-base[open] > summary :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) svg { transform: rotate(var(--e-accordion-icon-rotation, ' . Atomic_Accordion::ICON_ROTATION_DEFAULT . 'deg)); }',
+			// `display: none` until [open] skips the transform transition, so the open icon
+			// appears already rotated. Keep both slots rendered, stacked in one cell, and
+			// swap them with visibility so the visible icon can rotate.
+			'.e-accordion-item-header-base.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }',
+			'.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) > .e-accordion-item-title-base { grid-column: 1; grid-row: 1; }',
+			'.e-accordion-item-header-base:has(> .e-accordion-item-icon-open-base) > :is(.e-accordion-item-icon-base, .e-accordion-item-icon-open-base) { grid-column: 2; grid-row: 1; }',
+			'.e-accordion-item-base .e-accordion-item-icon-open-base.e-accordion-item-icon-open-base { visibility: hidden; }',
+			'.e-accordion-item-base[open] > summary .e-accordion-item-icon-open-base { visibility: visible; }',
+			'.e-accordion-item-base[open] > summary:has(.e-accordion-item-icon-open-base) .e-accordion-item-icon-base { visibility: hidden; }',
 			// A solid circle at 1em fills the text box and looks heavier than a bullet. 0.6em stays inside the 1lh slot.
 			'.e-list-item-marker-base { --e-svg-width: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; --e-svg-height: ' . Atomic_List_Item_Marker::MARKER_SVG_SIZE . '; }',
 			// The marker is a flex item and shrinks the icon (about 19.7px wide for a 21px font). :where() stays under the SVG's own styles.
@@ -729,6 +767,10 @@ class Module extends BaseModule {
 			'.e-list-item-marker-base .e-svg-base svg { display: block; }',
 
 		] );
+
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAV_MENU ) ) {
+			$inline_css .= Atomic_Menu::get_collapse_css();
+		}
 
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

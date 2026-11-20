@@ -13,7 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/types';
-import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
+import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
 import { usePseudoStates } from '../style-states/use-pseudo-states';
@@ -130,6 +130,15 @@ const CLASS_STATES_MAP: Record< string, { label: string } > = {
 	disabled: {
 		label: __( 'disabled', 'elementor' ),
 	},
+	current: {
+		label: __( 'current', 'elementor' ),
+	},
+	'current-ancestor': {
+		label: __( 'current ancestor', 'elementor' ),
+	},
+	expanded: {
+		label: __( 'expanded', 'elementor' ),
+	},
 };
 
 export function useElementStates() {
@@ -140,7 +149,7 @@ export function useElementStates() {
 	const elementStates = styleStates.map( ( { value, name } ) => ( {
 		key: value,
 		value,
-		label: CLASS_STATES_MAP[ value ]?.label ?? name,
+		label: CLASS_STATES_MAP[ name ]?.label ?? name,
 	} ) );
 
 	return {
@@ -259,7 +268,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 					{ isStyled && (
 						<StyleIndicator
 							aria-label={ __( 'Has style', 'elementor' ) }
-							getColor={ getTempStylesProviderThemeColor( provider ?? '' ) }
+							getColor={ getStylesProviderThemeColor( provider ?? '' ) }
 						/>
 					) }
 					{ label }

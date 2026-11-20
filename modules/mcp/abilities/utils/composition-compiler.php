@@ -10,6 +10,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
+use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
 use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
@@ -36,10 +38,18 @@ final class Composition_Compiler {
 	private const DOCUMENT_ROOT_WRAPPER = 'e-div-block';
 	private const DOCUMENT_ROOT_V3_WRAPPER = 'container';
 
+	private const NAME_COMES_FROM_CONFIGURATION_ID_HINT = 'The layer name is the element\'s configuration-id; rename it afterwards with elementor/manage-elements editor_settings.name.';
+
 	public const COMPONENT_PARENT_ID = 'component';
 
-	public static function make(): self {
-		return new self();
+	private ?Closed_Structure $closed_structure;
+
+	private function __construct( ?Closed_Structure $closed_structure ) {
+		$this->closed_structure = $closed_structure;
+	}
+
+	public static function make( ?Closed_Structure $closed_structure = null ): self {
+		return new self( $closed_structure );
 	}
 
 	/**
@@ -48,7 +58,7 @@ final class Composition_Compiler {
 	 * @param array     $document_tree Existing document tree used for insertion-context validation.
 	 * @param string    $parent_id     Target parent used for insertion-context validation.
 	 *
-	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: Xml_Parser}|\WP_Error
+	 * @return array{elements: array[], warnings: Warnings_Bag, dom: \DOMDocument, xml_parser: Xml_Parser, pro_features_discovery: \WP_Error[]}|\WP_Error
 	 */
 	public function compile(
 		array $input,
@@ -64,6 +74,8 @@ final class Composition_Compiler {
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
+
+		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
 
 		[
 			'configs' => $widget_configs,
@@ -102,7 +114,7 @@ final class Composition_Compiler {
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
 		if ( empty( $subtrees ) ) {
-			return new \WP_Error(
+			return $pro_features_discovery[0] ?? new \WP_Error(
 				'empty_composition',
 				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-div-block configuration-id="..."></e-div-block>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
@@ -120,11 +132,14 @@ final class Composition_Compiler {
 		}
 		$warnings->merge( $config_result['warnings'] );
 
+		$warnings->merge( $this->apply_editor_settings( $index, $this->as_map( $input['editor_settings'] ?? [] ) ) );
+
 		$class_applier = new Class_Applier( $this->create_global_classes_repository() );
 		$warnings->merge( $class_applier->apply( $index, $this->as_map( $input['classes'] ?? [] ) )['warnings'] );
 
-		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints() );
-		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch', $widget_configs )['warnings'] );
+		$style_applier = new Style_Applier( $this->create_css_converter( $variables_service ), $this->get_active_breakpoints(), $variables_service );
+		$warnings->merge( $style_applier->apply( $index, $this->as_map( $input['style'] ?? [] ), 'patch' )['warnings'] );
+		Grid_Empty_Rows_Warnings::report( $index, $warnings );
 
 		$warnings->merge( $this->apply_interactions( $index, $this->as_map( $input['interactions'] ?? [] ) )['warnings'] );
 
@@ -133,6 +148,7 @@ final class Composition_Compiler {
 			'warnings' => $warnings,
 			'dom' => $dom,
 			'xml_parser' => $xml_parser,
+			'pro_features_discovery' => $pro_features_discovery,
 		];
 	}
 
@@ -156,6 +172,7 @@ final class Composition_Compiler {
 			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
 			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
 			$this->tag_errors( 'elementor_unknown_type', $unknown_widget_tag_errors ),
+			$this->tag_errors( Closed_Structure::ERROR_CODE, $this->collect_closed_parent_errors( $document_tree, $parent_id ) ),
 		);
 
 		if ( empty( $errors ) ) {
@@ -171,6 +188,19 @@ final class Composition_Compiler {
 		}
 
 		return $aggregated;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function collect_closed_parent_errors( array $document_tree, string $parent_id ): array {
+		$closed_structure = $this->closed_structure ?? Composite_Widgets_Module::get_active_closed_structure();
+
+		if ( ! $closed_structure || ! $closed_structure->is_insertion_locked( $document_tree, $parent_id ) ) {
+			return [];
+		}
+
+		return [ $closed_structure->target_error_message( $parent_id ) ];
 	}
 
 	/**
@@ -257,14 +287,35 @@ final class Composition_Compiler {
 	}
 
 	private function resolve_document_root_wrapper(): string {
-		if (
-			Widget_Context_Helper::is_standardized_maps_active()
-			&& Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER )
-		) {
+		if ( Widget_Context_Helper::is_v3_supported( self::DOCUMENT_ROOT_V3_WRAPPER ) ) {
 			return self::DOCUMENT_ROOT_V3_WRAPPER;
 		}
 
 		return self::DOCUMENT_ROOT_WRAPPER;
+	}
+
+	/**
+	 * @param array<string, array&>               $index           Index of subtree refs.
+	 * @param array<string, array<string, mixed>> $editor_settings Per-config-id editor-only fields.
+	 */
+	private function apply_editor_settings( array $index, array $editor_settings ): Warnings_Bag {
+		$warnings = Warnings_Bag::make();
+
+		foreach ( $editor_settings as $config_id => $values ) {
+			if ( ! isset( $index[ $config_id ] ) ) {
+				continue;
+			}
+
+			Editor_Settings::apply(
+				$index[ $config_id ],
+				$this->as_map( $values ),
+				(string) $config_id,
+				$warnings,
+				[ Editor_Settings::NAME => self::NAME_COMES_FROM_CONFIGURATION_ID_HINT ]
+			);
+		}
+
+		return $warnings;
 	}
 
 	private function as_map( $value ): array {

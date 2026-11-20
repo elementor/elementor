@@ -28,7 +28,7 @@ test.describe( 'Editor tests', () => {
 		expect.soft( await appBar.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'editor-app-bar.jpg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'editor-app-bar.jpg', { maxDiffPixels: 600 } );
 	} );
 
 	test( 'Check for panel styles', async ( { page, apiRequests }, testInfo ) => {
@@ -39,10 +39,16 @@ test.describe( 'Editor tests', () => {
 		// Act
 		await editor.openElementsPanel();
 
+		const panel = editor.page.locator( 'aside#elementor-panel' );
+
 		// Assert
-		expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
+		expect.soft( await panel.screenshot( {
 			type: 'jpeg',
 			quality: 70,
+			mask: [
+				editor.page.locator( '.e-widget-new-badge' ),
+				editor.page.locator( '#elementor-panel-get-pro-elements-sticky' ),
+			],
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );

@@ -78,7 +78,7 @@ const getNextItemNumber = ( existingTitles: ( string | undefined )[] ) => {
 // `V1ElementData` is the plain-object form of a model tree: nested `elements` are objects that
 // Backbone turns into models on `initialize`, and ids have to be generated here because only the
 // outermost model gets one from `document/elements/create`.
-const buildItemModel = ( position: number, showIcon: boolean ): V1ElementData => {
+const buildItemModel = ( position: number, showIcon: boolean, differentOpenIcon: boolean ): V1ElementData => {
 	const numberedTitle = getItemTitle( position );
 
 	return {
@@ -94,7 +94,10 @@ const buildItemModel = ( position: number, showIcon: boolean ): V1ElementData =>
 				// has already turned Show Icon off, a newly added item must start with its icon hidden
 				// too, not re-show one just because the item itself is brand new. See the comment on
 				// the mirrored prop in `Atomic_Accordion_Item_Header` for why this duplication exists.
-				settings: { show_icon: booleanPropTypeUtil.create( showIcon ) },
+				settings: {
+					show_icon: booleanPropTypeUtil.create( showIcon ),
+					different_open_icon: booleanPropTypeUtil.create( differentOpenIcon ),
+				},
 				elements: [
 					{
 						elType: ACCORDION_ITEM_TITLE_ELEMENT_TYPE,
@@ -142,6 +145,7 @@ export const useActions = () => {
 		existingTitles,
 		items,
 		showIcon,
+		differentOpenIcon = false,
 	}: {
 		accordionId: string;
 		existingTitles: ( string | undefined )[];
@@ -149,6 +153,7 @@ export const useActions = () => {
 		// The root's *current* `show_icon` value, so the new item's header starts in sync with it
 		// instead of the schema default - see the comment on `buildItemModel`.
 		showIcon: boolean;
+		differentOpenIcon?: boolean;
 	} ) => {
 		const accordion = getContainer( accordionId );
 
@@ -175,7 +180,11 @@ export const useActions = () => {
 						// *existing* element out of the document, not for describing one to create. A single
 						// cast is enough (the two types overlap enough for TS to allow it directly); no
 						// `unknown` escape hatch needed.
-						model: buildItemModel( position, showIcon ) as CreateElementParams[ 'model' ],
+						model: buildItemModel(
+							position,
+							showIcon,
+							differentOpenIcon
+						) as CreateElementParams[ 'model' ],
 					},
 				],
 			} );

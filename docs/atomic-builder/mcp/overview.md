@@ -36,7 +36,7 @@ Verified: `abstract-ability.php`, `mcp-registry.ts`.
 | ID | Doc |
 |----|-----|
 | `elementor/build-composition` | [abilities/build-composition.md](abilities/build-composition.md) |
-| `elementor/get-widget-schema` | [abilities/get-widget-schema.md](abilities/get-widget-schema.md) |
+| `elementor/get-widget-schemas` | [abilities/get-widget-schema.md](abilities/get-widget-schema.md) |
 | `elementor/list-widget-schemas` | [abilities/list-widget-schemas.md](abilities/list-widget-schemas.md) |
 | `elementor/manage-classes` | [abilities/manage-classes.md](abilities/manage-classes.md) |
 | `elementor/manage-global-variable` | [abilities/manage-global-variable.md](abilities/manage-global-variable.md) |

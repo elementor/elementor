@@ -1,23 +1,27 @@
 import * as React from 'react';
 import { getHostDocumentId } from '@elementor/editor-elements';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
-import { ReloadIcon } from '@elementor/icons';
-import { Box, Button, Typography } from '@elementor/ui';
+import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { AUDIT_PANEL_ID } from '../constants';
 import { useAuditReport } from '../hooks/use-audit-report';
+import { useTrackPanelViewed } from '../hooks/use-track-panel-viewed';
+import { trackPanelClosed } from '../utils/tracking';
 import AuditFeedback from './audit-feedback';
 import ErrorPage from './pages/error-page';
 import LoadingPage from './pages/loading-page';
 import WelcomePage from './pages/welcome-page';
 import ReportShell from './report-shell';
+import RescanButton from './rescan-button';
 
 export default function AuditPanel() {
-	const { status, report, error, run } = useAuditReport();
+	const { status, report, error, isStale, run } = useAuditReport();
+
+	useTrackPanelViewed();
 
 	const hostDocumentId = getHostDocumentId() ?? 0;
-	const onRun = () => run( hostDocumentId );
+	const onRun = () => run( hostDocumentId, report ? 'rescan' : 'run_audit' );
 	const lastScanLabel = report ? new Date( report.runAt ).toLocaleTimeString() : null;
 
 	return (
@@ -27,6 +31,7 @@ export default function AuditPanel() {
 				title={ __( 'Page Audit', 'elementor' ) }
 				badge={ __( 'Beta', 'elementor' ) }
 				titleVariant="subtitle2"
+				onClose={ trackPanelClosed }
 			/>
 			<FloatingPanelBody
 				sx={
@@ -49,15 +54,12 @@ export default function AuditPanel() {
 					<Box sx={ { flex: 1 } } />
 				) }
 				{ lastScanLabel && <AuditFeedback /> }
-				<Button
-					variant="contained"
-					size="small"
-					startIcon={ lastScanLabel ? <ReloadIcon fontSize="small" /> : undefined }
-					onClick={ onRun }
+				<RescanButton
+					hasScanned={ Boolean( lastScanLabel ) }
+					isStale={ isStale }
 					disabled={ status === 'loading' || hostDocumentId === 0 }
-				>
-					{ lastScanLabel ? __( 'Rescan', 'elementor' ) : __( 'Run page audit', 'elementor' ) }
-				</Button>
+					onClick={ onRun }
+				/>
 			</FloatingPanelFooter>
 		</>
 	);

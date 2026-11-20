@@ -3,6 +3,9 @@
 namespace Elementor\Modules\Agents;
 
 use Elementor\Modules\Agents\Classes\Post_Noindex;
+use Elementor\Modules\Agents\Classes\Post_Title;
+use Elementor\Modules\Agents\Components\Discovery\Mcp_Discovery;
+use Elementor\Modules\Agents\Components\Discovery\Openapi_Spec;
 use Elementor\Modules\Agents\Components\Readability\Content_Extractor;
 use Elementor\Modules\Agents\Components\Readability\Frontmatter_Builder;
 use Elementor\Plugin;
@@ -53,6 +56,9 @@ class Content_Generator {
 	const INLINE_CACHE_VERSION      = 1;
 	const INLINE_CACHE_GEN_OPTION   = 'elementor_agents_inline_cache_gen';
 
+	const MCP_SECTION_TITLE = 'MCP Server';
+	const API_SECTION_TITLE = 'API';
+
 	/** Post types that should never appear in the output. */
 	const EXCLUDED_POST_TYPES = [
 		'attachment',
@@ -87,12 +93,13 @@ class Content_Generator {
 	 *   'intro'    – user-supplied intro text (replaces the auto-generated one).
 	 *   'optional' – extra section appended after all content sections.
 	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
-	public function generate_llms_txt( array $overrides = [], ?array $post_types = null ): string {
-		$lines = $this->build_header( $overrides );
+	public function generate_llms_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
 
-		$sections = $this->get_content_sections( $post_types );
+		$sections = $this->get_content_sections( $post_types, false, $excluded_post_ids );
 
 		foreach ( $sections as $title => $items ) {
 			if ( empty( $items ) ) {
@@ -109,6 +116,9 @@ class Content_Generator {
 			$lines[] = '';
 		}
 
+		array_push( $lines, ...$this->get_api_section_lines() );
+		array_push( $lines, ...$this->get_mcp_section_lines() );
+
 		$this->append_optional_section( $lines, $overrides );
 
 		return implode( "\n", $lines );
@@ -123,12 +133,13 @@ class Content_Generator {
 	 *
 	 * @param array{intro?: string, optional?: string} $overrides
 	 * @param string[]|null                            $post_types Post types to include; null includes every available type.
+	 * @param int[]                                    $excluded_post_ids Posts to leave out.
 	 * @return string
 	 */
-	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null ): string {
-		$lines = $this->build_header( $overrides );
+	public function generate_llms_full_txt( array $overrides = [], ?array $post_types = null, array $excluded_post_ids = [] ): string {
+		$lines = $this->build_header( $overrides, $excluded_post_ids );
 
-		$sections = $this->get_content_sections( $post_types, true );
+		$sections = $this->get_content_sections( $post_types, true, $excluded_post_ids );
 
 		// Separate WooCommerce products from everything else so we can deprioritise them.
 		$product_section = $sections['Products'] ?? [];
@@ -173,15 +184,31 @@ class Content_Generator {
 			];
 		}
 
+		$api_lines = $this->get_api_section_lines();
+
+		if ( ! empty( $api_lines ) ) {
+			$content_blocks[] = [
+				'header' => implode( "\n", $api_lines ),
+				'items'  => [],
+			];
+		}
+
+		$mcp_lines = $this->get_mcp_section_lines();
+
+		if ( ! empty( $mcp_lines ) ) {
+			$content_blocks[] = [
+				'header' => implode( "\n", $mcp_lines ),
+				'items'  => [],
+			];
+		}
+
 		// Build output, inlining content and respecting the size cap.
 		$header_text = implode( "\n", $lines );
 		$output      = $header_text;
-		$output_size = strlen( $output );
 
 		foreach ( $content_blocks as $block ) {
 			$section_text = $block['header'];
 
-			// Add inline content for each item in this section (if any).
 			if ( ! empty( $block['items'] ) ) {
 				foreach ( $block['items'] as $item ) {
 					if ( empty( $item['id'] ) ) {
@@ -194,37 +221,31 @@ class Content_Generator {
 						continue;
 					}
 
-					// Build the inline block for this document.
 					$inline_block = "\n---\n\n" . $inline . "\n";
 
-					// Hard-cap check: if adding this block would exceed 1 MB, stop.
-					if ( $output_size + strlen( $section_text ) + strlen( $inline_block ) > self::LLMS_FULL_HARD_CAP ) {
-						break 2; // stop processing all further content blocks
+					if ( $this->llms_full_would_exceed_cap( $output, "\n" . $section_text . $inline_block ) ) {
+						break;
 					}
 
 					$section_text .= $inline_block;
-
-					// If we've passed the 500 KB target, keep going but note it.
-					// The hard cap above will stop us if we truly go over 1 MB.
-					$output_size += strlen( $inline_block );
 				}
 			}
 
-			// Hard-cap check for the section header itself.
-			if ( $output_size + strlen( $section_text ) > self::LLMS_FULL_HARD_CAP ) {
+			if ( $this->llms_full_would_exceed_cap( $output, "\n" . $section_text ) ) {
 				break;
 			}
 
-			$output      .= "\n" . $section_text;
-			$output_size  = strlen( $output );
+			$output .= "\n" . $section_text;
 		}
 
-		// Append the user-editable optional section to the output directly,
-		// since $output was already built from $lines before the content loop.
 		$optional = $this->get_sanitized_optional( $overrides );
 
 		if ( '' !== $optional ) {
-			$output .= "\n## Optional\n\n" . $optional . "\n";
+			$optional_block = "\n## Optional\n\n" . $optional . "\n";
+
+			if ( ! $this->llms_full_would_exceed_cap( $output, $optional_block ) ) {
+				$output .= $optional_block;
+			}
 		}
 
 		return $output;
@@ -276,16 +297,17 @@ class Content_Generator {
 	 * Build the common header lines: site name + blockquote intro.
 	 *
 	 * @param array{intro?: string} $overrides
+	 * @param int[]                 $excluded_post_ids Posts to leave out.
 	 * @return string[]
 	 */
-	private function build_header( array $overrides ): array {
+	private function build_header( array $overrides, array $excluded_post_ids = [] ): array {
 		$lines   = [];
 		$lines[] = '# ' . get_bloginfo( 'name' );
 		$lines[] = '';
 
 		$intro = isset( $overrides['intro'] ) && '' !== trim( (string) $overrides['intro'] )
 			? $this->sanitizer->sanitize( trim( (string) $overrides['intro'] ) )
-			: $this->generate_intro();
+			: $this->generate_intro( $excluded_post_ids );
 
 		if ( '' !== $intro ) {
 			foreach ( explode( "\n", $intro ) as $intro_line ) {
@@ -302,13 +324,13 @@ class Content_Generator {
 	 * Auto-generate the intro from the site tagline and/or the front-page
 	 * description/excerpt.
 	 */
-	private function generate_intro(): string {
+	private function generate_intro( array $excluded_post_ids = [] ): string {
 		$show_on_front = get_option( 'show_on_front' );
 
 		if ( 'page' === $show_on_front ) {
 			$page_id = (int) get_option( 'page_on_front' );
 
-			if ( $page_id ) {
+			if ( $page_id && ! in_array( $page_id, $excluded_post_ids, true ) ) {
 				$candidate = $this->get_post_description( $page_id );
 
 				if ( '' !== $candidate ) {
@@ -366,9 +388,10 @@ class Content_Generator {
 	 * @param string[]|null $included_post_types Post types to include; null includes every available type.
 	 * @param bool          $apply_llms_full_limit Whether to cap each post type to the
 	 *   llms-full.txt per-type inline limit instead of MAX_POSTS_PER_TYPE.
+	 * @param int[]         $excluded_post_ids Posts to leave out.
 	 * @return array<string, array<array{id: int, title: string, url: string, description: string}>>
 	 */
-	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false ): array {
+	private function get_content_sections( ?array $included_post_types = null, bool $apply_llms_full_limit = false, array $excluded_post_ids = [] ): array {
 		$sections = [];
 
 		foreach ( $this->get_available_post_types() as $post_type => $label ) {
@@ -378,7 +401,7 @@ class Content_Generator {
 
 			$items = $this->get_posts_for_section(
 				$post_type,
-				$this->get_section_order( $post_type ),
+				array_merge( $this->get_section_order( $post_type ), [ 'post__not_in' => $excluded_post_ids ] ),
 				$this->get_posts_per_type_limit( $post_type, $apply_llms_full_limit )
 			);
 
@@ -478,7 +501,7 @@ class Content_Generator {
 
 			$result[] = [
 				'id'          => $post->ID,
-				'title'       => $this->clean_title( get_the_title( $post->ID ) ),
+				'title'       => Post_Title::to_plain_text( get_the_title( $post->ID ) ),
 				'url'         => $permalink,
 				'description' => $this->get_post_description( $post->ID ),
 			];
@@ -592,6 +615,18 @@ class Content_Generator {
 	}
 
 	/**
+	 * Sanitize admin-edited markdown without altering its structure: indentation,
+	 * hard line breaks, headings and percent-encoded URLs must survive a save.
+	 */
+	public function prepare_markdown_override_text( string $text ): string {
+		$text = wp_check_invalid_utf8( $text, true );
+		$text = str_replace( [ "\r\n", "\r" ], "\n", $text );
+		$text = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text ) ?? $text;
+
+		return rtrim( $text );
+	}
+
+	/**
 	 * Delete the cached inline content for every post at once.
 	 * Used when a global invalidation is needed (e.g. theme switch, plugin activation).
 	 */
@@ -673,18 +708,75 @@ class Content_Generator {
 	// -------------------------------------------------------------------------
 
 	/**
+	 * @param string $output Current llms-full.txt body.
+	 * @param string $append Bytes about to be appended.
+	 * @return bool
+	 */
+	private function llms_full_would_exceed_cap( string $output, string $append ): bool {
+		return strlen( $output ) + strlen( $append ) > self::LLMS_FULL_HARD_CAP;
+	}
+
+	/**
 	 * Format a single link line per the llmstxt.org spec.
 	 *
 	 * @param array{title: string, url: string, description: string} $item
 	 */
 	private function format_link_line( array $item ): string {
-		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url( $item['url'] ) . ')';
+		$line = '- [' . $this->escape_markdown_link_text( $item['title'] ) . '](' . esc_url_raw( $item['url'] ) . ')';
 
 		if ( '' !== $item['description'] ) {
 			$line .= ': ' . $item['description'];
 		}
 
 		return $line;
+	}
+
+	/**
+	 * @return string[] Empty when the API is not advertised.
+	 */
+	private function get_api_section_lines(): array {
+		$module = Plugin::$instance->modules_manager->get_modules( 'agents' );
+
+		if ( ! $module instanceof Module ) {
+			return [];
+		}
+
+		$component = $module->get_component( 'openapi_spec' );
+
+		if ( ! $component instanceof Openapi_Spec || ! $component->is_publishable() ) {
+			return [];
+		}
+
+		return [
+			'## ' . self::API_SECTION_TITLE,
+			'',
+			$this->format_link_line( [
+				'title'       => 'OpenAPI',
+				'url'         => trailingslashit( home_url() ) . 'openapi.json',
+				'description' => 'OpenAPI 3.0.3 specification for the WordPress REST API',
+			] ),
+			'',
+		];
+	}
+
+	/**
+	 * @return string[] Empty when the MCP server is not advertised.
+	 */
+	private function get_mcp_section_lines(): array {
+		if ( ! apply_filters( 'elementor/agents/mcp_server/is_active', false ) ) {
+			return [];
+		}
+
+		return [
+			'## ' . self::MCP_SECTION_TITLE,
+			'',
+			$this->format_link_line( [
+				'title'       => Mcp_Discovery::SERVER_TITLE,
+				'url'         => Mcp_Discovery::get_server_url(),
+				'description' => Mcp_Discovery::SERVER_DESCRIPTION,
+			] ),
+			'',
+		];
 	}
 
 	/**
@@ -720,13 +812,6 @@ class Content_Generator {
 		return '' !== $optional
 			? $this->sanitizer->sanitize( $optional )
 			: '';
-	}
-
-	/**
-	 * Strip HTML entities and tags from a post title.
-	 */
-	private function clean_title( string $title ): string {
-		return html_entity_decode( wp_strip_all_tags( $title ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	private function escape_markdown_link_text( string $text ): string {

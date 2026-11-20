@@ -12,4 +12,18 @@
 		text-align: center;
 		max-width: 520px;
 	}
+
+	&--upgrade &-description {
+		max-width: 600px;
+	}
+
+	&-note {
+		margin-block-start: 100px;
+		max-width: 600px;
+		color: tints( 500 );
+		font-size: $font-size-13;
+		font-style: italic;
+		line-height: 1.5;
+		text-align: center;
+	}
 }

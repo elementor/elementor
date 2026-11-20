@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Sensitivity;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\Components\Overridable_Schema_Extender;
@@ -143,6 +144,24 @@ class Test_Overridable_Schema_Extender extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( [ 'prop1' => $prop1, 'prop2' => $prop2 ], $schema );
+	}
+
+	public function test_get_extended_schema__skips_sensitive_prop_types() {
+		// Arrange
+		$extender = Overridable_Schema_Extender::make();
+
+		$sensitive = String_Prop_Type::make()->meta( Prop_Sensitivity::sensitive() );
+		$not_exportable = String_Prop_Type::make()->meta( Prop_Sensitivity::not_exportable() );
+
+		// Act
+		$schema = $extender->get_extended_schema( [
+			'sensitive' => $sensitive,
+			'not_exportable' => $not_exportable,
+		] );
+
+		// Assert
+		$this->assertSame( $sensitive, $schema['sensitive'] );
+		$this->assertInstanceof( Union_Prop_Type::class, $schema['not_exportable'] );
 	}
 
 	public function add_overridable_prop_type_data_provider() {
