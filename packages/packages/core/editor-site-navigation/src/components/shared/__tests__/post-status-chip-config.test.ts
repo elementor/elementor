@@ -15,6 +15,17 @@ describe( 'getStatusChipConfig', () => {
 		} );
 	} );
 
+	it( 'maps scheduled and private to neutral tone', () => {
+		expect( getStatusChipConfig( 'future' ) ).toMatchObject( {
+			color: 'default',
+			label: 'Scheduled',
+		} );
+		expect( getStatusChipConfig( 'private' ) ).toMatchObject( {
+			color: 'default',
+			label: 'Private',
+		} );
+	} );
+
 	it( 'falls back to neutral for custom statuses', () => {
 		expect( getStatusChipConfig( 'custom-status' ) ).toEqual( {
 			color: 'default',

@@ -29,6 +29,14 @@ describe( 'PageTitleAndStatus', () => {
 		expect( screen.getByText( 'Pending Review' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders scheduled and private status badge labels', () => {
+		render( <PageTitleAndStatus status="future" title="Launch day" /> );
+		expect( screen.getByText( 'Scheduled' ) ).toBeInTheDocument();
+
+		render( <PageTitleAndStatus status="private" title="Members only" /> );
+		expect( screen.getByText( 'Private' ) ).toBeInTheDocument();
+	} );
+
 	it( 'uses custom status text for unknown plugin statuses', () => {
 		render( <PageTitleAndStatus status="custom-plugin-status" title="Plugin post" /> );
 
