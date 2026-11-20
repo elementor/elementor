@@ -51,13 +51,18 @@ const flushPendingSave = async () => {
 // No assertion in this file depends on stylesheet CSS (hidden content uses attributes or unmounting),
 // so this file drops Emotion's inserted rules.
 const originalInsertRule = CSSStyleSheet.prototype.insertRule;
+const originalAgentsReadyConfig = window.elementorAgentsReadyConfig;
+const SCORE_TIER_LOW_MAX = 30;
+const SCORE_TIER_HIGH_MIN = 81;
 
 beforeAll( () => {
 	CSSStyleSheet.prototype.insertRule = () => 0;
+	window.elementorAgentsReadyConfig = { scanner: { scoreTiers: { lowMax: SCORE_TIER_LOW_MAX, highMin: SCORE_TIER_HIGH_MIN } } };
 } );
 
 afterAll( () => {
 	CSSStyleSheet.prototype.insertRule = originalInsertRule;
+	window.elementorAgentsReadyConfig = originalAgentsReadyConfig;
 } );
 
 const LAST_REPORT_SCORE = 72;

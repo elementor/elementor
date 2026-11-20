@@ -480,4 +480,92 @@ class Test_Openapi_Spec extends Elementor_Test_Base {
 
 		return '';
 	}
+
+	public function test_is_publishable_does_not_reset_current_user() {
+		$user_id = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		wp_set_current_user( $user_id );
+		$this->assertSame( $user_id, get_current_user_id() );
+
+		$filter_call_count = 0;
+		$filter_callback = function( $result ) use ( &$filter_call_count ) {
+			$filter_call_count++;
+			if ( ! empty( $result ) ) {
+				return $result;
+			}
+
+			$nonce = $_REQUEST['_wpnonce'] ?? null;
+			if ( null === $nonce ) {
+				wp_set_current_user( 0 );
+				return true;
+			}
+			return $result;
+		};
+
+		add_filter( 'rest_authentication_errors', $filter_callback, 100 );
+
+		try {
+			$this->spec->flush_cache();
+
+			$result = $this->spec->is_publishable();
+
+			$this->assertSame( $user_id, get_current_user_id(),
+				'Logged-in user should not be logged out by is_publishable()' );
+			$this->assertSame( 0, $filter_call_count,
+				'rest_authentication_errors filter should not be called outside REST context' );
+		} finally {
+			remove_filter( 'rest_authentication_errors', $filter_callback, 100 );
+		}
+	}
+
+	public function test_is_publishable_requires_http_200_from_loopback() {
+		remove_filter( 'pre_http_request', [ $this, 'mock_successful_rest_response' ] );
+
+		try {
+			$mock_status_response = function( $status_code, $status_message ) {
+				return function( $preempt, $args, $url ) use ( $status_code, $status_message ) {
+					if ( false !== strpos( $url, 'wp/v2/posts' ) ) {
+						return [
+							'headers'  => [],
+							'body'     => wp_json_encode( [ 'code' => 'rest_forbidden', 'message' => 'Sorry, you are not allowed to do that.' ] ),
+							'response' => [ 'code' => $status_code, 'message' => $status_message ],
+							'cookies'  => [],
+							'filename' => null,
+						];
+					}
+					return $preempt;
+				};
+			};
+
+			$mock_401 = $mock_status_response( 401, 'Unauthorized' );
+			add_filter( 'pre_http_request', $mock_401, 10, 3 );
+			$this->spec->flush_cache();
+			$this->assertFalse( $this->spec->is_publishable(), 'HTTP 401 should make spec not publishable' );
+			remove_filter( 'pre_http_request', $mock_401 );
+
+			$mock_403 = $mock_status_response( 403, 'Forbidden' );
+			add_filter( 'pre_http_request', $mock_403, 10, 3 );
+			$this->spec->flush_cache();
+			$this->assertFalse( $this->spec->is_publishable(), 'HTTP 403 should make spec not publishable' );
+			remove_filter( 'pre_http_request', $mock_403 );
+
+			$mock_error = function( $preempt, $args, $url ) {
+				if ( false !== strpos( $url, 'wp/v2/posts' ) ) {
+					return new \WP_Error( 'http_request_failed', 'Connection timeout' );
+				}
+				return $preempt;
+			};
+
+			add_filter( 'pre_http_request', $mock_error, 10, 3 );
+			$this->spec->flush_cache();
+			$this->assertFalse( $this->spec->is_publishable(), 'WP_Error should make spec not publishable' );
+			remove_filter( 'pre_http_request', $mock_error );
+
+			add_filter( 'pre_http_request', [ $this, 'mock_successful_rest_response' ], 10, 3 );
+			$this->spec->flush_cache();
+			$this->assertTrue( $this->spec->is_publishable(), 'HTTP 200 should make spec publishable' );
+		} finally {
+			remove_filter( 'pre_http_request', [ $this, 'mock_successful_rest_response' ] );
+			add_filter( 'pre_http_request', [ $this, 'mock_successful_rest_response' ], 10, 3 );
+		}
+	}
 }

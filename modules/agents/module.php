@@ -12,6 +12,7 @@ use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\AdminNotices\Agent_Ready_Notice;
 use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
+use Elementor\Modules\Agents\Classes\Dashboard_Overview_Block;
 use Elementor\Modules\Agents\Classes\Edge_Purge_Urls;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
@@ -31,6 +32,7 @@ use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
 use Elementor\Modules\Agents\Classes\Scanner_Orchestrator;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
+use Elementor\Modules\Agents\Classes\Score_Tiers;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
@@ -78,6 +80,10 @@ class Module extends BaseModule {
 
 	const CONFIG_OBJECT_NAME = 'elementorAgentsReadyConfig';
 
+	const DASHBOARD_TRACKING_SCRIPT_HANDLE = 'e-agents-dashboard-widget';
+
+	const DASHBOARD_HOOK_SUFFIX = 'index.php';
+
 	const AJAX_ACTIVATE_ACTION = 'agents_ready_activate';
 
 	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
@@ -122,6 +128,7 @@ class Module extends BaseModule {
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
 	private Seo_Llms_Txt_Detector $seo_detector;
 	private Module_Availability $module_availability;
+	private Dashboard_Overview_Block $dashboard_overview_block;
 
 	public function get_name() {
 		return 'agents';
@@ -146,6 +153,10 @@ class Module extends BaseModule {
 		$this->settings->register();
 
 		( new Scanner_Rest_Api( $this->scanner_orchestrator ) )->register_hooks();
+
+		$this->dashboard_overview_block = new Dashboard_Overview_Block( $this->scanner_store );
+		$this->dashboard_overview_block->register();
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_dashboard_tracking' ] );
 
 		$watched_options = array_merge(
 			[ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ],
@@ -278,6 +289,20 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
+	}
+
+	public function enqueue_dashboard_tracking( string $hook_suffix ): void {
+		if ( self::DASHBOARD_HOOK_SUFFIX !== $hook_suffix || ! $this->dashboard_overview_block->should_render() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			self::DASHBOARD_TRACKING_SCRIPT_HANDLE,
+			$this->get_js_assets_url( 'agents-dashboard-widget' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public function register_ajax_actions( Ajax $ajax ): void {
@@ -1127,6 +1152,7 @@ class Module extends BaseModule {
 			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
+			'scoreTiers'             => Score_Tiers::to_array(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 		];
 	}
