@@ -305,7 +305,11 @@ abstract class Settings_Page {
 			'primary',
 			'submit',
 			true,
-			[ 'data-id' => $button_data_id ]
+			[
+				'data-id' => $button_data_id,
+				'disabled' => 'disabled',
+				'aria-disabled' => 'true',
+			]
 		);
 		echo '</div>';
 	}

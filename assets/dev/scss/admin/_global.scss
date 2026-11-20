@@ -318,6 +318,7 @@ body {
 // Settings
 body.elementor-admin-settings-form {
 	--e-admin-settings-form-actions-height: 56px;
+	--e-admin-settings-form-content-spacing: 48px;
 	--e-admin-settings-form-sidebar-offset: 160px;
 
 	&.folded {
@@ -329,7 +330,9 @@ body.elementor-admin-settings-form {
 	}
 
 	#wpbody-content {
-		padding-block-end: var( --e-admin-settings-form-actions-height );
+		padding-block-end: calc(
+			var( --e-admin-settings-form-actions-height ) + var( --e-admin-settings-form-content-spacing )
+		);
 	}
 
 	#wpfooter {
@@ -365,6 +368,12 @@ body.elementor-admin-settings-form {
 	.submit {
 		margin: 0;
 		padding: 0;
+
+		&[disabled],
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.55;
+		}
 	}
 }
 

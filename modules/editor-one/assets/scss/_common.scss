@@ -406,6 +406,11 @@
 		background-color: var( --e-one-palette-background-default );
 		border-block-start-color: var( --e-one-palette-divider );
 		box-shadow: 0 -4px 16px rgba( 0, 0, 0, 0.08 );
+
+		.submit:disabled,
+		.submit[disabled] {
+			opacity: 0.45;
+		}
 	}
 
 	#post-body-content,
