@@ -263,6 +263,8 @@ ModulesScreen.propTypes = {
 		fileUrl: PropTypes.string.isRequired,
 		postTypes: PropTypes.array.isRequired,
 		excludedPostIds: PropTypes.arrayOf( PropTypes.number ),
+		customText: PropTypes.string,
+		maxCustomTextLength: PropTypes.number.isRequired,
 	} ).isRequired,
 	markdownConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,
