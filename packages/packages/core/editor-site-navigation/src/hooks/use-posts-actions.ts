@@ -9,13 +9,13 @@ import {
 	type UpdatePost,
 	updateRequest,
 } from '../api/post';
-import { postsQueryKey } from './use-posts';
+import { postsQueryKeyBase } from './use-posts';
 import { recentPostsQueryKey } from './use-recent-posts';
 
 export function usePostActions( postTypeSlug: Slug ) {
 	const invalidatePosts = useInvalidatePosts( postTypeSlug );
 
-	const onSuccess = () => invalidatePosts( { exact: true } );
+	const onSuccess = () => invalidatePosts();
 
 	const createPost = useMutation( {
 		mutationFn: ( newPost: NewPost ) => createRequest( postTypeSlug, newPost ),
@@ -48,9 +48,9 @@ export function usePostActions( postTypeSlug: Slug ) {
 function useInvalidatePosts( postTypeSlug: string ) {
 	const queryClient = useQueryClient();
 
-	return ( options = {} ) => {
-		const queryKey = postsQueryKey( postTypeSlug );
-		queryClient.invalidateQueries( { queryKey: recentPostsQueryKey }, options );
-		return queryClient.invalidateQueries( { queryKey }, options );
+	return () => {
+		const queryKey = postsQueryKeyBase( postTypeSlug );
+		queryClient.invalidateQueries( { queryKey: recentPostsQueryKey } );
+		return queryClient.invalidateQueries( { queryKey } );
 	};
 }

@@ -1,13 +1,14 @@
 import { QueryClient } from '@tanstack/react-query';
 
 export {
-	useQuery,
-	useInfiniteQuery,
-	useMutation,
-	useIsMutating,
-	useQueryClient,
+	keepPreviousData,
 	QueryClient,
 	QueryClientProvider,
+	useInfiniteQuery,
+	useIsMutating,
+	useMutation,
+	useQuery,
+	useQueryClient,
 	type UseQueryResult,
 } from '@tanstack/react-query';
 
