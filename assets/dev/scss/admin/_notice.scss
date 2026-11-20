@@ -52,6 +52,8 @@
 		--e-notice-context-color: #{$e-pink-400};
 		--e-notice-context-tint: #{$e-pink-50};
 
+		clear: both;
+
 		.e-notice__aside {
 			display: flex;
 			align-items: center;
@@ -183,5 +185,18 @@
 		+ p {
 			margin-block-start: 8px;
 		}
+	}
+}
+
+$e-notice-inline-gap-top: 16px;
+$e-notice-inline-gap-bottom: 15px;
+
+body:not(:has(#editor-one-top-bar > *)) {
+	#screen-meta-links:has(~ .e-notice--inline) {
+		margin-block-end: $e-notice-inline-gap-top;
+	}
+
+	.e-notice--inline {
+		margin-block: $e-notice-inline-gap-top $e-notice-inline-gap-bottom;
 	}
 }

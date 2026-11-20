@@ -493,6 +493,14 @@ class Admin extends App {
 		<div class="e-dashboard-overview e-dashboard-widget">
 			<?php
 			self::elementor_dashboard_overview_header();
+
+			/**
+			 * Elementor dashboard widget after the header section.
+			 *
+			 * @since 4.5.0
+			 */
+			do_action( 'elementor/admin/dashboard_overview_widget/after_header' );
+
 			self::elementor_dashboard_overview_recently_edited();
 			self::elementor_dashboard_overview_news_updates();
 			self::elementor_dashboard_overview_footer();

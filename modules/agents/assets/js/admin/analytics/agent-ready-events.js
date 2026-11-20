@@ -3,12 +3,16 @@ export const EVENT_ACTIVATION_CLICKED = 'agent_readiness_activation_clicked';
 export const EVENT_FEATURE_TOGGLED = 'agent_readiness_feature_toggled';
 export const EVENT_POST_TYPE_TOGGLED = 'agent_readiness_post_type_toggled';
 export const EVENT_BOT_PERMISSION_CHANGED = 'agent_readiness_bot_permission_changed';
+export const EVENT_DASHBOARD_CTA_CLICKED = 'agent_readiness_dashboard_cta_clicked';
 
 export const APP_TYPE_WP_ADMIN = 'wpadmin';
 export const LOCATION_L1 = 'agent_readiness';
 
 export const WINDOW_ONBOARDING = 'agent_readiness_onboarding';
 export const WINDOW_SETTINGS = 'agent_readiness_settings';
+export const WINDOW_DASHBOARD = 'wp_dashboard';
+
+export const TRANSPORT_SEND_BEACON = 'sendBeacon';
 
 export const FEATURE_MASTER = 'master';
 export const FEATURE_LLMS_TXT = 'llms_txt';
