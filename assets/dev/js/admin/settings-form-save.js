@@ -1,6 +1,8 @@
 const SETTINGS_FORM_FIELD_SELECTOR = 'input, select, textarea';
+const AUTO_SAVE_DELAY_MS = 1500;
 const SAVED_STATUS_DURATION_MS = 5000;
 const SETTINGS_SAVED_QUERY_ARG = 'settings-updated';
+const CONFIRM_DIALOG_SELECTOR = '.dialog-type-confirm.dialog-widget';
 
 export function serializeSettingsForm( form ) {
 	if ( ! form ) {
@@ -70,8 +72,12 @@ export default class SettingsFormSave {
 		this.savedStatusDismissed = ! this.wasSettingsJustSaved();
 		this.savedStatusTimer = null;
 		this.allowNavigation = false;
+		this.autosaveDebounceTimer = null;
+		this.autosaveInFlight = false;
+		this.autosavePaused = false;
 
 		this.bindEvents();
+		this.bindAutosave();
 		this.bindNavigationGuard();
 		this.patchSubmitClick();
 		this.syncSubmitState();
@@ -110,6 +116,76 @@ export default class SettingsFormSave {
 		};
 
 		this.form.addEventListener( 'submit', this.onFormSubmit, true );
+	}
+
+	bindAutosave() {
+		this.scheduleAutosave = () => {
+			if ( this.autosavePaused ) {
+				return;
+			}
+
+			clearTimeout( this.autosaveDebounceTimer );
+			this.autosaveDebounceTimer = setTimeout( () => {
+				this.maybeAutosave();
+			}, AUTO_SAVE_DELAY_MS );
+		};
+
+		this.form.addEventListener( 'input', this.scheduleAutosave );
+		this.form.addEventListener( 'change', this.scheduleAutosave );
+	}
+
+	isConfirmDialogVisible() {
+		return Boolean( document.querySelector( CONFIRM_DIALOG_SELECTOR ) );
+	}
+
+	async maybeAutosave() {
+		if ( this.autosavePaused || this.autosaveInFlight || this.isConfirmDialogVisible() ) {
+			if ( this.form.classList.contains( 'elementor-settings-form-is-dirty' ) ) {
+				this.scheduleAutosave();
+			}
+
+			return;
+		}
+
+		if ( ! this.form.classList.contains( 'elementor-settings-form-is-dirty' ) ) {
+			return;
+		}
+
+		await this.runAutosave();
+	}
+
+	async runAutosave() {
+		if ( ! window.ajaxurl ) {
+			return;
+		}
+
+		this.autosaveInFlight = true;
+		this.updateStatusMessage( 'saving' );
+
+		const formData = new FormData( this.form );
+		formData.append( 'action', 'elementor_admin_settings_autosave' );
+
+		try {
+			const response = await fetch( window.ajaxurl, {
+				method: 'POST',
+				body: formData,
+				credentials: 'same-origin',
+			} );
+			const payload = await response.json();
+
+			if ( ! response.ok || ! payload?.success ) {
+				throw new Error( 'Autosave failed' );
+			}
+
+			this.baseline = serializeSettingsForm( this.form );
+			this.savedStatusDismissed = false;
+			this.scheduleSavedStatusDismissal();
+			this.syncSubmitState();
+		} catch ( error ) {
+			this.updateStatusMessage( 'error' );
+		} finally {
+			this.autosaveInFlight = false;
+		}
 	}
 
 	bindNavigationGuard() {
@@ -201,7 +277,7 @@ export default class SettingsFormSave {
 	}
 
 	syncSubmitState() {
-		if ( ! this.submitButton ) {
+		if ( ! this.submitButton || this.autosaveInFlight ) {
 			return;
 		}
 

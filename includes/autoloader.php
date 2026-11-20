@@ -138,6 +138,7 @@ class Autoloader {
 			'Settings' => 'includes/settings/settings.php',
 			'Settings_Controls' => 'includes/settings/controls.php',
 			'Settings_Validations' => 'includes/settings/validations.php',
+			'Settings_Form_Autosave' => 'includes/settings/settings-form-autosave.php',
 			'Settings_Page' => 'includes/settings/settings-page.php',
 			'Shapes' => 'includes/shapes.php',
 			'Skins_Manager' => 'includes/managers/skins.php',

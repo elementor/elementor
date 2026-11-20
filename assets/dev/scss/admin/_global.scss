@@ -382,6 +382,14 @@ body.elementor-admin-settings-form {
 		&[data-state="saved"] {
 			color: #007017;
 		}
+
+		&[data-state="saving"] {
+			color: #50575e;
+		}
+
+		&[data-state="error"] {
+			color: #b32d2e;
+		}
 	}
 
 	&__controls {

@@ -418,6 +418,14 @@
 			&[data-state="saved"] {
 				color: var( --e-one-palette-success-main, #007017 );
 			}
+
+			&[data-state="saving"] {
+				color: var( --e-one-palette-text-secondary );
+			}
+
+			&[data-state="error"] {
+				color: var( --e-one-palette-error-main, #b32d2e );
+			}
 		}
 
 		.submit:disabled,

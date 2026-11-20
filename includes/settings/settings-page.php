@@ -302,6 +302,8 @@ abstract class Settings_Page {
 		$status_labels = [
 			'dirty' => esc_html__( 'Unsaved changes on this page. Save before continuing to another screen.', 'elementor' ),
 			'saved' => esc_html__( 'Changes saved.', 'elementor' ),
+			'saving' => esc_html__( 'Saving…', 'elementor' ),
+			'error' => esc_html__( 'Could not save changes. Use Save Changes or try again.', 'elementor' ),
 			'nav_title' => esc_html__( 'Leave without saving?', 'elementor' ),
 			'nav_message' => esc_html__( 'You have unsaved changes on this page. If you leave now, they will be lost.', 'elementor' ),
 			'nav_confirm' => esc_html__( 'Leave', 'elementor' ),
@@ -310,9 +312,11 @@ abstract class Settings_Page {
 
 		echo '<div class="elementor-settings-form-actions">';
 		printf(
-			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s" data-nav-title="%3$s" data-nav-message="%4$s" data-nav-confirm="%5$s" data-nav-cancel="%6$s"></p>',
+			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s" data-label-saving="%3$s" data-label-error="%4$s" data-nav-title="%5$s" data-nav-message="%6$s" data-nav-confirm="%7$s" data-nav-cancel="%8$s"></p>',
 			esc_attr( $status_labels['dirty'] ),
 			esc_attr( $status_labels['saved'] ),
+			esc_attr( $status_labels['saving'] ),
+			esc_attr( $status_labels['error'] ),
 			esc_attr( $status_labels['nav_title'] ),
 			esc_attr( $status_labels['nav_message'] ),
 			esc_attr( $status_labels['nav_confirm'] ),
@@ -541,3 +545,5 @@ abstract class Settings_Page {
 }
 
 add_action( 'admin_init', [ Settings_Page::class, 'register_settings_form_layout_body_class' ], 0 );
+
+Settings_Form_Autosave::register_hooks();
