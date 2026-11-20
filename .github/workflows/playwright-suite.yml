@@ -170,6 +170,8 @@ jobs:
         run: |
           jq '.config.WP_DEBUG = true | .config.WP_DEBUG_LOG = true | .config.WP_DEBUG_DISPLAY = false' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
+      - name: Fetch live CDN promotions
+        run: npm run test:playwright:fetch-cdn
       - name: Install WordPress environment
         run: |
           npm run start-local-server
