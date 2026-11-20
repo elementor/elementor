@@ -1,6 +1,7 @@
 import {
 	trackActivationClicked,
 	trackBotPermissionChanged,
+	trackDashboardCtaClicked,
 	trackFeatureToggled,
 	trackPostTypeToggled,
 	trackWelcomeViewed,
@@ -105,5 +106,22 @@ describe( 'track-agent-ready-event', () => {
 
 		// Assert
 		expect( dispatchEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'permission_type' );
+	} );
+
+	it( 'should dispatch dashboard cta clicked with the state and a beacon transport', () => {
+		// Act
+		trackDashboardCtaClicked( 'needs_work' );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith(
+			'agent_readiness_dashboard_cta_clicked',
+			expect.objectContaining( {
+				window_name: 'wp_dashboard',
+				target_name: 'dashboard_cta',
+				interaction_result: 'needs_work',
+				target_location: 'overview_widget',
+			} ),
+			{ transport: 'sendBeacon' },
+		);
 	} );
 } );
