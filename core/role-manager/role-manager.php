@@ -108,6 +108,7 @@ class Role_Manager extends Settings_Page {
 					<form id="elementor-settings-form" method="post" action="options.php">
 						<?php
 						settings_fields( static::PAGE_ID );
+						$this->render_settings_submit_bar( 'elementor-role-manager-button-save-changes' );
 						echo '<div class="elementor-settings-form-page elementor-active">';
 						foreach ( get_editable_roles() as $role_slug => $role_data ) {
 							if ( 'administrator' === $role_slug ) {
@@ -115,7 +116,7 @@ class Role_Manager extends Settings_Page {
 							}
 							$this->display_role_controls( $role_slug, $role_data );
 						}
-						submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-role-manager-button-save-changes' ] );
+						echo '</div>';
 						?>
 					</form>
 				</div>

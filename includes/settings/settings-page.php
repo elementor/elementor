@@ -298,6 +298,18 @@ abstract class Settings_Page {
 		}
 	}
 
+	protected function render_settings_submit_bar( string $button_data_id ): void {
+		echo '<div class="elementor-settings-form-actions">';
+		submit_button(
+			__( 'Save Changes', 'elementor' ),
+			'primary',
+			'submit',
+			true,
+			[ 'data-id' => $button_data_id ]
+		);
+		echo '</div>';
+	}
+
 	/**
 	 * Display settings page.
 	 *
@@ -339,6 +351,8 @@ abstract class Settings_Page {
 				<?php
 				settings_fields( static::PAGE_ID );
 
+				$this->render_settings_submit_bar( 'elementor-settings-button-save-changes' );
+
 				foreach ( $tabs as $tab_id => $tab ) {
 					if ( ! $this->should_render_tab( $tab ) ) {
 						continue;
@@ -379,8 +393,6 @@ abstract class Settings_Page {
 
 					echo '</div>';
 				}
-
-				submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-settings-button-save-changes' ] );
 				?>
 			</form>
 		</div><!-- /.wrap -->

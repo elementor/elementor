@@ -401,6 +401,13 @@
 		line-height: 1.4;
 	}
 
+	.elementor-settings-form-actions {
+		--e-admin-settings-form-actions-top: calc( var( --editor-one-wordpress-admin-bar-height, 32px ) + 8px );
+
+		background-color: var( --e-one-palette-background-default );
+		border-block-end-color: var( --e-one-palette-divider );
+	}
+
 	#post-body-content,
 	#revisionsdiv,
 	#elementor-settings-form {

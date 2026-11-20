@@ -316,6 +316,23 @@ body {
 }
 
 // Settings
+.elementor-settings-form-actions {
+	position: sticky;
+	top: var( --e-admin-settings-form-actions-top, 32px );
+	z-index: 20;
+	display: flex;
+	justify-content: flex-end;
+	margin-block: 0 16px;
+	padding-block: 12px;
+	background-color: #f0f0f1;
+	border-block-end: 1px solid #dcdcde;
+
+	.submit {
+		margin: 0;
+		padding: 0;
+	}
+}
+
 .elementor-settings-form-page {
 	padding-block-start: 30px;
 
