@@ -407,6 +407,19 @@
 		border-block-start-color: var( --e-one-palette-divider );
 		box-shadow: 0 -4px 16px rgba( 0, 0, 0, 0.08 );
 
+		&__status {
+			font-family: var( --e-one-typography-fontFamily );
+			color: var( --e-one-palette-text-tertiary );
+
+			&[data-state="dirty"] {
+				color: var( --e-one-palette-warning-main, #8a5a00 );
+			}
+
+			&[data-state="saved"] {
+				color: var( --e-one-palette-success-main, #007017 );
+			}
+		}
+
 		.submit:disabled,
 		.submit[disabled] {
 			opacity: 0.45;

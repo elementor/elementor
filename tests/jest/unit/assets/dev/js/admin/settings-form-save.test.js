@@ -80,4 +80,24 @@ describe( 'SettingsFormSave', () => {
 		// Assert
 		expect( submit.disabled ).toBe( true );
 	} );
+
+	it( 'should show dirty status when a field changes', () => {
+		// Arrange
+		const form = createForm();
+		form.innerHTML = `
+			<input type="text" name="sample" value="initial">
+			<p class="elementor-settings-form-actions__status" data-label-dirty="Unsaved changes"></p>
+			<input type="submit" id="submit" value="Save">
+		`;
+		const saveHandler = new SettingsFormSave( form );
+		const status = form.querySelector( '.elementor-settings-form-actions__status' );
+
+		// Act
+		form.querySelector( '[name="sample"]' ).value = 'updated';
+		saveHandler.syncSubmitState();
+
+		// Assert
+		expect( status.dataset.state ).toBe( 'dirty' );
+		expect( status.textContent ).toBe( 'Unsaved changes' );
+	} );
 } );

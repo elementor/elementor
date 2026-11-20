@@ -299,7 +299,18 @@ abstract class Settings_Page {
 	}
 
 	protected function render_settings_submit_bar( string $button_data_id ): void {
+		$status_labels = [
+			'dirty' => esc_html__( 'Unsaved changes on this page. Save before continuing to another screen.', 'elementor' ),
+			'saved' => esc_html__( 'Changes saved.', 'elementor' ),
+		];
+
 		echo '<div class="elementor-settings-form-actions">';
+		printf(
+			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s"></p>',
+			esc_attr( $status_labels['dirty'] ),
+			esc_attr( $status_labels['saved'] )
+		);
+		echo '<div class="elementor-settings-form-actions__controls">';
 		submit_button(
 			__( 'Save Changes', 'elementor' ),
 			'primary',
@@ -311,6 +322,7 @@ abstract class Settings_Page {
 				'aria-disabled' => 'true',
 			]
 		);
+		echo '</div>';
 		echo '</div>';
 	}
 

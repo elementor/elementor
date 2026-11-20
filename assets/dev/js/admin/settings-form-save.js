@@ -1,4 +1,6 @@
 const SETTINGS_FORM_FIELD_SELECTOR = 'input, select, textarea';
+const SAVED_STATUS_DURATION_MS = 5000;
+const SETTINGS_SAVED_QUERY_ARG = 'settings-updated';
 
 export function serializeSettingsForm( form ) {
 	if ( ! form ) {
@@ -44,11 +46,31 @@ export default class SettingsFormSave {
 	constructor( form ) {
 		this.form = form;
 		this.submitButton = form.querySelector( '#submit' );
+		this.statusElement = form.querySelector( '.elementor-settings-form-actions__status' );
 		this.baseline = serializeSettingsForm( form );
+		this.savedStatusDismissed = ! this.wasSettingsJustSaved();
+		this.savedStatusTimer = null;
 
 		this.bindEvents();
 		this.patchSubmitClick();
 		this.syncSubmitState();
+
+		if ( ! this.savedStatusDismissed ) {
+			this.scheduleSavedStatusDismissal();
+		}
+	}
+
+	wasSettingsJustSaved() {
+		return 'true' === new URLSearchParams( window.location.search ).get( SETTINGS_SAVED_QUERY_ARG );
+	}
+
+	scheduleSavedStatusDismissal() {
+		clearTimeout( this.savedStatusTimer );
+
+		this.savedStatusTimer = setTimeout( () => {
+			this.savedStatusDismissed = true;
+			this.syncSubmitState();
+		}, SAVED_STATUS_DURATION_MS );
 	}
 
 	bindEvents() {
@@ -85,6 +107,18 @@ export default class SettingsFormSave {
 		};
 	}
 
+	updateStatusMessage( state ) {
+		if ( ! this.statusElement ) {
+			return;
+		}
+
+		const labelKey = 'data-label-' + state;
+		const message = this.statusElement.getAttribute( labelKey ) || '';
+
+		this.statusElement.dataset.state = state;
+		this.statusElement.textContent = message;
+	}
+
 	syncSubmitState() {
 		if ( ! this.submitButton ) {
 			return;
@@ -95,5 +129,21 @@ export default class SettingsFormSave {
 		this.submitButton.disabled = ! hasChanges;
 		this.submitButton.setAttribute( 'aria-disabled', hasChanges ? 'false' : 'true' );
 		this.form.classList.toggle( 'elementor-settings-form-is-dirty', hasChanges );
+
+		if ( hasChanges ) {
+			this.savedStatusDismissed = true;
+			clearTimeout( this.savedStatusTimer );
+			this.updateStatusMessage( 'dirty' );
+
+			return;
+		}
+
+		if ( ! this.savedStatusDismissed ) {
+			this.updateStatusMessage( 'saved' );
+
+			return;
+		}
+
+		this.updateStatusMessage( 'idle' );
 	}
 }

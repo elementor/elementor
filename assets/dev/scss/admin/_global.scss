@@ -352,7 +352,9 @@ body.elementor-admin-settings-form {
 	z-index: 100;
 	box-sizing: border-box;
 	display: flex;
-	justify-content: flex-end;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
 	margin: 0;
 	padding-block: 12px;
 	padding-inline: 20px;
@@ -363,6 +365,32 @@ body.elementor-admin-settings-form {
 	@media screen and ( max-width: 782px ) {
 		inset-inline-start: 0;
 		width: 100vw;
+	}
+
+	&__status {
+		margin: 0;
+		flex: 1;
+		min-inline-size: 0;
+		font-size: 13px;
+		line-height: 1.4;
+		color: #50575e;
+
+		&[data-state="dirty"] {
+			color: #8a5a00;
+		}
+
+		&[data-state="saved"] {
+			color: #007017;
+		}
+	}
+
+	&__controls {
+		flex-shrink: 0;
+
+		.submit {
+			margin: 0;
+			padding: 0;
+		}
 	}
 
 	.submit {
