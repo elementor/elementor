@@ -484,4 +484,48 @@ body:has(#editor-one-top-bar > *) {
 			height: calc(100vh - var(--e-admin-bar-height, 0px) - var(--e-top-bar-header-height, 0px));
 		}
 	}
+<<<<<<< HEAD
+=======
+
+	#editor-one-secondary-bar {
+		order: -1;
+	}
+
+	$e-notice-gap-from-top: 24px;
+	$screen-meta-links-margin-block-end: 10px;
+
+	#wpbody-content > .e-notice--inline {
+		margin-block-start: $e-notice-gap-from-top;
+		margin-inline: 32px;
+	}
+
+	#screen-meta-links ~ .e-notice--inline {
+		margin-block-start: $e-notice-gap-from-top - $screen-meta-links-margin-block-end;
+	}
+
+	#wpbody-content:has(#editor-one-secondary-bar):not(:has(#screen-meta-links)) {
+		> .wrap,
+		> #elementor-system-info {
+			margin-block-start: 48px;
+		}
+	}
+
+	.wrap > hr.wp-header-end {
+		margin-block: 20px 0;
+	}
+
+	.nav-tab-wrapper {
+		margin-block-start: 20px;
+	}
+
+	#elementor-system-info {
+		margin: 0;
+		padding: 24px 32px;
+		background-color: var(--e-one-palette-background-default);
+
+		.elementor-system-info-header {
+			margin-block-end: 20px;
+		}
+	}
+>>>>>>> 9412d11ff4 (Internal: Add agent ready widget [APT-238] (#38283))
 }
