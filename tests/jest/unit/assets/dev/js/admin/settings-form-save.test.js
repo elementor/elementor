@@ -1,4 +1,4 @@
-import SettingsFormSave, { serializeSettingsForm } from 'elementor-admin/settings-form-save';
+import SettingsFormSave, { isNavigationLeavingCurrentScreen, serializeSettingsForm } from 'elementor-admin/settings-form-save';
 
 describe( 'serializeSettingsForm', () => {
 	// Arrange
@@ -39,6 +39,32 @@ describe( 'serializeSettingsForm', () => {
 
 		// Assert
 		expect( first ).toBe( second );
+	} );
+} );
+
+describe( 'isNavigationLeavingCurrentScreen', () => {
+	it( 'should allow in-page settings tab hash navigation', () => {
+		// Arrange
+		const current = 'https://example.com/wp-admin/admin.php?page=elementor-settings#tab-general';
+		const target = 'https://example.com/wp-admin/admin.php?page=elementor-settings#tab-features';
+
+		// Act
+		const leaves = isNavigationLeavingCurrentScreen( current, target );
+
+		// Assert
+		expect( leaves ).toBe( false );
+	} );
+
+	it( 'should block navigation to another elementor admin screen', () => {
+		// Arrange
+		const current = 'https://example.com/wp-admin/admin.php?page=elementor-settings';
+		const target = 'https://example.com/wp-admin/admin.php?page=elementor-tools';
+
+		// Act
+		const leaves = isNavigationLeavingCurrentScreen( current, target );
+
+		// Assert
+		expect( leaves ).toBe( true );
 	} );
 } );
 

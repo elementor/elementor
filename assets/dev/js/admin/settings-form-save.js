@@ -42,6 +42,25 @@ export function serializeSettingsForm( form ) {
 	return entries.map( ( [ name, value ] ) => `${ name }\u0000${ value }` ).join( '\n' );
 }
 
+export function isNavigationLeavingCurrentScreen( currentHref, targetHref ) {
+	const origin = window.location.origin;
+	const current = new URL( currentHref, origin );
+	const target = new URL( targetHref, origin );
+
+	if ( target.origin !== current.origin ) {
+		return true;
+	}
+
+	if ( target.pathname !== current.pathname ) {
+		return true;
+	}
+
+	const currentPage = current.searchParams.get( 'page' );
+	const targetPage = target.searchParams.get( 'page' );
+
+	return currentPage !== targetPage;
+}
+
 export default class SettingsFormSave {
 	constructor( form ) {
 		this.form = form;
@@ -50,8 +69,10 @@ export default class SettingsFormSave {
 		this.baseline = serializeSettingsForm( form );
 		this.savedStatusDismissed = ! this.wasSettingsJustSaved();
 		this.savedStatusTimer = null;
+		this.allowNavigation = false;
 
 		this.bindEvents();
+		this.bindNavigationGuard();
 		this.patchSubmitClick();
 		this.syncSubmitState();
 
@@ -89,6 +110,66 @@ export default class SettingsFormSave {
 		};
 
 		this.form.addEventListener( 'submit', this.onFormSubmit, true );
+	}
+
+	bindNavigationGuard() {
+		this.onDocumentClick = ( event ) => {
+			if ( this.allowNavigation || ! this.form.classList.contains( 'elementor-settings-form-is-dirty' ) ) {
+				return;
+			}
+
+			const link = event.target.closest( 'a[href]' );
+
+			if ( ! link || link.isContentEditable ) {
+				return;
+			}
+
+			if ( '_blank' === link.target || link.hasAttribute( 'download' ) ) {
+				return;
+			}
+
+			const href = link.getAttribute( 'href' );
+
+			if ( ! href || href.startsWith( '#' ) ) {
+				return;
+			}
+
+			const destination = new URL( href, window.location.origin ).href;
+
+			if ( ! isNavigationLeavingCurrentScreen( window.location.href, destination ) ) {
+				return;
+			}
+
+			event.preventDefault();
+			event.stopPropagation();
+
+			this.showLeaveDialog( destination );
+		};
+
+		document.addEventListener( 'click', this.onDocumentClick, true );
+	}
+
+	showLeaveDialog( destination ) {
+		if ( ! this.statusElement || ! elementorCommon?.dialogsManager ) {
+			this.allowNavigation = true;
+			window.location.assign( destination );
+
+			return;
+		}
+
+		elementorCommon.dialogsManager.createWidget( 'confirm', {
+			headerMessage: this.statusElement.getAttribute( 'data-nav-title' ),
+			message: this.statusElement.getAttribute( 'data-nav-message' ),
+			strings: {
+				confirm: this.statusElement.getAttribute( 'data-nav-confirm' ),
+				cancel: this.statusElement.getAttribute( 'data-nav-cancel' ),
+			},
+			defaultOption: 'cancel',
+			onConfirm: () => {
+				this.allowNavigation = true;
+				window.location.assign( destination );
+			},
+		} ).show();
 	}
 
 	patchSubmitClick() {

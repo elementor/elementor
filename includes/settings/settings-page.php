@@ -302,13 +302,21 @@ abstract class Settings_Page {
 		$status_labels = [
 			'dirty' => esc_html__( 'Unsaved changes on this page. Save before continuing to another screen.', 'elementor' ),
 			'saved' => esc_html__( 'Changes saved.', 'elementor' ),
+			'nav_title' => esc_html__( 'Leave without saving?', 'elementor' ),
+			'nav_message' => esc_html__( 'You have unsaved changes on this page. If you leave now, they will be lost.', 'elementor' ),
+			'nav_confirm' => esc_html__( 'Leave', 'elementor' ),
+			'nav_cancel' => esc_html__( 'Stay', 'elementor' ),
 		];
 
 		echo '<div class="elementor-settings-form-actions">';
 		printf(
-			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s"></p>',
+			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s" data-nav-title="%3$s" data-nav-message="%4$s" data-nav-confirm="%5$s" data-nav-cancel="%6$s"></p>',
 			esc_attr( $status_labels['dirty'] ),
-			esc_attr( $status_labels['saved'] )
+			esc_attr( $status_labels['saved'] ),
+			esc_attr( $status_labels['nav_title'] ),
+			esc_attr( $status_labels['nav_message'] ),
+			esc_attr( $status_labels['nav_confirm'] ),
+			esc_attr( $status_labels['nav_cancel'] )
 		);
 		echo '<div class="elementor-settings-form-actions__controls">';
 		submit_button(
