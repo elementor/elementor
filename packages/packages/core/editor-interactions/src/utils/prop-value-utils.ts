@@ -21,6 +21,10 @@ import { type PlainCustomEffect, toCustomEffectPropValue } from './custom-effect
 import { getInteractionsConfig } from './get-interactions-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
+export const CODE_EFFECT = 'code';
+
+const EFFECTS_WITHOUT_TYPE = [ 'custom', CODE_EFFECT ];
+
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
 	value,
@@ -116,6 +120,7 @@ export const createAnimationPreset = ( {
 	start,
 	end,
 	customEffects,
+	codeEffect,
 }: {
 	effect: string;
 	type: string;
@@ -130,13 +135,17 @@ export const createAnimationPreset = ( {
 	start?: SizeStringValue;
 	end?: SizeStringValue;
 	customEffects?: PropValue | PlainCustomEffect;
+	codeEffect?: PropValue;
 } ): AnimationPresetPropValue => {
 	const customEffectProp = toCustomEffectPropValue( customEffects );
+	const hasCodeEffect = CODE_EFFECT === effect && codeEffect !== undefined;
+
 	return {
 		$$type: 'animation-preset-props',
 		value: {
 			effect: createString( effect ),
 			...( customEffectProp !== undefined && { custom_effect: customEffectProp } ),
+			...( hasCodeEffect && { code_effect: codeEffect } ),
 			type: createString( type ),
 			direction: createString( direction ?? '' ),
 			timing_config: createTimingConfig( duration, delay ),
@@ -263,7 +272,7 @@ export const buildDisplayLabel = ( item: InteractionItemValue ): string => {
 
 	const triggerLabel = TRIGGER_LABELS[ trigger ] || capitalize( trigger );
 	const effectLabel = capitalize( effect );
-	const typeLabel = 'custom' === effect ? '' : capitalize( type );
+	const typeLabel = EFFECTS_WITHOUT_TYPE.includes( effect ) ? '' : capitalize( type );
 
 	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }`;
 };

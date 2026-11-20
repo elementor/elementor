@@ -1,9 +1,44 @@
 import {
+	buildDisplayLabel,
+	createAnimationPreset,
 	createExcludedBreakpoints,
 	createInteractionBreakpoints,
 	createString,
 	extractExcludedBreakpoints,
 } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
+
+describe( 'createAnimationPreset code effect', () => {
+	const codeEffect = { $$type: 'code-effect', value: { code: { $$type: 'code', value: '() => {}' } } };
+	const baseOptions = { type: 'in', duration: 600, delay: 0, replay: false, codeEffect };
+
+	it( 'should include code_effect when the effect is code', () => {
+		// Act
+		const result = createAnimationPreset( { ...baseOptions, effect: 'code' } );
+
+		// Assert
+		expect( result.value.code_effect ).toEqual( codeEffect );
+	} );
+
+	it( 'should drop code_effect when the effect is not code', () => {
+		// Act
+		const result = createAnimationPreset( { ...baseOptions, effect: 'fade' } );
+
+		// Assert
+		expect( result.value.code_effect ).toBeUndefined();
+	} );
+
+	it( 'should label code effects without a type', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'load', effect: 'code' } );
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'On page load: Code ' );
+	} );
+} );
 
 describe( 'Breakpoints Utility Functions', () => {
 	describe( 'createExcludedBreakpoints', () => {

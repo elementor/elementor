@@ -13,7 +13,7 @@ Interactions add motion to atomic (v4) elements. Each element holds an `interact
 | PHP module | `modules/interactions/` |
 | Editor package | `packages/packages/core/editor-interactions/` |
 | Frontend scripts | `modules/interactions/assets/js/` |
-| Animation library | Motion.js (`lib/motion/motion.js`, v11.13.5) |
+| Animation library | Motion.js (`lib/motion/motion.js`, v14.9.0) |
 
 Data is validated on save, cached in postmeta for frontend reads, and executed client-side via Motion.js.
 

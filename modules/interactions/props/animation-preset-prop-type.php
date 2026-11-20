@@ -24,6 +24,7 @@ class Animation_Preset_Prop_Type extends Object_Prop_Type {
 			'timing_config' => Timing_Config_Prop_Type::make()->description( 'The timing config to use for the animation' ),
 			'config' => Animation_Config_Prop_Type::make()->description( 'The config to use for the animation' ),
 			'custom_effect' => Custom_Effect_Prop_Type::make()->meta( 'pro', true ),
+			'code_effect' => Code_Effect_Prop_Type::make()->meta( 'pro', true )->description( 'Required when effect is "code". The code effect runs only with trigger "load"' ),
 		];
 	}
 }

@@ -570,4 +570,69 @@ class Test_Validation extends TestCase {
 
 		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
 	}
+
+	public function test_sanitize__keeps_valid_code_effect() {
+		// Arrange.
+		$document = $this->document_with_items( [ $this->create_code_effect_interaction( 'load' ) ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$items = json_decode( $result['elements'][0]['interactions'], true )['items'];
+		$this->assertCount( 1, $items );
+		$this->assertSame( 'code', $items[0]['value']['animation']['value']['effect']['value'] );
+	}
+
+	public function test_sanitize__strips_code_effect_with_non_load_trigger() {
+		// Arrange.
+		$document = $this->document_with_items( [ $this->create_code_effect_interaction( 'scrollIn' ) ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__strips_code_effect_without_code() {
+		// Arrange.
+		$interaction = $this->create_code_effect_interaction( 'load' );
+		unset( $interaction['value']['animation']['value']['code_effect'] );
+		$document = $this->document_with_items( [ $interaction ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	private function document_with_items( array $items ) {
+		return [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => $items,
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+	}
+
+	private function create_code_effect_interaction( $trigger ) {
+		$interaction = $this->create_prop_type_interaction( $trigger, 'code' );
+		$interaction['value']['animation']['value']['code_effect'] = [
+			'$$type' => 'code-effect',
+			'value' => [
+				'code' => [ '$$type' => 'code', 'value' => '({ element, motion }) => motion.hover( element, () => {} )' ],
+			],
+		];
+
+		return $interaction;
+	}
 }

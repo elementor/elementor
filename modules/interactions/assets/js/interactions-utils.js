@@ -15,12 +15,18 @@ import {
 	preserveTransformKeyframes,
 } from './interactions-shared-utils.js';
 
+const PRO_ONLY_EFFECTS = [ 'custom', 'code' ];
+
+export function isProOnlyEffect( effect ) {
+	return PRO_ONLY_EFFECTS.includes( effect );
+}
+
 function isSupportedInteraction( animationConfig ) {
 	if ( ! [ 'load', 'scrollIn', 'scrollOut' ].includes( animationConfig.trigger ) ) {
 		return false;
 	}
 
-	if ( 'custom' === animationConfig.effect ) {
+	if ( isProOnlyEffect( animationConfig.effect ) ) {
 		return false;
 	}
 

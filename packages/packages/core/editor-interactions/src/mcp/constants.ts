@@ -1,4 +1,5 @@
 export const MAX_INTERACTIONS_PER_ELEMENT = 5;
+export const MOTION_CODE_GUIDE_URI = 'elementor://interactions/motion-code-guide';
 export const EDITOR_INTERACTIONS_MCP_SHORT_DESCRIPTION = `Everything related to V4 ( Atomic ) interactions.
 # Interactions
 - Create/update/delete interactions

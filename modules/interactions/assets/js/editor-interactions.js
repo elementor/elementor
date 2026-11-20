@@ -8,6 +8,7 @@ import {
 	extractAnimationConfig,
 	extractInteractionId,
 	getAnimateFunction,
+	isProOnlyEffect,
 	waitForAnimateFunction,
 	parseInteractionsData,
 	resetElementStyles,
@@ -90,7 +91,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 	interactions.forEach( ( interaction ) => {
 		const animConfig = extractAnimationConfig( interaction );
 
-		if ( animConfig ) {
+		if ( animConfig && ! isProOnlyEffect( animConfig.effect ) ) {
 			applyAnimation( element, animConfig, animateFunc );
 		}
 	} );

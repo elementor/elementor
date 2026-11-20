@@ -20,7 +20,9 @@ class Presets {
 
 	const DEFAULT_EASING = 'easeIn';
 	const BASE_EFFECTS = [ 'fade', 'slide', 'scale' ];
-	const ADDITIONAL_EFFECTS = [ 'custom' ];
+	const ADDITIONAL_EFFECTS = [ 'custom', 'code' ];
+	const CODE_EFFECT = 'code';
+	const CODE_EFFECT_TRIGGER = 'load';
 
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right', '' ];

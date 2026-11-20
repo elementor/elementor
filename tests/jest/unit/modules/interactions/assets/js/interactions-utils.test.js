@@ -49,6 +49,11 @@ describe( 'interactions-utils', () => {
 			expect( result ).toBe( true );
 		} );
 
+		it( 'should skip interaction when effect is code', () => {
+			const result = skipInteraction( { trigger: 'load', effect: 'code' } );
+			expect( result ).toBe( true );
+		} );
+
 		it( 'should skip interaction when breakpoint is excluded', () => {
 			window.innerWidth = 1600;
 

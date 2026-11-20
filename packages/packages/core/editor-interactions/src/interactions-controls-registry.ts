@@ -23,12 +23,14 @@ export type InteractionsControlType =
 	| 'relativeTo'
 	| 'start'
 	| 'end'
-	| 'customEffects';
+	| 'customEffects'
+	| 'codeEffect';
 
 type InteractionsControlPropsMap = {
 	trigger: FieldProps;
 	effect: FieldProps;
 	customEffects: FieldProps< PropValue >;
+	codeEffect: FieldProps< PropValue >;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;
