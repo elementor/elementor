@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents;
 
+use Elementor\Api;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Kits\Documents\Kit;
@@ -291,6 +292,12 @@ class Module extends BaseModule {
 			[ 'elementor-common' ],
 			ELEMENTOR_VERSION,
 			true
+		);
+
+		wp_localize_script(
+			self::DASHBOARD_TRACKING_SCRIPT_HANDLE,
+			self::CONFIG_OBJECT_NAME,
+			[ 'siteKey' => Api::get_site_key() ]
 		);
 	}
 
@@ -1070,6 +1077,7 @@ class Module extends BaseModule {
 
 		return [
 			'isActivated'        => $this->settings->is_activated(),
+			'siteKey'            => Api::get_site_key(),
 			'readinessScoreUrl'  => admin_url( 'admin.php?page=' . self::PAGE_ID ),
 			'llms'               => $this->get_llms_state( $unavailable_reasons ),
 			'markdown'           => $this->get_markdown_state(),
