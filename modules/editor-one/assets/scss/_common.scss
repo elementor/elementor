@@ -484,4 +484,16 @@ body:has(#editor-one-top-bar > *) {
 			height: calc(100vh - var(--e-admin-bar-height, 0px) - var(--e-top-bar-header-height, 0px));
 		}
 	}
+
+	$e-notice-gap-from-top: 24px;
+	$screen-meta-links-margin-block-end: 10px;
+
+	#wpbody-content > .e-notice--inline {
+		margin-block-start: $e-notice-gap-from-top;
+		margin-inline: 32px;
+	}
+
+	#screen-meta-links ~ .e-notice--inline {
+		margin-block-start: $e-notice-gap-from-top - $screen-meta-links-margin-block-end;
+	}
 }
