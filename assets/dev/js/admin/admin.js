@@ -380,10 +380,6 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 		},
 
 		initSettingsFormSave() {
-			if ( ! elementorCommon.elements.$body.hasClass( 'elementor-admin-settings-form' ) ) {
-				return;
-			}
-
 			const form = document.getElementById( 'elementor-settings-form' );
 
 			if ( ! form ) {

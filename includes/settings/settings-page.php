@@ -327,11 +327,31 @@ abstract class Settings_Page {
 		];
 	}
 
-	protected function register_settings_form_layout_hooks(): void {
-		add_filter( 'admin_body_class', [ $this, 'append_settings_form_body_class' ] );
+	/**
+	 * Admin `page` query args for settings screens that use the fixed save bar layout.
+	 *
+	 * @return string[]
+	 */
+	public static function get_settings_form_layout_page_slugs(): array {
+		return [
+			'elementor-settings',
+			'elementor-tools',
+			'elementor-role-manager',
+		];
 	}
 
-	public function append_settings_form_body_class( string $classes ): string {
+	public static function register_settings_form_layout_body_class(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen routing only.
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( ! in_array( $page, self::get_settings_form_layout_page_slugs(), true ) ) {
+			return;
+		}
+
+		add_filter( 'admin_body_class', [ self::class, 'append_settings_form_body_class' ] );
+	}
+
+	public static function append_settings_form_body_class( string $classes ): string {
 		return $classes . ' elementor-admin-settings-form';
 	}
 
@@ -344,7 +364,6 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function display_settings_page() {
-		$this->register_settings_form_layout_hooks();
 		$this->register_settings_fields();
 
 		$tabs = $this->get_tabs();
@@ -500,3 +519,5 @@ abstract class Settings_Page {
 		return ! isset( $section['show_if'] ) || $section['show_if'];
 	}
 }
+
+add_action( 'admin_init', [ Settings_Page::class, 'register_settings_form_layout_body_class' ], 0 );
