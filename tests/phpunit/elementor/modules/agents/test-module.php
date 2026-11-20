@@ -936,10 +936,12 @@ class Test_Module extends Elementor_Test_Base {
 		$this->set_enabled_modules( [ Agent_Ready_Settings::MODULE_LLMS_TXT ] );
 
 		$purged_urls = null;
+		$purge_all   = null;
 		$invalidated = false;
-		add_action( 'elementor/agents/purge_urls', static function ( $urls ) use ( &$purged_urls ) {
+		add_action( 'elementor/agents/purge_urls', static function ( $urls, $purge_all_flag ) use ( &$purged_urls, &$purge_all ) {
 			$purged_urls = $urls;
-		} );
+			$purge_all   = $purge_all_flag;
+		}, 10, 2 );
 		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function () use ( &$invalidated ) {
 			$invalidated = true;
 		} );
@@ -952,6 +954,7 @@ class Test_Module extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
 
 		$this->assertTrue( $invalidated );
+		$this->assertTrue( $purge_all );
 		$this->assertContains( home_url( '/llms.txt' ), $purged_urls );
 	}
 
@@ -960,9 +963,11 @@ class Test_Module extends Elementor_Test_Base {
 		$this->set_enabled_modules( [] );
 
 		$purged_urls = null;
-		add_action( 'elementor/agents/purge_urls', static function ( $urls ) use ( &$purged_urls ) {
+		$purge_all   = null;
+		add_action( 'elementor/agents/purge_urls', static function ( $urls, $purge_all_flag ) use ( &$purged_urls, &$purge_all ) {
 			$purged_urls = $urls;
-		} );
+			$purge_all   = $purge_all_flag;
+		}, 10, 2 );
 
 		// Act
 		$this->set_enabled_modules( [ Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ] );
@@ -970,6 +975,7 @@ class Test_Module extends Elementor_Test_Base {
 		// Assert
 		remove_all_actions( 'elementor/agents/purge_urls' );
 
+		$this->assertTrue( $purge_all );
 		$this->assertContains( home_url( '/index.md' ), $purged_urls );
 		$this->assertContains( home_url( '/robots.txt' ), $purged_urls );
 		$this->assertContains( home_url( '/.well-known/agent.json' ), $purged_urls );
