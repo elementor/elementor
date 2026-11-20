@@ -311,6 +311,27 @@ abstract class Settings_Page {
 	}
 
 	/**
+	 * WordPress screen IDs that use the fixed settings save bar layout.
+	 *
+	 * @return string[]
+	 */
+	public static function get_settings_form_layout_screen_ids(): array {
+		return [
+			'elementor_page_elementor-settings',
+			'elementor_page_elementor-tools',
+			'elementor_page_elementor-role-manager',
+		];
+	}
+
+	protected function register_settings_form_layout_hooks(): void {
+		add_filter( 'admin_body_class', [ $this, 'append_settings_form_body_class' ] );
+	}
+
+	public function append_settings_form_body_class( string $classes ): string {
+		return $classes . ' elementor-admin-settings-form';
+	}
+
+	/**
 	 * Display settings page.
 	 *
 	 * Output the content for the settings page.
@@ -319,6 +340,7 @@ abstract class Settings_Page {
 	 * @access public
 	 */
 	public function display_settings_page() {
+		$this->register_settings_form_layout_hooks();
 		$this->register_settings_fields();
 
 		$tabs = $this->get_tabs();

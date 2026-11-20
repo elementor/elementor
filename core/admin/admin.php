@@ -12,6 +12,7 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
+use Elementor\Settings_Page;
 use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Utils\Hints;
@@ -440,6 +441,10 @@ class Admin extends App {
 
 		if ( $current_screen && str_ends_with( $current_screen->id, 'elementor-mcp' ) ) {
 			return $footer_text;
+		}
+
+		if ( $current_screen && in_array( $current_screen->id, Settings_Page::get_settings_form_layout_screen_ids(), true ) ) {
+			return '';
 		}
 
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->id, 'elementor' ) );

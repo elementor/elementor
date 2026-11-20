@@ -97,6 +97,7 @@ class Role_Manager extends Settings_Page {
 	 * @access public
 	 */
 	public function display_settings_page() {
+		$this->register_settings_form_layout_hooks();
 		$this->get_tabs();
 		?>
 		<div class="wrap">
