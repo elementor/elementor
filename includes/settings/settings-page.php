@@ -351,8 +351,6 @@ abstract class Settings_Page {
 				<?php
 				settings_fields( static::PAGE_ID );
 
-				$this->render_settings_submit_bar( 'elementor-settings-button-save-changes' );
-
 				foreach ( $tabs as $tab_id => $tab ) {
 					if ( ! $this->should_render_tab( $tab ) ) {
 						continue;
@@ -393,6 +391,8 @@ abstract class Settings_Page {
 
 					echo '</div>';
 				}
+
+				$this->render_settings_submit_bar( 'elementor-settings-button-save-changes' );
 				?>
 			</form>
 		</div><!-- /.wrap -->

@@ -402,10 +402,9 @@
 	}
 
 	.elementor-settings-form-actions {
-		--e-admin-settings-form-actions-top: calc( var( --editor-one-wordpress-admin-bar-height, 32px ) + 8px );
-
 		background-color: var( --e-one-palette-background-default );
-		border-block-end-color: var( --e-one-palette-divider );
+		border-block-start-color: var( --e-one-palette-divider );
+		box-shadow: 0 -4px 16px rgba( 0, 0, 0, 0.08 );
 	}
 
 	#post-body-content,

@@ -316,16 +316,21 @@ body {
 }
 
 // Settings
+#elementor-settings-form {
+	padding-block-end: var( --e-admin-settings-form-actions-height, 64px );
+}
+
 .elementor-settings-form-actions {
 	position: sticky;
-	top: var( --e-admin-settings-form-actions-top, 32px );
+	bottom: var( --e-admin-settings-form-actions-bottom, 0 );
 	z-index: 20;
 	display: flex;
 	justify-content: flex-end;
-	margin-block: 0 16px;
+	margin-block-start: 24px;
 	padding-block: 12px;
 	background-color: #f0f0f1;
-	border-block-end: 1px solid #dcdcde;
+	border-block-start: 1px solid #dcdcde;
+	box-shadow: 0 -4px 12px rgba( 0, 0, 0, 0.06 );
 
 	.submit {
 		margin: 0;
