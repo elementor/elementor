@@ -298,6 +298,83 @@ abstract class Settings_Page {
 		}
 	}
 
+	protected function render_settings_submit_bar( string $button_data_id ): void {
+		$status_labels = [
+			'dirty' => esc_html__( 'Unsaved changes on this page. Save before continuing to another screen.', 'elementor' ),
+			'saved' => esc_html__( 'Changes saved.', 'elementor' ),
+			'nav_title' => esc_html__( 'Leave without saving?', 'elementor' ),
+			'nav_message' => esc_html__( 'You have unsaved changes on this page. If you leave now, they will be lost.', 'elementor' ),
+			'nav_confirm' => esc_html__( 'Leave', 'elementor' ),
+			'nav_cancel' => esc_html__( 'Stay', 'elementor' ),
+		];
+
+		echo '<div class="elementor-settings-form-actions">';
+		printf(
+			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s" data-nav-title="%3$s" data-nav-message="%4$s" data-nav-confirm="%5$s" data-nav-cancel="%6$s"></p>',
+			esc_attr( $status_labels['dirty'] ),
+			esc_attr( $status_labels['saved'] ),
+			esc_attr( $status_labels['nav_title'] ),
+			esc_attr( $status_labels['nav_message'] ),
+			esc_attr( $status_labels['nav_confirm'] ),
+			esc_attr( $status_labels['nav_cancel'] )
+		);
+		echo '<div class="elementor-settings-form-actions__controls">';
+		submit_button(
+			__( 'Save Changes', 'elementor' ),
+			'primary',
+			'submit',
+			true,
+			[
+				'data-id' => $button_data_id,
+				'disabled' => 'disabled',
+				'aria-disabled' => 'true',
+			]
+		);
+		echo '</div>';
+		echo '</div>';
+	}
+
+	/**
+	 * WordPress screen IDs that use the fixed settings save bar layout.
+	 *
+	 * @return string[]
+	 */
+	public static function get_settings_form_layout_screen_ids(): array {
+		return [
+			'elementor_page_elementor-settings',
+			'elementor_page_elementor-tools',
+			'elementor_page_elementor-role-manager',
+		];
+	}
+
+	/**
+	 * Admin `page` query args for settings screens that use the fixed save bar layout.
+	 *
+	 * @return string[]
+	 */
+	public static function get_settings_form_layout_page_slugs(): array {
+		return [
+			'elementor-settings',
+			'elementor-tools',
+			'elementor-role-manager',
+		];
+	}
+
+	public static function register_settings_form_layout_body_class(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen routing only.
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( ! in_array( $page, self::get_settings_form_layout_page_slugs(), true ) ) {
+			return;
+		}
+
+		add_filter( 'admin_body_class', [ self::class, 'append_settings_form_body_class' ] );
+	}
+
+	public static function append_settings_form_body_class( string $classes ): string {
+		return $classes . ' elementor-admin-settings-form';
+	}
+
 	/**
 	 * Display settings page.
 	 *
@@ -380,7 +457,7 @@ abstract class Settings_Page {
 					echo '</div>';
 				}
 
-				submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-settings-button-save-changes' ] );
+				$this->render_settings_submit_bar( 'elementor-settings-button-save-changes' );
 				?>
 			</form>
 		</div><!-- /.wrap -->
@@ -462,3 +539,5 @@ abstract class Settings_Page {
 		return ! isset( $section['show_if'] ) || $section['show_if'];
 	}
 }
+
+add_action( 'admin_init', [ Settings_Page::class, 'register_settings_form_layout_body_class' ], 0 );
