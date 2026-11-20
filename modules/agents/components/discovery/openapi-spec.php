@@ -151,8 +151,6 @@ class Openapi_Spec extends Feature_Component {
 	}
 
 	private function validate_anonymous_rest_access(): bool {
-		// Don't apply rest_authentication_errors here: core's rest_cookie_check_errors calls wp_set_current_user( 0 )
-		// when no REST nonce is present, logging out frontend users. The anonymous loopback below is the real check.
 
 		$posts_url = rest_url( 'wp/v2/posts' );
 		$args      = [
