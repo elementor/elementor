@@ -3,6 +3,7 @@ import { disablePromotionCdn } from '../../../assets/disable-promotion-cdn';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { timeouts } from '../../../config/timeouts';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor One Menu Visual Tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -14,14 +15,14 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		await context.close();
 	} );
 
-	// Skipped until home-screen.json from the editor-assets CDN is mocked: the live BFCM sidebar banner breaks the screenshot [ED-26387].
-	test.skip( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
 		test.setTimeout( timeouts.singleTest );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await disablePromotionCdn();
 		await wpAdmin.setSiteLanguage( 'he_IL' );
 		await wpAdmin.updateTranslations();
+		await wpCli( 'wp language plugin install elementor he_IL' );
 
 		await page.goto( '/wp-admin/admin.php?page=elementor', {
 			timeout: timeouts.singleTest,
@@ -29,6 +30,8 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		} );
 
 		await wpAdmin.cleanAdminPageForScreenshot();
+		// The conversion banner unlocks once earlier tests create two Elementor pages, so it depends on test order.
+		await page.addStyleTag( { content: '#e-conversion-banner { display: none !important; }' } );
 
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
