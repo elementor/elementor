@@ -97,6 +97,55 @@ describe( 'MarkdownContentPanel', () => {
 		expect( screen.getByRole( 'button', { name: 'Revert to generated version' } ) ).toBeTruthy();
 	} );
 
+	it( 'tracks a conflict only when the loaded page was edited manually', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: EDITED_CONTENT, isOverridden: true } );
+
+		// Act
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await screen.findByTestId( 'chip' );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_feature_conflict_detected', expect.objectContaining( { feature_name: 'markdown_content' } ) );
+
+		delete window.elementorCommon;
+	} );
+
+	it( 'does not track a conflict for generated markdown', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: GENERATED_CONTENT, isOverridden: false } );
+
+		// Act
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await waitFor( () => expect( screen.getByTestId( 'preview' ).textContent ).toBe( GENERATED_CONTENT ) );
+
+		// Assert
+		expect( dispatchEvent ).not.toHaveBeenCalled();
+
+		delete window.elementorCommon;
+	} );
+
+	it( 'tracks the markdown file as opened when the edit action is used', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: GENERATED_CONTENT, isOverridden: false } );
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await waitFor( () => expect( screen.getByTestId( 'preview' ).textContent ).toBe( GENERATED_CONTENT ) );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Edit' } ) );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_file_opened', expect.objectContaining( { file_type: 'markdown' } ) );
+
+		delete window.elementorCommon;
+	} );
+
 	it( 'drops the override warning and revert action when Markdown content is turned off', async () => {
 		// Arrange
 		fetchMarkdownPreview.mockResolvedValue( { content: EDITED_CONTENT, isOverridden: true } );

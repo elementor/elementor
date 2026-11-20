@@ -7,6 +7,8 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { FEATURE_MARKDOWN_CONTENT, FILE_TYPE_MARKDOWN } from '../../analytics/agent-ready-events';
+import { trackFeatureConflictDetected, trackFileOpened } from '../../analytics/track-agent-ready-event';
 import { fetchMarkdownPreview, revertMarkdownContent, saveMarkdownContent } from '../../api';
 import { MARKDOWN_SETTINGS_KEY } from '../../constants';
 import { useMarkdownItems } from '../../hooks/use-markdown-items';
@@ -40,6 +42,11 @@ export const MarkdownContentPanel = ( { settings } ) => {
 	const selectItem = ( item ) => setPicked( { itemsKey, item } );
 	const closeDialog = () => setDialogMode( null );
 
+	const handleEdit = () => {
+		trackFileOpened( { fileType: FILE_TYPE_MARKDOWN } );
+		setDialogMode( DIALOG_MODE_EDIT );
+	};
+
 	const refreshAfterChange = () => setRevision( ( current ) => current + 1 );
 
 	const saveContent = ( nextContent ) => saveMarkdownContent( selectedItemId, nextContent ).then( refreshAfterChange );
@@ -60,6 +67,10 @@ export const MarkdownContentPanel = ( { settings } ) => {
 				if ( isCurrent ) {
 					setContent( preview.content );
 					setIsOverridden( preview.isOverridden );
+
+					if ( preview.isOverridden ) {
+						trackFeatureConflictDetected( { featureName: FEATURE_MARKDOWN_CONTENT } );
+					}
 				}
 			} )
 			.catch( () => {
@@ -120,7 +131,7 @@ export const MarkdownContentPanel = ( { settings } ) => {
 					content={ content }
 					onSelect={ selectItem }
 					hasContent={ '' !== content }
-					onEdit={ () => setDialogMode( DIALOG_MODE_EDIT ) }
+					onEdit={ handleEdit }
 					onExpand={ () => setDialogMode( DIALOG_MODE_VIEW ) }
 				/>
 			) }
