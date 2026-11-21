@@ -18,6 +18,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { NUMBER_OF_RECENT_POSTS } from '../../api/recent-posts';
+import { env } from '../../env';
 import useRecentPosts from '../../hooks/use-recent-posts';
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
 import { type ExtendedWindow } from '../../types';
@@ -50,6 +51,10 @@ export default function RecentlyEdited() {
 
 	if ( ! document ) {
 		return null;
+	}
+
+	if ( env.is_pages_panel_active ) {
+		return <Indicator title={ documentTitle } status={ document.status } />;
 	}
 
 	const buttonProps = bindTrigger( popupState );
