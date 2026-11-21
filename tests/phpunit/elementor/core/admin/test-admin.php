@@ -417,6 +417,19 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( $original_footer, $result );
 	}
 
+	public function test_admin_footer_text__hides_rating_on_settings_form_layout_screens() {
+		// Arrange
+		set_current_screen( 'elementor_page_elementor-settings' );
+		$admin = new Admin();
+		$original_footer = 'Default WordPress footer';
+
+		// Act
+		$result = $admin->admin_footer_text( $original_footer );
+
+		// Assert
+		$this->assertSame( '', $result );
+	}
+
 	public function test_admin_footer_text__keeps_default_footer_on_mcp_admin_screen() {
 		// Arrange
 		set_current_screen( 'elementor_page_elementor-mcp' );

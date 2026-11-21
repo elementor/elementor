@@ -115,7 +115,8 @@ class Role_Manager extends Settings_Page {
 							}
 							$this->display_role_controls( $role_slug, $role_data );
 						}
-						submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-role-manager-button-save-changes' ] );
+						echo '</div>';
+						$this->render_settings_submit_bar( 'elementor-role-manager-button-save-changes' );
 						?>
 					</form>
 				</div>

@@ -6,6 +6,7 @@ import FilesUploadHandler from '../editor/utils/files-upload-handler';
 import TemplateControls from './new-template/template-controls.js';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
 import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js/floating-buttons/admin/module';
+import SettingsFormSave from './settings-form-save';
 import 'elementor-app/event-track/wp-dashboard-tracking';
 
 ( function( $ ) {
@@ -374,6 +375,18 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 			this.templateControls = new TemplateControls();
 
 			new ExperimentsModule();
+
+			this.initSettingsFormSave();
+		},
+
+		initSettingsFormSave() {
+			const form = document.getElementById( 'elementor-settings-form' );
+
+			if ( ! form ) {
+				return;
+			}
+
+			this.settingsFormSave = new SettingsFormSave( form );
 		},
 
 		addUserAgentClasses() {
