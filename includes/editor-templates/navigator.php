@@ -29,13 +29,26 @@ if ( ! $has_pro ) {
 ?>
 <script type="text/template" id="tmpl-elementor-navigator">
 	<div id="elementor-navigator__header">
-		<button id="elementor-navigator__toggle-all" data-elementor-action="expand" aria-label="<?php echo esc_attr__( 'Expand all elements', 'elementor' ); ?>">
-			<i class="eicon-expand" aria-hidden="true"></i>
-		</button>
-		<h2 id="elementor-navigator__header__title"><?php echo esc_html__( 'Structure', 'elementor' ); ?></h2>
-		<button id="elementor-navigator__close" aria-label="<?php echo esc_attr__( 'Close structure', 'elementor' ); ?>">
-			<i class="eicon-close" aria-hidden="true"></i>
-		</button>
+		<div id="elementor-navigator__header__toolbar">
+			<button id="elementor-navigator__toggle-all" data-elementor-action="expand" aria-label="<?php echo esc_attr__( 'Expand all elements', 'elementor' ); ?>">
+				<i class="eicon-expand" aria-hidden="true"></i>
+			</button>
+			<h2 id="elementor-navigator__header__title"><?php echo esc_html__( 'Structure', 'elementor' ); ?></h2>
+			<button id="elementor-navigator__search-toggle" type="button" aria-label="<?php echo esc_attr__( 'Search in structure', 'elementor' ); ?>" aria-expanded="false">
+				<i class="eicon-search-bold" aria-hidden="true"></i>
+			</button>
+			<button id="elementor-navigator__close" aria-label="<?php echo esc_attr__( 'Close structure', 'elementor' ); ?>">
+				<i class="eicon-close" aria-hidden="true"></i>
+			</button>
+		</div>
+		<div id="elementor-navigator__search" class="elementor-navigator__search elementor-hidden">
+			<label class="elementor-navigator__search-field">
+				<input type="search" id="elementor-navigator__search-input" placeholder="<?php echo esc_attr__( 'Search in structure', 'elementor' ); ?>" autocomplete="off" aria-label="<?php echo esc_attr__( 'Search in structure', 'elementor' ); ?>" />
+				<button id="elementor-navigator__search-clear" type="button" class="elementor-hidden" aria-label="<?php echo esc_attr__( 'Clear search', 'elementor' ); ?>">
+					<i class="eicon-close-circle" aria-hidden="true"></i>
+				</button>
+			</label>
+		</div>
 	</div>
 	<div id="elementor-navigator__elements"
 		<?php if ( ! empty( $elements_list_class ) ) : ?>
@@ -67,6 +80,11 @@ if ( ! $has_pro ) {
 				<i class="eicon-sort-down" aria-hidden="true"></i>
 				<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide inner elements', 'elementor' ); ?></span>
 			</div>
+			<# if ( isLocked ) { #>
+				<div class="elementor-navigator__element__lock" title="<?php echo esc_attr__( 'Part of parent layout — can’t move, can edit', 'elementor' ); ?>">
+					<i class="eicon-anchor" aria-hidden="true"></i>
+				</div>
+			<# } #>
 			<#
 			if ( icon ) { #>
 				<div class="elementor-navigator__element__element-type">
@@ -75,12 +93,17 @@ if ( ! $has_pro ) {
 			<# } #>
 			<div class="elementor-navigator__element__title">
 				<span class="elementor-navigator__element__title__text">{{{ title }}}</span>
+				<# if ( hint ) { #>
+					<span class="elementor-navigator__element__title__hint">{{{ hint }}}</span>
+				<# } #>
 			</div>
-			<div class="elementor-navigator__element__toggle">
-				<i class="eicon-preview-medium" aria-hidden="true"></i>
-				<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide Element', 'elementor' ); ?></span>
+			<div class="elementor-navigator__element__actions">
+				<div class="elementor-navigator__element__indicators"></div>
+				<div class="elementor-navigator__element__toggle">
+					<i class="eicon-preview-medium" aria-hidden="true"></i>
+					<span class="elementor-screen-only"><?php echo esc_html__( 'Show/hide Element', 'elementor' ); ?></span>
+				</div>
 			</div>
-			<div class="elementor-navigator__element__indicators"></div>
 		</div>
 	<# } #>
 	<div class="elementor-navigator__elements"></div>
