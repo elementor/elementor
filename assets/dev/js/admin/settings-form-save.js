@@ -1,8 +1,7 @@
 const SETTINGS_FORM_FIELD_SELECTOR = 'input, select, textarea';
 const AUTO_SAVE_DELAY_MS = 1500;
-const SAVED_STATUS_DURATION_MS = 5000;
-const SETTINGS_SAVED_QUERY_ARG = 'settings-updated';
 const CONFIRM_DIALOG_SELECTOR = '.dialog-type-confirm.dialog-widget';
+const AUTOSAVE_TOAST_CLASSES = 'elementor-admin-settings-toast';
 
 export function serializeSettingsForm( form ) {
 	if ( ! form ) {
@@ -67,55 +66,40 @@ export default class SettingsFormSave {
 	constructor( form ) {
 		this.form = form;
 		this.submitButton = form.querySelector( '#submit' );
-		this.statusElement = form.querySelector( '.elementor-settings-form-actions__status' );
+		this.configElement = form.querySelector( '.elementor-settings-autosave-config' );
 		this.baseline = serializeSettingsForm( form );
-		this.savedStatusDismissed = ! this.wasSettingsJustSaved();
-		this.savedStatusTimer = null;
 		this.allowNavigation = false;
 		this.autosaveDebounceTimer = null;
 		this.autosaveInFlight = false;
 		this.autosavePaused = false;
+		this.lastChangedFieldLabel = '';
 
 		this.bindEvents();
 		this.bindAutosave();
 		this.bindNavigationGuard();
 		this.patchSubmitClick();
-		this.syncSubmitState();
+		this.syncDirtyState();
 
-		if ( ! this.savedStatusDismissed ) {
-			this.scheduleSavedStatusDismissal();
+		if ( this.wasSettingsJustSaved() ) {
+			this.showSuccessToast();
 		}
 	}
 
 	wasSettingsJustSaved() {
-		return 'true' === new URLSearchParams( window.location.search ).get( SETTINGS_SAVED_QUERY_ARG );
-	}
-
-	scheduleSavedStatusDismissal() {
-		clearTimeout( this.savedStatusTimer );
-
-		this.savedStatusTimer = setTimeout( () => {
-			this.savedStatusDismissed = true;
-			this.syncSubmitState();
-		}, SAVED_STATUS_DURATION_MS );
+		return 'true' === new URLSearchParams( window.location.search ).get( 'settings-updated' );
 	}
 
 	bindEvents() {
-		this.onFormInput = () => this.syncSubmitState();
+		this.onFormInput = ( event ) => {
+			if ( event?.target instanceof HTMLElement ) {
+				this.lastChangedFieldLabel = this.resolveFieldLabel( event.target );
+			}
+
+			this.syncDirtyState();
+		};
 
 		this.form.addEventListener( 'input', this.onFormInput );
 		this.form.addEventListener( 'change', this.onFormInput );
-
-		this.onFormSubmit = ( event ) => {
-			this.syncSubmitState();
-
-			if ( this.submitButton?.disabled ) {
-				event.preventDefault();
-				event.stopImmediatePropagation();
-			}
-		};
-
-		this.form.addEventListener( 'submit', this.onFormSubmit, true );
 	}
 
 	bindAutosave() {
@@ -154,13 +138,16 @@ export default class SettingsFormSave {
 		await this.runAutosave();
 	}
 
+	async persistForm() {
+		await this.runAutosave();
+	}
+
 	async runAutosave() {
 		if ( ! window.ajaxurl ) {
 			return;
 		}
 
 		this.autosaveInFlight = true;
-		this.updateStatusMessage( 'saving' );
 
 		const formData = new FormData( this.form );
 		formData.append( 'action', 'elementor_admin_settings_autosave' );
@@ -178,14 +165,79 @@ export default class SettingsFormSave {
 			}
 
 			this.baseline = serializeSettingsForm( this.form );
-			this.savedStatusDismissed = false;
-			this.scheduleSavedStatusDismissal();
-			this.syncSubmitState();
+			this.syncDirtyState();
+			this.showSuccessToast();
 		} catch ( error ) {
-			this.updateStatusMessage( 'error' );
+			this.showErrorToast();
 		} finally {
 			this.autosaveInFlight = false;
 		}
+	}
+
+	resolveFieldLabel( field ) {
+		const row = field.closest( 'tr' );
+
+		if ( ! row ) {
+			return '';
+		}
+
+		const labelNode = row.querySelector( 'th label' );
+
+		return labelNode?.textContent?.trim() || '';
+	}
+
+	buildSuccessToastMessage() {
+		if ( ! this.configElement ) {
+			return '';
+		}
+
+		const fallback = this.configElement.getAttribute( 'data-toast-saved' ) || '';
+		const withLabelTemplate = this.configElement.getAttribute( 'data-toast-saved-with-label' ) || '';
+
+		if ( this.lastChangedFieldLabel && withLabelTemplate ) {
+			return withLabelTemplate.replace( '%s', this.lastChangedFieldLabel );
+		}
+
+		return fallback;
+	}
+
+	showSuccessToast() {
+		const message = this.buildSuccessToastMessage();
+
+		if ( ! message ) {
+			return;
+		}
+
+		this.showToast( message, 'success' );
+	}
+
+	showErrorToast() {
+		const message = this.configElement?.getAttribute( 'data-toast-error' ) || '';
+
+		if ( ! message ) {
+			return;
+		}
+
+		this.showToast( message, 'error' );
+	}
+
+	showToast( message, type ) {
+		if ( ! elementorCommon?.notifications?.showToast ) {
+			return;
+		}
+
+		const classSuffix = 'error' === type ? ' elementor-admin-settings-toast--error' : ' elementor-admin-settings-toast--success';
+
+		elementorCommon.notifications.showToast( {
+			message,
+			classes: AUTOSAVE_TOAST_CLASSES + classSuffix,
+			position: {
+				my: 'center bottom',
+				at: 'center bottom-32',
+				of: document.body,
+				autoRefresh: true,
+			},
+		} );
 	}
 
 	bindNavigationGuard() {
@@ -226,7 +278,7 @@ export default class SettingsFormSave {
 	}
 
 	showLeaveDialog( destination ) {
-		if ( ! this.statusElement || ! elementorCommon?.dialogsManager ) {
+		if ( ! this.configElement || ! elementorCommon?.dialogsManager ) {
 			this.allowNavigation = true;
 			window.location.assign( destination );
 
@@ -234,11 +286,11 @@ export default class SettingsFormSave {
 		}
 
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			headerMessage: this.statusElement.getAttribute( 'data-nav-title' ),
-			message: this.statusElement.getAttribute( 'data-nav-message' ),
+			headerMessage: this.configElement.getAttribute( 'data-nav-title' ),
+			message: this.configElement.getAttribute( 'data-nav-message' ),
 			strings: {
-				confirm: this.statusElement.getAttribute( 'data-nav-confirm' ),
-				cancel: this.statusElement.getAttribute( 'data-nav-cancel' ),
+				confirm: this.configElement.getAttribute( 'data-nav-confirm' ),
+				cancel: this.configElement.getAttribute( 'data-nav-cancel' ),
 			},
 			defaultOption: 'cancel',
 			onConfirm: () => {
@@ -253,54 +305,14 @@ export default class SettingsFormSave {
 			return;
 		}
 
-		const nativeClick = this.submitButton.click.bind( this.submitButton );
-
 		this.submitButton.click = () => {
-			this.syncSubmitState();
-
-			if ( ! this.submitButton.disabled ) {
-				nativeClick();
-			}
+			this.persistForm();
 		};
 	}
 
-	updateStatusMessage( state ) {
-		if ( ! this.statusElement ) {
-			return;
-		}
-
-		const labelKey = 'data-label-' + state;
-		const message = this.statusElement.getAttribute( labelKey ) || '';
-
-		this.statusElement.dataset.state = state;
-		this.statusElement.textContent = message;
-	}
-
-	syncSubmitState() {
-		if ( ! this.submitButton || this.autosaveInFlight ) {
-			return;
-		}
-
+	syncDirtyState() {
 		const hasChanges = serializeSettingsForm( this.form ) !== this.baseline;
 
-		this.submitButton.disabled = ! hasChanges;
-		this.submitButton.setAttribute( 'aria-disabled', hasChanges ? 'false' : 'true' );
 		this.form.classList.toggle( 'elementor-settings-form-is-dirty', hasChanges );
-
-		if ( hasChanges ) {
-			this.savedStatusDismissed = true;
-			clearTimeout( this.savedStatusTimer );
-			this.updateStatusMessage( 'dirty' );
-
-			return;
-		}
-
-		if ( ! this.savedStatusDismissed ) {
-			this.updateStatusMessage( 'saved' );
-
-			return;
-		}
-
-		this.updateStatusMessage( 'idle' );
 	}
 }

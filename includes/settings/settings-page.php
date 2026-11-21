@@ -299,43 +299,39 @@ abstract class Settings_Page {
 	}
 
 	protected function render_settings_submit_bar( string $button_data_id ): void {
-		$status_labels = [
-			'dirty' => esc_html__( 'Unsaved changes on this page. Save before continuing to another screen.', 'elementor' ),
-			'saved' => esc_html__( 'Changes saved.', 'elementor' ),
-			'saving' => esc_html__( 'Saving…', 'elementor' ),
-			'error' => esc_html__( 'Could not save changes. Use Save Changes or try again.', 'elementor' ),
+		$config_labels = [
+			'toast_saved' => esc_html__( 'Your changes are saved.', 'elementor' ),
+			'toast_saved_with_label' => esc_html__( '%s updated.', 'elementor' ),
+			'toast_error' => esc_html__( 'Could not save your changes. Please try again.', 'elementor' ),
 			'nav_title' => esc_html__( 'Leave without saving?', 'elementor' ),
 			'nav_message' => esc_html__( 'You have unsaved changes on this page. If you leave now, they will be lost.', 'elementor' ),
 			'nav_confirm' => esc_html__( 'Leave', 'elementor' ),
 			'nav_cancel' => esc_html__( 'Stay', 'elementor' ),
 		];
 
-		echo '<div class="elementor-settings-form-actions">';
 		printf(
-			'<p class="elementor-settings-form-actions__status" id="elementor-settings-form-actions-status" role="status" aria-live="polite" data-state="idle" data-label-dirty="%1$s" data-label-saved="%2$s" data-label-saving="%3$s" data-label-error="%4$s" data-nav-title="%5$s" data-nav-message="%6$s" data-nav-confirm="%7$s" data-nav-cancel="%8$s"></p>',
-			esc_attr( $status_labels['dirty'] ),
-			esc_attr( $status_labels['saved'] ),
-			esc_attr( $status_labels['saving'] ),
-			esc_attr( $status_labels['error'] ),
-			esc_attr( $status_labels['nav_title'] ),
-			esc_attr( $status_labels['nav_message'] ),
-			esc_attr( $status_labels['nav_confirm'] ),
-			esc_attr( $status_labels['nav_cancel'] )
+			'<div class="elementor-settings-autosave-config screen-reader-text" data-toast-saved="%1$s" data-toast-saved-with-label="%2$s" data-toast-error="%3$s" data-nav-title="%4$s" data-nav-message="%5$s" data-nav-confirm="%6$s" data-nav-cancel="%7$s"></div>',
+			esc_attr( $config_labels['toast_saved'] ),
+			esc_attr( $config_labels['toast_saved_with_label'] ),
+			esc_attr( $config_labels['toast_error'] ),
+			esc_attr( $config_labels['nav_title'] ),
+			esc_attr( $config_labels['nav_message'] ),
+			esc_attr( $config_labels['nav_confirm'] ),
+			esc_attr( $config_labels['nav_cancel'] )
 		);
-		echo '<div class="elementor-settings-form-actions__controls">';
+
 		submit_button(
 			__( 'Save Changes', 'elementor' ),
 			'primary',
 			'submit',
-			true,
+			false,
 			[
+				'class' => 'elementor-settings-autosave-submit',
 				'data-id' => $button_data_id,
-				'disabled' => 'disabled',
-				'aria-disabled' => 'true',
+				'tabindex' => '-1',
+				'aria-hidden' => 'true',
 			]
 		);
-		echo '</div>';
-		echo '</div>';
 	}
 
 	/**

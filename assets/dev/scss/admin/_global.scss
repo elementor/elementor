@@ -315,101 +315,36 @@ body {
 	font-size: 17px;
 }
 
-// Settings
+// Settings (autosave)
 body.elementor-admin-settings-form {
-	--e-admin-settings-form-actions-height: 56px;
-	--e-admin-settings-form-content-spacing: 48px;
-	--e-admin-settings-form-sidebar-offset: 160px;
-
-	&.folded {
-		--e-admin-settings-form-sidebar-offset: 36px;
-	}
-
-	&.e-has-sidebar-navigation {
-		--e-admin-settings-form-sidebar-offset: var( --editor-one-sidebar-left-offset, 160px );
-	}
-
-	#wpbody-content {
-		padding-block-end: calc(
-			var( --e-admin-settings-form-actions-height ) + var( --e-admin-settings-form-content-spacing )
-		);
-	}
-
 	#wpfooter {
 		display: none;
 	}
 }
 
-.elementor-settings-form-actions {
-	--e-admin-settings-form-actions-inset-start: calc(
-		var( --e-admin-settings-form-sidebar-offset, 160px ) + var( --editor-one-sidebar-navigation-width, 0px )
-	);
-
-	position: fixed;
-	inset-block-end: 0;
-	inset-inline-start: var( --e-admin-settings-form-actions-inset-start );
-	width: calc( 100vw - var( --e-admin-settings-form-actions-inset-start ) );
-	z-index: 100;
-	box-sizing: border-box;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
+.elementor-settings-autosave-submit {
+	position: absolute !important;
+	overflow: hidden;
+	width: 1px;
+	height: 1px;
 	margin: 0;
-	padding-block: 12px;
-	padding-inline: 20px;
-	background-color: #f0f0f1;
-	border-block-start: 1px solid #dcdcde;
-	box-shadow: 0 -4px 12px rgba( 0, 0, 0, 0.06 );
+	padding: 0;
+	border: 0;
+	clip: rect( 0, 0, 0, 0 );
+}
 
-	@media screen and ( max-width: 782px ) {
-		inset-inline-start: 0;
-		width: 100vw;
-	}
-
-	&__status {
-		margin: 0;
-		flex: 1;
-		min-inline-size: 0;
+.dialog-widget.elementor-admin-settings-toast {
+	.dialog-message {
 		font-size: 13px;
 		line-height: 1.4;
-		color: #50575e;
-
-		&[data-state="dirty"] {
-			color: #8a5a00;
-		}
-
-		&[data-state="saved"] {
-			color: #007017;
-		}
-
-		&[data-state="saving"] {
-			color: #50575e;
-		}
-
-		&[data-state="error"] {
-			color: #b32d2e;
-		}
 	}
 
-	&__controls {
-		flex-shrink: 0;
-
-		.submit {
-			margin: 0;
-			padding: 0;
-		}
+	&.elementor-admin-settings-toast--success .dialog-message {
+		color: #007017;
 	}
 
-	.submit {
-		margin: 0;
-		padding: 0;
-
-		&[disabled],
-		&:disabled {
-			cursor: not-allowed;
-			opacity: 0.55;
-		}
+	&.elementor-admin-settings-toast--error .dialog-message {
+		color: #b32d2e;
 	}
 }
 

@@ -31,7 +31,6 @@ export default class ExperimentsModule extends elementorModules.ViewModule {
 		const submitButton = jQuery( event.currentTarget );
 
 		this.elements.$experimentSelects.val( submitButton.val() );
-		window.elementorAdmin?.settingsFormSave?.syncSubmitState();
 		this.elements.$experimentForm.find( '#submit' ).trigger( 'click' );
 	}
 
