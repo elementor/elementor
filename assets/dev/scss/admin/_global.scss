@@ -315,7 +315,39 @@ body {
 	font-size: 17px;
 }
 
-// Settings
+// Settings (autosave)
+body.elementor-admin-settings-form {
+	#wpfooter {
+		display: none;
+	}
+}
+
+.elementor-settings-autosave-submit {
+	position: absolute !important;
+	overflow: hidden;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	clip: rect( 0, 0, 0, 0 );
+}
+
+.dialog-widget.elementor-admin-settings-toast {
+	.dialog-message {
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
+	&.elementor-admin-settings-toast--success .dialog-message {
+		color: #007017;
+	}
+
+	&.elementor-admin-settings-toast--error .dialog-message {
+		color: #b32d2e;
+	}
+}
+
 .elementor-settings-form-page {
 	padding-block-start: 30px;
 
