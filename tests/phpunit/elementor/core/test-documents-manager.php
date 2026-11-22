@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Core;
 use Elementor\Core\Base\Document;
 use Elementor\Core\DocumentTypes\Page as WP_Page;
 use Elementor\Core\DocumentTypes\Post as WP_Post;
+use Elementor\Core\Documents_Manager;
 use Elementor\Modules\Library\Documents\Page as Theme_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -11,6 +12,12 @@ use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
 
 class Test_Documents_Manager extends Elementor_Test_Base {
+	public function tear_down() {
+		remove_all_filters( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER );
+
+		parent::tear_down();
+	}
+
 	public function test_ajax_get_document_config__set_id_build_with_elementor() {
 		// Arrange
 		$this->act_as_admin();
@@ -214,5 +221,43 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 
 		$updated_document = Plugin::$instance->documents->get($post_id)->get_elements_data();
 		$this->assertStringStartsWith(get_site_url(), $updated_document[0]['settings']['background_image']['url']);
+	}
+
+	public function test_get_doc_for_frontend__returns_filtered_revision_document() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
+		$revision_id = $this->create_revision_of( $document->get_main_id() );
+		add_filter( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER, fn() => $revision_id );
+
+		// Act.
+		$frontend_document = Plugin::$instance->documents->get_doc_for_frontend( $document->get_main_id() );
+
+		// Assert.
+		$this->assertSame( $revision_id, $frontend_document->get_post()->ID );
+	}
+
+	public function test_get_frontend_document_id__ignores_ids_that_are_not_a_revision_of_the_post() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
+		$other_document = $this->factory()->documents->publish_and_get();
+		$other_revision_id = $this->create_revision_of( $other_document->get_main_id() );
+		add_filter( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER, fn() => $other_revision_id );
+
+		// Act.
+		$resolved_id = Plugin::$instance->documents->get_frontend_document_id( $document->get_main_id() );
+
+		// Assert.
+		$this->assertSame( $document->get_main_id(), $resolved_id );
+	}
+
+	private function create_revision_of( int $post_id ): int {
+		$revision_id = $this->factory()->post->create( [
+			'post_type' => 'revision',
+			'post_parent' => $post_id,
+			'post_status' => 'inherit',
+		] );
+		update_metadata( 'post', $revision_id, '_elementor_edit_mode', 'builder' );
+
+		return $revision_id;
 	}
 }

@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Documents_Manager {
 
+	const FRONTEND_DOCUMENT_ID_FILTER = 'elementor/documents/frontend_document_id';
+
 	/**
 	 * Registered types.
 	 *
@@ -262,6 +264,44 @@ class Documents_Manager {
 	}
 
 	/**
+	 * Get the frontend document ID.
+	 *
+	 * Resolve which document ID should render on the frontend for the given post ID,
+	 * by applying the `FRONTEND_DOCUMENT_ID_FILTER` filter and validating that the
+	 * filtered value is actually a revision of the given post before using it.
+	 *
+	 * @since 4.5.0
+	 * @access public
+	 *
+	 * @param int $post_id The post ID to render.
+	 *
+	 * @return int The post ID to render. Defaults to `$post_id`.
+	 */
+	public function get_frontend_document_id( int $post_id ): int {
+		/**
+		 * Filters which post renders on the frontend in place of a post.
+		 *
+		 * Lets a request render a revision of the post instead of the post itself.
+		 * Any value that is not a revision of the post is ignored.
+		 *
+		 * @since 4.5.0
+		 *
+		 * @param int $post_id The post ID to render. Defaults to the post itself.
+		 */
+		$document_id = (int) apply_filters( self::FRONTEND_DOCUMENT_ID_FILTER, $post_id );
+
+		if ( $document_id === $post_id || ! $this->is_revision_of( $document_id, $post_id ) ) {
+			return $post_id;
+		}
+
+		return $document_id;
+	}
+
+	private function is_revision_of( int $revision_id, int $post_id ): bool {
+		return (int) wp_is_post_revision( $revision_id ) === $post_id;
+	}
+
+	/**
 	 * Get document for frontend.
 	 *
 	 * Retrieve the document for frontend use.
@@ -274,6 +314,12 @@ class Documents_Manager {
 	 * @return false|Document The document if it exist, False otherwise.
 	 */
 	public function get_doc_for_frontend( $post_id ) {
+		$frontend_document_id = $this->get_frontend_document_id( (int) $post_id );
+
+		if ( $frontend_document_id !== (int) $post_id ) {
+			return $this->get( $frontend_document_id );
+		}
+
 		$preview_id = (int) Utils::get_super_global_value( $_GET, 'preview_id' );
 		$is_preview = is_preview();
 		$is_nonce_verify = wp_verify_nonce( Utils::get_super_global_value( $_GET, 'preview_nonce' ), 'post_preview_' . $preview_id );
