@@ -151,11 +151,6 @@ class Openapi_Spec extends Feature_Component {
 	}
 
 	private function validate_anonymous_rest_access(): bool {
-		$auth_error = apply_filters( 'rest_authentication_errors', null );
-
-		if ( is_wp_error( $auth_error ) ) {
-			return false;
-		}
 
 		$posts_url = rest_url( 'wp/v2/posts' );
 		$args      = [
@@ -171,7 +166,7 @@ class Openapi_Spec extends Feature_Component {
 		}
 
 		$status = wp_remote_retrieve_response_code( $response );
-		return in_array( $status, [ 200, 403, 401 ], true );
+		return 200 === $status;
 	}
 
 	private function serve_openapi(): void {
