@@ -52,7 +52,13 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 			<Stack
 				alignItems="center"
 				justifyContent="center"
-				sx={ { position: 'relative', width: '100%', height: 72, borderRadius: 1, backgroundColor: 'action.hover' } }
+				sx={ {
+					position: 'relative',
+					width: '100%',
+					height: 72,
+					borderRadius: 1,
+					backgroundColor: 'action.hover',
+				} }
 			>
 				{ isLocked && <CrownIcon sx={ CROWN_SX } aria-label={ __( 'Upgrade', 'elementor' ) } /> }
 				{ tile.icon ? (

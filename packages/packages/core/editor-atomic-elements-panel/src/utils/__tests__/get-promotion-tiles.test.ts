@@ -21,7 +21,11 @@ describe( 'getPromotionTiles', () => {
 
 		// Assert.
 		expect( tiles ).toEqual( [
-			expect.objectContaining( { widgetType: 'e-form', promotionType: 'atomic-form', categories: [ 'atomic-form' ] } ),
+			expect.objectContaining( {
+				widgetType: 'e-form',
+				promotionType: 'atomic-form',
+				categories: [ 'atomic-form' ],
+			} ),
 		] );
 	} );
 
