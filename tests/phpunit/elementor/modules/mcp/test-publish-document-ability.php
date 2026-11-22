@@ -217,23 +217,12 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		$this->assertEmpty( get_post_meta( $post->ID, Document::CACHE_META_KEY, true ) );
 	}
 
-<<<<<<< HEAD
-	public function test_execute__removes_live_page_settings_missing_from_the_autosave() {
-=======
 	public function test_execute__refreshes_post_content_and_modified_date_when_promoting_autosave() {
->>>>>>> 7b0ce4db45 (Fix: MCP publish-document doesn't update post_content or modified date [ED-26410] (#38324))
 		// Arrange
 		$this->act_as_admin();
 		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
 		$main_document = Plugin::$instance->documents->get( $post->ID );
 		$main_document->set_is_built_with_elementor( true );
-<<<<<<< HEAD
-		$main_document->save( [ 'elements' => $this->containers( 1 ) ] );
-		update_post_meta( $post->ID, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
-
-		$autosave = Document_Mutator::instance()->save_as_draft( $main_document, $this->containers( 2 ), true );
-		delete_metadata( 'post', $autosave->get_post()->ID, Page_Settings_Manager::META_KEY );
-=======
 		$main_document->save( [ 'elements' => $this->heading_container( 'Old words' ) ] );
 
 		$stale_modified_gmt = '2000-01-01 00:00:00';
@@ -245,22 +234,36 @@ class Test_Publish_Document_Ability extends Elementor_Test_Base {
 		] );
 
 		Document_Mutator::instance()->save_as_draft( $main_document, $this->heading_container( 'New words' ), true );
->>>>>>> 7b0ce4db45 (Fix: MCP publish-document doesn't update post_content or modified date [ED-26410] (#38324))
 
 		// Act
 		$this->ability->execute( [ 'post_id' => $post->ID ] );
 
 		// Assert
-<<<<<<< HEAD
-		$this->assertFalse( metadata_exists( 'post', $post->ID, Page_Settings_Manager::META_KEY ) );
-		$this->assertCount( 2, Plugin::$instance->documents->get( $post->ID, false )->get_elements_data() );
-=======
 		clean_post_cache( $post->ID );
 		$refreshed_post = get_post( $post->ID );
 		$this->assertStringContainsString( 'New words', $refreshed_post->post_content );
 		$this->assertStringNotContainsString( 'Old words', $refreshed_post->post_content );
 		$this->assertNotSame( $stale_modified_gmt, $refreshed_post->post_modified_gmt );
->>>>>>> 7b0ce4db45 (Fix: MCP publish-document doesn't update post_content or modified date [ED-26410] (#38324))
+	}
+
+	public function test_execute__removes_live_page_settings_missing_from_the_autosave() {
+		// Arrange
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_custom_post( [ 'post_status' => 'publish' ] );
+		$main_document = Plugin::$instance->documents->get( $post->ID );
+		$main_document->set_is_built_with_elementor( true );
+		$main_document->save( [ 'elements' => $this->containers( 1 ) ] );
+		update_post_meta( $post->ID, Page_Settings_Manager::META_KEY, [ 'hide_title' => 'yes' ] );
+
+		$autosave = Document_Mutator::instance()->save_as_draft( $main_document, $this->containers( 2 ), true );
+		delete_metadata( 'post', $autosave->get_post()->ID, Page_Settings_Manager::META_KEY );
+
+		// Act
+		$this->ability->execute( [ 'post_id' => $post->ID ] );
+
+		// Assert
+		$this->assertFalse( metadata_exists( 'post', $post->ID, Page_Settings_Manager::META_KEY ) );
+		$this->assertCount( 2, Plugin::$instance->documents->get( $post->ID, false )->get_elements_data() );
 	}
 
 	public function test_execute__already_published_without_autosave_is_noop_success() {
