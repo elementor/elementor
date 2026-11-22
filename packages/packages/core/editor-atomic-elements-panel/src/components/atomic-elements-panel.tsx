@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { TILES_PER_ROW } from '../consts';
 import { useAtomicWidgets } from '../hooks/use-atomic-widgets';
 import { getNavigationTarget } from '../utils/get-navigation-target';
+import { getPromotionTiles } from '../utils/get-promotion-tiles';
 import { groupWidgets } from '../utils/group-widgets';
 import { AtomicPanelFallback } from './atomic-panel-fallback';
 import { ElementGroup } from './element-group';
@@ -48,7 +49,8 @@ const TABS_SX = {
 };
 
 export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'value' > ) {
-	const groups = groupWidgets( useAtomicWidgets() );
+	const widgets = useAtomicWidgets();
+	const groups = groupWidgets( widgets, getPromotionTiles( widgets ) );
 
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLElement > ) => {
 		const current = ( event.target as HTMLElement ).closest< HTMLElement >( '[data-nav-item]' );

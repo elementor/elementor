@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { WidgetsIcon } from '@elementor/icons';
+import { CrownIcon, WidgetsIcon } from '@elementor/icons';
 import { ButtonBase, Stack, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { type ElementTile as ElementTileData } from '../utils/group-widgets';
 
@@ -12,9 +13,28 @@ const TITLE_SX = {
 	'&.MuiTypography-root': { fontSize: 11, letterSpacing: 0 },
 };
 
+const CROWN_SX = {
+	position: 'absolute',
+	top: 6,
+	insetInlineEnd: 6,
+	fontSize: 16,
+	color: 'promotion.main',
+};
+
 export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId: string } ) {
+	const isLocked = !! tile.promotionType;
+
+	const openPromotion = ( event: React.MouseEvent< HTMLElement > ) => {
+		document.dispatchEvent(
+			new CustomEvent( `${ tile.promotionType }-promotion:open`, {
+				detail: { target: event.currentTarget, title: tile.title },
+			} )
+		);
+	};
+
 	return (
 		<ButtonBase
+			onClick={ isLocked ? openPromotion : undefined }
 			data-nav-item="tile"
 			data-group-id={ groupId }
 			data-el-type={ tile.elType }
@@ -32,8 +52,9 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 			<Stack
 				alignItems="center"
 				justifyContent="center"
-				sx={ { width: '100%', height: 72, borderRadius: 1, backgroundColor: 'action.hover' } }
+				sx={ { position: 'relative', width: '100%', height: 72, borderRadius: 1, backgroundColor: 'action.hover' } }
 			>
+				{ isLocked && <CrownIcon sx={ CROWN_SX } aria-label={ __( 'Upgrade', 'elementor' ) } /> }
 				{ tile.icon ? (
 					<i className={ tile.icon } aria-hidden="true" style={ { fontSize: ICON_SIZE } } />
 				) : (
