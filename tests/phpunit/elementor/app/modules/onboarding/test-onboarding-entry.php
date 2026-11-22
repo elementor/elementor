@@ -131,6 +131,41 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 		$this->assertTrue( Onboarding_Entry::is_pending() );
 	}
 
+	public function test_decide__queues_ajax_reason_once() {
+		// Arrange
+		$this->act_as_admin();
+		$this->prime_pending_window();
+		add_filter( 'wp_doing_ajax', '__return_true' );
+
+		// Act
+		Onboarding_Entry::decide();
+		Onboarding_Entry::decide();
+
+		// Assert
+		$this->assertSame(
+			[ [ 'reason' => Onboarding_Entry::REASON_AJAX ] ],
+			get_option( Onboarding_Entry::EVENT_QUEUE_OPTION )
+		);
+	}
+
+	public function test_decide__queues_third_party_skip_once() {
+		// Arrange
+		$this->act_as_admin();
+		$this->prime_pending_window();
+		update_option( Module::ONBOARDING_OPTION, true );
+
+		// Act
+		Onboarding_Entry::decide();
+		Onboarding_Entry::decide();
+
+		// Assert
+		$this->assertSame(
+			[ [ 'reason' => Onboarding_Entry::REASON_THIRD_PARTY_SKIP ] ],
+			get_option( Onboarding_Entry::EVENT_QUEUE_OPTION )
+		);
+		$this->assertTrue( Onboarding_Entry::is_pending() );
+	}
+
 	public function test_decide__expires_at_exactly_fourteen_days() {
 		// Arrange
 		$this->act_as_admin();
@@ -211,6 +246,7 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 		delete_option( Onboarding_Entry::PENDING_OPTION );
 		delete_option( Onboarding_Entry::ACTIVATED_AT_OPTION );
 		delete_option( Onboarding_Entry::EVENT_QUEUE_OPTION );
+		delete_option( Onboarding_Entry::TRACKED_REASONS_OPTION );
 		delete_option( Module::ONBOARDING_OPTION );
 		delete_option( Upgrade_Manager::get_install_history_meta() );
 	}

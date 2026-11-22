@@ -23,6 +23,7 @@ class Onboarding_Entry {
 	const PENDING_OPTION = 'elementor_onboarding_pending';
 	const ACTIVATED_AT_OPTION = 'elementor_onboarding_activated_at';
 	const EVENT_QUEUE_OPTION = 'elementor_onboarding_redirect_event_queue';
+	const TRACKED_REASONS_OPTION = 'elementor_onboarding_redirect_event_reasons';
 	const EVENT_NAME = 'core_onboarding_redirect_decision';
 	const ELIGIBILITY_WINDOW = 14 * DAY_IN_SECONDS;
 
@@ -172,9 +173,7 @@ class Onboarding_Entry {
 				continue;
 			}
 
-			Events_Manager::dispatch_event( self::EVENT_NAME, [
-				'reason' => $item['reason'],
-			] );
+			self::dispatch_decision_event( $item['reason'] );
 		}
 
 		delete_option( self::EVENT_QUEUE_OPTION );
@@ -213,10 +212,12 @@ class Onboarding_Entry {
 	}
 
 	private static function track_decision( string $reason ): void {
-		$payload = [ 'reason' => $reason ];
+		if ( self::was_reason_tracked( $reason ) ) {
+			return;
+		}
 
 		if ( self::can_send_events() ) {
-			Events_Manager::dispatch_event( self::EVENT_NAME, $payload );
+			self::dispatch_decision_event( $reason );
 
 			return;
 		}
@@ -233,8 +234,40 @@ class Onboarding_Entry {
 			}
 		}
 
-		$queue[] = $payload;
+		$queue[] = [ 'reason' => $reason ];
 		update_option( self::EVENT_QUEUE_OPTION, $queue );
+	}
+
+	private static function dispatch_decision_event( string $reason ): void {
+		if ( self::was_reason_tracked( $reason ) ) {
+			return;
+		}
+
+		self::mark_reason_tracked( $reason );
+		Events_Manager::dispatch_event( self::EVENT_NAME, [
+			'reason' => $reason,
+		] );
+	}
+
+	private static function was_reason_tracked( string $reason ): bool {
+		$reasons = get_option( self::TRACKED_REASONS_OPTION, [] );
+
+		return is_array( $reasons ) && in_array( $reason, $reasons, true );
+	}
+
+	private static function mark_reason_tracked( string $reason ): void {
+		$reasons = get_option( self::TRACKED_REASONS_OPTION, [] );
+
+		if ( ! is_array( $reasons ) ) {
+			$reasons = [];
+		}
+
+		if ( in_array( $reason, $reasons, true ) ) {
+			return;
+		}
+
+		$reasons[] = $reason;
+		update_option( self::TRACKED_REASONS_OPTION, $reasons );
 	}
 
 	private static function can_send_events(): bool {
