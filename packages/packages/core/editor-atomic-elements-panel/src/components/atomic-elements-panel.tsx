@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { Box, ErrorBoundary, Tab, Tabs, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -7,9 +8,11 @@ import { TILES_PER_ROW } from '../consts';
 import { useAtomicWidgets } from '../hooks/use-atomic-widgets';
 import { getNavigationTarget } from '../utils/get-navigation-target';
 import { getPromotionTiles } from '../utils/get-promotion-tiles';
+import { filterGroups } from '../utils/filter-groups';
 import { groupWidgets } from '../utils/group-widgets';
 import { AtomicPanelFallback } from './atomic-panel-fallback';
 import { ElementGroup } from './element-group';
+import { ElementsSearch } from './elements-search';
 import { ElementsPanelSwitcher, type ElementsPanelSwitcherProps } from './elements-panel-switcher';
 
 const ELEMENTS_TAB = 'elements';
@@ -50,7 +53,10 @@ const TABS_SX = {
 
 export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'value' > ) {
 	const widgets = useAtomicWidgets();
-	const groups = groupWidgets( widgets, getPromotionTiles( widgets ) );
+	const [ query, setQuery ] = useState( '' );
+	const allGroups = groupWidgets( widgets, getPromotionTiles( widgets ) );
+	const groups = filterGroups( allGroups, query );
+	const isSearching = query.trim() !== '';
 
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLElement > ) => {
 		const current = ( event.target as HTMLElement ).closest< HTMLElement >( '[data-nav-item]' );
@@ -91,16 +97,21 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 					<Tab value={ ELEMENTS_TAB } label={ __( 'Elements', 'elementor' ) } />
 					<Tab value="my-library" label={ __( 'My Library', 'elementor' ) } />
 				</Tabs>
-				<PanelBody sx={ { overflowY: 'auto', px: 2 } } onKeyDown={ onKeyDown }>
-					{ groups.length === 0 ? (
-						<Box sx={ { py: 4, textAlign: 'center' } }>
-							<Typography variant="body2" color="text.secondary">
-								{ __( 'No atomic elements available.', 'elementor' ) }
-							</Typography>
-						</Box>
-					) : (
-						groups.map( ( group ) => <ElementGroup key={ group.id } group={ group } /> )
-					) }
+				<PanelBody sx={ { overflowY: 'auto' } } onKeyDown={ onKeyDown }>
+					<ElementsSearch value={ query } onChange={ setQuery } groups={ groups } />
+					<Box sx={ { px: 2 } }>
+						{ groups.length === 0 ? (
+							<Box sx={ { py: 4, textAlign: 'center' } }>
+								<Typography variant="body2" color="text.secondary">
+									{ isSearching
+										? __( 'No elements found. Clear the search or switch to the Legacy panel.', 'elementor' )
+										: __( 'No atomic elements available.', 'elementor' ) }
+								</Typography>
+							</Box>
+						) : (
+							groups.map( ( group ) => <ElementGroup key={ group.id } group={ group } /> )
+						) }
+					</Box>
 				</PanelBody>
 			</Panel>
 		</ErrorBoundary>

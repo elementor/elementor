@@ -71,3 +71,51 @@ describe( 'AtomicElementsPanel groups', () => {
 		expect( screen.queryByRole( 'button', { expanded: true } ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'AtomicElementsPanel search', () => {
+	it( 'should filter tiles by title and hide empty groups', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'HEAD' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Heading' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Flexbox' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should match by keyword', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( {
+			'e-heading': { title: 'Heading', atomic: true, controls: {}, keywords: [ 'title' ] },
+		} as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'title' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Heading' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should show a no-results message, and restore the list when cleared', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'zzz' } } );
+
+		// Assert.
+		expect( screen.getAllByText( /No elements found/ ).length ).toBeGreaterThan( 0 );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: '' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeInTheDocument();
+	} );
+} );
