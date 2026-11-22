@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FEATURE_LLMS_TXT } from '../analytics/agent-ready-events';
 import { trackFeatureToggled, trackPostTypeToggled } from '../analytics/track-agent-ready-event';
 import { fetchLlmsFile, revertLlmsContent, saveAgentReadySettings, saveLlmsContent, takeOverLlmsFile } from '../api';
-import { LLMS_SETTINGS_KEY } from '../constants';
+import { LLMS_CUSTOM_TEXT_SETTINGS_KEY, LLMS_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
 import { usePostExclusions } from './use-post-exclusions';
 
@@ -22,6 +22,7 @@ export const useLlmsSettings = ( initialState ) => {
 	const [ isManuallyEdited, setIsManuallyEdited ] = useState( initialState.isManuallyEdited );
 	const [ postTypes, setPostTypes ] = useState( initialState.postTypes );
 	const [ content, setContent ] = useState( '' );
+	const [ customText, setCustomText ] = useState( initialState.customText ?? '' );
 	const [ isSaving, setIsSaving ] = useState( false );
 	const [ saveError, setSaveError ] = useState( '' );
 
@@ -97,6 +98,19 @@ export const useLlmsSettings = ( initialState ) => {
 		refreshContent();
 	} );
 
+	const saveCustomText = ( nextCustomText ) => {
+		const trimmedCustomText = nextCustomText.trim();
+
+		return saveAgentReadySettings( {
+			[ LLMS_SETTINGS_KEY ]: { [ LLMS_CUSTOM_TEXT_SETTINGS_KEY ]: trimmedCustomText },
+		} )
+			.then( () => {
+				setCustomText( trimmedCustomText );
+				refreshContent();
+			} )
+			.catch( ( reason ) => Promise.reject( getSaveErrorMessage( reason ) ) );
+	};
+
 	const revertContent = () => revertLlmsContent().then( () => {
 		setIsManuallyEdited( false );
 		refreshContent();
@@ -112,14 +126,17 @@ export const useLlmsSettings = ( initialState ) => {
 	return {
 		...exclusions,
 		content,
+		customText,
 		hasPhysicalFile,
 		isEnabled: isEnabled && ! unavailableReason,
 		isManuallyEdited,
 		isSaving,
+		maxCustomTextLength: initialState.maxCustomTextLength,
 		saveError,
 		postTypes,
 		revertContent,
 		saveContent,
+		saveCustomText,
 		setIsEnabled,
 		takeOverFile,
 		toggleEnabled,

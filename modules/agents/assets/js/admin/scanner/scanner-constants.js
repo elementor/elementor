@@ -175,9 +175,6 @@ export const DOT_FIELD = {
 export const SCORE_TIER_LOW = 'low';
 export const SCORE_TIER_MID = 'mid';
 export const SCORE_TIER_HIGH = 'high';
-export const SCORE_TIER_LOW_MAX = 30;
-export const SCORE_TIER_HIGH_MIN = 81;
-
 const SCORE_RING_GRADIENT_VECTOR = { x1: -28, y1: -35.5, x2: 95.5, y2: 56 };
 
 export const SCORE_RING_GRADIENTS = {

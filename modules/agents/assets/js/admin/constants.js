@@ -14,6 +14,7 @@ export const BOT_ACCESS_SETTINGS_KEY = 'bot_access_control';
 export const AGENT_DISCOVERY_SETTINGS_KEY = 'agent_discovery';
 export const BROWSER_TOOLS_SETTINGS_KEY = 'browser_tools';
 export const BUSINESS_DETAILS_SETTINGS_KEY = 'business_details';
+export const LLMS_CUSTOM_TEXT_SETTINGS_KEY = 'custom_text';
 
 export const BOT_PERMISSION_SEARCH = 'search';
 export const BOT_PERMISSION_AI_INPUT = 'aiInput';
