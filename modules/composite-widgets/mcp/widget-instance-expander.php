@@ -7,7 +7,6 @@ use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\CompositeWidgets\Instance\Template_Parts;
 use Elementor\Modules\CompositeWidgets\Instance\Widget_Instance_Factory;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Tag_Expander;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 
@@ -18,8 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * `<e-widget configuration-id="x"/>` + `element_config.x = { widget_id }` inserts a composite widget instance.
  * Its parts are indexed as `x.<part>`, so the composition's appliers configure each part with its own schema.
+ * Used by MCP's `build-composition` through `Composite_Widget_Placeholders`.
  */
-class Widget_Instance_Expander implements Composition_Tag_Expander {
+class Widget_Instance_Expander {
 	const TAG = 'e-widget';
 	const WIDGET_ID_KEY = 'widget_id';
 	const PART_SEPARATOR = '.';
@@ -45,10 +45,9 @@ class Widget_Instance_Expander implements Composition_Tag_Expander {
 		return $configuration_id . self::PART_SEPARATOR . $part;
 	}
 
-	public function get_tag(): string {
-		return self::TAG;
-	}
-
+	/**
+	 * A Pro features discovery error when this instance can't be added: the composition skips it and builds the rest.
+	 */
 	public function get_unavailable_error( array $config ): ?\WP_Error {
 		$widget_id = $config[ self::WIDGET_ID_KEY ] ?? null;
 
@@ -59,6 +58,13 @@ class Widget_Instance_Expander implements Composition_Tag_Expander {
 		return Site_Widgets_Pro_Features_Discovery::for_add_to_page();
 	}
 
+	/**
+	 * @param array<string, array&> $config_id_index       Index of subtree refs; each placeholder is replaced, and its parts are added.
+	 * @param array<string, array>  $placeholders          Configuration-id => its `element_config` entry.
+	 * @param string[]              $referenced_config_ids Every configuration-id used as a key in the input maps.
+	 *
+	 * @return array{error: ?\WP_Error, warnings: Warnings_Bag}
+	 */
 	public function expand( array &$config_id_index, array $placeholders, array $referenced_config_ids ): array {
 		$errors = [];
 		$warnings = Warnings_Bag::make();

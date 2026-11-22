@@ -17,8 +17,7 @@ import { PLUGIN_FILE_PATTERNS } from './shared/plugin-files.mjs';
  * `PLUGIN_FILE_PATTERNS` runs, and it does not honor `!` un-ignore rules. Putting a recursive
  * markdown glob in `PRUNED` therefore removed `modules/mcp/static-resources/` entirely; MCP
  * abilities then failed to register when `Prompt_Loader::load()` returned empty descriptions.
- * Only markdown under `modules/mcp/static-resources/` and modules' `mcp/prompts/` (prompt sections a module adds
- * through `Prompt_Loader::PROMPT_FILTER`) is exempt; other MCP markdown stays out of the build.
+ * Only markdown under `modules/mcp/static-resources/` is exempt; other MCP markdown stays out of the build.
  *
  * Order matters: the last pattern that matches a path wins (same rule as `PLUGIN_FILE_PATTERNS`).
  */
@@ -26,7 +25,6 @@ export const MARKDOWN_PRUNE_PATTERNS = [
 	'*.md',
 	'**/*.md',
 	'!modules/mcp/static-resources/**/*.md',
-	'!modules/*/mcp/prompts/**/*.md',
 ];
 
 /**

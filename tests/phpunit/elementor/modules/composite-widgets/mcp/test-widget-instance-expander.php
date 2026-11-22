@@ -8,7 +8,6 @@ use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\CompositeWidgets\Instance\Widget_Instance_Factory;
 use Elementor\Modules\CompositeWidgets\Mcp\Widget_Instance_Expander;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Tag_Expanders;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
@@ -31,11 +30,9 @@ class Test_Widget_Instance_Expander extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->registry = Composite_Widgets_Registry_Factory::make();
-		add_filter( Tag_Expanders::FILTER, fn () => [ new Widget_Instance_Expander( fn () => $this->registry ) ], 20 );
 	}
 
 	public function tearDown(): void {
-		remove_all_filters( Tag_Expanders::FILTER );
 		remove_all_filters( Site_Widgets_Access_Controller::ACCESS_FILTER );
 
 		parent::tearDown();
@@ -270,7 +267,7 @@ class Test_Widget_Instance_Expander extends Elementor_Test_Base {
 		$this->assertSame( Closed_Structure::ERROR_CODE, $into_part->get_error_code() );
 	}
 
-	public function test_resolve_type_config__treats_the_widget_tag_as_unknown_without_its_expander() {
+	public function test_resolve_type_config__treats_the_widget_tag_as_unknown_without_composite_widgets() {
 		// Arrange.
 		$resolver = new Widget_Type_Resolver( new Xml_Parser() );
 
@@ -283,7 +280,11 @@ class Test_Widget_Instance_Expander extends Elementor_Test_Base {
 	}
 
 	private function make_ability(): Build_Composition_Ability {
-		return new Build_Composition_Ability( null, new Closed_Structure( $this->registry ) );
+		return new Build_Composition_Ability(
+			null,
+			new Closed_Structure( $this->registry ),
+			new Widget_Instance_Expander( fn () => $this->registry )
+		);
 	}
 
 	private function given_site_widget_access( string $access ): void {

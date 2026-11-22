@@ -23,7 +23,7 @@ class Widget_Type_Resolver {
 
 	/**
 	 * @param Xml_Parser $xml_parser
-	 * @param string[]   $placeholder_tags Tags of `Composition_Tag_Expander`s: leaf placeholders, not element types.
+	 * @param string[]   $placeholder_tags Leaf tags replaced before the appliers run (`Composite_Widget_Placeholders`), not element types.
 	 */
 	public function __construct( Xml_Parser $xml_parser, array $placeholder_tags = [] ) {
 		$this->xml_parser = $xml_parser;

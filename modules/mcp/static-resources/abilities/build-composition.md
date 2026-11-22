@@ -56,6 +56,9 @@ Never put element ids in `xml_structure`. The server generates a **new** id for 
 ## component_id (inside `element_config` for `<e-component>` only)
 Integer post id of a reusable component from `elementor/list-components`. This is neither a `configuration-id` nor an element id.
 
+# COMPOSITE WIDGETS
+When `elementor/list-resources` lists [elementor://composite-widgets], read it before placing a ready-made widget with the `<e-widget>` tag; it has the widget ids and the rules for configuring their parts. Without that resource, `<e-widget>` is not available.
+
 # COMPONENTS (only when explicitly requested)
 Elementor components are reusable widget compositions; global classes are reusable styles. Do not substitute one for the other.
 

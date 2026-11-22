@@ -2,9 +2,13 @@
 
 namespace Elementor\Testing\Modules\CompositeWidgets\Mcp;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\CompositeWidgets\Mcp\Composite_Widgets_Resource_Ability;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
+use Elementor\Modules\Mcp\Module as Mcp_Module;
+use Elementor\Plugin;
 use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Composite_Widgets_Registry_Factory;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -57,6 +61,30 @@ class Test_Composite_Widgets_Resource_Ability extends Elementor_Test_Base {
 		], $widget['fields'][0]['target'] );
 		$this->assertIsArray( $widget['fields'][0]['schema'] );
 		$this->assertContains( 'e-heading', $resource['allowed_part_types'] );
+		$this->assertStringContainsString( '<e-widget', implode( ' ', $resource['usage'] ) );
+	}
+
+	/**
+	 * @dataProvider experiment_states_provider
+	 */
+	public function test_get_composite_widgets_abilities__adds_the_resource_only_with_the_experiment( string $state, bool $expected_registered ) {
+		// Arrange.
+		$original_state = Plugin::$instance->experiments->get_features( Composite_Widgets_Module::EXPERIMENT_NAME )['default'];
+		Plugin::$instance->experiments->set_feature_default_state( Composite_Widgets_Module::EXPERIMENT_NAME, $state );
+
+		// Act.
+		$abilities = Mcp_Module::get_composite_widgets_abilities();
+
+		// Assert.
+		Plugin::$instance->experiments->set_feature_default_state( Composite_Widgets_Module::EXPERIMENT_NAME, $original_state );
+		$this->assertSame( $expected_registered, ! empty( $abilities ) && $abilities[0] instanceof Composite_Widgets_Resource_Ability );
+	}
+
+	public function experiment_states_provider(): array {
+		return [
+			'active' => [ Experiments_Manager::STATE_ACTIVE, true ],
+			'inactive' => [ Experiments_Manager::STATE_INACTIVE, false ],
+		];
 	}
 
 	/**
@@ -86,7 +114,7 @@ class Test_Composite_Widgets_Resource_Ability extends Elementor_Test_Base {
 	 * @return array{widgets: array<string, array>, allowed_part_types: string[]}
 	 */
 	private function read_resource(): array {
-		$resource = json_decode( ( new Composite_Widgets_Resource_Ability( fn () => $this->registry ) )->execute(), true );
+		$resource = json_decode( ( new Composite_Widgets_Resource_Ability( $this->registry ) )->execute(), true );
 		$resource['widgets'] = array_column( $resource['widgets'], null, 'id' );
 
 		return $resource;

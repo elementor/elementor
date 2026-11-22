@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Mcp\Widget_Instance_Expander;
 use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -18,9 +19,9 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Composite_Widget_Placeholders;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Tag_Expanders;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Variables\Module as Variables_Module;
@@ -44,13 +45,15 @@ final class Composition_Compiler {
 	public const COMPONENT_PARENT_ID = 'component';
 
 	private ?Closed_Structure $closed_structure;
+	private ?Widget_Instance_Expander $widget_instance_expander;
 
-	private function __construct( ?Closed_Structure $closed_structure ) {
+	private function __construct( ?Closed_Structure $closed_structure, ?Widget_Instance_Expander $widget_instance_expander ) {
 		$this->closed_structure = $closed_structure;
+		$this->widget_instance_expander = $widget_instance_expander;
 	}
 
-	public static function make( ?Closed_Structure $closed_structure = null ): self {
-		return new self( $closed_structure );
+	public static function make( ?Closed_Structure $closed_structure = null, ?Widget_Instance_Expander $widget_instance_expander = null ): self {
+		return new self( $closed_structure, $widget_instance_expander );
 	}
 
 	/**
@@ -68,8 +71,11 @@ final class Composition_Compiler {
 		string $parent_id = self::DEFAULT_PARENT_ID
 	) {
 		$xml_parser = new Xml_Parser();
-		$tag_expanders = Tag_Expanders::from_filter( $xml_parser );
-		$type_resolver = new Widget_Type_Resolver( $xml_parser, $tag_expanders->get_tags() );
+		$widget_placeholders = new Composite_Widget_Placeholders(
+			$xml_parser,
+			$this->widget_instance_expander ?? Composite_Widgets_Module::get_active_widget_instance_expander()
+		);
+		$type_resolver = new Widget_Type_Resolver( $xml_parser, $widget_placeholders->get_tags() );
 		$subtree_builder = new Subtree_Builder( $xml_parser );
 		$element_config = $this->as_map( $input['element_config'] ?? [] );
 
@@ -80,7 +86,7 @@ final class Composition_Compiler {
 
 		$pro_features_discovery = $this->unique_by_message( array_merge(
 			( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom ),
-			$tag_expanders->remove_unavailable( $dom, $element_config )
+			$widget_placeholders->remove_unavailable( $dom, $element_config )
 		) );
 
 		[
@@ -94,7 +100,7 @@ final class Composition_Compiler {
 			$document_tree,
 			$parent_id,
 			$unknown_widget_tag_errors,
-			$tag_expanders->collect_missing_configuration_id_errors( $dom )
+			$widget_placeholders->collect_missing_configuration_id_errors( $dom )
 		);
 		if ( $validation_error ) {
 			return $validation_error;
@@ -130,12 +136,12 @@ final class Composition_Compiler {
 
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
-		$expansion_error = $tag_expanders->expand( $index, $element_config, $this->collect_referenced_config_ids( $input ), $warnings );
+		$expansion_error = $widget_placeholders->expand( $index, $element_config, $this->collect_referenced_config_ids( $input ), $warnings );
 		if ( $expansion_error ) {
 			return $expansion_error;
 		}
 
-		$widget_configs = $tag_expanders->add_type_configs( $subtrees, $widget_configs, $type_resolver );
+		$widget_configs = $widget_placeholders->add_type_configs( $subtrees, $widget_configs, $type_resolver );
 
 		$variables_service = $this->create_variables_service();
 

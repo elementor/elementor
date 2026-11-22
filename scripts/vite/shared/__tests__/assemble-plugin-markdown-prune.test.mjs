@@ -17,16 +17,6 @@ describe( 'matchesOrderedPatterns (MARKDOWN_PRUNE_PATTERNS)', () => {
 		);
 	} );
 
-	it( 'keeps a module\'s MCP prompt markdown', () => {
-		assert.equal(
-			matchesOrderedPatterns(
-				'modules/composite-widgets/mcp/prompts/build-composition.md',
-				MARKDOWN_PRUNE_PATTERNS,
-			),
-			false,
-		);
-	} );
-
 	it( 'prunes markdown outside MCP static-resources', () => {
 		assert.equal(
 			matchesOrderedPatterns( 'modules/other/foo.md', MARKDOWN_PRUNE_PATTERNS ),
