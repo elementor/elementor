@@ -1,5 +1,5 @@
 import { type WidgetsCache } from './get-atomic-widgets';
-import { type ElementTile } from './group-widgets';
+import { type PromotionTile } from './group-widgets';
 
 type PromotionWidget = {
 	name: string;
@@ -17,18 +17,20 @@ type ExtendedWindow = Window & {
 	elementor?: { config?: { atomicWidgetPromotions?: AtomicWidgetPromotion[] } };
 };
 
-export function getPromotionTiles( registeredWidgets: WidgetsCache ): ElementTile[] {
+export function getPromotionTiles( registeredWidgets: WidgetsCache ): PromotionTile[] {
 	const promotions = ( window as ExtendedWindow ).elementor?.config?.atomicWidgetPromotions ?? [];
 
 	return promotions.flatMap( ( { type, widgets = [] } ) =>
 		widgets
 			.filter( ( { name } ) => ! registeredWidgets[ name ] )
 			.map( ( widget ) => ( {
-				elType: 'widget',
-				widgetType: widget.name,
-				title: widget.title,
-				icon: widget.icon,
-				promotionType: type,
+				tile: {
+					elType: 'widget',
+					widgetType: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					promotionType: type,
+				},
 				categories: parseCategories( widget.categories ),
 			} ) )
 	);

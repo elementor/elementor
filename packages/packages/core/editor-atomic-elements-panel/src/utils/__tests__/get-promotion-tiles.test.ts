@@ -21,11 +21,10 @@ describe( 'getPromotionTiles', () => {
 
 		// Assert.
 		expect( tiles ).toEqual( [
-			expect.objectContaining( {
-				widgetType: 'e-form',
-				promotionType: 'atomic-form',
+			{
+				tile: expect.objectContaining( { widgetType: 'e-form', promotionType: 'atomic-form' } ),
 				categories: [ 'atomic-form' ],
-			} ),
+			},
 		] );
 	} );
 
@@ -38,7 +37,7 @@ describe( 'getPromotionTiles', () => {
 		const tiles = getPromotionTiles( registered );
 
 		// Assert.
-		expect( tiles.map( ( { widgetType } ) => widgetType ) ).toEqual( [ 'e-form-input' ] );
+		expect( tiles.map( ( { tile } ) => tile.widgetType ) ).toEqual( [ 'e-form-input' ] );
 	} );
 
 	it( 'should return nothing without promotions', () => {

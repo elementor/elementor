@@ -9,7 +9,11 @@ export type ElementTile = {
 	icon?: string;
 	settings?: Record< string, unknown >;
 	promotionType?: string;
-	categories?: string[];
+};
+
+export type PromotionTile = {
+	tile: ElementTile;
+	categories: string[];
 };
 
 export type ElementGroup = {
@@ -43,24 +47,27 @@ const GROUPS: { id: string; title: string; widgetTypes: string[] }[] = [
 	{ id: FALLBACK_GROUP_ID, title: __( 'Atomic Elements', 'elementor' ), widgetTypes: [] },
 ];
 
-export function groupWidgets( widgets: WidgetsCache, lockedTiles: ElementTile[] = [] ): ElementGroup[] {
+export function groupWidgets( widgets: WidgetsCache, lockedTiles: PromotionTile[] = [] ): ElementGroup[] {
 	const tilesByGroup = new Map< string, ElementTile[] >();
 
-	const tiles: ElementTile[] = [
+	const placedTiles = [
 		...Object.entries( widgets ).map( ( [ widgetType, widget ] ) => ( {
-			elType: widget.elType ?? 'widget',
-			widgetType,
-			title: widget.title,
-			icon: widget.icon,
-			settings: widget.custom?.isPreset ? widget.custom.preset_settings : undefined,
-			categories: widget.categories,
+			groupId: resolveGroupId( widgetType, widget.categories ),
+			tile: {
+				elType: widget.elType ?? 'widget',
+				widgetType,
+				title: widget.title,
+				icon: widget.icon,
+				settings: widget.custom?.isPreset ? widget.custom.preset_settings : undefined,
+			},
 		} ) ),
-		...lockedTiles,
+		...lockedTiles.map( ( { tile, categories } ) => ( {
+			groupId: resolveGroupId( tile.widgetType, categories ),
+			tile,
+		} ) ),
 	];
 
-	tiles.forEach( ( { categories, ...tile } ) => {
-		const groupId = resolveGroupId( tile.widgetType, categories );
-
+	placedTiles.forEach( ( { groupId, tile } ) => {
 		tilesByGroup.set( groupId, [ ...( tilesByGroup.get( groupId ) ?? [] ), tile ] );
 	} );
 

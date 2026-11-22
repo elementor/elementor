@@ -17,8 +17,6 @@ const CROWN_SX = {
 	position: 'absolute',
 	top: 6,
 	insetInlineEnd: 6,
-	fontSize: 16,
-	color: 'promotion.main',
 };
 
 export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId: string } ) {
@@ -60,7 +58,14 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 					backgroundColor: 'action.hover',
 				} }
 			>
-				{ isLocked && <CrownIcon sx={ CROWN_SX } aria-label={ __( 'Upgrade', 'elementor' ) } /> }
+				{ isLocked && (
+					<CrownIcon
+						fontSize="tiny"
+						color="promotion"
+						sx={ CROWN_SX }
+						aria-label={ __( 'Upgrade', 'elementor' ) }
+					/>
+				) }
 				{ tile.icon ? (
 					<i className={ tile.icon } aria-hidden="true" style={ { fontSize: ICON_SIZE } } />
 				) : (
