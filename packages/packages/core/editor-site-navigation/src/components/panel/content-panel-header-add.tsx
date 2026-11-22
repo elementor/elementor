@@ -3,10 +3,10 @@ import { PageTypeIcon, PostTypeIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, ListItemIcon, ListItemText, Menu, MenuItem, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getAccessiblePanelPostTypes, postTypesMap, type Slug } from '../../api/post';
+import { postTypesMap, type Slug } from '../../api/post';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
 import useCanCreate from '../../hooks/use-can-create';
-import useUser from '../../hooks/use-user';
 import ContentPanelAddIconButton from './content-panel-add-icon-button';
 
 const typeIcons: Record< Slug, typeof PageTypeIcon > = {
@@ -31,13 +31,11 @@ function HeaderAddMenuItem( { slug, onSelect }: { slug: Slug; onSelect: ( slug: 
 
 export default function ContentPanelHeaderAdd() {
 	const { requestCreate } = useContentPanelCoordinator();
-	const { data: user } = useUser();
+	const { accessiblePostTypes: accessibleSlugs } = useAccessiblePanelPostTypes();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: 'elementor-content-panel-header-add',
 	} );
-
-	const accessibleSlugs = getAccessiblePanelPostTypes( user?.capabilities ?? {} );
 	const canAddAny = accessibleSlugs.length > 0;
 
 	const buttonProps = bindTrigger( popupState );

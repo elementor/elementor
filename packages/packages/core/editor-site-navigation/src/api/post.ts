@@ -48,6 +48,14 @@ export function canAccessSiteContentPanel( capabilities: Record< string, boolean
 	return getAccessiblePanelPostTypes( capabilities ).length > 0;
 }
 
+export function getCannotEditPanelItemMessage( postTypeSlug: Slug ): string {
+	if ( 'page' === postTypeSlug ) {
+		return __( 'You cannot edit this page.', 'elementor' );
+	}
+
+	return __( 'You cannot edit this post.', 'elementor' );
+}
+
 export const POST_PER_PAGE = 10;
 
 type WpPostsResponse = {

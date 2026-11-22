@@ -85,4 +85,27 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$this->assertFalse( $env['@elementor/editor-site-navigation']['can_access_site_content_panel'] );
 	}
+
+	public function test_can_access_site_content_panel_pages_only_role() {
+		$user_id = self::factory()->user->create();
+		$user = new \WP_User( $user_id );
+		$user->set_role( 'subscriber' );
+		$user->add_cap( 'edit_pages' );
+		wp_set_current_user( $user_id );
+		new SiteNavigation();
+
+		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+
+		$this->assertTrue( $env['@elementor/editor-site-navigation']['can_access_site_content_panel'] );
+		$this->assertFalse( $user->has_cap( 'edit_posts' ) );
+	}
+
+	public function test_can_access_site_content_panel_contributor() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'contributor' ] ) );
+		new SiteNavigation();
+
+		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
+
+		$this->assertTrue( $env['@elementor/editor-site-navigation']['can_access_site_content_panel'] );
+	}
 }

@@ -1,4 +1,4 @@
-import { canAccessSiteContentPanel, getAccessiblePanelPostTypes } from '../post';
+import { canAccessSiteContentPanel, getAccessiblePanelPostTypes, getCannotEditPanelItemMessage } from '../post';
 
 describe( 'post panel capabilities', () => {
 	it( 'returns both types when user can edit pages and posts', () => {
@@ -24,5 +24,10 @@ describe( 'post panel capabilities', () => {
 	it( 'returns empty when user cannot edit pages or posts', () => {
 		expect( getAccessiblePanelPostTypes( {} ) ).toEqual( [] );
 		expect( canAccessSiteContentPanel( {} ) ).toBe( false );
+	} );
+
+	it( 'returns full cannot-edit messages by post type', () => {
+		expect( getCannotEditPanelItemMessage( 'page' ) ).toBe( 'You cannot edit this page.' );
+		expect( getCannotEditPanelItemMessage( 'post' ) ).toBe( 'You cannot edit this post.' );
 	} );
 } );

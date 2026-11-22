@@ -17,9 +17,9 @@ import {
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
-import { postTypesMap, type Slug } from '../../../../api/post';
+import { getCannotEditPanelItemMessage, type Slug } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
@@ -40,14 +40,9 @@ const DisabledPostTooltip = ( {
 	postTypeSlug: Slug;
 } ) => {
 	if ( isDisabled ) {
-		const typeLabel = postTypesMap[ postTypeSlug ].labels.singular_name;
 		const title = (
 			<Typography variant="caption">
-				{ sprintf(
-					/* translators: %s: Post type singular name (e.g. Page, Post). */
-					__( 'You cannot edit this %s.', 'elementor' ),
-					typeLabel
-				) }
+				{ getCannotEditPanelItemMessage( postTypeSlug ) }
 				<br />
 				{ __( 'To edit it directly, contact the site owner', 'elementor' ) }
 			</Typography>
