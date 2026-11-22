@@ -16,6 +16,7 @@ use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Modules\Mcp\Abilities\Utils\Components_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Forms_Pro_Features_Discovery;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Modules\PageTemplates\Module as Page_Templates_Module;
@@ -85,8 +86,6 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 	}
 
 	public function test_execute__renders_composition() {
-		$this->markTestSkipped( 'Unexpected llm_instructions key in output when MCP composer package is loaded in tests/bootstrap.php (APT-220); to be fixed by the owning team.' );
-
 		// Arrange
 		$this->act_as_admin();
 		$post_id = $this->create_real_document();
@@ -167,7 +166,11 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'edit_url', $result );
 		$this->assertNotEmpty( $result['edit_url'] );
 		$this->assertArrayNotHasKey( 'preview_url', $result );
-		$this->assertArrayNotHasKey( 'llm_instructions', $result );
+		$this->assertIsInt( $result['undo_revision_id'] );
+		$this->assertSame(
+			Document_Mutation_Links::undo_instructions( $post_id, $result['undo_revision_id'] ),
+			$result['llm_instructions']
+		);
 
 		$rendered = $this->render_root_elements( $post_id );
 		$this->assertMatchesSnapshot( $this->normalize_snapshot( $rendered ) );
