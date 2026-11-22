@@ -3,6 +3,8 @@ namespace Elementor\App\Modules\Onboarding;
 
 use Elementor\Core\Common\Modules\EventsManager\Module as Events_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Plugin;
+use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -236,6 +238,13 @@ class Onboarding_Entry {
 	}
 
 	private static function can_send_events(): bool {
-		return ! empty( Events_Manager::get_editor_events_config()['can_send_events'] );
+		if ( empty( Plugin::$instance ) || empty( Plugin::$instance->experiments ) ) {
+			return false;
+		}
+
+		return ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN )
+			&& Tracker::is_allow_track()
+			&& ! Tracker::has_terms_changed()
+			&& Plugin::$instance->experiments->is_feature_active( Events_Manager::EXPERIMENT_NAME );
 	}
 }

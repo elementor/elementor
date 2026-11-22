@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding;
 use Elementor\App\Modules\Onboarding\Module;
 use Elementor\App\Modules\Onboarding\Onboarding_Entry;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,6 +47,28 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 
 		// Act
 		Onboarding_Entry::mark_activation();
+
+		// Assert
+		$this->assertFalse( Onboarding_Entry::is_pending() );
+		$this->assertSame(
+			[ [ 'reason' => Onboarding_Entry::REASON_ALREADY_LOGGED_IN ] ],
+			get_option( Onboarding_Entry::EVENT_QUEUE_OPTION )
+		);
+	}
+
+	public function test_mark_activation__does_not_fatal_when_plugin_instance_is_null() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( Upgrade_Manager::get_install_history_meta(), [ '3.20.0' => time() ] );
+		$plugin = Plugin::$instance;
+		Plugin::$instance = null;
+
+		// Act
+		try {
+			Onboarding_Entry::mark_activation();
+		} finally {
+			Plugin::$instance = $plugin;
+		}
 
 		// Assert
 		$this->assertFalse( Onboarding_Entry::is_pending() );
