@@ -9,6 +9,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateRunCommand: jest.fn(),
 	__privateUseRouteStatus: jest.fn( () => ( { isActive: false, isBlocked: false } ) ),
 } ) );
+jest.mock( '../components/atomic-elements-panel', () => ( { AtomicElementsPanel: () => null } ) );
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
 	__useDispatch: () => mockDispatch,
