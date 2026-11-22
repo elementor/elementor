@@ -29,6 +29,7 @@ class Agent_Ready_Settings {
 	const ACTIVATED_KEY = 'activated';
 
 	const MAX_BUSINESS_DETAILS_LENGTH = 2000;
+	const MAX_LLMS_CUSTOM_TEXT_LENGTH = 2000;
 
 	const BOT_PERMISSION_SEARCH = 'search';
 	const BOT_PERMISSION_AI_INPUT = 'ai_input';
@@ -115,6 +116,10 @@ class Agent_Ready_Settings {
 
 	public function is_llms_manually_edited(): bool {
 		return (bool) $this->get_module_settings( self::MODULE_LLMS_TXT )['is_manually_edited'];
+	}
+
+	public function get_llms_custom_text(): string {
+		return (string) $this->get_module_settings( self::MODULE_LLMS_TXT )['custom_text'];
 	}
 
 	/**
@@ -250,6 +255,7 @@ class Agent_Ready_Settings {
 			self::MODULE_LLMS_TXT => [
 				'enabled'            => false,
 				'is_manually_edited' => false,
+				'custom_text'        => '',
 			],
 			self::MODULE_MARKDOWN_CONTENT => [
 				'enabled' => false,
@@ -292,7 +298,7 @@ class Agent_Ready_Settings {
 	 */
 	private function get_module_sanitizers(): array {
 		return [
-			self::MODULE_LLMS_TXT            => fn( array $settings ) => $this->sanitize_content_module( $settings ),
+			self::MODULE_LLMS_TXT            => fn( array $settings ) => $this->sanitize_llms_module( $settings ),
 			self::MODULE_MARKDOWN_CONTENT    => fn( array $settings ) => $this->sanitize_content_module( $settings ),
 			self::MODULE_BOT_ACCESS_CONTROL  => fn( array $settings ) => $this->sanitize_bot_access_module( $settings ),
 			self::MODULE_AGENT_DISCOVERY     => fn( array $settings ) => $this->sanitize_toggle_module( $settings ),
@@ -303,19 +309,29 @@ class Agent_Ready_Settings {
 	private function sanitize_browser_tools_module( array $settings ): array {
 		return [
 			'enabled'          => rest_sanitize_boolean( $settings['enabled'] ?? false ),
-			'business_details' => $this->sanitize_business_details( $settings['business_details'] ?? '' ),
+			'business_details' => $this->sanitize_bounded_text( $settings['business_details'] ?? '', self::MAX_BUSINESS_DETAILS_LENGTH ),
 		];
 	}
 
+	private function sanitize_llms_module( array $settings ): array {
+		$clean = $this->sanitize_content_module( $settings );
+
+		if ( isset( $settings['custom_text'] ) ) {
+			$clean['custom_text'] = $this->sanitize_bounded_text( $settings['custom_text'], self::MAX_LLMS_CUSTOM_TEXT_LENGTH );
+		}
+
+		return $clean;
+	}
+
 	/**
-	 * @param mixed $details Incoming business details.
+	 * @param mixed $text Incoming text.
 	 */
-	private function sanitize_business_details( $details ): string {
-		if ( ! is_scalar( $details ) ) {
+	private function sanitize_bounded_text( $text, int $max_length ): string {
+		if ( ! is_scalar( $text ) ) {
 			return '';
 		}
 
-		return mb_substr( trim( sanitize_textarea_field( (string) $details ) ), 0, self::MAX_BUSINESS_DETAILS_LENGTH );
+		return mb_substr( trim( sanitize_textarea_field( (string) $text ) ), 0, $max_length );
 	}
 
 	private function sanitize_toggle_module( array $settings ): array {
