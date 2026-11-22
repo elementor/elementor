@@ -1347,5 +1347,4 @@ class Module extends BaseModule {
 			] );
 		}
 	}
-
 }
