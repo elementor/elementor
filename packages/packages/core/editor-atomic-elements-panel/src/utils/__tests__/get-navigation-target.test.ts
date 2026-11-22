@@ -102,4 +102,21 @@ describe( 'getNavigationTarget', () => {
 		expect( fromHeader ).toBe( tiles[ 0 ] );
 		expect( fromLastRow ).toBe( nextHeader );
 	} );
+
+	it( 'should land on the last tile when moving down into a partially filled last row', () => {
+		// Arrange.
+		const { items, tiles } = buildItems();
+
+		// Act.
+		const target = getNavigationTarget( {
+			items,
+			current: tiles[ 2 ],
+			key: 'ArrowDown',
+			columns: COLUMNS,
+			isRtl: false,
+		} );
+
+		// Assert.
+		expect( target ).toBe( tiles[ 3 ] );
+	} );
 } );

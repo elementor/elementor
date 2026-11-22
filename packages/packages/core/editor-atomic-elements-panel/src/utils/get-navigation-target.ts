@@ -46,5 +46,8 @@ function getVerticalTileTarget( items: HTMLElement[], current: HTMLElement, step
 		return groupItems.find( ( item ) => item.dataset.navItem === 'header' ) ?? null;
 	}
 
-	return items[ items.indexOf( tiles[ tiles.length - 1 ] ) + 1 ] ?? null;
+	const lastTile = tiles[ tiles.length - 1 ];
+	const hasNextRow = Math.floor( tiles.indexOf( current ) / columns ) < Math.floor( ( tiles.length - 1 ) / columns );
+
+	return hasNextRow ? lastTile : items[ items.indexOf( lastTile ) + 1 ] ?? null;
 }
