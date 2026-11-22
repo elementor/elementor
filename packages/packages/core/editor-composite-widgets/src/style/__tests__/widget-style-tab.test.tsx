@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
 import { ElementProvider } from '@elementor/editor-editing-panel';
-import { getElementType } from '@elementor/editor-elements';
+import { ELEMENT_STYLE_CHANGE_EVENT, getElementType } from '@elementor/editor-elements';
 import { type PropType } from '@elementor/editor-props';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
 import { setCompositeWidgetDefinitions } from '../../__tests__/set-composite-widget-definitions';
 import {
@@ -101,6 +101,22 @@ describe( '<WidgetStyleTab />', () => {
 		// Assert
 		expect( screen.getByText( 'Quick edit' ) ).toBeInTheDocument();
 		expect( screen.getByText( `Gap -> ${ fixture.label.id }` ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'region', { name: `Style ${ LABEL_STYLE_ID } @ tablet` } ) ).toBeInTheDocument();
+	} );
+
+	it( "should read the first target's local style once a quick edit creates it", () => {
+		// Arrange
+		renderTab( fixture, [ { label: 'Gap', style_prop: REGISTERED_STYLE_PROP, targets: [ 'label' ] } ] );
+
+		// Act
+		act( () => {
+			fixture.label.model.set( 'styles', {
+				[ LABEL_STYLE_ID ]: { id: LABEL_STYLE_ID, type: 'class', label: 'local', variants: [] },
+			} );
+			window.dispatchEvent( new CustomEvent( ELEMENT_STYLE_CHANGE_EVENT ) );
+		} );
+
+		// Assert
 		expect( screen.getByRole( 'region', { name: `Style ${ LABEL_STYLE_ID } @ tablet` } ) ).toBeInTheDocument();
 	} );
 

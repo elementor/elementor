@@ -1,4 +1,4 @@
-import { type ElementID, getContainer } from '@elementor/editor-elements';
+import { type ElementID, getContainer, styleRerenderEvents } from '@elementor/editor-elements';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
@@ -16,8 +16,8 @@ export type QuickEditTargets = {
 export function useQuickEditTargets( rootId: ElementID, parts: string[] ): QuickEditTargets | null {
 	return useListenTo(
 		[
+			...styleRerenderEvents,
 			commandEndEvent( 'document/elements/set-settings' ),
-			commandEndEvent( 'document/elements/create' ),
 			commandEndEvent( 'document/elements/delete' ),
 		],
 		() => getQuickEditTargets( rootId, parts ),
