@@ -265,5 +265,4 @@ class Onboarding_Entry {
 		$reasons[] = $reason;
 		update_option( self::TRACKED_REASONS_OPTION, $reasons );
 	}
-
 }
