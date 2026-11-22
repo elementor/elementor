@@ -7,6 +7,7 @@ export type ElementTile = {
 	widgetType: string;
 	title: string;
 	icon?: string;
+	keywords?: string[];
 	settings?: Record< string, unknown >;
 	promotionType?: string;
 };
@@ -58,6 +59,7 @@ export function groupWidgets( widgets: WidgetsCache, lockedTiles: PromotionTile[
 				widgetType,
 				title: widget.title,
 				icon: widget.icon,
+				keywords: widget.keywords,
 				settings: widget.custom?.isPreset ? widget.custom.preset_settings : undefined,
 			},
 		} ) ),
