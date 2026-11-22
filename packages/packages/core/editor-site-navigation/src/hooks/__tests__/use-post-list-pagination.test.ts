@@ -82,6 +82,11 @@ describe( 'usePostListPagination', () => {
 
 		act( () => {
 			result.current.handleLoadMore();
+		} );
+
+		expect( result.current.visibleCount ).toBe( POST_PER_PAGE * 2 );
+
+		act( () => {
 			result.current.handleLoadMore();
 		} );
 

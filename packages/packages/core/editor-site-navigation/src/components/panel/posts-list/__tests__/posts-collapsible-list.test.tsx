@@ -3,11 +3,11 @@ import { createMockDocument, renderWithQuery } from 'test-utils';
 import { __useActiveDocument as useActiveDocument } from '@elementor/editor-documents';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
+import { POST_PER_PAGE } from '../../../../api/post';
 import {
 	ContentPanelCoordinatorProvider,
 	useContentPanelCoordinator,
 } from '../../../../contexts/content-panel-coordinator';
-import { POST_PER_PAGE } from '../../../../api/post';
 import { PostListContextProvider } from '../../../../contexts/post-list-context';
 import { usePosts } from '../../../../hooks/use-posts';
 import PostsCollapsibleList from '../posts-collapsible-list';

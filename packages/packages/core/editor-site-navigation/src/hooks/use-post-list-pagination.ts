@@ -57,14 +57,7 @@ export function usePostListPagination( {
 			pendingVisibleTargetRef.current = targetVisible;
 			fetchNextPage();
 		}
-	}, [
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
-		loadedCount,
-		totalCount,
-		visibleCount,
-	] );
+	}, [ fetchNextPage, hasNextPage, isFetchingNextPage, loadedCount, totalCount, visibleCount ] );
 
 	const handleShowLess = useCallback( () => {
 		pendingVisibleTargetRef.current = null;

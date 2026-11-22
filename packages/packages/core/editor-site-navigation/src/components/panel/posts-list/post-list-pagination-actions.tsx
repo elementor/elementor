@@ -69,9 +69,5 @@ export default function PostListPaginationActions( {
 		);
 	}
 
-	return (
-		<Box sx={ { px: 2, width: '100%' } }>
-			{ canShowLess ? showLessButton : loadMoreButton }
-		</Box>
-	);
+	return <Box sx={ { px: 2, width: '100%' } }>{ canShowLess ? showLessButton : loadMoreButton }</Box>;
 }

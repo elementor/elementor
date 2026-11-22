@@ -97,7 +97,12 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 
 	const handleShowLess = () => {
 		pagination.handleShowLess();
-		listTopRef.current?.scrollIntoView( { block: 'nearest' } );
+
+		const listTop = listTopRef.current;
+
+		if ( listTop && typeof listTop.scrollIntoView === 'function' ) {
+			listTop.scrollIntoView( { block: 'nearest' } );
+		}
 	};
 
 	useEffect( () => {
