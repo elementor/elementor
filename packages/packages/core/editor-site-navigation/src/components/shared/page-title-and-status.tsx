@@ -10,6 +10,10 @@ type StatusChipConfig = {
 	label: string;
 };
 
+function humanizeStatusSlug( status: string ): string {
+	return status.replace( /[-_]+/g, ' ' ).trim();
+}
+
 const statusChipConfig: Record< string, StatusChipConfig > = {
 	draft: {
 		color: 'default',
@@ -38,8 +42,12 @@ export function getStatusChipConfig( status: string ): StatusChipConfig {
 
 	return {
 		color: 'default',
-		label: status,
+		label: humanizeStatusSlug( status ),
 	};
+}
+
+function isKnownPanelStatus( status: string ): boolean {
+	return status in statusChipConfig;
 }
 
 const PageStatus = ( { status }: { status: string } ) => {
@@ -48,6 +56,7 @@ const PageStatus = ( { status }: { status: string } ) => {
 	}
 
 	const { color, label } = getStatusChipConfig( status );
+	const isKnownStatus = isKnownPanelStatus( status );
 
 	return (
 		<Chip
@@ -55,7 +64,18 @@ const PageStatus = ( { status }: { status: string } ) => {
 			component="span"
 			label={ label }
 			size="tiny"
-			sx={ { flexShrink: 0, ml: 0.5, textTransform: 'capitalize' } }
+			sx={ {
+				flexShrink: isKnownStatus ? 0 : 1,
+				maxWidth: isKnownStatus ? undefined : '45%',
+				minWidth: 0,
+				ml: 0.5,
+				'& .MuiChip-label': {
+					overflow: 'hidden',
+					textOverflow: 'ellipsis',
+					whiteSpace: 'nowrap',
+				},
+			} }
+			title={ label }
 			variant="standard"
 		/>
 	);

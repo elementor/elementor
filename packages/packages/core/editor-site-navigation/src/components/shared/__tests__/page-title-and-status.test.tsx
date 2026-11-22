@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import PageTitleAndStatus from '../page-title-and-status';
+import PageTitleAndStatus, { getStatusChipConfig } from '../page-title-and-status';
 
 jest.mock( '../../../hooks/use-reverse-html-entities', () => ( {
 	useReverseHtmlEntities: ( title: string ) => title,
@@ -37,9 +37,14 @@ describe( 'PageTitleAndStatus', () => {
 		expect( screen.getByText( 'Private' ) ).toBeInTheDocument();
 	} );
 
-	it( 'uses custom status text for unknown plugin statuses', () => {
-		render( <PageTitleAndStatus status="custom-plugin-status" title="Plugin post" /> );
+	it( 'humanizes unknown plugin statuses in the badge label', () => {
+		render( <PageTitleAndStatus status="in-progress" title="Plugin post" /> );
 
-		expect( screen.getByText( 'custom-plugin-status' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'in progress' ) ).toBeInTheDocument();
+	} );
+
+	it( 'maps known statuses to chip config labels', () => {
+		expect( getStatusChipConfig( 'draft' ).label ).toBe( 'Draft' );
+		expect( getStatusChipConfig( 'in-progress' ).label ).toBe( 'in progress' );
 	} );
 } );
