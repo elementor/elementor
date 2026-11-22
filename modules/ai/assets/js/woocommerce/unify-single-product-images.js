@@ -3,7 +3,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import UnifyProductImages from './unify-product-images';
 import PropTypes from 'prop-types';
-import { AiLink, Icon } from '../gutenberg/styles';
+import { AiLink, Icon } from './styles';
 
 const PRODUCT_ID_SEPARATOR = '-img_id-';
 
