@@ -55,10 +55,11 @@ describe( 'Shell', () => {
 			showUserLoadError: false,
 		} );
 
-		const { container } = renderWithQuery( <Shell /> );
+		renderWithQuery( <Shell /> );
 
-		expect( container.querySelectorAll( '.MuiSkeleton-root' ).length ).toBeGreaterThan( 0 );
+		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Pages' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Posts' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders only post sections the user can access', () => {
