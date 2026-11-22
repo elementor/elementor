@@ -43,6 +43,10 @@ class Module extends BaseModule {
 	}
 
 	public static function is_admin_navigation_active(): bool {
+		if ( empty( Plugin::$instance ) || empty( Plugin::$instance->experiments ) ) {
+			return false;
+		}
+
 		return Plugin::$instance->experiments->is_feature_active( self::ADMIN_NAVIGATION_EXPERIMENT_NAME );
 	}
 
@@ -58,6 +62,10 @@ class Module extends BaseModule {
 	}
 
 	public static function is_editor_one_active(): bool {
+		if ( empty( Plugin::$instance ) || empty( Plugin::$instance->experiments ) ) {
+			return false;
+		}
+
 		return Plugin::$instance->experiments->is_feature_active( self::EDITOR_ONE_EXPERIMENT_NAME );
 	}
 
