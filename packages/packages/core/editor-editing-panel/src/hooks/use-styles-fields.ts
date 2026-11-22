@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
+import { useStylesFieldsWrite } from '../contexts/styles-fields-write-context';
 import { StyleNotFoundUnderProviderError, StylesProviderCannotUpdatePropsError } from '../errors';
 import { useStylesRerender } from './use-styles-rerender';
 
@@ -28,13 +29,16 @@ export function useStylesFields< T extends Props >( propNames: ( keyof T & strin
 	const { id: styleId, meta, provider, canEdit } = useStyle();
 
 	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
+	const write = useStylesFieldsWrite();
 
 	useStylesRerender();
 
 	const values = getProps< T >( { elementId, styleId, provider, meta, propNames } );
 
 	const setValues = ( props: T, { history: { propDisplayName } }: { history: { propDisplayName: string } } ) => {
-		if ( ! styleId ) {
+		if ( write ) {
+			write( props, { propDisplayName } );
+		} else if ( ! styleId ) {
 			undoableUpdateStyle( { styleId: null, provider: null, props, propDisplayName } );
 		} else {
 			undoableUpdateStyle( { styleId, provider, props, propDisplayName } );

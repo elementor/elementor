@@ -3,7 +3,7 @@ import {
 	type ClosedStructureFixture,
 	setupClosedStructureFixture,
 } from '../../closed-structure/__tests__/closed-structure-fixture';
-import { findWidgetPart } from '../find-widget-part';
+import { findWidgetPart, findWidgetParts } from '../find-widget-part';
 
 describe( 'findWidgetPart', () => {
 	let fixture: ClosedStructureFixture;
@@ -51,5 +51,36 @@ describe( 'findWidgetPart', () => {
 
 		// Assert
 		expect( part ).toBeNull();
+	} );
+} );
+
+describe( 'findWidgetParts', () => {
+	let fixture: ClosedStructureFixture;
+
+	beforeEach( () => {
+		fixture = setupClosedStructureFixture();
+	} );
+
+	afterEach( () => {
+		cleanupClosedStructureFixture();
+	} );
+
+	it( 'should return every instance of a repeated part, in tree order, without nested widget parts', () => {
+		// Arrange
+		fixture.unnamedNode.model.set( 'part', 'label' );
+
+		// Act
+		const parts = findWidgetParts( fixture.root, 'label' );
+
+		// Assert
+		expect( parts ).toEqual( [ fixture.label, fixture.unnamedNode ] );
+	} );
+
+	it( 'should return an empty list for a part that is not in the structure', () => {
+		// Act
+		const parts = findWidgetParts( fixture.root, 'icon' );
+
+		// Assert
+		expect( parts ).toEqual( [] );
 	} );
 } );

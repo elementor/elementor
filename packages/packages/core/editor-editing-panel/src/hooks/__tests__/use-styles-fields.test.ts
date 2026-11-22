@@ -1,4 +1,4 @@
-import { act } from 'react';
+import { act, createElement } from 'react';
 import { createMockStylesProvider, mockHistoryManager } from 'test-utils';
 import {
 	createElementStyle,
@@ -11,6 +11,7 @@ import { renderHook } from '@testing-library/react';
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
+import { StylesFieldsWriteProvider } from '../../contexts/styles-fields-write-context';
 import { useStylesFields } from '../use-styles-fields';
 
 jest.mock( '../../contexts/element-context' );
@@ -199,5 +200,32 @@ describe( 'useStylesFields', () => {
 
 		// Assert.
 		expect( result.current.values?.[ 'prop-1' ] ).toBe( 'updated-value' );
+	} );
+
+	it( 'should hand the change to the write provider instead of writing the element style', () => {
+		// Arrange.
+		jest.mocked( useStyle ).mockReturnValue( {
+			id: null,
+			provider: null,
+			meta: { breakpoint: null, state: null },
+		} as StyleValue );
+
+		jest.mocked( useClassesProp ).mockReturnValue( 'test-classes-prop' );
+
+		const write = jest.fn();
+
+		const { result } = renderHook( () => useStylesFields< { 'test-prop': string } >( [ 'test-prop' ] ), {
+			wrapper: ( { children } ) => createElement( StylesFieldsWriteProvider, { write }, children ),
+		} );
+
+		// Act.
+		result.current.setValues( { 'test-prop': 'test-value' }, { history: { propDisplayName: 'Test Prop' } } );
+
+		jest.runAllTimers();
+
+		// Assert.
+		expect( write ).toHaveBeenCalledWith( { 'test-prop': 'test-value' }, { propDisplayName: 'Test Prop' } );
+		expect( createElementStyle ).not.toHaveBeenCalled();
+		expect( historyMock.instance.get() ).toBeNull();
 	} );
 } );

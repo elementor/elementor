@@ -28,7 +28,7 @@ class Module extends BaseModule {
 	const CORE_DEFINITION_FILES = [
 		'schema/examples/icon-button.json',
 	];
-	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template', 'general' ];
+	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template', 'general', 'style' ];
 	const SYNC_LOCKS_PRIORITY = 20;
 
 	const PACKAGES = [
