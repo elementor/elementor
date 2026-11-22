@@ -5,14 +5,14 @@ namespace Elementor\Tests\Phpunit\Modules\Mcp;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
 use Elementor\Modules\Mcp\Abilities\Get_Structure_Ability;
 use Elementor\Plugin;
-use Elementor\Tests\Phpunit\Modules\Mcp\Fixtures\Composite_Widgets_Registry_Factory;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Composite_Widgets_Registry_Factory;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/fixtures/composite-widgets-registry-factory.php';
+require_once __DIR__ . '/../composite-widgets/fixtures/composite-widgets-registry-factory.php';
 
 /**
  * @group Elementor\Modules\Mcp

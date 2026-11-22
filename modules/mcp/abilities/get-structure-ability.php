@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Local_Style_Serializer;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Structure_Title;
 use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
+use Elementor\Modules\CompositeWidgets\Site\Site_Widget_Instances;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
 use Elementor\Modules\DefaultStyles\Default_Styles_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -18,7 +19,6 @@ use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Default_Styles;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Map_Settings_Reader;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
 use Elementor\Modules\Mcp\Abilities\Utils\Atomic_Container_Presentation;
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widgets_Prompt;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Editor_Settings;
@@ -51,7 +51,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Page Structure', 'elementor' ),
-			Composite_Widgets_Prompt::append( $this->get_description(), 'get-page-structure' ),
+			__( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. V4 (atomic, `e-` types) nodes and the V3 widgets elementor/list-widget-schemas lists can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; their elementor/get-widget-schemas response has `widget_version` 3 for V3 widgets. Other V3 nodes are returned for context only and must be edited directly in the Elementor editor, except for their layer name. `title` is the layer name shown in the Structure panel: rename any node (v3 or v4) with elementor/manage-elements `editor_settings.name`, never through `settings`. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles, plus editor_settings (name, decorative) when set; editor_settings is separate from settings and is written back through the `editor_settings` input. On published pages the tree includes staged MCP changes (`staged: true`). V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles; V3 widgets with `style_targets` additionally include default_styles in the same style-target CSS as their styles. A composite widget instance has `widget` on its root and `part` (plus `slot: true` on parts that take children) on its atoms; its structure is closed, so only settings and styles of its parts can be changed. Only works for posts saved with Elementor.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -95,10 +95,6 @@ class Get_Structure_Ability extends Abstract_Ability {
 				],
 			]
 		);
-	}
-
-	private function get_description(): string {
-		return __( 'Returns a lean Elementor element tree skeleton (id, elType, widgetType, title, nested elements) for a single post or page ID. V4 (atomic, `e-` types) nodes and the V3 widgets elementor/list-widget-schemas lists can be modified via elementor/manage-elements or referenced by elementor/build-composition element_config; their elementor/get-widget-schemas response has `widget_version` 3 for V3 widgets. Other V3 nodes are returned for context only and must be edited directly in the Elementor editor, except for their layer name. `title` is the layer name shown in the Structure panel: rename any node (v3 or v4) with elementor/manage-elements `editor_settings.name`, never through `settings`. Optionally scope to a subtree via element_id. Set include_content=true (requires element_id) to also return each node\'s settings and styles, plus editor_settings (name, decorative) when set; editor_settings is separate from settings and is written back through the `editor_settings` input. On published pages the tree includes staged MCP changes (`staged: true`). V4 settings use the same plain shape that manage-elements.update.settings / build-composition.element_config accept, so a value can be sent back as-is. All nodes return styles as { css } where css is a raw CSS string round-trippable to manage-elements.update.style / build-composition.style in replace mode; V4 nodes additionally include __style_id when a local style is present, interactions, the rendered HTML tag, and default_styles; V3 widgets with `style_targets` additionally include default_styles in the same style-target CSS as their styles. Only works for posts saved with Elementor.', 'elementor' );
 	}
 
 	public function execute( $input = [] ) {
@@ -157,10 +153,9 @@ class Get_Structure_Ability extends Abstract_Ability {
 	}
 
 	private function prune_elements( array $elements, bool $include_content = false, array $document_root_ids = [] ): array {
-		$shows_widget_view = Composite_Widgets_Module::is_loaded();
-		$can_display_site_widgets = ! $shows_widget_view || Site_Widgets_Access_Controller::can_display();
+		$hides_site_widgets = $this->hides_site_widgets();
 
-		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content, $document_root_ids, $shows_widget_view, $can_display_site_widgets ) {
+		return Plugin::$instance->db->iterate_data( $elements, function ( $node ) use ( $include_content, $document_root_ids, $hides_site_widgets ) {
 			$skeleton = [
 				'id' => $node['id'] ?? null,
 				'elType' => $node['elType'] ?? null,
@@ -170,8 +165,8 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$skeleton['widgetType'] = $node['widgetType'];
 			}
 
-			if ( Widget_Structure_View::is_hidden_site_widget( $node, $can_display_site_widgets ) ) {
-				return Widget_Structure_View::build_hidden_site_widget( $skeleton, $node );
+			if ( $hides_site_widgets && Site_Widget_Instances::is_site_widget_root( $node ) ) {
+				return Widget_Structure_View::build_unavailable_site_widget( $skeleton, $node );
 			}
 
 			$title = Element_Structure_Title::resolve( $node );
@@ -180,9 +175,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 				$skeleton['title'] = $title;
 			}
 
-			if ( $shows_widget_view ) {
-				$skeleton = Widget_Structure_View::add_markers( $skeleton, $node );
-			}
+			$skeleton = Widget_Structure_View::add_markers( $skeleton, $node );
 
 			if ( ! empty( $node['elements'] ) ) {
 				$skeleton['elements'] = $node['elements'];
@@ -194,6 +187,14 @@ class Get_Structure_Ability extends Abstract_Ability {
 
 			return $skeleton;
 		} );
+	}
+
+	/**
+	 * Site widget copies are hidden on the page without access, so their content isn't returned either.
+	 */
+	private function hides_site_widgets(): bool {
+		return Plugin::$instance->experiments->is_feature_active( Composite_Widgets_Module::EXPERIMENT_NAME )
+			&& ! Site_Widgets_Access_Controller::can_display();
 	}
 
 	private function populate_content( array &$skeleton, array $node, bool $is_document_root ): void {

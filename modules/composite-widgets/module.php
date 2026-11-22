@@ -12,6 +12,7 @@ use Elementor\Modules\CompositeWidgets\Definitions\Site_Definitions_Registrar;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
+use Elementor\Modules\CompositeWidgets\Mcp\Mcp_Integration;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Visibility;
 use Elementor\Plugin;
@@ -58,33 +59,6 @@ class Module extends BaseModule {
 		return $module instanceof self ? $module->get_closed_structure() : null;
 	}
 
-	/**
-	 * Null while the experiment is off, like `get_active_closed_structure()`.
-	 */
-	public static function get_active_registry(): ?Widgets_Definitions_Registry {
-		$module = Plugin::$instance->modules_manager->get_modules( self::MODULE_NAME );
-
-		return $module instanceof self ? $module->get_registry() : null;
-	}
-
-	/**
-	 * Unlike `get_active_registry()`, doesn't build the registry.
-	 */
-	public static function is_loaded(): bool {
-		return Plugin::$instance->modules_manager->get_modules( self::MODULE_NAME ) instanceof self;
-	}
-
-	/**
-	 * Code definitions are always insertable. Site definitions need an active license and not be archived.
-	 */
-	public static function can_insert( array $definition ): bool {
-		if ( Widget_Definition::SOURCE_SITE !== $definition['source'] ) {
-			return true;
-		}
-
-		return empty( $definition[ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) && Site_Widgets_Access_Controller::can_add_to_page();
-	}
-
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
@@ -110,6 +84,18 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->sync_widget_locks( $data, $document ), self::SYNC_LOCKS_PRIORITY, 2 );
 
 		( new Site_Widgets_Visibility() )->register_hooks();
+		( new Mcp_Integration( fn () => $this->get_registry() ) )->register_hooks();
+	}
+
+	/**
+	 * Code definitions are always insertable. Site definitions need an active license and not be archived.
+	 */
+	public static function can_insert( array $definition ): bool {
+		if ( Widget_Definition::SOURCE_SITE !== $definition['source'] ) {
+			return true;
+		}
+
+		return empty( $definition[ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) && Site_Widgets_Access_Controller::can_add_to_page();
 	}
 
 	/**

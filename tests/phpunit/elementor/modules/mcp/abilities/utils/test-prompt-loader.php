@@ -63,6 +63,21 @@ class Test_Prompt_Loader extends TestCase {
 		$this->assertSame( 'core-1', $result );
 	}
 
+	public function test_load__lets_a_module_add_a_section_to_a_named_prompt() {
+		// Arrange.
+		$add_section = fn ( $prompt, $name ) => 'stub' === $name ? $prompt . "\n\nmodule-section" : $prompt;
+		add_filter( Prompt_Loader::PROMPT_FILTER, $add_section, 10, 2 );
+
+		// Act.
+		$stub = Prompt_Loader_Stub_No_Extra::load( 'stub' );
+		$other = Prompt_Loader_Stub_No_Extra::load( 'stub-core-only' );
+
+		// Assert.
+		remove_filter( Prompt_Loader::PROMPT_FILTER, $add_section, 10 );
+		$this->assertSame( "core-1\n\nmodule-section", $stub );
+		$this->assertSame( 'core-1', $other );
+	}
+
 	public function test_load__returns_extra_content_when_core_file_missing() {
 		// Act — extra file exists for 'stub-extra-only' but core does not.
 		$result = Prompt_Loader_Stub::load( 'stub-extra-only' );

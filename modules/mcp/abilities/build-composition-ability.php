@@ -5,14 +5,13 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
-use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widgets_Prompt;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Links;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Mutation_Save;
 use Elementor\Modules\Mcp\Abilities\Utils\Document_Revision_Snapshots;
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Tool_Performance_Metrics;
 use Elementor\Modules\Mcp\Abilities\Utils\Warnings_Bag;
 use Elementor\Modules\Mcp\Events\Mcp_Event_Dispatcher;
@@ -32,16 +31,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	private ?Document_Mutator $mutator;
 	private ?Closed_Structure $closed_structure;
-	private ?Widgets_Definitions_Registry $widgets_registry;
 
-	public function __construct(
-		?Document_Mutator $mutator = null,
-		?Closed_Structure $closed_structure = null,
-		?Widgets_Definitions_Registry $widgets_registry = null
-	) {
+	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
 		$this->mutator = $mutator;
 		$this->closed_structure = $closed_structure;
-		$this->widgets_registry = $widgets_registry;
 	}
 
 	protected function get_ability_id(): string {
@@ -59,7 +52,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Build Composition', 'elementor' ),
-			Composite_Widgets_Prompt::load( 'build-composition' ),
+			Prompt_Loader::load( 'build-composition' ),
 			'elementor',
 			$this->get_output_schema(),
 			[
@@ -107,7 +100,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$elements_data = $this->resolve_base_tree( $input, $document, $dry_run );
-		$compiled = Composition_Compiler::make( $this->closed_structure, $this->widgets_registry )->compile(
+		$compiled = Composition_Compiler::make( $this->closed_structure )->compile(
 			$input,
 			$document,
 			$elements_data,

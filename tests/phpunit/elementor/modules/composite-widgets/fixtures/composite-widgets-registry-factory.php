@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Modules\Mcp\Fixtures;
+namespace Elementor\Testing\Modules\CompositeWidgets\Fixtures;
 
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;

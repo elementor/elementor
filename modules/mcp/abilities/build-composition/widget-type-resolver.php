@@ -4,7 +4,6 @@ namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Modules\Mcp\Abilities\Appliers\V3\Maps\V3_Widget_Map_Registry;
-use Elementor\Modules\Mcp\Abilities\Appliers\Widget_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Utils\Default_Children_Utils;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 use Elementor\Plugin;
@@ -15,16 +14,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Type_Resolver {
 
+	const IS_LEAF_KEY = 'is_leaf';
+
 	private Xml_Parser $xml_parser;
-	private bool $resolves_widget_tag;
+
+	/** @var string[] */
+	private array $placeholder_tags;
 
 	/**
 	 * @param Xml_Parser $xml_parser
-	 * @param bool       $resolves_widget_tag Whether `<e-widget>` is a placeholder for a composite widget instance.
+	 * @param string[]   $placeholder_tags Tags of `Composition_Tag_Expander`s: leaf placeholders, not element types.
 	 */
-	public function __construct( Xml_Parser $xml_parser, bool $resolves_widget_tag = false ) {
+	public function __construct( Xml_Parser $xml_parser, array $placeholder_tags = [] ) {
 		$this->xml_parser = $xml_parser;
-		$this->resolves_widget_tag = $resolves_widget_tag;
+		$this->placeholder_tags = $placeholder_tags;
 	}
 
 	/**
@@ -137,13 +140,14 @@ class Widget_Type_Resolver {
 	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class', 'controls']
 	 */
 	public function resolve_type_config( string $type ) {
-		if ( $this->resolves_widget_tag && Widget_Instance_Applier::WIDGET_TAG === $type ) {
+		if ( in_array( $type, $this->placeholder_tags, true ) ) {
 			return [
-				'elType' => 'widget',
-				'widgetType' => Widget_Instance_Applier::WIDGET_TAG,
+				'elType' => $type,
+				'widgetType' => null,
 				'allowed_child_types' => [],
 				'default_children' => [],
 				'class' => null,
+				self::IS_LEAF_KEY => true,
 			];
 		}
 
@@ -228,7 +232,7 @@ class Widget_Type_Resolver {
 		$parent_tag = $this->xml_parser->get_tag_name( $node );
 		$parent_config = $widget_configs[ $parent_tag ] ?? null;
 		$allowed = $parent_config['allowed_child_types'] ?? [];
-		$is_leaf_widget = $parent_config && 'widget' === ( $parent_config['elType'] ?? null );
+		$is_leaf_widget = $parent_config && ( 'widget' === ( $parent_config['elType'] ?? null ) || ! empty( $parent_config[ self::IS_LEAF_KEY ] ) );
 
 		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
 			$child_tag = $this->xml_parser->get_tag_name( $child );

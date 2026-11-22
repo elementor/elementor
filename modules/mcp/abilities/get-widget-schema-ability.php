@@ -2,15 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Markers;
-use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
-use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
-use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
-use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widget_Schema_Builder;
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widgets_Prompt;
 use Elementor\Modules\Mcp\Abilities\Utils\Pro_Features_Discovery_Registry;
-use Elementor\Modules\Mcp\Abilities\Utils\Site_Widgets_Pro_Features_Discovery;
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,12 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Get_Widget_Schema_Ability extends Abstract_Ability {
 
-	private ?Widgets_Definitions_Registry $widgets_registry;
-
-	public function __construct( ?Widgets_Definitions_Registry $widgets_registry = null ) {
-		$this->widgets_registry = $widgets_registry;
-	}
-
 	protected function get_ability_id(): string {
 		return 'elementor/get-widget-schemas';
 	}
@@ -32,7 +19,7 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Widget Schema', 'elementor' ),
-			Composite_Widgets_Prompt::load( 'get-widget-schema' ),
+			Prompt_Loader::load( 'get-widget-schema' ),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
@@ -80,16 +67,10 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 		}
 
 		$types = [];
-		$composite_widget_ids = [];
 
 		foreach ( $widget_types as $widget_type ) {
 			if ( ! is_string( $widget_type ) ) {
 				return $this->invalid_input_error();
-			}
-
-			if ( preg_match( Widget_Markers::WIDGET_ID_PATTERN, $widget_type ) ) {
-				$composite_widget_ids[ $widget_type ] = true;
-				continue;
 			}
 
 			$sanitized = sanitize_key( $widget_type );
@@ -103,7 +84,7 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 			}
 		}
 
-		$parents_index = empty( $types ) ? [] : Widget_Context_Helper::build_parents_index(
+		$parents_index = Widget_Context_Helper::build_parents_index(
 			Widget_Context_Helper::get_llm_eligible_widgets()
 		);
 		$schemas = [];
@@ -121,20 +102,6 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 			}
 
 			$schemas[ $type ] = $schema;
-		}
-
-		foreach ( array_keys( $composite_widget_ids ) as $widget_id ) {
-			$schema = $this->resolve_composite_widget_schema( $widget_id );
-
-			if ( is_wp_error( $schema ) ) {
-				$errors[ $widget_id ] = [
-					'code' => $schema->get_error_code(),
-					'message' => $schema->get_error_message(),
-				];
-				continue;
-			}
-
-			$schemas[ $widget_id ] = $schema;
 		}
 
 		return [
@@ -170,26 +137,6 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 
 		return Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index )
 			?? $this->unknown_widget_error( $widget_type );
-	}
-
-	/**
-	 * Without access, site widgets aren't registered at all, so a missing `site/` id asks for Pro.
-	 *
-	 * @return array|\WP_Error
-	 */
-	private function resolve_composite_widget_schema( string $widget_id ) {
-		$registry = $this->widgets_registry ?? Composite_Widgets_Module::get_active_registry();
-		$definition = $registry ? $registry->get( $widget_id ) : null;
-
-		if ( $definition ) {
-			return Composite_Widget_Schema_Builder::build( $definition );
-		}
-
-		if ( $registry && Widget_Definition::is_site_namespace( $widget_id ) && ! Site_Widgets_Access_Controller::can_display() ) {
-			return Site_Widgets_Pro_Features_Discovery::for_add_to_page();
-		}
-
-		return $this->unknown_widget_error( $widget_id );
 	}
 
 	private function invalid_input_error(): \WP_Error {

@@ -8,6 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Prompt_Loader {
 
+	/**
+	 * Lets a module add its own section to a tool's prompt: `( string $prompt, string $name ) => string`.
+	 */
+	const PROMPT_FILTER = 'elementor/mcp/prompt';
+
 	protected static function get_core_path(): string {
 		return __DIR__ . '/../../static-resources/abilities/';
 	}
@@ -31,6 +36,9 @@ class Prompt_Loader {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$extra = ( null !== $extra_file && file_exists( $extra_file ) ) ? rtrim( (string) file_get_contents( $extra_file ) ) : '';
 
-		return implode( "\n\n", array_filter( [ $content, $extra ] ) );
+		$prompt = implode( "\n\n", array_filter( [ $content, $extra ] ) );
+		$filtered = apply_filters( self::PROMPT_FILTER, $prompt, $name );
+
+		return is_string( $filtered ) ? $filtered : $prompt;
 	}
 }

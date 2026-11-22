@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widgets_Prompt;
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -41,6 +41,6 @@ class Build_Composition_Guide_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		return Composite_Widgets_Prompt::load( 'build-composition' );
+		return Prompt_Loader::load( 'build-composition' );
 	}
 }

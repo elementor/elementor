@@ -11,7 +11,6 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
-use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -19,9 +18,9 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
-use Elementor\Modules\Mcp\Abilities\Appliers\Widget_Instance_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Tag_Expanders;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Variables\Module as Variables_Module;
@@ -45,15 +44,13 @@ final class Composition_Compiler {
 	public const COMPONENT_PARENT_ID = 'component';
 
 	private ?Closed_Structure $closed_structure;
-	private ?Widgets_Definitions_Registry $widgets_registry;
 
-	private function __construct( ?Closed_Structure $closed_structure, ?Widgets_Definitions_Registry $widgets_registry ) {
+	private function __construct( ?Closed_Structure $closed_structure ) {
 		$this->closed_structure = $closed_structure;
-		$this->widgets_registry = $widgets_registry;
 	}
 
-	public static function make( ?Closed_Structure $closed_structure = null, ?Widgets_Definitions_Registry $widgets_registry = null ): self {
-		return new self( $closed_structure, $widgets_registry );
+	public static function make( ?Closed_Structure $closed_structure = null ): self {
+		return new self( $closed_structure );
 	}
 
 	/**
@@ -71,17 +68,20 @@ final class Composition_Compiler {
 		string $parent_id = self::DEFAULT_PARENT_ID
 	) {
 		$xml_parser = new Xml_Parser();
+		$tag_expanders = Tag_Expanders::from_filter( $xml_parser );
+		$type_resolver = new Widget_Type_Resolver( $xml_parser, $tag_expanders->get_tags() );
 		$subtree_builder = new Subtree_Builder( $xml_parser );
+		$element_config = $this->as_map( $input['element_config'] ?? [] );
 
 		$dom = $xml_parser->parse( (string) ( $input['xml_structure'] ?? '' ) );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
 
-		$widgets_registry = $this->resolve_widgets_registry( $dom, $xml_parser );
-		$type_resolver = new Widget_Type_Resolver( $xml_parser, null !== $widgets_registry );
-
-		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
+		$pro_features_discovery = $this->unique_by_message( array_merge(
+			( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom ),
+			$tag_expanders->remove_unavailable( $dom, $element_config )
+		) );
 
 		[
 			'configs' => $widget_configs,
@@ -93,7 +93,8 @@ final class Composition_Compiler {
 			$xml_parser,
 			$document_tree,
 			$parent_id,
-			$unknown_widget_tag_errors
+			$unknown_widget_tag_errors,
+			$tag_expanders->collect_missing_configuration_id_errors( $dom )
 		);
 		if ( $validation_error ) {
 			return $validation_error;
@@ -128,18 +129,13 @@ final class Composition_Compiler {
 		}
 
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
-		$element_config = $this->as_map( $input['element_config'] ?? [] );
 
-		if ( $widgets_registry ) {
-			$widget_result = ( new Widget_Instance_Applier( $widgets_registry ) )->apply( $index, $element_config, $this->collect_referenced_config_ids( $input ) );
-			if ( $widget_result['error'] ) {
-				return $widget_result['error'];
-			}
-
-			$warnings->merge( $widget_result['warnings'] );
-			$element_config = $widget_result['element_config'];
-			$widget_configs = $this->add_type_configs( $widget_configs, $widget_result['element_types'], $type_resolver );
+		$expansion_error = $tag_expanders->expand( $index, $element_config, $this->collect_referenced_config_ids( $input ), $warnings );
+		if ( $expansion_error ) {
+			return $expansion_error;
 		}
+
+		$widget_configs = $tag_expanders->add_type_configs( $subtrees, $widget_configs, $type_resolver );
 
 		$variables_service = $this->create_variables_service();
 
@@ -176,6 +172,7 @@ final class Composition_Compiler {
 	 * @param array        $document_tree
 	 * @param string       $parent_id
 	 * @param string[]     $unknown_widget_tag_errors
+	 * @param string[]     $missing_configuration_id_errors
 	 *
 	 * @return \WP_Error|null
 	 */
@@ -184,10 +181,12 @@ final class Composition_Compiler {
 		Xml_Parser $xml_parser,
 		array $document_tree,
 		string $parent_id,
-		array $unknown_widget_tag_errors
+		array $unknown_widget_tag_errors,
+		array $missing_configuration_id_errors
 	) {
 		$errors = array_merge(
 			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
+			$this->tag_errors( 'elementor_missing_configuration_id', $missing_configuration_id_errors ),
 			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
 			$this->tag_errors( 'elementor_unknown_type', $unknown_widget_tag_errors ),
 			$this->tag_errors( Closed_Structure::ERROR_CODE, $this->collect_closed_parent_errors( $document_tree, $parent_id ) ),
@@ -264,7 +263,7 @@ final class Composition_Compiler {
 			$tag = $xml_parser->get_tag_name( $child );
 			$config = $widget_configs[ $tag ] ?? [];
 
-			if ( 'widget' !== ( $config['elType'] ?? null ) || Widget_Instance_Applier::WIDGET_TAG === $tag ) {
+			if ( 'widget' !== ( $config['elType'] ?? null ) ) {
 				continue;
 			}
 
@@ -337,16 +336,18 @@ final class Composition_Compiler {
 	}
 
 	/**
-	 * Building the registry loads the saved site widgets, so it's done only for a composition with a widget tag.
+	 * @param \WP_Error[] $errors
+	 *
+	 * @return \WP_Error[]
 	 */
-	private function resolve_widgets_registry( \DOMDocument $dom, Xml_Parser $xml_parser ): ?Widgets_Definitions_Registry {
-		foreach ( $xml_parser->iterate_all_descendants( $dom ) as $node ) {
-			if ( Widget_Instance_Applier::WIDGET_TAG === $xml_parser->get_tag_name( $node ) ) {
-				return $this->widgets_registry ?? Composite_Widgets_Module::get_active_registry();
-			}
+	private function unique_by_message( array $errors ): array {
+		$unique = [];
+
+		foreach ( $errors as $error ) {
+			$unique[ $error->get_error_message() ] = $error;
 		}
 
-		return null;
+		return array_values( $unique );
 	}
 
 	/**
@@ -356,34 +357,10 @@ final class Composition_Compiler {
 		$referenced = [];
 
 		foreach ( [ 'element_config', 'editor_settings', 'style', 'classes', 'interactions' ] as $map_key ) {
-			$referenced = array_merge( $referenced, array_keys( $this->as_map( $input[ $map_key ] ?? [] ) ) );
+			$referenced = array_merge( $referenced, array_map( 'strval', array_keys( $this->as_map( $input[ $map_key ] ?? [] ) ) ) );
 		}
 
 		return $referenced;
-	}
-
-	/**
-	 * Widget parts aren't tags in the XML, so their types are resolved here for the appliers' schemas.
-	 *
-	 * @param array<string, array> $widget_configs
-	 * @param string[]             $element_types
-	 *
-	 * @return array<string, array>
-	 */
-	private function add_type_configs( array $widget_configs, array $element_types, Widget_Type_Resolver $type_resolver ): array {
-		foreach ( $element_types as $element_type ) {
-			if ( isset( $widget_configs[ $element_type ] ) ) {
-				continue;
-			}
-
-			$config = $type_resolver->resolve_type_config( $element_type );
-
-			if ( ! is_wp_error( $config ) ) {
-				$widget_configs[ $element_type ] = $config;
-			}
-		}
-
-		return $widget_configs;
 	}
 
 	private function as_map( $value ): array {

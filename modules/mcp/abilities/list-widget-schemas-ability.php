@@ -2,10 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
-use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widget_Schema_Builder;
-use Elementor\Modules\Mcp\Abilities\Utils\Composite_Widgets_Prompt;
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,12 +15,6 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 		'image-carousel' => 'e-carousel',
 	];
 
-	private ?Widgets_Definitions_Registry $widgets_registry;
-
-	public function __construct( ?Widgets_Definitions_Registry $widgets_registry = null ) {
-		$this->widgets_registry = $widgets_registry;
-	}
-
 	protected function get_ability_id(): string {
 		return 'elementor/list-widget-schemas';
 	}
@@ -31,7 +22,7 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'List Elementor Widget Schemas', 'elementor' ),
-			Composite_Widgets_Prompt::load( 'list-widget-schemas' ),
+			Prompt_Loader::load( 'list-widget-schemas' ),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
@@ -102,20 +93,7 @@ class List_Widget_Schemas_Ability extends Abstract_Ability {
 			];
 		}
 
-		$response = [ 'widgets' => $summaries ];
-		$registry = $this->widgets_registry ?? Composite_Widgets_Module::get_active_registry();
-
-		if ( $registry ) {
-			$response['composite_widgets'] = $this->build_composite_widget_summaries( $registry );
-		}
-
-		return $response;
-	}
-
-	private function build_composite_widget_summaries( Widgets_Definitions_Registry $registry ): array {
-		$insertable = array_filter( $registry->all(), [ Composite_Widgets_Module::class, 'can_insert' ] );
-
-		return array_values( array_map( [ Composite_Widget_Schema_Builder::class, 'build_summary' ], $insertable ) );
+		return [ 'widgets' => $summaries ];
 	}
 
 	private function build_schemas( array $widgets ): array {
