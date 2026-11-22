@@ -139,9 +139,6 @@ class Module extends BaseModule {
 		} );
 
 		if ( is_admin() ) {
-			add_action( 'wp_enqueue_media', [ $this, 'enqueue_ai_media_library' ] );
-			add_action( 'admin_head', [ $this, 'enqueue_ai_media_library_upload_screen' ] );
-
 			if ( current_user_can( 'edit_products' ) || current_user_can( 'publish_products' ) ) {
 				add_action( 'admin_init', [ $this, 'enqueue_ai_products_page_scripts' ] );
 				add_action( 'current_screen', [ $this, 'enqueue_ai_single_product_page_scripts' ] );
@@ -149,34 +146,6 @@ class Module extends BaseModule {
 				add_action( 'wp_ajax_elementor-ai-set-product-images', [ $this, 'set_product_images_ajax' ] );
 			}
 		}
-
-		add_action( 'enqueue_block_editor_assets', function() {
-			wp_enqueue_script( 'elementor-ai-gutenberg',
-				$this->get_js_assets_url( 'ai-gutenberg' ),
-				[
-					'jquery',
-					'elementor-v2-ui',
-					'elementor-v2-icons',
-					'wp-blocks',
-					'wp-element',
-					'wp-editor',
-					'wp-data',
-					'wp-components',
-					'wp-compose',
-					'wp-i18n',
-					'wp-hooks',
-					'elementor-ai-media-library',
-				],
-			ELEMENTOR_VERSION, true );
-
-			wp_localize_script(
-				'elementor-ai-gutenberg',
-				'ElementorAiConfig',
-				$this->get_ai_config()
-			);
-
-			wp_set_script_translations( 'elementor-ai-gutenberg', 'elementor' );
-		});
 
 		// ED-26128: keep Animate with AI / hover AI control hosts so Angie entry points can attach.
 		add_action( 'elementor/element/common/section_effects/after_section_start', [ $this, 'register_ai_motion_effect_control' ], 10, 1 );
@@ -504,37 +473,6 @@ class Module extends BaseModule {
 		wp_send_json_success( [
 			'message' => __( 'Image added successfully', 'elementor' ),
 		] );
-	}
-
-	public function enqueue_ai_media_library_upload_screen() {
-		$screen = get_current_screen();
-		if ( ! $screen || 'upload' !== $screen->id ) {
-			return;
-		}
-
-		$this->enqueue_ai_media_library();
-	}
-
-	public function enqueue_ai_media_library() {
-		wp_enqueue_script( 'elementor-ai-media-library',
-			$this->get_js_assets_url( 'ai-media-library' ),
-			[
-				'jquery',
-				'elementor-v2-ui',
-				'elementor-v2-icons',
-				'media-grid',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'elementor-ai-media-library',
-			'ElementorAiConfig',
-			$this->get_ai_config()
-		);
-
-		wp_set_script_translations( 'elementor-ai-media-library', 'elementor' );
 	}
 
 	/**
