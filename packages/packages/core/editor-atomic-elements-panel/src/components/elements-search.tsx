@@ -34,7 +34,7 @@ export function ElementsSearch( { value, onChange, groups }: Props ) {
 					type="search"
 					id={ INPUT_ID }
 					value={ value }
-					placeholder={ __( 'Search Widget...', 'elementor' ) }
+					placeholder={ __( 'Search Widget…', 'elementor' ) }
 					autoComplete="off"
 					onChange={ ( event ) => onChange( event.target.value ) }
 				/>

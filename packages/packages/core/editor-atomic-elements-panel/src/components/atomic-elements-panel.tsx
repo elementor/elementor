@@ -6,14 +6,14 @@ import { __ } from '@wordpress/i18n';
 
 import { TILES_PER_ROW } from '../consts';
 import { useAtomicWidgets } from '../hooks/use-atomic-widgets';
+import { filterGroups } from '../utils/filter-groups';
 import { getNavigationTarget } from '../utils/get-navigation-target';
 import { getPromotionTiles } from '../utils/get-promotion-tiles';
-import { filterGroups } from '../utils/filter-groups';
 import { groupWidgets } from '../utils/group-widgets';
 import { AtomicPanelFallback } from './atomic-panel-fallback';
 import { ElementGroup } from './element-group';
-import { ElementsSearch } from './elements-search';
 import { ElementsPanelSwitcher, type ElementsPanelSwitcherProps } from './elements-panel-switcher';
+import { ElementsSearch } from './elements-search';
 
 const ELEMENTS_TAB = 'elements';
 
@@ -104,7 +104,10 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 							<Box sx={ { py: 4, textAlign: 'center' } }>
 								<Typography variant="body2" color="text.secondary">
 									{ isSearching
-										? __( 'No elements found. Clear the search or switch to the Legacy panel.', 'elementor' )
+										? __(
+												'No elements found. Clear the search or switch to the Legacy panel.',
+												'elementor'
+										  )
 										: __( 'No atomic elements available.', 'elementor' ) }
 								</Typography>
 							</Box>
