@@ -30,13 +30,65 @@ class Test_Agent_Ready_Notice extends Elementor_Test_Base {
 		$this->notice = new Agent_Ready_Notice( $this->settings, $this->scanner_store );
 
 		$this->act_as_admin();
+		set_current_screen( 'dashboard' );
 	}
 
 	public function tearDown(): void {
 		delete_option( Agent_Ready_Settings::OPTION );
 		delete_option( Scanner_Report_Store::OPTION_LAST_REPORT );
+		set_current_screen( 'front' );
 
 		parent::tearDown();
+	}
+
+	/**
+	 * @dataProvider allowed_screens_provider
+	 */
+	public function test_should_print__true_on_allowed_screens( $screen_id ) {
+		// Arrange
+		set_current_screen( $screen_id );
+
+		// Act
+		$result = $this->notice->should_print();
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function allowed_screens_provider(): array {
+		return [
+			'dashboard' => [ 'dashboard' ],
+			'posts' => [ 'edit-post' ],
+			'pages' => [ 'edit-page' ],
+			'mcp' => [ 'elementor_page_elementor-mcp' ],
+			'templates' => [ 'edit-elementor_library' ],
+			'settings' => [ 'elementor_page_elementor-settings' ],
+		];
+	}
+
+	/**
+	 * @dataProvider blocked_screens_provider
+	 */
+	public function test_should_print__false_on_other_screens( $screen_id ) {
+		// Arrange
+		set_current_screen( $screen_id );
+
+		// Act
+		$result = $this->notice->should_print();
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function blocked_screens_provider(): array {
+		return [
+			'plugins' => [ 'plugins' ],
+			'media' => [ 'upload' ],
+			'general settings' => [ 'options-general' ],
+			'elementor home' => [ 'toplevel_page_elementor-home' ],
+			'elementor tools' => [ 'elementor_page_elementor-tools' ],
+			'agent ready' => [ 'elementor_page_' . Module::PAGE_ID ],
+		];
 	}
 
 	public function test_should_print__for_admin_before_scan_and_activation() {
@@ -101,5 +153,14 @@ class Test_Agent_Ready_Notice extends Elementor_Test_Base {
 		$this->assertSame( 'inline', $config['type'] );
 		$this->assertTrue( $config['dismissible'] ?? true );
 		$this->assertStringContainsString( 'page=' . Module::PAGE_ID, $config['description'] );
+	}
+
+	public function test_get_config__keeps_wordpress_from_moving_the_notice_below_the_title() {
+		// Act
+		$config = $this->notice->get_config();
+
+		// Assert
+		$this->assertContains( 'inline', $config['classes'] );
+		$this->assertContains( 'notice', $config['classes'] );
 	}
 }
