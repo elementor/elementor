@@ -40,6 +40,22 @@ class Test_Onboarding_Entry extends Elementor_Test_Base {
 		$this->assertGreaterThan( 0, (int) get_option( Onboarding_Entry::ACTIVATED_AT_OPTION ) );
 	}
 
+	public function test_mark_activation__skips_pending_when_no_user_and_install_history() {
+		// Arrange
+		wp_set_current_user( 0 );
+		update_option( Upgrade_Manager::get_install_history_meta(), [ '3.20.0' => time() ] );
+
+		// Act
+		Onboarding_Entry::mark_activation();
+
+		// Assert
+		$this->assertFalse( Onboarding_Entry::is_pending() );
+		$this->assertSame(
+			[ [ 'reason' => Onboarding_Entry::REASON_ALREADY_LOGGED_IN ] ],
+			get_option( Onboarding_Entry::EVENT_QUEUE_OPTION )
+		);
+	}
+
 	public function test_mark_activation__skips_pending_when_logged_in_with_install_history() {
 		// Arrange
 		$this->act_as_admin();

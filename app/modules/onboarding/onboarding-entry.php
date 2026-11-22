@@ -3,8 +3,6 @@ namespace Elementor\App\Modules\Onboarding;
 
 use Elementor\Core\Common\Modules\EventsManager\Module as Events_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
-use Elementor\Plugin;
-use Elementor\Tracker;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,7 +41,7 @@ class Onboarding_Entry {
 	}
 
 	public static function mark_activation(): void {
-		if ( self::should_skip_pending_for_logged_in_existing_site() ) {
+		if ( self::should_skip_pending_for_existing_site() ) {
 			self::track_decision( self::REASON_ALREADY_LOGGED_IN );
 
 			return;
@@ -164,7 +162,7 @@ class Onboarding_Entry {
 			return;
 		}
 
-		if ( ! self::can_send_events() ) {
+		if ( ! Events_Manager::can_send_events() ) {
 			return;
 		}
 
@@ -179,15 +177,13 @@ class Onboarding_Entry {
 		delete_option( self::EVENT_QUEUE_OPTION );
 	}
 
-	private static function should_skip_pending_for_logged_in_existing_site(): bool {
-		// Logged-in reactivate of an existing site must not look like a new install.
-		if ( ! get_current_user_id() ) {
-			return false;
+	private static function should_skip_pending_for_existing_site(): bool {
+		// Existing site (history from a prior install, or logged-in reactivate already onboarded).
+		if ( ! empty( Upgrade_Manager::get_installs_history() ) ) {
+			return true;
 		}
 
-		$has_install_history = ! empty( Upgrade_Manager::get_installs_history() );
-
-		return self::has_finished_onboarding() || $has_install_history;
+		return (bool) get_current_user_id() && self::has_finished_onboarding();
 	}
 
 	private static function is_admin_post_request(): bool {
@@ -216,7 +212,7 @@ class Onboarding_Entry {
 			return;
 		}
 
-		if ( self::can_send_events() ) {
+		if ( Events_Manager::can_send_events() ) {
 			self::dispatch_decision_event( $reason );
 
 			return;
@@ -270,14 +266,4 @@ class Onboarding_Entry {
 		update_option( self::TRACKED_REASONS_OPTION, $reasons );
 	}
 
-	private static function can_send_events(): bool {
-		if ( empty( Plugin::$instance ) || empty( Plugin::$instance->experiments ) ) {
-			return false;
-		}
-
-		return ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN )
-			&& Tracker::is_allow_track()
-			&& ! Tracker::has_terms_changed()
-			&& Plugin::$instance->experiments->is_feature_active( Events_Manager::EXPERIMENT_NAME );
-	}
 }
