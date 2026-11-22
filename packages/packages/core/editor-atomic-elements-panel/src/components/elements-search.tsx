@@ -6,6 +6,7 @@ import { type ElementGroup } from '../utils/group-widgets';
 
 type Props = {
 	value: string;
+	isSearching: boolean;
 	onChange: ( value: string ) => void;
 	groups: ElementGroup[];
 };
@@ -20,8 +21,7 @@ const VISUALLY_HIDDEN_SX = {
 	clip: 'rect(0 0 0 0)',
 };
 
-export function ElementsSearch( { value, onChange, groups }: Props ) {
-	const isSearching = value.trim() !== '';
+export function ElementsSearch( { value, isSearching, onChange, groups }: Props ) {
 	const resultsCount = groups.reduce( ( total, { tiles } ) => total + tiles.length, 0 );
 
 	return (

@@ -118,4 +118,51 @@ describe( 'AtomicElementsPanel search', () => {
 		// Assert.
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeInTheDocument();
 	} );
+
+	it( 'should match by widget type', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'e-flex' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Heading' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should announce the results count', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'e-' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( '3 elements found.' );
+	} );
+
+	it( 'should keep a matching locked tile in the results', () => {
+		// Arrange.
+		( window as unknown as { elementor: unknown } ).elementor = {
+			config: {
+				atomicWidgetPromotions: [
+					{ type: 'pro', widgets: [ { name: 'e-pro-carousel', title: 'Pro Carousel', categories: '[]' } ] },
+				],
+			},
+		};
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'carousel' } } );
+
+		// Assert.
+		expect( screen.getAllByRole( 'button', { name: /Pro Carousel/ } ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'button', { name: 'Flexbox' } ) ).not.toBeInTheDocument();
+
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
+	} );
 } );

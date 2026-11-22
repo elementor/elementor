@@ -98,7 +98,12 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 					<Tab value="my-library" label={ __( 'My Library', 'elementor' ) } />
 				</Tabs>
 				<PanelBody sx={ { overflowY: 'auto' } } onKeyDown={ onKeyDown }>
-					<ElementsSearch value={ query } onChange={ setQuery } groups={ groups } />
+					<ElementsSearch
+						value={ query }
+						isSearching={ isSearching }
+						onChange={ setQuery }
+						groups={ groups }
+					/>
 					<Box sx={ { px: 2 } }>
 						{ groups.length === 0 ? (
 							<Box sx={ { py: 4, textAlign: 'center' } }>
