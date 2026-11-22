@@ -2,19 +2,23 @@ import {
 	APP_TYPE_WP_ADMIN,
 	EVENT_ACTIVATION_CLICKED,
 	EVENT_BOT_PERMISSION_CHANGED,
+	EVENT_DASHBOARD_CTA_CLICKED,
 	EVENT_FEATURE_TOGGLED,
 	EVENT_POST_TYPE_TOGGLED,
 	EVENT_WELCOME_VIEWED,
 	LOCATION_L1,
+	TARGET_TYPE_BUTTON,
+	TRANSPORT_SEND_BEACON,
+	WINDOW_DASHBOARD,
 	WINDOW_ONBOARDING,
 	WINDOW_SETTINGS,
 } from './agent-ready-events';
 
-const dispatch = ( eventName, payload ) => window.elementorCommon?.eventsManager?.dispatchEvent?.( eventName, {
+const dispatch = ( eventName, payload, ...dispatchOptions ) => window.elementorCommon?.eventsManager?.dispatchEvent?.( eventName, {
 	app_type: APP_TYPE_WP_ADMIN,
 	location_l1: LOCATION_L1,
 	...payload,
-} );
+}, ...dispatchOptions );
 
 export const trackWelcomeViewed = () => dispatch( EVENT_WELCOME_VIEWED, {
 	window_name: WINDOW_ONBOARDING,
@@ -72,3 +76,13 @@ export const trackBotPermissionChanged = ( { scope, crawlerId, permissionType, i
 	target_location: 'bot_access_table',
 	location_l2: 'bot_access',
 } );
+
+export const trackDashboardCtaClicked = ( state ) => dispatch( EVENT_DASHBOARD_CTA_CLICKED, {
+	window_name: WINDOW_DASHBOARD,
+	interaction_type: 'click',
+	target_type: TARGET_TYPE_BUTTON,
+	target_name: 'dashboard_cta',
+	interaction_result: state,
+	target_location: 'overview_widget',
+	location_l2: 'dashboard',
+}, { transport: TRANSPORT_SEND_BEACON } );

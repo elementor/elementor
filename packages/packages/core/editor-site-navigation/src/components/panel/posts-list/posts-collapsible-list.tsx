@@ -1,42 +1,96 @@
 import * as React from 'react';
-import { PageTypeIcon } from '@elementor/icons';
-import { Box, Button, CircularProgress, List, Skeleton } from '@elementor/ui';
+import { useEffect, useMemo, useState } from 'react';
+import { Box, Button, CircularProgress, Skeleton, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { postTypesMap } from '../../../api/post';
+import { useContentPanelCoordinator } from '../../../contexts/content-panel-coordinator';
 import { usePostListContext } from '../../../contexts/post-list-context';
 import { useHomepage } from '../../../hooks/use-homepage';
 import { usePosts } from '../../../hooks/use-posts';
-import AddNewButton from '../add-new-button';
+import SectionAddButton from '../section-add-button';
 import CollapsibleList from './collapsible-list';
 import ErrorState from './error-state';
 import PostListItem from './post-list-item';
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 type Props = {
 	isOpenByDefault?: boolean;
 };
 
 export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
-	const { type, editMode } = usePostListContext();
+	const { type, editMode, setEditMode } = usePostListContext();
+	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
+	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
+	const trimmedSearch = searchQuery.trim();
+	const [ debouncedSearch, setDebouncedSearch ] = useState( trimmedSearch );
+
+	useEffect( () => {
+		const handle = window.setTimeout( () => setDebouncedSearch( trimmedSearch ), SEARCH_DEBOUNCE_MS );
+
+		return () => window.clearTimeout( handle );
+	}, [ trimmedSearch ] );
+
 	const {
 		data: { posts, total },
-		isLoading: postsLoading,
 		isError: postsError,
+		isPending: postsPending,
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type );
+	} = usePosts( type, debouncedSearch );
 	const { data: homepageId } = useHomepage();
+	const isPageType = type === 'page';
+
+	useEffect( () => {
+		registerSection( type, {
+			setExpanded: setIsOpen,
+			startCreate: () => setEditMode( { mode: 'create', details: {} } ),
+		} );
+
+		return () => unregisterSection( type );
+	}, [ registerSection, unregisterSection, type, setEditMode ] );
+
+	const filteredPosts = useMemo( () => {
+		if ( ! posts ) {
+			return [];
+		}
+
+		const mappedPosts = isPageType
+			? posts.map( ( post ) => ( post.id === homepageId ? { ...post, isHome: true } : post ) )
+			: posts;
+
+		const sorted = isPageType
+			? [ ...mappedPosts ].sort( ( a, b ) => {
+					if ( a.id === homepageId ) {
+						return -1;
+					}
+
+					if ( b.id === homepageId ) {
+						return 1;
+					}
+
+					return 0;
+			  } )
+			: mappedPosts;
+
+		return sorted;
+	}, [ posts, isPageType, homepageId ] );
+
+	useEffect( () => {
+		if ( debouncedSearch && filteredPosts.length > 0 ) {
+			setIsOpen( true );
+		}
+	}, [ debouncedSearch, filteredPosts.length ] );
 
 	if ( postsError ) {
 		return <ErrorState />;
 	}
 
-	if ( ! posts || postsLoading ) {
+	if ( postsPending && ! posts?.length ) {
 		return (
-			<Box sx={ { px: 5 } }>
-				<Box display="flex" justifyContent="flex-end" alignItems="center">
-					<Skeleton sx={ { my: 4 } } animation="wave" variant="rounded" width="110px" height="28px" />
-				</Box>
+			<Box sx={ { px: 2 } }>
 				<Box>
 					<Skeleton sx={ { my: 3 } } animation="wave" variant="rounded" width="100%" height="24px" />
 					<Skeleton sx={ { my: 3 } } animation="wave" variant="rounded" width="70%" height="24px" />
@@ -47,61 +101,41 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		);
 	}
 
-	const label = `${ postTypesMap[ type ].labels.plural_name } (${ total.toString() })`;
-
-	const mappedPosts = posts.map( ( post ) => {
-		if ( post.id === homepageId ) {
-			return { ...post, isHome: true };
-		}
-
-		return post;
-	} );
-
-	const sortedPosts = mappedPosts.sort( ( a, b ) => {
-		if ( a.id === homepageId ) {
-			return -1;
-		}
-
-		if ( b.id === homepageId ) {
-			return 1;
-		}
-
-		return 0;
-	} );
+	const displayCount = total;
+	const sectionTitle = postTypesMap[ type ].labels.plural_name;
+	const showNoResults = debouncedSearch && filteredPosts.length === 0;
 
 	return (
-		<>
-			<Box
-				display="flex"
-				justifyContent="flex-end"
-				alignItems="center"
-				sx={ {
-					py: 1,
-					px: 2,
-				} }
-			>
-				<AddNewButton />
-			</Box>
-			<List dense>
-				<CollapsibleList label={ label } Icon={ PageTypeIcon } isOpenByDefault={ isOpenByDefault || false }>
-					{ sortedPosts.map( ( post ) => {
-						return <PostListItem key={ post.id } post={ post } />;
-					} ) }
-					{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
-					{ hasNextPage && (
-						<Box
-							sx={ {
-								display: 'flex',
-								justifyContent: 'center',
-							} }
-						>
-							<Button onClick={ fetchNextPage } color="secondary">
-								{ isFetchingNextPage ? <CircularProgress /> : 'Load More' }
-							</Button>
-						</Box>
-					) }
-				</CollapsibleList>
-			</List>
-		</>
+		<CollapsibleList
+			count={ displayCount }
+			isOpen={ isOpen }
+			onOpenChange={ setIsOpen }
+			title={ sectionTitle }
+			trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
+		>
+			{ showNoResults && (
+				<Box sx={ { py: 2, px: 2 } }>
+					<Typography variant="body2" color="text.secondary">
+						{ __( 'No results found', 'elementor' ) }
+					</Typography>
+				</Box>
+			) }
+			{ filteredPosts.map( ( post ) => {
+				return <PostListItem key={ post.id } post={ post } />;
+			} ) }
+			{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
+			{ hasNextPage && (
+				<Box
+					sx={ {
+						display: 'flex',
+						justifyContent: 'center',
+					} }
+				>
+					<Button onClick={ fetchNextPage } color="secondary">
+						{ isFetchingNextPage ? <CircularProgress /> : __( 'Load more', 'elementor' ) }
+					</Button>
+				</Box>
+			) }
+		</CollapsibleList>
 	);
 }

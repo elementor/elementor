@@ -8,6 +8,13 @@
 			margin-block-end: 13px;
 		}
 
+		h3.e-overview__agent-ready-title {
+			margin: 0;
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 20px;
+		}
+
 		.e-divider_bottom {
 			border-block-end: 1px solid #eee;
 			margin: 0 -12px;
@@ -50,6 +57,14 @@
 }
 
 //Overview Widget
+$agent-ready-needs-work: #d63638;
+$agent-ready-getting-there: #dba617;
+$agent-ready-strong: #00a32a;
+$agent-ready-card-background: #eff5fe;
+$agent-ready-title-color: #1d2327;
+$agent-ready-text-color: #3d4349;
+$overview-muted-color: #72777c;
+
 .e-dashboard-overview {
 
 	.dashicons {
@@ -121,7 +136,7 @@
 		&__recently-edited {
 
 			li {
-				color: #72777c;
+				color: $overview-muted-color;
 			}
 		}
 
@@ -148,6 +163,86 @@
 						border: none;
 					}
 				}
+			}
+		}
+
+		&__agent-ready {
+			margin: 0 -12px;
+			padding: 12px;
+			border-block-end: 1px solid #eee;
+
+			&-card {
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+				padding: 12px;
+				border-radius: 4px;
+				background: $agent-ready-card-background;
+			}
+
+			&-title-row,
+			&-status {
+				display: flex;
+				align-items: center;
+			}
+
+			&-title-row {
+				gap: 8px;
+			}
+
+			&-status {
+				gap: 6px;
+			}
+
+			&-text,
+			&-meta {
+				margin: 0;
+				font-size: 13px;
+				line-height: 20px;
+			}
+
+			&-text {
+				color: $agent-ready-text-color;
+			}
+
+			&-status .e-overview__agent-ready-text {
+				color: $agent-ready-title-color;
+			}
+
+			&-meta {
+				color: $overview-muted-color;
+			}
+
+			&-dot {
+				flex-shrink: 0;
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+			}
+
+			&-actions {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+
+				.button {
+					padding: 5px 10px;
+					min-height: 0;
+					line-height: 20px;
+					background: $white;
+				}
+			}
+
+			&--needs_work .e-overview__agent-ready-dot {
+				background: $agent-ready-needs-work;
+			}
+
+			&--getting_there .e-overview__agent-ready-dot {
+				background: $agent-ready-getting-there;
+			}
+
+			&--strong .e-overview__agent-ready-dot {
+				background: $agent-ready-strong;
 			}
 		}
 

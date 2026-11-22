@@ -32,8 +32,8 @@ jest.mock( '@elementor/ui/DialogContent', () => ( { children } ) => <div>{ child
 jest.mock( '@elementor/ui/DialogHeader', () => ( { children } ) => <div>{ children }</div> );
 jest.mock( '@elementor/ui/DialogTitle', () => ( { children } ) => <h2>{ children }</h2> );
 jest.mock( '@elementor/ui/Box', () => ( { children } ) => <div>{ children }</div> );
-jest.mock( '@elementor/ui/Button', () => ( { children, onClick } ) => (
-	<button type="button" onClick={ onClick }>{ children }</button>
+jest.mock( '@elementor/ui/Button', () => ( { children, disabled, onClick, type = 'button' } ) => (
+	<button type={ type } disabled={ disabled } onClick={ onClick }>{ children }</button>
 ) );
 jest.mock( '@elementor/ui/Chip', () => ( { label } ) => <span data-testid="chip">{ label }</span> );
 jest.mock( '@elementor/ui/Collapse', () => ( { children, in: isOpen } ) => ( isOpen ? <div>{ children }</div> : null ) );
@@ -41,9 +41,14 @@ jest.mock( '@elementor/ui/Divider', () => () => <hr /> );
 jest.mock( '@elementor/ui/IconButton', () => ( { children, onClick, 'aria-label': ariaLabel } ) => (
 	<button type="button" onClick={ onClick } aria-label={ ariaLabel }>{ children }</button>
 ) );
-jest.mock( '@elementor/ui/Stack', () => ( { children } ) => <div>{ children }</div> );
+jest.mock( '@elementor/ui/Stack', () => ( { children, component, onSubmit } ) => (
+	'form' === component ? <form onSubmit={ onSubmit }>{ children }</form> : <div>{ children }</div>
+) );
 jest.mock( '@elementor/ui/Switch', () => ( { checked, disabled, onChange, inputProps } ) => (
 	<input type="checkbox" role="switch" aria-label={ inputProps?.[ 'aria-label' ] } checked={ checked } disabled={ disabled } onChange={ onChange } />
+) );
+jest.mock( '@elementor/ui/TextField', () => ( { value, onChange, disabled, inputProps } ) => (
+	<textarea aria-label={ inputProps[ 'aria-label' ] } maxLength={ inputProps.maxLength } value={ value } disabled={ disabled } onChange={ onChange } />
 ) );
 jest.mock( '@elementor/ui/Tooltip', () => ( { children } ) => children );
 jest.mock( '@elementor/ui/Typography', () => ( { children } ) => <span>{ children }</span> );
@@ -55,16 +60,22 @@ const createPostTypes = ( total ) => Array.from( { length: total }, ( _, index )
 	included: true,
 } ) );
 
+const MAX_CUSTOM_TEXT_LENGTH = 2000;
+const CUSTOM_TEXT_FIELD_NAME = 'Instructions for agents';
+
 const createSettings = ( overrides = {} ) => ( {
 	content: '# Site',
+	customText: '',
 	excludedPostIds: [],
 	flushExclusions: jest.fn( () => Promise.resolve() ),
 	hasPhysicalFile: false,
 	isEnabled: true,
 	isManuallyEdited: false,
+	maxCustomTextLength: MAX_CUSTOM_TEXT_LENGTH,
 	postTypes: createPostTypes( 2 ),
 	revertContent: jest.fn( () => Promise.resolve() ),
 	saveContent: jest.fn( () => Promise.resolve() ),
+	saveCustomText: jest.fn( () => Promise.resolve() ),
 	takeOverFile: jest.fn( () => Promise.resolve() ),
 	togglePostExclusion: jest.fn(),
 	togglePostType: jest.fn(),
@@ -153,7 +164,8 @@ describe( 'LlmsTxtPanel', () => {
 			expect( row.checked ).toBe( true );
 			expect( row.disabled ).toBe( true );
 		} );
-		expect( screen.getByTestId( 'chip' ).textContent ).toBe( 'This file was edited manually and no longer syncs automatically.' );
+		expect( screen.getByRole( 'alert' ).textContent ).toContain( 'You’re editing llms.txt by hand.' );
+		expect( screen.queryByTestId( 'chip' ) ).toBeNull();
 		expect( screen.getByRole( 'button', { name: 'Edit' } ) ).toBeTruthy();
 	} );
 
@@ -186,7 +198,7 @@ describe( 'LlmsTxtPanel', () => {
 		render( <LlmsTxtPanel settings={ settings } /> );
 
 		// Act
-		fireEvent.click( screen.getByRole( 'button', { name: 'Revert to generated version' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Switch back' } ) );
 
 		// Assert
 		expect( settings.revertContent ).not.toHaveBeenCalled();
@@ -230,6 +242,69 @@ describe( 'LlmsTxtPanel', () => {
 		// Assert
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
 		expect( settings.takeOverFile ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'shows the saved instructions in a persistent field with a character count and caps its length', () => {
+		// Arrange & Act
+		render( <LlmsTxtPanel settings={ createSettings( { customText: 'Existing note.' } ) } /> );
+
+		// Assert
+		const field = screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } );
+		expect( field.value ).toBe( 'Existing note.' );
+		expect( field.maxLength ).toBe( MAX_CUSTOM_TEXT_LENGTH );
+		expect( screen.getByText( '14/2,000' ) ).toBeTruthy();
+	} );
+
+	it( 'enables Save only after the instructions change and keeps the text in the field after saving', async () => {
+		// Arrange
+		const settings = createSettings();
+		render( <LlmsTxtPanel settings={ settings } /> );
+		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+
+		// Assert
+		expect( saveButton.disabled ).toBe( true );
+
+		// Act
+		fireEvent.change( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ), { target: { value: 'Our note.' } } );
+
+		// Assert
+		expect( saveButton.disabled ).toBe( false );
+
+		// Act
+		fireEvent.click( saveButton );
+
+		// Assert
+		await waitFor( () => expect( settings.saveCustomText ).toHaveBeenCalledWith( 'Our note.' ) );
+		expect( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ).value ).toBe( 'Our note.' );
+	} );
+
+	it( 'shows the error and keeps the typed text when saving fails', async () => {
+		// Arrange
+		const serverError = 'Could not save.';
+		const settings = createSettings( { saveCustomText: jest.fn( () => Promise.reject( serverError ) ) } );
+		render( <LlmsTxtPanel settings={ settings } /> );
+
+		// Act
+		fireEvent.change( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ), { target: { value: 'Our note.' } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		// Assert
+		expect( await screen.findByRole( 'alert' ) ).toHaveProperty( 'textContent', serverError );
+		expect( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ).value ).toBe( 'Our note.' );
+	} );
+
+	it( 'disables the instructions field when the file was edited manually and hides it for a physical file', () => {
+		// Arrange & Act
+		const { rerender } = render( <LlmsTxtPanel settings={ createSettings( { isManuallyEdited: true } ) } /> );
+
+		// Assert
+		expect( screen.getByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ).disabled ).toBe( true );
+
+		// Act
+		rerender( <LlmsTxtPanel settings={ createSettings( { hasPhysicalFile: true, isEnabled: false } ) } /> );
+
+		// Assert
+		expect( screen.queryByRole( 'textbox', { name: CUSTOM_TEXT_FIELD_NAME } ) ).toBeNull();
 	} );
 
 	it( 'keeps the dialog open and shows the server error when the take over fails', async () => {

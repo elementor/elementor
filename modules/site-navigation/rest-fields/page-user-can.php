@@ -7,6 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Page_User_Can {
+
+	private const SUPPORTED_POST_TYPES = [ 'page', 'post' ];
+
 	public function register_rest_field() {
 		if ( ! isset( $_GET['_fields'] ) ) {
 			return;
@@ -15,21 +18,23 @@ class Page_User_Can {
 		$fields = sanitize_text_field( wp_unslash( $_GET['_fields'] ) );
 		$array_fields = explode( ',', $fields );
 
-		if ( ! in_array( 'user_can', $array_fields ) ) {
+		if ( ! in_array( 'user_can', $array_fields, true ) ) {
 			return;
 		}
 
-		register_rest_field(
-			'page',
-			'user_can',
-			[
-				'get_callback' => [ $this, 'get_callback' ],
-				'schema' => [
-					'description' => __( 'Whether the current user can edit or delete this post', 'elementor' ),
-					'type' => 'array',
-				],
-			]
-		);
+		foreach ( self::SUPPORTED_POST_TYPES as $post_type ) {
+			register_rest_field(
+				$post_type,
+				'user_can',
+				[
+					'get_callback' => [ $this, 'get_callback' ],
+					'schema' => [
+						'description' => __( 'Whether the current user can edit or delete this post', 'elementor' ),
+						'type' => 'array',
+					],
+				]
+			);
+		}
 	}
 
 	public function get_callback( $post ) {

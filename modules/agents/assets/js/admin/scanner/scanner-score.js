@@ -1,19 +1,21 @@
 import {
 	SCORE_TIER_HIGH,
-	SCORE_TIER_HIGH_MIN,
 	SCORE_TIER_LOW,
-	SCORE_TIER_LOW_MAX,
 	SCORE_TIER_MID,
 } from './scanner-constants';
 
 export const READINESS_SCORE_MAX = 100;
 
+const getScoreTierThresholds = () => window.elementorAgentsReadyConfig.scanner.scoreTiers;
+
 export const getScoreTier = ( score ) => {
-	if ( score <= SCORE_TIER_LOW_MAX ) {
+	const { lowMax, highMin } = getScoreTierThresholds();
+
+	if ( score <= lowMax ) {
 		return SCORE_TIER_LOW;
 	}
 
-	if ( score < SCORE_TIER_HIGH_MIN ) {
+	if ( score < highMin ) {
 		return SCORE_TIER_MID;
 	}
 

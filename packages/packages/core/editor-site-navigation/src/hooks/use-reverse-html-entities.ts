@@ -1,14 +1,7 @@
 import { useMemo } from 'react';
 
+import { getPostTitlePlain } from '../utils/post-title-plain';
+
 export function useReverseHtmlEntities( escapedHTML = '' ) {
-	return useMemo( () => {
-		const textarea = document.createElement( 'textarea' );
-		textarea.innerHTML = escapedHTML;
-
-		const { value } = textarea;
-
-		textarea.remove();
-
-		return value;
-	}, [ escapedHTML ] );
+	return useMemo( () => getPostTitlePlain( escapedHTML ), [ escapedHTML ] );
 }
