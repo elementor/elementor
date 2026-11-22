@@ -304,7 +304,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 			hasNextPage: true,
 			isFetchingNextPage: false,
 			isLoading: false,
-		} as ReturnType< typeof usePosts > );
+		} as unknown as ReturnType< typeof usePosts > );
 
 		renderList( <PostsCollapsibleList isOpenByDefault={ true } /> );
 
@@ -322,7 +322,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 			hasNextPage: false,
 			isFetchingNextPage: false,
 			isLoading: false,
-		} as ReturnType< typeof usePosts > );
+		} as unknown as ReturnType< typeof usePosts > );
 
 		renderList( <PostsCollapsibleList isOpenByDefault={ true } /> );
 
