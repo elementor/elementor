@@ -1,6 +1,6 @@
 import { injectIntoPageIndication, toolsMenu } from '@elementor/editor-app-bar';
 import { registerPanel } from '@elementor/editor-panels';
-import { isSidebarEnabled, sidebarTools } from '@elementor/editor-sidebar';
+import { sidebarTools } from '@elementor/editor-sidebar';
 
 import { init } from '../init';
 
