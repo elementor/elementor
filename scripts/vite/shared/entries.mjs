@@ -56,7 +56,6 @@ export const BASE_ENTRIES = {
 	'element-manager-admin': 'modules/element-manager/assets/js/admin.js',
 	'media-hints': 'assets/dev/js/admin/hints/media.js',
 	'guided-tours': 'modules/guided-tours/assets/js/guided-tours.js',
-	'ai-unify-product-images': 'modules/ai/assets/js/woocommerce/index.js',
 	'ai-admin': 'modules/ai/assets/js/admin/index.js',
 	styleguide: 'modules/styleguide/assets/js/styleguide.js',
 	'styleguide-app-initiator': 'modules/styleguide/assets/js/styleguide-app-initiator.js',
