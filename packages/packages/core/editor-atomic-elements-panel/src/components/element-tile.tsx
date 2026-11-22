@@ -4,7 +4,7 @@ import { ButtonBase, Stack, Typography } from '@elementor/ui';
 
 import { type ElementTile as ElementTileData } from '../utils/group-widgets';
 
-const ICON_SIZE = 24;
+const ICON_SIZE = 28;
 
 const TITLE_SX = {
 	maxWidth: '100%',
@@ -23,9 +23,8 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 				flexDirection: 'column',
 				justifyContent: 'flex-start',
 				minWidth: 0,
-				gap: 1,
-				py: 1.5,
-				px: 0.5,
+				gap: 0.5,
+				p: 0.5,
 				borderRadius: 1,
 				'&.Mui-focusVisible': { outline: '2px solid', outlineColor: 'primary.main' },
 			} }
@@ -33,7 +32,7 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 			<Stack
 				alignItems="center"
 				justifyContent="center"
-				sx={ { width: '100%', height: 56, borderRadius: 1, backgroundColor: 'action.hover' } }
+				sx={ { width: '100%', height: 72, borderRadius: 1, backgroundColor: 'action.hover' } }
 			>
 				{ tile.icon ? (
 					<i className={ tile.icon } aria-hidden="true" style={ { fontSize: ICON_SIZE } } />

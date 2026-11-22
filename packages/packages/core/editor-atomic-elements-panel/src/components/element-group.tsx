@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useId, useState } from 'react';
 import { ChevronDownIcon } from '@elementor/icons';
-import { Box, ButtonBase, Collapse, Divider, Typography } from '@elementor/ui';
+import { Box, ButtonBase, Collapse, Typography } from '@elementor/ui';
 
 import { TILES_PER_ROW } from '../consts';
 import { type ElementGroup as ElementGroupData } from '../utils/group-widgets';
@@ -26,7 +26,7 @@ export function ElementGroup( { group }: { group: ElementGroupData } ) {
 					'&.Mui-focusVisible': { outline: '2px solid', outlineColor: 'primary.main' },
 				} }
 			>
-				<Typography variant="caption" fontWeight={ 500 }>
+				<Typography variant="subtitle2" fontWeight={ 700 }>
 					{ group.title }
 				</Typography>
 				<ChevronDownIcon
@@ -42,7 +42,7 @@ export function ElementGroup( { group }: { group: ElementGroupData } ) {
 					sx={ {
 						display: 'grid',
 						gridTemplateColumns: `repeat(${ TILES_PER_ROW }, minmax(0, 1fr))`,
-						gap: 1,
+						gap: 0.5,
 						pb: 2,
 					} }
 				>
@@ -51,7 +51,6 @@ export function ElementGroup( { group }: { group: ElementGroupData } ) {
 					) ) }
 				</Box>
 			</Collapse>
-			<Divider />
 		</Box>
 	);
 }
