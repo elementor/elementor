@@ -466,6 +466,43 @@ class Test_Agent_Ready_Settings extends Elementor_Test_Base {
 		$this->assertSame( Agent_Ready_Settings::MAX_BUSINESS_DETAILS_LENGTH, mb_strlen( $saved ) );
 	}
 
+	public function test_get_llms_custom_text__defaults_to_empty() {
+		// Act & Assert
+		$this->assertSame( '', $this->settings->get_llms_custom_text() );
+	}
+
+	public function test_rest_update__sanitizes_and_limits_llms_custom_text() {
+		// Arrange
+		$custom_text = "<b>Hello</b> agents\n" . str_repeat( 'a', Agent_Ready_Settings::MAX_LLMS_CUSTOM_TEXT_LENGTH );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'custom_text' => $custom_text ],
+		] );
+
+		// Assert
+		$saved = $this->settings->get_llms_custom_text();
+
+		$this->assertStringStartsWith( "Hello agents\n", $saved );
+		$this->assertSame( Agent_Ready_Settings::MAX_LLMS_CUSTOM_TEXT_LENGTH, mb_strlen( $saved ) );
+	}
+
+	public function test_rest_update__keeps_llms_custom_text_when_only_the_toggle_is_saved() {
+		// Arrange
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'custom_text' => 'Hello agents' ],
+		] );
+
+		// Act
+		$this->put_settings( [
+			Agent_Ready_Settings::MODULE_LLMS_TXT => [ 'enabled' => false ],
+		] );
+
+		// Assert
+		$this->assertSame( 'Hello agents', $this->settings->get_llms_custom_text() );
+		$this->assertFalse( $this->settings->is_llms_enabled() );
+	}
+
 	public function test_rest_update__keeps_business_details_when_only_the_toggle_is_saved() {
 		// Arrange
 		$this->put_settings( [
