@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { LLMS_FILE_NAME } from '../../constants';
 import { ContentPreviewPane } from '../content-preview-pane';
 
-export const LlmsPreviewPane = ( { content, hasActions, onEdit, onExpand } ) => {
+export const LlmsPreviewPane = ( { content, footer, hasActions, onEdit, onExpand } ) => {
 	const header = (
 		<Stack direction="row" alignItems="center" justifyContent="space-between">
 			<Typography variant="subtitle2" component="code" fontFamily="monospace">
@@ -32,11 +32,12 @@ export const LlmsPreviewPane = ( { content, hasActions, onEdit, onExpand } ) => 
 		</Stack>
 	);
 
-	return <ContentPreviewPane header={ header } content={ content } />;
+	return <ContentPreviewPane header={ header } content={ content } footer={ footer } />;
 };
 
 LlmsPreviewPane.propTypes = {
 	content: PropTypes.string.isRequired,
+	footer: PropTypes.node,
 	hasActions: PropTypes.bool.isRequired,
 	onEdit: PropTypes.func.isRequired,
 	onExpand: PropTypes.func.isRequired,

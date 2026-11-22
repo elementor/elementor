@@ -102,6 +102,8 @@ const llmsConfig = {
 	hasPhysicalFile: false,
 	fileUrl: 'https://example.com/llms.txt',
 	postTypes: [ { name: 'page', label: 'Pages', count: 2, included: true } ],
+	customText: '',
+	maxCustomTextLength: 2000,
 };
 
 const markdownConfig = {
@@ -536,7 +538,7 @@ describe( 'Agents Ready App', () => {
 
 		// Assert - the first module starts open; the rest stay collapsed
 		expect( screen.queryByText( 'Help AI agents understand and recommend your site' ) ).toBeNull();
-		expect( screen.getByText( 'Help AI agents understand your site' ) ).toBeTruthy();
+		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents find what your site offers' ) ).toBeTruthy();
@@ -546,7 +548,7 @@ describe( 'Agents Ready App', () => {
 
 		// Assert
 		expect( screen.getByText( 'Help AI agents understand and recommend your site' ) ).toBeTruthy();
-		expect( screen.queryByText( 'Help AI agents understand your site' ) ).toBeNull();
+		expect( screen.queryByText( 'Help agents find your content' ) ).toBeNull();
 		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 	} );
