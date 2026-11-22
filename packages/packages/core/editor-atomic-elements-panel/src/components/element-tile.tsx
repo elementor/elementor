@@ -63,7 +63,7 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 						fontSize="tiny"
 						color="promotion"
 						sx={ CROWN_SX }
-						aria-label={ __( 'Upgrade', 'elementor' ) }
+						titleAccess={ __( 'Upgrade', 'elementor' ) }
 					/>
 				) }
 				{ tile.icon ? (
