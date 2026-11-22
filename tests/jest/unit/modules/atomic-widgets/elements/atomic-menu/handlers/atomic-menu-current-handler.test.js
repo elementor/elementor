@@ -4,6 +4,7 @@ jest.mock( '@elementor/frontend-handlers', () => ( {
 
 const ORIGIN = 'http://localhost';
 const CURRENT_CLASS = 'e--current';
+const ANCESTOR_CLASS = 'e--current-ancestor';
 
 class IntersectionObserverMock {
 	static instances = [];
@@ -61,6 +62,51 @@ function buildMenu( links ) {
 	} );
 
 	document.body.append( menu );
+
+	return { menu, items };
+}
+
+function buildEntries( parent, nodes, items ) {
+	const list = document.createElement( 'ul' );
+
+	nodes.forEach( ( { key, href = null, children = [] } ) => {
+		const entry = document.createElement( 'li' );
+		entry.dataset.element_type = 'e-menu-entry';
+
+		const item = document.createElement( null === href ? 'span' : 'a' );
+		item.dataset.element_type = 'e-menu-item';
+
+		if ( null !== href ) {
+			item.setAttribute( 'href', href );
+		}
+
+		entry.append( item );
+		items[ key ] = item;
+
+		if ( children.length ) {
+			const trigger = document.createElement( 'button' );
+			trigger.dataset.element_type = 'e-menu-submenu-trigger';
+
+			const submenu = document.createElement( 'div' );
+			submenu.dataset.element_type = 'e-menu-submenu';
+			buildEntries( submenu, children, items );
+
+			entry.append( trigger, submenu );
+		}
+
+		list.append( entry );
+	} );
+
+	parent.append( list );
+}
+
+function buildNestedMenu( nodes, container = document.body ) {
+	const menu = document.createElement( 'nav' );
+	menu.dataset.element_type = 'e-menu';
+	const items = {};
+
+	buildEntries( menu, nodes, items );
+	container.append( menu );
 
 	return { menu, items };
 }
@@ -390,5 +436,154 @@ describe( 'atomic-menu current handler', () => {
 		// Assert
 		expect( IntersectionObserverMock.instances ).toHaveLength( 0 );
 		expect( items[ 0 ].classList.contains( CURRENT_CLASS ) ).toBe( true );
+	} );
+
+	describe( 'current ancestors', () => {
+		const isAncestor = ( item ) => item.classList.contains( ANCESTOR_CLASS );
+
+		it( 'should mark the parent and grandparent items of a nested current page link, unlinked parents included', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'grandparent', children: [
+					{ key: 'parent', href: `${ ORIGIN }/services/`, children: [
+						{ key: 'current', href: `${ ORIGIN }/about/` },
+					] },
+				] },
+			] );
+
+			// Act
+			run( menu );
+
+			// Assert
+			expect( isAncestor( items.grandparent ) ).toBe( true );
+			expect( isAncestor( items.parent ) ).toBe( true );
+			expect( isAncestor( items.current ) ).toBe( false );
+			expect( items.current.classList.contains( CURRENT_CLASS ) ).toBe( true );
+		} );
+
+		it( 'should not mark siblings or unrelated entries', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'parent', children: [
+					{ key: 'current', href: `${ ORIGIN }/about/` },
+					{ key: 'sibling', href: `${ ORIGIN }/team/`, children: [
+						{ key: 'niece', href: `${ ORIGIN }/team/jane/` },
+					] },
+				] },
+				{ key: 'unrelated', children: [ { key: 'other', href: `${ ORIGIN }/contact/` } ] },
+			] );
+
+			// Act
+			run( menu );
+
+			// Assert
+			expect( isAncestor( items.parent ) ).toBe( true );
+			expect( [ 'sibling', 'niece', 'unrelated', 'other' ].map( ( key ) => isAncestor( items[ key ] ) ) )
+				.toEqual( [ false, false, false, false ] );
+		} );
+
+		it( 'should mark a current item as ancestor only when it also has a current descendant', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'parent', href: `${ ORIGIN }/about/`, children: [
+					{ key: 'child', href: `${ ORIGIN }/about` },
+				] },
+				{ key: 'alone', href: `${ ORIGIN }/about/` },
+			] );
+
+			// Act
+			run( menu );
+
+			// Assert
+			expect( isAncestor( items.parent ) ).toBe( true );
+			expect( isAncestor( items.alone ) ).toBe( false );
+		} );
+
+		it( 'should clear the ancestor when the nested item is rendered again with another link', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'parent', children: [ { key: 'current', href: `${ ORIGIN }/about/` } ] },
+			] );
+			run( menu );
+			expect( isAncestor( items.parent ) ).toBe( true );
+
+			// Act
+			items.current.setAttribute( 'href', `${ ORIGIN }/contact/` );
+			renderChild( items.current );
+
+			// Assert
+			expect( isAncestor( items.parent ) ).toBe( false );
+		} );
+
+		it( 'should move the ancestor with the anchor section in view and clear it when the section leaves', () => {
+			// Arrange
+			window.history.pushState( {}, '', '/' );
+			addSection( 'contact' );
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'home', href: `${ ORIGIN }/` },
+				{ key: 'parent', children: [ { key: 'anchor', href: `${ ORIGIN }/#contact` } ] },
+			] );
+			run( menu );
+			const [ observer ] = IntersectionObserverMock.instances;
+
+			// Act
+			observer.trigger( true );
+
+			// Assert
+			expect( isAncestor( items.parent ) ).toBe( true );
+
+			// Act
+			observer.trigger( false );
+
+			// Assert
+			expect( isAncestor( items.parent ) ).toBe( false );
+		} );
+
+		it( 'should not let a nested menu inside a submenu mark the outer menu entries', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'outerParent', children: [ { key: 'outerChild', href: `${ ORIGIN }/contact/` } ] },
+			] );
+			const submenu = items.outerParent.parentElement.querySelector( '[data-element_type="e-menu-submenu"]' );
+			const inner = buildNestedMenu( [
+				{ key: 'innerParent', children: [ { key: 'innerCurrent', href: `${ ORIGIN }/about/` } ] },
+			], submenu );
+
+			// Act
+			run( menu );
+			run( inner.menu );
+
+			// Assert
+			expect( isAncestor( items.outerParent ) ).toBe( false );
+			expect( isAncestor( inner.items.innerParent ) ).toBe( true );
+		} );
+
+		it( 'should not mark any ancestor when nothing is current', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'parent', children: [ { key: 'child', href: `${ ORIGIN }/contact/` } ] },
+			] );
+
+			// Act
+			run( menu );
+
+			// Assert
+			expect( Object.values( items ).some( isAncestor ) ).toBe( false );
+		} );
+
+		it( 'should not mark ancestors of an item that is only in editor preview state', () => {
+			// Arrange
+			const { menu, items } = buildNestedMenu( [
+				{ key: 'parent', children: [ { key: 'child', href: `${ ORIGIN }/contact/` } ] },
+			] );
+			items.child.setAttribute( 'data-e-preview-state', CURRENT_CLASS );
+			items.child.classList.add( CURRENT_CLASS );
+
+			// Act
+			run( menu );
+
+			// Assert
+			expect( isAncestor( items.parent ) ).toBe( false );
+		} );
 	} );
 } );
