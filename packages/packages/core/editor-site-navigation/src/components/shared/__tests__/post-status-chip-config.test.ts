@@ -29,7 +29,7 @@ describe( 'getStatusChipConfig', () => {
 	it( 'falls back to neutral for custom statuses', () => {
 		expect( getStatusChipConfig( 'custom-status' ) ).toEqual( {
 			color: 'default',
-			label: 'custom-status',
+			label: 'custom status',
 		} );
 	} );
 } );
