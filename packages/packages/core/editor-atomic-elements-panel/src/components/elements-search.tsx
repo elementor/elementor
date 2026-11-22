@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box } from '@elementor/ui';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 import { type ElementGroup } from '../utils/group-widgets';
 
@@ -37,6 +37,7 @@ export function ElementsSearch( { value, isSearching, onChange, groups }: Props 
 					placeholder={ __( 'Search Widget…', 'elementor' ) }
 					autoComplete="off"
 					onChange={ ( event ) => onChange( event.target.value ) }
+					onKeyDown={ ( event ) => event.key === 'Escape' && onChange( '' ) }
 				/>
 				<i className="eicon-search-bold" aria-hidden="true" />
 			</div>
@@ -46,7 +47,7 @@ export function ElementsSearch( { value, isSearching, onChange, groups }: Props 
 						? __( 'No elements found.', 'elementor' )
 						: sprintf(
 								/* translators: %d: number of matching elements */
-								__( '%d elements found.', 'elementor' ),
+								_n( '%d element found.', '%d elements found.', resultsCount, 'elementor' ),
 								resultsCount
 						  ) ) }
 			</Box>

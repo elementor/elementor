@@ -73,6 +73,10 @@ describe( 'AtomicElementsPanel groups', () => {
 } );
 
 describe( 'AtomicElementsPanel search', () => {
+	afterEach( () => {
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
+	} );
+
 	it( 'should filter tiles by title and hide empty groups', () => {
 		// Arrange.
 		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
@@ -162,7 +166,44 @@ describe( 'AtomicElementsPanel search', () => {
 		// Assert.
 		expect( screen.getAllByRole( 'button', { name: /Pro Carousel/ } ) ).toHaveLength( 1 );
 		expect( screen.queryByRole( 'button', { name: 'Flexbox' } ) ).not.toBeInTheDocument();
+	} );
 
-		delete ( window as unknown as { elementor?: unknown } ).elementor;
+	it( 'should use the singular form for a single result', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'flexbox' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( '1 element found.' );
+	} );
+
+	it( 'should show matches of a collapsed group while searching', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Layout' } ) );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'flexbox' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should clear the search on Escape', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+		const input = screen.getByRole( 'searchbox' );
+		fireEvent.change( input, { target: { value: 'flexbox' } } );
+
+		// Act.
+		fireEvent.keyDown( input, { key: 'Escape' } );
+
+		// Assert.
+		expect( input ).toHaveValue( '' );
 	} );
 } );

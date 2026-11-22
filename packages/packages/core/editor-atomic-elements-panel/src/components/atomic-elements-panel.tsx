@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { Box, ErrorBoundary, Tab, Tabs, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -54,7 +54,7 @@ const TABS_SX = {
 export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'value' > ) {
 	const widgets = useAtomicWidgets();
 	const [ query, setQuery ] = useState( '' );
-	const allGroups = groupWidgets( widgets, getPromotionTiles( widgets ) );
+	const allGroups = useMemo( () => groupWidgets( widgets, getPromotionTiles( widgets ) ), [ widgets ] );
 	const groups = filterGroups( allGroups, query );
 	const isSearching = query.trim() !== '';
 
@@ -117,7 +117,9 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 								</Typography>
 							</Box>
 						) : (
-							groups.map( ( group ) => <ElementGroup key={ group.id } group={ group } /> )
+							groups.map( ( group ) => (
+								<ElementGroup key={ group.id } group={ group } forceOpen={ isSearching } />
+							) )
 						) }
 					</Box>
 				</PanelBody>
