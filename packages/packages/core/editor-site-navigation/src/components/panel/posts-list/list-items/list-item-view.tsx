@@ -13,6 +13,7 @@ import {
 	ListItemButton,
 	ListItemText,
 	Menu,
+	Stack,
 	Tooltip,
 	Typography,
 	usePopupState,
@@ -29,6 +30,7 @@ import Rename from '../../actions-menu/actions/rename';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
+import { SiteContentListItemActionsSlot } from './site-content-list-item-actions-location';
 
 const DisabledPostTooltip = ( {
 	children,
@@ -83,17 +85,20 @@ export default function ListItemView( { post }: { post: Post } ) {
 					disablePadding
 					sx={ contentPanelListRowPaddingSx }
 					secondaryAction={
-						<IconButton
-							aria-label={ __( 'More actions', 'elementor' ) }
-							size="tiny"
-							{ ...menuTriggerProps }
-							onClick={ ( event: React.MouseEvent ) => {
-								event.stopPropagation();
-								menuTriggerProps.onClick?.( event );
-							} }
-						>
-							<DotsVerticalIcon fontSize="tiny" />
-						</IconButton>
+						<Stack alignItems="center" direction="row" spacing={ 0 }>
+							{ isActive && ! isDisabled && <SiteContentListItemActionsSlot post={ post } /> }
+							<IconButton
+								aria-label={ __( 'More actions', 'elementor' ) }
+								size="tiny"
+								{ ...menuTriggerProps }
+								onClick={ ( event: React.MouseEvent ) => {
+									event.stopPropagation();
+									menuTriggerProps.onClick?.( event );
+								} }
+							>
+								<DotsVerticalIcon fontSize="tiny" />
+							</IconButton>
+						</Stack>
 					}
 				>
 					<ListItemButton

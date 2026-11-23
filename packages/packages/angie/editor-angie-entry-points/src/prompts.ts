@@ -10,6 +10,12 @@ type ControlHeaderPromptParams = Pick< ControlHeaderProps, 'controlType' | 'bind
 	elementId: string;
 };
 
+type SiteContentActiveDocumentPromptParams = {
+	postId: number;
+	postType: string;
+	title: string;
+};
+
 type AngiePromptBuilders = {
 	backgroundImage: ( elementId: string ) => string;
 	classManager: () => string;
@@ -21,6 +27,7 @@ type AngiePromptBuilders = {
 	image: ( elementId: string ) => string;
 	interactions: ( params: InteractionsHeaderProps ) => string;
 	namedImage: ( elementId: string, bind: string ) => string;
+	siteContentActiveDocument: ( params: SiteContentActiveDocumentPromptParams ) => string;
 	styleTab: ( params: StyleTabHeaderProps ) => string;
 	text: ( elementId: string ) => string;
 	variableForm: ( params: VariableFormHeaderProps ) => string;
@@ -58,6 +65,8 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 	image: ( elementId: string ) => `At element ${ elementId }, image, I want: `,
 	interactions: ( { elementId }: InteractionsHeaderProps ) => `At element ${ elementId }, interactions, I want: `,
 	namedImage: ( elementId: string, bind: string ) => `At element ${ elementId }, image "${ bind }", I want: `,
+	siteContentActiveDocument: ( { postId, postType, title }: SiteContentActiveDocumentPromptParams ) =>
+		`For ${ postType } "${ title }" (document id ${ postId }), I want: `,
 	styleTab: ( { elementId }: StyleTabHeaderProps ) => `At element ${ elementId }, styles, I want: `,
 	text: ( elementId: string ) => `At element ${ elementId } I want: `,
 	variableForm: ( { variableType, label }: VariableFormHeaderProps ) => {
