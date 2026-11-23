@@ -38,7 +38,7 @@ export function ElementsPanelSwitcher( { value, isBlocked, open, close }: Elemen
 			sx={ {
 				p: '3px',
 				gap: 0,
-				borderRadius: 2,
+				borderRadius: 1,
 				backgroundColor: 'action.selected',
 				'& .MuiToggleButtonGroup-grouped': {
 					m: 0,

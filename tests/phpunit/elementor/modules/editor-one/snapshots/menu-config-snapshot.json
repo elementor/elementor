@@ -23,6 +23,16 @@
                 "event_id": "settings"
             },
             {
+                "slug": "elementor-mcp",
+                "label": "Elementor MCP",
+                "url": "/wp-admin/admin.php?page=elementor-mcp",
+                "icon": "extension",
+                "group_id": "",
+                "priority": 25,
+                "has_divider_before": false,
+                "event_id": "mcp"
+            },
+            {
                 "slug": "elementor-tools",
                 "label": "Tools",
                 "url": "/wp-admin/admin.php?page=elementor-tools",
@@ -149,14 +159,14 @@
                     "label": "Website Templates",
                     "url": "/wp-admin/admin.php?page=elementor-app&return_to=%2Fwp-admin%2Fadmin.php%3Fpage%3Delementor&source=wp_db_templates_menu#/kit-library",
                     "priority": 30,
-                    "event_id": "http://example.org/wp_admin/admin.php"
+                    "event_id": "kit_library"
                 },
                 {
                     "slug": "edit.php?post_type=e-floating-buttons",
                     "label": "Floating Elements",
                     "url": "/wp-admin/edit.php?post_type=e-floating-buttons",
                     "priority": 40,
-                    "event_id": "edit.php"
+                    "event_id": "e_floating_buttons"
                 },
                 {
                     "slug": "popup_templates",

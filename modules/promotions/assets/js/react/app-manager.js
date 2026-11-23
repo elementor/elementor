@@ -101,11 +101,11 @@ export class AppManager {
 		);
 	}
 
-	resolveAtomicWidgetPromotionCardProps( { cardType, content } ) {
+	resolveAtomicWidgetPromotionCardProps( { cardType, content, title } ) {
 		return {
 			cardType,
 			promotionData: applyProConnectPromotionOverrides( {
-				title: content.title,
+				title: title ?? content.title,
 				content: content.content,
 				ctaText: content.ctaText,
 				ctaUrl: content.widgetCtaUrl,
@@ -123,7 +123,7 @@ export class AppManager {
 				this.mountCard(
 					event.detail.target,
 					`e-${ type }-promotion-wrapper`,
-					this.resolveAtomicWidgetPromotionCardProps( { cardType, content } ),
+					this.resolveAtomicWidgetPromotionCardProps( { cardType, content, title: event.detail.title } ),
 				);
 			} );
 		} );
