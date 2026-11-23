@@ -1,5 +1,6 @@
 import { injectIntoComponentInstanceHeader, injectIntoComponentsTabHeader } from '@elementor/editor-components';
 import { injectIntoControlHeader } from '@elementor/editor-controls';
+import { injectIntoDefaultStylesHeader } from '@elementor/editor-default-styles';
 import { injectIntoClassSelectorActions, injectIntoCustomCssHeader } from '@elementor/editor-editing-panel';
 import { injectIntoClassManagerHeader } from '@elementor/editor-global-classes';
 import { injectIntoInteractionsHeader } from '@elementor/editor-interactions';
@@ -11,6 +12,7 @@ import { AngieComponentsTabHeaderAction } from '../components/angie-components-t
 import { AngieControlHeaderAction } from '../control-header/angie-control-header-action';
 import { AngieClassManagerHeaderAction } from '../css-classes/angie-class-manager-header-action';
 import { AngieClassSelectorAction } from '../css-classes/angie-class-selector-action';
+import { AngieDefaultStylesHeaderAction } from '../default-styles/angie-default-styles-header-action';
 import { init } from '../init';
 import { AngieInteractionsHeaderAction } from '../interactions/angie-interactions-header-action';
 import { AngieSiteContentListItemAction } from '../site-content/angie-site-content-list-item-action';
@@ -25,6 +27,10 @@ jest.mock( '@elementor/editor-components', () => ( {
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	injectIntoControlHeader: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-default-styles', () => ( {
+	injectIntoDefaultStylesHeader: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-editing-panel', () => ( {
@@ -77,6 +83,10 @@ describe( 'init', () => {
 		expect( injectIntoClassManagerHeader ).toHaveBeenCalledWith( {
 			id: 'angie-class-manager-header-action',
 			component: AngieClassManagerHeaderAction,
+		} );
+		expect( injectIntoDefaultStylesHeader ).toHaveBeenCalledWith( {
+			id: 'angie-default-styles-header-action',
+			component: AngieDefaultStylesHeaderAction,
 		} );
 		expect( injectIntoInteractionsHeader ).toHaveBeenCalledWith( {
 			id: 'angie-interactions-header-action',

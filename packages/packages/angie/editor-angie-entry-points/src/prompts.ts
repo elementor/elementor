@@ -24,6 +24,7 @@ type AngiePromptBuilders = {
 	componentsTab: () => string;
 	controlHeader: ( params: ControlHeaderPromptParams ) => string | null;
 	customCss: ( params: CustomCssHeaderProps ) => string;
+	defaultStylesManager: () => string;
 	image: ( elementId: string ) => string;
 	interactions: ( params: InteractionsHeaderProps ) => string;
 	namedImage: ( elementId: string, bind: string ) => string;
@@ -62,6 +63,7 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 		return null;
 	},
 	customCss: ( { elementId }: CustomCssHeaderProps ) => `At element ${ elementId }, custom CSS, I want: `,
+	defaultStylesManager: () => 'In the design system default styles, I want: ',
 	image: ( elementId: string ) => `At element ${ elementId }, image, I want: `,
 	interactions: ( { elementId }: InteractionsHeaderProps ) => `At element ${ elementId }, interactions, I want: `,
 	namedImage: ( elementId: string, bind: string ) => `At element ${ elementId }, image "${ bind }", I want: `,
