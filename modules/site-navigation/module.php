@@ -35,6 +35,7 @@ class Module extends Module_Base {
 
 		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
 			$env['@elementor/editor-site-navigation'] = [
+				'can_access_site_content_panel' => $this->can_access_site_content_panel(),
 				'is_pages_panel_active' => Plugin::$instance->experiments->is_feature_active(
 					self::PAGES_PANEL_EXPERIMENT_NAME
 				),
@@ -82,5 +83,9 @@ class Module extends Module_Base {
 
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
+	}
+
+	private function can_access_site_content_panel(): bool {
+		return current_user_can( 'edit_pages' ) || current_user_can( 'edit_posts' );
 	}
 }
