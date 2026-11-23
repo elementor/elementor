@@ -13,13 +13,13 @@ import {
 	ListItemButton,
 	ListItemText,
 	Menu,
+	Stack,
 	Tooltip,
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getCannotEditPanelItemMessage, type Slug } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
@@ -29,22 +29,15 @@ import Rename from '../../actions-menu/actions/rename';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
+import { SiteContentListItemActionsSlot } from './site-content-list-item-actions-location';
 
-const DisabledPostTooltip = ( {
-	children,
-	isDisabled,
-	postTypeSlug,
-}: {
-	children: React.ReactNode;
-	isDisabled: boolean;
-	postTypeSlug: Slug;
-} ) => {
+const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactNode; isDisabled: boolean } ) => {
 	if ( isDisabled ) {
 		const title = (
 			<Typography variant="caption">
-				{ getCannotEditPanelItemMessage( postTypeSlug ) }
+				You cannot edit this page.
 				<br />
-				{ __( 'To edit it directly, contact the site owner', 'elementor' ) }
+				To edit it directly, contact the site owner
 			</Typography>
 		);
 
@@ -78,22 +71,25 @@ export default function ListItemView( { post }: { post: Post } ) {
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
+			<DisabledPostTooltip isDisabled={ isDisabled }>
 				<ListItem
 					disablePadding
 					sx={ contentPanelListRowPaddingSx }
 					secondaryAction={
-						<IconButton
-							aria-label={ __( 'More actions', 'elementor' ) }
-							size="tiny"
-							{ ...menuTriggerProps }
-							onClick={ ( event: React.MouseEvent ) => {
-								event.stopPropagation();
-								menuTriggerProps.onClick?.( event );
-							} }
-						>
-							<DotsVerticalIcon fontSize="tiny" />
-						</IconButton>
+						<Stack alignItems="center" direction="row" spacing={ 0 }>
+							{ isActive && ! isDisabled && <SiteContentListItemActionsSlot post={ post } /> }
+							<IconButton
+								aria-label={ __( 'More actions', 'elementor' ) }
+								size="tiny"
+								{ ...menuTriggerProps }
+								onClick={ ( event: React.MouseEvent ) => {
+									event.stopPropagation();
+									menuTriggerProps.onClick?.( event );
+								} }
+							>
+								<DotsVerticalIcon fontSize="tiny" />
+							</IconButton>
+						</Stack>
 					}
 				>
 					<ListItemButton

@@ -6,11 +6,14 @@ import { fireEvent, screen } from '@testing-library/react';
 import { PostListContextProvider } from '../../../../../contexts/post-list-context';
 import { type Post } from '../../../../../types';
 import ListItemView from '../list-item-view';
+import { injectIntoSiteContentListItemActions } from '../site-content-list-item-actions-location';
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	__useActiveDocument: jest.fn( () => null ),
 	__useNavigateToDocument: jest.fn(),
 } ) );
+
+const AngieMarker = () => <button type="button">Angie marker</button>;
 
 const pagePost: Post = {
 	id: 1,
@@ -35,6 +38,28 @@ const readOnlyPost: Post = {
 };
 
 describe( 'ListItemView', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'renders list item action slot only for the active editable row', () => {
+		const { __useActiveDocument } = jest.requireMock( '@elementor/editor-documents' );
+		__useActiveDocument.mockReturnValue( { id: pagePost.id, status: { value: 'publish' }, title: 'Test Page' } );
+
+		injectIntoSiteContentListItemActions( { id: 'test-angie', component: AngieMarker } );
+
+		renderWithQuery(
+			<PostListContextProvider type="page" setError={ () => {} }>
+				<>
+					<ListItemView post={ pagePost } />
+					<ListItemView post={ { ...pagePost, id: 99, title: { rendered: 'Other' } } } />
+				</>
+			</PostListContextProvider>
+		);
+
+		expect( screen.getAllByRole( 'button', { name: 'Angie marker' } ) ).toHaveLength( 1 );
+	} );
+
 	it( 'omits Set as homepage for post type', () => {
 		renderWithQuery(
 			<PostListContextProvider type="post" setError={ () => {} }>
