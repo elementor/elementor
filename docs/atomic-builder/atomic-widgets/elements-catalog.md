@@ -74,7 +74,7 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-tab-content` | element | yes | any | Panel body |
 | `e-menu` | element | yes | `e-menu-items`, `e-menu-toggle` | `<nav>`; experiment `e_nav_menu`; collapses into the toggle at a breakpoint; default: items + toggle |
 | `e-menu-items` | element | yes | `e-menu-entry` | `<ul>` of entries; permanently locked |
-| `e-menu-entry` | element | yes | `e-menu-item` | `<li>`; permanently locked |
+| `e-menu-entry` | element | yes | `e-menu-item`, `e-menu-submenu-trigger`, `e-menu-submenu` | `<li>`; permanently locked; boolean `submenu` setting adds the trigger after the item and the Submenu after the trigger (children dependencies), and stashes both when off |
 | `e-menu-item` | element | yes | any | Link inside an entry; permanently locked |
 | `e-menu-toggle` | element | yes | `e-menu-toggle-closed`, `e-menu-toggle-open` | `<button>` that opens and closes the collapsed menu; permanently locked |
 | `e-menu-toggle-closed` | element | yes | any | Shown while the menu is closed; seeds an `e-svg` icon child (`fa-solid fa-bars`); permanently locked |
@@ -85,6 +85,8 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-form` (promotion) | element | — | — | Free sites: placeholder |
 | `e-collection-loop` | element | — | — | Free sites: Pro promotion |
 | `e-carousel` (promotion) | element | — | — | Free sites: Pro promotion (`Carousel_Promotion`) |
+| `e-menu-submenu-trigger` (placeholder) | element | yes | any | `Atomic_Menu_Submenu_Trigger_Promotion`; registered under `e_nav_menu` with or without Pro, so saved data survives; replaced by Pro's type when present |
+| `e-menu-submenu` (placeholder) | element | yes | any | `Atomic_Menu_Submenu_Promotion`; same registration as the trigger placeholder |
 
 ### SNAPSHOT — Pro carousel (atomic)
 
@@ -109,6 +111,23 @@ Registered by `elementor-pro/modules/atomic-carousel/module.php` when Pro, licen
 | Pro | no | active | Nothing (module constructor returns early) |
 
 Implementation notes: `elementor-pro/docs/modules/atomic-carousel/module.md`.
+
+### SNAPSHOT — Pro menu Submenu (atomic)
+
+Registered by `elementor-pro/modules/atomic-menu/module.php` when Core `>= 4.5` has `Atomic_Menu_Entry::SUBMENU_PROP` and `e_nav_menu` is active, with any license state. A license that is neither active nor expired only locks adding new Submenus in the editor.
+
+| Type | Kind | Container | Allowed children | Notes |
+|------|------|-----------|------------------|-------|
+| `e-menu-submenu-trigger` | element | yes | `e-menu-submenu-trigger-closed`, `e-menu-submenu-trigger-open` | Button after the entry's item; locked in structure |
+| `e-menu-submenu-trigger-closed` | element | yes | any | Shown while the Submenu is closed; seeds an `e-svg` chevron |
+| `e-menu-submenu-trigger-open` | element | yes | any | Shown while the Submenu is open; seeds an `e-svg` chevron |
+| `e-menu-submenu` | element | yes | any | Panel after the trigger; settings `position-relative-to`, `horizontal-alignment` |
+
+| Site | `e_nav_menu` | Registers |
+|------|--------------|-----------|
+| Free | active | Core placeholders only |
+| Pro with the Submenu module | active | Pro Submenu types (replace the placeholders) |
+| Pro without the Submenu module | active | Core placeholders only |
 
 ### SNAPSHOT — Pro form field widgets
 
@@ -149,6 +168,10 @@ Registered by `elementor-pro/modules/atomic-form/module.php` when Pro + `e_pro_a
 | `e-menu-toggle` | `e-menu` |
 | `e-menu-toggle-closed` | `e-menu-toggle` |
 | `e-menu-toggle-open` | `e-menu-toggle` |
+| `e-menu-submenu-trigger` | `e-menu-entry` |
+| `e-menu-submenu` | `e-menu-entry` |
+| `e-menu-submenu-trigger-closed` | `e-menu-submenu-trigger` |
+| `e-menu-submenu-trigger-open` | `e-menu-submenu-trigger` |
 | `e-paragraph` | `e-form-success-message`, `e-form-error-message` |
 | `e-carousel-viewport` | `e-carousel` |
 | `e-carousel-container` | `e-carousel-viewport` |
