@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\App\Modules\Onboarding\Onboarding_Entry;
 use Elementor\Core\Kits\Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
@@ -37,11 +38,17 @@ class Maintenance {
 		flush_rewrite_rules();
 
 		if ( is_multisite() && $network_wide ) {
-			static::create_default_kit(
-				get_sites( [
-					'fields' => 'ids',
-				] )
-			);
+			$site_ids = get_sites( [
+				'fields' => 'ids',
+			] );
+
+			static::create_default_kit( $site_ids );
+
+			foreach ( $site_ids as $site_id ) {
+				switch_to_blog( $site_id );
+				Onboarding_Entry::mark_activation();
+				restore_current_blog();
+			}
 
 			return;
 		}
@@ -49,7 +56,7 @@ class Maintenance {
 		static::create_default_kit();
 		static::insert_defaults_options();
 
-		set_transient( 'elementor_activation_redirect', true, MINUTE_IN_SECONDS );
+		Onboarding_Entry::mark_activation();
 	}
 
 	public static function insert_defaults_options() {

@@ -9,6 +9,7 @@ import {
 } from '../../../../contexts/content-panel-coordinator';
 import { PostListContextProvider } from '../../../../contexts/post-list-context';
 import { usePosts } from '../../../../hooks/use-posts';
+import useUser from '../../../../hooks/use-user';
 import PostsCollapsibleList from '../posts-collapsible-list';
 
 const mockMutateAsync = jest.fn();
@@ -124,9 +125,19 @@ const restoreDefaultUsePosts = () => {
 	jest.mocked( usePosts ).mockImplementation( () => defaultUsePostsValue );
 };
 
+const defaultUseUserValue = {
+	isLoading: false,
+	data: {
+		capabilities: {
+			edit_pages: true,
+		},
+	},
+} as unknown as ReturnType< typeof useUser >;
+
 describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 	beforeEach( () => {
 		restoreDefaultUsePosts();
+		jest.mocked( useUser ).mockReturnValue( defaultUseUserValue );
 		jest.mocked( useActiveDocument ).mockReturnValue(
 			createMockDocument( {
 				id: 3,
@@ -164,7 +175,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		expect( items[ 0 ] ).toHaveTextContent( 'Home' );
 		expect( items[ 0 ] ).toHaveTextContent( 'Homepage' );
 		expect( items[ 1 ] ).toHaveTextContent( 'About' );
-		expect( items[ 1 ] ).toHaveTextContent( '(draft)' );
+		expect( items[ 1 ] ).toHaveTextContent( 'Draft' );
 	} );
 
 	it( 'should create a new post after clicking section add button', async () => {
@@ -197,6 +208,29 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 				status: 'draft',
 			} );
 		} );
+	} );
+
+	it( 'disables duplicate when user cannot create the post type', () => {
+		jest.mocked( useUser ).mockReturnValue( {
+			isLoading: false,
+			data: {
+				capabilities: {
+					edit_posts: true,
+				},
+			},
+		} as unknown as ReturnType< typeof useUser > );
+
+		renderList(
+			<PostListContextProvider type={ 'page' } setError={ () => {} }>
+				<PostsCollapsibleList isOpenByDefault={ true } />
+			</PostListContextProvider>
+		);
+
+		const [ homeRow ] = screen.getAllByRole( 'listitem' );
+		const homeRowButtons = within( homeRow ).getAllByRole( 'button' );
+		fireEvent.click( homeRowButtons[ homeRowButtons.length - 1 ] );
+
+		expect( screen.getByRole( 'menuitem', { name: 'Duplicate' } ) ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	it( 'should append a new list item in edit mode, when "Duplicate" action is clicked', async () => {
