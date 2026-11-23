@@ -1,18 +1,15 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type StyleDefinition } from '@elementor/editor-styles';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
+import { __getState as getState } from '@elementor/store';
 
 import { defaultStylesStylesProvider } from '../default-styles-provider';
-import {
-	type DefaultStylesAbilityOperation,
-	getPendingAbilityOperations,
-	recordPendingDefaultStylesOperation,
-} from './pending-default-styles-changes';
+import { selectData } from '../store';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-default-styles';
-const MAX_OPERATIONS_PER_REQUEST = 20;
 
 type ManageDefaultStylesResult = Partial< StyleDefinition > & {
 	status: 'ok' | 'error';
@@ -25,9 +22,20 @@ type ManageDefaultStylesResponse = {
 	results?: ManageDefaultStylesResult[];
 };
 
-type ManageDefaultStylesParams = DefaultStylesAbilityOperation & {
+type ManageDefaultStylesParams = {
+	action: 'update' | 'delete';
+	tag: string;
 	css?: string;
+	mode?: 'patch' | 'replace';
 };
+
+type EditorDefaultStylesSnapshot = Record<
+	string,
+	{
+		type: StyleDefinition[ 'type' ];
+		variants: StyleDefinition[ 'variants' ];
+	}
+>;
 
 export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
@@ -58,18 +66,18 @@ export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 		},
 		isDestructive: true,
 		handler: async ( params ) => {
-			const pendingOperations = getPendingAbilityOperations();
-
-			if ( pendingOperations.length >= MAX_OPERATIONS_PER_REQUEST ) {
-				throw new Error( 'Too many unsaved default style changes. Save the kit, then try again.' );
-			}
+			const editorDefaultStyles = buildEditorDefaultStylesSnapshot( params.tag );
 
 			const { data } = await httpService().post< HttpResponse< ManageDefaultStylesResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: { operations: [ ...pendingOperations, params ], dry_run: true },
+				input: {
+					operations: [ params ],
+					dry_run: true,
+					editor_default_styles: editorDefaultStyles,
+				},
 			} );
 
-			const result = data.data.results?.[ pendingOperations.length ];
+			const result = data.data.results?.[ 0 ];
 
 			if ( result?.status !== 'ok' ) {
 				throw new Error( result?.message || 'Unexpected response from server' );
@@ -85,9 +93,24 @@ export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 	} );
 };
 
+const buildEditorDefaultStylesSnapshot = ( tag: string ): EditorDefaultStylesSnapshot => {
+	const style = selectData( getState() )[ tag ];
+
+	if ( ! style ) {
+		return {};
+	}
+
+	return {
+		[ tag ]: {
+			type: style.type,
+			variants: style.variants,
+		},
+	};
+};
+
 const applyPlannedDefaultStylesChange = ( params: ManageDefaultStylesParams, result: ManageDefaultStylesResult ) => {
 	applyInEditor( params.action, result );
-	recordPendingDefaultStylesOperation( params );
+	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 };
 
 const applyInEditor = ( action: 'update' | 'delete', result: ManageDefaultStylesResult ) => {

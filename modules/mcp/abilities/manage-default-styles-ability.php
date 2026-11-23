@@ -96,6 +96,20 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 							],
 						],
 					],
+					'editor_default_styles' => [
+						'type' => 'object',
+						'description' => 'Editor only, with dry_run: current unsaved default styles by tag to plan against instead of the saved kit.',
+						'additionalProperties' => [
+							'type' => 'object',
+							'properties' => [
+								'type' => [ 'type' => 'string' ],
+								'variants' => [
+									'type' => 'array',
+									'items' => [ 'type' => 'object' ],
+								],
+							],
+						],
+					],
 				],
 			]
 		);
@@ -129,7 +143,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 			);
 		}
 
-		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution );
+		$response = $this->handle_bulk( $operations, $this->is_dry_run_execution, $input );
 
 		if ( $this->is_dry_run_execution ) {
 			$response['dry_run'] = true;
@@ -157,8 +171,13 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		return count( array_filter( $results, fn( $result ) => 'ok' !== ( $result['status'] ?? '' ) ) );
 	}
 
-	private function handle_bulk( array $operations, bool $dry_run = false ): array {
+	private function handle_bulk( array $operations, bool $dry_run = false, array $input = [] ): array {
 		$this->dry_run_tag_overrides = $dry_run ? [] : null;
+
+		if ( $dry_run ) {
+			$this->seed_dry_run_from_editor( $input['editor_default_styles'] ?? null );
+		}
+
 		$results = new Bulk_Operations_Result();
 
 		foreach ( $operations as $index => $operation ) {
@@ -166,6 +185,33 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		}
 
 		return $results->to_array();
+	}
+
+	private function seed_dry_run_from_editor( $editor_default_styles ): void {
+		if ( ! is_array( $editor_default_styles ) || null === $this->dry_run_tag_overrides ) {
+			return;
+		}
+
+		foreach ( $editor_default_styles as $tag => $style ) {
+			if ( ! is_string( $tag ) || ! is_array( $style ) ) {
+				continue;
+			}
+
+			if ( ! Default_Styles_Repository::is_allowed_tag( $tag ) ) {
+				continue;
+			}
+
+			$variants = $style['variants'] ?? null;
+
+			if ( ! is_array( $variants ) ) {
+				continue;
+			}
+
+			$this->dry_run_tag_overrides[ $tag ] = [
+				'type' => is_string( $style['type'] ?? null ) ? $style['type'] : self::CLASS_TYPE,
+				'variants' => $variants,
+			];
+		}
 	}
 
 	private function get_existing_style( string $tag ): ?array {

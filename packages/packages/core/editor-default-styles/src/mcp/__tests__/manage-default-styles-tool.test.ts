@@ -1,12 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { type StyleDefinition } from '@elementor/editor-styles';
 import { httpService } from '@elementor/http-client';
+import { __getState as getState } from '@elementor/store';
 
 import { defaultStylesStylesProvider } from '../../default-styles-provider';
+import { selectData } from '../../store';
 import { initManageDefaultStylesTool } from '../manage-default-styles-tool';
-import { getPendingAbilityOperations, resetPendingDefaultStylesChanges } from '../pending-default-styles-changes';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/store', () => ( {
+	__getState: jest.fn(),
+} ) );
+
+jest.mock( '../../store', () => ( {
+	selectData: jest.fn(),
 } ) );
 
 jest.mock( '../../default-styles-provider', () => ( {
@@ -25,6 +35,10 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
 const VARIANTS = [ { meta: { breakpoint: 'desktop', state: null }, props: {} } ];
+
+const mockEditorStyle = ( style: StyleDefinition | undefined ) => {
+	( selectData as jest.Mock ).mockReturnValue( style ? { [ style.id ]: style } : {} );
+};
 
 function createMockRegistry() {
 	let registeredTool: any = null;
@@ -64,7 +78,8 @@ describe( 'manage-default-styles-tool', () => {
 		( httpService as jest.Mock ).mockReturnValue( httpMock );
 		( defaultStylesStylesProvider.actions.update as jest.Mock ).mockClear();
 		( defaultStylesStylesProvider.actions.delete as jest.Mock ).mockClear();
-		resetPendingDefaultStylesChanges();
+		( getState as jest.Mock ).mockReturnValue( {} );
+		mockEditorStyle( undefined );
 	} );
 
 	it( 'calls the proxy in dry run and applies the planned update locally', async () => {
@@ -95,6 +110,7 @@ describe( 'manage-default-styles-tool', () => {
 			input: {
 				operations: [ { action: 'update', tag: 'h1', css: 'color: #000000;' } ],
 				dry_run: true,
+				editor_default_styles: {},
 			},
 		} );
 		expect( defaultStylesStylesProvider.actions.update ).toHaveBeenCalledWith( {
@@ -151,7 +167,7 @@ describe( 'manage-default-styles-tool', () => {
 		expect( defaultStylesStylesProvider.actions.delete ).not.toHaveBeenCalled();
 	} );
 
-	it( 'sends pending operations with the next update on the same tag', async () => {
+	it( 'sends the current editor variants and applies sequential updates on the same tag', async () => {
 		// Arrange.
 		const firstVariants = [ { meta: { breakpoint: 'desktop', state: null }, props: { color: 'black' } } ];
 		const secondVariants = [ { meta: { breakpoint: 'desktop', state: null }, props: { color: 'white' } } ];
@@ -174,13 +190,6 @@ describe( 'manage-default-styles-tool', () => {
 						action: 'update',
 						tag: 'h1',
 						type: 'class',
-						variants: firstVariants,
-					},
-					{
-						status: 'ok',
-						action: 'update',
-						tag: 'h1',
-						type: 'class',
 						variants: secondVariants,
 					},
 				] )
@@ -193,6 +202,12 @@ describe( 'manage-default-styles-tool', () => {
 			tag: 'h1',
 			css: 'color: #000000;',
 		} );
+		mockEditorStyle( {
+			id: 'h1',
+			label: 'h1',
+			type: 'class',
+			variants: firstVariants,
+		} );
 		const result = await registeredTool.handler( {
 			action: 'update',
 			tag: 'h1',
@@ -201,10 +216,13 @@ describe( 'manage-default-styles-tool', () => {
 
 		// Assert.
 		const secondInput = httpMock.post.mock.calls[ 1 ][ 1 ].input;
-		expect( secondInput.operations ).toHaveLength( 2 );
-		expect( secondInput.operations[ 0 ] ).toEqual(
-			expect.objectContaining( { action: 'update', tag: 'h1', css: 'color: #000000;' } )
-		);
+		expect( secondInput.operations ).toEqual( [ { action: 'update', tag: 'h1', css: 'color: #ffffff;' } ] );
+		expect( secondInput.editor_default_styles ).toEqual( {
+			h1: {
+				type: 'class',
+				variants: firstVariants,
+			},
+		} );
 		expect( defaultStylesStylesProvider.actions.update ).toHaveBeenLastCalledWith( {
 			id: 'h1',
 			label: 'h1',
@@ -212,6 +230,70 @@ describe( 'manage-default-styles-tool', () => {
 			variants: secondVariants,
 		} );
 		expect( result ).toEqual( { status: 'ok', tag: 'h1' } );
-		expect( getPendingAbilityOperations() ).toHaveLength( 2 );
+	} );
+
+	it( 'plans from unsaved manual panel edits on the same tag', async () => {
+		// Arrange.
+		const manualVariants = [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				props: { color: { $$type: 'color', value: 'blue' } },
+			},
+		];
+		const plannedVariants = [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				props: {
+					color: { $$type: 'color', value: 'blue' },
+					'font-size': { $$type: 'size', value: '24px' },
+				},
+			},
+		];
+		mockEditorStyle( {
+			id: 'h1',
+			label: 'h1',
+			type: 'class',
+			variants: manualVariants,
+		} );
+		httpMock.post.mockResolvedValue(
+			mockProxyResults( [
+				{
+					status: 'ok',
+					action: 'update',
+					tag: 'h1',
+					type: 'class',
+					variants: plannedVariants,
+				},
+			] )
+		);
+		const { registeredTool } = createMockRegistry();
+
+		// Act.
+		await registeredTool.handler( {
+			action: 'update',
+			tag: 'h1',
+			css: 'font-size: 24px;',
+		} );
+
+		// Assert.
+		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
+			tool: 'manage-default-styles',
+			input: {
+				operations: [ { action: 'update', tag: 'h1', css: 'font-size: 24px;' } ],
+				dry_run: true,
+				editor_default_styles: {
+					h1: {
+						type: 'class',
+						variants: manualVariants,
+					},
+				},
+			},
+		} );
+		expect( defaultStylesStylesProvider.actions.update ).toHaveBeenCalledWith( {
+			id: 'h1',
+			label: 'h1',
+			type: 'class',
+			variants: plannedVariants,
+		} );
 	} );
 } );
