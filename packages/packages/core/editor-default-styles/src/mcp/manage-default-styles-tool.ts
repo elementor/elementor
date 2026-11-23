@@ -6,7 +6,7 @@ import { z } from '@elementor/schema';
 import { __getState as getState } from '@elementor/store';
 
 import { defaultStylesStylesProvider } from '../default-styles-provider';
-import { selectData } from '../store';
+import { selectData, selectInitialData, type StateWithDefaultStyles } from '../store';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-default-styles';
@@ -94,18 +94,30 @@ export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 };
 
 const buildEditorDefaultStylesSnapshot = ( tag: string ): EditorDefaultStylesSnapshot => {
-	const style = selectData( getState() )[ tag ];
+	const state = getState() as StateWithDefaultStyles;
+	const style = selectData( state )[ tag ];
 
-	if ( ! style ) {
-		return {};
+	if ( style ) {
+		return {
+			[ tag ]: {
+				type: style.type,
+				variants: style.variants,
+			},
+		};
 	}
 
-	return {
-		[ tag ]: {
-			type: style.type,
-			variants: style.variants,
-		},
-	};
+	const initialStyle = selectInitialData( state )[ tag ];
+
+	if ( initialStyle ) {
+		return {
+			[ tag ]: {
+				type: initialStyle.type,
+				variants: [],
+			},
+		};
+	}
+
+	return {};
 };
 
 const applyPlannedDefaultStylesChange = ( params: ManageDefaultStylesParams, result: ManageDefaultStylesResult ) => {

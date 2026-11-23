@@ -4,7 +4,7 @@ import { httpService } from '@elementor/http-client';
 import { __getState as getState } from '@elementor/store';
 
 import { defaultStylesStylesProvider } from '../../default-styles-provider';
-import { selectData } from '../../store';
+import { selectData, selectInitialData } from '../../store';
 import { initManageDefaultStylesTool } from '../manage-default-styles-tool';
 
 jest.mock( '@elementor/http-client', () => ( {
@@ -17,6 +17,7 @@ jest.mock( '@elementor/store', () => ( {
 
 jest.mock( '../../store', () => ( {
 	selectData: jest.fn(),
+	selectInitialData: jest.fn(),
 } ) );
 
 jest.mock( '../../default-styles-provider', () => ( {
@@ -36,8 +37,12 @@ const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
 const VARIANTS = [ { meta: { breakpoint: 'desktop', state: null }, props: {} } ];
 
-const mockEditorStyle = ( style: StyleDefinition | undefined ) => {
-	( selectData as jest.Mock ).mockReturnValue( style ? { [ style.id ]: style } : {} );
+const mockEditorStyle = (
+	current: Record< string, StyleDefinition >,
+	initial: Record< string, StyleDefinition > = current
+) => {
+	( selectData as jest.Mock ).mockReturnValue( current );
+	( selectInitialData as jest.Mock ).mockReturnValue( initial );
 };
 
 function createMockRegistry() {
@@ -79,7 +84,8 @@ describe( 'manage-default-styles-tool', () => {
 		( defaultStylesStylesProvider.actions.update as jest.Mock ).mockClear();
 		( defaultStylesStylesProvider.actions.delete as jest.Mock ).mockClear();
 		( getState as jest.Mock ).mockReturnValue( {} );
-		mockEditorStyle( undefined );
+		mockEditorStyle( {} );
+		( selectInitialData as jest.Mock ).mockReturnValue( {} );
 	} );
 
 	it( 'calls the proxy in dry run and applies the planned update locally', async () => {
@@ -203,10 +209,12 @@ describe( 'manage-default-styles-tool', () => {
 			css: 'color: #000000;',
 		} );
 		mockEditorStyle( {
-			id: 'h1',
-			label: 'h1',
-			type: 'class',
-			variants: firstVariants,
+			h1: {
+				id: 'h1',
+				label: 'h1',
+				type: 'class',
+				variants: firstVariants,
+			},
 		} );
 		const result = await registeredTool.handler( {
 			action: 'update',
@@ -250,10 +258,12 @@ describe( 'manage-default-styles-tool', () => {
 			},
 		];
 		mockEditorStyle( {
-			id: 'h1',
-			label: 'h1',
-			type: 'class',
-			variants: manualVariants,
+			h1: {
+				id: 'h1',
+				label: 'h1',
+				type: 'class',
+				variants: manualVariants,
+			},
 		} );
 		httpMock.post.mockResolvedValue(
 			mockProxyResults( [
@@ -295,5 +305,73 @@ describe( 'manage-default-styles-tool', () => {
 			type: 'class',
 			variants: plannedVariants,
 		} );
+	} );
+
+	it( 'sends an empty override when the tag was deleted in the editor and does not resurrect saved variants', async () => {
+		// Arrange.
+		const savedVariants = [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				props: { color: { $$type: 'color', value: 'blue' } },
+			},
+		];
+		const plannedVariants = [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				props: { 'font-size': { $$type: 'size', value: '24px' } },
+			},
+		];
+		mockEditorStyle(
+			{},
+			{
+				h1: {
+					id: 'h1',
+					label: 'h1',
+					type: 'class',
+					variants: savedVariants,
+				},
+			}
+		);
+		httpMock.post.mockResolvedValue(
+			mockProxyResults( [
+				{
+					status: 'ok',
+					action: 'update',
+					tag: 'h1',
+					type: 'class',
+					variants: plannedVariants,
+				},
+			] )
+		);
+		const { registeredTool } = createMockRegistry();
+
+		// Act.
+		await registeredTool.handler( {
+			action: 'update',
+			tag: 'h1',
+			css: 'font-size: 24px;',
+		} );
+
+		// Assert.
+		expect( httpMock.post ).toHaveBeenCalledWith( MCP_PROXY_URL, {
+			tool: 'manage-default-styles',
+			input: {
+				operations: [ { action: 'update', tag: 'h1', css: 'font-size: 24px;' } ],
+				dry_run: true,
+				editor_default_styles: {
+					h1: {
+						type: 'class',
+						variants: [],
+					},
+				},
+			},
+		} );
+		expect( defaultStylesStylesProvider.actions.update ).toHaveBeenCalledWith( {
+			id: 'h1',
+			label: 'h1',
+			type: 'class',
+			variants: plannedVariants,
+		} );
+		expect( plannedVariants[ 0 ].props ).not.toHaveProperty( 'color' );
 	} );
 } );

@@ -242,6 +242,48 @@ class Test_Manage_Default_Styles_Ability extends TestCase {
 		$this->assertArrayNotHasKey( 'default_styles_tag_saved', $this->emitted_events );
 	}
 
+	public function test_dry_run_plans_update_on_empty_editor_override_without_saved_kit_variants() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size', 'value' => '20px' ] ],
+			'customCss' => '',
+		] );
+		$repo = new Stub_Manage_Default_Styles_Repository( [
+			'h1' => [
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'blue' ] ],
+					],
+				],
+			],
+		] );
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'editor_default_styles' => [
+				'h1' => [
+					'type' => 'class',
+					'variants' => [],
+				],
+			],
+			'operations' => [ [ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ] ],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertArrayHasKey( 'font-size', $result['results'][0]['variants'][0]['props'] );
+		$this->assertArrayNotHasKey( 'color', $result['results'][0]['variants'][0]['props'] );
+		$this->assertSame( [], $repo->puts );
+	}
+
 	public function test_dry_run_plans_update_on_top_of_editor_default_styles() {
 		// Arrange.
 		$css_converter = $this->createMock( Css_Converter::class );
