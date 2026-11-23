@@ -10,7 +10,7 @@ import { useToggleButtonProps } from './hooks/use-toggle-button-props';
 export function init() {
 	registerTopBarMenuItems();
 	// TODO 06/06/2023 :  remove if when we are production ready
-	if ( env.is_pages_panel_active ) {
+	if ( env.is_pages_panel_active && env.can_access_site_content_panel ) {
 		registerPanel( panel );
 		registerButton();
 	}
