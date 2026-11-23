@@ -5,9 +5,9 @@ import { z } from '@elementor/schema';
 
 import { defaultStylesStylesProvider } from '../default-styles-provider';
 import {
+	type DefaultStylesAbilityOperation,
 	getPendingAbilityOperations,
 	recordPendingDefaultStylesOperation,
-	type DefaultStylesAbilityOperation,
 } from './pending-default-styles-changes';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
@@ -85,10 +85,7 @@ export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 	} );
 };
 
-const applyPlannedDefaultStylesChange = (
-	params: ManageDefaultStylesParams,
-	result: ManageDefaultStylesResult
-) => {
+const applyPlannedDefaultStylesChange = ( params: ManageDefaultStylesParams, result: ManageDefaultStylesResult ) => {
 	applyInEditor( params.action, result );
 	recordPendingDefaultStylesOperation( params );
 };
