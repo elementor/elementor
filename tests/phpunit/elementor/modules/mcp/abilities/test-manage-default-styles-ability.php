@@ -14,6 +14,12 @@ use PHPUnit\Framework\TestCase;
 // includes/utils.php; Default_Styles_Repository::is_allowed_tag depends on it transitively.
 require_once dirname( __DIR__, 6 ) . '/includes/utils.php';
 
+// MCP Composer classes are loaded via Versions::autoloader in WordPress; unit-bootstrap does not
+// register it, so require the shared bases that Abstract_Ability / Ability_Definition extend.
+$mcp_composer_src = dirname( __DIR__, 6 ) . '/vendor/elementor/elementor-mcp-composer/src';
+require_once $mcp_composer_src . '/Mcp/Ability_Definition.php';
+require_once $mcp_composer_src . '/Mcp/Abstract_Ability.php';
+
 class Stub_Manage_Default_Styles_Repository extends Default_Styles_Repository {
 
 	public array $stub_data;
@@ -207,6 +213,212 @@ class Test_Manage_Default_Styles_Ability extends TestCase {
 		$this->assertSame( 'h1', $result['results'][0]['tag'] );
 	}
 
+	public function test_dry_run_update_returns_planned_variants_without_persisting() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size' ] ],
+			'customCss' => '',
+		] );
+		$repo = new Stub_Manage_Default_Styles_Repository();
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'operations' => [ [ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ] ],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'h1', $result['results'][0]['tag'] );
+		$this->assertSame( 'class', $result['results'][0]['type'] );
+		$this->assertNotEmpty( $result['results'][0]['variants'] );
+		$this->assertSame( [], $repo->puts );
+		$this->assertArrayNotHasKey( 'default_styles_tag_saved', $this->emitted_events );
+	}
+
+	public function test_dry_run_plans_update_on_empty_editor_override_without_saved_kit_variants() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size', 'value' => '20px' ] ],
+			'customCss' => '',
+		] );
+		$repo = new Stub_Manage_Default_Styles_Repository( [
+			'h1' => [
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'blue' ] ],
+					],
+				],
+			],
+		] );
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'editor_default_styles' => [
+				'h1' => [
+					'type' => 'class',
+					'variants' => [],
+				],
+			],
+			'operations' => [ [ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ] ],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertArrayHasKey( 'font-size', $result['results'][0]['variants'][0]['props'] );
+		$this->assertArrayNotHasKey( 'color', $result['results'][0]['variants'][0]['props'] );
+		$this->assertSame( [], $repo->puts );
+	}
+
+	public function test_dry_run_plans_update_on_top_of_editor_default_styles() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size', 'value' => '20px' ] ],
+			'customCss' => '',
+		] );
+		$repo = new Stub_Manage_Default_Styles_Repository( [
+			'h1' => [
+				'variants' => [
+					[
+						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+						'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'blue' ] ],
+					],
+				],
+			],
+		] );
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'editor_default_styles' => [
+				'h1' => [
+					'type' => 'class',
+					'variants' => [
+						[
+							'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+							'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ],
+						],
+					],
+				],
+			],
+			'operations' => [ [ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ] ],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertArrayHasKey( 'color', $result['results'][0]['variants'][0]['props'] );
+		$this->assertSame( 'red', $result['results'][0]['variants'][0]['props']['color']['value'] );
+		$this->assertArrayHasKey( 'font-size', $result['results'][0]['variants'][0]['props'] );
+		$this->assertSame( [], $repo->puts );
+	}
+
+	public function test_dry_run_applies_sequential_updates_on_same_tag_in_one_request() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturnOnConsecutiveCalls(
+			[
+				'props' => [ 'font-size' => [ '$$type' => 'size', 'value' => '20px' ] ],
+				'customCss' => '',
+			],
+			[
+				'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ],
+				'customCss' => '',
+			]
+		);
+		$repo = new Stub_Manage_Default_Styles_Repository();
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'operations' => [
+				[ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ],
+				[ 'action' => 'update', 'tag' => 'h1', 'css' => 'color: red;' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertArrayHasKey( 'font-size', $result['results'][1]['variants'][0]['props'] );
+		$this->assertArrayHasKey( 'color', $result['results'][1]['variants'][0]['props'] );
+		$this->assertSame( [], $repo->puts );
+	}
+
+	public function test_dry_run_delete_after_pending_update_in_same_request() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size' ] ],
+			'customCss' => '',
+		] );
+		$repo = new Stub_Manage_Default_Styles_Repository();
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'operations' => [
+				[ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ],
+				[ 'action' => 'delete', 'tag' => 'h1' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertSame( [], $repo->deletes );
+	}
+
+	public function test_dry_run_delete_validates_without_removing() {
+		// Arrange.
+		$repo = new Stub_Manage_Default_Styles_Repository( [
+			'h1' => [ 'variants' => [ [ 'props' => [ 'color' => 'red' ] ] ] ],
+		] );
+		$ability = $this->make_ability( $repo );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'operations' => [ [ 'action' => 'delete', 'tag' => 'h1' ] ],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'h1', $result['results'][0]['tag'] );
+		$this->assertSame( [], $repo->deletes );
+		$this->assertArrayNotHasKey( 'default_styles_tag_saved', $this->emitted_events );
+		$this->assertArrayNotHasKey( 'default_styles_save_failed', $this->emitted_events );
+	}
+
 	public function test_mixed_ops_return_partial_error_status() {
 		// Arrange.
 		$repo = new Stub_Manage_Default_Styles_Repository( [
@@ -314,5 +526,13 @@ class Test_Manage_Default_Styles_Ability extends TestCase {
 		// Assert.
 		$this->assertSame( 'ok', $result['status'] );
 		$this->assertArrayNotHasKey( 'default_styles_save_failed', $this->emitted_events );
+	}
+
+	public function test_supports_dry_run() {
+		// Arrange.
+		$ability = $this->make_ability();
+
+		// Act & Assert.
+		$this->assertTrue( $ability->supports_dry_run() );
 	}
 }

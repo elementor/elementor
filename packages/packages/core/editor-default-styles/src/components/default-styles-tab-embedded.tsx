@@ -46,6 +46,7 @@ import { DEFAULT_STYLES_PROVIDER_KEY } from '../default-styles-provider';
 import { getChangedTags, saveDefaultStyles } from '../save-default-styles';
 import { selectIsDirty, slice, type StateWithDefaultStyles } from '../store';
 import { trackDefaultStyles } from '../utils/tracking';
+import { DefaultStylesHeaderSlot } from './default-styles-header-location';
 import { TagChip } from './tag-chip';
 
 const { useMenuItems } = controlActionsMenu;
@@ -180,30 +181,35 @@ export function DefaultStylesTabEmbedded( { onRequestClose, onExposeCloseAttempt
 						>
 							<Box sx={ { flex: 1, minHeight: 0, overflow: 'auto' } }>
 								<Stack sx={ { px: 2, pt: 1, gap: 1 } }>
-									<FormControl fullWidth size="small">
-										<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 1 } }>
-											{ __( 'Tag', 'elementor' ) }
-										</FormLabel>
-										<CreatableAutocomplete< Option >
-											id={ TAG_SELECTOR_ID }
-											size="tiny"
-											placeholder={ __( 'Type tag name', 'elementor' ) }
-											options={ tagOptions }
-											selected={ [ toTagChip( selectedTag ) ] }
-											onSelect={ handleTagSelect }
-											renderTags={ ( values, getTagProps ) =>
-												values.map( ( value, index ) => (
-													<TagChip
-														key={ value.value ?? value.label }
-														label={ value.label }
-														chipProps={ getTagProps( { index } ) }
-														activeState={ activeStyleState }
-														onSelectState={ setActiveStyleState }
-													/>
-												) )
-											}
-										/>
-									</FormControl>
+									<Stack direction="row" alignItems="flex-start" spacing={ 1 } width="100%">
+										<FormControl fullWidth size="small" sx={ { flex: 1, minWidth: 0 } }>
+											<FormLabel htmlFor={ TAG_SELECTOR_ID } size="small" sx={ { mb: 1 } }>
+												{ __( 'Tag', 'elementor' ) }
+											</FormLabel>
+											<CreatableAutocomplete< Option >
+												id={ TAG_SELECTOR_ID }
+												size="tiny"
+												placeholder={ __( 'Type tag name', 'elementor' ) }
+												options={ tagOptions }
+												selected={ [ toTagChip( selectedTag ) ] }
+												onSelect={ handleTagSelect }
+												renderTags={ ( values, getTagProps ) =>
+													values.map( ( value, index ) => (
+														<TagChip
+															key={ value.value ?? value.label }
+															label={ value.label }
+															chipProps={ getTagProps( { index } ) }
+															activeState={ activeStyleState }
+															onSelectState={ setActiveStyleState }
+														/>
+													) )
+												}
+											/>
+										</FormControl>
+										<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center', pt: 3.5 } }>
+											<DefaultStylesHeaderSlot />
+										</Box>
+									</Stack>
 								</Stack>
 								<ElementProvider
 									element={ shimElement }

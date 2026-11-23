@@ -1,9 +1,15 @@
 import { type PropValue } from '@elementor/editor-props';
 
 import { getContainer } from '../sync/get-container';
-import { addModelToParent, removeModelFromParent } from '../sync/resolve-element';
+import { addModelToParent, findModelInDocument, removeModelFromParent } from '../sync/resolve-element';
 import { resolveInsertIndex } from '../sync/resolve-insert-index';
-import { type V1Element, type V1ElementConfig, type V1ElementData, type V1ElementModelProps } from '../sync/types';
+import {
+	type BackboneCollection,
+	type V1Element,
+	type V1ElementConfig,
+	type V1ElementData,
+	type V1ElementModelProps,
+} from '../sync/types';
 import { createChildrenStash } from './stash';
 import { type ChildDependencyRule, type ChildrenStash } from './types';
 import { evaluateWhen, resolveChildModelData } from './utils';
@@ -77,8 +83,7 @@ export function bindSettingsReconcile( { model, elementConfig }: BindSettingsRec
 }
 
 function attachChildFromRule( parentId: string, rule: ChildDependencyRule, stash: ChildrenStash ): void {
-	const parent = getContainer( parentId ) ?? undefined;
-	const currentChildren = getDirectChildData( parent );
+	const currentChildren = getDirectChildData( parentId );
 	const alreadyPresent = currentChildren.some( ( child ) => child.elType === rule.child_type );
 
 	if ( alreadyPresent ) {
@@ -190,6 +195,10 @@ function requestNavigatorRefresh( parentId: string ): void {
 	);
 }
 
-function getDirectChildData( parent: V1Element | undefined ): V1ElementData[] {
-	return ( parent?.children ?? [] ).map( ( child ) => child.model.toJSON() as unknown as V1ElementData );
+// Read from the model collection `addModelToParent` writes to: a child attached earlier in the same settings change
+// has no container until the view renders, and a later rule may be anchored on it.
+function getDirectChildData( parentId: string ): V1ElementData[] {
+	const elements = findModelInDocument( parentId )?.get( 'elements' ) as BackboneCollection | undefined;
+
+	return ( elements?.models ?? [] ).map( ( model ) => ( { elType: model.get( 'elType' ) } ) as V1ElementData );
 }
