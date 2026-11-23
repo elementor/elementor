@@ -101,7 +101,9 @@ export default class extends Marionette.CompositeView {
 		if ( ! this.isNavigatorContainer() ) {
 			helpers.title = this.model.getTitle();
 
-			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.model.getIcon();
+			helpers.icon = 'section' === this.model.get( 'elType' )
+				? ''
+				: elementor.hooks.applyFilters( 'navigator/element/icon', this.model.getIcon(), this.model );
 		}
 
 		return helpers;
