@@ -69,3 +69,8 @@ export {
 	getUpdatedValues,
 	extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
+export {
+	registerSubmenuToggle,
+	type SubmenuToggleProps,
+} from './controls-registry/element-controls/menu-items-control/submenu-toggle-registry';
+export { SubmenuToggle } from './controls-registry/element-controls/menu-items-control/submenu-toggle';

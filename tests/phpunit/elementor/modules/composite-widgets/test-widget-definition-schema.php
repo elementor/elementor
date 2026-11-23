@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\CompositeWidgets;
 
+use Elementor\Modules\CompositeWidgets\Definitions\Validation\Template_Rules;
 use JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +27,17 @@ class Test_Widget_Definition_Schema extends TestCase {
 
 		// Assert.
 		$this->assertSame( [], $errors );
+	}
+
+	public function test_template_node_keys__match_the_schema_template_node() {
+		// Arrange.
+		$schema = $this->read_json_as_array( self::SCHEMA_FILE );
+
+		// Act.
+		$schema_keys = array_keys( $schema['definitions']['templateNode']['properties'] );
+
+		// Assert.
+		$this->assertEqualsCanonicalizing( $schema_keys, Template_Rules::TEMPLATE_NODE_KEYS );
 	}
 
 	public function example_files_provider(): array {

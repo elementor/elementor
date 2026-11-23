@@ -493,6 +493,18 @@ body:has(#editor-one-top-bar > *) {
 		order: -1;
 	}
 
+	$e-notice-gap-from-top: 24px;
+	$screen-meta-links-margin-block-end: 10px;
+
+	#wpbody-content > .e-notice--inline {
+		margin-block-start: $e-notice-gap-from-top;
+		margin-inline: 32px;
+	}
+
+	#screen-meta-links ~ .e-notice--inline {
+		margin-block-start: $e-notice-gap-from-top - $screen-meta-links-margin-block-end;
+	}
+
 	#wpbody-content:has(#editor-one-secondary-bar):not(:has(#screen-meta-links)) {
 		> .wrap,
 		> #elementor-system-info {

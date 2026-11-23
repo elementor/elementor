@@ -15,14 +15,18 @@ use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\CompositeWidgets\Definitions\Definition_Migrator;
+use Elementor\Modules\CompositeWidgets\Definitions\Site_Definitions_Registrar;
 use Elementor\Modules\CompositeWidgets\Definitions\Validation\Widget_Definition_Validator;
 use Elementor\Modules\CompositeWidgets\Definitions\Widget_Definition;
 use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
+use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Site_Definition_Fixture;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+require_once __DIR__ . '/fixtures/site-definition-fixture.php';
 
 class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 	const EXAMPLES_DIR = __DIR__ . '/../../../../../modules/composite-widgets/schema/examples/';
@@ -169,6 +173,100 @@ class Test_Widgets_Definitions_Registry extends Elementor_Test_Base {
 		$this->assertSame( Escaped_Html_Prop_Type::generate( 'Pro' ), $registered['template']['elements'][1]['settings']['title'] );
 		$this->assertSame( 'border-radius-v2', $preset_props['border-radius']['$$type'] );
 		$this->assertArrayHasKey( 'start-start', $preset_props['border-radius']['value'] );
+	}
+
+	public function test_register__rejects_a_code_definition_in_the_site_namespace() {
+		// Arrange.
+		$this->setExpectedIncorrectUsage( self::INCORRECT_USAGE );
+		$definition = $this->read_example( 'icon-button.json' );
+		$definition['id'] = Site_Definition_Fixture::WIDGET_ID;
+
+		// Act.
+		$registered = $this->registry->register( $definition );
+
+		// Assert.
+		$this->assertFalse( $registered );
+		$this->assertNull( $this->registry->get( Site_Definition_Fixture::WIDGET_ID ) );
+	}
+
+	public function test_construct__registers_site_definitions_with_global_references() {
+		// Act.
+		$registry = $this->make_registry_with_site_definitions( [ [ Site_Definition_Fixture::definition(), false ] ] );
+
+		// Assert.
+		$registered = $registry->get( Site_Definition_Fixture::WIDGET_ID );
+
+		$this->assertSame( Widget_Definition::SOURCE_SITE, $registered['source'] );
+		$this->assertContains( Site_Definition_Fixture::GLOBAL_CLASS_ID, $registered['template']['settings']['classes']['value'] );
+		$this->assertArrayNotHasKey( Widgets_Definitions_Registry::ARCHIVED_KEY, $registered );
+	}
+
+	public function test_construct__migrates_site_definitions() {
+		// Arrange.
+		$site_definition = Site_Definition_Fixture::definition();
+		$site_definition['template']['elements'][0]['settings']['title'] = [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => String_Prop_Type::generate( 'Promo' ),
+				'children' => [],
+			],
+		];
+
+		// Act.
+		$registry = $this->make_registry_with_site_definitions( [ [ $site_definition, false ] ] );
+
+		// Assert.
+		$this->assertSame(
+			Escaped_Html_Prop_Type::generate( 'Promo' ),
+			$registry->get( Site_Definition_Fixture::WIDGET_ID )['template']['elements'][0]['settings']['title']
+		);
+	}
+
+	public function test_construct__keeps_archived_site_definitions_registered_and_flagged() {
+		// Act.
+		$registry = $this->make_registry_with_site_definitions( [ [ Site_Definition_Fixture::definition(), true ] ] );
+
+		// Assert.
+		$this->assertTrue( $registry->get( Site_Definition_Fixture::WIDGET_ID )[ Widgets_Definitions_Registry::ARCHIVED_KEY ] );
+	}
+
+	public function test_construct__drops_site_definitions_outside_the_site_namespace() {
+		// Arrange.
+		$this->setExpectedIncorrectUsage( self::INCORRECT_USAGE );
+
+		// Act.
+		$registry = $this->make_registry_with_site_definitions( [ [ Site_Definition_Fixture::definition( 'acme/spoofed' ), false ] ] );
+
+		// Assert.
+		$this->assertSame( [], $registry->all() );
+	}
+
+	public function test_construct__drops_invalid_site_definitions() {
+		// Arrange.
+		$this->setExpectedIncorrectUsage( self::INCORRECT_USAGE );
+		$site_definition = Site_Definition_Fixture::definition();
+		$site_definition['template']['elements'][0]['widgetType'] = 'e-tabs';
+
+		// Act.
+		$registry = $this->make_registry_with_site_definitions( [ [ $site_definition, false ] ] );
+
+		// Assert.
+		$this->assertNull( $registry->get( Site_Definition_Fixture::WIDGET_ID ) );
+	}
+
+	/**
+	 * @param array<array{0: array, 1: bool}> $definitions Definition and archived flag pairs.
+	 */
+	private function make_registry_with_site_definitions( array $definitions ): Widgets_Definitions_Registry {
+		return new Widgets_Definitions_Registry(
+			Widget_Definition_Validator::make(),
+			new Definition_Migrator( Migrations_Orchestrator::make( self::MIGRATIONS_DIR ) ),
+			function ( Site_Definitions_Registrar $registrar ) use ( $definitions ) {
+				foreach ( $definitions as [ $definition, $is_archived ] ) {
+					$registrar->register( $definition, $is_archived );
+				}
+			}
+		);
 	}
 
 	private function build_icon_button_template(): array {

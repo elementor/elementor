@@ -1,27 +1,52 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
+import { Divider, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PostListContextProvider } from '../../contexts/post-list-context';
+import { ContentPanelCoordinatorProvider } from '../../contexts/content-panel-coordinator';
+import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
+import { contentPanelHeaderStackSx } from './content-panel-chrome';
+import ContentPanelHeaderAdd from './content-panel-header-add';
+import ContentPanelSearch from './content-panel-search';
 import ErrorSnackbar from './error-snackbar';
-import PostsCollapsibleList from './posts-list/posts-collapsible-list';
+import ShellPanelBodyContent from './shell-panel-body-content';
 
 const Shell = () => {
 	const [ isErrorSnackbarOpen, setIsErrorSnackbarOpen ] = useState( false );
+	const { accessiblePostTypes, isUserPending, showUserLoadError } = useAccessiblePanelPostTypes();
 
 	return (
-		<Panel>
-			<PanelHeader>
-				<PanelHeaderTitle>{ __( 'Pages', 'elementor' ) }</PanelHeaderTitle>
-			</PanelHeader>
-			<PanelBody>
-				<PostListContextProvider type={ 'page' } setError={ () => setIsErrorSnackbarOpen( true ) }>
-					<PostsCollapsibleList isOpenByDefault={ true } />
-				</PostListContextProvider>
-				<ErrorSnackbar open={ isErrorSnackbarOpen } onClose={ () => setIsErrorSnackbarOpen( false ) } />
-			</PanelBody>
-		</Panel>
+		<ContentPanelCoordinatorProvider>
+			<Panel>
+				<PanelHeader>
+					<Stack
+						alignItems="center"
+						direction="row"
+						spacing={ 0.5 }
+						sx={ {
+							...contentPanelHeaderStackSx,
+						} }
+					>
+						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0, textAlign: 'start' } }>
+							{ __( 'Site content', 'elementor' ) }
+						</PanelHeaderTitle>
+						<ContentPanelHeaderAdd />
+					</Stack>
+				</PanelHeader>
+				<Divider />
+				<PanelBody>
+					<ContentPanelSearch />
+					<ShellPanelBodyContent
+						accessiblePostTypes={ accessiblePostTypes }
+						isUserPending={ isUserPending }
+						onListError={ () => setIsErrorSnackbarOpen( true ) }
+						showUserLoadError={ showUserLoadError }
+					/>
+					<ErrorSnackbar open={ isErrorSnackbarOpen } onClose={ () => setIsErrorSnackbarOpen( false ) } />
+				</PanelBody>
+			</Panel>
+		</ContentPanelCoordinatorProvider>
 	);
 };
 

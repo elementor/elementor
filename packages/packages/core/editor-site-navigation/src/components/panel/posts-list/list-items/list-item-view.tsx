@@ -19,6 +19,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { getCannotEditPanelItemMessage, type Slug } from '../../../../api/post';
+import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
 import Delete from '../../actions-menu/actions/delete';
@@ -26,21 +28,30 @@ import Duplicate from '../../actions-menu/actions/duplicate';
 import Rename from '../../actions-menu/actions/rename';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
+import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
 
-const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactNode; isDisabled: boolean } ) => {
+const DisabledPostTooltip = ( {
+	children,
+	isDisabled,
+	postTypeSlug,
+}: {
+	children: React.ReactNode;
+	isDisabled: boolean;
+	postTypeSlug: Slug;
+} ) => {
 	if ( isDisabled ) {
 		const title = (
 			<Typography variant="caption">
-				You cannot edit this page.
+				{ getCannotEditPanelItemMessage( postTypeSlug ) }
 				<br />
-				To edit it directly, contact the site owner
+				{ __( 'To edit it directly, contact the site owner', 'elementor' ) }
 			</Typography>
 		);
 
 		return (
 			<Tooltip title={ title } placement="bottom" arrow={ false }>
 				{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-				{ children }
+				<span>{ children }</span>
 			</Tooltip>
 		);
 	}
@@ -49,6 +60,7 @@ const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactN
 };
 
 export default function ListItemView( { post }: { post: Post } ) {
+	const { type } = usePostListContext();
 	const activeDocument = useActiveDocument();
 	const navigateToDocument = useNavigateToDocument();
 
@@ -62,29 +74,42 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const status = isActive ? activeDocument?.status.value : post.status;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
 	const isDisabled = ! post.user_can.edit;
+	const menuTriggerProps = bindTrigger( popupState );
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled }>
+			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
 				<ListItem
 					disablePadding
+					sx={ contentPanelListRowPaddingSx }
 					secondaryAction={
-						<IconButton value size="small" { ...bindTrigger( popupState ) }>
-							<DotsVerticalIcon fontSize="small" />
+						<IconButton
+							aria-label={ __( 'More actions', 'elementor' ) }
+							size="tiny"
+							{ ...menuTriggerProps }
+							onClick={ ( event: React.MouseEvent ) => {
+								event.stopPropagation();
+								menuTriggerProps.onClick?.( event );
+							} }
+						>
+							<DotsVerticalIcon fontSize="tiny" />
 						</IconButton>
 					}
 				>
 					<ListItemButton
-						selected={ isActive }
+						dense
+						disableGutters
 						disabled={ isDisabled }
 						onClick={ () => {
 							if ( ! isActive ) {
 								navigateToDocument( post.id );
 							}
 						} }
-						dense
+						selected={ isActive }
+						shape="rounded"
+						sx={ contentPanelListItemButtonSx }
 					>
-						<ListItemText disableTypography={ true }>
+						<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 							<PageTitleAndStatus title={ title } status={ status } />
 						</ListItemText>
 						{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
@@ -100,8 +125,12 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<Duplicate post={ post } popupState={ popupState } />
 				<Delete post={ post } />
 				<View post={ post } />
-				<Divider />
-				<SetHome post={ post } closeMenu={ () => popupState.close() } />
+				{ type === 'page' && (
+					<>
+						<Divider />
+						<SetHome post={ post } closeMenu={ () => popupState.close() } />
+					</>
+				) }
 			</Menu>
 		</>
 	);
