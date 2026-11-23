@@ -3,12 +3,8 @@
 namespace Elementor\Modules\WidgetCreation;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Hints;
-use Elementor\Modules\Ai\Module as Ai_Module;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,36 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = Atomic_Widgets_Module::EXPERIMENT_NAME;
-	const ANGIE_IN_PANELS_EXPERIMENT_NAME = 'e_angie_in_panels';
 	const MODULE_NAME = 'widget-creation';
 
 	const PACKAGES = [
 		'editor-widget-creation',
 	];
 
-	const ANGIE_PACKAGE = 'editor-angie';
-
-	const ANGIE_FLOATING_PANELS_PACKAGE = 'editor-floating-panels';
-
-	const ANGIE_PANEL_PACKAGE = 'editor-angie-panel';
-
-	const ANGIE_ENTRY_POINTS_PACKAGE = 'editor-angie-entry-points';
-
-	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
-
 	public function get_name() {
 		return self::MODULE_NAME;
-	}
-
-	public static function get_angie_in_panels_experimental_data(): array {
-		return [
-			'name' => self::ANGIE_IN_PANELS_EXPERIMENT_NAME,
-			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
-			'description' => esc_html__( 'Load Angie in a docked floating panel in the editor instead of the legacy push sidebar.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		];
 	}
 
 	public static function is_angie_plugin_active(): bool {
@@ -58,57 +32,14 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-		$this->register_angie_in_panels_experiment();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_localize_settings( $settings ) );
-		add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'print_angie_config' ] );
-		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
-	}
-
-	private function register_angie_in_panels_experiment(): void {
-		Plugin::$instance->experiments->add_feature( self::get_angie_in_panels_experimental_data() );
-	}
-
-	public static function is_angie_in_panels_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME );
-	}
-
-	public function print_angie_config(): void {
-		if ( ! self::is_angie_in_panels_active() ) {
-			return;
-		}
-
-		Utils::print_js_config( 'elementor-v2-editor-angie', 'elementorEditorAngie', [
-			'isAngiePluginActive' => Hints::is_plugin_active( 'angie' ),
-			'showEntryPoints' => $this->should_show_angie_entry_points(),
-		] );
-	}
-
-	private function register_consent_route(): void {
-		register_rest_route( 'elementor/v1', '/angie/consent', [
-			'methods'             => 'POST',
-			'callback'            => fn() => $this->handle_save_consent(),
-			'permission_callback' => fn() => current_user_can( 'manage_options' ),
-		] );
-	}
-
-	private function handle_save_consent(): \WP_REST_Response {
-		update_option( self::ANGIE_CONSENT_OPTION, 'yes' );
-
-		return new \WP_REST_Response( [ 'success' => true ], 200 );
 	}
 
 	private function add_packages( array $packages ): array {
 		if ( self::can_create_widget() ) {
 			$packages = array_merge( $packages, self::PACKAGES );
-		}
-
-		if ( self::is_angie_in_panels_active() ) {
-			$packages[] = self::ANGIE_FLOATING_PANELS_PACKAGE;
-			$packages[] = self::ANGIE_PACKAGE;
-			$packages[] = self::ANGIE_PANEL_PACKAGE;
-			$packages[] = self::ANGIE_ENTRY_POINTS_PACKAGE;
 		}
 
 		return array_values( array_unique( $packages ) );
@@ -121,15 +52,5 @@ class Module extends BaseModule {
 		];
 
 		return $settings;
-	}
-
-	private function should_show_angie_entry_points(): bool {
-		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
-
-		if ( ! $ai_module instanceof Ai_Module ) {
-			return false;
-		}
-
-		return $ai_module->is_ai_enabled();
 	}
 }

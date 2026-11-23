@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Modules\Mcp\Site_Flag;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -78,6 +79,10 @@ class Api {
 			if ( ! empty( $additional_status ) ) {
 				$body_request['status'] = $additional_status;
 				$timeout = 3;
+			}
+
+			if ( class_exists( Site_Flag::class ) && '' !== Site_Flag::get_value() ) {
+				$body_request['mcp'] = '1';
 			}
 
 			$response = wp_remote_get( self::$api_info_url, [
