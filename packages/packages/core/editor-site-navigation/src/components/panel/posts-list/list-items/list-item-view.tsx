@@ -25,7 +25,9 @@ import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
 import Delete from '../../actions-menu/actions/delete';
 import Duplicate from '../../actions-menu/actions/duplicate';
+import ForceDelete from '../../actions-menu/actions/force-delete';
 import Rename from '../../actions-menu/actions/rename';
+import Restore from '../../actions-menu/actions/restore';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
@@ -73,7 +75,8 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isActive = activeDocument?.id === post.id;
 	const status = isActive ? activeDocument?.status.value : post.status;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
-	const isDisabled = ! post.user_can.edit;
+	const isTrashed = 'trash' === post.status;
+	const isDisabled = ! post.user_can.edit || isTrashed;
 	const menuTriggerProps = bindTrigger( popupState );
 
 	return (
@@ -101,9 +104,11 @@ export default function ListItemView( { post }: { post: Post } ) {
 						disableGutters
 						disabled={ isDisabled }
 						onClick={ () => {
-							if ( ! isActive ) {
-								navigateToDocument( post.id );
+							if ( isTrashed || isActive ) {
+								return;
 							}
+
+							navigateToDocument( post.id );
 						} }
 						selected={ isActive }
 						shape="rounded"
@@ -121,14 +126,24 @@ export default function ListItemView( { post }: { post: Post } ) {
 				MenuListProps={ { dense: true } }
 				{ ...bindMenu( popupState ) }
 			>
-				<Rename post={ post } />
-				<Duplicate post={ post } popupState={ popupState } />
-				<Delete post={ post } />
-				<View post={ post } />
-				{ type === 'page' && (
+				{ isTrashed ? (
 					<>
-						<Divider />
-						<SetHome post={ post } closeMenu={ () => popupState.close() } />
+						<Restore post={ post } />
+						<ForceDelete post={ post } />
+						<View post={ post } />
+					</>
+				) : (
+					<>
+						<Rename post={ post } />
+						<Duplicate post={ post } popupState={ popupState } />
+						<Delete post={ post } />
+						<View post={ post } />
+						{ type === 'page' && (
+							<>
+								<Divider />
+								<SetHome post={ post } closeMenu={ () => popupState.close() } />
+							</>
+						) }
 					</>
 				) }
 			</Menu>

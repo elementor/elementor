@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { type Slug } from '../api/post';
+import { type SiteContentStatusFilter } from '../site-content-status-filter';
 
 type SectionHandlers = {
 	setExpanded: ( expanded: boolean ) => void;
@@ -14,6 +15,8 @@ type ContentPanelCoordinatorValue = {
 	requestCreate: ( type: Slug ) => void;
 	searchQuery: string;
 	setSearchQuery: ( query: string ) => void;
+	setStatusFilter: ( filter: SiteContentStatusFilter ) => void;
+	statusFilter: SiteContentStatusFilter;
 };
 
 const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorValue | null >( null );
@@ -21,6 +24,7 @@ const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorVal
 export function ContentPanelCoordinatorProvider( { children }: { children: ReactNode } ) {
 	const sectionsRef = useRef( new Map< Slug, SectionHandlers >() );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
+	const [ statusFilter, setStatusFilter ] = useState< SiteContentStatusFilter >( 'all' );
 
 	const registerSection = useCallback( ( type: Slug, handlers: SectionHandlers ) => {
 		sectionsRef.current.set( type, handlers );
@@ -48,8 +52,10 @@ export function ContentPanelCoordinatorProvider( { children }: { children: React
 			requestCreate,
 			searchQuery,
 			setSearchQuery,
+			setStatusFilter,
+			statusFilter,
 		} ),
-		[ registerSection, unregisterSection, requestCreate, searchQuery ]
+		[ registerSection, unregisterSection, requestCreate, searchQuery, statusFilter ]
 	);
 
 	return (

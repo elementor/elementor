@@ -65,6 +65,13 @@ jest.mock( '../../../../hooks/use-posts', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( '../../../../hooks/use-posts-baseline-total', () => ( {
+	__esModule: true,
+	usePostsBaselineTotal: jest.fn( () => ( {
+		data: undefined,
+	} ) ),
+} ) );
+
 jest.mock( '../../../../hooks/use-homepage', () => ( {
 	__esModule: true,
 	useHomepage: jest.fn( () => ( {

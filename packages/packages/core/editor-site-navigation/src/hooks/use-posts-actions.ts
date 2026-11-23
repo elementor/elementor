@@ -9,6 +9,7 @@ import {
 	type UpdatePost,
 	updateRequest,
 } from '../api/post';
+import { postsBaselineTotalQueryKey } from './use-posts-baseline-total';
 import { postsQueryKeyBase } from './use-posts';
 import { recentPostsQueryKey } from './use-recent-posts';
 
@@ -32,6 +33,16 @@ export function usePostActions( postTypeSlug: Slug ) {
 		onSuccess,
 	} );
 
+	const forceDeletePost = useMutation( {
+		mutationFn: ( postId: number ) => deleteRequest( postTypeSlug, postId, true ),
+		onSuccess,
+	} );
+
+	const restorePost = useMutation( {
+		mutationFn: ( postId: number ) => updateRequest( postTypeSlug, { id: postId, status: 'draft' } ),
+		onSuccess,
+	} );
+
 	const duplicatePost = useMutation( {
 		mutationFn: ( originalPost: UpdatePost ) => duplicateRequest( originalPost ),
 		onSuccess,
@@ -39,9 +50,11 @@ export function usePostActions( postTypeSlug: Slug ) {
 
 	return {
 		createPost,
-		updatePost,
 		deletePost,
 		duplicatePost,
+		forceDeletePost,
+		restorePost,
+		updatePost,
 	};
 }
 
@@ -51,6 +64,8 @@ function useInvalidatePosts( postTypeSlug: string ) {
 	return () => {
 		const queryKey = postsQueryKeyBase( postTypeSlug );
 		queryClient.invalidateQueries( { queryKey: recentPostsQueryKey } );
+		queryClient.invalidateQueries( { queryKey: postsBaselineTotalQueryKey( postTypeSlug ) } );
+
 		return queryClient.invalidateQueries( { queryKey } );
 	};
 }
