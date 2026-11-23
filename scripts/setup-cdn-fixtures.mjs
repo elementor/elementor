@@ -15,7 +15,7 @@ import { parseArgs } from 'node:util';
 
 const __dirname = dirname( fileURLToPath( import.meta.url ) );
 const FIXTURES_BASE = resolve( __dirname, '../tests/playwright/mu-plugins/editor-assets-cdn' );
-const ACTION_SHA = '193fe6eeabd83bdd4cea5b630be3cee58b11aa2c';
+const ACTION_SHA = '2f929431ac9b693f70d5cde32a1cac58e3fa781e';
 const CDN_ORIGIN = 'https://assets.elementor.com';
 const SHARED_SCENARIOS = [ 'no-promotion', 'active-campaign' ];
 
