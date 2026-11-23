@@ -4,10 +4,12 @@ namespace Elementor\Modules\Ai;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\Element_Base;
-use Elementor\Plugin;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Hints;
+use Elementor\Element_Base;
 use Elementor\Modules\Ai\Connect\Ai;
+use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
 
@@ -28,6 +30,19 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
 	];
+
+	const ANGIE_IN_PANELS_EXPERIMENT_NAME = 'e_angie_in_panels';
+
+	const ANGIE_PACKAGE = 'editor-angie';
+
+	const ANGIE_FLOATING_PANELS_PACKAGE = 'editor-floating-panels';
+
+	const ANGIE_PANEL_PACKAGE = 'editor-angie-panel';
+
+	const ANGIE_ENTRY_POINTS_PACKAGE = 'editor-angie-entry-points';
+
+	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
+
 	public function get_name() {
 		return 'ai';
 	}
@@ -41,6 +56,11 @@ class Module extends BaseModule {
 			( new Preferences() )->register();
 			add_action( 'elementor/import-export/import-kit/runner/after-run', [ $this, 'handle_kit_install' ] );
 		}
+
+		$this->register_angie_in_panels_experiment();
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_angie_packages( $packages ) );
+		add_action( 'elementor/editor/v2/scripts/enqueue', [ $this, 'print_angie_config' ] );
+		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
 
 		if ( ! $this->is_ai_enabled() ) {
 			return;
@@ -171,6 +191,63 @@ class Module extends BaseModule {
 		}
 
 		return Preferences::is_ai_enabled( get_current_user_id() );
+	}
+
+	public static function get_angie_in_panels_experimental_data(): array {
+		return [
+			'name' => self::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Angie in editor panels', 'elementor' ),
+			'description' => esc_html__( 'Angie in the Editor: load Angie from Elementor Core in a docked panel, with Angie entry points across the Editor.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
+	public static function is_angie_in_panels_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+	}
+
+	public function print_angie_config(): void {
+		if ( ! self::is_angie_in_panels_active() ) {
+			return;
+		}
+
+		Utils::print_js_config( 'elementor-v2-editor-angie', 'elementorEditorAngie', [
+			'isAngiePluginActive' => Hints::is_plugin_active( 'angie' ),
+			'showEntryPoints' => $this->is_ai_enabled(),
+		] );
+	}
+
+	private function register_angie_in_panels_experiment(): void {
+		Plugin::$instance->experiments->add_feature( self::get_angie_in_panels_experimental_data() );
+	}
+
+	private function add_angie_packages( array $packages ): array {
+		if ( ! self::is_angie_in_panels_active() ) {
+			return $packages;
+		}
+
+		$packages[] = self::ANGIE_FLOATING_PANELS_PACKAGE;
+		$packages[] = self::ANGIE_PACKAGE;
+		$packages[] = self::ANGIE_PANEL_PACKAGE;
+		$packages[] = self::ANGIE_ENTRY_POINTS_PACKAGE;
+
+		return array_values( array_unique( $packages ) );
+	}
+
+	private function register_consent_route(): void {
+		register_rest_route( 'elementor/v1', '/angie/consent', [
+			'methods'             => 'POST',
+			'callback'            => fn() => $this->handle_save_consent(),
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
+	}
+
+	private function handle_save_consent(): \WP_REST_Response {
+		update_option( self::ANGIE_CONSENT_OPTION, 'yes' );
+
+		return new \WP_REST_Response( [ 'success' => true ], 200 );
 	}
 
 	public function handle_kit_install( $imported_data ) {
