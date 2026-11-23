@@ -119,7 +119,11 @@ class Module extends BaseModule {
 		];
 	}
 
-	private static function can_send_events(): bool {
+	public static function can_send_events(): bool {
+		if ( empty( Plugin::$instance ) || empty( Plugin::$instance->experiments ) ) {
+			return false;
+		}
+
 		return ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) &&
 			Tracker::is_allow_track() &&
 			! Tracker::has_terms_changed() &&
