@@ -59,6 +59,23 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertInstanceOf( Atomic_Menu_Submenu_Trigger_Promotion::class, $types['e-menu-submenu-trigger'] );
 	}
 
+	public function test_a_later_registration_replaces_the_placeholder() {
+		// Arrange.
+		$pro_submenu = new class() extends Atomic_Menu_Submenu_Promotion {};
+		add_action(
+			'elementor/elements/elements_registered',
+			fn ( $elements_manager ) => $elements_manager->register_element_type( $pro_submenu )
+		);
+
+		// Act.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$types = Plugin::$instance->elements_manager->get_element_types();
+		$this->assertSame( $pro_submenu, $types['e-menu-submenu'] );
+		$this->assertInstanceOf( Atomic_Menu_Submenu_Trigger_Promotion::class, $types['e-menu-submenu-trigger'] );
+	}
+
 	public function test_placeholders_are_not_registered_when_the_experiment_is_inactive() {
 		// Act.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_INACTIVE );
