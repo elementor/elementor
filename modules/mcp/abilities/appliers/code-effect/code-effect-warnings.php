@@ -24,6 +24,7 @@ class Code_Effect_Warnings {
 	const GLOBAL_ACCESS_PATTERN = '/\b(document|window)\s*\./';
 	const IMPORT_PATTERN = '/^\s*import\b|\bimport\s*\(/m';
 	const REDUCED_MOTION_PATTERN = '/\breducedMotion\b/';
+	const EMIT_CALL_PATTERN = '/\bemit\s*\(/';
 
 	public static function collect( array $interaction_item, callable $can_save_code ): array {
 		$item_value = $interaction_item['value'] ?? [];
@@ -41,7 +42,8 @@ class Code_Effect_Warnings {
 		return array_merge(
 			$warnings,
 			self::trigger_warnings( $code, $trigger ),
-			self::quality_warnings( $code, self::param_keys( $code_effect ) )
+			self::event_warnings( $code, Code_Effect_Value::get_fired_event( $item_value ) ),
+			self::quality_warnings( $code, (string) ( $code_effect['name']['value'] ?? '' ), self::param_keys( $code_effect ) )
 		);
 	}
 
@@ -72,8 +74,12 @@ class Code_Effect_Warnings {
 		];
 	}
 
-	private static function quality_warnings( string $code, array $param_keys ): array {
+	private static function quality_warnings( string $code, string $name, array $param_keys ): array {
 		$warnings = [];
+
+		if ( '' === $name ) {
+			$warnings[] = self::warning( 'missing_name', 'has no name. Set code_effect.name to a short label of what it does, e.g. Add class "is-active".' );
+		}
 
 		if ( preg_match( self::NON_COMPOSITOR_PROPERTY_PATTERN, $code ) ) {
 			$warnings[] = self::warning( 'non_compositor_property', 'animates layout or paint properties. Animate only transform and opacity (x, y, scale, rotate, opacity).' );
@@ -101,6 +107,20 @@ class Code_Effect_Warnings {
 			'code' => 'code_effect_' . $suffix,
 			'message' => sprintf( 'Code effect %s See %s and %s.', $problem, self::GUIDE_URI, self::PATTERNS_URI ),
 		];
+	}
+
+	private static function event_warnings( string $code, ?string $fires_event ): array {
+		$calls_emit = (bool) preg_match( self::EMIT_CALL_PATTERN, $code );
+
+		if ( $calls_emit && null === $fires_event ) {
+			return [ self::warning( 'emit_without_event', 'calls emit() but the interaction has no fires_event, so nothing is fired. Set fires_event to the event name.' ) ];
+		}
+
+		if ( ! $calls_emit && null !== $fires_event ) {
+			return [ self::warning( 'event_never_emitted', 'sets fires_event but never calls emit(), so the event is never fired.' ) ];
+		}
+
+		return [];
 	}
 
 	private static function returns_value( string $code ): bool {

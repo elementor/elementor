@@ -668,6 +668,30 @@ describe( 'InteractionDetails', () => {
 			expect( mockTriggerControl ).toHaveBeenCalledWith( expect.objectContaining( { effect: 'code' } ), {} );
 		} );
 
+		it( 'should pass the code effect name to the effect control', () => {
+			// Arrange
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			const mockEffectControl = jest.fn( () => null );
+			const defaultImplementation = getInteractionsControl.getMockImplementation();
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'effect' ? { component: mockEffectControl } : defaultImplementation( type )
+			);
+			const interaction = createCodeInteraction();
+			interaction.animation.value.code_effect = {
+				$$type: 'code-effect',
+				value: { ...codeEffectValue.value, name: { $$type: 'string', value: 'Set attribute aria-expanded' } },
+			};
+
+			// Act
+			renderInteractionDetails( interaction );
+
+			// Assert
+			expect( mockEffectControl ).toHaveBeenCalledWith(
+				expect.objectContaining( { codeEffectName: 'Set attribute aria-expanded' } ),
+				{}
+			);
+		} );
+
 		it( 'should reset a code effect only trigger to load when switching to a preset effect', () => {
 			// Arrange
 			const mockEffectControl = ( { onChange }: { onChange: ( value: string ) => void } ) => (

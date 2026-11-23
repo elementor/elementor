@@ -26,6 +26,7 @@ export const CODE_EFFECT_TRIGGER_OPTIONS = {
 	longPress: __( 'On long press', 'elementor' ),
 	drag: __( 'On drag', 'elementor' ),
 	resize: __( 'On resize', 'elementor' ),
+	event: __( 'On event', 'elementor' ),
 };
 
 export const BASE_TRIGGERS: string[] = [ 'load', 'scrollIn' ];

@@ -7,15 +7,17 @@ A code effect is an interaction item whose `animation.effect` is `"code"`. It ca
 ## Contract
 
 ```js
-({ element, params, motion, reducedMotion, event }) => onEnd | animation | void
+({ element, params, motion, reducedMotion, event, emit }) => onEnd | animation | void
 ```
+
+- `emit( detail? )`: fires this interaction's `fires_event` for other interactions to catch; see [Events](#events). It does nothing when the interaction has no `fires_event`, and in the editor.
 
 - `code` is a single function expression (arrow or `function`). No statements outside it, no `import`.
 - `element`: the element the interaction is attached to. Query only inside it (`element.querySelectorAll(...)`, `element.children`).
 - `params`: `{ [key]: value }` built from `code_effect.params`. Numbers are numbers, switches are booleans, colors and text are strings.
 - `motion`: the Motion library (free MIT `motion` 14.10.1), the same object as `window.Motion`.
 - `reducedMotion`: `true` when the visitor prefers reduced motion.
-- `event`: what fired the trigger. A `PointerEvent` for `hover`, `click`, `doubleClick`, `longPress` and `drag`, an `IntersectionObserverEntry` for `scrollIn` and `scrollOut`, `{ width, height }` for `resize`, `undefined` for `load` and `scrollOn`.
+- `event`: what fired the trigger. A `PointerEvent` for `hover`, `click`, `doubleClick`, `longPress` and `drag`, an `IntersectionObserverEntry` for `scrollIn` and `scrollOut`, `{ width, height }` for `resize`, `{ name, detail, source }` for `event` (`source` is the element that emitted it), `undefined` for `load` and `scrollOn`.
 - **The trigger is the interaction's `trigger`, never the code.** Elementor wires it with Motion's own `inView`, `scroll`, `hover`, `press`, `drag` and `resize`, then calls the function each time it fires. Don't call those APIs in the code (`code_effect_trigger_in_code` warning).
 - **No cleanup needed.** Each run happens inside `motion.scopeMotion( element )`: every `animate()`, loop and Motion gesture it starts is stopped by Elementor, and selector strings passed to `animate()` resolve inside `element`. Plain DOM listeners you add yourself are not tracked; see `load` below.
 - Durations are in **seconds**.
@@ -34,10 +36,42 @@ A code effect is an interaction item whose `animation.effect` is `"code"`. It ca
 | `longPress` | once the press is held for 0.5 s | on release |
 | `drag` | on drag start. Elementor makes the element draggable with Motion's defaults (both axes, momentum, no constraints) and moves it; don't animate `x` / `y` yourself | on drag end |
 | `resize` | each time the element's size changes, including once when observed. The previous run is stopped first | when the effect is torn down |
+| `event` | each time an element in scope fires the interaction's `event`. The previous run is stopped first | when the effect is torn down |
 
 Before a trigger re-runs the code, the previous run is stopped where it is (no jump back). In the editor, playing the interaction runs the code once as if the trigger fired, with `event` undefined (`resize` gets the current size), and never runs the end phase; real gestures only work on the published page. Read `event` defensively (`event?.target`).
 
-`doubleClick`, `longPress`, `drag` and `resize` are only valid with `effect: "code"`.
+`doubleClick`, `longPress`, `drag`, `resize` and `event` are only valid with `effect: "code"`.
+
+## Events
+
+One effect fires an event, other elements react to it.
+
+- **Firing:** set `fires_event: "<name>"` on the code-effect interaction (kebab-case, `^[a-z][a-z0-9-]{0,39}$`) and call `emit( detail? )` in its code. You choose the name once; the user sees it but cannot edit it.
+- **Listening:** `trigger: "event"` plus `event: "<name>"`. The name must be the `fires_event` of an interaction that exists in the same composition or component. Never invent a name nothing fires: the listener is removed on save (`code_effect_event_not_fired` warning). Its code runs with `event = { name, detail, source }`.
+
+Fire and listen in the same build call so both sides are validated together.
+
+```json
+{ "trigger": "event", "event": "card-open", "animation": { "effect": "code", "code_effect": { "name": "Reveal card body", "code": "..." } } }
+```
+
+Who can hear an event (there is no page-wide or global event):
+- Emitter on the page, outside any component: only the emitter itself and the elements inside it.
+- Emitter inside a component: every element of that same component instance, siblings included. Nothing outside the instance hears it, and the instance never hears events from outside.
+
+Choosing the shape:
+- All children behave the same: one interaction on the parent animates `element.children`. No event interactions on the children.
+- One child behaves differently when something happens on the parent: the parent interaction has `fires_event: "card-open"` and its code calls `emit()`, and only that child gets a `trigger: "event"` interaction with `event: "card-open"`.
+- Siblings: put the native trigger on their common parent and let it `emit`; the siblings listen. Inside a component, a sibling can emit directly.
+
+Rules: events do not chain in the editor (they only play on the published page); an event that is already being delivered is not delivered again (no A-to-B-to-A loops). Listeners are registered before any effect runs, so `load` effects can emit to them.
+
+```js
+({ element, motion, emit }) => {
+	motion.animate( element, { scale: [ 1, 1.05, 1 ] }, { duration: 0.4 } );
+	emit( { index: Array.from( element.parentElement.children ).indexOf( element ) } );
+}
+```
 
 ## Interaction item (build-composition / manage-elements)
 
@@ -49,6 +83,7 @@ Before a trigger re-runs the code, the previous run is stopped where it is (no j
   "animation": {
     "effect": "code",
     "code_effect": {
+      "name": "Spring lift on hover",
       "code": "({ element, params, motion }) => { ... }",
       "params": [
         { "key": "distance", "label": "Distance", "control": "slider", "value": 100, "default": 100, "min": 0, "max": 400, "step": 10 },
@@ -63,7 +98,13 @@ Before a trigger re-runs the code, the previous run is stopped where it is (no j
 
 For `scrollOn`, also set `animation.config.start`, `end` (percent sizes) and `relativeTo` (`viewport` or `page`) when the defaults (85%, 15%, viewport) don't fit.
 
-An element can carry up to 5 interactions, so combine triggers by adding one code effect per trigger (for example `hover` and `click` on the same button).
+An element can carry up to 10 interactions, so combine triggers by adding one code effect per trigger (for example `hover` and `click` on the same button).
+
+Name rules:
+- `code_effect.name` is the label the Interactions tab shows instead of "Code", in the interaction row and in the Effect dropdown. Always set it (`code_effect_missing_name` warning).
+- One line, at most 60 characters, imperative, describing what the effect does to the element: `Add class "is-active"`, `Set attribute aria-expanded`, `Spring scale on hover`, `Fade children in on scroll`.
+- Name the outcome, not the technique: not `Code effect`, `Motion function` or `Custom animation`.
+- Every example below needs its own `name`.
 
 Param rules:
 - `key` matches `^[a-zA-Z_][a-zA-Z0-9_]{0,31}$`, unique, at most 10 params.

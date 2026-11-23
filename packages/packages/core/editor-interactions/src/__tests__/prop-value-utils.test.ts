@@ -49,6 +49,33 @@ describe( 'createAnimationPreset code effect', () => {
 		// Assert
 		expect( label ).toBe( 'Long press: Code ' );
 	} );
+
+	it( 'should include the event name in the label of an event trigger', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'event', effect: 'code' } );
+		item.event = createString( 'card-open' );
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'On event card-open: Code ' );
+	} );
+
+	it( 'should label a code effect by its name', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'hover', effect: 'code' } );
+		item.animation.value.code_effect = {
+			$$type: 'code-effect',
+			value: { name: createString( 'Add class "is-active"' ) },
+		};
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'Hover: Add class "is-active" ' );
+	} );
 } );
 
 describe( 'Breakpoints Utility Functions', () => {

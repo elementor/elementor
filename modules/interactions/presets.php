@@ -17,7 +17,10 @@ class Presets {
 
 	const BASE_TRIGGERS = [ 'load', 'scrollIn' ];
 	const ADDITIONAL_TRIGGERS = [ 'scrollOut', 'scrollOn', 'hover', 'click' ];
-	const CODE_EFFECT_ONLY_TRIGGERS = [ 'doubleClick', 'longPress', 'drag', 'resize' ];
+	const EVENT_TRIGGER = 'event';
+	const EVENT_NAME_MAX_LENGTH = 40;
+	const EVENT_NAME_PATTERN = '/^[a-z][a-z0-9-]{0,' . ( self::EVENT_NAME_MAX_LENGTH - 1 ) . '}$/';
+	const CODE_EFFECT_ONLY_TRIGGERS = [ 'doubleClick', 'longPress', 'drag', 'resize', self::EVENT_TRIGGER ];
 
 	const DEFAULT_EASING = 'easeIn';
 	const BASE_EFFECTS = [ 'fade', 'slide', 'scale' ];

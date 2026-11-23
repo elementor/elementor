@@ -77,10 +77,44 @@ class Interactions_Applier {
 			];
 		}
 
+		$this->add_unfired_event_warnings( $index, $warnings );
+
 		return [
 			'error' => null,
 			'warnings' => $warnings,
 		];
+	}
+
+	private function add_unfired_event_warnings( array $index, Warnings_Bag $warnings ): void {
+		$fired_events = [];
+		$listeners = [];
+
+		foreach ( $index as $config_id => $element ) {
+			$items = is_array( $element['interactions'] ?? null ) ? ( $element['interactions']['items'] ?? [] ) : [];
+
+			foreach ( $items as $item ) {
+				$fired_event = Code_Effect_Value::get_fired_event( $item['value'] ?? [] );
+				$listened_event = Code_Effect_Value::get_listened_event( $item['value'] ?? [] );
+
+				if ( null !== $fired_event ) {
+					$fired_events[] = $fired_event;
+				}
+
+				if ( null !== $listened_event ) {
+					$listeners[] = [ (string) $config_id, $listened_event ];
+				}
+			}
+		}
+
+		foreach ( $listeners as [ $config_id, $listened_event ] ) {
+			if ( ! in_array( $listened_event, $fired_events, true ) ) {
+				$warnings->add(
+					'code_effect_event_not_fired',
+					sprintf( 'Interaction listens to event "%s" but no interaction in this call has fires_event "%1$s". It is removed on save unless an interaction in the same document already fires it. See %s.', $listened_event, Code_Effect_Warnings::GUIDE_URI ),
+					$config_id
+				);
+			}
+		}
 	}
 
 	private function resolve_items( array $items, string $config_id, Warnings_Bag $warnings ): array {
@@ -115,7 +149,7 @@ class Interactions_Applier {
 				$warnings->add(
 					'interaction_invalid',
 					sprintf(
-						'Interaction at index %d is invalid: a code effect needs a valid code_effect, and the triggers doubleClick, longPress, drag and resize need effect "code". See %s.',
+						'Interaction at index %d is invalid: a code effect needs a valid code_effect, and the triggers doubleClick, longPress, drag, resize and event need effect "code", trigger "event" needs a kebab-case "event" name, and fires_event is only valid on code effects. See %s.',
 						$item_index,
 						Code_Effect_Warnings::GUIDE_URI
 					),

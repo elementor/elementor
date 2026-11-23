@@ -281,7 +281,7 @@ class Test_Validation extends TestCase {
 
 	public function test_sanitize__will_throw_if_number_of_interactions_per_element_exceeds_the_limit() {
 		$interactions = [];
-		for ( $i = 0; $i < 6; $i++ ) {
+		for ( $i = 0; $i <= Validation::MAX_INTERACTIONS_PER_ELEMENT; $i++ ) {
 			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
 		}
 
@@ -308,7 +308,7 @@ class Test_Validation extends TestCase {
 
 	public function test_validate__will_not_throw_if_number_of_interactions_per_element_within_the_limit() {
 		$interactions = [];
-		for ( $i = 0; $i < 5; $i++ ) {
+		for ( $i = 0; $i < Validation::MAX_INTERACTIONS_PER_ELEMENT; $i++ ) {
 			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
 		}
 

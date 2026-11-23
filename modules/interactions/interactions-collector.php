@@ -48,6 +48,16 @@ class Interactions_Collector {
 		$this->interactions_data[ $element_id ] = $interactions;
 	}
 
+	private $component_roots = [];
+
+	public function register_component_roots( array $element_ids ) {
+		$this->component_roots = array_values( array_unique( array_merge( $this->component_roots, $element_ids ) ) );
+	}
+
+	public function get_component_roots() {
+		return $this->component_roots;
+	}
+
 	/**
 	 * Get all collected interaction data.
 	 *
@@ -72,5 +82,6 @@ class Interactions_Collector {
 	 */
 	public function reset() {
 		$this->interactions_data = [];
+		$this->component_roots = [];
 	}
 }

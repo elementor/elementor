@@ -150,6 +150,8 @@ export type InteractionItemPropValue = {
 	value: {
 		interaction_id?: StringPropValue;
 		trigger: StringPropValue;
+		event?: StringPropValue;
+		fires_event?: StringPropValue;
 		animation: AnimationPresetPropValue;
 		breakpoints?: InteractionBreakpointsPropValue;
 	};

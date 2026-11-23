@@ -2,8 +2,9 @@
 
 namespace Elementor\Modules\Interactions;
 
-use Elementor\Plugin;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -46,6 +47,10 @@ class Interactions_Frontend_Handler {
 
 		if ( empty( $elements_data ) || ! is_array( $elements_data ) ) {
 			return $elements_data;
+		}
+
+		if ( Component_Document::TYPE === get_post_type( $post_id ) ) {
+			Interactions_Collector::instance()->register_component_roots( array_column( $elements_data, 'id' ) );
 		}
 
 		$interactions_postmeta = new Interactions_Postmeta();

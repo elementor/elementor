@@ -59,14 +59,22 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 		return new Interactions_Applier( new Plain_Values_Resolver( $registry ), fn() => $can_save_code );
 	}
 
-	private function code_item( string $code, array $params ): array {
+	const EFFECT_NAME = 'Spring scale on hover';
+
+	private function code_item( string $code, array $params, ?string $name = self::EFFECT_NAME ): array {
+		$code_effect = [
+			'code' => $code,
+			'params' => $params,
+		];
+
+		if ( null !== $name ) {
+			$code_effect['name'] = $name;
+		}
+
 		return [
 			'animation' => [
 				'effect' => 'code',
-				'code_effect' => [
-					'code' => $code,
-					'params' => $params,
-				],
+				'code_effect' => $code_effect,
 			],
 		];
 	}
@@ -234,5 +242,29 @@ class Test_Interactions_Applier_Code_Effect extends TestCase {
 		$this->assertSame( [ 'code_effect_unused_param' ], array_column( $warnings, 'code' ) );
 		$this->assertStringContainsString( 'duration', $warnings[0]['message'] );
 		$this->assertStringNotContainsString( 'distance', $warnings[0]['message'] );
+	}
+
+	public function test_apply__keeps_code_effect_name() {
+		// Arrange
+		$item = $this->code_item( self::SCROLL_REVEAL_CODE, $this->scroll_reveal_params(), 'Add class "is-active"' );
+
+		// Act
+		[ $index, $codes ] = $this->apply( $item );
+
+		// Assert
+		$code_effect = $index['hero']['interactions']['items'][0]['value']['animation']['value']['code_effect']['value'];
+		$this->assertSame( 'Add class "is-active"', $code_effect['name']['value'] );
+		$this->assertSame( [], $codes );
+	}
+
+	public function test_apply__warns_when_code_effect_has_no_name() {
+		// Arrange
+		$item = $this->code_item( self::SCROLL_REVEAL_CODE, $this->scroll_reveal_params(), null );
+
+		// Act
+		[ , $codes ] = $this->apply( $item );
+
+		// Assert
+		$this->assertSame( [ 'code_effect_missing_name' ], $codes );
 	}
 }

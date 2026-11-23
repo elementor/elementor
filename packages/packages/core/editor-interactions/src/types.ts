@@ -55,6 +55,9 @@ export type TimesFieldProps = FieldProps< number >;
 export type TriggerFieldProps = FieldProps< string > & {
 	effect: string;
 };
+export type EffectFieldProps = FieldProps< string > & {
+	codeEffectName?: string;
+};
 
 export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;

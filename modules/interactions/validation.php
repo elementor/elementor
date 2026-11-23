@@ -14,7 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Validation {
 	private $elements_to_interactions_counter = [];
-	private $max_number_of_interactions = 5;
+	private $fired_events = [];
+	const MAX_INTERACTIONS_PER_ELEMENT = 10;
 
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom', 'code' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
@@ -27,13 +28,13 @@ class Validation {
 
 	public function validate() {
 		foreach ( $this->elements_to_interactions_counter as $element_id => $number_of_interactions ) {
-			if ( $number_of_interactions > $this->max_number_of_interactions ) {
+			if ( $number_of_interactions > self::MAX_INTERACTIONS_PER_ELEMENT ) {
 				throw new \Exception(
 					sprintf(
 						// translators: %1$s: element ID, %2$d: maximum number of interactions allowed.
 						esc_html__( 'Element %1$s has more than %2$d interactions', 'elementor' ),
 						esc_html( $element_id ),
-						esc_html( $this->max_number_of_interactions )
+						esc_html( self::MAX_INTERACTIONS_PER_ELEMENT )
 					)
 				);
 			}
@@ -42,7 +43,33 @@ class Validation {
 		return true;
 	}
 
+	private function collect_fired_events( $elements ): array {
+		$events = [];
+
+		foreach ( is_array( $elements ) ? $elements : [] as $element ) {
+			foreach ( $this->decode_interactions( $element['interactions'] ?? [] ) as $item ) {
+				$fired_event = is_array( $item['value'] ?? null ) ? Code_Effect_Value::get_fired_event( $item['value'] ) : null;
+
+				if ( null !== $fired_event ) {
+					$events[] = $fired_event;
+				}
+			}
+
+			$events = array_merge( $events, $this->collect_fired_events( $element['elements'] ?? [] ) );
+		}
+
+		return $events;
+	}
+
+	private function listens_to_existing_event( array $value ): bool {
+		$listened_event = Code_Effect_Value::get_listened_event( $value );
+
+		return null === $listened_event || in_array( $listened_event, $this->fired_events, true );
+	}
+
 	private function sanitize_document_data( $data ) {
+		$this->fired_events = $this->collect_fired_events( $data['elements'] ?? [] );
+
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$data['elements'] = $this->sanitize_elements_interactions( $data['elements'] );
 		}
@@ -158,7 +185,7 @@ class Validation {
 			return false;
 		}
 
-		return true;
+		return $this->listens_to_existing_event( $value );
 	}
 
 	private function is_valid_trigger_prop( $data ) {

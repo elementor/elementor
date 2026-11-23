@@ -2,6 +2,7 @@
 
 use Elementor\Modules\Interactions\Presets;
 use Elementor\Modules\Interactions\Props\Code_Effect_Params_Prop_Type;
+use Elementor\Modules\Interactions\Props\Code_Effect_Prop_Type;
 use Elementor\Modules\Interactions\Props\Code_Prop_Type;
 use Elementor\Modules\Interactions\Validators\Code_Effect_Value;
 use PHPUnit\Framework\TestCase;
@@ -50,8 +51,82 @@ class Test_Code_Effect_Value extends TestCase {
 		$this->assertTrue( $result );
 	}
 
+	public function test_is_valid__returns_true_for_named_code_effect() {
+		// Arrange.
+		$interaction_value = $this->interaction_value( 'hover', 'code', $this->code_effect( self::VALID_CODE, [], 'Add class "is-active"' ) );
+
+		// Act.
+		$result = Code_Effect_Value::is_valid( $interaction_value );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * @dataProvider invalid_names_provider
+	 */
+	public function test_is_valid__returns_false_for_invalid_name( string $name ) {
+		// Arrange.
+		$interaction_value = $this->interaction_value( 'hover', 'code', $this->code_effect( self::VALID_CODE, [], $name ) );
+
+		// Act.
+		$result = Code_Effect_Value::is_valid( $interaction_value );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function invalid_names_provider(): array {
+		return [
+			'multiline' => [ "Add class\nis-active" ],
+			'too long' => [ str_repeat( 'a', Code_Effect_Prop_Type::MAX_NAME_LENGTH + 1 ) ],
+		];
+	}
+
 	public function code_effect_triggers_provider(): array {
-		return array_map( fn( $trigger ) => [ $trigger ], Presets::triggers_options() );
+		$triggers = array_diff( Presets::triggers_options(), [ Presets::EVENT_TRIGGER ] );
+
+		return array_map( fn( $trigger ) => [ $trigger ], $triggers );
+	}
+
+	public function test_is_valid__returns_true_for_event_trigger_with_valid_event_name() {
+		// Arrange.
+		$interaction_value = $this->interaction_value( Presets::EVENT_TRIGGER, 'code', $this->code_effect( self::VALID_CODE ) );
+		$interaction_value['event'] = [ '$$type' => 'string', 'value' => 'card-open' ];
+
+		// Act.
+		$result = Code_Effect_Value::is_valid( $interaction_value );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 * @dataProvider invalid_event_names_provider
+	 */
+	public function test_is_valid__returns_false_for_event_trigger_with_missing_or_invalid_event_name( ?string $event_name ) {
+		// Arrange.
+		$interaction_value = $this->interaction_value( Presets::EVENT_TRIGGER, 'code', $this->code_effect( self::VALID_CODE ) );
+
+		if ( null !== $event_name ) {
+			$interaction_value['event'] = [ '$$type' => 'string', 'value' => $event_name ];
+		}
+
+		// Act.
+		$result = Code_Effect_Value::is_valid( $interaction_value );
+
+		// Assert.
+		$this->assertFalse( $result );
+	}
+
+	public function invalid_event_names_provider(): array {
+		return [
+			'missing' => [ null ],
+			'empty' => [ '' ],
+			'uppercase' => [ 'CardOpen' ],
+			'starts with digit' => [ '1-open' ],
+			'too long' => [ 'a' . str_repeat( 'b', Presets::EVENT_NAME_MAX_LENGTH ) ],
+		];
 	}
 
 	public function test_is_valid__returns_false_when_code_effect_trigger_is_unknown() {
@@ -227,10 +302,14 @@ class Test_Code_Effect_Value extends TestCase {
 		];
 	}
 
-	private function code_effect( string $code, array $params = [] ): array {
+	private function code_effect( string $code, array $params = [], ?string $name = null ): array {
 		$value = [
 			'code' => [ '$$type' => 'code', 'value' => $code ],
 		];
+
+		if ( null !== $name ) {
+			$value['name'] = [ '$$type' => 'string', 'value' => $name ];
+		}
 
 		if ( ! empty( $params ) ) {
 			$value['params'] = [ '$$type' => 'code-effect-params', 'value' => $params ];

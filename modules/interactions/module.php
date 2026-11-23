@@ -131,6 +131,7 @@ class Module extends BaseModule {
 		return [
 			'constants' => $this->get_presets()->defaults(),
 			'breakpoints' => $this->get_active_breakpoints(),
+			'componentRoots' => Interactions_Collector::instance()->get_component_roots(),
 		];
 	}
 

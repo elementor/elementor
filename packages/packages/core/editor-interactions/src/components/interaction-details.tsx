@@ -2,17 +2,26 @@ import * as React from 'react';
 import { type ComponentType, useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { type PropValue } from '@elementor/editor-props';
-import { Divider, Grid } from '@elementor/ui';
+import { BoltIcon } from '@elementor/icons';
+import { Divider, Grid, UnstableTag as Tag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import { type FieldProps, type InteractionItemValue, type SizeStringValue, type TriggerFieldProps } from '../types';
+import {
+	type EffectFieldProps,
+	type FieldProps,
+	type InteractionItemValue,
+	type SizeStringValue,
+	type TriggerFieldProps,
+} from '../types';
 import {
 	CODE_EFFECT,
 	CODE_EFFECT_EXTRA_TRIGGERS,
 	createAnimationPreset,
 	createString,
+	EVENT_TRIGGER,
 	extractBoolean,
+	extractCodeEffectName,
 	extractSize,
 	extractString,
 } from '../utils/prop-value-utils';
@@ -167,8 +176,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		codeEffect,
 	};
 
+	const eventName = extractString( interaction.event );
+	const firesEvent = extractString( interaction.fires_event );
+	const isListening = EVENT_TRIGGER === trigger && !! eventName;
 	const TriggerControl = useControlComponent( 'trigger' ) as ComponentType< TriggerFieldProps > | null;
-	const EffectControl = useControlComponent( 'effect' );
+	const EffectControl = useControlComponent( 'effect' ) as ComponentType< EffectFieldProps > | null;
 	const ReplayControl = useControlComponent( 'replay', controlVisibilityConfig.replay( interactionValues ) );
 	const RelativeToControl = useControlComponent(
 		'relativeTo',
@@ -230,8 +242,16 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			effect
 		);
 
+		const interactionWithoutEvents = { ...interaction };
+		delete interactionWithoutEvents.event;
+
+		if ( CODE_EFFECT !== nextEffect ) {
+			delete interactionWithoutEvents.fires_event;
+		}
+
 		const updatedInteraction = {
-			...interaction,
+			...interactionWithoutEvents,
+			...( EVENT_TRIGGER === nextTrigger && eventName && { event: createString( eventName ) } ),
 			interaction_id: interaction.interaction_id,
 			trigger: createString( nextTrigger ),
 			animation: createAnimationPreset( {
@@ -276,6 +296,18 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					</Field>
 				) }
 
+				{ isListening && (
+					<Field label={ __( 'Event', 'elementor' ) }>
+						<Tag fullWidth label={ eventName } startIcon={ <BoltIcon fontSize="tiny" /> } />
+					</Field>
+				) }
+
+				{ firesEvent && (
+					<Field label={ __( 'Fires event', 'elementor' ) }>
+						<Tag fullWidth label={ firesEvent } startIcon={ <BoltIcon fontSize="tiny" /> } />
+					</Field>
+				) }
+
 				{ ReplayControl && (
 					<Field label={ __( 'Replay', 'elementor' ) }>
 						<ReplayControl
@@ -292,7 +324,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			<Grid container spacing={ 1.5 }>
 				{ EffectControl && (
 					<Field label={ __( 'Effect', 'elementor' ) }>
-						<EffectControl value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+						<EffectControl
+							value={ effect }
+							onChange={ ( v ) => updateInteraction( { effect: v } ) }
+							codeEffectName={ extractCodeEffectName( codeEffect ) }
+						/>
 					</Field>
 				) }
 

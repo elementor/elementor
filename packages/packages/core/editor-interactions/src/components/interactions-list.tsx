@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Repeater, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useInteractionsContext } from '../contexts/interactions-context';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
@@ -18,7 +18,7 @@ import { trackInteractionCreated } from '../utils/tracking';
 import { DEFAULT_VALUES } from './interaction-details';
 import { InteractionsHeaderSlot } from './interactions-header-location';
 import { InteractionsListItem } from './interactions-list-item';
-export const MAX_NUMBER_OF_INTERACTIONS = 5;
+export const MAX_NUMBER_OF_INTERACTIONS = 10;
 
 export type InteractionListProps = {
 	onSelectInteractions: ( interactions: ElementInteractions ) => void;
@@ -66,9 +66,13 @@ export function InteractionsList( props: InteractionListProps ) {
 		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
 			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
 			<Box component="span">
-				{ __(
-					"You've reached the limit of 5 interactions for this element. Please remove an interaction before creating a new one.",
-					'elementor'
+				{ sprintf(
+					/* translators: %d: maximum number of interactions per element. */
+					__(
+						"You've reached the limit of %d interactions for this element. Please remove an interaction before creating a new one.",
+						'elementor'
+					),
+					MAX_NUMBER_OF_INTERACTIONS
 				) }
 			</Box>
 		</Alert>

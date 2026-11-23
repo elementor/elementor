@@ -4,6 +4,8 @@ Pick a card, build the markup it targets, expose the listed fields as `code_effe
 
 Each card is adapted from a free motion.dev vanilla JS example (slug shown; never use Motion+ examples). Grades are motion.dev's own MotionScore filter. Cards marked **14.x API** use APIs that only exist in the bundled Motion 14.10.1 (`drag`, `arc`, `stagger` `grid` / `"edges"` / `"random"`, `press` `count` / `hold`); don't take older snippets for them from memory.
 
+**Name** is `code_effect.name`, a short imperative label of what the effect does (for example `Spring scale on hover`). Set it on every code effect; the editor shows it instead of "Code".
+
 **Trigger** is the interaction's `trigger`. Elementor wires it and runs the code when it fires; the snippet never calls `inView`, `scroll`, `hover`, `press`, `drag` or `resize`. See the trigger table in the guide for what the returned function does.
 
 **Target** says what the code animates: `self` is the element, `children` are its direct children (build them as composition children).
@@ -47,6 +49,12 @@ Fields: `scale`. Snippet: guide example 8.
 ### Press and hold — `js-press-hold` — S — 14.x API
 Trigger: `longPress`. APIs: `animate` (spring). Animates: `scale`. Target: self.
 Fields: `scale`, `bounce`. Snippet: guide example 7.
+
+## Events
+
+### Parent fires, one child reacts — S
+Triggers: any trigger on the parent with `fires_event: "name"` whose code calls `emit()`; the child has `trigger: "event"` with the same `event`. APIs: `animate`. Animates: `opacity`, `y`. Scope: the child must be inside the emitter, or both inside the same component. If all children behave the same, skip events and animate `element.children` from the parent.
+Fields: `distance`, `duration`. Snippet: guide Events section.
 
 ## Entrances and transforms
 
