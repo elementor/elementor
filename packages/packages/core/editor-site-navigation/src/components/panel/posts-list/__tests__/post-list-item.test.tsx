@@ -74,8 +74,7 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		renderWithQuery( <PostListItem post={ post } /> );
 
 		// Assert.
-		const label = screen.getByText( 'draft', { exact: false } );
-		expect( label ).toBeInTheDocument();
+		expect( screen.getByText( 'Draft' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render actions menu', () => {

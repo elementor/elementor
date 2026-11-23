@@ -7,8 +7,9 @@ import { TILES_PER_ROW } from '../consts';
 import { type ElementGroup as ElementGroupData } from '../utils/group-widgets';
 import { ElementTile } from './element-tile';
 
-export function ElementGroup( { group }: { group: ElementGroupData } ) {
-	const [ isOpen, setIsOpen ] = useState( true );
+export function ElementGroup( { group, forceOpen = false }: { group: ElementGroupData; forceOpen?: boolean } ) {
+	const [ isExpanded, setIsExpanded ] = useState( true );
+	const isOpen = isExpanded || forceOpen;
 	const contentId = useId();
 
 	return (
@@ -18,7 +19,7 @@ export function ElementGroup( { group }: { group: ElementGroupData } ) {
 				data-nav-item="header"
 				data-group-id={ group.id }
 				aria-controls={ contentId }
-				onClick={ () => setIsOpen( ( open ) => ! open ) }
+				onClick={ () => setIsExpanded( ( expanded ) => ! expanded ) }
 				sx={ {
 					width: '100%',
 					justifyContent: 'space-between',

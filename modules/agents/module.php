@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents;
 
+use Elementor\Api;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Kits\Documents\Kit;
@@ -13,6 +14,7 @@ use Elementor\Modules\Agents\AdminNotices\Agent_Ready_Notice;
 use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
 use Elementor\Modules\Agents\Classes\Dashboard_Overview_Block;
+use Elementor\Modules\Agents\Classes\Edge_Purge_Urls;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
@@ -54,8 +56,8 @@ use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
+use Elementor\Modules\Ai\Module as Ai_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\WidgetCreation\Module as Widget_Creation_Module;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -103,11 +105,20 @@ class Module extends BaseModule {
 	 */
 	const OPTION_OVERRIDES = 'elementor_agents_llms_overrides';
 
+	const EDGE_VISIBLE_MODULES = [
+		Agent_Ready_Settings::MODULE_LLMS_TXT,
+		Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+		Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL,
+		Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+		Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+	];
+
 	private Feature_Registry $feature_registry;
 	private Llms_Cache $cache;
 	private Content_Generator $generator;
 	private Robots_Txt_Handler $robots_handler;
 	private Well_Known_Router $well_known_router;
+	private Edge_Purge_Urls $edge_purge_urls;
 	private Agent_Ready_Settings $settings;
 	private Llms_Manual_Content $manual_content;
 	private Bot_Catalog $bot_catalog;
@@ -199,6 +210,7 @@ class Module extends BaseModule {
 
 		$this->well_known_router = new Well_Known_Router( $this->settings );
 		$this->add_component( 'well_known_router', $this->well_known_router );
+		$this->edge_purge_urls = new Edge_Purge_Urls( $this->well_known_router );
 
 		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ) ) {
 			$this->well_known_router->init();
@@ -292,6 +304,12 @@ class Module extends BaseModule {
 			[ 'elementor-common' ],
 			ELEMENTOR_VERSION,
 			true
+		);
+
+		wp_localize_script(
+			self::DASHBOARD_TRACKING_SCRIPT_HANDLE,
+			self::CONFIG_OBJECT_NAME,
+			[ 'siteKey' => Api::get_site_key() ]
 		);
 	}
 
@@ -759,7 +777,9 @@ class Module extends BaseModule {
 	 * Handles add_option_{$option} hook (2 args: $option, $value).
 	 */
 	public function on_settings_add( string $option, $value ): void {
-		$this->invalidate_cache( 0 );
+		$should_notify_edge = $this->should_notify_edge();
+
+		$this->invalidate_cache( 0, $should_notify_edge );
 
 		if ( isset( $this->well_known_router ) ) {
 			$this->well_known_router->flush_all_caches();
@@ -771,6 +791,10 @@ class Module extends BaseModule {
 		if ( Agent_Ready_Settings::OPTION === $option ) {
 			$this->clear_caches_for_newly_active_modules( null, $value );
 		}
+
+		if ( $should_notify_edge ) {
+			$this->purge_edge_urls();
+		}
 	}
 
 	/**
@@ -778,7 +802,10 @@ class Module extends BaseModule {
 	 * Handles update_option_{$option} hook (3 args: $old_value, $value, $option).
 	 */
 	public function on_settings_update( $old_value, $new_value, string $option ): void {
-		$this->invalidate_cache( 0 );
+		$previous_settings  = Agent_Ready_Settings::OPTION === $option ? $old_value : null;
+		$should_notify_edge = $this->should_notify_edge( $previous_settings );
+
+		$this->invalidate_cache( 0, $should_notify_edge );
 
 		if ( isset( $this->well_known_router ) ) {
 			$this->well_known_router->flush_all_caches();
@@ -789,6 +816,10 @@ class Module extends BaseModule {
 
 		if ( Agent_Ready_Settings::OPTION === $option ) {
 			$this->clear_caches_for_newly_active_modules( $old_value, $new_value );
+		}
+
+		if ( $should_notify_edge ) {
+			$this->purge_edge_urls();
 		}
 	}
 
@@ -1045,10 +1076,10 @@ class Module extends BaseModule {
 		exit;
 	}
 
-	private function invalidate_cache( int $post_id = 0 ): void {
+	private function invalidate_cache( int $post_id = 0, bool $force_signal = false ): void {
 		$this->cache->invalidate();
 
-		if ( ! $this->settings->has_any_active( [
+		if ( ! $force_signal && ! $this->settings->has_any_active( [
 			Agent_Ready_Settings::MODULE_LLMS_TXT,
 			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
 		] ) ) {
@@ -1064,6 +1095,41 @@ class Module extends BaseModule {
 		do_action( 'elementor/agents/llms_txt/cache_invalidated', $post_id );
 	}
 
+	private function should_notify_edge( $previous_settings = null ): bool {
+		return $this->settings->has_any_active( self::EDGE_VISIBLE_MODULES )
+			|| $this->has_enabled_module( $previous_settings );
+	}
+
+	private function has_enabled_module( $settings ): bool {
+		if ( ! is_array( $settings ) ) {
+			return false;
+		}
+
+		foreach ( self::EDGE_VISIBLE_MODULES as $module ) {
+			if ( ! empty( $settings[ $module ]['enabled'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function purge_edge_urls(): void {
+		if ( ! isset( $this->edge_purge_urls ) ) {
+			return;
+		}
+
+		/**
+		 * Fires when Agent Ready settings change, so a CDN or edge cache can purge the
+		 * affected URLs. Markdown variants are per post and content-negotiated, so
+		 * subscribers that can purge a whole site should do so.
+		 *
+		 * @param string[] $urls      Absolute URLs of Agent Ready resources.
+		 * @param bool     $purge_all Whether every Agent Ready response on the site is stale.
+		 */
+		do_action( 'elementor/agents/purge_urls', $this->edge_purge_urls->get_urls(), true );
+	}
+
 	private function get_app_config(): array {
 		$this->settings->ensure_option_exists();
 
@@ -1071,6 +1137,7 @@ class Module extends BaseModule {
 
 		return [
 			'isActivated'        => $this->settings->is_activated(),
+			'siteKey'            => Api::get_site_key(),
 			'readinessScoreUrl'  => admin_url( 'admin.php?page=' . self::PAGE_ID ),
 			'llms'               => $this->get_llms_state( $unavailable_reasons ),
 			'markdown'           => $this->get_markdown_state(),
@@ -1079,6 +1146,12 @@ class Module extends BaseModule {
 			'scanner'            => $this->get_scanner_state(),
 			'browserTools'       => $this->get_browser_tools_state( $unavailable_reasons ),
 		];
+	}
+
+	private function is_angie_enabled(): bool {
+		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
+
+		return $ai_module instanceof Ai_Module && $ai_module->is_angie_enabled();
 	}
 
 	private function get_scanner_state(): array {
@@ -1091,7 +1164,7 @@ class Module extends BaseModule {
 			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
-			'isAngieActive'          => Widget_Creation_Module::is_angie_enabled(),
+			'isAngieActive'          => $this->is_angie_enabled(),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'scoreTiers'             => Score_Tiers::to_array(),

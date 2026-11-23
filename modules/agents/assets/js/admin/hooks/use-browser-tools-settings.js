@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { FEATURE_BROWSER_TOOLS } from '../analytics/agent-ready-events';
+import { trackFeatureToggled } from '../analytics/track-agent-ready-event';
 import { saveAgentReadySettings } from '../api';
 import { BROWSER_TOOLS_SETTINGS_KEY, BUSINESS_DETAILS_SETTINGS_KEY } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
@@ -14,6 +16,7 @@ export const useBrowserToolsSettings = ( initialState ) => {
 		const previousIsEnabled = isEnabled;
 		const nextIsEnabled = ! isEnabled;
 
+		trackFeatureToggled( { featureName: FEATURE_BROWSER_TOOLS, isEnabled: nextIsEnabled, hasConflict: false } );
 		setSaveError( '' );
 		setIsSaving( true );
 		setIsEnabled( nextIsEnabled );

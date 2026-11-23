@@ -71,3 +71,139 @@ describe( 'AtomicElementsPanel groups', () => {
 		expect( screen.queryByRole( 'button', { expanded: true } ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'AtomicElementsPanel search', () => {
+	afterEach( () => {
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
+	} );
+
+	it( 'should filter tiles by title and hide empty groups', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'HEAD' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Heading' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Flexbox' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should match by keyword', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( {
+			'e-heading': { title: 'Heading', atomic: true, controls: {}, keywords: [ 'title' ] },
+		} as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'title' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Heading' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should show a no-results message, and restore the list when cleared', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'zzz' } } );
+
+		// Assert.
+		expect( screen.getAllByText( /No elements found/ ).length ).toBeGreaterThan( 0 );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: '' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should match by widget type', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'e-flex' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Heading' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should announce the results count', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'e-' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( '3 elements found.' );
+	} );
+
+	it( 'should keep a matching locked tile in the results', () => {
+		// Arrange.
+		( window as unknown as { elementor: unknown } ).elementor = {
+			config: {
+				atomicWidgetPromotions: [
+					{ type: 'pro', widgets: [ { name: 'e-pro-carousel', title: 'Pro Carousel', categories: '[]' } ] },
+				],
+			},
+		};
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'carousel' } } );
+
+		// Assert.
+		expect( screen.getAllByRole( 'button', { name: /Pro Carousel/ } ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'button', { name: 'Flexbox' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should use the singular form for a single result', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'flexbox' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( '1 element found.' );
+	} );
+
+	it( 'should show matches of a collapsed group while searching', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Layout' } ) );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'searchbox' ), { target: { value: 'flexbox' } } );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should clear the search on Escape', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		render( <AtomicElementsPanel { ...props } /> );
+		const input = screen.getByRole( 'searchbox' );
+		fireEvent.change( input, { target: { value: 'flexbox' } } );
+
+		// Act.
+		fireEvent.keyDown( input, { key: 'Escape' } );
+
+		// Assert.
+		expect( input ).toHaveValue( '' );
+	} );
+} );
