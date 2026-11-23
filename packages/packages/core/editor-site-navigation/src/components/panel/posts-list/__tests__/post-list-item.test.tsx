@@ -74,8 +74,7 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		renderWithQuery( <PostListItem post={ post } /> );
 
 		// Assert.
-		const label = screen.getByText( 'draft', { exact: false } );
-		expect( label ).toBeInTheDocument();
+		expect( screen.getByText( 'Draft' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render actions menu', () => {
@@ -99,12 +98,9 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		// Act.
 		renderWithQuery( <PostListItem post={ post } /> );
 
-		const buttons = screen.getAllByRole( 'button' );
-		// Button to open menu
-		const button = buttons[ 1 ];
+		const menuButton = screen.getByRole( 'button', { name: 'More actions' } );
 
-		// Open menu
-		fireEvent.click( button );
+		fireEvent.click( menuButton );
 
 		// Assert.
 		actions.forEach( ( action ) => {
@@ -170,8 +166,7 @@ describe( '@elementor/editor-site-navigation - PostListItem', () => {
 		);
 
 		// Act #1 - enter edit mode.
-		const buttons = screen.getAllByRole( 'button' );
-		fireEvent.click( buttons[ 1 ] ); // Button to open the actions' menu of the post.
+		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
 		const renameButton = screen.getByRole( 'menuitem', { name: 'Rename' } );
 		fireEvent.click( renameButton );

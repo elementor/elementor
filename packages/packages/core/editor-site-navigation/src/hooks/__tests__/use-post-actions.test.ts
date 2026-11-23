@@ -87,4 +87,20 @@ describe( '@elementor/site-settings/use-post-actions', () => {
 
 		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
 	} );
+
+	it( 'invalidates search queries when a post is updated', async () => {
+		const { component, queryClient } = renderHookWithQuery( () => usePostActions( 'page' ) );
+		const { updatePost } = component.result.current;
+
+		const listQueryKey = postsQueryKey( 'page' );
+		const searchQueryKey = postsQueryKey( 'page', 'about' );
+
+		await queryClient.setQueryData( listQueryKey, { posts: [] } );
+		await queryClient.setQueryData( searchQueryKey, { posts: [] } );
+
+		await updatePost.mutateAsync( { id: 1, title: 'About us' } );
+
+		expect( queryClient.getQueryState( listQueryKey )?.isInvalidated ).toBe( true );
+		expect( queryClient.getQueryState( searchQueryKey )?.isInvalidated ).toBe( true );
+	} );
 } );

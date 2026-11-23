@@ -102,6 +102,8 @@ const llmsConfig = {
 	hasPhysicalFile: false,
 	fileUrl: 'https://example.com/llms.txt',
 	postTypes: [ { name: 'page', label: 'Pages', count: 2, included: true } ],
+	customText: '',
+	maxCustomTextLength: 2000,
 };
 
 const markdownConfig = {
@@ -536,7 +538,7 @@ describe( 'Agents Ready App', () => {
 
 		// Assert - the first module starts open; the rest stay collapsed
 		expect( screen.queryByText( 'Help AI agents understand and recommend your site' ) ).toBeNull();
-		expect( screen.getByText( 'Help AI agents understand your site' ) ).toBeTruthy();
+		expect( screen.getByText( 'Help agents find your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Help agents find what your site offers' ) ).toBeTruthy();
@@ -546,7 +548,7 @@ describe( 'Agents Ready App', () => {
 
 		// Assert
 		expect( screen.getByText( 'Help AI agents understand and recommend your site' ) ).toBeTruthy();
-		expect( screen.queryByText( 'Help AI agents understand your site' ) ).toBeNull();
+		expect( screen.queryByText( 'Help agents find your content' ) ).toBeNull();
 		expect( screen.getByText( 'Help agents get clearer content' ) ).toBeTruthy();
 		expect( screen.getByText( 'Decide how AI agents can use your content' ) ).toBeTruthy();
 	} );
@@ -601,5 +603,68 @@ describe( 'ModulesStatus', () => {
 		// Assert
 		expect( screen.getByText( '0/4' ) ).toBeTruthy();
 		expect( screen.getByTestId( 'circle-x-icon' ) ).toBeTruthy();
+	} );
+} );
+
+describe( 'Agents Ready App analytics', () => {
+	let dispatchEvent;
+
+	beforeEach( () => {
+		dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+	} );
+
+	afterEach( () => {
+		delete window.elementorCommon;
+	} );
+
+	it( 'tracks the browser tools module as a feature toggle', async () => {
+		// Arrange
+		renderActiveApp();
+
+		// Act
+		fireEvent.click( getModuleSwitch( BROWSER_TOOLS_SWITCH_INDEX ) );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_feature_toggled', expect.objectContaining( {
+			feature_name: 'browser_tools',
+			interaction_result: 'feature_disabled',
+			has_conflict: false,
+		} ) );
+		await waitFor( () => {
+			expect( getModuleSwitch( BROWSER_TOOLS_SWITCH_INDEX ).disabled ).toBe( false );
+		} );
+	} );
+
+	it( 'tracks a conflict for every module with a physical file when the master toggle is used', async () => {
+		// Arrange
+		renderActiveApp( {
+			llmsConfig: { ...llmsConfig, hasPhysicalFile: true, unavailableReason: PHYSICAL_LLMS_REASON },
+			botAccessConfig: { ...botAccessConfig, hasPhysicalFile: true, unavailableReason: PHYSICAL_ROBOTS_REASON },
+		} );
+
+		// Act
+		clickTurnOff();
+		confirmTurnOff();
+
+		// Assert
+		const conflictFeatures = dispatchEvent.mock.calls
+			.filter( ( [ eventName ] ) => 'agent_readiness_feature_conflict_detected' === eventName )
+			.map( ( [ , payload ] ) => payload.feature_name );
+		expect( conflictFeatures ).toEqual( [ 'llms_txt', 'bot_access' ] );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+	} );
+
+	it( 'does not track a conflict when the master toggle is used without a physical file', async () => {
+		// Arrange
+		renderActiveApp();
+
+		// Act
+		clickTurnOff();
+		confirmTurnOff();
+
+		// Assert
+		expect( dispatchEvent ).not.toHaveBeenCalledWith( 'agent_readiness_feature_conflict_detected', expect.anything() );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
 	} );
 } );

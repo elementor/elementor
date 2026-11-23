@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Agents;
 
+use Elementor\Api;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Kits\Documents\Kit;
@@ -12,6 +13,8 @@ use Elementor\Modules\Agents\AdminMenuItems\Editor_One_Agents_Ready_Menu;
 use Elementor\Modules\Agents\AdminNotices\Agent_Ready_Notice;
 use Elementor\Modules\Agents\Classes\Agents_Sidebar_Config;
 use Elementor\Modules\Agents\Classes\Content_Items_Ajax;
+use Elementor\Modules\Agents\Classes\Dashboard_Overview_Block;
+use Elementor\Modules\Agents\Classes\Edge_Purge_Urls;
 use Elementor\Modules\Agents\Classes\Feature_Component;
 use Elementor\Modules\Agents\Classes\Feature_Registry;
 use Elementor\Modules\Agents\Classes\Llms_Content_Ajax;
@@ -30,6 +33,7 @@ use Elementor\Modules\Agents\Classes\Scanner_Client;
 use Elementor\Modules\Agents\Classes\Scanner_Report_Store;
 use Elementor\Modules\Agents\Classes\Scanner_Orchestrator;
 use Elementor\Modules\Agents\Classes\Scanner_Rest_Api;
+use Elementor\Modules\Agents\Classes\Score_Tiers;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Agent_Skills;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Api_Catalog;
 use Elementor\Modules\Agents\Components\Discovery\Well_Known\Ard_Catalog;
@@ -77,6 +81,10 @@ class Module extends BaseModule {
 
 	const CONFIG_OBJECT_NAME = 'elementorAgentsReadyConfig';
 
+	const DASHBOARD_TRACKING_SCRIPT_HANDLE = 'e-agents-dashboard-widget';
+
+	const DASHBOARD_HOOK_SUFFIX = 'index.php';
+
 	const AJAX_ACTIVATE_ACTION = 'agents_ready_activate';
 
 	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
@@ -96,11 +104,20 @@ class Module extends BaseModule {
 	 */
 	const OPTION_OVERRIDES = 'elementor_agents_llms_overrides';
 
+	const EDGE_VISIBLE_MODULES = [
+		Agent_Ready_Settings::MODULE_LLMS_TXT,
+		Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT,
+		Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL,
+		Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
+		Agent_Ready_Settings::MODULE_BROWSER_TOOLS,
+	];
+
 	private Feature_Registry $feature_registry;
 	private Llms_Cache $cache;
 	private Content_Generator $generator;
 	private Robots_Txt_Handler $robots_handler;
 	private Well_Known_Router $well_known_router;
+	private Edge_Purge_Urls $edge_purge_urls;
 	private Agent_Ready_Settings $settings;
 	private Llms_Manual_Content $manual_content;
 	private Bot_Catalog $bot_catalog;
@@ -112,6 +129,7 @@ class Module extends BaseModule {
 	private Webmcp_Browser_Tools $webmcp_browser_tools;
 	private Seo_Llms_Txt_Detector $seo_detector;
 	private Module_Availability $module_availability;
+	private Dashboard_Overview_Block $dashboard_overview_block;
 
 	public function get_name() {
 		return 'agents';
@@ -136,6 +154,10 @@ class Module extends BaseModule {
 		$this->settings->register();
 
 		( new Scanner_Rest_Api( $this->scanner_orchestrator ) )->register_hooks();
+
+		$this->dashboard_overview_block = new Dashboard_Overview_Block( $this->scanner_store );
+		$this->dashboard_overview_block->register();
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_dashboard_tracking' ] );
 
 		$watched_options = array_merge(
 			[ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ],
@@ -187,6 +209,7 @@ class Module extends BaseModule {
 
 		$this->well_known_router = new Well_Known_Router( $this->settings );
 		$this->add_component( 'well_known_router', $this->well_known_router );
+		$this->edge_purge_urls = new Edge_Purge_Urls( $this->well_known_router );
 
 		if ( $this->settings->is_module_active( Agent_Ready_Settings::MODULE_AGENT_DISCOVERY ) ) {
 			$this->well_known_router->init();
@@ -267,6 +290,26 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
+	}
+
+	public function enqueue_dashboard_tracking( string $hook_suffix ): void {
+		if ( self::DASHBOARD_HOOK_SUFFIX !== $hook_suffix || ! $this->dashboard_overview_block->should_render() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			self::DASHBOARD_TRACKING_SCRIPT_HANDLE,
+			$this->get_js_assets_url( 'agents-dashboard-widget' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			self::DASHBOARD_TRACKING_SCRIPT_HANDLE,
+			self::CONFIG_OBJECT_NAME,
+			[ 'siteKey' => Api::get_site_key() ]
+		);
 	}
 
 	public function register_ajax_actions( Ajax $ajax ): void {
@@ -554,7 +597,7 @@ class Module extends BaseModule {
 			return $cached;
 		}
 
-		$overrides = $this->get_overrides();
+		$overrides = array_merge( $this->get_overrides(), [ 'custom_text' => $this->settings->get_llms_custom_text() ] );
 		$content   = $this->generator->generate_llms_txt( $overrides, $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() );
 
 		if ( '' !== $content ) {
@@ -733,7 +776,9 @@ class Module extends BaseModule {
 	 * Handles add_option_{$option} hook (2 args: $option, $value).
 	 */
 	public function on_settings_add( string $option, $value ): void {
-		$this->invalidate_cache( 0 );
+		$should_notify_edge = $this->should_notify_edge();
+
+		$this->invalidate_cache( 0, $should_notify_edge );
 
 		if ( isset( $this->well_known_router ) ) {
 			$this->well_known_router->flush_all_caches();
@@ -745,6 +790,10 @@ class Module extends BaseModule {
 		if ( Agent_Ready_Settings::OPTION === $option ) {
 			$this->clear_caches_for_newly_active_modules( null, $value );
 		}
+
+		if ( $should_notify_edge ) {
+			$this->purge_edge_urls();
+		}
 	}
 
 	/**
@@ -752,7 +801,10 @@ class Module extends BaseModule {
 	 * Handles update_option_{$option} hook (3 args: $old_value, $value, $option).
 	 */
 	public function on_settings_update( $old_value, $new_value, string $option ): void {
-		$this->invalidate_cache( 0 );
+		$previous_settings  = Agent_Ready_Settings::OPTION === $option ? $old_value : null;
+		$should_notify_edge = $this->should_notify_edge( $previous_settings );
+
+		$this->invalidate_cache( 0, $should_notify_edge );
 
 		if ( isset( $this->well_known_router ) ) {
 			$this->well_known_router->flush_all_caches();
@@ -763,6 +815,10 @@ class Module extends BaseModule {
 
 		if ( Agent_Ready_Settings::OPTION === $option ) {
 			$this->clear_caches_for_newly_active_modules( $old_value, $new_value );
+		}
+
+		if ( $should_notify_edge ) {
+			$this->purge_edge_urls();
 		}
 	}
 
@@ -1019,10 +1075,10 @@ class Module extends BaseModule {
 		exit;
 	}
 
-	private function invalidate_cache( int $post_id = 0 ): void {
+	private function invalidate_cache( int $post_id = 0, bool $force_signal = false ): void {
 		$this->cache->invalidate();
 
-		if ( ! $this->settings->has_any_active( [
+		if ( ! $force_signal && ! $this->settings->has_any_active( [
 			Agent_Ready_Settings::MODULE_LLMS_TXT,
 			Agent_Ready_Settings::MODULE_AGENT_DISCOVERY,
 		] ) ) {
@@ -1038,6 +1094,41 @@ class Module extends BaseModule {
 		do_action( 'elementor/agents/llms_txt/cache_invalidated', $post_id );
 	}
 
+	private function should_notify_edge( $previous_settings = null ): bool {
+		return $this->settings->has_any_active( self::EDGE_VISIBLE_MODULES )
+			|| $this->has_enabled_module( $previous_settings );
+	}
+
+	private function has_enabled_module( $settings ): bool {
+		if ( ! is_array( $settings ) ) {
+			return false;
+		}
+
+		foreach ( self::EDGE_VISIBLE_MODULES as $module ) {
+			if ( ! empty( $settings[ $module ]['enabled'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function purge_edge_urls(): void {
+		if ( ! isset( $this->edge_purge_urls ) ) {
+			return;
+		}
+
+		/**
+		 * Fires when Agent Ready settings change, so a CDN or edge cache can purge the
+		 * affected URLs. Markdown variants are per post and content-negotiated, so
+		 * subscribers that can purge a whole site should do so.
+		 *
+		 * @param string[] $urls      Absolute URLs of Agent Ready resources.
+		 * @param bool     $purge_all Whether every Agent Ready response on the site is stale.
+		 */
+		do_action( 'elementor/agents/purge_urls', $this->edge_purge_urls->get_urls(), true );
+	}
+
 	private function get_app_config(): array {
 		$this->settings->ensure_option_exists();
 
@@ -1045,6 +1136,7 @@ class Module extends BaseModule {
 
 		return [
 			'isActivated'        => $this->settings->is_activated(),
+			'siteKey'            => Api::get_site_key(),
 			'readinessScoreUrl'  => admin_url( 'admin.php?page=' . self::PAGE_ID ),
 			'llms'               => $this->get_llms_state( $unavailable_reasons ),
 			'markdown'           => $this->get_markdown_state(),
@@ -1068,6 +1160,7 @@ class Module extends BaseModule {
 			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
+			'scoreTiers'             => Score_Tiers::to_array(),
 			'retryAt'                => null === $retry_at ? null : gmdate( 'c', $retry_at ),
 		];
 	}
@@ -1153,13 +1246,15 @@ class Module extends BaseModule {
 
 	private function get_llms_state( array $unavailable_reasons ): array {
 		return [
-			'enabled'            => $this->settings->is_llms_enabled(),
-			'isManuallyEdited'   => $this->settings->is_llms_manually_edited(),
-			'hasPhysicalFile'    => self::has_physical_llms_file(),
-			'unavailableReason'  => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
-			'fileUrl'            => home_url( '/' . self::LLMS_FILENAME ),
-			'postTypes'          => $this->get_post_type_rows( $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() ),
-			'excludedPostIds'    => $this->settings->get_llms_excluded_post_ids(),
+			'enabled'             => $this->settings->is_llms_enabled(),
+			'isManuallyEdited'    => $this->settings->is_llms_manually_edited(),
+			'hasPhysicalFile'     => self::has_physical_llms_file(),
+			'unavailableReason'   => $unavailable_reasons[ Agent_Ready_Settings::MODULE_LLMS_TXT ] ?? null,
+			'fileUrl'             => home_url( '/' . self::LLMS_FILENAME ),
+			'postTypes'           => $this->get_post_type_rows( $this->settings->get_llms_post_types(), $this->settings->get_llms_excluded_post_ids() ),
+			'excludedPostIds'     => $this->settings->get_llms_excluded_post_ids(),
+			'customText'          => $this->settings->get_llms_custom_text(),
+			'maxCustomTextLength' => Agent_Ready_Settings::MAX_LLMS_CUSTOM_TEXT_LENGTH,
 		];
 	}
 

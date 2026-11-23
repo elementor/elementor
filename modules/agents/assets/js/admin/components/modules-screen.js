@@ -8,6 +8,7 @@ import Stack from '@elementor/ui/Stack';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { FEATURE_BOT_ACCESS, FEATURE_LLMS_TXT } from '../analytics/agent-ready-events';
 import {
 	AGENT_DISCOVERY_SETTINGS_KEY,
 	BOT_ACCESS_SETTINGS_KEY,
@@ -65,9 +66,9 @@ export const ModulesScreen = ( { readinessScoreUrl, agentDiscoveryConfig, botAcc
 	const isBotAccessUnavailable = Boolean( botAccessSettings.unavailableReason );
 	const isBrowserToolsUnavailable = Boolean( browserToolsSettings.unavailableReason );
 	const allModules = useAllModulesToggle( [
-		{ settingsKey: LLMS_SETTINGS_KEY, settings: llmsSettings, isToggleable: ! isLlmsUnavailable },
+		{ settingsKey: LLMS_SETTINGS_KEY, featureName: FEATURE_LLMS_TXT, settings: llmsSettings, isToggleable: ! isLlmsUnavailable },
 		{ settingsKey: MARKDOWN_SETTINGS_KEY, settings: markdownSettings, isToggleable: true },
-		{ settingsKey: BOT_ACCESS_SETTINGS_KEY, settings: botAccessSettings, isToggleable: ! isBotAccessUnavailable },
+		{ settingsKey: BOT_ACCESS_SETTINGS_KEY, featureName: FEATURE_BOT_ACCESS, settings: botAccessSettings, isToggleable: ! isBotAccessUnavailable },
 		{ settingsKey: AGENT_DISCOVERY_SETTINGS_KEY, settings: agentDiscoverySettings, isToggleable: true },
 		{ settingsKey: BROWSER_TOOLS_SETTINGS_KEY, settings: browserToolsSettings, isToggleable: ! isBrowserToolsUnavailable },
 	] );
@@ -263,6 +264,8 @@ ModulesScreen.propTypes = {
 		fileUrl: PropTypes.string.isRequired,
 		postTypes: PropTypes.array.isRequired,
 		excludedPostIds: PropTypes.arrayOf( PropTypes.number ),
+		customText: PropTypes.string,
+		maxCustomTextLength: PropTypes.number.isRequired,
 	} ).isRequired,
 	markdownConfig: PropTypes.shape( {
 		enabled: PropTypes.bool.isRequired,

@@ -1,85 +1,110 @@
 import * as React from 'react';
-import { type PropsWithChildren, useState } from 'react';
-import { ChevronDownIcon } from '@elementor/icons';
+import { type PropsWithChildren, type ReactNode, type Ref, useId } from 'react';
+import { CollapseIcon } from '@elementor/editor-ui';
+import { Box, Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
+
 import {
-	Collapse,
-	Divider,
-	IconButton,
-	List,
-	ListItem,
-	ListItemIcon,
-	ListItemText,
-	styled,
-	type SvgIconProps,
-} from '@elementor/ui';
+	contentPanelListSectionListSx,
+	contentPanelSectionHeaderSx,
+	contentPanelSectionHeaderTrailingGap,
+} from '../content-panel-chrome';
 
 type Props = {
-	label: string;
-	Icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > >;
-	isOpenByDefault?: boolean;
+	count: number;
+	headerRef?: Ref< HTMLDivElement >;
+	isOpen: boolean;
+	onOpenChange: ( isOpen: boolean ) => void;
+	title: string;
+	trailingActions?: ReactNode;
 };
 
-interface RotateIconProps extends SvgIconProps {
-	isOpen: boolean;
+const sectionHeaderListItemButtonSx = {
+	flexGrow: 1,
+	justifyContent: 'flex-start',
+	minWidth: 0,
+	textAlign: 'start',
+	'&:focus': { backgroundColor: 'transparent' },
+	'&:hover': { backgroundColor: 'transparent' },
+	'&.Mui-focusVisible': { backgroundColor: 'transparent' },
+};
+
+function getSectionHeaderAriaLabel( title: string, count: number ) {
+	return `${ title } (${ count.toString() })`;
 }
 
-// TODO 21/06/2023 : Should replace this with future Rotate component that will be implemented in elementor-ui
-const RotateIcon = styled( ChevronDownIcon, {
-	shouldForwardProp: ( prop ) => prop !== 'isOpen',
-} )< RotateIconProps >( ( { theme, isOpen } ) => ( {
-	transform: isOpen ? 'rotate(0deg)' : 'rotate(-90deg)',
-	transition: theme.transitions.create( 'transform', {
-		duration: theme.transitions.duration.standard,
-	} ),
-} ) );
-
-const StyledListItemIcon = styled( ListItemIcon )( ( { theme } ) => ( {
-	minWidth: theme.spacing( 4 ),
-} ) );
-
 export default function CollapsibleList( {
-	label,
-	Icon,
-	isOpenByDefault = false,
+	count,
+	headerRef,
+	isOpen,
+	onOpenChange,
+	title,
+	trailingActions,
 	children,
 }: PropsWithChildren< Props > ) {
-	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
+	const id = useId();
+	const labelId = `label-${ id }`;
+	const contentId = `content-${ id }`;
+	const sectionHeaderAriaLabel = getSectionHeaderAriaLabel( title, count );
+
+	const handleClick = () => onOpenChange( ! isOpen );
 
 	return (
 		<>
-			<ListItem>
-				<StyledListItemIcon
-					sx={ {
-						color: 'text.secondary',
-					} }
+			<Box
+				sx={ {
+					...contentPanelSectionHeaderSx,
+					alignItems: 'center',
+					display: 'flex',
+					flexDirection: 'row',
+					width: '100%',
+				} }
+			>
+				<ListItemButton
+					ref={ headerRef }
+					id={ labelId }
+					aria-controls={ contentId }
+					aria-expanded={ isOpen }
+					aria-label={ sectionHeaderAriaLabel }
+					dense
+					disableGutters
+					disableRipple
+					onClick={ handleClick }
+					sx={ sectionHeaderListItemButtonSx }
 				>
-					<IconButton
-						onClick={ () => setIsOpen( ( prev ) => ! prev ) }
-						size="small"
-						sx={ {
-							color: 'inherit',
-						} }
+					<Stack alignItems="center" direction="row" flexGrow={ 1 } gap={ 0.5 } minWidth={ 0 } width="100%">
+						<Stack alignItems="center" direction="row" flex={ 1 } gap={ 0.5 } minWidth={ 0 }>
+							<ListItemText
+								secondary={ title }
+								secondaryTypographyProps={ {
+									color: 'text.primary',
+									fontWeight: 'bold',
+									variant: 'caption',
+								} }
+								sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
+							/>
+							<Chip label={ count } size="tiny" />
+						</Stack>
+						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } sx={ { flexShrink: 0 } } />
+					</Stack>
+				</ListItemButton>
+				{ trailingActions && (
+					<Stack
+						alignItems="center"
+						direction="row"
+						flexShrink={ 0 }
+						gap={ contentPanelSectionHeaderTrailingGap }
+						sx={ { marginInlineStart: 0.5 } }
 					>
-						<RotateIcon fontSize="small" isOpen={ isOpen } />
-					</IconButton>
-				</StyledListItemIcon>
-				<StyledListItemIcon
-					size="small"
-					sx={ {
-						color: 'inherit',
-					} }
-				>
-					<Icon fontSize="small" />
-				</StyledListItemIcon>
-				<ListItemText
-					primaryTypographyProps={ { variant: 'subtitle2', component: 'span' } }
-					primary={ label }
-				/>
-			</ListItem>
-			<Collapse in={ isOpen } timeout="auto" unmountOnExit>
-				<List dense>{ children }</List>
+						{ trailingActions }
+					</Stack>
+				) }
+			</Box>
+			<Collapse aria-labelledby={ labelId } id={ contentId } in={ isOpen } timeout="auto" unmountOnExit>
+				<List dense disablePadding sx={ contentPanelListSectionListSx }>
+					{ children }
+				</List>
 			</Collapse>
-			<Divider sx={ { mt: 1 } } />
+			<Divider />
 		</>
 	);
 }
