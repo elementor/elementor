@@ -1,27 +1,83 @@
 import * as React from 'react';
-import { Box, Typography } from '@elementor/ui';
+import { Box, Chip, type ChipProps, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { useReverseHtmlEntities } from '../../hooks/use-reverse-html-entities';
+import { contentPanelListRowTitleSx } from '../panel/content-panel-chrome';
+
+type StatusChipConfig = {
+	color: ChipProps[ 'color' ];
+	label: string;
+};
+
+function humanizeStatusSlug( status: string ): string {
+	return status.replace( /[-_]+/g, ' ' ).trim();
+}
+
+const statusChipConfig: Record< string, StatusChipConfig > = {
+	draft: {
+		color: 'default',
+		label: __( 'Draft', 'elementor' ),
+	},
+	future: {
+		color: 'default',
+		label: __( 'Scheduled', 'elementor' ),
+	},
+	pending: {
+		color: 'warning',
+		label: __( 'Pending Review', 'elementor' ),
+	},
+	private: {
+		color: 'default',
+		label: __( 'Private', 'elementor' ),
+	},
+};
+
+export function getStatusChipConfig( status: string ): StatusChipConfig {
+	const known = statusChipConfig[ status ];
+
+	if ( known ) {
+		return known;
+	}
+
+	return {
+		color: 'default',
+		label: humanizeStatusSlug( status ),
+	};
+}
+
+function isKnownPanelStatus( status: string ): boolean {
+	return status in statusChipConfig;
+}
 
 const PageStatus = ( { status }: { status: string } ) => {
 	if ( 'publish' === status ) {
 		return null;
 	}
 
+	const { color, label } = getStatusChipConfig( status );
+	const isKnownStatus = isKnownPanelStatus( status );
+
 	return (
-		<Typography
+		<Chip
+			color={ color }
 			component="span"
-			variant="body2"
-			color="text.secondary"
+			label={ label }
+			size="tiny"
 			sx={ {
-				textTransform: 'capitalize',
-				fontStyle: 'italic',
-				whiteSpace: 'nowrap',
-				flexBasis: 'content',
+				flexShrink: isKnownStatus ? 0 : 1,
+				maxWidth: isKnownStatus ? undefined : '45%',
+				minWidth: 0,
+				ml: 0.5,
+				'& .MuiChip-label': {
+					overflow: 'hidden',
+					textOverflow: 'ellipsis',
+					whiteSpace: 'nowrap',
+				},
 			} }
-		>
-			({ status })
-		</Typography>
+			title={ label }
+			variant="standard"
+		/>
 	);
 };
 
@@ -35,6 +91,7 @@ const PageTitle = ( { title }: { title: string } ) => {
 			color="text.secondary"
 			noWrap
 			sx={ {
+				...contentPanelListRowTitleSx,
 				flexBasis: 'auto',
 			} }
 		>
@@ -45,9 +102,8 @@ const PageTitle = ( { title }: { title: string } ) => {
 
 export default function PageTitleAndStatus( { title, status }: { title: string; status: string } ) {
 	return (
-		<Box display="flex">
+		<Box alignItems="center" display="flex" minWidth={ 0 }>
 			<PageTitle title={ title } />
-			&nbsp;
 			<PageStatus status={ status } />
 		</Box>
 	);

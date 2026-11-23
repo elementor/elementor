@@ -152,6 +152,8 @@ class Publish_Document_Ability extends Abstract_Ability {
 
 		Revisions_Manager::restore_revision( $main_id, $autosave_post->ID );
 
+		Plugin::$instance->db->save_plain_text( $main_id );
+
 		wp_delete_post_revision( $autosave_post->ID );
 	}
 
