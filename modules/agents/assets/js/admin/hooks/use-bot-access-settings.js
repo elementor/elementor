@@ -3,12 +3,13 @@ import { useState } from 'react';
 import {
 	CRAWLER_ID_ALL,
 	FEATURE_BOT_ACCESS,
+	PERMISSION_TYPE_ALL,
 	SCOPE_BULK,
 	SCOPE_SINGLE,
 	TARGET_TYPE_BUTTON,
 	TARGET_TYPE_CHECKBOX,
 } from '../analytics/agent-ready-events';
-import { trackBotPermissionChanged, trackFeatureToggled } from '../analytics/track-agent-ready-event';
+import { trackBotPermissionChanged, trackCustomCrawlerAdded, trackFeatureToggled } from '../analytics/track-agent-ready-event';
 import { saveAgentReadySettings } from '../api';
 import {
 	addBot as addBotToList,
@@ -17,7 +18,7 @@ import {
 	toSettingsBots,
 	togglePermission as togglePermissionValue,
 } from '../components/bot-access/bot-access-rules';
-import { BOT_ACCESS_SETTINGS_KEY, BOT_PERMISSION_SETTING_KEYS } from '../constants';
+import { BOT_ACCESS_SETTINGS_KEY, BOT_PERMISSION_ANALYTICS_TYPES } from '../constants';
 import { getSaveErrorMessage } from './get-save-error-message';
 
 export const useBotAccessSettings = ( initialState ) => {
@@ -65,7 +66,7 @@ export const useBotAccessSettings = ( initialState ) => {
 		trackBotPermissionChanged( {
 			scope: SCOPE_SINGLE,
 			crawlerId: token,
-			permissionType: BOT_PERMISSION_SETTING_KEYS[ permission ],
+			permissionType: BOT_PERMISSION_ANALYTICS_TYPES[ permission ],
 			isAllowed: ! currentBot?.[ permission ],
 			targetType: TARGET_TYPE_CHECKBOX,
 		} );
@@ -77,7 +78,7 @@ export const useBotAccessSettings = ( initialState ) => {
 		trackBotPermissionChanged( {
 			scope: SCOPE_BULK,
 			crawlerId: CRAWLER_ID_ALL,
-			permissionType: BOT_PERMISSION_SETTING_KEYS[ permission ],
+			permissionType: BOT_PERMISSION_ANALYTICS_TYPES[ permission ],
 			isAllowed: value,
 			targetType: TARGET_TYPE_BUTTON,
 		} );
@@ -89,6 +90,7 @@ export const useBotAccessSettings = ( initialState ) => {
 		trackBotPermissionChanged( {
 			scope: SCOPE_BULK,
 			crawlerId: token,
+			permissionType: PERMISSION_TYPE_ALL,
 			isAllowed: value,
 			targetType: TARGET_TYPE_BUTTON,
 		} );
@@ -96,7 +98,11 @@ export const useBotAccessSettings = ( initialState ) => {
 		return saveSettings( isEnabled, setRowValue( bots, token, value ) );
 	};
 
-	const addBot = ( token ) => saveSettings( isEnabled, addBotToList( bots, token, catalogTokens ) );
+	const addBot = ( token ) => {
+		trackCustomCrawlerAdded( { crawlerToken: token } );
+
+		return saveSettings( isEnabled, addBotToList( bots, token, catalogTokens ) );
+	};
 
 	return {
 		addBot,
