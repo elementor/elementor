@@ -1181,7 +1181,7 @@ class Frontend extends App {
 		}
 
 		if ( ! $this->_is_excerpt ) {
-			if ( $document->is_autosave() ) {
+			if ( $document->is_revision() ) {
 				$css_file = Post_Preview::create( $document->get_post()->ID );
 			} else {
 				$css_file = Post_CSS::create( $post_id );

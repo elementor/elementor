@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Testing\Includes;
 
+use Elementor\Core\Documents_Manager;
+use Elementor\Core\Files\CSS\Post_Preview;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Plugin;
 use Elementor\Frontend;
@@ -137,6 +139,35 @@ class Test_Frontend extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertContains( 'https://fonts.googleapis.com/earlyaccess/opensanshebrew.css', $font_urls );
+	}
+
+	public function test_get_builder_content__uses_preview_css_for_filtered_revision() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get();
+		$post_id = $document->get_main_id();
+		$revision_id = $this->factory()->post->create( [
+			'post_type' => 'revision',
+			'post_parent' => $post_id,
+			'post_status' => 'inherit',
+		] );
+		Plugin::$instance->db->copy_elementor_meta( $post_id, $revision_id );
+		$use_revision = fn( $id ) => $id === $post_id ? $revision_id : $id;
+		add_filter( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER, $use_revision );
+		$css_file_class = null;
+		$capture = function( $css_file ) use ( &$css_file_class ) {
+			$css_file_class = get_class( $css_file );
+
+			return $css_file;
+		};
+		add_filter( 'elementor/frontend/builder_content/before_enqueue_css_file', $capture );
+
+		// Act.
+		Plugin::$instance->frontend->get_builder_content( $post_id );
+		remove_filter( 'elementor/frontend/builder_content/before_enqueue_css_file', $capture );
+		remove_filter( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER, $use_revision );
+
+		// Assert.
+		$this->assertSame( Post_Preview::class, $css_file_class );
 	}
 
 	public function test_widget_with_global_scripts() {
