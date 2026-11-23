@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { getPostTypeCreateCapability, postTypesMap } from '../../api/post';
+import { postTypesMap } from '../../api/post';
 import { usePostListContext } from '../../contexts/post-list-context';
-import useUser from '../../hooks/use-user';
+import useCanCreate from '../../hooks/use-can-create';
 import ContentPanelAddIconButton from './content-panel-add-icon-button';
 
 type Props = {
@@ -12,8 +12,7 @@ type Props = {
 
 export default function SectionAddButton( { onBeforeCreate }: Props ) {
 	const { type, setEditMode } = usePostListContext();
-	const { data: user } = useUser();
-	const createCapability = getPostTypeCreateCapability( type );
+	const canCreate = useCanCreate( type );
 	const singularName = postTypesMap[ type ].labels.singular_name;
 	const ariaLabel = sprintf(
 		/* translators: %s: Post type singular name (e.g. Page, Post). */
@@ -24,7 +23,7 @@ export default function SectionAddButton( { onBeforeCreate }: Props ) {
 	return (
 		<ContentPanelAddIconButton
 			aria-label={ ariaLabel }
-			disabled={ ! user?.capabilities?.[ createCapability ] }
+			disabled={ ! canCreate }
 			onClick={ ( event ) => {
 				event.stopPropagation();
 				onBeforeCreate?.();

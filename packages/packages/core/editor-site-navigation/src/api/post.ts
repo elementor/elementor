@@ -40,6 +40,22 @@ export function getPostTypeCreateCapability( postTypeSlug: Slug ): string {
 	return postTypesMap[ postTypeSlug ].createCapability;
 }
 
+export function getAccessiblePanelPostTypes( capabilities: Record< string, boolean > ): Slug[] {
+	return panelPostTypeSlugs.filter( ( slug ) => capabilities[ getPostTypeCreateCapability( slug ) ] );
+}
+
+export function canAccessSiteContentPanel( capabilities: Record< string, boolean > ): boolean {
+	return getAccessiblePanelPostTypes( capabilities ).length > 0;
+}
+
+export function getCannotEditPanelItemMessage( postTypeSlug: Slug ): string {
+	if ( 'page' === postTypeSlug ) {
+		return __( 'You cannot edit this page.', 'elementor' );
+	}
+
+	return __( 'You cannot edit this post.', 'elementor' );
+}
+
 export const POST_PER_PAGE = 10;
 
 type WpPostsResponse = {
