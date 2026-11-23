@@ -73,7 +73,9 @@ test-results/
 tests/playwright/config/local.config.js
 playwright-report
 tests/playwright/blob-report
+tests/playwright/mu-plugins/editor-assets-cdn/active-campaign/
 tests/playwright/mu-plugins/editor-assets-cdn/live/
+tests/playwright/mu-plugins/editor-assets-cdn/no-promotion/
 **/allure-results
 playwright-test-results
 **/.env

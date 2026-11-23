@@ -15,8 +15,9 @@ import { parseArgs } from 'node:util';
 
 const __dirname = dirname( fileURLToPath( import.meta.url ) );
 const FIXTURES_BASE = resolve( __dirname, '../tests/playwright/mu-plugins/editor-assets-cdn' );
-const ACTION_SHA = '9be0b7940ea3e66aea0bb57cce3ce3a191190c16';
+const ACTION_SHA = '193fe6eeabd83bdd4cea5b630be3cee58b11aa2c';
 const CDN_ORIGIN = 'https://assets.elementor.com';
+const SHARED_SCENARIOS = [ 'no-promotion', 'active-campaign' ];
 
 const CDN_PATHS = [
 	'editor-promotions/v1/connect-page.json',
@@ -48,16 +49,18 @@ const saveFile = async ( path, content ) => {
 	await writeFile( path, 'string' === typeof content ? content : JSON.stringify( content, null, '\t' ) + '\n' );
 };
 
-console.log( '📦 Fetching shared no-promotion fixtures from action repo...' );
-for ( const path of CDN_PATHS ) {
-	const url = `https://raw.githubusercontent.com/elementor/elementor-editor-github-actions/${ ACTION_SHA }/actions/fetch-cdn-scenario/fixtures/no-promotion/${ path }`;
-	try {
-		const json = await fetchJson( url );
-		const target = resolve( FIXTURES_BASE, 'no-promotion', path );
-		await saveFile( target, json );
-		console.log( `  ✓ ${ path }` );
-	} catch ( error ) {
-		console.warn( `  ⚠ Skipped ${ path }: ${ error.message }` );
+for ( const scenario of SHARED_SCENARIOS ) {
+	console.log( `📦 Fetching shared ${ scenario } fixtures from action repo...` );
+	for ( const path of CDN_PATHS ) {
+		const url = `https://raw.githubusercontent.com/elementor/elementor-editor-github-actions/${ ACTION_SHA }/actions/fetch-cdn-scenario/fixtures/${ scenario }/${ path }`;
+		try {
+			const json = await fetchJson( url );
+			const target = resolve( FIXTURES_BASE, scenario, path );
+			await saveFile( target, json );
+			console.log( `  ✓ ${ scenario }/${ path }` );
+		} catch ( error ) {
+			console.warn( `  ⚠ Skipped ${ scenario }/${ path }: ${ error.message }` );
+		}
 	}
 }
 

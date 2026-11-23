@@ -2,6 +2,7 @@ import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { type BrowserContext } from '@playwright/test';
 
+export const ACTIVE_CAMPAIGN_SCENARIO = 'active-campaign';
 export const NO_PROMOTION_SCENARIO = 'no-promotion';
 
 const SCENARIO_COOKIE = 'e2e_cdn_scenario';
@@ -60,7 +61,7 @@ export const assertScenarioFetched = ( scenario: string, paths: string[] ): void
 	const missing = paths.filter( ( path ) => ! existsSync( resolve( FIXTURES_DIR, scenario, path ) ) );
 
 	if ( missing.length ) {
-		throw new Error( `CDN scenario "${ scenario }" is missing ${ missing.join( ', ' ) }. Run \`npm run test:playwright:fetch-cdn\` before starting WordPress.` );
+		throw new Error( `CDN scenario "${ scenario }" is missing ${ missing.join( ', ' ) }. Run \`npm run test:playwright:setup-cdn\` before starting WordPress.` );
 	}
 };
 

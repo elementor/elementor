@@ -4,6 +4,7 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import { wpCli } from '../../../../assets/wp-cli';
 import { timeouts } from '../../../../config/timeouts';
 import {
+	ACTIVE_CAMPAIGN_SCENARIO,
 	EDITOR_PROMOTION_PATHS,
 	HOME_SCREEN_PATH,
 	NOTIFICATIONS_PATH,
@@ -16,7 +17,7 @@ import {
 	useCdnScenario,
 } from './cdn-scenario';
 
-const CAMPAIGN_SCENARIO = process.env.E2E_CDN_SCENARIO || 'live';
+const CAMPAIGN_SCENARIO = process.env.E2E_CDN_SCENARIO || ACTIVE_CAMPAIGN_SCENARIO;
 
 const CORE_DEFAULTS = {
 	pluginsPage: { label: 'Get Elementor Pro', url: 'https://go.elementor.com/go-pro-wp-plugins/' },

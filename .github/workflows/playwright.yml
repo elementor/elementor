@@ -125,12 +125,14 @@ jobs:
           echo "PHP version set to:"
           cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
-      - name: Fetch live CDN promotions
-        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@9be0b7940ea3e66aea0bb57cce3ce3a191190c16
+      - name: Setup CDN promotion fixtures
+        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@193fe6eeabd83bdd4cea5b630be3cee58b11aa2c
         with:
           output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
           mu-plugins-dir: tests/playwright/mu-plugins
           copy-fixtures: true
+          fetch-live: false
+          allow-failure: true
       - name: Install WordPress environment
         run: |
           npm run start-local-server
