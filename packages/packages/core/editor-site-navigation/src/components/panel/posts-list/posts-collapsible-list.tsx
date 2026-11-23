@@ -27,7 +27,10 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const trimmedSearch = searchQuery.trim();
 	const [ debouncedSearch, setDebouncedSearch ] = useState( trimmedSearch );
+	const focusAfterShowLessRef = useRef( false );
 	const listTopRef = useRef< HTMLDivElement | null >( null );
+	const loadMoreButtonRef = useRef< HTMLButtonElement | null >( null );
+	const sectionHeaderRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
 		const handle = window.setTimeout( () => setDebouncedSearch( trimmedSearch ), SEARCH_DEBOUNCE_MS );
@@ -96,6 +99,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	);
 
 	const handleShowLess = () => {
+		focusAfterShowLessRef.current = true;
 		pagination.handleShowLess();
 
 		const listTop = listTopRef.current;
@@ -104,6 +108,23 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			listTop.scrollIntoView( { block: 'nearest' } );
 		}
 	};
+
+	useEffect( () => {
+		if ( ! focusAfterShowLessRef.current ) {
+			return;
+		}
+
+		focusAfterShowLessRef.current = false;
+
+		const loadMoreButton = loadMoreButtonRef.current;
+
+		if ( loadMoreButton ) {
+			loadMoreButton.focus();
+			return;
+		}
+
+		sectionHeaderRef.current?.focus();
+	}, [ pagination.canLoadMore, pagination.visibleCount ] );
 
 	useEffect( () => {
 		if ( debouncedSearch && filteredPosts.length > 0 ) {
@@ -135,6 +156,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	return (
 		<CollapsibleList
 			count={ displayCount }
+			headerRef={ sectionHeaderRef }
 			isOpen={ isOpen }
 			onOpenChange={ setIsOpen }
 			title={ sectionTitle }
@@ -156,6 +178,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 				canLoadMore={ pagination.canLoadMore }
 				canShowLess={ pagination.canShowLess }
 				isLoadingMore={ isFetchingNextPage }
+				loadMoreButtonRef={ loadMoreButtonRef }
 				onLoadMore={ pagination.handleLoadMore }
 				onShowLess={ handleShowLess }
 			/>

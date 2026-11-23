@@ -13,6 +13,7 @@ type PostListPaginationActionsProps = {
 	canLoadMore: boolean;
 	canShowLess: boolean;
 	isLoadingMore: boolean;
+	loadMoreButtonRef?: React.RefObject< HTMLButtonElement | null >;
 	onLoadMore: () => void;
 	onShowLess: () => void;
 };
@@ -21,6 +22,7 @@ export default function PostListPaginationActions( {
 	canLoadMore,
 	canShowLess,
 	isLoadingMore,
+	loadMoreButtonRef,
 	onLoadMore,
 	onShowLess,
 }: PostListPaginationActionsProps ) {
@@ -34,6 +36,7 @@ export default function PostListPaginationActions( {
 	const loadMoreButton = (
 		<Button
 			{ ...listPaginationButtonProps }
+			ref={ loadMoreButtonRef }
 			aria-label={ loadMoreLabel }
 			disabled={ isLoadingMore }
 			endIcon={ isLoadingMore ? undefined : <CollapseIcon open={ false } /> }

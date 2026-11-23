@@ -30,34 +30,47 @@ export function usePostListPagination( {
 	useEffect( () => {
 		const target = pendingVisibleTargetRef.current;
 
-		if ( target === null || loadedCount < target ) {
+		if ( target === null ) {
 			return;
 		}
 
-		setVisibleCount( target );
-		pendingVisibleTargetRef.current = null;
-	}, [ loadedCount ] );
+		if ( loadedCount >= target ) {
+			setVisibleCount( target );
+			pendingVisibleTargetRef.current = null;
+			return;
+		}
+
+		if ( ! isFetchingNextPage ) {
+			setVisibleCount( Math.min( target, loadedCount ) );
+			pendingVisibleTargetRef.current = null;
+		}
+	}, [ isFetchingNextPage, loadedCount ] );
 
 	const canShowLess = visibleCount > POST_PER_PAGE;
-	const canLoadMore = visibleCount < totalCount;
+	const canLoadMore = visibleCount < loadedCount || hasNextPage;
 
 	const handleLoadMore = useCallback( () => {
-		if ( isFetchingNextPage || visibleCount >= totalCount ) {
+		if ( isFetchingNextPage || ! canLoadMore ) {
 			return;
 		}
 
 		const targetVisible = Math.min( visibleCount + POST_PER_PAGE, totalCount );
 
 		if ( targetVisible <= loadedCount ) {
-			setVisibleCount( targetVisible );
+			setVisibleCount( Math.min( targetVisible, loadedCount ) );
 			return;
 		}
 
 		if ( hasNextPage ) {
 			pendingVisibleTargetRef.current = targetVisible;
 			fetchNextPage();
+			return;
 		}
-	}, [ fetchNextPage, hasNextPage, isFetchingNextPage, loadedCount, totalCount, visibleCount ] );
+
+		if ( visibleCount < loadedCount ) {
+			setVisibleCount( Math.min( visibleCount + POST_PER_PAGE, loadedCount ) );
+		}
+	}, [ canLoadMore, fetchNextPage, hasNextPage, isFetchingNextPage, loadedCount, totalCount, visibleCount ] );
 
 	const handleShowLess = useCallback( () => {
 		pendingVisibleTargetRef.current = null;
