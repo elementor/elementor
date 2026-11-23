@@ -24,13 +24,13 @@ export default function ForceDelete( { post }: { post: Post } ) {
 	return (
 		<>
 			<ActionMenuItem
-				title={ __( 'Delete permanently', 'elementor' ) }
 				icon={ TrashIcon }
 				MenuItemProps={ {
 					disabled: ! post.user_can.delete,
 					onClick: () => setIsDialogOpen( true ),
 					sx: { '&:hover': { color: 'error.main' } },
 				} }
+				title={ __( 'Delete permanently', 'elementor' ) }
 			/>
 			{ isDialogOpen && <ForceDeleteDialog post={ post } setIsDialogOpen={ setIsDialogOpen } /> }
 		</>
@@ -44,14 +44,12 @@ function ForceDeleteDialog( {
 	post: Post;
 	setIsDialogOpen: React.Dispatch< React.SetStateAction< boolean > >;
 } ) {
-	const { type, setError } = usePostListContext();
+	const { setError, type } = usePostListContext();
 	const { forceDeletePost } = usePostActions( type );
 
+	/* translators: %s: Post title. */
 	const dialogTitle = sprintf( __( 'Delete "%s" permanently?', 'elementor' ), post.title.rendered );
-	const dialogBody = __(
-		'This will permanently delete the item. You cannot undo this action.',
-		'elementor'
-	);
+	const dialogBody = __( 'This will permanently delete the item. You cannot undo this action.', 'elementor' );
 
 	const handleDelete = async () => {
 		try {
@@ -72,17 +70,27 @@ function ForceDeleteDialog( {
 	};
 
 	return (
-		<Dialog open onClose={ handleCancel } aria-labelledby="force-delete-dialog">
+		<Dialog aria-labelledby="force-delete-dialog" onClose={ handleCancel } open>
 			<DialogTitle noWrap>{ dialogTitle }</DialogTitle>
 			<Divider />
 			<DialogContent>
 				<DialogContentText>{ dialogBody }</DialogContentText>
 			</DialogContent>
 			<DialogActions>
-				<Button variant="contained" color="secondary" onClick={ handleCancel } disabled={ forceDeletePost.isPending }>
+				<Button
+					variant="contained"
+					color="secondary"
+					onClick={ handleCancel }
+					disabled={ forceDeletePost.isPending }
+				>
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
-				<Button variant="contained" color="error" onClick={ () => void handleDelete() } disabled={ forceDeletePost.isPending }>
+				<Button
+					variant="contained"
+					color="error"
+					onClick={ () => void handleDelete() }
+					disabled={ forceDeletePost.isPending }
+				>
 					{ ! forceDeletePost.isPending ? __( 'Delete permanently', 'elementor' ) : <CircularProgress /> }
 				</Button>
 			</DialogActions>

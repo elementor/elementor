@@ -8,7 +8,6 @@ import {
 	hasActiveSiteContentStatusFilters,
 	SITE_CONTENT_ALL_FILTER_LABEL,
 	SITE_CONTENT_SELECTABLE_STATUS_FILTERS,
-	type SiteContentSelectableStatus,
 } from '../../site-content-status-filter';
 
 const renderFilterMenuItemContent = ( label: string, selected: boolean ) => (

@@ -1,8 +1,8 @@
 import { renderHookWithQuery } from 'test-utils';
 import apiFetch from '@wordpress/api-fetch';
 
-import { postsBaselineTotalQueryKey } from '../use-posts-baseline-total';
 import { postsQueryKey } from '../use-posts';
+import { postsBaselineTotalQueryKey } from '../use-posts-baseline-total';
 import { usePostActions } from '../use-posts-actions';
 
 jest.mock( '@wordpress/api-fetch' );

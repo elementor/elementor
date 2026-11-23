@@ -13,7 +13,7 @@ describe( 'ContentPanelStatusFilterList', () => {
 			</ContentPanelCoordinatorProvider>
 		);
 
-		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).toHaveAttribute( 'aria-checked', 'true' );
+		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).toBeChecked();
 	} );
 
 	it( 'toggles Published without checkboxes', () => {
@@ -26,7 +26,7 @@ describe( 'ContentPanelStatusFilterList', () => {
 		const publishedItem = screen.getByRole( 'menuitemcheckbox', { name: /Published/i } );
 		fireEvent.click( publishedItem );
 
-		expect( publishedItem ).toHaveAttribute( 'aria-checked', 'true' );
-		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).toHaveAttribute( 'aria-checked', 'false' );
+		expect( publishedItem ).toBeChecked();
+		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).not.toBeChecked();
 	} );
 } );

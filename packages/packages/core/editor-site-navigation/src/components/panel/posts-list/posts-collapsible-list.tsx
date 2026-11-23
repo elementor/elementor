@@ -8,12 +8,13 @@ import { useContentPanelCoordinator } from '../../../contexts/content-panel-coor
 import { usePostListContext } from '../../../contexts/post-list-context';
 import { useHomepage } from '../../../hooks/use-homepage';
 import { usePostListPagination } from '../../../hooks/use-post-list-pagination';
-import { serializeStatusFilters, usePosts } from '../../../hooks/use-posts';
+import { usePosts } from '../../../hooks/use-posts';
 import { usePostsBaselineTotal } from '../../../hooks/use-posts-baseline-total';
 import {
 	hasActiveSiteContentStatusFilters,
 	isSiteContentListNarrowed,
 	isSiteContentTrashFilterActive,
+	serializeSiteContentStatusFilters,
 } from '../../../site-content-status-filter';
 import SectionAddButton from '../section-add-button';
 import CollapsibleList from './collapsible-list';
@@ -57,7 +58,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	const { data: homepageId } = useHomepage();
 	const isPageType = type === 'page';
 	const isTrashFilter = isSiteContentTrashFilterActive( statusFilters );
-	const statusFiltersKey = serializeStatusFilters( statusFilters );
+	const statusFiltersKey = serializeSiteContentStatusFilters( statusFilters );
 
 	useEffect( () => {
 		registerSection( type, {
@@ -161,7 +162,8 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 
 	const displayCount = total;
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
-	const showNoResults = ( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length === 0;
+	const showNoResults =
+		( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length === 0;
 	const countChipLabel =
 		isNarrowed && baselineTotal !== undefined ? `${ total } / ${ baselineTotal }` : undefined;
 
@@ -173,9 +175,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			isOpen={ isOpen }
 			onOpenChange={ setIsOpen }
 			title={ sectionTitle }
-			trailingActions={
-				isTrashFilter ? null : <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } />
-			}
+			trailingActions={ isTrashFilter ? null : <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
 		>
 			{ showNoResults && (
 				<Box sx={ { py: 2, px: 2 } }>

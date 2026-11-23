@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
 import {
 	hasActiveSiteContentStatusFilters,
-	SITE_CONTENT_FILTER_POPOVER_BODY_HEIGHT_PX,
+	SITE_CONTENT_FILTER_POPOVER_WIDTH_PX,
 } from '../../site-content-status-filter';
 import ContentPanelClearFiltersButton from './content-panel-clear-filters-button';
 import ContentPanelStatusFilterList from './content-panel-status-filter-list';
@@ -40,7 +40,7 @@ export default function ContentPanelStatusFilter() {
 					vertical: 'top',
 				} }
 				sx={ {
-					maxWidth: '344px',
+					maxWidth: `${ SITE_CONTENT_FILTER_POPOVER_WIDTH_PX }px`,
 				} }
 				transformOrigin={ {
 					horizontal: -21,
@@ -66,7 +66,7 @@ export default function ContentPanelStatusFilter() {
 					title={ __( 'Filters', 'elementor' ) }
 				/>
 				<Divider sx={ { borderWidth: '1px 0 0 0' } } />
-				<PopoverBody height={ SITE_CONTENT_FILTER_POPOVER_BODY_HEIGHT_PX } width={ 344 }>
+				<PopoverBody height="auto" width={ SITE_CONTENT_FILTER_POPOVER_WIDTH_PX }>
 					<ContentPanelStatusFilterList />
 				</PopoverBody>
 			</Popover>

@@ -10,9 +10,6 @@ import { type Post } from '../types';
 
 export const postsQueryKeyBase = ( postTypeSlug: string ) => [ 'site-navigation', 'posts', postTypeSlug ];
 
-export const serializeStatusFilters = ( statusFilters: SiteContentStatusFilters ) =>
-	( [ 'publish', 'draft', 'trash' ] as const ).map( ( key ) => ( statusFilters[ key ] ? key : '' ) ).join( '|' );
-
 export const postsQueryKey = (
 	postTypeSlug: string,
 	search = '',
@@ -20,10 +17,6 @@ export const postsQueryKey = (
 ) => {
 	const trimmedSearch = search.trim();
 	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
-
-	if ( ! trimmedSearch && 'any' === restStatus ) {
-		return postsQueryKeyBase( postTypeSlug );
-	}
 
 	return [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ];
 };
@@ -51,13 +44,13 @@ export function usePosts(
 	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
 
 	const query = useInfiniteQuery( {
-		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch, restStatus ),
 		getNextPageParam: ( lastPage ) => {
 			return lastPage.currentPage < lastPage.totalPages ? lastPage.currentPage + 1 : undefined;
 		},
 		initialPageParam: 1,
 		placeholderData: keepPreviousData,
-		queryKey: postsQueryKey( postTypeSlug, trimmedSearch, statusFilters ),
+		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch, restStatus ),
+		queryKey: [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ],
 	} );
 
 	return { ...query, data: { posts: flattenData( query.data ), total: query.data?.pages[ 0 ]?.totalPosts ?? 0 } };

@@ -4,9 +4,9 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef
 import { type Slug } from '../api/post';
 import {
 	EMPTY_SITE_CONTENT_STATUS_FILTERS,
-	toggleSiteContentStatusFilter,
 	type SiteContentSelectableStatus,
 	type SiteContentStatusFilters,
+	toggleSiteContentStatusFilter,
 } from '../site-content-status-filter';
 
 type SectionHandlers = {
@@ -30,7 +30,9 @@ const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorVal
 export function ContentPanelCoordinatorProvider( { children }: { children: ReactNode } ) {
 	const sectionsRef = useRef( new Map< Slug, SectionHandlers >() );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
-	const [ statusFilters, setStatusFilters ] = useState< SiteContentStatusFilters >( EMPTY_SITE_CONTENT_STATUS_FILTERS );
+	const [ statusFilters, setStatusFilters ] = useState< SiteContentStatusFilters >(
+		EMPTY_SITE_CONTENT_STATUS_FILTERS
+	);
 
 	const registerSection = useCallback( ( type: Slug, handlers: SectionHandlers ) => {
 		sectionsRef.current.set( type, handlers );
@@ -70,7 +72,15 @@ export function ContentPanelCoordinatorProvider( { children }: { children: React
 			toggleStatusFilter,
 			unregisterSection,
 		} ),
-		[ clearStatusFilters, registerSection, requestCreate, searchQuery, statusFilters, toggleStatusFilter, unregisterSection ]
+		[
+			clearStatusFilters,
+			registerSection,
+			requestCreate,
+			searchQuery,
+			statusFilters,
+			toggleStatusFilter,
+			unregisterSection,
+		]
 	);
 
 	return (

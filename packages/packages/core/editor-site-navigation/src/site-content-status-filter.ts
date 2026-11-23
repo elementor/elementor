@@ -20,7 +20,7 @@ const filterLabels: Record< SiteContentSelectableStatus, string > = {
 
 export const SITE_CONTENT_ALL_FILTER_LABEL = __( 'All', 'elementor' );
 
-export const SITE_CONTENT_FILTER_POPOVER_BODY_HEIGHT_PX = 210;
+export const SITE_CONTENT_FILTER_POPOVER_WIDTH_PX = 280;
 
 export function getSiteContentStatusFilterLabel( filter: SiteContentSelectableStatus ): string {
 	return filterLabels[ filter ];
@@ -35,6 +35,9 @@ export function getActiveSiteContentStatusFilterKeys(
 ): SiteContentSelectableStatus[] {
 	return SITE_CONTENT_SELECTABLE_STATUS_FILTERS.filter( ( key ) => filters[ key ] );
 }
+
+export const serializeSiteContentStatusFilters = ( statusFilters: SiteContentStatusFilters ): string =>
+	( [ 'publish', 'draft', 'trash' ] as const ).map( ( key ) => ( statusFilters[ key ] ? key : '' ) ).join( '|' );
 
 export function getRestStatusForSiteContentFilters( filters: SiteContentStatusFilters ): string {
 	if ( filters.trash ) {

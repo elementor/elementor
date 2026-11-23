@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Box, Stack } from '@elementor/ui';
 
-import { contentPanelSearchBoxSx } from './content-panel-chrome';
 import ContentPanelActiveFilters from './content-panel-active-filters';
+import { contentPanelSearchBoxSx } from './content-panel-chrome';
 import ContentPanelSearch from './content-panel-search';
 import ContentPanelStatusFilter from './content-panel-status-filter';
 
