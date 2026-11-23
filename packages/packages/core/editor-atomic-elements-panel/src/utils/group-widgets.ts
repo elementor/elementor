@@ -7,7 +7,14 @@ export type ElementTile = {
 	widgetType: string;
 	title: string;
 	icon?: string;
+	keywords?: string[];
 	settings?: Record< string, unknown >;
+	promotionType?: string;
+};
+
+export type PromotionTile = {
+	tile: ElementTile;
+	categories: string[];
 };
 
 export type ElementGroup = {
@@ -35,28 +42,35 @@ const GROUPS: { id: string; title: string; widgetTypes: string[] }[] = [
 	{
 		id: 'interactive',
 		title: __( 'Interactive', 'elementor' ),
-		widgetTypes: [ 'e-tabs', 'e-accordion', 'e-menu', 'e-list', 'e-collection-loop' ],
+		widgetTypes: [ 'e-tabs', 'e-accordion', 'e-menu', 'e-list', 'e-collection-loop', 'e-carousel' ],
 	},
 	{ id: FORM_GROUP_ID, title: __( 'Form', 'elementor' ), widgetTypes: [ 'e-form' ] },
 	{ id: FALLBACK_GROUP_ID, title: __( 'Atomic Elements', 'elementor' ), widgetTypes: [] },
 ];
 
-export function groupWidgets( widgets: WidgetsCache ): ElementGroup[] {
+export function groupWidgets( widgets: WidgetsCache, lockedTiles: PromotionTile[] = [] ): ElementGroup[] {
 	const tilesByGroup = new Map< string, ElementTile[] >();
 
-	Object.entries( widgets ).forEach( ( [ widgetType, widget ] ) => {
-		const groupId = resolveGroupId( widgetType, widget.categories );
-
-		tilesByGroup.set( groupId, [
-			...( tilesByGroup.get( groupId ) ?? [] ),
-			{
+	const placedTiles = [
+		...Object.entries( widgets ).map( ( [ widgetType, widget ] ) => ( {
+			groupId: resolveGroupId( widgetType, widget.categories ),
+			tile: {
 				elType: widget.elType ?? 'widget',
 				widgetType,
 				title: widget.title,
 				icon: widget.icon,
+				keywords: widget.keywords,
 				settings: widget.custom?.isPreset ? widget.custom.preset_settings : undefined,
 			},
-		] );
+		} ) ),
+		...lockedTiles.map( ( { tile, categories } ) => ( {
+			groupId: resolveGroupId( tile.widgetType, categories ),
+			tile,
+		} ) ),
+	];
+
+	placedTiles.forEach( ( { groupId, tile } ) => {
+		tilesByGroup.set( groupId, [ ...( tilesByGroup.get( groupId ) ?? [] ), tile ] );
 	} );
 
 	return GROUPS.filter( ( { id } ) => tilesByGroup.has( id ) ).map( ( { id, title } ) => ( {
