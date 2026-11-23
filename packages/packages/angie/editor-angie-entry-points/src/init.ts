@@ -1,5 +1,6 @@
 import { injectIntoComponentInstanceHeader, injectIntoComponentsTabHeader } from '@elementor/editor-components';
 import { injectIntoControlHeader } from '@elementor/editor-controls';
+import { injectIntoDefaultStylesHeader } from '@elementor/editor-default-styles';
 import { injectIntoClassSelectorActions, injectIntoCustomCssHeader } from '@elementor/editor-editing-panel';
 import { injectIntoClassManagerHeader } from '@elementor/editor-global-classes';
 import { injectIntoInteractionsHeader } from '@elementor/editor-interactions';
@@ -10,6 +11,7 @@ import { AngieComponentsTabHeaderAction } from './components/angie-components-ta
 import { AngieControlHeaderAction } from './control-header/angie-control-header-action';
 import { AngieClassManagerHeaderAction } from './css-classes/angie-class-manager-header-action';
 import { AngieClassSelectorAction } from './css-classes/angie-class-selector-action';
+import { AngieDefaultStylesHeaderAction } from './default-styles/angie-default-styles-header-action';
 import { AngieInteractionsHeaderAction } from './interactions/angie-interactions-header-action';
 import { AngieCustomCssHeaderAction } from './style-section/angie-custom-css-header-action';
 import { initV3 } from './v3/init-v3';
@@ -37,6 +39,11 @@ export function init(): void {
 	injectIntoClassManagerHeader( {
 		id: 'angie-class-manager-header-action',
 		component: AngieClassManagerHeaderAction,
+	} );
+
+	injectIntoDefaultStylesHeader( {
+		id: 'angie-default-styles-header-action',
+		component: AngieDefaultStylesHeaderAction,
 	} );
 
 	injectIntoInteractionsHeader( {
