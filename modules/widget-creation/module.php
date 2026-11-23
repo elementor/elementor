@@ -52,6 +52,22 @@ class Module extends BaseModule {
 		return Hints::is_plugin_active( 'angie' );
 	}
 
+	public static function is_angie_enabled(): bool {
+		return self::is_angie_in_panels_active()
+			&& self::is_ai_enabled()
+			&& self::has_angie_consent();
+	}
+
+	private static function has_angie_consent(): bool {
+		return 'yes' === get_option( self::ANGIE_CONSENT_OPTION );
+	}
+
+	private static function is_ai_enabled(): bool {
+		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
+
+		return $ai_module instanceof Ai_Module && $ai_module->is_ai_enabled();
+	}
+
 	public static function can_create_widget(): bool {
 		return self::is_angie_plugin_active() && current_user_can( 'manage_options' );
 	}
@@ -81,7 +97,8 @@ class Module extends BaseModule {
 
 		Utils::print_js_config( 'elementor-v2-editor-angie', 'elementorEditorAngie', [
 			'isAngiePluginActive' => Hints::is_plugin_active( 'angie' ),
-			'showEntryPoints' => $this->should_show_angie_entry_points(),
+			'showEntryPoints' => self::is_ai_enabled(),
+			'isAngieEnabled' => self::is_angie_enabled(),
 		] );
 	}
 
@@ -121,15 +138,5 @@ class Module extends BaseModule {
 		];
 
 		return $settings;
-	}
-
-	private function should_show_angie_entry_points(): bool {
-		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
-
-		if ( ! $ai_module instanceof Ai_Module ) {
-			return false;
-		}
-
-		return $ai_module->is_ai_enabled();
 	}
 }

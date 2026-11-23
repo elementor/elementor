@@ -55,6 +55,7 @@ use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\WidgetCreation\Module as Widget_Creation_Module;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -1090,7 +1091,7 @@ class Module extends BaseModule {
 			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
-			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
+			'isAngieActive'          => Widget_Creation_Module::is_angie_enabled(),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'scoreTiers'             => Score_Tiers::to_array(),

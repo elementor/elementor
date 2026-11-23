@@ -2,7 +2,6 @@ import {
 	ANGIE_SIDEBAR_STATE_OPEN,
 	clearReferrerRedirect,
 	getAngieIframe,
-	isAngiePluginActive,
 	saveState,
 	setReferrerRedirect,
 	toggleAngieSidebar,
@@ -14,7 +13,7 @@ const PENDING_PROMPT_STORAGE_KEY = 'elementor_agent_ready_pending_angie_prompt';
 const ANGIE_ACTIVATION_RETURN_PARAM = 'open-angie';
 const ANGIE_READY_TIMEOUT_MS = 10000;
 
-export const canOpenAngie = ( isAngieActive ) => Boolean( isAngieActive ) || isAngiePluginActive() || Boolean( getAngieIframe() );
+export const canOpenAngie = ( isAngieActive ) => Boolean( isAngieActive );
 
 export const openAngieWithPrompt = ( prompt ) => {
 	const iframe = getAngieIframe();

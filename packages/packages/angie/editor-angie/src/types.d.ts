@@ -5,6 +5,7 @@ declare global {
 		elementorEditorAngie?: {
 			isAngiePluginActive?: boolean;
 			showEntryPoints?: boolean;
+			isAngieEnabled?: boolean;
 		};
 	}
 }
