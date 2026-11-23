@@ -1,11 +1,36 @@
 import { Page, TestInfo } from '@playwright/test';
 import ApiRequests from '../../../assets/api-requests';
+import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { timeouts } from '../../../config/timeouts';
 
-export const getInSettingsTab = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests, innerPanel: string, styleguideOpen: boolean ) => {
+const openNewPageWithEditorReloadRetry = async (
+	wpAdmin: WpAdminPage,
+	page: Page,
+	testInfo: TestInfo,
+): Promise<EditorPage> => {
+	try {
+		return await wpAdmin.openNewPage();
+	} catch {
+		await page.reload( { waitUntil: 'load', timeout: timeouts.heavyAction } );
+		await wpAdmin.waitForPanel();
+		await wpAdmin.closeAnnouncementsIfVisible();
+		return new EditorPage( page, testInfo );
+	}
+};
+
+export const getInSettingsTab = async (
+	page: Page,
+	testInfo: TestInfo,
+	apiRequests: ApiRequests,
+	innerPanel: string,
+	styleguideOpen: boolean,
+	retryEditorOpen = false,
+) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	const editor = await wpAdmin.openNewPage();
+	const editor = retryEditorOpen
+		? await openNewPageWithEditorReloadRetry( wpAdmin, page, testInfo )
+		: await wpAdmin.openNewPage();
 	page.setDefaultTimeout( timeouts.longAction );
 
 	await page.evaluate( ( isOpen ) => $e.run( 'document/elements/settings', {

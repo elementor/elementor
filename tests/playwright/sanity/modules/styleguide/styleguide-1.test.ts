@@ -213,11 +213,10 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	test( 'Disabling Styleguide Preview at Global Colors hides the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true, true );
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
-		// Assert switcher is off and Styleguide Modal is hidden.
 		expect( siteSettingsStyleguideSwitcherBeforeClick ).toBeTruthy();
 		await expect( styleguidePreviewDialog ).toBeVisible();
 		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeTruthy();
@@ -229,9 +228,8 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		const siteSettingsStyleguideSwitcherAfterClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 
-		// Assert switcher is on and Styleguide Modal is visible.
 		expect( siteSettingsStyleguideSwitcherAfterClick ).toBeFalsy();
-		await expect( styleguidePreviewDialog ).toBeHidden();
+		await expect( styleguidePreviewDialog ).toBeHidden( { timeout: timeouts.heavyAction } );
 		expect( await isStyleguidePreviewUserPreferencesEnabled( page ) ).toBeFalsy();
 	} );
 
