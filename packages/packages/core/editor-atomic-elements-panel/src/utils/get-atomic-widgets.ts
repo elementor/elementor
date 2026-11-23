@@ -1,6 +1,11 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-type WidgetConfig = V1ElementConfig< { categories?: string[]; deprecation?: { replacement?: string } } >;
+type WidgetConfig = V1ElementConfig< {
+	categories?: string[];
+	keywords?: string[];
+	deprecation?: { replacement?: string };
+	custom?: { isPreset?: boolean; preset_settings?: Record< string, unknown > };
+} >;
 export type WidgetsCache = Record< string, WidgetConfig >;
 
 const EXCLUDED_CATEGORIES = [ 'angie-widgets', 'custom-widgets' ];
