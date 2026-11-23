@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertCircleIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Chip from '@elementor/ui/Chip';
@@ -34,6 +34,7 @@ export const MarkdownContentPanel = ( { settings } ) => {
 	const [ content, setContent ] = useState( '' );
 	const [ isOverridden, setIsOverridden ] = useState( false );
 	const [ dialogMode, setDialogMode ] = useState( null );
+	const conflictReportedItemIds = useRef( new Set() );
 
 	const pickedItem = picked?.itemsKey === itemsKey ? picked.item : null;
 	const selectedItem = isEnabled ? pickedItem ?? defaultItems[ 0 ] ?? null : null;
@@ -49,7 +50,20 @@ export const MarkdownContentPanel = ( { settings } ) => {
 
 	const refreshAfterChange = () => setRevision( ( current ) => current + 1 );
 
-	const saveContent = ( nextContent ) => saveMarkdownContent( selectedItemId, nextContent ).then( refreshAfterChange );
+	const reportConflictOnce = ( itemId ) => {
+		if ( conflictReportedItemIds.current.has( itemId ) ) {
+			return;
+		}
+
+		conflictReportedItemIds.current.add( itemId );
+		trackFeatureConflictDetected( { featureName: FEATURE_MARKDOWN_CONTENT } );
+	};
+
+	const saveContent = ( nextContent ) => {
+		conflictReportedItemIds.current.add( selectedItemId );
+
+		return saveMarkdownContent( selectedItemId, nextContent ).then( refreshAfterChange );
+	};
 
 	const revertContent = () => revertMarkdownContent( selectedItemId ).then( refreshAfterChange );
 
@@ -69,7 +83,7 @@ export const MarkdownContentPanel = ( { settings } ) => {
 					setIsOverridden( preview.isOverridden );
 
 					if ( preview.isOverridden ) {
-						trackFeatureConflictDetected( { featureName: FEATURE_MARKDOWN_CONTENT } );
+						reportConflictOnce( selectedItemId );
 					}
 				}
 			} )
