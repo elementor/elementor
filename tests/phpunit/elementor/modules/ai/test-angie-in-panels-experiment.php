@@ -1,10 +1,10 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\Modules\WidgetCreation;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\Ai;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\Ai\Module;
 use Elementor\Modules\Ai\Preferences;
-use Elementor\Modules\WidgetCreation\Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -42,6 +42,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		);
 
 		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
+		delete_option( Module::ANGIE_CONSENT_OPTION );
 		remove_all_filters( 'pre_option_active_plugins' );
 		wp_deregister_script( self::ANGIE_SCRIPT_HANDLE );
 
@@ -57,6 +58,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertTrue( $data['hidden'] );
 		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $data['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $data['release_status'] );
+		$this->assertSame(
+			'Angie in the Editor: load Angie from Elementor Core in a docked panel, with Angie entry points across the Editor.',
+			$data['description']
+		);
 	}
 
 	public function test_editor_angie_package_is_registered_only_when_experiment_is_active() {
@@ -120,12 +125,31 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertContains( Module::ANGIE_PACKAGE, $active_packages );
 	}
 
+	public function test_angie_packages_load_when_show_ai_is_disabled() {
+		// Arrange.
+		$this->act_as_admin();
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		update_user_option( get_current_user_id(), Preferences::ENABLE_AI, '0' );
+
+		// Act.
+		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
+
+		// Assert.
+		$this->assertContains( Module::ANGIE_PACKAGE, $packages );
+		$this->assertContains( Module::ANGIE_PANEL_PACKAGE, $packages );
+		$this->assertContains( Module::ANGIE_FLOATING_PANELS_PACKAGE, $packages );
+		$this->assertContains( Module::ANGIE_ENTRY_POINTS_PACKAGE, $packages );
+	}
+
 	public function test_print_angie_config_prints_nothing_when_experiment_is_inactive() {
 		// Arrange.
 		$this->register_angie_script();
 
 		// Act.
-		$this->get_widget_creation_module()->print_angie_config();
+		$this->get_ai_module()->print_angie_config();
 
 		// Assert.
 		$this->assertFalse( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) );
@@ -148,7 +172,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->register_angie_script();
 
 		// Act.
-		$this->get_widget_creation_module()->print_angie_config();
+		$this->get_ai_module()->print_angie_config();
 
 		// Assert.
 		$this->assertSame(
@@ -180,7 +204,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->register_angie_script();
 
 		// Act.
-		$this->get_widget_creation_module()->print_angie_config();
+		$this->get_ai_module()->print_angie_config();
 
 		// Assert.
 		$this->assertSame(
@@ -206,7 +230,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->register_angie_script();
 
 		// Act.
-		$this->get_widget_creation_module()->print_angie_config();
+		$this->get_ai_module()->print_angie_config();
 
 		// Assert.
 		$this->assertSame(
@@ -238,11 +262,42 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertFalse( Module::is_angie_in_panels_active() );
 	}
 
+	public function test_consent_route_saves_option_for_admin() {
+		// Arrange.
+		$this->act_as_admin();
+		delete_option( Module::ANGIE_CONSENT_OPTION );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/angie/consent' );
+
+		// Act.
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [ 'success' => true ], $response->get_data() );
+		$this->assertSame( 'yes', get_option( Module::ANGIE_CONSENT_OPTION ) );
+	}
+
+	public function test_consent_route_requires_manage_options() {
+		// Arrange.
+		$this->act_as_editor();
+		delete_option( Module::ANGIE_CONSENT_OPTION );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/angie/consent' );
+
+		// Act.
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( \WP_Http::FORBIDDEN, $response->get_status() );
+		$this->assertFalse( get_option( Module::ANGIE_CONSENT_OPTION ) );
+	}
+
 	private function register_angie_script(): void {
 		wp_register_script( self::ANGIE_SCRIPT_HANDLE, 'angie.js', [], '1.0.0', true );
 	}
 
-	private function get_widget_creation_module(): Module {
-		return Plugin::$instance->modules_manager->get_modules( Module::MODULE_NAME );
+	private function get_ai_module(): Module {
+		return Plugin::$instance->modules_manager->get_modules( 'ai' );
 	}
 }

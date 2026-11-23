@@ -1,11 +1,6 @@
 import { render } from '@testing-library/react';
 import { useLocation } from 'elementor/modules/ai/assets/js/editor/pages/form-media/context/location-context';
 import { useEditImage } from 'elementor/modules/ai/assets/js/editor/pages/form-media/context/edit-image-context';
-jest.mock( 'elementor/modules/ai/assets/js/editor/pages/form-media/views/product-image-unification', () => ( {
-	__esModule: true,
-	default: () => <div>Product Image Unification View</div>,
-} ) );
-
 jest.mock( 'elementor/modules/ai/assets/js/editor/components/prompt-history/context/prompt-history-action-context', () => ( {
 	useSubscribeOnPromptHistoryAction: jest.fn(),
 	ACTION_TYPES: {
