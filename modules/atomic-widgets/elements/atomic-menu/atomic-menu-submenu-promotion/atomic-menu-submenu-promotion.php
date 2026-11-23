@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Html_Tag_Computer;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Atomic_Pro_Promotion_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Menu_Submenu_Promotion extends Atomic_Pro_Promotion_Element_Base {
 	const TYPE = Atomic_Menu::ELEMENT_TYPE_SUBMENU;
+	const POSITION_MENU_ITEM = 'menu-item';
+	const POSITIONS = [ self::POSITION_MENU_ITEM, 'menu-container', 'viewport' ];
+	const ALIGNMENT_START = 'start';
+	const ALIGNMENTS = [ self::ALIGNMENT_START, 'center', 'end' ];
 
 	public static function get_type() {
 		return self::TYPE;
@@ -39,6 +44,12 @@ class Atomic_Menu_Submenu_Promotion extends Atomic_Pro_Promotion_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'position-relative-to' => String_Prop_Type::make()
+				->enum( self::POSITIONS )
+				->default( self::POSITION_MENU_ITEM ),
+			'horizontal-alignment' => String_Prop_Type::make()
+				->enum( self::ALIGNMENTS )
+				->default( self::ALIGNMENT_START ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}

@@ -7,6 +7,7 @@ import { MarkdownContentPanel } from 'elementor/modules/agents/assets/js/admin/c
 const PAGE = { id: 7, title: 'About', path: '/about/', type: 'page' };
 const GENERATED_CONTENT = '# About generated';
 const EDITED_CONTENT = '# About edited';
+const CHANGED_CONTENT = '# About changed again';
 
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text ) => text,
@@ -95,6 +96,99 @@ describe( 'MarkdownContentPanel', () => {
 		// Assert
 		expect( await screen.findByTestId( 'chip' ) ).toHaveProperty( 'textContent', 'This page was edited manually and no longer syncs automatically.' );
 		expect( screen.getByRole( 'button', { name: 'Revert to generated version' } ) ).toBeTruthy();
+	} );
+
+	it( 'tracks a conflict only when the loaded page was edited manually', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: EDITED_CONTENT, isOverridden: true } );
+
+		// Act
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await screen.findByTestId( 'chip' );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_feature_conflict_detected', expect.objectContaining( { feature_name: 'markdown_content' } ) );
+
+		delete window.elementorCommon;
+	} );
+
+	it( 'tracks the conflict of an already edited page once when the preview reloads after a save', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: EDITED_CONTENT, isOverridden: true } );
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await screen.findByTestId( 'chip' );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Edit' } ) );
+		fireEvent.change( screen.getByRole( 'textbox', { name: 'about.md' } ), { target: { value: CHANGED_CONTENT } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await waitFor( () => expect( fetchMarkdownPreview ).toHaveBeenCalledTimes( 2 ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).toBeNull() );
+
+		// Assert
+		const conflictCalls = dispatchEvent.mock.calls.filter( ( [ eventName ] ) => 'agent_readiness_feature_conflict_detected' === eventName );
+		expect( conflictCalls ).toHaveLength( 1 );
+
+		delete window.elementorCommon;
+	} );
+
+	it( 'does not track a conflict when the admin edits a generated page themselves', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview
+			.mockResolvedValueOnce( { content: GENERATED_CONTENT, isOverridden: false } )
+			.mockResolvedValue( { content: EDITED_CONTENT, isOverridden: true } );
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await waitFor( () => expect( screen.getByTestId( 'preview' ).textContent ).toBe( GENERATED_CONTENT ) );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Edit' } ) );
+		fireEvent.change( screen.getByRole( 'textbox', { name: 'about.md' } ), { target: { value: CHANGED_CONTENT } } );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await waitFor( () => expect( screen.getByTestId( 'chip' ) ).toBeTruthy() );
+
+		// Assert
+		expect( dispatchEvent ).not.toHaveBeenCalledWith( 'agent_readiness_feature_conflict_detected', expect.anything() );
+
+		delete window.elementorCommon;
+	} );
+
+	it( 'does not track a conflict for generated markdown', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: GENERATED_CONTENT, isOverridden: false } );
+
+		// Act
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await waitFor( () => expect( screen.getByTestId( 'preview' ).textContent ).toBe( GENERATED_CONTENT ) );
+
+		// Assert
+		expect( dispatchEvent ).not.toHaveBeenCalled();
+
+		delete window.elementorCommon;
+	} );
+
+	it( 'tracks the markdown file as opened when the edit action is used', async () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		fetchMarkdownPreview.mockResolvedValue( { content: GENERATED_CONTENT, isOverridden: false } );
+		render( <MarkdownContentPanel settings={ createSettings() } /> );
+		await waitFor( () => expect( screen.getByTestId( 'preview' ).textContent ).toBe( GENERATED_CONTENT ) );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Edit' } ) );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_file_opened', expect.objectContaining( { file_type: 'markdown' } ) );
+
+		delete window.elementorCommon;
 	} );
 
 	it( 'drops the override warning and revert action when Markdown content is turned off', async () => {

@@ -59,6 +59,23 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertInstanceOf( Atomic_Menu_Submenu_Trigger_Promotion::class, $types['e-menu-submenu-trigger'] );
 	}
 
+	public function test_a_later_registration_replaces_the_placeholder() {
+		// Arrange.
+		$pro_submenu = new class() extends Atomic_Menu_Submenu_Promotion {};
+		add_action(
+			'elementor/elements/elements_registered',
+			fn ( $elements_manager ) => $elements_manager->register_element_type( $pro_submenu )
+		);
+
+		// Act.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$types = Plugin::$instance->elements_manager->get_element_types();
+		$this->assertSame( $pro_submenu, $types['e-menu-submenu'] );
+		$this->assertInstanceOf( Atomic_Menu_Submenu_Trigger_Promotion::class, $types['e-menu-submenu-trigger'] );
+	}
+
 	public function test_placeholders_are_not_registered_when_the_experiment_is_inactive() {
 		// Act.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_INACTIVE );
@@ -120,6 +137,33 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertTrue( Submenu_Entitlement::is_locked_for( false, true ), 'Pro deactivated' );
 		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, false ), 'Pro without the Submenu types' );
 		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, true ), 'Pro with the Submenu types' );
+	}
+
+	public function test_has_pro_submenu_type__is_false_with_only_the_placeholder_registered() {
+		// Act.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertFalse( Submenu_Entitlement::has_pro_submenu_type() );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, Submenu_Entitlement::has_pro_submenu_type() ), 'Pro without the Submenu types' );
+	}
+
+	public function test_has_pro_submenu_type__is_true_once_a_real_type_replaces_the_placeholder() {
+		// Arrange.
+		add_action(
+			'elementor/elements/elements_registered',
+			fn ( $elements_manager ) => $elements_manager->register_element_type( new class() extends \Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item {
+				public static function get_type() {
+					return 'e-menu-submenu';
+				}
+			} )
+		);
+
+		// Act.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertTrue( Submenu_Entitlement::has_pro_submenu_type() );
 	}
 
 	public function test_is_locked_is_decided_by_pro_through_a_filter() {
@@ -222,6 +266,46 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertSame( 'par0001', $saved_submenu['elements'][0]['id'] );
 		$this->assertSame( 'nested1', $saved_submenu['elements'][1]['id'] );
 		$this->assertSame( 'isub0001', $saved_submenu['elements'][1]['elements'][0]['elements'][0]['elements'][1]['id'] );
+	}
+
+	public function test_childless_trigger_and_empty_submenu_settings_survive_a_save_while_pro_is_off() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		( new Pro_Promotion_Data_Preservation() )->register_hooks();
+
+		$trigger_settings = [
+			'show-indicator' => [ '$$type' => 'boolean', 'value' => false ],
+			'closed-angle' => [ '$$type' => 'number', 'value' => 90 ],
+			'open-angle' => [ '$$type' => 'number', 'value' => -90 ],
+			'label-open' => [ '$$type' => 'string', 'value' => 'Show products' ],
+			'label-close' => [ '$$type' => 'string', 'value' => 'Hide products' ],
+		];
+		$submenu_settings = [
+			'position-relative-to' => [ '$$type' => 'string', 'value' => 'viewport' ],
+			'horizontal-alignment' => [ '$$type' => 'string', 'value' => 'end' ],
+		];
+		$entry = [
+			'id' => 'entry01',
+			'elType' => 'e-menu-entry',
+			'settings' => [ 'submenu' => [ '$$type' => 'boolean', 'value' => true ] ],
+			'elements' => [
+				[ 'id' => 'item001', 'elType' => 'e-menu-item', 'settings' => [], 'elements' => [] ],
+				[ 'id' => 'trig001', 'elType' => 'e-menu-submenu-trigger', 'settings' => $trigger_settings, 'elements' => [] ],
+				[ 'id' => 'sub0001', 'elType' => 'e-menu-submenu', 'settings' => $submenu_settings, 'elements' => [] ],
+			],
+		];
+		$menu = [ 'id' => 'menu001', 'elType' => 'e-menu', 'settings' => [], 'elements' => [ [ 'id' => 'items01', 'elType' => 'e-menu-items', 'settings' => [], 'elements' => [ $entry ] ] ] ];
+
+		// Act.
+		$document = $this->factory()->documents->create_and_get();
+		$document->save( [ 'elements' => [ $menu ], 'settings' => [] ] );
+
+		// Assert.
+		$saved_entry = $document->get_elements_data()[0]['elements'][0]['elements'][0];
+
+		$this->assertTrue( $saved_entry['settings']['submenu']['value'] );
+		$this->assertSame( $trigger_settings, $saved_entry['elements'][1]['settings'] );
+		$this->assertSame( $submenu_settings, $saved_entry['elements'][2]['settings'] );
 	}
 
 	public function test_menu_item_controls_serialize_with_the_submenu_toggle() {
