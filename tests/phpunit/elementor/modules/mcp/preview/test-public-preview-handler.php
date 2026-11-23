@@ -2,8 +2,11 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp\Preview;
 
+use Elementor\Core\Base\Document;
+use Elementor\Core\Documents_Manager;
 use Elementor\Modules\Mcp\Preview\Preview_Token;
 use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,15 +19,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 	private Public_Preview_Handler $handler;
+	private $original_screen;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->handler = new Public_Preview_Handler();
+		$this->original_screen = $GLOBALS['current_screen'] ?? null;
 	}
 
 	public function tearDown(): void {
 		unset( $_GET[ Preview_Token::QUERY_ARG ] );
+		remove_all_filters( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER );
+		remove_all_filters( 'get_post_metadata' );
+		delete_option( 'elementor_element_cache_ttl' );
+		$GLOBALS['current_screen'] = $this->original_screen;
 
 		parent::tearDown();
 	}
@@ -35,7 +44,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 		$this->handler->maybe_activate( $wp );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+		$this->assertSame( $post_id, Plugin::$instance->documents->get_frontend_document_id( $post_id ) );
 	}
 
 	public function test_invalid_token__does_nothing() {
@@ -44,7 +53,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+		$this->assertSame( $post_id, Plugin::$instance->documents->get_frontend_document_id( $post_id ) );
 	}
 
 	public function test_expired_token__does_nothing() {
@@ -53,7 +62,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+		$this->assertSame( $post_id, Plugin::$instance->documents->get_frontend_document_id( $post_id ) );
 	}
 
 	public function test_missing_post__does_nothing() {
@@ -63,11 +72,11 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 			'post_parent' => $non_existent_post_id,
 			'post_status' => 'inherit',
 		] );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $non_existent_post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $non_existent_post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $non_existent_post_id, '_elementor_data', true ) );
+		$this->assertSame( $non_existent_post_id, Plugin::$instance->documents->get_frontend_document_id( $non_existent_post_id ) );
 	}
 
 	public function test_non_elementor_post__does_nothing() {
@@ -78,64 +87,40 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 			'post_status' => 'inherit',
 		] );
 		update_metadata( 'post', $revision_id, '_elementor_data', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+		$this->assertSame( $post_id, Plugin::$instance->documents->get_frontend_document_id( $post_id ) );
 	}
 
 	public function test_revision_parent_mismatch__does_nothing() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
 		$other_post_id = $this->factory()->post->create();
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $other_post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $other_post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $other_post_id, '_elementor_data', true ) );
+		$this->assertSame( $other_post_id, Plugin::$instance->documents->get_frontend_document_id( $other_post_id ) );
 	}
 
-	public function test_valid_token__returns_revision_meta_for_parent_post() {
+	public function test_valid_token__renders_the_revision_for_the_parent_post_only() {
+		// Arrange.
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
-
-		$this->handler->maybe_activate( new \WP() );
-
-		$this->assertSame( [ 'snapshot' ], $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
-	}
-
-	public function test_valid_token__falls_through_when_revision_has_no_value_for_key() {
-		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
-
-		$this->handler->maybe_activate( new \WP() );
-
-		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_elementor_css', true ) );
-	}
-
-	public function test_valid_token__ignores_other_post_ids() {
-		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
-
-		$this->handler->maybe_activate( new \WP() );
-
 		$other_id = $this->factory()->post->create();
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $other_id, '_elementor_data', true ) );
-	}
-
-	public function test_valid_token__does_not_override_unrelated_meta_keys() {
-		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
-
+		// Act.
 		$this->handler->maybe_activate( new \WP() );
 
-		$this->assertNull( $this->handler->filter_post_metadata( null, $post_id, '_thumbnail_id', true ) );
+		// Assert.
+		$this->assertSame( $revision_id, Plugin::$instance->documents->get_frontend_document_id( $post_id ) );
+		$this->assertSame( $other_id, Plugin::$instance->documents->get_frontend_document_id( $other_id ) );
 	}
 
 	public function test_valid_token__rewrites_query_vars() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 
 		$wp = new \WP();
 		$this->handler->maybe_activate( $wp );
@@ -146,7 +131,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 	public function test_valid_token__query_vars_filter_can_replace_the_main_query() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 		$received = [];
 		$filter = function ( $query_vars, $post ) use ( &$received ) {
 			$received = [ $query_vars, $post ];
@@ -166,7 +151,7 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 
 	public function test_valid_token__announces_activation_before_the_query_is_rewritten() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 		$calls = [];
 		$on_activated = function ( ...$args ) use ( &$calls ) {
 			$calls[] = [ 'activated', $args[0]->ID, count( $args ) ];
@@ -186,16 +171,39 @@ class Test_Public_Preview_Handler extends Elementor_Test_Base {
 		$this->assertSame( [ [ 'activated', $post_id, 1 ], [ 'query_vars' ] ], $calls );
 	}
 
-	public function test_valid_token__previewed_document_keeps_revision_meta_when_main_query_is_replaced() {
+	public function test_valid_token__keeps_rendering_the_revision_when_main_query_is_replaced() {
 		[ $post_id, $revision_id ] = $this->create_post_and_revision( 'live', 'snapshot' );
-		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + 3600, Preview_Token::secret() );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
 		$filter = fn() => [ 'page_id' => 42 ];
 		add_filter( 'elementor/mcp/preview/query_vars', $filter );
 
 		$this->handler->maybe_activate( new \WP() );
 		remove_filter( 'elementor/mcp/preview/query_vars', $filter );
 
-		$this->assertSame( [ 'snapshot' ], $this->handler->filter_post_metadata( null, $post_id, '_elementor_data', true ) );
+		$this->assertSame( $revision_id, Plugin::$instance->documents->get_frontend_document_id( $post_id ) );
+	}
+
+	public function test_valid_token__render_does_not_touch_live_element_cache() {
+		// Arrange.
+		// Force a front-end screen context: the element cache is only written when `is_admin()`
+		// is false, and this suite's bootstrap otherwise leaves `current_screen` as 'dashboard'.
+		set_current_screen( 'front' );
+		update_option( 'elementor_element_cache_ttl', '24' );
+		$post_id = $this->factory()->documents->publish_and_get()->get_main_id();
+		$revision_id = $this->factory()->post->create( [
+			'post_type' => 'revision',
+			'post_parent' => $post_id,
+			'post_status' => 'inherit',
+		] );
+		Plugin::$instance->db->copy_elementor_meta( $post_id, $revision_id );
+		$_GET[ Preview_Token::QUERY_ARG ] = Preview_Token::encode( $post_id, $revision_id, time() + HOUR_IN_SECONDS, Preview_Token::secret() );
+		$this->handler->maybe_activate( new \WP() );
+
+		// Act.
+		Plugin::$instance->frontend->get_builder_content( $post_id );
+
+		// Assert.
+		$this->assertFalse( metadata_exists( 'post', $post_id, Document::CACHE_META_KEY ) );
 	}
 
 	private function create_snapshot_post( string $data ): int {

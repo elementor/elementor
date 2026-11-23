@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Preview;
 
+use Elementor\Core\Documents_Manager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,20 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Public_Preview_Handler {
 
-	const OVERRIDDEN_META_KEYS = [
-		'_elementor_data',
-		'_elementor_page_settings',
-		'_elementor_css',
-		'_elementor_edit_mode',
-		'_elementor_template_type',
-		'_elementor_version',
-		'_elementor_pro_version',
-		'_elementor_element_cache',
-	];
-
 	private ?int $active_post_id = null;
 	private ?int $active_revision_id = null;
-	private array $revision_meta_cache = [];
 
 	public function register(): void {
 		add_action( 'parse_request', [ $this, 'maybe_activate' ], 1 );
@@ -57,7 +46,6 @@ class Public_Preview_Handler {
 
 		$this->active_post_id = $claims['post_id'];
 		$this->active_revision_id = $claims['revision_id'];
-		$this->prime_revision_meta_cache( $claims['revision_id'] );
 
 		/**
 		 * Fires when a public preview request is accepted, before its main query is set.
@@ -123,35 +111,13 @@ class Public_Preview_Handler {
 	}
 
 	private function install_render_filters(): void {
-		add_filter( 'get_post_metadata', [ $this, 'filter_post_metadata' ], 10, 4 );
+		add_filter( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER, [ $this, 'filter_frontend_document_id' ] );
 		add_filter( 'posts_results', [ $this, 'filter_posts_results' ], 10, 1 );
 		add_filter( 'the_preview', [ $this, 'filter_the_preview' ], 10, 1 );
 	}
 
-	public function filter_post_metadata( $value, $object_id, $meta_key, $single ) {
-		if ( (int) $object_id !== $this->active_post_id ) {
-			return $value;
-		}
-
-		if ( ! in_array( $meta_key, self::OVERRIDDEN_META_KEYS, true ) ) {
-			return $value;
-		}
-
-		if ( ! array_key_exists( $meta_key, $this->revision_meta_cache ) ) {
-			return $value;
-		}
-
-		return $this->revision_meta_cache[ $meta_key ];
-	}
-
-	private function prime_revision_meta_cache( int $revision_id ): void {
-		foreach ( self::OVERRIDDEN_META_KEYS as $meta_key ) {
-			$values = get_post_meta( $revision_id, $meta_key, false );
-
-			if ( is_array( $values ) && ! empty( $values ) ) {
-				$this->revision_meta_cache[ $meta_key ] = $values;
-			}
-		}
+	public function filter_frontend_document_id( $post_id ) {
+		return (int) $post_id === $this->active_post_id ? $this->active_revision_id : $post_id;
 	}
 
 	public function filter_posts_results( $posts ) {
