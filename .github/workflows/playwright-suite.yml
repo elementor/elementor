@@ -171,7 +171,11 @@ jobs:
           jq '.config.WP_DEBUG = true | .config.WP_DEBUG_LOG = true | .config.WP_DEBUG_DISPLAY = false' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Fetch live CDN promotions
-        run: npm run test:playwright:fetch-cdn
+        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@9be0b7940ea3e66aea0bb57cce3ce3a191190c16
+        with:
+          output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
+          mu-plugins-dir: tests/playwright/mu-plugins
+          copy-fixtures: true
       - name: Install WordPress environment
         run: |
           npm run start-local-server
