@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type PropsWithChildren, type ReactNode, useId } from 'react';
+import { type PropsWithChildren, type ReactNode, type Ref, useId } from 'react';
 import { CollapseIcon } from '@elementor/editor-ui';
 import { Box, Chip, Collapse, Divider, List, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
@@ -11,6 +11,7 @@ import {
 
 type Props = {
 	count: number;
+	headerRef?: Ref< HTMLDivElement >;
 	isOpen: boolean;
 	onOpenChange: ( isOpen: boolean ) => void;
 	title: string;
@@ -33,6 +34,7 @@ function getSectionHeaderAriaLabel( title: string, count: number ) {
 
 export default function CollapsibleList( {
 	count,
+	headerRef,
 	isOpen,
 	onOpenChange,
 	title,
@@ -58,6 +60,7 @@ export default function CollapsibleList( {
 				} }
 			>
 				<ListItemButton
+					ref={ headerRef }
 					id={ labelId }
 					aria-controls={ contentId }
 					aria-expanded={ isOpen }
