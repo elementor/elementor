@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Setup CDN fixtures for local Playwright testing.
- * 
+ *
  * This script:
  * 1. Fetches shared no-promotion fixtures from the shared action repo
  * 2. Fetches live CDN data to test current campaigns
- * 
+ *
  * Usage: node scripts/setup-cdn-fixtures.mjs [--skip-live]
  */
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -45,7 +45,7 @@ const fetchJson = async ( url ) => {
 
 const saveFile = async ( path, content ) => {
 	await mkdir( dirname( path ), { recursive: true } );
-	await writeFile( path, typeof content === 'string' ? content : JSON.stringify( content, null, '\t' ) + '\n' );
+	await writeFile( path, 'string' === typeof content ? content : JSON.stringify( content, null, '\t' ) + '\n' );
 };
 
 console.log( '📦 Fetching shared no-promotion fixtures from action repo...' );
