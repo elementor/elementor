@@ -76,51 +76,60 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const status = isActive ? activeDocument?.status.value : post.status;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
 	const isTrashed = 'trash' === post.status;
-	const isDisabled = ! post.user_can.edit || isTrashed;
+	const isEditBlocked = ! post.user_can.edit && ! isTrashed;
+	const isRowDisabled = isEditBlocked || isTrashed;
 	const menuTriggerProps = bindTrigger( popupState );
+
+	const listRow = (
+		<ListItem
+			disablePadding
+			sx={ contentPanelListRowPaddingSx }
+			secondaryAction={
+				<IconButton
+					aria-label={ __( 'More actions', 'elementor' ) }
+					size="tiny"
+					{ ...menuTriggerProps }
+					onClick={ ( event: React.MouseEvent ) => {
+						event.stopPropagation();
+						menuTriggerProps.onClick?.( event );
+					} }
+				>
+					<DotsVerticalIcon fontSize="tiny" />
+				</IconButton>
+			}
+		>
+			<ListItemButton
+				dense
+				disableGutters
+				disabled={ isRowDisabled }
+				onClick={ () => {
+					if ( isTrashed || isActive ) {
+						return;
+					}
+
+					navigateToDocument( post.id );
+				} }
+				selected={ isActive }
+				shape="rounded"
+				sx={ contentPanelListItemButtonSx }
+			>
+				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
+					<PageTitleAndStatus title={ title } status={ status } />
+				</ListItemText>
+				{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
+			</ListItemButton>
+		</ListItem>
+	);
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
-				<ListItem
-					disablePadding
-					sx={ contentPanelListRowPaddingSx }
-					secondaryAction={
-						<IconButton
-							aria-label={ __( 'More actions', 'elementor' ) }
-							size="tiny"
-							{ ...menuTriggerProps }
-							onClick={ ( event: React.MouseEvent ) => {
-								event.stopPropagation();
-								menuTriggerProps.onClick?.( event );
-							} }
-						>
-							<DotsVerticalIcon fontSize="tiny" />
-						</IconButton>
-					}
-				>
-					<ListItemButton
-						dense
-						disableGutters
-						disabled={ isDisabled }
-						onClick={ () => {
-							if ( isTrashed || isActive ) {
-								return;
-							}
-
-							navigateToDocument( post.id );
-						} }
-						selected={ isActive }
-						shape="rounded"
-						sx={ contentPanelListItemButtonSx }
-					>
-						<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
-							<PageTitleAndStatus title={ title } status={ status } />
-						</ListItemText>
-						{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
-					</ListItemButton>
-				</ListItem>
-			</DisabledPostTooltip>
+			{ isEditBlocked ? (
+				<DisabledPostTooltip isDisabled postTypeSlug={ type }>
+					{ listRow }
+				</DisabledPostTooltip>
+			) : (
+				listRow
+			) }
 			<Menu
 				PaperProps={ { sx: { mt: 2, width: 200 } } }
 				MenuListProps={ { dense: true } }
@@ -130,7 +139,6 @@ export default function ListItemView( { post }: { post: Post } ) {
 					<>
 						<Restore post={ post } />
 						<ForceDelete post={ post } />
-						<View post={ post } />
 					</>
 				) : (
 					<>

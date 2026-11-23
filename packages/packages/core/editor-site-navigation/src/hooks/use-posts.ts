@@ -1,19 +1,31 @@
 import { keepPreviousData, useInfiniteQuery } from '@elementor/query';
 
 import { getRequest, type PostsResponse, type Slug } from '../api/post';
-import { getRestStatusForSiteContentFilter, type SiteContentStatusFilter } from '../site-content-status-filter';
+import {
+	EMPTY_SITE_CONTENT_STATUS_FILTERS,
+	getRestStatusForSiteContentFilters,
+	type SiteContentStatusFilters,
+} from '../site-content-status-filter';
 import { type Post } from '../types';
 
 export const postsQueryKeyBase = ( postTypeSlug: string ) => [ 'site-navigation', 'posts', postTypeSlug ];
 
-export const postsQueryKey = ( postTypeSlug: string, search = '', statusFilter: SiteContentStatusFilter = 'all' ) => {
-	const trimmedSearch = search.trim();
+export const serializeStatusFilters = ( statusFilters: SiteContentStatusFilters ) =>
+	( [ 'publish', 'draft', 'trash' ] as const ).map( ( key ) => ( statusFilters[ key ] ? key : '' ) ).join( '|' );
 
-	if ( ! trimmedSearch && 'all' === statusFilter ) {
+export const postsQueryKey = (
+	postTypeSlug: string,
+	search = '',
+	statusFilters: SiteContentStatusFilters = EMPTY_SITE_CONTENT_STATUS_FILTERS
+) => {
+	const trimmedSearch = search.trim();
+	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
+
+	if ( ! trimmedSearch && 'any' === restStatus ) {
 		return postsQueryKeyBase( postTypeSlug );
 	}
 
-	return [ ...postsQueryKeyBase( postTypeSlug ), statusFilter, trimmedSearch ];
+	return [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ];
 };
 
 const flattenData = ( data?: { pages: PostsResponse[] } ) => {
@@ -30,18 +42,22 @@ const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	return flattened;
 };
 
-export function usePosts( postTypeSlug: Slug, search = '', statusFilter: SiteContentStatusFilter = 'all' ) {
+export function usePosts(
+	postTypeSlug: Slug,
+	search = '',
+	statusFilters: SiteContentStatusFilters = EMPTY_SITE_CONTENT_STATUS_FILTERS
+) {
 	const trimmedSearch = search.trim();
-	const restStatus = getRestStatusForSiteContentFilter( statusFilter );
+	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
 
 	const query = useInfiniteQuery( {
-		queryKey: postsQueryKey( postTypeSlug, trimmedSearch, statusFilter ),
 		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch, restStatus ),
-		initialPageParam: 1,
 		getNextPageParam: ( lastPage ) => {
 			return lastPage.currentPage < lastPage.totalPages ? lastPage.currentPage + 1 : undefined;
 		},
+		initialPageParam: 1,
 		placeholderData: keepPreviousData,
+		queryKey: postsQueryKey( postTypeSlug, trimmedSearch, statusFilters ),
 	} );
 
 	return { ...query, data: { posts: flattenData( query.data ), total: query.data?.pages[ 0 ]?.totalPosts ?? 0 } };

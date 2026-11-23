@@ -78,6 +78,7 @@ describe( 'ListItemView', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'Delete permanently' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'menuitem', { name: 'Rename' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'menuitem', { name: 'Delete' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitem', { name: 'View Page' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not navigate when the row is in trash', () => {

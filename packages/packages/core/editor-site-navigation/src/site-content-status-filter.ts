@@ -1,31 +1,80 @@
 import { __ } from '@wordpress/i18n';
 
-export type SiteContentStatusFilter = 'all' | 'draft' | 'publish' | 'trash';
+export type SiteContentSelectableStatus = 'draft' | 'publish' | 'trash';
 
-export const SITE_CONTENT_STATUS_FILTERS: SiteContentStatusFilter[] = [ 'all', 'publish', 'draft', 'trash' ];
+export type SiteContentStatusFilters = Record< SiteContentSelectableStatus, boolean >;
 
-const filterLabels: Record< SiteContentStatusFilter, string > = {
-	all: __( 'All', 'elementor' ),
+export const SITE_CONTENT_SELECTABLE_STATUS_FILTERS: SiteContentSelectableStatus[] = [ 'publish', 'draft', 'trash' ];
+
+export const EMPTY_SITE_CONTENT_STATUS_FILTERS: SiteContentStatusFilters = {
+	draft: false,
+	publish: false,
+	trash: false,
+};
+
+const filterLabels: Record< SiteContentSelectableStatus, string > = {
 	publish: __( 'Published', 'elementor' ),
 	draft: __( 'Drafts', 'elementor' ),
 	trash: __( 'Trash', 'elementor' ),
 };
 
-export function getSiteContentStatusFilterLabel( filter: SiteContentStatusFilter ): string {
+export const SITE_CONTENT_ALL_FILTER_LABEL = __( 'All', 'elementor' );
+
+export const SITE_CONTENT_FILTER_POPOVER_BODY_HEIGHT_PX = 210;
+
+export function getSiteContentStatusFilterLabel( filter: SiteContentSelectableStatus ): string {
 	return filterLabels[ filter ];
 }
 
-export function getRestStatusForSiteContentFilter( filter: SiteContentStatusFilter ): string {
-	if ( 'all' === filter ) {
+export function hasActiveSiteContentStatusFilters( filters: SiteContentStatusFilters ): boolean {
+	return SITE_CONTENT_SELECTABLE_STATUS_FILTERS.some( ( key ) => filters[ key ] );
+}
+
+export function getActiveSiteContentStatusFilterKeys(
+	filters: SiteContentStatusFilters
+): SiteContentSelectableStatus[] {
+	return SITE_CONTENT_SELECTABLE_STATUS_FILTERS.filter( ( key ) => filters[ key ] );
+}
+
+export function getRestStatusForSiteContentFilters( filters: SiteContentStatusFilters ): string {
+	if ( filters.trash ) {
+		return 'trash';
+	}
+
+	const active = getActiveSiteContentStatusFilterKeys( filters );
+
+	if ( 0 === active.length ) {
 		return 'any';
 	}
 
-	return filter;
+	return active.join( ',' );
 }
 
-export function isSiteContentListNarrowed(
-	statusFilter: SiteContentStatusFilter,
-	search: string
-): boolean {
-	return 'all' !== statusFilter || search.trim().length > 0;
+export function isSiteContentTrashFilterActive( filters: SiteContentStatusFilters ): boolean {
+	return filters.trash;
+}
+
+export function isSiteContentListNarrowed( filters: SiteContentStatusFilters, search: string ): boolean {
+	return hasActiveSiteContentStatusFilters( filters ) || search.trim().length > 0;
+}
+
+export function toggleSiteContentStatusFilter(
+	filters: SiteContentStatusFilters,
+	filter: SiteContentSelectableStatus
+): SiteContentStatusFilters {
+	if ( 'trash' === filter ) {
+		const isTrashOn = ! filters.trash;
+
+		return {
+			draft: false,
+			publish: false,
+			trash: isTrashOn,
+		};
+	}
+
+	return {
+		...filters,
+		trash: false,
+		[ filter ]: ! filters[ filter ],
+	};
 }

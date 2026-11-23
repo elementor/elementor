@@ -37,6 +37,7 @@ const Shell = () => {
 				<Divider />
 				<PanelBody>
 					<ContentPanelToolbar />
+					<Divider />
 					<ShellPanelBodyContent
 						accessiblePostTypes={ accessiblePostTypes }
 						isUserPending={ isUserPending }

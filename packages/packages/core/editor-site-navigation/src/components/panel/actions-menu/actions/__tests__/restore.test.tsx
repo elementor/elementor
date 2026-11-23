@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { PostListContextProvider } from '../../../../../contexts/post-list-context';
 import { type Post } from '../../../../../types';
@@ -58,8 +58,8 @@ describe( 'Restore', () => {
 
 		fireEvent.click( screen.getByRole( 'menuitem', { name: 'Restore' } ) );
 
-		await screen.findByRole( 'menuitem', { name: 'Restore' } );
-
-		expect( mockSetError ).toHaveBeenCalledTimes( 1 );
+		await waitFor( () => {
+			expect( mockSetError ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 } );

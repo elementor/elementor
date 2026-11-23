@@ -1,76 +1,73 @@
 import * as React from 'react';
 import { PopoverBody, PopoverHeader } from '@elementor/editor-ui';
 import { FilterIcon } from '@elementor/icons';
-import {
-	bindPopover,
-	bindToggle,
-	Divider,
-	MenuItem,
-	MenuList,
-	Popover,
-	ToggleButton,
-	Tooltip,
-	usePopupState,
-} from '@elementor/ui';
+import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
 import {
-	getSiteContentStatusFilterLabel,
-	SITE_CONTENT_STATUS_FILTERS,
-	type SiteContentStatusFilter,
+	hasActiveSiteContentStatusFilters,
+	SITE_CONTENT_FILTER_POPOVER_BODY_HEIGHT_PX,
 } from '../../site-content-status-filter';
+import ContentPanelClearFiltersButton from './content-panel-clear-filters-button';
+import ContentPanelStatusFilterList from './content-panel-status-filter-list';
 
 export default function ContentPanelStatusFilter() {
-	const { statusFilter, setStatusFilter } = useContentPanelCoordinator();
+	const { clearStatusFilters, statusFilters } = useContentPanelCoordinator();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,
 	} );
 
-	const handleSelect = ( filter: SiteContentStatusFilter ) => {
-		setStatusFilter( filter );
-		popupState.close();
-	};
+	const hasActiveFilters = hasActiveSiteContentStatusFilters( statusFilters );
 
 	return (
 		<>
-			<Tooltip title={ __( 'Filter', 'elementor' ) } placement="top">
+			<Tooltip placement="top" title={ __( 'Filters', 'elementor' ) }>
 				<ToggleButton
-					value="filter"
+					aria-label={ __( 'Filters', 'elementor' ) }
+					selected={ popupState.isOpen || hasActiveFilters }
 					size="tiny"
-					selected={ 'all' !== statusFilter || popupState.isOpen }
+					value="filter"
 					{ ...bindToggle( popupState ) }
-					aria-label={ __( 'Filter', 'elementor' ) }
 				>
 					<FilterIcon fontSize="tiny" />
 				</ToggleButton>
 			</Tooltip>
 			<Popover
 				anchorOrigin={ {
-					vertical: 'bottom',
 					horizontal: 'right',
+					vertical: 'top',
+				} }
+				sx={ {
+					maxWidth: '344px',
 				} }
 				transformOrigin={ {
+					horizontal: -21,
 					vertical: 'top',
-					horizontal: 'right',
 				} }
 				{ ...bindPopover( popupState ) }
 			>
 				<PopoverHeader
-					onClose={ popupState.close }
-					title={ __( 'Filter', 'elementor' ) }
+					actions={
+						hasActiveFilters
+							? [
+									<ContentPanelClearFiltersButton
+										ariaLabel={ __( 'Clear all', 'elementor' ) }
+										key="clear-all-filters"
+										onClear={ clearStatusFilters }
+										tooltipText={ __( 'Clear all', 'elementor' ) }
+									/>,
+							  ]
+							: []
+					}
 					icon={ <FilterIcon fontSize="tiny" /> }
+					onClose={ popupState.close }
+					title={ __( 'Filters', 'elementor' ) }
 				/>
 				<Divider sx={ { borderWidth: '1px 0 0 0' } } />
-				<PopoverBody>
-					<MenuList dense>
-						{ SITE_CONTENT_STATUS_FILTERS.map( ( filter ) => (
-							<MenuItem key={ filter } selected={ statusFilter === filter } onClick={ () => handleSelect( filter ) }>
-								{ getSiteContentStatusFilterLabel( filter ) }
-							</MenuItem>
-						) ) }
-					</MenuList>
+				<PopoverBody height={ SITE_CONTENT_FILTER_POPOVER_BODY_HEIGHT_PX } width={ 344 }>
+					<ContentPanelStatusFilterList />
 				</PopoverBody>
 			</Popover>
 		</>

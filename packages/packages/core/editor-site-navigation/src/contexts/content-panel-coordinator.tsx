@@ -2,7 +2,12 @@ import * as React from 'react';
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { type Slug } from '../api/post';
-import { type SiteContentStatusFilter } from '../site-content-status-filter';
+import {
+	EMPTY_SITE_CONTENT_STATUS_FILTERS,
+	toggleSiteContentStatusFilter,
+	type SiteContentSelectableStatus,
+	type SiteContentStatusFilters,
+} from '../site-content-status-filter';
 
 type SectionHandlers = {
 	setExpanded: ( expanded: boolean ) => void;
@@ -10,13 +15,14 @@ type SectionHandlers = {
 };
 
 type ContentPanelCoordinatorValue = {
+	clearStatusFilters: () => void;
 	registerSection: ( type: Slug, handlers: SectionHandlers ) => void;
-	unregisterSection: ( type: Slug ) => void;
 	requestCreate: ( type: Slug ) => void;
 	searchQuery: string;
 	setSearchQuery: ( query: string ) => void;
-	setStatusFilter: ( filter: SiteContentStatusFilter ) => void;
-	statusFilter: SiteContentStatusFilter;
+	statusFilters: SiteContentStatusFilters;
+	toggleStatusFilter: ( filter: SiteContentSelectableStatus ) => void;
+	unregisterSection: ( type: Slug ) => void;
 };
 
 const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorValue | null >( null );
@@ -24,7 +30,7 @@ const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorVal
 export function ContentPanelCoordinatorProvider( { children }: { children: ReactNode } ) {
 	const sectionsRef = useRef( new Map< Slug, SectionHandlers >() );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
-	const [ statusFilter, setStatusFilter ] = useState< SiteContentStatusFilter >( 'all' );
+	const [ statusFilters, setStatusFilters ] = useState< SiteContentStatusFilters >( EMPTY_SITE_CONTENT_STATUS_FILTERS );
 
 	const registerSection = useCallback( ( type: Slug, handlers: SectionHandlers ) => {
 		sectionsRef.current.set( type, handlers );
@@ -45,17 +51,26 @@ export function ContentPanelCoordinatorProvider( { children }: { children: React
 		handlers.startCreate();
 	}, [] );
 
+	const clearStatusFilters = useCallback( () => {
+		setStatusFilters( EMPTY_SITE_CONTENT_STATUS_FILTERS );
+	}, [] );
+
+	const toggleStatusFilter = useCallback( ( filter: SiteContentSelectableStatus ) => {
+		setStatusFilters( ( current ) => toggleSiteContentStatusFilter( current, filter ) );
+	}, [] );
+
 	const value = useMemo(
 		() => ( {
+			clearStatusFilters,
 			registerSection,
-			unregisterSection,
 			requestCreate,
 			searchQuery,
 			setSearchQuery,
-			setStatusFilter,
-			statusFilter,
+			statusFilters,
+			toggleStatusFilter,
+			unregisterSection,
 		} ),
-		[ registerSection, unregisterSection, requestCreate, searchQuery, statusFilter ]
+		[ clearStatusFilters, registerSection, requestCreate, searchQuery, statusFilters, toggleStatusFilter, unregisterSection ]
 	);
 
 	return (

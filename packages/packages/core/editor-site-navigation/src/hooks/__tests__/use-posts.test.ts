@@ -109,11 +109,41 @@ describe( '@elementor/site-settings/use-posts', () => {
 		} );
 	} );
 
-	it( 'passes status filter to the REST request', async () => {
-		const { component } = renderHookWithQuery( () => usePosts( 'page', '', 'draft' ) );
+	it( 'passes status filters to the REST request', async () => {
+		const { component } = renderHookWithQuery( () =>
+			usePosts( 'page', '', {
+				draft: true,
+				publish: false,
+				trash: false,
+			} )
+		);
 
 		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
 		const expectedPath = `/wp/v2/pages?status=draft&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+
+		await waitFor( () => {
+			expect( apiFetch ).toHaveBeenCalledWith( {
+				parse: false,
+				path: expectedPath,
+			} );
+		} );
+
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+	} );
+
+	it( 'passes combined status filters to the REST request', async () => {
+		const { component } = renderHookWithQuery( () =>
+			usePosts( 'page', '', {
+				draft: true,
+				publish: true,
+				trash: false,
+			} )
+		);
+
+		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+		const expectedPath = `/wp/v2/pages?status=publish%2Cdraft&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
 		await waitFor( () => {
 			expect( apiFetch ).toHaveBeenCalledWith( {
