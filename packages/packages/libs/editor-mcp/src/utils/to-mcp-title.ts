@@ -1,4 +1,8 @@
 export const toMCPTitle = ( namespace: string ): string => {
-	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
-	return `Editor ${ capitalized }`;
+	const label = namespace
+		.split( '_' )
+		.map( ( word ) => word.charAt( 0 ).toUpperCase() + word.slice( 1 ) )
+		.join( ' ' );
+
+	return `Editor ${ label }`;
 };
