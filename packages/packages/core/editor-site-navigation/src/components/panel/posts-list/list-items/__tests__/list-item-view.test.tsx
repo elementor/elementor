@@ -39,6 +39,8 @@ const readOnlyPost: Post = {
 
 describe( 'ListItemView', () => {
 	afterEach( () => {
+		const { __useActiveDocument } = jest.requireMock( '@elementor/editor-documents' );
+		__useActiveDocument.mockReturnValue( null );
 		jest.clearAllMocks();
 	} );
 
@@ -95,8 +97,7 @@ describe( 'ListItemView', () => {
 			</PostListContextProvider>
 		);
 
-		const rowButtons = screen.getAllByRole( 'button' );
-		fireEvent.click( rowButtons[ 0 ] );
+		fireEvent.click( screen.getByText( 'Test Page' ) );
 
 		expect( navigateToDocument ).toHaveBeenCalledWith( pagePost.id );
 	} );

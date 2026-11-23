@@ -30,7 +30,7 @@ describe( 'AngieSiteContentListItemAction', () => {
 	} );
 
 	it( 'opens Angie with the site content prompt when clicked', () => {
-		render( <AngieSiteContentListItemAction post={ post } /> );
+		render( <AngieSiteContentListItemAction post={ post } title="Renamed in editor" /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: getGenerateWithAngieLabel() } ) );
 
@@ -38,7 +38,7 @@ describe( 'AngieSiteContentListItemAction', () => {
 			ANGIE_PROMPTS.siteContentActiveDocument( {
 				postId: post.id,
 				postType: post.type,
-				title: post.title.rendered,
+				title: 'Renamed in editor',
 			} )
 		);
 	} );

@@ -86,7 +86,9 @@ export default function ListItemView( { post }: { post: Post } ) {
 					sx={ contentPanelListRowPaddingSx }
 					secondaryAction={
 						<Stack alignItems="center" direction="row" spacing={ 0 }>
-							{ isActive && ! isDisabled && <SiteContentListItemActionsSlot post={ post } /> }
+							{ isActive && ! isDisabled && (
+								<SiteContentListItemActionsSlot post={ post } title={ title } />
+							) }
 							<IconButton
 								aria-label={ __( 'More actions', 'elementor' ) }
 								size="tiny"

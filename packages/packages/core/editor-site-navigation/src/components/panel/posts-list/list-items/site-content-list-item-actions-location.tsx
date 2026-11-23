@@ -4,9 +4,8 @@ import { type Post } from '../../../../types';
 
 export type SiteContentListItemActionsProps = {
 	post: Post;
+	title: string;
 };
 
-export const {
-	Slot: SiteContentListItemActionsSlot,
-	inject: injectIntoSiteContentListItemActions,
-} = createLocation< SiteContentListItemActionsProps >();
+export const { Slot: SiteContentListItemActionsSlot, inject: injectIntoSiteContentListItemActions } =
+	createLocation< SiteContentListItemActionsProps >();
