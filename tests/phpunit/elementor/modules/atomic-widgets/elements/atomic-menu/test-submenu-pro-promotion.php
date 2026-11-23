@@ -139,6 +139,33 @@ class Test_Submenu_Pro_Promotion extends Elementor_Test_Base {
 		$this->assertFalse( Submenu_Entitlement::is_locked_for( true, true ), 'Pro with the Submenu types' );
 	}
 
+	public function test_has_pro_submenu_type__is_false_with_only_the_placeholder_registered() {
+		// Act.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertFalse( Submenu_Entitlement::has_pro_submenu_type() );
+		$this->assertTrue( Submenu_Entitlement::is_locked_for( true, Submenu_Entitlement::has_pro_submenu_type() ), 'Pro without the Submenu types' );
+	}
+
+	public function test_has_pro_submenu_type__is_true_once_a_real_type_replaces_the_placeholder() {
+		// Arrange.
+		add_action(
+			'elementor/elements/elements_registered',
+			fn ( $elements_manager ) => $elements_manager->register_element_type( new class() extends \Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Item\Atomic_Menu_Item {
+				public static function get_type() {
+					return 'e-menu-submenu';
+				}
+			} )
+		);
+
+		// Act.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Assert.
+		$this->assertTrue( Submenu_Entitlement::has_pro_submenu_type() );
+	}
+
 	public function test_is_locked_is_decided_by_pro_through_a_filter() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
