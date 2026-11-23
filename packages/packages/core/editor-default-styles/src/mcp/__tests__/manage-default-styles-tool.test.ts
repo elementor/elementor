@@ -35,14 +35,14 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
-const VARIANTS = [ { meta: { breakpoint: 'desktop', state: null }, props: {} } ];
+const VARIANTS = [ { meta: { breakpoint: 'desktop', state: null }, custom_css: null, props: {} } ];
 
 const mockEditorStyle = (
 	current: Record< string, StyleDefinition >,
 	initial: Record< string, StyleDefinition > = current
 ) => {
-	( selectData as jest.Mock ).mockReturnValue( current );
-	( selectInitialData as jest.Mock ).mockReturnValue( initial );
+	( selectData as unknown as jest.Mock ).mockReturnValue( current );
+	( selectInitialData as unknown as jest.Mock ).mockReturnValue( initial );
 };
 
 function createMockRegistry() {
@@ -85,7 +85,7 @@ describe( 'manage-default-styles-tool', () => {
 		( defaultStylesStylesProvider.actions.delete as jest.Mock ).mockClear();
 		( getState as jest.Mock ).mockReturnValue( {} );
 		mockEditorStyle( {} );
-		( selectInitialData as jest.Mock ).mockReturnValue( {} );
+		( selectInitialData as unknown as jest.Mock ).mockReturnValue( {} );
 	} );
 
 	it( 'calls the proxy in dry run and applies the planned update locally', async () => {
@@ -175,8 +175,20 @@ describe( 'manage-default-styles-tool', () => {
 
 	it( 'sends the current editor variants and applies sequential updates on the same tag', async () => {
 		// Arrange.
-		const firstVariants = [ { meta: { breakpoint: 'desktop', state: null }, props: { color: 'black' } } ];
-		const secondVariants = [ { meta: { breakpoint: 'desktop', state: null }, props: { color: 'white' } } ];
+		const firstVariants: StyleDefinition[ 'variants' ] = [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				custom_css: null,
+				props: { color: { $$type: 'color', value: 'black' } },
+			},
+		];
+		const secondVariants: StyleDefinition[ 'variants' ] = [
+			{
+				meta: { breakpoint: 'desktop', state: null },
+				custom_css: null,
+				props: { color: { $$type: 'color', value: 'white' } },
+			},
+		];
 		httpMock.post
 			.mockResolvedValueOnce(
 				mockProxyResults( [
@@ -242,15 +254,17 @@ describe( 'manage-default-styles-tool', () => {
 
 	it( 'plans from unsaved manual panel edits on the same tag', async () => {
 		// Arrange.
-		const manualVariants = [
+		const manualVariants: StyleDefinition[ 'variants' ] = [
 			{
 				meta: { breakpoint: 'desktop', state: null },
+				custom_css: null,
 				props: { color: { $$type: 'color', value: 'blue' } },
 			},
 		];
-		const plannedVariants = [
+		const plannedVariants: StyleDefinition[ 'variants' ] = [
 			{
 				meta: { breakpoint: 'desktop', state: null },
+				custom_css: null,
 				props: {
 					color: { $$type: 'color', value: 'blue' },
 					'font-size': { $$type: 'size', value: '24px' },
@@ -309,15 +323,17 @@ describe( 'manage-default-styles-tool', () => {
 
 	it( 'sends an empty override when the tag was deleted in the editor and does not resurrect saved variants', async () => {
 		// Arrange.
-		const savedVariants = [
+		const savedVariants: StyleDefinition[ 'variants' ] = [
 			{
 				meta: { breakpoint: 'desktop', state: null },
+				custom_css: null,
 				props: { color: { $$type: 'color', value: 'blue' } },
 			},
 		];
-		const plannedVariants = [
+		const plannedVariants: StyleDefinition[ 'variants' ] = [
 			{
 				meta: { breakpoint: 'desktop', state: null },
+				custom_css: null,
 				props: { 'font-size': { $$type: 'size', value: '24px' } },
 			},
 		];
