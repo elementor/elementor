@@ -95,11 +95,15 @@ export default class extends Marionette.CompositeView {
 		};
 	}
 
+	getNavigatorTitle() {
+		return elementor.hooks.applyFilters( 'navigator/element/title', this.model.getTitle(), this.model );
+	}
+
 	templateHelpers() {
 		const helpers = {};
 
 		if ( ! this.isNavigatorContainer() ) {
-			helpers.title = this.model.getTitle();
+			helpers.title = this.getNavigatorTitle();
 
 			helpers.icon = 'section' === this.model.get( 'elType' )
 				? ''
@@ -168,12 +172,12 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onTitleExternalChange() {
-		this.ui.title.text( this.model.getTitle() );
+		this.ui.title.text( this.getNavigatorTitle() );
 	}
 
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
 		if ( undefined !== elementModel.changed?.editor_settings?.title ) {
-			this.ui.title.text( editorSettings.title );
+			this.ui.title.text( this.getNavigatorTitle() );
 		}
 
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_editor_settings', {
@@ -436,11 +440,11 @@ export default class extends Marionette.CompositeView {
 
 	onModelSettingsChange( settingsModel ) {
 		if ( undefined !== settingsModel.changed._title ) {
-			this.ui.title.text( this.model.getTitle() );
+			this.ui.title.text( this.getNavigatorTitle() );
 		}
 
 		if ( undefined !== settingsModel.changed.presetTitle && undefined === settingsModel._title ) {
-			this.ui.title.text( this.model.getTitle() );
+			this.ui.title.text( this.getNavigatorTitle() );
 		}
 
 		if ( undefined !== settingsModel.changed.presetIcon ) {

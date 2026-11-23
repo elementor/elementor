@@ -3,6 +3,7 @@ import { __registerSlice as registerSlice } from '@elementor/store';
 import { initStructureGuards } from './closed-structure/structure-guards';
 import { initWidgetGeneral } from './general/init-widget-general';
 import { initNavigatorIcon } from './navigator/init-navigator-icon';
+import { initNavigatorTitle } from './navigator/init-navigator-title';
 import { loadCompositeWidgetsFromConfig } from './store/load-composite-widgets';
 import { slice } from './store/store';
 import { initExpandWidgetOnDrop } from './sync/expand-widget-on-drop';
@@ -15,4 +16,5 @@ export function init() {
 	initStructureGuards();
 	initWidgetGeneral();
 	initNavigatorIcon();
+	initNavigatorTitle();
 }
