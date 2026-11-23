@@ -20,6 +20,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { getCannotEditPanelItemMessage, type Slug } from '../../../../api/post';
 import { usePostListContext } from '../../../../contexts/post-list-context';
 import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
@@ -31,13 +32,21 @@ import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
 import { SiteContentListItemActionsSlot } from './site-content-list-item-actions-location';
 
-const DisabledPostTooltip = ( { children, isDisabled }: { children: React.ReactNode; isDisabled: boolean } ) => {
+const DisabledPostTooltip = ( {
+	children,
+	isDisabled,
+	postTypeSlug,
+}: {
+	children: React.ReactNode;
+	isDisabled: boolean;
+	postTypeSlug: Slug;
+} ) => {
 	if ( isDisabled ) {
 		const title = (
 			<Typography variant="caption">
-				You cannot edit this page.
+				{ getCannotEditPanelItemMessage( postTypeSlug ) }
 				<br />
-				To edit it directly, contact the site owner
+				{ __( 'To edit it directly, contact the site owner', 'elementor' ) }
 			</Typography>
 		);
 
@@ -71,7 +80,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled }>
+			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
 				<ListItem
 					disablePadding
 					sx={ contentPanelListRowPaddingSx }
