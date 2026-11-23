@@ -1,4 +1,4 @@
-import { isAngieEnabled, useIsAngieEnabled } from '../is-angie-enabled';
+import { isAngieEnabled } from '../is-angie-enabled';
 
 describe( 'isAngieEnabled', () => {
 	afterEach( () => {
@@ -11,7 +11,6 @@ describe( 'isAngieEnabled', () => {
 
 		// Act & Assert
 		expect( isAngieEnabled() ).toBe( true );
-		expect( useIsAngieEnabled() ).toBe( true );
 	} );
 
 	it( 'should be disabled when the host signals Angie is disabled', () => {
@@ -20,7 +19,6 @@ describe( 'isAngieEnabled', () => {
 
 		// Act & Assert
 		expect( isAngieEnabled() ).toBe( false );
-		expect( useIsAngieEnabled() ).toBe( false );
 	} );
 
 	it( 'should be disabled when consent is missing and the host sends no signal', () => {

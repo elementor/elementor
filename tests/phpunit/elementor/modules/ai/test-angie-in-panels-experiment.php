@@ -183,8 +183,8 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 	public function angie_plugin_active_provider(): array {
 		return [
-			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true,"showEntryPoints":true}' ],
-			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false,"showEntryPoints":true}' ],
+			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true,"showEntryPoints":true,"isAngieEnabled":true}' ],
+			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false,"showEntryPoints":true,"isAngieEnabled":false}' ],
 		];
 	}
 
@@ -208,7 +208,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame(
-			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false,"isAngieEnabled":false};' ],
 			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
 		);
 	}
@@ -234,13 +234,49 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame(
-			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false,"isAngieEnabled":false};' ],
 			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
 		);
 
 		if ( null !== $original_container_default ) {
 			Plugin::$instance->experiments->set_feature_default_state( 'container', $original_container_default );
 		}
+	}
+
+	public function test_is_angie_enabled_when_angie_plugin_is_active() {
+		// Arrange.
+		add_filter( 'pre_option_active_plugins', static fn() => [ 'angie/angie.php' ] );
+
+		// Act & Assert.
+		$this->assertTrue( $this->get_ai_module()->is_angie_enabled() );
+	}
+
+	/**
+	 * @dataProvider angie_enabled_without_plugin_provider
+	 */
+	public function test_is_angie_enabled_without_plugin( bool $experiment_active, bool $ai_enabled, bool $consent, bool $expected ) {
+		// Arrange.
+		$this->act_as_admin();
+		add_filter( 'pre_option_active_plugins', static fn() => [] );
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			$experiment_active ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE
+		);
+		Plugin::$instance->experiments->set_feature_default_state( 'container', Experiments_Manager::STATE_ACTIVE );
+		update_user_option( get_current_user_id(), Preferences::ENABLE_AI, $ai_enabled ? '1' : '0' );
+		update_option( Module::ANGIE_CONSENT_OPTION, $consent ? 'yes' : 'no' );
+
+		// Act & Assert.
+		$this->assertSame( $expected, $this->get_ai_module()->is_angie_enabled() );
+	}
+
+	public function angie_enabled_without_plugin_provider(): array {
+		return [
+			'all conditions met' => [ true, true, true, true ],
+			'experiment inactive' => [ false, true, true, false ],
+			'ai disabled' => [ true, false, true, false ],
+			'no consent' => [ true, true, false, false ],
+		];
 	}
 
 	public function test_experiment_can_be_activated() {

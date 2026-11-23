@@ -1164,7 +1164,7 @@ class Module extends BaseModule {
 			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
-			'isAngieActive'          => $this->is_angie_enabled(),
+			'isAngieEnabled'          => $this->is_angie_enabled(),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'scoreTiers'             => Score_Tiers::to_array(),

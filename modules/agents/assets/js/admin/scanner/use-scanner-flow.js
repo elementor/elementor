@@ -76,7 +76,7 @@ export const useScannerFlow = ( {
 	initialScan = null,
 	initialRetryAt = null,
 	isActivated: initialIsActivated = false,
-	isAngieActive = false,
+	isAngieEnabled = false,
 	llmsConfig,
 	markdownConfig,
 	botAccessConfig,
@@ -374,13 +374,13 @@ export const useScannerFlow = ( {
 	}, [] );
 
 	const fixWithAngie = useCallback( ( check ) => {
-		if ( canOpenAngie( isAngieActive ) ) {
+		if ( canOpenAngie( isAngieEnabled ) ) {
 			openAngieWithPrompt( check.fixPrompt );
 			return;
 		}
 
 		setInstallCheck( check );
-	}, [ isAngieActive ] );
+	}, [ isAngieEnabled ] );
 
 	const openHowToFix = useCallback( ( check ) => {
 		setInstallCheck( null );

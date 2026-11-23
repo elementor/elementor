@@ -13,7 +13,7 @@ const PENDING_PROMPT_STORAGE_KEY = 'elementor_agent_ready_pending_angie_prompt';
 const ANGIE_ACTIVATION_RETURN_PARAM = 'open-angie';
 const ANGIE_READY_TIMEOUT_MS = 10000;
 
-export const canOpenAngie = ( isAngieActive ) => Boolean( isAngieActive );
+export const canOpenAngie = ( isAngieEnabled ) => Boolean( isAngieEnabled );
 
 export const openAngieWithPrompt = ( prompt ) => {
 	const iframe = getAngieIframe();

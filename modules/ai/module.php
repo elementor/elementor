@@ -116,6 +116,10 @@ class Module extends BaseModule {
 	}
 
 	public function is_angie_enabled(): bool {
+		if ( Hints::is_plugin_active( 'angie' ) ) {
+			return true;
+		}
+
 		return self::is_angie_in_panels_active()
 			&& $this->is_ai_enabled()
 			&& 'yes' === get_option( self::ANGIE_CONSENT_OPTION );
